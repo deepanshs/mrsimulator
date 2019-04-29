@@ -15,7 +15,7 @@ cdef extern from "csa_static_lineshape.h":
     ) 
 
 cdef extern from "spinning_sidebands.h":
-    void lineshape_cas_spinning_sideband_core(
+    void spinning_sideband_core(
         # spectrum information and related amplitude
         double * spec,
         double * cpu_time_,
@@ -36,6 +36,9 @@ cdef extern from "spinning_sidebands.h":
         double *Cq_e,                       # The Cq of the quadrupole center.
         double *eta_e,                      # The asymmetry term of the tensor.
         int quadSecondOrder,                # Quad theory for second order, 
+
+				# Pointer to the array of dipolar tensor information in the PAS. 
+        double *D,                          # The dipolar coupling constant.
 
         # spin rate, spin angle and number spinning sidebands
         int ph_step,
@@ -83,3 +86,11 @@ cdef extern from "spinning_sidebands.h":
 # cdef extern from "MRAngularMomentum.h":
 #     void fullWigner_d(double *wigner, double l, double beta)
 #     double wigner_d(double l, double m1, double m2, double beta)
+
+cdef extern from "powder_setup.h":
+    void rasterization(double * grid,
+                   double *v0,
+                   double *v1,
+                   double *v2,
+                   int rows,
+                   int columns)

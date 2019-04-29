@@ -6,7 +6,7 @@
 //  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
 //
 
-#define PI2 6.2831853072
+
 
 // Definning pi^{2,2}_{L,J} as piLJ //
 #define pi01 = 0.3577708764
@@ -18,7 +18,7 @@
 #define pi43 = -1.2850792082
 // --------------------------------- //
 
-#define PI2I PI2*I
+
 #include "spinning_sidebands.h"
 
 
@@ -371,7 +371,7 @@ destroyDoubleComplex1DArray(MR_full_DLM);
 // @params int n - The number of points                                      //
 // @params double increment - The increment (sampling interval)              //
 // @returns *double values = The pointer to the fft output order vector      //
-static inline double* __get_frequency_in_FFT_order(
+inline double* __get_frequency_in_FFT_order(
                                       int n, 
                                       double increment
                                   )
@@ -400,7 +400,7 @@ static inline double* __get_frequency_in_FFT_order(
 }
 
 
-// Return the p(mi, mf) transition elemeent                                  //
+// Return the p(mi, mf) transition element                                   //
 // The expression follows                                                    //
 //        p(mf, mi) = < mf | T10 | mf > - < mi | T10 | mi >                  //
 //                  = mf - mi                                                //
@@ -408,11 +408,11 @@ static inline double* __get_frequency_in_FFT_order(
 // @params double mi = quantum number of the initial state                   //
 // @params double mf = quantum number of the final state                     //
 // @returns double p = The value                                             //
-static inline double p__(double mf, double mi){
+static inline double __p__(double mf, double mi){
   return (mf - mi);
 }
 
-// Return the d(mi, mf) transition elemeent                                  //
+// Return the d(mi, mf) transition element                                   //
 // The expression follows                                                    //
 //        d(mf, mi) = < mf | T20 | mf > - < mi | T20 | mi >                  //
 //                  = sqrt(3/2)*(mf^2 - mi^2)                                //
@@ -420,11 +420,31 @@ static inline double p__(double mf, double mi){
 // @params double mi = quantum number of the initial state                   //
 // @params double mf = quantum number of the final state                     //
 // @returns double d = The value                                             //
-static inline double d__(double mf, double mi){
+static inline double __d__(double mf, double mi){
   return 1.2247448714*(mf*mf - mi*mi);
 }
 
-// Return the f(mi, mf) transition elemeent                                  //
+
+/* 
+  Return the dIS(mIi, mIf, mSi, mSf) transition element                     
+  The expression follows                                                    
+        d(mf, mi) = < mIf mSf | T10(I) T10(S) | mIf mSf > -                
+                    < mIi mSi | T10(I) T10(S) | mTi mSi >                  
+                  = (mIf * mSf - mIi * mSi)                                
+                                                                           
+  @params double mIi = quantum number of the initial state of spin I        
+  @params double mIf = quantum number of the final state of spin I          
+  @params double mSi = quantum number of the initial state of spin S        
+  @params double mSf = quantum number of the final state of spin S          
+  @returns double dIS = The value                                           
+*/
+static inline double __dIS__(double mIf, double mIi,
+                             double mSf, double mSi){
+  return mIf*mSf - mIi*mSi;
+}
+
+
+// Return the f(mi, mf) transition element                                   //
 // The expression follows                                                    //
 //        f(mf, mi) = < mf | T30 | mf > - < mi | T30 | mi >                  //
 //                  = sqrt(1/10)*[5(mf^3 - mi^3)+(1-3I(I+1))(mf-mi)          //
@@ -432,7 +452,7 @@ static inline double d__(double mf, double mi){
 // @params double mi = quantum number of the initial state                   //
 // @params double mf = quantum number of the final state                     //
 // @returns double f = The value                                             //
-static inline double f__(double mf, double mi, double spin){
+static inline double __f__(double mf, double mi, double spin){
   double f = 1.0 - 3.0*spin*(spin+1.0);
   f*=(mf - mi); 
   f += 5.0*(mf*mf*mf - mi*mi*mi);
@@ -443,7 +463,7 @@ static inline double f__(double mf, double mi, double spin){
 
 
 
-static inline void get_quad_ci__(
+static inline void __get_quad_ci__(
     double *c0,
     double *c2,
     double *c4,
@@ -451,8 +471,8 @@ static inline void get_quad_ci__(
     double mi,
     double spin)
 {
-  double f =  f__(mf, mi, spin);
-  double p = p__(mf, mi);
+  double f =  __f__(mf, mi, spin);
+  double p = __p__(mf, mi);
   
 
   double temp = spin*(spin+1.0) - 0.75;
@@ -461,7 +481,17 @@ static inline void get_quad_ci__(
   c4[0] = -0.1434274331 * temp * p + -1.2850792082 * f;
 }
 
-static inline void getNuclearShieldingUptoFirstRs(
+
+
+
+
+// ========================================================================= //
+//          First order Nuclear shielding Hamiltonian in the PAS.            //
+// ------------------------------------------------------------------------- //
+// The Hamiltonian includes the product of second rank tensor and the        //
+// spin transition functions.                                                //
+// ------------------------------------------------------------------------- //
+static inline void getNuclearShieldingHamiltonianUptoFirstOrder(
           double complex *R0,
           double complex *R2,
           double iso,
@@ -470,20 +500,20 @@ static inline void getNuclearShieldingUptoFirstRs(
           double *transition)
 {
   // Spin trnasition contribution
-  // scale = mj - mi
-  double scale = p__(transition[1], transition[0]);
+  double scale = __p__(transition[1], transition[0]);
   printf("\n Entering CSA");
   printf("\n Transition element %f \n", scale);
   // Scaled R00
   R0[0] = iso*scale; 
 
-  // Scaled R2m containing the components of the CSA tensor in its principal axis frame. //
+  // Scaled R2m containing the components of the CSA second rank tensor in   //
+  // its principal axis frame.                                               //
   double temp = -0.4082482905 * (aniso * eta) * scale;
-  R2[0] += temp;                        // R2-2
-  R2[1] += 0.0;                         // R2-1
-  R2[2] += aniso * scale;               // R20
-  R2[3] += 0.0;                         // R21
-  R2[4] += temp;                        // R22
+  R2[0] += temp;                                                        // R2-2
+  R2[1] += 0.0;                                                         // R2-1
+  R2[2] += aniso * scale;                                               // R2 0
+  R2[3] += 0.0;                                                         // R2 1
+  R2[4] += temp;                                                        // R2 2
 
   printf("R00 %f \n", creal(R0[0]) );
   printf("R2-2 %f \n", creal(R2[0]) );
@@ -492,11 +522,16 @@ static inline void getNuclearShieldingUptoFirstRs(
   printf("R21 %f \n", creal(R2[3]) );
   printf("R22 %f \n", creal(R2[4]) );
 }
+// ========================================================================= //
 
 
-
-
-static inline void getQuandropuleShieldingUptoFirstOrderRs(
+// ========================================================================= //
+//             First order Quadrupolar  Hamiltonian in the PAS.              //
+// ------------------------------------------------------------------------- //
+// The Hamiltonian includes the product of second rank tensor and the        //
+// spin transition functions.                                                //
+// ------------------------------------------------------------------------- //
+static inline void getQuandrupoleHamiltonianUptoFirstOrder(
           double complex *R0,
           double complex *R2,
           double spin,
@@ -505,7 +540,7 @@ static inline void getQuandropuleShieldingUptoFirstOrderRs(
           double *transition)
 {
   // Spin transition contribution
-  double transition_d_ = d__(transition[1], transition[0]); // transition[1]*transition[1] - transition[0]*transition[0];
+  double transition_d_ = __d__(transition[1], transition[0]);
 
   printf("\n Entering Quad");
   printf("\n Transition element %f \n", transition_d_);
@@ -513,18 +548,21 @@ static inline void getQuandropuleShieldingUptoFirstOrderRs(
   // Scaled R00
   R0[0] += 0.0; 
 
+  // vq is the Quadrupolar coupling constant                                 //
+  // vq = 3*Cq/(2I(2I-1)), where I is the spin quantum number                //
   double vq = 3.0*Cq;
   double denominator = 2.0*spin*(2.0*spin - 1.0);
   vq/=denominator;
   printf("quad coupling constant, vq %f \n", vq);
 
-  // Scaled R2m containing the components of the CSA tensor in its principal axis frame. //
+  // Scaled R2m containing the components of the quad second rank tensor in  //
+  // its principal axis frame. //
   double temp = -0.1666666667 * (vq * eta) * transition_d_;
-  R2[0] += temp;                          // R2-2
-  R2[1] += 0.0;                           // R2-1
-  R2[2] += 0.4082482905 * vq * transition_d_;     // R20
-  R2[3] += 0.0;                           // R21
-  R2[4] += temp;                          // R22
+  R2[0] += temp;                                                        // R2-2
+  R2[1] += 0.0;                                                         // R2-1
+  R2[2] += 0.4082482905 * vq * transition_d_;                           // R20
+  R2[3] += 0.0;                                                         // R2 1
+  R2[4] += temp;                                                        // R2 2
 
   printf("R00 %f \n", creal(R0[0]) );
   printf("R2-2 %f \n", creal(R2[0]) );
@@ -533,10 +571,16 @@ static inline void getQuandropuleShieldingUptoFirstOrderRs(
   printf("R21 %f \n", creal(R2[3]) );
   printf("R22 %f \n", creal(R2[4]) );
 }
+// ========================================================================= //
 
 
-// 
-static inline void getQuandropuleShieldingUptoSecondOrderRs(
+// ========================================================================= //
+//            Second order Quadrupolar  Hamiltonian in the PAS.              //
+// ------------------------------------------------------------------------- //
+// The Hamiltonian includes the product of second rank tensor and the        //
+// spin transition functions.                                                //
+// ------------------------------------------------------------------------- //
+static inline void getQuandrupoleHamiltonianUptoSecondOrder(
           double complex *R0,
           double complex *R2,
           double complex *R4,
@@ -547,13 +591,14 @@ static inline void getQuandropuleShieldingUptoSecondOrderRs(
           double vo)
 {
   // Spin transition contribution
-  // c0 = sqrt(3/2) * (mj^2 - mi^2)
   double c0, c2, c4;
-  get_quad_ci__(&c0, &c2, &c4, transition[1], transition[0], spin);
+  __get_quad_ci__(&c0, &c2, &c4, transition[1], transition[0], spin);
 
   printf("\n Entering Quad");
   printf("\n Transition element c0=%f, c2=%f, c4=%f \n", c0, c2, c4);
 
+  // vq is the Quadrupolar coupling constant                                 //
+  // vq = 3*Cq/(2I(2I-1)), where I is the spin quantum number                //
   double vq = 3.0*Cq;
   double denominator = 2.0*spin*(2.0*spin - 1.0);
   vq/=denominator;
@@ -565,22 +610,25 @@ static inline void getQuandropuleShieldingUptoSecondOrderRs(
   // Scaled R00
   R0[0] += (eta2 * 0.33333333333 + 1.0) * 0.07453559925 * scale * c0; 
 
-  // Scaled R2m containing the components of the quad tensor in its principal axis frame. //
+  // Scaled R2m containing the components of the quad second rank tensor in  //
+  // its principal axis frame. //
   double temp = eta * 0.07273929675  * scale * c2;
   R2[0] += temp;                                                      // R2-2
   R2[1] += 0.0;                                                       // R2-1
-  R2[2] += 0.08908708064 * (eta2 * 0.33333333333 - 1.0) * scale * c2; // R20
-  R2[3] += 0.0;                                                       // R21
-  R2[4] += temp;                                                      // R22
+  R2[2] += 0.08908708064 * (eta2 * 0.33333333333 - 1.0) * scale * c2; // R2 0
+  R2[3] += 0.0;                                                       // R2 1
+  R2[4] += temp;                                                      // R2 2
 
-  // Scaled R4m containing the components of the quad tensor in its principal axis frame. //
+  // Scaled R2m containing the components of the quad fourth rank tensor in  //
+  // its principal axis frame. //
   temp = eta2 * 0.02777777778 * scale * c4; 
   double temp2 = 0.06299407883 * eta * scale * c4;
   R4[0] += temp;                                                      // R4-4
   R4[2] += temp2;                                                     // R4-2
-  R4[4] += 0.1195228609 * (eta2 * 0.05555555556 + 1.0) * scale * c4;  // R40
-  R4[6] += temp2;                                                     // R42
-  R4[8] += temp;                                                      // R44
+  R4[4] += 0.1195228609 * (eta2 * 0.05555555556 + 1.0) * scale * c4;  // R4 0
+  R4[6] += temp2;                                                     // R4 2
+  R4[8] += temp;                                                      // R4 4
+
 
   printf("R00 %f \n", creal(R0[0]) );
 
@@ -596,28 +644,115 @@ static inline void getQuandropuleShieldingUptoSecondOrderRs(
   printf("R42 %f \n", creal(R4[6]) );
   printf("R44 %f \n", creal(R4[8]) );
 }
+// ========================================================================= //
 
 
 
+// ========================================================================= //
+//     First order Weakly coupled Magnetic Dipole Hamiltonian in the PAS.    //
+// ------------------------------------------------------------------------- //
+// The Hamiltonian includes the product of second rank tensor and the        //
+// spin transition functions in the weak coupling limit.                     //
+// ------------------------------------------------------------------------- //
+static inline void getWeaklyCoupledMagneticDipoleHamiltonianUptoFirstOrder(
+          double complex *R0,
+          double complex *R2,
+          double D,
+          double *transition)
+{
+  // Spin transition contribution
+  double transition_dIS_ = __dIS__(transition[0], transition[1],
+                                   0.5, 0.5);
 
-// static inline void CSAHamiltonian(
-//           double *local_frequency,
-//           double *R0,
-//           double *R2)
-// {
-//   local_frequency[0] = 1.;
-// }
+  printf("\n Entering Quad");
+  printf("\n Transition element %f \n", transition_dIS_);
+
+  // Scaled R00
+  R0[0] += 0.0; 
+
+  // Scaled R2m containing the components of the magnetic dipole second rank //
+  // tensor in its principal axis frame. //
+  R2[0] += 0.0;                                                         // R2-2
+  R2[1] += 0.0;                                                         // R2-1
+  R2[2] += 2.0 * D * transition_dIS_;                                   // R20
+  R2[3] += 0.0;                                                         // R2 1
+  R2[4] += 0.0;                                                         // R2 2
+
+  printf("R00 %f \n", creal(R0[0]) );
+  printf("R2-2 %f \n", creal(R2[0]) );
+  printf("R2-1 %f \n", creal(R2[1]) );
+  printf("R20 %f \n", creal(R2[2]) );
+  printf("R21 %f \n", creal(R2[3]) );
+  printf("R22 %f \n", creal(R2[4]) );
+}
+// ========================================================================= //
+
+
+static inline void wigner_rotation(
+          int l,
+          double *wigner,
+          double *cos_alpha,
+          double *cos_gamma,
+          double complex *scalex,
+          double complex *initial_vector,
+          double complex *final_vector
+          )
+{
+  int i=0, m, mp, ll=2*l;
+  double complex pha = cos_alpha[0] - I*sqrt(1.0-cos_alpha[0]*cos_alpha[0]);
+  double complex ph2 = pha;
+  double complex temp_inital_vector[ll+1];
+
+
+  // copy the initial vector
+  for(m=0; m<=ll; m++){
+    temp_inital_vector[m] = initial_vector[m];
+  }
+
+  // scale the temp initial vector with exp[-I m alpha]
+  for(m=1; m<=l; m++){
+    temp_inital_vector[l+m]*=ph2;
+    temp_inital_vector[l-m]*=conj(ph2);
+    ph2*=pha;
+  }
+  
+  // Allpy wigner rotation to the temp inital vector
+  for(m=0; m<=ll; m++){
+    final_vector[m] *= scalex[0];
+    for(mp=0; mp<=ll; mp++){
+      final_vector[m] += wigner[i++]*temp_inital_vector[mp];
+    }
+    // final_vector[ll-m] = creal(final_vector[m]) - I*cimag(final_vector[m]);
+    // if(m%2!=0) final_vector[ll-m]*=-1.0;
+  }
+
+  // for(mp=0; mp<=ll; mp++){
+  //     final_vector[l] += wigner[i++]*initial_vector[mp];
+  // }
+  // cblas_zgemv(CblasRowMajor, CblasNoTrans, ll, ll, &one, wigner, l,
+  //               &temp_inital_vector[0], 1, scalex, &final_vector[0], 1);
+}
+
+
+static inline void __zero_components(
+              double complex *R0,
+              double complex *R2,
+              double complex *R4
+              )
+{
+  int i;
+  R0[0] = 0.0;
+  for(i=0; i<=4; i++){
+    R2[i] = 0.0;
+  }
+  for(i=0; i<=8; i++){
+    R4[i] = 0.0;
+  }
+}
 
 
 
-
-
-
-
-
-
-
-void lineshape_cas_spinning_sideband_core(
+void spinning_sideband_core(
           // spectrum information and related amplitude
           double * spec,                    // The amplitude of the spectrum.
           double * cpu_time_,               // Execution time
@@ -638,6 +773,9 @@ void lineshape_cas_spinning_sideband_core(
           double *eta_e,                      // The asymmetry term of the tensor.
           int quadSecondOrder,                // Quad theory for second order, 
 
+          // Pointer to the array of dipolar tensor information in the PAS. 
+          double *D,                          // The dipolar coupling constant.
+
           // spin rate, spin angle and number spinning sidebands
           int ph_step,                      // The number of spinning sidebands to evaluate
           double spin_frequency,            // The rotor spin frequency
@@ -653,8 +791,8 @@ void lineshape_cas_spinning_sideband_core(
           unsigned int number_of_sites)
 {
 
-  // double wo = 1.0;
-  // The following code is an adaption of Eden and Levitt et. al.
+  // The computation of the spinning sidebands is based on the method 
+  // described by Eden and Levitt et. al.
   // `Computation of Orientational Averages in Solid-State NMR by
   //  Gaussian Spherical Quadrature`
   //  JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
@@ -692,17 +830,18 @@ void lineshape_cas_spinning_sideband_core(
     // double **ptr_ptr = &ptr[0][0];
 
     int m, mp, step, i, allow_second_order_quad=0;
-    double tau, t, pht, spin_angular_freq;
+    double tau, wrt, pht, spin_angular_freq, scale;
     double ph_step_inverse = 1.0/((double) (ph_step));
 
     // temporary interaction terms 
-    double iso_n_, aniso_n_, eta_n_, Cq_e_, eta_e_;
+    double iso_n_, aniso_n_, eta_n_, Cq_e_, eta_e_, d_;
 
     // double complex molecular_rotor;
     double complex *pre_phase = createDoubleComplex1DArray(ph_step*9);
     double complex * amp1;
-    double complex* MR_full_DLM_2 = createDoubleComplex1DArray(25);
-    double complex* MR_full_DLM_4 = createDoubleComplex1DArray(81);
+    // double complex * MR_full_DLM_2 = createDoubleComplex1DArray(25);
+    double * MR_full_DLM_2 = createDouble1DArray(25);
+    double * MR_full_DLM_4 = createDouble1DArray(81);
     // double complex alpha[9], phase_alpha;
     // double complex* PM_full_DLM = createDoubleComplex1DArray(25);
 
@@ -722,6 +861,7 @@ void lineshape_cas_spinning_sideband_core(
     double complex w_cs_2[5], rotor_lab_2[5];
     double complex w_cs_4[9], rotor_lab_4[9];
     double complex one=1.0, zero=0.0;
+    double zero_f = 0.0;
 
     int spec_site;
     double * spec_site_ptr;
@@ -736,12 +876,6 @@ void lineshape_cas_spinning_sideband_core(
     // fftw routine end
     // ----------------------------------------------------------------------- //
 
-
-
-    // ----------------------------------------------------------------------- //
-    // prep for tenting --> histogram
-    // spin_frequency/=spectral_increment;
-    // spectral_start/=spectral_increment;
 
     // Calcuate the spinning angular frequency
     spin_angular_freq = spin_frequency * PI2;
@@ -763,7 +897,7 @@ void lineshape_cas_spinning_sideband_core(
     // Calculate tau increments, where tau = (rotor period / number of phase steps)
     tau = 1.0/((double)ph_step*spin_frequency);
 
-    // Also pre-calculating the rotor to lab frame wigner terms
+    // pre-calculating the rotor to lab frame wigner terms
     for(mp = -4; mp <= 4; mp++){
       rotor_lab_4[mp+4] = wigner_d(4, mp, 0, rotor_angle);
     }
@@ -777,15 +911,26 @@ void lineshape_cas_spinning_sideband_core(
     double complex m_wr[9] = {-4., -3., -2., -1., 0., 1., 2., 3., 4.};
     cblas_zdscal(9, spin_angular_freq, &m_wr[0], 1);
 
-    // pre-calculating the phase step exponents. ----------------------------- //
+    // pre-calculating the phase step exponents. --------------------------- //
+    // --------------------------------------------------------------------- //
+    //   phi = exp(sum_m w_cs_m * I 2pi [(exp(I m wr t) - 1)/(I m wr)])      //
+    //   pre_phase(m, t) = I 2pi [(exp(I m wr t) - 1)/(I m wr)]              //
+    //                   = (2 pi / m wr) (exp(I m wr t) - 1)                 //
+    //                     ----scale----                                     //
+    //                   = scale * (exp(I m wr t) - 1)                       //
+    // --------------------------------------------------------------------- //
     i = 0;
     for(m =0; m<=8; m++){
       if (m!=4){
+        wrt = m_wr[m] * tau;
+        pht = 0.0;
+        scale = PI2 / m_wr[m];
         // vzExp(ph_step, phi, pre_phase[m*ph_step]);
         for(step=0; step<ph_step; step++){
-          t = step * tau;
-          pht = m_wr[m] * t;
-          pre_phase[i++] = PI2I * (cexp(I*pht) - 1.0)/ (I * m_wr[m]);
+          // t = step * tau;
+          // pht = m_wr[m] * t;
+          pre_phase[i++] = scale * (cexp(I*pht) - 1.0);
+          pht += wrt;
         }
       }
       else{
@@ -800,18 +945,21 @@ void lineshape_cas_spinning_sideband_core(
       spec_site = site*number_of_points;
       spec_site_ptr = &spec[spec_site];
 
-      // Scaling all the interactions with the frequency interval.
       // Nuclear shielding terms
-      iso_n_ = iso_n[site]; //spectral_increment;
-      aniso_n_ = aniso_n[site]; //spectral_increment;
+      iso_n_ = iso_n[site];
+      aniso_n_ = aniso_n[site];
       eta_n_ = eta_n[site];
 
       // Electric quadrupolar terms
-      Cq_e_ = Cq_e[site]; //spectral_increment;
+      Cq_e_ = Cq_e[site];
       eta_e_ = eta_e[site];
 
+      // Magnetic dipole
+      d_ = D[site];
 
-      getNuclearShieldingUptoFirstRs(
+      __zero_components(&R0[0], &R2[0], &R4[0]);
+
+      getNuclearShieldingHamiltonianUptoFirstOrder(
                     &R0[0],
                     &R2[0],
                     iso_n_,
@@ -820,8 +968,15 @@ void lineshape_cas_spinning_sideband_core(
                     transition
       );
 
+      getWeaklyCoupledMagneticDipoleHamiltonianUptoFirstOrder(
+                    &R0[0],
+                    &R2[0],
+                    d_,
+                    transition
+      );
+
       if (qunatum_number[site] > 0.5){
-        getQuandropuleShieldingUptoFirstOrderRs(
+        getQuandrupoleHamiltonianUptoFirstOrder(
                     &R0[0],
                     &R2[0],
                     qunatum_number[site],
@@ -831,7 +986,7 @@ void lineshape_cas_spinning_sideband_core(
           );
         if (quadSecondOrder == 1){
           allow_second_order_quad = 1;
-          getQuandropuleShieldingUptoSecondOrderRs(
+          getQuandrupoleHamiltonianUptoSecondOrder(
                     &R0[0],
                     &R2[0],
                     &R4[0],
@@ -851,71 +1006,58 @@ void lineshape_cas_spinning_sideband_core(
       for(orientation=0; orientation < n_orientations; orientation++){
         double *sideband_amplitude_f = &sideband_amplitude[ph_step*orientation];
 
-        // phase_alpha = cosAlpha[orientation]-I*sinAlpha[orientation];
-        // alpha[4]=1.0;
-        // for(i=1; i<=4; i++){
-        //   alpha[i+4] = alpha[i+3] * phase_alpha;
-        //   alpha[-i+4] = conj(alpha[i+4]);
-        // }
+        wigner_d_matrix(MR_full_DLM_2, 2, &cosBeta[orientation], 1);
 
-        // wigner_d_matrix(MR_full_DLM_2, 2, &cosBeta[orientation], 1);
-        
-        // for(i=0;i<5;i++){
-        //   cblas_zscal(5, &alpha[i+2], &MR_full_DLM_2[i], 5);
-        // }
-
-        full_DLM_trig(MR_full_DLM_2, 2,
-              cosAlpha[orientation],
-              sinAlpha[orientation],
-              cosBeta[orientation],
-              sinBeta[orientation]);
+        // full_DLM_trig(MR_full_DLM_2, 2,
+        //       cosAlpha[orientation],
+        //       sinAlpha[orientation],
+        //       cosBeta[orientation],
+        //       sinBeta[orientation]);
 
         // ------------------------------------------------------------------- //
-        //         Computing wigner rotation w_cs_PM to w_cs_MR                //
-        //         w_cs_PM are the A2m components in the Molecular frame.      //
-        //         w_cs are the A2m components in the rotor frame.             //
+        //         Computing wigner rotation upto lab frame                    //
 
-        // cblas_zgemv(CblasRowMajor, CblasNoTrans, 5, 5, &one, MR_full_DLM, 5,
-        //               &w_cs_PM[0], 1, &zero, &w_cs[0], 1);
-
-        // Second rank wigner rotation
-        cblas_zgemv(CblasRowMajor, CblasNoTrans, 5, 5, &one, MR_full_DLM_2, 5,
-                      &R2[0], 1, &zero, &w_cs_2[0], 1);
+        // Second rank wigner rotation to rotor frame
+        wigner_rotation(2, MR_full_DLM_2, &cosAlpha[orientation], 
+                        &zero_f, &zero, &R2[0], &w_cs_2[0]);
         
-        
-        
-
+        // Second rank wigner rotation to lab frame cosidering alpha=gamma=0
+        // vzMul( 5, &w_cs_2[0], &rotor_lab_2[0], &w_cs_2[0] );
+        for(i=0; i<5; i++){
+          w_cs_2[i]*=rotor_lab_2[i];
+        }
 
         // Fourth rank Wigner Rotation
         if (allow_second_order_quad){
-          // get_even_DLM_4_from_2(MR_full_DLM_2, cosBeta[orientation]);
-          full_DLM_trig(MR_full_DLM_4, 4,
-              cosAlpha[orientation],
-              sinAlpha[orientation],
-              cosBeta[orientation],
-              sinBeta[orientation]);
+          // full_DLM_trig(MR_full_DLM_4, 4,
+          //     cosAlpha[orientation],
+          //     sinAlpha[orientation],
+          //     cosBeta[orientation],
+          //     sinBeta[orientation]);
 
-          cblas_zgemv(CblasRowMajor, CblasNoTrans, 9, 9, &one, MR_full_DLM_4, 9,
-                      &R4[0], 1, &zero, &w_cs_4[0], 1);
+          wigner_d_matrix(MR_full_DLM_4, 4, &cosBeta[orientation], 1);
+          wigner_rotation(4, MR_full_DLM_4, &cosAlpha[orientation], 
+                            &zero_f, &zero, R4, w_cs_4);
+
+          // vzMul( 9, &w_cs_4[0], &rotor_lab_4[0], &w_cs_4[0] );
+          for(i=0; i<9; i++){
+            w_cs_4[i]*=rotor_lab_4[i];
+          }
         }
 
-
-        // ------------------------------------------------------------------- //
-        //         Rotor to lab frame transformation.													 //
-        //         multiplying w_cs by lab frame wigner d elements. 					 //
-        //    Here, the alpha_RL = gamma_RL = 0 and beta is the rotor angle.	 //
-
-        vzMul( 5, &w_cs_2[0], &rotor_lab_2[0], &w_cs_2[0] );
-
-        if (allow_second_order_quad){
-          vzMul( 9, &w_cs_4[0], &rotor_lab_4[0], &w_cs_4[0] );
-        }
-
+        // for(i=0; i<5; i++){
+        //   w_cs_4[i+2] += w_cs_2[i];
+        // }
 
         // ------------------------------------------------------------------- //
         //    Computing phi = w_cs * I 2pi [(exp(i m wr t) - 1)/(i m wr)]      //
         //                           -------------- pre_phase------------      //
-        //      The pre_phase is calculated before.                            //
+        // The pre_phase is calculated before.                                 //
+
+        // cblas_zgemv(CblasRowMajor, CblasTrans, 9, ph_step, &one,
+        //               pre_phase, ph_step, &w_cs_4[0], 
+        //               1, &zero, phi, 1);
+
         cblas_zgemv(CblasRowMajor, CblasTrans, 5, ph_step, &one,
                       &pre_phase[2*ph_step], ph_step, &w_cs_2[0], 
                       1, &zero, phi, 1);
@@ -926,7 +1068,7 @@ void lineshape_cas_spinning_sideband_core(
                       1, &one, phi, 1);
         }
 
-        // Computing exp(phi) ---------------------------------------------- //
+        // Computing exp(phi) ------------------------------------------------ //
         vzExp(ph_step, phi, phi);
 
         // Compute the fft --------------------------------------------------- //
@@ -941,6 +1083,9 @@ void lineshape_cas_spinning_sideband_core(
               // vdPowx( ph_step, sideband_amplitude_f, 2, sideband_amplitude_f);
 
         // Taking the square of the the fft ampitudes
+        // cblas_dgbmv(CblasRowMajor, CblasNoTrans, ph_step, ph_step,0,0, 1,
+        //             side_band, 1, side_band, 1, 0, sideband_amplitude_f, 1)
+
         for(m=0; m<ph_step; m++){
           amp1 = &side_band[m];
           sideband_amplitude_f[m] = creal(amp1[0])*creal(amp1[0]) + cimag(amp1[0])*cimag(amp1[0]);
@@ -1026,7 +1171,10 @@ void lineshape_cas_spinning_sideband_core(
   destroyDouble1DArray(cosBeta);
   destroyDouble1DArray(sinAlpha);
   destroyDouble1DArray(sinBeta);
-  destroyDoubleComplex1DArray(MR_full_DLM_2);
+  // destroyDoubleComplex1DArray(MR_full_DLM_2);
+  // destroyDoubleComplex1DArray(MR_full_DLM_4);
+  destroyDouble1DArray(MR_full_DLM_2);
+  destroyDouble1DArray(MR_full_DLM_4);
   destroyDouble1DArray(vr_freq);
   destroyDouble1DArray(local_frequency);
   destroyDouble1DArray(sideband_amplitude);
@@ -1038,90 +1186,6 @@ void lineshape_cas_spinning_sideband_core(
 }
 
 
-// inline void powderTenstingAverage(
-//         double * cosAlpha,
-//         double * sinAlpha,
-//         double * cosBeta,
-//         double * sinBeta,
-//         double * sideband_amplitude,
-//         double complex * w_cs_PM,
-//         double complex * w_cs,
-//         double complex * rotor_lab,
-//         double complex * pre_phase,
-//         fftw_complex * phi,
-//         int nt,
-//         int ph_step,
-//         fftw_plan *plan,
-//         double *ph_step_inverse,
-//         double *local_frequency,
-
-
-// ){
-//   // powder tenting average //
-//   for(i=0; i<nt+1; i++){
-//     double *sideband_amplitude_f = &sideband_amplitude[i*increment];
-//     ii = 0;
-//     for(j=0; j<2*nt+1; j++){
-//       full_DLM_trig(MR_full_DLM, 2,
-//             cosAlpha[i][j],
-//             sinAlpha[i][j],
-//             cosBeta[i][j],
-//             sinBeta[i][j]);
-
-//       // Computing wigner rotation w_cs_PM to w_cs_MR 											 //
-//       // w_cs_PM are the A2m components in the Molecular frame.							 //
-//       // w_cs are the A2m components in the rotor frame.										 //
-//       cblas_zgemv(CblasRowMajor, CblasNoTrans, 5, 5, &one, MR_full_DLM, 5,
-//                   &w_cs_PM[0], 1, &zero, &w_cs[0], 1);
-
-//       // Rotor to lab frame transformation.																	 //
-//       // multiplying w_cs by lab frame wigner d elements. 									 //
-//       // Here, the alpha_RL = gamma_RL = 0 and beta is the rotor angle. 		 //
-//       vzMul( 5, &w_cs[0], &rotor_lab[0], &w_cs[0] );
-
-//       w_cs[2]+=iso;
-
-//       // Computing phi = w_cs * [(exp(i m wr t) - 1)/(i m wr)]               //
-//       //                        ---------- pre_phase----------               //
-//       // The pre_phase is calculated before.                                 //
-//       cblas_zgemv(CblasRowMajor, CblasTrans, 5, ph_step, &one, pre_phase, /
-//                   ph_step, &w_cs[0], 1, &zero, phi, 1);
-
-//       // Computing exp(i phi)
-//       cblas_zscal(ph_step, &i2pi, phi, 1);
-//       vzExp(ph_step, phi, phi);
-
-//       // Normalizing with the number of phase steps
-//       cblas_zscal(ph_step, ph_step_inverse, phi, 1);
-
-//       // Compute the fft
-//       fftw_execute(plan);
-
-
-//       // Taking the square of the the fft ampitudes
-//       // vzMulByConj(ph_step, side_band, side_band, sideband_amplitude[i][j]);
-
-//       // vzAbs( ph_step, side_band, sideband_amplitude[i][j] );
-//       // Multiply by the weightN
-//       // cblas_dscal(ph_step, amp[i][j], sideband_amplitude[i][j], 1);
-
-//       // // // Taking the square of the the fft ampitudes
-//       for(m=0; m<ph_step; m++){
-//         amp1 = side_band[m];
-//         sideband_amplitude_f[ii++] = creal(amp1)*creal(amp1) + cimag(amp1)*cimag(amp1);
-
-//       //   // adding the w_cs^0 term to the sideband frequencies before binning the spectrum.
-//       //    // - frequency_start;
-//       // 	// local_frequency[ii][i][j] /= freq_inc;
-//       // // }
-//       }
-//       cblas_dscal(ph_step, amp[i][j], &sideband_amplitude_f[ii-ph_step], 1);
-
-
-//       local_frequency[i][j] =  creal(w_cs[2]);
-//     }
-//   }
-// }
 
 
 
@@ -1138,11 +1202,19 @@ void lineshape_cas_spinning_sideband_core(
 
 
 
-void lineshape_cas_spinning_sideband(
+
+
+
+
+
+
+
+
+void spinning_sideband(
             double * spec,
             double * cpu_time_,
-            double frequency_start,
-            double frequency_bandwidth,
+            double spectral_start,
+            double spectral_increment,
             double number_of_points,
 
             double * qunatum_number,
@@ -1155,6 +1227,8 @@ void lineshape_cas_spinning_sideband(
             double Cq_e,
             double eta_e,
             int quadSecondOrder,
+
+            double D,
 
             int ph_step,
             double spin_frequency,
@@ -1170,11 +1244,11 @@ void lineshape_cas_spinning_sideband(
         // 																						averaging_size);
         // double omega_PM[3] = {omega_PM_c.alphaInRadians, omega_PM_c.betaInRadians, omega_PM_c.gammaInRadians};
 
-        lineshape_cas_spinning_sideband_core(
+        spinning_sideband_core(
                   spec,
                   cpu_time_,
-                  frequency_start,
-                  frequency_bandwidth,
+                  spectral_start,
+                  spectral_increment,
                   number_of_points,
 
                   qunatum_number,           // Spin quantum numbers
@@ -1187,6 +1261,8 @@ void lineshape_cas_spinning_sideband(
                   &Cq_e,
                   &eta_e,
                   quadSecondOrder, 
+
+                  &D,
 
                   ph_step,
                   spin_frequency,

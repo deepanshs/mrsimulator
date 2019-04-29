@@ -1,5 +1,5 @@
 
-
+cimport numpy as np
 
 cdef struct c_NuclearShieldingTensor:
     double isotropicNuclearShiftInPPM          # Isotropic chemical shift (ppm)                   #
@@ -17,4 +17,10 @@ cdef struct c_MRsite:
     NuclearShieldingTensor nuclearShieldingInPAS
     NuclearShieldingTensor quandupolarCouplingInPAS
 
-ctypedef c_MRsite intList
+cdef struct transition:
+    np.ndarray m_initial
+    double m_final
+
+
+
+

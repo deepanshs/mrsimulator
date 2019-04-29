@@ -8,10 +8,13 @@
 
 // OCPowderScheme Type
 struct __OCPowderScheme {
-    // char *name[120];     /* name of the scheme*/
-    OCEulerAngle *angles;   /* Euler angles */
-    double *weights;        /* Weights of Euler angles */
-    int size;               /* number of Euler angles */
+    // char *name[120];                 /* name of the scheme*/
+    OCEulerAngle *angles;
+    // double *alpha_in_radians;           /* Euler angles */
+    // double *beta_in_radians;
+    // double *gamma_in_radians;
+    double *weights;                    /* Weights of Euler angles */
+    int size;                           /* number of Euler angles */
 };
 
 typedef struct __OCPowderScheme OCPowderScheme;

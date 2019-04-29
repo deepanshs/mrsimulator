@@ -37,7 +37,7 @@ double mypow(double x, int n)
     return(temp);
 }
 
-void wigner_d_matrix(double complex *wigner, int l, double *value, int trig){
+void wigner_d_matrix(double *wigner, int l, double *value, int trig){
     double cx;
     if (trig==0) cx = cos(value[0]);
     else cx = value[0];

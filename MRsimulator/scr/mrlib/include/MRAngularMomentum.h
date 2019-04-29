@@ -19,4 +19,4 @@ void full_DLM_trig(double complex *wigner,
 void get_even_DLM_4_from_2(double complex *wigner, double cosBeta);
 double wigner_d_trig(int l, int m1, int m2, double cx, double sx);
 // extern double wigner4(double beta, int m1, int m2);
-extern void wigner_d_matrix(double complex *wigner, int l, double *value, int trig);
+extern void wigner_d_matrix(double *wigner, int l, double *value, int trig);

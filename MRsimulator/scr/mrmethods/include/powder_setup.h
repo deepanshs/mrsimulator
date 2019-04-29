@@ -108,3 +108,9 @@ extern void powderAverageWithTentingSchemeOverHemisphere(
 
 
 
+extern void rasterization(double * grid,
+                   double *v0,
+                   double *v1,
+                   double *v2,
+                   int rows,
+                   int columns);

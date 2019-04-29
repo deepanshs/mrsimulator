@@ -1,5 +1,7 @@
 
-#define MKL_Complex16 double complex
+
+#define PI2 6.2831853072
+#define PI2I PI2*I
 
 #include "MRAngularMomentum.h"
 #include "OCEulerAngle.h"
@@ -15,6 +17,23 @@
 #include "histogram.h"
 #include "mkl.h"
 
+#define MKL_Complex16 double complex
+
+struct directionCosines
+{
+	double cosAlpha;
+	double cosBeta;
+}; 
+
+
+// Return a vector ordered according to the fft output order.                //
+// @params int n - The number of points                                      //
+// @params double increment - The increment (sampling interval)              //
+// @returns *double values = The pointer to the fft output order vector      //
+extern inline double* __get_frequency_in_FFT_order(
+                                      int n, 
+                                      double increment
+                                  );
 
 
 // static inline void get_frequency(int index,
@@ -82,7 +101,7 @@ extern void lineshape_cas_spinning_sideband_angles(
             OCPowderScheme Omega); 				// Set of euler angles in powder averaging.
 
 
-extern void lineshape_cas_spinning_sideband_core(
+extern void spinning_sideband_core(
           // spectrum information and related amplitude
           double * spec,                    // The amplitude of the spectrum.
           double * cpu_time_,               // Execution time
@@ -102,6 +121,9 @@ extern void lineshape_cas_spinning_sideband_core(
           double *Cq_e,                       // The Cq of the quadrupole center.
           double *eta_e,                      // The asymmetry term of the tensor.
           int quadSecondOrder,                // Quad theory for second order, 
+
+          // Pointer to the array of dipolar tensor information in the PAS. 
+          double *D,                          // The dipolar coupling constant.
 
           // spin rate, spin angle and number spinning sidebands
           int ph_step,                      // The number of spinning sidebands to evaluate
