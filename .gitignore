@@ -20,6 +20,7 @@ parts/
 sdist/
 var/
 wheels/
+test/**
 *.egg-info/
 .installed.cfg
 cython_debug/**
