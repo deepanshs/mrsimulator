@@ -531,7 +531,7 @@ static inline void getNuclearShieldingHamiltonianUptoFirstOrder(
 // The Hamiltonian includes the product of second rank tensor and the        //
 // spin transition functions.                                                //
 // ------------------------------------------------------------------------- //
-static inline void getQuandrupoleHamiltonianUptoFirstOrder(
+static inline void getQuadrupoleHamiltonianUptoFirstOrder(
           double complex *R0,
           double complex *R2,
           double spin,
@@ -575,12 +575,12 @@ static inline void getQuandrupoleHamiltonianUptoFirstOrder(
 
 
 // ========================================================================= //
-//            Second order Quadrupolar  Hamiltonian in the PAS.              //
+//            Second order Quadrupolar Hamiltonian in the PAS.               //
 // ------------------------------------------------------------------------- //
 // The Hamiltonian includes the product of second rank tensor and the        //
 // spin transition functions.                                                //
 // ------------------------------------------------------------------------- //
-static inline void getQuandrupoleHamiltonianUptoSecondOrder(
+static inline void getQuadrupoleHamiltonianUptoSecondOrder(
           double complex *R0,
           double complex *R2,
           double complex *R4,
@@ -612,7 +612,7 @@ static inline void getQuandrupoleHamiltonianUptoSecondOrder(
 
   // Scaled R2m containing the components of the quad second rank tensor in  //
   // its principal axis frame. //
-  double temp = eta * 0.07273929675  * scale * c2;
+  double temp = -eta * 0.07273929675  * scale * c2;
   R2[0] += temp;                                                      // R2-2
   R2[1] += 0.0;                                                       // R2-1
   R2[2] += 0.08908708064 * (eta2 * 0.33333333333 - 1.0) * scale * c2; // R2 0
@@ -622,7 +622,7 @@ static inline void getQuandrupoleHamiltonianUptoSecondOrder(
   // Scaled R2m containing the components of the quad fourth rank tensor in  //
   // its principal axis frame. //
   temp = eta2 * 0.02777777778 * scale * c4; 
-  double temp2 = 0.06299407883 * eta * scale * c4;
+  double temp2 = -0.06299407883 * eta * scale * c4;
   R4[0] += temp;                                                      // R4-4
   R4[2] += temp2;                                                     // R4-2
   R4[4] += 0.1195228609 * (eta2 * 0.05555555556 + 1.0) * scale * c4;  // R4 0
@@ -716,7 +716,7 @@ static inline void wigner_rotation(
     ph2*=pha;
   }
   
-  // Allpy wigner rotation to the temp inital vector
+  // Apply wigner rotation to the temp inital vector
   for(m=0; m<=ll; m++){
     final_vector[m] *= scalex[0];
     for(mp=0; mp<=ll; mp++){
@@ -760,8 +760,8 @@ void spinning_sideband_core(
           double spectral_increment,        // The increment of the frequency spectrum.
           int number_of_points,             // Number of points on the frequency spectrum.
 
-          double *qunatum_number,           // Spin quantum numbers
-          double *wo,                       // omega_o
+          double spin_quantum_number,       // Spin quantum numbers
+          double larmor_frequency,          // Larmor frequency
 
           // Pointer to the array of CSA tensor information in the PAS. 
           double *iso_n,                      // The isotropic chemical shift.
@@ -832,7 +832,7 @@ void spinning_sideband_core(
     int m, mp, step, i, allow_second_order_quad=0;
     double tau, wrt, pht, spin_angular_freq, scale;
     double ph_step_inverse = 1.0/((double) (ph_step));
-
+    double spectral_increment_inverse = 1.0/spectral_increment;
     // temporary interaction terms 
     double iso_n_, aniso_n_, eta_n_, Cq_e_, eta_e_, d_;
 
@@ -849,7 +849,10 @@ void spinning_sideband_core(
     getPolarAngleTrigOverAnOctant(nt, cosAlpha, sinAlpha, cosBeta, sinBeta, amp);
 
     // Normalize the amplitudes
-    cblas_dscal(n_orientations, ph_step_inverse, amp, 1);
+    for(ii=0; ii<n_orientations; ii++){
+      amp[ii]*=ph_step_inverse;
+    }
+    // cblas_dscal(n_orientations, ph_step_inverse, amp, 1);
     // temp = ph_step_inverse_square*amp[orientation];
 
     
@@ -862,6 +865,10 @@ void spinning_sideband_core(
     double complex w_cs_4[9], rotor_lab_4[9];
     double complex one=1.0, zero=0.0;
     double zero_f = 0.0;
+    double shift = 0.0;
+    if (number_of_points%2 == 0){
+      shift = 0.5;
+    }
 
     int spec_site;
     double * spec_site_ptr;
@@ -882,7 +889,10 @@ void spinning_sideband_core(
 
     // Generate the sideband order frequency relative to fft output order
     double *vr_freq = __get_frequency_in_FFT_order(ph_step, spin_frequency);
-    cblas_dscal(ph_step, 1./spectral_increment, vr_freq, 1);
+    for(ii=0; ii<ph_step; ii++){
+      vr_freq[ii]*=spectral_increment_inverse;
+    }
+    // cblas_dscal(ph_step, spectral_increment_inverse, vr_freq, 1);
 
 
     // create an empty array to hold the local spinning sideband frequencies.
@@ -909,7 +919,10 @@ void spinning_sideband_core(
 
     // pre-calculate the m omega spinning frequencies
     double complex m_wr[9] = {-4., -3., -2., -1., 0., 1., 2., 3., 4.};
-    cblas_zdscal(9, spin_angular_freq, &m_wr[0], 1);
+    for(ii=0; ii<9; ii++){
+      m_wr[ii]*=spin_angular_freq;
+    }
+    // cblas_zdscal(9, spin_angular_freq, &m_wr[0], 1);
 
     // pre-calculating the phase step exponents. --------------------------- //
     // --------------------------------------------------------------------- //
@@ -975,26 +988,26 @@ void spinning_sideband_core(
                     transition
       );
 
-      if (qunatum_number[site] > 0.5){
-        getQuandrupoleHamiltonianUptoFirstOrder(
+      if (spin_quantum_number > 0.5){
+        getQuadrupoleHamiltonianUptoFirstOrder(
                     &R0[0],
                     &R2[0],
-                    qunatum_number[site],
+                    spin_quantum_number,
                     Cq_e_,
                     eta_e_,
                     transition
           );
         if (quadSecondOrder == 1){
           allow_second_order_quad = 1;
-          getQuandrupoleHamiltonianUptoSecondOrder(
+          getQuadrupoleHamiltonianUptoSecondOrder(
                     &R0[0],
                     &R2[0],
                     &R4[0],
-                    qunatum_number[site],
+                    spin_quantum_number,
                     Cq_e_,
                     eta_e_,
                     transition,
-                    wo[0]);
+                    larmor_frequency);
         }
       }
 
@@ -1098,7 +1111,13 @@ void spinning_sideband_core(
         cblas_dscal(ph_step, amp[orientation], sideband_amplitude_f, 1);
 
         // adding the w_cs[0] term to the sideband frequencies before binning the spectrum.
-        local_frequency[orientation] = 0.5 + (creal(w_cs_2[2]) + creal(w_cs_4[4]) + R0[0] - spectral_start)/spectral_increment;
+        local_frequency[orientation] = shift + 
+                                        (
+                                          creal(w_cs_2[2]) + 
+                                          creal(w_cs_4[4]) + 
+                                          R0[0] - 
+                                          spectral_start
+                                        )/spectral_increment;
       }
 
 
@@ -1217,8 +1236,8 @@ void spinning_sideband(
             double spectral_increment,
             double number_of_points,
 
-            double * qunatum_number,
-            double * wo,
+            double spin_quantum_number,
+            double larmor_frequency,
 
             double iso_n,
             double aniso_n,
@@ -1251,8 +1270,8 @@ void spinning_sideband(
                   spectral_increment,
                   number_of_points,
 
-                  qunatum_number,           // Spin quantum numbers
-                  wo,
+                  spin_quantum_number,           // Spin quantum numbers
+                  larmor_frequency,
 
                   &iso_n,
                   &aniso_n,

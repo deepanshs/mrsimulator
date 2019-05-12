@@ -109,8 +109,8 @@ extern void spinning_sideband_core(
           double spectral_increment,        // The bandwidth of the frequency spectrum.
           int number_of_points,             // Number of points on the frequency spectrum.
 
-          double *qunatum_number,           // Spin quantum numbers
-          double *wo,                       // omega_o
+          double spin_quantum_number,       // Spin quantum numbers
+          double larmor_frequency,          // Larmor frequency
 
           // Pointer to the array of CSA tensor information in the PAS. 
           double *iso_n,                      // The isotropic chemical shift.

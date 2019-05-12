@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to MRSimulator's documentation!
+Welcome to mrsimulator's documentation!
 =======================================
 
 .. toctree::
@@ -11,8 +11,7 @@ Welcome to MRSimulator's documentation!
    :caption: Contents:
 
    nuclear_shielding
-   api/powder_triangle_interpolation
-
+   api/api
 
 Indices and tables
 ==================

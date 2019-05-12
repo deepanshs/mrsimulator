@@ -63,14 +63,14 @@ void getPolarAngleTrigOverAnOctant(
 //         double fstart,
 //         double finc);
 
-// int tent2(
-//         double freq1,
-//         double freq2,
-//         double freq3,
-//         double *offset,
-//         double amp,
-//         double *spec,
-//         int points);
+extern int triangle_interpolation(double *freq1,
+          double *freq2,
+          double *freq3,
+          double *offset,
+          double *amp,
+          double *spec,
+          int *points
+          );
 
 // int tent_amp(double *freq1,
 //           double *freq2,

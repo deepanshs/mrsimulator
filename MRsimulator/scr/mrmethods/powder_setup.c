@@ -519,141 +519,10 @@ void getPolarAngleTrigOverHemisphere(
 
 
 
-// tent_amp is an optimized version of tent. Using tent2 can provide a
-// factor of two boost in the compulation time of spectrum.
-// static inline int tent_amp(double *freq1,
-//           double *freq2,
-//           double *freq3,
-//           double *offset,
-//           double *amp1,
-//           double *amp2,
-//           double *amp3,
-//           double *spec,
-//           int points) {
 
-// double df1, df2, top, t, ampt, diff, Vxy_Vxz, Vyz_Vxz;
-// double f10, f21, f20, Vxz, Vxy, Vyz, v1, v2;
-// double amp_base;
-// int p, pmid, pmax, i, j;
-
-// // off = (int) offset[0];
-// p = (int) (freq1[0] + offset[0]);
-// if (p == (int)freq2[0] && p == (int)freq3[0]){
-//   if(p >= points || p < 0) return 0;
-//   spec[p] += (amp1[0]+amp2[0]+amp3[0])/3.0;
-// 	return 0;
-// }
-
-// double f[3]; //= {0.0, 0.0, 0.0};
-// double amp[3];
-
-// f[0] = freq1[0] + offset[0];
-// f[1] = freq2[0] + offset[0];
-// f[2] = freq3[0] + offset[0];
-
-// amp[0] = amp1[0];
-// amp[1] = amp2[0];
-// amp[2] = amp3[0];
-
-// for( j = 1; j <= 2; j++) {
-//     t = f[j];
-//     ampt = amp[j];
-//     i=j-1;
-//     while(i >= 0 && f[i] > t){
-//         f[i+1] = f[i];
-//         amp[i+1] = amp[i];
-//         i--;
-//     }
-//     f[i+1]=t;
-//     amp[i+1]=ampt;
-// }
-
-
-// p = (int) f[0];
-// pmid = (int) f[1];
-// pmax = (int) f[2];
-// // df1 = 0.;
-// // df2 = 0.;
-// f10 = f[1]-f[0];
-// f21 = f[2]-f[1];
-// f20 = f[2]-f[0];
-
-// top = 2.0 / (f[2]-f[0]);
-
-// // if( f10 != 0.) df1 = top / (2.0 * f10 );
-// // if( f21 != 0.) df2 = top / (2.0 * f21 );
-
-// // Volume elements pre-factors
-// Vxz = (amp[2]-amp[0])/f20;
-// Vxy = (amp[1]-amp[0])/f10;
-// Vyz = (amp[2]-amp[1])/f21;
-// amp_base = amp[0] + Vxz*f10;
-// Vxy_Vxz = Vxy+Vxz;
-// Vyz_Vxz = Vyz+Vxz;
-
-// if((pmax >= points) || (p < 0)) return 0;
-
-// if(p != pmid) {
-//     df1 = top / (2.0 * f10);
-//     diff = (double)p +1. - f[0];
-//     // cnst = 2.0 * df1 * (amp[0] + diff * (Vxy+Vxz));
-//     v1 = diff * diff * df1 * (amp[0] + 0.33333333 * diff * Vxy_Vxz);
-//     spec[p++] += v1;
-//     diff+=1.0;
-//     v2 = diff * diff * df1 * (amp[0] + 0.33333333 * diff * Vxy_Vxz);
-//     // vol = v2-v1-cnst;
-//     // incr = 2.0 * df1 * (Vxy+Vxz);
-//     // i=0;
-//     while(p != pmid) {
-//       // vol += (cnst+ i*incr);
-//       spec[p++] += v2-v1; // vol;
-//       // i++;
-//       v1=v2;
-//       diff+=1.0;
-//       v2 = diff * diff * df1 * (amp[0] + 0.33333333 * diff * Vxy_Vxz);
-//     }
-//     // f1 = (double)p;
-//     spec[p] += f10 * top * (amp[0]+amp[1]+amp_base)/6.0 - v1; //vol;
-//     // spec[p] += (f[1]-f1) * ( f10 + (f1-f[0]) ) * df1;
-// } else {
-//     spec[p] += f10 * top * (amp[0]+amp[1]+amp_base)/6.0;
-// }
-
-// p=pmax;
-// if(p != pmid) {
-//     df2 = top / (2.0 * f21 );
-//     // f2 = (double)p;
-//     diff = f[2] - (double)p;
-//     // cnst = 2.0 * df2 * (amp[2] - diff * (Vyz+Vxz));
-//     v1 = diff * diff * df2 * (amp[2] - 0.33333333 * diff * Vyz_Vxz);
-//     spec[p--] += v1;
-//     diff+=1.0;
-//     v2 = diff * diff * df2 * (amp[2] - 0.33333333 * diff * Vyz_Vxz);
-//     // vol = v2-v1-cnst;
-//     // incr = -2.0 * df2 * (Vyz+Vxz);
-//     // two_df = 2.0 * df2;
-//     // i=0;
-//     while(p != pmid) {
-//       // vol += (cnst + i*incr);
-//       spec[p--] += v2-v1; //vol;
-//       // i++;
-//       v1=v2;
-//       diff+=1.0;
-//       v2 = diff * diff * df2 * (amp[2] - 0.33333333 * diff * Vyz_Vxz);
-//     }
-//     // f1 = (double)p;
-//     spec[p] += f21 * top * (amp[2]+amp[1]+amp_base)/6.0 - v1 ; //vol;
-// } else {
-//     spec[p] += f21 * top * (amp[2]+amp[1]+amp_base)/6.0;
-// }
-// return 0;
-// }
-
-
-
-// tent2 is an optimized version of tent. Using tent2 can provide a
-// factor of two boost in the computation time of spectrum.
-static inline int tent2(double *freq1,
+// triangle_interpolation is an optimized version of tent. 
+int triangle_interpolation(
+          double *freq1,
           double *freq2,
           double *freq3,
           double *offset,
@@ -663,11 +532,11 @@ static inline int tent2(double *freq1,
           ) {
 
 double df1, df2, top=0.0, t, diff, f10=0.0, f21=0.0;
-int p, pmid, pmax, i, j;
+int p, pmid, pmax, i, j, clip_right = 0, clip_left = 0;
 
 // off = (int) offset[0];
 p = (int) (freq1[0] + offset[0]);
-if (p == (int)freq2 && p == (int)freq3){
+if ((int)freq1[0] == (int)freq2[0] && (int)freq1[0] == (int)freq3[0]){
   if(p >= points[0] || p < 0) return 0;
   spec[p] += amp[0];
 	return 0;
@@ -696,12 +565,41 @@ pmax = (int)f[2];       //floor( f[2] );
 f10 += f[1]-f[0];
 f21 += f[2]-f[1];
 
-if((pmax >= points[0]) || (p < 0)) return 0;
+// if((pmax >= points[0]) || (p < 0)) return 0;
+
+if (pmax < 0) return 0;
+if (p > points[0]) return 0;
+
+if(pmax >= points[0]){
+  pmax = points[0];
+  clip_right = 1;
+}
+
+if(pmid >= points[0]){
+  pmid = points[0];
+  clip_right = 1;
+}
+    
+if (p < 0){
+  p = 0;
+  clip_left = 1;
+}
+    
+if (pmid < 0){
+  pmid = 0;
+  clip_left = 1;
+}
+
 
 if(p != pmid) {
     df1 = top / f10;
     diff = (double)p + 1. - f[0];
-    spec[p++] += 0.5 * diff * diff * df1;
+    if (clip_left == 0){
+      spec[p++] += 0.5 * diff * diff * df1;
+    }
+    else{
+      spec[p++] += (diff - 0.5) * df1;
+    }
     // diff = (diff - 0.5) * df1;
     diff -= 0.5;
     diff *= df1;
@@ -709,15 +607,25 @@ if(p != pmid) {
       diff += df1;
       spec[p++] += diff;
     }
-    spec[p] += (f[1]-(double)p) * ( f10 + ((double)p - f[0]) ) * 0.5 * df1;
+    if(clip_right == 0){
+      spec[p] += (f[1]-(double)p) * ( f10 + ((double)p - f[0]) ) * 0.5 * df1;
+    }
 } else {
-    spec[p] += f10 * top * 0.5;
+      if(clip_right == 0 && clip_left==0){
+        spec[p] += f10 * top * 0.5;
+      }
 }
 
 if(p != pmax) {
     df2 = top / f21;
     diff = f[2] - (double)p - 1.;
-    spec[p++] += (f21 - diff) * ( diff + f21 ) * 0.5 * df2;
+
+    if (clip_left == 0){
+      spec[p++] += (f21 - diff) * ( diff + f21 ) * 0.5 * df2;
+    }
+    else{
+      spec[p++] += (diff + 0.5) * df2;
+    }
     // diff = (diff + 0.5) * df2;
     diff += 0.5;
     diff *= df2;
@@ -725,10 +633,15 @@ if(p != pmax) {
       diff -= df2;
       spec[p++] += diff;
     }
-    spec[p] += pow((f[2] - (double)p), 2) * 0.5 * df2;
+    if(clip_right == 0){
+      spec[p] += pow((f[2] - (double)p), 2) * 0.5 * df2;
+    }
 } else {
-    spec[p] += f21 * top * 0.5;
-}
+      if(clip_right == 0){
+        spec[p] += f21 * top * 0.5;
+      }
+  }
+  return 0;
 }
 
 
@@ -755,14 +668,12 @@ void powderAverageWithTentingSchemeOverOctant2(
       amp1 = temp;
       amp1 += amp[i];
       
-      tent2(&freq[i], &freq[i+1], &freq_address[j], \
-                  offset, &amp1, spec, &m);
+      triangle_interpolation(&freq[i], &freq[i+1], &freq_address[j], offset, &amp1, spec, &m);
 
       if (i<local_index){  
         amp1 = temp;
         amp1 += amp_address[j+1];
-        tent2(&freq[i+1], &freq_address[j], &freq_address[j+1], \
-                  offset, &amp1, spec, &m);
+        triangle_interpolation(&freq[i+1], &freq_address[j], &freq_address[j+1], offset, &amp1, spec, &m);
       }
       else{
         local_index=j+nt;
@@ -796,19 +707,16 @@ void powderAverageWithTentingSchemeOverHemisphere2(
       amp1 = temp;
       amp1 += amp[i];
       
-      tent2(&freq[i], &freq[i+1], &freq_address[j], \
-                  offset, &amp1, spec, &m);
+      triangle_interpolation(&freq[i], &freq[i+1], &freq_address[j], offset, &amp1, spec, &m);
 
       if (i<local_index){  
         amp1 = temp;
         if(j==4*l){
           amp1 += amp_address[j-4*l];
-          tent2(&freq[i+1], &freq_address[j], &freq_address[0], \
-                  offset, &amp1, spec, &m);
+          triangle_interpolation(&freq[i+1], &freq_address[j], &freq_address[0], offset, &amp1, spec, &m);
         }
         else amp1 += amp_address[j+1];
-        tent2(&freq[i+1], &freq_address[j], &freq_address[j+1], \
-                  offset, &amp1, spec, &m);
+        triangle_interpolation(&freq[i+1], &freq_address[j], &freq_address[j+1], offset, &amp1, spec, &m);
         i++; j++;
       }
       else{
@@ -837,12 +745,12 @@ void powderAverageWithTentingSchemeOverHemisphere2(
 //     for (i=0; i<=local_index; i++){
 //       temp = amp[i][j+1] + amp[i+1][j];
 //       amp1 = amp[i][j] + temp;
-//       tent2(&powfreq[i+1][j], &powfreq[i][j+1], &powfreq[i][j], \
+//       triangle_interpolation(&powfreq[i+1][j], &powfreq[i][j+1], &powfreq[i][j], \
 //                   offset, &amp1, spec, &m);
 
 //       if (i<local_index){        
 //         amp2 = temp + amp[i+1][j+1];
-//         tent2(&powfreq[i+1][j], &powfreq[i][j+1], &powfreq[i+1][j+1], \
+//         triangle_interpolation(&powfreq[i+1][j], &powfreq[i][j+1], &powfreq[i+1][j+1], \
 //                   offset, &amp2, spec, &m);
 //       }
 //     }
@@ -868,9 +776,9 @@ void powderAverageWithTentingSchemeOverHemisphere(
       amp1 = amp[i][j] + temp;
       amp2 = temp + amp[i+1][j+1];
 
-      tent2(&powfreq[i+1][j], &powfreq[i][j+1], &powfreq[i][j], \
+      triangle_interpolation(&powfreq[i+1][j], &powfreq[i][j+1], &powfreq[i][j], \
                   offset, &amp1, spec, &m);
-      tent2(&powfreq[i+1][j], &powfreq[i][j+1], &powfreq[i+1][j+1], \
+      triangle_interpolation(&powfreq[i+1][j], &powfreq[i][j+1], &powfreq[i+1][j+1], \
                   offset, &amp2, spec, &m);
 
 
@@ -888,9 +796,9 @@ void powderAverageWithTentingSchemeOverHemisphere(
         amp1 = temp + amp[i+1][j];
         amp2 = temp + amp[i][j+1];
 
-        tent2(&powfreq[i][j], &powfreq[i+1][j+1], &powfreq[i+1][j], \
+        triangle_interpolation(&powfreq[i][j], &powfreq[i+1][j+1], &powfreq[i+1][j], \
                     offset, &amp1, spec, &m);
-        tent2(&powfreq[i][j], &powfreq[i+1][j+1], &powfreq[i][j+1], \
+        triangle_interpolation(&powfreq[i][j], &powfreq[i+1][j+1], &powfreq[i][j+1], \
                     offset, &amp2, spec, &m);
 
         // tent_amp(&powfreq[i][j], &powfreq[i+1][j+1], &powfreq[i][j+1], offset, \
@@ -936,6 +844,7 @@ void rasterization(double * grid,
   maxX_ = (int) fmin(maxX, (double) rows - 1.);
   maxY_ = (int) fmin(maxY, (double) columns - 1.);
 
+  
   A12 = (v2[0]-v1[0]); B12 = (v2[1]-v1[1]); C12 = -A12*v1[1] + B12*v1[0];
   A20 = (v0[0]-v2[0]); B20 = (v0[1]-v2[1]); C20 = -A20*v2[1] + B20*v2[0];
   A01 = (v1[0]-v0[0]); B01 = (v1[1]-v0[1]); C01 = -A01*v0[1] + B01*v0[0];
@@ -957,10 +866,10 @@ void rasterization(double * grid,
     for(j=minX_; j<=maxX_; j++){
       // If p is on or inside all edges, render pixel.
       if((int) w0>=0 && (int) w1>=0 && (int) w2>= 0){
-        grid[i_+j] += 1.;
+        grid[i_+j] += 1.; //(w0+w1+w2);
       }
       if ((int) w0<=0 && (int) w1<=0 && (int) w2<=0){
-        grid[i_+j] += 1.;
+        grid[i_+j] += -1.; //(w0+w1+w2);
       }
       // i_++;
               

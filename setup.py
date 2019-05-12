@@ -1,7 +1,7 @@
 import numpy
 import io
 from setuptools import setup, Extension, find_packages
-from MRsimulator.__version__ import __version__ 
+from mrsimulator.__version__ import __version__ 
 try:
       from Cython.Distutils import build_ext
       from Cython.Build import cythonize
@@ -14,12 +14,13 @@ except ImportError:
 else:
     use_cython = True
 
+import platform
 from os import path, listdir
 from os.path import isfile, join, abspath, dirname
 
 
 # Package meta-data.
-NAME = 'MRsimulator'
+NAME = 'mrsimulator'
 DESCRIPTION = 'A python toolbox for simulating NMR spectra'
 URL = 'https://github.com/DeepanshS/MRsimulator/'
 EMAIL = 'srivastava.89@osu.edu'
@@ -31,7 +32,10 @@ VERSION = __version__
 # What packages are required for this module to be executed?
 REQUIRED = [
     'scipy>=0.16.0',
-    'numpy>=1.10.1'
+    'numpy>=1.10.1',
+    'mkl',
+#     'fftw3',
+    'mkl-include'
 ]
 
 # What packages are optional?
@@ -72,29 +76,42 @@ if use_cython:
 
 
 # scr_c folder
-nmr_lib_source_dir = 'MRsimulator/scr/mrlib/scr_c/'
+_list = ['mrsimulator', 'scr', 'mrlib', 'scr_c']
+nmr_lib_source_dir = path.join(*_list)
 _source_files = []
 for _file in listdir(nmr_lib_source_dir):
       if _file.endswith(".c"):
-            _source_files.append(nmr_lib_source_dir+_file)
+            _source_files.append(path.join(nmr_lib_source_dir,_file))
 
 
 # powder_averaging_scheme
-nmr_lib_source_dir = 'MRsimulator/scr/mrlib/scr_c/powder_averaging_scheme/'
+_list = ['mrsimulator', 'scr', 'mrlib', 'scr_c', 'powder_averaging_scheme']
+nmr_lib_source_dir = path.join(*_list)
 for _file in listdir(nmr_lib_source_dir):
       if _file.endswith(".c"):
-            _source_files.append(nmr_lib_source_dir+_file)
+            _source_files.append(path.join(nmr_lib_source_dir,_file))
 
 
-include_nmr_lib_directories = ["MRsimulator/scr/mrlib/include/"]
+_list = ['mrsimulator', 'scr', 'mrlib', 'include']
+include_nmr_lib_directories = [path.join(*_list)]
+
+if platform.system() == 'Windows':
+      path_ = numpy.get_include()
+      for i in range(5):
+            path_ = path.split(path_)[0]
+      path_ = path.join(path_, 'Library', 'include')
+      include_nmr_lib_directories.append(path_)
+
 include_nmr_lib_directories.append(numpy.get_include())
 
 nmr_lib_source_file = _source_files[:]
 if use_cython:
       # pyx
-      nmr_lib_source_file.append("MRsimulator/scr/mrlib/mrlib.pyx")
+      _list = ['mrsimulator', 'scr', 'mrlib', 'mrlib.pyx']
+      nmr_lib_source_file.append(path.join(*_list))
 else:
-      nmr_lib_source_file.append("MRsimulator/scr/mrlib/mrlib.c")
+      _list = ['mrsimulator', 'scr', 'mrlib', 'mrlib.c']
+      nmr_lib_source_file.append(path.join(*_list))
 
 
 print("NMR lib Source files----------------------------------")
@@ -102,33 +119,39 @@ for item in nmr_lib_source_file:
       print(item)
 
 
-ext_modules += [
-      Extension(
-            name = NAME+'.lib',
-            sources = nmr_lib_source_file,
-            include_dirs = include_nmr_lib_directories,
-            language="c",
-            extra_compile_args = "-flax-vector-conversions -g -Ofast".split(),
-            extra_link_args = "-g".split()
-      )
-]
+# ext_modules += [
+#       Extension(
+#             name = NAME+'.lib',
+#             sources = nmr_lib_source_file,
+#             include_dirs = include_nmr_lib_directories,
+#             language="c",
+#             extra_compile_args = "-flax-vector-conversions -g -Ofast".split(),
+#             extra_link_args = "-g".split()
+#       )
+# ]
 
 
 nmr_function_source_file = _source_files[:]
-nmr_function_source_dir = 'MRsimulator/scr/mrmethods/'
+
+_list = ['mrsimulator', 'scr', 'mrmethods']
+nmr_function_source_dir = path.join(*_list)
 
 for _file in listdir(nmr_function_source_dir):
       if _file.endswith(".c") and _file != 'nmr_methods.c':
-            nmr_function_source_file.append(nmr_function_source_dir+_file)
+            nmr_function_source_file.append(path.join(nmr_function_source_dir,_file))
+
+source2 = nmr_function_source_file[:]
 
 if use_cython:
-      nmr_function_source_file.append("MRsimulator/scr/mrmethods/nmr_methods.pyx")
-      nmr_function_source_file.append("MRsimulator/scr/mrlib/mrlib.pxd")
-else:
-      nmr_function_source_file.append("MRsimulator/scr/mrmethods/nmr_methods.c")
-      nmr_function_source_file.append("MRsimulator/scr/mrlib/mrlib.c")
+      _list = ['mrsimulator', 'scr', 'mrmethods', 'nmr_methods.pyx']
+      nmr_function_source_file.append(path.join(*_list))
 
-include_nmr_lib_directories.append("MRsimulator/scr/mrmethods/include")
+else:
+      _list = ['mrsimulator', 'scr', 'mrmethods', 'nmr_methods.c']
+      nmr_function_source_file.append(path.join(*_list))
+
+_list = ['mrsimulator', 'scr', 'mrmethods', 'include']
+include_nmr_lib_directories.append(path.join(*_list))
 
 print (include_nmr_lib_directories)
 print("NMR method Source files----------------------------------")
@@ -136,7 +159,7 @@ for item in nmr_function_source_file:
       print(item)
 
 
-ext_modules += [
+ext_modules = [
       Extension(
             name=NAME+'.methods',
             sources=nmr_function_source_file,
@@ -152,6 +175,30 @@ ext_modules += [
       )
 ]
 
+
+## Sandbox
+
+# sandbox_files = source2[:]
+
+# _list = ['mrsimulator', 'scr', 'sandbox', 'interpolation', 'interpolation.pyx']
+# sandbox_files.append(path.join(*_list))
+
+
+# ext_modules += [
+#       Extension(
+#             name=NAME+'.sandbox.interpolation',
+#             sources=sandbox_files,
+#             # include_dirs=[numpy.get_include()],
+#             # extra_objects= ['./mrlib'], # ["fc.o"],  # if you compile fc.cpp separately
+#             include_dirs = include_nmr_lib_directories,  # .../site-packages/numpy/core/include
+#             language="c",
+#             # libraries=["./mrlib"],
+#             # -ffast-math -flax-vector-conversions -g -Ofast
+#             extra_compile_args = "-O1".split(), # 
+#             extra_link_args = "-g -lfftw3 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
+#                               -ldl -liomp5 -lm -Wl".split() #  
+#       )
+# ]
 
 if use_cython:
       ext = cythonize(ext_modules, annotate=True, language_level=3, gdb_debug=True)
