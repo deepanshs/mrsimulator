@@ -1,6 +1,6 @@
 
 #include "complex.h"
-#include "OCPowderScheme.h"
+// #include "OCPowderScheme.h"
 // to use calloc, malloc, and free methods
 #include <stdlib.h>
 
@@ -25,8 +25,8 @@ extern void destroyDouble2DMatrix(double** arr);
 extern double*** createDouble3DArray(int n, int m, int o);
 extern void destroyDouble3DArray(double*** arr);
 
-extern OCPolarAngleTrig** create2DOCPolarAngleTrigArray(int m, int n);
-extern void destroy2DOCPolarAngleTrigArray(OCPolarAngleTrig** arr);
+// extern OCPolarAngleTrig** create2DOCPolarAngleTrigArray(int m, int n);
+// extern void destroy2DOCPolarAngleTrigArray(OCPolarAngleTrig** arr);
 
-extern OCDirectionCosineSquare** create2DOCDirectionCosineSquareArray(int m, int n);
-extern void destroy2DOCDirectionCosineSquareArray(OCDirectionCosineSquare** arr);
+// extern OCDirectionCosineSquare** create2DOCDirectionCosineSquareArray(int m, int n);
+// extern void destroy2DOCDirectionCosineSquareArray(OCDirectionCosineSquare** arr);

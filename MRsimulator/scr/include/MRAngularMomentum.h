@@ -2,14 +2,14 @@
 
 #define MKL_Complex16 double complex
 
-#include "OCEulerAngle.h"
 #include <stdio.h>
+#include <math.h>
 #include <complex.h>
 #include "mkl.h"
 
 extern void full_DLM(double complex *wigner, int l, double * omega);
 extern double wigner_d(int l, int m1, int m2, double beta);
-extern double complex DLM(int l, int  m1, int m2, OCEulerAngle omega);
+// extern double complex DLM(int l, int  m1, int m2, OCEulerAngle omega);
 void full_DLM_trig(double complex *wigner,
                    int l, 
                    double cosAlpha,

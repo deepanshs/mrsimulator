@@ -2,9 +2,8 @@
 #include <math.h>
 #include <string.h>
 #include "c_array.h"
-#include "OCPowderScheme.h"
 #include <stdio.h>
-#include "core.h"
+// #include "core.h"
 #include "mkl.h"
 
 extern void getDirectionCosineSquareOverOctantAndWeights2(

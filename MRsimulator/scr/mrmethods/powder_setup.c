@@ -1,6 +1,5 @@
 
 #include "powder_setup.h"
-#include "OCPowderScheme.h"
 
 void getDirectionCosineSquareOverOctantAndWeights2(
           int nt,
