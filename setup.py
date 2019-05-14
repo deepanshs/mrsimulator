@@ -21,6 +21,7 @@ VERSION = __version__
 REQUIRED = [
     'scipy>=0.16.0',
     'numpy>=1.10.1',
+    'astropy',
     'mkl',
     'mkl-include'
 ]

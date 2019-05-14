@@ -84,16 +84,17 @@ def zg(dict spectrometer,
     The above example 
     """
     # spectrometer
-    cdef double sample_rotation_frequency = spectrometer['sample_rotation_frequency']
-    cdef double rotor_angle = spectrometer['sample_rotation_axis']['polar_angle']
-    B0 = spectrometer['magnetic_flux_density']
+    cdef double sample_rotation_frequency = spectrometer['sample_rotation_frequency'].to('Hz').value
+    cdef double rotor_angle = spectrometer['sample_rotation_axis']['polar_angle'].to('rad').value
+    B0 = spectrometer['magnetic_flux_density'].to('T').value
 
-    # print ('\nSetting up the virtual NMR spectrometer')
-    # print ('---------------------------------------')
-    # print (f'Adjusting the virtual magnetic flux density to {B0} T')
-    # print (f'Setting sample rotation angle to {rotor_angle} degree')
-    # print (f'Setting sample rotation frequency to {sample_rotation_frequency} Hz')
-    rotor_angle *= np.pi/180.0
+    print ('\nSetting up the virtual NMR spectrometer')
+    print ('---------------------------------------')
+    print (f'Adjusting the virtual magnetic flux density to {B0} T')
+    _angle = spectrometer['sample_rotation_axis']['polar_angle']
+    print (f'Setting sample rotation angle to {_angle} degree')
+    print (f'Setting sample rotation frequency to {sample_rotation_frequency} Hz')
+    # rotor_angle *= np.pi/180.0
 
     # spin observed -----------------------------------------------
     obs_spin = observed['isotope_symbol']
@@ -107,11 +108,11 @@ def zg(dict spectrometer,
     cdef double increment = frequency_bandwidth/number_of_points
     cdef double reference_offset = observed['reference_offset'] - frequency_bandwidth/2.0
 
-    # print ((f'Detecting {obs_spin}(I={spin_quantum_number}) isotope '
-    #         f'with precession frequency {larmor_frequency} MHz'))
-    # print ((f'Recording {obs_spin} spectrum with {number_of_points} '
-    #         f'points over a {frequency_bandwidth} Hz bandwidth with a '
-    #         f'reference offset of {reference_offset} Hz.'))
+    print ((f'Detecting {obs_spin}(I={spin_quantum_number}) isotope '
+            f'with precession frequency {larmor_frequency} MHz'))
+    print ((f'Recording {obs_spin} spectrum with {number_of_points} '
+            f'points over a {frequency_bandwidth} Hz bandwidth with a '
+            f'reference offset of {reference_offset} Hz.'))
 
     cdef np.ndarray[double, ndim=1] transition_array = \
                         np.asarray(observed['spin_transitions'], dtype=np.float64).ravel()
@@ -144,10 +145,10 @@ def zg(dict spectrometer,
         iso_n[i] = site['isotropic_chemical_shift']
         aniso_n[i] = site['shielding_symmetric']['anisotropy']
         eta_n[i] = site['shielding_symmetric']['asymmetry']
-        # print(f'\n{obs_spin} site 1\n----------------------------')
-        # print(f'isotropic chemical shift = {iso_n[i]} Hz')
-        # print(f'chemical shift anisotropy = {aniso_n[i]} Hz')
-        # print(f'chemical shift asymmetry = {eta_n[i]} Hz')
+        print(f'\n{obs_spin} site 1\n----------------------------')
+        print(f'isotropic chemical shift = {iso_n[i]} Hz')
+        print(f'chemical shift anisotropy = {aniso_n[i]} Hz')
+        print(f'chemical shift asymmetry = {eta_n[i]} Hz')
         
         # quad tensor
         # if spin.electric_quadrupole_tensor is not ():

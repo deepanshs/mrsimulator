@@ -7,7 +7,7 @@ API documentation
    :maxdepth: 2
    :caption: Contents:
 
-   spin
+   spectrometer
 ..    parameterized_tensor
 ..    interaction
 

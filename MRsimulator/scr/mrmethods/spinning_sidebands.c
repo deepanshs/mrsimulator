@@ -461,8 +461,6 @@ void spinning_sideband_core(
 
     // Sampled over an octant
     unsigned int n_orientations = (nt+1) * (nt+2)/2, orientation;
-    // unsigned int n_orientations = (nt +1) * (2*nt+1), orientation;
-    // unsigned int increment = (2*nt+1) * ph_step;
     unsigned int ji, ii;
     unsigned int size = n_orientations * ph_step;
     unsigned int site;
@@ -473,33 +471,19 @@ void spinning_sideband_core(
     double* cosAlpha = createDouble1DArray( n_orientations );
     double* sinAlpha = createDouble1DArray( n_orientations );
 
-    //
     double* amp = createDouble1DArray(n_orientations);
     double* amp_temp = createDouble1DArray(n_orientations);
-
-
-    // double** amp = createDouble2DMatrix(nt+1, 2*nt+1);
-    // double** amp_temp = createDouble2DMatrix(nt+1, 2*nt+1);
-    // double * amp_address_temp = &amp_temp[0];
-
-    // double *ptr[nt+1][2*nt+1];
-    // double **ptr_ptr = &ptr[0][0];
 
     int m, mp, step, i, allow_second_order_quad=0;
     double tau, wrt, pht, spin_angular_freq, scale;
     double ph_step_inverse = 1.0/((double) (ph_step));
     double spectral_increment_inverse = 1.0/spectral_increment;
-    // temporary interaction terms 
     double iso_n_, aniso_n_, eta_n_, Cq_e_, eta_e_, d_;
 
-    // double complex molecular_rotor;
     double complex *pre_phase = createDoubleComplex1DArray(ph_step*9);
     double complex * amp1;
-    // double complex * MR_full_DLM_2 = createDoubleComplex1DArray(25);
     double * MR_full_DLM_2 = createDouble1DArray(25);
     double * MR_full_DLM_4 = createDouble1DArray(81);
-    // double complex alpha[9], phase_alpha;
-    // double complex* PM_full_DLM = createDoubleComplex1DArray(25);
 
     // Angle setup
     getPolarAngleTrigOverAnOctant(nt, cosAlpha, sinAlpha, cosBeta, sinBeta, amp);
@@ -677,12 +661,6 @@ void spinning_sideband_core(
 
         wigner_d_matrix(MR_full_DLM_2, 2, &cosBeta[orientation], 1);
 
-        // full_DLM_trig(MR_full_DLM_2, 2,
-        //       cosAlpha[orientation],
-        //       sinAlpha[orientation],
-        //       cosBeta[orientation],
-        //       sinBeta[orientation]);
-
         // ------------------------------------------------------------------- //
         //         Computing wigner rotation upto lab frame                    //
 
@@ -698,11 +676,6 @@ void spinning_sideband_core(
 
         // Fourth rank Wigner Rotation
         if (allow_second_order_quad){
-          // full_DLM_trig(MR_full_DLM_4, 4,
-          //     cosAlpha[orientation],
-          //     sinAlpha[orientation],
-          //     cosBeta[orientation],
-          //     sinBeta[orientation]);
 
           wigner_d_matrix(MR_full_DLM_4, 4, &cosBeta[orientation], 1);
           wigner_rotation(4, MR_full_DLM_4, &cosAlpha[orientation], 
@@ -714,18 +687,10 @@ void spinning_sideband_core(
           }
         }
 
-        // for(i=0; i<5; i++){
-        //   w_cs_4[i+2] += w_cs_2[i];
-        // }
-
         // ------------------------------------------------------------------- //
         //    Computing phi = w_cs * I 2pi [(exp(i m wr t) - 1)/(i m wr)]      //
         //                           -------------- pre_phase------------      //
         // The pre_phase is calculated before.                                 //
-
-        // cblas_zgemv(CblasRowMajor, CblasTrans, 9, ph_step, &one,
-        //               pre_phase, ph_step, &w_cs_4[0], 
-        //               1, &zero, phi, 1);
 
         cblas_zgemv(CblasRowMajor, CblasTrans, 5, ph_step, &one,
                       &pre_phase[2*ph_step], ph_step, &w_cs_2[0], 
@@ -746,21 +711,10 @@ void spinning_sideband_core(
 
         // ------------------------------------------------------------------- //
         // Taking the square of the the fft ampitudes
-        // vzMulByConj(ph_step, side_band, side_band, sideband_amplitude_f);
-
-        // vzAbs( ph_step, side_band, sideband_amplitude_f);
-              // vdPowx( ph_step, sideband_amplitude_f, 2, sideband_amplitude_f);
-
-        // Taking the square of the the fft ampitudes
-        // cblas_dgbmv(CblasRowMajor, CblasNoTrans, ph_step, ph_step,0,0, 1,
-        //             side_band, 1, side_band, 1, 0, sideband_amplitude_f, 1)
-
         for(m=0; m<ph_step; m++){
           amp1 = &side_band[m];
           sideband_amplitude_f[m] = creal(amp1[0])*creal(amp1[0]) + cimag(amp1[0])*cimag(amp1[0]);
-                  // sideband_amplitude_f[m] = pow(cblas_dznrm2(1, &side_band[m], 1),2);
         }
-
 
         // Multiplying the square amplitudes with the power scheme weights. -- //
         // And Normalizing with the number of phase steps squared ------------ //
@@ -793,7 +747,7 @@ void spinning_sideband_core(
           };
 
           // cblas_dcopy(n_orientations, &sideband_amplitude[0], ph_step, &amp[0][0], 1);
-          powderAverageWithTentingSchemeOverOctant2(
+          powderAverageWithTentingSchemeOverOctant(
                       spec_site_ptr,
                       local_frequency,
                       nt,
@@ -802,40 +756,6 @@ void spinning_sideband_core(
                       number_of_points);
         }
       }
-
-      // i=0;
-      // min_bound = (int) (vr_freq[i] + iso[site]/freq_inc);
-      // while (min_bound <= number_of_points/2){
-      // 	ii = 0;
-      // 	ji = i;
-      // 	while(ii<n_orientations){
-      // 			amp[ii] = sideband_amplitude[ji];
-      // 			ii++;
-      // 			ji+=ph_step;
-      // 	};
-
-      // 	// cblas_dcopy(n_orientations, &sideband_amplitude[0], ph_step, &amp[0][0], 1);
-      // 	powderAverageTentingScheme(spec, local_frequency, amp, &vr_freq[i], number_of_points, nt, 0, 1);
-      // 	min_bound += (int) spin_frequency;
-      // 	i++;
-      // }
-
-      // i=ph_step-1;
-      // min_bound = (int) (vr_freq[i] + iso[site]/freq_inc);
-      // while (min_bound >= -number_of_points/2){
-      // 	ii = 0;
-      // 	ji = i;
-      // 	while(ii<n_orientations){
-      // 			// printf("%i %i %f \n", ii, ji, sideband_amplitude[ji] );
-      // 			amp[ii] = sideband_amplitude[ji];
-      // 			ii++;
-      // 			ji+=ph_step;
-      // 	};
-      // 	powderAverageTentingScheme(spec, local_frequency, amp, &vr_freq[i], number_of_points, nt, 0, 1);
-      // 	min_bound -= (int) spin_frequency;
-      // 	i--;
-      // }
-      // ------------------------------------------------------------------- //
     }
 
   // clean up ------------------------------- //
