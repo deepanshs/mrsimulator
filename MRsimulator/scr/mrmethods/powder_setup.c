@@ -163,9 +163,9 @@ void getDirectionCosineSquareOverHemishpereAndWeights(
 void getPolarAngleTrigOverAnOctant(
         int nt,
         double* cosAlpha,
-        double* sinAlpha,
+        // double* sinAlpha,
         double* cosBeta,
-        double* sinBeta,
+        // double* sinBeta,
         double* amp)
 {
 
@@ -175,6 +175,7 @@ void getPolarAngleTrigOverAnOctant(
   double* xr = createDouble1DArray( points );
   double* yr = createDouble1DArray( points );
   double* zr = createDouble1DArray( points );
+  double* sinBeta = createDouble1DArray( points );
   
   getDirectionCosineSquareOverOctantAndWeights(nt, xr, yr, zr, amp);
 
@@ -192,13 +193,13 @@ void getPolarAngleTrigOverAnOctant(
   vdSqrt(points, &xr[0], &xr[0]);
 
   // Evaluate sqrt of xr
-  vdSqrt(points, &yr[0], &yr[0]);
+  // vdSqrt(points, &yr[0], &yr[0]);
 
   vdDiv(points-1, xr, sinBeta, cosAlpha );
-  vdDiv(points-1, yr, sinBeta, sinAlpha );
+  // vdDiv(points-1, yr, sinBeta, sinAlpha );
 
   cosAlpha[points-1] = 1.0;
-  sinAlpha[points-1] = 0.0;
+  // sinAlpha[points-1] = 0.0;
 
   // int ii=0;
   // for( i = 0; i < points; i++) {
@@ -214,6 +215,7 @@ void getPolarAngleTrigOverAnOctant(
   destroyDouble1DArray(xr);
   destroyDouble1DArray(yr);
   destroyDouble1DArray(zr);
+  destroyDouble1DArray(sinBeta);
 }
 
 

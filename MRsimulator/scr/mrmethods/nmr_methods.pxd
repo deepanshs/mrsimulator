@@ -1,5 +1,12 @@
 
 cdef extern from "spinning_sidebands.h":
+    void __powder_averaging_setup(
+          int nt,
+          double *cosAlpha, 
+          double *cosBeta,
+          double *amp,
+          int space)   # 1 for octant, 2 for hemisphere and 4 for sphere
+
     void spinning_sideband_core(
         # spectrum information and related amplitude
         double * spec,
@@ -37,5 +44,11 @@ cdef extern from "spinning_sidebands.h":
         # double *omega_PM,
 
         # Euler angles for powder averaging scheme
+        # powder orientation averager
+        unsigned int n_orientations,
+        double *cosAlpha, 
+        double *cosBeta,
+        double *amp,
         int nt,
+
         unsigned int number_of_site)

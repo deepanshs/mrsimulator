@@ -8,7 +8,7 @@
 #include <complex.h>
 #include <time.h>
 #include "math.h"
-#include "fftw3.h"
+#include "fftw/fftw3.h"
 #include "fftw/fftw3_mkl.h"
 #include "c_array.h"
 #include "mkl.h"
@@ -20,6 +20,15 @@ struct directionCosines
 	double cosAlpha;
 	double cosBeta;
 }; 
+
+extern void __powder_averaging_setup(
+          int nt,
+          double *cosAlpha, 
+          double *cosBeta,
+          double *amp,
+          int space   // 1 for octant, 2 for hemisphere and 4 for sphere
+);
+
 
 
 // Return a vector ordered according to the fft output order.                //
@@ -65,5 +74,11 @@ extern void spinning_sideband_core(
           // The principal to molecular frame transformation euler angles.
           //   double * omega_PM,
 
+          // powder orientation averager
+          unsigned int n_orientations,
+          double *cosAlpha, 
+          double *cosBeta,
+          double *amp,
           int nt,
+
           unsigned int number_of_sites);

@@ -1,55 +1,58 @@
 cimport nmr_methods as clib
+from nmr_methods cimport (
+    __powder_averaging_setup
+)
 cimport numpy as np
 import numpy as np
 # from nmr.lib import EulerAnglesInRadians
 import cython
 from .utils import __get_spin_attribute__
 
+
+
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def zg(dict spectrometer,
-       list sites,
-       dict observed,
-       int number_of_sidebands=64,
-       int averaging_size=128):
+def one_D_spectrum(dict spectrum,
+       list isotopomers,
+       int verbose=0,
+       int number_of_sidebands=90,
+       int averaging_size=72):
     """
     Parameters
     ----------
-    spectrometer:
-        A dictionary with spectrometer parameters.
-    sites:
-        An array of nuclear sites. Each nuclear site is described by 
+    spectrum:
+        A dictionary with spectrum parameters.
+    isotopomers:
+        An array of nuclear isotopomers. Each nuclear site is described by
         a site dictionary. See the description below.
-    observed:
+    dimensions:
         A dictionary of obsevable parameters.
 
     Description
     -----------
-    A spectrometer dictionary consists of the following keywords:
+    A spectrum dictionary consists of the following keywords:
 
     ``magnetic_flux_density``: A float describing the magnetic flux density
                                  of the spectromenter (in Tesla).
-    ``sample_rotation_frequency``: A float describing the sample rotation
+    ``sample_rotation_frequency``: A float describing the isotopomers rotation
                                  frequency (in Hz).
     ``sample_rotation_axis``: A dictionary describing the rotation axis with
                                 the following keywords-
         ``polar_angle``: A float describing the angle (in degrees) of the
-                           rotating sample with respect to the lab frame z-axis.
+                           rotating isotopomers with respect to the lab frame z-axis.
         ``azimuthal_angle``: A float describing the angle (in degrees) of the
-                           rotating sample with respect to the lab frame x-axis.
-    
-    An example of the spectrometer dictionary is,
+                           rotating isotopomers with respect to the lab frame x-axis.
 
-        >>> "spectrometer": {
-        ...     "magnetic_flux_density": 9.4,
-        ...     "sample_rotation_frequency": 1000,
-        ...     "sample_rotation_axis": {
-        ...         "polar_angle": 54.735,
-        ...         "azimuthal_angle": 0
+    An example of the spectrum dictionary is,
+
+        >>> "spectrum": {
+        ...     "magnetic_flux_density": "9.4 T",
+        ...     "rotor_frequency": "1 kHz",
+        ...     "rotor_angle": "54.735 rad", 
         ...     }
         ... }
-    
-    which describes a sample spinning at the magic angle (54.745 degree) at
+
+    which describes a isotopomers spinning at the magic angle (54.745 degree) at
     1000 Hz inside a 9.4 T NMR spectromenter.
 
     ---
@@ -66,7 +69,7 @@ def zg(dict spectrometer,
                          tensor. This value ranges from [0,1].
 
     An example of the site dictionary is
-    
+
         >>> {
         ...     "isotope_symbol": "13C",
         ...     "isotropic_chemical_shift": 100,
@@ -75,98 +78,341 @@ def zg(dict spectrometer,
         ...         "asymmetry": 0.7
         ...     }
         ... }
-    
+
     which describes a '13C' nucleus with an isotropic chemical shift of 100 Hz
     and a second rank symmetric tensor with a 12000 Hz anisotropy and an asymmetry
     of 0.7.
 
     ---
-    The above example 
+    The above example
     """
-    # spectrometer
-    cdef double sample_rotation_frequency = spectrometer['sample_rotation_frequency'].to('Hz').value
-    cdef double rotor_angle = spectrometer['sample_rotation_axis']['polar_angle'].to('rad').value
-    B0 = spectrometer['magnetic_flux_density'].to('T').value
+# ---------------------------------------------------------------------
+# spectrum ________________________________________________________
+    cdef double sample_rotation_frequency = spectrum['rotor_frequency']
+    cdef double rotor_angle = spectrum['rotor_angle']
+    B0 = spectrum['magnetic_flux_density']
 
-    print ('\nSetting up the virtual NMR spectrometer')
-    print ('---------------------------------------')
-    print (f'Adjusting the virtual magnetic flux density to {B0} T')
-    _angle = spectrometer['sample_rotation_axis']['polar_angle']
-    print (f'Setting sample rotation angle to {_angle} degree')
-    print (f'Setting sample rotation frequency to {sample_rotation_frequency} Hz')
-    # rotor_angle *= np.pi/180.0
+    if verbose:
+        print ('\nSetting up the virtual NMR spectrometer')
+        print ('---------------------------------------')
+        print (f'Adjusting the magnetic flux density to {B0} T')
+        _angle = spectrum['rotor_angle']
+        print (f'Setting rotation angle to {_angle} rad')
+        print (f'Setting rotation frequency to {sample_rotation_frequency} Hz')
 
-    # spin observed -----------------------------------------------
-    obs_spin = observed['isotope_symbol']
-    obs_dict = __get_spin_attribute__[obs_spin]
+# ---------------------------------------------------------------------
+# spin observed _______________________________________________________
+    # obs_dict = __get_spin_attribute__[detect]
+    isotope = spectrum['isotope']
 
-    cdef double spin_quantum_number = obs_dict['spin']
-    cdef double larmor_frequency = obs_dict['gyromagnetic_ratio']*B0
+    # spin quantum number of the obsered spin
+    cdef double spin_quantum_number = spectrum['spin']
 
-    cdef int number_of_points = observed['number_of_points']
-    cdef double frequency_bandwidth = observed['frequency_bandwidth']
-    cdef double increment = frequency_bandwidth/number_of_points
-    cdef double reference_offset = observed['reference_offset'] - frequency_bandwidth/2.0
+    # transitions of the observed spin
+    number_of_energy_levels = int(2*spin_quantum_number+1)
+    cdef int number_of_transitions = number_of_energy_levels-1
+    energy_states = np.arange(number_of_energy_levels) - spin_quantum_number
+    transitions = [ [energy_states[i], energy_states[i+1]] for i in range(number_of_transitions)]
+    # print(transitions)
+    cdef np.ndarray[double, ndim=1] transition_array = np.asarray(transitions).ravel()
 
-    print ((f'Detecting {obs_spin}(I={spin_quantum_number}) isotope '
-            f'with precession frequency {larmor_frequency} MHz'))
-    print ((f'Recording {obs_spin} spectrum with {number_of_points} '
-            f'points over a {frequency_bandwidth} Hz bandwidth with a '
-            f'reference offset of {reference_offset} Hz.'))
+    # gyromagnetic ratio
+    cdef double larmor_frequency = spectrum['gyromagnetic_ratio']*B0
 
-    cdef np.ndarray[double, ndim=1] transition_array = \
-                        np.asarray(observed['spin_transitions'], dtype=np.float64).ravel()
-    cdef int number_of_transitions = transition_array.size/2
+# ---------------------------------------------------------------------
+# dimension axis ______________________________________________________
+    cdef int number_of_points = spectrum['number_of_points']
+    cdef double spectral_width = spectrum['spectral_width']
+    cdef double increment = spectral_width/number_of_points
+    cdef double reference_offset = spectrum['reference_offset']
 
-    # ---------------------------------------------------------------------
-    # sites
-    sub_sites = [site for site in sites if site['isotope_symbol'] == obs_spin]
+    if verbose:
+        print ((f'Detecting {isotope}(I={spin_quantum_number}, '
+                f'precession frequency = {larmor_frequency} MHz) isotope '))
+        print ((f'Recording {isotope} spectrum with {number_of_points} '
+                f'points over a {spectral_width} Hz bandwidth and a '
+                f'reference offset of {reference_offset} Hz.'))
 
-    cdef int number_of_sites= len(sub_sites)
+    reference_offset -= spectral_width/2.0
 
-    # site specification
     # CSA
-    cdef np.ndarray[double] iso_n = np.empty(number_of_sites, dtype=np.float64)
-    cdef np.ndarray[double] aniso_n = np.empty(number_of_sites, dtype=np.float64)
-    cdef np.ndarray[double] eta_n = np.empty(number_of_sites, dtype=np.float64)
-    
+    cdef int number_of_sites
+    cdef np.ndarray[double] iso_n
+    cdef np.ndarray[double] aniso_n
+    cdef np.ndarray[double] eta_n
+
     # quad
-    cdef np.ndarray[double] Cq_e = np.zeros(number_of_sites, dtype=np.float64)
-    cdef np.ndarray[double] eta_e = np.zeros(number_of_sites, dtype=np.float64)
+    cdef np.ndarray[double] Cq_e
+    cdef np.ndarray[double] eta_e
 
-    cdef np.ndarray[double] D_c = np.zeros(number_of_sites, dtype=np.float64)
+    cdef np.ndarray[double] D_c
 
-    # cdef int i, size = len(sites)
-    cdef int i
-    for i in range(number_of_sites):
-        site = sub_sites[i]
+    cdef int i, trans__
+    cdef np.ndarray[double, ndim=1] amp
+    cdef double cpu_time_ = 0.0
+    amp1 = np.zeros(number_of_points, dtype=np.float64)
 
-        # CSA tensor
-        iso_n[i] = site['isotropic_chemical_shift']
-        aniso_n[i] = site['shielding_symmetric']['anisotropy']
-        eta_n[i] = site['shielding_symmetric']['asymmetry']
-        print(f'\n{obs_spin} site 1\n----------------------------')
-        print(f'isotropic chemical shift = {iso_n[i]} Hz')
-        print(f'chemical shift anisotropy = {aniso_n[i]} Hz')
-        print(f'chemical shift asymmetry = {eta_n[i]} Hz')
+    # print (amp1)
+    # octahedran power orienation averaging
+    cdef unsigned int n_orientations = int((averaging_size+1) * (averaging_size+2)/2)
+    cdef np.ndarray[double] cosAlpha = np.zeros(n_orientations, dtype=np.float64)
+    cdef np.ndarray[double] cosBeta = np.zeros(n_orientations, dtype=np.float64)
+    cdef np.ndarray[double] amp_orientation = np.zeros(n_orientations, dtype=np.float64)
+
+    # print (cosAlpha)
+
+    __powder_averaging_setup(averaging_size, &cosAlpha[0],
+                             &cosBeta[0], &amp_orientation[0], 1)
+    amp_orientation*=(1./number_of_sidebands)
+
+    # print (cosAlpha)
+    # print(cosBeta)
+    # print(amp_orientation)
+    # ---------------------------------------------------------------------
+    # sample _______________________________________________________________
+    for index_isotopomer, isotopmer in enumerate(isotopomers):
+        sub_sites = [site for site in isotopmer['sites'] if site['isotope_symbol'] == isotope]
+
+        number_of_sites= len(sub_sites)
+
+        # site specification
+        # CSA
+        iso_n = np.empty(number_of_sites, dtype=np.float64)
+        aniso_n = np.empty(number_of_sites, dtype=np.float64)
+        eta_n = np.empty(number_of_sites, dtype=np.float64)
+
+        # quad
+        Cq_e = np.zeros(number_of_sites, dtype=np.float64)
+        eta_e = np.zeros(number_of_sites, dtype=np.float64)
+
+        D_c = np.zeros(number_of_sites, dtype=np.float64)
+        # abundance_array = np.ones(number_of_sites, dtype=np.float64)
+
+        # cdef int i, size = len(sample)
+
+        amp = np.zeros(number_of_points*number_of_sites)
         
-        # quad tensor
-        # if spin.electric_quadrupole_tensor is not ():
-        #     Cq_e[i] = spin.electric_quadrupole_tensor.Cq.to('Hz').value
-        #     eta_e[i] = spin.electric_quadrupole_tensor.eta
+        for i in range(number_of_sites):
+            site = sub_sites[i]
 
-    # print('\n')
-    # print(transition_array)
-    # print(number_of_transitions)
+            # abundance_array[i] = site['abundance']
+            # CSA tensor
+            # sign_ = -1
+            iso_n[i] = site['isotropic_chemical_shift']
+            aniso_n[i] = site['shielding_symmetric']['anisotropy']
+            # if site['shielding_symmetric']['anisotropy_sign']=='+': sign_=1
+            # aniso_n[i]*=sign_
+            eta_n[i] = site['shielding_symmetric']['asymmetry']
 
-    # cdef double m_initial, m_final
-    cdef np.ndarray[double, ndim=1] amp = np.zeros(number_of_points * number_of_sites) 
+            if verbose:
+                print(f'\n{isotope} site {i} in isotopomer {index_isotopomer}\n----------------------------')
+                print(f'isotropic chemical shift = {iso_n[i]} Hz')
+                print(f'chemical shift anisotropy = {aniso_n[i]} Hz')
+                print(f'chemical shift asymmetry = {eta_n[i]}')
+                # print(f'percentage abundance = {abundance_array[i]} %')
+
+            # quad tensor
+            # if spin.electric_quadrupole_tensor is not ():
+            #     Cq_e[i] = spin.electric_quadrupole_tensor.Cq.to('Hz').value
+            #     eta_e[i] = spin.electric_quadrupole_tensor.eta
+
+        # print('\n')
+        # print(transition_array)
+        # print(number_of_transitions)
+
+        
+
+        for trans__ in range(number_of_transitions):
+            # spin transitions
+            # m_initial = transition_array[i][0]
+            # m_final   = transition_array[i][1]
+            clib.spinning_sideband_core(
+                    # spectrum information and related amplitude
+                    &amp[0],
+                    &cpu_time_,
+                    reference_offset,
+                    increment,
+                    number_of_points,
+
+                    spin_quantum_number,
+                    larmor_frequency,
+
+                    # CSA tensor information
+                    &iso_n[0],
+                    &aniso_n[0],
+                    &eta_n[0],
+
+                    # quad tensor information
+                    &Cq_e[0],
+                    &eta_e[0],
+                    1, # quad_second_order_c,
+
+                    # Dipolar couplings
+                    &D_c[0],
+
+                    # spin rate, spin angle and number spinning sidebands
+                    number_of_sidebands,
+                    sample_rotation_frequency,
+                    rotor_angle,
+
+                    &transition_array[2*trans__],
+                    # Euler angle -> principal to molecular frame
+                    # &omega_PM_c[0],
+
+                    # Euler angles for powder averaging scheme
+
+                    # powder orientation averager
+                    n_orientations,
+                    &cosAlpha[0], 
+                    &cosBeta[0],
+                    &amp_orientation[0],
+                    averaging_size,
+
+                    number_of_sites
+                    )
+
+        
+        amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)
+
+    if verbose:
+        print(f'\nExecution time {cpu_time_} s')
+    freq = np.arange(number_of_points)*increment + reference_offset    
+    return freq, amp1
+
+
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def _one_d_simulator(
+        # spectrum information
+        double reference_offset,
+        double increment,
+        int number_of_points,
+
+        float quantum_number = 0.5,
+        float larmor_frequency = 0.0,
+
+        # CSA tensor information
+        isotropic_chemical_shift = None,
+        chemical_shift_anisotropy = None,
+        chemical_shift_asymmetry = None,
+
+        # quad tensor information
+        quadrupolar_coupling_constant = None,
+        quadrupolar_asymmetry = None,
+        second_order_quad = 1,
+
+        # dipolar coupling
+        D = None,
+
+        # spin rate, spin angle and number spinning sidebands
+        int number_of_sidebands = 96,
+        double sample_rotation_frequency = 0.0,
+        rotor_angle = None,
+
+        m_final = 0.5,
+        m_initial = -0.5,
+
+        # Euler angle -> principal to molecular frame
+        # omega_PM=None,
+
+        # Euler angles for powder averaging scheme
+        int averaging_scheme=0,
+        int averaging_size=64):
+
+
+    if isotropic_chemical_shift is None:
+        isotropic_chemical_shift = 0
+    isotropic_chemical_shift = np.asarray([isotropic_chemical_shift], dtype=np.float64).ravel()
+    cdef number_of_sites = isotropic_chemical_shift.size
+    cdef np.ndarray[double, ndim=1] isotropic_chemical_shift_c = isotropic_chemical_shift
+
+    if quantum_number > 0.5 and larmor_frequency == 0.0:
+        raise Exception("'larmor_frequency' is required for quandrupolar spins.")
+
+    # Shielding anisotropic values
+    if chemical_shift_anisotropy is None:
+        chemical_shift_anisotropy = np.ones(number_of_sites, dtype=np.float64).ravel() #*1e-4*increment
+    else:
+        chemical_shift_anisotropy = np.asarray([chemical_shift_anisotropy], dtype=np.float64).ravel()
+        # chemical_shift_anisotropy[np.where(chemical_shift_anisotropy==0.)] = 1e-4*increment
+    if chemical_shift_anisotropy.size != number_of_sites:
+        raise Exception("Number of shielding anisotropies are not consistent with the number of spins.")
+    cdef np.ndarray[double, ndim=1] chemical_shift_anisotropy_c = chemical_shift_anisotropy
+
+    # Shielding asymmetry values
+    if chemical_shift_asymmetry is None:
+        chemical_shift_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()
+    else:
+        chemical_shift_asymmetry = np.asarray([chemical_shift_asymmetry], dtype=np.float64).ravel()
+    if chemical_shift_asymmetry.size != number_of_sites:
+        raise Exception("Number of shielding asymmetry are not consistent with the number of spins.")
+    cdef np.ndarray[double, ndim=1] chemical_shift_asymmetry_c = chemical_shift_asymmetry
+
+    # Quad coupling constant
+    if quadrupolar_coupling_constant is None:
+        quadrupolar_coupling_constant = np.zeros(number_of_sites, dtype=np.float64).ravel()
+    else:
+        quadrupolar_coupling_constant = np.asarray([quadrupolar_coupling_constant], dtype=np.float64).ravel()
+    if quadrupolar_coupling_constant.size != number_of_sites:
+        raise Exception("Number of quad coupling constants are not consistent with the number of spins.")
+    cdef np.ndarray[double, ndim=1] quadrupolar_coupling_constant_c = quadrupolar_coupling_constant
+
+    # Quad asymmetry value
+    if quadrupolar_asymmetry is None:
+        quadrupolar_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()
+    else:
+        quadrupolar_asymmetry = np.asarray([quadrupolar_asymmetry], dtype=np.float64).ravel()
+    if quadrupolar_asymmetry.size != number_of_sites:
+        raise Exception("Number of quad asymmetry are not consistent with the number of spins.")
+    cdef np.ndarray[double, ndim=1] quadrupolar_asymmetry_c = quadrupolar_asymmetry
+
+
+    # Dipolar coupling constant
+    if D is None:
+        D = np.zeros(number_of_sites, dtype=np.float64).ravel()
+    else:
+        D = np.asarray([D], dtype=np.float64).ravel()
+    if D.size != number_of_sites:
+        raise Exception("Number of dipolar coupling are not consistent with the number of spins.")
+    cdef np.ndarray[double, ndim=1] D_c = D
+
+
+    # if omega_PM is None:
+    #     omega_PM = np.zeros(3)
+    # cdef np.ndarray[double, ndim=1] omega_PM_c = np.asarray(omega_PM, dtype=np.float64).ravel()
+
+    if rotor_angle is None:
+        rotor_angle = 54.735
+    cdef double rotor_angle_c = np.pi*rotor_angle/180.
+
+    # if sample_rotation_frequency == 0:
+    #     rotor_angle_c = 0
+    #     sample_rotation_frequency = 1000000
+    print(rotor_angle_c, sample_rotation_frequency)
+
+    cdef second_order_quad_c = second_order_quad
+    # if quad_second_order:
+    #     quad_second_order_c = 1
+
+    cdef np.ndarray[double, ndim=1] transition_c = np.asarray([m_initial, m_final], dtype=np.float64)
+
+    cdef np.ndarray[double, ndim=1] amp = np.zeros(number_of_points * number_of_sites)
     cdef double cpu_time_
+    # # print('rotor_angle in rad', rotor_angle_in_rad)
+    # # print('transition', transition_c)
 
-    for i in range(number_of_transitions):
-        # spin transitions
-        # m_initial = transition_array[i][0]
-        # m_final   = transition_array[i][1]
+    # octahedran power orienation averaging
+    cdef unsigned int n_orientations = int((averaging_size+1) * (averaging_size+2)/2)
+    cdef np.ndarray[double, ndim=1] cosAlpha = np.empty(n_orientations, dtype=np.float64)
+    cdef np.ndarray[double, ndim=1] cosBeta = np.empty(n_orientations, dtype=np.float64)
+    cdef np.ndarray[double, ndim=1] amp_orientation = np.empty(n_orientations, dtype=np.float64)
+    __powder_averaging_setup(averaging_size, &cosAlpha[0],
+                             &cosBeta[0], &amp_orientation[0], 1)
+
+
+    if averaging_scheme == 0:
         clib.spinning_sideband_core(
                 # spectrum information and related amplitude
                 &amp[0],
@@ -175,38 +421,70 @@ def zg(dict spectrometer,
                 increment,
                 number_of_points,
 
-                spin_quantum_number,
+                quantum_number,
                 larmor_frequency,
 
                 # CSA tensor information
-                &iso_n[0],
-                &aniso_n[0],
-                &eta_n[0],
+                &isotropic_chemical_shift_c[0],
+                &chemical_shift_anisotropy_c[0],
+                &chemical_shift_asymmetry_c[0],
 
                 # quad tensor information
-                &Cq_e[0],
-                &eta_e[0],
-                1, # quad_second_order_c,
+                &quadrupolar_coupling_constant_c[0],
+                &quadrupolar_asymmetry_c[0],
+                second_order_quad_c,
 
-                # Dipolar couplings 
+                # Dipolar couplings
                 &D_c[0],
 
                 # spin rate, spin angle and number spinning sidebands
                 number_of_sidebands,
                 sample_rotation_frequency,
-                rotor_angle,
+                rotor_angle_c,
 
-                &transition_array[2*i],
+                &transition_c[0],
                 # Euler angle -> principal to molecular frame
                 # &omega_PM_c[0],
 
                 # Euler angles for powder averaging scheme
+
+                # powder orientation averager
+                n_orientations,
+                &cosAlpha[0], 
+                &cosBeta[0],
+                &amp_orientation[0],
                 averaging_size,
+
                 number_of_sites
                 )
 
-    freq = np.arange(number_of_points)*increment + reference_offset   
+    # else:
+    #     clib.lineshape_cas_spinning_sideband_cython_angles(
+    #             # spectrum information and related amplitude
+    #             &amp[0],
+    #             &cpu_time_,
+    #             spectral_start,
+    #             spectral_increment,
+    #             number_of_points,
 
-    return freq, amp.reshape(number_of_sites, number_of_points).sum(axis=0), cpu_time_
+    #             # CSA tensor information
+    #             iso,
+    #             aniso,
+    #             eta,
 
+    #             # spin rate, spin angle and number spinning sidebands
+    #             ph_step,
+    #             spin_frequency,
+    #             rotor_angle_c,
 
+    #             # Euler angle -> principal to molecular frame
+    #             &omega_PM_c[0],
+
+    #             # Euler angles for powder averaging scheme
+    #             averaging_scheme,
+    #             averaging_size
+    #             )
+
+    freq = np.arange(number_of_points)*increment + reference_offset
+
+    return freq, amp, cpu_time_

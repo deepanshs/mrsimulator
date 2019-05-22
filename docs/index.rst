@@ -6,11 +6,15 @@
 Welcome to mrsimulator's documentation!
 =======================================
 
+``mrsimulator`` is a python package currently developed to toolbox for
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   nuclear_shielding
+   installation
+   getting_started
+   examples
    api/api
 
 Indices and tables

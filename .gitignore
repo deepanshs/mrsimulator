@@ -115,8 +115,6 @@ venv.bak/
 
 # files
 test**
-*.pyx
-*.pxd
 setup_cython.py
 *.out
 *.prof

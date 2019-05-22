@@ -7,7 +7,8 @@ API documentation
    :maxdepth: 2
    :caption: Contents:
 
-   spectrometer
+   simulator
+   
 ..    parameterized_tensor
 ..    interaction
 

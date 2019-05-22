@@ -129,6 +129,8 @@ setup(
       url=URL,
       packages=find_packages(),
 
+      include_package_data=True,
+      
       install_requires=REQUIRED,
       extras_require=EXTRAS,
 

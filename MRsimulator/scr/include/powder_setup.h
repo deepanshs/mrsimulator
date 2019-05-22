@@ -47,9 +47,9 @@ extern void getPolarAngleTrigOverHemisphere(
 void getPolarAngleTrigOverAnOctant(
         int nt,
         double* cosAlpha,
-        double* sinAlpha,
+        // double* sinAlpha,
         double* cosBeta,
-        double* sinBeta,
+        // double* sinBeta,
         double* amp);
 
 // void tent(
@@ -81,7 +81,7 @@ extern int triangle_interpolation(double *freq1,
 //           double *spec,
 //           int points);
 
-extern void powderAverageWithTentingSchemeOverOctant2(
+extern void powderAverageWithTentingSchemeOverOctant(
         double *spec,
         double *freq,
         int nt,

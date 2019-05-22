@@ -157,8 +157,8 @@ static inline void getNuclearShieldingHamiltonianUptoFirstOrder(
 {
   // Spin trnasition contribution
   double scale = __p__(transition[1], transition[0]);
-  printf("\n Entering CSA");
-  printf("\n Transition element %f \n", scale);
+  // printf("\n Entering CSA");
+  // printf("\n Transition element %f \n", scale);
   // Scaled R00
   R0[0] = iso*scale; 
 
@@ -171,12 +171,12 @@ static inline void getNuclearShieldingHamiltonianUptoFirstOrder(
   R2[3] += 0.0;                                                         // R2 1
   R2[4] += temp;                                                        // R2 2
 
-  printf("R00 %f \n", creal(R0[0]) );
-  printf("R2-2 %f \n", creal(R2[0]) );
-  printf("R2-1 %f \n", creal(R2[1]) );
-  printf("R20 %f \n", creal(R2[2]) );
-  printf("R21 %f \n", creal(R2[3]) );
-  printf("R22 %f \n", creal(R2[4]) );
+  // printf("R00 %f \n", creal(R0[0]) );
+  // printf("R2-2 %f \n", creal(R2[0]) );
+  // printf("R2-1 %f \n", creal(R2[1]) );
+  // printf("R20 %f \n", creal(R2[2]) );
+  // printf("R21 %f \n", creal(R2[3]) );
+  // printf("R22 %f \n", creal(R2[4]) );
 }
 // ========================================================================= //
 
@@ -198,8 +198,8 @@ static inline void getQuadrupoleHamiltonianUptoFirstOrder(
   // Spin transition contribution
   double transition_d_ = __d__(transition[1], transition[0]);
 
-  printf("\n Entering Quad");
-  printf("\n Transition element %f \n", transition_d_);
+  // printf("\n Entering Quad");
+  // printf("\n Transition element %f \n", transition_d_);
 
   // Scaled R00
   R0[0] += 0.0; 
@@ -209,7 +209,7 @@ static inline void getQuadrupoleHamiltonianUptoFirstOrder(
   double vq = 3.0*Cq;
   double denominator = 2.0*spin*(2.0*spin - 1.0);
   vq/=denominator;
-  printf("quad coupling constant, vq %f \n", vq);
+  // printf("quad coupling constant, vq %f \n", vq);
 
   // Scaled R2m containing the components of the quad second rank tensor in  //
   // its principal axis frame. //
@@ -220,12 +220,12 @@ static inline void getQuadrupoleHamiltonianUptoFirstOrder(
   R2[3] += 0.0;                                                         // R2 1
   R2[4] += temp;                                                        // R2 2
 
-  printf("R00 %f \n", creal(R0[0]) );
-  printf("R2-2 %f \n", creal(R2[0]) );
-  printf("R2-1 %f \n", creal(R2[1]) );
-  printf("R20 %f \n", creal(R2[2]) );
-  printf("R21 %f \n", creal(R2[3]) );
-  printf("R22 %f \n", creal(R2[4]) );
+  // printf("R00 %f \n", creal(R0[0]) );
+  // printf("R2-2 %f \n", creal(R2[0]) );
+  // printf("R2-1 %f \n", creal(R2[1]) );
+  // printf("R20 %f \n", creal(R2[2]) );
+  // printf("R21 %f \n", creal(R2[3]) );
+  // printf("R22 %f \n", creal(R2[4]) );
 }
 // ========================================================================= //
 
@@ -250,15 +250,15 @@ static inline void getQuadrupoleHamiltonianUptoSecondOrder(
   double c0, c2, c4;
   __get_quad_ci__(&c0, &c2, &c4, transition[1], transition[0], spin);
 
-  printf("\n Entering Quad");
-  printf("\n Transition element c0=%f, c2=%f, c4=%f \n", c0, c2, c4);
+  // printf("\n Entering Quad");
+  // printf("\n Transition element c0=%f, c2=%f, c4=%f \n", c0, c2, c4);
 
   // vq is the Quadrupolar coupling constant                                 //
   // vq = 3*Cq/(2I(2I-1)), where I is the spin quantum number                //
   double vq = 3.0*Cq;
   double denominator = 2.0*spin*(2.0*spin - 1.0);
   vq/=denominator;
-  printf("quad coupling constant, vq %f \n", vq);
+  // printf("quad coupling constant, vq %f \n", vq);
 
   double scale = vq*vq/vo;
   double eta2 = eta*eta;
@@ -286,19 +286,19 @@ static inline void getQuadrupoleHamiltonianUptoSecondOrder(
   R4[8] += temp;                                                      // R4 4
 
 
-  printf("R00 %f \n", creal(R0[0]) );
+  // printf("R00 %f \n", creal(R0[0]) );
 
-  printf("R2-2 %f \n", creal(R2[0]) );
-  printf("R2-1 %f \n", creal(R2[1]) );
-  printf("R20 %f \n", creal(R2[2]) );
-  printf("R21 %f \n", creal(R2[3]) );
-  printf("R22 %f \n", creal(R2[4]) );
+  // printf("R2-2 %f \n", creal(R2[0]) );
+  // printf("R2-1 %f \n", creal(R2[1]) );
+  // printf("R20 %f \n", creal(R2[2]) );
+  // printf("R21 %f \n", creal(R2[3]) );
+  // printf("R22 %f \n", creal(R2[4]) );
 
-  printf("R4-4 %f \n", creal(R4[0]) );
-  printf("R4-2 %f \n", creal(R4[2]) );
-  printf("R40 %f \n", creal(R4[4]) );
-  printf("R42 %f \n", creal(R4[6]) );
-  printf("R44 %f \n", creal(R4[8]) );
+  // printf("R4-4 %f \n", creal(R4[0]) );
+  // printf("R4-2 %f \n", creal(R4[2]) );
+  // printf("R40 %f \n", creal(R4[4]) );
+  // printf("R42 %f \n", creal(R4[6]) );
+  // printf("R44 %f \n", creal(R4[8]) );
 }
 // ========================================================================= //
 
@@ -320,8 +320,8 @@ static inline void getWeaklyCoupledMagneticDipoleHamiltonianUptoFirstOrder(
   double transition_dIS_ = __dIS__(transition[0], transition[1],
                                    0.5, 0.5);
 
-  printf("\n Entering Quad");
-  printf("\n Transition element %f \n", transition_dIS_);
+  // printf("\n Entering Quad");
+  // printf("\n Transition element %f \n", transition_dIS_);
 
   // Scaled R00
   R0[0] += 0.0; 
@@ -334,12 +334,12 @@ static inline void getWeaklyCoupledMagneticDipoleHamiltonianUptoFirstOrder(
   R2[3] += 0.0;                                                         // R2 1
   R2[4] += 0.0;                                                         // R2 2
 
-  printf("R00 %f \n", creal(R0[0]) );
-  printf("R2-2 %f \n", creal(R2[0]) );
-  printf("R2-1 %f \n", creal(R2[1]) );
-  printf("R20 %f \n", creal(R2[2]) );
-  printf("R21 %f \n", creal(R2[3]) );
-  printf("R22 %f \n", creal(R2[4]) );
+  // printf("R00 %f \n", creal(R0[0]) );
+  // printf("R2-2 %f \n", creal(R2[0]) );
+  // printf("R2-1 %f \n", creal(R2[1]) );
+  // printf("R20 %f \n", creal(R2[2]) );
+  // printf("R21 %f \n", creal(R2[3]) );
+  // printf("R22 %f \n", creal(R2[4]) );
 }
 // ========================================================================= //
 
@@ -407,6 +407,20 @@ static inline void __zero_components(
 }
 
 
+void __powder_averaging_setup(
+          int nt,
+          double *cosAlpha, 
+          double *cosBeta,
+          double *amp,
+          int space   // 1 for octant, 2 for hemisphere and 4 for sphere
+){
+  // unsigned int n_orientations = 1;
+  if(space == 1){    //octant
+    getPolarAngleTrigOverAnOctant(nt, cosAlpha, cosBeta, amp);
+  }
+}
+
+
 
 void spinning_sideband_core(
           // spectrum information and related amplitude
@@ -433,7 +447,7 @@ void spinning_sideband_core(
           double *D,                          // The dipolar coupling constant.
 
           // spin rate, spin angle and number spinning sidebands
-          int ph_step,                      // The number of spinning sidebands to evaluate
+          int number_of_sidebands,                      // The number of spinning sidebands to evaluate
           double spin_frequency,            // The rotor spin frequency
           double rotor_angle,               // The rotor angle relative to lab-frame z-axis
 
@@ -443,7 +457,13 @@ void spinning_sideband_core(
           // The principal to molecular frame transformation euler angles.
           // double * omega_PM,
 
+          // powder orientation averager
+          unsigned int n_orientations,
+          double *cosAlpha, 
+          double *cosBeta,
+          double *amp,
           int nt,
+
           unsigned int number_of_sites)
 {
 
@@ -460,43 +480,50 @@ void spinning_sideband_core(
     // fftw_init_threads();
 
     // Sampled over an octant
-    unsigned int n_orientations = (nt+1) * (nt+2)/2, orientation;
-    unsigned int ji, ii;
-    unsigned int size = n_orientations * ph_step;
+    // unsigned int n_orientations = (nt+1) * (nt+2)/2, orientation;
+    unsigned int ji, ii, orientation;
+    unsigned int size = n_orientations * number_of_sidebands;
     unsigned int site;
     int min_bound;
 
-    double* cosBeta = createDouble1DArray( n_orientations );
-    double* sinBeta = createDouble1DArray( n_orientations );
-    double* cosAlpha = createDouble1DArray( n_orientations );
-    double* sinAlpha = createDouble1DArray( n_orientations );
+    // double* cosBeta = createDouble1DArray( n_orientations );
+    // double* sinBeta = createDouble1DArray( n_orientations );
+    // double* cosAlpha = createDouble1DArray( n_orientations );
+    // double* sinAlpha = createDouble1DArray( n_orientations );
 
-    double* amp = createDouble1DArray(n_orientations);
+    // double* amp = createDouble1DArray(n_orientations);
     double* amp_temp = createDouble1DArray(n_orientations);
 
     int m, mp, step, i, allow_second_order_quad=0;
     double tau, wrt, pht, spin_angular_freq, scale;
-    double ph_step_inverse = 1.0/((double) (ph_step));
+    double number_of_sidebands_inverse = 1.0/((double) (number_of_sidebands));
     double spectral_increment_inverse = 1.0/spectral_increment;
     double iso_n_, aniso_n_, eta_n_, Cq_e_, eta_e_, d_;
 
-    double complex *pre_phase = createDoubleComplex1DArray(ph_step*9);
+    double complex *pre_phase = createDoubleComplex1DArray(number_of_sidebands*9);
     double complex * amp1;
     double * MR_full_DLM_2 = createDouble1DArray(25);
     double * MR_full_DLM_4 = createDouble1DArray(81);
 
-    // Angle setup
-    getPolarAngleTrigOverAnOctant(nt, cosAlpha, sinAlpha, cosBeta, sinBeta, amp);
-
-    // Normalize the amplitudes
-    for(ii=0; ii<n_orientations; ii++){
-      amp[ii]*=ph_step_inverse;
+    // set the rotor angle to 0 degree if the sample spin frequency is 
+    // less than 1 mHz
+    if (spin_frequency < 1e-3){
+      spin_frequency = 1e6;
+      rotor_angle = 0.0;
     }
-    // cblas_dscal(n_orientations, ph_step_inverse, amp, 1);
-    // temp = ph_step_inverse_square*amp[orientation];
+
+    // Angle setup
+    // getPolarAngleTrigOverAnOctant(nt, cosAlpha, cosBeta, amp);
+
+    // __powder_averaging_setup(nt, &cosAlpha[0], &cosBeta[0], &amp[0], 1);   // 1 for octant, 2 for hemisphere and 4 for sphere
+    // Normalize the amplitudes
+    // for(ii=0; ii<n_orientations; ii++){
+    //   amp[ii]*=number_of_sidebands_inverse;
+    // }
+    // cblas_dscal(n_orientations, number_of_sidebands_inverse, amp, 1);
 
     
-    printf("\n Initializing system..........................");
+    // printf("\n Initializing system..........................");
     double complex R0[1] = {0.0};
     double complex R2[5] = {0.0, 0.0, 0.0, 0.0, 0.0};
     double complex R4[9] = {0., 0., 0., 0., 0., 0., 0., 0., 0.};
@@ -517,9 +544,9 @@ void spinning_sideband_core(
     // setup the fftw routine
     fftw_plan plan;
     fftw_complex *phi, *side_band;
-    phi = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * ph_step);
-    side_band = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * ph_step);
-    plan = fftw_plan_dft_1d(ph_step, phi, side_band, FFTW_FORWARD, FFTW_ESTIMATE);
+    phi = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * number_of_sidebands);
+    side_band = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * number_of_sidebands);
+    plan = fftw_plan_dft_1d(number_of_sidebands, phi, side_band, FFTW_FORWARD, FFTW_ESTIMATE);
     // fftw routine end
     // ----------------------------------------------------------------------- //
 
@@ -528,11 +555,11 @@ void spinning_sideband_core(
     spin_angular_freq = spin_frequency * PI2;
 
     // Generate the sideband order frequency relative to fft output order
-    double *vr_freq = __get_frequency_in_FFT_order(ph_step, spin_frequency);
-    for(ii=0; ii<ph_step; ii++){
-      vr_freq[ii]*=spectral_increment_inverse;
-    }
-    // cblas_dscal(ph_step, spectral_increment_inverse, vr_freq, 1);
+    double *vr_freq = __get_frequency_in_FFT_order(number_of_sidebands, spin_frequency);
+    // for(ii=0; ii<number_of_sidebands; ii++){
+    //   vr_freq[ii]*=spectral_increment_inverse;
+    // }
+    cblas_dscal(number_of_sidebands, spectral_increment_inverse, vr_freq, 1);
 
 
     // create an empty array to hold the local spinning sideband frequencies.
@@ -545,7 +572,7 @@ void spinning_sideband_core(
 
 
     // Calculate tau increments, where tau = (rotor period / number of phase steps)
-    tau = 1.0/((double)ph_step*spin_frequency);
+    tau = 1.0/((double)number_of_sidebands*spin_frequency);
 
     // pre-calculating the rotor to lab frame wigner terms
     for(mp = -4; mp <= 4; mp++){
@@ -559,10 +586,10 @@ void spinning_sideband_core(
 
     // pre-calculate the m omega spinning frequencies
     double complex m_wr[9] = {-4., -3., -2., -1., 0., 1., 2., 3., 4.};
-    for(ii=0; ii<9; ii++){
-      m_wr[ii]*=spin_angular_freq;
-    }
-    // cblas_zdscal(9, spin_angular_freq, &m_wr[0], 1);
+    // for(ii=0; ii<9; ii++){
+    //   m_wr[ii]*=spin_angular_freq;
+    // }
+    cblas_zdscal(9, spin_angular_freq, &m_wr[0], 1);
 
     // pre-calculating the phase step exponents. --------------------------- //
     // --------------------------------------------------------------------- //
@@ -578,8 +605,8 @@ void spinning_sideband_core(
         wrt = m_wr[m] * tau;
         pht = 0.0;
         scale = PI2 / m_wr[m];
-        // vzExp(ph_step, phi, pre_phase[m*ph_step]);
-        for(step=0; step<ph_step; step++){
+        // vzExp(number_of_sidebands, phi, pre_phase[m*number_of_sidebands]);
+        for(step=0; step<number_of_sidebands; step++){
           // t = step * tau;
           // pht = m_wr[m] * t;
           pre_phase[i++] = scale * (cexp(I*pht) - 1.0);
@@ -587,7 +614,7 @@ void spinning_sideband_core(
         }
       }
       else{
-        i+=ph_step;
+        i+=number_of_sidebands;
       }
     }
     //  ---------------------------------------------------------------------- //
@@ -657,7 +684,7 @@ void spinning_sideband_core(
       //
 
       for(orientation=0; orientation < n_orientations; orientation++){
-        double *sideband_amplitude_f = &sideband_amplitude[ph_step*orientation];
+        double *sideband_amplitude_f = &sideband_amplitude[number_of_sidebands*orientation];
 
         wigner_d_matrix(MR_full_DLM_2, 2, &cosBeta[orientation], 1);
 
@@ -692,18 +719,18 @@ void spinning_sideband_core(
         //                           -------------- pre_phase------------      //
         // The pre_phase is calculated before.                                 //
 
-        cblas_zgemv(CblasRowMajor, CblasTrans, 5, ph_step, &one,
-                      &pre_phase[2*ph_step], ph_step, &w_cs_2[0], 
+        cblas_zgemv(CblasRowMajor, CblasTrans, 5, number_of_sidebands, &one,
+                      &pre_phase[2*number_of_sidebands], number_of_sidebands, &w_cs_2[0], 
                       1, &zero, phi, 1);
 
         if (allow_second_order_quad){
-          cblas_zgemv(CblasRowMajor, CblasTrans, 9, ph_step, &one,
-                      pre_phase, ph_step, &w_cs_4[0], 
+          cblas_zgemv(CblasRowMajor, CblasTrans, 9, number_of_sidebands, &one,
+                      pre_phase, number_of_sidebands, &w_cs_4[0], 
                       1, &one, phi, 1);
         }
 
         // Computing exp(phi) ------------------------------------------------ //
-        vzExp(ph_step, phi, phi);
+        vzExp(number_of_sidebands, phi, phi);
 
         // Compute the fft --------------------------------------------------- //
         fftw_execute(plan);
@@ -711,14 +738,14 @@ void spinning_sideband_core(
 
         // ------------------------------------------------------------------- //
         // Taking the square of the the fft ampitudes
-        for(m=0; m<ph_step; m++){
+        for(m=0; m<number_of_sidebands; m++){
           amp1 = &side_band[m];
           sideband_amplitude_f[m] = creal(amp1[0])*creal(amp1[0]) + cimag(amp1[0])*cimag(amp1[0]);
         }
 
         // Multiplying the square amplitudes with the power scheme weights. -- //
         // And Normalizing with the number of phase steps squared ------------ //
-        cblas_dscal(ph_step, amp[orientation], sideband_amplitude_f, 1);
+        cblas_dscal(number_of_sidebands, amp[orientation], sideband_amplitude_f, 1);
 
         // adding the w_cs[0] term to the sideband frequencies before binning the spectrum.
         local_frequency[orientation] = shift + 
@@ -734,7 +761,7 @@ void spinning_sideband_core(
       // --------------------------------------------------------------------- //
       //              Calculating the tent for every sideband                  //
       // Allowing only sidebands that are within the spectral bandwidth ------ //
-      for(i =0; i<ph_step; i++){
+      for(i =0; i<number_of_sidebands; i++){
         min_bound = (int) (vr_freq[i] + iso_n[site]/spectral_increment);
         if (min_bound >= -number_of_points/2 -1 && min_bound < number_of_points/2 +1){
           ii = 0;
@@ -743,10 +770,10 @@ void spinning_sideband_core(
             // ptr_ptr[ii] = &sideband_amplitude[ji];
             amp_temp[ii] = sideband_amplitude[ji];
             ii++;
-            ji+=ph_step;
+            ji+=number_of_sidebands;
           };
 
-          // cblas_dcopy(n_orientations, &sideband_amplitude[0], ph_step, &amp[0][0], 1);
+          // cblas_dcopy(n_orientations, &sideband_amplitude[0], number_of_sidebands, &amp[0][0], 1);
           powderAverageWithTentingSchemeOverOctant(
                       spec_site_ptr,
                       local_frequency,
@@ -762,10 +789,10 @@ void spinning_sideband_core(
   fftw_destroy_plan(plan);
   fftw_free(phi); fftw_free(side_band);
   destroyDoubleComplex1DArray(pre_phase);
-  destroyDouble1DArray(cosAlpha);
-  destroyDouble1DArray(cosBeta);
-  destroyDouble1DArray(sinAlpha);
-  destroyDouble1DArray(sinBeta);
+  // destroyDouble1DArray(cosAlpha);
+  // destroyDouble1DArray(cosBeta);
+  // destroyDouble1DArray(sinAlpha);
+  // destroyDouble1DArray(sinBeta);
   // destroyDoubleComplex1DArray(MR_full_DLM_2);
   // destroyDoubleComplex1DArray(MR_full_DLM_4);
   destroyDouble1DArray(MR_full_DLM_2);
@@ -773,9 +800,9 @@ void spinning_sideband_core(
   destroyDouble1DArray(vr_freq);
   destroyDouble1DArray(local_frequency);
   destroyDouble1DArray(sideband_amplitude);
-  destroyDouble1DArray(amp);
+  // destroyDouble1DArray(amp);
   destroyDouble1DArray(amp_temp);
 
   end = clock();
-  cpu_time_[0] = ((double) (end - start)) / (double) CLOCKS_PER_SEC;
+  cpu_time_[0] += ((double) (end - start)) / (double) CLOCKS_PER_SEC;
 }
