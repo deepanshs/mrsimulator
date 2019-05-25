@@ -6,7 +6,7 @@
 Examples
 ========
 
-Setup a :ref:`simulator` instance and load the isotopmers.
+Setup a :ref:`simulator_api` instance and load the isotopmers.
 
 .. doctest::
     :skipif: None is None
