@@ -6,7 +6,8 @@
 Welcome to mrsimulator's documentation!
 =======================================
 
-``mrsimulator`` is a python package currently developed to toolbox for
+`mrsimulator` is a python package, currently under developedment, for
+simulating one-dimensional nuclear magnetic resonance lineshapes.
 
 .. toctree::
    :maxdepth: 2
@@ -14,6 +15,8 @@ Welcome to mrsimulator's documentation!
 
    installation
    getting_started
+   mr_objects
+   load_isotopomers
    examples
    api/api
 

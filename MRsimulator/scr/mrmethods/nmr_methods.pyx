@@ -12,79 +12,26 @@ from .utils import __get_spin_attribute__
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def one_D_spectrum(dict spectrum,
+def one_d_spectrum(dict spectrum,
        list isotopomers,
        int verbose=0,
        int number_of_sidebands=90,
-       int averaging_size=72):
+       int geodesic_polyhedron_frequency=72):
     """
-    Parameters
-    ----------
-    spectrum:
-        A dictionary with spectrum parameters.
-    isotopomers:
-        An array of nuclear isotopomers. Each nuclear site is described by
-        a site dictionary. See the description below.
-    dimensions:
-        A dictionary of obsevable parameters.
-
-    Description
-    -----------
-    A spectrum dictionary consists of the following keywords:
-
-    ``magnetic_flux_density``: A float describing the magnetic flux density
-                                 of the spectromenter (in Tesla).
-    ``sample_rotation_frequency``: A float describing the isotopomers rotation
-                                 frequency (in Hz).
-    ``sample_rotation_axis``: A dictionary describing the rotation axis with
-                                the following keywords-
-        ``polar_angle``: A float describing the angle (in degrees) of the
-                           rotating isotopomers with respect to the lab frame z-axis.
-        ``azimuthal_angle``: A float describing the angle (in degrees) of the
-                           rotating isotopomers with respect to the lab frame x-axis.
-
-    An example of the spectrum dictionary is,
-
-        >>> "spectrum": {
-        ...     "magnetic_flux_density": "9.4 T",
-        ...     "rotor_frequency": "1 kHz",
-        ...     "rotor_angle": "54.735 rad", 
-        ...     }
-        ... }
-
-    which describes a isotopomers spinning at the magic angle (54.745 degree) at
-    1000 Hz inside a 9.4 T NMR spectromenter.
-
-    ---
-    A site dictionary consists of the following keywords:
-
-    ``isotope_symbol``: A string with the isotope symbol of the nucleus, eg.
-                          '1H' or '29Si'
-    ``isotropic_chemical_shift``: A float with the isotropic chemical shift
-                          (in Hz).
-    ``shielding_symmetric``: A python dictionary describing the spin contributions
-                          of a second rank symmetric tensor with the following keywords
-        ``anisotropy``: A float describing the strength of the anisotropy (in Hz).
-        ``asymmetry``: A float describing the asymmetry of the second rank symmetric
-                         tensor. This value ranges from [0,1].
-
-    An example of the site dictionary is
-
-        >>> {
-        ...     "isotope_symbol": "13C",
-        ...     "isotropic_chemical_shift": 100,
-        ...     "shielding_symmetric": {
-        ...         "anisotropy": 12000,
-        ...         "asymmetry": 0.7
-        ...     }
-        ... }
-
-    which describes a '13C' nucleus with an isotropic chemical shift of 100 Hz
-    and a second rank symmetric tensor with a 12000 Hz anisotropy and an asymmetry
-    of 0.7.
-
-    ---
-    The above example
+    
+    :ivar verbose:
+        The value is either 0 or 1. Prints the isotopmers and
+        method on screen when value is 1. The default is 0.
+    :ivar number_of_sidebands:
+        The value is an integer. Only requested number of sidebands
+        are calcualted. The default value is 90.
+    :ivar geodesic_polyhedron_frequency:
+        An integer which represents the frequency of the class I geodesic
+        polyhedra. This polyhedra is used in calculating the spherical
+        average. Presently we use octahedral as the frequency 1 polyhedra.
+        With higher geodesic polyhedron frequency, the polyhedra starts to
+        resemples a shpere. The default value is 72.
+        Read more on geodesic polyhedron.
     """
 # ---------------------------------------------------------------------
 # spectrum ________________________________________________________
@@ -154,14 +101,14 @@ def one_D_spectrum(dict spectrum,
 
     # print (amp1)
     # octahedran power orienation averaging
-    cdef unsigned int n_orientations = int((averaging_size+1) * (averaging_size+2)/2)
+    cdef unsigned int n_orientations = int((geodesic_polyhedron_frequency+1) * (geodesic_polyhedron_frequency+2)/2)
     cdef np.ndarray[double] cosAlpha = np.zeros(n_orientations, dtype=np.float64)
     cdef np.ndarray[double] cosBeta = np.zeros(n_orientations, dtype=np.float64)
     cdef np.ndarray[double] amp_orientation = np.zeros(n_orientations, dtype=np.float64)
 
     # print (cosAlpha)
 
-    __powder_averaging_setup(averaging_size, &cosAlpha[0],
+    __powder_averaging_setup(geodesic_polyhedron_frequency, &cosAlpha[0],
                              &cosBeta[0], &amp_orientation[0], 1)
     amp_orientation*=(1./number_of_sidebands)
 
@@ -266,7 +213,7 @@ def one_D_spectrum(dict spectrum,
                     &cosAlpha[0], 
                     &cosBeta[0],
                     &amp_orientation[0],
-                    averaging_size,
+                    geodesic_polyhedron_frequency,
 
                     number_of_sites
                     )
