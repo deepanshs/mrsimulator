@@ -1829,11 +1829,13 @@ static const char __pyx_k_B0[] = "B0";
 static const char __pyx_k_Hz[] = " Hz";
 static const char __pyx_k__2[] = "---------------------------------------";
 static const char __pyx_k__4[] = "\n";
-static const char __pyx_k__5[] = "\n----------------------------";
+static const char __pyx_k__5[] = " @ ";
+static const char __pyx_k__6[] = "-";
 static const char __pyx_k_np[] = "np";
 static const char __pyx_k_pi[] = "pi";
 static const char __pyx_k_D_c[] = "D_c";
 static const char __pyx_k_amp[] = "amp";
+static const char __pyx_k_len[] = "len_";
 static const char __pyx_k_rad[] = " rad";
 static const char __pyx_k_sum[] = "sum";
 static const char __pyx_k_Cq_e[] = "Cq_e";
@@ -1848,6 +1850,7 @@ static const char __pyx_k_site[] = " site ";
 static const char __pyx_k_size[] = "size";
 static const char __pyx_k_spin[] = "spin";
 static const char __pyx_k_test[] = "__test__";
+static const char __pyx_k_text[] = "text";
 static const char __pyx_k_angle[] = "_angle";
 static const char __pyx_k_dtype[] = "dtype";
 static const char __pyx_k_empty[] = "empty";
@@ -1878,16 +1881,18 @@ static const char __pyx_k_cpu_time[] = "cpu_time_";
 static const char __pyx_k_spectrum[] = "spectrum";
 static const char __pyx_k_Detecting[] = "Detecting ";
 static const char __pyx_k_Recording[] = "Recording ";
+static const char __pyx_k_abundance[] = "abundance";
 static const char __pyx_k_asymmetry[] = "asymmetry";
 static const char __pyx_k_enumerate[] = "enumerate";
 static const char __pyx_k_increment[] = "increment";
-static const char __pyx_k_isotopmer[] = "isotopmer";
 static const char __pyx_k_m_initial[] = "m_initial";
 static const char __pyx_k_sub_sites[] = "sub_sites";
 static const char __pyx_k_ValueError[] = "ValueError";
 static const char __pyx_k_anisotropy[] = "anisotropy";
+static const char __pyx_k_isotopomer[] = "isotopomer";
 static const char __pyx_k_ImportError[] = "ImportError";
 static const char __pyx_k_MHz_isotope[] = " MHz) isotope ";
+static const char __pyx_k_abundance_2[] = "% abundance";
 static const char __pyx_k_isotopomers[] = "isotopomers";
 static const char __pyx_k_rotor_angle[] = "rotor_angle";
 static const char __pyx_k_transitions[] = "transitions";
@@ -1994,6 +1999,10 @@ static PyObject *__pyx_n_s_ValueError;
 static PyObject *__pyx_kp_u__2;
 static PyObject *__pyx_kp_u__4;
 static PyObject *__pyx_kp_u__5;
+static PyObject *__pyx_kp_u__6;
+static PyObject *__pyx_n_s_abundance;
+static PyObject *__pyx_n_u_abundance;
+static PyObject *__pyx_kp_u_abundance_2;
 static PyObject *__pyx_n_s_amp;
 static PyObject *__pyx_n_s_amp1;
 static PyObject *__pyx_n_s_amp_orientation;
@@ -2036,7 +2045,7 @@ static PyObject *__pyx_n_s_iso_n;
 static PyObject *__pyx_n_s_isotope;
 static PyObject *__pyx_n_u_isotope;
 static PyObject *__pyx_n_u_isotope_symbol;
-static PyObject *__pyx_n_s_isotopmer;
+static PyObject *__pyx_n_s_isotopomer;
 static PyObject *__pyx_n_s_isotopomers;
 static PyObject *__pyx_n_s_isotropic_chemical_shift;
 static PyObject *__pyx_n_u_isotropic_chemical_shift;
@@ -2044,6 +2053,7 @@ static PyObject *__pyx_kp_u_isotropic_chemical_shift_2;
 static PyObject *__pyx_n_s_isotropic_chemical_shift_c;
 static PyObject *__pyx_n_s_larmor_frequency;
 static PyObject *__pyx_kp_u_larmor_frequency_is_required_fo;
+static PyObject *__pyx_n_s_len;
 static PyObject *__pyx_n_s_m_final;
 static PyObject *__pyx_n_s_m_initial;
 static PyObject *__pyx_n_u_magnetic_flux_density;
@@ -2104,6 +2114,7 @@ static PyObject *__pyx_n_s_spin_quantum_number;
 static PyObject *__pyx_n_s_sub_sites;
 static PyObject *__pyx_n_s_sum;
 static PyObject *__pyx_n_s_test;
+static PyObject *__pyx_n_s_text;
 static PyObject *__pyx_n_s_trans;
 static PyObject *__pyx_n_s_transition_array;
 static PyObject *__pyx_n_s_transition_c;
@@ -2122,9 +2133,9 @@ static PyObject *__pyx_float_54_735;
 static PyObject *__pyx_float_neg_0_5;
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
+static PyObject *__pyx_int_100;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__3;
-static PyObject *__pyx_tuple__6;
 static PyObject *__pyx_tuple__7;
 static PyObject *__pyx_tuple__8;
 static PyObject *__pyx_tuple__9;
@@ -2138,9 +2149,10 @@ static PyObject *__pyx_tuple__16;
 static PyObject *__pyx_tuple__17;
 static PyObject *__pyx_tuple__18;
 static PyObject *__pyx_tuple__19;
-static PyObject *__pyx_tuple__21;
-static PyObject *__pyx_codeobj__20;
-static PyObject *__pyx_codeobj__22;
+static PyObject *__pyx_tuple__20;
+static PyObject *__pyx_tuple__22;
+static PyObject *__pyx_codeobj__21;
+static PyObject *__pyx_codeobj__23;
 /* Late includes */
 
 /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":15
@@ -2153,7 +2165,7 @@ static PyObject *__pyx_codeobj__22;
 
 /* Python wrapper */
 static PyObject *__pyx_pw_11mrsimulator_7methods_1one_d_spectrum(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_11mrsimulator_7methods_one_d_spectrum[] = "\n    \n    :ivar verbose:\n        The value is either 0 or 1. Prints the isotopmers and\n        method on screen when value is 1. The default is 0.\n    :ivar number_of_sidebands:\n        The value is an integer. Only requested number of sidebands\n        are calcualted. The default value is 90.\n    :ivar geodesic_polyhedron_frequency:\n        An integer which represents the frequency of the class I geodesic\n        polyhedra. This polyhedra is used in calculating the spherical\n        average. Presently we use octahedral as the frequency 1 polyhedra.\n        With higher geodesic polyhedron frequency, the polyhedra starts to\n        resemples a shpere. The default value is 72.\n        Read more on geodesic polyhedron.\n    ";
+static char __pyx_doc_11mrsimulator_7methods_one_d_spectrum[] = "\n    \n    :ivar verbose:\n        The value is either 0 or 1. Prints the isotopomers and\n        method on screen when value is 1. The default is 0.\n    :ivar number_of_sidebands:\n        The value is an integer. Only requested number of sidebands\n        are calcualted. The default value is 90.\n    :ivar geodesic_polyhedron_frequency:\n        An integer which represents the frequency of the class I geodesic\n        polyhedra. This polyhedra is used in calculating the spherical\n        average. Presently we use octahedral as the frequency 1 polyhedra.\n        With higher geodesic polyhedron frequency, the polyhedra starts to\n        resemples a shpere. The default value is 72.\n        Read more on geodesic polyhedron.\n    ";
 static PyMethodDef __pyx_mdef_11mrsimulator_7methods_1one_d_spectrum = {"one_d_spectrum", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_11mrsimulator_7methods_1one_d_spectrum, METH_VARARGS|METH_KEYWORDS, __pyx_doc_11mrsimulator_7methods_one_d_spectrum};
 static PyObject *__pyx_pw_11mrsimulator_7methods_1one_d_spectrum(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_spectrum = 0;
@@ -2304,9 +2316,12 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
   PyArrayObject *__pyx_v_cosBeta = 0;
   PyArrayObject *__pyx_v_amp_orientation = 0;
   Py_ssize_t __pyx_v_index_isotopomer;
-  PyObject *__pyx_v_isotopmer = NULL;
+  PyObject *__pyx_v_isotopomer = NULL;
+  PyObject *__pyx_v_abundance = NULL;
   PyObject *__pyx_v_sub_sites = NULL;
   PyObject *__pyx_v_site = NULL;
+  PyObject *__pyx_v_text = NULL;
+  PyObject *__pyx_v_len_ = NULL;
   PyObject *__pyx_v_freq = NULL;
   int __pyx_7genexpr__pyx_v_i;
   PyObject *__pyx_8genexpr1__pyx_v_site = NULL;
@@ -3382,9 +3397,9 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
   /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":120
  *     # ---------------------------------------------------------------------
  *     # sample _______________________________________________________________
- *     for index_isotopomer, isotopmer in enumerate(isotopomers):             # <<<<<<<<<<<<<<
- *         sub_sites = [site for site in isotopmer['sites'] if site['isotope_symbol'] == isotope]
- * 
+ *     for index_isotopomer, isotopomer in enumerate(isotopomers):             # <<<<<<<<<<<<<<
+ *         abundance = isotopomer['abundance']
+ *         sub_sites = [site for site in isotopomer['sites'] if site['isotope_symbol'] == isotope]
  */
   __pyx_t_4 = 0;
   __pyx_t_7 = __pyx_v_isotopomers; __Pyx_INCREF(__pyx_t_7); __pyx_t_24 = 0;
@@ -3396,30 +3411,42 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
     __pyx_t_6 = PySequence_ITEM(__pyx_t_7, __pyx_t_24); __pyx_t_24++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     #endif
-    __Pyx_XDECREF_SET(__pyx_v_isotopmer, __pyx_t_6);
+    __Pyx_XDECREF_SET(__pyx_v_isotopomer, __pyx_t_6);
     __pyx_t_6 = 0;
     __pyx_v_index_isotopomer = __pyx_t_4;
     __pyx_t_4 = (__pyx_t_4 + 1);
 
     /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":121
  *     # sample _______________________________________________________________
- *     for index_isotopomer, isotopmer in enumerate(isotopomers):
- *         sub_sites = [site for site in isotopmer['sites'] if site['isotope_symbol'] == isotope]             # <<<<<<<<<<<<<<
+ *     for index_isotopomer, isotopomer in enumerate(isotopomers):
+ *         abundance = isotopomer['abundance']             # <<<<<<<<<<<<<<
+ *         sub_sites = [site for site in isotopomer['sites'] if site['isotope_symbol'] == isotope]
+ * 
+ */
+    __pyx_t_6 = __Pyx_PyObject_Dict_GetItem(__pyx_v_isotopomer, __pyx_n_u_abundance); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 121, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_XDECREF_SET(__pyx_v_abundance, __pyx_t_6);
+    __pyx_t_6 = 0;
+
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":122
+ *     for index_isotopomer, isotopomer in enumerate(isotopomers):
+ *         abundance = isotopomer['abundance']
+ *         sub_sites = [site for site in isotopomer['sites'] if site['isotope_symbol'] == isotope]             # <<<<<<<<<<<<<<
  * 
  *         number_of_sites= len(sub_sites)
  */
     { /* enter inner scope */
-      __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 121, __pyx_L11_error)
+      __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 122, __pyx_L11_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v_isotopmer, __pyx_n_u_sites); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 121, __pyx_L11_error)
+      __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v_isotopomer, __pyx_n_u_sites); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 122, __pyx_L11_error)
       __Pyx_GOTREF(__pyx_t_12);
       if (likely(PyList_CheckExact(__pyx_t_12)) || PyTuple_CheckExact(__pyx_t_12)) {
         __pyx_t_1 = __pyx_t_12; __Pyx_INCREF(__pyx_t_1); __pyx_t_25 = 0;
         __pyx_t_26 = NULL;
       } else {
-        __pyx_t_25 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 121, __pyx_L11_error)
+        __pyx_t_25 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L11_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_26 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_26)) __PYX_ERR(0, 121, __pyx_L11_error)
+        __pyx_t_26 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_26)) __PYX_ERR(0, 122, __pyx_L11_error)
       }
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       for (;;) {
@@ -3427,17 +3454,17 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
           if (likely(PyList_CheckExact(__pyx_t_1))) {
             if (__pyx_t_25 >= PyList_GET_SIZE(__pyx_t_1)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_12 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_25); __Pyx_INCREF(__pyx_t_12); __pyx_t_25++; if (unlikely(0 < 0)) __PYX_ERR(0, 121, __pyx_L11_error)
+            __pyx_t_12 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_25); __Pyx_INCREF(__pyx_t_12); __pyx_t_25++; if (unlikely(0 < 0)) __PYX_ERR(0, 122, __pyx_L11_error)
             #else
-            __pyx_t_12 = PySequence_ITEM(__pyx_t_1, __pyx_t_25); __pyx_t_25++; if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 121, __pyx_L11_error)
+            __pyx_t_12 = PySequence_ITEM(__pyx_t_1, __pyx_t_25); __pyx_t_25++; if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 122, __pyx_L11_error)
             __Pyx_GOTREF(__pyx_t_12);
             #endif
           } else {
             if (__pyx_t_25 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_12 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_25); __Pyx_INCREF(__pyx_t_12); __pyx_t_25++; if (unlikely(0 < 0)) __PYX_ERR(0, 121, __pyx_L11_error)
+            __pyx_t_12 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_25); __Pyx_INCREF(__pyx_t_12); __pyx_t_25++; if (unlikely(0 < 0)) __PYX_ERR(0, 122, __pyx_L11_error)
             #else
-            __pyx_t_12 = PySequence_ITEM(__pyx_t_1, __pyx_t_25); __pyx_t_25++; if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 121, __pyx_L11_error)
+            __pyx_t_12 = PySequence_ITEM(__pyx_t_1, __pyx_t_25); __pyx_t_25++; if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 122, __pyx_L11_error)
             __Pyx_GOTREF(__pyx_t_12);
             #endif
           }
@@ -3447,7 +3474,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
               if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-              else __PYX_ERR(0, 121, __pyx_L11_error)
+              else __PYX_ERR(0, 122, __pyx_L11_error)
             }
             break;
           }
@@ -3455,14 +3482,14 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
         }
         __Pyx_XDECREF_SET(__pyx_8genexpr1__pyx_v_site, __pyx_t_12);
         __pyx_t_12 = 0;
-        __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_8genexpr1__pyx_v_site, __pyx_n_u_isotope_symbol); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 121, __pyx_L11_error)
+        __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_8genexpr1__pyx_v_site, __pyx_n_u_isotope_symbol); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 122, __pyx_L11_error)
         __Pyx_GOTREF(__pyx_t_12);
-        __pyx_t_14 = PyObject_RichCompare(__pyx_t_12, __pyx_v_isotope, Py_EQ); __Pyx_XGOTREF(__pyx_t_14); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 121, __pyx_L11_error)
+        __pyx_t_14 = PyObject_RichCompare(__pyx_t_12, __pyx_v_isotope, Py_EQ); __Pyx_XGOTREF(__pyx_t_14); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 122, __pyx_L11_error)
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_14); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 121, __pyx_L11_error)
+        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_14); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 122, __pyx_L11_error)
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         if (__pyx_t_3) {
-          if (unlikely(__Pyx_ListComp_Append(__pyx_t_6, (PyObject*)__pyx_8genexpr1__pyx_v_site))) __PYX_ERR(0, 121, __pyx_L11_error)
+          if (unlikely(__Pyx_ListComp_Append(__pyx_t_6, (PyObject*)__pyx_8genexpr1__pyx_v_site))) __PYX_ERR(0, 122, __pyx_L11_error)
         }
       }
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3476,50 +3503,50 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
     __Pyx_XDECREF_SET(__pyx_v_sub_sites, ((PyObject*)__pyx_t_6));
     __pyx_t_6 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":123
- *         sub_sites = [site for site in isotopmer['sites'] if site['isotope_symbol'] == isotope]
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":124
+ *         sub_sites = [site for site in isotopomer['sites'] if site['isotope_symbol'] == isotope]
  * 
  *         number_of_sites= len(sub_sites)             # <<<<<<<<<<<<<<
  * 
  *         # site specification
  */
-    __pyx_t_25 = PyList_GET_SIZE(__pyx_v_sub_sites); if (unlikely(__pyx_t_25 == ((Py_ssize_t)-1))) __PYX_ERR(0, 123, __pyx_L1_error)
+    __pyx_t_25 = PyList_GET_SIZE(__pyx_v_sub_sites); if (unlikely(__pyx_t_25 == ((Py_ssize_t)-1))) __PYX_ERR(0, 124, __pyx_L1_error)
     __pyx_v_number_of_sites = __pyx_t_25;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":127
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":128
  *         # site specification
  *         # CSA
  *         iso_n = np.empty(number_of_sites, dtype=np.float64)             # <<<<<<<<<<<<<<
  *         aniso_n = np.empty(number_of_sites, dtype=np.float64)
  *         eta_n = np.empty(number_of_sites, dtype=np.float64)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 127, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 128, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_empty); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_empty); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 127, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 128, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 127, __pyx_L1_error)
+    __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 128, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_14);
     __Pyx_GIVEREF(__pyx_t_6);
     PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_6);
     __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 127, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 128, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_GetModuleGlobalName(__pyx_t_12, __pyx_n_s_np); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 127, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_12, __pyx_n_s_np); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 128, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
-    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_float64); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 127, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_float64); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 128, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_27) < 0) __PYX_ERR(0, 127, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_27) < 0) __PYX_ERR(0, 128, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-    __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_14, __pyx_t_6); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 127, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_14, __pyx_t_6); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 128, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (!(likely(((__pyx_t_27) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_27, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 127, __pyx_L1_error)
+    if (!(likely(((__pyx_t_27) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_27, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 128, __pyx_L1_error)
     __pyx_t_28 = ((PyArrayObject *)__pyx_t_27);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -3536,46 +3563,46 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
         __pyx_t_23 = __pyx_t_22 = __pyx_t_21 = 0;
       }
       __pyx_pybuffernd_iso_n.diminfo[0].strides = __pyx_pybuffernd_iso_n.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_iso_n.diminfo[0].shape = __pyx_pybuffernd_iso_n.rcbuffer->pybuffer.shape[0];
-      if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 127, __pyx_L1_error)
+      if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 128, __pyx_L1_error)
     }
     __pyx_t_28 = 0;
     __Pyx_XDECREF_SET(__pyx_v_iso_n, ((PyArrayObject *)__pyx_t_27));
     __pyx_t_27 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":128
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":129
  *         # CSA
  *         iso_n = np.empty(number_of_sites, dtype=np.float64)
  *         aniso_n = np.empty(number_of_sites, dtype=np.float64)             # <<<<<<<<<<<<<<
  *         eta_n = np.empty(number_of_sites, dtype=np.float64)
  * 
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_27, __pyx_n_s_np); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 128, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_27, __pyx_n_s_np); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 129, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_27, __pyx_n_s_empty); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 128, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_27, __pyx_n_s_empty); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 129, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-    __pyx_t_27 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 128, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 129, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
-    __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 128, __pyx_L1_error)
+    __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 129, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_14);
     __Pyx_GIVEREF(__pyx_t_27);
     PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_27);
     __pyx_t_27 = 0;
-    __pyx_t_27 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 128, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 129, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_float64); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 128, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_float64); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 129, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (PyDict_SetItem(__pyx_t_27, __pyx_n_s_dtype, __pyx_t_12) < 0) __PYX_ERR(0, 128, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_27, __pyx_n_s_dtype, __pyx_t_12) < 0) __PYX_ERR(0, 129, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-    __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_14, __pyx_t_27); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 128, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_14, __pyx_t_27); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 129, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-    if (!(likely(((__pyx_t_12) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_12, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 128, __pyx_L1_error)
+    if (!(likely(((__pyx_t_12) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_12, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 129, __pyx_L1_error)
     __pyx_t_29 = ((PyArrayObject *)__pyx_t_12);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -3592,46 +3619,46 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
         __pyx_t_21 = __pyx_t_22 = __pyx_t_23 = 0;
       }
       __pyx_pybuffernd_aniso_n.diminfo[0].strides = __pyx_pybuffernd_aniso_n.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_aniso_n.diminfo[0].shape = __pyx_pybuffernd_aniso_n.rcbuffer->pybuffer.shape[0];
-      if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 128, __pyx_L1_error)
+      if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 129, __pyx_L1_error)
     }
     __pyx_t_29 = 0;
     __Pyx_XDECREF_SET(__pyx_v_aniso_n, ((PyArrayObject *)__pyx_t_12));
     __pyx_t_12 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":129
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":130
  *         iso_n = np.empty(number_of_sites, dtype=np.float64)
  *         aniso_n = np.empty(number_of_sites, dtype=np.float64)
  *         eta_n = np.empty(number_of_sites, dtype=np.float64)             # <<<<<<<<<<<<<<
  * 
  *         # quad
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_12, __pyx_n_s_np); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 129, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_12, __pyx_n_s_np); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
-    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_empty); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 129, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_empty); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-    __pyx_t_12 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 129, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
-    __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 129, __pyx_L1_error)
+    __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_14);
     __Pyx_GIVEREF(__pyx_t_12);
     PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_12);
     __pyx_t_12 = 0;
-    __pyx_t_12 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 129, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 129, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_float64); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_float64); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_dtype, __pyx_t_1) < 0) __PYX_ERR(0, 129, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_12, __pyx_n_s_dtype, __pyx_t_1) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_t_14, __pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_t_14, __pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
     __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 129, __pyx_L1_error)
+    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 130, __pyx_L1_error)
     __pyx_t_30 = ((PyArrayObject *)__pyx_t_1);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -3648,46 +3675,46 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
         __pyx_t_23 = __pyx_t_22 = __pyx_t_21 = 0;
       }
       __pyx_pybuffernd_eta_n.diminfo[0].strides = __pyx_pybuffernd_eta_n.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_eta_n.diminfo[0].shape = __pyx_pybuffernd_eta_n.rcbuffer->pybuffer.shape[0];
-      if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 129, __pyx_L1_error)
+      if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 130, __pyx_L1_error)
     }
     __pyx_t_30 = 0;
     __Pyx_XDECREF_SET(__pyx_v_eta_n, ((PyArrayObject *)__pyx_t_1));
     __pyx_t_1 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":132
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":133
  * 
  *         # quad
  *         Cq_e = np.zeros(number_of_sites, dtype=np.float64)             # <<<<<<<<<<<<<<
  *         eta_e = np.zeros(number_of_sites, dtype=np.float64)
  * 
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 133, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_zeros); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 132, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_zeros); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 133, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 133, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 132, __pyx_L1_error)
+    __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 133, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_14);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 133, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_GetModuleGlobalName(__pyx_t_27, __pyx_n_s_np); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 132, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_27, __pyx_n_s_np); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 133, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_27, __pyx_n_s_float64); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 132, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_27, __pyx_n_s_float64); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 133, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-    if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_6) < 0) __PYX_ERR(0, 132, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_6) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_14, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 132, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_14, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 133, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
     __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 132, __pyx_L1_error)
+    if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 133, __pyx_L1_error)
     __pyx_t_31 = ((PyArrayObject *)__pyx_t_6);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -3704,46 +3731,46 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
         __pyx_t_21 = __pyx_t_22 = __pyx_t_23 = 0;
       }
       __pyx_pybuffernd_Cq_e.diminfo[0].strides = __pyx_pybuffernd_Cq_e.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_Cq_e.diminfo[0].shape = __pyx_pybuffernd_Cq_e.rcbuffer->pybuffer.shape[0];
-      if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 132, __pyx_L1_error)
+      if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 133, __pyx_L1_error)
     }
     __pyx_t_31 = 0;
     __Pyx_XDECREF_SET(__pyx_v_Cq_e, ((PyArrayObject *)__pyx_t_6));
     __pyx_t_6 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":133
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":134
  *         # quad
  *         Cq_e = np.zeros(number_of_sites, dtype=np.float64)
  *         eta_e = np.zeros(number_of_sites, dtype=np.float64)             # <<<<<<<<<<<<<<
  * 
  *         D_c = np.zeros(number_of_sites, dtype=np.float64)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 133, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_zeros); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 133, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_zeros); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 133, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 133, __pyx_L1_error)
+    __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_14);
     __Pyx_GIVEREF(__pyx_t_6);
     PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_6);
     __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 133, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_GetModuleGlobalName(__pyx_t_12, __pyx_n_s_np); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 133, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_12, __pyx_n_s_np); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
-    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_float64); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 133, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_12, __pyx_n_s_float64); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_27) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_27) < 0) __PYX_ERR(0, 134, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-    __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_14, __pyx_t_6); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 133, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_14, __pyx_t_6); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (!(likely(((__pyx_t_27) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_27, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 133, __pyx_L1_error)
+    if (!(likely(((__pyx_t_27) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_27, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 134, __pyx_L1_error)
     __pyx_t_32 = ((PyArrayObject *)__pyx_t_27);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -3760,46 +3787,46 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
         __pyx_t_23 = __pyx_t_22 = __pyx_t_21 = 0;
       }
       __pyx_pybuffernd_eta_e.diminfo[0].strides = __pyx_pybuffernd_eta_e.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_eta_e.diminfo[0].shape = __pyx_pybuffernd_eta_e.rcbuffer->pybuffer.shape[0];
-      if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 133, __pyx_L1_error)
+      if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 134, __pyx_L1_error)
     }
     __pyx_t_32 = 0;
     __Pyx_XDECREF_SET(__pyx_v_eta_e, ((PyArrayObject *)__pyx_t_27));
     __pyx_t_27 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":135
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":136
  *         eta_e = np.zeros(number_of_sites, dtype=np.float64)
  * 
  *         D_c = np.zeros(number_of_sites, dtype=np.float64)             # <<<<<<<<<<<<<<
- *         # abundance_array = np.ones(number_of_sites, dtype=np.float64)
  * 
+ *         # cdef int i, size = len(sample)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_27, __pyx_n_s_np); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 135, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_27, __pyx_n_s_np); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 136, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_27, __pyx_n_s_zeros); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 135, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_27, __pyx_n_s_zeros); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 136, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-    __pyx_t_27 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 135, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 136, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
-    __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 135, __pyx_L1_error)
+    __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 136, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_14);
     __Pyx_GIVEREF(__pyx_t_27);
     PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_27);
     __pyx_t_27 = 0;
-    __pyx_t_27 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 135, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 136, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 135, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 136, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_float64); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 135, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_float64); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 136, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (PyDict_SetItem(__pyx_t_27, __pyx_n_s_dtype, __pyx_t_12) < 0) __PYX_ERR(0, 135, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_27, __pyx_n_s_dtype, __pyx_t_12) < 0) __PYX_ERR(0, 136, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-    __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_14, __pyx_t_27); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 135, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_14, __pyx_t_27); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 136, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-    if (!(likely(((__pyx_t_12) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_12, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 135, __pyx_L1_error)
+    if (!(likely(((__pyx_t_12) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_12, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 136, __pyx_L1_error)
     __pyx_t_33 = ((PyArrayObject *)__pyx_t_12);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -3816,7 +3843,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
         __pyx_t_21 = __pyx_t_22 = __pyx_t_23 = 0;
       }
       __pyx_pybuffernd_D_c.diminfo[0].strides = __pyx_pybuffernd_D_c.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_D_c.diminfo[0].shape = __pyx_pybuffernd_D_c.rcbuffer->pybuffer.shape[0];
-      if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 135, __pyx_L1_error)
+      if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 136, __pyx_L1_error)
     }
     __pyx_t_33 = 0;
     __Pyx_XDECREF_SET(__pyx_v_D_c, ((PyArrayObject *)__pyx_t_12));
@@ -3892,79 +3919,79 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  *         for i in range(number_of_sites):
  *             site = sub_sites[i]             # <<<<<<<<<<<<<<
  * 
- *             # abundance_array[i] = site['abundance']
+ *             # CSA tensor
  */
       __pyx_t_12 = PyList_GET_ITEM(__pyx_v_sub_sites, __pyx_v_i);
       __Pyx_INCREF(__pyx_t_12);
       __Pyx_XDECREF_SET(__pyx_v_site, __pyx_t_12);
       __pyx_t_12 = 0;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":148
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":146
+ * 
  *             # CSA tensor
- *             # sign_ = -1
  *             iso_n[i] = site['isotropic_chemical_shift']             # <<<<<<<<<<<<<<
  *             aniso_n[i] = site['shielding_symmetric']['anisotropy']
- *             # if site['shielding_symmetric']['anisotropy_sign']=='+': sign_=1
+ *             eta_n[i] = site['shielding_symmetric']['asymmetry']
  */
-      __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v_site, __pyx_n_u_isotropic_chemical_shift); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 148, __pyx_L1_error)
+      __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v_site, __pyx_n_u_isotropic_chemical_shift); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 146, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
-      __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_12); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 148, __pyx_L1_error)
+      __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_12); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 146, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       __pyx_t_35 = __pyx_v_i;
       *__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_iso_n.rcbuffer->pybuffer.buf, __pyx_t_35, __pyx_pybuffernd_iso_n.diminfo[0].strides) = __pyx_t_2;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":149
- *             # sign_ = -1
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":147
+ *             # CSA tensor
  *             iso_n[i] = site['isotropic_chemical_shift']
  *             aniso_n[i] = site['shielding_symmetric']['anisotropy']             # <<<<<<<<<<<<<<
- *             # if site['shielding_symmetric']['anisotropy_sign']=='+': sign_=1
- *             # aniso_n[i]*=sign_
+ *             eta_n[i] = site['shielding_symmetric']['asymmetry']
+ * 
  */
-      __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v_site, __pyx_n_u_shielding_symmetric); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 149, __pyx_L1_error)
+      __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v_site, __pyx_n_u_shielding_symmetric); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 147, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
-      __pyx_t_14 = __Pyx_PyObject_Dict_GetItem(__pyx_t_12, __pyx_n_u_anisotropy); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 149, __pyx_L1_error)
+      __pyx_t_14 = __Pyx_PyObject_Dict_GetItem(__pyx_t_12, __pyx_n_u_anisotropy); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 147, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_14);
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-      __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_14); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 149, __pyx_L1_error)
+      __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_14); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 147, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
       __pyx_t_36 = __pyx_v_i;
       *__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_aniso_n.rcbuffer->pybuffer.buf, __pyx_t_36, __pyx_pybuffernd_aniso_n.diminfo[0].strides) = __pyx_t_2;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":152
- *             # if site['shielding_symmetric']['anisotropy_sign']=='+': sign_=1
- *             # aniso_n[i]*=sign_
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":148
+ *             iso_n[i] = site['isotropic_chemical_shift']
+ *             aniso_n[i] = site['shielding_symmetric']['anisotropy']
  *             eta_n[i] = site['shielding_symmetric']['asymmetry']             # <<<<<<<<<<<<<<
  * 
  *             if verbose:
  */
-      __pyx_t_14 = __Pyx_PyObject_Dict_GetItem(__pyx_v_site, __pyx_n_u_shielding_symmetric); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 152, __pyx_L1_error)
+      __pyx_t_14 = __Pyx_PyObject_Dict_GetItem(__pyx_v_site, __pyx_n_u_shielding_symmetric); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 148, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_14);
-      __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_t_14, __pyx_n_u_asymmetry); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 152, __pyx_L1_error)
+      __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_t_14, __pyx_n_u_asymmetry); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 148, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
       __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-      __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_12); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 152, __pyx_L1_error)
+      __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_12); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 148, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       __pyx_t_37 = __pyx_v_i;
       *__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_eta_n.rcbuffer->pybuffer.buf, __pyx_t_37, __pyx_pybuffernd_eta_n.diminfo[0].strides) = __pyx_t_2;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":154
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":150
  *             eta_n[i] = site['shielding_symmetric']['asymmetry']
  * 
  *             if verbose:             # <<<<<<<<<<<<<<
- *                 print(f'\n{isotope} site {i} in isotopomer {index_isotopomer}\n----------------------------')
- *                 print(f'isotropic chemical shift = {iso_n[i]} Hz')
+ *                 text = ((
+ *                     f"\n{isotope} site {i} in isotopomer {index_isotopomer} "
  */
       __pyx_t_3 = (__pyx_v_verbose != 0);
       if (__pyx_t_3) {
 
-        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":155
- * 
+        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":152
  *             if verbose:
- *                 print(f'\n{isotope} site {i} in isotopomer {index_isotopomer}\n----------------------------')             # <<<<<<<<<<<<<<
- *                 print(f'isotropic chemical shift = {iso_n[i]} Hz')
- *                 print(f'chemical shift anisotropy = {aniso_n[i]} Hz')
+ *                 text = ((
+ *                     f"\n{isotope} site {i} in isotopomer {index_isotopomer} "             # <<<<<<<<<<<<<<
+ *                     f"@ {abundance*100}% abundance"
+ *                 ))
  */
-        __pyx_t_12 = PyTuple_New(7); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 155, __pyx_L1_error)
+        __pyx_t_12 = PyTuple_New(9); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 152, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
         __pyx_t_25 = 0;
         __pyx_t_5 = 127;
@@ -3972,7 +3999,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
         __pyx_t_25 += 1;
         __Pyx_GIVEREF(__pyx_kp_u__4);
         PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_kp_u__4);
-        __pyx_t_14 = __Pyx_PyObject_FormatSimple(__pyx_v_isotope, __pyx_empty_unicode); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 155, __pyx_L1_error)
+        __pyx_t_14 = __Pyx_PyObject_FormatSimple(__pyx_v_isotope, __pyx_empty_unicode); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 152, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         __pyx_t_5 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_14) > __pyx_t_5) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_14) : __pyx_t_5;
         __pyx_t_25 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_14);
@@ -3983,7 +4010,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
         __pyx_t_25 += 6;
         __Pyx_GIVEREF(__pyx_kp_u_site);
         PyTuple_SET_ITEM(__pyx_t_12, 2, __pyx_kp_u_site);
-        __pyx_t_14 = __Pyx_PyUnicode_From_int(__pyx_v_i, 0, ' ', 'd'); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 155, __pyx_L1_error)
+        __pyx_t_14 = __Pyx_PyUnicode_From_int(__pyx_v_i, 0, ' ', 'd'); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 152, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         __pyx_t_25 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_14);
         __Pyx_GIVEREF(__pyx_t_14);
@@ -3993,32 +4020,104 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
         __pyx_t_25 += 15;
         __Pyx_GIVEREF(__pyx_kp_u_in_isotopomer);
         PyTuple_SET_ITEM(__pyx_t_12, 4, __pyx_kp_u_in_isotopomer);
-        __pyx_t_14 = __Pyx_PyUnicode_From_Py_ssize_t(__pyx_v_index_isotopomer, 0, ' ', 'd'); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 155, __pyx_L1_error)
+        __pyx_t_14 = __Pyx_PyUnicode_From_Py_ssize_t(__pyx_v_index_isotopomer, 0, ' ', 'd'); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 152, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         __pyx_t_25 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_14);
         __Pyx_GIVEREF(__pyx_t_14);
         PyTuple_SET_ITEM(__pyx_t_12, 5, __pyx_t_14);
         __pyx_t_14 = 0;
         __Pyx_INCREF(__pyx_kp_u__5);
-        __pyx_t_25 += 29;
+        __pyx_t_25 += 3;
         __Pyx_GIVEREF(__pyx_kp_u__5);
         PyTuple_SET_ITEM(__pyx_t_12, 6, __pyx_kp_u__5);
-        __pyx_t_14 = __Pyx_PyUnicode_Join(__pyx_t_12, 7, __pyx_t_25, __pyx_t_5); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 155, __pyx_L1_error)
+
+        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":153
+ *                 text = ((
+ *                     f"\n{isotope} site {i} in isotopomer {index_isotopomer} "
+ *                     f"@ {abundance*100}% abundance"             # <<<<<<<<<<<<<<
+ *                 ))
+ *                 len_ = len(text)
+ */
+        __pyx_t_14 = PyNumber_Multiply(__pyx_v_abundance, __pyx_int_100); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 153, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
-        __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __pyx_t_12 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_14); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 155, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_12);
+        __pyx_t_27 = __Pyx_PyObject_FormatSimple(__pyx_t_14, __pyx_empty_unicode); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_27);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __pyx_t_5 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_27) > __pyx_t_5) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_27) : __pyx_t_5;
+        __pyx_t_25 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_27);
+        __Pyx_GIVEREF(__pyx_t_27);
+        PyTuple_SET_ITEM(__pyx_t_12, 7, __pyx_t_27);
+        __pyx_t_27 = 0;
+        __Pyx_INCREF(__pyx_kp_u_abundance_2);
+        __pyx_t_25 += 11;
+        __Pyx_GIVEREF(__pyx_kp_u_abundance_2);
+        PyTuple_SET_ITEM(__pyx_t_12, 8, __pyx_kp_u_abundance_2);
+
+        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":152
+ *             if verbose:
+ *                 text = ((
+ *                     f"\n{isotope} site {i} in isotopomer {index_isotopomer} "             # <<<<<<<<<<<<<<
+ *                     f"@ {abundance*100}% abundance"
+ *                 ))
+ */
+        __pyx_t_27 = __Pyx_PyUnicode_Join(__pyx_t_12, 9, __pyx_t_25, __pyx_t_5); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 152, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_27);
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+        __Pyx_XDECREF_SET(__pyx_v_text, ((PyObject*)__pyx_t_27));
+        __pyx_t_27 = 0;
+
+        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":155
+ *                     f"@ {abundance*100}% abundance"
+ *                 ))
+ *                 len_ = len(text)             # <<<<<<<<<<<<<<
+ *                 print(text)
+ *                 print(f"{'-'*(len_-1)}")
+ */
+        __pyx_t_25 = __Pyx_PyUnicode_GET_LENGTH(__pyx_v_text); if (unlikely(__pyx_t_25 == ((Py_ssize_t)-1))) __PYX_ERR(0, 155, __pyx_L1_error)
+        __pyx_t_27 = PyInt_FromSsize_t(__pyx_t_25); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 155, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_XDECREF_SET(__pyx_v_len_, __pyx_t_27);
+        __pyx_t_27 = 0;
 
         /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":156
- *             if verbose:
- *                 print(f'\n{isotope} site {i} in isotopomer {index_isotopomer}\n----------------------------')
+ *                 ))
+ *                 len_ = len(text)
+ *                 print(text)             # <<<<<<<<<<<<<<
+ *                 print(f"{'-'*(len_-1)}")
+ *                 print(f'isotropic chemical shift = {iso_n[i]} Hz')
+ */
+        __pyx_t_27 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_v_text); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 156, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+
+        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":157
+ *                 len_ = len(text)
+ *                 print(text)
+ *                 print(f"{'-'*(len_-1)}")             # <<<<<<<<<<<<<<
+ *                 print(f'isotropic chemical shift = {iso_n[i]} Hz')
+ *                 print(f'chemical shift anisotropy = {aniso_n[i]} Hz')
+ */
+        __pyx_t_27 = __Pyx_PyInt_SubtractObjC(__pyx_v_len_, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 157, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_27);
+        __pyx_t_12 = PyNumber_Multiply(__pyx_kp_u__6, __pyx_t_27); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 157, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_12);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        __pyx_t_27 = __Pyx_PyObject_FormatSimple(__pyx_t_12, __pyx_empty_unicode); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 157, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+        __pyx_t_12 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_27); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 157, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_12);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+
+        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":158
+ *                 print(text)
+ *                 print(f"{'-'*(len_-1)}")
  *                 print(f'isotropic chemical shift = {iso_n[i]} Hz')             # <<<<<<<<<<<<<<
  *                 print(f'chemical shift anisotropy = {aniso_n[i]} Hz')
  *                 print(f'chemical shift asymmetry = {eta_n[i]}')
  */
-        __pyx_t_12 = PyTuple_New(3); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 156, __pyx_L1_error)
+        __pyx_t_12 = PyTuple_New(3); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 158, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
         __pyx_t_25 = 0;
         __pyx_t_5 = 127;
@@ -4027,9 +4126,47 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
         __Pyx_GIVEREF(__pyx_kp_u_isotropic_chemical_shift_2);
         PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_kp_u_isotropic_chemical_shift_2);
         __pyx_t_38 = __pyx_v_i;
-        __pyx_t_14 = PyFloat_FromDouble((*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_iso_n.rcbuffer->pybuffer.buf, __pyx_t_38, __pyx_pybuffernd_iso_n.diminfo[0].strides))); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 156, __pyx_L1_error)
+        __pyx_t_27 = PyFloat_FromDouble((*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_iso_n.rcbuffer->pybuffer.buf, __pyx_t_38, __pyx_pybuffernd_iso_n.diminfo[0].strides))); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 158, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_27);
+        __pyx_t_14 = __Pyx_PyObject_FormatSimple(__pyx_t_27, __pyx_empty_unicode); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 158, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
-        __pyx_t_27 = __Pyx_PyObject_FormatSimple(__pyx_t_14, __pyx_empty_unicode); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 156, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        __pyx_t_5 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_14) > __pyx_t_5) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_14) : __pyx_t_5;
+        __pyx_t_25 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_14);
+        __Pyx_GIVEREF(__pyx_t_14);
+        PyTuple_SET_ITEM(__pyx_t_12, 1, __pyx_t_14);
+        __pyx_t_14 = 0;
+        __Pyx_INCREF(__pyx_kp_u_Hz);
+        __pyx_t_25 += 3;
+        __Pyx_GIVEREF(__pyx_kp_u_Hz);
+        PyTuple_SET_ITEM(__pyx_t_12, 2, __pyx_kp_u_Hz);
+        __pyx_t_14 = __Pyx_PyUnicode_Join(__pyx_t_12, 3, __pyx_t_25, __pyx_t_5); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 158, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+        __pyx_t_12 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_14); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 158, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_12);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+
+        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":159
+ *                 print(f"{'-'*(len_-1)}")
+ *                 print(f'isotropic chemical shift = {iso_n[i]} Hz')
+ *                 print(f'chemical shift anisotropy = {aniso_n[i]} Hz')             # <<<<<<<<<<<<<<
+ *                 print(f'chemical shift asymmetry = {eta_n[i]}')
+ * 
+ */
+        __pyx_t_12 = PyTuple_New(3); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 159, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_12);
+        __pyx_t_25 = 0;
+        __pyx_t_5 = 127;
+        __Pyx_INCREF(__pyx_kp_u_chemical_shift_anisotropy);
+        __pyx_t_25 += 28;
+        __Pyx_GIVEREF(__pyx_kp_u_chemical_shift_anisotropy);
+        PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_kp_u_chemical_shift_anisotropy);
+        __pyx_t_39 = __pyx_v_i;
+        __pyx_t_14 = PyFloat_FromDouble((*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_aniso_n.rcbuffer->pybuffer.buf, __pyx_t_39, __pyx_pybuffernd_aniso_n.diminfo[0].strides))); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 159, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_27 = __Pyx_PyObject_FormatSimple(__pyx_t_14, __pyx_empty_unicode); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 159, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_27);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         __pyx_t_5 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_27) > __pyx_t_5) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_27) : __pyx_t_5;
@@ -4041,84 +4178,46 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
         __pyx_t_25 += 3;
         __Pyx_GIVEREF(__pyx_kp_u_Hz);
         PyTuple_SET_ITEM(__pyx_t_12, 2, __pyx_kp_u_Hz);
-        __pyx_t_27 = __Pyx_PyUnicode_Join(__pyx_t_12, 3, __pyx_t_25, __pyx_t_5); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 156, __pyx_L1_error)
+        __pyx_t_27 = __Pyx_PyUnicode_Join(__pyx_t_12, 3, __pyx_t_25, __pyx_t_5); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 159, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_27);
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __pyx_t_12 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_27); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 156, __pyx_L1_error)
+        __pyx_t_12 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_27); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 159, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
         __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
 
-        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":157
- *                 print(f'\n{isotope} site {i} in isotopomer {index_isotopomer}\n----------------------------')
- *                 print(f'isotropic chemical shift = {iso_n[i]} Hz')
- *                 print(f'chemical shift anisotropy = {aniso_n[i]} Hz')             # <<<<<<<<<<<<<<
- *                 print(f'chemical shift asymmetry = {eta_n[i]}')
- *                 # print(f'percentage abundance = {abundance_array[i]} %')
- */
-        __pyx_t_12 = PyTuple_New(3); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 157, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_12);
-        __pyx_t_25 = 0;
-        __pyx_t_5 = 127;
-        __Pyx_INCREF(__pyx_kp_u_chemical_shift_anisotropy);
-        __pyx_t_25 += 28;
-        __Pyx_GIVEREF(__pyx_kp_u_chemical_shift_anisotropy);
-        PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_kp_u_chemical_shift_anisotropy);
-        __pyx_t_39 = __pyx_v_i;
-        __pyx_t_27 = PyFloat_FromDouble((*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_aniso_n.rcbuffer->pybuffer.buf, __pyx_t_39, __pyx_pybuffernd_aniso_n.diminfo[0].strides))); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 157, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_27);
-        __pyx_t_14 = __Pyx_PyObject_FormatSimple(__pyx_t_27, __pyx_empty_unicode); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 157, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_14);
-        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-        __pyx_t_5 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_14) > __pyx_t_5) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_14) : __pyx_t_5;
-        __pyx_t_25 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_14);
-        __Pyx_GIVEREF(__pyx_t_14);
-        PyTuple_SET_ITEM(__pyx_t_12, 1, __pyx_t_14);
-        __pyx_t_14 = 0;
-        __Pyx_INCREF(__pyx_kp_u_Hz);
-        __pyx_t_25 += 3;
-        __Pyx_GIVEREF(__pyx_kp_u_Hz);
-        PyTuple_SET_ITEM(__pyx_t_12, 2, __pyx_kp_u_Hz);
-        __pyx_t_14 = __Pyx_PyUnicode_Join(__pyx_t_12, 3, __pyx_t_25, __pyx_t_5); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 157, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_14);
-        __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __pyx_t_12 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_14); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 157, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_12);
-        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-
-        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":158
+        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":160
  *                 print(f'isotropic chemical shift = {iso_n[i]} Hz')
  *                 print(f'chemical shift anisotropy = {aniso_n[i]} Hz')
  *                 print(f'chemical shift asymmetry = {eta_n[i]}')             # <<<<<<<<<<<<<<
- *                 # print(f'percentage abundance = {abundance_array[i]} %')
  * 
+ *             # quad tensor
  */
         __pyx_t_40 = __pyx_v_i;
-        __pyx_t_12 = PyFloat_FromDouble((*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_eta_n.rcbuffer->pybuffer.buf, __pyx_t_40, __pyx_pybuffernd_eta_n.diminfo[0].strides))); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 158, __pyx_L1_error)
+        __pyx_t_12 = PyFloat_FromDouble((*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_eta_n.rcbuffer->pybuffer.buf, __pyx_t_40, __pyx_pybuffernd_eta_n.diminfo[0].strides))); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 160, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
-        __pyx_t_14 = __Pyx_PyObject_FormatSimple(__pyx_t_12, __pyx_empty_unicode); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 158, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_27 = __Pyx_PyObject_FormatSimple(__pyx_t_12, __pyx_empty_unicode); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 160, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_27);
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __pyx_t_12 = __Pyx_PyUnicode_Concat(__pyx_kp_u_chemical_shift_asymmetry, __pyx_t_14); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 158, __pyx_L1_error)
+        __pyx_t_12 = __Pyx_PyUnicode_Concat(__pyx_kp_u_chemical_shift_asymmetry, __pyx_t_27); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 160, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
-        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __pyx_t_14 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_12); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 158, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        __pyx_t_27 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_12); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 160, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_27);
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":154
+        /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":150
  *             eta_n[i] = site['shielding_symmetric']['asymmetry']
  * 
  *             if verbose:             # <<<<<<<<<<<<<<
- *                 print(f'\n{isotope} site {i} in isotopomer {index_isotopomer}\n----------------------------')
- *                 print(f'isotropic chemical shift = {iso_n[i]} Hz')
+ *                 text = ((
+ *                     f"\n{isotope} site {i} in isotopomer {index_isotopomer} "
  */
       }
     }
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":172
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":173
  * 
  * 
  *         for trans__ in range(number_of_transitions):             # <<<<<<<<<<<<<<
@@ -4130,7 +4229,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
     for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
       __pyx_v_trans__ = __pyx_t_10;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":178
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":179
  *             clib.spinning_sideband_core(
  *                     # spectrum information and related amplitude
  *                     &amp[0],             # <<<<<<<<<<<<<<
@@ -4139,7 +4238,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  */
       __pyx_t_41 = 0;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":188
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":189
  * 
  *                     # CSA tensor information
  *                     &iso_n[0],             # <<<<<<<<<<<<<<
@@ -4148,7 +4247,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  */
       __pyx_t_42 = 0;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":189
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":190
  *                     # CSA tensor information
  *                     &iso_n[0],
  *                     &aniso_n[0],             # <<<<<<<<<<<<<<
@@ -4157,7 +4256,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  */
       __pyx_t_43 = 0;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":190
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":191
  *                     &iso_n[0],
  *                     &aniso_n[0],
  *                     &eta_n[0],             # <<<<<<<<<<<<<<
@@ -4166,7 +4265,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  */
       __pyx_t_44 = 0;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":193
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":194
  * 
  *                     # quad tensor information
  *                     &Cq_e[0],             # <<<<<<<<<<<<<<
@@ -4175,7 +4274,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  */
       __pyx_t_45 = 0;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":194
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":195
  *                     # quad tensor information
  *                     &Cq_e[0],
  *                     &eta_e[0],             # <<<<<<<<<<<<<<
@@ -4184,7 +4283,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  */
       __pyx_t_46 = 0;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":198
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":199
  * 
  *                     # Dipolar couplings
  *                     &D_c[0],             # <<<<<<<<<<<<<<
@@ -4193,7 +4292,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  */
       __pyx_t_47 = 0;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":205
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":206
  *                     rotor_angle,
  * 
  *                     &transition_array[2*trans__],             # <<<<<<<<<<<<<<
@@ -4202,7 +4301,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  */
       __pyx_t_48 = (2 * __pyx_v_trans__);
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":213
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":214
  *                     # powder orientation averager
  *                     n_orientations,
  *                     &cosAlpha[0],             # <<<<<<<<<<<<<<
@@ -4211,7 +4310,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  */
       __pyx_t_49 = 0;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":214
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":215
  *                     n_orientations,
  *                     &cosAlpha[0],
  *                     &cosBeta[0],             # <<<<<<<<<<<<<<
@@ -4220,7 +4319,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  */
       __pyx_t_50 = 0;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":215
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":216
  *                     &cosAlpha[0],
  *                     &cosBeta[0],
  *                     &amp_orientation[0],             # <<<<<<<<<<<<<<
@@ -4229,7 +4328,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  */
       __pyx_t_51 = 0;
 
-      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":176
+      /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":177
  *             # m_initial = transition_array[i][0]
  *             # m_final   = transition_array[i][1]
  *             clib.spinning_sideband_core(             # <<<<<<<<<<<<<<
@@ -4239,18 +4338,18 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
       spinning_sideband_core((&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_amp.rcbuffer->pybuffer.buf, __pyx_t_41, __pyx_pybuffernd_amp.diminfo[0].strides))), (&__pyx_v_cpu_time_), __pyx_v_reference_offset, __pyx_v_increment, __pyx_v_number_of_points, __pyx_v_spin_quantum_number, __pyx_v_larmor_frequency, (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_iso_n.rcbuffer->pybuffer.buf, __pyx_t_42, __pyx_pybuffernd_iso_n.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_aniso_n.rcbuffer->pybuffer.buf, __pyx_t_43, __pyx_pybuffernd_aniso_n.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_eta_n.rcbuffer->pybuffer.buf, __pyx_t_44, __pyx_pybuffernd_eta_n.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_Cq_e.rcbuffer->pybuffer.buf, __pyx_t_45, __pyx_pybuffernd_Cq_e.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_eta_e.rcbuffer->pybuffer.buf, __pyx_t_46, __pyx_pybuffernd_eta_e.diminfo[0].strides))), 1, (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_D_c.rcbuffer->pybuffer.buf, __pyx_t_47, __pyx_pybuffernd_D_c.diminfo[0].strides))), __pyx_v_number_of_sidebands, __pyx_v_sample_rotation_frequency, __pyx_v_rotor_angle, (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_transition_array.rcbuffer->pybuffer.buf, __pyx_t_48, __pyx_pybuffernd_transition_array.diminfo[0].strides))), __pyx_v_n_orientations, (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_cosAlpha.rcbuffer->pybuffer.buf, __pyx_t_49, __pyx_pybuffernd_cosAlpha.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_cosBeta.rcbuffer->pybuffer.buf, __pyx_t_50, __pyx_pybuffernd_cosBeta.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_amp_orientation.rcbuffer->pybuffer.buf, __pyx_t_51, __pyx_pybuffernd_amp_orientation.diminfo[0].strides))), __pyx_v_geodesic_polyhedron_frequency, __pyx_v_number_of_sites);
     }
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":222
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":223
  * 
  * 
- *         amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)             # <<<<<<<<<<<<<<
+ *         amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance             # <<<<<<<<<<<<<<
  * 
  *     if verbose:
  */
-    __pyx_t_12 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_amp), __pyx_n_s_reshape); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 222, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_amp), __pyx_n_s_reshape); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 223, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
-    __pyx_t_27 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 222, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_27);
-    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_number_of_points); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 222, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_number_of_sites); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 223, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_14);
+    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_number_of_points); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 223, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __pyx_t_1 = NULL;
     __pyx_t_8 = 0;
@@ -4266,69 +4365,72 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
     }
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_12)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_1, __pyx_t_27, __pyx_t_6};
-      __pyx_t_14 = __Pyx_PyFunction_FastCall(__pyx_t_12, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 222, __pyx_L1_error)
+      PyObject *__pyx_temp[3] = {__pyx_t_1, __pyx_t_14, __pyx_t_6};
+      __pyx_t_27 = __Pyx_PyFunction_FastCall(__pyx_t_12, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 223, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_GOTREF(__pyx_t_14);
-      __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+      __Pyx_GOTREF(__pyx_t_27);
+      __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     } else
     #endif
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_12)) {
-      PyObject *__pyx_temp[3] = {__pyx_t_1, __pyx_t_27, __pyx_t_6};
-      __pyx_t_14 = __Pyx_PyCFunction_FastCall(__pyx_t_12, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 222, __pyx_L1_error)
+      PyObject *__pyx_temp[3] = {__pyx_t_1, __pyx_t_14, __pyx_t_6};
+      __pyx_t_27 = __Pyx_PyCFunction_FastCall(__pyx_t_12, __pyx_temp+1-__pyx_t_8, 2+__pyx_t_8); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 223, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_GOTREF(__pyx_t_14);
-      __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+      __Pyx_GOTREF(__pyx_t_27);
+      __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     } else
     #endif
     {
-      __pyx_t_52 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 222, __pyx_L1_error)
+      __pyx_t_52 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 223, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_52);
       if (__pyx_t_1) {
         __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_52, 0, __pyx_t_1); __pyx_t_1 = NULL;
       }
-      __Pyx_GIVEREF(__pyx_t_27);
-      PyTuple_SET_ITEM(__pyx_t_52, 0+__pyx_t_8, __pyx_t_27);
+      __Pyx_GIVEREF(__pyx_t_14);
+      PyTuple_SET_ITEM(__pyx_t_52, 0+__pyx_t_8, __pyx_t_14);
       __Pyx_GIVEREF(__pyx_t_6);
       PyTuple_SET_ITEM(__pyx_t_52, 1+__pyx_t_8, __pyx_t_6);
-      __pyx_t_27 = 0;
+      __pyx_t_14 = 0;
       __pyx_t_6 = 0;
-      __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_52, NULL); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 222, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_14);
+      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_52, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 223, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_27);
       __Pyx_DECREF(__pyx_t_52); __pyx_t_52 = 0;
     }
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-    __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_14, __pyx_n_s_sum); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 222, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_27, __pyx_n_s_sum); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 223, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
-    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-    __pyx_t_14 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 222, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_14);
-    if (PyDict_SetItem(__pyx_t_14, __pyx_n_s_axis, __pyx_int_0) < 0) __PYX_ERR(0, 222, __pyx_L1_error)
-    __pyx_t_52 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_empty_tuple, __pyx_t_14); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 222, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    __pyx_t_27 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 223, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_27);
+    if (PyDict_SetItem(__pyx_t_27, __pyx_n_s_axis, __pyx_int_0) < 0) __PYX_ERR(0, 223, __pyx_L1_error)
+    __pyx_t_52 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_empty_tuple, __pyx_t_27); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 223, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_52);
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-    __pyx_t_14 = PyNumber_InPlaceAdd(__pyx_v_amp1, __pyx_t_52); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 222, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    __pyx_t_27 = PyNumber_Multiply(__pyx_t_52, __pyx_v_abundance); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 223, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_27);
     __Pyx_DECREF(__pyx_t_52); __pyx_t_52 = 0;
-    __Pyx_DECREF_SET(__pyx_v_amp1, __pyx_t_14);
-    __pyx_t_14 = 0;
+    __pyx_t_52 = PyNumber_InPlaceAdd(__pyx_v_amp1, __pyx_t_27); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 223, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_52);
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    __Pyx_DECREF_SET(__pyx_v_amp1, __pyx_t_52);
+    __pyx_t_52 = 0;
 
     /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":120
  *     # ---------------------------------------------------------------------
  *     # sample _______________________________________________________________
- *     for index_isotopomer, isotopmer in enumerate(isotopomers):             # <<<<<<<<<<<<<<
- *         sub_sites = [site for site in isotopmer['sites'] if site['isotope_symbol'] == isotope]
- * 
+ *     for index_isotopomer, isotopomer in enumerate(isotopomers):             # <<<<<<<<<<<<<<
+ *         abundance = isotopomer['abundance']
+ *         sub_sites = [site for site in isotopomer['sites'] if site['isotope_symbol'] == isotope]
  */
   }
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":224
- *         amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":225
+ *         amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
  * 
  *     if verbose:             # <<<<<<<<<<<<<<
  *         print(f'\nExecution time {cpu_time_} s')
@@ -4337,14 +4439,14 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
   __pyx_t_3 = (__pyx_v_verbose != 0);
   if (__pyx_t_3) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":225
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":226
  * 
  *     if verbose:
  *         print(f'\nExecution time {cpu_time_} s')             # <<<<<<<<<<<<<<
  *     freq = np.arange(number_of_points)*increment + reference_offset
  *     return freq, amp1
  */
-    __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 225, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 226, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __pyx_t_4 = 0;
     __pyx_t_5 = 127;
@@ -4352,30 +4454,30 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
     __pyx_t_4 += 16;
     __Pyx_GIVEREF(__pyx_kp_u_Execution_time);
     PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_kp_u_Execution_time);
-    __pyx_t_14 = PyFloat_FromDouble(__pyx_v_cpu_time_); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 225, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_14);
-    __pyx_t_52 = __Pyx_PyObject_FormatSimple(__pyx_t_14, __pyx_empty_unicode); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 225, __pyx_L1_error)
+    __pyx_t_52 = PyFloat_FromDouble(__pyx_v_cpu_time_); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 226, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_52);
-    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-    __pyx_t_5 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_52) > __pyx_t_5) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_52) : __pyx_t_5;
-    __pyx_t_4 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_52);
-    __Pyx_GIVEREF(__pyx_t_52);
-    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_52);
-    __pyx_t_52 = 0;
+    __pyx_t_27 = __Pyx_PyObject_FormatSimple(__pyx_t_52, __pyx_empty_unicode); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 226, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_DECREF(__pyx_t_52); __pyx_t_52 = 0;
+    __pyx_t_5 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_27) > __pyx_t_5) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_27) : __pyx_t_5;
+    __pyx_t_4 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_27);
+    __Pyx_GIVEREF(__pyx_t_27);
+    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_27);
+    __pyx_t_27 = 0;
     __Pyx_INCREF(__pyx_kp_u_s);
     __pyx_t_4 += 2;
     __Pyx_GIVEREF(__pyx_kp_u_s);
     PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_kp_u_s);
-    __pyx_t_52 = __Pyx_PyUnicode_Join(__pyx_t_7, 3, __pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 225, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_52);
+    __pyx_t_27 = __Pyx_PyUnicode_Join(__pyx_t_7, 3, __pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 226, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_27);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_52); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 225, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_27); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 226, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_DECREF(__pyx_t_52); __pyx_t_52 = 0;
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":224
- *         amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":225
+ *         amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
  * 
  *     if verbose:             # <<<<<<<<<<<<<<
  *         print(f'\nExecution time {cpu_time_} s')
@@ -4383,52 +4485,52 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  */
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":226
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":227
  *     if verbose:
  *         print(f'\nExecution time {cpu_time_} s')
  *     freq = np.arange(number_of_points)*increment + reference_offset             # <<<<<<<<<<<<<<
  *     return freq, amp1
  * 
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_52, __pyx_n_s_np); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 226, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_27, __pyx_n_s_np); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 227, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_27);
+  __pyx_t_52 = __Pyx_PyObject_GetAttrStr(__pyx_t_27, __pyx_n_s_arange); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 227, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_52);
-  __pyx_t_14 = __Pyx_PyObject_GetAttrStr(__pyx_t_52, __pyx_n_s_arange); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 226, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_14);
-  __Pyx_DECREF(__pyx_t_52); __pyx_t_52 = 0;
-  __pyx_t_52 = __Pyx_PyInt_From_int(__pyx_v_number_of_points); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 226, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_52);
+  __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+  __pyx_t_27 = __Pyx_PyInt_From_int(__pyx_v_number_of_points); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 227, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_27);
   __pyx_t_12 = NULL;
-  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_14))) {
-    __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_14);
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_52))) {
+    __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_52);
     if (likely(__pyx_t_12)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_14);
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_52);
       __Pyx_INCREF(__pyx_t_12);
       __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_14, function);
+      __Pyx_DECREF_SET(__pyx_t_52, function);
     }
   }
-  __pyx_t_7 = (__pyx_t_12) ? __Pyx_PyObject_Call2Args(__pyx_t_14, __pyx_t_12, __pyx_t_52) : __Pyx_PyObject_CallOneArg(__pyx_t_14, __pyx_t_52);
+  __pyx_t_7 = (__pyx_t_12) ? __Pyx_PyObject_Call2Args(__pyx_t_52, __pyx_t_12, __pyx_t_27) : __Pyx_PyObject_CallOneArg(__pyx_t_52, __pyx_t_27);
   __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-  __Pyx_DECREF(__pyx_t_52); __pyx_t_52 = 0;
-  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 226, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+  if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 227, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-  __pyx_t_14 = PyFloat_FromDouble(__pyx_v_increment); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 226, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_14);
-  __pyx_t_52 = PyNumber_Multiply(__pyx_t_7, __pyx_t_14); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 226, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_52); __pyx_t_52 = 0;
+  __pyx_t_52 = PyFloat_FromDouble(__pyx_v_increment); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 227, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_52);
+  __pyx_t_27 = PyNumber_Multiply(__pyx_t_7, __pyx_t_52); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 227, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_27);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-  __pyx_t_14 = PyFloat_FromDouble(__pyx_v_reference_offset); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 226, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_14);
-  __pyx_t_7 = PyNumber_Add(__pyx_t_52, __pyx_t_14); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 226, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_52); __pyx_t_52 = 0;
-  __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+  __pyx_t_52 = PyFloat_FromDouble(__pyx_v_reference_offset); if (unlikely(!__pyx_t_52)) __PYX_ERR(0, 227, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_52);
+  __pyx_t_7 = PyNumber_Add(__pyx_t_27, __pyx_t_52); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 227, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+  __Pyx_DECREF(__pyx_t_52); __pyx_t_52 = 0;
   __pyx_v_freq = __pyx_t_7;
   __pyx_t_7 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":227
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":228
  *         print(f'\nExecution time {cpu_time_} s')
  *     freq = np.arange(number_of_points)*increment + reference_offset
  *     return freq, amp1             # <<<<<<<<<<<<<<
@@ -4436,7 +4538,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 227, __pyx_L1_error)
+  __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 228, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_INCREF(__pyx_v_freq);
   __Pyx_GIVEREF(__pyx_v_freq);
@@ -4515,9 +4617,12 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
   __Pyx_XDECREF((PyObject *)__pyx_v_cosAlpha);
   __Pyx_XDECREF((PyObject *)__pyx_v_cosBeta);
   __Pyx_XDECREF((PyObject *)__pyx_v_amp_orientation);
-  __Pyx_XDECREF(__pyx_v_isotopmer);
+  __Pyx_XDECREF(__pyx_v_isotopomer);
+  __Pyx_XDECREF(__pyx_v_abundance);
   __Pyx_XDECREF(__pyx_v_sub_sites);
   __Pyx_XDECREF(__pyx_v_site);
+  __Pyx_XDECREF(__pyx_v_text);
+  __Pyx_XDECREF(__pyx_v_len_);
   __Pyx_XDECREF(__pyx_v_freq);
   __Pyx_XDECREF(__pyx_8genexpr1__pyx_v_site);
   __Pyx_XGIVEREF(__pyx_r);
@@ -4525,7 +4630,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
   return __pyx_r;
 }
 
-/* "mrsimulator/scr/mrmethods/nmr_methods.pyx":234
+/* "mrsimulator/scr/mrmethods/nmr_methods.pyx":235
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * def _one_d_simulator(             # <<<<<<<<<<<<<<
@@ -4563,7 +4668,7 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_reference_offset,&__pyx_n_s_increment,&__pyx_n_s_number_of_points,&__pyx_n_s_quantum_number,&__pyx_n_s_larmor_frequency,&__pyx_n_s_isotropic_chemical_shift,&__pyx_n_s_chemical_shift_anisotropy_2,&__pyx_n_s_chemical_shift_asymmetry_2,&__pyx_n_s_quadrupolar_coupling_constant,&__pyx_n_s_quadrupolar_asymmetry,&__pyx_n_s_second_order_quad,&__pyx_n_s_D,&__pyx_n_s_number_of_sidebands,&__pyx_n_s_sample_rotation_frequency,&__pyx_n_s_rotor_angle,&__pyx_n_s_m_final,&__pyx_n_s_m_initial,&__pyx_n_s_averaging_scheme,&__pyx_n_s_averaging_size,0};
     PyObject* values[19] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":244
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":245
  * 
  *         # CSA tensor information
  *         isotropic_chemical_shift = None,             # <<<<<<<<<<<<<<
@@ -4572,7 +4677,7 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
  */
     values[5] = ((PyObject *)Py_None);
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":245
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":246
  *         # CSA tensor information
  *         isotropic_chemical_shift = None,
  *         chemical_shift_anisotropy = None,             # <<<<<<<<<<<<<<
@@ -4581,7 +4686,7 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
  */
     values[6] = ((PyObject *)Py_None);
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":246
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":247
  *         isotropic_chemical_shift = None,
  *         chemical_shift_anisotropy = None,
  *         chemical_shift_asymmetry = None,             # <<<<<<<<<<<<<<
@@ -4590,7 +4695,7 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
  */
     values[7] = ((PyObject *)Py_None);
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":249
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":250
  * 
  *         # quad tensor information
  *         quadrupolar_coupling_constant = None,             # <<<<<<<<<<<<<<
@@ -4599,7 +4704,7 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
  */
     values[8] = ((PyObject *)Py_None);
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":250
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":251
  *         # quad tensor information
  *         quadrupolar_coupling_constant = None,
  *         quadrupolar_asymmetry = None,             # <<<<<<<<<<<<<<
@@ -4609,7 +4714,7 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
     values[9] = ((PyObject *)Py_None);
     values[10] = ((PyObject *)__pyx_int_1);
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":254
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":255
  * 
  *         # dipolar coupling
  *         D = None,             # <<<<<<<<<<<<<<
@@ -4618,7 +4723,7 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
  */
     values[11] = ((PyObject *)Py_None);
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":259
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":260
  *         int number_of_sidebands = 96,
  *         double sample_rotation_frequency = 0.0,
  *         rotor_angle = None,             # <<<<<<<<<<<<<<
@@ -4682,13 +4787,13 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_increment)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_one_d_simulator", 0, 3, 19, 1); __PYX_ERR(0, 234, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_one_d_simulator", 0, 3, 19, 1); __PYX_ERR(0, 235, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_number_of_points)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_one_d_simulator", 0, 3, 19, 2); __PYX_ERR(0, 234, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_one_d_simulator", 0, 3, 19, 2); __PYX_ERR(0, 235, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
@@ -4788,7 +4893,7 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_one_d_simulator") < 0)) __PYX_ERR(0, 234, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_one_d_simulator") < 0)) __PYX_ERR(0, 235, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -4831,16 +4936,16 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
         default: goto __pyx_L5_argtuple_error;
       }
     }
-    __pyx_v_reference_offset = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_reference_offset == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 236, __pyx_L3_error)
-    __pyx_v_increment = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_increment == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 237, __pyx_L3_error)
-    __pyx_v_number_of_points = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_number_of_points == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 238, __pyx_L3_error)
+    __pyx_v_reference_offset = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_reference_offset == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 237, __pyx_L3_error)
+    __pyx_v_increment = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_increment == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 238, __pyx_L3_error)
+    __pyx_v_number_of_points = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_number_of_points == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 239, __pyx_L3_error)
     if (values[3]) {
-      __pyx_v_quantum_number = __pyx_PyFloat_AsFloat(values[3]); if (unlikely((__pyx_v_quantum_number == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 240, __pyx_L3_error)
+      __pyx_v_quantum_number = __pyx_PyFloat_AsFloat(values[3]); if (unlikely((__pyx_v_quantum_number == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 241, __pyx_L3_error)
     } else {
       __pyx_v_quantum_number = ((float)0.5);
     }
     if (values[4]) {
-      __pyx_v_larmor_frequency = __pyx_PyFloat_AsFloat(values[4]); if (unlikely((__pyx_v_larmor_frequency == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 241, __pyx_L3_error)
+      __pyx_v_larmor_frequency = __pyx_PyFloat_AsFloat(values[4]); if (unlikely((__pyx_v_larmor_frequency == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 242, __pyx_L3_error)
     } else {
       __pyx_v_larmor_frequency = ((float)0.0);
     }
@@ -4852,12 +4957,12 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
     __pyx_v_second_order_quad = values[10];
     __pyx_v_D = values[11];
     if (values[12]) {
-      __pyx_v_number_of_sidebands = __Pyx_PyInt_As_int(values[12]); if (unlikely((__pyx_v_number_of_sidebands == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 257, __pyx_L3_error)
+      __pyx_v_number_of_sidebands = __Pyx_PyInt_As_int(values[12]); if (unlikely((__pyx_v_number_of_sidebands == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 258, __pyx_L3_error)
     } else {
       __pyx_v_number_of_sidebands = ((int)96);
     }
     if (values[13]) {
-      __pyx_v_sample_rotation_frequency = __pyx_PyFloat_AsDouble(values[13]); if (unlikely((__pyx_v_sample_rotation_frequency == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 258, __pyx_L3_error)
+      __pyx_v_sample_rotation_frequency = __pyx_PyFloat_AsDouble(values[13]); if (unlikely((__pyx_v_sample_rotation_frequency == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 259, __pyx_L3_error)
     } else {
       __pyx_v_sample_rotation_frequency = ((double)0.0);
     }
@@ -4865,19 +4970,19 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
     __pyx_v_m_final = values[15];
     __pyx_v_m_initial = values[16];
     if (values[17]) {
-      __pyx_v_averaging_scheme = __Pyx_PyInt_As_int(values[17]); if (unlikely((__pyx_v_averaging_scheme == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 268, __pyx_L3_error)
+      __pyx_v_averaging_scheme = __Pyx_PyInt_As_int(values[17]); if (unlikely((__pyx_v_averaging_scheme == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 269, __pyx_L3_error)
     } else {
       __pyx_v_averaging_scheme = ((int)0);
     }
     if (values[18]) {
-      __pyx_v_averaging_size = __Pyx_PyInt_As_int(values[18]); if (unlikely((__pyx_v_averaging_size == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 269, __pyx_L3_error)
+      __pyx_v_averaging_size = __Pyx_PyInt_As_int(values[18]); if (unlikely((__pyx_v_averaging_size == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 270, __pyx_L3_error)
     } else {
       __pyx_v_averaging_size = ((int)64);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_one_d_simulator", 0, 3, 19, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 234, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_one_d_simulator", 0, 3, 19, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 235, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("mrsimulator.methods._one_d_simulator", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4885,7 +4990,7 @@ static PyObject *__pyx_pw_11mrsimulator_7methods_3_one_d_simulator(PyObject *__p
   __pyx_L4_argument_unpacking_done:;
   __pyx_r = __pyx_pf_11mrsimulator_7methods_2_one_d_simulator(__pyx_self, __pyx_v_reference_offset, __pyx_v_increment, __pyx_v_number_of_points, __pyx_v_quantum_number, __pyx_v_larmor_frequency, __pyx_v_isotropic_chemical_shift, __pyx_v_chemical_shift_anisotropy, __pyx_v_chemical_shift_asymmetry, __pyx_v_quadrupolar_coupling_constant, __pyx_v_quadrupolar_asymmetry, __pyx_v_second_order_quad, __pyx_v_D, __pyx_v_number_of_sidebands, __pyx_v_sample_rotation_frequency, __pyx_v_rotor_angle, __pyx_v_m_final, __pyx_v_m_initial, __pyx_v_averaging_scheme, __pyx_v_averaging_size);
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":234
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":235
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * def _one_d_simulator(             # <<<<<<<<<<<<<<
@@ -5023,7 +5128,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_pybuffernd_amp_orientation.data = NULL;
   __pyx_pybuffernd_amp_orientation.rcbuffer = &__pyx_pybuffer_amp_orientation;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":272
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":273
  * 
  * 
  *     if isotropic_chemical_shift is None:             # <<<<<<<<<<<<<<
@@ -5034,7 +5139,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":273
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":274
  * 
  *     if isotropic_chemical_shift is None:
  *         isotropic_chemical_shift = 0             # <<<<<<<<<<<<<<
@@ -5044,7 +5149,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     __Pyx_INCREF(__pyx_int_0);
     __Pyx_DECREF_SET(__pyx_v_isotropic_chemical_shift, __pyx_int_0);
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":272
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":273
  * 
  * 
  *     if isotropic_chemical_shift is None:             # <<<<<<<<<<<<<<
@@ -5053,43 +5158,43 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":274
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":275
  *     if isotropic_chemical_shift is None:
  *         isotropic_chemical_shift = 0
  *     isotropic_chemical_shift = np.asarray([isotropic_chemical_shift], dtype=np.float64).ravel()             # <<<<<<<<<<<<<<
  *     cdef number_of_sites = isotropic_chemical_shift.size
  *     cdef np.ndarray[double, ndim=1] isotropic_chemical_shift_c = isotropic_chemical_shift
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 274, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_asarray); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 274, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_asarray); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 274, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_INCREF(__pyx_v_isotropic_chemical_shift);
   __Pyx_GIVEREF(__pyx_v_isotropic_chemical_shift);
   PyList_SET_ITEM(__pyx_t_4, 0, __pyx_v_isotropic_chemical_shift);
-  __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 274, __pyx_L1_error)
+  __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_GIVEREF(__pyx_t_4);
   PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4);
   __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 274, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 274, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_float64); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 274, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_float64); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_8) < 0) __PYX_ERR(0, 274, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_8) < 0) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_6, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 274, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_6, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_ravel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 274, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_ravel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __pyx_t_8 = NULL;
@@ -5104,46 +5209,46 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   }
   __pyx_t_3 = (__pyx_t_8) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_8) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 274, __pyx_L1_error)
+  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 275, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF_SET(__pyx_v_isotropic_chemical_shift, __pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":275
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":276
  *         isotropic_chemical_shift = 0
  *     isotropic_chemical_shift = np.asarray([isotropic_chemical_shift], dtype=np.float64).ravel()
  *     cdef number_of_sites = isotropic_chemical_shift.size             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] isotropic_chemical_shift_c = isotropic_chemical_shift
  * 
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_isotropic_chemical_shift, __pyx_n_s_size); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 275, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_isotropic_chemical_shift, __pyx_n_s_size); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 276, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_v_number_of_sites = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":276
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":277
  *     isotropic_chemical_shift = np.asarray([isotropic_chemical_shift], dtype=np.float64).ravel()
  *     cdef number_of_sites = isotropic_chemical_shift.size
  *     cdef np.ndarray[double, ndim=1] isotropic_chemical_shift_c = isotropic_chemical_shift             # <<<<<<<<<<<<<<
  * 
  *     if quantum_number > 0.5 and larmor_frequency == 0.0:
  */
-  if (!(likely(((__pyx_v_isotropic_chemical_shift) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_isotropic_chemical_shift, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 276, __pyx_L1_error)
+  if (!(likely(((__pyx_v_isotropic_chemical_shift) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_isotropic_chemical_shift, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 277, __pyx_L1_error)
   __pyx_t_3 = __pyx_v_isotropic_chemical_shift;
   __Pyx_INCREF(__pyx_t_3);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_isotropic_chemical_shift_c.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_3), &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_isotropic_chemical_shift_c = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_isotropic_chemical_shift_c.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 276, __pyx_L1_error)
+      __PYX_ERR(0, 277, __pyx_L1_error)
     } else {__pyx_pybuffernd_isotropic_chemical_shift_c.diminfo[0].strides = __pyx_pybuffernd_isotropic_chemical_shift_c.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_isotropic_chemical_shift_c.diminfo[0].shape = __pyx_pybuffernd_isotropic_chemical_shift_c.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_isotropic_chemical_shift_c = ((PyArrayObject *)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":278
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":279
  *     cdef np.ndarray[double, ndim=1] isotropic_chemical_shift_c = isotropic_chemical_shift
  * 
  *     if quantum_number > 0.5 and larmor_frequency == 0.0:             # <<<<<<<<<<<<<<
@@ -5161,20 +5266,20 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_L5_bool_binop_done:;
   if (unlikely(__pyx_t_2)) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":279
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":280
  * 
  *     if quantum_number > 0.5 and larmor_frequency == 0.0:
  *         raise Exception("'larmor_frequency' is required for quandrupolar spins.")             # <<<<<<<<<<<<<<
  * 
  *     # Shielding anisotropic values
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 279, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 280, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __PYX_ERR(0, 279, __pyx_L1_error)
+    __PYX_ERR(0, 280, __pyx_L1_error)
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":278
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":279
  *     cdef np.ndarray[double, ndim=1] isotropic_chemical_shift_c = isotropic_chemical_shift
  * 
  *     if quantum_number > 0.5 and larmor_frequency == 0.0:             # <<<<<<<<<<<<<<
@@ -5183,7 +5288,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":282
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":283
  * 
  *     # Shielding anisotropic values
  *     if chemical_shift_anisotropy is None:             # <<<<<<<<<<<<<<
@@ -5194,38 +5299,38 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_t_1 = (__pyx_t_2 != 0);
   if (__pyx_t_1) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":283
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":284
  *     # Shielding anisotropic values
  *     if chemical_shift_anisotropy is None:
  *         chemical_shift_anisotropy = np.ones(number_of_sites, dtype=np.float64).ravel() #*1e-4*increment             # <<<<<<<<<<<<<<
  *     else:
  *         chemical_shift_anisotropy = np.asarray([chemical_shift_anisotropy], dtype=np.float64).ravel()
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 283, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_ones); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 283, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_ones); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 283, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_v_number_of_sites);
     __Pyx_GIVEREF(__pyx_v_number_of_sites);
     PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_number_of_sites);
-    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 283, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 283, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_float64); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 283, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_float64); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_7) < 0) __PYX_ERR(0, 283, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_7) < 0) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 283, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_ravel); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 283, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_ravel); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __pyx_t_7 = NULL;
@@ -5240,13 +5345,13 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     }
     __pyx_t_3 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_6);
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 283, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 284, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF_SET(__pyx_v_chemical_shift_anisotropy, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":282
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":283
  * 
  *     # Shielding anisotropic values
  *     if chemical_shift_anisotropy is None:             # <<<<<<<<<<<<<<
@@ -5256,7 +5361,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     goto __pyx_L7;
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":285
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":286
  *         chemical_shift_anisotropy = np.ones(number_of_sites, dtype=np.float64).ravel() #*1e-4*increment
  *     else:
  *         chemical_shift_anisotropy = np.asarray([chemical_shift_anisotropy], dtype=np.float64).ravel()             # <<<<<<<<<<<<<<
@@ -5264,36 +5369,36 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  *     if chemical_shift_anisotropy.size != number_of_sites:
  */
   /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 285, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 286, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_asarray); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 285, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_asarray); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 286, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 285, __pyx_L1_error)
+    __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 286, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_INCREF(__pyx_v_chemical_shift_anisotropy);
     __Pyx_GIVEREF(__pyx_v_chemical_shift_anisotropy);
     PyList_SET_ITEM(__pyx_t_6, 0, __pyx_v_chemical_shift_anisotropy);
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 285, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 286, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_6);
     PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_6);
     __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 285, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 286, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 285, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 286, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_float64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 285, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_float64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 286, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 285, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 286, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 285, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 286, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_ravel); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 285, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_ravel); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 286, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_t_5 = NULL;
@@ -5308,7 +5413,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     }
     __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_6);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 285, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 286, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF_SET(__pyx_v_chemical_shift_anisotropy, __pyx_t_3);
@@ -5316,35 +5421,35 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   }
   __pyx_L7:;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":287
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":288
  *         chemical_shift_anisotropy = np.asarray([chemical_shift_anisotropy], dtype=np.float64).ravel()
  *         # chemical_shift_anisotropy[np.where(chemical_shift_anisotropy==0.)] = 1e-4*increment
  *     if chemical_shift_anisotropy.size != number_of_sites:             # <<<<<<<<<<<<<<
  *         raise Exception("Number of shielding anisotropies are not consistent with the number of spins.")
  *     cdef np.ndarray[double, ndim=1] chemical_shift_anisotropy_c = chemical_shift_anisotropy
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_chemical_shift_anisotropy, __pyx_n_s_size); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 287, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_chemical_shift_anisotropy, __pyx_n_s_size); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 288, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_6 = PyObject_RichCompare(__pyx_t_3, __pyx_v_number_of_sites, Py_NE); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 287, __pyx_L1_error)
+  __pyx_t_6 = PyObject_RichCompare(__pyx_t_3, __pyx_v_number_of_sites, Py_NE); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 288, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 287, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 288, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   if (unlikely(__pyx_t_1)) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":288
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":289
  *         # chemical_shift_anisotropy[np.where(chemical_shift_anisotropy==0.)] = 1e-4*increment
  *     if chemical_shift_anisotropy.size != number_of_sites:
  *         raise Exception("Number of shielding anisotropies are not consistent with the number of spins.")             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] chemical_shift_anisotropy_c = chemical_shift_anisotropy
  * 
  */
-    __pyx_t_6 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 288, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 289, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_Raise(__pyx_t_6, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __PYX_ERR(0, 288, __pyx_L1_error)
+    __PYX_ERR(0, 289, __pyx_L1_error)
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":287
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":288
  *         chemical_shift_anisotropy = np.asarray([chemical_shift_anisotropy], dtype=np.float64).ravel()
  *         # chemical_shift_anisotropy[np.where(chemical_shift_anisotropy==0.)] = 1e-4*increment
  *     if chemical_shift_anisotropy.size != number_of_sites:             # <<<<<<<<<<<<<<
@@ -5353,28 +5458,28 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":289
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":290
  *     if chemical_shift_anisotropy.size != number_of_sites:
  *         raise Exception("Number of shielding anisotropies are not consistent with the number of spins.")
  *     cdef np.ndarray[double, ndim=1] chemical_shift_anisotropy_c = chemical_shift_anisotropy             # <<<<<<<<<<<<<<
  * 
  *     # Shielding asymmetry values
  */
-  if (!(likely(((__pyx_v_chemical_shift_anisotropy) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_chemical_shift_anisotropy, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 289, __pyx_L1_error)
+  if (!(likely(((__pyx_v_chemical_shift_anisotropy) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_chemical_shift_anisotropy, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 290, __pyx_L1_error)
   __pyx_t_6 = __pyx_v_chemical_shift_anisotropy;
   __Pyx_INCREF(__pyx_t_6);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_chemical_shift_anisotropy_c.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_6), &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_chemical_shift_anisotropy_c = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_chemical_shift_anisotropy_c.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 289, __pyx_L1_error)
+      __PYX_ERR(0, 290, __pyx_L1_error)
     } else {__pyx_pybuffernd_chemical_shift_anisotropy_c.diminfo[0].strides = __pyx_pybuffernd_chemical_shift_anisotropy_c.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_chemical_shift_anisotropy_c.diminfo[0].shape = __pyx_pybuffernd_chemical_shift_anisotropy_c.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_chemical_shift_anisotropy_c = ((PyArrayObject *)__pyx_t_6);
   __pyx_t_6 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":292
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":293
  * 
  *     # Shielding asymmetry values
  *     if chemical_shift_asymmetry is None:             # <<<<<<<<<<<<<<
@@ -5385,38 +5490,38 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":293
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":294
  *     # Shielding asymmetry values
  *     if chemical_shift_asymmetry is None:
  *         chemical_shift_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()             # <<<<<<<<<<<<<<
  *     else:
  *         chemical_shift_asymmetry = np.asarray([chemical_shift_asymmetry], dtype=np.float64).ravel()
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 293, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 294, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_zeros); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 293, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_zeros); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 294, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 293, __pyx_L1_error)
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 294, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_v_number_of_sites);
     __Pyx_GIVEREF(__pyx_v_number_of_sites);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_number_of_sites);
-    __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 293, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 294, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 293, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 294, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_float64); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 293, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_float64); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 294, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_8) < 0) __PYX_ERR(0, 293, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_8) < 0) __PYX_ERR(0, 294, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 293, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 294, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_ravel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 293, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_ravel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 294, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __pyx_t_8 = NULL;
@@ -5431,13 +5536,13 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     }
     __pyx_t_6 = (__pyx_t_8) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_8) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 293, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 294, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF_SET(__pyx_v_chemical_shift_asymmetry, __pyx_t_6);
     __pyx_t_6 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":292
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":293
  * 
  *     # Shielding asymmetry values
  *     if chemical_shift_asymmetry is None:             # <<<<<<<<<<<<<<
@@ -5447,7 +5552,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     goto __pyx_L9;
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":295
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":296
  *         chemical_shift_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()
  *     else:
  *         chemical_shift_asymmetry = np.asarray([chemical_shift_asymmetry], dtype=np.float64).ravel()             # <<<<<<<<<<<<<<
@@ -5455,36 +5560,36 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  *         raise Exception("Number of shielding asymmetry are not consistent with the number of spins.")
  */
   /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 295, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 296, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_asarray); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 295, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_asarray); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 296, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 295, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 296, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_v_chemical_shift_asymmetry);
     __Pyx_GIVEREF(__pyx_v_chemical_shift_asymmetry);
     PyList_SET_ITEM(__pyx_t_4, 0, __pyx_v_chemical_shift_asymmetry);
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 295, __pyx_L1_error)
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 296, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_4);
     __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 295, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 296, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 295, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 296, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_float64); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 295, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_float64); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 296, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_7) < 0) __PYX_ERR(0, 295, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_7) < 0) __PYX_ERR(0, 296, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 295, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 296, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_ravel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 295, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_ravel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 296, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __pyx_t_7 = NULL;
@@ -5499,7 +5604,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     }
     __pyx_t_6 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 295, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 296, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF_SET(__pyx_v_chemical_shift_asymmetry, __pyx_t_6);
@@ -5507,35 +5612,35 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   }
   __pyx_L9:;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":296
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":297
  *     else:
  *         chemical_shift_asymmetry = np.asarray([chemical_shift_asymmetry], dtype=np.float64).ravel()
  *     if chemical_shift_asymmetry.size != number_of_sites:             # <<<<<<<<<<<<<<
  *         raise Exception("Number of shielding asymmetry are not consistent with the number of spins.")
  *     cdef np.ndarray[double, ndim=1] chemical_shift_asymmetry_c = chemical_shift_asymmetry
  */
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_chemical_shift_asymmetry, __pyx_n_s_size); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 296, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_chemical_shift_asymmetry, __pyx_n_s_size); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_4 = PyObject_RichCompare(__pyx_t_6, __pyx_v_number_of_sites, Py_NE); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 296, __pyx_L1_error)
+  __pyx_t_4 = PyObject_RichCompare(__pyx_t_6, __pyx_v_number_of_sites, Py_NE); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 296, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   if (unlikely(__pyx_t_2)) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":297
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":298
  *         chemical_shift_asymmetry = np.asarray([chemical_shift_asymmetry], dtype=np.float64).ravel()
  *     if chemical_shift_asymmetry.size != number_of_sites:
  *         raise Exception("Number of shielding asymmetry are not consistent with the number of spins.")             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] chemical_shift_asymmetry_c = chemical_shift_asymmetry
  * 
  */
-    __pyx_t_4 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 297, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 298, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_Raise(__pyx_t_4, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __PYX_ERR(0, 297, __pyx_L1_error)
+    __PYX_ERR(0, 298, __pyx_L1_error)
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":296
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":297
  *     else:
  *         chemical_shift_asymmetry = np.asarray([chemical_shift_asymmetry], dtype=np.float64).ravel()
  *     if chemical_shift_asymmetry.size != number_of_sites:             # <<<<<<<<<<<<<<
@@ -5544,28 +5649,28 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":298
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":299
  *     if chemical_shift_asymmetry.size != number_of_sites:
  *         raise Exception("Number of shielding asymmetry are not consistent with the number of spins.")
  *     cdef np.ndarray[double, ndim=1] chemical_shift_asymmetry_c = chemical_shift_asymmetry             # <<<<<<<<<<<<<<
  * 
  *     # Quad coupling constant
  */
-  if (!(likely(((__pyx_v_chemical_shift_asymmetry) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_chemical_shift_asymmetry, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 298, __pyx_L1_error)
+  if (!(likely(((__pyx_v_chemical_shift_asymmetry) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_chemical_shift_asymmetry, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 299, __pyx_L1_error)
   __pyx_t_4 = __pyx_v_chemical_shift_asymmetry;
   __Pyx_INCREF(__pyx_t_4);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_chemical_shift_asymmetry_c.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_4), &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_chemical_shift_asymmetry_c = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_chemical_shift_asymmetry_c.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 298, __pyx_L1_error)
+      __PYX_ERR(0, 299, __pyx_L1_error)
     } else {__pyx_pybuffernd_chemical_shift_asymmetry_c.diminfo[0].strides = __pyx_pybuffernd_chemical_shift_asymmetry_c.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_chemical_shift_asymmetry_c.diminfo[0].shape = __pyx_pybuffernd_chemical_shift_asymmetry_c.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_chemical_shift_asymmetry_c = ((PyArrayObject *)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":301
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":302
  * 
  *     # Quad coupling constant
  *     if quadrupolar_coupling_constant is None:             # <<<<<<<<<<<<<<
@@ -5576,38 +5681,38 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_t_1 = (__pyx_t_2 != 0);
   if (__pyx_t_1) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":302
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":303
  *     # Quad coupling constant
  *     if quadrupolar_coupling_constant is None:
  *         quadrupolar_coupling_constant = np.zeros(number_of_sites, dtype=np.float64).ravel()             # <<<<<<<<<<<<<<
  *     else:
  *         quadrupolar_coupling_constant = np.asarray([quadrupolar_coupling_constant], dtype=np.float64).ravel()
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 303, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_zeros); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_zeros); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 303, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 303, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_INCREF(__pyx_v_number_of_sites);
     __Pyx_GIVEREF(__pyx_v_number_of_sites);
     PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_v_number_of_sites);
-    __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 303, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 303, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_float64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_float64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 303, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 302, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 303, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_6, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_6, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 303, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_ravel); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 302, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_ravel); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 303, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_t_5 = NULL;
@@ -5622,13 +5727,13 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     }
     __pyx_t_4 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 302, __pyx_L1_error)
+    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 303, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF_SET(__pyx_v_quadrupolar_coupling_constant, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":301
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":302
  * 
  *     # Quad coupling constant
  *     if quadrupolar_coupling_constant is None:             # <<<<<<<<<<<<<<
@@ -5638,7 +5743,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     goto __pyx_L11;
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":304
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":305
  *         quadrupolar_coupling_constant = np.zeros(number_of_sites, dtype=np.float64).ravel()
  *     else:
  *         quadrupolar_coupling_constant = np.asarray([quadrupolar_coupling_constant], dtype=np.float64).ravel()             # <<<<<<<<<<<<<<
@@ -5646,36 +5751,36 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  *         raise Exception("Number of quad coupling constants are not consistent with the number of spins.")
  */
   /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 305, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_asarray); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_asarray); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 305, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 305, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_v_quadrupolar_coupling_constant);
     __Pyx_GIVEREF(__pyx_v_quadrupolar_coupling_constant);
     PyList_SET_ITEM(__pyx_t_3, 0, __pyx_v_quadrupolar_coupling_constant);
-    __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 305, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_GIVEREF(__pyx_t_3);
     PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_3);
     __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 305, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 305, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_float64); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_float64); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 305, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_8) < 0) __PYX_ERR(0, 304, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_8) < 0) __PYX_ERR(0, 305, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_6, __pyx_t_3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_6, __pyx_t_3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 305, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_ravel); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 304, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_ravel); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 305, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __pyx_t_8 = NULL;
@@ -5690,7 +5795,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     }
     __pyx_t_4 = (__pyx_t_8) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_8) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 304, __pyx_L1_error)
+    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 305, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF_SET(__pyx_v_quadrupolar_coupling_constant, __pyx_t_4);
@@ -5698,35 +5803,35 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   }
   __pyx_L11:;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":305
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":306
  *     else:
  *         quadrupolar_coupling_constant = np.asarray([quadrupolar_coupling_constant], dtype=np.float64).ravel()
  *     if quadrupolar_coupling_constant.size != number_of_sites:             # <<<<<<<<<<<<<<
  *         raise Exception("Number of quad coupling constants are not consistent with the number of spins.")
  *     cdef np.ndarray[double, ndim=1] quadrupolar_coupling_constant_c = quadrupolar_coupling_constant
  */
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_quadrupolar_coupling_constant, __pyx_n_s_size); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 305, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_quadrupolar_coupling_constant, __pyx_n_s_size); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 306, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = PyObject_RichCompare(__pyx_t_4, __pyx_v_number_of_sites, Py_NE); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 305, __pyx_L1_error)
+  __pyx_t_3 = PyObject_RichCompare(__pyx_t_4, __pyx_v_number_of_sites, Py_NE); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 306, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 305, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 306, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (unlikely(__pyx_t_1)) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":306
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":307
  *         quadrupolar_coupling_constant = np.asarray([quadrupolar_coupling_constant], dtype=np.float64).ravel()
  *     if quadrupolar_coupling_constant.size != number_of_sites:
  *         raise Exception("Number of quad coupling constants are not consistent with the number of spins.")             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] quadrupolar_coupling_constant_c = quadrupolar_coupling_constant
  * 
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 306, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 307, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __PYX_ERR(0, 306, __pyx_L1_error)
+    __PYX_ERR(0, 307, __pyx_L1_error)
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":305
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":306
  *     else:
  *         quadrupolar_coupling_constant = np.asarray([quadrupolar_coupling_constant], dtype=np.float64).ravel()
  *     if quadrupolar_coupling_constant.size != number_of_sites:             # <<<<<<<<<<<<<<
@@ -5735,28 +5840,28 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":307
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":308
  *     if quadrupolar_coupling_constant.size != number_of_sites:
  *         raise Exception("Number of quad coupling constants are not consistent with the number of spins.")
  *     cdef np.ndarray[double, ndim=1] quadrupolar_coupling_constant_c = quadrupolar_coupling_constant             # <<<<<<<<<<<<<<
  * 
  *     # Quad asymmetry value
  */
-  if (!(likely(((__pyx_v_quadrupolar_coupling_constant) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_quadrupolar_coupling_constant, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 307, __pyx_L1_error)
+  if (!(likely(((__pyx_v_quadrupolar_coupling_constant) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_quadrupolar_coupling_constant, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 308, __pyx_L1_error)
   __pyx_t_3 = __pyx_v_quadrupolar_coupling_constant;
   __Pyx_INCREF(__pyx_t_3);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_quadrupolar_coupling_constant_c.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_3), &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_quadrupolar_coupling_constant_c = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_quadrupolar_coupling_constant_c.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 307, __pyx_L1_error)
+      __PYX_ERR(0, 308, __pyx_L1_error)
     } else {__pyx_pybuffernd_quadrupolar_coupling_constant_c.diminfo[0].strides = __pyx_pybuffernd_quadrupolar_coupling_constant_c.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_quadrupolar_coupling_constant_c.diminfo[0].shape = __pyx_pybuffernd_quadrupolar_coupling_constant_c.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_quadrupolar_coupling_constant_c = ((PyArrayObject *)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":310
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":311
  * 
  *     # Quad asymmetry value
  *     if quadrupolar_asymmetry is None:             # <<<<<<<<<<<<<<
@@ -5767,38 +5872,38 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":311
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":312
  *     # Quad asymmetry value
  *     if quadrupolar_asymmetry is None:
  *         quadrupolar_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()             # <<<<<<<<<<<<<<
  *     else:
  *         quadrupolar_asymmetry = np.asarray([quadrupolar_asymmetry], dtype=np.float64).ravel()
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 311, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 312, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_zeros); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 311, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_zeros); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 312, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 311, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 312, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_v_number_of_sites);
     __Pyx_GIVEREF(__pyx_v_number_of_sites);
     PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_number_of_sites);
-    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 311, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 312, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 311, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 312, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_float64); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 311, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_float64); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 312, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_7) < 0) __PYX_ERR(0, 311, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_7) < 0) __PYX_ERR(0, 312, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 311, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 312, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_ravel); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 311, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_ravel); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 312, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __pyx_t_7 = NULL;
@@ -5813,13 +5918,13 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     }
     __pyx_t_3 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_6);
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 311, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 312, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF_SET(__pyx_v_quadrupolar_asymmetry, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":310
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":311
  * 
  *     # Quad asymmetry value
  *     if quadrupolar_asymmetry is None:             # <<<<<<<<<<<<<<
@@ -5829,7 +5934,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     goto __pyx_L13;
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":313
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":314
  *         quadrupolar_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()
  *     else:
  *         quadrupolar_asymmetry = np.asarray([quadrupolar_asymmetry], dtype=np.float64).ravel()             # <<<<<<<<<<<<<<
@@ -5837,36 +5942,36 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  *         raise Exception("Number of quad asymmetry are not consistent with the number of spins.")
  */
   /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 313, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_asarray); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 313, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_asarray); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 313, __pyx_L1_error)
+    __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_INCREF(__pyx_v_quadrupolar_asymmetry);
     __Pyx_GIVEREF(__pyx_v_quadrupolar_asymmetry);
     PyList_SET_ITEM(__pyx_t_6, 0, __pyx_v_quadrupolar_asymmetry);
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 313, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_6);
     PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_6);
     __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 313, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 313, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_float64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 313, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_float64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 313, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 313, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_ravel); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 313, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_ravel); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_t_5 = NULL;
@@ -5881,7 +5986,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     }
     __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_6);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 313, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 314, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF_SET(__pyx_v_quadrupolar_asymmetry, __pyx_t_3);
@@ -5889,35 +5994,35 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   }
   __pyx_L13:;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":314
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":315
  *     else:
  *         quadrupolar_asymmetry = np.asarray([quadrupolar_asymmetry], dtype=np.float64).ravel()
  *     if quadrupolar_asymmetry.size != number_of_sites:             # <<<<<<<<<<<<<<
  *         raise Exception("Number of quad asymmetry are not consistent with the number of spins.")
  *     cdef np.ndarray[double, ndim=1] quadrupolar_asymmetry_c = quadrupolar_asymmetry
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_quadrupolar_asymmetry, __pyx_n_s_size); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 314, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_quadrupolar_asymmetry, __pyx_n_s_size); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 315, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_6 = PyObject_RichCompare(__pyx_t_3, __pyx_v_number_of_sites, Py_NE); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 314, __pyx_L1_error)
+  __pyx_t_6 = PyObject_RichCompare(__pyx_t_3, __pyx_v_number_of_sites, Py_NE); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 315, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 314, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 315, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   if (unlikely(__pyx_t_2)) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":315
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":316
  *         quadrupolar_asymmetry = np.asarray([quadrupolar_asymmetry], dtype=np.float64).ravel()
  *     if quadrupolar_asymmetry.size != number_of_sites:
  *         raise Exception("Number of quad asymmetry are not consistent with the number of spins.")             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] quadrupolar_asymmetry_c = quadrupolar_asymmetry
  * 
  */
-    __pyx_t_6 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 315, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 316, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_Raise(__pyx_t_6, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __PYX_ERR(0, 315, __pyx_L1_error)
+    __PYX_ERR(0, 316, __pyx_L1_error)
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":314
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":315
  *     else:
  *         quadrupolar_asymmetry = np.asarray([quadrupolar_asymmetry], dtype=np.float64).ravel()
  *     if quadrupolar_asymmetry.size != number_of_sites:             # <<<<<<<<<<<<<<
@@ -5926,28 +6031,28 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":316
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":317
  *     if quadrupolar_asymmetry.size != number_of_sites:
  *         raise Exception("Number of quad asymmetry are not consistent with the number of spins.")
  *     cdef np.ndarray[double, ndim=1] quadrupolar_asymmetry_c = quadrupolar_asymmetry             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  if (!(likely(((__pyx_v_quadrupolar_asymmetry) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_quadrupolar_asymmetry, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 316, __pyx_L1_error)
+  if (!(likely(((__pyx_v_quadrupolar_asymmetry) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_quadrupolar_asymmetry, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 317, __pyx_L1_error)
   __pyx_t_6 = __pyx_v_quadrupolar_asymmetry;
   __Pyx_INCREF(__pyx_t_6);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_quadrupolar_asymmetry_c.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_6), &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_quadrupolar_asymmetry_c = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_quadrupolar_asymmetry_c.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 316, __pyx_L1_error)
+      __PYX_ERR(0, 317, __pyx_L1_error)
     } else {__pyx_pybuffernd_quadrupolar_asymmetry_c.diminfo[0].strides = __pyx_pybuffernd_quadrupolar_asymmetry_c.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_quadrupolar_asymmetry_c.diminfo[0].shape = __pyx_pybuffernd_quadrupolar_asymmetry_c.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_quadrupolar_asymmetry_c = ((PyArrayObject *)__pyx_t_6);
   __pyx_t_6 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":320
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":321
  * 
  *     # Dipolar coupling constant
  *     if D is None:             # <<<<<<<<<<<<<<
@@ -5958,38 +6063,38 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_t_1 = (__pyx_t_2 != 0);
   if (__pyx_t_1) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":321
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":322
  *     # Dipolar coupling constant
  *     if D is None:
  *         D = np.zeros(number_of_sites, dtype=np.float64).ravel()             # <<<<<<<<<<<<<<
  *     else:
  *         D = np.asarray([D], dtype=np.float64).ravel()
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 321, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 322, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_zeros); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 321, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_zeros); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 322, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 321, __pyx_L1_error)
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 322, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_v_number_of_sites);
     __Pyx_GIVEREF(__pyx_v_number_of_sites);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_number_of_sites);
-    __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 321, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 322, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 321, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 322, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_float64); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 321, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_float64); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 322, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_8) < 0) __PYX_ERR(0, 321, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_8) < 0) __PYX_ERR(0, 322, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 321, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 322, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_ravel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 321, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_ravel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 322, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __pyx_t_8 = NULL;
@@ -6004,13 +6109,13 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     }
     __pyx_t_6 = (__pyx_t_8) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_8) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 321, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 322, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF_SET(__pyx_v_D, __pyx_t_6);
     __pyx_t_6 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":320
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":321
  * 
  *     # Dipolar coupling constant
  *     if D is None:             # <<<<<<<<<<<<<<
@@ -6020,7 +6125,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     goto __pyx_L15;
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":323
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":324
  *         D = np.zeros(number_of_sites, dtype=np.float64).ravel()
  *     else:
  *         D = np.asarray([D], dtype=np.float64).ravel()             # <<<<<<<<<<<<<<
@@ -6028,36 +6133,36 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  *         raise Exception("Number of dipolar coupling are not consistent with the number of spins.")
  */
   /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 323, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 324, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_asarray); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 323, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_asarray); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 324, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 323, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 324, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_v_D);
     __Pyx_GIVEREF(__pyx_v_D);
     PyList_SET_ITEM(__pyx_t_4, 0, __pyx_v_D);
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 323, __pyx_L1_error)
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 324, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_4);
     __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 323, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 324, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 323, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 324, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_float64); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 323, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_float64); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 324, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_7) < 0) __PYX_ERR(0, 323, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_7) < 0) __PYX_ERR(0, 324, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 323, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 324, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_ravel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 323, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_ravel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 324, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __pyx_t_7 = NULL;
@@ -6072,7 +6177,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     }
     __pyx_t_6 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 323, __pyx_L1_error)
+    if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 324, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF_SET(__pyx_v_D, __pyx_t_6);
@@ -6080,35 +6185,35 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   }
   __pyx_L15:;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":324
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":325
  *     else:
  *         D = np.asarray([D], dtype=np.float64).ravel()
  *     if D.size != number_of_sites:             # <<<<<<<<<<<<<<
  *         raise Exception("Number of dipolar coupling are not consistent with the number of spins.")
  *     cdef np.ndarray[double, ndim=1] D_c = D
  */
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_D, __pyx_n_s_size); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 324, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_D, __pyx_n_s_size); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 325, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_4 = PyObject_RichCompare(__pyx_t_6, __pyx_v_number_of_sites, Py_NE); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 324, __pyx_L1_error)
+  __pyx_t_4 = PyObject_RichCompare(__pyx_t_6, __pyx_v_number_of_sites, Py_NE); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 325, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 324, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 325, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   if (unlikely(__pyx_t_1)) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":325
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":326
  *         D = np.asarray([D], dtype=np.float64).ravel()
  *     if D.size != number_of_sites:
  *         raise Exception("Number of dipolar coupling are not consistent with the number of spins.")             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] D_c = D
  * 
  */
-    __pyx_t_4 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 325, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Call(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])), __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 326, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_Raise(__pyx_t_4, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __PYX_ERR(0, 325, __pyx_L1_error)
+    __PYX_ERR(0, 326, __pyx_L1_error)
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":324
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":325
  *     else:
  *         D = np.asarray([D], dtype=np.float64).ravel()
  *     if D.size != number_of_sites:             # <<<<<<<<<<<<<<
@@ -6117,28 +6222,28 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":326
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":327
  *     if D.size != number_of_sites:
  *         raise Exception("Number of dipolar coupling are not consistent with the number of spins.")
  *     cdef np.ndarray[double, ndim=1] D_c = D             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  if (!(likely(((__pyx_v_D) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_D, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 326, __pyx_L1_error)
+  if (!(likely(((__pyx_v_D) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_D, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 327, __pyx_L1_error)
   __pyx_t_4 = __pyx_v_D;
   __Pyx_INCREF(__pyx_t_4);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_D_c.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_4), &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_D_c = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_D_c.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 326, __pyx_L1_error)
+      __PYX_ERR(0, 327, __pyx_L1_error)
     } else {__pyx_pybuffernd_D_c.diminfo[0].strides = __pyx_pybuffernd_D_c.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_D_c.diminfo[0].shape = __pyx_pybuffernd_D_c.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_D_c = ((PyArrayObject *)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":333
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":334
  *     # cdef np.ndarray[double, ndim=1] omega_PM_c = np.asarray(omega_PM, dtype=np.float64).ravel()
  * 
  *     if rotor_angle is None:             # <<<<<<<<<<<<<<
@@ -6149,7 +6254,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":334
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":335
  * 
  *     if rotor_angle is None:
  *         rotor_angle = 54.735             # <<<<<<<<<<<<<<
@@ -6159,7 +6264,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
     __Pyx_INCREF(__pyx_float_54_735);
     __Pyx_DECREF_SET(__pyx_v_rotor_angle, __pyx_float_54_735);
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":333
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":334
  *     # cdef np.ndarray[double, ndim=1] omega_PM_c = np.asarray(omega_PM, dtype=np.float64).ravel()
  * 
  *     if rotor_angle is None:             # <<<<<<<<<<<<<<
@@ -6168,40 +6273,40 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":335
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":336
  *     if rotor_angle is None:
  *         rotor_angle = 54.735
  *     cdef double rotor_angle_c = np.pi*rotor_angle/180.             # <<<<<<<<<<<<<<
  * 
  *     # if sample_rotation_frequency == 0:
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 335, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 336, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_pi); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 335, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_pi); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 336, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyNumber_Multiply(__pyx_t_6, __pyx_v_rotor_angle); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 335, __pyx_L1_error)
+  __pyx_t_4 = PyNumber_Multiply(__pyx_t_6, __pyx_v_rotor_angle); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 336, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = __Pyx_PyFloat_TrueDivideObjC(__pyx_t_4, __pyx_float_180_, 180., 0, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 335, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyFloat_TrueDivideObjC(__pyx_t_4, __pyx_float_180_, 180., 0, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 336, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 335, __pyx_L1_error)
+  __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 336, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_v_rotor_angle_c = __pyx_t_9;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":340
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":341
  *     #     rotor_angle_c = 0
  *     #     sample_rotation_frequency = 1000000
  *     print(rotor_angle_c, sample_rotation_frequency)             # <<<<<<<<<<<<<<
  * 
  *     cdef second_order_quad_c = second_order_quad
  */
-  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_rotor_angle_c); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 340, __pyx_L1_error)
+  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_rotor_angle_c); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 341, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_sample_rotation_frequency); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 340, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_sample_rotation_frequency); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 341, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 340, __pyx_L1_error)
+  __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 341, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_GIVEREF(__pyx_t_6);
   PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_6);
@@ -6209,12 +6314,12 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_4);
   __pyx_t_6 = 0;
   __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_7, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 340, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_7, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 341, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":342
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":343
  *     print(rotor_angle_c, sample_rotation_frequency)
  * 
  *     cdef second_order_quad_c = second_order_quad             # <<<<<<<<<<<<<<
@@ -6224,19 +6329,19 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __Pyx_INCREF(__pyx_v_second_order_quad);
   __pyx_v_second_order_quad_c = __pyx_v_second_order_quad;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":346
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":347
  *     #     quad_second_order_c = 1
  * 
  *     cdef np.ndarray[double, ndim=1] transition_c = np.asarray([m_initial, m_final], dtype=np.float64)             # <<<<<<<<<<<<<<
  * 
  *     cdef np.ndarray[double, ndim=1] amp = np.zeros(number_of_points * number_of_sites)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 346, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 347, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_asarray); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 346, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_asarray); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 347, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyList_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 346, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 347, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_INCREF(__pyx_v_m_initial);
   __Pyx_GIVEREF(__pyx_v_m_initial);
@@ -6244,32 +6349,32 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __Pyx_INCREF(__pyx_v_m_final);
   __Pyx_GIVEREF(__pyx_v_m_final);
   PyList_SET_ITEM(__pyx_t_4, 1, __pyx_v_m_final);
-  __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 346, __pyx_L1_error)
+  __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 347, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_GIVEREF(__pyx_t_4);
   PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4);
   __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 346, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 347, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 346, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 347, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float64); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 346, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float64); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 347, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_8) < 0) __PYX_ERR(0, 346, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_8) < 0) __PYX_ERR(0, 347, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_6, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 346, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_6, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 347, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (!(likely(((__pyx_t_8) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_8, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 346, __pyx_L1_error)
+  if (!(likely(((__pyx_t_8) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_8, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 347, __pyx_L1_error)
   __pyx_t_10 = ((PyArrayObject *)__pyx_t_8);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_transition_c.rcbuffer->pybuffer, (PyObject*)__pyx_t_10, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_transition_c = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_transition_c.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 346, __pyx_L1_error)
+      __PYX_ERR(0, 347, __pyx_L1_error)
     } else {__pyx_pybuffernd_transition_c.diminfo[0].strides = __pyx_pybuffernd_transition_c.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_transition_c.diminfo[0].shape = __pyx_pybuffernd_transition_c.rcbuffer->pybuffer.shape[0];
     }
   }
@@ -6277,21 +6382,21 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_v_transition_c = ((PyArrayObject *)__pyx_t_8);
   __pyx_t_8 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":348
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":349
  *     cdef np.ndarray[double, ndim=1] transition_c = np.asarray([m_initial, m_final], dtype=np.float64)
  * 
  *     cdef np.ndarray[double, ndim=1] amp = np.zeros(number_of_points * number_of_sites)             # <<<<<<<<<<<<<<
  *     cdef double cpu_time_
  *     # # print('rotor_angle in rad', rotor_angle_in_rad)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 348, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_zeros); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 348, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_zeros); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_number_of_points); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 348, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_number_of_points); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_7 = PyNumber_Multiply(__pyx_t_4, __pyx_v_number_of_sites); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 348, __pyx_L1_error)
+  __pyx_t_7 = PyNumber_Multiply(__pyx_t_4, __pyx_v_number_of_sites); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_4 = NULL;
@@ -6307,16 +6412,16 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_t_8 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_4, __pyx_t_7) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_7);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 348, __pyx_L1_error)
+  if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (!(likely(((__pyx_t_8) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_8, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 348, __pyx_L1_error)
+  if (!(likely(((__pyx_t_8) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_8, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 349, __pyx_L1_error)
   __pyx_t_11 = ((PyArrayObject *)__pyx_t_8);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_amp.rcbuffer->pybuffer, (PyObject*)__pyx_t_11, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_amp = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_amp.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 348, __pyx_L1_error)
+      __PYX_ERR(0, 349, __pyx_L1_error)
     } else {__pyx_pybuffernd_amp.diminfo[0].strides = __pyx_pybuffernd_amp.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_amp.diminfo[0].shape = __pyx_pybuffernd_amp.rcbuffer->pybuffer.shape[0];
     }
   }
@@ -6324,7 +6429,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_v_amp = ((PyArrayObject *)__pyx_t_8);
   __pyx_t_8 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":354
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":355
  * 
  *     # octahedran power orienation averaging
  *     cdef unsigned int n_orientations = int((averaging_size+1) * (averaging_size+2)/2)             # <<<<<<<<<<<<<<
@@ -6333,46 +6438,46 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
   __pyx_v_n_orientations = ((unsigned int)(((double)((__pyx_v_averaging_size + 1) * (__pyx_v_averaging_size + 2))) / 2.0));
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":355
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":356
  *     # octahedran power orienation averaging
  *     cdef unsigned int n_orientations = int((averaging_size+1) * (averaging_size+2)/2)
  *     cdef np.ndarray[double, ndim=1] cosAlpha = np.empty(n_orientations, dtype=np.float64)             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] cosBeta = np.empty(n_orientations, dtype=np.float64)
  *     cdef np.ndarray[double, ndim=1] amp_orientation = np.empty(n_orientations, dtype=np.float64)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 356, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_empty); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_empty); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 356, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = __Pyx_PyInt_From_unsigned_int(__pyx_v_n_orientations); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyInt_From_unsigned_int(__pyx_v_n_orientations); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 356, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 356, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_GIVEREF(__pyx_t_8);
   PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_8);
   __pyx_t_8 = 0;
-  __pyx_t_8 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 356, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 356, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_float64); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_float64); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 356, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_dtype, __pyx_t_3) < 0) __PYX_ERR(0, 355, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_dtype, __pyx_t_3) < 0) __PYX_ERR(0, 356, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_7, __pyx_t_8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_7, __pyx_t_8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 356, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 355, __pyx_L1_error)
+  if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 356, __pyx_L1_error)
   __pyx_t_12 = ((PyArrayObject *)__pyx_t_3);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_cosAlpha.rcbuffer->pybuffer, (PyObject*)__pyx_t_12, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_cosAlpha = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_cosAlpha.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 355, __pyx_L1_error)
+      __PYX_ERR(0, 356, __pyx_L1_error)
     } else {__pyx_pybuffernd_cosAlpha.diminfo[0].strides = __pyx_pybuffernd_cosAlpha.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_cosAlpha.diminfo[0].shape = __pyx_pybuffernd_cosAlpha.rcbuffer->pybuffer.shape[0];
     }
   }
@@ -6380,46 +6485,46 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_v_cosAlpha = ((PyArrayObject *)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":356
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":357
  *     cdef unsigned int n_orientations = int((averaging_size+1) * (averaging_size+2)/2)
  *     cdef np.ndarray[double, ndim=1] cosAlpha = np.empty(n_orientations, dtype=np.float64)
  *     cdef np.ndarray[double, ndim=1] cosBeta = np.empty(n_orientations, dtype=np.float64)             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] amp_orientation = np.empty(n_orientations, dtype=np.float64)
  *     __powder_averaging_setup(averaging_size, &cosAlpha[0],
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 357, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_empty); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_empty); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 357, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyInt_From_unsigned_int(__pyx_v_n_orientations); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_unsigned_int(__pyx_v_n_orientations); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 357, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 357, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_GIVEREF(__pyx_t_3);
   PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_3);
   __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 357, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 357, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_float64); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_float64); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 357, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_4) < 0) __PYX_ERR(0, 356, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_4) < 0) __PYX_ERR(0, 357, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_7, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_7, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 357, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 356, __pyx_L1_error)
+  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 357, __pyx_L1_error)
   __pyx_t_13 = ((PyArrayObject *)__pyx_t_4);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_cosBeta.rcbuffer->pybuffer, (PyObject*)__pyx_t_13, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_cosBeta = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_cosBeta.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 356, __pyx_L1_error)
+      __PYX_ERR(0, 357, __pyx_L1_error)
     } else {__pyx_pybuffernd_cosBeta.diminfo[0].strides = __pyx_pybuffernd_cosBeta.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_cosBeta.diminfo[0].shape = __pyx_pybuffernd_cosBeta.rcbuffer->pybuffer.shape[0];
     }
   }
@@ -6427,46 +6532,46 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_v_cosBeta = ((PyArrayObject *)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":357
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":358
  *     cdef np.ndarray[double, ndim=1] cosAlpha = np.empty(n_orientations, dtype=np.float64)
  *     cdef np.ndarray[double, ndim=1] cosBeta = np.empty(n_orientations, dtype=np.float64)
  *     cdef np.ndarray[double, ndim=1] amp_orientation = np.empty(n_orientations, dtype=np.float64)             # <<<<<<<<<<<<<<
  *     __powder_averaging_setup(averaging_size, &cosAlpha[0],
  *                              &cosBeta[0], &amp_orientation[0], 1)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_empty); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_empty); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyInt_From_unsigned_int(__pyx_v_n_orientations); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_From_unsigned_int(__pyx_v_n_orientations); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_GIVEREF(__pyx_t_4);
   PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_4);
   __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_float64); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_float64); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_6) < 0) __PYX_ERR(0, 357, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_6) < 0) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_7, __pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 357, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_7, __pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 358, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 357, __pyx_L1_error)
+  if (!(likely(((__pyx_t_6) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 358, __pyx_L1_error)
   __pyx_t_14 = ((PyArrayObject *)__pyx_t_6);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_amp_orientation.rcbuffer->pybuffer, (PyObject*)__pyx_t_14, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_amp_orientation = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_amp_orientation.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 357, __pyx_L1_error)
+      __PYX_ERR(0, 358, __pyx_L1_error)
     } else {__pyx_pybuffernd_amp_orientation.diminfo[0].strides = __pyx_pybuffernd_amp_orientation.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_amp_orientation.diminfo[0].shape = __pyx_pybuffernd_amp_orientation.rcbuffer->pybuffer.shape[0];
     }
   }
@@ -6474,7 +6579,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_v_amp_orientation = ((PyArrayObject *)__pyx_t_6);
   __pyx_t_6 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":358
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":359
  *     cdef np.ndarray[double, ndim=1] cosBeta = np.empty(n_orientations, dtype=np.float64)
  *     cdef np.ndarray[double, ndim=1] amp_orientation = np.empty(n_orientations, dtype=np.float64)
  *     __powder_averaging_setup(averaging_size, &cosAlpha[0],             # <<<<<<<<<<<<<<
@@ -6483,7 +6588,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
   __pyx_t_15 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":359
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":360
  *     cdef np.ndarray[double, ndim=1] amp_orientation = np.empty(n_orientations, dtype=np.float64)
  *     __powder_averaging_setup(averaging_size, &cosAlpha[0],
  *                              &cosBeta[0], &amp_orientation[0], 1)             # <<<<<<<<<<<<<<
@@ -6493,7 +6598,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_t_16 = 0;
   __pyx_t_17 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":358
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":359
  *     cdef np.ndarray[double, ndim=1] cosBeta = np.empty(n_orientations, dtype=np.float64)
  *     cdef np.ndarray[double, ndim=1] amp_orientation = np.empty(n_orientations, dtype=np.float64)
  *     __powder_averaging_setup(averaging_size, &cosAlpha[0],             # <<<<<<<<<<<<<<
@@ -6502,7 +6607,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
   __powder_averaging_setup(__pyx_v_averaging_size, (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_cosAlpha.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_cosAlpha.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_cosBeta.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_cosBeta.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_amp_orientation.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_amp_orientation.diminfo[0].strides))), 1);
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":362
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":363
  * 
  * 
  *     if averaging_scheme == 0:             # <<<<<<<<<<<<<<
@@ -6512,7 +6617,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_t_2 = ((__pyx_v_averaging_scheme == 0) != 0);
   if (__pyx_t_2) {
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":365
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":366
  *         clib.spinning_sideband_core(
  *                 # spectrum information and related amplitude
  *                 &amp[0],             # <<<<<<<<<<<<<<
@@ -6521,7 +6626,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
     __pyx_t_18 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":375
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":376
  * 
  *                 # CSA tensor information
  *                 &isotropic_chemical_shift_c[0],             # <<<<<<<<<<<<<<
@@ -6530,7 +6635,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
     __pyx_t_19 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":376
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":377
  *                 # CSA tensor information
  *                 &isotropic_chemical_shift_c[0],
  *                 &chemical_shift_anisotropy_c[0],             # <<<<<<<<<<<<<<
@@ -6539,7 +6644,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
     __pyx_t_20 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":377
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":378
  *                 &isotropic_chemical_shift_c[0],
  *                 &chemical_shift_anisotropy_c[0],
  *                 &chemical_shift_asymmetry_c[0],             # <<<<<<<<<<<<<<
@@ -6548,7 +6653,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
     __pyx_t_21 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":380
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":381
  * 
  *                 # quad tensor information
  *                 &quadrupolar_coupling_constant_c[0],             # <<<<<<<<<<<<<<
@@ -6557,7 +6662,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
     __pyx_t_22 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":381
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":382
  *                 # quad tensor information
  *                 &quadrupolar_coupling_constant_c[0],
  *                 &quadrupolar_asymmetry_c[0],             # <<<<<<<<<<<<<<
@@ -6566,16 +6671,16 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
     __pyx_t_23 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":382
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":383
  *                 &quadrupolar_coupling_constant_c[0],
  *                 &quadrupolar_asymmetry_c[0],
  *                 second_order_quad_c,             # <<<<<<<<<<<<<<
  * 
  *                 # Dipolar couplings
  */
-    __pyx_t_24 = __Pyx_PyInt_As_int(__pyx_v_second_order_quad_c); if (unlikely((__pyx_t_24 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 382, __pyx_L1_error)
+    __pyx_t_24 = __Pyx_PyInt_As_int(__pyx_v_second_order_quad_c); if (unlikely((__pyx_t_24 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 383, __pyx_L1_error)
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":385
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":386
  * 
  *                 # Dipolar couplings
  *                 &D_c[0],             # <<<<<<<<<<<<<<
@@ -6584,7 +6689,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
     __pyx_t_25 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":392
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":393
  *                 rotor_angle_c,
  * 
  *                 &transition_c[0],             # <<<<<<<<<<<<<<
@@ -6593,7 +6698,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
     __pyx_t_26 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":400
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":401
  *                 # powder orientation averager
  *                 n_orientations,
  *                 &cosAlpha[0],             # <<<<<<<<<<<<<<
@@ -6602,7 +6707,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
     __pyx_t_27 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":401
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":402
  *                 n_orientations,
  *                 &cosAlpha[0],
  *                 &cosBeta[0],             # <<<<<<<<<<<<<<
@@ -6611,7 +6716,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
     __pyx_t_28 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":402
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":403
  *                 &cosAlpha[0],
  *                 &cosBeta[0],
  *                 &amp_orientation[0],             # <<<<<<<<<<<<<<
@@ -6620,16 +6725,16 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
     __pyx_t_29 = 0;
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":405
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":406
  *                 averaging_size,
  * 
  *                 number_of_sites             # <<<<<<<<<<<<<<
  *                 )
  * 
  */
-    __pyx_t_30 = __Pyx_PyInt_As_unsigned_int(__pyx_v_number_of_sites); if (unlikely((__pyx_t_30 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 405, __pyx_L1_error)
+    __pyx_t_30 = __Pyx_PyInt_As_unsigned_int(__pyx_v_number_of_sites); if (unlikely((__pyx_t_30 == (unsigned int)-1) && PyErr_Occurred())) __PYX_ERR(0, 406, __pyx_L1_error)
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":363
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":364
  * 
  *     if averaging_scheme == 0:
  *         clib.spinning_sideband_core(             # <<<<<<<<<<<<<<
@@ -6638,7 +6743,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
     spinning_sideband_core((&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_amp.rcbuffer->pybuffer.buf, __pyx_t_18, __pyx_pybuffernd_amp.diminfo[0].strides))), (&__pyx_v_cpu_time_), __pyx_v_reference_offset, __pyx_v_increment, __pyx_v_number_of_points, __pyx_v_quantum_number, __pyx_v_larmor_frequency, (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_isotropic_chemical_shift_c.rcbuffer->pybuffer.buf, __pyx_t_19, __pyx_pybuffernd_isotropic_chemical_shift_c.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_chemical_shift_anisotropy_c.rcbuffer->pybuffer.buf, __pyx_t_20, __pyx_pybuffernd_chemical_shift_anisotropy_c.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_chemical_shift_asymmetry_c.rcbuffer->pybuffer.buf, __pyx_t_21, __pyx_pybuffernd_chemical_shift_asymmetry_c.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_quadrupolar_coupling_constant_c.rcbuffer->pybuffer.buf, __pyx_t_22, __pyx_pybuffernd_quadrupolar_coupling_constant_c.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_quadrupolar_asymmetry_c.rcbuffer->pybuffer.buf, __pyx_t_23, __pyx_pybuffernd_quadrupolar_asymmetry_c.diminfo[0].strides))), __pyx_t_24, (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_D_c.rcbuffer->pybuffer.buf, __pyx_t_25, __pyx_pybuffernd_D_c.diminfo[0].strides))), __pyx_v_number_of_sidebands, __pyx_v_sample_rotation_frequency, __pyx_v_rotor_angle_c, (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_transition_c.rcbuffer->pybuffer.buf, __pyx_t_26, __pyx_pybuffernd_transition_c.diminfo[0].strides))), __pyx_v_n_orientations, (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_cosAlpha.rcbuffer->pybuffer.buf, __pyx_t_27, __pyx_pybuffernd_cosAlpha.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_cosBeta.rcbuffer->pybuffer.buf, __pyx_t_28, __pyx_pybuffernd_cosBeta.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_amp_orientation.rcbuffer->pybuffer.buf, __pyx_t_29, __pyx_pybuffernd_amp_orientation.diminfo[0].strides))), __pyx_v_averaging_size, __pyx_t_30);
 
-    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":362
+    /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":363
  * 
  * 
  *     if averaging_scheme == 0:             # <<<<<<<<<<<<<<
@@ -6647,19 +6752,19 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
  */
   }
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":435
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":436
  *     #             )
  * 
  *     freq = np.arange(number_of_points)*increment + reference_offset             # <<<<<<<<<<<<<<
  * 
  *     return freq, amp, cpu_time_
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 435, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 436, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_arange); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 435, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_arange); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 436, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_number_of_points); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 435, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_number_of_points); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 436, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_7))) {
@@ -6674,33 +6779,33 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_t_6 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_3, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 435, __pyx_L1_error)
+  if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 436, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_increment); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 435, __pyx_L1_error)
+  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_increment); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 436, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_4 = PyNumber_Multiply(__pyx_t_6, __pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 435, __pyx_L1_error)
+  __pyx_t_4 = PyNumber_Multiply(__pyx_t_6, __pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 436, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_reference_offset); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 435, __pyx_L1_error)
+  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_reference_offset); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 436, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_6 = PyNumber_Add(__pyx_t_4, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 435, __pyx_L1_error)
+  __pyx_t_6 = PyNumber_Add(__pyx_t_4, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 436, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_v_freq = __pyx_t_6;
   __pyx_t_6 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":437
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":438
  *     freq = np.arange(number_of_points)*increment + reference_offset
  * 
  *     return freq, amp, cpu_time_             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_cpu_time_); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 437, __pyx_L1_error)
+  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_cpu_time_); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 438, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 437, __pyx_L1_error)
+  __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 438, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_INCREF(__pyx_v_freq);
   __Pyx_GIVEREF(__pyx_v_freq);
@@ -6715,7 +6820,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_2_one_d_simulator(CYTHON_UNUSED
   __pyx_t_7 = 0;
   goto __pyx_L0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":234
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":235
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * def _one_d_simulator(             # <<<<<<<<<<<<<<
@@ -6906,7 +7011,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  * 
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 272, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 272, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -6962,7 +7067,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  * 
  *             info.buf = PyArray_DATA(self)
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 276, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__14, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 276, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -7220,7 +7325,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *                 if   t == NPY_BYTE:        f = "b"
  *                 elif t == NPY_UBYTE:       f = "B"
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__14, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 306, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 306, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -8100,7 +8205,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  * 
  *         if ((child.byteorder == c'>' and little_endian) or
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 856, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__16, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 856, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -8168,7 +8273,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             # One could encode it in the format string and have Cython
  *             # complain instead, BUT: < and > in format strings also imply
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__14, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 860, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 860, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -8277,7 +8382,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  * 
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
-        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__16, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 880, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 880, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_Raise(__pyx_t_4, 0, 0, 0);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -8905,7 +9010,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
  * 
  * cdef inline int import_umath() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 1038, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__18, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 1038, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -9034,7 +9139,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
  * 
  * cdef inline int import_ufunc() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__18, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 1044, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__19, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 1044, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -9160,7 +9265,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__18, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 1050, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__19, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 1050, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -9284,6 +9389,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_u__2, __pyx_k__2, sizeof(__pyx_k__2), 0, 1, 0, 0},
   {&__pyx_kp_u__4, __pyx_k__4, sizeof(__pyx_k__4), 0, 1, 0, 0},
   {&__pyx_kp_u__5, __pyx_k__5, sizeof(__pyx_k__5), 0, 1, 0, 0},
+  {&__pyx_kp_u__6, __pyx_k__6, sizeof(__pyx_k__6), 0, 1, 0, 0},
+  {&__pyx_n_s_abundance, __pyx_k_abundance, sizeof(__pyx_k_abundance), 0, 0, 1, 1},
+  {&__pyx_n_u_abundance, __pyx_k_abundance, sizeof(__pyx_k_abundance), 0, 1, 0, 1},
+  {&__pyx_kp_u_abundance_2, __pyx_k_abundance_2, sizeof(__pyx_k_abundance_2), 0, 1, 0, 0},
   {&__pyx_n_s_amp, __pyx_k_amp, sizeof(__pyx_k_amp), 0, 0, 1, 1},
   {&__pyx_n_s_amp1, __pyx_k_amp1, sizeof(__pyx_k_amp1), 0, 0, 1, 1},
   {&__pyx_n_s_amp_orientation, __pyx_k_amp_orientation, sizeof(__pyx_k_amp_orientation), 0, 0, 1, 1},
@@ -9326,7 +9435,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_isotope, __pyx_k_isotope, sizeof(__pyx_k_isotope), 0, 0, 1, 1},
   {&__pyx_n_u_isotope, __pyx_k_isotope, sizeof(__pyx_k_isotope), 0, 1, 0, 1},
   {&__pyx_n_u_isotope_symbol, __pyx_k_isotope_symbol, sizeof(__pyx_k_isotope_symbol), 0, 1, 0, 1},
-  {&__pyx_n_s_isotopmer, __pyx_k_isotopmer, sizeof(__pyx_k_isotopmer), 0, 0, 1, 1},
+  {&__pyx_n_s_isotopomer, __pyx_k_isotopomer, sizeof(__pyx_k_isotopomer), 0, 0, 1, 1},
   {&__pyx_n_s_isotopomers, __pyx_k_isotopomers, sizeof(__pyx_k_isotopomers), 0, 0, 1, 1},
   {&__pyx_n_s_isotropic_chemical_shift, __pyx_k_isotropic_chemical_shift, sizeof(__pyx_k_isotropic_chemical_shift), 0, 0, 1, 1},
   {&__pyx_n_u_isotropic_chemical_shift, __pyx_k_isotropic_chemical_shift, sizeof(__pyx_k_isotropic_chemical_shift), 0, 1, 0, 1},
@@ -9334,6 +9443,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_isotropic_chemical_shift_c, __pyx_k_isotropic_chemical_shift_c, sizeof(__pyx_k_isotropic_chemical_shift_c), 0, 0, 1, 1},
   {&__pyx_n_s_larmor_frequency, __pyx_k_larmor_frequency, sizeof(__pyx_k_larmor_frequency), 0, 0, 1, 1},
   {&__pyx_kp_u_larmor_frequency_is_required_fo, __pyx_k_larmor_frequency_is_required_fo, sizeof(__pyx_k_larmor_frequency_is_required_fo), 0, 1, 0, 0},
+  {&__pyx_n_s_len, __pyx_k_len, sizeof(__pyx_k_len), 0, 0, 1, 1},
   {&__pyx_n_s_m_final, __pyx_k_m_final, sizeof(__pyx_k_m_final), 0, 0, 1, 1},
   {&__pyx_n_s_m_initial, __pyx_k_m_initial, sizeof(__pyx_k_m_initial), 0, 0, 1, 1},
   {&__pyx_n_u_magnetic_flux_density, __pyx_k_magnetic_flux_density, sizeof(__pyx_k_magnetic_flux_density), 0, 1, 0, 1},
@@ -9394,6 +9504,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_sub_sites, __pyx_k_sub_sites, sizeof(__pyx_k_sub_sites), 0, 0, 1, 1},
   {&__pyx_n_s_sum, __pyx_k_sum, sizeof(__pyx_k_sum), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
+  {&__pyx_n_s_text, __pyx_k_text, sizeof(__pyx_k_text), 0, 0, 1, 1},
   {&__pyx_n_s_trans, __pyx_k_trans, sizeof(__pyx_k_trans), 0, 0, 1, 1},
   {&__pyx_n_s_transition_array, __pyx_k_transition_array, sizeof(__pyx_k_transition_array), 0, 0, 1, 1},
   {&__pyx_n_s_transition_c, __pyx_k_transition_c, sizeof(__pyx_k_transition_c), 0, 0, 1, 1},
@@ -9442,71 +9553,71 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":279
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":280
  * 
  *     if quantum_number > 0.5 and larmor_frequency == 0.0:
  *         raise Exception("'larmor_frequency' is required for quandrupolar spins.")             # <<<<<<<<<<<<<<
  * 
  *     # Shielding anisotropic values
  */
-  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_u_larmor_frequency_is_required_fo); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 279, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__6);
-  __Pyx_GIVEREF(__pyx_tuple__6);
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_u_larmor_frequency_is_required_fo); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 280, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__7);
+  __Pyx_GIVEREF(__pyx_tuple__7);
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":288
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":289
  *         # chemical_shift_anisotropy[np.where(chemical_shift_anisotropy==0.)] = 1e-4*increment
  *     if chemical_shift_anisotropy.size != number_of_sites:
  *         raise Exception("Number of shielding anisotropies are not consistent with the number of spins.")             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] chemical_shift_anisotropy_c = chemical_shift_anisotropy
  * 
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_u_Number_of_shielding_anisotropies); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 288, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__7);
-  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_u_Number_of_shielding_anisotropies); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 289, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__8);
+  __Pyx_GIVEREF(__pyx_tuple__8);
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":297
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":298
  *         chemical_shift_asymmetry = np.asarray([chemical_shift_asymmetry], dtype=np.float64).ravel()
  *     if chemical_shift_asymmetry.size != number_of_sites:
  *         raise Exception("Number of shielding asymmetry are not consistent with the number of spins.")             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] chemical_shift_asymmetry_c = chemical_shift_asymmetry
  * 
  */
-  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_u_Number_of_shielding_asymmetry_ar); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 297, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__8);
-  __Pyx_GIVEREF(__pyx_tuple__8);
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Number_of_shielding_asymmetry_ar); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 298, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":306
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":307
  *         quadrupolar_coupling_constant = np.asarray([quadrupolar_coupling_constant], dtype=np.float64).ravel()
  *     if quadrupolar_coupling_constant.size != number_of_sites:
  *         raise Exception("Number of quad coupling constants are not consistent with the number of spins.")             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] quadrupolar_coupling_constant_c = quadrupolar_coupling_constant
  * 
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Number_of_quad_coupling_constant); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 306, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__9);
-  __Pyx_GIVEREF(__pyx_tuple__9);
+  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_u_Number_of_quad_coupling_constant); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 307, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__10);
+  __Pyx_GIVEREF(__pyx_tuple__10);
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":315
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":316
  *         quadrupolar_asymmetry = np.asarray([quadrupolar_asymmetry], dtype=np.float64).ravel()
  *     if quadrupolar_asymmetry.size != number_of_sites:
  *         raise Exception("Number of quad asymmetry are not consistent with the number of spins.")             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] quadrupolar_asymmetry_c = quadrupolar_asymmetry
  * 
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_u_Number_of_quad_asymmetry_are_not); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 315, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__10);
-  __Pyx_GIVEREF(__pyx_tuple__10);
+  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_u_Number_of_quad_asymmetry_are_not); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 316, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__11);
+  __Pyx_GIVEREF(__pyx_tuple__11);
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":325
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":326
  *         D = np.asarray([D], dtype=np.float64).ravel()
  *     if D.size != number_of_sites:
  *         raise Exception("Number of dipolar coupling are not consistent with the number of spins.")             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[double, ndim=1] D_c = D
  * 
  */
-  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_u_Number_of_dipolar_coupling_are_n); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 325, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__11);
-  __Pyx_GIVEREF(__pyx_tuple__11);
+  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_u_Number_of_dipolar_coupling_are_n); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 326, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__12);
+  __Pyx_GIVEREF(__pyx_tuple__12);
 
   /* "../../../../anaconda3/lib/python3.7/site-packages/Cython/Includes/numpy/__init__.pxd":272
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
@@ -9515,9 +9626,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
-  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(1, 272, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__12);
-  __Pyx_GIVEREF(__pyx_tuple__12);
+  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(1, 272, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__13);
+  __Pyx_GIVEREF(__pyx_tuple__13);
 
   /* "../../../../anaconda3/lib/python3.7/site-packages/Cython/Includes/numpy/__init__.pxd":276
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
@@ -9526,9 +9637,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *             info.buf = PyArray_DATA(self)
  */
-  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(1, 276, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__13);
-  __Pyx_GIVEREF(__pyx_tuple__13);
+  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(1, 276, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__14);
+  __Pyx_GIVEREF(__pyx_tuple__14);
 
   /* "../../../../anaconda3/lib/python3.7/site-packages/Cython/Includes/numpy/__init__.pxd":306
  *                 if ((descr.byteorder == c'>' and little_endian) or
@@ -9537,9 +9648,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *                 if   t == NPY_BYTE:        f = "b"
  *                 elif t == NPY_UBYTE:       f = "B"
  */
-  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(1, 306, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__14);
-  __Pyx_GIVEREF(__pyx_tuple__14);
+  __pyx_tuple__15 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(1, 306, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__15);
+  __Pyx_GIVEREF(__pyx_tuple__15);
 
   /* "../../../../anaconda3/lib/python3.7/site-packages/Cython/Includes/numpy/__init__.pxd":856
  * 
@@ -9548,9 +9659,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *         if ((child.byteorder == c'>' and little_endian) or
  */
-  __pyx_tuple__15 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(1, 856, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__15);
-  __Pyx_GIVEREF(__pyx_tuple__15);
+  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(1, 856, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__16);
+  __Pyx_GIVEREF(__pyx_tuple__16);
 
   /* "../../../../anaconda3/lib/python3.7/site-packages/Cython/Includes/numpy/__init__.pxd":880
  *             t = child.type_num
@@ -9559,9 +9670,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
-  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(1, 880, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__16);
-  __Pyx_GIVEREF(__pyx_tuple__16);
+  __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(1, 880, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__17);
+  __Pyx_GIVEREF(__pyx_tuple__17);
 
   /* "../../../../anaconda3/lib/python3.7/site-packages/Cython/Includes/numpy/__init__.pxd":1038
  *         _import_array()
@@ -9570,9 +9681,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * cdef inline int import_umath() except -1:
  */
-  __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_u_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(1, 1038, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__17);
-  __Pyx_GIVEREF(__pyx_tuple__17);
+  __pyx_tuple__18 = PyTuple_Pack(1, __pyx_kp_u_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(1, 1038, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__18);
+  __Pyx_GIVEREF(__pyx_tuple__18);
 
   /* "../../../../anaconda3/lib/python3.7/site-packages/Cython/Includes/numpy/__init__.pxd":1044
  *         _import_umath()
@@ -9581,9 +9692,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * cdef inline int import_ufunc() except -1:
  */
-  __pyx_tuple__18 = PyTuple_Pack(1, __pyx_kp_u_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(1, 1044, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__18);
-  __Pyx_GIVEREF(__pyx_tuple__18);
+  __pyx_tuple__19 = PyTuple_Pack(1, __pyx_kp_u_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(1, 1044, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__19);
+  __Pyx_GIVEREF(__pyx_tuple__19);
 
   /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":15
  * @cython.boundscheck(False)
@@ -9592,22 +9703,22 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *        list isotopomers,
  *        int verbose=0,
  */
-  __pyx_tuple__19 = PyTuple_Pack(44, __pyx_n_s_spectrum, __pyx_n_s_isotopomers, __pyx_n_s_verbose, __pyx_n_s_number_of_sidebands, __pyx_n_s_geodesic_polyhedron_frequency, __pyx_n_s_sample_rotation_frequency, __pyx_n_s_rotor_angle, __pyx_n_s_B0, __pyx_n_s_angle, __pyx_n_s_isotope, __pyx_n_s_spin_quantum_number, __pyx_n_s_number_of_energy_levels, __pyx_n_s_number_of_transitions, __pyx_n_s_energy_states, __pyx_n_s_transitions, __pyx_n_s_transition_array, __pyx_n_s_larmor_frequency, __pyx_n_s_number_of_points, __pyx_n_s_spectral_width, __pyx_n_s_increment, __pyx_n_s_reference_offset, __pyx_n_s_number_of_sites, __pyx_n_s_iso_n, __pyx_n_s_aniso_n, __pyx_n_s_eta_n, __pyx_n_s_Cq_e, __pyx_n_s_eta_e, __pyx_n_s_D_c, __pyx_n_s_i, __pyx_n_s_trans, __pyx_n_s_amp, __pyx_n_s_cpu_time, __pyx_n_s_amp1, __pyx_n_s_n_orientations, __pyx_n_s_cosAlpha, __pyx_n_s_cosBeta, __pyx_n_s_amp_orientation, __pyx_n_s_index_isotopomer, __pyx_n_s_isotopmer, __pyx_n_s_sub_sites, __pyx_n_s_site_2, __pyx_n_s_freq, __pyx_n_s_i, __pyx_n_s_site_2); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 15, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__19);
-  __Pyx_GIVEREF(__pyx_tuple__19);
-  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(5, 0, 44, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mrsimulator_scr_mrmethods_nmr_me, __pyx_n_s_one_d_spectrum, 15, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 15, __pyx_L1_error)
+  __pyx_tuple__20 = PyTuple_Pack(47, __pyx_n_s_spectrum, __pyx_n_s_isotopomers, __pyx_n_s_verbose, __pyx_n_s_number_of_sidebands, __pyx_n_s_geodesic_polyhedron_frequency, __pyx_n_s_sample_rotation_frequency, __pyx_n_s_rotor_angle, __pyx_n_s_B0, __pyx_n_s_angle, __pyx_n_s_isotope, __pyx_n_s_spin_quantum_number, __pyx_n_s_number_of_energy_levels, __pyx_n_s_number_of_transitions, __pyx_n_s_energy_states, __pyx_n_s_transitions, __pyx_n_s_transition_array, __pyx_n_s_larmor_frequency, __pyx_n_s_number_of_points, __pyx_n_s_spectral_width, __pyx_n_s_increment, __pyx_n_s_reference_offset, __pyx_n_s_number_of_sites, __pyx_n_s_iso_n, __pyx_n_s_aniso_n, __pyx_n_s_eta_n, __pyx_n_s_Cq_e, __pyx_n_s_eta_e, __pyx_n_s_D_c, __pyx_n_s_i, __pyx_n_s_trans, __pyx_n_s_amp, __pyx_n_s_cpu_time, __pyx_n_s_amp1, __pyx_n_s_n_orientations, __pyx_n_s_cosAlpha, __pyx_n_s_cosBeta, __pyx_n_s_amp_orientation, __pyx_n_s_index_isotopomer, __pyx_n_s_isotopomer, __pyx_n_s_abundance, __pyx_n_s_sub_sites, __pyx_n_s_site_2, __pyx_n_s_text, __pyx_n_s_len, __pyx_n_s_freq, __pyx_n_s_i, __pyx_n_s_site_2); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 15, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__20);
+  __Pyx_GIVEREF(__pyx_tuple__20);
+  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(5, 0, 47, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mrsimulator_scr_mrmethods_nmr_me, __pyx_n_s_one_d_spectrum, 15, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 15, __pyx_L1_error)
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":234
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":235
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * def _one_d_simulator(             # <<<<<<<<<<<<<<
  *         # spectrum information
  *         double reference_offset,
  */
-  __pyx_tuple__21 = PyTuple_Pack(36, __pyx_n_s_reference_offset, __pyx_n_s_increment, __pyx_n_s_number_of_points, __pyx_n_s_quantum_number, __pyx_n_s_larmor_frequency, __pyx_n_s_isotropic_chemical_shift, __pyx_n_s_chemical_shift_anisotropy_2, __pyx_n_s_chemical_shift_asymmetry_2, __pyx_n_s_quadrupolar_coupling_constant, __pyx_n_s_quadrupolar_asymmetry, __pyx_n_s_second_order_quad, __pyx_n_s_D, __pyx_n_s_number_of_sidebands, __pyx_n_s_sample_rotation_frequency, __pyx_n_s_rotor_angle, __pyx_n_s_m_final, __pyx_n_s_m_initial, __pyx_n_s_averaging_scheme, __pyx_n_s_averaging_size, __pyx_n_s_number_of_sites, __pyx_n_s_isotropic_chemical_shift_c, __pyx_n_s_chemical_shift_anisotropy_c, __pyx_n_s_chemical_shift_asymmetry_c, __pyx_n_s_quadrupolar_coupling_constant_c, __pyx_n_s_quadrupolar_asymmetry_c, __pyx_n_s_D_c, __pyx_n_s_rotor_angle_c, __pyx_n_s_second_order_quad_c, __pyx_n_s_transition_c, __pyx_n_s_amp, __pyx_n_s_cpu_time, __pyx_n_s_n_orientations, __pyx_n_s_cosAlpha, __pyx_n_s_cosBeta, __pyx_n_s_amp_orientation, __pyx_n_s_freq); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 234, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__21);
-  __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(19, 0, 36, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mrsimulator_scr_mrmethods_nmr_me, __pyx_n_s_one_d_simulator, 234, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 234, __pyx_L1_error)
+  __pyx_tuple__22 = PyTuple_Pack(36, __pyx_n_s_reference_offset, __pyx_n_s_increment, __pyx_n_s_number_of_points, __pyx_n_s_quantum_number, __pyx_n_s_larmor_frequency, __pyx_n_s_isotropic_chemical_shift, __pyx_n_s_chemical_shift_anisotropy_2, __pyx_n_s_chemical_shift_asymmetry_2, __pyx_n_s_quadrupolar_coupling_constant, __pyx_n_s_quadrupolar_asymmetry, __pyx_n_s_second_order_quad, __pyx_n_s_D, __pyx_n_s_number_of_sidebands, __pyx_n_s_sample_rotation_frequency, __pyx_n_s_rotor_angle, __pyx_n_s_m_final, __pyx_n_s_m_initial, __pyx_n_s_averaging_scheme, __pyx_n_s_averaging_size, __pyx_n_s_number_of_sites, __pyx_n_s_isotropic_chemical_shift_c, __pyx_n_s_chemical_shift_anisotropy_c, __pyx_n_s_chemical_shift_asymmetry_c, __pyx_n_s_quadrupolar_coupling_constant_c, __pyx_n_s_quadrupolar_asymmetry_c, __pyx_n_s_D_c, __pyx_n_s_rotor_angle_c, __pyx_n_s_second_order_quad_c, __pyx_n_s_transition_c, __pyx_n_s_amp, __pyx_n_s_cpu_time, __pyx_n_s_n_orientations, __pyx_n_s_cosAlpha, __pyx_n_s_cosBeta, __pyx_n_s_amp_orientation, __pyx_n_s_freq); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(0, 235, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__22);
+  __Pyx_GIVEREF(__pyx_tuple__22);
+  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(19, 0, 36, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mrsimulator_scr_mrmethods_nmr_me, __pyx_n_s_one_d_simulator, 235, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 235, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -9623,6 +9734,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   __pyx_float_neg_0_5 = PyFloat_FromDouble(-0.5); if (unlikely(!__pyx_float_neg_0_5)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_100 = PyInt_FromLong(100); if (unlikely(!__pyx_int_100)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -9965,16 +10077,16 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_one_d_spectrum, __pyx_t_2) < 0) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":234
+  /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":235
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * def _one_d_simulator(             # <<<<<<<<<<<<<<
  *         # spectrum information
  *         double reference_offset,
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_11mrsimulator_7methods_3_one_d_simulator, NULL, __pyx_n_s_mrsimulator_methods); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 234, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_11mrsimulator_7methods_3_one_d_simulator, NULL, __pyx_n_s_mrsimulator_methods); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 235, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_one_d_simulator, __pyx_t_2) < 0) __PYX_ERR(0, 234, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_one_d_simulator, __pyx_t_2) < 0) __PYX_ERR(0, 235, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "mrsimulator/scr/mrmethods/nmr_methods.pyx":1

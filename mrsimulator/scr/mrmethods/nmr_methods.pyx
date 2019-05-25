@@ -20,7 +20,7 @@ def one_d_spectrum(dict spectrum,
     """
     
     :ivar verbose:
-        The value is either 0 or 1. Prints the isotopmers and
+        The value is either 0 or 1. Prints the isotopomers and
         method on screen when value is 1. The default is 0.
     :ivar number_of_sidebands:
         The value is an integer. Only requested number of sidebands
@@ -117,8 +117,9 @@ def one_d_spectrum(dict spectrum,
     # print(amp_orientation)
     # ---------------------------------------------------------------------
     # sample _______________________________________________________________
-    for index_isotopomer, isotopmer in enumerate(isotopomers):
-        sub_sites = [site for site in isotopmer['sites'] if site['isotope_symbol'] == isotope]
+    for index_isotopomer, isotopomer in enumerate(isotopomers):
+        abundance = isotopomer['abundance']
+        sub_sites = [site for site in isotopomer['sites'] if site['isotope_symbol'] == isotope]
 
         number_of_sites= len(sub_sites)
 
@@ -133,7 +134,6 @@ def one_d_spectrum(dict spectrum,
         eta_e = np.zeros(number_of_sites, dtype=np.float64)
 
         D_c = np.zeros(number_of_sites, dtype=np.float64)
-        # abundance_array = np.ones(number_of_sites, dtype=np.float64)
 
         # cdef int i, size = len(sample)
 
@@ -142,21 +142,22 @@ def one_d_spectrum(dict spectrum,
         for i in range(number_of_sites):
             site = sub_sites[i]
 
-            # abundance_array[i] = site['abundance']
             # CSA tensor
-            # sign_ = -1
             iso_n[i] = site['isotropic_chemical_shift']
             aniso_n[i] = site['shielding_symmetric']['anisotropy']
-            # if site['shielding_symmetric']['anisotropy_sign']=='+': sign_=1
-            # aniso_n[i]*=sign_
             eta_n[i] = site['shielding_symmetric']['asymmetry']
 
             if verbose:
-                print(f'\n{isotope} site {i} in isotopomer {index_isotopomer}\n----------------------------')
+                text = ((
+                    f"\n{isotope} site {i} in isotopomer {index_isotopomer} "
+                    f"@ {abundance*100}% abundance"
+                ))
+                len_ = len(text)
+                print(text)
+                print(f"{'-'*(len_-1)}")
                 print(f'isotropic chemical shift = {iso_n[i]} Hz')
                 print(f'chemical shift anisotropy = {aniso_n[i]} Hz')
                 print(f'chemical shift asymmetry = {eta_n[i]}')
-                # print(f'percentage abundance = {abundance_array[i]} %')
 
             # quad tensor
             # if spin.electric_quadrupole_tensor is not ():
@@ -219,7 +220,7 @@ def one_d_spectrum(dict spectrum,
                     )
 
         
-        amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)
+        amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
 
     if verbose:
         print(f'\nExecution time {cpu_time_} s')

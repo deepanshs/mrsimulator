@@ -496,7 +496,7 @@ void spinning_sideband_core(
 
     int m, mp, step, i, allow_second_order_quad=0;
     double tau, wrt, pht, spin_angular_freq, scale;
-    double number_of_sidebands_inverse = 1.0/((double) (number_of_sidebands));
+    // double number_of_sidebands_inverse = 1.0/((double) (number_of_sidebands));
     double spectral_increment_inverse = 1.0/spectral_increment;
     double iso_n_, aniso_n_, eta_n_, Cq_e_, eta_e_, d_;
 

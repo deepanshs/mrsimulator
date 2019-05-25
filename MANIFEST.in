@@ -5,3 +5,4 @@ include README.md
 include mrsimulator/scr/lib/*.c
 include mrsimulator/scr/mrmethods/*.c
 include mrsimulator/scr/include/*.*
+include mrsimulator/test/*.*

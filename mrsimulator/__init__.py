@@ -144,7 +144,7 @@ class _Isotopomer:
             self,
             sites: list = [],
             couplings: list = [],
-            abundance: float = 1.0) -> list:
+            abundance: str = '100.0 %') -> list:
         """Initialize."""
         if not isinstance(sites, list):
             raise ValueError((
@@ -152,6 +152,7 @@ class _Isotopomer:
             ))
         _sites = []
         isotope_list = []
+        abundance = string_to_quantity(abundance).to('').value
         for site in sites:
             _sites.append(_Site(**site))
             isotope_list.append(_sites[-1]['isotope_symbol'])

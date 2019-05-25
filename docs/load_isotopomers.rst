@@ -116,39 +116,45 @@ or
 
 
 .. doctest::
+    :skipif: None is None
 
     >>> from pprint import pprint
-    >>> filename = 'mrsimulator/test/isotopomers.json'
+    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers.json'
     >>> st2 = Simulator()
     >>> st2.load_isotopomers(filename)
+    Downloading '/DeepanshS/mrsimulator-test/master/isotopomers.json' from 'raw.githubusercontent.com' to file 'isotopomers.json'.
+    [█████████████████████████████████████████████████████████████████████████]
+
+.. doctest::
+    :skipif: None is None
+
     >>> pprint(st2.isotopomers)
-    [{'abundance': 1.0,
-    'couplings': [],
-    'sites': [{'isotope_symbol': '13C',
-                'isotropic_chemical_shift': '1 Hz',
-                'shielding_symmetric': {'anisotropy': '-3.89 kHz',
-                                        'asymmetry': 0.25}}]},
-    {'sites': [{'isotope_symbol': '13C',
-                'isotropic_chemical_shift': '1 kHz',
-                'shielding_symmetric': {'anisotropy': '8.2 kHz',
-                                        'asymmetry': 0.0}}]},
-    {'sites': [{'isotope_symbol': '1H',
-                'isotropic_chemical_shift': '3 kHz',
-                'shielding_symmetric': {'anisotropy': '23.2 kHz',
-                                        'asymmetry': 0.0}}]},
-    {'sites': [{'isotope_symbol': '29Si',
-                'isotropic_chemical_shift': '1.64 kHz',
-                'shielding_symmetric': {'anisotropy': '7.36 kHz',
-                                        'asymmetry': 0.0}}]},
-    {'sites': [{'isotope_symbol': '29Si',
-                'isotropic_chemical_shift': '43 kHz',
-                'shielding_symmetric': {'anisotropy': '8.36 kHz',
-                                        'asymmetry': 0.5}}]},
-    {'sites': [{'isotope_symbol': '29Si',
-                'isotropic_chemical_shift': '10 kHz',
-                'shielding_symmetric': {'anisotropy': '6.36 kHz',
-                                        'asymmetry': 0.0}}]},
-    {'sites': [{'isotope_symbol': '1H',
-                'isotropic_chemical_shift': '5.6 kHz',
-                'shielding_symmetric': {'anisotropy': '13.2 kHz',
-                                        'asymmetry': 0.0}}]}]
+    [{'abundance': '12%',
+      'sites': [{'isotope_symbol': '13C',
+                 'isotropic_chemical_shift': '1 Hz',
+                 'shielding_symmetric': {'anisotropy': '-3.89 kHz',
+                                         'asymmetry': 0.25}}]},
+     {'sites': [{'isotope_symbol': '13C',
+                 'isotropic_chemical_shift': '1 kHz',
+                 'shielding_symmetric': {'anisotropy': '8.2 kHz',
+                                         'asymmetry': 0.0}}]},
+     {'sites': [{'isotope_symbol': '1H',
+                 'isotropic_chemical_shift': '3 kHz',
+                 'shielding_symmetric': {'anisotropy': '23.2 kHz',
+                                         'asymmetry': 0.0}}]},
+     {'sites': [{'isotope_symbol': '29Si',
+                 'isotropic_chemical_shift': '1.64 kHz',
+                 'shielding_symmetric': {'anisotropy': '7.36 kHz',
+                                         'asymmetry': 0.0}}]},
+     {'sites': [{'isotope_symbol': '29Si',
+                 'isotropic_chemical_shift': '43 kHz',
+                 'shielding_symmetric': {'anisotropy': '8.36 kHz',
+                                         'asymmetry': 0.5}}]},
+     {'sites': [{'isotope_symbol': '29Si',
+                 'isotropic_chemical_shift': '10 kHz',
+                 'shielding_symmetric': {'anisotropy': '6.36 kHz',
+                                         'asymmetry': 0.0}}]},
+     {'sites': [{'isotope_symbol': '1H',
+                 'isotropic_chemical_shift': '5.6 kHz',
+                 'shielding_symmetric': {'anisotropy': '13.2 kHz',
+                                         'asymmetry': 0.0}}]}]

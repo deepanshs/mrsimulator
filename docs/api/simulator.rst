@@ -22,6 +22,7 @@ Simulator
 
     .. autosummary::
         ~Simulator.run
+        ~Simulator.load_isotopomers
 
     .. rubric:: Attributes Documentation
     .. autoattribute:: isotopomers
@@ -30,6 +31,7 @@ Simulator
 
     .. rubric:: Method Documentation
     .. automethod:: run
+    .. automethod:: load_isotopomers
 
 
 

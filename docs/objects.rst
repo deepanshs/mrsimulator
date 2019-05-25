@@ -41,11 +41,14 @@ Orientation
 
   *An example of Orientation object.*
 
-  >>> {
-  ...     "alpha": "0.5 rad",
-  ...     "beta": "0.23 rad",
-  ...     "gamma": "2.54 rad"
-  ... }
+.. doctest::
+    :skipif: None is None
+
+    >>> {
+    ...     "alpha": "0.5 rad",
+    ...     "beta": "0.23 rad",
+    ...     "gamma": "2.54 rad"
+    ... }
 
 .. - The value is a list of three euler angles, [:math:`alpha`, :math:`beta`
 ..   and :math:`gamma`]. Each angle is given as a string with a physical
@@ -90,15 +93,18 @@ SymmetricTensor
 
   *An example of SymmetricTensor object.*
 
-  >>> {
-  ...     "anisotropy": "10.3 kHz",
-  ...     "asymmetry": 0.5,
-  ...     "orientation": {
-  ...         "alpha": "0.5 rad",
-  ...         "beta": "0.23 rad",
-  ...         "gamma": "2.54 rad"
-  ...     }
-  ... }
+.. doctest::
+    :skipif: None is None
+
+    >>> {
+    ...     "anisotropy": "10.3 kHz",
+    ...     "asymmetry": 0.5,
+    ...     "orientation": {
+    ...         "alpha": "0.5 rad",
+    ...         "beta": "0.23 rad",
+    ...         "gamma": "2.54 rad"
+    ...     }
+    ... }
 
 
 
@@ -135,19 +141,22 @@ Site
 
   *An example of Site object.*
 
-  >>> {
-  ...     "isotope_symbol": "13C",
-  ...     "isotropic_chemical_shift": "15 Hz",
-  ...     "shielding_symmetric": {
-  ...         "anisotropy": "10.3 kHz",
-  ...         "asymmetry": 0.5,
-  ...         "orientation": {
-  ...             "alpha": "0.5 rad",
-  ...             "beta": "0.23 rad",
-  ...             "gamma": "2.54 rad"
-  ...         }
-  ...     }
-  ... }
+.. doctest::
+    :skipif: None is None
+
+    >>> {
+    ...     "isotope_symbol": "13C",
+    ...     "isotropic_chemical_shift": "15 Hz",
+    ...     "shielding_symmetric": {
+    ...         "anisotropy": "10.3 kHz",
+    ...         "asymmetry": 0.5,
+    ...         "orientation": {
+    ...             "alpha": "0.5 rad",
+    ...             "beta": "0.23 rad",
+    ...             "gamma": "2.54 rad"
+    ...         }
+    ...     }
+    ... }
 
 
 
@@ -191,24 +200,27 @@ Isotopomer
 
   *An example of Isotopomer object.*
 
-  >>> {
-  ...     "sites": [
-  ...         {
-  ...             "isotope_symbol": "13C",
-  ...             "isotropic_chemical_shift": "15 Hz",
-  ...             "shielding_symmetric": {
-  ...                 "anisotropy": "10.3 kHz",
-  ...                 "asymmetry": 0.5,
-  ...                 "orientation": {
-  ...                     "alpha": "0.5 rad",
-  ...                     "beta": "0.23 rad",
-  ...                     "gamma": "2.54 rad"
-  ...                 }
-  ...             }
-  ...         }
-  ...     ],
-  ...     "abundance": "15.3 %"
-  ... }
+.. doctest::
+    :skipif: None is None
+
+    >>> {
+    ...     "sites": [
+    ...         {
+    ...             "isotope_symbol": "13C",
+    ...             "isotropic_chemical_shift": "15 Hz",
+    ...             "shielding_symmetric": {
+    ...                 "anisotropy": "10.3 kHz",
+    ...                 "asymmetry": 0.5,
+    ...                 "orientation": {
+    ...                     "alpha": "0.5 rad",
+    ...                     "beta": "0.23 rad",
+    ...                     "gamma": "2.54 rad"
+    ...                 }
+    ...             }
+    ...         }
+    ...     ],
+    ...     "abundance": "15.3 %"
+    ... }
 
 
 
