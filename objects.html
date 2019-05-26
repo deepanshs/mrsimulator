@@ -1,0 +1,516 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Objects &mdash; mrsimulator 0.1dev1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Isotopomers" href="isotopomers_object.html" />
+    <link rel="prev" title="mrsimulator objects" href="mr_objects.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: black" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> mrsimulator
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0.dev1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started with <cite>mrsimulator</cite></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mr_objects.html"><cite>mrsimulator</cite> objects</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Objects</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#orientation">Orientation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symmetrictensor">SymmetricTensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#site">Site</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#isotopomer">Isotopomer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#directdimension">DirectDimension</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="isotopomers_object.html">Isotopomers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spectrum_object.html">Spectrum</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="load_isotopomers.html">Setting up the isotopomers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/api.html">API documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">mrsimulator</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="mr_objects.html"><cite>mrsimulator</cite> objects</a> &raquo;</li>
+        
+      <li>Objects</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/objects.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="isotopomers_object.html" class="btn btn-neutral float-right" title="Isotopomers" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="mr_objects.html" class="btn btn-neutral float-left" title="mrsimulator objects" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="objects">
+<span id="ojects"></span><h1>Objects<a class="headerlink" href="#objects" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="orientation">
+<span id="id1"></span><h2>Orientation<a class="headerlink" href="#orientation" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>An <cite>Orientation</cite> is a python
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict">dict</a>
+object which represents the three Euler angles. The key-value pairs of this
+object follow,</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="15%" />
+<col width="25%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">key</th>
+<th class="head">value type</th>
+<th class="head">value description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">alpha</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
+containing a physical quantity</td>
+<td>The <span class="math notranslate nohighlight">\(\alpha\)</span> Euler angle. For example, ‘2.1 rad’. The default value is
+‘0 rad’.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">beta</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
+containing a physical quantity</td>
+<td>The <span class="math notranslate nohighlight">\(\beta\)</span> Euler angle. For example, ‘23.5 deg’. The default value is
+‘0 rad’.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">gamma</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
+containing a physical quantity</td>
+<td>The <span class="math notranslate nohighlight">\(\gamma\)</span> Euler angle. For example, ‘.5 rad’. The default value is
+‘0 rad’.</td>
+</tr>
+</tbody>
+</table>
+<p><em>An example of Orientation object.</em></p>
+</div></blockquote>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5 rad&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="s2">&quot;0.23 rad&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="s2">&quot;2.54 rad&quot;</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="symmetrictensor">
+<span id="symmetric-tensor"></span><h2>SymmetricTensor<a class="headerlink" href="#symmetrictensor" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>A <cite>SymmetricTensor</cite> is a python
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict">dict</a>
+object which represents a traceless second rank symmetric tensor.
+The traceless symmetric second rank tensor is represented by the following
+key-value pairs.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="15%" />
+<col width="25%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">key</th>
+<th class="head">value type</th>
+<th class="head">value description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">anisotropy</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
+containing a physical quantity</td>
+<td>The strength of the anisotropy as calculated using Haeberlen
+convention. For example, “10 kHz”. The default value is ‘0 Hz’</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">asymmetry</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td>The asymmetry parameter of the tensor as calculated using
+Haeberlen convention. For example, 0.75. The default value is 0.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">orientation</span></code></td>
+<td>An <a class="reference internal" href="#orientation"><span class="std std-ref">Orientation</span></a> object</td>
+<td>The orientation of the tensor in the principal axis frame relative to
+the crystal frame.</td>
+</tr>
+</tbody>
+</table>
+<p><em>An example of SymmetricTensor object.</em></p>
+</div></blockquote>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;10.3 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;asymmetry&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5 rad&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="s2">&quot;0.23 rad&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="s2">&quot;2.54 rad&quot;</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="site">
+<span id="id2"></span><h2>Site<a class="headerlink" href="#site" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>A <cite>Site</cite> object is a python
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict">dict</a>
+object which represents a nuclear site through the following key-value pairs,</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">key</th>
+<th class="head">value type</th>
+<th class="head">value description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">isotope_symbol</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a></td>
+<td>The NMR active isotope symbol, for example, ‘13C’.
+This is a required key.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">isotropic_chemical_shift</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
+containing a physical quantity</td>
+<td>The isotropic chemical shift of the isotope, for example,
+‘1 Hz’. The default value is ‘0 Hz’.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">shielding_symmetric</span></code></td>
+<td>A <a class="reference internal" href="#symmetric-tensor"><span class="std std-ref">SymmetricTensor</span></a> object</td>
+<td>See the description for the <a class="reference internal" href="#symmetric-tensor"><span class="std std-ref">SymmetricTensor</span></a> object.</td>
+</tr>
+</tbody>
+</table>
+<p><em>An example of Site object.</em></p>
+</div></blockquote>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;isotope_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;13C&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;isotropic_chemical_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;15 Hz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;shielding_symmetric&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;10.3 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;asymmetry&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>            <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5 rad&quot;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="s2">&quot;0.23 rad&quot;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="s2">&quot;2.54 rad&quot;</span>
+<span class="gp">... </span>        <span class="p">}</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="isotopomer">
+<span id="id3"></span><h2>Isotopomer<a class="headerlink" href="#isotopomer" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>An <cite>Isotopomer</cite> object is a python
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict">dict</a>
+object which represents an isotopomer.
+In <cite>mrsimulator</cite>, each <cite>isotopomer</cite> is treated as a <span class="math notranslate nohighlight">\(n\)</span>-coupled spin
+system where <span class="math notranslate nohighlight">\(n\)</span> is the number of sites in the isotopomer.
+It is recommended that if the sites are uncoupled, it be specified as
+individual isotopomers with a single site object, rather than a single
+isotopomer with multiple sites.</p>
+<p>The key-value pairs of the <cite>Isotopomer</cite> object follow,</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="15%" />
+<col width="15%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">key</th>
+<th class="head">value type</th>
+<th class="head">value description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">sites</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a></td>
+<td>A list of <a class="reference internal" href="#site"><span class="std std-ref">Site</span></a> objects.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">abundance</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/functions.html#float">string</a></td>
+<td>The abundance of the isotopomer. The abundance is either given as
+percent, for example, ‘25.4 %’ or a number between 0 and 1, for
+example, ‘0.5’. This key-value is useful when simulating multiple
+isotopomers. The default value is ‘100 %’.</td>
+</tr>
+</tbody>
+</table>
+<p><em>An example of Isotopomer object.</em></p>
+</div></blockquote>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;sites&quot;</span><span class="p">:</span> <span class="p">[</span>
+<span class="gp">... </span>        <span class="p">{</span>
+<span class="gp">... </span>            <span class="s2">&quot;isotope_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;13C&quot;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;isotropic_chemical_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;15 Hz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;shielding_symmetric&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>                <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;10.3 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s2">&quot;asymmetry&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>                    <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5 rad&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="s2">&quot;0.23 rad&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="s2">&quot;2.54 rad&quot;</span>
+<span class="gp">... </span>                <span class="p">}</span>
+<span class="gp">... </span>            <span class="p">}</span>
+<span class="gp">... </span>        <span class="p">}</span>
+<span class="gp">... </span>    <span class="p">],</span>
+<span class="gp">... </span>    <span class="s2">&quot;abundance&quot;</span><span class="p">:</span> <span class="s2">&quot;15.3 %&quot;</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="directdimension">
+<span id="direct-dimension"></span><h2>DirectDimension<a class="headerlink" href="#directdimension" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>A <cite>DirectDimension</cite> object is a python
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict">dict</a>
+object with the following key-value pairs.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">key</th>
+<th class="head">value type</th>
+<th class="head">value description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">nucleus</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a></td>
+<td>The isotope symbol of the nuclei. The recorded spectrum a histogram of
+frequencies corresponding to this nuclear isotope. An example may
+be ‘29Si’.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">magnetic_flux_density</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
+containing a physical quantity</td>
+<td>The strength of the external static magnetic field of the spectrometer,
+for example, ‘14.1 T’. The default value is ‘9.4 T’.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">rotor_frequency</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
+containing a physical quantity</td>
+<td>The sample spinning frequency, for example, ‘10 kHz’. The default value
+is ‘0 Hz’.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">rotor_angle</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
+containing a physical quantity</td>
+<td>The angle between the sample rotation axis and the external magnetic
+field, for example, ‘90 deg’. The default value is ‘54.735 deg’.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">number_of_points</span></code></td>
+<td>An <a class="reference external" href="https://docs.python.org/3.3/library/functions.html#int">integer</a></td>
+<td>The number of points used in sampling the spectrum, for example, 8192.
+The default value is 1024.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">spectral_width</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
+containing a physical quantity</td>
+<td>The frequency spectral width over which the spectrum is simulated,
+for example, ‘500 kHz’. The default value is ‘100 kHz’.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">reference_offset</span></code></td>
+<td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
+containing a physical quantity</td>
+<td>The reference offset of the spectrum, for example, ‘1.4587 kHz’.
+The default value is ‘0 Hz’.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">All physical quantities are specified as strings containing a numerical
+value and a unit.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Deepansh J. Srivastava
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

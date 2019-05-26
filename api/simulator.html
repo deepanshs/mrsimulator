@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Simulator &mdash; mrsimulator 0.1dev1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="API documentation" href="api.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: black" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> mrsimulator
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0.dev1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started with <cite>mrsimulator</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mr_objects.html"><cite>mrsimulator</cite> objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../load_isotopomers.html">Setting up the isotopomers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Simulator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mrsimulator.methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">mrsimulator</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api.html">API documentation</a> &raquo;</li>
+        
+      <li>Simulator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/simulator.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+      
+        <a href="api.html" class="btn btn-neutral float-left" title="API documentation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="simulator">
+<span id="simulator-api"></span><h1>Simulator<a class="headerlink" href="#simulator" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="mrsimulator.Simulator">
+<em class="property">class </em><code class="descclassname">mrsimulator.</code><code class="descname">Simulator</code><span class="sig-paren">(</span><em>isotopomers=None</em>, <em>spectrum=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mrsimulator.Simulator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The simulator class.</p>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#mrsimulator.Simulator.isotopomers" title="mrsimulator.Simulator.isotopomers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isotopomers</span></code></a></td>
+<td>Return a list of <a class="reference internal" href="../objects.html#isotopomer"><span class="std std-ref">Isotopomer</span></a> objects.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#mrsimulator.Simulator.spectrum" title="mrsimulator.Simulator.spectrum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spectrum</span></code></a></td>
+<td>Return a <a class="reference internal" href="../spectrum_object.html#spectrum"><span class="std std-ref">Spectrum</span></a> object.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#mrsimulator.Simulator.isotope_list" title="mrsimulator.Simulator.isotope_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isotope_list</span></code></a></td>
+<td>Return a list of unique isotopes symbols from the list of isotopomers.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#mrsimulator.Simulator.run" title="mrsimulator.Simulator.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(method,&nbsp;**kwargs)</td>
+<td>Simulate the spectrum using the specified method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#mrsimulator.Simulator.load_isotopomers" title="mrsimulator.Simulator.load_isotopomers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_isotopomers</span></code></a>(filename)</td>
+<td>Load a JSON serialized isotopomers file.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="mrsimulator.Simulator.isotopomers">
+<code class="descname">isotopomers</code><a class="headerlink" href="#mrsimulator.Simulator.isotopomers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of <a class="reference internal" href="../objects.html#isotopomer"><span class="std std-ref">Isotopomer</span></a> objects.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mrsimulator.Simulator.spectrum">
+<code class="descname">spectrum</code><a class="headerlink" href="#mrsimulator.Simulator.spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference internal" href="../spectrum_object.html#spectrum"><span class="std std-ref">Spectrum</span></a> object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mrsimulator.Simulator.isotope_list">
+<code class="descname">isotope_list</code><a class="headerlink" href="#mrsimulator.Simulator.isotope_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of unique isotopes symbols from the list of
+isotopomers.</p>
+</dd></dl>
+
+<p class="rubric">Method Documentation</p>
+<dl class="method">
+<dt id="mrsimulator.Simulator.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>method</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mrsimulator.Simulator.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the spectrum using the specified method. The keyword argument
+are arguments of the <cite>method</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrsimulator.Simulator.load_isotopomers">
+<code class="descname">load_isotopomers</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#mrsimulator.Simulator.load_isotopomers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a JSON serialized isotopomers file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mrsimulator.methods">
+<span id="methods"></span><span id="methods-api"></span><h1>Methods<a class="headerlink" href="#module-mrsimulator.methods" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="mrsimulator.methods.one_d_spectrum">
+<code class="descclassname">mrsimulator.methods.</code><code class="descname">one_d_spectrum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mrsimulator.methods.one_d_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>verbose</strong> – The value is either 0 or 1. When the value is 1, the output is
+printed on the screen. The default value is 0.</li>
+<li><strong>number_of_sidebands</strong> – The value is an integer which corresponds to the number of sidebands
+simulated in the spectrum. The default value is 90. Note, when the
+sample spin frequency is low, more sidebands may be required for
+proper computation. The user is advised to ensure that enough sidebands
+are requested in the simulation, based on the spin frequency.</li>
+<li><strong>geodesic_polyhedron_frequency</strong> – The value is an integer which represents the frequency of class I
+geodesic
+polyhedra. These polyhedra are used in calculating the spherical
+average. Presently we use octahedral as the frequency 1 polyhedra.
+With higher geodesic polyhedron frequency, the polyhedra start to
+resembles a sphere. The default value is 72.
+Read more on the geodesic polyhedron.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Deepansh J. Srivastava
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

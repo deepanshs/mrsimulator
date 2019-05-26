@@ -1,0 +1,482 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Examples &mdash; mrsimulator 0.1dev1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API documentation" href="api/api.html" />
+    <link rel="prev" title="Setting up the isotopomers" href="load_isotopomers.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: black" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> mrsimulator
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0.dev1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started with <cite>mrsimulator</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="mr_objects.html"><cite>mrsimulator</cite> objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_isotopomers.html">Setting up the isotopomers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#static-spectrum">Static spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mas-spectrum">MAS spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#switch-to-another-isotope">Switch to another isotope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-rotor-angle">Setting rotor angle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#switch-to-another-nucleus">Switch to another nucleus</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/api.html">API documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">mrsimulator</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Examples</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="api/api.html" class="btn btn-neutral float-right" title="API documentation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="load_isotopomers.html" class="btn btn-neutral float-left" title="Setting up the isotopomers" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="examples">
+<span id="id1"></span><h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<p>Setup a <a class="reference internal" href="api/simulator.html#simulator-api"><span class="std std-ref">Simulator</span></a> instance and load the isotopomers.
+See <a class="reference internal" href="load_isotopomers.html#load-isotopomers"><span class="std std-ref">Setting up the isotopomers</span></a> for details.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mrsimulator</span> <span class="kn">import</span> <span class="n">Simulator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mrsimulator.methods</span> <span class="kn">import</span> <span class="n">one_d_spectrum</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers.json&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim</span><span class="o">.</span><span class="n">load_isotopomers</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<span class="go">Downloading &#39;/DeepanshS/mrsimulator-test/master/isotopomers.json&#39; from &#39;raw.githubusercontent.com&#39; to file &#39;isotopomers.json&#39;.</span>
+<span class="go">[█████████████████████████████████████████████████████████████████████████]</span>
+</pre></div>
+</div>
+<p>Use the <a class="reference internal" href="api/simulator.html#mrsimulator.Simulator.isotope_list" title="mrsimulator.Simulator.isotope_list"><code class="xref py py-attr docutils literal notranslate"><span class="pre">isotope_list</span></code></a> attribute of the <code class="docutils literal notranslate"><span class="pre">sim</span></code>
+instance to get the list of unique isotopes from the list of isotopomers.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">isotope_list</span><span class="p">)</span>
+<span class="go">[&#39;13C&#39;, &#39;29Si&#39;, &#39;1H&#39;]</span>
+</pre></div>
+</div>
+<p>In this example, the list of isotopomers contains three unique isotopes,
+<span class="math notranslate nohighlight">\(^{13}\mathrm{C}\)</span>, <span class="math notranslate nohighlight">\(^{29}\mathrm{Si}\)</span>, and <span class="math notranslate nohighlight">\(^{1}\mathrm{H}\)</span>.</p>
+<div class="section" id="static-spectrum">
+<h2>Static spectrum<a class="headerlink" href="#static-spectrum" title="Permalink to this headline">¶</a></h2>
+<p>To generate a static spectrum, set up with the following <a class="reference internal" href="spectrum_object.html#spectrum"><span class="std std-ref">Spectrum</span></a>
+object,</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sim</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;direct_dimension&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;nucleus&quot;</span><span class="p">:</span> <span class="s2">&quot;13C&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;magnetic_flux_density&quot;</span><span class="p">:</span> <span class="s2">&quot;9.4 T&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;rotor_frequency&quot;</span><span class="p">:</span> <span class="s2">&quot;0 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;rotor_angle&quot;</span><span class="p">:</span> <span class="s2">&quot;54.735 deg&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;number_of_points&quot;</span><span class="p">:</span> <span class="mi">8192</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;spectral_width&quot;</span><span class="p">:</span> <span class="s2">&quot;30 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;reference_offset&quot;</span><span class="p">:</span> <span class="s2">&quot;0 Hz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The above spectrum object is set to simulate a <span class="math notranslate nohighlight">\(^{13}\mathrm{C}\)</span> static
+spectrum at 9.4 T magnetic field over 30 kHz frequency-bandwidth using 8192
+points.</p>
+<p>Now, generate the lineshape with the <a class="reference internal" href="api/simulator.html#mrsimulator.Simulator.run" title="mrsimulator.Simulator.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a>
+method as</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">freq</span><span class="p">,</span> <span class="n">amp</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">one_d_spectrum</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">Setting up the virtual NMR spectrometer</span>
+<span class="go">---------------------------------------</span>
+<span class="go">Adjusting the magnetic flux density to 9.4 T</span>
+<span class="go">Setting rotation angle to 0.9553059660790962 rad</span>
+<span class="go">Setting rotation frequency to 0.0 Hz</span>
+<span class="go">Detecting 13C(I=0.5, precession frequency = 100.65896 MHz) isotope</span>
+<span class="go">Recording 13C spectrum with 8192 points over a 30000.0 Hz bandwidth and a reference offset of 0.0 Hz.</span>
+
+<span class="go">13C site 0 in isotopomer 0 @ 12.0% abundance</span>
+<span class="go">--------------------------------------------</span>
+<span class="go">isotropic chemical shift = 1.0 Hz</span>
+<span class="go">chemical shift anisotropy = -3890.0 Hz</span>
+<span class="go">chemical shift asymmetry = 0.25</span>
+
+<span class="go">13C site 0 in isotopomer 1 @ 100.0% abundance</span>
+<span class="go">---------------------------------------------</span>
+<span class="go">isotropic chemical shift = 1000.0 Hz</span>
+<span class="go">chemical shift anisotropy = 8200.0 Hz</span>
+<span class="go">chemical shift asymmetry = 0.0</span>
+
+<span class="go">Execution time 0.03153 s</span>
+</pre></div>
+</div>
+<p>The simulator goes through every isotopomer in the list and simulates the
+lineshape corresponding to the <span class="math notranslate nohighlight">\(^{13}\mathrm{C}\)</span> isotopes. In this
+example, there are two <span class="math notranslate nohighlight">\(^{13}\mathrm{C}\)</span> isotopes in the list of the
+isotopomers.</p>
+<img alt="_images/13C_static.pdf" src="_images/13C_static.pdf" />
+</div>
+<div class="section" id="mas-spectrum">
+<h2>MAS spectrum<a class="headerlink" href="#mas-spectrum" title="Permalink to this headline">¶</a></h2>
+<p>To generate a MAS spectrum, set the rotor frequency of the <a class="reference internal" href="spectrum_object.html#spectrum"><span class="std std-ref">Spectrum</span></a>
+object to the desired value. For example,</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sim</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;direct_dimension&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;nucleus&quot;</span><span class="p">:</span> <span class="s2">&quot;13C&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;magnetic_flux_density&quot;</span><span class="p">:</span> <span class="s2">&quot;9.4 T&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;rotor_frequency&quot;</span><span class="p">:</span> <span class="s2">&quot;1 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;rotor_angle&quot;</span><span class="p">:</span> <span class="s2">&quot;54.735 deg&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;number_of_points&quot;</span><span class="p">:</span> <span class="mi">8192</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;spectral_width&quot;</span><span class="p">:</span> <span class="s2">&quot;30 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;reference_offset&quot;</span><span class="p">:</span> <span class="s2">&quot;0 Hz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Compute the lineshape.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">freq</span><span class="p">,</span> <span class="n">amp</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">one_d_spectrum</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">Setting up the virtual NMR spectrometer</span>
+<span class="go">---------------------------------------</span>
+<span class="go">Adjusting the magnetic flux density to 9.4 T</span>
+<span class="go">Setting rotation angle to 0.9553059660790962 rad</span>
+<span class="go">Setting rotation frequency to 1000.0 Hz</span>
+<span class="go">Detecting 13C(I=0.5, precession frequency = 100.65896 MHz) isotope</span>
+<span class="go">Recording 13C spectrum with 8192 points over a 30000.0 Hz bandwidth and a reference offset of 0.0 Hz.</span>
+
+<span class="go">13C site 0 in isotopomer 0 @ 12.0% abundance</span>
+<span class="go">--------------------------------------------</span>
+<span class="go">isotropic chemical shift = 1.0 Hz</span>
+<span class="go">chemical shift anisotropy = -3890.0 Hz</span>
+<span class="go">chemical shift asymmetry = 0.25</span>
+
+<span class="go">13C site 0 in isotopomer 1 @ 100.0% abundance</span>
+<span class="go">---------------------------------------------</span>
+<span class="go">isotropic chemical shift = 1000.0 Hz</span>
+<span class="go">chemical shift anisotropy = 8200.0 Hz</span>
+<span class="go">chemical shift asymmetry = 0.0</span>
+
+<span class="go">Execution time 0.027652 s</span>
+</pre></div>
+</div>
+<img alt="_images/13C_mas_1kHz.pdf" src="_images/13C_mas_1kHz.pdf" />
+</div>
+<div class="section" id="switch-to-another-isotope">
+<h2>Switch to another isotope<a class="headerlink" href="#switch-to-another-isotope" title="Permalink to this headline">¶</a></h2>
+<p>Generate a new <a class="reference internal" href="spectrum_object.html#spectrum"><span class="std std-ref">Spectrum</span></a> object with a different isotope. The isotope
+may be specified with the <cite>nucleus</cite> key, as shown below. In the following
+example, a <span class="math notranslate nohighlight">\(^1\mathrm{H}\)</span> spectrum is simulated at 9.4 T field, spinning
+at the magic angle at 2 kHz frequency, and sampled over 100 kHz frequency
+bandwidth with 8192 points.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sim</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;direct_dimension&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;nucleus&quot;</span><span class="p">:</span> <span class="s2">&quot;1H&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;magnetic_flux_density&quot;</span><span class="p">:</span> <span class="s2">&quot;9.4 T&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;rotor_frequency&quot;</span><span class="p">:</span> <span class="s2">&quot;2 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;rotor_angle&quot;</span><span class="p">:</span> <span class="s2">&quot;54.735 deg&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;number_of_points&quot;</span><span class="p">:</span> <span class="mi">8192</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;spectral_width&quot;</span><span class="p">:</span> <span class="s2">&quot;100 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;reference_offset&quot;</span><span class="p">:</span> <span class="s2">&quot;0 Hz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Now compute the lineshape.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">freq</span><span class="p">,</span> <span class="n">amp</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">one_d_spectrum</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">Setting up the virtual NMR spectrometer</span>
+<span class="go">---------------------------------------</span>
+<span class="go">Adjusting the magnetic flux density to 9.4 T</span>
+<span class="go">Setting rotation angle to 0.9553059660790962 rad</span>
+<span class="go">Setting rotation frequency to 2000.0 Hz</span>
+<span class="go">Detecting 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope</span>
+<span class="go">Recording 1H spectrum with 8192 points over a 100000.0 Hz bandwidth and a reference offset of 0.0 Hz.</span>
+
+<span class="go">1H site 0 in isotopomer 2 @ 100.0% abundance</span>
+<span class="go">--------------------------------------------</span>
+<span class="go">isotropic chemical shift = 3000.0 Hz</span>
+<span class="go">chemical shift anisotropy = 23200.0 Hz</span>
+<span class="go">chemical shift asymmetry = 0.0</span>
+
+<span class="go">1H site 0 in isotopomer 6 @ 100.0% abundance</span>
+<span class="go">--------------------------------------------</span>
+<span class="go">isotropic chemical shift = 5600.0 Hz</span>
+<span class="go">chemical shift anisotropy = 13200.0 Hz</span>
+<span class="go">chemical shift asymmetry = 0.0</span>
+
+<span class="go">Execution time 0.03747 s</span>
+</pre></div>
+</div>
+<img alt="_images/1H_mas_2kHz.pdf" src="_images/1H_mas_2kHz.pdf" />
+</div>
+<div class="section" id="setting-rotor-angle">
+<h2>Setting rotor angle<a class="headerlink" href="#setting-rotor-angle" title="Permalink to this headline">¶</a></h2>
+<p>The rotor angle may be set to any value from <span class="math notranslate nohighlight">\(0^\circ\)</span> to
+<span class="math notranslate nohighlight">\(90^\circ\)</span>. In the following example, the <a class="reference internal" href="spectrum_object.html#spectrum"><span class="std std-ref">Spectrum</span></a>
+object is the same are from the previous example, except the
+<code class="docutils literal notranslate"><span class="pre">rotor_angle</span></code> is set to <span class="math notranslate nohighlight">\(90^\circ\)</span>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sim</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;direct_dimension&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;nucleus&quot;</span><span class="p">:</span> <span class="s2">&quot;1H&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;magnetic_flux_density&quot;</span><span class="p">:</span> <span class="s2">&quot;9.4 T&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;rotor_frequency&quot;</span><span class="p">:</span> <span class="s2">&quot;2 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;rotor_angle&quot;</span><span class="p">:</span> <span class="s2">&quot;90 deg&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;number_of_points&quot;</span><span class="p">:</span> <span class="mi">8192</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;spectral_width&quot;</span><span class="p">:</span> <span class="s2">&quot;100 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;reference_offset&quot;</span><span class="p">:</span> <span class="s2">&quot;0 Hz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The simulated lineshape.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">freq</span><span class="p">,</span> <span class="n">amp</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">one_d_spectrum</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">Setting up the virtual NMR spectrometer</span>
+<span class="go">---------------------------------------</span>
+<span class="go">Adjusting the magnetic flux density to 9.4 T</span>
+<span class="go">Setting rotation angle to 1.5707963267948966 rad</span>
+<span class="go">Setting rotation frequency to 2000.0 Hz</span>
+<span class="go">Detecting 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope</span>
+<span class="go">Recording 1H spectrum with 8192 points over a 100000.0 Hz bandwidth and a reference offset of 0.0 Hz.</span>
+
+<span class="go">1H site 0 in isotopomer 2 @ 100.0% abundance</span>
+<span class="go">--------------------------------------------</span>
+<span class="go">isotropic chemical shift = 3000.0 Hz</span>
+<span class="go">chemical shift anisotropy = 23200.0 Hz</span>
+<span class="go">chemical shift asymmetry = 0.0</span>
+
+<span class="go">1H site 0 in isotopomer 6 @ 100.0% abundance</span>
+<span class="go">--------------------------------------------</span>
+<span class="go">isotropic chemical shift = 5600.0 Hz</span>
+<span class="go">chemical shift anisotropy = 13200.0 Hz</span>
+<span class="go">chemical shift asymmetry = 0.0</span>
+
+<span class="go">Execution time 0.050539 s</span>
+</pre></div>
+</div>
+<img alt="_images/1H_mas_2khz_90deg.pdf" src="_images/1H_mas_2khz_90deg.pdf" />
+</div>
+<div class="section" id="switch-to-another-nucleus">
+<h2>Switch to another nucleus<a class="headerlink" href="#switch-to-another-nucleus" title="Permalink to this headline">¶</a></h2>
+<p>In this example, we simulate the MAS lineshape of <span class="math notranslate nohighlight">\(^{29}\mathrm{Si}\)</span>
+isotope.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sim</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;direct_dimension&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;nucleus&quot;</span><span class="p">:</span> <span class="s2">&quot;29Si&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;magnetic_flux_density&quot;</span><span class="p">:</span> <span class="s2">&quot;9.4 T&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;rotor_frequency&quot;</span><span class="p">:</span> <span class="s2">&quot;2 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;rotor_angle&quot;</span><span class="p">:</span> <span class="s2">&quot;90 deg&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;number_of_points&quot;</span><span class="p">:</span> <span class="mi">8192</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;spectral_width&quot;</span><span class="p">:</span> <span class="s2">&quot;150 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;reference_offset&quot;</span><span class="p">:</span> <span class="s2">&quot;20 Hz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The simulated lineshape.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">freq</span><span class="p">,</span> <span class="n">amp</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">one_d_spectrum</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">Setting up the virtual NMR spectrometer</span>
+<span class="go">---------------------------------------</span>
+<span class="go">Adjusting the magnetic flux density to 9.4 T</span>
+<span class="go">Setting rotation angle to 0.9553059660790962 rad</span>
+<span class="go">Setting rotation frequency to 2000.0 Hz</span>
+<span class="go">Detecting 29Si(I=0.5, precession frequency = -79.571 MHz) isotope</span>
+<span class="go">Recording 29Si spectrum with 8192 points over a 150000.0 Hz bandwidth and a reference offset of 20000.0 Hz.</span>
+
+<span class="go">29Si site 0 in isotopomer 3 @ 100.0% abundance</span>
+<span class="go">----------------------------------------------</span>
+<span class="go">isotropic chemical shift = 1640.0 Hz</span>
+<span class="go">chemical shift anisotropy = 7360.0 Hz</span>
+<span class="go">chemical shift asymmetry = 0.0</span>
+
+<span class="go">29Si site 0 in isotopomer 4 @ 100.0% abundance</span>
+<span class="go">----------------------------------------------</span>
+<span class="go">isotropic chemical shift = 43000.0 Hz</span>
+<span class="go">chemical shift anisotropy = 8360.0 Hz</span>
+<span class="go">chemical shift asymmetry = 0.5</span>
+
+<span class="go">29Si site 0 in isotopomer 5 @ 100.0% abundance</span>
+<span class="go">----------------------------------------------</span>
+<span class="go">isotropic chemical shift = 10000.0 Hz</span>
+<span class="go">chemical shift anisotropy = 6360.0 Hz</span>
+<span class="go">chemical shift asymmetry = 0.0</span>
+
+<span class="go">Execution time 0.045870999999999995</span>
+</pre></div>
+</div>
+<img alt="_images/29Si_mas_2kHz.pdf" src="_images/29Si_mas_2kHz.pdf" />
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Deepansh J. Srivastava
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
