@@ -6,7 +6,7 @@
 Installation
 ============
 
-The ``mrsimulator`` package requires the 'fftw3' package to function properly.
+The `mrsimulator` package requires the 'fftw3' package to function properly.
 Install the fftw3 package using
 
 .. doctest::
@@ -18,12 +18,12 @@ Read more about
 `fftw3 installation <https://anaconda.org/eumetsat/fftw3>`_.
 
 
-Before installing the package, install the required dependency packages using
+.. Before installing the package, install the required dependency packages using
 
-.. doctest::
-    :skipif: None is None
+.. .. doctest::
+..     :skipif: None is None
 
-    >>> pip install scipy numpy astropy mkl mkl-include
+..     >>> pip install scipy numpy astropy mkl mkl-include
 
 To install the ``mrsimulator`` package, first download package and run the
 following in the terminal
@@ -31,4 +31,4 @@ following in the terminal
 .. doctest::
     :skipif: None is None
 
-    >>> python setup.py install
+    >>> pip install git+https://github.com/DeepanshS/mrsimulator.git@version0.0.9

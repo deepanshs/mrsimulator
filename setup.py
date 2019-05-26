@@ -133,6 +133,7 @@ setup(
       
       install_requires=REQUIRED,
       extras_require=EXTRAS,
+      data_files = ['mrsimulator/test/isotopomers.json'],
 
       cmdclass = cmdclass,
       ext_modules = ext, # cythonize(ext_modules, annotate=True, language_level=3, gdb_debug=True),

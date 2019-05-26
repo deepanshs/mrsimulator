@@ -20,18 +20,22 @@ def one_d_spectrum(dict spectrum,
     """
     
     :ivar verbose:
-        The value is either 0 or 1. Prints the isotopomers and
-        method on screen when value is 1. The default is 0.
+        The value is either 0 or 1. When the value is 1, the output is
+        printed on the screen. The default value is 0.
     :ivar number_of_sidebands:
-        The value is an integer. Only requested number of sidebands
-        are calcualted. The default value is 90.
+        The value is an integer which corresponds to the number of sidebands
+        simulated in the spectrum. The default value is 90. Note, when the
+        sample spin frequency is low, more sidebands may be required for
+        proper computation. The user is advised to ensure that enough sidebands
+        are requested in the simulation, based on the spin frequency.
     :ivar geodesic_polyhedron_frequency:
-        An integer which represents the frequency of the class I geodesic
-        polyhedra. This polyhedra is used in calculating the spherical
+        The value is an integer which represents the frequency of class I
+        geodesic
+        polyhedra. These polyhedra are used in calculating the spherical
         average. Presently we use octahedral as the frequency 1 polyhedra.
-        With higher geodesic polyhedron frequency, the polyhedra starts to
-        resemples a shpere. The default value is 72.
-        Read more on geodesic polyhedron.
+        With higher geodesic polyhedron frequency, the polyhedra start to
+        resembles a sphere. The default value is 72.
+        Read more on the geodesic polyhedron.
     """
 # ---------------------------------------------------------------------
 # spectrum ________________________________________________________

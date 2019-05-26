@@ -5,6 +5,8 @@ from .unit import string_to_quantity
 import json
 from urllib.parse import urlparse
 from ._utils_download_file import _download_file_from_url
+from .utils import __get_spin_attribute__
+
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.90@osu.edu"
@@ -101,11 +103,11 @@ class _Spectrum(_Dimensions):
 
 class Isotopomers(list):
     def __init__(self, isotopomers: list) -> list:
-        isotopomers_, isotope_list = _Isotopomers(isotopomers)
+        isotopomers_ = _Isotopomers(isotopomers)
         list.__init__(self, isotopomers_)
 
     def append(self, value):
-        isotopomer_, isotope_list_ = _Isotopomer(**value)
+        isotopomer_ = _Isotopomer(**value)
         list.append(isotopomer_)
 
 
@@ -129,12 +131,12 @@ class _Isotopomers:
         isotopomers_ = []
         isotope_list = []
         for isotopomer in isotopomers:
-            isotopomer_set, isotope_list_ = _Isotopomer(**isotopomer)
+            isotopomer_set = _Isotopomer(**isotopomer)
             isotopomers_.append(isotopomer_set)
 
-            isotope_list.append(isotope_list_)
+            # isotope_list.append(isotope_list_)
 
-        return (isotopomers_, isotope_list)
+        return isotopomers_#, isotope_list)
 
 
 class _Isotopomer:
@@ -151,12 +153,12 @@ class _Isotopomer:
                 f"Expecting a list of sites. Found {type(sites)}."
             ))
         _sites = []
-        isotope_list = []
+        # isotope_list = []
         abundance = string_to_quantity(abundance).to('').value
         for site in sites:
             _sites.append(_Site(**site))
-            isotope_list.append(_sites[-1]['isotope_symbol'])
-        return ({'sites': _sites, 'abundance': abundance}, isotope_list)
+            # isotope_list.append(_sites[-1]['isotope_symbol'])
+        return ({'sites': _sites, 'abundance': abundance}) #, isotope_list)
 
 
 class _Site:
@@ -199,7 +201,8 @@ class Simulator:
         '_isotopomers',
         '_spectrum',
         '_spectrum_c',
-        '_isotope_list'
+        '_isotope_list',
+        '_allowed_isotopes'
     )
 
     def __init__(self, isotopomers=None, spectrum=None):
@@ -208,6 +211,11 @@ class Simulator:
         self._spectrum = {}
         self._spectrum_c = {}
         self._isotope_list = []
+        isotope_list = __get_spin_attribute__.keys()
+        self._allowed_isotopes = list(set([
+            isotope for isotope in isotope_list 
+                if __get_spin_attribute__[isotope]['spin']==0.5
+        ]))
 
         if isotopomers is not None:
             self.isotopomers = isotopomers
@@ -233,15 +241,19 @@ class Simulator:
 
     @isotopomers.setter
     def isotopomers(self, value):
-        self._isotopomers_c, isotope_list = _Isotopomers(value)
-        isotope_list = [item for sublist in isotope_list for item in sublist]
+        self._isotopomers_c = _Isotopomers(value)
+        isotope_list = [
+            site['isotope_symbol'] for isotopomer in self._isotopomers_c
+                for site in isotopomer['sites'] 
+                    if site['isotope_symbol'] in self._allowed_isotopes
+        ]
         self._isotope_list = set(isotope_list)
         self._isotopomers = value
 
     @property
     def spectrum(self):
         """
-        Return a :ref:`spectrum` objects.
+        Return a :ref:`spectrum` object.
         """
         # return json.dumps(self._spectrum, ensure_ascii=True, indent=2)
         return self._spectrum
@@ -271,7 +283,7 @@ class Simulator:
         return (freq, amp)
 
     def load_isotopomers(self, filename):
-        """Load a json serialized isotopomers file."""
+        """Load a JSON serialized isotopomers file."""
         contents = _import_json(filename)
         self.isotopomers = contents['isotopomers']
 

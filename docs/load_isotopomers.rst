@@ -91,13 +91,14 @@ objects or directly imported from a JSON serialized isotopomers file.
     ...     },
     ... ]
 
-Create an instance of the :ref:`simulator_api` class,
+To load this list of isotopomers, first, create an instance of
+the :ref:`simulator_api` class,
 
 .. doctest::
 
     >>> from mrsimulator import Simulator
 
-and then assign the isotopomers using either
+and then assign the list using either
 
 .. doctest::
 
@@ -114,6 +115,12 @@ or
 
 **Import from JSON serialized isotopomers file**
 
+The list of isotopomers may directly be assigned to an instance of a
+:ref:`simulator_api` class from a JSON serialized isotopomers file.
+In the following example, we load a
+`test <https://github.com/DeepanshS/mrsimulator-test/blob/master/isotopomers.json>`_
+JSON serialized isotopomers file.
+
 
 .. doctest::
     :skipif: None is None
@@ -124,6 +131,8 @@ or
     >>> st2.load_isotopomers(filename)
     Downloading '/DeepanshS/mrsimulator-test/master/isotopomers.json' from 'raw.githubusercontent.com' to file 'isotopomers.json'.
     [█████████████████████████████████████████████████████████████████████████]
+
+The isotopomers from the file are
 
 .. doctest::
     :skipif: None is None

@@ -73,7 +73,6 @@ and run the simulation.
     :skipif: None is None
 
     >>> freq, amp = sim1.run(one_d_spectrum, verbose=1)
-    <BLANKLINE>
     Setting up the virtual NMR spectrometer
     ---------------------------------------
     Adjusting the magnetic flux density to 9.4 T
