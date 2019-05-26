@@ -31,4 +31,4 @@ following in the terminal
 .. doctest::
     :skipif: None is None
 
-    >>> pip install git+https://github.com/DeepanshS/mrsimulator.git@version0.0.9
+    >>> pip install git+https://github.com/DeepanshS/mrsimulator.git@master
