@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to mrsimulator’s documentation! &mdash; mrsimulator 0.1dev1 documentation</title>
+  <title>Welcome to mrsimulator’s documentation! &mdash; mrsimulator 0.1.0 documentation</title>
   
 
   
@@ -25,6 +25,8 @@
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/_static/copybutton.js"></script>
+        <script type="text/javascript" src="_static/_static/jquery.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -146,20 +148,15 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+            
+              <a href="https://github.com/DeepanshS/mrsimulator/blob/master/docs/source/index.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
     
   </ul>
 
-  
-  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
-      
-        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-  </div>
   
   <hr/>
 </div>
@@ -168,12 +165,18 @@
             
   <div class="section" id="welcome-to-mrsimulator-s-documentation">
 <h1>Welcome to mrsimulator’s documentation!<a class="headerlink" href="#welcome-to-mrsimulator-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p><cite>mrsimulator</cite> is a python package, currently under developedment, for
-simulating one-dimensional nuclear magnetic resonance lineshapes.</p>
+<p>The package <code class="docutils literal notranslate"><span class="pre">mrsimulator</span></code> contains key functionality and tools needed for
+simulating one-dimensional nuclear magnetic resonance (NMR) lineshapes using
+Python. The package is currently under development. Version 0.1.0 supports
+simulation of single spin <span class="math notranslate nohighlight">\(I=\frac{1}{2}\)</span> nuclei static,
+magic angle spinning (MAS), and variable angle spinning (VSA) lineshapes.</p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#test">Test</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started with <cite>mrsimulator</cite></a></li>
 <li class="toctree-l1"><a class="reference internal" href="mr_objects.html"><cite>mrsimulator</cite> objects</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="objects.html">Objects</a></li>
@@ -184,10 +187,9 @@ simulating one-dimensional nuclear magnetic resonance lineshapes.</p>
 <li class="toctree-l1"><a class="reference internal" href="load_isotopomers.html">Setting up the isotopomers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="examples.html#static-spectrum">Static spectrum</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#mas-spectrum">MAS spectrum</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#switch-to-another-isotope">Switch to another isotope</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#setting-rotor-angle">Setting rotor angle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#switch-to-another-nucleus">Switch to another nucleus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#magic-angle-spinning-mas-spectrum">Magic angle spinning (MAS) spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#switch-to-a-different-isotope">Switch to a different isotope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#variable-angle-spinning">Variable angle spinning</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/api.html">API documentation</a><ul>
@@ -205,6 +207,10 @@ simulating one-dimensional nuclear magnetic resonance lineshapes.</p>
 <li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
 <li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
 </ul>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="examples.html#examples"><span class="std std-ref">Examples</span></a></p>
+</div>
 </div>
 
 
@@ -212,6 +218,13 @@ simulating one-dimensional nuclear magnetic resonance lineshapes.</p>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
   
 
   <hr/>

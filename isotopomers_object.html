@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Isotopomers &mdash; mrsimulator 0.1dev1 documentation</title>
+  <title>Isotopomers &mdash; mrsimulator 0.1.0 documentation</title>
   
 
   
@@ -25,6 +25,8 @@
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/_static/copybutton.js"></script>
+        <script type="text/javascript" src="_static/_static/jquery.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -154,22 +156,15 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/isotopomers_object.rst.txt" rel="nofollow"> View page source</a>
+            
+              <a href="https://github.com/DeepanshS/mrsimulator/blob/master/docs/source/isotopomers_object.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
     
   </ul>
 
-  
-  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
-      
-        <a href="spectrum_object.html" class="btn btn-neutral float-right" title="Spectrum" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="objects.html" class="btn btn-neutral float-left" title="Objects" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-  </div>
   
   <hr/>
 </div>
@@ -189,9 +184,9 @@ abundance of each isotopomer.</p>
 <span class="gp">... </span>        <span class="s2">&quot;sites&quot;</span><span class="p">:</span> <span class="p">[</span>
 <span class="gp">... </span>            <span class="p">{</span>
 <span class="gp">... </span>                <span class="s2">&quot;isotope_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;13C&quot;</span><span class="p">,</span>
-<span class="gp">... </span>                <span class="s2">&quot;isotropic_chemical_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;1 Hz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s2">&quot;isotropic_chemical_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;1 ppm&quot;</span><span class="p">,</span>
 <span class="gp">... </span>                <span class="s2">&quot;shielding_symmetric&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="gp">... </span>                    <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;-3.89 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;-3.89 µHz/Hz&quot;</span><span class="p">,</span>
 <span class="gp">... </span>                    <span class="s2">&quot;asymmetry&quot;</span><span class="p">:</span> <span class="mf">0.</span>
 <span class="gp">... </span>                <span class="p">}</span>
 <span class="gp">... </span>            <span class="p">}</span>
@@ -202,9 +197,9 @@ abundance of each isotopomer.</p>
 <span class="gp">... </span>        <span class="s2">&quot;sites&quot;</span><span class="p">:</span> <span class="p">[</span>
 <span class="gp">... </span>            <span class="p">{</span>
 <span class="gp">... </span>                <span class="s2">&quot;isotope_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;29Si&quot;</span><span class="p">,</span>
-<span class="gp">... </span>                <span class="s2">&quot;isotropic_chemical_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;0 Hz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s2">&quot;isotropic_chemical_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;-0.1 mHz/Hz&quot;</span><span class="p">,</span>
 <span class="gp">... </span>                <span class="s2">&quot;shielding_symmetric&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="gp">... </span>                    <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;8.89 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;8.89 ppm&quot;</span><span class="p">,</span>
 <span class="gp">... </span>                    <span class="s2">&quot;asymmetry&quot;</span><span class="p">:</span> <span class="mf">0.5</span>
 <span class="gp">... </span>                <span class="p">}</span>
 <span class="gp">... </span>            <span class="p">}</span>
@@ -217,9 +212,11 @@ abundance of each isotopomer.</p>
 <p>In the above example, the variable <code class="docutils literal notranslate"><span class="pre">isotopomers_list</span></code> is a list with two
 <a class="reference internal" href="objects.html#isotopomer"><span class="std std-ref">Isotopomer</span></a> objects, each containing a single <a class="reference internal" href="objects.html#site"><span class="std std-ref">Site</span></a> object.
 The first isotopomer describes a <span class="math notranslate nohighlight">\(^{13}\mathrm{C}\)</span> nuclear site
-with 1 Hz isotropic chemical shift, -3.89 kHz of anisotropy and an asymmetry
+with 1 ppm isotropic chemical shift, -3.89 µHz/Hz of anisotropy and an
+asymmetry
 parameter of 0.0. The second isotopomer describes a <span class="math notranslate nohighlight">\(^{29}\mathrm{Si}\)</span>
-nuclear site with 0 Hz of isotropic chemical shift, 8.89 kHz of anisotropy
+nuclear site with -0.1 mHz/Hz of isotropic chemical shift, 8.89 ppm of
+anisotropy
 and a value of 0.5 for the asymmetry parameter.</p>
 </div>
 
@@ -228,6 +225,15 @@ and a value of 0.5 for the asymmetry parameter.</p>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="spectrum_object.html" class="btn btn-neutral float-right" title="Spectrum" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="objects.html" class="btn btn-neutral float-left" title="Objects" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

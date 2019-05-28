@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Simulator &mdash; mrsimulator 0.1dev1 documentation</title>
+  <title>Simulator &mdash; mrsimulator 0.1.0 documentation</title>
   
 
   
@@ -25,6 +25,8 @@
         <script type="text/javascript" src="../_static/underscore.js"></script>
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script type="text/javascript" src="../_static/_static/copybutton.js"></script>
+        <script type="text/javascript" src="../_static/_static/jquery.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -152,20 +154,15 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/api/simulator.rst.txt" rel="nofollow"> View page source</a>
+            
+              <a href="https://github.com/DeepanshS/mrsimulator/blob/master/docs/source/api/simulator.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
     
   </ul>
 
-  
-  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
-      
-      
-        <a href="api.html" class="btn btn-neutral float-left" title="API documentation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-  </div>
   
   <hr/>
 </div>
@@ -204,7 +201,7 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#mrsimulator.Simulator.run" title="mrsimulator.Simulator.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(method,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#mrsimulator.Simulator.run" title="mrsimulator.Simulator.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(method[,&nbsp;data_object])</td>
 <td>Simulate the spectrum using the specified method.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#mrsimulator.Simulator.load_isotopomers" title="mrsimulator.Simulator.load_isotopomers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_isotopomers</span></code></a>(filename)</td>
@@ -216,13 +213,15 @@
 <dl class="attribute">
 <dt id="mrsimulator.Simulator.isotopomers">
 <code class="descname">isotopomers</code><a class="headerlink" href="#mrsimulator.Simulator.isotopomers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of <a class="reference internal" href="../objects.html#isotopomer"><span class="std std-ref">Isotopomer</span></a> objects.</p>
+<dd><p>Return a list of <a class="reference internal" href="../objects.html#isotopomer"><span class="std std-ref">Isotopomer</span></a> objects. The attribute can also be
+used to assign a list of valid isotopomers.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="mrsimulator.Simulator.spectrum">
 <code class="descname">spectrum</code><a class="headerlink" href="#mrsimulator.Simulator.spectrum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a <a class="reference internal" href="../spectrum_object.html#spectrum"><span class="std std-ref">Spectrum</span></a> object.</p>
+<dd><p>Return a <a class="reference internal" href="../spectrum_object.html#spectrum"><span class="std std-ref">Spectrum</span></a> object. The attribute can also be
+used to assign a valid spectrum object.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -235,15 +234,40 @@ isotopomers.</p>
 <p class="rubric">Method Documentation</p>
 <dl class="method">
 <dt id="mrsimulator.Simulator.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>method</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mrsimulator.Simulator.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><em>method</em>, <em>data_object=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mrsimulator.Simulator.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate the spectrum using the specified method. The keyword argument
-are arguments of the <cite>method</cite>.</p>
+are the arguments of the specified <cite>method</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first simple">
+<li><strong>method</strong> – The method used in computing the linshape.</li>
+<li><strong>data_object</strong> – If true, returns a <cite>csdm</cite> data object. If false,
+returns a tuple of frequency array and the corresponding
+amplitude array. The amplitude is a
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html">numpy</a>
+array, whereas, the frequency is a 
+<a class="reference external" href="http://docs.astropy.org/en/stable/units/quantity.html">Quantity</a>
+array. The default value is False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <cite>csdm</cite> object if <cite>data_object</cite> is True, else a tuple of frequency and
+amplitude. For details, refer to the description of <cite>data_object</cite>.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="mrsimulator.Simulator.load_isotopomers">
 <code class="descname">load_isotopomers</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#mrsimulator.Simulator.load_isotopomers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a JSON serialized isotopomers file.</p>
+<p>See an <a class="reference external" href="https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json">example</a>
+of JSON serialized isotopomers file. For details, refer to the
+<a class="reference internal" href="../load_isotopomers.html#load-isotopomers"><span class="std std-ref">Setting up the isotopomers</span></a> section.</p>
 </dd></dl>
 
 </dd></dl>
@@ -259,20 +283,23 @@ are arguments of the <cite>method</cite>.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>verbose</strong> – The value is either 0 or 1. When the value is 1, the output is
-printed on the screen. The default value is 0.</li>
+<li><strong>verbose</strong> – The allowed values are 0, 1, and 11. When the value is 1, the output is
+printed on the screen. When the value is 11, in addition to the output
+from 1, execution time is also printed on the screen.
+The default value is 0.</li>
 <li><strong>number_of_sidebands</strong> – The value is an integer which corresponds to the number of sidebands
 simulated in the spectrum. The default value is 90. Note, when the
-sample spin frequency is low, more sidebands may be required for
-proper computation. The user is advised to ensure that enough sidebands
-are requested in the simulation, based on the spin frequency.</li>
+sample spinning frequency is low, computation of more sidebands may be
+required for an acceptable result. The user is advised to ensure that
+enough sidebands are requested for computation.</li>
 <li><strong>geodesic_polyhedron_frequency</strong> – The value is an integer which represents the frequency of class I
-geodesic
-polyhedra. These polyhedra are used in calculating the spherical
-average. Presently we use octahedral as the frequency 1 polyhedra.
-With higher geodesic polyhedron frequency, the polyhedra start to
-resembles a sphere. The default value is 72.
-Read more on the geodesic polyhedron.</li>
+geodesic polyhedra. These polyhedra are used in calculating the
+spherical average. Presently we only use octahedral as the frequency1
+polyhedra. As the frequency of the geodesic polyhedron increases, the
+polyhedra approach a sphere geometry. In lineshape simulation, a higher
+frequency may result in proper powder averaging.
+The default value is 72.
+Read more on the <a class="reference external" href="https://en.wikipedia.org/wiki/Geodesic_polyhedron">Geodesic polyhedron</a>.</li>
 </ul>
 </td>
 </tr>
@@ -280,6 +307,10 @@ Read more on the geodesic polyhedron.</li>
 </table>
 </dd></dl>
 
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../isotopomers_object.html#isotopomers"><span class="std std-ref">Isotopomers</span></a>, <a class="reference internal" href="../spectrum_object.html#spectrum"><span class="std std-ref">Spectrum</span></a> and <a class="reference internal" href="../load_isotopomers.html#load-isotopomers"><span class="std std-ref">Setting up the isotopomers</span></a>,</p>
+</div>
 </div>
 
 
@@ -287,6 +318,13 @@ Read more on the geodesic polyhedron.</li>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="api.html" class="btn btn-neutral float-left" title="API documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

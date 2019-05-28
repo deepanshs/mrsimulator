@@ -67,8 +67,7 @@ SymmetricTensor
   A `SymmetricTensor` is a python
   `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`__
   object which represents a traceless second rank symmetric tensor.
-  The traceless symmetric second rank tensor is represented by the following
-  key-value pairs.
+  It is represented by the following key-value pairs.
 
   .. list-table::
     :widths: 15 25 60
@@ -81,15 +80,17 @@ SymmetricTensor
       - A `string <https://docs.python.org/3/library/stdtypes.html#str>`__
         containing a physical quantity
       - The strength of the anisotropy as calculated using Haeberlen
-        convention. For example, "10 kHz". The default value is '0 Hz'
+        convention. The value may be provided as a frequency quantity, for
+        example, "4.2 kHz", or as a dimensionless frequency ratio, for example,
+        "10 ppm" or "10 µHz/Hz". The default value is '0 ppm'
     * - ``asymmetry``
       - A `float <https://docs.python.org/3/library/functions.html#float>`__
       - The asymmetry parameter of the tensor as calculated using
         Haeberlen convention. For example, 0.75. The default value is 0.
     * - ``orientation``
       - An :ref:`orientation` object
-      - The orientation of the tensor in the principal axis frame relative to
-        the crystal frame.
+      - The Euler angles for rotating the tensor from the principal axis frame
+        to the crystal frame.
 
   *An example of SymmetricTensor object.*
 
@@ -97,7 +98,7 @@ SymmetricTensor
     :skipif: None is None
 
     >>> {
-    ...     "anisotropy": "10.3 kHz",
+    ...     "anisotropy": "10.3 ppm",
     ...     "asymmetry": 0.5,
     ...     "orientation": {
     ...         "alpha": "0.5 rad",
@@ -117,7 +118,7 @@ Site
 
   A `Site` object is a python
   `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`__
-  object which represents a nuclear site through the following key-value pairs,
+  object which represents a nuclear site with the following key-value pairs,
 
   .. list-table::
     :widths: 25 25 50
@@ -133,8 +134,9 @@ Site
     * - ``isotropic_chemical_shift``
       - A `string <https://docs.python.org/3/library/stdtypes.html#str>`__
         containing a physical quantity
-      - The isotropic chemical shift of the isotope, for example,
-        '1 Hz'. The default value is '0 Hz'.
+      - The isotropic chemical shift of the isotope. The value may be provided
+        as a frequency quantity, "12.6 Hz", or as a dimensionless frequency ratio,
+        "1 mHz/Hz", or equivalently, "1000 ppm". The default value is '0 ppm'.
     * - ``shielding_symmetric``
       - A :ref:`symmetric_tensor` object
       - See the description for the :ref:`symmetric_tensor` object.
@@ -146,9 +148,9 @@ Site
 
     >>> {
     ...     "isotope_symbol": "13C",
-    ...     "isotropic_chemical_shift": "15 Hz",
+    ...     "isotropic_chemical_shift": "15 ppm",
     ...     "shielding_symmetric": {
-    ...         "anisotropy": "10.3 kHz",
+    ...         "anisotropy": "10.3 ppm",
     ...         "asymmetry": 0.5,
     ...         "orientation": {
     ...             "alpha": "0.5 rad",
@@ -189,10 +191,9 @@ Isotopomer
       - A list of :ref:`site` objects.
     * - ``abundance``
       - A `string <https://docs.python.org/3/library/functions.html#float>`__
-      - The abundance of the isotopomer. The abundance is either given as
-        percent, for example, '25.4 %' or a number between 0 and 1, for
-        example, '0.5'. This key-value is useful when simulating multiple
-        isotopomers. The default value is '100 %'.
+      - The abundance of the isotopomer. The abundance is given as
+        percent, for example, '25.4 %'. This key-value is useful when
+        simulating multiple isotopomers. The default value is '100 %'.
 
   ..  * - ``coulpings``
   ..    - Not yet implemented.
@@ -207,9 +208,9 @@ Isotopomer
     ...     "sites": [
     ...         {
     ...             "isotope_symbol": "13C",
-    ...             "isotropic_chemical_shift": "15 Hz",
+    ...             "isotropic_chemical_shift": "15 ppm",
     ...             "shielding_symmetric": {
-    ...                 "anisotropy": "10.3 kHz",
+    ...                 "anisotropy": "10.3 ppm",
     ...                 "asymmetry": 0.5,
     ...                 "orientation": {
     ...                     "alpha": "0.5 rad",
@@ -268,7 +269,7 @@ DirectDimension
     * - ``spectral_width``
       - A `string <https://docs.python.org/3/library/stdtypes.html#str>`__
         containing a physical quantity
-      - The frequency spectral width over which the spectrum is simulated,
+      - The frequency spectral width over which the spectrum is evaluated,
         for example, '500 kHz'. The default value is '100 kHz'.
     * - ``reference_offset``
       - A `string <https://docs.python.org/3/library/stdtypes.html#str>`__

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Objects &mdash; mrsimulator 0.1dev1 documentation</title>
+  <title>Objects &mdash; mrsimulator 0.1.0 documentation</title>
   
 
   
@@ -25,6 +25,8 @@
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/_static/copybutton.js"></script>
+        <script type="text/javascript" src="_static/_static/jquery.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -161,22 +163,15 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/objects.rst.txt" rel="nofollow"> View page source</a>
+            
+              <a href="https://github.com/DeepanshS/mrsimulator/blob/master/docs/source/objects.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
     
   </ul>
 
-  
-  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
-      
-        <a href="isotopomers_object.html" class="btn btn-neutral float-right" title="Isotopomers" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="mr_objects.html" class="btn btn-neutral float-left" title="mrsimulator objects" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-  </div>
   
   <hr/>
 </div>
@@ -241,8 +236,7 @@ containing a physical quantity</td>
 <div><p>A <cite>SymmetricTensor</cite> is a python
 <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict">dict</a>
 object which represents a traceless second rank symmetric tensor.
-The traceless symmetric second rank tensor is represented by the following
-key-value pairs.</p>
+It is represented by the following key-value pairs.</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="15%" />
@@ -260,7 +254,9 @@ key-value pairs.</p>
 <td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
 containing a physical quantity</td>
 <td>The strength of the anisotropy as calculated using Haeberlen
-convention. For example, “10 kHz”. The default value is ‘0 Hz’</td>
+convention. The value may be provided as a frequency quantity, for
+example, “4.2 kHz”, or as a dimensionless frequency ratio, for example,
+“10 ppm” or “10 µHz/Hz”. The default value is ‘0 ppm’</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">asymmetry</span></code></td>
 <td>A <a class="reference external" href="https://docs.python.org/3/library/functions.html#float">float</a></td>
@@ -269,15 +265,15 @@ Haeberlen convention. For example, 0.75. The default value is 0.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">orientation</span></code></td>
 <td>An <a class="reference internal" href="#orientation"><span class="std std-ref">Orientation</span></a> object</td>
-<td>The orientation of the tensor in the principal axis frame relative to
-the crystal frame.</td>
+<td>The Euler angles for rotating the tensor from the principal axis frame
+to the crystal frame.</td>
 </tr>
 </tbody>
 </table>
 <p><em>An example of SymmetricTensor object.</em></p>
 </div></blockquote>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
-<span class="gp">... </span>    <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;10.3 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;10.3 ppm&quot;</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="s2">&quot;asymmetry&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="p">{</span>
 <span class="gp">... </span>        <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5 rad&quot;</span><span class="p">,</span>
@@ -293,7 +289,7 @@ the crystal frame.</td>
 <blockquote>
 <div><p>A <cite>Site</cite> object is a python
 <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict">dict</a>
-object which represents a nuclear site through the following key-value pairs,</p>
+object which represents a nuclear site with the following key-value pairs,</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="25%" />
@@ -315,8 +311,9 @@ This is a required key.</td>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">isotropic_chemical_shift</span></code></td>
 <td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
 containing a physical quantity</td>
-<td>The isotropic chemical shift of the isotope, for example,
-‘1 Hz’. The default value is ‘0 Hz’.</td>
+<td>The isotropic chemical shift of the isotope. The value may be provided
+as a frequency quantity, “12.6 Hz”, or as a dimensionless frequency ratio,
+“1 mHz/Hz”, or equivalently, “1000 ppm”. The default value is ‘0 ppm’.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">shielding_symmetric</span></code></td>
 <td>A <a class="reference internal" href="#symmetric-tensor"><span class="std std-ref">SymmetricTensor</span></a> object</td>
@@ -328,9 +325,9 @@ containing a physical quantity</td>
 </div></blockquote>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
 <span class="gp">... </span>    <span class="s2">&quot;isotope_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;13C&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="s2">&quot;isotropic_chemical_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;15 Hz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;isotropic_chemical_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;15 ppm&quot;</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="s2">&quot;shielding_symmetric&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="gp">... </span>        <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;10.3 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;10.3 ppm&quot;</span><span class="p">,</span>
 <span class="gp">... </span>        <span class="s2">&quot;asymmetry&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
 <span class="gp">... </span>        <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="p">{</span>
 <span class="gp">... </span>            <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5 rad&quot;</span><span class="p">,</span>
@@ -373,10 +370,9 @@ isotopomer with multiple sites.</p>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">abundance</span></code></td>
 <td>A <a class="reference external" href="https://docs.python.org/3/library/functions.html#float">string</a></td>
-<td>The abundance of the isotopomer. The abundance is either given as
-percent, for example, ‘25.4 %’ or a number between 0 and 1, for
-example, ‘0.5’. This key-value is useful when simulating multiple
-isotopomers. The default value is ‘100 %’.</td>
+<td>The abundance of the isotopomer. The abundance is given as
+percent, for example, ‘25.4 %’. This key-value is useful when
+simulating multiple isotopomers. The default value is ‘100 %’.</td>
 </tr>
 </tbody>
 </table>
@@ -386,9 +382,9 @@ isotopomers. The default value is ‘100 %’.</td>
 <span class="gp">... </span>    <span class="s2">&quot;sites&quot;</span><span class="p">:</span> <span class="p">[</span>
 <span class="gp">... </span>        <span class="p">{</span>
 <span class="gp">... </span>            <span class="s2">&quot;isotope_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;13C&quot;</span><span class="p">,</span>
-<span class="gp">... </span>            <span class="s2">&quot;isotropic_chemical_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;15 Hz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;isotropic_chemical_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;15 ppm&quot;</span><span class="p">,</span>
 <span class="gp">... </span>            <span class="s2">&quot;shielding_symmetric&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="gp">... </span>                <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;10.3 kHz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s2">&quot;anisotropy&quot;</span><span class="p">:</span> <span class="s2">&quot;10.3 ppm&quot;</span><span class="p">,</span>
 <span class="gp">... </span>                <span class="s2">&quot;asymmetry&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
 <span class="gp">... </span>                <span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="p">{</span>
 <span class="gp">... </span>                    <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5 rad&quot;</span><span class="p">,</span>
@@ -454,7 +450,7 @@ The default value is 1024.</td>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">spectral_width</span></code></td>
 <td>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str">string</a>
 containing a physical quantity</td>
-<td>The frequency spectral width over which the spectrum is simulated,
+<td>The frequency spectral width over which the spectrum is evaluated,
 for example, ‘500 kHz’. The default value is ‘100 kHz’.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">reference_offset</span></code></td>
@@ -479,6 +475,15 @@ value and a unit.</p>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="isotopomers_object.html" class="btn btn-neutral float-right" title="Isotopomers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="mr_objects.html" class="btn btn-neutral float-left" title="mrsimulator objects" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

@@ -68,3 +68,8 @@ Methods
 
 .. .. rubric:: Method Documentation
 .. .. automethod:: run
+
+
+.. seealso::
+
+    :ref:`isotopomers`, :ref:`spectrum` and :ref:`load_isotopomers`,

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Getting started with mrsimulator &mdash; mrsimulator 0.1dev1 documentation</title>
+  <title>Getting started with mrsimulator &mdash; mrsimulator 0.1.0 documentation</title>
   
 
   
@@ -25,6 +25,8 @@
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
+        <script type="text/javascript" src="_static/_static/copybutton.js"></script>
+        <script type="text/javascript" src="_static/_static/jquery.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -147,22 +149,15 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
+            
+              <a href="https://github.com/DeepanshS/mrsimulator/blob/master/docs/source/getting_started.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
     
   </ul>
 
-  
-  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
-      
-        <a href="mr_objects.html" class="btn btn-neutral float-right" title="mrsimulator objects" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-  </div>
   
   <hr/>
 </div>
@@ -171,8 +166,9 @@
             
   <div class="section" id="getting-started-with-mrsimulator">
 <span id="getting-started"></span><h1>Getting started with <cite>mrsimulator</cite><a class="headerlink" href="#getting-started-with-mrsimulator" title="Permalink to this headline">¶</a></h1>
-<p>The NMR lineshape is calculated through the instance of the
-<a class="reference internal" href="api/simulator.html#simulator-api"><span class="std std-ref">Simulator</span></a> class. Import the class</p>
+<p>In this section, we have put together guidelines to encourage consistency
+amongst the users. The NMR lineshapes are calculated with the instance of
+the <a class="reference internal" href="api/simulator.html#simulator-api"><span class="std std-ref">Simulator</span></a> class. Import this class following</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mrsimulator</span> <span class="kn">import</span> <span class="n">Simulator</span>
 </pre></div>
 </div>
@@ -191,19 +187,27 @@ The default value of these attributes is</p>
 <span class="go">{}</span>
 </pre></div>
 </div>
-<p>Read the section on <a class="reference internal" href="isotopomers_object.html#isotopomers"><span class="std std-ref">Isotopomers</span></a> and <a class="reference internal" href="spectrum_object.html#spectrum"><span class="std std-ref">Spectrum</span></a> for instructions
-on how to assign the values to these attributes, respectively.
-Here, we use a built-in example to assign these attributes.</p>
+<p>Please read the section on <a class="reference internal" href="isotopomers_object.html#isotopomers"><span class="std std-ref">Isotopomers</span></a> and <a class="reference internal" href="spectrum_object.html#spectrum"><span class="std std-ref">Spectrum</span></a> for
+instructions on how to assign values to these attributes, respectively.
+Here, we use a built-in example to assign these attributes. Import
+the examples using</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mrsimulator</span> <span class="kn">import</span> <span class="n">examples</span>
+</pre></div>
+</div>
+<p>and assign the isotopomers and spectrum attributes of <code class="docutils literal notranslate"><span class="pre">sim1</span></code> with</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sim1</span><span class="o">.</span><span class="n">isotopomers</span><span class="p">,</span> <span class="n">sim1</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">csa_static</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You may view the contents of the isotopomers and spectrum attribute
+using the print statement. Here, we use the pprint, the data pretty printer
+command.</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mrsimulator</span> <span class="kn">import</span> <span class="n">examples</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sim1</span><span class="o">.</span><span class="n">isotopomers</span><span class="p">,</span> <span class="n">sim1</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">csa_static</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">sim1</span><span class="o">.</span><span class="n">isotopomers</span><span class="p">)</span>
 <span class="go">[{&#39;abundance&#39;: &#39;100 %&#39;,</span>
 <span class="go">  &#39;sites&#39;: [{&#39;isotope_symbol&#39;: &#39;1H&#39;,</span>
-<span class="go">             &#39;isotropic_chemical_shift&#39;: &#39;0 Hz&#39;,</span>
-<span class="go">             &#39;shielding_symmetric&#39;: {&#39;anisotropy&#39;: &#39;-3.89 kHz&#39;,</span>
+<span class="go">             &#39;isotropic_chemical_shift&#39;: &#39;0 ppm&#39;,</span>
+<span class="go">             &#39;shielding_symmetric&#39;: {&#39;anisotropy&#39;: &#39;13.89 ppm&#39;,</span>
 <span class="go">                                     &#39;asymmetry&#39;: 0.25}}]}]</span>
-
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">sim1</span><span class="o">.</span><span class="n">spectrum</span><span class="p">)</span>
 <span class="go">{&#39;direct_dimension&#39;: {&#39;magnetic_flux_density&#39;: &#39;9.4 T&#39;,</span>
 <span class="go">                      &#39;nucleus&#39;: &#39;1H&#39;,</span>
@@ -216,10 +220,10 @@ Here, we use a built-in example to assign these attributes.</p>
 </div>
 <p>In general, the isotopomers contain the metadata on the spin system while
 the spectrum contains metadata required to simulate the lineshapes.
-To simulate a lineshape, use the <a class="reference internal" href="api/simulator.html#mrsimulator.Simulator.run" title="mrsimulator.Simulator.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method
-of the instance with an NMR method.
-In version 0.1, there is only one method, <cite>one_d_spectrum</cite>.
-Import this method using</p>
+A lineshape is simulated using the <a class="reference internal" href="api/simulator.html#mrsimulator.Simulator.run" title="mrsimulator.Simulator.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method
+of the <a class="reference internal" href="api/simulator.html#simulator-api"><span class="std std-ref">Simulator</span></a> instance based on the NMR method.
+In version 0.1, we provide <cite>one_d_spectrum</cite> method for simulating one
+dimensional NMR lineshapes. Import this method using</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mrsimulator.methods</span> <span class="kn">import</span> <span class="n">one_d_spectrum</span>
 </pre></div>
 </div>
@@ -227,29 +231,29 @@ Import this method using</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">freq</span><span class="p">,</span> <span class="n">amp</span> <span class="o">=</span> <span class="n">sim1</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">one_d_spectrum</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">Setting up the virtual NMR spectrometer</span>
 <span class="go">---------------------------------------</span>
-<span class="go">Adjusting the magnetic flux density to 9.4 T</span>
-<span class="go">Setting rotation angle to 0.9553059660790962 rad</span>
-<span class="go">Setting rotation frequency to 0.0 Hz</span>
-<span class="go">Detecting 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope</span>
+<span class="go">Adjusting the magnetic flux density to 9.4 T.</span>
+<span class="go">Setting rotation angle to 0.9553059660790962 rad.</span>
+<span class="go">Setting rotation frequency to 0.0 Hz.</span>
+<span class="go">Detecting 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope.</span>
 <span class="go">Recording 1H spectrum with 2048 points over a 25000.0 Hz bandwidth and a reference offset of 0.0 Hz.</span>
 
-<span class="go">1H site 0 in isotopomer 0</span>
-<span class="go">----------------------------</span>
-<span class="go">isotropic chemical shift = 0.0 Hz</span>
-<span class="go">chemical shift anisotropy = -3890.0 Hz</span>
+<span class="go">1H site 0 from isotopomer 0 @ 100.0% abundance</span>
+<span class="go">----------------------------------------------</span>
+<span class="go">isotropic chemical shift = 0.0 ppm</span>
+<span class="go">chemical shift anisotropy = 13.89 ppm</span>
 <span class="go">chemical shift asymmetry = 0.25</span>
-
-<span class="go">Execution time 0.015989 s</span>
 </pre></div>
 </div>
-<p>In the above code, the <code class="docutils literal notranslate"><span class="pre">freq</span></code> and <code class="docutils literal notranslate"><span class="pre">amp</span></code> are the frequency and the
-corresponding amplitude of the spectrum. The following is a plot of the
-lineshape using the matplotlib library.</p>
-<p>..doctest:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">amp</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;frequency / Hz&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<p>In the above code, the <code class="docutils literal notranslate"><span class="pre">freq</span></code> and <code class="docutils literal notranslate"><span class="pre">amp</span></code> are the frequency in ppm and the
+corresponding amplitude of the spectrum. The following is a figure of the above
+lineshape plotted using the matplotlib library.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;frequency / {str(x.unit)}&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">amp</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="_images/1H_example.pdf" src="_images/1H_example.pdf" />
@@ -260,6 +264,15 @@ lineshape using the matplotlib library.</p>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="mr_objects.html" class="btn btn-neutral float-right" title="mrsimulator objects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

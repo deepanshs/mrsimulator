@@ -21,9 +21,9 @@ abundance of each isotopomer.
     ...         "sites": [
     ...             {
     ...                 "isotope_symbol": "13C",
-    ...                 "isotropic_chemical_shift": "1 Hz",
+    ...                 "isotropic_chemical_shift": "1 ppm",
     ...                 "shielding_symmetric": {
-    ...                     "anisotropy": "-3.89 kHz",
+    ...                     "anisotropy": "-3.89 µHz/Hz",
     ...                     "asymmetry": 0.
     ...                 }
     ...             }
@@ -34,9 +34,9 @@ abundance of each isotopomer.
     ...         "sites": [
     ...             {
     ...                 "isotope_symbol": "29Si",
-    ...                 "isotropic_chemical_shift": "0 Hz",
+    ...                 "isotropic_chemical_shift": "-0.1 mHz/Hz",
     ...                 "shielding_symmetric": {
-    ...                     "anisotropy": "8.89 kHz",
+    ...                     "anisotropy": "8.89 ppm",
     ...                     "asymmetry": 0.5
     ...                 }
     ...             }
@@ -48,8 +48,10 @@ abundance of each isotopomer.
 In the above example, the variable ``isotopomers_list`` is a list with two
 :ref:`isotopomer` objects, each containing a single :ref:`site` object.
 The first isotopomer describes a :math:`^{13}\mathrm{C}` nuclear site
-with 1 Hz isotropic chemical shift, -3.89 kHz of anisotropy and an asymmetry
+with 1 ppm isotropic chemical shift, -3.89 µHz/Hz of anisotropy and an
+asymmetry
 parameter of 0.0. The second isotopomer describes a :math:`^{29}\mathrm{Si}`
-nuclear site with 0 Hz of isotropic chemical shift, 8.89 kHz of anisotropy
+nuclear site with -0.1 mHz/Hz of isotropic chemical shift, 8.89 ppm of
+anisotropy
 and a value of 0.5 for the asymmetry parameter.
 
