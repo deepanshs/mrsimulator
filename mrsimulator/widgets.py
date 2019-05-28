@@ -138,7 +138,7 @@ def direct_dimension_setup():
         html.Div(className='row', children=[
             html.H6(className='col s6 m6 l6', children='Dimension parameters'),
             daq.BooleanSwitch(
-                id-'ppm_switch',
+                id='ppm_switch',
                 className='col s6 m6 l6',
                 label='Show ppm',
                 labelPosition='bottom',
