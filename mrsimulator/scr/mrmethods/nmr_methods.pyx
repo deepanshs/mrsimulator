@@ -20,22 +20,25 @@ def one_d_spectrum(dict spectrum,
     """
     
     :ivar verbose:
-        The value is either 0 or 1. When the value is 1, the output is
-        printed on the screen. The default value is 0.
+        The allowed values are 0, 1, and 11. When the value is 1, the output is
+        printed on the screen. When the value is 11, in addition to the output
+        from 1, execution time is also printed on the screen.
+        The default value is 0. 
     :ivar number_of_sidebands:
         The value is an integer which corresponds to the number of sidebands
         simulated in the spectrum. The default value is 90. Note, when the
-        sample spin frequency is low, more sidebands may be required for
-        proper computation. The user is advised to ensure that enough sidebands
-        are requested in the simulation, based on the spin frequency.
+        sample spinning frequency is low, computation of more sidebands may be
+        required for an acceptable result. The user is advised to ensure that
+        enough sidebands are requested for computation.
     :ivar geodesic_polyhedron_frequency:
         The value is an integer which represents the frequency of class I
-        geodesic
-        polyhedra. These polyhedra are used in calculating the spherical
-        average. Presently we use octahedral as the frequency 1 polyhedra.
-        With higher geodesic polyhedron frequency, the polyhedra start to
-        resembles a sphere. The default value is 72.
-        Read more on the geodesic polyhedron.
+        geodesic polyhedra. These polyhedra are used in calculating the
+        spherical average. Presently we only use octahedral as the frequency1
+        polyhedra. As the frequency of the geodesic polyhedron increases, the
+        polyhedra approach a sphere geometry. In lineshape simulation, a higher
+        frequency may result in proper powder averaging.
+        The default value is 72.
+        Read more on the `Geodesic polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
     """
 # ---------------------------------------------------------------------
 # spectrum ________________________________________________________
@@ -43,13 +46,13 @@ def one_d_spectrum(dict spectrum,
     cdef double rotor_angle = spectrum['rotor_angle']
     B0 = spectrum['magnetic_flux_density']
 
-    if verbose:
-        print ('\nSetting up the virtual NMR spectrometer')
+    if verbose in [1, 11]:
+        print ('Setting up the virtual NMR spectrometer')
         print ('---------------------------------------')
-        print (f'Adjusting the magnetic flux density to {B0} T')
+        print (f'Adjusting the magnetic flux density to {B0} T.')
         _angle = spectrum['rotor_angle']
-        print (f'Setting rotation angle to {_angle} rad')
-        print (f'Setting rotation frequency to {sample_rotation_frequency} Hz')
+        print (f'Setting rotation angle to {_angle} rad.')
+        print (f'Setting rotation frequency to {sample_rotation_frequency} Hz.')
 
 # ---------------------------------------------------------------------
 # spin observed _______________________________________________________
@@ -77,9 +80,9 @@ def one_d_spectrum(dict spectrum,
     cdef double increment = spectral_width/number_of_points
     cdef double reference_offset = spectrum['reference_offset']
 
-    if verbose:
+    if verbose in [1, 11]:
         print ((f'Detecting {isotope}(I={spin_quantum_number}, '
-                f'precession frequency = {larmor_frequency} MHz) isotope '))
+                f'precession frequency = {larmor_frequency} MHz) isotope.'))
         print ((f'Recording {isotope} spectrum with {number_of_points} '
                 f'points over a {spectral_width} Hz bandwidth and a '
                 f'reference offset of {reference_offset} Hz.'))
@@ -116,6 +119,7 @@ def one_d_spectrum(dict spectrum,
                              &cosBeta[0], &amp_orientation[0], 1)
     amp_orientation*=(1./number_of_sidebands)
 
+    list_index_isotopomer = []
     # print (cosAlpha)
     # print(cosBeta)
     # print(amp_orientation)
@@ -143,25 +147,37 @@ def one_d_spectrum(dict spectrum,
 
         amp = np.zeros(number_of_points*number_of_sites)
         
+        if number_of_sites > 0: list_index_isotopomer.append(index_isotopomer)
         for i in range(number_of_sites):
             site = sub_sites[i]
 
             # CSA tensor
-            iso_n[i] = site['isotropic_chemical_shift']
-            aniso_n[i] = site['shielding_symmetric']['anisotropy']
-            eta_n[i] = site['shielding_symmetric']['asymmetry']
+            iso = site['isotropic_chemical_shift']
+            aniso = site['shielding_symmetric']['anisotropy']
+            eta = site['shielding_symmetric']['asymmetry']
 
-            if verbose:
+            if verbose in [1, 11]:
                 text = ((
-                    f"\n{isotope} site {i} in isotopomer {index_isotopomer} "
+                    f"\n{isotope} site {i} from isotopomer {index_isotopomer} "
                     f"@ {abundance*100}% abundance"
                 ))
                 len_ = len(text)
                 print(text)
                 print(f"{'-'*(len_-1)}")
-                print(f'isotropic chemical shift = {iso_n[i]} Hz')
-                print(f'chemical shift anisotropy = {aniso_n[i]} Hz')
-                print(f'chemical shift asymmetry = {eta_n[i]}')
+                print(f'isotropic chemical shift = {str(iso)}')
+                print(f'chemical shift anisotropy = {str(aniso)}')
+                print(f'chemical shift asymmetry = {eta}')
+
+            # CSA tensor to Hz
+            if iso.unit.physical_type == 'frequency':
+                iso_n[i] = iso.to('Hz').value
+            else:
+                iso_n[i] = iso.value*larmor_frequency
+            if aniso.unit.physical_type == 'frequency':
+                aniso_n[i] = aniso.to('Hz').value
+            else:
+                aniso_n[i] = aniso.value*larmor_frequency
+            eta_n[i] = eta
 
             # quad tensor
             # if spin.electric_quadrupole_tensor is not ():
@@ -226,10 +242,10 @@ def one_d_spectrum(dict spectrum,
         
         amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
 
-    if verbose:
+    if verbose in [11]:
         print(f'\nExecution time {cpu_time_} s')
-    freq = np.arange(number_of_points)*increment + reference_offset    
-    return freq, amp1
+    freq = (np.arange(number_of_points)*increment + reference_offset)  
+    return freq, amp1, larmor_frequency, list_index_isotopomer
 
 
 

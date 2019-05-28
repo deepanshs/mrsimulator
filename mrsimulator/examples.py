@@ -1,5 +1,9 @@
 
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.90@osu.edu"
+
+
 def csa_static():
     temp = {
         "isotopomers": [
@@ -7,9 +11,9 @@ def csa_static():
                 "sites": [
                     {
                         "isotope_symbol": "1H",
-                        "isotropic_chemical_shift": "0 Hz",
+                        "isotropic_chemical_shift": "0 ppm",
                         "shielding_symmetric": {
-                            "anisotropy": "-3.89 kHz",
+                            "anisotropy": "13.89 ppm",
                             "asymmetry": 0.25
                         }
                     }
@@ -37,11 +41,11 @@ def csa_mas():
             {
                 "sites": [
                     {
-                        "isotope_symbol": "13C",
-                        "isotropic_chemical_shift": "0 Hz",
+                        "isotope_symbol": "1H",
+                        "isotropic_chemical_shift": "0 ppm",
                         "shielding_symmetric": {
-                            "anisotropy": "12.89 kHz",
-                            "asymmetry": 0.5
+                            "anisotropy": "13.89 ppm",
+                            "asymmetry": 0.25
                         }
                     }
                 ],
@@ -51,12 +55,12 @@ def csa_mas():
         "spectrum": {
             "direct_dimension":{
                 "magnetic_flux_density": "9.4 T",
-                "rotor_frequency": "5 kHz",
+                "rotor_frequency": "1 kHz",
                 "rotor_angle": "54.735 deg",
                 "number_of_points": 2048,
-                "spectral_width": "100 kHz",
+                "spectral_width": "25 kHz",
                 "reference_offset": "0 Hz",
-                "nucleus": "13C"
+                "nucleus": "1H"
             }
         }
     }

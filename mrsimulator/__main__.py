@@ -11,6 +11,16 @@ from dash.dependencies import Input, Output, State
 import datetime, json
 import base64
 
+from mrsimulator.widgets import (
+    spectrum_object_widget,
+    plot_object_widget,
+    direct_dimension_setup,
+)
+
+
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.90@osu.edu"
+
 
 external_stylesheets = [
     "https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
@@ -28,130 +38,6 @@ colors = {
 }
 
 
-def child_1():
-    """
-    Return the layout for nucleus, number of points,
-    spectral width and reference offset.
-    """
-    return [
-        html.Div(
-            className='card-panel hoverable',
-            children=[
-                html.H5(
-                    children='Spectrum parameters',
-                    style={
-                        'textAlign': 'left',
-                        'color': colors['text']
-                    }
-                ),
-                html.H6(
-                    children='Direct dimensions',
-                    style={
-                        'textAlign': 'left',
-                        'color': colors['text']
-                    }
-                ),
-                html.Div(className='row', children=[
-                    html.Div(className='col', children=[html.Label('Nucleus')]),
-                    # html.Div(className='col', children=[daq.Indicator(
-                    #     id='simulation_success_indicator',
-                    #     size=10,
-                    #     value=True,
-                    #     color="#00cc96"
-                    # )]),
-                ]),
-                html.Div(id='nucleus_widget_id', children=[
-                    dcc.Dropdown(
-                        id='nucleus_id',
-                        style={"display": "block",
-                            "margin-left": "auto",
-                            "margin-right": "auto",
-                            "width": "auto"},
-                    ),
-                ]),
-                html.Div([
-                    html.Div([
-                        html.Label('Number of points'),
-                    ]),
-                    html.Div([
-                        dcc.Input(id='number_of_points',
-                                value=1024,
-                                type='number',
-                                min=0.0,
-                                #   style={'width': '50%', 'display': 'inline-block'},
-                        ),
-                    ]),
-                ]),
-                html.Div([
-                    html.Div([
-                        html.Label('spectral width in Hz'),
-                    ]),
-                    html.Div([
-                        dcc.Input(id='frequency_bandwidth',
-                                value=100000.0,
-                                type='number',
-                                min=0.0,
-                                #   style={'width': '50%', 'display': 'inline-block'},
-                        ),
-                    ]),
-                ]),
-                html.Div([
-                    html.Div([
-                        html.Label('reference offset in Hz'),
-                    ]),
-                    html.Div([
-                        dcc.Input(id='reference_offset',
-                                value=0,
-                                type='number',
-                                min=0.0,
-                                #   style={'width': '50%', 'display': 'inline-block'},
-                        ),
-                    ]),
-                ]),
-                html.Div([
-                    html.Div([
-                        html.Label('Magic angle spinning'),
-                    ]),
-                    html.Div([
-                        dcc.Slider(
-                            id='spinning_frequency_in_kHz',
-                            min=0.0,
-                            max=50,
-                            step=0.050,
-                            value=0,
-                        ),
-                        html.Div(id='spinning_frequency_output_container'),
-                    ]),
-                ]),
-            ]
-        )
-    ]
-
-
-def plot_layout():
-    return [
-        html.Div(
-            className='card-panel hoverable',
-            children=[
-                html.H5(
-                    children='Spectrum',
-                    style={
-                        'textAlign': 'left',
-                        'color': colors['text']
-                    }
-                ),
-                dcc.Graph(
-                    id='nmr_spectrum',
-                    # animate=True,
-                    # style={"display": "inline-block",
-                    #     "margin-left": 'auto',
-                    #     "margin-right": 'auto',
-                    #     "width": 'auto'},
-                    figure={ 'data': []}
-                )
-            ]
-        )
-    ]
 
 # isotopomer = get_system()
 def setup(app, simulator):
@@ -170,7 +56,7 @@ def setup(app, simulator):
                     'color': colors['text']
                 }
             ),
-            html.Div(children='A web application framework for NMR spectrum simulator.',
+            html.Div(children='A web application framework for NMR lineshape simulation.',
                 style={
                     'textAlign': 'center',
                     'color': colors['text']
@@ -178,8 +64,8 @@ def setup(app, simulator):
             ),
             html.Hr(),
             html.Div(className='row', children=[
-                html.Div(className='col s8 m8 l8', id='output-data-upload'),
-                html.Div(className='col s4 m4 l4', children=[
+                html.Div(className='col s12 m7 l7', id='output-data-upload'),
+                html.Div(className='col s12 m5 l5', children=[
                     dcc.Upload(
                         id='upload_data',
                         children=html.Div([
@@ -199,7 +85,7 @@ def setup(app, simulator):
                         # Allow multiple files to be uploaded
                         multiple=False
                     ),
-                    html.Div(id='error_message')
+                    html.Div(id='error_message', style={'textAlign': 'center'})
                 ])
             ]),
             html.Hr(),
@@ -207,16 +93,24 @@ def setup(app, simulator):
                 className='row',
                 children=[
                     html.Div(
-                        className='col s12 m8 l8',
-                        children=plot_layout()
+                        className='col s12 m7 l7',
+                        children=plot_object_widget()
                     ),
                     html.Div(
-                        className='col s12 m4 l4',
-                        children=child_1()#nuclei, simulator.isotope_list)
+                        className='col s12 m5 l5',
+                        children=spectrum_object_widget(direct_dimension_setup())#nuclei, simulator.isotope_list)
                     )
             ]),
         ]
     )
+
+    # @app.callback(
+    #     Output('tabs_content', 'children'),
+    #     [Input('tabs', 'value')]
+    # )
+    # def update_tab(value):
+    #     if value == 'direct_dimension':
+    #         return direct_dimension_setup()
 
     @app.callback(
         [
@@ -224,25 +118,37 @@ def setup(app, simulator):
         ],
         [
             # Input('confirm', 'submit_n_clicks'),
-            Input(component_id='spinning_frequency_in_kHz', component_property='value'),
+            Input(component_id='spinning_frequency_in_kHz_coarse', component_property='value'),
+            Input(component_id='spinning_frequency_in_kHz_fine', component_property='value'),
             Input(component_id='number_of_points', component_property='value'),
-            Input(component_id='frequency_bandwidth', component_property='value'),
-            Input(component_id='reference_offset', component_property='value'),
+            Input(component_id='frequency_bandwidth_coarse', component_property='value'),
+            Input(component_id='frequency_bandwidth_fine', component_property='value'),
+            Input(component_id='reference_offset_coarse', component_property='value'),
+            Input(component_id='reference_offset_fine', component_property='value'),
+            Input(component_id='magnetic_flux_density', component_property='value'),
             # Input(component_id='MAS_switch', component_property='value'),
             Input(component_id='nucleus_id', component_property='value'),
         ])
     def update_plot(
             # submit_n_clicks,
-            spinning_frequency_in_kHz,
+            spinning_frequency_in_kHz_coarse,
+            spinning_frequency_in_kHz_fine,
             number_of_points,
-            frequency_bandwidth,
-            reference_offset,
+            frequency_bandwidth_coarse,
+            frequency_bandwidth_fine,
+            reference_offset_coarse,
+            reference_offset_fine,
+            magnetic_flux_density,
             # MAS_switch,
             nucleus_id):
 
+        frequency_bandwidth = frequency_bandwidth_coarse + frequency_bandwidth_fine
         if number_of_points == 0 or frequency_bandwidth == 0 or nucleus_id in ['', None]:
             return empty_plot()
 
+        spin_frequency = spinning_frequency_in_kHz_coarse+spinning_frequency_in_kHz_fine
+        reference_offset = reference_offset_coarse + reference_offset_fine
+        
         # if MAS_switch:
         rotor_angle_in_degree = 54.735
         # else:
@@ -251,12 +157,12 @@ def setup(app, simulator):
         simulator.spectrum = {
             "direct_dimension": {
                 "nucleus": nucleus_id,
-                "magnetic_flux_density": "9.4 T",
-                "rotor_frequency": str(spinning_frequency_in_kHz)+' kHz',
+                "magnetic_flux_density": str(magnetic_flux_density) + " T",
+                "rotor_frequency": str(spin_frequency)+' kHz',
                 "rotor_angle": str(rotor_angle_in_degree)+' deg',
-                "number_of_points": number_of_points,
-                "spectral_width": str(frequency_bandwidth)+' Hz',
-                "reference_offset": str(reference_offset)+' Hz',
+                "number_of_points": 2**number_of_points,
+                "spectral_width": str(frequency_bandwidth)+' kHz',
+                "reference_offset": str(reference_offset)+' kHz',
             }
         }
 
@@ -264,14 +170,14 @@ def setup(app, simulator):
 
         data_spinning = go.Scatter(x=freq/1000, y=amp/amp.max(),
                                 mode='lines', opacity=1.0, name=nucleus_id)
-        # x_label = str(nucleus_id + ' frequency / kHz')
+        x_label = str(nucleus_id + ' frequency / kHz')
         # print(x_label)
         return [{
             'data': [data_spinning],
             'layout': go.Layout(
                 xaxis={
                     'type': 'linear',
-                    'title': 'frequency / kHz',
+                    'title': x_label, #'frequency / kHz',
                     'ticks': 'outside',
                     'showline': True,
                     'autorange': True
@@ -284,7 +190,7 @@ def setup(app, simulator):
                     'autorange': True,
                 },
                 autosize=True,
-                transition={'duration': 500, 'easing': 'quad-in-out'},
+                transition={'duration': 600}, #'easing': 'quad-in-out'},
                 margin={'l': 50, 'b': 40, 't': 5, 'r': 5},
                 # legend={'x': 0, 'y': 1},
                 hovermode='closest'
@@ -342,13 +248,54 @@ def setup(app, simulator):
                 ]
         return [children[0]], [children[1]], nucleus_id
 
+    @app.callback(
+        Output('Magnetic_flux_density_output_container', 'children'),
+        [Input('magnetic_flux_density', 'value')]
+    )
+    def update_magnetic_flux_density(value):
+        return 'Magnetic flux density   {0} T @ {1} MHz'.format(
+                            value, '{0:.2f}'.format(42.57747892*value)
+                )
+
+    @app.callback(
+        Output('spectrum_id', 'children'),
+        [Input('nucleus_id', 'value')]
+    )
+    def update_spectrum_title(value):
+        if value is None:
+            return 'Spectrum'
+        return '{} spectrum'.format(value)
+
+    @app.callback(
+        Output('number_of_points_output_container', 'children'),
+        [Input('number_of_points', 'value')]
+    )
+    def update_number_of_points(value):
+        return 'Number of points        {}'.format(2**value)
 
     @app.callback(
         Output('spinning_frequency_output_container', 'children'),
-        [Input('spinning_frequency_in_kHz', 'value')]
+        [Input('spinning_frequency_in_kHz_fine', 'value'),
+         Input('spinning_frequency_in_kHz_coarse', 'value')]
     )
-    def update_rotor_frequency(value):
-        return html.Label('{} kHz'.format(value))
+    def update_rotor_frequency(value1, value2):
+        return 'Magic angle spinning    {} kHz'.format(value1 + value2)
+
+    @app.callback(
+        Output('reference_offset_output_container', 'children'),
+        [Input('reference_offset_fine', 'value'),
+         Input('reference_offset_coarse', 'value')]
+    )
+    def update_reference_offset(value1, value2):
+        return 'Reference offset        {} kHz'.format(value1 + value2)
+
+    @app.callback(
+        Output('frequency_bandwidth_output_container', 'children'),
+        [Input('frequency_bandwidth_fine', 'value'),
+         Input('frequency_bandwidth_coarse', 'value')]
+    )
+    def update_frequency_bandwidth(value1, value2):
+        return 'Spectral width          {} kHz'.format(value1 + value2)
 
 
 #  ['linear', 'quad', 'cubic', 'sin', 'exp', 'circle',
@@ -364,6 +311,7 @@ def setup(app, simulator):
 
 def empty_plot():
     data = go.Scatter(x=[-1,1], y=[0,0], text='', mode='lines', opacity=1.0)
+    # return [{'data': [data]}]
     return [{
         'data': [data],
         'layout': go.Layout(
@@ -382,7 +330,7 @@ def empty_plot():
                 'autorange': True,
             },
             autosize=True,
-            transition={'duration': 500, 'easing': 'quad-in-out'},
+            transition={'duration': 500},
             margin={'l': 50, 'b': 40, 't': 5, 'r': 5},
             # legend={'x': 0, 'y': 1},
             hovermode='closest'
@@ -434,4 +382,4 @@ if __name__ == '__main__':
     FIRST = True
     simulator = Simulator()
     setup(app, simulator)
-    app.run_server()#debug=True)
+    app.run_server(debug=True)

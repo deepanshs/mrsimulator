@@ -6,8 +6,11 @@
 Welcome to mrsimulator's documentation!
 =======================================
 
-`mrsimulator` is a python package, currently under developedment, for
-simulating one-dimensional nuclear magnetic resonance lineshapes.
+The package ``mrsimulator`` contains key functionality and tools needed for
+simulating one-dimensional nuclear magnetic resonance (NMR) lineshapes using
+Python. The package is currently under development. Version 0.1.0 supports
+simulation of single spin :math:`I=\frac{1}{2}` nuclei static,
+magic angle spinning (MAS), and variable angle spinning (VSA) lineshapes.
 
 .. toctree::
    :maxdepth: 2
@@ -26,3 +29,7 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. seealso::
+
+    :ref:`examples`

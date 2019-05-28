@@ -2,5 +2,8 @@
 scipy>=0.16.0
 numpy>=1.10.1
 astropy
-mkl,
+plotly
+dash
+dash_daq
+mkl
 mkl-include

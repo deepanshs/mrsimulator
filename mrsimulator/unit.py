@@ -14,6 +14,10 @@ from numpy import inf
 
 # cds.enable()
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.90@osu.edu"
+
+
 _ppm = u.def_unit('ppm', 1e-6*u.Unit(1))
 _tr = u.def_unit(['tr', 'turn', 'cycle', 'revolution'], 1*u.Unit(1))
 
@@ -107,9 +111,12 @@ def string_to_quantity(string, dtype=float):
 
     for key in convert:
         unit = unit.replace(key, convert[key])
-
+        unit_multiplier = 1
+    if 'ppm' in unit:
+        unit = unit.replace('ppm', '1')
+        unit_multiplier = _ppm
     try:
-        unit_qt = u.Unit(unit)
+        unit_qt = u.Unit(unit)*unit_multiplier
         analysis = dtype(number) * unit_qt
         return analysis
 
@@ -214,7 +221,7 @@ if __name__ == '__main__':
     # import numpy as np
     from timeit import default_timer as timer
     start = timer()
-    s = "1 deg"
+    s = "1 µHz/Hz"
     # s = '5 cm^-1 µs °'
     # print (s, type(s))
     # a = string_to_quantity('1102 µh/km')
@@ -223,6 +230,8 @@ if __name__ == '__main__':
     a = string_to_quantity(s)  # dtype=np.float32)
     # print(timer() - start)
     print(a)
+    print(a.unit)
+    print(a.to(_ppm))
     # print(type(a.unit), a.unit.physical_type)
-    print('val_object', value_object_format(a, unit=True))
+    # print('val_object', value_object_format(a, unit=True))
     print(unit_to_latex(a.unit))

@@ -9,7 +9,7 @@ Setting up the isotopomers
 The isotopomers may either be specified as a list of :ref:`isotopomer`
 objects or directly imported from a JSON serialized isotopomers file.
 
-**Using python list:**
+**Using python list of** :ref:`isotopomer` **objects:**
 
 .. doctest::
 
@@ -18,9 +18,9 @@ objects or directly imported from a JSON serialized isotopomers file.
     ...         "sites": [
     ...             {
     ...                 "isotope_symbol": "13C",
-    ...                 "isotropic_chemical_shift": "1 Hz",
+    ...                 "isotropic_chemical_shift": "1 ppm",
     ...                 "shielding_symmetric": {
-    ...                     "anisotropy": "-3.89 kHz",
+    ...                     "anisotropy": "-3.89 ppm",
     ...                     "asymmetry": 0.25
     ...                 }
     ...             }
@@ -31,9 +31,9 @@ objects or directly imported from a JSON serialized isotopomers file.
     ...         "sites": [
     ...             {
     ...                 "isotope_symbol": "1H",
-    ...                 "isotropic_chemical_shift": "1 kHz",
+    ...                 "isotropic_chemical_shift": "1 ppm",
     ...                 "shielding_symmetric": {
-    ...                     "anisotropy": "8.2 kHz",
+    ...                     "anisotropy": "8.2 ppm",
     ...                     "asymmetry": 0.0
     ...                 }
     ...             }
@@ -43,9 +43,9 @@ objects or directly imported from a JSON serialized isotopomers file.
     ...         "sites": [
     ...             {
     ...                 "isotope_symbol": "1H",
-    ...                 "isotropic_chemical_shift": "1 kHz",
+    ...                 "isotropic_chemical_shift": "1 ppm",
     ...                 "shielding_symmetric": {
-    ...                     "anisotropy": "8.2 kHz",
+    ...                     "anisotropy": "8.2 ppm",
     ...                     "asymmetry": 0.0
     ...                 }
     ...             }
@@ -55,9 +55,9 @@ objects or directly imported from a JSON serialized isotopomers file.
     ...         "sites": [
     ...             {
     ...                 "isotope_symbol": "1H",
-    ...                 "isotropic_chemical_shift": "3 kHz",
+    ...                 "isotropic_chemical_shift": "3 ppm",
     ...                 "shielding_symmetric": {
-    ...                     "anisotropy": "23.2 kHz",
+    ...                     "anisotropy": "23.2 ppm",
     ...                     "asymmetry": 0.0
     ...                 }
     ...             }
@@ -67,9 +67,9 @@ objects or directly imported from a JSON serialized isotopomers file.
     ...         "sites": [
     ...             {
     ...                 "isotope_symbol": "29Si",
-    ...                 "isotropic_chemical_shift": "1.64 kHz",
+    ...                 "isotropic_chemical_shift": "-90 ppm",
     ...                 "shielding_symmetric": {
-    ...                     "anisotropy": "7.36 kHz",
+    ...                     "anisotropy": "1 mHz/Hz",
     ...                     "asymmetry": 0.0
     ...                 }
     ...             }
@@ -80,10 +80,10 @@ objects or directly imported from a JSON serialized isotopomers file.
     ...         "sites": [
     ...             {
     ...                 "isotope_symbol": "29Si",
-    ...                 "isotropic_chemical_shift": "43 kHz",
+    ...                 "isotropic_chemical_shift": "-100 ppm",
     ...                 "shielding_symmetric": {
-    ...                     "anisotropy": "8.36 kHz",
-    ...                     "asymmetry": 0.5
+    ...                     "anisotropy": "80.36 µHz/Hz",
+    ...                     "asymmetry": 0.0
     ...                 }
     ...             }
     ...         ],
@@ -113,57 +113,60 @@ or
 
 
 
-**Import from JSON serialized isotopomers file**
+**Import the list of isotopomers from JSON serialized file**
 
 The list of isotopomers may directly be assigned to an instance of a
 :ref:`simulator_api` class from a JSON serialized isotopomers file.
-In the following example, we load a
-`test <https://github.com/DeepanshS/mrsimulator-test/blob/master/isotopomers.json>`_
-JSON serialized isotopomers file.
+In the following example, we load an
+`example JSON <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json>`_
+serialized isotopomers file.
 
 
 .. doctest::
-    :skipif: None is None
 
-    >>> from pprint import pprint
-    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers.json'
+    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json'
     >>> st2 = Simulator()
     >>> st2.load_isotopomers(filename)
-    Downloading '/DeepanshS/mrsimulator-test/master/isotopomers.json' from 'raw.githubusercontent.com' to file 'isotopomers.json'.
+    Downloading '/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json' from 'raw.githubusercontent.com' to file 'isotopomers_ppm.json'.
     [█████████████████████████████████████████████████████████████████████████]
+
+.. testcleanup::
+
+    import os
+    os.remove('isotopomers_ppm.json')
 
 The isotopomers from the file are
 
 .. doctest::
-    :skipif: None is None
 
+    >>> from pprint import pprint
     >>> pprint(st2.isotopomers)
-    [{'abundance': '12%',
+    [{'abundance': '100 %',
       'sites': [{'isotope_symbol': '13C',
-                 'isotropic_chemical_shift': '1 Hz',
-                 'shielding_symmetric': {'anisotropy': '-3.89 kHz',
+                 'isotropic_chemical_shift': '1 ppm',
+                 'shielding_symmetric': {'anisotropy': '-3.89 ppm',
                                          'asymmetry': 0.25}}]},
      {'sites': [{'isotope_symbol': '13C',
-                 'isotropic_chemical_shift': '1 kHz',
-                 'shielding_symmetric': {'anisotropy': '8.2 kHz',
+                 'isotropic_chemical_shift': '1 ppm',
+                 'shielding_symmetric': {'anisotropy': '8.2 ppm',
                                          'asymmetry': 0.0}}]},
      {'sites': [{'isotope_symbol': '1H',
-                 'isotropic_chemical_shift': '3 kHz',
-                 'shielding_symmetric': {'anisotropy': '23.2 kHz',
+                 'isotropic_chemical_shift': '3 ppm',
+                 'shielding_symmetric': {'anisotropy': '23.2 ppm',
                                          'asymmetry': 0.0}}]},
      {'sites': [{'isotope_symbol': '29Si',
-                 'isotropic_chemical_shift': '1.64 kHz',
-                 'shielding_symmetric': {'anisotropy': '7.36 kHz',
+                 'isotropic_chemical_shift': '-100 ppm',
+                 'shielding_symmetric': {'anisotropy': '1.36 ppm',
                                          'asymmetry': 0.0}}]},
      {'sites': [{'isotope_symbol': '29Si',
-                 'isotropic_chemical_shift': '43 kHz',
-                 'shielding_symmetric': {'anisotropy': '8.36 kHz',
+                 'isotropic_chemical_shift': '-100 ppm',
+                 'shielding_symmetric': {'anisotropy': '70.36 ppm',
+                                         'asymmetry': 0.0}}]},
+     {'sites': [{'isotope_symbol': '29Si',
+                 'isotropic_chemical_shift': '-90 ppm',
+                 'shielding_symmetric': {'anisotropy': '80.36 ppm',
                                          'asymmetry': 0.5}}]},
-     {'sites': [{'isotope_symbol': '29Si',
-                 'isotropic_chemical_shift': '10 kHz',
-                 'shielding_symmetric': {'anisotropy': '6.36 kHz',
-                                         'asymmetry': 0.0}}]},
      {'sites': [{'isotope_symbol': '1H',
-                 'isotropic_chemical_shift': '5.6 kHz',
-                 'shielding_symmetric': {'anisotropy': '13.2 kHz',
+                 'isotropic_chemical_shift': '5.6 ppm',
+                 'shielding_symmetric': {'anisotropy': '13.2 ppm',
                                          'asymmetry': 0.0}}]}]

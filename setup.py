@@ -19,12 +19,14 @@ VERSION = __version__
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'scipy>=0.16.0',
-    'numpy>=1.10.1',
-    'astropy',
-    'plotly',
-    'mkl',
-    'mkl-include'
+     'numpy>=1.10.1',
+     'scipy>=0.16.0',
+     'astropy',
+     'plotly',
+     'dash',
+     'dash_daq',
+     'mkl',
+     'mkl-include'
 ]
 
 # What packages are optional?

@@ -1,15 +1,24 @@
 
 
 from .utils import __get_spin_attribute__
-from .unit import string_to_quantity
+from .unit import string_to_quantity, _ppm
 import json
 from urllib.parse import urlparse
 from ._utils_download_file import _download_file_from_url
 from .utils import __get_spin_attribute__
+from . import examples
+from astropy import units as u
+try:
+    import csdfpy as cp
+except:
+    pass
 
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.90@osu.edu"
+
+
+__fn__ = lambda x: int(''.join([i for i in x if i.isnumeric()]))
 
 
 def _import_json(filename):
@@ -161,23 +170,47 @@ class _Isotopomer:
         return ({'sites': _sites, 'abundance': abundance}) #, isotope_list)
 
 
+def _check_values_in_ppm(value, property):
+    value_ = string_to_quantity(value)
+    if value_.unit.physical_type == 'dimensionless':
+        if str(value_.unit) == 'ppm':
+            return value_
+        else:
+            return value_.to(_ppm)
+    if value_.unit.physical_type == 'frequency':
+        return value_
+    else:
+        raise Exception(
+            (f"Expecting '{property}' in units of frequency or a dimensionless "
+             f"frequency ratio, ppm, found {str(value_)}.")
+        )
+
 class _Site:
     __slots__ = ()
 
     def __new__(self,
                 isotope_symbol='1H',
-                isotropic_chemical_shift='0 Hz',
-                shielding_symmetric=0):
+                isotropic_chemical_shift='0 ppm',
+                shielding_symmetric=None):
         """Initialize."""
+        # iso = _check_values_in_ppm(isotropic_chemical_shift,
+        #                            'isotropic_chemical_shift')
+        # if str(iso.unit) == 'ppm':
+        #     iso = iso.value
+        # else:
+        #     raise Exception(
+        #         (f"Expecting 'isotropic_chemical_shift' in units if ppm, "
+        #          f"found {str(iso)}.")
+        #     )
         return {
             'isotope_symbol': isotope_symbol,
-            'isotropic_chemical_shift': string_to_quantity(
-                                            isotropic_chemical_shift
-                                        ).to('Hz').value,
+            'isotropic_chemical_shift': _check_values_in_ppm(
+                                            isotropic_chemical_shift,
+                                            'isotropic_chemical_shift'),
             'shielding_symmetric': {
-                'anisotropy': string_to_quantity(
-                                shielding_symmetric['anisotropy']
-                            ).to('Hz').value,
+                'anisotropy': _check_values_in_ppm(
+                                shielding_symmetric['anisotropy'],
+                                'shielding anisotropy'),
                 'asymmetry': float(shielding_symmetric['asymmetry'])
             }
         }
@@ -202,7 +235,7 @@ class Simulator:
         '_spectrum',
         '_spectrum_c',
         '_isotope_list',
-        '_allowed_isotopes'
+        '_allowed_isotopes',
     )
 
     def __init__(self, isotopomers=None, spectrum=None):
@@ -229,12 +262,13 @@ class Simulator:
         Return a list of unique isotopes symbols from the list of
         isotopomers.
         """
-        return list(self._isotope_list)
+        return self._isotope_list
 
     @property
     def isotopomers(self):
         """
-        Return a list of :ref:`isotopomer` objects.
+        Return a list of :ref:`isotopomer` objects. The attribute can also be
+        used to assign a list of valid isotopomers. 
         """
         # return json.dumps(self._isotopomers, ensure_ascii=True, indent=2)
         return self._isotopomers
@@ -247,13 +281,16 @@ class Simulator:
                 for site in isotopomer['sites'] 
                     if site['isotope_symbol'] in self._allowed_isotopes
         ]
-        self._isotope_list = set(isotope_list)
+
+        self._isotope_list = list(set(isotope_list))
+        self._isotope_list.sort(key=__fn__)
         self._isotopomers = value
 
     @property
     def spectrum(self):
         """
-        Return a :ref:`spectrum` object.
+        Return a :ref:`spectrum` object. The attribute can also be
+        used to assign a valid spectrum object. 
         """
         # return json.dumps(self._spectrum, ensure_ascii=True, indent=2)
         return self._spectrum
@@ -263,10 +300,22 @@ class Simulator:
         self._spectrum_c = _Spectrum(**value['direct_dimension'])
         self._spectrum = value
 
-    def run(self, method, **kwargs):
+    def run(self, method, data_object=False, **kwargs):
         """
         Simulate the spectrum using the specified method. The keyword argument
-        are arguments of the `method`.
+        are the arguments of the specified `method`.
+
+        :ivar method: The method used in computing the linshape.
+        :ivar data_object: If true, returns a `csdm` data object. If false,
+                           returns a tuple of frequency array and the corresponding
+                           amplitude array. The amplitude is a
+                           `numpy <https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html>`_
+                           array, whereas, the frequency is a 
+                           `Quantity <http://docs.astropy.org/en/stable/units/quantity.html>`_
+                           array. The default value is False.
+
+        :returns: A `csdm` object if `data_object` is True, else a tuple of frequency and
+                  amplitude. For details, refer to the description of `data_object`.
         """
         isotopomers = self._isotopomers_c
         if isotopomers is []:
@@ -276,17 +325,82 @@ class Simulator:
             raise Exception((
                 "Cannot simulate without the spectrum information."
             ))
-        freq, amp = method(
+        freq, amp, larmor_frequency, list_index_isotopomer = method(
                     spectrum=spectrum,
                     isotopomers=isotopomers, **kwargs
                 )
-        return (freq, amp)
+
+        """The frequency is in the units of Hz."""
+        freq *= u.Hz
+        """The larmor_frequency is in the units of MHz."""
+        larmor_frequency *= u.MHz
+
+        isotopo_ = [isotopomers[i] for i in list_index_isotopomer]
+        application = {
+            'isotopomers': str(isotopo_),
+            'spectrum': spectrum
+        }
+        data_object = False
+        if data_object:
+            return get_csdfpy_object(freq, larmor_frequency, amp, application)
+        else:
+            return freq, amp
 
     def load_isotopomers(self, filename):
-        """Load a JSON serialized isotopomers file."""
+        """
+        Load a JSON serialized isotopomers file.
+        
+        See an `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json>`_
+        of JSON serialized isotopomers file. For details, refer to the
+        :ref:`load_isotopomers` section.
+        """
         contents = _import_json(filename)
         self.isotopomers = contents['isotopomers']
 
+def get_csdfpy_object(x, x0, y, application):
+    ob1 = cp.new()
+    d1 = {
+        'type': 'linear',
+        'number_of_points': x.size,
+        'increment': str(x[1] - x[0]),
+        'index_zero_value': str(x[0]),
+        'origin_offset': str(x0),
+        'quantity': 'frequency'
+    }
+    ob1.add_dimension(d1)
+    s1 = {
+        'type': 'internal',
+        'numeric_type': 'float64',
+        'components': [y],
+        'component_labels': ['arbitrary units'],
+    }
+    ob1.add_dependent_variable(s1)
+
+    ob1.dependent_variables[0].application = {
+            'mrsimulator': application
+        }
+    return ob1
+
+# class _dimension_object:
+#     __slots__ = (
+#         'type',
+#         'number_of_points',
+#         'increment',
+#         'index_zero_value',
+#         'origin_offset',
+#         'coordinates'
+#     )
+
+#     def __init__(self, vector, origin_offset):
+#         self.type= 'linear'
+#         self.number_of_points = vector.size
+#         self.increment = str(vector[1] - vector[0]) + ' Hz'
+#         self.index_zero_value = str(vector[0]) + ' Hz'
+#         self.origin_offset = str(origin_offset) + ' MHz'
+#         self.coordinates = vector
+    
+#     def to_ppm(self):
+#         return None
 
 def _simulator(
         spectrum,
@@ -316,3 +430,32 @@ def _simulator(
                 )
 
     return (freq, amp)
+
+
+def run_test():
+    from mrsimulator.methods import one_d_spectrum
+    import matplotlib.pyplot as plt
+    s1 = Simulator()
+    # test 1
+    s1.isotopomers, s1.spectrum = examples.csa_static()
+    freq, amp = s1.run(one_d_spectrum, verbose=1)
+
+    fig, ax = plt.subplots(1, 2, figsize=(6,3))
+    ax[0].plot(freq, amp)
+    # ax[0].plot(ob1.dimensions[0].coordinates,
+    #            ob1.dependent_variables[0].components[0])
+    # label_ = ob1.dimensions[0].axis_label
+    label_ = f'frequency / {freq.unit}'
+    ax[0].set_xlabel(label_)
+
+    # test 2
+    s1.isotopomers, s1.spectrum = examples.csa_mas()
+    freq, amp = s1.run(one_d_spectrum, verbose=1)
+    ax[1].plot(freq, amp)
+    # ax[1].plot(ob2.dimensions[0].coordinates,
+    #            ob2.dependent_variables[0].components[0])
+    # label_ = ob1.dimensions[0].axis_label
+    label_ = f'frequency / {freq.unit}'
+    ax[1].set_xlabel(label_)
+    plt.tight_layout()
+    plt.show()
