@@ -2,11 +2,10 @@
 
 import dash_html_components as html
 import dash_core_components as dcc
-import dash_daq as daq
 
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = "srivastava.90@osu.edu"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
 colors = {
@@ -28,14 +27,13 @@ def plot_object_widget():
                         'color': colors['text']
                     }
                 ),
+                html.A(
+                    id='download_link',
+                    children='\u21E9 Download CSV'
+                ),
                 dcc.Graph(
                     id='nmr_spectrum',
-                    # animate=True,
-                    # style={"display": "inline-block",
-                    #     "margin-left": 'auto',
-                    #     "margin-right": 'auto',
-                    #     "width": 'auto'},
-                    figure={ 'data': []}
+                    figure={'data': []}
                 ),
             ]
         )
@@ -46,7 +44,7 @@ def spectrum_object_widget(object_=[]):
     """
     Return the layout for nucleus, number of points,
     spectral width and reference offset.
-    """        
+    """
     return [
         html.Div(
             className='card-panel hoverable',
@@ -58,15 +56,21 @@ def spectrum_object_widget(object_=[]):
                         'color': colors['text']
                     }
                 ),
-
-                # dcc.Tabs(id="tabs", value='direct_dimension', children=[
-                #     dcc.Tab(label='Direct dimension', value='direct_dimension'),
-                #     # dcc.Tab(label='Tab Two', value='tab-2-example'),
-                # ]),
+                # dcc.Tabs(
+                #     id="tabs",
+                #     value='direct_dimension',
+                #     children=[
+                #         dcc.Tab(
+                #             label='Direct dimension',
+                #             value='direct_dimension'
+                #         ),
+                #         # dcc.Tab(label='Tab Two', value='tab-2-example'),
+                #     ]
+                # ),
                 html.Div(id='tabs_content', children=object_)
             ]
         )
-    ]   
+    ]
 
 
 def direct_dimension_setup():
@@ -80,7 +84,8 @@ def direct_dimension_setup():
         ),
 
         # environment
-        html.Div([html.H6('Environment parameters')],
+        html.Div([
+            html.H6('Environment parameters')],
             style={
                 'margin-bottom': '5px',
                 'margin-top': '35px',
@@ -119,6 +124,7 @@ def direct_dimension_setup():
                 max=110,
                 step=5.0,
                 value=0,
+                marks={0: '+0 Hz', 50: '50 kHz', 110: '110 kHz'}
             ),
             dcc.Slider(
                 className='col s6 m6 l6',
@@ -127,6 +133,7 @@ def direct_dimension_setup():
                 max=5,
                 step=0.050,
                 value=2.5,
+                marks={2.5: '+2.5 kHz', 5: '+5 kHz'}
             )],
             style={'margin-bottom': '10px', 'margin-top': '0px'}
         ),
@@ -137,18 +144,19 @@ def direct_dimension_setup():
         # dimension
         html.Div(className='row', children=[
             html.H6(className='col s6 m6 l6', children='Dimension parameters'),
-            daq.BooleanSwitch(
-                id='ppm_switch',
-                className='col s6 m6 l6',
-                label='Show ppm',
-                labelPosition='bottom',
-                # size=40,
-                style={
-                    'margin-bottom': '0px',
-                    'margin-top': '5px',
-                    'color': colors['text']
-                }
-            )],
+            # daq.BooleanSwitch(
+            #     id='ppm_switch',
+            #     className='col s6 m6 l6',
+            #     label='Show ppm',
+            #     labelPosition='bottom',
+            #     # size=40,
+            #     style={
+            #         'margin-bottom': '0px',
+            #         'margin-top': '5px',
+            #         'color': colors['text']
+            #     }
+            # )
+            ],
             style={
                 'margin-bottom': '0px',
                 'margin-top': '35px',
@@ -164,31 +172,43 @@ def direct_dimension_setup():
                 max=16,
                 step=1,
                 value=10,
-                marks={8: '', 9: '', 10: '', 11: '', 12: '', 13: '', 14: '', 15: '', 16: ''}
+                marks={
+                    8: '',
+                    9: '',
+                    10: '',
+                    11: '',
+                    12: '',
+                    13: '',
+                    14: '',
+                    15: '',
+                    16: ''
+                }
             )],
             style={'margin-bottom': '10px', 'margin-top': '0px'}
         ),
 
         # Spectral width
-        html.Label(id='frequency_bandwidth_output_container', style={'display': 'block'}),
+        html.Label(id='frequency_bandwidth_output_container'),
         html.Div(className='row', children=[
             dcc.Slider(
                 className='col s6 m6 l6',
                 id='frequency_bandwidth_coarse',
-                min=1.0,
+                min=0.0,
                 max=1000,
-                step=10,
-                value=100
+                step=50,
+                value=100,
+                marks={0: '0 Hz', 500: '0.5 MHz', 1000: '1 MHz'}
             ),
             dcc.Slider(
                 className='col s6 m6 l6',
                 id='frequency_bandwidth_fine',
                 min=0.0,
-                max=10,
+                max=50,
                 step=0.050,
-                value=5,
+                value=25,
+                marks={0: '', 25: '+25 kHz', 50: '+50 kHz'}
             )],
-            style={'margin-bottom': '10px', 'margin-top': '0px'}
+            # style={'margin-bottom': '10px', 'margin-top': '0px'}
         ),
 
         # Reference offset
@@ -199,18 +219,19 @@ def direct_dimension_setup():
                 id='reference_offset_coarse',
                 min=0.0,
                 max=100,
-                step=5,
+                step=10,
                 value=0,
+                marks={0: '0 Hz', 50: '50 kHz', 100: '100 kHz'},
             ),
             dcc.Slider(
                 className='col s6 m6 l6',
                 id='reference_offset_fine',
                 min=0,
-                max=5,
+                max=10,
                 step=0.050,
-                value=2.5,
+                value=0,
+                marks={0: '', 5: '+5 kHz', 10: '+10 kHz'}
             )],
-        style={'margin-bottom': '10px', 'margin-top': '0px'}
+            # style={'margin-bottom': '10px', 'margin-top': '0px'}
         ),
     ]
-

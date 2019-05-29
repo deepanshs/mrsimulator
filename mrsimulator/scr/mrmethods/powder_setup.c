@@ -1,4 +1,12 @@
 
+//
+//  powder_setup.c
+//
+//  Created by Deepansh J. Srivastava, Apr 11, 2019
+//  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
+//  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
+//
+
 #include "powder_setup.h"
 
 void getDirectionCosineSquareOverOctantAndWeights(

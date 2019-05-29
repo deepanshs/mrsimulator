@@ -5,20 +5,23 @@ from .unit import string_to_quantity, _ppm
 import json
 from urllib.parse import urlparse
 from ._utils_download_file import _download_file_from_url
-from .utils import __get_spin_attribute__
 from . import examples
 from astropy import units as u
+from copy import deepcopy
+from .__version__ import __version__
 try:
     import csdfpy as cp
-except:
+except ImportError:
     pass
 
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = "srivastava.90@osu.edu"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+__version__ = __version__
 
 
-__fn__ = lambda x: int(''.join([i for i in x if i.isnumeric()]))
+def _fn_(x):
+    return int(''.join([i for i in x if i.isnumeric()]))
 
 
 def _import_json(filename):
@@ -138,14 +141,11 @@ class _Isotopomers:
                 ))
 
         isotopomers_ = []
-        isotope_list = []
         for isotopomer in isotopomers:
             isotopomer_set = _Isotopomer(**isotopomer)
             isotopomers_.append(isotopomer_set)
 
-            # isotope_list.append(isotope_list_)
-
-        return isotopomers_#, isotope_list)
+        return isotopomers_
 
 
 class _Isotopomer:
@@ -162,12 +162,10 @@ class _Isotopomer:
                 f"Expecting a list of sites. Found {type(sites)}."
             ))
         _sites = []
-        # isotope_list = []
         abundance = string_to_quantity(abundance).to('').value
         for site in sites:
             _sites.append(_Site(**site))
-            # isotope_list.append(_sites[-1]['isotope_symbol'])
-        return ({'sites': _sites, 'abundance': abundance}) #, isotope_list)
+        return ({'sites': _sites, 'abundance': abundance})
 
 
 def _check_values_in_ppm(value, property):
@@ -181,9 +179,10 @@ def _check_values_in_ppm(value, property):
         return value_
     else:
         raise Exception(
-            (f"Expecting '{property}' in units of frequency or a dimensionless "
-             f"frequency ratio, ppm, found {str(value_)}.")
+            (f"Expecting '{property}' in units of frequency or a "
+             f"dimensionless frequency ratio, ppm, found {str(value_)}.")
         )
+
 
 class _Site:
     __slots__ = ()
@@ -193,15 +192,6 @@ class _Site:
                 isotropic_chemical_shift='0 ppm',
                 shielding_symmetric=None):
         """Initialize."""
-        # iso = _check_values_in_ppm(isotropic_chemical_shift,
-        #                            'isotropic_chemical_shift')
-        # if str(iso.unit) == 'ppm':
-        #     iso = iso.value
-        # else:
-        #     raise Exception(
-        #         (f"Expecting 'isotropic_chemical_shift' in units if ppm, "
-        #          f"found {str(iso)}.")
-        #     )
         return {
             'isotope_symbol': isotope_symbol,
             'isotropic_chemical_shift': _check_values_in_ppm(
@@ -236,6 +226,9 @@ class Simulator:
         '_spectrum_c',
         '_isotope_list',
         '_allowed_isotopes',
+        '_larmor_frequency',
+        '_freq',
+        '_amp'
     )
 
     def __init__(self, isotopomers=None, spectrum=None):
@@ -244,10 +237,12 @@ class Simulator:
         self._spectrum = {}
         self._spectrum_c = {}
         self._isotope_list = []
+        self._freq = []*u.Hz
+        self._amp = []
         isotope_list = __get_spin_attribute__.keys()
         self._allowed_isotopes = list(set([
-            isotope for isotope in isotope_list 
-                if __get_spin_attribute__[isotope]['spin']==0.5
+            isotope for isotope in isotope_list
+            if __get_spin_attribute__[isotope]['spin'] == 0.5
         ]))
 
         if isotopomers is not None:
@@ -268,7 +263,7 @@ class Simulator:
     def isotopomers(self):
         """
         Return a list of :ref:`isotopomer` objects. The attribute can also be
-        used to assign a list of valid isotopomers. 
+        used to assign a list of valid isotopomers.
         """
         # return json.dumps(self._isotopomers, ensure_ascii=True, indent=2)
         return self._isotopomers
@@ -278,19 +273,19 @@ class Simulator:
         self._isotopomers_c = _Isotopomers(value)
         isotope_list = [
             site['isotope_symbol'] for isotopomer in self._isotopomers_c
-                for site in isotopomer['sites'] 
-                    if site['isotope_symbol'] in self._allowed_isotopes
+            for site in isotopomer['sites']
+            if site['isotope_symbol'] in self._allowed_isotopes
         ]
 
         self._isotope_list = list(set(isotope_list))
-        self._isotope_list.sort(key=__fn__)
+        self._isotope_list.sort(key=_fn_)
         self._isotopomers = value
 
     @property
     def spectrum(self):
         """
         Return a :ref:`spectrum` object. The attribute can also be
-        used to assign a valid spectrum object. 
+        used to assign a valid spectrum object.
         """
         # return json.dumps(self._spectrum, ensure_ascii=True, indent=2)
         return self._spectrum
@@ -307,15 +302,16 @@ class Simulator:
 
         :ivar method: The method used in computing the linshape.
         :ivar data_object: If true, returns a `csdm` data object. If false,
-                           returns a tuple of frequency array and the corresponding
-                           amplitude array. The amplitude is a
-                           `numpy <https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html>`_
-                           array, whereas, the frequency is a 
-                           `Quantity <http://docs.astropy.org/en/stable/units/quantity.html>`_
-                           array. The default value is False.
+            returns a tuple of frequency array and the
+            corresponding amplitude array. The amplitude is a
+            `numpy <https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html>`_
+            array, whereas, the frequency is a
+            `Quantity <http://docs.astropy.org/en/stable/units/quantity.html>`_
+            array. The default value is False.
 
-        :returns: A `csdm` object if `data_object` is True, else a tuple of frequency and
-                  amplitude. For details, refer to the description of `data_object`.
+        :returns: A `csdm` object if `data_object` is True, else a tuple of
+            frequency and amplitude. For details, refer to the
+            description of `data_object`.
         """
         isotopomers = self._isotopomers_c
         if isotopomers is []:
@@ -325,15 +321,16 @@ class Simulator:
             raise Exception((
                 "Cannot simulate without the spectrum information."
             ))
-        freq, amp, larmor_frequency, list_index_isotopomer = method(
+        self._freq, self._amp, \
+            self._larmor_frequency, list_index_isotopomer = method(
                     spectrum=spectrum,
                     isotopomers=isotopomers, **kwargs
                 )
 
         """The frequency is in the units of Hz."""
-        freq *= u.Hz
+        self._freq *= u.Hz
         """The larmor_frequency is in the units of MHz."""
-        larmor_frequency *= u.MHz
+        self._larmor_frequency *= u.MHz
 
         isotopo_ = [isotopomers[i] for i in list_index_isotopomer]
         application = {
@@ -342,20 +339,27 @@ class Simulator:
         }
         data_object = False
         if data_object:
-            return get_csdfpy_object(freq, larmor_frequency, amp, application)
+            return get_csdfpy_object(
+                        self._freq,
+                        self._larmor_frequency,
+                        self._amp,
+                        application
+            )
         else:
-            return freq, amp
+            return deepcopy(self._freq), deepcopy(self._amp)
 
     def load_isotopomers(self, filename):
         """
         Load a JSON serialized isotopomers file.
-        
-        See an `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json>`_
+
+        See an
+        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json>`_
         of JSON serialized isotopomers file. For details, refer to the
         :ref:`load_isotopomers` section.
         """
         contents = _import_json(filename)
         self.isotopomers = contents['isotopomers']
+
 
 def get_csdfpy_object(x, x0, y, application):
     ob1 = cp.new()
@@ -398,9 +402,10 @@ def get_csdfpy_object(x, x0, y, application):
 #         self.index_zero_value = str(vector[0]) + ' Hz'
 #         self.origin_offset = str(origin_offset) + ' MHz'
 #         self.coordinates = vector
-    
+
 #     def to_ppm(self):
 #         return None
+
 
 def _simulator(
         spectrum,
@@ -440,7 +445,7 @@ def run_test():
     s1.isotopomers, s1.spectrum = examples.csa_static()
     freq, amp = s1.run(one_d_spectrum, verbose=1)
 
-    fig, ax = plt.subplots(1, 2, figsize=(6,3))
+    ax = plt.subplots(1, 2, figsize=(6, 3))[1]
     ax[0].plot(freq, amp)
     # ax[0].plot(ob1.dimensions[0].coordinates,
     #            ob1.dependent_variables[0].components[0])

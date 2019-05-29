@@ -7,7 +7,7 @@ import sys
 
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = "srivastava.89@osu.edu"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
 def _download_file_from_url(url):

@@ -11,11 +11,11 @@ from astropy import units as u
 from numpy import inf
 # from astropy.units import UnitConversionError
 # from astropy.units import cds
-
 # cds.enable()
 
+
 __author__ = "Deepansh J. Srivastava"
-__email__ = "srivastava.90@osu.edu"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
 _ppm = u.def_unit('ppm', 1e-6*u.Unit(1))

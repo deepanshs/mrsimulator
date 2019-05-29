@@ -1,7 +1,7 @@
 
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = "srivastava.90@osu.edu"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
 def csa_static():
@@ -22,7 +22,7 @@ def csa_static():
             }
         ],
         "spectrum": {
-            "direct_dimension":{
+            "direct_dimension": {
                 "magnetic_flux_density": "9.4 T",
                 "rotor_frequency": "0 kHz",
                 "rotor_angle": "54.735 deg",
@@ -34,6 +34,7 @@ def csa_static():
         }
     }
     return temp["isotopomers"], temp["spectrum"]
+
 
 def csa_mas():
     temp = {
@@ -53,7 +54,7 @@ def csa_mas():
             }
         ],
         "spectrum": {
-            "direct_dimension":{
+            "direct_dimension": {
                 "magnetic_flux_density": "9.4 T",
                 "rotor_frequency": "1 kHz",
                 "rotor_angle": "54.735 deg",

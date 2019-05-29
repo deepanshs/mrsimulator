@@ -111,7 +111,7 @@ matplotlib in our examples.
 
     >>> plot(freq, amp)
 
-.. image:: /_static/13C_static.pdf
+.. image:: /_static/13C_static.png
 
 
 -----------------------------------
@@ -166,7 +166,7 @@ Now compute the lineshape as before.
 
     >>> plot(freq, amp)
 
-.. image:: /_static/13C_mas_1kHz.pdf
+.. image:: /_static/13C_mas_1kHz.png
 
 
 -----------------------------
@@ -222,7 +222,7 @@ Now compute the lineshape.
 
     >>> plot(freq, amp)
 
-.. image:: /_static/1H_mas_2kHz.pdf
+.. image:: /_static/1H_mas_2kHz.png
 
 
 In this example, we simulate the MAS lineshape of :math:`^{29}\mathrm{Si}`
@@ -277,7 +277,7 @@ The simulated lineshape.
 
     >>> plot(freq, amp)
 
-.. image:: /_static/29Si_mas_1kHz.pdf
+.. image:: /_static/29Si_mas_1kHz.png
 
 
 -----------------------
@@ -332,4 +332,4 @@ The simulated lineshape.
 
     >>> plot(freq, amp)
 
-.. image:: /_static/1H_mas_2khz_90deg.pdf
+.. image:: /_static/1H_mas_2khz_90deg.png

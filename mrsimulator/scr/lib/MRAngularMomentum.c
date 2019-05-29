@@ -4,7 +4,7 @@
 //  Created by Philip Grandinetti on 4/12/17.
 //  Copyright © 2017 Philip Grandinetti. All rights reserved.
 //  Contribution: Deepansh J. Srivatava. contact: srivastava.89@osu.edu
-//
+//      Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 
 #include "MRAngularMomentum.h"
 

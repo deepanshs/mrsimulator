@@ -1,7 +1,7 @@
 
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = "srivastava.90@osu.edu"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
 # gyromagnetic_ratio is in units MHz/T
