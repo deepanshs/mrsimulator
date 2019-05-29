@@ -8,9 +8,9 @@ simulation of single spin \(I=1/2\) nuclei, static,
 magic angle spinning (MAS), and variable angle spinning (VSA) lineshapes.
 For more information, read the documentation [here](https://deepanshs.github.io/mrsimulator/).
 
-
-
 ## Installation
+
+### Installing requirements
 
 The `mrsimulator` package requires the [fftw3](https://anaconda.org/eumetsat/fftw3)
 C routines to function. Download and install the fftw3 by typing the following
@@ -18,38 +18,38 @@ in the terminal
 
     conda install -c eumetsat fftw3
 
-
 Additionally, ``mrsimulator`` requires the following packages.
 
- - [NumPy](http://www.numpy.org)
- - [SciPy](https://www.scipy.org)
- - [astropy](https://www.astropy.org)
- - mkl, mkl-include
+- [NumPy>=1.13.3](http://www.numpy.org) for array manipulation.
+- [astropy>=3.0](https://www.astropy.org) for units library.
+- mkl, mkl-include for lineshape calculation.
 
-You may install these package using pip as follows
+<!-- You may install these package using pip as follows
 
-    pip install numpy scipy astropy mkl mkl-include
+    pip install numpy scipy astropy mkl mkl-include -->
 
-For figures and visualization, we use the following packages.
+For figures and visualization, we use
 
- - [plotly](https://plot.ly/python/)
- - dash
- - dash_daq
+- [matplotlib>=3.0.2](https://matplotlib.org)
 
-To install these package with
+For the web-face interface, we use
 
-    pip install matplotlib plotly dash dash_daq
+- [plotly>=3.6](https://plot.ly/python/)
+- dash>=0.40
+- dash_daq>=0.1
 
+<!-- To install these package with
 
-Finally, to install the ``mrsimulator`` package, type the following
-in the terminal
+    pip install matplotlib plotly dash dash_daq -->
+
+### Installing mrsimulator
+
+To install the ``mrsimulator`` package, type the following
+in the terminal.
 
     pip install git+https://github.com/DeepanshS/mrsimulator.git@master
 
-
-
 ## Test
-
 
 If the installation is successful, you should be able to run the following
 in the terminal.
@@ -88,4 +88,3 @@ This will display the following message on the screen
 and a corresponding plot shown below.
 
 ![alt text](https://raw.githubusercontent.com/DeepanshS/mrsimulator/gh-pages/_static/test_output.png)
-

@@ -34,7 +34,7 @@ For figures and visualization, we use
 
  - `matplotlib>=3.0.2 <https://matplotlib.org>`_.
 
-For a web face interface, we use
+For the web-face interface, we use
 
  - `plotly>=3.6 <https://plot.ly/python/>`_
  - dash>=0.40
@@ -50,7 +50,7 @@ Installing mrsimulator
 ++++++++++++++++++++++
 
 To install the ``mrsimulator`` package, type the following
-in the terminal
+in the terminal.
 
 .. code-block:: python
 
