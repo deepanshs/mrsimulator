@@ -1,8 +1,7 @@
 {
-    "python.linting.pylintEnabled": false,
-    "python.linting.flake8Enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.flake8Enabled": false,
     "python.linting.enabled": true,
     "python.linting.banditEnabled": false,
-    "python.linting.pep8Enabled": false,
-    "restructuredtext.confPath": "${workspaceFolder}/docs"
+    "python.linting.pep8Enabled": false
 }

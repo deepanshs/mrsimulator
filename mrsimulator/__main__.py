@@ -52,7 +52,7 @@ class webApp:
         app.layout = html.Div(
             className='container',
             # style={'background-color': '#303030', 'color': 'white'},
-            style={'backgroundColor': colors['background'], 'width': '90%'},
+            style={'width': '90%'},
             children=[
                 # dcc.ConfirmDialog(
                 #     id='confirm',
@@ -105,7 +105,7 @@ class webApp:
                         ),
                         html.Label(
                             id='error_message',
-                            style={'textAlign': 'center', 'color': 'red'}
+                            style={'textAlign': 'center',}# 'color': 'red'}
                         )
                     ])
                 ]),

@@ -13,34 +13,30 @@ For more information, read the documentation [here](https://deepanshs.github.io/
 ### Installing requirements
 
 The `mrsimulator` package requires the [fftw3](https://anaconda.org/eumetsat/fftw3)
-C routines to function. Download and install the fftw3 by typing the following
+C routines. Download and install the fftw3 routines by typing the following
 in the terminal
 
     conda install -c eumetsat fftw3
 
-Additionally, ``mrsimulator`` requires the following packages.
+In addition, ``mrsimulator`` also requires [NumPy>=1.13.3](http://www.numpy.org)
+and intel [mkl](https://pypi.org/project/mkl/) and
+[mkl_include](https://pypi.org/project/mkl-include) C routines to build and
+install the `mrsimulator` package. Download and install these C routines using
 
-- [NumPy>=1.13.3](http://www.numpy.org) for array manipulation.
-- [astropy>=3.0](https://www.astropy.org) for units library.
-- mkl, mkl-include for lineshape calculation.
+    pip install "numpy>=1.13.1" mkl mkl-include
 
-<!-- You may install these package using pip as follows
+Some additional package dependencies are
 
-    pip install numpy scipy astropy mkl mkl-include -->
+- [astropy>=3.0](https://www.astropy.org) for the units library,
+- [matplotlib>=3.0.2](https://matplotlib.org) for figures and visualization,
 
-For figures and visualization, we use
-
-- [matplotlib>=3.0.2](https://matplotlib.org)
-
-For the web-face interface, we use
+and,
 
 - [plotly>=3.6](https://plot.ly/python/)
-- dash>=0.40
-- dash_daq>=0.1
+- [dash>=0.40](https://pypi.org/project/dash/)
+- [dash_daq>=0.1](https://pypi.org/project/dash-daq/)
 
-<!-- To install these package with
-
-    pip install matplotlib plotly dash dash_daq -->
+for the web-face interface.
 
 ### Installing mrsimulator
 
@@ -85,6 +81,6 @@ This will display the following message on the screen
     chemical shift anisotropy = 13.89 ppm
     chemical shift asymmetry = 0.25
 
-and a corresponding plot shown below.
+and the corresponding plot shown below.
 
 ![alt text](https://raw.githubusercontent.com/DeepanshS/mrsimulator/gh-pages/_static/test_output.png)

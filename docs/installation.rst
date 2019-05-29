@@ -9,42 +9,36 @@ Installation
 Installing requirements
 +++++++++++++++++++++++
 
-The `mrsimulator` package requires the `fftw3 <https://anaconda.org/eumetsat/fftw3>`_
-C routines to function. Download and install the fftw3 by typing the following
-in the terminal
+The `mrsimulator` package requires `fftw3 <https://anaconda.org/eumetsat/fftw3>`_
+C routines. Download and install the fftw3 routines by typing
+the following in the terminal
 
 .. code-block:: python
 
     conda install -c eumetsat fftw3
 
+In addition, `mrsimulator` also requires `NumPy>=1.13.3 <http://www.numpy.org>`_
+and intel `mkl <https://pypi.org/project/mkl/>`_ and
+`mkl_include <https://pypi.org/project/mkl-include/>`_ C routines to build and
+install the `mrsimulator` package. Download and install these C routines using
 
-Additionally, ``mrsimulator`` requires the following packages.
+.. code-block:: python
 
- - `NumPy>=1.13.3 <http://www.numpy.org>`_ for array manipulation.
- - `astropy>=3.0 <https://www.astropy.org>`_ for units library.
- - mkl, mkl-include for lineshape calculation.
+    pip install "numpy>=1.13.1" mkl mkl-include
 
-.. You may install these package using pip as
+Some additional package dependencies are
 
-.. .. code-block:: python
+ - `astropy>=3.0 <https://www.astropy.org>`_ for the units library,
+ - `matplotlib>=3.0.2 <https://matplotlib.org>`_ for figures and visualization,
 
-..     pip install numpy astropy mkl mkl-include
-
-For figures and visualization, we use
-
- - `matplotlib>=3.0.2 <https://matplotlib.org>`_.
-
-For the web-face interface, we use
+and,
 
  - `plotly>=3.6 <https://plot.ly/python/>`_
- - dash>=0.40
- - dash_daq>=0.1
+ - `dash>=0.40 <https://pypi.org/project/dash/>`_
+ - `dash_daq>=0.1 <https://pypi.org/project/dash-daq/>`_
 
-.. To install these package use
+for the web-face interface.
 
-.. .. code-block:: python
-
-..     pip install matplotlib plotly dash dash_daq
 
 Installing mrsimulator
 ++++++++++++++++++++++
@@ -98,6 +92,6 @@ This will display the following message on the screen
     chemical shift anisotropy = 13.89 ppm
     chemical shift asymmetry = 0.25
 
-and a corresponding plot shown below.
+and the corresponding plot shown below.
 
 .. image:: /_static/test_output.png

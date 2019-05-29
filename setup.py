@@ -1,10 +1,10 @@
 import io
 from setuptools import setup, Extension, find_packages
-from mrsimulator.__version__ import __version__
+# from mrsimulator.__version__ import __version__
 import platform
 from os import path, listdir
 from os.path import join, abspath, dirname
-
+import numpy
 
 # Package meta-data.
 NAME = 'mrsimulator'
@@ -13,7 +13,7 @@ URL = 'https://github.com/DeepanshS/MRsimulator/'
 EMAIL = 'srivastava.89@osu.edu'
 AUTHOR = 'Deepansh J. Srivastava'
 REQUIRES_PYTHON = '>=3.6'
-VERSION = __version__
+VERSION = '0.1.0' #__version__
 
 
 # What packages are required for this module to be executed?
@@ -71,18 +71,16 @@ _list = ['mrsimulator', 'scr', 'include']
 include_nmr_lib_directories = [path.join(*_list)]
 
 
-def get_numpy_includes():
-    import numpy
-    path_ = numpy.get_include()
-    if platform.system() == 'Windows':
-        for i in range(5):
-            path_ = path.split(path_)[0]
-        path_ = path.join(path_, 'Library', 'include')
-        include_nmr_lib_directories.append(path_)
-    return path_
+# def get_numpy_includes():
+path_n = numpy.get_include()
+if platform.system() == 'Windows':
+    for i in range(5):
+        path_ = path.split(path_n)[0]
+    path_ = path.join(path_, 'Library', 'include')
+    include_nmr_lib_directories.append(path_)
+    # return path_n
 
-
-include_nmr_lib_directories.append(get_numpy_includes())
+include_nmr_lib_directories.append(path_n)
 
 nmr_function_source_file = _source_files[:]
 
