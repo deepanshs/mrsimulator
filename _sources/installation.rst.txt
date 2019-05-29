@@ -6,6 +6,9 @@
 Installation
 ============
 
+Installing requirements
++++++++++++++++++++++++
+
 The `mrsimulator` package requires the `fftw3 <https://anaconda.org/eumetsat/fftw3>`_
 C routines to function. Download and install the fftw3 by typing the following
 in the terminal
@@ -17,37 +20,41 @@ in the terminal
 
 Additionally, ``mrsimulator`` requires the following packages.
 
- - `NumPy <http://www.numpy.org>`_
- - `SciPy <https://www.scipy.org>`_
- - `astropy <https://www.astropy.org>`_
- - mkl, mkl-include
+ - `NumPy>=1.13.3 <http://www.numpy.org>`_ for array manipulation.
+ - `astropy>=3.0 <https://www.astropy.org>`_ for units library.
+ - mkl, mkl-include for lineshape calculation.
 
-You may install these package using pip as
+.. You may install these package using pip as
 
-.. code-block:: python
+.. .. code-block:: python
 
-    pip install numpy scipy astropy mkl mkl-include
+..     pip install numpy astropy mkl mkl-include
 
-For figures and visualization, we use the following packages.
+For figures and visualization, we use
 
- - `plotly <https://plot.ly/python/>`_
- - dash
- - dash_daq
+ - `matplotlib>=3.0.2 <https://matplotlib.org>`_.
 
-To install these package use
+For a web face interface, we use
 
-.. code-block:: python
+ - `plotly>=3.6 <https://plot.ly/python/>`_
+ - dash>=0.40
+ - dash_daq>=0.1
 
-    pip install matplotlib plotly dash dash_daq
+.. To install these package use
 
+.. .. code-block:: python
 
-Finally to install the ``mrsimulator`` package, type the following
+..     pip install matplotlib plotly dash dash_daq
+
+Installing mrsimulator
+++++++++++++++++++++++
+
+To install the ``mrsimulator`` package, type the following
 in the terminal
 
 .. code-block:: python
 
     pip install git+https://github.com/DeepanshS/mrsimulator.git@master
-
 
 
 Test
@@ -93,4 +100,4 @@ This will display the following message on the screen
 
 and a corresponding plot shown below.
 
-.. image:: /_static/test_output.pdf
+.. image:: /_static/test_output.png

@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.1.0.dev1
+                0.1.0
               </div>
             
           
@@ -93,6 +93,8 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-requirements">Installing requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-mrsimulator">Installing mrsimulator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#test">Test</a></li>
 </ul>
 </li>
@@ -169,6 +171,8 @@
             
   <div class="section" id="installation">
 <span id="shielding-tensor-api"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installing-requirements">
+<h2>Installing requirements<a class="headerlink" href="#installing-requirements" title="Permalink to this headline">¶</a></h2>
 <p>The <cite>mrsimulator</cite> package requires the <a class="reference external" href="https://anaconda.org/eumetsat/fftw3">fftw3</a>
 C routines to function. Download and install the fftw3 by typing the following
 in the terminal</p>
@@ -178,32 +182,33 @@ in the terminal</p>
 <p>Additionally, <code class="docutils literal notranslate"><span class="pre">mrsimulator</span></code> requires the following packages.</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference external" href="http://www.numpy.org">NumPy</a></li>
-<li><a class="reference external" href="https://www.scipy.org">SciPy</a></li>
-<li><a class="reference external" href="https://www.astropy.org">astropy</a></li>
-<li>mkl, mkl-include</li>
+<li><a class="reference external" href="http://www.numpy.org">NumPy&gt;=1.13.3</a> for array manipulation.</li>
+<li><a class="reference external" href="https://www.astropy.org">astropy&gt;=3.0</a> for units library.</li>
+<li>mkl, mkl-include for lineshape calculation.</li>
 </ul>
 </div></blockquote>
-<p>You may install these package using pip as</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">numpy</span> <span class="n">scipy</span> <span class="n">astropy</span> <span class="n">mkl</span> <span class="n">mkl</span><span class="o">-</span><span class="n">include</span>
-</pre></div>
-</div>
-<p>For figures and visualization, we use the following packages.</p>
+<p>For figures and visualization, we use</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference external" href="https://plot.ly/python/">plotly</a></li>
-<li>dash</li>
-<li>dash_daq</li>
+<li><a class="reference external" href="https://matplotlib.org">matplotlib&gt;=3.0.2</a>.</li>
 </ul>
 </div></blockquote>
-<p>To install these package use</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">matplotlib</span> <span class="n">plotly</span> <span class="n">dash</span> <span class="n">dash_daq</span>
-</pre></div>
+<p>For a web face interface, we use</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://plot.ly/python/">plotly&gt;=3.6</a></li>
+<li>dash&gt;=0.40</li>
+<li>dash_daq&gt;=0.1</li>
+</ul>
+</div></blockquote>
 </div>
-<p>Finally to install the <code class="docutils literal notranslate"><span class="pre">mrsimulator</span></code> package, type the following
+<div class="section" id="installing-mrsimulator">
+<h2>Installing mrsimulator<a class="headerlink" href="#installing-mrsimulator" title="Permalink to this headline">¶</a></h2>
+<p>To install the <code class="docutils literal notranslate"><span class="pre">mrsimulator</span></code> package, type the following
 in the terminal</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">git</span><span class="o">+</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">DeepanshS</span><span class="o">/</span><span class="n">mrsimulator</span><span class="o">.</span><span class="n">git</span><span class="nd">@master</span>
 </pre></div>
+</div>
 </div>
 <div class="section" id="test">
 <h2>Test<a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h2>
@@ -242,7 +247,7 @@ chemical shift asymmetry = 0.25
 </pre></div>
 </div>
 <p>and a corresponding plot shown below.</p>
-<img alt="_images/test_output.pdf" src="_images/test_output.pdf" />
+<img alt="_images/test_output.png" src="_images/test_output.png" />
 </div>
 </div>
 

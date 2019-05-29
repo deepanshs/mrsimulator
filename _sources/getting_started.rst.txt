@@ -113,4 +113,4 @@ lineshape plotted using the matplotlib library.
 
     >>> plot(freq, amp)
 
-.. image:: /_static/1H_example.pdf
+.. image:: /_static/1H_example.png
