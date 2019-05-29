@@ -27,6 +27,7 @@
         <script type="text/javascript" src="_static/language_data.js"></script>
         <script type="text/javascript" src="_static/_static/copybutton.js"></script>
         <script type="text/javascript" src="_static/_static/jquery.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -172,34 +173,35 @@
 <span id="shielding-tensor-api"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="installing-requirements">
 <h2>Installing requirements<a class="headerlink" href="#installing-requirements" title="Permalink to this headline">¶</a></h2>
-<p>The <cite>mrsimulator</cite> package requires the <a class="reference external" href="https://anaconda.org/eumetsat/fftw3">fftw3</a>
-C routines to function. Download and install the fftw3 by typing the following
-in the terminal</p>
+<p>The <cite>mrsimulator</cite> package requires <a class="reference external" href="https://anaconda.org/eumetsat/fftw3">fftw3</a>
+C routines. Download and install the fftw3 routines by typing
+the following in the terminal</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">eumetsat</span> <span class="n">fftw3</span>
 </pre></div>
 </div>
-<p>Additionally, <code class="docutils literal notranslate"><span class="pre">mrsimulator</span></code> requires the following packages.</p>
+<p>In addition, <cite>mrsimulator</cite> also requires <a class="reference external" href="http://www.numpy.org">NumPy&gt;=1.13.3</a>
+and intel <a class="reference external" href="https://pypi.org/project/mkl/">mkl</a> and
+<a class="reference external" href="https://pypi.org/project/mkl-include/">mkl_include</a> C routines to build and
+install the <cite>mrsimulator</cite> package. Download and install these C routines using</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="s2">&quot;numpy&gt;=1.13.1&quot;</span> <span class="n">mkl</span> <span class="n">mkl</span><span class="o">-</span><span class="n">include</span>
+</pre></div>
+</div>
+<p>Some additional package dependencies are</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference external" href="http://www.numpy.org">NumPy&gt;=1.13.3</a> for array manipulation.</li>
-<li><a class="reference external" href="https://www.astropy.org">astropy&gt;=3.0</a> for units library.</li>
-<li>mkl, mkl-include for lineshape calculation.</li>
+<li><a class="reference external" href="https://www.astropy.org">astropy&gt;=3.0</a> for the units library,</li>
+<li><a class="reference external" href="https://matplotlib.org">matplotlib&gt;=3.0.2</a> for figures and visualization,</li>
 </ul>
 </div></blockquote>
-<p>For figures and visualization, we use</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference external" href="https://matplotlib.org">matplotlib&gt;=3.0.2</a>.</li>
-</ul>
-</div></blockquote>
-<p>For the web-face interface, we use</p>
+<p>and,</p>
 <blockquote>
 <div><ul class="simple">
 <li><a class="reference external" href="https://plot.ly/python/">plotly&gt;=3.6</a></li>
-<li>dash&gt;=0.40</li>
-<li>dash_daq&gt;=0.1</li>
+<li><a class="reference external" href="https://pypi.org/project/dash/">dash&gt;=0.40</a></li>
+<li><a class="reference external" href="https://pypi.org/project/dash-daq/">dash_daq&gt;=0.1</a></li>
 </ul>
 </div></blockquote>
+<p>for the web-face interface.</p>
 </div>
 <div class="section" id="installing-mrsimulator">
 <h2>Installing mrsimulator<a class="headerlink" href="#installing-mrsimulator" title="Permalink to this headline">¶</a></h2>
@@ -245,7 +247,7 @@ chemical shift anisotropy = 13.89 ppm
 chemical shift asymmetry = 0.25
 </pre></div>
 </div>
-<p>and a corresponding plot shown below.</p>
+<p>and the corresponding plot shown below.</p>
 <img alt="_images/test_output.png" src="_images/test_output.png" />
 </div>
 </div>
