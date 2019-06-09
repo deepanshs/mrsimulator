@@ -33,7 +33,13 @@ VERSION = "0.1.1"
 
 
 # What packages are required for this module to be executed?
-REQUIRED = ["numpy>=1.13.3", "astropy>=3.0", "mkl", "mkl-include"]
+REQUIRED = [
+    "numpy>=1.13.3",
+    "astropy>=3.0",
+    "mkl",
+    "mkl-include",
+    "requests>=2.21.0",
+]
 
 # What packages are optional?
 EXTRAS = {

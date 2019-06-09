@@ -62,9 +62,9 @@ before_install:
   - pip install --upgrade pip
   - pip install --upgrade numpy mkl mkl-include
   - pip install --upgrade cython
+  - pip install -r requirements-dev.txt
 
 install:
-  - pip install -r requirements-dev.txt
   - python setup_cython.py install
 
 # command to run tests

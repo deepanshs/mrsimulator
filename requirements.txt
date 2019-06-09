@@ -2,4 +2,6 @@
 mkl
 mkl-include
 numpy>=1.13.3
-astropy
+setuptools>=27.3
+astropy>=3.0
+requests>=2.21.0

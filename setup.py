@@ -30,6 +30,7 @@ REQUIRED = [
     "mkl-include",
     "pytest-runner>=5.0",
     "pytest",
+    "requests>=2.21.0",
 ]
 
 # What packages are optional?
@@ -157,7 +158,13 @@ setup(
     include_package_data=True,
     install_requires=REQUIRED,
     extras_require=EXTRAS,
-    setup_requires=["pytest-runner", "numpy>=1.13.3", "mkl", "mkl-include"],
+    setup_requires=[
+        "pytest-runner",
+        "numpy>=1.13.3",
+        "mkl",
+        "mkl-include",
+        "setuptools>=27.3",
+    ],
     tests_require=["pytest"],
     package_data={"mrsimulator": ["tests/*.*"]},
     cmdclass=cmdclass,
