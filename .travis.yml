@@ -34,13 +34,6 @@ matrix:
     #   cache: false
     - env: STACKLESS=true BACKEND=c PY=3
       python: 3.6
-    - python: pypy3
-      env: BACKEND=c
-
-  allow_failures:
-    - python: pypy
-    - python: pypy3
-    - python: 3.8-dev
 
 # safelist
 branches:
@@ -69,4 +62,4 @@ install:
 
 # command to run tests
 script:
-  - pytest
+  - py.test
