@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 """Utility functions for the csdfpy module."""
-
-from os import path
-import requests
-from urllib.parse import urlparse
 import sys
+from os import path
+from urllib.parse import urlparse
+
+import requests
 
 
 __author__ = "Deepansh J. Srivastava"
@@ -17,12 +18,12 @@ def _download_file_from_url(url):
     original_name = name
     i = 0
     while path.isfile(filename):
-        filename = '{0}_{1}{2}'.format(original_name, str(i), extension)
+        filename = "{0}_{1}{2}".format(original_name, str(i), extension)
         i += 1
 
-    with open(filename, 'wb') as f:
+    with open(filename, "wb") as f:
         response = requests.get(url, stream=True)
-        total = response.headers.get('content-length')
+        total = response.headers.get("content-length")
 
         if total is None:
             f.write(response.content)
@@ -35,16 +36,16 @@ def _download_file_from_url(url):
                 )
             )
             for data in response.iter_content(
-                chunk_size=max(int(total/1000), 1024*1024)
+                chunk_size=max(int(total / 1000), 1024 * 1024)
             ):
                 downloaded += len(data)
                 f.write(data)
-                done = int(8*downloaded/total)
+                done = int(8 * downloaded / total)
                 sys.stdout.write(
-                    '\r[{}{}]'.format('█' * done, '.' * (8-done))
+                    "\r[{}{}]".format("█" * done, "." * (8 - done))
                 )
                 sys.stdout.flush()
 
-    sys.stdout.write('\n')
+    sys.stdout.write("\n")
 
     return filename

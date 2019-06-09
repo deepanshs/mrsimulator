@@ -8,7 +8,7 @@ API documentation
    :caption: Contents:
 
    simulator
-   
+
 ..    parameterized_tensor
 ..    interaction
 

@@ -117,9 +117,10 @@ or
 
 The list of isotopomers may directly be assigned to an instance of a
 :ref:`simulator_api` class from a JSON serialized isotopomers file.
-In the following example, we load an
-`example JSON <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json>`_
-serialized isotopomers file.
+In the following example, we load an example
+`JSON <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json>`_
+serialized isotopomers file. For this, we make use of the
+:meth:`~mrsimulator.Simulator.load_isotopomers` method as follows,
 
 
 .. doctest::
@@ -135,7 +136,7 @@ serialized isotopomers file.
     import os
     os.remove('isotopomers_ppm.json')
 
-The isotopomers from the file are
+The list of isotopomers from this file are
 
 .. doctest::
 

@@ -1,0 +1,31 @@
+{
+    "spectrum": {
+        "direct_dimension": {
+            "rotor_frequency": "1 kHz",
+            "number_of_points": 100,
+            "spectral_width": "100 kHz",
+            "nucleus": "29Si"
+        }
+    },
+    "isotopomer": [
+        {
+            "sites": [
+                {
+                    "isotope_symbol": "29Si",
+                    "isotropic_chemical_shift": "0 Hz",
+                    "shielding_symmetric": {
+                        "anisotropy": "12 kHz",
+                        "asymmetry": 0.5
+                    }
+                }
+            ]
+        }
+    ],
+    "test_data": {
+        "source": "simpson",
+        "filename": "test00.fid",
+        "quantity": "time",
+        "type": "complex",
+        "periodic": true
+    }
+}

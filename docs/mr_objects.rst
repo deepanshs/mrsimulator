@@ -15,4 +15,3 @@ Below is a detail description of these objects.
    objects
    isotopomers_object
    spectrum_object
-

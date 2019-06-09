@@ -54,4 +54,3 @@ parameter of 0.0. The second isotopomer describes a :math:`^{29}\mathrm{Si}`
 nuclear site with -0.1 mHz/Hz of isotropic chemical shift, 8.89 ppm of
 anisotropy
 and a value of 0.5 for the asymmetry parameter.
-

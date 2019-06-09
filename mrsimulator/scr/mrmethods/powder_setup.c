@@ -51,7 +51,7 @@ void getDirectionCosineSquareOverOctantAndWeights(
 
 
 void getDirectionCosineSquareOverHemishpereAndWeights(
-            int nt, 
+            int nt,
             double ** xr,
             double ** yr,
             double ** zr,
@@ -65,7 +65,7 @@ void getDirectionCosineSquareOverHemishpereAndWeights(
   !y -> 0 to nt-z
   !x -> nt - y - z
   !*/
-  
+
   for( j = 0; j <= nt-1; j++) {
     for( i = 0; i <= nt-j; i++) {
       // x = nt-i-j;
@@ -184,7 +184,7 @@ void getPolarAngleTrigOverAnOctant(
   double* yr = createDouble1DArray( points );
   double* zr = createDouble1DArray( points );
   double* sinBeta = createDouble1DArray( points );
-  
+
   getDirectionCosineSquareOverOctantAndWeights(nt, xr, yr, zr, amp);
 
   // // OCPolarAngleTrig **trigs = create2DOCPolarAngleTrigArray(nt+1, 2*nt+1);
@@ -243,13 +243,13 @@ void getPolarAngleTrigOverHemisphere(
   double** xr = createDouble2DMatrix( (nt+1), (2*nt+1) );
   double** yr = createDouble2DMatrix( (nt+1), (2*nt+1) );
   double** zr = createDouble2DMatrix( (nt+1), (2*nt+1) );
-  
+
   getDirectionCosineSquareOverHemishpereAndWeights(nt, xr, yr, zr, amp);
 
   // Evaluate sqrt of zr to get cos(beta)
   vdSqrt(points, &zr[0][0], &cosBeta[0]);
 
-   // exaluate A = x + y
+   // evaluate A = x + y
   vdAdd(points, &xr[0][0], &yr[0][0], &sinBeta[0]);
   // Take sqrt of A to get sin(beta)
   vdSqrt(points, &sinBeta[0], &sinBeta[0]);
@@ -284,7 +284,7 @@ void getPolarAngleTrigOverHemisphere(
 
 
 
-// triangle_interpolation is an optimized version of tent. 
+// triangle_interpolation is an optimized version of tent.
 int triangle_interpolation(
           double *freq1,
           double *freq2,
@@ -301,7 +301,9 @@ int p, pmid, pmax, i, j, clip_right = 0, clip_left = 0;
 // off = (int) offset[0];
 p = (int) (freq1[0] + offset[0]);
 if ((int)freq1[0] == (int)freq2[0] && (int)freq1[0] == (int)freq3[0]){
-  if(p >= points[0] || p < 0) return 0;
+  if(p >= points[0] || p < 0) {
+    return 0;
+  }
   spec[p] += amp[0];
 	return 0;
 }
@@ -331,8 +333,12 @@ f21 += f[2]-f[1];
 
 // if((pmax >= points[0]) || (p < 0)) return 0;
 
-if (pmax < 0) return 0;
-if (p > points[0]) return 0;
+if (pmax < 0) {
+  return 0;
+}
+if (p > points[0]) {
+  return 0;
+}
 
 if(pmax >= points[0]){
   pmax = points[0];
@@ -343,12 +349,12 @@ if(pmid >= points[0]){
   pmid = points[0];
   clip_right = 1;
 }
-    
+
 if (p < 0){
   p = 0;
   clip_left = 1;
 }
-    
+
 if (pmid < 0){
   pmid = 0;
   clip_left = 1;
@@ -431,10 +437,10 @@ void powderAverageWithTentingSchemeOverOctant(
       temp = amp[i+1] + amp_address[j];
       amp1 = temp;
       amp1 += amp[i];
-      
+
       triangle_interpolation(&freq[i], &freq[i+1], &freq_address[j], offset, &amp1, spec, &m);
 
-      if (i<local_index){  
+      if (i<local_index){
         amp1 = temp;
         amp1 += amp_address[j+1];
         triangle_interpolation(&freq[i+1], &freq_address[j], &freq_address[j+1], offset, &amp1, spec, &m);
@@ -470,10 +476,10 @@ void powderAverageWithTentingSchemeOverHemisphere2(
       temp = amp[i+1] + amp_address[j];
       amp1 = temp;
       amp1 += amp[i];
-      
+
       triangle_interpolation(&freq[i], &freq[i+1], &freq_address[j], offset, &amp1, spec, &m);
 
-      if (i<local_index){  
+      if (i<local_index){
         amp1 = temp;
         if(j==4*l){
           amp1 += amp_address[j-4*l];
@@ -545,7 +551,7 @@ void powderAverageWithTentingSchemeOverHemisphere(
 };
 
 // static inline double two_times_triangle_area(
-//                         double *a, 
+//                         double *a,
 //                         double *b,
 //                         double *c)
 // {
@@ -578,16 +584,16 @@ void rasterization(double * grid,
   maxX_ = (int) fmin(maxX, (double) rows - 1.);
   maxY_ = (int) fmin(maxY, (double) columns - 1.);
 
-  
+
   A12 = (v2[0]-v1[0]); B12 = (v2[1]-v1[1]); C12 = -A12*v1[1] + B12*v1[0];
   A20 = (v0[0]-v2[0]); B20 = (v0[1]-v2[1]); C20 = -A20*v2[1] + B20*v2[0];
   A01 = (v1[0]-v0[0]); B01 = (v1[1]-v0[1]); C01 = -A01*v0[1] + B01*v0[0];
-      
+
 
   w0_row = A12 *minY - B12*minX + C12;
   w1_row = A20 *minY - B20*minX + C20;
   w2_row = A01 *minY - B01*minX + C01;
-    
+
   // Rasterize
   for(i=minY_; i<=maxY_; i++){
 
@@ -606,7 +612,7 @@ void rasterization(double * grid,
         grid[i_+j] += -1.; //(w0+w1+w2);
       }
       // i_++;
-              
+
       w0 -= B12;
       w1 -= B20;
       w2 -= B01;
@@ -624,7 +630,7 @@ void rasterization(double * grid,
 //             double *x,
 //             double *y)
 // {
-//   double K[2] = 
+//   double K[2] =
 // }
 // def get_KL(self, x0, y0, x1, y1, eps = 1e-5):
 //     self.x0, self.y0, self.x1, self.y1 = x0, y0, x1, y1
@@ -693,7 +699,7 @@ void rasterization(double * grid,
 //         xdelta = self.x1 - self.x0
 //         ydelta = self.y1 - self.y0
 //         for edge in range(4): #traverse through left, right, bottom, top edges.
-//             if   edge == 0:   p, q = -xdelta, -(left-self.x0) 
+//             if   edge == 0:   p, q = -xdelta, -(left-self.x0)
 //             elif edge == 1:   p, q =  xdelta,  (right-self.x0)
 //             elif edge == 2:   p, q =  ydelta,  (bottom-self.y0)
 //             elif edge == 3:   p, q = -ydelta, -(top-self.y0)
@@ -706,6 +712,6 @@ void rasterization(double * grid,
 //                 r = q / float(p)
 //                 if r < t0:          return []
 //                 elif r < t1:        t1 = r   # line is clipped!
-//         clipped_line = (self.x0 + t0*xdelta, self.y0 + t0*ydelta, 
+//         clipped_line = (self.x0 + t0*xdelta, self.y0 + t0*ydelta,
 //                         self.x0 + t1*xdelta, self.y0 + t1*ydelta)
 //         return [clipped_line]

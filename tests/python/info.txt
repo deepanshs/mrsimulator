@@ -1,0 +1,1 @@
+Brute-force NMR calculations. The line shape is averaged over 1 billion orientations.

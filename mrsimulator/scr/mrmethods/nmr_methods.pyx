@@ -20,12 +20,12 @@ def one_d_spectrum(dict spectrum,
        int number_of_sidebands=90,
        int geodesic_polyhedron_frequency=72):
     """
-    
+
     :ivar verbose:
         The allowed values are 0, 1, and 11. When the value is 1, the output is
         printed on the screen. When the value is 11, in addition to the output
         from 1, execution time is also printed on the screen.
-        The default value is 0. 
+        The default value is 0.
     :ivar number_of_sidebands:
         The value is an integer which corresponds to the number of sidebands
         simulated in the spectrum. The default value is 90. Note, when the
@@ -38,7 +38,7 @@ def one_d_spectrum(dict spectrum,
         spherical average. Presently we only use octahedral as the frequency1
         polyhedra. As the frequency of the geodesic polyhedron increases, the
         polyhedra approach a sphere geometry. In lineshape simulation, a higher
-        frequency may result in proper powder averaging.
+        frequency will result in a better powder averaging.
         The default value is 72.
         Read more on the `Geodesic polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
     """
@@ -61,7 +61,7 @@ def one_d_spectrum(dict spectrum,
     # obs_dict = __get_spin_attribute__[detect]
     isotope = spectrum['isotope']
 
-    # spin quantum number of the obsered spin
+    # spin quantum number of the observed spin
     cdef double spin_quantum_number = spectrum['spin']
 
     # transitions of the observed spin
@@ -109,7 +109,7 @@ def one_d_spectrum(dict spectrum,
     amp1 = np.zeros(number_of_points, dtype=np.float64)
 
     # print (amp1)
-    # octahedran power orienation averaging
+    # octahedral power orientation averaging
     cdef unsigned int n_orientations = int((geodesic_polyhedron_frequency+1) * (geodesic_polyhedron_frequency+2)/2)
     cdef np.ndarray[double] cosAlpha = np.zeros(n_orientations, dtype=np.float64)
     cdef np.ndarray[double] cosBeta = np.zeros(n_orientations, dtype=np.float64)
@@ -148,7 +148,7 @@ def one_d_spectrum(dict spectrum,
         # cdef int i, size = len(sample)
 
         amp = np.zeros(number_of_points*number_of_sites)
-        
+
         if number_of_sites > 0: list_index_isotopomer.append(index_isotopomer)
         for i in range(number_of_sites):
             site = sub_sites[i]
@@ -190,7 +190,7 @@ def one_d_spectrum(dict spectrum,
         # print(transition_array)
         # print(number_of_transitions)
 
-        
+
 
         for trans__ in range(number_of_transitions):
             # spin transitions
@@ -233,7 +233,7 @@ def one_d_spectrum(dict spectrum,
 
                     # powder orientation averager
                     n_orientations,
-                    &cosAlpha[0], 
+                    &cosAlpha[0],
                     &cosBeta[0],
                     &amp_orientation[0],
                     geodesic_polyhedron_frequency,
@@ -241,12 +241,12 @@ def one_d_spectrum(dict spectrum,
                     number_of_sites
                     )
 
-        
+
         amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
 
     if verbose in [11]:
         print(f'\nExecution time {cpu_time_} s')
-    freq = (np.arange(number_of_points)*increment + reference_offset)  
+    freq = (np.arange(number_of_points)*increment + reference_offset)
     return freq, amp1, larmor_frequency, list_index_isotopomer
 
 
@@ -299,7 +299,7 @@ def _one_d_simulator(
     cdef np.ndarray[double, ndim=1] isotropic_chemical_shift_c = isotropic_chemical_shift
 
     if quantum_number > 0.5 and larmor_frequency == 0.0:
-        raise Exception("'larmor_frequency' is required for quandrupolar spins.")
+        raise Exception("'larmor_frequency' is required for quadrupole spins.")
 
     # Shielding anisotropic values
     if chemical_shift_anisotropy is None:
@@ -373,7 +373,7 @@ def _one_d_simulator(
     # # print('rotor_angle in rad', rotor_angle_in_rad)
     # # print('transition', transition_c)
 
-    # octahedran power orienation averaging
+    # octahedral power orientation averaging
     cdef unsigned int n_orientations = int((averaging_size+1) * (averaging_size+2)/2)
     cdef np.ndarray[double, ndim=1] cosAlpha = np.empty(n_orientations, dtype=np.float64)
     cdef np.ndarray[double, ndim=1] cosBeta = np.empty(n_orientations, dtype=np.float64)
@@ -420,7 +420,7 @@ def _one_d_simulator(
 
                 # powder orientation averager
                 n_orientations,
-                &cosAlpha[0], 
+                &cosAlpha[0],
                 &cosBeta[0],
                 &amp_orientation[0],
                 averaging_size,

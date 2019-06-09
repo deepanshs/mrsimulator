@@ -2,7 +2,7 @@
 cdef extern from "spinning_sidebands.h":
     void __powder_averaging_setup(
           int nt,
-          double *cosAlpha, 
+          double *cosAlpha,
           double *cosBeta,
           double *amp,
           int space)   # 1 for octant, 2 for hemisphere and 4 for sphere
@@ -19,17 +19,17 @@ cdef extern from "spinning_sidebands.h":
         double spin_quantum_number,
         double larmor_frequency,
 
-        # Pointer to the array of CSA tensor information in the PAS for every spin. 
+        # Pointer to the array of CSA tensor information in the PAS for every spin.
         double *iso,
         double *aniso,
         double *eta,
 
-        # Pointer to the array of quadrupole tensor information in the PAS for every spin. 
+        # Pointer to the array of quadrupole tensor information in the PAS for every spin.
         double *Cq_e,                       # The Cq of the quadrupole center.
         double *eta_e,                      # The asymmetry term of the tensor.
-        int quadSecondOrder,                # Quad theory for second order, 
+        int quadSecondOrder,                # Quad theory for second order,
 
-				# Pointer to the array of dipolar tensor information in the PAS. 
+				# Pointer to the array of dipolar tensor information in the PAS.
         double *D,                          # The dipolar coupling constant.
 
         # spin rate, spin angle and number spinning sidebands
@@ -38,15 +38,15 @@ cdef extern from "spinning_sidebands.h":
         double rotor_angle,
 
         # The transition as transition[0] = mi and transition[1] = mf
-        double *transition,     
-                
+        double *transition,
+
         # Euler angle -> principal to molecular frame
         # double *omega_PM,
 
         # Euler angles for powder averaging scheme
-        # powder orientation averager
+        # powder orientation average
         unsigned int n_orientations,
-        double *cosAlpha, 
+        double *cosAlpha,
         double *cosBeta,
         double *amp,
         int nt,

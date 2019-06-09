@@ -13,7 +13,7 @@ The `mrsimulator` package requires `fftw3 <https://anaconda.org/eumetsat/fftw3>`
 C routines. Download and install the fftw3 routines by typing
 the following in the terminal
 
-.. code-block:: python
+.. code-block:: text
 
     conda install -c eumetsat fftw3
 
@@ -22,7 +22,7 @@ and intel `mkl <https://pypi.org/project/mkl/>`_ and
 `mkl_include <https://pypi.org/project/mkl-include/>`_ C routines to build and
 install the `mrsimulator` package. Download and install these C routines using
 
-.. code-block:: python
+.. code-block:: text
 
     pip install "numpy>=1.13.1" mkl mkl-include
 
@@ -43,10 +43,20 @@ for the web-face interface.
 Installing mrsimulator
 ++++++++++++++++++++++
 
+A c compiler is required to successful compile and build the ``mrsimulator``
+package.
+
+On linux
+
+.. code-block:: text
+
+    sudo apt install gcc
+
+
 To install the ``mrsimulator`` package, type the following
 in the terminal.
 
-.. code-block:: python
+.. code-block:: text
 
     pip install git+https://github.com/DeepanshS/mrsimulator.git@master
 
@@ -57,13 +67,13 @@ Test
 If the installation is successful, you should be able to run the following
 in the terminal.
 
-.. code-block:: python
+.. code-block:: text
 
     python -c "import mrsimulator; mrsimulator.run_test()"
 
 This will display the following message on the screen
 
-.. code-block:: python
+.. code-block:: text
 
     Setting up the virtual NMR spectrometer
     ---------------------------------------
@@ -72,7 +82,7 @@ This will display the following message on the screen
     Setting rotation frequency to 0.0 Hz.
     Detecting 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope.
     Recording 1H spectrum with 2048 points over a 25000.0 Hz bandwidth and a reference offset of 0.0 Hz.
-    <BLANKLINE>
+
     1H site 0 from isotopomer 0 @ 100.0% abundance
     ----------------------------------------------
     isotropic chemical shift = 0.0 ppm
@@ -85,7 +95,7 @@ This will display the following message on the screen
     Setting rotation frequency to 1000.0 Hz.
     Detecting 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope.
     Recording 1H spectrum with 2048 points over a 25000.0 Hz bandwidth and a reference offset of 0.0 Hz.
-    <BLANKLINE>
+
     1H site 0 from isotopomer 0 @ 100.0% abundance
     ----------------------------------------------
     isotropic chemical shift = 0.0 ppm

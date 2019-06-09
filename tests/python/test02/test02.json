@@ -1,0 +1,31 @@
+{
+    "spectrum": {
+        "direct_dimension": {
+            "rotor_frequency": "0 kHz",
+            "number_of_points": 2048,
+            "spectral_width": "100 kHz",
+            "nucleus": "1H"
+        }
+    },
+    "isotopomer": [
+        {
+            "sites": [
+                {
+                    "isotope_symbol": "1H",
+                    "isotropic_chemical_shift": "-120 Hz",
+                    "shielding_symmetric": {
+                        "anisotropy": "9.34 kHz",
+                        "asymmetry": 0.0
+                    }
+                }
+            ]
+        }
+    ],
+    "test_data": {
+        "source": "python",
+        "filename": "test02.csv",
+        "quantity": "frequency",
+        "type": "real",
+        "delimiter": ","
+    }
+}

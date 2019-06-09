@@ -16,13 +16,16 @@ double fac(double x)
 {
     double sum = 1;
     int ix;
-    
+
     if (x < 0) {
         fprintf(stderr, "illegal argument x = %g in factorial...\n",x);
         exit(1);
     }
     ix = (int) x;
-    for (; ix > 1; ix--) sum *= ix;
+    for (; ix > 1; ix--)
+    {
+        sum *= ix;
+    }
     return sum;
 }
 
@@ -31,16 +34,24 @@ double fac(double x)
 double mypow(double x, int n)
 {
     double temp;
-    if(n==0) return(1.);
+    if(n==0){
+        return(1.);
+    }
     temp = 1.;
-    for (; n >= 1; n--) temp *= x;
+    for (; n >= 1; n--) {
+        temp *= x;
+    }
     return(temp);
 }
 
 void wigner_d_matrix(double *wigner, int l, double *value, int trig){
     double cx;
-    if (trig==0) cx = cos(value[0]);
-    else cx = value[0];
+    if (trig==0) {
+        cx = cos(value[0]);
+    }
+    else {
+        cx = value[0];
+    }
     if (l==2){
         double complex cx2 = cx*cx;
         double complex sx = sqrt(1. - cx2);
@@ -93,7 +104,7 @@ void wigner_d_matrix(double *wigner, int l, double *value, int trig){
         double complex cx2 = cx*cx;
         double complex sx = sqrt(1.-cx2);
         double complex sx2 = sx*sx, sx3=sx2*sx;
-        
+
 
         double complex cxp1 = (1.+cx), cxm1 = (1.-cx);
         double complex cxp12 = cxp1*cxp1, cxm12=cxm1*cxm1;
@@ -109,7 +120,7 @@ void wigner_d_matrix(double *wigner, int l, double *value, int trig){
         wigner[72] = temp;  // -4,  4 // 72
         wigner[8]  = temp;  //  4, -4 //  8
 
-        temp = -0.1767766953*cxp13*sx;  
+        temp = -0.1767766953*cxp13*sx;
         wigner[1] = temp;    // -3, -4 //  1
         wigner[9] = -temp;   // -4, -3 //  9
         wigner[79] = -temp;  //  3,  4 // 79
@@ -317,7 +328,7 @@ void full_DLM(double complex *wigner, int l, double * omega){
         wigner[72] = temp * pha[0];  // -4,  4 // 72
         wigner[8]  = temp * pha[8];  //  4, -4 //  8
 
-        temp = -0.1767766953*cxp12*cxp1*sx;  
+        temp = -0.1767766953*cxp12*cxp1*sx;
         wigner[1] = temp * pha[1];    // -3, -4 //  1
         wigner[9] = -temp * pha[0];   // -4, -3 //  9
         wigner[79] = -temp * pha[7];  //  3,  4 // 79
@@ -442,11 +453,11 @@ void full_DLM(double complex *wigner, int l, double * omega){
     }
 }
 
-// @parameters 
+// @parameters
 // int l: The angular momentum quantum number
 // double complex *wigner: a pointer to (2l+1)*(2l+1) size matrix of full Wigner matrix
 void full_DLM_trig(double complex *wigner,
-                   int l, 
+                   int l,
                    double cosAlpha,
                    double sinAlpha,
                    double cosBeta,
@@ -461,14 +472,14 @@ void full_DLM_trig(double complex *wigner,
         // phg[2] = 1.0;
 
         // for m=-1
-        // ph[1] = cos(-1 alpha) - I sin(-1 alpha) 
+        // ph[1] = cos(-1 alpha) - I sin(-1 alpha)
         //       = cos(alpha) + I sin(alpha)
         pha[1] = cosAlpha + I*sinAlpha;
         // phg[1] = cosGamma + I*sinGamma;
-        
+
         // similarly,
         // for m=1
-        // ph[3] = cos(1 alpha) - I sin(1 alpha) 
+        // ph[3] = cos(1 alpha) - I sin(1 alpha)
         //       = cos(alpha) - I sin(alpha)
         pha[3] = cosAlpha - I*sinAlpha;
         // phg[3] = cosGamma - I*sinGamma;
@@ -488,7 +499,7 @@ void full_DLM_trig(double complex *wigner,
         //        = (ph[3])^2
         pha[4] = pha[3] * pha[3];
         // phg[4] = cpow(phg[3], 2);
-        
+
 
         double cx = cosBeta;
         double sx = sinBeta;
@@ -538,7 +549,7 @@ void full_DLM_trig(double complex *wigner,
         wigner[16] = temp * pha[1];// * phg[3];    // -1,  1 // 16
 
         // 0,  0 // 12
-        wigner[12] = 1.5 * cx2 - .5  * pha[2];// * phg[2]; 
+        wigner[12] = 1.5 * cx2 - .5  * pha[2];// * phg[2];
     }
 
     if (l==4){
@@ -569,7 +580,7 @@ void full_DLM_trig(double complex *wigner,
         wigner[72] = temp * pha[0];  // -4,  4 // 72
         wigner[8]  = temp * pha[8];  //  4, -4 //  8
 
-        temp = -0.1767766953*cxp12*cxp1*sx;  
+        temp = -0.1767766953*cxp12*cxp1*sx;
         wigner[1] = temp * pha[1];    // -3, -4 //  1
         wigner[9] = -temp * pha[0];   // -4, -3 //  9
         wigner[79] = -temp * pha[7];  //  3,  4 // 79
@@ -826,18 +837,18 @@ double wigner_d(int l, int m1, int m2, double beta)
         double cx = cos(beta/2.);
         double sum = 0.;
         int sign = 1;
-        
+
         for (int k = 0; k <= l - m1; k++) {
             double k1 = (int)(l - m1 - k);
             double k2 = (int)(l + m2 - k);
             double k3 = (int)(k + m1 - m2);
-            
-            if ( k1 >= 0 && k2 >= 0 && k3 >= 0) {   
+
+            if ( k1 >= 0 && k2 >= 0 && k3 >= 0) {
                 int n1 = (int)(2 * l + m2 - m1 - 2 * k);
                 int n2 = (int)(m1 - m2 + 2 * k);
                 double x = mypow(cx, n1);
                 double y = mypow(sx, n2);
-                sum += sign * x * y / (fac((double)k1) * fac((double)k2) * fac((double)k3) * fac((double)k)); 
+                sum += sign * x * y / (fac((double)k1) * fac((double)k2) * fac((double)k3) * fac((double)k));
             }
             sign = -sign;
         }

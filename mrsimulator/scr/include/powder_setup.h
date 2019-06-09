@@ -15,11 +15,11 @@
 #include "mkl.h"
 
 extern void getDirectionCosineSquareOverOctantAndWeights2(
-          int nt,
-          double *xr,
-          double *yr,
-          double *zr,
-          double *amp);
+    int nt,
+    double *xr,
+    double *yr,
+    double *zr,
+    double *amp);
 
 // extern void getDirectionCosineSquareOverOctantAndWeights(
 //         int nt,
@@ -31,11 +31,11 @@ extern void getDirectionCosineSquareOverOctantAndWeights2(
 // extern OCAveragingSchemeDirectionCosineSquareForTenting powderDirectionCosineSquare(int nt);
 
 extern void getDirectionCosineSquareOverHemishpereAndWeights(
-        int nt, 
-        double ** xr,
-        double ** yr,
-        double ** zr,
-        double ** amp);
+    int nt,
+    double **xr,
+    double **yr,
+    double **zr,
+    double **amp);
 
 // extern void powderDirectionCosineSquare(
 //         int nt,
@@ -45,20 +45,20 @@ extern void getDirectionCosineSquareOverHemishpereAndWeights(
 //         double **rrr);
 
 extern void getPolarAngleTrigOverHemisphere(
-        int nt,
-        double* cosAlpha,
-        double* sinAlpha,
-        double* cosBeta,
-        double* sinBeta,
-        double** amp);
+    int nt,
+    double *cosAlpha,
+    double *sinAlpha,
+    double *cosBeta,
+    double *sinBeta,
+    double **amp);
 
 void getPolarAngleTrigOverAnOctant(
-        int nt,
-        double* cosAlpha,
-        // double* sinAlpha,
-        double* cosBeta,
-        // double* sinBeta,
-        double* amp);
+    int nt,
+    double *cosAlpha,
+    // double* sinAlpha,
+    double *cosBeta,
+    // double* sinBeta,
+    double *amp);
 
 // void tent(
 //         double freq1,
@@ -71,13 +71,12 @@ void getPolarAngleTrigOverAnOctant(
 //         double finc);
 
 extern int triangle_interpolation(double *freq1,
-          double *freq2,
-          double *freq3,
-          double *offset,
-          double *amp,
-          double *spec,
-          int *points
-          );
+                                  double *freq2,
+                                  double *freq3,
+                                  double *offset,
+                                  double *amp,
+                                  double *spec,
+                                  int *points);
 
 // int tent_amp(double *freq1,
 //           double *freq2,
@@ -90,12 +89,12 @@ extern int triangle_interpolation(double *freq1,
 //           int points);
 
 extern void powderAverageWithTentingSchemeOverOctant(
-        double *spec,
-        double *freq,
-        int nt,
-        double *amp,
-        double *offset,
-        int m);
+    double *spec,
+    double *freq,
+    int nt,
+    double *amp,
+    double *offset,
+    int m);
 
 // extern void powderAverageWithTentingSchemeOverOctant(
 //         double *spec,
@@ -106,18 +105,16 @@ extern void powderAverageWithTentingSchemeOverOctant(
 //         int m);
 
 extern void powderAverageWithTentingSchemeOverHemisphere(
-        double *spec,
-        double **powfreq,
-        int nt,
-        double **amp,
-        double *offset,
-        int m);
+    double *spec,
+    double **powfreq,
+    int nt,
+    double **amp,
+    double *offset,
+    int m);
 
-
-
-extern void rasterization(double * grid,
-                   double *v0,
-                   double *v1,
-                   double *v2,
-                   int rows,
-                   int columns);
+extern void rasterization(double *grid,
+                          double *v0,
+                          double *v1,
+                          double *v2,
+                          int rows,
+                          int columns);

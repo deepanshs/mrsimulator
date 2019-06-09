@@ -16,12 +16,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib64/
-parts/
 sdist/
-var/
 wheels/
-test/**
 *.egg-info/
 .installed.cfg
 cython_debug/**
@@ -115,8 +111,6 @@ venv.bak/
 *.DSYM/**
 
 # files
-test**
-setup_cython.py
 *.out
 *.prof
 *.ipynb
