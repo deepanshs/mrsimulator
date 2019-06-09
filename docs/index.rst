@@ -3,6 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. image:: https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master
+    :target: https://travis-ci.org/DeepanshS/mrsimulator
+
+
 Welcome to mrsimulator's documentation!
 =======================================
 

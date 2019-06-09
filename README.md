@@ -1,4 +1,6 @@
 
+[![Build Status](https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master)](https://travis-ci.org/DeepanshS/mrsimulator)
+
 # mrsimulator
 
 The package ``mrsimulator`` contains key functionality and tools needed for

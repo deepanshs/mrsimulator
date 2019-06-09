@@ -25,20 +25,13 @@ matrix:
       dist: xenial    # Required for Python 3.7
       sudo: required  # travis-ci/travis-ci#9069
       env: BACKEND=c
-    # - os: osx
-    #   osx_image: xcode6.4
-    #   env: PY=3
-    #   python: 3
-    #   language: c
-    #   compiler: clang
-    #   cache: false
     - env: STACKLESS=true BACKEND=c PY=3
       python: 3.6
 
 # safelist
 branches:
   only:
-  - v0.1.1
+  - master
 
 
 before_install:
@@ -49,7 +42,8 @@ before_install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pytest
+  - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pytest pytest-cov
+  - pip install pytest-openfiles pytest-arraydiff pytest-doctestplus pytest-remotedata
   - source activate test-env
   - conda install -c eumetsat fftw3
   - pip install --upgrade pip
@@ -62,5 +56,5 @@ install:
 
 # command to run tests
 script:
-  - ls tests/
+  -  python -m pytest --cov=./
   # - py.test
