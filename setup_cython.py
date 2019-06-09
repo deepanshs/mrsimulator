@@ -14,9 +14,12 @@ except ImportError:
 else:
     use_cython = True
 
-import platform
-from os import path, listdir
-from os.path import join, abspath, dirname
+from os import listdir
+from os.path import join
+from os.path import abspath
+from os.path import dirname
+from os.path import split
+from os.path import exists
 
 
 # Package meta-data.
@@ -73,52 +76,73 @@ if use_cython:
 
 # scr_c folder
 _list = ["mrsimulator", "scr", "lib"]
-nmr_lib_source_dir = path.join(*_list)
+nmr_lib_source_dir = join(*_list)
 _source_files = []
 for _file in listdir(nmr_lib_source_dir):
     if _file.endswith(".c"):
-        _source_files.append(path.join(nmr_lib_source_dir, _file))
+        _source_files.append(join(nmr_lib_source_dir, _file))
 
 _list = ["mrsimulator", "scr", "include"]
-include_nmr_lib_directories = [path.join(*_list)]
+include_nmr_lib_directories = [join(*_list)]
 
 
-def get_numpy_includes():
+def get_include_and_lib_paths():
+    """Get paths to include and lib folders on windows, linux and mac os."""
     import numpy
 
+    # numpy include
     path_ = numpy.get_include()
-    if platform.system() == "Windows":
-        for i in range(5):
-            path_ = path.split(path_)[0]
-        path_ = path.join(path_, "Library", "include")
-        include_nmr_lib_directories.append(path_)
-    return path_
+    print("numpy include:", path_)
+    include_nmr_lib_directories.append(path_)
+
+    # conda lib
+    for _ in range(5):
+        path_ = split(path_)[0]
+    path_lib = path_
+    print("conda lib:")
+    print("exist:", exists(path_lib))
+    print("path:", path_lib)
+    if exists(path_lib):
+        include_nmr_lib_directories.append(path_lib)
+
+    # conda include
+    path_include_conda = join(split(path_)[0], "include")
+    print("conda include:")
+    print("exist:", exists(path_include_conda))
+    print("path:", path_include_conda)
+    if exists(path_include_conda):
+        include_nmr_lib_directories.append(path_include_conda)
+
+    # other include
+    path_include_other = join(path_lib, "Library", "include")
+    print("other include:")
+    print("exist:", exists(path_include_other))
+    print("path:", path_include_other)
+    if exists(path_include_other):
+        include_nmr_lib_directories.append(path_include_other)
 
 
-include_nmr_lib_directories.append(get_numpy_includes())
-
+get_include_and_lib_paths()
 
 nmr_function_source_file = _source_files[:]
 
 _list = ["mrsimulator", "scr", "mrmethods"]
-nmr_function_source_dir = path.join(*_list)
+nmr_function_source_dir = join(*_list)
 
 for _file in listdir(nmr_function_source_dir):
     if _file.endswith(".c") and _file != "nmr_methods.c":
-        nmr_function_source_file.append(
-            path.join(nmr_function_source_dir, _file)
-        )
+        nmr_function_source_file.append(join(nmr_function_source_dir, _file))
 
 
 source2 = nmr_function_source_file[:]
 
 if use_cython:
     _list = ["mrsimulator", "scr", "mrmethods", "nmr_methods.pyx"]
-    nmr_function_source_file.append(path.join(*_list))
+    nmr_function_source_file.append(join(*_list))
 
 else:
     _list = ["mrsimulator", "scr", "mrmethods", "nmr_methods.c"]
-    nmr_function_source_file.append(path.join(*_list))
+    nmr_function_source_file.append(join(*_list))
 
 
 print(include_nmr_lib_directories)
@@ -131,17 +155,13 @@ ext_modules = [
     Extension(
         name=NAME + ".methods",
         sources=nmr_function_source_file,
-        # include_dirs=[numpy.get_include()],
-        # # if you compile fc.cpp separately
-        # extra_objects= ['./mrlib'], # ["fc.o"],
-        #  # .../site-packages/numpy/core/include
         include_dirs=include_nmr_lib_directories,
         language="c",
         # libraries=["./mrlib"],
         # -ffast-math -flax-vector-conversions -g -Ofast
         extra_compile_args="-O1".split(),  #
         extra_link_args="-g -lfftw3 -lmkl_intel_lp64 -lmkl_intel_thread \
-                        -lmkl_core -ldl -liomp5 -lm -Wl".split(),  #
+                        -lmkl_core -ldl -liomp5 -lm -W".split(),  #
     )
 ]
 

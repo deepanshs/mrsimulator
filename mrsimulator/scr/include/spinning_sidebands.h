@@ -10,28 +10,24 @@
 #define PI2I PI2 *I
 
 #include "MRAngularMomentum.h"
+#include "c_array.h"
+#include "fftw/fftw3.h"
+#include "fftw/fftw3_mkl.h"
+#include "math.h"
+#include "mkl.h"
 #include "powder_setup.h"
 #include <complex.h>
 #include <time.h>
-#include "math.h"
-#include "fftw/fftw3.h"
-#include "fftw/fftw3_mkl.h"
-#include "c_array.h"
-#include "mkl.h"
 
 #define MKL_Complex16 double complex
 
-struct directionCosines
-{
-    double cosAlpha;
-    double cosBeta;
+struct directionCosines {
+  double cosAlpha;
+  double cosBeta;
 };
 
 extern void __powder_averaging_setup(
-    int nt,
-    double *cosAlpha,
-    double *cosBeta,
-    double *amp,
+    int nt, double *cosAlpha, double *cosBeta, double *amp,
     int space // 1 for octant, 2 for hemisphere and 4 for sphere
 );
 
@@ -39,9 +35,7 @@ extern void __powder_averaging_setup(
 // @params int n - The number of points                                      //
 // @params double increment - The increment (sampling interval)              //
 // @returns *double values = The pointer to the fft output order vector      //
-extern inline double *__get_frequency_in_FFT_order(
-    int n,
-    double increment);
+extern inline double *__get_frequency_in_FFT_order(int n, double increment);
 
 extern void spinning_sideband_core(
     // spectrum information and related amplitude
@@ -72,17 +66,18 @@ extern void spinning_sideband_core(
     double spin_frequency, // The rotor spin frequency
     double rotor_angle,    // The rotor angle relative to lab-frame z-axis
 
-    double *transition, // The transition as transition[0] = mi and transition[1] = mf
+    double *transition, // The transition as transition[0] = mi and
+                        // transition[1] = mf
 
     // The principal to molecular frame transformation euler angles.
     //   double * omega_PM,
 
     // powder orientation average
-    unsigned int n_orientations,
-    double *cosAlpha,
-    double *cosBeta,
-    double *amp,
-    int nt,
+    unsigned int n_orientations, // number of orientations
+    double *cosAlpha,            // array of cosAlpha of orientations
+    double *cosBeta,             // array of cosBeta of orientations
+    double *amp,                 // array of amplitude of orientations
+    int nt, // number of triangles along the edge of the octahedral face
 
-    unsigned int number_of_sites
-    );
+    unsigned int number_of_sites // number of sites in the isotopomer
+);

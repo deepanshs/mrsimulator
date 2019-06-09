@@ -20,11 +20,13 @@
             "-ldl",
             "-liomp5",
             "-lm",
-            "-Wl"
+            "-W"
         ],
         "include_dirs": [
             "mrsimulator/scr/include",
-            "/Users/deepansh/anaconda3/lib/python3.7/site-packages/numpy/core/include"
+            "/Users/deepansh/anaconda3/lib/python3.7/site-packages/numpy/core/include",
+            "/Users/deepansh/anaconda3/lib",
+            "/Users/deepansh/anaconda3/include"
         ],
         "language": "c",
         "name": "mrsimulator.methods",

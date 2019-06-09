@@ -25,13 +25,13 @@ matrix:
       dist: xenial    # Required for Python 3.7
       sudo: required  # travis-ci/travis-ci#9069
       env: BACKEND=c
-    - os: osx
-      osx_image: xcode6.4
-      env: PY=3
-      python: 3
-      language: c
-      compiler: clang
-      cache: false
+    # - os: osx
+    #   osx_image: xcode6.4
+    #   env: PY=3
+    #   python: 3
+    #   language: c
+    #   compiler: clang
+    #   cache: false
     - env: STACKLESS=true BACKEND=c PY=3
       python: 3.6
     - python: pypy3
@@ -49,6 +49,7 @@ branches:
   - v0.1.1
 
 before_install:
+  - "conda install -c eumetsat fftw3"
   - "pip install --upgrade pip"
   - "pip install --upgrade numpy"
   - "pip install --upgrade mkl"

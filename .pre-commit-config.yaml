@@ -28,9 +28,7 @@ repos:
       language: python
     - id: check-added-large-files
       language: python
-    - id: fix-encoding-pragma
-      language: python
-    # - id: name-tests-test
+    # - id: fix-encoding-pragma
     #   language: python
     - id: check-docstring-first
       language: python
@@ -49,43 +47,13 @@ repos:
       types: [python]
 
 
--   repo: https://github.com/asottile/reorder_python_imports
-    rev: v1.4.0
-    hooks:
-    - id: reorder-python-imports
-      name: Reorder python imports
-      description: This hook reorders imports in python files.
-      entry: reorder-python-imports
-      language: python
-      types: [python]
-      minimum_pre_commit_version: "0.15.0"
-
--   repo: https://github.com/pocc/pre-commit-hooks
-    rev: master
-    hooks:
-    - id: clang-format
-      name: clang-format
-      entry: hooks/clang-format
-      description: Formats C/CPP code
-      files: "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$"
-      language: script
-      additional_dependencies: [clang-format]
-      args: [--style=Google, -i]
-
-#     - id: clang-tidy
-#       name: clang-tidy
-#       entry: hooks/clang-tidy
-#       description: Find warnings/errors in C/CPP code
-#       files: "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$"
-#       language: script
-#       additional_dependencies: [clang-tidy]
-#       args: [-checks=*, -warnings-as-errors=*]
-
-    # - id: oclint
-    #   name: oclint
-    #   entry: hooks/oclint
-    #   description: Find warnings/errors in C/CPP code
-    #   files: "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$"
-    #   language: script
-    #   additional_dependencies: [oclint]
-    #   args: [-enable-clang-static-analyzer, -enable-global-analysis]
+# -   repo: https://github.com/asottile/reorder_python_imports
+#     rev: v1.4.0
+#     hooks:
+#     - id: reorder-python-imports
+#       name: Reorder python imports
+#       description: This hook reorders imports in python files.
+#       entry: reorder-python-imports
+#       language: python
+#       types: [python]
+#       minimum_pre_commit_version: "0.15.0"

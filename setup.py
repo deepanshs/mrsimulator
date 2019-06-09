@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 import io
-import platform
 from os import listdir
 from os import path
 from os.path import abspath
 from os.path import dirname
 from os.path import join
 
-import numpy
 from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
@@ -82,16 +80,43 @@ _list = ["mrsimulator", "scr", "include"]
 include_nmr_lib_directories = [path.join(*_list)]
 
 
-# def get_numpy_includes():
-path_n = numpy.get_include()
-if platform.system() == "Windows":
-    for i in range(5):
-        path_ = path.split(path_n)[0]
-    path_ = path.join(path_, "Library", "include")
-    include_nmr_lib_directories.append(path_)
-    # return path_n
+def get_include_and_lib_paths():
+    """Get paths to include and lib folders on windows, linux and mac os."""
+    import numpy
 
-include_nmr_lib_directories.append(path_n)
+    # numpy include
+    path_ = numpy.get_include()
+    print("numpy include:", path_)
+    include_nmr_lib_directories.append(path_)
+
+    # conda lib
+    for _ in range(5):
+        path_ = path.split(path_)[0]
+    path_lib = path_
+    print("conda lib:")
+    print("exist:", path.exists(path_lib))
+    print("path:", path_lib)
+    if path.exists(path_lib):
+        include_nmr_lib_directories.append(path_lib)
+
+    # conda include
+    path_include_conda = path.join(path.split(path_)[0], "include")
+    print("conda include:")
+    print("exist:", path.exists(path_include_conda))
+    print("path:", path_include_conda)
+    if path.exists(path_include_conda):
+        include_nmr_lib_directories.append(path_include_conda)
+
+    # other include
+    path_include_other = path.join(path_lib, "Library", "include")
+    print("other include:")
+    print("exist:", path.exists(path_include_other))
+    print("path:", path_include_other)
+    if path.exists(path_include_other):
+        include_nmr_lib_directories.append(path_include_other)
+
+
+get_include_and_lib_paths()
 
 nmr_function_source_file = _source_files[:]
 
@@ -113,7 +138,7 @@ ext_modules = [
         language="c",
         extra_compile_args="-O1".split(),
         extra_link_args="-g -lfftw3 -lmkl_intel_lp64 -lmkl_intel_thread \
-                        -lmkl_core -ldl -liomp5 -lm -Wl".split(),
+                        -lmkl_core -ldl -liomp5 -lm -W".split(),
     )
 ]
 

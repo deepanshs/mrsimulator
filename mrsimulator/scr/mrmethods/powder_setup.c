@@ -9,14 +9,11 @@
 
 #include "powder_setup.h"
 
-void getDirectionCosineSquareOverOctantAndWeights(
-          int nt,
-          double *xr,
-          double *yr,
-          double *zr,
-          double *amp) {
+void getDirectionCosineSquareOverOctantAndWeights(int nt, double *xr,
+                                                  double *yr, double *zr,
+                                                  double *amp) {
 
-  int i, j, k=0;
+  int i, j, k = 0;
   double x2, y2, z2, r2, scale = 1.0; // /((double)(nt+1)*(nt+2)/2);
 
   /* Do the (x + y + z = nt) face of the octahedron
@@ -25,19 +22,19 @@ void getDirectionCosineSquareOverOctantAndWeights(
   !x -> nt - y - z
   !*/
 
-  for( j = 0; j <= nt-1; j++) {
-    for( i = 0; i <= nt-j; i++) {
+  for (j = 0; j <= nt - 1; j++) {
+    for (i = 0; i <= nt - j; i++) {
       // x = nt-i-j;
       // y = i;
       // z = j;
-      x2 = pow(nt-i-j, 2);
+      x2 = pow(nt - i - j, 2);
       y2 = pow(i, 2);
       z2 = pow(j, 2);
       r2 = x2 + y2 + z2;
-      xr[k] = x2/r2;
-      yr[k] = y2/r2;
-      zr[k] = z2/r2;
-      amp[k] = scale/(r2*sqrt(r2));
+      xr[k] = x2 / r2;
+      yr[k] = y2 / r2;
+      zr[k] = z2 / r2;
+      amp[k] = scale / (r2 * sqrt(r2));
       k++;
     }
   }
@@ -46,16 +43,12 @@ void getDirectionCosineSquareOverOctantAndWeights(
   yr[k] = 0.0;
   zr[k] = 1.0;
   r2 = nt;
-  amp[k] = scale/(r2*r2*r2);
+  amp[k] = scale / (r2 * r2 * r2);
 }
 
-
-void getDirectionCosineSquareOverHemishpereAndWeights(
-            int nt,
-            double ** xr,
-            double ** yr,
-            double ** zr,
-            double ** amp){
+void getDirectionCosineSquareOverHemishpereAndWeights(int nt, double **xr,
+                                                      double **yr, double **zr,
+                                                      double **amp) {
 
   int i, j;
   double x2, y2, z2, r2;
@@ -66,75 +59,74 @@ void getDirectionCosineSquareOverHemishpereAndWeights(
   !x -> nt - y - z
   !*/
 
-  for( j = 0; j <= nt-1; j++) {
-    for( i = 0; i <= nt-j; i++) {
+  for (j = 0; j <= nt - 1; j++) {
+    for (i = 0; i <= nt - j; i++) {
       // x = nt-i-j;
       // y = i;
       // z = j;
-      x2 = pow(nt-i-j, 2);
+      x2 = pow(nt - i - j, 2);
       y2 = pow(i, 2);
       z2 = pow(j, 2);
       r2 = x2 + y2 + z2;
-      xr[i][j] = x2/r2;
-      yr[i][j] = y2/r2;
-      zr[i][j] = z2/r2;
-      amp[i][j] = 1.0/(r2*sqrt(r2));
+      xr[i][j] = x2 / r2;
+      yr[i][j] = y2 / r2;
+      zr[i][j] = z2 / r2;
+      amp[i][j] = 1.0 / (r2 * sqrt(r2));
     }
 
-  /* Do the (-x + y + z = nt) face of the octahedron
-  !z -> 0 to nt-1
-  !y -> 0 to nt-z
-  !x -> -nt + y + z
-  !*/
-    for( i = nt-j+1; i <= nt; i++) {
+    /* Do the (-x + y + z = nt) face of the octahedron
+    !z -> 0 to nt-1
+    !y -> 0 to nt-z
+    !x -> -nt + y + z
+    !*/
+    for (i = nt - j + 1; i <= nt; i++) {
       // x = nt-i-j;
       // y = nt-j;
       // z = nt-i;
-      x2 = pow(nt-i-j,2);
-      y2 = pow(nt-j, 2);
-      z2 = pow(nt-i, 2);
+      x2 = pow(nt - i - j, 2);
+      y2 = pow(nt - j, 2);
+      z2 = pow(nt - i, 2);
       r2 = x2 + y2 + z2;
-      xr[i][j] = x2/r2;
-      yr[i][j] = y2/r2;
-      zr[i][j] = z2/r2;
-      amp[i][j] = 1.0/(r2*sqrt(r2));
+      xr[i][j] = x2 / r2;
+      yr[i][j] = y2 / r2;
+      zr[i][j] = z2 / r2;
+      amp[i][j] = 1.0 / (r2 * sqrt(r2));
     }
   }
 
   /* Do the (-x - y + z = nt) face of the octahedron
   !*/
 
-
-  for( j = nt; j < 2*nt; j++) {
-    for( i = j-nt+1; i < nt; i++) {
+  for (j = nt; j < 2 * nt; j++) {
+    for (i = j - nt + 1; i < nt; i++) {
       // x = -nt-i+j;
       // y = nt-j;
       // z = nt-i;
-      x2 = pow(-nt-i+j, 2); // x*x;
-      y2 = pow(nt-j, 2); // y*y;
-      z2 = pow(nt-i, 2); //z*z;
+      x2 = pow(-nt - i + j, 2); // x*x;
+      y2 = pow(nt - j, 2);      // y*y;
+      z2 = pow(nt - i, 2);      // z*z;
       r2 = x2 + y2 + z2;
-      xr[i][j] = x2/r2;
-      yr[i][j] = y2/r2;
-      zr[i][j] = z2/r2;
-      amp[i][j] = 1.0/(r2*sqrt(r2));
+      xr[i][j] = x2 / r2;
+      yr[i][j] = y2 / r2;
+      zr[i][j] = z2 / r2;
+      amp[i][j] = 1.0 / (r2 * sqrt(r2));
     }
 
-  /* Do the (x - y + z = nt) face of the octahedron
-  !*/
+    /* Do the (x - y + z = nt) face of the octahedron
+    !*/
 
-    for( i = 1; i <= j-nt; i++) {
+    for (i = 1; i <= j - nt; i++) {
       // x = -nt-i+j;
       // y = -i;
       // z = 2*nt-j;
-      x2 = pow(-nt-i+j, 2); //x*x;
-      y2 = pow(-i, 2); //y*y;
-      z2 = pow(2*nt-j, 2); //z*z;
+      x2 = pow(-nt - i + j, 2); // x*x;
+      y2 = pow(-i, 2);          // y*y;
+      z2 = pow(2 * nt - j, 2);  // z*z;
       r2 = x2 + y2 + z2;
-      xr[i][j] = x2/r2;
-      yr[i][j] = y2/r2;
-      zr[i][j] = z2/r2;
-      amp[i][j] = 1.0/(r2*sqrt(r2));
+      xr[i][j] = x2 / r2;
+      yr[i][j] = y2 / r2;
+      zr[i][j] = z2 / r2;
+      amp[i][j] = 1.0 / (r2 * sqrt(r2));
     }
   }
 
@@ -142,48 +134,45 @@ void getDirectionCosineSquareOverHemishpereAndWeights(
   yr[0][nt] = 0.0;
   zr[0][nt] = 1.0;
   r2 = nt;
-  amp[0][nt] = 1.0/(r2*r2*r2);
+  amp[0][nt] = 1.0 / (r2 * r2 * r2);
 
-  for( j = 0; j < nt; j++){
-      i = 2*nt-j;
-      xr[0][i] = xr[0][j];
-      yr[0][i] = yr[0][j];
-      zr[0][i] = zr[0][j];
-      amp[0][i] = amp[0][j];
+  for (j = 0; j < nt; j++) {
+    i = 2 * nt - j;
+    xr[0][i] = xr[0][j];
+    yr[0][i] = yr[0][j];
+    zr[0][i] = zr[0][j];
+    amp[0][i] = amp[0][j];
   }
 
-  for( i = 0; i <= nt; i++) {
-      xr[nt][nt+i] = xr[i][0];
-      yr[nt][nt+i] = yr[i][0];
-      zr[nt][nt+i] = zr[i][0];
-      amp[nt][nt+i] = amp[i][0];
+  for (i = 0; i <= nt; i++) {
+    xr[nt][nt + i] = xr[i][0];
+    yr[nt][nt + i] = yr[i][0];
+    zr[nt][nt + i] = zr[i][0];
+    amp[nt][nt + i] = amp[i][0];
   }
 
-  i = 2*nt;
-  for( j = 1; j < nt; j++) {
-      xr[nt-j][i] = xr[nt][j];
-      yr[nt-j][i] = yr[nt][j];
-      zr[nt-j][i] = zr[nt][j];
-      amp[nt-j][i] = amp[nt][j];
+  i = 2 * nt;
+  for (j = 1; j < nt; j++) {
+    xr[nt - j][i] = xr[nt][j];
+    yr[nt - j][i] = yr[nt][j];
+    zr[nt - j][i] = zr[nt][j];
+    amp[nt - j][i] = amp[nt][j];
   }
 }
 
-void getPolarAngleTrigOverAnOctant(
-        int nt,
-        double* cosAlpha,
-        // double* sinAlpha,
-        double* cosBeta,
-        // double* sinBeta,
-        double* amp)
-{
+void getPolarAngleTrigOverAnOctant(int nt, double *cosAlpha,
+                                   // double* sinAlpha,
+                                   double *cosBeta,
+                                   // double* sinBeta,
+                                   double *amp) {
 
   // int i, j;
 
-  int points = (nt+1) * (nt+2)/2;
-  double* xr = createDouble1DArray( points );
-  double* yr = createDouble1DArray( points );
-  double* zr = createDouble1DArray( points );
-  double* sinBeta = createDouble1DArray( points );
+  int points = (nt + 1) * (nt + 2) / 2;
+  double *xr = createDouble1DArray(points);
+  double *yr = createDouble1DArray(points);
+  double *zr = createDouble1DArray(points);
+  double *sinBeta = createDouble1DArray(points);
 
   getDirectionCosineSquareOverOctantAndWeights(nt, xr, yr, zr, amp);
 
@@ -192,7 +181,7 @@ void getPolarAngleTrigOverAnOctant(
   // Evaluate sqrt of zr to get cos(beta)
   vdSqrt(points, &zr[0], &cosBeta[0]);
 
-   // exaluate A = x + y
+  // exaluate A = x + y
   vdAdd(points, &xr[0], &yr[0], &sinBeta[0]);
   // Take sqrt of A to get sin(beta)
   vdSqrt(points, &sinBeta[0], &sinBeta[0]);
@@ -203,10 +192,10 @@ void getPolarAngleTrigOverAnOctant(
   // Evaluate sqrt of xr
   // vdSqrt(points, &yr[0], &yr[0]);
 
-  vdDiv(points-1, xr, sinBeta, cosAlpha );
+  vdDiv(points - 1, xr, sinBeta, cosAlpha);
   // vdDiv(points-1, yr, sinBeta, sinAlpha );
 
-  cosAlpha[points-1] = 1.0;
+  cosAlpha[points - 1] = 1.0;
   // sinAlpha[points-1] = 0.0;
 
   // int ii=0;
@@ -226,30 +215,23 @@ void getPolarAngleTrigOverAnOctant(
   destroyDouble1DArray(sinBeta);
 }
 
-
-
-void getPolarAngleTrigOverHemisphere(
-        int nt,
-        double* cosAlpha,
-        double* sinAlpha,
-        double* cosBeta,
-        double* sinBeta,
-        double** amp)
-{
+void getPolarAngleTrigOverHemisphere(int nt, double *cosAlpha, double *sinAlpha,
+                                     double *cosBeta, double *sinBeta,
+                                     double **amp) {
 
   int i, j;
 
-  double points = (nt+1) * (2*nt+1);
-  double** xr = createDouble2DMatrix( (nt+1), (2*nt+1) );
-  double** yr = createDouble2DMatrix( (nt+1), (2*nt+1) );
-  double** zr = createDouble2DMatrix( (nt+1), (2*nt+1) );
+  double points = (nt + 1) * (2 * nt + 1);
+  double **xr = createDouble2DMatrix((nt + 1), (2 * nt + 1));
+  double **yr = createDouble2DMatrix((nt + 1), (2 * nt + 1));
+  double **zr = createDouble2DMatrix((nt + 1), (2 * nt + 1));
 
   getDirectionCosineSquareOverHemishpereAndWeights(nt, xr, yr, zr, amp);
 
   // Evaluate sqrt of zr to get cos(beta)
   vdSqrt(points, &zr[0][0], &cosBeta[0]);
 
-   // evaluate A = x + y
+  // evaluate A = x + y
   vdAdd(points, &xr[0][0], &yr[0][0], &sinBeta[0]);
   // Take sqrt of A to get sin(beta)
   vdSqrt(points, &sinBeta[0], &sinBeta[0]);
@@ -260,17 +242,16 @@ void getPolarAngleTrigOverHemisphere(
   // Evaluate sqrt of xr
   vdSqrt(points, &yr[0][0], &yr[0][0]);
 
-  int ii=0;
-  for( i = 0; i <= nt; i++) {
-    for( j = 0; j <= 2*nt; j++) {
+  int ii = 0;
+  for (i = 0; i <= nt; i++) {
+    for (j = 0; j <= 2 * nt; j++) {
       // cosBeta[i][j] = sqrt(zr[i][j]);
       // sinBeta[i][j] = sqrt(xr[i][j] + yr[i][j]);
-      if (sinBeta[ii] != 0.){
+      if (sinBeta[ii] != 0.) {
         cosAlpha[ii] = xr[i][j] / sinBeta[ii];
         sinAlpha[ii] = yr[i][j] / sinBeta[ii];
         ii++;
-      }
-      else{
+      } else {
         cosAlpha[ii] = 1.0;
         sinAlpha[ii] = 0.0;
         ii++;
@@ -282,245 +263,224 @@ void getPolarAngleTrigOverHemisphere(
   destroyDouble2DMatrix(zr);
 }
 
-
-
 // triangle_interpolation is an optimized version of tent.
-int triangle_interpolation(
-          double *freq1,
-          double *freq2,
-          double *freq3,
-          double *offset,
-          double *amp,
-          double *spec,
-          int *points
-          ) {
+int triangle_interpolation(double *freq1, double *freq2, double *freq3,
+                           double *offset, double *amp, double *spec,
+                           int *points) {
 
-double df1, df2, top=0.0, t, diff, f10=0.0, f21=0.0;
-int p, pmid, pmax, i, j, clip_right = 0, clip_left = 0;
+  double df1, df2, top = 0.0, t, diff, f10 = 0.0, f21 = 0.0;
+  int p, pmid, pmax, i, j, clip_right = 0, clip_left = 0;
 
-// off = (int) offset[0];
-p = (int) (freq1[0] + offset[0]);
-if ((int)freq1[0] == (int)freq2[0] && (int)freq1[0] == (int)freq3[0]){
-  if(p >= points[0] || p < 0) {
+  // off = (int) offset[0];
+  p = (int)(freq1[0] + offset[0]);
+  if ((int)freq1[0] == (int)freq2[0] && (int)freq1[0] == (int)freq3[0]) {
+    if (p >= points[0] || p < 0) {
+      return 0;
+    }
+    spec[p] += amp[0];
     return 0;
   }
-  spec[p] += amp[0];
-	return 0;
-}
 
-double f[3]; //= {0.0, 0.0, 0.0};
+  double f[3]; //= {0.0, 0.0, 0.0};
 
-f[0] = freq1[0] + offset[0];
-f[1] = freq2[0] + offset[0];
-f[2] = freq3[0] + offset[0];
+  f[0] = freq1[0] + offset[0];
+  f[1] = freq2[0] + offset[0];
+  f[2] = freq3[0] + offset[0];
 
-for( j = 1; j <= 2; j++) {
+  for (j = 1; j <= 2; j++) {
     t = f[j];
-    i=j-1;
-    while(i >= 0 && f[i] > t){
-        f[i+1] = f[i];
-        i--;
+    i = j - 1;
+    while (i >= 0 && f[i] > t) {
+      f[i + 1] = f[i];
+      i--;
     }
-    f[i+1]=t;
-}
+    f[i + 1] = t;
+  }
 
-top += (amp[0]*2.0 / (f[2]-f[0]));
-p = (int)f[0];          //floor( f[0] );
-pmid = (int)f[1];       //floor( f[1] );
-pmax = (int)f[2];       //floor( f[2] );
-f10 += f[1]-f[0];
-f21 += f[2]-f[1];
+  top += (amp[0] * 2.0 / (f[2] - f[0]));
+  p = (int)f[0];    // floor( f[0] );
+  pmid = (int)f[1]; // floor( f[1] );
+  pmax = (int)f[2]; // floor( f[2] );
+  f10 += f[1] - f[0];
+  f21 += f[2] - f[1];
 
-// if((pmax >= points[0]) || (p < 0)) return 0;
+  // if((pmax >= points[0]) || (p < 0)) return 0;
 
-if (pmax < 0) {
-  return 0;
-}
-if (p > points[0]) {
-  return 0;
-}
+  if (pmax < 0) {
+    return 0;
+  }
+  if (p > points[0]) {
+    return 0;
+  }
 
-if(pmax >= points[0]){
-  pmax = points[0];
-  clip_right = 1;
-}
+  if (pmax >= points[0]) {
+    pmax = points[0];
+    clip_right = 1;
+  }
 
-if(pmid >= points[0]){
-  pmid = points[0];
-  clip_right = 1;
-}
+  if (pmid >= points[0]) {
+    pmid = points[0];
+    clip_right = 1;
+  }
 
-if (p < 0){
-  p = 0;
-  clip_left = 1;
-}
+  if (p < 0) {
+    p = 0;
+    clip_left = 1;
+  }
 
-if (pmid < 0){
-  pmid = 0;
-  clip_left = 1;
-}
+  if (pmid < 0) {
+    pmid = 0;
+    clip_left = 1;
+  }
 
-
-if(p != pmid) {
+  if (p != pmid) {
     df1 = top / f10;
     diff = (double)p + 1. - f[0];
-    if (clip_left == 0){
+    if (clip_left == 0) {
       spec[p++] += 0.5 * diff * diff * df1;
-    }
-    else{
+    } else {
       spec[p++] += (diff - 0.5) * df1;
     }
     // diff = (diff - 0.5) * df1;
     diff -= 0.5;
     diff *= df1;
-    while(p != pmid) {
+    while (p != pmid) {
       diff += df1;
       spec[p++] += diff;
     }
-    if(clip_right == 0){
-      spec[p] += (f[1]-(double)p) * ( f10 + ((double)p - f[0]) ) * 0.5 * df1;
+    if (clip_right == 0) {
+      spec[p] += (f[1] - (double)p) * (f10 + ((double)p - f[0])) * 0.5 * df1;
     }
-} else {
-      if(clip_right == 0 && clip_left==0){
-        spec[p] += f10 * top * 0.5;
-      }
-}
+  } else {
+    if (clip_right == 0 && clip_left == 0) {
+      spec[p] += f10 * top * 0.5;
+    }
+  }
 
-if(p != pmax) {
+  if (p != pmax) {
     df2 = top / f21;
     diff = f[2] - (double)p - 1.;
 
-    if (clip_left == 0){
-      spec[p++] += (f21 - diff) * ( diff + f21 ) * 0.5 * df2;
-    }
-    else{
+    if (clip_left == 0) {
+      spec[p++] += (f21 - diff) * (diff + f21) * 0.5 * df2;
+    } else {
       spec[p++] += (diff + 0.5) * df2;
     }
     // diff = (diff + 0.5) * df2;
     diff += 0.5;
     diff *= df2;
-    while(p != pmax) {
+    while (p != pmax) {
       diff -= df2;
       spec[p++] += diff;
     }
-    if(clip_right == 0){
+    if (clip_right == 0) {
       spec[p] += pow((f[2] - (double)p), 2) * 0.5 * df2;
     }
-} else {
-      if(clip_right == 0){
-        spec[p] += f21 * top * 0.5;
-      }
+  } else {
+    if (clip_right == 0) {
+      spec[p] += f21 * top * 0.5;
+    }
   }
   return 0;
 }
 
+void powderAverageWithTentingSchemeOverOctant(double *spec, double *freq,
+                                              int nt, double *amp,
+                                              double *offset, int m) {
 
-void powderAverageWithTentingSchemeOverOctant(
-        double *spec,
-        double *freq,
-        int nt,
-        double *amp,
-        double *offset,
-        int m){
-
-  int i=0, j=0, local_index, n_pts = (nt+1)*(nt+2)/2;
-  double amp1=0.0, temp;
+  int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
+  double amp1 = 0.0, temp;
   double *amp_address, *freq_address;
 
   /* Interpolate between frequencies by setting up tents */
 
-    local_index = nt-1;
-    amp_address = &amp[nt+1];
-    freq_address = &freq[nt+1];
+  local_index = nt - 1;
+  amp_address = &amp[nt + 1];
+  freq_address = &freq[nt + 1];
 
-    while(i<n_pts-1){
-      temp = amp[i+1] + amp_address[j];
+  while (i < n_pts - 1) {
+    temp = amp[i + 1] + amp_address[j];
+    amp1 = temp;
+    amp1 += amp[i];
+
+    triangle_interpolation(&freq[i], &freq[i + 1], &freq_address[j], offset,
+                           &amp1, spec, &m);
+
+    if (i < local_index) {
       amp1 = temp;
-      amp1 += amp[i];
-
-      triangle_interpolation(&freq[i], &freq[i+1], &freq_address[j], offset, &amp1, spec, &m);
-
-      if (i<local_index){
-        amp1 = temp;
-        amp1 += amp_address[j+1];
-        triangle_interpolation(&freq[i+1], &freq_address[j], &freq_address[j+1], offset, &amp1, spec, &m);
-      }
-      else{
-        local_index=j+nt;
-        i++;
-      }
-      i++; j++;
+      amp1 += amp_address[j + 1];
+      triangle_interpolation(&freq[i + 1], &freq_address[j],
+                             &freq_address[j + 1], offset, &amp1, spec, &m);
+    } else {
+      local_index = j + nt;
+      i++;
     }
+    i++;
+    j++;
+  }
 }
 
+void powderAverageWithTentingSchemeOverHemisphere2(double *spec, double *freq,
+                                                   int nt, double *amp,
+                                                   double *offset, int m) {
 
-void powderAverageWithTentingSchemeOverHemisphere2(
-        double *spec,
-        double *freq,
-        int nt,
-        double *amp,
-        double *offset,
-        int m){
-
-  int i=0, j=0, local_index, n_pts = (nt+1)*(nt+2)/2;
-  double amp1=0.0, temp;
+  int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
+  double amp1 = 0.0, temp;
   double *amp_address, *freq_address;
 
   /* Interpolate between frequencies by setting up tents */
-    int l=nt;
-    local_index = nt-1;
-    amp_address = &amp[4*nt];
-    freq_address = &freq[4*nt];
+  int l = nt;
+  local_index = nt - 1;
+  amp_address = &amp[4 * nt];
+  freq_address = &freq[4 * nt];
 
-    while(i<n_pts-1){
-      temp = amp[i+1] + amp_address[j];
+  while (i < n_pts - 1) {
+    temp = amp[i + 1] + amp_address[j];
+    amp1 = temp;
+    amp1 += amp[i];
+
+    triangle_interpolation(&freq[i], &freq[i + 1], &freq_address[j], offset,
+                           &amp1, spec, &m);
+
+    if (i < local_index) {
       amp1 = temp;
-      amp1 += amp[i];
-
-      triangle_interpolation(&freq[i], &freq[i+1], &freq_address[j], offset, &amp1, spec, &m);
-
-      if (i<local_index){
-        amp1 = temp;
-        if(j==4*l){
-          amp1 += amp_address[j-4*l];
-          triangle_interpolation(&freq[i+1], &freq_address[j], &freq_address[0], offset, &amp1, spec, &m);
-        }
-        else amp1 += amp_address[j+1];
-        triangle_interpolation(&freq[i+1], &freq_address[j], &freq_address[j+1], offset, &amp1, spec, &m);
-        i++; j++;
-      }
-      else{
-        local_index=i+nt;
-        i++;
-      }
+      if (j == 4 * l) {
+        amp1 += amp_address[j - 4 * l];
+        triangle_interpolation(&freq[i + 1], &freq_address[j], &freq_address[0],
+                               offset, &amp1, spec, &m);
+      } else
+        amp1 += amp_address[j + 1];
+      triangle_interpolation(&freq[i + 1], &freq_address[j],
+                             &freq_address[j + 1], offset, &amp1, spec, &m);
+      i++;
+      j++;
+    } else {
+      local_index = i + nt;
+      i++;
     }
+  }
 }
 
+void powderAverageWithTentingSchemeOverHemisphere(double *spec,
+                                                  double **powfreq, int nt,
+                                                  double **amp, double *offset,
+                                                  int m) {
 
-void powderAverageWithTentingSchemeOverHemisphere(
-        double *spec,
-        double **powfreq,
-        int nt,
-        double **amp,
-        double *offset,
-        int m){
-
-  int i,j;
+  int i, j;
   double amp1, amp2, temp;
 
   /* Interpolate between frequencies by setting up tents */
 
-  for (i=0; i<=nt-1; i++){
-    for (j=0; j<=nt-1; j++){
-      temp = amp[i][j+1] + amp[i+1][j];
+  for (i = 0; i <= nt - 1; i++) {
+    for (j = 0; j <= nt - 1; j++) {
+      temp = amp[i][j + 1] + amp[i + 1][j];
       amp1 = amp[i][j] + temp;
-      amp2 = temp + amp[i+1][j+1];
+      amp2 = temp + amp[i + 1][j + 1];
 
-      triangle_interpolation(&powfreq[i+1][j], &powfreq[i][j+1], &powfreq[i][j], \
-                  offset, &amp1, spec, &m);
-      triangle_interpolation(&powfreq[i+1][j], &powfreq[i][j+1], &powfreq[i+1][j+1], \
-                  offset, &amp2, spec, &m);
-
+      triangle_interpolation(&powfreq[i + 1][j], &powfreq[i][j + 1],
+                             &powfreq[i][j], offset, &amp1, spec, &m);
+      triangle_interpolation(&powfreq[i + 1][j], &powfreq[i][j + 1],
+                             &powfreq[i + 1][j + 1], offset, &amp2, spec, &m);
 
       // tent_amp(&powfreq[i+1][j], &powfreq[i][j+1], &powfreq[i][j], offset, \
       //          &amp[i+1][j], &amp[i][j+1], &amp[i][j], spec, m);
@@ -530,23 +490,23 @@ void powderAverageWithTentingSchemeOverHemisphere(
   }
 
   // if (octa == 0){
-    for (i=0; i<=nt-1; i++){
-      for (j=nt; j<=2*nt-1; j++){
-        temp = amp[i][j] + amp[i+1][j+1];
-        amp1 = temp + amp[i+1][j];
-        amp2 = temp + amp[i][j+1];
+  for (i = 0; i <= nt - 1; i++) {
+    for (j = nt; j <= 2 * nt - 1; j++) {
+      temp = amp[i][j] + amp[i + 1][j + 1];
+      amp1 = temp + amp[i + 1][j];
+      amp2 = temp + amp[i][j + 1];
 
-        triangle_interpolation(&powfreq[i][j], &powfreq[i+1][j+1], &powfreq[i+1][j], \
-                    offset, &amp1, spec, &m);
-        triangle_interpolation(&powfreq[i][j], &powfreq[i+1][j+1], &powfreq[i][j+1], \
-                    offset, &amp2, spec, &m);
+      triangle_interpolation(&powfreq[i][j], &powfreq[i + 1][j + 1],
+                             &powfreq[i + 1][j], offset, &amp1, spec, &m);
+      triangle_interpolation(&powfreq[i][j], &powfreq[i + 1][j + 1],
+                             &powfreq[i][j + 1], offset, &amp2, spec, &m);
 
-        // tent_amp(&powfreq[i][j], &powfreq[i+1][j+1], &powfreq[i][j+1], offset, \
+      // tent_amp(&powfreq[i][j], &powfreq[i+1][j+1], &powfreq[i][j+1], offset, \
         //          &amp[i][j], &amp[i+1][j+1], &amp[i][j+1], spec, m);
-        // tent_amp(&powfreq[i][j], &powfreq[i+1][j+1], &powfreq[i][j+1], offset, \
+      // tent_amp(&powfreq[i][j], &powfreq[i+1][j+1], &powfreq[i][j+1], offset, \
         //          &amp[i][j], &amp[i+1][j+1], &amp[i][j+1], spec, m);
-      }
     }
+  }
   // }
 };
 
@@ -558,14 +518,8 @@ void powderAverageWithTentingSchemeOverHemisphere(
 //     return ((b[0]-a[0])*(c[1]-a[1]) - (b[1]-a[1])*(c[0]-a[0]));
 // }
 
-
-void rasterization(double * grid,
-                   double *v0,
-                   double *v1,
-                   double *v2,
-                   int rows,
-                   int columns){
-
+void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,
+                   int columns) {
 
   double A12, B12, C12, A20, B20, C20, A01, B01, C01;
   double minX, minY, maxX, maxY, w0, w1, w2;
@@ -577,46 +531,48 @@ void rasterization(double * grid,
   maxX = fmax(fmax(v0[0], v1[0]), v2[0]);
   maxY = fmax(fmax(v0[1], v1[1]), v2[1]);
 
-
   // clip against screen bounds
-  minX_ = (int) fmax(minX, 0.);
-  minY_ = (int) fmax(minY, 0.);
-  maxX_ = (int) fmin(maxX, (double) rows - 1.);
-  maxY_ = (int) fmin(maxY, (double) columns - 1.);
+  minX_ = (int)fmax(minX, 0.);
+  minY_ = (int)fmax(minY, 0.);
+  maxX_ = (int)fmin(maxX, (double)rows - 1.);
+  maxY_ = (int)fmin(maxY, (double)columns - 1.);
 
+  A12 = (v2[0] - v1[0]);
+  B12 = (v2[1] - v1[1]);
+  C12 = -A12 * v1[1] + B12 * v1[0];
+  A20 = (v0[0] - v2[0]);
+  B20 = (v0[1] - v2[1]);
+  C20 = -A20 * v2[1] + B20 * v2[0];
+  A01 = (v1[0] - v0[0]);
+  B01 = (v1[1] - v0[1]);
+  C01 = -A01 * v0[1] + B01 * v0[0];
 
-  A12 = (v2[0]-v1[0]); B12 = (v2[1]-v1[1]); C12 = -A12*v1[1] + B12*v1[0];
-  A20 = (v0[0]-v2[0]); B20 = (v0[1]-v2[1]); C20 = -A20*v2[1] + B20*v2[0];
-  A01 = (v1[0]-v0[0]); B01 = (v1[1]-v0[1]); C01 = -A01*v0[1] + B01*v0[0];
-
-
-  w0_row = A12 *minY - B12*minX + C12;
-  w1_row = A20 *minY - B20*minX + C20;
-  w2_row = A01 *minY - B01*minX + C01;
+  w0_row = A12 * minY - B12 * minX + C12;
+  w1_row = A20 * minY - B20 * minX + C20;
+  w2_row = A01 * minY - B01 * minX + C01;
 
   // Rasterize
-  for(i=minY_; i<=maxY_; i++){
+  for (i = minY_; i <= maxY_; i++) {
 
     // Determine barycentric coordinates
     w0 = w0_row;
     w1 = w1_row;
     w2 = w2_row;
 
-    i_ = rows*i;
-    for(j=minX_; j<=maxX_; j++){
+    i_ = rows * i;
+    for (j = minX_; j <= maxX_; j++) {
       // If p is on or inside all edges, render pixel.
-      if((int) w0>=0 && (int) w1>=0 && (int) w2>= 0){
-        grid[i_+j] += 1.; //(w0+w1+w2);
+      if ((int)w0 >= 0 && (int)w1 >= 0 && (int)w2 >= 0) {
+        grid[i_ + j] += 1.; //(w0+w1+w2);
       }
-      if ((int) w0<=0 && (int) w1<=0 && (int) w2<=0){
-        grid[i_+j] += -1.; //(w0+w1+w2);
+      if ((int)w0 <= 0 && (int)w1 <= 0 && (int)w2 <= 0) {
+        grid[i_ + j] += -1.; //(w0+w1+w2);
       }
       // i_++;
 
       w0 -= B12;
       w1 -= B20;
       w2 -= B01;
-
     }
     w0_row += A12;
     w1_row += A20;
@@ -647,7 +603,6 @@ void rasterization(double * grid,
 //         Lx += 1./8 * (v0.y-v1.y) * (v0.x+v1.x)
 //         Ly += 1./8 * (v1.x-v0.x) * (v0.y+v1.y)
 //     return Point(Kx, Ky), Point(Lx, Ly)
-
 
 // static inline void clip(
 //             double left,
@@ -698,7 +653,8 @@ void rasterization(double * grid,
 //         t0, t1 = 0, 1
 //         xdelta = self.x1 - self.x0
 //         ydelta = self.y1 - self.y0
-//         for edge in range(4): #traverse through left, right, bottom, top edges.
+//         for edge in range(4): #traverse through left, right, bottom, top
+//         edges.
 //             if   edge == 0:   p, q = -xdelta, -(left-self.x0)
 //             elif edge == 1:   p, q =  xdelta,  (right-self.x0)
 //             elif edge == 2:   p, q =  ydelta,  (bottom-self.y0)

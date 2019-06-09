@@ -117,3 +117,4 @@ venv.bak/
 *.mp4
 *.html
 *.png
+test_os.py
