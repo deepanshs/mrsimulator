@@ -52,7 +52,7 @@ before_install:
   - pip install -r requirements-dev.txt
 
 install:
-  - python setup_cython.py install
+  - python setup_cython.py build_ext --inplace
 
 # command to run tests
 script:
