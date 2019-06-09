@@ -62,4 +62,5 @@ install:
 
 # command to run tests
 script:
-  - py.test
+  - ls tests/
+  # - py.test
