@@ -41,25 +41,32 @@ matrix:
     - python: pypy
     - python: pypy3
     - python: 3.8-dev
-# Disabled: coverage anal
 
 # safelist
 branches:
   only:
   - v0.1.1
 
+
 before_install:
-  - "conda install -c eumetsat fftw3"
-  - "pip install --upgrade pip"
-  - "pip install --upgrade numpy"
-  - "pip install --upgrade mkl"
-  - "pip install --upgrade mkl-include"
-  - "pip install --upgrade cython"
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pytest
+  - source activate test-env
+  - conda install -c eumetsat fftw3
+  - pip install --upgrade pip
+  - pip install --upgrade numpy mkl mkl-include
+  - pip install --upgrade cython
 
 install:
-  - "pip install -r requirements-dev.txt"
-  - "python setup_cython.py install"
+  - pip install -r requirements-dev.txt
+  - python setup_cython.py install
 
 # command to run tests
 script:
-  - "pytest"
+  - pytest
