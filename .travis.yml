@@ -1,13 +1,47 @@
 os: linux
 dist: xenial
 language: python
-python:
-  - "3.6"
-  - "3.7"
 
-sudo: false
-cache: pip
+cache:
+  pip: true
+  directories:
+    - $HOME/.ccache
 
+env:
+  global:
+    - USE_CCACHE=1
+    - CCACHE_SLOPPINESS=pch_defines,time_macros
+    - CCACHE_COMPRESS=1
+    - CCACHE_MAXSIZE=750M
+    - PATH="/usr/lib/ccache:$HOME/miniconda/bin:$PATH"
+    - BACKEND=c
+
+matrix:
+  include:
+    - python: 3.6
+      dist: xenial    # Required for Python 3.7
+      env: BACKEND=c
+    - python: 3.7
+      dist: xenial    # Required for Python 3.7
+      sudo: required  # travis-ci/travis-ci#9069
+      env: BACKEND=c
+    - os: osx
+      osx_image: xcode6.4
+      env: PY=3
+      python: 3
+      language: c
+      compiler: clang
+      cache: false
+    - env: STACKLESS=true BACKEND=c PY=3
+      python: 3.6
+    - python: pypy3
+      env: BACKEND=c
+
+  allow_failures:
+    - python: pypy
+    - python: pypy3
+    - python: 3.8-dev
+# Disabled: coverage anal
 
 # safelist
 branches:
@@ -23,7 +57,6 @@ before_install:
 
 install:
   - "pip install -r requirements-dev.txt"
-  - "python setup_cython.py build"
   - "python setup_cython.py install"
 
 # command to run tests
