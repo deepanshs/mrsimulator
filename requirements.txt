@@ -1,4 +1,4 @@
-
+pydantic
 mkl
 mkl-include
 numpy>=1.13.3
