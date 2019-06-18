@@ -1,21 +1,14 @@
 # -*- coding: utf-8 -*-
-import json
 from copy import deepcopy
-from urllib.parse import urlparse
 
 from astropy import units as u
 
-from .__version__ import __version__
-from ._utils_download_file import _download_file_from_url
-from .simulator import _Isotopomers
-from .simulator import _Spectrum
-from .simulator import get_csdfpy_object
-from .utils import __get_spin_attribute__
-
+from mrsimulator._utils import _download_file_from_url, _fn_, _import_json
+from mrsimulator import Isotopomer, Spectrum
+from mrsimulator.spectrum import ISOTOPE_DATA
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
-__version__ = __version__
 
 
 class Simulator:
@@ -23,88 +16,52 @@ class Simulator:
     The simulator class.
     """
 
-    __slots__ = (
-        "_isotopomers_c",
-        "_isotopomers",
-        "_spectrum",
-        "_spectrum_c",
-        "_isotope_list",
-        "_allowed_isotopes",
-        "_larmor_frequency",
-        "_freq",
-        "_amp",
-    )
+    def __init__(self, isotopomers=None):
+        self.isotopomers = isotopomers or []
+        self.isotope_list = []
 
-    def __init__(self, isotopomers=None, spectrum=None):
-        self._isotopomers_c = []
-        self._isotopomers = []
-        self._spectrum = {}
-        self._spectrum_c = {}
-        self._isotope_list = []
-        self._freq = [] * u.Unit("Hz")
-        self._amp = []
-        isotope_list = __get_spin_attribute__.keys()
-        self._allowed_isotopes = list(
-            set(
-                [
-                    isotope
-                    for isotope in isotope_list
-                    if __get_spin_attribute__[isotope]["spin"] == 0.5
-                ]
-            )
+    @staticmethod
+    def allowed_isotopes():
+        """
+        Returns a list of all valid isotopes for this simulator
+        """
+        return list(
+            {
+                isotope
+                for isotope in isotope_list
+                if ISOTOPE_DATA[isotope]["spin"] == 1
+            }
         )
 
-        if isotopomers is not None:
-            self.isotopomers = isotopomers
-
-        if spectrum is not None:
-            self.spectrum = spectrum
-
     @property
-    def isotope_list(self):
+    def all_isotopes(self):
         """
         Return a list of unique isotopes symbols from the list of
         isotopomers.
         """
-        return self._isotope_list
+        return list(
+            {
+                site.nucleus
+                for isotopomer in isotopomers
+                for site in isotopomer.sites
+            }
+        )
 
     @property
-    def isotopomers(self):
+    def valid_isotope_list(self):
         """
-        Return a list of :ref:`isotopomer` objects. The attribute can also be
-        used to assign a list of valid isotopomers.
+        Returns a list of unique and valid isotope symbols from the list of isotopomers
         """
-        return self._isotopomers
+        return list(
+            {
+                site.nucleus
+                for isotopomer in isotopomers
+                for site in isotopomer.sites
+                if site.nucleus in self.allowed_isotopes
+            }
+        )
 
-    @isotopomers.setter
-    def isotopomers(self, value):
-        self._isotopomers_c = _Isotopomers(value)
-        isotope_list = [
-            site["isotope_symbol"]
-            for isotopomer in self._isotopomers_c
-            for site in isotopomer["sites"]
-            if site["isotope_symbol"] in self._allowed_isotopes
-        ]
-
-        self._isotope_list = list(set(isotope_list))
-        self._isotope_list.sort(key=_fn_)
-        self._isotopomers = value
-
-    @property
-    def spectrum(self):
-        """
-        Return a :ref:`spectrum` object. The attribute can also be
-        used to assign a valid spectrum object.
-        """
-        # return json.dumps(self._spectrum, ensure_ascii=True, indent=2)
-        return self._spectrum
-
-    @spectrum.setter
-    def spectrum(self, value):
-        self._spectrum_c = _Spectrum(**value["direct_dimension"])
-        self._spectrum = value
-
-    def run(self, method, data_object=False, **kwargs):
+    def run(self, method, **kwargs):
         """
         Simulate the spectrum using the specified method. The keyword argument
         are the arguments of the specified `method`.
@@ -123,6 +80,7 @@ class Simulator:
             frequency and amplitude. For details, refer to the
             description of `data_object`.
         """
+
         isotopomers = self._isotopomers_c
         if isotopomers is []:
             raise Exception("Isotopomers are required for simulation.")
@@ -137,7 +95,6 @@ class Simulator:
             self._larmor_frequency,
             list_index_isotopomer,
         ) = method(spectrum=spectrum, isotopomers=isotopomers, **kwargs)
-
         """The frequency is in the units of Hz."""
         self._freq *= u.Unit("Hz")
         """The larmor_frequency is in the units of MHz."""
@@ -165,34 +122,3 @@ class Simulator:
         """
         contents = _import_json(filename)
         self.isotopomers = contents["isotopomers"]
-
-
-def run_test():
-    from mrsimulator.methods import one_d_spectrum
-    import matplotlib.pyplot as plt
-    from . import examples
-
-    s1 = Simulator()
-    # test 1
-    s1.isotopomers, s1.spectrum = examples.csa_static()
-    freq, amp = s1.run(one_d_spectrum, verbose=1)
-
-    ax = plt.subplots(1, 2, figsize=(6, 3))[1]
-    ax[0].plot(freq, amp)
-    # ax[0].plot(ob1.dimensions[0].coordinates,
-    #            ob1.dependent_variables[0].components[0])
-    # label_ = ob1.dimensions[0].axis_label
-    label_ = f"frequency / {freq.unit}"
-    ax[0].set_xlabel(label_)
-
-    # test 2
-    s1.isotopomers, s1.spectrum = examples.csa_mas()
-    freq, amp = s1.run(one_d_spectrum, verbose=1)
-    ax[1].plot(freq, amp)
-    # ax[1].plot(ob2.dimensions[0].coordinates,
-    #            ob2.dependent_variables[0].components[0])
-    # label_ = ob1.dimensions[0].axis_label
-    label_ = f"frequency / {freq.unit}"
-    ax[1].set_xlabel(label_)
-    plt.tight_layout()
-    plt.show()
