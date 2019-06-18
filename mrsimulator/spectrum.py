@@ -1,98 +1,85 @@
-# -*- coding: utf-8 -*-
-from .unit import _ppm
-from .unit import string_to_quantity
-from .utils import __get_spin_attribute__
-
-try:
-    import csdfpy as cp
-except ImportError:
-    pass
-
+import os.path
+import re
+from monty.serialization import loadfn
+from mrsimulator.parseable import Parseable
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
-
-class _Dimensions:
-    __slots__ = ()
-
-    def __new__(
-        number_of_points=1024,
-        spectral_width="100 kHz",
-        reference_offset="0 Hz",
-    ):
-        """Initialize."""
-        dictionary = {}
-        dictionary["number_of_points"] = int(number_of_points)
-
-        spectral_width = string_to_quantity(spectral_width)
-        if spectral_width.unit.physical_type != "frequency":
-            raise Exception(
-                ("A frequency value is required for the 'spectral_width'.")
-            )
-        dictionary["spectral_width"] = spectral_width.to("Hz").value
-
-        reference_offset = string_to_quantity(reference_offset)
-        if reference_offset.unit.physical_type != "frequency":
-            raise Exception(
-                ("A frequency value is required for the 'reference_offset'.")
-            )
-        dictionary["reference_offset"] = reference_offset.to("Hz").value
-        return dictionary
+MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
+ISOTOPE_DATA = loadfn(os.path.join(MODULE_DIR, "isotope_data.json"))
 
 
-class _Spectrum(_Dimensions):
-    """Set up a virtual spin environment."""
+class Spectrum(Parseable):
+    """
+    Base class for an NMR Spectrum
 
-    __slots__ = ()
+    Args:
+        number_of_points: Number of points 
+        spectral_width: Width of spectrum region to consider in Hz
+        reference_offset: Offset frequecy in Hz
+        magnetic_flux_density: Magnetic flux density in T
+        rotor_frequency: Frequency in Hz
+        rotor_angle: Angle in radians
+        rotor_phase: Phase in radians
+        nucleus: Isotope in "{A}{Symbol}" notation such as 1H or 29Si
+        spin: nuclear spin quantum number as n/2
+        natural_abundance: fractional natural abundance, IE sums should equal 1
+        gyromagnetic_ratio: #TODO What are the units?
+    """
 
-    def __new__(
-        self,
-        magnetic_flux_density="9.4 T",
-        rotor_frequency="0 kHz",
-        rotor_angle="54.735 deg",
-        rotor_phase="0 rad",
-        nucleus="1H",
-        *args,
-        **kwargs,
-    ):
-        """Initialize"""
-        dimension_dictionary = super(_Spectrum, self).__new__(*args, **kwargs)
-        magnetic_flux_density = string_to_quantity(magnetic_flux_density)
-        if magnetic_flux_density.unit.physical_type != "magnetic flux density":
-            raise Exception(
-                (
-                    "A magnetic flux density quantity is required for "
-                    "'magnetic_flux_density'."
-                )
-            )
-        magnetic_flux_density = magnetic_flux_density.to("T").value
+    number_of_points: int = 1024
+    spectral_width: float = 100
+    reference_offset: float = 0
+    magnetic_flux_density: float = 9.4
+    rotor_frequency: float = 0
+    rotor_angle: float = 0.9553  # 54.935 degrees in radians
+    rotor_phase: float = 0
+    nucleus: str = "1H"
+    spin: int = 1
+    natural_abundance: float = 0.04683
+    gyromagnetic_ratio: float = -8.465
 
-        rotor_frequency = string_to_quantity(rotor_frequency)
-        if rotor_frequency.unit.physical_type != "frequency":
-            raise Exception(
-                ("A frequency quantity is required for 'rotor_frequency'.")
-            )
-        rotor_frequency = rotor_frequency.to("Hz").value
+    __property_unit_types = {
+        "spectral_width": "frequency",
+        "reference_offset": "frequency",
+        "magnetic_flux_density": "magnetic flux density",
+        "rotor_frequency": "frequency",
+        "rotor_angle": "angle",
+        "rotor_phase": "angle"
+    }
 
-        rotor_angle = string_to_quantity(rotor_angle).to("rad").value
-        rotor_phase = string_to_quantity(rotor_phase).to("rad").value
+    __property_default_units = {
+        "spectral_width": "Hz",
+        "reference_offset": "Hz",
+        "magnetic_flux_density": "T",
+        "rotor_frequency": "Hz",
+        "rotor_angle": "rad",
+        "rotor_phase": "rad",
+    }
 
-        dictionary = {
-            "magnetic_flux_density": magnetic_flux_density,
-            "rotor_frequency": rotor_frequency,
-            "rotor_angle": rotor_angle,
-            "rotor_phase": rotor_phase,
-        }
+    @classmethod
+    def parse_json_with_units(cls, json_dict):
 
-        dictionary.update(dimension_dictionary)
+        if "nucleus" in json_dict:
+            isotope_data = ISOTOPE_DATA[get_isotope_data(json_dict["nucleus"])]
+            json_dict.update(isotope_data)
 
-        detect = get_proper_detector_nucleus(nucleus)
-        try:
-            spin_dictionary = __get_spin_attribute__[detect]
-            spin_dictionary["isotope"] = detect
-        except KeyError:
-            raise Exception(f"Failed to simulates the {detect} spectrum.")
+            return super().parse_json_with_units(json_dict)
 
-        dictionary.update(spin_dictionary)
-        return dictionary
+
+def get_isotope_data(isotope_string):
+    """
+    Gets the isotope's intrinsinc NMR properties from a JSON
+    data file
+    """
+    result = re.match(r"(\d+)\s*(\w+)", isotope_string)
+
+    formatted_isotope_string = f"{result[0]}{result[1]}"
+
+    if formatted_isotope_string in isotope_data:
+        isotope_dict = dict(isotope_data[formatted_isotope_string])
+        isotope_dict.update({"nucleus": formatted_isotope_string})
+        return isotope_dict
+    else:
+        raise Exception(f"Could not parse isotrop string {isotope_string}")
