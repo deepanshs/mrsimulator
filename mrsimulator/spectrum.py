@@ -47,7 +47,7 @@ class Spectrum(Parseable):
         "magnetic_flux_density": "magnetic flux density",
         "rotor_frequency": "frequency",
         "rotor_angle": "angle",
-        "rotor_phase": "angle"
+        "rotor_phase": "angle",
     }
 
     property_default_units: ClassVar = {
@@ -63,7 +63,7 @@ class Spectrum(Parseable):
     def parse_json_with_units(cls, json_dict):
 
         if "nucleus" in json_dict:
-            isotope_data = ISOTOPE_DATA[get_isotope_data(json_dict["nucleus"])]
+            isotope_data = get_isotope_data(json_dict["nucleus"])
             json_dict.update(isotope_data)
 
             return super().parse_json_with_units(json_dict)
@@ -75,12 +75,16 @@ def get_isotope_data(isotope_string):
     data file
     """
     result = re.match(r"(\d+)\s*(\w+)", isotope_string)
+    nucleus = result.group(2)
+    A = result.group(1)
 
-    formatted_isotope_string = f"{result[0]}{result[1]}"
+    formatted_isotope_string = f"{A}{nucleus}"
 
-    if formatted_isotope_string in isotope_data:
-        isotope_dict = dict(isotope_data[formatted_isotope_string])
+    if formatted_isotope_string in ISOTOPE_DATA:
+        isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
         isotope_dict.update({"nucleus": formatted_isotope_string})
         return isotope_dict
     else:
-        raise Exception(f"Could not parse isotrop string {isotope_string}")
+        raise Exception(
+            f"Could not parse isotope string {formatted_isotope_string}"
+        )

@@ -69,7 +69,7 @@ class TestIsotopomer(unittest.TestCase):
         Isotopomer(sites=[test_site], abundance=10)
         Isotopomer(sites=[test_site, test_site], abundance=10)
 
-    def test_parse__isojson(self):
+    def test_parse_json(self):
         good_json = {"sites": [], "abundance": "10"}
 
         good_json2 = {
@@ -90,7 +90,41 @@ class TestIsotopomer(unittest.TestCase):
         Isotopomer.parse_json_with_units(good_json2)
 
         with self.assertRaises(Exception):
-        	Isotopomer.parse_json_with_units(bad_json)
+            Isotopomer.parse_json_with_units(bad_json)
+
+
+class TestSpectrum(unittest.TestCase):
+    def test_direct_init(self):
+        Spectrum()
+        Spectrum(
+            number_of_points=1024,
+            spectral_width=100,
+            reference_offset=0,
+            magnetic_flux_density=9.4,
+            rotor_frequency=0,
+            rotor_angle=0.9553,  # 54.935 degrees in radians
+            rotor_phase=0,
+            nucleus="1H",
+            spin=1,
+            natural_abundance=0.04683,
+            gyromagnetic_ratio=-8.465,
+        )
+
+    def test_parse_json(self):
+        good_json = {
+            "number_of_points": 1024,
+            "spectral_width": "100 Hz",
+            "reference_offset": "0 Hz",
+            "magnetic_flux_density": "9.4 T",
+            "rotor_frequency": "0 Hz",
+            "rotor_angle": "0.9553 rad",  # 54.935 degrees in radians
+            "rotor_phase": "0 rad",
+            "nucleus": "1H",
+        }
+
+        spec = Spectrum.parse_json_with_units(good_json)
+        self.assertIn("spin", spec.dict())
+        self.assertEqual(spec.spin, 1)
 
 
 if __name__ == "__main__":
