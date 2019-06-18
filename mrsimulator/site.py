@@ -34,6 +34,10 @@ class Site(Parseable):
     @classmethod
     def parse_json_with_units(cls, json_dict):
 
+        if "isotope_symbol" in json_dict:
+            json_dict["nucleus"] = json_dict["isotope_symbol"]
+            del json_dict["isotope_symbol"]
+
         if "shielding_symmetric" in json_dict:
             for k, v in json_dict["shielding_symmetric"].items():
                 json_dict[k] = v
