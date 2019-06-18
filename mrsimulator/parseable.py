@@ -11,18 +11,6 @@ class Parseable(BaseModel):
     and property units and defaults
     """
 
-    number_of_points: int = 1024
-    spectral_width: float = 100
-    reference_offset: float = 0
-    magnetic_flux_density: float = 9.4
-    rotor_frequency: float = 0
-    rotor_angle: float = 0.9553  # 54.935 degrees in radians
-    rotor_phase: float = 0
-    nucleus: str = "1H"
-    spin: int = 1
-    natural_abundance: float = 0.04683
-    gyromagnetic_ratio: float = -8.465
-
     __property_unit_types = {}
 
     __property_default_units = {}
