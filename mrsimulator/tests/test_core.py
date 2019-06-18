@@ -2,12 +2,13 @@
 """
 Tests for the base Parseable pattern
 """
-import os
+import os.path
 import unittest
 from typing import ClassVar
 
-import mrsimulator.unit
+from monty.serialization import loadfn
 from mrsimulator import Site, Isotopomer, Spectrum
+from mrsimulator.tests import TEST_FOLDER
 
 
 class TestSite(unittest.TestCase):
@@ -125,6 +126,27 @@ class TestSpectrum(unittest.TestCase):
         spec = Spectrum.parse_json_with_units(good_json)
         self.assertIn("spin", spec.dict())
         self.assertEqual(spec.spin, 1)
+
+
+class TestJSONData(unittest.TestCase):
+    def setUp(self):
+
+        self.mas_data = loadfn(os.path.join(TEST_FOLDER, "mas.json"))
+        self.static_data = loadfn(os.path.join(TEST_FOLDER, "static.json"))
+
+    def test_parsing(self):
+        Spectrum.parse_json_with_units(self.mas_data["spectrum"])
+        Spectrum.parse_json_with_units(self.static_data["spectrum"])
+
+        [
+            Isotopomer.parse_json_with_units(isotopomer)
+            for isotopomer in self.mas_data["isotopomers"]
+        ]
+
+        [
+            Isotopomer.parse_json_with_units(isotopomer)
+            for isotopomer in self.static_data["isotopomers"]
+        ]
 
 
 if __name__ == "__main__":
