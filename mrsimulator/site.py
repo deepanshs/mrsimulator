@@ -1,4 +1,5 @@
-from mrsimulator.parseable import Parseable
+from mrsimulator import Parseable
+from typing import ClassVar
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -14,18 +15,18 @@ class Site(Parseable):
     beta: float = 0
     gamma: float = 0
 
-    __property_unit_types = {
+    property_unit_types: ClassVar = {
         "isotropic_chemical_shift": "dimensionless",
         "shift_anisotropy": "dimensionless",
         "alpha": "angle",
         "beta": "angle",
-        "gamma": "angle"
+        "gamma": "angle",
     }
 
-    __property_default_units = {
+    property_default_units: ClassVar = {
         "isotropic_chemical_shift": "ppm",
         "shift_anisotropy": "ppm",
         "alpha": "rad",
         "beta": "rad",
-        "gamma": "rad"
+        "gamma": "rad",
     }

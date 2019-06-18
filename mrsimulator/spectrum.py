@@ -1,7 +1,8 @@
 import os.path
 import re
 from monty.serialization import loadfn
-from mrsimulator.parseable import Parseable
+from mrsimulator import Parseable
+from typing import ClassVar
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -40,7 +41,7 @@ class Spectrum(Parseable):
     natural_abundance: float = 0.04683
     gyromagnetic_ratio: float = -8.465
 
-    __property_unit_types = {
+    property_unit_types: ClassVar = {
         "spectral_width": "frequency",
         "reference_offset": "frequency",
         "magnetic_flux_density": "magnetic flux density",
@@ -49,7 +50,7 @@ class Spectrum(Parseable):
         "rotor_phase": "angle"
     }
 
-    __property_default_units = {
+    property_default_units: ClassVar = {
         "spectral_width": "Hz",
         "reference_offset": "Hz",
         "magnetic_flux_density": "T",
