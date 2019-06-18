@@ -9,15 +9,15 @@ class Site(Parseable):
 
     nucleus: str = "1H"
     isotropic_chemical_shift: float = 0
-    shift_anisotropy: float = 0
-    shift_asymmetry: float = 0
+    anisotropy: float = 0
+    asymmetry: float = 0
     alpha: float = 0
     beta: float = 0
     gamma: float = 0
 
     property_unit_types: ClassVar = {
         "isotropic_chemical_shift": "dimensionless",
-        "shift_anisotropy": "dimensionless",
+        "anisotropy": "dimensionless",
         "alpha": "angle",
         "beta": "angle",
         "gamma": "angle",
@@ -25,7 +25,7 @@ class Site(Parseable):
 
     property_default_units: ClassVar = {
         "isotropic_chemical_shift": "ppm",
-        "shift_anisotropy": "ppm",
+        "anisotropy": "ppm",
         "alpha": "rad",
         "beta": "rad",
         "gamma": "rad",
