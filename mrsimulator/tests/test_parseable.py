@@ -1,11 +1,9 @@
 # coding: utf-8
 """
-Tests for the base Stores
+Tests for the base Parseable pattern
 """
 import os
 import unittest
-import numpy as np
-import numpy.testing.utils as nptu
 from typing import ClassVar
 
 from mrsimulator.parseable import Parseable, enforce_units
