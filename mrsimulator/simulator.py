@@ -18,19 +18,6 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 __version__ = __version__
 
 
-def _fn_(x):
-    return int("".join([i for i in x if i.isnumeric()]))
-
-
-def _import_json(filename):
-    res = urlparse(filename)
-    if res[0] not in ["file", ""]:
-        filename = _download_file_from_url(filename)
-    with open(filename, "rb") as f:
-        content = f.read()
-        return json.loads(str(content, encoding="UTF-8"))
-
-
 class Simulator:
     """
     The simulator class.

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Utility functions for the csdfpy module."""
 import sys
+import json
 from os import path
 from urllib.parse import urlparse
 
 import requests
-
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -49,3 +49,16 @@ def _download_file_from_url(url):
     sys.stdout.write("\n")
 
     return filename
+
+
+def _fn_(x):
+    return int("".join([i for i in x if i.isnumeric()]))
+
+
+def _import_json(filename):
+    res = urlparse(filename)
+    if res[0] not in ["file", ""]:
+        filename = _download_file_from_url(filename)
+    with open(filename, "rb") as f:
+        content = f.read()
+        return json.loads(str(content, encoding="UTF-8"))
