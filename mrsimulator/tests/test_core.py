@@ -89,8 +89,8 @@ class TestIsotopomer(unittest.TestCase):
         Isotopomer.parse_json_with_units(good_json)
         Isotopomer.parse_json_with_units(good_json2)
 
-        # with self.assertRaises(Exception):
-        #    Isotopomer.parse_json_with_units(bad_json)
+        with self.assertRaises(Exception):
+        	Isotopomer.parse_json_with_units(bad_json)
 
 
 if __name__ == "__main__":
