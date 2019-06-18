@@ -53,5 +53,45 @@ class TestSite(unittest.TestCase):
             Site.parse_json_with_units(bad_json)
 
 
+class TestIsotopomer(unittest.TestCase):
+    def test_direct_init(self):
+        Isotopomer(sites=[], abundance=10)
+        test_site = Site(
+            nucleus="29Si",
+            isotropic_chemical_shift=10,
+            shift_anisotropy=10,
+            shift_asymmetry=0.1,
+            alpha=0.5,
+            beta=0.5,
+            gamma=0.5,
+        )
+
+        Isotopomer(sites=[test_site], abundance=10)
+        Isotopomer(sites=[test_site, test_site], abundance=10)
+
+    def test_parse__isojson(self):
+        good_json = {"sites": [], "abundance": "10"}
+
+        good_json2 = {
+            "sites": [
+                {
+                    "isotope_symbol": "1H",
+                    "isotropic_chemical_shift": "0 ppm",
+                    "anisotropy": "13.89 ppm",
+                    "asymmetry": 0.25,
+                }
+            ],
+            "abundance": "10",
+        }
+
+        bad_json = {"sites": [], "abundance": "10 Hz"}
+
+        Isotopomer.parse_json_with_units(good_json)
+        Isotopomer.parse_json_with_units(good_json2)
+
+        # with self.assertRaises(Exception):
+        #    Isotopomer.parse_json_with_units(bad_json)
+
+
 if __name__ == "__main__":
     unittest.main()

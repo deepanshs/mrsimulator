@@ -19,7 +19,6 @@ class Parseable(BaseModel):
 
     @classmethod
     def parse_json_with_units(cls, json_dict):
-
         # Only consider properties with both unit types and default units
         all_props = set(cls.property_unit_types.keys()).intersection(
             set(cls.property_default_units.keys())
@@ -57,7 +56,6 @@ class Parseable(BaseModel):
                         json_dict[prop] = list(
                             filter(None.__ne__, pos_values)
                         )[0]
-
         return cls(**json_dict)
 
 
