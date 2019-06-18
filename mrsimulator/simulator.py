@@ -3,7 +3,7 @@ from copy import deepcopy
 
 from astropy import units as u
 
-from mrsimulator._utils import _download_file_from_url, _fn_, _import_json
+from mrsimulator.utils import _download_file_from_url, _fn_, _import_json
 from mrsimulator import Isotopomer, Spectrum
 from mrsimulator.spectrum import ISOTOPE_DATA
 
