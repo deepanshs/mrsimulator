@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from mrsimulator.unit import string_to_quantity
+from typing import ClassVar
 
 __author__ = "Shyam Dwaraknath"
 __email__ = "shyamd@lbl.gov"
@@ -11,21 +13,21 @@ class Parseable(BaseModel):
     and property units and defaults
     """
 
-    __property_unit_types = {}
+    property_unit_types: ClassVar = {}
 
-    __property_default_units = {}
+    property_default_units: ClassVar = {}
 
     @classmethod
     def parse_json_with_units(cls, json_dict):
 
         # Only consider properties with both unit types and default units
-        all_props = set(cls.__property_unit_types.keys()).intersection(
-            cls.__property_default_units.keys()
+        all_props = set(cls.property_unit_types.keys()).intersection(
+            set(cls.property_default_units.keys())
         )
 
         for prop in all_props:
-            required_type = cls.__property_unit_types[prop]
-            default_unit = cls.__property_default_units[prop]
+            required_type = cls.property_unit_types[prop]
+            default_unit = cls.property_default_units[prop]
 
             if prop in json_dict:
                 # If we have a single option
@@ -56,19 +58,24 @@ class Parseable(BaseModel):
                             filter(None.__ne__, pos_values)
                         )[0]
 
+        return cls(**json_dict)
 
-def enforce_units(value, required_type, default_unit, throw_error=True):
+
+def enforce_units(
+    value: str, required_type: str, default_unit: str, throw_error=True
+):
     """
     Enforces a required type and default unit on the value
-    """
 
+        value 
+    """
     value = string_to_quantity(value)
     data_type = value.unit.physical_type
 
     if required_type != data_type:
         if throw_error:
             raise Exception(
-                f"A {required_type} value is required for '{prop}' but got a {data_type} instead"
+                f"A {required_type} value is required but got a {data_type} instead"
             )
         else:
             return None
