@@ -6,7 +6,7 @@ import numpy as np
 from numpy.fft import fft
 from numpy.fft import fftshift
 
-from mrsimulator import Simulator
+from mrsimulator import Site, Isotopomer, Spectrum, Simulator
 from mrsimulator.methods import one_d_spectrum
 
 
@@ -44,7 +44,6 @@ def read_and_compare_data(filename):
 
     # source data
     data_object = _import_json(filename)
-
     test_data_object = data_object["test_data"]
 
     source_file = test_data_object["filename"]
@@ -101,10 +100,13 @@ def read_and_compare_data(filename):
     #     label_source = "simpson"
 
     # mrsimulator
-    spectrum, isotopomer = data_object["spectrum"], data_object["isotopomer"]
+    spectrum = Spectrum.parse_json_with_units(data_object["spectrum"])
+    isotopomer = [
+        Isotopomer.parse_json_with_units(isotopomer)
+        for isotopomer in data_object["isotopomers"]
+    ]
 
-    s1 = Simulator(isotopomer)
-    s1.spectrum = spectrum
+    s1 = Simulator(isotopomer, spectrum)
     freq, data_mrsimulator = s1.run(
         one_d_spectrum, geodesic_polyhedron_frequency=120
     )
