@@ -66,7 +66,7 @@ class Spectrum(Parseable):
             isotope_data = get_isotope_data(json_dict["nucleus"])
             json_dict.update(isotope_data)
 
-            return super().parse_json_with_units(json_dict)
+        return super().parse_json_with_units(json_dict)
 
 
 def get_isotope_data(isotope_string):
