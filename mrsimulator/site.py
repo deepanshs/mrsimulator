@@ -16,16 +16,16 @@ class Site(Parseable):
     gamma: float = 0
 
     property_unit_types: ClassVar = {
-        "isotropic_chemical_shift": "dimensionless",
-        "anisotropy": "dimensionless",
+        "isotropic_chemical_shift": ["dimensionless","frequency"],
+        "anisotropy": ["dimensionless","frequency"],
         "alpha": "angle",
         "beta": "angle",
         "gamma": "angle",
     }
 
     property_default_units: ClassVar = {
-        "isotropic_chemical_shift": "ppm",
-        "anisotropy": "ppm",
+        "isotropic_chemical_shift": ["ppm","Hz"],
+        "anisotropy": ["ppm","Hz"],
         "alpha": "rad",
         "beta": "rad",
         "gamma": "rad",
