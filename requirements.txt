@@ -6,4 +6,3 @@ astropy==3.2.1
 numpy==1.15.4
 requests==2.21.0
 monty==2.0.4
-pymatgen=2019.6.20
