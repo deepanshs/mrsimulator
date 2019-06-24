@@ -1,7 +1,9 @@
-pydantic
-mkl
-mkl-include
-numpy>=1.13.3
-setuptools>=27.3
-astropy>=3.0
-requests>=2.21.0
+cython==0.29.6
+mkl==2019.0
+mkl-include==2019.0
+pydantic==0.28
+astropy==3.2.1
+numpy==1.15.4
+requests==2.21.0
+monty==2.0.4
+pymatgen=2019.6.20
