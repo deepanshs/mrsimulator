@@ -5,7 +5,7 @@ from nmr_methods cimport (
 cimport numpy as np
 import numpy as np
 import cython
-from .utils import __get_spin_attribute__
+
 
 
 __author__ = "Deepansh J. Srivastava"
@@ -59,10 +59,10 @@ def one_d_spectrum(dict spectrum,
 # ---------------------------------------------------------------------
 # spin observed _______________________________________________________
     # obs_dict = __get_spin_attribute__[detect]
-    isotope = spectrum['isotope']
+    isotope = spectrum['nucleus']
 
     # spin quantum number of the observed spin
-    cdef double spin_quantum_number = spectrum['spin']
+    cdef double spin_quantum_number = spectrum['spin']/2
 
     # transitions of the observed spin
     number_of_energy_levels = int(2*spin_quantum_number+1)
@@ -129,7 +129,7 @@ def one_d_spectrum(dict spectrum,
     # sample _______________________________________________________________
     for index_isotopomer, isotopomer in enumerate(isotopomers):
         abundance = isotopomer['abundance']
-        sub_sites = [site for site in isotopomer['sites'] if site['isotope_symbol'] == isotope]
+        sub_sites = [site for site in isotopomer['sites'] if site['nucleus'] == isotope]
 
         number_of_sites= len(sub_sites)
 
@@ -155,8 +155,8 @@ def one_d_spectrum(dict spectrum,
 
             # CSA tensor
             iso = site['isotropic_chemical_shift']
-            aniso = site['shielding_symmetric']['anisotropy']
-            eta = site['shielding_symmetric']['asymmetry']
+            aniso = site['anisotropy']
+            eta = site['asymmetry']
 
             if verbose in [1, 11]:
                 text = ((

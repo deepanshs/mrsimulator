@@ -6,6 +6,7 @@ from astropy import units as u
 from mrsimulator.utils import _download_file_from_url, _fn_, _import_json
 from mrsimulator import Isotopomer, Spectrum
 from mrsimulator.spectrum import ISOTOPE_DATA
+from mrsimulator.methods import one_d_spectrum
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -16,22 +17,16 @@ class Simulator:
     The simulator class.
     """
 
-    def __init__(self, isotopomers=None):
-        self.isotopomers = isotopomers or []
-        self.isotope_list = []
+    def __init__(self, isotopomers, spectrum):
+        self.isotopomers = isotopomers
+        self.spectrum = spectrum
 
     @staticmethod
     def allowed_isotopes():
         """
         Returns a list of all valid isotopes for this simulator
         """
-        return list(
-            {
-                isotope
-                for isotope in isotope_list
-                if ISOTOPE_DATA[isotope]["spin"] == 1
-            }
-        )
+        return list({isotope for isotope, data in ISOTOPE_DATA.items() if data["spin"] == 1})
 
     @property
     def all_isotopes(self):
@@ -39,27 +34,25 @@ class Simulator:
         Return a list of unique isotopes symbols from the list of
         isotopomers.
         """
-        return list(
-            {
-                site.nucleus
-                for isotopomer in isotopomers
-                for site in isotopomer.sites
-            }
-        )
+        return list({site.nucleus for isotopomer in self.isotopomers for site in isotopomer.sites})
 
     @property
     def valid_isotope_list(self):
         """
         Returns a list of unique and valid isotope symbols from the list of isotopomers
         """
-        return list(
-            {
-                site.nucleus
-                for isotopomer in isotopomers
-                for site in isotopomer.sites
-                if site.nucleus in self.allowed_isotopes
-            }
-        )
+        return list({
+            site.nucleus
+            for isotopomer in self.isotopomers for site in isotopomer.sites if site.nucleus in self.allowed_isotopes()
+        })
+
+    @property
+    def one_d_spectrum(self):
+        """
+        Get's a 1D spectrum for this
+        """
+        return self.run(one_d_spectrum)
+    
 
     def run(self, method, **kwargs):
         """
@@ -81,44 +74,19 @@ class Simulator:
             description of `data_object`.
         """
 
-        isotopomers = self._isotopomers_c
-        if isotopomers is []:
-            raise Exception("Isotopomers are required for simulation.")
-        spectrum = self._spectrum_c
-        if spectrum is {}:
-            raise Exception(
-                ("Cannot simulate without the spectrum information.")
-            )
+        isotopomers = [isotopomer.dict() for isotopomer in self.isotopomers]
+        spectrum = self.spectrum.dict()
         (
-            self._freq,
-            self._amp,
-            self._larmor_frequency,
+            freq,
+            amp,
+            larmor_frequency,
             list_index_isotopomer,
-        ) = method(spectrum=spectrum, isotopomers=isotopomers, **kwargs)
+        ) = method(
+            spectrum=spectrum, isotopomers=isotopomers, **kwargs)
         """The frequency is in the units of Hz."""
-        self._freq *= u.Unit("Hz")
+        freq *= u.Unit("Hz")
         """The larmor_frequency is in the units of MHz."""
-        self._larmor_frequency *= u.Unit("MHz")
+        larmor_frequency *= u.Unit("MHz")
 
-        isotopo_ = [isotopomers[i] for i in list_index_isotopomer]
-        application = {"isotopomers": str(isotopo_), "spectrum": spectrum}
-        data_object = False
-        if data_object:
-            return get_csdfpy_object(
-                self._freq, self._larmor_frequency, self._amp, application
-            )
-        else:
-            return deepcopy(self._freq), deepcopy(self._amp)
-
-    def load_isotopomers(self, filename):
-        """
-        Load a JSON serialized isotopomers file.
-
-        See an
-        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
-        /master/isotopomers_ppm.json>`_
-        of JSON serialized isotopomers file. For details, refer to the
-        :ref:`load_isotopomers` section.
-        """
-        contents = _import_json(filename)
-        self.isotopomers = contents["isotopomers"]
+        isotopo_ = [self.isotopomers[i] for i in list_index_isotopomer]
+        return freq, amp

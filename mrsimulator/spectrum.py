@@ -85,6 +85,4 @@ def get_isotope_data(isotope_string):
         isotope_dict.update({"nucleus": formatted_isotope_string})
         return isotope_dict
     else:
-        raise Exception(
-            f"Could not parse isotope string {formatted_isotope_string}"
-        )
+        raise Exception(f"Could not parse isotope string {formatted_isotope_string}")
