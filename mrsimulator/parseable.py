@@ -89,6 +89,5 @@ def enforce_units(
         if throw_error:
             raise e
         else:
-            print(e)
             return None
 

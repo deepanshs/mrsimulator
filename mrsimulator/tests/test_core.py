@@ -43,7 +43,7 @@ class TestSite(unittest.TestCase):
         bad_json = {
             "isotope_symbol": "1H",
             "isotropic_chemical_shift": "0 ppm",
-            "anisotropy": "13.89 Hz",
+            "anisotropy": "13.89 rad",
             "asymmetry": 0.25,
         }
 
