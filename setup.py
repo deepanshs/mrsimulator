@@ -38,7 +38,7 @@ setup(
     url="https://github.com/DeepanshS/MRsimulator/",
     packages=find_packages(),
     package_data={},
-    install_requires=["numpy>=1.13.3", "astropy>=3.0", "pydantic", "requests>=2.21.0", "monty==2.0.4"],
+    install_requires=["numpy>=1.13.3", "astropy>=3.0", "pydantic==0.28", "requests>=2.21.0", "monty==2.0.4"],
     extras_require={"fancy feature": [
         "matplotlib>=3.0.2",
         "plotly>=3.6",
