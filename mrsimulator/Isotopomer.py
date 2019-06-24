@@ -14,7 +14,7 @@ class Isotopomer(Parseable):
 
     sites: List[Site]
     # couplings: list = [], # TODO: Deepansh what should this look like?
-    abundance: float
+    abundance: float = 100
 
     property_unit_types: ClassVar = {"abundance": "dimensionless"}
 
