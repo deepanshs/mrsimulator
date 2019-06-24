@@ -11,13 +11,16 @@ from mrsimulator.parseable import Parseable, enforce_units
 
 class ParseableTestClass(Parseable):
     """
-	Dummy test class for Parseable pattern
-	"""
+    Dummy test class for Parseable pattern
+    """
 
     foo: float = 0
-    bar: str = ""
-    property_unit_types: ClassVar = {"foo": "angle"}
-    property_default_units: ClassVar = {"foo": "rad"}
+    bar: int = 0
+    property_unit_types: ClassVar = {
+        "foo": "angle",
+        "bar": ["dimensionless", "frequency"],
+    }
+    property_default_units: ClassVar = {"foo": "rad", "bar": ["pct", "Hz"]}
 
 
 class TestEnforceUnits(unittest.TestCase):
@@ -38,17 +41,23 @@ class TestParseable(unittest.TestCase):
 
     def test_parse_json(self):
 
-        good_json = {"foo": "300 rad", "bar": "stuff"}
+        good_json = {"foo": "300 rad", "bar": "300 ppm"}
         pr = ParseableTestClass.parse_json_with_units(good_json)
 
-        bad_json = {"foo": "300 Hz", "bar": "stuff"}
+        good_json2 = {"foo": "300 rad", "bar": "300 Hz"}
+        pr = ParseableTestClass.parse_json_with_units(good_json2)
+
+        bad_json = {"foo": "300 Hz", "bar": "300 ppm"}
 
         with self.assertRaises(Exception) as err:
             pr = ParseableTestClass.parse_json_with_units(bad_json)
         self.assertEqual(
             str(err.exception),
+            "Error enforcing units for foo: 300 Hz\n"
             "A angle value is required but got a frequency instead",
         )
+
+
 
 
 if __name__ == "__main__":
