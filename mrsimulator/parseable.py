@@ -33,17 +33,25 @@ class Parseable(BaseModel):
                 if isinstance(required_type, str) and isinstance(
                     default_unit, str
                 ):
-                    json_dict[prop] = enforce_units(
-                        json_dict[prop], required_type, default_unit
-                    )
+                    try:
+                        json_dict[prop] = enforce_units(
+                            json_dict[prop], required_type, default_unit
+                        )
+                    except Exception as e:
+                        raise Exception(
+                            f"Error enforcing units for {prop}: {json_dict[prop]}\n"
+                            + str(e)
+                        )
+
                 # If there are multiple type/unit combinations
                 elif isinstance(required_type, list) and isinstance(
                     default_unit, list
                 ):
                     pos_values = [
                         enforce_units(
-                            json_dict[prop], required_type, default_unit
+                            json_dict[prop], r_type, d_unit, throw_error=False
                         )
+                        != None
                         for r_type, d_unit in zip(required_type, default_unit)
                     ]
                     # If none of the units were enforceable, error
@@ -67,15 +75,20 @@ def enforce_units(
 
         value 
     """
-    value = string_to_quantity(value)
-    data_type = value.unit.physical_type
+    try:
+        value = string_to_quantity(value)
+        data_type = value.unit.physical_type
 
-    if required_type != data_type:
-        if throw_error:
+        if required_type != data_type:
             raise Exception(
                 f"A {required_type} value is required but got a {data_type} instead"
             )
+
+        return value.to(default_unit).value
+    except Exception as e:
+        if throw_error:
+            raise e
         else:
+            print(e)
             return None
 
-    return value.to(default_unit).value
