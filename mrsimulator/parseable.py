@@ -17,6 +17,8 @@ class Parseable(BaseModel):
 
     property_default_units: ClassVar = {}
 
+    property_units: Dict
+
     @classmethod
     def parse_json_with_units(cls, json_dict):
         # Only consider properties with both unit types and default units
@@ -24,6 +26,7 @@ class Parseable(BaseModel):
             set(cls.property_default_units.keys())
         )
 
+        property_units = {}
         for prop in all_props:
             required_type = cls.property_unit_types[prop]
             default_unit = cls.property_default_units[prop]
@@ -37,6 +40,7 @@ class Parseable(BaseModel):
                         json_dict[prop] = enforce_units(
                             json_dict[prop], required_type, default_unit
                         )
+                        property_units[prop] = default_unit
                     except Exception as e:
                         raise Exception(
                             f"Error enforcing units for {prop}: {json_dict[prop]}\n"
@@ -61,10 +65,10 @@ class Parseable(BaseModel):
                             f"Could not enforce any units on {prop}"
                         )
                     else:
-                        json_dict[prop] = list(
-                            filter(None.__ne__, pos_values)
-                        )[0]
-        return cls(**json_dict)
+                        json_dict[prop], property_units[prop] = [
+                            d for d in zip(pos_values, default_unit) if d[0]
+                        ][0]
+        return cls(**json_dict,property_units=property_units)
 
 
 def enforce_units(
@@ -90,4 +94,3 @@ def enforce_units(
             raise e
         else:
             return None
-
