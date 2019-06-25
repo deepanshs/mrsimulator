@@ -17,10 +17,7 @@ before_install:
   - conda info -a
   - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION
   - source activate test-env
-  - conda install fftw
-  - pip install --upgrade pip
-  - pip install --upgrade numpy mkl mkl-include
-  - pip install --upgrade cython
+  - conda install fftw mkl-devel
   - pip install -r requirements.txt
   - pip install -r requirements-optional.txt
   - pip install -r requirements-dev.txt  

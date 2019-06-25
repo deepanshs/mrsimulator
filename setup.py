@@ -2,11 +2,19 @@
 
 import os
 import numpy
+import numpy.distutils.system_info as sysinfo
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
 from Cython.Build import cythonize
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
+
+mkl_info = sysinfo.get_info("mkl")
+
+include_dirs = ["src/c_lib/include", numpy.get_include()]
+
+if "include_dirs" in mkl_info:
+    include_dirs.extend(mkl_info["include_dirs"])
 
 ext_modules = [
     Extension(
@@ -18,7 +26,7 @@ ext_modules = [
             "src/c_lib/mrmethods/powder_setup.c",
             "src/c_lib/mrmethods/nmr_methods.pyx",
         ],
-        include_dirs=["src/c_lib/include", numpy.get_include()],
+        include_dirs=include_dirs,
         libraries=["fftw3"],
         language="c",
         extra_compile_args="-O1".split(),
@@ -45,7 +53,7 @@ setup(
         "requests>=2.21.0",
         "monty==2.0.4",
         "mkl==2019.0",
-        "mkl-include==2019.0"
+        "mkl-include==2019.0",
     ],
     extras_require={
         "fancy feature": [
