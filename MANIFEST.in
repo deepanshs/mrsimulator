@@ -1,5 +1,5 @@
 include README.md
-include mrsimulator/scr/lib/*.c
-include mrsimulator/scr/mrmethods/*.c
-include mrsimulator/scr/include/*.*
-include mrsimulator/test/*.*
+include src/c_lib/lib/*.c
+include src/c_lib/mrmethods/*.c
+include src/c_lib/include/*.*
+include src/c_lib/test/*.*

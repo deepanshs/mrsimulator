@@ -12,13 +12,13 @@ ext_modules = [
     Extension(
         name="mrsimulator.methods",
         sources=[
-            "mrsimulator/scr/lib/c_array.c",
-            "mrsimulator/scr/lib/MRAngularMomentum.c",
-            "mrsimulator/scr/mrmethods/spinning_sidebands.c",
-            "mrsimulator/scr/mrmethods/powder_setup.c",
-            "mrsimulator/scr/mrmethods/nmr_methods.pyx",
+            "src/c_lib/lib/c_array.c",
+            "src/c_lib/lib/MRAngularMomentum.c",
+            "src/c_lib/mrmethods/spinning_sidebands.c",
+            "src/c_lib/mrmethods/powder_setup.c",
+            "src/c_lib/mrmethods/nmr_methods.pyx",
         ],
-        include_dirs=["mrsimulator/scr/include", numpy.get_include()],
+        include_dirs=["src/c_lib/include", numpy.get_include()],
         libraries=["fftw3"],
         language="c",
         extra_compile_args="-O1".split(),
@@ -36,18 +36,28 @@ setup(
     author_email="srivastava.89@osu.edu",
     python_requires=">=3.0",
     url="https://github.com/DeepanshS/MRsimulator/",
-    packages=find_packages(),
-    package_data={},
-    install_requires=["numpy>=1.13.3", "astropy>=3.0", "pydantic==0.28", "requests>=2.21.0", "monty==2.0.4"],
-    extras_require={"fancy feature": [
-        "matplotlib>=3.0.2",
-        "plotly>=3.6",
-        "dash>=0.40",
-        "dash_daq>=0.1",
-    ]},
+    packages=find_packages("src"),
+    package_dir={"": "src"},
+    install_requires=[
+        "numpy>=1.13.3",
+        "astropy>=3.0",
+        "pydantic==0.28",
+        "requests>=2.21.0",
+        "monty==2.0.4",
+    ],
+    extras_require={
+        "fancy feature": [
+            "matplotlib>=3.0.2",
+            "plotly>=3.6",
+            "dash>=0.40",
+            "dash_daq>=0.1",
+        ]
+    },
     tests_require=["nose"],
-    entry_points={"console_scripts": ["nmr_app = mrsimulator.web_interface:main"]},
-    ext_modules=cythonize(ext_modules, annotate=True, language_level=3, gdb_debug=True),
+    entry_points={
+        "console_scripts": ["nmr_app = mrsimulator.web_interface:main"]
+    },
+    ext_modules=cythonize(ext_modules),
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
