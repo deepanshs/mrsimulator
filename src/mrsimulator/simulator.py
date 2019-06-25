@@ -34,7 +34,7 @@ class Simulator:
         Return a list of unique isotopes symbols from the list of
         isotopomers.
         """
-        return list({site.nucleus for isotopomer in self.isotopomers for site in isotopomer.sites})
+        return list({site.isotope for isotopomer in self.isotopomers for site in isotopomer.sites})
 
     @property
     def valid_isotope_list(self):
@@ -42,8 +42,8 @@ class Simulator:
         Returns a list of unique and valid isotope symbols from the list of isotopomers
         """
         return list({
-            site.nucleus
-            for isotopomer in self.isotopomers for site in isotopomer.sites if site.nucleus in self.allowed_isotopes()
+            site.isotope
+            for isotopomer in self.isotopomers for site in isotopomer.sites if site.isotope in self.allowed_isotopes()
         })
 
     @property

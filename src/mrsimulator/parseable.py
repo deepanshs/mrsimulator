@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from mrsimulator.unit import string_to_quantity
-from typing import ClassVar
+from typing import ClassVar, Dict
 
 __author__ = "Shyam Dwaraknath"
 __email__ = "shyamd@lbl.gov"
@@ -17,7 +17,7 @@ class Parseable(BaseModel):
 
     property_default_units: ClassVar = {}
 
-    property_units: Dict
+    property_units: Dict = {}
 
     @classmethod
     def parse_json_with_units(cls, json_dict):

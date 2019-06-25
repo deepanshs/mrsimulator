@@ -1925,7 +1925,6 @@ static const char __pyx_k_cosBeta[] = "cosBeta";
 static const char __pyx_k_float64[] = "float64";
 static const char __pyx_k_isotope[] = "isotope";
 static const char __pyx_k_m_final[] = "m_final";
-static const char __pyx_k_nucleus[] = "nucleus";
 static const char __pyx_k_reshape[] = "reshape";
 static const char __pyx_k_verbose[] = "verbose";
 static const char __pyx_k_cosAlpha[] = "cosAlpha";
@@ -2125,7 +2124,6 @@ static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_kp_u_ndarray_is_not_C_contiguous;
 static PyObject *__pyx_kp_u_ndarray_is_not_Fortran_contiguou;
 static PyObject *__pyx_n_s_np;
-static PyObject *__pyx_n_s_nucleus;
 static PyObject *__pyx_n_s_number_of_energy_levels;
 static PyObject *__pyx_n_s_number_of_points;
 static PyObject *__pyx_n_s_number_of_sidebands;
@@ -2717,7 +2715,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
   /* "src/c_lib/mrmethods/nmr_methods.pyx":62
  * # spin observed _______________________________________________________
  *     # obs_dict = __get_spin_attribute__[detect]
- *     isotope = spectrum['nucleus']             # <<<<<<<<<<<<<<
+ *     isotope = spectrum['isotope']             # <<<<<<<<<<<<<<
  * 
  *     # spin quantum number of the observed spin
  */
@@ -2725,7 +2723,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(0, 62, __pyx_L1_error)
   }
-  __pyx_t_6 = __Pyx_PyDict_GetItem(__pyx_v_spectrum, __pyx_n_s_nucleus); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyDict_GetItem(__pyx_v_spectrum, __pyx_n_s_isotope); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __pyx_v_isotope = __pyx_t_6;
   __pyx_t_6 = 0;
@@ -3466,7 +3464,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  *     # sample _______________________________________________________________
  *     for index_isotopomer, isotopomer in enumerate(isotopomers):             # <<<<<<<<<<<<<<
  *         abundance = isotopomer['abundance']
- *         sub_sites = [site for site in isotopomer['sites'] if site['nucleus'] == isotope]
+ *         sub_sites = [site for site in isotopomer['sites'] if site['isotope'] == isotope]
  */
   __pyx_t_3 = 0;
   __pyx_t_6 = __pyx_v_isotopomers; __Pyx_INCREF(__pyx_t_6); __pyx_t_23 = 0;
@@ -3487,7 +3485,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  *     # sample _______________________________________________________________
  *     for index_isotopomer, isotopomer in enumerate(isotopomers):
  *         abundance = isotopomer['abundance']             # <<<<<<<<<<<<<<
- *         sub_sites = [site for site in isotopomer['sites'] if site['nucleus'] == isotope]
+ *         sub_sites = [site for site in isotopomer['sites'] if site['isotope'] == isotope]
  * 
  */
     __pyx_t_5 = __Pyx_PyObject_Dict_GetItem(__pyx_v_isotopomer, __pyx_n_s_abundance); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 131, __pyx_L1_error)
@@ -3498,7 +3496,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
     /* "src/c_lib/mrmethods/nmr_methods.pyx":132
  *     for index_isotopomer, isotopomer in enumerate(isotopomers):
  *         abundance = isotopomer['abundance']
- *         sub_sites = [site for site in isotopomer['sites'] if site['nucleus'] == isotope]             # <<<<<<<<<<<<<<
+ *         sub_sites = [site for site in isotopomer['sites'] if site['isotope'] == isotope]             # <<<<<<<<<<<<<<
  * 
  *         number_of_sites= len(sub_sites)
  */
@@ -3548,7 +3546,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
       }
       __Pyx_XDECREF_SET(__pyx_v_site, __pyx_t_11);
       __pyx_t_11 = 0;
-      __pyx_t_11 = __Pyx_PyObject_Dict_GetItem(__pyx_v_site, __pyx_n_s_nucleus); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 132, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyObject_Dict_GetItem(__pyx_v_site, __pyx_n_s_isotope); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 132, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __pyx_t_13 = PyObject_RichCompare(__pyx_t_11, __pyx_v_isotope, Py_EQ); __Pyx_XGOTREF(__pyx_t_13); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 132, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
@@ -3563,7 +3561,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
     __pyx_t_5 = 0;
 
     /* "src/c_lib/mrmethods/nmr_methods.pyx":134
- *         sub_sites = [site for site in isotopomer['sites'] if site['nucleus'] == isotope]
+ *         sub_sites = [site for site in isotopomer['sites'] if site['isotope'] == isotope]
  * 
  *         number_of_sites= len(sub_sites)             # <<<<<<<<<<<<<<
  * 
@@ -4612,7 +4610,7 @@ static PyObject *__pyx_pf_11mrsimulator_7methods_one_d_spectrum(CYTHON_UNUSED Py
  *     # sample _______________________________________________________________
  *     for index_isotopomer, isotopomer in enumerate(isotopomers):             # <<<<<<<<<<<<<<
  *         abundance = isotopomer['abundance']
- *         sub_sites = [site for site in isotopomer['sites'] if site['nucleus'] == isotope]
+ *         sub_sites = [site for site in isotopomer['sites'] if site['isotope'] == isotope]
  */
   }
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -9656,7 +9654,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_u_ndarray_is_not_C_contiguous, __pyx_k_ndarray_is_not_C_contiguous, sizeof(__pyx_k_ndarray_is_not_C_contiguous), 0, 1, 0, 0},
   {&__pyx_kp_u_ndarray_is_not_Fortran_contiguou, __pyx_k_ndarray_is_not_Fortran_contiguou, sizeof(__pyx_k_ndarray_is_not_Fortran_contiguou), 0, 1, 0, 0},
   {&__pyx_n_s_np, __pyx_k_np, sizeof(__pyx_k_np), 0, 0, 1, 1},
-  {&__pyx_n_s_nucleus, __pyx_k_nucleus, sizeof(__pyx_k_nucleus), 0, 0, 1, 1},
   {&__pyx_n_s_number_of_energy_levels, __pyx_k_number_of_energy_levels, sizeof(__pyx_k_number_of_energy_levels), 0, 0, 1, 1},
   {&__pyx_n_s_number_of_points, __pyx_k_number_of_points, sizeof(__pyx_k_number_of_points), 0, 0, 1, 1},
   {&__pyx_n_s_number_of_sidebands, __pyx_k_number_of_sidebands, sizeof(__pyx_k_number_of_sidebands), 0, 0, 1, 1},

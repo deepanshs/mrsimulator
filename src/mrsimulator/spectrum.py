@@ -23,7 +23,7 @@ class Spectrum(Parseable):
         rotor_frequency: Frequency in Hz
         rotor_angle: Angle in radians
         rotor_phase: Phase in radians
-        nucleus: Isotope in "{A}{Symbol}" notation such as 1H or 29Si
+        isotope: Isotope in "{A}{Symbol}" notation such as 1H or 29Si
         spin: nuclear spin quantum number as n/2
         natural_abundance: fractional natural abundance, IE sums should equal 1
         gyromagnetic_ratio: #TODO What are the units?
@@ -36,7 +36,7 @@ class Spectrum(Parseable):
     rotor_frequency: float = 0
     rotor_angle: float = 0.9553  # 54.935 degrees in radians
     rotor_phase: float = 0
-    nucleus: str = "1H"
+    isotope: str = "1H"
     spin: int = 1
     natural_abundance: float = 0.04683
     gyromagnetic_ratio: float = -8.465
@@ -62,7 +62,7 @@ class Spectrum(Parseable):
     @classmethod
     def parse_json_with_units(cls, json_dict):
 
-        if "nucleus" in json_dict:
+        if "isotope" in json_dict:
             isotope_data = get_isotope_data(json_dict["nucleus"])
             json_dict.update(isotope_data)
 

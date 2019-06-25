@@ -21,7 +21,7 @@ class TestSite(unittest.TestCase):
             rotor_frequency=0,
             rotor_angle=0.9553,  # 54.935 degrees in radians
             rotor_phase=0,
-            nucleus="1H",
+            isotope="1H",
             spin=1,
             natural_abundance=0.04683,
             gyromagnetic_ratio=-8.465,
@@ -30,13 +30,8 @@ class TestSite(unittest.TestCase):
             Isotopomer(
                 sites=[
                     Site(
-                        nucleus="29Si",
+                        isotope="29Si",
                         isotropic_chemical_shift=10,
-                        shift_anisotropy=10,
-                        shift_asymmetry=0.1,
-                        alpha=0.5,
-                        beta=0.5,
-                        gamma=0.5,
                     )
                 ],
                 abundance=10)
@@ -57,6 +52,7 @@ class TestSite(unittest.TestCase):
 
     def test_one_d_spectrum(self):
         print(self.simulator.one_d_spectrum)
+        raise Exception("H")
 
     def test_run(self):
         pass

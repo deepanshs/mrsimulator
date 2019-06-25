@@ -1,6 +1,6 @@
 from typing import ClassVar, Optional
 from mrsimulator import Parseable, SymmetricTensor, AntisymmetricTensor
-
+ 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
@@ -14,20 +14,24 @@ class Site(Parseable):
     quadrupolar: Optional[SymmetricTensor]
 
     property_unit_types: ClassVar = {
-        "isotropic_chemical_shift": ["dimensionless","frequency"],
-        "anisotropy": ["dimensionless","frequency"],
-        "alpha": "angle",
-        "beta": "angle",
-        "gamma": "angle",
+        "isotropic_chemical_shift": ["dimensionless", "frequency"],
     }
 
     property_default_units: ClassVar = {
-        "isotropic_chemical_shift": ["ppm","Hz"],
+        "isotropic_chemical_shift": ["ppm", "Hz"],
     }
 
     @classmethod
     def parse_json_with_units(cls, json_dict):
 
+        prop_mapping = {
+            "shielding_symmetric": SymmetricTensor,
+            "shielding_antisymmetric": AntisymmetricTensor,
+            "quadrupolar": SymmetricTensor
+        }
 
+        for k, v in prop_mapping.items():
+            if k in json_dict:
+                json_dict[k] = v.parse_json_with_units(json_dict[k])
 
         return super().parse_json_with_units(json_dict)

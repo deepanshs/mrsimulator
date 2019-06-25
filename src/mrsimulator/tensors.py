@@ -1,4 +1,4 @@
-from typing import ClassVar
+from typing import ClassVar, Optional
 from mrsimulator import Parseable
 
 __author__ = "Deepansh J. Srivastava"

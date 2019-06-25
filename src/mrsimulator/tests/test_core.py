@@ -13,15 +13,7 @@ from mrsimulator.tests import TEST_FOLDER
 
 class TestSite(unittest.TestCase):
     def test_direct_init(self):
-        Site(
-            nucleus="29Si",
-            isotropic_chemical_shift=10,
-            shift_anisotropy=10,
-            shift_asymmetry=0.1,
-            alpha=0.5,
-            beta=0.5,
-            gamma=0.5,
-        )
+        Site(nucleus="29Si", isotropic_chemical_shift=10)
 
     def test_parse_json(self):
         good_json = {
@@ -36,15 +28,11 @@ class TestSite(unittest.TestCase):
         good_json_2 = {
             "isotope_symbol": "1H",
             "isotropic_chemical_shift": "0 ppm",
-            "anisotropy": "13.89 ppm",
-            "asymmetry": 0.25,
         }
 
         bad_json = {
             "isotope_symbol": "1H",
-            "isotropic_chemical_shift": "0 ppm",
-            "anisotropy": "13.89 rad",
-            "asymmetry": 0.25,
+            "isotropic_chemical_shift": "0 rad",
         }
 
         Site.parse_json_with_units(good_json)
@@ -57,15 +45,7 @@ class TestSite(unittest.TestCase):
 class TestIsotopomer(unittest.TestCase):
     def test_direct_init(self):
         Isotopomer(sites=[], abundance=10)
-        test_site = Site(
-            nucleus="29Si",
-            isotropic_chemical_shift=10,
-            shift_anisotropy=10,
-            shift_asymmetry=0.1,
-            alpha=0.5,
-            beta=0.5,
-            gamma=0.5,
-        )
+        test_site = Site(nucleus="29Si", isotropic_chemical_shift=10)
 
         Isotopomer(sites=[test_site], abundance=10)
         Isotopomer(sites=[test_site, test_site], abundance=10)
@@ -74,14 +54,10 @@ class TestIsotopomer(unittest.TestCase):
         good_json = {"sites": [], "abundance": "10"}
 
         good_json2 = {
-            "sites": [
-                {
-                    "isotope_symbol": "1H",
-                    "isotropic_chemical_shift": "0 ppm",
-                    "anisotropy": "13.89 ppm",
-                    "asymmetry": 0.25,
-                }
-            ],
+            "sites": [{
+                "isotope_symbol": "1H",
+                "isotropic_chemical_shift": "0 ppm"
+            }],
             "abundance": "10",
         }
 
@@ -138,15 +114,9 @@ class TestJSONData(unittest.TestCase):
         Spectrum.parse_json_with_units(self.mas_data["spectrum"])
         Spectrum.parse_json_with_units(self.static_data["spectrum"])
 
-        [
-            Isotopomer.parse_json_with_units(isotopomer)
-            for isotopomer in self.mas_data["isotopomers"]
-        ]
+        [Isotopomer.parse_json_with_units(isotopomer) for isotopomer in self.mas_data["isotopomers"]]
 
-        [
-            Isotopomer.parse_json_with_units(isotopomer)
-            for isotopomer in self.static_data["isotopomers"]
-        ]
+        [Isotopomer.parse_json_with_units(isotopomer) for isotopomer in self.static_data["isotopomers"]]
 
 
 if __name__ == "__main__":
