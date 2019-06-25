@@ -44,6 +44,8 @@ setup(
         "pydantic==0.28",
         "requests>=2.21.0",
         "monty==2.0.4",
+        "mkl==2019.0",
+        "mkl-include==2019.0"
     ],
     extras_require={
         "fancy feature": [

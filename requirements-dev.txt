@@ -1,2 +1,5 @@
 black
 pre-commit
+nose
+coverage
+python-coveralls

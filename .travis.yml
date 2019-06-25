@@ -6,12 +6,26 @@ python:
 branches:
   only:
   - master
+
+  before_install:
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION
+  - source activate test-env
+
 install:
+  - conda install -c fftw3
+  - pip install --upgrade pip
+  - pip install --upgrade numpy mkl mkl-include
+  - pip install --upgrade cython
   - pip install -r requirements.txt
   - pip install -r requirements-optional.txt
-  - pip install nose
-  - pip install coverage
-  - pip install python-coveralls
+  - pip install -r requirements-dev.txt  
   - python setup.py develop
 script:
   - nosetests -v --nocapture --with-coverage --cover-package=mrsimulator
