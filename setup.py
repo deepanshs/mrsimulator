@@ -14,7 +14,8 @@ mkl_info = sysinfo.get_info("mkl")
 include_dirs = ["src/c_lib/include", numpy.get_include()]
 
 if "include_dirs" in mkl_info:
-    include_dirs.extend(mkl_info["include_dirs"])
+    #include_dirs.extend(mkl_info["include_dirs"])
+    pass
 
 ext_modules = [
     Extension(
@@ -27,9 +28,9 @@ ext_modules = [
             "src/c_lib/mrmethods/nmr_methods.pyx",
         ],
         include_dirs=include_dirs,
-        libraries=["fftw3"],
+        libraries=["fftw3","mkl"],
         language="c",
-        extra_compile_args="-O1".split(),
+        extra_compile_args=["-O1","-std=c11"],
         extra_link_args="-g -lfftw3 -lmkl_intel_lp64 -lmkl_intel_thread \
                         -lmkl_core -ldl -liomp5 -lm -W".split(),
     )
