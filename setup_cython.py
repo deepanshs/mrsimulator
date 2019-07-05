@@ -33,22 +33,11 @@ VERSION = "0.1.1"
 
 
 # What packages are required for this module to be executed?
-REQUIRED = [
-    "numpy>=1.13.3",
-    "astropy>=3.0",
-    "mkl",
-    "mkl-include",
-    "requests>=2.21.0",
-]
+REQUIRED = ["numpy>=1.13.3", "astropy>=3.0", "mkl", "mkl-include", "requests>=2.21.0"]
 
 # What packages are optional?
 EXTRAS = {
-    "fancy feature": [
-        "matplotlib>=3.0.2",
-        "plotly>=3.6",
-        "dash>=0.40",
-        "dash_daq>=0.1",
-    ]
+    "fancy feature": ["matplotlib>=3.0.2", "plotly>=3.6", "dash>=0.40", "dash_daq>=0.1"]
 }
 
 
@@ -163,46 +152,38 @@ ext_modules = [
         sources=nmr_function_source_file,
         include_dirs=include_nmr_lib_directories,
         language="c",
-        # libraries=["./mrlib"],
-        # -ffast-math -flax-vector-conversions -g -Ofast
-        extra_compile_args="-O1".split(),  #
-        extra_link_args="-g -lfftw3 -lmkl_intel_lp64 -lmkl_intel_thread \
-                        -lmkl_core -ldl -liomp5 -lm -W".split(),  #
+        extra_compile_args="-m64 -g -O1".split(),  #
+        extra_link_args="-lmkl_intel_lp64 -lmkl_sequential -lmkl_core \
+                         -lpthread -lm -ldl -W".split()
+        # extra_link_args="-lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
+        #                  -liomp5 -lpthread -lm -ldl -W".split()
     )
 ]
 
 
 # Sandbox
 
-# sandbox_files = source2[:]
+sandbox_files = source2[:]
 
-# _list = [
-#     'mrsimulator', 'scr', 'sandbox', 'interpolation', 'interpolation.pyx'
-# ]
-# sandbox_files.append(path.join(*_list))
+_list = ["mrsimulator", "scr", "sandbox", "sandbox.pyx"]
+sandbox_files.append(join(*_list))
 
-# ext_modules += [
-#     Extension(
-#         name=NAME+'.sandbox.interpolation',
-#         sources=sandbox_files,
-#         # # include_dirs=[numpy.get_include()],
-#         # if you compile fc.cpp separately
-#         # extra_objects= ['./mrlib'], # ["fc.o"],
-#         # # .../site-packages/numpy/core/include
-#         include_dirs=include_nmr_lib_directories,
-#         language="c",
-#         # libraries=["./mrlib"],
-#         # -ffast-math -flax-vector-conversions -g -Ofast
-#         extra_compile_args="-O1".split(),
-#         extra_link_args="-g -lfftw3 -lmkl_intel_lp64 -lmkl_intel_thread \
-#                         -lmkl_core -ldl -liomp5 -lm -Wl".split()
-#     )
-# ]
+ext_modules += [
+    Extension(
+        name=NAME + ".sandbox",
+        sources=sandbox_files,
+        include_dirs=include_nmr_lib_directories,
+        language="c",
+        extra_compile_args="-flax-vector-conversions -g -O3 ".split(),
+        extra_link_args="-g -lmkl_intel_lp64 -lmkl_intel_thread \
+                        -lmkl_core -ldl -liomp5 -lpthread -lm -W".split()
+        # extra_link_args="-g -lmkl_intel_lp64 -lmkl_intel_thread \
+        #                 -lmkl_core -ldl -liomp5 -lpthread -lm -Wl".split(),
+    )
+]
 
 if use_cython:
-    ext = cythonize(
-        ext_modules, annotate=True, language_level=3, gdb_debug=True
-    )
+    ext = cythonize(ext_modules, annotate=True, language_level=3, gdb_debug=True)
 else:
     ext = ext_modules
 

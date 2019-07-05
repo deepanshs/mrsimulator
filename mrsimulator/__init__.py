@@ -7,8 +7,8 @@ from astropy import units as u
 
 from .__version__ import __version__
 from ._utils_download_file import _download_file_from_url
-from .simulator import _Isotopomers
-from .simulator import _Spectrum
+from .simulator import Isotopomers
+from .simulator import Spectrum
 from .simulator import get_csdfpy_object
 from .utils import __get_spin_attribute__
 
@@ -56,16 +56,10 @@ class Simulator:
         self._isotope_list = []
         self._freq = [] * u.Unit("Hz")
         self._amp = []
-        isotope_list = __get_spin_attribute__.keys()
-        self._allowed_isotopes = list(
-            set(
-                [
-                    isotope
-                    for isotope in isotope_list
-                    if __get_spin_attribute__[isotope]["spin"] == 0.5
-                ]
-            )
-        )
+        self._allowed_isotopes = __get_spin_attribute__.keys()
+        # self._allowed_isotopes = list(
+        #     set([isotope for isotope in isotope_list])
+        # )
 
         if isotopomers is not None:
             self.isotopomers = isotopomers
@@ -91,12 +85,11 @@ class Simulator:
 
     @isotopomers.setter
     def isotopomers(self, value):
-        self._isotopomers_c = _Isotopomers(value)
+        self._isotopomers_c = Isotopomers(value)
         isotope_list = [
             site["isotope_symbol"]
             for isotopomer in self._isotopomers_c
             for site in isotopomer["sites"]
-            if site["isotope_symbol"] in self._allowed_isotopes
         ]
 
         self._isotope_list = list(set(isotope_list))
@@ -109,12 +102,11 @@ class Simulator:
         Return a :ref:`spectrum` object. The attribute can also be
         used to assign a valid spectrum object.
         """
-        # return json.dumps(self._spectrum, ensure_ascii=True, indent=2)
         return self._spectrum
 
     @spectrum.setter
     def spectrum(self, value):
-        self._spectrum_c = _Spectrum(**value["direct_dimension"])
+        self._spectrum_c = Spectrum(**value["direct_dimension"])
         self._spectrum = value
 
     def run(self, method, data_object=False, **kwargs):
@@ -141,23 +133,18 @@ class Simulator:
             raise Exception("Isotopomers are required for simulation.")
         spectrum = self._spectrum_c
         if spectrum is {}:
-            raise Exception(
-                ("Cannot simulate without the spectrum information.")
-            )
-        (
-            self._freq,
-            self._amp,
-            self._larmor_frequency,
-            list_index_isotopomer,
-        ) = method(spectrum=spectrum, isotopomers=isotopomers, **kwargs)
+            raise Exception(("Cannot simulate without the spectrum information."))
+        (self._freq, self._amp, self._larmor_frequency, list_index_isotopomer) = method(
+            spectrum=spectrum, isotopomers=isotopomers, **kwargs
+        )
 
         """The frequency is in the units of Hz."""
         self._freq *= u.Unit("Hz")
         """The larmor_frequency is in the units of MHz."""
         self._larmor_frequency *= u.Unit("MHz")
 
-        isotopo_ = [isotopomers[i] for i in list_index_isotopomer]
-        application = {"isotopomers": str(isotopo_), "spectrum": spectrum}
+        isotopomer = [isotopomers[i] for i in list_index_isotopomer]
+        application = {"isotopomers": str(isotopomer), "spectrum": spectrum}
         data_object = False
         if data_object:
             return get_csdfpy_object(

@@ -35,12 +35,7 @@ REQUIRED = [
 
 # What packages are optional?
 EXTRAS = {
-    "fancy feature": [
-        "matplotlib>=3.0.2",
-        "plotly>=3.6",
-        "dash>=0.40",
-        "dash_daq>=0.1",
-    ]
+    "fancy feature": ["matplotlib>=3.0.2", "plotly>=3.6", "dash>=0.40", "dash_daq>=0.1"]
 }
 
 
@@ -126,9 +121,7 @@ nmr_function_source_dir = path.join(*_list)
 
 for _file in listdir(nmr_function_source_dir):
     if _file.endswith(".c"):
-        nmr_function_source_file.append(
-            path.join(nmr_function_source_dir, _file)
-        )
+        nmr_function_source_file.append(path.join(nmr_function_source_dir, _file))
 
 
 ext_modules = [

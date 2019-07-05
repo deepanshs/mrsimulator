@@ -75,14 +75,11 @@ class mrsimulatorWebApp:
                     className="row",
                     children=[
                         html.Div(
-                            className="col s12 m12 l7",
-                            children=plot_object_widget(),
+                            className="col s12 m12 l7", children=plot_object_widget()
                         ),
                         html.Div(
                             className="col s12 m12 l5",
-                            children=spectrum_object_widget(
-                                direct_dimension_setup()
-                            ),
+                            children=spectrum_object_widget(direct_dimension_setup()),
                         ),
                     ],
                     style={"width": "100%", "height": "100%"},
@@ -95,17 +92,12 @@ class mrsimulatorWebApp:
         @app.callback(
             Output("download_link", "href"),
             [Input("nmr_spectrum", "figure")],
-            [
-                State("filename_dataset", "children"),
-                State("spectrum_id", "children"),
-            ],
+            [State("filename_dataset", "children"), State("spectrum_id", "children")],
         )
         def _update_link(value, filename_dataset, spectrum_id):
             """Update the csv download link when the plot is refreshed."""
             name_ = os.path.splitext(str(filename_dataset))[0]
-            return "/dash/urlToDownload?value={0}+++{1}".format(
-                name_, spectrum_id
-            )
+            return "/dash/urlToDownload?value={0}+++{1}".format(name_, spectrum_id)
 
         @app.server.route("/dash/urlToDownload")
         def _download_csv():
@@ -120,9 +112,7 @@ class mrsimulatorWebApp:
             ).format(nuclei, file_)
 
             # save file as csv
-            np.savetxt(
-                str_io, writer, fmt="%f", delimiter=",", header=_header_
-            )
+            np.savetxt(str_io, writer, fmt="%f", delimiter=",", header=_header_)
 
             mem = io.BytesIO()
             mem.write(str_io.getvalue().encode("utf-8"))
@@ -186,9 +176,7 @@ class mrsimulatorWebApp:
             """
 
             # calculating frequency_bandwidth
-            frequency_bandwidth = (
-                frequency_bandwidth_coarse + frequency_bandwidth_fine
-            )
+            frequency_bandwidth = frequency_bandwidth_coarse + frequency_bandwidth_fine
 
             # exit when the following conditions are True
             if (
@@ -200,8 +188,7 @@ class mrsimulatorWebApp:
 
             # calculating spin_frequency
             spin_frequency = (
-                spinning_frequency_in_kHz_coarse
-                + spinning_frequency_in_kHz_fine
+                spinning_frequency_in_kHz_coarse + spinning_frequency_in_kHz_fine
             )
 
             reference_offset = reference_offset_coarse + reference_offset_fine
@@ -226,11 +213,7 @@ class mrsimulatorWebApp:
             freq, amp = simulator.run(one_d_spectrum)
             freq = freq.to("kHz")
             data_spinning = go.Scatter(
-                x=freq,
-                y=amp / amp.max(),
-                mode="lines",
-                opacity=1.0,
-                name=nucleus_id,
+                x=freq, y=amp / amp.max(), mode="lines", opacity=1.0, name=nucleus_id
             )
 
             x_label = str(nucleus_id + f" frequency / {freq.unit}")
@@ -271,17 +254,12 @@ class mrsimulatorWebApp:
                 Output("nucleus_widget_id", "children"),
             ],
             [Input("upload_data", "contents")],
-            [
-                State("upload_data", "filename"),
-                State("upload_data", "last_modified"),
-            ],
+            [State("upload_data", "filename"), State("upload_data", "last_modified")],
         )
         def _update_isotopomers(content, filename, date):
             """Update the isotopomers when a new file is imported."""
             # FIRST = False
-            children, success = parse_contents(
-                simulator, content, filename, date
-            )
+            children, success = parse_contents(simulator, content, filename, date)
 
             if success:
                 nuclei = [
@@ -331,9 +309,7 @@ class mrsimulatorWebApp:
                 value, "{0:.2f}".format(42.57747892 * value)
             )
 
-        @app.callback(
-            Output("spectrum_id", "children"), [Input("nucleus_id", "value")]
-        )
+        @app.callback(Output("spectrum_id", "children"), [Input("nucleus_id", "value")])
         def _update_spectrum_title(value):
             """Update the title of the plot."""
             if value is None:
@@ -357,9 +333,7 @@ class mrsimulatorWebApp:
         )
         def _update_rotor_frequency(value1, value2):
             """Update the rotor spin frequency."""
-            return "Magic angle spinning frequency {} kHz".format(
-                value1 + value2
-            )
+            return "Magic angle spinning frequency {} kHz".format(value1 + value2)
 
         @app.callback(
             Output("reference_offset_output_container", "children"),
@@ -444,20 +418,13 @@ def parse_contents(simulator, contents, filename, date):
 
         else:
             return (
-                [
-                    "",
-                    "",
-                    "A JSON file with valid list of isotopomers is required.",
-                ],
+                ["", "", "A JSON file with valid list of isotopomers is required."],
                 False,
             )
 
     except Exception:
         if FIRST:
-            return (
-                ["", "", "Select a JSON serialized isotopomers file."],
-                False,
-            )
+            return (["", "", "Select a JSON serialized isotopomers file."], False)
         else:
             return ["", "", "There was an error reading the file."], False
 

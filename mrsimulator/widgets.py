@@ -22,10 +22,7 @@ def top_bar():
                         html.H5(id="filename_dataset"),
                         html.H6(
                             id="data_time",
-                            style={
-                                "textAlign": "left",
-                                "color": colors["text"],
-                            },
+                            style={"textAlign": "left", "color": colors["text"]},
                         ),
                     ],
                 ),
@@ -77,13 +74,7 @@ def table_css():
 
 
 def display_isotopomers(nucleus, isotopomer_list):
-    columns_ = [
-        "index",
-        "site",
-        "isotropic chemical shift",
-        "anisotropy",
-        "asymmetry",
-    ]
+    columns_ = ["index", "site", "isotropic chemical shift", "anisotropy", "asymmetry"]
 
     child = []
     for j, isotopomer in enumerate(isotopomer_list):
@@ -93,9 +84,7 @@ def display_isotopomers(nucleus, isotopomer_list):
                 site_ = {}
                 site_["index"] = i
                 site_["isotope"] = site["isotope_symbol"]
-                site_["isotropic chemical shift"] = site[
-                    "isotropic_chemical_shift"
-                ]
+                site_["isotropic chemical shift"] = site["isotropic_chemical_shift"]
                 site_["anisotropy"] = site["shielding_symmetric"]["anisotropy"]
                 site_["asymmetry"] = site["shielding_symmetric"]["asymmetry"]
 
@@ -113,9 +102,7 @@ def display_isotopomers(nucleus, isotopomer_list):
                                 className="card-panel hoverable col s12 m6 l6",
                                 children=[
                                     html.H6(
-                                        children="".join(
-                                            ["Isotopomer ", str(j)]
-                                        ),
+                                        children="".join(["Isotopomer ", str(j)]),
                                         style={
                                             "textAlign": "left",
                                             "color": colors["text"],
@@ -142,8 +129,7 @@ def display_isotopomers(nucleus, isotopomer_list):
                                             }
                                         ],
                                         columns=[
-                                            {"name": i, "id": i}
-                                            for i in columns_
+                                            {"name": i, "id": i} for i in columns_
                                         ],
                                         data=sites_,
                                     ),
@@ -233,11 +219,7 @@ def direct_dimension_setup():
         html.Div(
             [
                 dcc.Slider(
-                    id="magnetic_flux_density",
-                    min=0,
-                    max=30,
-                    step=0.1,
-                    value=9.4,
+                    id="magnetic_flux_density", min=0, max=30, step=0.1, value=9.4
                 )
             ],
             style={"margin-bottom": "10px", "margin-top": "0px"},
@@ -273,9 +255,7 @@ def direct_dimension_setup():
         html.Div(
             className="row",
             children=[
-                html.H6(
-                    className="col s6 m6 l6", children="Dimension parameters"
-                ),
+                html.H6(className="col s6 m6 l6", children="Dimension parameters"),
                 # daq.BooleanSwitch(
                 #     id='ppm_switch',
                 #     className='col s6 m6 l6',

@@ -1,6 +1,6 @@
 
 //
-//  powder_setup.h
+//  interpolation.h
 //
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
 //  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
@@ -9,7 +9,5 @@
 
 #include "mrsimulator.h"
 
-extern void __powder_averaging_setup(
-    int nt, double *cos_alpha, double *cos_beta, double *amp,
-    int space // 1 for octant, 2 for hemisphere and 4 for sphere
-);
+extern int triangle_interpolation(double *freq1, double *freq2, double *freq3,
+                                  double *amp, double *spec, int *points);

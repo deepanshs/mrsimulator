@@ -22,7 +22,6 @@ wheels/
 .installed.cfg
 cython_debug/**
 *.egg
-MANIFEST
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -118,3 +117,5 @@ venv.bak/
 *.html
 *.png
 test_os.py
+note.txt
+sideband2.c

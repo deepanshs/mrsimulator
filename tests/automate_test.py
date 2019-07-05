@@ -9,6 +9,8 @@ from numpy.fft import fftshift
 from mrsimulator import Simulator
 from mrsimulator.methods import one_d_spectrum
 
+# from mrsimulator.python.simulator import simulator
+
 
 def _import_json(filename):
     with open(filename, "rb") as f:
@@ -89,84 +91,84 @@ def read_and_compare_data(filename):
 
     data_source /= data_source.max()
 
-    # if test_data_object["source"] == "python":
-    #     label_source = "python"
-
     if test_data_object["source"] == "dmfit":
         data_source = data_source[::-1]
         data_source = np.roll(data_source, 1)
-        # label_source = "dmfit"
-
-    # if test_data_object["source"] == "simpson":
-    #     label_source = "simpson"
 
     # mrsimulator
     spectrum, isotopomer = data_object["spectrum"], data_object["isotopomer"]
 
     s1 = Simulator(isotopomer)
     s1.spectrum = spectrum
-    freq, data_mrsimulator = s1.run(
+    freq_c, data_mrsimulator_c = s1.run(
         one_d_spectrum, geodesic_polyhedron_frequency=120
     )
-    data_mrsimulator /= data_mrsimulator.max()
+    data_mrsimulator_c /= data_mrsimulator_c.max()
+    satisfy_c = np.all((data_mrsimulator_c - data_source) < 0.005)
 
-    satisfy = np.all((data_mrsimulator - data_source) < 0.005)
-
-    return satisfy
+    return satisfy_c
+    # freq_py, data_mrsimulator_py = simulator(
+    #     isotopomers=s1._isotopomers_c, spectrum=s1._spectrum_c)
+    # data_mrsimulator_py /= data_mrsimulator_py.max()
+    # satisfy_py = np.all((data_mrsimulator_py - data_source) < 0.005)
+    # if satisfy_py and satisfy_c:
+    #     return True
+    # else:
+    #     False
 
 
 # --------------------------------------------------------------------------- #
 # The test pass criterion
-# np.all((mrsimulator_vector - test_vector) < 0.0
+# np.all((mrsimulator_vector - test_vector) < 0.005
 # --------------------------------------------------------------------------- #
 
 # --------------------------------------------------------------------------- #
 # Test against simpson calculations
 
 
-def test00_sim():
+def test_sim00():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test00", "test00.json")
     assert read_and_compare_data(file_)
 
 
-def test01_sim():
+def test_sim01():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test01", "test01.json")
     assert read_and_compare_data(file_)
 
 
-def test02_sim():
+def test_sim02():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test02", "test02.json")
     assert read_and_compare_data(file_)
 
 
-def test03_sim():
+def test_sim03():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test03", "test03.json")
     assert read_and_compare_data(file_)
 
 
-def test04_sim():
+def test_sim04():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test04", "test04.json")
     assert read_and_compare_data(file_)
 
 
-def test05_sim():
+def test_sim05():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test05", "test05.json")
     assert read_and_compare_data(file_)
 
 
-def test06_sim():
+def test_sim06():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test06", "test06.json")
     assert read_and_compare_data(file_)
 
 
-def test07_sim():
+def test_sim07():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test07", "test07.json")
     assert read_and_compare_data(file_)
@@ -177,31 +179,31 @@ def test07_sim():
 # are averaged over a billion orientations.
 
 
-def test00_python():
+def test_python00():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test00", "test00.json")
     assert read_and_compare_data(file_)
 
 
-def test01_python():
+def test_python01():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test01", "test01.json")
     assert read_and_compare_data(file_)
 
 
-def test02_python():
+def test_python02():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test02", "test02.json")
     assert read_and_compare_data(file_)
 
 
-def test03_python():
+def test_python03():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test03", "test03.json")
     assert read_and_compare_data(file_)
 
 
-def test04_python():
+def test_python04():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test04", "test04.json")
     assert read_and_compare_data(file_)

@@ -13,13 +13,14 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
-class _Dimensions:
+class Dimension:
     __slots__ = ()
 
     def __new__(
         number_of_points=1024,
         spectral_width="100 kHz",
         reference_offset="0 Hz",
+        **kwargs,
     ):
         """Initialize."""
         dictionary = {}
@@ -27,9 +28,7 @@ class _Dimensions:
 
         spectral_width = string_to_quantity(spectral_width)
         if spectral_width.unit.physical_type != "frequency":
-            raise Exception(
-                ("A frequency value is required for the 'spectral_width'.")
-            )
+            raise Exception(("A frequency value is required for the 'spectral_width'."))
         dictionary["spectral_width"] = spectral_width.to("Hz").value
 
         reference_offset = string_to_quantity(reference_offset)
@@ -41,7 +40,7 @@ class _Dimensions:
         return dictionary
 
 
-class _Spectrum(_Dimensions):
+class Spectrum(Dimension):
     """Set up a virtual spin environment."""
 
     __slots__ = ()
@@ -53,11 +52,11 @@ class _Spectrum(_Dimensions):
         rotor_angle="54.735 deg",
         rotor_phase="0 rad",
         nucleus="1H",
-        *args,
+        transitions=[-0.5, 0.5],
         **kwargs,
     ):
         """Initialize"""
-        dimension_dictionary = super(_Spectrum, self).__new__(*args, **kwargs)
+        dimension_dictionary = super(Spectrum, self).__new__(**kwargs)
         magnetic_flux_density = string_to_quantity(magnetic_flux_density)
         if magnetic_flux_density.unit.physical_type != "magnetic flux density":
             raise Exception(
@@ -70,9 +69,7 @@ class _Spectrum(_Dimensions):
 
         rotor_frequency = string_to_quantity(rotor_frequency)
         if rotor_frequency.unit.physical_type != "frequency":
-            raise Exception(
-                ("A frequency quantity is required for 'rotor_frequency'.")
-            )
+            raise Exception(("A frequency quantity is required for 'rotor_frequency'."))
         rotor_frequency = rotor_frequency.to("Hz").value
 
         rotor_angle = string_to_quantity(rotor_angle).to("rad").value
@@ -83,6 +80,7 @@ class _Spectrum(_Dimensions):
             "rotor_frequency": rotor_frequency,
             "rotor_angle": rotor_angle,
             "rotor_phase": rotor_phase,
+            "transitions": transitions,
         }
 
         dictionary.update(dimension_dictionary)
@@ -98,27 +96,14 @@ class _Spectrum(_Dimensions):
         return dictionary
 
 
-# class Isotopomers(list):
-#     def __init__(self, isotopomers: list) -> list:
-#         isotopomers_ = _Isotopomers(isotopomers)
-#         list.__init__(self, isotopomers_)
-
-#     def append(self, value):
-#         isotopomer_ = _Isotopomer(**value)
-#         list.append(isotopomer_)
-
-
-class _Isotopomers:
+class Isotopomers:
     __slots__ = ()
 
     def __new__(self, isotopomers: list) -> list:
 
         if not isinstance(isotopomers, list):
             raise Exception(
-                (
-                    f"A list of isotopomers is required, "
-                    f"found {type(isotopomers)}."
-                )
+                (f"A list of isotopomers is required, " f"found {type(isotopomers)}.")
             )
         if len(isotopomers) != 0:
             if not isinstance(isotopomers[0], dict):
@@ -129,54 +114,26 @@ class _Isotopomers:
                     )
                 )
 
-        isotopomers_ = []
-        for isotopomer in isotopomers:
-            isotopomer_set = _Isotopomer(**isotopomer)
-            isotopomers_.append(isotopomer_set)
+        isotopomer_list = [Isotopomer(**item) for item in isotopomers]
 
-        return isotopomers_
+        return isotopomer_list
 
 
-class _Isotopomer:
+class Isotopomer:
     __slots__ = ()
 
     def __new__(
-        self,
-        sites: list = [],
-        couplings: list = [],
-        abundance: str = "100.0 %",
+        self, sites: list = [], couplings: list = [], abundance: str = "100.0 %"
     ) -> list:
         """Initialize."""
         if not isinstance(sites, list):
-            raise ValueError(
-                (f"Expecting a list of sites. Found {type(sites)}.")
-            )
-        _sites = []
+            raise ValueError((f"Expecting a list of sites. Found {type(sites)}."))
         abundance = string_to_quantity(abundance).to("").value
-        for site in sites:
-            _sites.append(_Site(**site))
-        return {"sites": _sites, "abundance": abundance}
+        site_list = [Site(**site) for site in sites]
+        return {"sites": site_list, "abundance": abundance}
 
 
-def _check_values_in_ppm(value, property):
-    value_ = string_to_quantity(value)
-    if value_.unit.physical_type == "dimensionless":
-        if str(value_.unit) == "ppm":
-            return value_
-        else:
-            return value_.to(_ppm)
-    if value_.unit.physical_type == "frequency":
-        return value_
-    else:
-        raise Exception(
-            (
-                f"Expecting '{property}' in units of frequency or a "
-                f"dimensionless frequency ratio, ppm, found {str(value_)}."
-            )
-        )
-
-
-class _Site:
+class Site:
     __slots__ = ()
 
     def __new__(
@@ -184,20 +141,46 @@ class _Site:
         isotope_symbol="1H",
         isotropic_chemical_shift="0 ppm",
         shielding_symmetric=None,
+        quadrupolar=None,
     ):
-        """Initialize."""
-        return {
-            "isotope_symbol": isotope_symbol,
-            "isotropic_chemical_shift": _check_values_in_ppm(
-                isotropic_chemical_shift, "isotropic_chemical_shift"
-            ),
-            "shielding_symmetric": {
+        dictionary = {}
+        dictionary["isotope_symbol"] = get_proper_detector_nucleus(isotope_symbol)
+        dictionary["isotropic_chemical_shift"] = _check_values_in_ppm(
+            isotropic_chemical_shift, "isotropic_chemical_shift"
+        )
+        if isinstance(shielding_symmetric, dict):
+            dictionary["shielding_symmetric"] = {
                 "anisotropy": _check_values_in_ppm(
                     shielding_symmetric["anisotropy"], "shielding anisotropy"
                 ),
                 "asymmetry": float(shielding_symmetric["asymmetry"]),
-            },
-        }
+            }
+
+        if isinstance(quadrupolar, dict):
+            dictionary["quadrupolar"] = {
+                "anisotropy": string_to_quantity(quadrupolar["anisotropy"])
+                .to("Hz")
+                .value,
+                "asymmetry": float(quadrupolar["asymmetry"]),
+            }
+        else:
+            dictionary["quadrupolar"] = {"anisotropy": 0, "asymmetry": 0}
+        return dictionary
+
+
+def _check_values_in_ppm(value, property):
+    value = string_to_quantity(value)
+    if value.unit.physical_type == "dimensionless":
+        return value.to(_ppm)
+    if value.unit.physical_type == "frequency":
+        return value.to("Hz")
+    else:
+        raise Exception(
+            (
+                f"Expecting '{property}' in units of frequency or a "
+                f"dimensionless frequency ratio, ppm, found {str(value)}."
+            )
+        )
 
 
 def get_proper_detector_nucleus(string):
@@ -266,9 +249,9 @@ def _simulator(spectrum, method, isotopomers, **kwargs):
     """
     if isotopomers is None:
         raise Exception("No isotopomer found.")
-    isotopomers = _Isotopomers(isotopomers)
+    isotopomers = Isotopomers(isotopomers)
 
-    spectrum = _Spectrum(**spectrum["direct_dimension"])
+    spectrum = Spectrum(**spectrum["direct_dimension"])
     # print(spectrum)
 
     freq, amp = method(spectrum=spectrum, isotopomers=isotopomers, **kwargs)

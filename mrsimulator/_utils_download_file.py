@@ -41,9 +41,7 @@ def _download_file_from_url(url):
                 downloaded += len(data)
                 f.write(data)
                 done = int(8 * downloaded / total)
-                sys.stdout.write(
-                    "\r[{}{}]".format("█" * done, "." * (8 - done))
-                )
+                sys.stdout.write("\r[{}{}]".format("█" * done, "." * (8 - done)))
                 sys.stdout.flush()
 
     sys.stdout.write("\n")
