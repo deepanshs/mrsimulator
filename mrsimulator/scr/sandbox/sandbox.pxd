@@ -26,6 +26,15 @@ cdef extern from "interpolation.h":
         double *spec,
         int *points)
 
+cdef extern from "octahedron.h":
+    void octahedronInterpolation(
+        double *spec,
+        double *freq,
+        int nt,
+        double *amp,
+        int stride,
+        int m)
+
 cdef extern from "spinning_sidebands.h":
     void __get_pre_phase_components(
         int number_of_sidebands,

@@ -132,8 +132,17 @@ def trig_of_polar_angles_and_amplitudes(int geodesic_polyhedron_frequency=72):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
+def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, int stride=1):
+    cdef int i
+    cdef int number_of_sidebands = amp.shape[0]
+    for i in range(number_of_sidebands):
+        clib.octahedronInterpolation(&spec[0], &freq[i,0], nt, &amp[i,0], stride, spec.size)
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
 def triangle_interpolation(vector, np.ndarray[double, ndim=1] spectrum_amp,
-                           double offset=0, double amp=1):
+                           double amp=1):
     r"""
     Given a vector of three points, this method interpolates the
     between the points to form a triangle. The height of the triangle is given
@@ -150,8 +159,8 @@ def triangle_interpolation(vector, np.ndarray[double, ndim=1] spectrum_amp,
                default value is 0.
     """
     cdef np.ndarray[int, ndim=1] points = np.asarray([spectrum_amp.size], dtype=np.int32)
-    cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector + offset, dtype=np.float64)
-    f_vector+=0.5
+    cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector, dtype=np.float64)
+
     cdef double *f1 = &f_vector[0]
     cdef double *f2 = &f_vector[1]
     cdef double *f3 = &f_vector[2]

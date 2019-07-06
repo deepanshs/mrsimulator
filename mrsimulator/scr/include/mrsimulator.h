@@ -14,8 +14,8 @@
 #define MKL_Complex16 double complex
 
 #include "mkl.h"
-#include "mkl_scalapack.h"
-#include "omp.h"
+#include "mkl_dfti.h"
+// #include "omp.h"
 #include <math.h>
 // to use calloc, malloc, and free methods
 #include <stdio.h>

@@ -8,6 +8,7 @@
             "/Users/deepansh/anaconda3/lib/python3.7/site-packages/numpy/core/include/numpy/ufuncobject.h",
             "mrsimulator/scr/include/angular_momentum.h",
             "mrsimulator/scr/include/interpolation.h",
+            "mrsimulator/scr/include/octahedron.h",
             "mrsimulator/scr/include/powder_setup.h",
             "mrsimulator/scr/include/spinning_sidebands.h"
         ],
@@ -641,6 +642,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include "angular_momentum.h"
 #include "powder_setup.h"
 #include "interpolation.h"
+#include "octahedron.h"
 #include "spinning_sidebands.h"
 #include <string.h>
 #include <stdio.h>
@@ -1232,6 +1234,16 @@ typedef npy_cdouble __pyx_t_5numpy_complex_t;
 #define __Pyx_CLEAR(r)    do { PyObject* tmp = ((PyObject*)(r)); r = NULL; __Pyx_DECREF(tmp);} while(0)
 #define __Pyx_XCLEAR(r)   do { if((r) != NULL) {PyObject* tmp = ((PyObject*)(r)); r = NULL; __Pyx_DECREF(tmp);}} while(0)
 
+/* PyObjectGetAttrStr.proto */
+#if CYTHON_USE_TYPE_SLOTS
+static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject* attr_name);
+#else
+#define __Pyx_PyObject_GetAttrStr(o,n) PyObject_GetAttr(o,n)
+#endif
+
+/* GetBuiltinName.proto */
+static PyObject *__Pyx_GetBuiltinName(PyObject *name);
+
 /* RaiseArgTupleInvalid.proto */
 static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
     Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
@@ -1243,16 +1255,6 @@ static void __Pyx_RaiseDoubleKeywordsError(const char* func_name, PyObject* kw_n
 static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
     PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args,\
     const char* function_name);
-
-/* PyObjectGetAttrStr.proto */
-#if CYTHON_USE_TYPE_SLOTS
-static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject* attr_name);
-#else
-#define __Pyx_PyObject_GetAttrStr(o,n) PyObject_GetAttr(o,n)
-#endif
-
-/* GetBuiltinName.proto */
-static PyObject *__Pyx_GetBuiltinName(PyObject *name);
 
 /* PyDictVersioning.proto */
 #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
@@ -1464,6 +1466,7 @@ static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, long intval, 
     (inplace ? PyNumber_InPlaceAdd(op1, op2) : PyNumber_Add(op1, op2))
 #endif
 
+#define __Pyx_BufPtrStrided2d(type, buf, i0, s0, i1, s1) (type)((char*)buf + i0 * s0 + i1 * s1)
 /* RaiseException.proto */
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
 
@@ -1769,10 +1772,11 @@ extern int __pyx_module_is_main_mrsimulator__sandbox;
 int __pyx_module_is_main_mrsimulator__sandbox = 0;
 
 /* Implementation of 'mrsimulator.sandbox' */
-static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_range;
+static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_RuntimeError;
 static PyObject *__pyx_builtin_ImportError;
+static const char __pyx_k_i[] = "i";
 static const char __pyx_k_l[] = "l";
 static const char __pyx_k_n[] = "n";
 static const char __pyx_k_f1[] = "f1";
@@ -1784,9 +1788,11 @@ static const char __pyx_k_nt[] = "nt";
 static const char __pyx_k_amp[] = "amp";
 static const char __pyx_k_R_in[] = "R_in";
 static const char __pyx_k_beta[] = "beta";
+static const char __pyx_k_freq[] = "freq";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_name[] = "__name__";
 static const char __pyx_k_size[] = "size";
+static const char __pyx_k_spec[] = "spec";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_R_out[] = "R_out";
 static const char __pyx_k_amp_2[] = "amp_";
@@ -1802,8 +1808,8 @@ static const char __pyx_k_utils[] = "utils";
 static const char __pyx_k_zeros[] = "zeros";
 static const char __pyx_k_author[] = "__author__";
 static const char __pyx_k_import[] = "__import__";
-static const char __pyx_k_offset[] = "offset";
 static const char __pyx_k_points[] = "points";
+static const char __pyx_k_stride[] = "stride";
 static const char __pyx_k_vector[] = "vector";
 static const char __pyx_k_wigner[] = "wigner";
 static const char __pyx_k_asarray[] = "asarray";
@@ -1834,6 +1840,7 @@ static const char __pyx_k_Deepansh_J_Srivastava[] = "Deepansh J. Srivastava";
 static const char __pyx_k_srivastava_89_osu_edu[] = "srivastava.89@osu.edu";
 static const char __pyx_k_deepansh2012_gmail_com[] = "deepansh2012@gmail.com";
 static const char __pyx_k_triangle_interpolation[] = "triangle_interpolation";
+static const char __pyx_k_octahedronInterpolation[] = "octahedronInterpolation";
 static const char __pyx_k_wigner_d_matrix_cosines[] = "wigner_d_matrix_cosines";
 static const char __pyx_k_sample_rotation_frequency[] = "sample_rotation_frequency";
 static const char __pyx_k_ndarray_is_not_C_contiguous[] = "ndarray is not C contiguous";
@@ -1879,8 +1886,10 @@ static PyObject *__pyx_n_s_f2;
 static PyObject *__pyx_n_s_f3;
 static PyObject *__pyx_n_s_f_vector;
 static PyObject *__pyx_n_s_float64;
+static PyObject *__pyx_n_s_freq;
 static PyObject *__pyx_n_s_geodesic_polyhedron_frequency;
 static PyObject *__pyx_n_s_get_spin_attribute;
+static PyObject *__pyx_n_s_i;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_int32;
 static PyObject *__pyx_n_s_l;
@@ -1899,7 +1908,7 @@ static PyObject *__pyx_n_s_number_of_sidebands;
 static PyObject *__pyx_n_s_numpy;
 static PyObject *__pyx_kp_u_numpy_core_multiarray_failed_to;
 static PyObject *__pyx_kp_u_numpy_core_umath_failed_to_impor;
-static PyObject *__pyx_n_s_offset;
+static PyObject *__pyx_n_s_octahedronInterpolation;
 static PyObject *__pyx_n_s_phase_alpha;
 static PyObject *__pyx_n_s_points;
 static PyObject *__pyx_n_s_pre_phase;
@@ -1910,8 +1919,10 @@ static PyObject *__pyx_n_s_reshape;
 static PyObject *__pyx_n_s_sample_rotation_frequency;
 static PyObject *__pyx_n_s_shape;
 static PyObject *__pyx_n_s_size;
+static PyObject *__pyx_n_s_spec;
 static PyObject *__pyx_n_s_spectrum_amp;
 static PyObject *__pyx_kp_u_srivastava_89_osu_edu;
+static PyObject *__pyx_n_s_stride;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_triangle_interpolation;
 static PyObject *__pyx_n_s_trig_of_polar_angles_and_amplitu;
@@ -1930,10 +1941,10 @@ static PyObject *__pyx_pf_11mrsimulator_7sandbox_2wigner_dm0_vector(CYTHON_UNUSE
 static PyObject *__pyx_pf_11mrsimulator_7sandbox_4wigner_rotation(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_l, PyArrayObject *__pyx_v_R_in, PyObject *__pyx_v_cos_alpha, PyObject *__pyx_v_cos_beta, PyObject *__pyx_v_wigner_matrix, CYTHON_UNUSED PyObject *__pyx_v_phase_alpha); /* proto */
 static PyObject *__pyx_pf_11mrsimulator_7sandbox_6wigner_d_matrix_cosines(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_l, PyArrayObject *__pyx_v_cos_beta); /* proto */
 static PyObject *__pyx_pf_11mrsimulator_7sandbox_8trig_of_polar_angles_and_amplitudes(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_geodesic_polyhedron_frequency); /* proto */
-static PyObject *__pyx_pf_11mrsimulator_7sandbox_10triangle_interpolation(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_vector, PyArrayObject *__pyx_v_spectrum_amp, double __pyx_v_offset, double __pyx_v_amp); /* proto */
+static PyObject *__pyx_pf_11mrsimulator_7sandbox_10octahedronInterpolation(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_spec, PyArrayObject *__pyx_v_freq, int __pyx_v_nt, PyArrayObject *__pyx_v_amp, int __pyx_v_stride); /* proto */
+static PyObject *__pyx_pf_11mrsimulator_7sandbox_12triangle_interpolation(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_vector, PyArrayObject *__pyx_v_spectrum_amp, double __pyx_v_amp); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
-static PyObject *__pyx_float_0_5;
 static PyObject *__pyx_int_1;
 static PyObject *__pyx_int_2;
 static PyObject *__pyx_int_9;
@@ -1950,12 +1961,14 @@ static PyObject *__pyx_tuple__12;
 static PyObject *__pyx_tuple__14;
 static PyObject *__pyx_tuple__16;
 static PyObject *__pyx_tuple__18;
+static PyObject *__pyx_tuple__20;
 static PyObject *__pyx_codeobj__9;
 static PyObject *__pyx_codeobj__11;
 static PyObject *__pyx_codeobj__13;
 static PyObject *__pyx_codeobj__15;
 static PyObject *__pyx_codeobj__17;
 static PyObject *__pyx_codeobj__19;
+static PyObject *__pyx_codeobj__21;
 /* Late includes */
 
 /* "mrsimulator/scr/sandbox/sandbox.pyx":14
@@ -3793,32 +3806,270 @@ static PyObject *__pyx_pf_11mrsimulator_7sandbox_8trig_of_polar_angles_and_ampli
 /* "mrsimulator/scr/sandbox/sandbox.pyx":135
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
+ * def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, int stride=1):             # <<<<<<<<<<<<<<
+ *     cdef int i
+ *     cdef int number_of_sidebands = amp.shape[0]
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_11mrsimulator_7sandbox_11octahedronInterpolation(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_11mrsimulator_7sandbox_11octahedronInterpolation = {"octahedronInterpolation", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_11mrsimulator_7sandbox_11octahedronInterpolation, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_11mrsimulator_7sandbox_11octahedronInterpolation(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyArrayObject *__pyx_v_spec = 0;
+  PyArrayObject *__pyx_v_freq = 0;
+  int __pyx_v_nt;
+  PyArrayObject *__pyx_v_amp = 0;
+  int __pyx_v_stride;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("octahedronInterpolation (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_spec,&__pyx_n_s_freq,&__pyx_n_s_nt,&__pyx_n_s_amp,&__pyx_n_s_stride,0};
+    PyObject* values[5] = {0,0,0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+        CYTHON_FALLTHROUGH;
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_spec)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_freq)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("octahedronInterpolation", 0, 4, 5, 1); __PYX_ERR(0, 135, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_nt)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("octahedronInterpolation", 0, 4, 5, 2); __PYX_ERR(0, 135, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_amp)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("octahedronInterpolation", 0, 4, 5, 3); __PYX_ERR(0, 135, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  4:
+        if (kw_args > 0) {
+          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_stride);
+          if (value) { values[4] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "octahedronInterpolation") < 0)) __PYX_ERR(0, 135, __pyx_L3_error)
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+        CYTHON_FALLTHROUGH;
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_spec = ((PyArrayObject *)values[0]);
+    __pyx_v_freq = ((PyArrayObject *)values[1]);
+    __pyx_v_nt = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_nt == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 135, __pyx_L3_error)
+    __pyx_v_amp = ((PyArrayObject *)values[3]);
+    if (values[4]) {
+      __pyx_v_stride = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_stride == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 135, __pyx_L3_error)
+    } else {
+      __pyx_v_stride = ((int)1);
+    }
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("octahedronInterpolation", 0, 4, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 135, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("mrsimulator.sandbox.octahedronInterpolation", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_spec), __pyx_ptype_5numpy_ndarray, 1, "spec", 0))) __PYX_ERR(0, 135, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_freq), __pyx_ptype_5numpy_ndarray, 1, "freq", 0))) __PYX_ERR(0, 135, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_amp), __pyx_ptype_5numpy_ndarray, 1, "amp", 0))) __PYX_ERR(0, 135, __pyx_L1_error)
+  __pyx_r = __pyx_pf_11mrsimulator_7sandbox_10octahedronInterpolation(__pyx_self, __pyx_v_spec, __pyx_v_freq, __pyx_v_nt, __pyx_v_amp, __pyx_v_stride);
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_11mrsimulator_7sandbox_10octahedronInterpolation(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_spec, PyArrayObject *__pyx_v_freq, int __pyx_v_nt, PyArrayObject *__pyx_v_amp, int __pyx_v_stride) {
+  int __pyx_v_i;
+  int __pyx_v_number_of_sidebands;
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_amp;
+  __Pyx_Buffer __pyx_pybuffer_amp;
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_freq;
+  __Pyx_Buffer __pyx_pybuffer_freq;
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_spec;
+  __Pyx_Buffer __pyx_pybuffer_spec;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  Py_ssize_t __pyx_t_4;
+  Py_ssize_t __pyx_t_5;
+  Py_ssize_t __pyx_t_6;
+  Py_ssize_t __pyx_t_7;
+  Py_ssize_t __pyx_t_8;
+  PyObject *__pyx_t_9 = NULL;
+  int __pyx_t_10;
+  __Pyx_RefNannySetupContext("octahedronInterpolation", 0);
+  __pyx_pybuffer_spec.pybuffer.buf = NULL;
+  __pyx_pybuffer_spec.refcount = 0;
+  __pyx_pybuffernd_spec.data = NULL;
+  __pyx_pybuffernd_spec.rcbuffer = &__pyx_pybuffer_spec;
+  __pyx_pybuffer_freq.pybuffer.buf = NULL;
+  __pyx_pybuffer_freq.refcount = 0;
+  __pyx_pybuffernd_freq.data = NULL;
+  __pyx_pybuffernd_freq.rcbuffer = &__pyx_pybuffer_freq;
+  __pyx_pybuffer_amp.pybuffer.buf = NULL;
+  __pyx_pybuffer_amp.refcount = 0;
+  __pyx_pybuffernd_amp.data = NULL;
+  __pyx_pybuffernd_amp.rcbuffer = &__pyx_pybuffer_amp;
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_spec.rcbuffer->pybuffer, (PyObject*)__pyx_v_spec, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 135, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_spec.diminfo[0].strides = __pyx_pybuffernd_spec.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_spec.diminfo[0].shape = __pyx_pybuffernd_spec.rcbuffer->pybuffer.shape[0];
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_freq.rcbuffer->pybuffer, (PyObject*)__pyx_v_freq, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 135, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_freq.diminfo[0].strides = __pyx_pybuffernd_freq.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_freq.diminfo[0].shape = __pyx_pybuffernd_freq.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_freq.diminfo[1].strides = __pyx_pybuffernd_freq.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_freq.diminfo[1].shape = __pyx_pybuffernd_freq.rcbuffer->pybuffer.shape[1];
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_amp.rcbuffer->pybuffer, (PyObject*)__pyx_v_amp, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 135, __pyx_L1_error)
+  }
+  __pyx_pybuffernd_amp.diminfo[0].strides = __pyx_pybuffernd_amp.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_amp.diminfo[0].shape = __pyx_pybuffernd_amp.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_amp.diminfo[1].strides = __pyx_pybuffernd_amp.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_amp.diminfo[1].shape = __pyx_pybuffernd_amp.rcbuffer->pybuffer.shape[1];
+
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":137
+ * def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, int stride=1):
+ *     cdef int i
+ *     cdef int number_of_sidebands = amp.shape[0]             # <<<<<<<<<<<<<<
+ *     for i in range(number_of_sidebands):
+ *         clib.octahedronInterpolation(&spec[0], &freq[i,0], nt, &amp[i,0], stride, spec.size)
+ */
+  __pyx_v_number_of_sidebands = (__pyx_v_amp->dimensions[0]);
+
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":138
+ *     cdef int i
+ *     cdef int number_of_sidebands = amp.shape[0]
+ *     for i in range(number_of_sidebands):             # <<<<<<<<<<<<<<
+ *         clib.octahedronInterpolation(&spec[0], &freq[i,0], nt, &amp[i,0], stride, spec.size)
+ *
+ */
+  __pyx_t_1 = __pyx_v_number_of_sidebands;
+  __pyx_t_2 = __pyx_t_1;
+  for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
+    __pyx_v_i = __pyx_t_3;
+
+    /* "mrsimulator/scr/sandbox/sandbox.pyx":139
+ *     cdef int number_of_sidebands = amp.shape[0]
+ *     for i in range(number_of_sidebands):
+ *         clib.octahedronInterpolation(&spec[0], &freq[i,0], nt, &amp[i,0], stride, spec.size)             # <<<<<<<<<<<<<<
+ *
+ *
+ */
+    __pyx_t_4 = 0;
+    __pyx_t_5 = __pyx_v_i;
+    __pyx_t_6 = 0;
+    __pyx_t_7 = __pyx_v_i;
+    __pyx_t_8 = 0;
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_spec), __pyx_n_s_size); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 139, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_10 = __Pyx_PyInt_As_int(__pyx_t_9); if (unlikely((__pyx_t_10 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 139, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    octahedronInterpolation((&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_spec.rcbuffer->pybuffer.buf, __pyx_t_4, __pyx_pybuffernd_spec.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided2d(double *, __pyx_pybuffernd_freq.rcbuffer->pybuffer.buf, __pyx_t_5, __pyx_pybuffernd_freq.diminfo[0].strides, __pyx_t_6, __pyx_pybuffernd_freq.diminfo[1].strides))), __pyx_v_nt, (&(*__Pyx_BufPtrStrided2d(double *, __pyx_pybuffernd_amp.rcbuffer->pybuffer.buf, __pyx_t_7, __pyx_pybuffernd_amp.diminfo[0].strides, __pyx_t_8, __pyx_pybuffernd_amp.diminfo[1].strides))), __pyx_v_stride, __pyx_t_10);
+  }
+
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":135
+ * @cython.boundscheck(False)
+ * @cython.wraparound(False)
+ * def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, int stride=1):             # <<<<<<<<<<<<<<
+ *     cdef int i
+ *     cdef int number_of_sidebands = amp.shape[0]
+ */
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_9);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_amp.rcbuffer->pybuffer);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_freq.rcbuffer->pybuffer);
+    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_spec.rcbuffer->pybuffer);
+  __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
+  __Pyx_AddTraceback("mrsimulator.sandbox.octahedronInterpolation", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  goto __pyx_L2;
+  __pyx_L0:;
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_amp.rcbuffer->pybuffer);
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_freq.rcbuffer->pybuffer);
+  __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_spec.rcbuffer->pybuffer);
+  __pyx_L2:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "mrsimulator/scr/sandbox/sandbox.pyx":144
+ * @cython.boundscheck(False)
+ * @cython.wraparound(False)
  * def triangle_interpolation(vector, np.ndarray[double, ndim=1] spectrum_amp,             # <<<<<<<<<<<<<<
- *                            double offset=0, double amp=1):
+ *                            double amp=1):
  *     r"""
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_11mrsimulator_7sandbox_11triangle_interpolation(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_11mrsimulator_7sandbox_10triangle_interpolation[] = "\n    Given a vector of three points, this method interpolates the\n    between the points to form a triangle. The height of the triangle is given\n    as `2.0/(f[2]-f[1])` where `f` is the array `vector` sorted in an ascending\n    order.\n\n    :ivar vector: 1-D array of three points.\n    :ivar spectrum_amp: A numpy array of amplitudes. This array is updated.\n    :ivar offset: A float specifying the offset. The points from array `vector`\n                  are incremented or decremented based in this values. The\n                  default value is 0.\n    :ivar amp: A float specifying the offset. The points from array `vector`\n               are incremented or decremented based in this values. The\n               default value is 0.\n    ";
-static PyMethodDef __pyx_mdef_11mrsimulator_7sandbox_11triangle_interpolation = {"triangle_interpolation", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_11mrsimulator_7sandbox_11triangle_interpolation, METH_VARARGS|METH_KEYWORDS, __pyx_doc_11mrsimulator_7sandbox_10triangle_interpolation};
-static PyObject *__pyx_pw_11mrsimulator_7sandbox_11triangle_interpolation(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_11mrsimulator_7sandbox_13triangle_interpolation(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_11mrsimulator_7sandbox_12triangle_interpolation[] = "\n    Given a vector of three points, this method interpolates the\n    between the points to form a triangle. The height of the triangle is given\n    as `2.0/(f[2]-f[1])` where `f` is the array `vector` sorted in an ascending\n    order.\n\n    :ivar vector: 1-D array of three points.\n    :ivar spectrum_amp: A numpy array of amplitudes. This array is updated.\n    :ivar offset: A float specifying the offset. The points from array `vector`\n                  are incremented or decremented based in this values. The\n                  default value is 0.\n    :ivar amp: A float specifying the offset. The points from array `vector`\n               are incremented or decremented based in this values. The\n               default value is 0.\n    ";
+static PyMethodDef __pyx_mdef_11mrsimulator_7sandbox_13triangle_interpolation = {"triangle_interpolation", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_11mrsimulator_7sandbox_13triangle_interpolation, METH_VARARGS|METH_KEYWORDS, __pyx_doc_11mrsimulator_7sandbox_12triangle_interpolation};
+static PyObject *__pyx_pw_11mrsimulator_7sandbox_13triangle_interpolation(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_vector = 0;
   PyArrayObject *__pyx_v_spectrum_amp = 0;
-  double __pyx_v_offset;
   double __pyx_v_amp;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("triangle_interpolation (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_vector,&__pyx_n_s_spectrum_amp,&__pyx_n_s_offset,&__pyx_n_s_amp,0};
-    PyObject* values[4] = {0,0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_vector,&__pyx_n_s_spectrum_amp,&__pyx_n_s_amp,0};
+    PyObject* values[3] = {0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
-        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-        CYTHON_FALLTHROUGH;
         case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
         CYTHON_FALLTHROUGH;
         case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
@@ -3837,28 +4088,20 @@ static PyObject *__pyx_pw_11mrsimulator_7sandbox_11triangle_interpolation(PyObje
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_spectrum_amp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("triangle_interpolation", 0, 2, 4, 1); __PYX_ERR(0, 135, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("triangle_interpolation", 0, 2, 3, 1); __PYX_ERR(0, 144, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (kw_args > 0) {
-          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_offset);
-          if (value) { values[2] = value; kw_args--; }
-        }
-        CYTHON_FALLTHROUGH;
-        case  3:
-        if (kw_args > 0) {
           PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_amp);
-          if (value) { values[3] = value; kw_args--; }
+          if (value) { values[2] = value; kw_args--; }
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "triangle_interpolation") < 0)) __PYX_ERR(0, 135, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "triangle_interpolation") < 0)) __PYX_ERR(0, 144, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
-        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-        CYTHON_FALLTHROUGH;
         case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
         CYTHON_FALLTHROUGH;
         case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
@@ -3870,26 +4113,21 @@ static PyObject *__pyx_pw_11mrsimulator_7sandbox_11triangle_interpolation(PyObje
     __pyx_v_vector = values[0];
     __pyx_v_spectrum_amp = ((PyArrayObject *)values[1]);
     if (values[2]) {
-      __pyx_v_offset = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_offset == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 136, __pyx_L3_error)
-    } else {
-      __pyx_v_offset = ((double)0.0);
-    }
-    if (values[3]) {
-      __pyx_v_amp = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_amp == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 136, __pyx_L3_error)
+      __pyx_v_amp = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_amp == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 145, __pyx_L3_error)
     } else {
       __pyx_v_amp = ((double)1.0);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("triangle_interpolation", 0, 2, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 135, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("triangle_interpolation", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 144, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("mrsimulator.sandbox.triangle_interpolation", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_spectrum_amp), __pyx_ptype_5numpy_ndarray, 1, "spectrum_amp", 0))) __PYX_ERR(0, 135, __pyx_L1_error)
-  __pyx_r = __pyx_pf_11mrsimulator_7sandbox_10triangle_interpolation(__pyx_self, __pyx_v_vector, __pyx_v_spectrum_amp, __pyx_v_offset, __pyx_v_amp);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_spectrum_amp), __pyx_ptype_5numpy_ndarray, 1, "spectrum_amp", 0))) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_r = __pyx_pf_11mrsimulator_7sandbox_12triangle_interpolation(__pyx_self, __pyx_v_vector, __pyx_v_spectrum_amp, __pyx_v_amp);
 
   /* function exit code */
   goto __pyx_L0;
@@ -3900,7 +4138,7 @@ static PyObject *__pyx_pw_11mrsimulator_7sandbox_11triangle_interpolation(PyObje
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_11mrsimulator_7sandbox_10triangle_interpolation(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_vector, PyArrayObject *__pyx_v_spectrum_amp, double __pyx_v_offset, double __pyx_v_amp) {
+static PyObject *__pyx_pf_11mrsimulator_7sandbox_12triangle_interpolation(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_vector, PyArrayObject *__pyx_v_spectrum_amp, double __pyx_v_amp) {
   PyArrayObject *__pyx_v_points = 0;
   PyArrayObject *__pyx_v_f_vector = 0;
   double *__pyx_v_f1;
@@ -3924,17 +4162,13 @@ static PyObject *__pyx_pf_11mrsimulator_7sandbox_10triangle_interpolation(CYTHON
   PyObject *__pyx_t_5 = NULL;
   PyArrayObject *__pyx_t_6 = NULL;
   PyArrayObject *__pyx_t_7 = NULL;
-  int __pyx_t_8;
-  PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
+  Py_ssize_t __pyx_t_8;
+  Py_ssize_t __pyx_t_9;
+  Py_ssize_t __pyx_t_10;
+  PyArrayObject *__pyx_t_11 = NULL;
   Py_ssize_t __pyx_t_12;
   Py_ssize_t __pyx_t_13;
   Py_ssize_t __pyx_t_14;
-  PyArrayObject *__pyx_t_15 = NULL;
-  Py_ssize_t __pyx_t_16;
-  Py_ssize_t __pyx_t_17;
-  Py_ssize_t __pyx_t_18;
   __Pyx_RefNannySetupContext("triangle_interpolation", 0);
   __pyx_pybuffer_points.pybuffer.buf = NULL;
   __pyx_pybuffer_points.refcount = 0;
@@ -3954,55 +4188,55 @@ static PyObject *__pyx_pf_11mrsimulator_7sandbox_10triangle_interpolation(CYTHON
   __pyx_pybuffernd_spectrum_amp.rcbuffer = &__pyx_pybuffer_spectrum_amp;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_spectrum_amp.rcbuffer->pybuffer, (PyObject*)__pyx_v_spectrum_amp, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 135, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_spectrum_amp.rcbuffer->pybuffer, (PyObject*)__pyx_v_spectrum_amp, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 144, __pyx_L1_error)
   }
   __pyx_pybuffernd_spectrum_amp.diminfo[0].strides = __pyx_pybuffernd_spectrum_amp.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_spectrum_amp.diminfo[0].shape = __pyx_pybuffernd_spectrum_amp.rcbuffer->pybuffer.shape[0];
 
-  /* "mrsimulator/scr/sandbox/sandbox.pyx":152
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":161
  *                default value is 0.
  *     """
  *     cdef np.ndarray[int, ndim=1] points = np.asarray([spectrum_amp.size], dtype=np.int32)             # <<<<<<<<<<<<<<
- *     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector + offset, dtype=np.float64)
- *     f_vector+=0.5
+ *     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector, dtype=np.float64)
+ *
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_asarray); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_asarray); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_spectrum_amp), __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_spectrum_amp), __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_1);
   PyList_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_3);
   PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_3);
   __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_int32); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_int32); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 152, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 161, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 152, __pyx_L1_error)
+  if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 161, __pyx_L1_error)
   __pyx_t_6 = ((PyArrayObject *)__pyx_t_5);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_points.rcbuffer->pybuffer, (PyObject*)__pyx_t_6, &__Pyx_TypeInfo_int, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_points = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_points.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 152, __pyx_L1_error)
+      __PYX_ERR(0, 161, __pyx_L1_error)
     } else {__pyx_pybuffernd_points.diminfo[0].strides = __pyx_pybuffernd_points.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_points.diminfo[0].shape = __pyx_pybuffernd_points.rcbuffer->pybuffer.shape[0];
     }
   }
@@ -4010,49 +4244,44 @@ static PyObject *__pyx_pf_11mrsimulator_7sandbox_10triangle_interpolation(CYTHON
   __pyx_v_points = ((PyArrayObject *)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "mrsimulator/scr/sandbox/sandbox.pyx":153
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":162
  *     """
  *     cdef np.ndarray[int, ndim=1] points = np.asarray([spectrum_amp.size], dtype=np.int32)
- *     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector + offset, dtype=np.float64)             # <<<<<<<<<<<<<<
- *     f_vector+=0.5
+ *     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector, dtype=np.float64)             # <<<<<<<<<<<<<<
+ *
  *     cdef double *f1 = &f_vector[0]
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_asarray); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_asarray); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_offset); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_1 = PyNumber_Add(__pyx_v_vector, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __Pyx_INCREF(__pyx_v_vector);
+  __Pyx_GIVEREF(__pyx_v_vector);
+  PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_v_vector);
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 153, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
-  __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 153, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_float64); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_float64); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_4) < 0) __PYX_ERR(0, 153, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_4) < 0) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 153, __pyx_L1_error)
+  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 162, __pyx_L1_error)
   __pyx_t_7 = ((PyArrayObject *)__pyx_t_4);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_f_vector.rcbuffer->pybuffer, (PyObject*)__pyx_t_7, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_f_vector = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_f_vector.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 153, __pyx_L1_error)
+      __PYX_ERR(0, 162, __pyx_L1_error)
     } else {__pyx_pybuffernd_f_vector.diminfo[0].strides = __pyx_pybuffernd_f_vector.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_f_vector.diminfo[0].shape = __pyx_pybuffernd_f_vector.rcbuffer->pybuffer.shape[0];
     }
   }
@@ -4060,83 +4289,51 @@ static PyObject *__pyx_pf_11mrsimulator_7sandbox_10triangle_interpolation(CYTHON
   __pyx_v_f_vector = ((PyArrayObject *)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "mrsimulator/scr/sandbox/sandbox.pyx":154
- *     cdef np.ndarray[int, ndim=1] points = np.asarray([spectrum_amp.size], dtype=np.int32)
- *     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector + offset, dtype=np.float64)
- *     f_vector+=0.5             # <<<<<<<<<<<<<<
- *     cdef double *f1 = &f_vector[0]
- *     cdef double *f2 = &f_vector[1]
- */
-  __pyx_t_4 = PyNumber_InPlaceAdd(((PyObject *)__pyx_v_f_vector), __pyx_float_0_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 154, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 154, __pyx_L1_error)
-  __pyx_t_7 = ((PyArrayObject *)__pyx_t_4);
-  {
-    __Pyx_BufFmt_StackElem __pyx_stack[1];
-    __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_f_vector.rcbuffer->pybuffer);
-    __pyx_t_8 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_f_vector.rcbuffer->pybuffer, (PyObject*)__pyx_t_7, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
-    if (unlikely(__pyx_t_8 < 0)) {
-      PyErr_Fetch(&__pyx_t_9, &__pyx_t_10, &__pyx_t_11);
-      if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_f_vector.rcbuffer->pybuffer, (PyObject*)__pyx_v_f_vector, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
-        Py_XDECREF(__pyx_t_9); Py_XDECREF(__pyx_t_10); Py_XDECREF(__pyx_t_11);
-        __Pyx_RaiseBufferFallbackError();
-      } else {
-        PyErr_Restore(__pyx_t_9, __pyx_t_10, __pyx_t_11);
-      }
-      __pyx_t_9 = __pyx_t_10 = __pyx_t_11 = 0;
-    }
-    __pyx_pybuffernd_f_vector.diminfo[0].strides = __pyx_pybuffernd_f_vector.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_f_vector.diminfo[0].shape = __pyx_pybuffernd_f_vector.rcbuffer->pybuffer.shape[0];
-    if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 154, __pyx_L1_error)
-  }
-  __pyx_t_7 = 0;
-  __Pyx_DECREF_SET(__pyx_v_f_vector, ((PyArrayObject *)__pyx_t_4));
-  __pyx_t_4 = 0;
-
-  /* "mrsimulator/scr/sandbox/sandbox.pyx":155
- *     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector + offset, dtype=np.float64)
- *     f_vector+=0.5
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":164
+ *     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector, dtype=np.float64)
+ *
  *     cdef double *f1 = &f_vector[0]             # <<<<<<<<<<<<<<
  *     cdef double *f2 = &f_vector[1]
  *     cdef double *f3 = &f_vector[2]
  */
-  __pyx_t_12 = 0;
-  __pyx_v_f1 = (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_f_vector.rcbuffer->pybuffer.buf, __pyx_t_12, __pyx_pybuffernd_f_vector.diminfo[0].strides)));
+  __pyx_t_8 = 0;
+  __pyx_v_f1 = (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_f_vector.rcbuffer->pybuffer.buf, __pyx_t_8, __pyx_pybuffernd_f_vector.diminfo[0].strides)));
 
-  /* "mrsimulator/scr/sandbox/sandbox.pyx":156
- *     f_vector+=0.5
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":165
+ *
  *     cdef double *f1 = &f_vector[0]
  *     cdef double *f2 = &f_vector[1]             # <<<<<<<<<<<<<<
  *     cdef double *f3 = &f_vector[2]
  *
  */
-  __pyx_t_13 = 1;
-  __pyx_v_f2 = (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_f_vector.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_f_vector.diminfo[0].strides)));
+  __pyx_t_9 = 1;
+  __pyx_v_f2 = (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_f_vector.rcbuffer->pybuffer.buf, __pyx_t_9, __pyx_pybuffernd_f_vector.diminfo[0].strides)));
 
-  /* "mrsimulator/scr/sandbox/sandbox.pyx":157
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":166
  *     cdef double *f1 = &f_vector[0]
  *     cdef double *f2 = &f_vector[1]
  *     cdef double *f3 = &f_vector[2]             # <<<<<<<<<<<<<<
  *
  *     cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
  */
-  __pyx_t_14 = 2;
-  __pyx_v_f3 = (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_f_vector.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_f_vector.diminfo[0].strides)));
+  __pyx_t_10 = 2;
+  __pyx_v_f3 = (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_f_vector.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_f_vector.diminfo[0].strides)));
 
-  /* "mrsimulator/scr/sandbox/sandbox.pyx":159
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":168
  *     cdef double *f3 = &f_vector[2]
  *
  *     cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])             # <<<<<<<<<<<<<<
  *
  *     clib.triangle_interpolation(f1, f2, f3, &amp_[0], &spectrum_amp[0], &points[0])
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_asarray); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_asarray); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_amp); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_amp); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 159, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_1);
   PyList_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
@@ -4154,38 +4351,38 @@ static PyObject *__pyx_pf_11mrsimulator_7sandbox_10triangle_interpolation(CYTHON
   __pyx_t_4 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_1, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_3);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 159, __pyx_L1_error)
+  if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 168, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 159, __pyx_L1_error)
-  __pyx_t_15 = ((PyArrayObject *)__pyx_t_4);
+  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 168, __pyx_L1_error)
+  __pyx_t_11 = ((PyArrayObject *)__pyx_t_4);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_amp_.rcbuffer->pybuffer, (PyObject*)__pyx_t_15, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_amp_.rcbuffer->pybuffer, (PyObject*)__pyx_t_11, &__Pyx_TypeInfo_double, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_amp_ = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_amp_.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 159, __pyx_L1_error)
+      __PYX_ERR(0, 168, __pyx_L1_error)
     } else {__pyx_pybuffernd_amp_.diminfo[0].strides = __pyx_pybuffernd_amp_.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_amp_.diminfo[0].shape = __pyx_pybuffernd_amp_.rcbuffer->pybuffer.shape[0];
     }
   }
-  __pyx_t_15 = 0;
+  __pyx_t_11 = 0;
   __pyx_v_amp_ = ((PyArrayObject *)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "mrsimulator/scr/sandbox/sandbox.pyx":161
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":170
  *     cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
  *
  *     clib.triangle_interpolation(f1, f2, f3, &amp_[0], &spectrum_amp[0], &points[0])             # <<<<<<<<<<<<<<
  */
-  __pyx_t_16 = 0;
-  __pyx_t_17 = 0;
-  __pyx_t_18 = 0;
-  triangle_interpolation(__pyx_v_f1, __pyx_v_f2, __pyx_v_f3, (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_amp_.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_amp_.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_spectrum_amp.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_spectrum_amp.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(int *, __pyx_pybuffernd_points.rcbuffer->pybuffer.buf, __pyx_t_18, __pyx_pybuffernd_points.diminfo[0].strides))));
+  __pyx_t_12 = 0;
+  __pyx_t_13 = 0;
+  __pyx_t_14 = 0;
+  triangle_interpolation(__pyx_v_f1, __pyx_v_f2, __pyx_v_f3, (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_amp_.rcbuffer->pybuffer.buf, __pyx_t_12, __pyx_pybuffernd_amp_.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(double *, __pyx_pybuffernd_spectrum_amp.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_spectrum_amp.diminfo[0].strides))), (&(*__Pyx_BufPtrStrided1d(int *, __pyx_pybuffernd_points.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_points.diminfo[0].strides))));
 
-  /* "mrsimulator/scr/sandbox/sandbox.pyx":135
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":144
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
  * def triangle_interpolation(vector, np.ndarray[double, ndim=1] spectrum_amp,             # <<<<<<<<<<<<<<
- *                            double offset=0, double amp=1):
+ *                            double amp=1):
  *     r"""
  */
 
@@ -6718,8 +6915,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_f3, __pyx_k_f3, sizeof(__pyx_k_f3), 0, 0, 1, 1},
   {&__pyx_n_s_f_vector, __pyx_k_f_vector, sizeof(__pyx_k_f_vector), 0, 0, 1, 1},
   {&__pyx_n_s_float64, __pyx_k_float64, sizeof(__pyx_k_float64), 0, 0, 1, 1},
+  {&__pyx_n_s_freq, __pyx_k_freq, sizeof(__pyx_k_freq), 0, 0, 1, 1},
   {&__pyx_n_s_geodesic_polyhedron_frequency, __pyx_k_geodesic_polyhedron_frequency, sizeof(__pyx_k_geodesic_polyhedron_frequency), 0, 0, 1, 1},
   {&__pyx_n_s_get_spin_attribute, __pyx_k_get_spin_attribute, sizeof(__pyx_k_get_spin_attribute), 0, 0, 1, 1},
+  {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_int32, __pyx_k_int32, sizeof(__pyx_k_int32), 0, 0, 1, 1},
   {&__pyx_n_s_l, __pyx_k_l, sizeof(__pyx_k_l), 0, 0, 1, 1},
@@ -6738,7 +6937,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_numpy, __pyx_k_numpy, sizeof(__pyx_k_numpy), 0, 0, 1, 1},
   {&__pyx_kp_u_numpy_core_multiarray_failed_to, __pyx_k_numpy_core_multiarray_failed_to, sizeof(__pyx_k_numpy_core_multiarray_failed_to), 0, 1, 0, 0},
   {&__pyx_kp_u_numpy_core_umath_failed_to_impor, __pyx_k_numpy_core_umath_failed_to_impor, sizeof(__pyx_k_numpy_core_umath_failed_to_impor), 0, 1, 0, 0},
-  {&__pyx_n_s_offset, __pyx_k_offset, sizeof(__pyx_k_offset), 0, 0, 1, 1},
+  {&__pyx_n_s_octahedronInterpolation, __pyx_k_octahedronInterpolation, sizeof(__pyx_k_octahedronInterpolation), 0, 0, 1, 1},
   {&__pyx_n_s_phase_alpha, __pyx_k_phase_alpha, sizeof(__pyx_k_phase_alpha), 0, 0, 1, 1},
   {&__pyx_n_s_points, __pyx_k_points, sizeof(__pyx_k_points), 0, 0, 1, 1},
   {&__pyx_n_s_pre_phase, __pyx_k_pre_phase, sizeof(__pyx_k_pre_phase), 0, 0, 1, 1},
@@ -6749,8 +6948,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_sample_rotation_frequency, __pyx_k_sample_rotation_frequency, sizeof(__pyx_k_sample_rotation_frequency), 0, 0, 1, 1},
   {&__pyx_n_s_shape, __pyx_k_shape, sizeof(__pyx_k_shape), 0, 0, 1, 1},
   {&__pyx_n_s_size, __pyx_k_size, sizeof(__pyx_k_size), 0, 0, 1, 1},
+  {&__pyx_n_s_spec, __pyx_k_spec, sizeof(__pyx_k_spec), 0, 0, 1, 1},
   {&__pyx_n_s_spectrum_amp, __pyx_k_spectrum_amp, sizeof(__pyx_k_spectrum_amp), 0, 0, 1, 1},
   {&__pyx_kp_u_srivastava_89_osu_edu, __pyx_k_srivastava_89_osu_edu, sizeof(__pyx_k_srivastava_89_osu_edu), 0, 1, 0, 0},
+  {&__pyx_n_s_stride, __pyx_k_stride, sizeof(__pyx_k_stride), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_triangle_interpolation, __pyx_k_triangle_interpolation, sizeof(__pyx_k_triangle_interpolation), 0, 0, 1, 1},
   {&__pyx_n_s_trig_of_polar_angles_and_amplitu, __pyx_k_trig_of_polar_angles_and_amplitu, sizeof(__pyx_k_trig_of_polar_angles_and_amplitu), 0, 0, 1, 1},
@@ -6767,8 +6968,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 138, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 272, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(1, 285, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(1, 856, __pyx_L1_error)
   __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(1, 1038, __pyx_L1_error)
   return 0;
@@ -6920,14 +7121,26 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "mrsimulator/scr/sandbox/sandbox.pyx":135
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
- * def triangle_interpolation(vector, np.ndarray[double, ndim=1] spectrum_amp,             # <<<<<<<<<<<<<<
- *                            double offset=0, double amp=1):
- *     r"""
+ * def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, int stride=1):             # <<<<<<<<<<<<<<
+ *     cdef int i
+ *     cdef int number_of_sidebands = amp.shape[0]
  */
-  __pyx_tuple__18 = PyTuple_Pack(10, __pyx_n_s_vector, __pyx_n_s_spectrum_amp, __pyx_n_s_offset, __pyx_n_s_amp, __pyx_n_s_points, __pyx_n_s_f_vector, __pyx_n_s_f1, __pyx_n_s_f2, __pyx_n_s_f3, __pyx_n_s_amp_2); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __pyx_tuple__18 = PyTuple_Pack(7, __pyx_n_s_spec, __pyx_n_s_freq, __pyx_n_s_nt, __pyx_n_s_amp, __pyx_n_s_stride, __pyx_n_s_i, __pyx_n_s_number_of_sidebands); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 135, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__18);
   __Pyx_GIVEREF(__pyx_tuple__18);
-  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(4, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mrsimulator_scr_sandbox_sandbox, __pyx_n_s_triangle_interpolation, 135, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(5, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mrsimulator_scr_sandbox_sandbox, __pyx_n_s_octahedronInterpolation, 135, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 135, __pyx_L1_error)
+
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":144
+ * @cython.boundscheck(False)
+ * @cython.wraparound(False)
+ * def triangle_interpolation(vector, np.ndarray[double, ndim=1] spectrum_amp,             # <<<<<<<<<<<<<<
+ *                            double amp=1):
+ *     r"""
+ */
+  __pyx_tuple__20 = PyTuple_Pack(9, __pyx_n_s_vector, __pyx_n_s_spectrum_amp, __pyx_n_s_amp, __pyx_n_s_points, __pyx_n_s_f_vector, __pyx_n_s_f1, __pyx_n_s_f2, __pyx_n_s_f3, __pyx_n_s_amp_2); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__20);
+  __Pyx_GIVEREF(__pyx_tuple__20);
+  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(3, 0, 9, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_mrsimulator_scr_sandbox_sandbox, __pyx_n_s_triangle_interpolation, 144, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -6937,7 +7150,6 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
 static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  __pyx_float_0_5 = PyFloat_FromDouble(0.5); if (unlikely(!__pyx_float_0_5)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_9 = PyInt_FromLong(9); if (unlikely(!__pyx_int_9)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -7361,13 +7573,25 @@ if (!__Pyx_RefNanny) {
   /* "mrsimulator/scr/sandbox/sandbox.pyx":135
  * @cython.boundscheck(False)
  * @cython.wraparound(False)
+ * def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, int stride=1):             # <<<<<<<<<<<<<<
+ *     cdef int i
+ *     cdef int number_of_sidebands = amp.shape[0]
+ */
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_11mrsimulator_7sandbox_11octahedronInterpolation, NULL, __pyx_n_s_mrsimulator_sandbox); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_octahedronInterpolation, __pyx_t_2) < 0) __PYX_ERR(0, 135, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "mrsimulator/scr/sandbox/sandbox.pyx":144
+ * @cython.boundscheck(False)
+ * @cython.wraparound(False)
  * def triangle_interpolation(vector, np.ndarray[double, ndim=1] spectrum_amp,             # <<<<<<<<<<<<<<
- *                            double offset=0, double amp=1):
+ *                            double amp=1):
  *     r"""
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_11mrsimulator_7sandbox_11triangle_interpolation, NULL, __pyx_n_s_mrsimulator_sandbox); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_11mrsimulator_7sandbox_13triangle_interpolation, NULL, __pyx_n_s_mrsimulator_sandbox); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_triangle_interpolation, __pyx_t_2) < 0) __PYX_ERR(0, 135, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_triangle_interpolation, __pyx_t_2) < 0) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "mrsimulator/scr/sandbox/sandbox.pyx":1
@@ -7431,6 +7655,34 @@ end:
     return (__Pyx_RefNannyAPIStruct *)r;
 }
 #endif
+
+/* PyObjectGetAttrStr */
+#if CYTHON_USE_TYPE_SLOTS
+static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject* attr_name) {
+    PyTypeObject* tp = Py_TYPE(obj);
+    if (likely(tp->tp_getattro))
+        return tp->tp_getattro(obj, attr_name);
+#if PY_MAJOR_VERSION < 3
+    if (likely(tp->tp_getattr))
+        return tp->tp_getattr(obj, PyString_AS_STRING(attr_name));
+#endif
+    return PyObject_GetAttr(obj, attr_name);
+}
+#endif
+
+/* GetBuiltinName */
+static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
+    PyObject* result = __Pyx_PyObject_GetAttrStr(__pyx_b, name);
+    if (unlikely(!result)) {
+        PyErr_Format(PyExc_NameError,
+#if PY_MAJOR_VERSION >= 3
+            "name '%U' is not defined", name);
+#else
+            "name '%.200s' is not defined", PyString_AS_STRING(name));
+#endif
+    }
+    return result;
+}
 
 /* RaiseArgTupleInvalid */
 static void __Pyx_RaiseArgtupleInvalid(
@@ -7572,34 +7824,6 @@ invalid_keyword:
     #endif
 bad:
     return -1;
-}
-
-/* PyObjectGetAttrStr */
-#if CYTHON_USE_TYPE_SLOTS
-static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject* attr_name) {
-    PyTypeObject* tp = Py_TYPE(obj);
-    if (likely(tp->tp_getattro))
-        return tp->tp_getattro(obj, attr_name);
-#if PY_MAJOR_VERSION < 3
-    if (likely(tp->tp_getattr))
-        return tp->tp_getattr(obj, PyString_AS_STRING(attr_name));
-#endif
-    return PyObject_GetAttr(obj, attr_name);
-}
-#endif
-
-/* GetBuiltinName */
-static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
-    PyObject* result = __Pyx_PyObject_GetAttrStr(__pyx_b, name);
-    if (unlikely(!result)) {
-        PyErr_Format(PyExc_NameError,
-#if PY_MAJOR_VERSION >= 3
-            "name '%U' is not defined", name);
-#else
-            "name '%.200s' is not defined", PyString_AS_STRING(name));
-#endif
-    }
-    return result;
 }
 
 /* PyDictVersioning */

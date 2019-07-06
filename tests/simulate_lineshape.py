@@ -7,7 +7,7 @@ from mrsimulator.python.simulator import simulator
 
 from timeit import default_timer
 
-# import time
+import time
 
 # time.sleep(5)
 isotopomers = [
@@ -100,18 +100,42 @@ isotopomers = [
 spectrum = {
     "direct_dimension": {
         "magnetic_flux_density": "9.4 T",
-        "rotor_frequency": "0 kHz",
+        "rotor_frequency": "0. kHz",
         "rotor_angle": "54.735 deg",
-        "number_of_points": 2048,
+        "number_of_points": 1024,
         "spectral_width": "125 kHz",
         "reference_offset": "0 kHz",
         "nucleus": "1H",
     }
 }
-s = Simulator(isotopomers)
-s.spectrum = spectrum
 
-# n = 100
+
+# spectrum = {
+#     "direct_dimension": {
+#         "rotor_frequency": "0 kHz",
+#         "number_of_points": 2048,
+#         "spectral_width": "100 kHz",
+#         "nucleus": "1H"
+#     }
+# }
+# isotopomer = [
+#     {
+#         "sites": [
+#             {
+#                 "isotope_symbol": "1H",
+#                 "isotropic_chemical_shift": "-120 Hz",
+#                 "shielding_symmetric": {
+#                     "anisotropy": "9.34 kHz",
+#                     "asymmetry": 0.0
+#                 }
+#             }
+#         ]
+#     }
+# ]
+
+s = Simulator(isotopomers, spectrum)
+
+# n = 1
 # start = default_timer()
 # [
 #     s.run(
@@ -121,12 +145,13 @@ s.spectrum = spectrum
 #         number_of_sidebands=128,
 #     ) for _ in range(n)]
 # print('python side time', (default_timer() - start) / float(n), ' s')
+
 n = 1
 start = default_timer()
 f, a = s.run(
     one_d_spectrum,
     verbose=11,
-    geodesic_polyhedron_frequency=48,
+    geodesic_polyhedron_frequency=90,
     number_of_sidebands=128,
 )
 print("python side time", (default_timer() - start) / float(n), " s")
@@ -135,19 +160,20 @@ print("python side time", (default_timer() - start) / float(n), " s")
 
 # print(s._spectrum_c)
 # print(s._isotopomers_c)
-n = 1
+# n = 1
 
 # start = default_timer()
 # [simulator(s._spectrum_c, s._isotopomers_c) for _ in range(n)]
 # print((default_timer() - start) / float(n), ' s')
 
 start = default_timer()
-freq, spec = simulator(s._spectrum_c, s._isotopomers_c, nt=48)
+freq, spec = simulator(s._spectrum_c, s._isotopomers_c, nt=90, number_of_sidebands=128)
 print("python side time", (default_timer() - start) / float(n), " s")
 # assert np.allclose(spec, a)
 fig, ax = plt.subplots(2, 1)
 ax[0].plot(freq, spec / spec.max(), "r", label="py")
 ax[0].plot(f, a / a.max(), "b", label="c")
+ax[0].legend()
 ax[1].plot(f, (spec / spec.max()) - (a / a.max()))
-plt.legend()
+
 plt.show()
