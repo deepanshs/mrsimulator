@@ -95,9 +95,9 @@ and run the simulation.
     <BLANKLINE>
     1H site 0 from isotopomer 0 @ 100.0% abundance
     ----------------------------------------------
-    isotropic chemical shift = 0.0 ppm
-    chemical shift anisotropy = 13.89 ppm
-    chemical shift asymmetry = 0.25
+    Isotropic chemical shift = 0.0 ppm
+    Shielding anisotropy = 13.89 ppm
+    Shielding asymmetry = 0.25
 
 In the above code, the ``freq`` and ``amp`` are the frequency in ppm and the
 corresponding amplitude of the spectrum. The following is a figure of the above

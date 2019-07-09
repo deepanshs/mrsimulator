@@ -152,11 +152,11 @@ ext_modules = [
         sources=nmr_function_source_file,
         include_dirs=include_nmr_lib_directories,
         language="c",
-        extra_compile_args="-m64 -g -O1".split(),  #
-        extra_link_args="-lmkl_intel_lp64 -lmkl_sequential -lmkl_core \
-                         -lpthread -lm -ldl -W".split()
-        # extra_link_args="-lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
-        #                  -liomp5 -lpthread -lm -ldl -W".split()
+        extra_compile_args="-m64 -g -O3".split(),  #
+        # extra_link_args="-lmkl_intel_lp64 -lmkl_sequential -lmkl_core \
+        #                  -lpthread -lm -ldl -W".split()
+        extra_link_args="-g -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
+                         -liomp5 -lpthread -lm -ldl -W".split(),
     )
 ]
 
@@ -174,7 +174,7 @@ ext_modules += [
         sources=sandbox_files,
         include_dirs=include_nmr_lib_directories,
         language="c",
-        extra_compile_args="-flax-vector-conversions -g -O3 ".split(),
+        extra_compile_args="-m64 -g -O3".split(),
         extra_link_args="-g -lmkl_intel_lp64 -lmkl_intel_thread \
                         -lmkl_core -ldl -liomp5 -lpthread -lm -W".split()
         # extra_link_args="-g -lmkl_intel_lp64 -lmkl_intel_thread \

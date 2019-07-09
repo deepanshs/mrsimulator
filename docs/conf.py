@@ -30,7 +30,7 @@ author = "Deepansh J. Srivastava"
 # The short X.Y version
 version = __version__
 # The full version, including alpha/beta/rc tags
-release = "0.1.0"
+release = "0.1.1"
 
 
 # -- General configuration ---------------------------------------------------
@@ -49,7 +49,13 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
+    "sphinx.ext.viewcode",
+    "autoapi.extension",
 ]
+
+
+autoapi_type = "python"
+autoapi_dirs = ["../mrsimulator/"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

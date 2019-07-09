@@ -51,23 +51,23 @@ void octahedronGetPolarAngleTrigOverAnOctant(int nt, double *cos_alpha,
                                              double *cos_beta, double *amp) {
 
   int points = (nt + 1) * (nt + 2) / 2;
-  double *xr = createDouble1DArray(points);
-  double *yr = createDouble1DArray(points);
-  double *zr = createDouble1DArray(points);
-  double *sin_beta = createDouble1DArray(points);
+  double *xr = malloc_double(points);
+  double *yr = malloc_double(points);
+  double *zr = malloc_double(points);
+  double *sin_beta = malloc_double(points);
 
   octahedronGetDirectionCosineSquareOverOctantAndWeights(nt, xr, yr, zr, amp);
 
   // Evaluate sqrt of zr to get cos(beta)
-  vdSqrt(points, &zr[0], &cos_beta[0]);
+  vdSqrt(points, zr, cos_beta);
 
   // Evaluate A = x + y
-  vdAdd(points, &xr[0], &yr[0], &sin_beta[0]);
+  vdAdd(points, xr, yr, sin_beta);
   // Take sqrt of A to get sin(beta)
-  vdSqrt(points, &sin_beta[0], &sin_beta[0]);
+  vdSqrt(points, sin_beta, sin_beta);
 
   // Evaluate sqrt of xr
-  vdSqrt(points, &xr[0], &xr[0]);
+  vdSqrt(points, xr, xr);
 
   // Evaluate sqrt of xr
   // vdSqrt(points, &yr[0], &yr[0]);
@@ -78,10 +78,64 @@ void octahedronGetPolarAngleTrigOverAnOctant(int nt, double *cos_alpha,
   cos_alpha[points - 1] = 1.0;
   // sinAlpha[points-1] = 0.0;
 
-  destroyDouble1DArray(xr);
-  destroyDouble1DArray(yr);
-  destroyDouble1DArray(zr);
-  destroyDouble1DArray(sin_beta);
+  free_double(xr);
+  free_double(yr);
+  free_double(zr);
+  free_double(sin_beta);
+}
+
+void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
+    int nt, double complex *exp_I_alpha, double *cos_beta, double *amp) {
+
+  int points = (nt + 1) * (nt + 2) / 2;
+  double *xr = malloc_double(points);
+  double *yr = malloc_double(points);
+  double *zr = malloc_double(points);
+  double *sin_beta = malloc_double(points);
+
+  // The values xr = x^2, yr = y^2, zr = z^2, where x, y, and z are the
+  // direction cosines.
+  octahedronGetDirectionCosineSquareOverOctantAndWeights(nt, xr, yr, zr, amp);
+
+  // Evaluate sqrt of zr to get cos(beta)
+  // cos(beta) = sqrt(z^2)
+  vdSqrt(points, zr, cos_beta);
+
+  // Evaluate A = x + y
+  // sin^2(beta) = x^2 + y^2
+  vdAdd(points, xr, yr, sin_beta);
+  // Take sqrt of A to get sin(beta)
+  // sin(beta) = sqrt(x^2 + y^2)
+  vdSqrt(points, sin_beta, sin_beta);
+
+  // Evaluate sqrt of xr
+  // value of xr is updated to sqrt(x^2)
+  vdSqrt(points, xr, xr);
+
+  // Evaluate sqrt of yr
+  // value of yr is updated to sqrt(y^2)
+  vdSqrt(points, yr, yr);
+
+  // Evaluate cos_alpha = x/sqrt(x^2 + y^2) = xr/sin_beta
+  // value of xr is updated to hold cos_alpha
+  vdDiv(points - 1, xr, sin_beta, xr);
+
+  // Evaluate sin_alpha = y/sqrt(x^2 + y^2) = yr/sin_beta
+  // value of yr is updated to hold sin_alpha
+  vdDiv(points - 1, yr, sin_beta, yr);
+
+  xr[points - 1] = 1.0;
+  yr[points - 1] = 0.0;
+
+  // copy cos_alpha and sin_alpha to alternating address of exp_I_alpha
+  // to emulate a complex array.
+  cblas_dcopy(points, xr, 1, (double *)&exp_I_alpha[0], 2);
+  cblas_dcopy(points, yr, 1, (double *)&exp_I_alpha[0] + 1, 2);
+
+  free_double(xr);
+  free_double(yr);
+  free_double(zr);
+  free_double(sin_beta);
 }
 
 void octahedronInterpolation(double *spec, double *freq, int nt, double *amp,

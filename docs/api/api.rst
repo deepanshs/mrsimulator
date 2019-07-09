@@ -8,6 +8,7 @@ API documentation
    :caption: Contents:
 
    simulator
+   sandbox
 
 ..    parameterized_tensor
 ..    interaction

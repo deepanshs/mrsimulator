@@ -1,4 +1,10 @@
-
+//
+//  isotopomer_ravel.h
+//
+//  Created by Deepansh J. Srivastava, Apr 11, 2019
+//  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
+//  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
+//
 
 #ifndef isotopomer_ravel_h
 #define isotopomer_ravel_h
@@ -26,6 +32,62 @@ struct __isotopomers_list {
   isotopomer_ravel *isotopomers;
 };
 
+
 typedef struct __isotopomers_list isotopomers_list;
 
 #endif /* isotopomer_h */
+
+// typedef struct isotopomer_element_t {
+//   isotopomer_ravel *isotopomer;
+//   struct isotopomers_list_t *next;
+// } isotopomer_element;
+
+// // typedef struct s_words {
+// //         char* str;
+// //         struct s_words* next;
+// // } words;
+
+// isotopomer_element *create_isotopomer(isotopomer_ravel *the_isotopomer) {
+//   isotopomer_element *new_element = malloc(sizeof(isotopomer_element));
+//   if (NULL != new_element) {
+//     new_element->isotopomer = the_isotopomer;
+//     new_element->next = NULL;
+//   }
+//   return new_element;
+// }
+
+// // words* create_words(char* word) {
+// //         words* newWords = malloc(sizeof(words));
+// //         if (NULL != newWords){
+// //                 newWords->str = word;
+// //                 newWords->next = NULL;
+// //         }
+// //         return newWords;
+// // }
+
+// isotopomer_element *add_isotopomer(isotopomer_element
+// *the_isotopomer_element,
+//                                    isotopomer_ravel *the_isotopomer) {
+//   isotopomer_element *new_element = create_isotopomer(the_isotopomer);
+//   if (NULL != new_element) {
+//     new_element->next = the_isotopomer_element;
+//   }
+//   return new_element;
+// }
+
+// // words* add_word(words* wordList, char* word) {
+// //         words* newWords = create_words(word);
+// //         if (NULL != newWords) {
+// //                 newWords->next = wordList;
+// //         }
+// //         return newWords;
+// // }
+
+// // void delete_words(words *oldWords) {
+// //   if (NULL != oldWords->next) {
+// //     delete_words(oldWords->next);
+// //   }
+// //   free(oldWords);
+// // }
+
+// // typedef struct isotopomers_list_t isotopomers_list;

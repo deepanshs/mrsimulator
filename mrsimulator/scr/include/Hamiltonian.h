@@ -30,6 +30,7 @@ The expression follows,
 */
 static inline double __p__(double mf, double mi) { return (mf - mi); }
 
+
 /*
 Return the d(mi, mf) transition element.
 The expression follows,
@@ -102,7 +103,7 @@ The Hamiltonian includes the product of second rank tensor and the
 spin transition functions.
 */
 static inline void get_nuclear_shielding_hamiltonian_to_first_order(
-    double complex *R0, double complex *R2, double iso, double zeta, double eta,
+    double *R0, double complex *R2, double iso, double zeta, double eta,
     double *transition)
 {
   // Spin transition contribution
@@ -131,7 +132,7 @@ The Hamiltonian includes the product of second rank tensor and the
 spin transition functions.
 */
 static inline void get_quadrupole_hamiltonian_to_first_order(
-    double complex *R0, double complex *R2, double spin, double Cq, double eta,
+    double *R0, double complex *R2, double spin, double Cq, double eta,
     double *transition)
 {
   // Spin transition contribution
@@ -151,7 +152,7 @@ static inline void get_quadrupole_hamiltonian_to_first_order(
   double temp = -0.1666666667 * (vq * eta) * transition_d_;
   R2[0] += temp;                              // R2-2
   R2[1] += 0.0;                               // R2-1
-  R2[2] += 0.4082482905 * vq * transition_d_; // R20
+  R2[2] += 0.4082482905 * vq * transition_d_; // R2 0
   R2[3] += 0.0;                               // R2 1
   R2[4] += temp;                              // R2 2
 }
@@ -164,7 +165,7 @@ The Hamiltonian includes the product of second rank tensor and the
 spin transition functions.
 */
 static inline void get_quadrupole_hamiltonian_to_second_order(
-    double complex *R0, double complex *R2, double complex *R4, double spin,
+    double *R0, double complex *R2, double complex *R4, double spin,
     double Cq, double eta, double *transition, double vo,
     int remove_second_order_quad_iso)
 {
@@ -215,7 +216,7 @@ The Hamiltonian includes the product of second rank tensor and the
 spin transition functions in the weak coupling limit.
 */
 static inline void get_weakly_coupled_direct_dipole_hamiltonian_to_first_order(
-    double complex *R0, double complex *R2, double D, double *transition)
+    double *R0, double complex *R2, double D, double *transition)
 {
   // Spin transition contribution
   double transition_dIS_ = __dIS__(transition[0], transition[1], 0.5, 0.5);
@@ -227,7 +228,7 @@ static inline void get_weakly_coupled_direct_dipole_hamiltonian_to_first_order(
   tensor in its principal axis frame. */
   R2[0] += 0.0;                       // R2-2
   R2[1] += 0.0;                       // R2-1
-  R2[2] += 2.0 * D * transition_dIS_; // R20
+  R2[2] += 2.0 * D * transition_dIS_; // R2 0
   R2[3] += 0.0;                       // R2 1
   R2[4] += 0.0;                       // R2 2
 }

@@ -8,71 +8,29 @@
 //
 
 #include "spinning_sidebands.h"
-// #include "mkl_dfti.h"
 
-static inline void __zero_components(double complex *R0, double complex *R2,
+static inline void __zero_components(double *R0, double complex *R2,
                                      double complex *R4) {
   int i;
   R0[0] = 0.0;
-  for (i = 0; i <= 4; i++) {
+  for (i = 0; i < 5; i++) {
     R2[i] = 0.0;
   }
-  for (i = 0; i <= 8; i++) {
+  for (i = 0; i < 9; i++) {
     R4[i] = 0.0;
   }
 }
 
-void __get_pre_phase_components(int number_of_sidebands,
-                                double sample_rotation_frequency,
-                                double complex *pre_phase) {
-  double spin_angular_freq, tau, wrt, pht, scale;
-  int step, i, m;
-  // Calculate the spinning angular frequency
-  spin_angular_freq = sample_rotation_frequency * PI2;
-
-  // Calculate tau increments, where tau = (rotor period / number of phase
-  // steps)
-  tau = 1.0 / ((double)number_of_sidebands * sample_rotation_frequency);
-
-  // pre-calculate the m omega spinning frequencies
-  double m_wr[9] = {-4., -3., -2., -1., 0., 1., 2., 3., 4.};
-  cblas_dscal(9, spin_angular_freq, &m_wr[0], 1);
-
-  // pre-calculating the phase step exponents. --------------------------- //
-  // --------------------------------------------------------------------- //
-  //   phi = exp(sum_m v_cs_m * I 2pi [(exp(I m wr t) - 1)/(I m wr)])      //
-  //   pre_phase(m, t) = I 2pi [(exp(I m wr t) - 1)/(I m wr)]              //
-  //                   = (2 pi / m wr) (exp(I m wr t) - 1)                 //
-  //                     ----scale----                                     //
-  //                   = scale * (exp(I m wr t) - 1)                       //
-  // --------------------------------------------------------------------- //
-  i = 0;
-  for (m = 0; m <= 8; m++) {
-    if (m != 4) {
-      wrt = m_wr[m] * tau;
-      pht = 0.0;
-      scale = PI2 / m_wr[m];
-      for (step = 0; step < number_of_sidebands; step++) {
-        pre_phase[i++] = scale * (cexp(I * pht) - 1.0);
-        pht += wrt;
-      }
-    } else {
-      i += number_of_sidebands;
-    }
-  }
-}
-//  ---------------------------------------------------------------------- //
-
 static inline void __spinning_sideband_core(
     // spectrum information and related amplitude
-    double *spec,              // The amplitude of the spectrum.
-    double spectral_start,     // The start of the frequency spectrum.
-    double spectral_increment, // The increment of the frequency spectrum.
-    int number_of_points,      // Number of points on the frequency spectrum.
+    double *spec,             // amplitude vector representing the spectrum.
+    double coordinate_offset, // starting coordinate of the dimension.
+    double increment,         // increment of coordinates along the dimension.
+    int count,                // number of coordinates along the dimension.
 
     isotopomer_ravel *ravel_isotopomer, // isotopomer structure
 
-    int quadSecondOrder,              // Quad theory for second order,
+    bool ALLOW_FOURTH_RANK,           // Quad theory for second order,
     int remove_second_order_quad_iso, // remove the isotropic contribution from
                                       // the second order quad Hamiltonian.
 
@@ -82,31 +40,8 @@ static inline void __spinning_sideband_core(
     double rotor_angle, // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the transitions. transition[0] = mi and transition[1] = mf
-    double *transition,
+    double *transition, mrsimulator_plan *plan) {
 
-    // fftw plan
-    fftw_plan plan, fftw_complex *vector,
-
-    // powder orientation average
-    unsigned int n_orientations, // number of orientations
-    int nt,
-
-    // supplement
-    double *local_frequency, // buffer for local frequencies
-    double *freq_offset,     // buffer for frequencies + sideband frequencies
-    double complex *w2,      // buffer for 2nd rank frequency calculation
-    double complex *w4,      // buffer for 4nd rank frequency calculation
-    double *vr_freq,         // sideband order frequencies in fft output order
-    double *cos_alpha,       // array of cos_alpha of orientations
-    double *amp,             // array of amplitude of orientations
-    double *wigner_2j_matrices, // wigner-d 2j matrix for all orientations
-    double *wigner_4j_matrices, // wigner-d 4j matrix for all orientations
-    double complex *pre_phase_2, double complex *pre_phase_4,
-    double *rotor_lab_2, double *rotor_lab_4) {
-
-  clock_t start_site_time;
-  double clock_time;
-  // start = clock();
   /*
   The computation of the spinning sidebands is based on the method described by
   Eden and Levitt et. al.
@@ -116,16 +51,15 @@ static inline void __spinning_sideband_core(
   */
 
   // Sampled over an octant
-  unsigned int orientation, i, allow_second_order_quad = 0;
-  unsigned int size = n_orientations * number_of_sidebands;
-  unsigned int site;
+  int i, site;
+  unsigned int orientation;
 
-  double spectral_increment_inverse = 1.0 / spectral_increment;
+  double inverse_increment = 1.0 / increment;
   double iso_n_, zeta_n_, eta_n_, Cq_e_, eta_e_, d_, offset, scale;
 
-  double complex R0[1] = {0.0};
-  double complex R2[5] = {0.0, 0.0, 0.0, 0.0, 0.0};
-  double complex R4[9] = {0., 0., 0., 0., 0., 0., 0., 0., 0.};
+  double R0 = 0.0;
+  double complex *R2 = malloc_double_complex(5);
+  double complex *R4 = malloc_double_complex(9);
 
   double complex one = 1.0, zero = 0.0;
   double shift_half_bin = 0.5;
@@ -135,138 +69,170 @@ static inline void __spinning_sideband_core(
   double local_frequency_offset;
 
   // Per site base calculation
-  for (site = 0; site < ravel_isotopomer[0].number_of_sites; site++) {
-    start_site_time = clock();
-    // start = clock();
+  for (site = 0; site < ravel_isotopomer->number_of_sites; site++) {
+    // gettimeofday(&start_site_time, NULL);
 
-    spec_site = site * number_of_points;
+    spec_site = site * count;
     spec_site_ptr = &spec[spec_site];
 
-    // Nuclear shielding terms
-    iso_n_ = ravel_isotopomer[0].isotropic_chemical_shift_in_Hz[site];
-    zeta_n_ = ravel_isotopomer[0].shielding_anisotropy_in_Hz[site];
-    eta_n_ = ravel_isotopomer[0].shielding_asymmetry[site];
+    /* Nuclear shielding terms                                               */
+    iso_n_ = ravel_isotopomer->isotropic_chemical_shift_in_Hz[site];
+    zeta_n_ = ravel_isotopomer->shielding_anisotropy_in_Hz[site];
+    eta_n_ = ravel_isotopomer->shielding_asymmetry[site];
 
-    // Electric quadrupolar terms
-    Cq_e_ = ravel_isotopomer[0].quadrupolar_constant_in_Hz[site];
-    eta_e_ = ravel_isotopomer[0].quadrupolar_asymmetry[site];
+    /* Electric quadrupolar terms                                            */
+    Cq_e_ = ravel_isotopomer->quadrupolar_constant_in_Hz[site];
+    eta_e_ = ravel_isotopomer->quadrupolar_asymmetry[site];
 
-    // Magnetic dipole
-    d_ = ravel_isotopomer[0].dipolar_couplings[site];
+    /* Magnetic dipole terms                                                 */
+    d_ = ravel_isotopomer->dipolar_couplings[site];
 
-    __zero_components(&R0[0], &R2[0], &R4[0]);
+    /* The following codeblock populates the spatial part of the tensor for   /
+    /   zeroth rank, R0 = [ R00 ] * transition element                        /
+    /   second rank, R2 = [ R2m ] * transition element where m ∈ [-2, 2].     /
+    /   fourth rank, R4 = [ R4m ] * transition element where m ∈ [-4, 4].     /
+    / Here, transition element is derived from symmetry pathways. See ref.    /
+    /   Symmetry pathways in solid-state NMR. PNMRS 2011 59(2):12 1-96.       /
+    /   https://doi.org/10.1016/j.pnmrs.2010.11.003                          */
 
-    get_nuclear_shielding_hamiltonian_to_first_order(
-        &R0[0], &R2[0], iso_n_, zeta_n_, eta_n_, transition);
+    /* Initialize with zeroing all spatial components                        */
+    __zero_components(&R0, R2, R4);
 
-    get_weakly_coupled_direct_dipole_hamiltonian_to_first_order(&R0[0], &R2[0],
-                                                                d_, transition);
+    /* get nuclear shielding components upto first order                     */
+    get_nuclear_shielding_hamiltonian_to_first_order(&R0, R2, iso_n_, zeta_n_,
+                                                     eta_n_, transition);
 
-    if (ravel_isotopomer[0].spin > 0.5) {
-      get_quadrupole_hamiltonian_to_first_order(
-          &R0[0], &R2[0], ravel_isotopomer[0].spin, Cq_e_, eta_e_, transition);
-      if (quadSecondOrder == 1) {
-        allow_second_order_quad = 1;
+    /* get weakly coupled direct dipole components upto first order          */
+    get_weakly_coupled_direct_dipole_hamiltonian_to_first_order(&R0, R2, d_,
+                                                                transition);
+
+    if (ravel_isotopomer->spin > 0.5) {
+      /* get electric quadrupolar components upto first order                */
+      get_quadrupole_hamiltonian_to_first_order(&R0, R2, ravel_isotopomer->spin,
+                                                Cq_e_, eta_e_, transition);
+
+      /* get electric quadrupolar components upto second order               */
+      if (ALLOW_FOURTH_RANK) {
         get_quadrupole_hamiltonian_to_second_order(
-            &R0[0], &R2[0], &R4[0], ravel_isotopomer[0].spin, Cq_e_, eta_e_,
-            transition, ravel_isotopomer[0].larmor_frequency,
-            remove_second_order_quad_iso);
+            &R0, R2, R4, ravel_isotopomer->spin, Cq_e_, eta_e_, transition,
+            ravel_isotopomer->larmor_frequency, remove_second_order_quad_iso);
       }
     }
-    // ------------------------------------------------------------------- //
 
-    // Equation [39] in the refernce above.
+    /* Calculating the local isotropic offset with respect to frequency bins */
+    local_frequency_offset =
+        shift_half_bin + (R0 - coordinate_offset) * inverse_increment;
+
+    // ------------------------------------------------------------------- //
+    // Equation [39] in the refernce https://doi.org/10.1006/jmre.1998.1427.
     //
     // w_cs^{m}(O_MR) = iso delta(m,0) + sum_{m', m" =-2}^{2} A[m"]
     // D^2_{m"m'}(O_PM) D^2_{m'm}(O_MR) d^2_{m'm}(b_RL)
     //
 
-    local_frequency_offset = shift_half_bin + (creal(R0[0]) - spectral_start) *
-                                                  spectral_increment_inverse;
+    /* Wigner second rank rotation */
+    __wigner_rotation_2(2, plan->n_orientations, plan->wigner_2j_matrices,
+                        plan->exp_Im_alpha, R2, plan->w2);
 
-    // -------------------------------------------------------------------
-    //              Computing wigner rotation upto lab frame
-    // Second rank wigner rotation
-    __wigner_rotation(2, n_orientations, wigner_2j_matrices, cos_alpha, &R2[0],
-                      &w2[0]);
+    /* Evaluating the exponent of the sideband phase w.r.t fourth rank       *
+     * tensor given as,                                                      *
+     * w_cs(Θ) * I 2π [(exp(I m wr t) - 1)/(I m wr)] * d^2m0(rotor_angle)    *
+     *           |------------------- pre_phase_2 ----------------------|    *
+     * The result, `vector` is interpreted as a matrix of dimensions         *
+     * `number_of_sidebands` x `n_orientations` with `n_orientations` as the *
+     * leading dimension.                                                    */
+    cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans,
+                plan->number_of_sidebands, plan->n_orientations, 5, &one,
+                plan->pre_phase_2, plan->number_of_sidebands, plan->w2, 5,
+                &zero, plan->vector, plan->n_orientations);
 
-    // Fourth rank wigner rotation
-    if (allow_second_order_quad) {
-      __wigner_rotation(4, n_orientations, wigner_4j_matrices, cos_alpha,
-                        &R4[0], &w4[0]);
+    if (ALLOW_FOURTH_RANK) {
+      /* Wigner fourth rank rotation */
+      __wigner_rotation_2(4, plan->n_orientations, plan->wigner_4j_matrices,
+                          plan->exp_Im_alpha, R4, plan->w4);
+
+      /* Evaluating the exponent of the sideband phase w.r.t fourth rank     *
+       *  tensor given as,                                                   *
+       * w_cs(Θ) * I 2π [(exp(I m wr t) - 1)/(I m wr)] * d^4m0(rotor_angle)  *
+       *            |------------------- pre_phase_4 ----------------------| *
+       * The result, `vector` is interpreted as a matrix of dimensions       *
+       * `number_of_sidebands` x `n_orientations` with `n_orientations` as   *
+       * the leading dimension.                                              */
+      cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans,
+                  plan->number_of_sidebands, plan->n_orientations, 9, &one,
+                  plan->pre_phase_4, plan->number_of_sidebands, plan->w4, 9,
+                  &one, plan->vector, plan->n_orientations);
     }
 
-    // -------------------------------------------------------------------
-    //    Computing phi = w_cs * I 2pi [(exp(i m wr t) - 1)/(i m wr)]
-    //                           -------------- pre_phase------------
-    // second rank
-    cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans, number_of_sidebands,
-                n_orientations, 5, &one, pre_phase_2, number_of_sidebands, w2,
-                5, &zero, vector, n_orientations);
-    // fourth rank
-    if (allow_second_order_quad) {
-      cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans, number_of_sidebands,
-                  n_orientations, 9, &one, pre_phase_4, number_of_sidebands, w4,
-                  9, &one, vector, n_orientations);
-    }
+    /* Evaluating the sideband phase exp(vector)                             */
+    vmzExp(plan->size, plan->vector, plan->vector, VML_EP);
 
-    // Compute exp(phi) ------------------------------------------------
-    vmzExp(size, vector, vector, VML_EP);
-
-    // Compute the fft ---------------------------------------------------
-    fftw_execute(plan);
+    /* Evaluate the Fourier transform of vector, fft(vector).                *
+     * The fft operation updates the value of the array, `vector`            */
+    fftw_execute(plan->the_fftw_plan);
     // DftiComputeForward(plan, vector);
 
-    // Taking the square of the the fft ampitudes
-    vmdSqr(2 * size, (double *)&vector[0], (double *)&vector[0], VML_EP);
-    cblas_daxpby(size, 1.0, (double *)&vector[0] + 1, 2, 1.0,
-                 (double *)&vector[0], 2);
+    /* Taking the absolute value square of the vector array. The absolute    *
+     *  value square is stores as the real part of the vector array. The     *
+     *  imaginary part is garbage. This method avoids creating new arrays.   */
+    vmdSqr(2 * plan->size, (double *)plan->vector, (double *)plan->vector,
+           VML_EP);
+    cblas_daxpby(plan->size, 1.0, (double *)plan->vector + 1, 2, 1.0,
+                 (double *)plan->vector, 2);
 
-    // Multiplying the amplitude square with the power scheme weights.
-    for (orientation = 0; orientation < n_orientations; orientation++) {
-      cblas_dscal(number_of_sidebands, amp[orientation],
-                  (double *)&vector[orientation], 2 * n_orientations);
+    /* Scaling the absolute square value with the power scheme weights.      *
+     *  Only the real part is scaled and the imaginary part is discarded.    */
+    for (orientation = 0; orientation < plan->n_orientations; orientation++) {
+      cblas_dscal(number_of_sidebands, plan->amplitudes[orientation],
+                  (double *)&plan->vector[orientation],
+                  2 * plan->n_orientations);
     }
 
-    // calculating local frequencies
-    scale = spectral_increment_inverse * rotor_lab_2[2];
-    cblas_daxpby(n_orientations, scale, (double *)&w2[2], 10, 0.0,
-                 local_frequency, 1);
-    if (allow_second_order_quad) {
-      scale = spectral_increment_inverse * rotor_lab_4[4];
-      cblas_daxpby(n_orientations, scale, (double *)&w4[4], 18, 1.0,
-                   local_frequency, 1);
+    /* Calculating local anisotropic frequency contributions                 *
+     * contribution from the second rank tensor.                             */
+    scale = inverse_increment * plan->rotor_lab_2[2];
+    cblas_daxpby(plan->n_orientations, scale, (double *)&plan->w2[2], 10, 0.0,
+                 plan->local_frequency, 1);
+
+    if (ALLOW_FOURTH_RANK) {
+      /* contribution from the fourth rank tensor.                           */
+      scale = inverse_increment * plan->rotor_lab_4[4];
+      cblas_daxpby(plan->n_orientations, scale, (double *)&plan->w4[4], 18, 1.0,
+                   plan->local_frequency, 1);
     }
+
     // ---------------------------------------------------------------------
     //              Calculating the tent for every sideband
     // Allowing only sidebands that are within the spectral bandwidth
     //
     for (i = 0; i < number_of_sidebands; i++) {
-      offset = vr_freq[i] + local_frequency_offset;
-      if ((int)offset >= 0 && (int)offset <= number_of_points) {
+      offset = plan->vr_freq[i] + local_frequency_offset;
+      if ((int)offset >= 0 && (int)offset <= count) {
 
-        vdLinearFrac(n_orientations, local_frequency, local_frequency, 1.0,
-                     offset, 0.0, 1.0, freq_offset);
-        octahedronInterpolation(spec_site_ptr, freq_offset, nt,
-                                (double *)&vector[i * n_orientations], 2,
-                                number_of_points);
+        vdLinearFrac(plan->n_orientations, plan->local_frequency,
+                     plan->local_frequency, 1.0, offset, 0.0, 1.0,
+                     plan->freq_offset);
+        octahedronInterpolation(
+            spec_site_ptr, plan->freq_offset,
+            plan->geodesic_polyhedron_frequency,
+            (double *)&plan->vector[i * plan->n_orientations], 2, count);
       }
     }
-    clock_time = ((double)(clock() - start_site_time)) / (double)CLOCKS_PER_SEC;
-    printf("Total time per site %f \n", clock_time);
+    // gettimeofday(&end_site_time, NULL);
+    // clock_time =
+    //     (double)(end_site_time.tv_usec - start_site_time.tv_usec) / 1000000.
+    //     + (double)(end_site_time.tv_sec - start_site_time.tv_sec);
+    // printf("Total time per site %f \n", clock_time);
   }
-
-  destroyDouble1DArray(local_frequency);
-  destroyDouble1DArray(freq_offset);
 }
 
 void spinning_sideband_core(
     // spectrum information and related amplitude
-    double *spec,              // The amplitude of the spectrum.
-    double *cpu_time_,         // Execution time
-    double spectral_start,     // The start of the frequency spectrum.
-    double spectral_increment, // The increment of the frequency spectrum.
-    int number_of_points,      // Number of points on the frequency spectrum.
+    double *spec,             // The amplitude of the spectrum.
+    double *cpu_time_,        // Execution time
+    double coordinate_offset, // The start of the frequency spectrum.
+    double increment,         // The increment of the frequency spectrum.
+    int count,                // Number of points on the frequency spectrum.
 
     isotopomer_ravel *ravel_isotopomer, // isotopomer structure
 
@@ -287,15 +253,14 @@ void spinning_sideband_core(
     int geodesic_polyhedron_frequency // The number of triangle along the edge
                                       // of octahedron
 ) {
-  // Time it
-  printf("start time %f s\n", cpu_time_[0]);
-  clock_t begin, start1, all_site_time, all_c_time, fft_setup_time;
-  all_c_time = clock();
-  begin = clock();
-
-  int nt = geodesic_polyhedron_frequency;
-  unsigned int n_orientations = (nt + 1) * (nt + 2) / 2, i, size_2, size_4;
-  int size = n_orientations * number_of_sidebands;
+  bool ALLOW_FOURTH_RANK = false;
+  if (ravel_isotopomer[0].spin > 0.5 && quadSecondOrder == 1) {
+    ALLOW_FOURTH_RANK = true;
+  }
+  // mkl_set_threading_layer(MKL_THREADING_INTEL);
+  int max_threads = mkl_get_max_threads();
+  mkl_set_num_threads(max_threads);
+  printf("Using %d threads\n", max_threads);
 
   // check for spinning speed
   if (sample_rotation_frequency < 1.0e-3) {
@@ -304,124 +269,32 @@ void spinning_sideband_core(
     number_of_sidebands = 1;
   }
 
-  // setup the fftw routine
-  fftw_plan plan;
-  fftw_complex *vector;
-  vector = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * size);
-  fft_setup_time = clock();
-  plan = fftw_plan_many_dft(1, &number_of_sidebands, n_orientations, vector,
-                            NULL, n_orientations, 1, vector, NULL,
-                            n_orientations, 1, FFTW_FORWARD, FFTW_ESTIMATE);
-  // char *filename = "128_sidebands.wisdom";
-  // int status = fftw_export_wisdom_to_filename(filename);
-  // printf("file save status %i \n", status);
+  struct timeval begin, end; // all_site_time, all_c_time;
+  double clock_time;
 
-  // double complex *vector = createDoubleComplex1DArray(size);
-  // DFTI_DESCRIPTOR_HANDLE plan;
-  // MKL_LONG status;
-  // MKL_LONG stride[2] = {0, n_orientations};
-  // status = DftiCreateDescriptor(&plan, DFTI_DOUBLE, DFTI_COMPLEX, 1,
-  //                               number_of_sidebands);
-  // status = DftiSetValue(plan, DFTI_NUMBER_OF_TRANSFORMS, n_orientations);
-  // status = DftiSetValue(plan, DFTI_INPUT_DISTANCE, 1);
-  // status = DftiSetValue(plan, DFTI_OUTPUT_DISTANCE, 1);
-  // status = DftiSetValue(plan, DFTI_INPUT_STRIDES, stride);
-  // status = DftiSetValue(plan, DFTI_OUTPUT_STRIDES, stride);
-  // DftiCommitDescriptor(plan);
-  printf("fft time %f \n",
-         ((double)(clock() - fft_setup_time)) / (double)CLOCKS_PER_SEC);
+  gettimeofday(&begin, NULL);
+  mrsimulator_plan *plan = mrsimulator_create_plan(
+      geodesic_polyhedron_frequency, number_of_sidebands,
+      sample_rotation_frequency, rotor_angle, increment, ALLOW_FOURTH_RANK);
+  gettimeofday(&end, NULL);
+  clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +
+               (double)(end.tv_sec - begin.tv_sec);
+  printf("mrsimulator plan time %f \n", clock_time);
 
-  double cost = fftw_cost(plan);
-  printf("plan %f \n", cost);
-  // fftw routine end
-
-  start1 = clock();
-
-  // create buffer for frequency calculations
-  double complex *w2 = createDoubleComplex1DArray(5 * n_orientations);
-  double complex *w4 = createDoubleComplex1DArray(9 * n_orientations);
-
-  // Generate the sideband order frequency relative to fft output order
-  double spectral_increment_inverse = 1.0 / spectral_increment;
-  double *vr_freq = __get_frequency_in_FFT_order(number_of_sidebands,
-                                                 sample_rotation_frequency);
-  cblas_dscal(number_of_sidebands, spectral_increment_inverse, vr_freq, 1);
-
-  // orientation set-up
-  double *cos_alpha = createDouble1DArray(n_orientations);
-  double *cos_beta = createDouble1DArray(n_orientations);
-  double *amp_orientation = createDouble1DArray(n_orientations);
-  __powder_averaging_setup(geodesic_polyhedron_frequency, cos_alpha, cos_beta,
-                           amp_orientation, 1);
-  // normalizing amplitudes
-  double number_of_sideband_inverse = (1.0 / (double)number_of_sidebands);
-  cblas_dscal(n_orientations, number_of_sideband_inverse, amp_orientation, 1);
-
-  // setting up wigner 2j matrices for every orientation
-  double *wigner_2j_matrices = createDouble1DArray(25 * n_orientations);
-  __wigner_d_matrix_cosine(2, n_orientations, cos_beta, wigner_2j_matrices);
-  double *wigner_4j_matrices = NULL;
-  if (ravel_isotopomer[0].spin > 0.5) {
-    double *wigner_4j_matrices = createDouble1DArray(81 * n_orientations);
-    __wigner_d_matrix_cosine(4, n_orientations, cos_beta, wigner_4j_matrices);
-  }
-  destroyDouble1DArray(cos_beta);
-
-  // rotor to lab frame tranformation setup
-  double *rotor_lab_2 = createDouble1DArray(5);
-  __wigner_dm0_vector(2, rotor_angle, &rotor_lab_2[0]);
-  double *rotor_lab_4 = NULL;
-  if (ravel_isotopomer[0].spin > 0.5) {
-    double *rotor_lab_4 = createDouble1DArray(9);
-    __wigner_dm0_vector(4, rotor_angle, rotor_lab_4);
-  }
-
-  // pre-calculating phase for side-band amplitudes
-  size_4 = 9 * number_of_sidebands;
-  double complex *pre_phase = createDoubleComplex1DArray(size_4);
-  __get_pre_phase_components(number_of_sidebands, sample_rotation_frequency,
-                             pre_phase);
-
-  size_2 = 5 * number_of_sidebands;
-  double complex *pre_phase_2 = createDoubleComplex1DArray(size_2);
-
-  cblas_zcopy(size_2, &pre_phase[2 * number_of_sidebands], 1, pre_phase_2, 1);
-  for (i = 0; i < 5; i++) {
-    cblas_zdscal(number_of_sidebands, rotor_lab_2[i],
-                 &pre_phase_2[i * number_of_sidebands], 1);
-  }
-  double complex *pre_phase_4 = NULL;
-  if (ravel_isotopomer[0].spin > 0.5) {
-    pre_phase_4 = &pre_phase[0];
-    for (i = 0; i < 9; i++) {
-      cblas_zdscal(number_of_sidebands, rotor_lab_4[i],
-                   &pre_phase_4[i * number_of_sidebands], 1);
-    }
-  } else {
-    destroyDoubleComplex1DArray(pre_phase);
-  }
-
-  // create an empty array to hold the local spinning sideband frequencies.
-  // This is useful when rotor angle is off the magic angle.
-  double *local_frequency = createDouble1DArray(n_orientations);
-  double *freq_offset = createDouble1DArray(n_orientations);
-
-  printf("setup time %f \n",
-         ((double)(clock() - start1)) / (double)CLOCKS_PER_SEC);
-
-  all_site_time = clock();
+  // gettimeofday(&all_site_time, NULL);
   __spinning_sideband_core(
       // spectrum information and related amplitude
-      spec,               // The amplitude of the spectrum.
-      spectral_start,     // The start of the frequency spectrum.
-      spectral_increment, // The increment of the frequency spectrum.
-      number_of_points,   // Number of points on the frequency spectrum.
+      spec,              // The amplitude of the spectrum.
+      coordinate_offset, // The start of the frequency spectrum.
+      increment,         // The increment of the frequency spectrum.
+      count,             // Number of points on the frequency spectrum.
 
       ravel_isotopomer, // isotopomer structure
 
-      quadSecondOrder,              // Quad theory for second order,
-      remove_second_order_quad_iso, // remove the isotropic contribution from
-                                    // the second order quad Hamiltonian.
+      ALLOW_FOURTH_RANK,            // Quad theory for second order,
+      remove_second_order_quad_iso, // remove the isotropic contribution
+                                    // from the second order quad
+                                    // Hamiltonian.
 
       // spin rate, spin angle and number spinning sidebands
       number_of_sidebands,       // The number of spinning sidebands to evaluate
@@ -431,47 +304,25 @@ void spinning_sideband_core(
       // Pointer to the transitions. transition[0] = mi and transition[1] = mf
       transition,
 
-      // powder orientation average
-      plan, vector,
-      n_orientations,                // number of orientations
-      geodesic_polyhedron_frequency, // number of triangles along the edge of
-                                     // octahedron
+      plan);
 
-      // supplement
-      local_frequency,    // buffer for local frequencies
-      freq_offset,        // buffer for frequencies + sideband frequencies
-      w2,                 // buffer for 2nd rank frequency calculation
-      w4,                 // buffer for 4nd rank frequency calculation
-      vr_freq,            // sideband order frequencies in fft output order
-      cos_alpha,          // array of cos_alpha of orientations
-      amp_orientation,    // array of amplitude of orientations
-      wigner_2j_matrices, // wigner-d 2j matrix for all orientations
-      wigner_4j_matrices, // wigner-d 4j matrix for all orientations
-      pre_phase_2, pre_phase_4, rotor_lab_2, rotor_lab_4);
+  // gettimeofday(&all_site_time_end, NULL);
+  // clock_time =
+  //     (double)(all_site_time_end.tv_usec - all_site_time.tv_usec) / 1000000.
+  //     + (double)(all_site_time_end.tv_sec - all_site_time.tv_sec);
+  // printf("all site time %f \n", clock_time);
 
-  printf("all site time %f \n",
-         ((double)(clock() - all_site_time)) / (double)CLOCKS_PER_SEC);
+  // gettimeofday(&all_c_time_end, NULL);
+  // clock_time =
+  //     (double)(all_c_time_end.tv_usec - all_c_time.tv_usec) / 1000000. +
+  //     (double)(all_c_time_end.tv_sec - all_c_time.tv_sec);
+  // printf("all c time %f \n", clock_time);
 
-  printf("all c time %f \n",
-         ((double)(clock() - all_c_time)) / (double)CLOCKS_PER_SEC);
+  // gettimeofday(&end, NULL);
+  // clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +
+  //              (double)(end.tv_sec - begin.tv_sec);
+  // printf("time %f s\n", clock_time);
+  // cpu_time_[0] += clock_time;
 
-  cpu_time_[0] += ((double)(clock() - begin)) / (double)CLOCKS_PER_SEC;
-  printf("time %f s\n", cpu_time_[0]);
-
-  // clean up ------------------------------- //
-  fftw_destroy_plan(plan);
-  fftw_free(vector);
-  // DftiFreeDescriptor(&plan);
-  // destroyDoubleComplex1DArray(vector);
-  destroyDouble1DArray(rotor_lab_2);
-  destroyDouble1DArray(rotor_lab_4);
-  destroyDouble1DArray(wigner_2j_matrices);
-  destroyDouble1DArray(wigner_4j_matrices);
-  destroyDoubleComplex1DArray(pre_phase_2);
-  destroyDoubleComplex1DArray(pre_phase_4);
-  destroyDouble1DArray(amp_orientation);
-  destroyDouble1DArray(cos_alpha);
-  destroyDouble1DArray(vr_freq);
-  destroyDoubleComplex1DArray(w2);
-  destroyDoubleComplex1DArray(w4);
+  mrsimulator_free_plan(plan); /* clean up */
 }

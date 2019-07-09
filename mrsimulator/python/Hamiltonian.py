@@ -1,5 +1,8 @@
 import numpy as np
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+
 
 def _p_(mf, mi):
     return mf - mi

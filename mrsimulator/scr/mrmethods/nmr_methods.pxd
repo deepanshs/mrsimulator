@@ -24,18 +24,6 @@ cdef extern from "isotopomer_ravel.h":
         isotopomer_ravel *isotopomers
 
 cdef extern from "spinning_sidebands.h":
-    void __get_pre_phase_components(
-        int number_of_sidebands,
-        double spin_frequency,
-        double complex *pre_phase)
-
-    void __powder_averaging_setup(
-        int nt,
-        double *cos_alpha,
-        double *cos_beta,
-        double *amp,
-        int space)   # 1 for octant, 2 for hemisphere and 4 for sphere
-
     void spinning_sideband_core(
         # spectrum information and related amplitude
         double * spec,
@@ -58,19 +46,3 @@ cdef extern from "spinning_sidebands.h":
         # The transition as transition[0] = mi and transition[1] = mf
         double *transition,
         int geodesic_polyhedron_frequency)
-        # # Euler angle -> principal to molecular frame
-        # # double *omega_PM,
-
-        # # Euler angles for powder averaging scheme
-        # # powder orientation average
-        # unsigned int n_orientations,
-        # double *cos_alpha,
-        # double *amp,
-        # int nt,
-
-        # unsigned int number_of_site,
-        # double *wigner_2j_matrices,
-        # double *wigner_4j_matrices,
-        # double complex *pre_phase,
-        # double *rotor_lab_2,
-        # double *rotor_lab_4)

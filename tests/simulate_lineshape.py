@@ -1,8 +1,9 @@
 from mrsimulator.methods import one_d_spectrum
 from mrsimulator import Simulator
 import matplotlib.pyplot as plt
+from mrsimulator.sandbox import _one_d_simulator
 
-# import numpy as np
+import numpy as np
 from mrsimulator.python.simulator import simulator
 
 from timeit import default_timer
@@ -100,7 +101,7 @@ isotopomers = [
 spectrum = {
     "direct_dimension": {
         "magnetic_flux_density": "9.4 T",
-        "rotor_frequency": "0. kHz",
+        "rotor_frequency": "10. kHz",
         "rotor_angle": "54.735 deg",
         "number_of_points": 1024,
         "spectral_width": "125 kHz",
@@ -135,7 +136,7 @@ spectrum = {
 
 s = Simulator(isotopomers, spectrum)
 
-# n = 1
+# n = 300
 # start = default_timer()
 # [
 #     s.run(
@@ -144,7 +145,7 @@ s = Simulator(isotopomers, spectrum)
 #         geodesic_polyhedron_frequency=90,
 #         number_of_sidebands=128,
 #     ) for _ in range(n)]
-# print('python side time', (default_timer() - start) / float(n), ' s')
+# print('python side time', (default_timer() - start), ' s')
 
 n = 1
 start = default_timer()
@@ -166,14 +167,56 @@ print("python side time", (default_timer() - start) / float(n), " s")
 # [simulator(s._spectrum_c, s._isotopomers_c) for _ in range(n)]
 # print((default_timer() - start) / float(n), ' s')
 
-start = default_timer()
-freq, spec = simulator(s._spectrum_c, s._isotopomers_c, nt=90, number_of_sidebands=128)
-print("python side time", (default_timer() - start) / float(n), " s")
-# assert np.allclose(spec, a)
-fig, ax = plt.subplots(2, 1)
-ax[0].plot(freq, spec / spec.max(), "r", label="py")
-ax[0].plot(f, a / a.max(), "b", label="c")
-ax[0].legend()
-ax[1].plot(f, (spec / spec.max()) - (a / a.max()))
+# start = default_timer()
+# freq, spec = simulator(s._spectrum_c, s._isotopomers_c,
+#                        nt=90, number_of_sidebands=128)
+# print("python side time", (default_timer() - start) / float(n), " s")
+# # assert np.allclose(spec, a)
+# fig, ax = plt.subplots(2, 1)
+# # ax[0].plot(freq, spec / spec.max(), "r", label="py")
+# ax[0].plot(f, a / a.max(), "b", label="c")
+# ax[0].legend()
+# # ax[1].plot(f, (spec / spec.max()) - (a / a.max()))
 
+# plt.show()
+
+# start = default_timer()
+# n = 1000
+# number_of_points = 256 * 2
+# f, a, time__ = _one_d_simulator(
+#     reference_offset=-128 * 2,
+#     increment=1,
+#     number_of_points=number_of_points,
+#     isotropic_chemical_shift=np.random.normal(0., 2., n),
+#     chemical_shift_anisotropy=np.random.normal(100., 60., n),
+#     chemical_shift_asymmetry=np.random.normal(0.5, 0.2, n),
+#     sample_rotation_frequency=0.0,
+#     rotor_angle=54.735
+# )
+# # print('Execultion time in c ', time__)
+# print("Execution time in python", default_timer() - start)
+# plt.plot(f, a.reshape(n, number_of_points).sum(axis=0))
+# plt.show()
+
+start = default_timer()
+n = 1000
+number_of_points = 2048
+sw = 25000
+f, a, time__ = _one_d_simulator(
+    reference_offset=-sw / 2,
+    increment=sw / number_of_points,
+    number_of_points=number_of_points,
+    isotropic_chemical_shift=np.zeros(n),  # np.random.normal(0, 20, n),
+    chemical_shift_anisotropy=np.random.normal(100, 10, n),
+    chemical_shift_asymmetry=np.random.normal(0.75, 0.1, n),
+    quadrupolar_coupling_constant=np.random.normal(5.0e6, 1e5, n),
+    quadrupolar_asymmetry=np.random.normal(0.5, 0.1, n),
+    larmor_frequency=67.4e6,
+    spin_quantum_number=2.5,
+    sample_rotation_frequency=11000.0,
+    rotor_angle=54.735,
+    number_of_sidebands=128,
+)
+print("Execution time in python", default_timer() - start)
+plt.plot(f, a.reshape(n, number_of_points).sum(axis=0))
 plt.show()

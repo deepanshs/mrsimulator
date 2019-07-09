@@ -10,10 +10,6 @@
 
 // headerdoc
 
-extern void __get_pre_phase_components(int number_of_sidebands,
-                                       double spin_frequency,
-                                       double complex *pre_phase);
-
 extern void spinning_sideband_core(
     // spectrum information and related amplitude
     double *spec,              // The amplitude of the spectrum.
@@ -37,33 +33,6 @@ extern void spinning_sideband_core(
     double *transition,
 
     // powder orientation average
-    int geodesic_polyhedron_frequency // The number of triangle along the edge
-                                      // of octahedron
+    int geodesic_polyhedron_frequency // The number of triangle along
+                                      // the edge of octahedron
 );
-
-// Return a vector ordered according to the fft output order.                //
-// @params int n - The number of points                                      //
-// @params double increment - The increment (sampling interval)              //
-// @returns *double values = The pointer to the fft output order vector      //
-static inline double *__get_frequency_in_FFT_order(int n, double increment) {
-  double *vr_freq = createDouble1DArray(n);
-  int i = 0, m, positive_limit, negative_limit;
-
-  if (n % 2 == 0) {
-    negative_limit = (int)(-n / 2);
-    positive_limit = -negative_limit - 1;
-  } else {
-    negative_limit = (int)(-(n - 1) / 2);
-    positive_limit = -negative_limit;
-  }
-
-  for (m = 0; m <= positive_limit; m++) {
-    vr_freq[i] = (double)m * increment;
-    i++;
-  }
-  for (m = negative_limit; m < 0; m++) {
-    vr_freq[i] = (double)m * increment;
-    i++;
-  }
-  return vr_freq;
-}

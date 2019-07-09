@@ -1,5 +1,8 @@
 import numpy as np
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+
 
 def wigner_rotation(
     l, R_in, cos_alpha=None, cos_beta=None, wigner_matrix=None, phase_alpha=None

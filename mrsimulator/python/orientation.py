@@ -1,5 +1,8 @@
 import numpy as np
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+
 
 def octahedral_coordinate(nt: int):
 
@@ -72,16 +75,13 @@ def octahedral_direction_cosine_squares_and_amplitudes(nt: int):
     return x, y, z, amp
 
 
-def trig_of_polar_angles_and_amplitudes(geodesic_polyhedron_frequency: int = 72):
+def cosine_of_polar_angles_and_amplitudes(geodesic_polyhedron_frequency: int = 72):
     r"""
     Calculates and return the direction cosines and the related amplitudes for
     the positive quadrant of the sphere. The direction cosines corresponds to
     angle $\alpha$ and $\beta$, where $\alpha$ is the azimuthal angle and
-    $\beta$ is the polar angle. The amplitudes are evaluated as
-
-        >>> amp = 1/r**3
-
-    where `r` is the distance from the origin to the face of the unit
+    $\beta$ is the polar angle. The amplitudes are evaluated as $\frac{1}{r^3}$
+    where $r$ is the distance from the origin to the face of the unit
     octahedron in the positive quadrant along the line given by the values of
     $\alpha$ and $\beta$.
 

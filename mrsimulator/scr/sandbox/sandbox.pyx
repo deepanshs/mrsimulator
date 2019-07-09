@@ -72,7 +72,7 @@ def wigner_rotation(int l, np.ndarray[complex] R_in,
 @cython.wraparound(False)
 def wigner_d_matrix_cosines(int l, np.ndarray[double] cos_beta):
     r"""
-    Returns a $(2l+1) \times (2l+1)$ wigner-d(cos_beta) matrix for rank $l$ at
+    Returns a :math:`(2l+1) \times (2l+1)` wigner-d(cos_beta) matrix for rank $l$ at
     a given `cos_beta`. Currently only rank l=2 and l=4 is supported.
 
     If `cos_beta` is a 1D-numpy array of size n, a
@@ -90,14 +90,14 @@ def wigner_d_matrix_cosines(int l, np.ndarray[double] cos_beta):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def trig_of_polar_angles_and_amplitudes(int geodesic_polyhedron_frequency=72):
+def cosine_of_polar_angles_and_amplitudes(int geodesic_polyhedron_frequency=72):
     r"""
-    Calculates and return the direction cosines and the related amplitudes for
+    Calculate the direction cosines and the related amplitudes for
     the positive quadrant of the sphere. The direction cosines corresponds to
     angle $\alpha$ and $\beta$, where $\alpha$ is the azimuthal angle and
     $\beta$ is the polar angle. The amplitudes are evaluated as
 
-        >>> amp = 1/r**3
+        `amp = 1/r**3`
 
     where `r` is the distance from the origin to the face of the unit
     octahedron in the positive quadrant along the line given by the values of
@@ -168,3 +168,159 @@ def triangle_interpolation(vector, np.ndarray[double, ndim=1] spectrum_amp,
     cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
 
     clib.triangle_interpolation(f1, f2, f3, &amp_[0], &spectrum_amp[0], &points[0])
+
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def _one_d_simulator(
+        # spectrum information
+        double reference_offset,
+        double increment,
+        int number_of_points,
+
+        float spin_quantum_number = 0.5,
+        float larmor_frequency = 0.0,
+
+        # CSA tensor information
+        isotropic_chemical_shift = None,
+        chemical_shift_anisotropy = None,
+        chemical_shift_asymmetry = None,
+
+        # quad tensor information
+        quadrupolar_coupling_constant = None,
+        quadrupolar_asymmetry = None,
+        second_order_quad = 1,
+        remove_second_order_quad_iso = 0,
+
+        # dipolar coupling
+        D = None,
+
+        # spin rate, spin angle and number spinning sidebands
+        int number_of_sidebands = 128,
+        double sample_rotation_frequency = 0.0,
+        rotor_angle = None,
+
+        m_final = 0.5,
+        m_initial = -0.5,
+
+        # Euler angle -> principal to molecular frame
+        # omega_PM=None,
+
+        # Euler angles for powder averaging scheme
+        int geodesic_polyhedron_frequency=90):
+
+    nt = geodesic_polyhedron_frequency
+    if isotropic_chemical_shift is None:
+        isotropic_chemical_shift = 0
+    isotropic_chemical_shift = np.asarray([isotropic_chemical_shift], dtype=np.float64).ravel()
+    cdef number_of_sites = isotropic_chemical_shift.size
+    cdef np.ndarray[double, ndim=1] isotropic_chemical_shift_c = isotropic_chemical_shift
+
+    if spin_quantum_number > 0.5 and larmor_frequency == 0.0:
+        raise Exception("'larmor_frequency' is required for quadrupole spins.")
+
+    # Shielding anisotropic values
+    if chemical_shift_anisotropy is None:
+        chemical_shift_anisotropy = np.ones(number_of_sites, dtype=np.float64).ravel() #*1e-4*increment
+    else:
+        chemical_shift_anisotropy = np.asarray([chemical_shift_anisotropy], dtype=np.float64).ravel()
+        # chemical_shift_anisotropy[np.where(chemical_shift_anisotropy==0.)] = 1e-4*increment
+    if chemical_shift_anisotropy.size != number_of_sites:
+        raise Exception("Number of shielding anisotropies are not consistent with the number of spins.")
+    cdef np.ndarray[double, ndim=1] chemical_shift_anisotropy_c = chemical_shift_anisotropy
+
+    # Shielding asymmetry values
+    if chemical_shift_asymmetry is None:
+        chemical_shift_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()
+    else:
+        chemical_shift_asymmetry = np.asarray([chemical_shift_asymmetry], dtype=np.float64).ravel()
+    if chemical_shift_asymmetry.size != number_of_sites:
+        raise Exception("Number of shielding asymmetry are not consistent with the number of spins.")
+    cdef np.ndarray[double, ndim=1] chemical_shift_asymmetry_c = chemical_shift_asymmetry
+
+    # Quad coupling constant
+    if quadrupolar_coupling_constant is None:
+        quadrupolar_coupling_constant = np.zeros(number_of_sites, dtype=np.float64).ravel()
+    else:
+        quadrupolar_coupling_constant = np.asarray([quadrupolar_coupling_constant], dtype=np.float64).ravel()
+    if quadrupolar_coupling_constant.size != number_of_sites:
+        raise Exception("Number of quad coupling constants are not consistent with the number of spins.")
+    cdef np.ndarray[double, ndim=1] quadrupolar_coupling_constant_c = quadrupolar_coupling_constant
+
+    # Quad asymmetry value
+    if quadrupolar_asymmetry is None:
+        quadrupolar_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()
+    else:
+        quadrupolar_asymmetry = np.asarray([quadrupolar_asymmetry], dtype=np.float64).ravel()
+    if quadrupolar_asymmetry.size != number_of_sites:
+        raise Exception("Number of quad asymmetry are not consistent with the number of spins.")
+    cdef np.ndarray[double, ndim=1] quadrupolar_asymmetry_c = quadrupolar_asymmetry
+
+
+    # Dipolar coupling constant
+    if D is None:
+        D = np.zeros(number_of_sites, dtype=np.float64).ravel()
+    else:
+        D = np.asarray([D], dtype=np.float64).ravel()
+    if D.size != number_of_sites:
+        raise Exception("Number of dipolar coupling are not consistent with the number of spins.")
+    cdef np.ndarray[double, ndim=1] D_c = D
+
+    if rotor_angle is None:
+        rotor_angle = 54.735
+    cdef double rotor_angle_c = np.pi*rotor_angle/180.
+
+    cdef second_order_quad_c = second_order_quad
+
+    cdef np.ndarray[double, ndim=1] transition_c = np.asarray([m_initial, m_final], dtype=np.float64)
+
+    cdef np.ndarray[double, ndim=1] amp = np.zeros(number_of_points * number_of_sites)
+    cdef double cpu_time_
+
+    cdef np.ndarray[double] ori_n = np.zeros(3*number_of_sites, dtype=np.float64)
+    cdef np.ndarray[double] ori_e = np.zeros(3*number_of_sites, dtype=np.float64)
+
+    cdef clib.isotopomer_ravel isotopomer_struct
+
+    isotopomer_struct.number_of_sites = number_of_sites
+    isotopomer_struct.spin = spin_quantum_number
+    isotopomer_struct.larmor_frequency = larmor_frequency
+
+    isotopomer_struct.isotropic_chemical_shift_in_Hz = &isotropic_chemical_shift_c[0]
+    isotopomer_struct.shielding_anisotropy_in_Hz = &chemical_shift_anisotropy_c[0]
+    isotopomer_struct.shielding_asymmetry = &chemical_shift_asymmetry_c[0]
+    isotopomer_struct.shielding_orientation = &ori_n[0]
+
+    isotopomer_struct.quadrupolar_constant_in_Hz = &quadrupolar_coupling_constant_c[0]
+    isotopomer_struct.quadrupolar_asymmetry = &quadrupolar_asymmetry_c[0]
+    isotopomer_struct.quadrupolar_orientation = &ori_e[0]
+
+    isotopomer_struct.dipolar_couplings = &D_c[0]
+
+    cdef int remove_second_order_quad_iso_c = remove_second_order_quad_iso
+    clib.spinning_sideband_core(
+            # spectrum information and related amplitude
+            &amp[0],
+            &cpu_time_,
+            reference_offset,
+            increment,
+            number_of_points,
+
+            &isotopomer_struct,
+
+            second_order_quad_c,
+            remove_second_order_quad_iso_c,
+
+            # spin rate, spin angle and number spinning sidebands
+            number_of_sidebands,
+            sample_rotation_frequency,
+            rotor_angle_c,
+
+            &transition_c[0],
+            geodesic_polyhedron_frequency)
+
+
+    freq = np.arange(number_of_points)*increment + reference_offset
+
+    return freq, amp, cpu_time_

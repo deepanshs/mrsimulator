@@ -65,4 +65,8 @@ evaluated at all `n` wigner matrices.
 extern void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
                               double complex *R_in, double complex *R_out);
 
+extern void __wigner_rotation_2(int l, int n, double *wigner,
+                                double complex *exp_Im_alpha,
+                                double complex *R_in, double complex *R_out);
+
 extern void __wigner_dm0_vector(int l, double beta, double *R_out);

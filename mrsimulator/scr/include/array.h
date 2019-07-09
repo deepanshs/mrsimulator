@@ -9,23 +9,22 @@
 
 #include "mrsimulator.h"
 
-extern float *createFloat1DArray(int m);
-extern void destroyFloat1DArray(float *arr);
+// allocate memory for a float array of size m .
+extern float *malloc_float(int m);
+// free allocated memory of a float array of size m.
+extern void free_float(float *arr);
 
-extern float complex *createFloatComplex1DArray(int m);
-extern void destroyFloatComplex1DArray(float complex *arr);
+// allocate memory for a float complex array of size m.
+extern float complex *malloc_float_complex(int m);
+// free allocated memory of a float complex array of size m.
+extern void free_float_complex(float complex *arr);
 
-extern double *createDouble1DArray(int m);
-extern void destroyDouble1DArray(double *arr);
+// allocate memory for a double array of size m.
+extern double *malloc_double(int m);
+// free allocated memory of a double array of size m.
+extern void free_double(double *arr);
 
-extern double complex *createDoubleComplex1DArray(int m);
-extern void destroyDoubleComplex1DArray(double complex *arr);
-
-// extern float **createFloat2DMatrix(int m, int n);
-// extern void destroyFloat2DMatrix(float **arr);
-
-// extern double **createDouble2DMatrix(int n, int m);
-// extern void destroyDouble2DMatrix(double **arr);
-
-// extern double ***createDouble3DArray(int n, int m, int o);
-// extern void destroyDouble3DArray(double ***arr);
+// allocate memory for a double complex array of size m.
+extern double complex *malloc_double_complex(int m);
+// free allocated memory of a double complex array of size m.
+extern void free_double_complex(double complex *arr);

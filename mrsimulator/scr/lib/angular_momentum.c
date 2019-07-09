@@ -260,9 +260,12 @@ void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
   int n1 = 2 * l + 1, m, i = 0, mp;
   double complex temp_inital_vector[n1], ph2, pha;
   double complex *final_vector;
-  // double *final_vector;
-  // int n2 = n1 * n1;
+  int n2 = n1 * n1;
 
+  // #pragma omp parallel for
+  //   // private(orientation, pha, ph2, m, temp_inital_vector,
+  //   //                                  final_vector, i),
+  //   //     shared(n, cos_alpha, n1, R_in, l, R_out, wigner, n2)
   for (orientation = 0; orientation < n; orientation++) {
 
     // calculate the alpha phase, exp(-I m alpha).
@@ -285,6 +288,7 @@ void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
     }
 
     final_vector = &R_out[orientation * n1];
+    i = orientation * n2;
     // Apply wigner rotation to the temp inital vector
     for (m = 0; m < n1; m++) {
       final_vector[m] = 0.;
@@ -299,13 +303,51 @@ void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
     // c for-loops --- 1.19 ms ± 10.4 µs
     // blas        --- 4.19 ms ± 14.8 µs
 
-    // final_vector = (double *)&R_out[orientation * n1];
+    // final_vector = &R_out[orientation * n1];
     // cblas_dgemv(CblasRowMajor, CblasNoTrans, n1, n1, 1.0, &wigner[i], n1,
-    //             (double *)&temp_inital_vector[0], 2, 0.0, &final_vector[0], 2);
+    //             (double *)&temp_inital_vector[0], 2, 0.0,
+    //             (double *)&final_vector[0], 2);
     // cblas_dgemv(CblasRowMajor, CblasNoTrans, n1, n1, 1.0, &wigner[i], n1,
     //             (double *)&temp_inital_vector[0] + 1, 2, 0.0,
-    //             &final_vector[0] + 1, 2);
+    //             (double *)&final_vector[0] + 1, 2);
     // i += n2;
+  }
+}
+
+void __wigner_rotation_2(int l, int n, double *wigner,
+                         double complex *exp_Im_alpha, double complex *R_in,
+                         double complex *R_out) {
+  int orientation;
+  int n1 = 2 * l + 1, m, i = 0, mp;
+  double complex temp_inital_vector[n1];
+  double complex *final_vector, temp;
+
+  // #pragma omp parallel for
+  // private(orientation, pha, ph2, m, temp_inital_vector,
+  //                                  final_vector, i),
+  //     shared(n, cos_alpha, n1, R_in, l, R_out, wigner, n2)
+  for (orientation = 0; orientation < n; orientation++) {
+
+    // copy the initial vector
+    for (m = 0; m < n1; m++) {
+      temp_inital_vector[m] = R_in[m];
+    }
+
+    // scale the temp initial vector with exp[-I m alpha]
+    for (m = 1; m <= l; m++) {
+      temp = exp_Im_alpha[(4 - m) * n + orientation];
+      temp_inital_vector[l - m] *= temp;
+      temp_inital_vector[l + m] *= conj(temp);
+    }
+
+    final_vector = &R_out[orientation * n1];
+    // Apply wigner rotation to the temp inital vector
+    for (m = 0; m < n1; m++) {
+      final_vector[m] = 0.;
+      for (mp = 0; mp < n1; mp++) {
+        final_vector[m] += wigner[i++] * temp_inital_vector[mp];
+      }
+    }
   }
 }
 

@@ -83,15 +83,15 @@ method as
     <BLANKLINE>
     13C site 0 from isotopomer 0 @ 100.0% abundance
     -----------------------------------------------
-    isotropic chemical shift = 1.0 ppm
-    chemical shift anisotropy = -3.89 ppm
-    chemical shift asymmetry = 0.25
+    Isotropic chemical shift = 1.0 ppm
+    Shielding anisotropy = -3.89 ppm
+    Shielding asymmetry = 0.25
     <BLANKLINE>
     13C site 0 from isotopomer 1 @ 100.0% abundance
     -----------------------------------------------
-    isotropic chemical shift = 1.0 ppm
-    chemical shift anisotropy = 8.2 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = 1.0 ppm
+    Shielding anisotropy = 8.2 ppm
+    Shielding asymmetry = 0.0
 
 The simulator goes through every isotopomer in the list and simulates the
 lineshape corresponding to the :math:`^{13}\mathrm{C}` isotopes. In this
@@ -152,15 +152,15 @@ Now compute the lineshape as before.
     <BLANKLINE>
     13C site 0 from isotopomer 0 @ 100.0% abundance
     -----------------------------------------------
-    isotropic chemical shift = 1.0 ppm
-    chemical shift anisotropy = -3.89 ppm
-    chemical shift asymmetry = 0.25
+    Isotropic chemical shift = 1.0 ppm
+    Shielding anisotropy = -3.89 ppm
+    Shielding asymmetry = 0.25
     <BLANKLINE>
     13C site 0 from isotopomer 1 @ 100.0% abundance
     -----------------------------------------------
-    isotropic chemical shift = 1.0 ppm
-    chemical shift anisotropy = 8.2 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = 1.0 ppm
+    Shielding anisotropy = 8.2 ppm
+    Shielding asymmetry = 0.0
 
 .. doctest::
 
@@ -208,15 +208,15 @@ Now compute the lineshape.
     <BLANKLINE>
     1H site 0 from isotopomer 2 @ 100.0% abundance
     ----------------------------------------------
-    isotropic chemical shift = 3.0 ppm
-    chemical shift anisotropy = 23.2 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = 3.0 ppm
+    Shielding anisotropy = 23.2 ppm
+    Shielding asymmetry = 0.0
     <BLANKLINE>
     1H site 0 from isotopomer 6 @ 100.0% abundance
     ----------------------------------------------
-    isotropic chemical shift = 5.6 ppm
-    chemical shift anisotropy = 13.2 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = 5.6 ppm
+    Shielding anisotropy = 13.2 ppm
+    Shielding asymmetry = 0.0
 
 .. doctest::
 
@@ -257,21 +257,21 @@ The simulated lineshape.
     <BLANKLINE>
     29Si site 0 from isotopomer 3 @ 100.0% abundance
     ------------------------------------------------
-    isotropic chemical shift = -100.0 ppm
-    chemical shift anisotropy = 1.36 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = -100.0 ppm
+    Shielding anisotropy = 1.36 ppm
+    Shielding asymmetry = 0.0
     <BLANKLINE>
     29Si site 0 from isotopomer 4 @ 100.0% abundance
     ------------------------------------------------
-    isotropic chemical shift = -100.0 ppm
-    chemical shift anisotropy = 70.36 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = -100.0 ppm
+    Shielding anisotropy = 70.36 ppm
+    Shielding asymmetry = 0.0
     <BLANKLINE>
     29Si site 0 from isotopomer 5 @ 100.0% abundance
     ------------------------------------------------
-    isotropic chemical shift = -90.0 ppm
-    chemical shift anisotropy = 80.36 ppm
-    chemical shift asymmetry = 0.5
+    Isotropic chemical shift = -90.0 ppm
+    Shielding anisotropy = 80.36 ppm
+    Shielding asymmetry = 0.5
 
 .. doctest::
 
@@ -318,15 +318,15 @@ The simulated lineshape.
     <BLANKLINE>
     1H site 0 from isotopomer 2 @ 100.0% abundance
     ----------------------------------------------
-    isotropic chemical shift = 3.0 ppm
-    chemical shift anisotropy = 23.2 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = 3.0 ppm
+    Shielding anisotropy = 23.2 ppm
+    Shielding asymmetry = 0.0
     <BLANKLINE>
     1H site 0 from isotopomer 6 @ 100.0% abundance
     ----------------------------------------------
-    isotropic chemical shift = 5.6 ppm
-    chemical shift anisotropy = 13.2 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = 5.6 ppm
+    Shielding anisotropy = 13.2 ppm
+    Shielding asymmetry = 0.0
 
 .. doctest::
 

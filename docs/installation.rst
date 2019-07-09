@@ -85,9 +85,9 @@ This will display the following message on the screen
 
     1H site 0 from isotopomer 0 @ 100.0% abundance
     ----------------------------------------------
-    isotropic chemical shift = 0.0 ppm
-    chemical shift anisotropy = 13.89 ppm
-    chemical shift asymmetry = 0.25
+    Isotropic chemical shift = 0.0 ppm
+    Shielding anisotropy = 13.89 ppm
+    Shielding asymmetry = 0.25
     Setting up the virtual NMR spectrometer
     ---------------------------------------
     Adjusting the magnetic flux density to 9.4 T.
@@ -98,9 +98,9 @@ This will display the following message on the screen
 
     1H site 0 from isotopomer 0 @ 100.0% abundance
     ----------------------------------------------
-    isotropic chemical shift = 0.0 ppm
-    chemical shift anisotropy = 13.89 ppm
-    chemical shift asymmetry = 0.25
+    Isotropic chemical shift = 0.0 ppm
+    Shielding anisotropy = 13.89 ppm
+    Shielding asymmetry = 0.25
 
 and the corresponding plot shown below.
 

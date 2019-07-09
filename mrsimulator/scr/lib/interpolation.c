@@ -9,9 +9,10 @@
 
 #include "interpolation.h"
 
-// triangle_interpolation is an optimized version of tent.
+// triangle_interpolation is an optimized version of tent. Still plenty of
+// room for optimization.
 int inline triangle_interpolation(double *freq1, double *freq2, double *freq3,
-                           double *amp, double *spec, int *points) {
+                                  double *amp, double *spec, int *points) {
 
   double df1, df2, top = 0.0, t, diff, f10 = 0.0, f21 = 0.0, temp;
   int p, pmid, pmax, i, j;

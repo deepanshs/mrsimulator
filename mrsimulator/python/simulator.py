@@ -11,13 +11,16 @@ from mrsimulator.python.angular_momentum import wigner_rotation as rotation
 
 from mrsimulator.python.Hamiltonian import nuclear_shielding as NS
 from mrsimulator.python.orientation import (
-    trig_of_polar_angles_and_amplitudes as polar_coordinates,
+    cosine_of_polar_angles_and_amplitudes as polar_coordinates,
 )
 
 from mrsimulator.python.orientation import average_over_octant as averager
 from mrsimulator.python.utils import pre_phase_components
 from timeit import default_timer
 import matplotlib.pyplot as plt
+
+__author__ = "Deepansh J. Srivastava"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
 def simulator(
@@ -131,6 +134,8 @@ def simulator(
                     if int(shift) >= 0 and int(shift) <= number_of_points:
                         freq_offset[:] = shift + local_frequency
                         averager(spec, freq_offset, nt, sideband_amplitude[:, j])
+                        # np.vectorize(averager(spec, freq_offset,
+                        #                       nt, sideband_amplitude[:, j]))
 
                 print("time for computing site", default_timer() - start0)
         # average over all spins

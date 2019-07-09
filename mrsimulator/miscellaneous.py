@@ -3,6 +3,9 @@ import json
 import os
 import numpy as np
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+
 
 def import_json(filename):
     with open(filename, "rb") as f:
