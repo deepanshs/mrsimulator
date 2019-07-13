@@ -136,26 +136,25 @@ spectrum = {
 
 s = Simulator(isotopomers, spectrum)
 
-# n = 300
-# start = default_timer()
-# [
-#     s.run(
-#         one_d_spectrum,
-#         verbose=0,
-#         geodesic_polyhedron_frequency=90,
-#         number_of_sidebands=128,
-#     ) for _ in range(n)]
-# print('python side time', (default_timer() - start), ' s')
-
-n = 1
+n = 10
 start = default_timer()
-f, a = s.run(
-    one_d_spectrum,
-    verbose=11,
-    geodesic_polyhedron_frequency=90,
-    number_of_sidebands=128,
-)
-print("python side time", (default_timer() - start) / float(n), " s")
+[
+    simulator(s._spectrum_c, s._isotopomers_c, nt=90, number_of_sidebands=128)
+    for _ in range(n)
+]
+print("python side time, py", (default_timer() - start) / float(n), " s")
+
+start = default_timer()
+[
+    s.run(
+        one_d_spectrum,
+        verbose=0,
+        geodesic_polyhedron_frequency=90,
+        number_of_sidebands=128,
+    )
+    for _ in range(n)
+]
+print("python side time, c", (default_timer() - start) / float(n), " s")
 # plt.plot(f, a)
 # plt.show()
 
@@ -164,19 +163,20 @@ print("python side time", (default_timer() - start) / float(n), " s")
 # n = 1
 
 # start = default_timer()
-# [simulator(s._spectrum_c, s._isotopomers_c) for _ in range(n)]
-# print((default_timer() - start) / float(n), ' s')
+f, a = simulator(s._spectrum_c, s._isotopomers_c, nt=90, number_of_sidebands=128)
+# print("python side time, py", (default_timer() - start) / float(n), ' s')
 
 # start = default_timer()
-# freq, spec = simulator(s._spectrum_c, s._isotopomers_c,
-#                        nt=90, number_of_sidebands=128)
+freq, spec = s.run(
+    one_d_spectrum, geodesic_polyhedron_frequency=90, number_of_sidebands=128
+)
 # print("python side time", (default_timer() - start) / float(n), " s")
 # # assert np.allclose(spec, a)
-# fig, ax = plt.subplots(2, 1)
-# # ax[0].plot(freq, spec / spec.max(), "r", label="py")
-# ax[0].plot(f, a / a.max(), "b", label="c")
-# ax[0].legend()
-# # ax[1].plot(f, (spec / spec.max()) - (a / a.max()))
+fig, ax = plt.subplots(2, 1)
+ax[0].plot(freq, spec / spec.max(), "r", label="py")
+ax[0].plot(f, a / a.max(), "b", label="c")
+ax[0].legend()
+# ax[1].plot(f, (spec / spec.max()) - (a / a.max()))
 
 # plt.show()
 
@@ -198,25 +198,25 @@ print("python side time", (default_timer() - start) / float(n), " s")
 # plt.plot(f, a.reshape(n, number_of_points).sum(axis=0))
 # plt.show()
 
-start = default_timer()
-n = 1000
-number_of_points = 2048
-sw = 25000
-f, a, time__ = _one_d_simulator(
-    reference_offset=-sw / 2,
-    increment=sw / number_of_points,
-    number_of_points=number_of_points,
-    isotropic_chemical_shift=np.zeros(n),  # np.random.normal(0, 20, n),
-    chemical_shift_anisotropy=np.random.normal(100, 10, n),
-    chemical_shift_asymmetry=np.random.normal(0.75, 0.1, n),
-    quadrupolar_coupling_constant=np.random.normal(5.0e6, 1e5, n),
-    quadrupolar_asymmetry=np.random.normal(0.5, 0.1, n),
-    larmor_frequency=67.4e6,
-    spin_quantum_number=2.5,
-    sample_rotation_frequency=11000.0,
-    rotor_angle=54.735,
-    number_of_sidebands=128,
-)
-print("Execution time in python", default_timer() - start)
-plt.plot(f, a.reshape(n, number_of_points).sum(axis=0))
-plt.show()
+# start = default_timer()
+# n = 1000
+# number_of_points = 2048
+# sw = 2500
+# f, a, time__ = _one_d_simulator(
+#     reference_offset=-sw / 2,
+#     increment=sw / number_of_points,
+#     number_of_points=number_of_points,
+#     isotropic_chemical_shift=np.zeros(n),  # np.random.normal(0, 20, n),
+#     chemical_shift_anisotropy=np.random.normal(500, 10, n),
+#     chemical_shift_asymmetry=np.random.normal(0.75, 0.1, n),
+#     # quadrupolar_coupling_constant=np.random.normal(5.0e6, 1e5, n),
+#     # quadrupolar_asymmetry=np.random.normal(0.5, 0.1, n),
+#     # larmor_frequency=67.4e6,
+#     # spin_quantum_number=2.5,
+#     sample_rotation_frequency=0.0,
+#     rotor_angle=54.735,
+#     number_of_sidebands=128,
+# )
+# print("Execution time in python", default_timer() - start)
+# plt.plot(f, a.reshape(n, number_of_points).sum(axis=0))
+# plt.show()

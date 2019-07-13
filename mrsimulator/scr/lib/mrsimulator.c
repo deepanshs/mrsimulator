@@ -9,7 +9,7 @@
 #include "mrsimulator.h"
 
 /* free the buffer and pre-calculated tables from the mrsimulator plan.      */
-void mrsimulator_free_plan(mrsimulator_plan *the_plan) {
+void MRS_free_plan(MRS_plan *the_plan) {
   fftw_destroy_plan(the_plan->the_fftw_plan);
   fftw_free(the_plan->vector);
   //   DftiFreeDescriptor(&plan);
@@ -25,23 +25,36 @@ void mrsimulator_free_plan(mrsimulator_plan *the_plan) {
   free_double_complex(the_plan->w4);
   free_double_complex(the_plan->pre_phase_2);
   free_double_complex(the_plan->pre_phase_4);
+  mkl_free_buffers();
 }
 
-/* Create a new mrsimulator plan. */
-mrsimulator_plan *
-mrsimulator_create_plan(unsigned int geodesic_polyhedron_frequency,
-                        int number_of_sidebands,
-                        double sample_rotation_frequency, double rotor_angle,
-                        double spectral_increment, bool ALLOW_FOURTH_RANK) {
+/* Create a new mrsimulator plan.
+ * A plan for mrsimulator contains buffers and tabulated values to produce
+ * faster simulation. The plan includes,
+ * 1) Calculating an array of orientation on the surface of a sphere. Each
+ * orientation is described by an azimuthal angle, alpha, a polar angle, beta,
+ * and a weighting value representing the spherical  The plan includes
+ * pre-calculating 1) wigner-2j and wigner-4j matrices at every orientation (β),
+ * 2) pre-calculating exp(-Imα), the exponent of the sideband phase.
+ */
+MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
+                          int number_of_sidebands,
+                          double sample_rotation_frequency, double rotor_angle,
+                          double increment, bool ALLOW_FOURTH_RANK) {
 
   unsigned int nt = geodesic_polyhedron_frequency, j, i, size_2, size_4;
   unsigned int n_orientations = (nt + 1) * (nt + 2) / 2;
 
-  mrsimulator_plan *plan = malloc(sizeof(mrsimulator_plan));
+  MRS_plan *plan = malloc(sizeof(MRS_plan));
   plan->number_of_sidebands = number_of_sidebands;
+  plan->sample_rotation_frequency = sample_rotation_frequency;
+  plan->rotor_angle = rotor_angle;
   plan->n_orientations = n_orientations;
   plan->size = n_orientations * number_of_sidebands;
   plan->geodesic_polyhedron_frequency = nt;
+  plan->ALLOW_FOURTH_RANK = ALLOW_FOURTH_RANK;
+  plan->one = 1.0;
+  plan->zero = 0.0;
 
   // setup the fftw routine
   plan->vector = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * plan->size);
@@ -77,11 +90,10 @@ mrsimulator_create_plan(unsigned int geodesic_polyhedron_frequency,
   // gettimeofday(&start1, NULL);
 
   // Sideband order frequency relative to fft output order.
-  double spectral_increment_inverse = 1.0 / spectral_increment;
+  double increment_inverse = 1.0 / increment;
   plan->vr_freq = __get_frequency_in_FFT_order(number_of_sidebands,
                                                sample_rotation_frequency);
-  cblas_dscal(number_of_sidebands, spectral_increment_inverse, plan->vr_freq,
-              1);
+  cblas_dscal(number_of_sidebands, increment_inverse, plan->vr_freq, 1);
 
   // orientation set-up
   double *cos_alpha = malloc_double(n_orientations);
@@ -100,31 +112,21 @@ mrsimulator_create_plan(unsigned int geodesic_polyhedron_frequency,
 
   plan->exp_Im_alpha = malloc_double_complex(5 * n_orientations);
   int s_2 = 2 * n_orientations, s_3 = 3 * n_orientations;
-  // s_5 = 5 * n_orientations, s_6 = 6 * n_orientations;
   int s_0 = 0 * n_orientations, s_1 = 1 * n_orientations;
-  // s_7 = 7 * n_orientations, s_8 = 8 * n_orientations;
-  // int s_4 = 4 * n_orientations;
-
-  // cblas_zdscal(n_orientations, 0.0, &exp_Im_alpha[s_4], 1);
 
   cblas_dcopy(n_orientations, cos_alpha, 1, (double *)&plan->exp_Im_alpha[s_3],
               2);
   cblas_dcopy(n_orientations, sin_alpha, 1,
               (double *)&plan->exp_Im_alpha[s_3] + 1, 2);
-  // vmzConj(n_orientations, &exp_Im_alpha[s_3], &exp_Im_alpha[s_5], VML_EP);
 
   vmzMul(n_orientations, &plan->exp_Im_alpha[s_3], &plan->exp_Im_alpha[s_3],
          &plan->exp_Im_alpha[s_2], VML_EP);
-  // vmzConj(n_orientations, &exp_Im_alpha[s_2], &exp_Im_alpha[s_6], VML_EP);
 
   if (ALLOW_FOURTH_RANK) {
     vmzMul(n_orientations, &plan->exp_Im_alpha[s_2], &plan->exp_Im_alpha[s_3],
            &plan->exp_Im_alpha[s_1], VML_EP);
-    // vmzConj(n_orientations, &exp_Im_alpha[s_1], &exp_Im_alpha[s_7], VML_EP);
-
     vmzMul(n_orientations, &plan->exp_Im_alpha[s_1], &plan->exp_Im_alpha[s_3],
            &plan->exp_Im_alpha[s_0], VML_EP);
-    // vmzConj(n_orientations, &exp_Im_alpha[s_0], &exp_Im_alpha[s_8], VML_EP);
   }
 
   // Setup for second rank tensor.
@@ -200,10 +202,124 @@ mrsimulator_create_plan(unsigned int geodesic_polyhedron_frequency,
   return plan;
 }
 
-// void mrsimulator_simulate(mrsimulator_plan *plan, double *R0,
-//                           double complex *R2, double complex *R4) {
-//   rotate
-// }
+/* Return a copy of thr mrsimulator plan. */
+MRS_plan *MRS_copy_plan(MRS_plan *plan) {}
+
+/* The function evaluates the amplitudes at every orientation and at every
+ * sideband per orientation. This is done in two steps.
+ * 1) Rotate R2 and R4, given in the crystal or common frame to w2 and w4 in
+ *    the lab frame using wigner 2j and 4j rotation matrices, respectively,
+ *    at all orientations.
+ * 2) Evalute the sideband amplitudes using equation [39] of the reference
+ *    https://doi.org/10.1006/jmre.1998.1427.
+ */
+void MRS_get_amplitudes_from_plan(MRS_plan *plan, double complex *R2,
+                                  double complex *R4) {
+
+  /* Wigner second rank rotation from crystal/common frame to rotor frame. */
+  __wigner_rotation_2(2, plan->n_orientations, plan->wigner_2j_matrices,
+                      plan->exp_Im_alpha, R2, plan->w2);
+
+  /* Evaluating the exponent of the sideband phase w.r.t the fourth rank
+   * tensor. The exponent is given as,
+   * w_cs(Θ) * I 2π [(exp(I m wr t) - 1)/(I m wr)] * d^2m0(rotor_angle)
+   *           |------------------- pre_phase_2 ----------------------|
+   * where `pre_phase_2` is pre-calculated and stored in plan. It is accessed
+   * with `plan->pre_phase_2`.
+   * The result, `vector` is interpreted as a row major matrix of shape
+   * `number_of_sidebands` x `n_orientations` with `n_orientations` as the
+   * leading dimension.                                                      */
+  cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans, plan->number_of_sidebands,
+              plan->n_orientations, 5, &plan->one, plan->pre_phase_2,
+              plan->number_of_sidebands, plan->w2, 5, &plan->zero, plan->vector,
+              plan->n_orientations);
+
+  if (plan->ALLOW_FOURTH_RANK) {
+    /* Wigner fourth rank rotation from crystal/common frame to rotor frame. */
+    __wigner_rotation_2(4, plan->n_orientations, plan->wigner_4j_matrices,
+                        plan->exp_Im_alpha, R4, plan->w4);
+
+    /* Evaluating the exponent of the sideband phase w.r.t fourth rank
+     *  tensor given as,
+     * w_cs(Θ) * I 2π [(exp(I m wr t) - 1)/(I m wr)] * d^4m0(rotor_angle)
+     *           |------------------- pre_phase_4 ----------------------|
+     * The result, `vector` is interpreted as a matrix of dimensions
+     * `number_of_sidebands` x `n_orientations` with `n_orientations` as
+     * the leading dimension.                                              */
+    cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans,
+                plan->number_of_sidebands, plan->n_orientations, 9, &plan->one,
+                plan->pre_phase_4, plan->number_of_sidebands, plan->w4, 9,
+                &plan->one, plan->vector, plan->n_orientations);
+  }
+
+  /* Evaluating the sideband phase exp(vector)                             */
+  vmzExp(plan->size, plan->vector, plan->vector, VML_EP);
+
+  /* Evaluate the Fourier transform of vector, fft(vector).                *
+   * The fft operation updates the value of the array, `vector`            */
+  fftw_execute(plan->the_fftw_plan);
+  // DftiComputeForward(plan, vector);
+
+  /* Taking the absolute value square of the vector array. The absolute    *
+   *  value square is stores as the real part of the vector array. The     *
+   *  imaginary part is garbage. This method avoids creating new arrays.   */
+  vmdSqr(2 * plan->size, (double *)plan->vector, (double *)plan->vector,
+         VML_EP);
+  cblas_daxpby(plan->size, 1.0, (double *)plan->vector + 1, 2, 1.0,
+               (double *)plan->vector, 2);
+
+  /* Scaling the absolute value square with the powder scheme weights.      *
+   *  Only the real part is scaled and the imaginary part is discarded.    */
+  for (int orientation = 0; orientation < plan->n_orientations; orientation++) {
+    cblas_dscal(plan->number_of_sidebands, plan->amplitudes[orientation],
+                (double *)&plan->vector[orientation], 2 * plan->n_orientations);
+  }
+}
+
+/* The double complex w2 and w4 vectors are accessed from the plan as plan->w2
+ * and plan->w4 */
+void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0,
+                                   double complex *R2, double complex *R4) {
+  /* Setting isotropic frequency contribution from the zeroth rank tensor.   */
+  plan->isotropic_offset = R0;
+
+  /* Calculating the local anisotropic frequency contributions from the      *
+   * second rank tensor.                                                     */
+  plan->buffer = plan->rotor_lab_2[2];
+  cblas_daxpby(plan->n_orientations, plan->buffer, (double *)&plan->w2[2], 10,
+               0.0, plan->local_frequency, 1);
+
+  if (plan->ALLOW_FOURTH_RANK) {
+    /* Calculating the local anisotropic frequency contributions from the    *
+     * fourth rank tensor.                                                   */
+    plan->buffer = plan->rotor_lab_4[4];
+    cblas_daxpby(plan->n_orientations, plan->buffer, (double *)&plan->w4[4], 18,
+                 1.0, plan->local_frequency, 1);
+  }
+}
+
+void MRS_get_normalized_frequencies_from_plan(MRS_plan *plan,
+                                              MRS_dimension *dim, double R0,
+                                              double complex *R2,
+                                              double complex *R4) {
+  /* Calculating the normalized isotropic frequency contribution from the    *
+   * zeroth rank tensor.                                                     */
+  plan->isotropic_offset = dim->normalize_offset + R0 * dim->inverse_increment;
+
+  /* Calculating the normalized local anisotropic frequency contributions    *
+   * from the second rank tensor.                                            */
+  plan->buffer = dim->inverse_increment * plan->rotor_lab_2[2];
+  cblas_daxpby(plan->n_orientations, plan->buffer, (double *)&plan->w2[2], 10,
+               0.0, plan->local_frequency, 1);
+
+  if (plan->ALLOW_FOURTH_RANK) {
+    /* Calculating the normalized local anisotropic frequency contributions  *
+     * from the fourth rank tensor.                                          */
+    plan->buffer = dim->inverse_increment * plan->rotor_lab_4[4];
+    cblas_daxpby(plan->n_orientations, plan->buffer, (double *)&plan->w4[4], 18,
+                 1.0, plan->local_frequency, 1);
+  }
+}
 
 /* pre-calculating the phase step exponents. ------------------------------- *
  * ------------------------------------------------------------------------- *
@@ -212,7 +328,8 @@ mrsimulator_create_plan(unsigned int geodesic_polyhedron_frequency,
  *                   = (2 pi / m wr) (exp(I m wr t) - 1)                     *
  *                     ----scale----                                         *
  *                   = scale * (exp(I m wr t) - 1)                           *
- * ------------------------------------------------------------------------- */
+ * -------------------------------------------------------------------------
+ */
 void __get_pre_phase_components(int number_of_sidebands,
                                 double sample_rotation_frequency,
                                 double complex *pre_phase) {
@@ -246,4 +363,16 @@ void __get_pre_phase_components(int number_of_sidebands,
       }
     }
   }
+}
+
+MRS_dimension *MRS_create_dimension(int count, double coordinates_offset,
+                                    double increment) {
+  MRS_dimension *dim = malloc(sizeof(MRS_dimension));
+  dim->count = count;
+  dim->coordinates_offset = coordinates_offset;
+  dim->increment = increment;
+
+  dim->inverse_increment = 1.0 / increment;
+  dim->normalize_offset = 0.5 - (coordinates_offset * dim->inverse_increment);
+  return dim;
 }

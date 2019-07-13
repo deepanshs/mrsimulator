@@ -6,6 +6,7 @@ mkl-include
 
 astropy>=3.0
 pytest>=4.5.0
+sphinx>=2.0
 cython>=0.29.6
 requests>=2.21.0
 setuptools>=27.3

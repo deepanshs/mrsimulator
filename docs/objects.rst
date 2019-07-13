@@ -42,7 +42,7 @@ Orientation
   *An example of Orientation object.*
 
 .. doctest::
-    :skipif: None is None
+    :skipif: 1 == 1
 
     >>> {
     ...     "alpha": "0.5 rad",

@@ -1,4 +1,5 @@
 import numpy as np
+import numba
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -110,6 +111,7 @@ def cosine_of_polar_angles_and_amplitudes(geodesic_polyhedron_frequency: int = 7
     return cos_alpha, cos_beta, amp
 
 
+@numba.jit(nopython=True, fastmath=False)
 def triangle_interpolation(f, spec, amp=1.0):
     points = spec.size
     f = np.asarray(f, dtype=np.float64)
@@ -118,8 +120,8 @@ def triangle_interpolation(f, spec, amp=1.0):
     clip_left1 = clip_left2 = False
 
     p = int(f[0])
-    fint = f.astype(int)
-    if fint[0] == fint[1] == fint[2]:
+    # fint = f.astype(int)
+    if int(f[0]) == int(f[1]) == int(f[2]):
         if p >= points or p < 0:
             return
         spec[p] += amp
@@ -128,7 +130,7 @@ def triangle_interpolation(f, spec, amp=1.0):
     f = np.sort(f)
 
     top = amp * 2.0 / (f[2] - f[0])
-    # p, pmid, pmax = int(f)
+
     p = int(f[0])
     pmid = int(f[1])
     pmax = int(f[2])
@@ -170,7 +172,11 @@ def triangle_interpolation(f, spec, amp=1.0):
 
         diff -= 0.5
         diff *= df1
-        spec[p:pmid] += diff + (np.arange(pmid - p, dtype=np.float64) + 1) * df1
+        while p != pmid:
+            diff += df1
+            spec[p] += diff
+            p += 1
+        # spec[p:pmid] += diff + (np.arange(pmid - p, dtype=np.float64) + 1) * df1
         p = pmid
         if not clip_right1:
             spec[p] += (f[1] - p) * (f10 + p - f[0]) * 0.5 * df1
@@ -191,7 +197,11 @@ def triangle_interpolation(f, spec, amp=1.0):
 
         diff += 0.5
         diff *= df2
-        spec[p:pmax] += diff - (np.arange(pmax - p, dtype=np.float64) + 1) * df2
+        while p != pmax:
+            diff -= df2
+            spec[p] += diff
+            p += 1
+        # spec[p:pmax] += diff - (np.arange(pmax - p, dtype=np.float64) + 1) * df2
         p = pmax
         if not clip_right2:
             spec[p] += (f[2] - p) ** 2 * 0.5 * df2
@@ -358,6 +368,7 @@ def triangle_interpolation(f, spec, amp=1.0):
 #         j_last += local_index - 1
 
 
+@numba.jit(nopython=True, fastmath=False)
 def average_over_octant(spec, freq, nt, amp):
 
     n_pts = (nt + 1) * (nt + 2) / 2

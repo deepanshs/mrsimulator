@@ -16,6 +16,8 @@ from mrsimulator.python.orientation import (
 
 from mrsimulator.python.orientation import average_over_octant as averager
 from mrsimulator.python.utils import pre_phase_components
+import mrsimulator.python.transition_function as tf
+
 from timeit import default_timer
 import matplotlib.pyplot as plt
 
@@ -87,6 +89,7 @@ def simulator(
 
         for transition in transitions:
             for site in sites:
+                # start0 = default_timer()
                 iso = site["isotropic_chemical_shift"]
                 if iso.unit.physical_type == "dimensionless":
                     iso = iso.value * frequency_scaling_factor
@@ -103,13 +106,15 @@ def simulator(
 
                 # Hailtonian
                 # nuclear shielding
-                R0, R2 = NS(iso, zeta, eta, transition)
+                R0, R2 = NS(iso, zeta, eta)
+                scale = tf.p(transition[1], transition[0])
+                R0 *= scale
+                R2 *= scale
 
                 local_frequency_offset = (
                     shift_half_bin + (R0 - frequency[0]) / increment
                 )
 
-                start0 = default_timer()
                 # rotation from PAS to Rotor frame over all orientations
                 R2_out = rotation(2, R2, wigner_matrix=wigner_2, cos_alpha=cos_alpha)
                 # rotation from rotor to lab frame over all orientations
@@ -124,20 +129,18 @@ def simulator(
                 local_frequency[:] = R2_out[:, 2].real / increment
 
                 # interpolate in-between the frequencies to generate a smooth spectrum.
-                # This is the slowest part of the code.
                 offset[:] = vr_freq + local_frequency_offset
 
-                # lf = local_frequency[np.newaxis, :] + offset[:, np.newaxis]
-                # averager(spec, lf, nt, sideband_amplitude.T)
-
+                # print("before", default_timer() - start0)
                 for j, shift in enumerate(offset):
                     if int(shift) >= 0 and int(shift) <= number_of_points:
                         freq_offset[:] = shift + local_frequency
+                        # This is the slowest part of the code.
                         averager(spec, freq_offset, nt, sideband_amplitude[:, j])
                         # np.vectorize(averager(spec, freq_offset,
                         #                       nt, sideband_amplitude[:, j]))
 
-                print("time for computing site", default_timer() - start0)
+                # print("time for computing site", default_timer() - start0)
         # average over all spins
         spectrum += spec * isotopomer["abundance"]
 

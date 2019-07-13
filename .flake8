@@ -1,5 +1,5 @@
 [flake8]
-ignore = E741, W503, F401, F403, E203
+ignore = E741, W503, F401, F403, E203, C901
 exclude = .eggs,*.egg,build
 filename = *.pyx,*.px*, *py
 max-line-length = 88

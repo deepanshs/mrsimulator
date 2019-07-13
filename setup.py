@@ -131,7 +131,7 @@ ext_modules = [
         include_dirs=include_nmr_lib_directories,
         language="c",
         extra_compile_args="-O1".split(),
-        extra_link_args="-g -lfftw3 -lmkl_intel_lp64 -lmkl_intel_thread \
+        extra_link_args="-g -lmkl_intel_lp64 -lmkl_intel_thread \
                         -lmkl_core -ldl -liomp5 -lm -W".split(),
     )
 ]

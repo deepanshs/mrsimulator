@@ -33,7 +33,14 @@ VERSION = "0.1.1"
 
 
 # What packages are required for this module to be executed?
-REQUIRED = ["numpy>=1.13.3", "astropy>=3.0", "mkl", "mkl-include", "requests>=2.21.0"]
+REQUIRED = [
+    "numpy>=1.13.3",
+    "astropy>=3.0",
+    "mkl",
+    "mkl-include",
+    "requests>=2.21.0",
+    "matplotlib>=3.0.2",
+]
 
 # What packages are optional?
 EXTRAS = {
@@ -199,6 +206,7 @@ setup(
     packages=find_packages(),
     install_requires=REQUIRED,
     extras_require=EXTRAS,
+    license="BSD-3-Clause",
     # data_files = ['mrsimulator/test/isotopomers.json'],
     cmdclass=cmdclass,
     # cythonize(ext_modules, annotate=True, language_level=3, gdb_debug=True),

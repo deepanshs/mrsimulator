@@ -99,7 +99,7 @@ and run the simulation.
     Shielding anisotropy = 13.89 ppm
     Shielding asymmetry = 0.25
 
-In the above code, the ``freq`` and ``amp`` are the frequency in ppm and the
+In the above code, the ``freq`` and ``amp`` are the frequency in Hz and the
 corresponding amplitude of the spectrum. The following is a figure of the above
 lineshape plotted using the matplotlib library.
 

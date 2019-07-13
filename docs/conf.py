@@ -50,12 +50,38 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
     "sphinx.ext.viewcode",
-    "autoapi.extension",
+    # "autoapi.extension",
+    "breathe",
+    "exhale",
 ]
 
+# Setup the breathe extension
+breathe_projects = {"My Project": "./doxyoutput/xml"}
+breathe_default_project = "My Project"
 
-autoapi_type = "python"
-autoapi_dirs = ["../mrsimulator/"]
+# Setup the exhale extension
+exhale_args = {
+    # These arguments are required
+    "containmentFolder": "./api",
+    "rootFileName": "c_api.rst",
+    "rootFileTitle": "C-API References",
+    "doxygenStripFromPath": "..",
+    # Suggested optional arguments
+    "createTreeView": True,
+    # TIP: if using the sphinx-bootstrap-theme, you need
+    # "treeViewIsBootstrap": True,
+    "exhaleExecutesDoxygen": True,
+    "exhaleDoxygenStdin": "INPUT = ../mrsimulator/scr/include",
+}
+
+# Tell sphinx what the primary language being documented is.
+primary_domain = "cpp"
+
+# Tell sphinx what the pygments highlight language should be.
+highlight_language = "cpp"
+
+
+# autoapi_dirs = ["../mrsimulator/"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

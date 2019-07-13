@@ -1,3 +1,6 @@
 
+================
+C-API References
+================
 
-.. c:autodoc:: Hamiltonian.h
+.. c:autodoc:: include/Hamiltonian.h

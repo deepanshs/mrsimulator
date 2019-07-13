@@ -11,6 +11,7 @@ from mrsimulator.methods import one_d_spectrum
 from mrsimulator.python.simulator import simulator
 
 TEST_PY = True
+TEST_C = True
 
 
 def _import_json(filename):
@@ -135,53 +136,47 @@ def py_test(data_object, data_source):
 # --------------------------------------------------------------------------- #
 # Test against simpson calculations
 
+if TEST_C:
 
-def test_integration_sim00_c():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test00", "test00.json")
-    assert c_test(*get_data(file_))
+    def test_integration_sim00_c():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test00", "test00.json")
+        assert c_test(*get_data(file_))
 
+    def test_integration_sim01_c():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test01", "test01.json")
+        assert c_test(*get_data(file_))
 
-def test_integration_sim01_c():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test01", "test01.json")
-    assert c_test(*get_data(file_))
+    def test_integration_sim02_c():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test02", "test02.json")
+        assert c_test(*get_data(file_))
 
+    def test_integration_sim03_c():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test03", "test03.json")
+        assert c_test(*get_data(file_))
 
-def test_integration_sim02_c():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test02", "test02.json")
-    assert c_test(*get_data(file_))
+    def test_integration_sim04_c():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test04", "test04.json")
+        assert c_test(*get_data(file_))
 
+    def test_integration_sim05_c():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test05", "test05.json")
+        assert c_test(*get_data(file_))
 
-def test_integration_sim03_c():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test03", "test03.json")
-    assert c_test(*get_data(file_))
+    def test_integration_sim06_c():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test06", "test06.json")
+        assert c_test(*get_data(file_))
 
-
-def test_integration_sim04_c():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test04", "test04.json")
-    assert c_test(*get_data(file_))
-
-
-def test_integration_sim05_c():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test05", "test05.json")
-    assert c_test(*get_data(file_))
-
-
-def test_integration_sim06_c():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test06", "test06.json")
-    assert c_test(*get_data(file_))
-
-
-def test_integration_sim07_c():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test07", "test07.json")
-    assert c_test(*get_data(file_))
+    def test_integration_sim07_c():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test07", "test07.json")
+        assert c_test(*get_data(file_))
 
 
 if TEST_PY:
@@ -231,35 +226,32 @@ if TEST_PY:
 # Test against brute-force NMR calculation where lineshapes
 # are averaged over a billion orientations.
 
+if TEST_C:
 
-def test_integration_python00_c():
-    path_ = path.join("tests", "python")
-    file_ = path.join(path_, "test00", "test00.json")
-    assert c_test(*get_data(file_))
+    def test_integration_python00_c():
+        path_ = path.join("tests", "python")
+        file_ = path.join(path_, "test00", "test00.json")
+        assert c_test(*get_data(file_))
 
+    def test_integration_python01_c():
+        path_ = path.join("tests", "python")
+        file_ = path.join(path_, "test01", "test01.json")
+        assert c_test(*get_data(file_))
 
-def test_integration_python01_c():
-    path_ = path.join("tests", "python")
-    file_ = path.join(path_, "test01", "test01.json")
-    assert c_test(*get_data(file_))
+    def test_integration_python02_c():
+        path_ = path.join("tests", "python")
+        file_ = path.join(path_, "test02", "test02.json")
+        assert c_test(*get_data(file_))
 
+    def test_integration_python03_c():
+        path_ = path.join("tests", "python")
+        file_ = path.join(path_, "test03", "test03.json")
+        assert c_test(*get_data(file_))
 
-def test_integration_python02_c():
-    path_ = path.join("tests", "python")
-    file_ = path.join(path_, "test02", "test02.json")
-    assert c_test(*get_data(file_))
-
-
-def test_integration_python03_c():
-    path_ = path.join("tests", "python")
-    file_ = path.join(path_, "test03", "test03.json")
-    assert c_test(*get_data(file_))
-
-
-def test_integration_python04_c():
-    path_ = path.join("tests", "python")
-    file_ = path.join(path_, "test04", "test04.json")
-    assert c_test(*get_data(file_))
+    def test_integration_python04_c():
+        path_ = path.join("tests", "python")
+        file_ = path.join(path_, "test04", "test04.json")
+        assert c_test(*get_data(file_))
 
 
 if TEST_PY:
