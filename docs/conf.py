@@ -15,8 +15,6 @@ import sys
 import textwrap
 import sphinx_rtd_theme
 
-from mrsimulator.__version__ import __version__
-
 sys.path.insert(0, os.path.abspath("../.."))
 sys.setrecursionlimit(1500)
 
@@ -30,16 +28,12 @@ copyright = "2019, Deepansh J. Srivastava"
 author = "Deepansh J. Srivastava"
 
 # The short X.Y version
-version = __version__
+version = "0.1"
 # The full version, including alpha/beta/rc tags
-release = "0.1.1"
+release = "0.1.1a0"
 
 
 # -- General configuration ---------------------------------------------------
-
-# If your documentation needs a minimal Sphinx version, state it here.
-#
-# needs_sphinx = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -52,7 +46,6 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
     "sphinx.ext.viewcode",
-    # "hawkmoth"
     # "autoapi.extension",
     "breathe",
     "exhale",
@@ -61,16 +54,7 @@ extensions = [
 # Setup the breathe extension
 breathe_projects = {"My Project": "./doxyoutput/xml"}
 breathe_default_project = "My Project"
-
 breathe_domain_by_extension = {"h": "c", "py": "py"}
-
-# breathe_domain_by_file_pattern = {
-#         "*/class.h" : "cpp",
-#         "*/alias.h" : "c",
-#         "*/c_enum.h" : "c",
-#         "c_typedef.h" : "c",
-#         }
-
 breathe_use_project_refids = True
 
 # Setup the exhale extension
@@ -103,7 +87,6 @@ primary_domain = "c"
 # Tell sphinx what the pygments highlight language should be.
 highlight_language = "c"
 
-# cautodoc_root = os.path.abspath('../mrsimulator/scr')
 # autoapi_dirs = ["../mrsimulator/"]
 
 # Add any paths that contain templates here, relative to this directory.
