@@ -1,7 +1,7 @@
 
-==============
-API References
-==============
+=====================
+Python-API References
+=====================
 
 .. toctree::
    :maxdepth: 2
@@ -11,7 +11,6 @@ API References
    sandbox
    hamiltonian
    transition_functions
-   c_api
 
 ..    parameterized_tensor
 ..    interaction

@@ -2174,7 +2174,7 @@ static PyObject *__pyx_pf_11mrsimulator_7sandbox_pre_phase_components(CYTHON_UNU
  *     """
  *     cdef int n1 = 9 * number_of_sidebands             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[complex] pre_phase = np.zeros(n1, dtype=np.complex128)
- *     clib.__get_pre_phase_components(number_of_sidebands, sample_rotation_frequency, &pre_phase[0])
+ *     clib.__get_components(number_of_sidebands, sample_rotation_frequency, &pre_phase[0])
  */
   __pyx_v_n1 = (9 * __pyx_v_number_of_sidebands);
 
@@ -2182,7 +2182,7 @@ static PyObject *__pyx_pf_11mrsimulator_7sandbox_pre_phase_components(CYTHON_UNU
  *     """
  *     cdef int n1 = 9 * number_of_sidebands
  *     cdef np.ndarray[complex] pre_phase = np.zeros(n1, dtype=np.complex128)             # <<<<<<<<<<<<<<
- *     clib.__get_pre_phase_components(number_of_sidebands, sample_rotation_frequency, &pre_phase[0])
+ *     clib.__get_components(number_of_sidebands, sample_rotation_frequency, &pre_phase[0])
  *     return pre_phase.reshape(9, number_of_sidebands)
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 19, __pyx_L1_error)
@@ -2228,16 +2228,16 @@ static PyObject *__pyx_pf_11mrsimulator_7sandbox_pre_phase_components(CYTHON_UNU
   /* "mrsimulator/scr/sandbox/sandbox.pyx":20
  *     cdef int n1 = 9 * number_of_sidebands
  *     cdef np.ndarray[complex] pre_phase = np.zeros(n1, dtype=np.complex128)
- *     clib.__get_pre_phase_components(number_of_sidebands, sample_rotation_frequency, &pre_phase[0])             # <<<<<<<<<<<<<<
+ *     clib.__get_components(number_of_sidebands, sample_rotation_frequency, &pre_phase[0])             # <<<<<<<<<<<<<<
  *     return pre_phase.reshape(9, number_of_sidebands)
  *
  */
   __pyx_t_7 = 0;
-  __get_pre_phase_components(__pyx_v_number_of_sidebands, __pyx_v_sample_rotation_frequency, (&(*__Pyx_BufPtrStrided1d(__pyx_t_double_complex *, __pyx_pybuffernd_pre_phase.rcbuffer->pybuffer.buf, __pyx_t_7, __pyx_pybuffernd_pre_phase.diminfo[0].strides))));
+  __get_components(__pyx_v_number_of_sidebands, __pyx_v_sample_rotation_frequency, (&(*__Pyx_BufPtrStrided1d(__pyx_t_double_complex *, __pyx_pybuffernd_pre_phase.rcbuffer->pybuffer.buf, __pyx_t_7, __pyx_pybuffernd_pre_phase.diminfo[0].strides))));
 
   /* "mrsimulator/scr/sandbox/sandbox.pyx":21
  *     cdef np.ndarray[complex] pre_phase = np.zeros(n1, dtype=np.complex128)
- *     clib.__get_pre_phase_components(number_of_sidebands, sample_rotation_frequency, &pre_phase[0])
+ *     clib.__get_components(number_of_sidebands, sample_rotation_frequency, &pre_phase[0])
  *     return pre_phase.reshape(9, number_of_sidebands)             # <<<<<<<<<<<<<<
  *
  *

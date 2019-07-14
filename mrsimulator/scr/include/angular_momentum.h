@@ -21,8 +21,8 @@ void get_even_DLM_4_from_2(double complex *wigner, double cosBeta);
 
 double wigner_d_trig(int l, int m1, int m2, double cx, double sx);
 
-/*!
-@function __wigner_d_matrix
+/**
+@func __wigner_d_matrix
 @abstract Evaluates nx(2l+1)x(2l+1) wigner-d matrices of rank `l` for `n`
 angles given in radians. Here `angle` is a 1D array of size `n`.
 @param l: The rank of the matrix of type int.

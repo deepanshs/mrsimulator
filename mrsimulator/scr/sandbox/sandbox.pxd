@@ -38,7 +38,7 @@ cdef extern from "octahedron.h":
         int m)
 
 cdef extern from "mrsimulator.h":
-    void __get_pre_phase_components(
+    void __get_components(
         int number_of_sidebands,
         double spin_frequency,
         double complex *pre_phase)

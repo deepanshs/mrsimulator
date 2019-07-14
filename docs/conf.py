@@ -12,6 +12,8 @@
 #
 import os
 import sys
+import textwrap
+import sphinx_rtd_theme
 
 from mrsimulator.__version__ import __version__
 
@@ -50,6 +52,7 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
     "sphinx.ext.viewcode",
+    # "hawkmoth"
     # "autoapi.extension",
     "breathe",
     "exhale",
@@ -59,12 +62,32 @@ extensions = [
 breathe_projects = {"My Project": "./doxyoutput/xml"}
 breathe_default_project = "My Project"
 
+breathe_domain_by_extension = {"h": "c", "py": "py"}
+
+# breathe_domain_by_file_pattern = {
+#         "*/class.h" : "cpp",
+#         "*/alias.h" : "c",
+#         "*/c_enum.h" : "c",
+#         "c_typedef.h" : "c",
+#         }
+
+breathe_use_project_refids = True
+
 # Setup the exhale extension
 exhale_args = {
     # These arguments are required
-    "containmentFolder": "./api",
+    "containmentFolder": "./api_c",
     "rootFileName": "c_api.rst",
     "rootFileTitle": "C-API References",
+    "afterTitleDescription": textwrap.dedent(
+        """
+       .. note::
+
+           The following documentation presents the C-API.  The Python API
+           generally mirrors the C-API, but some methods may not be available in
+           Python or may perform different actions.
+    """
+    ),
     "doxygenStripFromPath": "..",
     # Suggested optional arguments
     "createTreeView": True,
@@ -75,12 +98,12 @@ exhale_args = {
 }
 
 # Tell sphinx what the primary language being documented is.
-primary_domain = "cpp"
+primary_domain = "c"
 
 # Tell sphinx what the pygments highlight language should be.
-highlight_language = "cpp"
+highlight_language = "c"
 
-
+# cautodoc_root = os.path.abspath('../mrsimulator/scr')
 # autoapi_dirs = ["../mrsimulator/"]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -117,6 +140,7 @@ pygments_style = None
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

@@ -25,7 +25,8 @@ magic angle spinning (MAS), and variable angle spinning (VSA) lineshapes.
    mr_objects
    load_isotopomers
    examples
-   api/api
+   api_py/py_api
+   api_c/c_api
 
 Indices and tables
 ==================

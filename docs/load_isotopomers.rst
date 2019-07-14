@@ -120,7 +120,7 @@ The list of isotopomers may directly be assigned to an instance of a
 In the following example, we load an example
 `JSON <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json>`_
 serialized isotopomers file. For this, we make use of the
-:meth:`~mrsimulator.Simulator.load_isotopomers` method as follows,
+py:meth:`~mrsimulator.Simulator.load_isotopomers` method as follows,
 
 
 .. doctest::

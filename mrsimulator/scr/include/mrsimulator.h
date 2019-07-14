@@ -36,17 +36,47 @@
 #include "octahedron.h"
 #include "powder_setup.h"
 
+/**
+ * @struct MRS_plan_t
+ * @brief Create a mrsimulator plan for faster lineshape simulation.
+ * @var double sample_rotation_frequency
+ *
+ *
+ * @var double rotor_angle
+ * The polar angle, in radians describing the axis of rotation with respect
+ * to the lab-frame z-axis.
+ */
+struct MRS_plan_t {
+  unsigned short geodesic_polyhedron_frequency; /**< The number of triangles
+  along the edge of octahedron. This value is a positive integer which
+  represents the frequency of class I geodesic polyhedra. These polyhedra may be
+  used in calculating the spherical average. Currently, we only use octahedral
+  as the frequency 1 polyhedra. As the frequency of the geodesic polyhedron
+  increases, the polyhedra approach to a sphere geometry. For line-shape
+  simulation, a higher geodesic polyhedron frequency will result in a better
+  spherical averaging. The default value is 72. Read more on the `Geodesic
+  polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_. */
 
-typedef struct MRS_plan_t {
-  // number of triangles along  the edge of octahedron.
-  unsigned short geodesic_polyhedron_frequency;
-  int number_of_sidebands;          // The number of sidebands to compute.
-  double sample_rotation_frequency; // sample rotation frequency in Hz.
-  double rotor_angle;     // polar angle describing the axis of rotation in rad.
-  bool ALLOW_FOURTH_RANK; // Allow buffer for fourth rank tensors.
-  double *vr_freq;        // sideband order frequencies in fft output order.
-  double isotropic_offset; // isotropic frequency offset.
-  fftw_complex *vector; // array of sideband amplitudes stored as strides of 2.
+  int number_of_sidebands; /**< The number of sidebands to compute. */
+
+  double sample_rotation_frequency; /**< The sample rotation frequency in Hz. */
+  double rotor_angle;
+
+  /** Allow buffer for fourth rank tensors. */
+  bool ALLOW_FOURTH_RANK;
+
+  // The sideband order frequency ratio stored in fft output order. The
+  // frequency ratio is defined as (sideband_order_frequency/increment) where
+  // `increment` is the increment of the spectroscopic grid dimension.
+  double *vr_freq;
+
+  // The isotropic frequency offset ratio. The ratio is similarly defined as
+  //  before.
+  double isotropic_offset;
+
+  // The buffer to hold the sideband amplitudes as stride 2 array after
+  // mrsimulator processing.
+  fftw_complex *vector;
 
   /* private attributes */
 
@@ -68,7 +98,9 @@ typedef struct MRS_plan_t {
   double complex one;          // holds complex value 1.
   double complex zero;         // hold complex value 0.
   double buffer;               // buffer for temporary storage.
-} MRS_plan;
+};
+
+typedef struct MRS_plan_t MRS_plan;
 
 typedef struct MRS_dimension_t {
   int count;                 // the number of coordinates along the dimension.
@@ -80,123 +112,109 @@ typedef struct MRS_dimension_t {
   double inverse_increment;
 } MRS_dimension;
 
+
 MRS_dimension *MRS_create_dimension(int count, double coordinates_offset,
                                     double increment);
 
-void MRS_free_plan(MRS_plan *the_plan);
+/**
+ * @brief Release the allocated memory from a mrsimulator plan.
+ *
+ * @param	MRS_plan *plan The pointer to the mrsimulator plan to be freed.
+ */
+void MRS_free_plan(MRS_plan *plan);
 
-/* Create a new mrsimulator plan.
- * @func MRS_create_plan.
+/**
+ * @brief Create a new mrsimulator plan.
  *
- * @author	Deepansh J. Srivastava
- * @since	v0.1.1
- * @version	v0.1.1	Friday, July 12th, 2019.
- *
- * @param	unsigned int geodesic_polyhedron_frequency = The number of
- *      triangles along the edge of the octahedron.
- * @param	int number_of_sidebands = The number of sideband to compute.
- * @param	double sample_rotation_frequency = The sample rotation
- *      frequency in Hz.
- * @param	double rotor_angle = The polar angle in radians with respect to
- *      z-axis describing the axis of rotation.
- * @param	double increment = The increment along the spectroscopic
- *      dimension.
- * @param	bool ALLOW_FOURTH_RANK = When true, the plan calculates
- *      matrices for processing the fourth rank tensor.
- * @return	void
+ * @param	geodesic_polyhedron_frequency The number of triangles along the
+ *            edge of the octahedron.
+ * @param number_of_sidebands The number of sideband to compute.
+ * @param sample_rotation_frequency The sample rotation frequency in Hz.
+ * @param rotor_angle The polar angle in radians with respect to z-axis
+ *            describing the axis of rotation.
+ * @param increment The increment along the spectroscopic dimension.
+ * @param ALLOW_FOURTH_RANK When true, the plan calculates matrices for
+ *            processing the fourth rank tensor.
  */
 MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
                           int number_of_sidebands,
                           double sample_rotation_frequency, double rotor_angle,
                           double increment, bool ALLOW_FOURTH_RANK);
 
-/* Update the mrsimulator plan.
-//  * @func MRS_update_plan.
-//  *
-//  * @author	Deepansh J. Srivastava
-//  * @since	v0.1.1
-//  * @version	v0.1.1	Friday, July 12th, 2019.
-//  *
-//  * @param	int   	geodesic_polyhedron_frequency = The number of triangles
-//  *      along the edge of the octahedron.
-//  * @param	int   	number_of_sidebands = The number of sideband to compute.
-//  * @param	double	sample_rotation_frequency = The sample rotation
-//  *      frequency in Hz.
-//  * @param	double	rotor_angle = The polar angle in radians with respect to
-//  *      z-axis describing the axis of rotation.
-//  * @param	double	increment = The increment along the spectroscopic
-//  *      dimension.
-//  * @param	bool  	ALLOW_FOURTH_RANK = When true, the plan calculates
-//  *      matrices for processing the fourth rank tensor.
-//  * @return	void
-//  */
+/**
+ * @brief Update the mrsimulator plan.
+ *
+ * @param	geodesic_polyhedron_frequency The number of triangles along the
+ *            edge of the octahedron.
+ * @param number_of_sidebands The number of sideband to compute.
+ * @param sample_rotation_frequency The sample rotation frequency in Hz.
+ * @param rotor_angle The polar angle in radians with respect to z-axis
+ *            describing the axis of rotation.
+ * @param increment The increment along the spectroscopic dimension.
+ * @param ALLOW_FOURTH_RANK When true, the plan calculates matrices for
+ *            processing the fourth rank tensor.
+ */
 // MRS_plan *MRS_update_plan(unsigned int *geodesic_polyhedron_frequency,
 //                           int *number_of_sidebands,
 //                           double *sample_rotation_frequency,
 //                           double *rotor_angle, double *increment,
 //                           bool ALLOW_FOURTH_RANK);
 
-/* Return a copy of thr mrsimulator plan.
- * @func MRS_copy_plan.
+/**
+ * @brief Return a copy of the mrsimulator plan.
  *
- * @author	Deepansh J. Srivastava
- * @since	v0.1.1
- * @version	v0.1.1	Friday, July 12th, 2019.
- * @param MRS_plan *plan = The pointer to the plan to be copied.
+ * @param *plan The pointer to the plan to be copied.
  * @return MRS_plan = A pointer to the copied plan.
  * This function is incomplete.
  */
 MRS_plan *MRS_copy_plan(MRS_plan *plan);
 
-/* Compute the R2 and R4 in the lab frame using wigner 2j and 4j rotation
- * matrices at all orientations. Evalute the sideband amplitudes
- * Equation [39] in the refernce https://doi.org/10.1006/jmre.1998.1427.
+/**
+ * @brief Process the plan for the amplitudes at every orientation.
  *
- * @func MRS_get_amplitudes_from_plan.
+ * The method takes the arguments @p R2 and @p R4 vectors defined in a crystal /
+ * commmon frame and evaluates the amplitudes corresponding to the @p R2 and @p
+ * R4 vectors in the lab frame. The transformation from the crystal / commmon
+ * frame to the lab frame is done using the wigner 2j and 4j rotation matrices
+ * over all orientations. The sideband amplitudes are evaluated using equation
+ * [39] of the reference https://doi.org/10.1006/jmre.1998.1427.
  *
- * @author	Deepansh J. Srivastava
- * @since	v0.1.1
- * @version	v0.1.1	Friday, July 12th, 2019.
- *
- * @param	MRS_plan       *plan = The pointer to the mrsimulator plan.
- * @param	double complex *R2 = The pointer to the product of the spatial
- *      part coefficient of the second rank tensor and the spin transition
- *      function. R2 is an array of length 5 with the first element
- *      corresponding to the product of the spin transition function and the
- *      coefficient of the T_{2,-2} irreducible tensor.
- * @param double complex *R4 = The pointer to the product of the spatial part
- *      coefficient of the fourth rank tensor and the spin transition function.
- *      R4 is an array of length 9 with the first element corresponding to the
- *      product of the spin transition function and the coefficient of the
- *      T_{4,-4} irreducible tensor.
- * @return void
+ * @param	plan A pointer to the mrsimulator plan of type MRS_plan.
+ * @param R2 A pointer to the product of the spatial part coefficients of the
+ *            second rank tensor and the spin transition functions. The vector
+ *            @p R2 is a double complex array of length 5 with the first element
+ *            corresponding to the product of the spin transition function and
+ *            the coefficient of the @f$T_{2,-2}@f$ spatial irreducible tensor.
+ * @param R4 A pointer to the product of the spatial part coefficients of the
+ *            fourth rank tensor and the spin transition functions. The vector
+ *            @p R4 is a double complex array of length 9 with the first element
+ *            corresponding to the product of the spin transition function and
+ *            the coefficient of the @f$T_{4,-4}@f$ spatial irreducible tensor.
  */
 void MRS_get_amplitudes_from_plan(MRS_plan *plan, double complex *R2,
                                   double complex *R4);
 
 /**
- * MRS_get_normalized_frequencies_from_plan.
+ * @brief Process the plan for normalized frequencies at every orientation.
  *
- * @author	Deepansh J. Srivastava
- * @since	v0.0.1
- * @version	v1.0.0	Friday, July 12th, 2019.
- * @global
- * @param	mrs_plan     	*plan
- * @param	mrs_dimension	*dim
- * @param	double       	R0
- * @param	complex      	*R2
- * @param	complex      	*R4
- * @return	mixed
+ * @param	plan
+ * @param	dim
+ * @param	R0
+ * @param	R2
+ * @param	R4
  */
 void MRS_get_normalized_frequencies_from_plan(MRS_plan *plan,
                                               MRS_dimension *dim, double R0,
                                               double complex *R2,
                                               double complex *R4);
 
-/* Return a vector ordered according to the fft output order. *
- * @params int n - The number of points *
- * @params double increment - The increment (sampling interval) *
- * @returns *double values = The pointer to the fft output order vector */
+/**
+ * @brief Return a vector ordered according to the fft output order.
+ *
+ * @params n The number of points.
+ * @params increment The increment along the dimension axis (sampling interval).
+ * @returns values A pointer to the fft output order vector of size @p p.
+ */
 static inline double *__get_frequency_in_FFT_order(int n, double increment) {
   double *vr_freq = malloc_double(n);
   int i = 0, m, positive_limit, negative_limit;
@@ -220,8 +238,7 @@ static inline double *__get_frequency_in_FFT_order(int n, double increment) {
   return vr_freq;
 };
 
-extern void __get_pre_phase_components(int number_of_sidebands,
-                                       double spin_frequency,
-                                       double complex *pre_phase);
+extern void __get_components(int number_of_sidebands, double spin_frequency,
+                             double complex *pre_phase);
 
 #endif /* mrsimulator_h */

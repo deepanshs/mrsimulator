@@ -18,67 +18,63 @@
 // #define pi43 = -1.2850792082
 // --------------------------------- //
 
-/*
-Transition symmetry function from irreducible 1st rank tensor.
-The function evaluates,
-
-.. math::
-
-    \mathbb{p}(m_f, m_i) &= \left< m_f | T_{10} | m_f \right> -
-                            \left< m_i | T_{10} | m_i \right> \\
-    &= m_f - m_i
-
-where :math:`T_{10}` is the irreducible 1st rank tensor operator in the
-rotating tilted frame.
-
-@param double mf = The quantum number associated with the final energy state.
-@param double mi = The quantum number associated with the initial energy state.
-@rtype = float.
-@return double p = The transition symmetry function p.
-*/
+/**
+ * @brief The @f$\mathbb{p}@f$ spin symmetry transition function.
+ *
+ * The transition symmetry function from irreducible 1st rank tensor, given as
+ * @f[
+ *    \mathbb{p}(m_f, m_i) &= \left< m_f | T_{10} | m_f \right> -
+ *                            \left< m_i | T_{10} | m_i \right> \\
+ *    &= m_f - m_i
+ * @f]
+ * where @f$T_{10}@f$ is the irreducible 1st rank tensor operator in the
+ * rotating tilted frame.
+ *
+ * @param mf The quantum number associated with the final energy state.
+ * @param mi The quantum number associated with the initial energy state.
+ * @return The spin transition symmetry function @f$\mathbb{p}@f$.
+ */
 static inline double p(double mf, double mi) { return (mf - mi); }
 
-/*
-Transition symmetry function from irreducible 2nd rank tensor.
-The function evaluates,
 
-.. math::
-
-    \mathbb{p}(m_f, m_i) &= \left< m_f | T_{20} | m_f \right> -
-                            \left< m_i | T_{20} | m_i \right> \\
-    &= \sqrt{\frac{3}{2}} \left(m_f^2 - m_i^2 \right)
-
-where :math:`T_{20}` is the irreducible 2nd rank tensor operator in the
-rotating tilted frame.
-
-@param float mf = The quantum number associated with the final energy state.
-@param float mi = The quantum number associated with the initial energy state.
-@rtype = float.
-@return = The transition symmetry function d.
-*/
+/**
+ * @brief The @f$\mathbb{d}@f$ spin transition symmetry function.
+ *
+ * The transition symmetry function from irreducible 2nd rank tensor, given as
+ * @f[
+ *    \mathbb{d}(m_f, m_i) &= \left< m_f | T_{20} | m_f \right> -
+ *                            \left< m_i | T_{20} | m_i \right> \\
+ *    &= \sqrt{\frac{3}{2}} \left(m_f^2 - m_i^2 \right)
+ * @f]
+ * where @f$T_{20}@f$ is the irreducible 2nd rank tensor operator in the
+ * rotating tilted frame.
+ *
+ * @param mf The quantum number associated with the final energy state.
+ * @param mi The quantum number associated with the initial energy state.
+ * @return The spin transition symmetry function @f$\mathbb{d}@f$.
+ */
 static inline double d(double mf, double mi)
 {
     return 1.2247448714 * (mf * mf - mi * mi);
 }
 
-/*
-Transition symmetry function from irreducible 3rd rank tensor.
-The function evaluates,
 
-.. math::
-
-    \mathbb{p}(m_f, m_i) &= \left< m_f | T_{30} | m_f \right> -
-                            \left< m_i | T_{30} | m_i \right> \\
-    &= \frac{1}{\sqrt{10}} [5(m_f^3 - m_i^3) + (1 - 3I(I+1))(m_f-m_i)]
-
-where :math:`T_{30}` is the irreducible 3rd rank tensor operator in the
-rotating tilted frame.
-
-@param float mf = The quantum number associated with the final energy state.
-@param float mi = The quantum number associated with the initial energy state.
-@rtype = float
-@return = The transition symmetry function f.
-*/
+/**
+ * @brief The @f$\mathbb{f}@f$ spin transition symmetry function.
+ *
+ * The transition symmetry function from irreducible 3rd rank tensor, given as
+ * @f[
+ *    \mathbb{f}(m_f, m_i) &= \left< m_f | T_{30} | m_f \right> -
+ *                            \left< m_i | T_{30} | m_i \right> \\
+ *    &= \frac{1}{\sqrt{10}} [5(m_f^3 - m_i^3) + (1 - 3I(I+1))(m_f-m_i)]
+ * @f]
+ * where @f$T_{30}@f$ is the irreducible 3rd rank tensor operator in the
+ * rotating tilted frame.
+ *
+ * @param mf The quantum number associated with the final energy state.
+ * @param mi The quantum number associated with the initial energy state.
+ * @return The spin transition symmetry function @f$\mathbb{f}@f$.
+ */
 static inline double f(double mf, double mi, double spin)
 {
     double f_ = 1.0 - 3.0 * spin * (spin + 1.0);
@@ -88,17 +84,26 @@ static inline double f(double mf, double mi, double spin)
     return f_;
 }
 
-/* Returns the dIS(mIi, mIf, mSi, mSf) transition element.                   *
- * The expression follows,                                                   *
- *     d(mf, mi) = < mIf mSf | T10(I) T10(S) | mIf mSf > -                   *
- *                 < mIi mSi | T10(I) T10(S) | mTi mSi >                     *
- *               = (mIf * mSf - mIi * mSi)                                   *
- *                                                                           *
- * @param double mIi = quantum number for the initial state of spin I.      *
- * @param double mIf = quantum number for the final state of spin I.        *
- * @param double mSi = quantum number for the initial state of spin S.      *
- * @param double mSf = quantum number for the final state of spin S.        *
- * @return double dIS = The value.                                          */
+/**
+ * @brief The @f$\mathbb{d_{IS}}@f$ spin transition symmetry function.
+ *
+ * The transition symmetry function from irreducible tensors for a coupled
+ * spin system is defined as
+ * @f[
+ *   \mathbb{d}_{IS}(m_{If}, m_{Sf}, m_{Ii}, m_{Si}) &=
+ *        \left< m_{If} m_{Sf} | T_{10}(I)~T_{10}(S) | m_{If} m_{Sf} \right> \\
+ *   &~~- \left< m_{Ii} m_{Si} | T_{10}(I)~T_{10}(S) | m_{Ii} m_{Si} \right> \\
+ *   &= m_{If} m_{Sf} - m_{Ii} m_{Si}
+ * @f]
+ * where @f$T_{10}(I)@f$ and @f$T_{10}(S)@f$ are the irreducible 1st rank tensor
+ * operators in the rotating tilted frame for spin I and S, respectively.
+ *
+ * @param mIi The quantum number associated with the initial state of spin I.
+ * @param mIf The quantum number associated with the final state of spin I.
+ * @param mSi The quantum number associated with the initial state of spin S.
+ * @param mSf The quantum number associated with the final state of spin S.
+ * @return The spin transition symmetry function @f$\mathbb{d_{IS}}@f$.
+ */
 static inline double dIS(double mIf, double mIi, double mSf, double mSi)
 {
     return mIf * mSf - mIi * mSi;
