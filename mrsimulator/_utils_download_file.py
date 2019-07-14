@@ -31,7 +31,7 @@ def _download_file_from_url(url):
             downloaded = 0
             total = int(total)
             sys.stdout.write(
-                "Downloading '{0}' from '{1}' to file '{2}'.\n".format(
+                "Downloading '{0}' from '{1}' to file '{2}'.".format(
                     res[2], res[1], filename
                 )
             )
@@ -41,7 +41,7 @@ def _download_file_from_url(url):
                 downloaded += len(data)
                 f.write(data)
                 done = int(8 * downloaded / total)
-                sys.stdout.write("\r[{}{}]".format("█" * done, "." * (8 - done)))
+                sys.stdout.write("\n[{}{}]".format("█" * done, "." * (8 - done)))
                 sys.stdout.flush()
 
     sys.stdout.write("\n")

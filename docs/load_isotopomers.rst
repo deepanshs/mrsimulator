@@ -120,7 +120,7 @@ The list of isotopomers may directly be assigned to an instance of a
 In the following example, we load an example
 `JSON <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json>`_
 serialized isotopomers file. For this, we make use of the
-py:meth:`~mrsimulator.Simulator.load_isotopomers` method as follows,
+meth:`~mrsimulator.Simulator.load_isotopomers` method as follows,
 
 
 .. doctest::
@@ -128,8 +128,8 @@ py:meth:`~mrsimulator.Simulator.load_isotopomers` method as follows,
     >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json'
     >>> st2 = Simulator()
     >>> st2.load_isotopomers(filename)
-    Downloading '/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json' from 'raw.githubusercontent.com' to file 'isotopomers_ppm.json'.
-    [█████████████████████████████████████████████████████████████████████████]
+    Downloading '/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json' from 'raw.githubusercontent.com' to file 'isotopomers_ppm_0.json'.
+    [████████████████████████████████████████████████████████████████████]
 
 .. testcleanup::
 

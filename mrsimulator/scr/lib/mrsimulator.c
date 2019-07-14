@@ -45,7 +45,7 @@ void MRS_free_plan(MRS_plan *the_plan) {
 MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
                           int number_of_sidebands,
                           double sample_rotation_frequency, double rotor_angle,
-                          double increment, bool ALLOW_FOURTH_RANK) {
+                          double increment, bool allow_fourth_rank) {
 
   unsigned int nt = geodesic_polyhedron_frequency, j, i, size_2, size_4;
   unsigned int n_orientations = (nt + 1) * (nt + 2) / 2;
@@ -57,7 +57,7 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
   plan->n_orientations = n_orientations;
   plan->size = n_orientations * number_of_sidebands;
   plan->geodesic_polyhedron_frequency = nt;
-  plan->ALLOW_FOURTH_RANK = ALLOW_FOURTH_RANK;
+  plan->allow_fourth_rank = allow_fourth_rank;
   plan->one = 1.0;
   plan->zero = 0.0;
 
@@ -127,7 +127,7 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
   vmzMul(n_orientations, &plan->exp_Im_alpha[s_3], &plan->exp_Im_alpha[s_3],
          &plan->exp_Im_alpha[s_2], VML_EP);
 
-  if (ALLOW_FOURTH_RANK) {
+  if (allow_fourth_rank) {
     vmzMul(n_orientations, &plan->exp_Im_alpha[s_2], &plan->exp_Im_alpha[s_3],
            &plan->exp_Im_alpha[s_1], VML_EP);
     vmzMul(n_orientations, &plan->exp_Im_alpha[s_1], &plan->exp_Im_alpha[s_3],
@@ -187,7 +187,7 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
   plan->pre_phase_4 = NULL;
 
   /* Setup for processing the fourth rank tensors. */
-  if (ALLOW_FOURTH_RANK) {
+  if (allow_fourth_rank) {
     /* w4 is the buffer for storing calculated frequencies after processing
      * the fourth rank tensors. */
     plan->w4 = malloc_double_complex(9 * n_orientations);
@@ -267,7 +267,7 @@ void MRS_get_amplitudes_from_plan(MRS_plan *plan, double complex *R2,
               plan->number_of_sidebands, plan->w2, 5, &plan->zero, plan->vector,
               plan->n_orientations);
 
-  if (plan->ALLOW_FOURTH_RANK) {
+  if (plan->allow_fourth_rank) {
     /* Wigner fourth rank rotation from crystal/common frame to rotor frame. */
     __wigner_rotation_2(4, plan->n_orientations, plan->wigner_4j_matrices,
                         plan->exp_Im_alpha, R4, plan->w4);
@@ -327,7 +327,7 @@ void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0,
   cblas_daxpby(plan->n_orientations, plan->buffer, (double *)&plan->w2[2], 10,
                0.0, plan->local_frequency, 1);
 
-  if (plan->ALLOW_FOURTH_RANK) {
+  if (plan->allow_fourth_rank) {
     /* Calculating the local anisotropic frequency contributions from the    *
      * fourth rank tensor.                                                   */
     plan->buffer = plan->rotor_lab_4[4];
@@ -350,7 +350,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_plan *plan,
   cblas_daxpby(plan->n_orientations, plan->buffer, (double *)&plan->w2[2], 10,
                0.0, plan->local_frequency, 1);
 
-  if (plan->ALLOW_FOURTH_RANK) {
+  if (plan->allow_fourth_rank) {
     /* Calculating the normalized local anisotropic frequency contributions  *
      * from the fourth rank tensor.                                          */
     plan->buffer = dim->inverse_increment * plan->rotor_lab_4[4];

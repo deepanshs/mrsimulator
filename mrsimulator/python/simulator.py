@@ -29,8 +29,6 @@ def simulator(
     spectrum, isotopomers, transitions=[[-0.5, 0.5]], nt=90, number_of_sidebands=128
 ):
 
-    start = default_timer()
-
     B0 = spectrum["magnetic_flux_density"]
     spin_frequency = spectrum["rotor_frequency"]
     rotor_angle = spectrum["rotor_angle"]
@@ -89,7 +87,6 @@ def simulator(
 
         for transition in transitions:
             for site in sites:
-                # start0 = default_timer()
                 iso = site["isotropic_chemical_shift"]
                 if iso.unit.physical_type == "dimensionless":
                     iso = iso.value * frequency_scaling_factor
@@ -144,5 +141,4 @@ def simulator(
         # average over all spins
         spectrum += spec * isotopomer["abundance"]
 
-    print("time", default_timer() - start)
     return frequency, spectrum

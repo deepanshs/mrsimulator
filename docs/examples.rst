@@ -23,15 +23,15 @@ isotopomers from a JSON serialized isotopomers file.
 
     >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json'
     >>> sim.load_isotopomers(filename)
-    Downloading '/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json' from 'raw.githubusercontent.com' to file 'isotopomers.json'.
-    [█████████████████████████████████████████████████████████████████████████]
+    Downloading '/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json' from 'raw.githubusercontent.com' to file 'isotopomers_ppm.json'.
+    [████████████████████████████████████████████████████████████████████]
 
 .. testcleanup::
 
     import os
     os.remove('isotopomers_ppm.json')
 
-Use the py:attr:`~mrsimulator.Simulator.isotope_list` attribute of the ``sim``
+Use the attr:`~mrsimulator.Simulator.isotope_list` attribute of the ``sim``
 instance to get the list of unique isotopes from the list of isotopomers.
 
 .. doctest::
@@ -67,7 +67,7 @@ The above spectrum object is set to simulate a :math:`^{13}\mathrm{C}` static
 spectrum at 9.4 T magnetic field over 5 kHz frequency-bandwidth using 8192
 points.
 
-Now, generate the lineshape with the py:meth:`~mrsimulator.Simulator.run`
+Now, generate the lineshape with the meth:`~mrsimulator.Simulator.run`
 method as
 
 .. doctest::

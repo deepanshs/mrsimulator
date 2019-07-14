@@ -1,0 +1,51 @@
+from mrsimulator.miscellaneous import read_dmfit_files
+import matplotlib.pyplot as plt
+from mrsimulator.python.simulator import simulator
+from mrsimulator import Simulator
+import numpy as np
+
+
+def _dmfit():
+    file_address = '/Users/deepansh/Documents/CSA_20kHz_0.1.txt'
+
+    freq, amp = read_dmfit_files(file_address)
+    max_amp = amp.max()
+    freq_at_max = freq[np.argmax(amp)]
+    print(freq_at_max, max_amp)
+
+    spectrum = {
+        "direct_dimension": {
+            "magnetic_flux_density": "9.4 T",
+            "rotor_frequency": "0 kHz",
+            "rotor_angle": "54.735 deg",
+            "number_of_points": 2048,
+            "spectral_width": "100 kHz",
+            "reference_offset": "0 kHz",
+            "nucleus": "1H",
+        }
+    }
+    isotopomers = [
+        {
+            "sites": [
+                {
+                    "isotope_symbol": "1H",
+                    "isotropic_chemical_shift": "0 Hz",
+                    "shielding_symmetric": {"anisotropy": "20 kHz", "asymmetry": 0.1},
+                },
+            ]
+        }
+    ]
+    sp = Simulator()
+    sp.isotopomers = isotopomers
+    sp.spectrum = spectrum
+    f, a = simulator(isotopomers=sp._isotopomers_c, spectrum=sp._spectrum_c)
+    fig, ax = plt.subplots(2, 1)
+    ax[0].plot(freq, amp / amp.max(), 'r', label='dmfit')
+    ax[0].plot(f, a / a.max(), 'k', label='mrsimulator')
+    ax[0].legend()
+    ax[1].plot(f, (amp / amp.max())[::4] - a / a.max())
+    plt.show()
+
+
+if __name__ == '__main__':
+    _dmfit()

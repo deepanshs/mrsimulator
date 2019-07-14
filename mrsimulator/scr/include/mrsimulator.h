@@ -39,39 +39,46 @@
 /**
  * @struct MRS_plan_t
  * @brief Create a mrsimulator plan for faster lineshape simulation.
- * @var double sample_rotation_frequency
- *
- *
- * @var double rotor_angle
- * The polar angle, in radians describing the axis of rotation with respect
- * to the lab-frame z-axis.
  */
 struct MRS_plan_t {
-  unsigned short geodesic_polyhedron_frequency; /**< The number of triangles
-  along the edge of octahedron. This value is a positive integer which
-  represents the frequency of class I geodesic polyhedra. These polyhedra may be
-  used in calculating the spherical average. Currently, we only use octahedral
-  as the frequency 1 polyhedra. As the frequency of the geodesic polyhedron
-  increases, the polyhedra approach to a sphere geometry. For line-shape
-  simulation, a higher geodesic polyhedron frequency will result in a better
-  spherical averaging. The default value is 72. Read more on the `Geodesic
-  polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_. */
+  /**
+   * The number of triangles along the edge of octahedron. This value is a
+   * positive integer which represents the frequency of class I geodesic
+   * polyhedra. These polyhedra may be used in calculating the spherical
+   * average. Currently, we only use octahedral as the frequency 1 polyhedra. As
+   * the frequency of the geodesic polyhedron increases, the polyhedra approach
+   * to a sphere geometry. For line-shape simulation, a higher geodesic
+   * polyhedron frequency will result in a better spherical averaging. The
+   * default value is 72. Read more on the <a
+   * href="https://en.wikipedia.org/wiki/Geodesic_polyhedron">Geodesic
+   * polyhedron</a>.
+   */
+  unsigned short geodesic_polyhedron_frequency;
 
   int number_of_sidebands; /**< The number of sidebands to compute. */
 
   double sample_rotation_frequency; /**< The sample rotation frequency in Hz. */
+
+  /**
+   * The polar angle, in radians, describing the axis of rotation of the sample
+   * with respect to the lab-frame z-axis.
+   */
   double rotor_angle;
 
-  /** Allow buffer for fourth rank tensors. */
-  bool ALLOW_FOURTH_RANK;
+  bool allow_fourth_rank; /**< Allow buffer for fourth rank tensors. */
 
-  // The sideband order frequency ratio stored in fft output order. The
-  // frequency ratio is defined as (sideband_order_frequency/increment) where
-  // `increment` is the increment of the spectroscopic grid dimension.
+  /**
+   * The sideband frequency ratio stored in the fft output order. The sideband
+   * frequency ratio is defined as the ratio -
+   *    @f[\frac{n \omega_r}{n_i}@f]
+   * where `n` is an integer, @f$\omega_r@f$ is the spinning frequency frequency
+   * in Hz, and @f$n_i@f$ is the `increment` along the spectroscopic grid
+   * dimension.
+   */
   double *vr_freq;
 
-  // The isotropic frequency offset ratio. The ratio is similarly defined as
-  //  before.
+  /** The isotropic frequency offset ratio. The ratio is similarly defined as
+   * before. */
   double isotropic_offset;
 
   // The buffer to hold the sideband amplitudes as stride 2 array after
@@ -112,7 +119,6 @@ typedef struct MRS_dimension_t {
   double inverse_increment;
 } MRS_dimension;
 
-
 MRS_dimension *MRS_create_dimension(int count, double coordinates_offset,
                                     double increment);
 
@@ -133,13 +139,13 @@ void MRS_free_plan(MRS_plan *plan);
  * @param rotor_angle The polar angle in radians with respect to z-axis
  *            describing the axis of rotation.
  * @param increment The increment along the spectroscopic dimension.
- * @param ALLOW_FOURTH_RANK When true, the plan calculates matrices for
+ * @param allow_fourth_rank When true, the plan calculates matrices for
  *            processing the fourth rank tensor.
  */
 MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
                           int number_of_sidebands,
                           double sample_rotation_frequency, double rotor_angle,
-                          double increment, bool ALLOW_FOURTH_RANK);
+                          double increment, bool allow_fourth_rank);
 
 /**
  * @brief Update the mrsimulator plan.
@@ -151,14 +157,14 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
  * @param rotor_angle The polar angle in radians with respect to z-axis
  *            describing the axis of rotation.
  * @param increment The increment along the spectroscopic dimension.
- * @param ALLOW_FOURTH_RANK When true, the plan calculates matrices for
+ * @param allow_fourth_rank When true, the plan calculates matrices for
  *            processing the fourth rank tensor.
  */
 // MRS_plan *MRS_update_plan(unsigned int *geodesic_polyhedron_frequency,
 //                           int *number_of_sidebands,
 //                           double *sample_rotation_frequency,
 //                           double *rotor_angle, double *increment,
-//                           bool ALLOW_FOURTH_RANK);
+//                           bool allow_fourth_rank);
 
 /**
  * @brief Return a copy of the mrsimulator plan.

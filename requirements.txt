@@ -1,7 +1,8 @@
 
-mkl
-mkl-include
+mkl>=2019
+mkl-include>=2019
 numpy>=1.13.3
 setuptools>=27.3
 astropy>=3.0
 requests>=2.21.0
+numba

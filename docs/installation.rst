@@ -9,17 +9,9 @@ Installation
 Installing requirements
 +++++++++++++++++++++++
 
-The `mrsimulator` package requires `fftw3 <https://anaconda.org/eumetsat/fftw3>`_
-C routines. Download and install the fftw3 routines by typing
-the following in the terminal
-
-.. code-block:: text
-
-    conda install -c eumetsat fftw3
-
-In addition, `mrsimulator` also requires `NumPy>=1.13.3 <http://www.numpy.org>`_
+`mrsimulator` requires `NumPy>=1.13.3 <http://www.numpy.org>`_
 and intel `mkl <https://pypi.org/project/mkl/>`_ and
-`mkl_include <https://pypi.org/project/mkl-include/>`_ C routines to build and
+`mkl_include <https://pypi.org/project/mkl-include/>`_ C routines to properly build and
 install the `mrsimulator` package. Download and install these C routines using
 
 .. code-block:: text

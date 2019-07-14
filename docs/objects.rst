@@ -41,10 +41,7 @@ Orientation
 
   *An example of Orientation object.*
 
-.. doctest::
-    :skipif: 1 == 1
-
-    >>> {
+    >>> orientation_object = {
     ...     "alpha": "0.5 rad",
     ...     "beta": "0.23 rad",
     ...     "gamma": "2.54 rad"
@@ -94,10 +91,7 @@ SymmetricTensor
 
   *An example of SymmetricTensor object.*
 
-.. doctest::
-    :skipif: None is None
-
-    >>> {
+    >>> symmetric_tensor_object = {
     ...     "anisotropy": "10.3 ppm",
     ...     "asymmetry": 0.5,
     ...     "orientation": {
@@ -143,10 +137,7 @@ Site
 
   *An example of Site object.*
 
-.. doctest::
-    :skipif: None is None
-
-    >>> {
+    >>> site_object = {
     ...     "isotope_symbol": "13C",
     ...     "isotropic_chemical_shift": "15 ppm",
     ...     "shielding_symmetric": {
@@ -201,10 +192,7 @@ Isotopomer
 
   *An example of Isotopomer object.*
 
-.. doctest::
-    :skipif: None is None
-
-    >>> {
+    >>> isotopomer_object = {
     ...     "sites": [
     ...         {
     ...             "isotope_symbol": "13C",

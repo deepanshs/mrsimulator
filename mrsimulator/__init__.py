@@ -11,7 +11,7 @@ from .simulator import Isotopomers
 from .simulator import Spectrum
 from .simulator import get_csdfpy_object
 from .utils import __get_spin_attribute__
-
+from .python.simulator import simulator as py_sim
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -175,24 +175,27 @@ def run_test():
     s1 = Simulator()
     # test 1
     s1.isotopomers, s1.spectrum = examples.csa_static()
-    freq, amp = s1.run(one_d_spectrum, verbose=1)
+    freq_c, amp_c = s1.run(one_d_spectrum, verbose=1)
+    freq_py, amp_py = py_sim(isotopomers=s1._isotopomers_c, spectrum=s1._spectrum_c)
 
     ax = plt.subplots(1, 2, figsize=(6, 3))[1]
-    ax[0].plot(freq, amp)
-    # ax[0].plot(ob1.dimensions[0].coordinates,
-    #            ob1.dependent_variables[0].components[0])
-    # label_ = ob1.dimensions[0].axis_label
-    label_ = f"frequency / {freq.unit}"
+    ax[0].plot(freq_py, amp_py / amp_py.max(), label="py_test")
+    ax[0].plot(freq_c, amp_c / amp_c.max(), "--", label="c_test")
+    ax[0].legend()
+
+    label_ = f"frequency / {freq_c.unit}"
     ax[0].set_xlabel(label_)
 
     # test 2
     s1.isotopomers, s1.spectrum = examples.csa_mas()
-    freq, amp = s1.run(one_d_spectrum, verbose=1)
-    ax[1].plot(freq, amp)
-    # ax[1].plot(ob2.dimensions[0].coordinates,
-    #            ob2.dependent_variables[0].components[0])
-    # label_ = ob1.dimensions[0].axis_label
-    label_ = f"frequency / {freq.unit}"
+    freq_c, amp_c = s1.run(one_d_spectrum, verbose=1)
+    freq_py, amp_py = py_sim(isotopomers=s1._isotopomers_c, spectrum=s1._spectrum_c)
+
+    ax[1].plot(freq_py, amp_py / amp_py.max(), label="py_test")
+    ax[1].plot(freq_c, amp_c / amp_c.max(), "--", label="c_test")
+    ax[1].legend()
+
+    label_ = f"frequency / {freq_c.unit}"
     ax[1].set_xlabel(label_)
     plt.tight_layout()
     plt.show()

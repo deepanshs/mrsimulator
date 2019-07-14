@@ -15,11 +15,12 @@ import sys
 import textwrap
 import sphinx_rtd_theme
 
-sys.path.insert(0, os.path.abspath("../.."))
-sys.setrecursionlimit(1500)
+sys.path.insert(0, os.path.dirname(os.path.abspath(".")))
+# sys.path.insert(0, os.path.abspath("../.."))
 
-curr_dir = os.path.abspath(os.path.dirname(__file__))
-path_to_static = os.path.join(curr_dir, "_build", "html", "_static")
+# curr_dir = os.path.abspath(os.path.dirname(__file__))
+# path_to_static = os.path.join(curr_dir, "_build", "_static")
+
 
 # -- Project information -----------------------------------------------------
 
@@ -82,7 +83,7 @@ exhale_args = {
 }
 
 # Tell sphinx what the primary language being documented is.
-primary_domain = "c"
+primary_domain = "py"
 
 # Tell sphinx what the pygments highlight language should be.
 highlight_language = "c"

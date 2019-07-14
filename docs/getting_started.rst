@@ -21,8 +21,8 @@ and create an instance,
 
 Here, ``sim1`` is an instance of the :ref:`simulator_api` class. The
 two often used attributes of this instance are
-py:attr:`~mrsimulator.Simulator.isotopomers` and
-py:attr:`~mrsimulator.Simulator.spectrum`.
+attr:`~mrsimulator.Simulator.isotopomers` and
+attr:`~mrsimulator.Simulator.spectrum`.
 The default value of these attributes is
 
 .. doctest::
@@ -71,7 +71,7 @@ command.
 
 In general, the isotopomers contain the metadata on the spin system while
 the spectrum contains metadata required to simulate the lineshapes.
-A lineshape is simulated using the py:meth:`~mrsimulator.Simulator.run` method
+A lineshape is simulated using the meth:`~mrsimulator.Simulator.run` method
 of the :ref:`simulator_api` instance based on the NMR method.
 In version 0.1, we provide `one_d_spectrum` method for simulating one
 dimensional NMR lineshapes. Import this method using

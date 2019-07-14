@@ -98,7 +98,7 @@ static inline void __spinning_sideband_core(
                                                 Cq_e_, eta_e_, transition);
 
       /* get electric quadrupolar components upto second order               */
-      if (plan->ALLOW_FOURTH_RANK) {
+      if (plan->allow_fourth_rank) {
         get_quadrupole_hamiltonian_to_second_order(
             &R0, R2, R4, ravel_isotopomer->spin, Cq_e_, eta_e_, transition,
             ravel_isotopomer->larmor_frequency, remove_second_order_quad_iso);
@@ -162,15 +162,15 @@ void spinning_sideband_core(
     int geodesic_polyhedron_frequency // The number of triangle along the edge
                                       // of octahedron
 ) {
-  bool ALLOW_FOURTH_RANK = false;
+  bool allow_fourth_rank = false;
   if (ravel_isotopomer[0].spin > 0.5 && quadSecondOrder == 1) {
-    ALLOW_FOURTH_RANK = true;
+    allow_fourth_rank = true;
   }
 
   // mkl_set_threading_layer(MKL_THREADING_INTEL);
   int max_threads = mkl_get_max_threads();
   mkl_set_num_threads(max_threads);
-  printf("Using upto %d threads for simulation.\n", max_threads);
+  // printf("Using upto %d threads for simulation.\n", max_threads);
 
   // check for spinning speed
   if (sample_rotation_frequency < 1.0e-3) {
@@ -188,7 +188,7 @@ void spinning_sideband_core(
   gettimeofday(&begin, NULL);
   MRS_plan *plan = MRS_create_plan(
       geodesic_polyhedron_frequency, number_of_sidebands,
-      sample_rotation_frequency, rotor_angle, increment, ALLOW_FOURTH_RANK);
+      sample_rotation_frequency, rotor_angle, increment, allow_fourth_rank);
   gettimeofday(&end, NULL);
   clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +
                (double)(end.tv_sec - begin.tv_sec);

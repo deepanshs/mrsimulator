@@ -63,8 +63,6 @@ instance/
 
 # Sphinx documentation
 docs/_build/
-docs/_static/
-docs/_templates
 docs/api_c
 
 # Doxygen output
@@ -119,7 +117,6 @@ venv.bak/
 *.ipynb
 *.mp4
 *.html
-*.png
 test_os.py
 note.txt
 sideband2.c
@@ -127,3 +124,4 @@ dmfit_comparision.py
 simulate_lineshape.py
 sideband.3
 mrsimulator.code-workspace
+jquery.js

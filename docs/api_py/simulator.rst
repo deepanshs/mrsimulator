@@ -6,9 +6,23 @@
 Simulator
 =========
 
-.. py:currentmodule:: mrsimulator
+.. currentmodule:: mrsimulator
 
 .. autoclass:: Simulator
+    :show-inheritance:
+
+    .. rubric:: Attributes Summary
+
+    .. autosummary::
+        ~Simulator.isotopomers
+        ~Simulator.spectrum
+        ~Simulator.isotope_list
+
+    .. rubric:: Methods Summary
+
+    .. autosummary::
+        ~Simulator.run
+        ~Simulator.load_isotopomers
 
     .. rubric:: Attributes Documentation
     .. autoattribute:: isotopomers
