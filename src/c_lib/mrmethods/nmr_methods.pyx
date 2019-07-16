@@ -155,8 +155,8 @@ def one_d_spectrum(dict spectrum,
 
             # CSA tensor
             iso = site['isotropic_chemical_shift']
-            aniso = site['anisotropy']
-            eta = site['asymmetry']
+            aniso = site['shielding_symmetric']['anisotropy']
+            eta = site['shielding_symmetric']['asymmetry']
 
             if verbose in [1, 11]:
                 text = ((
