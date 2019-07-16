@@ -1,8 +1,8 @@
-cython==0.29.6
-mkl==2019.0
-mkl-include==2019.0
+cython>=0.29.6
+mkl>=2019.0
+mkl-include>=2019.0
+numpy>=1.15.4
 pydantic==0.28
 astropy==3.2.1
-numpy==1.15.4
 requests==2.21.0
 monty==2.0.4
