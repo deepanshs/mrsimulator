@@ -118,3 +118,6 @@ venv.bak/
 *.html
 *.png
 test_os.py
+
+# Cython build file
+src/c_lib/mrmethods/nmr_methods.c
