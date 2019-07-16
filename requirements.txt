@@ -6,3 +6,4 @@ pydantic==0.28
 astropy==3.2.1
 requests==2.21.0
 monty==2.0.4
+pydash==4.7.5
