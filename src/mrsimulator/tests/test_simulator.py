@@ -51,8 +51,7 @@ class TestSite(unittest.TestCase):
             {'29Si'})
 
     def test_one_d_spectrum(self):
-        print(self.simulator.one_d_spectrum)
-        raise Exception("H")
+        self.simulator.one_d_spectrum
 
     def test_run(self):
         pass
