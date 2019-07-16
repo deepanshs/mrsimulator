@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-from copy import deepcopy
-
+from pydash import has, get
 from astropy import units as u
-
-from mrsimulator.utils import _download_file_from_url, _fn_, _import_json
 from mrsimulator import Isotopomer, Spectrum
 from mrsimulator.spectrum import ISOTOPE_DATA
 from mrsimulator.methods import one_d_spectrum
@@ -26,7 +23,13 @@ class Simulator:
         """
         Returns a list of all valid isotopes for this simulator
         """
-        return list({isotope for isotope, data in ISOTOPE_DATA.items() if data["spin"] == 1})
+        return list(
+            {
+                isotope
+                for isotope, data in ISOTOPE_DATA.items()
+                if data["spin"] == 1
+            }
+        )
 
     @property
     def all_isotopes(self):
@@ -34,27 +37,32 @@ class Simulator:
         Return a list of unique isotopes symbols from the list of
         isotopomers.
         """
-        return list({site.isotope for isotopomer in self.isotopomers for site in isotopomer.sites})
+        return list(
+            {
+                site.isotope
+                for isotopomer in self.isotopomers
+                for site in isotopomer.sites
+            }
+        )
 
     @property
     def valid_isotope_list(self):
         """
         Returns a list of unique and valid isotope symbols from the list of isotopomers
         """
-        return list({
-            site.isotope
-            for isotopomer in self.isotopomers for site in isotopomer.sites if site.isotope in self.allowed_isotopes()
-        })
-
-    @property
-    def one_d_spectrum(self):
-        """
-        Get's a 1D spectrum for this
-        """
-        return self.run(one_d_spectrum)
-    
+        return list(
+            {
+                site.isotope
+                for isotopomer in self.isotopomers
+                for site in isotopomer.sites
+                if site.isotope in self.allowed_isotopes()
+            }
+        )
 
     def run(self, method, **kwargs):
+        return self.one_d_spectrum(**kwargs)
+
+    def one_d_spectrum(self, verbose=False, **kwargs):
         """
         Simulate the spectrum using the specified method. The keyword argument
         are the arguments of the specified `method`.
@@ -74,15 +82,15 @@ class Simulator:
             description of `data_object`.
         """
 
-        isotopomers = [isotopomer.dict() for isotopomer in self.isotopomers]
+        isotopomers = [
+            isotopomer.to_freq_dict(self.spectrum.larmor_frequency)
+            for isotopomer in self.isotopomers
+        ]
         spectrum = self.spectrum.dict()
-        (
-            freq,
-            amp,
-            larmor_frequency,
-            list_index_isotopomer,
-        ) = method(
-            spectrum=spectrum, isotopomers=isotopomers, **kwargs)
+
+        (freq, amp, larmor_frequency, list_index_isotopomer) = one_d_spectrum(
+            spectrum=spectrum, isotopomers=isotopomers, **kwargs
+        )
         """The frequency is in the units of Hz."""
         freq *= u.Unit("Hz")
         """The larmor_frequency is in the units of MHz."""
