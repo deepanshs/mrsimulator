@@ -59,6 +59,13 @@ class Spectrum(Parseable):
         "rotor_phase": "rad",
     }
 
+    @property
+    def larmor_frequency(self):
+        """
+        Larmor frequency in MHz
+        """
+        return self.gyromagnetic_ratio * self.magnetic_flux_density
+
     @classmethod
     def parse_json_with_units(cls, json_dict):
 
@@ -85,4 +92,6 @@ def get_isotope_data(isotope_string):
         isotope_dict.update({"nucleus": formatted_isotope_string})
         return isotope_dict
     else:
-        raise Exception(f"Could not parse isotope string {formatted_isotope_string}")
+        raise Exception(
+            f"Could not parse isotope string {formatted_isotope_string}"
+        )
