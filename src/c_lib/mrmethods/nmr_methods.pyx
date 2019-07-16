@@ -160,9 +160,9 @@ def one_d_spectrum(dict spectrum,
                 len_ = len(text)
                 print(text)
                 print(f"{'-'*(len_-1)}")
-                print(f'isotropic chemical shift = {str(iso)}')
-                print(f'chemical shift anisotropy = {str(aniso)}')
-                print(f'chemical shift asymmetry = {eta}')
+                print(f'isotropic chemical shift = {str(iso_n[i])}')
+                print(f'chemical shift anisotropy = {str(aniso_n[i])}')
+                print(f'chemical shift asymmetry = {eta_n[i]}')
 
 
         for trans__ in range(number_of_transitions):
