@@ -1,6 +1,7 @@
 cython>=0.29.6
 mkl>=2019.0
 mkl-include>=2019.0
+mkl-service==2.0.2
 numpy>=1.15.4
 pydantic==0.28
 astropy==3.2.1
