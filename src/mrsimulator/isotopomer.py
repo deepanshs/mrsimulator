@@ -29,3 +29,14 @@ class Isotopomer(Parseable):
             ]
 
         return super().parse_json_with_units(json_dict)
+
+    def to_freq_dict(self, larmor_frequency):
+        """
+        Enforces units of Hz by multiplying any ppm values by the Larmor frequency in MHz
+        MHz*ppm -> Hz
+        """
+        temp_dict = self.dict()
+
+        temp_dict["sites"] = [site.to_freq_dict(larmor_frequency) for site in self.sites]
+
+        return temp_dict

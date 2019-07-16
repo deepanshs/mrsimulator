@@ -27,6 +27,17 @@ class SymmetricTensor(Parseable):
         "gamma": "rad",
     }
 
+    def to_freq_dict(self, larmor_frequency):
+        """
+        Enforces units of Hz by multiplying any ppm values by the Larmor frequency in MHz
+        MHz*ppm -> Hz
+        """
+        temp_dict = self.dict()
+        if self.property_units["anisotropy"] is "ppm":
+            temp_dict["anisotropy"] *= larmor_frequency
+
+        return temp_dict
+
 
 class AntisymmetricTensor(Parseable):
 
@@ -45,3 +56,14 @@ class AntisymmetricTensor(Parseable):
         "alpha": "rad",
         "beta": "rad",
     }
+
+    def to_freq_dict(self, larmor_frequency):
+        """
+        Enforces units of Hz by multiplying any ppm values by the Larmor frequency in MHz
+        MHz*ppm -> Hz
+        """
+        temp_dict = self.dict()
+        if self.property_units["anisotropy"] is "ppm":
+            temp_dict["anisotropy"] *= larmor_frequency
+
+        return temp_dict
