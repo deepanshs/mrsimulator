@@ -125,3 +125,4 @@ simulate_lineshape.py
 sideband.3
 mrsimulator.code-workspace
 jquery.js
+mrsimulator/scr/main.c

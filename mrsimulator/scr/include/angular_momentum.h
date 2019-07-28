@@ -8,16 +8,16 @@
 
 #include "mrsimulator.h"
 
-extern void full_DLM(double complex *wigner, int l, double *omega);
+extern void full_DLM(complex128 *wigner, int l, double *omega);
 
 extern double wigner_d(int l, int m1, int m2, double beta);
 
-// extern double complex DLM(int l, int  m1, int m2, OCEulerAngle omega);
+// extern complex128 DLM(int l, int  m1, int m2, OCEulerAngle omega);
 
-void full_DLM_trig(double complex *wigner, int l, double cosAlpha,
+void full_DLM_trig(complex128 *wigner, int l, double cosAlpha,
                    double sinAlpha, double cosBeta, double sinBeta);
 
-void get_even_DLM_4_from_2(double complex *wigner, double cosBeta);
+void get_even_DLM_4_from_2(complex128 *wigner, double cosBeta);
 
 double wigner_d_trig(int l, int m1, int m2, double cx, double sx);
 
@@ -73,10 +73,10 @@ evaluated
  *          `i*(2*l+1)*(2*l+1)`.
  */
 extern void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
-                              double complex *R_in, double complex *R_out);
+                              complex128 *R_in, complex128 *R_out);
 
 extern void __wigner_rotation_2(int l, int n, double *wigner,
-                                double complex *exp_Im_alpha,
-                                double complex *R_in, double complex *R_out);
+                                complex128 *exp_Im_alpha,
+                                complex128 *R_in, complex128 *R_out);
 
 extern void __wigner_dm0_vector(int l, double beta, double *R_out);

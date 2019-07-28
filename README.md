@@ -1,5 +1,6 @@
 
 [![Build Status](https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master)](https://travis-ci.org/DeepanshS/mrsimulator)
+[![Documentation Status](https://readthedocs.org/projects/mrsimulator/badge/?version=stable)](https://mrsimulator.readthedocs.io/en/stable/?badge=stable)
 
 # mrsimulator
 
@@ -14,31 +15,19 @@ For more information, read the documentation [here](https://deepanshs.github.io/
 
 ### Installing requirements
 
-The `mrsimulator` package requires the [fftw3](https://anaconda.org/eumetsat/fftw3)
-C routines. Download and install the fftw3 routines by typing the following
-in the terminal
-
-    conda install -c eumetsat fftw3
-
-In addition, ``mrsimulator`` also requires [NumPy>=1.13.3](http://www.numpy.org)
+``mrsimulator`` requires [NumPy>=1.13.3](http://www.numpy.org)
 and intel [mkl](https://pypi.org/project/mkl/) and
 [mkl_include](https://pypi.org/project/mkl-include) C routines to build and
-install the `mrsimulator` package. Download and install these C routines using
+install the package. You can install these dependent libraries using
 
-    pip install "numpy>=1.13.1" mkl mkl-include
+    pip install -r requirements.txt
 
-Some additional package dependencies are
+A c compiler is required to successful compile and build the ``mrsimulator``
+package.
 
-- [astropy>=3.0](https://www.astropy.org) for the units library,
-- [matplotlib>=3.0.2](https://matplotlib.org) for figures and visualization,
+On linux
 
-and,
-
-- [plotly>=3.6](https://plot.ly/python/)
-- [dash>=0.40](https://pypi.org/project/dash/)
-- [dash_daq>=0.1](https://pypi.org/project/dash-daq/)
-
-for the web-face interface.
+    sudo apt install gcc
 
 ### Installing mrsimulator
 
@@ -47,7 +36,7 @@ in the terminal.
 
     pip install git+https://github.com/DeepanshS/mrsimulator.git@master
 
-## Test
+## Test and verify the build
 
 If the installation is successful, you should be able to run the following
 in the terminal.

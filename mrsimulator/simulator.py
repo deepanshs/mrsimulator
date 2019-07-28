@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from .unit import _ppm
+# from .unit import _ppm
 from .unit import string_to_quantity
 from .utils import __get_spin_attribute__
 
-try:
-    import csdfpy as cp
-except ImportError:
-    pass
+# try:
+#     import csdfpy as cp
+# except ImportError:
+#     pass
 
 
 __author__ = "Deepansh J. Srivastava"
@@ -171,7 +171,7 @@ class Site:
 def _check_values_in_ppm(value, property):
     value = string_to_quantity(value)
     if value.unit.physical_type == "dimensionless":
-        return value.to(_ppm)
+        return value.to("ppm")
     if value.unit.physical_type == "frequency":
         return value.to("Hz")
     else:
@@ -191,27 +191,27 @@ def get_proper_detector_nucleus(string):
     return string[i:] + string[0:i]
 
 
-def get_csdfpy_object(x, x0, y, application):
-    ob1 = cp.new()
-    d1 = {
-        "type": "linear",
-        "number_of_points": x.size,
-        "increment": str(x[1] - x[0]),
-        "index_zero_value": str(x[0]),
-        "origin_offset": str(x0),
-        "quantity": "frequency",
-    }
-    ob1.add_dimension(d1)
-    s1 = {
-        "type": "internal",
-        "numeric_type": "float64",
-        "components": [y],
-        "component_labels": ["arbitrary units"],
-    }
-    ob1.add_dependent_variable(s1)
+# def get_csdfpy_object(x, x0, y, application):
+#     ob1 = cp.new()
+#     d1 = {
+#         "type": "linear",
+#         "number_of_points": x.size,
+#         "increment": str(x[1] - x[0]),
+#         "index_zero_value": str(x[0]),
+#         "origin_offset": str(x0),
+#         "quantity": "frequency",
+#     }
+#     ob1.add_dimension(d1)
+#     s1 = {
+#         "type": "internal",
+#         "numeric_type": "float64",
+#         "components": [y],
+#         "component_labels": ["arbitrary units"],
+#     }
+#     ob1.add_dependent_variable(s1)
 
-    ob1.dependent_variables[0].application = {"mrsimulator": application}
-    return ob1
+#     ob1.dependent_variables[0].application = {"mrsimulator": application}
+#     return ob1
 
 
 # class _dimension_object:

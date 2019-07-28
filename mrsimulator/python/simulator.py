@@ -31,7 +31,7 @@ def simulator(
 
     B0 = spectrum["magnetic_flux_density"]
     spin_frequency = spectrum["rotor_frequency"]
-    rotor_angle = spectrum["rotor_angle"]
+    rotor_angle_in_rad = spectrum["rotor_angle"]
 
     frequency_scaling_factor = spectrum["gyromagnetic_ratio"] * B0
 
@@ -45,7 +45,7 @@ def simulator(
 
     if spin_frequency < 1.0e-3:
         spin_frequency = 1.0e9
-        rotor_angle = 0.0
+        rotor_angle_in_rad = 0.0
         number_of_sidebands = 1
 
     shift_half_bin = 0.5
@@ -63,7 +63,7 @@ def simulator(
     wigner_2 = wigner_matrices(2, cos_beta)
 
     # rotor to lab frame transformation
-    lab_vector_2 = rotation_lab(2, rotor_angle)
+    lab_vector_2 = rotation_lab(2, rotor_angle_in_rad)
 
     # pre phase
     pre_phase = pre_phase_components(number_of_sidebands, spin_frequency)
@@ -73,7 +73,7 @@ def simulator(
     spectrum = np.zeros(number_of_points)
 
     shape = (n_orientation, number_of_sidebands)
-    temp = np.empty(shape, dtype=np.complex128)
+    vector = np.empty(shape, dtype=np.complex128)
     sideband_amplitude = np.empty(shape, dtype=np.float64)
     local_frequency = np.empty(n_orientation, dtype=np.float64)
     freq_offset = np.empty(n_orientation, dtype=np.float64)
@@ -103,7 +103,7 @@ def simulator(
 
                 # Hailtonian
                 # nuclear shielding
-                R0, R2 = NS(iso, zeta, eta)
+                R0, R2, R4 = NS(iso, zeta, eta)
                 scale = tf.p(transition[1], transition[0])
                 R0 *= scale
                 R2 *= scale
@@ -118,8 +118,8 @@ def simulator(
                 R2_out *= lab_vector_2
 
                 # calculating side-band amplitudes
-                temp[:] = fft(exp(dot(R2_out, pre_phase[2:7])), axis=-1)
-                sideband_amplitude[:] = temp.real ** 2 + temp.imag ** 2
+                vector[:] = fft(exp(dot(R2_out, pre_phase[2:7])), axis=-1)
+                sideband_amplitude[:] = vector.real ** 2 + vector.imag ** 2
                 sideband_amplitude *= orientation_amp[:, np.newaxis]
 
                 # calculating local frequencies

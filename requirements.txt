@@ -6,3 +6,4 @@ setuptools>=27.3
 astropy>=3.0
 requests>=2.21.0
 numba
+matplotlib>=3.0.2

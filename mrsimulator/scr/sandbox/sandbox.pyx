@@ -11,13 +11,13 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def pre_phase_components(int number_of_sidebands, double sample_rotation_frequency):
+def pre_phase_components(int number_of_sidebands, double sample_rotation_frequency_in_Hz):
     r"""
 
     """
     cdef int n1 = 9 * number_of_sidebands
     cdef np.ndarray[complex] pre_phase = np.zeros(n1, dtype=np.complex128)
-    clib.__get_components(number_of_sidebands, sample_rotation_frequency, &pre_phase[0])
+    clib.__get_components(number_of_sidebands, sample_rotation_frequency_in_Hz, &pre_phase[0])
     return pre_phase.reshape(9, number_of_sidebands)
 
 
@@ -198,7 +198,7 @@ def _one_d_simulator(
 
         # spin rate, spin angle and number spinning sidebands
         int number_of_sidebands = 128,
-        double sample_rotation_frequency = 0.0,
+        double sample_rotation_frequency_in_Hz = 0.0,
         rotor_angle = None,
 
         m_final = 0.5,
@@ -314,7 +314,7 @@ def _one_d_simulator(
 
             # spin rate, spin angle and number spinning sidebands
             number_of_sidebands,
-            sample_rotation_frequency,
+            sample_rotation_frequency_in_Hz,
             rotor_angle_c,
 
             &transition_c[0],
@@ -324,3 +324,49 @@ def _one_d_simulator(
     freq = np.arange(number_of_points)*increment + reference_offset
 
     return freq, amp, cpu_time_
+
+
+cdef class MRSplan:
+    cdef clib.MRS_plan *c_plan
+
+    def __cinit__(self, geodesic_polyhedron_frequency, number_of_sidebands,
+                  sample_rotation_frequency_in_Hz, rotor_angle_in_rad, increment,
+                  allow_fourth_rank=False):
+
+        self.c_plan = clib.MRS_create_plan(geodesic_polyhedron_frequency,
+                                              number_of_sidebands,
+                                              sample_rotation_frequency_in_Hz,
+                                              rotor_angle_in_rad, increment,
+                                              allow_fourth_rank)
+
+    @property
+    def amplitudes(self):
+        n = self.c_plan.n_orientations
+        cdef np.float64_t[:] view = <np.float64_t[:n]> self.c_plan.amplitudes
+        return np.asarray(view)
+
+    @property
+    def local_frequency(self):
+        n = self.c_plan.n_orientations
+        cdef np.float64_t[:] view = <np.float64_t[:n]> self.c_plan.local_frequency
+        return np.asarray(view)
+
+    @property
+    def vr_freq(self):
+        n = self.c_plan.number_of_sidebands
+        cdef np.float64_t[:] view = <np.float64_t[:n]> self.c_plan.vr_freq
+        return np.asarray(view)
+
+    @property
+    def vector(self):
+        n = self.c_plan.number_of_sidebands*self.c_plan.n_orientations
+        cdef np.complex128_t[:] view = <np.complex128_t[:n]> self.c_plan.vector
+        return np.asarray(view).real
+
+    def get_amplitudes(self, np.ndarray[np.complex128_t] R2, np.ndarray[np.complex128_t] R4):
+        clib.MRS_get_amplitudes_from_plan(&self.c_plan[0], &R2[0], &R4[0])
+        return self.vector
+
+    def get_frequencies(self, R0):
+        clib.MRS_get_frequencies_from_plan(&self.c_plan[0], R0)
+        return self.local_frequency

@@ -9,15 +9,19 @@
 
 #include "spinning_sidebands.h"
 
-static inline void __zero_components(double *R0, double complex *R2,
-                                     double complex *R4) {
+static inline void __zero_components(double *R0, complex128 *R2,
+                                     complex128 *R4) {
   int i;
-  R0[0] = 0.0;
+  *R0 = 0.0;
   for (i = 0; i < 5; i++) {
-    R2[i] = 0.0;
+    // *R2++ = 0.0;
+    (*R2).real = 0.0;
+    (*R2++).imag = 0.0;
   }
   for (i = 0; i < 9; i++) {
-    R4[i] = 0.0;
+    // *R4++ = 0.0;
+    (*R4).real = 0.0;
+    (*R4++).imag = 0.0;
   }
 }
 
@@ -44,8 +48,8 @@ static inline void __spinning_sideband_core(
   int i, site;
   double iso_n_, zeta_n_, eta_n_, Cq_e_, eta_e_, d_, offset;
   double R0 = 0.0;
-  double complex *R2 = malloc_double_complex(5);
-  double complex *R4 = malloc_double_complex(9);
+  complex128 *R2 = malloc_double_complex(5);
+  complex128 *R4 = malloc_double_complex(9);
 
   int spec_site;
   double *spec_site_ptr;
@@ -107,7 +111,7 @@ static inline void __spinning_sideband_core(
 
     /*  */
     MRS_get_amplitudes_from_plan(plan, R2, R4);
-    MRS_get_normalized_frequencies_from_plan(plan, dimension, R0, R2, R4);
+    MRS_get_normalized_frequencies_from_plan(plan, dimension, R0);
 
     // ---------------------------------------------------------------------
     //              Calculating the tent for every sideband
@@ -117,9 +121,8 @@ static inline void __spinning_sideband_core(
       offset = plan->vr_freq[i] + plan->isotropic_offset;
       if ((int)offset >= 0 && (int)offset <= dimension->count) {
 
-        vdLinearFrac(plan->n_orientations, plan->local_frequency,
-                     plan->local_frequency, 1.0, offset, 0.0, 1.0,
-                     plan->freq_offset);
+        vm_dlinear(plan->n_orientations, plan->local_frequency, 1.0, offset,
+                   plan->freq_offset);
         octahedronInterpolation(
             spec_site_ptr, plan->freq_offset,
             plan->geodesic_polyhedron_frequency,
@@ -151,9 +154,9 @@ void spinning_sideband_core(
                                       // Hamiltonian.
 
     // spin rate, spin angle and number spinning sidebands
-    int number_of_sidebands,          // The number of sidebands
-    double sample_rotation_frequency, // The rotor spin frequency
-    double rotor_angle, // The rotor angle relative to lab-frame z-axis
+    int number_of_sidebands,                // The number of sidebands
+    double sample_rotation_frequency_in_Hz, // The rotor spin frequency
+    double rotor_angle_in_rad, // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the transitions. transition[0] = mi and transition[1] = mf
     double *transition,
@@ -167,32 +170,28 @@ void spinning_sideband_core(
     allow_fourth_rank = true;
   }
 
-  // mkl_set_threading_layer(MKL_THREADING_INTEL);
-  int max_threads = mkl_get_max_threads();
-  mkl_set_num_threads(max_threads);
-  // printf("Using upto %d threads for simulation.\n", max_threads);
-
   // check for spinning speed
-  if (sample_rotation_frequency < 1.0e-3) {
-    sample_rotation_frequency = 1.0e9;
-    rotor_angle = 0.0;
+  if (sample_rotation_frequency_in_Hz < 1.0e-3) {
+    sample_rotation_frequency_in_Hz = 1.0e9;
+    rotor_angle_in_rad = 0.0;
     number_of_sidebands = 1;
   }
 
   MRS_dimension *dimension =
       MRS_create_dimension(count, coordinates_offset, increment);
 
-  struct timeval begin, end; // all_site_time, all_c_time;
-  double clock_time;
+  // struct timeval begin, end; // all_site_time, all_c_time;
+  // double clock_time;
 
-  gettimeofday(&begin, NULL);
-  MRS_plan *plan = MRS_create_plan(
-      geodesic_polyhedron_frequency, number_of_sidebands,
-      sample_rotation_frequency, rotor_angle, increment, allow_fourth_rank);
-  gettimeofday(&end, NULL);
-  clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +
-               (double)(end.tv_sec - begin.tv_sec);
-  printf("Created mrsimulator plan in %f s.\n", clock_time);
+  // gettimeofday(&begin, NULL);
+  MRS_plan *plan =
+      MRS_create_plan(geodesic_polyhedron_frequency, number_of_sidebands,
+                      sample_rotation_frequency_in_Hz, rotor_angle_in_rad,
+                      increment, allow_fourth_rank);
+  // gettimeofday(&end, NULL);
+  // clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +
+  //              (double)(end.tv_sec - begin.tv_sec);
+  // printf("Created mrsimulator plan in %f s.\n", clock_time);
 
   // gettimeofday(&all_site_time, NULL);
   __spinning_sideband_core(

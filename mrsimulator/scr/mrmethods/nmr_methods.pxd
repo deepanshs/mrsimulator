@@ -40,8 +40,8 @@ cdef extern from "spinning_sidebands.h":
 
         # spin rate, spin angle and number spinning sidebands
         int number_of_sidebands,
-        double sample_rotation_frequency,
-        double rotor_angle,
+        double sample_rotation_frequency_in_Hz,
+        double rotor_angle_in_rad,
 
         # The transition as transition[0] = mi and transition[1] = mf
         double *transition,

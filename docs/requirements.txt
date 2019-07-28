@@ -3,3 +3,4 @@ sphinx>=2.0
 sphinx_rtd_theme
 breathe
 exhale
+numpy>=1.13.3

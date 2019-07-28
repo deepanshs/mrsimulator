@@ -1,4 +1,4 @@
-# from libcpp cimport bool as bool_t
+from libcpp cimport bool as bool_t
 
 cdef extern from "angular_momentum.h":
     void __wigner_d_matrix(int l, int n, double *angle, double *wigner)
@@ -38,10 +38,35 @@ cdef extern from "octahedron.h":
         int m)
 
 cdef extern from "mrsimulator.h":
+    cdef struct MRS_plan_t:
+        unsigned short geodesic_polyhedron_frequency
+        unsigned int n_orientations
+        int number_of_sidebands
+        double sample_rotation_frequency_in_Hz
+        double *amplitudes
+        double rotor_angle_in_rad
+        bool_t allow_fourth_rank
+        double complex *vector
+        double *local_frequency
+        double isotropic_offset
+        double *vr_freq
+
+    ctypedef MRS_plan_t MRS_plan
+
     void __get_components(
         int number_of_sidebands,
         double spin_frequency,
         double complex *pre_phase)
+
+    MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
+                          int number_of_sidebands,
+                          double sample_rotation_frequency_in_Hz, double rotor_angle_in_rad,
+                          double increment, bool_t allow_fourth_rank)
+
+    void MRS_get_amplitudes_from_plan(MRS_plan *plan, double complex *R2,
+                                      double complex *R4)
+
+    void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0)
 
 cdef extern from "isotopomer_ravel.h":
     ctypedef struct isotopomer_ravel:
@@ -77,8 +102,8 @@ cdef extern from "spinning_sidebands.h":
 
         # spin rate, spin angle and number spinning sidebands
         int number_of_sidebands,
-        double sample_rotation_frequency,
-        double rotor_angle,
+        double sample_rotation_frequency_in_Hz,
+        double rotor_angle_in_rad,
 
         # The transition as transition[0] = mi and transition[1] = mf
         double *transition,

@@ -28,12 +28,12 @@ struct __isotopomer_ravel {
 
 typedef struct __isotopomer_ravel isotopomer_ravel;
 
-struct __isotopomers_list {
-  isotopomer_ravel *isotopomers;
-};
+// struct __isotopomers_list {
+//   isotopomer_ravel *isotopomers;
+// };
 
 
-typedef struct __isotopomers_list isotopomers_list;
+// typedef struct __isotopomers_list isotopomers_list;
 
 #endif /* isotopomer_h */
 

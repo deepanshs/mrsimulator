@@ -9,41 +9,27 @@ Installation
 Installing requirements
 +++++++++++++++++++++++
 
-`mrsimulator` requires `NumPy>=1.13.3 <http://www.numpy.org>`_
+``mrsimulator`` requires `NumPy>=1.13.3 <http://www.numpy.org>`_
 and intel `mkl <https://pypi.org/project/mkl/>`_ and
-`mkl_include <https://pypi.org/project/mkl-include/>`_ C routines to properly build and
-install the `mrsimulator` package. Download and install these C routines using
+`mkl_include <https://pypi.org/project/mkl-include>`_ C routines to build
+and install the package. You can install these dependent libraries using
 
 .. code-block:: text
 
-    pip install "numpy>=1.13.1" mkl mkl-include
+    pip install -r requirements.txt
 
-Some additional package dependencies are
-
- - `astropy>=3.0 <https://www.astropy.org>`_ for the units library,
- - `matplotlib>=3.0.2 <https://matplotlib.org>`_ for figures and visualization,
-
-and,
-
- - `plotly>=3.6 <https://plot.ly/python/>`_
- - `dash>=0.40 <https://pypi.org/project/dash/>`_
- - `dash_daq>=0.1 <https://pypi.org/project/dash-daq/>`_
-
-for the web-face interface.
-
-
-Installing mrsimulator
-++++++++++++++++++++++
 
 A c compiler is required to successful compile and build the ``mrsimulator``
 package.
 
-On linux
+On linux, you may install gcc c-compiler.
 
 .. code-block:: text
 
     sudo apt install gcc
 
+Installing mrsimulator
+++++++++++++++++++++++
 
 To install the ``mrsimulator`` package, type the following
 in the terminal.
@@ -53,8 +39,8 @@ in the terminal.
     pip install git+https://github.com/DeepanshS/mrsimulator.git@master
 
 
-Test
-++++
+Test and verify the build
++++++++++++++++++++++++++
 
 If the installation is successful, you should be able to run the following
 in the terminal.

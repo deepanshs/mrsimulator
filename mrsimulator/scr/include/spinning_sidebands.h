@@ -26,8 +26,8 @@ extern void spinning_sideband_core(
 
     // spin rate, spin angle and number spinning sidebands
     int number_of_sidebands,          // The number of sidebands
-    double sample_rotation_frequency, // The rotor spin frequency
-    double rotor_angle, // The rotor angle relative to lab-frame z-axis
+    double sample_rotation_frequency_in_Hz, // The rotor spin frequency
+    double rotor_angle_in_rad, // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the transitions. transition[0] = mi and transition[1] = mf
     double *transition,

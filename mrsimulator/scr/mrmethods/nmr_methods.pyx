@@ -40,8 +40,8 @@ def one_d_spectrum(dict spectrum,
     """
 # ---------------------------------------------------------------------
 # spectrum ________________________________________________________
-    cdef double sample_rotation_frequency = spectrum['rotor_frequency']
-    cdef double rotor_angle = spectrum['rotor_angle']
+    cdef double sample_rotation_frequency_in_Hz = spectrum['rotor_frequency']
+    cdef double rotor_angle_in_rad = spectrum['rotor_angle']
     B0 = spectrum['magnetic_flux_density']
 
     if verbose in [1, 11]:
@@ -50,7 +50,7 @@ def one_d_spectrum(dict spectrum,
         print (f'Adjusting the magnetic flux density to {B0} T.')
         _angle = spectrum['rotor_angle']
         print (f'Setting rotation angle to {_angle} rad.')
-        print (f'Setting rotation frequency to {sample_rotation_frequency} Hz.')
+        print (f'Setting rotation frequency to {sample_rotation_frequency_in_Hz} Hz.')
 
 # ---------------------------------------------------------------------
 # spin observed _______________________________________________________
@@ -219,8 +219,8 @@ def one_d_spectrum(dict spectrum,
 
                     # spin rate, spin angle and number spinning sidebands
                     number_of_sidebands,
-                    sample_rotation_frequency,
-                    rotor_angle,
+                    sample_rotation_frequency_in_Hz,
+                    rotor_angle_in_rad,
 
                     &transition_array[2*trans__],
                     geodesic_polyhedron_frequency)

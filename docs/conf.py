@@ -16,10 +16,6 @@ import textwrap
 import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(".")))
-# sys.path.insert(0, os.path.abspath("../.."))
-
-# curr_dir = os.path.abspath(os.path.dirname(__file__))
-# path_to_static = os.path.join(curr_dir, "_build", "_static")
 
 
 # -- Project information -----------------------------------------------------
@@ -47,10 +43,14 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
     "sphinx.ext.viewcode",
+    "sphinx.ext.napoleon",
     # "autoapi.extension",
     "breathe",
     "exhale",
 ]
+
+# autodoc mock modules
+autodoc_mock_imports = ["astropy", "matplotlib", "numba"]
 
 # Setup the breathe extension
 breathe_projects = {"My Project": "./doxyoutput/xml"}
@@ -73,7 +73,7 @@ exhale_args = {
            Python or may perform different actions.
     """
     ),
-    "doxygenStripFromPath": "..",
+    "doxygenStripFromPath": ".",
     # Suggested optional arguments
     "createTreeView": True,
     # TIP: if using the sphinx-bootstrap-theme, you need
@@ -95,8 +95,6 @@ templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-#
-# source_suffix = ['.rst', '.md']
 source_suffix = ".rst"
 
 # The master toctree document.
@@ -141,9 +139,9 @@ html_theme_options = {
     # Toc options
     "collapse_navigation": True,
     "sticky_navigation": True,
-    "navigation_depth": 4,
+    "navigation_depth": 7,
     "includehidden": False,
-    "titles_only": False,
+    "titles_only": True,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

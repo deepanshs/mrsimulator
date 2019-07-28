@@ -5,7 +5,9 @@
 
 .. image:: https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master
     :target: https://travis-ci.org/DeepanshS/mrsimulator
-
+.. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
+    :target: https://mrsimulator.readthedocs.io/en/stable/?badge=stable
+    :alt: Documentation Status
 
 Welcome to mrsimulator's documentation!
 =======================================
@@ -17,10 +19,11 @@ simulation of single spin :math:`I=\frac{1}{2}` nuclei static,
 magic angle spinning (MAS), and variable angle spinning (VSA) lineshapes.
 
 .. toctree::
-   :maxdepth: 7
+   :maxdepth: 3
    :caption: Contents:
 
    installation
+   required_packages
    getting_started
    mr_objects
    load_isotopomers

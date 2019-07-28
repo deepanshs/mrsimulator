@@ -8,6 +8,7 @@ manipulation and conversion is done using
 Astropy unit library.
 """
 from astropy import units as u
+from astropy.units import cds
 from numpy import inf
 
 # from astropy.units import UnitConversionError
@@ -19,8 +20,8 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
-_ppm = u.def_unit("ppm", 1e-6 * u.Unit(1))
-_tr = u.def_unit(["tr", "turn", "cycle", "revolution"], 1 * u.Unit(1))
+u.add_enabled_units([cds.ppm])
+# _tr = u.def_unit(["tr", "turn", "cycle", "revolution"], 1 * u.Unit(1))
 
 convert = {
     "Å": "Angstrom",
@@ -30,7 +31,6 @@ convert = {
     "µ": "u",
     "ℏ": "/h",
     "Ω": "Ohm",
-    # "ppm" : _ppm,
 }
 
 
@@ -113,9 +113,9 @@ def string_to_quantity(string, dtype=float):
     for key in convert:
         unit = unit.replace(key, convert[key])
         unit_multiplier = 1
-    if "ppm" in unit:
-        unit = unit.replace("ppm", "1")
-        unit_multiplier = _ppm
+    # if "ppm" in unit:
+    #     unit = unit.replace("ppm", "1")
+    #     unit_multiplier = _ppm
     try:
         unit_qt = u.Unit(unit) * unit_multiplier
         analysis = dtype(number) * unit_qt
@@ -227,7 +227,7 @@ if __name__ == "__main__":
     # print(timer() - start)
     print(a)
     print(a.unit)
-    print(a.to(_ppm))
+    print(a.to("ppm"))
     # print(type(a.unit), a.unit.physical_type)
     # print('val_object', value_object_format(a, unit=True))
     print(unit_to_latex(a.unit))

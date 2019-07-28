@@ -59,21 +59,23 @@ void octahedronGetPolarAngleTrigOverAnOctant(int nt, double *cos_alpha,
   octahedronGetDirectionCosineSquareOverOctantAndWeights(nt, xr, yr, zr, amp);
 
   // Evaluate sqrt of zr to get cos(beta)
-  vdSqrt(points, zr, cos_beta);
+  vmd_sqrt(points, zr, cos_beta);
 
   // Evaluate A = x + y
-  vdAdd(points, xr, yr, sin_beta);
+  vmd_add(points, xr, yr, sin_beta);
+
   // Take sqrt of A to get sin(beta)
-  vdSqrt(points, sin_beta, sin_beta);
+  vmd_sqrt(points, sin_beta, sin_beta);
 
   // Evaluate sqrt of xr
-  vdSqrt(points, xr, xr);
+  vmd_sqrt(points, xr, xr);
 
   // Evaluate sqrt of xr
-  // vdSqrt(points, &yr[0], &yr[0]);
+  // vmd_sqrt(points, &yr[0], &yr[0]);
 
-  vdDiv(points - 1, xr, sin_beta, cos_alpha);
-  // vdDiv(points-1, yr, sinBeta, sinAlpha );
+  vmd_div(points - 1, xr, sin_beta, cos_alpha);
+
+  // vmd_div(points-1, yr, sinBeta, sinAlpha );
 
   cos_alpha[points - 1] = 1.0;
   // sinAlpha[points-1] = 0.0;
@@ -85,7 +87,7 @@ void octahedronGetPolarAngleTrigOverAnOctant(int nt, double *cos_alpha,
 }
 
 void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
-    int nt, double complex *exp_I_alpha, double *cos_beta, double *amp) {
+    int nt, complex128 *exp_I_alpha, double *cos_beta, double *amp) {
 
   int points = (nt + 1) * (nt + 2) / 2;
   double *xr = malloc_double(points);
@@ -99,30 +101,30 @@ void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
 
   // Evaluate sqrt of zr to get cos(beta)
   // cos(beta) = sqrt(z^2)
-  vdSqrt(points, zr, cos_beta);
+  vmd_sqrt(points, zr, cos_beta);
 
   // Evaluate A = x + y
   // sin^2(beta) = x^2 + y^2
-  vdAdd(points, xr, yr, sin_beta);
+  vmd_add(points, xr, yr, sin_beta);
   // Take sqrt of A to get sin(beta)
   // sin(beta) = sqrt(x^2 + y^2)
-  vdSqrt(points, sin_beta, sin_beta);
+  vmd_sqrt(points, sin_beta, sin_beta);
 
   // Evaluate sqrt of xr
   // value of xr is updated to sqrt(x^2)
-  vdSqrt(points, xr, xr);
+  vmd_sqrt(points, xr, xr);
 
   // Evaluate sqrt of yr
   // value of yr is updated to sqrt(y^2)
-  vdSqrt(points, yr, yr);
+  vmd_sqrt(points, yr, yr);
 
   // Evaluate cos_alpha = x/sqrt(x^2 + y^2) = xr/sin_beta
   // value of xr is updated to hold cos_alpha
-  vdDiv(points - 1, xr, sin_beta, xr);
+  vmd_div(points - 1, xr, sin_beta, xr);
 
   // Evaluate sin_alpha = y/sqrt(x^2 + y^2) = yr/sin_beta
   // value of yr is updated to hold sin_alpha
-  vdDiv(points - 1, yr, sin_beta, yr);
+  vmd_div(points - 1, yr, sin_beta, yr);
 
   xr[points - 1] = 1.0;
   yr[points - 1] = 0.0;
