@@ -126,3 +126,5 @@ sideband.3
 mrsimulator.code-workspace
 jquery.js
 mrsimulator/scr/main.c
+mrsimulator/scr/mrmethods/nmr_methods.c
+mrsimulator/scr/sandbox/sandbox.c
