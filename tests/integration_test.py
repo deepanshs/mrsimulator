@@ -10,7 +10,7 @@ from mrsimulator import Simulator
 from mrsimulator.methods import one_d_spectrum
 from mrsimulator.python.simulator import simulator
 
-TEST_PY = True
+TEST_PY = False
 TEST_C = True
 
 

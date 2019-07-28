@@ -11,13 +11,13 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def pre_phase_components(int number_of_sidebands, double sample_rotation_frequency):
+def pre_phase_components(int number_of_sidebands, double sample_rotation_frequency_in_Hz):
     r"""
 
     """
     cdef int n1 = 9 * number_of_sidebands
     cdef np.ndarray[complex] pre_phase = np.zeros(n1, dtype=np.complex128)
-    clib.__get_components(number_of_sidebands, sample_rotation_frequency, &pre_phase[0])
+    clib.__get_components(number_of_sidebands, sample_rotation_frequency_in_Hz, &pre_phase[0])
     return pre_phase.reshape(9, number_of_sidebands)
 
 
@@ -198,7 +198,7 @@ def _one_d_simulator(
 
         # spin rate, spin angle and number spinning sidebands
         int number_of_sidebands = 128,
-        double sample_rotation_frequency = 0.0,
+        double sample_rotation_frequency_in_Hz = 0.0,
         rotor_angle = None,
 
         m_final = 0.5,
@@ -314,7 +314,7 @@ def _one_d_simulator(
 
             # spin rate, spin angle and number spinning sidebands
             number_of_sidebands,
-            sample_rotation_frequency,
+            sample_rotation_frequency_in_Hz,
             rotor_angle_c,
 
             &transition_c[0],

@@ -1,18 +1,17 @@
 
 
-numpy>=1.13.3
 mkl>=2019
 mkl-include>=2019
-pre-commit
+cython>=0.29.11
+numpy>=1.13.3
+setuptools>=27.3
+astropy>=3.0
+requests>=2.21.0
+matplotlib>=3.0.2
 numba
 
-astropy>=3.0
 pytest>=4.5.0
 sphinx>=2.0
-sphinx_rtd_theme
+sphinxjp.themes.basicstrap
 breathe
 exhale
-
-cython>=0.29.6
-requests>=2.21.0
-setuptools>=27.3

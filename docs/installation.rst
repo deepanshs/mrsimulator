@@ -2,47 +2,45 @@
 
 .. _shielding_tensor_api:
 
-============
-Installation
-============
+================================
+Installing `mrsimulator` package
+================================
 
-Installing requirements
-+++++++++++++++++++++++
+We recommend installing `anaconda <https://www.anaconda.com/distribution/>`_
+distribution for python version 3.6 or higher. The anaconda distribution
+ships with numerous packages and modules including Numpy, Scipy, and Matplotlib
+which are useful packages for scientific datasets. In addition,
+conda provides `mkl optimized <https://docs.anaconda.com/mkl-optimizations/>`_
+for numerical libraries such as Numpy, Scipy.
 
-`mrsimulator` requires `NumPy>=1.13.3 <http://www.numpy.org>`_
-and intel `mkl <https://pypi.org/project/mkl/>`_ and
-`mkl_include <https://pypi.org/project/mkl-include/>`_ C routines to properly build and
-install the `mrsimulator` package. Download and install these C routines using
+If you have opted for the ``nomkl``, we suggest you create a new conda
+environment before proceeding. You can read about creating new conda
+environment `here <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_.
+
+
+
+**Installing dependencies**
+
+Clone and download the `mrsimulator` package. Using the terminal to navigate
+into the downloaded `mrsimulator` folder and type the following.
 
 .. code-block:: text
 
-    pip install "numpy>=1.13.1" mkl mkl-include
+    $ conda install --file requirements.txt
 
-Some additional package dependencies are
-
- - `astropy>=3.0 <https://www.astropy.org>`_ for the units library,
- - `matplotlib>=3.0.2 <https://matplotlib.org>`_ for figures and visualization,
-
-and,
-
- - `plotly>=3.6 <https://plot.ly/python/>`_
- - `dash>=0.40 <https://pypi.org/project/dash/>`_
- - `dash_daq>=0.1 <https://pypi.org/project/dash-daq/>`_
-
-for the web-face interface.
+This will install all dependencies.
 
 
-Installing mrsimulator
-++++++++++++++++++++++
+**Installing mrsimulator**
 
 A c compiler is required to successful compile and build the ``mrsimulator``
 package.
 
-On linux
+.. On linux, you can get the gcc compiler.
 
-.. code-block:: text
+.. .. code-block:: text
 
-    sudo apt install gcc
+..     $ sudo apt install gcc
 
 
 To install the ``mrsimulator`` package, type the following
@@ -50,7 +48,9 @@ in the terminal.
 
 .. code-block:: text
 
-    pip install git+https://github.com/DeepanshS/mrsimulator.git@master
+    python setup.py install
+
+.. pip install git+https://github.com/DeepanshS/mrsimulator.git@master
 
 
 Test

@@ -134,27 +134,27 @@ spectrum = {
 #     }
 # ]
 
-s = Simulator(isotopomers, spectrum)
+# s = Simulator(isotopomers, spectrum)
 
-n = 10
-start = default_timer()
-[
-    simulator(s._spectrum_c, s._isotopomers_c, nt=90, number_of_sidebands=128)
-    for _ in range(n)
-]
-print("python side time, py", (default_timer() - start) / float(n), " s")
+# n = 10
+# start = default_timer()
+# [
+#     simulator(s._spectrum_c, s._isotopomers_c, nt=90, number_of_sidebands=128)
+#     for _ in range(n)
+# ]
+# print("python side time, py", (default_timer() - start) / float(n), " s")
 
-start = default_timer()
-[
-    s.run(
-        one_d_spectrum,
-        verbose=0,
-        geodesic_polyhedron_frequency=90,
-        number_of_sidebands=128,
-    )
-    for _ in range(n)
-]
-print("python side time, c", (default_timer() - start) / float(n), " s")
+# start = default_timer()
+# [
+#     s.run(
+#         one_d_spectrum,
+#         verbose=0,
+#         geodesic_polyhedron_frequency=90,
+#         number_of_sidebands=128,
+#     )
+#     for _ in range(n)
+# ]
+# print("python side time, c", (default_timer() - start) / float(n), " s")
 # plt.plot(f, a)
 # plt.show()
 
@@ -162,41 +162,41 @@ print("python side time, c", (default_timer() - start) / float(n), " s")
 # print(s._isotopomers_c)
 # n = 1
 
-# start = default_timer()
-f, a = simulator(s._spectrum_c, s._isotopomers_c, nt=90, number_of_sidebands=128)
-# print("python side time, py", (default_timer() - start) / float(n), ' s')
+# # start = default_timer()
+# f, a = simulator(s._spectrum_c, s._isotopomers_c, nt=90, number_of_sidebands=128)
+# # print("python side time, py", (default_timer() - start) / float(n), ' s')
 
-# start = default_timer()
-freq, spec = s.run(
-    one_d_spectrum, geodesic_polyhedron_frequency=90, number_of_sidebands=128
-)
-# print("python side time", (default_timer() - start) / float(n), " s")
-# # assert np.allclose(spec, a)
-fig, ax = plt.subplots(2, 1)
-ax[0].plot(freq, spec / spec.max(), "r", label="py")
-ax[0].plot(f, a / a.max(), "b", label="c")
-ax[0].legend()
-# ax[1].plot(f, (spec / spec.max()) - (a / a.max()))
-
-# plt.show()
-
-# start = default_timer()
-# n = 1000
-# number_of_points = 256 * 2
-# f, a, time__ = _one_d_simulator(
-#     reference_offset=-128 * 2,
-#     increment=1,
-#     number_of_points=number_of_points,
-#     isotropic_chemical_shift=np.random.normal(0., 2., n),
-#     chemical_shift_anisotropy=np.random.normal(100., 60., n),
-#     chemical_shift_asymmetry=np.random.normal(0.5, 0.2, n),
-#     sample_rotation_frequency=0.0,
-#     rotor_angle=54.735
+# # start = default_timer()
+# freq, spec = s.run(
+#     one_d_spectrum, geodesic_polyhedron_frequency=90, number_of_sidebands=128
 # )
-# # print('Execultion time in c ', time__)
-# print("Execution time in python", default_timer() - start)
-# plt.plot(f, a.reshape(n, number_of_points).sum(axis=0))
+# # print("python side time", (default_timer() - start) / float(n), " s")
+# # # assert np.allclose(spec, a)
+# fig, ax = plt.subplots(2, 1)
+# ax[0].plot(freq, spec / spec.max(), "r", label="py")
+# ax[0].plot(f, a / a.max(), "b", label="c")
+# ax[0].legend()
+# # ax[1].plot(f, (spec / spec.max()) - (a / a.max()))
+
 # plt.show()
+
+start = default_timer()
+n = 1000
+number_of_points = 256 * 2
+f, a, time__ = _one_d_simulator(
+    reference_offset=-128 * 2,
+    increment=1,
+    number_of_points=number_of_points,
+    isotropic_chemical_shift=np.random.normal(0.0, 2.0, n),
+    chemical_shift_anisotropy=np.random.normal(100.0, 60.0, n),
+    chemical_shift_asymmetry=np.random.normal(0.5, 0.2, n),
+    sample_rotation_frequency_in_Hz=0.0,
+    rotor_angle=54.735,
+)
+# print('Execultion time in c ', time__)
+print("Execution time in python", default_timer() - start)
+plt.plot(f, a.reshape(n, number_of_points).sum(axis=0))
+plt.show()
 
 # start = default_timer()
 # n = 1000
