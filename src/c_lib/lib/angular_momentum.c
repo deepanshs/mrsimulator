@@ -40,7 +40,7 @@ double mypow(double x, int n) {
 }
 
 void __wigner_d_matrix(int l, int n, double *angle, double *wigner) {
-  vdCos(n, &angle[0], &angle[0]);
+  vm_double_cosine(n, &angle[0], &angle[0]);
   __wigner_d_matrix_cosine(l, n, &angle[0], &wigner[0]);
 }
 
@@ -255,11 +255,11 @@ void __wigner_d_matrix_cosine(int l, int n, double *cos_angle, double *wigner) {
 }
 
 void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
-                       double complex *R_in, double complex *R_out) {
+                       complex128 *R_in, complex128 *R_out) {
   int orientation;
   int n1 = 2 * l + 1, m, i = 0, mp;
-  double complex temp_inital_vector[n1], ph2, pha;
-  double complex *final_vector;
+  complex128 temp_inital_vector[n1], ph2, pha;
+  complex128 *final_vector;
   int n2 = n1 * n1;
 
   // #pragma omp parallel for
@@ -314,13 +314,52 @@ void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
   }
 }
 
-void __wigner_rotation_2(int l, int n, double *wigner,
-                         double complex *exp_Im_alpha, double complex *R_in,
-                         double complex *R_out) {
+#if !(__STDC_VERSION__ >= 199901L)
+static inline void self_cmult(complex128 a, complex128 b) {
+  a.real = a.real * b.real - a.imag * b.imag;
+  a.imag = a.real * b.imag + b.real * a.imag;
+}
+
+void __wigner_rotation_2(int l, int n, double *wigner, complex128 *exp_Im_alpha,
+                         complex128 *R_in, complex128 *R_out) {
   int orientation;
   int n1 = 2 * l + 1, m, i = 0, mp;
-  double complex temp_inital_vector[n1];
-  double complex *final_vector, temp;
+  complex128 *temp_inital_vector = malloc_double_complex(n1);
+  complex128 *final_vector, temp;
+
+  for (orientation = 0; orientation < n; orientation++) {
+
+    // copy the initial vector
+    for (m = 0; m < n1; m++) {
+      temp_inital_vector[m] = R_in[m];
+    }
+
+    // scale the temp initial vector with exp[-I m alpha]
+    for (m = 1; m <= l; m++) {
+      temp = exp_Im_alpha[(4 - m) * n + orientation];
+
+      self_cmult(temp_inital_vector[l - m], temp);
+      self_cmult(temp_inital_vector[l + m], conj(temp));
+    }
+
+    final_vector = &R_out[orientation * n1];
+    // Apply wigner rotation to the temp inital vector
+    for (m = 0; m < n1; m++) {
+      final_vector[m] = 0.;
+      for (mp = 0; mp < n1; mp++) {
+        final_vector[m].real += wigner[i] * temp_inital_vector[mp].real;
+        final_vector[m].imag += wigner[i++] * temp_inital_vector[mp].imag;
+      }
+    }
+  }
+}
+#else
+void __wigner_rotation_2(int l, int n, double *wigner, complex128 *exp_Im_alpha,
+                         complex128 *R_in, complex128 *R_out) {
+  int orientation;
+  int n1 = 2 * l + 1, m, i = 0, mp;
+  complex128 temp_inital_vector[n1];
+  complex128 *final_vector, temp;
 
   // #pragma omp parallel for
   // private(orientation, pha, ph2, m, temp_inital_vector,
@@ -330,6 +369,7 @@ void __wigner_rotation_2(int l, int n, double *wigner,
 
     // copy the initial vector
     for (m = 0; m < n1; m++) {
+      // cblas_zcopy(n, &R_in[m], 0, &temp_inital_vector[m], n1);
       temp_inital_vector[m] = R_in[m];
     }
 
@@ -350,6 +390,7 @@ void __wigner_rotation_2(int l, int n, double *wigner,
     }
   }
 }
+#endif
 
 void __wigner_dm0_vector(int l, double beta, double *R_out) {
   double cx = cos(beta), sx = sin(beta);
@@ -376,9 +417,9 @@ void __wigner_dm0_vector(int l, double beta, double *R_out) {
   }
 }
 
-void full_DLM(double complex *wigner, int l, double *omega) {
+void full_DLM(complex128 *wigner, int l, double *omega) {
   if (l == 2) {
-    double complex pha[5], phg[5];
+    complex128 pha[5], phg[5];
     int m;
     for (m = -2; m <= 2; m++) {
       pha[m + 2] = cexp(-I * m * omega[0]);
@@ -433,7 +474,7 @@ void full_DLM(double complex *wigner, int l, double *omega) {
     wigner[12] = 1.5 * cx * cx - .5 * pha[2] * phg[2]; // 0,  0 // 12
   }
   if (l == 4) {
-    double complex pha[9], phg[9];
+    complex128 pha[9], phg[9];
     int m;
     for (m = -4; m <= 4; m++) {
       pha[m + 4] = cexp(-I * m * omega[0]);
@@ -585,16 +626,16 @@ void full_DLM(double complex *wigner, int l, double *omega) {
 
 // @parameters
 // int l: The angular momentum quantum number
-// double complex *wigner: a pointer to (2l+1)*(2l+1) size matrix of full
+// complex128 *wigner: a pointer to (2l+1)*(2l+1) size matrix of full
 // Wigner matrix
-void full_DLM_trig(double complex *wigner, int l, double cosAlpha,
-                   double sinAlpha, double cosBeta, double sinBeta) {
+void full_DLM_trig(complex128 *wigner, int l, double cosAlpha, double sinAlpha,
+                   double cosBeta, double sinBeta) {
   //    double cosGamma,
   //    double sinGamma){
   if (l == 2) {
     // pha[m+2] holds the value of exp(-I m alpha)
     // phg[m+2] holds the value of exp(-I m beta)
-    double complex pha[5]; //, phg[5];
+    complex128 pha[5]; //, phg[5];
     pha[2] = 1.0;
     // phg[2] = 1.0;
 
@@ -679,7 +720,7 @@ void full_DLM_trig(double complex *wigner, int l, double cosAlpha,
   }
 
   if (l == 4) {
-    double complex pha[9]; //, phg[5];
+    complex128 pha[9]; //, phg[5];
     pha[4] = 1.0;
     pha[5] = cosAlpha - I * sinAlpha;
     pha[3] = cosAlpha + I * sinAlpha;

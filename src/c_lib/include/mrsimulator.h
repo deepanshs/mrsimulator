@@ -10,31 +10,83 @@
 #define mrsimulator_h
 
 // library definition
-#include <complex.h>
-
-#define MKL_Complex16 double complex
-
-#include "fftw/fftw3.h"
+#if __has_include("mkl.h")
 #include "mkl.h"
-#include "omp.h"
-#include <math.h>
-#include <stdbool.h>
-#include <stdio.h> // to use calloc, malloc, and free methods
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+#include "vm_mkl.h"
+#define __blas_activate
+
+#elif __has_include("cblas.h")
+#include "cblas.h"
+#include "vm.h"
+#define __blas_activate
+#endif
+
+#include <complex.h>
 
 // user definition
 #define PI2 6.2831853072
 #define PI2I PI2 *I
 
+#if __STDC_VERSION__ >= 199901L
+#define complex128 double _Complex
+#define MKL_Complex16 double _Complex
+#define self_cdadd(a, b) (a += b)
+// similarly for other operations
+
+#else // not C99
+typedef struct complex128_ {
+  double real;
+  double imag;
+} complex128;
+#define restrict __restrict
+inline complex128 self_cdadd(complex128 a, double b) {
+  a.real += b;
+  a.imag += b;
+  return a;
+}
+#endif
+
+// #ifdef __APPLE__
+// #include <Accelerate/Accelerate.h>
+// #define __blas_activate
+// #include "vm.h"
+// #include "mkl.h"
+// #include "vm_mkl.h"
+// #endif
+
+// #ifdef linux
+// #include "mkl.h"
+// #include "vm_mkl.h"
+// // mkl_set_threading_layer(MKL_THREADING_INTEL);
+// // int max_threads = mkl_get_max_threads();
+// // mkl_set_num_threads(max_threads);
+// // printf("Using upto %d threads for simulation.\n", max_threads);
+// #endif
+
+// #ifdef _WIN32
+// #include "mkl.h"
+// #include "vm_mkl.h"
+// // mkl_set_threading_layer(MKL_THREADING_INTEL);
+// // int max_threads = mkl_get_max_threads();
+// // mkl_set_num_threads(max_threads);
+// // printf("Using upto %d threads for simulation.\n", max_threads);
+// #endif
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h> // to use calloc, malloc, and free methods
+#include <string.h>
+#include <time.h>
+
 #include "Hamiltonian.h"
 #include "angular_momentum.h"
 #include "array.h"
+#include "fftw3.h"
 #include "interpolation.h"
 #include "isotopomer_ravel.h"
 #include "octahedron.h"
 #include "powder_setup.h"
+#include "vm_common.h"
 
 /**
  * @struct MRS_plan_t
@@ -57,13 +109,14 @@ struct MRS_plan_t {
 
   int number_of_sidebands; /**< The number of sidebands to compute. */
 
-  double sample_rotation_frequency; /**< The sample rotation frequency in Hz. */
+  double sample_rotation_frequency_in_Hz; /**< The sample rotation frequency in
+                                             Hz. */
 
   /**
    * The polar angle, in radians, describing the axis of rotation of the sample
    * with respect to the lab-frame z-axis.
    */
-  double rotor_angle;
+  double rotor_angle_in_rad;
 
   bool allow_fourth_rank; /**< Allow buffer for fourth rank tensors. */
 
@@ -87,23 +140,23 @@ struct MRS_plan_t {
 
   /* private attributes */
 
-  fftw_plan the_fftw_plan;      // The plan for fftw routine.
-  unsigned int n_orientations;  // number of unique orientations.
-  unsigned int size;            // number of orientations * number of sizebands.
-  double *amplitudes;           // array of amplitude scaling per orientation.
-  double complex *exp_Im_alpha; // array of cos_alpha per orientation.
-  double complex *w2;           // buffer for 2nd rank frequency calculation.
-  double *wigner_2j_matrices;   // wigner-d 2j matrix per orientation.
-  double *rotor_lab_2;          // wigner-2j dm0 vector, n ∈ [-2, 2].
-  double complex *pre_phase_2; // buffer for 2nk rank sideband phase calculation
-  double complex *w4;          // buffer for 4nd rank frequency calculation.
+  fftw_plan the_fftw_plan;     // The plan for fftw routine.
+  unsigned int n_orientations; // number of unique orientations.
+  unsigned int size;           // number of orientations * number of sizebands.
+  double *amplitudes;          // array of amplitude scaling per orientation.
+  complex128 *exp_Im_alpha;    // array of cos_alpha per orientation.
+  complex128 *w2;              // buffer for 2nd rank frequency calculation.
+  double *wigner_2j_matrices;  // wigner-d 2j matrix per orientation.
+  double *rotor_lab_2;         // wigner-2j dm0 vector, n ∈ [-2, 2].
+  complex128 *pre_phase_2;     // buffer for 2nk rank sideband phase calculation
+  complex128 *w4;              // buffer for 4nd rank frequency calculation.
   double *wigner_4j_matrices;  // wigner-d 4j matrix per orientation.
   double *rotor_lab_4;         // wigner-4j dm0 vector, n ∈ [-4, 4].
-  double complex *pre_phase_4; // buffer for 4th rank sideband phase calculation
+  complex128 *pre_phase_4;     // buffer for 4th rank sideband phase calculation
   double *local_frequency;     // buffer for local frequencies.
   double *freq_offset;         // buffer for local + sideband frequencies.
-  double complex one;          // holds complex value 1.
-  double complex zero;         // hold complex value 0.
+  complex128 one;              // holds complex value 1.
+  complex128 zero;             // hold complex value 0.
   double buffer;               // buffer for temporary storage.
 };
 
@@ -135,8 +188,8 @@ void MRS_free_plan(MRS_plan *plan);
  * @param	geodesic_polyhedron_frequency The number of triangles along the
  *            edge of the octahedron.
  * @param number_of_sidebands The number of sideband to compute.
- * @param sample_rotation_frequency The sample rotation frequency in Hz.
- * @param rotor_angle The polar angle in radians with respect to z-axis
+ * @param sample_rotation_frequency_in_Hz The sample rotation frequency in Hz.
+ * @param rotor_angle_in_rad The polar angle in radians with respect to z-axis
  *            describing the axis of rotation.
  * @param increment The increment along the spectroscopic dimension.
  * @param allow_fourth_rank When true, the plan calculates matrices for
@@ -144,8 +197,9 @@ void MRS_free_plan(MRS_plan *plan);
  */
 MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
                           int number_of_sidebands,
-                          double sample_rotation_frequency, double rotor_angle,
-                          double increment, bool allow_fourth_rank);
+                          double sample_rotation_frequency_in_Hz,
+                          double rotor_angle_in_rad, double increment,
+                          bool allow_fourth_rank);
 
 /**
  * @brief Update the mrsimulator plan.
@@ -153,8 +207,8 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
  * @param	geodesic_polyhedron_frequency The number of triangles along the
  *            edge of the octahedron.
  * @param number_of_sidebands The number of sideband to compute.
- * @param sample_rotation_frequency The sample rotation frequency in Hz.
- * @param rotor_angle The polar angle in radians with respect to z-axis
+ * @param sample_rotation_frequency_in_Hz The sample rotation frequency in Hz.
+ * @param rotor_angle_in_rad The polar angle in radians with respect to z-axis
  *            describing the axis of rotation.
  * @param increment The increment along the spectroscopic dimension.
  * @param allow_fourth_rank When true, the plan calculates matrices for
@@ -162,8 +216,8 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
  */
 // MRS_plan *MRS_update_plan(unsigned int *geodesic_polyhedron_frequency,
 //                           int *number_of_sidebands,
-//                           double *sample_rotation_frequency,
-//                           double *rotor_angle, double *increment,
+//                           double *sample_rotation_frequency_in_Hz,
+//                           double *rotor_angle_in_rad, double *increment,
 //                           bool allow_fourth_rank);
 
 /**
@@ -188,17 +242,17 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan);
  * @param	plan A pointer to the mrsimulator plan of type MRS_plan.
  * @param R2 A pointer to the product of the spatial part coefficients of the
  *            second rank tensor and the spin transition functions. The vector
- *            @p R2 is a double complex array of length 5 with the first element
+ *            @p R2 is a complex128 array of length 5 with the first element
  *            corresponding to the product of the spin transition function and
  *            the coefficient of the @f$T_{2,-2}@f$ spatial irreducible tensor.
  * @param R4 A pointer to the product of the spatial part coefficients of the
  *            fourth rank tensor and the spin transition functions. The vector
- *            @p R4 is a double complex array of length 9 with the first element
+ *            @p R4 is a complex128 array of length 9 with the first element
  *            corresponding to the product of the spin transition function and
  *            the coefficient of the @f$T_{4,-4}@f$ spatial irreducible tensor.
  */
-void MRS_get_amplitudes_from_plan(MRS_plan *plan, double complex *R2,
-                                  double complex *R4);
+void MRS_get_amplitudes_from_plan(MRS_plan *plan, complex128 *R2,
+                                  complex128 *R4);
 
 /**
  * @brief Process the plan for normalized frequencies at every orientation.
@@ -206,13 +260,9 @@ void MRS_get_amplitudes_from_plan(MRS_plan *plan, double complex *R2,
  * @param	plan
  * @param	dim
  * @param	R0
- * @param	R2
- * @param	R4
  */
 void MRS_get_normalized_frequencies_from_plan(MRS_plan *plan,
-                                              MRS_dimension *dim, double R0,
-                                              double complex *R2,
-                                              double complex *R4);
+                                              MRS_dimension *dim, double R0);
 
 /**
  * @brief Return a vector ordered according to the fft output order.
@@ -245,6 +295,6 @@ static inline double *__get_frequency_in_FFT_order(int n, double increment) {
 };
 
 extern void __get_components(int number_of_sidebands, double spin_frequency,
-                             double complex *pre_phase);
+                             complex128 *pre_phase);
 
 #endif /* mrsimulator_h */

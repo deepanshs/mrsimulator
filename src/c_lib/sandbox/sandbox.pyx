@@ -269,7 +269,7 @@ def _one_d_simulator(
 
     if rotor_angle is None:
         rotor_angle = 54.735
-    cdef double rotor_angle_c = np.pi*rotor_angle/180.
+    cdef double rotor_angle_in_rad_c = np.pi*rotor_angle/180.
 
     cdef second_order_quad_c = second_order_quad
 
@@ -315,7 +315,7 @@ def _one_d_simulator(
             # spin rate, spin angle and number spinning sidebands
             number_of_sidebands,
             sample_rotation_frequency_in_Hz,
-            rotor_angle_c,
+            rotor_angle_in_rad_c,
 
             &transition_c[0],
             geodesic_polyhedron_frequency)

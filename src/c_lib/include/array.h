@@ -15,16 +15,16 @@ extern float *malloc_float(int m);
 extern void free_float(float *arr);
 
 // allocate memory for a float complex array of size m.
-extern float complex *malloc_float_complex(int m);
-// free allocated memory of a float complex array of size m.
-extern void free_float_complex(float complex *arr);
+// extern float complex *malloc_float_complex(int m);
+// // free allocated memory of a float complex array of size m.
+// extern void free_float_complex(float complex *arr);
 
 // allocate memory for a double array of size m.
 extern double *malloc_double(int m);
 // free allocated memory of a double array of size m.
 extern void free_double(double *arr);
 
-// allocate memory for a double complex array of size m.
-extern double complex *malloc_double_complex(int m);
-// free allocated memory of a double complex array of size m.
-extern void free_double_complex(double complex *arr);
+// allocate memory for a complex128 array of size m.
+extern complex128 *malloc_double_complex(int m);
+// free allocated memory of a complex128 array of size m.
+extern void free_double_complex(complex128 *arr);

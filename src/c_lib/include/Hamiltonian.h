@@ -17,7 +17,7 @@ The Hamiltonian includes the product of second rank tensor and the
 spin transition functions.
 */
 static inline void get_nuclear_shielding_hamiltonian_to_first_order(
-    double *R0, double complex *R2, double iso, double zeta, double eta,
+    double *R0, complex128 *R2, double iso, double zeta, double eta,
     double *transition)
 {
   // Spin transition contribution
@@ -31,11 +31,11 @@ static inline void get_nuclear_shielding_hamiltonian_to_first_order(
   its principal axis frame.
   */
   double temp = -0.4082482905 * (zeta * eta) * transition_fn;
-  R2[0] += temp;                 // R2-2
-  R2[1] += 0.0;                  // R2-1
-  R2[2] += zeta * transition_fn; // R2 0
-  R2[3] += 0.0;                  // R2 1
-  R2[4] += temp;                 // R2 2
+  self_cdadd(R2[0], temp);                 // R2-2
+  self_cdadd(R2[1], 0.0);                  // R2-1
+  self_cdadd(R2[2], zeta * transition_fn); // R2 0
+  self_cdadd(R2[3], 0.0);                  // R2 1
+  self_cdadd(R2[4], temp);                 // R2 2
 }
 
 /*
@@ -46,7 +46,7 @@ The Hamiltonian includes the product of second rank tensor and the
 spin transition functions.
 */
 static inline void get_quadrupole_hamiltonian_to_first_order(
-    double *R0, double complex *R2, double spin, double Cq, double eta,
+    double *R0, complex128 *R2, double spin, double Cq, double eta,
     double *transition)
 {
   // Spin transition contribution
@@ -64,11 +64,11 @@ static inline void get_quadrupole_hamiltonian_to_first_order(
   /* Scaled R2m containing the components of the quad second rank tensor in
   its principal axis frame. */
   double temp = -0.1666666667 * (vq * eta) * transition_fn;
-  R2[0] += temp;                              // R2-2
-  R2[1] += 0.0;                               // R2-1
-  R2[2] += 0.4082482905 * vq * transition_fn; // R2 0
-  R2[3] += 0.0;                               // R2 1
-  R2[4] += temp;                              // R2 2
+  self_cdadd(R2[0], temp);                              // R2-2
+  self_cdadd(R2[1], 0.0);                               // R2-1
+  self_cdadd(R2[2], 0.4082482905 * vq * transition_fn); // R2 0
+  self_cdadd(R2[3], 0.0);                               // R2 1
+  self_cdadd(R2[4], temp);                              // R2 2
 }
 
 /*
@@ -79,7 +79,7 @@ The Hamiltonian includes the product of second rank tensor and the
 spin transition functions.
 */
 static inline void get_quadrupole_hamiltonian_to_second_order(
-    double *R0, double complex *R2, double complex *R4, double spin,
+    double *R0, complex128 *R2, complex128 *R4, double spin,
     double Cq, double eta, double *transition, double vo,
     int remove_second_order_quad_iso)
 {
@@ -105,21 +105,23 @@ static inline void get_quadrupole_hamiltonian_to_second_order(
   /* Scaled R2m containing the components of the quad second rank tensor in
   its principal axis frame. */
   double temp = -eta * 0.07273929675 * scale * c2;
-  R2[0] += temp;                                                      // R2-2
-  R2[1] += 0.0;                                                       // R2-1
-  R2[2] += 0.08908708064 * (eta2 * 0.33333333333 - 1.0) * scale * c2; // R2 0
-  R2[3] += 0.0;                                                       // R2 1
-  R2[4] += temp;                                                      // R2 2
+  double temp2 = 0.08908708064 * (eta2 * 0.33333333333 - 1.0) * scale * c2;
+  self_cdadd(R2[0], temp);                                                      // R2-2
+  self_cdadd(R2[1], 0.0);                                                       // R2-1
+  self_cdadd(R2[2], temp2); // R2 0
+  self_cdadd(R2[3], 0.0);                                                       // R2 1
+  self_cdadd(R2[4], temp);                                                      // R2 2
 
   /* Scaled R4m containing the components of the quad second rank tensor in
   its principal axis frame. */
   temp = eta2 * 0.02777777778 * scale * c4;
-  double temp2 = -0.06299407883 * eta * scale * c4;
-  R4[0] += temp;                                                     // R4-4
-  R4[2] += temp2;                                                    // R4-2
-  R4[4] += 0.1195228609 * (eta2 * 0.05555555556 + 1.0) * scale * c4; // R4 0
-  R4[6] += temp2;                                                    // R4 2
-  R4[8] += temp;                                                     // R4 4
+  temp2 = -0.06299407883 * eta * scale * c4;
+  double temp4 = 0.1195228609 * (eta2 * 0.05555555556 + 1.0) * scale * c4;
+  self_cdadd(R4[0], temp);                                                     // R4-4
+  self_cdadd(R4[2], temp2);                                                    // R4-2
+  self_cdadd(R4[4], temp4); // R4 0
+  self_cdadd(R4[6], temp2);                                                    // R4 2
+  self_cdadd(R4[8], temp);                                                     // R4 4
 }
 
 /*
@@ -130,7 +132,7 @@ The Hamiltonian includes the product of second rank tensor and the
 spin transition functions in the weak coupling limit.
 */
 static inline void get_weakly_coupled_direct_dipole_hamiltonian_to_first_order(
-    double *R0, double complex *R2, double D, double *transition)
+    double *R0, complex128 *R2, double D, double *transition)
 {
   // Spin transition contribution
   double transition_fn = dIS(transition[0], transition[1], 0.5, 0.5);
@@ -140,9 +142,9 @@ static inline void get_weakly_coupled_direct_dipole_hamiltonian_to_first_order(
 
   /* Scaled R2m containing the components of the magnetic dipole second rank
   tensor in its principal axis frame. */
-  R2[0] += 0.0;                     // R2-2
-  R2[1] += 0.0;                     // R2-1
-  R2[2] += 2.0 * D * transition_fn; // R2 0
-  R2[3] += 0.0;                     // R2 1
-  R2[4] += 0.0;                     // R2 2
+  self_cdadd(R2[0], 0.0);                     // R2-2
+  self_cdadd(R2[1], 0.0);                     // R2-1
+  self_cdadd(R2[2], 2.0 * D * transition_fn); // R2 0
+  self_cdadd(R2[3], 0.0);                     // R2 1
+  self_cdadd(R2[4], 0.0);                     // R2 2
 }

@@ -1,17 +1,18 @@
 
 
-mkl>=2019
-mkl-include>=2019
 cython>=0.29.11
 numpy>=1.13.3
+sympy>=1.4
 setuptools>=27.3
 astropy>=3.0
 requests>=2.21.0
 matplotlib>=3.0.2
-numba
+fftw>=3.3.0
+
 
 pytest>=4.5.0
 sphinx>=2.0
+flask>=1.1.0
 sphinxjp.themes.basicstrap
 breathe
 exhale

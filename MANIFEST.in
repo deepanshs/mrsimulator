@@ -2,7 +2,7 @@
 
 include README.md
 
-include mrsimulator/scr/lib/*.c
-include mrsimulator/scr/mrmethods/*.c
-include mrsimulator/scr/include/*.*
-include mrsimulator/tests/*.*
+include src/c_lib/lib/*.c
+include src/c_lib/mrmethods/*.c
+include src/c_lib/include/*.*
+include tests/*.*

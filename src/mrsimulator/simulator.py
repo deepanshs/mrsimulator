@@ -191,7 +191,7 @@ def get_proper_detector_nucleus(string):
     return string[i:] + string[0:i]
 
 
-def get_csdfpy_object(x, x0, y, application):
+def get_csdmpy_object(x, x0, y, application):
     ob1 = cp.new()
     d1 = {
         "type": "linear",

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import json
-from copy import deepcopy
 from urllib.parse import urlparse
 
 from astropy import units as u
@@ -9,7 +8,7 @@ from .__version__ import __version__
 from ._utils_download_file import _download_file_from_url
 from .simulator import Isotopomers
 from .simulator import Spectrum
-from .simulator import get_csdfpy_object
+from .simulator import get_csdmpy_object
 from .utils import __get_spin_attribute__
 from .python.simulator import simulator as py_sim
 
@@ -90,6 +89,7 @@ class Simulator:
             site["isotope_symbol"]
             for isotopomer in self._isotopomers_c
             for site in isotopomer["sites"]
+            if site["isotope_symbol"] in self._allowed_isotopes
         ]
 
         self._isotope_list = list(set(isotope_list))
@@ -147,11 +147,11 @@ class Simulator:
         application = {"isotopomers": str(isotopomer), "spectrum": spectrum}
         data_object = False
         if data_object:
-            return get_csdfpy_object(
+            return get_csdmpy_object(
                 self._freq, self._larmor_frequency, self._amp, application
             )
         else:
-            return deepcopy(self._freq), deepcopy(self._amp)
+            return self._freq.copy(), self._amp.copy()
 
     def load_isotopomers(self, filename):
         """

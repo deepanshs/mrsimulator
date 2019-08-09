@@ -13,25 +13,48 @@ which are useful packages for scientific datasets. In addition,
 conda provides `mkl optimized <https://docs.anaconda.com/mkl-optimizations/>`_
 for numerical libraries such as Numpy, Scipy.
 
-If you have opted for the ``nomkl``, we suggest you create a new conda
-environment before proceeding. You can read about creating new conda
-environment `here <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_.
+.. If you have opted for the ``nomkl``, we suggest you create a new conda
+.. environment before proceeding. You can read about creating new conda
+.. environment `here <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_.
 
 
 
-**Installing dependencies**
 
-Clone and download the `mrsimulator` package. Using the terminal to navigate
-into the downloaded `mrsimulator` folder and type the following.
+Installing dependencies
+^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: text
+Clone and download the `mrsimulator` package,
 
-    $ conda install --file requirements.txt
+.. code-block:: shell
 
-This will install all dependencies.
+    $ git clone git://github.com/DeepanshS/mrsimulator.git
+    $ cd mrsimulator
 
 
-**Installing mrsimulator**
+.. and install the dependencies using
+
+.. .. code-block:: shell
+
+..     $ cd mrsimulator
+..     $ conda install --file requirements.txt
+
+
+Installing dependencies
+^^^^^^^^^^^^^^^^^^^^^^^
+
+In Anaconda versions 2.5 and later, intel MKL is freely available by default.
+To build and link ``mrsimulator`` with the intel-mkl libraries follow,
+
+.. code-block:: shell
+
+    $ conda install mkl mkl-include --file requirements.txt
+
+If you, however, wish to opt out of MKL and instead use
+`openBLAS <http://www.openblas.net/>`_, execute the following lines.
+
+.. code-block:: shell
+
+    $ conda install nomkl openblas --file requirements.txt
 
 A c compiler is required to successful compile and build the ``mrsimulator``
 package.

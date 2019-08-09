@@ -14,7 +14,6 @@ The required and optional dependencies of `mrsimulator` are
 - `astropy>=3.0 <https://www.astropy.org>`_ for the units library
 - `requests>=2.21.0 <https://pypi.org/project/requests/>`_
 - setuptools>=27.3
-- numba
 - cython>=0.29.11
 - `matplotlib>=3.0.2 <https://matplotlib.org>`_ for figures and visualization,
 

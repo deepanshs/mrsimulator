@@ -34,6 +34,7 @@ external_stylesheets = [
         "materialize.min.css"
     )
 ]
+
 external_scripts = [
     (
         "https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/"
@@ -54,12 +55,11 @@ class mrsimulatorWebApp:
         app.layout = html.Div(
             className="container",
             # style={'background-color': '#303030', 'color': 'white'},
-            style={"width": "90%"},
+            # style={"width": "90%"},
             children=[
-                # dcc.ConfirmDialog(
-                #     id='confirm',
-                #     message='Cannot process the current request.',
-                # ),
+                dcc.ConfirmDialog(
+                    id="confirm", message="Cannot process the current request."
+                ),
                 html.H1(
                     children=__title__,
                     style={"textAlign": "center", "color": colors["text"]},
@@ -82,7 +82,7 @@ class mrsimulatorWebApp:
                             children=spectrum_object_widget(direct_dimension_setup()),
                         ),
                     ],
-                    style={"width": "100%", "height": "100%"},
+                    # style={"width": "100%", "height": "100%"},
                 ),
                 html.Hr(),
                 html.Div(id="isotopomer_computed_log"),

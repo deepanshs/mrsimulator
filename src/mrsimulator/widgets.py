@@ -236,7 +236,7 @@ def direct_dimension_setup():
                     max=110,
                     step=5.0,
                     value=0,
-                    marks={0: "+0 Hz", 50: "50 kHz", 110: "110 kHz"},
+                    marks={0: "0 Hz", 50: "50 kHz", 110: "110 kHz"},
                     # style={'textAlign': 'right'}
                 ),
                 dcc.Slider(
@@ -255,7 +255,7 @@ def direct_dimension_setup():
         html.Div(
             className="row",
             children=[
-                html.H6(className="col s6 m6 l6", children="Dimension parameters"),
+                html.H6(className="col s12 m12 l12", children="Dimension parameters"),
                 # daq.BooleanSwitch(
                 #     id='ppm_switch',
                 #     className='col s6 m6 l6',

@@ -39,7 +39,7 @@ def d(mf, mi):
 
     .. math::
 
-        \mathbb{p}(m_f, m_i) &= \left< m_f | T_{20} | m_f \right> -
+        \mathbb{d}(m_f, m_i) &= \left< m_f | T_{20} | m_f \right> -
                                 \left< m_i | T_{20} | m_i \right> \\
         &= \sqrt{\frac{3}{2}} \left(m_f^2 - m_i^2 \right)
 
@@ -62,7 +62,7 @@ def f(mf, mi, spin):
 
     .. math::
 
-        \mathbb{p}(m_f, m_i) &= \left< m_f | T_{30} | m_f \right> -
+        \mathbb{f}(m_f, m_i) &= \left< m_f | T_{30} | m_f \right> -
                                 \left< m_i | T_{30} | m_i \right> \\
         &= \frac{1}{\sqrt{10}} [5(m_f^3 - m_i^3) + (1 - 3I(I+1))(m_f-m_i)]
 

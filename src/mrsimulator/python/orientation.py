@@ -1,5 +1,4 @@
 import numpy as np
-import numba
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -111,7 +110,6 @@ def cosine_of_polar_angles_and_amplitudes(geodesic_polyhedron_frequency: int = 7
     return cos_alpha, cos_beta, amp
 
 
-@numba.jit(nopython=True, fastmath=False)
 def triangle_interpolation(f, spec, amp=1.0):
     points = spec.size
     f = np.asarray(f, dtype=np.float64)
@@ -368,7 +366,6 @@ def triangle_interpolation(f, spec, amp=1.0):
 #         j_last += local_index - 1
 
 
-@numba.jit(nopython=True, fastmath=False)
 def average_over_octant(spec, freq, nt, amp):
 
     n_pts = (nt + 1) * (nt + 2) / 2
