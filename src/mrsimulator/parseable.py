@@ -55,19 +55,18 @@ class Parseable(BaseModel):
                         enforce_units(
                             json_dict[prop], r_type, d_unit, throw_error=False
                         )
-                        != None
                         for r_type, d_unit in zip(required_type, default_unit)
                     ]
                     # If none of the units were enforceable, error
                     # else choose the first good one
-                    if not any(pos_values):
+                    if not ([val != None for val in pos_values]):
                         raise Exception(
                             f"Could not enforce any units on {prop}"
                         )
                     else:
                         json_dict[prop], property_units[prop] = [
-                            d for d in zip(pos_values, default_unit) if d[0]
-                        ][0]
+                            d for d in zip(pos_values, default_unit) if d[0] != None
+                        ][0] 
         return cls(**json_dict,property_units=property_units)
 
 

@@ -94,8 +94,8 @@ def test_parse_json_spectrum():
 
 
 def test_parsing(mas_data, static_data):
-    Spectrum.parse_json_with_units(mas_data["spectrum"])
-    Spectrum.parse_json_with_units(static_data["spectrum"])
+    mas = Spectrum.parse_json_with_units(mas_data["spectrum"])
+    static = Spectrum.parse_json_with_units(static_data["spectrum"])
 
     [
         Isotopomer.parse_json_with_units(isotopomer)
@@ -106,3 +106,6 @@ def test_parsing(mas_data, static_data):
         Isotopomer.parse_json_with_units(isotopomer)
         for isotopomer in static_data["isotopomers"]
     ]
+
+    assert static.rotor_frequency == 0
+    assert mas.rotor_frequency == 1000
