@@ -43,10 +43,10 @@ static inline void vm_double_arange(int count, double *restrict res) {
 static inline void vm_double_zeros(int count, double *restrict res) {
   //   x = __builtin_assume_aligned(x, 32);
   //   res = __builtin_assume_aligned(res, 32);
-  // while (count-- > 0) {
-  //   *res++ = 0.0;
-  // }
-  memset(res, 0, count * sizeof(double));
+  while (count-- > 0) {
+    *res++ = 0.0;
+  }
+  // memset(res, 0, count * sizeof(double));
 }
 
 /**
