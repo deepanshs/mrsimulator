@@ -107,13 +107,12 @@ def read_and_compare_data(filename):
     ]
 
     s1 = Simulator(isotopomer, spectrum)
-    freq, data_mrsimulator = s1.run(
-        one_d_spectrum, geodesic_polyhedron_frequency=120
+    freq, data_mrsimulator = s1.one_d_spectrum(
+        geodesic_polyhedron_frequency=120
     )
     data_mrsimulator /= data_mrsimulator.max()
 
-    satisfy = np.all((data_mrsimulator - data_source) < 0.005)
-
+    satisfy = np.all(np.abs(data_mrsimulator - data_source) < 0.005)
     return satisfy
 
 
