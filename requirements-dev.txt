@@ -1,18 +1,17 @@
 
 
-cython>=0.29.11
+## setup required
 numpy>=1.13.3
-sympy>=1.4
+fftw>=3.3.0
 setuptools>=27.3
+cython>=0.29.11
 astropy>=3.0
 requests>=2.21.0
 matplotlib>=3.0.2
-fftw>=3.3.0
 
 
+## test required
+sympy>=1.4
+coverage
 pytest>=4.5.0
-sphinx>=2.0
-flask>=1.1.0
-sphinxjp.themes.basicstrap
-breathe
-exhale
+nose

@@ -37,7 +37,7 @@ if mkl_info != {}:
 elif openblas_info != {}:
     print("using openblas library")
     library_dirs += openblas_info["library_dirs"]
-    libraries + openblas_info["libraries"]
+    libraries += openblas_info["libraries"]
 else:
     raise Exception("mkl blas or openblas library not found.")
 
@@ -124,7 +124,8 @@ setup(
     setup_requires=["numpy>=1.13.3", "setuptools>=27.3", "cython>=0.29.11"],
     install_requires=[
         "numpy>=1.13.3",
-        "setuptools>=27.3" "cython>=0.29.11",
+        "setuptools>=27.3",
+        "cython>=0.29.11",
         "astropy>=3.0",
         "pydantic==0.28",
         "requests>=2.21.0",

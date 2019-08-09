@@ -1,5 +1,5 @@
 
 sphinx>=2.0
-sphinx_rtd_theme
+sphinxjp.themes.basicstrap
 breathe
 exhale

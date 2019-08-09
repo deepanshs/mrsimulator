@@ -9,23 +9,8 @@
 #ifndef mrsimulator_h
 #define mrsimulator_h
 
-// library definition
-#if __has_include("mkl.h")
-#include "mkl.h"
-#include "vm_mkl.h"
-#define __blas_activate
-
-#elif __has_include("cblas.h")
-#include "cblas.h"
-#include "vm.h"
-#define __blas_activate
-#endif
-
+#include "vm_common.h"
 #include <complex.h>
-
-// user definition
-#define PI2 6.2831853072
-#define PI2I PI2 *I
 
 #if __STDC_VERSION__ >= 199901L
 #define complex128 double _Complex
@@ -45,6 +30,22 @@ inline complex128 self_cdadd(complex128 a, double b) {
   return a;
 }
 #endif
+
+// library definition
+#if __has_include("mkl.h")
+#include "mkl.h"
+#include "vm_mkl.h"
+#define __blas_activate
+
+#elif __has_include("cblas.h")
+#include "cblas.h"
+#define __blas_activate
+#include "vm.h"
+#endif
+
+// user definition
+#define PI2 6.2831853072
+#define PI2I PI2 *I
 
 // #ifdef __APPLE__
 // #include <Accelerate/Accelerate.h>
@@ -86,7 +87,6 @@ inline complex128 self_cdadd(complex128 a, double b) {
 #include "isotopomer_ravel.h"
 #include "octahedron.h"
 #include "powder_setup.h"
-#include "vm_common.h"
 
 /**
  * @struct MRS_plan_t

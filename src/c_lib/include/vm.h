@@ -5,22 +5,8 @@
 //  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
-#include <math.h>
 
 /** Arithmetic suit ======================================================== */
-/**
- * Multiply a vector of type double by `scale` and add an `offset` to its
- * elements. res = scale*x + offset
- */
-static inline void vm_double_ramp(int count, const double *restrict x,
-                                  const double scale, const double offset,
-                                  double *restrict res) {
-  // x = __builtin_assume_aligned(x, 32);
-  // res = __builtin_assume_aligned(res, 32);
-  while (count-- > 0) {
-    *res++ = scale * *x++ + offset;
-  }
-}
 
 /**
  * Add the elements of vector x and y and store in res of type double.
@@ -458,22 +444,4 @@ static inline void catlas_daxpby(int count, const double a,
     y += stride_y;
   }
 }
-
-// // C := alpha*op(A)*op(B) + beta*C
-// static inline void
-// cblas_zgemm(const CBLAS_TRANSPOSE transa, const CBLAS_TRANSPOSE transb,
-//             const int m, const int n, const int k, const complex128 *alpha,
-//             const complex128 *restrict a, const int lda,
-//             const complex128 *restrict b, const int ldb, const complex128
-//             *beta, complex128 *restrict c, int ldc) {
-//   int i, j;
-// }
-
-// static inline void __sideband_phase(MRS_plan *plan, const rank l) {
-//   cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans,
-//   plan->number_of_sidebands,
-//               plan->n_orientations, l, &plan->one, plan->pre_phase_2,
-//               plan->number_of_sidebands, plan->w2, l, &plan->zero,
-//               plan->vector, plan->n_orientations);
-// }
 #endif

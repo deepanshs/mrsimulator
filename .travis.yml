@@ -30,7 +30,7 @@ before_install:
   - conda info -a
   - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pytest pytest-cov
   - source activate test-env
-  - conda install $PKG1 $PKG2 --file requirements.txt
+  - conda install $PKG1 $PKG2 --file requirements-dev.txt
 
 install:
   - python setup.py develop
