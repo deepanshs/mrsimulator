@@ -283,12 +283,14 @@ static inline double *__get_frequency_in_FFT_order(int n, double increment) {
   }
 
   for (m = 0; m <= positive_limit; m++) {
-    *vr_freq++ = (double)m * increment;
+    vr_freq[i] = (double)m * increment;
+    i++;
   }
   for (m = negative_limit; m < 0; m++) {
-    *vr_freq++ = (double)m * increment;
+    vr_freq[i] = (double)m * increment;
+    i++;
   }
-  return vr_freq -= n;
+  return vr_freq;
 };
 
 extern void __get_components(int number_of_sidebands, double spin_frequency,
