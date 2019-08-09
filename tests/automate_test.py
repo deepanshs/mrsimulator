@@ -112,7 +112,8 @@ def read_and_compare_data(filename):
     )
     data_mrsimulator /= data_mrsimulator.max()
 
-    satisfy = np.all(np.abs(data_mrsimulator - data_source) < 0.005)
+    return data_mrsimulator, data_source
+    
     return satisfy
 
 
@@ -128,49 +129,58 @@ def read_and_compare_data(filename):
 def test00_sim():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test00", "test00.json")
-    assert read_and_compare_data(file_)
+    
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
 
 
 def test01_sim():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test01", "test01.json")
-    assert read_and_compare_data(file_)
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
 
 
 def test02_sim():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test02", "test02.json")
-    assert read_and_compare_data(file_)
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
 
 
 def test03_sim():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test03", "test03.json")
-    assert read_and_compare_data(file_)
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
 
 
 def test04_sim():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test04", "test04.json")
-    assert read_and_compare_data(file_)
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
 
 
 def test05_sim():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test05", "test05.json")
-    assert read_and_compare_data(file_)
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
 
 
 def test06_sim():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test06", "test06.json")
-    assert read_and_compare_data(file_)
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
 
 
 def test07_sim():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test07", "test07.json")
-    assert read_and_compare_data(file_)
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
 
 
 # --------------------------------------------------------------------------- #
@@ -181,28 +191,33 @@ def test07_sim():
 def test00_python():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test00", "test00.json")
-    assert read_and_compare_data(file_)
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
 
 
 def test01_python():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test01", "test01.json")
-    assert read_and_compare_data(file_)
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
 
 
 def test02_python():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test02", "test02.json")
-    assert read_and_compare_data(file_)
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
 
 
 def test03_python():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test03", "test03.json")
-    assert read_and_compare_data(file_)
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
 
 
 def test04_python():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test04", "test04.json")
-    assert read_and_compare_data(file_)
+    data_mrsimulator,data_source = read_and_compare_data(file_)
+    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
