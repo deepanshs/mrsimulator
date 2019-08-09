@@ -54,7 +54,7 @@ static inline void vm_double_divide(int count, const double *x, const double *y,
  * res = x * x
  */
 static inline void vm_double_square(int count, const double *x, double *res) {
-  vmdSqr(count, x, res, VML_EP);
+  vdSqr(count, x, res);
 }
 
 /**
@@ -63,7 +63,7 @@ static inline void vm_double_square(int count, const double *x, double *res) {
  */
 static inline void vm_double_square_root(int count, const double *x,
                                          double *res) {
-  vmdSqrt(count, x, res, VML_EP);
+  vdSqrt(count, x, res);
 }
 
 /**
@@ -74,7 +74,7 @@ static inline void vm_double_square_root(int count, const double *x,
 static inline void vm_double_complex_multiply(int count, const complex128 *x,
                                               const complex128 *y,
                                               complex128 *res) {
-  vmzMul(count, x, y, res, VML_EP);
+  vzMul(count, x, y, res);
 }
 
 // Trignometry
@@ -84,7 +84,7 @@ static inline void vm_double_complex_multiply(int count, const complex128 *x,
  * res = cos(x)
  */
 static inline void vm_double_cosine(int count, const double *x, double *res) {
-  vmdCos(count, x, res, VML_EP);
+  vdCos(count, x, res);
 }
 
 /**
@@ -92,7 +92,7 @@ static inline void vm_double_cosine(int count, const double *x, double *res) {
  * res = sin(x)
  */
 static inline void vm_double_sine(int count, const double *x, double *res) {
-  vmdSin(count, x, res, VML_EP);
+  vdSin(count, x, res);
 }
 
 /**
@@ -102,7 +102,7 @@ static inline void vm_double_sine(int count, const double *x, double *res) {
  */
 static inline void vm_cosine_I_sine(int count, const double *x,
                                     complex128 *res) {
-  vmzCIS(count, x, res, VML_EP);
+  vzCIS(count, x, res);
 }
 
 static inline void vm_dlinear(int count, double *x, double scale, double offset,
