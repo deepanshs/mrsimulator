@@ -258,12 +258,12 @@ void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
                        complex128 *R_in, complex128 *R_out) {
   int orientation;
   int n1 = 2 * l + 1, m, i = 0, mp;
-  complex128 temp_inital_vector[n1], ph2, pha;
+  complex128 temp_initial_vector[n1], ph2, pha;
   complex128 *final_vector;
   int n2 = n1 * n1;
 
   // #pragma omp parallel for
-  //   // private(orientation, pha, ph2, m, temp_inital_vector,
+  //   // private(orientation, pha, ph2, m, temp_initial_vector,
   //   //                                  final_vector, i),
   //   //     shared(n, cos_alpha, n1, R_in, l, R_out, wigner, n2)
   for (orientation = 0; orientation < n; orientation++) {
@@ -277,13 +277,13 @@ void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
 
     // copy the initial vector
     for (m = 0; m < n1; m++) {
-      temp_inital_vector[m] = R_in[m];
+      temp_initial_vector[m] = R_in[m];
     }
 
     // scale the temp initial vector with exp[-I m alpha]
     for (m = 1; m <= l; m++) {
-      temp_inital_vector[l + m] *= ph2;
-      temp_inital_vector[l - m] *= conj(ph2);
+      temp_initial_vector[l + m] *= ph2;
+      temp_initial_vector[l - m] *= conj(ph2);
       ph2 *= pha;
     }
 
@@ -293,7 +293,7 @@ void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
     for (m = 0; m < n1; m++) {
       final_vector[m] = 0.;
       for (mp = 0; mp < n1; mp++) {
-        final_vector[m] += wigner[i++] * temp_inital_vector[mp];
+        final_vector[m] += wigner[i++] * temp_initial_vector[mp];
       }
     }
 
@@ -305,10 +305,10 @@ void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
 
     // final_vector = &R_out[orientation * n1];
     // cblas_dgemv(CblasRowMajor, CblasNoTrans, n1, n1, 1.0, &wigner[i], n1,
-    //             (double *)&temp_inital_vector[0], 2, 0.0,
+    //             (double *)&temp_initial_vector[0], 2, 0.0,
     //             (double *)&final_vector[0], 2);
     // cblas_dgemv(CblasRowMajor, CblasNoTrans, n1, n1, 1.0, &wigner[i], n1,
-    //             (double *)&temp_inital_vector[0] + 1, 2, 0.0,
+    //             (double *)&temp_initial_vector[0] + 1, 2, 0.0,
     //             (double *)&final_vector[0] + 1, 2);
     // i += n2;
   }
@@ -320,26 +320,27 @@ static inline void self_cmult(complex128 a, complex128 b) {
   a.imag = a.real * b.imag + b.real * a.imag;
 }
 
-void __wigner_rotation_2(int l, int n, double *wigner, complex128 *exp_Im_alpha,
-                         complex128 *R_in, complex128 *R_out) {
+void __wigner_rotation_2(const int l, const int n, const double *wigner,
+                         const complex128 *exp_Im_alpha, const complex128 *R_in,
+                         complex128 *R_out) {
   int orientation;
   int n1 = 2 * l + 1, m, i = 0, mp;
-  complex128 *temp_inital_vector = malloc_double_complex(n1);
+  complex128 *temp_initial_vector = malloc_double_complex(n1);
   complex128 *final_vector, temp;
 
   for (orientation = 0; orientation < n; orientation++) {
 
     // copy the initial vector
     for (m = 0; m < n1; m++) {
-      temp_inital_vector[m] = R_in[m];
+      temp_initial_vector[m] = R_in[m];
     }
 
     // scale the temp initial vector with exp[-I m alpha]
     for (m = 1; m <= l; m++) {
       temp = exp_Im_alpha[(4 - m) * n + orientation];
 
-      self_cmult(temp_inital_vector[l - m], temp);
-      self_cmult(temp_inital_vector[l + m], conj(temp));
+      self_cmult(temp_initial_vector[l - m], temp);
+      self_cmult(temp_initial_vector[l + m], conj(temp));
     }
 
     final_vector = &R_out[orientation * n1];
@@ -347,46 +348,47 @@ void __wigner_rotation_2(int l, int n, double *wigner, complex128 *exp_Im_alpha,
     for (m = 0; m < n1; m++) {
       final_vector[m] = 0.;
       for (mp = 0; mp < n1; mp++) {
-        final_vector[m].real += wigner[i] * temp_inital_vector[mp].real;
-        final_vector[m].imag += wigner[i++] * temp_inital_vector[mp].imag;
+        final_vector[m].real += wigner[i] * temp_initial_vector[mp].real;
+        final_vector[m].imag += wigner[i++] * temp_initial_vector[mp].imag;
       }
     }
   }
 }
 #else
-void __wigner_rotation_2(int l, int n, double *wigner, complex128 *exp_Im_alpha,
-                         complex128 *R_in, complex128 *R_out) {
+void __wigner_rotation_2(const int l, const int n,
+                         const double *restrict wigner,
+                         const complex128 *exp_Im_alpha,
+                         const complex128 *restrict R_in,
+                         complex128 *restrict R_out) {
   int orientation;
-  int n1 = 2 * l + 1, m, i = 0, mp;
-  complex128 temp_inital_vector[n1];
-  complex128 *final_vector, temp;
+  int n1 = 2 * l + 1, m, mp;
+  complex128 temp;
+  complex128 *temp_initial_vector = malloc_double_complex(n1);
+  *R_out = 0.;
 
   // #pragma omp parallel for
-  // private(orientation, pha, ph2, m, temp_inital_vector,
+  // private(orientation, pha, ph2, m, temp_initial_vector,
   //                                  final_vector, i),
   //     shared(n, cos_alpha, n1, R_in, l, R_out, wigner, n2)
   for (orientation = 0; orientation < n; orientation++) {
 
     // copy the initial vector
-    for (m = 0; m < n1; m++) {
-      // cblas_zcopy(n, &R_in[m], 0, &temp_inital_vector[m], n1);
-      temp_inital_vector[m] = R_in[m];
-    }
+    cblas_zcopy(n1, R_in, 1, temp_initial_vector, 1);
 
     // scale the temp initial vector with exp[-I m alpha]
     for (m = 1; m <= l; m++) {
       temp = exp_Im_alpha[(4 - m) * n + orientation];
-      temp_inital_vector[l - m] *= temp;
-      temp_inital_vector[l + m] *= conj(temp);
+      temp_initial_vector[l - m] *= temp;
+      temp_initial_vector[l + m] *= conj(temp);
     }
 
-    final_vector = &R_out[orientation * n1];
+    m = n1;
     // Apply wigner rotation to the temp inital vector
-    for (m = 0; m < n1; m++) {
-      final_vector[m] = 0.;
+    while (m-- > 0) {
       for (mp = 0; mp < n1; mp++) {
-        final_vector[m] += wigner[i++] * temp_inital_vector[mp];
+        *R_out += *wigner++ * temp_initial_vector[mp];
       }
+      *(++R_out) = 0.;
     }
   }
 }

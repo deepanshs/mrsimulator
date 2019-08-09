@@ -34,8 +34,8 @@ inline complex128 self_cdadd(complex128 a, double b) {
 // library definition
 #if __has_include("mkl.h")
 #include "mkl.h"
-#include "vm_mkl.h"
 #define __blas_activate
+#include "vm_mkl.h"
 
 #elif __has_include("cblas.h")
 #include "cblas.h"
@@ -76,7 +76,6 @@ inline complex128 self_cdadd(complex128 a, double b) {
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h> // to use calloc, malloc, and free methods
-#include <string.h>
 #include <time.h>
 
 #include "Hamiltonian.h"
@@ -273,7 +272,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_plan *plan,
  */
 static inline double *__get_frequency_in_FFT_order(int n, double increment) {
   double *vr_freq = malloc_double(n);
-  int i = 0, m, positive_limit, negative_limit;
+  int m, positive_limit, negative_limit;
 
   if (n % 2 == 0) {
     negative_limit = (int)(-n / 2);
@@ -284,14 +283,12 @@ static inline double *__get_frequency_in_FFT_order(int n, double increment) {
   }
 
   for (m = 0; m <= positive_limit; m++) {
-    vr_freq[i] = (double)m * increment;
-    i++;
+    *vr_freq++ = (double)m * increment;
   }
   for (m = negative_limit; m < 0; m++) {
-    vr_freq[i] = (double)m * increment;
-    i++;
+    *vr_freq++ = (double)m * increment;
   }
-  return vr_freq;
+  return vr_freq -= n;
 };
 
 extern void __get_components(int number_of_sidebands, double spin_frequency,

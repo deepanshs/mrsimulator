@@ -54,7 +54,7 @@ static inline void vm_double_divide(int count, const double *x, const double *y,
  * res = x * x
  */
 static inline void vm_double_square(int count, const double *x, double *res) {
-  vdSqr(count, x, res);
+  vmdSqr(count, x, res, VML_EP);
 }
 
 /**
@@ -63,7 +63,7 @@ static inline void vm_double_square(int count, const double *x, double *res) {
  */
 static inline void vm_double_square_root(int count, const double *x,
                                          double *res) {
-  vdSqrt(count, x, res);
+  vmdSqrt(count, x, res, VML_EP);
 }
 
 /**
@@ -107,7 +107,7 @@ static inline void vm_cosine_I_sine(int count, const double *x,
 
 static inline void vm_dlinear(int count, double *x, double scale, double offset,
                               double *res) {
-  vmdLinearFrac(count, x, x, scale, offset, 0.0, 1.0, res, VML_EP);
+  vdLinearFrac(count, x, x, scale, offset, 0.0, 1.0, res);
 }
 // Exponent
 

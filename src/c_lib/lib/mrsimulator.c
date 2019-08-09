@@ -12,7 +12,6 @@
 void MRS_free_plan(MRS_plan *the_plan) {
   fftw_destroy_plan(the_plan->the_fftw_plan);
   fftw_free(the_plan->vector);
-  //   DftiFreeDescriptor(&plan);
   free_double(the_plan->vr_freq);
   free_double(the_plan->rotor_lab_2);
   free_double(the_plan->rotor_lab_4);
@@ -85,7 +84,8 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
   // setup the fftw routine
   plan->vector = malloc_double_complex(plan->size);
   // plan->vector = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) *
-  // plan->size); gettimeofday(&fft_setup_time, NULL);
+  // plan->size);
+  // gettimeofday(&fft_setup_time, NULL);
   plan->the_fftw_plan =
       fftw_plan_many_dft(1, &number_of_sidebands, n_orientations, plan->vector,
                          NULL, n_orientations, 1, plan->vector, NULL,
@@ -95,18 +95,6 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
   // int status = fftw_export_wisdom_to_filename(filename);
   // printf("file save status %i \n", status);
 
-  // complex128 *vector = malloc_double_complex(size);
-  // DFTI_DESCRIPTOR_HANDLE plan;
-  // MKL_LONG status;
-  // MKL_LONG stride[2] = {0, n_orientations};
-  // status = DftiCreateDescriptor(&plan, DFTI_DOUBLE, DFTI_COMPLEX, 1,
-  //                               number_of_sidebands);
-  // status = DftiSetValue(plan, DFTI_NUMBER_OF_TRANSFORMS, n_orientations);
-  // status = DftiSetValue(plan, DFTI_INPUT_DISTANCE, 1);
-  // status = DftiSetValue(plan, DFTI_OUTPUT_DISTANCE, 1);
-  // status = DftiSetValue(plan, DFTI_INPUT_STRIDES, stride);
-  // status = DftiSetValue(plan, DFTI_OUTPUT_STRIDES, stride);
-  // DftiCommitDescriptor(plan);
   // gettimeofday(&fft_setup_time_end, NULL);
   // clock_time =
   //     (double)(fft_setup_time_end.tv_usec - fft_setup_time.tv_usec) /
@@ -305,11 +293,15 @@ void MRS_get_amplitudes_from_plan(MRS_plan *plan, complex128 *R2,
   /* Evaluate the Fourier transform of vector, fft(vector). The fft operation
    * updates the value of the array, `vector` */
   fftw_execute(plan->the_fftw_plan);
-  // DftiComputeForward(plan, vector);
 
   /* Taking the absolute value square of the vector array. The absolute value
    * square is stores as the real part of the `vector` array. The imaginary part
    * is garbage. This method avoids creating new arrays. */
+
+  // cblas_dsbmv(CblasRowMajor, CblasUpper, 2 * plan->size, 0, 1.0,
+  //             (double *)plan->vector, 1, (double *)plan->vector, 1, 0.0,
+  //             (double *)plan->vector, 1);
+
   vm_double_square(2 * plan->size, (double *)plan->vector,
                    (double *)plan->vector);
   cblas_daxpy(plan->size, 1.0, (double *)plan->vector + 1, 2,
@@ -337,11 +329,8 @@ void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0) {
   /* Calculating the local anisotropic frequency contributions from the      *
    * second rank tensor.                                                     */
   plan->buffer = plan->rotor_lab_2[2];
-  // memset(plan->local_frequency, 0, plan->n_orientations * sizeof(double));
-  vm_double_zeros(plan->n_orientations, plan->local_frequency);
-  // cblas_dscal(plan->n_orientations, 0.0, plan->local_frequency, 1);
-  cblas_daxpy(plan->n_orientations, plan->buffer, (double *)&plan->w2[2], 10,
-              plan->local_frequency, 1);
+  cblas_daxpby(plan->n_orientations, plan->buffer, (double *)&plan->w2[2], 10,
+               0.0, plan->local_frequency, 1);
 
   if (plan->allow_fourth_rank) {
     /* Calculating the local anisotropic frequency contributions from the    *
@@ -361,11 +350,8 @@ void MRS_get_normalized_frequencies_from_plan(MRS_plan *plan,
   /* Calculating the normalized local anisotropic frequency contributions    *
    * from the second rank tensor.                                            */
   plan->buffer = dim->inverse_increment * plan->rotor_lab_2[2];
-  // memset(plan->local_frequency, 0, plan->n_orientations * sizeof(double));
-  vm_double_zeros(plan->n_orientations, plan->local_frequency);
-  // cblas_dscal(plan->n_orientations, 0.0, plan->local_frequency, 1);
-  cblas_daxpy(plan->n_orientations, plan->buffer, (double *)&plan->w2[2], 10,
-              plan->local_frequency, 1);
+  cblas_daxpby(plan->n_orientations, plan->buffer, (double *)&plan->w2[2], 10,
+               0.0, plan->local_frequency, 1);
 
   if (plan->allow_fourth_rank) {
     /* Calculating the normalized local anisotropic frequency contributions  *

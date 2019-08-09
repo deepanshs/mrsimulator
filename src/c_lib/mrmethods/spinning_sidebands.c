@@ -11,19 +11,9 @@
 
 static inline void __zero_components(double *R0, complex128 *R2,
                                      complex128 *R4) {
-  // int i;
   R0[0] = 0.0;
   vm_double_zeros(10, (double *)R2);
   vm_double_zeros(18, (double *)R4);
-  // memset((double *)R2, 0, 10 * sizeof(double));
-  // memset((double *)R4, 0, 18 * sizeof(double));
-  //   R0[0] = 0.0;
-  //   for (i = 0; i < 5; i++) {
-  //     R2[i] = 0.0;
-  //   }
-  //   for (i = 0; i < 9; i++) {
-  //     R4[i] = 0.0;
-  //   }
 }
 
 static inline void __spinning_sideband_core(
@@ -124,9 +114,6 @@ static inline void __spinning_sideband_core(
 
         vm_double_ramp(plan->n_orientations, plan->local_frequency, 1.0, offset,
                        plan->freq_offset);
-        // vdLinearFrac(plan->n_orientations, plan->local_frequency,
-        //              plan->local_frequency, 1.0, offset, 0.0, 1.0,
-        //              plan->freq_offset);
         octahedronInterpolation(
             spec_site_ptr, plan->freq_offset,
             plan->geodesic_polyhedron_frequency,

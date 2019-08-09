@@ -263,8 +263,10 @@ static inline void vm_cosine_I_sine(int count, const double *restrict x,
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   double *res_ = (double *)res;
-  *res_++ = cos(*x);
-  *res_++ = sin(*x++);
+  while (count-- > 0) {
+    *res_++ = cos(*x);
+    *res_++ = sin(*x++);
+  }
 }
 
 // Exponent
