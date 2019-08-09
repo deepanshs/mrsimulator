@@ -62,7 +62,7 @@ def one_d_spectrum(dict spectrum,
     isotope = spectrum['isotope']
 
     # spin quantum number of the observed spin
-    cdef double spin_quantum_number = spectrum['spin']/2
+    cdef double spin_quantum_number = spectrum['spin']
 
     # transitions of the observed spin
     number_of_energy_levels = int(2*spin_quantum_number+1)
@@ -122,7 +122,7 @@ def one_d_spectrum(dict spectrum,
     # ---------------------------------------------------------------------
     # sample _______________________________________________________________
     for index_isotopomer, isotopomer in enumerate(isotopomers):
-        abundance = isotopomer['abundance']
+        abundance = isotopomer['abundance']/100
         sub_sites = [site for site in isotopomer['sites'] if site['isotope'] == isotope]
 
         number_of_sites= len(sub_sites)
