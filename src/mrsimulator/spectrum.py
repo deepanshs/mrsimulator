@@ -69,6 +69,9 @@ class Spectrum(Parseable):
     @classmethod
     def parse_json_with_units(cls, json_dict):
 
+        if "direct_dimension" in json_dict:
+            json_dict.update(json_dict["direct_dimension"])
+
         if "isotope" in json_dict:
             isotope_data = get_isotope_data(json_dict["nucleus"])
             json_dict.update(isotope_data)
@@ -92,6 +95,4 @@ def get_isotope_data(isotope_string):
         isotope_dict.update({"nucleus": formatted_isotope_string})
         return isotope_dict
     else:
-        raise Exception(
-            f"Could not parse isotope string {formatted_isotope_string}"
-        )
+        raise Exception(f"Could not parse isotope string {formatted_isotope_string}")
