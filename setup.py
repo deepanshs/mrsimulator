@@ -75,9 +75,7 @@ ext_modules = [
         libraries=libraries,
         library_dirs=library_dirs,
         extra_compile_args=[],
-        extra_link_args=[]
-        # extra_link_args="-g -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
-        #                  -liomp5 -lpthread -lm -ldl -W".split(),
+        extra_link_args=[],
     )
 ]
 
@@ -100,12 +98,8 @@ ext_modules += [
         language="c",
         libraries=libraries,
         library_dirs=library_dirs,
-        extra_compile_args=[],
-        extra_link_args=[]
-        # extra_link_args="-g -lmkl_intel_lp64 -lmkl_intel_thread \
-        #                 -lmkl_core -ldl -liomp5 -lpthread -lm -W".split()
-        # extra_link_args="-g -lmkl_intel_lp64 -lmkl_intel_thread \
-        #                 -lmkl_core -ldl -liomp5 -lpthread -lm -Wl".split(),
+        # extra_compile_args=["--std=c99"],
+        extra_link_args=[],
     )
 ]
 

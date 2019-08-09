@@ -35,7 +35,7 @@ inline complex128 self_cdadd(complex128 a, double b) {
 #if __has_include("mkl.h")
 #include "mkl.h"
 #define __blas_activate
-#include "vm_mkl.h"
+#include "vm.h"
 
 #elif __has_include("cblas.h")
 #include "cblas.h"
