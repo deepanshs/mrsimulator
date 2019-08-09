@@ -65,7 +65,6 @@ cdef extern from "spinning_sidebands.h":
     void spinning_sideband_core(
         # spectrum information and related amplitude
         double * spec,
-        double * cpu_time_,
         double spectral_start,
         double spectral_increment,
         int number_of_points,

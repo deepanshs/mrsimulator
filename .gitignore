@@ -123,3 +123,4 @@ mrsimulator.code-workspace
 jquery.js
 setup.py.src
 setup.temp
+__config__.json

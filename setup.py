@@ -18,6 +18,8 @@ import platform
 import numpy as np
 import numpy.distutils.system_info as sysinfo
 
+import json
+
 module_dir = dirname(abspath(__file__))
 
 print(platform.system())
@@ -30,12 +32,12 @@ fftw3_info = sysinfo.get_info("fftw3")
 mkl_info = sysinfo.get_info("mkl")
 
 if mkl_info != {}:
-    print("using intel mkl library")
+    name = "mkl"
     include_dirs += mkl_info["include_dirs"]
     library_dirs += mkl_info["library_dirs"]
     libraries += mkl_info["libraries"]
 elif openblas_info != {}:
-    print("using openblas library")
+    name = "openblas"
     library_dirs += openblas_info["library_dirs"]
     libraries += openblas_info["libraries"]
 else:
@@ -45,17 +47,25 @@ include_dirs += fftw3_info["include_dirs"]
 library_dirs += fftw3_info["library_dirs"]
 libraries += fftw3_info["libraries"]
 
-# other include paths
-include_dirs.append("src/c_lib/include")
-include_dirs.append(np.get_include())
-
 include_dirs = list(set(include_dirs))
 library_dirs = list(set(library_dirs))
 libraries = list(set(libraries))
 
-print(include_dirs)
-print(library_dirs)
-print(libraries)
+blas_info = {
+    "name": name,
+    "library_dirs": library_dirs,
+    "include_dirs": include_dirs,
+    "libraries": libraries,
+}
+
+print(blas_info)
+
+with open("src/mrsimulator/__config__.json", "w", encoding="utf8") as outfile:
+    json.dump(blas_info, outfile, ensure_ascii=True, indent=2)
+
+# other include paths
+include_dirs.append("src/c_lib/include")
+include_dirs.append(np.get_include())
 
 ext_modules = [
     Extension(
@@ -74,7 +84,7 @@ ext_modules = [
         language="c",
         libraries=libraries,
         library_dirs=library_dirs,
-        extra_compile_args=[],
+        extra_compile_args=["--std=c99", "-g", "-W", "-O3"],
         extra_link_args=[],
     )
 ]
@@ -98,7 +108,7 @@ ext_modules += [
         language="c",
         libraries=libraries,
         library_dirs=library_dirs,
-        # extra_compile_args=["--std=c99"],
+        extra_compile_args=["--std=c99", "-g", "-W", "-O3"],
         extra_link_args=[],
     )
 ]

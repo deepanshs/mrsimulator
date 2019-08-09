@@ -1,4 +1,7 @@
-os: linux
+os:
+  - linux
+  - osx
+
 dist: xenial
 language: python
 
@@ -7,7 +10,7 @@ python:
   - '3.7'
 
 env:
-  - PKG1=mkl PKG2=mkl-include
+  # - PKG1=mkl PKG2=mkl-include
   - PKG1=nomkl PKG2=openblas
 
 cache:

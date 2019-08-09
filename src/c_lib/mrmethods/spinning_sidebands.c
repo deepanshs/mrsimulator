@@ -132,7 +132,6 @@ static inline void __spinning_sideband_core(
 void spinning_sideband_core(
     // spectrum information and related amplitude
     double *spec,              // The amplitude of the spectrum.
-    double *cpu_time_,         // Execution time
     double coordinates_offset, // The start of the frequency spectrum.
     double increment,          // The increment of the frequency spectrum.
     int count,                 // Number of points on the frequency spectrum.
@@ -171,18 +170,11 @@ void spinning_sideband_core(
   MRS_dimension *dimension =
       MRS_create_dimension(count, coordinates_offset, increment);
 
-  // struct timeval begin, end; // all_site_time, all_c_time;
-  // double clock_time;
-
   // gettimeofday(&begin, NULL);
   MRS_plan *plan =
       MRS_create_plan(geodesic_polyhedron_frequency, number_of_sidebands,
                       sample_rotation_frequency_in_Hz, rotor_angle_in_rad,
                       increment, allow_fourth_rank);
-  // gettimeofday(&end, NULL);
-  // clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +
-  //              (double)(end.tv_sec - begin.tv_sec);
-  // printf("Created mrsimulator plan in %f s.\n", clock_time);
 
   // gettimeofday(&all_site_time, NULL);
   __spinning_sideband_core(
@@ -199,18 +191,6 @@ void spinning_sideband_core(
       transition,
 
       plan, dimension);
-
-  // gettimeofday(&all_site_time_end, NULL);
-  // clock_time =
-  //     (double)(all_site_time_end.tv_usec - all_site_time.tv_usec) / 1000000.
-  //     + (double)(all_site_time_end.tv_sec - all_site_time.tv_sec);
-  // printf("all site time %f \n", clock_time);
-
-  // gettimeofday(&all_c_time_end, NULL);
-  // clock_time =
-  //     (double)(all_c_time_end.tv_usec - all_c_time.tv_usec) / 1000000. +
-  //     (double)(all_c_time_end.tv_sec - all_c_time.tv_sec);
-  // printf("all c time %f \n", clock_time);
 
   // gettimeofday(&end, NULL);
   // clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +

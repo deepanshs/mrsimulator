@@ -116,7 +116,7 @@ static inline void vm_dlinear(int count, double *x, double scale, double offset,
  * res = exp(x)
  */
 static inline void vm_dexp(int count, const double *x, double *res) {
-  vmdExp(count, x, res, VML_EP);
+  vdExp(count, x, res);
 }
 
 /**
@@ -126,15 +126,4 @@ static inline void vm_dexp(int count, const double *x, double *res) {
 static inline void vm_double_complex_exp(int count, const complex128 *x,
                                          complex128 *res) {
   vmzExp(count, x, res, VML_EP);
-}
-
-/**
- * Copy elements of vector x to vector y of type complex128.
- * y = a*x + b*y
- * Equivalent to cblas_daxpby.
- */
-static inline void catlas_daxpby(int count, const double a, const double *x,
-                                 const int stride_x, const double b, double *y,
-                                 const int stride_y) {
-  cblas_daxpby(count, a, x, stride_x, b, y, stride_y);
 }

@@ -13,7 +13,6 @@
 extern void spinning_sideband_core(
     // spectrum information and related amplitude
     double *spec,              // The amplitude of the spectrum.
-    double *cpu_time_,         // Execution time
     double spectral_start,     // The start of the frequency spectrum.
     double spectral_increment, // The increment of the frequency spectrum.
     int number_of_points,      // Number of points on the frequency spectrum.

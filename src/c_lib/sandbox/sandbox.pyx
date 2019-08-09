@@ -276,7 +276,6 @@ def _one_d_simulator(
     cdef np.ndarray[double, ndim=1] transition_c = np.asarray([m_initial, m_final], dtype=np.float64)
 
     cdef np.ndarray[double, ndim=1] amp = np.zeros(number_of_points * number_of_sites)
-    cdef double cpu_time_
 
     cdef np.ndarray[double] ori_n = np.zeros(3*number_of_sites, dtype=np.float64)
     cdef np.ndarray[double] ori_e = np.zeros(3*number_of_sites, dtype=np.float64)
@@ -302,7 +301,6 @@ def _one_d_simulator(
     clib.spinning_sideband_core(
             # spectrum information and related amplitude
             &amp[0],
-            &cpu_time_,
             reference_offset,
             increment,
             number_of_points,
@@ -323,4 +321,4 @@ def _one_d_simulator(
 
     freq = np.arange(number_of_points)*increment + reference_offset
 
-    return freq, amp, cpu_time_
+    return freq, amp

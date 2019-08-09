@@ -107,7 +107,6 @@ def one_d_spectrum(dict spectrum,
 
     cdef int i, trans__
     cdef ndarray[double, ndim=1] amp
-    cdef double cpu_time_ = 0.0
     amp1 = zeros(number_of_points, dtype=float64)
 
     cdef clib.isotopomer_ravel isotopomer_struct
@@ -207,7 +206,6 @@ def one_d_spectrum(dict spectrum,
             clib.spinning_sideband_core(
                     # spectrum information and related amplitude
                     &amp[0],
-                    &cpu_time_,
                     reference_offset,
                     increment,
                     number_of_points,
@@ -228,7 +226,5 @@ def one_d_spectrum(dict spectrum,
 
         amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
 
-    if verbose in [11]:
-        print(f'\nExecution time {cpu_time_} s')
     freq = (arange(number_of_points)*increment + reference_offset)
     return freq, amp1, larmor_frequency, list_index_isotopomer

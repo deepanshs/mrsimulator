@@ -21,6 +21,14 @@ def _fn_(x):
     return int("".join([i for i in x if i.isnumeric()]))
 
 
+def show_config():
+    with open("__config__.json", "rb") as f:
+        content = f.read()
+        info = json.loads(str(content, encoding="UTF-8"))
+
+    return json.dumps(info, ensure_ascii=False, indent=2)
+
+
 def _import_json(filename):
     res = urlparse(filename)
     if res[0] not in ["file", ""]:
