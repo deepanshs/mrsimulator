@@ -272,7 +272,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_plan *plan,
  */
 static inline double *__get_frequency_in_FFT_order(int n, double increment) {
   double *vr_freq = malloc_double(n);
-  int m, positive_limit, negative_limit;
+  int i = 0, m, positive_limit, negative_limit;
 
   if (n % 2 == 0) {
     negative_limit = (int)(-n / 2);
