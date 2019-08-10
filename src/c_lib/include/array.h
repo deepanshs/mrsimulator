@@ -9,22 +9,8 @@
 
 #include "mrsimulator.h"
 
-// allocate memory for a float array of size m .
-extern float *malloc_float(int m);
-// free allocated memory of a float array of size m.
-extern void free_float(float *arr);
-
-// allocate memory for a float complex array of size m.
-// extern float complex *malloc_float_complex(int m);
-// // free allocated memory of a float complex array of size m.
-// extern void free_float_complex(float complex *arr);
-
-// allocate memory for a double array of size m.
-extern double *malloc_double(int m);
-// free allocated memory of a double array of size m.
-extern void free_double(double *arr);
-
-// allocate memory for a complex128 array of size m.
-extern complex128 *malloc_double_complex(int m);
-// free allocated memory of a complex128 array of size m.
-extern void free_double_complex(complex128 *arr);
+// allocate memory for array of size m for a given type.
+#define malloc_complex128(m) (complex128 *)malloc(m * sizeof(complex128))
+#define malloc_complex64(m) (complex64 *)malloc(m * sizeof(complex64))
+#define malloc_float(m) (float *)malloc(m * sizeof(float))
+#define malloc_double(m) (double *)malloc(m * sizeof(double))

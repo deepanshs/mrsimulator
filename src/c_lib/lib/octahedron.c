@@ -82,10 +82,10 @@ void octahedronGetPolarAngleTrigOverAnOctant(int nt, double *cos_alpha,
   cos_alpha[points - 1] = 1.0;
   // sinAlpha[points-1] = 0.0;
 
-  free_double(xr);
-  free_double(yr);
-  free_double(zr);
-  free_double(sin_beta);
+  free(xr);
+  free(yr);
+  free(zr);
+  free(sin_beta);
 }
 void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
     int nt, complex128 *exp_I_alpha, double *cos_beta, double *amp) {
@@ -129,10 +129,10 @@ void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
   cblas_dcopy(points, xr, 1, (double *)&exp_I_alpha[0], 2);
   cblas_dcopy(points, yr, 1, (double *)&exp_I_alpha[0] + 1, 2);
 
-  free_double(xr);
-  free_double(yr);
-  free_double(zr);
-  free_double(sin_beta);
+  free(xr);
+  free(yr);
+  free(zr);
+  free(sin_beta);
 }
 
 void octahedronInterpolation(double *spec, double *freq, int nt, double *amp,

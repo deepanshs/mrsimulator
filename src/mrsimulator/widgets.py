@@ -153,7 +153,16 @@ def plot_object_widget():
                     children="Spectrum",
                     style={"textAlign": "left", "color": colors["text"]},
                 ),
-                html.A(id="download_link", children="\u21E9 Download CSV"),
+                # dcc.Dropdown(
+                #     id="download",
+                #     options=[
+                #         {"label": "csv", "value": "csv"},
+                #         {"label": "csdf", "value": "csdf"},
+                #     ],
+                #     value="csdf",
+                # ),
+                html.A(id="download_csv", children="\u21E9 Download CSV"),
+                html.A(id="download_csdf", children="\u21E9 Download CSDM"),
                 dcc.Graph(id="nmr_spectrum", figure={"data": []}),
             ],
             # style={'width': '100%', 'margin': '0px'}

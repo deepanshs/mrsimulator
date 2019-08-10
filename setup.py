@@ -40,6 +40,7 @@ elif openblas_info != {}:
     name = "openblas"
     library_dirs += openblas_info["library_dirs"]
     libraries += openblas_info["libraries"]
+    libraries += ["pthread"]
 else:
     raise Exception("mkl blas or openblas library not found.")
 

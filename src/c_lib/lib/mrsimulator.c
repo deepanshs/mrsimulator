@@ -12,18 +12,18 @@
 void MRS_free_plan(MRS_plan *the_plan) {
   fftw_destroy_plan(the_plan->the_fftw_plan);
   fftw_free(the_plan->vector);
-  free_double(the_plan->vr_freq);
-  free_double(the_plan->rotor_lab_2);
-  free_double(the_plan->rotor_lab_4);
-  free_double(the_plan->freq_offset);
-  free_double(the_plan->amplitudes);
-  free_double(the_plan->local_frequency);
-  free_double(the_plan->wigner_2j_matrices);
-  free_double(the_plan->wigner_4j_matrices);
-  free_double_complex(the_plan->w2);
-  free_double_complex(the_plan->w4);
-  free_double_complex(the_plan->pre_phase_2);
-  free_double_complex(the_plan->pre_phase_4);
+  free(the_plan->vr_freq);
+  free(the_plan->rotor_lab_2);
+  free(the_plan->rotor_lab_4);
+  free(the_plan->freq_offset);
+  free(the_plan->amplitudes);
+  free(the_plan->local_frequency);
+  free(the_plan->wigner_2j_matrices);
+  free(the_plan->wigner_4j_matrices);
+  free(the_plan->w2);
+  free(the_plan->w4);
+  free(the_plan->pre_phase_2);
+  free(the_plan->pre_phase_4);
   // mkl_free_buffers();
 }
 
@@ -82,7 +82,7 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
   }
 
   // setup the fftw routine
-  plan->vector = malloc_double_complex(plan->size);
+  plan->vector = malloc_complex128(plan->size);
   // plan->vector = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) *
   // plan->size);
   // gettimeofday(&fft_setup_time, NULL);
@@ -111,7 +111,7 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
   cblas_dscal(number_of_sidebands, increment_inverse, plan->vr_freq, 1);
 
   /* calculating exp(-Imα) at every orientation angle α and for m=-4 to -1. */
-  plan->exp_Im_alpha = malloc_double_complex(4 * n_orientations);
+  plan->exp_Im_alpha = malloc_complex128(4 * n_orientations);
   int s_2 = 2 * n_orientations, s_3 = 3 * n_orientations;
   int s_0 = 0 * n_orientations, s_1 = 1 * n_orientations;
 
@@ -136,7 +136,7 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
   /* Setup for processing the second rank tensors. */
   /* w2 is the buffer for storing calculated frequencies after processing the
    * second rank tensors. */
-  plan->w2 = malloc_double_complex(5 * n_orientations);
+  plan->w2 = malloc_complex128(5 * n_orientations);
 
   /* calculating wigner 2j matrices at every β orientation. */
   plan->wigner_2j_matrices = malloc_double(25 * n_orientations);
@@ -158,12 +158,12 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
    * @see __get_components()
    */
   size_4 = 9 * number_of_sidebands;
-  complex128 *pre_phase = malloc_double_complex(size_4);
+  complex128 *pre_phase = malloc_complex128(size_4);
   __get_components(number_of_sidebands, sample_rotation_frequency_in_Hz,
                    pre_phase);
 
   size_2 = 5 * number_of_sidebands;
-  plan->pre_phase_2 = malloc_double_complex(size_2);
+  plan->pre_phase_2 = malloc_complex128(size_2);
 
   /* multiplying the wigner 2j d^2_{m,0}(rotor_angle_in_rad) vector to the
    * sideband phase multiplier. This multiplication absorbs the rotation of the
@@ -190,7 +190,7 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
   if (allow_fourth_rank) {
     /* w4 is the buffer for storing calculated frequencies after processing
      * the fourth rank tensors. */
-    plan->w4 = malloc_double_complex(9 * n_orientations);
+    plan->w4 = malloc_complex128(9 * n_orientations);
 
     /* calculating wigner 4j matrices at every β orientation. */
     plan->wigner_4j_matrices = malloc_double(81 * n_orientations);
@@ -218,11 +218,11 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
       j += number_of_sidebands;
     }
   } else {
-    free_double_complex(pre_phase);
+    free(pre_phase);
   }
-  free_double(cos_beta);
-  free_double(cos_alpha);
-  free_double(sin_alpha);
+  free(cos_beta);
+  free(cos_alpha);
+  free(sin_alpha);
 
   /* buffer to hold the local frequencies and frequency offset. The buffer   *
    * is useful when the rotor angle is off magic angle (54.735 deg).         */
@@ -443,9 +443,9 @@ void __get_components_2(int number_of_sidebands,
   // memset((double *)&pre_phase[4 * number_of_sidebands], 0,
   //        2 * number_of_sidebands * sizeof(double));
 
-  free_double(input);
-  free_double(phase);
-  free_double(ones);
+  free(input);
+  free(phase);
+  free(ones);
 }
 
 /**

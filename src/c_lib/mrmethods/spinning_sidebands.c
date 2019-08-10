@@ -39,8 +39,8 @@ static inline void __spinning_sideband_core(
   int i, site;
   double iso_n_, zeta_n_, eta_n_, Cq_e_, eta_e_, d_, offset;
   double R0 = 0.0;
-  complex128 *R2 = malloc_double_complex(5);
-  complex128 *R4 = malloc_double_complex(9);
+  complex128 *R2 = malloc_complex128(5);
+  complex128 *R4 = malloc_complex128(9);
 
   int spec_site;
   double *spec_site_ptr;
@@ -155,6 +155,12 @@ void spinning_sideband_core(
     int geodesic_polyhedron_frequency // The number of triangle along the edge
                                       // of octahedron
 ) {
+
+  int num_process = openblas_get_num_procs();
+  printf("%d processors", num_process);
+  int parallel = openblas_get_parallel();
+  printf("%d parallel", parallel);
+
   bool allow_fourth_rank = false;
   if (ravel_isotopomer[0].spin > 0.5 && quadSecondOrder == 1) {
     allow_fourth_rank = true;

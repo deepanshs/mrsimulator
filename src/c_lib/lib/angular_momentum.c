@@ -325,7 +325,7 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
                          complex128 *R_out) {
   int orientation;
   int n1 = 2 * l + 1, m, i = 0, mp;
-  complex128 *temp_initial_vector = malloc_double_complex(n1);
+  complex128 *temp_initial_vector = malloc_complex128(n1);
   complex128 *final_vector, temp;
 
   for (orientation = 0; orientation < n; orientation++) {
@@ -360,7 +360,7 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
                          complex128 *R_out) {
   int orientation;
   int n1 = 2 * l + 1, m, i = 0, mp;
-  complex128 *temp_initial_vector = malloc_double_complex(n1);
+  complex128 *temp_initial_vector = malloc_complex128(n1);
   complex128 *final_vector, temp;
 
   // #pragma omp parallel for

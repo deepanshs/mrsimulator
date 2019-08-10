@@ -22,6 +22,7 @@ from mrsimulator.widgets import display_isotopomers
 from mrsimulator.widgets import plot_object_widget
 from mrsimulator.widgets import spectrum_object_widget
 from mrsimulator.widgets import top_bar
+import csdmpy as cp
 
 
 __author__ = "Deepansh J. Srivastava"
@@ -54,8 +55,11 @@ class mrsimulatorWebApp:
         self._filename = ""
         app.layout = html.Div(
             className="container",
-            # style={'background-color': '#303030', 'color': 'white'},
-            # style={"width": "90%"},
+            style={
+                "color": "#585858",
+                "background-image": "linear-gradient(#fdfefe, #f4f6f7, #fbfcfc)",
+                "width": "200%",
+            },
             children=[
                 dcc.ConfirmDialog(
                     id="confirm", message="Cannot process the current request."
@@ -90,41 +94,90 @@ class mrsimulatorWebApp:
         )
 
         @app.callback(
-            Output("download_link", "href"),
+            [Output("download_csv", "href"), Output("download_csdf", "href")],
             [Input("nmr_spectrum", "figure")],
             [State("filename_dataset", "children"), State("spectrum_id", "children")],
         )
-        def _update_link(value, filename_dataset, spectrum_id):
+        def update_link(value, filename_dataset, spectrum_id):
             """Update the csv download link when the plot is refreshed."""
             name_ = os.path.splitext(str(filename_dataset))[0]
-            return "/dash/urlToDownload?value={0}+++{1}".format(name_, spectrum_id)
+            return [
+                "/dash/urlToDownload?name={0}&nuclei={1}&id=csv".format(
+                    name_, spectrum_id
+                ),
+                "/dash/urlToDownload?name={0}&nuclei={1}&id=csdf".format(
+                    name_, spectrum_id
+                ),
+            ]
 
         @app.server.route("/dash/urlToDownload")
-        def _download_csv():
-            value = flask.request.args.get("value")
-
+        def download():
             # creating a dynamic csv or file here using `StringIO`
+            file_ = flask.request.args.get("name")
+            nuclei = flask.request.args.get("nuclei")
+            id_ = flask.request.args.get("id")
             str_io = io.StringIO()
-            writer = np.asarray([simulator._freq.value, simulator._amp]).T
-            file_, nuclei = value.split("   ")
-            _header_ = (
-                ("\n {0} from file {1}.json\nfrequency / kHz, amplitudes\n")
-            ).format(nuclei, file_)
 
-            # save file as csv
-            np.savetxt(str_io, writer, fmt="%f", delimiter=",", header=_header_)
+            print("id", id_)
 
-            mem = io.BytesIO()
-            mem.write(str_io.getvalue().encode("utf-8"))
-            mem.seek(0)
-            str_io.close()
-            name_ = "_".join([file_, nuclei])
-            return flask.send_file(
-                mem,
-                mimetype="text/csv",
-                attachment_filename=f"{name_}.csv",
-                as_attachment=True,
-            )
+            if id_ == "csv":
+                writer = np.asarray([simulator._freq.value, simulator._amp]).T
+                _header_ = (
+                    ("\n {0} from file {1}.json\nfrequency / kHz, amplitudes\n")
+                ).format(nuclei, file_)
+
+                # save file as csv
+                np.savetxt(str_io, writer, fmt="%f", delimiter=",", header=_header_)
+
+                mem = io.BytesIO()
+                mem.write(str_io.getvalue().encode("utf-8"))
+                mem.seek(0)
+                str_io.close()
+                name_ = "_".join([file_, nuclei])
+                return flask.send_file(
+                    mem,
+                    mimetype="text/csv",
+                    attachment_filename=f"{name_}.csv",
+                    as_attachment=True,
+                )
+            print(simulator.spectrum)
+            if id_ == "csdf":
+                new = cp.new()
+                dimension = {
+                    "type": "linear",
+                    "count": simulator._spectrum_c["number_of_points"],
+                    "increment": "{0} Hz".format(
+                        simulator._spectrum_c["spectral_width"]
+                        / simulator._spectrum_c["number_of_points"]
+                    ),
+                    "coordinates_offset": "{0} Hz".format(
+                        simulator._spectrum_c["reference_offset"]
+                    ),
+                    "complex_fft": True,
+                }
+                dependent_variable = {
+                    "type": "internal",
+                    "quantity_type": "scalar",
+                    "numeric_type": "float64",
+                    "components": [simulator._amp],
+                }
+                new.add_dimension(dimension)
+                new.add_dependent_variable(dependent_variable)
+                new.dependent_variables[0].encoding = "base64"
+
+                new.save(output_device=str_io)
+
+                mem = io.BytesIO()
+                mem.write(str_io.getvalue().encode("utf-8"))
+                mem.seek(0)
+                str_io.close()
+                name_ = "_".join([file_, nuclei])
+                return flask.send_file(
+                    mem,
+                    mimetype="json",
+                    attachment_filename=f"{name_}.csdf",
+                    as_attachment=True,
+                )
 
         @app.callback(
             Output("isotopomer_computed_log", "children"),

@@ -15,7 +15,10 @@
 #if __STDC_VERSION__ >= 199901L
 #define complex128 double _Complex
 #define MKL_Complex16 double _Complex
-#define self_cdadd(a, b) (a += b)
+#define complex64 _Complex
+#define MKL_Complex8 _Complex
+#define complex128_add_inplace(a, b) (a += b)
+#define complex64_add_inplace(a, b) (a += b)
 // similarly for other operations
 
 #else // not C99
@@ -23,8 +26,17 @@ typedef struct complex128_ {
   double real;
   double imag;
 } complex128;
+typedef struct complex64_ {
+  float real;
+  float imag;
+} complex64;
 #define restrict __restrict
-inline complex128 self_cdadd(complex128 a, double b) {
+inline complex128 complex128_add_inplace(complex128 a, double b) {
+  a.real += b;
+  a.imag += b;
+  return a;
+}
+inline complex64 complex128_add_inplace(complex64 a, float b) {
   a.real += b;
   a.imag += b;
   return a;
