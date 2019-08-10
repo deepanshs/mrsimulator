@@ -1,0 +1,98 @@
+{
+    "1H":
+    {
+        "spin": 1,
+        "natural_abundance": 99.989,
+        "gyromagnetic_ratio": 42.57747892
+    },
+    "2H":
+    {
+        "spin": 2,
+        "natural_abundance": 0.015,
+        "gyromagnetic_ratio": 6.536
+    },
+    "7Li":
+    {
+        "spin": 3,
+        "natural_abundance": 92.41,
+        "gyromagnetic_ratio": 16.546
+    },
+    "13C":
+    {
+        "spin": 1,
+        "natural_abundance": 1.07,
+        "gyromagnetic_ratio": 10.7084
+    },
+    "14N":
+    {
+        "spin": 2,
+        "natural_abundance": 99.632,
+        "gyromagnetic_ratio": 3.077
+    },
+    "15N":
+    {
+        "spin": 1,
+        "natural_abundance": 0.368,
+        "gyromagnetic_ratio": -4.316
+    },
+    "17O":
+    {
+        "spin": 5,
+        "natural_abundance": 0.038,
+        "gyromagnetic_ratio": -5.772
+    },
+    "19F":
+    {
+        "spin": 1,
+        "natural_abundance": 100.0,
+        "gyromagnetic_ratio": 40.052
+    },
+    "23Na":
+    {
+        "spin": 3,
+        "natural_abundance": 100.0,
+        "gyromagnetic_ratio": 11.262
+    },
+    "27Al":
+    {
+        "spin": 5,
+        "natural_abundance": 100.0,
+        "gyromagnetic_ratio": 11.103
+    },
+    "29Si":
+    {
+        "spin": 1,
+        "natural_abundance": 4.683,
+        "gyromagnetic_ratio": -8.465
+    },
+    "31P":
+    {
+        "spin": 1,
+        "natural_abundance": 100.0,
+        "gyromagnetic_ratio": 17.235
+    },
+    "57Fe":
+    {
+        "spin": 1,
+        "natural_abundance": 2.119,
+        "gyromagnetic_ratio": 1.382
+    },
+    "63Cu":
+    {
+        "spin": 3,
+        "natural_abundance": 69.17,
+        "gyromagnetic_ratio": 11.319
+    },
+    "67Zn":
+    {
+        "spin": 5,
+        "natural_abundance": 4.1,
+        "gyromagnetic_ratio": 2.669
+    },
+    "129Xe":
+    {
+        "spin": 1,
+        "natural_abundance": 26.44,
+        "gyromagnetic_ratio": 11.777
+    }
+}

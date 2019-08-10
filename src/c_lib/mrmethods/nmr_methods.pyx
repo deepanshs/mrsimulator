@@ -5,7 +5,7 @@ from nmr_methods cimport (
 cimport numpy as np
 import numpy as np
 import cython
-from .utils import __get_spin_attribute__
+
 
 
 __author__ = "Deepansh J. Srivastava"
@@ -108,28 +108,22 @@ def one_d_spectrum(dict spectrum,
     cdef double cpu_time_ = 0.0
     amp1 = np.zeros(number_of_points, dtype=np.float64)
 
-    # print (amp1)
     # octahedral power orientation averaging
     cdef unsigned int n_orientations = int((geodesic_polyhedron_frequency+1) * (geodesic_polyhedron_frequency+2)/2)
     cdef np.ndarray[double] cosAlpha = np.zeros(n_orientations, dtype=np.float64)
     cdef np.ndarray[double] cosBeta = np.zeros(n_orientations, dtype=np.float64)
     cdef np.ndarray[double] amp_orientation = np.zeros(n_orientations, dtype=np.float64)
 
-    # print (cosAlpha)
-
     __powder_averaging_setup(geodesic_polyhedron_frequency, &cosAlpha[0],
                              &cosBeta[0], &amp_orientation[0], 1)
     amp_orientation*=(1./number_of_sidebands)
 
     list_index_isotopomer = []
-    # print (cosAlpha)
-    # print(cosBeta)
-    # print(amp_orientation)
     # ---------------------------------------------------------------------
     # sample _______________________________________________________________
     for index_isotopomer, isotopomer in enumerate(isotopomers):
-        abundance = isotopomer['abundance']
-        sub_sites = [site for site in isotopomer['sites'] if site['isotope_symbol'] == isotope]
+        abundance = isotopomer['abundance']/100
+        sub_sites = [site for site in isotopomer['sites'] if site['isotope'] == isotope]
 
         number_of_sites= len(sub_sites)
 
@@ -154,9 +148,9 @@ def one_d_spectrum(dict spectrum,
             site = sub_sites[i]
 
             # CSA tensor
-            iso = site['isotropic_chemical_shift']
-            aniso = site['shielding_symmetric']['anisotropy']
-            eta = site['shielding_symmetric']['asymmetry']
+            iso_n[i] = site['isotropic_chemical_shift']
+            aniso_n[i] = site['shielding_symmetric']['anisotropy']
+            eta_n[i] = site['shielding_symmetric']['asymmetry']
 
             if verbose in [1, 11]:
                 text = ((
@@ -166,30 +160,9 @@ def one_d_spectrum(dict spectrum,
                 len_ = len(text)
                 print(text)
                 print(f"{'-'*(len_-1)}")
-                print(f'isotropic chemical shift = {str(iso)}')
-                print(f'chemical shift anisotropy = {str(aniso)}')
-                print(f'chemical shift asymmetry = {eta}')
-
-            # CSA tensor to Hz
-            if iso.unit.physical_type == 'frequency':
-                iso_n[i] = iso.to('Hz').value
-            else:
-                iso_n[i] = iso.value*larmor_frequency
-            if aniso.unit.physical_type == 'frequency':
-                aniso_n[i] = aniso.to('Hz').value
-            else:
-                aniso_n[i] = aniso.value*larmor_frequency
-            eta_n[i] = eta
-
-            # quad tensor
-            # if spin.electric_quadrupole_tensor is not ():
-            #     Cq_e[i] = spin.electric_quadrupole_tensor.Cq.to('Hz').value
-            #     eta_e[i] = spin.electric_quadrupole_tensor.eta
-
-        # print('\n')
-        # print(transition_array)
-        # print(number_of_transitions)
-
+                print(f'isotropic chemical shift = {str(iso_n[i])}')
+                print(f'chemical shift anisotropy = {str(aniso_n[i])}')
+                print(f'chemical shift asymmetry = {eta_n[i]}')
 
 
         for trans__ in range(number_of_transitions):
