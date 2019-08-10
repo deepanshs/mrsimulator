@@ -55,18 +55,7 @@ setup(
         "mkl==2019.0",
         "mkl-include==2019.0",
     ],
-    extras_require={
-        "fancy feature": [
-            "matplotlib>=3.0.2",
-            "plotly>=3.6",
-            "dash>=0.40",
-            "dash_daq>=0.1",
-        ]
-    },
-    tests_require=["nose"],
-    entry_points={
-        "console_scripts": ["nmr_app = mrsimulator.web_interface:main"]
-    },
+    tests_require=["pytest"],
     ext_modules=cythonize(ext_modules),
     classifiers=[
         # Trove classifiers
