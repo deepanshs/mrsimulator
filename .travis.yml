@@ -20,7 +20,7 @@ cache:
 # safelist
 branches:
   only:
-  - v0.1.1merge_restructure
+  - master
 
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
