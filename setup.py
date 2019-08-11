@@ -131,6 +131,8 @@ setup(
     ],
     extras_require={"fancy feature": ["plotly>=3.6", "dash>=0.40", "dash_daq>=0.1"]},
     ext_modules=cythonize(ext_modules, language_level=3),
+    include_package_data=True,
+    zip_safe=False,
     license="BSD-3-Clause",
     classifiers=[
         # Trove classifiers

@@ -2,6 +2,5 @@ black
 pre-commit
 
 ## test required
-coverage
 sympy
 pytest
