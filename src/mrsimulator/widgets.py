@@ -73,22 +73,22 @@ def table_css():
     }
 
 
-def display_isotopomers(nucleus, isotopomer_list):
+def display_isotopomers(isotope, isotopomer_list):
     columns_ = ["index", "site", "isotropic chemical shift", "anisotropy", "asymmetry"]
 
     child = []
     for j, isotopomer in enumerate(isotopomer_list):
         sites_ = []
         for i, site in enumerate(isotopomer["sites"]):
-            if site["isotope_symbol"] == nucleus:
+            if site["isotope"] == isotope:
                 site_ = {}
                 site_["index"] = i
-                site_["isotope"] = site["isotope_symbol"]
+                site_["isotope"] = site["isotope"]
                 site_["isotropic chemical shift"] = site["isotropic_chemical_shift"]
                 site_["anisotropy"] = site["shielding_symmetric"]["anisotropy"]
                 site_["asymmetry"] = site["shielding_symmetric"]["asymmetry"]
 
-                # ravel_.append(site['isotope_symbol'])
+                # ravel_.append(site['isotope'])
                 # ravel_.append(site['isotropic_chemical_shift'])
                 # ravel_.append(site['shielding_symmetric']['anisotropy'])
                 # ravel_.append(site['shielding_symmetric']['asymmetry'])
@@ -172,7 +172,7 @@ def plot_object_widget():
 
 def spectrum_object_widget(object_=[]):
     """
-    Return the layout for nucleus, number of points,
+    Return the layout for the isotope, number of points,
     spectral width and reference offset.
     """
     return [
@@ -216,11 +216,11 @@ def direct_dimension_setup():
                 "color": colors["text"],
             },
         ),
-        # Nucleus
-        html.Label("Nucleus"),
+        # isotope
+        html.Label("Isotope"),
         html.Div(
-            id="nucleus_widget_id",
-            children=[dcc.Dropdown(id="nucleus_id")],
+            id="isotope_widget_id",
+            children=[dcc.Dropdown(id="isotope_id")],
             style={"margin-bottom": "10px", "margin-top": "0px"},
         ),
         # Magnetic flux density

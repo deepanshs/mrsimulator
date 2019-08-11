@@ -53,7 +53,7 @@ object,
 
     >>> sim.spectrum = {
     ...     "direct_dimension": {
-    ...         "nucleus": "13C",
+    ...         "isotope": "13C",
     ...         "magnetic_flux_density": "9.4 T",
     ...         "rotor_frequency": "0 kHz",
     ...         "rotor_angle": "54.735 deg",
@@ -127,7 +127,7 @@ for the ``rotor_frequency`` which is set to 100 Hz.
 
     >>> sim.spectrum = {
     ...     "direct_dimension": {
-    ...         "nucleus": "13C",
+    ...         "isotope": "13C",
     ...         "magnetic_flux_density": "9.4 T",
     ...         "rotor_frequency": "100 Hz",
     ...         "rotor_angle": "54.735 deg",
@@ -174,7 +174,7 @@ Switch to a different isotope
 -----------------------------
 
 Generate a new :ref:`spectrum` object with a different isotope. The isotope
-is specified with the `nucleus` key, as shown below. In the following
+is specified with the `isotope` key, as shown below. In the following
 example, a :math:`^1\mathrm{H}` spectrum is simulated at 9.4 T field, spinning
 at the magic angle at 2 kHz frequency, and sampled over 100 kHz frequency
 bandwidth with 8192 points.
@@ -183,7 +183,7 @@ bandwidth with 8192 points.
 
     >>> sim.spectrum = {
     ...     "direct_dimension": {
-    ...         "nucleus": "1H",
+    ...         "isotope": "1H",
     ...         "magnetic_flux_density": "9.4 T",
     ...         "rotor_frequency": "2 kHz",
     ...         "rotor_angle": "54.735 deg",
@@ -232,7 +232,7 @@ isotope.
 
     >>> sim.spectrum = {
     ...     "direct_dimension": {
-    ...         "nucleus": "29Si",
+    ...         "isotope": "29Si",
     ...         "magnetic_flux_density": "9.4 T",
     ...         "rotor_frequency": "1 kHz",
     ...         "rotor_angle": "54.735 deg",
@@ -293,7 +293,7 @@ object is the same are from the previous example, except the
 
     >>> sim.spectrum = {
     ...     "direct_dimension": {
-    ...         "nucleus": "1H",
+    ...         "isotope": "1H",
     ...         "magnetic_flux_density": "9.4 T",
     ...         "rotor_frequency": "2 kHz",
     ...         "rotor_angle": "90 deg",

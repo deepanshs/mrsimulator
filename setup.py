@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import io
 
 from setuptools import Extension
 from setuptools import find_packages
@@ -7,12 +6,9 @@ from setuptools import setup
 
 from Cython.Build import cythonize
 
-from os import listdir
 from os.path import join
 from os.path import abspath
 from os.path import dirname
-from os.path import split
-from os.path import exists
 import platform
 
 import numpy as np
@@ -22,27 +18,25 @@ import json
 
 module_dir = dirname(abspath(__file__))
 
-print(platform.system())
-
 include_dirs = []
 library_dirs = []
 libraries = []
 openblas_info = sysinfo.get_info("openblas")
 fftw3_info = sysinfo.get_info("fftw3")
-mkl_info = sysinfo.get_info("mkl")
+# mkl_info = sysinfo.get_info("mkl")
 
-if mkl_info != {}:
-    name = "mkl"
-    include_dirs += mkl_info["include_dirs"]
-    library_dirs += mkl_info["library_dirs"]
-    libraries += mkl_info["libraries"]
-elif openblas_info != {}:
+# if mkl_info != {}:
+#     name = "mkl"
+#     include_dirs += mkl_info["include_dirs"]
+#     library_dirs += mkl_info["library_dirs"]
+#     libraries += mkl_info["libraries"]
+if openblas_info != {}:
     name = "openblas"
     library_dirs += openblas_info["library_dirs"]
     libraries += openblas_info["libraries"]
     libraries += ["pthread"]
-else:
-    raise Exception("mkl blas or openblas library not found.")
+# else:
+#     raise Exception("mkl blas or openblas library not found.")
 
 include_dirs += fftw3_info["include_dirs"]
 library_dirs += fftw3_info["library_dirs"]
@@ -72,13 +66,12 @@ ext_modules = [
     Extension(
         name="mrsimulator.methods",
         sources=[
-            "src/c_lib/lib/array.c",
             "src/c_lib/lib/angular_momentum.c",
             "src/c_lib/lib/interpolation.c",
             "src/c_lib/lib/mrsimulator.c",
             "src/c_lib/lib/octahedron.c",
-            "src/c_lib/mrmethods/spinning_sidebands.c",
-            "src/c_lib/mrmethods/powder_setup.c",
+            "src/c_lib/lib/spinning_sidebands.c",
+            "src/c_lib/lib/powder_setup.c",
             "src/c_lib/mrmethods/nmr_methods.pyx",
         ],
         include_dirs=include_dirs,
@@ -96,13 +89,12 @@ ext_modules += [
     Extension(
         name="mrsimulator.sandbox",
         sources=[
-            "src/c_lib/lib/array.c",
             "src/c_lib/lib/angular_momentum.c",
             "src/c_lib/lib/interpolation.c",
             "src/c_lib/lib/mrsimulator.c",
             "src/c_lib/lib/octahedron.c",
-            "src/c_lib/mrmethods/spinning_sidebands.c",
-            "src/c_lib/mrmethods/powder_setup.c",
+            "src/c_lib/lib/spinning_sidebands.c",
+            "src/c_lib/lib/powder_setup.c",
             "src/c_lib/sandbox/sandbox.pyx",
         ],
         include_dirs=include_dirs,

@@ -44,12 +44,12 @@ inline complex64 complex128_add_inplace(complex64 a, float b) {
 #endif
 
 // library definition
-#if __has_include("mkl.h")
-#include "mkl.h"
-#define __blas_activate
-#include "vm_mkl.h"
+// #if __has_include("mkl.h")
+// #include "mkl.h"
+// #define __blas_activate
+// #include "vm_mkl.h"
 
-#elif __has_include("cblas.h")
+#if __has_include("cblas.h")
 #include "cblas.h"
 #define __blas_activate
 #include "vm.h"

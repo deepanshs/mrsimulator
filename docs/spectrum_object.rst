@@ -17,7 +17,7 @@ object with a single key, `direct_dimension`, whose value is a
 
     >>> spectrum_object = {
     ...     "direct_dimension": {
-    ...         "nucleus": "13C",
+    ...         "isotope": "13C",
     ...         "magnetic_flux_density": "9.4 T",
     ...         "rotor_frequency": "5 kHz",
     ...         "rotor_angle": "54.735 deg",

@@ -121,7 +121,7 @@ Site
     * - key
       - value type
       - value description
-    * - ``isotope_symbol``
+    * - ``isotope``
       - A `string <https://docs.python.org/3/library/stdtypes.html#str>`__
       - The NMR active isotope symbol, for example, '13C'.
         This is a required key.
@@ -138,7 +138,7 @@ Site
   *An example of Site object.*
 
     >>> site_object = {
-    ...     "isotope_symbol": "13C",
+    ...     "isotope": "13C",
     ...     "isotropic_chemical_shift": "15 ppm",
     ...     "shielding_symmetric": {
     ...         "anisotropy": "10.3 ppm",
@@ -195,7 +195,7 @@ Isotopomer
     >>> isotopomer_object = {
     ...     "sites": [
     ...         {
-    ...             "isotope_symbol": "13C",
+    ...             "isotope": "13C",
     ...             "isotropic_chemical_shift": "15 ppm",
     ...             "shielding_symmetric": {
     ...                 "anisotropy": "10.3 ppm",
@@ -230,7 +230,7 @@ DirectDimension
     * - key
       - value type
       - value description
-    * - ``nucleus``
+    * - ``isotope``
       - A `string <https://docs.python.org/3/library/stdtypes.html#str>`__
       - The isotope symbol of the nuclei. The recorded spectrum a histogram of
         frequencies corresponding to this nuclear isotope. An example may

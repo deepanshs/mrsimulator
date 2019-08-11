@@ -1,5 +1,5 @@
 [flake8]
-ignore = E741, W503, F401, F403, E203, C901
+ignore = E741, C901, W503, F401, F841, F811
 exclude = .eggs,*.egg,build
 filename = *.pyx,*.px*, *py
 max-line-length = 88
@@ -7,4 +7,4 @@ max-complexity = 18
 select = B,C,E,F,W,T4,B9
 
 
-## E203, E266, E501, W503, F403, F401
+## E203, E266, E501, F403

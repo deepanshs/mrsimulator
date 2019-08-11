@@ -20,7 +20,7 @@ abundance of each isotopomer.
     ...     {
     ...         "sites": [
     ...             {
-    ...                 "isotope_symbol": "13C",
+    ...                 "isotope": "13C",
     ...                 "isotropic_chemical_shift": "1 ppm",
     ...                 "shielding_symmetric": {
     ...                     "anisotropy": "-3.89 µHz/Hz",
@@ -33,7 +33,7 @@ abundance of each isotopomer.
     ...     {
     ...         "sites": [
     ...             {
-    ...                 "isotope_symbol": "29Si",
+    ...                 "isotope": "29Si",
     ...                 "isotropic_chemical_shift": "-0.1 mHz/Hz",
     ...                 "shielding_symmetric": {
     ...                     "anisotropy": "8.89 ppm",

@@ -56,13 +56,13 @@ command.
     >>> from pprint import pprint
     >>> pprint(sim1.isotopomers)
     [{'abundance': '100 %',
-      'sites': [{'isotope_symbol': '1H',
+      'sites': [{'isotope': '1H',
                  'isotropic_chemical_shift': '0 ppm',
                  'shielding_symmetric': {'anisotropy': '13.89 ppm',
                                          'asymmetry': 0.25}}]}]
     >>> pprint(sim1.spectrum)
     {'direct_dimension': {'magnetic_flux_density': '9.4 T',
-                          'nucleus': '1H',
+                          'isotope': '1H',
                           'number_of_points': 2048,
                           'reference_offset': '0 Hz',
                           'rotor_angle': '54.735 deg',

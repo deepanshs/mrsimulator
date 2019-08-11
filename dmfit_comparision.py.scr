@@ -21,14 +21,14 @@ def _dmfit():
             "number_of_points": 2048,
             "spectral_width": "100 kHz",
             "reference_offset": "0 kHz",
-            "nucleus": "1H",
+            "isotope": "1H",
         }
     }
     isotopomers = [
         {
             "sites": [
                 {
-                    "isotope_symbol": "1H",
+                    "isotope": "1H",
                     "isotropic_chemical_shift": "0 Hz",
                     "shielding_symmetric": {"anisotropy": "20 kHz", "asymmetry": 0.1},
                 },

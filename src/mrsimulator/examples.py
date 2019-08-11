@@ -9,7 +9,7 @@ def csa_static():
             {
                 "sites": [
                     {
-                        "isotope_symbol": "1H",
+                        "isotope": "1H",
                         "isotropic_chemical_shift": "0 ppm",
                         "shielding_symmetric": {
                             "anisotropy": "13.89 ppm",
@@ -28,7 +28,7 @@ def csa_static():
                 "number_of_points": 2048,
                 "spectral_width": "25 kHz",
                 "reference_offset": "0 Hz",
-                "nucleus": "1H",
+                "isotope": "1H",
             }
         },
     }
@@ -41,7 +41,7 @@ def csa_mas():
             {
                 "sites": [
                     {
-                        "isotope_symbol": "1H",
+                        "isotope": "1H",
                         "isotropic_chemical_shift": "0 ppm",
                         "shielding_symmetric": {
                             "anisotropy": "13.89 ppm",
@@ -60,7 +60,7 @@ def csa_mas():
                 "number_of_points": 2048,
                 "spectral_width": "25 kHz",
                 "reference_offset": "0 Hz",
-                "nucleus": "1H",
+                "isotope": "1H",
             }
         },
     }

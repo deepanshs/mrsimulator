@@ -18,8 +18,8 @@ from mrsimulator.python.orientation import average_over_octant as averager
 from mrsimulator.python.utils import pre_phase_components
 import mrsimulator.python.transition_function as tf
 
-from timeit import default_timer
-import matplotlib.pyplot as plt
+# from timeit import default_timer
+# import matplotlib.pyplot as plt
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]

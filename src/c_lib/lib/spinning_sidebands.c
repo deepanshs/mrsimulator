@@ -156,10 +156,10 @@ void spinning_sideband_core(
                                       // of octahedron
 ) {
 
-  int num_process = openblas_get_num_procs();
-  printf("%d processors", num_process);
-  int parallel = openblas_get_parallel();
-  printf("%d parallel", parallel);
+  // int num_process = openblas_get_num_procs();
+  // printf("%d processors", num_process);
+  // int parallel = openblas_get_parallel();
+  // printf("%d parallel", parallel);
 
   bool allow_fourth_rank = false;
   if (ravel_isotopomer[0].spin > 0.5 && quadSecondOrder == 1) {

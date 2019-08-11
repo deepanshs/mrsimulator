@@ -1,5 +1,3 @@
-
-
 include README.md
 
 include src/c_lib/lib/*.c

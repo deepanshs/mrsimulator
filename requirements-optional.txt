@@ -1,0 +1,4 @@
+matplotlib>=3.0.2
+plotly>=3.6
+dash>=0.40
+dash_daq>=0.1

@@ -181,7 +181,7 @@ class mrsimulatorWebApp:
 
         @app.callback(
             Output("isotopomer_computed_log", "children"),
-            [Input("nucleus_id", "value")],
+            [Input("isotope_id", "value")],
         )
         def _update_isotopomers_table_log(value):
             return display_isotopomers(value, simulator.isotopomers)
@@ -207,7 +207,7 @@ class mrsimulatorWebApp:
                 Input("reference_offset_fine", "value"),
                 Input("magnetic_flux_density", "value"),
                 # Input('MAS_switch', 'value'),
-                Input("nucleus_id", "value"),
+                Input("isotope_id", "value"),
             ],
         )
         def _update_plot(
@@ -221,7 +221,7 @@ class mrsimulatorWebApp:
             reference_offset_fine,
             magnetic_flux_density,
             # MAS_switch,
-            nucleus_id,
+            isotope_id,
         ):
             """
             The method creates a new spectrum dictionary based on the inputs
@@ -235,7 +235,7 @@ class mrsimulatorWebApp:
             if (
                 number_of_points == 0
                 or frequency_bandwidth == 0
-                or nucleus_id in ["", None]
+                or isotope_id in ["", None]
             ):
                 return empty_plot()
 
@@ -253,7 +253,7 @@ class mrsimulatorWebApp:
 
             simulator.spectrum = {
                 "direct_dimension": {
-                    "nucleus": nucleus_id,
+                    "isotope": isotope_id,
                     "magnetic_flux_density": str(magnetic_flux_density) + " T",
                     "rotor_frequency": str(spin_frequency) + " kHz",
                     "rotor_angle": str(rotor_angle_in_degree) + " deg",
@@ -266,10 +266,10 @@ class mrsimulatorWebApp:
             freq, amp = simulator.run(one_d_spectrum)
             freq = freq.to("kHz")
             data_spinning = go.Scatter(
-                x=freq, y=amp / amp.max(), mode="lines", opacity=1.0, name=nucleus_id
+                x=freq, y=amp / amp.max(), mode="lines", opacity=1.0, name=isotope_id
             )
 
-            x_label = str(nucleus_id + f" frequency / {freq.unit}")
+            x_label = str(isotope_id + f" frequency / {freq.unit}")
 
             return [
                 {
@@ -304,7 +304,7 @@ class mrsimulatorWebApp:
                 Output("filename_dataset", "children"),
                 Output("data_time", "children"),
                 Output("error_message", "children"),
-                Output("nucleus_widget_id", "children"),
+                Output("isotope_widget_id", "children"),
             ],
             [Input("upload_data", "contents")],
             [State("upload_data", "filename"), State("upload_data", "last_modified")],
@@ -324,9 +324,9 @@ class mrsimulatorWebApp:
                     value = simulator.isotope_list[0]
                 else:
                     value = ""
-                nucleus_id = [
+                isotope_id = [
                     dcc.Dropdown(
-                        id="nucleus_id",
+                        id="isotope_id",
                         options=nuclei,
                         value=value,
                         style={
@@ -339,9 +339,9 @@ class mrsimulatorWebApp:
                 ]
             else:
                 simulator.isotopomers = []
-                nucleus_id = [
+                isotope_id = [
                     dcc.Dropdown(
-                        id="nucleus_id",
+                        id="isotope_id",
                         style={
                             "display": "block",
                             "margin-left": "auto",
@@ -350,7 +350,7 @@ class mrsimulatorWebApp:
                         },
                     )
                 ]
-            return [children[0], children[1], children[2], nucleus_id]
+            return [children[0], children[1], children[2], isotope_id]
 
         @app.callback(
             Output("Magnetic_flux_density_output_container", "children"),
@@ -362,7 +362,7 @@ class mrsimulatorWebApp:
                 value, "{0:.2f}".format(42.57747892 * value)
             )
 
-        @app.callback(Output("spectrum_id", "children"), [Input("nucleus_id", "value")])
+        @app.callback(Output("spectrum_id", "children"), [Input("isotope_id", "value")])
         def _update_spectrum_title(value):
             """Update the title of the plot."""
             if value is None:

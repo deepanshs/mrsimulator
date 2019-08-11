@@ -1,8 +1,7 @@
 cimport nmr_methods as clib
 from numpy cimport ndarray
-from numpy import ndarray, asarray, zeros, float64, empty, arange
+import numpy as np
 import cython
-from .utils import __get_spin_attribute__
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -54,23 +53,22 @@ def one_d_spectrum(dict spectrum,
 
 # ---------------------------------------------------------------------
 # spin observed _______________________________________________________
-    # obs_dict = __get_spin_attribute__[detect]
     isotope = spectrum['isotope']
 
     # spin quantum number of the observed spin
-    cdef double spin_quantum_number = spectrum['spin']
+    cdef double spin_quantum_number = spectrum['spin']/2.0
 
     # transitions of the observed spin
     cdef ndarray[double, ndim=1] transition_array
     cdef int number_of_transitions
-    transition_array = asarray(spectrum['transitions']).ravel()
+    transition_array = np.asarray([-0.5, 0.5])
     number_of_transitions = int(transition_array.size/2)
     # else:
     #     energy_level_count = int(2*spin_quantum_number+1)
     #     number_of_transitions = energy_level_count-1
-    #     energy_states = arange(energy_level_count) - spin_quantum_number
+    #     energy_states = np.arange(energy_level_count) - spin_quantum_number
     #     transitions = [ [energy_states[i], energy_states[i+1]] for i in range(number_of_transitions)]
-    #     transition_array = asarray(transitions).ravel()
+    #     transition_array = np.asarray(transitions).ravel()
 
     # gyromagnetic ratio
     cdef double larmor_frequency = spectrum['gyromagnetic_ratio']*B0
@@ -107,7 +105,7 @@ def one_d_spectrum(dict spectrum,
 
     cdef int i, trans__
     cdef ndarray[double, ndim=1] amp
-    amp1 = zeros(number_of_points, dtype=float64)
+    amp1 = np.zeros(number_of_points, dtype=np.float64)
 
     cdef clib.isotopomer_ravel isotopomer_struct
     # cdef clib.isotopomers_list *isotopomers_list_c
@@ -117,27 +115,27 @@ def one_d_spectrum(dict spectrum,
     # sample _______________________________________________________________
     for index_isotopomer, isotopomer in enumerate(isotopomers):
         abundance = isotopomer['abundance']
-        sub_sites = [site for site in isotopomer['sites'] if site['isotope_symbol'] == isotope]
+        sub_sites = [site for site in isotopomer['sites'] if site['isotope'] == isotope]
 
         number_of_sites= len(sub_sites)
 
         # site specification
         # CSA
-        iso_n = empty(number_of_sites, dtype=float64)
-        zeta_n = empty(number_of_sites, dtype=float64)
-        eta_n = empty(number_of_sites, dtype=float64)
-        ori_n = zeros(3*number_of_sites, dtype=float64)
+        iso_n = np.empty(number_of_sites, dtype=np.float64)
+        zeta_n = np.empty(number_of_sites, dtype=np.float64)
+        eta_n = np.empty(number_of_sites, dtype=np.float64)
+        ori_n = np.zeros(3*number_of_sites, dtype=np.float64)
 
         # quad
-        Cq_e = zeros(number_of_sites, dtype=float64)
-        eta_e = zeros(number_of_sites, dtype=float64)
-        ori_e = zeros(3*number_of_sites, dtype=float64)
+        Cq_e = np.zeros(number_of_sites, dtype=np.float64)
+        eta_e = np.zeros(number_of_sites, dtype=np.float64)
+        ori_e = np.zeros(3*number_of_sites, dtype=np.float64)
 
-        D_c = zeros(number_of_sites, dtype=float64)
+        D_c = np.zeros(number_of_sites, dtype=np.float64)
 
         # cdef int i, size = len(sample)
 
-        amp = zeros(number_of_points*number_of_sites)
+        amp = np.zeros(number_of_points*number_of_sites)
 
         if number_of_sites > 0: list_index_isotopomer.append(index_isotopomer)
         for i in range(number_of_sites):
@@ -161,14 +159,8 @@ def one_d_spectrum(dict spectrum,
                 print(f'Shielding asymmetry = {eta}')
 
             # CSA tensor in Hz
-            if iso.unit.physical_type == 'frequency':
-                iso_n[i] = iso.to('Hz').value
-            else:
-                iso_n[i] = iso.value*larmor_frequency
-            if aniso.unit.physical_type == 'frequency':
-                zeta_n[i] = aniso.to('Hz').value
-            else:
-                zeta_n[i] = aniso.value*larmor_frequency
+            iso_n[i] = iso
+            zeta_n[i] = aniso
             eta_n[i] = eta
 
             # quad tensor
@@ -226,5 +218,5 @@ def one_d_spectrum(dict spectrum,
 
         amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
 
-    freq = (arange(number_of_points)*increment + reference_offset)
+    freq = (np.arange(number_of_points)*increment + reference_offset)
     return freq, amp1, larmor_frequency, list_index_isotopomer
