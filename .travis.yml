@@ -20,7 +20,7 @@ cache:
 # safelist
 branches:
   only:
-  - v0.1.1
+  - v0.1.1merge_restructure
 
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -32,14 +32,15 @@ before_install:
   - conda info -a
   - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pytest pytest-cov
   - source activate test-env
-  - conda install $PKG1 $PKG2 --file requirements-dev.txt
+  - conda install -c anaconda $PKG1 $PKG2 --file requirements.txt
+  - pip install -r requirements.txt
 
 install:
   - python setup.py develop
 
 # command to run tests
 script:
-  - nosetests -v --nocapture --with-coverage --cover-package=mrsimulator
+  - pytest
 
 after_success:
   - coveralls

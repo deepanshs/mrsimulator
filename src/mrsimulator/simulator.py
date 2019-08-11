@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pydash import has, get
+# from pydash import has, get
 from astropy import units as u
 from mrsimulator import Isotopomer, Spectrum
 from mrsimulator.spectrum import ISOTOPE_DATA

@@ -54,7 +54,7 @@ If you, however, wish to opt out of MKL and instead use
 
 .. code-block:: shell
 
-    $ conda install nomkl openblas --file requirements.txt
+    $ conda install -c anaconda nomkl openblas --file requirements.txt
 
 A c compiler is required to successful compile and build the ``mrsimulator``
 package.
@@ -76,15 +76,15 @@ in the terminal.
 .. pip install git+https://github.com/DeepanshS/mrsimulator.git@master
 
 
-Test
-++++
+Check your build
+++++++++++++++++
 
-If the installation is successful, you should be able to run the following
-in the terminal.
+If the installation is successful, you should be able to run the following test
+file in your terminal. Download the test file `here <link>`_.
 
 .. code-block:: text
 
-    python -c "import mrsimulator; mrsimulator.run_test()"
+    python mrsimulator_quick_test.py
 
 This will display the following message on the screen
 

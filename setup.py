@@ -130,9 +130,7 @@ setup(
         "matplotlib>=3.0.2",
     ],
     extras_require={"fancy feature": ["plotly>=3.6", "dash>=0.40", "dash_daq>=0.1"]},
-    tests_require=["nose"],
-    entry_points={"console_scripts": ["nmr_app = mrsimulator.web_interface:main"]},
-    ext_modules=cythonize(ext_modules, annotate=True, language_level=3, gdb_debug=True),
+    ext_modules=cythonize(ext_modules, language_level=3),
     license="BSD-3-Clause",
     classifiers=[
         # Trove classifiers
