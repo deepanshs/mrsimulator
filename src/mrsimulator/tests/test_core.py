@@ -92,6 +92,10 @@ def test_direct_init_isotopomer():
     assert id(the_isotopomer.sites[0] != the_isotopomer.sites[1])
     assert the_isotopomer.abundance == 10.0
 
+    # This should raise an error, but it is not.
+    the_isotopomer.sites[0] = "Trash"
+    assert the_isotopomer.sites[0] == "Trash"
+
 
 def test_parse_json_isotopomer():
     good_json = {"sites": [], "abundance": "10"}

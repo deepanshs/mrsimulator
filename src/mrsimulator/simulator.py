@@ -74,7 +74,7 @@ class Simulator:
     def run(self, method, **kwargs):
         return self.one_d_spectrum(**kwargs)
 
-    def one_d_spectrum(self, verbose=False, **kwargs):
+    def one_d_spectrum(self, **kwargs):
         """
         Simulate the spectrum using the specified method. The keyword argument
         are the arguments of the specified `method`.
@@ -88,10 +88,6 @@ class Simulator:
             array, whereas, the frequency is a
             `Quantity <http://docs.astropy.org/en/stable/units/quantity.html>`_
             array. The default value is False.
-
-        :returns: A `csdm` object if `data_object` is True, else a tuple of
-            frequency and amplitude. For details, refer to the
-            description of `data_object`.
         """
 
         isotopomers = [
