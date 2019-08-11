@@ -3,7 +3,7 @@
 import sys
 from os import path
 from urllib.parse import urlparse
-
+import json
 import requests
 
 
@@ -11,7 +11,7 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
-def _download_file_from_url(url):
+def download_file_from_url(url):
     res = urlparse(url)
     filename = path.split(res[2])[1]
     name, extension = path.splitext(filename)
@@ -47,3 +47,12 @@ def _download_file_from_url(url):
     sys.stdout.write("\n")
 
     return filename
+
+
+def import_json(filename):
+    res = urlparse(filename)
+    if res[0] not in ["file", ""]:
+        filename = download_file_from_url(filename)
+    with open(filename, "rb") as f:
+        content = f.read()
+        return json.loads(str(content, encoding="UTF-8"))
