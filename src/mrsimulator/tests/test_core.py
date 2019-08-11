@@ -4,6 +4,7 @@ Tests for the base Parseable pattern
 """
 # import os.path
 import pytest
+import numpy as np
 
 # from typing import ClassVar
 
@@ -81,8 +82,15 @@ def test_direct_init_isotopomer():
     assert test_site.isotropic_chemical_shift == 10.0
     # assert test_site.property_units["isotropic_chemical_shift"] == "Hz"
 
-    Isotopomer(sites=[test_site], abundance=10)
-    Isotopomer(sites=[test_site, test_site], abundance=10)
+    the_isotopomer = Isotopomer(sites=[test_site], abundance=10)
+    assert isinstance(the_isotopomer.sites[0], Site)
+    assert the_isotopomer.abundance == 10.0
+
+    the_isotopomer = Isotopomer(sites=[test_site, test_site], abundance=10)
+    assert isinstance(the_isotopomer.sites[0], Site)
+    assert isinstance(the_isotopomer.sites[1], Site)
+    assert id(the_isotopomer.sites[0] != the_isotopomer.sites[1])
+    assert the_isotopomer.abundance == 10.0
 
 
 def test_parse_json_isotopomer():
@@ -103,7 +111,11 @@ def test_parse_json_isotopomer():
 
 
 def test_direct_init_spectrum():
-    Spectrum()
+    the_spectrum = Spectrum()
+    assert the_spectrum.number_of_points == 1024
+    assert the_spectrum.spectral_width == 100
+    # assert the_spectrum.property_units["spectral_width"] == 'Hz'
+
     Spectrum(
         number_of_points=1024,
         spectral_width=100,
@@ -126,7 +138,7 @@ def test_parse_json_spectrum():
         "reference_offset": "0 Hz",
         "magnetic_flux_density": "9.4 T",
         "rotor_frequency": "0 Hz",
-        "rotor_angle": "0.9553 rad",  # 54.935 degrees in radians
+        "rotor_angle": "54.935 degree",  # 54.935 degrees in radians
         "rotor_phase": "0 rad",
         "isotope": "1H",
     }
@@ -134,6 +146,8 @@ def test_parse_json_spectrum():
     spec = Spectrum.parse_json_with_units(good_json)
     assert "spin" in spec.dict()
     assert spec.spin == 1
+    assert spec.isotope == "1H"
+    assert np.allclose(spec.rotor_angle, 0.95879662)
 
 
 # def test_parsing(mas_data, static_data):
