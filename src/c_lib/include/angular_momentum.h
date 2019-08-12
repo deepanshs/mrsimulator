@@ -53,8 +53,8 @@ extern void AMT_wigner_d_matrix(int l, int n, double *angle, double *wigner);
  *          length @p n.
  * @param wigner A pointer to the start of wigner-d matrices.
  */
-extern void __wigner_d_matrix_cosine(int l, int n, double *cos_angle,
-                                     double *wigner);
+extern void __wigner_d_matrix_cosine(const int l, const int n,
+                                     const double *cos_angle, double *wigner);
 
 /**
  * @brief Rotate @p R_in of length @p l using wigner-d matrices of rank @p l.
@@ -79,4 +79,4 @@ extern void __wigner_rotation_2(const int l, const int n, const double *wigner,
                                 const complex128 *exp_Im_alpha,
                                 const complex128 *R_in, complex128 *R_out);
 
-extern void __wigner_dm0_vector(int l, double beta, double *R_out);
+extern void __wigner_dm0_vector(const int l, const double beta, double *R_out);

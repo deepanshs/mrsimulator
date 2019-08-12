@@ -15,8 +15,8 @@
 #if __STDC_VERSION__ >= 199901L
 #define complex128 double _Complex
 #define MKL_Complex16 double _Complex
-#define complex64 _Complex
-#define MKL_Complex8 _Complex
+#define complex64 float _Complex
+#define MKL_Complex8 float _Complex
 #define complex128_add_inplace(a, b) (a += b)
 #define complex64_add_inplace(a, b) (a += b)
 // similarly for other operations
@@ -145,38 +145,40 @@ struct MRS_plan_t {
    * before. */
   double isotropic_offset;
 
-  // The buffer to hold the sideband amplitudes as stride 2 array after
-  // mrsimulator processing.
+  /** The buffer to hold the sideband amplitudes as stride 2 array after
+   * mrsimulator processing.
+   */
   fftw_complex *vector;
 
   /* private attributes */
 
-  fftw_plan the_fftw_plan;     // The plan for fftw routine.
-  unsigned int n_orientations; // number of unique orientations.
-  unsigned int size;           // number of orientations * number of sizebands.
-  double *amplitudes;          // array of amplitude scaling per orientation.
-  complex128 *exp_Im_alpha;    // array of cos_alpha per orientation.
-  complex128 *w2;              // buffer for 2nd rank frequency calculation.
-  double *wigner_2j_matrices;  // wigner-d 2j matrix per orientation.
-  double *rotor_lab_2;         // wigner-2j dm0 vector, n ∈ [-2, 2].
-  complex128 *pre_phase_2;     // buffer for 2nk rank sideband phase calculation
-  complex128 *w4;              // buffer for 4nd rank frequency calculation.
-  double *wigner_4j_matrices;  // wigner-d 4j matrix per orientation.
-  double *rotor_lab_4;         // wigner-4j dm0 vector, n ∈ [-4, 4].
-  complex128 *pre_phase_4;     // buffer for 4th rank sideband phase calculation
-  double *local_frequency;     // buffer for local frequencies.
-  double *freq_offset;         // buffer for local + sideband frequencies.
-  complex128 one;              // holds complex value 1.
-  complex128 zero;             // hold complex value 0.
-  double buffer;               // buffer for temporary storage.
+  fftw_plan the_fftw_plan;     //  The plan for fftw routine.
+  unsigned int n_orientations; //  number of unique orientations.
+  unsigned int size;           //  number of orientations * number of sizebands.
+  double *amplitudes;          //  array of amplitude scaling per orientation.
+  double *norm_amplitudes;  //  array of normalized amplitudes per orientation.
+  complex128 *exp_Im_alpha; //  array of cos_alpha per orientation.
+  complex128 *w2;           //  buffer for 2nd rank frequency calculation.
+  complex128 *w4;           //  buffer for 4nd rank frequency calculation.
+  double *wigner_2j_matrices; //  wigner-d 2j matrix per orientation.
+  double *wigner_d2m0_vector; //  wigner-2j dm0 vector, n ∈ [-2, 2].
+  double *wigner_4j_matrices; //  wigner-d 4j matrix per orientation.
+  double *wigner_d4m0_vector; //  wigner-4j dm0 vector, n ∈ [-4, 4].
+  complex128 *pre_phase_2; //  buffer for 2nk rank sideband phase calculation.
+  complex128 *pre_phase_4; //  buffer for 4th rank sideband phase calculation.
+  double *local_frequency; //  buffer for local frequencies.
+  double *freq_offset;     //  buffer for local + sideband frequencies.
+  complex128 one;          //  holds complex value 1.
+  complex128 zero;         //  hold complex value 0.
+  double buffer;           //  buffer for temporary storage.
 };
 
 typedef struct MRS_plan_t MRS_plan;
 
 typedef struct MRS_dimension_t {
-  int count;                 // the number of coordinates along the dimension.
-  double coordinates_offset; // starting coordinate of the dimension.
-  double increment;          // increment of coordinates along the dimension.
+  int count; /**<  the number of coordinates along the dimension. */
+  double coordinates_offset; /**<  starting coordinate of the dimension. */
+  double increment; /**<  increment of coordinates along the dimension. */
 
   /* private attributes */
   double normalize_offset; // fixed value = 0.5 - coordinate_offset/increment
@@ -213,24 +215,34 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
                           bool allow_fourth_rank);
 
 /**
- * @brief Update the mrsimulator plan.
+ * @brief Free memory allocated for spherical averaging scheme.
+ *
+ * @param	plan The plan from which the memory allocated to spherical
+ * averaging scheme is freed.
+ */
+void MRS_plan_free_averaging_scheme(MRS_plan *plan);
+
+/**
+ * @brief Update the plan with a new spherical averaging scheme.
  *
  * @param	geodesic_polyhedron_frequency The number of triangles along the
  *            edge of the octahedron.
- * @param number_of_sidebands The number of sideband to compute.
- * @param sample_rotation_frequency_in_Hz The sample rotation frequency in Hz.
- * @param rotor_angle_in_rad The polar angle in radians with respect to z-axis
- *            describing the axis of rotation.
- * @param increment The increment along the spectroscopic dimension.
  * @param allow_fourth_rank When true, the plan calculates matrices for
  *            processing the fourth rank tensor.
  */
-// MRS_plan *MRS_update_plan(unsigned int *geodesic_polyhedron_frequency,
-//                           int *number_of_sidebands,
-//                           double *sample_rotation_frequency_in_Hz,
-//                           double *rotor_angle_in_rad, double *increment,
-//                           bool allow_fourth_rank);
+void MRS_plan_update_averaging_scheme(
+    MRS_plan *plan, unsigned int geodesic_polyhedron_frequency,
+    bool allow_fourth_rank);
 
+/* Free the memory from the mrsimulator plan associated with the wigner
+ * d^l_{m,0}(rotor_angle_in_rad) vectors. Here, l=2 or 4.
+ *  */
+void MRS_plan_free_rotor_angle_in_rad(MRS_plan *plan);
+
+/* Update the MRS plan for the given rotor angle in radians. */
+void MRS_plan_update_rotor_angle_in_rad(MRS_plan *plan,
+                                        double rotor_angle_in_rad,
+                                        bool allow_fourth_rank);
 /**
  * @brief Return a copy of the mrsimulator plan.
  *

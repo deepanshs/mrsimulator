@@ -12,8 +12,8 @@
 // triangle_interpolation is an optimized version of tent. Still plenty of
 // room for optimization.
 
-
-int triangle_interpolation(double *freq1, double *freq2, double *freq3, double *amp, double *spec, int *points) {
+int triangle_interpolation(double *freq1, double *freq2, double *freq3,
+                           double *amp, double *spec, int *points) {
 
   double df1, df2, top = 0.0, t, diff, f10 = 0.0, f21 = 0.0, temp;
   int p, pmid, pmax, i, j;
@@ -125,7 +125,8 @@ int triangle_interpolation(double *freq1, double *freq2, double *freq3, double *
   return 0;
 }
 
-void rasterization(double *grid, double *v0, double *v1, double *v2, int rows, int columns) {
+void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,
+                   int columns) {
 
   double A12, B12, C12, A20, B20, C20, A01, B01, C01;
   double minX, minY, maxX, maxY, w0, w1, w2;

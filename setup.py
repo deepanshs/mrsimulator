@@ -29,7 +29,7 @@ fftw3_info = sysinfo.get_info("fftw3")
 #     name = "mkl"
 #     include_dirs += mkl_info["include_dirs"]
 #     library_dirs += mkl_info["library_dirs"]
-#     libraries += mkl_info["libraries"]
+# libraries += mkl_info["libraries"]
 if openblas_info != {}:
     name = "openblas"
     library_dirs += openblas_info["library_dirs"]
@@ -62,6 +62,24 @@ with open("src/mrsimulator/__config__.json", "w", encoding="utf8") as outfile:
 include_dirs.append("src/c_lib/include")
 include_dirs.append(np.get_include())
 
+extra_link_args = []
+extra_compile_args = []
+
+# system = platform.system()
+# arch = platform.architecture()[0]
+# compiler = platform.python_compiler()
+# if system == 'Linux':
+#     extra_link_args += ["-lm", "-ldl"]
+#     if arch == '64bit':
+#         extra_compile_args += ["-m64", "-DMKL_ILP64"]
+#     if arch == '32bit':
+#         extra_compile_args += ["-m32"]
+# if system == 'Darwin':
+#     extra_link_args += ["-Wl", "-lm", "-ldl"]
+#     extra_compile_args += ["-m64"]
+
+print(extra_compile_args)
+print(extra_link_args)
 ext_modules = [
     Extension(
         name="mrsimulator.methods",
@@ -78,8 +96,8 @@ ext_modules = [
         language="c",
         libraries=libraries,
         library_dirs=library_dirs,
-        extra_compile_args=["--std=c99", "-g", "-W", "-O3"],
-        extra_link_args=[],
+        extra_compile_args=["--std=c99", "-g", "-O3"] + extra_compile_args,
+        extra_link_args=extra_link_args,
     )
 ]
 
@@ -101,8 +119,8 @@ ext_modules += [
         language="c",
         libraries=libraries,
         library_dirs=library_dirs,
-        extra_compile_args=["--std=c99", "-g", "-W", "-O3"],
-        extra_link_args=[],
+        extra_compile_args=["--std=c99", "-g", "-O3"] + extra_compile_args,
+        extra_link_args=extra_link_args,
     )
 ]
 
