@@ -36,7 +36,6 @@
  */
 static inline double p(double mf, double mi) { return (mf - mi); }
 
-
 /**
  * @brief The @f$\mathbb{d}@f$ spin transition symmetry function.
  *
@@ -53,11 +52,9 @@ static inline double p(double mf, double mi) { return (mf - mi); }
  * @param mi The quantum number associated with the initial energy state.
  * @return The spin transition symmetry function @f$\mathbb{d}@f$.
  */
-static inline double d(double mf, double mi)
-{
-    return 1.2247448714 * (mf * mf - mi * mi);
+static inline double d(double mf, double mi) {
+  return 1.2247448714 * (mf * mf - mi * mi);
 }
-
 
 /**
  * @brief The @f$\mathbb{f}@f$ spin transition symmetry function.
@@ -75,13 +72,12 @@ static inline double d(double mf, double mi)
  * @param mi The quantum number associated with the initial energy state.
  * @return The spin transition symmetry function @f$\mathbb{f}@f$.
  */
-static inline double f(double mf, double mi, double spin)
-{
-    double f_ = 1.0 - 3.0 * spin * (spin + 1.0);
-    f_ *= (mf - mi);
-    f_ += 5.0 * (mf * mf * mf - mi * mi * mi);
-    f_ *= 0.316227766;
-    return f_;
+static inline double f(double mf, double mi, double spin) {
+  double f_ = 1.0 - 3.0 * spin * (spin + 1.0);
+  f_ *= (mf - mi);
+  f_ += 5.0 * (mf * mf * mf - mi * mi * mi);
+  f_ *= 0.316227766;
+  return f_;
 }
 
 /**
@@ -104,18 +100,17 @@ static inline double f(double mf, double mi, double spin)
  * @param mSf The quantum number associated with the final state of spin S.
  * @return The spin transition symmetry function @f$\mathbb{d_{IS}}@f$.
  */
-static inline double dIS(double mIf, double mIi, double mSf, double mSi)
-{
-    return mIf * mSf - mIi * mSi;
+static inline double dIS(double mIf, double mIi, double mSf, double mSi) {
+  return mIf * mSf - mIi * mSi;
 }
 
-static inline void quad_ci(double *c0, double *c2, double *c4, double mf, double mi, double spin)
-{
-    double f_ = f(mf, mi, spin);
-    double p_ = p(mf, mi);
+static inline void quad_ci(double *c0, double *c2, double *c4, double mf,
+                           double mi, double spin) {
+  double f_ = f(mf, mi, spin);
+  double p_ = p(mf, mi);
 
-    double temp = spin * (spin + 1.0) - 0.75;
-    c0[0] = 0.3577708764 * temp * p_ + 0.8485281374 * f_;
-    c2[0] = 0.1069044968 * temp * p_ + -1.0141851057 * f_;
-    c4[0] = -0.1434274331 * temp * p_ + -1.2850792082 * f_;
+  double temp = spin * (spin + 1.0) - 0.75;
+  c0[0] = 0.3577708764 * temp * p_ + 0.8485281374 * f_;
+  c2[0] = 0.1069044968 * temp * p_ + -1.0141851057 * f_;
+  c4[0] = -0.1434274331 * temp * p_ + -1.2850792082 * f_;
 }

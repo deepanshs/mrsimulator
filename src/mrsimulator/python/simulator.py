@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from numpy.fft import fft, fftfreq
 import numpy as np
 from numpy import dot, exp

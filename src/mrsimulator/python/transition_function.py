@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Transition symmetry functions from irreducible tensors.
 
 .. seealso::

@@ -24,7 +24,7 @@ extern void spinning_sideband_core(
                                       // the second order quad Hamiltonian.
 
     // spin rate, spin angle and number spinning sidebands
-    int number_of_sidebands,          // The number of sidebands
+    int number_of_sidebands,                // The number of sidebands
     double sample_rotation_frequency_in_Hz, // The rotor spin frequency
     double rotor_angle_in_rad, // The rotor angle relative to lab-frame z-axis
 

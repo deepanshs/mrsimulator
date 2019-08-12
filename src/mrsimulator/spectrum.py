@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os.path
 import re
 from monty.serialization import loadfn

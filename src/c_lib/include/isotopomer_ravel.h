@@ -32,7 +32,6 @@ struct __isotopomers_list {
   isotopomer_ravel *isotopomers;
 };
 
-
 typedef struct __isotopomers_list isotopomers_list;
 
 #endif /* isotopomer_h */

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import mrsimulator.sandbox as clib
 from mrsimulator.python.angular_momentum import (
     wigner_d_matrix_cosines,

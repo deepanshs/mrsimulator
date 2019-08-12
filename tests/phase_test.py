@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import mrsimulator.sandbox as clib
 from mrsimulator.python.utils import pre_phase_components
 import numpy as np

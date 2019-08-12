@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import ClassVar, Optional
 from mrsimulator import Parseable, SymmetricTensor, AntisymmetricTensor
 

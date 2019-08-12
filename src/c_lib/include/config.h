@@ -82,6 +82,4 @@ inline complex128 complex128_add_inplace(complex128 a, double b) {
 // // printf("Using upto %d threads for simulation.\n", max_threads);
 // #endif
 
-
-
 #endif

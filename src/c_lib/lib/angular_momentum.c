@@ -99,7 +99,7 @@ void __wigner_d_matrix_cosine(const int l, const int n, const double *cos_angle,
 
       wigner[12] = 1.5 * cx2 - .5; // 0,  0 // 12
 
-      wigner+=25;
+      wigner += 25;
     }
   }
   if (l == 4) {
@@ -250,7 +250,7 @@ void __wigner_d_matrix_cosine(const int l, const int n, const double *cos_angle,
       temp = 0.125 * (3. - 30. * cx2 + 35 * cx2 * cx2);
       wigner[40] = temp; //  0,  0 // 40
 
-      wigner+=81;
+      wigner += 81;
     }
   }
 }

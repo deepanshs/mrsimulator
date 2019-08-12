@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pydantic import BaseModel
 from mrsimulator.unit import string_to_quantity
 from typing import ClassVar, Dict

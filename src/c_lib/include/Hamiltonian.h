@@ -6,8 +6,8 @@
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
-#include "transition_function.h"
 #include "mrsimulator.h"
+#include "transition_function.h"
 
 /*
 ===============================================================================
@@ -18,8 +18,7 @@ spin transition functions.
 */
 static inline void get_nuclear_shielding_hamiltonian_to_first_order(
     double *R0, complex128 *R2, double iso, double zeta, double eta,
-    double *transition)
-{
+    double *transition) {
   // Spin transition contribution
   double transition_fn = p(transition[1], transition[0]);
 
@@ -45,10 +44,10 @@ static inline void get_nuclear_shielding_hamiltonian_to_first_order(
 The Hamiltonian includes the product of second rank tensor and the
 spin transition functions.
 */
-static inline void get_quadrupole_hamiltonian_to_first_order(
-    double *R0, complex128 *R2, double spin, double Cq, double eta,
-    double *transition)
-{
+static inline void
+get_quadrupole_hamiltonian_to_first_order(double *R0, complex128 *R2,
+                                          double spin, double Cq, double eta,
+                                          double *transition) {
   // Spin transition contribution
   double transition_fn = d(transition[1], transition[0]);
 
@@ -79,10 +78,9 @@ The Hamiltonian includes the product of second rank tensor and the
 spin transition functions.
 */
 static inline void get_quadrupole_hamiltonian_to_second_order(
-    double *R0, complex128 *R2, complex128 *R4, double spin,
-    double Cq, double eta, double *transition, double vo,
-    int remove_second_order_quad_iso)
-{
+    double *R0, complex128 *R2, complex128 *R4, double spin, double Cq,
+    double eta, double *transition, double vo,
+    int remove_second_order_quad_iso) {
   // Spin transition contribution
   double c0, c2, c4;
   quad_ci(&c0, &c2, &c4, transition[1], transition[0], spin);
@@ -97,8 +95,7 @@ static inline void get_quadrupole_hamiltonian_to_second_order(
   double eta2 = eta * eta;
 
   // Scaled R00
-  if (remove_second_order_quad_iso == 0)
-  {
+  if (remove_second_order_quad_iso == 0) {
     R0[0] += (eta2 * 0.33333333333 + 1.0) * 0.07453559925 * scale * c0;
   }
 
@@ -106,22 +103,22 @@ static inline void get_quadrupole_hamiltonian_to_second_order(
   its principal axis frame. */
   double temp = -eta * 0.07273929675 * scale * c2;
   double temp2 = 0.08908708064 * (eta2 * 0.33333333333 - 1.0) * scale * c2;
-  complex128_add_inplace(R2[0], temp);                                                      // R2-2
-  complex128_add_inplace(R2[1], 0.0);                                                       // R2-1
+  complex128_add_inplace(R2[0], temp);  // R2-2
+  complex128_add_inplace(R2[1], 0.0);   // R2-1
   complex128_add_inplace(R2[2], temp2); // R2 0
-  complex128_add_inplace(R2[3], 0.0);                                                       // R2 1
-  complex128_add_inplace(R2[4], temp);                                                      // R2 2
+  complex128_add_inplace(R2[3], 0.0);   // R2 1
+  complex128_add_inplace(R2[4], temp);  // R2 2
 
   /* Scaled R4m containing the components of the quad second rank tensor in
   its principal axis frame. */
   temp = eta2 * 0.02777777778 * scale * c4;
   temp2 = -0.06299407883 * eta * scale * c4;
   double temp4 = 0.1195228609 * (eta2 * 0.05555555556 + 1.0) * scale * c4;
-  complex128_add_inplace(R4[0], temp);                                                     // R4-4
-  complex128_add_inplace(R4[2], temp2);                                                    // R4-2
+  complex128_add_inplace(R4[0], temp);  // R4-4
+  complex128_add_inplace(R4[2], temp2); // R4-2
   complex128_add_inplace(R4[4], temp4); // R4 0
-  complex128_add_inplace(R4[6], temp2);                                                    // R4 2
-  complex128_add_inplace(R4[8], temp);                                                     // R4 4
+  complex128_add_inplace(R4[6], temp2); // R4 2
+  complex128_add_inplace(R4[8], temp);  // R4 4
 }
 
 /*
@@ -132,8 +129,7 @@ The Hamiltonian includes the product of second rank tensor and the
 spin transition functions in the weak coupling limit.
 */
 static inline void get_weakly_coupled_direct_dipole_hamiltonian_to_first_order(
-    double *R0, complex128 *R2, double D, double *transition)
-{
+    double *R0, complex128 *R2, double D, double *transition) {
   // Spin transition contribution
   double transition_fn = dIS(transition[0], transition[1], 0.5, 0.5);
 
