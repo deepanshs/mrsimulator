@@ -6,78 +6,32 @@
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
-#define PI2 6.2831853072
-#define PI2I PI2 *I
+#include "mrsimulator.h"
 
-#include "MRAngularMomentum.h"
-#include "c_array.h"
-#include "fftw/fftw3.h"
-#include "fftw/fftw3_mkl.h"
-#include "math.h"
-#include "mkl.h"
-#include "powder_setup.h"
-#include <complex.h>
-#include <time.h>
-
-#define MKL_Complex16 double complex
-
-struct directionCosines {
-  double cosAlpha;
-  double cosBeta;
-};
-
-extern void __powder_averaging_setup(
-    int nt, double *cosAlpha, double *cosBeta, double *amp,
-    int space // 1 for octant, 2 for hemisphere and 4 for sphere
-);
-
-// Return a vector ordered according to the fft output order.                //
-// @params int n - The number of points                                      //
-// @params double increment - The increment (sampling interval)              //
-// @returns *double values = The pointer to the fft output order vector      //
-extern inline double *__get_frequency_in_FFT_order(int n, double increment);
+// headerdoc
 
 extern void spinning_sideband_core(
     // spectrum information and related amplitude
     double *spec,              // The amplitude of the spectrum.
-    double *cpu_time_,         // Execution time
     double spectral_start,     // The start of the frequency spectrum.
-    double spectral_increment, // The bandwidth of the frequency spectrum.
+    double spectral_increment, // The increment of the frequency spectrum.
     int number_of_points,      // Number of points on the frequency spectrum.
 
-    double spin_quantum_number, // Spin quantum numbers
-    double larmor_frequency,    // Larmor frequency
+    isotopomer_ravel *ravel_isotopomer, // isotopomer structure
 
-    // Pointer to the array of CSA tensor information in the PAS.
-    double *iso_n,   // The isotropic chemical shift.
-    double *aniso_n, // The chemical shielding anisotropic.
-    double *eta_n,   // Chemical shielding asymmetry
-
-    // Pointer to the array of quadrupole tensor information in the PAS.
-    double *Cq_e,        // The Cq of the quadrupole center.
-    double *eta_e,       // The asymmetry term of the tensor.
-    int quadSecondOrder, // Quad theory for second order,
-
-    // Pointer to the array of dipolar tensor information in the PAS.
-    double *D, // The dipolar coupling constant.
+    int quadSecondOrder,              // Quad theory for second order,
+    int remove_second_order_quad_iso, // remove the isotropic contribution from
+                                      // the second order quad Hamiltonian.
 
     // spin rate, spin angle and number spinning sidebands
-    int ph_step,           // The number of spinning sidebands to evaluate
-    double spin_frequency, // The rotor spin frequency
-    double rotor_angle,    // The rotor angle relative to lab-frame z-axis
+    int number_of_sidebands,                // The number of sidebands
+    double sample_rotation_frequency_in_Hz, // The rotor spin frequency
+    double rotor_angle_in_rad, // The rotor angle relative to lab-frame z-axis
 
-    double *transition, // The transition as transition[0] = mi and
-                        // transition[1] = mf
-
-    // The principal to molecular frame transformation euler angles.
-    //   double * omega_PM,
+    // Pointer to the transitions. transition[0] = mi and transition[1] = mf
+    double *transition,
 
     // powder orientation average
-    unsigned int n_orientations, // number of orientations
-    double *cosAlpha,            // array of cosAlpha of orientations
-    double *cosBeta,             // array of cosBeta of orientations
-    double *amp,                 // array of amplitude of orientations
-    int nt, // number of triangles along the edge of the octahedral face
-
-    unsigned int number_of_sites // number of sites in the isotopomer
+    int geodesic_polyhedron_frequency // The number of triangle along
+                                      // the edge of octahedron
 );

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import ClassVar, Optional
 from mrsimulator import Parseable
 
@@ -29,11 +30,11 @@ class SymmetricTensor(Parseable):
 
     def to_freq_dict(self, larmor_frequency):
         """
-        Enforces units of Hz by multiplying any ppm values by the Larmor frequency in MHz
-        MHz*ppm -> Hz
+        Enforces units of Hz by multiplying any ppm values by the Larmor frequency in
+        MHz, MHz*ppm -> Hz
         """
         temp_dict = self.dict()
-        if self.property_units["anisotropy"] is "ppm":
+        if self.property_units["anisotropy"] == "ppm":
             temp_dict["anisotropy"] *= larmor_frequency
 
         return temp_dict
@@ -59,11 +60,11 @@ class AntisymmetricTensor(Parseable):
 
     def to_freq_dict(self, larmor_frequency):
         """
-        Enforces units of Hz by multiplying any ppm values by the Larmor frequency in MHz
-        MHz*ppm -> Hz
+        Enforces units of Hz by multiplying any ppm values by the Larmor frequency in
+        MHz, MHz*ppm -> Hz
         """
         temp_dict = self.dict()
-        if self.property_units["anisotropy"] is "ppm":
+        if self.property_units["anisotropy"] == "ppm":
             temp_dict["anisotropy"] *= larmor_frequency
 
         return temp_dict

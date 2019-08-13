@@ -1,4 +1,6 @@
 black
 pre-commit
-pytest
 
+## test required
+sympy
+pytest

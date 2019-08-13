@@ -23,15 +23,15 @@ isotopomers from a JSON serialized isotopomers file.
 
     >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json'
     >>> sim.load_isotopomers(filename)
-    Downloading '/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json' from 'raw.githubusercontent.com' to file 'isotopomers.json'.
-    [█████████████████████████████████████████████████████████████████████████]
+    Downloading '/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json' from 'raw.githubusercontent.com' to file 'isotopomers_ppm.json'.
+    [████████████████████████████████████████████████████████████████████]
 
 .. testcleanup::
 
     import os
     os.remove('isotopomers_ppm.json')
 
-Use the :attr:`~mrsimulator.Simulator.isotope_list` attribute of the ``sim``
+Use the attr:`~mrsimulator.Simulator.isotope_list` attribute of the ``sim``
 instance to get the list of unique isotopes from the list of isotopomers.
 
 .. doctest::
@@ -53,7 +53,7 @@ object,
 
     >>> sim.spectrum = {
     ...     "direct_dimension": {
-    ...         "nucleus": "13C",
+    ...         "isotope": "13C",
     ...         "magnetic_flux_density": "9.4 T",
     ...         "rotor_frequency": "0 kHz",
     ...         "rotor_angle": "54.735 deg",
@@ -67,7 +67,7 @@ The above spectrum object is set to simulate a :math:`^{13}\mathrm{C}` static
 spectrum at 9.4 T magnetic field over 5 kHz frequency-bandwidth using 8192
 points.
 
-Now, generate the lineshape with the :meth:`~mrsimulator.Simulator.run`
+Now, generate the lineshape with the meth:`~mrsimulator.Simulator.run`
 method as
 
 .. doctest::
@@ -83,15 +83,15 @@ method as
     <BLANKLINE>
     13C site 0 from isotopomer 0 @ 100.0% abundance
     -----------------------------------------------
-    isotropic chemical shift = 1.0 ppm
-    chemical shift anisotropy = -3.89 ppm
-    chemical shift asymmetry = 0.25
+    Isotropic chemical shift = 1.0 ppm
+    Shielding anisotropy = -3.89 ppm
+    Shielding asymmetry = 0.25
     <BLANKLINE>
     13C site 0 from isotopomer 1 @ 100.0% abundance
     -----------------------------------------------
-    isotropic chemical shift = 1.0 ppm
-    chemical shift anisotropy = 8.2 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = 1.0 ppm
+    Shielding anisotropy = 8.2 ppm
+    Shielding asymmetry = 0.0
 
 The simulator goes through every isotopomer in the list and simulates the
 lineshape corresponding to the :math:`^{13}\mathrm{C}` isotopes. In this
@@ -127,7 +127,7 @@ for the ``rotor_frequency`` which is set to 100 Hz.
 
     >>> sim.spectrum = {
     ...     "direct_dimension": {
-    ...         "nucleus": "13C",
+    ...         "isotope": "13C",
     ...         "magnetic_flux_density": "9.4 T",
     ...         "rotor_frequency": "100 Hz",
     ...         "rotor_angle": "54.735 deg",
@@ -152,15 +152,15 @@ Now compute the lineshape as before.
     <BLANKLINE>
     13C site 0 from isotopomer 0 @ 100.0% abundance
     -----------------------------------------------
-    isotropic chemical shift = 1.0 ppm
-    chemical shift anisotropy = -3.89 ppm
-    chemical shift asymmetry = 0.25
+    Isotropic chemical shift = 1.0 ppm
+    Shielding anisotropy = -3.89 ppm
+    Shielding asymmetry = 0.25
     <BLANKLINE>
     13C site 0 from isotopomer 1 @ 100.0% abundance
     -----------------------------------------------
-    isotropic chemical shift = 1.0 ppm
-    chemical shift anisotropy = 8.2 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = 1.0 ppm
+    Shielding anisotropy = 8.2 ppm
+    Shielding asymmetry = 0.0
 
 .. doctest::
 
@@ -174,7 +174,7 @@ Switch to a different isotope
 -----------------------------
 
 Generate a new :ref:`spectrum` object with a different isotope. The isotope
-is specified with the `nucleus` key, as shown below. In the following
+is specified with the `isotope` key, as shown below. In the following
 example, a :math:`^1\mathrm{H}` spectrum is simulated at 9.4 T field, spinning
 at the magic angle at 2 kHz frequency, and sampled over 100 kHz frequency
 bandwidth with 8192 points.
@@ -183,7 +183,7 @@ bandwidth with 8192 points.
 
     >>> sim.spectrum = {
     ...     "direct_dimension": {
-    ...         "nucleus": "1H",
+    ...         "isotope": "1H",
     ...         "magnetic_flux_density": "9.4 T",
     ...         "rotor_frequency": "2 kHz",
     ...         "rotor_angle": "54.735 deg",
@@ -208,15 +208,15 @@ Now compute the lineshape.
     <BLANKLINE>
     1H site 0 from isotopomer 2 @ 100.0% abundance
     ----------------------------------------------
-    isotropic chemical shift = 3.0 ppm
-    chemical shift anisotropy = 23.2 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = 3.0 ppm
+    Shielding anisotropy = 23.2 ppm
+    Shielding asymmetry = 0.0
     <BLANKLINE>
     1H site 0 from isotopomer 6 @ 100.0% abundance
     ----------------------------------------------
-    isotropic chemical shift = 5.6 ppm
-    chemical shift anisotropy = 13.2 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = 5.6 ppm
+    Shielding anisotropy = 13.2 ppm
+    Shielding asymmetry = 0.0
 
 .. doctest::
 
@@ -232,7 +232,7 @@ isotope.
 
     >>> sim.spectrum = {
     ...     "direct_dimension": {
-    ...         "nucleus": "29Si",
+    ...         "isotope": "29Si",
     ...         "magnetic_flux_density": "9.4 T",
     ...         "rotor_frequency": "1 kHz",
     ...         "rotor_angle": "54.735 deg",
@@ -257,21 +257,21 @@ The simulated lineshape.
     <BLANKLINE>
     29Si site 0 from isotopomer 3 @ 100.0% abundance
     ------------------------------------------------
-    isotropic chemical shift = -100.0 ppm
-    chemical shift anisotropy = 1.36 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = -100.0 ppm
+    Shielding anisotropy = 1.36 ppm
+    Shielding asymmetry = 0.0
     <BLANKLINE>
     29Si site 0 from isotopomer 4 @ 100.0% abundance
     ------------------------------------------------
-    isotropic chemical shift = -100.0 ppm
-    chemical shift anisotropy = 70.36 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = -100.0 ppm
+    Shielding anisotropy = 70.36 ppm
+    Shielding asymmetry = 0.0
     <BLANKLINE>
     29Si site 0 from isotopomer 5 @ 100.0% abundance
     ------------------------------------------------
-    isotropic chemical shift = -90.0 ppm
-    chemical shift anisotropy = 80.36 ppm
-    chemical shift asymmetry = 0.5
+    Isotropic chemical shift = -90.0 ppm
+    Shielding anisotropy = 80.36 ppm
+    Shielding asymmetry = 0.5
 
 .. doctest::
 
@@ -293,7 +293,7 @@ object is the same are from the previous example, except the
 
     >>> sim.spectrum = {
     ...     "direct_dimension": {
-    ...         "nucleus": "1H",
+    ...         "isotope": "1H",
     ...         "magnetic_flux_density": "9.4 T",
     ...         "rotor_frequency": "2 kHz",
     ...         "rotor_angle": "90 deg",
@@ -318,15 +318,15 @@ The simulated lineshape.
     <BLANKLINE>
     1H site 0 from isotopomer 2 @ 100.0% abundance
     ----------------------------------------------
-    isotropic chemical shift = 3.0 ppm
-    chemical shift anisotropy = 23.2 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = 3.0 ppm
+    Shielding anisotropy = 23.2 ppm
+    Shielding asymmetry = 0.0
     <BLANKLINE>
     1H site 0 from isotopomer 6 @ 100.0% abundance
     ----------------------------------------------
-    isotropic chemical shift = 5.6 ppm
-    chemical shift anisotropy = 13.2 ppm
-    chemical shift asymmetry = 0.0
+    Isotropic chemical shift = 5.6 ppm
+    Shielding anisotropy = 13.2 ppm
+    Shielding asymmetry = 0.0
 
 .. doctest::
 

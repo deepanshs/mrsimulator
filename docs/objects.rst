@@ -41,10 +41,7 @@ Orientation
 
   *An example of Orientation object.*
 
-.. doctest::
-    :skipif: None is None
-
-    >>> {
+    >>> orientation_object = {
     ...     "alpha": "0.5 rad",
     ...     "beta": "0.23 rad",
     ...     "gamma": "2.54 rad"
@@ -94,10 +91,7 @@ SymmetricTensor
 
   *An example of SymmetricTensor object.*
 
-.. doctest::
-    :skipif: None is None
-
-    >>> {
+    >>> symmetric_tensor_object = {
     ...     "anisotropy": "10.3 ppm",
     ...     "asymmetry": 0.5,
     ...     "orientation": {
@@ -127,7 +121,7 @@ Site
     * - key
       - value type
       - value description
-    * - ``isotope_symbol``
+    * - ``isotope``
       - A `string <https://docs.python.org/3/library/stdtypes.html#str>`__
       - The NMR active isotope symbol, for example, '13C'.
         This is a required key.
@@ -143,11 +137,8 @@ Site
 
   *An example of Site object.*
 
-.. doctest::
-    :skipif: None is None
-
-    >>> {
-    ...     "isotope_symbol": "13C",
+    >>> site_object = {
+    ...     "isotope": "13C",
     ...     "isotropic_chemical_shift": "15 ppm",
     ...     "shielding_symmetric": {
     ...         "anisotropy": "10.3 ppm",
@@ -201,13 +192,10 @@ Isotopomer
 
   *An example of Isotopomer object.*
 
-.. doctest::
-    :skipif: None is None
-
-    >>> {
+    >>> isotopomer_object = {
     ...     "sites": [
     ...         {
-    ...             "isotope_symbol": "13C",
+    ...             "isotope": "13C",
     ...             "isotropic_chemical_shift": "15 ppm",
     ...             "shielding_symmetric": {
     ...                 "anisotropy": "10.3 ppm",
@@ -242,7 +230,7 @@ DirectDimension
     * - key
       - value type
       - value description
-    * - ``nucleus``
+    * - ``isotope``
       - A `string <https://docs.python.org/3/library/stdtypes.html#str>`__
       - The isotope symbol of the nuclei. The recorded spectrum a histogram of
         frequencies corresponding to this nuclear isotope. An example may

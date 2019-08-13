@@ -1,9 +1,23 @@
-os: linux
+os:
+  - linux
+
 dist: xenial
 language: python
-cache: pip
+
 python:
-  - "3.6"
+  - '3.6'
+  - '3.7.3'
+
+env:
+  # - PKG1=mkl PKG2=mkl-include
+  - PKG1=nomkl PKG2=openblas
+
+cache:
+  pip: true
+  directories:
+    - $HOME/.ccache
+
+# safelist
 branches:
   only:
   - master
@@ -18,11 +32,12 @@ before_install:
   - conda info -a
   - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pytest pytest-cov
   - source activate test-env
-  - conda install fftw mkl-service
-  - pip install -r requirements.txt
-  - pip install -r requirements-dev.txt  
+  - conda install -c anaconda $PKG1 $PKG2 --file requirements.txt
+  - pip install -r requirements-dev.txt
 
 install:
   - python setup.py develop
+
+# command to run tests
 script:
   - pytest

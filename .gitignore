@@ -22,7 +22,6 @@ wheels/
 .installed.cfg
 cython_debug/**
 *.egg
-MANIFEST
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -32,7 +31,6 @@ MANIFEST
 
 # Installer logs
 pip-log.txt
-pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 htmlcov/
@@ -64,8 +62,10 @@ instance/
 
 # Sphinx documentation
 docs/_build/
-docs/_static/
-docs/_templates
+docs/api_c
+
+# Doxygen output
+doxyoutput/
 
 # PyBuilder
 target/
@@ -75,12 +75,6 @@ target/
 
 # pyenv
 .python-version
-
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
 
 # Environments
 .env
@@ -95,9 +89,6 @@ venv.bak/
 .spyderproject
 .spyproject
 
-# Rope project settings
-.ropeproject
-
 # mkdocs documentation
 /site
 
@@ -110,14 +101,26 @@ venv.bak/
 # build
 *.DSYM/**
 
+# folders
+src/c_lib/test_c/**
+
 # files
 *.out
 *.prof
 *.ipynb
 *.mp4
 *.html
-*.png
 test_os.py
-
-# Cython build file
-src/c_lib/mrmethods/nmr_methods.c
+note.txt
+sideband2.c
+dmfit_comparision.py
+simulate_lineshape.py
+sideband.3
+sandbox.c
+nmr_methods.c
+main.c
+mrsimulator.code-workspace
+jquery.js
+setup.py.src
+setup.temp
+__config__.json

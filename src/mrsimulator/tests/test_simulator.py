@@ -1,8 +1,8 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 """
 Tests for the base Parseable pattern
 """
-import os.path
+# import os.path
 import pytest
 from mrsimulator import Site, Isotopomer, Spectrum, Simulator
 
@@ -28,8 +28,7 @@ def spectrum():
 def isotopomers():
     return [
         Isotopomer(
-            sites=[Site(isotope="29Si", isotropic_chemical_shift=10)],
-            abundance=10,
+            sites=[Site(isotope="29Si", isotropic_chemical_shift=10)], abundance=10
         )
     ]
 

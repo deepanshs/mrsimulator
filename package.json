@@ -1,0 +1,20 @@
+{
+    "name": "mrsimulator",
+    "description": "A python toolbox for simulation NMR lineshapes.",
+    "version": "0.1.1",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/deepanshS/mrsimulator.git"
+    },
+    "keywords": [
+        "NMR simulator",
+        "NMR lineshape",
+        "amorphous solids"
+    ],
+    "author": "Deepansh J. Srivastava",
+    "license": "BSD-3-Clause",
+    "bugs": {
+        "url": "https://github.com/deepanshS/mrsimulator/issues"
+    },
+    "homepage": "https://github.com/deepanshS/mrsimulator"
+}

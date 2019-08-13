@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import ClassVar, Optional
 from mrsimulator import Parseable, SymmetricTensor, AntisymmetricTensor
 
@@ -17,9 +18,7 @@ class Site(Parseable):
         "isotropic_chemical_shift": ["dimensionless", "frequency"]
     }
 
-    property_default_units: ClassVar = {
-        "isotropic_chemical_shift": ["ppm", "Hz"]
-    }
+    property_default_units: ClassVar = {"isotropic_chemical_shift": ["ppm", "Hz"]}
 
     @classmethod
     def parse_json_with_units(cls, json_dict):
@@ -38,20 +37,16 @@ class Site(Parseable):
 
     def to_freq_dict(self, larmor_frequency):
         """
-        Enforces units of Hz by multiplying any ppm values by the Larmor frequency in MHz
-        MHz*ppm -> Hz
+        Enforces units of Hz by multiplying any ppm values by the Larmor frequency in
+        MHz, MHz*ppm -> Hz
         """
         temp_dict = self.dict()
 
-        for k in [
-            "shielding_symmetric",
-            "shielding_antisymmetric",
-            "quadrupolar",
-        ]:
-            if getattr(self,k):
-                temp_dict[k] = getattr(self,k).to_freq_dict(larmor_frequency)
+        for k in ["shielding_symmetric", "shielding_antisymmetric", "quadrupolar"]:
+            if getattr(self, k):
+                temp_dict[k] = getattr(self, k).to_freq_dict(larmor_frequency)
 
-        if self.property_units["isotropic_chemical_shift"] is "ppm":
+        if self.property_units["isotropic_chemical_shift"] == "ppm":
             temp_dict["isotropic_chemical_shift"] *= larmor_frequency
 
         return temp_dict

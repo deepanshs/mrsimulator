@@ -206,24 +206,3 @@ def unit_to_latex(unit):
     # string = string.replace('* ( *', '(')
     # string = string.replace('* ) *', ')')
     return string
-
-
-if __name__ == "__main__":
-    # import numpy as np
-    from timeit import default_timer as timer
-
-    start = timer()
-    s = "1 µHz/Hz"
-    # s = '5 cm^-1 µs °'
-    # print (s, type(s))
-    # a = string_to_quantity('1102 µh/km')
-    # print(display_unit(a))
-    # print(a.to('s/m'))
-    a = string_to_quantity(s)  # dtype=np.float32)
-    # print(timer() - start)
-    print(a)
-    print(a.unit)
-    print(a.to(_ppm))
-    # print(type(a.unit), a.unit.physical_type)
-    # print('val_object', value_object_format(a, unit=True))
-    print(unit_to_latex(a.unit))

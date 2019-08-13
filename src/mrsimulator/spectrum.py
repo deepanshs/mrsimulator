@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os.path
 import re
 from monty.serialization import loadfn
@@ -16,7 +17,7 @@ class Spectrum(Parseable):
     Base class for an NMR Spectrum
 
     Args:
-        number_of_points: Number of points 
+        number_of_points: Number of points
         spectral_width: Width of spectrum region to consider in Hz
         reference_offset: Offset frequecy in Hz
         magnetic_flux_density: Magnetic flux density in T
@@ -73,7 +74,7 @@ class Spectrum(Parseable):
             json_dict.update(json_dict["direct_dimension"])
 
         if "isotope" in json_dict:
-            isotope_data = get_isotope_data(json_dict["nucleus"])
+            isotope_data = get_isotope_data(json_dict["isotope"])
             json_dict.update(isotope_data)
 
         return super().parse_json_with_units(json_dict)
@@ -85,14 +86,14 @@ def get_isotope_data(isotope_string):
     data file
     """
     result = re.match(r"(\d+)\s*(\w+)", isotope_string)
-    nucleus = result.group(2)
+    isotope = result.group(2)
     A = result.group(1)
 
-    formatted_isotope_string = f"{A}{nucleus}"
+    formatted_isotope_string = f"{A}{isotope}"
 
     if formatted_isotope_string in ISOTOPE_DATA:
         isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
-        isotope_dict.update({"nucleus": formatted_isotope_string})
+        isotope_dict.update({"isotope": formatted_isotope_string})
         return isotope_dict
     else:
         raise Exception(f"Could not parse isotope string {formatted_isotope_string}")

@@ -4,14 +4,14 @@
             "rotor_frequency": "0 kHz",
             "number_of_points": 2048,
             "spectral_width": "100 kHz",
-            "nucleus": "1H"
+            "isotope": "1H"
         }
     },
     "isotopomers": [
         {
             "sites": [
                 {
-                    "isotope_symbol": "1H",
+                    "isotope": "1H",
                     "isotropic_chemical_shift": "2 kHz",
                     "shielding_symmetric": {
                         "anisotropy": "6 kHz",

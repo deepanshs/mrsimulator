@@ -1,8 +1,8 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 """
 Tests for the base Parseable pattern
 """
-import os
+# import os
 import pytest
 from typing import ClassVar
 

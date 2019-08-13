@@ -4,14 +4,14 @@
             "rotor_frequency": "1 kHz",
             "number_of_points": 512,
             "spectral_width": "64 kHz",
-            "nucleus": "29Si"
+            "isotope": "29Si"
         }
     },
     "isotopomers": [
         {
             "sites": [
                 {
-                    "isotope_symbol": "29Si",
+                    "isotope": "29Si",
                     "isotropic_chemical_shift": "0 Hz",
                     "shielding_symmetric": {
                         "anisotropy": "12 kHz",

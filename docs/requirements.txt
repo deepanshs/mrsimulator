@@ -1,0 +1,5 @@
+
+sphinx>=2.0
+sphinxjp.themes.basicstrap
+breathe
+exhale

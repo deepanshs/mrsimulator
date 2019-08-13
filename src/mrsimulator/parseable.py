@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pydantic import BaseModel
 from mrsimulator.unit import string_to_quantity
 from typing import ClassVar, Dict
@@ -33,9 +34,7 @@ class Parseable(BaseModel):
 
             if prop in json_dict:
                 # If we have a single option
-                if isinstance(required_type, str) and isinstance(
-                    default_unit, str
-                ):
+                if isinstance(required_type, str) and isinstance(default_unit, str):
                     try:
                         json_dict[prop] = enforce_units(
                             json_dict[prop], required_type, default_unit
@@ -48,9 +47,7 @@ class Parseable(BaseModel):
                         )
 
                 # If there are multiple type/unit combinations
-                elif isinstance(required_type, list) and isinstance(
-                    default_unit, list
-                ):
+                elif isinstance(required_type, list) and isinstance(default_unit, list):
                     pos_values = [
                         enforce_units(
                             json_dict[prop], r_type, d_unit, throw_error=False
@@ -59,24 +56,20 @@ class Parseable(BaseModel):
                     ]
                     # If none of the units were enforceable, error
                     # else choose the first good one
-                    if not ([val != None for val in pos_values]):
-                        raise Exception(
-                            f"Could not enforce any units on {prop}"
-                        )
+                    if not ([val is not None for val in pos_values]):
+                        raise Exception(f"Could not enforce any units on {prop}")
                     else:
                         json_dict[prop], property_units[prop] = [
-                            d for d in zip(pos_values, default_unit) if d[0] != None
-                        ][0] 
-        return cls(**json_dict,property_units=property_units)
+                            d for d in zip(pos_values, default_unit) if d[0] is not None
+                        ][0]
+        return cls(**json_dict, property_units=property_units)
 
 
-def enforce_units(
-    value: str, required_type: str, default_unit: str, throw_error=True
-):
+def enforce_units(value: str, required_type: str, default_unit: str, throw_error=True):
     """
     Enforces a required type and default unit on the value
 
-        value 
+        value
     """
     try:
         value = string_to_quantity(value)

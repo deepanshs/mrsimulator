@@ -1,9 +1,8 @@
-cython>=0.29.6
-mkl>=2019.0
-mkl-include>=2019.0
-numpy>=1.15.4
-pydantic==0.28
-astropy==3.2.1
-requests==2.21.0
-monty==2.0.4
-pydash==4.7.5
+
+numpy>=1.13.3
+setuptools>=27.3
+cython>=0.29.11
+astropy>=3.0
+requests>=2.21.0
+matplotlib>=3.0.2
+fftw>=3.3.0

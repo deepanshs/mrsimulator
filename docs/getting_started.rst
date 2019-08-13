@@ -21,8 +21,8 @@ and create an instance,
 
 Here, ``sim1`` is an instance of the :ref:`simulator_api` class. The
 two often used attributes of this instance are
-:attr:`~mrsimulator.Simulator.isotopomers` and
-:attr:`~mrsimulator.Simulator.spectrum`.
+attr:`~mrsimulator.Simulator.isotopomers` and
+attr:`~mrsimulator.Simulator.spectrum`.
 The default value of these attributes is
 
 .. doctest::
@@ -56,13 +56,13 @@ command.
     >>> from pprint import pprint
     >>> pprint(sim1.isotopomers)
     [{'abundance': '100 %',
-      'sites': [{'isotope_symbol': '1H',
+      'sites': [{'isotope': '1H',
                  'isotropic_chemical_shift': '0 ppm',
                  'shielding_symmetric': {'anisotropy': '13.89 ppm',
                                          'asymmetry': 0.25}}]}]
     >>> pprint(sim1.spectrum)
     {'direct_dimension': {'magnetic_flux_density': '9.4 T',
-                          'nucleus': '1H',
+                          'isotope': '1H',
                           'number_of_points': 2048,
                           'reference_offset': '0 Hz',
                           'rotor_angle': '54.735 deg',
@@ -71,7 +71,7 @@ command.
 
 In general, the isotopomers contain the metadata on the spin system while
 the spectrum contains metadata required to simulate the lineshapes.
-A lineshape is simulated using the :meth:`~mrsimulator.Simulator.run` method
+A lineshape is simulated using the meth:`~mrsimulator.Simulator.run` method
 of the :ref:`simulator_api` instance based on the NMR method.
 In version 0.1, we provide `one_d_spectrum` method for simulating one
 dimensional NMR lineshapes. Import this method using
@@ -95,11 +95,11 @@ and run the simulation.
     <BLANKLINE>
     1H site 0 from isotopomer 0 @ 100.0% abundance
     ----------------------------------------------
-    isotropic chemical shift = 0.0 ppm
-    chemical shift anisotropy = 13.89 ppm
-    chemical shift asymmetry = 0.25
+    Isotropic chemical shift = 0.0 ppm
+    Shielding anisotropy = 13.89 ppm
+    Shielding asymmetry = 0.25
 
-In the above code, the ``freq`` and ``amp`` are the frequency in ppm and the
+In the above code, the ``freq`` and ``amp`` are the frequency in Hz and the
 corresponding amplitude of the spectrum. The following is a figure of the above
 lineshape plotted using the matplotlib library.
 

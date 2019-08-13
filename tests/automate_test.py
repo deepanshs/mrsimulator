@@ -6,8 +6,9 @@ import numpy as np
 from numpy.fft import fft
 from numpy.fft import fftshift
 
-from mrsimulator import Site, Isotopomer, Spectrum, Simulator
-from mrsimulator.methods import one_d_spectrum
+from mrsimulator import Isotopomer, Spectrum, Simulator
+
+TEST_C = True
 
 
 def _import_json(filename):
@@ -39,8 +40,8 @@ def _get_header_and_footer(source_file):
     return skip_header, skip_footer
 
 
-def read_and_compare_data(filename):
-    """Load a simpson output file"""
+def get_data(filename):
+    """Load a simpson or DMfit output file"""
 
     # source data
     data_object = _import_json(filename)
@@ -88,17 +89,14 @@ def read_and_compare_data(filename):
 
     data_source /= data_source.max()
 
-    # if test_data_object["source"] == "python":
-    #     label_source = "python"
-
     if test_data_object["source"] == "dmfit":
         data_source = data_source[::-1]
         data_source = np.roll(data_source, 1)
-        # label_source = "dmfit"
 
-    # if test_data_object["source"] == "simpson":
-    #     label_source = "simpson"
+    return data_object, data_source
 
+
+def c_setup(data_object, data_source):
     # mrsimulator
     spectrum = Spectrum.parse_json_with_units(data_object["spectrum"])
     isotopomer = [
@@ -107,80 +105,66 @@ def read_and_compare_data(filename):
     ]
 
     s1 = Simulator(isotopomer, spectrum)
-    freq, data_mrsimulator = s1.one_d_spectrum(
-        geodesic_polyhedron_frequency=120
-    )
+    freq, data_mrsimulator = s1.one_d_spectrum(geodesic_polyhedron_frequency=120)
     data_mrsimulator /= data_mrsimulator.max()
 
     return data_mrsimulator, data_source
-    
-    return satisfy
 
-
-# --------------------------------------------------------------------------- #
-# The test pass criterion
-# np.all((mrsimulator_vector - test_vector) < 0.0
-# --------------------------------------------------------------------------- #
 
 # --------------------------------------------------------------------------- #
 # Test against simpson calculations
 
 
-def test00_sim():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test00", "test00.json")
-    
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
+if TEST_C:
 
+    def test00_sim():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test00", "test00.json")
 
-def test01_sim():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test01", "test01.json")
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
+        data_mrsimulator, data_source = c_setup(*get_data(file_))
+        np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
+    def test01_sim():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test01", "test01.json")
+        data_mrsimulator, data_source = c_setup(*get_data(file_))
+        np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
-def test02_sim():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test02", "test02.json")
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
+    def test02_sim():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test02", "test02.json")
+        data_mrsimulator, data_source = c_setup(*get_data(file_))
+        np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
+    def test03_sim():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test03", "test03.json")
+        data_mrsimulator, data_source = c_setup(*get_data(file_))
+        np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
-def test03_sim():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test03", "test03.json")
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
+    def test04_sim():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test04", "test04.json")
+        data_mrsimulator, data_source = c_setup(*get_data(file_))
+        np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
+    def test05_sim():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test05", "test05.json")
+        data_mrsimulator, data_source = c_setup(*get_data(file_))
+        np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
-def test04_sim():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test04", "test04.json")
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
+    def test06_sim():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test06", "test06.json")
+        data_mrsimulator, data_source = c_setup(*get_data(file_))
+        np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
-
-def test05_sim():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test05", "test05.json")
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
-
-
-def test06_sim():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test06", "test06.json")
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
-
-
-def test07_sim():
-    path_ = path.join("tests", "simpson")
-    file_ = path.join(path_, "test07", "test07.json")
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
+    def test07_sim():
+        path_ = path.join("tests", "simpson")
+        file_ = path.join(path_, "test07", "test07.json")
+        data_mrsimulator, data_source = c_setup(*get_data(file_))
+        np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 # --------------------------------------------------------------------------- #
@@ -191,33 +175,33 @@ def test07_sim():
 def test00_python():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test00", "test00.json")
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
+    data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test01_python():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test01", "test01.json")
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
+    data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test02_python():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test02", "test02.json")
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
+    data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test03_python():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test03", "test03.json")
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
+    data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test04_python():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test04", "test04.json")
-    data_mrsimulator,data_source = read_and_compare_data(file_)
-    np.testing.assert_almost_equal(data_mrsimulator,data_source,decimal=2)
+    data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)

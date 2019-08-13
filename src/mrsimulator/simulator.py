@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-from pydash import has, get
+# from pydash import has, get
 from astropy import units as u
 from mrsimulator import Isotopomer, Spectrum
 from mrsimulator.spectrum import ISOTOPE_DATA
 from mrsimulator.methods import one_d_spectrum
+from mrsimulator.importer import import_json
+
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -14,7 +16,7 @@ class Simulator:
     The simulator class.
     """
 
-    def __init__(self, isotopomers, spectrum):
+    def __init__(self, isotopomers=[], spectrum={}):
         self.isotopomers = isotopomers
         self.spectrum = spectrum
 
@@ -24,11 +26,7 @@ class Simulator:
         Returns a list of all valid isotopes for this simulator
         """
         return list(
-            {
-                isotope
-                for isotope, data in ISOTOPE_DATA.items()
-                if data["spin"] == 1
-            }
+            {isotope for isotope, data in ISOTOPE_DATA.items() if data["spin"] == 1}
         )
 
     @property
@@ -59,10 +57,24 @@ class Simulator:
             }
         )
 
+    def load_isotopomers(self, filename):
+        """
+        Load a JSON serialized isotopomers file.
+
+        See an
+        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
+        /master/isotopomers_ppm.json>`_
+        of JSON serialized isotopomers file. For details, refer to the
+        :ref:`load_isotopomers` section.
+        """
+        contents = import_json(filename)
+        json_data = contents["isotopomers"]
+        self.isotopomers = [Isotopomer.parse_json_with_units(obj) for obj in json_data]
+
     def run(self, method, **kwargs):
         return self.one_d_spectrum(**kwargs)
 
-    def one_d_spectrum(self, verbose=False, **kwargs):
+    def one_d_spectrum(self, **kwargs):
         """
         Simulate the spectrum using the specified method. The keyword argument
         are the arguments of the specified `method`.
@@ -76,10 +88,6 @@ class Simulator:
             array, whereas, the frequency is a
             `Quantity <http://docs.astropy.org/en/stable/units/quantity.html>`_
             array. The default value is False.
-
-        :returns: A `csdm` object if `data_object` is True, else a tuple of
-            frequency and amplitude. For details, refer to the
-            description of `data_object`.
         """
 
         isotopomers = [
@@ -94,7 +102,7 @@ class Simulator:
         """The frequency is in the units of Hz."""
         freq *= u.Unit("Hz")
         """The larmor_frequency is in the units of MHz."""
-        larmor_frequency *= u.Unit("MHz")
+        # larmor_frequency *= u.Unit("MHz")
 
-        isotopo_ = [self.isotopomers[i] for i in list_index_isotopomer]
+        # isotopo_ = [self.isotopomers[i] for i in list_index_isotopomer]
         return freq, amp
