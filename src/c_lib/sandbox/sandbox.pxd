@@ -81,8 +81,8 @@ cdef extern from "spinning_sidebands.h":
 
         isotopomer_ravel *ravel_isotopomer,
 
-        int quadSecondOrder,                # Quad theory for second order,
-        int remove_second_order_quad_iso,   # remove the isotropic contribution from the
+        int quad_second_order,                # Quad theory for second order,
+        int remove_second_order_quad_isotropic,   # remove the isotropic contribution from the
                                             # second order quad Hamiltonian.
 
         # spin rate, spin angle and number spinning sidebands

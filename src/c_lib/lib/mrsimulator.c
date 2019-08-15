@@ -61,6 +61,16 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
   // plan->zero.real = 0.0;
   // plan->zero.imag = 0.0;
 
+  if (octant) {
+    plan->n_octants = 1;
+  }
+  if (hemisphere) {
+    plan->n_octants = 4;
+  }
+  if (sphere) {
+    plan->n_octants = 8;
+  }
+
   /**
    * Update the mrsimulator plan with the given spherical averaging scheme. We
    * create the coordinates on the surface of the unit sphere by projecting the
@@ -101,6 +111,8 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
   size_2 = 5 * number_of_sidebands;
   plan->pre_phase_2 = malloc_complex128(size_2);
 
+  cblas_zcopy(size_2, &pre_phase[2 * number_of_sidebands], 1, plan->pre_phase_2,
+              1);
   /* multiplying the wigner 2j d^2_{m,0}(rotor_angle_in_rad) vector to the
    * sideband phase multiplier. This multiplication absorbs the rotation of the
    * second rank tensors from the rotor frame to the lab frame, thereby,
@@ -108,8 +120,7 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
    * that the Euler angles invloved in the rotation of the 2nd rank tensors to
    * the lab frame is (0, rotor_angle_in_rad, 0).
    */
-  cblas_zcopy(size_2, &pre_phase[2 * number_of_sidebands], 1, plan->pre_phase_2,
-              1);
+
   j = 0;
   for (i = 0; i < 5; i++) {
     cblas_zdscal(number_of_sidebands, plan->wigner_d2m0_vector[i],
@@ -194,100 +205,148 @@ void MRS_plan_update_averaging_scheme(
     MRS_plan *plan, unsigned int geodesic_polyhedron_frequency,
     bool allow_fourth_rank) {
 
-  unsigned int nt = geodesic_polyhedron_frequency, i;
-  unsigned int n_orientations = (nt + 1) * (nt + 2) / 2;
-  plan->n_orientations = n_orientations;
+  unsigned int nt = geodesic_polyhedron_frequency;
+  unsigned int octant_orientations = (nt + 1) * (nt + 2) / 2;
+  unsigned int allocate_size_2, allocate_size_4;
+
+  plan->octant_orientations = octant_orientations;
+
+  if (octant) {
+    plan->total_orientations = octant_orientations;
+  }
+  if (hemisphere) {
+    plan->total_orientations = 4 * octant_orientations;
+  }
+  if (sphere) {
+    plan->total_orientations = 8 * octant_orientations;
+  }
+
   plan->geodesic_polyhedron_frequency = nt;
   plan->allow_fourth_rank = allow_fourth_rank;
 
-  /* orientation setup. Calculate α, β, and weights. */
-  double *cos_alpha = malloc_double(n_orientations);
-  double *cos_beta = malloc_double(n_orientations);
-  plan->amplitudes = malloc_double(n_orientations);
-  plan->norm_amplitudes = malloc_double(n_orientations);
+  /* Calculate α, β, and weights over the positive octant. ................. */
+  /* ....................................................................... */
+  double *cos_alpha = malloc_double(octant_orientations);
+  double *cos_beta = malloc_double(octant_orientations);
+  plan->amplitudes = malloc_double(octant_orientations);
+  plan->norm_amplitudes = malloc_double(octant_orientations);
   __powder_averaging_setup(geodesic_polyhedron_frequency, cos_alpha, cos_beta,
-                           plan->amplitudes, 1);
+                           plan->amplitudes);
 
-  /* normalizing amplitudes from the spherical averaging scheme by the number
-   * of sidebands
-   */
-  cblas_dcopy(n_orientations, plan->amplitudes, 1, plan->norm_amplitudes, 1);
-  double number_of_sideband_inverse = (1.0 / (double)plan->number_of_sidebands);
-  cblas_dscal(n_orientations, number_of_sideband_inverse, plan->norm_amplitudes,
+  /* Normalizing amplitudes from the spherical averaging scheme by the number
+   * of sidebands */
+  cblas_dcopy(octant_orientations, plan->amplitudes, 1, plan->norm_amplitudes,
               1);
+  double number_of_sideband_inverse = (1.0 / (double)plan->number_of_sidebands);
+  cblas_dscal(octant_orientations, number_of_sideband_inverse,
+              plan->norm_amplitudes, 1);
+  /* ----------------------------------------------------------------------- */
 
-  double *sin_alpha = malloc_double(n_orientations);
-  for (i = 0; i < n_orientations; i++) {
-    sin_alpha[i] = sqrt(1.0 - pow(cos_alpha[i], 2));
-  }
+  /* calculating exp(-Imα) at every orientation angle α form m=-4 to -1,
+   * where α is the azimuthal angle over the positive octant ............... */
+  /* ....................................................................... */
+  plan->exp_Im_alpha = malloc_complex128(4 * octant_orientations);
+  get_exp_Im_alpha(octant_orientations, cos_alpha, allow_fourth_rank,
+                   plan->exp_Im_alpha);
+  free(cos_alpha);
+  /* ----------------------------------------------------------------------- */
 
-  /* calculating exp(-Imα) at every orientation angle α and for m=-4 to -1. */
-  plan->exp_Im_alpha = malloc_complex128(4 * n_orientations);
-  int s_2 = 2 * n_orientations, s_3 = 3 * n_orientations;
-  int s_0 = 0 * n_orientations, s_1 = 1 * n_orientations;
-
-  cblas_dcopy(n_orientations, cos_alpha, 1, (double *)&plan->exp_Im_alpha[s_3],
-              2);
-  cblas_dcopy(n_orientations, sin_alpha, 1,
-              (double *)&plan->exp_Im_alpha[s_3] + 1, 2);
-
-  vm_double_complex_multiply(n_orientations, &plan->exp_Im_alpha[s_3],
-                             &plan->exp_Im_alpha[s_3],
-                             &plan->exp_Im_alpha[s_2]);
-
-  if (allow_fourth_rank) {
-    vm_double_complex_multiply(n_orientations, &plan->exp_Im_alpha[s_2],
-                               &plan->exp_Im_alpha[s_3],
-                               &plan->exp_Im_alpha[s_1]);
-    vm_double_complex_multiply(n_orientations, &plan->exp_Im_alpha[s_1],
-                               &plan->exp_Im_alpha[s_3],
-                               &plan->exp_Im_alpha[s_0]);
-  }
-
-  /* Setup for processing the second rank tensors. */
-  /* w2 is the buffer for storing calculated frequencies after processing the
+  /* Setting up buffers and tables for processing the second rank tensors. . */
+  /* ....................................................................... */
+  /* w2 is the buffer for storing the frequencies calculated from the
    * second rank tensors. */
-  plan->w2 = malloc_complex128(5 * n_orientations);
-
-  /* calculating wigner 2j matrices at every β orientation. */
-  plan->wigner_2j_matrices = malloc_double(25 * n_orientations);
-  __wigner_d_matrix_cosine(2, n_orientations, cos_beta,
-                           plan->wigner_2j_matrices);
+  plan->w2 = malloc_complex128(5 * plan->total_orientations);
 
   plan->w4 = NULL;
-  plan->wigner_4j_matrices = NULL;
-
   if (allow_fourth_rank) {
-    /* w4 is the buffer for storing calculated frequencies after processing
-     * the fourth rank tensors. */
-    plan->w4 = malloc_complex128(9 * n_orientations);
+    /* w4 is the buffer for storing the frequencies calculated from the
+     * fourth rank tensors. */
+    plan->w4 = malloc_complex128(9 * plan->total_orientations);
+  }
 
-    /* calculating wigner 4j matrices at every β orientation. */
-    plan->wigner_4j_matrices = malloc_double(81 * n_orientations);
-    __wigner_d_matrix_cosine(4, n_orientations, cos_beta,
+  /**
+   * Wigner matrices corresponding to the upper hemisphere.
+   *
+   * The wigner matrices are evaluated at every β orientation over the
+   * positive upper octant.  Note, the β angles from this octant repeat for the
+   * other three octant in the upper hemisphere, therfore, only one set of
+   * second and fourth rank wigner matrices should suffice.
+   */
+
+  // calculating the required space for storing wigner matrices.
+  if (sphere) {
+    allocate_size_2 = 25 * 2 * octant_orientations;
+    allocate_size_4 = 81 * 2 * octant_orientations;
+  } else {
+    allocate_size_2 = 25 * octant_orientations;
+    allocate_size_4 = 81 * octant_orientations;
+  }
+
+  /* Second rank reduced wigner matrices at every β orientation from the
+   * positive upper octant. */
+  plan->wigner_2j_matrices = malloc_double(allocate_size_2);
+  __wigner_d_matrix_cosine(2, octant_orientations, cos_beta,
+                           plan->wigner_2j_matrices);
+
+  plan->wigner_4j_matrices = NULL;
+  if (allow_fourth_rank) {
+    /* Fourth rank reduced wigner matrices at every β orientation from the
+     * positive upper octant. */
+    plan->wigner_4j_matrices = malloc_double(allocate_size_4);
+    __wigner_d_matrix_cosine(4, octant_orientations, cos_beta,
                              plan->wigner_4j_matrices);
   }
+
+  /**
+   * If averaging over a sphere is selected, then calculate the wigner matrices
+   * corresponding to the lower hemisphere.
+   *
+   * The wigner matrices only dependents on the β angles. Going from upper to
+   * the lower hemisphere, β -> β+π/2. This implies,
+   *      cos(β+π/2) -> -cos(β)
+   *      sin(β+π/2) -> sin(β)
+   *
+   * For evaluating the reduced wigner matrices from the lower hemisphere, the
+   * sign of cosine beta is changed. As before, the β angles from any octant
+   * from the lower hemisphere repeat for the other three octant in the lower
+   * hemisphere, therfore, only one set of second rank and fourth rank reduced
+   * wigner matrices should suffice. */
+  if (sphere) {
+    /* cos(beta) is negative in the lower hemisphere */
+    cblas_dscal(octant_orientations, -1.0, cos_beta, 1);
+
+    /* Second rank reduced wigner matrices at every β orientation over an octant
+     * from the lower hemisphere */
+    __wigner_d_matrix_cosine(2, octant_orientations, cos_beta,
+                             &plan->wigner_2j_matrices[allocate_size_2]);
+    if (allow_fourth_rank) {
+      /* Fourth rank reduced wigner matrices at every β orientation. */
+      __wigner_d_matrix_cosine(4, octant_orientations, cos_beta,
+                               &plan->wigner_4j_matrices[allocate_size_4]);
+    }
+  }
   free(cos_beta);
-  free(cos_alpha);
-  free(sin_alpha);
+  /* ----------------------------------------------------------------------- */
 
   /* buffer to hold the local frequencies and frequency offset. The buffer   *
    * is useful when the rotor angle is off magic angle (54.735 deg). */
-  plan->local_frequency = malloc_double(n_orientations);
-  plan->freq_offset = malloc_double(n_orientations);
+  plan->local_frequency = malloc_double(plan->total_orientations);
+  plan->freq_offset = malloc_double(octant_orientations);
 
-  // setup the fftw routine
-  plan->size = n_orientations * plan->number_of_sidebands;
+  /* fftw routine setup .................................................... */
+  /* ....................................................................... */
+  plan->size = plan->total_orientations * plan->number_of_sidebands;
   plan->vector = malloc_complex128(plan->size);
   // gettimeofday(&fft_setup_time, NULL);
   plan->the_fftw_plan = fftw_plan_many_dft(
-      1, &plan->number_of_sidebands, plan->n_orientations, plan->vector, NULL,
-      plan->n_orientations, 1, plan->vector, NULL, plan->n_orientations, 1,
-      FFTW_FORWARD, FFTW_ESTIMATE);
+      1, &plan->number_of_sidebands, plan->total_orientations, plan->vector,
+      NULL, plan->total_orientations, 1, plan->vector, NULL,
+      plan->total_orientations, 1, FFTW_FORWARD, FFTW_ESTIMATE);
 
   // char *filename = "128_sidebands.wisdom";
   // int status = fftw_export_wisdom_to_filename(filename);
   // printf("file save status %i \n", status);
+  /* ----------------------------------------------------------------------- */
 }
 
 /* Return a copy of thr mrsimulator plan. */
@@ -306,45 +365,40 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {}
  */
 void MRS_get_amplitudes_from_plan(MRS_plan *plan, complex128 *R2,
                                   complex128 *R4) {
-
-  /* Wigner second rank rotation from crystal/common frame to rotor frame. */
-  __wigner_rotation_2(2, plan->n_orientations, plan->wigner_2j_matrices,
-                      plan->exp_Im_alpha, R2, plan->w2);
+  unsigned int orientation;
+  __batch_wigner_rotation(
+      plan->octant_orientations, plan->n_octants, plan->wigner_2j_matrices, R2,
+      plan->wigner_4j_matrices, R4, plan->exp_Im_alpha, plan->w2, plan->w4);
 
   /* Evaluating the exponent of the sideband phase w.r.t the second rank
    * tensors. The exponent is given as,
-   * w2(Θ) * d^2_{m, 0}(rotor_angle_in_rad) * I 2π [(exp(I m ωr t) - 1)/(I m
-   * ωr)]
-   * |-lab frame 2nd rank tensors--|
-   *         |---------------------- pre_phase_2 ------------------------|
+   * w2(Θ)*d^2_{m,0}(rotor_angle_in_rad) * 2πI [(exp(I m ωr t) - 1)/(I m ωr)]
+   * |----lab frame 2nd rank tensors---|
+   *       |------------------------- pre_phase_2 ---------------------------|
    * where `pre_phase_2` is pre-calculated and stored in the plan. The result
    * is stored in the plan as a complex double array under the variable
    * `vector`, which is interpreted as a row major matrix of shape
-   * `number_of_sidebands` x `n_orientations` with `n_orientations` as the
-   * leading dimension. */
+   * `number_of_sidebands` x `total_orientations` with `total_orientations`
+   * as the leading dimension. */
   cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans, plan->number_of_sidebands,
-              plan->n_orientations, 5, &plan->one, plan->pre_phase_2,
+              plan->total_orientations, 5, &plan->one, plan->pre_phase_2,
               plan->number_of_sidebands, plan->w2, 5, &plan->zero, plan->vector,
-              plan->n_orientations);
+              plan->total_orientations);
 
-  if (plan->allow_fourth_rank) {
-    /* Wigner fourth rank rotation from crystal/common frame to rotor frame.
-     */
-    __wigner_rotation_2(4, plan->n_orientations, plan->wigner_4j_matrices,
-                        plan->exp_Im_alpha, R4, plan->w4);
-
+  if (plan->w4 != NULL) {
     /* Evaluating the exponent of the sideband phase w.r.t the fourth rank
      * tensors. The exponent is given as,
-     * w4(Θ) * d^4_{m, 0}(rotor_angle_in_rad) * I 2π [(exp(I m ωr t) - 1)/(I m
-     * ωr)]
-     * |-lab frame 4th rank tensors--|
-     *         |--------------------- pre_phase_4 -------------------------|
-     * where `pre_phase_4` is pre-calculated and also stored in the plan. This
-     * operation updates the variable `vector`. */
+     * w4(Θ)*d^4_{m, 0}(rotor_angle_in_rad) * 2πI[(exp(I m ωr t) - 1)/(I m ωr)]
+     * |----lab frame 4th rank tensors----|
+     *       |-------------------------- pre_phase_4 -------------------------|
+     * where `pre_phase_4` is pre-calculated and stored in the plan.
+     * This operation will update the values in variable `vector`.
+     */
     cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans,
-                plan->number_of_sidebands, plan->n_orientations, 9, &plan->one,
-                plan->pre_phase_4, plan->number_of_sidebands, plan->w4, 9,
-                &plan->one, plan->vector, plan->n_orientations);
+                plan->number_of_sidebands, plan->total_orientations, 9,
+                &plan->one, plan->pre_phase_4, plan->number_of_sidebands,
+                plan->w4, 9, &plan->one, plan->vector,
+                plan->total_orientations);
   }
 
   /* Evaluating the sideband phase exp(vector) */
@@ -362,17 +416,19 @@ void MRS_get_amplitudes_from_plan(MRS_plan *plan, complex128 *R2,
   //             (double *)plan->vector, 1, (double *)plan->vector, 1, 0.0,
   //             (double *)plan->vector, 1);
 
-  vm_double_square(2 * plan->size, (double *)plan->vector,
-                   (double *)plan->vector);
+  vm_double_square_inplace(2 * plan->size, (double *)plan->vector);
   cblas_daxpy(plan->size, 1.0, (double *)plan->vector + 1, 2,
               (double *)plan->vector, 2);
 
   /* Scaling the absolute value square with the powder scheme weights. Only
    * the real part is scaled and the imaginary part is left as is.
    */
-  for (int orientation = 0; orientation < plan->n_orientations; orientation++) {
-    cblas_dscal(plan->number_of_sidebands, plan->norm_amplitudes[orientation],
-                (double *)&plan->vector[orientation], 2 * plan->n_orientations);
+  for (orientation = 0; orientation < plan->octant_orientations;
+       orientation++) {
+    cblas_dscal(plan->n_octants * plan->number_of_sidebands,
+                plan->norm_amplitudes[orientation],
+                (double *)&plan->vector[orientation],
+                2 * plan->octant_orientations);
   }
 }
 
@@ -389,15 +445,14 @@ void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0) {
   /* Calculating the local anisotropic frequency contributions from the      *
    * second rank tensor. */
   plan->buffer = plan->wigner_d2m0_vector[2];
-  cblas_daxpby(plan->n_orientations, plan->buffer, (double *)&plan->w2[2], 10,
-               0.0, plan->local_frequency, 1);
-
+  cblas_daxpby(plan->total_orientations, plan->buffer, (double *)&plan->w2[2],
+               10, 0.0, plan->local_frequency, 1);
   if (plan->allow_fourth_rank) {
     /* Calculating the local anisotropic frequency contributions from the    *
      * fourth rank tensor. */
     plan->buffer = plan->wigner_d4m0_vector[4];
-    cblas_daxpy(plan->n_orientations, plan->buffer, (double *)&plan->w4[4], 18,
-                plan->local_frequency, 1);
+    cblas_daxpy(plan->total_orientations, plan->buffer, (double *)&plan->w4[4],
+                18, plan->local_frequency, 1);
   }
 }
 
@@ -410,15 +465,14 @@ void MRS_get_normalized_frequencies_from_plan(MRS_plan *plan,
   /* Calculating the normalized local anisotropic frequency contributions    *
    * from the second rank tensor. */
   plan->buffer = dim->inverse_increment * plan->wigner_d2m0_vector[2];
-  cblas_daxpby(plan->n_orientations, plan->buffer, (double *)&plan->w2[2], 10,
-               0.0, plan->local_frequency, 1);
-
+  cblas_daxpby(plan->total_orientations, plan->buffer, (double *)&plan->w2[2],
+               10, 0.0, plan->local_frequency, 1);
   if (plan->allow_fourth_rank) {
     /* Calculating the normalized local anisotropic frequency contributions  *
      * from the fourth rank tensor. */
     plan->buffer = dim->inverse_increment * plan->wigner_d4m0_vector[4];
-    cblas_daxpy(plan->n_orientations, plan->buffer, (double *)&plan->w4[4], 18,
-                plan->local_frequency, 1);
+    cblas_daxpy(plan->total_orientations, plan->buffer, (double *)&plan->w4[4],
+                18, plan->local_frequency, 1);
   }
 }
 

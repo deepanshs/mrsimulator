@@ -11,7 +11,7 @@
 
 // isotopomer like structure
 struct __isotopomer_ravel {
-  int number_of_sites;                    /* Number of sites */
+  unsigned int number_of_sites;           /* Number of sites */
   float spin;                             /* The spin quantum number */
   double larmor_frequency;                /* Larmor frequency (MHz) */
   double *isotropic_chemical_shift_in_Hz; /* Isotropic chemical shift (Hz) */
@@ -19,6 +19,7 @@ struct __isotopomer_ravel {
   double *shielding_asymmetry;   /* Nuclear shielding asymmetry parameter */
   double *shielding_orientation; /* Nuclear shielding PAS to CRS euler angles
                                     (rad.) */
+
   double *quadrupolar_constant_in_Hz; /* Quadrupolar coupling constant (Hz) */
   double *quadrupolar_asymmetry;      /* Quadrupolar asymmetry parameter */
   double

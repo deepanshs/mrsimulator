@@ -3,10 +3,10 @@ import numpy as np
 from mrsimulator.python.orientation import cosine_of_polar_angles_and_amplitudes
 from mrsimulator.python.orientation import triangle_interpolation
 
-import mrsimulator.sandbox as clib
+import mrsimulator.tests.tests as clib
 
 
-def test_polar_coordinates_and_amps():
+def test__powder_averaging_setup():
     nt = 64
     cos_alpha_py, cos_beta_py, amp_py = cosine_of_polar_angles_and_amplitudes(nt)
     cos_alpha_c, cos_beta_c, amp_c = clib.cosine_of_polar_angles_and_amplitudes(nt)

@@ -158,7 +158,7 @@ static inline void vm_double_square(int count, const double *restrict x,
 
 /**
  * Square the elements of vector y inplace.
- * y /= x
+ * x *= x
  */
 static inline void vm_double_square_inplace(int count, double *restrict x) {
   // x = __builtin_assume_aligned(x, 32);
@@ -232,7 +232,9 @@ static inline void vm_double_cosine(int count, const double *restrict x,
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
-    *res++ = cos(*x++);
+    *res = cos(*x);
+    res++;
+    x++;
     // x += stride_x;
     // res += stride_res;
   }
@@ -290,8 +292,8 @@ static inline double my_exp(double x) {
  * Exponent of the elements of vector x stored in res of type double.
  * res = exp(x)
  */
-static inline void vm_dexp(int count, double *restrict x,
-                           double *restrict res) {
+static inline void vm_double_exp(int count, double *restrict x,
+                                 double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {

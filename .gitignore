@@ -116,7 +116,7 @@ sideband2.c
 dmfit_comparision.py
 simulate_lineshape.py
 sideband.3
-sandbox.c
+test.c
 nmr_methods.c
 main.c
 mrsimulator.code-workspace

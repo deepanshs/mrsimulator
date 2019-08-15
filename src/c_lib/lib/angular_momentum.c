@@ -27,7 +27,7 @@ double fac(double x) {
 }
 
 /* power function */
-double mypow(double x, int n) {
+double my_power(double x, int n) {
   double temp;
   if (n == 0) {
     return (1.);
@@ -39,11 +39,16 @@ double mypow(double x, int n) {
   return (temp);
 }
 
-void __wigner_d_matrix(int l, int n, double *angle, double *wigner) {
-  vm_double_cosine(n, &angle[0], &angle[0]);
-  __wigner_d_matrix_cosine(l, n, &angle[0], &wigner[0]);
+// ✅ .. note: (wigner_d_matrix) monitored with pytest .........................
+void wigner_d_matrix(const int l, const int n, const double *angle,
+                     double *wigner) {
+  double *cos_angle = malloc_double(n);
+  vm_double_cosine(n, angle, cos_angle);
+  __wigner_d_matrix_cosine(l, n, cos_angle, wigner);
+  free(cos_angle);
 }
 
+// ✅ .. note: (__wigner_d_matrix_cosine) monitored with pytest ................
 void __wigner_d_matrix_cosine(const int l, const int n, const double *cos_angle,
                               double *wigner) {
   double cx, cx2, sx, temp;
@@ -255,22 +260,20 @@ void __wigner_d_matrix_cosine(const int l, const int n, const double *cos_angle,
   }
 }
 
-void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
-                       complex128 *R_in, complex128 *R_out) {
+// ✅ .. note: (__wigner_rotation) monitored with pytest .......................
+void __wigner_rotation(const int l, const int n, const double *wigner,
+                       const double *cos_alpha, const complex128 *R_in,
+                       complex128 *R_out) {
   int orientation;
   int n1 = 2 * l + 1, m, i = 0, mp;
   complex128 temp_initial_vector[n1], ph2, pha;
   complex128 *final_vector;
   int n2 = n1 * n1;
 
-  // #pragma omp parallel for
-  //   // private(orientation, pha, ph2, m, temp_initial_vector,
-  //   //                                  final_vector, i),
-  //   //     shared(n, cos_alpha, n1, R_in, l, R_out, wigner, n2)
   for (orientation = 0; orientation < n; orientation++) {
 
     // calculate the alpha phase, exp(-I m alpha).
-    pha = cos_alpha[orientation] -
+    pha = cos_alpha[orientation] +
           I * sqrt(1.0 - cos_alpha[orientation] * cos_alpha[orientation]);
 
     // note to self: it is important to copy the pha to temporary variable, ph2.
@@ -283,8 +286,8 @@ void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
 
     // scale the temp initial vector with exp[-I m alpha]
     for (m = 1; m <= l; m++) {
-      temp_initial_vector[l + m] *= ph2;
-      temp_initial_vector[l - m] *= conj(ph2);
+      temp_initial_vector[l - m] *= ph2;
+      temp_initial_vector[l + m] *= conj(ph2);
       ph2 *= pha;
     }
 
@@ -316,11 +319,6 @@ void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
 }
 
 #if !(__STDC_VERSION__ >= 199901L)
-static inline void self_cmult(complex128 a, complex128 b) {
-  a.real = a.real * b.real - a.imag * b.imag;
-  a.imag = a.real * b.imag + b.real * a.imag;
-}
-
 void __wigner_rotation_2(const int l, const int n, const double *wigner,
                          const complex128 *exp_Im_alpha, const complex128 *R_in,
                          complex128 *R_out) {
@@ -339,9 +337,10 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
     // scale the temp initial vector with exp[-I m alpha]
     for (m = 1; m <= l; m++) {
       temp = exp_Im_alpha[(4 - m) * n + orientation];
-
-      self_cmult(temp_initial_vector[l - m], temp);
-      self_cmult(temp_initial_vector[l + m], conj(temp));
+      temp_initial_vector[l - m] =
+          complex_multiply(temp_initial_vector[l - m], temp);
+      temp_initial_vector[l + m] =
+          complex_multiply(temp_initial_vector[l + m], conj(temp));
     }
 
     final_vector = &R_out[orientation * n1];
@@ -349,13 +348,16 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
     for (m = 0; m < n1; m++) {
       final_vector[m] = 0.;
       for (mp = 0; mp < n1; mp++) {
-        final_vector[m].real += wigner[i] * temp_initial_vector[mp].real;
-        final_vector[m].imag += wigner[i++] * temp_initial_vector[mp].imag;
+        *final_vector.real += *wigner * temp_initial_vector[mp].real;
+        *final_vector.imag += *wigner++ * temp_initial_vector[mp].imag;
       }
+      final_vector++;
     }
   }
 }
 #else
+
+// ✅ .. note: (__wigner_rotation_2) monitored with pytest .....................
 void __wigner_rotation_2(const int l, const int n, const double *wigner,
                          const complex128 *exp_Im_alpha, const complex128 *R_in,
                          complex128 *R_out) {
@@ -392,6 +394,7 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
 }
 #endif
 
+// ✅ .. note: (__wigner_dm0_vector) monitored with pytest .....................
 void __wigner_dm0_vector(const int l, const double beta, double *R_out) {
   double cx = cos(beta), sx = sin(beta);
   if (l == 2) {
@@ -417,6 +420,7 @@ void __wigner_dm0_vector(const int l, const double beta, double *R_out) {
   }
 }
 
+// ❌.. note: (full_DLM) not tested ............................................
 void full_DLM(complex128 *wigner, int l, double *omega) {
   if (l == 2) {
     complex128 pha[5], phg[5];
@@ -474,12 +478,12 @@ void full_DLM(complex128 *wigner, int l, double *omega) {
     wigner[12] = 1.5 * cx * cx - .5 * pha[2] * phg[2]; // 0,  0 // 12
   }
   if (l == 4) {
-    complex128 pha[9], phg[9];
+    complex128 pha[9]; //, phg[9];
     int m;
     for (m = -4; m <= 4; m++) {
       pha[m + 4] = cexp(-I * m * omega[0]);
       // printf("pha %f \n", creal(pha[m+2]));
-      phg[m + 4] = cexp(-I * m * omega[2]);
+      // phg[m + 4] = cexp(-I * m * omega[2]);
     }
     double cx = cos(omega[1]);
     double sx = sin(omega[1]);
@@ -624,6 +628,7 @@ void full_DLM(complex128 *wigner, int l, double *omega) {
   }
 }
 
+// ❌.. note: (full_DLM_trig) not tested .......................................
 // @parameters
 // int l: The angular momentum quantum number
 // complex128 *wigner: a pointer to (2l+1)*(2l+1) size matrix of full
@@ -874,6 +879,7 @@ void full_DLM_trig(complex128 *wigner, int l, double cosAlpha, double sinAlpha,
   }
 }
 
+// ❌.. note: (wigner_d) not tested ............................................
 double wigner_d(int l, int m1, int m2, double beta) {
   if (l == 2) {
     if (m1 == 2) {
@@ -988,8 +994,8 @@ double wigner_d(int l, int m1, int m2, double beta) {
       if (k1 >= 0 && k2 >= 0 && k3 >= 0) {
         int n1 = (int)(2 * l + m2 - m1 - 2 * k);
         int n2 = (int)(m1 - m2 + 2 * k);
-        double x = mypow(cx, n1);
-        double y = mypow(sx, n2);
+        double x = my_power(cx, n1);
+        double y = my_power(sx, n2);
         sum += sign * x * y /
                (fac((double)k1) * fac((double)k2) * fac((double)k3) *
                 fac((double)k));
@@ -1003,7 +1009,7 @@ double wigner_d(int l, int m1, int m2, double beta) {
   return (0);
 }
 
-// cx = cos(beta) and sx = sin(beta)
+// ❌.. note: (wigner_d_trig) not tested .......................................
 double wigner_d_trig(int l, int m1, int m2, double cx, double sx) {
   if (l == 2) {
     if (m1 == 2) {
@@ -1069,4 +1075,196 @@ double wigner_d_trig(int l, int m1, int m2, double cx, double sx) {
     }
   }
   return (0);
+}
+
+/** ✅ Performs a rank l wigner rotation of the coefficients from the l rank
+ * spherical tensors.
+ *
+ * @param l The rank of the tensor.
+ * @param euler_angles A pointer to the array of three euler angles.
+ * @param R_in A pointer to the array of coefficients from the l rank tensors of
+ *      length 2xl+1 before rotation.
+ * @param R_out A pointer to the array of coefficients from the l rank tensors
+ *      of length 2xl+1 after rotation.
+ */
+void single_wigner_rotation(const int l, const double *euler_angles,
+                            const complex128 *R_in, complex128 *R_out) {
+  int n1 = 2 * l + 1, n2 = n1 * n1, m, mp, k;
+  double *wigner = malloc_double(n2);
+  // double cos_angle = cos(euler_angles[1]);
+  complex128 *temp_initial_vector = malloc_complex128(n1), temp, copy_temp;
+
+  // get wigner matrix corresponding to beta angle
+  wigner_d_matrix(l, 1, &euler_angles[1], wigner);
+
+  // copy the initial vector
+  cblas_zcopy(n1, R_in, 1, temp_initial_vector, 1);
+
+  // scale the temp initial vector with exp[-I m alpha]
+  // orientation at index 0, 1, 2 are alpha, beta, and gamma.
+  temp = cos(euler_angles[0]) + I * sin(euler_angles[0]);
+  copy_temp = temp;
+  for (m = 1; m <= l; m++) {
+    temp_initial_vector[l - m] *= temp;
+    temp_initial_vector[l + m] *= conj(temp);
+    temp *= copy_temp;
+  }
+
+  // Apply wigner rotation to the temp inital vector
+  k = 0;
+  for (m = 0; m < n1; m++) {
+    R_out[m] = 0.0;
+    for (mp = 0; mp < n1; mp++) {
+      R_out[m] += wigner[k++] * temp_initial_vector[mp];
+    }
+  }
+
+  temp = cos(euler_angles[2]) + I * sin(euler_angles[2]);
+  copy_temp = temp;
+  for (m = 1; m <= l; m++) {
+    R_out[l - m] *= temp;
+    R_out[l + m] *= conj(temp);
+    temp *= copy_temp;
+  }
+
+  free(wigner);
+  free(temp_initial_vector);
+}
+
+/**
+ * ❌ Performs wigner rotations on a batch of wigner matrices and initial tensor
+ * orientation. The wigner matrices corresponds to the beta orientations. The
+ * orientations cover either an octant, hemisphere, or the sphere surface. This
+ * is specified by the value of the `n_octant` variables.
+ *    n_octant = 1 for octant
+ *    n_octant = 4 for hemisphere
+ *    n_octant = 8 for sphere
+ * The function performs both second rank and fourth rank wigner rotations.
+ *
+ * @param octant_orientations Number of orientations on an octant.
+ * @param n_octants Number of octants.
+ * @param wigner_2j_matrices A pointer to a stack of 5x5 second rank wigner
+ *      matrices.
+ * @param R2 A pointer to the second rank tensor coefficients of length 5 to be
+ *      rotated.
+ * @param wigner_4j_matrices A pointer to a stack of 9x9 fourth rank wigner
+ *      matrices.
+ * @param R4 A pointer to the fourth rank tensor coefficients of length 9 to be
+ *      rotated.
+ * @param exp_Im_alpha A pointer to a `4 x octant_orientations` array with the
+ *      exp(-Im α) with `octant_orientations` as the leading dimension and
+ *      ordered as m=[-4,-3,-2,-1].
+ * @param w2 A pointer to a stack of second rank tensor coefficients after
+ *      rotation with second rank wigner matrices. The length of w2 is
+ *      `octant_orientations x n_octants x 5` with 5 as the leading dimension.
+ * @param w4 A pointer to a stack of fourth rank tensor coefficients after
+ *      rotation with fourth rank wigner matrices. The length of w4 is
+ *      `octant_orientations x n_octants x 9` with 9 as the leading dimension.
+ */
+void __batch_wigner_rotation(const unsigned int octant_orientations,
+                             const unsigned int n_octants,
+                             const double *wigner_2j_matrices,
+                             const complex128 *R2,
+                             const double *wigner_4j_matrices,
+                             const complex128 *R4, complex128 *exp_Im_alpha,
+                             complex128 *w2, complex128 *w4) {
+
+  unsigned int j, index_25, index_81, w2_increment, w4_increment = 0;
+
+  complex128 iota = I, negative_iota = -I;
+  index_25 = 25 * octant_orientations;
+  index_81 = 81 * octant_orientations;
+  w2_increment = 5 * octant_orientations;
+  if (w4 != NULL) {
+    w4_increment = 9 * octant_orientations;
+  }
+
+  for (j = 0; j < n_octants; j++) {
+    /* Wigner second rank rotation from crystal/common frame to rotor frame.
+     */
+    __wigner_rotation_2(2, octant_orientations, wigner_2j_matrices,
+                        exp_Im_alpha, R2, w2);
+    w2 += w2_increment;
+    if (sphere) {
+      __wigner_rotation_2(2, octant_orientations, &wigner_2j_matrices[index_25],
+                          exp_Im_alpha, R2, w2);
+      w2 += w2_increment;
+    }
+    if (w4 != NULL) {
+      /* Wigner fourth rank rotation from crystal/common frame to rotor frame.
+       */
+      __wigner_rotation_2(4, octant_orientations, wigner_4j_matrices,
+                          exp_Im_alpha, R4, w4);
+      w4 += w4_increment;
+      if (sphere) {
+        __wigner_rotation_2(4, octant_orientations,
+                            &wigner_4j_matrices[index_81], exp_Im_alpha, R4,
+                            w4);
+        w4 += w4_increment;
+      }
+    }
+    /**
+     * Stepping the alpha phase by π/2.
+     *
+     * The array exp_Im_alpha is a two-dimensional array of shape
+     * `4 x number_of_sidebands`, where
+     *
+     * exp_Im_alpha[m, :] = exp(-I (m-4) alpha) for m=[0, 1, 2, 3]
+     * when alpha += π/2
+     *
+     *    exp_Im_alpha[0, :] = exp(I 4alpha) * exp(I 4π/2) = exp(I 4alpha)
+     *    exp_Im_alpha[0, :] *= 1
+     *
+     *    exp_Im_alpha[1, :] = exp(I 3alpha) * exp(I 3π/2) = -i exp(I 3alpha)
+     *    exp_Im_alpha[1, :] *= -I
+     *
+     *    exp_Im_alpha[2, :] = exp(I 2alpha) * exp(I 2π/2) = -1 exp(I 2alpha)
+     *    exp_Im_alpha[2, :] *= -1
+     *
+     *    exp_Im_alpha[3, :] = exp(I 1alpha) * exp(I 1π/2) = i exp(I 1alpha)
+     *    exp_Im_alpha[3, :] *= I
+     *
+     * After four iterations, exp_Im_alpha restores to its original value.
+     */
+    if (!octant) {
+      cblas_zscal(octant_orientations, &negative_iota,
+                  &exp_Im_alpha[3 * octant_orientations], 1);
+      cblas_zdscal(octant_orientations, -1,
+                   &exp_Im_alpha[2 * octant_orientations], 1);
+      if (w4 != NULL) {
+        cblas_zscal(octant_orientations, &iota,
+                    &exp_Im_alpha[octant_orientations], 1);
+      }
+    }
+  }
+}
+
+/**
+ * ✅ Calculates exp(-Im alpha) where alpha is an array of size n.
+ * The function accepts cos_alpha = cos(alpha)
+ * The result is stored in exp_Im_alpha as m x n matrix where m = [-4,-3,-2,-1]
+ */
+void get_exp_Im_alpha(const unsigned int n, const double *cos_alpha,
+                      const bool allow_fourth_rank, complex128 *exp_Im_alpha) {
+  unsigned int i, s_2 = 2 * n, s_3 = 3 * n, s_1 = n;
+
+  // generate sin(alpha) from cos(alpha)
+  double *sin_alpha = malloc_double(n);
+  for (i = 0; i < n; i++) {
+    sin_alpha[i] = sqrt(1.0 - cos_alpha[i] * cos_alpha[i]);
+  }
+
+  cblas_dcopy(n, cos_alpha, 1, (double *)&exp_Im_alpha[s_3], 2);
+  cblas_dcopy(n, sin_alpha, 1, (double *)&exp_Im_alpha[s_3] + 1, 2);
+
+  vm_double_complex_multiply(n, &exp_Im_alpha[s_3], &exp_Im_alpha[s_3],
+                             &exp_Im_alpha[s_2]);
+
+  if (allow_fourth_rank) {
+    vm_double_complex_multiply(n, &exp_Im_alpha[s_2], &exp_Im_alpha[s_3],
+                               &exp_Im_alpha[s_1]);
+    vm_double_complex_multiply(n, &exp_Im_alpha[s_1], &exp_Im_alpha[s_3],
+                               exp_Im_alpha);
+  }
+  free(sin_alpha);
 }

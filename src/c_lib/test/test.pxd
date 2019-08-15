@@ -17,7 +17,7 @@ cdef extern from "angular_momentum.h":
 
     void __wigner_dm0_vector(const int l, const double beta, double *R_out)
 
-    void get_exp_Im_alpha(const unsigned int n_orientations,
+    void get_exp_Im_alpha(const unsigned int octant_orientations,
                              const double *cos_alpha,
                              const bool_t allow_fourth_rank,
                              double complex *exp_Im_alpha)
@@ -100,9 +100,9 @@ cdef extern from "spinning_sidebands.h":
 
         isotopomer_ravel *ravel_isotopomer,
 
-        int quadSecondOrder,                # Quad theory for second order,
-        int remove_second_order_quad_iso,   # remove the isotropic contribution from the
-                                            # second order quad Hamiltonian.
+        int quad_second_order,                    # Quad theory for second order,
+        int remove_second_order_quad_isotropic,   # remove the isotropic contribution from the
+                                                  # second order quad Hamiltonian.
 
         # spin rate, spin angle and number spinning sidebands
         int number_of_sidebands,

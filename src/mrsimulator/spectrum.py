@@ -19,7 +19,7 @@ class Spectrum(Parseable):
     Args:
         number_of_points: Number of points
         spectral_width: Width of spectrum region to consider in Hz
-        reference_offset: Offset frequecy in Hz
+        reference_offset: Offset frequency in Hz
         magnetic_flux_density: Magnetic flux density in T
         rotor_frequency: Frequency in Hz
         rotor_angle: Angle in radians
@@ -27,7 +27,7 @@ class Spectrum(Parseable):
         isotope: Isotope in "{A}{Symbol}" notation such as 1H or 29Si
         spin: nuclear spin quantum number as n/2
         natural_abundance: fractional natural abundance, IE sums should equal 1
-        gyromagnetic_ratio: #TODO What are the units?
+        gyromagnetic_ratio: In units of MHz/T?
     """
 
     number_of_points: int = 1024
@@ -35,7 +35,7 @@ class Spectrum(Parseable):
     reference_offset: float = 0
     magnetic_flux_density: float = 9.4
     rotor_frequency: float = 0
-    rotor_angle: float = 0.9553  # 54.935 degrees in radians
+    rotor_angle: float = 0.9553  # 54.735 degrees in radians
     rotor_phase: float = 0
     isotope: str = "1H"
     spin: int = 1

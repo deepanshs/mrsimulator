@@ -8,8 +8,6 @@ from numpy.fft import fftshift
 
 from mrsimulator import Isotopomer, Spectrum, Simulator
 
-TEST_C = True
-
 
 def _import_json(filename):
     with open(filename, "rb") as f:
@@ -107,11 +105,28 @@ def c_setup(data_object, data_source):
     isotopomer = [
         Isotopomer.parse_json_with_units(item) for item in data_object["isotopomers"]
     ]
-    print(spectrum)
-    print(isotopomer[0].sites[0])
 
     s1 = Simulator(isotopomer, spectrum)
     data_mrsimulator = s1.one_d_spectrum(geodesic_polyhedron_frequency=120)[1]
+    data_mrsimulator /= data_mrsimulator.max()
+
+    return data_mrsimulator, data_source
+
+
+def c_setup_random_euler_angles(data_object, data_source):
+    # mrsimulator
+    spectrum = Spectrum.parse_json_with_units(data_object["spectrum"])
+    isotopomers = [
+        Isotopomer.parse_json_with_units(isotopomer)
+        for isotopomer in data_object["isotopomers"]
+    ]
+    for isotopomer in isotopomers:
+        isotopomer.sites[0].shielding_symmetric.alpha = np.random.rand(1) * 2 * np.pi
+        isotopomer.sites[0].shielding_symmetric.beta = np.random.rand(1) * 2 * np.pi
+        isotopomer.sites[0].shielding_symmetric.gamma = np.random.rand(1) * 2 * np.pi
+
+    s1 = Simulator(isotopomers, spectrum)
+    freq, data_mrsimulator = s1.one_d_spectrum(geodesic_polyhedron_frequency=120)
     data_mrsimulator /= data_mrsimulator.max()
 
     return data_mrsimulator, data_source
@@ -125,56 +140,103 @@ def test00_sim_shielding():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test00", "test00.json")
 
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test01_sim_shielding():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test01", "test01.json")
+
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test02_sim_shielding():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test02", "test02.json")
+
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test03_sim_shielding():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test03", "test03.json")
+
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test04_sim_shielding():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test04", "test04.json")
+
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test05_sim_shielding():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test05", "test05.json")
+
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test06_sim_shielding():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test06", "test06.json")
+
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test07_sim_shielding():
     path_ = path.join("tests", "simpson")
     file_ = path.join(path_, "test07", "test07.json")
+
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
@@ -186,35 +248,65 @@ def test07_sim_shielding():
 def test00_python_shielding():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test00", "test00.json")
+
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test01_python_shielding():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test01", "test01.json")
+
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test02_python_shielding():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test02", "test02.json")
+
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test03_python_shielding():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test03", "test03.json")
+
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 
 def test04_python_shielding():
     path_ = path.join("tests", "python")
     file_ = path.join(path_, "test04", "test04.json")
+
+    # euler angle all zero
     data_mrsimulator, data_source = c_setup(*get_data(file_))
+    np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
+
+    # random euler angle all zero. Euler angles should not affect the spectrum.
+    data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(file_))
     np.testing.assert_almost_equal(data_mrsimulator, data_source, decimal=2)
 
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import mrsimulator.sandbox as clib
+import mrsimulator.tests.tests as clib
 from mrsimulator.python.utils import pre_phase_components
 import numpy as np
 

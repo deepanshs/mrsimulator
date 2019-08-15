@@ -17,8 +17,6 @@ extern double wigner_d(int l, int m1, int m2, double beta);
 void full_DLM_trig(complex128 *wigner, int l, double cosAlpha, double sinAlpha,
                    double cosBeta, double sinBeta);
 
-void get_even_DLM_4_from_2(complex128 *wigner, double cosBeta);
-
 double wigner_d_trig(int l, int m1, int m2, double cx, double sx);
 
 /**
@@ -59,8 +57,7 @@ extern void __wigner_d_matrix_cosine(const int l, const int n,
 /**
  * @brief Rotate @p R_in of length @p l using wigner-d matrices of rank @p l.
  * wigner matrices. The result is a stack of output vector of size `nxl`
-evaluated
- * at all `n` wigner matrices.
+ * evaluated at all `n` wigner matrices.
  * @param l The rank of the wigner-d matrices.
  * @param n The number of cosine alpha angles and wigner-lj matrices.
  * @param cos_alpha A pointer to the 1d array of @f$\cos\alphas@f$.
@@ -72,11 +69,40 @@ evaluated
  *          `i*(2*l+1)` is rotated with the wigner-lj matrix at index
  *          `i*(2*l+1)*(2*l+1)`.
  */
-extern void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
-                              complex128 *R_in, complex128 *R_out);
+extern void __wigner_rotation(const int l, const int n, const double *wigner,
+                              const double *cos_alpha, const complex128 *R_in,
+                              complex128 *R_out);
 
 extern void __wigner_rotation_2(const int l, const int n, const double *wigner,
                                 const complex128 *exp_Im_alpha,
                                 const complex128 *R_in, complex128 *R_out);
 
 extern void __wigner_dm0_vector(const int l, const double beta, double *R_out);
+
+/**
+ * ✅
+ * @brief Performs a rank l wigner rotation of the coefficients from the l rank
+ * spherical tensors.
+ *
+ * @param l The rank of the tensor.
+ * @param euler_angles A pointer to the array of three euler angles.
+ * @param R_in A pointer to the array of coefficients from the l rank tensors of
+ *          length 2xl+1 before rotation.
+ * @param R_out A pointer to the array of coefficients from the l rank tensors
+ *          of length 2xl+1 after rotation.
+ */
+extern void single_wigner_rotation(const int l, const double *euler_angles,
+                                   const complex128 *R_in, complex128 *R_out);
+
+extern void wigner_d_matrix(const int l, const int n, const double *angle,
+                            double *wigner);
+
+extern void __batch_wigner_rotation(
+    const unsigned int octant_orientations, const unsigned int n_octants,
+    const double *wigner_2j_matrices, const complex128 *R2,
+    const double *wigner_4j_matrices, const complex128 *R4,
+    complex128 *exp_Im_alpha, complex128 *w2, complex128 *w4);
+
+extern void get_exp_Im_alpha(const unsigned int n, const double *cos_alpha,
+                             const bool allow_fourth_rank,
+                             complex128 *exp_Im_alpha);

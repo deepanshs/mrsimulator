@@ -180,11 +180,11 @@ def cosine_of_polar_angles_and_amplitudes(int geodesic_polyhedron_frequency=72):
     :return amp: The amplitude at the given $\alpha$ and $\beta$.
     """
     nt = geodesic_polyhedron_frequency
-    cdef unsigned int n_orientations = int((nt+1) * (nt+2)/2)
+    cdef unsigned int octant_orientations = int((nt+1) * (nt+2)/2)
 
-    cdef np.ndarray[double] cos_alpha = np.empty(n_orientations, dtype=np.float64)
-    cdef np.ndarray[double] cos_beta = np.empty(n_orientations, dtype=np.float64)
-    cdef np.ndarray[double] amp = np.empty(n_orientations, dtype=np.float64)
+    cdef np.ndarray[double] cos_alpha = np.empty(octant_orientations, dtype=np.float64)
+    cdef np.ndarray[double] cos_beta = np.empty(octant_orientations, dtype=np.float64)
+    cdef np.ndarray[double] amp = np.empty(octant_orientations, dtype=np.float64)
 
     clib.__powder_averaging_setup(nt, &cos_alpha[0], &cos_beta[0], &amp[0])
 
@@ -272,7 +272,7 @@ def _one_d_simulator(
         quadrupolar_orientations = None,
 
         second_order_quad = 1,
-        remove_second_order_quad_iso = 0,
+        remove_second_order_quad_isotropic = 0,
 
         # dipolar coupling
         D = None,
@@ -391,7 +391,7 @@ def _one_d_simulator(
 
     isotopomer_struct.dipolar_couplings = &D_c[0]
 
-    cdef int remove_second_order_quad_iso_c = remove_second_order_quad_iso
+    cdef int remove_second_order_quad_isotropic_c = remove_second_order_quad_isotropic
     clib.spinning_sideband_core(
             # spectrum information and related amplitude
             &amp[0],
@@ -402,7 +402,7 @@ def _one_d_simulator(
             &isotopomer_struct,
 
             second_order_quad_c,
-            remove_second_order_quad_iso_c,
+            remove_second_order_quad_isotropic_c,
 
             # spin rate, spin angle and number spinning sidebands
             number_of_sidebands,

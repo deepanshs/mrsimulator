@@ -41,6 +41,12 @@ inline complex64 complex128_add_inplace(complex64 a, float b) {
   a.imag += b;
   return a;
 }
+complex128 void complex_multiply(complex128 a, complex128 b) {
+  complex128 res;
+  res.real = a.real * b.real - a.imag * b.imag;
+  res.imag = a.real * b.imag + b.real * a.imag;
+  return res;
+}
 #endif
 
 // library definition
@@ -99,6 +105,10 @@ inline complex64 complex128_add_inplace(complex64 a, float b) {
 #include "octahedron.h"
 #include "powder_setup.h"
 
+#define sphere 0
+#define hemisphere 1
+#define octant 0
+
 /**
  * @struct MRS_plan_t
  * @brief Create a mrsimulator plan for faster lineshape simulation.
@@ -152,10 +162,14 @@ struct MRS_plan_t {
 
   /* private attributes */
 
-  fftw_plan the_fftw_plan;     //  The plan for fftw routine.
-  unsigned int n_orientations; //  number of unique orientations.
-  unsigned int size;           //  number of orientations * number of sizebands.
-  double *amplitudes;          //  array of amplitude scaling per orientation.
+  fftw_plan the_fftw_plan;          //  The plan for fftw routine.
+  unsigned int octant_orientations; //  number of unique orientations on the
+                                    //  face of an octant.
+  unsigned int total_orientations;  //  number of unique orientations on the
+                                    //  surface of a sphere.
+  unsigned int size;        //  number of orientations * number of sizebands.
+  unsigned int n_octants;   //  number of octants used in the simulation.
+  double *amplitudes;       //  array of amplitude scaling per orientation.
   double *norm_amplitudes;  //  array of normalized amplitudes per orientation.
   complex128 *exp_Im_alpha; //  array of cos_alpha per orientation.
   complex128 *w2;           //  buffer for 2nd rank frequency calculation.
