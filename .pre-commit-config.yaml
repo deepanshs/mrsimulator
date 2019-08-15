@@ -32,8 +32,8 @@ repos:
       language: python
     - id: check-docstring-first
       language: python
-    # - id: flake8
-    #   language: python
+    - id: flake8
+      language: python
     - id: end-of-file-fixer
       language: python
     - id: trailing-whitespace

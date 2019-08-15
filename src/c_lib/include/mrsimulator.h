@@ -50,12 +50,12 @@ complex128 void complex_multiply(complex128 a, complex128 b) {
 #endif
 
 // library definition
-// #if __has_include("mkl.h")
-// #include "mkl.h"
-// #define __blas_activate
-// #include "vm_mkl.h"
+#if __has_include("mkl.h")
+#include "mkl.h"
+#define __blas_activate
+#include "vm_mkl.h"
 
-#if __has_include("cblas.h")
+#elif __has_include("cblas.h")
 #include "cblas.h"
 #define __blas_activate
 #include "vm.h"

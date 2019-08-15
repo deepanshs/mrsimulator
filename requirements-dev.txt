@@ -1,5 +1,7 @@
 black
 pre-commit
+pydantic
+monty
 
 ## test required
 sympy
