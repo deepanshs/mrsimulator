@@ -143,35 +143,63 @@ def one_d_spectrum(dict spectrum,
 
             # CSA tensor
             iso = site['isotropic_chemical_shift']
-            aniso = site['shielding_symmetric']['anisotropy']
-            eta = site['shielding_symmetric']['asymmetry']
+            if iso is None: iso = 0.0
+
+            shielding = site['shielding_symmetric']
+            if shielding is not None:
+                zeta = shielding['anisotropy']
+                if zeta is None: zeta = 0.0
+                eta = shielding['asymmetry']
+                if eta is None: eta = 0.0
+                alpha, beta, gamma = shielding['alpha'], shielding['beta'], shielding['gamma']
+                if alpha is None: alpha = 0.0
+                if beta is None: beta = 0.0
+                if gamma is None: gamma = 0.0
+            else:
+                zeta, eta, alpha, beta, gamma = 0.0, 0.0, 0.0, 0.0, 0.0
 
             if verbose in [1, 11]:
                 text = ((
                     f"\n{isotope} site {i} from isotopomer {index_isotopomer} "
-                    f"@ {abundance*100}% abundance"
+                    f"@ {abundance}% abundance"
                 ))
                 len_ = len(text)
                 print(text)
                 print(f"{'-'*(len_-1)}")
                 print(f'Isotropic chemical shift = {str(iso)}')
-                print(f'Shielding anisotropy = {str(aniso)}')
+                print(f'Shielding anisotropy = {str(zeta)}')
                 print(f'Shielding asymmetry = {eta}')
+                print(f'Shielding orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
             # CSA tensor in Hz
             iso_n[i] = iso
-            zeta_n[i] = aniso
+            zeta_n[i] = zeta
             eta_n[i] = eta
+            ori_n[3*i:3*i+3] = [alpha, beta, gamma]
 
             # quad tensor
             if spin_quantum_number > 0.5:
-                Cq_e[i] = site['quadrupolar']['anisotropy']
-                eta_e[i] = site['quadrupolar']['asymmetry']
+                quad = site['quadrupolar']
+                if quad is not None:
+                    Cq = quad['anisotropy']
+                    if Cq is None: Cq = 0.0
+                    eta = quad['asymmetry']
+                    if eta is None: eta = 0.0
+                    alpha, beta, gamma = quad['alpha'], quad['beta'], quad['gamma']
+                    if alpha is None: alpha = 0.0
+                    if beta is None: beta = 0.0
+                    if gamma is None: gamma = 0.0
+                else:
+                    Cq, eta, alpha, beta, gamma = 0.0, 0.0, 0.0, 0.0, 0.0
+
+                Cq_e[i] = Cq
+                eta_e[i] = eta
+                ori_e[3*i:3*i+3] = [alpha, beta, gamma]
 
                 if verbose in [1, 11]:
                     print(f'Quadrupolar coupling constant = {Cq_e[i]/1e6} MHz')
                     print(f'Quadrupolar asymmetry = {eta}')
-
+                    print(f'Quadrupolar orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
         # print(transition_array)
         # print(number_of_transitions)
 
