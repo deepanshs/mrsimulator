@@ -119,7 +119,7 @@ sideband.3
 sandbox.c
 nmr_methods.c
 main.c
-mrsimulator.code-workspace
+*.code-workspace
 jquery.js
 setup.py.src
 setup.temp
