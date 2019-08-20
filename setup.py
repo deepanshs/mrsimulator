@@ -147,6 +147,7 @@ setup(
         "requests>=2.21.0",
         "monty==2.0.4",
         "matplotlib>=3.0.2",
+        "csdmpy",
     ],
     extras_require={"fancy feature": ["plotly>=3.6", "dash>=0.40", "dash_daq>=0.1"]},
     ext_modules=cythonize(ext_modules, language_level=3),

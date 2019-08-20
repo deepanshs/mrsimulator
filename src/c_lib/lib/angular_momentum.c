@@ -49,7 +49,8 @@ void wigner_d_matrix(const int l, const int n, const double *angle,
 }
 
 // ✅ .. note: (__wigner_d_matrix_cosine) monitored with pytest ................
-void __wigner_d_matrix_cosine(const int l, const int n, const double *cos_angle,
+void __wigner_d_matrix_cosine(const int l, const int n,
+                              const double *restrict cos_angle,
                               double *wigner) {
   double cx, cx2, sx, temp;
   int i;
@@ -61,24 +62,24 @@ void __wigner_d_matrix_cosine(const int l, const int n, const double *cos_angle,
       sx = sqrt(1. - cx2);
 
       t1 = (1. + cx);
-      temp = -sx * t1 / 2.;
+      temp = -sx * t1 * 0.5;
       wigner[19] = temp;  //  2,  1 // 19
       wigner[5] = -temp;  // -2, -1 //  5
       wigner[23] = -temp; //  1,  2 // 23
       wigner[1] = temp;   // -1, -2 //  1
 
-      temp = t1 * t1 / 4.;
+      temp = t1 * t1 * 0.25;
       wigner[24] = temp; //  2,  2 // 24
       wigner[0] = temp;  // -2, -2 //  0
 
       t1 = (1. - cx);
-      temp = -sx * t1 / 2.;
+      temp = -sx * t1 * 0.5;
       wigner[9] = temp;   //  2, -1 //  9
       wigner[15] = -temp; // -2,  1 // 15
       wigner[3] = temp;   //  1, -2 //  3
       wigner[21] = -temp; // -1,  2 // 21
 
-      temp = t1 * t1 / 4.;
+      temp = t1 * t1 * 0.25;
       wigner[4] = temp;  //  2, -2 //  4
       wigner[20] = temp; // -2,  2 // 20
 
@@ -94,15 +95,15 @@ void __wigner_d_matrix_cosine(const int l, const int n, const double *cos_angle,
       wigner[7] = -temp;  //  0, -1 //  7
       wigner[11] = temp;  // -1,  0 // 11
 
-      temp = (2.0 * cx2 + cx - 1.) / 2.;
+      temp = (2.0 * cx2 + cx - 1.) * 0.5;
       wigner[18] = temp; //  1,  1 // 18
       wigner[6] = temp;  // -1, -1 //  6
 
-      temp = -(2.0 * cx2 - cx - 1.) / 2.;
+      temp = -(2.0 * cx2 - cx - 1.) * 0.5;
       wigner[8] = temp;  //  1, -1 //  8
       wigner[16] = temp; // -1,  1 // 16
 
-      wigner[12] = 1.5 * cx2 - .5; // 0,  0 // 12
+      wigner[12] = 1.5 * cx2 - 0.5; // 0,  0 // 12
 
       wigner += 25;
     }
@@ -200,7 +201,7 @@ void __wigner_d_matrix_cosine(const int l, const int n, const double *cos_angle,
       wigner[56] = temp; // -2,  2 // 56
       wigner[24] = temp; //  2, -2 // 24
 
-      temp = 0.3952847075 * sx2 * (7. * cx2 - 1);
+      temp = 0.3952847075 * sx2 * (7. * cx2 - 1.0);
       wigner[42] = temp; //  2,  0 // 42
       wigner[38] = temp; // -2,  0 // 38
       wigner[58] = temp; //  0,  2 // 58
@@ -252,7 +253,7 @@ void __wigner_d_matrix_cosine(const int l, const int n, const double *cos_angle,
       wigner[32] = temp; //  1, -1 // 32
       wigner[48] = temp; // -1,  1 // 48
 
-      temp = 0.125 * (3. - 30. * cx2 + 35 * cx2 * cx2);
+      temp = 0.125 * (3. - 30. * cx2 + 35.0 * cx2 * cx2);
       wigner[40] = temp; //  0,  0 // 40
 
       wigner += 81;
@@ -366,10 +367,6 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
   complex128 *temp_initial_vector = malloc_complex128(n1);
   complex128 temp;
 
-  // #pragma omp parallel for
-  // private(orientation, pha, ph2, m, temp_initial_vector,
-  //                                  final_vector, i),
-  //     shared(n, cos_alpha, n1, R_in, l, R_out, wigner, n2)
   for (orientation = 0; orientation < n; orientation++) {
 
     // copy the initial vector

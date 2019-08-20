@@ -103,6 +103,7 @@ venv.bak/
 
 # folders
 src/c_lib/test_c/**
+tests/simpson/quad/**
 
 # files
 *.out
@@ -124,3 +125,4 @@ jquery.js
 setup.py.src
 setup.temp
 __config__.json
+src/mrsimulator/web_ui/test_dash.py

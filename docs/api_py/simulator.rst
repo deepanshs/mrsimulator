@@ -13,25 +13,25 @@ Simulator
 
     .. rubric:: Attributes Summary
 
-    .. autosummary::
-        ~Simulator.isotopomers
-        ~Simulator.spectrum
-        ~Simulator.isotope_list
+.. .. autosummary::
+..     ~Simulator.isotopomers
+..     ~Simulator.spectrum
+..     ~Simulator.isotope_list
 
-    .. rubric:: Methods Summary
+.. .. rubric:: Methods Summary
 
-    .. autosummary::
-        ~Simulator.run
-        ~Simulator.load_isotopomers
+.. .. autosummary::
+..     ~Simulator.run
+..     ~Simulator.load_isotopomers
 
-    .. rubric:: Attributes Documentation
-    .. autoattribute:: isotopomers
-    .. autoattribute:: spectrum
-    .. autoattribute:: isotope_list
+.. .. rubric:: Attributes Documentation
+.. .. autoattribute:: isotopomers
+.. .. autoattribute:: spectrum
+.. .. autoattribute:: isotope_list
 
-    .. rubric:: Method Documentation
-    .. automethod:: run
-    .. automethod:: load_isotopomers
+.. .. rubric:: Method Documentation
+.. .. automethod:: run
+.. .. automethod:: load_isotopomers
 
 
 

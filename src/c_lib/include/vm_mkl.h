@@ -6,6 +6,7 @@
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
  * Add the elements of vector x and y and store in res of type double.
  * res = x + y
@@ -137,3 +138,4 @@ static inline void vm_double_complex_exp(int count, const complex128 *x,
                                          complex128 *res) {
   vmzExp(count, x, res, VML_EP);
 }
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */

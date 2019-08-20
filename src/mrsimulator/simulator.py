@@ -25,9 +25,7 @@ class Simulator:
         """
         Returns a list of all valid isotopes for this simulator
         """
-        return list(
-            {isotope for isotope, data in ISOTOPE_DATA.items() if data["spin"] == 1}
-        )
+        return list({isotope for isotope, data in ISOTOPE_DATA.items()})
 
     @property
     def all_isotopes(self):
@@ -44,7 +42,7 @@ class Simulator:
         )
 
     @property
-    def valid_isotope_list(self):
+    def unique_isotopes(self):
         """
         Returns a list of unique and valid isotope symbols from the list of isotopomers
         """

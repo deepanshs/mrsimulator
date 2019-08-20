@@ -6,6 +6,7 @@
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /** Arithmetic suit ======================================================== */
 
 /**
@@ -448,4 +449,6 @@ static inline void catlas_daxpby(int count, const double a,
     y += stride_y;
   }
 }
-#endif
+#endif /* __blas_activate */
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */

@@ -65,11 +65,19 @@ def string_to_unit(unit):
     return unit_qt
 
 
+def is_physical_quantity(string):
+    try:
+        string_to_quantity(string)
+        return True
+    except BaseException:
+        return False
+
+
 def string_to_quantity(string, dtype=float):
     """
     Parse the string and return a ``Quantity`` object.
 
-    The string must contain a physical quanity. The method parse the string
+    The string must contain a physical quantity. The method parse the string
     for numerical value and unit.
 
     :returns: ``Quantity`` object

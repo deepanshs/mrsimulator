@@ -8,7 +8,6 @@ Python-API References
    :caption: Contents:
 
    simulator
-   sandbox
    hamiltonian
    transition_functions
 
