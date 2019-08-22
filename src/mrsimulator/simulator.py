@@ -21,11 +21,19 @@ class Simulator:
         self.spectrum = spectrum
 
     @staticmethod
-    def allowed_isotopes():
+    def allowed_isotopes(spin=None):
         """
         Returns a list of all valid isotopes for this simulator
         """
-        return list({isotope for isotope, data in ISOTOPE_DATA.items()})
+        if spin is None:
+            return list({isotope for isotope, data in ISOTOPE_DATA.items()})
+        return list(
+            {
+                isotope
+                for isotope, data in ISOTOPE_DATA.items()
+                if data["spin"] == int(2 * spin)
+            }
+        )
 
     @property
     def all_isotopes(self):
@@ -41,8 +49,7 @@ class Simulator:
             }
         )
 
-    @property
-    def unique_isotopes(self):
+    def isotope_list(self, spin=None):
         """
         Returns a list of unique and valid isotope symbols from the list of isotopomers
         """
@@ -51,7 +58,7 @@ class Simulator:
                 site.isotope
                 for isotopomer in self.isotopomers
                 for site in isotopomer.sites
-                if site.isotope in self.allowed_isotopes()
+                if site.isotope in self.allowed_isotopes(spin)
             }
         )
 
@@ -92,15 +99,9 @@ class Simulator:
             isotopomer.to_freq_dict(self.spectrum.larmor_frequency)
             for isotopomer in self.isotopomers
         ]
-        spectrum = self.spectrum.dict()
+        spectrum = self.spectrum
 
-        (freq, amp, larmor_frequency, list_index_isotopomer) = one_d_spectrum(
-            spectrum=spectrum, isotopomers=isotopomers, **kwargs
-        )
+        freq, amp = one_d_spectrum(spectrum=spectrum, isotopomers=isotopomers, **kwargs)
         """The frequency is in the units of Hz."""
         freq *= u.Unit("Hz")
-        """The larmor_frequency is in the units of MHz."""
-        # larmor_frequency *= u.Unit("MHz")
-
-        # isotopo_ = [self.isotopomers[i] for i in list_index_isotopomer]
         return freq, amp

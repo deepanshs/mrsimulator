@@ -6,7 +6,7 @@ import base64
 
 __title__ = "mrsimulator"
 __sub_title__ = "A web application framework for NMR lineshape simulation."
-bar = "docs/_static/mrsimulator.png"
+bar = "docs/_static/mrsimulator-dark.png"
 encoded_image = base64.b64encode(open(bar, "rb").read())
 
 colors = {"background": "#e2e2e2", "text": "#085858"}

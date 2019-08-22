@@ -27,6 +27,8 @@ magic angle spinning (MAS), and variable angle spinning (VSA) lineshapes.
    examples
    api_py/py_api
    api_c/c_api
+   c_api/transition_function
+   c_api/struct_isotopomer_ravel
 
 Indices and tables
 ==================

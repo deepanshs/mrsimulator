@@ -10,7 +10,7 @@ python:
 
 env:
   - PKG1=mkl PKG2=mkl-include
-  - PKG1=nomkl PKG2=openblas
+  # - PKG1=nomkl PKG2=openblas
 
 cache:
   pip: true

@@ -16,148 +16,139 @@ colors = {"background": "#e2e2e2", "text": "#585858"}
 
 main_body = dbc.Container(
     [
-        html.Br(),
         dbc.Row(
             [
                 dbc.Col(spectrum_body, xs=12, sm=12, md=12, lg=7, xl=7),
                 dbc.Col(dimension_body),
             ],
             no_gutters=False,
-        ),
-        html.Br(),
-        # dbc.Jumbotron(),
-        html.Br(),
+        )
     ],
-    fluid=True,
-    # className="mt-4",
+    # fluid=True,
+    # className="w3-container w3-teal",
 )
 
-input_file = (
-    html.Div(
-        className="row",
-        children=[
-            html.Div(
-                className="col s12 m7 l7",
-                children=[
-                    html.H5(id="filename_dataset"),
-                    html.H6(
-                        id="data_time",
-                        style={"textAlign": "left", "color": colors["text"]},
-                    ),
-                ],
-            ),
-            html.Div(
-                className="col s12 m5 l5",
-                children=[
-                    dcc.Upload(
-                        id="upload_data",
-                        children=html.Div(["Drag and Drop or ", html.A("Select File")]),
-                        style={
-                            "width": "100%",
-                            "height": "50px",
-                            "lineHeight": "50px",
-                            "borderWidth": "1px",
-                            "borderStyle": "dashed",
-                            "borderRadius": "5px",
-                            "textAlign": "center",
-                            "margin": "1px",
-                        },
-                        # Allow multiple files to be uploaded
-                        multiple=False,
-                    ),
-                    html.Label(
-                        id="error_message",
-                        # 'color': 'red'}
-                        style={"textAlign": "center"},
-                    ),
-                ],
-            ),
-        ],
-    ),
+filename_datetime = dbc.Col(
+    [
+        html.H5(id="filename_dataset"),
+        html.P(id="data_time", style={"textAlign": "left", "color": colors["text"]}),
+    ]
 )
 
+upload_data = dbc.Col(
+    [
+        dcc.Upload(
+            id="upload_data",
+            children=html.Div(["Drag and Drop or ", html.A("Select File")]),
+            style={
+                "width": "100%",
+                "height": "50px",
+                "lineHeight": "50px",
+                "borderWidth": "1px",
+                "borderStyle": "dashed",
+                "borderRadius": "5px",
+                "textAlign": "center",
+                "margin": "1px",
+            },
+            # Allow multiple files to be uploaded
+            multiple=False,
+        ),
+        dbc.Label(id="error_message", align="center"),
+    ]
+)
 
-def table_css():
-    return {
-        "selector": ".dash-cell div.dash-cell-value",
-        "rule": {
-            "display": "inline",
-            "white-space": "inherit",
-            "overflow": "inherit",
-            "text-overflow": "inherit",
-            "overflowX": "scroll",
-            "border": "thin lightgrey solid",
-        },
-    }
+input_file = dbc.Container(dbc.Row([filename_datetime, upload_data]), fluid=True)
 
 
-def display_isotopomers(isotope, isotopomers_object):
-    columns_ = ["index", "site", "isotropic chemical shift", "anisotropy", "asymmetry"]
+def get_isotopomers(isotope, isotopomers_object):
+    list_isotopomers = [
+        dbc.ListGroup(
+            [
+                dbc.ListGroupItem(
+                    [
+                        dbc.ListGroupItemHeading(f"Isotopomer {i+1}"),
+                        dbc.ListGroupItem(
+                            f"{j+1} {site.isotope} Site", n_clicks=0, action=True
+                        ),
+                    ]
+                )
+                for i, isotopomer in enumerate(isotopomers_object)
+                for j, site in enumerate(isotopomer.sites)
+            ]
+        )
+    ]
+    return html.Div(list_isotopomers)
 
-    child = []
-    for j, isotopomer in enumerate(isotopomers_object):
-        sites_ = []
-        for i, site in enumerate(isotopomer.sites):
-            if site.isotope == isotope:
-                site_ = {}
-                site_["index"] = i
-                # site_["isotope"] = site.isotope
-                # site_["isotropic chemical shift"] = site.isotropic_chemical_shift
-                # site_["anisotropy"] = site.shielding_symmetric.anisotropy
-                # site_["asymmetry"] = site.shielding_symmetric.asymmetry
 
-                # ravel_.append(site['isotope'])
-                # ravel_.append(site['isotropic_chemical_shift'])
-                # ravel_.append(site['shielding_symmetric']['anisotropy'])
-                # ravel_.append(site['shielding_symmetric']['asymmetry'])
-                sites_.append(site_)
+# def get_isotopomers(isotope, isotopomers_object):
 
-                # print(sites_)
+#     cards = []
+#     total_sites = 0
+#     for j, isotopomer in enumerate(isotopomers_object):
+#         number_of_sites = len(isotopomer.sites)
+#         total_sites += number_of_sites
+#         for i, site in enumerate(isotopomer.sites):
+#             if site.isotope == isotope:
+#                 card_body = [
+#                     html.H6(f"{isotope} site index {i}", className="card-title"),
+#                     dbc.Row(
+#                         [
+#                             dbc.Col(dbc.Label(
+#                                  f"Isotropic chemical shift", size="sm"
+#                             )),
+#                             dbc.Col(
+#                                 dbc.Label(
+#                                     "{0} {1}".format(
+#                                         site.isotropic_chemical_shift,
+#                                         site.property_units["isotropic_chemical_shift"],
+#                                     ),
+#                                     className="card-text",
+#                                     size="sm",
+#                                     align="right",
+#                                 )
+#                             ),
+#                         ],
+#                         no_gutters=True,
+#                     ),
+#                     dbc.Row(
+#                         [
+#                             dbc.Col(dbc.Label(f"Shielding anisotropy", size="sm")),
+#                             dbc.Col(
+#                                 dbc.Label(
+#                                     "{0} {1}".format(
+#                                         site.shielding_symmetric.anisotropy,
+#                                         site.shielding_symmetric.property_units[
+#                                             "anisotropy"
+#                                         ],
+#                                     ),
+#                                     className="card-text",
+#                                     size="sm",
+#                                     align="right",
+#                                 )
+#                             ),
+#                         ],
+#                         no_gutters=True,
+#                     ),
+#                     dbc.Row(
+#                         [
+#                             dbc.Col(dbc.Label(f"Shielding asymmetry", size="sm")),
+#                             dbc.Col(
+#                                 dbc.Label(
+#                                     f"{site.shielding_symmetric.asymmetry}",
+#                                     className="card-text",
+#                                     size="sm",
+#                                     align="right",
+#                                 )
+#                             ),
+#                         ],
+#                         no_gutters=True,
+#                     ),
+#                 ]
+#                 card = [
+#                     dbc.CardHeader(f"Isotopomer index {j}"),
+#                     dbc.CardBody(card_body),
+#                 ]
+#                 cards.append(dbc.Card(card))
 
-                # child.append(
-                #     html.Div(
-                #         className="row",
-                #         children=[
-                #             html.Div(
-                #                 className="card-panel hoverable col s12 m6 l6",
-                #                 children=[
-                #                     html.H6(
-                #                         children="".join(["Isotopomer ", str(j)]),
-                #                         style={
-                #                             "textAlign": "left",
-                #                             "color": colors["text"],
-                #                         },
-                #                     ),
-                #                     dash_table.DataTable(
-                #                         style_data={"whiteSpace": "normal"},
-                #                         css=[table_css()],
-                #                         style_as_list_view=True,
-                #                         style_cell={
-                #                             "textAlign": "left",
-                #                             "padding": "5px",
-                #                         },
-                #                         style_header={
-                #                             "backgroundColor": "white",
-                #                             "fontWeight": "bold",
-                #                             "fontSize": 12,
-                #                             "color": "#585858",
-                #                         },
-                #                         style_cell_conditional=[
-                #                             {
-                #                                 "if": {"row_index": "odd"},
-                #                                 "backgroundColor": "#f8f8f8",
-                #                             }
-                #                         ],
-                #                         columns=[
-                #                             {"name": i, "id": i} for i in columns_
-                #                         ],
-                #                         data=sites_,
-                #                     ),
-                #                 ],
-                #             )
-                #         ],
-                #     )
-                # )
-
-    # abundance = isotopomer['abundance']
-    return child
+#     cards_deck = dbc.Jumbotron(dbc.CardDeck(cards))
+#     return cards_deck, total_sites

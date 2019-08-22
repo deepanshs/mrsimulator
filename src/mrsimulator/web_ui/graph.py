@@ -12,16 +12,16 @@ csv_button = dbc.Button(
     "CSV",
     id="download_csv_button",
     outline=True,
-    color="info",
-    className="mr-1",
+    color="primary",
+    className="mr-7",
     size="sm",
 )
 csdm_button = dbc.Button(
     "CSDM",
     id="download_csdm_button",
     outline=True,
-    color="info",
-    className="mr-1",
+    color="primary",
+    className="mr-7",
     size="sm",
 )
 
@@ -29,17 +29,35 @@ info_button = dbc.Button(
     "Info", id="info", outline=True, color="info", className="mr-1", size="sm"
 )
 
+show_individual_button = dbc.Button(
+    "Decompose",
+    id="decompose",
+    outline=True,
+    color="info",
+    className="mr-1",
+    size="sm",
+    active=True,
+)
+
 button_group = dbc.ButtonGroup(
     [
-        dbc.CardLink(csv_button, href="", id="download_csv", external_link=True),
-        dbc.CardLink(csdm_button, href="", id="download_csdm", external_link=True),
+        dbc.CardLink(
+            csv_button, href="", id="download_csv", external_link=True, className="mr-1"
+        ),
+        dbc.CardLink(
+            csdm_button,
+            href="",
+            id="download_csdm",
+            external_link=True,
+            className="mr-1",
+        ),
     ]
 )
 
 
 modal = html.Div(
     [
-        dbc.ButtonGroup([info_button]),
+        dbc.ButtonGroup([show_individual_button]),
         dbc.Modal(
             [
                 dbc.ModalHeader("Header"),
@@ -48,7 +66,13 @@ modal = html.Div(
                     id="simulation-output",
                 ),
                 dbc.ModalFooter(
-                    dbc.Button("Close", id="close", className="ml-auto", outline=True)
+                    dbc.Button(
+                        "Close",
+                        id="close",
+                        color="dark",
+                        className="ml-auto",
+                        outline=True,
+                    )
                 ),
             ],
             id="modal",
@@ -62,7 +86,7 @@ spectrum_body = dbc.Card(
             dbc.Row(
                 [
                     dbc.Col(
-                        html.H3("Spectrum", id="spectrum_id", className="card-title"),
+                        html.H4("Spectrum", id="spectrum_id", className="card-title"),
                         xs=4,
                         sm=4,
                         md=4,
@@ -71,60 +95,8 @@ spectrum_body = dbc.Card(
                     ),
                     dbc.Col(modal, align="right"),
                     button_group,
-                    #     ]
-                    # ),
-                    # # html.H3("Spectrum", id="spectrum_id", className="card-title"),
-                    # dbc.Col(
-                    #     [
-                    # dbc.Col(
-                    # dbc.Button(
-                    #     dbc.DropdownMenuItem(
-                    #         "CSV",
-                    #         id="download_csv",
-                    #         external_link=True,
-                    #         style={
-                    #             "background-color": "rgba(245, 245, 245, 0)",
-                    #             "opacity": "1.0",
-                    #             "border": "none",
-                    #         },
-                    #     ),
-                    #     outline=True,
-                    #     color="info",
-                    #     className="mr-1",
-                    #     size="sm",
-                    # ),
-                    # ),
-                    # dbc.Col(
-                    # dbc.Button(
-                    #     dbc.DropdownMenuItem(
-                    #         "CSDM", id="download_csdf", external_link=True
-                    #     ),
-                    #     # id="download_csdm",
-                    #     outline=True,
-                    #     color="info",
-                    #     className="mr-1",
-                    #     size="sm",
-                    # ),
-                    # ),
-                    # dbc.Col(html.H5("info", id="spectrum_id_info")),
-                    # dbc.DropdownMenu(
-                    #     [
-                    #         # dbc.DropdownMenuItem(
-                    #         #     "CSV", id="download_csv", external_link=True
-                    #         # ),
-                    #         # dbc.DropdownMenuItem(
-                    #         #     "CSDM", id="download_csdf", external_link=True
-                    #         # )
-                    #     ],
-                    #     label="Download",
-                    #     group=True,
-                    # ),
-                    # html.A("\u21E9 Download CSV", id="download_csv"),
-                    # html.A("\u21E9 Download CSDM", id="download_csdf"),
                 ]
             ),
-            # html.P(id="placeholder"),
-            html.Div(html.A(id="download")),
             dcc.Graph(id="nmr_spectrum", figure={"data": []}),
         ]
     )

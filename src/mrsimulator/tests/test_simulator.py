@@ -39,7 +39,7 @@ def simulator(isotopomers, spectrum):
 
 
 def test_allowed_isotopes():
-    assert set(Simulator.allowed_isotopes()) == {
+    assert set(Simulator.allowed_isotopes(spin=0.5)) == {
         "19F",
         "31P",
         "129Xe",
@@ -55,8 +55,8 @@ def test_all_isotopes(simulator):
     assert set(simulator.all_isotopes) == {"29Si"}
 
 
-def test_valid_isotope_list(simulator):
-    assert set(simulator.valid_isotope_list) == {"29Si"}
+def test_isotope_list(simulator):
+    assert set(simulator.isotope_list()) == {"29Si"}
 
 
 def test_one_d_spectrum(simulator):

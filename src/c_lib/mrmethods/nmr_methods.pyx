@@ -1,4 +1,5 @@
 cimport nmr_methods as clib
+from libcpp cimport bool as bool_t
 from numpy cimport ndarray
 import numpy as np
 import cython
@@ -9,11 +10,12 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def one_d_spectrum(dict spectrum,
+def one_d_spectrum(spectrum,
        list isotopomers,
        int verbose=0,
        int number_of_sidebands=90,
-       int geodesic_polyhedron_frequency=72):
+       int geodesic_polyhedron_frequency=72,
+       bool_t individual_spectrum=False):
     """
 
     :ivar verbose:
@@ -39,24 +41,23 @@ def one_d_spectrum(dict spectrum,
     """
 # ---------------------------------------------------------------------
 # spectrum ________________________________________________________
-    cdef double sample_rotation_frequency_in_Hz = spectrum['rotor_frequency']
-    cdef double rotor_angle_in_rad = spectrum['rotor_angle']
-    B0 = spectrum['magnetic_flux_density']
+    cdef double sample_rotation_frequency_in_Hz = spectrum.rotor_frequency
+    cdef double rotor_angle_in_rad = spectrum.rotor_angle
+    B0 = spectrum.magnetic_flux_density
 
     if verbose in [1, 11]:
         print ('Setting up the virtual NMR spectrometer')
         print ('---------------------------------------')
         print (f'Adjusting the magnetic flux density to {B0} T.')
-        _angle = spectrum['rotor_angle']
-        print (f'Setting rotation angle to {_angle} rad.')
+        print (f'Setting rotation angle to {rotor_angle_in_rad} rad.')
         print (f'Setting rotation frequency to {sample_rotation_frequency_in_Hz} Hz.')
 
 # ---------------------------------------------------------------------
 # spin observed _______________________________________________________
-    isotope = spectrum['isotope']
+    isotope = spectrum.isotope
 
     # spin quantum number of the observed spin
-    cdef double spin_quantum_number = spectrum['spin']/2.0
+    cdef double spin_quantum_number = spectrum.spin/2.0
 
     # transitions of the observed spin
     cdef ndarray[double, ndim=1] transition_array
@@ -71,14 +72,14 @@ def one_d_spectrum(dict spectrum,
     #     transition_array = np.asarray(transitions).ravel()
 
     # gyromagnetic ratio
-    cdef double larmor_frequency = spectrum['gyromagnetic_ratio']*B0
+    cdef double larmor_frequency = spectrum.larmor_frequency
 
 # ---------------------------------------------------------------------
 # dimension axis ______________________________________________________
-    cdef int number_of_points = spectrum['number_of_points']
-    cdef double spectral_width = spectrum['spectral_width']
+    cdef int number_of_points = spectrum.number_of_points
+    cdef double spectral_width = spectrum.spectral_width
     cdef double increment = spectral_width/number_of_points
-    cdef double reference_offset = spectrum['reference_offset']
+    cdef double reference_offset = spectrum.reference_offset
 
     if verbose in [1, 11]:
         print ((f'Detecting {isotope}(I={spin_quantum_number}, '
@@ -106,6 +107,7 @@ def one_d_spectrum(dict spectrum,
     cdef int i, trans__
     cdef ndarray[double, ndim=1] amp
     amp1 = np.zeros(number_of_points, dtype=np.float64)
+    amp_individual = []
 
     cdef clib.isotopomer_ravel isotopomer_struct
     # cdef clib.isotopomers_list *isotopomers_list_c
@@ -243,8 +245,13 @@ def one_d_spectrum(dict spectrum,
                     &transition_array[2*trans__],
                     geodesic_polyhedron_frequency)
 
+        if individual_spectrum:
+            amp_individual.append(amp.reshape(number_of_sites, number_of_points)*abundance)
+        else:
+            amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
 
-        amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
+    if individual_spectrum:
+        amp1 = np.asarray(amp_individual)
 
     freq = (np.arange(number_of_points)*increment + reference_offset)
-    return freq, amp1, larmor_frequency, list_index_isotopomer
+    return freq, amp1
