@@ -5,32 +5,85 @@
 Getting started with `mrsimulator`
 ==================================
 
-In this section, we have put together guidelines to encourage consistency
-amongst the users. The NMR lineshapes are calculated with the instance of
-the :ref:`simulator_api` class. Import this class following
+We have put together a set of guidelines from using various methods and
+attributes of `mrsimulator` package. We encourage the users
+to follow these guidelines to promote consistency amongst others.
+The solid state nuclear magnetic resonance (ssNMR) lineshapes are calculated
+through an instance of the :ref:`simulator_api` class.
+
+First, import the :ref:`simulator_api` class,
 
 .. doctest::
 
     >>> from mrsimulator import Simulator
 
-and create an instance,
+and create an instance as follows,
 
 .. doctest::
 
     >>> sim1 = Simulator()
 
-Here, ``sim1`` is an instance of the :ref:`simulator_api` class. The
-two often used attributes of this instance are
-attr:`~mrsimulator.Simulator.isotopomers` and
-attr:`~mrsimulator.Simulator.spectrum`.
-The default value of these attributes is
+Here, ``sim1`` is a variable with an instance of the :ref:`simulator_api`
+class. The two attributes of this class that you will often use are
+:attr:`~mrsimulator.Simulator.isotopomers` and
+:attr:`~mrsimulator.Simulator.spectrum`. The default value of these
+attributes is an empty list.
 
 .. doctest::
 
-    >>> print(sim1.isotopomers)
+    >>> sim1.isotopomers
     []
-    >>> print(sim1.spectrum)
-    {}
+    >>> sim1.spectrum
+    []
+
+Before we can start simulating lineshapes, we need to specify a list of
+isotopomers and spectrum to the above attributes.
+
+Setting up an Isotopomer object
+-------------------------------
+We define an isotopomer as an isolated spin-system containing
+multiple sites and couplings between them. In this example, however, we
+concern ourselves with a single site spin-system, that is, an isotopomer with
+a single site. Shown below is an example of such isotopomer expressed as a
+python dictionary.
+
+.. code-block:: json
+
+    {
+        "sites": [
+            {
+                "isotope": "29Si",
+                "isotropic_chemical_shift": "-101.1 ppm",
+                "shielding_symmetric": {
+                    "anisotropy": "70.5 ppm",
+                    "asymmetry": 0.1
+            }
+        ]
+    }
+
+The python dictionary contains a ``sites`` keyword containing a list of sites
+defined within the isotopomer. In this examples, we have defined a single site,
+again as a python dictionary, containing site specific information such as,
+the site isotope, the isotropic chemical shift, and the parameters from the
+irreducible second rank symmetric nuclear shielding tensor---asymmetry and
+anisotropy, expressed in Haeberlen convension. For additional information
+see :ref:`isotopomer` and :ref:`site`.
+
+
+
+
+An instance of an Isotopomer object may be created from a python dictionary,
+such as the one shown above, using the :ref:`isotopomer_api`
+class.
+
+    >>> from mrsimulator import Isotopomer
+    >>> isotopomer_object = Isotopomer.parse_json_with_units(isotopomer_dict)
+
+You may create as many isotopomers as necessary, although in this example, we
+stick with a single isotopomer. Now add this isotopomer to the variable
+``sim``
+
+
 
 Please read the section on :ref:`isotopomers` and :ref:`spectrum` for
 instructions on how to assign values to these attributes, respectively.

@@ -6,7 +6,7 @@ from setuptools import setup
 
 from Cython.Build import cythonize
 
-from os.path import join
+from os.path import join, split
 from os.path import abspath
 from os.path import dirname
 import platform
@@ -21,30 +21,50 @@ module_dir = dirname(abspath(__file__))
 include_dirs = []
 library_dirs = []
 libraries = []
-openblas_info = sysinfo.get_info("openblas")
-fftw3_info = sysinfo.get_info("fftw3")
-mkl_info = sysinfo.get_info("mkl")
 
-if mkl_info != {}:
-    name = "mkl"
-    include_dirs += mkl_info["include_dirs"]
-    library_dirs += mkl_info["library_dirs"]
-    libraries += mkl_info["libraries"]
-elif openblas_info != {}:
+if platform.system() == "Windows":
+    numpy_include = np.get_include()
+    conda_location = numpy_include
+    for _ in range(5):
+        conda_location = split(conda_location)[0]
+    include_dirs += [join(conda_location, "Library", "include", "fftw")]
+    include_dirs += [join(conda_location, "Library", "include", "openblas")]
+    include_dirs += [join(conda_location, "include")]
+    library_dirs += [join(conda_location, "Library", "lib")]
+    libraries += ["fftw3", "openblas"]
     name = "openblas"
-    library_dirs += openblas_info["library_dirs"]
-    libraries += openblas_info["libraries"]
-    libraries += ["pthread"]
-# else:
-#     raise Exception("mkl blas or openblas library not found.")
 
-include_dirs += fftw3_info["include_dirs"]
-library_dirs += fftw3_info["library_dirs"]
-libraries += fftw3_info["libraries"]
+    extra_link_args = ["-lm"]
+    extra_compile_args = ["-DFFTW_DLL"]
 
-include_dirs = list(set(include_dirs))
-library_dirs = list(set(library_dirs))
-libraries = list(set(libraries))
+else:
+    openblas_info = sysinfo.get_info("openblas")
+    fftw3_info = sysinfo.get_info("fftw3")
+    mkl_info = sysinfo.get_info("mkl")
+
+    if mkl_info != {}:
+        name = "mkl"
+        include_dirs += mkl_info["include_dirs"]
+        library_dirs += mkl_info["library_dirs"]
+        libraries += mkl_info["libraries"]
+    elif openblas_info != {}:
+        name = "openblas"
+        library_dirs += openblas_info["library_dirs"]
+        libraries += openblas_info["libraries"]
+        libraries += ["pthread"]
+    # else:
+    #     raise Exception("mkl blas or openblas library not found.")
+
+    include_dirs += fftw3_info["include_dirs"]
+    library_dirs += fftw3_info["library_dirs"]
+    libraries += fftw3_info["libraries"]
+
+    include_dirs = list(set(include_dirs))
+    library_dirs = list(set(library_dirs))
+    libraries = list(set(libraries))
+
+    extra_link_args = ["-lm"]
+    extra_compile_args = ["--std=c99", "-g", "-O3", "-DFFTW_DLL"]
 
 blas_info = {
     "name": name,
@@ -61,9 +81,6 @@ with open("src/mrsimulator/__config__.json", "w", encoding="utf8") as outfile:
 # other include paths
 include_dirs.append("src/c_lib/include")
 include_dirs.append(np.get_include())
-
-extra_link_args = ["-lm"]
-extra_compile_args = ["--std=c99", "-g", "-O3"]
 
 # system = platform.system()
 # arch = platform.architecture()[0]

@@ -14,16 +14,33 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 class Simulator:
     """
     The simulator class.
+
+    .. rubric:: Attributes Documentation
+
+    Attributes:
+        isotopomers: List of Isotopomer objects.
+        dimensions: List of dimension objects.
+        isotope: List of all unique isotopes defined in the list of isotopomers.
+            This also includes NMR inactive isotopes.
     """
 
-    def __init__(self, isotopomers=[], spectrum={}):
+    def __init__(self, isotopomers=[], spectrum=[]):
         self.isotopomers = isotopomers
         self.spectrum = spectrum
 
+    # @property
     @staticmethod
     def allowed_isotopes(spin=None):
         """
-        Returns a list of all valid isotopes for this simulator
+        List of NMR active isotopes allowed in ``mrsimulator``.
+
+        Args:
+            spin: (optional) The spin quantum number. Valid input are multiples of 0.5.
+
+        Returns:
+            A list of all isotopes with the give spin quantum number allowed in
+            mrsimulator. If the spin is unspecified or None, a list of all
+            allowed isotopes is returned instead.
         """
         if spin is None:
             return list({isotope for isotope, data in ISOTOPE_DATA.items()})
@@ -36,11 +53,7 @@ class Simulator:
         )
 
     @property
-    def all_isotopes(self):
-        """
-        Return a list of unique isotopes symbols from the list of
-        isotopomers.
-        """
+    def isotopes(self):
         return list(
             {
                 site.isotope
@@ -49,9 +62,17 @@ class Simulator:
             }
         )
 
-    def isotope_list(self, spin=None):
+    def get_isotopes(self, spin=None):
         """
-        Returns a list of unique and valid isotope symbols from the list of isotopomers
+        List of unique isotopes defined in list of isotopomers.
+
+        Args:
+            spin: (optional) The spin quantum number. Valid input are multiples of 0.5.
+
+        Returns:
+            A list of unique isotopes from the list of isotopomers corresponding
+            to given value of `spin`. If the spin is unspecified or None, a list of all
+            unique isotopes is returned instead.
         """
         return list(
             {
@@ -64,13 +85,17 @@ class Simulator:
 
     def load_isotopomers(self, filename):
         """
-        Load a JSON serialized isotopomers file.
+        Load a list of isotopomers from JSON serialized isotopomers file.
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
         /master/isotopomers_ppm.json>`_
         of JSON serialized isotopomers file. For details, refer to the
         :ref:`load_isotopomers` section.
+
+        Args:
+            `filename`: A local or remote address to the JSON serialized isotopomers
+                        file.
         """
         contents = import_json(filename)
         json_data = contents["isotopomers"]

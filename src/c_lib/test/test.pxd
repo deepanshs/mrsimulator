@@ -6,8 +6,8 @@ cdef extern from "angular_momentum.h":
     void __wigner_d_matrix_cosine(const int l, const int n, const double *cos_angle,
                                   double *wigner)
 
-    void __wigner_rotation(const int l, const int n, const double *wigner, const double *cos_alpha,
-                           const double complex *R_in, double complex *R_out)
+    # void __wigner_rotation(const int l, const int n, const double *wigner, const double *cos_alpha,
+    #                        const double complex *R_in, double complex *R_out)
 
     void __wigner_rotation_2(const int l, const int n, const double *wigner, const double complex *exp_Im_alpha,
                            const double complex *R_in, double complex *R_out)

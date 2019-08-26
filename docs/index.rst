@@ -17,21 +17,20 @@ simulation of single spin :math:`I=\frac{1}{2}` nuclei static,
 magic angle spinning (MAS), and variable angle spinning (VSA) lineshapes.
 
 .. toctree::
-   :maxdepth: 7
+   :maxdepth: 2
    :caption: Contents:
 
+   mr_objects
    installation
    getting_started
-   mr_objects
    load_isotopomers
    examples
    api_py/py_api
    api_c/c_api
-   c_api/transition_function
-   c_api/struct_isotopomer_ravel
+   c_api/c_api
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

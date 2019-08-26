@@ -6,6 +6,9 @@
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
+#include <math.h>
+#include <string.h>
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /** Arithmetic suit ======================================================== */
 
@@ -32,13 +35,14 @@ static inline void vm_double_add(int count, const double *restrict x,
  * y += x
  */
 static inline void vm_double_add_inplace(int count, const double *restrict x,
-                                         double *restrict y) {
+                                         const int stride_x, double *restrict y,
+                                         const int stride_y) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   while (count-- > 0) {
-    *y++ += *x++;
-    // x += stride_x;
-    // y += stride_y;
+    *y += *x;
+    x += stride_x;
+    y += stride_y;
   }
 }
 
@@ -212,13 +216,22 @@ static inline void vm_double_complex_multiply(int count,
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   // res = __builtin_assume_aligned(res, 32);
-  // double *res_ = (double *)res;
-  // double *x_ = (double *)x;
-  // double *y_ = (double *)y;
-  // int count_ = 2 * count;
+  double *res_ = (double *)res;
+  double *x_ = (double *)x;
+  double *y_ = (double *)y;
+  double real, imag, a, b, c, d;
 
   while (count-- > 0) {
-    *res++ = *x++ * *y++;
+    real = *x_++;
+    imag = *x_++;
+    a = real * *y_;   // real real
+    c = imag * *y_++; // imag real
+    b = imag * *y_;   // imag imag
+    d = real * *y_++; // real imag
+    *res_++ = a - b;
+    *res_++ = c + d;
+
+    // *res++ = *x++ * *y++;
   }
 }
 
@@ -311,39 +324,15 @@ static inline void vm_double_complex_exp(int count,
                                          complex128 *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
-  // double *x_ = (double *)x;
-  // double *res_ = (double *)res;
-  // double *res_1 = (double *)res + 1;
-  // int count_ = 2 * count;
-  // int i = 1;
-  // double factor, num_;
+  double *x_ = (double *)x;
+  double *res_ = (double *)res;
+  double temp;
 
-  // // double temp;
   while (count-- > 0) {
-    //   i = 1;
-    //   factor = *++x_;
-    //   num_ = factor;
-    //   *res_ = 1;
-    //   *res_1 = factor;
-    //   while (i < 10)
-    //   {
-    //     factor *= num_ / ++i;
-    //     *res_ -= factor;
-    //     factor *= num_ / ++i;
-    //     *res_1 -= factor;
-    //     factor *= num_ / ++i;
-    //     *res_ += factor;
-    //     factor *= num_ / ++i;
-    //     *res_1 += factor;
-    //   }
-    //   res_ += 2;
-    //   res_1 += 2;
-    //   x_++;
-
-    *res++ = cexp(*x++);
-    // temp = my_exp(*x_++);
-    // *res_++ = cos(*++x_) * temp;
-    // *res_++ = sin(*x_++) * temp;
+    // *res++ = cexp(*x++);
+    temp = my_exp(*x_++);
+    *res_++ = cos(*x_) * temp;
+    *res_++ = sin(*x_++) * temp;
   }
 }
 

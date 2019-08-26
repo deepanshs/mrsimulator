@@ -67,32 +67,32 @@ def single_wigner_rotation(int l, np.ndarray[double] euler_angles, np.ndarray[do
     return R_out
 
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-def wigner_rotation(int l, np.ndarray[double complex] R_in,
-                    cos_alpha = None, cos_beta = None,
-                    wigner_matrix=None):
-    r"""
+# @cython.boundscheck(False)
+# @cython.wraparound(False)
+# def wigner_rotation(int l, np.ndarray[double complex] R_in,
+#                     cos_alpha = None, cos_beta = None,
+#                     wigner_matrix=None):
+#     r"""
 
-    """
-    cdef int n1 = 2 * l + 1
-    cdef np.ndarray[double, ndim=1] wigner, cos_alpha_c, cos_beta_c
-    cos_alpha_c = np.asarray(cos_alpha, dtype=np.float64)
+#     """
+#     cdef int n1 = 2 * l + 1
+#     cdef np.ndarray[double, ndim=1] wigner, cos_alpha_c, cos_beta_c
+#     cos_alpha_c = np.asarray(cos_alpha, dtype=np.float64)
 
-    if wigner_matrix is None:
-        n = cos_beta.size
-        wigner = np.empty(n1**2 * n)
-        cos_beta_c = np.asarray(cos_beta, dtype=np.float64)
-        clib.__wigner_d_matrix_cosine(l, n, &cos_beta_c[0], &wigner[0])
-    else:
-        n = wigner_matrix.shape[0]
-        wigner = np.asarray(wigner_matrix.ravel(), dtype=np.float64)
+#     if wigner_matrix is None:
+#         n = cos_beta.size
+#         wigner = np.empty(n1**2 * n)
+#         cos_beta_c = np.asarray(cos_beta, dtype=np.float64)
+#         clib.__wigner_d_matrix_cosine(l, n, &cos_beta_c[0], &wigner[0])
+#     else:
+#         n = wigner_matrix.shape[0]
+#         wigner = np.asarray(wigner_matrix.ravel(), dtype=np.float64)
 
-    cdef np.ndarray[complex] R_out = np.zeros(n1*n, dtype=np.complex128)
+#     cdef np.ndarray[complex] R_out = np.zeros(n1*n, dtype=np.complex128)
 
-    clib.__wigner_rotation(l, n, &wigner[0],
-                           &cos_alpha_c[0], &R_in[0], &R_out[0])
-    return R_out.reshape(n, n1)
+#     clib.__wigner_rotation(l, n, &wigner[0],
+#                            &cos_alpha_c[0], &R_in[0], &R_out[0])
+#     return R_out.reshape(n, n1)
 
 
 @cython.boundscheck(False)

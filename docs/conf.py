@@ -13,6 +13,7 @@
 import os
 import sys
 import textwrap
+import subprocess
 
 # import sphinx_rtd_theme
 
@@ -46,43 +47,54 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
     "sphinx.ext.viewcode",
+    "sphinx.ext.napoleon",
     # "autoapi.extension",
     "breathe",
-    "exhale",
-    # "sphinxjp.themes.basicstrap",
+    # "exhale",
+    "sphinxjp.themes.basicstrap",
 ]
+
+read_the_docs_build = os.environ.get("READTHEDOCS", None) == "True"
+
+# if read_the_docs_build:
+subprocess.call("cd doxyoutput; doxygen", shell=True)
 
 # Setup the breathe extension
 breathe_projects = {"My Project": "./doxyoutput/xml"}
 breathe_default_project = "My Project"
 breathe_domain_by_extension = {"h": "c", "py": "py"}
 breathe_use_project_refids = True
-breathe_doxygen_config_options = {"PREDEFINED": "DOXYGEN_SHOULD_SKIP_THIS"}
+breathe_doxygen_config_options = {
+    "PREDEFINED": "DOXYGEN_SHOULD_SKIP_THIS",
+    # "GENERATE_XML": True,
+    # "XML_PROGRAMLISTING": True,
+    # "INPUT": "../../src/c_lib/include",
+}
 
 
 # Setup the exhale extension
-exhale_args = {
-    # These arguments are required
-    "containmentFolder": "./api_c",
-    "rootFileName": "c_api.rst",
-    "rootFileTitle": "C-API References",
-    "afterTitleDescription": textwrap.dedent(
-        """
-       .. note::
+# exhale_args = {
+#     # These arguments are required
+#     "containmentFolder": "./api_c",
+#     "rootFileName": "c_api.rst",
+#     "rootFileTitle": "C-API References",
+#     "afterTitleDescription": textwrap.dedent(
+#         """
+#        .. note::
 
-           The following documentation presents the C-API.  The Python API
-           generally mirrors the C-API, but some methods may not be available in
-           Python or may perform different actions.
-    """
-    ),
-    "doxygenStripFromPath": "..",
-    # Suggested optional arguments
-    "createTreeView": True,
-    # TIP: if using the sphinx-bootstrap-theme, you need
-    # "treeViewIsBootstrap": True,
-    "exhaleExecutesDoxygen": True,
-    "exhaleDoxygenStdin": "INPUT = ../src/c_lib/include",
-}
+#            The following documentation presents the C-API.  The Python API
+#            generally mirrors the C-API, but some methods may not be available in
+#            Python or may perform different actions.
+#     """
+#     ),
+#     "doxygenStripFromPath": "..",
+#     # Suggested optional arguments
+#     "createTreeView": True,
+#     # TIP: if using the sphinx-bootstrap-theme, you need
+#     # "treeViewIsBootstrap": True,
+#     "exhaleExecutesDoxygen": True,
+#     "exhaleDoxygenStdin": "INPUT = ../src/c_lib/include",
+# }
 
 # Tell sphinx what the primary language being documented is.
 primary_domain = "py"
@@ -127,7 +139,7 @@ pygments_style = None
 #
 # Some html_theme options are 'alabaster', 'bootstrap', 'sphinx_rtd_theme',
 # 'classic', 'basicstrap'
-html_theme = "sphinx_rtd_theme"
+html_theme = "basicstrap"
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -165,13 +177,13 @@ html_theme = "sphinx_rtd_theme"
 #     # Works only "bootstrap_version = 3"
 #     "noflatdesign": False,
 #     # Enable Google Web Font. Defaults to false
-#     "googlewebfont": True,
+#     # "googlewebfont": False,
 #     # Set the URL of Google Web Font's CSS.
 #     # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
 #     # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Lily+Script+One",  # NOQA
 #     # Set the Style of Google Web Font's CSS.
 #     # Defaults to "font-family: 'Text Me One', sans-serif;"
-#     "googlewebfont_style": u"font-family: 'Roboto' Regular 24;",
+#     # "googlewebfont_style": u"font-family: 'Roboto' Regular 24;",
 #     # Set 'navbar-inverse' attribute to header navbar. Defaults to false.
 #     "header_inverse": True,
 #     # Set 'navbar-inverse' attribute to relbar navbar. Defaults to false.
@@ -179,11 +191,11 @@ html_theme = "sphinx_rtd_theme"
 #     # Enable inner theme by Bootswatch. Defaults to false
 #     "inner_theme": False,
 #     # Set the name of inner theme. Defaults to 'bootswatch-simplex'
-#     "inner_theme_name": "bootswatch-simplex",
+#     "inner_theme_name": "bootswatch-default",
 #     # Select Twitter bootstrap version 2 or 3. Defaults to '3'
 #     "bootstrap_version": "3",
 #     # Show "theme preview" button in header navbar. Defaults to false.
-#     "theme_preview": True,
+#     # "theme_preview": True,
 #     # Set the Size of Heading text. Defaults to None
 #     # "h1_size": "3.0em",
 #     # "h2_size": "2.6em",
@@ -194,7 +206,7 @@ html_theme = "sphinx_rtd_theme"
 # }
 
 # Theme options
-html_logo = "_static/mrsimulator.png"
+html_logo = "_static/mrsimulator-light-add-01.png"
 
 html_context = {
     "display_github": True,
@@ -202,7 +214,7 @@ html_context = {
     "github_repo": "mrsimulator",
     "github_version": "master/docs/",
     "css_files": [
-        "_static/button.css",
+        # "_static/button.css",
         #     "_static/theme_overrides.css",  # override wide tables in RTD theme
         #     "_static/style.css",
         #     "_static/custom.css",

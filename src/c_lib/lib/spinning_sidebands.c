@@ -90,36 +90,36 @@ static inline void __spinning_sideband_core(
     __zero_components(&R0, R2, R4);
 
     /* get nuclear shielding components upto first order ................... */
-    get_nuclear_shielding_hamiltonian_to_first_order(
-        &R0, R2_temp, iso_n_, zeta_n_, eta_n_, transition);
+    nuclear_shielding_frequency_to_1st_order(&R0, R2_temp, iso_n_, zeta_n_,
+                                             eta_n_, transition);
     single_wigner_rotation(2, shielding_orientation, R2_temp, R2_temp);
-    vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+    vm_double_add_inplace(10, (double *)R2_temp, 1, (double *)R2, 1);
 
     /* get weakly coupled direct dipole components upto first order ........ */
-    get_weakly_coupled_direct_dipole_hamiltonian_to_first_order(&R0, R2_temp,
-                                                                d_, transition);
-    vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+    weakly_coupled_direct_dipole_frequencies_to_first_order(&R0, R2_temp, d_,
+                                                            transition);
+    vm_double_add_inplace(10, (double *)R2_temp, 1, (double *)R2, 1);
     // add orientation dependence
 
     if (ravel_isotopomer->spin > 0.5) {
       /* get electric quadrupolar components upto first order .............. */
-      get_quadrupole_hamiltonian_to_first_order(
+      quadrupole_frequencies_to_first_order(
           &R0, R2_temp, ravel_isotopomer->spin, Cq_e_, eta_e_, transition);
       single_wigner_rotation(2, quadrupolar_orientation, R2_temp, R2_temp);
-      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+      vm_double_add_inplace(10, (double *)R2_temp, 1, (double *)R2, 1);
 
       /* get electric quadrupolar components upto second order ............. */
       if (plan->allow_fourth_rank) {
-        get_quadrupole_hamiltonian_to_second_order(
+        quadrupole_frequencies_to_second_order(
             &R0, R2_temp, R4_temp, ravel_isotopomer->spin, Cq_e_, eta_e_,
             transition, ravel_isotopomer->larmor_frequency,
             remove_second_order_quad_isotropic);
 
         single_wigner_rotation(2, quadrupolar_orientation, R2_temp, R2_temp);
-        vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+        vm_double_add_inplace(10, (double *)R2_temp, 1, (double *)R2, 1);
 
         single_wigner_rotation(4, quadrupolar_orientation, R4_temp, R4_temp);
-        vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+        vm_double_add_inplace(18, (double *)R4_temp, 1, (double *)R4, 1);
       }
     }
 

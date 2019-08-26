@@ -51,12 +51,12 @@ def test_allowed_isotopes():
     }
 
 
-def test_all_isotopes(simulator):
-    assert set(simulator.all_isotopes) == {"29Si"}
+def test_get_isotopes(simulator):
+    assert set(simulator.get_isotopes()) == {"29Si"}
 
 
-def test_isotope_list(simulator):
-    assert set(simulator.isotope_list()) == {"29Si"}
+# def test_isotope_list(simulator):
+#     assert set(simulator.isotope_list()) == {"29Si"}
 
 
 def test_one_d_spectrum(simulator):

@@ -54,8 +54,10 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
   plan->sample_rotation_frequency_in_Hz = sample_rotation_frequency_in_Hz;
 
   plan->allow_fourth_rank = allow_fourth_rank;
-  plan->one = 1.0;
-  plan->zero = 0.0;
+  plan->one[0] = 1.0;
+  plan->one[1] = 0.0;
+  plan->zero[0] = 0.0;
+  plan->zero[1] = 0.0;
   // plan->one.real = 1.0;
   // plan->one.imag = 0.0;
   // plan->zero.real = 0.0;
@@ -159,6 +161,8 @@ MRS_plan *MRS_create_plan(unsigned int geodesic_polyhedron_frequency,
 void MRS_plan_free_rotor_angle_in_rad(MRS_plan *plan) {
   free(plan->wigner_d2m0_vector);
   free(plan->wigner_d4m0_vector);
+  plan->wigner_d2m0_vector = NULL;
+  plan->wigner_d4m0_vector = NULL;
 }
 
 /* Update the MRS plan for the given rotor angle in radians. */
@@ -336,7 +340,8 @@ void MRS_plan_update_averaging_scheme(
   /* fftw routine setup .................................................... */
   /* ....................................................................... */
   plan->size = plan->total_orientations * plan->number_of_sidebands;
-  plan->vector = malloc_complex128(plan->size);
+  plan->vector = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * plan->size);
+  // malloc_complex128(plan->size);
   // gettimeofday(&fft_setup_time, NULL);
   plan->the_fftw_plan = fftw_plan_many_dft(
       1, &plan->number_of_sidebands, plan->total_orientations, plan->vector,
@@ -577,6 +582,7 @@ void __get_components(int number_of_sidebands, double sample_rotation_frequency,
                       complex128 *pre_phase) {
   double spin_angular_freq, tau, wrt, pht, scale;
   int step, i, m;
+  double *pre_phase_ = (double *)pre_phase;
 
   // Calculate the spin angular frequency
   spin_angular_freq = sample_rotation_frequency * PI2;
@@ -596,13 +602,13 @@ void __get_components(int number_of_sidebands, double sample_rotation_frequency,
       pht = 0.0;
       scale = PI2 / m_wr[m];
       for (step = 0; step < number_of_sidebands; step++) {
-        pre_phase[i++] = scale * (cexp(I * pht) - 1.0);
+        *pre_phase_++ = scale * (cos(pht) - 1.0);
+        *pre_phase_++ = scale * sin(pht);
         pht += wrt;
       }
     } else {
-      for (step = 0; step < number_of_sidebands; step++) {
-        pre_phase[i++] = 0.0;
-      }
+      vm_double_zeros(2 * number_of_sidebands, pre_phase_);
+      pre_phase_ += 2 * number_of_sidebands;
     }
   }
 }

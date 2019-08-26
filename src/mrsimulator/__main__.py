@@ -416,7 +416,7 @@ def update_isotopomers(content, filename, date):
 
     if success:
         isotope_list = [
-            {"label": site_iso, "value": site_iso} for site_iso in sim.isotope_list()
+            {"label": site_iso, "value": site_iso} for site_iso in sim.get_isotopes()
         ]
         isotope = isotope_list[0]["value"]
     else:

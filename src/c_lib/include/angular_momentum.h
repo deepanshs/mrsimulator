@@ -69,9 +69,9 @@ extern void __wigner_d_matrix_cosine(const int l, const int n,
  *          `i*(2*l+1)` is rotated with the wigner-lj matrix at index
  *          `i*(2*l+1)*(2*l+1)`.
  */
-extern void __wigner_rotation(const int l, const int n, const double *wigner,
-                              const double *cos_alpha, const complex128 *R_in,
-                              complex128 *R_out);
+// extern void __wigner_rotation(const int l, const int n, const double *wigner,
+//                               const double *cos_alpha, const complex128 *R_in,
+//                               complex128 *R_out);
 
 extern void __wigner_rotation_2(const int l, const int n, const double *wigner,
                                 const complex128 *exp_Im_alpha,
