@@ -1,0 +1,119 @@
+from mrsimulator.methods import one_d_spectrum
+from mrsimulator import Simulator, Isotopomer, Spectrum
+import numpy as np
+import json
+import os
+
+eta_array = [1.0, 0.5, 0.0]
+angle_array = ["90 deg", "70.12 deg",  "65 deg", "54.74 deg", "45 deg", "30.56 deg"]
+
+count = 1
+for eta in eta_array:
+    for angle in angle_array:
+        isotopomers_dict = [
+            {
+                "sites": [
+                    {
+                        "isotope": "23Na",
+                        "isotropic_chemical_shift": "0 ppm",
+                        "quadrupolar": {"anisotropy": "2.5 MHz", "asymmetry": eta}
+                    }
+                ],
+                "abundance": "100 %",
+            },
+        ]
+        spectrum_dict = {
+            "direct_dimension": {
+                "magnetic_flux_density": "4.7 T",
+                "rotor_frequency": "12.5 kHz",
+                "rotor_angle": angle,
+                "number_of_points": 1024,
+                "spectral_width": "70 kHz",
+                "isotope": "23Na"
+            }
+        }
+
+        test_data_dict = {
+            "source": "python",
+            "filename": f"grid_eta_{eta}_angle_{angle}.npy",
+            "quantity": "frequency",
+            "type": "npz"
+        }
+
+        dictionary = {}
+        dictionary['spectrum'] = spectrum_dict
+        dictionary['isotopomers'] = isotopomers_dict
+        dictionary['test_data'] = test_data_dict
+
+        path__ = os.path.split(__file__)[0]
+        filename = os.path.join(path__, f"test{count:02d}/test{count:02d}.json")
+        print(filename)
+
+        with open(filename, "w", encoding="utf8") as outfile:
+            json.dump(dictionary, outfile, ensure_ascii=False,
+                    sort_keys=False,
+                    indent=2,
+                    allow_nan=False)
+
+        isotopomers = [Isotopomer.parse_json_with_units(item) for item in isotopomers_dict]
+        spectrum = Spectrum.parse_json_with_units(spectrum_dict)
+        s = Simulator(isotopomers, spectrum)
+        f,a = s.run(one_d_spectrum, verbose=0, geodesic_polyhedron_frequency=120)
+
+        save_file = os.path.join(path__, f"test{count:02d}", test_data_dict["filename"])
+        np.save(save_file, np.asarray([f,a]))
+        count +=1
+
+
+isotopomers_dict = [
+    {
+        "sites": [
+            {
+                "isotope": "23Na",
+                "isotropic_chemical_shift": "0 ppm",
+                "quadrupolar": {"anisotropy": "2.5 MHz", "asymmetry": 0.0}
+            }
+        ],
+        "abundance": "100 %",
+    },
+]
+spectrum_dict = {
+    "direct_dimension": {
+        "magnetic_flux_density": "4.7 T",
+        "rotor_frequency": "12.5 kHz",
+        "rotor_angle": "0 deg",
+        "number_of_points": 1024,
+        "spectral_width": "70 kHz",
+        "isotope": "23Na"
+    }
+}
+
+test_data_dict = {
+    "source": "python",
+    "filename": f"grid_eta_0.0_angle_0 deg.npy",
+    "quantity": "frequency",
+    "type": "npz"
+}
+
+dictionary = {}
+dictionary['spectrum'] = spectrum_dict
+dictionary['isotopomers'] = isotopomers_dict
+dictionary['test_data'] = test_data_dict
+
+path__ = os.path.split(__file__)[0]
+filename = os.path.join(path__, f"test00/test00.json")
+print(filename)
+
+with open(filename, "w", encoding="utf8") as outfile:
+    json.dump(dictionary, outfile, ensure_ascii=False,
+            sort_keys=False,
+            indent=2,
+            allow_nan=False)
+
+isotopomers = [Isotopomer.parse_json_with_units(item) for item in isotopomers_dict]
+spectrum = Spectrum.parse_json_with_units(spectrum_dict)
+s = Simulator(isotopomers, spectrum)
+f,a = s.run(one_d_spectrum, verbose=0, geodesic_polyhedron_frequency=120)
+
+save_file = os.path.join(path__, "test00", test_data_dict["filename"])
+np.save(save_file, np.asarray([f,a]))

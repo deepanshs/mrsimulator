@@ -1,0 +1,7 @@
+
+
+===========
+Frequencies
+===========
+
+.. doxygenfile:: frequencies.h

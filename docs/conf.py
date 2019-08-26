@@ -13,14 +13,11 @@
 import os
 import sys
 import textwrap
+import subprocess
+
+# import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath("../.."))
-# sys.path.insert(0, os.path.dirname(os.path.abspath(".")))
-# sys.path.insert(0, os.path.abspath("../.."))
-
-# curr_dir = os.path.abspath(os.path.dirname(__file__))
-# path_to_static = os.path.join(curr_dir, "_build", "_static")
-
 
 # -- Project information -----------------------------------------------------
 
@@ -50,41 +47,54 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
     "sphinx.ext.viewcode",
+    "sphinx.ext.napoleon",
     # "autoapi.extension",
     "breathe",
-    "exhale",
+    # "exhale",
     "sphinxjp.themes.basicstrap",
 ]
+
+read_the_docs_build = os.environ.get("READTHEDOCS", None) == "True"
+
+# if read_the_docs_build:
+subprocess.call("cd doxyoutput; doxygen", shell=True)
 
 # Setup the breathe extension
 breathe_projects = {"My Project": "./doxyoutput/xml"}
 breathe_default_project = "My Project"
 breathe_domain_by_extension = {"h": "c", "py": "py"}
 breathe_use_project_refids = True
+breathe_doxygen_config_options = {
+    "PREDEFINED": "DOXYGEN_SHOULD_SKIP_THIS",
+    # "GENERATE_XML": True,
+    # "XML_PROGRAMLISTING": True,
+    # "INPUT": "../../src/c_lib/include",
+}
+
 
 # Setup the exhale extension
-exhale_args = {
-    # These arguments are required
-    "containmentFolder": "./api_c",
-    "rootFileName": "c_api.rst",
-    "rootFileTitle": "C-API References",
-    "afterTitleDescription": textwrap.dedent(
-        """
-       .. note::
+# exhale_args = {
+#     # These arguments are required
+#     "containmentFolder": "./api_c",
+#     "rootFileName": "c_api.rst",
+#     "rootFileTitle": "C-API References",
+#     "afterTitleDescription": textwrap.dedent(
+#         """
+#        .. note::
 
-           The following documentation presents the C-API.  The Python API
-           generally mirrors the C-API, but some methods may not be available in
-           Python or may perform different actions.
-    """
-    ),
-    "doxygenStripFromPath": "..",
-    # Suggested optional arguments
-    "createTreeView": True,
-    # TIP: if using the sphinx-bootstrap-theme, you need
-    # "treeViewIsBootstrap": True,
-    "exhaleExecutesDoxygen": True,
-    "exhaleDoxygenStdin": "INPUT = ../mrsimulator/scr/include",
-}
+#            The following documentation presents the C-API.  The Python API
+#            generally mirrors the C-API, but some methods may not be available in
+#            Python or may perform different actions.
+#     """
+#     ),
+#     "doxygenStripFromPath": "..",
+#     # Suggested optional arguments
+#     "createTreeView": True,
+#     # TIP: if using the sphinx-bootstrap-theme, you need
+#     # "treeViewIsBootstrap": True,
+#     "exhaleExecutesDoxygen": True,
+#     "exhaleDoxygenStdin": "INPUT = ../src/c_lib/include",
+# }
 
 # Tell sphinx what the primary language being documented is.
 primary_domain = "py"
@@ -136,67 +146,67 @@ html_theme = "basicstrap"
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {
-    # Set the lang attribute of the html tag. Defaults to 'en'
-    "lang": "en",
-    # Disable showing the sidebar. Defaults to 'false'
-    "nosidebar": False,
-    # Show header searchbox. Defaults to false. works only "nosidebar=True",
-    "header_searchbox": True,
-    # Put the sidebar on the right side. Defaults to false.
-    "rightsidebar": False,
-    # Set the width of the sidebar. Defaults to 3
-    "sidebar_span": 3,
-    # Fix navbar to top of screen. Defaults to true
-    "nav_fixed_top": True,
-    # Fix the width of the sidebar. Defaults to false
-    "nav_fixed": False,
-    # Set the width of the sidebar. Defaults to '900px'
-    "nav_width": "900px",
-    # Fix the width of the content area. Defaults to false
-    "content_fixed": False,
-    # Set the width of the content area. Defaults to '900px'
-    "content_width": "900px",
-    # Fix the width of the row. Defaults to false
-    "row_fixed": True,
-    # Disable the responsive design. Defaults to false
-    "noresponsive": False,
-    # Disable the responsive footer relbar. Defaults to false
-    "noresponsiverelbar": False,
-    # Disable flat design. Defaults to false.
-    # Works only "bootstrap_version = 3"
-    "noflatdesign": False,
-    # Enable Google Web Font. Defaults to false
-    "googlewebfont": True,
-    # Set the URL of Google Web Font's CSS.
-    # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
-    # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Lily+Script+One",  # NOQA
-    # Set the Style of Google Web Font's CSS.
-    # Defaults to "font-family: 'Text Me One', sans-serif;"
-    "googlewebfont_style": u"font-family: 'Roboto' Regular 24;",
-    # Set 'navbar-inverse' attribute to header navbar. Defaults to false.
-    "header_inverse": True,
-    # Set 'navbar-inverse' attribute to relbar navbar. Defaults to false.
-    "relbar_inverse": True,
-    # Enable inner theme by Bootswatch. Defaults to false
-    "inner_theme": False,
-    # Set the name of inner theme. Defaults to 'bootswatch-simplex'
-    "inner_theme_name": "bootswatch-simplex",
-    # Select Twitter bootstrap version 2 or 3. Defaults to '3'
-    "bootstrap_version": "3",
-    # Show "theme preview" button in header navbar. Defaults to false.
-    "theme_preview": True,
-    # Set the Size of Heading text. Defaults to None
-    # "h1_size": "3.0em",
-    # "h2_size": "2.6em",
-    # "h3_size": "2.2em",
-    # "h4_size": "1.8em",
-    # "h5_size": "1.4em",
-    # "h6_size": "1.1em",
-}
+# html_theme_options = {
+#     # Set the lang attribute of the html tag. Defaults to 'en'
+#     "lang": "en",
+#     # Disable showing the sidebar. Defaults to 'false'
+#     "nosidebar": False,
+#     # Show header searchbox. Defaults to false. works only "nosidebar=True",
+#     "header_searchbox": True,
+#     # Put the sidebar on the right side. Defaults to false.
+#     "rightsidebar": False,
+#     # Set the width of the sidebar. Defaults to 3
+#     "sidebar_span": 3,
+#     # Fix navbar to top of screen. Defaults to true
+#     "nav_fixed_top": True,
+#     # Fix the width of the sidebar. Defaults to false
+#     "nav_fixed": False,
+#     # Set the width of the sidebar. Defaults to '900px'
+#     "nav_width": "900px",
+#     # Fix the width of the content area. Defaults to false
+#     "content_fixed": False,
+#     # Set the width of the content area. Defaults to '900px'
+#     "content_width": "900px",
+#     # Fix the width of the row. Defaults to false
+#     "row_fixed": True,
+#     # Disable the responsive design. Defaults to false
+#     "noresponsive": False,
+#     # Disable the responsive footer relbar. Defaults to false
+#     "noresponsiverelbar": False,
+#     # Disable flat design. Defaults to false.
+#     # Works only "bootstrap_version = 3"
+#     "noflatdesign": False,
+#     # Enable Google Web Font. Defaults to false
+#     # "googlewebfont": False,
+#     # Set the URL of Google Web Font's CSS.
+#     # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
+#     # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Lily+Script+One",  # NOQA
+#     # Set the Style of Google Web Font's CSS.
+#     # Defaults to "font-family: 'Text Me One', sans-serif;"
+#     # "googlewebfont_style": u"font-family: 'Roboto' Regular 24;",
+#     # Set 'navbar-inverse' attribute to header navbar. Defaults to false.
+#     "header_inverse": True,
+#     # Set 'navbar-inverse' attribute to relbar navbar. Defaults to false.
+#     "relbar_inverse": True,
+#     # Enable inner theme by Bootswatch. Defaults to false
+#     "inner_theme": False,
+#     # Set the name of inner theme. Defaults to 'bootswatch-simplex'
+#     "inner_theme_name": "bootswatch-default",
+#     # Select Twitter bootstrap version 2 or 3. Defaults to '3'
+#     "bootstrap_version": "3",
+#     # Show "theme preview" button in header navbar. Defaults to false.
+#     # "theme_preview": True,
+#     # Set the Size of Heading text. Defaults to None
+#     # "h1_size": "3.0em",
+#     # "h2_size": "2.6em",
+#     # "h3_size": "2.2em",
+#     # "h4_size": "1.8em",
+#     # "h5_size": "1.4em",
+#     # "h6_size": "1.1em",
+# }
 
 # Theme options
-html_logo = "_static/csdmpy.png"
+html_logo = "_static/mrsimulator-light-add-01.png"
 
 html_context = {
     "display_github": True,
@@ -204,7 +214,7 @@ html_context = {
     "github_repo": "mrsimulator",
     "github_version": "master/docs/",
     "css_files": [
-        "_static/button.css",
+        # "_static/button.css",
         #     "_static/theme_overrides.css",  # override wide tables in RTD theme
         #     "_static/style.css",
         #     "_static/custom.css",

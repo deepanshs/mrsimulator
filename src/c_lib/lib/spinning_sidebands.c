@@ -22,8 +22,9 @@ static inline void __spinning_sideband_core(
 
     isotopomer_ravel *ravel_isotopomer, // isotopomer structure
 
-    int remove_second_order_quad_iso, // remove the isotropic contribution from
-                                      // the second order quad Hamiltonian.
+    int remove_second_order_quad_isotropic, // remove the isotropic contribution
+                                            // from the second order quad
+                                            // Hamiltonian.
 
     // Pointer to the transitions. transition[0] = mi and transition[1] = mf
     double *transition, MRS_plan *plan, MRS_dimension *dimension) {
@@ -36,9 +37,15 @@ static inline void __spinning_sideband_core(
       JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
 
-  int i, site;
+  int i;
+  unsigned int site, j;
   double iso_n_, zeta_n_, eta_n_, Cq_e_, eta_e_, d_, offset;
+  double *shielding_orientation, *quadrupolar_orientation;
+
   double R0 = 0.0;
+  complex128 *R2_temp = malloc_complex128(5);
+  complex128 *R4_temp = malloc_complex128(9);
+
   complex128 *R2 = malloc_complex128(5);
   complex128 *R4 = malloc_complex128(9);
 
@@ -56,10 +63,13 @@ static inline void __spinning_sideband_core(
     iso_n_ = ravel_isotopomer->isotropic_chemical_shift_in_Hz[site];
     zeta_n_ = ravel_isotopomer->shielding_anisotropy_in_Hz[site];
     eta_n_ = ravel_isotopomer->shielding_asymmetry[site];
+    shielding_orientation = &ravel_isotopomer->shielding_orientation[3 * site];
 
     /* Electric quadrupolar terms                                            */
     Cq_e_ = ravel_isotopomer->quadrupolar_constant_in_Hz[site];
     eta_e_ = ravel_isotopomer->quadrupolar_asymmetry[site];
+    quadrupolar_orientation =
+        &ravel_isotopomer->quadrupolar_orientation[3 * site];
 
     /* Magnetic dipole terms                                                 */
     d_ = ravel_isotopomer->dipolar_couplings[site];
@@ -79,28 +89,41 @@ static inline void __spinning_sideband_core(
     /* Initialize with zeroing all spatial components                        */
     __zero_components(&R0, R2, R4);
 
-    /* get nuclear shielding components upto first order                     */
-    get_nuclear_shielding_hamiltonian_to_first_order(&R0, R2, iso_n_, zeta_n_,
-                                                     eta_n_, transition);
+    /* get nuclear shielding components upto first order ................... */
+    nuclear_shielding_frequency_to_1st_order(&R0, R2_temp, iso_n_, zeta_n_,
+                                             eta_n_, transition);
+    single_wigner_rotation(2, shielding_orientation, R2_temp, R2_temp);
+    vm_double_add_inplace(10, (double *)R2_temp, 1, (double *)R2, 1);
 
-    /* get weakly coupled direct dipole components upto first order          */
-    get_weakly_coupled_direct_dipole_hamiltonian_to_first_order(&R0, R2, d_,
-                                                                transition);
+    /* get weakly coupled direct dipole components upto first order ........ */
+    weakly_coupled_direct_dipole_frequencies_to_first_order(&R0, R2_temp, d_,
+                                                            transition);
+    vm_double_add_inplace(10, (double *)R2_temp, 1, (double *)R2, 1);
+    // add orientation dependence
 
     if (ravel_isotopomer->spin > 0.5) {
-      /* get electric quadrupolar components upto first order                */
-      get_quadrupole_hamiltonian_to_first_order(&R0, R2, ravel_isotopomer->spin,
-                                                Cq_e_, eta_e_, transition);
+      /* get electric quadrupolar components upto first order .............. */
+      quadrupole_frequencies_to_first_order(
+          &R0, R2_temp, ravel_isotopomer->spin, Cq_e_, eta_e_, transition);
+      single_wigner_rotation(2, quadrupolar_orientation, R2_temp, R2_temp);
+      vm_double_add_inplace(10, (double *)R2_temp, 1, (double *)R2, 1);
 
-      /* get electric quadrupolar components upto second order               */
+      /* get electric quadrupolar components upto second order ............. */
       if (plan->allow_fourth_rank) {
-        get_quadrupole_hamiltonian_to_second_order(
-            &R0, R2, R4, ravel_isotopomer->spin, Cq_e_, eta_e_, transition,
-            ravel_isotopomer->larmor_frequency, remove_second_order_quad_iso);
+        quadrupole_frequencies_to_second_order(
+            &R0, R2_temp, R4_temp, ravel_isotopomer->spin, Cq_e_, eta_e_,
+            transition, ravel_isotopomer->larmor_frequency,
+            remove_second_order_quad_isotropic);
+
+        single_wigner_rotation(2, quadrupolar_orientation, R2_temp, R2_temp);
+        vm_double_add_inplace(10, (double *)R2_temp, 1, (double *)R2, 1);
+
+        single_wigner_rotation(4, quadrupolar_orientation, R4_temp, R4_temp);
+        vm_double_add_inplace(18, (double *)R4_temp, 1, (double *)R4, 1);
       }
     }
 
-    /*  */
+    /* Get frequencies and amplitudes per octant ........................... */
     MRS_get_amplitudes_from_plan(plan, R2, R4);
     MRS_get_normalized_frequencies_from_plan(plan, dimension, R0);
 
@@ -108,19 +131,40 @@ static inline void __spinning_sideband_core(
     //              Calculating the tent for every sideband
     // Allowing only sidebands that are within the spectral bandwidth
     //
+    // for (i = 0; i < plan->number_of_sidebands; i++) {
+    //   offset = plan->vr_freq[i] + plan->isotropic_offset;
+    //   if ((int)offset >= 0 && (int)offset <= dimension->count) {
+
+    //     vm_double_ramp(plan->octant_orientations, plan->local_frequency, 1.0,
+    //                    offset, plan->freq_offset);
+    //     octahedronInterpolation(
+    //         spec_site_ptr, plan->freq_offset,
+    //         plan->geodesic_polyhedron_frequency,
+    //         (double *)&plan->vector[i * plan->octant_orientations], 2,
+    //         dimension->count);
+    //   }
+    // }
+
+    unsigned int step_vector = 0, address;
     for (i = 0; i < plan->number_of_sidebands; i++) {
       offset = plan->vr_freq[i] + plan->isotropic_offset;
       if ((int)offset >= 0 && (int)offset <= dimension->count) {
+        step_vector = i * plan->total_orientations;
+        for (j = 0; j < plan->n_octants; j++) {
+          address = j * plan->octant_orientations;
 
-        vm_double_ramp(plan->n_orientations, plan->local_frequency, 1.0, offset,
-                       plan->freq_offset);
-        octahedronInterpolation(
-            spec_site_ptr, plan->freq_offset,
-            plan->geodesic_polyhedron_frequency,
-            (double *)&plan->vector[i * plan->n_orientations], 2,
-            dimension->count);
+          vm_double_ramp(plan->octant_orientations,
+                         &plan->local_frequency[address], 1.0, offset,
+                         plan->freq_offset);
+          octahedronInterpolation(spec_site_ptr, plan->freq_offset,
+                                  plan->geodesic_polyhedron_frequency,
+                                  (double *)&plan->vector[step_vector], 2,
+                                  dimension->count);
+          step_vector += plan->octant_orientations;
+        }
       }
     }
+
     // gettimeofday(&end_site_time, NULL);
     // clock_time =
     //     (double)(end_site_time.tv_usec - start_site_time.tv_usec) / 1000000.
@@ -135,13 +179,11 @@ void spinning_sideband_core(
     double coordinates_offset, // The start of the frequency spectrum.
     double increment,          // The increment of the frequency spectrum.
     int count,                 // Number of points on the frequency spectrum.
-
-    isotopomer_ravel *ravel_isotopomer, // isotopomer structure
-
-    int quadSecondOrder,              // Quad theory for second order,
-    int remove_second_order_quad_iso, // remove the isotropic contribution
-                                      // from the second order quad
-                                      // Hamiltonian.
+    isotopomer_ravel *ravel_isotopomer,     // Isotopomer structure
+    int quad_second_order,                  // Quad theory for second order,
+    int remove_second_order_quad_isotropic, // remove the isotropic contribution
+                                            // from the second order quad
+                                            // interaction.
 
     // spin rate, spin angle and number spinning sidebands
     int number_of_sidebands,                // The number of sidebands
@@ -162,7 +204,7 @@ void spinning_sideband_core(
   // printf("%d parallel", parallel);
 
   bool allow_fourth_rank = false;
-  if (ravel_isotopomer[0].spin > 0.5 && quadSecondOrder == 1) {
+  if (ravel_isotopomer[0].spin > 0.5 && quad_second_order == 1) {
     allow_fourth_rank = true;
   }
 
@@ -189,9 +231,9 @@ void spinning_sideband_core(
 
       ravel_isotopomer, // isotopomer structure
 
-      remove_second_order_quad_iso, // remove the isotropic contribution
-                                    // from the second order quad
-                                    // Hamiltonian.
+      remove_second_order_quad_isotropic, // remove the isotropic contribution
+                                          // from the second order quad
+                                          // Hamiltonian.
 
       // Pointer to the transitions. transition[0] = mi and transition[1] = mf
       transition,

@@ -103,6 +103,7 @@ venv.bak/
 
 # folders
 src/c_lib/test_c/**
+tests/simpson/quad/**
 
 # files
 *.out
@@ -116,7 +117,7 @@ sideband2.c
 dmfit_comparision.py
 simulate_lineshape.py
 sideband.3
-sandbox.c
+test.c
 nmr_methods.c
 main.c
 *.code-workspace
@@ -124,3 +125,4 @@ jquery.js
 setup.py.src
 setup.temp
 __config__.json
+src/mrsimulator/web_ui/test_dash.py

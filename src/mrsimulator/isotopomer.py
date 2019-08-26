@@ -9,7 +9,14 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 class Isotopomer(Parseable):
     """
-    Base isotopmer class which lists a set of interacting NMR sites
+    Base isotopmer class which lists a set of interacting NMR sites.
+
+    .. rubric:: Attributes Documentation
+
+    Attributes:
+        sites: A list of Site objects.
+        abundance: The fractional abundance of the isotopomer. This attribute
+                is useful when multiple isotopomers are present.
     """
 
     sites: List[Site]
@@ -22,7 +29,14 @@ class Isotopomer(Parseable):
 
     @classmethod
     def parse_json_with_units(cls, json_dict):
+        """
+        Parse the physical quantities of an isotopomer when expressed as a python
+        dictionary.
 
+        Args:
+            json_dict: Python dictionary representation of an isotopomers containing
+                        physical quantities.
+        """
         if "sites" in json_dict:
             json_dict["sites"] = [
                 Site.parse_json_with_units(s) for s in json_dict["sites"]

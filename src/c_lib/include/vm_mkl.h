@@ -6,13 +6,7 @@
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
-// static inline complex128 cmult(complex128 x, complex128 y) {
-//   complex128 res;
-//   res.real = x.real * y.real - x.imag * y.imag;
-//   res.imag = x.real * y.imag + x.imag * y.real;
-//   return res;
-// }
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /**
  * Add the elements of vector x and y and store in res of type double.
  * res = x + y
@@ -20,6 +14,15 @@
 static inline void vm_double_add(int count, const double *x, const double *y,
                                  double *res) {
   vdAdd(count, x, y, res);
+}
+
+/**
+ * Add the elements of vector y inplace with the elements from vector x.
+ * y += x
+ */
+static inline void vm_double_add_inplace(int count, const double *x,
+                                         double *y) {
+  vdAdd(count, x, y, y);
 }
 
 /**
@@ -55,6 +58,14 @@ static inline void vm_double_divide(int count, const double *x, const double *y,
  */
 static inline void vm_double_square(int count, const double *x, double *res) {
   vdSqr(count, x, res);
+}
+
+/**
+ * Square the elements of vector y inplace.
+ * x *= x
+ */
+static inline void vm_double_square_inplace(int count, double *x) {
+  vdSqr(count, x, x);
 }
 
 /**
@@ -115,7 +126,7 @@ static inline void vm_dlinear(int count, double *x, double scale, double offset,
  * Exponent of the elements of vector x stored in res of type double.
  * res = exp(x)
  */
-static inline void vm_dexp(int count, const double *x, double *res) {
+static inline void vm_double_exp(int count, const double *x, double *res) {
   vdExp(count, x, res);
 }
 
@@ -127,3 +138,4 @@ static inline void vm_double_complex_exp(int count, const complex128 *x,
                                          complex128 *res) {
   vmzExp(count, x, res, VML_EP);
 }
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */

@@ -14,27 +14,46 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 class Simulator:
     """
     The simulator class.
+
+    .. rubric:: Attributes Documentation
+
+    Attributes:
+        isotopomers: List of Isotopomer objects.
+        dimensions: List of dimension objects.
+        isotope: List of all unique isotopes defined in the list of isotopomers.
+            This also includes NMR inactive isotopes.
     """
 
-    def __init__(self, isotopomers=[], spectrum={}):
+    def __init__(self, isotopomers=[], spectrum=[]):
         self.isotopomers = isotopomers
         self.spectrum = spectrum
 
+    # @property
     @staticmethod
-    def allowed_isotopes():
+    def allowed_isotopes(spin=None):
         """
-        Returns a list of all valid isotopes for this simulator
+        List of NMR active isotopes allowed in ``mrsimulator``.
+
+        Args:
+            spin: (optional) The spin quantum number. Valid input are multiples of 0.5.
+
+        Returns:
+            A list of all isotopes with the give spin quantum number allowed in
+            mrsimulator. If the spin is unspecified or None, a list of all
+            allowed isotopes is returned instead.
         """
+        if spin is None:
+            return list({isotope for isotope, data in ISOTOPE_DATA.items()})
         return list(
-            {isotope for isotope, data in ISOTOPE_DATA.items() if data["spin"] == 1}
+            {
+                isotope
+                for isotope, data in ISOTOPE_DATA.items()
+                if data["spin"] == int(2 * spin)
+            }
         )
 
     @property
-    def all_isotopes(self):
-        """
-        Return a list of unique isotopes symbols from the list of
-        isotopomers.
-        """
+    def isotopes(self):
         return list(
             {
                 site.isotope
@@ -43,29 +62,40 @@ class Simulator:
             }
         )
 
-    @property
-    def valid_isotope_list(self):
+    def get_isotopes(self, spin=None):
         """
-        Returns a list of unique and valid isotope symbols from the list of isotopomers
+        List of unique isotopes defined in list of isotopomers.
+
+        Args:
+            spin: (optional) The spin quantum number. Valid input are multiples of 0.5.
+
+        Returns:
+            A list of unique isotopes from the list of isotopomers corresponding
+            to given value of `spin`. If the spin is unspecified or None, a list of all
+            unique isotopes is returned instead.
         """
         return list(
             {
                 site.isotope
                 for isotopomer in self.isotopomers
                 for site in isotopomer.sites
-                if site.isotope in self.allowed_isotopes()
+                if site.isotope in self.allowed_isotopes(spin)
             }
         )
 
     def load_isotopomers(self, filename):
         """
-        Load a JSON serialized isotopomers file.
+        Load a list of isotopomers from JSON serialized isotopomers file.
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
         /master/isotopomers_ppm.json>`_
         of JSON serialized isotopomers file. For details, refer to the
         :ref:`load_isotopomers` section.
+
+        Args:
+            `filename`: A local or remote address to the JSON serialized isotopomers
+                        file.
         """
         contents = import_json(filename)
         json_data = contents["isotopomers"]
@@ -94,15 +124,9 @@ class Simulator:
             isotopomer.to_freq_dict(self.spectrum.larmor_frequency)
             for isotopomer in self.isotopomers
         ]
-        spectrum = self.spectrum.dict()
+        spectrum = self.spectrum
 
-        (freq, amp, larmor_frequency, list_index_isotopomer) = one_d_spectrum(
-            spectrum=spectrum, isotopomers=isotopomers, **kwargs
-        )
+        freq, amp = one_d_spectrum(spectrum=spectrum, isotopomers=isotopomers, **kwargs)
         """The frequency is in the units of Hz."""
         freq *= u.Unit("Hz")
-        """The larmor_frequency is in the units of MHz."""
-        # larmor_frequency *= u.Unit("MHz")
-
-        # isotopo_ = [self.isotopomers[i] for i in list_index_isotopomer]
         return freq, amp
