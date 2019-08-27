@@ -58,9 +58,9 @@ read_the_docs_build = os.environ.get("READTHEDOCS", None) == "True"
 
 # if read_the_docs_build:
 subprocess.call("cd doxyoutput; doxygen", shell=True)
-
+doxy_output = os.path.abspath("./doxyoutput/xml")
 # Setup the breathe extension
-breathe_projects = {"My Project": "./doxyoutput/xml"}
+breathe_projects = {"My Project": doxy_output}
 breathe_default_project = "My Project"
 breathe_domain_by_extension = {"h": "c", "py": "py"}
 breathe_use_project_refids = True
