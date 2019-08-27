@@ -8,88 +8,10 @@
 
 #ifndef mrsimulator_h
 #define mrsimulator_h
-
+#include "config.h"
 #include "array.h"
 #include "vm_common.h"
 
-#if __STDC_VERSION__ >= 199901L
-typedef double complex128[2];
-typedef float complex64[2];
-// #define complex128 double _Complex
-// #define MKL_Complex16 double _Complex
-// #define complex64 float _Complex
-// #define MKL_Complex8 float _Complex
-// similarly for other operations
-
-#else // not C99
-// typedef struct complex128_ {
-//   double real;
-//   double imag;
-// } complex128;
-// typedef struct complex64_ {
-//   float real;
-//   float imag;
-// } complex64;
-// #define restrict __restrict
-// inline complex128 complex128_add_inplace(complex128 a, double b) {
-//   a.real += b;
-//   a.imag += b;
-//   return a;
-// }
-// inline complex64 complex128_add_inplace(complex64 a, float b) {
-//   a.real += b;
-//   a.imag += b;
-//   return a;
-// }
-// complex128 void complex_multiply(complex128 a, complex128 b) {
-//   complex128 res;
-//   res.real = a.real * b.real - a.imag * b.imag;
-//   res.imag = a.real * b.imag + b.real * a.imag;
-//   return res;
-// }
-#endif
-
-// library definition
-// #if __has_include("mkl.h")
-// #include "mkl.h"
-// #define __blas_activate
-// #include "vm_mkl.h"
-
-#if __has_include("cblas.h")
-#include "cblas.h"
-#define __blas_activate
-#include "vm.h"
-#endif
-
-// user definition
-#define PI2 6.2831853072
-#define PI2I PI2 *I
-
-// #ifdef __APPLE__
-// #include <Accelerate/Accelerate.h>
-// #define __blas_activate
-// #include "vm.h"
-// #include "mkl.h"
-// #include "vm_mkl.h"
-// #endif
-
-// #ifdef linux
-// #include "mkl.h"
-// #include "vm_mkl.h"
-// // mkl_set_threading_layer(MKL_THREADING_INTEL);
-// // int max_threads = mkl_get_max_threads();
-// // mkl_set_num_threads(max_threads);
-// // printf("Using upto %d threads for simulation.\n", max_threads);
-// #endif
-
-// #ifdef _WIN32
-// #include "mkl.h"
-// #include "vm_mkl.h"
-// // mkl_set_threading_layer(MKL_THREADING_INTEL);
-// // int max_threads = mkl_get_max_threads();
-// // mkl_set_num_threads(max_threads);
-// // printf("Using upto %d threads for simulation.\n", max_threads);
-// #endif
 
 #include <stdbool.h>
 #include <stdio.h>

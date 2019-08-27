@@ -120,7 +120,7 @@ sideband.3
 test.c
 nmr_methods.c
 main.c
-mrsimulator.code-workspace
+*.code-workspace
 jquery.js
 setup.py.src
 setup.temp
