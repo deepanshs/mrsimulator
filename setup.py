@@ -30,6 +30,7 @@ if platform.system() == "Windows":
         conda_location = split(conda_location)[0]
     include_dirs += [join(conda_location, "Library", "include", "fftw")]
     include_dirs += [join(conda_location, "Library", "include", "openblas")]
+    include_dirs += [join(conda_location, "Library", "include")]
     include_dirs += [join(conda_location, "include")]
     library_dirs += [join(conda_location, "Library", "lib")]
     # data_files += [join(conda_location, "Library", "bin", "mkl_rt.dll")]
