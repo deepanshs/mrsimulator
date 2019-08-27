@@ -11,6 +11,7 @@ This is c-API
 
    tensors_operators
    transition_function
+   spatial_function
    frequencies
    struct_isotopomer_ravel
    MRS_plan

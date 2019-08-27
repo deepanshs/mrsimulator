@@ -43,6 +43,7 @@ static inline void __spinning_sideband_core(
   double *shielding_orientation, *quadrupolar_orientation;
 
   double R0 = 0.0;
+  double R0_temp = 0.0;
   complex128 *R2_temp = malloc_complex128(5);
   complex128 *R4_temp = malloc_complex128(9);
 
@@ -90,36 +91,39 @@ static inline void __spinning_sideband_core(
     __zero_components(&R0, R2, R4);
 
     /* get nuclear shielding components upto first order ................... */
-    nuclear_shielding_frequency_to_1st_order(&R0, R2_temp, iso_n_, zeta_n_,
-                                             eta_n_, transition);
+    frequency_components_from_1st_order_nuclear_shielding_Hamiltonian(
+        &R0_temp, R2_temp, iso_n_, zeta_n_, eta_n_, transition);
+    R0 += R0_temp;
     single_wigner_rotation(2, shielding_orientation, R2_temp, R2_temp);
-    vm_double_add_inplace(10, (double *)R2_temp, 1, (double *)R2, 1);
+    vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
 
     /* get weakly coupled direct dipole components upto first order ........ */
     weakly_coupled_direct_dipole_frequencies_to_first_order(&R0, R2_temp, d_,
                                                             transition);
-    vm_double_add_inplace(10, (double *)R2_temp, 1, (double *)R2, 1);
+    vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
     // add orientation dependence
 
     if (ravel_isotopomer->spin > 0.5) {
       /* get electric quadrupolar components upto first order .............. */
-      quadrupole_frequencies_to_first_order(
-          &R0, R2_temp, ravel_isotopomer->spin, Cq_e_, eta_e_, transition);
+      frequency_components_from_1st_order_electric_quadrupole_Hamiltonian(
+          R2_temp, ravel_isotopomer->spin, Cq_e_, eta_e_, transition);
       single_wigner_rotation(2, quadrupolar_orientation, R2_temp, R2_temp);
-      vm_double_add_inplace(10, (double *)R2_temp, 1, (double *)R2, 1);
+      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
 
       /* get electric quadrupolar components upto second order ............. */
       if (plan->allow_fourth_rank) {
-        quadrupole_frequencies_to_second_order(
-            &R0, R2_temp, R4_temp, ravel_isotopomer->spin, Cq_e_, eta_e_,
-            transition, ravel_isotopomer->larmor_frequency,
-            remove_second_order_quad_isotropic);
+        frequency_components_from_2nd_order_electric_quadrupole_Hamiltonian(
+            &R0_temp, R2_temp, R4_temp, ravel_isotopomer->spin, Cq_e_, eta_e_,
+            transition, ravel_isotopomer->larmor_frequency);
+        if (remove_second_order_quad_isotropic == 0) {
+          R0 += R0_temp;
+        }
 
         single_wigner_rotation(2, quadrupolar_orientation, R2_temp, R2_temp);
-        vm_double_add_inplace(10, (double *)R2_temp, 1, (double *)R2, 1);
+        vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
 
         single_wigner_rotation(4, quadrupolar_orientation, R4_temp, R4_temp);
-        vm_double_add_inplace(18, (double *)R4_temp, 1, (double *)R4, 1);
+        vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
       }
     }
 
@@ -199,7 +203,10 @@ void spinning_sideband_core(
 ) {
 
   // int num_process = openblas_get_num_procs();
+  // int num_threads = openblas_get_num_threads();
+  // // openblas_set_num_threads(1);
   // printf("%d processors", num_process);
+  // printf("%d threads", num_threads);
   // int parallel = openblas_get_parallel();
   // printf("%d parallel", parallel);
 

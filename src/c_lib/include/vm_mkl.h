@@ -65,7 +65,7 @@ static inline void vm_double_square(int count, const double *x, double *res) {
  * x *= x
  */
 static inline void vm_double_square_inplace(int count, double *x) {
-  vdSqr(count, x, x);
+  vmdSqr(count, x, x, VML_EP);
 }
 
 /**

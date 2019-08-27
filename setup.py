@@ -21,6 +21,7 @@ module_dir = dirname(abspath(__file__))
 include_dirs = []
 library_dirs = []
 libraries = []
+data_files = []
 
 if platform.system() == "Windows":
     numpy_include = np.get_include()
@@ -31,6 +32,7 @@ if platform.system() == "Windows":
     include_dirs += [join(conda_location, "Library", "include", "openblas")]
     include_dirs += [join(conda_location, "include")]
     library_dirs += [join(conda_location, "Library", "lib")]
+    # data_files += [join(conda_location, "Library", "bin", "mkl_rt.dll")]
     libraries += ["fftw3", "openblas"]
     name = "openblas"
 
@@ -51,7 +53,6 @@ else:
         name = "openblas"
         library_dirs += openblas_info["library_dirs"]
         libraries += openblas_info["libraries"]
-        libraries += ["pthread"]
     # else:
     #     raise Exception("mkl blas or openblas library not found.")
 
@@ -59,12 +60,15 @@ else:
     library_dirs += fftw3_info["library_dirs"]
     libraries += fftw3_info["libraries"]
 
-    include_dirs = list(set(include_dirs))
-    library_dirs = list(set(library_dirs))
-    libraries = list(set(libraries))
-
     extra_link_args = ["-lm"]
-    extra_compile_args = ["--std=c99", "-g", "-O3", "-DFFTW_DLL"]
+    extra_compile_args = ["-g", "-O3"]
+
+    libraries += ["fftw3_threads", "pthread"]
+
+include_dirs = list(set(include_dirs))
+library_dirs = list(set(library_dirs))
+libraries = list(set(libraries))
+
 
 blas_info = {
     "name": name,
@@ -114,6 +118,7 @@ ext_modules = [
         language="c",
         libraries=libraries,
         library_dirs=library_dirs,
+        data_files=data_files,
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
     )

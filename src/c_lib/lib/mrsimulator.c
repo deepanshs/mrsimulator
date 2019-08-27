@@ -202,6 +202,7 @@ void MRS_plan_free_averaging_scheme(MRS_plan *plan) {
   free(plan->local_frequency);
   free(plan->freq_offset);
   free(plan->vector);
+  fftw_cleanup_threads();
 }
 
 /* Update the spherical averaging scheme of the mrsimulator plan. */
@@ -343,6 +344,12 @@ void MRS_plan_update_averaging_scheme(
   plan->vector = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * plan->size);
   // malloc_complex128(plan->size);
   // gettimeofday(&fft_setup_time, NULL);
+  int fftw_thread = fftw_init_threads();
+  if (fftw_thread == 0) {
+    printf("failed to initialize fftw threading");
+  }
+  fftw_plan_with_nthreads(4);
+
   plan->the_fftw_plan = fftw_plan_many_dft(
       1, &plan->number_of_sidebands, plan->total_orientations, plan->vector,
       NULL, plan->total_orientations, 1, plan->vector, NULL,
