@@ -82,9 +82,9 @@ static inline void vm_double_square_root(int count, const double *x,
  * complex.
  * res = x * y
  */
-static inline void vm_double_complex_multiply(int count, const complex128 *x,
-                                              const complex128 *y,
-                                              complex128 *res) {
+static inline void vm_double_complex_multiply(int count, const void *x,
+                                              const void *y,
+                                              void *res) {
   vzMul(count, x, y, res);
 }
 
@@ -112,7 +112,7 @@ static inline void vm_double_sine(int count, const double *x, double *res) {
  * res = cos(x) + I sin(x)
  */
 static inline void vm_cosine_I_sine(int count, const double *x,
-                                    complex128 *res) {
+                                    void *res) {
   vzCIS(count, x, res);
 }
 
@@ -134,8 +134,8 @@ static inline void vm_double_exp(int count, const double *x, double *res) {
  * Exponent of the elements of vector x stored in res of type complex128.
  * res = exp(x)
  */
-static inline void vm_double_complex_exp(int count, const complex128 *x,
-                                         complex128 *res) {
+static inline void vm_double_complex_exp(int count, const void *x,
+                                         void *res) {
   vmzExp(count, x, res, VML_EP);
 }
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */

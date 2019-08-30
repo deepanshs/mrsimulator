@@ -361,20 +361,22 @@ def update_plot(
     data_object = {
         "data": data,
         "layout": go.Layout(
-            xaxis={
-                "type": "linear",
-                "title": x_label,
-                "ticks": "outside",
-                "showline": True,
-                "autorange": "reversed",
-            },
-            yaxis={
-                "type": "linear",
-                "title": "arbitrary unit",
-                "ticks": "outside",
-                "showline": True,
-                "autorange": True,
-            },
+            xaxis=dict(
+                type="linear",
+                title=x_label,
+                ticks="outside",
+                showline=True,
+                autorange="reversed",
+                zeroline=False,
+            ),
+            yaxis=dict(
+                type="linear",
+                title="arbitrary unit",
+                ticks="outside",
+                showline=True,
+                zeroline=False,
+                rangemode="tozero",
+            ),
             autosize=False,
             transition={"duration": 150, "easing": "sin-out"},
             margin={"l": 50, "b": 40, "t": 5, "r": 5},

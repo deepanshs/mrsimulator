@@ -16,6 +16,14 @@ import numpy.distutils.system_info as sysinfo
 
 import json
 
+# get the version from file
+
+with open("src/mrsimulator/__init__.py", "r") as f:
+    for line in f.readlines():
+        if "__version__" in line:
+            before_keyword, keyword, after_keyword = line.partition("=")
+            version = after_keyword.strip()[1:-1]
+
 module_dir = dirname(abspath(__file__))
 
 include_dirs = []
@@ -43,14 +51,14 @@ if platform.system() == "Windows":
 else:
     openblas_info = sysinfo.get_info("openblas")
     fftw3_info = sysinfo.get_info("fftw3")
-    mkl_info = sysinfo.get_info("mkl")
+    # mkl_info = sysinfo.get_info("mkl")
 
-    if mkl_info != {}:
-        name = "mkl"
-        include_dirs += mkl_info["include_dirs"]
-        library_dirs += mkl_info["library_dirs"]
-        libraries += mkl_info["libraries"]
-    elif openblas_info != {}:
+    # if mkl_info != {}:
+    #     name = "mkl"
+    #     include_dirs += mkl_info["include_dirs"]
+    #     library_dirs += mkl_info["library_dirs"]
+    #     libraries += mkl_info["libraries"]
+    if openblas_info != {}:
         name = "openblas"
         library_dirs += openblas_info["library_dirs"]
         libraries += openblas_info["libraries"]
@@ -151,7 +159,7 @@ ext_modules += [
 
 setup(
     name="mrsimulator",
-    version="0.1.0",
+    version=version,
     description="A python toolbox for simulating NMR spectra",
     long_description=open(join(module_dir, "README.md")).read(),
     author="Deepansh J. Srivastava",

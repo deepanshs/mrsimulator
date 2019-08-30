@@ -16,5 +16,8 @@ extern void octahedronGetPolarAngleTrigOverAnOctant(int nt, double *cos_alpha,
                                                     double *cos_beta,
                                                     double *amp);
 
+extern void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
+    int nt, void *exp_I_alpha, void *exp_I_beta, double *amp);
+
 extern void octahedronInterpolation(double *spec, double *freq, int nt,
                                     double *amp, int stride, int m);

@@ -126,7 +126,7 @@ In general, the isotopomers contain the metadata on the spin system while
 the spectrum contains metadata required to simulate the lineshapes.
 A lineshape is simulated using the meth:`~mrsimulator.Simulator.run` method
 of the :ref:`simulator_api` instance based on the NMR method.
-In version 0.1, we provide `one_d_spectrum` method for simulating one
+Currently, we provide `one_d_spectrum` method for simulating one
 dimensional NMR lineshapes. Import this method using
 
 .. doctest::

@@ -100,7 +100,7 @@ def cosine_of_polar_angles_and_amplitudes(geodesic_polyhedron_frequency: int = 7
     cos_beta = np.sqrt(zr)
     cos_alpha = np.zeros(xr.size, dtype=np.float64)
     cos_alpha[:-1] = np.sqrt(xr[:-1] / (xr[:-1] + yr[:-1]))
-    cos_alpha[-1] = 1.0
+    cos_alpha[-1] = 0.0
     return cos_alpha, cos_beta, amp
 
 

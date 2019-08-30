@@ -32,7 +32,7 @@ def wigner_dm0_vector(int l, double beta):
     """
     cdef int n1 = (2 * l + 1)
     cdef np.ndarray[double] R_out = np.zeros(n1, dtype=np.float64)
-    clib.__wigner_dm0_vector(l, beta, &R_out[0])
+    clib.wigner_dm0_vector(l, beta, &R_out[0])
     return R_out
 
 
@@ -45,14 +45,16 @@ def wigner_rotation(int l, np.ndarray[complex] R_in,
 
     """
     cdef int n1 = 2 * l + 1
-    cdef np.ndarray[double, ndim=1] wigner, cos_alpha_c, cos_beta_c
+    cdef np.ndarray[double, ndim=1] wigner, cos_alpha_c
+    cdef np.ndarray[double complex] exp_I_beta_c
     cos_alpha_c = np.asarray(cos_alpha, dtype=np.float64)
 
     if wigner_matrix is None:
         n = cos_beta.size
+        sin_beta = np.sqrt(1 - cos_beta**2)
         wigner = np.empty(n1**2 * n)
-        cos_beta_c = np.asarray(cos_beta, dtype=np.float64)
-        clib.__wigner_d_matrix_cosine(l, n, &cos_beta_c[0], &wigner[0])
+        exp_I_beta_c = np.asarray(cos_beta+1j*sin_beta, dtype=np.complex128)
+        clib.wigner_d_matrices_from_exp_I_beta(l, n, &exp_I_beta_c[0], &wigner[0])
     else:
         n = wigner_matrix.shape[0]
         wigner = np.asarray(wigner_matrix.ravel(), dtype=np.float64)
@@ -86,8 +88,11 @@ def wigner_d_matrix_cosines(int l, np.ndarray[double] cos_beta):
     """
     n1 = (2 * l + 1)
     cdef int n = cos_beta.size
+    cdef np.ndarray[double complex] exp_I_beta_c
+    sin_beta = np.sqrt(1 - cos_beta**2)
+    exp_I_beta_c = np.asarray(cos_beta+1j*sin_beta, dtype=np.complex128)
     cdef np.ndarray[double, ndim=1] wigner = np.empty(n * n1**2)
-    clib.__wigner_d_matrix_cosine(l, n, &cos_beta[0], &wigner[0])
+    clib.wigner_d_matrices_from_exp_I_beta(l, n, &exp_I_beta_c[0], &wigner[0])
     return wigner.reshape(n, n1, n1)
 
 
@@ -124,13 +129,14 @@ def cosine_of_polar_angles_and_amplitudes(int geodesic_polyhedron_frequency=72):
     nt = geodesic_polyhedron_frequency
     cdef unsigned int n_orientations = int((nt+1) * (nt+2)/2)
 
-    cdef np.ndarray[double] cos_alpha = np.empty(n_orientations, dtype=np.float64)
-    cdef np.ndarray[double] cos_beta = np.empty(n_orientations, dtype=np.float64)
+    cdef np.ndarray[double complex] exp_I_alpha = np.empty(n_orientations, dtype=np.complex128)
+    cdef np.ndarray[double complex] exp_I_beta = np.empty(n_orientations, dtype=np.complex128)
     cdef np.ndarray[double] amp = np.empty(n_orientations, dtype=np.float64)
 
-    clib.__powder_averaging_setup(nt, &cos_alpha[0], &cos_beta[0], &amp[0], 1)
 
-    return cos_alpha, cos_beta, amp
+    clib.__powder_averaging_setup(nt, &exp_I_alpha[0], &exp_I_beta[0], &amp[0], 1)
+
+    return exp_I_alpha, exp_I_beta, amp
 
 
 @cython.boundscheck(False)

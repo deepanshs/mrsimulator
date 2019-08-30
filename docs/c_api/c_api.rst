@@ -13,5 +13,6 @@ This is c-API
    transition_function
    spatial_function
    frequencies
+   angular_momentum
    struct_isotopomer_ravel
    MRS_plan

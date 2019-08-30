@@ -6,7 +6,7 @@
 Spectrum
 --------
 
-In version 0.1, the `Spectrum` object is a python
+The `Spectrum` object is a python
 `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`_
 object with a single key, `direct_dimension`, whose value is a
 :ref:`direct_dimension` object.

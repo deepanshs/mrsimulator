@@ -2,9 +2,11 @@
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import base64
+from os.path import join, split
 
 
-mrsimulator_logo = "docs/_static/mrsimulator-dark.png"
+folder = split(__file__)[0]
+mrsimulator_logo = join(folder, "resource/mrsimulator-dark.png")
 encoded_image = base64.b64encode(open(mrsimulator_logo, "rb").read())
 
 search_bar = dbc.Row(

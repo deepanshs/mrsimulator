@@ -11,8 +11,10 @@ def test__batch_wigner_rotation():
     beta = np.random.rand(n) * np.pi / 2.0
 
     cos_beta = np.cos(beta)
-    wigner_2j_matrices = clib.__wigner_d_matrix_cosines(2, cos_beta).ravel()
-    wigner_4j_matrices = clib.__wigner_d_matrix_cosines(4, cos_beta).ravel()
+    sin_beta = np.sqrt(1.0 - cos_beta ** 2)
+    exp_I_beta = cos_beta + 1j * sin_beta
+    wigner_2j_matrices = clib.wigner_d_matrices_from_exp_I_beta(2, exp_I_beta).ravel()
+    wigner_4j_matrices = clib.wigner_d_matrices_from_exp_I_beta(4, exp_I_beta).ravel()
 
     R4 = np.asarray(
         [0 - 0.2j, 0, 0 + 0.5j, 0, 0 + 0.1j, 0, 0 - 0.5j, 0, 0 + 0.2j],
@@ -64,7 +66,7 @@ def test_single_2j_rotation_00():
 
         exp_im_alpha = np.exp(-1j * indexes * euler_angle[0])
         R_out_p = R_in * exp_im_alpha
-        wigner = clib.wigner_d_matrix(l, np.asarray([euler_angle[1]]))
+        wigner = clib.wigner_d_matrices(l, np.asarray([euler_angle[1]]))
         R_out_p = np.dot(wigner.reshape(5, 5), R_out_p)
         exp_im_gamma = np.exp(-1j * indexes * euler_angle[2])
         R_out_p *= exp_im_gamma
@@ -88,7 +90,7 @@ def test_single_4j_rotation_00():
 
         exp_im_alpha = np.exp(-1j * indexes * euler_angle[0])
         R_out_p = R_in * exp_im_alpha
-        wigner = clib.wigner_d_matrix(l, np.asarray([euler_angle[1]]))
+        wigner = clib.wigner_d_matrices(l, np.asarray([euler_angle[1]]))
         R_out_p = np.dot(wigner.reshape(9, 9), R_out_p)
         exp_im_gamma = np.exp(-1j * indexes * euler_angle[2])
         R_out_p *= exp_im_gamma

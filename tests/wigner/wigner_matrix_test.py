@@ -19,10 +19,12 @@ def wigner_dm0_vector_sympy(l, angle):
 def wigner(l, cos_beta):
     # python test
     cos_beta = np.asarray([cos_beta]).ravel()
+    sin_beta = np.sqrt(1.0 - cos_beta ** 2)
+    exp_I_beta = cos_beta + 1j * sin_beta
     wigner_py = wigner_d_matrix_cosines(l, cos_beta)
 
     # c test
-    wigner_c = clib.__wigner_d_matrix_cosines(l, cos_beta)
+    wigner_c = clib.wigner_d_matrices_from_exp_I_beta(l, exp_I_beta)
     return wigner_py.ravel(), wigner_c.ravel()
 
 
@@ -34,7 +36,7 @@ def test_wigner_2j_matrix_angle_00():
     l = 2
     beta = np.arccos(0.5)
     array = np.load("tests/wigner/l=2_cx=0.5.npy")
-    wigner = clib.wigner_d_matrix(l, np.asarray([beta]))
+    wigner = clib.wigner_d_matrices(l, np.asarray([beta]))
     np.testing.assert_almost_equal(array, wigner, decimal=8)
 
 
@@ -52,7 +54,7 @@ def test_wigner_2j_matrix_angle_01():
     cos_beta = [-0.5498, 0.230]
     beta = np.arccos(cos_beta)
     array = np.load("tests/wigner/l=2_cx=[-0.5498, 0.230].npy")
-    wigner = clib.wigner_d_matrix(l, beta)
+    wigner = clib.wigner_d_matrices(l, beta)
     np.testing.assert_almost_equal(array, wigner, decimal=8)
 
 
@@ -70,7 +72,7 @@ def test_wigner_4j_matrix_angle_02():
     cos_beta = [-0.8459]
     beta = np.arccos(cos_beta)
     array = np.load("tests/wigner/l=4_cx=-0.8459.npy")
-    wigner = clib.wigner_d_matrix(l, beta)
+    wigner = clib.wigner_d_matrices(l, beta)
     np.testing.assert_almost_equal(array, wigner, decimal=8)
 
 
@@ -88,7 +90,7 @@ def test_wigner_4j_matrix_angle_03():
     cos_beta = [-0.934, 0.4958]
     beta = np.arccos(cos_beta)
     array = np.load("tests/wigner/l=4_cx=[-0.934, 0.4958].npy")
-    wigner = clib.wigner_d_matrix(l, beta)
+    wigner = clib.wigner_d_matrices(l, beta)
     np.testing.assert_almost_equal(array, wigner, decimal=8)
 
 

@@ -9,10 +9,10 @@ import mrsimulator.tests.tests as clib
 def test__powder_averaging_setup():
     nt = 64
     cos_alpha_py, cos_beta_py, amp_py = cosine_of_polar_angles_and_amplitudes(nt)
-    cos_alpha_c, cos_beta_c, amp_c = clib.cosine_of_polar_angles_and_amplitudes(nt)
+    exp_I_alpha_c, exp_I_beta_c, amp_c = clib.cosine_of_polar_angles_and_amplitudes(nt)
 
-    assert np.allclose(cos_alpha_py, cos_alpha_c, atol=1e-15)
-    assert np.allclose(cos_beta_py, cos_beta_c, atol=1e-15)
+    assert np.allclose(cos_alpha_py, exp_I_alpha_c.real, atol=1e-15)
+    assert np.allclose(cos_beta_py, exp_I_beta_c.real, atol=1e-15)
     assert np.allclose(amp_py, amp_c, atol=1e-15)
 
 

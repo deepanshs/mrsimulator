@@ -15,8 +15,13 @@ subgroups described here using the lower-case symbols,
 :math:`\mathbb{s}`, :math:`\mathbb{p}`, :math:`\mathbb{d}`, and
 :math:`\mathbb{f}`.
 
+.. seealso:: :ref:`theory`
 
-:ref:`transition_function_source`
+.. raw:: html
+
+    <a class="btn btn-default" href=./transition_function_source.html#transition_function_source>
+    Source </a>
+
 
 Single nucleus spin transition functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -30,7 +35,7 @@ Single nucleus spin transition functions
 .. doxygenfunction:: cL(double *, double *, double *, double, double, double)
 
 
-Two weakly coupled nuclei spin transition functions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. Two weakly coupled nuclei spin transition functions
+.. ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. doxygenfunction:: dIS(double, double, double, double)
+.. .. doxygenfunction:: dIS(double, double, double, double)

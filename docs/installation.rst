@@ -11,68 +11,54 @@ distribution for python version 3.6 or higher. The anaconda distribution
 ships with numerous packages and modules including Numpy, Scipy, and Matplotlib
 which are useful packages for scientific datasets.
 
-.. In addition,
-.. conda provides `mkl optimized <https://docs.anaconda.com/mkl-optimizations/>`_
-.. for numerical libraries such as Numpy, Scipy.
+Downloading mrsimulator package
+*******************************
 
-.. If you have opted for the ``nomkl``, we suggest you create a new conda
-.. environment before proceeding. You can read about creating new conda
-.. environment `here <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_.
+First, clone and download the ``mrsimulator`` package from Github. If you use
+``git``, type the following in the terminal,
+
+.. code-block:: bash
+
+    $ git clone git://github.com/DeepanshS/mrsimulator.git
+
+else, `download <https://github.com/DeepanshS/mrsimulator>`_ the package using
+your browser. Once downloaded, use the terminal to change the current directory
+location to the downloaded folder (usually, the downloader folder is named
+mrsimulator).
+
+.. code-block:: bash
+
+    $ cd mrsimulator
 
 
+Installing dependencies
+***********************
 
+Next, install the dependencies of the package. We recommend using ``conda`` to
+install the dependencies, as follows,
 
-
-The core of the ``mrsimulator`` package is written in C and wrapped in python.
-To build the C library, you will require a c-compiler.
-
-.. and install the dependencies using
-
-.. .. code-block:: shell
-
-..     $ cd mrsimulator
-..     $ conda install --file requirements.txt
-
-**Installing dependencies**: First install the dependencies using,
-
-.. In Anaconda versions 2.5 and later, intel MKL is freely available by default.
-.. To build and link ``mrsimulator`` with the intel-mkl libraries follow,
-
-.. .. code-block:: shell
-
-..     $ conda install mkl mkl-include --file requirements.txt
-
-.. If you, however, wish to opt out of MKL and instead use
-.. `openBLAS <http://www.openblas.net/>`_, execute the following lines.
-
-.. code-block:: shell
+.. code-block:: bash
 
     $ conda install -c conda-forge openblas --file requirements.txt
 
 
-.. On linux, you can get the gcc compiler.
 
-.. .. code-block:: text
+Building and Installing mrsimulator package
+*******************************************
 
-..     $ sudo apt install gcc
-
-**Installing ``mrsimulator``**: Clone and download the `mrsimulator` package,
+Since the core of the ``mrsimulator`` package is written in C, you will require
+a C compiler to build and install the package.
 
 .. code-block:: shell
-
-    $ git clone git://github.com/DeepanshS/mrsimulator.git
-    $ cd mrsimulator
-
-and install with
-
-.. code-block:: text
 
     $ python setup.py install
 
 .. pip install git+https://github.com/DeepanshS/mrsimulator.git@master
 
 
-**Check your build**
+
+Check your build
+****************
 
 If the installation is successful, you should be able to run the following test
 file in your terminal. Download the test file `here <link>`_.

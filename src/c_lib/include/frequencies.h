@@ -6,7 +6,6 @@
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
-#include "mrsimulator.h"
 #include "spatial_function.h"
 #include "transition_function.h"
 /*
@@ -32,7 +31,7 @@
  */
 static inline void
 frequency_components_from_1st_order_nuclear_shielding_Hamiltonian(
-    double *restrict R0, complex128 *restrict R2, const double iso,
+    double *restrict R0, void *restrict R2, const double iso,
     const double zeta, const double eta, const double *transition) {
   // Spin transition contribution
   double transition_fn = p(transition[1], transition[0]);
@@ -59,7 +58,7 @@ spin transition functions.
 */
 static inline void
 frequency_components_from_1st_order_electric_quadrupole_Hamiltonian(
-    complex128 *restrict R2, const double spin, const double Cq,
+    void *restrict R2, const double spin, const double Cq,
     const double eta, const double *transition) {
   // Spin transition contribution
   double transition_fn = d(transition[1], transition[0]);
@@ -83,7 +82,7 @@ spin transition functions.
 */
 static inline void
 frequency_components_from_2nd_order_electric_quadrupole_Hamiltonian(
-    double *restrict R0, complex128 *restrict R2, complex128 *restrict R4,
+    double *restrict R0, void *restrict R2, void *restrict R4,
     const double spin, const double Cq, const double eta,
     const double *transition, const double vo) {
   // Spin transition contribution
@@ -121,7 +120,7 @@ The frequency includes the product of second rank tensor and the
 spin transition functions in the weak coupling limit.
 */
 static inline void weakly_coupled_direct_dipole_frequencies_to_first_order(
-    double *restrict R0, complex128 *restrict R2, const double D,
+    double *restrict R0, void *restrict R2, const double D,
     const double *transition) {
   // Spin transition contribution
   double transition_fn = dIS(transition[0], transition[1], 0.5, 0.5);

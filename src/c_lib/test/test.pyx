@@ -15,31 +15,32 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def wigner_d_matrix(int l, np.ndarray[double] angle):
+def wigner_d_matrices(int l, np.ndarray[double] angle):
     cdef int n = angle.size
     cdef int n1 = (2*l+1)**2
     cdef np.ndarray[double] wigner = np.empty(n*n1, dtype=np.float64)
-    clib.wigner_d_matrix(l, n, &angle[0], &wigner[0])
+    clib.wigner_d_matrices(l, n, &angle[0], &wigner[0])
     return wigner
 
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def __wigner_d_matrix_cosines(int l, np.ndarray[double] cos_beta):
+def wigner_d_matrices_from_exp_I_beta(int l, np.ndarray[double complex] exp_I_beta):
     r"""
-    Returns a :math:`(2l+1) \times (2l+1)` wigner-d(cos_beta) matrix for rank $l$ at
-    a given `cos_beta`. Currently only rank l=2 and l=4 is supported.
+    Returns a :math:`(2l+1) \times (2l+1)` wigner-d(beta) matrix of rank $l$ at
+    a given angle `beta` in the form of `exp(i\beta)`. Currently only rank l=2 and
+    l=4 is supported.
 
-    If `cos_beta` is a 1D-numpy array of size n, a
+    If `exp_I_beta` is a 1D-numpy array of size n, a
     `n x (2l+1) x (2l+1)` matrix is returned instead.
 
     :ivar l: The angular momentum quantum number.
-    :ivar cos_beta: An 1D numpy array or a scalar representing the cosine of $\beta$ angles.
+    :ivar exp_I_beta: An 1D numpy array or a scalar representing $\exp\beta$.
     """
     n1 = (2 * l + 1)
-    cdef int n = cos_beta.size
+    cdef int n = exp_I_beta.size
     cdef np.ndarray[double, ndim=1] wigner = np.empty(n * n1**2)
-    clib.__wigner_d_matrix_cosine(l, n, &cos_beta[0], &wigner[0])
+    clib.wigner_d_matrices_from_exp_I_beta(l, n, &exp_I_beta[0], &wigner[0])
     return wigner.reshape(n, n1, n1)
 
 
@@ -51,7 +52,7 @@ def wigner_dm0_vector(int l, double beta):
     """
     cdef int n1 = (2 * l + 1)
     cdef np.ndarray[double] R_out = np.zeros(n1, dtype=np.float64)
-    clib.__wigner_dm0_vector(l, beta, &R_out[0])
+    clib.wigner_dm0_vector(l, beta, &R_out[0])
     return R_out
 
 
@@ -83,7 +84,7 @@ def single_wigner_rotation(int l, np.ndarray[double] euler_angles, np.ndarray[do
 #         n = cos_beta.size
 #         wigner = np.empty(n1**2 * n)
 #         cos_beta_c = np.asarray(cos_beta, dtype=np.float64)
-#         clib.__wigner_d_matrix_cosine(l, n, &cos_beta_c[0], &wigner[0])
+#         clib.wigner_d_matrices_from_cosines(l, n, &cos_beta_c[0], &wigner[0])
 #     else:
 #         n = wigner_matrix.shape[0]
 #         wigner = np.asarray(wigner_matrix.ravel(), dtype=np.float64)
@@ -104,12 +105,16 @@ def __wigner_rotation_2(int l, np.ndarray[double] cos_alpha,
     cdef int n1 = 2 * l + 1
     cdef int n = cos_alpha.size
     cdef np.ndarray[double, ndim=1] wigner
+    cdef np.ndarray[double complex, ndim=1] exp_I_beta
     wigner = np.empty(n1**2 * n, dtype=np.float64)
-    clib.__wigner_d_matrix_cosine(l, n, &cos_beta[0], &wigner[0])
+    sin_beta = np.sqrt(1 - cos_beta**2)
+    exp_I_beta = np.asarray(cos_beta + 1j*sin_beta, dtype=np.complex128)
+    clib.wigner_d_matrices_from_exp_I_beta(l, n, &exp_I_beta[0], &wigner[0])
 
     cdef np.ndarray[double complex] exp_im_alpha
-    exp_im_alpha = np.empty(n1**2 * n, dtype=np.complex128)
-    clib.get_exp_Im_alpha(n, &cos_alpha[0], 1, &exp_im_alpha[0])
+    exp_im_alpha = np.empty(4 * n, dtype=np.complex128)
+    exp_im_alpha[3*n:] = cos_alpha + 1j*np.sqrt(1.0 - cos_alpha**2)
+    clib.get_exp_Im_alpha(n, 1, &exp_im_alpha[0])
 
     cdef np.ndarray[complex] R_out = np.zeros(n1*n, dtype=np.complex128)
 
@@ -125,7 +130,8 @@ def __wigner_rotation_2(int l, np.ndarray[double] cos_alpha,
 def get_exp_Im_alpha(int n, np.ndarray[double] cos_alpha, bool_t allow_fourth_rank):
     cdef unsigned int n_ = n
     cdef np.ndarray[double complex] exp_Im_alpha = np.empty(4*n, dtype=np.complex128)
-    clib.get_exp_Im_alpha(n_, &cos_alpha[0], allow_fourth_rank, &exp_Im_alpha[0])
+    exp_Im_alpha[3*n:] = cos_alpha + 1j*np.sqrt(1.0 - cos_alpha**2)
+    clib.get_exp_Im_alpha(n_, allow_fourth_rank, &exp_Im_alpha[0])
     return exp_Im_alpha
 
 
@@ -182,13 +188,13 @@ def cosine_of_polar_angles_and_amplitudes(int geodesic_polyhedron_frequency=72):
     nt = geodesic_polyhedron_frequency
     cdef unsigned int octant_orientations = int((nt+1) * (nt+2)/2)
 
-    cdef np.ndarray[double] cos_alpha = np.empty(octant_orientations, dtype=np.float64)
-    cdef np.ndarray[double] cos_beta = np.empty(octant_orientations, dtype=np.float64)
+    cdef np.ndarray[double complex] exp_I_alpha = np.empty(octant_orientations, dtype=np.complex128)
+    cdef np.ndarray[double complex] exp_I_beta = np.empty(octant_orientations, dtype=np.complex128)
     cdef np.ndarray[double] amp = np.empty(octant_orientations, dtype=np.float64)
 
-    clib.__powder_averaging_setup(nt, &cos_alpha[0], &cos_beta[0], &amp[0])
+    clib.__powder_averaging_setup(nt, &exp_I_alpha[0], &exp_I_beta[0], &amp[0])
 
-    return cos_alpha, cos_beta, amp
+    return exp_I_alpha, exp_I_beta, amp
 
 
 @cython.boundscheck(False)

@@ -1,12 +1,13 @@
 
 [![Build Status](https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master)](https://travis-ci.org/DeepanshS/mrsimulator)
+[![Documentation Status](https://readthedocs.org/projects/mrsimulator/badge/?version=stable)](https://mrsimulator.readthedocs.io/en/stable/?badge=stable)
 
 # mrsimulator
 
 The package ``mrsimulator`` contains key functionality and tools needed for
 simulating one-dimensional nuclear magnetic resonance (NMR) lineshapes using
-Python. The package is currently under development. Version 0.1.0 supports
-simulation of single spin \(I=1/2\) nuclei, static,
+Python. The package is currently under development. We support
+simulation of single spin \(I=1/2\) nucleus, static,
 magic angle spinning (MAS), and variable angle spinning (VSA) lineshapes.
 For more information, read the documentation [here](https://deepanshs.github.io/mrsimulator/).
 

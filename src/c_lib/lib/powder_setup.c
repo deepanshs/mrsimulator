@@ -10,7 +10,9 @@
 #include "powder_setup.h"
 #include "octahedron.h"
 
-void __powder_averaging_setup(int nt, double *cos_alpha, double *cos_beta,
+void __powder_averaging_setup(int nt, void *exp_I_alpha, void *exp_I_beta,
                               double *amp) {
-  octahedronGetPolarAngleTrigOverAnOctant(nt, cos_alpha, cos_beta, amp);
+  // octahedronGetPolarAngleTrigOverAnOctant(nt, cos_alpha, cos_beta, amp);
+  octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(nt, exp_I_alpha,
+                                                             exp_I_beta, amp);
 }

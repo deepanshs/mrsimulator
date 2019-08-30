@@ -174,10 +174,10 @@ void MRS_plan_update_rotor_angle_in_rad(MRS_plan *plan,
    *  calculating wigner 2j d^2_{m,0} vector where m ∈ [-2, 2]. This vector is
    * used to rotate the second tank tensors from the rotor frame to the lab
    * frame.
-   * @see __wigner_dm0_vector()
+   * @see wigner_dm0_vector()
    */
   plan->wigner_d2m0_vector = malloc_double(5);
-  __wigner_dm0_vector(2, rotor_angle_in_rad, plan->wigner_d2m0_vector);
+  wigner_dm0_vector(2, rotor_angle_in_rad, plan->wigner_d2m0_vector);
 
   plan->wigner_d4m0_vector = NULL;
   if (allow_fourth_rank) {
@@ -185,7 +185,7 @@ void MRS_plan_update_rotor_angle_in_rad(MRS_plan *plan,
      * used to rotate the fourth tank tensors from the rotor frame to the lab
      * frame.*/
     plan->wigner_d4m0_vector = malloc_double(9);
-    __wigner_dm0_vector(4, rotor_angle_in_rad, plan->wigner_d4m0_vector);
+    wigner_dm0_vector(4, rotor_angle_in_rad, plan->wigner_d4m0_vector);
   }
 }
 
@@ -210,7 +210,7 @@ void MRS_plan_update_averaging_scheme(
     MRS_plan *plan, unsigned int geodesic_polyhedron_frequency,
     bool allow_fourth_rank) {
 
-  unsigned int nt = geodesic_polyhedron_frequency;
+  unsigned int nt = geodesic_polyhedron_frequency, i;
   unsigned int octant_orientations = (nt + 1) * (nt + 2) / 2;
   unsigned int allocate_size_2, allocate_size_4;
 
@@ -231,12 +231,13 @@ void MRS_plan_update_averaging_scheme(
 
   /* Calculate α, β, and weights over the positive octant. ................. */
   /* ....................................................................... */
-  double *cos_alpha = malloc_double(octant_orientations);
-  double *cos_beta = malloc_double(octant_orientations);
+  plan->exp_Im_alpha = malloc_complex128(4 * octant_orientations);
+  complex128 *exp_I_beta = malloc_complex128(octant_orientations);
   plan->amplitudes = malloc_double(octant_orientations);
   plan->norm_amplitudes = malloc_double(octant_orientations);
-  __powder_averaging_setup(geodesic_polyhedron_frequency, cos_alpha, cos_beta,
-                           plan->amplitudes);
+  __powder_averaging_setup(geodesic_polyhedron_frequency,
+                           &plan->exp_Im_alpha[3 * octant_orientations],
+                           exp_I_beta, plan->amplitudes);
 
   /* Normalizing amplitudes from the spherical averaging scheme by the number
    * of sidebands */
@@ -250,24 +251,8 @@ void MRS_plan_update_averaging_scheme(
   /* calculating exp(-Imα) at every orientation angle α form m=-4 to -1,
    * where α is the azimuthal angle over the positive octant ............... */
   /* ....................................................................... */
-  plan->exp_Im_alpha = malloc_complex128(4 * octant_orientations);
-  get_exp_Im_alpha(octant_orientations, cos_alpha, allow_fourth_rank,
-                   plan->exp_Im_alpha);
-  free(cos_alpha);
+  get_exp_Im_alpha(octant_orientations, allow_fourth_rank, plan->exp_Im_alpha);
   /* ----------------------------------------------------------------------- */
-
-  /* Setting up buffers and tables for processing the second rank tensors. . */
-  /* ....................................................................... */
-  /* w2 is the buffer for storing the frequencies calculated from the
-   * second rank tensors. */
-  plan->w2 = malloc_complex128(5 * plan->total_orientations);
-
-  plan->w4 = NULL;
-  if (allow_fourth_rank) {
-    /* w4 is the buffer for storing the frequencies calculated from the
-     * fourth rank tensors. */
-    plan->w4 = malloc_complex128(9 * plan->total_orientations);
-  }
 
   /**
    * Wigner matrices corresponding to the upper hemisphere.
@@ -279,27 +264,26 @@ void MRS_plan_update_averaging_scheme(
    */
 
   // calculating the required space for storing wigner matrices.
+  allocate_size_2 = 25 * octant_orientations;
+  allocate_size_4 = 81 * octant_orientations;
   if (sphere) {
-    allocate_size_2 = 25 * 2 * octant_orientations;
-    allocate_size_4 = 81 * 2 * octant_orientations;
-  } else {
-    allocate_size_2 = 25 * octant_orientations;
-    allocate_size_4 = 81 * octant_orientations;
+    allocate_size_2 *= 2;
+    allocate_size_4 *= 2;
   }
 
   /* Second rank reduced wigner matrices at every β orientation from the
    * positive upper octant. */
   plan->wigner_2j_matrices = malloc_double(allocate_size_2);
-  __wigner_d_matrix_cosine(2, octant_orientations, cos_beta,
-                           plan->wigner_2j_matrices);
+  wigner_d_matrices_from_exp_I_beta(2, octant_orientations, exp_I_beta,
+                                    plan->wigner_2j_matrices);
 
   plan->wigner_4j_matrices = NULL;
   if (allow_fourth_rank) {
     /* Fourth rank reduced wigner matrices at every β orientation from the
      * positive upper octant. */
     plan->wigner_4j_matrices = malloc_double(allocate_size_4);
-    __wigner_d_matrix_cosine(4, octant_orientations, cos_beta,
-                             plan->wigner_4j_matrices);
+    wigner_d_matrices_from_exp_I_beta(4, octant_orientations, exp_I_beta,
+                                      plan->wigner_4j_matrices);
   }
 
   /**
@@ -318,20 +302,35 @@ void MRS_plan_update_averaging_scheme(
    * wigner matrices should suffice. */
   if (sphere) {
     /* cos(beta) is negative in the lower hemisphere */
-    cblas_dscal(octant_orientations, -1.0, cos_beta, 1);
+    cblas_dscal(octant_orientations, -1.0, (double *)exp_I_beta, 2);
 
     /* Second rank reduced wigner matrices at every β orientation over an octant
      * from the lower hemisphere */
-    __wigner_d_matrix_cosine(2, octant_orientations, cos_beta,
-                             &plan->wigner_2j_matrices[allocate_size_2]);
+    wigner_d_matrices_from_exp_I_beta(
+        2, octant_orientations, exp_I_beta,
+        &plan->wigner_2j_matrices[allocate_size_2]);
     if (allow_fourth_rank) {
       /* Fourth rank reduced wigner matrices at every β orientation. */
-      __wigner_d_matrix_cosine(4, octant_orientations, cos_beta,
-                               &plan->wigner_4j_matrices[allocate_size_4]);
+      wigner_d_matrices_from_exp_I_beta(
+          4, octant_orientations, exp_I_beta,
+          &plan->wigner_4j_matrices[allocate_size_4]);
     }
   }
-  free(cos_beta);
+  free(exp_I_beta);
   /* ----------------------------------------------------------------------- */
+
+  /* Setting up buffers and tables for processing the second rank tensors. . */
+  /* ....................................................................... */
+  /* w2 is the buffer for storing the frequencies calculated from the
+   * second rank tensors. */
+  plan->w2 = malloc_complex128(5 * plan->total_orientations);
+
+  plan->w4 = NULL;
+  if (allow_fourth_rank) {
+    /* w4 is the buffer for storing the frequencies calculated from the
+     * fourth rank tensors. */
+    plan->w4 = malloc_complex128(9 * plan->total_orientations);
+  }
 
   /* buffer to hold the local frequencies and frequency offset. The buffer   *
    * is useful when the rotor angle is off magic angle (54.735 deg). */

@@ -3,20 +3,20 @@ from libcpp cimport bool as bool_t
 cdef extern from "angular_momentum.h":
     void __wigner_d_matrix(int l, int n, double *angle, double *wigner)
 
-    void __wigner_d_matrix_cosine(int l, int n, double *cos_angle,
+    void wigner_d_matrices_from_exp_I_beta(int l, int n, void *exp_I_beta,
                                   double *wigner)
 
     void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
                            double complex *R_in, double complex *R_out)
 
-    void __wigner_dm0_vector(int l, double beta, double *R_out)
+    void wigner_dm0_vector(int l, double beta, double *R_out)
 
 
 cdef extern from "powder_setup.h":
     void __powder_averaging_setup(
         int nt,
-        double *cosAlpha,
-        double *cosBeta,
+        double complex *exp_I_alpha,
+        double complex *exp_I_beta,
         double *amp,
         int space)   # 1 for octant, 2 for hemisphere and 4 for sphere
 

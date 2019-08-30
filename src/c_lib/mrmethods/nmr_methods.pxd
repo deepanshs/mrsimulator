@@ -1,10 +1,10 @@
 cdef extern from "angular_momentum.h":
-    void __wigner_d_matrix_cosine(int l, int n, double *cos_angle,
+    void wigner_d_matrices_from_exp_I_beta(int l, int n, void *exp_I_beta,
                                   double *wigner)
 
-cdef extern from "powder_setup.h":
-    void __powder_averaging_setup(int nt, double *cosAlpha, double *cosBeta,
-                                  double *amp, int space)
+# cdef extern from "powder_setup.h":
+#     void __powder_averaging_setup(int nt, double *cosAlpha, double *cosBeta,
+#                                   double *amp, int space)
 
 # cdef extern from "site.h":
 #     ctypedef struct site:

@@ -9,5 +9,5 @@
 
 #include "mrsimulator.h"
 
-extern void __powder_averaging_setup(int nt, double *cos_alpha,
-                                     double *cos_beta, double *amp);
+extern void __powder_averaging_setup(int nt, void *exp_I_alpha,
+                                     void *exp_I_beta, double *amp);

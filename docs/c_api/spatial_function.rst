@@ -1,12 +1,13 @@
 
 
-=================
-Spatial Functions
-=================
+===============
+Spatial Tensors
+===============
 
 The NMR frequency can be written as a sum of frequency components where each
 component :math:`\nu_k(\Theta, i, j)` is given as a product of the spatial and
-spin part of the Hamiltonian, given as,
+spin functions which are determined from the spatial and spin part of the
+Hamiltonian, given as,
 
 .. math::
     \nu_k(\Theta, i, j) = \Xi_k(\Theta) \xi_k(i, j),

@@ -87,52 +87,76 @@ void octahedronGetPolarAngleTrigOverAnOctant(int nt, double *cos_alpha,
   free(zr);
   free(sin_beta);
 }
+
 void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
-    int nt, complex128 *exp_I_alpha, double *cos_beta, double *amp) {
+    int nt, void *exp_I_alpha, void *exp_I_beta, double *amp) {
   int points = (nt + 1) * (nt + 2) / 2;
   double *xr = malloc_double(points);
   double *yr = malloc_double(points);
   double *zr = malloc_double(points);
-  double *sin_beta = malloc_double(points);
 
-  // The values xr = x^2, yr = y^2, zr = z^2, where x, y, and z are the
-  // direction cosines.
   octahedronGetDirectionCosineSquareOverOctantAndWeights(nt, xr, yr, zr, amp);
+  // At this point the variables
+  //    xr = x^2,
+  //    yr = y^2,
+  //    zr = z^2,
+  // where x, y, and z are the direction cosines.
 
-  // Evaluate sqrt of zr to get cos(beta) ---> cos(beta) = sqrt(z^2)
-  vm_double_square_root(points, zr, cos_beta);
+  // Cos beta .............................................................. //
+  // cos(beta) = sqrt(z^2) ... (1)
+  // In terms of the variables, Eq (1) is given as sqrt(zr)
+  // Evaluate zr = sqrt(zr)         ==>> sqrt(z^2)
+  vm_double_square_root(points, zr, zr);
+  // Copy cos(beta), aka zr, to the even addresses of exp_I_beta
+  cblas_dcopy(points, zr, 1, (double *)exp_I_beta, 2);
 
-  // Evaluate zr = xr + yr ---> sin^2(beta) = x^2 + y^2
+  // Sin beta .............................................................. //
+  // sin^2(beta) = x^2 + y^2 ... (2)
+  // In terms of the variables, Eq (2) is given as xr + yr
+  // Evaluate zr = xr + yr.
   vm_double_add(points, xr, yr, zr);
-  // Take sqrt of zr to get sin(beta) ---> sin(beta) = sqrt(x^2 + y^2)
-  vm_double_square_root(points, zr, sin_beta);
+  // Take the square root of zr to get sin(beta).
+  // Evaluate zr = sqrt(zr)         ==>> sqrt(x^2 + y^2)
+  vm_double_square_root(points, zr, zr);
+  // Copy sin(beta), aka zr, to the odd addresses of exp_I_beta
+  cblas_dcopy(points, zr, 1, (double *)exp_I_beta + 1, 2);
 
-  // Evaluate sqrt of xr ---> value of xr is updated to sqrt(x^2)
+  // Evaluate squate root of xr
+  // xr = sqrt(xr)        ==>> sqrt(x^2)
   vm_double_square_root(points, xr, xr);
 
-  // Evaluate sqrt of yr ---> value of yr is updated to sqrt(y^2)
+  // Evaluate squate root of yr
+  // yr = sqrt(yr)        ==>> sqrt(y^2)
   vm_double_square_root(points, yr, yr);
 
-  // Evaluate cos_alpha = x/sqrt(x^2 + y^2) = xr/sin_beta
-  // value of xr is updated to hold cos_alpha
-  vm_double_divide(points - 1, xr, sin_beta, xr);
+  // .. note
+  // At this point the variables,
+  //    xr = x,
+  //    yr = y,
+  //    zr = sin(beta) = sqrt(x^2 + y^2)
 
-  // Evaluate sin_alpha = y/sqrt(x^2 + y^2) = yr/sin_beta
-  // value of yr is updated to hold sin_alpha
-  vm_double_divide(points - 1, yr, sin_beta, yr);
+  // Cos alpha ............................................................. //
+  // cos(alpha) = x/sqrt(x^2 + y^2) = x/sin(beta) ... (3)
+  // In terms of the variables, Eq (3) is given as xr/zr
+  // Evaluate xr = xr/zr
+  vm_double_divide(points - 1, xr, zr, xr);
+  xr[points - 1] = 0.0;
+  // Copy cos(alpha), aka xr, to the even addresses of exp_I_alpha
+  cblas_dcopy(points, xr, 1, (double *)exp_I_alpha, 2);
 
-  xr[points - 1] = 1.0;
+  // Sin alpha ............................................................. //
+  // sin(alpha) = y/sqrt(x^2 + y^2) = y/sin(beta) ... (4)
+  // In terms of the variables, Eq (4) is given as yr/zr
+  // Evaluate yr = yr/zr
+  vm_double_divide(points - 1, yr, zr, yr);
   yr[points - 1] = 0.0;
+  // Copy sin(alpha), aka yr, to the odd addresses of exp_I_alpha
+  cblas_dcopy(points, yr, 1, (double *)exp_I_alpha + 1, 2);
 
-  // copy cos_alpha and sin_alpha to alternating address of exp_I_alpha
-  // to emulate a complex array.
-  cblas_dcopy(points, xr, 1, (double *)&exp_I_alpha[0], 2);
-  cblas_dcopy(points, yr, 1, (double *)&exp_I_alpha[0] + 1, 2);
-
+  // free temporary memory
   free(xr);
   free(yr);
   free(zr);
-  free(sin_beta);
 }
 
 void octahedronInterpolation(double *spec, double *freq, int nt, double *amp,

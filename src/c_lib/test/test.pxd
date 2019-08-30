@@ -1,9 +1,9 @@
 from libcpp cimport bool as bool_t
 
 cdef extern from "angular_momentum.h":
-    void wigner_d_matrix(const int l, const int n, const double *angle, double *wigner)
+    void wigner_d_matrices(const int l, const int n, const double *angle, double *wigner)
 
-    void __wigner_d_matrix_cosine(const int l, const int n, const double *cos_angle,
+    void wigner_d_matrices_from_exp_I_beta(const int l, const int n, const double complex *exp_I_beta,
                                   double *wigner)
 
     # void __wigner_rotation(const int l, const int n, const double *wigner, const double *cos_alpha,
@@ -15,10 +15,9 @@ cdef extern from "angular_momentum.h":
     void single_wigner_rotation(const int l, const double *euler_angles,
                             const double complex *R_in, double complex *R_out)
 
-    void __wigner_dm0_vector(const int l, const double beta, double *R_out)
+    void wigner_dm0_vector(const int l, const double beta, double *R_out)
 
     void get_exp_Im_alpha(const unsigned int octant_orientations,
-                             const double *cos_alpha,
                              const bool_t allow_fourth_rank,
                              double complex *exp_Im_alpha)
 
@@ -35,8 +34,8 @@ cdef extern from "angular_momentum.h":
 cdef extern from "powder_setup.h":
     void __powder_averaging_setup(
         int nt,
-        double *cosAlpha,
-        double *cosBeta,
+        double complex *exp_I_alpha,
+        double complex *exp_I_beta,
         double *amp)
 
 cdef extern from "interpolation.h":
