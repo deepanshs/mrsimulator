@@ -13,21 +13,22 @@ Welcome to mrsimulator's documentation!
 =======================================
 
 The package ``mrsimulator`` is a collection of methods and tools for simulating
-nuclear magnetic resonance (NMR) lineshapes. Because the bulk of the code is
+nuclear magnetic resonance (NMR) line-shapes. Because the bulk of the code is
 written in C and eventually wrapped in python, ``mrsimulator`` is a fast NMR
-lineshape simulation library, harnessing both the speed of C and the advantages
-of Python programming language.
+line-shape simulation library, harnessing both the speed of C and the
+advantages of Python programming language.
 
 The package is currently in development. We currently support simulation of
-NMR lineshapes from uncoupled spin :math:`I=\frac{1}{2}` nucleus under static,
+NMR line-shapes from uncoupled spin :math:`I=\frac{1}{2}` nucleus under static,
 magic angle spinning (MAS), and variable angle spinning (VSA) conditions.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    :caption: Table of Contents:
 
    mr_objects
    installation
+   requirements
    getting_started
    load_isotopomers
    examples

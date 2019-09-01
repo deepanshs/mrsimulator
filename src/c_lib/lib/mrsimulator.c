@@ -210,7 +210,7 @@ void MRS_plan_update_averaging_scheme(
     MRS_plan *plan, unsigned int geodesic_polyhedron_frequency,
     bool allow_fourth_rank) {
 
-  unsigned int nt = geodesic_polyhedron_frequency, i;
+  unsigned int nt = geodesic_polyhedron_frequency;
   unsigned int octant_orientations = (nt + 1) * (nt + 2) / 2;
   unsigned int allocate_size_2, allocate_size_4;
 

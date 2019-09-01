@@ -8,10 +8,9 @@
 
 #ifndef mrsimulator_h
 #define mrsimulator_h
-#include "config.h"
 #include "array.h"
+#include "config.h"
 #include "vm_common.h"
-
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -19,7 +18,7 @@
 
 #include "angular_momentum.h"
 #include "fftw3.h"
-#include "frequencies.h"
+#include "frequency_component_function.h"
 #include "interpolation.h"
 #include "isotopomer_ravel.h"
 #include "octahedron.h"

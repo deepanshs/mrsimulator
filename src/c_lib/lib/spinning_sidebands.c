@@ -91,7 +91,7 @@ static inline void __spinning_sideband_core(
     __zero_components(&R0, R2, R4);
 
     /* get nuclear shielding components upto first order ................... */
-    frequency_components_from_1st_order_nuclear_shielding_Hamiltonian(
+    frequency_component_functions_from_1st_order_nuclear_shielding_Hamiltonian(
         &R0_temp, R2_temp, iso_n_, zeta_n_, eta_n_, transition);
     R0 += R0_temp;
     single_wigner_rotation(2, shielding_orientation, R2_temp, R2_temp);
@@ -105,14 +105,14 @@ static inline void __spinning_sideband_core(
 
     if (ravel_isotopomer->spin > 0.5) {
       /* get electric quadrupolar components upto first order .............. */
-      frequency_components_from_1st_order_electric_quadrupole_Hamiltonian(
+      frequency_component_functions_from_1st_order_electric_quadrupole_Hamiltonian(
           R2_temp, ravel_isotopomer->spin, Cq_e_, eta_e_, transition);
       single_wigner_rotation(2, quadrupolar_orientation, R2_temp, R2_temp);
       vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
 
       /* get electric quadrupolar components upto second order ............. */
       if (plan->allow_fourth_rank) {
-        frequency_components_from_2nd_order_electric_quadrupole_Hamiltonian(
+        frequency_component_functions_from_2nd_order_electric_quadrupole_Hamiltonian(
             &R0_temp, R2_temp, R4_temp, ravel_isotopomer->spin, Cq_e_, eta_e_,
             transition, ravel_isotopomer->larmor_frequency);
         if (remove_second_order_quad_isotropic == 0) {

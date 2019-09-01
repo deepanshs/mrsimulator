@@ -845,7 +845,7 @@ void get_exp_Im_alpha(const unsigned int n, const bool allow_fourth_rank,
 
   // The complex array is interpreted as alternating real and imag double array.
   // The index s_i = i*n of complex array is now at index 2*i*n.
-  unsigned int i, s_2 = 4 * n, s_3 = 6 * n, s_1 = 2 * n;
+  unsigned int s_2 = 4 * n, s_3 = 6 * n, s_1 = 2 * n;
 
   vm_double_complex_multiply(n, &exp_Im_alpha_[s_3], &exp_Im_alpha_[s_3],
                              &exp_Im_alpha_[s_2]);

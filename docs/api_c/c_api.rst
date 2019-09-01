@@ -7,10 +7,10 @@ C-API
    :maxdepth: 3
    :caption: Contents:
 
-   transition_function
-   spatial_function
+   spatial_orientation_function
+   spin_transition_function
+   frequency_component_function
    angular_momentum
    MRS_plan
 
-..    frequencies
 ..    struct_isotopomer_ravel

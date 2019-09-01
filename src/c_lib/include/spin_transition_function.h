@@ -1,5 +1,5 @@
 //
-//  transition_function.h
+//  spin_transition_function.h
 //
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
 //  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
@@ -11,67 +11,61 @@
 // Single nucleus spin transition functions................................. //
 
 /**
- * @brief The @f$\mathbb{p}@f$ spin symmetry transition function.
- *
- * Single nucleus transition symmetry function from irreducible 1st-rank tensor,
- * given as
+ * Single nucleus spin transition function from irreducible tensor of rank
+ * @f$L=1@f$, given as
  * @f[
  *    \mathbb{p}(m_f, m_i) &= \left< m_f | \hat{T}_{10} | m_f \right> -
  *                            \left< m_i | \hat{T}_{10} | m_i \right> \\
  *                         &= m_f - m_i,
  * @f]
- * where @f$\hat{T}_{10}@f$ is the irreducible 1st rank spherical tensor
+ * where @f$\hat{T}_{10}@f$ is the irreducible 1st-rank spherical tensor
  * operator in the rotating tilted frame.
  *
  * @param mi The quantum number associated with the quantized initial energy
- *        level, @f$E_{m_i}@f$.
+ *        level.
  * @param mf The quantum number associated with the quantized final energy
- *        level, @f$E_{m_f}@f$.
- * @returns The spin transition symmetry function @f$\mathbb{p}@f$.
+ *        level.
+ * @returns The spin transition function @f$\mathbb{p}@f$.
  */
 static inline double p(const double mf, const double mi) { return (mf - mi); }
 
 /**
- * @brief The @f$\mathbb{d}@f$ spin transition symmetry function.
- *
- * Single nucleus transition symmetry function from irreducible 2nd-rank tensor,
- * given as
+ * Single nucleus spin transition function from irreducible tensor of rank
+ * @f$L=2@f$, given as
  * @f[
  *    \mathbb{d}(m_f, m_i) &= \left< m_f | \hat{T}_{20} | m_f \right> -
  *                            \left< m_i | \hat{T}_{20} | m_i \right> \\
  *    &= \sqrt{\frac{3}{2}} \left(m_f^2 - m_i^2 \right),
  * @f]
- * where @f$\hat{T}_{20}@f$ is the irreducible 2nd rank spherical tensor
+ * where @f$\hat{T}_{20}@f$ is the irreducible 2nd-rank spherical tensor
  * operator in the rotating tilted frame.
  *
  * @param mi The quantum number associated with the quantized initial energy
- *        level, @f$E_{m_i}@f$.
+ *        level.
  * @param mf The quantum number associated with the quantized final energy
- *        level, @f$E_{m_f}@f$.
- * @returns The spin transition symmetry function @f$\mathbb{d}@f$.
+ *        level.
+ * @returns The spin transition function @f$\mathbb{d}@f$.
  */
 static inline double d(const double mf, const double mi) {
   return 1.2247448714 * (mf * mf - mi * mi);
 }
 
 /**
- * @brief The @f$\mathbb{f}@f$ spin transition symmetry function.
- *
- * Single nucleus transition symmetry function from irreducible 3rd-rank tensor,
- * given as
+ * Single nucleus spin transition function from irreducible tensor of rank
+ * @f$L=3@f$, given as
  * @f[
  *    \mathbb{f}(m_f, m_i) &= \left< m_f | \hat{T}_{30} | m_f \right> -
  *                            \left< m_i | \hat{T}_{30} | m_i \right> \\
  *    &= \frac{1}{\sqrt{10}} [5(m_f^3 - m_i^3) + (1 - 3I(I+1))(m_f-m_i)],
  * @f]
- * where @f$\hat{T}_{30}@f$ is the irreducible 3rd rank spherical tensor
+ * where @f$\hat{T}_{30}@f$ is the irreducible 3rd-rank spherical tensor
  * operator in the rotating tilted frame.
  *
  * @param mi The quantum number associated with the quantized initial energy
- *        level, @f$E_{m_i}@f$.
+ *        level.
  * @param mf The quantum number associated with the quantized final energy
- *        level, @f$E_{m_f}@f$.
- * @return The spin transition symmetry function @f$\mathbb{f}@f$.
+ *        level.
+ * @return The spin transition function @f$\mathbb{f}@f$.
  */
 static inline double f(const double mf, const double mi, const double spin) {
   double f_value = 1.0 - 3.0 * spin * (spin + 1.0);
@@ -82,11 +76,9 @@ static inline double f(const double mf, const double mi, const double spin) {
 }
 
 /**
- * @brief The @f$\mathbb{c}_{L}@f$ spin transition symmetry functions.
- *
- * Single nucleus transition symmetry functions corresponding to the
- * @f$L=[0,2,4]@f$ rank irreducible tensors resulting from the second-order
- * corrections to the quadrupolar frequency. The functions are defined as
+ * Single nucleus composite spin transition functions corresponding to rank
+ * @f$L=[0,2,4]@f$ irreducible tensors resulting from the second-order
+ * corrections to the quadrupole frequency. The functions are defined as
  * @f[
  *   \mathbb{c}_{0}(m_f, m_i) &= \frac{4}{\sqrt{125}} \left[I(I+1) -
  *          \frac{3}{4}\right] \mathbb{p}(m_f, m_i) +
@@ -98,18 +90,18 @@ static inline double f(const double mf, const double mi, const double spin) {
  *          \frac{3}{4}\right] \mathbb{p}(m_f, m_i) -
  *          \frac{17}{\sqrt{175}} \mathbb{f}(m_f, m_i),
  * @f]
- * where @f$\mathbb{p}(m_f, m_i)@f$ and @f$\mathbb{f}(m_f, m_i)@f$ are the
- * spin transition functions described before, and @f$I@f$ is the spin quantum
- * number.
+ * where @f$\mathbb{p}(m_f, m_i)@f$ and @f$\mathbb{f}(m_f, m_i)@f$ are single
+ * nucleus spin transition functions described before, and @f$I@f$ is the spin
+ * quantum number.
  *
  * @param mi The quantum number associated with the quantized initial energy
- *        level, @f$E_{m_i}@f$.
+ *        level.
  * @param mf The quantum number associated with the quantized final energy
- *        level, @f$E_{m_f}@f$.
- * @param spin The spin quantum number.
+ *        level.
+ * @param spin The spin quantum number, @f$I@f$.
  * @param cl_value A pointer to an array of size 3 where the spin transition
- *        symmetry functions, @f$\mathbb{c}_{L}@f$ ordered according to
- *        @f$L=[0,2,4]@f$, will be stored.
+ *        functions, @f$\mathbb{c}_{L}@f$, will be stored ordered according to
+ *        @f$L=[0,2,4]@f$.
  */
 static inline void cL(double *restrict cl_value, const double mf,
                       const double mi, const double spin) {
@@ -141,13 +133,13 @@ static inline void cL(double *restrict cl_value, const double mf,
  * S, respectively.
  *
  * @param mIi The quantum number associated with the quantized initial energy
- *        level, @f$E_{{mI_i},{mS_i}}@f$ corresponding to spin I.
+ *        level corresponding to spin I.
  * @param mSi The quantum number associated with the quantized initial energy
- *        level, @f$E_{{mI_i},{mS_i}}@f$ corresponding to spin S.
+ *        level corresponding to spin S.
  * @param mIf The quantum number associated with the quantized final energy
- *        level, @f$E_{{mI_f},{mS_f}}@f$ corresponding to spin I.
+ *        level corresponding to spin I.
  * @param mSf The quantum number associated with the quantized final energy
- *        level, @f$E_{{mI_f},{mS_f}}@f$ corresponding to spin S.
+ *        level corresponding to spin S.
  * @return The spin transition symmetry function @f$\mathbb{d}_{IS}@f$.
  */
 static inline double dIS(const double mIf, const double mIi, const double mSf,
