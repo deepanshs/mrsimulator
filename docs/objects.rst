@@ -11,46 +11,39 @@ Creating instances from python dictionary
 Orientation
 ^^^^^^^^^^^
 
-An `Orientation` is a python
-`dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`__
-object which represents the three Euler angles. The key-value pairs of this
-object follow,
+We define `Orientation` as an object with attributes representing the
+Euler angles---:math:`\alpha, \beta, \gamma`.
+
 
 .. cssclass:: table-bordered table-hover
 .. list-table::
-  :widths: 15 25 60
+  :widths: 15 20 65
   :header-rows: 1
 
   * - Attributes
     - Type
     - Description
   * - ``alpha``
-    - A `string <https://docs.python.org/3/library/stdtypes.html#str>`__
-      containing a physical quantity
-    - The :math:`\alpha` Euler angle. For example, ``2.1 rad``. The default value is
+    - ScalarQuantity
+    - Euler angle, :math:`\alpha`. For example, ``2.1 rad``. The default value is
       ``0 rad``.
   * - ``beta``
-    - A `string <https://docs.python.org/3/library/stdtypes.html#str>`__
-      containing a physical quantity
-    - The :math:`\beta` Euler angle. For example, ``23.5 deg``. The default value is
+    - ScalarQuantity
+    - Euler angle, :math:`\beta`. For example, ``23.5 deg``. The default value is
       ``0 rad``.
   * - ``gamma``
-    - A `string <https://docs.python.org/3/library/stdtypes.html#str>`__
-      containing a physical quantity
-    - The :math:`\gamma` Euler angle. For example, ``0.5 rad``. The default value is
+    - ScalarQuantity
+    - Euler angle, :math:`\gamma`. For example, ``0.5 rad``. The default value is
       ``0 rad``.
 
 **Example**
 
-  >>> orientation = {"alpha": "0.5 rad", "beta": "0.23 rad", "gamma": "2.54 rad"}
+Using python `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`_
+object, Orientation may be represented as,
 
-.. - The value is a list of three euler angles, [:math:`alpha`, :math:`beta`
-..   and :math:`gamma`]. Each angle is given as a string with a physical
-..   quantity representing the angle. Tor example, the orientation may be
-..   given as ['15 deg', '0.34 rad', '0 rad]. The default value is
-..   ['0 rad', '0 rad', '0 rad']
+.. code-block:: py
 
-
+    orientation_example = dict(alpha="0.5 rad", beta="0.23 rad", gamma="2.54 rad")
 
 
 .. _symmetric_tensor:
@@ -58,47 +51,47 @@ object follow,
 SymmetricTensor
 ^^^^^^^^^^^^^^^
 
-A `SymmetricTensor` is a python
-`dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`__
-object which represents a traceless second rank symmetric tensor.
-It is represented by the following key-value pairs.
+We define `SymmetricTensor` as an object with attributes representing the
+traceless second rank symmetric spatial irreducible tensor.
 
 .. cssclass:: table-bordered table-hover
+
 .. list-table::
-  :widths: 15 25 60
+  :widths: 15 20 65
   :header-rows: 1
 
   * - Attributes
     - Type
     - Description
-  * - ``anisotropy``
-    - `String <https://docs.python.org/3/library/stdtypes.html#str>`__
-      containing a physical quantity
-    - The strength of the anisotropy as calculated using Haeberlen
-      convention. The value may be provided as a frequency quantity, for
-      example, "4.2 kHz", or as a dimensionless frequency ratio, for example,
-      "10 ppm" or "10 µHz/Hz". The default value is '0 ppm'
-  * - ``asymmetry``
-    - `Float <https://docs.python.org/3/library/functions.html#float>`__
-    - The asymmetry parameter of the tensor as calculated using
-      Haeberlen convention. For example, 0.75. The default value is 0.
+  * - ``zeta``
+    - ScalarQuantity
+    - The strength of the anisotropy calculated using Haeberlen
+      convention. The value is a physical quantity given as either frequency,
+      ``4.2 kHz``, or as a dimensionless frequency ratio, ``10 ppm`` or
+      ``10 µHz/Hz``. The default value is ``0 ppm``.
+  * - ``eta``
+    - Float
+    - The asymmetry parameter calculated using Haeberlen convention, for
+      example, ``0.75``. The default value is ``0``.
   * - ``orientation``
     - :ref:`orientation`
-    - The Euler angles for rotating the second rank irreducible symmetric tensor
-      from the principal axis system (PAS) to the crystal frame using wigner
-      rotations.
+    - The Euler angles (:math:`\alpha, \beta, \gamma`) that rotates the second rank
+      irreducible symmetric tensor from the principal axis system (PAS) to the
+      frame of reference using wigner rotations.
 
 **Example**
 
-  >>> symmetric_tensor_object = {
-  ...     "anisotropy": "10.3 ppm",
-  ...     "asymmetry": 0.5,
-  ...     "orientation": {
-  ...         "alpha": "0.5 rad",
-  ...         "beta": "0.23 rad",
-  ...         "gamma": "2.54 rad"
-  ...     }
-  ... }
+Using python `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`_
+object, SymmetricTensor may be represented as,
+
+.. code-block:: py
+
+    symmetric_tensor_example = dict(
+        anisotropy="10.3 ppm", asymmetry=0.5, orientation=orientation_example
+    )
+
+where ``orientation_example`` is the dict object with Euler angles from the
+previous example.
 
 
 
@@ -109,49 +102,46 @@ It is represented by the following key-value pairs.
 Site
 ^^^^
 
-A `Site` object is a python
-`dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`__
-object which represents a nuclear site with the following key-value pairs,
+We define `Site` as an object with attributes representing an isolated nuclear
+site.
 
 .. cssclass:: table-bordered table-hover
 .. list-table::
-  :widths: 25 25 50
+  :widths: 25 20 55
   :header-rows: 1
 
   * - Attributes
     - Type
     - Description
   * - ``isotope``
-    - `String <https://docs.python.org/3/library/stdtypes.html#str>`__
-    - The NMR active isotope symbol, for example, '13C'.
+    - String
+    - The isotope symbol of the NMR active nucleus, for example, ``13C``.
       This is a required key.
   * - ``isotropic_chemical_shift``
-    - `String <https://docs.python.org/3/library/stdtypes.html#str>`__
-      containing a physical quantity
-    - The isotropic chemical shift of the isotope. The value may be provided
-      as a frequency quantity, "12.6 Hz", or as a dimensionless frequency ratio,
-      "1 mHz/Hz", or equivalently, "1000 ppm". The default value is '0 ppm'.
+    - ScalarQuantity
+    - The isotropic chemical shift of the site. The value is a physical quantity given as either frequency,
+      ``4.2 kHz``, or as a dimensionless frequency ratio, ``10 ppm`` or
+      ``10 µHz/Hz``. The default value is ``0 ppm``.
   * - ``shielding_symmetric``
     - :ref:`symmetric_tensor`
     - See the description for the :ref:`symmetric_tensor` object.
 
-*An example of Site object.*
+**Example**
 
-  >>> site_object = {
-  ...     "isotope": "13C",
-  ...     "isotropic_chemical_shift": "15 ppm",
-  ...     "shielding_symmetric": {
-  ...         "anisotropy": "10.3 ppm",
-  ...         "asymmetry": 0.5,
-  ...         "orientation": {
-  ...             "alpha": "0.5 rad",
-  ...             "beta": "0.23 rad",
-  ...             "gamma": "2.54 rad"
-  ...         }
-  ...     }
-  ... }
+Using python `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`_,
+object, Site may be represented as,
 
+.. code-block:: py
 
+  site_example = dict(
+      isotope="13C",
+      isotropic_chemical_shift="15 ppm",
+      shielding_symmetric=symmetric_tensor_example
+      )
+  )
+
+where ``symmetric_tensor_example`` is the dict object with symmetric tensor
+attributes from the previous example.
 
 
 .. _isotopomer:
@@ -193,26 +183,11 @@ The key-value pairs of the `Isotopomer` object follow,
 
 *An example of Isotopomer object.*
 
-  >>> isotopomer_object = {
-  ...     "sites": [
-  ...         {
-  ...             "isotope": "13C",
-  ...             "isotropic_chemical_shift": "15 ppm",
-  ...             "shielding_symmetric": {
-  ...                 "anisotropy": "10.3 ppm",
-  ...                 "asymmetry": 0.5,
-  ...                 "orientation": {
-  ...                     "alpha": "0.5 rad",
-  ...                     "beta": "0.23 rad",
-  ...                     "gamma": "2.54 rad"
-  ...                 }
-  ...             }
-  ...         }
-  ...     ],
-  ...     "abundance": "15.3 %"
-  ... }
+.. code-block:: py
 
+  isotopomer_object = dict(sites=[site_example], abundance="15.3 %")
 
+where `site_example` is the dict object from the previous example.
 
 
 .. _direct_dimension:

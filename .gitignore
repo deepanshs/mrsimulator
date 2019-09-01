@@ -62,10 +62,9 @@ instance/
 
 # Sphinx documentation
 docs/_build/
-docs/api_c
 
 # Doxygen output
-doxyoutput/
+docs/xml/
 
 # PyBuilder
 target/

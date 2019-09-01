@@ -23,18 +23,17 @@ NMR lineshapes from uncoupled spin :math:`I=\frac{1}{2}` nucleus under static,
 magic angle spinning (MAS), and variable angle spinning (VSA) conditions.
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 3
+   :caption: Table of Contents:
 
    mr_objects
    installation
    getting_started
    load_isotopomers
    examples
-   what's_going_on
+   theory/what's_going_on
    api_py/py_api
    api_c/c_api
-   c_api/c_api
 
 Indices and tables
 ------------------

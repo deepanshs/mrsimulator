@@ -55,17 +55,13 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
-    # "autoapi.extension",
     "breathe",
-    # "exhale",
     "sphinxjp.themes.basicstrap",
 ]
 
-read_the_docs_build = os.environ.get("READTHEDOCS", None) == "True"
+subprocess.run("doxygen", shell=True)
+doxy_output = os.path.abspath("./xml")
 
-# if read_the_docs_build:
-subprocess.call("cd doxyoutput; doxygen", shell=True)
-doxy_output = os.path.abspath("./doxyoutput/xml")
 # Setup the breathe extension
 breathe_projects = {"My Project": doxy_output}
 breathe_default_project = "My Project"
@@ -82,7 +78,7 @@ breathe_doxygen_config_options = {
 # Setup the exhale extension
 # exhale_args = {
 #     # These arguments are required
-#     "containmentFolder": "./api_c",
+#     "containmentFolder": "./api_c_temp",
 #     "rootFileName": "c_api.rst",
 #     "rootFileTitle": "C-API References",
 #     "afterTitleDescription": textwrap.dedent(
@@ -205,9 +201,9 @@ html_theme_options = {
     # "theme_preview": True,
     # Set the Size of Heading text. Defaults to None
     # "h1_size": "3.0em",
-    "h2_size": "1.8em",
-    "h3_size": "1.6em",
-    "h4_size": "1.4em",
+    # "h2_size": "1.8em",
+    # "h3_size": "1.6em",
+    # "h4_size": "1.4em",
     # "h5_size": "1.4em",
     # "h6_size": "1.1em",
 }
@@ -215,19 +211,19 @@ html_theme_options = {
 # Theme options
 html_logo = "_static/mrsimulator-light-add-01.png"
 
-html_context = {
-    "display_github": True,
-    "github_user": "DeepanshS",
-    "github_repo": "mrsimulator",
-    "github_version": "master/docs/",
-    "css_files": [
-        # "_static/button.css",
-        #     "_static/theme_overrides.css",  # override wide tables in RTD theme
-        #     "_static/style.css",
-        #     "_static/custom.css",
-        #     "_static/bootstrap-toc.css",
-    ],
-}
+# html_context = {
+#     "display_github": True,
+#     "github_user": "DeepanshS",
+#     "github_repo": "mrsimulator",
+#     "github_version": "master/docs/",
+#     "css_files": [
+#         # "_static/button.css",
+#         #     "_static/theme_overrides.css",  # override wide tables in RTD theme
+#         #     "_static/style.css",
+#         #     "_static/custom.css",
+#         #     "_static/bootstrap-toc.css",
+#     ],
+# }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

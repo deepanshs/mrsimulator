@@ -28,5 +28,3 @@ Method Documentation
 .. doxygenfunction:: MRS_plan_update_averaging_scheme()
 
 .. doxygenfunction:: MRS_plan_free_averaging_scheme()
-
-----
