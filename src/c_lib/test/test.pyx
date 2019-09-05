@@ -274,8 +274,8 @@ def _one_d_simulator(
 
         # quad tensor information
         quadrupolar_coupling_constant = None,
-        quadrupolar_asymmetry = None,
-        quadrupolar_orientations = None,
+        quadrupole_asymmetry = None,
+        quadrupole_orientations = None,
 
         second_order_quad = 1,
         remove_second_order_quad_isotropic = 0,
@@ -344,22 +344,22 @@ def _one_d_simulator(
     cdef np.ndarray[double, ndim=1] quadrupolar_coupling_constant_c = quadrupolar_coupling_constant
 
     # Quad asymmetry value
-    if quadrupolar_asymmetry is None:
-        quadrupolar_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()
+    if quadrupole_asymmetry is None:
+        quadrupole_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()
     else:
-        quadrupolar_asymmetry = np.asarray([quadrupolar_asymmetry], dtype=np.float64).ravel()
-    if quadrupolar_asymmetry.size != number_of_sites:
+        quadrupole_asymmetry = np.asarray([quadrupole_asymmetry], dtype=np.float64).ravel()
+    if quadrupole_asymmetry.size != number_of_sites:
         raise Exception("Number of quad asymmetry are not consistent with the number of spins.")
-    cdef np.ndarray[double, ndim=1] quadrupolar_asymmetry_c = quadrupolar_asymmetry
+    cdef np.ndarray[double, ndim=1] quadrupole_asymmetry_c = quadrupole_asymmetry
 
     # Quadrupolar orientations
-    if quadrupolar_orientations is None:
-        quadrupolar_orientations = np.zeros(3*number_of_sites, dtype=np.float64).ravel()
+    if quadrupole_orientations is None:
+        quadrupole_orientations = np.zeros(3*number_of_sites, dtype=np.float64).ravel()
     else:
-        quadrupolar_orientations = np.asarray([quadrupolar_orientations], dtype=np.float64).ravel()
-    if quadrupolar_orientations.size != 3*number_of_sites:
+        quadrupole_orientations = np.asarray([quadrupole_orientations], dtype=np.float64).ravel()
+    if quadrupole_orientations.size != 3*number_of_sites:
         raise Exception("Number of euler angles are not consistent with the number of quad tensors.")
-    cdef np.ndarray[double, ndim=1] quadrupolar_orientations_c = quadrupolar_orientations*np.pi/180.0
+    cdef np.ndarray[double, ndim=1] quadrupole_orientations_c = quadrupole_orientations*np.pi/180.0
 
     # Dipolar coupling constant
     if D is None:
@@ -391,9 +391,9 @@ def _one_d_simulator(
     isotopomer_struct.shielding_asymmetry = &shielding_asymmetry_c[0]
     isotopomer_struct.shielding_orientation = &shielding_orientations_c[0]
 
-    isotopomer_struct.quadrupolar_constant_in_Hz = &quadrupolar_coupling_constant_c[0]
-    isotopomer_struct.quadrupolar_asymmetry = &quadrupolar_asymmetry_c[0]
-    isotopomer_struct.quadrupolar_orientation = &quadrupolar_orientations_c[0]
+    isotopomer_struct.quadrupole_coupling_constant_in_Hz = &quadrupolar_coupling_constant_c[0]
+    isotopomer_struct.quadrupole_asymmetry = &quadrupole_asymmetry_c[0]
+    isotopomer_struct.quadrupole_orientation = &quadrupole_orientations_c[0]
 
     isotopomer_struct.dipolar_couplings = &D_c[0]
 

@@ -3,11 +3,11 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. image:: https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master
-    :target: https://travis-ci.org/DeepanshS/mrsimulator
-.. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
-    :target: https://mrsimulator.readthedocs.io/en/stable/?badge=stable
-    :alt: Documentation Status
+.. .. image:: https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master
+..     :target: https://travis-ci.org/DeepanshS/mrsimulator
+.. .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
+..     :target: https://mrsimulator.readthedocs.io/en/stable/?badge=stable
+..     :alt: Documentation Status
 
 Welcome to mrsimulator's documentation!
 =======================================
@@ -32,7 +32,8 @@ magic angle spinning (MAS), and variable angle spinning (VSA) conditions.
    getting_started
    load_isotopomers
    examples
-   theory/what's_going_on
+   theory/components
+   theory/wigner_rotations
    api_py/py_api
    api_c/c_api
 

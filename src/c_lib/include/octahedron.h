@@ -7,7 +7,8 @@
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
-#include "mrsimulator.h"
+#include "config.h"
+#include "interpolation.h"
 
 extern void octahedronGetDirectionCosineSquareOverOctantAndWeights(
     int nt, double *xr, double *yr, double *zr, double *amp);

@@ -15,8 +15,6 @@
 typedef double complex128[2];
 typedef float complex64[2];
 
-// #include "vm_common.h"
-
 #if __STDC_VERSION__ >= 199901L
 // #define complex128 double _Complex
 #define MKL_Complex16 complex128
@@ -58,6 +56,10 @@ typedef float complex64[2];
 #define PI2 6.2831853072
 #define PI2I PI2 *I
 
+#define sphere 0
+#define hemisphere 1
+#define octant 0
+
 // #ifdef __APPLE__
 // #include <Accelerate/Accelerate.h>
 // #define __blas_activate
@@ -83,5 +85,12 @@ typedef float complex64[2];
 // // mkl_set_num_threads(max_threads);
 // // printf("Using upto %d threads for simulation.\n", max_threads);
 // #endif
+
+#include "array.h"
+#include "vm_common.h"
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <time.h>
 
 #endif

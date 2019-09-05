@@ -168,8 +168,8 @@ def one_d_spectrum(spectrum,
                 len_ = len(text)
                 print(text)
                 print(f"{'-'*(len_-1)}")
-                print(f'Isotropic chemical shift = {str(iso)}')
-                print(f'Shielding anisotropy = {str(zeta)}')
+                print(f'Isotropic chemical shift = {str(iso)} Hz')
+                print(f'Shielding anisotropy = {str(zeta)} Hz')
                 print(f'Shielding asymmetry = {eta}')
                 print(f'Shielding orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
@@ -214,9 +214,9 @@ def one_d_spectrum(spectrum,
         isotopomer_struct.shielding_asymmetry = &eta_n[0]
         isotopomer_struct.shielding_orientation = &ori_n[0]
 
-        isotopomer_struct.quadrupolar_constant_in_Hz = &Cq_e[0]
-        isotopomer_struct.quadrupolar_asymmetry = &eta_e[0]
-        isotopomer_struct.quadrupolar_orientation = &ori_e[0]
+        isotopomer_struct.quadrupole_coupling_constant_in_Hz = &Cq_e[0]
+        isotopomer_struct.quadrupole_asymmetry = &eta_e[0]
+        isotopomer_struct.quadrupole_orientation = &ori_e[0]
 
         isotopomer_struct.dipolar_couplings = &D_c[0]
 

@@ -40,7 +40,7 @@ static inline void __spinning_sideband_core(
   int i;
   unsigned int site, j;
   double iso_n_, zeta_n_, eta_n_, Cq_e_, eta_e_, d_, offset;
-  double *shielding_orientation, *quadrupolar_orientation;
+  double *shielding_orientation, *quadrupole_orientation;
 
   double R0 = 0.0;
   double R0_temp = 0.0;
@@ -52,6 +52,7 @@ static inline void __spinning_sideband_core(
 
   int spec_site;
   double *spec_site_ptr;
+  MRS_averaging_scheme *scheme = plan->averaging_scheme;
 
   // Per site base calculation
   for (site = 0; site < ravel_isotopomer->number_of_sites; site++) {
@@ -66,11 +67,11 @@ static inline void __spinning_sideband_core(
     eta_n_ = ravel_isotopomer->shielding_asymmetry[site];
     shielding_orientation = &ravel_isotopomer->shielding_orientation[3 * site];
 
-    /* Electric quadrupolar terms                                            */
-    Cq_e_ = ravel_isotopomer->quadrupolar_constant_in_Hz[site];
-    eta_e_ = ravel_isotopomer->quadrupolar_asymmetry[site];
-    quadrupolar_orientation =
-        &ravel_isotopomer->quadrupolar_orientation[3 * site];
+    /* Electric quadrupole terms                                            */
+    Cq_e_ = ravel_isotopomer->quadrupole_coupling_constant_in_Hz[site];
+    eta_e_ = ravel_isotopomer->quadrupole_asymmetry[site];
+    quadrupole_orientation =
+        &ravel_isotopomer->quadrupole_orientation[3 * site];
 
     /* Magnetic dipole terms                                                 */
     d_ = ravel_isotopomer->dipolar_couplings[site];
@@ -91,10 +92,10 @@ static inline void __spinning_sideband_core(
     __zero_components(&R0, R2, R4);
 
     /* get nuclear shielding components upto first order ................... */
-    frequency_component_functions_from_1st_order_nuclear_shielding_Hamiltonian(
-        &R0_temp, R2_temp, iso_n_, zeta_n_, eta_n_, transition);
+    FCF_1st_order_nuclear_shielding_Hamiltonian(
+        &R0_temp, R2_temp, iso_n_, zeta_n_, eta_n_, shielding_orientation,
+        transition);
     R0 += R0_temp;
-    single_wigner_rotation(2, shielding_orientation, R2_temp, R2_temp);
     vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
 
     /* get weakly coupled direct dipole components upto first order ........ */
@@ -104,25 +105,23 @@ static inline void __spinning_sideband_core(
     // add orientation dependence
 
     if (ravel_isotopomer->spin > 0.5) {
-      /* get electric quadrupolar components upto first order .............. */
-      frequency_component_functions_from_1st_order_electric_quadrupole_Hamiltonian(
-          R2_temp, ravel_isotopomer->spin, Cq_e_, eta_e_, transition);
-      single_wigner_rotation(2, quadrupolar_orientation, R2_temp, R2_temp);
+      /* get electric quadrupole frequency tensors upto first order .............. */
+      FCF_1st_order_electric_quadrupole_Hamiltonian(
+          R2_temp, ravel_isotopomer->spin, Cq_e_, eta_e_,
+          quadrupole_orientation, transition);
       vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
 
-      /* get electric quadrupolar components upto second order ............. */
+      /* get electric quadrupole frequency tensors upto second order ............. */
       if (plan->allow_fourth_rank) {
-        frequency_component_functions_from_2nd_order_electric_quadrupole_Hamiltonian(
-            &R0_temp, R2_temp, R4_temp, ravel_isotopomer->spin, Cq_e_, eta_e_,
-            transition, ravel_isotopomer->larmor_frequency);
+        FCF_2nd_order_electric_quadrupole_Hamiltonian(
+            &R0_temp, R2_temp, R4_temp, ravel_isotopomer->spin,
+            ravel_isotopomer->larmor_frequency, Cq_e_, eta_e_,
+            quadrupole_orientation, transition);
         if (remove_second_order_quad_isotropic == 0) {
           R0 += R0_temp;
         }
 
-        single_wigner_rotation(2, quadrupolar_orientation, R2_temp, R2_temp);
         vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-
-        single_wigner_rotation(4, quadrupolar_orientation, R4_temp, R4_temp);
         vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
       }
     }
@@ -153,18 +152,18 @@ static inline void __spinning_sideband_core(
     for (i = 0; i < plan->number_of_sidebands; i++) {
       offset = plan->vr_freq[i] + plan->isotropic_offset;
       if ((int)offset >= 0 && (int)offset <= dimension->count) {
-        step_vector = i * plan->total_orientations;
+        step_vector = i * scheme->total_orientations;
         for (j = 0; j < plan->n_octants; j++) {
-          address = j * plan->octant_orientations;
+          address = j * scheme->octant_orientations;
 
-          vm_double_ramp(plan->octant_orientations,
-                         &plan->local_frequency[address], 1.0, offset,
-                         plan->freq_offset);
-          octahedronInterpolation(spec_site_ptr, plan->freq_offset,
-                                  plan->geodesic_polyhedron_frequency,
+          vm_double_ramp(scheme->octant_orientations,
+                         &scheme->local_frequency[address], 1.0, offset,
+                         scheme->freq_offset);
+          octahedronInterpolation(spec_site_ptr, scheme->freq_offset,
+                                  scheme->geodesic_polyhedron_frequency,
                                   (double *)&plan->vector[step_vector], 2,
                                   dimension->count);
-          step_vector += plan->octant_orientations;
+          step_vector += scheme->octant_orientations;
         }
       }
     }
@@ -222,12 +221,15 @@ void spinning_sideband_core(
     number_of_sidebands = 1;
   }
 
+  MRS_averaging_scheme *scheme = MRS_create_averaging_scheme(
+      geodesic_polyhedron_frequency, allow_fourth_rank);
+
   MRS_dimension *dimension =
       MRS_create_dimension(count, coordinates_offset, increment);
 
   // gettimeofday(&begin, NULL);
   MRS_plan *plan =
-      MRS_create_plan(geodesic_polyhedron_frequency, number_of_sidebands,
+      MRS_create_plan(scheme, number_of_sidebands,
                       sample_rotation_frequency_in_Hz, rotor_angle_in_rad,
                       increment, allow_fourth_rank);
 

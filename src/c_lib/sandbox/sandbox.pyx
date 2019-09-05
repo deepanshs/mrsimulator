@@ -198,7 +198,7 @@ def _one_d_simulator(
 
         # quad tensor information
         quadrupolar_coupling_constant = None,
-        quadrupolar_asymmetry = None,
+        quadrupole_asymmetry = None,
         second_order_quad = 1,
         remove_second_order_quad_isotropic = 0,
 
@@ -258,13 +258,13 @@ def _one_d_simulator(
     cdef np.ndarray[double, ndim=1] quadrupolar_coupling_constant_c = quadrupolar_coupling_constant
 
     # Quad asymmetry value
-    if quadrupolar_asymmetry is None:
-        quadrupolar_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()
+    if quadrupole_asymmetry is None:
+        quadrupole_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()
     else:
-        quadrupolar_asymmetry = np.asarray([quadrupolar_asymmetry], dtype=np.float64).ravel()
-    if quadrupolar_asymmetry.size != number_of_sites:
+        quadrupole_asymmetry = np.asarray([quadrupole_asymmetry], dtype=np.float64).ravel()
+    if quadrupole_asymmetry.size != number_of_sites:
         raise Exception("Number of quad asymmetry are not consistent with the number of spins.")
-    cdef np.ndarray[double, ndim=1] quadrupolar_asymmetry_c = quadrupolar_asymmetry
+    cdef np.ndarray[double, ndim=1] quadrupole_asymmetry_c = quadrupole_asymmetry
 
 
     # Dipolar coupling constant
@@ -300,9 +300,9 @@ def _one_d_simulator(
     isotopomer_struct.shielding_asymmetry = &chemical_shift_asymmetry_c[0]
     isotopomer_struct.shielding_orientation = &ori_n[0]
 
-    isotopomer_struct.quadrupolar_constant_in_Hz = &quadrupolar_coupling_constant_c[0]
-    isotopomer_struct.quadrupolar_asymmetry = &quadrupolar_asymmetry_c[0]
-    isotopomer_struct.quadrupolar_orientation = &ori_e[0]
+    isotopomer_struct.quadrupole_coupling_constant_in_Hz = &quadrupolar_coupling_constant_c[0]
+    isotopomer_struct.quadrupole_asymmetry = &quadrupole_asymmetry_c[0]
+    isotopomer_struct.quadrupole_orientation = &ori_e[0]
 
     isotopomer_struct.dipolar_couplings = &D_c[0]
 

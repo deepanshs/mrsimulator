@@ -1,11 +1,8 @@
 
 
-========================
-Angular Momentum Methods
-========================
 
-Method Documentation
---------------------
+Angular Momentum Method Documentation
+-------------------------------------
 
 Generic methods
 ^^^^^^^^^^^^^^^

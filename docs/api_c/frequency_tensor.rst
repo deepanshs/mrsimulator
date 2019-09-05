@@ -1,0 +1,33 @@
+
+.. _frequency_component_function:
+
+Frequency Tensors (FT), :math:`\Lambda_{L, n}^{(k)}(i,j)`
+---------------------------------------------------------
+
+.. seealso:: :ref:`Frequency component functions in PAS <frequency_tensor_theory>`,
+             :ref:`Spatial orientation functions (SOF) <spatial_orientation_function>`,
+             :ref:`Spin transition functions (STF) <spin_transition_function>`
+
+.. raw:: html
+
+    <a class="btn btn-default"
+       href=./source/frequency_tensor_source.html> Source
+    </a>
+
+Single nucleus frequency tensors
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+First order Nuclear shielding
+"""""""""""""""""""""""""""""
+
+.. doxygenfunction:: FCF_1st_order_nuclear_shielding_Hamiltonian()
+
+First order Electric Quadrupole
+"""""""""""""""""""""""""""""""
+
+.. doxygenfunction:: FCF_1st_order_electric_quadrupole_Hamiltonian()
+
+Second order Electric Quadrupole
+""""""""""""""""""""""""""""""""
+
+.. doxygenfunction:: FCF_2nd_order_electric_quadrupole_Hamiltonian()

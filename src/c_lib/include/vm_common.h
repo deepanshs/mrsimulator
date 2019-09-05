@@ -27,7 +27,7 @@ static inline void vm_double_ramp(int count, const double *restrict x,
  * Create a vector x = [0 .. count-1]
  * res = 0 .. count-1
  */
-static inline void vm_double_arange(int count, double *restrict res) {
+static inline void vm_double_arrange(int count, double *restrict res) {
   //   x = __builtin_assume_aligned(x, 32);
   //   res = __builtin_assume_aligned(res, 32);
   double i = 0.0;

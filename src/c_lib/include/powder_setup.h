@@ -7,7 +7,7 @@
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
-#include "mrsimulator.h"
+#include "config.h"
 
 extern void __powder_averaging_setup(int nt, void *exp_I_alpha,
                                      void *exp_I_beta, double *amp);

@@ -23,11 +23,15 @@
  *
  * @param mi The quantum number associated with the quantized initial energy
  *        level.
+ *
  * @param mf The quantum number associated with the quantized final energy
  *        level.
+ *
  * @returns The spin transition function @f$\mathbb{p}@f$.
  */
-static inline double p(const double mf, const double mi) { return (mf - mi); }
+static inline double STF_p(const double mf, const double mi) {
+  return (mf - mi);
+}
 
 /**
  * Single nucleus spin transition function from irreducible tensor of rank
@@ -42,11 +46,13 @@ static inline double p(const double mf, const double mi) { return (mf - mi); }
  *
  * @param mi The quantum number associated with the quantized initial energy
  *        level.
+ *
  * @param mf The quantum number associated with the quantized final energy
  *        level.
+ *
  * @returns The spin transition function @f$\mathbb{d}@f$.
  */
-static inline double d(const double mf, const double mi) {
+static inline double STF_d(const double mf, const double mi) {
   return 1.2247448714 * (mf * mf - mi * mi);
 }
 
@@ -63,11 +69,14 @@ static inline double d(const double mf, const double mi) {
  *
  * @param mi The quantum number associated with the quantized initial energy
  *        level.
+ *
  * @param mf The quantum number associated with the quantized final energy
  *        level.
+ *
  * @return The spin transition function @f$\mathbb{f}@f$.
  */
-static inline double f(const double mf, const double mi, const double spin) {
+static inline double STF_f(const double mf, const double mi,
+                           const double spin) {
   double f_value = 1.0 - 3.0 * spin * (spin + 1.0);
   f_value *= (mf - mi);
   f_value += 5.0 * (mf * mf * mf - mi * mi * mi);
@@ -96,17 +105,20 @@ static inline double f(const double mf, const double mi, const double spin) {
  *
  * @param mi The quantum number associated with the quantized initial energy
  *        level.
+ *
  * @param mf The quantum number associated with the quantized final energy
  *        level.
+ *
  * @param spin The spin quantum number, @f$I@f$.
+ *
  * @param cl_value A pointer to an array of size 3 where the spin transition
  *        functions, @f$\mathbb{c}_{L}@f$, will be stored ordered according to
  *        @f$L=[0,2,4]@f$.
  */
-static inline void cL(double *restrict cl_value, const double mf,
-                      const double mi, const double spin) {
-  double f_value = f(mf, mi, spin);
-  double p_value = p(mf, mi);
+static inline void STF_cL(double *restrict cl_value, const double mf,
+                          const double mi, const double spin) {
+  double f_value = STF_f(mf, mi, spin);
+  double p_value = STF_p(mf, mi);
   double temp = spin * (spin + 1.0) - 0.75;
   temp *= p_value;
 
@@ -134,15 +146,19 @@ static inline void cL(double *restrict cl_value, const double mf,
  *
  * @param mIi The quantum number associated with the quantized initial energy
  *        level corresponding to spin I.
+ *
  * @param mSi The quantum number associated with the quantized initial energy
  *        level corresponding to spin S.
+ *
  * @param mIf The quantum number associated with the quantized final energy
  *        level corresponding to spin I.
+ *
  * @param mSf The quantum number associated with the quantized final energy
  *        level corresponding to spin S.
+ *
  * @return The spin transition symmetry function @f$\mathbb{d}_{IS}@f$.
  */
-static inline double dIS(const double mIf, const double mIi, const double mSf,
-                         const double mSi) {
+static inline double STF_dIS(const double mIf, const double mIi,
+                             const double mSf, const double mSi) {
   return mIf * mSf - mIi * mSi;
 }

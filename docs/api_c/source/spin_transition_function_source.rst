@@ -1,7 +1,7 @@
 .. _spin_transition_function_source:
 
-Spin Transition Functions, :math:`\xi_L^{(k)}(i,j)`
----------------------------------------------------
+Spin Transition Functions (STF), :math:`\xi_L^{(k)}(i,j)`
+---------------------------------------------------------
 
 .. raw:: html
 
@@ -12,5 +12,5 @@ Spin Transition Functions, :math:`\xi_L^{(k)}(i,j)`
 Source
 ^^^^^^
 
-.. literalinclude:: ../../../src/c_lib/include/spin_transition_function.h
+.. literalinclude:: ../../../src/c_lib/include/frequency_component/spin_transition_function.h
    :language: c

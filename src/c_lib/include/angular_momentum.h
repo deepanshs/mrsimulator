@@ -6,7 +6,7 @@
 //  Contribution: Deepansh J. Srivatava. contact: srivastava.89@osu.edu
 //      Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 
-#include "mrsimulator.h"
+#include "config.h"
 
 // Generic function ........................................................ //
 

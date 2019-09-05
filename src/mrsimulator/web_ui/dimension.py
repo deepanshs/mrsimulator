@@ -83,14 +83,14 @@ isotope_and_filter = [
             [dbc.Label("Isotope", className="mr-2"), dcc.Dropdown(id="isotope_id")]
         )
     ),
-    dbc.Col(
-        dbc.FormGroup(
-            [
-                dbc.Label("Filter", className="mr-2"),
-                dcc.Dropdown(id="filter_spin", options=filter_spin, value=0.5),
-            ]
-        )
-    ),
+    # dbc.Col(
+    #     dbc.FormGroup(
+    #         [
+    #             dbc.Label("Filter", className="mr-2"),
+    #             dcc.Dropdown(id="filter_spin", options=filter_spin, value=0.5),
+    #         ]
+    #     )
+    # ),
 ]
 
 spectrometer_frequency = dbc.FormGroup(

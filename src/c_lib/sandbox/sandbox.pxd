@@ -63,9 +63,9 @@ cdef extern from "isotopomer_ravel.h":
         double *shielding_anisotropy_in_Hz;     # Nuclear shielding anisotropy (Hz)
         double *shielding_asymmetry;            # Nuclear shielding asymmetry parameter
         double *shielding_orientation;          # Nuclear shielding PAS to CRS euler angles (rad.)
-        double *quadrupolar_constant_in_Hz;     # Quadrupolar coupling constant (Hz)
-        double *quadrupolar_asymmetry;          # Quadrupolar asymmetry parameter
-        double *quadrupolar_orientation;        # Quadrupolar PAS to CRS euler angles (rad.)
+        double *quadrupole_coupling_constant_in_Hz;     # Quadrupolar coupling constant (Hz)
+        double *quadrupole_asymmetry;          # Quadrupolar asymmetry parameter
+        double *quadrupole_orientation;        # Quadrupolar PAS to CRS euler angles (rad.)
         double *dipolar_couplings;              # dipolar coupling stored as list of lists
 
     ctypedef struct isotopomers_list:

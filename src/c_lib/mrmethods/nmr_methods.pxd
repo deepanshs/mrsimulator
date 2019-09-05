@@ -13,9 +13,9 @@ cdef extern from "angular_momentum.h":
 #         double shielding_symmetric_anisotropy_in_Hz     # Nuclear shielding anisotropy (Hz)
 #         double shielding_symmetric_asymmetry            # Nuclear shielding asymmetry
 #         double shielding_symmetric_orientation[3]          # Nuclear shielding PAS to CRS euler angles (rad.)
-#         double quadrupolar_constant_in_Hz     # Quadrupolar coupling constant (Hz)
-#         double quadrupolar_asymmetry          # Quadrupolar asymmetry parameter
-#         double quadrupolar_orientation[3]        # Quadrupolar PAS to CRS euler angles (rad.)
+#         double quadrupole_coupling_constant_in_Hz     # Quadrupolar coupling constant (Hz)
+#         double quadrupole_asymmetry          # Quadrupolar asymmetry parameter
+#         double quadrupole_orientation[3]        # Quadrupolar PAS to CRS euler angles (rad.)
 #         double dipolar_coupling              # dipolar coupling sof the site
 
 
@@ -28,9 +28,9 @@ cdef extern from "isotopomer_ravel.h":
         double *shielding_anisotropy_in_Hz     # Nuclear shielding anisotropy (Hz)
         double *shielding_asymmetry            # Nuclear shielding asymmetry
         double *shielding_orientation          # Nuclear shielding PAS to CRS euler angles (rad.)
-        double *quadrupolar_constant_in_Hz     # Quadrupolar coupling constant (Hz)
-        double *quadrupolar_asymmetry          # Quadrupolar asymmetry parameter
-        double *quadrupolar_orientation        # Quadrupolar PAS to CRS euler angles (rad.)
+        double *quadrupole_coupling_constant_in_Hz     # Quadrupolar coupling constant (Hz)
+        double *quadrupole_asymmetry          # Quadrupolar asymmetry parameter
+        double *quadrupole_orientation        # Quadrupolar PAS to CRS euler angles (rad.)
         double *dipolar_couplings              # dipolar coupling stored as list of lists
 
 cdef extern from "spinning_sidebands.h":

@@ -1,7 +1,7 @@
 .. _spin_transition_function:
 
-Spin transition functions, :math:`\xi_L^{(k)}(i,j)`
-----------------------------------------------------
+Spin transition functions (STF), :math:`\xi_L^{(k)}(i,j)`
+---------------------------------------------------------
 
 .. seealso:: :ref:`Spin transition functions <spin_transition_theory>`
 
@@ -15,22 +15,22 @@ Spin transition functions, :math:`\xi_L^{(k)}(i,j)`
 Single nucleus spin transition functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The single spin transition functions for :math:`m_i \rightarrow m_f`
-transition.
+The single spin transition functions for
+:math:`\left|m_i\right> \rightarrow \left|m_f\right>` transition.
 
-.. doxygenfunction:: p()
+.. doxygenfunction:: STF_p()
 
-.. doxygenfunction:: d()
+.. doxygenfunction:: STF_d()
 
-.. doxygenfunction:: f()
+.. doxygenfunction:: STF_f()
 
 Composite single nucleus spin transition functions
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
-.. doxygenfunction:: cL()
+.. doxygenfunction:: STF_cL()
 
 
 .. Two weakly coupled nuclei spin transition functions
 .. ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. .. doxygenfunction:: dIS(double, double, double, double)
+.. .. doxygenfunction:: STF_dIS(double, double, double, double)

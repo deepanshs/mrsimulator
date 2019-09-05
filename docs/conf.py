@@ -74,38 +74,11 @@ breathe_doxygen_config_options = {
     # "INPUT": "../../src/c_lib/include",
 }
 
-
-# Setup the exhale extension
-# exhale_args = {
-#     # These arguments are required
-#     "containmentFolder": "./api_c_temp",
-#     "rootFileName": "c_api.rst",
-#     "rootFileTitle": "C-API References",
-#     "afterTitleDescription": textwrap.dedent(
-#         """
-#        .. note::
-
-#            The following documentation presents the C-API.  The Python API
-#            generally mirrors the C-API, but some methods may not be available in
-#            Python or may perform different actions.
-#     """
-#     ),
-#     "doxygenStripFromPath": "..",
-#     # Suggested optional arguments
-#     "createTreeView": True,
-#     # TIP: if using the sphinx-bootstrap-theme, you need
-#     # "treeViewIsBootstrap": True,
-#     "exhaleExecutesDoxygen": True,
-#     "exhaleDoxygenStdin": "INPUT = ../src/c_lib/include",
-# }
-
 # Tell sphinx what the primary language being documented is.
 primary_domain = "py"
 
 # Tell sphinx what the pygments highlight language should be.
 highlight_language = "c"
-
-# autoapi_dirs = ["../mrsimulator/"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -249,20 +222,27 @@ htmlhelp_basename = "MRSimulatordoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
-
+latex_engine = "xelatex"
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     "papersize": "letterpaper",
     # The font size ('10pt', '11pt' or '12pt').
     #
-    "pointsize": "10pt",
+    "pointsize": "11pt",
+    "fontenc": "\\usepackage[utf8]{inputenc}",
+    "geometry": "\\usepackage[vmargin=2.5cm, hmargin=2cm]{geometry}",
     # Additional stuff for the LaTeX preamble.
-    #
-    # 'preamble': '',
+    "preamble": """\
+        \\usepackage[T1]{fontenc}
+        \\usepackage{amsfonts}
+        \\usepackage{amsmath}
+        \\usepackage{amssymb}
+        \\usepackage{mathbbol}
+    """
     # Latex figure (float) alignment
     #
-    "figure_align": "htbp",
+    # "figure_align": "htbp",
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
