@@ -9,8 +9,6 @@ Python-API References
 
    simulator
    isotopomer
-   hamiltonian
-   transition_functions
 
 ..    parameterized_tensor
 ..    interaction

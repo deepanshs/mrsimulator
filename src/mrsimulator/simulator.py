@@ -28,7 +28,6 @@ class Simulator:
         self.isotopomers = isotopomers
         self.spectrum = spectrum
 
-    # @property
     @staticmethod
     def allowed_isotopes(spin=None):
         """
@@ -102,6 +101,11 @@ class Simulator:
         self.isotopomers = [Isotopomer.parse_dict_with_units(obj) for obj in json_data]
 
     def run(self, method, **kwargs):
+        """Simulate the lineshape.
+
+        Args:
+            method: The methods used in simulation of the line-shapes.
+        """
         return self.one_d_spectrum(**kwargs)
 
     def one_d_spectrum(self, **kwargs):

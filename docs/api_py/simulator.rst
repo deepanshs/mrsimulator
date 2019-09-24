@@ -16,6 +16,7 @@ Simulator
     .. automethod:: allowed_isotopes
     .. automethod:: get_isotopes
     .. automethod:: load_isotopomers
+    .. automethod:: run
 
 
 

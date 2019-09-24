@@ -115,7 +115,7 @@ def test_parse_json_isotopomer():
 
 
 def test_direct_init_spectrum():
-    the_spectrum = SpectroscopicDimension()
+    the_spectrum = SpectroscopicDimension(number_of_points=1024, spectral_width=100)
     assert the_spectrum.number_of_points == 1024
     assert the_spectrum.spectral_width == 100
     # assert the_spectrum.property_units["spectral_width"] == 'Hz'
@@ -129,9 +129,6 @@ def test_direct_init_spectrum():
         rotor_angle=0.9553,  # 54.935 degrees in radians
         rotor_phase=0,
         isotope="1H",
-        spin=1,
-        natural_abundance=0.04683,
-        gyromagnetic_ratio=-8.465,
     )
 
 

@@ -1,13 +1,11 @@
-.. MRSimulator documentation master file, created by
-   sphinx-quickstart on Tue Apr  2 21:31:08 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-.. .. image:: https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master
-..     :target: https://travis-ci.org/DeepanshS/mrsimulator
-.. .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
-..     :target: https://mrsimulator.readthedocs.io/en/stable/?badge=stable
-..     :alt: Documentation Status
+.. only:: html
+
+    .. image:: https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master
+        :target: https://travis-ci.org/DeepanshS/mrsimulator
+    .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
+        :target: https://mrsimulator.readthedocs.io/en/stable/?badge=stable
+        :alt: Documentation Status
 
 Welcome to mrsimulator's documentation!
 =======================================
@@ -41,9 +39,11 @@ magic angle spinning (MAS), and variable angle spinning (VSA) conditions.
 ..    theory/wigner_rotations
 
 
-Indices and tables
-------------------
+.. only:: html
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+    Indices and tables
+    ------------------
+
+    * :ref:`genindex`
+    * :ref:`modindex`
+    * :ref:`search`

@@ -24,7 +24,7 @@ from mrsimulator.unit import string_to_quantity, is_physical_quantity
 
 import csdmpy as cp
 
-from mrsimulator.web_ui import navbar, titlebar
+from mrsimulator.web_ui import navbar
 
 
 __author__ = "Deepansh J. Srivastava"

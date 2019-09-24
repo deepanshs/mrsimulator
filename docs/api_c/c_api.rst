@@ -1,7 +1,8 @@
 
 
-C-API
-=====
+================
+C-API References
+================
 
 .. toctree::
    :maxdepth: 3
@@ -13,5 +14,3 @@ C-API
    angular_momentum
    struct/MRS_averaging_scheme
    struct/MRS_plan
-
-..    struct_isotopomer_ravel

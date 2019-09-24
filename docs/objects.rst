@@ -11,11 +11,6 @@ spin-system is a collection of sites and couplings. We refer an isolated
 spin-system as an isotopomer. In our model, each isotopomer is composed
 of various objects. In the following, we list and describe these objects.
 
-.. A Unified Modeling Language (UML) class-diagram for `Isotopomers` object is
-.. shown below.
-
-.. .. figure:: ./_static/class-diagram.png
-
 .. _orientation:
 
 Orientation
@@ -28,7 +23,7 @@ interaction tensor from the principal axis system (PAS) to a reference frame.
 
 .. cssclass:: table-bordered table-hover
 .. list-table:: Attributes of an Orientation object.
-  :widths: 15 20 65
+  :widths: 20 18 62
   :header-rows: 1
 
   * - Attribute name
@@ -137,7 +132,7 @@ nuclear site.
 
 .. cssclass:: table-bordered table-hover
 .. list-table::  Attributes of a Site object.
-  :widths: 25 20 55
+  :widths: 30 15 50
   :header-rows: 1
 
   * - Attribute name
