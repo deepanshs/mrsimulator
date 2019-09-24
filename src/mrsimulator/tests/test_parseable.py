@@ -43,15 +43,15 @@ def test_blank_init():
 def test_parse_json():
 
     good_json = {"foo": "300 rad", "bar": "300 ppm"}
-    pr = ParseableTestClass.parse_json_with_units(good_json)
+    pr = ParseableTestClass.parse_dict_with_units(good_json)
 
     good_json2 = {"foo": "300 rad", "bar": "300 Hz"}
-    pr = ParseableTestClass.parse_json_with_units(good_json2)
+    pr = ParseableTestClass.parse_dict_with_units(good_json2)
 
     bad_json = {"foo": "300 Hz", "bar": "300 ppm"}
 
     with pytest.raises(Exception) as err:
-        pr = ParseableTestClass.parse_json_with_units(bad_json)
+        pr = ParseableTestClass.parse_dict_with_units(bad_json)
     assert (
         str(err.value) == "Error enforcing units for foo: 300 Hz\n"
         "A angle value is required but got a frequency instead"

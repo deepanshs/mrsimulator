@@ -4,12 +4,12 @@ Tests for the base Parseable pattern
 """
 # import os.path
 import pytest
-from mrsimulator import Site, Isotopomer, Spectrum, Simulator
+from mrsimulator import Site, Isotopomer, SpectroscopicDimension, Simulator
 
 
 @pytest.fixture
 def spectrum():
-    return Spectrum(
+    return SpectroscopicDimension(
         number_of_points=1024,
         spectral_width=100,
         reference_offset=0,

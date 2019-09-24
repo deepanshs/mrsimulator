@@ -8,21 +8,24 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 class SymmetricTensor(Parseable):
 
-    anisotropy: Optional[float]
-    asymmetry: Optional[float]
+    zeta: Optional[float]
+    Cq: Optional[float]
+    eta: Optional[float]
     alpha: Optional[float]
     beta: Optional[float]
     gamma: Optional[float]
 
     property_unit_types: ClassVar = {
-        "anisotropy": ["dimensionless", "frequency"],
+        "zeta": "dimensionless",
+        "Cq": "frequency",
         "alpha": "angle",
         "beta": "angle",
         "gamma": "angle",
     }
 
     property_default_units: ClassVar = {
-        "anisotropy": ["ppm", "Hz"],
+        "zeta": "ppm",
+        "Cq": "Hz",
         "alpha": "rad",
         "beta": "rad",
         "gamma": "rad",
@@ -34,20 +37,21 @@ class SymmetricTensor(Parseable):
         MHz, MHz*ppm -> Hz
         """
         temp_dict = self.dict()
-        if self.property_units["anisotropy"] == "ppm":
-            temp_dict["anisotropy"] *= larmor_frequency
+        if "zeta" in self.property_units:
+            if self.property_units["zeta"] == "ppm":
+                temp_dict["zeta"] *= larmor_frequency
 
         return temp_dict
 
 
 class AntisymmetricTensor(Parseable):
 
-    anisotropy: Optional[float]
+    zeta: Optional[float]
     alpha: Optional[float]
     beta: Optional[float]
 
     property_unit_types: ClassVar = {
-        "anisotropy": ["dimensionless", "frequency"],
+        "zeta": "dimensionless",
         "alpha": "angle",
         "beta": "angle",
     }

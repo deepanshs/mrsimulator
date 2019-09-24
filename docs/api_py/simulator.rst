@@ -33,4 +33,4 @@ Methods
 
 .. seealso::
 
-    :ref:`isotopomers`, :ref:`spectrum` and :ref:`load_isotopomers`,
+    and :ref:`load_isotopomers`,

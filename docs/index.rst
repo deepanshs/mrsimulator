@@ -26,16 +26,20 @@ magic angle spinning (MAS), and variable angle spinning (VSA) conditions.
    :maxdepth: 2
    :caption: Table of Contents:
 
-   mr_objects
    installation
    requirements
    getting_started
    load_isotopomers
+   objects
+   spectrum_object
    examples
    theory/components
-   theory/wigner_rotations
    api_py/py_api
    api_c/c_api
+
+
+..    theory/wigner_rotations
+
 
 Indices and tables
 ------------------

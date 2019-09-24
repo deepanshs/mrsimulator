@@ -6,7 +6,7 @@ import numpy as np
 from numpy.fft import fft
 from numpy.fft import fftshift
 
-from mrsimulator import Isotopomer, Spectrum, Simulator
+from mrsimulator import Isotopomer, SpectroscopicDimension, Simulator
 
 
 def _import_json(filename):
@@ -101,9 +101,12 @@ def get_data(filename):
 
 def c_setup(data_object, data_source):
     # mrsimulator
-    spectrum = Spectrum.parse_json_with_units(data_object["spectrum"])
+    spectrum = [
+        SpectroscopicDimension.parse_dict_with_units(item)
+        for item in data_object["spectrum"]
+    ]
     isotopomer = [
-        Isotopomer.parse_json_with_units(item) for item in data_object["isotopomers"]
+        Isotopomer.parse_dict_with_units(item) for item in data_object["isotopomers"]
     ]
 
     s1 = Simulator(isotopomer, spectrum)
@@ -115,9 +118,12 @@ def c_setup(data_object, data_source):
 
 def c_setup_random_euler_angles(data_object, data_source):
     # mrsimulator
-    spectrum = Spectrum.parse_json_with_units(data_object["spectrum"])
+    spectrum = [
+        SpectroscopicDimension.parse_dict_with_units(item)
+        for item in data_object["spectrum"]
+    ]
     isotopomers = [
-        Isotopomer.parse_json_with_units(isotopomer)
+        Isotopomer.parse_dict_with_units(isotopomer)
         for isotopomer in data_object["isotopomers"]
     ]
     for isotopomer in isotopomers:
@@ -135,7 +141,7 @@ def c_setup_random_euler_angles(data_object, data_source):
 # --------------------------------------------------------------------------- #
 # Test against simpson calculations
 
-path_for_simpson_test_shielding = path.join("tests", "simpson")
+path_for_simpson_test_shielding = path.join("tests", "simpson", "shielding")
 
 
 def test00_sim_shielding():
@@ -239,7 +245,7 @@ def test07_sim_shielding():
 # Test against brute-force NMR calculation where lineshapes
 # are averaged over a billion orientations.
 
-path_for_python_test_shielding = path.join("tests", "python")
+path_for_python_test_shielding = path.join("tests", "python", "shielding")
 
 
 def test00_python_shielding():

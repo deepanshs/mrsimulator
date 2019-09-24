@@ -6,7 +6,7 @@ from os.path import join, split
 
 
 folder = split(__file__)[0]
-mrsimulator_logo = join(folder, "resource/mrsimulator-dark.png")
+mrsimulator_logo = join(folder, "resource/mrsimulator-dark-featured.png")
 encoded_image = base64.b64encode(open(mrsimulator_logo, "rb").read())
 
 search_bar = dbc.Row(
@@ -51,7 +51,7 @@ navbar = dbc.Navbar(
                 dbc.Col(
                     html.Img(
                         src="data:image/png;base64,{}".format(encoded_image.decode()),
-                        height="40px",
+                        height="60px",
                     )
                 )
             ],

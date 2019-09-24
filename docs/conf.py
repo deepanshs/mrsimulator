@@ -12,10 +12,7 @@
 #
 import os
 import sys
-import textwrap
 import subprocess
-
-# import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath("../.."))
 
@@ -55,6 +52,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
+    "sphinx_copybutton",
     "breathe",
     "sphinxjp.themes.basicstrap",
 ]
@@ -171,7 +169,7 @@ html_theme_options = {
     # Select Twitter bootstrap version 2 or 3. Defaults to '3'
     "bootstrap_version": "3",
     # Show "theme preview" button in header navbar. Defaults to false.
-    # "theme_preview": True,
+    "theme_preview": False,
     # Set the Size of Heading text. Defaults to None
     # "h1_size": "3.0em",
     # "h2_size": "1.8em",
@@ -203,18 +201,6 @@ html_logo = "_static/mrsimulator-light-add-01.png"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
-
-# Custom sidebar templates, must be a dictionary that maps document names
-# to template names.
-#
-# The default sidebars (for documents that don't match any pattern) are
-# defined by theme itself.  Builtin themes are using these templates by
-# default: ``['localtoc.html', 'relations.html', 'sourcelink.html',
-# 'searchbox.html']``.
-#
-# html_sidebars = {}
-
-
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
@@ -223,22 +209,34 @@ htmlhelp_basename = "MRSimulatordoc"
 
 # -- Options for LaTeX output ------------------------------------------------
 latex_engine = "xelatex"
+latex_logo = "_static/mrsimulator-light-add-01.png"
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     "papersize": "letterpaper",
     # The font size ('10pt', '11pt' or '12pt').
     #
-    "pointsize": "11pt",
+    "pointsize": "9pt",
     "fontenc": "\\usepackage[utf8]{inputenc}",
     "geometry": "\\usepackage[vmargin=2.5cm, hmargin=2cm]{geometry}",
     # Additional stuff for the LaTeX preamble.
     "preamble": """\
         \\usepackage[T1]{fontenc}
-        \\usepackage{amsfonts}
-        \\usepackage{amsmath}
-        \\usepackage{amssymb}
-        \\usepackage{mathbbol}
+        \\usepackage{amsfonts, amsmath, amssymb, mathbbol}
+        \\usepackage{graphicx}
+        \\usepackage{setspace}
+        \\singlespacing
+
+        \\usepackage{fancyhdr}
+        \\pagestyle{fancy}
+        \\fancyhf{}
+        \\fancyhead[L]{
+            \\ifthenelse{\\isodd{\\value{page}}}{ \\small \\nouppercase{\\leftmark} }{}
+        }
+        \\fancyhead[R]{
+            \\ifthenelse{\\isodd{\\value{page}}}{}{ \\small \\nouppercase{\\rightmark} }
+        }
+        \\fancyfoot[CO, CE]{\\thepage}
     """
     # Latex figure (float) alignment
     #
@@ -249,13 +247,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (
-        master_doc,
-        "mrsimulator.tex",
-        "mrsimulator Documentation",
-        "Deepansh J. Srivastava",
-        "manual",
-    )
+    (master_doc, "mrsimulator.tex", "mrsimulator Documentation", author, "manual")
 ]
 
 
@@ -263,7 +255,15 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "mrsimulator", "mrsimulator Documentation", [author], 1)]
+man_pages = [
+    (
+        master_doc,
+        "mrsimulator",
+        "mrsimulator Documentation",
+        ["Deepansh J. Srivastava"],
+        1,
+    )
+]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -300,11 +300,3 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ["search.html"]
-
-
-# -- Extension configuration -------------------------------------------------
-
-
-# def setup(app):
-#     app.add_javascript("_static/copybutton.js")
-#     app.add_javascript("_static/jquery.js")

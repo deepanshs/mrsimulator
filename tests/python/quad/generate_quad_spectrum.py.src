@@ -55,8 +55,8 @@ for eta in eta_array:
                     indent=2,
                     allow_nan=False)
 
-        isotopomers = [Isotopomer.parse_json_with_units(item) for item in isotopomers_dict]
-        spectrum = Spectrum.parse_json_with_units(spectrum_dict)
+        isotopomers = [Isotopomer.parse_dict_with_units(item) for item in isotopomers_dict]
+        spectrum = Spectrum.parse_dict_with_units(spectrum_dict)
         s = Simulator(isotopomers, spectrum)
         f,a = s.run(one_d_spectrum, verbose=0, geodesic_polyhedron_frequency=120)
 
@@ -110,8 +110,8 @@ with open(filename, "w", encoding="utf8") as outfile:
             indent=2,
             allow_nan=False)
 
-isotopomers = [Isotopomer.parse_json_with_units(item) for item in isotopomers_dict]
-spectrum = Spectrum.parse_json_with_units(spectrum_dict)
+isotopomers = [Isotopomer.parse_dict_with_units(item) for item in isotopomers_dict]
+spectrum = Spectrum.parse_dict_with_units(spectrum_dict)
 s = Simulator(isotopomers, spectrum)
 f,a = s.run(one_d_spectrum, verbose=0, geodesic_polyhedron_frequency=120)
 

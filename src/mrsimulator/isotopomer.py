@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import List, ClassVar
+from typing import List, ClassVar, Optional
 from mrsimulator.site import Site
 from mrsimulator import Parseable
 
@@ -14,12 +14,16 @@ class Isotopomer(Parseable):
     .. rubric:: Attributes Documentation
 
     Attributes:
+        name: A optional name for the isotopomer.
+        description: An optional description for the isotopomer
         sites: A list of Site objects.
         abundance: The fractional abundance of the isotopomer. This attribute
                 is useful when multiple isotopomers are present.
     """
 
-    sites: List[Site]
+    name: Optional[str] = ""
+    description: Optional[str] = ""
+    sites: List[Site] = []
     # couplings: list = [], # TODO: Deepansh what should this look like?
     abundance: float = 100
 
@@ -28,7 +32,7 @@ class Isotopomer(Parseable):
     property_default_units: ClassVar = {"abundance": "pct"}
 
     @classmethod
-    def parse_json_with_units(cls, json_dict):
+    def parse_dict_with_units(cls, json_dict):
         """
         Parse the physical quantities of an isotopomer when expressed as a python
         dictionary.
@@ -39,10 +43,10 @@ class Isotopomer(Parseable):
         """
         if "sites" in json_dict:
             json_dict["sites"] = [
-                Site.parse_json_with_units(s) for s in json_dict["sites"]
+                Site.parse_dict_with_units(s) for s in json_dict["sites"]
             ]
 
-        return super().parse_json_with_units(json_dict)
+        return super().parse_dict_with_units(json_dict)
 
     def to_freq_dict(self, larmor_frequency):
         """

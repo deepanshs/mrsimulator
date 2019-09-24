@@ -17,7 +17,7 @@ from dash.dependencies import Input
 from dash.dependencies import Output
 from dash.dependencies import State
 
-from mrsimulator import Simulator, Isotopomer, Spectrum
+from mrsimulator import Simulator, Isotopomer, SpectroscopicDimension
 from mrsimulator.methods import one_d_spectrum
 from mrsimulator.web_ui.widgets import get_isotopomers, input_file, main_body
 from mrsimulator.unit import string_to_quantity, is_physical_quantity
@@ -43,7 +43,7 @@ app = Dash(
 )
 
 
-FIRST = True
+FIRST = False
 sim = Simulator()
 sim.x = np.asarray([-1.0, 1.0])
 sim.y = np.asarray([0.0, 0.0])
@@ -178,33 +178,44 @@ def download():
         new = cp.new()
         dimension = {
             "type": "linear",
-            "count": sim.spectrum.number_of_points,
+            "count": sim.spectrum[0].number_of_points,
             "increment": "{0} Hz".format(
-                sim.spectrum.spectral_width / sim.spectrum.number_of_points
+                sim.spectrum[0].spectral_width / sim.spectrum[0].number_of_points
             ),
-            "coordinates_offset": f"{sim.spectrum.reference_offset} Hz",
-            "origin_offset": f"{sim.spectrum.larmor_frequency} MHz",
+            "coordinates_offset": f"{sim.spectrum[0].reference_offset} Hz",
+            "origin_offset": f"{sim.spectrum[0].larmor_frequency} MHz",
             "complex_fft": True,
         }
         new.add_dimension(dimension)
 
         if is_decomposed == "True":
-            for datum in sim.y:
-                if datum.size != 0:
+            for index, datum in enumerate(sim.y):
+                if not isinstance(datum, list):
+
                     dependent_variable = {
                         "type": "internal",
                         "quantity_type": "scalar",
                         "numeric_type": "float64",
-                        "components": [datum[0]],
+                        "components": [datum],
                     }
+
+                    name = sim.isotopomers[index].name
+                    if name != "":
+                        dependent_variable.update({"name": sim.isotopomers[index].name})
+
+                    description = sim.isotopomers[index].description
+                    if description != "":
+                        dependent_variable.update(
+                            {"description": sim.isotopomers[index].description}
+                        )
                     new.add_dependent_variable(dependent_variable)
                     new.dependent_variables[-1].encoding = "base64"
 
         else:
-            sum_spectrums = np.zeros(sim.spectrum.number_of_points)
-            for datum in sim.y:
-                if datum.size != 0:
-                    sum_spectrums += datum.sum(axis=0)
+            sum_spectrums = np.zeros(sim.spectrum[0].number_of_points)
+            for index, datum in enumerate(sim.y):
+                if not isinstance(datum, list):
+                    sum_spectrums += datum
 
             dependent_variable = {
                 "type": "internal",
@@ -289,59 +300,50 @@ def update_plot(
     rotor_angle_in_degree = 54.735
 
     spectrum = {
-        "direct_dimension": {
-            "isotope": isotope_id,
-            "magnetic_flux_density": str(magnetic_flux_density * 100) + " T",
-            "rotor_frequency": str(spin_frequency) + " kHz",
-            "rotor_angle": str(rotor_angle_in_degree) + " deg",
-            "number_of_points": 2 ** number_of_points,
-            "spectral_width": str(frequency_bandwidth) + " kHz",
-            "reference_offset": str(reference_offset) + " kHz",
-        }
+        "isotope": isotope_id,
+        "magnetic_flux_density": str(magnetic_flux_density * 100) + " T",
+        "rotor_frequency": str(spin_frequency) + " kHz",
+        "rotor_angle": str(rotor_angle_in_degree) + " deg",
+        "number_of_points": 2 ** number_of_points,
+        "spectral_width": str(frequency_bandwidth) + " kHz",
+        "reference_offset": str(reference_offset) + " kHz",
     }
-    # print(spectrum["direct_dimension"])
 
-    # sim.spectrum.isotope = isotope_id
-    # sim.spectrum.magnetic_flux_density = magnetic_flux_density * 100
-    # sim.spectrum.rotor_frequency = spin_frequency * 1000.0
-    # sim.spectrum.rotor_angle = rotor_angle_in_degree * np.pi / 180.0
-    # sim.spectrum.number_of_points = 2 ** number_of_points
-    # sim.spectrum.spectral_width = frequency_bandwidth * 1000.0
-    # sim.spectrum.reference_offset = reference_offset * 1000.0
-
-    sim.spectrum = Spectrum.parse_json_with_units(spectrum)
+    sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(spectrum)]
     sim.x, sim.y = sim.run(
         one_d_spectrum, geodesic_polyhedron_frequency=sim.nt, individual_spectrum=True
     )
 
-    # convert to ppm
     sim.x = sim.x.value
-    denominator = reference_offset / 1000 + sim.spectrum.larmor_frequency
-    sim.x /= denominator
+
+    # print(sim.y)
 
     data = []
     if show_individual:
         for i, datum in enumerate(sim.y):
-            if datum.size != 0:
+            if not isinstance(datum, list):
+                name = sim.isotopomers[i].name
+                if name == "":
+                    name = "Isotopomer " + str(i + 1)
                 data.append(
                     go.Scatter(
                         x=sim.x,
-                        y=datum[0],
+                        y=datum,
                         mode="lines",
                         opacity=0.8,
                         line={"width": 1.2},
                         fill="tozeroy",
                         # name=isotope_id,
-                        name=f"Isotopomer {i+1}",
+                        name=name,
                         # hovername=
                         # customdata=str(sim.isotopomers[i]),
                     )
                 )
     else:
-        sum_spectrums = np.zeros(sim.spectrum.number_of_points)
+        sum_spectrums = np.zeros(sim.spectrum[0].number_of_points)
         for datum in sim.y:
-            if datum.size != 0:
-                sum_spectrums += datum.sum(axis=0)
+            if not isinstance(datum, list):
+                sum_spectrums += datum
         data.append(
             go.Scatter(
                 x=sim.x,
@@ -630,8 +632,8 @@ def parse_contents(contents, filename, date):
             content_string = contents.split(",")[1]
             decoded = base64.b64decode(content_string)
             parse = json.loads(str(decoded, encoding="UTF-8"))["isotopomers"]
-            sim.isotopomers = [Isotopomer.parse_json_with_units(item) for item in parse]
-            sim.spectrum = Spectrum()
+            sim.isotopomers = [Isotopomer.parse_dict_with_units(item) for item in parse]
+            sim.spectrum = []
             return (
                 [
                     filename,
@@ -651,7 +653,7 @@ def parse_contents(contents, filename, date):
         if FIRST:
             return (["", "", "Select a JSON serialized isotopomers file."], False)
         else:
-            return ["", "", "There was an error reading the file."], False
+            return ["", "", "Error reading the file."], False
 
 
 if __name__ == "__main__":

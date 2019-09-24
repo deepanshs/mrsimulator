@@ -1,17 +1,42 @@
 
 .. _getting_started:
 
+.. testsetup::
+
+    >>> import matplotlib
+    >>> font = {'family': 'Helvetica', 'weight': 'light', 'size': 9};
+    >>> matplotlib.rc('font', **font)
+    >>> from os import path
+
+    >>> import matplotlib.pyplot as plt
+    >>> def plot_save(x, y, filename):
+    ...     plt.figure(figsize=(4, 3))
+    ...     plt.plot(x, y, linewidth=1)
+    ...     plt.xlim([x.value.max(), x.value.min()])
+    ...     plt.xlabel(f"frequency ratio / {str(x.unit)}", **font)
+    ...     plt.grid(color='gray', linestyle='--', linewidth=1.0, alpha=0.25)
+    ...     plt.tight_layout(h_pad=0, w_pad=0, pad=0)
+    ...
+    ...     filename = path.split(filename)[1]
+    ...     filepath = './docs/_images'
+    ...     pth = path.join(filepath, filename)
+    ...     plt.savefig(pth+'.pdf')
+    ...     plt.savefig(pth+'.png', dpi=100)
+    ...     plt.close()
+
+
 ==================================
 Getting started with `mrsimulator`
 ==================================
 
-We have put together a set of guidelines from using various methods and
+We have put together a set of guidelines for using various methods and
 attributes of `mrsimulator` package. We encourage the users
 to follow these guidelines to promote consistency amongst others.
-The solid state nuclear magnetic resonance (ssNMR) lineshapes are calculated
-through an instance of the :ref:`simulator_api` class.
+In `mrsimulator`, the solid state nuclear magnetic resonance (ssNMR)
+lineshape is calculated through an instance of the :ref:`simulator_api`
+class.
 
-First, import the :ref:`simulator_api` class,
+Import the :ref:`simulator_api` class,
 
 .. doctest::
 
@@ -21,9 +46,9 @@ and create an instance as follows,
 
 .. doctest::
 
-    >>> sim1 = Simulator()
+    >>> sim = Simulator()
 
-Here, ``sim1`` is a variable with an instance of the :ref:`simulator_api`
+Here, ``sim`` is a variable with an instance of the :ref:`simulator_api`
 class. The two attributes of this class that you will often use are
 :attr:`~mrsimulator.Simulator.isotopomers` and
 :attr:`~mrsimulator.Simulator.spectrum`. The default value of these
@@ -31,139 +56,178 @@ attributes is an empty list.
 
 .. doctest::
 
-    >>> sim1.isotopomers
+    >>> sim.isotopomers
     []
-    >>> sim1.spectrum
+    >>> sim.spectrum
     []
 
-Before we can start simulating lineshapes, we need to specify a list of
-isotopomers and spectrum to the above attributes.
+The value of the attribute :attr:`~mrsimulator.Simulator.isotopomers` is a
+list of :ref:`isotopomer_api` objects while the value of the attribute
+:attr:`~mrsimulator.Simulator.spectrum` is a list of
+:ref:`spectroscopicDimension_api` objects. Before you can start simulating
+NMR lineshapes, you need to understand the role of the Isotopomer and
+SpectroscopicDimension objects. We recommend starting with
+:ref:`dictionary_objects` and :ref:`spectroscopic_dimension`.
 
-Setting up an Isotopomer object
--------------------------------
+
+Setting up Isotopomer objects
+-----------------------------
 We define an isotopomer as an isolated spin-system containing
 multiple sites and couplings between them. In this example, however, we
 concern ourselves with a single site spin-system, that is, an isotopomer with
 a single site. Shown below is an example of such isotopomer expressed as a
 python dictionary.
 
-.. code-block:: json
+.. code-block:: py
 
-    {
-        "sites": [
-            {
-                "isotope": "29Si",
-                "isotropic_chemical_shift": "-101.1 ppm",
-                "shielding_symmetric": {
-                    "anisotropy": "70.5 ppm",
-                    "asymmetry": 0.1
-            }
-        ]
-    }
+    >>> isotopomer_dict = {
+    ...     "sites": [
+    ...         {
+    ...             "isotope": "29Si",
+    ...             "isotropic_chemical_shift": "-101.1 ppm",
+    ...             "shielding_symmetric": {
+    ...                 "zeta": "70.5 ppm",
+    ...                 "eta": 0.5
+    ...             }
+    ...         }
+    ...     ]
+    ... }
 
-The python dictionary contains a ``sites`` keyword containing a list of sites
+In the above example, ``isotopomer_dict``, represents an isotopomer.
+This isotopomer contains a ``sites`` keyword whose value is a list of sites
 defined within the isotopomer. In this examples, we have defined a single site,
 again as a python dictionary, containing site specific information such as,
 the site isotope, the isotropic chemical shift, and the parameters from the
-irreducible second rank symmetric nuclear shielding tensor---asymmetry and
-anisotropy, expressed in Haeberlen convension. For additional information
-see :ref:`isotopomer` and :ref:`site`.
+irreducible second rank symmetric nuclear shielding tensor---asymmetry
+(:math:`\zeta`), and anisotropy (:math:`\eta`), expressed in Haeberlen
+convension. For additional information see :ref:`isotopomer` and :ref:`site`.
 
-
-
+.. seealso:: :ref:`dictionary_objects`
 
 An instance of an Isotopomer object may be created from a python dictionary,
 such as the one shown above, using the :ref:`isotopomer_api`
 class.
 
     >>> from mrsimulator import Isotopomer
-    >>> isotopomer_object = Isotopomer.parse_json_with_units(isotopomer_dict)
+    >>> isotopomer_object = Isotopomer.parse_dict_with_units(isotopomer_dict)
 
-You may create as many isotopomers as necessary, although in this example, we
-stick with a single isotopomer. Now add this isotopomer to the variable
-``sim``
+You may create as many isotopomer objects as necessary, although in this
+example, we stick with a single isotopomer. Finally, add the isotopomer
+objects, in this case, ``isotopomer_object``, to the instance of the Simulator
+class, ``sim``, as follows
+
+    >>> sim.isotopomers = [isotopomer_object]
 
 
+Setting up SpectroscopicDimension objects
+-----------------------------------------
 
-Please read the section on :ref:`isotopomers` and :ref:`spectrum` for
-instructions on how to assign values to these attributes, respectively.
-Here, we use a built-in example to assign these attributes. Import
-the examples using
+A spectroscopic dimension is a dimension of the NMR spectrum. The number of
+spectroscopic dimensions depends on the dimensionality of the NMR experiment.
+A one pulse acquired spectrum will consist of a single spectroscopic dimension,
+while a two-dimensional experiments will consist of two spectroscopic
+dimensions. In `mrsimulator`, a spectroscopic dimension includes keywords that
+are required in evaluating the spectrum/line-shape along the dimension.
+A spectroscopic dimension may be defined as follows,
 
-.. doctest::
+.. code-block:: py
 
-    >>> from mrsimulator import examples
+    >>> dimension = {
+    ...     "isotope": "29Si",
+    ...     "magnetic_flux_density": "9.4 T",
+    ...     "rotor_angle": "54.735 deg",
+    ...     "rotor_frequency": "0 kHz",
+    ...     "number_of_points": 2048,
+    ...     "spectral_width": "25 kHz",
+    ...     "reference_offset": "8 kHz"
+    ... }
 
-and assign the isotopomers and spectrum attributes of ``sim1`` with
+In the above example, ``dimension``, is a spectroscopic dimension represented
+as a python dictionary. Here, the value of the `isotope` key is the isotope
+symbol of the observed nucleus. The keys `magnetic_flux_density`,
+`rotor_angle`, and `rotor_frequency` define the spin-environment, while
+`number_of_points`, `spectral_width`, and `reference_offset` define the
+grid points along the spectroscopic dimension at which the spectrum is
+evaluated.
 
-.. doctest::
+.. seealso:: :ref:`spectroscopic_dimension`.
 
-    >>> sim1.isotopomers, sim1.spectrum = examples.csa_static()
 
-You may view the contents of the isotopomers and spectrum attribute
-using the print statement. Here, we use the pprint, the data pretty printer
-command.
+An instance of a spectroscopic dimension object may be created from
+a python dictionary, such as the one shown above, using the
+:ref:`spectroscopicDimension_api` class.
 
-.. doctest::
+    >>> from mrsimulator import SpectroscopicDimension
+    >>> spectrum_object = SpectroscopicDimension.parse_dict_with_units(dimension)
 
-    >>> from pprint import pprint
-    >>> pprint(sim1.isotopomers)
-    [{'abundance': '100 %',
-      'sites': [{'isotope': '1H',
-                 'isotropic_chemical_shift': '0 ppm',
-                 'shielding_symmetric': {'anisotropy': '13.89 ppm',
-                                         'asymmetry': 0.25}}]}]
-    >>> pprint(sim1.spectrum)
-    {'direct_dimension': {'magnetic_flux_density': '9.4 T',
-                          'isotope': '1H',
-                          'number_of_points': 2048,
-                          'reference_offset': '0 Hz',
-                          'rotor_angle': '54.735 deg',
-                          'rotor_frequency': '0 kHz',
-                          'spectral_width': '25 kHz'}}
+You may create multiple spectroscopic dimension objects as required by the
+experiment. In this example, we stick with a single spectroscopic dimension.
+Finally, add the spectroscopic dimensions, in this case, ``spectrum_object``,
+to the instance of the Simulator class, ``sim``, as follows
 
-In general, the isotopomers contain the metadata on the spin system while
-the spectrum contains metadata required to simulate the lineshapes.
-A lineshape is simulated using the meth:`~mrsimulator.Simulator.run` method
-of the :ref:`simulator_api` instance based on the NMR method.
-Currently, we provide `one_d_spectrum` method for simulating one
-dimensional NMR lineshapes. Import this method using
+    >>> sim.spectrum = [spectrum_object]
+
+Setting up the NMR method
+-------------------------
+
+Beside, the list of isotopomer and spectroscopic dimension objects,
+`mrsimulator` also requires an NMR method to simulate a line-shape.
+Note, while the list isotopomer objects are independent of the NMR method, the
+ordered list of spectroscopic dimension objects is dependent on the NMR method.
+In this example, we illustrate the use of one pulse acquisition method,
+referred here as, `one_d_spectrum`. This method requires a single spectroscopic
+dimension.
+
+.. seealso:: :ref:`methods_api`
+
+Import the method as
 
 .. doctest::
 
     >>> from mrsimulator.methods import one_d_spectrum
 
-and run the simulation.
+and run the simulation using
 
 .. doctest::
 
-    >>> freq, amp = sim1.run(one_d_spectrum, verbose=1)
-    Setting up the virtual NMR spectrometer
-    ---------------------------------------
-    Adjusting the magnetic flux density to 9.4 T.
-    Setting rotation angle to 0.9553059660790962 rad.
-    Setting rotation frequency to 0.0 Hz.
-    Detecting 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope.
-    Recording 1H spectrum with 2048 points over a 25000.0 Hz bandwidth and a reference offset of 0.0 Hz.
+    >>> freq, amp = sim.run(method=one_d_spectrum, verbose=1)
+    `one_d_spectrum` method simulation parameters.
+    ---------------------------------------------
+    The magnetic flux density is 9.4 T.
+    Sample rotation angle is 0.9553059660790962 rad.
+    Sample rotation frequency is 0.0 Hz.
+    Simulating 29Si(I=0.5, precession frequency = -79.571 MHz) isotope.
+    Recording 29Si spectrum with 2048 points over 25000.0 Hz bandwidth
+    and a reference offset of 8000.0 Hz.
     <BLANKLINE>
-    1H site 0 from isotopomer 0 @ 100.0% abundance
+    29Si site 0 from isotopomer 0 @ 100% abundance
     ----------------------------------------------
-    Isotropic chemical shift = 0.0 ppm
-    Shielding anisotropy = 13.89 ppm
-    Shielding asymmetry = 0.25
+    Isotropic chemical shift (δ) = 8044.628099999999 Hz
+    Shielding anisotropy (ζ) = -5609.7555 Hz
+    Shielding asymmetry (η) = 0.5
+    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
 
-In the above code, the ``freq`` and ``amp`` are the frequency in Hz and the
-corresponding amplitude of the spectrum. The following is a figure of the above
-lineshape plotted using the matplotlib library.
+In the above code, the ``freq`` and ``amp`` are the dimensionless frequency
+ratio given in `ppm` and the corresponding amplitude of the spectrum. The
+following is a figure of the above lineshape plotted using the matplotlib
+library.
 
 .. doctest::
 
     >>> import matplotlib.pyplot as plt
     >>> def plot(x, y):
+    ...     plt.figure(figsize=(4,3))
     ...     plt.plot(x,y)
-    ...     plt.xlabel(f'frequency / {str(x.unit)}')
+    ...     plt.xlim([x.value.max(), x.value.min()]) # for reverse axis
+    ...     plt.xlabel(f'frequency ratio / {str(x.unit)}')
+    ...     plt.tight_layout()
     ...     plt.show()
 
     >>> plot(freq, amp)
 
-.. image:: /_static/1H_example.png
+.. testsetup::
+
+    >>> plot_save(freq, amp, "example.pdf")
+
+.. figure:: _images/example.*
+    :figclass: figure-polaroid

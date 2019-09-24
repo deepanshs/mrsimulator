@@ -13,4 +13,20 @@ Isotopomer
 
     .. rubric:: Method Documentation
 
-    .. automethod:: parse_json_with_units
+    .. automethod:: parse_dict_with_units
+
+
+.. _spectroscopicDimension_api:
+
+======================
+SpectroscopicDimension
+======================
+
+.. currentmodule:: mrsimulator
+
+.. autoclass:: SpectroscopicDimension
+    :show-inheritance:
+
+    .. rubric:: Method Documentation
+
+    .. automethod:: parse_dict_with_units

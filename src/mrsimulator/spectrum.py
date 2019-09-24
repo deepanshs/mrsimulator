@@ -12,22 +12,21 @@ MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
 ISOTOPE_DATA = loadfn(os.path.join(MODULE_DIR, "isotope_data.json"))
 
 
-class Spectrum(Parseable):
+class SpectroscopicDimension(Parseable):
     """
     Base class for an NMR Spectrum
 
     Args:
-        number_of_points: Number of points
-        spectral_width: Width of spectrum region to consider in Hz
-        reference_offset: Offset frequency in Hz
-        magnetic_flux_density: Magnetic flux density in T
-        rotor_frequency: Frequency in Hz
-        rotor_angle: Angle in radians
-        rotor_phase: Phase in radians
-        isotope: Isotope in "{A}{Symbol}" notation such as 1H or 29Si
-        spin: nuclear spin quantum number as n/2
-        natural_abundance: fractional natural abundance, IE sums should equal 1
-        gyromagnetic_ratio: In units of MHz/T?
+        number_of_points: Number of points.
+        spectral_width: Width of spectrum region to consider in Hz.
+        reference_offset: Offset frequency in Hz.
+        magnetic_flux_density: Magnetic flux density in T.
+        rotor_frequency: Frequency in Hz.
+        rotor_angle: Angle in radians.
+        isotope: Isotope in "{A}{Symbol}" notation such as 1H or 29Si.
+        spin: nuclear spin quantum number as 2I.
+        natural_abundance: fractional natural abundance, IE sums should equal 1.
+        gyromagnetic_ratio: In units of (MHz/T).
     """
 
     number_of_points: int = 1024
@@ -36,7 +35,6 @@ class Spectrum(Parseable):
     magnetic_flux_density: float = 9.4
     rotor_frequency: float = 0
     rotor_angle: float = 0.9553  # 54.735 degrees in radians
-    rotor_phase: float = 0
     isotope: str = "1H"
     spin: int = 1
     natural_abundance: float = 0.04683
@@ -48,7 +46,6 @@ class Spectrum(Parseable):
         "magnetic_flux_density": "magnetic flux density",
         "rotor_frequency": "frequency",
         "rotor_angle": "angle",
-        "rotor_phase": "angle",
     }
 
     property_default_units: ClassVar = {
@@ -57,7 +54,6 @@ class Spectrum(Parseable):
         "magnetic_flux_density": "T",
         "rotor_frequency": "Hz",
         "rotor_angle": "rad",
-        "rotor_phase": "rad",
     }
 
     @property
@@ -68,16 +64,16 @@ class Spectrum(Parseable):
         return self.gyromagnetic_ratio * self.magnetic_flux_density
 
     @classmethod
-    def parse_json_with_units(cls, json_dict):
+    def parse_dict_with_units(cls, json_dict):
 
-        if "direct_dimension" in json_dict:
-            json_dict.update(json_dict["direct_dimension"])
+        # if "direct_dimension" in json_dict:
+        #     json_dict.update(json_dict["direct_dimension"])
 
         if "isotope" in json_dict:
             isotope_data = get_isotope_data(json_dict["isotope"])
             json_dict.update(isotope_data)
 
-        return super().parse_json_with_units(json_dict)
+        return super().parse_dict_with_units(json_dict)
 
 
 def get_isotope_data(isotope_string):

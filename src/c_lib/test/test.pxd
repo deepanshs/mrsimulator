@@ -62,14 +62,14 @@ cdef extern from "mrsimulator.h":
         double spin_frequency,
         double complex *pre_phase)
 
-    ctypedef struct MRS_plan
+#     ctypedef struct MRS_plan
 
-    MRS_plan *MRS_create_plan(
-        unsigned int geodesic_polyhedron_frequency,
-        int number_of_sidebands,
-        double sample_rotation_frequency_in_Hz,
-        double rotor_angle_in_rad, double increment,
-        bool_t allow_fourth_rank)
+#     MRS_plan *MRS_create_plan(
+#         unsigned int geodesic_polyhedron_frequency,
+#         int number_of_sidebands,
+#         double sample_rotation_frequency_in_Hz,
+#         double rotor_angle_in_rad, double increment,
+#         bool_t allow_fourth_rank)
 
 
 cdef extern from "isotopomer_ravel.h":

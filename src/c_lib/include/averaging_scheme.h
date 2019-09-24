@@ -36,7 +36,7 @@
  * required. This is especially efficient when performing a batch simulation,
  * such as line-shape simulation from thousands of sites.
  */
-struct MRS_averaging_scheme {
+typedef struct MRS_averaging_scheme {
   unsigned int total_orientations; /**< The total number of orientations. */
 
   /** \privatesection */
@@ -52,9 +52,9 @@ struct MRS_averaging_scheme {
   double *wigner_4j_matrices; //  wigner-d 4j matrix per orientation.
   double *local_frequency;    //  buffer for local frequencies.
   double *freq_offset;        //  buffer for local + sideband frequencies.
-};
+} MRS_averaging_scheme;
 
-typedef struct MRS_averaging_scheme MRS_averaging_scheme;
+// typedef struct MRS_averaging_scheme;
 
 /**
  * Create a new orientation averaging scheme.

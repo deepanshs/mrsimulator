@@ -111,6 +111,8 @@ include_dirs.append(np.get_include())
 print(extra_compile_args)
 print(extra_link_args)
 
+# method
+
 ext_modules = [
     Extension(
         name="mrsimulator.methods",
@@ -134,7 +136,7 @@ ext_modules = [
     )
 ]
 
-# Sandbox
+# tests
 
 ext_modules += [
     Extension(
@@ -158,6 +160,29 @@ ext_modules += [
     )
 ]
 
+# # sandbox
+
+# ext_modules += [
+#     Extension(
+#         name="mrsimulator.sandbox",
+#         sources=[
+#             "src/c_lib/lib/angular_momentum.c",
+#             "src/c_lib/lib/interpolation.c",
+#             "src/c_lib/lib/mrsimulator.c",
+#             "src/c_lib/lib/octahedron.c",
+#             "src/c_lib/lib/spinning_sidebands.c",
+#             "src/c_lib/lib/powder_setup.c",
+#             "src/c_lib/lib/averaging_scheme.c",
+#             "src/c_lib/sandbox/sandbox.pyx",
+#         ],
+#         include_dirs=include_dirs,
+#         language="c",
+#         libraries=libraries,
+#         library_dirs=library_dirs,
+#         extra_compile_args=extra_compile_args,
+#         extra_link_args=extra_link_args,
+#     )
+# ]
 
 setup(
     name="mrsimulator",
@@ -176,11 +201,11 @@ setup(
         "setuptools>=27.3",
         "cython>=0.29.11",
         "astropy>=3.0",
-        "pydantic==0.28",
+        "pydantic>=0.28",
         "requests>=2.21.0",
         "monty==2.0.4",
         "matplotlib>=3.0.2",
-        "csdmpy",
+        "csdmpy>=0.1.2",
     ],
     extras_require={"fancy feature": ["plotly>=3.6", "dash>=0.40", "dash_daq>=0.1"]},
     ext_modules=cythonize(ext_modules, language_level=3),

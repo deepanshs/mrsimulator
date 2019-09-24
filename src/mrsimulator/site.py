@@ -14,14 +14,12 @@ class Site(Parseable):
     shielding_antisymmetric: Optional[AntisymmetricTensor]
     quadrupolar: Optional[SymmetricTensor]
 
-    property_unit_types: ClassVar = {
-        "isotropic_chemical_shift": ["dimensionless", "frequency"]
-    }
+    property_unit_types: ClassVar = {"isotropic_chemical_shift": "dimensionless"}
 
-    property_default_units: ClassVar = {"isotropic_chemical_shift": ["ppm", "Hz"]}
+    property_default_units: ClassVar = {"isotropic_chemical_shift": "ppm"}
 
     @classmethod
-    def parse_json_with_units(cls, json_dict):
+    def parse_dict_with_units(cls, json_dict):
 
         prop_mapping = {
             "shielding_symmetric": SymmetricTensor,
@@ -31,9 +29,9 @@ class Site(Parseable):
 
         for k, v in prop_mapping.items():
             if k in json_dict:
-                json_dict[k] = v.parse_json_with_units(json_dict[k])
+                json_dict[k] = v.parse_dict_with_units(json_dict[k])
 
-        return super().parse_json_with_units(json_dict)
+        return super().parse_dict_with_units(json_dict)
 
     def to_freq_dict(self, larmor_frequency):
         """

@@ -38,6 +38,9 @@ def one_d_spectrum(spectrum,
         frequency will result in a better powder averaging.
         The default value is 72.
         Read more on the `Geodesic polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
+    :ivar individual_spectrum:
+        A boolean. If true, returns an ordered list of spectrum corresponding
+        to the ordered list of isotopomers.
     """
 # ---------------------------------------------------------------------
 # spectrum ________________________________________________________
@@ -46,11 +49,13 @@ def one_d_spectrum(spectrum,
     B0 = spectrum.magnetic_flux_density
 
     if verbose in [1, 11]:
-        print ('Setting up the virtual NMR spectrometer')
-        print ('---------------------------------------')
-        print (f'Adjusting the magnetic flux density to {B0} T.')
-        print (f'Setting rotation angle to {rotor_angle_in_rad} rad.')
-        print (f'Setting rotation frequency to {sample_rotation_frequency_in_Hz} Hz.')
+        text = "`one_d_spectrum` method simulation parameters."
+        len_ = len(text)
+        print(text)
+        print(f"{'-'*(len_-1)}")
+        print (f'The magnetic flux density is {B0} T.')
+        print (f'Sample rotation angle is {rotor_angle_in_rad} rad.')
+        print (f'Sample rotation frequency is {sample_rotation_frequency_in_Hz} Hz.')
 
 # ---------------------------------------------------------------------
 # spin observed _______________________________________________________
@@ -82,11 +87,11 @@ def one_d_spectrum(spectrum,
     cdef double reference_offset = spectrum.reference_offset
 
     if verbose in [1, 11]:
-        print ((f'Detecting {isotope}(I={spin_quantum_number}, '
+        print((f'Simulating {isotope}(I={spin_quantum_number}, '
                 f'precession frequency = {larmor_frequency} MHz) isotope.'))
-        print ((f'Recording {isotope} spectrum with {number_of_points} '
-                f'points over a {spectral_width} Hz bandwidth and a '
-                f'reference offset of {reference_offset} Hz.'))
+        print((f'Recording {isotope} spectrum with {number_of_points} '
+                f'points over {spectral_width} Hz bandwidth'))
+        print((f'and a reference offset of {reference_offset} Hz.'))
 
     reference_offset -= spectral_width/2.0
 
@@ -149,9 +154,9 @@ def one_d_spectrum(spectrum,
 
             shielding = site['shielding_symmetric']
             if shielding is not None:
-                zeta = shielding['anisotropy']
+                zeta = shielding['zeta']
                 if zeta is None: zeta = 0.0
-                eta = shielding['asymmetry']
+                eta = shielding['eta']
                 if eta is None: eta = 0.0
                 alpha, beta, gamma = shielding['alpha'], shielding['beta'], shielding['gamma']
                 if alpha is None: alpha = 0.0
@@ -168,9 +173,9 @@ def one_d_spectrum(spectrum,
                 len_ = len(text)
                 print(text)
                 print(f"{'-'*(len_-1)}")
-                print(f'Isotropic chemical shift = {str(iso)} Hz')
-                print(f'Shielding anisotropy = {str(zeta)} Hz')
-                print(f'Shielding asymmetry = {eta}')
+                print(f'Isotropic chemical shift (δ) = {str(iso)} Hz')
+                print(f'Shielding anisotropy (ζ) = {str(zeta)} Hz')
+                print(f'Shielding asymmetry (η) = {eta}')
                 print(f'Shielding orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
             # CSA tensor in Hz
@@ -183,9 +188,9 @@ def one_d_spectrum(spectrum,
             if spin_quantum_number > 0.5:
                 quad = site['quadrupolar']
                 if quad is not None:
-                    Cq = quad['anisotropy']
+                    Cq = quad['Cq']
                     if Cq is None: Cq = 0.0
-                    eta = quad['asymmetry']
+                    eta = quad['eta']
                     if eta is None: eta = 0.0
                     alpha, beta, gamma = quad['alpha'], quad['beta'], quad['gamma']
                     if alpha is None: alpha = 0.0
@@ -199,33 +204,34 @@ def one_d_spectrum(spectrum,
                 ori_e[3*i:3*i+3] = [alpha, beta, gamma]
 
                 if verbose in [1, 11]:
-                    print(f'Quadrupolar coupling constant = {Cq_e[i]/1e6} MHz')
-                    print(f'Quadrupolar asymmetry = {eta}')
+                    print(f'Quadrupolar coupling constant (Cq) = {Cq_e[i]/1e6} MHz')
+                    print(f'Quadrupolar asymmetry (η) = {eta}')
                     print(f'Quadrupolar orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
         # print(transition_array)
         # print(number_of_transitions)
 
-        isotopomer_struct.number_of_sites = number_of_sites
-        isotopomer_struct.spin = spin_quantum_number
-        isotopomer_struct.larmor_frequency = larmor_frequency*1.0e6
+        if number_of_sites != 0:
+            isotopomer_struct.number_of_sites = number_of_sites
+            isotopomer_struct.spin = spin_quantum_number
+            isotopomer_struct.larmor_frequency = larmor_frequency*1.0e6
 
-        isotopomer_struct.isotropic_chemical_shift_in_Hz = &iso_n[0]
-        isotopomer_struct.shielding_anisotropy_in_Hz = &zeta_n[0]
-        isotopomer_struct.shielding_asymmetry = &eta_n[0]
-        isotopomer_struct.shielding_orientation = &ori_n[0]
+            isotopomer_struct.isotropic_chemical_shift_in_Hz = &iso_n[0]
+            isotopomer_struct.shielding_anisotropy_in_Hz = &zeta_n[0]
+            isotopomer_struct.shielding_asymmetry = &eta_n[0]
+            isotopomer_struct.shielding_orientation = &ori_n[0]
 
-        isotopomer_struct.quadrupole_coupling_constant_in_Hz = &Cq_e[0]
-        isotopomer_struct.quadrupole_asymmetry = &eta_e[0]
-        isotopomer_struct.quadrupole_orientation = &ori_e[0]
+            isotopomer_struct.quadrupole_coupling_constant_in_Hz = &Cq_e[0]
+            isotopomer_struct.quadrupole_asymmetry = &eta_e[0]
+            isotopomer_struct.quadrupole_orientation = &ori_e[0]
 
-        isotopomer_struct.dipolar_couplings = &D_c[0]
+            isotopomer_struct.dipolar_couplings = &D_c[0]
 
-        # isotopomers_list_c[i] = isotopomer_struct
-        for trans__ in range(number_of_transitions):
-            # spin transitions
-            # m_initial = transition_array[i][0]
-            # m_final   = transition_array[i][1]
-            clib.spinning_sideband_core(
+            # isotopomers_list_c[i] = isotopomer_struct
+            for trans__ in range(number_of_transitions):
+                # spin transitions
+                # m_initial = transition_array[i][0]
+                # m_final   = transition_array[i][1]
+                clib.spinning_sideband_core(
                     # spectrum information and related amplitude
                     &amp[0],
                     reference_offset,
@@ -245,13 +251,18 @@ def one_d_spectrum(spectrum,
                     &transition_array[2*trans__],
                     geodesic_polyhedron_frequency)
 
-        if individual_spectrum:
-            amp_individual.append(amp.reshape(number_of_sites, number_of_points)*abundance)
+            if individual_spectrum:
+                amp_individual.append(amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance)
+            else:
+                amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
         else:
-            amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
+            if individual_spectrum:
+                amp_individual.append([])
 
     if individual_spectrum:
         amp1 = np.asarray(amp_individual)
 
     freq = (np.arange(number_of_points)*increment + reference_offset)
+    denominator = reference_offset/1.0e6 + larmor_frequency
+    freq/=denominator
     return freq, amp1

@@ -194,6 +194,8 @@ void MRS_get_amplitudes_from_plan(MRS_plan *plan, complex128 *R2,
 void MRS_get_normalized_frequencies_from_plan(MRS_plan *plan,
                                               MRS_dimension *dim, double R0);
 
+void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0);
+
 extern void __get_components(int number_of_sidebands, double spin_frequency,
                              complex128 *pre_phase);
 

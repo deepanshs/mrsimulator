@@ -8,6 +8,7 @@ Python-API References
    :caption: Contents:
 
    simulator
+   isotopomer
    hamiltonian
    transition_functions
 

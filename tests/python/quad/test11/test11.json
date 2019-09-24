@@ -1,6 +1,6 @@
 {
-  "spectrum": {
-    "direct_dimension": {
+  "spectrum": [
+    {
       "magnetic_flux_density": "4.7 T",
       "rotor_frequency": "12.5 kHz",
       "rotor_angle": "45 deg",
@@ -8,7 +8,7 @@
       "spectral_width": "70 kHz",
       "isotope": "23Na"
     }
-  },
+  ],
   "isotopomers": [
     {
       "sites": [
@@ -16,8 +16,8 @@
           "isotope": "23Na",
           "isotropic_chemical_shift": "0 ppm",
           "quadrupolar": {
-            "anisotropy": "2.5 MHz",
-            "asymmetry": 0.5
+            "Cq": "2.5 MHz",
+            "eta": 0.5
           }
         }
       ],

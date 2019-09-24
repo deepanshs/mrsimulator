@@ -105,6 +105,7 @@ src/c_lib/test_c/**
 tests/simpson/quad/**
 
 # files
+class-diagram*
 *.out
 *.prof
 *.ipynb
@@ -123,3 +124,4 @@ test_dash.py
 # cython generated files
 test.c
 nmr_methods.c
+sandbox.c

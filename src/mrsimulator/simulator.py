@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # from pydash import has, get
 from astropy import units as u
-from mrsimulator import Isotopomer, Spectrum
+from mrsimulator import Isotopomer, SpectroscopicDimension
 from mrsimulator.spectrum import ISOTOPE_DATA
 from mrsimulator.methods import one_d_spectrum
 from mrsimulator.importer import import_json
@@ -19,7 +19,7 @@ class Simulator:
 
     Attributes:
         isotopomers: List of Isotopomer objects.
-        dimensions: List of dimension objects.
+        spectrum: List of dimension objects.
         isotope: List of all unique isotopes defined in the list of isotopomers.
             This also includes NMR inactive isotopes.
     """
@@ -99,7 +99,7 @@ class Simulator:
         """
         contents = import_json(filename)
         json_data = contents["isotopomers"]
-        self.isotopomers = [Isotopomer.parse_json_with_units(obj) for obj in json_data]
+        self.isotopomers = [Isotopomer.parse_dict_with_units(obj) for obj in json_data]
 
     def run(self, method, **kwargs):
         return self.one_d_spectrum(**kwargs)
@@ -121,12 +121,14 @@ class Simulator:
         """
 
         isotopomers = [
-            isotopomer.to_freq_dict(self.spectrum.larmor_frequency)
+            isotopomer.to_freq_dict(self.spectrum[0].larmor_frequency)
             for isotopomer in self.isotopomers
         ]
         spectrum = self.spectrum
 
-        freq, amp = one_d_spectrum(spectrum=spectrum, isotopomers=isotopomers, **kwargs)
+        freq, amp = one_d_spectrum(
+            spectrum=spectrum[0], isotopomers=isotopomers, **kwargs
+        )
         """The frequency is in the units of Hz."""
-        freq *= u.Unit("Hz")
+        freq *= u.Unit("ppm")
         return freq, amp
