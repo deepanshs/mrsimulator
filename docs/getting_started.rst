@@ -51,8 +51,9 @@ and create an instance as follows,
 Here, ``sim`` is a variable with an instance of the :ref:`simulator_api`
 class. The two attributes of this class that you will often use are
 :attr:`~mrsimulator.Simulator.isotopomers` and
-:attr:`~mrsimulator.Simulator.spectrum`. The default value of these
-attributes is an empty list.
+:attr:`~mrsimulator.Simulator.spectrum`, whose value is a list of
+:ref:`isotopomer_api` and :ref:`spectroscopicDimension_api` objects,
+respectively. The default value of these attributes is an empty list.
 
 .. doctest::
 
@@ -61,10 +62,8 @@ attributes is an empty list.
     >>> sim.spectrum
     []
 
-The value of the attribute :attr:`~mrsimulator.Simulator.isotopomers` is a
-list of :ref:`isotopomer_api` objects while the value of the attribute
-:attr:`~mrsimulator.Simulator.spectrum` is a list of
-:ref:`spectroscopicDimension_api` objects. Before you can start simulating
+
+Before you can start simulating
 NMR lineshapes, you need to understand the role of the Isotopomer and
 SpectroscopicDimension objects. We recommend starting with
 :ref:`dictionary_objects` and :ref:`spectroscopic_dimension`.
@@ -72,13 +71,14 @@ SpectroscopicDimension objects. We recommend starting with
 
 Setting up Isotopomer objects
 -----------------------------
-We define an isotopomer as an isolated spin-system containing
-multiple sites and couplings between them. In this example, however, we
-concern ourselves with a single site spin-system, that is, an isotopomer with
-a single site. Shown below is an example of such isotopomer expressed as a
-python dictionary.
+For all practical purposes, an isotopomer is an isolated spin-system with
+multiple sites and couplings between them. For simplicity, in this section,
+we concern ourselves with a single site spin-system, that is, an
+isotopomer with a single site. Shown below is an example of a single-site
+isotopomer, expressed as a python dictionary.
 
 .. code-block:: py
+    :linenos:
 
     >>> isotopomer_dict = {
     ...     "sites": [
@@ -93,14 +93,15 @@ python dictionary.
     ...     ]
     ... }
 
-In the above example, ``isotopomer_dict``, represents an isotopomer.
-This isotopomer contains a ``sites`` keyword whose value is a list of sites
-defined within the isotopomer. In this examples, we have defined a single site,
-again as a python dictionary, containing site specific information such as,
-the site isotope, the isotropic chemical shift, and the parameters from the
-irreducible second rank symmetric nuclear shielding tensor---asymmetry
-(:math:`\zeta`), and anisotropy (:math:`\eta`), expressed in Haeberlen
-convension. For additional information see :ref:`isotopomer` and :ref:`site`.
+The above isotopomer contains a ``sites`` keyword, at line 2, whose value is
+a list of sites defined within the isotopomer. In this examples, we have
+defined a single site, again as a python dictionary, (lines 3-10) containing
+site specific information such as, the site isotope (line 4), the isotropic
+chemical shift (line 5), and the parameters from the second-rank irreducible
+symmetric nuclear shielding tensor---the shielding asymmetry (:math:`\zeta`)
+at line 7, and the shielding anisotropy (:math:`\eta`) at line 8, expressed
+using Haeberlen convension.
+For additional information see :ref:`isotopomer` and :ref:`site`.
 
 .. seealso:: :ref:`dictionary_objects`
 
@@ -113,24 +114,25 @@ class.
 
 You may create as many isotopomer objects as necessary, although in this
 example, we stick with a single isotopomer. Finally, add the isotopomer
-objects, in this case, ``isotopomer_object``, to the instance of the Simulator
-class, ``sim``, as follows
+objects, in this case, the variable ``isotopomer_object``, to the instance of
+the Simulator class, ``sim``, as follows
 
-    >>> sim.isotopomers = [isotopomer_object]
+    >>> sim.isotopomers.append(isotopomer_object)
 
 
 Setting up SpectroscopicDimension objects
 -----------------------------------------
 
 A spectroscopic dimension is a dimension of the NMR spectrum. The number of
-spectroscopic dimensions depends on the dimensionality of the NMR experiment.
-A one pulse acquired spectrum will consist of a single spectroscopic dimension,
-while a two-dimensional experiments will consist of two spectroscopic
-dimensions. In `mrsimulator`, a spectroscopic dimension includes keywords that
-are required in evaluating the spectrum/line-shape along the dimension.
-A spectroscopic dimension may be defined as follows,
+spectroscopic dimensions depends on the dimensionality of the experiment. For
+example, a one-pulse acquired 1-D spectrum consists of a single spectroscopic
+dimension, while two-dimensional experiments will consist of two spectroscopic
+dimensions. In `mrsimulator`, we have designed the spectroscopic dimension to
+includes keywords that are required in evaluating the spectrum/line-shape along
+the dimension. A spectroscopic dimension may be defined as follows,
 
 .. code-block:: py
+    :linenos:
 
     >>> dimension = {
     ...     "isotope": "29Si",
@@ -142,13 +144,14 @@ A spectroscopic dimension may be defined as follows,
     ...     "reference_offset": "8 kHz"
     ... }
 
-In the above example, ``dimension``, is a spectroscopic dimension represented
-as a python dictionary. Here, the value of the `isotope` key is the isotope
-symbol of the observed nucleus. The keys `magnetic_flux_density`,
-`rotor_angle`, and `rotor_frequency` define the spin-environment, while
-`number_of_points`, `spectral_width`, and `reference_offset` define the
-grid points along the spectroscopic dimension at which the spectrum is
-evaluated.
+In the above example, the variable ``dimension``, holds a python dictionary
+representation of the spectroscopic dimension. Here, the value of the `isotope`
+key is the isotope symbol of the observed nucleus. A value, ``29Si``, means
+that the simulated lineshape arises from :math:`^{29}\text{Si}` resonances.
+The keys `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency`
+collectively define the spin-environment, while the keys `number_of_points`,
+`spectral_width`, and `reference_offset` describes the grid coordinates
+along the spectroscopic dimension at which the spectrum is evaluated.
 
 .. seealso:: :ref:`spectroscopic_dimension`.
 

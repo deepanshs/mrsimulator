@@ -5,7 +5,7 @@ from mrsimulator import Isotopomer, SpectroscopicDimension
 from mrsimulator.spectrum import ISOTOPE_DATA
 from mrsimulator.methods import one_d_spectrum
 from mrsimulator.importer import import_json
-
+import csdmpy as cp
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -27,6 +27,7 @@ class Simulator:
     def __init__(self, isotopomers=[], spectrum=[]):
         self.isotopomers = isotopomers
         self.spectrum = spectrum
+        self.simulated_data = []
 
     @staticmethod
     def allowed_isotopes(spin=None):
@@ -133,6 +134,65 @@ class Simulator:
         freq, amp = one_d_spectrum(
             spectrum=spectrum[0], isotopomers=isotopomers, **kwargs
         )
+        self.simulated_data = amp
+
         """The frequency is in the units of Hz."""
         freq *= u.Unit("ppm")
         return freq, amp
+
+    def as_csdm_object(self):
+        new = cp.new()
+        for spectrum in self.spectrum:
+            larmor_frequency = spectrum.larmor_frequency
+            dimension = {
+                "type": "linear",
+                "count": spectrum.number_of_points,
+                "increment": "{0} Hz".format(
+                    spectrum.spectral_width / spectrum.number_of_points
+                ),
+                "coordinates_offset": f"{spectrum.reference_offset} Hz",
+                "origin_offset": f"{larmor_frequency} MHz",
+                "complex_fft": True,
+            }
+            new.add_dimension(dimension)
+
+        if isinstance(self.simulated_data, list):
+            for index, datum in enumerate(self.simulated_data):
+                if datum != []:
+                    dependent_variable = {
+                        "type": "internal",
+                        "quantity_type": "scalar",
+                        "numeric_type": "float64",
+                        "components": [datum],
+                    }
+
+                    name = self.isotopomers[index].name
+                    if name != "":
+                        dependent_variable.update({"name": name})
+
+                    description = self.isotopomers[index].description
+                    if description != "":
+                        dependent_variable.update({"description": description})
+
+                    dependent_variable["application"] = {
+                        "com.github.DeepanshS.mrsimulator": {
+                            "isotopomers": [
+                                self.isotopomers[index].to_dict_with_units()
+                            ]
+                        }
+                    }
+
+                    new.add_dependent_variable(dependent_variable)
+                    new.dependent_variables[-1].encoding = "base64"
+
+        else:
+            dependent_variable = {
+                "type": "internal",
+                "quantity_type": "scalar",
+                "numeric_type": "float64",
+                "components": [self.simulated_data],
+            }
+            new.add_dependent_variable(dependent_variable)
+            new.dependent_variables[-1].encoding = "base64"
+
+        return new

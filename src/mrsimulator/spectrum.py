@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os.path
 import re
+import numpy as np
+import warnings
 from monty.serialization import loadfn
 from mrsimulator import Parseable
 from typing import ClassVar, Optional
@@ -13,29 +15,44 @@ ISOTOPE_DATA = loadfn(os.path.join(MODULE_DIR, "isotope_data.json"))
 
 
 class SpectroscopicDimension(Parseable):
-    """
+    r"""
     Base class for an NMR spectroscopic dimension.
 
-    .. rubric:: Attributes Documentation
-
-    Attributes:
-        number_of_points: A `required` integer with the number of points along
-                the spectroscopic dimension.
-        spectral_width: A `required` float representing the spectral width of the
-                spectroscopic dimension in units of Hz.
-        reference_offset: An `optional` float representing the reference offset
-                along the spectroscopic dimension in units of Hz. The default
-                value is 0.
-        magnetic_flux_density: An `optional` float represeting the magnetic flux
-                density of the external magnetic field in units of T. The
-                default value is 9.4.
-        rotor_frequency: An `optional` float representing the sample spinning
-                frequency in units of Hz. The default value is 0.
-        rotor_angle: An `optional` float representing the angle between the
-                sample rotation axis and the external magnetic field in units
-                of rad. The default value is 0.9553166.
+    Args:
+        number_of_points: A `required` integer with the number of points, :math:`N`,
+                along the dimension.
+        spectral_width: A `required` float with the spectral width,
+                :math:`\Delta x`, along the dimension in units of Hz.
+        reference_offset: An `optional` float with the reference offset, :math:`x_0`
+                along the dimension in units of Hz. The default value is 0.
+        magnetic_flux_density: An `optional` float with the macroscopic magnetic flux
+                density, :math:`B_0`, of the applied external magnetic field in
+                units of T. The default value is 9.4.
+        rotor_frequency: An `optional` float with the sample spinning frequency
+                :math:`\nu_r`, in units of Hz. The default value is 0.
+        rotor_angle: An `optional` float with the angle between the
+                sample rotation axis and the applied external magnetic field,
+                :math:`\theta`, in units of rad. The default value is 0.9553166,
+                i.e. the magic angle.
         isotope: An `optional` isotope string in "{A}{Symbol}" notation such as
                 1H or 29Si. The default is None.
+        label: An `optional`
+
+    .. rubric:: Attribute Documentation
+
+    Attributes:
+        number_of_points: Number of points, :math:`N`, along the dimension.
+        spectral_width: Spectral width, :math:`\Delta x`, along the
+                dimension in units of Hz.
+        reference_offset: Reference offset, :math:`x_0`, along the
+                dimension in units of Hz.
+        magnetic_flux_density: The macroscopic magnetic flux density of
+                the applied external magnetic field, :math:`B_0`, in units of T.
+        rotor_frequency: Sample spinning frequency, :math:`\nu_r`,
+                in units of Hz.
+        rotor_angle: The angle between the sample rotation axis and the
+                applied macroscopic magnetic field, :math:`\theta` in units of rad.
+        isotope: The isotope assigned to the dimension.
     """
 
     # public attributes
@@ -70,10 +87,48 @@ class SpectroscopicDimension(Parseable):
 
     @property
     def larmor_frequency(self):
+        r"""
+        Signed Larmor frequency, :math:`\omega_0=-\gamma B_0`, of the isotope,
+        in MHz, where :math:`\gamma` is the gyromagnetic ratio of the
+        isotope and :math:`B_0` is the macroscopic magnetic flux density
+        of the applied external field.
         """
-        Larmor frequency of the site in MHz.
+        return -self.gyromagnetic_ratio * self.magnetic_flux_density
+
+    @property
+    def coordinates_Hz(self):
+        r"""
+        The grid coordinates along the dimension in units of Hz, evaluated as
+
+        .. math::
+            x_\text{Hz} = \left([0, 1, ... N-1] - T\right) \frac{\Delta x}{N} + x_0
+
+        where :math:`T=N/2` and :math:`T=(N-1)/2` for even and odd values of
+        :math:`N`, respectively.
         """
-        return self.gyromagnetic_ratio * self.magnetic_flux_density
+        n = self.number_of_points
+        Tk = int(n / 2)
+        return (np.arange(n) - Tk) * (self.spectral_width / n) + self.reference_offset
+
+    @property
+    def coordinates_ppm(self):
+        r"""
+        The grid coordinates along the dimension as dimension frequency ratio
+        in ppm. The coordinates are evaluated as
+
+        .. math::
+            x_\text{ppm} = \frac{x_\text{Hz}} {x_0 + \omega_0}
+        """
+        if self.isotope is None:
+            raise warnings.warn(
+                (
+                    "The coordinates along the dimension without an assigned "
+                    "isotope cannot be converted to dimensionless ratio."
+                )
+            )
+        else:
+            denominator = np.abs(self.reference_offset * 1e-6 + self.larmor_frequency)
+            return self.coordinates_Hz / denominator
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):

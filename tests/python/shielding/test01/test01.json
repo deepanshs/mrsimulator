@@ -15,7 +15,7 @@
                     "isotope": "1H",
                     "isotropic_chemical_shift": "2000/42.57747892 ppm",
                     "shielding_symmetric": {
-                        "zeta": "6000/42.57747892 ppm",
+                        "zeta": "-6000/42.57747892 ppm",
                         "eta": 0.75
                     }
                 }

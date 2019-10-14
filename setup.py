@@ -31,8 +31,9 @@ library_dirs = []
 libraries = []
 data_files = []
 
+numpy_include = np.get_include()
+
 if platform.system() == "Windows":
-    numpy_include = np.get_include()
     conda_location = numpy_include
     for _ in range(5):
         conda_location = split(conda_location)[0]
@@ -92,8 +93,7 @@ with open("src/mrsimulator/__config__.json", "w", encoding="utf8") as outfile:
     json.dump(blas_info, outfile, ensure_ascii=True, indent=2)
 
 # other include paths
-include_dirs.append("src/c_lib/include")
-include_dirs.append(np.get_include())
+include_dirs += ["src/c_lib/include", numpy_include]
 
 # system = platform.system()
 # arch = platform.architecture()[0]

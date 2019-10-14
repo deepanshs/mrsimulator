@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 import base64
-import datetime
 import io
 import json
 import os
 
-import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 import numpy as np
 import flask
 import plotly.graph_objs as go
+
+from copy import deepcopy
 from dash import Dash
 from dash.dependencies import Input
 from dash.dependencies import Output
@@ -19,20 +19,51 @@ from dash.dependencies import State
 
 from mrsimulator import Simulator, Isotopomer, SpectroscopicDimension
 from mrsimulator.methods import one_d_spectrum
-from mrsimulator.web_ui.widgets import get_isotopomers, input_file, main_body
-from mrsimulator.unit import string_to_quantity, is_physical_quantity
-
-import csdmpy as cp
-
-from mrsimulator.web_ui import navbar
-
+from mrsimulator.web_ui.widgets import get_isotopomers, main_body
+from mrsimulator.web_ui import navbar, sidebar
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
 external_scripts = [
-    "https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"
+    {
+        "src": "https://use.fontawesome.com/releases/v5.0.13/js/solid.js",
+        "integrity": (
+            "sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ"
+        ),
+        "crossorigin": "anonymous",
+    },
+    {
+        "src": "https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js",
+        "integrity": (
+            "sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY"
+        ),
+        "crossorigin": "anonymous",
+    },
+    {
+        "src": "https://code.jquery.com/jquery-3.3.1.slim.min.js",
+        "integrity": (
+            "sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        ),
+        "crossorigin": "anonymous",
+    },
+    {
+        "src": (
+            "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        ),
+        "integrity": (
+            "sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        ),
+        "crossorigin": "anonymous",
+    },
+    {
+        "src": "https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js",
+        "integrity": (
+            "sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        ),
+        "crossorigin": "anonymous",
+    },
 ]
 
 
@@ -40,50 +71,72 @@ app = Dash(
     __name__,
     external_stylesheets=[dbc.themes.BOOTSTRAP],
     external_scripts=external_scripts,
+    meta_tags=[{"name": "viewport", "content": "width=device-width"}],
 )
 
+server = app.server
 
-FIRST = False
+
+FIRST = True
 sim = Simulator()
 sim.x = np.asarray([-1.0, 1.0])
 sim.y = np.asarray([0.0, 0.0])
 sim.nt = 64
+sim.spectrum_previous = {}
+sim.new = False
 count = 0
 total_sites = 0
 
-app.layout = dbc.Container(
+app.layout = html.Div(
     [
-        navbar.navbar,
-        html.Br(),
-        html.Div(input_file),
-        html.Br(),
-        html.Div(main_body, className="accordion"),
-        html.Br(),
-        # html.Div(id="isotopomer_computed_log"),
-        dbc.Jumbotron(),
+        dbc.Container(
+            [
+                navbar.navbar,
+                dbc.Row(
+                    [
+                        dbc.Col(sidebar.sidebar, xs=12, sm=12, md=12, lg=12, xl=3),
+                        dbc.Col(
+                            [
+                                html.Br(),
+                                html.Div(main_body),
+                                html.Br(),
+                                html.Div(id="isotopomer_computed_log"),
+                            ],
+                            xs=12,
+                            sm=12,
+                            md=12,
+                            lg=12,
+                            xl=9,
+                        ),
+                    ]
+                ),
+                dbc.Jumbotron(),
+            ],
+            fluid=True,
+        )
     ],
-    style={
-        "color": "#585858",
-        "background-image": "linear-gradient(#fdfefe, #f4f6f7, #ffffff)",
-    },
+    className="flex-display",
 )
 
 
+# toggle download buttons
 @app.callback(
     [
         Output("download_csv_button", "disabled"),
         Output("download_csdm_button", "disabled"),
     ],
     [Input("nmr_spectrum", "figure")],
-    [State("filename_dataset", "children"), State("spectrum_id", "children")],
+    [State("filename_dataset", "children")],
 )
-def toggle_download(value, filename_dataset, spectrum_id):
-    if filename_dataset in [None, ""] or spectrum_id in [None, ""]:
+def toggle_download_buttons(value, filename_dataset):
+    """Toggle download buttons---csv, csdm."""
+    if filename_dataset in [None, ""]:
         return [True, True]
     else:
         return [False, False]
 
 
+# update the link to the downloadable serialized file.
 @app.callback(
     [Output("download_csv", "href"), Output("download_csdm", "href")],
     [
@@ -93,15 +146,15 @@ def toggle_download(value, filename_dataset, spectrum_id):
     ],
     [
         State("filename_dataset", "children"),
-        State("isotope_id", "value"),
+        State("isotope_id-0", "value"),
         State("download_csv_button", "n_clicks_timestamp"),
         State("download_csdm_button", "n_clicks_timestamp"),
         State("decompose", "active"),
-        State("spinning_frequency", "value"),
-        State("number_of_points", "value"),
-        State("frequency_bandwidth", "value"),
-        State("reference_offset", "value"),
-        State("magnetic_flux_density", "value"),
+        State("spinning_frequency-0", "value"),
+        State("number_of_points-0", "value"),
+        State("frequency_bandwidth-0", "value"),
+        State("reference_offset-0", "value"),
+        State("magnetic_flux_density-0", "value"),
     ],
 )
 def update_link(
@@ -117,7 +170,7 @@ def update_link(
     reference_offset,
     magnetic_flux_density,
 ):
-    """Update the csv download link when the plot is refreshed."""
+    """Update the link to the downloadable serialized file."""
     name = os.path.splitext(str(filename_dataset))[0]
 
     global count
@@ -138,8 +191,10 @@ def update_link(
     return [v1, v2]
 
 
+# Serialize the computed spectrum and download the serialized file.
 @app.server.route("/dash/urlToDownload")
 def download():
+    """Serialize the computed spectrum and download the serialized file."""
     # creating a dynamic csv or file here using `StringIO`
     filename = flask.request.args.get("name")
     isotope_id = flask.request.args.get("isotope")
@@ -175,59 +230,8 @@ def download():
         )
 
     if file_type == "csdf":
-        new = cp.new()
-        dimension = {
-            "type": "linear",
-            "count": sim.spectrum[0].number_of_points,
-            "increment": "{0} Hz".format(
-                sim.spectrum[0].spectral_width / sim.spectrum[0].number_of_points
-            ),
-            "coordinates_offset": f"{sim.spectrum[0].reference_offset} Hz",
-            "origin_offset": f"{sim.spectrum[0].larmor_frequency} MHz",
-            "complex_fft": True,
-        }
-        new.add_dimension(dimension)
-
-        if is_decomposed == "True":
-            for index, datum in enumerate(sim.y):
-                if not isinstance(datum, list):
-
-                    dependent_variable = {
-                        "type": "internal",
-                        "quantity_type": "scalar",
-                        "numeric_type": "float64",
-                        "components": [datum],
-                    }
-
-                    name = sim.isotopomers[index].name
-                    if name != "":
-                        dependent_variable.update({"name": sim.isotopomers[index].name})
-
-                    description = sim.isotopomers[index].description
-                    if description != "":
-                        dependent_variable.update(
-                            {"description": sim.isotopomers[index].description}
-                        )
-                    new.add_dependent_variable(dependent_variable)
-                    new.dependent_variables[-1].encoding = "base64"
-
-        else:
-            sum_spectrums = np.zeros(sim.spectrum[0].number_of_points)
-            for index, datum in enumerate(sim.y):
-                if not isinstance(datum, list):
-                    sum_spectrums += datum
-
-            dependent_variable = {
-                "type": "internal",
-                "quantity_type": "scalar",
-                "numeric_type": "float64",
-                "components": [sum_spectrums],
-            }
-            new.add_dependent_variable(dependent_variable)
-            new.dependent_variables[-1].encoding = "base64"
-
+        new = sim.as_csdm_object()
         new.save(output_device=str_io)
-
         mem.write(str_io.getvalue().encode("utf-8"))
         mem.seek(0)
         str_io.close()
@@ -236,68 +240,75 @@ def download():
         )
 
 
+# Main function. Evaluates the spectrum and update the plot.
 @app.callback(
     [Output("nmr_spectrum", "figure"), Output("indicator_status", "color")],
     [
-        Input("spinning_frequency", "value"),
-        Input("number_of_points", "value"),
-        Input("frequency_bandwidth", "value"),
-        Input("reference_offset", "value"),
-        Input("magnetic_flux_density", "value"),
-        Input("isotope_id", "value"),
+        Input("spinning_frequency-0", "value"),
+        Input("rotor_angle-0", "value"),
+        Input("number_of_points-0", "value"),
+        Input("frequency_bandwidth-0", "value"),
+        Input("reference_offset-0", "value"),
+        Input("magnetic_flux_density-0", "value"),
+        Input("isotope_id-0", "value"),
         Input("decompose", "active"),
     ],
 )
-def update_plot(
+def update_data(
     spinning_frequency,
+    rotor_angle,
     number_of_points,
     frequency_bandwidth,
     reference_offset,
     magnetic_flux_density,
     isotope_id,
-    show_individual,
+    decompose,
 ):
-    """
-    The method creates a new spectrum dictionary based on the inputs
-    and re-computes the NMR lineshape.
-    """
+    """Evaluate the spectrum and update the plot."""
     color = "danger"  # "#ff2b2b"
     if frequency_bandwidth in [None, 0, "", ".", "-"]:
-        return [empty_plot(), color]
+        return [clear_1D_plot(), color]
     if reference_offset in [None, "", ".", "-"]:
-        return [empty_plot(), color]
+        return [clear_1D_plot(), color]
     if spinning_frequency in [None, "", ".", "-"]:
-        return [empty_plot(), color]
+        return [clear_1D_plot(), color]
 
     # exit when the following conditions are True
     if number_of_points == 0 or isotope_id in ["", None]:
-        return [empty_plot(), color]
+        return [clear_1D_plot(), color]
 
     # calculating frequency_bandwidth
     try:
         frequency_bandwidth = float(frequency_bandwidth)
     except ValueError:
-        return [empty_plot(), color]
+        return [clear_1D_plot(), color]
 
     # calculating spin_frequency
     try:
-        spin_frequency = float(spinning_frequency)
+        spin_frequency = float(eval(str(spinning_frequency)))
     except ValueError:
-        return [empty_plot(), color]
+        return [clear_1D_plot(), color]
+    except SyntaxError:
+        return [clear_1D_plot(), color]
 
     # calculating reference_offset
     try:
         reference_offset = float(reference_offset)
     except ValueError:
-        return [empty_plot(), color]
+        return [clear_1D_plot(), color]
 
     try:
         magnetic_flux_density = float(magnetic_flux_density) / 42.57747892
     except ValueError:
-        return [empty_plot(), color]
+        return [clear_1D_plot(), color]
 
     # if MAS_switch:
-    rotor_angle_in_degree = 54.735
+    try:
+        rotor_angle_in_degree = float(eval(str(rotor_angle)))  # 54.735
+    except ValueError:
+        return [clear_1D_plot(), color]
+    except SyntaxError:
+        return [clear_1D_plot(), color]
 
     spectrum = {
         "isotope": isotope_id,
@@ -309,107 +320,30 @@ def update_plot(
         "reference_offset": str(reference_offset) + " kHz",
     }
 
-    sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(spectrum)]
-    sim.x, sim.y = sim.run(
-        one_d_spectrum, geodesic_polyhedron_frequency=sim.nt, individual_spectrum=True
-    )
+    if not sim.spectrum_previous == spectrum or sim.new:
+        sim.new = False
+        sim.spectrum_previous = deepcopy(spectrum)
 
-    sim.x = sim.x.value
-
-    # print(sim.y)
-
-    data = []
-    if show_individual:
-        for i, datum in enumerate(sim.y):
-            if not isinstance(datum, list):
-                name = sim.isotopomers[i].name
-                if name == "":
-                    name = "Isotopomer " + str(i + 1)
-                data.append(
-                    go.Scatter(
-                        x=sim.x,
-                        y=datum,
-                        mode="lines",
-                        opacity=0.8,
-                        line={"width": 1.2},
-                        fill="tozeroy",
-                        # name=isotope_id,
-                        name=name,
-                        # hovername=
-                        # customdata=str(sim.isotopomers[i]),
-                    )
-                )
-    else:
-        sum_spectrums = np.zeros(sim.spectrum[0].number_of_points)
-        for datum in sim.y:
-            if not isinstance(datum, list):
-                sum_spectrums += datum
-        data.append(
-            go.Scatter(
-                x=sim.x,
-                y=sum_spectrums,
-                mode="lines",
-                line={"color": "black", "width": 1.2},
-                opacity=1.0,
-                # name=isotope_id,
-                name=f"spectrum",
-                # hovername=
-                # customdata=str(sim.isotopomers[i]),
-            )
+        sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(spectrum)]
+        sim.x, sim.y = sim.run(
+            one_d_spectrum,
+            geodesic_polyhedron_frequency=sim.nt,
+            individual_spectrum=True,
         )
 
-    x_label = str(isotope_id + f" frequency / ppm")
+        sim.x = sim.x.value
 
-    data_object = {
-        "data": data,
-        "layout": go.Layout(
-            xaxis=dict(
-                type="linear",
-                title=x_label,
-                ticks="outside",
-                showline=True,
-                autorange="reversed",
-                zeroline=False,
-            ),
-            yaxis=dict(
-                type="linear",
-                title="arbitrary unit",
-                ticks="outside",
-                showline=True,
-                zeroline=False,
-                rangemode="tozero",
-            ),
-            autosize=False,
-            transition={"duration": 150, "easing": "sin-out"},
-            margin={"l": 50, "b": 40, "t": 5, "r": 5},
-            legend={"x": 0, "y": 1},
-            # legend_orientation="h",
-            hovermode="closest",
-        ),
-    }
-    return [data_object, "success"]
+    return plot_1D(isotope_id, decompose)
 
 
-# line={"shape": "hv", "width": 1},
-
-#  ['linear', 'quad', 'cubic', 'sin', 'exp', 'circle',
-#             'elastic', 'back', 'bounce', 'linear-in', 'quad-in',
-#             'cubic-in', 'sin-in', 'exp-in', 'circle-in', 'elastic-in',
-#             'back-in', 'bounce-in', 'linear-out', 'quad-out',
-#             'cubic-out', 'sin-out', 'exp-out', 'circle-out',
-#             'elastic-out', 'back-out', 'bounce-out', 'linear-in-out',
-#             'quad-in-out', 'cubic-in-out', 'sin-in-out', 'exp-in-out',
-#             'circle-in-out', 'elastic-in-out', 'back-in-out',
-#             'bounce-in-out']
-
-
+# Update the isotopomers when a new file is imported.
 @app.callback(
     [
         Output("filename_dataset", "children"),
         Output("data_time", "children"),
         Output("error_message", "children"),
-        Output("isotope_id", "options"),
-        Output("isotope_id", "value"),
+        Output("isotope_id-0", "options"),
+        Output("isotope_id-0", "value"),
     ],
     [Input("upload_data", "contents")],
     [State("upload_data", "filename"), State("upload_data", "last_modified")],
@@ -423,6 +357,7 @@ def update_isotopomers(content, filename, date):
             {"label": site_iso, "value": site_iso} for site_iso in sim.get_isotopes()
         ]
         isotope = isotope_list[0]["value"]
+        sim.new = True
     else:
         sim.isotopomers = []
         isotope_list = []
@@ -430,42 +365,29 @@ def update_isotopomers(content, filename, date):
     return [children[0], children[1], children[2], isotope_list, isotope]
 
 
-# @app.callback(
-#     Output("modal", "is_open"),
-#     [Input("info", "n_clicks"), Input("close", "n_clicks")],
-#     [State("modal", "is_open")],
-# )
-# def toggle_modal(n1, n2, is_open):
-#     if n1 or n2:
-#         return not is_open
-#     return is_open
-
-
+# Model window for advance input,
 @app.callback(
     Output("modal_setting", "is_open"),
     [Input("advance-id", "n_clicks"), Input("close_setting", "n_clicks")],
     [State("modal_setting", "is_open")],
 )
 def toggle_modal_setting(n1, n2, is_open):
+    """Model window for advance input."""
     if n1 or n2:
         return not is_open
     return is_open
 
 
-@app.callback(Output("spectrum_id", "children"), [Input("isotope_id", "value")])
-def update_spectrum_title(value):
-    """Update the title of the plot."""
-    if value is None:
-        return "Spectrum"
-    return "{} spectrum".format(value)
-
-
+# Model window option, number-of-orientations, from advance input.
 @app.callback(
     Output("number_of_averaging_points", "children"),
     [Input("averaging_quality", "value")],
 )
 def update_number_of_orientations(value):
-    """Update the number of orientation for powder averaging."""
+    """
+    Update the number of orientation for powder averaging.
+    Option for advance modal.
+    """
     sim.nt = value
     ori = 2 * (value + 1) * (value + 2)
     return f"Averaging over {ori} orientations.".format(value)
@@ -527,52 +449,52 @@ def update_number_of_orientations(value):
 
 
 # add callback for toggling the collapse on small screens
-@app.callback(
-    Output("navbar-collapse", "is_open"),
-    [Input("navbar-toggler", "n_clicks")],
-    [State("navbar-collapse", "is_open")],
-)
-def toggle_navbar_collapse(n, is_open):
-    if n:
-        return not is_open
-    return is_open
+# @app.callback(
+#     Output("navbar-collapse", "is_open"),
+#     [Input("navbar-toggler", "n_clicks")],
+#     [State("navbar-collapse", "is_open")],
+# )
+# def toggle_navbar_collapse(n, is_open):
+#     if n:
+#         return not is_open
+#     return is_open
 
 
-@app.callback(
-    [
-        Output(f"collapse-dimension", "is_open"),
-        # *[Output(f"collapse-card-{i}", "n_clicks") for i in range(total_sites)],
-    ],
-    [
-        Input(f"dimension-toggle", "n_clicks"),
-        # *[Input(f"card-toggle-{i}", "n_clicks") for i in range(total_sites)],
-    ],
-    [
-        State(f"collapse-dimension", "is_open"),
-        # *[State(f"collapse-card-{i}", "n_clicks") for i in range(total_sites)],
-    ],
-)
-def toggle_accordion(n1, is_dimension_open):
-    ctx = dash.callback_context
-    # global total_sites
-    # print("total_sites", total_sites)
-    # list_output = [False for _ in range(total_sites + 1)]
+# @app.callback(
+#     [
+#         Output(f"collapse-dimension-0", "is_open"),
+#         # *[Output(f"collapse-card-{i}", "n_clicks") for i in range(total_sites)],
+#     ],
+#     [
+#         Input(f"dimension-toggle-0", "n_clicks"),
+#         # *[Input(f"card-toggle-{i}", "n_clicks") for i in range(total_sites)],
+#     ],
+#     [
+#         State(f"collapse-dimension-0", "is_open"),
+#         # *[State(f"collapse-card-{i}", "n_clicks") for i in range(total_sites)],
+#     ],
+# )
+# def toggle_accordion(n1, is_dimension_open):
+#     ctx = dash.callback_context
+#     # global total_sites
+#     # print("total_sites", total_sites)
+#     # list_output = [False for _ in range(total_sites + 1)]
 
-    if not ctx.triggered:
-        return [""]
-    else:
-        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+#     if not ctx.triggered:
+#         return [""]
+#     else:
+#         button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-    if button_id == "dimension-toggle" and n1:
-        # list_output[0] = not is_dimension_open
-        return [not is_dimension_open]
-    # for i in range(total_sites):
-    #     if button_id == "card-toggle-{i}" and n_list[i]:
-    #         list_output[i] = not is_open[i]
-    #     return False, not is_open2, False
-    # elif button_id == "group-3-toggle" and n3:
-    #     return False, False, not is_open3
-    return [False]
+#     if button_id == "dimension-toggle-0" and n1:
+#         # list_output[0] = not is_dimension_open
+#         return [not is_dimension_open]
+#     # for i in range(total_sites):
+#     #     if button_id == "card-toggle-{i}" and n_list[i]:
+#     #         list_output[i] = not is_open[i]
+#     #     return False, not is_open2, False
+#     # elif button_id == "group-3-toggle" and n3:
+#     #     return False, False, not is_open3
+#     return [False]
 
 
 @app.callback(
@@ -580,7 +502,8 @@ def toggle_accordion(n1, is_dimension_open):
     [Input("decompose", "n_clicks")],
     [State("decompose", "active")],
 )
-def update_spectral_decomposition(n1, status):
+def toggle_decompose_button(n1, status):
+    "Toggle decompose button."
     new_status = True
     if bool(status):
         new_status = False
@@ -597,8 +520,24 @@ def update_spectral_decomposition(n1, status):
 #     return [cards_deck]
 
 
-def empty_plot():
-    data = go.Scatter(x=[-1, 1], y=[0, 0], text="", mode="lines", opacity=1.0)
+# @app.callback(
+#     [Output("dimension-body", "children")], [Input("dimension-tabs", "active_tab")]
+# )
+# def tab_content(active_tab):
+#     index = int(active_tab.split("-")[1])
+#     return [dimension_children[index]]
+
+
+def clear_1D_plot():
+    """Create and return a new blank plot."""
+    data = go.Scatter(
+        x=[-1, 1],
+        y=[0, 0],
+        text="",
+        mode="lines",
+        opacity=1.0,
+        line={"color": "black", "width": 1.2},
+    )
     data_object = {
         "data": [data],
         "layout": go.Layout(
@@ -626,20 +565,116 @@ def empty_plot():
     return data_object
 
 
+def plot_1D(isotope_id, decompose):
+    """Generate and return a one-dimensional plot instance."""
+    data = []
+    if decompose:
+        for i, datum in enumerate(sim.y):
+            if not isinstance(datum, list):
+                name = sim.isotopomers[i].name
+                if name == "":
+                    name = "Isotopomer " + str(i + 1)
+                data.append(
+                    go.Scatter(
+                        x=sim.x,
+                        y=datum,
+                        mode="lines",
+                        opacity=0.8,
+                        line={"width": 1.2},
+                        fill="tozeroy",
+                        name=name,
+                        # hovername=
+                        # customdata=str(sim.isotopomers[i]),
+                    )
+                )
+    else:
+        y_data = 0
+        for i, datum in enumerate(sim.y):
+            if not isinstance(datum, list):
+                y_data += datum
+        data.append(
+            go.Scatter(
+                x=sim.x,
+                y=y_data,
+                mode="lines",
+                line={"color": "black", "width": 1.2},
+                opacity=1.0,
+                # name=isotope_id,
+                name=f"spectrum",
+                # hovername=
+                # customdata=str(sim.isotopomers[i]),
+            )
+        )
+
+    x_label = str(isotope_id + f" frequency / ppm")
+
+    data_object = {
+        "data": data,
+        "layout": go.Layout(
+            xaxis=dict(
+                type="linear",
+                title=x_label,
+                ticks="outside",
+                showline=True,
+                autorange="reversed",
+                zeroline=False,
+            ),
+            yaxis=dict(
+                type="linear",
+                title="arbitrary unit",
+                ticks="outside",
+                showline=True,
+                zeroline=False,
+                rangemode="tozero",
+            ),
+            autosize=True,
+            transition={"duration": 150, "easing": "sin-out"},
+            margin={"l": 50, "b": 40, "t": 5, "r": 5},
+            legend={"x": 0, "y": 1},
+            hovermode="closest",
+        ),
+    }
+    return [data_object, "success"]
+
+
+# line={"shape": "hv", "width": 1},
+
+#  ['linear', 'quad', 'cubic', 'sin', 'exp', 'circle',
+#             'elastic', 'back', 'bounce', 'linear-in', 'quad-in',
+#             'cubic-in', 'sin-in', 'exp-in', 'circle-in', 'elastic-in',
+#             'back-in', 'bounce-in', 'linear-out', 'quad-out',
+#             'cubic-out', 'sin-out', 'exp-out', 'circle-out',
+#             'elastic-out', 'back-out', 'bounce-out', 'linear-in-out',
+#             'quad-in-out', 'cubic-in-out', 'sin-in-out', 'exp-in-out',
+#             'circle-in-out', 'elastic-in-out', 'back-in-out',
+#             'bounce-in-out']
+
+
 def parse_contents(contents, filename, date):
+    """Parse contents from the isotopomers file."""
     try:
         if "json" in filename:
             content_string = contents.split(",")[1]
             decoded = base64.b64decode(content_string)
-            parse = json.loads(str(decoded, encoding="UTF-8"))["isotopomers"]
-            sim.isotopomers = [Isotopomer.parse_dict_with_units(item) for item in parse]
+            data = json.loads(str(decoded, encoding="UTF-8"))
+            isotopomers = data["isotopomers"]
+
+            name = filename
+            if "name" in data.keys():
+                name = data["name"]
+                if name == "":
+                    name = filename
+
+            description = ""
+            if "description" in data.keys():
+                description = data["description"]
+
+            sim.isotopomers = [
+                Isotopomer.parse_dict_with_units(item) for item in isotopomers
+            ]
             sim.spectrum = []
             return (
-                [
-                    filename,
-                    datetime.datetime.fromtimestamp(date),
-                    "Select a JSON serialized isotopomers file.",
-                ],
+                [name, description, "Select a JSON serialized .isotopomers file."],
                 True,
             )
 
@@ -651,7 +686,8 @@ def parse_contents(contents, filename, date):
 
     except Exception:
         if FIRST:
-            return (["", "", "Select a JSON serialized isotopomers file."], False)
+            return (["", "", "Select a JSON serialized .isotopomers file."], False)
+            # FIRST = False
         else:
             return ["", "", "Error reading the file."], False
 

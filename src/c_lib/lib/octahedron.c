@@ -25,9 +25,6 @@ void octahedronGetDirectionCosineSquareOverOctantAndWeights(int nt, double *xr,
 
   for (j = 0; j <= nt - 1; j++) {
     for (i = 0; i <= nt - j; i++) {
-      // x = nt-i-j;
-      // y = i;
-      // z = j;
       x2 = pow(nt - i - j, 2);
       y2 = pow(i, 2);
       z2 = pow(j, 2);

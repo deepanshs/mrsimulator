@@ -779,7 +779,7 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
     __wigner_rotation_2(2, octant_orientations, wigner_2j_matrices,
                         exp_Im_alpha, R2, w2);
     w2 += w2_increment;
-    if (sphere) {
+    if (n_octants == 8) {
       __wigner_rotation_2(2, octant_orientations, &wigner_2j_matrices[index_25],
                           exp_Im_alpha, R2, w2);
       w2 += w2_increment;
@@ -790,7 +790,7 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
       __wigner_rotation_2(4, octant_orientations, wigner_4j_matrices,
                           exp_Im_alpha, R4, w4);
       w4 += w4_increment;
-      if (sphere) {
+      if (n_octants == 8) {
         __wigner_rotation_2(4, octant_orientations,
                             &wigner_4j_matrices[index_81], exp_Im_alpha, R4,
                             w4);
@@ -820,7 +820,7 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
      *
      * After four iterations, exp_Im_alpha restores to its original value.
      */
-    if (!octant) {
+    if (n_octants != 1) {
       cblas_zscal(octant_orientations, &negative_iota,
                   &exp_Im_alpha[3 * octant_orientations], 1);
       cblas_zdscal(octant_orientations, -1,

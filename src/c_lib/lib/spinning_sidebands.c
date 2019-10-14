@@ -105,13 +105,15 @@ static inline void __spinning_sideband_core(
     // add orientation dependence
 
     if (ravel_isotopomer->spin > 0.5) {
-      /* get electric quadrupole frequency tensors upto first order .............. */
+      /* get electric quadrupole frequency tensors upto first order
+       * .............. */
       FCF_1st_order_electric_quadrupole_Hamiltonian(
           R2_temp, ravel_isotopomer->spin, Cq_e_, eta_e_,
           quadrupole_orientation, transition);
       vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
 
-      /* get electric quadrupole frequency tensors upto second order ............. */
+      /* get electric quadrupole frequency tensors upto second order
+       * ............. */
       if (plan->allow_fourth_rank) {
         FCF_2nd_order_electric_quadrupole_Hamiltonian(
             &R0_temp, R2_temp, R4_temp, ravel_isotopomer->spin,
@@ -197,8 +199,9 @@ void spinning_sideband_core(
     double *transition,
 
     // powder orientation average
-    int geodesic_polyhedron_frequency // The number of triangle along the edge
-                                      // of octahedron
+    int geodesic_polyhedron_frequency, // The number of triangle along the edge
+                                       // of octahedron
+    unsigned int averaging             // 0-octant, 1-hemisphere, 2-sphere.
 ) {
 
   // int num_process = openblas_get_num_procs();
@@ -222,16 +225,15 @@ void spinning_sideband_core(
   }
 
   MRS_averaging_scheme *scheme = MRS_create_averaging_scheme(
-      geodesic_polyhedron_frequency, allow_fourth_rank);
+      geodesic_polyhedron_frequency, allow_fourth_rank, averaging);
 
   MRS_dimension *dimension =
       MRS_create_dimension(count, coordinates_offset, increment);
 
   // gettimeofday(&begin, NULL);
-  MRS_plan *plan =
-      MRS_create_plan(scheme, number_of_sidebands,
-                      sample_rotation_frequency_in_Hz, rotor_angle_in_rad,
-                      increment, allow_fourth_rank);
+  MRS_plan *plan = MRS_create_plan(
+      scheme, number_of_sidebands, sample_rotation_frequency_in_Hz,
+      rotor_angle_in_rad, increment, allow_fourth_rank);
 
   // gettimeofday(&all_site_time, NULL);
   __spinning_sideband_core(

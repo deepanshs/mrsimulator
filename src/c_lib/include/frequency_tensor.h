@@ -36,10 +36,12 @@
  *      stored ordered according to
  *      @f$\left[{\Lambda'}_{2,n}^{(\sigma)}(\Theta, i,j)\right]_{n=-2}^2@f$.
  *
- * @param iso_in_Hz The isotropic nuclear shielding given in Hz.
+ * @param omega_0_delta_iso_in_Hz The quantity,
+ *      @f$2\pi\omega_0\delta_\text{iso}@f$, given in Hz.
  *
- * @param zeta_in_Hz The strength of the nuclear shielding anisotropy, in Hz,
- *      defined using Haeberlen convention.
+ * @param omega_0_zeta_sigma_in_Hz The quantity, @f$2\pi\omega_0\zeta_sigma@f$,
+ *      representing the strength of the nuclear shielding anisotropy, given in
+ *      Hz, defined using Haeberlen convention.
  *
  * @param eta The nuclear shielding asymmetry parameter,
  *      @f$\eta_\sigma \in [-1,1]@f$, defined using Haeberlen convention.
@@ -53,16 +55,17 @@
  *      @f$[i, j]@f$.
  */
 static inline void FCF_1st_order_nuclear_shielding_Hamiltonian(
-    double *restrict Lambda_0, void *restrict Lambda_2, const double iso_in_Hz,
-    const double zeta_in_Hz, const double eta, const double *Theta,
-    const double *transition) {
+    double *restrict Lambda_0, void *restrict Lambda_2,
+    const double omega_0_delta_iso_in_Hz, const double omega_0_zeta_sigma_in_Hz,
+    const double eta, const double *Theta, const double *transition) {
 
   // Spin transition function
   double transition_fn = STF_p(transition[1], transition[0]);
 
   // Spatial orientation function
-  sSOT_1st_order_nuclear_shielding_Hamiltonian(Lambda_0, Lambda_2, iso_in_Hz,
-                                               zeta_in_Hz, eta, Theta);
+  sSOT_1st_order_nuclear_shielding_Hamiltonian(
+      Lambda_0, Lambda_2, omega_0_delta_iso_in_Hz, omega_0_zeta_sigma_in_Hz,
+      eta, Theta);
 
   // frequency component function from zeroth-rank irreducible tensor
   *Lambda_0 *= transition_fn;

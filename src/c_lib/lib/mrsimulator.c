@@ -71,16 +71,11 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
   // plan->averaging_scheme = MRS_create_averaging_scheme(
   //     geodesic_polyhedron_frequency, allow_fourth_rank);
   plan->averaging_scheme = scheme;
-
-  if (octant) {
-    plan->n_octants = 1;
-  }
-  if (hemisphere) {
+  plan->n_octants = 1;
+  if (scheme->averaging == 1)
     plan->n_octants = 4;
-  }
-  if (sphere) {
+  if (scheme->averaging == 2)
     plan->n_octants = 8;
-  }
 
   /* Normalizing amplitudes from the spherical averaging scheme by the number
    * of sidebands */
@@ -97,6 +92,7 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
   plan->vector = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * plan->size);
   // malloc_complex128(plan->size);
   // gettimeofday(&fft_setup_time, NULL);
+
   int fftw_thread = fftw_init_threads();
   if (fftw_thread == 0) {
     printf("failed to initialize fftw threading");
@@ -446,7 +442,7 @@ void __get_components_2(int number_of_sidebands,
  * `pre_phase` is a matrix of shape, `9 x number_of_sidebands`.
  */
 void __get_components(int number_of_sidebands, double sample_rotation_frequency,
-                      complex128 *pre_phase) {
+                      void *pre_phase) {
   double spin_angular_freq, tau, wrt, pht, scale;
   int step, i, m;
   double *pre_phase_ = (double *)pre_phase;

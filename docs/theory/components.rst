@@ -48,7 +48,8 @@ The spatial orientation function, :math:`\Xi_L^{(k)}(\Theta)`, in Eq.
 direction of the external magnetic field. This function is the spatial
 contribution to the observed frequency component arising from the
 rotation of the :math:`L^\text{th}`-rank irreducible tensor,
-:math:`\varrho_{L,n}^{(k)}`, via Wigner rotation which follows,
+:math:`\varrho_{L,n}^{(k)}`, from the principal axis system to the lab frame
+via Wigner rotation which follows,
 
 .. math::
     \Xi_L^{(k)}(\Theta) = \sum_{n_0=-L}^L D^L_{n_0,0}(\Theta_0)
@@ -57,20 +58,21 @@ rotation of the :math:`L^\text{th}`-rank irreducible tensor,
                           \varrho_{L,n}^{(k)}.
     :label: eq_3
 
-Here, :math:`\varrho_{L,n}^{(k)}` is defined in the principal axis system of the
-interaction tensor, here generically denoted with
-:math:`\boldsymbol{\rho}^{(\lambda)}`, and the subscript :math:`n \in [-L, L]`.
-The relationship between :math:`\boldsymbol{\rho}^{(\lambda)}` and
-:math:`\varrho_{L,n}^{(k)}` is described in the next section.
-The term :math:`D^L_{n',n}(\Theta)` is the
+.. Here, :math:`\varrho_{L,n}^{(k)}` is defined in the principal axis system of the
+.. interaction tensor, here generically denoted with
+.. :math:`\boldsymbol{\rho}^{(\lambda)}`, and the subscript :math:`n \in [-L, L]`.
+.. The relationship between :math:`\boldsymbol{\rho}^{(\lambda)}` and
+.. :math:`\varrho_{L,n}^{(k)}` is described in the next section.
+
+Here, the term :math:`D^L_{n_i,n_j}(\Theta)` is the
 `Wigner rotation matrix element <https://en.wikipedia.org/wiki/Wigner_D-matrix>`_,
 generically denoted as,
 
 .. math::
-    D^L_{n',n}(\Theta) = e^{-i n' \alpha} d_{n', n}^L(\beta) e^{-i n \gamma},
+    D^L_{n_i,n_j}(\Theta) = e^{-i n_i \alpha} d_{n_i, n_j}^L(\beta) e^{-i n_j \gamma},
     :label: eq_4
 
-where :math:`d_{n', n}^L(\beta)` is Wigner small :math:`d` element.
+where :math:`d_{n_i, n_j}^L(\beta)` is Wigner small :math:`d` element.
 
 ----
 
@@ -156,11 +158,11 @@ Nuclear shielding interaction
 """""""""""""""""""""""""""""
 
 The nuclear shielding tensor, :math:`\boldsymbol{\rho}^{(\sigma)}`, is a second
-rank tensor which can also be represented as a sum of zeroth-rank isotropic,
-first-rank anti-symmetric and second-rank traceless symmetric irreducible
-spherical tensors.
-In the principal axis system, the zeroth and the second rank irreducible
-tensors follow,
+rank reducible tensor which can be decomposed into a sum of the zeroth-rank
+isotropic, first-rank anti-symmetric and second-rank traceless symmetric
+irreducible spherical tensors.
+In the principal axis system, the zeroth-rank, :math:`\rho_{0,0}^{(\sigma)}`
+and the second-rank, :math:`\rho_{2,n}^{(\sigma)}`, irreducible tensors follow,
 
 .. math::
     \begin{array}{c c c c}
@@ -173,15 +175,17 @@ tensors follow,
 where :math:`\sigma_\text{iso}, \zeta_\sigma`, and :math:`\eta_\sigma` are the
 isotropic nuclear shielding, shielding anisotropy, and shielding asymmetry of
 the site, respectively. The shielding anisotropy, and asymmetry are defined
-using Haeberlen convention.
+using Haeberlen notation.
 
 **First-order perturbation**
 
-The size of the frequency component from the first-order perturbation expansion
-of Nuclear shielding Hamiltonian is :math:`\omega_k = \omega_0`, where
-:math:`\omega_0` is the Larmor angular frequency of the nucleus. The
-relation between :math:`\varrho_{L,n}^{(\sigma)}` and
-:math:`\rho_{L,n}^{(\sigma)}` follows,
+The size of the frequency component, :math:`\omega_k`, from the first-order
+perturbation expansion of Nuclear shielding Hamiltonian is
+:math:`\omega_0=-\gamma B_0`, where :math:`\omega_0` is the Larmor angular
+frequency of the nucleus, and :math:`\gamma`, :math:`B_0` are the gyromagnetic
+ratio of the nucleus and the macroscopic magnetic flux density of the applied
+external magnetic field, respectively. The relation between
+:math:`\varrho_{L,n}^{(\sigma)}` and :math:`\rho_{L,n}^{(\sigma)}` follows,
 
 .. math::
     \varrho_{0,0}^{(\sigma)} &= -\frac{1}{\sqrt{3}} \rho_{0,0}^{(\sigma)} \\
@@ -202,15 +206,15 @@ relation between :math:`\varrho_{L,n}^{(\sigma)}` and
 
   * - 1
     - 0
-    - :math:`\varsigma_{0,0}^{(\sigma)} = \omega_0\varrho_\text{iso}`
+    - :math:`\varsigma_{0,0}^{(\sigma)} = -\omega_0\sigma_\text{iso}`
 
   * - 1
     - 2
-    - :math:`\varsigma_{2,0}^{(\sigma)} = \omega_0 \zeta_\sigma`,
+    - :math:`\varsigma_{2,0}^{(\sigma)} = -\omega_0 \zeta_\sigma`,
 
       :math:`\varsigma_{2,\pm1}^{(\sigma)} = 0`,
 
-      :math:`\varsigma_{2,\pm2}^{(\sigma)} = -\frac{1}{\sqrt{6}} \omega_0\eta_\sigma \zeta_\sigma`
+      :math:`\varsigma_{2,\pm2}^{(\sigma)} = \frac{1}{\sqrt{6}} \omega_0\eta_\sigma \zeta_\sigma`
 
 
 Electric quadrupole interaction

@@ -14,14 +14,14 @@
  * in the principal axis system (PAS), includes the
  * zeroth and second-rank irreducible tensors which follows,
  * @f[ \left.
- *        \varsigma_{0,0}^{(\sigma)} = \omega_0\sigma_\text{iso}
+ *        \varsigma_{0,0}^{(\sigma)} = \omega_0\delta_\text{iso}
  *      \right\} \text{Rank-0},
  * @f]
  * @f[ \left.
  *      \begin{aligned}
- *      \varsigma_{2,0}^{(\sigma)} &= \omega_0\zeta_\sigma, \\
+ *      \varsigma_{2,0}^{(\sigma)} &= -\omega_0\zeta_\sigma, \\
  *      \varsigma_{2,\pm1}^{(\sigma)} &= 0, \\
- *      \varsigma_{2,\pm2}^{(\sigma)} &= -\frac{1}{\sqrt{6}}\omega_0
+ *      \varsigma_{2,\pm2}^{(\sigma)} &= \frac{1}{\sqrt{6}}\omega_0
  *                                        \eta_\sigma \zeta_\sigma,
  *      \end{aligned}
  *     \right\} \text{Rank-2},
@@ -68,10 +68,11 @@
  *      according to
  *      @f$\left[\mathcal{R'}_{2,n}^{(\sigma)}(\Theta)/2\pi\right]_{n=-2}^2@f$.
  *
- * @param iso_in_Hz The quantity, @f$\omega_0\sigma_\text{iso}/2\pi@f$, given
- *      in Hz.
+ * @param omega_0_delta_iso_in_Hz The quantity,
+ * @f$\omega_0\sigma_\text{iso}/2\pi@f$, given in Hz.
  *
- * @param zeta_in_Hz The quantity, @f$\omega_0\zeta_\sigma/2\pi@f$, given in Hz.
+ * @param omega_0_zeta_sigma_in_Hz The quantity,
+ * @f$\omega_0\zeta_\sigma/2\pi@f$, given in Hz.
  *
  * @param eta The nuclear shielding asymmetry, @f$\eta_\sigma \in [0, 1]@f$.
  *
@@ -79,20 +80,21 @@
  *      ordered as @f$[\alpha, \beta, \gamma]@f$, are stored in radians.
  */
 static inline void sSOT_1st_order_nuclear_shielding_Hamiltonian(
-    double *restrict R_0, void *restrict R_2, const double iso_in_Hz,
-    const double zeta_in_Hz, const double eta, const double *Theta) {
+    double *restrict R_0, void *restrict R_2,
+    const double omega_0_delta_iso_in_Hz, const double omega_0_zeta_sigma_in_Hz,
+    const double eta, const double *Theta) {
 
   // contribution from the zeroth rank
-  *R_0 = iso_in_Hz;
+  *R_0 = omega_0_delta_iso_in_Hz;
 
   // contribution from the shielding symmetric second rank
   vm_double_zeros(10, (double *)R_2);
   double *R_2_ = (double *)R_2;
 
-  double temp = -0.4082482905 * (zeta_in_Hz * eta);
-  R_2_[0] = temp;       // R2-2 real
-  R_2_[4] = zeta_in_Hz; // R2 0 real
-  R_2_[8] = temp;       // R2 2 real
+  double temp = 0.4082482905 * (omega_0_zeta_sigma_in_Hz * eta);
+  R_2_[0] = temp;                      // R2-2 real
+  R_2_[4] = -omega_0_zeta_sigma_in_Hz; // R2 0 real
+  R_2_[8] = temp;                      // R2 2 real
 
   if (Theta[0] != 0.0 && Theta[1] != 0.0 && Theta[2] != 0.0) {
     single_wigner_rotation(2, Theta, R_2, R_2);

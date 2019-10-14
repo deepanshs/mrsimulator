@@ -40,6 +40,11 @@ SpectroscopicDimension
 .. autoclass:: SpectroscopicDimension
     :show-inheritance:
 
+    .. autoattribute:: larmor_frequency
+    .. autoattribute:: coordinates_Hz
+    .. autoattribute:: coordinates_ppm
+
+
     .. rubric:: Method Documentation
 
     .. automethod:: parse_dict_with_units

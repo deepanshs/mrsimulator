@@ -9,7 +9,7 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
 csv_button = dbc.Button(
-    "CSV",
+    [html.I(className="fas fa-download"), "CSV"],
     id="download_csv_button",
     outline=True,
     color="primary",
@@ -17,7 +17,7 @@ csv_button = dbc.Button(
     size="sm",
 )
 csdm_button = dbc.Button(
-    "CSDM",
+    [html.I(className="fas fa-download"), " CSDM"],
     id="download_csdm_button",
     outline=True,
     color="primary",
@@ -29,8 +29,8 @@ info_button = dbc.Button(
     "Info", id="info", outline=True, color="info", className="mr-1", size="sm"
 )
 
-show_individual_button = dbc.Button(
-    "Decompose",
+decompose_button = dbc.Button(
+    [html.I(className="fas fa-align-left"), " Decompose"],
     id="decompose",
     outline=True,
     color="info",
@@ -57,7 +57,7 @@ button_group = dbc.ButtonGroup(
 
 modal = html.Div(
     [
-        dbc.ButtonGroup([show_individual_button]),
+        dbc.ButtonGroup([decompose_button]),
         dbc.Modal(
             [
                 dbc.ModalHeader("Header"),
@@ -81,12 +81,12 @@ modal = html.Div(
 )
 
 spectrum_body = dbc.Card(
-    dbc.CardBody(
-        [
+    [
+        dbc.CardHeader(
             dbc.Row(
                 [
                     dbc.Col(
-                        html.H4("Spectrum", id="spectrum_id", className="card-title"),
+                        html.H4("Spectrum", className="card-title"),
                         xs=4,
                         sm=4,
                         md=4,
@@ -96,8 +96,9 @@ spectrum_body = dbc.Card(
                     dbc.Col(modal, align="right"),
                     button_group,
                 ]
-            ),
-            dcc.Graph(id="nmr_spectrum", figure={"data": []}),
-        ]
-    )
+            )
+        ),
+        dbc.CardBody([dcc.Graph(id="nmr_spectrum", figure={"data": []})]),
+    ],
+    className="h-100",
 )

@@ -33,6 +33,7 @@ extern void spinning_sideband_core(
     double *transition,
 
     // powder orientation average
-    int geodesic_polyhedron_frequency // The number of triangle along
-                                      // the edge of octahedron
+    int geodesic_polyhedron_frequency, // The number of triangle along
+                                       // the edge of octahedron
+    unsigned int averaging             // 0-octant, 1-hemisphere, 2-sphere.
 );

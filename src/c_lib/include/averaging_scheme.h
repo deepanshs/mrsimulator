@@ -52,6 +52,7 @@ typedef struct MRS_averaging_scheme {
   double *wigner_4j_matrices; //  wigner-d 4j matrix per orientation.
   double *local_frequency;    //  buffer for local frequencies.
   double *freq_offset;        //  buffer for local + sideband frequencies.
+  unsigned int averaging;     //  0-octant, 1-hemisphere, 2-sphere
 } MRS_averaging_scheme;
 
 // typedef struct MRS_averaging_scheme;
@@ -75,7 +76,7 @@ typedef struct MRS_averaging_scheme {
  */
 MRS_averaging_scheme *
 MRS_create_averaging_scheme(unsigned int geodesic_polyhedron_frequency,
-                            bool allow_fourth_rank);
+                            bool allow_fourth_rank, unsigned int averaging);
 
 /**
  * Free the memory allocated for the spatial orientation averaging scheme.

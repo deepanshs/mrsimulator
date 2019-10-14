@@ -72,7 +72,24 @@ class Site(Parseable):
             if getattr(self, k):
                 temp_dict[k] = getattr(self, k).to_freq_dict(larmor_frequency)
 
-        if self.property_units["isotropic_chemical_shift"] == "ppm":
-            temp_dict["isotropic_chemical_shift"] *= larmor_frequency
+        temp_dict["isotropic_chemical_shift"] *= larmor_frequency
+
+        return temp_dict
+
+    def to_dict_with_units(self):
+        """
+        Serialize the Site object to a JSON compliant python dictionary with units.
+        """
+        temp_dict = {k: v for k, v in self.dict().items() if v is not None}
+
+        for k in ["shielding_symmetric", "shielding_antisymmetric", "quadrupolar"]:
+            if getattr(self, k):
+                temp_dict[k] = getattr(self, k).to_dict_with_units()
+
+        temp_dict["isotropic_chemical_shift"] = (
+            str(temp_dict["isotropic_chemical_shift"]) + " ppm"
+        )
+
+        temp_dict.pop("property_units")
 
         return temp_dict

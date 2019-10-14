@@ -10,115 +10,178 @@ dropdown_menu_items_1 = [
     dbc.DropdownMenuItem("ppm", id="ppm_1"),
 ]
 
-# dimension parameters
 range_num = [8, 10, 12, 14, 16]
 list_of_numbers = {i: f"{2 ** i}" for i in range_num}
+field_strength = {2: "200 MHz", 4: "400 MHz", 6: "600 MHz", 8: "800 MHz", 10: "1 GHz"}
 
-dimension = [
-    dbc.FormGroup(
+
+def sub_group(text, id, children):
+    header = dbc.Row(
         [
-            dbc.Label("Number of points"),
+            dbc.Col(html.Hr()),
+            dbc.Col(html.P(html.Span(text, id=id)), className="col-auto"),
+            dbc.Col(html.Hr()),
+        ]
+    )
+    return html.Div([header, *children])
+
+
+def coordinate_grid_subgroup(i):
+    # number of points
+    number_of_points = dbc.FormGroup(
+        [
+            html.P("Number of points"),
             dcc.Slider(
                 min=7,
                 max=17,
                 step=1,
                 value=11,
                 marks=list_of_numbers,
-                id="number_of_points",
+                id=f"number_of_points-{i}",
             ),
         ]
-    ),
-    html.Br(),
-    dbc.InputGroup(
+    )
+
+    # spectral width
+    spectral_width = dbc.InputGroup(
         [
             dbc.InputGroupAddon("Spectral width", addon_type="prepend"),
-            dbc.Input(value=25.0, min=0.0, id="frequency_bandwidth"),
+            dbc.Input(value=25.0, min=0.0, id=f"frequency_bandwidth-{i}"),
             dbc.InputGroupAddon("kHz", addon_type="append"),
         ]
-    ),
-    # html.Br(),
-    dbc.InputGroup(
+    )
+
+    # reference offset
+    reference_offset = dbc.InputGroup(
         [
             dbc.InputGroupAddon("Reference offset", addon_type="prepend"),
-            dbc.Input(value=0.0, id="reference_offset"),
+            dbc.Input(value=0.0, id=f"reference_offset-{i}"),
             dbc.InputGroupAddon("kHz", addon_type="append"),
         ]
-    ),
-]
+    )
 
-collapsible_dimension = dbc.Card(
-    [
-        dbc.CardHeader(
-            [
-                # dbc.Label("Dimension parameters"),
-                dbc.Button(
-                    "Dimension parameters",
-                    color="link",
-                    size="sm",
-                    id="dimension-toggle",
-                )
-            ]
-        ),
-        dbc.Collapse(dbc.CardBody(dimension), id="collapse-dimension"),
-    ],
-    # style={"border": "1px"},
-)
+    return [number_of_points, html.Br(), spectral_width, reference_offset]
 
 
-# spin and environment parameters
+def environment(i):
+    # spectrometer frequency
 
-indexes = [2, 4, 6, 8, 10]
-field_strength = {2: "200 MHz", 4: "400 MHz", 6: "600 MHz", 8: "800 MHz", 10: "1 GHz"}
-
-filter_spin = [
-    {"label": "1/2", "value": 0.5},
-    {"label": "1", "value": 1},
-    {"label": "3/2", "value": 1.5},
-    {"label": "5/2", "value": 2.5},
-]
-
-isotope_and_filter = [
-    dbc.Col(
-        dbc.FormGroup(
-            [dbc.Label("Isotope", className="mr-2"), dcc.Dropdown(id="isotope_id")]
-        )
-    ),
-    # dbc.Col(
-    #     dbc.FormGroup(
-    #         [
-    #             dbc.Label("Filter", className="mr-2"),
-    #             dcc.Dropdown(id="filter_spin", options=filter_spin, value=0.5),
-    #         ]
-    #     )
-    # ),
-]
-
-spectrometer_frequency = dbc.FormGroup(
-    [
-        dbc.Label("Spectrometer frequency @ 1H"),
-        dcc.Slider(
-            min=1,
-            max=11,
-            step=0.5,
-            value=4,
-            marks=field_strength,
-            id="magnetic_flux_density",
-        ),
-    ]
-)
-
-environment = [
-    dbc.Row(isotope_and_filter),
-    spectrometer_frequency,
-    html.Br(),
-    dbc.InputGroup(
+    spectrometer_frequency = dbc.FormGroup(
         [
-            dbc.InputGroupAddon("Spinning frequency", addon_type="prepend"),
-            dbc.Input(value=0, id="spinning_frequency"),
+            dbc.Label("Spectrometer frequency @ 1H"),
+            dcc.Slider(
+                min=1,
+                max=11,
+                step=0.5,
+                value=4,
+                marks=field_strength,
+                id=f"magnetic_flux_density-{i}",
+            ),
+        ]
+    )
+
+    # rotor frequency
+    rotor_frequency = dbc.InputGroup(
+        [
+            dbc.InputGroupAddon("Rotor frequency", addon_type="prepend"),
+            dbc.Input(value=0, id=f"spinning_frequency-{i}"),
             dbc.InputGroupAddon("kHz", addon_type="append"),
         ]
-    ),
-]
+    )
+
+    # rotor angle
+    # rotor_marks = {
+    #     0: "0°",
+    #     10: "10°",
+    #     20: "20°",
+    #     30: "30°",
+    #     40: "40°",
+    #     50: "50°",
+    #     54.735: "MA",
+    #     60: "60°",
+    #     70: "70°",
+    #     80: "80°",
+    #     90: "90°",
+    # }
+    # rotor_angle = dbc.FormGroup(
+    #     [
+    #         dbc.Label("Rotor angle"),
+    #         dcc.Slider(
+    #             min=0, max=90, step=10, value=54.735,
+    #             marks=rotor_marks, id="rotor_angle"
+    #         ),
+    #     ]
+    # )
+
+    rotor_angle = dbc.InputGroup(
+        [
+            dbc.InputGroupAddon("Rotor angle", addon_type="prepend"),
+            dbc.Input(value=54.735, id=f"rotor_angle-{i}"),
+            dbc.InputGroupAddon("degree", addon_type="append"),
+        ]
+    )
+
+    filter_spin = [
+        {"label": "1/2", "value": 0.5},
+        {"label": "1", "value": 1},
+        {"label": "3/2", "value": 1.5},
+        {"label": "5/2", "value": 2.5},
+    ]
+
+    isotope_and_filter = dbc.Row(
+        [
+            dbc.Col(
+                dbc.FormGroup(
+                    [
+                        dbc.Label("Isotope", className="mr-2"),
+                        dcc.Dropdown(id=f"isotope_id-{i}"),
+                    ]
+                )
+            ),
+            # dbc.Col(
+            #     dbc.FormGroup(
+            #         [
+            #             dbc.Label("Filter", className="mr-2"),
+            #             dcc.Dropdown(id="filter_spin", options=filter_spin,
+            #                          value=0.5),
+            #         ]
+            #     )
+            # ),
+        ]
+    )
+
+    return [
+        isotope_and_filter,
+        spectrometer_frequency,
+        html.Br(),
+        rotor_frequency,
+        rotor_angle,
+    ]
+
+
+# dimension parameters
+def make_dimension(i):
+
+    # dimension parameters
+    dimension_contents = dbc.Tab(
+        label=f"Index-{i}",
+        children=[
+            *environment(i),
+            html.Br(),
+            sub_group(
+                "Coordinate grid",
+                f"coordinate_grid_id={i}",
+                coordinate_grid_subgroup(i),
+            ),
+        ],
+        # style={
+        #     "min-height": "65vh",
+        #     "max-height": "65vh",
+        #     "overflow-y": "scroll",
+        #     "overflow-x": "hidden",
+        # },
+    )
+    return dimension_contents
 
 
 # submit_button = dbc.Button(
@@ -128,26 +191,6 @@ environment = [
 #     color="primary",
 #     className="mr-1",
 #     size="sm",
-# )
-
-# dimension_body = dbc.Card(
-#     dbc.CardBody(
-#         [
-#             html.H3("Spectrum parameters"),
-#             html.H4("Direct dimension"),
-#             html.Br(),
-#             html.Br(),
-#             html.H5("Environment parameters"),
-#             html.Div(environment),
-#             html.Br(),
-#             html.Br(),
-#             html.H5("Dimension parameters"),
-#             html.Div(dimension),
-#             html.Br(),
-#             # html.Div(submit_button),
-#         ]
-#     ),
-#     className="mb-0",
 # )
 
 
@@ -227,12 +270,13 @@ modal = html.Div(
 
 
 dimension_body = dbc.Card(
-    dbc.CardBody(
-        [
-            dbc.Row([dbc.Col(html.H4("Parameters")), dbc.Col(modal, align="right")]),
-            html.Div(environment),
-            html.Br(),
-            html.Div(collapsible_dimension),
-        ]
-    )
+    [
+        dbc.CardHeader(
+            dbc.Row(
+                [dbc.Col(html.H4("Dimensions", className="card-title")), dbc.Col(modal)]
+            )
+        ),
+        dbc.CardBody(dbc.Tabs([make_dimension(i) for i in range(2)])),
+    ],
+    className="h-100",
 )

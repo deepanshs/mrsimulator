@@ -2,6 +2,7 @@
 from typing import List, ClassVar, Optional
 from mrsimulator.site import Site
 from mrsimulator import Parseable
+from copy import deepcopy
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -44,10 +45,13 @@ class Isotopomer(Parseable):
             py_dict: Python dictionary representation of an isotopomers with
                         physical quantities.
         """
-        if "sites" in py_dict:
-            py_dict["sites"] = [Site.parse_dict_with_units(s) for s in py_dict["sites"]]
+        py_dict_copy = deepcopy(py_dict)
+        if "sites" in py_dict_copy:
+            py_dict_copy["sites"] = [
+                Site.parse_dict_with_units(s) for s in py_dict_copy["sites"]
+            ]
 
-        return super().parse_dict_with_units(py_dict)
+        return super().parse_dict_with_units(py_dict_copy)
 
     def to_freq_dict(self, larmor_frequency):
         """
@@ -59,5 +63,15 @@ class Isotopomer(Parseable):
         temp_dict["sites"] = [
             site.to_freq_dict(larmor_frequency) for site in self.sites
         ]
+
+        return temp_dict
+
+    def to_dict_with_units(self):
+        """
+        Serialize the Isotopomer object to a JSON compliant python dictionary.
+        """
+        temp_dict = self.dict()
+        temp_dict["sites"] = [site.to_dict_with_units() for site in self.sites]
+        temp_dict.pop("property_units")
 
         return temp_dict

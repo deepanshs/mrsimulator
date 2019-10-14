@@ -15,7 +15,8 @@ def one_d_spectrum(spectrum,
        int verbose=0,
        int number_of_sidebands=90,
        int geodesic_polyhedron_frequency=72,
-       bool_t individual_spectrum=False):
+       bool_t individual_spectrum=False,
+       int averaging=1):
     """
 
     :ivar verbose:
@@ -93,7 +94,8 @@ def one_d_spectrum(spectrum,
                 f'points over {spectral_width} Hz bandwidth'))
         print((f'and a reference offset of {reference_offset} Hz.'))
 
-    reference_offset -= spectral_width/2.0
+    offset = increment*int(number_of_points/2.0)
+    reference_offset -= offset
 
     # CSA
     cdef int number_of_sites
@@ -117,7 +119,6 @@ def one_d_spectrum(spectrum,
     cdef clib.isotopomer_ravel isotopomer_struct
     # cdef clib.isotopomers_list *isotopomers_list_c
 
-    list_index_isotopomer = []
     # ---------------------------------------------------------------------
     # sample _______________________________________________________________
     for index_isotopomer, isotopomer in enumerate(isotopomers):
@@ -144,7 +145,6 @@ def one_d_spectrum(spectrum,
 
         amp = np.zeros(number_of_points*number_of_sites)
 
-        if number_of_sites > 0: list_index_isotopomer.append(index_isotopomer)
         for i in range(number_of_sites):
             site = sub_sites[i]
 
@@ -249,20 +249,29 @@ def one_d_spectrum(spectrum,
                     rotor_angle_in_rad,
 
                     &transition_array[2*trans__],
-                    geodesic_polyhedron_frequency)
+                    geodesic_polyhedron_frequency,
+                    averaging,          # 0-octant, 1-hemisphere, 2-sphere.
+                    )
+
+            temp = amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
+
+            ## reverse the spectrum if larmor_frequency is negative
+            if larmor_frequency < 0:
+                if number_of_points % 2 == 0:
+                    temp[1:] = temp[1:][::-1]
+                else:
+                    temp = temp[::-1]
 
             if individual_spectrum:
-                amp_individual.append(amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance)
+                amp_individual.append(temp)
             else:
-                amp1 += amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
+                amp1 += temp
         else:
             if individual_spectrum:
                 amp_individual.append([])
 
     if individual_spectrum:
-        amp1 = np.asarray(amp_individual)
+        amp1 = amp_individual
 
-    freq = (np.arange(number_of_points)*increment + reference_offset)
-    denominator = reference_offset/1.0e6 + larmor_frequency
-    freq/=denominator
+    freq = spectrum.coordinates_ppm
     return freq, amp1

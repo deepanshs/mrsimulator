@@ -9,30 +9,30 @@ cdef extern from "angular_momentum.h":
     # void __wigner_rotation(const int l, const int n, const double *wigner, const double *cos_alpha,
     #                        const double complex *R_in, double complex *R_out)
 
-    void __wigner_rotation_2(const int l, const int n, const double *wigner, const double complex *exp_Im_alpha,
-                           const double complex *R_in, double complex *R_out)
+    void __wigner_rotation_2(const int l, const int n, const double *wigner,
+                             const void *exp_Im_alpha, const void *R_in,
+                             void *R_out)
 
     void single_wigner_rotation(const int l, const double *euler_angles,
-                            const double complex *R_in, double complex *R_out)
+                            const void *R_in, void *R_out)
 
     void wigner_dm0_vector(const int l, const double beta, double *R_out)
 
     void get_exp_Im_alpha(const unsigned int octant_orientations,
-                             const bool_t allow_fourth_rank,
-                             double complex *exp_Im_alpha)
+                          const bool_t allow_fourth_rank, void *exp_Im_alpha)
 
     void __batch_wigner_rotation(const unsigned int octant_orientations,
                              const unsigned int n_octants,
                              const double *wigner_2j_matrices,
-                             const double complex *R2,
+                             const void *R2,
                              const double *wigner_4j_matrices,
-                             const double complex *R4,
-                             double complex *exp_Im_alpha,
-                             double complex *w2, double complex *w4)
+                             const void *R4,
+                             void *exp_Im_alpha,
+                             void *w2, void *w4)
 
 
 cdef extern from "powder_setup.h":
-    void __powder_averaging_setup(
+    void octahedron_averaging_setup(
         int nt,
         double complex *exp_I_alpha,
         double complex *exp_I_beta,
@@ -60,7 +60,7 @@ cdef extern from "mrsimulator.h":
     void __get_components(
         int number_of_sidebands,
         double spin_frequency,
-        double complex *pre_phase)
+        void *pre_phase)
 
 #     ctypedef struct MRS_plan
 
@@ -110,4 +110,6 @@ cdef extern from "spinning_sidebands.h":
 
         # The transition as transition[0] = mi and transition[1] = mf
         double *transition,
-        int geodesic_polyhedron_frequency)
+        int geodesic_polyhedron_frequency,
+        unsigned int averaging             # 0-octant, 1-hemisphere, 2-sphere.
+        )

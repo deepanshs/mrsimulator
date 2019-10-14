@@ -56,10 +56,6 @@ typedef float complex64[2];
 #define PI2 6.2831853072
 #define PI2I PI2 *I
 
-#define sphere 0
-#define hemisphere 1
-#define octant 0
-
 // #ifdef __APPLE__
 // #include <Accelerate/Accelerate.h>
 // #define __blas_activate

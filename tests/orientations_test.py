@@ -6,7 +6,7 @@ from mrsimulator.python.orientation import triangle_interpolation
 import mrsimulator.tests.tests as clib
 
 
-def test__powder_averaging_setup():
+def test_octahedron_averaging_setup():
     nt = 64
     cos_alpha_py, cos_beta_py, amp_py = cosine_of_polar_angles_and_amplitudes(nt)
     exp_I_alpha_c, exp_I_beta_c, amp_c = clib.cosine_of_polar_angles_and_amplitudes(nt)

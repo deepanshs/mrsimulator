@@ -192,7 +192,7 @@ def cosine_of_polar_angles_and_amplitudes(int geodesic_polyhedron_frequency=72):
     cdef np.ndarray[double complex] exp_I_beta = np.empty(octant_orientations, dtype=np.complex128)
     cdef np.ndarray[double] amp = np.empty(octant_orientations, dtype=np.float64)
 
-    clib.__powder_averaging_setup(nt, &exp_I_alpha[0], &exp_I_beta[0], &amp[0])
+    clib.octahedron_averaging_setup(nt, &exp_I_alpha[0], &exp_I_beta[0], &amp[0])
 
     return exp_I_alpha, exp_I_beta, amp
 
@@ -295,7 +295,8 @@ def _one_d_simulator(
         # omega_PM=None,
 
         # Euler angles for powder averaging scheme
-        int geodesic_polyhedron_frequency=90):
+        int geodesic_polyhedron_frequency=90,
+        int averaging=0):
 
     nt = geodesic_polyhedron_frequency
     if isotropic_chemical_shift is None:
@@ -416,7 +417,9 @@ def _one_d_simulator(
             rotor_angle_in_rad_c,
 
             &transition_c[0],
-            geodesic_polyhedron_frequency)
+            geodesic_polyhedron_frequency,
+            averaging             # 0-octant, 1-hemisphere, 2-sphere.
+            )
 
 
     freq = np.arange(number_of_points)*increment + reference_offset

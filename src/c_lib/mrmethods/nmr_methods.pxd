@@ -2,9 +2,6 @@ cdef extern from "angular_momentum.h":
     void wigner_d_matrices_from_exp_I_beta(int l, int n, void *exp_I_beta,
                                   double *wigner)
 
-# cdef extern from "powder_setup.h":
-#     void __powder_averaging_setup(int nt, double *cosAlpha, double *cosBeta,
-#                                   double *amp, int space)
 
 # cdef extern from "site.h":
 #     ctypedef struct site:
@@ -54,4 +51,6 @@ cdef extern from "spinning_sidebands.h":
 
         # The transition as transition[0] = mi and transition[1] = mf
         double *transition,
-        int geodesic_polyhedron_frequency)
+        int geodesic_polyhedron_frequency,
+        unsigned int averaging             # 0-octant, 1-hemisphere, 2-sphere
+        )

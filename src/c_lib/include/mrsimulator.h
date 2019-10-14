@@ -20,10 +20,8 @@
 #include "averaging_scheme.h"
 #include "fftw3.h"
 #include "frequency_tensor.h"
-// #include "interpolation.h"
 #include "isotopomer_ravel.h"
 #include "octahedron.h"
-// #include "powder_setup.h"
 
 typedef struct MRS_dimension {
   int count; /**<  the number of coordinates along the dimension. */
@@ -197,6 +195,6 @@ void MRS_get_normalized_frequencies_from_plan(MRS_plan *plan,
 void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0);
 
 extern void __get_components(int number_of_sidebands, double spin_frequency,
-                             complex128 *pre_phase);
+                             void *pre_phase);
 
 #endif /* mrsimulator_h */
