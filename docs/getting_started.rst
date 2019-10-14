@@ -141,7 +141,7 @@ the dimension. A spectroscopic dimension may be defined as follows,
     ...     "rotor_frequency": "0 kHz",
     ...     "number_of_points": 2048,
     ...     "spectral_width": "25 kHz",
-    ...     "reference_offset": "8 kHz"
+    ...     "reference_offset": "-8 kHz"
     ... }
 
 In the above example, the variable ``dimension``, holds a python dictionary
@@ -196,17 +196,18 @@ and run the simulation using
     >>> freq, amp = sim.run(method=one_d_spectrum, verbose=1)
     `one_d_spectrum` method simulation parameters.
     ---------------------------------------------
-    The magnetic flux density is 9.4 T.
-    Sample rotation angle is 0.9553059660790962 rad.
-    Sample rotation frequency is 0.0 Hz.
-    Simulating 29Si(I=0.5, precession frequency = -79.571 MHz) isotope.
+    Macroscopic magnetic flux density (B0) = 9.4 T
+    Sample rotation angle is (θ) = 0.9553059660790962 rad
+    Sample rotation frequency (𝜈r) = 0.0 Hz
+    Simulating 29Si (I=0.5)
+    Larmor frequency (ω0 = - γ B0) = 79.571 MHz
     Recording 29Si spectrum with 2048 points over 25000.0 Hz bandwidth
-    and a reference offset of 8000.0 Hz.
+    and a reference offset of -8000.0 Hz.
     <BLANKLINE>
     29Si site 0 from isotopomer 0 @ 100% abundance
     ----------------------------------------------
-    Isotropic chemical shift (δ) = 8044.628099999999 Hz
-    Shielding anisotropy (ζ) = -5609.7555 Hz
+    Isotropic chemical shift (δ) = -101.1 ppm
+    Shielding anisotropy (ζ) = 70.5 ppm
     Shielding asymmetry (η) = 0.5
     Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
 

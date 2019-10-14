@@ -101,24 +101,25 @@ method as
     >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
     `one_d_spectrum` method simulation parameters.
     ---------------------------------------------
-    The magnetic flux density is 9.4 T.
-    Sample rotation angle is 0.9553059660790962 rad.
-    Sample rotation frequency is 0.0 Hz.
-    Simulating 13C(I=0.5, precession frequency = 100.65896 MHz) isotope.
+    Macroscopic magnetic flux density (B0) = 9.4 T
+    Sample rotation angle is (θ) = 0.9553059660790962 rad
+    Sample rotation frequency (𝜈r) = 0.0 Hz
+    Simulating 13C (I=0.5)
+    Larmor frequency (ω0 = - γ B0) = -100.65896 MHz
     Recording 13C spectrum with 8192 points over 5000.0 Hz bandwidth
     and a reference offset of 0.0 Hz.
     <BLANKLINE>
     13C site 0 from isotopomer 0 @ 100.0% abundance
     -----------------------------------------------
-    Isotropic chemical shift (δ) = 100.65896 Hz
-    Shielding anisotropy (ζ) = -391.5633544 Hz
+    Isotropic chemical shift (δ) = 1.0 ppm
+    Shielding anisotropy (ζ) = -3.89 ppm
     Shielding asymmetry (η) = 0.25
     Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
     <BLANKLINE>
     13C site 0 from isotopomer 1 @ 100% abundance
     ---------------------------------------------
-    Isotropic chemical shift (δ) = 100.65896 Hz
-    Shielding anisotropy (ζ) = 825.4034719999999 Hz
+    Isotropic chemical shift (δ) = 1.0 ppm
+    Shielding anisotropy (ζ) = 8.2 ppm
     Shielding asymmetry (η) = 0.0
     Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
 
@@ -176,24 +177,25 @@ Now compute the line-shape as before.
     >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
     `one_d_spectrum` method simulation parameters.
     ---------------------------------------------
-    The magnetic flux density is 9.4 T.
-    Sample rotation angle is 0.9553059660790962 rad.
-    Sample rotation frequency is 100.0 Hz.
-    Simulating 13C(I=0.5, precession frequency = 100.65896 MHz) isotope.
+    Macroscopic magnetic flux density (B0) = 9.4 T
+    Sample rotation angle is (θ) = 0.9553059660790962 rad
+    Sample rotation frequency (𝜈r) = 100.0 Hz
+    Simulating 13C (I=0.5)
+    Larmor frequency (ω0 = - γ B0) = -100.65896 MHz
     Recording 13C spectrum with 8192 points over 5000.0 Hz bandwidth
     and a reference offset of 0.0 Hz.
     <BLANKLINE>
     13C site 0 from isotopomer 0 @ 100.0% abundance
     -----------------------------------------------
-    Isotropic chemical shift (δ) = 100.65896 Hz
-    Shielding anisotropy (ζ) = -391.5633544 Hz
+    Isotropic chemical shift (δ) = 1.0 ppm
+    Shielding anisotropy (ζ) = -3.89 ppm
     Shielding asymmetry (η) = 0.25
     Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
     <BLANKLINE>
     13C site 0 from isotopomer 1 @ 100% abundance
     ---------------------------------------------
-    Isotropic chemical shift (δ) = 100.65896 Hz
-    Shielding anisotropy (ζ) = 825.4034719999999 Hz
+    Isotropic chemical shift (δ) = 1.0 ppm
+    Shielding anisotropy (ζ) = 8.2 ppm
     Shielding asymmetry (η) = 0.0
     Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
 
@@ -236,24 +238,25 @@ The simulated lineshape.
     >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
     `one_d_spectrum` method simulation parameters.
     ---------------------------------------------
-    The magnetic flux density is 9.4 T.
-    Sample rotation angle is 1.5707963267948966 rad.
-    Sample rotation frequency is 500.0 Hz.
-    Simulating 13C(I=0.5, precession frequency = 100.65896 MHz) isotope.
+    Macroscopic magnetic flux density (B0) = 9.4 T
+    Sample rotation angle is (θ) = 1.5707963267948966 rad
+    Sample rotation frequency (𝜈r) = 500.0 Hz
+    Simulating 13C (I=0.5)
+    Larmor frequency (ω0 = - γ B0) = -100.65896 MHz
     Recording 13C spectrum with 8192 points over 5000.0 Hz bandwidth
     and a reference offset of 0.0 Hz.
     <BLANKLINE>
     13C site 0 from isotopomer 0 @ 100.0% abundance
     -----------------------------------------------
-    Isotropic chemical shift (δ) = 100.65896 Hz
-    Shielding anisotropy (ζ) = -391.5633544 Hz
+    Isotropic chemical shift (δ) = 1.0 ppm
+    Shielding anisotropy (ζ) = -3.89 ppm
     Shielding asymmetry (η) = 0.25
     Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
     <BLANKLINE>
     13C site 0 from isotopomer 1 @ 100% abundance
     ---------------------------------------------
-    Isotropic chemical shift (δ) = 100.65896 Hz
-    Shielding anisotropy (ζ) = 825.4034719999999 Hz
+    Isotropic chemical shift (δ) = 1.0 ppm
+    Shielding anisotropy (ζ) = 8.2 ppm
     Shielding asymmetry (η) = 0.0
     Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
 
@@ -283,7 +286,7 @@ spectroscopic dimension with "29Si" as the value of the ``isotope`` key.
 
     >>> dim = dict(isotope="29Si", magnetic_flux_density="9.4 T", rotor_frequency="1 kHz",
     ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="30 kHz",
-    ...         reference_offset="5 kHz")
+    ...         reference_offset="-5 kHz")
     >>> sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(dim)]
 
 Run the simulation.
@@ -293,31 +296,32 @@ Run the simulation.
     >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
     `one_d_spectrum` method simulation parameters.
     ---------------------------------------------
-    The magnetic flux density is 9.4 T.
-    Sample rotation angle is 0.9553059660790962 rad.
-    Sample rotation frequency is 1000.0 Hz.
-    Simulating 29Si(I=0.5, precession frequency = -79.571 MHz) isotope.
+    Macroscopic magnetic flux density (B0) = 9.4 T
+    Sample rotation angle is (θ) = 0.9553059660790962 rad
+    Sample rotation frequency (𝜈r) = 1000.0 Hz
+    Simulating 29Si (I=0.5)
+    Larmor frequency (ω0 = - γ B0) = 79.571 MHz
     Recording 29Si spectrum with 8192 points over 30000.0 Hz bandwidth
-    and a reference offset of 5000.0 Hz.
+    and a reference offset of -5000.0 Hz.
     <BLANKLINE>
     29Si site 0 from isotopomer 3 @ 100% abundance
     ----------------------------------------------
-    Isotropic chemical shift (δ) = 7957.099999999999 Hz
-    Shielding anisotropy (ζ) = -108.21656 Hz
+    Isotropic chemical shift (δ) = -100.0 ppm
+    Shielding anisotropy (ζ) = 1.36 ppm
     Shielding asymmetry (η) = 0.0
     Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
     <BLANKLINE>
     29Si site 0 from isotopomer 4 @ 100% abundance
     ----------------------------------------------
-    Isotropic chemical shift (δ) = 7957.099999999999 Hz
-    Shielding anisotropy (ζ) = -5598.61556 Hz
+    Isotropic chemical shift (δ) = -100.0 ppm
+    Shielding anisotropy (ζ) = 70.36 ppm
     Shielding asymmetry (η) = 0.0
     Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
     <BLANKLINE>
     29Si site 0 from isotopomer 5 @ 100% abundance
     ----------------------------------------------
-    Isotropic chemical shift (δ) = 7161.389999999999 Hz
-    Shielding anisotropy (ζ) = -6394.32556 Hz
+    Isotropic chemical shift (δ) = -90.0 ppm
+    Shielding anisotropy (ζ) = 80.36 ppm
     Shielding asymmetry (η) = 0.5
     Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
 
@@ -349,24 +353,25 @@ The line-shape simulation
     >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
     `one_d_spectrum` method simulation parameters.
     ---------------------------------------------
-    The magnetic flux density is 9.4 T.
-    Sample rotation angle is 0.9553059660790962 rad.
-    Sample rotation frequency is 2000.0 Hz.
-    Simulating 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope.
+    Macroscopic magnetic flux density (B0) = 9.4 T
+    Sample rotation angle is (θ) = 0.9553059660790962 rad
+    Sample rotation frequency (𝜈r) = 2000.0 Hz
+    Simulating 1H (I=0.5)
+    Larmor frequency (ω0 = - γ B0) = -400.228301848 MHz
     Recording 1H spectrum with 8192 points over 50000.0 Hz bandwidth
     and a reference offset of 0.0 Hz.
     <BLANKLINE>
     1H site 0 from isotopomer 2 @ 100% abundance
     --------------------------------------------
-    Isotropic chemical shift (δ) = 1200.684905544 Hz
-    Shielding anisotropy (ζ) = 9285.2966028736 Hz
+    Isotropic chemical shift (δ) = 3.0 ppm
+    Shielding anisotropy (ζ) = 23.2 ppm
     Shielding asymmetry (η) = 0.0
     Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
     <BLANKLINE>
     1H site 0 from isotopomer 6 @ 100% abundance
     --------------------------------------------
-    Isotropic chemical shift (δ) = 2241.2784903488 Hz
-    Shielding anisotropy (ζ) = 5283.0135843936 Hz
+    Isotropic chemical shift (δ) = 5.6 ppm
+    Shielding anisotropy (ζ) = 13.2 ppm
     Shielding asymmetry (η) = 0.0
     Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
 

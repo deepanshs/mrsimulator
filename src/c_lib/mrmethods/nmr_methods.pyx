@@ -54,9 +54,9 @@ def one_d_spectrum(spectrum,
         len_ = len(text)
         print(text)
         print(f"{'-'*(len_-1)}")
-        print (f'The magnetic flux density is {B0} T.')
-        print (f'Sample rotation angle is {rotor_angle_in_rad} rad.')
-        print (f'Sample rotation frequency is {sample_rotation_frequency_in_Hz} Hz.')
+        print (f'Macroscopic magnetic flux density (B0) = {B0} T')
+        print (f'Sample rotation angle is (θ) = {rotor_angle_in_rad} rad')
+        print (f'Sample rotation frequency (𝜈r) = {sample_rotation_frequency_in_Hz} Hz')
 
 # ---------------------------------------------------------------------
 # spin observed _______________________________________________________
@@ -88,8 +88,8 @@ def one_d_spectrum(spectrum,
     cdef double reference_offset = spectrum.reference_offset
 
     if verbose in [1, 11]:
-        print((f'Simulating {isotope}(I={spin_quantum_number}, '
-                f'precession frequency = {larmor_frequency} MHz) isotope.'))
+        print(f'Simulating {isotope} (I={spin_quantum_number})')
+        print(f'Larmor frequency (ω0 = - γ B0) = {larmor_frequency} MHz')
         print((f'Recording {isotope} spectrum with {number_of_points} '
                 f'points over {spectral_width} Hz bandwidth'))
         print((f'and a reference offset of {reference_offset} Hz.'))
@@ -173,8 +173,8 @@ def one_d_spectrum(spectrum,
                 len_ = len(text)
                 print(text)
                 print(f"{'-'*(len_-1)}")
-                print(f'Isotropic chemical shift (δ) = {str(iso)} Hz')
-                print(f'Shielding anisotropy (ζ) = {str(zeta)} Hz')
+                print(f'Isotropic chemical shift (δ) = {str(iso/larmor_frequency)} ppm')
+                print(f'Shielding anisotropy (ζ) = {str(zeta/larmor_frequency)} ppm')
                 print(f'Shielding asymmetry (η) = {eta}')
                 print(f'Shielding orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
