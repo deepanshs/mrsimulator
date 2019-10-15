@@ -100,5 +100,5 @@ spectrum_body = dbc.Card(
         ),
         dbc.CardBody([dcc.Graph(id="nmr_spectrum", figure={"data": []})]),
     ],
-    className="h-100",
+    className="v-100",
 )

@@ -27,6 +27,8 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
 external_scripts = [
+    {"src": "https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"},
+    {"src": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"},
     {
         "src": "https://use.fontawesome.com/releases/v5.0.13/js/solid.js",
         "integrity": (
@@ -87,34 +89,26 @@ sim.new = False
 count = 0
 total_sites = 0
 
-app.layout = html.Div(
+app.layout = dbc.Container(
     [
-        dbc.Container(
+        navbar.navbar_top,
+        dbc.Row(
             [
-                navbar.navbar,
-                dbc.Row(
-                    [
-                        dbc.Col(sidebar.sidebar, xs=12, sm=12, md=12, lg=12, xl=3),
-                        dbc.Col(
-                            [
-                                html.Br(),
-                                html.Div(main_body),
-                                html.Br(),
-                                html.Div(id="isotopomer_computed_log"),
-                            ],
-                            xs=12,
-                            sm=12,
-                            md=12,
-                            lg=12,
-                            xl=9,
-                        ),
-                    ]
+                dbc.Col(sidebar.sidebar, xs=12, sm=12, md=12, lg=12, xl=3),
+                dbc.Col(
+                    [html.Div(main_body), html.Div(id="isotopomer_computed_log")],
+                    xs=12,
+                    sm=12,
+                    md=12,
+                    lg=12,
+                    xl=9,
                 ),
-                dbc.Jumbotron(),
-            ],
-            fluid=True,
-        )
+            ]
+        ),
+        navbar.navbar_bottom,
     ],
+    fluid=True,
+    style={"max-width": "1400px"},
     className="flex-display",
 )
 

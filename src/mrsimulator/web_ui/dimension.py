@@ -19,10 +19,31 @@ def sub_group(text, id, children):
     header = dbc.Row(
         [
             dbc.Col(html.Hr()),
-            dbc.Col(html.P(html.Span(text, id=id)), className="col-auto"),
+            dbc.Col(dbc.Label(html.Span(text, id=id)), className="col-auto"),
             dbc.Col(html.Hr()),
         ]
     )
+
+    # return html.Div(
+    #     className="card card-info",
+    #     children=[
+    #         html.Div(
+    #             className="my-card-header",
+    #             children=[
+    #                 html.Span(
+    #                     html.H6(
+    #                         [text, html.I(className="fas fa-chevron-down")],
+    #                         className="card-title",
+    #                     ),
+    #                     id=id,
+    #                     # className="pull-right clickable",
+    #                 )
+    #             ],
+    #         ),
+    #         html.Div(className="card-body", children=children),
+    #     ],
+    # )
+
     return html.Div([header, *children])
 
 
@@ -30,7 +51,7 @@ def coordinate_grid_subgroup(i):
     # number of points
     number_of_points = dbc.FormGroup(
         [
-            html.P("Number of points"),
+            dbc.Label("Number of points"),
             dcc.Slider(
                 min=7,
                 max=17,
@@ -167,7 +188,7 @@ def make_dimension(i):
         label=f"Index-{i}",
         children=[
             *environment(i),
-            html.Br(),
+            # html.Br(),
             sub_group(
                 "Coordinate grid",
                 f"coordinate_grid_id={i}",
@@ -271,12 +292,18 @@ modal = html.Div(
 
 dimension_body = dbc.Card(
     [
-        dbc.CardHeader(
-            dbc.Row(
-                [dbc.Col(html.H4("Dimensions", className="card-title")), dbc.Col(modal)]
-            )
-        ),
-        dbc.CardBody(dbc.Tabs([make_dimension(i) for i in range(2)])),
+        dbc.CardBody(
+            [
+                dbc.Row(
+                    [
+                        dbc.Col(html.H4("Dimensions", className="card-title")),
+                        dbc.Col(modal),
+                    ]
+                ),
+                dbc.Tabs([make_dimension(i) for i in range(2)]),
+            ],
+            className="w-100",
+        )
     ],
-    className="h-100",
+    className="h-100 my-card-2",
 )

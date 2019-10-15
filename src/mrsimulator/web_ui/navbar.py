@@ -27,16 +27,12 @@ nav_items = dbc.Row(
                 "Documentation",
                 href="https://mrsimulator.readthedocs.io/en/stable/",
                 className="navbar-light expand-lg",
-                # style={"color": "white", "hover": {"color": "#272727"}},
-                # className="navbar navbar-expand-lg navbar-dark bg-dark",
             )
         ),
         dbc.Col(
             dbc.NavLink(
-                "Github",
+                children=[html.I(className="fab fa-github-square"), "Github"],
                 href="https://github.com/DeepanshS/mrsimulator",
-                # style={"color": "white"},
-                # className="navbar navbar-expand-lg navbar-dark bg-dark",
             )
         ),
     ],
@@ -44,7 +40,7 @@ nav_items = dbc.Row(
     align="center",
 )
 
-navbar = dbc.Navbar(
+navbar_top = dbc.Navbar(
     [
         dbc.Row(
             [
@@ -63,6 +59,16 @@ navbar = dbc.Navbar(
     ],
     color="dark",
     sticky="top",
+    fixed="top",
     dark=True,
     className="navbar navbar-expand-lg navbar-dark bg-dark",
+)
+
+navbar_bottom = dbc.Navbar(
+    [dbc.Label("mrsimulator 2018-2019", style={"color": "white"})],
+    color="dark",
+    sticky="bottom",
+    # fixed="bottom",
+    dark=True,
+    # className="navbar navbar-expand-lg navbar-dark bg-dark",
 )

@@ -42,17 +42,9 @@ upload_data = html.Div(
 )
 
 
-input_file = [upload_data, html.Hr(), filename_datetime]
+input_file = [html.Br(), upload_data, html.Hr(), filename_datetime]
 
 
 sidebar = dbc.Card(
-    [html.Div(input_file)],
-    className="h-100",
-    inverse=False,
-    body=True,
-    # style={"background-color": "#AAAAAA"},
-    style={
-        "background": "linear-gradient(to bottom, #f2f3f4 , 0%, #f2f3f4 100%)",
-        "border-color": "#e5e8e8",
-    },
+    dbc.CardBody(html.Div(input_file)), className="h-100 my-card", inverse=False
 )
