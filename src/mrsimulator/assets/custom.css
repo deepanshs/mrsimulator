@@ -20,16 +20,18 @@ body {
 
 #tabs .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
     color: #000000;
-    background-color: #ccedff;
+    background-color: #e4f6ff;
     border: 1px solid #006ab1ce;
     border-bottom: 0px solid #75b7dd !important;
-    font-size: 12px;
+    /* font-size: 12px; */
     font-weight: bold;
 }
 
-#tabs .nav-tabs .nav-link, .nav-tabs {font-size: 12px}
+/* #tabs .nav-tabs, .nav-tabs {font-size: 12px} */
 
-#tabs .nav-link, .nav-link:hover {font-size: 12px; background-color: #c9c9c9;}
+#tabs .nav-link, .nav-tabs .nav-link:hover {
+    background-color: #dff3fd;
+}
 
 .tab-content{
     background: #ffffff00;
@@ -77,6 +79,36 @@ body {
     box-shadow: 0 0px 0px 0 #d4d4d5, 0 0 0 0px #d4d4d5;
 }
 
-.card-header{
+/* .card-header{
     height: 3.5em;
+} */
+
+.input-group-addon-append {
+    min-width:145px;
+    text-align:left;
 }
+
+.input-group-addon-prepend {
+    min-width:50px;
+    text-align:left;
+}
+
+.input-group { width: 100%; }
+
+.form-text{
+    font-size: 15;
+    color: black;
+}
+
+.fa-spin:hover {
+  -webkit-animation: spin 2s infinite linear;
+  -moz-animation: spin 2s infinite linear;
+  -o-animation: spin 2s infinite linear;
+  animation: spin 2s infinite linear;
+}
+/* .fa-spin:hover {
+    -webkit-animation: spin 2s infinite linear;
+    -moz-animation: spin 2s infinite linear;
+    -o-animation: spin 2s infinite linear;
+    animation: spin 2s infinite linear;
+  } */

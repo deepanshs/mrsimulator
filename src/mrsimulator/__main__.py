@@ -82,7 +82,8 @@ server = app.server
 FIRST = True
 sim = Simulator()
 sim.x = np.asarray([-1.0, 1.0])
-sim.y = np.asarray([0.0, 0.0])
+sim.y = []
+sim.original = np.asarray([0.0, 0.0])
 sim.nt = 64
 sim.spectrum_previous = {}
 sim.new = False
@@ -115,54 +116,43 @@ app.layout = dbc.Container(
 
 # toggle download buttons
 @app.callback(
-    [
-        Output("download_csv_button", "disabled"),
-        Output("download_csdm_button", "disabled"),
-    ],
+    [Output("download_csdm_button", "disabled")],
     [Input("nmr_spectrum", "figure")],
     [State("filename_dataset", "children")],
 )
 def toggle_download_buttons(value, filename_dataset):
     """Toggle download buttons---csv, csdm."""
     if filename_dataset in [None, ""]:
-        return [True, True]
+        return [True]
     else:
-        return [False, False]
+        return [False]
 
 
 # update the link to the downloadable serialized file.
 @app.callback(
-    [Output("download_csv", "href"), Output("download_csdm", "href")],
-    [
-        Input("nmr_spectrum", "figure")
-        # Input("download_csv_button", "n_clicks"),
-        # Input("download_csdm_button", "n_clicks"),
-    ],
+    [Output("download_csdm", "href")],
+    [Input("nmr_spectrum", "figure")],
     [
         State("filename_dataset", "children"),
         State("isotope_id-0", "value"),
-        State("download_csv_button", "n_clicks_timestamp"),
-        State("download_csdm_button", "n_clicks_timestamp"),
         State("decompose", "active"),
-        State("spinning_frequency-0", "value"),
+        State("rotor_frequency-0", "value"),
         State("number_of_points-0", "value"),
-        State("frequency_bandwidth-0", "value"),
+        State("spectral_width-0", "value"),
         State("reference_offset-0", "value"),
-        State("magnetic_flux_density-0", "value"),
+        State("spectrometer_frequency-0", "value"),
     ],
 )
 def update_link(
     figure,
     filename_dataset,
     isotope_id,
-    t1,
-    t2,
     decompose_status,
-    spinning_frequency,
+    rotor_frequency,
     number_of_points,
-    frequency_bandwidth,
+    spectral_width,
     reference_offset,
-    magnetic_flux_density,
+    spectrometer_frequency,
 ):
     """Update the link to the downloadable serialized file."""
     name = os.path.splitext(str(filename_dataset))[0]
@@ -173,16 +163,14 @@ def update_link(
     head = "/dash/urlToDownload?name={0}&isotope={1}".format(name, isotope_id)
     tail = "&status={0}&index={1}_{2}_{3}_{4}_{5}_{6}".format(
         str(decompose_status),
-        str(spinning_frequency),
+        str(rotor_frequency),
         str(number_of_points),
-        str(frequency_bandwidth),
+        str(spectral_width),
         str(reference_offset),
-        str(magnetic_flux_density),
+        str(spectrometer_frequency),
         str(count),
     )
-    v1 = head + "&id=csv" + tail
-    v2 = head + "&id=csdf" + tail
-    return [v1, v2]
+    return [head + tail]
 
 
 # Serialize the computed spectrum and download the serialized file.
@@ -192,7 +180,6 @@ def download():
     # creating a dynamic csv or file here using `StringIO`
     filename = flask.request.args.get("name")
     isotope_id = flask.request.args.get("isotope")
-    file_type = flask.request.args.get("id")
     index = flask.request.args.get("index")
     is_decomposed = flask.request.args.get("status")
 
@@ -203,114 +190,97 @@ def download():
     mem = io.BytesIO()
     file_name = "_".join([filename, isotope_id, is_decomposed, index, str(count)])
 
-    if file_type == "csv":
-        writer = np.asarray([sim.x, sim.y]).T
-        header = (("\n {0} from file {1}.json\nfrequency / kHz, amplitudes\n")).format(
-            isotope_id, filename
-        )
-
-        # save file as csv
-        np.savetxt(str_io, writer, fmt="%f", delimiter=",", header=header)
-
-        mem.write(str_io.getvalue().encode("utf-8"))
-        mem.seek(0)
-        str_io.close()
-
-        return flask.send_file(
-            mem,
-            mimetype="text/csv",
-            attachment_filename=f"{file_name}.csv",
-            as_attachment=True,
-        )
-
-    if file_type == "csdf":
-        new = sim.as_csdm_object()
-        new.save(output_device=str_io)
-        mem.write(str_io.getvalue().encode("utf-8"))
-        mem.seek(0)
-        str_io.close()
-        return flask.send_file(
-            mem, attachment_filename=f"{file_name}.csdf", as_attachment=True
-        )
+    new = sim.as_csdm_object()
+    new.save(output_device=str_io)
+    mem.write(str_io.getvalue().encode("utf-8"))
+    mem.seek(0)
+    str_io.close()
+    return flask.send_file(
+        mem, attachment_filename=f"{file_name}.csdf", as_attachment=True
+    )
 
 
 # Main function. Evaluates the spectrum and update the plot.
 @app.callback(
-    [Output("nmr_spectrum", "figure"), Output("indicator_status", "color")],
+    [Output("nmr_spectrum", "figure")],
     [
-        Input("spinning_frequency-0", "value"),
+        Input("rotor_frequency-0", "value"),
         Input("rotor_angle-0", "value"),
         Input("number_of_points-0", "value"),
-        Input("frequency_bandwidth-0", "value"),
+        Input("spectral_width-0", "value"),
         Input("reference_offset-0", "value"),
-        Input("magnetic_flux_density-0", "value"),
+        Input("spectrometer_frequency-0", "value"),
         Input("isotope_id-0", "value"),
         Input("decompose", "active"),
     ],
 )
 def update_data(
-    spinning_frequency,
+    rotor_frequency,
     rotor_angle,
     number_of_points,
-    frequency_bandwidth,
+    spectral_width,
     reference_offset,
-    magnetic_flux_density,
+    spectrometer_frequency,
     isotope_id,
     decompose,
 ):
     """Evaluate the spectrum and update the plot."""
-    color = "danger"  # "#ff2b2b"
-    if frequency_bandwidth in [None, 0, "", ".", "-"]:
-        return [clear_1D_plot(), color]
+    clear_array = [clear_1D_plot()]
+
+    if spectral_width in [None, 0, "", ".", "-"]:
+        return clear_array
     if reference_offset in [None, "", ".", "-"]:
-        return [clear_1D_plot(), color]
-    if spinning_frequency in [None, "", ".", "-"]:
-        return [clear_1D_plot(), color]
+        return clear_array
+    if rotor_frequency in [None, "", ".", "-"]:
+        return clear_array
 
     # exit when the following conditions are True
     if number_of_points == 0 or isotope_id in ["", None]:
-        return [clear_1D_plot(), color]
+        return clear_array
 
-    # calculating frequency_bandwidth
+    # calculating spectral_width
     try:
-        frequency_bandwidth = float(frequency_bandwidth)
+        spectral_width = float(spectral_width)
     except ValueError:
-        return [clear_1D_plot(), color]
+        return clear_array
 
-    # calculating spin_frequency
+    # calculating rotor_frequency
     try:
-        spin_frequency = float(eval(str(spinning_frequency)))
+        rotor_frequency = float(eval(str(rotor_frequency)))
     except ValueError:
-        return [clear_1D_plot(), color]
+        return clear_array
     except SyntaxError:
-        return [clear_1D_plot(), color]
+        try:
+            rotor_frequency = float(rotor_frequency)
+        except ValueError:
+            return clear_array
 
     # calculating reference_offset
     try:
         reference_offset = float(reference_offset)
     except ValueError:
-        return [clear_1D_plot(), color]
+        return clear_array
 
     try:
-        magnetic_flux_density = float(magnetic_flux_density) / 42.57747892
+        magnetic_flux_density = float(spectrometer_frequency) / 42.57747892
     except ValueError:
-        return [clear_1D_plot(), color]
+        return clear_array
 
-    # if MAS_switch:
+    # calculating rotor angle
     try:
-        rotor_angle_in_degree = float(eval(str(rotor_angle)))  # 54.735
+        rotor_angle = float(eval(str(rotor_angle)))  # 54.735
     except ValueError:
-        return [clear_1D_plot(), color]
+        return clear_array
     except SyntaxError:
-        return [clear_1D_plot(), color]
+        return clear_array
 
     spectrum = {
         "isotope": isotope_id,
         "magnetic_flux_density": str(magnetic_flux_density * 100) + " T",
-        "rotor_frequency": str(spin_frequency) + " kHz",
-        "rotor_angle": str(rotor_angle_in_degree) + " deg",
+        "rotor_frequency": str(rotor_frequency) + " kHz",
+        "rotor_angle": str(rotor_angle) + " deg",
         "number_of_points": 2 ** number_of_points,
-        "spectral_width": str(frequency_bandwidth) + " kHz",
+        "spectral_width": str(spectral_width) + " kHz",
         "reference_offset": str(reference_offset) + " kHz",
     }
 
@@ -319,13 +289,25 @@ def update_data(
         sim.spectrum_previous = deepcopy(spectrum)
 
         sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(spectrum)]
-        sim.x, sim.y = sim.run(
+        sim.spectrum[0].isotope = isotope_id
+        sim.spectrum[0].magnetic_flux_density = magnetic_flux_density * 100
+        sim.spectrum[0].rotor_frequency = rotor_frequency * 1000.0
+        sim.spectrum[0].rotor_angle = rotor_angle * np.pi / 180.0
+        sim.spectrum[0].number_of_points = 2 ** number_of_points
+        sim.spectrum[0].spectral_width = spectral_width * 1000.0
+        sim.spectrum[0].reference_offset = reference_offset * 1000.0
+
+        sim.x, sim.original = sim.run(
             one_d_spectrum,
             geodesic_polyhedron_frequency=sim.nt,
             individual_spectrum=True,
         )
 
         sim.x = sim.x.value
+
+    # remove the following line and add post simulation function as
+    #       sim.y = post_simulation(my_function)
+    sim.y = sim.original
 
     return plot_1D(isotope_id, decompose)
 
@@ -385,6 +367,24 @@ def update_number_of_orientations(value):
     sim.nt = value
     ori = 2 * (value + 1) * (value + 2)
     return f"Averaging over {ori} orientations.".format(value)
+
+
+# simulation_ids = [
+#     "rotor_frequency",
+#     "rotor_angle",
+#     "number_of_points",
+#     "spectral_width",
+#     "reference_offset",
+#     "spectrometer_frequency",
+#     "isotope_id",
+#     "decompose",
+# ]
+# for item_id in simulation_ids:
+#     @app.callback(
+#         [Output("nmr_spectrum", "figure")],
+#         [Input(item_id+'-0', "value")],
+#     )
+#     def update()
 
 
 # @app.callback(
@@ -504,14 +504,14 @@ def toggle_decompose_button(n1, status):
     return [new_status]
 
 
-# @app.callback(
-#     [Output("isotopomer_computed_log", "children")],
-#     [Input("isotope_id", "value"), Input("magnetic_flux_density", "value")],
-# )
-# def update_isotopomer_list(isotope, flux):
-#     cards_deck = get_isotopomers(isotope, sim.isotopomers)
-
-#     return [cards_deck]
+@app.callback(
+    [Output("spectrometer_freq_label-0", "children")],
+    [Input("spectrometer_frequency-0", "value")],
+)
+def update_isotopomer_list(value):
+    if value < 10:
+        return [f"{int(value*100)} MHz"]
+    return [f"{value/10} GHz"]
 
 
 # @app.callback(
@@ -628,7 +628,7 @@ def plot_1D(isotope_id, decompose):
             hovermode="closest",
         ),
     }
-    return [data_object, "success"]
+    return [data_object]
 
 
 # line={"shape": "hv", "width": 1},
@@ -642,6 +642,10 @@ def plot_1D(isotope_id, decompose):
 #             'quad-in-out', 'cubic-in-out', 'sin-in-out', 'exp-in-out',
 #             'circle-in-out', 'elastic-in-out', 'back-in-out',
 #             'bounce-in-out']
+
+
+def post_simulation(function):
+    return [function(datum) for datum in sim.y if not isinstance(datum, list)]
 
 
 def parse_contents(contents, filename, date):

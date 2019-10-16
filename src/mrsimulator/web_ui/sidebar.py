@@ -20,7 +20,8 @@ upload_data = html.Div(
         dcc.Upload(
             id="upload_data",
             children=html.Div(
-                "Drag and drop, or click to select", style={"font-size": 16}
+                ["Drag and drop, or ", html.I(className="fas fa-upload"), " select"],
+                #  style={"font-size": 15}
             ),
             style={
                 "lineHeight": "60px",
@@ -33,11 +34,7 @@ upload_data = html.Div(
             multiple=False,
             className="control-upload",
         ),
-        dbc.Label(
-            id="error_message",
-            align="center",
-            style={"font-size": 12, "align": "center"},
-        ),
+        dbc.FormText(id="error_message"),
     ]
 )
 

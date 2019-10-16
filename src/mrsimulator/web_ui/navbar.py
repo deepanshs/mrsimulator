@@ -65,7 +65,10 @@ navbar_top = dbc.Navbar(
 )
 
 navbar_bottom = dbc.Navbar(
-    [dbc.Label("mrsimulator 2018-2019", style={"color": "white"})],
+    [
+        dbc.Label("mrsimulator 2018-2019", style={"color": "white"}),
+        html.I(className="fab fa-apple"),
+    ],
     color="dark",
     sticky="bottom",
     # fixed="bottom",

@@ -5,14 +5,14 @@ import dash_core_components as dcc
 import dash_daq as daq
 import numpy as np
 
-dropdown_menu_items_1 = [
-    dbc.DropdownMenuItem("kHz", id="kHz_1"),
-    dbc.DropdownMenuItem("ppm", id="ppm_1"),
-]
+# dropdown_menu_items_1 = [
+#     dbc.DropdownMenuItem("kHz", id="kHz_1"),
+#     dbc.DropdownMenuItem("ppm", id="ppm_1"),
+# ]
 
 range_num = [8, 10, 12, 14, 16]
 list_of_numbers = {i: f"{2 ** i}" for i in range_num}
-field_strength = {2: "200 MHz", 4: "400 MHz", 6: "600 MHz", 8: "800 MHz", 10: "1 GHz"}
+field_strength = {2: "200 MHz", 4: "400 MHz", 6: "600 MHz", 8: "0.8 GHz", 10: "1 GHz"}
 
 
 def sub_group(text, id, children):
@@ -44,14 +44,14 @@ def sub_group(text, id, children):
     #     ],
     # )
 
-    return html.Div([header, *children])
+    return html.Div([html.Br(), header, *children])
 
 
 def coordinate_grid_subgroup(i):
     # number of points
     number_of_points = dbc.FormGroup(
         [
-            dbc.Label("Number of points"),
+            dbc.Label("Number of points", color="dark"),
             dcc.Slider(
                 min=7,
                 max=17,
@@ -67,18 +67,27 @@ def coordinate_grid_subgroup(i):
     spectral_width = dbc.InputGroup(
         [
             dbc.InputGroupAddon("Spectral width", addon_type="prepend"),
-            dbc.Input(value=25.0, min=0.0, id=f"frequency_bandwidth-{i}"),
+            dbc.Input(
+                value=25.0,
+                min=0.0,
+                id=f"spectral_width-{i}",
+                pattern="^[-+]?[0-9]*\\.?[0-9]+$",
+            ),
             dbc.InputGroupAddon("kHz", addon_type="append"),
-        ]
+        ],
+        # size="sm",
     )
 
     # reference offset
     reference_offset = dbc.InputGroup(
         [
             dbc.InputGroupAddon("Reference offset", addon_type="prepend"),
-            dbc.Input(value=0.0, id=f"reference_offset-{i}"),
+            dbc.Input(
+                value=0.0, id=f"reference_offset-{i}", pattern="^[-+]?[0-9]*\\.?[0-9]+$"
+            ),
             dbc.InputGroupAddon("kHz", addon_type="append"),
-        ]
+        ],
+        # size="sm",
     )
 
     return [number_of_points, html.Br(), spectral_width, reference_offset]
@@ -89,14 +98,30 @@ def environment(i):
 
     spectrometer_frequency = dbc.FormGroup(
         [
-            dbc.Label("Spectrometer frequency @ 1H"),
+            dbc.Row(
+                [
+                    dbc.Col(
+                        dbc.Label(
+                            "Spectrometer frequency @1H",
+                            color="dark",
+                            style={"float": "left"},
+                        ),
+                        width=9,
+                    ),
+                    dbc.Col(
+                        dbc.FormText(
+                            id=f"spectrometer_freq_label-{i}", style={"float": "right"}
+                        )
+                    ),
+                ]
+            ),
             dcc.Slider(
                 min=1,
-                max=11,
+                max=12,
                 step=0.5,
                 value=4,
                 marks=field_strength,
-                id=f"magnetic_flux_density-{i}",
+                id=f"spectrometer_frequency-{i}",
             ),
         ]
     )
@@ -105,9 +130,16 @@ def environment(i):
     rotor_frequency = dbc.InputGroup(
         [
             dbc.InputGroupAddon("Rotor frequency", addon_type="prepend"),
-            dbc.Input(value=0, id=f"spinning_frequency-{i}"),
+            dbc.Input(
+                value=0.0,
+                id=f"rotor_frequency-{i}",
+                pattern="^[-+]?[0-9]*\\.?[0-9]+$",
+                min=0.0,
+                list=["0", "54.7356", "30", "60", "90"],
+            ),
             dbc.InputGroupAddon("kHz", addon_type="append"),
-        ]
+        ],
+        # size="sm",
     )
 
     # rotor angle
@@ -137,9 +169,19 @@ def environment(i):
     rotor_angle = dbc.InputGroup(
         [
             dbc.InputGroupAddon("Rotor angle", addon_type="prepend"),
-            dbc.Input(value=54.735, id=f"rotor_angle-{i}"),
-            dbc.InputGroupAddon("degree", addon_type="append"),
-        ]
+            dbc.Input(
+                value=54.735,
+                id=f"rotor_angle-{i}",
+                pattern="^[-+]?[0-9]*\\.?[0-9]+$",
+                max=90,
+                min=0,
+                # step=0.01,
+                # type="number",
+                # inputMode="numeric",
+            ),
+            dbc.InputGroupAddon("deg", addon_type="append"),
+        ],
+        # size="sm",
     )
 
     filter_spin = [
@@ -154,7 +196,7 @@ def environment(i):
             dbc.Col(
                 dbc.FormGroup(
                     [
-                        dbc.Label("Isotope", className="mr-2"),
+                        dbc.Label("Isotope", color="dark"),
                         dcc.Dropdown(id=f"isotope_id-{i}"),
                     ]
                 )
@@ -171,13 +213,16 @@ def environment(i):
         ]
     )
 
-    return [
-        isotope_and_filter,
-        spectrometer_frequency,
-        html.Br(),
-        rotor_frequency,
-        rotor_angle,
-    ]
+    return html.Div(
+        [
+            isotope_and_filter,
+            spectrometer_frequency,
+            html.Br(),
+            rotor_frequency,
+            rotor_angle,
+        ],
+        style={"padding": 0},
+    )
 
 
 # dimension parameters
@@ -187,7 +232,7 @@ def make_dimension(i):
     dimension_contents = dbc.Tab(
         label=f"Index-{i}",
         children=[
-            *environment(i),
+            environment(i),
             # html.Br(),
             sub_group(
                 "Coordinate grid",
@@ -215,91 +260,16 @@ def make_dimension(i):
 # )
 
 
-badge = dbc.Badge(
-    " ", pill=True, color="success", className="mr-1", id="indicator_status"
-)
-
-setting_button = dbc.Button(
-    "Advance", id="advance-id", color="dark", outline=True, className="mr-1", size="sm"
-)
-
-integration_level = {4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9", 10: "10", 11: "11"}
-
-model_line_1 = dbc.Row(
-    [
-        dbc.Col(dbc.Label("Integration density")),
-        dbc.Col(
-            dbc.Input(
-                type="number",
-                value=70,
-                # type="slider",
-                min=0,
-                max=4096,
-                step=1,
-                id="averaging_quality",
-            )
-        ),
-    ]
-)
-
-model_line_2 = dbc.Row(
-    [
-        dbc.Col(dbc.Label("Integration volume")),
-        dbc.Col(
-            dcc.Dropdown(
-                id="octants",
-                options=[
-                    {"label": "Octant", "value": 0},
-                    {"label": "Hemisphere", "value": 1},
-                    {"label": "Sphere", "value": 2},
-                ],
-                value=0,
-                clearable=False,
-            )
-        ),
-    ]
-)
-
-model_info = dbc.Label(
-    size="sm", id="number_of_averaging_points", style={"color": "#566573"}
-)
-
-modal = html.Div(
-    [
-        dbc.ButtonGroup([setting_button, badge]),
-        dbc.Modal(
-            [
-                dbc.ModalHeader("Advance setting"),
-                dbc.ModalBody(dbc.FormGroup([model_line_1, model_info])),
-                dbc.ModalFooter(
-                    dbc.Button(
-                        "Close",
-                        id="close_setting",
-                        color="dark",
-                        className="ml-auto",
-                        outline=True,
-                    )
-                ),
-            ],
-            id="modal_setting",
-            role="document",
-            # modalClassName="modal-dialog",
-            className="modal-dialog",
-        ),
-    ]
-)
+# badge = dbc.Badge(
+#     " ", pill=True, color="success", className="mr-1", id="indicator_status"
+# )
 
 
 dimension_body = dbc.Card(
     [
         dbc.CardBody(
             [
-                dbc.Row(
-                    [
-                        dbc.Col(html.H4("Dimensions", className="card-title")),
-                        dbc.Col(modal),
-                    ]
-                ),
+                dbc.Row(dbc.Col(html.H4("Dimensions", className="card-title"))),
                 dbc.Tabs([make_dimension(i) for i in range(2)]),
             ],
             className="w-100",

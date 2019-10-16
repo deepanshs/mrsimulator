@@ -59,7 +59,6 @@ Install the package with,
 .. pip install git+https://github.com/DeepanshS/mrsimulator.git@master
 
 
-
 Check your build
 ----------------
 
@@ -71,42 +70,7 @@ file in your terminal. Download the test file
 
     $ python test_file.py
 
-This will display the following message on the screen
-
-.. code-block:: text
-
-    `one_d_spectrum` method simulation parameters.
-    ---------------------------------------------
-    The magnetic flux density is 9.4 T.
-    Sample rotation angle is 0.9553059660790962 rad.
-    Sample rotation frequency is 0.0 Hz.
-    Simulating 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope.
-    Recording 1H spectrum with 2048 points over 25000.0 Hz bandwidth
-    and a reference offset of 0.0 Hz.
-
-    1H site 0 from isotopomer 0 @ 100.0% abundance
-    ----------------------------------------------
-    Isotropic chemical shift (δ) = 0.0 Hz
-    Shielding anisotropy (ζ) = 5559.1711126687205 Hz
-    Shielding asymmetry (η) = 0.25
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
-    `one_d_spectrum` method simulation parameters.
-    ---------------------------------------------
-    The magnetic flux density is 9.4 T.
-    Sample rotation angle is 0.9553059660790962 rad.
-    Sample rotation frequency is 1000.0 Hz.
-    Simulating 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope.
-    Recording 1H spectrum with 2048 points over 25000.0 Hz bandwidth
-    and a reference offset of 0.0 Hz.
-
-    1H site 0 from isotopomer 0 @ 100.0% abundance
-    ----------------------------------------------
-    Isotropic chemical shift (δ) = 0.0 Hz
-    Shielding anisotropy (ζ) = 5559.1711126687205 Hz
-    Shielding asymmetry (η) = 0.25
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
-
-and the corresponding plot shown below.
+This should produce the following figure.
 
 .. figure:: _static/test_output.*
     :figclass: figure-polaroid
