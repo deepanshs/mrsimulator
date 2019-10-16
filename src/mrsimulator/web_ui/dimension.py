@@ -90,7 +90,40 @@ def coordinate_grid_subgroup(i):
         # size="sm",
     )
 
-    return [number_of_points, html.Br(), spectral_width, reference_offset]
+    broaden_range = {"0": 0, "2": 2, "4": 4, "6": 6, "8": 8, "10": 10, "12": 12}
+
+    line_broadening = html.Div(
+        dbc.CardBody(
+            [
+                dbc.FormGroup(
+                    [
+                        dbc.Label("Line Broadening"),
+                        dcc.Slider(
+                            min=0,
+                            max=10,
+                            step=1,
+                            value=0,
+                            # marks=broaden_range,
+                            id=f"broadening_points-{i}",
+                        ),
+                        # html.Div(id='slider-output')
+                    ]
+                )
+            ]
+        )
+    )
+    broad_label = dbc.Label(
+        size="sm", id=f"test_to_value-{i}", style={"color": "#566573"}
+    )
+
+    return [
+        number_of_points,
+        html.Br(),
+        spectral_width,
+        reference_offset,
+        line_broadening,
+        broad_label,
+    ]
 
 
 def environment(i):
