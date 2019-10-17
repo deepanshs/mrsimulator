@@ -4,8 +4,6 @@ from scipy.ndimage import gaussian_filter
 
 def line_broadening(datum, sigma):
     normalize = datum.max()
-    print(sigma)
-    print(type(sigma))
     datum = gaussian_filter(datum, sigma, 0)
     return (datum / datum.max()) * normalize
 

@@ -51,14 +51,20 @@ def coordinate_grid_subgroup(i):
     # number of points
     number_of_points = dbc.FormGroup(
         [
-            dbc.Row([
-                dbc.Col(
-                    dbc.Label("Number of points", color="dark", style={"float": "left"}),
-                ),
-                dbc.Col(
-                    id=f"number_points_label-{i}", style={"float": "right"}
-                ),
-            ]),
+            dbc.Row(
+                [
+                    dbc.Col(
+                        dbc.Label(
+                            "Number of points", color="dark", style={"float": "left"}
+                        )
+                    ),
+                    dbc.Col(
+                        dbc.FormText(
+                            id=f"number_points_label-{i}", style={"float": "right"}
+                        )
+                    ),
+                ]
+            ),
             dcc.Slider(
                 min=7,
                 max=17,
@@ -97,38 +103,30 @@ def coordinate_grid_subgroup(i):
         # size="sm",
     )
 
-    broaden_range = {0: "0", 2: "2", 4: "4", 6: "6", 8:"8", 10:"10"}
+    broaden_range = {0: "0", 2: "2", 4: "4", 6: "6", 8: "8", 10: "10"}
 
-    line_broadening = html.Div(
-        dbc.CardBody(
-            [
-                dbc.FormGroup(
-                    [
-                        dbc.Row([
-                            dbc.Col(
-                                dbc.Label("Line Broadening", style={"float": "left"}),
-                            ),
-                            dbc.Col(
-                                dbc.FormText(
-                                    id=f"broadening_sigma_label-{i}", style={"float": "right"})
-                                ),
-                        ]),
-                        dcc.Slider(
-                            min=0,
-                            max=10,
-                            step=1,
-                            value=0,
-                            marks=broaden_range,
-                            id=f"broadening_points-{i}",
-                        ),
-                        # html.Div(id='slider-output')
-                    ]
-                )
-            ]
-        )
-    )
-    broad_label = dbc.Label(
-        size="sm", id=f"test_to_value-{i}", style={"color": "#566573"}
+    line_broadening = dbc.FormGroup(
+        [
+            dbc.Row(
+                [
+                    dbc.Col(dbc.Label("Line Broadening", style={"float": "left"})),
+                    dbc.Col(
+                        dbc.FormText(
+                            id=f"broadening_sigma_label-{i}", style={"float": "right"}
+                        )
+                    ),
+                ]
+            ),
+            dcc.Slider(
+                min=0,
+                max=10,
+                step=1,
+                value=0,
+                marks=broaden_range,
+                id=f"broadening_points-{i}",
+            ),
+            # html.Div(id='slider-output')
+        ]
     )
 
     return [
@@ -136,8 +134,8 @@ def coordinate_grid_subgroup(i):
         html.Br(),
         spectral_width,
         reference_offset,
+        html.Br(),
         line_broadening,
-        broad_label,
     ]
 
 
