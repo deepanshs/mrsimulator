@@ -21,6 +21,7 @@ from mrsimulator import Simulator, Isotopomer, SpectroscopicDimension
 from mrsimulator.methods import one_d_spectrum
 from mrsimulator.web_ui.widgets import get_isotopomers, main_body
 from mrsimulator.web_ui import navbar, sidebar
+from mrsimulator.web_ui.post_simulation import line_broadening
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -212,6 +213,7 @@ def download():
         Input("spectrometer_frequency-0", "value"),
         Input("isotope_id-0", "value"),
         Input("decompose", "active"),
+        Input("broadening_points-0", "value"),
     ],
 )
 def update_data(
@@ -223,6 +225,7 @@ def update_data(
     spectrometer_frequency,
     isotope_id,
     decompose,
+    broadening,
 ):
     """Evaluate the spectrum and update the plot."""
     clear_array = [clear_1D_plot()]
@@ -306,8 +309,7 @@ def update_data(
         sim.x = sim.x.value
 
     # remove the following line and add post simulation function as
-    #       sim.y = post_simulation(my_function)
-    sim.y = sim.original
+    sim.y = post_simulation(line_broadening, sigma=float(broadening))
 
     return plot_1D(isotope_id, decompose)
 
@@ -514,6 +516,22 @@ def update_isotopomer_list(value):
     return [f"{value/10} GHz"]
 
 
+@app.callback(
+    [Output("broadening_sigma_label-0", "children")],
+    [Input("broadening_points-0", "value")],
+)
+def update_broaden_value(value):
+    return [f"{value} ppm"]
+
+
+@app.callback(
+    [Output("number_points_label-0", "children")],
+    [Input("number_of_points-0", "value")],
+)
+def update_broaden_value(value):
+    return [f"{2**value}"]
+
+
 # @app.callback(
 #     [Output("dimension-body", "children")], [Input("dimension-tabs", "active_tab")]
 # )
@@ -644,8 +662,12 @@ def plot_1D(isotope_id, decompose):
 #             'bounce-in-out']
 
 
-def post_simulation(function):
-    return [function(datum) for datum in sim.y if not isinstance(datum, list)]
+def post_simulation(function, **kwargs):
+    return [
+        function(datum, **kwargs)
+        for datum in sim.original
+        if not isinstance(datum, list)
+    ]
 
 
 def parse_contents(contents, filename, date):
