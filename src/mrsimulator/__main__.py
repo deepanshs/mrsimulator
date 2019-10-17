@@ -515,6 +515,19 @@ def update_isotopomer_list(value):
         return [f"{int(value*100)} MHz"]
     return [f"{value/10} GHz"]
 
+@app.callback(
+    [Output("broadening_sigma_label-0", "children")],
+    [Input("broadening_points-0", "value")],
+)
+def update_broaden_value(value):
+    return [f"{value}"]
+
+@app.callback(
+    [Output("number_points_label-0", "children")],
+    [Input("number_of_points-0", "value")],
+)
+def update_broaden_value(value):
+    return [f"{2**value}"]
 
 # @app.callback(
 #     [Output("dimension-body", "children")], [Input("dimension-tabs", "active_tab")]
