@@ -2,7 +2,6 @@
 import mrsimulator.tests.tests as clib
 from mrsimulator.python.angular_momentum import (
     wigner_d_matrix_cosines,
-    wigner_d_matrix,
     wigner_dm0_vector,
 )
 import numpy as np

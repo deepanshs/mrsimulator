@@ -32,7 +32,7 @@ before_install:
   - conda info -a
   - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pytest pytest-cov
   - source activate test-env
-  - conda install -c anaconda $PKG1 $PKG2 --file requirements.txt
+  - conda install -c anaconda $PKG1 $PKG2 --file conda-requirements.txt
   - pip install -r requirements-dev.txt
 
 install:

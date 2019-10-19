@@ -3,6 +3,9 @@ import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+
 
 colors = {"background": "#e2e2e2", "text": "#585858"}
 
@@ -20,7 +23,10 @@ upload_data = html.Div(
         dcc.Upload(
             id="upload_data",
             children=html.Div(
-                ["Drag and drop, or ", html.I(className="fas fa-upload"), " select"],
+                [
+                    "Drag and drop, or ",
+                    html.A([html.I(className="fas fa-upload"), " select"], href="#"),
+                ],
                 #  style={"font-size": 15}
             ),
             style={

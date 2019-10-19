@@ -4,6 +4,9 @@ import dash_html_components as html
 import base64
 from os.path import join, split
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+
 
 folder = split(__file__)[0]
 mrsimulator_logo = join(folder, "resource/mrsimulator-dark-featured.png")
@@ -22,37 +25,23 @@ search_bar = dbc.Row(
 
 nav_items = dbc.Row(
     [
-        dbc.Col(
-            dbc.NavLink(
-                "Documentation",
-                href="https://mrsimulator.readthedocs.io/en/stable/",
-                className="navbar-light expand-lg",
-            )
+        dbc.NavLink(
+            "Documentation",
+            href="https://mrsimulator.readthedocs.io/en/stable/",
+            className="navbar-light expand-lg",
         ),
-        dbc.Col(
-            dbc.NavLink(
-                children=[html.I(className="fab fa-github-square"), "Github"],
-                href="https://github.com/DeepanshS/mrsimulator",
-            )
+        dbc.NavLink(
+            children=[html.I(className="fab fa-github-square"), "Github"],
+            href="https://github.com/DeepanshS/mrsimulator",
         ),
     ],
-    className="ml-auto flex-nowrap mt-3 mt-md-0",
-    align="center",
+    className="ml-auto",  # mt-3 mt-md-0 flex-nowrap
 )
 
 navbar_top = dbc.Navbar(
     [
-        dbc.Row(
-            [
-                dbc.Col(
-                    html.Img(
-                        src="data:image/png;base64,{}".format(encoded_image.decode()),
-                        height="60px",
-                    )
-                )
-            ],
-            align="center",
-            no_gutters=True,
+        html.Img(
+            src="data:image/png;base64,{}".format(encoded_image.decode()), height="60px"
         ),
         dbc.NavbarToggler(id="navbar-toggler"),
         dbc.Collapse([nav_items], id="navbar-collapse", navbar=True),

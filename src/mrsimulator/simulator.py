@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # from pydash import has, get
 from astropy import units as u
-from mrsimulator import Isotopomer, SpectroscopicDimension
+from mrsimulator import Isotopomer
 from mrsimulator.spectrum import ISOTOPE_DATA
 from mrsimulator.methods import one_d_spectrum
 from mrsimulator.importer import import_json

@@ -4,6 +4,10 @@ import dash_html_components as html
 import base64
 from os.path import join, split
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+
+
 __title__ = "mrsimulator"
 __sub_title__ = "A web application framework for NMR lineshape simulation."
 

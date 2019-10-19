@@ -48,9 +48,9 @@ def test__batch_wigner_rotation():
     w2_1 = clib.__wigner_rotation_2(2, cos_alpha_octants, cos_beta_octants, R2).ravel()
     w4_1 = clib.__wigner_rotation_2(4, cos_alpha_octants, cos_beta_octants, R4).ravel()
 
-    print(np.argmax(w2 - w2_1))
+    # print(np.argmax(w2 - w2_1))
     assert np.allclose(w2, w2_1, atol=1e-12)
-    # np.testing.assert_almost_equal(w4, w4_1, decimal=8)
+    np.testing.assert_almost_equal(w4, w4_1, decimal=8)
 
 
 def test_single_2j_rotation_00():

@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-import dash_core_components as dcc
 import dash_html_components as html
-from mrsimulator.web_ui import dimension
-from mrsimulator.web_ui.dimension import dimension_body
-from mrsimulator.web_ui.graph import spectrum_body
-import dash_table
+from mrsimulator.app.dimension import dimension_body
+from mrsimulator.app.graph import spectrum_body
 import dash_bootstrap_components as dbc
 
 
