@@ -205,7 +205,7 @@ setup(
         "requests>=2.21.0",
         "monty==2.0.4",
         "matplotlib>=3.0.2",
-        "csdmpy>=0.1.3",
+        "csdmpy>=0.1.2",
     ],
     ext_modules=cythonize(ext_modules, language_level=3),
     include_package_data=True,
