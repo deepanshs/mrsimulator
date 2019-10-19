@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from dash import Dash
 import dash_bootstrap_components as dbc
-from mrsimulator import Simulator
+from mrsimulator import Simulator, Dimension
 import numpy as np
 
 __author__ = "Deepansh J. Srivastava"
@@ -57,8 +57,6 @@ app = Dash(
     external_scripts=external_scripts,
     meta_tags=[{"name": "viewport", "content": "width=device-width"}],
 )
-
-server = app.server
 app.config.suppress_callback_exceptions = True
 
 sim = Simulator()
@@ -66,5 +64,6 @@ sim.x = np.asarray([-1.0, 1.0])
 sim.y = []
 sim.original = np.asarray([0.0, 0.0])
 sim.nt = 64
-sim.spectrum_previous = {}
+sim.spectrum = [Dimension(number_of_points=2, spectral_width=25)]
+sim.spectrum_previous = []
 sim.new = False

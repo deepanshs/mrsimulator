@@ -52,7 +52,7 @@ Here, ``sim`` is a variable with an instance of the :ref:`simulator_api`
 class. The two attributes of this class that you will often use are
 :attr:`~mrsimulator.Simulator.isotopomers` and
 :attr:`~mrsimulator.Simulator.spectrum`, whose value is a list of
-:ref:`isotopomer_api` and :ref:`spectroscopicDimension_api` objects,
+:ref:`isotopomer_api` and :ref:`dimension_api` objects,
 respectively. The default value of these attributes is an empty list.
 
 .. doctest::
@@ -65,8 +65,8 @@ respectively. The default value of these attributes is an empty list.
 
 Before you can start simulating
 NMR lineshapes, you need to understand the role of the Isotopomer and
-SpectroscopicDimension objects. We recommend starting with
-:ref:`dictionary_objects` and :ref:`spectroscopic_dimension`.
+Dimension objects. We recommend starting with
+:ref:`dictionary_objects` and :ref:`dimension`.
 
 
 Setting up Isotopomer objects
@@ -120,8 +120,8 @@ the Simulator class, ``sim``, as follows
     >>> sim.isotopomers.append(isotopomer_object)
 
 
-Setting up SpectroscopicDimension objects
------------------------------------------
+Setting up Dimension objects
+----------------------------
 
 A spectroscopic dimension is a dimension of the NMR spectrum. The number of
 spectroscopic dimensions depends on the dimensionality of the experiment. For
@@ -153,15 +153,15 @@ collectively define the spin-environment, while the keys `number_of_points`,
 `spectral_width`, and `reference_offset` describes the grid coordinates
 along the spectroscopic dimension at which the spectrum is evaluated.
 
-.. seealso:: :ref:`spectroscopic_dimension`.
+.. seealso:: :ref:`dimension`.
 
 
 An instance of a spectroscopic dimension object may be created from
 a python dictionary, such as the one shown above, using the
-:ref:`spectroscopicDimension_api` class.
+:ref:`dimension_api` class.
 
-    >>> from mrsimulator import SpectroscopicDimension
-    >>> spectrum_object = SpectroscopicDimension.parse_dict_with_units(dimension)
+    >>> from mrsimulator import Dimension
+    >>> spectrum_object = Dimension.parse_dict_with_units(dimension)
 
 You may create multiple spectroscopic dimension objects as required by the
 experiment. In this example, we stick with a single spectroscopic dimension.

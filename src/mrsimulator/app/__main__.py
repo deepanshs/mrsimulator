@@ -4,8 +4,7 @@ import io
 import json
 import os
 
-import dash_html_components as html
-import dash_bootstrap_components as dbc
+# import dash_html_components as html
 import numpy as np
 import flask
 import plotly.graph_objs as go
@@ -15,23 +14,21 @@ from dash.dependencies import Input
 from dash.dependencies import Output
 from dash.dependencies import State
 
-from mrsimulator import Isotopomer, SpectroscopicDimension
+from mrsimulator import Isotopomer, Dimension
 from mrsimulator.methods import one_d_spectrum
-from mrsimulator.app.widgets import main_body
-from mrsimulator.app import navbar, sidebar
 
-# from mrsimulator.app.post_simulation import line_broadening
+import dash_bootstrap_components as dbc
+import dash_html_components as html
 
 from mrsimulator.app.app import app, sim
+from mrsimulator.app import navbar, sidebar
+from mrsimulator.app.widgets import main_body
+
+# from mrsimulator.app.post_simulation import line_broadening
 
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
-
-
-FIRST = True
-count = 0
-total_sites = 0
 
 app.layout = dbc.Container(
     [
@@ -55,6 +52,12 @@ app.layout = dbc.Container(
     style={"max-width": "1400px"},
     className="flex-display",
 )
+server = app.server
+
+
+FIRST = True
+count = 0
+total_sites = 0
 
 
 # update the link to the downloadable serialized file.
@@ -142,6 +145,7 @@ def download():
         Input("isotope_id-0", "value"),
         Input("decompose", "active"),
         # Input("broadening_points-0", "value"),
+        Input("close_setting", "n_clicks"),
     ],
     [State("averaging_quality", "value")],
 )
@@ -155,6 +159,7 @@ def update_data(
     isotope_id,
     decompose,
     # broadening,
+    close_setting_model_01,
     averaging_quality,
 ):
     """Evaluate the spectrum and update the plot."""
@@ -216,13 +221,14 @@ def update_data(
         "number_of_points": 2 ** number_of_points,
         "spectral_width": str(spectral_width) + " kHz",
         "reference_offset": str(reference_offset) + " kHz",
+        "nt": averaging_quality,
     }
 
     if not sim.spectrum_previous == spectrum or sim.new:
         sim.new = False
         sim.spectrum_previous = deepcopy(spectrum)
 
-        sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(spectrum)]
+        # sim.spectrum = [Dimension()]
         sim.spectrum[0].isotope = isotope_id
         sim.spectrum[0].magnetic_flux_density = magnetic_flux_density * 100
         sim.spectrum[0].rotor_frequency = rotor_frequency * 1000.0
@@ -438,7 +444,7 @@ def parse_contents(contents, filename, date):
             sim.isotopomers = [
                 Isotopomer.parse_dict_with_units(item) for item in isotopomers
             ]
-            sim.spectrum = []
+            sim.spectrum = [Dimension(number_of_points=2, spectral_width=25)]
             return (
                 [name, description, "Select a JSON serialized .isotopomers file."],
                 True,

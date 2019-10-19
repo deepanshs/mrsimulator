@@ -6,7 +6,7 @@ import numpy as np
 from numpy.fft import fft
 from numpy.fft import fftshift
 
-from mrsimulator import Isotopomer, SpectroscopicDimension, Simulator
+from mrsimulator import Isotopomer, Dimension, Simulator
 
 
 def _import_json(filename):
@@ -102,8 +102,7 @@ def get_data(filename):
 def c_setup(data_object, data_source):
     # mrsimulator
     spectrum = [
-        SpectroscopicDimension.parse_dict_with_units(item)
-        for item in data_object["spectrum"]
+        Dimension.parse_dict_with_units(item) for item in data_object["spectrum"]
     ]
     isotopomer = [
         Isotopomer.parse_dict_with_units(item) for item in data_object["isotopomers"]
@@ -119,8 +118,7 @@ def c_setup(data_object, data_source):
 def c_setup_random_euler_angles(data_object, data_source):
     # mrsimulator
     spectrum = [
-        SpectroscopicDimension.parse_dict_with_units(item)
-        for item in data_object["spectrum"]
+        Dimension.parse_dict_with_units(item) for item in data_object["spectrum"]
     ]
     isotopomers = [
         Isotopomer.parse_dict_with_units(isotopomer)

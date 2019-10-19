@@ -30,14 +30,14 @@ Site
     .. automethod:: parse_dict_with_units
 
 
-.. _spectroscopicDimension_api:
+.. _dimension_api:
 
-SpectroscopicDimension
-======================
+Dimension
+=========
 
 .. currentmodule:: mrsimulator
 
-.. autoclass:: SpectroscopicDimension
+.. autoclass:: Dimension
     :show-inheritance:
 
     .. autoattribute:: larmor_frequency

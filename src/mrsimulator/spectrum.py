@@ -14,7 +14,7 @@ MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
 ISOTOPE_DATA = loadfn(os.path.join(MODULE_DIR, "isotope_data.json"))
 
 
-class SpectroscopicDimension(Parseable):
+class Dimension(Parseable):
     r"""
     Base class for an NMR spectroscopic dimension.
 
@@ -65,9 +65,9 @@ class SpectroscopicDimension(Parseable):
     isotope: Optional[str] = None
 
     # private attributes
-    spin: int = 1
-    natural_abundance: float = 1.0
-    gyromagnetic_ratio: float = 0.0
+    _spin: float = 1
+    _natural_abundance: float = 1.0
+    _gyromagnetic_ratio: float = 1.0
 
     property_unit_types: ClassVar = {
         "spectral_width": "frequency",
@@ -84,6 +84,47 @@ class SpectroscopicDimension(Parseable):
         "rotor_frequency": "Hz",
         "rotor_angle": "rad",
     }
+
+    @property
+    def spin(self):
+        if self.isotope is None:
+            return self._spin
+        isotope_data = get_isotope_data(self.isotope)
+        return isotope_data["spin"]
+
+    @spin.setter
+    def spin(self, value):
+        if self.isotope is None:
+            self._spin = value
+
+    @property
+    def natural_abundance(self):
+        if self.isotope is None:
+            return self._natural_abundance
+        isotope_data = get_isotope_data(self.isotope)
+        return isotope_data["natural_abundance"]
+
+    @natural_abundance.setter
+    def natural_abundance(self, value):
+        if self.isotope is None:
+            self._natural_abundance = value
+
+    @property
+    def gyromagnetic_ratio(self):
+        if self.isotope is None:
+            return 0.0
+        isotope_data = get_isotope_data(self.isotope)
+        return isotope_data["gyromagnetic_ratio"]
+
+    @gyromagnetic_ratio.setter
+    def gyromagnetic_ratio(self, value):
+        if self.isotope is None:
+            self._gyromagnetic_ratio = value
+
+    @spin.setter
+    def spin(self, value):
+        if self.isotope is None:
+            self._spin = value
 
     @property
     def larmor_frequency(self):
@@ -127,13 +168,14 @@ class SpectroscopicDimension(Parseable):
                 )
             )
         else:
+
             denominator = np.abs(self.reference_offset * 1e-6 + self.larmor_frequency)
             return self.coordinates_Hz / denominator
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantities of a SpectroscopicDimension object
+        Parse the physical quantities of a Dimension object
         when expressed as a python dictionary.
 
         Args:

@@ -40,7 +40,7 @@ To begin, set up an instance of the :ref:`simulator_api` class and import the
 
 .. doctest::
 
-    >>> from mrsimulator import Simulator, SpectroscopicDimension
+    >>> from mrsimulator import Simulator, Dimension
     >>> from mrsimulator.methods import one_d_spectrum
     >>> sim = Simulator()
 
@@ -80,14 +80,14 @@ Static spectrum
 '''''''''''''''
 
 To simulate a static spectrum, set up with the following
-:ref:`spectroscopicDimension_api` object,
+:ref:`dimension_api` object,
 
 .. doctest::
 
     >>> dim = dict(isotope="13C", magnetic_flux_density="9.4 T", rotor_frequency="0 kHz",
     ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="5 kHz",
     ...         reference_offset="0 Hz")
-    >>> sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(dim)]
+    >>> sim.spectrum = [Dimension.parse_dict_with_units(dim)]
 
 The above spectroscopic dimension will simulate a :math:`^{13}\mathrm{C}`
 static spectrum at 9.4 T magnetic field over 5 kHz frequency-bandwidth using
@@ -168,7 +168,7 @@ is set to 100 Hz.
     >>> dim = dict(isotope="13C", magnetic_flux_density="9.4 T", rotor_frequency="100 Hz",
     ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="5 kHz",
     ...         reference_offset="0 Hz")
-    >>> sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(dim)]
+    >>> sim.spectrum = [Dimension.parse_dict_with_units(dim)]
 
 Now compute the line-shape as before.
 
@@ -229,7 +229,7 @@ and 500 Hz, respectively.
     >>> dim = dict(isotope="13C", magnetic_flux_density="9.4 T", rotor_frequency="500 Hz",
     ...         rotor_angle="90 deg", number_of_points=8192, spectral_width="5 kHz",
     ...         reference_offset="0 Hz")
-    >>> sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(dim)]
+    >>> sim.spectrum = [Dimension.parse_dict_with_units(dim)]
 
 The simulated lineshape.
 
@@ -287,7 +287,7 @@ spectroscopic dimension with "29Si" as the value of the ``isotope`` key.
     >>> dim = dict(isotope="29Si", magnetic_flux_density="9.4 T", rotor_frequency="1 kHz",
     ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="30 kHz",
     ...         reference_offset="-5 kHz")
-    >>> sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(dim)]
+    >>> sim.spectrum = [Dimension.parse_dict_with_units(dim)]
 
 Run the simulation.
 
@@ -344,7 +344,7 @@ In this another examples, we simulate a :math:`^1\mathrm{H}` spectrum.
     >>> dim = dict(isotope="1H", magnetic_flux_density="9.4 T", rotor_frequency="2 kHz",
     ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="50 kHz",
     ...         reference_offset="0 Hz")
-    >>> sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(dim)]
+    >>> sim.spectrum = [Dimension.parse_dict_with_units(dim)]
 
 The line-shape simulation
 

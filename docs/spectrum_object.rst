@@ -1,11 +1,11 @@
 
 
-.. _spectroscopic_dimension:
+.. _dimension:
 
-Understanding SpectroscopicDimension
-------------------------------------
+Understanding Dimension
+-----------------------
 
-We define a `SpectroscopicDimension` as an object with attributes representing
+We define a `Dimension` as an object with attributes representing
 a spectroscopic dimension of an NMR experiment.
 
 .. cssclass:: table-bordered table-hover
@@ -64,7 +64,7 @@ object, the `Dimension` object may be represented as,
 
 .. code-block:: py
 
-    spectroscopic_dimension_object = dict(
+    dimension_object = dict(
         "isotope": "13C",
         "magnetic_flux_density": "9.4 T",
         "rotor_frequency": "5 kHz",

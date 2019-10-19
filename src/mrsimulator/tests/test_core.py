@@ -8,7 +8,7 @@ import numpy as np
 
 # from typing import ClassVar
 
-from mrsimulator import Site, Isotopomer, SpectroscopicDimension
+from mrsimulator import Site, Isotopomer, Dimension
 
 # from mrsimulator.examples import mas_data, static_data
 
@@ -115,12 +115,12 @@ def test_parse_json_isotopomer():
 
 
 def test_direct_init_spectrum():
-    the_spectrum = SpectroscopicDimension(number_of_points=1024, spectral_width=100)
+    the_spectrum = Dimension(number_of_points=1024, spectral_width=100)
     assert the_spectrum.number_of_points == 1024
     assert the_spectrum.spectral_width == 100
     # assert the_spectrum.property_units["spectral_width"] == 'Hz'
 
-    SpectroscopicDimension(
+    Dimension(
         number_of_points=1024,
         spectral_width=100,
         reference_offset=0,
@@ -144,16 +144,15 @@ def test_parse_json_spectrum():
         "isotope": "1H",
     }
 
-    spec = SpectroscopicDimension.parse_dict_with_units(good_json)
-    assert "spin" in spec.dict()
+    spec = Dimension.parse_dict_with_units(good_json)
     assert spec.spin == 1
     assert spec.isotope == "1H"
     assert np.allclose(spec.rotor_angle, 0.95879662)
 
 
 # def test_parsing(mas_data, static_data):
-#     mas = SpectroscopicDimension.parse_dict_with_units(mas_data["spectrum"])
-#     static = SpectroscopicDimension.parse_dict_with_units(static_data["spectrum"])
+#     mas = Dimension.parse_dict_with_units(mas_data["spectrum"])
+#     static = Dimension.parse_dict_with_units(static_data["spectrum"])
 
 #     [
 #         Isotopomer.parse_dict_with_units(isotopomer)

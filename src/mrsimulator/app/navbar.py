@@ -40,8 +40,17 @@ nav_items = dbc.Row(
 
 navbar_top = dbc.Navbar(
     [
-        html.Img(
-            src="data:image/png;base64,{}".format(encoded_image.decode()), height="60px"
+        html.Div(
+            [
+                html.Img(
+                    src="data:image/png;base64,{}".format(encoded_image.decode()),
+                    height="70px",
+                ),
+                html.H5(
+                    "A plotly-dash app",
+                    style={"color": "white", "float": "center", "font-size": 16},
+                ),
+            ]
         ),
         dbc.NavbarToggler(id="navbar-toggler"),
         dbc.Collapse([nav_items], id="navbar-collapse", navbar=True),
