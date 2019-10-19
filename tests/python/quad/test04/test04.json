@@ -1,0 +1,33 @@
+{
+  "spectrum": [
+    {
+      "magnetic_flux_density": "4.7 T",
+      "rotor_frequency": "12.5 kHz",
+      "rotor_angle": "54.74 deg",
+      "number_of_points": 1024,
+      "spectral_width": "70 kHz",
+      "isotope": "23Na"
+    }
+  ],
+  "isotopomers": [
+    {
+      "sites": [
+        {
+          "isotope": "23Na",
+          "isotropic_chemical_shift": "0 ppm",
+          "quadrupolar": {
+            "Cq": "2.5 MHz",
+            "eta": 1.0
+          }
+        }
+      ],
+      "abundance": "100 %"
+    }
+  ],
+  "test_data": {
+    "source": "python",
+    "filename": "grid_eta_1.0_angle_54.74 deg.npy",
+    "quantity": "frequency",
+    "type": "npz"
+  }
+}

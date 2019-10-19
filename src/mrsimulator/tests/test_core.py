@@ -8,7 +8,7 @@ import numpy as np
 
 # from typing import ClassVar
 
-from mrsimulator import Site, Isotopomer, Spectrum
+from mrsimulator import Site, Isotopomer, SpectroscopicDimension
 
 # from mrsimulator.examples import mas_data, static_data
 
@@ -28,36 +28,36 @@ def test_parse_json_site():
     good_json = {
         "isotope": "1H",
         "isotropic_chemical_shift": "0 ppm",
-        "shielding_symmetric": {"anisotropy": "13.89 ppm", "asymmetry": 0.25},
+        "shielding_symmetric": {"zeta": "13.89 ppm", "eta": 0.25},
     }
 
-    the_site = Site.parse_json_with_units(good_json)
+    the_site = Site.parse_dict_with_units(good_json)
     assert the_site.isotope == "1H"
     assert the_site.isotropic_chemical_shift == 0
     assert the_site.property_units["isotropic_chemical_shift"] == "ppm"
     assert the_site.shielding_antisymmetric is None
     assert the_site.quadrupolar is None
-    assert the_site.shielding_symmetric.anisotropy == 13.89
-    assert the_site.shielding_symmetric.property_units["anisotropy"] == "ppm"
-    assert the_site.shielding_symmetric.asymmetry == 0.25
+    assert the_site.shielding_symmetric.zeta == 13.89
+    assert the_site.shielding_symmetric.property_units["zeta"] == "ppm"
+    assert the_site.shielding_symmetric.eta == 0.25
     assert the_site.shielding_symmetric.alpha is None
     assert the_site.shielding_symmetric.beta is None
     assert the_site.shielding_symmetric.gamma is None
 
-    good_json_2 = {"isotope": "14N", "isotropic_chemical_shift": "-120 Hz"}
+    good_json_2 = {"isotope": "14N", "isotropic_chemical_shift": "-10 ppm"}
 
-    the_site = Site.parse_json_with_units(good_json_2)
+    the_site = Site.parse_dict_with_units(good_json_2)
     assert the_site.isotope == "14N"
-    assert the_site.isotropic_chemical_shift == -120
-    assert the_site.property_units["isotropic_chemical_shift"] == "Hz"
+    assert the_site.isotropic_chemical_shift == -10
+    assert the_site.property_units["isotropic_chemical_shift"] == "ppm"
     assert the_site.shielding_antisymmetric is None
     assert the_site.quadrupolar is None
     assert the_site.shielding_symmetric is None
 
     result = {
         "isotope": "14N",
-        "isotropic_chemical_shift": -120.0,
-        "property_units": {"isotropic_chemical_shift": "Hz"},
+        "isotropic_chemical_shift": -10.0,
+        "property_units": {"isotropic_chemical_shift": "ppm"},
         "quadrupolar": None,
         "shielding_symmetric": None,
         "shielding_antisymmetric": None,
@@ -67,7 +67,7 @@ def test_parse_json_site():
     bad_json = {"isotope": "1H", "isotropic_chemical_shift": "0 rad"}
 
     with pytest.raises(Exception):
-        Site.parse_json_with_units(bad_json)
+        Site.parse_dict_with_units(bad_json)
 
 
 def test_direct_init_isotopomer():
@@ -107,20 +107,20 @@ def test_parse_json_isotopomer():
 
     bad_json = {"sites": [], "abundance": "10 Hz"}
 
-    Isotopomer.parse_json_with_units(good_json)
-    Isotopomer.parse_json_with_units(good_json2)
+    Isotopomer.parse_dict_with_units(good_json)
+    Isotopomer.parse_dict_with_units(good_json2)
 
     with pytest.raises(Exception):
-        Isotopomer.parse_json_with_units(bad_json)
+        Isotopomer.parse_dict_with_units(bad_json)
 
 
 def test_direct_init_spectrum():
-    the_spectrum = Spectrum()
+    the_spectrum = SpectroscopicDimension(number_of_points=1024, spectral_width=100)
     assert the_spectrum.number_of_points == 1024
     assert the_spectrum.spectral_width == 100
     # assert the_spectrum.property_units["spectral_width"] == 'Hz'
 
-    Spectrum(
+    SpectroscopicDimension(
         number_of_points=1024,
         spectral_width=100,
         reference_offset=0,
@@ -129,9 +129,6 @@ def test_direct_init_spectrum():
         rotor_angle=0.9553,  # 54.935 degrees in radians
         rotor_phase=0,
         isotope="1H",
-        spin=1,
-        natural_abundance=0.04683,
-        gyromagnetic_ratio=-8.465,
     )
 
 
@@ -147,7 +144,7 @@ def test_parse_json_spectrum():
         "isotope": "1H",
     }
 
-    spec = Spectrum.parse_json_with_units(good_json)
+    spec = SpectroscopicDimension.parse_dict_with_units(good_json)
     assert "spin" in spec.dict()
     assert spec.spin == 1
     assert spec.isotope == "1H"
@@ -155,16 +152,16 @@ def test_parse_json_spectrum():
 
 
 # def test_parsing(mas_data, static_data):
-#     mas = Spectrum.parse_json_with_units(mas_data["spectrum"])
-#     static = Spectrum.parse_json_with_units(static_data["spectrum"])
+#     mas = SpectroscopicDimension.parse_dict_with_units(mas_data["spectrum"])
+#     static = SpectroscopicDimension.parse_dict_with_units(static_data["spectrum"])
 
 #     [
-#         Isotopomer.parse_json_with_units(isotopomer)
+#         Isotopomer.parse_dict_with_units(isotopomer)
 #         for isotopomer in mas_data["isotopomers"]
 #     ]
 
 #     [
-#         Isotopomer.parse_json_with_units(isotopomer)
+#         Isotopomer.parse_dict_with_units(isotopomer)
 #         for isotopomer in static_data["isotopomers"]
 #     ]
 

@@ -8,21 +8,24 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 class SymmetricTensor(Parseable):
 
-    anisotropy: Optional[float]
-    asymmetry: Optional[float]
+    zeta: Optional[float]
+    Cq: Optional[float]
+    eta: Optional[float]
     alpha: Optional[float]
     beta: Optional[float]
     gamma: Optional[float]
 
     property_unit_types: ClassVar = {
-        "anisotropy": ["dimensionless", "frequency"],
+        "zeta": "dimensionless",
+        "Cq": "frequency",
         "alpha": "angle",
         "beta": "angle",
         "gamma": "angle",
     }
 
     property_default_units: ClassVar = {
-        "anisotropy": ["ppm", "Hz"],
+        "zeta": "ppm",
+        "Cq": "Hz",
         "alpha": "rad",
         "beta": "rad",
         "gamma": "rad",
@@ -34,29 +37,42 @@ class SymmetricTensor(Parseable):
         MHz, MHz*ppm -> Hz
         """
         temp_dict = self.dict()
-        if self.property_units["anisotropy"] == "ppm":
-            temp_dict["anisotropy"] *= larmor_frequency
+        if "zeta" in self.property_units:
+            if self.property_units["zeta"] == "ppm":
+                temp_dict["zeta"] *= larmor_frequency
 
+        return temp_dict
+
+    def to_dict_with_units(self):
+        """
+        Serialize the SymmetricTensor object to a JSON compliant python dictionary
+        with units.
+        """
+        temp_dict = {k: v for k, v in self.dict().items() if v is not None}
+
+        if "zeta" in self.property_units:
+            temp_dict["zeta"] = str(temp_dict["zeta"]) + " ppm"
+
+        if "Cq" in self.property_units:
+            temp_dict["Cq"] = str(temp_dict["Cq"] / 1.0e6) + " MHz"
+
+        temp_dict.pop("property_units")
         return temp_dict
 
 
 class AntisymmetricTensor(Parseable):
 
-    anisotropy: Optional[float]
+    zeta: Optional[float]
     alpha: Optional[float]
     beta: Optional[float]
 
     property_unit_types: ClassVar = {
-        "anisotropy": ["dimensionless", "frequency"],
+        "zeta": "dimensionless",
         "alpha": "angle",
         "beta": "angle",
     }
 
-    property_default_units: ClassVar = {
-        "anisotropy": ["ppm", "Hz"],
-        "alpha": "rad",
-        "beta": "rad",
-    }
+    property_default_units: ClassVar = {"zeta": ["ppm"], "alpha": "rad", "beta": "rad"}
 
     def to_freq_dict(self, larmor_frequency):
         """
@@ -64,7 +80,18 @@ class AntisymmetricTensor(Parseable):
         MHz, MHz*ppm -> Hz
         """
         temp_dict = self.dict()
-        if self.property_units["anisotropy"] == "ppm":
-            temp_dict["anisotropy"] *= larmor_frequency
+        if self.property_units["zeta"] == "ppm":
+            temp_dict["zeta"] *= larmor_frequency
+
+        return temp_dict
+
+    def to_dict_with_units(self, larmor_frequency):
+        """
+        Serialize the AntiSymmetricTensor object to a JSON compliant python dictionary
+        with units.
+        """
+        temp_dict = {k: v for k, v in self.dict().items() if v is not None}
+        if "zeta" in self.property_units:
+            temp_dict["zeta"] = str(temp_dict["zeta"]) + " ppm"
 
         return temp_dict

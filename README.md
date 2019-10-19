@@ -1,88 +1,75 @@
 
 [![Build Status](https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master)](https://travis-ci.org/DeepanshS/mrsimulator)
+[![Documentation Status](https://readthedocs.org/projects/mrsimulator/badge/?version=stable)](https://mrsimulator.readthedocs.io/en/stable/?badge=stable)
 
 # mrsimulator
 
-The package ``mrsimulator`` contains key functionality and tools needed for
-simulating one-dimensional nuclear magnetic resonance (NMR) lineshapes using
-Python. The package is currently under development. Version 0.1.0 supports
-simulation of single spin \(I=1/2\) nuclei, static,
-magic angle spinning (MAS), and variable angle spinning (VSA) lineshapes.
-For more information, read the documentation [here](https://deepanshs.github.io/mrsimulator/).
+``mrsimulator`` is a library package with methods and tools for fast
+simulation of solid-state nuclear magnetic resonance (NMR) line-shapes.
+The library contains routines written in C which are wrapped and made
+available in python.
+
+The package is currently under development. At present, `mrsimulator` features
+simulation of one-dimensional NMR line-shape of uncoupled spin
+I=1/2 isotopes for the following scenarios --
+
+- At arbitrary macroscopic magnetic flux density,
+- Magic angle spinning (MAS) at arbitrary spin rate,
+- Variable angle spinning (VAS) at arbitrary angle and spin rates,
+- Static line-shape.
+
+For more information, refer to the
+[documentation](https://deepanshs.github.io/mrsimulator/).
 
 ## Installation
 
-### Installing requirements
+We recommend installing [anaconda](https://www.anaconda.com/distribution/)
+distribution for python version 3.6 or higher. The anaconda distribution
+ships with numerous packages and modules including Numpy, Scipy, and Matplotlib
+which are useful packages for scientific datasets.
 
-The `mrsimulator` package requires the [fftw3](https://anaconda.org/eumetsat/fftw3)
-C routines. Download and install the fftw3 routines by typing the following
-in the terminal
+### Download mrsimulator package
 
-    conda install -c eumetsat fftw3
+First, clone and download the ``mrsimulator`` package from Github. If you prefer
+``git``, type the following in the terminal,
 
-In addition, ``mrsimulator`` also requires [NumPy>=1.13.3](http://www.numpy.org)
-and intel [mkl](https://pypi.org/project/mkl/) and
-[mkl_include](https://pypi.org/project/mkl-include) C routines to build and
-install the `mrsimulator` package. Download and install these C routines using
+    $ git clone git://github.com/DeepanshS/mrsimulator.git
 
-    pip install "numpy>=1.13.1" mkl mkl-include
+else, [download](https://github.com/DeepanshS/mrsimulator) the package using
+the browser. Once downloaded, use the terminal to navigate to the directory
+containing the package (usually, the folder is named mrsimulator).
 
-Some additional package dependencies are
+    $ cd mrsimulator
 
-- [astropy>=3.0](https://www.astropy.org) for the units library,
-- [matplotlib>=3.0.2](https://matplotlib.org) for figures and visualization,
+### Installing dependencies
 
-and,
+Next, install the dependencies of the package. We recommend using ``conda`` to
+install the dependencies, as follows,
 
-- [plotly>=3.6](https://plot.ly/python/)
-- [dash>=0.40](https://pypi.org/project/dash/)
-- [dash_daq>=0.1](https://pypi.org/project/dash-daq/)
+    $ conda install -c conda-forge openblas --file requirements.txt
 
-for the web-face interface.
+### Building and Installing mrsimulator package
 
-### Installing mrsimulator
+Because the core of the ``mrsimulator`` package is written in C, you will
+require a C-compiler to build and install the package. We recommend the
+following C-compiler for the OS types:
 
-To install the ``mrsimulator`` package, type the following
-in the terminal.
+- Mac OS - ``clang``
+- Linux - ``gcc``
+- Windows - ``msvc``
 
-    pip install git+https://github.com/DeepanshS/mrsimulator.git@master
+Install the package with,
 
-## Test
+    $ python setup.py install
+
+## Check your build
 
 If the installation is successful, you should be able to run the following
-in the terminal.
+[test file](https://raw.github.com/DeepanshS/mrsimulator-test/master/test_file.py?raw=true)
+in your terminal.
 
-    python -c "import mrsimulator; mrsimulator.run_test()"
+    $ python test_file.py
 
-This will display the following message on the screen
+This should produce the following figure.
 
-    Setting up the virtual NMR spectrometer
-    ---------------------------------------
-    Adjusting the magnetic flux density to 9.4 T.
-    Setting rotation angle to 0.9553059660790962 rad.
-    Setting rotation frequency to 0.0 Hz.
-    Detecting 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope.
-    Recording 1H spectrum with 2048 points over a 25000.0 Hz bandwidth and a reference offset of 0.0 Hz.
-
-    1H site 0 from isotopomer 0 @ 100.0% abundance
-    ----------------------------------------------
-    Isotropic chemical shift = 0.0 ppm
-    Shielding anisotropy = 13.89 ppm
-    Shielding asymmetry = 0.25
-    Setting up the virtual NMR spectrometer
-    ---------------------------------------
-    Adjusting the magnetic flux density to 9.4 T.
-    Setting rotation angle to 0.9553059660790962 rad.
-    Setting rotation frequency to 1000.0 Hz.
-    Detecting 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope.
-    Recording 1H spectrum with 2048 points over a 25000.0 Hz bandwidth and a reference offset of 0.0 Hz.
-
-    1H site 0 from isotopomer 0 @ 100.0% abundance
-    ----------------------------------------------
-    Isotropic chemical shift = 0.0 ppm
-    Shielding anisotropy = 13.89 ppm
-    Shielding asymmetry = 0.25
-
-and the corresponding plot shown below.
-
-![alt text](https://raw.githubusercontent.com/DeepanshS/mrsimulator/gh-pages/_static/test_output.png)
+![alt text](https://raw.githubusercontent.com/DeepanshS/mrsimulator/master/docs/_static/test_output.png)

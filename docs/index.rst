@@ -1,40 +1,53 @@
-.. MRSimulator documentation master file, created by
-   sphinx-quickstart on Tue Apr  2 21:31:08 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-.. image:: https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master
-    :target: https://travis-ci.org/DeepanshS/mrsimulator
+.. only:: html
 
+    .. image:: https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master
+        :target: https://travis-ci.org/DeepanshS/mrsimulator
+    .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
+        :target: https://mrsimulator.readthedocs.io/en/stable/?badge=stable
+        :alt: Documentation Status
 
 Welcome to mrsimulator's documentation!
 =======================================
 
-The package ``mrsimulator`` contains key functionality and tools needed for
-simulating one-dimensional nuclear magnetic resonance (NMR) lineshapes using
-Python. The package is currently under development. Version 0.1.0 supports
-simulation of single spin :math:`I=\frac{1}{2}` nuclei static,
-magic angle spinning (MAS), and variable angle spinning (VSA) lineshapes.
+``mrsimulator`` is a library package with methods and tools for fast
+simulation of solid-state nuclear magnetic resonance (NMR) line-shapes.
+The library contains routines written in C which are wrapped and made
+available in python.
+
+The package is currently under development. At present, `mrsimulator` features
+simulation of one-dimensional NMR line-shape of uncoupled spin
+:math:`I=\frac{1}{2}` isotopes for the following scenarios --
+
+- At arbitrary macroscopic magnetic flux density,
+- Magic angle spinning (MAS) at arbitrary spin rate,
+- Variable angle spinning (VAS) at arbitrary angle and spin rates,
+- Static line-shape.
 
 .. toctree::
-   :maxdepth: 7
-   :caption: Contents:
+   :maxdepth: 2
+   :caption: Table of Contents:
 
    installation
+   requirements
    getting_started
-   mr_objects
    load_isotopomers
+   objects
+   spectrum_object
    examples
+   theory/components
    api_py/py_api
    api_c/c_api
 
-Indices and tables
-==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+..    theory/wigner_rotations
 
-.. seealso::
 
-    :ref:`examples`
+.. only:: html
+
+    Indices and tables
+    ------------------
+
+    * :ref:`genindex`
+    * :ref:`modindex`
+    * :ref:`search`

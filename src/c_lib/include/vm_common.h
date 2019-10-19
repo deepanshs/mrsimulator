@@ -27,7 +27,7 @@ static inline void vm_double_ramp(int count, const double *restrict x,
  * Create a vector x = [0 .. count-1]
  * res = 0 .. count-1
  */
-static inline void vm_double_arange(int count, double *restrict res) {
+static inline void vm_double_arrange(int count, double *restrict res) {
   //   x = __builtin_assume_aligned(x, 32);
   //   res = __builtin_assume_aligned(res, 32);
   double i = 0.0;
@@ -61,3 +61,33 @@ static inline void vm_double_ones(int count, double *restrict res) {
   }
   // memset(res, 0, count * sizeof(double));
 }
+
+/**
+ * @brief Return a vector ordered according to the fft output order.
+ *
+ * @params n The number of points.
+ * @params increment The increment along the dimension axis (sampling interval).
+ * @returns values A pointer to the fft output order vector of size @p n.
+ */
+static inline double *__get_frequency_in_FFT_order(int n, double increment) {
+  double *vr_freq = malloc_double(n);
+  int i = 0, m, positive_limit, negative_limit;
+
+  if (n % 2 == 0) {
+    negative_limit = (int)(-n / 2);
+    positive_limit = -negative_limit - 1;
+  } else {
+    negative_limit = (int)(-(n - 1) / 2);
+    positive_limit = -negative_limit;
+  }
+
+  for (m = 0; m <= positive_limit; m++) {
+    vr_freq[i] = (double)m * increment;
+    i++;
+  }
+  for (m = negative_limit; m < 0; m++) {
+    vr_freq[i] = (double)m * increment;
+    i++;
+  }
+  return vr_freq;
+};

@@ -6,6 +6,10 @@
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
+#include <math.h>
+#include <string.h>
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /** Arithmetic suit ======================================================== */
 
 /**
@@ -158,7 +162,7 @@ static inline void vm_double_square(int count, const double *restrict x,
 
 /**
  * Square the elements of vector y inplace.
- * y /= x
+ * x *= x
  */
 static inline void vm_double_square_inplace(int count, double *restrict x) {
   // x = __builtin_assume_aligned(x, 32);
@@ -204,20 +208,28 @@ static inline void vm_double_square_root_inplace(int count,
  * complex.
  * res = x * y
  */
-static inline void vm_double_complex_multiply(int count,
-                                              const complex128 *restrict x,
-                                              const complex128 *restrict y,
-                                              complex128 *restrict res) {
+static inline void vm_double_complex_multiply(int count, const void *restrict x,
+                                              const void *restrict y,
+                                              void *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   // res = __builtin_assume_aligned(res, 32);
-  // double *res_ = (double *)res;
-  // double *x_ = (double *)x;
-  // double *y_ = (double *)y;
-  // int count_ = 2 * count;
+  double *res_ = (double *)res;
+  double *x_ = (double *)x;
+  double *y_ = (double *)y;
+  double real, imag, a, b, c, d;
 
   while (count-- > 0) {
-    *res++ = *x++ * *y++;
+    real = *x_++;
+    imag = *x_++;
+    a = real * *y_;   // real real
+    c = imag * *y_++; // imag real
+    b = imag * *y_;   // imag imag
+    d = real * *y_++; // real imag
+    *res_++ = a - b;
+    *res_++ = c + d;
+
+    // *res++ = *x++ * *y++;
   }
 }
 
@@ -232,7 +244,9 @@ static inline void vm_double_cosine(int count, const double *restrict x,
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
-    *res++ = cos(*x++);
+    *res = cos(*x);
+    res++;
+    x++;
     // x += stride_x;
     // res += stride_res;
   }
@@ -259,7 +273,7 @@ static inline void vm_double_sine(int count, const double *restrict x,
  * res = cos(x) + I sin(x)
  */
 static inline void vm_cosine_I_sine(int count, const double *restrict x,
-                                    complex128 *restrict res) {
+                                    void *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   double *res_ = (double *)res;
@@ -290,8 +304,8 @@ static inline double my_exp(double x) {
  * Exponent of the elements of vector x stored in res of type double.
  * res = exp(x)
  */
-static inline void vm_dexp(int count, double *restrict x,
-                           double *restrict res) {
+static inline void vm_double_exp(int count, double *restrict x,
+                                 double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
@@ -303,44 +317,19 @@ static inline void vm_dexp(int count, double *restrict x,
  * Exponent of the elements of vector x stored in res of type complex128.
  * res = exp(x)
  */
-static inline void vm_double_complex_exp(int count,
-                                         const complex128 *restrict x,
-                                         complex128 *restrict res) {
+static inline void vm_double_complex_exp(int count, const void *restrict x,
+                                         void *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
-  // double *x_ = (double *)x;
-  // double *res_ = (double *)res;
-  // double *res_1 = (double *)res + 1;
-  // int count_ = 2 * count;
-  // int i = 1;
-  // double factor, num_;
+  double *x_ = (double *)x;
+  double *res_ = (double *)res;
+  double temp;
 
-  // // double temp;
   while (count-- > 0) {
-    //   i = 1;
-    //   factor = *++x_;
-    //   num_ = factor;
-    //   *res_ = 1;
-    //   *res_1 = factor;
-    //   while (i < 10)
-    //   {
-    //     factor *= num_ / ++i;
-    //     *res_ -= factor;
-    //     factor *= num_ / ++i;
-    //     *res_1 -= factor;
-    //     factor *= num_ / ++i;
-    //     *res_ += factor;
-    //     factor *= num_ / ++i;
-    //     *res_1 += factor;
-    //   }
-    //   res_ += 2;
-    //   res_1 += 2;
-    //   x_++;
-
-    *res++ = cexp(*x++);
-    // temp = my_exp(*x_++);
-    // *res_++ = cos(*++x_) * temp;
-    // *res_++ = sin(*x_++) * temp;
+    // *res++ = cexp(*x++);
+    temp = my_exp(*x_++);
+    *res_++ = cos(*x_) * temp;
+    *res_++ = sin(*x_++) * temp;
   }
 }
 
@@ -368,12 +357,15 @@ static inline void cblas_dscal(int count, const double a, double *restrict x,
  * x *= a
  * Equivalent to cblas_zdscal.
  */
-static inline void cblas_zdscal(int count, const double a,
-                                complex128 *restrict x, const int stride_x) {
+static inline void cblas_zdscal(int count, const double a, void *restrict x,
+                                const int stride_x) {
   // x = __builtin_assume_aligned(x, 32);
+  double *x_ = (double *)x;
+  int stride_xp = stride_x * 2 - 1;
   while (count-- > 0) {
-    *x *= a;
-    x += stride_x;
+    *x_++ *= a;
+    *x_++ *= a;
+    x_ += stride_xp;
   }
 }
 
@@ -399,15 +391,20 @@ static inline void cblas_dcopy(int count, const double *restrict x,
  * y = x
  * Equivalent to cblas_zcopy.
  */
-static inline void cblas_zcopy(int count, const complex128 *restrict x,
-                               const int stride_x, complex128 *restrict y,
+static inline void cblas_zcopy(int count, const void *restrict x,
+                               const int stride_x, void *restrict y,
                                const int stride_y) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
+  double *x_ = (double *)x;
+  double *y_ = (double *)y;
+  int stride_xp = stride_x * 2 - 1;
+  int stride_yp = stride_y * 2 - 1;
   while (count-- > 0) {
-    *y = *x;
-    x += stride_x;
-    y += stride_y;
+    *y_++ = *x_++;
+    *y_++ = *x_++;
+    x_ += stride_xp;
+    y_ += stride_yp;
   }
 }
 
@@ -446,4 +443,6 @@ static inline void catlas_daxpby(int count, const double a,
     y += stride_y;
   }
 }
-#endif
+#endif /* __blas_activate */
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */

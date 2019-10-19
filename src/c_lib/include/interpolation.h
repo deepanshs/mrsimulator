@@ -7,7 +7,7 @@
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
-#include "mrsimulator.h"
+#include "config.h"
 
 extern int triangle_interpolation(double *freq1, double *freq2, double *freq3,
                                   double *amp, double *spec, int *points);

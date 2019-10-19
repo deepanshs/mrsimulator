@@ -158,7 +158,7 @@ void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,
   w1_row = A20 * minY - B20 * minX + C20;
   w2_row = A01 * minY - B01 * minX + C01;
 
-  // Rasterize
+  // Rasterizer
   for (i = minY_; i <= maxY_; i++) {
 
     // Determine barycentric coordinates

@@ -12,15 +12,9 @@
 #
 import os
 import sys
-import textwrap
+import subprocess
 
 sys.path.insert(0, os.path.abspath("../.."))
-# sys.path.insert(0, os.path.dirname(os.path.abspath(".")))
-# sys.path.insert(0, os.path.abspath("../.."))
-
-# curr_dir = os.path.abspath(os.path.dirname(__file__))
-# path_to_static = os.path.join(curr_dir, "_build", "_static")
-
 
 # -- Project information -----------------------------------------------------
 
@@ -28,10 +22,17 @@ project = "mrsimulator"
 copyright = "2019, Deepansh J. Srivastava"
 author = "Deepansh J. Srivastava"
 
+# get version number from the file
+with open("../src/mrsimulator/__init__.py", "r") as f:
+    for line in f.readlines():
+        if "__version__" in line:
+            before_keyword, keyword, after_keyword = line.partition("=")
+            __version__ = after_keyword.strip()[1:-1]
+
 # The short X.Y version
-version = "0.1"
+version = __version__
 # The full version, including alpha/beta/rc tags
-release = "0.1.1a0"
+release = __version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -50,40 +51,25 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
     "sphinx.ext.viewcode",
-    # "autoapi.extension",
+    "sphinx.ext.napoleon",
+    "sphinx_copybutton",
     "breathe",
-    "exhale",
     "sphinxjp.themes.basicstrap",
 ]
 
+subprocess.run("doxygen", shell=True)
+doxy_output = os.path.abspath("./xml")
+
 # Setup the breathe extension
-breathe_projects = {"My Project": "./doxyoutput/xml"}
+breathe_projects = {"My Project": doxy_output}
 breathe_default_project = "My Project"
 breathe_domain_by_extension = {"h": "c", "py": "py"}
 breathe_use_project_refids = True
-
-# Setup the exhale extension
-exhale_args = {
-    # These arguments are required
-    "containmentFolder": "./api_c",
-    "rootFileName": "c_api.rst",
-    "rootFileTitle": "C-API References",
-    "afterTitleDescription": textwrap.dedent(
-        """
-       .. note::
-
-           The following documentation presents the C-API.  The Python API
-           generally mirrors the C-API, but some methods may not be available in
-           Python or may perform different actions.
-    """
-    ),
-    "doxygenStripFromPath": "..",
-    # Suggested optional arguments
-    "createTreeView": True,
-    # TIP: if using the sphinx-bootstrap-theme, you need
-    # "treeViewIsBootstrap": True,
-    "exhaleExecutesDoxygen": True,
-    "exhaleDoxygenStdin": "INPUT = ../mrsimulator/scr/include",
+breathe_doxygen_config_options = {
+    "PREDEFINED": "DOXYGEN_SHOULD_SKIP_THIS",
+    # "GENERATE_XML": True,
+    # "XML_PROGRAMLISTING": True,
+    # "INPUT": "../../src/c_lib/include",
 }
 
 # Tell sphinx what the primary language being documented is.
@@ -91,8 +77,6 @@ primary_domain = "py"
 
 # Tell sphinx what the pygments highlight language should be.
 highlight_language = "c"
-
-# autoapi_dirs = ["../mrsimulator/"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -167,13 +151,13 @@ html_theme_options = {
     # Works only "bootstrap_version = 3"
     "noflatdesign": False,
     # Enable Google Web Font. Defaults to false
-    "googlewebfont": True,
+    "googlewebfont": False,
     # Set the URL of Google Web Font's CSS.
     # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
     # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Lily+Script+One",  # NOQA
     # Set the Style of Google Web Font's CSS.
     # Defaults to "font-family: 'Text Me One', sans-serif;"
-    "googlewebfont_style": u"font-family: 'Roboto' Regular 24;",
+    # "googlewebfont_style": u"font-family: 'Roboto' Regular 24;",
     # Set 'navbar-inverse' attribute to header navbar. Defaults to false.
     "header_inverse": True,
     # Set 'navbar-inverse' attribute to relbar navbar. Defaults to false.
@@ -181,53 +165,41 @@ html_theme_options = {
     # Enable inner theme by Bootswatch. Defaults to false
     "inner_theme": False,
     # Set the name of inner theme. Defaults to 'bootswatch-simplex'
-    "inner_theme_name": "bootswatch-simplex",
+    # "inner_theme_name": "bootswatch-Yeti",
     # Select Twitter bootstrap version 2 or 3. Defaults to '3'
     "bootstrap_version": "3",
     # Show "theme preview" button in header navbar. Defaults to false.
-    "theme_preview": True,
+    "theme_preview": False,
     # Set the Size of Heading text. Defaults to None
     # "h1_size": "3.0em",
-    # "h2_size": "2.6em",
-    # "h3_size": "2.2em",
-    # "h4_size": "1.8em",
+    # "h2_size": "1.8em",
+    # "h3_size": "1.6em",
+    # "h4_size": "1.4em",
     # "h5_size": "1.4em",
     # "h6_size": "1.1em",
 }
 
 # Theme options
-html_logo = "_static/csdmpy.png"
+html_logo = "_static/mrsimulator-light-add-01.png"
 
-html_context = {
-    "display_github": True,
-    "github_user": "DeepanshS",
-    "github_repo": "mrsimulator",
-    "github_version": "master/docs/",
-    "css_files": [
-        "_static/button.css",
-        #     "_static/theme_overrides.css",  # override wide tables in RTD theme
-        #     "_static/style.css",
-        #     "_static/custom.css",
-        #     "_static/bootstrap-toc.css",
-    ],
-}
+# html_context = {
+#     "display_github": True,
+#     "github_user": "DeepanshS",
+#     "github_repo": "mrsimulator",
+#     "github_version": "master/docs/",
+#     "css_files": [
+#         # "_static/button.css",
+#         #     "_static/theme_overrides.css",  # override wide tables in RTD theme
+#         #     "_static/style.css",
+#         #     "_static/custom.css",
+#         #     "_static/bootstrap-toc.css",
+#     ],
+# }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
-
-
-# Custom sidebar templates, must be a dictionary that maps document names
-# to template names.
-#
-# The default sidebars (for documents that don't match any pattern) are
-# defined by theme itself.  Builtin themes are using these templates by
-# default: ``['localtoc.html', 'relations.html', 'sourcelink.html',
-# 'searchbox.html']``.
-#
-# html_sidebars = {}
-
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
@@ -236,33 +208,46 @@ htmlhelp_basename = "MRSimulatordoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
-
+latex_engine = "xelatex"
+latex_logo = "_static/mrsimulator-light-add-01.png"
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     "papersize": "letterpaper",
     # The font size ('10pt', '11pt' or '12pt').
     #
-    "pointsize": "10pt",
+    "pointsize": "9pt",
+    "fontenc": "\\usepackage[utf8]{inputenc}",
+    "geometry": "\\usepackage[vmargin=2.5cm, hmargin=2cm]{geometry}",
     # Additional stuff for the LaTeX preamble.
-    #
-    # 'preamble': '',
+    "preamble": """\
+        \\usepackage[T1]{fontenc}
+        \\usepackage{amsfonts, amsmath, amssymb, mathbbol}
+        \\usepackage{graphicx}
+        \\usepackage{setspace}
+        \\singlespacing
+
+        \\usepackage{fancyhdr}
+        \\pagestyle{fancy}
+        \\fancyhf{}
+        \\fancyhead[L]{
+            \\ifthenelse{\\isodd{\\value{page}}}{ \\small \\nouppercase{\\leftmark} }{}
+        }
+        \\fancyhead[R]{
+            \\ifthenelse{\\isodd{\\value{page}}}{}{ \\small \\nouppercase{\\rightmark} }
+        }
+        \\fancyfoot[CO, CE]{\\thepage}
+    """
     # Latex figure (float) alignment
     #
-    "figure_align": "htbp",
+    # "figure_align": "htbp",
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (
-        master_doc,
-        "mrsimulator.tex",
-        "mrsimulator Documentation",
-        "Deepansh J. Srivastava",
-        "manual",
-    )
+    (master_doc, "mrsimulator.tex", "mrsimulator Documentation", author, "manual")
 ]
 
 
@@ -270,7 +255,15 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "mrsimulator", "mrsimulator Documentation", [author], 1)]
+man_pages = [
+    (
+        master_doc,
+        "mrsimulator",
+        "mrsimulator Documentation",
+        ["Deepansh J. Srivastava"],
+        1,
+    )
+]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -307,11 +300,3 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ["search.html"]
-
-
-# -- Extension configuration -------------------------------------------------
-
-
-# def setup(app):
-#     app.add_javascript("_static/copybutton.js")
-#     app.add_javascript("_static/jquery.js")

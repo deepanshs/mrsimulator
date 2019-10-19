@@ -9,8 +9,7 @@ The required and optional dependencies of `mrsimulator` are
 **Required packages**
 
 - `NumPy>=1.13.3 <http://www.numpy.org>`_
-- `intel mkl>=2019 <https://pypi.org/project/mkl/>`_
-- `mkl_include>=2019 <https://pypi.org/project/mkl-include>`_
+- openblas
 - `astropy>=3.0 <https://www.astropy.org>`_ for the units library
 - `requests>=2.21.0 <https://pypi.org/project/requests/>`_
 - setuptools>=27.3

@@ -6,64 +6,94 @@
 //  Contribution: Deepansh J. Srivatava. contact: srivastava.89@osu.edu
 //      Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 
-#include "mrsimulator.h"
+#include "config.h"
 
-extern void full_DLM(complex128 *wigner, int l, double *omega);
-
-extern double wigner_d(int l, int m1, int m2, double beta);
-
-// extern complex128 DLM(int l, int  m1, int m2, OCEulerAngle omega);
-
-void full_DLM_trig(complex128 *wigner, int l, double cosAlpha, double sinAlpha,
-                   double cosBeta, double sinBeta);
-
-void get_even_DLM_4_from_2(complex128 *wigner, double cosBeta);
-
-double wigner_d_trig(int l, int m1, int m2, double cx, double sx);
+// Generic function ........................................................ //
 
 /**
- * @brief Evaluates `n` wigner-d matrices of rank `l` at every given angles
- *          @f$\beta@f$ (in radians).
+ * @brief Evaluates @f$d^{l}_{m_1, m_2}(\beta)@f$ wigner-d element of the given
+ *          angle @f$\beta@f$.
  *
- * Each wigner-d matrix is `(2l+1) x (2l+1)` in dimension, where @p l is the
- * rank. When evaluating @p n wigner-d matrices, the matrices are stored such
- * that the wigner-d matrix corresponding to the angle `alpha[i]` starts at the
- * index `i*(2*l+1)*(2*l+1)`.
+ * @param l The rank of the wigner-d matrix element.
+ * @param m1 The quantum number @f$m_1@f$.
+ * @param m2 The quantum number @f$m_2@f$.
+ * @param beta The angle @f$\beta@f$ given in radian.
+ * @return The wigner-d element, @f$d^{l}_{m_1, m_2}(\beta)@f$.
+ */
+extern double wigner_d_element(const int l, const int m1, const int m2,
+                               const double beta);
+
+/**
+ * @brief Evaluates @f$n@f$ wigner-d matrices of rank @f$l@f$ at @f$n@f$
+ *          angles given in radians.
+ *
+ * At a given angle, @f$\beta@f$, the wigner-d matrix, @f$d^{l}\left(m_1, m_2 |
+ * \beta\right)@f$, is a @f$(2l+1) \times (2l+1)@f$ square matrix where
+ * @f$m_1@f$ and @f$m_2@f$ range from @f$-l@f$ to @f$l@f$. The wigner-d
+ * elements, @f$d^{l}_{m_1, m_2}(\beta)@f$, are ordered with @f$m_1@f$ as the
+ * leading dimension. For example, when @f$l=2@f$, the wigner-d elements are
+ * ordered according to
+ * @f[
+ *    \left[d^{2}_{-2, -2}(\beta),~d^{2}_{-1, -2}(\beta),~d^{2}_{0, -2}(\beta),
+ *    ~~...~~d^{2}_{1, 2}(\beta),~d^{2}_{2, 2}(\beta) \right].
+ * @f]
+ *
+ * The @f$n@f$ matrices are stored such that the wigner-d matrix from angle at
+ * index @f$i@f$ is stacked after the wigner-d matrix from angle at index
+ * @f$i-1@f$, that is, the wigner-d matrix corresponding to `angle[i]` starts at
+ * the index `i*(2*l+1)*(2*l+1)`.
+ *
+ * @param l The rank of the wigner-d matrix.
+ * @param n The number of wigner-d matrix to evaluate. This is also the length
+ *          of angle array, `beta`.
+ * @param beta A pointer to an array of length @f$n@f$ where the angles
+ *          @f$\beta@f$ are stored in radians.
+ * @param wigner A pointer to an array of length `n*(2*l+1)*(2*l+1)`.
+ */
+extern void wigner_d_matrices(const int l, const int n, const double *beta,
+                              double *wigner);
+
+// Specialized methods ..................................................... //
+
+/**
+ * @brief Evaluates @f$d^{l}_{m_1, m_2}(\beta)@f$ wigner-d element from
+ *          @f$\exp(i\beta)@f$ of the angle @f$\beta@f$.
+ *
+ * @sa wigner_d_element(const int, const int, const int, const double)
+ *
+ * @param l The rank of the wigner-d matrix element.
+ * @param m1 The quantum number @f$m_1@f$.
+ * @param m2 The quantum number @f$m_2@f$.
+ * @param exp_I_beta A pointer to an array of size two, where cosine and sine of
+ *          the angle @f$\beta@f$ stored.
+ * @return The wigner-d element, @f$d^{l}_{m_1, m_2}(\beta)@f$.
+ */
+double wigner_d_element_from_exp_I_beta(const int l, const int m1, const int m2,
+                                        const void *exp_I_beta);
+
+/**
+ * @brief Evaluates @f$n@f$ wigner-d matrices of rank @f$l@f$ from an array of
+ *          angles expressed as @f$\exp(i\beta)@f$.
+ *
+ * @see `wigner_d_matrices()` for details.
  *
  * @param l The rank of the wigner-d matrix.
  * @param n The number of wigner-d matrix to evaluate.
- * @param angle A pointer to a 1D-array of angles @f$\beta@f$ of length @p n,
- *          given in radians.
- * @param wigner A pointer to the start of wigner-d matrices.
+ * @param exp_I_beta A pointer to an array of length `2*n`, where the cosine and
+ *          sine of the angles are stored.
+ * @param wigner A pointer to an array of length `n*(2*l+1)*(2*l+1)`.
  */
-extern void AMT_wigner_d_matrix(int l, int n, double *angle, double *wigner);
-
-/**
- * @brief Evaluates @p n wigner-d matrices of rank @p l at every given
- *          **cosine** of angles, @f$\beta@f$.
- *
- * Each wigner-d matrix is `(2l+1) x (2l+1)` in dimension, where @p l is the
- * rank. When evaluating @p n wigner-d matrices, the matrices are stored such
- * that the wigner-d matrix corresponding to the angle `alpha[i]` starts at the
- * index `i*(2*l+1)*(2*l+1)`.
- *
- * @param l The rank of the wigner-d matrix.
- * @param n The number of wigner-d matrix to evaluate.
- * @param cos_angle A pointer to a 1D-array of cosine of angles @f$\beta@f$ of
- *          length @p n.
- * @param wigner A pointer to the start of wigner-d matrices.
- */
-extern void __wigner_d_matrix_cosine(const int l, const int n,
-                                     const double *cos_angle, double *wigner);
+extern void wigner_d_matrices_from_exp_I_beta(const int l, const int n,
+                                              const void *restrict exp_I_beta,
+                                              double *wigner);
 
 /**
  * @brief Rotate @p R_in of length @p l using wigner-d matrices of rank @p l.
  * wigner matrices. The result is a stack of output vector of size `nxl`
-evaluated
- * at all `n` wigner matrices.
+ * evaluated at all `n` wigner matrices.
  * @param l The rank of the wigner-d matrices.
  * @param n The number of cosine alpha angles and wigner-lj matrices.
- * @param cos_alpha A pointer to the 1d array of @f$\cos\alphas@f$.
+ * @param cos_alpha A pointer to the 1d array of @f$\cos\alpha@f$.
  * @param wigner A pointer to nx(2l+1)x(2l+1) wigner-d matrices of rank @p l.
  *          The wigner matrices are stacked in a row major order.
  * @param R_in A pointer to a 1D-array of initial vector of length `2l+1`.
@@ -72,11 +102,32 @@ evaluated
  *          `i*(2*l+1)` is rotated with the wigner-lj matrix at index
  *          `i*(2*l+1)*(2*l+1)`.
  */
-extern void __wigner_rotation(int l, int n, double *wigner, double *cos_alpha,
-                              complex128 *R_in, complex128 *R_out);
-
 extern void __wigner_rotation_2(const int l, const int n, const double *wigner,
-                                const complex128 *exp_Im_alpha,
-                                const complex128 *R_in, complex128 *R_out);
+                                const void *exp_Im_alpha, const void *R_in,
+                                void *R_out);
 
-extern void __wigner_dm0_vector(const int l, const double beta, double *R_out);
+extern void wigner_dm0_vector(const int l, const double beta, double *R_out);
+
+/**
+ * ✅
+ * @brief Performs a rank l wigner rotation of the coefficients from the l rank
+ * spherical tensors.
+ *
+ * @param l The rank of the tensor.
+ * @param euler_angles A pointer to the array of three euler angles.
+ * @param R_in A pointer to the array of coefficients from the l rank tensors of
+ *          length 2xl+1 before rotation.
+ * @param R_out A pointer to the array of coefficients from the l rank tensors
+ *          of length 2xl+1 after rotation.
+ */
+extern void single_wigner_rotation(const int l, const double *euler_angles,
+                                   const void *R_in, void *R_out);
+
+extern void __batch_wigner_rotation(
+    const unsigned int octant_orientations, const unsigned int n_octants,
+    const double *wigner_2j_matrices, const complex128 *R2,
+    const double *wigner_4j_matrices, const complex128 *R4,
+    complex128 *exp_Im_alpha, complex128 *w2, complex128 *w4);
+
+extern void get_exp_Im_alpha(const unsigned int n, const bool allow_fourth_rank,
+                             void *exp_Im_alpha);

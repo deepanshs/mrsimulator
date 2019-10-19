@@ -62,10 +62,9 @@ instance/
 
 # Sphinx documentation
 docs/_build/
-docs/api_c
 
 # Doxygen output
-doxyoutput/
+docs/xml/
 
 # PyBuilder
 target/
@@ -103,24 +102,26 @@ venv.bak/
 
 # folders
 src/c_lib/test_c/**
+tests/simpson/quad/**
 
 # files
+class-diagram*
 *.out
 *.prof
 *.ipynb
 *.mp4
 *.html
+*.temp
 test_os.py
 note.txt
-sideband2.c
-dmfit_comparision.py
 simulate_lineshape.py
-sideband.3
-sandbox.c
-nmr_methods.c
 main.c
-mrsimulator.code-workspace
+*.code-workspace
 jquery.js
-setup.py.src
-setup.temp
 __config__.json
+test_dash.py
+
+# cython generated files
+test.c
+nmr_methods.c
+sandbox.c

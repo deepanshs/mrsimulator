@@ -7,7 +7,8 @@
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
-#include "mrsimulator.h"
+#include "config.h"
+#include "interpolation.h"
 
 extern void octahedronGetDirectionCosineSquareOverOctantAndWeights(
     int nt, double *xr, double *yr, double *zr, double *amp);
@@ -15,6 +16,9 @@ extern void octahedronGetDirectionCosineSquareOverOctantAndWeights(
 extern void octahedronGetPolarAngleTrigOverAnOctant(int nt, double *cos_alpha,
                                                     double *cos_beta,
                                                     double *amp);
+
+extern void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
+    int nt, void *exp_I_alpha, void *exp_I_beta, double *amp);
 
 extern void octahedronInterpolation(double *spec, double *freq, int nt,
                                     double *amp, int stride, int m);

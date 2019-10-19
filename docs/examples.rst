@@ -2,334 +2,386 @@
 
 .. _examples:
 
-========
-Examples
-========
+.. testsetup::
 
-Setup an instance of the :ref:`simulator_api` class and import the
+    >>> import matplotlib
+    >>> font = {'family': 'Helvetica', 'weight': 'light', 'size': 9};
+    >>> matplotlib.rc('font', **font)
+    >>> from os import path
+
+    >>> import matplotlib.pyplot as plt
+    >>> def plot_save(x, y, filename):
+    ...     plt.figure(figsize=(4, 3))
+    ...     plt.plot(x, y, linewidth=1)
+    ...     plt.xlim([x.value.max(), x.value.min()])
+    ...     plt.xlabel(f"frequency ratio / {str(x.unit)}", **font)
+    ...     plt.grid(color='gray', linestyle='--', linewidth=1.0, alpha=0.25)
+    ...     plt.tight_layout(h_pad=0, w_pad=0, pad=0)
+    ...
+    ...     filename = path.split(filename)[1]
+    ...     filepath = './docs/_images'
+    ...     pth = path.join(filepath, filename)
+    ...     plt.savefig(pth+'.pdf')
+    ...     plt.savefig(pth+'.png', dpi=100)
+    ...     plt.close()
+
+Examples
+--------
+
+The following examples utilizes the `one_d_spectrum` method to simulate
+NMR spectrum under various condition
+
+- :ref:`static_example`
+- :ref:`mas_example`
+- :ref:`vas_example`
+
+To begin, set up an instance of the :ref:`simulator_api` class and import the
 ``one_d_spectrum`` method.
 
 .. doctest::
 
-    >>> from mrsimulator import Simulator
+    >>> from mrsimulator import Simulator, SpectroscopicDimension
     >>> from mrsimulator.methods import one_d_spectrum
     >>> sim = Simulator()
 
-Now add the isotopomers to the ``sim`` object.
-See :ref:`load_isotopomers` for details. Here, we import the list of
-isotopomers from a JSON serialized isotopomers file.
+Let's add the isotopomers to the ``sim`` object from a JSON serialized
+isotopomers file, see :ref:`load_isotopomers` for details,
 
 .. doctest::
 
-    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json'
+    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_test.json'
+
     >>> sim.load_isotopomers(filename)
-    Downloading '/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json' from 'raw.githubusercontent.com' to file 'isotopomers_ppm.json'.
-    [████████████████████████████████████████████████████████████████████]
+    Downloading '/DeepanshS/mrsimulator-test/master/isotopomers_test.json'
+    from 'raw.githubusercontent.com' to file 'isotopomers_test.json'.
+    [████████████████████████████████████]
 
-.. testcleanup::
+.. testsetup::
 
-    import os
-    os.remove('isotopomers_ppm.json')
+    >>> import os
+    >>> os.remove('isotopomers_test.json')
 
-Use the attr:`~mrsimulator.Simulator.isotope_list` attribute of the ``sim``
-instance to get the list of unique isotopes from the list of isotopomers.
+Once the isotopomers are assigned, you may use the
+:meth:`~mrsimulator.Simulator.get_isotopes` method to list the
+unique isotope symbols present in the list of isotopomers.
 
 .. doctest::
 
-    >>> print(sim.isotope_list)
+    >>> print(sim.get_isotopes(spin=0.5)) # doctest: +SKIP
     ['1H', '13C', '29Si']
 
-In this example, the list of isotopomers contains three unique isotopes,
+In this example, the list of isotopomers contain three unique isotopes,
 :math:`^{13}\mathrm{C}`, :math:`^{29}\mathrm{Si}`, and :math:`^{1}\mathrm{H}`.
 
----------------
-Static spectrum
----------------
 
-To generate a static spectrum, set up with the following :ref:`spectrum`
-object,
+.. _static_example:
+
+Static spectrum
+'''''''''''''''
+
+To simulate a static spectrum, set up with the following
+:ref:`spectroscopicDimension_api` object,
 
 .. doctest::
 
-    >>> sim.spectrum = {
-    ...     "direct_dimension": {
-    ...         "isotope": "13C",
-    ...         "magnetic_flux_density": "9.4 T",
-    ...         "rotor_frequency": "0 kHz",
-    ...         "rotor_angle": "54.735 deg",
-    ...         "number_of_points": 8192,
-    ...         "spectral_width": "5 kHz",
-    ...         "reference_offset": "0 Hz",
-    ...     }
-    ... }
+    >>> dim = dict(isotope="13C", magnetic_flux_density="9.4 T", rotor_frequency="0 kHz",
+    ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="5 kHz",
+    ...         reference_offset="0 Hz")
+    >>> sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(dim)]
 
-The above spectrum object is set to simulate a :math:`^{13}\mathrm{C}` static
-spectrum at 9.4 T magnetic field over 5 kHz frequency-bandwidth using 8192
-points.
+The above spectroscopic dimension will simulate a :math:`^{13}\mathrm{C}`
+static spectrum at 9.4 T magnetic field over 5 kHz frequency-bandwidth using
+8192 points.
 
-Now, generate the lineshape with the meth:`~mrsimulator.Simulator.run`
+Now, generate the line-shape using the :meth:`~mrsimulator.Simulator.run`
 method as
 
 .. doctest::
 
     >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
-    Setting up the virtual NMR spectrometer
-    ---------------------------------------
-    Adjusting the magnetic flux density to 9.4 T.
-    Setting rotation angle to 0.9553059660790962 rad.
-    Setting rotation frequency to 0.0 Hz.
-    Detecting 13C(I=0.5, precession frequency = 100.65896 MHz) isotope.
-    Recording 13C spectrum with 8192 points over a 5000.0 Hz bandwidth and a reference offset of 0.0 Hz.
+    `one_d_spectrum` method simulation parameters.
+    ---------------------------------------------
+    Macroscopic magnetic flux density (B0) = 9.4 T
+    Sample rotation angle is (θ) = 0.9553059660790962 rad
+    Sample rotation frequency (𝜈r) = 0.0 Hz
+    Simulating 13C (I=0.5)
+    Larmor frequency (ω0 = - γ B0) = -100.65896 MHz
+    Recording 13C spectrum with 8192 points over 5000.0 Hz bandwidth
+    and a reference offset of 0.0 Hz.
     <BLANKLINE>
     13C site 0 from isotopomer 0 @ 100.0% abundance
     -----------------------------------------------
-    Isotropic chemical shift = 1.0 ppm
-    Shielding anisotropy = -3.89 ppm
-    Shielding asymmetry = 0.25
+    Isotropic chemical shift (δ) = 1.0 ppm
+    Shielding anisotropy (ζ) = -3.89 ppm
+    Shielding asymmetry (η) = 0.25
+    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
     <BLANKLINE>
-    13C site 0 from isotopomer 1 @ 100.0% abundance
-    -----------------------------------------------
-    Isotropic chemical shift = 1.0 ppm
-    Shielding anisotropy = 8.2 ppm
-    Shielding asymmetry = 0.0
+    13C site 0 from isotopomer 1 @ 100% abundance
+    ---------------------------------------------
+    Isotropic chemical shift (δ) = 1.0 ppm
+    Shielding anisotropy (ζ) = 8.2 ppm
+    Shielding asymmetry (η) = 0.0
+    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
 
-The simulator goes through every isotopomer in the list and simulates the
-lineshape corresponding to the :math:`^{13}\mathrm{C}` isotopes. In this
-example, there are two :math:`^{13}\mathrm{C}` isotopes in the list of the
-isotopomers.
+The simulator object goes through every isotopomer in the list and
+simulates the line-shape corresponding to the :math:`^{13}\mathrm{C}` isotopes.
+In this example, there are two isotopomers with :math:`^{13}\mathrm{C}` sites.
 
-You may visualize the spectrum using any plotting library of choise. We use
+You may visualize the spectrum using any plotting library of choice. We use
 matplotlib in our examples.
 
 .. doctest::
 
     >>> import matplotlib.pyplot as plt
     >>> def plot(x, y):
-    ...     plt.plot(x,y)
-    ...     plt.xlabel(f'frequency / {x.unit}')
+    ...     plt.figure(figsize=(4, 3))
+    ...     plt.plot(x, y)
+    ...     plt.xlabel(f"frequency ratio / {str(x.unit)}")
+    ...     plt.xlim([x.value.max(), x.value.min()]) # for reverse axis
+    ...     plt.grid()
+    ...     plt.tight_layout()
     ...     plt.show()
 
     >>> plot(freq, amp)
 
-.. image:: /_static/13C_static.png
+.. testsetup::
 
+    >>> plot_save(freq, amp, '13C_static.pdf')
 
------------------------------------
+.. figure:: _images/13C_static.*
+    :figclass: figure-polaroid
+
+.. _mas_example:
+
 Magic angle spinning (MAS) spectrum
------------------------------------
+'''''''''''''''''''''''''''''''''''
 
-To generate a magic angle spinning (MAS) spectrum, set the rotor frequency
-of the :ref:`spectrum` object to the desired value. In the following example,
-the spectrum object is similar to the one from the previous examples, except
-for the ``rotor_frequency`` which is set to 100 Hz.
+To simulate a magic angle spinning (MAS) spectrum, set the rotor frequency
+of the spectroscopic dimension object to the desired value, and set the
+rotor_angle to :math:`54.735^\circ`. In the following example,
+the spectroscopic dimension object is similar to the one from the
+previous examples, except for the value of the ``rotor_frequency`` which
+is set to 100 Hz.
 
 .. doctest::
 
-    >>> sim.spectrum = {
-    ...     "direct_dimension": {
-    ...         "isotope": "13C",
-    ...         "magnetic_flux_density": "9.4 T",
-    ...         "rotor_frequency": "100 Hz",
-    ...         "rotor_angle": "54.735 deg",
-    ...         "number_of_points": 8192,
-    ...         "spectral_width": "5 kHz",
-    ...         "reference_offset": "0 Hz",
-    ...     }
-    ... }
+    >>> dim = dict(isotope="13C", magnetic_flux_density="9.4 T", rotor_frequency="100 Hz",
+    ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="5 kHz",
+    ...         reference_offset="0 Hz")
+    >>> sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(dim)]
 
-Now compute the lineshape as before.
+Now compute the line-shape as before.
 
 .. doctest::
 
     >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
-    Setting up the virtual NMR spectrometer
-    ---------------------------------------
-    Adjusting the magnetic flux density to 9.4 T.
-    Setting rotation angle to 0.9553059660790962 rad.
-    Setting rotation frequency to 100.0 Hz.
-    Detecting 13C(I=0.5, precession frequency = 100.65896 MHz) isotope.
-    Recording 13C spectrum with 8192 points over a 5000.0 Hz bandwidth and a reference offset of 0.0 Hz.
+    `one_d_spectrum` method simulation parameters.
+    ---------------------------------------------
+    Macroscopic magnetic flux density (B0) = 9.4 T
+    Sample rotation angle is (θ) = 0.9553059660790962 rad
+    Sample rotation frequency (𝜈r) = 100.0 Hz
+    Simulating 13C (I=0.5)
+    Larmor frequency (ω0 = - γ B0) = -100.65896 MHz
+    Recording 13C spectrum with 8192 points over 5000.0 Hz bandwidth
+    and a reference offset of 0.0 Hz.
     <BLANKLINE>
     13C site 0 from isotopomer 0 @ 100.0% abundance
     -----------------------------------------------
-    Isotropic chemical shift = 1.0 ppm
-    Shielding anisotropy = -3.89 ppm
-    Shielding asymmetry = 0.25
+    Isotropic chemical shift (δ) = 1.0 ppm
+    Shielding anisotropy (ζ) = -3.89 ppm
+    Shielding asymmetry (η) = 0.25
+    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
     <BLANKLINE>
-    13C site 0 from isotopomer 1 @ 100.0% abundance
+    13C site 0 from isotopomer 1 @ 100% abundance
+    ---------------------------------------------
+    Isotropic chemical shift (δ) = 1.0 ppm
+    Shielding anisotropy (ζ) = 8.2 ppm
+    Shielding asymmetry (η) = 0.0
+    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
+
+.. doctest::
+
+    >>> plot(freq, amp)
+
+.. testsetup::
+
+    >>> plot_save(freq, amp, '13C_mas_100Hz.pdf')
+
+.. figure:: _images/13C_mas_100Hz.*
+    :figclass: figure-polaroid
+
+
+.. _vas_example:
+
+Variable angle spinning (VAS) spectrum
+''''''''''''''''''''''''''''''''''''''
+
+To simulate a variable angle spinning spectrum, set the rotor angle
+and the rotor frequency to the desired value. The rotor angle may be
+set to any value from :math:`0^\circ` to :math:`90^\circ`.
+In the following example, the spectroscopic dimension object is similar
+to spectroscopic dimension from the previous example, except the
+``rotor_angle`` and ``rotor_frequency`` is set to :math:`90^\circ` and
+and 500 Hz, respectively.
+
+.. doctest::
+
+    >>> dim = dict(isotope="13C", magnetic_flux_density="9.4 T", rotor_frequency="500 Hz",
+    ...         rotor_angle="90 deg", number_of_points=8192, spectral_width="5 kHz",
+    ...         reference_offset="0 Hz")
+    >>> sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(dim)]
+
+The simulated lineshape.
+
+.. doctest::
+
+    >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
+    `one_d_spectrum` method simulation parameters.
+    ---------------------------------------------
+    Macroscopic magnetic flux density (B0) = 9.4 T
+    Sample rotation angle is (θ) = 1.5707963267948966 rad
+    Sample rotation frequency (𝜈r) = 500.0 Hz
+    Simulating 13C (I=0.5)
+    Larmor frequency (ω0 = - γ B0) = -100.65896 MHz
+    Recording 13C spectrum with 8192 points over 5000.0 Hz bandwidth
+    and a reference offset of 0.0 Hz.
+    <BLANKLINE>
+    13C site 0 from isotopomer 0 @ 100.0% abundance
     -----------------------------------------------
-    Isotropic chemical shift = 1.0 ppm
-    Shielding anisotropy = 8.2 ppm
-    Shielding asymmetry = 0.0
+    Isotropic chemical shift (δ) = 1.0 ppm
+    Shielding anisotropy (ζ) = -3.89 ppm
+    Shielding asymmetry (η) = 0.25
+    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
+    <BLANKLINE>
+    13C site 0 from isotopomer 1 @ 100% abundance
+    ---------------------------------------------
+    Isotropic chemical shift (δ) = 1.0 ppm
+    Shielding anisotropy (ζ) = 8.2 ppm
+    Shielding asymmetry (η) = 0.0
+    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
 
 .. doctest::
 
     >>> plot(freq, amp)
 
-.. image:: /_static/13C_mas_1kHz.png
+.. testsetup::
+
+    >>> plot_save(freq, amp, '13C_vas_100Hz_90.pdf')
+
+.. figure:: _images/13C_vas_100Hz_90.*
+    :figclass: figure-polaroid
 
 
------------------------------
-Switch to a different isotope
------------------------------
+Switching to a different isotope
+''''''''''''''''''''''''''''''''
 
-Generate a new :ref:`spectrum` object with a different isotope. The isotope
-is specified with the `isotope` key, as shown below. In the following
-example, a :math:`^1\mathrm{H}` spectrum is simulated at 9.4 T field, spinning
-at the magic angle at 2 kHz frequency, and sampled over 100 kHz frequency
-bandwidth with 8192 points.
+Up till now, we were simulating a one-dimensional :math:`^{13}\mathrm{C}`
+spectrum under conditions. Notice, however, there are three unique isotopes,
+:math:`^{13}\mathrm{C}`, :math:`^{29}\mathrm{Si}`, and :math:`^{1}\mathrm{H}`,
+in the list of isotopomers.
+To simulate, for example, a :math:`^{29}\mathrm{Si}` spectrum, create a new
+spectroscopic dimension with "29Si" as the value of the ``isotope`` key.
 
 .. doctest::
 
-    >>> sim.spectrum = {
-    ...     "direct_dimension": {
-    ...         "isotope": "1H",
-    ...         "magnetic_flux_density": "9.4 T",
-    ...         "rotor_frequency": "2 kHz",
-    ...         "rotor_angle": "54.735 deg",
-    ...         "number_of_points": 8192,
-    ...         "spectral_width": "50 kHz",
-    ...         "reference_offset": "0 Hz",
-    ...     }
-    ... }
+    >>> dim = dict(isotope="29Si", magnetic_flux_density="9.4 T", rotor_frequency="1 kHz",
+    ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="30 kHz",
+    ...         reference_offset="-5 kHz")
+    >>> sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(dim)]
 
-Now compute the lineshape.
+Run the simulation.
 
 .. doctest::
 
     >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
-    Setting up the virtual NMR spectrometer
-    ---------------------------------------
-    Adjusting the magnetic flux density to 9.4 T.
-    Setting rotation angle to 0.9553059660790962 rad.
-    Setting rotation frequency to 2000.0 Hz.
-    Detecting 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope.
-    Recording 1H spectrum with 8192 points over a 50000.0 Hz bandwidth and a reference offset of 0.0 Hz.
+    `one_d_spectrum` method simulation parameters.
+    ---------------------------------------------
+    Macroscopic magnetic flux density (B0) = 9.4 T
+    Sample rotation angle is (θ) = 0.9553059660790962 rad
+    Sample rotation frequency (𝜈r) = 1000.0 Hz
+    Simulating 29Si (I=0.5)
+    Larmor frequency (ω0 = - γ B0) = 79.571 MHz
+    Recording 29Si spectrum with 8192 points over 30000.0 Hz bandwidth
+    and a reference offset of -5000.0 Hz.
     <BLANKLINE>
-    1H site 0 from isotopomer 2 @ 100.0% abundance
+    29Si site 0 from isotopomer 3 @ 100% abundance
     ----------------------------------------------
-    Isotropic chemical shift = 3.0 ppm
-    Shielding anisotropy = 23.2 ppm
-    Shielding asymmetry = 0.0
+    Isotropic chemical shift (δ) = -100.0 ppm
+    Shielding anisotropy (ζ) = 1.36 ppm
+    Shielding asymmetry (η) = 0.0
+    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
     <BLANKLINE>
-    1H site 0 from isotopomer 6 @ 100.0% abundance
+    29Si site 0 from isotopomer 4 @ 100% abundance
     ----------------------------------------------
-    Isotropic chemical shift = 5.6 ppm
-    Shielding anisotropy = 13.2 ppm
-    Shielding asymmetry = 0.0
+    Isotropic chemical shift (δ) = -100.0 ppm
+    Shielding anisotropy (ζ) = 70.36 ppm
+    Shielding asymmetry (η) = 0.0
+    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
+    <BLANKLINE>
+    29Si site 0 from isotopomer 5 @ 100% abundance
+    ----------------------------------------------
+    Isotropic chemical shift (δ) = -90.0 ppm
+    Shielding anisotropy (ζ) = 80.36 ppm
+    Shielding asymmetry (η) = 0.5
+    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
 
 .. doctest::
 
     >>> plot(freq, amp)
 
-.. image:: /_static/1H_mas_2kHz.png
+.. testsetup::
+
+    >>> plot_save(freq, amp, '29Si_mas_1kHz.pdf')
+
+.. figure:: _images/29Si_mas_1kHz.*
+    :figclass: figure-polaroid
 
 
-In this example, we simulate the MAS lineshape of :math:`^{29}\mathrm{Si}`
-isotope.
+In this another examples, we simulate a :math:`^1\mathrm{H}` spectrum.
 
 .. doctest::
 
-    >>> sim.spectrum = {
-    ...     "direct_dimension": {
-    ...         "isotope": "29Si",
-    ...         "magnetic_flux_density": "9.4 T",
-    ...         "rotor_frequency": "1 kHz",
-    ...         "rotor_angle": "54.735 deg",
-    ...         "number_of_points": 8192,
-    ...         "spectral_width": "30 kHz",
-    ...         "reference_offset": "5 kHz",
-    ...     }
-    ... }
+    >>> dim = dict(isotope="1H", magnetic_flux_density="9.4 T", rotor_frequency="2 kHz",
+    ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="50 kHz",
+    ...         reference_offset="0 Hz")
+    >>> sim.spectrum = [SpectroscopicDimension.parse_dict_with_units(dim)]
 
-The simulated lineshape.
+The line-shape simulation
 
 .. doctest::
 
     >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
-    Setting up the virtual NMR spectrometer
-    ---------------------------------------
-    Adjusting the magnetic flux density to 9.4 T.
-    Setting rotation angle to 0.9553059660790962 rad.
-    Setting rotation frequency to 1000.0 Hz.
-    Detecting 29Si(I=0.5, precession frequency = -79.571 MHz) isotope.
-    Recording 29Si spectrum with 8192 points over a 30000.0 Hz bandwidth and a reference offset of 5000.0 Hz.
+    `one_d_spectrum` method simulation parameters.
+    ---------------------------------------------
+    Macroscopic magnetic flux density (B0) = 9.4 T
+    Sample rotation angle is (θ) = 0.9553059660790962 rad
+    Sample rotation frequency (𝜈r) = 2000.0 Hz
+    Simulating 1H (I=0.5)
+    Larmor frequency (ω0 = - γ B0) = -400.228301848 MHz
+    Recording 1H spectrum with 8192 points over 50000.0 Hz bandwidth
+    and a reference offset of 0.0 Hz.
     <BLANKLINE>
-    29Si site 0 from isotopomer 3 @ 100.0% abundance
-    ------------------------------------------------
-    Isotropic chemical shift = -100.0 ppm
-    Shielding anisotropy = 1.36 ppm
-    Shielding asymmetry = 0.0
+    1H site 0 from isotopomer 2 @ 100% abundance
+    --------------------------------------------
+    Isotropic chemical shift (δ) = 3.0 ppm
+    Shielding anisotropy (ζ) = 23.2 ppm
+    Shielding asymmetry (η) = 0.0
+    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
     <BLANKLINE>
-    29Si site 0 from isotopomer 4 @ 100.0% abundance
-    ------------------------------------------------
-    Isotropic chemical shift = -100.0 ppm
-    Shielding anisotropy = 70.36 ppm
-    Shielding asymmetry = 0.0
-    <BLANKLINE>
-    29Si site 0 from isotopomer 5 @ 100.0% abundance
-    ------------------------------------------------
-    Isotropic chemical shift = -90.0 ppm
-    Shielding anisotropy = 80.36 ppm
-    Shielding asymmetry = 0.5
+    1H site 0 from isotopomer 6 @ 100% abundance
+    --------------------------------------------
+    Isotropic chemical shift (δ) = 5.6 ppm
+    Shielding anisotropy (ζ) = 13.2 ppm
+    Shielding asymmetry (η) = 0.0
+    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
 
 .. doctest::
 
     >>> plot(freq, amp)
 
-.. image:: /_static/29Si_mas_1kHz.png
+.. testsetup::
 
+    >>> plot_save(freq, amp, '1H_mas_2kHz.pdf')
 
------------------------
-Variable angle spinning
------------------------
-
-The rotor angle may be set to any value from :math:`0^\circ` to
-:math:`90^\circ`. In the following example, the :ref:`spectrum`
-object is the same are from the previous example, except the
-``rotor_angle`` is set to :math:`90^\circ`.
-
-.. doctest::
-
-    >>> sim.spectrum = {
-    ...     "direct_dimension": {
-    ...         "isotope": "1H",
-    ...         "magnetic_flux_density": "9.4 T",
-    ...         "rotor_frequency": "2 kHz",
-    ...         "rotor_angle": "90 deg",
-    ...         "number_of_points": 8192,
-    ...         "spectral_width": "50 kHz",
-    ...         "reference_offset": "0 Hz",
-    ...     }
-    ... }
-
-The simulated lineshape.
-
-.. doctest::
-
-    >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
-    Setting up the virtual NMR spectrometer
-    ---------------------------------------
-    Adjusting the magnetic flux density to 9.4 T.
-    Setting rotation angle to 1.5707963267948966 rad.
-    Setting rotation frequency to 2000.0 Hz.
-    Detecting 1H(I=0.5, precession frequency = 400.228301848 MHz) isotope.
-    Recording 1H spectrum with 8192 points over a 50000.0 Hz bandwidth and a reference offset of 0.0 Hz.
-    <BLANKLINE>
-    1H site 0 from isotopomer 2 @ 100.0% abundance
-    ----------------------------------------------
-    Isotropic chemical shift = 3.0 ppm
-    Shielding anisotropy = 23.2 ppm
-    Shielding asymmetry = 0.0
-    <BLANKLINE>
-    1H site 0 from isotopomer 6 @ 100.0% abundance
-    ----------------------------------------------
-    Isotropic chemical shift = 5.6 ppm
-    Shielding anisotropy = 13.2 ppm
-    Shielding asymmetry = 0.0
-
-.. doctest::
-
-    >>> plot(freq, amp)
-
-.. image:: /_static/1H_mas_2khz_90deg.png
+.. figure:: _images/1H_mas_2kHz.*
+    :figclass: figure-polaroid

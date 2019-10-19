@@ -11,27 +11,12 @@ Simulator
 .. autoclass:: Simulator
     :show-inheritance:
 
-    .. rubric:: Attributes Summary
-
-    .. autosummary::
-        ~Simulator.isotopomers
-        ~Simulator.spectrum
-        ~Simulator.isotope_list
-
-    .. rubric:: Methods Summary
-
-    .. autosummary::
-        ~Simulator.run
-        ~Simulator.load_isotopomers
-
-    .. rubric:: Attributes Documentation
-    .. autoattribute:: isotopomers
-    .. autoattribute:: spectrum
-    .. autoattribute:: isotope_list
-
     .. rubric:: Method Documentation
-    .. automethod:: run
+
+    .. automethod:: allowed_isotopes
+    .. automethod:: get_isotopes
     .. automethod:: load_isotopomers
+    .. automethod:: run
 
 
 
@@ -47,29 +32,6 @@ Methods
    :show-inheritance:
 
 
-.. :show-inheritance:
-
-.. .. rubric:: Attributes Summary
-
-.. .. autosummary::
-..     ~Simulator.isotopomers
-..     ~Simulator.spectrum
-..     ~Simulator.isotope_list
-
-.. .. rubric:: Methods Summary
-
-.. .. autosummary::
-..     ~Simulator.run
-
-.. .. rubric:: Attributes Documentation
-.. .. autoattribute:: isotopomers
-.. .. autoattribute:: spectrum
-.. .. autoattribute:: isotope_list
-
-.. .. rubric:: Method Documentation
-.. .. automethod:: run
-
-
 .. seealso::
 
-    :ref:`isotopomers`, :ref:`spectrum` and :ref:`load_isotopomers`,
+    and :ref:`load_isotopomers`,
