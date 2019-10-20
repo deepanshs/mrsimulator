@@ -204,7 +204,6 @@ setup(
         "pydantic>=0.28",
         "requests>=2.21.0",
         "monty==2.0.4",
-        "matplotlib>=3.0.2",
         "csdmpy>=0.1.2",
     ],
     ext_modules=cythonize(ext_modules, language_level=3),

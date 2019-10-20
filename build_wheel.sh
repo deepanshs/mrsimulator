@@ -20,7 +20,8 @@ done
 
 
 # Install packages and test
-# for PYBIN in /opt/python/*/bin/; do
-#     "${PYBIN}/pip" install python-manylinux-demo --no-index -f /io/dist
-#     (cd "$HOME"; "${PYBIN}/nosetests" pymanylinuxdemo)
-# done
+for PYBIN in /opt/python/cp3[6-7]*/bin/; do
+    "${PYBIN}/pip" install -r requirements-dev.txt
+    "${PYBIN}/pip" install mrsimulator --no-index -f /io/wheelhouse
+    (cd "$HOME"; "${PYBIN}/pytest")
+done
