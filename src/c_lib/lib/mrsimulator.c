@@ -132,13 +132,13 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
   size_4 = 9 * number_of_sidebands;
   complex128 *pre_phase = malloc_complex128(size_4);
   __get_components(number_of_sidebands, sample_rotation_frequency_in_Hz,
-                   pre_phase);
+                   (double *)pre_phase);
 
   size_2 = 5 * number_of_sidebands;
   plan->pre_phase_2 = malloc_complex128(size_2);
 
-  cblas_zcopy(size_2, &pre_phase[2 * number_of_sidebands], 1, plan->pre_phase_2,
-              1);
+  cblas_zcopy(size_2, (double *)(pre_phase[2 * number_of_sidebands]), 1,
+              (double *)(plan->pre_phase_2), 1);
   /* multiplying the wigner 2j d^2_{m,0}(rotor_angle_in_rad) vector to the
    * sideband phase multiplier. This multiplication absorbs the rotation of the
    * second rank tensors from the rotor frame to the lab frame, thereby,
@@ -150,7 +150,7 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
   j = 0;
   for (i = 0; i < 5; i++) {
     cblas_zdscal(number_of_sidebands, plan->wigner_d2m0_vector[i],
-                 &plan->pre_phase_2[j], 1);
+                 (double *)(plan->pre_phase_2[j]), 1);
     j += number_of_sidebands;
   }
 
@@ -170,7 +170,7 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
     j = 0;
     for (i = 0; i < 9; i++) {
       cblas_zdscal(number_of_sidebands, plan->wigner_d4m0_vector[i],
-                   &plan->pre_phase_4[j], 1);
+                   (double *)(plan->pre_phase_4[j]), 1);
       j += number_of_sidebands;
     }
   } else {
@@ -247,9 +247,10 @@ void MRS_get_amplitudes_from_plan(MRS_plan *plan, complex128 *R2,
    * `number_of_sidebands` x `total_orientations` with `total_orientations`
    * as the leading dimension. */
   cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans, plan->number_of_sidebands,
-              scheme->total_orientations, 5, &plan->one, plan->pre_phase_2,
-              plan->number_of_sidebands, scheme->w2, 5, &plan->zero,
-              plan->vector, scheme->total_orientations);
+              scheme->total_orientations, 5, (double *)(plan->one),
+              (double *)(plan->pre_phase_2), plan->number_of_sidebands,
+              (double *)(scheme->w2), 5, (double *)(plan->zero),
+              (double *)(plan->vector), scheme->total_orientations);
 
   if (scheme->w4 != NULL) {
     /* Evaluating the exponent of the sideband phase w.r.t the fourth rank
@@ -262,8 +263,9 @@ void MRS_get_amplitudes_from_plan(MRS_plan *plan, complex128 *R2,
      */
     cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans,
                 plan->number_of_sidebands, scheme->total_orientations, 9,
-                &plan->one, plan->pre_phase_4, plan->number_of_sidebands,
-                scheme->w4, 9, &plan->one, plan->vector,
+                (double *)(plan->one), (double *)(plan->pre_phase_4),
+                plan->number_of_sidebands, (double *)(scheme->w4), 9,
+                (double *)(plan->one), (double *)(plan->vector),
                 scheme->total_orientations);
   }
 
@@ -406,22 +408,23 @@ void __get_components_2(int number_of_sidebands,
     vm_cosine_I_sine(number_of_sidebands, phase, &pre_phase[i]);
 
     // step 3. subtract 1.0 from pre_phase
-    cblas_daxpy(number_of_sidebands, -1.0, ones, 1, (double *)&pre_phase[i], 2);
+    cblas_daxpy(number_of_sidebands, -1.0, ones, 1, (double *)(pre_phase[i]),
+                2);
 
     // step 4. scale pre_phase with factor `scale`
-    cblas_zdscal(number_of_sidebands, scale, &pre_phase[i], 1);
+    cblas_zdscal(number_of_sidebands, scale, (double *)(pre_phase[i]), 1);
 
     /* The expression pre_phase[m] = scale * (cexp(I * phase) - 1.0) given
      * above from m is related to -m as pre_phase[-m] = -Re(pre_phase[m]) +
      * Im(pre_phase[m])
      */
 
-    cblas_zcopy(number_of_sidebands, &pre_phase[i], 1,
-                &pre_phase[(8 - m) * number_of_sidebands], 1);
-    cblas_dscal(number_of_sidebands, -1.0, (double *)&pre_phase[i], 2);
+    cblas_zcopy(number_of_sidebands, (double *)(pre_phase[i]), 1,
+                (double *)(pre_phase[(8 - m) * number_of_sidebands]), 1);
+    cblas_dscal(number_of_sidebands, -1.0, (double *)(pre_phase[i]), 2);
   }
   vm_double_zeros(2 * number_of_sidebands,
-                  (double *)&pre_phase[4 * number_of_sidebands]);
+                  (double *)(pre_phase[4 * number_of_sidebands]));
   // memset((double *)&pre_phase[4 * number_of_sidebands], 0,
   //        2 * number_of_sidebands * sizeof(double));
 
@@ -442,10 +445,10 @@ void __get_components_2(int number_of_sidebands,
  * `pre_phase` is a matrix of shape, `9 x number_of_sidebands`.
  */
 void __get_components(int number_of_sidebands, double sample_rotation_frequency,
-                      void *pre_phase) {
+                      double *restrict pre_phase) {
   double spin_angular_freq, tau, wrt, pht, scale;
-  int step, i, m;
-  double *pre_phase_ = (double *)pre_phase;
+  int step, m;
+  // double *pre_phase_ = (double *)pre_phase;
 
   // Calculate the spin angular frequency
   spin_angular_freq = sample_rotation_frequency * PI2;
@@ -458,20 +461,19 @@ void __get_components(int number_of_sidebands, double sample_rotation_frequency,
   double m_wr[9] = {-4., -3., -2., -1., 0., 1., 2., 3., 4.};
   cblas_dscal(9, spin_angular_freq, m_wr, 1);
 
-  i = 0;
   for (m = 0; m <= 8; m++) {
     if (m != 4) {
       wrt = m_wr[m] * tau;
       pht = 0.0;
       scale = PI2 / m_wr[m];
       for (step = 0; step < number_of_sidebands; step++) {
-        *pre_phase_++ = scale * (cos(pht) - 1.0);
-        *pre_phase_++ = scale * sin(pht);
+        *pre_phase++ = scale * (cos(pht) - 1.0);
+        *pre_phase++ = scale * sin(pht);
         pht += wrt;
       }
     } else {
-      vm_double_zeros(2 * number_of_sidebands, pre_phase_);
-      pre_phase_ += 2 * number_of_sidebands;
+      vm_double_zeros(2 * number_of_sidebands, &pre_phase[0]);
+      pre_phase += 2 * number_of_sidebands;
     }
   }
 }

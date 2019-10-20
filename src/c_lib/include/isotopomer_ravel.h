@@ -20,11 +20,12 @@ struct __isotopomer_ravel {
   double *shielding_orientation; /* Nuclear shielding PAS to CRS euler angles
                                     (rad.) */
 
-  double *quadrupole_coupling_constant_in_Hz; /* Quadrupole coupling constant (Hz) */
-  double *quadrupole_asymmetry;      /* Quadrupole asymmetry parameter */
+  double *quadrupole_coupling_constant_in_Hz; /* Quadrupole coupling constant
+                                                 (Hz) */
+  double *quadrupole_asymmetry; /* Quadrupole asymmetry parameter */
   double
       *quadrupole_orientation; /* Quadrupole PAS to CRS euler angles (rad.) */
-  double *dipolar_couplings;    /* dipolar coupling stored as list of lists */
+  double *dipolar_couplings;   /* dipolar coupling stored as list of lists */
 };
 
 typedef struct __isotopomer_ravel isotopomer_ravel;

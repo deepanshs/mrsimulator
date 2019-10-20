@@ -42,7 +42,6 @@ if platform.system() == "Windows":
     include_dirs += [join(conda_location, "Library", "include")]
     include_dirs += [join(conda_location, "include")]
     library_dirs += [join(conda_location, "Library", "lib")]
-    # data_files += [join(conda_location, "Library", "bin", "mkl_rt.dll")]
     libraries += ["fftw3", "openblas"]
     name = "openblas"
 
@@ -52,19 +51,11 @@ if platform.system() == "Windows":
 else:
     openblas_info = sysinfo.get_info("openblas")
     fftw3_info = sysinfo.get_info("fftw3")
-    # mkl_info = sysinfo.get_info("mkl")
 
-    # if mkl_info != {}:
-    #     name = "mkl"
-    #     include_dirs += mkl_info["include_dirs"]
-    #     library_dirs += mkl_info["library_dirs"]
-    #     libraries += mkl_info["libraries"]
     if openblas_info != {}:
         name = "openblas"
         library_dirs += openblas_info["library_dirs"]
         libraries += openblas_info["libraries"]
-    # else:
-    #     raise Exception("mkl blas or openblas library not found.")
 
     include_dirs += fftw3_info["include_dirs"]
     library_dirs += fftw3_info["library_dirs"]
@@ -95,24 +86,10 @@ with open("src/mrsimulator/__config__.json", "w", encoding="utf8") as outfile:
 # other include paths
 include_dirs += ["src/c_lib/include", numpy_include]
 
-# system = platform.system()
-# arch = platform.architecture()[0]
-# compiler = platform.python_compiler()
-# if system == 'Linux':
-#     extra_link_args += ["-lm", "-ldl"]
-#     if arch == '64bit':
-#         extra_compile_args += ["-m64", "-DMKL_ILP64"]
-#     if arch == '32bit':
-#         extra_compile_args += ["-m32"]
-# if system == 'Darwin':
-#     extra_link_args += ["-Wl", "-lm", "-ldl"]
-#     extra_compile_args += ["-m64"]
-
 print(extra_compile_args)
 print(extra_link_args)
 
 # method
-
 ext_modules = [
     Extension(
         name="mrsimulator.methods",

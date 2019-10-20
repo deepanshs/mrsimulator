@@ -195,6 +195,6 @@ void MRS_get_normalized_frequencies_from_plan(MRS_plan *plan,
 void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0);
 
 extern void __get_components(int number_of_sidebands, double spin_frequency,
-                             void *pre_phase);
+                             double *restrict pre_phase);
 
 #endif /* mrsimulator_h */

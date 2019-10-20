@@ -123,11 +123,12 @@ extern void wigner_dm0_vector(const int l, const double beta, double *R_out);
 extern void single_wigner_rotation(const int l, const double *euler_angles,
                                    const void *R_in, void *R_out);
 
-extern void __batch_wigner_rotation(
-    const unsigned int octant_orientations, const unsigned int n_octants,
-    const double *wigner_2j_matrices, const complex128 *R2,
-    const double *wigner_4j_matrices, const complex128 *R4,
-    complex128 *exp_Im_alpha, complex128 *w2, complex128 *w4);
+extern void __batch_wigner_rotation(const unsigned int octant_orientations,
+                                    const unsigned int n_octants,
+                                    double *wigner_2j_matrices, complex128 *R2,
+                                    double *wigner_4j_matrices, complex128 *R4,
+                                    complex128 *exp_Im_alpha, complex128 *w2,
+                                    complex128 *w4);
 
 extern void get_exp_Im_alpha(const unsigned int n, const bool allow_fourth_rank,
                              void *exp_Im_alpha);

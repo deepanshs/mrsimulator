@@ -142,9 +142,9 @@ def pre_phase_components(int number_of_sidebands, double sample_rotation_frequen
 
     """
     cdef int n1 = 9 * number_of_sidebands
-    cdef np.ndarray[complex] pre_phase = np.zeros(n1, dtype=np.complex128)
+    cdef np.ndarray[double] pre_phase = np.zeros(2*n1, dtype=np.float64)
     clib.__get_components(number_of_sidebands, sample_rotation_frequency_in_Hz, &pre_phase[0])
-    return pre_phase.reshape(9, number_of_sidebands)
+    return pre_phase.view(dtype=np.complex128).reshape(9, number_of_sidebands)
 
 
 

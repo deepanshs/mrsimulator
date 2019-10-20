@@ -1,0 +1,29 @@
+{
+    "addons": [],
+    "buildpacks": [
+        {
+            "url": "heroku/python"
+        }
+    ],
+    "description": "Mrsimulator app is an open-source plotly-dast python application for real-time solid-state magnetic resonance line-shape simulation.",
+    "env": {},
+    "formation": {
+        "web": {
+            "quantity": 1
+        }
+    },
+    "name": "mrsimulator-app",
+    "scripts": {},
+    "stack": "heroku-18",
+    "keywords": [
+        "NMR",
+        "magnetic resonance",
+        "ssNMR lineshape",
+        "simulation",
+        "nuclear shielding",
+        "chemical shift",
+        "quadrupole"
+    ],
+    "repository": "https://github.com/DeepanshS/mrsimulator-app",
+    "logo": "https://raw.githubusercontent.com/DeepanshS/mrsimulator-app/master/app/resource/mrsimulator-dark-featured.png"
+}

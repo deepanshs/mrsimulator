@@ -28,7 +28,7 @@ data_files = []
 numpy_include = np.get_include()
 
 extra_link_args = ["-lm"]
-extra_compile_args = ["-g", "-O3"]
+extra_compile_args = ["-g", "-O3", "-std=c99"]
 
 libraries = ["openblas", "fftw3", "fftw3_threads", "pthread"]
 include_dirs = ["/usr/include/", "/usr/include/openblas"]

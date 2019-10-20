@@ -754,11 +754,10 @@ void single_wigner_rotation(const int l, const double *euler_angles,
  */
 void __batch_wigner_rotation(const unsigned int octant_orientations,
                              const unsigned int n_octants,
-                             const double *wigner_2j_matrices,
-                             const complex128 *R2,
-                             const double *wigner_4j_matrices,
-                             const complex128 *R4, complex128 *exp_Im_alpha,
-                             complex128 *w2, complex128 *w4) {
+                             double *wigner_2j_matrices, complex128 *R2,
+                             double *wigner_4j_matrices, complex128 *R4,
+                             complex128 *exp_Im_alpha, complex128 *w2,
+                             complex128 *w4) {
 
   unsigned int j, index_25, index_81, w2_increment, w4_increment = 0;
 
@@ -822,13 +821,13 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
      * After four iterations, exp_Im_alpha restores to its original value.
      */
     if (n_octants != 1) {
-      cblas_zscal(octant_orientations, &negative_iota,
-                  &exp_Im_alpha[3 * octant_orientations], 1);
+      cblas_zscal(octant_orientations, (double *)negative_iota,
+                  &(((double *)exp_Im_alpha)[6 * octant_orientations]), 1);
       cblas_zdscal(octant_orientations, -1,
-                   &exp_Im_alpha[2 * octant_orientations], 1);
+                   &(((double *)exp_Im_alpha)[4 * octant_orientations]), 1);
       if (w4 != NULL) {
-        cblas_zscal(octant_orientations, &iota,
-                    &exp_Im_alpha[octant_orientations], 1);
+        cblas_zscal(octant_orientations, (double *)iota,
+                    &(((double *)exp_Im_alpha)[2 * octant_orientations]), 1);
       }
     }
   }

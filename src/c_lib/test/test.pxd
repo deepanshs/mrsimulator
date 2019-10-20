@@ -23,10 +23,10 @@ cdef extern from "angular_momentum.h":
 
     void __batch_wigner_rotation(const unsigned int octant_orientations,
                              const unsigned int n_octants,
-                             const double *wigner_2j_matrices,
-                             const void *R2,
-                             const double *wigner_4j_matrices,
-                             const void *R4,
+                             double *wigner_2j_matrices,
+                             void *R2,
+                             double *wigner_4j_matrices,
+                             void *R4,
                              void *exp_Im_alpha,
                              void *w2, void *w4)
 
@@ -60,7 +60,7 @@ cdef extern from "mrsimulator.h":
     void __get_components(
         int number_of_sidebands,
         double spin_frequency,
-        void *pre_phase)
+        double *pre_phase)
 
 #     ctypedef struct MRS_plan
 
