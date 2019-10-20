@@ -10,16 +10,17 @@ cd mrsim
 # Compile wheels
 for PYBIN in /opt/python/cp3[6-8]*/bin; do
     "${PYBIN}/pip" install -r requirements.txt
-    "${PYBIN}/python" setup_unix.py bdist_wheel /io/ -w wheelhouse/
+    "${PYBIN}/python" setup.py bdist_wheel --dist-dir=/mrsim/dist/
 done
 
 # Bundle external shared libraries into the wheels
-for whl in wheelhouse/*.whl; do
-    auditwheel repair "$whl" --plat $PLAT -w /io/wheelhouse/
+for whl in dist/*.whl; do
+    auditwheel repair "$whl" -w /mrsim/dist/
 done
 
+
 # Install packages and test
-for PYBIN in /opt/python/*/bin/; do
-    "${PYBIN}/pip" install python-manylinux-demo --no-index -f /io/wheelhouse
-    (cd "$HOME"; "${PYBIN}/nosetests" pymanylinuxdemo)
-done
+# for PYBIN in /opt/python/*/bin/; do
+#     "${PYBIN}/pip" install python-manylinux-demo --no-index -f /mrsim/dist
+#     (cd "$HOME"; "${PYBIN}/nosetests" pymanylinuxdemo)
+# done
