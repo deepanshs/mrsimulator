@@ -2,7 +2,8 @@
 set -e -x
 
 # Install a system package required by our library
-yum install -y openblas-devel git fftw-devel
+apt-get install libopenblas-dev libfftw3-dev
+# yum install -y openblas-devel git fftw-devel
 mkdir mrsim
 git clone --single-branch --branch master https://github.com/DeepanshS/mrsimulator.git mrsim
 cd mrsim

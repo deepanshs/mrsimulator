@@ -14,8 +14,6 @@ import platform
 import numpy as np
 import numpy.distutils.system_info as sysinfo
 
-import json
-
 # get the version from file
 
 with open("src/mrsimulator/__init__.py", "r") as f:
@@ -26,9 +24,13 @@ with open("src/mrsimulator/__init__.py", "r") as f:
 
 module_dir = dirname(abspath(__file__))
 
-include_dirs = []
-library_dirs = []
-libraries = []
+include_dirs = [
+    "/usr/include/",
+    "/usr/include/openblas",
+    "/usr/include/x86_64-linux-gnu/",
+]
+library_dirs = ["/usr/lib64/", "/usr/lib/x86_64-linux-gnu/"]
+libraries = ["openblas", "fftw3", "fftw3_threads", "pthread"]
 data_files = []
 
 numpy_include = np.get_include()
@@ -69,19 +71,6 @@ else:
 include_dirs = list(set(include_dirs))
 library_dirs = list(set(library_dirs))
 libraries = list(set(libraries))
-
-
-blas_info = {
-    "name": name,
-    "library_dirs": library_dirs,
-    "include_dirs": include_dirs,
-    "libraries": libraries,
-}
-
-print(blas_info)
-
-with open("src/mrsimulator/__config__.json", "w", encoding="utf8") as outfile:
-    json.dump(blas_info, outfile, ensure_ascii=True, indent=2)
 
 # other include paths
 include_dirs += ["src/c_lib/include", numpy_include]
