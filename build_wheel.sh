@@ -3,19 +3,19 @@ set -e -x
 
 # Install a system package required by our library
 yum install -y openblas-devel git fftw-devel
-mkdir io
-git clone --single-branch --branch master https://github.com/DeepanshS/mrsimulator.git io
-cd io
+mkdir mrsim
+git clone --single-branch --branch master https://github.com/DeepanshS/mrsimulator.git mrsim
+cd mrsim
 
 # Compile wheels
 for PYBIN in /opt/python/cp3[6-8]*/bin; do
     "${PYBIN}/pip" install -r requirements.txt
-    "${PYBIN}/python" setup_unix.py bdist_wheel --dist-dir=/io/dist/
+    "${PYBIN}/python" setup_unix.py bdist_wheel
 done
 
 # Bundle external shared libraries into the wheels
 for whl in dist/*.whl; do
-    auditwheel repair "$whl" -w /io/dist/
+    auditwheel repair "$whl" -w /io/wheelhouse/
 done
 
 
