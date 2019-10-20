@@ -514,8 +514,9 @@ double wigner_d_element(const int l, const int m1, const int m2,
     double cx = cos(beta / 2.);
     double sum = 0.;
     int sign = 1;
+    int k;
 
-    for (int k = 0; k <= l - m1; k++) {
+    for (k = 0; k <= l - m1; k++) {
       double k1 = (int)(l - m1 - k);
       double k2 = (int)(l + m2 - k);
       double k3 = (int)(k + m1 - m2);
