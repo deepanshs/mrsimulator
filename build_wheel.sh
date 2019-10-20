@@ -8,7 +8,7 @@ git clone --single-branch --branch master https://github.com/DeepanshS/mrsimulat
 cd mrsim
 
 # Compile wheels
-for PYBIN in /opt/python/cp3[6-8]*/bin; do
+for PYBIN in /opt/python/cp3[6-7]*/bin; do
     "${PYBIN}/pip" install -r requirements.txt
     "${PYBIN}/python" setup_unix.py bdist_wheel
 done
