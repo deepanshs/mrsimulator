@@ -117,9 +117,8 @@ static inline void vm_double_multiply_inplace(int count,
  * Divide the elements of vector x by y and store in res of type double.
  * res = x / y
  */
-static inline void vm_double_divide(int count, const double *restrict x,
-                                    const double *restrict y,
-                                    double *restrict res) {
+static inline void vm_double_divide(int count, const double *x, const double *y,
+                                    double *res) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   // res = __builtin_assume_aligned(res, 32);
@@ -180,8 +179,8 @@ static inline void vm_double_square_inplace(int count, double *restrict x) {
  * Square root of the elements of vector x stored in res of type double.
  * res = sqrt(x)
  */
-static inline void vm_double_square_root(int count, const double *restrict x,
-                                         double *restrict res) {
+static inline void vm_double_square_root(int count, const double *x,
+                                         double *res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
@@ -317,8 +316,7 @@ static inline void vm_double_exp(int count, double *restrict x,
  * Exponent of the elements of vector x stored in res of type complex128.
  * res = exp(x)
  */
-static inline void vm_double_complex_exp(int count, const void *restrict x,
-                                         void *restrict res) {
+static inline void vm_double_complex_exp(int count, const void *x, void *res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   double *x_ = (double *)x;
