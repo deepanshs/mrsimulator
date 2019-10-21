@@ -1,6 +1,21 @@
 include README.md
+include requirements.txt
+include conda-requirements.txt
+include LICENSE
+include CHANGELOG
 
 recursive-include src/mrsimulator/examples *
+recursive-include src/c_lib/include *
+recursive-include src/c_lib/lib *
+
 include src/mrsimulator/isotope_data.json
 include src/mrsimulator/app/resource/mrsimulator-dark-featured.png
 include src/mrsimulator/app/assets/custom.css
+
+include src/c_lib/mrmethods/nmr_methods.pxd
+include src/c_lib/mrmethods/nmr_methods.pyx
+exclude src/c_lib/mrmethods/nmr_methods.c
+
+include src/c_lib/test/test.pxd
+include src/c_lib/test/test.pyx
+exclude src/c_lib/test/test.c

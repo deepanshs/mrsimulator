@@ -8,9 +8,3 @@ matplotlib>=3.0.2
 csdmpy>=0.1.2
 pydantic>=0.28
 monty==2.0.4
-
-flask>=1.1.0
-plotly>=3.6
-dash>=0.40
-dash_bootstrap_components
-gunicorn

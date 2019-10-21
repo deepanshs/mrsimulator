@@ -21,15 +21,21 @@ with open("src/mrsimulator/__init__.py", "r") as f:
         if "__version__" in line:
             before_keyword, keyword, after_keyword = line.partition("=")
             version = after_keyword.strip()[1:-1]
+            print(version)
 
 module_dir = dirname(abspath(__file__))
+print(module_dir)
 
 include_dirs = [
     "/usr/include/",
     "/usr/include/openblas",
     "/usr/include/x86_64-linux-gnu/",
 ]
-library_dirs = ["/usr/lib64/", "/usr/lib/x86_64-linux-gnu/"]
+include_dirs += [f"/app/.apt{item}" for item in include_dirs]
+
+library_dirs = ["/usr/lib64/", "/usr/lib/", "/usr/lib/x86_64-linux-gnu/"]
+library_dirs += [f"/app/.apt{item}" for item in library_dirs]
+
 libraries = ["openblas", "fftw3", "fftw3_threads", "pthread"]
 data_files = []
 
@@ -58,22 +64,25 @@ else:
         name = "openblas"
         library_dirs += openblas_info["library_dirs"]
         libraries += openblas_info["libraries"]
-
-    include_dirs += fftw3_info["include_dirs"]
-    library_dirs += fftw3_info["library_dirs"]
-    libraries += fftw3_info["libraries"]
+    fftw_keys = fftw3_info.keys()
+    if "include_dirs" in fftw_keys:
+        include_dirs += fftw3_info["include_dirs"]
+    if "library_dirs" in fftw_keys:
+        library_dirs += fftw3_info["library_dirs"]
+    if "libraries" in fftw_keys:
+        libraries += fftw3_info["libraries"]
 
     extra_link_args = ["-lm"]
     extra_compile_args = ["-g", "-O3"]
-
-    libraries += ["fftw3_threads", "pthread"]
-
 include_dirs = list(set(include_dirs))
 library_dirs = list(set(library_dirs))
 libraries = list(set(libraries))
 
 # other include paths
-include_dirs += ["src/c_lib/include", numpy_include]
+include_dirs += [f"{module_dir}/src/c_lib/include/", numpy_include]
+print(include_dirs)
+print(library_dirs)
+print(libraries)
 
 print(extra_compile_args)
 print(extra_link_args)

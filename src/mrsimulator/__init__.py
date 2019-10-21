@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 from mrsimulator.parseable import Parseable
 from mrsimulator.tensors import SymmetricTensor, AntisymmetricTensor

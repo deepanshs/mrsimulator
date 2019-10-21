@@ -46,11 +46,14 @@ typedef float complex64[2];
 // #define __blas_activate
 // #include "vm_mkl.h"
 
-// #elif __has_include("cblas.h")
+#if __has_include("cblas.h")
 #include "cblas.h"
+#endif
+#if __has_include("cblas-openblas.h")
+#include "cblas-openblas.h"
+#endif
 #define __blas_activate
 #include "vm.h"
-// #endif
 
 // user definition
 #define PI2 6.2831853072
