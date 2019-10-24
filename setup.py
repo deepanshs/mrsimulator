@@ -36,7 +36,7 @@ include_dirs += [f"/app/.apt{item}" for item in include_dirs]
 library_dirs = ["/usr/lib64/", "/usr/lib/", "/usr/lib/x86_64-linux-gnu/"]
 library_dirs += [f"/app/.apt{item}" for item in library_dirs]
 
-libraries = ["openblas", "fftw3", "fftw3_threads", "pthread"]
+libraries = []
 data_files = []
 
 numpy_include = np.get_include()
@@ -57,6 +57,7 @@ if platform.system() == "Windows":
     extra_compile_args = ["-DFFTW_DLL"]
 
 else:
+    libraries = ["openblas", "fftw3", "fftw3_threads", "pthread"]
     openblas_info = sysinfo.get_info("openblas")
     fftw3_info = sysinfo.get_info("fftw3")
 
