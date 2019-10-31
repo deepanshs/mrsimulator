@@ -39,16 +39,9 @@ def simulator(isotopomers, spectrum):
 
 
 def test_allowed_isotopes():
-    assert set(Simulator.allowed_isotopes(spin=0.5)) == {
-        "19F",
-        "31P",
-        "129Xe",
-        "1H",
-        "57Fe",
-        "13C",
-        "15N",
-        "29Si",
-    }
+    assert {"19F", "31P", "129Xe", "1H", "57Fe", "13C", "15N", "29Si"}.issubset(
+        set(Simulator.allowed_isotopes(spin=0.5))
+    )
 
 
 def test_get_isotopes(simulator):
