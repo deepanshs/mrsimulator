@@ -1,87 +1,744 @@
 {
-    "1H": {
-        "spin": 1,
-        "natural_abundance": 99.989,
-        "gyromagnetic_ratio": 42.57747892
-    },
-    "2H": {
-        "spin": 2,
-        "natural_abundance": 0.015,
-        "gyromagnetic_ratio": 6.536
-    },
-    "7Li": {
-        "spin": 3,
-        "natural_abundance": 92.41,
-        "gyromagnetic_ratio": 16.546
-    },
-    "13C": {
-        "spin": 1,
-        "natural_abundance": 1.07,
-        "gyromagnetic_ratio": 10.7084
-    },
-    "14N": {
-        "spin": 2,
-        "natural_abundance": 99.632,
-        "gyromagnetic_ratio": 3.077
-    },
-    "15N": {
-        "spin": 1,
-        "natural_abundance": 0.368,
-        "gyromagnetic_ratio": -4.316
-    },
-    "17O": {
-        "spin": 5,
-        "natural_abundance": 0.038,
-        "gyromagnetic_ratio": -5.772
-    },
-    "19F": {
-        "spin": 1,
-        "natural_abundance": 100.0,
-        "gyromagnetic_ratio": 40.052
-    },
-    "23Na": {
-        "spin": 3,
-        "natural_abundance": 100.0,
-        "gyromagnetic_ratio": 11.262
-    },
-    "27Al": {
-        "spin": 5,
-        "natural_abundance": 100.0,
-        "gyromagnetic_ratio": 11.103
-    },
-    "87Rb": {
-        "spin": 3,
-        "natural_abundance": 27.83,
-        "gyromagnetic_ratio": 14.896
-    },
-    "29Si": {
-        "spin": 1,
-        "natural_abundance": 4.683,
-        "gyromagnetic_ratio": -8.465
-    },
-    "31P": {
-        "spin": 1,
-        "natural_abundance": 100.0,
-        "gyromagnetic_ratio": 17.235
-    },
-    "57Fe": {
-        "spin": 1,
-        "natural_abundance": 2.119,
-        "gyromagnetic_ratio": 1.382
-    },
-    "63Cu": {
-        "spin": 3,
-        "natural_abundance": 69.17,
-        "gyromagnetic_ratio": 11.319
-    },
-    "67Zn": {
-        "spin": 5,
-        "natural_abundance": 4.1,
-        "gyromagnetic_ratio": 2.669
-    },
-    "129Xe": {
-        "spin": 1,
-        "natural_abundance": 26.44,
-        "gyromagnetic_ratio": 11.777
-    }
+  "2H": {
+    "spin": 2,
+    "natural_abundance": 0.015,
+    "gyromagnetic_ratio": 6.535903,
+    "quadrupole_moment": 0.00286,
+    "atomic_number": 1
+  },
+  "1H": {
+    "spin": 1,
+    "natural_abundance": 99.985,
+    "gyromagnetic_ratio": 42.57748,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 1
+  },
+  "3He": {
+    "spin": 1,
+    "natural_abundance": 0.00013700000000000002,
+    "gyromagnetic_ratio": -32.436040000000006,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 2
+  },
+  "6Li": {
+    "spin": 2,
+    "natural_abundance": 7.59,
+    "gyromagnetic_ratio": 6.266132,
+    "quadrupole_moment": -0.0008300000000000001,
+    "atomic_number": 3
+  },
+  "7Li": {
+    "spin": 3,
+    "natural_abundance": 92.41,
+    "gyromagnetic_ratio": 16.54828,
+    "quadrupole_moment": -0.0406,
+    "atomic_number": 3
+  },
+  "9Be": {
+    "spin": 3,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": -5.98526,
+    "quadrupole_moment": 0.053,
+    "atomic_number": 4
+  },
+  "10B": {
+    "spin": 6,
+    "natural_abundance": 19.8,
+    "gyromagnetic_ratio": 4.575194000000001,
+    "quadrupole_moment": 0.08472,
+    "atomic_number": 5
+  },
+  "11B": {
+    "spin": 3,
+    "natural_abundance": 80.2,
+    "gyromagnetic_ratio": 13.66298,
+    "quadrupole_moment": 0.04065,
+    "atomic_number": 5
+  },
+  "13C": {
+    "spin": 1,
+    "natural_abundance": 1.11,
+    "gyromagnetic_ratio": 10.7084,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 6
+  },
+  "15N": {
+    "spin": 1,
+    "natural_abundance": 0.366,
+    "gyromagnetic_ratio": -4.317267,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 7
+  },
+  "14N": {
+    "spin": 2,
+    "natural_abundance": 99.634,
+    "gyromagnetic_ratio": 3.077706,
+    "quadrupole_moment": 0.0193,
+    "atomic_number": 7
+  },
+  "17O": {
+    "spin": 5,
+    "natural_abundance": 0.038,
+    "gyromagnetic_ratio": -5.774237,
+    "quadrupole_moment": -0.02578,
+    "atomic_number": 8
+  },
+  "19F": {
+    "spin": 1,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 40.07759,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 9
+  },
+  "21Ne": {
+    "spin": 3,
+    "natural_abundance": 0.27,
+    "gyromagnetic_ratio": -3.3630730000000004,
+    "quadrupole_moment": 0.10300000000000001,
+    "atomic_number": 10
+  },
+  "23Na": {
+    "spin": 3,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 11.262,
+    "quadrupole_moment": 0.1006,
+    "atomic_number": 11
+  },
+  "25Mg": {
+    "spin": 5,
+    "natural_abundance": 10.0,
+    "gyromagnetic_ratio": -2.608299,
+    "quadrupole_moment": 0.201,
+    "atomic_number": 12
+  },
+  "27Al": {
+    "spin": 5,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 11.10309,
+    "quadrupole_moment": 0.15,
+    "atomic_number": 13
+  },
+  "29Si": {
+    "spin": 1,
+    "natural_abundance": 4.683,
+    "gyromagnetic_ratio": -8.465499000000001,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 14
+  },
+  "31P": {
+    "spin": 1,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 17.25145,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 15
+  },
+  "33S": {
+    "spin": 3,
+    "natural_abundance": 0.75,
+    "gyromagnetic_ratio": 3.271725,
+    "quadrupole_moment": -0.076,
+    "atomic_number": 16
+  },
+  "37Cl": {
+    "spin": 3,
+    "natural_abundance": 24.23,
+    "gyromagnetic_ratio": 3.4765309999999996,
+    "quadrupole_moment": -0.06493,
+    "atomic_number": 17
+  },
+  "35Cl": {
+    "spin": 3,
+    "natural_abundance": 75.77,
+    "gyromagnetic_ratio": 4.1765419999999995,
+    "quadrupole_moment": -0.08249,
+    "atomic_number": 17
+  },
+  "41K": {
+    "spin": 3,
+    "natural_abundance": 6.7302,
+    "gyromagnetic_ratio": 1.091912,
+    "quadrupole_moment": 0.06,
+    "atomic_number": 19
+  },
+  "39K": {
+    "spin": 3,
+    "natural_abundance": 93.2581,
+    "gyromagnetic_ratio": 1.989325,
+    "quadrupole_moment": 0.049,
+    "atomic_number": 19
+  },
+  "43Ca": {
+    "spin": 7,
+    "natural_abundance": 0.135,
+    "gyromagnetic_ratio": -2.869673,
+    "quadrupole_moment": -0.049,
+    "atomic_number": 20
+  },
+  "45Sc": {
+    "spin": 7,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 10.35908,
+    "quadrupole_moment": -0.22,
+    "atomic_number": 21
+  },
+  "49Ti": {
+    "spin": 7,
+    "natural_abundance": 5.41,
+    "gyromagnetic_ratio": -2.404754,
+    "quadrupole_moment": 0.24,
+    "atomic_number": 22
+  },
+  "47Ti": {
+    "spin": 5,
+    "natural_abundance": 7.44,
+    "gyromagnetic_ratio": -2.404105,
+    "quadrupole_moment": 0.29,
+    "atomic_number": 22
+  },
+  "51V": {
+    "spin": 7,
+    "natural_abundance": 99.75,
+    "gyromagnetic_ratio": 11.213280000000001,
+    "quadrupole_moment": -0.052000000000000005,
+    "atomic_number": 23
+  },
+  "53Cr": {
+    "spin": 3,
+    "natural_abundance": 9.500999,
+    "gyromagnetic_ratio": -2.411484,
+    "quadrupole_moment": -0.15,
+    "atomic_number": 24
+  },
+  "55Mn": {
+    "spin": 5,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 10.528939999999999,
+    "quadrupole_moment": 0.33,
+    "atomic_number": 25
+  },
+  "57Fe": {
+    "spin": 1,
+    "natural_abundance": 2.119,
+    "gyromagnetic_ratio": 1.378775,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 26
+  },
+  "59Co": {
+    "spin": 7,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 10.077069999999999,
+    "quadrupole_moment": 0.40399999999999997,
+    "atomic_number": 27
+  },
+  "61Ni": {
+    "spin": 3,
+    "natural_abundance": 1.14,
+    "gyromagnetic_ratio": -3.8113989999999998,
+    "quadrupole_moment": 0.162,
+    "atomic_number": 28
+  },
+  "63Cu": {
+    "spin": 3,
+    "natural_abundance": 69.17,
+    "gyromagnetic_ratio": 11.298160000000001,
+    "quadrupole_moment": -0.21100000000000002,
+    "atomic_number": 29
+  },
+  "65Cu": {
+    "spin": 3,
+    "natural_abundance": 30.83,
+    "gyromagnetic_ratio": 12.103,
+    "quadrupole_moment": -0.195,
+    "atomic_number": 29
+  },
+  "67Zn": {
+    "spin": 5,
+    "natural_abundance": 4.1,
+    "gyromagnetic_ratio": 2.669368,
+    "quadrupole_moment": 0.15,
+    "atomic_number": 30
+  },
+  "69Ga": {
+    "spin": 3,
+    "natural_abundance": 60.108000000000004,
+    "gyromagnetic_ratio": 10.247760000000001,
+    "quadrupole_moment": 0.168,
+    "atomic_number": 31
+  },
+  "71Ga": {
+    "spin": 3,
+    "natural_abundance": 39.891999999999996,
+    "gyromagnetic_ratio": 13.02074,
+    "quadrupole_moment": 0.106,
+    "atomic_number": 31
+  },
+  "73Ge": {
+    "spin": 9,
+    "natural_abundance": 7.76,
+    "gyromagnetic_ratio": -1.489739,
+    "quadrupole_moment": -0.17300000000000001,
+    "atomic_number": 32
+  },
+  "75As": {
+    "spin": 3,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 7.314996000000001,
+    "quadrupole_moment": 0.314,
+    "atomic_number": 33
+  },
+  "77Se": {
+    "spin": 1,
+    "natural_abundance": 7.63,
+    "gyromagnetic_ratio": 8.156818,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 34
+  },
+  "79Br": {
+    "spin": 3,
+    "natural_abundance": 50.69,
+    "gyromagnetic_ratio": 10.70415,
+    "quadrupole_moment": 0.331,
+    "atomic_number": 35
+  },
+  "81Br": {
+    "spin": 3,
+    "natural_abundance": 49.31,
+    "gyromagnetic_ratio": 11.53838,
+    "quadrupole_moment": 0.276,
+    "atomic_number": 35
+  },
+  "83Kr": {
+    "spin": 9,
+    "natural_abundance": 11.49,
+    "gyromagnetic_ratio": -1.644225,
+    "quadrupole_moment": 0.253,
+    "atomic_number": 36
+  },
+  "85Rb": {
+    "spin": 5,
+    "natural_abundance": 72.17,
+    "gyromagnetic_ratio": 4.126419,
+    "quadrupole_moment": 0.23,
+    "atomic_number": 37
+  },
+  "87Sr": {
+    "spin": 9,
+    "natural_abundance": 7.0,
+    "gyromagnetic_ratio": -1.8524650000000003,
+    "quadrupole_moment": 0.335,
+    "atomic_number": 38
+  },
+  "89Y": {
+    "spin": 1,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": -2.094923,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 39
+  },
+  "91Zr": {
+    "spin": 5,
+    "natural_abundance": 11.22,
+    "gyromagnetic_ratio": -3.974786,
+    "quadrupole_moment": -0.20600000000000002,
+    "atomic_number": 40
+  },
+  "93Nb": {
+    "spin": 9,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 10.45227,
+    "quadrupole_moment": -0.32,
+    "atomic_number": 41
+  },
+  "97Mo": {
+    "spin": 5,
+    "natural_abundance": 9.55,
+    "gyromagnetic_ratio": -2.846276,
+    "quadrupole_moment": 0.255,
+    "atomic_number": 42
+  },
+  "95Mo": {
+    "spin": 5,
+    "natural_abundance": 15.92,
+    "gyromagnetic_ratio": -2.78743,
+    "quadrupole_moment": -0.022000000000000002,
+    "atomic_number": 42
+  },
+  "101Ru": {
+    "spin": 5,
+    "natural_abundance": 17.06,
+    "gyromagnetic_ratio": -2.191648,
+    "quadrupole_moment": 0.457,
+    "atomic_number": 44
+  },
+  "99Ru": {
+    "spin": 5,
+    "natural_abundance": 12.76,
+    "gyromagnetic_ratio": -1.954433,
+    "quadrupole_moment": 0.079,
+    "atomic_number": 44
+  },
+  "103Rh": {
+    "spin": 1,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": -1.347674,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 45
+  },
+  "105Pd": {
+    "spin": 5,
+    "natural_abundance": 22.33,
+    "gyromagnetic_ratio": -1.957482,
+    "quadrupole_moment": 0.66,
+    "atomic_number": 46
+  },
+  "109Ag": {
+    "spin": 1,
+    "natural_abundance": 48.161,
+    "gyromagnetic_ratio": -1.990457,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 47
+  },
+  "107Ag": {
+    "spin": 1,
+    "natural_abundance": 51.839,
+    "gyromagnetic_ratio": -1.731396,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 47
+  },
+  "111Cd": {
+    "spin": 1,
+    "natural_abundance": 12.8,
+    "gyromagnetic_ratio": -9.069149000000001,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 48
+  },
+  "113In": {
+    "spin": 9,
+    "natural_abundance": 4.29,
+    "gyromagnetic_ratio": 9.365457000000001,
+    "quadrupole_moment": 0.799,
+    "atomic_number": 49
+  },
+  "119Sn": {
+    "spin": 1,
+    "natural_abundance": 8.59,
+    "gyromagnetic_ratio": -15.965979999999998,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 50
+  },
+  "117Sn": {
+    "spin": 1,
+    "natural_abundance": 7.68,
+    "gyromagnetic_ratio": -15.26104,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 50
+  },
+  "115Sn": {
+    "spin": 1,
+    "natural_abundance": 0.34,
+    "gyromagnetic_ratio": -14.007729999999999,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 50
+  },
+  "123Sb": {
+    "spin": 7,
+    "natural_abundance": 42.79,
+    "gyromagnetic_ratio": 5.553168,
+    "quadrupole_moment": -0.49,
+    "atomic_number": 51
+  },
+  "121Sb": {
+    "spin": 5,
+    "natural_abundance": 57.21,
+    "gyromagnetic_ratio": 10.25513,
+    "quadrupole_moment": -0.36,
+    "atomic_number": 51
+  },
+  "125Te": {
+    "spin": 1,
+    "natural_abundance": 7.07,
+    "gyromagnetic_ratio": -13.54543,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 52
+  },
+  "127I": {
+    "spin": 5,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 8.577765,
+    "quadrupole_moment": -0.79,
+    "atomic_number": 53
+  },
+  "129Xe": {
+    "spin": 1,
+    "natural_abundance": 26.4,
+    "gyromagnetic_ratio": -11.860389999999999,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 54
+  },
+  "131Xe": {
+    "spin": 3,
+    "natural_abundance": 21.232,
+    "gyromagnetic_ratio": 3.515855,
+    "quadrupole_moment": -0.12,
+    "atomic_number": 54
+  },
+  "133Cs": {
+    "spin": 7,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 5.62335,
+    "quadrupole_moment": -0.00371,
+    "atomic_number": 55
+  },
+  "135Ba": {
+    "spin": 3,
+    "natural_abundance": 6.5920000000000005,
+    "gyromagnetic_ratio": 4.258198999999999,
+    "quadrupole_moment": 0.16,
+    "atomic_number": 56
+  },
+  "137Ba": {
+    "spin": 3,
+    "natural_abundance": 11.232000000000001,
+    "gyromagnetic_ratio": 4.763434999999999,
+    "quadrupole_moment": 0.245,
+    "atomic_number": 56
+  },
+  "139La": {
+    "spin": 7,
+    "natural_abundance": 99.91,
+    "gyromagnetic_ratio": 6.06115,
+    "quadrupole_moment": 0.2,
+    "atomic_number": 57
+  },
+  "141Pr": {
+    "spin": 5,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 13.03585,
+    "quadrupole_moment": -0.0589,
+    "atomic_number": 59
+  },
+  "143Nd": {
+    "spin": 7,
+    "natural_abundance": 12.2,
+    "gyromagnetic_ratio": -2.319446,
+    "quadrupole_moment": -0.63,
+    "atomic_number": 60
+  },
+  "145Nd": {
+    "spin": 7,
+    "natural_abundance": 8.299999,
+    "gyromagnetic_ratio": -1.428692,
+    "quadrupole_moment": -0.33,
+    "atomic_number": 60
+  },
+  "149Sm": {
+    "spin": 7,
+    "natural_abundance": 13.82,
+    "gyromagnetic_ratio": -1.462885,
+    "quadrupole_moment": 0.075,
+    "atomic_number": 62
+  },
+  "153Eu": {
+    "spin": 5,
+    "natural_abundance": 52.19,
+    "gyromagnetic_ratio": 4.674174,
+    "quadrupole_moment": 2.412,
+    "atomic_number": 63
+  },
+  "151Eu": {
+    "spin": 5,
+    "natural_abundance": 47.81,
+    "gyromagnetic_ratio": 10.585339999999999,
+    "quadrupole_moment": 0.903,
+    "atomic_number": 63
+  },
+  "157Gd": {
+    "spin": 3,
+    "natural_abundance": 15.65,
+    "gyromagnetic_ratio": -1.7267709999999998,
+    "quadrupole_moment": 1.36,
+    "atomic_number": 64
+  },
+  "155Gd": {
+    "spin": 3,
+    "natural_abundance": 14.8,
+    "gyromagnetic_ratio": -1.316676,
+    "quadrupole_moment": 1.3,
+    "atomic_number": 64
+  },
+  "159Tb": {
+    "spin": 3,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 10.2346,
+    "quadrupole_moment": 1.432,
+    "atomic_number": 65
+  },
+  "161Dy": {
+    "spin": 5,
+    "natural_abundance": 18.91,
+    "gyromagnetic_ratio": -1.464453,
+    "quadrupole_moment": 2.5069999999999997,
+    "atomic_number": 66
+  },
+  "163Dy": {
+    "spin": 5,
+    "natural_abundance": 24.9,
+    "gyromagnetic_ratio": 2.050782,
+    "quadrupole_moment": 2.648,
+    "atomic_number": 66
+  },
+  "165Ho": {
+    "spin": 7,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 8.999016000000001,
+    "quadrupole_moment": 3.58,
+    "atomic_number": 67
+  },
+  "167Er": {
+    "spin": 7,
+    "natural_abundance": 22.869,
+    "gyromagnetic_ratio": -1.228,
+    "quadrupole_moment": 3.565,
+    "atomic_number": 68
+  },
+  "169Tm": {
+    "spin": 1,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": -3.530785,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 69
+  },
+  "173Yb": {
+    "spin": 5,
+    "natural_abundance": 16.13,
+    "gyromagnetic_ratio": -2.07301,
+    "quadrupole_moment": 2.8,
+    "atomic_number": 70
+  },
+  "171Yb": {
+    "spin": 1,
+    "natural_abundance": 14.28,
+    "gyromagnetic_ratio": 7.526091,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 70
+  },
+  "175Lu": {
+    "spin": 7,
+    "natural_abundance": 97.41,
+    "gyromagnetic_ratio": 4.8625620000000005,
+    "quadrupole_moment": 3.49,
+    "atomic_number": 71
+  },
+  "179Hf": {
+    "spin": 9,
+    "natural_abundance": 13.62,
+    "gyromagnetic_ratio": -1.0856270000000001,
+    "quadrupole_moment": 3.79,
+    "atomic_number": 72
+  },
+  "177Hf": {
+    "spin": 7,
+    "natural_abundance": 18.6,
+    "gyromagnetic_ratio": 1.7281509999999998,
+    "quadrupole_moment": 3.365,
+    "atomic_number": 72
+  },
+  "181Ta": {
+    "spin": 7,
+    "natural_abundance": 99.988,
+    "gyromagnetic_ratio": 5.162674,
+    "quadrupole_moment": 3.28,
+    "atomic_number": 73
+  },
+  "183W": {
+    "spin": 1,
+    "natural_abundance": 14.31,
+    "gyromagnetic_ratio": 1.7956509999999999,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 74
+  },
+  "185Re": {
+    "spin": 5,
+    "natural_abundance": 37.4,
+    "gyromagnetic_ratio": 9.717586,
+    "quadrupole_moment": 2.18,
+    "atomic_number": 75
+  },
+  "187Os": {
+    "spin": 1,
+    "natural_abundance": 1.6,
+    "gyromagnetic_ratio": 0.9856302,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 76
+  },
+  "189Os": {
+    "spin": 3,
+    "natural_abundance": 16.21,
+    "gyromagnetic_ratio": 3.3536010000000003,
+    "quadrupole_moment": 0.856,
+    "atomic_number": 76
+  },
+  "191Ir": {
+    "spin": 3,
+    "natural_abundance": 37.3,
+    "gyromagnetic_ratio": 0.7658166000000001,
+    "quadrupole_moment": 0.816,
+    "atomic_number": 77
+  },
+  "193Ir": {
+    "spin": 3,
+    "natural_abundance": 62.7,
+    "gyromagnetic_ratio": 0.831879,
+    "quadrupole_moment": 0.7509999999999999,
+    "atomic_number": 77
+  },
+  "195Pt": {
+    "spin": 1,
+    "natural_abundance": 33.832,
+    "gyromagnetic_ratio": 9.292247,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 78
+  },
+  "197Au": {
+    "spin": 3,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 0.7406416,
+    "quadrupole_moment": 0.547,
+    "atomic_number": 79
+  },
+  "201Hg": {
+    "spin": 3,
+    "natural_abundance": 13.18,
+    "gyromagnetic_ratio": -2.846915,
+    "quadrupole_moment": 0.385,
+    "atomic_number": 80
+  },
+  "199Hg": {
+    "spin": 1,
+    "natural_abundance": 16.87,
+    "gyromagnetic_ratio": 7.712319,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 80
+  },
+  "203Tl": {
+    "spin": 1,
+    "natural_abundance": 29.524,
+    "gyromagnetic_ratio": 24.73162,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 81
+  },
+  "205Tl": {
+    "spin": 1,
+    "natural_abundance": 70.476,
+    "gyromagnetic_ratio": 24.97489,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 81
+  },
+  "207Pb": {
+    "spin": 1,
+    "natural_abundance": 22.1,
+    "gyromagnetic_ratio": 9.034039,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 82
+  }
 }
