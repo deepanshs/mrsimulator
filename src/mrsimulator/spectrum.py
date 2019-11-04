@@ -68,6 +68,8 @@ class Dimension(Parseable):
     _spin: float = 1
     _natural_abundance: float = 1.0
     _gyromagnetic_ratio: float = 1.0
+    _quadrupole_moment: float = 1.0
+    _atomic_number: int = 1
 
     property_unit_types: ClassVar = {
         "spectral_width": "frequency",
@@ -125,6 +127,30 @@ class Dimension(Parseable):
     def spin(self, value):
         if self.isotope is None:
             self._spin = value
+
+    @property
+    def quadrupole_moment(self):
+        if self.isotope is None:
+            return 0.0
+        isotope_data = get_isotope_data(self.isotope)
+        return isotope_data["quadrupole_moment"]
+
+    @quadrupole_moment.setter
+    def quadrupole_moment(self, value):
+        if self.isotope is None:
+            self._quadrupole_moment = value
+
+    @property
+    def atomic_number(self):
+        if self.isotope is None:
+            return 0.0
+        isotope_data = get_isotope_data(self.isotope)
+        return isotope_data["atomic_number"]
+
+    @atomic_number.setter
+    def atomic_number(self, value):
+        if self.isotope is None:
+            self._atomic_number = value
 
     @property
     def larmor_frequency(self):
