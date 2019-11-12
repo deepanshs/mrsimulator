@@ -16,11 +16,24 @@ def test_octahedron_averaging_setup():
 
 
 def test_triangle_interpolation():
-    f = np.asarray([10, 30, 50])
-    amp_py = np.zeros(100)
-    triangle_interpolation(f, amp_py)
+    f_list = [
+        [10.2, 80.3, 80.4],
+        [80.2, 80.3, 107.4],
+        [-200.1, -200.2, -200.3],
+        [-200, -150, -600],
+        [-100, -40, 10],
+        [-20, 10, 50],
+        [10, 30, 50],
+        [50.1, 50.4, 50.9],
+        [82.3, 100.5, 200],
+        [102, 103, 104],
+    ]
+    for list_ in f_list:
+        list_ = np.asarray(list_)
+        amp_py = np.zeros(100)
+        triangle_interpolation(list_, amp_py)
 
-    amp_c = np.zeros(100)
-    clib.triangle_interpolation(f, amp_c)
+        amp_c = np.zeros(100)
+        clib.triangle_interpolation(list_, amp_c)
 
-    assert np.allclose(amp_py, amp_c, atol=1e-15)
+        assert np.allclose(amp_py, amp_c, atol=1e-15)

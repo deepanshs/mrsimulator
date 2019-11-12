@@ -63,6 +63,18 @@ else:
     openblas_info = sysinfo.get_info("openblas")
     fftw3_info = sysinfo.get_info("fftw3")
 
+    if openblas_info != {}:
+        name = "openblas"
+        library_dirs += openblas_info["library_dirs"]
+        libraries += openblas_info["libraries"]
+    fftw_keys = fftw3_info.keys()
+    if "include_dirs" in fftw_keys:
+        include_dirs += fftw3_info["include_dirs"]
+    if "library_dirs" in fftw_keys:
+        library_dirs += fftw3_info["library_dirs"]
+    if "libraries" in fftw_keys:
+        libraries += fftw3_info["libraries"]
+
     extra_link_args = ["-lm"]
     extra_compile_args = ["-g", "-O3"]
 

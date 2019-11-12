@@ -69,7 +69,7 @@ def is_physical_quantity(string):
     try:
         string_to_quantity(string)
         return True
-    except BaseException:
+    except Exception:
         return False
 
 
