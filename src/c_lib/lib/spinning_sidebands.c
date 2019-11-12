@@ -201,7 +201,7 @@ void spinning_sideband_core(
     // powder orientation average
     int geodesic_polyhedron_frequency, // The number of triangle along the edge
                                        // of octahedron
-    unsigned int averaging             // 0-octant, 1-hemisphere, 2-sphere.
+    unsigned int integration_volume             // 0-octant, 1-hemisphere, 2-sphere.
 ) {
 
   // int num_process = openblas_get_num_procs();
@@ -225,7 +225,7 @@ void spinning_sideband_core(
   }
 
   MRS_averaging_scheme *scheme = MRS_create_averaging_scheme(
-      geodesic_polyhedron_frequency, allow_fourth_rank, averaging);
+      geodesic_polyhedron_frequency, allow_fourth_rank, integration_volume);
 
   MRS_dimension *dimension =
       MRS_create_dimension(count, coordinates_offset, increment);

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """Utility functions for the csdfpy module."""
+import json
 import sys
 from os import path
 from urllib.parse import urlparse
-import json
+
 import requests
 
 

@@ -18,7 +18,8 @@ void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
 /* Create a new orientation averaging scheme. */
 MRS_averaging_scheme *
 MRS_create_averaging_scheme(unsigned int geodesic_polyhedron_frequency,
-                            bool allow_fourth_rank, unsigned int averaging) {
+                            bool allow_fourth_rank,
+                            unsigned int integration_volume) {
 
   MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
 
@@ -27,10 +28,10 @@ MRS_create_averaging_scheme(unsigned int geodesic_polyhedron_frequency,
   unsigned int allocate_size_2, allocate_size_4;
 
   scheme->octant_orientations = octant_orientations;
-  scheme->averaging = averaging;
-  if (averaging == 0) {
+  scheme->integration_volume = integration_volume;
+  if (integration_volume == 0) {
     scheme->total_orientations = octant_orientations;
-  } else if (averaging == 1) {
+  } else if (integration_volume == 1) {
     scheme->total_orientations = 4 * octant_orientations;
   } else {
     scheme->total_orientations = 8 * octant_orientations;
@@ -68,7 +69,7 @@ MRS_create_averaging_scheme(unsigned int geodesic_polyhedron_frequency,
   // calculating the required space for storing wigner matrices.
   allocate_size_2 = 25 * octant_orientations;
   allocate_size_4 = 81 * octant_orientations;
-  if (averaging == 2) {
+  if (integration_volume == 2) {
     allocate_size_2 *= 2;
     allocate_size_4 *= 2;
   }
@@ -102,7 +103,7 @@ MRS_create_averaging_scheme(unsigned int geodesic_polyhedron_frequency,
    * from the lower hemisphere repeat for the other three octant in the lower
    * hemisphere, therfore, only one set of second rank and fourth rank reduced
    * wigner matrices should suffice. */
-  if (averaging == 2) {
+  if (integration_volume == 2) {
     /* cos(beta) is negative in the lower hemisphere */
     cblas_dscal(octant_orientations, -1.0, (double *)exp_I_beta, 2);
 

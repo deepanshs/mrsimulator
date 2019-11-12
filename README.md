@@ -1,10 +1,10 @@
-
 [![Build Status](https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master)](https://travis-ci.org/DeepanshS/mrsimulator)
 [![Documentation Status](https://readthedocs.org/projects/mrsimulator/badge/?version=stable)](https://mrsimulator.readthedocs.io/en/stable/?badge=stable)
+[![PyPI version](https://badge.fury.io/py/mrsimulator.svg)](https://badge.fury.io/py/mrsimulator)
 
 # mrsimulator
 
-``mrsimulator`` is a library package with methods and tools for fast
+`mrsimulator` is a library package with methods and tools for fast
 simulation of solid-state nuclear magnetic resonance (NMR) line-shapes.
 The library contains routines written in C which are wrapped and made
 available in python.
@@ -30,8 +30,8 @@ which are useful packages for scientific datasets.
 
 ### Download mrsimulator package
 
-First, clone and download the ``mrsimulator`` package from Github. If you prefer
-``git``, type the following in the terminal,
+First, clone and download the `mrsimulator` package from Github. If you prefer
+`git`, type the following in the terminal,
 
     $ git clone git://github.com/DeepanshS/mrsimulator.git
 
@@ -43,20 +43,20 @@ containing the package (usually, the folder is named mrsimulator).
 
 ### Installing dependencies
 
-Next, install the dependencies of the package. We recommend using ``conda`` to
+Next, install the dependencies of the package. We recommend using `conda` to
 install the dependencies, as follows,
 
     $ conda install -c conda-forge openblas --file requirements.txt
 
 ### Building and Installing mrsimulator package
 
-Because the core of the ``mrsimulator`` package is written in C, you will
+Because the core of the `mrsimulator` package is written in C, you will
 require a C-compiler to build and install the package. We recommend the
 following C-compiler for the OS types:
 
-- Mac OS - ``clang``
-- Linux - ``gcc``
-- Windows - ``msvc``
+- Mac OS - `clang`
+- Linux - `gcc`
+- Windows - `msvc`
 
 Install the package with,
 

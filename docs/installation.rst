@@ -13,15 +13,14 @@ which are useful packages for scientific datasets.
 
 **Download mrsimulator package**
 
-First, clone and download the ``mrsimulator`` package from Github. If you use
-``git``, type the following in the terminal,
+`Clone and download <https://github.com/DeepanshS/mrsimulator>`_ the ``mrsimulator``
+package from Github. If you prefer ``git``, type the following in the terminal,
 
 .. code-block:: bash
 
     $ git clone git://github.com/DeepanshS/mrsimulator.git
 
-else, `download <https://github.com/DeepanshS/mrsimulator>`_ the package using
-your browser. Once downloaded, use the terminal to navigate to the directory
+Once downloaded, use the terminal to navigate to the directory
 containing the package (usually, the folder is named mrsimulator).
 
 .. code-block:: bash

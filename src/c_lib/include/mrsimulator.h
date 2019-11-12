@@ -1,37 +1,34 @@
+// -*- coding: utf-8 -*-
 //
 //  mrsimulator.h
 //
 //  Created by Deepansh J. Srivastava, Jun 30, 2019
-//  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
 #ifndef mrsimulator_h
 #define mrsimulator_h
-// #include "array.h"
-#include "config.h"
-// #include "vm_common.h"
-
-// #include <stdbool.h>
-// #include <stdio.h>
-// #include <time.h>
 
 #include "angular_momentum.h"
 #include "averaging_scheme.h"
+#include "config.h"
 #include "fftw3.h"
 #include "frequency_tensor.h"
 #include "isotopomer_ravel.h"
 #include "octahedron.h"
 
 typedef struct MRS_dimension {
-  int count; /**<  the number of coordinates along the dimension. */
-  double coordinates_offset; /**<  starting coordinate of the dimension. */
-  double increment; /**<  increment of coordinates along the dimension. */
+  int count; /**<  The number of coordinates along the dimension. */
+  double coordinates_offset; /**<  Start coordinate of the dimension. */
+  double increment; /**<  Increment of coordinates along the dimension. */
 
   /* private attributes */
   double normalize_offset; // fixed value = 0.5 - coordinate_offset/increment
   double inverse_increment;
 } MRS_dimension;
+
+MRS_dimension *MRS_create_dimension(int count, double coordinates_offset,
+                                    double increment);
 
 /**
  * @struct MRS_plan
@@ -108,14 +105,10 @@ struct MRS_plan {
 
 typedef struct MRS_plan MRS_plan;
 
-MRS_dimension *MRS_create_dimension(int count, double coordinates_offset,
-                                    double increment);
-
 /**
  * Create a new mrsimulator plan.
  *
- * @param	geodesic_polyhedron_frequency The number of triangles along the
- *            edge of the octahedron.
+ * @param	scheme The MRS_averaging_scheme.
  * @param number_of_sidebands The number of sideband to compute.
  * @param sample_rotation_frequency_in_Hz The sample rotation frequency in Hz.
  * @param rotor_angle_in_rad The polar angle in radians with respect to z-axis

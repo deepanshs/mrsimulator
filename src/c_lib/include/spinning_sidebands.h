@@ -1,8 +1,8 @@
+// -*- coding: utf-8 -*-
 //
 //  spinning_sidebands.h
 //
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
-//  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
@@ -35,5 +35,5 @@ extern void spinning_sideband_core(
     // powder orientation average
     int geodesic_polyhedron_frequency, // The number of triangle along
                                        // the edge of octahedron
-    unsigned int averaging             // 0-octant, 1-hemisphere, 2-sphere.
+    unsigned int integration_volume             // 0-octant, 1-hemisphere, 2-sphere.
 );

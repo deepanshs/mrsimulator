@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e -x
 
+# used with docker image - quay.io/pypa/manylinux2010_x86_64
 # Install a system package required by our library
 yum install -y openblas-devel git fftw-devel
 mkdir mrsim
@@ -18,5 +19,5 @@ done
 
 # Bundle external shared libraries into the wheels
 for whl in dist/*.whl; do
-    auditwheel repair "$whl" -w /io/wheelhouse/
+    auditwheel repair "$whl" -w /io/dist/
 done

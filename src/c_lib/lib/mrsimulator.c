@@ -72,9 +72,9 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
   //     geodesic_polyhedron_frequency, allow_fourth_rank);
   plan->averaging_scheme = scheme;
   plan->n_octants = 1;
-  if (scheme->averaging == 1)
+  if (scheme->integration_volume == 1)
     plan->n_octants = 4;
-  if (scheme->averaging == 2)
+  if (scheme->integration_volume == 2)
     plan->n_octants = 8;
 
   /* Normalizing amplitudes from the spherical averaging scheme by the number

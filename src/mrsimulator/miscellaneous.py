@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-import os
+
 import numpy as np
 
 __author__ = "Deepansh J. Srivastava"
@@ -53,7 +53,7 @@ def read_dmfit_files(filename):
     # test_data_object = data_object["test_data"]
 
     # source_file = test_data_object["filename"]
-    path, extension = os.path.split(filename)
+    # path, extension = os.path.split(filename)
     # path_ = path.split(path_)[0]
     # source_file = path.join(path_, filename)
 

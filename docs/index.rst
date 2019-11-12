@@ -10,19 +10,25 @@
 Welcome to mrsimulator's documentation!
 =======================================
 
-``mrsimulator`` is a library package with methods and tools for fast
+The package, ``mrsimulator``, is a library of methods and tools for fast
 simulation of solid-state nuclear magnetic resonance (NMR) line-shapes.
-The library contains routines written in C which are wrapped and made
-available in python.
+The library is written in C and is wrapped and made available in python for
+python users. The package is currently under development
 
-The package is currently under development. At present, `mrsimulator` features
-simulation of one-dimensional NMR line-shape of uncoupled spin
-:math:`I=\frac{1}{2}` isotopes for the following scenarios --
+Features
+********
 
-- At arbitrary macroscopic magnetic flux density,
-- Magic angle spinning (MAS) at arbitrary spin rate,
-- Variable angle spinning (VAS) at arbitrary angle and spin rates,
+At present, ``mrsimulator`` offers fast-simulation of one-dimensional NMR
+line-shape of uncoupled sites for the following:
+
+- Spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}`,
+  (See the list of supported isotopes),
+- Arbitrary macroscopic magnetic flux density,
+- Magic angle spinning (MAS) at arbitrary spin frequency,
+- Variable angle spinning (VAS) at arbitrary angle and spin frequency,
 - Static line-shape.
+
+-------
 
 .. toctree::
    :maxdepth: 2

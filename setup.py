@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
-
-from setuptools import Extension
-from setuptools import find_packages
-from setuptools import setup
-
-from Cython.Build import cythonize
-
-from os.path import join, split
+import platform
 from os.path import abspath
 from os.path import dirname
-import platform
+from os.path import join
+from os.path import split
 
 import numpy as np
 import numpy.distutils.system_info as sysinfo
+from Cython.Build import cythonize
+from setuptools import Extension
+from setuptools import find_packages
+from setuptools import setup
 
 # get the version from file
 
@@ -27,14 +25,18 @@ module_dir = dirname(abspath(__file__))
 print(module_dir)
 
 include_dirs = [
+    "/opt/local/include/",
     "/usr/include/",
     "/usr/include/openblas",
     "/usr/include/x86_64-linux-gnu/",
 ]
-include_dirs += [f"/app/.apt{item}" for item in include_dirs]
 
-library_dirs = ["/usr/lib64/", "/usr/lib/", "/usr/lib/x86_64-linux-gnu/"]
-library_dirs += [f"/app/.apt{item}" for item in library_dirs]
+library_dirs = [
+    "/opt/local/lib/",
+    "/usr/lib64/",
+    "/usr/lib/",
+    "/usr/lib/x86_64-linux-gnu/",
+]
 
 libraries = []
 data_files = []
@@ -61,20 +63,9 @@ else:
     openblas_info = sysinfo.get_info("openblas")
     fftw3_info = sysinfo.get_info("fftw3")
 
-    if openblas_info != {}:
-        name = "openblas"
-        library_dirs += openblas_info["library_dirs"]
-        libraries += openblas_info["libraries"]
-    fftw_keys = fftw3_info.keys()
-    if "include_dirs" in fftw_keys:
-        include_dirs += fftw3_info["include_dirs"]
-    if "library_dirs" in fftw_keys:
-        library_dirs += fftw3_info["library_dirs"]
-    if "libraries" in fftw_keys:
-        libraries += fftw3_info["libraries"]
-
     extra_link_args = ["-lm"]
     extra_compile_args = ["-g", "-O3"]
+
 include_dirs = list(set(include_dirs))
 library_dirs = list(set(library_dirs))
 libraries = list(set(libraries))
@@ -88,45 +79,36 @@ print(libraries)
 print(extra_compile_args)
 print(extra_link_args)
 
+source = [
+    "src/c_lib/lib/angular_momentum.c",
+    "src/c_lib/lib/interpolation.c",
+    "src/c_lib/lib/mrsimulator.c",
+    "src/c_lib/lib/octahedron.c",
+    "src/c_lib/lib/spinning_sidebands.c",
+    "src/c_lib/lib/powder_setup.c",
+    "src/c_lib/lib/averaging_scheme.c",
+]
+
 # method
 ext_modules = [
     Extension(
         name="mrsimulator.methods",
-        sources=[
-            "src/c_lib/lib/angular_momentum.c",
-            "src/c_lib/lib/interpolation.c",
-            "src/c_lib/lib/mrsimulator.c",
-            "src/c_lib/lib/octahedron.c",
-            "src/c_lib/lib/spinning_sidebands.c",
-            "src/c_lib/lib/powder_setup.c",
-            "src/c_lib/lib/averaging_scheme.c",
-            "src/c_lib/mrmethods/nmr_methods.pyx",
-        ],
+        sources=[*source, "src/c_lib/mrmethods/nmr_methods.pyx"],
         include_dirs=include_dirs,
         language="c",
         libraries=libraries,
         library_dirs=library_dirs,
-        data_files=data_files,
+        # data_files=data_files,
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
     )
 ]
 
 # tests
-
 ext_modules += [
     Extension(
         name="mrsimulator.tests.tests",
-        sources=[
-            "src/c_lib/lib/angular_momentum.c",
-            "src/c_lib/lib/interpolation.c",
-            "src/c_lib/lib/mrsimulator.c",
-            "src/c_lib/lib/octahedron.c",
-            "src/c_lib/lib/spinning_sidebands.c",
-            "src/c_lib/lib/powder_setup.c",
-            "src/c_lib/lib/averaging_scheme.c",
-            "src/c_lib/test/test.pyx",
-        ],
+        sources=[*source, "src/c_lib/test/test.pyx"],
         include_dirs=include_dirs,
         language="c",
         libraries=libraries,
@@ -136,29 +118,19 @@ ext_modules += [
     )
 ]
 
-# # sandbox
-
-# ext_modules += [
-#     Extension(
-#         name="mrsimulator.sandbox",
-#         sources=[
-#             "src/c_lib/lib/angular_momentum.c",
-#             "src/c_lib/lib/interpolation.c",
-#             "src/c_lib/lib/mrsimulator.c",
-#             "src/c_lib/lib/octahedron.c",
-#             "src/c_lib/lib/spinning_sidebands.c",
-#             "src/c_lib/lib/powder_setup.c",
-#             "src/c_lib/lib/averaging_scheme.c",
-#             "src/c_lib/sandbox/sandbox.pyx",
-#         ],
-#         include_dirs=include_dirs,
-#         language="c",
-#         libraries=libraries,
-#         library_dirs=library_dirs,
-#         extra_compile_args=extra_compile_args,
-#         extra_link_args=extra_link_args,
-#     )
-# ]
+# sandbox
+ext_modules += [
+    Extension(
+        name="mrsimulator.sandbox",
+        sources=[*source, "src/c_lib/sandbox/sandbox.pyx"],
+        include_dirs=include_dirs,
+        language="c",
+        libraries=libraries,
+        library_dirs=library_dirs,
+        extra_compile_args=extra_compile_args,
+        extra_link_args=extra_link_args,
+    )
+]
 
 setup(
     name="mrsimulator",

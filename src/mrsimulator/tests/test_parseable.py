@@ -3,10 +3,11 @@
 Tests for the base Parseable pattern
 """
 # import os
-import pytest
 from typing import ClassVar
 
-from mrsimulator.parseable import Parseable, enforce_units
+import pytest
+from mrsimulator.parseable import enforce_units
+from mrsimulator.parseable import Parseable
 
 
 class ParseableTestClass(Parseable):

@@ -4,24 +4,29 @@ Tests for the base Parseable pattern
 """
 # import os.path
 import pytest
-from mrsimulator import Site, Isotopomer, Dimension, Simulator
+from mrsimulator import Dimension
+from mrsimulator import Isotopomer
+from mrsimulator import Simulator
+from mrsimulator import Site
 
 
 @pytest.fixture
-def spectrum():
-    return Dimension(
-        number_of_points=1024,
-        spectral_width=100,
-        reference_offset=0,
-        magnetic_flux_density=9.4,
-        rotor_frequency=0,
-        rotor_angle=0.9553,  # 54.935 degrees in radians
-        rotor_phase=0,
-        isotope="1H",
-        spin=1,
-        natural_abundance=0.04683,
-        gyromagnetic_ratio=-8.465,
-    )
+def dimension():
+    return [
+        Dimension(
+            number_of_points=1024,
+            spectral_width=100,
+            reference_offset=0,
+            magnetic_flux_density=9.4,
+            rotor_frequency=0,
+            rotor_angle=0.9553,  # 54.935 degrees in radians
+            rotor_phase=0,
+            isotope="1H",
+            spin=1,
+            natural_abundance=0.04683,
+            gyromagnetic_ratio=-8.465,
+        )
+    ]
 
 
 @pytest.fixture
@@ -34,8 +39,8 @@ def isotopomers():
 
 
 @pytest.fixture
-def simulator(isotopomers, spectrum):
-    return Simulator(isotopomers, spectrum)
+def simulator(isotopomers, dimension):
+    return Simulator(isotopomers=isotopomers, dimensions=dimension)
 
 
 def test_allowed_isotopes():

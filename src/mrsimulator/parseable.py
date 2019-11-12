@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-from pydantic import BaseModel
+from typing import ClassVar
+from typing import Dict
+
 from mrsimulator.unit import string_to_quantity
-from typing import ClassVar, Dict
+from pydantic import BaseModel
 
 __author__ = "Shyam Dwaraknath"
 __email__ = "shyamd@lbl.gov"

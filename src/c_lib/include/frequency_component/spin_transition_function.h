@@ -1,3 +1,4 @@
+// -*- coding: utf-8 -*-
 //
 //  spin_transition_function.h
 //
@@ -11,8 +12,8 @@
 // Single nucleus spin transition functions................................. //
 
 /**
- * Single nucleus spin transition function from irreducible tensor of rank
- * @f$L=1@f$, given as
+ * @brief Single nucleus spin transition function from irreducible tensor of
+ * rank @f$L=1@f$, given as
  * @f[
  *    \mathbb{p}(m_f, m_i) &= \left< m_f | \hat{T}_{10} | m_f \right> -
  *                            \left< m_i | \hat{T}_{10} | m_i \right> \\

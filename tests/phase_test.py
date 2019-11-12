@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import mrsimulator.tests.tests as clib
-from mrsimulator.python.utils import pre_phase_components
 import numpy as np
+from mrsimulator.python.utils import pre_phase_components
 
 
 def test_phase_components():

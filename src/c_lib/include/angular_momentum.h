@@ -1,9 +1,10 @@
+// -*- coding: utf-8 -*-
 //
 //  angular_momentum.c
 //
 //  Created by Philip Grandinetti on 4/12/17.
 //  Copyright © 2017 Philip Grandinetti. All rights reserved.
-//  Contribution: Deepansh J. Srivatava. contact: srivastava.89@osu.edu
+//  Contribution: Deepansh J. Srivatava.
 //      Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 
 #include "config.h"
@@ -93,9 +94,9 @@ extern void wigner_d_matrices_from_exp_I_beta(const int l, const int n,
  * evaluated at all `n` wigner matrices.
  * @param l The rank of the wigner-d matrices.
  * @param n The number of cosine alpha angles and wigner-lj matrices.
- * @param cos_alpha A pointer to the 1d array of @f$\cos\alpha@f$.
  * @param wigner A pointer to nx(2l+1)x(2l+1) wigner-d matrices of rank @p l.
  *          The wigner matrices are stacked in a row major order.
+ * @param exp_Im_alpha A pointer to the 1d array of @f$\exp(-i\alpha)@f$.
  * @param R_in A pointer to a 1D-array of initial vector of length `2l+1`.
  * @param R_out A pointer to a 1D-array of final vectors after rotation. The
  *          length of this vector is `n*(2*l+1)`, where the vector of index

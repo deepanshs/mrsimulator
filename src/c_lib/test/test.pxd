@@ -111,5 +111,5 @@ cdef extern from "spinning_sidebands.h":
         # The transition as transition[0] = mi and transition[1] = mf
         double *transition,
         int geodesic_polyhedron_frequency,
-        unsigned int averaging             # 0-octant, 1-hemisphere, 2-sphere.
+        unsigned int integration_volume             # 0-octant, 1-hemisphere, 2-sphere.
         )

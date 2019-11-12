@@ -296,7 +296,7 @@ def _one_d_simulator(
 
         # Euler angles for powder averaging scheme
         int geodesic_polyhedron_frequency=90,
-        int averaging=0):
+        int integration_volume=0):
 
     nt = geodesic_polyhedron_frequency
     if isotropic_chemical_shift is None:
@@ -418,7 +418,7 @@ def _one_d_simulator(
 
             &transition_c[0],
             geodesic_polyhedron_frequency,
-            averaging             # 0-octant, 1-hemisphere, 2-sphere.
+            integration_volume             # 0-octant, 1-hemisphere, 2-sphere.
             )
 
 

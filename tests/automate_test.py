@@ -3,10 +3,11 @@ import json
 from os import path
 
 import numpy as np
+from mrsimulator import Dimension
+from mrsimulator import Isotopomer
+from mrsimulator import Simulator
 from numpy.fft import fft
 from numpy.fft import fftshift
-
-from mrsimulator import Isotopomer, Dimension, Simulator
 
 
 def _import_json(filename):
@@ -101,14 +102,14 @@ def get_data(filename):
 
 def c_setup(data_object, data_source):
     # mrsimulator
-    spectrum = [
-        Dimension.parse_dict_with_units(item) for item in data_object["spectrum"]
+    dimensions = [
+        Dimension.parse_dict_with_units(item) for item in data_object["dimensions"]
     ]
-    isotopomer = [
+    isotopomers = [
         Isotopomer.parse_dict_with_units(item) for item in data_object["isotopomers"]
     ]
 
-    s1 = Simulator(isotopomer, spectrum)
+    s1 = Simulator(isotopomers=isotopomers, dimensions=dimensions)
     data_mrsimulator = s1.one_d_spectrum(geodesic_polyhedron_frequency=120)[1]
     data_mrsimulator /= data_mrsimulator.max()
 
@@ -117,8 +118,8 @@ def c_setup(data_object, data_source):
 
 def c_setup_random_euler_angles(data_object, data_source):
     # mrsimulator
-    spectrum = [
-        Dimension.parse_dict_with_units(item) for item in data_object["spectrum"]
+    dimensions = [
+        Dimension.parse_dict_with_units(item) for item in data_object["dimensions"]
     ]
     isotopomers = [
         Isotopomer.parse_dict_with_units(isotopomer)
@@ -129,8 +130,8 @@ def c_setup_random_euler_angles(data_object, data_source):
         isotopomer.sites[0].shielding_symmetric.beta = np.random.rand(1) * 2 * np.pi
         isotopomer.sites[0].shielding_symmetric.gamma = np.random.rand(1) * 2 * np.pi
 
-    s1 = Simulator(isotopomers, spectrum)
-    freq, data_mrsimulator = s1.one_d_spectrum(geodesic_polyhedron_frequency=120)
+    s1 = Simulator(isotopomers=isotopomers, dimensions=dimensions)
+    data_mrsimulator = s1.one_d_spectrum(geodesic_polyhedron_frequency=120)[1]
     data_mrsimulator /= data_mrsimulator.max()
 
     return data_mrsimulator, data_source

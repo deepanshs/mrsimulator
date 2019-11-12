@@ -2,11 +2,12 @@
 
 .. _examples:
 
+.. >>> font = {'family': 'Helvetica', 'weight': 'light', 'size': 9};
+.. >>> matplotlib.rc('font', **font)
+
 .. testsetup::
 
     >>> import matplotlib
-    >>> font = {'family': 'Helvetica', 'weight': 'light', 'size': 9};
-    >>> matplotlib.rc('font', **font)
     >>> from os import path
 
     >>> import matplotlib.pyplot as plt
@@ -14,7 +15,7 @@
     ...     plt.figure(figsize=(4, 3))
     ...     plt.plot(x, y, linewidth=1)
     ...     plt.xlim([x.value.max(), x.value.min()])
-    ...     plt.xlabel(f"frequency ratio / {str(x.unit)}", **font)
+    ...     plt.xlabel(f"frequency ratio / {str(x.unit)}")
     ...     plt.grid(color='gray', linestyle='--', linewidth=1.0, alpha=0.25)
     ...     plt.tight_layout(h_pad=0, w_pad=0, pad=0)
     ...
@@ -87,7 +88,7 @@ To simulate a static spectrum, set up with the following
     >>> dim = dict(isotope="13C", magnetic_flux_density="9.4 T", rotor_frequency="0 kHz",
     ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="5 kHz",
     ...         reference_offset="0 Hz")
-    >>> sim.spectrum = [Dimension.parse_dict_with_units(dim)]
+    >>> sim.dimensions = [Dimension.parse_dict_with_units(dim)]
 
 The above spectroscopic dimension will simulate a :math:`^{13}\mathrm{C}`
 static spectrum at 9.4 T magnetic field over 5 kHz frequency-bandwidth using
@@ -98,30 +99,7 @@ method as
 
 .. doctest::
 
-    >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
-    `one_d_spectrum` method simulation parameters.
-    ---------------------------------------------
-    Macroscopic magnetic flux density (B0) = 9.4 T
-    Sample rotation angle is (θ) = 0.9553059660790962 rad
-    Sample rotation frequency (𝜈r) = 0.0 Hz
-    Simulating 13C (I=0.5)
-    Larmor frequency (ω0 = - γ B0) = -100.65896 MHz
-    Recording 13C spectrum with 8192 points over 5000.0 Hz bandwidth
-    and a reference offset of 0.0 Hz.
-    <BLANKLINE>
-    13C site 0 from isotopomer 0 @ 100.0% abundance
-    -----------------------------------------------
-    Isotropic chemical shift (δ) = 1.0 ppm
-    Shielding anisotropy (ζ) = -3.89 ppm
-    Shielding asymmetry (η) = 0.25
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
-    <BLANKLINE>
-    13C site 0 from isotopomer 1 @ 100% abundance
-    ---------------------------------------------
-    Isotropic chemical shift (δ) = 1.0 ppm
-    Shielding anisotropy (ζ) = 8.2 ppm
-    Shielding asymmetry (η) = 0.0
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
+    >>> freq, amp = sim.run(one_d_spectrum)
 
 The simulator object goes through every isotopomer in the list and
 simulates the line-shape corresponding to the :math:`^{13}\mathrm{C}` isotopes.
@@ -129,8 +107,6 @@ In this example, there are two isotopomers with :math:`^{13}\mathrm{C}` sites.
 
 You may visualize the spectrum using any plotting library of choice. We use
 matplotlib in our examples.
-
-.. doctest::
 
     >>> import matplotlib.pyplot as plt
     >>> def plot(x, y):
@@ -142,11 +118,11 @@ matplotlib in our examples.
     ...     plt.tight_layout()
     ...     plt.show()
 
-    >>> plot(freq, amp)
+    >>> plot(freq, amp) # doctest: +SKIP
 
-.. testsetup::
+.. .. testsetup::
 
-    >>> plot_save(freq, amp, '13C_static.pdf')
+..    >>> plot_save(freq, amp, '13C_static.pdf')
 
 .. figure:: _images/13C_static.*
     :figclass: figure-polaroid
@@ -168,44 +144,18 @@ is set to 100 Hz.
     >>> dim = dict(isotope="13C", magnetic_flux_density="9.4 T", rotor_frequency="100 Hz",
     ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="5 kHz",
     ...         reference_offset="0 Hz")
-    >>> sim.spectrum = [Dimension.parse_dict_with_units(dim)]
+    >>> sim.dimensions = [Dimension.parse_dict_with_units(dim)]
 
 Now compute the line-shape as before.
 
 .. doctest::
 
-    >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
-    `one_d_spectrum` method simulation parameters.
-    ---------------------------------------------
-    Macroscopic magnetic flux density (B0) = 9.4 T
-    Sample rotation angle is (θ) = 0.9553059660790962 rad
-    Sample rotation frequency (𝜈r) = 100.0 Hz
-    Simulating 13C (I=0.5)
-    Larmor frequency (ω0 = - γ B0) = -100.65896 MHz
-    Recording 13C spectrum with 8192 points over 5000.0 Hz bandwidth
-    and a reference offset of 0.0 Hz.
-    <BLANKLINE>
-    13C site 0 from isotopomer 0 @ 100.0% abundance
-    -----------------------------------------------
-    Isotropic chemical shift (δ) = 1.0 ppm
-    Shielding anisotropy (ζ) = -3.89 ppm
-    Shielding asymmetry (η) = 0.25
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
-    <BLANKLINE>
-    13C site 0 from isotopomer 1 @ 100% abundance
-    ---------------------------------------------
-    Isotropic chemical shift (δ) = 1.0 ppm
-    Shielding anisotropy (ζ) = 8.2 ppm
-    Shielding asymmetry (η) = 0.0
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
+    >>> freq, amp = sim.run(one_d_spectrum)
+    >>> plot(freq, amp) # doctest: +SKIP
 
-.. doctest::
+.. .. testsetup::
 
-    >>> plot(freq, amp)
-
-.. testsetup::
-
-    >>> plot_save(freq, amp, '13C_mas_100Hz.pdf')
+..    >>> plot_save(freq, amp, '13C_mas_100Hz.pdf')
 
 .. figure:: _images/13C_mas_100Hz.*
     :figclass: figure-polaroid
@@ -229,44 +179,18 @@ and 500 Hz, respectively.
     >>> dim = dict(isotope="13C", magnetic_flux_density="9.4 T", rotor_frequency="500 Hz",
     ...         rotor_angle="90 deg", number_of_points=8192, spectral_width="5 kHz",
     ...         reference_offset="0 Hz")
-    >>> sim.spectrum = [Dimension.parse_dict_with_units(dim)]
+    >>> sim.dimensions = [Dimension.parse_dict_with_units(dim)]
 
 The simulated lineshape.
 
 .. doctest::
 
-    >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
-    `one_d_spectrum` method simulation parameters.
-    ---------------------------------------------
-    Macroscopic magnetic flux density (B0) = 9.4 T
-    Sample rotation angle is (θ) = 1.5707963267948966 rad
-    Sample rotation frequency (𝜈r) = 500.0 Hz
-    Simulating 13C (I=0.5)
-    Larmor frequency (ω0 = - γ B0) = -100.65896 MHz
-    Recording 13C spectrum with 8192 points over 5000.0 Hz bandwidth
-    and a reference offset of 0.0 Hz.
-    <BLANKLINE>
-    13C site 0 from isotopomer 0 @ 100.0% abundance
-    -----------------------------------------------
-    Isotropic chemical shift (δ) = 1.0 ppm
-    Shielding anisotropy (ζ) = -3.89 ppm
-    Shielding asymmetry (η) = 0.25
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
-    <BLANKLINE>
-    13C site 0 from isotopomer 1 @ 100% abundance
-    ---------------------------------------------
-    Isotropic chemical shift (δ) = 1.0 ppm
-    Shielding anisotropy (ζ) = 8.2 ppm
-    Shielding asymmetry (η) = 0.0
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
+    >>> freq, amp = sim.run(one_d_spectrum)
+    >>> plot(freq, amp) # doctest: +SKIP
 
-.. doctest::
+.. .. testsetup::
 
-    >>> plot(freq, amp)
-
-.. testsetup::
-
-    >>> plot_save(freq, amp, '13C_vas_100Hz_90.pdf')
+..    >>> plot_save(freq, amp, '13C_vas_100Hz_90.pdf')
 
 .. figure:: _images/13C_vas_100Hz_90.*
     :figclass: figure-polaroid
@@ -279,7 +203,7 @@ Up till now, we were simulating a one-dimensional :math:`^{13}\mathrm{C}`
 spectrum under conditions. Notice, however, there are three unique isotopes,
 :math:`^{13}\mathrm{C}`, :math:`^{29}\mathrm{Si}`, and :math:`^{1}\mathrm{H}`,
 in the list of isotopomers.
-To simulate, for example, a :math:`^{29}\mathrm{Si}` spectrum, create a new
+To simulate, for example, a :math:`^{29}\mathrm{Si}` dimensions, create a new
 spectroscopic dimension with "29Si" as the value of the ``isotope`` key.
 
 .. doctest::
@@ -287,101 +211,42 @@ spectroscopic dimension with "29Si" as the value of the ``isotope`` key.
     >>> dim = dict(isotope="29Si", magnetic_flux_density="9.4 T", rotor_frequency="1 kHz",
     ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="30 kHz",
     ...         reference_offset="-5 kHz")
-    >>> sim.spectrum = [Dimension.parse_dict_with_units(dim)]
+    >>> sim.dimensions = [Dimension.parse_dict_with_units(dim)]
 
 Run the simulation.
 
 .. doctest::
 
-    >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
-    `one_d_spectrum` method simulation parameters.
-    ---------------------------------------------
-    Macroscopic magnetic flux density (B0) = 9.4 T
-    Sample rotation angle is (θ) = 0.9553059660790962 rad
-    Sample rotation frequency (𝜈r) = 1000.0 Hz
-    Simulating 29Si (I=0.5)
-    Larmor frequency (ω0 = - γ B0) = 79.571 MHz
-    Recording 29Si spectrum with 8192 points over 30000.0 Hz bandwidth
-    and a reference offset of -5000.0 Hz.
-    <BLANKLINE>
-    29Si site 0 from isotopomer 3 @ 100% abundance
-    ----------------------------------------------
-    Isotropic chemical shift (δ) = -100.0 ppm
-    Shielding anisotropy (ζ) = 1.36 ppm
-    Shielding asymmetry (η) = 0.0
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
-    <BLANKLINE>
-    29Si site 0 from isotopomer 4 @ 100% abundance
-    ----------------------------------------------
-    Isotropic chemical shift (δ) = -100.0 ppm
-    Shielding anisotropy (ζ) = 70.36 ppm
-    Shielding asymmetry (η) = 0.0
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
-    <BLANKLINE>
-    29Si site 0 from isotopomer 5 @ 100% abundance
-    ----------------------------------------------
-    Isotropic chemical shift (δ) = -90.0 ppm
-    Shielding anisotropy (ζ) = 80.36 ppm
-    Shielding asymmetry (η) = 0.5
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
+    >>> freq, amp = sim.run(one_d_spectrum)
+    >>> plot(freq, amp) # doctest: +SKIP
 
-.. doctest::
+.. .. testsetup::
 
-    >>> plot(freq, amp)
-
-.. testsetup::
-
-    >>> plot_save(freq, amp, '29Si_mas_1kHz.pdf')
+..    >>> plot_save(freq, amp, '29Si_mas_1kHz.pdf')
 
 .. figure:: _images/29Si_mas_1kHz.*
     :figclass: figure-polaroid
 
 
-In this another examples, we simulate a :math:`^1\mathrm{H}` spectrum.
+In this another examples, we simulate a :math:`^1\mathrm{H}` dimensions.
 
 .. doctest::
 
     >>> dim = dict(isotope="1H", magnetic_flux_density="9.4 T", rotor_frequency="2 kHz",
     ...         rotor_angle="54.735 deg", number_of_points=8192, spectral_width="50 kHz",
     ...         reference_offset="0 Hz")
-    >>> sim.spectrum = [Dimension.parse_dict_with_units(dim)]
+    >>> sim.dimensions = [Dimension.parse_dict_with_units(dim)]
 
 The line-shape simulation
 
 .. doctest::
 
-    >>> freq, amp = sim.run(one_d_spectrum, verbose=1)
-    `one_d_spectrum` method simulation parameters.
-    ---------------------------------------------
-    Macroscopic magnetic flux density (B0) = 9.4 T
-    Sample rotation angle is (θ) = 0.9553059660790962 rad
-    Sample rotation frequency (𝜈r) = 2000.0 Hz
-    Simulating 1H (I=0.5)
-    Larmor frequency (ω0 = - γ B0) = -400.228301848 MHz
-    Recording 1H spectrum with 8192 points over 50000.0 Hz bandwidth
-    and a reference offset of 0.0 Hz.
-    <BLANKLINE>
-    1H site 0 from isotopomer 2 @ 100% abundance
-    --------------------------------------------
-    Isotropic chemical shift (δ) = 3.0 ppm
-    Shielding anisotropy (ζ) = 23.2 ppm
-    Shielding asymmetry (η) = 0.0
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
-    <BLANKLINE>
-    1H site 0 from isotopomer 6 @ 100% abundance
-    --------------------------------------------
-    Isotropic chemical shift (δ) = 5.6 ppm
-    Shielding anisotropy (ζ) = 13.2 ppm
-    Shielding asymmetry (η) = 0.0
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
+    >>> freq, amp = sim.run(one_d_spectrum)
+    >>> plot(freq, amp) # doctest: +SKIP
 
-.. doctest::
+.. .. testsetup::
 
-    >>> plot(freq, amp)
-
-.. testsetup::
-
-    >>> plot_save(freq, amp, '1H_mas_2kHz.pdf')
+..    >>> plot_save(freq, amp, '1H_mas_2kHz.pdf')
 
 .. figure:: _images/1H_mas_2kHz.*
     :figclass: figure-polaroid

@@ -1,11 +1,12 @@
 
 .. _getting_started:
 
+.. >>> font = {'family': 'Helvetica', 'weight': 'light', 'size': 9};
+.. >>> matplotlib.rc('font', **font)
+
 .. testsetup::
 
     >>> import matplotlib
-    >>> font = {'family': 'Helvetica', 'weight': 'light', 'size': 9};
-    >>> matplotlib.rc('font', **font)
     >>> from os import path
 
     >>> import matplotlib.pyplot as plt
@@ -13,7 +14,7 @@
     ...     plt.figure(figsize=(4, 3))
     ...     plt.plot(x, y, linewidth=1)
     ...     plt.xlim([x.value.max(), x.value.min()])
-    ...     plt.xlabel(f"frequency ratio / {str(x.unit)}", **font)
+    ...     plt.xlabel(f"frequency ratio / {str(x.unit)}")
     ...     plt.grid(color='gray', linestyle='--', linewidth=1.0, alpha=0.25)
     ...     plt.tight_layout(h_pad=0, w_pad=0, pad=0)
     ...
@@ -51,7 +52,7 @@ and create an instance as follows,
 Here, ``sim`` is a variable with an instance of the :ref:`simulator_api`
 class. The two attributes of this class that you will often use are
 :attr:`~mrsimulator.Simulator.isotopomers` and
-:attr:`~mrsimulator.Simulator.spectrum`, whose value is a list of
+:attr:`~mrsimulator.Simulator.dimensions`, whose value is a list of
 :ref:`isotopomer_api` and :ref:`dimension_api` objects,
 respectively. The default value of these attributes is an empty list.
 
@@ -59,7 +60,7 @@ respectively. The default value of these attributes is an empty list.
 
     >>> sim.isotopomers
     []
-    >>> sim.spectrum
+    >>> sim.dimensions
     []
 
 
@@ -168,7 +169,7 @@ experiment. In this example, we stick with a single spectroscopic dimension.
 Finally, add the spectroscopic dimensions, in this case, ``spectrum_object``,
 to the instance of the Simulator class, ``sim``, as follows
 
-    >>> sim.spectrum = [spectrum_object]
+    >>> sim.dimensions = [spectrum_object]
 
 Setting up the NMR method
 -------------------------
@@ -193,23 +194,7 @@ and run the simulation using
 
 .. doctest::
 
-    >>> freq, amp = sim.run(method=one_d_spectrum, verbose=1)
-    `one_d_spectrum` method simulation parameters.
-    ---------------------------------------------
-    Macroscopic magnetic flux density (B0) = 9.4 T
-    Sample rotation angle is (θ) = 0.9553059660790962 rad
-    Sample rotation frequency (𝜈r) = 0.0 Hz
-    Simulating 29Si (I=0.5)
-    Larmor frequency (ω0 = - γ B0) = 79.571 MHz
-    Recording 29Si spectrum with 2048 points over 25000.0 Hz bandwidth
-    and a reference offset of -8000.0 Hz.
-    <BLANKLINE>
-    29Si site 0 from isotopomer 0 @ 100% abundance
-    ----------------------------------------------
-    Isotropic chemical shift (δ) = -101.1 ppm
-    Shielding anisotropy (ζ) = 70.5 ppm
-    Shielding asymmetry (η) = 0.5
-    Shielding orientation = [alpha = 0.0, beta = 0.0, gamma = 0.0]
+    >>> freq, amp = sim.run(method=one_d_spectrum)
 
 In the above code, the ``freq`` and ``amp`` are the dimensionless frequency
 ratio given in `ppm` and the corresponding amplitude of the spectrum. The
@@ -227,11 +212,11 @@ library.
     ...     plt.tight_layout()
     ...     plt.show()
 
-    >>> plot(freq, amp)
+    >>> plot(freq, amp) # doctest: +SKIP
 
-.. testsetup::
+.. .. testsetup::
 
-    >>> plot_save(freq, amp, "example.pdf")
+..    >>> plot_save(freq, amp, "example.pdf")
 
 .. figure:: _images/example.*
     :figclass: figure-polaroid

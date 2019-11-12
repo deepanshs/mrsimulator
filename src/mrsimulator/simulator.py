@@ -1,17 +1,21 @@
 # -*- coding: utf-8 -*-
 # from pydash import has, get
-from astropy import units as u
-from mrsimulator import Isotopomer
-from mrsimulator.spectrum import ISOTOPE_DATA
-from mrsimulator.methods import one_d_spectrum
-from mrsimulator.importer import import_json
+from typing import List
+
 import csdmpy as cp
+from astropy import units as u
+from mrsimulator import Dimension
+from mrsimulator import Isotopomer
+from mrsimulator.importer import import_json
+from mrsimulator.methods import one_d_spectrum
+from mrsimulator.spectrum import ISOTOPE_DATA
+from pydantic import BaseModel
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
-class Simulator:
+class Simulator(BaseModel):
     """
     The simulator class.
 
@@ -19,15 +23,14 @@ class Simulator:
 
     Attributes:
         isotopomers: List of Isotopomer objects.
-        spectrum: List of dimension objects.
+        dimension: List of Dimension objects.
         isotope: List of all unique isotopes defined in the list of isotopomers.
             This also includes NMR inactive isotopes.
     """
 
-    def __init__(self, isotopomers=[], spectrum=[]):
-        self.isotopomers = isotopomers
-        self.spectrum = spectrum
-        self.simulated_data = []
+    isotopomers: List[Isotopomer] = []
+    dimensions: List[Dimension] = []
+    simulated_data: List = []
 
     @staticmethod
     def allowed_isotopes(spin=None):
@@ -124,37 +127,35 @@ class Simulator:
             `Quantity <http://docs.astropy.org/en/stable/units/quantity.html>`_
             array. The default value is False.
         """
-
         isotopomers = [
-            isotopomer.to_freq_dict(self.spectrum[0].larmor_frequency)
+            isotopomer.to_freq_dict(self.dimensions[0].magnetic_flux_density)
             for isotopomer in self.isotopomers
         ]
-        spectrum = self.spectrum
 
-        freq, amp = one_d_spectrum(
-            spectrum=spectrum[0], isotopomers=isotopomers, **kwargs
+        amp = one_d_spectrum(
+            dimension=self.dimensions[0].to_dict(), isotopomers=isotopomers, **kwargs
         )
         self.simulated_data = amp
 
         """The frequency is in the units of Hz."""
+        freq = self.dimensions[0].coordinates_ppm
         freq *= u.Unit("ppm")
         return freq, amp
 
     def as_csdm_object(self):
         new = cp.new()
-        for spectrum in self.spectrum:
-            larmor_frequency = spectrum.larmor_frequency
-            dimension = {
+        for dimension in self.dimensions:
+            new_dimension = {
                 "type": "linear",
-                "count": spectrum.number_of_points,
+                "count": dimension.number_of_points,
                 "increment": "{0} Hz".format(
-                    spectrum.spectral_width / spectrum.number_of_points
+                    dimension.spectral_width / dimension.number_of_points
                 ),
-                "coordinates_offset": f"{spectrum.reference_offset} Hz",
-                "origin_offset": f"{larmor_frequency} MHz",
+                "coordinates_offset": f"{dimension.reference_offset} Hz",
+                "origin_offset": f"{dimension.larmor_frequency} Hz",
                 "complex_fft": True,
             }
-            new.add_dimension(dimension)
+            new.add_dimension(new_dimension)
 
         if isinstance(self.simulated_data, list):
             for index, datum in enumerate(self.simulated_data):

@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import mrsimulator.tests.tests as clib
-from mrsimulator.python.angular_momentum import (
-    wigner_d_matrix_cosines,
-    wigner_dm0_vector,
-)
 import numpy as np
+from mrsimulator.python.angular_momentum import wigner_d_matrix_cosines
+from mrsimulator.python.angular_momentum import wigner_dm0_vector
 from sympy.physics.quantum.spin import Rotation
 
 
@@ -118,60 +116,58 @@ def test_wigner_4j_dm0_vector():
     np.testing.assert_almost_equal(R_c, R_sympy, decimal=8)
 
 
-# def triangle(f, n_points):
-#     f = np.sort(f)
-#     h = 2.0 / (f[2] - f[0])
-#     x = f
-#     y = [0, h, 0]
+#
+# This code was used to generate and store wigner d-matrices from sympy rotation.
+# All tests are compared with these stored values to speed up the test runs.
+#
+# if __name__ == "__main__":
+#     value = []
+#     l = 2
+#     cos_beta = [-0.5498, 0.230]
+#     for k, cos_b in enumerate(cos_beta):
+#         for i in range(2 * l + 1):
+#             for j in range(2 * l + 1):
+#                 value.append(
+#                     complex(
+#                       Rotation.d(l, -l + j, -l + i, np.arccos(cos_b)).doit()
+#                     ).real
+#                 )
+#     value = np.asarray(value)
+#     np.save("tests/wigner/l=2_cx=[-0.5498, 0.230]", value)
 
-#     p = np.arange(int(x[1] - x[0]))
-#     spec = np.arange(n_points)
-#     y[int(x[0]):int(x[0]) + p] = y[0] + (y[1] - y[0]) / (x[1] - x[0]) * (p - x[0])
+#     value = []
+#     l = 2
+#     cos_beta = 0.5
+#     for i in range(2 * l + 1):
+#         for j in range(2 * l + 1):
+#             value.append(
+#                 complex(
+#                   Rotation.d(l, -l + j, -l + i, np.arccos(cos_beta)).doit()).real
+#             )
+#     value = np.asarray(value)
+#     np.save("tests/wigner/l=2_cx=0.5", value)
 
+#     value = []
+#     l = 4
+#     cos_beta = -0.8459
+#     for i in range(2 * l + 1):
+#         for j in range(2 * l + 1):
+#             value.append(
+#                 complex(
+#                   Rotation.d(l, -l + j, -l + i, np.arccos(cos_beta)).doit()).real
+#             )
+#     value = np.asarray(value)
+#     np.save("tests/wigner/l=4_cx=-0.8459", value)
 
-if __name__ == "__main__":
-    value = []
-    l = 2
-    cos_beta = [-0.5498, 0.230]
-    for k, cos_b in enumerate(cos_beta):
-        for i in range(2 * l + 1):
-            for j in range(2 * l + 1):
-                value.append(
-                    complex(Rotation.d(l, -l + j, -l + i, np.arccos(cos_b)).doit()).real
-                )
-    value = np.asarray(value)
-    np.save("tests/wigner/l=2_cx=[-0.5498, 0.230]", value)
-
-    value = []
-    l = 2
-    cos_beta = 0.5
-    for i in range(2 * l + 1):
-        for j in range(2 * l + 1):
-            value.append(
-                complex(Rotation.d(l, -l + j, -l + i, np.arccos(cos_beta)).doit()).real
-            )
-    value = np.asarray(value)
-    np.save("tests/wigner/l=2_cx=0.5", value)
-
-    value = []
-    l = 4
-    cos_beta = -0.8459
-    for i in range(2 * l + 1):
-        for j in range(2 * l + 1):
-            value.append(
-                complex(Rotation.d(l, -l + j, -l + i, np.arccos(cos_beta)).doit()).real
-            )
-    value = np.asarray(value)
-    np.save("tests/wigner/l=4_cx=-0.8459", value)
-
-    value = []
-    l = 4
-    cos_beta = [-0.934, 0.4958]
-    for k, cos_b in enumerate(cos_beta):
-        for i in range(2 * l + 1):
-            for j in range(2 * l + 1):
-                value.append(
-                    complex(Rotation.d(l, -l + j, -l + i, np.arccos(cos_b)).doit()).real
-                )
-    value = np.asarray(value)
-    np.save("tests/wigner/l=4_cx=[-0.934, 0.4958]", value)
+#     value = []
+#     l = 4
+#     cos_beta = [-0.934, 0.4958]
+#     for k, cos_b in enumerate(cos_beta):
+#         for i in range(2 * l + 1):
+#             for j in range(2 * l + 1):
+#                 value.append(
+#                     complex(
+#                       Rotation.d(l, -l + j, -l + i, np.arccos(cos_b)).doit()).real
+#                 )
+#     value = np.asarray(value)
+#     np.save("tests/wigner/l=4_cx=[-0.934, 0.4958]", value)

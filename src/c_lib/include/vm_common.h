@@ -1,8 +1,8 @@
+// -*- coding: utf-8 -*-
 //
 //  vm_common.h
 //
 //  Created by Deepansh J. Srivastava, Jul 26, 2019
-//  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
@@ -65,8 +65,8 @@ static inline void vm_double_ones(int count, double *restrict res) {
 /**
  * @brief Return a vector ordered according to the fft output order.
  *
- * @params n The number of points.
- * @params increment The increment along the dimension axis (sampling interval).
+ * @param n The number of points.
+ * @param increment The increment along the dimension axis (sampling interval).
  * @returns values A pointer to the fft output order vector of size @p n.
  */
 static inline double *__get_frequency_in_FFT_order(int n, double increment) {

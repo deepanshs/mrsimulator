@@ -15,8 +15,8 @@
   },
   "3He": {
     "spin": 1,
-    "natural_abundance": 0.00013700000000000002,
-    "gyromagnetic_ratio": -32.436040000000006,
+    "natural_abundance": 0.000137,
+    "gyromagnetic_ratio": -32.43604,
     "quadrupole_moment": 0.0,
     "atomic_number": 2
   },
@@ -24,7 +24,7 @@
     "spin": 2,
     "natural_abundance": 7.59,
     "gyromagnetic_ratio": 6.266132,
-    "quadrupole_moment": -0.0008300000000000001,
+    "quadrupole_moment": -0.00083,
     "atomic_number": 3
   },
   "7Li": {
@@ -44,7 +44,7 @@
   "10B": {
     "spin": 6,
     "natural_abundance": 19.8,
-    "gyromagnetic_ratio": 4.575194000000001,
+    "gyromagnetic_ratio": 4.575194,
     "quadrupole_moment": 0.08472,
     "atomic_number": 5
   },
@@ -93,8 +93,8 @@
   "21Ne": {
     "spin": 3,
     "natural_abundance": 0.27,
-    "gyromagnetic_ratio": -3.3630730000000004,
-    "quadrupole_moment": 0.10300000000000001,
+    "gyromagnetic_ratio": -3.363073,
+    "quadrupole_moment": 0.103,
     "atomic_number": 10
   },
   "23Na": {
@@ -121,7 +121,7 @@
   "29Si": {
     "spin": 1,
     "natural_abundance": 4.683,
-    "gyromagnetic_ratio": -8.465499000000001,
+    "gyromagnetic_ratio": -8.465499,
     "quadrupole_moment": 0.0,
     "atomic_number": 14
   },
@@ -142,14 +142,14 @@
   "37Cl": {
     "spin": 3,
     "natural_abundance": 24.23,
-    "gyromagnetic_ratio": 3.4765309999999996,
+    "gyromagnetic_ratio": 3.476531,
     "quadrupole_moment": -0.06493,
     "atomic_number": 17
   },
   "35Cl": {
     "spin": 3,
     "natural_abundance": 75.77,
-    "gyromagnetic_ratio": 4.1765419999999995,
+    "gyromagnetic_ratio": 4.176542,
     "quadrupole_moment": -0.08249,
     "atomic_number": 17
   },
@@ -198,8 +198,8 @@
   "51V": {
     "spin": 7,
     "natural_abundance": 99.75,
-    "gyromagnetic_ratio": 11.213280000000001,
-    "quadrupole_moment": -0.052000000000000005,
+    "gyromagnetic_ratio": 11.21328,
+    "quadrupole_moment": -0.052,
     "atomic_number": 23
   },
   "53Cr": {
@@ -212,7 +212,7 @@
   "55Mn": {
     "spin": 5,
     "natural_abundance": 100.0,
-    "gyromagnetic_ratio": 10.528939999999999,
+    "gyromagnetic_ratio": 10.52894,
     "quadrupole_moment": 0.33,
     "atomic_number": 25
   },
@@ -226,22 +226,22 @@
   "59Co": {
     "spin": 7,
     "natural_abundance": 100.0,
-    "gyromagnetic_ratio": 10.077069999999999,
-    "quadrupole_moment": 0.40399999999999997,
+    "gyromagnetic_ratio": 10.07707,
+    "quadrupole_moment": 0.404,
     "atomic_number": 27
   },
   "61Ni": {
     "spin": 3,
     "natural_abundance": 1.14,
-    "gyromagnetic_ratio": -3.8113989999999998,
+    "gyromagnetic_ratio": -3.811399,
     "quadrupole_moment": 0.162,
     "atomic_number": 28
   },
   "63Cu": {
     "spin": 3,
     "natural_abundance": 69.17,
-    "gyromagnetic_ratio": 11.298160000000001,
-    "quadrupole_moment": -0.21100000000000002,
+    "gyromagnetic_ratio": 11.29816,
+    "quadrupole_moment": -0.211,
     "atomic_number": 29
   },
   "65Cu": {
@@ -260,14 +260,14 @@
   },
   "69Ga": {
     "spin": 3,
-    "natural_abundance": 60.108000000000004,
-    "gyromagnetic_ratio": 10.247760000000001,
+    "natural_abundance": 60.108,
+    "gyromagnetic_ratio": 10.24776,
     "quadrupole_moment": 0.168,
     "atomic_number": 31
   },
   "71Ga": {
     "spin": 3,
-    "natural_abundance": 39.891999999999996,
+    "natural_abundance": 39.892,
     "gyromagnetic_ratio": 13.02074,
     "quadrupole_moment": 0.106,
     "atomic_number": 31
@@ -276,13 +276,13 @@
     "spin": 9,
     "natural_abundance": 7.76,
     "gyromagnetic_ratio": -1.489739,
-    "quadrupole_moment": -0.17300000000000001,
+    "quadrupole_moment": -0.173,
     "atomic_number": 32
   },
   "75As": {
     "spin": 3,
     "natural_abundance": 100.0,
-    "gyromagnetic_ratio": 7.314996000000001,
+    "gyromagnetic_ratio": 7.314996,
     "quadrupole_moment": 0.314,
     "atomic_number": 33
   },
@@ -321,10 +321,17 @@
     "quadrupole_moment": 0.23,
     "atomic_number": 37
   },
+  "87Rb": {
+    "spin": 3,
+    "natural_abundance": 27.83,
+    "gyromagnetic_ratio": 13.974918,
+    "quadrupole_moment": 0.13,
+    "atomic_number": 37
+  },
   "87Sr": {
     "spin": 9,
     "natural_abundance": 7.0,
-    "gyromagnetic_ratio": -1.8524650000000003,
+    "gyromagnetic_ratio": -1.852465,
     "quadrupole_moment": 0.335,
     "atomic_number": 38
   },
@@ -339,7 +346,7 @@
     "spin": 5,
     "natural_abundance": 11.22,
     "gyromagnetic_ratio": -3.974786,
-    "quadrupole_moment": -0.20600000000000002,
+    "quadrupole_moment": -0.206,
     "atomic_number": 40
   },
   "93Nb": {
@@ -360,7 +367,7 @@
     "spin": 5,
     "natural_abundance": 15.92,
     "gyromagnetic_ratio": -2.78743,
-    "quadrupole_moment": -0.022000000000000002,
+    "quadrupole_moment": -0.022,
     "atomic_number": 42
   },
   "101Ru": {
@@ -408,21 +415,21 @@
   "111Cd": {
     "spin": 1,
     "natural_abundance": 12.8,
-    "gyromagnetic_ratio": -9.069149000000001,
+    "gyromagnetic_ratio": -9.069149,
     "quadrupole_moment": 0.0,
     "atomic_number": 48
   },
   "113In": {
     "spin": 9,
     "natural_abundance": 4.29,
-    "gyromagnetic_ratio": 9.365457000000001,
+    "gyromagnetic_ratio": 9.365457,
     "quadrupole_moment": 0.799,
     "atomic_number": 49
   },
   "119Sn": {
     "spin": 1,
     "natural_abundance": 8.59,
-    "gyromagnetic_ratio": -15.965979999999998,
+    "gyromagnetic_ratio": -15.96598,
     "quadrupole_moment": 0.0,
     "atomic_number": 50
   },
@@ -436,7 +443,7 @@
   "115Sn": {
     "spin": 1,
     "natural_abundance": 0.34,
-    "gyromagnetic_ratio": -14.007729999999999,
+    "gyromagnetic_ratio": -14.00773,
     "quadrupole_moment": 0.0,
     "atomic_number": 50
   },
@@ -471,7 +478,7 @@
   "129Xe": {
     "spin": 1,
     "natural_abundance": 26.4,
-    "gyromagnetic_ratio": -11.860389999999999,
+    "gyromagnetic_ratio": -11.86039,
     "quadrupole_moment": 0.0,
     "atomic_number": 54
   },
@@ -491,15 +498,15 @@
   },
   "135Ba": {
     "spin": 3,
-    "natural_abundance": 6.5920000000000005,
-    "gyromagnetic_ratio": 4.258198999999999,
+    "natural_abundance": 6.592,
+    "gyromagnetic_ratio": 4.258199,
     "quadrupole_moment": 0.16,
     "atomic_number": 56
   },
   "137Ba": {
     "spin": 3,
-    "natural_abundance": 11.232000000000001,
-    "gyromagnetic_ratio": 4.763434999999999,
+    "natural_abundance": 11.232,
+    "gyromagnetic_ratio": 4.763435,
     "quadrupole_moment": 0.245,
     "atomic_number": 56
   },
@@ -548,14 +555,14 @@
   "151Eu": {
     "spin": 5,
     "natural_abundance": 47.81,
-    "gyromagnetic_ratio": 10.585339999999999,
+    "gyromagnetic_ratio": 10.58534,
     "quadrupole_moment": 0.903,
     "atomic_number": 63
   },
   "157Gd": {
     "spin": 3,
     "natural_abundance": 15.65,
-    "gyromagnetic_ratio": -1.7267709999999998,
+    "gyromagnetic_ratio": -1.726771,
     "quadrupole_moment": 1.36,
     "atomic_number": 64
   },
@@ -577,7 +584,7 @@
     "spin": 5,
     "natural_abundance": 18.91,
     "gyromagnetic_ratio": -1.464453,
-    "quadrupole_moment": 2.5069999999999997,
+    "quadrupole_moment": 2.507,
     "atomic_number": 66
   },
   "163Dy": {
@@ -590,7 +597,7 @@
   "165Ho": {
     "spin": 7,
     "natural_abundance": 100.0,
-    "gyromagnetic_ratio": 8.999016000000001,
+    "gyromagnetic_ratio": 8.999016,
     "quadrupole_moment": 3.58,
     "atomic_number": 67
   },
@@ -625,21 +632,21 @@
   "175Lu": {
     "spin": 7,
     "natural_abundance": 97.41,
-    "gyromagnetic_ratio": 4.8625620000000005,
+    "gyromagnetic_ratio": 4.862562,
     "quadrupole_moment": 3.49,
     "atomic_number": 71
   },
   "179Hf": {
     "spin": 9,
     "natural_abundance": 13.62,
-    "gyromagnetic_ratio": -1.0856270000000001,
+    "gyromagnetic_ratio": -1.085627,
     "quadrupole_moment": 3.79,
     "atomic_number": 72
   },
   "177Hf": {
     "spin": 7,
     "natural_abundance": 18.6,
-    "gyromagnetic_ratio": 1.7281509999999998,
+    "gyromagnetic_ratio": 1.728151,
     "quadrupole_moment": 3.365,
     "atomic_number": 72
   },
@@ -653,7 +660,7 @@
   "183W": {
     "spin": 1,
     "natural_abundance": 14.31,
-    "gyromagnetic_ratio": 1.7956509999999999,
+    "gyromagnetic_ratio": 1.795651,
     "quadrupole_moment": 0.0,
     "atomic_number": 74
   },
@@ -674,14 +681,14 @@
   "189Os": {
     "spin": 3,
     "natural_abundance": 16.21,
-    "gyromagnetic_ratio": 3.3536010000000003,
+    "gyromagnetic_ratio": 3.353601,
     "quadrupole_moment": 0.856,
     "atomic_number": 76
   },
   "191Ir": {
     "spin": 3,
     "natural_abundance": 37.3,
-    "gyromagnetic_ratio": 0.7658166000000001,
+    "gyromagnetic_ratio": 0.7658166,
     "quadrupole_moment": 0.816,
     "atomic_number": 77
   },
@@ -689,7 +696,7 @@
     "spin": 3,
     "natural_abundance": 62.7,
     "gyromagnetic_ratio": 0.831879,
-    "quadrupole_moment": 0.7509999999999999,
+    "quadrupole_moment": 0.7509999,
     "atomic_number": 77
   },
   "195Pt": {

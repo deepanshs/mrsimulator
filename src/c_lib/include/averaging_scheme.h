@@ -1,8 +1,8 @@
+// -*- coding: utf-8 -*-
 //
 //  averaging_scheme.h
 //
 //  Created by Deepansh J. Srivastava, Sep 3, 2019
-//  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
 //  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
 //
 
@@ -52,7 +52,7 @@ typedef struct MRS_averaging_scheme {
   double *wigner_4j_matrices; //  wigner-d 4j matrix per orientation.
   double *local_frequency;    //  buffer for local frequencies.
   double *freq_offset;        //  buffer for local + sideband frequencies.
-  unsigned int averaging;     //  0-octant, 1-hemisphere, 2-sphere
+  unsigned int integration_volume; //  0-octant, 1-hemisphere, 2-sphere
 } MRS_averaging_scheme;
 
 // typedef struct MRS_averaging_scheme;
@@ -73,10 +73,12 @@ typedef struct MRS_averaging_scheme {
  *
  * @param allow_fourth_rank If true, the scheme also calculates matrices for
  *            processing fourth rank tensors.
+ * @param integration_volume An enumeration. 0=octant, 1=hemisphere
  */
 MRS_averaging_scheme *
 MRS_create_averaging_scheme(unsigned int geodesic_polyhedron_frequency,
-                            bool allow_fourth_rank, unsigned int averaging);
+                            bool allow_fourth_rank,
+                            unsigned int integration_volume);
 
 /**
  * Free the memory allocated for the spatial orientation averaging scheme.

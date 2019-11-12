@@ -1,10 +1,16 @@
 v0.1.4
- - Added more isotopes to the simulator. Source NMR Tables (https://apps.apple.com/bn/app/nmr-tables/
-id1030899609?mt=12)
+ - Added more isotopes to the simulator. Source NMR Tables (https://apps.apple.com/bn/app/nmr-tables/id1030899609?mt=12)
  - Added two new keywords: 'atomic_number' and 'quadrupole_moment'
 
 v0.1.3
     Fixed missing files from source tar.
 
 v0.1.2
-    Release on pypi
+    Release on pypi.
+
+v0.1.1
+    - Added solid state quadrupolar lineshape simulation.
+    - Added mrsimulator plotly-dash app.
+
+v0.1.0
+    - Solid state chemical shift anisotropy lineshape simulation

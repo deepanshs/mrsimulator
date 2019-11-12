@@ -42,7 +42,6 @@ def octahedral_direction_cosine_squares_and_amplitudes(nt: int):
     x = np.empty(n, dtype=np.float64)
     y = np.empty(n, dtype=np.float64)
     z = np.empty(n, dtype=np.float64)
-    amp = np.empty(n, dtype=np.float64)
 
     k = 0
     for j in range(nt + 1):
