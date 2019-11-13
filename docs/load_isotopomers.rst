@@ -10,7 +10,7 @@ A list of isotopomers may also be imported from a `JSON <https://raw.githubuserc
 serialized isotopomers file. Consider `JSON isotopomers <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_test.json>`_ file.
 
 To import the isotopomers from this file, use the
-:meth:`~mrsimulator.simulator.Simulator.load_isotopomers`
+:meth:`~mrsimulator.Simulator.load_isotopomers`
 method of the :ref:`simulator_api` class, as follows,
 
 .. doctest::

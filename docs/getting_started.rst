@@ -27,17 +27,17 @@
 
 
 ==================================
-Getting started with `mrsimulator`
+Getting started with `Mrsimulator`
 ==================================
 
 We have put together a set of guidelines for using various methods and
-attributes of `mrsimulator` package. We encourage the users
+objects of `Mrsimulator` package. We encourage the users
 to follow these guidelines to promote consistency amongst others.
-In `mrsimulator`, the solid state nuclear magnetic resonance (ssNMR)
+In `Mrsimulator`, the solid state nuclear magnetic resonance (ssNMR)
 lineshape is calculated through an instance of the :ref:`simulator_api`
 class.
 
-Import the :ref:`simulator_api` class,
+Import the :ref:`simulator_api` class using
 
 .. doctest::
 
@@ -49,9 +49,9 @@ and create an instance as follows,
 
     >>> sim = Simulator()
 
-Here, ``sim`` is a variable with an instance of the :ref:`simulator_api`
-class. The two attributes of this class that you will often use are
-:attr:`~mrsimulator.Simulator.isotopomers` and
+Here, ``sim`` is a variable which is assigned to an instance of the
+:ref:`simulator_api` class. The two attributes of this class that you will
+frequently use are :attr:`~mrsimulator.Simulator.isotopomers` and
 :attr:`~mrsimulator.Simulator.dimensions`, whose value is a list of
 :ref:`isotopomer_api` and :ref:`dimension_api` objects,
 respectively. The default value of these attributes is an empty list.
@@ -66,52 +66,72 @@ respectively. The default value of these attributes is an empty list.
 
 Before you can start simulating
 NMR lineshapes, you need to understand the role of the Isotopomer and
-Dimension objects. We recommend starting with
-:ref:`dictionary_objects` and :ref:`dimension`.
+Dimension objects. The following provides a brief description of the respective
+objects. For more information, we recommend reading :ref:`dictionary_objects`
+and :ref:`dimension`.
 
 
 Setting up Isotopomer objects
 -----------------------------
-For all practical purposes, an isotopomer is an isolated spin-system with
-multiple sites and couplings between them. For simplicity, in this section,
-we concern ourselves with a single site spin-system, that is, an
-isotopomer with a single site. Shown below is an example of a single-site
-isotopomer, expressed as a python dictionary.
+For all practical purposes, an isotopomer may be described an isolated
+spin-system containing multiple sites and couplings between them. In the
+current version, we focus on a single site spin-system, that is,
+an isotopomer with a single site. Let's start by building a site.
 
 .. code-block:: py
     :linenos:
 
-    >>> isotopomer_dict = {
-    ...     "sites": [
-    ...         {
-    ...             "isotope": "29Si",
-    ...             "isotropic_chemical_shift": "-101.1 ppm",
-    ...             "shielding_symmetric": {
-    ...                 "zeta": "70.5 ppm",
-    ...                 "eta": 0.5
-    ...             }
-    ...         }
-    ...     ]
+    the_site = {
+        "isotope": "29Si",
+        "isotropic_chemical_shift": "-101.1 ppm",
+        "shielding_symmetric": {
+            "zeta": "70.5 ppm",
+            "eta": 0.5
+        }
+    }
+
+.. testsetup::
+    >>> the_site = {
+    ...     "isotope": "29Si",
+    ...     "isotropic_chemical_shift": "-101.1 ppm",
+    ...     "shielding_symmetric": {
+    ...         "zeta": "70.5 ppm",
+    ...         "eta": 0.5
+    ...     }
     ... }
 
-The above isotopomer contains a ``sites`` keyword, at line 2, whose value is
-a list of sites defined within the isotopomer. In this examples, we have
-defined a single site, again as a python dictionary, (lines 3-10) containing
-site specific information such as, the site isotope (line 4), the isotropic
-chemical shift (line 5), and the parameters from the second-rank irreducible
-symmetric nuclear shielding tensor---the shielding asymmetry (:math:`\zeta`)
-at line 7, and the shielding anisotropy (:math:`\eta`) at line 8, expressed
-using Haeberlen convension.
-For additional information see :ref:`isotopomer` and :ref:`site`.
+In the above code, ``the_site`` is a simplified python dictionary
+representation of a :ref:`site_api` object. This site describes a
+:math:`^{29}\text{Si}` isotope with a -101.1 ppm isotropic chemical shift
+along with nuclear shielding anisotropy, described here with `zeta` and
+`eta` using Haeberlen convention.
 
-.. seealso:: :ref:`dictionary_objects`
+Let's create an isotopomer with this site.
 
-An instance of an Isotopomer object may be created from a python dictionary,
-such as the one shown above, using the :ref:`isotopomer_api`
-class.
+.. code-block:: py
+    :linenos:
+
+    the_isotopomer = {
+        "name": "site A",
+        "sites": [ the_site ], # from previous code
+        "abundance": "80%"
+    }
+
+.. testsetup::
+    >>> the_isotopomer = {"name": "site A", "sites": [ the_site ],
+    ...     "abundance": "80%"}
+
+The above isotopomer contains ``the_sites`` as the value of the `sites`
+attribute of the isotopomer. In addition to the site, we have also provided
+an optional `name` and `abundance` to the isotopomer.
+
+.. seealso:: :ref:`dictionary_objects`, :ref:`isotopomer` and :ref:`site`.
+
+An instance of an Isotopomer object may be created from the above python
+dictionary, using the :ref:`isotopomer_api` class as follows
 
     >>> from mrsimulator import Isotopomer
-    >>> isotopomer_object = Isotopomer.parse_dict_with_units(isotopomer_dict)
+    >>> isotopomer_object = Isotopomer.parse_dict_with_units(the_isotopomer)
 
 You may create as many isotopomer objects as necessary, although in this
 example, we stick with a single isotopomer. Finally, add the isotopomer
@@ -124,17 +144,28 @@ the Simulator class, ``sim``, as follows
 Setting up Dimension objects
 ----------------------------
 
-A spectroscopic dimension is a dimension of the NMR spectrum. The number of
-spectroscopic dimensions depends on the dimensionality of the experiment. For
-example, a one-pulse acquired 1-D spectrum consists of a single spectroscopic
-dimension, while two-dimensional experiments will consist of two spectroscopic
-dimensions. In `mrsimulator`, we have designed the spectroscopic dimension to
-includes keywords that are required in evaluating the spectrum/line-shape along
-the dimension. A spectroscopic dimension may be defined as follows,
+The :ref:`dimension_api` object describes a spectroscopic dimension of the
+NMR spectrum. The number of dimensions depends on the dimensionality of the
+experiment. For example, a one-pulse acquired 1-D spectrum consists of a
+single dimension, while a two-dimensional experiment consist of two dimensions.
+In `Mrsimulator`, we have designed the :ref:`dimension_api` object to
+include attributes required for evaluating the spectrum/line-shape along
+a dimension. A Dimension may be defined as follows,
 
 .. code-block:: py
     :linenos:
 
+    dimension = {
+        "isotope": "29Si",
+        "magnetic_flux_density": "9.4 T",
+        "rotor_angle": "54.735 deg",
+        "rotor_frequency": "0 kHz",
+        "number_of_points": 2048,
+        "spectral_width": "25 kHz",
+        "reference_offset": "-8 kHz"
+    }
+
+.. testsetup::
     >>> dimension = {
     ...     "isotope": "29Si",
     ...     "magnetic_flux_density": "9.4 T",
@@ -146,40 +177,40 @@ the dimension. A spectroscopic dimension may be defined as follows,
     ... }
 
 In the above example, the variable ``dimension``, holds a python dictionary
-representation of the spectroscopic dimension. Here, the value of the `isotope`
-key is the isotope symbol of the observed nucleus. A value, ``29Si``, means
-that the simulated lineshape arises from :math:`^{29}\text{Si}` resonances.
+representation of a :ref:`dimension_api` object. Here, the value of the
+`isotope` key is the isotope symbol of the observed nucleus. A value, ``29Si``,
+implies that the simulated lineshape comprise of frequency components arising
+from :math:`^{29}\text{Si}` resonances.
 The keys `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency`
-collectively define the spin-environment, while the keys `number_of_points`,
+collectively describe the spin-environment, while the keys `number_of_points`,
 `spectral_width`, and `reference_offset` describes the grid coordinates
-along the spectroscopic dimension at which the spectrum is evaluated.
+along the dimension at which the spectrum is evaluated.
 
 .. seealso:: :ref:`dimension`.
 
 
-An instance of a spectroscopic dimension object may be created from
-a python dictionary, such as the one shown above, using the
-:ref:`dimension_api` class.
+An instance of a Dimension object may be created from a python dictionary,
+such as the one shown above using the :ref:`dimension_api` class as follows,
 
     >>> from mrsimulator import Dimension
-    >>> spectrum_object = Dimension.parse_dict_with_units(dimension)
+    >>> dimension_object = Dimension.parse_dict_with_units(dimension)
 
-You may create multiple spectroscopic dimension objects as required by the
-experiment. In this example, we stick with a single spectroscopic dimension.
-Finally, add the spectroscopic dimensions, in this case, ``spectrum_object``,
+You may create multiple dimension objects as required by the
+experiment. In this example, we stick with a single dimension.
+Finally, add the dimensions, in this case, ``dimension_object``,
 to the instance of the Simulator class, ``sim``, as follows
 
-    >>> sim.dimensions = [spectrum_object]
+    >>> sim.dimensions.append(dimension_object)
 
 Setting up the NMR method
 -------------------------
 
-Beside, the list of isotopomer and spectroscopic dimension objects,
-`mrsimulator` also requires an NMR method to simulate a line-shape.
-Note, while the list isotopomer objects are independent of the NMR method, the
-ordered list of spectroscopic dimension objects is dependent on the NMR method.
-In this example, we illustrate the use of one pulse acquisition method,
-referred here as, `one_d_spectrum`. This method requires a single spectroscopic
+Beside, the list of isotopomer and dimension objects, you also need to specify
+an NMR method used to simulate the line-shape. Note, while the list of
+isotopomer objects are independent of the NMR method, the
+ordered list of dimension objects dependents on the specified NMR method.
+In this example, we illustrate the use of a single pulse acquisition method,
+referred here as, `one_d_spectrum`. This method requires a single
 dimension.
 
 .. seealso:: :ref:`methods_api`
@@ -190,7 +221,7 @@ Import the method as
 
     >>> from mrsimulator.methods import one_d_spectrum
 
-and run the simulation using
+To run the simulation use,
 
 .. doctest::
 

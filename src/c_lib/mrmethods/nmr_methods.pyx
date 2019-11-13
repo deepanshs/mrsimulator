@@ -15,7 +15,7 @@ def one_d_spectrum(dimension,
        list isotopomers,
        int verbose=0,
        int number_of_sidebands=90,
-       int geodesic_polyhedron_frequency=72,
+       int integration_density=72,
        bool_t individual_spectrum=False,
        int integration_volume=1):
     """
@@ -31,7 +31,7 @@ def one_d_spectrum(dimension,
         sample spinning frequency is low, computation of more sidebands may be
         required for an acceptable result. The user is advised to ensure that
         enough sidebands are requested for computation.
-    :ivar geodesic_polyhedron_frequency:
+    :ivar integration_density:
         The value is an integer which represents the frequency of class I
         geodesic polyhedra. These polyhedra are used in calculating the
         spherical average. Presently we only use octahedral as the frequency1
@@ -53,9 +53,9 @@ def one_d_spectrum(dimension,
 
     # gyromagnetic ratio
     cdef double larmor_frequency = dimension["larmor_frequency"]
-    # cdef double factor = 1.0
-    # if larmor_frequency < 0.0:
-    #     factor = -1.0
+    cdef double factor = 1.0
+    if larmor_frequency < 0.0:
+        factor = -1.0
 
     # if verbose in [1, 11]:
     #     print(f'Simulating {isotope} (I={spin_quantum_number})')
@@ -81,7 +81,7 @@ def one_d_spectrum(dimension,
     cdef int number_of_points = dimension["number_of_points"]
     cdef double spectral_width = dimension["spectral_width"]
     cdef double increment = spectral_width/number_of_points
-    cdef double reference_offset = dimension["reference_offset"] #*factor
+    cdef double reference_offset = dimension["reference_offset"] *factor
 
     offset = increment*int(number_of_points/2.0)
     reference_offset -= offset
@@ -90,7 +90,7 @@ def one_d_spectrum(dimension,
 # -------------------------------------------------------------------------------------
 # averaging scheme ____________________________________________________________________
     MRS_averaging_scheme = sb.averagingScheme(
-        geodesic_polyhedron_frequency, 1, integration_volume
+        integration_density, 1, integration_volume
     )
 
 
@@ -269,7 +269,7 @@ def one_d_spectrum(dimension,
                     rotor_angle_in_rad,
 
                     &transition_array[2*trans__],
-                    geodesic_polyhedron_frequency,
+                    integration_density,
                     integration_volume,          # 0-octant, 1-hemisphere, 2-sphere.
                     )
 

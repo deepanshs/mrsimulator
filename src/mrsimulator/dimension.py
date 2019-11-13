@@ -45,18 +45,6 @@ class Dimension(Parseable):
     .. rubric:: Attribute Documentation
 
     Attributes:
-        number_of_points: Number of points, :math:`N`, along the dimension.
-        spectral_width: Spectral width, :math:`\Delta x`, along the
-                dimension in units of Hz.
-        reference_offset: Reference offset, :math:`x_0`, along the
-                dimension in units of Hz.
-        magnetic_flux_density: The macroscopic magnetic flux density of
-                the applied external magnetic field, :math:`B_0`, in units of T.
-        rotor_frequency: Sample spinning frequency, :math:`\nu_r`,
-                in units of Hz.
-        rotor_angle: The angle between the sample rotation axis and the
-                applied macroscopic magnetic field, :math:`\theta` in units of rad.
-        isotope: The isotope assigned to the dimension.
     """
 
     # public attributes
@@ -65,9 +53,10 @@ class Dimension(Parseable):
     reference_offset: Optional[float] = Field(default=0)
     magnetic_flux_density: Optional[float] = Field(default=9.4, ge=0)
     rotor_frequency: Optional[float] = Field(default=0, ge=0)
-    # 54.735 degrees in radians
+    # 54.735 degrees = 0.9553166 radians
     rotor_angle: Optional[float] = Field(default=0.9553166, ge=0, le=1.5707963268)
     isotope: Optional[str] = None
+    label: Optional[str] = ""
 
     # private attributes
     spin: float = 1
@@ -75,7 +64,7 @@ class Dimension(Parseable):
     gyromagnetic_ratio: float = 1.0
     quadrupole_moment: float = 1.0
     atomic_number: int = 1
-    larmor_frequency: float = 1  # MHz
+    larmor_frequency: float = 1  # default is Hz
 
     property_unit_types: ClassVar = {
         "spectral_width": ["frequency", "dimensionless"],

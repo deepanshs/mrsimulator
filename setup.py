@@ -58,6 +58,7 @@ if platform.system() == "Windows":
     extra_link_args = ["-lm"]
     extra_compile_args = ["-DFFTW_DLL"]
 
+# this section is important for travis-ci build.
 else:
     libraries = ["openblas", "fftw3", "fftw3_threads", "pthread"]
     openblas_info = sysinfo.get_info("openblas")

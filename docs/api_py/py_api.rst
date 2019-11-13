@@ -9,6 +9,8 @@ Python-API References
 
    simulator
    isotopomer
+   site
+   other_objects
 
 ..    parameterized_tensor
 ..    interaction

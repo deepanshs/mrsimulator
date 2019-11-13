@@ -16,7 +16,7 @@ class SymmetricTensor(Parseable):
     irreducible second-rank tensor.
 
     Arguments:
-        zeta: The anisotropy parameter of the SymmetricTensor expressed using
+        zeta: The anisotropy parameter of a nuclear shielding tensor expressed using
                 Haeberlen convention.
         Cq: The quadrupolar coupling constant derived from an electric field tensor.
         eta: The asymmetry parameter of the SymmetricTensor expressed using

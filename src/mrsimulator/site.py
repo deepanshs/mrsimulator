@@ -6,7 +6,7 @@ from typing import Optional
 from mrsimulator import AntisymmetricTensor
 from mrsimulator import Parseable
 from mrsimulator import SymmetricTensor
-from mrsimulator.spectrum import get_isotope_data
+from mrsimulator.dimension import get_isotope_data
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -35,7 +35,7 @@ class Site(Parseable):
                 part of electric-field gradient tensor. The default value is None.
 
     Example:
-        Using python dictionary.
+        Setting up Site objects.
 
         .. doctest::
 
@@ -102,12 +102,22 @@ class Site(Parseable):
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantities of a Site object when expressed as a
-        python dictionary.
+        Parse the physical quantities from a dictionary representation of the Site
+        object.
 
         Args:
-            py_dict: Python dictionary representation of an isotopomers with
-                        physical quantities.
+            py_dict: A required Dict object.
+
+        Returns:
+            Site object
+
+        Example:
+            >>> site_dict = {
+            ...    "isotope": "13C",
+            ...    "isotropic_chemical_shift": "20 ppm",
+            ...    "shielding_symmetric": {"zeta": "10 ppm", "eta":0.5}
+            ... }
+            >>> site1 = Site.parse_dict_with_units(site_dict)
         """
         prop_mapping = {
             "shielding_symmetric": SymmetricTensor,
@@ -132,7 +142,21 @@ class Site(Parseable):
         Args:
             B0: A required macroscopic magnetic flux density given in units of T.
 
-        Return: A python dict
+        Return:
+            Dict object
+
+        Example:
+            >>> from pprint import pprint
+            >>> pprint(site1.to_freq_dict(9.4))
+            {'isotope': '13C',
+             'isotropic_chemical_shift': -2013.1791999999998,
+             'quadrupolar': None,
+             'shielding_antisymmetric': None,
+             'shielding_symmetric': {'alpha': None,
+                                     'beta': None,
+                                     'eta': 0.5,
+                                     'gamma': None,
+                                     'zeta': -1006.5895999999999}}
         """
         temp_dict = self.dict()
         larmor_frequency = -self.gyromagnetic_ratio * B0  # in MHz
@@ -149,6 +173,17 @@ class Site(Parseable):
     def to_dict_with_units(self):
         """
         Serialize the Site object to a JSON compliant python dictionary with units.
+
+        Returns:
+            Dict object
+
+        Example:
+            >>> from pprint import pprint
+            >>> pprint(site1.to_dict_with_units())
+            {'isotope': '13C',
+             'isotropic_chemical_shift': '20.0 ppm',
+             'shielding_symmetric': {'eta': 0.5, 'zeta': '10.0 ppm'}}
+
         """
         temp_dict = {k: v for k, v in self.dict().items() if v is not None}
 

@@ -6,6 +6,12 @@
     .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
         :target: https://mrsimulator.readthedocs.io/en/stable/?badge=stable
         :alt: Documentation Status
+    .. image:: https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18
+        :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/
+        :alt: Total alerts
+    .. image:: https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18
+        :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python
+        :alt: Language grade: Python
 
 Welcome to mrsimulator's documentation!
 =======================================

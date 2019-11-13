@@ -7,4 +7,4 @@ requests>=2.21.0
 matplotlib>=3.0.2
 csdmpy>=0.1.2
 pydantic>=0.28
-monty==2.0.4
+monty>=2.0.4

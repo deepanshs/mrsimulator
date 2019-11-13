@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # from pydash import has, get
 from typing import List
+from enum import Enum
 
 import csdmpy as cp
 from astropy import units as u
@@ -8,11 +9,42 @@ from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator.importer import import_json
 from mrsimulator.methods import one_d_spectrum
-from mrsimulator.spectrum import ISOTOPE_DATA
-from pydantic import BaseModel
+
+from pydantic import BaseModel, Field
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+
+
+class IntegrationVolumeEnum(str, Enum):
+    octant = "octant"
+    hemisphere = "hemisphere"
+
+
+class Config(BaseModel):
+    """
+    The configurable parametes used in lineshape simulation
+
+    Args:
+        number_of_sidebands: The number of sidebands requested for simulation
+        integration_volume: An enumeration ('octant', 'hemisphere') over which the
+            lineshape average is evaluated.
+        integration_density: This number is used to evaluate the number of orientations
+            at which the frequencies are calculated. If `n` is the integration_density,
+            then the number of orientations are ``(n+1)*(n+2)/2 * number of octant``.
+
+    Example:
+        >>> a = Simulator()
+        >>> a.config.number_of_sidebands = 128
+        >>> a.config.integration_volume = 'hemisphere'
+    """
+
+    number_of_sidebands: int = Field(64, ge=1)
+    integration_volume: IntegrationVolumeEnum = IntegrationVolumeEnum.octant
+    integration_density: int = Field(70, ge=1)
+
+    class Config:
+        validate_assignment = True
 
 
 class Simulator(BaseModel):
@@ -21,70 +53,43 @@ class Simulator(BaseModel):
 
     .. rubric:: Attributes Documentation
 
-    Attributes:
-        isotopomers: List of Isotopomer objects.
-        dimension: List of Dimension objects.
-        isotope: List of all unique isotopes defined in the list of isotopomers.
-            This also includes NMR inactive isotopes.
+    Args:
+        isotopomers: List of :ref:`isotopomer_api` objects.
+        dimensions: List of :ref:`dimension_api` objects.
+        config: :ref:`config_api` object.
     """
 
     isotopomers: List[Isotopomer] = []
     dimensions: List[Dimension] = []
     simulated_data: List = []
+    config: Config = Config()
 
-    @staticmethod
-    def allowed_isotopes(spin=None):
+    def get_isotopes(self, I=None):
         """
-        List of NMR active isotopes allowed in ``mrsimulator``.
+        Set of unique isotopes from the list of isotopomers corresponding
+        to the given value of `I`. If `I` is unspecified or None, a list of all
+        unique isotopes is returned instead.
 
         Args:
-            spin: (optional) The spin quantum number. Valid input are multiples of 0.5.
+            I: (optional) The spin quantum number. Valid input are multiples of 0.5.
 
         Returns:
-            A list of all isotopes with the give spin quantum number allowed in
-            mrsimulator. If the spin is unspecified or None, a list of all
-            allowed isotopes is returned instead.
+            A Set
+
+        Example:
+            >>> sim.get_isotopes() # doctest:+SKIP
+            {'1H', '27Al', '13C'}
+            >>> sim.get_isotopes(I=0.5) # doctest:+SKIP
+            {'1H', '13C'}
+            >>> sim.get_isotopes(I=1.5)
+            set()
+            >>> sim.get_isotopes(I=2.5)
+            {'27Al'}
         """
-        if spin is None:
-            return list({isotope for isotope, data in ISOTOPE_DATA.items()})
-        return list(
-            {
-                isotope
-                for isotope, data in ISOTOPE_DATA.items()
-                if data["spin"] == int(2 * spin)
-            }
-        )
-
-    @property
-    def isotopes(self):
-        return list(
-            {
-                site.isotope
-                for isotopomer in self.isotopomers
-                for site in isotopomer.sites
-            }
-        )
-
-    def get_isotopes(self, spin=None):
-        """
-        List of unique isotopes defined in list of isotopomers.
-
-        Args:
-            spin: (optional) The spin quantum number. Valid input are multiples of 0.5.
-
-        Returns:
-            A list of unique isotopes from the list of isotopomers corresponding
-            to given value of `spin`. If the spin is unspecified or None, a list of all
-            unique isotopes is returned instead.
-        """
-        return list(
-            {
-                site.isotope
-                for isotopomer in self.isotopomers
-                for site in isotopomer.sites
-                if site.isotope in self.allowed_isotopes(spin)
-            }
-        )
+        st = set()
+        for isotopomer in self.isotopomers:
+            st.update(isotopomer.get_isotopes(I))
+        return st
 
     def load_isotopomers(self, filename):
         """

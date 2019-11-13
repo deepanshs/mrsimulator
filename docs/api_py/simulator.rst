@@ -2,27 +2,34 @@
 
 .. _simulator_api:
 
-=========
 Simulator
 =========
 
-.. currentmodule:: mrsimulator
+.. currentmodule:: mrsimulator.simulator
 
 .. autoclass:: Simulator
     :show-inheritance:
 
     .. rubric:: Method Documentation
 
-    .. automethod:: allowed_isotopes
     .. automethod:: get_isotopes
     .. automethod:: load_isotopomers
     .. automethod:: run
 
 
+.. _config_api:
+
+Config
+======
+
+.. currentmodule:: mrsimulator.simulator
+
+.. autoclass:: Config
+    :show-inheritance:
+
 
 .. _methods_api:
 
-=======
 Methods
 =======
 
