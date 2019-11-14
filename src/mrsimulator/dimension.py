@@ -3,13 +3,14 @@ import os.path
 import re
 import warnings
 from typing import ClassVar
+from typing import Dict
 from typing import Optional
 
 import numpy as np
 from monty.serialization import loadfn
 from mrsimulator import Parseable
-from mrsimulator.unit import string_to_quantity
 from pydantic import Field
+from pydantic import validator
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -40,7 +41,7 @@ class Dimension(Parseable):
                 i.e. the magic angle.
         isotope: An `optional` isotope string in "{A}{Symbol}" notation such as
                 1H or 29Si. The default is None.
-        label: An `optional`
+        label: An `optional` string label.
 
     .. rubric:: Attribute Documentation
 
@@ -48,7 +49,7 @@ class Dimension(Parseable):
     """
 
     # public attributes
-    number_of_points: int = Field(..., gt=0)
+    number_of_points: int = Field(1024, gt=0)
     spectral_width: float = Field(..., gt=0)
     reference_offset: Optional[float] = Field(default=0)
     magnetic_flux_density: Optional[float] = Field(default=9.4, ge=0)
@@ -58,13 +59,13 @@ class Dimension(Parseable):
     isotope: Optional[str] = None
     label: Optional[str] = ""
 
-    # private attributes
-    spin: float = 1
-    natural_abundance: float = 1.0
-    gyromagnetic_ratio: float = 1.0
-    quadrupole_moment: float = 1.0
-    atomic_number: int = 1
-    larmor_frequency: float = 1  # default is Hz
+    # Immutable attributes
+    # spin: Optional[float] = None
+    # natural_abundance: Optional[float] = None
+    # gyromagnetic_ratio: Optional[float] = None
+    # quadrupole_moment: Optional[float] = None
+    # atomic_number: Optional[int] = None
+    # larmor_frequency: Optional[float] = None  # default is Hz
 
     property_unit_types: ClassVar = {
         "spectral_width": ["frequency", "dimensionless"],
@@ -82,80 +83,136 @@ class Dimension(Parseable):
         "rotor_angle": "rad",
     }
 
-    # @property
-    # def spin(self):
-    #     """Quantity 2I, where I is the spinquantum number."""
-    #     if self.isotope is None:
-    #         return self._spin
-    #     isotope_data = get_isotope_data(self.isotope)
-    #     return isotope_data["spin"]
+    property_units: Dict = {
+        "spectral_width": "Hz",
+        "reference_offset": "Hz",
+        "magnetic_flux_density": "T",
+        "rotor_frequency": "Hz",
+        "rotor_angle": "rad",
+        "natural_abundance": "%",
+        "gyromagnetic_ratio": "MHz/T",
+        "quadrupole_moment": "eB",
+        "larmor_frequency": "Hz",
+    }
 
-    # @spin.setter
-    # def spin(self, value):
-    #     if self.isotope is None:
-    #         self._spin = value
+    class Config:
+        validate_assignment = True
 
-    # @property
-    # def natural_abundance(self):
-    #     """Natural abundance of the spin."""
-    #     if self.isotope is None:
-    #         return self._natural_abundance
-    #     isotope_data = get_isotope_data(self.isotope)
-    #     return isotope_data["natural_abundance"]
+    @validator("isotope", always=True)
+    def get_isotope(cls, v, *, values, **kwargs):
+        if v is None:
+            return v
+        return format_isotope_string(v)
+
+    # @validator("spin", always=True)
+    # def immutable_spin(cls, v, *, values, **kwargs):
+    #     if values["isotope"] is None:
+    #         return None
+    #     return get_isotope_data(values["isotope"])["spin"]
+
+    # @validator("natural_abundance", always=True)
+    # def immutable_natural_abundance(cls, v, *, values, **kwargs):
+    #     if values["isotope"] is None:
+    #         return None
+    #     return get_isotope_data(values["isotope"])["natural_abundance"]
+
+    # @validator("gyromagnetic_ratio", always=True)
+    # def immutable_gyromagnetic_ratio(cls, v, *, values, **kwargs):
+    #     if values["isotope"] is None:
+    #         return None
+    #     return get_isotope_data(values["isotope"])["gyromagnetic_ratio"]
+
+    # @validator("quadrupole_moment", always=True)
+    # def immutable_quadrupole_moment(cls, v, *, values, **kwargs):
+    #     if values["isotope"] is None:
+    #         return None
+    #     return get_isotope_data(values["isotope"])["quadrupole_moment"]
+
+    # @validator("atomic_number", always=True)
+    # def immutable_atomic_number(cls, v, *, values, **kwargs):
+    #     if values["isotope"] is None:
+    #         return None
+    #     return get_isotope_data(values["isotope"])["atomic_number"]
+
+    # @validator("larmor_frequency", always=True)
+    # def immutable_larmor_frequency(cls, v, *, values, **kwargs):
+    #     if values["isotope"] is None:
+    #         return None
+    #     B0 = values["magnetic_flux_density"]
+    #     gamma = get_isotope_data(values["isotope"])["gyromagnetic_ratio"]
+    #     return -gamma * B0 * 1e6  # larmor freqency in Hz
+
+    @property
+    def spin(self):
+        """Spin quantum number, I."""
+        if self.isotope is None:
+            return None
+        isotope_data = get_isotope_data(self.isotope)
+        return isotope_data["spin"] / 2.0
+
+    @property
+    def natural_abundance(self):
+        """Natural abundance of the spin."""
+        if self.isotope is None:
+            return None
+        isotope_data = get_isotope_data(self.isotope)
+        return isotope_data["natural_abundance"]
 
     # @natural_abundance.setter
     # def natural_abundance(self, value):
     #     if self.isotope is None:
     #         self._natural_abundance = value
 
-    # @property
-    # def gyromagnetic_ratio(self):
-    #     """Reduced gyromagnetic ratio of the nucleus given in units of MHz/T."""
-    #     if self.isotope is None:
-    #         return 0.0
-    #     isotope_data = get_isotope_data(self.isotope)
-    #     return isotope_data["gyromagnetic_ratio"]
+    @property
+    def gyromagnetic_ratio(self):
+        """Reduced gyromagnetic ratio of the nucleus given in units of MHz/T."""
+        if self.isotope is None:
+            return None
+        isotope_data = get_isotope_data(self.isotope)
+        return isotope_data["gyromagnetic_ratio"]
 
     # @gyromagnetic_ratio.setter
     # def gyromagnetic_ratio(self, value):
     #     if self.isotope is None:
     #         self._gyromagnetic_ratio = value
 
-    # @property
-    # def quadrupole_moment(self):
-    #     """Quadrupole moment of the nucleus given in units of electron-barn."""
-    #     if self.isotope is None:
-    #         return 0.0
-    #     isotope_data = get_isotope_data(self.isotope)
-    #     return isotope_data["quadrupole_moment"]
+    @property
+    def quadrupole_moment(self):
+        """Quadrupole moment of the nucleus given in units of electron-barn."""
+        if self.isotope is None:
+            return None
+        isotope_data = get_isotope_data(self.isotope)
+        return isotope_data["quadrupole_moment"]
 
     # @quadrupole_moment.setter
     # def quadrupole_moment(self, value):
     #     if self.isotope is None:
     #         self._quadrupole_moment = value
 
-    # @property
-    # def atomic_number(self):
-    #     """Atomic number of the nucleus"""
-    #     if self.isotope is None:
-    #         return 0.0
-    #     isotope_data = get_isotope_data(self.isotope)
-    #     return isotope_data["atomic_number"]
+    @property
+    def atomic_number(self):
+        """Atomic number of the nucleus"""
+        if self.isotope is None:
+            return None
+        isotope_data = get_isotope_data(self.isotope)
+        return isotope_data["atomic_number"]
 
     # @atomic_number.setter
     # def atomic_number(self, value):
     #     if self.isotope is None:
     #         self._atomic_number = value
 
-    # @property
-    # def larmor_frequency(self):
-    #     r"""
-    #     Signed Larmor frequency, :math:`\omega_0=-\gamma B_0`, of the isotope,
-    #     in MHz, where :math:`\gamma` is the gyromagnetic ratio of the
-    #     isotope and :math:`B_0` is the macroscopic magnetic flux density
-    #     of the applied external field.
-    #     """
-    #     return -self.gyromagnetic_ratio * self.magnetic_flux_density
+    @property
+    def larmor_frequency(self):
+        r"""
+        Signed Larmor frequency, :math:`\omega_0=-\gamma B_0`, of the isotope,
+        in MHz, where :math:`\gamma` is the gyromagnetic ratio of the
+        isotope and :math:`B_0` is the macroscopic magnetic flux density
+        of the applied external field.
+        """
+        if self.isotope is None:
+            return None
+        return -self.gyromagnetic_ratio * self.magnetic_flux_density * 1e6  # in Hz
 
     @property
     def coordinates_Hz(self):
@@ -185,7 +242,7 @@ class Dimension(Parseable):
             warnings.warn(
                 (
                     "The coordinates along the dimension without an assigned "
-                    "isotope cannot be converted to dimensionless ratio."
+                    "isotope cannot be converted to dimensionless frequency ratio."
                 )
             )
         else:
@@ -203,70 +260,48 @@ class Dimension(Parseable):
             py_dict: Python dictionary representation of an isotopomers with
                         physical quantities.
         """
-        if "isotope" in py_dict:
-            isotope_data = get_isotope_data(py_dict["isotope"])
-            py_dict.update(isotope_data)
-
-        B0 = string_to_quantity(py_dict["magnetic_flux_density"]).to("T").value
-        gamma = isotope_data["gyromagnetic_ratio"]
-        py_dict.update({"larmor_frequency": -gamma * B0 * 1e6})  # larmor freqency in Hz
         return super().parse_dict_with_units(py_dict)
-
-    def to_dict(self):
-        """
-        Serialize the Spectrum object to a JSON compliant python dictionary without
-        units. Default units are assumed. [Hz, rad]
-        """
-        temp_dict = {k: v for k, v in self.dict().items() if v is not None}
-
-        keys = temp_dict["property_units"].keys()
-        if "spectral_width" in keys:
-            if temp_dict["property_units"]["spectral_width"] == "ppm":
-                temp_dict["spectral_width"] *= self.larmor_frequency
-        if "reference_offset" in keys:
-            if temp_dict["property_units"]["reference_offset"] == "ppm":
-                temp_dict["reference_offset"] *= self.larmor_frequency
-        return temp_dict
 
     def to_dict_with_units(self):
         """
         Serialize the Spectrum object to a JSON compliant python dictionary with
         units.
         """
-        temp_dict = {k: v for k, v in self.dict().items() if v is not None}
-
-        property_key = [
-            "spectral_width",
-            "reference_offset",
-            "magnetic_flux_density",
-            "rotor_frequency",
-            "rotor_angle",
-            "gyromagnetic_ratio",
-            "quadrupole_moment",
-            "larmor_frequency",
-        ]
-
-        property_unit = ["Hz", "Hz", "T", "Hz", "rad", "MHz/T", "eB", "MHz"]
-        for i, item in enumerate(property_key):
-            temp_dict[item] = f"{temp_dict[item]} {property_unit[i]}"
+        temp_dict = {
+            k: v
+            for k, v in self.dict(exclude={"property_units"}).items()
+            if v is not None
+        }
+        temp_keys = temp_dict.keys()
+        for key, unit in self.property_units.items():
+            if key in temp_keys:
+                temp_dict[key] = f"{temp_dict[key]} {unit}"
 
         return temp_dict
+
+
+def format_isotope_string(isotope_string):
+    """Format isotope string to {A}{symbol}, where A is the isotope number"""
+    result = re.match(r"(\d+)\s*(\w+)", isotope_string)
+
+    if result is None:
+        raise Exception(f"Could not parse isotope string {isotope_string}")
+    isotope = result.group(2)
+    A = result.group(1)
+
+    formatted_string = f"{A}{isotope}"
+    if formatted_string not in ISOTOPE_DATA:
+        raise Exception(f"Could not parse isotope string {isotope_string}")
+
+    return formatted_string
 
 
 def get_isotope_data(isotope_string):
     """
     Gets the isotope's intrinsinc NMR properties from a JSON
-    data file
+    data file.
     """
-    result = re.match(r"(\d+)\s*(\w+)", isotope_string)
-    isotope = result.group(2)
-    A = result.group(1)
-
-    formatted_isotope_string = f"{A}{isotope}"
-
-    if formatted_isotope_string in ISOTOPE_DATA:
-        isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
-        isotope_dict.update({"isotope": formatted_isotope_string})
-        return isotope_dict
-    else:
-        raise Exception(f"Could not parse isotope string {formatted_isotope_string}")
+    formatted_isotope_string = format_isotope_string(isotope_string)
+    isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
+    isotope_dict.update({"isotope": formatted_isotope_string})
+    return isotope_dict

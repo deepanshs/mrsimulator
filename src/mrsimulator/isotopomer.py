@@ -6,9 +6,9 @@ from typing import List
 from typing import Optional
 
 from mrsimulator import Parseable
+from mrsimulator.dimension import ISOTOPE_DATA
 from mrsimulator.site import Site
 from pydantic import Field
-from mrsimulator.dimension import ISOTOPE_DATA
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -38,6 +38,9 @@ class Isotopomer(Parseable):
     property_unit_types: ClassVar = {"abundance": "dimensionless"}
     property_default_units: ClassVar = {"abundance": "pct"}
     property_units: Dict = {"abundance": "pct"}
+
+    class Config:
+        validate_assignment = True
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):

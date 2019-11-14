@@ -7,6 +7,7 @@ from mrsimulator import AntisymmetricTensor
 from mrsimulator import Parseable
 from mrsimulator import SymmetricTensor
 from mrsimulator.dimension import get_isotope_data
+from pydantic import validator
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -17,8 +18,8 @@ class Site(Parseable):
     Base Site class representing a nuclear isotope.
 
     Arguments:
-        isotope: A required string expressed as atomic number followed by an
-                isotope symbol, eg. ``13C``, ``17O``.
+        isotope: An optional string expressed as atomic number followed by an
+                isotope symbol, eg. ``13C``, ``17O``. The default value is '1H'.
         isotropic_chemical_shift: An optional floating point number representing
                 the isotropic chemical shift of the site in unit of ppm. The
                 default value is 0.
@@ -64,7 +65,7 @@ class Site(Parseable):
             ...         )
     """
 
-    isotope: str
+    isotope: str = "1H"
     isotropic_chemical_shift: Optional[float] = 0
     shielding_symmetric: Optional[SymmetricTensor] = None
     shielding_antisymmetric: Optional[AntisymmetricTensor] = None
@@ -73,6 +74,18 @@ class Site(Parseable):
     property_unit_types: ClassVar = {"isotropic_chemical_shift": "dimensionless"}
     property_default_units: ClassVar = {"isotropic_chemical_shift": "ppm"}
     property_units: Dict = {"isotropic_chemical_shift": "ppm"}
+
+    @validator("quadrupolar")
+    def spin_must_be_at_least_one(cls, v, values):
+        isotope = values["isotope"]
+        I = get_isotope_data(isotope)["spin"] / 2.0
+        if I >= 1:
+            return v
+        message = f"with spin quantum number {I} does not allow quadrupolar tensor."
+        raise ValueError(f"{isotope} {message}")
+
+    class Config:
+        validate_assignment = True
 
     @property
     def spin(self):

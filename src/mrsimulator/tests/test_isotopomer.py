@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
+from random import randint
+
 import pytest
 from mrsimulator import Isotopomer
 from mrsimulator import Site
-from random import randint
 from mrsimulator.isotopomer import allowed_isotopes
+from pydantic import ValidationError
 
 
 def test_direct_init_isotopomer():
@@ -150,3 +153,18 @@ def test_allowed_isotopes():
     assert {"73Ge", "83Kr", "87Sr", "93Nb", "113In"}.issubset(
         set(allowed_isotopes(I=4.5))
     )
+
+
+def test_bad_assignments():
+    error = "value is not a valid list"
+    with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
+        Isotopomer(sites=Site())
+
+
+def test_equality():
+    a = Isotopomer(sites=[Site(isotope="1H")])
+    b = Isotopomer(sites=[Site(isotope="1H")])
+    assert a == b
+
+    c = Isotopomer(sites=[Site(isotope="1H", isotropic_chemical_shift=16)])
+    assert a != c

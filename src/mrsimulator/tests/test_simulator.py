@@ -3,12 +3,34 @@
 Tests for the base Parseable pattern
 """
 # import os.path
+from random import randint
+
 import pytest
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
-from random import randint
 from pydantic import ValidationError
+
+
+def test_simulator_assignments():
+    a = Simulator()
+    assert a.isotopomers == []
+
+    error = "value is not a valid list"
+    with pytest.raises(Exception, match=".*{0}.*".format(error)):
+        a.isotopomers = ""
+
+    with pytest.raises(Exception, match=".*{0}.*".format(error)):
+        a.dimensions = ""
+
+
+def test_equality():
+    a = Simulator()
+    b = Simulator()
+    assert a == b
+
+    c = Simulator(sites=[Isotopomer()])
+    assert a is not c
 
 
 def get_simulator():

@@ -28,8 +28,8 @@ repos:
         language: python
       - id: check-added-large-files
         language: python
-      # - id: fix-encoding-pragma
-      #   language: python
+      - id: fix-encoding-pragma
+        language: python
       - id: check-docstring-first
         language: python
       - id: flake8
@@ -45,13 +45,13 @@ repos:
         entry: debug-statement-hook
         language: python
         types: [python]
-  # - repo: https://github.com/asottile/reorder_python_imports
-  #   rev: v1.4.0
-  #   hooks:
-  #     - id: reorder-python-imports
-  #       name: Reorder python imports
-  #       description: This hook reorders imports in python files.
-  #       entry: reorder-python-imports
-  #       language: python
-  #       types: [python]
-  #       minimum_pre_commit_version: "0.15.0"
+  - repo: https://github.com/asottile/reorder_python_imports
+    rev: v1.4.0
+    hooks:
+      - id: reorder-python-imports
+        name: Reorder python imports
+        description: This hook reorders imports in python files.
+        entry: reorder-python-imports
+        language: python
+        types: [python]
+        minimum_pre_commit_version: "0.15.0"

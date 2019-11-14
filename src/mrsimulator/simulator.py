@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # from pydash import has, get
-from typing import List
 from enum import Enum
+from typing import List
+from typing import Optional
 
 import csdmpy as cp
 from astropy import units as u
@@ -9,8 +10,8 @@ from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator.importer import import_json
 from mrsimulator.methods import one_d_spectrum
-
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from pydantic import Field
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
@@ -21,7 +22,7 @@ class IntegrationVolumeEnum(str, Enum):
     hemisphere = "hemisphere"
 
 
-class Config(BaseModel):
+class ConfigSimulator(BaseModel):
     """
     The configurable parametes used in lineshape simulation
 
@@ -61,8 +62,11 @@ class Simulator(BaseModel):
 
     isotopomers: List[Isotopomer] = []
     dimensions: List[Dimension] = []
-    simulated_data: List = []
-    config: Config = Config()
+    simulated_data: Optional[List]
+    config: ConfigSimulator = ConfigSimulator()
+
+    class Config:
+        validate_assignment = True
 
     def get_isotopes(self, I=None):
         """
@@ -138,9 +142,12 @@ class Simulator(BaseModel):
         ]
 
         amp = one_d_spectrum(
-            dimension=self.dimensions[0].to_dict(), isotopomers=isotopomers, **kwargs
+            dimension=self.dimensions[0], isotopomers=isotopomers, **kwargs
         )
-        self.simulated_data = amp
+        if isinstance(amp, list):
+            self.simulated_data = amp
+        else:
+            self.simulated_data = [amp]
 
         """The frequency is in the units of Hz."""
         freq = self.dimensions[0].coordinates_ppm
@@ -162,43 +169,27 @@ class Simulator(BaseModel):
             }
             new.add_dimension(new_dimension)
 
-        if isinstance(self.simulated_data, list):
-            for index, datum in enumerate(self.simulated_data):
-                if datum != []:
-                    dependent_variable = {
-                        "type": "internal",
-                        "quantity_type": "scalar",
-                        "numeric_type": "float64",
-                        "components": [datum],
+        dependent_variable = {
+            "type": "internal",
+            "quantity_type": "scalar",
+            "numeric_type": "float64",
+        }
+        for index, datum in enumerate(self.simulated_data):
+            if datum != []:
+                dependent_variable["components"] = [datum]
+                name = self.isotopomers[index].name
+                if name != "":
+                    dependent_variable.update({"name": name})
+
+                description = self.isotopomers[index].description
+                if description != "":
+                    dependent_variable.update({"description": description})
+
+                dependent_variable["application"] = {
+                    "com.github.DeepanshS.mrsimulator": {
+                        "isotopomers": [self.isotopomers[index].to_dict_with_units()]
                     }
-
-                    name = self.isotopomers[index].name
-                    if name != "":
-                        dependent_variable.update({"name": name})
-
-                    description = self.isotopomers[index].description
-                    if description != "":
-                        dependent_variable.update({"description": description})
-
-                    dependent_variable["application"] = {
-                        "com.github.DeepanshS.mrsimulator": {
-                            "isotopomers": [
-                                self.isotopomers[index].to_dict_with_units()
-                            ]
-                        }
-                    }
-
-                    new.add_dependent_variable(dependent_variable)
-                    new.dependent_variables[-1].encoding = "base64"
-
-        else:
-            dependent_variable = {
-                "type": "internal",
-                "quantity_type": "scalar",
-                "numeric_type": "float64",
-                "components": [self.simulated_data],
-            }
-            new.add_dependent_variable(dependent_variable)
-            new.dependent_variables[-1].encoding = "base64"
-
+                }
+                new.add_dependent_variable(dependent_variable)
+                new.dependent_variables[-1].encoding = "base64"
         return new

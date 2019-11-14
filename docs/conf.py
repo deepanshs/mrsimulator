@@ -33,6 +33,12 @@ version = __version__
 # The full version, including alpha/beta/rc tags
 release = __version__
 
+# mock packages
+autodoc_mock_imports = [
+    # "astropy",
+    "requests",
+    "csdmpy",
+]
 
 # -- General configuration ---------------------------------------------------
 

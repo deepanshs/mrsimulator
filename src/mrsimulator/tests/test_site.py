@@ -60,9 +60,14 @@ def test_direct_init_site1():
             shielding_symmetric={"zeta": 12.1, "eta": 1.5},
         )
 
-    error = r"Site\nisotope\n  field required"
-    with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
-        Site()
+    assert Site().isotope == "1H"
+
+    error = ["with spin quantum number", "does not allow quadrupolar tensor"]
+    with pytest.raises(ValidationError, match=".*{0}.*{1}.*".format(*error)):
+        Site(quadrupolar={"Cq": 5.1e6})
+
+    with pytest.raises(ValidationError, match=".*{0}.*{1}.*".format(*error)):
+        Site.parse_dict_with_units(dict(quadrupolar={"Cq": "5.1 MHz"}))
 
 
 def test_parse_json_site():
@@ -213,3 +218,12 @@ def test_site_object_methods():
         },
     }
     assert the_site.to_freq_dict(9.4) == result, "Failed Site.to_dict_with_units()"
+
+
+def test_equality():
+    a = Site(isotope="1H")
+    b = Site(isotope="1H")
+    assert a == b
+
+    c = Site(isotope="1H", isotropic_chemical_shift=16)
+    assert a != c

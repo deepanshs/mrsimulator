@@ -19,12 +19,12 @@ Simulator
 
 .. _config_api:
 
-Config
-======
+ConfigSimulator
+===============
 
 .. currentmodule:: mrsimulator.simulator
 
-.. autoclass:: Config
+.. autoclass:: ConfigSimulator
     :show-inheritance:
 
 

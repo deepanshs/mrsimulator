@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import pytest
-from mrsimulator import Site, Isotopomer, Simulator
+from mrsimulator import Isotopomer
+from mrsimulator import Simulator
+from mrsimulator import Site
 from mrsimulator import SymmetricTensor
 
 __all__ = []

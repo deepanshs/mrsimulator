@@ -1,8 +1,10 @@
-from mrsimulator import Dimension
-from mrsimulator import Isotopomer, Site
-from mrsimulator import Simulator
-from mrsimulator.methods import one_d_spectrum
+# -*- coding: utf-8 -*-
 import numpy as np
+from mrsimulator import Dimension
+from mrsimulator import Isotopomer
+from mrsimulator import Simulator
+from mrsimulator import Site
+from mrsimulator.methods import one_d_spectrum
 
 
 def pre_setup(isotope, shift, reference_offset):

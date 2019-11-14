@@ -3,3 +3,8 @@ sphinx>=2.0
 sphinxjp.themes.basicstrap
 breathe>=4.13.0
 sphinx-copybutton
+numpy>=1.13.3
+setuptools>=27.3
+cython>=0.29.11
+pydantic>=0.28
+monty>=2.0.4
