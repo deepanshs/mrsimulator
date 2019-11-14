@@ -19,21 +19,21 @@ class Site(Parseable):
 
     Arguments:
         isotope: An optional string expressed as atomic number followed by an
-                isotope symbol, eg. ``13C``, ``17O``. The default value is '1H'.
+                isotope symbol, eg. ``13C``, ``17O``. The default value is ``1H``.
         isotropic_chemical_shift: An optional floating point number representing
                 the isotropic chemical shift of the site in unit of ppm. The
-                default value is 0.
+                default value is ``0``.
         shielding_symmetric: An optional SymmetricTensor object or an equivalent
                 python dict object representing the irreducible second-rank traceless
                 symmetric part of the nuclear shielding tensor. The default value is
-                None.
+                ``None``.
         shielding_antisymmetric: An optional AntisymmetricTensor object or an
                 equivalent python dict object representing the irreducible first-rank
                 antisymmetric part of the nuclear shielding tensor. The default value
-                is None.
+                is ``None``.
         quadrupolar: An optional SymmetricTensor object or an equivalent python dict
                 object representing the irreducible second-rank traceless symmetric
-                part of electric-field gradient tensor. The default value is None.
+                part of electric-field gradient tensor. The default value is ``None``.
 
     Example:
         Setting up Site objects.

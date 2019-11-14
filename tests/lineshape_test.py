@@ -6,6 +6,7 @@ import numpy as np
 from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
+from mrsimulator.methods import one_d_spectrum
 from numpy.fft import fft
 from numpy.fft import fftshift
 
@@ -110,7 +111,7 @@ def c_setup(data_object, data_source):
     ]
 
     s1 = Simulator(isotopomers=isotopomers, dimensions=dimensions)
-    data_mrsimulator = s1.one_d_spectrum(integration_density=120)[1]
+    data_mrsimulator = s1.run(method=one_d_spectrum, integration_density=120)[1]
     data_mrsimulator /= data_mrsimulator.max()
 
     return data_mrsimulator, data_source
@@ -131,7 +132,7 @@ def c_setup_random_euler_angles(data_object, data_source):
         isotopomer.sites[0].shielding_symmetric.gamma = np.random.rand(1) * 2 * np.pi
 
     s1 = Simulator(isotopomers=isotopomers, dimensions=dimensions)
-    data_mrsimulator = s1.one_d_spectrum(integration_density=120)[1]
+    data_mrsimulator = s1.run(method=one_d_spectrum, integration_density=120)[1]
     data_mrsimulator /= data_mrsimulator.max()
 
     return data_mrsimulator, data_source

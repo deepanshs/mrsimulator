@@ -15,6 +15,7 @@ Simulator
     .. automethod:: get_isotopes
     .. automethod:: load_isotopomers
     .. automethod:: run
+    .. automethod:: as_csdm_object
 
 
 .. _config_api:

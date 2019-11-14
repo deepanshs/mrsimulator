@@ -9,7 +9,7 @@ from astropy import units as u
 from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator.importer import import_json
-from mrsimulator.methods import one_d_spectrum
+from mrsimulator.sandbox import AveragingScheme
 from pydantic import BaseModel
 from pydantic import Field
 
@@ -43,9 +43,43 @@ class ConfigSimulator(BaseModel):
     number_of_sidebands: int = Field(64, ge=1)
     integration_volume: IntegrationVolumeEnum = IntegrationVolumeEnum.octant
     integration_density: int = Field(70, ge=1)
+    _averaging_scheme: Optional[AveragingScheme] = None
+    # previous_integration_volume: ClassVar[int] = None
+    # previous_integration_density: ClassVar[str] = None
 
     class Config:
         validate_assignment = True
+        arbitrary_types_allowed = True
+        # fields = {"_previous_integration_volume": "previous_integration_volume"}
+        # fields = {"_previous_integration_density": "previous_integration_density"}
+
+    def __post_init__(self):
+        print(self.integration_density, self.integration_volume.value)
+        self._averaging_scheme = AveragingScheme(
+            integration_density=self.integration_density,
+            integration_volume=self.integration_volume.value,
+            allow_fourth_rank=True,
+        )
+
+    @property
+    def averaging_scheme(self):
+        return self._averaging_scheme
+
+    # @property
+    # def averaging_scheme(self):
+    #     # if (
+    #     #     self.previous_integration_volume == self.integration_volume
+    #     #     and self.previous_integration_density == self.integration_density
+    #     # ):
+    #     #     return
+
+    #     return AveragingScheme(
+    #         integration_density=self.integration_density,
+    #         integration_volume=self.integration_volume.value,
+    #         allow_fourth_rank=True,
+    #     )
+    # self.previous_integration_volume = self.integration_volume
+    # self.previous_integration_density = self.integration_density
 
 
 class Simulator(BaseModel):
@@ -70,8 +104,8 @@ class Simulator(BaseModel):
 
     def get_isotopes(self, I=None):
         """
-        Set of unique isotopes from the list of isotopomers corresponding
-        to the given value of `I`. If `I` is unspecified or None, a list of all
+        Set of unique isotopes from sites in the list of isotopomers corresponding
+        to spin quantum number `I`. If `I` is unspecified or None, a set of all
         unique isotopes is returned instead.
 
         Args:
@@ -117,33 +151,15 @@ class Simulator(BaseModel):
         """Simulate the lineshape.
 
         Args:
-            method: The methods used in simulation of the line-shapes.
-        """
-        return self.one_d_spectrum(**kwargs)
-
-    def one_d_spectrum(self, **kwargs):
-        """
-        Simulate the spectrum using the specified method. The keyword argument
-        are the arguments of the specified `method`.
-
-        :ivar method: The method used in computing the linshape.
-        :ivar data_object: If true, returns a `csdm` data object. If false,
-            returns a tuple of frequency array and the
-            corresponding amplitude array. The amplitude is a
-            `numpy <https://docs.scipy.org/doc/numpy/reference/generated
-            /numpy.array.html>`_
-            array, whereas, the frequency is a
-            `Quantity <http://docs.astropy.org/en/stable/units/quantity.html>`_
-            array. The default value is False.
+            method: The methods used in simulating line-shapes.
         """
         isotopomers = [
             isotopomer.to_freq_dict(self.dimensions[0].magnetic_flux_density)
             for isotopomer in self.isotopomers
         ]
 
-        amp = one_d_spectrum(
-            dimension=self.dimensions[0], isotopomers=isotopomers, **kwargs
-        )
+        amp = method(dimension=self.dimensions, isotopomers=isotopomers, **kwargs)
+
         if isinstance(amp, list):
             self.simulated_data = amp
         else:
@@ -155,6 +171,13 @@ class Simulator(BaseModel):
         return freq, amp
 
     def as_csdm_object(self):
+        """
+        Converts the data to a CSDM object. Read
+        `csdmpy <https://csdmpy.readthedocs.io/en/latest/>`_ for details
+
+        Return:
+            CSDM object
+        """
         new = cp.new()
         for dimension in self.dimensions:
             new_dimension = {

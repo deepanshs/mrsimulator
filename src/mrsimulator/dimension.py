@@ -24,28 +24,28 @@ class Dimension(Parseable):
     Base class for an NMR spectroscopic dimension.
 
     Args:
-        number_of_points: A `required` integer with the number of points, :math:`N`,
-                along the dimension.
+        number_of_points: An optional integer with the number of points, :math:`N`,
+                along the dimension. The default value is ``1024``.
         spectral_width: A `required` float with the spectral width,
                 :math:`\Delta x`, along the dimension in units of Hz.
         reference_offset: An `optional` float with the reference offset, :math:`x_0`
-                along the dimension in units of Hz. The default value is 0.
+                along the dimension in units of Hz. The default value is ``0``.
         magnetic_flux_density: An `optional` float with the macroscopic magnetic flux
                 density, :math:`B_0`, of the applied external magnetic field in
-                units of T. The default value is 9.4.
+                units of T. The default value is ``9.4``.
         rotor_frequency: An `optional` float with the sample spinning frequency
-                :math:`\nu_r`, in units of Hz. The default value is 0.
+                :math:`\nu_r`, in units of Hz. The default value is ``0``.
         rotor_angle: An `optional` float with the angle between the
                 sample rotation axis and the applied external magnetic field,
-                :math:`\theta`, in units of rad. The default value is 0.9553166,
+                :math:`\theta`, in units of rad. The default value is ``0.9553166``,
                 i.e. the magic angle.
         isotope: An `optional` isotope string in "{A}{Symbol}" notation such as
-                1H or 29Si. The default is None.
-        label: An `optional` string label.
+                1H or 29Si. The default is`` None``.
+        label: An `optional` string label. The default is an empty string.
 
-    .. rubric:: Attribute Documentation
+    Example:
+        >>> dim = Dimension(isotope='27Al', spectral_width=50000, rotor_frequency=12000)
 
-    Attributes:
     """
 
     # public attributes
@@ -58,14 +58,6 @@ class Dimension(Parseable):
     rotor_angle: Optional[float] = Field(default=0.9553166, ge=0, le=1.5707963268)
     isotope: Optional[str] = None
     label: Optional[str] = ""
-
-    # Immutable attributes
-    # spin: Optional[float] = None
-    # natural_abundance: Optional[float] = None
-    # gyromagnetic_ratio: Optional[float] = None
-    # quadrupole_moment: Optional[float] = None
-    # atomic_number: Optional[int] = None
-    # larmor_frequency: Optional[float] = None  # default is Hz
 
     property_unit_types: ClassVar = {
         "spectral_width": ["frequency", "dimensionless"],
@@ -104,47 +96,15 @@ class Dimension(Parseable):
             return v
         return format_isotope_string(v)
 
-    # @validator("spin", always=True)
-    # def immutable_spin(cls, v, *, values, **kwargs):
-    #     if values["isotope"] is None:
-    #         return None
-    #     return get_isotope_data(values["isotope"])["spin"]
-
-    # @validator("natural_abundance", always=True)
-    # def immutable_natural_abundance(cls, v, *, values, **kwargs):
-    #     if values["isotope"] is None:
-    #         return None
-    #     return get_isotope_data(values["isotope"])["natural_abundance"]
-
-    # @validator("gyromagnetic_ratio", always=True)
-    # def immutable_gyromagnetic_ratio(cls, v, *, values, **kwargs):
-    #     if values["isotope"] is None:
-    #         return None
-    #     return get_isotope_data(values["isotope"])["gyromagnetic_ratio"]
-
-    # @validator("quadrupole_moment", always=True)
-    # def immutable_quadrupole_moment(cls, v, *, values, **kwargs):
-    #     if values["isotope"] is None:
-    #         return None
-    #     return get_isotope_data(values["isotope"])["quadrupole_moment"]
-
-    # @validator("atomic_number", always=True)
-    # def immutable_atomic_number(cls, v, *, values, **kwargs):
-    #     if values["isotope"] is None:
-    #         return None
-    #     return get_isotope_data(values["isotope"])["atomic_number"]
-
-    # @validator("larmor_frequency", always=True)
-    # def immutable_larmor_frequency(cls, v, *, values, **kwargs):
-    #     if values["isotope"] is None:
-    #         return None
-    #     B0 = values["magnetic_flux_density"]
-    #     gamma = get_isotope_data(values["isotope"])["gyromagnetic_ratio"]
-    #     return -gamma * B0 * 1e6  # larmor freqency in Hz
-
     @property
     def spin(self):
-        """Spin quantum number, I."""
+        """
+        Spin quantum number, I.
+
+        Example:
+            >>> dim.spin
+            2.5
+        """
         if self.isotope is None:
             return None
         isotope_data = get_isotope_data(self.isotope)
@@ -152,63 +112,71 @@ class Dimension(Parseable):
 
     @property
     def natural_abundance(self):
-        """Natural abundance of the spin."""
+        """
+        Natural abundance of the spin.
+
+        Example:
+            >>> dim.natural_abundance
+            100.0
+        """
         if self.isotope is None:
             return None
         isotope_data = get_isotope_data(self.isotope)
         return isotope_data["natural_abundance"]
 
-    # @natural_abundance.setter
-    # def natural_abundance(self, value):
-    #     if self.isotope is None:
-    #         self._natural_abundance = value
-
     @property
     def gyromagnetic_ratio(self):
-        """Reduced gyromagnetic ratio of the nucleus given in units of MHz/T."""
+        """
+        Reduced gyromagnetic ratio of the nucleus given in units of MHz/T.
+
+        Example:
+            >>> dim.gyromagnetic_ratio
+            11.10309
+        """
         if self.isotope is None:
             return None
         isotope_data = get_isotope_data(self.isotope)
         return isotope_data["gyromagnetic_ratio"]
 
-    # @gyromagnetic_ratio.setter
-    # def gyromagnetic_ratio(self, value):
-    #     if self.isotope is None:
-    #         self._gyromagnetic_ratio = value
-
     @property
     def quadrupole_moment(self):
-        """Quadrupole moment of the nucleus given in units of electron-barn."""
+        """
+        Quadrupole moment of the nucleus given in units of electron-barn.
+
+        Example:
+            >>> dim.quadrupole_moment
+            0.15
+        """
         if self.isotope is None:
             return None
         isotope_data = get_isotope_data(self.isotope)
         return isotope_data["quadrupole_moment"]
 
-    # @quadrupole_moment.setter
-    # def quadrupole_moment(self, value):
-    #     if self.isotope is None:
-    #         self._quadrupole_moment = value
-
     @property
     def atomic_number(self):
-        """Atomic number of the nucleus"""
+        """
+        Atomic number of the nucleus.
+
+        Example:
+            >>> dim.atomic_number
+            13
+        """
         if self.isotope is None:
             return None
         isotope_data = get_isotope_data(self.isotope)
         return isotope_data["atomic_number"]
 
-    # @atomic_number.setter
-    # def atomic_number(self, value):
-    #     if self.isotope is None:
-    #         self._atomic_number = value
-
     @property
     def larmor_frequency(self):
         r"""
         Signed Larmor frequency, :math:`\omega_0=-\gamma B_0`, of the isotope,
-        in MHz, where :math:`\gamma` is the gyromagnetic ratio of the
+        in units of Hz, where :math:`\gamma` is the gyromagnetic ratio of the
         isotope and :math:`B_0` is the macroscopic magnetic flux density
         of the applied external field.
+
+        Example:
+            >>> dim.larmor_frequency
+            -104369046.0
         """
         if self.isotope is None:
             return None
@@ -224,6 +192,11 @@ class Dimension(Parseable):
 
         where :math:`T=N/2` and :math:`T=(N-1)/2` for even and odd values of
         :math:`N`, respectively.
+
+        Example:
+            >>> dim.coordinates_Hz[:5]
+            array([-25000.      , -24951.171875, -24902.34375 , -24853.515625,
+                   -24804.6875  ])
         """
         n = self.number_of_points
         Tk = int(n / 2)
@@ -233,10 +206,17 @@ class Dimension(Parseable):
     def coordinates_ppm(self):
         r"""
         The grid coordinates along the dimension as dimension frequency ratio
-        in ppm. The coordinates are evaluated as
+        in units of ppm. The coordinates are evaluated as
 
         .. math::
             x_\text{ppm} = \frac{x_\text{Hz}} {x_0 + \omega_0}
+
+        where :math:`\omega_0` is the Larmor frequency.
+
+        Example:
+            >>> dim.coordinates_ppm[:5]
+            array([-239.53462217, -239.06678111, -238.59894005, -238.13109899,
+                   -237.66325794])
         """
         if self.isotope is None:
             warnings.warn(
@@ -257,15 +237,37 @@ class Dimension(Parseable):
         when expressed as a python dictionary.
 
         Args:
-            py_dict: Python dictionary representation of an isotopomers with
-                        physical quantities.
+            py_dict: Dict object
+
+        Example:
+            >>> dimension_1 = {
+            ...     "number_of_points": 1024,
+            ...     "spectral_width": "100 Hz",
+            ...     "reference_offset": "0 Hz",
+            ...     "magnetic_flux_density": "9.4 T",
+            ...     "rotor_frequency": "0 Hz",
+            ...     "rotor_angle": "54.935 degree",
+            ...     "isotope": "29Si",
+            ... }
+            >>> dimension_object = Dimension.parse_dict_with_units(dimension_1)
         """
         return super().parse_dict_with_units(py_dict)
 
     def to_dict_with_units(self):
         """
-        Serialize the Spectrum object to a JSON compliant python dictionary with
+        Serialize the Dimension object to a JSON compliant python dictionary with
         units.
+
+        Example:
+            >>> pprint(dimension_object.to_dict_with_units())
+            {'isotope': '29Si',
+             'label': '',
+             'magnetic_flux_density': '9.4 T',
+             'number_of_points': 1024,
+             'reference_offset': '0.0 Hz',
+             'rotor_angle': '0.958796624583085 rad',
+             'rotor_frequency': '0.0 Hz',
+             'spectral_width': '100.0 Hz'}
         """
         temp_dict = {
             k: v
@@ -276,7 +278,6 @@ class Dimension(Parseable):
         for key, unit in self.property_units.items():
             if key in temp_keys:
                 temp_dict[key] = f"{temp_dict[key]} {unit}"
-
         return temp_dict
 
 

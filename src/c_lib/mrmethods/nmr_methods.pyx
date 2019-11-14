@@ -1,5 +1,4 @@
 cimport nmr_methods as clib
-from mrsimulator import sandbox as sb
 from libcpp cimport bool as bool_t
 from numpy cimport ndarray
 import numpy as np
@@ -47,6 +46,7 @@ def one_d_spectrum(dimension,
 
 # ---------------------------------------------------------------------
 # observed spin _______________________________________________________
+    dimension = dimension[0]
     isotope = dimension.isotope
     # spin quantum number of the observed spin
     cdef double spin_quantum_number = dimension.spin
@@ -87,23 +87,9 @@ def one_d_spectrum(dimension,
     reference_offset -= offset
     # freq = dimension.coordinates_ppm
 
-# -------------------------------------------------------------------------------------
-# averaging scheme ____________________________________________________________________
-    MRS_averaging_scheme = sb.averagingScheme(
-        integration_density, 1, integration_volume
-    )
-
-
 # create MRS_plan _____________________________________________________________________
     cdef double sample_rotation_frequency_in_Hz = dimension.rotor_frequency
     cdef double rotor_angle_in_rad = dimension.rotor_angle
-
-    MRS_plan = sb.MRSPlan(MRS_averaging_scheme,
-                number_of_sidebands=number_of_sidebands,
-                sample_rotation_frequency_in_Hz=sample_rotation_frequency_in_Hz,
-                rotor_angle_in_rad=rotor_angle_in_rad,
-                increment=increment,
-                allow_fourth_rank=True)
 
     # B0 = dimension.magnetic_flux_density
 

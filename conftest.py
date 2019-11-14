@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+from pprint import pprint
+
 import pytest
+from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SymmetricTensor
+
 
 __all__ = []
 
@@ -41,3 +45,19 @@ def add_site(doctest_namespace):
     sim = Simulator()
     sim.isotopomers.append(isotopomers)
     doctest_namespace["sim"] = sim
+
+    dim = Dimension(isotope="27Al", spectral_width=50000, rotor_frequency=12000)
+    doctest_namespace["dim"] = dim
+
+    dimension_1 = {
+        "number_of_points": 1024,
+        "spectral_width": "100 Hz",
+        "reference_offset": "0 Hz",
+        "magnetic_flux_density": "9.4 T",
+        "rotor_frequency": "0 Hz",
+        "rotor_angle": "54.935 degree",
+        "isotope": "29Si",
+    }
+    dimension_object = Dimension.parse_dict_with_units(dimension_1)
+    doctest_namespace["dimension_object"] = dimension_object
+    doctest_namespace["pprint"] = pprint
