@@ -33,6 +33,7 @@ before_install:
   - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pytest pytest-cov
   - source activate test-env
   - conda install -c anaconda $PKG1 $PKG2 --file conda-requirements.txt
+  - pip install codecov
   - pip install -r requirements-dev.txt
 
 install:
@@ -41,3 +42,6 @@ install:
 # command to run tests
 script:
   - pytest
+
+after_success:
+  - codecov
