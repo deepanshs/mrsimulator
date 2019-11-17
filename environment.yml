@@ -4,15 +4,15 @@ channels:
 dependencies:
   - fftw>=3.3.0
   - openblas
-  # - python=3.7.4
-  # - anaconda
-  # - numpy>=1.13.3
-  # - setuptools>=27.3
-  # - cython>=0.29.11
-  # - astropy>=3.0
-  # - requests>=2.21.0
-  # - pip>=19.1.1
-  # - pip:
-  # - monty==2.0.4
-  # - csdmpy>=0.1.2
-  # - pydantic>=0.28
+  - numpy>=1.13.3
+  - setuptools>=27.3
+  - cython>=0.29.11
+  - astropy>=3.0
+  - requests>=2.21.0
+  - pip>=19.1.1
+  - pip:
+      - monty==2.0.4
+      - csdmpy>=0.1.2
+      - pydantic>=0.28
+    # - python=3.7.4
+    # - anaconda
