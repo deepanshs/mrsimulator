@@ -91,10 +91,8 @@ def test_isotopomer_methods():
         "sites": [
             {
                 "isotope": "1H",
-                "isotropic_chemical_shift": -1
-                * 42.57748
-                * 9.4
-                * 2,  # -gamma * B0 * iso
+                "isotropic_chemical_shift": -2 * 42.57748 * 9.4,  # -gamma * B0 * iso
+                "name": None,
                 "quadrupolar": None,
                 "shielding_antisymmetric": None,
                 "shielding_symmetric": None,

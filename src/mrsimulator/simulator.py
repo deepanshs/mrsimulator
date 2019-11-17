@@ -26,7 +26,7 @@ class ConfigSimulator(BaseModel):
     """
     The configurable parametes used in lineshape simulation
 
-    Args:
+    Attributes:
         number_of_sidebands: The number of sidebands requested for simulation
         integration_volume: An enumeration ('octant', 'hemisphere') over which the
             lineshape average is evaluated.
@@ -86,9 +86,7 @@ class Simulator(BaseModel):
     """
     The simulator class.
 
-    .. rubric:: Attributes Documentation
-
-    Args:
+    Attributes:
         isotopomers: List of :ref:`isotopomer_api` objects.
         dimensions: List of :ref:`dimension_api` objects.
         config: :ref:`config_api` object.

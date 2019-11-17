@@ -9,12 +9,19 @@ version: 2
 sphinx:
   configuration: docs/conf.py
 
+build:
+  image: latest
 
 # Optionally build your docs in additional formats such as PDF and ePub
 formats: all
+
+conda:
+  environment: environment.yml
 
 # Optionally set the version of Python and requirements required to build your docs
 python:
   version: 3.7
   install:
     - requirements: docs/requirements.txt
+    - requirements: requirements.txt
+  setup_py_install: true

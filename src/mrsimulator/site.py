@@ -18,6 +18,7 @@ class Site(Parseable):
     Base Site class representing a nuclear isotope.
 
     Arguments:
+        name: An optional string with a name or id of the site.
         isotope: An optional string expressed as atomic number followed by an
                 isotope symbol, eg. ``13C``, ``17O``. The default value is ``1H``.
         isotropic_chemical_shift: An optional floating point number representing
@@ -65,6 +66,7 @@ class Site(Parseable):
             ...         )
     """
 
+    name: str = None
     isotope: str = "1H"
     isotropic_chemical_shift: Optional[float] = 0
     shielding_symmetric: Optional[SymmetricTensor] = None
@@ -80,9 +82,17 @@ class Site(Parseable):
         isotope = values["isotope"]
         I = get_isotope_data(isotope)["spin"] / 2.0
         if I >= 1:
+            if "zeta" in v.property_units:
+                v.property_units.pop("zeta")
             return v
         message = f"with spin quantum number {I} does not allow quadrupolar tensor."
         raise ValueError(f"{isotope} {message}")
+
+    @validator("shielding_symmetric")
+    def shielding_symmetric_must_not_contain_Cq(cls, v, values):
+        if "Cq" in v.property_units:
+            v.property_units.pop("Cq")
+        return v
 
     class Config:
         validate_assignment = True
@@ -163,6 +173,7 @@ class Site(Parseable):
             >>> pprint(site1.to_freq_dict(9.4))
             {'isotope': '13C',
              'isotropic_chemical_shift': -2013.1791999999998,
+             'name': None,
              'quadrupolar': None,
              'shielding_antisymmetric': None,
              'shielding_symmetric': {'alpha': None,

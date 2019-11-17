@@ -3,29 +3,42 @@
 
     .. image:: https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master
         :target: https://travis-ci.org/DeepanshS/mrsimulator
+
     .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
         :target: https://mrsimulator.readthedocs.io/en/stable/?badge=stable
         :alt: Documentation Status
+
+    .. image:: https://badge.fury.io/py/mrsimulator.svg
+        :target: https://badge.fury.io/py/mrsimulator
+        :alt: PyPI version
+
     .. image:: https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18
         :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/
         :alt: Total alerts
+
     .. image:: https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18
         :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python
         :alt: Language grade: Python
 
-Welcome to mrsimulator's documentation!
+    .. image:: https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg
+        :target: https://codecov.io/gh/DeepanshS/mrsimulator
+
+Welcome to Mrsimulator's documentation!
 =======================================
 
-The package, ``mrsimulator``, is a library of methods and tools for fast
-simulation of solid-state nuclear magnetic resonance (NMR) line-shapes.
-The library is written in C and is wrapped and made available in python for
-python users. The package is currently under development
+``Mrsimulator`` is a python package that offers methods and tools for fast
+simulation of solid-state nuclear magnetic resonance (NMR) line-shapes. The
+core methods of this package are written in C and is wrapped and made available
+in python for python users.
 
-Features
-********
+.. warning::
+    The package is currently under development. We advice using with
+    caution. Bug report are greatly appreciated.
+
+**Features**
 
 At present, ``mrsimulator`` offers fast-simulation of one-dimensional NMR
-line-shape of uncoupled sites for the following:
+line-shape of uncoupled spins for the following:
 
 - Spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}`,
   (See the list of supported isotopes),
@@ -43,17 +56,24 @@ line-shape of uncoupled sites for the following:
    installation
    requirements
    getting_started
+   using_mrsimulator_objects
+   illustrative_examples/coesite
    load_isotopomers
-   objects
-   spectrum_object
-   examples
    theory/components
    api_py/py_api
    api_c/c_api
 
-
+..    objects
+..    spectrum_object
 ..    theory/wigner_rotations
+..    examples
 
+Contribution
+------------
+
+``Mrsimulator`` is a open source NMR simulation package. We are a small team
+working on developing the package for the NMR community. Any contribution is
+greatly appreciated.
 
 .. only:: html
 

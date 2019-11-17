@@ -71,7 +71,7 @@ traceless second-rank symmetric irreducible interaction tensor.
 Using python `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`_
 object, SymmetricTensor may be represented as,
 
-.. code-block:: py
+.. code-block:: python
 
     # For nuclear shielding tensor
     symmetric_shielding_tensor_example_1 = dict(zeta="10.3 ppm", eta=0.5)
@@ -126,18 +126,18 @@ nuclear site.
 Using python `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`_
 object, Site may be represented as,
 
-.. code-block:: py
+.. code-block:: python
 
   site_example1 = dict(
       isotope="27Al",
       isotropic_chemical_shift="15 ppm",
-      quadrupolar=quadrupole_tensor_example
+      quadrupolar=quadrupole_tensor_example,
   )
 
   site_example2 = dict(
       isotope="13C",
       isotropic_chemical_shift="15 ppm",
-      shielding_symmetric=symmetric_shielding_tensor_example
+      shielding_symmetric=symmetric_shielding_tensor_example,
   )
 
 where ``symmetric_shielding_tensor_example`` and ``quadrupole_tensor_example``
@@ -203,7 +203,7 @@ spin-system.
 Using python `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`_
 object, Isotopomer may be represented as,
 
-.. code-block:: py
+.. code-block:: python
 
   isotopomer_example1 = dict(sites=[site_example1], abundance="15.3 %")
   isotopomer_example2 = dict(sites=[site_example2], abundance="65.19 %")

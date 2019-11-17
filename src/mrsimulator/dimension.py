@@ -81,10 +81,6 @@ class Dimension(Parseable):
         "magnetic_flux_density": "T",
         "rotor_frequency": "Hz",
         "rotor_angle": "rad",
-        "natural_abundance": "%",
-        "gyromagnetic_ratio": "MHz/T",
-        "quadrupole_moment": "eB",
-        "larmor_frequency": "Hz",
     }
 
     class Config:

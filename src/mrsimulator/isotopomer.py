@@ -95,6 +95,7 @@ class Isotopomer(Parseable):
              'name': '',
              'sites': [{'isotope': '13C',
                         'isotropic_chemical_shift': -2013.1791999999998,
+                        'name': None,
                         'quadrupolar': None,
                         'shielding_antisymmetric': None,
                         'shielding_symmetric': {'alpha': None,
