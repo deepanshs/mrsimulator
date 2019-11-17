@@ -14,5 +14,8 @@ dependencies:
       - monty==2.0.4
       - csdmpy>=0.1.2
       - pydantic>=0.28
+      - sphinxjp.themes.basicstrap
+      - breathe>=4.13.0
+      - sphinx-copybutton
     # - python=3.7.4
     # - anaconda
