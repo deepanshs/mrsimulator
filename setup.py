@@ -84,7 +84,7 @@ library_dirs = list(set(library_dirs))
 libraries = list(set(libraries))
 
 # other include paths
-include_dirs += [f"{module_dir}/src/c_lib/include/", numpy_include]
+include_dirs += ["src/c_lib/include/", numpy_include]
 print(include_dirs)
 print(library_dirs)
 print(libraries)
