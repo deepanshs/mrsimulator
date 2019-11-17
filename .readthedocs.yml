@@ -16,7 +16,7 @@ build:
 formats: all
 
 conda:
-  environment: environment.yml
+  environment: environment-dev.yml
 
 # Optionally set the version of Python and requirements required to build your docs
 python:
