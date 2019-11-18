@@ -15,8 +15,8 @@ Package dependencies
 - setuptools>=27.3
 - cython>=0.29.11
 - `matplotlib>=3.0.2 <https://matplotlib.org>`_ for figures and visualization,
-- `csdmpy>=0.1.2 <https://csdmpy.readthedocs.io/en/latest/>`_
-- pydantic>=0.28
+- `csdmpy>=0.1.4 <https://csdmpy.readthedocs.io/en/latest/>`_
+- `pydantic>=0.28 <https://pydantic-docs.helpmanual.io>`_
 - monty>=2.0.4
 
 **Other packages**

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # from pydash import has, get
-from enum import Enum
 from typing import List
 from typing import Optional
 
@@ -9,77 +8,11 @@ from astropy import units as u
 from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator.importer import import_json
-from mrsimulator.sandbox import AveragingScheme
+from mrsimulator.simulator_config import ConfigSimulator
 from pydantic import BaseModel
-from pydantic import Field
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
-
-
-class IntegrationVolumeEnum(str, Enum):
-    octant = "octant"
-    hemisphere = "hemisphere"
-
-
-class ConfigSimulator(BaseModel):
-    """
-    The configurable parametes used in lineshape simulation
-
-    Attributes:
-        number_of_sidebands: The number of sidebands requested for simulation
-        integration_volume: An enumeration ('octant', 'hemisphere') over which the
-            lineshape average is evaluated.
-        integration_density: This number is used to evaluate the number of orientations
-            at which the frequencies are calculated. If `n` is the integration_density,
-            then the number of orientations are ``(n+1)*(n+2)/2 * number of octant``.
-
-    Example:
-        >>> a = Simulator()
-        >>> a.config.number_of_sidebands = 128
-        >>> a.config.integration_volume = 'hemisphere'
-    """
-
-    number_of_sidebands: int = Field(64, ge=1)
-    integration_volume: IntegrationVolumeEnum = IntegrationVolumeEnum.octant
-    integration_density: int = Field(70, ge=1)
-    _averaging_scheme: Optional[AveragingScheme] = None
-    # previous_integration_volume: ClassVar[int] = None
-    # previous_integration_density: ClassVar[str] = None
-
-    class Config:
-        validate_assignment = True
-        arbitrary_types_allowed = True
-        # fields = {"_previous_integration_volume": "previous_integration_volume"}
-        # fields = {"_previous_integration_density": "previous_integration_density"}
-
-    def __post_init__(self):
-        print(self.integration_density, self.integration_volume.value)
-        self._averaging_scheme = AveragingScheme(
-            integration_density=self.integration_density,
-            integration_volume=self.integration_volume.value,
-            allow_fourth_rank=True,
-        )
-
-    @property
-    def averaging_scheme(self):
-        return self._averaging_scheme
-
-    # @property
-    # def averaging_scheme(self):
-    #     # if (
-    #     #     self.previous_integration_volume == self.integration_volume
-    #     #     and self.previous_integration_density == self.integration_density
-    #     # ):
-    #     #     return
-
-    #     return AveragingScheme(
-    #         integration_density=self.integration_density,
-    #         integration_volume=self.integration_volume.value,
-    #         allow_fourth_rank=True,
-    #     )
-    # self.previous_integration_volume = self.integration_volume
-    # self.previous_integration_density = self.integration_density
+__email__ = "deepansh2012@gmail.com"
 
 
 class Simulator(BaseModel):
@@ -99,6 +32,17 @@ class Simulator(BaseModel):
 
     class Config:
         validate_assignment = True
+        arbitrary_types_allowed = True
+
+    def __eq__(self, other):
+        if (
+            not isinstance(other, Simulator)
+            or self.isotopomers != other.isotopomers
+            or self.dimensions != other.dimensions
+            or self.config != other.config
+        ):
+            return False
+        return True
 
     def get_isotopes(self, I=None):
         """
@@ -156,7 +100,12 @@ class Simulator(BaseModel):
             for isotopomer in self.isotopomers
         ]
 
-        amp = method(dimension=self.dimensions, isotopomers=isotopomers, **kwargs)
+        amp = method(
+            dimension=self.dimensions,
+            isotopomers=isotopomers,
+            **self.config._dict,
+            **kwargs,
+        )
 
         if isinstance(amp, list):
             self.simulated_data = amp

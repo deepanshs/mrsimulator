@@ -15,7 +15,7 @@ def one_d_spectrum(dimension,
        int verbose=0,
        int number_of_sidebands=90,
        int integration_density=72,
-       bool_t individual_spectrum=False,
+       bool_t decompose=False,
        int integration_volume=1):
     """
 
@@ -39,7 +39,7 @@ def one_d_spectrum(dimension,
         frequency will result in a better powder averaging.
         The default value is 72.
         Read more on the `Geodesic polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
-    :ivar individual_spectrum:
+    :ivar decompose:
         A boolean. If true, returns an ordered list of spectrum corresponding
         to the ordered list of isotopomers.
     """
@@ -268,15 +268,15 @@ def one_d_spectrum(dimension,
                 else:
                     temp = temp[::-1]
 
-            if individual_spectrum:
+            if decompose:
                 amp_individual.append(temp)
             else:
                 amp1 += temp
         else:
-            if individual_spectrum:
+            if decompose:
                 amp_individual.append([])
 
-    if individual_spectrum:
+    if decompose:
         amp1 = amp_individual
 
 

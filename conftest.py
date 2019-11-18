@@ -61,3 +61,5 @@ def add_site(doctest_namespace):
     dimension_object = Dimension.parse_dict_with_units(dimension_1)
     doctest_namespace["dimension_object"] = dimension_object
     doctest_namespace["pprint"] = pprint
+
+    doctest_namespace["Simulator"] = Simulator

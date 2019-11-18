@@ -256,8 +256,7 @@ library.
     >>> plot(freq, amp) # doctest: +SKIP
 
 .. .. testsetup::
-
-..    >>> plot_save(freq, amp, "example.pdf")
+..    >>> plot_save(freq, amp, "example")
 
 .. figure:: _images/example.*
     :figclass: figure-polaroid

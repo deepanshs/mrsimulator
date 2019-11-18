@@ -13,7 +13,7 @@ from pydantic import Field
 from pydantic import validator
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+__email__ = "deepansh2012@gmail.com"
 
 MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
 ISOTOPE_DATA = loadfn(os.path.join(MODULE_DIR, "isotope_data.json"))

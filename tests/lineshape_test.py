@@ -88,15 +88,15 @@ def get_data(filename):
     if test_data_object["quantity"] == "time":
         if periodic:
             data_source = fftshift(fft(data_source)).real
-        else:
-            data_source[0] /= 2.0
-            data_source = fftshift(fft(data_source)).real
+        # else:
+        #     data_source[0] /= 2.0
+        #     data_source = fftshift(fft(data_source)).real
 
     data_source /= data_source.max()
 
-    if test_data_object["source"] == "dmfit":
-        data_source = data_source[::-1]
-        data_source = np.roll(data_source, 1)
+    # if test_data_object["source"] == "dmfit":
+    #     data_source = data_source[::-1]
+    #     data_source = np.roll(data_source, 1)
 
     return data_object, data_source
 
@@ -111,7 +111,9 @@ def c_setup(data_object, data_source):
     ]
 
     s1 = Simulator(isotopomers=isotopomers, dimensions=dimensions)
-    data_mrsimulator = s1.run(method=one_d_spectrum, integration_density=120)[1]
+    s1.config.integration_density = 120
+    s1.config.number_of_sidebands = 90
+    data_mrsimulator = s1.run(method=one_d_spectrum)[1]
     data_mrsimulator /= data_mrsimulator.max()
 
     return data_mrsimulator, data_source
@@ -132,7 +134,10 @@ def c_setup_random_euler_angles(data_object, data_source):
         isotopomer.sites[0].shielding_symmetric.gamma = np.random.rand(1) * 2 * np.pi
 
     s1 = Simulator(isotopomers=isotopomers, dimensions=dimensions)
-    data_mrsimulator = s1.run(method=one_d_spectrum, integration_density=120)[1]
+    s1.config.integration_density = 120
+    s1.config.integration_volume = "hemisphere"
+    s1.config.number_of_sidebands = 90
+    data_mrsimulator = s1.run(method=one_d_spectrum)[1]
     data_mrsimulator /= data_mrsimulator.max()
 
     return data_mrsimulator, data_source

@@ -5,30 +5,30 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 
 
-def octahedral_coordinate(nt: int):
+# def octahedral_coordinate(nt: int):
 
-    # Do the (x + y + z = nt) face of the octahedron
-    # z -> 0 to nt-1
-    # y -> 0 to nt-z
-    # x -> nt - y - z
+#     # Do the (x + y + z = nt) face of the octahedron
+#     # z -> 0 to nt-1
+#     # y -> 0 to nt-z
+#     # x -> nt - y - z
 
-    n = int((nt + 1) * (nt + 2) / 2)
-    x = np.empty(n, dtype=np.float64)
-    y = np.empty(n, dtype=np.float64)
-    z = np.empty(n, dtype=np.float64)
+#     n = int((nt + 1) * (nt + 2) / 2)
+#     x = np.empty(n, dtype=np.float64)
+#     y = np.empty(n, dtype=np.float64)
+#     z = np.empty(n, dtype=np.float64)
 
-    k = 0
-    for j in range(nt + 1):
-        for i in range(nt - j + 1):
-            # x = nt-i-j;
-            # y = i;
-            # z = j;
-            x[k] = nt - i - j
-            y[k] = i
-            z[k] = j
-            k += 1
+#     k = 0
+#     for j in range(nt + 1):
+#         for i in range(nt - j + 1):
+#             # x = nt-i-j;
+#             # y = i;
+#             # z = j;
+#             x[k] = nt - i - j
+#             y[k] = i
+#             z[k] = j
+#             k += 1
 
-    return x, y, z
+#     return x, y, z
 
 
 def octahedral_direction_cosine_squares_and_amplitudes(nt: int):

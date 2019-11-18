@@ -7,3 +7,4 @@ requests>=2.21.0
 matplotlib>=3.0.2
 fftw>=3.3.0
 openblas
+csdmpy>=0.1.4

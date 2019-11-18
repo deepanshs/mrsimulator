@@ -5,11 +5,12 @@ Tests for the base Parseable pattern
 # import os.path
 from random import randint
 
+import numpy as np
 import pytest
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
-from pydantic import ValidationError
+from mrsimulator.methods import one_d_spectrum
 
 
 def test_simulator_assignments():
@@ -28,6 +29,8 @@ def test_equality():
     a = Simulator()
     b = Simulator()
     assert a == b
+
+    assert a is not {}
 
     c = Simulator(sites=[Isotopomer()])
     assert a is not c
@@ -56,30 +59,28 @@ def test_get_isotopes():
     assert sim.get_isotopes(I=4.5) == {"87Sr"}
 
 
-def test_config():
-    a = Simulator()
+def test_csdm_object():
+    sim = Simulator()
+    site = Site(
+        isotope="27Al",
+        isotropic_chemical_shift=120,
+        shielding_symmetric={"zeta": 2.1, "eta": 0.1},
+        quadrupole={"Cq": 5.1e6, "eta": 0.5},
+    )
+    sim.isotopomers = [{"name": "test", "description": "awesome", "sites": [site]}]
+    sim.dimensions = [
+        {
+            "number_of_points": 1024,
+            "spectral_width": 100,
+            "reference_offset": 0,
+            "magnetic_flux_density": 9.4,
+            "rotor_frequency": 0,
+            "rotor_angle": 0.9553166,
+            "isotope": "27Al",
+        }
+    ]
+    x, y = sim.run(method=one_d_spectrum)
+    csdm_obj = sim.as_csdm_object()
 
-    # number of sidebands
-    assert a.config.number_of_sidebands == 64
-    a.config.number_of_sidebands = 10
-    assert a.config.number_of_sidebands == 10
-
-    # integration density
-    assert a.config.integration_density == 70
-    a.config.integration_density = 20
-    assert a.config.integration_density == 20
-
-    # integration volume
-    assert a.config.integration_volume == "octant"
-    a.config.integration_volume = "hemisphere"
-    assert a.config.integration_volume == "hemisphere"
-
-    error = "value is not a valid enumeration member; permitted: 'octant', 'hemisphere'"
-    with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
-        a.config.integration_volume = "sphere"
-
-    assert a.config.dict() == {
-        "number_of_sidebands": 10,
-        "integration_volume": "hemisphere",
-        "integration_density": 20,
-    }
+    assert np.allclose(csdm_obj.dependent_variables[0].components[0], y)
+    assert csdm_obj.dimensions[0].count == x.size

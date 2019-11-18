@@ -59,6 +59,9 @@ line-shape of uncoupled spins for the following:
    using_mrsimulator_objects
    illustrative_examples/coesite
    load_isotopomers
+   configuring_simulator
+   benchmark
+   amorphous_material
    theory/components
    api_py/py_api
    api_c/c_api
