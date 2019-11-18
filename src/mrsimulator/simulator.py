@@ -196,7 +196,7 @@ class Simulator(BaseModel):
             "numeric_type": "float64",
         }
         for index, datum in enumerate(self.simulated_data):
-            if datum is not []:
+            if datum != []:
                 dependent_variable["components"] = [datum]
                 name = self.isotopomers[index].name
                 if name != "":
