@@ -1,39 +1,3 @@
-.. _examples_coesite:
-
-.. testsetup::
-
-    >>> import matplotlib
-    >>> from os import path
-    >>> font = {'family': 'Helvetica', 'weight': 'light', 'size': 9}
-    >>> matplotlib.rc('font', **font)
-
-    >>> import matplotlib.pyplot as plt
-    >>> def plot_save(x, y, filename):
-    ...     plt.figure(figsize=(4, 3))
-    ...     plt.plot(x, y, linewidth=1)
-    ...     plt.xlim([x.value.max(), x.value.min()])
-    ...     plt.xlabel(f"frequency ratio / {str(x.unit)}", **font)
-    ...     plt.grid(color='gray', linestyle='--', linewidth=1.0, alpha=0.25)
-    ...     plt.tight_layout(h_pad=0, w_pad=0, pad=0)
-    ...
-    ...     filename = path.split(filename)[1]
-    ...     filepath = './docs/_images'
-    ...     pth = path.join(filepath, filename)
-    ...     plt.savefig(pth+'.pdf')
-    ...     plt.savefig(pth+'.png', dpi=100)
-    ...     plt.close()
-
-Examples
-========
-
-In this section, we use the tools we learned so far to create isotopomers
-with practical/experimental applications.
-
-.. doctest::
-
-    >>> from mrsimulator import Simulator, Isotopomer, Site, Dimension
-    >>> from mrsimulator import SymmetricTensor as st
-    >>> from mrsimulator.methods import one_d_spectrum
 
 Coesite
 -------
@@ -58,12 +22,9 @@ information from
 
 .. doctest::
 
-    >>> all_sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
-    >>> all_abundance = [0.83, 1.05, 2.16, 2.05, 1.90] # abundance of each isotopomer
-    >>> isotopomers = []
-    >>> for site, abundance in zip(all_sites, all_abundance):
-    ...    isotopomers.append(Isotopomer(sites=[site], abundance=abundance))
-
+    >>> sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
+    >>> abundance = [0.83, 1.05, 2.16, 2.05, 1.90] # abundance of each isotopomer
+    >>> isotopomers = [Isotopomer(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
 
 **Step 3**  Create a dimension.
 
@@ -72,7 +33,7 @@ information from
     >>> dimension = Dimension(isotope='17O', number_of_points=2046, spectral_width=50000, rotor_frequency=14000)
 
 The above dimension is set up to record the :math:`^{17}\text{O}` resonances
-at the magic angle spinning at 14 kHz at 9.4 T external magnetic flux density.
+at the magic angle, spinning at 14 kHz at 9.4 T external magnetic flux density.
 The resonances are recorded over 50 kHz using 2046 points. You may also request
 a full description of the dimension object using the
 :meth:`~mrsimulator.Dimension.to_dict_with_units` method.
@@ -89,19 +50,20 @@ a full description of the dimension object using the
      'rotor_frequency': '14000.0 Hz',
      'spectral_width': '50000.0 Hz'}
 
-**Step 4**  Create Simulator object and add dimension and isotopomer objects.
+**Step 4**  Create the Simulator object and add dimension and isotopomer
+objects.
 
 .. doctest::
 
-    >>> sim = Simulator()
-    >>> sim.isotopomers += isotopomers
-    >>> sim.dimensions += [dimension]
+    >>> sim_coesite = Simulator()
+    >>> sim_coesite.isotopomers += isotopomers
+    >>> sim_coesite.dimensions += [dimension]
 
 **Step 5**  Simulate and plot.
 
 .. doctest::
 
-    >>> x, y = sim.run(method=one_d_spectrum)
+    >>> x, y = sim_coesite.run(method=one_d_spectrum)
     >>> plt.plot(x,y) # doctest:+SKIP
 
 .. .. testsetup::

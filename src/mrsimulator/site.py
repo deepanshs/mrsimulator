@@ -169,7 +169,6 @@ class Site(Parseable):
             Dict object
 
         Example:
-            >>> from pprint import pprint
             >>> pprint(site1.to_freq_dict(9.4))
             {'isotope': '13C',
              'isotropic_chemical_shift': -2013.1791999999998,
@@ -202,7 +201,6 @@ class Site(Parseable):
             Dict object
 
         Example:
-            >>> from pprint import pprint
             >>> pprint(site1.to_dict_with_units())
             {'isotope': '13C',
              'isotropic_chemical_shift': '20.0 ppm',

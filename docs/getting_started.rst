@@ -1,30 +1,6 @@
 
 .. _getting_started:
 
-.. testsetup::
-
-    >>> import matplotlib
-    >>> font = {'family': 'Helvetica', 'weight': 'light', 'size': 9}
-    >>> matplotlib.rc('font', **font)
-    >>> from os import path
-
-    >>> import matplotlib.pyplot as plt
-    >>> def plot_save(x, y, filename):
-    ...     plt.figure(figsize=(4, 3))
-    ...     plt.plot(x, y, linewidth=1)
-    ...     plt.xlim([x.value.max(), x.value.min()])
-    ...     plt.xlabel(f"frequency ratio / {str(x.unit)}", **font)
-    ...     plt.grid(color='gray', linestyle='--', linewidth=1.0, alpha=0.25)
-    ...     plt.tight_layout(h_pad=0, w_pad=0, pad=0)
-    ...
-    ...     filename = path.split(filename)[1]
-    ...     filepath = './docs/_images'
-    ...     pth = path.join(filepath, filename)
-    ...     plt.savefig(pth+'.pdf')
-    ...     plt.savefig(pth+'.png', dpi=100)
-    ...     plt.close()
-
-
 ==============================================
 Getting started with `Mrsimulator`: The basics
 ==============================================

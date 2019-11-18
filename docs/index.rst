@@ -57,7 +57,7 @@ line-shape of uncoupled spins for the following:
    requirements
    getting_started
    using_mrsimulator_objects
-   illustrative_examples/coesite
+   illustrative_examples/index
    load_isotopomers
    configuring_simulator
    benchmark

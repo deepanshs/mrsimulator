@@ -71,4 +71,12 @@ def test_config():
         "integration_density": 20,
     }
 
+    assert str(a.config) == str(
+        {
+            "number_of_sidebands": 10,
+            "integration_volume": "hemisphere",
+            "integration_density": 20,
+            "decompose": True,
+        }
+    )
     assert b != a

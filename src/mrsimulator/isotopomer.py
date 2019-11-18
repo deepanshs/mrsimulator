@@ -88,7 +88,6 @@ class Isotopomer(Parseable):
         Return: A python dict
 
         Example:
-            >>> from pprint import pprint
             >>> pprint(isotopomer_1.to_freq_dict(B0=9.4))
             {'abundance': 100,
              'description': '',
@@ -118,7 +117,6 @@ class Isotopomer(Parseable):
         Return: A python dict
 
         Example:
-            >>> from pprint import pprint
             >>> pprint(isotopomer_1.to_dict_with_units())
             {'abundance': '100%',
              'description': '',

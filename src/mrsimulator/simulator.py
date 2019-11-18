@@ -71,6 +71,52 @@ class Simulator(BaseModel):
             st.update(isotopomer.get_isotopes(I))
         return st
 
+    def to_dict_with_units(self, include_dimensions=False):
+        """
+        Serialize the isotopomers and dimensions attribute from the Simulator object
+        to a JSON compliant python dictionary with units.
+
+        Args:
+            remove_dimensions: A boolean. If True, the output contains serialized
+                dimension objects. Default is False.
+
+        Returns:
+            Dict object
+
+        Example:
+            >>> pprint(sim.to_dict_with_units())
+            {'isotopomers': [{'abundance': '100%',
+                            'description': '',
+                            'name': '',
+                            'sites': [{'isotope': '13C',
+                                       'isotropic_chemical_shift': '20.0 ppm',
+                                       'shielding_symmetric': {'eta': 0.5,
+                                                               'zeta': '10.0 ppm'}}]},
+                            {'abundance': '100%',
+                            'description': '',
+                            'name': '',
+                            'sites': [{'isotope': '1H',
+                                       'isotropic_chemical_shift': '-4.0 ppm',
+                                       'shielding_symmetric': {'eta': 0.1,
+                                                               'zeta': '2.1 ppm'}}]},
+                            {'abundance': '100%',
+                            'description': '',
+                            'name': '',
+                            'sites': [{'isotope': '27Al',
+                                       'isotropic_chemical_shift': '120.0 ppm',
+                                       'shielding_symmetric': {'eta': 0.1,
+                                                               'zeta': '2.1 ppm'}}]}]}
+        """
+        sim = {}
+        sim["isotopomers"] = [_.to_dict_with_units() for _ in self.isotopomers]
+
+        if include_dimensions:
+            dimensions = [_.to_dict_with_units() for _ in self.dimensions]
+            if dimensions != []:
+                sim["dimensions"] = dimensions
+
+        return sim
+
     def load_isotopomers(self, filename):
         """
         Load a list of isotopomers from JSON serialized isotopomers file.
@@ -84,6 +130,8 @@ class Simulator(BaseModel):
         Args:
             `filename`: A local or remote address to the JSON serialized isotopomers
                         file.
+        Example:
+            >>> sim.load_isotopomers(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
         json_data = contents["isotopomers"]
@@ -94,6 +142,9 @@ class Simulator(BaseModel):
 
         Args:
             method: The methods used in simulating line-shapes.
+
+        Example:
+            >>> sim.run(method=one_d_spectrum) # doctest:+SKIP
         """
         isotopomers = [
             isotopomer.to_freq_dict(self.dimensions[0].magnetic_flux_density)
@@ -145,7 +196,7 @@ class Simulator(BaseModel):
             "numeric_type": "float64",
         }
         for index, datum in enumerate(self.simulated_data):
-            if datum != []:
+            if datum is not []:
                 dependent_variable["components"] = [datum]
                 name = self.isotopomers[index].name
                 if name != "":

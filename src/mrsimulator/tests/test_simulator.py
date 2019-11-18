@@ -7,6 +7,7 @@ from random import randint
 
 import numpy as np
 import pytest
+from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
@@ -32,8 +33,29 @@ def test_equality():
 
     assert a is not {}
 
-    c = Simulator(sites=[Isotopomer()])
+    c = Simulator(isotopomers=[Isotopomer()])
     assert a is not c
+
+    result = {
+        "isotopomers": [
+            {"abundance": "100%", "description": "", "name": "", "sites": []}
+        ]
+    }
+    assert c.to_dict_with_units(include_dimensions=True) == result
+
+    result["dimensions"] = [
+        {
+            "label": "",
+            "magnetic_flux_density": "9.4 T",
+            "number_of_points": 1024,
+            "reference_offset": "0 Hz",
+            "rotor_angle": "0.9553166 rad",
+            "rotor_frequency": "0 Hz",
+            "spectral_width": "10.0 Hz",
+        }
+    ]
+    c.dimensions = [Dimension(spectral_width=10)]
+    assert c.to_dict_with_units(include_dimensions=True) == result
 
 
 def get_simulator():
