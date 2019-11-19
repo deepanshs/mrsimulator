@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Tests for the base Parseable pattern
-"""
+"""Test for the base Site class."""
 # import os.path
 import pytest
 from mrsimulator import Site

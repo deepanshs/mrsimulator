@@ -1,9 +1,9 @@
+// -*- coding: utf-8 -*-
 //
 //  mrsimulator.c
 //
 //  Created by Deepansh J. Srivastava, Jun 9, 2019
-//  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
-//  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
+//  Contact email = deepansh2012@gmail.com
 //
 
 #include "mrsimulator.h"

@@ -1,4 +1,10 @@
-
+// -*- coding: utf-8 -*-
+//
+//  aceraging_scheme.c
+//
+//  Created by Deepansh J. Srivastava.
+//  Contact email = deepansh2012@gmail.com
+//
 
 #include "averaging_scheme.h"
 

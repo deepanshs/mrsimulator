@@ -5,7 +5,7 @@ import numpy as np
 import cython
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+__email__ = "deepansh2012@gmail.com"
 
 
 @cython.boundscheck(False)

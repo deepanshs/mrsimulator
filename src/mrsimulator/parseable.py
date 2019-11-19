@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Base Parseable class."""
 from typing import ClassVar
 from typing import Dict
 

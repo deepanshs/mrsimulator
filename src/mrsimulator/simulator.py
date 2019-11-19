@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# from pydash import has, get
+"""Base Simulator class."""
 from typing import List
 from typing import Optional
 

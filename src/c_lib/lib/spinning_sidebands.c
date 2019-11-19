@@ -1,10 +1,9 @@
-
+// -*- coding: utf-8 -*-
 //
 //  sideband_simulator.c
 //
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
-//  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
-//  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
+//  Contact email = deepansh2012@gmail.com
 //
 
 #include "spinning_sidebands.h"

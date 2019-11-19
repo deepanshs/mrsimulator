@@ -1,10 +1,10 @@
+// -*- coding: utf-8 -*-
 //
 //  angular_momentum.c
 //
 //  Created by Philip Grandinetti on 4/12/17.
-//  Copyright © 2017 Philip Grandinetti. All rights reserved.
-//  Contribution: Deepansh J. Srivatava. contact: srivastava.89@osu.edu
-//      Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
+//  Contribution: Deepansh J. Srivatava. contact: deepansh2012@gmail.com
+//
 
 #include "angular_momentum.h"
 

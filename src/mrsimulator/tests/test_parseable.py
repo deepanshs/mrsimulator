@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Tests for the base Parseable pattern
-"""
-# import os
+"""Tests for the base Parseable pattern"""
 from typing import ClassVar
 
 import pytest
@@ -55,7 +52,7 @@ def test_parse_json():
     bad_json = {"foo": "300 Hz", "bar": "300 ppm"}
 
     with pytest.raises(Exception) as err:
-        pr = ParseableTestClass.parse_dict_with_units(bad_json)
+        ParseableTestClass.parse_dict_with_units(bad_json)
     assert (
         str(err.value) == "Error enforcing units for foo: 300 Hz\n"
         "A angle value is required but got a frequency instead"

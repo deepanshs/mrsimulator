@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Base Site class."""
 from typing import ClassVar
 from typing import Dict
 from typing import Optional

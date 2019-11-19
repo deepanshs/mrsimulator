@@ -3,7 +3,7 @@
 //  frequency_component_function.h
 //
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
-//  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
+//  Contact email = deepansh2012@gmail.com
 //
 
 #include "frequency_component/spatial_orientation_tensor.h"

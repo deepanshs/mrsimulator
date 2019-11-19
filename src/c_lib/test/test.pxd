@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+#
+#  test.pxd
+#
+#  Created by Deepansh J. Srivastava.
+#  Contact email = deepansh2012@gmail.com
+#
+
 from libcpp cimport bool as bool_t
 
 cdef extern from "angular_momentum.h":

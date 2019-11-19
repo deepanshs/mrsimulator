@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Test for shift and reference offset."""
 import numpy as np
 from mrsimulator import Dimension
 from mrsimulator import Isotopomer

@@ -3,7 +3,7 @@
 //  vm_mkl.h
 //
 //  Created by Deepansh J. Srivastava, Jul 26, 2019
-//  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
+//  Contact email = deepansh2012@gmail.com
 //
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

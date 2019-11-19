@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Base Isotopomer class."""
 from copy import deepcopy
 from typing import ClassVar
 from typing import Dict

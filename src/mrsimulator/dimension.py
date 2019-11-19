@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Base Dimension class."""
 import os.path
 import re
 import warnings

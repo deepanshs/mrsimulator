@@ -3,8 +3,7 @@
 //  spin_transition_function.h
 //
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
-//  Copyright © 2019 Deepansh J. Srivastava. All rights reserved.
-//  Contact email = srivastava.89@osu.edu, deepansh2012@gmail.com
+//  Contact email = deepansh2012@gmail.com
 //
 
 #include "mrsimulator.h"

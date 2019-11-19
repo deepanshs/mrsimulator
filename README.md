@@ -75,4 +75,4 @@ in your terminal.
 
 This should produce the following figure.
 
-![alt text](https://raw.githubusercontent.com/DeepanshS/mrsimulator/master/docs/_static/test_output.png)
+![alt text](https://raw.githubusercontent.com/DeepanshS/mrsimulator/master/docs/_images/test_output.png)

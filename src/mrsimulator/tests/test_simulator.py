@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Tests for the base Parseable pattern
-"""
-# import os.path
+"""Test for the base Simulator class."""
 from random import randint
 
 import numpy as np

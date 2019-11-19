@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Base ConfigSimulator class."""
 from copy import deepcopy
 
 from mrsimulator.sandbox import AveragingScheme
