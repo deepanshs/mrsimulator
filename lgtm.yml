@@ -1,0 +1,8 @@
+extraction:
+  python:
+    prepare: libopenblas-dev
+      libfftw3-dev
+    python_setup:
+      version: 3
+      requirements_files: requirements.txt
+      setup_py: false

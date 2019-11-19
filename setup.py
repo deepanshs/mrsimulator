@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import platform
+import sys
 from os.path import abspath
 from os.path import dirname
 from os.path import join
@@ -13,6 +14,8 @@ from setuptools import find_packages
 from setuptools import setup
 
 # get the version from file
+
+print("python version", sys.version_info)
 
 with open("src/mrsimulator/__init__.py", "r") as f:
     for line in f.readlines():
