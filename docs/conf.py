@@ -11,9 +11,9 @@
 #
 import os
 import subprocess
-import sys
 
-sys.path.insert(0, os.path.abspath("../.."))
+# import sys
+# sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 
@@ -32,7 +32,6 @@ with open("../src/mrsimulator/__init__.py", "r") as f:
 version = __version__
 # The full version, including alpha/beta/rc tags
 release = __version__
-
 
 # -- General configuration ---------------------------------------------------
 

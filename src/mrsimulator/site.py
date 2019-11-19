@@ -6,10 +6,11 @@ from typing import Optional
 from mrsimulator import AntisymmetricTensor
 from mrsimulator import Parseable
 from mrsimulator import SymmetricTensor
-from mrsimulator.spectrum import get_isotope_data
+from mrsimulator.dimension import get_isotope_data
+from pydantic import validator
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+__email__ = "deepansh2012@gmail.com"
 
 
 class Site(Parseable):
@@ -17,25 +18,26 @@ class Site(Parseable):
     Base Site class representing a nuclear isotope.
 
     Arguments:
-        isotope: A required string expressed as atomic number followed by an
-                isotope symbol, eg. ``13C``, ``17O``.
+        name: An optional string with a name or id of the site.
+        isotope: An optional string expressed as atomic number followed by an
+                isotope symbol, eg. ``13C``, ``17O``. The default value is ``1H``.
         isotropic_chemical_shift: An optional floating point number representing
                 the isotropic chemical shift of the site in unit of ppm. The
-                default value is 0.
+                default value is ``0``.
         shielding_symmetric: An optional SymmetricTensor object or an equivalent
                 python dict object representing the irreducible second-rank traceless
                 symmetric part of the nuclear shielding tensor. The default value is
-                None.
+                ``None``.
         shielding_antisymmetric: An optional AntisymmetricTensor object or an
                 equivalent python dict object representing the irreducible first-rank
                 antisymmetric part of the nuclear shielding tensor. The default value
-                is None.
+                is ``None``.
         quadrupolar: An optional SymmetricTensor object or an equivalent python dict
                 object representing the irreducible second-rank traceless symmetric
-                part of electric-field gradient tensor. The default value is None.
+                part of electric-field gradient tensor. The default value is ``None``.
 
     Example:
-        Using python dictionary.
+        Setting up Site objects.
 
         .. doctest::
 
@@ -64,7 +66,8 @@ class Site(Parseable):
             ...         )
     """
 
-    isotope: str
+    name: str = None
+    isotope: str = "1H"
     isotropic_chemical_shift: Optional[float] = 0
     shielding_symmetric: Optional[SymmetricTensor] = None
     shielding_antisymmetric: Optional[AntisymmetricTensor] = None
@@ -73,6 +76,26 @@ class Site(Parseable):
     property_unit_types: ClassVar = {"isotropic_chemical_shift": "dimensionless"}
     property_default_units: ClassVar = {"isotropic_chemical_shift": "ppm"}
     property_units: Dict = {"isotropic_chemical_shift": "ppm"}
+
+    @validator("quadrupolar")
+    def spin_must_be_at_least_one(cls, v, values):
+        isotope = values["isotope"]
+        I = get_isotope_data(isotope)["spin"] / 2.0
+        if I >= 1:
+            if "zeta" in v.property_units:
+                v.property_units.pop("zeta")
+            return v
+        message = f"with spin quantum number {I} does not allow quadrupolar tensor."
+        raise ValueError(f"{isotope} {message}")
+
+    @validator("shielding_symmetric")
+    def shielding_symmetric_must_not_contain_Cq(cls, v, values):
+        if "Cq" in v.property_units:
+            v.property_units.pop("Cq")
+        return v
+
+    class Config:
+        validate_assignment = True
 
     @property
     def spin(self):
@@ -102,12 +125,22 @@ class Site(Parseable):
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantities of a Site object when expressed as a
-        python dictionary.
+        Parse the physical quantities from a dictionary representation of the Site
+        object.
 
         Args:
-            py_dict: Python dictionary representation of an isotopomers with
-                        physical quantities.
+            py_dict: A required Dict object.
+
+        Returns:
+            Site object
+
+        Example:
+            >>> site_dict = {
+            ...    "isotope": "13C",
+            ...    "isotropic_chemical_shift": "20 ppm",
+            ...    "shielding_symmetric": {"zeta": "10 ppm", "eta":0.5}
+            ... }
+            >>> site1 = Site.parse_dict_with_units(site_dict)
         """
         prop_mapping = {
             "shielding_symmetric": SymmetricTensor,
@@ -132,7 +165,21 @@ class Site(Parseable):
         Args:
             B0: A required macroscopic magnetic flux density given in units of T.
 
-        Return: A python dict
+        Return:
+            Dict object
+
+        Example:
+            >>> pprint(site1.to_freq_dict(9.4))
+            {'isotope': '13C',
+             'isotropic_chemical_shift': -2013.1791999999998,
+             'name': None,
+             'quadrupolar': None,
+             'shielding_antisymmetric': None,
+             'shielding_symmetric': {'alpha': None,
+                                     'beta': None,
+                                     'eta': 0.5,
+                                     'gamma': None,
+                                     'zeta': -1006.5895999999999}}
         """
         temp_dict = self.dict()
         larmor_frequency = -self.gyromagnetic_ratio * B0  # in MHz
@@ -149,6 +196,16 @@ class Site(Parseable):
     def to_dict_with_units(self):
         """
         Serialize the Site object to a JSON compliant python dictionary with units.
+
+        Returns:
+            Dict object
+
+        Example:
+            >>> pprint(site1.to_dict_with_units())
+            {'isotope': '13C',
+             'isotropic_chemical_shift': '20.0 ppm',
+             'shielding_symmetric': {'eta': 0.5, 'zeta': '10.0 ppm'}}
+
         """
         temp_dict = {k: v for k, v in self.dict().items() if v is not None}
 

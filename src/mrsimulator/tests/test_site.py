@@ -3,10 +3,7 @@
 Tests for the base Parseable pattern
 """
 # import os.path
-import numpy as np
 import pytest
-from mrsimulator import Dimension
-from mrsimulator import Isotopomer
 from mrsimulator import Site
 from pydantic import ValidationError
 
@@ -57,15 +54,20 @@ def test_direct_init_site1():
     # test 3 --------------------------------------------------------------------------
     error = "ensure this value is less than or equal to 1"
     with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
-        the_site = Site(
+        Site(
             isotope="29Si",
             isotropic_chemical_shift=10,
             shielding_symmetric={"zeta": 12.1, "eta": 1.5},
         )
 
-    error = r"Site\nisotope\n  field required"
-    with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
-        Site()
+    assert Site().isotope == "1H"
+
+    error = ["with spin quantum number", "does not allow quadrupolar tensor"]
+    with pytest.raises(ValidationError, match=".*{0}.*{1}.*".format(*error)):
+        Site(quadrupolar={"Cq": 5.1e6})
+
+    with pytest.raises(ValidationError, match=".*{0}.*{1}.*".format(*error)):
+        Site.parse_dict_with_units(dict(quadrupolar={"Cq": "5.1 MHz"}))
 
 
 def test_parse_json_site():
@@ -132,7 +134,7 @@ def test_parse_json_site():
 
     error = "Error enforcing units for isotropic_chemical_shift: 10 MHz"
     with pytest.raises(Exception, match=".*{0}.*".format(error)):
-        the_site = Site.parse_dict_with_units(
+        Site.parse_dict_with_units(
             {
                 "isotope": "29Si",
                 "isotropic_chemical_shift": "10 MHz",
@@ -150,6 +152,7 @@ def test_site_object_methods():
         "isotope": "14N",
         "isotropic_chemical_shift": -10.0,
         "property_units": {"isotropic_chemical_shift": "ppm"},
+        "name": None,
         "quadrupolar": None,
         "shielding_symmetric": None,
         "shielding_antisymmetric": None,
@@ -160,6 +163,7 @@ def test_site_object_methods():
     result = {
         "isotope": "14N",
         "isotropic_chemical_shift": -1 * 3.077706 * 9.4 * -10.0,  # -gamma * B0 * iso
+        "name": None,
         "quadrupolar": None,
         "shielding_symmetric": None,
         "shielding_antisymmetric": None,
@@ -192,6 +196,7 @@ def test_site_object_methods():
 
     larmor_freq = -1 * 11.10309 * 9.4  # -gamma * B0
     result = {
+        "name": None,
         "isotope": "27Al",
         "isotropic_chemical_shift": 10.0 * larmor_freq,  # larmor_freq * iso
         "shielding_symmetric": {
@@ -218,170 +223,10 @@ def test_site_object_methods():
     assert the_site.to_freq_dict(9.4) == result, "Failed Site.to_dict_with_units()"
 
 
-def test_direct_init_isotopomer():
-    the_isotopomer = Isotopomer(sites=[], abundance=10)
+def test_equality():
+    a = Site(isotope="1H")
+    b = Site(isotope="1H")
+    assert a == b
 
-    assert the_isotopomer.sites == []
-    assert the_isotopomer.abundance == 10.0
-
-    test_site = Site(isotope="29Si", isotropic_chemical_shift=10)
-
-    assert test_site.isotope == "29Si"
-    assert test_site.isotropic_chemical_shift == 10.0
-    # assert test_site.property_units["isotropic_chemical_shift"] == "Hz"
-
-    the_isotopomer = Isotopomer(sites=[test_site], abundance=10)
-    assert isinstance(the_isotopomer.sites[0], Site)
-    assert the_isotopomer.abundance == 10.0
-
-    the_isotopomer = Isotopomer(sites=[test_site, test_site], abundance=10)
-    assert isinstance(the_isotopomer.sites[0], Site)
-    assert isinstance(the_isotopomer.sites[1], Site)
-    assert id(the_isotopomer.sites[0]) != id(the_isotopomer.sites[1])
-    assert the_isotopomer.abundance == 10.0
-
-    the_isotopomer = Isotopomer(
-        name="Just a test",
-        description="The same",
-        sites=[
-            {"isotope": "1H", "isotropic_chemical_shift": 0},
-            {
-                "isotope": "17O",
-                "isotropic_chemical_shift": -10,
-                "quadrupolar": {"Cq": 5.1e6, "eta": 0.5},
-            },
-        ],
-        abundance=4.23,
-    )
-    assert the_isotopomer.name == "Just a test"
-    assert the_isotopomer.description == "The same"
-    assert the_isotopomer.sites[0].isotope == "1H"
-    assert the_isotopomer.sites[0].isotropic_chemical_shift == 0
-    assert the_isotopomer.sites[1].isotope == "17O"
-    assert the_isotopomer.sites[1].isotropic_chemical_shift == -10
-    assert the_isotopomer.sites[1].quadrupolar.Cq == 5.1e6
-    assert the_isotopomer.sites[1].quadrupolar.eta == 0.5
-    assert the_isotopomer.abundance == 4.23
-
-
-def test_parse_json_isotopomer():
-    good_json = {"sites": [], "abundance": "10%"}
-
-    good_json2 = {
-        "sites": [{"isotope": "1H", "isotropic_chemical_shift": "0 ppm"}],
-        "abundance": "10%",
-    }
-
-    iso1 = Isotopomer.parse_dict_with_units(good_json)
-    assert len(iso1.sites) == 0
-    assert iso1.abundance == 10
-
-    iso2 = Isotopomer.parse_dict_with_units(good_json2)
-    assert len(iso2.sites) == 1
-    assert iso2.sites[0].isotope == "1H"
-    assert iso2.sites[0].isotropic_chemical_shift == 0
-    assert iso2.abundance == 10
-
-    bad_json = {"sites": [], "abundance": "10 Hz"}
-    with pytest.raises(Exception):
-        Isotopomer.parse_dict_with_units(bad_json)
-
-
-def test_isotopomer_methods():
-    good_json2 = {
-        "sites": [{"isotope": "1H", "isotropic_chemical_shift": "2 ppm"}],
-        "abundance": "10%",
-    }
-
-    # to_freq_dict()
-    iso1 = Isotopomer.parse_dict_with_units(good_json2).to_freq_dict(9.4)
-    result = {
-        "name": "",
-        "description": "",
-        "sites": [
-            {
-                "isotope": "1H",
-                "isotropic_chemical_shift": -1
-                * 42.57748
-                * 9.4
-                * 2,  # -gamma * B0 * iso
-                "quadrupolar": None,
-                "shielding_antisymmetric": None,
-                "shielding_symmetric": None,
-            }
-        ],
-        "abundance": 10,
-    }
-    assert iso1 == result
-
-    # to_dict_with_units()
-    iso1 = Isotopomer.parse_dict_with_units(good_json2).to_dict_with_units()
-    result = {
-        "name": "",
-        "description": "",
-        "sites": [{"isotope": "1H", "isotropic_chemical_shift": "2.0 ppm"}],
-        "abundance": "10.0%",
-    }
-    assert iso1 == result
-
-
-def test_direct_init_spectrum():
-    the_spectrum = Dimension(number_of_points=1024, spectral_width=100)
-    assert the_spectrum.number_of_points == 1024
-    assert the_spectrum.spectral_width == 100
-    # assert the_spectrum.property_units["spectral_width"] == 'Hz'
-
-    Dimension(
-        number_of_points=1024,
-        spectral_width=100,
-        reference_offset=0,
-        magnetic_flux_density=9.4,
-        rotor_frequency=0,
-        rotor_angle=0.9553,  # 54.935 degrees in radians
-        rotor_phase=0,
-        isotope="1H",
-    )
-
-
-def test_parse_json_spectrum():
-    good_json = {
-        "number_of_points": 1024,
-        "spectral_width": "100 Hz",
-        "reference_offset": "0 Hz",
-        "magnetic_flux_density": "9.4 T",
-        "rotor_frequency": "0 Hz",
-        "rotor_angle": "54.935 degree",  # 54.935 degrees in radians
-        "rotor_phase": "0 rad",
-        "isotope": "1H",
-    }
-
-    spec = Dimension.parse_dict_with_units(good_json)
-    assert spec.spin == 1
-    assert spec.isotope == "1H"
-    assert spec.gyromagnetic_ratio == 42.57748
-    assert spec.natural_abundance == 99.985
-    assert spec.quadrupole_moment == 0.0
-    assert spec.atomic_number == 1
-    assert np.allclose(spec.rotor_angle, 0.95879662)
-
-
-def test_parse_json_spectrum2():
-    good_json = {
-        "number_of_points": 1024,
-        "spectral_width": "100 Hz",
-        "reference_offset": "0 Hz",
-        "magnetic_flux_density": "9.4 T",
-        "rotor_frequency": "0 Hz",
-        "rotor_angle": "54.935 degree",  # 54.935 degrees in radians
-        "rotor_phase": "0 rad",
-        "isotope": "29Si",
-    }
-
-    spec = Dimension.parse_dict_with_units(good_json)
-    assert spec.spin == 1
-    assert spec.isotope == "29Si"
-    assert spec.gyromagnetic_ratio == -8.465499
-    assert spec.natural_abundance == 4.683
-    assert spec.quadrupole_moment == 0.0
-    assert spec.atomic_number == 14
-    assert np.allclose(spec.rotor_angle, 0.95879662)
+    c = Site(isotope="1H", isotropic_chemical_shift=16)
+    assert a != c

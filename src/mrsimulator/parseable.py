@@ -2,7 +2,7 @@
 from typing import ClassVar
 from typing import Dict
 
-from mrsimulator.unit import string_to_quantity
+from csdmpy.units import string_to_quantity
 from pydantic import BaseModel
 
 __author__ = "Shyam Dwaraknath"

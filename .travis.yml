@@ -6,7 +6,7 @@ language: python
 
 python:
   - "3.6"
-  - "3.7.3"
+  - "3.7"
 
 env:
   # - PKG1=mkl PKG2=mkl-include
@@ -33,6 +33,7 @@ before_install:
   - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pytest pytest-cov
   - source activate test-env
   - conda install -c anaconda $PKG1 $PKG2 --file conda-requirements.txt
+  - pip install -r requirements.txt
   - pip install -r requirements-dev.txt
 
 install:

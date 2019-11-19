@@ -3,12 +3,76 @@
 .. _load_isotopomers:
 
 
-Importing isotopomers from JSON file
+Exporting/Importing isotopomers to/from JSON file
+=================================================
+
+Exporting isotopomers to a JSON file
 ------------------------------------
 
-A list of isotopomers may also be imported from a `JSON <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_ppm.json>`_
-serialized isotopomers file. Consider `JSON isotopomers <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_test.json>`_ file.
+The isotopomers and dimensions from the :ref:`simulator_api` class object may
+be serialized JSON compliant python dictionary object using the
+:meth:`~mrsimulator.simulator.Simulator.to_dict_with_units` method. Consider
+the simulator object from the :ref:`example_coesite` example.
 
+.. doctest::
+
+    >>> py_dict = sim_coesite.to_dict_with_units()
+    >>> pprint(py_dict)
+    {'isotopomers': [{'abundance': '0.83%',
+                      'description': '',
+                      'name': '',
+                      'sites': [{'isotope': '17O',
+                                 'isotropic_chemical_shift': '29.0 ppm',
+                                 'quadrupolar': {'Cq': '6050000.0 Hz',
+                                                 'eta': 0.0}}]},
+                     {'abundance': '1.05%',
+                      'description': '',
+                      'name': '',
+                      'sites': [{'isotope': '17O',
+                                 'isotropic_chemical_shift': '41.0 ppm',
+                                 'quadrupolar': {'Cq': '5430000.0 Hz',
+                                                 'eta': 0.166}}]},
+                     {'abundance': '2.16%',
+                      'description': '',
+                      'name': '',
+                      'sites': [{'isotope': '17O',
+                                 'isotropic_chemical_shift': '57.0 ppm',
+                                 'quadrupolar': {'Cq': '5450000.0 Hz',
+                                                 'eta': 0.168}}]},
+                     {'abundance': '2.05%',
+                      'description': '',
+                      'name': '',
+                      'sites': [{'isotope': '17O',
+                                 'isotropic_chemical_shift': '53.0 ppm',
+                                 'quadrupolar': {'Cq': '5520000.0 Hz',
+                                                 'eta': 0.169}}]},
+                     {'abundance': '1.9%',
+                      'description': '',
+                      'name': '',
+                      'sites': [{'isotope': '17O',
+                                 'isotropic_chemical_shift': '58.0 ppm',
+                                 'quadrupolar': {'Cq': '5160000.0 Hz',
+                                                 'eta': 0.292}}]}]}
+
+The :meth:`~mrsimulator.simulator.Simulator.to_dict_with_units` method returns
+a python dictionary which can then be serialized to a file with JSON module,
+
+.. doctest::
+
+    >>> import json
+    >>> filename = 'my_serialized_file.json'
+    >>> with open(filename, 'w') as f:
+    ...     json.dump(py_dict, f)
+
+.. testsetup::
+    >>> import os
+    >>> os.remove('my_serialized_file.json')
+
+Importing isotopomers to a JSON file
+------------------------------------
+
+A list of isotopomers may similarly be imported from a JSON
+serialized isotopomers file. Consider`JSON isotopomers <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_test.json>`_ file.
 To import the isotopomers from this file, use the
 :meth:`~mrsimulator.simulator.Simulator.load_isotopomers`
 method of the :ref:`simulator_api` class, as follows,
@@ -24,8 +88,9 @@ method of the :ref:`simulator_api` class, as follows,
     Downloading '/DeepanshS/mrsimulator-test/master/isotopomers_test.json'
     from 'raw.githubusercontent.com' to file 'isotopomers_test.json'.
     [████████████████████████████████████]
+    >>> pprint(len(sim.isotopomers))
+    7
 
 .. testsetup::
-
     >>> import os
     >>> os.remove('isotopomers_test.json')

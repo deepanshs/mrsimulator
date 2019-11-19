@@ -1,5 +1,0 @@
-
-sphinx>=2.0
-sphinxjp.themes.basicstrap
-breathe>=4.13.0
-sphinx-copybutton

@@ -1,90 +1,121 @@
 # -*- coding: utf-8 -*-
 # from pydash import has, get
 from typing import List
+from typing import Optional
 
 import csdmpy as cp
 from astropy import units as u
 from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator.importer import import_json
-from mrsimulator.methods import one_d_spectrum
-from mrsimulator.spectrum import ISOTOPE_DATA
+from mrsimulator.simulator_config import ConfigSimulator
 from pydantic import BaseModel
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
+__email__ = "deepansh2012@gmail.com"
 
 
 class Simulator(BaseModel):
     """
     The simulator class.
 
-    .. rubric:: Attributes Documentation
-
     Attributes:
-        isotopomers: List of Isotopomer objects.
-        dimension: List of Dimension objects.
-        isotope: List of all unique isotopes defined in the list of isotopomers.
-            This also includes NMR inactive isotopes.
+        isotopomers: List of :ref:`isotopomer_api` objects.
+        dimensions: List of :ref:`dimension_api` objects.
+        config: :ref:`config_api` object.
     """
 
     isotopomers: List[Isotopomer] = []
     dimensions: List[Dimension] = []
-    simulated_data: List = []
+    simulated_data: Optional[List]
+    config: ConfigSimulator = ConfigSimulator()
 
-    @staticmethod
-    def allowed_isotopes(spin=None):
+    class Config:
+        validate_assignment = True
+        arbitrary_types_allowed = True
+
+    def __eq__(self, other):
+        if (
+            not isinstance(other, Simulator)
+            or self.isotopomers != other.isotopomers
+            or self.dimensions != other.dimensions
+            or self.config != other.config
+        ):
+            return False
+        return True
+
+    def get_isotopes(self, I=None):
         """
-        List of NMR active isotopes allowed in ``mrsimulator``.
+        Set of unique isotopes from sites in the list of isotopomers corresponding
+        to spin quantum number `I`. If `I` is unspecified or None, a set of all
+        unique isotopes is returned instead.
 
         Args:
-            spin: (optional) The spin quantum number. Valid input are multiples of 0.5.
+            I: (optional) The spin quantum number. Valid input are multiples of 0.5.
 
         Returns:
-            A list of all isotopes with the give spin quantum number allowed in
-            mrsimulator. If the spin is unspecified or None, a list of all
-            allowed isotopes is returned instead.
-        """
-        if spin is None:
-            return list({isotope for isotope, data in ISOTOPE_DATA.items()})
-        return list(
-            {
-                isotope
-                for isotope, data in ISOTOPE_DATA.items()
-                if data["spin"] == int(2 * spin)
-            }
-        )
+            A Set
 
-    @property
-    def isotopes(self):
-        return list(
-            {
-                site.isotope
-                for isotopomer in self.isotopomers
-                for site in isotopomer.sites
-            }
-        )
-
-    def get_isotopes(self, spin=None):
+        Example:
+            >>> sim.get_isotopes() # doctest:+SKIP
+            {'1H', '27Al', '13C'}
+            >>> sim.get_isotopes(I=0.5) # doctest:+SKIP
+            {'1H', '13C'}
+            >>> sim.get_isotopes(I=1.5)
+            set()
+            >>> sim.get_isotopes(I=2.5)
+            {'27Al'}
         """
-        List of unique isotopes defined in list of isotopomers.
+        st = set()
+        for isotopomer in self.isotopomers:
+            st.update(isotopomer.get_isotopes(I))
+        return st
+
+    def to_dict_with_units(self, include_dimensions=False):
+        """
+        Serialize the isotopomers and dimensions attribute from the Simulator object
+        to a JSON compliant python dictionary with units.
 
         Args:
-            spin: (optional) The spin quantum number. Valid input are multiples of 0.5.
+            remove_dimensions: A boolean. If True, the output contains serialized
+                dimension objects. Default is False.
 
         Returns:
-            A list of unique isotopes from the list of isotopomers corresponding
-            to given value of `spin`. If the spin is unspecified or None, a list of all
-            unique isotopes is returned instead.
+            Dict object
+
+        Example:
+            >>> pprint(sim.to_dict_with_units())
+            {'isotopomers': [{'abundance': '100%',
+                            'description': '',
+                            'name': '',
+                            'sites': [{'isotope': '13C',
+                                       'isotropic_chemical_shift': '20.0 ppm',
+                                       'shielding_symmetric': {'eta': 0.5,
+                                                               'zeta': '10.0 ppm'}}]},
+                            {'abundance': '100%',
+                            'description': '',
+                            'name': '',
+                            'sites': [{'isotope': '1H',
+                                       'isotropic_chemical_shift': '-4.0 ppm',
+                                       'shielding_symmetric': {'eta': 0.1,
+                                                               'zeta': '2.1 ppm'}}]},
+                            {'abundance': '100%',
+                            'description': '',
+                            'name': '',
+                            'sites': [{'isotope': '27Al',
+                                       'isotropic_chemical_shift': '120.0 ppm',
+                                       'shielding_symmetric': {'eta': 0.1,
+                                                               'zeta': '2.1 ppm'}}]}]}
         """
-        return list(
-            {
-                site.isotope
-                for isotopomer in self.isotopomers
-                for site in isotopomer.sites
-                if site.isotope in self.allowed_isotopes(spin)
-            }
-        )
+        sim = {}
+        sim["isotopomers"] = [_.to_dict_with_units() for _ in self.isotopomers]
+
+        if include_dimensions:
+            dimensions = [_.to_dict_with_units() for _ in self.dimensions]
+            if dimensions != []:
+                sim["dimensions"] = dimensions
+
+        return sim
 
     def load_isotopomers(self, filename):
         """
@@ -99,6 +130,8 @@ class Simulator(BaseModel):
         Args:
             `filename`: A local or remote address to the JSON serialized isotopomers
                         file.
+        Example:
+            >>> sim.load_isotopomers(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
         json_data = contents["isotopomers"]
@@ -108,34 +141,27 @@ class Simulator(BaseModel):
         """Simulate the lineshape.
 
         Args:
-            method: The methods used in simulation of the line-shapes.
-        """
-        return self.one_d_spectrum(**kwargs)
+            method: The methods used in simulating line-shapes.
 
-    def one_d_spectrum(self, **kwargs):
-        """
-        Simulate the spectrum using the specified method. The keyword argument
-        are the arguments of the specified `method`.
-
-        :ivar method: The method used in computing the linshape.
-        :ivar data_object: If true, returns a `csdm` data object. If false,
-            returns a tuple of frequency array and the
-            corresponding amplitude array. The amplitude is a
-            `numpy <https://docs.scipy.org/doc/numpy/reference/generated
-            /numpy.array.html>`_
-            array, whereas, the frequency is a
-            `Quantity <http://docs.astropy.org/en/stable/units/quantity.html>`_
-            array. The default value is False.
+        Example:
+            >>> sim.run(method=one_d_spectrum) # doctest:+SKIP
         """
         isotopomers = [
             isotopomer.to_freq_dict(self.dimensions[0].magnetic_flux_density)
             for isotopomer in self.isotopomers
         ]
 
-        amp = one_d_spectrum(
-            dimension=self.dimensions[0].to_dict(), isotopomers=isotopomers, **kwargs
+        amp = method(
+            dimension=self.dimensions,
+            isotopomers=isotopomers,
+            **self.config._dict,
+            **kwargs,
         )
-        self.simulated_data = amp
+
+        if isinstance(amp, list):
+            self.simulated_data = amp
+        else:
+            self.simulated_data = [amp]
 
         """The frequency is in the units of Hz."""
         freq = self.dimensions[0].coordinates_ppm
@@ -143,6 +169,13 @@ class Simulator(BaseModel):
         return freq, amp
 
     def as_csdm_object(self):
+        """
+        Converts the data to a CSDM object. Read
+        `csdmpy <https://csdmpy.readthedocs.io/en/latest/>`_ for details
+
+        Return:
+            CSDM object
+        """
         new = cp.new()
         for dimension in self.dimensions:
             new_dimension = {
@@ -157,43 +190,27 @@ class Simulator(BaseModel):
             }
             new.add_dimension(new_dimension)
 
-        if isinstance(self.simulated_data, list):
-            for index, datum in enumerate(self.simulated_data):
-                if datum != []:
-                    dependent_variable = {
-                        "type": "internal",
-                        "quantity_type": "scalar",
-                        "numeric_type": "float64",
-                        "components": [datum],
+        dependent_variable = {
+            "type": "internal",
+            "quantity_type": "scalar",
+            "numeric_type": "float64",
+        }
+        for index, datum in enumerate(self.simulated_data):
+            if datum != []:
+                dependent_variable["components"] = [datum]
+                name = self.isotopomers[index].name
+                if name != "":
+                    dependent_variable.update({"name": name})
+
+                description = self.isotopomers[index].description
+                if description != "":
+                    dependent_variable.update({"description": description})
+
+                dependent_variable["application"] = {
+                    "com.github.DeepanshS.mrsimulator": {
+                        "isotopomers": [self.isotopomers[index].to_dict_with_units()]
                     }
-
-                    name = self.isotopomers[index].name
-                    if name != "":
-                        dependent_variable.update({"name": name})
-
-                    description = self.isotopomers[index].description
-                    if description != "":
-                        dependent_variable.update({"description": description})
-
-                    dependent_variable["application"] = {
-                        "com.github.DeepanshS.mrsimulator": {
-                            "isotopomers": [
-                                self.isotopomers[index].to_dict_with_units()
-                            ]
-                        }
-                    }
-
-                    new.add_dependent_variable(dependent_variable)
-                    new.dependent_variables[-1].encoding = "base64"
-
-        else:
-            dependent_variable = {
-                "type": "internal",
-                "quantity_type": "scalar",
-                "numeric_type": "float64",
-                "components": [self.simulated_data],
-            }
-            new.add_dependent_variable(dependent_variable)
-            new.dependent_variables[-1].encoding = "base64"
-
+                }
+                new.add_dependent_variable(dependent_variable)
+                new.dependent_variables[-1].encoding = "base64"
         return new

@@ -11,51 +11,6 @@ spin-system is a collection of sites and couplings. We refer an isolated
 spin-system as an isotopomer. In our model, each isotopomer is composed
 of various objects. In the following, we list and describe these objects.
 
-.. _orientation:
-
-Orientation
------------
-
-We define `Orientation` as an object with attributes representing the Euler
-angles, :math:`\alpha, \beta, \gamma`, involved in the rotation of the
-interaction tensor from the principal axis system (PAS) to a reference frame.
-
-
-.. cssclass:: table-bordered table-hover
-.. list-table:: Attributes of an Orientation object.
-  :widths: 20 18 62
-  :header-rows: 1
-
-  * - Attribute name
-    - Type
-    - Description
-
-  * - ``alpha``
-    - ScalarQuantity
-    - A `required` Euler angle, :math:`\alpha`. For example, ``2.1 rad``.
-
-  * - ``beta``
-    - ScalarQuantity
-    - A `required` Euler angle, :math:`\beta`. For example, ``23.5 deg``.
-
-  * - ``gamma``
-    - ScalarQuantity
-    - An `optional` Euler angle, :math:`\gamma`. For example, ``0.5 rad``.
-      The default value is ``0 rad``.
-
-**Example**
-
-Using python `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`_
-object, Orientation may be represented as,
-
-.. code-block:: py
-
-    orientation_example = dict(alpha="0.5 rad", beta="0.23 rad", gamma="2.54 rad")
-
-
-
-
-
 .. _symmetric_tensor:
 
 SymmetricTensor
@@ -64,7 +19,7 @@ SymmetricTensor
 We define `SymmetricTensor` as an object with attributes representing the
 traceless second-rank symmetric irreducible interaction tensor.
 
-.. cssclass:: table-bordered table-hover
+.. cssclass:: table-bordered
 
 .. list-table:: Attributes of a SymmetricTensor object.
   :widths: 15 20 65
@@ -96,30 +51,36 @@ traceless second-rank symmetric irreducible interaction tensor.
     - A `required` asymmetry parameter calculated using Haeberlen convention, for
       example, ``0.75``.
 
-  * - ``orientation``
-    - :ref:`orientation`
-    - An `optional` object. The default value is a ``NULL`` object.
+  * - ``alpha``
+    - ScalarQuantity
+    - An `optional` Euler angle, :math:`\alpha`. For example, ``2.1 rad``.
+      The default value is ``0 rad``.
+
+  * - ``beta``
+    - ScalarQuantity
+    - An `optional` Euler angle, :math:`\beta`. For example, ``23.5 deg``.
+      The default value is ``0 rad``.
+
+  * - ``gamma``
+    - ScalarQuantity
+    - An `optional` Euler angle, :math:`\gamma`. For example, ``0.5 rad``.
+      The default value is ``0 rad``.
 
 **Example**
 
 Using python `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`_
 object, SymmetricTensor may be represented as,
 
-.. code-block:: py
+.. code-block:: python
 
     # For nuclear shielding tensor
-    symmetric_shielding_tensor_example = dict(
-        zeta="10.3 ppm", eta=0.5, orientation=orientation_example
-    )
+    symmetric_shielding_tensor_example_1 = dict(zeta="10.3 ppm", eta=0.5)
+    symmetric_shielding_tensor_example_2 = dict(zeta="10.3 ppm", eta=0.5, beta="0.23 rad")
 
     # For electric quadrupole tensor
     quadrupole_tensor_example = dict(
-        Cq="1.45 MHz", eta=0.13, orientation=orientation_example
+        Cq="1.45 MHz", eta=0.13, alpha="0.5 rad", beta="0.23 rad", gamma="2.54 rad"
     )
-
-where ``orientation_example`` is the dict object with Euler angles from the
-previous example.
-
 
 
 .. _site:
@@ -165,18 +126,18 @@ nuclear site.
 Using python `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`_
 object, Site may be represented as,
 
-.. code-block:: py
+.. code-block:: python
 
   site_example1 = dict(
       isotope="27Al",
       isotropic_chemical_shift="15 ppm",
-      quadrupolar=quadrupole_tensor_example
+      quadrupolar=quadrupole_tensor_example,
   )
 
   site_example2 = dict(
       isotope="13C",
       isotropic_chemical_shift="15 ppm",
-      shielding_symmetric=symmetric_shielding_tensor_example
+      shielding_symmetric=symmetric_shielding_tensor_example,
   )
 
 where ``symmetric_shielding_tensor_example`` and ``quadrupole_tensor_example``
@@ -242,7 +203,7 @@ spin-system.
 Using python `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`_
 object, Isotopomer may be represented as,
 
-.. code-block:: py
+.. code-block:: python
 
   isotopomer_example1 = dict(sites=[site_example1], abundance="15.3 %")
   isotopomer_example2 = dict(sites=[site_example2], abundance="65.19 %")

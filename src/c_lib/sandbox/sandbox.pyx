@@ -12,46 +12,35 @@ __email__ = ["srivastava.89@osu.edu", "deepansh2012@gmail.com"]
 # def MRS_plan(int geodesic_polyhedron_frequency,
 #         int number_of_sidebands)
 
-cdef class averagingScheme:
+cdef class AveragingScheme:
     cdef clib.MRS_averaging_scheme *scheme
 
-    def __init__(self, nt, averaging_volume='octant', allow_fourth_rank=False):
+    def __init__(self, integration_density, integration_volume='octant', allow_fourth_rank=False):
         """Create the averaging scheme for the simulation.
 
         Args:
-            nt: The number of triangles along the edge of the octahedron face.
-            averaging_volume: An enumeration literal, 'octant', 'hemisphere'.
+            integration_density: The number of triangles along the edge of the octahedron face.
+            integration_volume: An enumeration literal, 'octant', 'hemisphere'.
             allow_fourth_rank: Boolean, If True, pre-calculates tables for computing fourth rank tensors.
         """
         allow_fourth_rank_ = 0
-        averaging_volume_ = 0
+        integration_volume_ = 0
         if allow_fourth_rank:
             allow_fourth_rank_=1
-        if averaging_volume == 'hemisphere':
-            averaging_volume_=1
-        self.scheme = clib.MRS_create_averaging_scheme(
-                                    nt, allow_fourth_rank_, averaging_volume_)
+        if integration_volume == 'hemisphere':
+            integration_volume_=1
+        self.scheme = clib.MRS_create_averaging_scheme(integration_density,
+                                        allow_fourth_rank_, integration_volume_)
 
     @property
     def total_orientations(self):
         return self.scheme.total_orientations
 
-    # cdef __scheme__(self):
-    #     return self.scheme
-
-    # @property
-    # def scheme1(self):
-    #     return self.scheme
-
-    # def set_scheme(scheme, nt, allow_fourth_rank=1):
-    #     if scheme == 'octahedron':
-    #         self.scheme = clib.MRS_create_averaging_scheme(
-    #                                 nt, allow_fourth_rank)
 
 cdef class MRSPlan:
     cdef clib.MRS_plan *plan
 
-    def __init__(self, averagingScheme averaging_scheme, number_of_sidebands,
+    def __init__(self, AveragingScheme averaging_scheme, number_of_sidebands,
                 sample_rotation_frequency_in_Hz, rotor_angle_in_rad,
                 increment, allow_fourth_rank):
         self.plan = clib.MRS_create_plan(averaging_scheme.scheme,

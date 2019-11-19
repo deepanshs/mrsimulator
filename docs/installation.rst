@@ -71,5 +71,5 @@ file in your terminal. Download the test file
 
 This should produce the following figure.
 
-.. figure:: _static/test_output.*
+.. figure:: _images/test_output.*
     :figclass: figure-polaroid

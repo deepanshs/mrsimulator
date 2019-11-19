@@ -1,5 +1,4 @@
 cimport nmr_methods as clib
-from mrsimulator import sandbox as sb
 from libcpp cimport bool as bool_t
 from numpy cimport ndarray
 import numpy as np
@@ -15,8 +14,8 @@ def one_d_spectrum(dimension,
        list isotopomers,
        int verbose=0,
        int number_of_sidebands=90,
-       int geodesic_polyhedron_frequency=72,
-       bool_t individual_spectrum=False,
+       int integration_density=72,
+       bool_t decompose=False,
        int integration_volume=1):
     """
 
@@ -31,7 +30,7 @@ def one_d_spectrum(dimension,
         sample spinning frequency is low, computation of more sidebands may be
         required for an acceptable result. The user is advised to ensure that
         enough sidebands are requested for computation.
-    :ivar geodesic_polyhedron_frequency:
+    :ivar integration_density:
         The value is an integer which represents the frequency of class I
         geodesic polyhedra. These polyhedra are used in calculating the
         spherical average. Presently we only use octahedral as the frequency1
@@ -40,22 +39,23 @@ def one_d_spectrum(dimension,
         frequency will result in a better powder averaging.
         The default value is 72.
         Read more on the `Geodesic polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
-    :ivar individual_spectrum:
+    :ivar decompose:
         A boolean. If true, returns an ordered list of spectrum corresponding
         to the ordered list of isotopomers.
     """
 
 # ---------------------------------------------------------------------
 # observed spin _______________________________________________________
-    isotope = dimension["isotope"]
+    dimension = dimension[0]
+    isotope = dimension.isotope
     # spin quantum number of the observed spin
-    cdef double spin_quantum_number = dimension["spin"]/2.0
+    cdef double spin_quantum_number = dimension.spin
 
     # gyromagnetic ratio
-    cdef double larmor_frequency = dimension["larmor_frequency"]
-    # cdef double factor = 1.0
-    # if larmor_frequency < 0.0:
-    #     factor = -1.0
+    cdef double larmor_frequency = dimension.larmor_frequency
+    cdef double factor = 1.0
+    if larmor_frequency < 0.0:
+        factor = -1.0
 
     # if verbose in [1, 11]:
     #     print(f'Simulating {isotope} (I={spin_quantum_number})')
@@ -78,34 +78,20 @@ def one_d_spectrum(dimension,
 
 
 # Generate the dimension coordinates __________________________________________________
-    cdef int number_of_points = dimension["number_of_points"]
-    cdef double spectral_width = dimension["spectral_width"]
+    cdef int number_of_points = dimension.number_of_points
+    cdef double spectral_width = dimension.spectral_width
     cdef double increment = spectral_width/number_of_points
-    cdef double reference_offset = dimension["reference_offset"] #*factor
+    cdef double reference_offset = dimension.reference_offset *factor
 
     offset = increment*int(number_of_points/2.0)
     reference_offset -= offset
     # freq = dimension.coordinates_ppm
 
-# -------------------------------------------------------------------------------------
-# averaging scheme ____________________________________________________________________
-    MRS_averaging_scheme = sb.averagingScheme(
-        geodesic_polyhedron_frequency, 1, integration_volume
-    )
-
-
 # create MRS_plan _____________________________________________________________________
-    cdef double sample_rotation_frequency_in_Hz = dimension["rotor_frequency"]
-    cdef double rotor_angle_in_rad = dimension["rotor_angle"]
+    cdef double sample_rotation_frequency_in_Hz = dimension.rotor_frequency
+    cdef double rotor_angle_in_rad = dimension.rotor_angle
 
-    MRS_plan = sb.MRSPlan(MRS_averaging_scheme,
-                number_of_sidebands=number_of_sidebands,
-                sample_rotation_frequency_in_Hz=sample_rotation_frequency_in_Hz,
-                rotor_angle_in_rad=rotor_angle_in_rad,
-                increment=increment,
-                allow_fourth_rank=True)
-
-    B0 = dimension["magnetic_flux_density"]
+    # B0 = dimension.magnetic_flux_density
 
     # if verbose in [1, 11]:
     #     text = "`one_d_spectrum` method simulation parameters."
@@ -269,7 +255,7 @@ def one_d_spectrum(dimension,
                     rotor_angle_in_rad,
 
                     &transition_array[2*trans__],
-                    geodesic_polyhedron_frequency,
+                    integration_density,
                     integration_volume,          # 0-octant, 1-hemisphere, 2-sphere.
                     )
 
@@ -282,15 +268,15 @@ def one_d_spectrum(dimension,
                 else:
                     temp = temp[::-1]
 
-            if individual_spectrum:
+            if decompose:
                 amp_individual.append(temp)
             else:
                 amp1 += temp
         else:
-            if individual_spectrum:
+            if decompose:
                 amp_individual.append([])
 
-    if individual_spectrum:
+    if decompose:
         amp1 = amp_individual
 
 

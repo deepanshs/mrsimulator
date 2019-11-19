@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import platform
+import sys
 from os.path import abspath
 from os.path import dirname
 from os.path import join
@@ -13,6 +14,8 @@ from setuptools import find_packages
 from setuptools import setup
 
 # get the version from file
+
+print("python version", sys.version_info)
 
 with open("src/mrsimulator/__init__.py", "r") as f:
     for line in f.readlines():
@@ -165,7 +168,7 @@ setup(
         "pydantic>=0.28",
         "requests>=2.21.0",
         "monty==2.0.4",
-        "csdmpy>=0.1.2",
+        "csdmpy>=0.1.4",
     ],
     ext_modules=cythonize(ext_modules, language_level=3),
     include_package_data=True,

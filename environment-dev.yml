@@ -1,0 +1,24 @@
+name: mrsim-dev
+channels:
+  - anaconda
+dependencies:
+  - fftw>=3.3.0
+  - openblas
+  - numpy>=1.13.3
+  - setuptools>=27.3
+  - cython>=0.29.11
+  - astropy>=3.0
+  - requests>=2.21.0
+  - pip>=19.1.1
+  - pip:
+      - monty==2.0.4
+      - csdmpy>=0.1.4
+      - pydantic>=0.28
+      - sphinxjp.themes.basicstrap
+      - breathe>=4.13.0
+      - sphinx-copybutton
+      - pytest>=5.2.1
+      - pytest-cov
+      - black
+      - pre-commit
+      - sympy

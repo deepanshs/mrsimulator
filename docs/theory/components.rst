@@ -191,7 +191,7 @@ external magnetic field, respectively. The relation between
     \varrho_{0,0}^{(\sigma)} &= -\frac{1}{\sqrt{3}} \rho_{0,0}^{(\sigma)} \\
     \varrho_{2,n}^{(\sigma)} &=\sqrt{\frac{2}{3}} \rho_{2,n}^{(\sigma)}
 
-.. cssclass:: table-bordered table-hover centered
+.. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of scaled spatial orientation tensors in the principal
   axis system of the nuclear shielding tensor, |SOF|, from Eq. :eq:`eq_5` of
@@ -265,12 +265,12 @@ The relation between :math:`\varrho_{L,n}^{(qq)}` and
 where :math:`\left<L~M~|~l_1~l_2~m_1~m_2\right>` is the Clebsch Gordan
 coefficient.
 
-.. cssclass:: table-bordered table-hover centered
+.. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of scaled spatial orientation tensors in the principal
-  axis system of the efg tensor, |SOF|,  from Eq. :eq:`eq_5` of rank :math:`L`
-  resulting from the :math:`M^\text{th}` order perturbation expansion of the
-  Electric Quadrupole Hamiltonian is presented.
+                axis system of the efg tensor, |SOF|, from Eq. :eq:`eq_5` of rank :math:`L`
+                resulting from the :math:`M^\text{th}` order perturbation expansion of the
+                Electric Quadrupole Hamiltonian is presented.
   :widths: 25 25 50
   :header-rows: 1
 
@@ -326,7 +326,7 @@ transition functions are described using the orthogonal rotation subgroups.
 Single nucleus spin transition functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. cssclass:: table-bordered table-hover centered
+.. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of single nucleus spin transition functions,
                 :math:`\xi_L^{(k)}(i,j)`.
@@ -365,7 +365,7 @@ operators of rank :math:`L`, and :math:`k \in [-L, L]`.
 In terms of the tensor product of the Cartesian operators, the above spherical
 tensors are expressed as follows,
 
-.. cssclass:: table-bordered table-hover
+.. cssclass:: table-bordered table-striped centered
 
 .. list-table::
   :widths: 50 50
@@ -385,7 +385,7 @@ tensors are expressed as follows,
 where :math:`I` is the spin quantum number of the nucleus and
 :math:`\hat{\bf{1}}` is the identity operator.
 
-.. cssclass:: table-bordered table-hover centered
+.. cssclass:: table-bordered table-striped centered
 .. list-table:: A list of composite single nucleus spin transition functions,
                 :math:`\xi_L^{(k)}(i,j)`. Here, :math:`I` is the spin quantum
                 number of the nucleus.
@@ -412,7 +412,7 @@ Frequency tensors (FT) in PAS, :math:`\varpi_{L, n}^{(k)}(i,j)`
 Single nucleus frequency tensors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. cssclass:: table-bordered table-hover centered
+.. cssclass:: table-bordered table-striped centered
 
 .. list-table:: The table presents a list of frequency tensors defined in the principal
   axis system of the respective interaction tensor from Eq. :eq:`eq_7`,
