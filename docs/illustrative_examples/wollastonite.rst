@@ -13,9 +13,9 @@ parameters were obtained from
 
 .. doctest::
 
-    >>> S29_1 = Site(name='Q21', isotope='29Si', isotropic_chemical_shift=-89.0, shielding_symmetric={'zeta': 59.8, 'eta': 0.62})
-    >>> S29_2 = Site(name='Q22', isotope='29Si', isotropic_chemical_shift=-89.5, shielding_symmetric={'zeta': 52.1, 'eta': 0.68})
-    >>> S29_3 = Site(name='Q23', isotope='29Si', isotropic_chemical_shift=-87.8, shielding_symmetric={'zeta': 69.4, 'eta': 0.60})
+    >>> S29_1 = Site(isotope='29Si', isotropic_chemical_shift=-89.0, shielding_symmetric={'zeta': 59.8, 'eta': 0.62})
+    >>> S29_2 = Site(isotope='29Si', isotropic_chemical_shift=-89.5, shielding_symmetric={'zeta': 52.1, 'eta': 0.68})
+    >>> S29_3 = Site(isotope='29Si', isotropic_chemical_shift=-87.8, shielding_symmetric={'zeta': 69.4, 'eta': 0.60})
 
 **Step 2**  Create isotopomers from these sites.
 
@@ -43,7 +43,9 @@ objects.
 .. doctest::
 
     >>> sim_wollastonite = Simulator()
+    >>> # add isotopomers
     >>> sim_wollastonite.isotopomers += isotopomers
+    >>> # add dimensions
     >>> sim_wollastonite.dimensions += [dimension]
 
 **Step 5**  Simulate and plot.
@@ -51,7 +53,7 @@ objects.
 .. doctest::
 
     >>> x, y = sim_wollastonite.run(method=one_d_spectrum)
-    >>> plt.plot(x,y) # doctest:+SKIP
+    >>> plot(x,y) # doctest:+SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'illustrative_example_wollastonite')

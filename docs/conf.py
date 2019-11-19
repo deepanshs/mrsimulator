@@ -42,13 +42,13 @@ needs_sphinx = "2.0"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "sphinx.ext.autodoc",
+    # "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
-    "sphinx.ext.coverage",
+    # "sphinx.ext.coverage",
     "sphinx.ext.mathjax",
-    "sphinx.ext.githubpages",
+    # "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
-    "sphinx.ext.viewcode",
+    # "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
     "breathe",
@@ -124,7 +124,7 @@ html_theme_options = {
     # Disable showing the sidebar. Defaults to 'false'
     "nosidebar": False,
     # Show header searchbox. Defaults to false. works only "nosidebar=True",
-    "header_searchbox": True,
+    "header_searchbox": False,
     # Put the sidebar on the right side. Defaults to false.
     "rightsidebar": False,
     # Set the width of the sidebar. Defaults to 3
@@ -140,7 +140,7 @@ html_theme_options = {
     # Set the width of the content area. Defaults to '900px'
     "content_width": "900px",
     # Fix the width of the row. Defaults to false
-    "row_fixed": True,
+    "row_fixed": False,
     # Disable the responsive design. Defaults to false
     "noresponsive": False,
     # Disable the responsive footer relbar. Defaults to false

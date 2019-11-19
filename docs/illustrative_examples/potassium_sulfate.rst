@@ -45,7 +45,9 @@ object.
 .. doctest::
 
     >>> sim_K2SO3 = Simulator()
+    >>> # add isotopomers
     >>> sim_K2SO3.isotopomers += [isotopomers]
+    >>> # add dimensions
     >>> sim_K2SO3.dimensions += [dimension]
 
 **Step 5**  Simulate and plot.
@@ -53,7 +55,7 @@ object.
 .. doctest::
 
     >>> x, y = sim_K2SO3.run(method=one_d_spectrum)
-    >>> plt.plot(x,y) # doctest:+SKIP
+    >>> plot(x,y) # doctest:+SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'illustrative_example_K2SO3')

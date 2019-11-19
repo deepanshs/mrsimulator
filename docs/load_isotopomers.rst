@@ -10,7 +10,7 @@ Exporting isotopomers to a JSON file
 ------------------------------------
 
 The isotopomers and dimensions from the :ref:`simulator_api` class object may
-be serialized JSON compliant python dictionary object using the
+be serialized to a JSON compliant python dictionary object using the
 :meth:`~mrsimulator.simulator.Simulator.to_dict_with_units` method. Consider
 the simulator object from the :ref:`example_coesite` example.
 
@@ -55,7 +55,8 @@ the simulator object from the :ref:`example_coesite` example.
                                                  'eta': 0.292}}]}]}
 
 The :meth:`~mrsimulator.simulator.Simulator.to_dict_with_units` method returns
-a python dictionary which can then be serialized to a file with JSON module,
+a python dictionary, which can then be serialized to a file using the JSON
+module, as follows
 
 .. doctest::
 
@@ -68,14 +69,14 @@ a python dictionary which can then be serialized to a file with JSON module,
     >>> import os
     >>> os.remove('my_serialized_file.json')
 
-Importing isotopomers to a JSON file
-------------------------------------
+Importing isotopomers from a JSON file
+--------------------------------------
 
-A list of isotopomers may similarly be imported from a JSON
-serialized isotopomers file. Consider`JSON isotopomers <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_test.json>`_ file.
+Similarly, a list of isotopomers can be directly imported from a JSON
+serialized isotopomers file. Consider this `JSON isotopomers <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_test.json>`_ file.
 To import the isotopomers from this file, use the
 :meth:`~mrsimulator.simulator.Simulator.load_isotopomers`
-method of the :ref:`simulator_api` class, as follows,
+method of the :ref:`simulator_api` class, as follows
 
 .. doctest::
 
@@ -88,7 +89,10 @@ method of the :ref:`simulator_api` class, as follows,
     Downloading '/DeepanshS/mrsimulator-test/master/isotopomers_test.json'
     from 'raw.githubusercontent.com' to file 'isotopomers_test.json'.
     [████████████████████████████████████]
-    >>> pprint(len(sim.isotopomers))
+
+    >>> # The seven isotopomers from the file are added to the isotopomers
+    >>> # attribute of the simulator class.
+    >>> len(sim.isotopomers)
     7
 
 .. testsetup::

@@ -8,9 +8,8 @@ Getting started with `Mrsimulator`: Using objects
 
 In the previous section on getting started, we showed an example where
 we parse python dictionaries to create :ref:`isotopomer_api` and
-:ref:`dimension_api` objects. In this section, we'll illustrate
-the use of core `Mrsimulator` objects to construct isotopomer and dimension
-objects.
+:ref:`dimension_api` objects. In this section, we'll illustrate how we can
+achieve the same result using the core `Mrsimulator` objects.
 
 Let's start by importing the objects.
 
@@ -38,9 +37,9 @@ example,
 
     >>> C13A = Site(isotope='13C')
 
-The above code creates a site with :math:`^{13}\text{C}` isotope. Because, no
+The above code creates a site with a :math:`^{13}\text{C}` isotope. Because, no
 further information is delivered to the site object, other attributes such as
-the isotropic chemical shift assume their default values.
+the isotropic chemical shift assume their default value.
 
 .. doctest::
 
@@ -48,7 +47,7 @@ the isotropic chemical shift assume their default values.
     0
 
 Here, the isotropic chemical shift is given in ppm. This information is also
-delivered with the ``property_units`` attribute of the instance. For example,
+present in the ``property_units`` attribute of the instance. For example,
 
 .. doctest::
 
@@ -70,11 +69,10 @@ In creating the site, ``H1``, we use the :ref:`symmetric_tensor_api` object to
 describe a traceless symmetric second-rank irreducible nuclear shielding
 tensor, using the attributes `zeta` and `eta`, respectively.
 The parameter `zeta` and `eta` are defined as per
-Haeberlen convention and describe the anisotropy and asymmetry parameters of
+Haeberlen convention and describes the anisotropy and asymmetry parameter of
 the tensor, respectively.
-Once again, the default unit for the attributes from the SymmetricTensor class
-may be found in the ``property_units`` attribute of the respective class,
-such as,
+Similarly, the default unit of the attributes from the SymmetricTensor class
+may be found with the ``property_units`` attribute, such as
 
 .. doctest::
 
@@ -85,9 +83,9 @@ For site, ``O17``, we once again use the SymmetricTensor class, only this time
 to describe a traceless symmetric second-rank irreducible electric quadrupole
 tensor, using the attributes `Cq` and `eta`, respectively. The parameter `Cq`
 is the quadrupole coupling constant, and `eta` is the asymmetry parameters of
-the quadrupole tensor, respectively. Once again, the default unit for the
-attributes from the SymmetricTensor object can be found in the
-``property_units`` attribute of the respective class, such as,
+the quadrupole tensor, respectively.
+The default unit of the attributes from the SymmetricTensor class may be found
+in the ``property_units`` attribute, such as
 
 .. doctest::
 
@@ -103,9 +101,10 @@ Isotopomer object
 -----------------
 
 An isotopomer object contains sites and couplings along with the abundance
-of the said isotopomer. In this version, we focus on isotopomers with a single
-site, and therefore the couplings are irrelevant. Let's use the
-sites we have already created to set up isotopomers.
+of the respective isotopomer. In this version, we focus on isotopomers with a
+single site, and therefore the couplings are irrelevant.
+
+Let's use the sites we have already created to set up isotopomers.
 
 .. doctest::
 
@@ -125,10 +124,10 @@ Likewise, we can create a :ref:`dimension_api` object following,
 
     >>> dimension_1 = Dimension(isotope='13C', number_of_points=2046, spectral_width=25000)
 
-Here, we have set up a dimension, ``dimension_1``, which ready to record
-:math:`^{13}\text{C}` resonances over 25 kHz with 2046 points. The
+The above dimension, ``dimension_1``, is defined to record
+:math:`^{13}\text{C}` resonances over 25 kHz using 2046 points. The
 unspecified attributes, such as `rotor_frequency`, `rotor_angle`,
-`magnetic_flux_density` assume their default values,
+`magnetic_flux_density`, assume their default value,
 
 .. doctest::
 
@@ -154,13 +153,15 @@ similarly accessed via,
 Simulator object
 ----------------
 
-The use of simulator object is the same as described in the previous
+The use of the simulator object is the same as described in the previous
 section.
 
 .. doctest::
 
     >>> sim = Simulator()
+    >>> # add isotopomers
     >>> sim.isotopomers += [isotopomer_1, isotopomer_2, isotopomer_3, isotopomer_4]
+    >>> # add dimensions
     >>> sim.dimensions += [dimension_1]
 
 A quick run
@@ -168,7 +169,7 @@ A quick run
 
 Let's import the `one_d_spectrum` method, do a quick run of the simulator,
 and observe the spectrum. But before, here is the plotting method we'll
-use to plot the spectrum from the following simulations.
+use to plot the spectrum for all further examples.
 
     >>> import matplotlib.pyplot as plt
     >>> def plot(x, y):

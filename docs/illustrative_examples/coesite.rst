@@ -33,7 +33,8 @@ information from
     >>> dimension = Dimension(isotope='17O', number_of_points=2046, spectral_width=50000, rotor_frequency=14000)
 
 The above dimension is set up to record the :math:`^{17}\text{O}` resonances
-at the magic angle, spinning at 14 kHz at 9.4 T external magnetic flux density.
+at the magic angle, spinning at 14 kHz and 9.4 T external magnetic flux
+density.
 The resonances are recorded over 50 kHz using 2046 points. You may also request
 a full description of the dimension object using the
 :meth:`~mrsimulator.Dimension.to_dict_with_units` method.
@@ -56,7 +57,9 @@ objects.
 .. doctest::
 
     >>> sim_coesite = Simulator()
+    >>> # add isotopomers
     >>> sim_coesite.isotopomers += isotopomers
+    >>> # add dimensions
     >>> sim_coesite.dimensions += [dimension]
 
 **Step 5**  Simulate and plot.
@@ -64,7 +67,7 @@ objects.
 .. doctest::
 
     >>> x, y = sim_coesite.run(method=one_d_spectrum)
-    >>> plt.plot(x,y) # doctest:+SKIP
+    >>> plot(x,y) # doctest:+SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'illustrative_example_1')

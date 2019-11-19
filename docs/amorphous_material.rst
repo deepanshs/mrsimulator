@@ -42,7 +42,9 @@ these isotopomers.
 .. doctest::
 
     >>> sim = Simulator()
+    >>> # add isotopomers
     >>> sim.isotopomers = isotopomers
+    >>> # create and add a dimension
     >>> sim.dimensions = [Dimension(isotope='29Si', spectral_width=25000, reference_offset=-7000)]
 
 Let's observe the static spectrum first.
@@ -59,15 +61,17 @@ Let's observe the static spectrum first.
     :figclass: figure-polaroid
 
 .. note::
-    The lineshape broadening seen in the above spectrum is the result of
+    The broad lineshape seen in the above spectrum is the result of
     lineshapes arising from a distribution of tensors. In this case,
-    the lineshape is an integral of 1000 individual spectrum.
+    the lineshape is an integral of 1000 individual spectrum. There is no
+    lineshape broadening filter applied to the spectrum.
 
-Here is a spinning sideband spectrum at a 90-degree angle.
+Here is another example with a spinning sideband spectrum at a 90-degree angle.
 
 .. doctest::
 
-    >>> sim.dimensions = [Dimension(isotope='29Si', spectral_width=25000, reference_offset=-7000, rotor_frequency=5000, rotor_angle=1.57079)]
+    >>> sim.dimensions[0].rotor_frequency = 5000 # in Hz
+    >>> sim.dimensions[0].rotor_angle = 1.57079 # 90 degree in radian
     >>> x, y = sim.run(method=one_d_spectrum) # doctest:+SKIP
     >>> plt.plot(x,y) # doctest:+SKIP
 
