@@ -143,12 +143,12 @@ similarly accessed via,
 
 .. doctest::
 
-    >>> dimension_1.property_units
-    {'spectral_width': 'Hz',
+    >>> pprint(dimension_1.property_units)
+    {'magnetic_flux_density': 'T',
      'reference_offset': 'Hz',
-     'magnetic_flux_density': 'T',
+     'rotor_angle': 'rad',
      'rotor_frequency': 'Hz',
-     'rotor_angle': 'rad'}
+     'spectral_width': 'Hz'}
 
 Simulator object
 ----------------

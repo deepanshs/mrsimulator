@@ -4,7 +4,6 @@ include conda-requirements.txt
 include LICENSE
 include CHANGELOG
 
-recursive-include src/mrsimulator/examples *
 recursive-include src/c_lib/include *
 recursive-include src/c_lib/lib *
 

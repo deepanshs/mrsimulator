@@ -63,7 +63,7 @@ def octahedral_direction_cosine_squares_and_amplitudes(nt: int):
     x /= r2
     y /= r2
     z /= r2
-    amp = 1.0 / (r2 * np.sqrt(r2))
+    amp = nt / (r2 * np.sqrt(r2))
 
     return x, y, z, amp
 

@@ -1,6 +1,10 @@
-v0.1.4
+v0.2.0
  - Added more isotopes to the simulator. Source NMR Tables (https://apps.apple.com/bn/app/nmr-tables/id1030899609?mt=12)
  - Added two new keywords: 'atomic_number' and 'quadrupole_moment'
+ - Renamed the class Spectrum to Dimension
+ - Added documentation for every class.
+ - Added examples for simulating NMR quadrupolar lineshapes
+ - Fixed bug associated with changing amplitudes, when number of orientations is changed.
 
 v0.1.3
     Fixed missing files from source tar.

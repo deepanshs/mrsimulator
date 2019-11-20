@@ -4,3 +4,4 @@ pre-commit
 ## test required
 sympy
 pytest
+pytest-cov

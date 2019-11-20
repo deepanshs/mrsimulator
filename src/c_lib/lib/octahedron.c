@@ -14,7 +14,7 @@ void octahedronGetDirectionCosineSquareOverOctantAndWeights(int nt, double *xr,
                                                             double *amp) {
 
   int i, j, k = 0;
-  double x2, y2, z2, r2, scale = 1.0;
+  double x2, y2, z2, r2, scale = (double)nt;
 
   /* Do the (x + y + z = nt) face of the octahedron
   !z -> 0 to nt-1
