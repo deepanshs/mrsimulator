@@ -173,7 +173,7 @@ use to plot the spectrum for all further examples.
 
     >>> import matplotlib.pyplot as plt
     >>> def plot(x, y):
-    ...     plt.figure(figsize=(4, 3))
+    ...     plt.figure(figsize=(4.5, 2.5))
     ...     plt.plot(x, y, linewidth=1)
     ...     plt.xlim([x.value.max(), x.value.min()])
     ...     plt.xlabel(f"frequency ratio / {str(x.unit)}")

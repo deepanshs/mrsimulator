@@ -110,7 +110,6 @@ version/
 class-diagram*
 *.out
 *.prof
-*.ipynb
 *.mp4
 *.html
 *.temp
