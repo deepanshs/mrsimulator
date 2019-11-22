@@ -42,6 +42,7 @@ We recommend using pip for installing Mrsimulator. PIP is a package manager
 for Python packages, and is included with python version 3.4 and higher.
 
 **Mac and Linux system**
+
 For mac and linux systems, we provide binary distributions of mrsimulator
 package for python version 3.6-3.8. To install, type the following in the
 terminal,
@@ -49,6 +50,7 @@ terminal,
     $ pip install mrsimulator
 
 **Windows**
+
 For windows, we currently do not provide binary distribution. You'll need to compile and build the mrsimulator library. Please follow the instructions below.
 
 1.  Install dependencies using conda
