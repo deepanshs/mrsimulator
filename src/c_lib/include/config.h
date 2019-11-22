@@ -19,6 +19,11 @@ typedef float complex64[2];
 #define restrict __restrict
 #endif
 
+// for windows msvc compiler
+#if _MSC_VER && !__INTEL_COMPILER
+#include "cblas.h"
+#else
+
 // #ifdef __APPLE__
 // #include <Accelerate/Accelerate.h>
 #if __has_include("cblas.h")
@@ -36,6 +41,7 @@ typedef float complex64[2];
 #elif __has_include("cblas_openblas.h")
 #include "cblas_openblas.h"
 
+#endif
 #endif
 
 #define __blas_activate

@@ -2,6 +2,9 @@
 
 .. _using_objects:
 
+.. .. image:: https://mybinder.org/badge_logo.svg
+..  :target: https://mybinder.org/v2/gh/DeepanshS/mrsimulator/master?filepath=jupyternotebooks%2F
+
 =================================================
 Getting started with `Mrsimulator`: Using objects
 =================================================
@@ -91,10 +94,6 @@ in the ``property_units`` attribute, such as
 
     >>> O17.quadrupolar.property_units
     {'Cq': 'Hz', 'alpha': 'rad', 'beta': 'rad', 'gamma': 'rad'}
-
-.. .. tip::
-..     If `Mrsimulator`, we use SymmetricTensor objects in about every solid-state
-..     NMR line-shape simulation. We recommend reading :ref:`symmetric_tensor_api`.
 
 
 Isotopomer object
