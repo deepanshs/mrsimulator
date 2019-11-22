@@ -47,6 +47,14 @@ line-shape of uncoupled spins for the following:
 - Variable angle spinning (VAS) at arbitrary angle and spin frequency,
 - Static line-shape.
 
+
+
+**Contribution**
+
+``Mrsimulator`` is a open source NMR simulation package. We are a small team
+working on developing the package for the NMR community. Any contribution and
+suggestion is greatly appreciated.
+
 -------
 
 .. toctree::
@@ -71,12 +79,6 @@ line-shape of uncoupled spins for the following:
 ..    theory/wigner_rotations
 ..    examples
 
-Contribution
-------------
-
-``Mrsimulator`` is a open source NMR simulation package. We are a small team
-working on developing the package for the NMR community. Any contribution is
-greatly appreciated.
 
 .. only:: html
 

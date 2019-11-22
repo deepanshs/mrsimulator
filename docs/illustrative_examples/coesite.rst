@@ -12,11 +12,11 @@ information from
 
 .. doctest::
 
-    >>> O17_1 = Site(isotope='17O', isotropic_chemical_shift=29, quadrupolar=st(Cq=6.05e6, eta=0.000))
-    >>> O17_2 = Site(isotope='17O', isotropic_chemical_shift=41, quadrupolar=st(Cq=5.43e6, eta=0.166))
-    >>> O17_3 = Site(isotope='17O', isotropic_chemical_shift=57, quadrupolar=st(Cq=5.45e6, eta=0.168))
-    >>> O17_4 = Site(isotope='17O', isotropic_chemical_shift=53, quadrupolar=st(Cq=5.52e6, eta=0.169))
-    >>> O17_5 = Site(isotope='17O', isotropic_chemical_shift=58, quadrupolar=st(Cq=5.16e6, eta=0.292))
+    >>> O17_1 = Site(isotope='17O', isotropic_chemical_shift=29, quadrupolar={'Cq': 6.05e6, 'eta': 0.000})
+    >>> O17_2 = Site(isotope='17O', isotropic_chemical_shift=41, quadrupolar={'Cq': 5.43e6, 'eta': 0.166})
+    >>> O17_3 = Site(isotope='17O', isotropic_chemical_shift=57, quadrupolar={'Cq': 5.45e6, 'eta': 0.168})
+    >>> O17_4 = Site(isotope='17O', isotropic_chemical_shift=53, quadrupolar={'Cq': 5.52e6, 'eta': 0.169})
+    >>> O17_5 = Site(isotope='17O', isotropic_chemical_shift=58, quadrupolar={'Cq': 5.16e6, 'eta': 0.292})
 
 **Step 2**  Create isotopomers using the sites.
 
@@ -70,32 +70,7 @@ objects.
     >>> plot(x,y) # doctest:+SKIP
 
 .. .. testsetup::
-..     >>> plot_save(x, y, 'illustrative_example_1')
+..     >>> plot_save(x, y, 'illustrative_example_coesite')
 
-.. figure:: ../_images/illustrative_example_1.*
+.. figure:: ../_images/illustrative_example_coesite.*
     :figclass: figure-polaroid
-
-
-.. Coesite :math:`^{17}\text{O}` NMR spectrum at 11.7 T
-.. ****************************************************
-
-.. To simulate the lineshape at 11.7 T magnetic flux density, set the value of the
-.. `magnetic_flux_density` attribute from the Dimension object to 11.7,
-
-.. .. doctest::
-
-..     >>> dimension.magnetic_flux_density = 11.7
-
-.. and rerun the simulation
-
-.. .. doctest::
-
-..     >>> x, y = sim.run(method=one_d_spectrum)
-..     >>> plt.plot(x,y) # doctest:+SKIP
-
-.. .. testsetup::
-
-..     >>> plot_save(x, y, 'illustrative_example_2')
-
-.. .. figure:: ../_images/illustrative_example_2.*
-..     :figclass: figure-polaroid

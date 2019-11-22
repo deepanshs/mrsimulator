@@ -236,3 +236,5 @@ library.
 
 .. figure:: _images/example.*
     :figclass: figure-polaroid
+
+    An example static solid state NMR lineshape simulation

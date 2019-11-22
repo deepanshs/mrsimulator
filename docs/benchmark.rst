@@ -10,7 +10,7 @@ put a considerable effort into optimizing the library. The following benchmark
 shows the number of sites simulated per second for the shift and quadrupolar
 tensor interaction at static and MAS conditions.
 
-.. figure:: _images/benchmark.*
+.. figure:: _static/benchmark.*
     :figclass: figure-polaroid
 
 .. .. raw:: html

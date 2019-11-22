@@ -77,12 +77,12 @@ def add_site(doctest_namespace):
     doctest_namespace["dimension_object"] = dimension_object
 
     def plot_save(x, y, filename):
-        plt.figure(figsize=(4, 3))
+        plt.figure(figsize=(4.5, 2.5))
         plt.plot(x, y, linewidth=1)
         plt.xlim([x.value.max(), x.value.min()])
         plt.xlabel(f"frequency ratio / {str(x.unit)}", **font)
-        plt.grid(color="gray", linestyle="--", linewidth=1.0, alpha=0.25)
-        plt.tight_layout(h_pad=0, w_pad=0, pad=0)
+        plt.grid(color="gray", linestyle="--", linewidth=0.75, alpha=0.25)
+        plt.tight_layout(pad=0.15)
 
         filename = path.split(filename)[1]
         filepath = "./docs/_images"

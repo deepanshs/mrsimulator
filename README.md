@@ -5,20 +5,24 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python)
 [![codecov](https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/DeepanshS/mrsimulator)
 
-# mrsimulator
+# Mrsimulator
 
-`mrsimulator` is a library package with methods and tools for fast
-simulation of solid-state nuclear magnetic resonance (NMR) line-shapes.
-The library contains routines written in C which are wrapped and made
-available in python.
+`Mrsimulator` is a python package that offers methods and tools for fast
+simulation of solid-state nuclear magnetic resonance (NMR) line-shapes. The
+core methods of this package are written in C and is wrapped and made available
+in python for python users.
 
-The package is currently under development. At present, `mrsimulator` features
-simulation of one-dimensional NMR line-shape of uncoupled spin
-I=1/2 isotopes for the following scenarios --
+> :warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
 
-- At arbitrary macroscopic magnetic flux density,
-- Magic angle spinning (MAS) at arbitrary spin rate,
-- Variable angle spinning (VAS) at arbitrary angle and spin rates,
+**Features**
+At present, *mrsimulator* offers fast-simulation of one-dimensional NMR
+line-shape of uncoupled spins for the following:
+
+- Spin $I=\frac{1}{2}$, and quadrupole $I \ge \frac{1}{2}$,
+  (See the list of supported isotopes),
+- Arbitrary macroscopic magnetic flux density,
+- Magic angle spinning (MAS) at arbitrary spin frequency,
+- Variable angle spinning (VAS) at arbitrary angle and spin frequency,
 - Static line-shape.
 
 For more information, refer to the
@@ -31,7 +35,35 @@ distribution for python version 3.6 or higher. The anaconda distribution
 ships with numerous packages and modules including Numpy, Scipy, and Matplotlib
 which are useful packages for scientific datasets.
 
-### Download mrsimulator package
+### Using pip
+
+Pip is the probably the easiest way to install python packages. PIP is a
+package manager for Python packages, and is included with python version 3.4
+and higher.
+
+**Mac and Linux system**
+For mac and linux systems, we provide binary distributions of mrsimulator
+package for python version 3.6 and 3.7. To install, type the following in the
+terminal,
+
+    $ pip install mrsimulator
+
+**Windows or python version>=3.8**
+For windows, or python version>=3.8, you need to compile and build the
+mrsimulator library. Follow the instructions below.
+
+1) Install dependencies using conda
+
+    $ conda install -c conda-forge openblas fftw>=3.3.0 numpy>=1.13.3 cython>=0.29.11
+
+2) Install mrsimulator using pip
+
+    $ pip install mrsimulator
+
+
+### From source
+
+#### Download mrsimulator package
 
 First, clone and download the `mrsimulator` package from Github. If you prefer
 `git`, type the following in the terminal,
@@ -44,14 +76,14 @@ containing the package (usually, the folder is named mrsimulator).
 
     $ cd mrsimulator
 
-### Installing dependencies
+#### Installing dependencies
 
 Next, install the dependencies of the package. We recommend using `conda` to
 install the dependencies, as follows,
 
     $ conda install -c conda-forge openblas --file requirements.txt
 
-### Building and Installing mrsimulator package
+#### Building and Installing mrsimulator package
 
 Because the core of the `mrsimulator` package is written in C, you will
 require a C-compiler to build and install the package. We recommend the
@@ -75,4 +107,4 @@ in your terminal.
 
 This should produce the following figure.
 
-![alt text](https://raw.githubusercontent.com/DeepanshS/mrsimulator/master/docs/_images/test_output.png)
+![alt text](https://raw.githubusercontent.com/DeepanshS/mrsimulator/master/docs/_static/test_output.png)

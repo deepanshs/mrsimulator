@@ -40,8 +40,6 @@ class Site(Parseable):
     Example:
         Setting up Site objects.
 
-        .. doctest::
-
             >>> site1 = Site(
             ...           isotope='13C',
             ...           isotropic_chemical_shift=20, # in ppm

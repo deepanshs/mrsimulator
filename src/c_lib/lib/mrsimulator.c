@@ -82,10 +82,9 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
   plan->norm_amplitudes = malloc_double(scheme->octant_orientations);
   cblas_dcopy(scheme->octant_orientations, scheme->amplitudes, 1,
               plan->norm_amplitudes, 1);
-  double number_of_sideband_inverse =
-      (1.0 / (double)(plan->number_of_sidebands * plan->n_octants));
-  cblas_dscal(scheme->octant_orientations, number_of_sideband_inverse,
-              plan->norm_amplitudes, 1);
+  double scale = (1.0 / (double)(plan->number_of_sidebands *
+                                 plan->number_of_sidebands * plan->n_octants));
+  cblas_dscal(scheme->octant_orientations, scale, plan->norm_amplitudes, 1);
   /* ----------------------------------------------------------------------- */
   /* fftw routine setup .................................................... */
   /* ....................................................................... */

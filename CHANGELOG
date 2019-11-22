@@ -4,7 +4,10 @@ v0.2.0
  - Renamed the class Spectrum to Dimension
  - Added documentation for every class.
  - Added examples for simulating NMR quadrupolar lineshapes
- - Fixed bug associated with changing amplitudes, when number of orientations is changed.
+ - Added amplitude normalization. The spectral amplitudes no longer change when
+   integral_density, integral_volume, number of sidebands, or number of points
+   along the dimension is changed.
+ - Removed plotly-dash app to its own repository.
 
 v0.1.3
     Fixed missing files from source tar.
