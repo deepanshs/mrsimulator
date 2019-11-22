@@ -14,43 +14,43 @@ which are useful packages for scientific datasets.
 Using pip
 ---------
 
-Pip is the probably the easiest way to install python packages. PIP is a
-package manager for Python packages, and is included with python version 3.4
-and higher.
+Pip is the probably the easiest way to install python packages. We recommend
+using pip for installing Mrsimulator. PIP is a package manager for Python
+packages, and is included with python version 3.4 and higher.
 
 **Mac and Linux system**
 
 For mac and linux systems, we provide binary distributions of mrsimulator
-package for python version 3.6 and 3.7. To install, type the following in the
+package for python version 3.6-3.8. To install, type the following in the
 terminal,
 
 .. code-block:: bash
 
     $ pip install mrsimulator
 
-**Windows or python version>=3.8**
+**Windows**
 
-For windows, or python version>=3.8, you need to compile and build the
-mrsimulator library. Follow the instructions below.
+For windows, we currently do not provide binary distribution. You'll need to
+compile and build the mrsimulator library. Follow the instructions below.
 
-1) Install dependencies using conda
-    .. code-block:: bash
+1. Install dependencies using conda
+        .. code-block:: bash
 
-        $ conda install -c conda-forge openblas fftw>=3.3.0 numpy>=1.13.3 cython>=0.29.11
+            $ conda install -c conda-forge openblas fftw>=3.3.0 numpy>=1.13.3 cython>=0.29.11
 
-2) Install mrsimulator using pip
-    .. code-block:: bash
+2. Build package using pip (you will require a c-compiler, such as, `Microsoft Visual C++ <https://visualstudio.microsoft.com/downloads/>`_).
+        .. code-block:: bash
 
-        $ pip install mrsimulator
+            $ pip install mrsimulator
 
 
-From source
------------
+Building from source
+--------------------
 
 **Download mrsimulator package**
 
 `Clone and download <https://github.com/DeepanshS/mrsimulator>`_ the mrsimulator
-package from Github. If you use git, type the following in the terminal,
+package from Github. If you prefer git, type the following in the terminal,
 
 .. code-block:: bash
 

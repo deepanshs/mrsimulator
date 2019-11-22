@@ -7,16 +7,16 @@
 
 # Mrsimulator
 
-`Mrsimulator` is a python package that offers methods and tools for fast
-simulation of solid-state nuclear magnetic resonance (NMR) line-shapes. The
-core methods of this package are written in C and is wrapped and made available
+`Mrsimulator` is a python package with methods and tools for simulating
+fast solid-state nuclear magnetic resonance (NMR) line-shapes. The
+core library is written in C, wrapped and made available
 in python for python users.
 
 > :warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
 
 **Features**
-At present, *mrsimulator* offers fast-simulation of one-dimensional NMR
-line-shape of uncoupled spins for the following:
+At present, _mrsimulator_ offers fast-simulation of one-dimensional NMR
+line-shape of uncoupled spins for the following scenarios:
 
 - Spin $I=\frac{1}{2}$, and quadrupole $I \ge \frac{1}{2}$,
   (See the list of supported isotopes),
@@ -33,35 +33,33 @@ For more information, refer to the
 We recommend installing [anaconda](https://www.anaconda.com/distribution/)
 distribution for python version 3.6 or higher. The anaconda distribution
 ships with numerous packages and modules including Numpy, Scipy, and Matplotlib
-which are useful packages for scientific datasets.
+which are useful for scientific datasets.
 
 ### Using pip
 
-Pip is the probably the easiest way to install python packages. PIP is a
-package manager for Python packages, and is included with python version 3.4
-and higher.
+Pip is the probably the easiest way to install python packages.
+We recommend using pip for installing Mrsimulator. PIP is a package manager
+for Python packages, and is included with python version 3.4 and higher.
 
 **Mac and Linux system**
 For mac and linux systems, we provide binary distributions of mrsimulator
-package for python version 3.6 and 3.7. To install, type the following in the
+package for python version 3.6-3.8. To install, type the following in the
 terminal,
 
     $ pip install mrsimulator
 
-**Windows or python version>=3.8**
-For windows, or python version>=3.8, you need to compile and build the
-mrsimulator library. Follow the instructions below.
+**Windows**
+For windows, we currently do not provide binary distribution. You'll need to compile and build the mrsimulator library. Please follow the instructions below.
 
-1) Install dependencies using conda
+1.  Install dependencies using conda
 
-    $ conda install -c conda-forge openblas fftw>=3.3.0 numpy>=1.13.3 cython>=0.29.11
+        $ conda install -c conda-forge openblas fftw>=3.3.0 numpy>=1.13.3 cython>=0.29.11
 
-2) Install mrsimulator using pip
+2.  Install mrsimulator using pip
 
-    $ pip install mrsimulator
+         $ pip install mrsimulator
 
-
-### From source
+### Building from source
 
 #### Download mrsimulator package
 

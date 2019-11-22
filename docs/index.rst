@@ -26,9 +26,9 @@
 Welcome to Mrsimulator's documentation!
 =======================================
 
-``Mrsimulator`` is a python package that offers methods and tools for fast
-simulation of solid-state nuclear magnetic resonance (NMR) line-shapes. The
-core methods of this package are written in C and is wrapped and made available
+``Mrsimulator`` is a python package with methods and tools for simulating
+fast solid-state nuclear magnetic resonance (NMR) line-shapes. The
+core methods is written in C, wrapped and made available
 in python for python users.
 
 .. warning::

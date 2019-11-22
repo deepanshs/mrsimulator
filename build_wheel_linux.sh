@@ -7,16 +7,13 @@ cd io
 yum install -y openblas-devel git fftw-devel
 
 # Compile wheels
-for PYBIN in /opt/python/cp3[6-7]*/bin; do
+for PYBIN in /opt/python/cp3[6-8]*/bin; do
+    "${PYBIN}/python" --version
     "${PYBIN}/pip" install --upgrade pip
     "${PYBIN}/pip" install -r requirements.txt
+    "${PYBIN}/python" setup.py develop bdist_wheel -d linuxwheels
     "${PYBIN}/pip" install -r requirements-dev.txt
-    "${PYBIN}/python" setup.py develop
     "${PYBIN}/pytest"
-    "${PYBIN}/python" setup.py bdist_wheel -d linuxwheels
-    rm src/c_lib/mrmethods/nmr_methods.c
-    rm src/c_lib/sandbox/sandbox.c
-    rm src/c_lib/test/test.c
 done
 
 # Bundle external shared libraries into the wheels
