@@ -1,12 +1,10 @@
 
 Coesite
--------
+^^^^^^^
 Coesite is a high-pressure (2-3 GPa) and high-temperature (700°C) polymorph of
 silicon dioxide :math:`\text{SiO}_2`. Coesite has five distinct
 :math:`^{17}\text{O}` sites.  We use the :math:`^{17}\text{O}` tensor
-information from
-`Grandinetti et. al. <https://pubs.acs.org/doi/abs/10.1021/j100032a045>`_
-
+information from Grandinetti et. al. :cite:`jpc_1995_99_12341`
 
 **Step 1**  Create sites.
 

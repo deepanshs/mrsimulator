@@ -63,6 +63,7 @@ suggestion is greatly appreciated.
 
    installation
    requirements
+   understanding-isotopomers
    getting_started
    using_mrsimulator_objects
    illustrative_examples/index
@@ -73,6 +74,7 @@ suggestion is greatly appreciated.
    theory/components
    api_py/py_api
    api_c/c_api
+
 
 ..    objects
 ..    spectrum_object
@@ -88,3 +90,8 @@ suggestion is greatly appreciated.
     * :ref:`genindex`
     * :ref:`modindex`
     * :ref:`search`
+
+.. only:: latex
+
+    .. bibliography:: ref2.bib illustrative_examples/ref.bib
+        :style: plain

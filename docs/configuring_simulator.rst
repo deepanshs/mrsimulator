@@ -34,7 +34,7 @@ Here, the configurable attributes are ``number_of_sidebands``,
 Number of sidebands
 -------------------
 The value of this attribute is the number of sidebands
-requested in evaluated the lineshapes. The default value is 64 and is
+requested in evaluating the lineshapes. The default value is 64 and is
 sufficient for most cases, as seen from our previous examples. In certain
 circumstances, especially when the anisotropy is large or the rotor spin
 frequency is low, 64 sidebands might not be sufficient. The user is thus
@@ -93,8 +93,7 @@ over the positive octant of the sphere.
 `Mrsimulator` enables the user to exploit the orientational symmetry of the
 problem, and thus optimize the simulation by performing a partial integration
 ---`octant` or `hemisphere`. To learn more about the orientational symmetries,
-please refer to
-`Eden et. al. <https://www.sciencedirect.com/science/article/pii/S1090780798914276?via%3Dihub>`_
+please refer to Eden et. al. :cite:`jmr_1998_132_220`
 
 In previous examples, we exploited the :math:`\text{D}_{2h}` symmetry
 of the problem and therefore were able to simulate the spectrum by integrating
@@ -219,3 +218,8 @@ list of isotopomers. In this example, ``y`` is a list of two numpy arrays.
 
 .. figure:: _images/example_decompose_2.*
     :figclass: figure-polaroid
+
+.. only:: html
+
+    .. bibliography:: ref2.bib
+        :style: plain

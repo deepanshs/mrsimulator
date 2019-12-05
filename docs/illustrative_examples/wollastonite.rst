@@ -1,12 +1,11 @@
 
 Wollastonite
-------------
+^^^^^^^^^^^^
 
 Wollastonite is a high-temperature calcium-silicate,
 :math:`\beta-\text{Ca}_3\text{Si}_3\text{O}_9`, with three distinct
 :math:`^{29}\text{Si}` sites.  The :math:`^{29}\text{Si}` shielding tensor
-parameters were obtained from
-`Hansen et. al. <https://pubs.acs.org/doi/10.1021/ic020647f>`_
+parameters were obtained from Hansen et. al. :cite:`ic_2003_42_2368`
 
 
 **Step 1**  Create sites.

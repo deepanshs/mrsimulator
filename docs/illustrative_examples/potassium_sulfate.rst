@@ -1,11 +1,11 @@
 
 Potassium Sulfate
------------------
+^^^^^^^^^^^^^^^^^
 
 The following example is a :math:`^{33}\text{S}` NMR lineshape simulation of
 potassium sulfate (:math:`\text{K}_2\text{SO}_4`). The quadrupole tensor
-parameters for :math:`^{33}\text{S}` is obtained from
-`Moudrakovski et. al. <https://pubs.acs.org/doi/10.1021/jp908206c>`_
+parameters for :math:`^{33}\text{S}` is obtained from Moudrakovski et. al.
+:cite:`jpc_2010_114_309`
 
 
 **Step 1**  Create sites, in this case, just the one.

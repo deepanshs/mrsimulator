@@ -51,9 +51,23 @@ extensions = [
     # "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
+    "sphinxcontrib.bibtex",
+    # "sphinx.ext.numfig",
     "breathe",
     "sphinxjp.themes.basicstrap",
 ]
+
+# numfig:
+numfig = True
+numfig_secnum_depth = 1
+# numfig_format = {
+#     "figure": "Fig. %s.",
+#     "table": "Table %s.",
+#     "code-block": "Listing %s.",
+# }
+
+# math
+math_number_all = True
 
 subprocess.run("doxygen", shell=True)
 doxy_output = os.path.abspath("./xml")
@@ -101,7 +115,7 @@ language = None
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = None
+pygments_style = "sphinx"
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -235,10 +249,10 @@ latex_elements = {
             \\ifthenelse{\\isodd{\\value{page}}}{}{ \\small \\nouppercase{\\rightmark} }
         }
         \\fancyfoot[CO, CE]{\\thepage}
-    """
+    """,
     # Latex figure (float) alignment
     #
-    # "figure_align": "htbp",
+    "figure_align": "htbp",
 }
 
 # Grouping the document tree into LaTeX files. List of tuples

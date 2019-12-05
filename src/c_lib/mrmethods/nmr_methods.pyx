@@ -44,6 +44,7 @@ def one_d_spectrum(dimension,
         to the ordered list of isotopomers.
     """
 
+    cdef int transition_increment
 # ---------------------------------------------------------------------
 # observed spin _______________________________________________________
     dimension = dimension[0]
@@ -67,8 +68,8 @@ def one_d_spectrum(dimension,
     # transitions of the observed spin
     cdef ndarray[double, ndim=1] transition_array
     cdef int number_of_transitions
-    transition_array = np.asarray([-0.5, 0.5])
-    number_of_transitions = int(transition_array.size/2)
+    # transition_array = np.asarray([-0.5, 0.5]).ravel()
+    # number_of_transitions = int(transition_array.size/2)
     # else:
     #     energy_level_count = int(2*spin_quantum_number+1)
     #     number_of_transitions = energy_level_count-1
@@ -215,8 +216,14 @@ def one_d_spectrum(dimension,
                 #     print(f'Quadrupolar asymmetry (η) = {eta}')
                 #     print(f'Quadrupolar orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
-
         if number_of_sites != 0:
+            if isotopomer['transitions'] is not None:
+                transition_array = np.asarray(isotopomer['transitions']).ravel()
+            else:
+                transition_array = np.asarray([-0.5, 0.5])
+            transition_increment = 2*number_of_sites
+            number_of_transitions = int((transition_array.size)/transition_increment)
+
             isotopomer_struct.number_of_sites = number_of_sites
             isotopomer_struct.spin = spin_quantum_number
             isotopomer_struct.larmor_frequency = larmor_frequency
@@ -254,7 +261,7 @@ def one_d_spectrum(dimension,
                     sample_rotation_frequency_in_Hz,
                     rotor_angle_in_rad,
 
-                    &transition_array[2*trans__],
+                    &transition_array[transition_increment*trans__],
                     integration_density,
                     integration_volume,          # 0-octant, 1-hemisphere, 2-sphere.
                     )

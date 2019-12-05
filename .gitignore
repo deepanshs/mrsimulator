@@ -126,3 +126,4 @@ test_dash.py
 test.c
 nmr_methods.c
 sandbox.c
+*.bib

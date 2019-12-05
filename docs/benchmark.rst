@@ -4,7 +4,7 @@
 Benchmark
 =========
 
-The primary objective in the design of the ``Mrsimulator`` library is to enable
+One of the objectives in the design of the ``Mrsimulator`` library is to enable
 fast NMR lineshape simulation for amorphous materials. For this, we have
 put a considerable effort into optimizing the library. The following benchmark
 shows the number of sites simulated per second for the shift and quadrupolar
