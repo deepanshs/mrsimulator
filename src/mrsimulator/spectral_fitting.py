@@ -187,7 +187,7 @@ def fcn2min(params, data, sim):
 
     simulatedData.dependent_variables[0].components[0] = line_broadening(
         broaden_x, broaden_y, values["sigma"], 0
-    )
+    ).real
 
     return data - simulatedData.dependent_variables[0].components[0]
 

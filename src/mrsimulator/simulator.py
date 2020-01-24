@@ -7,6 +7,7 @@ import csdmpy as cp
 from astropy import units as u
 from mrsimulator import Dimension
 from mrsimulator import Isotopomer
+from mrsimulator.apodization import Apodization
 from mrsimulator.importer import import_json
 from mrsimulator.simulator_config import ConfigSimulator
 from pydantic import BaseModel
@@ -29,6 +30,7 @@ class Simulator(BaseModel):
     dimensions: List[Dimension] = []
     simulated_data: Optional[List]
     config: ConfigSimulator = ConfigSimulator()
+
 
     class Config:
         validate_assignment = True
@@ -214,3 +216,7 @@ class Simulator(BaseModel):
                 new.add_dependent_variable(dependent_variable)
                 new.dependent_variables[-1].encoding = "base64"
         return new
+    def apodize(self, fn, dimension = 0, **kwargs):
+
+        apodization_filter = Apodization(self.as_csdm_object(), dimension = dimension)
+        return apodization_filter.apodize(fn, **kwargs)
