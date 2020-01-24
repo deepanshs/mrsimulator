@@ -13,11 +13,13 @@ from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SymmetricTensor as st
+from mrsimulator.apodization import Apodization
 from mrsimulator.methods import one_d_spectrum
 from numpy.fft import fft
 from numpy.fft import fftshift
 from numpy.fft import ifft
 from numpy.fft import ifftshift
+
 
 __author__ = "Maxwell C Venetos"
 __email__ = "maxvenetos@gmail.com"
@@ -165,7 +167,13 @@ def make_fitting_parameters(sim):
     return params
 
 
-def fcn2min(params, data, sim):
+function_mapping = {
+    "Gaussian": Apodization.Gaussian,
+    "Lorentzian": Apodization.Lorentzian,
+}
+
+
+def fcn2min(params, data, sim, apodization_function):
     """
     The simulation routine to establish how the parameters will update the simulation.
 
@@ -181,18 +189,14 @@ def fcn2min(params, data, sim):
             exec(executable)
 
     sim.run(method=one_d_spectrum)
-    simulatedData = sim.as_csdm_object()
-    broaden_x = simulatedData.dimensions[0]
-    broaden_y = simulatedData.dependent_variables[0].components[0] * values["factor"]
+    y = sim.apodize(function_mapping[apodization_function], sigma=values["sigma"])
 
-    simulatedData.dependent_variables[0].components[0] = line_broadening(
-        broaden_x, broaden_y, values["sigma"], 0
-    ).real
+    # y_factored = y * values["factor"]
 
-    return data - simulatedData.dependent_variables[0].components[0]
+    return data - y  # _factored#simulatedData.dependent_variables[0].components[0]
 
 
-def spectral_fitting(experiment, sim, params=Parameters()):
+def spectral_fitting(experiment, sim, apodization_function, params):
     """
     Spectrum fitting routine to fit the mrsimulation to an experimental spectrum. Parameters may be provided or if not provided will be generated based on the simulation object passed through.
 
@@ -224,7 +228,11 @@ def spectral_fitting(experiment, sim, params=Parameters()):
     minner = Minimizer(
         fcn2min,
         params,
-        fcn_args=(experiment.dependent_variables[0].components[0].real, sim),
+        fcn_args=(
+            experiment.dependent_variables[0].components[0].real,
+            sim,
+            apodization_function,
+        ),
     )
     result = minner.minimize()
 
