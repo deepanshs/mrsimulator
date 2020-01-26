@@ -11,9 +11,10 @@
 #
 import os
 import subprocess
+import warnings
 
-# import sys
-# sys.path.insert(0, os.path.abspath("../.."))
+from sphinx_gallery.sorting import ExplicitOrder
+from sphinx_gallery.sorting import FileNameSortKey
 
 # -- Project information -----------------------------------------------------
 
@@ -52,14 +53,72 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
     "sphinxcontrib.bibtex",
+    "sphinx_gallery.gen_gallery",
     # "sphinx.ext.numfig",
     "breathe",
     "sphinxjp.themes.basicstrap",
 ]
 
+
+autosummary_generate = True
+
+# filter sphinx matplotlib warning
+warnings.filterwarnings(
+    "ignore",
+    category=UserWarning,
+    message="Matplotlib is currently using agg, which is a"
+    " non-GUI backend, so cannot show the figure.",
+)
+warnings.filterwarnings(
+    "ignore",
+    category=UserWarning,
+    message=(
+        "The physical quantity name, 'plane angle', is not "
+        "defined in the astropy.units package. Continuing "
+        "with 'plane angle' as the physical quantity name "
+        "for unit deg."
+    ),
+)
+warnings.filterwarnings(
+    "ignore",
+    category=UserWarning,
+    message=(
+        "The physical quantity name, 'electric field strength', is not "
+        "defined in the astropy.units package. Continuing "
+        "with 'electric field strength' as the physical quantity name "
+        "for unit N / C."
+    ),
+)
+
+# sphinx gallery config
+sphinx_gallery_conf = {
+    "examples_dirs": "../examples",  # path to your example scripts
+    "remove_config_comments": True,
+    "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
+    "within_subsection_order": FileNameSortKey,
+    "subsection_order": ExplicitOrder(
+        [
+            "../examples/plot_Wollastonite",
+            "../examples/plot_Coesite",
+            "../examples/plot_PotassiumSulfate",
+        ]
+    ),
+    "reference_url": {
+        # The module you locally document uses None
+        "mrsimulator": None,
+        # "matplotlib": "https://matplotlib.org",
+        # "numpy": "https://numpy.org",
+    },
+}
+
+intersphinx_mapping = {
+    "matplotlib": ("https://matplotlib.org", None),
+    "numpy": ("https://numpy.org", None),
+}
+
 # numfig:
-numfig = True
-numfig_secnum_depth = 1
+# numfig = True
+# numfig_secnum_depth = 1
 # numfig_format = {
 #     "figure": "Fig. %s.",
 #     "table": "Table %s.",
@@ -192,7 +251,7 @@ html_theme_options = {
 }
 
 # Theme options
-html_logo = "_static/mrsimulator-light-add-01.png"
+html_logo = "_static/mrsimulator.png"
 
 # html_context = {
 #     "display_github": True,
@@ -221,7 +280,7 @@ htmlhelp_basename = "MRSimulatordoc"
 
 # -- Options for LaTeX output ------------------------------------------------
 latex_engine = "xelatex"
-latex_logo = "_static/mrsimulator-light-add-01.png"
+latex_logo = "_static/mrsimulator.png"
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #

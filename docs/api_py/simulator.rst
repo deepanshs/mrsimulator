@@ -5,7 +5,7 @@
 Simulator
 =========
 
-.. currentmodule:: mrsimulator.simulator
+.. currentmodule:: mrsimulator
 
 .. autoclass:: Simulator
     :show-inheritance:

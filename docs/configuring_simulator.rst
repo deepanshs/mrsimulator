@@ -63,6 +63,9 @@ advised to increase this value as required. Consider the following example.
 .. figure:: _images/example_sidebands_1.*
     :figclass: figure-polaroid
 
+    Spinning sidebands evaluated with a relatively low number of sidebands,
+    resulting in an inaccurate sideband simulation.
+
 If you are familiar with NMR lineshapes, you may notice that the above sideband
 simulation is inaccurate, as evident from the abrupt termination of the
 sideband amplitudes at the edges. As mentioned earlier, this
@@ -83,6 +86,7 @@ observe.
 .. figure:: _images/example_sidebands_2.*
     :figclass: figure-polaroid
 
+    Spinning sideband spectrum evaluated with a large number of sidebands.
 
 Integration volume
 ------------------
@@ -93,7 +97,7 @@ over the positive octant of the sphere.
 `Mrsimulator` enables the user to exploit the orientational symmetry of the
 problem, and thus optimize the simulation by performing a partial integration
 ---`octant` or `hemisphere`. To learn more about the orientational symmetries,
-please refer to Eden et. al. :cite:`jmr_1998_132_220`
+please refer to Eden et. al. [#f4]_
 
 In previous examples, we exploited the :math:`\text{D}_{2h}` symmetry
 of the problem and therefore were able to simulate the spectrum by integrating
@@ -125,6 +129,10 @@ shielding tensor, as follows,
 .. figure:: _images/example_integration_volume_1.*
     :figclass: figure-polaroid
 
+    An example of an incomplete lineshape integration, lineshape simulation
+    resulting from the frequency contributions evaluated over the positive
+    octant.
+
 Clearly, the above spectrum is incorrect. To fix this, set the integration
 volume to `hemisphere` and re-simulate.
 
@@ -143,6 +151,8 @@ volume to `hemisphere` and re-simulate.
 .. figure:: _images/example_integration_volume_2.*
     :figclass: figure-polaroid
 
+    The lineshape resulting from the frequency contributions evaluted over the
+    top hemisphere.
 
 Integration density
 -------------------
@@ -192,6 +202,9 @@ arising from an individual isotopomer. For example,
 .. figure:: _images/example_decompose_1.*
     :figclass: figure-polaroid
 
+    By default, the spectrum is an integration of the spectra from individual
+    isotopomers.
+
 Now, that we have a spectrum from two isotopomers, try setting the value of the
 decompose attribute to ``True`` and observe.
 
@@ -219,7 +232,9 @@ list of isotopomers. In this example, ``y`` is a list of two numpy arrays.
 .. figure:: _images/example_decompose_2.*
     :figclass: figure-polaroid
 
-.. only:: html
+    Spectrum from individual isotopomers when the value of the `decompose`
+    config is True.
 
-    .. bibliography:: ref2.bib
-        :style: plain
+.. [#f4] Edén, M. and Levitt, M. H. Computation of orientational averages in
+         solid-state nmr by gaussian spherical quadrature. J. Mag. Res.,
+         **132**, *2*, 220–239, 1998. `doi:10.1006/jmre.1998.1427 <https://doi.org/10.1006/jmre.1998.1427>`_.

@@ -66,7 +66,7 @@ suggestion is greatly appreciated.
    understanding-isotopomers
    getting_started
    using_mrsimulator_objects
-   illustrative_examples/index
+   auto_examples/index
    load_isotopomers
    configuring_simulator
    benchmark
@@ -90,8 +90,3 @@ suggestion is greatly appreciated.
     * :ref:`genindex`
     * :ref:`modindex`
     * :ref:`search`
-
-.. only:: latex
-
-    .. bibliography:: ref2.bib illustrative_examples/ref.bib
-        :style: plain

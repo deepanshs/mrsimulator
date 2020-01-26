@@ -26,7 +26,7 @@ line-shape of uncoupled spins for the following scenarios:
 - Static line-shape.
 
 For more information, refer to the
-[documentation](https://deepanshs.github.io/mrsimulator/).
+[documentation](https://mrsimulator.readthedocs.io/en/stable/).
 
 ## Installation
 
@@ -81,7 +81,7 @@ containing the package (usually, the folder is named mrsimulator).
 Next, install the dependencies of the package. We recommend using `conda` to
 install the dependencies, as follows,
 
-    $ conda install -c conda-forge openblas --file requirements.txt
+    $ conda install -c conda-forge --file conda-requirements.txt
 
 #### Building and Installing mrsimulator package
 
