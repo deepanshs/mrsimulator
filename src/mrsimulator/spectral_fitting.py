@@ -191,9 +191,9 @@ def fcn2min(params, data, sim, apodization_function):
     sim.run(method=one_d_spectrum)
     y = sim.apodize(function_mapping[apodization_function], sigma=values["sigma"])
 
-    # y_factored = y * values["factor"]
+    y_factored = y * values["factor"]
 
-    return data - y  # _factored#simulatedData.dependent_variables[0].components[0]
+    return data - y_factored  # _factored#simulatedData.dependent_variables[0].components[0]
 
 
 def spectral_fitting(experiment, sim, apodization_function, params):
