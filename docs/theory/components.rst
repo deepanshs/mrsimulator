@@ -146,7 +146,8 @@ system of the interaction tensor and corresponds to the
 .. _spatial_orientation_table:
 
 .. |SOF| replace:: :math:`\mathbf{\varsigma}_{L,n}^{(k)}`
-
+.. |L| replace:: :math:`L`
+.. |Mth| replace:: :math:`M^\mathrm{th}`
 
 Scaled spatial orientation tensors (sSOT) in PAS, |SOF|
 -------------------------------------------------------
@@ -195,7 +196,7 @@ external magnetic field, respectively. The relation between
 
 .. list-table:: A list of scaled spatial orientation tensors in the principal
   axis system of the nuclear shielding tensor, |SOF|, from Eq. :eq:`eq_5` of
-  rank :math:`L` resulting from the :math:`M^\text{th}` order perturbation
+  rank L resulting from the Mth order perturbation
   expansion of the Nuclear shielding Hamiltonian is presented.
   :widths: 25 25 50
   :header-rows: 1
@@ -268,9 +269,9 @@ coefficient.
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of scaled spatial orientation tensors in the principal
-                axis system of the efg tensor, |SOF|, from Eq. :eq:`eq_5` of rank :math:`L`
-                resulting from the :math:`M^\text{th}` order perturbation expansion of the
-                Electric Quadrupole Hamiltonian is presented.
+                axis system of the efg tensor, |SOF|, from Eq. :eq:`eq_5` of
+                rank L resulting from the Mth order perturbation expansion
+                of the Electric Quadrupole Hamiltonian is presented.
   :widths: 25 25 50
   :header-rows: 1
 
@@ -387,7 +388,7 @@ where :math:`I` is the spin quantum number of the nucleus and
 
 .. cssclass:: table-bordered table-striped centered
 .. list-table:: A list of composite single nucleus spin transition functions,
-                :math:`\xi_L^{(k)}(i,j)`. Here, :math:`I` is the spin quantum
+                :math:`\xi_L^{(k)}(i,j)`. Here, `I` is the spin quantum
                 number of the nucleus.
   :widths: 50 50
   :header-rows: 1
@@ -416,9 +417,7 @@ Single nucleus frequency tensors
 
 .. list-table:: The table presents a list of frequency tensors defined in the principal
   axis system of the respective interaction tensor from Eq. :eq:`eq_7`,
-  :math:`\varpi_{L,n}^{(k)}(i,j)`, of rank :math:`L` resulting from the
-  :math:`M^\text{th}` order perturbation expansion of the interaction
-  Hamiltonians supported in ``mrsimulator``.
+  :math:`\varpi_{L,n}^{(k)}(i,j)`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonians supported in ``mrsimulator``.
   :widths: 20 15 15 50
   :header-rows: 1
 

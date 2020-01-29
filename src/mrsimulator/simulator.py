@@ -180,15 +180,18 @@ class Simulator(BaseModel):
         """
         new = cp.new()
         for dimension in self.dimensions:
+            count = dimension.number_of_points
+            increment = dimension.spectral_width / count
             new_dimension = {
                 "type": "linear",
-                "count": dimension.number_of_points,
-                "increment": "{0} Hz".format(
-                    dimension.spectral_width / dimension.number_of_points
-                ),
+                "count": count,
+                "increment": f"{increment} Hz",
                 "coordinates_offset": f"{dimension.reference_offset} Hz",
                 "origin_offset": f"{dimension.larmor_frequency} Hz",
                 "complex_fft": True,
+                "reciprocal": {
+                    "coordinates_offset": f"{-(count/2)/dimension.spectral_width} s"
+                },
             }
             new.add_dimension(new_dimension)
 

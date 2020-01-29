@@ -286,7 +286,7 @@ def _one_d_simulator(
         # spin rate, spin angle and number spinning sidebands
         int number_of_sidebands = 128,
         double sample_rotation_frequency_in_Hz = 0.0,
-        rotor_angle = None,
+        rotor_angle_in_rad = None,
 
         m_final = 0.5,
         m_initial = -0.5,
@@ -371,9 +371,9 @@ def _one_d_simulator(
         raise Exception("Number of dipolar coupling are not consistent with the number of spins.")
     cdef np.ndarray[double, ndim=1] D_c = D
 
-    if rotor_angle is None:
-        rotor_angle = 54.735
-    cdef double rotor_angle_in_rad_c = np.pi*rotor_angle/180.
+    # if rotor_angle is None:
+    #     rotor_angle = 54.735
+    cdef double rotor_angle_in_rad_c = rotor_angle_in_rad
 
     cdef second_order_quad_c = second_order_quad
 

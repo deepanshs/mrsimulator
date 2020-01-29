@@ -177,7 +177,18 @@ setup(
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
+        "Intended Audience :: Science/Research",
+        "Intended Audience :: Education",
+        "Intended Audience :: Developers",
+        "Operating System :: OS Independent",
+        "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: BSD License",
+        "Programming Language :: C",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Topic :: Education",
+        "Topic :: Scientific/Engineering :: Chemistry",
     ],
 )

@@ -12,7 +12,7 @@ Exporting isotopomers to a JSON file
 The isotopomers and dimensions from the :ref:`simulator_api` class object may
 be serialized to a JSON compliant python dictionary object using the
 :meth:`~mrsimulator.simulator.Simulator.to_dict_with_units` method. Consider
-the simulator object from the :ref:`example_coesite` example.
+the simulator object from the coesite example.
 
 .. doctest::
 

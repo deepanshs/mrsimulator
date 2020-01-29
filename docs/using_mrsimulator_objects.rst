@@ -193,6 +193,9 @@ And now, a quick run.
 .. figure:: _images/example_1.*
     :figclass: figure-polaroid
 
+    An example of solid-state :math:`^{13}\text{C}` isotropic lineshape
+    simulation.
+
 Tweak the sites and simulate
 ****************************
 
@@ -210,6 +213,9 @@ Let's add shielding tensors to sites ``C13A`` and ``C13B``.
 
 .. figure:: _images/example_2.*
     :figclass: figure-polaroid
+
+    An example of static-solid state :math:`^{13}\text{C}` CSA lineshape
+    simulation.
 
 .. note::
     Because the objects in python are passed as reference, we were able to
@@ -231,6 +237,7 @@ Turn up the rotor frequency and simulate
 .. figure:: _images/example_3.*
     :figclass: figure-polaroid
 
+    An example solid-state :math:`^{13}\text{C}` MAS sideband simulation.
 
 Change the rotor angle and simulate
 ***********************************
@@ -247,6 +254,8 @@ Change the rotor angle and simulate
 .. figure:: _images/example_4.*
     :figclass: figure-polaroid
 
+    An example of solid-state :math:`^{13}\text{C}` VAS sideband simulation.
+
 Switch to 1H and simulate
 *************************
 
@@ -261,6 +270,8 @@ Switch to 1H and simulate
 
 .. figure:: _images/example_5.*
     :figclass: figure-polaroid
+
+    An example of solid-state :math:`^{1}\text{H}` VAS sideband simulation.
 
 Switch to 17O and simulate
 **************************
@@ -278,3 +289,6 @@ Switch to 17O and simulate
 
 .. figure:: _images/example_6.*
     :figclass: figure-polaroid
+
+    An example of solid-state :math:`^{17}\text{O}` MAS central-transition
+    simulation.

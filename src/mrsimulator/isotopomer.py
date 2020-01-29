@@ -28,6 +28,11 @@ class Isotopomer(Parseable):
                 representing a nuclear site. Default value is an empty list.
         abundance: The abundance of the isotopomer in unit of %. The default value is
                 100. This attribute is useful when multiple isotopomers are present.
+        transitions: A list of lists where each list is a transition, given as
+                [initial state, final state]. For examples [[-0.5, 0.5]], [[1.5, 2.5]].
+                You may also provide, multiple transitions, [[-0.5, 0.5], [-1.5, 0.5]].
+                The resulting spectrum is a sum of resonances from individual
+                transitions.
     """
 
     name: Optional[str] = ""
@@ -39,6 +44,7 @@ class Isotopomer(Parseable):
     property_unit_types: ClassVar = {"abundance": "dimensionless"}
     property_default_units: ClassVar = {"abundance": "pct"}
     property_units: Dict = {"abundance": "pct"}
+    transitions: Optional[List] = None
 
     class Config:
         validate_assignment = True
@@ -102,7 +108,8 @@ class Isotopomer(Parseable):
                                                 'beta': None,
                                                 'eta': 0.5,
                                                 'gamma': None,
-                                                'zeta': -1006.5895999999999}}]}
+                                                'zeta': -1006.5895999999999}}],
+             'transitions': None}
         """
         temp_dict = self.dict()
         temp_dict["sites"] = [site.to_freq_dict(B0) for site in self.sites]
@@ -130,6 +137,7 @@ class Isotopomer(Parseable):
         temp_dict["sites"] = [site.to_dict_with_units() for site in self.sites]
         temp_dict["abundance"] = f"{self.abundance}%"
         temp_dict.pop("property_units")
+        temp_dict.pop("transitions")
 
         return temp_dict
 

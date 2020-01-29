@@ -8,6 +8,7 @@ from typing import Dict
 from typing import Optional
 
 import numpy as np
+from csdmpy import Dimension as csdm_dimension
 from monty.serialization import loadfn
 from mrsimulator import Parseable
 from pydantic import Field
@@ -276,6 +277,18 @@ class Dimension(Parseable):
             if key in temp_keys:
                 temp_dict[key] = f"{temp_dict[key]} {unit}"
         return temp_dict
+
+    def to_csdm_dimension(self):
+        count = self.number_of_points
+        dim = csdm_dimension(
+            type="linear",
+            count=count,
+            increment=f"{self.spectral_width/count} Hz",
+            coordinates_offset=f"{self.reference_offset} Hz",
+            origin_offset=f"{np.abs(self.larmor_frequency)} Hz",
+            complex_fft=True,
+        )
+        return dim
 
 
 def format_isotope_string(isotope_string):

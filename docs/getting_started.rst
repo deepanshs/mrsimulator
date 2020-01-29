@@ -50,7 +50,7 @@ objects.
 
 Setting up Isotopomer objects
 -----------------------------
-For all practical purposes, an isotopomer may be described as an isolated
+An isotopomer may be described as an isolated
 spin-system containing multiple sites and couplings between them. In the
 current version, we focus on a single site spin-system, that is,
 an isotopomer with a single site. Let's start by building a site.
@@ -234,6 +234,7 @@ library.
 .. .. testsetup::
 ..    >>> plot_save(freq, amp, "example")
 
+.. _fig2:
 .. figure:: _images/example.*
     :figclass: figure-polaroid
 

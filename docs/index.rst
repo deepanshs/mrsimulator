@@ -63,9 +63,10 @@ suggestion is greatly appreciated.
 
    installation
    requirements
+   understanding-isotopomers
    getting_started
    using_mrsimulator_objects
-   illustrative_examples/index
+   auto_examples/index
    load_isotopomers
    configuring_simulator
    benchmark
@@ -73,6 +74,7 @@ suggestion is greatly appreciated.
    theory/components
    api_py/py_api
    api_c/c_api
+
 
 ..    objects
 ..    spectrum_object

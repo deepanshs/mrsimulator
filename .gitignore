@@ -89,9 +89,6 @@ venv.bak/
 .spyderproject
 .spyproject
 
-# mkdocs documentation
-/site
-
 # mypy
 .mypy_cache/
 
@@ -105,6 +102,7 @@ venv.bak/
 src/c_lib/test_c/**
 tests/simpson/quad/**
 version/
+docs/auto_examples/
 
 # files
 class-diagram*
@@ -126,3 +124,4 @@ test_dash.py
 test.c
 nmr_methods.c
 sandbox.c
+*.bib
