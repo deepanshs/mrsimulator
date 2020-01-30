@@ -10,4 +10,4 @@ pytest-cov
 ## Building Docs
 sphinxjp.themes.basicstrap
 sphinx>=2.0
-sphinx-gallery>=1.1.1
+sphinx-gallery
