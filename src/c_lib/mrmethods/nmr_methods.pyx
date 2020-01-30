@@ -82,7 +82,7 @@ def one_d_spectrum(dimension,
     cdef int number_of_points = dimension.number_of_points
     cdef double spectral_width = dimension.spectral_width
     cdef double increment = spectral_width/number_of_points
-    cdef double reference_offset = dimension.reference_offset *factor
+    cdef double reference_offset = dimension.reference_offset * factor
 
     offset = increment*int(number_of_points/2.0)
     reference_offset -= offset
