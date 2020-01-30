@@ -9,10 +9,12 @@ dependencies:
   - cython>=0.29.11
   - astropy>=3.0
   - requests>=2.21.0
+  - matplotlib>=3.0.2
   - pip>=19.1.1
   - pip:
       - monty==2.0.4
       - csdmpy>=0.1.4
       - pydantic>=0.28
+      - lmfit>=1.0.0
     # - python=3.7.4
     # - anaconda
