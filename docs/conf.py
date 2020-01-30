@@ -52,7 +52,7 @@ extensions = [
     # "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
-    "sphinxcontrib.bibtex",
+    # "sphinxcontrib.bibtex",
     "sphinx_gallery.gen_gallery",
     # "sphinx.ext.numfig",
     "breathe",
