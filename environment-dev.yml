@@ -19,7 +19,7 @@ dependencies:
       - sphinxjp.themes.basicstrap
       - breathe>=4.13.0
       - sphinx-copybutton
-      - sphinx-gallery>=1.1.1
+      - sphinx-gallery
       - pytest>=5.2.1
       - pytest-cov
       - black
