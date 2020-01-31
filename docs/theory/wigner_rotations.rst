@@ -14,12 +14,14 @@ frequency tensor in PAS, :math:`\varpi_{L, n}^{(k)}(i,j)`, is generically
 expressed as,
 
 .. math::
+
     \varpi_{L, n}^{(k)}(i,j) = \varrho_{L,n}^{(k)}~~\xi_L^{(k)}(i, j).
     :label: eq_8
 
 In terms of the matrix notation, the above equation may also be represented as
 
 .. math::
+
     \boldsymbol{\varpi}_{L}^{(k)}(i,j) = \boldsymbol{\varrho}_{L}^{(k)}~~\xi_L^{(k)}(i, j).
     :label: eq_9
 

@@ -19,8 +19,9 @@ stationary-state semi-classical Hamiltonian, can be written as a sum of
 frequency components,
 
 .. math::
-    \Omega(\Theta, i, j) = \sum_k \Omega_k (\Theta, i, j),
     :label: eq_1
+
+    \Omega(\Theta, i, j) = \sum_k \Omega_k (\Theta, i, j),
 
 where :math:`\Theta` is the sample's lattice spatial orientation described with
 the Euler angles :math:`\Theta = \left(\alpha, \beta, \gamma\right)`, and
@@ -32,8 +33,9 @@ Each frequency component, :math:`\Omega_k (\Theta, i, j)`, is separated into
 three parts,
 
 .. math::
-    \Omega_k(\Theta, i, j) = \omega_k ~ \Xi_L^{(k)}(\Theta) ~ \xi_L^{(k)}(i, j),
     :label: eq_2
+
+    \Omega_k(\Theta, i, j) = \omega_k ~ \Xi_L^{(k)}(\Theta) ~ \xi_L^{(k)}(i, j),
 
 where :math:`\omega_k` is the size of the :math:`k^\text{th}` frequency
 component, and :math:`\Xi_L^{(k)}(\Theta)` and :math:`\xi_L^{(k)}(i, j)` are
@@ -52,15 +54,17 @@ rotation of the :math:`L^\text{th}`-rank irreducible tensor,
 via Wigner rotation which follows,
 
 .. math::
+    :label: eq_3
+
     \Xi_L^{(k)}(\Theta) = \sum_{n_0=-L}^L D^L_{n_0,0}(\Theta_0)
                           \sum_{n_1=-L}^L D^L_{n_1,n_0}(\Theta_1) ~ ... ~
                           \sum_{n_i=-L}^L D^L_{n_i,n}(\Theta_i) ~~
                           \varrho_{L,n}^{(k)}.
-    :label: eq_3
 
-.. Here, :math:`\varrho_{L,n}^{(k)}` is defined in the principal axis system of the
-.. interaction tensor, here generically denoted with
-.. :math:`\boldsymbol{\rho}^{(\lambda)}`, and the subscript :math:`n \in [-L, L]`.
+.. Here, :math:`\varrho_{L,n}^{(k)}` is defined in the principal axis system of
+.. the interaction tensor, here generically denoted with
+.. :math:`\boldsymbol{\rho}^{(\lambda)}`, and the subscript
+.. :math:`n \in [-L, L]`.
 .. The relationship between :math:`\boldsymbol{\rho}^{(\lambda)}` and
 .. :math:`\varrho_{L,n}^{(k)}` is described in the next section.
 
@@ -69,8 +73,9 @@ Here, the term :math:`D^L_{n_i,n_j}(\Theta)` is the
 generically denoted as,
 
 .. math::
-    D^L_{n_i,n_j}(\Theta) = e^{-i n_i \alpha} d_{n_i, n_j}^L(\beta) e^{-i n_j \gamma},
     :label: eq_4
+
+    D^L_{n_i,n_j}(\Theta) = e^{-i n_i \alpha} d_{n_i, n_j}^L(\beta) e^{-i n_j \gamma},
 
 where :math:`d_{n_i, n_j}^L(\beta)` is Wigner small :math:`d` element.
 
@@ -85,25 +90,28 @@ the principal axis system of the interaction tensor,
 tensor (sSOT),
 
 .. math::
-    \varsigma_{L,n}^{(k)} = \omega_k \varrho_{L,n}^{(k)},
     :label: eq_5
+
+    \varsigma_{L,n}^{(k)} = \omega_k \varrho_{L,n}^{(k)},
 
 of rank :math:`L`, also defined in the principal axis system of the interaction
 tensor, :math:`\boldsymbol{\rho}^{(\lambda)}`.
 Using Eqs. :eq:`eq_3` and :eq:`eq_5`, we re-express Eq. :eq:`eq_2` as
 
 .. math::
+    :label: eq_6
+
     \Omega_k(\Theta, i, j) =  \sum_{n_0=-L}^L D^L_{n_0,0}(\Theta_0)
                               \sum_{n_1=-L}^L D^L_{n_1,n_0}(\Theta_1) ~ ... ~
                               \sum_{n_i=-L}^L D^L_{n_i,n}(\Theta_i) ~~
                               \varpi_{L, n}^{(k)}(i,j),
-    :label: eq_6
 
 where
 
 .. math::
-    \varpi_{L, n}^{(k)}(i,j) = \varsigma_{L,n}^{(k)}~~\xi_L^{(k)}(i, j)
     :label: eq_7
+
+    \varpi_{L, n}^{(k)}(i,j) = \varsigma_{L,n}^{(k)}~~\xi_L^{(k)}(i, j)
 
 is the frequency tensor (FT) of rank :math:`L` defined in the principal axis
 system of the interaction tensor and corresponds to the
@@ -129,7 +137,8 @@ system of the interaction tensor and corresponds to the
 ..     - Description
 
 ..   * - Nuclear shielding
-..     - The parameter :math:`\varrho_\text{iso}` is the isotropic nuclear shielding.
+..     - The parameter :math:`\varrho_\text{iso}` is the isotropic nuclear
+..       shielding.
 
 ..       .. cssclass:: table-bordered table-hover centered
 ..       .. list-table::

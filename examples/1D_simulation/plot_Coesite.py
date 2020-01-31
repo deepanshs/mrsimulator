@@ -3,6 +3,8 @@
 """
 Coesite
 ^^^^^^^
+
+17O (I=5/2) quadrupolar line-shape simulation.
 """
 #%%
 # Coesite is a high-pressure (2-3 GPa) and high-temperature (700°C) polymorph of silicon
@@ -79,12 +81,10 @@ x, y = sim_coesite.run(method=one_d_spectrum)
 #%%
 # **Step 6** Plot.
 
-
-_, ax = plt.subplots(1, 1, figsize=(4.5, 3))
-ax.plot(x, y, color="black", linewidth=0.5)
-ax.set_xlabel("frequency / ppm")
-ax.set_xlim(x.value.max(), x.value.min())
-ax.grid(color="gray", linestyle="--", linewidth=0.25)
+plt.figure(figsize=(4, 3))
+plt.plot(x, y, color="black", linewidth=1)
+plt.xlabel("frequency / ppm")
+plt.xlim(x.value.max(), x.value.min())
 plt.tight_layout()
 plt.show()
 

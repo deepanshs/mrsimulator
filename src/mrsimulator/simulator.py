@@ -4,6 +4,7 @@ from typing import List
 from typing import Optional
 
 import csdmpy as cp
+import numpy as np
 from astropy import units as u
 from mrsimulator import Dimension
 from mrsimulator import Isotopomer
@@ -37,14 +38,15 @@ class Simulator(BaseModel):
         arbitrary_types_allowed = True
 
     def __eq__(self, other):
-        if (
-            not isinstance(other, Simulator)
-            or self.isotopomers != other.isotopomers
-            or self.dimensions != other.dimensions
-            or self.config != other.config
-        ):
-            return False
-        return True
+        check = [
+            isinstance(other, Simulator),
+            self.isotopomers == other.isotopomers,
+            self.dimensions == other.dimensions,
+            self.config == other.config,
+        ]
+        if np.all(check):
+            return True
+        return False
 
     def get_isotopes(self, I=None):
         """
