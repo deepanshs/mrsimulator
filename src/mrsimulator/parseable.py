@@ -45,8 +45,7 @@ class Parseable(BaseModel):
                         property_units[prop] = default_unit
                     except Exception as e:
                         raise Exception(
-                            f"Error enforcing units for {prop}: {json_dict[prop]}\n"
-                            + str(e)
+                            f"Error enforcing units for {prop}: {json_dict[prop]}\n{e}"
                         )
 
                 # If there are multiple type/unit combinations

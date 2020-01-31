@@ -13,6 +13,7 @@ import os
 import subprocess
 import warnings
 
+from sphinx_gallery.scrapers import matplotlib_scraper
 from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
 
@@ -62,6 +63,10 @@ extensions = [
 
 autosummary_generate = True
 
+# ---------------------------------------------------------------------------- #
+#                               Sphinx Gallery config                          #
+# ---------------------------------------------------------------------------- #
+
 # filter sphinx matplotlib warning
 warnings.filterwarnings(
     "ignore",
@@ -90,19 +95,26 @@ warnings.filterwarnings(
     ),
 )
 
+
+# matplotlib svg plots
+class matplotlib_svg_scraper(object):
+    def __repr__(self):
+        return self.__class__.__name__
+
+    def __call__(self, *args, **kwargs):
+        return matplotlib_scraper(*args, format="svg", **kwargs)
+
+
 # sphinx gallery config
 sphinx_gallery_conf = {
     "examples_dirs": "../examples",  # path to your example scripts
     "remove_config_comments": True,
     "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
     "within_subsection_order": FileNameSortKey,
-    "subsection_order": ExplicitOrder(
-        [
-            "../examples/plot_Wollastonite",
-            "../examples/plot_Coesite",
-            "../examples/plot_PotassiumSulfate",
-        ]
-    ),
+    # "show_memory": True,
+    "thumbnail_size": (400, 400),
+    "image_scrapers": (matplotlib_svg_scraper(),),
+    "subsection_order": ExplicitOrder(["../examples/1D_simulation"]),
     "reference_url": {
         # The module you locally document uses None
         "mrsimulator": None,
@@ -115,19 +127,12 @@ intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org", None),
     "numpy": ("https://numpy.org", None),
 }
+# ---------------------------------------------------------------------------- #
 
-# numfig:
-# numfig = True
-# numfig_secnum_depth = 1
-# numfig_format = {
-#     "figure": "Fig. %s.",
-#     "table": "Table %s.",
-#     "code-block": "Listing %s.",
-# }
 
-# math
-math_number_all = True
-
+# ---------------------------------------------------------------------------- #
+#                               Doxygen C docs config                          #
+# ---------------------------------------------------------------------------- #
 subprocess.run("doxygen", shell=True)
 doxy_output = os.path.abspath("./xml")
 
@@ -142,6 +147,15 @@ breathe_doxygen_config_options = {
     # "XML_PROGRAMLISTING": True,
     # "INPUT": "../../src/c_lib/include",
 }
+# ---------------------------------------------------------------------------- #
+
+# numfig config
+numfig = True
+numfig_secnum_depth = 1
+numfig_format = {"figure": "Figure %s", "table": "Table %s", "code-block": "Listing %s"}
+
+# math
+math_number_all = True
 
 # Tell sphinx what the primary language being documented is.
 primary_domain = "py"

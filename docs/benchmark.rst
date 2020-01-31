@@ -13,10 +13,6 @@ tensor interaction at static and MAS conditions.
 .. figure:: _static/benchmark.*
     :figclass: figure-polaroid
 
-.. .. raw:: html
-
-..     <iframe src="_static/benchmark_result.html" height="475px" width="100%" frameBorder="0"></iframe>
-
 The benchmark was performed on a 2.3 GHz Quad-Core Intel Core i5 Laptop using 8
 GB 2133 MHz LPDDR3 memory. For consistent benchmarking, 1000 single-site
 isotopomers were constructed, where the tensor parameters of the sites (`zeta`

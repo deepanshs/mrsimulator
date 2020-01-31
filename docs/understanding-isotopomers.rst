@@ -78,8 +78,8 @@ attributes.
 
 .. _listing_1H-12C:
 .. code-block:: json
-    :linenos:
-    :caption: A example JSON representation of `1H-12C` isotopomer.
+   :linenos:
+   :caption: An example 1H-12C isotopomer in JSON representation.
 
     {
         "name": "1H-12C",
@@ -97,8 +97,8 @@ attributes.
         "abundance": "98.915%"
     }
 
-:numref:`listing_1H-12C` is an example of the `1H-12C` isotopomer, serialized
-using JavaScript Object Notation (JSON).
+In :numref:`listing_1H-12C` is an example of the `1H-12C` isotopomer,
+serialized using the JavaScript Object Notation (JSON).
 At the root level of the **Isotopomer** object, we find four keywords,
 **name**, **description**, **sites**, and **abundance**. The value of the
 `name` key is `1H-12C`. The value of the description key is an optional
@@ -124,9 +124,9 @@ attributes.
 
 .. _listing_2H-12C:
 .. code-block:: json
-    :linenos:
-    :emphasize-lines: 12-17
-    :caption: A example JSON representation of `2H-12C` isotopomer.
+   :linenos:
+   :emphasize-lines: 12-17
+   :caption: An example 2H-12C isotopomer in JSON representation.
 
     {
         "name": "2H-12C",
@@ -150,7 +150,7 @@ attributes.
         "abundance": "0.148%"
     }
 
-:numref:`listing_2H-12C` is an example of the `2H-12C` isotopomer. This
+In :numref:`listing_2H-12C` is an example of a `2H-12C` isotopomer. This
 example is similar to the example in :numref:`listing_1H-12C`, except we have
 defined a new keyword, **quadrupolar**, to the **Site** object (lines 12-17).
 In this example, the site `isotope` is `2H`, which is a quadrupolar nucleus,

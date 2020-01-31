@@ -3,6 +3,8 @@
 """
 Wollastonite
 ^^^^^^^^^^^^
+
+29Si (I=1/2) spinning sideband simulation.
 """
 #%%
 # Wollastonite is a high-temperature calcium-silicate,
@@ -74,11 +76,10 @@ x, y = sim_wollastonite.run(method=one_d_spectrum)
 #%%
 # **Step 6** Plot.
 
-_, ax = plt.subplots(1, 1, figsize=(4.5, 3))
-ax.plot(x, y, color="black", linewidth=0.5)
-ax.set_xlabel("frequency / ppm")
-ax.set_xlim(x.value.max(), x.value.min())
-ax.grid(color="gray", linestyle="--", linewidth=0.25)
+plt.figure(figsize=(4, 3))
+plt.plot(x, y, color="black", linewidth=1)
+plt.xlabel("frequency / ppm")
+plt.xlim(x.value.max(), x.value.min())
 plt.tight_layout()
 plt.show()
 
