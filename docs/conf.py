@@ -101,6 +101,8 @@ sphinx_gallery_conf = {
             "../examples/plot_Wollastonite",
             "../examples/plot_Coesite",
             "../examples/plot_PotassiumSulfate",
+            "../example/plot_mrsimFitExample_O17",
+            "../example/plot_mrsimFitExample_wollastonite",
         ]
     ),
     "reference_url": {
