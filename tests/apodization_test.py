@@ -39,7 +39,7 @@ freq, amp = sim.run(method=one_d_spectrum)
 freqHz = sim.dimensions[0].coordinates_Hz
 
 
-def test_1():
+def test_Lorentzian():
     sigma = 200
     test = (sigma / 2) / (np.pi * (freqHz ** 2 + (sigma / 2) ** 2))
     y = sim.apodize(Apodization.Lorentzian, sigma=sigma)
@@ -49,7 +49,7 @@ def test_1():
     ), "Lorentzian appodization amplitude failed"
 
 
-def test_2():
+def test_Gaussian():
     sigma = 20
     test = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-((freqHz / sigma) ** 2) / 2)
     y = sim.apodize(Apodization.Gaussian, sigma=sigma)
