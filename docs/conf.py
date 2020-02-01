@@ -113,7 +113,7 @@ sphinx_gallery_conf = {
     "within_subsection_order": FileNameSortKey,
     # "show_memory": True,
     "thumbnail_size": (400, 400),
-    "image_scrapers": (matplotlib_svg_scraper(),),
+    # "image_scrapers": (matplotlib_svg_scraper(),),
     "subsection_order": ExplicitOrder(["../examples/1D_simulation"]),
     "reference_url": {
         # The module you locally document uses None
