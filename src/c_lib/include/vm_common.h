@@ -2,12 +2,23 @@
 //
 //  vm_common.h
 //
+//  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Jul 26, 2019
 //  Contact email = deepansh2012@gmail.com
 //
 
 #include <math.h>
 #include <string.h>
+
+/**
+ * List of function -
+ *
+ * vm_double_ramp -> creates a linear ramp, y = scale*x + offset.
+ * vm_double_arrange -> Create a vector x = [0 .. count-1].
+ * vm_double_zeros -> Create a vector of zeros.
+ * vm_double_ones -> Create a vector of ones.
+ *
+ **/
 
 /**
  * Multiply a vector of type double by `scale` and add an `offset` to its

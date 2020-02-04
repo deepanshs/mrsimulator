@@ -2,6 +2,7 @@
 //
 //  mrsimulator.h
 //
+//  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Jun 30, 2019
 //  Contact email = deepansh2012@gmail.com
 //
@@ -23,7 +24,7 @@ typedef struct MRS_dimension {
   double increment; /**<  Increment of coordinates along the dimension. */
 
   /* private attributes */
-  double normalize_offset; // fixed value = 0.5 - coordinate_offset/increment
+  double normalize_offset;  // fixed value = 0.5 - coordinate_offset/increment
   double inverse_increment;
 } MRS_dimension;
 
@@ -51,7 +52,6 @@ MRS_dimension *MRS_create_dimension(int count, double coordinates_offset,
  */
 
 struct MRS_plan {
-
   /**
    * A pointer to the MRS_averaging_scheme orientation averaging scheme.
    */
@@ -88,19 +88,19 @@ struct MRS_plan {
    */
   fftw_complex *vector;
 
-  bool allow_fourth_rank;  // If true, creates buffer and tables for processing
-                           // fourth rank tensors.
-  fftw_plan the_fftw_plan; //  The plan for fftw routine.
-  unsigned int size;       //  number of orientations * number of sizebands.
-  unsigned int n_octants;  //  number of octants used in the simulation.
-  double *norm_amplitudes; //  array of normalized amplitudes per orientation.
-  double *wigner_d2m0_vector; //  wigner-2j dm0 vector, n ∈ [-2, 2].
-  double *wigner_d4m0_vector; //  wigner-4j dm0 vector, n ∈ [-4, 4].
-  complex128 *pre_phase_2; //  buffer for 2nk rank sideband phase calculation.
-  complex128 *pre_phase_4; //  buffer for 4th rank sideband phase calculation.
-  complex128 one;          //  holds complex value 1.
-  complex128 zero;         //  hold complex value 0.
-  double buffer;           //  buffer for temporary storage.
+  bool allow_fourth_rank;   // If true, creates buffer and tables for processing
+                            // fourth rank tensors.
+  fftw_plan the_fftw_plan;  //  The plan for fftw routine.
+  unsigned int size;        //  number of orientations * number of sizebands.
+  unsigned int n_octants;   //  number of octants used in the simulation.
+  double *norm_amplitudes;  //  array of normalized amplitudes per orientation.
+  double *wigner_d2m0_vector;  //  wigner-2j dm0 vector, n ∈ [-2, 2].
+  double *wigner_d4m0_vector;  //  wigner-4j dm0 vector, n ∈ [-4, 4].
+  complex128 *pre_phase_2;  //  buffer for 2nk rank sideband phase calculation.
+  complex128 *pre_phase_4;  //  buffer for 4th rank sideband phase calculation.
+  complex128 one;           //  holds complex value 1.
+  complex128 zero;          //  hold complex value 0.
+  double buffer;            //  buffer for temporary storage.
 };
 
 typedef struct MRS_plan MRS_plan;

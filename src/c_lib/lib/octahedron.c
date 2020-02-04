@@ -2,6 +2,7 @@
 //
 //  octahedron.c
 //
+//  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
 //  Contact email = deepansh2012@gmail.com
 //
@@ -12,7 +13,6 @@ void octahedronGetDirectionCosineSquareOverOctantAndWeights(int nt, double *xr,
                                                             double *yr,
                                                             double *zr,
                                                             double *amp) {
-
   int i, j, k = 0;
   double x2, y2, z2, r2, scale = (double)nt;
 
@@ -45,7 +45,6 @@ void octahedronGetDirectionCosineSquareOverOctantAndWeights(int nt, double *xr,
 
 void octahedronGetPolarAngleTrigOverAnOctant(int nt, double *cos_alpha,
                                              double *cos_beta, double *amp) {
-
   int points = (nt + 1) * (nt + 2) / 2;
   double *xr = malloc_double(points);
   double *yr = malloc_double(points);
@@ -157,7 +156,6 @@ void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
 
 void octahedronInterpolation(double *spec, double *freq, int nt, double *amp,
                              int stride, int m) {
-
   int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
   unsigned int int_i_stride, int_j_stride;
   double amp1 = 0.0, temp;

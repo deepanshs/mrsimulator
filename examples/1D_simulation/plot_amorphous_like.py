@@ -46,8 +46,8 @@ ax[1].set_ylabel("shielding asymmetry")
 ax[1].set_xlim(-120, -80)
 ax[1].set_ylim(0, 1)
 
-ax[2].scatter(zeta, eta, color="black", s=0.5)
-ax[2].set_xlabel("shielding anisotropy / ppm", alpha=0.3)
+ax[2].scatter(zeta, eta, color="black", s=0.5, alpha=0.3)
+ax[2].set_xlabel("shielding anisotropy / ppm")
 ax[2].set_ylabel("shielding asymmetry")
 ax[2].set_xlim(0, 100)
 ax[2].set_ylim(0, 1)
@@ -140,7 +140,7 @@ plt.show()
 #%%
 sim.dimensions[0].rotor_frequency = 1000  # in Hz
 sim.dimensions[0].rotor_angle = 54.735 * np.pi / 180.0  # magic angle in radian
-sim.config.number_of_sidebands = 32
+sim.config.number_of_sidebands = 16
 x, y = sim.run(method=one_d_spectrum)
 
 #%% and the corresponding plot.

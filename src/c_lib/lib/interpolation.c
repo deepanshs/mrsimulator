@@ -2,6 +2,7 @@
 //
 //  interpolation.c
 //
+//  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
 //  Contact email = deepansh2012@gmail.com
 //
@@ -13,7 +14,6 @@
 
 int triangle_interpolation(double *freq1, double *freq2, double *freq3,
                            double *amp, double *spec, int *points) {
-
   double df1, df2, top = 0.0, t, diff, f10 = 0.0, f21 = 0.0, temp;
   int p, pmid, pmax, i, j;
   int clip_right1 = 0, clip_left1 = 0, clip_right2 = 0, clip_left2 = 0;
@@ -126,7 +126,6 @@ int triangle_interpolation(double *freq1, double *freq2, double *freq3,
 
 void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,
                    int columns) {
-
   double A12, B12, C12, A20, B20, C20, A01, B01, C01;
   double minX, minY, maxX, maxY, w0, w1, w2;
   double w0_row, w1_row, w2_row;
@@ -159,7 +158,6 @@ void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,
 
   // Rasterizer
   for (i = minY_; i <= maxY_; i++) {
-
     // Determine barycentric coordinates
     w0 = w0_row;
     w1 = w1_row;
@@ -169,10 +167,10 @@ void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,
     for (j = minX_; j <= maxX_; j++) {
       // If p is on or inside all edges, render pixel.
       if ((int)w0 >= 0 && (int)w1 >= 0 && (int)w2 >= 0) {
-        grid[i_ + j] += 1.; //(w0+w1+w2);
+        grid[i_ + j] += 1.;  //(w0+w1+w2);
       }
       if ((int)w0 <= 0 && (int)w1 <= 0 && (int)w2 <= 0) {
-        grid[i_ + j] += -1.; //(w0+w1+w2);
+        grid[i_ + j] += -1.;  //(w0+w1+w2);
       }
       // i_++;
 

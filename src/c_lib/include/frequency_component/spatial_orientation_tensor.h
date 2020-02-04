@@ -82,7 +82,6 @@ static inline void sSOT_1st_order_nuclear_shielding_Hamiltonian(
     double *restrict R_0, void *restrict R_2,
     const double omega_0_delta_iso_in_Hz, const double omega_0_zeta_sigma_in_Hz,
     const double eta, const double *Theta) {
-
   // contribution from the zeroth rank
   *R_0 = omega_0_delta_iso_in_Hz;
 
@@ -91,9 +90,9 @@ static inline void sSOT_1st_order_nuclear_shielding_Hamiltonian(
   double *R_2_ = (double *)R_2;
 
   double temp = 0.4082482905 * (omega_0_zeta_sigma_in_Hz * eta);
-  R_2_[0] = temp;                      // R2-2 real
-  R_2_[4] = -omega_0_zeta_sigma_in_Hz; // R2 0 real
-  R_2_[8] = temp;                      // R2 2 real
+  R_2_[0] = temp;                       // R2-2 real
+  R_2_[4] = -omega_0_zeta_sigma_in_Hz;  // R2 0 real
+  R_2_[8] = temp;                       // R2 2 real
 
   if (Theta[0] != 0.0 && Theta[1] != 0.0 && Theta[2] != 0.0) {
     single_wigner_rotation(2, Theta, R_2, R_2);
@@ -151,7 +150,6 @@ static inline void sSOT_1st_order_nuclear_shielding_Hamiltonian(
 static inline void sSOT_1st_order_electric_quadrupole_Hamiltonian(
     void *restrict R_2, const double spin, const double Cq_in_Hz,
     const double eta, const double *Theta) {
-
   /* vq is the Quadrupole coupling constant given as vq = 3*Cq/(2I(2I-1)),
   where `I` is the spin quantum number. */
   double vq = 3.0 * Cq_in_Hz;
@@ -164,9 +162,9 @@ static inline void sSOT_1st_order_electric_quadrupole_Hamiltonian(
 
   double temp = -0.1666666667 * (vq * eta);
 
-  R_2_[0] = temp;              // R2-2 real
-  R_2_[4] = 0.4082482905 * vq; // R2 0 real
-  R_2_[8] = temp;              // R2 2 real
+  R_2_[0] = temp;               // R2-2 real
+  R_2_[4] = 0.4082482905 * vq;  // R2 0 real
+  R_2_[8] = temp;               // R2 2 real
 
   if (Theta[0] != 0.0 && Theta[1] != 0.0 && Theta[2] != 0.0) {
     single_wigner_rotation(2, Theta, R_2, R_2);
@@ -270,7 +268,6 @@ static inline void sSOT_2nd_order_electric_quadrupole_Hamiltonian(
     double *restrict R_0, void *restrict R_2, void *restrict R_4,
     const double spin, const double v0_in_Hz, const double Cq_in_Hz,
     const double eta, const double *Theta) {
-
   /* vq is the Quadrupole coupling constant given as vq = 3*Cq/(2I(2I-1)),
   where `I` is the spin quantum number. */
   double vq = 3.0 * Cq_in_Hz;
@@ -290,9 +287,9 @@ static inline void sSOT_2nd_order_electric_quadrupole_Hamiltonian(
   double temp = -eta * 0.07273929675 * scale;
   double temp2 = 0.08908708064 * scale * (eta2 * 0.33333333333 - 1.0);
 
-  R_2_[0] = temp;  // R2-2 real
-  R_2_[4] = temp2; // R2 0 real
-  R_2_[8] = temp;  // R2 2 real
+  R_2_[0] = temp;   // R2-2 real
+  R_2_[4] = temp2;  // R2 0 real
+  R_2_[8] = temp;   // R2 2 real
 
   if (Theta[0] != 0.0 && Theta[1] != 0.0 && Theta[2] != 0.0) {
     single_wigner_rotation(2, Theta, R_2, R_2);
@@ -306,11 +303,11 @@ static inline void sSOT_2nd_order_electric_quadrupole_Hamiltonian(
   temp2 = -0.06299407883 * eta * scale;
   double temp4 = 0.1195228609 * scale * (eta2 * 0.05555555556 + 1.0);
 
-  R_4_[0] = temp;   // R4-4 real
-  R_4_[4] = temp2;  // R4-2 real
-  R_4_[8] = temp4;  // R4 0 real
-  R_4_[12] = temp2; // R4 2 real
-  R_4_[16] = temp;  // R4 4 real
+  R_4_[0] = temp;    // R4-4 real
+  R_4_[4] = temp2;   // R4-2 real
+  R_4_[8] = temp4;   // R4 0 real
+  R_4_[12] = temp2;  // R4 2 real
+  R_4_[16] = temp;   // R4 4 real
 
   if (Theta[0] != 0.0 && Theta[1] != 0.0 && Theta[2] != 0.0) {
     single_wigner_rotation(4, Theta, R_2, R_2);

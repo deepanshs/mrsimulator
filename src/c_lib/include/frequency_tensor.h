@@ -2,6 +2,7 @@
 //
 //  frequency_component_function.h
 //
+//  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
 //  Contact email = deepansh2012@gmail.com
 //
@@ -58,7 +59,6 @@ static inline void FCF_1st_order_nuclear_shielding_Hamiltonian(
     double *restrict Lambda_0, void *restrict Lambda_2,
     const double omega_0_delta_iso_in_Hz, const double omega_0_zeta_sigma_in_Hz,
     const double eta, const double *Theta, const double *transition) {
-
   // Spin transition function
   double transition_fn = STF_p(transition[1], transition[0]);
 
@@ -72,9 +72,9 @@ static inline void FCF_1st_order_nuclear_shielding_Hamiltonian(
 
   // frequency component function from second-rank irreducible tensor
   double *Lambda_2_ = (double *)Lambda_2;
-  Lambda_2_[0] *= transition_fn; // Lambda_2-2 real
-  Lambda_2_[4] *= transition_fn; // Lambda_2 0 real
-  Lambda_2_[8] *= transition_fn; // Lambda_2 2 real
+  Lambda_2_[0] *= transition_fn;  // Lambda_2-2 real
+  Lambda_2_[4] *= transition_fn;  // Lambda_2 0 real
+  Lambda_2_[8] *= transition_fn;  // Lambda_2 2 real
 }
 
 /**
@@ -112,7 +112,6 @@ static inline void FCF_1st_order_nuclear_shielding_Hamiltonian(
 static inline void FCF_1st_order_electric_quadrupole_Hamiltonian(
     void *restrict Lambda_2, const double spin, const double Cq_in_Hz,
     const double eta, const double *Theta, const double *transition) {
-
   // Spin transition function
   double transition_fn = STF_d(transition[1], transition[0]);
 
@@ -122,9 +121,9 @@ static inline void FCF_1st_order_electric_quadrupole_Hamiltonian(
 
   // frequency component function from second-rank irreducible tensor
   double *Lambda_2_ = (double *)Lambda_2;
-  Lambda_2_[0] *= transition_fn; // Lambda_2-2 real
-  Lambda_2_[4] *= transition_fn; // Lambda_2 0 real
-  Lambda_2_[8] *= transition_fn; // Lambda_2 2 real
+  Lambda_2_[0] *= transition_fn;  // Lambda_2-2 real
+  Lambda_2_[4] *= transition_fn;  // Lambda_2 0 real
+  Lambda_2_[8] *= transition_fn;  // Lambda_2 2 real
 }
 
 /**
@@ -180,7 +179,6 @@ static inline void FCF_2nd_order_electric_quadrupole_Hamiltonian(
     double *restrict Lambda_0, void *restrict Lambda_2, void *restrict Lambda_4,
     const double spin, const double v0_in_Hz, const double Cq_in_Hz,
     const double eta, const double *Theta, const double *transition) {
-
   // Composite spin transition functions
   double *cl_value = malloc_double(3);
   STF_cL(cl_value, transition[1], transition[0], spin);
@@ -194,18 +192,18 @@ static inline void FCF_2nd_order_electric_quadrupole_Hamiltonian(
 
   // frequency component function from second-rank irreducible tensor
   double *Lambda_2_ = (double *)Lambda_2;
-  Lambda_2_[0] *= *cl_value; // Lambda_2-2 real
-  Lambda_2_[4] *= *cl_value; // Lambda_2 0 real
-  Lambda_2_[8] *= *cl_value; // Lambda_2 2 real
+  Lambda_2_[0] *= *cl_value;  // Lambda_2-2 real
+  Lambda_2_[4] *= *cl_value;  // Lambda_2 0 real
+  Lambda_2_[8] *= *cl_value;  // Lambda_2 2 real
 
   cl_value++;
   // frequency component function from fourth-rank irreducible tensor
   double *Lambda_4_ = (double *)Lambda_4;
-  Lambda_4_[0] *= *cl_value;  // Lambda_4-4 real
-  Lambda_4_[4] *= *cl_value;  // Lambda_4-2 real
-  Lambda_4_[8] *= *cl_value;  // Lambda_4 0 real
-  Lambda_4_[12] *= *cl_value; // Lambda_4 2 real
-  Lambda_4_[16] *= *cl_value; // Lambda_4 4 real
+  Lambda_4_[0] *= *cl_value;   // Lambda_4-4 real
+  Lambda_4_[4] *= *cl_value;   // Lambda_4-2 real
+  Lambda_4_[8] *= *cl_value;   // Lambda_4 0 real
+  Lambda_4_[12] *= *cl_value;  // Lambda_4 2 real
+  Lambda_4_[16] *= *cl_value;  // Lambda_4 4 real
 }
 
 /*
@@ -228,5 +226,5 @@ static inline void weakly_coupled_direct_dipole_frequencies_to_first_order(
   tensor in its principal axis frame. */
   vm_double_zeros(10, (double *)Lambda_2);
   double *Lambda_2_ = (double *)Lambda_2;
-  Lambda_2_[4] = 2.0 * D * transition_fn; // Lambda_2 0 real
+  Lambda_2_[4] = 2.0 * D * transition_fn;  // Lambda_2 0 real
 }

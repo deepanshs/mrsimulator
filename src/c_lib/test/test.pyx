@@ -157,7 +157,7 @@ def pre_phase_components(int number_of_sidebands, double sample_rotation_frequen
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def cosine_of_polar_angles_and_amplitudes(int geodesic_polyhedron_frequency=72):
+def cosine_of_polar_angles_and_amplitudes(int integration_density=72):
     r"""
     Calculate the direction cosines and the related amplitudes for
     the positive quadrant of the sphere. The direction cosines corresponds to
@@ -170,7 +170,7 @@ def cosine_of_polar_angles_and_amplitudes(int geodesic_polyhedron_frequency=72):
     octahedron in the positive quadrant along the line given by the values of
     $\alpha$ and $\beta$.
 
-    :ivar geodesic_polyhedron_frequency:
+    :ivar integration_density:
         The value is an integer which represents the frequency of class I
         geodesic polyhedra. These polyhedra are used in calculating the
         spherical average. Presently we only use octahedral as the frequency1
@@ -185,7 +185,7 @@ def cosine_of_polar_angles_and_amplitudes(int geodesic_polyhedron_frequency=72):
     :return cos_beta: The cosine of the polar angle.
     :return amp: The amplitude at the given $\alpha$ and $\beta$.
     """
-    nt = geodesic_polyhedron_frequency
+    nt = integration_density
     cdef unsigned int octant_orientations = int((nt+1) * (nt+2)/2)
 
     cdef np.ndarray[double complex] exp_I_alpha = np.empty(octant_orientations, dtype=np.complex128)
@@ -295,10 +295,10 @@ def _one_d_simulator(
         # omega_PM=None,
 
         # Euler angles for powder averaging scheme
-        int geodesic_polyhedron_frequency=90,
+        int integration_density=90,
         int integration_volume=0):
 
-    nt = geodesic_polyhedron_frequency
+    nt = integration_density
     if isotropic_chemical_shift is None:
         isotropic_chemical_shift = 0
     isotropic_chemical_shift = np.asarray([isotropic_chemical_shift], dtype=np.float64).ravel()
@@ -399,7 +399,7 @@ def _one_d_simulator(
     isotopomer_struct.dipolar_couplings = &D_c[0]
 
     cdef int remove_second_order_quad_isotropic_c = remove_second_order_quad_isotropic
-    clib.spinning_sideband_core(
+    clib.mrsimulator_core(
             # spectrum information and related amplitude
             &amp[0],
             reference_offset,
@@ -417,8 +417,9 @@ def _one_d_simulator(
             rotor_angle_in_rad_c,
 
             &transition_c[0],
-            geodesic_polyhedron_frequency,
-            integration_volume             # 0-octant, 1-hemisphere, 2-sphere.
+            integration_density,
+            integration_volume,           # 0-octant, 1-hemisphere, 2-sphere.
+            1
             )
 
 

@@ -9,6 +9,10 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
 
 
+__integration_volume_enum__ = {"octant": 0, "hemisphere": 1}
+__integration_volume_enum_rev__ = {0: "octant", 1: "hemisphere"}
+
+
 class ConfigSimulator:
     """
     The configurable parametes used in lineshape simulation
@@ -36,9 +40,6 @@ class ConfigSimulator:
         >>> a.config.decompose = True
     """
 
-    integration_volume_enum = {"octant": 0, "hemisphere": 1}
-    integration_volume_enum_rev = {0: "octant", 1: "hemisphere"}
-
     def __init__(self):
         self._dict = {
             "number_of_sidebands": 64,
@@ -46,13 +47,16 @@ class ConfigSimulator:
             "integration_density": 70,
             "decompose": False,
         }
-
-    def update_integration_scheme(self):
         self._averaging_scheme = AveragingScheme(
-            integration_density=self._dict["integration_density"],
-            integration_volume=self._dict["integration_volume"],
-            allow_fourth_rank=True,
+            integration_density=70, integration_volume=0, allow_fourth_rank=True
         )
+
+    # def update_averaging_scheme(self):
+    #     self._averaging_scheme = AveragingScheme(
+    #         integration_density=self._dict["integration_density"],
+    #         integration_volume=self._dict["integration_volume"],
+    #         allow_fourth_rank=True,
+    #     )
 
     # decompose line-shape into array of lineshapes arising from individual
     # isotopomers.
@@ -83,29 +87,33 @@ class ConfigSimulator:
     # integration density
     @property
     def integration_density(self):
+        # return self._averaging_scheme.integration_density
         return self._dict["integration_density"]
 
     @integration_density.setter
     def integration_density(self, value):
+        # self._averaging_scheme.integration_density = value
+        # self._dict["integration_density"] = value
         if isinstance(value, int):
             if value > 0:
                 self._dict["integration_density"] = value
-                self.update_integration_scheme()
+                # self.update_integration_scheme()
                 return
         raise ValueError(f"Expecting a positive integer, found {value}.")
 
     # integration volume
     @property
     def integration_volume(self):
-        return self.__class__.integration_volume_enum_rev[
-            self._dict["integration_volume"]
-        ]
+        # return self._averaging_scheme.integration_volume
+        return __integration_volume_enum_rev__[self._dict["integration_volume"]]
 
     @integration_volume.setter
     def integration_volume(self, value):
-        class_dict = self.__class__.integration_volume_enum
-        if value in class_dict:
-            self._dict["integration_volume"] = class_dict[value]
+        # self._averaging_scheme.integration_volume = value
+        # self._dict["integration_volume"] = value
+        # class_dict = self.__class__.integration_volume_enum
+        if value in __integration_volume_enum__.keys():
+            self._dict["integration_volume"] = __integration_volume_enum__[value]
             return
         raise ValueError(
             (
@@ -119,6 +127,12 @@ class ConfigSimulator:
     @property
     def averaging_scheme(self):
         return self._averaging_scheme
+
+    @averaging_scheme.setter
+    def averaging_scheme(self, other):
+        if isinstance(other, AveragingScheme):
+            self._averaging_scheme = other
+        raise ValueError("Expecting an instance of either the AveragingScheme class.")
 
     # methods
     def __eq__(self, other):
@@ -135,6 +149,7 @@ class ConfigSimulator:
             "ConfigSimulator(number_of_sidebands={0}, integration_volume={1}, "
             "integration_density={2}, decompose={3})"
         ).format(
+            # self.averaging_scheme,
             self.number_of_sidebands,
             self.integration_volume,
             self.integration_density,

@@ -2,6 +2,7 @@
 #
 #  test.pxd
 #
+#  @copyright Deepansh J. Srivastava, 2019-2020.
 #  Created by Deepansh J. Srivastava.
 #  Contact email = deepansh2012@gmail.com
 #
@@ -73,7 +74,7 @@ cdef extern from "mrsimulator.h":
 #     ctypedef struct MRS_plan
 
 #     MRS_plan *MRS_create_plan(
-#         unsigned int geodesic_polyhedron_frequency,
+#         unsigned int integration_density,
 #         int number_of_sidebands,
 #         double sample_rotation_frequency_in_Hz,
 #         double rotor_angle_in_rad, double increment,
@@ -97,8 +98,8 @@ cdef extern from "isotopomer_ravel.h":
     ctypedef struct isotopomers_list:
         isotopomer_ravel *isotopomers
 
-cdef extern from "spinning_sidebands.h":
-    void spinning_sideband_core(
+cdef extern from "simulation.h":
+    void mrsimulator_core(
         # spectrum information and related amplitude
         double * spec,
         double spectral_start,
@@ -118,6 +119,7 @@ cdef extern from "spinning_sidebands.h":
 
         # The transition as transition[0] = mi and transition[1] = mf
         double *transition,
-        int geodesic_polyhedron_frequency,
-        unsigned int integration_volume             # 0-octant, 1-hemisphere, 2-sphere.
+        int integration_density,
+        unsigned int integration_volume,      # 0-octant, 1-hemisphere, 2-sphere.
+        bool_t interpolation
         )

@@ -2,6 +2,7 @@
 //
 //  config.h
 //
+//  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Aug 10, 2019
 //  Contact email = deepansh2012@gmail.com
 //
@@ -15,7 +16,7 @@ typedef float complex64[2];
 
 #if __STDC_VERSION__ >= 199901L
 #define MKL_Complex16 complex128
-#else // not C99
+#else  // not C99
 #define restrict __restrict
 #endif
 
@@ -29,7 +30,7 @@ typedef float complex64[2];
 #if __has_include("cblas.h")
 #include "cblas.h"
 
-// installing openblas on centos with
+// installing openblas on cent-os with
 //      yum install -y openblas-devel
 // include cblas-openblas.h header file
 #elif __has_include("cblas-openblas.h")

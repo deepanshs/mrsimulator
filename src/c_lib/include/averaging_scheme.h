@@ -2,6 +2,7 @@
 //
 //  averaging_scheme.h
 //
+//  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Sep 3, 2019
 //  Contact email = deepansh2012@gmail.com
 //
@@ -40,19 +41,19 @@ typedef struct MRS_averaging_scheme {
   unsigned int total_orientations; /**< The total number of orientations. */
 
   /** \privatesection */
-  unsigned short geodesic_polyhedron_frequency; // number of triangles along the
-                                                // edge of the octahedron
-  unsigned int octant_orientations; //  number of unique orientations on the
-                                    //  face of an octant.
-  double *amplitudes;         //  array of amplitude scaling per orientation.
-  complex128 *exp_Im_alpha;   //  array of cos_alpha per orientation.
-  complex128 *w2;             //  buffer for 2nd rank frequency calculation.
-  complex128 *w4;             //  buffer for 4nd rank frequency calculation.
-  double *wigner_2j_matrices; //  wigner-d 2j matrix per orientation.
-  double *wigner_4j_matrices; //  wigner-d 4j matrix per orientation.
-  double *local_frequency;    //  buffer for local frequencies.
-  double *freq_offset;        //  buffer for local + sideband frequencies.
-  unsigned int integration_volume; //  0-octant, 1-hemisphere, 2-sphere
+  unsigned int integration_density;  // number of triangles along the edge of
+                                     // the octahedron.
+  unsigned int octant_orientations;  //  number of unique orientations on the
+                                     //  face of an octant.
+  double *amplitudes;          //  array of amplitude scaling per orientation.
+  complex128 *exp_Im_alpha;    //  array of cos_alpha per orientation.
+  complex128 *w2;              //  buffer for 2nd rank frequency calculation.
+  complex128 *w4;              //  buffer for 4nd rank frequency calculation.
+  double *wigner_2j_matrices;  //  wigner-d 2j matrix per orientation.
+  double *wigner_4j_matrices;  //  wigner-d 4j matrix per orientation.
+  double *local_frequency;     //  buffer for local frequencies.
+  double *freq_offset;         //  buffer for local + sideband frequencies.
+  unsigned int integration_volume;  //  0-octant, 1-hemisphere, 2-sphere.
 } MRS_averaging_scheme;
 
 // typedef struct MRS_averaging_scheme;
@@ -60,7 +61,7 @@ typedef struct MRS_averaging_scheme {
 /**
  * Create a new orientation averaging scheme.
  *
- * @param geodesic_polyhedron_frequency The value is a positive integer
+ * @param integration_density The value is a positive integer
  *      representing the number of triangles along the edge of an octahedron,
  *      also called the frequency of class I geodesic polyhedra. We use these
  *      polyhedra in calculating the orientation average. Currently, we only
@@ -75,10 +76,27 @@ typedef struct MRS_averaging_scheme {
  *            processing fourth rank tensors.
  * @param integration_volume An enumeration. 0=octant, 1=hemisphere
  */
-MRS_averaging_scheme *
-MRS_create_averaging_scheme(unsigned int geodesic_polyhedron_frequency,
-                            bool allow_fourth_rank,
-                            unsigned int integration_volume);
+MRS_averaging_scheme *MRS_create_averaging_scheme(
+    unsigned int integration_density, bool allow_fourth_rank,
+    unsigned int integration_volume);
+
+/**
+ * Create a new orientation averaging scheme from given alpha and beta.
+ *
+ * @param alpha A pointer to an array of size `n_angles` holding the alpha
+ *      values of type double.
+ * @param beta A pointer to an array of size `n_angles` holding the beta values
+ *      of type double.
+ * @param weight A pointer to an array of size `n_angles` holding the weights
+ *      of the angle pair (alpha, beta) of type double.
+ * @param n_angles An unsigned int whose value of the total number of alpha,
+ *      beta, and weight values.
+ * @param allow_fourth_rank If true, the scheme also calculates matrices for
+ *      processing fourth rank tensors.
+ */
+MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
+    double *alpha, double *beta, double *weight, unsigned int n_angles,
+    bool allow_fourth_rank);
 
 /**
  * Free the memory allocated for the spatial orientation averaging scheme.
@@ -87,4 +105,4 @@ MRS_create_averaging_scheme(unsigned int geodesic_polyhedron_frequency,
  */
 void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme);
 
-#endif // averaging_scheme_h
+#endif  // averaging_scheme_h

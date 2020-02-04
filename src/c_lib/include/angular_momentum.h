@@ -2,7 +2,8 @@
 //
 //  angular_momentum.c
 //
-//  Created by Deepansh J. Srivatava.
+//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  Created by Deepansh J. Srivastava.
 //  Contact email = deepansh2012@gmail.com
 
 #include "config.h"

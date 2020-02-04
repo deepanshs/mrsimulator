@@ -1,50 +1,71 @@
 
+=======================================
 Welcome to Mrsimulator's documentation!
 =======================================
 
+.. .. image:: _static/mrsimulator_cover_light.png
+..     :align: center
+
 .. only:: html
 
-    .. image:: https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master
-        :target: https://travis-ci.org/DeepanshS/mrsimulator
-        :alt: Build Status
+    .. cssclass:: table-bordered table-striped centered
 
-    .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
-        :target: https://mrsimulator.readthedocs.io/en/stable/?badge=stable
-        :alt: Documentation Status
+    .. list-table::
+      :widths: 25 75
+      :header-rows: 0
 
-    .. image:: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
-        :target: https://opensource.org/licenses/BSD-3-Clause
-        :alt: License
+      * - Deployment
+        - .. image:: https://img.shields.io/pypi/v/mrsimulator.svg?style=flat&logo=pypi&logoColor=white
+            :target: https://pypi.python.org/pypi/mrsimulator
+            :alt: PyPI version
 
-    .. image:: https://img.shields.io/github/issues-raw/deepanshs/mrsimulator
-        :target: https://github.com/DeepanshS/mrsimulator/issues
-        :alt: GitHub issues
+      * - Build Status
+        - .. image:: https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master&logo=travis&color=white
+              :target: https://travis-ci.org/DeepanshS/mrsimulator
+              :alt: Build Status
 
-    .. image:: https://badge.fury.io/py/mrsimulator.svg
-        :target: https://badge.fury.io/py/mrsimulator
-        :alt: PyPI version
+          .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
+              :target: https://mrsimulator.readthedocs.io/en/stable/?badge=stable
+              :alt: Documentation Status
 
-    .. image:: https://img.shields.io/pypi/dm/mrsimulator.svg
-        :target: https://img.shields.io/pypi/dm/mrsimulator
-        :alt: PyPI - Downloads
+      * - License
+        - .. image:: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
+              :target: https://opensource.org/licenses/BSD-3-Clause
+              :alt: License
 
-    .. image:: https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18
-        :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/
-        :alt: Total alerts
+      * - Metrics
+        - .. image:: https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18
+              :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python
+              :alt: Language grade: Python
 
-    .. image:: https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18
-        :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python
-        :alt: Language grade: Python
+          .. image:: https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg
+              :target: https://codecov.io/gh/DeepanshS/mrsimulator
 
-    .. image:: https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg
-        :target: https://codecov.io/gh/DeepanshS/mrsimulator
+          .. image:: https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18
+              :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/
+              :alt: Total alerts
+
+      * - GitHub
+        - .. image:: https://img.shields.io/github/contributors/DeepanshS/mrsimulator.svg?style=flat&logo=github
+              :target: https://github.com/DeepanshS/mrsimulator/graphs/contributors
+              :alt: GitHub contributors
+
+          .. image:: https://img.shields.io/github/issues-raw/deepanshs/mrsimulator
+              :target: https://github.com/DeepanshS/mrsimulator/issues
+              :alt: GitHub issues
+
+.. .. image:: https://img.shields.io/pypi/dm/mrsimulator.svg?style=flat&logo=pypi
+..     :target: https://img.shields.io/pypi/dm/mrsimulator
+..     :alt: PyPI - Downloads
 
 ----
 
-``Mrsimulator`` is a python package with methods and tools for simulating
-fast solid-state nuclear magnetic resonance (NMR) line-shapes. The
-core methods is written in C, wrapped and made available
-in python for python users.
+About
+^^^^^
+
+The `Mrsimulator` package is a c and python based library for simulating fast
+solid-state nuclear magnetic resonance (NMR) spectra. The core methods are
+written in C, wrapped, and made available in python for python users.
 
 .. warning::
     The package is currently under development. We advice using with
@@ -52,17 +73,16 @@ in python for python users.
 
 ----
 
-**Features**
+  **Features**
 
-At present, ``mrsimulator`` offers fast-simulation of one-dimensional NMR
-line-shape of uncoupled spins for the following:
+  Fast-simulation of one-dimensional NMR spectra of uncoupled spins featuring:
 
-- Spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}`,
-  (See the list of supported isotopes),
-- Arbitrary macroscopic magnetic flux density,
-- Magic angle spinning (MAS) at arbitrary spin frequency,
-- Variable angle spinning (VAS) at arbitrary angle and spin frequency,
-- Static line-shape.
+  - Spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}`,
+    (See the list of supported isotopes),
+  - Arbitrary macroscopic magnetic flux density,
+  - Magic angle spinning (MAS) at arbitrary spin frequency,
+  - Variable angle spinning (VAS) at arbitrary angle and spin frequency,
+  - Static line-shape.
 
 ----
 
@@ -70,7 +90,7 @@ line-shape of uncoupled spins for the following:
 
     .. only:: html
 
-        .. image:: https://img.shields.io/badge/View-Example%20Gallery-Purple?size=large
+        .. image:: https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small
             :target: auto_examples/index.html
 
 ----
@@ -111,7 +131,7 @@ suggestion is greatly appreciated.
 .. only:: html
 
     Indices and tables
-    ------------------
+    ^^^^^^^^^^^^^^^^^^
 
     * :ref:`genindex`
     * :ref:`modindex`

@@ -2,6 +2,7 @@
 //
 //  mrsimulator.c
 //
+//  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Jun 9, 2019
 //  Contact email = deepansh2012@gmail.com
 //
@@ -46,7 +47,6 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
                           double sample_rotation_frequency_in_Hz,
                           double rotor_angle_in_rad, double increment,
                           bool allow_fourth_rank) {
-
   unsigned int j, i, size_2, size_4;
 
   MRS_plan *plan = malloc(sizeof(MRS_plan));
@@ -69,13 +69,11 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
    * MRS_free_averaging_plan() method.
    */
   // plan->averaging_scheme = MRS_create_averaging_scheme(
-  //     geodesic_polyhedron_frequency, allow_fourth_rank);
+  //     integration_density, allow_fourth_rank);
   plan->averaging_scheme = scheme;
   plan->n_octants = 1;
-  if (scheme->integration_volume == 1)
-    plan->n_octants = 4;
-  if (scheme->integration_volume == 2)
-    plan->n_octants = 8;
+  if (scheme->integration_volume == 1) plan->n_octants = 4;
+  if (scheme->integration_volume == 2) plan->n_octants = 8;
 
   /* Normalizing amplitudes from the spherical averaging scheme by the number
    * of sidebands */
@@ -158,7 +156,6 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
 
   /* Setup for processing the fourth rank tensors. */
   if (allow_fourth_rank) {
-
     /* multiplying the wigner 4j d^4_{m,0} vector to the sideband phase
      * multiplier. This multiplication absorbs the rotation of the fourth rank
      * tensors from the rotor frame to the lab frame, thereby, reducing the
@@ -268,26 +265,30 @@ void MRS_get_amplitudes_from_plan(MRS_plan *plan, complex128 *R2,
                 (double *)(plan->one), (double *)(plan->vector),
                 scheme->total_orientations);
   }
+  if (plan->number_of_sidebands == 1) {
+    cblas_dscal(plan->size, 2.0, (double *)(plan->vector), 2);
+    vm_double_exp(plan->size, (double *)(plan->vector),
+                  (double *)(plan->vector), 2);
+  } else {
+    /* Evaluating the sideband phase exp(vector) */
+    vm_double_complex_exp(plan->size, plan->vector, plan->vector);
 
-  /* Evaluating the sideband phase exp(vector) */
-  vm_double_complex_exp(plan->size, plan->vector, plan->vector);
+    /* Evaluate the Fourier transform of vector, fft(vector). The fft operation
+     * updates the value of the array, `vector` */
+    fftw_execute(plan->the_fftw_plan);
 
-  /* Evaluate the Fourier transform of vector, fft(vector). The fft operation
-   * updates the value of the array, `vector` */
-  fftw_execute(plan->the_fftw_plan);
+    /* Taking the absolute value square of the vector array. The absolute value
+     * square is stores as the real part of the `vector` array. The imaginary
+     * part is garbage. This method avoids creating new arrays. */
 
-  /* Taking the absolute value square of the vector array. The absolute value
-   * square is stores as the real part of the `vector` array. The imaginary
-   * part is garbage. This method avoids creating new arrays. */
+    // cblas_dsbmv(CblasRowMajor, CblasUpper, 2 * plan->size, 0, 1.0,
+    //             (double *)plan->vector, 1, (double *)plan->vector, 1, 0.0,
+    //             (double *)plan->vector, 1);
 
-  // cblas_dsbmv(CblasRowMajor, CblasUpper, 2 * plan->size, 0, 1.0,
-  //             (double *)plan->vector, 1, (double *)plan->vector, 1, 0.0,
-  //             (double *)plan->vector, 1);
-
-  vm_double_square_inplace(2 * plan->size, (double *)plan->vector);
-  cblas_daxpy(plan->size, 1.0, (double *)plan->vector + 1, 2,
-              (double *)plan->vector, 2);
-
+    vm_double_square_inplace(2 * plan->size, (double *)plan->vector);
+    cblas_daxpy(plan->size, 1.0, (double *)plan->vector + 1, 2,
+                (double *)plan->vector, 2);
+  }
   /* Scaling the absolute value square with the powder scheme weights. Only
    * the real part is scaled and the imaginary part is left as is.
    */

@@ -2,6 +2,7 @@
 //
 //  interpolation.h
 //
+//  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
 //  Contact email = deepansh2012@gmail.com
 //

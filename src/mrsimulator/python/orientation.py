@@ -68,7 +68,7 @@ def octahedral_direction_cosine_squares_and_amplitudes(nt: int):
     return x, y, z, amp
 
 
-def cosine_of_polar_angles_and_amplitudes(geodesic_polyhedron_frequency: int = 72):
+def cosine_of_polar_angles_and_amplitudes(integration_density: int = 72):
     r"""
     Calculates and return the direction cosines and the related amplitudes for
     the positive quadrant of the sphere. The direction cosines corresponds to
@@ -78,7 +78,7 @@ def cosine_of_polar_angles_and_amplitudes(geodesic_polyhedron_frequency: int = 7
     octahedron in the positive quadrant along the line given by the values of
     $\alpha$ and $\beta$.
 
-    :ivar geodesic_polyhedron_frequency:
+    :ivar integration_density:
         The value is an integer which represents the frequency of class I
         geodesic polyhedra. These polyhedra are used in calculating the
         spherical average. Presently we only use octahedral as the frequency1
@@ -93,7 +93,7 @@ def cosine_of_polar_angles_and_amplitudes(geodesic_polyhedron_frequency: int = 7
     :return cos_beta: The cosine of the polar angle.
     :return amp: The amplitude at the given $\alpha$ and $\beta$.
     """
-    nt = geodesic_polyhedron_frequency
+    nt = integration_density
     xr, yr, zr, amp = octahedral_direction_cosine_squares_and_amplitudes(nt)
 
     cos_beta = np.sqrt(zr)

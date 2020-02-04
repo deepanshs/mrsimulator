@@ -2,6 +2,7 @@
 //
 //  vm_mkl.h
 //
+//  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Jul 26, 2019
 //  Contact email = deepansh2012@gmail.com
 //

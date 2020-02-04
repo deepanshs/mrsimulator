@@ -3,6 +3,7 @@ from libcpp cimport bool as bool_t
 from numpy cimport ndarray
 import numpy as np
 import cython
+from mrsimulator import sandbox as sb
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
@@ -14,9 +15,10 @@ def one_d_spectrum(dimension,
        list isotopomers,
        int verbose=0,
        int number_of_sidebands=90,
-       int integration_density=72,
+       unsigned int integration_density=72,
        bool_t decompose=False,
-       int integration_volume=1):
+       unsigned int integration_volume=1,
+       bool_t interpolation=True):
     """
 
     :ivar verbose:
@@ -88,9 +90,41 @@ def one_d_spectrum(dimension,
     reference_offset -= offset
     # freq = dimension.coordinates_ppm
 
-# create MRS_plan _____________________________________________________________________
     cdef double sample_rotation_frequency_in_Hz = dimension.rotor_frequency
     cdef double rotor_angle_in_rad = dimension.rotor_angle
+
+# # -------------------------------------------------------------------------------------
+# # schemes
+
+#     cdef bool_t allow_fourth_rank = 0
+#     if spin_quantum_number > 0.5:
+#         allow_fourth_rank = 1
+
+#     if sample_rotation_frequency_in_Hz < 1.0e-3:
+#         sample_rotation_frequency_in_Hz = 1.0e9
+#         rotor_angle_in_rad = 0.0
+#         number_of_sidebands = 1
+
+# # create averaging scheme _____________________________________________________
+#     cdef clib.MRS_averaging_scheme *scheme
+#     scheme = clib.MRS_create_averaging_scheme(
+#         integration_density=integration_density, allow_fourth_rank=allow_fourth_rank, integration_volume=integration_volume
+#     )
+
+# # create MRS_plan _____________________________________________________________
+#     cdef clib.MRS_plan *the_plan
+#     the_plan = clib.MRS_create_plan(scheme,
+#                 number_of_sidebands=number_of_sidebands,
+#                 sample_rotation_frequency_in_Hz=sample_rotation_frequency_in_Hz,
+#                 rotor_angle_in_rad=rotor_angle_in_rad,
+#                 increment=increment,
+#                 allow_fourth_rank=allow_fourth_rank)
+
+# # create dimension ____________________________________________________________
+#     cdef clib.MRS_dimension *the_dimension
+#     the_dimension = clib.MRS_create_dimension(number_of_points, reference_offset, increment)
+# # _____________________________________________________________________________
+
 
     # B0 = dimension.magnetic_flux_density
 
@@ -221,6 +255,8 @@ def one_d_spectrum(dimension,
                 transition_array = np.asarray(isotopomer['transitions']).ravel()
             else:
                 transition_array = np.asarray([-0.5, 0.5])
+            # the number 2 is because of single site transition [mi, mf]
+            # it dose not work for coupled sites.
             transition_increment = 2*number_of_sites
             number_of_transitions = int((transition_array.size)/transition_increment)
 
@@ -244,7 +280,8 @@ def one_d_spectrum(dimension,
                 # spin transitions
                 # m_initial = transition_array[i][0]
                 # m_final   = transition_array[i][1]
-                clib.spinning_sideband_core(
+
+                clib.mrsimulator_core(
                     # spectrum information and related amplitude
                     &amp[0],
                     reference_offset,
@@ -264,7 +301,33 @@ def one_d_spectrum(dimension,
                     &transition_array[transition_increment*trans__],
                     integration_density,
                     integration_volume,          # 0-octant, 1-hemisphere, 2-sphere.
+                    interpolation,
                     )
+
+                # clib.__mrsimulator_core(
+                #     # spectrum information and related amplitude
+                #     &amp[0],
+                #     # reference_offset,
+                #     # increment,
+                #     # number_of_points,
+
+                #     &isotopomer_struct,
+
+                #     # 1, # quad_second_order_c,
+                #     0, # turn off quad second order isotropic contribution
+
+                #     # spin rate, spin angle and number spinning sidebands
+                #     # number_of_sidebands,
+                #     # sample_rotation_frequency_in_Hz,
+                #     # rotor_angle_in_rad,
+
+                #     &transition_array[transition_increment*trans__],
+                #     # integration_density,
+                #     # integration_volume,          # 0-octant, 1-hemisphere, 2-sphere.
+                #     the_plan,
+                #     the_dimension,
+                #     interpolation,
+                #     )
 
             temp = amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
 

@@ -100,7 +100,7 @@ source = [
     "src/c_lib/lib/interpolation.c",
     "src/c_lib/lib/mrsimulator.c",
     "src/c_lib/lib/octahedron.c",
-    "src/c_lib/lib/spinning_sidebands.c",
+    "src/c_lib/lib/simulation.c",
     "src/c_lib/lib/powder_setup.c",
     "src/c_lib/lib/averaging_scheme.c",
 ]
