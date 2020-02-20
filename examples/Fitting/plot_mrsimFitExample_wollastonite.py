@@ -1,26 +1,36 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Fitting a simulation to a synthetic spectrum - Wollastonite.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Fitting Wollastonite.
+^^^^^^^^^^^^^^^^^^^^^
 """
+# sphinx_gallery_thumbnail_number = 3
 #%%
-# Often, after obtaining an NMR measurement we must fit tensors to our data so we can obtain the tensor parameters. In this example, we will illustrate the use of the *mrsimulator* method to simulate the experimental spectrum and fit the simulation to the data allowing us to extract the tensor parameters for our isotopomers. We will be using the *LMFIT* methods to establish fitting parameters and fit the spectrum. The following examples will show the measurements from an :math:`^{17}\text{O}` experiment on :math:`\text{Na}_{2}\text{SiO}_{3}` and a :math:`^{29}\text{Si}` experiment on wollastonite. The *mrsimulator* library and data make use of CSDM compliant files.
+# Often, after obtaining an NMR measurement we must fit tensors to our data so we can obtain the tensor parameters.
+# In this example, we will illustrate the use of the *mrsimulator* method to simulate the experimental spectrum and
+# fit the simulation to the data allowing us to extract the tensor parameters for our isotopomers. We will be using the
+# *LMFIT* methods to establish fitting parameters and fit the spectrum. The following examples will show the
+# measurements from an :math:`^{17}\text{O}` experiment on :math:`\text{Na}_{2}\text{SiO}_{3}` and a :math:`^{29}\text{Si}`
+# experiment on wollastonite. The *mrsimulator* library and data make use of CSDM compliant files.
 #
-# In this example we will be creating a synthetic spectrum of wollastonite and attempting to fit a simulation to the synthetic spectrum. We will create the synthetic spectrum using tensor parameters from wollastonite and ensure that our fitting method is able to fit the spectrum.
+# In this example we will be creating a synthetic spectrum of wollastonite and attempting to fit a simulation to the synthetic
+# spectrum. We will create the synthetic spectrum using tensor parameters from wollastonite and ensure that our fitting
+# method is able to fit the spectrum.
 #
 # As before with :math:`\text{Na}_{2}\text{SiO}_{3}`, we will be creating simulation objects
-#%%
+import csdmpy as cp
+import matplotlib
 import matplotlib.pylab as pylab
+import matplotlib.pyplot as plt
+from mrsimulator import Dimension
+from mrsimulator import Isotopomer
+from mrsimulator import Simulator
+from mrsimulator import Site
+from mrsimulator import SymmetricTensor as st
+from mrsimulator.methods import one_d_spectrum
 
 params = {"figure.figsize": (4.5, 3)}
 pylab.rcParams.update(params)
-import matplotlib
-import matplotlib.pyplot as plt
-import csdmpy as cp
-from mrsimulator import Simulator, Isotopomer, Site, Dimension
-from mrsimulator import SymmetricTensor as st
-from mrsimulator.methods import one_d_spectrum
 
 S29_1 = Site(
     isotope="29Si",
@@ -85,7 +95,8 @@ synth_data.dependent_variables[0].components[0] = synthetic
 cp.plot(synth_data)
 
 #%%
-# We have just created a synthetic experimental data set and now we must create the simulation to fit to this synthetic data. We will use another initial guess to generate our simulation:
+# We have just created a synthetic experimental data set and now we must create the simulation
+# to fit to this synthetic data. We will use another initial guess to generate our simulation:
 
 #%%
 
@@ -178,7 +189,6 @@ plt.plot(
     alpha=0.5,
     label="Residual",
 )
-plt.grid(which="major", axis="both", linestyle="--")
 plt.xlabel("Frequency / Hz")
 plt.legend()
 
