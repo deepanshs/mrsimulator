@@ -80,6 +80,7 @@ plt.figure(figsize=(4, 3))
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("frequency / ppm")
 plt.xlim(x.value.max(), x.value.min())
+plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 plt.tight_layout()
 plt.show()
 
