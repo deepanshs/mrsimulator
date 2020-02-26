@@ -168,7 +168,7 @@ setup(
         "pydantic>=0.28",
         "requests>=2.21.0",
         "monty==2.0.4",
-        "csdmpy>=0.1.4",
+        "csdmpy>=0.2",
     ],
     ext_modules=cythonize(ext_modules, language_level=3),
     include_package_data=True,

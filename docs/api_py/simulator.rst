@@ -15,11 +15,12 @@ Simulator
     .. automethod:: get_isotopes
     .. automethod:: to_dict_with_units
     .. automethod:: load_isotopomers
-    .. seealso::
-        :ref:`load_isotopomers`,
     .. automethod:: run
     .. automethod:: as_csdm_object
+    .. automethod:: apodize
 
+.. seealso::
+        :ref:`load_isotopomers`
 
 .. _config_api:
 

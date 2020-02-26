@@ -6,10 +6,14 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
+import numpy as np
 from mrsimulator import Parseable
+from mrsimulator.abstract_list import TransitionList
 from mrsimulator.dimension import ISOTOPE_DATA
 from mrsimulator.site import Site
+from mrsimulator.transition import Transition
 from pydantic import Field
+
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
@@ -80,6 +84,44 @@ class Isotopomer(Parseable):
             ]
 
         return super().parse_dict_with_units(py_dict_copy)
+
+    @property
+    def Zeeman_energy_states(self):
+        """
+        Return a list of all Zeeman energy states, where the energy states are
+        represented by a list of quantum numbers, [m_1, m_2,..m_n], where m_i is the
+        quantum number associated with the ith site of the isotopomer.
+        """
+        two_I_p_one = [int(2 * site.spin + 1) for site in self.sites]
+        spin_quantum_numbers = [
+            np.arange(2 * site.spin + 1) - site.spin for site in self.sites
+        ]
+        size = len(spin_quantum_numbers)
+
+        lst = []
+        for j in range(size):
+            k = 1
+            for i in range(size):
+                if i == j:
+                    k = np.kron(k, spin_quantum_numbers[i])
+                else:
+                    k = np.kron(k, np.ones(two_I_p_one[i]))
+            lst.append(k)
+        return np.asarray(lst).T
+
+    @property
+    def all_transitions(self):
+        """Returns a list of all possible spin transitions in as isotopomer."""
+        energy_states = self.Zeeman_energy_states
+        s = energy_states.shape[0]
+        lst = np.arange(s)
+        indexes = np.asarray(np.meshgrid(lst, lst)).T.reshape(-1, 2)
+        return TransitionList(
+            [
+                Transition(initial=item[0].tolist(), final=item[1].tolist())
+                for item in energy_states[indexes]
+            ]
+        )
 
     def to_freq_dict(self, B0):
         """

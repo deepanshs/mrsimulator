@@ -22,12 +22,12 @@ import csdmpy as cp
 import matplotlib.pylab as pylab
 import numpy as np
 
-params = {"figure.figsize": (4.5, 3)}
+params = {"figure.figsize": (4.5, 3), "font.size": 9}
 pylab.rcParams.update(params)
 
 
-filename = "Na2SiO3_O17.csdf.temp"
-oxygen_experiment = cp.load(filename)
+filename = "https://osu.box.com/shared/static/kfgt0jxgy93srsye9pofdnoha6qy58qf.csdf"
+oxygen_experiment = cp.load(filename).real
 
 cp.plot(oxygen_experiment)
 

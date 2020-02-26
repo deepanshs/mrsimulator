@@ -20,7 +20,7 @@ from sphinx_gallery.sorting import FileNameSortKey
 # -- Project information -----------------------------------------------------
 
 project = "mrsimulator"
-copyright = "2019, Deepansh J. Srivastava"
+copyright = "2019, The Mrsimulator project"
 author = "Deepansh J. Srivastava"
 
 # get version number from the file
@@ -113,7 +113,7 @@ sphinx_gallery_conf = {
     "within_subsection_order": FileNameSortKey,
     # "show_memory": True,
     "thumbnail_size": (400, 400),
-    #"image_scrapers": (matplotlib_svg_scraper(),),
+    # "image_scrapers": (matplotlib_svg_scraper(),),
     "subsection_order": ExplicitOrder(
         ["../examples/1D_simulation", "../examples/Fitting"]
     ),
@@ -128,6 +128,8 @@ sphinx_gallery_conf = {
 intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org", None),
     "numpy": ("https://numpy.org", None),
+    "csdmpy": ("https://csdmpy.readthedocs.io/en/latest/", None),
+    "lmfit": ("https://lmfit-py.readthedocs.io/en/latest/", None),
 }
 # ---------------------------------------------------------------------------- #
 
