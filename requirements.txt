@@ -1,11 +1,10 @@
 
-numpy>=1.13.3
-setuptools>=27.3
-cython>=0.29.11
-astropy>=3.0
-requests>=2.21.0
-matplotlib>=3.0.2
-csdmpy>=0.2
-pydantic>=1.3
-monty>=2.0.4
-lmfit>=1.0.0
+numpy
+setuptools
+cython
+requests
+matplotlib
+csdmpy
+pydantic
+monty==2.0.4
+lmfit

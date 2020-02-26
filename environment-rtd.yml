@@ -2,23 +2,8 @@ name: mrsim-dev
 channels:
   - anaconda
 dependencies:
-  - fftw>=3.3.0
+  - fftw
   - openblas
-  - numpy>=1.17
-  - setuptools>=27.3
-  - cython>=0.29.11
-  - pip>=19.1.1
-  - pip:
-      - monty==2.0.4
-      - astropy==3.2.3
-      - matplotlib>=3.0.2
-      - csdmpy>=0.2
-      - pydantic>=0.28
-      - sphinxjp.themes.basicstrap
-      - breathe>=4.13.0
-      - sphinx-copybutton
-      - sphinx-gallery
-      - pytest>=5.2.1
-      - pytest-cov
-      - sympy
-      - lmfit>=1.0.0
+  - numpy
+  - setuptools
+  - cython
