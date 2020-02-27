@@ -4,10 +4,10 @@ channels:
 dependencies:
   - fftw>=3.3.0
   - openblas
+  - cython>=0.29.11
   - pip:
       - numpy>=1.17
       - setuptools>=27.3
-      - cython>=0.29.11
       - astropy>=3.0
       - requests>=2.21.0
       - matplotlib>=3.0.2
