@@ -54,10 +54,11 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
     # "sphinxcontrib.bibtex",
-    "sphinx_gallery.gen_gallery",
     # "sphinx.ext.numfig",
     "breathe",
     "sphinxjp.themes.basicstrap",
+    "sphinx_gallery.gen_gallery",
+    "sphinx.ext.intersphinx",
 ]
 
 
@@ -128,8 +129,8 @@ sphinx_gallery_conf = {
 intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org", None),
     "numpy": ("https://numpy.org", None),
-    "csdmpy": ("https://csdmpy.readthedocs.io/en/latest/", None),
-    "lmfit": ("https://lmfit-py.readthedocs.io/en/latest/", None),
+    "csdmpy": ("https://csdmpy.readthedocs.io/en/stable/", None),
+    "lmfit": ("https://lmfit-py.readthedocs.io/en/stable/", None),
 }
 # ---------------------------------------------------------------------------- #
 
