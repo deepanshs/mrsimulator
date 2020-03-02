@@ -25,7 +25,7 @@ __author__ = "Maxwell C Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 
-def line_broadening(x, amp, sigma, broadType):
+def line_broadening(csdm_obj, sigma, broadType):
     """
     Applies appodization filter to the simulated spectrum using either Lorentzian filtering or Gaussian filtering.
 
@@ -33,6 +33,8 @@ def line_broadening(x, amp, sigma, broadType):
         Array of appodized intensities.
 
     """
+    x = csdm_obj.dimensions[0]
+    amp = csdm_obj.dependent_variables[0].components[0]
     freq = x.coordinates.to("Hz")
 
     TimeDomain = ifft(ifftshift(amp))
@@ -53,7 +55,7 @@ def line_broadening(x, amp, sigma, broadType):
 
     appodized = np.roll(TimeDomain * broadSignal, -int(x.count / 2))
 
-    return fftshift(fft(appodized))
+    return fftshift(fft(appodized)).real
 
 
 def str_to_html(my_string):
@@ -173,7 +175,7 @@ function_mapping = {
 }
 
 
-def fcn2min(params, data, sim, apodization_function):
+def min_function(params, data, sim, apodization_function):
     """
     The simulation routine to establish how the parameters will update the simulation.
 
@@ -181,6 +183,7 @@ def fcn2min(params, data, sim, apodization_function):
         Array of the differences between the simulation and the experimental data.
 
     """
+    intensity_data = data.dependent_variables[0].components[0].real
     values = params.valuesdict()
     for items in values:
         if items not in ["sigma", "factor"]:
@@ -191,70 +194,75 @@ def fcn2min(params, data, sim, apodization_function):
     sim.run(method=one_d_spectrum)
     y = sim.apodize(function_mapping[apodization_function], sigma=values["sigma"])
 
-    y_factored = y * values["factor"]
+    if "factor" in values:
+        y_factored = y * values["factor"]
+    else:
+        y_factored = y
 
-    return data - y_factored  # _factored#simulatedData.dependent_variables[0].components[0]
+    return (
+        intensity_data - y_factored
+    )  # _factored#simulatedData.dependent_variables[0].components[0]
 
 
-def spectral_fitting(experiment, sim, apodization_function, params):
-    """
-    Spectrum fitting routine to fit the mrsimulation to an experimental spectrum. Parameters may be provided or if not provided will be generated based on the simulation object passed through.
+# def spectral_fitting(experiment, sim, apodization_function, params):
+#     """
+#     Spectrum fitting routine to fit the mrsimulation to an experimental spectrum. Parameters may be provided or if not provided will be generated based on the simulation object passed through.
 
-    Returns:
-        CSDM object containing the experimental data and the simulated fit.
+#     Returns:
+#         CSDM object containing the experimental data and the simulated fit.
 
-    """
-    if len(params) == 0:
-        params = make_fitting_parameters(sim)
-        params.add(
-            name="sigma", value=experiment.dimensions[0].increment.to("Hz").value, min=0
-        )
-        params.add(
-            name="factor",
-            value=experiment.dependent_variables[0].components[0].max().real,
-            min=0,
-        )
-    if "sigma" not in params:
-        params.add(
-            name="sigma", value=experiment.dimensions[0].increment.to("Hz").value, min=0
-        )
-    if "factor" not in params:
-        params.add(
-            name="factor",
-            value=experiment.dependent_variables[0].components[0].max().real,
-            min=0,
-        )
+#     """
+#     if len(params) == 0:
+#         params = make_fitting_parameters(sim)
+#         params.add(
+#             name="sigma", value=experiment.dimensions[0].increment.to("Hz").value, min=0
+#         )
+#         params.add(
+#             name="factor",
+#             value=experiment.dependent_variables[0].components[0].max().real,
+#             min=0,
+#         )
+#     if "sigma" not in params:
+#         params.add(
+#             name="sigma", value=experiment.dimensions[0].increment.to("Hz").value, min=0
+#         )
+#     if "factor" not in params:
+#         params.add(
+#             name="factor",
+#             value=experiment.dependent_variables[0].components[0].max().real,
+#             min=0,
+#         )
 
-    minner = Minimizer(
-        fcn2min,
-        params,
-        fcn_args=(
-            experiment.dependent_variables[0].components[0].real,
-            sim,
-            apodization_function,
-        ),
-    )
-    result = minner.minimize()
+#     minner = Minimizer(
+#         min_function,
+#         params,
+#         fcn_args=(
+#             experiment.dependent_variables[0].components[0].real,
+#             sim,
+#             apodization_function,
+#         ),
+#     )
+#     result = minner.minimize()
 
-    report_fit(result)
+#     report_fit(result)
 
-    sim.run(method=one_d_spectrum)
-    sim_data = sim.as_csdm_object()
+#     sim.run(method=one_d_spectrum)
+#     sim_data = sim.as_csdm_object()
 
-    x_simulated = sim_data.dimensions[0]
-    y_simulated = sim_data.dependent_variables[0].components[0]
-    sim_data.dependent_variables[0].components[0] = line_broadening(
-        x_simulated, y_simulated, result.params["sigma"], 0
-    ).real
-    sim_data.dependent_variables[0].components[0] = (
-        sim_data.dependent_variables[0].components[0] * result.params["factor"]
-    )
+#     x_simulated = sim_data.dimensions[0]
+#     y_simulated = sim_data.dependent_variables[0].components[0]
+#     sim_data.dependent_variables[0].components[0] = line_broadening(
+#         x_simulated, y_simulated, result.params["sigma"], 0
+#     ).real
+#     sim_data.dependent_variables[0].components[0] = (
+#         sim_data.dependent_variables[0].components[0] * result.params["factor"]
+#     )
 
-    new_csdm = cp.new()
+#     new_csdm = cp.new()
 
-    new_csdm.add_dimension(experiment.dimensions[0])
-    new_csdm.add_dependent_variable(experiment.dependent_variables[0])
+#     new_csdm.add_dimension(experiment.dimensions[0])
+#     new_csdm.add_dependent_variable(experiment.dependent_variables[0])
 
-    new_csdm.add_dependent_variable(sim_data.dependent_variables[0])
+#     new_csdm.add_dependent_variable(sim_data.dependent_variables[0])
 
-    return new_csdm
+#     return new_csdm

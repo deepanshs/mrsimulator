@@ -4,20 +4,21 @@
 Fitting Wollastonite.
 ^^^^^^^^^^^^^^^^^^^^^
 """
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 #%%
-# Often, after obtaining an NMR measurement we must fit tensors to our data so we can obtain the tensor parameters.
-# In this example, we will illustrate the use of the *mrsimulator* method to simulate the experimental spectrum and
-# fit the simulation to the data allowing us to extract the tensor parameters for our isotopomers. We will be using the
-# *LMFIT* methods to establish fitting parameters and fit the spectrum. The following examples will show the
-# measurements from an :math:`^{17}\text{O}` experiment on :math:`\text{Na}_{2}\text{SiO}_{3}` and a :math:`^{29}\text{Si}`
-# experiment on wollastonite. The *mrsimulator* library and data make use of CSDM compliant files.
+# Often, after obtaining an NMR measurement we must fit tensors to our data so we can
+# obtain the tensor parameters. In this example, we will illustrate the use of the *mrsimulator*
+# method to simulate the experimental spectrum and fit the simulation to the data allowing us to
+# extract the tensor parameters for our isotopomers. We will be using the *LMFIT* methods to
+# establish fitting parameters and fit the spectrum. The following examples will show fitting with
+# two synthetic :math:`^{29}\text{Si}` spectra--cuspidine and wollastonite--as well as the
+# measurements from an :math:`^{17}\text{O}` experiment on :math:`\text{Na}_{2}\text{SiO}_{3}`.
+# The *mrsimulator* library and data make use of CSDM compliant files.
 #
-# In this example we will be creating a synthetic spectrum of wollastonite and attempting to fit a simulation to the synthetic
-# spectrum. We will create the synthetic spectrum using tensor parameters from wollastonite and ensure that our fitting
-# method is able to fit the spectrum.
+# In this example we will be creating a synthetic spectrum of wollastonite from reported tensor
+# parameters and then fit a simulation to the spectrum to demonstrate a fitting procedure.
 #
-# As before with :math:`\text{Na}_{2}\text{SiO}_{3}`, we will be creating simulation objects
+# To begin, we will create a synthetic spectrum. In order to do so we must create a simulation.
 import csdmpy as cp
 import matplotlib
 import matplotlib.pylab as pylab
@@ -71,7 +72,7 @@ plt.show()
 
 #%%
 # In order to create a synthetic spectrum we will add noise and line broadening to the
-# spectrum. The line broadening is performed using the Apodization class which is a
+# spectrum. The line broadening is performed using the ``Apodization`` class which is a
 # member of a simulator object.
 
 #%%
@@ -84,10 +85,12 @@ synth_data = synth_wollastonite.as_csdm_object()
 
 x = synth_data.dimensions[0]
 y = synth_data.dependent_variables[0].components[0]
+# Here we apodize the spectrum using a Lorentzian line broadening
 synth_data.dependent_variables[0].components[0] = synth_wollastonite.apodize(
     Apodization.Lorentzian, sigma=200
 )
 
+# Here we simulate noise with RNG and add the noise to the spectrum
 noise = np.random.normal(-0.025, 0.025, y.shape)
 synthetic = y + noise
 synth_data.dependent_variables[0].components[0] = synthetic
@@ -96,7 +99,7 @@ cp.plot(synth_data)
 
 #%%
 # We have just created a synthetic experimental data set and now we must create the simulation
-# to fit to this synthetic data. We will use another initial guess to generate our simulation:
+# to fit to this synthetic data. We will use an initial approximation to generate our fitting simulation:
 
 #%%
 
@@ -128,7 +131,8 @@ sim_data = sim.as_csdm_object()
 cp.plot(sim_data)
 
 #%%
-# Again, we will need a list of parameters to change during the fitting:
+# Again, we will need a list of parameters to change during the fitting. We create this list using the
+# ``make_fitting_parameters()`` function.
 
 #%%
 
@@ -150,46 +154,24 @@ params.add(
 
 
 minner = Minimizer(
-    spectral_fitting.fcn2min,
-    params,
-    fcn_args=(synth_data.dependent_variables[0].components[0].real, sim, "Lorentzian"),
+    spectral_fitting.min_function, params, fcn_args=(synth_data, sim, "Lorentzian")
 )
 result = minner.minimize()
-report_fit(result)
-
 
 #%%
+# After the fit, we can plot the new simulated spectrum using the *matplotlib* library.
+#%%
 
+plt.figsize = (4, 3)
+residual = synth_data.copy()
+residual[:] = result.residual
+plt.plot(*synth_data.to_list(), label="Spectrum")
+plt.plot(*(synth_data - residual).to_list(), "r", alpha=0.5, label="Fit")
+plt.plot(*residual.to_list(), alpha=0.5, label="Residual")
 
-sim.run(method=one_d_spectrum)
-sim_data = sim.as_csdm_object()
-values = params.valuesdict()
-
-
-x_simulated = sim_data.dimensions[0]
-y_simulated = sim_data.dependent_variables[0].components[0]
-sim_data.dependent_variables[0].components[0] = spectral_fitting.line_broadening(
-    x_simulated, y_simulated, result.params["sigma"], 0
-).real
-
-plt.plot(
-    x.coordinates, synth_data.dependent_variables[0].components[0], label="Spectrum"
-)
-plt.plot(
-    x_simulated.coordinates,
-    sim_data.dependent_variables[0].components[0] * result.params["factor"],
-    "r",
-    alpha=0.5,
-    label="Fit",
-)
-plt.plot(
-    x.coordinates,
-    synth_data.dependent_variables[0].components[0].real
-    - sim_data.dependent_variables[0].components[0] * result.params["factor"],
-    alpha=0.5,
-    label="Residual",
-)
 plt.xlabel("Frequency / Hz")
+plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()
 
+plt.tight_layout()
 plt.show()

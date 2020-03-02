@@ -9,8 +9,17 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
+set AUTOEX=auto_examples
 
 if "%1" == "" goto help
+
+if "%1" == "clean" (
+	for /d %%i in (%BUILDDIR%\*) do rmdir /q /s %%i
+	del /q /s %BUILDDIR%\*
+	for /d %%i in (%AUTOEX%\*) do rmdir /q /s %%i
+	del /q /s %AUTOEX%\*
+	goto end
+)
 
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (

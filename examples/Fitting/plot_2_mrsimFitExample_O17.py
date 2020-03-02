@@ -7,20 +7,19 @@ Fitting Sodium Silicate.
 # sphinx_gallery_thumbnail_number = 3
 #%%
 # Often, after obtaining an NMR measurement we must fit tensors to our data so we can
-# obtain the tensor parameters. In this example, we will illustrate the use of the
-# *mrsimulator* method to simulate the experimental spectrum and fit the simulation to
-# the data allowing us to extract the tensor parameters for our isotopomers. We will
-# be using the *LMFIT* methods to establish fitting parameters and fit the spectrum.
-# The following examples will show the measurements from an :math:`^{17}\text{O}`
-# experiment on :math:`\text{Na}_{2}\text{SiO}_{3}` and a :math:`^{29}\text{Si}`
-# experiment on wollastonite. The *mrsimulator* library and data make use of CSDM
-# compliant files.
+# obtain the tensor parameters. In this example, we will illustrate the use of the *mrsimulator*
+# method to simulate the experimental spectrum and fit the simulation to the data allowing us to
+# extract the tensor parameters for our isotopomers. We will be using the *LMFIT* methods to
+# establish fitting parameters and fit the spectrum. The following examples will show fitting with
+# two synthetic :math:`^{29}\text{Si}` spectra--cuspidine and wollastonite--as well as the
+# measurements from an :math:`^{17}\text{O}` experiment on :math:`\text{Na}_{2}\text{SiO}_{3}`.
+# The *mrsimulator* library and data make use of CSDM compliant files.
+# In this example we will fit a simulation to an experimentally obtained :math:`^{17}\text{O}` spectrum.
 #
-# Import the *csdmpy* model and load the dataset. We will also be importing *matplotlib* to
-# adjust the plotting output.
+# Begin by importing *csdmpy* and loading the data file. We will also be establishing *matplotlib*
+# figure size here.
 import csdmpy as cp
 import matplotlib.pylab as pylab
-import numpy as np
 
 params = {"figure.figsize": (4.5, 3), "font.size": 9}
 pylab.rcParams.update(params)
@@ -32,10 +31,9 @@ oxygen_experiment = cp.load(filename).real
 cp.plot(oxygen_experiment)
 
 #%%
-# Next, we will want to create a simulation object that we will use to fit to our
+# Next, we will want to create a ``simulation`` object that we will use to fit to our
 # spectrum. We will need to import the necessary libraries for the *mrsimulator*
-# methods. We will then create isotopomer objects. While the tensor parameters we
-# initialize are not exact, they serve as a good initial guess.
+# methods. We will then create ``isotopomer`` objects.
 
 #%%
 
@@ -77,10 +75,7 @@ cp.plot(sim_data)
 
 #%%
 # Once we have our simulation we must create our list of parameters to use in our
-# fitting. We will be using the Parameters() class from LMFIT. For more information on
-# the LMFIT library please visit [LMFIT documentation](https://lmfit.github.io/lmfit-py/).
-
-#%%
+# fitting. We will be using the ``Parameters()`` class from *LMFIT*.
 
 from lmfit import Minimizer, Parameters, report_fit
 
@@ -100,11 +95,7 @@ params = spectral_fitting.make_fitting_parameters(sim)
 params.add(
     name="sigma", value=oxygen_experiment.dimensions[0].increment.to("Hz").value, min=0
 )
-params.add(
-    name="factor",
-    value=oxygen_experiment.dependent_variables[0].components[0].max().real,
-    min=0,
-)
+params.add(name="factor", value=oxygen_experiment.max(), min=0)
 
 #%%
 # With an experimental spectrum, a simulaton, and a list of parameters we are now
@@ -113,26 +104,19 @@ params.add(
 # for *fcn2min* are the intensities from the experimental data and the simulation
 # CSDM object. Reporting the results of the fit will give us our tensor parameters.
 #
-# The naming convention of the variables may seem a bit odd at first. LMFIT
-# parameter names do not accept special characters such as "\[," "\], "or "."
-# in the names of the parmeters, so in order to maintain the addresses of each
-# parameter in the simulator object we converted the square brakets and periods
-# to their HTML numbers. For example, isotopomers\[0\].sites\[0\].isotropic_chemical_shift
-# is converted to isotopomers9109346sites9109346isotropic_chemical_shift, and during
-# any updates to the simualtion object the name is converted back to the address before
-# execution of the assignments.
+# One thing to note is that the names of our parameters must correspond to their addresses within the simulation object
+# in order to update the simulation during the fit. The *LMFIT* library does not allow for the use of special characters
+# such as "\[", "\]", or "." so our current workaround is converting the special characters to their corresponding HTML
+# character code numbers and converting back to the special character when updating the simulation.
+
 
 #%%
 
 
 minner = Minimizer(
-    spectral_fitting.fcn2min,
+    spectral_fitting.min_function,
     params,
-    fcn_args=(
-        oxygen_experiment.dependent_variables[0].components[0].real,
-        sim,
-        "Lorentzian",
-    ),
+    fcn_args=(oxygen_experiment, sim, "Lorentzian"),
 )
 result = minner.minimize()
 report_fit(result)
@@ -142,41 +126,20 @@ report_fit(result)
 
 #%%
 
-
 import matplotlib
 import matplotlib.pyplot as plt
-from mrsimulator.apodization import Apodization
-
-sim.run(method=one_d_spectrum)
-sim_data = sim.as_csdm_object()
-values = params.valuesdict()
-
-x_simulated = sim_data.dimensions[0]
-y_simulated = sim_data.dependent_variables[0].components[0]
-sim_data.dependent_variables[0].components[0] = sim.apodize(
-    Apodization.Lorentzian, sigma=result.params["sigma"]
-)
 
 
-plt.plot(
-    oxygen_experiment.dimensions[0].coordinates,
-    oxygen_experiment.dependent_variables[0].components[0].real,
-    label="Experimental",
-)
-plt.plot(
-    x_simulated.coordinates,
-    sim_data.dependent_variables[0].components[0] * result.params["factor"],
-    "r",
-    alpha=0.5,
-    label="Fit",
-)
-plt.plot(
-    x_simulated.coordinates,
-    oxygen_experiment.dependent_variables[0].components[0]
-    - sim_data.dependent_variables[0].components[0] * result.params["factor"],
-    alpha=0.5,
-    label="Residual",
-)
+plt.figsize = (4, 3)
+residual = oxygen_experiment.copy()
+residual[:] = result.residual
+plt.plot(*oxygen_experiment.to_list(), label="Spectrum")
+plt.plot(*(oxygen_experiment - residual).to_list(), "r", alpha=0.5, label="Fit")
+plt.plot(*residual.to_list(), alpha=0.5, label="Residual")
+
 plt.xlabel("Frequency / Hz")
+plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()
+
+plt.tight_layout()
 plt.show()
