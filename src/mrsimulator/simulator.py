@@ -222,5 +222,16 @@ class Simulator(BaseModel):
         return new
 
     def apodize(self, fn, dimension=0, **kwargs):
+        """
+        Applies an appodization filter to the data.
+
+        Args:
+            self: simulation object.
+            fn: the apodization function to be used. A member function of Apodization class.
+            dimension: The dimension to apply the fourier transform to.
+
+        Return:
+            A Numpy array
+        """
         apodization_filter = Apodization(self.as_csdm_object(), dimension=dimension)
         return apodization_filter.apodize(fn, **kwargs)

@@ -9,6 +9,17 @@ from numpy.fft import ifftshift
 
 
 class Apodization:
+    """
+    The Apodization class.
+
+    Attributes:
+        dimension: List of dimensions.
+        fft: An FFT algorithm may be applied to the data
+        x: array of frequency domain coordinates
+        y: array of amplitudes
+        inverse_x: array of time domain coordinates
+    """
+
     def __init__(self, sim, dimension=0):
         self.dimension = dimension
         self.fft = True
@@ -17,9 +28,27 @@ class Apodization:
         self.inverse_x = reciprocal_coordinates(self.x)
 
     def Lorentzian(self, sigma):
+        """Lorentzian apodization function.
+
+        Args:
+            Self: simulation object
+            sigma: The full-width-half-max in Hz of the Lorentzian function
+
+        Returns:
+            A Numpy array
+        """
         return np.exp(-sigma * np.pi * np.abs(self.inverse_x))
 
     def Gaussian(self, sigma):
+        """Gaussian apodization function.
+
+        Args:
+            Self: simulation object
+            sigma: standard deviation in Hz of the Gaussian function
+
+        Returns:
+            A Numpy array
+        """
         return np.exp(-((self.inverse_x * sigma * np.pi) ** 2) * 2)
 
     #     def Stretch_Exponential(self, beta, dim):
@@ -33,6 +62,15 @@ class Apodization:
     # Uniform
     # Welch
     def apodize(self, fn, **kwargs):
+        """Returns the result of passing the selected apodization function .
+
+        Args:
+            Self: simulation object
+            fn: The apodization function. See the Apodization member functions for a list of available functions
+
+        Returns:
+            A Numpy array
+        """
         axis = -self.dimension - 1
         fapp = fn(self, **kwargs)
         TimeDomain = ifft(ifftshift(self.y, axes=axis), axis=axis)
@@ -44,6 +82,14 @@ class Apodization:
 
 
 def reciprocal_coordinates(x):
+    """Returns the result of passing the selected apodization function .
+
+    Args:
+        x: array of frequency domain coordinates
+
+    Returns:
+        A Numpy array
+    """
     delta_x = abs(x[1] - x[0]).to("Hz")
     t_indices = np.arange(x.size) - int(x.size / 2)
     t_increment = (1 / (x.size * delta_x)).to("s").value
