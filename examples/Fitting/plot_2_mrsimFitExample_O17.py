@@ -83,7 +83,7 @@ cp.plot(sim_data)
 
 #%%
 
-from lmfit import Minimizer, Parameters, report_fit
+
 from mrsimulator import spectral_fitting
 
 params = spectral_fitting.make_fitting_parameters(sim)
@@ -107,6 +107,7 @@ params.add(name="factor", value=oxygen_experiment.max(), min=0)
 
 #%%
 
+from lmfit import Minimizer, report_fit
 
 minner = Minimizer(
     spectral_fitting.min_function,

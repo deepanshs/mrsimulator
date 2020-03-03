@@ -137,7 +137,6 @@ cp.plot(sim_data)
 #%%
 
 
-from lmfit import Minimizer, Parameters
 from mrsimulator import spectral_fitting
 
 
@@ -152,6 +151,7 @@ params.add(
 
 #%%
 
+from lmfit import Minimizer
 
 minner = Minimizer(
     spectral_fitting.min_function, params, fcn_args=(synth_data, sim, "Lorentzian")
