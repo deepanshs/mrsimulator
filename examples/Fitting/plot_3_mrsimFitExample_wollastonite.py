@@ -137,10 +137,10 @@ cp.plot(sim_data)
 #%%
 
 
-from lmfit import Minimizer, Parameters, report_fit
+from lmfit import Minimizer, Parameters
 from mrsimulator import spectral_fitting
 
-params = Parameters()
+
 params = spectral_fitting.make_fitting_parameters(sim)
 params.add(name="sigma", value=0)
 params.add(

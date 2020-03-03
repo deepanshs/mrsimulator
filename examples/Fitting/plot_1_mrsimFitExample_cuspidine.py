@@ -37,7 +37,6 @@ cp.plot(synthetic_experiment)
 
 
 from mrsimulator import Simulator, Isotopomer, Site, Dimension
-from mrsimulator import SymmetricTensor as st
 from mrsimulator.methods import one_d_spectrum
 
 S29 = Site(
@@ -131,7 +130,6 @@ report_fit(result)
 # After the fit, we can plot the new simulated spectrum using the *matplotlib* library.
 
 
-import matplotlib
 import matplotlib.pyplot as plt
 
 

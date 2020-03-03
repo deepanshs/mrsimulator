@@ -76,19 +76,14 @@ cp.plot(sim_data)
 #%%
 # Once we have our simulation we must create our list of parameters to use in our
 # fitting. We will be using the ``Parameters()`` class from *LMFIT*.
-
-from lmfit import Minimizer, Parameters, report_fit
-
-params = Parameters()
-
-#%%
+#
 # In each experiment the number of isotopomers and sites present as well as their
 # attributes may vary. To simplify the parameter list creation we will use the
 # *make_fitting_parameters()* method from *mrsimulator.spectral_fitting*
 
 #%%
 
-
+from lmfit import Minimizer, Parameters, report_fit
 from mrsimulator import spectral_fitting
 
 params = spectral_fitting.make_fitting_parameters(sim)
@@ -126,7 +121,6 @@ report_fit(result)
 
 #%%
 
-import matplotlib
 import matplotlib.pyplot as plt
 
 

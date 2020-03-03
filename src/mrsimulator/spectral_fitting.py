@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 from pprint import pprint
 
-import csdmpy as cp
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-from lmfit import Minimizer
 from lmfit import Parameters
-from lmfit import report_fit
 from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
