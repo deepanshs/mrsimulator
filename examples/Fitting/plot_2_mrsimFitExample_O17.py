@@ -20,6 +20,7 @@ Fitting Sodium Silicate.
 # figure size here.
 import csdmpy as cp
 import matplotlib.pylab as pylab
+import matplotlib.pyplot as plt
 
 params = {"figure.figsize": (4.5, 3), "font.size": 9}
 pylab.rcParams.update(params)
@@ -27,8 +28,17 @@ pylab.rcParams.update(params)
 
 filename = "https://osu.box.com/shared/static/kfgt0jxgy93srsye9pofdnoha6qy58qf.csdf"
 oxygen_experiment = cp.load(filename).real
+oxygen_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
-cp.plot(oxygen_experiment)
+x1, y1 = oxygen_experiment.to_list()
+
+plt.plot(x1, y1)
+plt.xlabel("$^{17}$O frequency / ppm")
+plt.xlim(x1.value.max(), x1.value.min())
+plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+plt.tight_layout()
+plt.show()
+
 
 #%%
 # Next, we will want to create a ``simulation`` object that we will use to fit to our
@@ -36,7 +46,6 @@ cp.plot(oxygen_experiment)
 # methods. We will then create ``isotopomer`` objects.
 
 #%%
-
 
 from mrsimulator import Simulator, Isotopomer, Site, Dimension
 from mrsimulator import SymmetricTensor as st
@@ -68,10 +77,14 @@ dimension = Dimension(
 
 sim.isotopomers += isotopomers
 sim.dimensions += [dimension]
-sim.run(method=one_d_spectrum)
-sim_data = sim.as_csdm_object()
+x, y = sim.run(method=one_d_spectrum)
 
-cp.plot(sim_data)
+plt.plot(x, y)
+plt.xlabel("$^{17}$O frequency / ppm")
+plt.xlim(x.value.max(), x.value.min())
+plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+plt.tight_layout()
+plt.show()
 
 #%%
 # Once we have our simulation we must create our list of parameters to use in our
@@ -118,11 +131,9 @@ result = minner.minimize()
 report_fit(result)
 
 #%%
-# Next, we can compare the fit to the experimental data using the *matplotlib* library:
+# Next, we can compare the fit to the experimental data:
 
 #%%
-
-import matplotlib.pyplot as plt
 
 
 plt.figsize = (4, 3)
@@ -132,7 +143,8 @@ plt.plot(*oxygen_experiment.to_list(), label="Spectrum")
 plt.plot(*(oxygen_experiment - residual).to_list(), "r", alpha=0.5, label="Fit")
 plt.plot(*residual.to_list(), alpha=0.5, label="Residual")
 
-plt.xlabel("Frequency / Hz")
+plt.xlim(x.value.max(), x.value.min())
+plt.xlabel("$^{29}$Si frequency / ppm")
 plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()
 

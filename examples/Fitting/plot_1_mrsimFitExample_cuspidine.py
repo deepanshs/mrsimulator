@@ -21,13 +21,22 @@ Fitting Cusipidine.
 # figure size here.
 import csdmpy as cp
 import matplotlib.pylab as pylab
+import matplotlib.pyplot as plt
 
 params = {"figure.figsize": (4.5, 3), "font.size": 9}
 pylab.rcParams.update(params)
 
 synthetic_experiment = cp.load("synthetic_cuspidine_test.csdf")
+synthetic_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
-cp.plot(synthetic_experiment)
+x1, y1 = synthetic_experiment.to_list()
+
+plt.plot(x1, y1)
+plt.xlabel("$^{29}$Si frequency / ppm")
+plt.xlim(x1.value.max(), x1.value.min())
+plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+plt.tight_layout()
+plt.show()
 
 #%%
 # In order to to fit a simulation to the data we will need to establish a ``simulation`` object. We will
@@ -50,17 +59,21 @@ dimension = Dimension(
     magnetic_flux_density=7.1,  # in T
     number_of_points=2046,
     spectral_width=25000,  # in Hz
-    reference_offset=-10000,  # in Hz
+    reference_offset=-5000,  # in Hz
     rotor_frequency=780,  # in Hz
 )
 
 sim = Simulator()
 sim.isotopomers += [Isotopomer(name="Si29", sites=[S29], abundance=100)]
 sim.dimensions += [dimension]
-sim.run(method=one_d_spectrum)
-sim_data = sim.as_csdm_object()
+x, y = sim.run(method=one_d_spectrum)
 
-cp.plot(sim_data)
+plt.plot(x, y)
+plt.xlabel("$^{29}$Si frequency / ppm")
+plt.xlim(x.value.max(), x.value.min())
+plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+plt.tight_layout()
+plt.show()
 
 #%%
 # Next, we will need a list of parameters that will be used in the fit. the *LMFIT* library allows us to create
@@ -127,10 +140,7 @@ result = minner.minimize()
 report_fit(result)
 
 #%%
-# After the fit, we can plot the new simulated spectrum using the *matplotlib* library.
-
-
-import matplotlib.pyplot as plt
+# After the fit, we can plot the new simulated spectrum.
 
 
 plt.figsize = (4, 3)
@@ -140,6 +150,7 @@ plt.plot(*synthetic_experiment.to_list(), label="Spectrum")
 plt.plot(*(synthetic_experiment - residual).to_list(), "r", alpha=0.5, label="Fit")
 plt.plot(*residual.to_list(), alpha=0.5, label="Residual")
 
+plt.xlim(x.value.max(), x.value.min())
 plt.xlabel("Frequency / Hz")
 plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()

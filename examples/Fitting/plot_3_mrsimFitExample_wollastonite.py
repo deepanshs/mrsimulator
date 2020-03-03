@@ -65,9 +65,13 @@ synth_wollastonite = Simulator()
 synth_wollastonite.isotopomers += isotopomers
 synth_wollastonite.dimensions += [dimension]
 
-synth_wollastonite.run(method=one_d_spectrum)
-synth_data = synth_wollastonite.as_csdm_object()
-cp.plot(synth_data)
+x1, y1 = synth_wollastonite.run(method=one_d_spectrum)
+
+plt.plot(x1, y1)
+plt.xlabel("$^{29}$Si frequency / ppm")
+plt.xlim(x1.value.max(), x1.value.min())
+plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+plt.tight_layout()
 plt.show()
 
 #%%
@@ -82,20 +86,27 @@ from mrsimulator.apodization import Apodization
 import numpy as np
 
 synth_data = synth_wollastonite.as_csdm_object()
+synth_data.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
-x = synth_data.dimensions[0]
-y = synth_data.dependent_variables[0].components[0]
+x2 = synth_data.dimensions[0].coordinates
+y2 = synth_data.dependent_variables[0].components[0]
 # Here we apodize the spectrum using a Lorentzian line broadening
 synth_data.dependent_variables[0].components[0] = synth_wollastonite.apodize(
     Apodization.Lorentzian, sigma=200
 )
 
 # Here we simulate noise with RNG and add the noise to the spectrum
-noise = np.random.normal(-0.025, 0.025, y.shape)
-synthetic = y + noise
+noise = np.random.normal(-0.025, 0.025, y2.shape)
+synthetic = y2 + noise
 synth_data.dependent_variables[0].components[0] = synthetic
 
-cp.plot(synth_data)
+
+plt.plot(x2, synthetic)
+plt.xlabel("$^{29}$Si frequency / ppm")
+plt.xlim(x2.value.max(), x2.value.min())
+plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+plt.tight_layout()
+plt.show()
 
 #%%
 # We have just created a synthetic experimental data set and now we must create the simulation
@@ -125,10 +136,14 @@ isotopomers = [Isotopomer(sites=[site]) for site in [S29_1, S29_2, S29_3]]
 sim = Simulator()
 sim.isotopomers += isotopomers
 sim.dimensions += [dimension]
-sim.run(method=one_d_spectrum)
-sim_data = sim.as_csdm_object()
+x3, y3 = sim.run(method=one_d_spectrum)
 
-cp.plot(sim_data)
+plt.plot(x3, y3)
+plt.xlabel("$^{29}$Si frequency / ppm")
+plt.xlim(x3.value.max(), x3.value.min())
+plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+plt.tight_layout()
+plt.show()
 
 #%%
 # Again, we will need a list of parameters to change during the fitting. We create this list using the
@@ -142,9 +157,7 @@ from mrsimulator import spectral_fitting
 
 params = spectral_fitting.make_fitting_parameters(sim)
 params.add(name="sigma", value=0)
-params.add(
-    name="factor", value=sim_data.dependent_variables[0].components[0].max(), min=0
-)
+params.add(name="factor", value=1, min=0)
 
 #%%
 # With the synthetic data, simulation, and the parameters we are ready to perform the fit
@@ -169,7 +182,8 @@ plt.plot(*synth_data.to_list(), label="Spectrum")
 plt.plot(*(synth_data - residual).to_list(), "r", alpha=0.5, label="Fit")
 plt.plot(*residual.to_list(), alpha=0.5, label="Residual")
 
-plt.xlabel("Frequency / Hz")
+plt.xlim(x3.value.max(), x3.value.min())
+plt.xlabel("$^{29}$Si frequency / ppm")
 plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()
 
