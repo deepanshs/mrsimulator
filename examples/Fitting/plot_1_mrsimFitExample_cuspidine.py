@@ -48,11 +48,11 @@ S29 = Site(
 
 dimension = Dimension(
     isotope="29Si",
-    magnetic_flux_density=14.1,  # in T
+    magnetic_flux_density=7.1,  # in T
     number_of_points=2046,
     spectral_width=25000,  # in Hz
     reference_offset=-10000,  # in Hz
-    rotor_frequency=0,  # in Hz
+    rotor_frequency=780,  # in Hz
 )
 
 sim = Simulator()
@@ -66,7 +66,7 @@ cp.plot(sim_data)
 #%%
 # Next, we will need a list of parameters that will be used in the fit. the *LMFIT* library allows us to create
 # a list of parameters rather easily using the ``Parameters()`` class. We have created a function to parse the
-# simulation object for available parameters and construct an *LMFIT* Parameter object which is shown in the next two
+# simulation object for available parameters and construct an *LMFIT* ``Parameter`` object which is shown in the next two
 # examples on fitting. Here, however, we will construct the parameter list explicitly to demonstrate how the parameters
 # are created.
 #
