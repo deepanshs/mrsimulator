@@ -15,6 +15,7 @@ Fitting Sodium Silicate.
 # measurements from an :math:`^{17}\text{O}` experiment on :math:`\text{Na}_{2}\text{SiO}_{3}`.
 # The *mrsimulator* library and data make use of CSDM compliant files.
 # In this example we will fit a simulation to an experimentally obtained :math:`^{17}\text{O}` spectrum.
+# We use the :math:`^{17}\text{O}` tensor information from Grandinetti et. al. [#f5]_
 #
 # Begin by importing *csdmpy* and loading the data file. We will also be establishing *matplotlib*
 # figure size here.
@@ -150,3 +151,10 @@ plt.legend()
 
 plt.tight_layout()
 plt.show()
+
+#%%
+# .. [#f5] T. M. Clark, P. Florian, J. F. Stebbins, and P. J. Grandinetti,
+#       An :math:`^{17}\text{O}` NMR Investigation of Crystalline Sodium Metasilicate:
+#       Implications for the Determination of Local Structure in Alkali Silicates,
+#       J. Phys. Chem. B. 2001, **105**, 12257-12265.
+#       `DOI: 10.1021/jp011289p  <https://doi.org/10.1021/jp011289p>`_

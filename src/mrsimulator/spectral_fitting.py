@@ -22,42 +22,48 @@ __author__ = "Maxwell C Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 
-def line_broadening(csdm_obj, sigma, broadType):
-    """
-    Applies appodization filter to the simulated spectrum using either Lorentzian filtering or Gaussian filtering.
+# def line_broadening(csdm_obj, sigma, broadType):
+#     """
+#     Applies appodization filter to the simulated spectrum using either Lorentzian filtering or Gaussian filtering.
 
-    Returns:
-        Array of appodized intensities.
+#     Args:
+#         csdm_obj: A CSDM type object containing the data to apodize
 
-    """
-    x = csdm_obj.dimensions[0]
-    amp = csdm_obj.dependent_variables[0].components[0]
-    freq = x.coordinates.to("Hz")
+#     Returns:
+#         Array of appodized intensities.
 
-    TimeDomain = ifft(ifftshift(amp))
-    TimeDomain = np.roll(TimeDomain, int(x.count / 2))
-    t = np.arange(x.count) - int(x.count / 2)
+#     """
+#     x = csdm_obj.dimensions[0]
+#     amp = csdm_obj.dependent_variables[0].components[0]
+#     freq = x.coordinates.to("Hz")
 
-    time = t * 1 / (len(freq) * x.increment.to("Hz").value)
+#     TimeDomain = ifft(ifftshift(amp))
+#     TimeDomain = np.roll(TimeDomain, int(x.count / 2))
+#     t = np.arange(x.count) - int(x.count / 2)
 
-    # Lorentzian broadening:
-    if broadType == 0 and sigma != 0:
-        broadSignal = np.exp(-sigma * np.pi * np.abs(time))
-    # Gaussian broadening:
-    elif broadType == 1 and sigma != 0:
-        broadSignal = np.exp(-((time * sigma * np.pi) ** 2) * 2)
-    # No apodization
-    else:
-        broadSignal = 1
+#     time = t * 1 / (len(freq) * x.increment.to("Hz").value)
 
-    appodized = np.roll(TimeDomain * broadSignal, -int(x.count / 2))
+#     # Lorentzian broadening:
+#     if broadType == 0 and sigma != 0:
+#         broadSignal = np.exp(-sigma * np.pi * np.abs(time))
+#     # Gaussian broadening:
+#     elif broadType == 1 and sigma != 0:
+#         broadSignal = np.exp(-((time * sigma * np.pi) ** 2) * 2)
+#     # No apodization
+#     else:
+#         broadSignal = 1
 
-    return fftshift(fft(appodized)).real
+#     appodized = np.roll(TimeDomain * broadSignal, -int(x.count / 2))
+
+#     return fftshift(fft(appodized)).real
 
 
 def str_to_html(my_string):
     """
     LMFIT Parameters class does not allow for names to include special characters. This function converts '[', ']', and '.' to their HTML numbers to comply with LMFIT.
+
+    Args:
+        my_string: A string object
 
     Returns:
         String object.
@@ -71,6 +77,9 @@ def html_to_string(my_string):
     """
     Converts the HTML numbers to '[', ']', and '.' to allow for execution of the parameter name to update the simulator.
 
+    Args:
+        my_string: A string object
+
     Returns:
         String Object.
 
@@ -81,6 +90,9 @@ def html_to_string(my_string):
 def list_of_dictionaries(my_list):
     """
     Helper function for traverse_dictionaries function which will return a list of dictionaries.
+
+    Args:
+        my_list: A list object
 
     Returns:
         List Object.
@@ -95,6 +107,10 @@ exclude = ["property_units", "isotope", "name", "description"]
 def traverse_dictionaries(dictionary, parent="isotopomers"):
     """
     Parses through the dictionary objects contained within the simulator object in order to return a list of all attributes that are populated.
+
+    Args:
+        dictionary: A dictionary or lsit object of the Isotopomer attributes from a simulation object
+        parent: a string object used to create the addresses of the Isotopomer attributes.
 
     Returns:
         List Object.
@@ -123,6 +139,9 @@ def traverse_dictionaries(dictionary, parent="isotopomers"):
 def make_fitting_parameters(sim):
     """
     Parses through the fitting parameter list to create LMFIT parameters used for fitting.
+
+    Args:
+        sim: a simulation object.
 
     Returns:
         LMFIT Parameters object.
@@ -175,6 +194,12 @@ function_mapping = {
 def min_function(params, data, sim, apodization_function):
     """
     The simulation routine to establish how the parameters will update the simulation.
+
+    Args:
+        params: Parameter object containing parameters to vary during minimization.
+        data: a CSDM object of the data to fit the simulation to.
+        sim: simulation object to be fit to data. Initialized with arbitrary fitting parameters.
+        apodization_function: A string indicating the apodization function to use. Currently "Gaussian" and "Lorentzian" are supported.
 
     Returns:
         Array of the differences between the simulation and the experimental data.

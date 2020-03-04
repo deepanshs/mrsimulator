@@ -17,6 +17,7 @@ Fitting Wollastonite.
 #
 # In this example we will be creating a synthetic spectrum of wollastonite from reported tensor
 # parameters and then fit a simulation to the spectrum to demonstrate a fitting procedure.
+# The :math:`^{29}\text{Si}` tensor parameters were obtained from Hansen et. al. [#f1]_
 #
 # To begin, we will create a synthetic spectrum. In order to do so we must create a simulation.
 import csdmpy as cp
@@ -189,3 +190,10 @@ plt.legend()
 
 plt.tight_layout()
 plt.show()
+
+#%%
+# .. [#f1] Hansen, M. R., Jakobsen, H. J., Skibsted, J., :math:`^{29}\text{Si}`
+#       Chemical Shift Anisotropies in Calcium Silicates from High-Field
+#       :math:`^{29}\text{Si}` MAS NMR Spectroscopy, Inorg. Chem. 2003,
+#       **42**, *7*, 2368-2377.
+#       `DOI: 10.1021/ic020647f <https://doi.org/10.1021/ic020647f>`_

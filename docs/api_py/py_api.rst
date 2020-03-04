@@ -12,6 +12,7 @@ Python-API References
    site
    other_objects
    dimension
+   fitting
 
 ..    parameterized_tensor
 ..    interaction
