@@ -20,7 +20,6 @@ Fitting Wollastonite.
 # The :math:`^{29}\text{Si}` tensor parameters were obtained from Hansen et. al. [#f1]_
 #
 # To begin, we will create a synthetic spectrum. In order to do so we must create a simulation.
-import csdmpy as cp
 import matplotlib
 import matplotlib.pylab as pylab
 import matplotlib.pyplot as plt

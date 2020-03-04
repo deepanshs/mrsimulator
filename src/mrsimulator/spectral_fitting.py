@@ -3,7 +3,6 @@ from pprint import pprint
 
 import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
 from lmfit import Parameters
 from mrsimulator import Dimension
 from mrsimulator import Isotopomer
@@ -12,10 +11,6 @@ from mrsimulator import Site
 from mrsimulator import SymmetricTensor as st
 from mrsimulator.apodization import Apodization
 from mrsimulator.methods import one_d_spectrum
-from numpy.fft import fft
-from numpy.fft import fftshift
-from numpy.fft import ifft
-from numpy.fft import ifftshift
 
 
 __author__ = "Maxwell C Venetos"
