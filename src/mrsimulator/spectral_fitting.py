@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from pprint import pprint
 
+import csdmpy as cp
 import matplotlib
 import matplotlib.pyplot as plt
 from lmfit import Parameters
@@ -53,7 +54,7 @@ __email__ = "maxvenetos@gmail.com"
 #     return fftshift(fft(appodized)).real
 
 
-def str_to_html(my_string):
+def _str_to_html(my_string):
     """
     LMFIT Parameters class does not allow for names to include special characters. This function converts '[', ']', and '.' to their HTML numbers to comply with LMFIT.
 
@@ -68,7 +69,7 @@ def str_to_html(my_string):
     return my_string.replace("[", "91").replace("]", "93").replace(".", "46")
 
 
-def html_to_string(my_string):
+def _html_to_string(my_string):
     """
     Converts the HTML numbers to '[', ']', and '.' to allow for execution of the parameter name to update the simulator.
 
@@ -82,7 +83,7 @@ def html_to_string(my_string):
     return my_string.replace("91", "[").replace("93", "]").replace("46", ".")
 
 
-def list_of_dictionaries(my_list):
+def _list_of_dictionaries(my_list):
     """
     Helper function for traverse_dictionaries function which will return a list of dictionaries.
 
@@ -99,7 +100,7 @@ def list_of_dictionaries(my_list):
 exclude = ["property_units", "isotope", "name", "description"]
 
 
-def traverse_dictionaries(dictionary, parent="isotopomers"):
+def _traverse_dictionaries(dictionary, parent="isotopomers"):
     """
     Parses through the dictionary objects contained within the simulator object in order to return a list of all attributes that are populated.
 
@@ -116,17 +117,17 @@ def traverse_dictionaries(dictionary, parent="isotopomers"):
         for key, vals in dictionary.items():
             if key not in exclude and vals is not None:
                 if isinstance(vals, (dict, list)):
-                    name_list += traverse_dictionaries(
-                        vals, str_to_html(f"{parent}.{key}")
+                    name_list += _traverse_dictionaries(
+                        vals, _str_to_html(f"{parent}.{key}")
                     )
                 else:
-                    name_list += [str_to_html(f"{parent}.{key}")]
+                    name_list += [_str_to_html(f"{parent}.{key}")]
     elif isinstance(dictionary, list):
         for i, items in enumerate(dictionary):
-            name_list += traverse_dictionaries(items, str_to_html(f"{parent}[{i}]"))
+            name_list += _traverse_dictionaries(items, _str_to_html(f"{parent}[{i}]"))
 
     else:
-        name_list += [str_to_html(f"{parent}.{dictionary}")]
+        name_list += [_str_to_html(f"{parent}.{dictionary}")]
 
     return name_list
 
@@ -136,14 +137,17 @@ def make_fitting_parameters(sim):
     Parses through the fitting parameter list to create LMFIT parameters used for fitting.
 
     Args:
-        sim: a simulation object.
+        sim: a Simulator object.
 
     Returns:
         LMFIT Parameters object.
 
     """
+    if not isinstance(sim, Simulator):
+        raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
+
     params = Parameters()
-    temp_list = traverse_dictionaries(list_of_dictionaries(sim.isotopomers))
+    temp_list = _traverse_dictionaries(_list_of_dictionaries(sim.isotopomers))
     length = len(sim.isotopomers)
     abundance = 0
     last_abund = f"{length - 1}9346abundance"
@@ -151,31 +155,34 @@ def make_fitting_parameters(sim):
     for i in range(length - 1):
         expression += f"-isotopomers91{i}9346abundance"
     for i in range(length):
-        abundance += eval("sim." + html_to_string(f"isotopomers91{i}9346abundance"))
+        abundance += eval("sim." + _html_to_string(f"isotopomers91{i}9346abundance"))
 
     for items in temp_list:
         if "46eta" in items or "abundance" in items and last_abund not in items:
             if "46eta" in items:
                 params.add(
-                    name=items, value=eval("sim." + html_to_string(items)), min=0, max=1
+                    name=items,
+                    value=eval("sim." + _html_to_string(items)),
+                    min=0,
+                    max=1,
                 )
             if "abundance" in items:
                 params.add(
                     name=items,
-                    value=eval("sim." + html_to_string(items)) / abundance * 100,
+                    value=eval("sim." + _html_to_string(items)) / abundance * 100,
                     min=0,
                     max=100,
                 )
         elif last_abund in items:
             params.add(
                 name=items,
-                value=eval("sim." + html_to_string(items)),
+                value=eval("sim." + _html_to_string(items)),
                 min=0,
                 max=100,
                 expr=expression,
             )
         else:
-            params.add(name=items, value=eval("sim." + html_to_string(items)))
+            params.add(name=items, value=eval("sim." + _html_to_string(items)))
 
     return params
 
@@ -186,30 +193,47 @@ function_mapping = {
 }
 
 
-def min_function(params, data, sim, apodization_function):
+def min_function(params, data, sim, apodization_function=None):
     """
     The simulation routine to establish how the parameters will update the simulation.
 
     Args:
-        params: Parameter object containing parameters to vary during minimization.
+        params: Parameters object containing parameters to vary during minimization.
         data: a CSDM object of the data to fit the simulation to.
-        sim: simulation object to be fit to data. Initialized with arbitrary fitting parameters.
+        sim: Simulator object to be fit to data. Initialized with arbitrary fitting parameters.
         apodization_function: A string indicating the apodization function to use. Currently "Gaussian" and "Lorentzian" are supported.
 
     Returns:
         Array of the differences between the simulation and the experimental data.
 
     """
+    if not isinstance(params, Parameters):
+        raise ValueError(
+            f"Expecting a `Parameters` object, found {type(params).__name__}."
+        )
+    if not isinstance(data, cp.CSDM):
+        raise ValueError(f"Expecting a `CSDM` object, found {type(data).__name__}.")
+    if not isinstance(sim, Simulator):
+        raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
+    if not isinstance(apodization_function, str):
+        raise ValueError(
+            f"Expecting a `string` object, found {type(apodization_function).__name__}."
+        )
+
     intensity_data = data.dependent_variables[0].components[0].real
     values = params.valuesdict()
     for items in values:
         if items not in ["sigma", "factor"]:
-            nameString = "sim." + html_to_string(items)
+            nameString = "sim." + _html_to_string(items)
             executable = f"{nameString} = {values[items]}"
             exec(executable)
 
     sim.run(method=one_d_spectrum)
-    y = sim.apodize(function_mapping[apodization_function], sigma=values["sigma"])
+
+    if apodization_function is not None:
+        y = sim.apodize(function_mapping[apodization_function], sigma=values["sigma"])
+    else:
+        y = sim.dependent_variables[0].components[0]
 
     if "factor" in values:
         y_factored = y * values["factor"]

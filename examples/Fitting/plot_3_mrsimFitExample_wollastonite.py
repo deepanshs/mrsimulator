@@ -9,8 +9,8 @@ Fitting Wollastonite.
 # Often, after obtaining an NMR measurement we must fit tensors to our data so we can
 # obtain the tensor parameters. In this example, we will illustrate the use of the *mrsimulator*
 # method to simulate the experimental spectrum and fit the simulation to the data allowing us to
-# extract the tensor parameters for our isotopomers. We will be using the *LMFIT* methods to
-# establish fitting parameters and fit the spectrum. The following examples will show fitting with
+# extract the tensor parameters for our isotopomers. We will be using the `LMFIT <https://lmfit.github.io/lmfit-py/>`_
+# methods to establish fitting parameters and fit the spectrum. The following examples will show fitting with
 # two synthetic :math:`^{29}\text{Si}` spectra--cuspidine and wollastonite--as well as the
 # measurements from an :math:`^{17}\text{O}` experiment on :math:`\text{Na}_{2}\text{SiO}_{3}`.
 # The *mrsimulator* library and data make use of CSDM compliant files.
@@ -19,14 +19,16 @@ Fitting Wollastonite.
 # parameters and then fit a simulation to the spectrum to demonstrate a fitting procedure.
 # The :math:`^{29}\text{Si}` tensor parameters were obtained from Hansen et. al. [#f1]_
 #
-# To begin, we will create a synthetic spectrum. In order to do so we must create a simulation.
-import matplotlib
+# We will begin by importing *matplotlib* and establishing figure size.
 import matplotlib.pylab as pylab
 import matplotlib.pyplot as plt
-from mrsimulator import Dimension
-from mrsimulator import Isotopomer
-from mrsimulator import Simulator
-from mrsimulator import Site
+
+params = {"figure.figsize": (4.5, 3), "font.size": 9}
+pylab.rcParams.update(params)
+
+# Next, we will create a synthetic spectrum. In order to do so we must create a simulation.
+
+from mrsimulator import Dimension, Isotopomer, Simulator, Site
 from mrsimulator import SymmetricTensor as st
 from mrsimulator.methods import one_d_spectrum
 
@@ -76,7 +78,7 @@ plt.show()
 
 #%%
 # In order to create a synthetic spectrum we will add noise and line broadening to the
-# spectrum. The line broadening is performed using the ``Apodization`` class which is a
+# spectrum. The line broadening is performed using :meth:`mrsimulator.Apodization.apodize` which is a
 # member of a simulator object.
 
 #%%
@@ -147,15 +149,14 @@ plt.show()
 
 #%%
 # Again, we will need a list of parameters to change during the fitting. We create this list using the
-# ``make_fitting_parameters()`` function.
+# :func:`~mrsimulator.spectral_fitting.make_fitting_parameters` function.
 
 #%%
 
 
-from mrsimulator import spectral_fitting
+from mrsimulator.spectral_fitting import make_fitting_parameters
 
-
-params = spectral_fitting.make_fitting_parameters(sim)
+params = make_fitting_parameters(sim)
 params.add(name="sigma", value=0)
 params.add(name="factor", value=1, min=0)
 
@@ -163,17 +164,14 @@ params.add(name="factor", value=1, min=0)
 # With the synthetic data, simulation, and the parameters we are ready to perform the fit
 
 #%%
-
+from mrsimulator.spectral_fitting import min_function
 from lmfit import Minimizer
 
-minner = Minimizer(
-    spectral_fitting.min_function, params, fcn_args=(synth_data, sim, "Lorentzian")
-)
+minner = Minimizer(min_function, params, fcn_args=(synth_data, sim, "Lorentzian"))
 result = minner.minimize()
 
 #%%
 # After the fit, we can plot the new simulated spectrum using the *matplotlib* library.
-#%%
 
 plt.figsize = (4, 3)
 residual = synth_data.copy()

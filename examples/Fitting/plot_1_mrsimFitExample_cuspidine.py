@@ -9,8 +9,8 @@ Fitting Cusipidine.
 # Often, after obtaining an NMR measurement we must fit tensors to our data so we can
 # obtain the tensor parameters. In this example, we will illustrate the use of the *mrsimulator*
 # method to simulate the experimental spectrum and fit the simulation to the data allowing us to
-# extract the tensor parameters for our isotopomers. We will be using the *LMFIT* methods to
-# establish fitting parameters and fit the spectrum. The following examples will show fitting with
+# extract the tensor parameters for our isotopomers. We will be using the `LMFIT <https://lmfit.github.io/lmfit-py/>`_
+# methods to establish fitting parameters and fit the spectrum. The following examples will show fitting with
 # two synthetic :math:`^{29}\text{Si}` spectra--cuspidine and wollastonite--as well as the
 # measurements from an :math:`^{17}\text{O}` experiment on :math:`\text{Na}_{2}\text{SiO}_{3}`.
 # The *mrsimulator* library and data make use of CSDM compliant files.
@@ -18,14 +18,16 @@ Fitting Cusipidine.
 # parameters and then fit a simulation to the spectrum to demonstrate a simple fitting procedure.
 # The :math:`^{29}\text{Si}` tensor parameters were obtained from Hansen et. al. [#f1]_
 #
-# Begin by importing *csdmpy* and loading the data file. We will also be establishing *matplotlib*
-# figure size here.
-import csdmpy as cp
+# We will begin by importing *matplotlib* and establishing figure size.
 import matplotlib.pylab as pylab
 import matplotlib.pyplot as plt
 
 params = {"figure.figsize": (4.5, 3), "font.size": 9}
 pylab.rcParams.update(params)
+
+#%%
+# Next we will import `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ and loading the data file.
+import csdmpy as cp
 
 synthetic_experiment = cp.load("synthetic_cuspidine_test.csdf")
 synthetic_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
@@ -40,7 +42,7 @@ plt.tight_layout()
 plt.show()
 
 #%%
-# In order to to fit a simulation to the data we will need to establish a ``simulation`` object. We will
+# In order to to fit a simulation to the data we will need to establish a ``Simulator`` object. We will
 # use approximate initial parameters to generate our simulation:
 
 #%%
@@ -78,15 +80,11 @@ plt.show()
 
 #%%
 # Next, we will need a list of parameters that will be used in the fit. the *LMFIT* library allows us to create
-# a list of parameters rather easily using the ``Parameters()`` class. We have created a function to parse the
-# simulation object for available parameters and construct an *LMFIT* ``Parameter`` object which is shown in the next two
+# a list of parameters rather easily using the `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_ class.
+# We have created a function to parse the
+# ``simulator`` object for available parameters and construct an *LMFIT* ``Parameter`` object which is shown in the next two
 # examples on fitting. Here, however, we will construct the parameter list explicitly to demonstrate how the parameters
 # are created.
-#
-# One thing to note is that the names of our parameters must correspond to their addresses within the simulation object
-# in order to update the simulation during the fit. The *LMFIT* library does not allow for the use of special characters
-# such as "\[", "\]", or "." so our current workaround is converting the special characters to their corresponding HTML
-# character code numbers and converting back to the special character when updating the simulation.
 
 #%%
 
@@ -132,7 +130,7 @@ def test_function(params, data, sim):
 
 #%%
 # With the synthetic data, simulation, and the parameters we are ready to perform the fit. To fit, we use
-# the *LMFIT* ``Minimizer`` class.
+# the *LMFIT* `Minimizer <https://lmfit.github.io/lmfit-py/fitting.html>`_ class.
 
 #%%
 
@@ -165,3 +163,6 @@ plt.show()
 #       :math:`^{29}\text{Si}` MAS NMR Spectroscopy, Inorg. Chem. 2003,
 #       **42**, *7*, 2368-2377.
 #       `DOI: 10.1021/ic020647f <https://doi.org/10.1021/ic020647f>`_
+
+
+# %%
