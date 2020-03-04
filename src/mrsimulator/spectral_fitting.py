@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from pprint import pprint
-
 import csdmpy as cp
 import matplotlib
 import matplotlib.pyplot as plt

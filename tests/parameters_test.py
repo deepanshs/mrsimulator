@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """Parameter test"""
-import csdmpy as cp
-import numpy as np
 from lmfit import Parameters
 from mrsimulator import Dimension
 from mrsimulator import Isotopomer
