@@ -188,7 +188,7 @@ class Simulator(BaseModel):
                 "count": count,
                 "increment": f"{increment} Hz",
                 "coordinates_offset": f"{dimension.reference_offset} Hz",
-                "origin_offset": f"{dimension.larmor_frequency} Hz",
+                "origin_offset": f"{np.abs(dimension.larmor_frequency)} Hz",
                 "complex_fft": True,
                 "reciprocal": {
                     "coordinates_offset": f"{-(count/2)/dimension.spectral_width} s"

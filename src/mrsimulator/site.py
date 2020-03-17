@@ -78,6 +78,8 @@ class Site(Parseable):
 
     @validator("quadrupolar")
     def spin_must_be_at_least_one(cls, v, values):
+        if v is None:
+            return v
         isotope = values["isotope"]
         I = get_isotope_data(isotope)["spin"] / 2.0
         if I >= 1:
@@ -89,6 +91,8 @@ class Site(Parseable):
 
     @validator("shielding_symmetric")
     def shielding_symmetric_must_not_contain_Cq(cls, v, values):
+        if v is None:
+            return v
         if "Cq" in v.property_units:
             v.property_units.pop("Cq")
         return v
