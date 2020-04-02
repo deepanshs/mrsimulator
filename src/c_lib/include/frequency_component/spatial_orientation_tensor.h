@@ -310,6 +310,6 @@ static inline void sSOT_2nd_order_electric_quadrupole_Hamiltonian(
   R_4_[16] = temp;   // R4 4 real
 
   if (Theta[0] != 0.0 && Theta[1] != 0.0 && Theta[2] != 0.0) {
-    single_wigner_rotation(4, Theta, R_2, R_2);
+    single_wigner_rotation(4, Theta, R_4, R_4);
   }
 }
