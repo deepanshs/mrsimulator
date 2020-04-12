@@ -120,7 +120,7 @@ def c_setup(data_object, data_source):
     return data_mrsimulator, data_source
 
 
-def c_setup_random_euler_angles(data_object, data_source):
+def c_setup_random_euler_angles(data_object, data_source, group):
     # mrsimulator
     dimensions = [
         Dimension.parse_dict_with_units(item) for item in data_object["dimensions"]
@@ -129,10 +129,18 @@ def c_setup_random_euler_angles(data_object, data_source):
         Isotopomer.parse_dict_with_units(isotopomer)
         for isotopomer in data_object["isotopomers"]
     ]
-    for isotopomer in isotopomers:
-        isotopomer.sites[0].shielding_symmetric.alpha = np.random.rand(1) * 2 * np.pi
-        isotopomer.sites[0].shielding_symmetric.beta = np.random.rand(1) * 2 * np.pi
-        isotopomer.sites[0].shielding_symmetric.gamma = np.random.rand(1) * 2 * np.pi
+    pix2 = 2 * np.pi
+    if group == "shielding_symmetric":
+        for isotopomer in isotopomers:
+            isotopomer.sites[0].shielding_symmetric.alpha = np.random.rand(1) * pix2
+            isotopomer.sites[0].shielding_symmetric.beta = np.random.rand(1) * pix2
+            isotopomer.sites[0].shielding_symmetric.gamma = np.random.rand(1) * pix2
+
+    if group == "quadrupolar":
+        for isotopomer in isotopomers:
+            isotopomer.sites[0].quadrupolar.alpha = np.random.rand(1) * pix2
+            isotopomer.sites[0].quadrupolar.beta = np.random.rand(1) * pix2
+            isotopomer.sites[0].quadrupolar.gamma = np.random.rand(1) * pix2
 
     s1 = Simulator(isotopomers=isotopomers, dimensions=dimensions)
     s1.config.integration_density = 120
@@ -169,7 +177,9 @@ def test_shielding_simulation_against_simpson():
         )
 
         # random euler angle all zero. Euler angles should not affect the spectrum.
-        data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(filename))
+        data_mrsimulator, data_source = c_setup_random_euler_angles(
+            *get_data(filename), "shielding_symmetric"
+        )
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=2, err_msg=message
         )
@@ -198,7 +208,9 @@ def test_shielding_against_brute_force_lineshape_simulation():
         )
 
         # random euler angle all zero. Euler angles should not affect the spectrum.
-        data_mrsimulator, data_source = c_setup_random_euler_angles(*get_data(filename))
+        data_mrsimulator, data_source = c_setup_random_euler_angles(
+            *get_data(filename), "shielding_symmetric"
+        )
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=2, err_msg=message
         )
@@ -220,4 +232,12 @@ def test_pure_quadrupolar_lineshapes():
         data_mrsimulator, data_source = c_setup(*get_data(filename))
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=2, err_msg=message
+        )
+
+        # random euler angle. Euler angles should not affect the spectrum.
+        data_mrsimulator, data_source = c_setup_random_euler_angles(
+            *get_data(filename), "quadrupolar"
+        )
+        np.testing.assert_almost_equal(
+            data_mrsimulator, data_source, decimal=1, err_msg=message
         )

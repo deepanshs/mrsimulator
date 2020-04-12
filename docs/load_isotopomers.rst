@@ -85,16 +85,16 @@ method of the :ref:`simulator_api` class, as follows
 
     >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/isotopomers_test.json'
 
-    >>> sim.load_isotopomers(filename)
+    >>> sim.load_isotopomers(filename)  # doctest:+SKIP
     Downloading '/DeepanshS/mrsimulator-test/master/isotopomers_test.json'
     from 'raw.githubusercontent.com' to file 'isotopomers_test.json'.
     [████████████████████████████████████]
 
     >>> # The seven isotopomers from the file are added to the isotopomers
     >>> # attribute of the simulator class.
-    >>> len(sim.isotopomers)
+    >>> len(sim.isotopomers) # doctest:+SKIP
     7
 
-.. testsetup::
-    >>> import os
-    >>> os.remove('isotopomers_test.json')
+.. .. testsetup::
+..     >>> import os
+..     >>> os.remove('isotopomers_test.json')

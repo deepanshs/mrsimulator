@@ -71,10 +71,7 @@ static inline void FCF_1st_order_nuclear_shielding_Hamiltonian(
   *Lambda_0 *= transition_fn;
 
   // frequency component function from second-rank irreducible tensor
-  double *Lambda_2_ = (double *)Lambda_2;
-  Lambda_2_[0] *= transition_fn;  // Lambda_2-2 real
-  Lambda_2_[4] *= transition_fn;  // Lambda_2 0 real
-  Lambda_2_[8] *= transition_fn;  // Lambda_2 2 real
+  cblas_dscal(10, transition_fn, (double *)Lambda_2, 1);
 }
 
 /**
@@ -120,10 +117,7 @@ static inline void FCF_1st_order_electric_quadrupole_Hamiltonian(
                                                  Theta);
 
   // frequency component function from second-rank irreducible tensor
-  double *Lambda_2_ = (double *)Lambda_2;
-  Lambda_2_[0] *= transition_fn;  // Lambda_2-2 real
-  Lambda_2_[4] *= transition_fn;  // Lambda_2 0 real
-  Lambda_2_[8] *= transition_fn;  // Lambda_2 2 real
+  cblas_dscal(10, transition_fn, (double *)Lambda_2, 1);
 }
 
 /**
@@ -191,19 +185,10 @@ static inline void FCF_2nd_order_electric_quadrupole_Hamiltonian(
   *Lambda_0 *= *cl_value++;
 
   // frequency component function from second-rank irreducible tensor
-  double *Lambda_2_ = (double *)Lambda_2;
-  Lambda_2_[0] *= *cl_value;  // Lambda_2-2 real
-  Lambda_2_[4] *= *cl_value;  // Lambda_2 0 real
-  Lambda_2_[8] *= *cl_value;  // Lambda_2 2 real
+  cblas_dscal(10, *cl_value++, (double *)Lambda_2, 1);
 
-  cl_value++;
   // frequency component function from fourth-rank irreducible tensor
-  double *Lambda_4_ = (double *)Lambda_4;
-  Lambda_4_[0] *= *cl_value;   // Lambda_4-4 real
-  Lambda_4_[4] *= *cl_value;   // Lambda_4-2 real
-  Lambda_4_[8] *= *cl_value;   // Lambda_4 0 real
-  Lambda_4_[12] *= *cl_value;  // Lambda_4 2 real
-  Lambda_4_[16] *= *cl_value;  // Lambda_4 4 real
+  cblas_dscal(18, *cl_value, (double *)Lambda_4, 1);
 }
 
 /*
