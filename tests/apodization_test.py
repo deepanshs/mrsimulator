@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 """Apodization test"""
-import csdmpy as cp
 import numpy as np
-from mrsimulator import Dimension
 from mrsimulator import Isotopomer
+from mrsimulator import Method
 from mrsimulator import Simulator
-from mrsimulator import Site
 from mrsimulator.apodization import Apodization
-from mrsimulator.methods import one_d_spectrum
 
 
 sim = Simulator()
@@ -21,22 +18,40 @@ isotopomer_object = Isotopomer.parse_dict_with_units(the_isotopomer)
 sim.isotopomers += [isotopomer_object]
 
 
-dimension = {
+# dimension = {
+#     "isotope": "1H",
+#     "magnetic_flux_density": "9.4 T",
+#     "rotor_angle": "0 deg",
+#     "rotor_frequency": "0 kHz",
+#     "number_of_points": 4096,
+#     "spectral_width": "25 kHz",
+#     "reference_offset": "0 kHz",
+# }
+
+method = {
     "isotope": "1H",
-    "magnetic_flux_density": "9.4 T",
-    "rotor_angle": "0 deg",
-    "rotor_frequency": "0 kHz",
-    "number_of_points": 4096,
-    "spectral_width": "25 kHz",
-    "reference_offset": "0 kHz",
+    "sequences": [
+        {
+            "count": 4096,
+            "spectral_width": "25 kHz",
+            "reference_offset": "0 kHz",
+            "events": [
+                {
+                    "magnetic_flux_density": "9.4 T",
+                    "rotor_angle": "0 deg",
+                    "rotor_frequency": "0 kHz",
+                }
+            ],
+        }
+    ],
 }
 
-dimension_object = Dimension.parse_dict_with_units(dimension)
-sim.dimensions += [dimension_object]
 
-freq, amp = sim.run(method=one_d_spectrum)
+sim.method = Method.parse_dict_with_units(method)
 
-freqHz = sim.dimensions[0].coordinates_Hz
+freq, amp = sim.run()
+
+freqHz = sim.method.sequences[0].coordinates_Hz
 
 
 def test_Lorentzian():
@@ -46,7 +61,7 @@ def test_Lorentzian():
 
     assert np.allclose(
         test / test.max(), y / y.max(), atol=1e-04
-    ), "Lorentzian appodization amplitude failed"
+    ), "Lorentzian apodization amplitude failed"
 
 
 def test_Gaussian():
@@ -56,4 +71,4 @@ def test_Gaussian():
 
     assert np.allclose(
         test / test.max(), y / y.max(), atol=1e-04
-    ), "Gaussian appodization amplitude failed"
+    ), "Gaussian apodization amplitude failed"

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Base Parseable class."""
 from typing import ClassVar
-from typing import Dict
 
 from csdmpy.units import string_to_quantity
 from pydantic import BaseModel
@@ -20,8 +19,6 @@ class Parseable(BaseModel):
     property_unit_types: ClassVar = {}
 
     property_default_units: ClassVar = {}
-
-    property_units: Dict = {}
 
     @classmethod
     def parse_dict_with_units(cls, json_dict):
@@ -65,6 +62,33 @@ class Parseable(BaseModel):
                             d for d in zip(pos_values, default_unit) if d[0] is not None
                         ][0]
         return cls(**json_dict, property_units=property_units)
+
+    def to_dict_with_units(self):
+        """Parse the class object to a JSON compliant python dict with units."""
+        temp_dict = {}
+        for k, v in self.dict(exclude={"property_units"}).items():
+
+            # check the dict objects
+            if isinstance(v, dict):
+                val = getattr(self, k).to_dict_with_units()
+                if val is not None:
+                    temp_dict[k] = val
+
+            # check the list objects
+            elif isinstance(v, list):
+                list_len = len(v)
+                temp_dict[k] = [
+                    getattr(self, k)[_].to_dict_with_units() for _ in range(list_len)
+                ]
+            elif v not in [None, ""]:
+                temp_dict[k] = v
+
+        temp_keys = temp_dict.keys()
+        for key, unit in getattr(self, "property_units").items():
+            if key in temp_keys:
+                u = unit if unit != "pct" else "%"
+                temp_dict[key] = f"{temp_dict[key]} {u}"
+        return temp_dict
 
 
 def enforce_units(value: str, required_type: str, default_unit: str, throw_error=True):

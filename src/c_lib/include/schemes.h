@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 //
-//  averaging_scheme.h
+//  schemes.h
 //
 //  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Sep 3, 2019
@@ -9,9 +9,8 @@
 
 #ifndef averaging_scheme_h
 #define averaging_scheme_h
-#include "config.h"
-
 #include "angular_momentum.h"
+#include "config.h"
 #include "powder_setup.h"
 
 /**
@@ -54,6 +53,7 @@ typedef struct MRS_averaging_scheme {
   double *local_frequency;     //  buffer for local frequencies.
   double *freq_offset;         //  buffer for local + sideband frequencies.
   unsigned int integration_volume;  //  0-octant, 1-hemisphere, 2-sphere.
+  bool allow_fourth_rank;  // If true, compute wigner matrices for wigner-d 4j.
 } MRS_averaging_scheme;
 
 // typedef struct MRS_averaging_scheme;
@@ -106,3 +106,24 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
 void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme);
 
 #endif  // averaging_scheme_h
+
+#ifndef fftw_scheme_h
+#define fftw_scheme_h
+#include "fftw3.h"
+
+typedef struct MRS_fftw_scheme {
+  /** \privatesection */
+  /** The buffer to hold the sideband amplitudes as stride 2 array after
+   * mrsimulator processing.
+   */
+  fftw_complex *vector;  // holds the amplitude of sidebands.
+
+  fftw_plan the_fftw_plan;  //  The plan for fftw routine.
+} MRS_fftw_scheme;
+
+MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
+                                    int number_of_sidebands);
+
+void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme);
+
+#endif  // fftw_scheme_h

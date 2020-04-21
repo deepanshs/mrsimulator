@@ -1,13 +1,13 @@
 // -*- coding: utf-8 -*-
 //
-//  aceraging_scheme.c
+//  schemes.c
 //
 //  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava.
 //  Contact email = deepansh2012@gmail.com
 //
 
-#include "averaging_scheme.h"
+#include "schemes.h"
 
 static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
                                           complex128 *exp_I_beta,
@@ -135,6 +135,8 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(
 
   scheme->integration_density = integration_density;
   scheme->integration_volume = integration_volume;
+  scheme->allow_fourth_rank = allow_fourth_rank;
+
   scheme->octant_orientations =
       ((integration_density + 1) * (integration_density + 2)) / 2;
 
@@ -177,4 +179,41 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
 
   averaging_scheme_setup(scheme, exp_I_beta, allow_fourth_rank);
   return scheme;
+}
+
+/* ----------------------------------------------------------------------- */
+/* fftw routine setup .................................................... */
+/* ....................................................................... */
+MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
+                                    int number_of_sidebands) {
+  unsigned int size = total_orientations * number_of_sidebands;
+
+  MRS_fftw_scheme *fftw_scheme = malloc(sizeof(MRS_fftw_scheme));
+
+  fftw_scheme->vector =
+      (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * size);
+  // malloc_complex128(plan->size);
+  // gettimeofday(&fft_setup_time, NULL);
+
+  int fftw_thread = fftw_init_threads();
+  if (fftw_thread == 0) {
+    printf("failed to initialize fftw threading");
+  }
+  fftw_plan_with_nthreads(4);
+
+  fftw_scheme->the_fftw_plan = fftw_plan_many_dft(
+      1, &number_of_sidebands, total_orientations, fftw_scheme->vector, NULL,
+      total_orientations, 1, fftw_scheme->vector, NULL, total_orientations, 1,
+      FFTW_FORWARD, FFTW_ESTIMATE);
+
+  // char *filename = "128_sidebands.wisdom";
+  // int status = fftw_export_wisdom_to_filename(filename);
+  // printf("file save status %i \n", status);
+  /* ----------------------------------------------------------------------- */
+  return fftw_scheme;
+}
+
+void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme) {
+  fftw_destroy_plan(fftw_scheme->the_fftw_plan);
+  fftw_free(fftw_scheme->vector);
 }

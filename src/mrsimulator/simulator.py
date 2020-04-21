@@ -9,7 +9,9 @@ from astropy import units as u
 from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator.apodization import Apodization
+from mrsimulator.base_model import one_d_spectrum
 from mrsimulator.importer import import_json
+from mrsimulator.method import Method
 from mrsimulator.simulator_config import ConfigSimulator
 from pydantic import BaseModel
 
@@ -29,6 +31,7 @@ class Simulator(BaseModel):
 
     isotopomers: List[Isotopomer] = []
     dimensions: List[Dimension] = []
+    method: Optional[Method] = None
     simulated_data: Optional[List]
     config: ConfigSimulator = ConfigSimulator()
 
@@ -40,7 +43,7 @@ class Simulator(BaseModel):
         check = [
             isinstance(other, Simulator),
             self.isotopomers == other.isotopomers,
-            self.dimensions == other.dimensions,
+            self.method == other.method,
             self.config == other.config,
         ]
         if np.all(check):
@@ -140,7 +143,7 @@ class Simulator(BaseModel):
         json_data = contents["isotopomers"]
         self.isotopomers = [Isotopomer.parse_dict_with_units(obj) for obj in json_data]
 
-    def run(self, method, **kwargs):
+    def run(self, **kwargs):
         """Simulate the lineshape.
 
         Args:
@@ -149,14 +152,16 @@ class Simulator(BaseModel):
         Example:
             >>> sim.run(method=one_d_spectrum) # doctest:+SKIP
         """
-        isotopomers = [
-            isotopomer.to_freq_dict(self.dimensions[0].magnetic_flux_density)
-            for isotopomer in self.isotopomers
-        ]
+        # isotopomers = [
+        #     isotopomer.to_freq_dict(
+        #         self.method.sequences[0].events[0].magnetic_flux_density
+        #     )
+        #     for isotopomer in self.isotopomers
+        # ]
 
-        amp = method(
-            dimension=self.dimensions,
-            isotopomers=isotopomers,
+        amp = one_d_spectrum(
+            method=self.method,
+            isotopomers=self.isotopomers,
             **self.config._dict,
             **kwargs,
         )
@@ -167,7 +172,13 @@ class Simulator(BaseModel):
             self.simulated_data = [amp]
 
         """The frequency is in the units of Hz."""
-        freq = self.dimensions[0].coordinates_ppm
+        gamma = self.method.isotope.gyromagnetic_ratio
+        B0 = self.method.sequences[0].events[0].magnetic_flux_density
+        larmor_frequency = -gamma * B0
+
+        denom = self.method.sequences[0].reference_offset / 1e6 + larmor_frequency
+        freq = self.method.sequences[0].coordinates_Hz / abs(denom)
+
         freq *= u.Unit("ppm")
         return freq, amp
 
@@ -180,21 +191,8 @@ class Simulator(BaseModel):
             CSDM object
         """
         new = cp.new()
-        for dimension in self.dimensions:
-            count = dimension.number_of_points
-            increment = dimension.spectral_width / count
-            new_dimension = {
-                "type": "linear",
-                "count": count,
-                "increment": f"{increment} Hz",
-                "coordinates_offset": f"{dimension.reference_offset} Hz",
-                "origin_offset": f"{dimension.larmor_frequency} Hz",
-                "complex_fft": True,
-                "reciprocal": {
-                    "coordinates_offset": f"{-(count/2)/dimension.spectral_width} s"
-                },
-            }
-            new.add_dimension(new_dimension)
+        for dimension in self.method.sequences:
+            new.add_dimension(dimension.to_csdm_dimension())
 
         dependent_variable = {
             "type": "internal",
@@ -205,11 +203,11 @@ class Simulator(BaseModel):
             if datum != []:
                 dependent_variable["components"] = [datum]
                 name = self.isotopomers[index].name
-                if name != "":
+                if name not in ["", None]:
                     dependent_variable.update({"name": name})
 
                 description = self.isotopomers[index].description
-                if description != "":
+                if description not in ["", None]:
                     dependent_variable.update({"description": description})
 
                 dependent_variable["application"] = {

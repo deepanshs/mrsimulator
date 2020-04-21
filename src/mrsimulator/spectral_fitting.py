@@ -1,20 +1,10 @@
 # -*- coding: utf-8 -*-
-from pprint import pprint
-
 import csdmpy as cp
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
 from lmfit import Minimizer
 from lmfit import Parameters
 from lmfit import report_fit
-from mrsimulator import Dimension
-from mrsimulator import Isotopomer
-from mrsimulator import Simulator
-from mrsimulator import Site
-from mrsimulator import SymmetricTensor as st
 from mrsimulator.apodization import Apodization
-from mrsimulator.methods import one_d_spectrum
 from numpy.fft import fft
 from numpy.fft import fftshift
 from numpy.fft import ifft
@@ -27,7 +17,8 @@ __email__ = "maxvenetos@gmail.com"
 
 def line_broadening(x, amp, sigma, broadType):
     """
-    Applies appodization filter to the simulated spectrum using either Lorentzian filtering or Gaussian filtering.
+    Applies appodization filter to the simulated spectrum using either Lorentzian
+    filtering or Gaussian filtering.
 
     Returns:
         Array of appodized intensities.
@@ -58,7 +49,9 @@ def line_broadening(x, amp, sigma, broadType):
 
 def str_to_html(my_string):
     """
-    LMFIT Parameters class does not allow for names to include special characters. This function converts '[', ']', and '.' to their HTML numbers to comply with LMFIT.
+    LMFIT Parameters class does not allow for names to include special characters.
+    This function converts '[', ']', and '.' to their HTML numbers to comply with
+    LMFIT.
 
     Returns:
         String object.
@@ -70,7 +63,8 @@ def str_to_html(my_string):
 
 def html_to_string(my_string):
     """
-    Converts the HTML numbers to '[', ']', and '.' to allow for execution of the parameter name to update the simulator.
+    Converts the HTML numbers to '[', ']', and '.' to allow for execution of the
+    parameter name to update the simulator.
 
     Returns:
         String Object.
@@ -81,7 +75,8 @@ def html_to_string(my_string):
 
 def list_of_dictionaries(my_list):
     """
-    Helper function for traverse_dictionaries function which will return a list of dictionaries.
+    Helper function for traverse_dictionaries function which will return a list of
+    dictionaries.
 
     Returns:
         List Object.
@@ -95,7 +90,8 @@ exclude = ["property_units", "isotope", "name", "description"]
 
 def traverse_dictionaries(dictionary, parent="isotopomers"):
     """
-    Parses through the dictionary objects contained within the simulator object in order to return a list of all attributes that are populated.
+    Parses through the dictionary objects contained within the simulator object in
+    order to return a list of all attributes that are populated.
 
     Returns:
         List Object.
@@ -123,7 +119,8 @@ def traverse_dictionaries(dictionary, parent="isotopomers"):
 
 def make_fitting_parameters(sim):
     """
-    Parses through the fitting parameter list to create LMFIT parameters used for fitting.
+    Parses through the fitting parameter list to create LMFIT parameters used for
+    fitting.
 
     Returns:
         LMFIT Parameters object.
@@ -188,17 +185,21 @@ def fcn2min(params, data, sim, apodization_function):
             executable = f"{nameString} = {values[items]}"
             exec(executable)
 
-    sim.run(method=one_d_spectrum)
+    sim.run()
     y = sim.apodize(function_mapping[apodization_function], sigma=values["sigma"])
 
     y_factored = y * values["factor"]
 
-    return data - y_factored  # _factored#simulatedData.dependent_variables[0].components[0]
+    return (
+        data - y_factored
+    )  # _factored#simulatedData.dependent_variables[0].components[0]
 
 
 def spectral_fitting(experiment, sim, apodization_function, params):
     """
-    Spectrum fitting routine to fit the mrsimulation to an experimental spectrum. Parameters may be provided or if not provided will be generated based on the simulation object passed through.
+    Spectrum fitting routine to fit the mrsimulation to an experimental spectrum.
+    Parameters may be provided or if not provided will be generated based on the
+    simulation object passed through.
 
     Returns:
         CSDM object containing the experimental data and the simulated fit.
@@ -238,7 +239,7 @@ def spectral_fitting(experiment, sim, apodization_function, params):
 
     report_fit(result)
 
-    sim.run(method=one_d_spectrum)
+    sim.run()
     sim_data = sim.as_csdm_object()
 
     x_simulated = sim_data.dimensions[0]

@@ -15,7 +15,6 @@ from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
-from mrsimulator.methods import one_d_spectrum
 
 #%%
 # **Step 1** Create sites, in this case, just the one.
@@ -59,7 +58,7 @@ sim_K2SO3.dimensions += [dimension]
 #%%
 # **Step 5** Simulate the spectrum.
 
-x, y = sim_K2SO3.run(method=one_d_spectrum)
+x, y = sim_K2SO3.run()
 
 #%%
 # **Step 6** Plot.

@@ -42,7 +42,6 @@ cp.plot(oxygen_experiment)
 
 from mrsimulator import Simulator, Isotopomer, Site, Dimension
 from mrsimulator import SymmetricTensor as st
-from mrsimulator.methods import one_d_spectrum
 
 sim = Simulator()
 O17_1 = Site(
@@ -70,7 +69,7 @@ dimension = Dimension(
 
 sim.isotopomers += isotopomers
 sim.dimensions += [dimension]
-sim.run(method=one_d_spectrum)
+sim.run()
 sim_data = sim.as_csdm_object()
 
 cp.plot(sim_data)
@@ -147,7 +146,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from mrsimulator.apodization import Apodization
 
-sim.run(method=one_d_spectrum)
+sim.run()
 sim_data = sim.as_csdm_object()
 values = params.valuesdict()
 

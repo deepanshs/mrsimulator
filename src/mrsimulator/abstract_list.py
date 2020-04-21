@@ -66,6 +66,8 @@ class TransitionList(AbstractList):
         super().__init__(data)
 
     def __setitem__(self, index, item):
+        if isinstance(item, dict):
+            item = Transition(**item)
         if not isinstance(item, Transition):
             raise ValueError(
                 f"Expecting a Transition object, found {item.__class__.name__}"
@@ -75,7 +77,7 @@ class TransitionList(AbstractList):
     def Zeeman_allowed(self):
         return TransitionList([item for item in self._list if item.Zeeman_allowed])
 
-    def filter(self, p=-1, search=None):
+    def filter(self, p=None, transitions=None, start_state=None):
         """Filter a list of transitions to satisfy the filtering criterion.
             Args:
                 p: The total Δm of the spin transition, given as the sum individual
@@ -86,20 +88,33 @@ class TransitionList(AbstractList):
                     in the isotopomer.
         """
 
-        if search is None:
-            return TransitionList([item for item in self._list if item.p == p])
+        if p is transitions is start_state is None:
+            p = -1
+        ts = self._list.copy()
 
-        lst = self._list
-        for i, element in enumerate(search):
-            if isinstance(element, int):
-                lst = [item for item in lst if item.delta_m(i) == element]
-            if isinstance(element, list):
-                lst = [
-                    item
-                    for item in lst
-                    if (item.initial[i] == element[1] and item.final[i] == element[0])
-                ]
-        return lst
+        # if search is None:
+        if p is not None:
+            ts = TransitionList([item for item in ts if item.p == p])
+        if transitions is not None:
+            for transition in transitions:
+                ts = TransitionList(
+                    [item for item in ts if item == Transition(**transition)]
+                )
+        if start_state is not None:
+            ts = [item for item in ts if ts.initial == start_state]
+        return ts
+
+        # lst = self._list
+        # for i, element in enumerate(search):
+        #     if isinstance(element, int):
+        #         lst = [item for item in lst if item.delta_m(i) == element]
+        #     if isinstance(element, list):
+        #         lst = [
+        #             item
+        #             for item in lst
+        #             if (item.initial[i] == element[1] and item.final[i] == element[0])
+        #         ]
+        # return lst
         #     return TransitionList(
         #         [item for item in self._list if np.all(item.initial == delta_ms)]
         #     )

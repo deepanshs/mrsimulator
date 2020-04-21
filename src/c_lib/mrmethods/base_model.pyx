@@ -1,4 +1,4 @@
-cimport nmr_methods as clib
+cimport base_model as clib
 from libcpp cimport bool as bool_t
 from numpy cimport ndarray
 import numpy as np
@@ -11,7 +11,7 @@ __email__ = "deepansh2012@gmail.com"
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def one_d_spectrum(dimension,
+def one_d_spectrum(method,
        list isotopomers,
        int verbose=0,
        int number_of_sidebands=90,
@@ -47,17 +47,20 @@ def one_d_spectrum(dimension,
     """
 
     cdef int transition_increment
+
+
 # ---------------------------------------------------------------------
 # observed spin _______________________________________________________
-    dimension = dimension[0]
-    isotope = dimension.isotope
+    # dimension = dimension[0]
+    isotope = method.isotope.symbol
     # spin quantum number of the observed spin
-    cdef double spin_quantum_number = dimension.spin
+    cdef double spin_quantum_number = method.isotope.spin
 
     # gyromagnetic ratio
-    cdef double larmor_frequency = dimension.larmor_frequency
+    # cdef double larmor_frequency =
+    cdef gyromagnetic_ratio = method.isotope.gyromagnetic_ratio
     cdef double factor = 1.0
-    if larmor_frequency < 0.0:
+    if gyromagnetic_ratio > 0.0:
         factor = -1.0
 
     # if verbose in [1, 11]:
@@ -81,48 +84,115 @@ def one_d_spectrum(dimension,
 
 
 # Generate the dimension coordinates __________________________________________________
-    cdef int number_of_points = dimension.number_of_points
-    cdef double spectral_width = dimension.spectral_width
-    cdef double increment = spectral_width/number_of_points
-    cdef double reference_offset = dimension.reference_offset * factor
+    # cdef int number_of_points = dimension.number_of_points
+    # cdef double spectral_width = dimension.spectral_width
+    # cdef double increment = spectral_width/number_of_points
+    # cdef double reference_offset = dimension.reference_offset * factor
 
-    offset = increment*int(number_of_points/2.0)
-    reference_offset -= offset
-    # freq = dimension.coordinates_ppm
+    # offset = increment*int(number_of_points/2.0)
+    # reference_offset -= offset
+    # # freq = dimension.coordinates_ppm
 
-    cdef double sample_rotation_frequency_in_Hz = dimension.rotor_frequency
-    cdef double rotor_angle_in_rad = dimension.rotor_angle
+    # cdef double sample_rotation_frequency_in_Hz = dimension.rotor_frequency
+    # cdef double rotor_angle_in_rad = dimension.rotor_angle
 
-# # -------------------------------------------------------------------------------------
-# # schemes
+# -------------------------------------------------------------------------------------
+# schemes
 
-#     cdef bool_t allow_fourth_rank = 0
-#     if spin_quantum_number > 0.5:
-#         allow_fourth_rank = 1
+    cdef bool_t allow_fourth_rank = 0
+    if spin_quantum_number > 0.5:
+        allow_fourth_rank = 1
 
-#     if sample_rotation_frequency_in_Hz < 1.0e-3:
-#         sample_rotation_frequency_in_Hz = 1.0e9
-#         rotor_angle_in_rad = 0.0
-#         number_of_sidebands = 1
+    # if sample_rotation_frequency_in_Hz < 1.0e-3:
+    #     sample_rotation_frequency_in_Hz = 1.0e9
+    #     rotor_angle_in_rad = 0.0
+    #     number_of_sidebands = 1
 
-# # create averaging scheme _____________________________________________________
-#     cdef clib.MRS_averaging_scheme *scheme
-#     scheme = clib.MRS_create_averaging_scheme(
-#         integration_density=integration_density, allow_fourth_rank=allow_fourth_rank, integration_volume=integration_volume
-#     )
+# create averaging scheme _____________________________________________________
+    cdef clib.MRS_averaging_scheme *the_averaging_scheme
+    the_averaging_scheme = clib.MRS_create_averaging_scheme(
+        integration_density=integration_density, allow_fourth_rank=allow_fourth_rank, integration_volume=integration_volume
+    )
 
-# # create MRS_plan _____________________________________________________________
-#     cdef clib.MRS_plan *the_plan
-#     the_plan = clib.MRS_create_plan(scheme,
-#                 number_of_sidebands=number_of_sidebands,
-#                 sample_rotation_frequency_in_Hz=sample_rotation_frequency_in_Hz,
-#                 rotor_angle_in_rad=rotor_angle_in_rad,
-#                 increment=increment,
-#                 allow_fourth_rank=allow_fourth_rank)
+    max_n_sidebands = number_of_sidebands
 
-# # create dimension ____________________________________________________________
-#     cdef clib.MRS_dimension *the_dimension
-#     the_dimension = clib.MRS_create_dimension(number_of_points, reference_offset, increment)
+# create sequences____________________________________________________________
+
+    cdef int n_sequence = len(method.sequences)
+    total_n_points = 1
+    cdef ndarray[int] n_event
+    cdef ndarray[double] magnetic_flux_density_in_T
+    cdef ndarray[double] srfiH
+    cdef ndarray[double] rair
+    cdef ndarray[int] cnt
+    cdef ndarray[double] coord_off
+    cdef ndarray[double] incre
+
+    Bo = []
+    vr = []
+    th = []
+    event_i = []
+    count = []
+    increment = []
+    coordinates_offset = []
+
+    prev_n_sidebands = 0
+    for i, seq in enumerate(method.sequences):
+        for event in seq.events:
+            if event.rotor_frequency < 1.0e-3:
+                sample_rotation_frequency_in_Hz = 1.0e9
+                rotor_angle_in_rad = 0.0
+                number_of_sidebands = 1
+                if prev_n_sidebands == 0: prev_n_sidebands = 1
+            else:
+                sample_rotation_frequency_in_Hz = event.rotor_frequency
+                rotor_angle_in_rad = event.rotor_angle
+                if prev_n_sidebands == 0: prev_n_sidebands = number_of_sidebands
+
+            if prev_n_sidebands != number_of_sidebands:
+                raise ValueError(
+                    (
+                        'The library does not support sequences containing both zero and non-zero '
+                        'rotor frequencies. Consider using a smaller value instead of zero.'
+                    )
+                )
+
+            Bo.append(event.magnetic_flux_density)  # in T
+            vr.append(sample_rotation_frequency_in_Hz) # in Hz
+            th.append(rotor_angle_in_rad) # in rad
+
+        total_n_points *= seq.count
+
+        count.append(seq.count)
+        offset = seq.spectral_width / 2.0
+        coordinates_offset.append(seq.reference_offset * factor - offset)
+        increment.append(seq.spectral_width / seq.count)
+        event_i.append(len(seq.events))
+
+    magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
+    srfiH = np.asarray(vr, dtype=np.float64)
+    rair = np.asarray(th, dtype=np.float64)
+    cnt = np.asarray(count, dtype=np.int32)
+    incre = np.asarray(increment, dtype=np.float64)
+    coord_off = np.asarray(coordinates_offset, dtype=np.float64)
+    n_event = np.asarray(event_i, dtype=np.int32)
+    # magnetic_flux_density_in_T = np.asarray([dimension.magnetic_flux_density], dtype=np.float64)
+    # srfiH = np.asarray([sample_rotation_frequency_in_Hz], dtype=np.float64)
+    # rair = np.asarray([rotor_angle_in_rad], dtype=np.float64)
+    # create sequences
+
+
+
+    the_sequence = clib.MRS_create_plans_for_sequence(
+        the_averaging_scheme, &cnt[0], &coord_off[0],
+        &incre[0], &magnetic_flux_density_in_T[0], &srfiH[0],
+        &rair[0], &n_event[0], n_sequence, number_of_sidebands)
+
+
+# create fftw scheme __________________________________________________________
+
+    cdef clib.MRS_fftw_scheme *the_fftw_scheme
+    the_fftw_scheme = clib.create_fftw_scheme(the_averaging_scheme.total_orientations, number_of_sidebands)
 # # _____________________________________________________________________________
 
 
@@ -140,6 +210,9 @@ def one_d_spectrum(dimension,
 # sites _______________________________________________________________________________
     # CSA
     cdef int number_of_sites
+    cdef ndarray[float] spin_i
+    cdef ndarray[double] gyromagnetic_ratio_i
+
     cdef ndarray[double] iso_n
     cdef ndarray[double] zeta_n
     cdef ndarray[double] eta_n
@@ -152,9 +225,9 @@ def one_d_spectrum(dimension,
 
     cdef ndarray[double] D_c
 
-    cdef int i, trans__
+    cdef int trans__
     cdef ndarray[double, ndim=1] amp
-    amp1 = np.zeros(number_of_points, dtype=np.float64)
+    amp1 = np.zeros(total_n_points, dtype=np.float64)
     amp_individual = []
 
     cdef clib.isotopomer_ravel isotopomer_struct
@@ -162,14 +235,20 @@ def one_d_spectrum(dimension,
 
     # ---------------------------------------------------------------------
     # sample _______________________________________________________________
-    for index_isotopomer, isotopomer in enumerate(isotopomers):
-        abundance = isotopomer['abundance']
-        sub_sites = [site for site in isotopomer['sites'] if site['isotope'] == isotope]
+    for isotopomer in isotopomers:
+        abundance = isotopomer.abundance
+        sub_sites = [site for site in isotopomer.sites if site.isotope.symbol == isotope]
 
         number_of_sites= len(sub_sites)
 
+        if number_of_sites > 2:
+            continue
         # site specification
         # CSA
+
+        spin_i = np.empty(number_of_sites, dtype=np.float32)
+        gyromagnetic_ratio_i = np.empty(number_of_sites, dtype=np.float64)
+
         iso_n = np.empty(number_of_sites, dtype=np.float64)
         zeta_n = np.empty(number_of_sites, dtype=np.float64)
         eta_n = np.empty(number_of_sites, dtype=np.float64)
@@ -180,27 +259,30 @@ def one_d_spectrum(dimension,
         eta_e = np.zeros(number_of_sites, dtype=np.float64)
         ori_e = np.zeros(3*number_of_sites, dtype=np.float64)
 
+        # for n sites, coupling grows as sum_{i=1}^{n-1}(i)
         D_c = np.zeros(number_of_sites, dtype=np.float64)
 
         # cdef int i, size = len(sample)
 
-        amp = np.zeros(number_of_points*number_of_sites)
+        amp = np.zeros(total_n_points*number_of_sites)
 
         for i in range(number_of_sites):
             site = sub_sites[i]
+            spin_i[i] = site.isotope.spin
+            gyromagnetic_ratio_i[i] = site.isotope.gyromagnetic_ratio
 
 
             # CSA tensor
-            iso = site['isotropic_chemical_shift']
+            iso = site.isotropic_chemical_shift
             if iso is None: iso = 0.0
 
-            shielding = site['shielding_symmetric']
+            shielding = site.shielding_symmetric
             if shielding is not None:
-                zeta = shielding['zeta']
+                zeta = shielding.zeta
                 if zeta is None: zeta = 0.0
-                eta = shielding['eta']
+                eta = shielding.eta
                 if eta is None: eta = 0.0
-                alpha, beta, gamma = shielding['alpha'], shielding['beta'], shielding['gamma']
+                alpha, beta, gamma = shielding.alpha, shielding.beta, shielding.gamma
                 if alpha is None: alpha = 0.0
                 if beta is None: beta = 0.0
                 if gamma is None: gamma = 0.0
@@ -228,13 +310,13 @@ def one_d_spectrum(dimension,
 
             # quad tensor
             if spin_quantum_number > 0.5:
-                quad = site['quadrupolar']
+                quad = site.quadrupolar
                 if quad is not None:
-                    Cq = quad['Cq']
+                    Cq = quad.Cq
                     if Cq is None: Cq = 0.0
-                    eta = quad['eta']
+                    eta = quad.eta
                     if eta is None: eta = 0.0
-                    alpha, beta, gamma = quad['alpha'], quad['beta'], quad['gamma']
+                    alpha, beta, gamma = quad.alpha, quad.beta, quad.gamma
                     if alpha is None: alpha = 0.0
                     if beta is None: beta = 0.0
                     if gamma is None: gamma = 0.0
@@ -251,8 +333,8 @@ def one_d_spectrum(dimension,
                 #     print(f'Quadrupolar orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
         if number_of_sites != 0:
-            if isotopomer['transitions'] is not None:
-                transition_array = np.asarray(isotopomer['transitions']).ravel()
+            if isotopomer.transitions is not None:
+                transition_array = np.asarray(isotopomer.transitions).ravel()
             else:
                 transition_array = np.asarray([-0.5, 0.5])
             # the number 2 is because of single site transition [mi, mf]
@@ -261,8 +343,8 @@ def one_d_spectrum(dimension,
             number_of_transitions = int((transition_array.size)/transition_increment)
 
             isotopomer_struct.number_of_sites = number_of_sites
-            isotopomer_struct.spin = spin_quantum_number
-            isotopomer_struct.larmor_frequency = larmor_frequency
+            isotopomer_struct.spin = &spin_i[0]
+            isotopomer_struct.gyromagnetic_ratio = &gyromagnetic_ratio_i[0]
 
             isotopomer_struct.isotropic_chemical_shift_in_Hz = &iso_n[0]
             isotopomer_struct.shielding_anisotropy_in_Hz = &zeta_n[0]
@@ -277,63 +359,24 @@ def one_d_spectrum(dimension,
 
             # isotopomers_list_c[i] = isotopomer_struct
             for trans__ in range(number_of_transitions):
-                # spin transitions
-                # m_initial = transition_array[i][0]
-                # m_final   = transition_array[i][1]
-
-                clib.mrsimulator_core(
+                clib.__mrsimulator_core(
                     # spectrum information and related amplitude
                     &amp[0],
-                    reference_offset,
-                    increment,
-                    number_of_points,
-
                     &isotopomer_struct,
-
-                    1, # quad_second_order_c,
                     0, # turn off quad second order isotropic contribution
-
-                    # spin rate, spin angle and number spinning sidebands
-                    number_of_sidebands,
-                    sample_rotation_frequency_in_Hz,
-                    rotor_angle_in_rad,
-
                     &transition_array[transition_increment*trans__],
-                    integration_density,
-                    integration_volume,          # 0-octant, 1-hemisphere, 2-sphere.
+                    the_sequence,
+                    n_sequence,
+                    the_fftw_scheme,
+                    the_averaging_scheme,
                     interpolation,
                     )
 
-                # clib.__mrsimulator_core(
-                #     # spectrum information and related amplitude
-                #     &amp[0],
-                #     # reference_offset,
-                #     # increment,
-                #     # number_of_points,
+            temp = amp.reshape(number_of_sites, total_n_points).sum(axis=0)*abundance
 
-                #     &isotopomer_struct,
-
-                #     # 1, # quad_second_order_c,
-                #     0, # turn off quad second order isotropic contribution
-
-                #     # spin rate, spin angle and number spinning sidebands
-                #     # number_of_sidebands,
-                #     # sample_rotation_frequency_in_Hz,
-                #     # rotor_angle_in_rad,
-
-                #     &transition_array[transition_increment*trans__],
-                #     # integration_density,
-                #     # integration_volume,          # 0-octant, 1-hemisphere, 2-sphere.
-                #     the_plan,
-                #     the_dimension,
-                #     interpolation,
-                #     )
-
-            temp = amp.reshape(number_of_sites, number_of_points).sum(axis=0)*abundance
-
-            ## reverse the spectrum if larmor_frequency is negative
-            if larmor_frequency < 0:
-                if number_of_points % 2 == 0:
+            ## reverse the spectrum if gyromagnetic ratio is positive.
+            if gyromagnetic_ratio > 0:
+                if total_n_points % 2 == 0:
                     temp[1:] = temp[1:][::-1]
                 else:
                     temp = temp[::-1]

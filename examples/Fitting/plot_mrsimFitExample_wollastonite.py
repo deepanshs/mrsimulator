@@ -27,7 +27,6 @@ from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SymmetricTensor as st
-from mrsimulator.methods import one_d_spectrum
 
 params = {"figure.figsize": (4.5, 3)}
 pylab.rcParams.update(params)
@@ -64,7 +63,7 @@ synth_wollastonite = Simulator()
 synth_wollastonite.isotopomers += isotopomers
 synth_wollastonite.dimensions += [dimension]
 
-synth_wollastonite.run(method=one_d_spectrum)
+synth_wollastonite.run()
 synth_data = synth_wollastonite.as_csdm_object()
 cp.plot(synth_data)
 plt.show()
@@ -122,7 +121,7 @@ isotopomers = [Isotopomer(sites=[site]) for site in [S29_1, S29_2, S29_3]]
 sim = Simulator()
 sim.isotopomers += isotopomers
 sim.dimensions += [dimension]
-sim.run(method=one_d_spectrum)
+sim.run()
 sim_data = sim.as_csdm_object()
 
 cp.plot(sim_data)
@@ -161,7 +160,7 @@ report_fit(result)
 #%%
 
 
-sim.run(method=one_d_spectrum)
+sim.run()
 sim_data = sim.as_csdm_object()
 values = params.valuesdict()
 

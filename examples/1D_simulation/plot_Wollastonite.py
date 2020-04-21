@@ -17,7 +17,6 @@ from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
-from mrsimulator.methods import one_d_spectrum
 
 #%%
 # **Step 1** Create sites.
@@ -71,7 +70,7 @@ sim_wollastonite.dimensions += [dimension]
 #%%
 # **Step 5** Simulate the spectrum.
 
-x, y = sim_wollastonite.run(method=one_d_spectrum)
+x, y = sim_wollastonite.run()
 
 #%%
 # **Step 6** Plot.

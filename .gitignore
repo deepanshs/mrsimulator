@@ -123,6 +123,6 @@ test_dash.py
 
 # cython generated files
 test.c
-nmr_methods.c
+base_model.c
 sandbox.c
 *.bib

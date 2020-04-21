@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
 from numpy.fft import fft
 from numpy.fft import fftshift

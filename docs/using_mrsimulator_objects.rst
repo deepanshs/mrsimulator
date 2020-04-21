@@ -112,16 +112,20 @@ Let's use the sites we have already created to set up isotopomers.
     >>> isotopomer_3 = Isotopomer(name='H1', sites=[H1], abundance=100)
     >>> isotopomer_4 = Isotopomer(name='O17', sites=[O17], abundance=1)
 
-Here we have created four isotopomers, each with a single site.
+Here, we have created four isotopomers, each with a single site.
 
 
-Dimension object
-----------------
+Method object
+-------------
 Likewise, we can create a :ref:`dimension_api` object following,
 
 .. doctest::
 
-    >>> dimension_1 = Dimension(isotope='13C', number_of_points=2046, spectral_width=25000)
+    >>> from mrsimulator.methods import BlochDecayFT
+    >>> method = BlochDecayFT(
+    ...     isotope='13C',
+    ...     dimensions = [ dict(count=2046, spectral_width=25000) ]
+    ... )
 
 The above dimension, ``dimension_1``, is defined to record
 :math:`^{13}\text{C}` resonances over 25 kHz using 2046 points. The
@@ -166,7 +170,7 @@ section.
 A quick run
 -----------
 
-Let's import the `one_d_spectrum` method, do a quick run of the simulator,
+Let's do a quick run of the simulator,
 and observe the spectrum. But before, here is the plotting method we'll
 use to plot the spectrum for all further examples.
 
@@ -183,8 +187,7 @@ And now, a quick run.
 
 .. doctest::
 
-    >>> from mrsimulator.methods import one_d_spectrum
-    >>> x, y = sim.run(method=one_d_spectrum)
+    >>> x, y = sim.run()
     >>> plot(x,y) # doctest:+SKIP
 
 .. .. testsetup::
@@ -205,7 +208,7 @@ Let's add shielding tensors to sites ``C13A`` and ``C13B``.
 
     >>> C13A.shielding_symmetric = st(zeta=80, eta=0.5)
     >>> C13B.shielding_symmetric = st(zeta=-100, eta=0.25)
-    >>> x, y = sim.run(method=one_d_spectrum)
+    >>> x, y = sim.run()
     >>> plot(x,y) # doctest:+SKIP
 
 .. .. testsetup::
@@ -228,7 +231,7 @@ Turn up the rotor frequency and simulate
 .. doctest::
 
     >>> dimension_1.rotor_frequency = 1000 # in Hz
-    >>> x, y = sim.run(method=one_d_spectrum)
+    >>> x, y = sim.run()
     >>> plot(x,y) # doctest:+SKIP
 
 .. .. testsetup::
@@ -245,7 +248,7 @@ Change the rotor angle and simulate
 .. doctest::
 
     >>> dimension_1.rotor_angle = 90*3.1415926/180 # 90 degree in radian
-    >>> x, y = sim.run(method=one_d_spectrum)
+    >>> x, y = sim.run()
     >>> plot(x,y) # doctest:+SKIP
 
 .. .. testsetup::
@@ -262,7 +265,7 @@ Switch to 1H and simulate
 .. doctest::
 
     >>> dimension_1.isotope = '1H'
-    >>> x, y = sim.run(method=one_d_spectrum)
+    >>> x, y = sim.run()
     >>> plot(x,y) # doctest:+SKIP
 
 .. .. testsetup::
@@ -281,7 +284,7 @@ Switch to 17O and simulate
     >>> dimension_1.isotope = '17O'
     >>> dimension_1.rotor_angle = 0.9553166 # magic angle is rad
     >>> dimension_1.rotor_frequency = 15000 # Hz
-    >>> x, y = sim.run(method=one_d_spectrum)
+    >>> x, y = sim.run()
     >>> plot(x,y) # doctest:+SKIP
 
 .. .. testsetup::
