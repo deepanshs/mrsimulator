@@ -3,6 +3,7 @@ import csdmpy as cp
 from lmfit import Parameters
 from mrsimulator.apodization import Apodization
 from mrsimulator.methods import one_d_spectrum
+from mrsimulator import Simulator
 
 
 __author__ = "Maxwell C Venetos"
