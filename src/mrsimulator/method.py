@@ -19,7 +19,7 @@ from .transition import Transition
 
 class TransitionQuery(BaseModel):
     P: List[float] = [-1.0]
-    D: List[float] = []
+    D: List[float] = Field(default=None)
     f: Optional[float] = Field(default=None)
     transitions: List[Transition] = None
 
@@ -73,13 +73,13 @@ class Event(Parseable):
         """
         return super().parse_dict_with_units(py_dict)
 
-    def to_dict_with_units(self):
-        """
-        Serialize the Event object to a JSON compliant python dictionary with
-        units.
-        """
-        return self._to_dict_with_units(self)
-        # temp_dict["transitions"] = self.transitions
+    # def to_dict_with_units(self):
+    #     """
+    #     Serialize the Event object to a JSON compliant python dictionary with
+    #     units.
+    #     """
+    #     return self._to_dict_with_units(self)
+    #     # temp_dict["transitions"] = self.transitions
 
 
 class GlobalEvent(Event):
@@ -173,13 +173,13 @@ class Sequence(Parseable):
 
         return super().parse_dict_with_units(py_dict_copy)
 
-    def to_dict_with_units(self):
-        """
-        Serialize the Dimension object to a JSON compliant python dictionary with
-        units.
+    # def to_dict_with_units(self):
+    #     """
+    #     Serialize the Dimension object to a JSON compliant python dictionary with
+    #     units.
 
-        """
-        return self._to_dict_with_units(self)
+    #     """
+    #     return self._to_dict_with_units(self)
 
     def to_csdm_dimension(self):
         increment = self.spectral_width / self.count

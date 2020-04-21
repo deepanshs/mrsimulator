@@ -2,7 +2,6 @@
 """Base Isotope class."""
 from os import path
 from re import match
-from typing import Optional
 
 from monty.serialization import loadfn
 from pydantic import BaseModel
@@ -16,15 +15,13 @@ ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
 
 
 class Isotope(BaseModel):
-    symbol: Optional[str] = None
+    symbol: str
 
     class Config:
         validate_assignment = True
 
     @validator("symbol", always=True)
     def get_isotope(cls, v, *, values, **kwargs):
-        if v is None:
-            return v
         return format_isotope_string(v)
 
     def to_dict_with_units(self):
@@ -39,8 +36,6 @@ class Isotope(BaseModel):
             >>> dim.spin
             2.5
         """
-        if self.symbol is None:
-            return None
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["spin"] / 2.0
 
@@ -53,8 +48,6 @@ class Isotope(BaseModel):
             >>> dim.natural_abundance
             100.0
         """
-        if self.symbol is None:
-            return None
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["natural_abundance"]
 
@@ -67,8 +60,6 @@ class Isotope(BaseModel):
             >>> dim.gyromagnetic_ratio
             11.10309
         """
-        if self.symbol is None:
-            return None
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["gyromagnetic_ratio"]
 
@@ -81,8 +72,6 @@ class Isotope(BaseModel):
             >>> dim.quadrupole_moment
             0.15
         """
-        if self.symbol is None:
-            return None
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["quadrupole_moment"]
 
@@ -95,8 +84,6 @@ class Isotope(BaseModel):
             >>> dim.atomic_number
             13
         """
-        if self.symbol is None:
-            return None
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["atomic_number"]
 

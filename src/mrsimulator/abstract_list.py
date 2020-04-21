@@ -77,24 +77,24 @@ class TransitionList(AbstractList):
     def Zeeman_allowed(self):
         return TransitionList([item for item in self._list if item.Zeeman_allowed])
 
-    def filter(self, p=None, transitions=None, start_state=None):
+    def filter(self, P=None, D=None, transitions=None, start_state=None):
         """Filter a list of transitions to satisfy the filtering criterion.
             Args:
-                p: The total Δm of the spin transition, given as the sum individual
-                    quantum number from the final state minus the sum of individual
-                    quantum number from the initial state.
+                P: A list of Δm values. If `l` Δm are given for an isotopomer with N
+                    sites, where N >= l, the transitions corresponding to all
+                    combinations of `l` Δm values over N sites is selected.
                 delta_ms: A list of Δm values for the spin transition.
                 transition: A list of single spin transition corresponding to each site
                     in the isotopomer.
         """
 
-        if p is transitions is start_state is None:
-            p = -1
+        if P is transitions is start_state is None:
+            P = -1
         ts = self._list.copy()
 
         # if search is None:
-        if p is not None:
-            ts = TransitionList([item for item in ts if item.p == p])
+        if P is not None:
+            ts = TransitionList([item for item in ts if item.P == P])
         if transitions is not None:
             for transition in transitions:
                 ts = TransitionList(

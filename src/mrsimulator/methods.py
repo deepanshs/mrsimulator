@@ -65,7 +65,7 @@ def generate_method_from_template(template):
 
 
 Bloch_decay = {
-    "name": "Bloch template",
+    "name": "BlochDecayFT",
     "description": "Bloch decay Fourier Transform",
     "isotopomer_query": {
         "site_count": None,  # applies to any number of sites
