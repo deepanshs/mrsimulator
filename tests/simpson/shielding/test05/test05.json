@@ -1,4 +1,25 @@
 {
+  "method": {
+    "isotope": "29Si",
+    "sequences": [
+      {
+        "count": 512,
+        "spectral_width": "64 kHz",
+        "events": [
+          {
+            "magnetic_flux_density": "1 T",
+            "rotor_frequency": "1 kHz",
+            "transition_query": {
+              "transition": {
+                "final": [0.5],
+                "initial": [-0.5]
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
   "dimensions": [
     {
       "magnetic_flux_density": "1 T",

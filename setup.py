@@ -102,14 +102,15 @@ source = [
     "src/c_lib/lib/octahedron.c",
     "src/c_lib/lib/simulation.c",
     "src/c_lib/lib/powder_setup.c",
-    "src/c_lib/lib/averaging_scheme.c",
+    "src/c_lib/lib/schemes.c",
+    "src/c_lib/lib/method.c",
 ]
 
 # method
 ext_modules = [
     Extension(
-        name="mrsimulator.methods",
-        sources=[*source, "src/c_lib/mrmethods/nmr_methods.pyx"],
+        name="mrsimulator.base_model",
+        sources=[*source, "src/c_lib/mrmethods/base_model.pyx"],
         include_dirs=include_dirs,
         language="c",
         libraries=libraries,

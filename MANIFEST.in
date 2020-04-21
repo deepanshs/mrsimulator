@@ -9,9 +9,9 @@ recursive-include src/c_lib/lib *
 
 include src/mrsimulator/isotope_data.json
 
-include src/c_lib/mrmethods/nmr_methods.pxd
-include src/c_lib/mrmethods/nmr_methods.pyx
-exclude src/c_lib/mrmethods/nmr_methods.c
+include src/c_lib/mrmethods/base_model.pxd
+include src/c_lib/mrmethods/base_model.pyx
+exclude src/c_lib/mrmethods/base_model.c
 
 include src/c_lib/test/test.pxd
 include src/c_lib/test/test.pyx

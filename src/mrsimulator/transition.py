@@ -28,13 +28,18 @@ class Transition(BaseModel):
 
     @property
     def p(self):
-        """Return the total Δm value of the spin transition."""
+        """Return the total Δm (m_final-m_initial) value of the spin transition."""
         return self.delta_ms.sum()
 
     @property
-    def delta_ms(self):
+    def P(self):
         """Return a list of Δm values of the spin transition for each site."""
         return np.asarray(self.final) - np.asarray(self.initial)
+
+    @property
+    def D(self):
+        """Return a list of Δm**2 values of the spin transition for each site."""
+        return np.asarray(self.final) ** 2 - np.asarray(self.initial) * 2
 
     def delta_m(self, i):
         """Return the Δm element of the transition corresponding to the ith site."""

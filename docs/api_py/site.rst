@@ -22,15 +22,15 @@ Site
     .. doctest::
 
         >>> # 13C isotope information
-        >>> site1.spin
+        >>> site1.isotope.spin
         0.5
-        >>> site1.natural_abundance # in %
+        >>> site1.isotope.natural_abundance # in %
         1.11
-        >>> site1.gyromagnetic_ratio # in MHz/T
+        >>> site1.isotope.gyromagnetic_ratio # in MHz/T
         10.7084
-        >>> site1.atomic_number
+        >>> site1.isotope.atomic_number
         6
-        >>> site1.quadrupole_moment # in eB
+        >>> site1.isotope.quadrupole_moment # in eB
         0.0
 
     .. rubric:: Method Documentation

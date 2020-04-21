@@ -7,8 +7,9 @@ from typing import Optional
 from mrsimulator import AntisymmetricTensor
 from mrsimulator import Parseable
 from mrsimulator import SymmetricTensor
-from mrsimulator.dimension import get_isotope_data
 from pydantic import validator
+
+from .isotope import Isotope
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
@@ -66,7 +67,7 @@ class Site(Parseable):
     """
 
     name: str = None
-    isotope: str = "1H"
+    isotope: Optional[str] = "1H"
     isotropic_chemical_shift: Optional[float] = 0
     shielding_symmetric: Optional[SymmetricTensor] = None
     shielding_antisymmetric: Optional[AntisymmetricTensor] = None
@@ -81,7 +82,8 @@ class Site(Parseable):
         if v is None:
             return v
         isotope = values["isotope"]
-        I = get_isotope_data(isotope)["spin"] / 2.0
+        isotope = Isotope(symbol=isotope) if isinstance(isotope, str) else isotope
+        I = isotope.spin
         if I >= 1:
             if "zeta" in v.property_units:
                 v.property_units.pop("zeta")
@@ -91,39 +93,28 @@ class Site(Parseable):
 
     @validator("shielding_symmetric")
     def shielding_symmetric_must_not_contain_Cq(cls, v, values):
-        if v is None:
-            return v
+        if "zeta" in v.property_units:
+            if isinstance(v.property_units["zeta"], list):
+                v.property_units["zeta"] = "ppm"
+            elif v.property_units["zeta"] != "ppm":
+                raise ValueError(
+                    (
+                        "A value in the unit of `ppm` is required for the parameter "
+                        "`zeta` from the shielding symmetric tensor."
+                    )
+                )
         if "Cq" in v.property_units:
             v.property_units.pop("Cq")
         return v
 
+    @validator("isotope", always=True)
+    def get_isotope(cls, v, *, values, **kwargs):
+        if v is None:
+            return v
+        return Isotope(symbol=v)
+
     class Config:
         validate_assignment = True
-
-    @property
-    def spin(self):
-        """Spin quantum number of the isotope."""
-        return get_isotope_data(self.isotope)["spin"] / 2.0
-
-    @property
-    def natural_abundance(self):
-        """Natural abundance of the isotope in units of %."""
-        return get_isotope_data(self.isotope)["natural_abundance"]
-
-    @property
-    def gyromagnetic_ratio(self):
-        """Reduced gyromagnetic ratio of the isotope in units of MHz/T."""
-        return get_isotope_data(self.isotope)["gyromagnetic_ratio"]
-
-    @property
-    def quadrupole_moment(self):
-        """Quadrupole moment of the isotope in units of eB (electron-Barn)."""
-        return get_isotope_data(self.isotope)["quadrupole_moment"]
-
-    @property
-    def atomic_number(self):
-        """Atomic number of the isotope."""
-        return get_isotope_data(self.isotope)["atomic_number"]
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
@@ -184,8 +175,9 @@ class Site(Parseable):
                                      'gamma': None,
                                      'zeta': -1006.5895999999999}}
         """
-        temp_dict = self.dict()
-        larmor_frequency = -self.gyromagnetic_ratio * B0  # in MHz
+        temp_dict = self.dict(exclude={"isotope"})
+        temp_dict["isotope"] = self.isotope.symbol
+        larmor_frequency = -self.isotope.gyromagnetic_ratio * B0  # in MHz
         for k in ["shielding_symmetric", "shielding_antisymmetric", "quadrupolar"]:
             if getattr(self, k):
                 temp_dict[k] = getattr(self, k).to_freq_dict(larmor_frequency)
@@ -194,31 +186,4 @@ class Site(Parseable):
 
         temp_dict["isotropic_chemical_shift"] *= larmor_frequency
         temp_dict.pop("property_units")
-        return temp_dict
-
-    def to_dict_with_units(self):
-        """
-        Serialize the Site object to a JSON compliant python dictionary with units.
-
-        Returns:
-            Dict object
-
-        Example:
-            >>> pprint(site1.to_dict_with_units())
-            {'isotope': '13C',
-             'isotropic_chemical_shift': '20.0 ppm',
-             'shielding_symmetric': {'eta': 0.5, 'zeta': '10.0 ppm'}}
-
-        """
-        temp_dict = {k: v for k, v in self.dict().items() if v is not None}
-
-        for k in ["shielding_symmetric", "shielding_antisymmetric", "quadrupolar"]:
-            if getattr(self, k):
-                temp_dict[k] = getattr(self, k).to_dict_with_units()
-
-        temp_dict["isotropic_chemical_shift"] = (
-            str(temp_dict["isotropic_chemical_shift"]) + " ppm"
-        )
-        temp_dict.pop("property_units")
-
         return temp_dict

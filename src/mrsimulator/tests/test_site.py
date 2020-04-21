@@ -10,7 +10,7 @@ from pydantic import ValidationError
 def test_direct_init_site1():
     # test 1 --------------------------------------------------------------------------
     the_site = Site(isotope="29Si", isotropic_chemical_shift=10)
-    assert the_site.isotope == "29Si"
+    assert the_site.isotope.symbol == "29Si"
     assert the_site.isotropic_chemical_shift == 10
     assert the_site.property_units["isotropic_chemical_shift"] == "ppm"
 
@@ -18,11 +18,11 @@ def test_direct_init_site1():
     assert the_site.quadrupolar is None
     assert the_site.shielding_symmetric is None
 
-    assert the_site.atomic_number == 14
-    assert the_site.gyromagnetic_ratio == -8.465499
-    assert the_site.natural_abundance == 4.683
-    assert the_site.quadrupole_moment == 0.0
-    assert the_site.spin == 0.5
+    assert the_site.isotope.atomic_number == 14
+    assert the_site.isotope.gyromagnetic_ratio == -8.465499
+    assert the_site.isotope.natural_abundance == 4.683
+    assert the_site.isotope.quadrupole_moment == 0.0
+    assert the_site.isotope.spin == 0.5
 
     # test 2 --------------------------------------------------------------------------
     the_site = Site(
@@ -30,7 +30,7 @@ def test_direct_init_site1():
         isotropic_chemical_shift=10,
         shielding_symmetric={"zeta": 12.1, "eta": 0.1},
     )
-    assert the_site.isotope == "29Si"
+    assert the_site.isotope.symbol == "29Si"
     assert the_site.isotropic_chemical_shift == 10
     assert the_site.property_units["isotropic_chemical_shift"] == "ppm"
 
@@ -43,11 +43,11 @@ def test_direct_init_site1():
     assert the_site.shielding_symmetric.eta == 0.1
 
     # site properties
-    assert the_site.atomic_number == 14
-    assert the_site.gyromagnetic_ratio == -8.465499
-    assert the_site.natural_abundance == 4.683
-    assert the_site.quadrupole_moment == 0.0
-    assert the_site.spin == 0.5
+    assert the_site.isotope.atomic_number == 14
+    assert the_site.isotope.gyromagnetic_ratio == -8.465499
+    assert the_site.isotope.natural_abundance == 4.683
+    assert the_site.isotope.quadrupole_moment == 0.0
+    assert the_site.isotope.spin == 0.5
 
     # test 3 --------------------------------------------------------------------------
     error = "ensure this value is less than or equal to 1"
@@ -58,7 +58,7 @@ def test_direct_init_site1():
             shielding_symmetric={"zeta": 12.1, "eta": 1.5},
         )
 
-    assert Site().isotope == "1H"
+    assert Site().isotope.symbol == "1H"
 
     error = ["with spin quantum number", "does not allow quadrupolar tensor"]
     with pytest.raises(ValidationError, match=".*{0}.*{1}.*".format(*error)):
@@ -78,7 +78,7 @@ def test_parse_json_site():
 
     # testing method parse_dict_with_units()
     the_site = Site.parse_dict_with_units(good_json_site)
-    assert the_site.isotope == "1H"
+    assert the_site.isotope.symbol == "1H"
     assert the_site.isotropic_chemical_shift == 0
     assert the_site.property_units["isotropic_chemical_shift"] == "ppm"
 
@@ -93,11 +93,11 @@ def test_parse_json_site():
     assert the_site.shielding_symmetric.gamma is None
 
     # site properties
-    assert the_site.atomic_number == 1
-    assert the_site.gyromagnetic_ratio == 42.57748
-    assert the_site.natural_abundance == 99.985
-    assert the_site.quadrupole_moment == 0.0
-    assert the_site.spin == 0.5
+    assert the_site.isotope.atomic_number == 1
+    assert the_site.isotope.gyromagnetic_ratio == 42.57748
+    assert the_site.isotope.natural_abundance == 99.985
+    assert the_site.isotope.quadrupole_moment == 0.0
+    assert the_site.isotope.spin == 0.5
 
     # test 2 --------------------------------------------------------------------------
     good_json_2 = {
@@ -107,7 +107,7 @@ def test_parse_json_site():
     }
 
     the_site = Site.parse_dict_with_units(good_json_2)
-    assert the_site.isotope == "14N"
+    assert the_site.isotope.symbol == "14N"
     assert the_site.isotropic_chemical_shift == -10
     assert the_site.property_units["isotropic_chemical_shift"] == "ppm"
 
@@ -118,11 +118,11 @@ def test_parse_json_site():
     assert the_site.quadrupolar.eta == 0.5
 
     # site properties
-    assert the_site.atomic_number == 7
-    assert the_site.gyromagnetic_ratio == 3.077706
-    assert the_site.natural_abundance == 99.634
-    assert the_site.quadrupole_moment == 0.0193
-    assert the_site.spin == 1
+    assert the_site.isotope.atomic_number == 7
+    assert the_site.isotope.gyromagnetic_ratio == 3.077706
+    assert the_site.isotope.natural_abundance == 99.634
+    assert the_site.isotope.quadrupole_moment == 0.0193
+    assert the_site.isotope.spin == 1
 
     # test 3 bad input ----------------------------------------------------------------
     bad_json = {"isotope": "1H", "isotropic_chemical_shift": "0 rad"}
@@ -147,7 +147,7 @@ def test_site_object_methods():
 
     # testing method dict()
     result = {
-        "isotope": "14N",
+        "isotope": {"symbol": "14N"},
         "isotropic_chemical_shift": -10.0,
         "property_units": {"isotropic_chemical_shift": "ppm"},
         "name": None,

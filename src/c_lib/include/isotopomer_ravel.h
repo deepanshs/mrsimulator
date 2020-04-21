@@ -12,21 +12,29 @@
 
 // isotopomer like structure
 struct __isotopomer_ravel {
-  unsigned int number_of_sites;           /**< Number of sites */
-  float spin;                             /**< The spin quantum number */
-  double larmor_frequency;                /**< Larmor frequency (MHz) */
-  double *isotropic_chemical_shift_in_Hz; /**< Isotropic chemical shift (Hz) */
-  double *shielding_anisotropy_in_Hz; /**< Nuclear shielding anisotropy (Hz) */
-  double *shielding_asymmetry;   /**< Nuclear shielding asymmetry parameter */
-  double *shielding_orientation; /**< Nuclear shielding PAS to CRS euler angles
-                                    (rad.) */
+  unsigned int number_of_sites; /**< Number of sites */
+  float *spin; /**< Pointer to an array of spin quantum numbers. */
+  double *gyromagnetic_ratio; /**< Pointer to an array of gyromagnetic ratio
+                                 (MHz/T). */
+  double *isotropic_chemical_shift_in_Hz; /**< Pointer to an array of Isotropic
+                                             chemical shift (Hz). */
+  double *shielding_anisotropy_in_Hz;     /**< Pointer to an array of Nuclear
+                                             shielding anisotropy (Hz). */
+  double *shielding_asymmetry;   /**< Pointer to an array of Nuclear shielding
+                                    asymmetry parameter. */
+  double *shielding_orientation; /**< Pointer to an array of Nuclear shielding
+                                    PAS to CRS euler angles (rad.). The array
+                                    size is 3*number_of_sites */
 
-  double *quadrupole_coupling_constant_in_Hz; /**< Quadrupole coupling constant
-                                                 (Hz) */
-  double *quadrupole_asymmetry; /**< Quadrupole asymmetry parameter */
-  double
-      *quadrupole_orientation; /**< Quadrupole PAS to CRS euler angles (rad.) */
-  double *dipolar_couplings;   /**< dipolar coupling stored as list of lists */
+  double *
+      quadrupole_coupling_constant_in_Hz; /**< Pointer to an array of Quadrupole
+                                             coupling constant (Hz). */
+  double *quadrupole_asymmetry; /**< Pointer to an array of Quadrupole asymmetry
+                                   parameter. */
+  double *quadrupole_orientation; /**< Pointer to an array of Quadrupole PAS to
+                                     CRS euler angles (rad.).  The array size is
+                                     3*number_of_sites. */
+  double *dipolar_couplings; /**< Pointer to an array of dipolar couplings */
 };
 
 typedef struct __isotopomer_ravel isotopomer_ravel;

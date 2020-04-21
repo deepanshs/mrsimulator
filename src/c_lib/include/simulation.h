@@ -7,8 +7,9 @@
 //  Contact email = deepansh2012@gmail.com
 //
 
+#include "method.h"
 #include "mrsimulator.h"
-
+#include "octahedron.h"
 // headerdoc
 
 extern void mrsimulator_core(
@@ -19,6 +20,8 @@ extern void mrsimulator_core(
     int number_of_points,       // Number of points on the frequency spectrum.
 
     isotopomer_ravel *ravel_isotopomer,  // isotopomer structure
+    MRS_sequence *the_sequence,          // the transition sequence.
+    int n_sequence,                      // number of sequences.
 
     int quad_second_order,                   // Quad theory for second order,
     int remove_second_order_quad_isotropic,  // remove the isotropic
@@ -48,5 +51,6 @@ extern void __mrsimulator_core(
                                              // order quad Hamiltonian.
 
     // Pointer to the transitions. transition[0] = mi and transition[1] = mf
-    double *transition, MRS_plan *plan, MRS_dimension *dimension,
+    double *transition, MRS_sequence *the_sequence, int n_sequence,
+    MRS_fftw_scheme *fftw_scheme, MRS_averaging_scheme *scheme,
     bool interpolation);

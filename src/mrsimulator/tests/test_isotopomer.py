@@ -17,7 +17,7 @@ def test_direct_init_isotopomer():
 
     test_site = Site(isotope="29Si", isotropic_chemical_shift=10)
 
-    assert test_site.isotope == "29Si"
+    assert test_site.isotope.symbol == "29Si"
     assert test_site.isotropic_chemical_shift == 10.0
     assert test_site.property_units["isotropic_chemical_shift"] == "ppm"
 
@@ -46,9 +46,9 @@ def test_direct_init_isotopomer():
     )
     assert the_isotopomer.name == "Just a test"
     assert the_isotopomer.description == "The same"
-    assert the_isotopomer.sites[0].isotope == "1H"
+    assert the_isotopomer.sites[0].isotope.symbol == "1H"
     assert the_isotopomer.sites[0].isotropic_chemical_shift == 0
-    assert the_isotopomer.sites[1].isotope == "17O"
+    assert the_isotopomer.sites[1].isotope.symbol == "17O"
     assert the_isotopomer.sites[1].isotropic_chemical_shift == -10
     assert the_isotopomer.sites[1].quadrupolar.Cq == 5.1e6
     assert the_isotopomer.sites[1].quadrupolar.eta == 0.5
@@ -69,7 +69,7 @@ def test_parse_json_isotopomer():
 
     iso2 = Isotopomer.parse_dict_with_units(good_json2)
     assert len(iso2.sites) == 1
-    assert iso2.sites[0].isotope == "1H"
+    assert iso2.sites[0].isotope.symbol == "1H"
     assert iso2.sites[0].isotropic_chemical_shift == 0
     assert iso2.abundance == 10
 
@@ -107,10 +107,8 @@ def test_isotopomer_methods():
     # to_dict_with_units()
     iso1 = Isotopomer.parse_dict_with_units(good_json2).to_dict_with_units()
     result = {
-        "name": "",
-        "description": "",
         "sites": [{"isotope": "1H", "isotropic_chemical_shift": "2.0 ppm"}],
-        "abundance": "10.0%",
+        "abundance": "10.0 %",
     }
     assert iso1 == result
 

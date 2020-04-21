@@ -58,9 +58,9 @@
 static inline void FCF_1st_order_nuclear_shielding_Hamiltonian(
     double *restrict Lambda_0, void *restrict Lambda_2,
     const double omega_0_delta_iso_in_Hz, const double omega_0_zeta_sigma_in_Hz,
-    const double eta, const double *Theta, const double *transition) {
+    const double eta, const double *Theta, const double mf, const double mi) {
   // Spin transition function
-  double transition_fn = STF_p(transition[1], transition[0]);
+  double transition_fn = STF_p(mf, mi);
 
   // Spatial orientation function
   sSOT_1st_order_nuclear_shielding_Hamiltonian(
@@ -108,9 +108,9 @@ static inline void FCF_1st_order_nuclear_shielding_Hamiltonian(
  */
 static inline void FCF_1st_order_electric_quadrupole_Hamiltonian(
     void *restrict Lambda_2, const double spin, const double Cq_in_Hz,
-    const double eta, const double *Theta, const double *transition) {
+    const double eta, const double *Theta, const double mf, const double mi) {
   // Spin transition function
-  double transition_fn = STF_d(transition[1], transition[0]);
+  double transition_fn = STF_d(mf, mi);
 
   // Spatial orientation function
   sSOT_1st_order_electric_quadrupole_Hamiltonian(Lambda_2, spin, Cq_in_Hz, eta,
@@ -172,10 +172,10 @@ static inline void FCF_1st_order_electric_quadrupole_Hamiltonian(
 static inline void FCF_2nd_order_electric_quadrupole_Hamiltonian(
     double *restrict Lambda_0, void *restrict Lambda_2, void *restrict Lambda_4,
     const double spin, const double v0_in_Hz, const double Cq_in_Hz,
-    const double eta, const double *Theta, const double *transition) {
+    const double eta, const double *Theta, const double mf, const double mi) {
   // Composite spin transition functions
   double *cl_value = malloc_double(3);
-  STF_cL(cl_value, transition[1], transition[0], spin);
+  STF_cL(cl_value, mf, mi, spin);
 
   // Spatial orientation function
   sSOT_2nd_order_electric_quadrupole_Hamiltonian(
@@ -200,9 +200,9 @@ spin transition functions in the weak coupling limit.
 */
 static inline void weakly_coupled_direct_dipole_frequencies_to_first_order(
     double *restrict Lambda_0, void *restrict Lambda_2, const double D,
-    const double *transition) {
+    const double mIf, const double mIi, const double mSf, const double mSi) {
   // Spin transition contribution
-  double transition_fn = STF_dIS(transition[0], transition[1], 0.5, 0.5);
+  double transition_fn = STF_dIS(mIf, mIi, mSf, mSi);
 
   // Scaled R00
   *Lambda_0 += 0.0;

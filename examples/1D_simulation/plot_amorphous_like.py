@@ -60,7 +60,6 @@ plt.show()
 
 #%%
 from mrsimulator import Simulator, Site, Isotopomer, Dimension
-from mrsimulator.methods import one_d_spectrum
 
 isotopomers = []
 for i, z, e in zip(iso, zeta, eta):
@@ -89,7 +88,7 @@ sim.dimensions += [
 # Observe the static :math:`^{29}\text{Si}` line-shape simulation.
 
 #%%
-x, y = sim.run(method=one_d_spectrum)
+x, y = sim.run()
 
 #%%
 # The plot of the corresponding spectrum.

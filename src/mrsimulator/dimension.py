@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Base Dimension class."""
 import os.path
-import re
 import warnings
 from typing import ClassVar
 from typing import Dict
@@ -13,6 +12,8 @@ from monty.serialization import loadfn
 from mrsimulator import Parseable
 from pydantic import Field
 from pydantic import validator
+
+from .isotope import Isotope
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
@@ -92,77 +93,7 @@ class Dimension(Parseable):
     def get_isotope(cls, v, *, values, **kwargs):
         if v is None:
             return v
-        return format_isotope_string(v)
-
-    @property
-    def spin(self):
-        """
-        Spin quantum number, I.
-
-        Example:
-            >>> dim.spin
-            2.5
-        """
-        if self.isotope is None:
-            return None
-        isotope_data = get_isotope_data(self.isotope)
-        return isotope_data["spin"] / 2.0
-
-    @property
-    def natural_abundance(self):
-        """
-        Natural abundance of the spin.
-
-        Example:
-            >>> dim.natural_abundance
-            100.0
-        """
-        if self.isotope is None:
-            return None
-        isotope_data = get_isotope_data(self.isotope)
-        return isotope_data["natural_abundance"]
-
-    @property
-    def gyromagnetic_ratio(self):
-        """
-        Reduced gyromagnetic ratio of the nucleus given in units of MHz/T.
-
-        Example:
-            >>> dim.gyromagnetic_ratio
-            11.10309
-        """
-        if self.isotope is None:
-            return None
-        isotope_data = get_isotope_data(self.isotope)
-        return isotope_data["gyromagnetic_ratio"]
-
-    @property
-    def quadrupole_moment(self):
-        """
-        Quadrupole moment of the nucleus given in units of electron-barn.
-
-        Example:
-            >>> dim.quadrupole_moment
-            0.15
-        """
-        if self.isotope is None:
-            return None
-        isotope_data = get_isotope_data(self.isotope)
-        return isotope_data["quadrupole_moment"]
-
-    @property
-    def atomic_number(self):
-        """
-        Atomic number of the nucleus.
-
-        Example:
-            >>> dim.atomic_number
-            13
-        """
-        if self.isotope is None:
-            return None
-        isotope_data = get_isotope_data(self.isotope)
-        return isotope_data["atomic_number"]
+        return Isotope(symbol=v)
 
     @property
     def larmor_frequency(self):
@@ -178,7 +109,9 @@ class Dimension(Parseable):
         """
         if self.isotope is None:
             return None
-        return -self.gyromagnetic_ratio * self.magnetic_flux_density * 1e6  # in Hz
+        return (
+            -self.isotope.gyromagnetic_ratio * self.magnetic_flux_density * 1e6
+        )  # in Hz
 
     @property
     def coordinates_Hz(self):
@@ -231,8 +164,7 @@ class Dimension(Parseable):
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantities of a Dimension object
-        when expressed as a python dictionary.
+        Parse the physical quantities of a Dimension object from as a python dictionary.
 
         Args:
             py_dict: Dict object
@@ -251,33 +183,6 @@ class Dimension(Parseable):
         """
         return super().parse_dict_with_units(py_dict)
 
-    def to_dict_with_units(self):
-        """
-        Serialize the Dimension object to a JSON compliant python dictionary with
-        units.
-
-        Example:
-            >>> pprint(dimension_object.to_dict_with_units())
-            {'isotope': '29Si',
-             'label': '',
-             'magnetic_flux_density': '9.4 T',
-             'number_of_points': 1024,
-             'reference_offset': '0.0 Hz',
-             'rotor_angle': '0.958796624583085 rad',
-             'rotor_frequency': '0.0 Hz',
-             'spectral_width': '100.0 Hz'}
-        """
-        temp_dict = {
-            k: v
-            for k, v in self.dict(exclude={"property_units"}).items()
-            if v is not None
-        }
-        temp_keys = temp_dict.keys()
-        for key, unit in self.property_units.items():
-            if key in temp_keys:
-                temp_dict[key] = f"{temp_dict[key]} {unit}"
-        return temp_dict
-
     def to_csdm_dimension(self):
         count = self.number_of_points
         dim = csdm_dimension(
@@ -289,30 +194,3 @@ class Dimension(Parseable):
             complex_fft=True,
         )
         return dim
-
-
-def format_isotope_string(isotope_string):
-    """Format isotope string to {A}{symbol}, where A is the isotope number"""
-    result = re.match(r"(\d+)\s*(\w+)", isotope_string)
-
-    if result is None:
-        raise Exception(f"Could not parse isotope string {isotope_string}")
-    isotope = result.group(2)
-    A = result.group(1)
-
-    formatted_string = f"{A}{isotope}"
-    if formatted_string not in ISOTOPE_DATA:
-        raise Exception(f"Could not parse isotope string {isotope_string}")
-
-    return formatted_string
-
-
-def get_isotope_data(isotope_string):
-    """
-    Gets the isotope's intrinsinc NMR properties from a JSON
-    data file.
-    """
-    formatted_isotope_string = format_isotope_string(isotope_string)
-    isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
-    isotope_dict.update({"isotope": formatted_isotope_string})
-    return isotope_dict

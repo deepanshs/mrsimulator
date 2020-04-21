@@ -10,7 +10,6 @@ from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SymmetricTensor
-from mrsimulator.methods import one_d_spectrum
 
 font = {"family": "Helvetica", "weight": "light", "size": 9}
 matplotlib.rc("font", **font)
@@ -26,7 +25,6 @@ def add_site(doctest_namespace):
     doctest_namespace["SymmetricTensor"] = SymmetricTensor
     doctest_namespace["st"] = SymmetricTensor
     doctest_namespace["pprint"] = pprint
-    doctest_namespace["one_d_spectrum"] = one_d_spectrum
 
     site1 = Site(
         isotope="13C",

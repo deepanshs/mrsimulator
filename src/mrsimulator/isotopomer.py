@@ -7,13 +7,14 @@ from typing import List
 from typing import Optional
 
 import numpy as np
-from mrsimulator import Parseable
-from mrsimulator.abstract_list import TransitionList
-from mrsimulator.dimension import ISOTOPE_DATA
-from mrsimulator.site import Site
-from mrsimulator.transition import Transition
 from pydantic import Field
 
+from .abstract_list import TransitionList
+from .dimension import ISOTOPE_DATA
+from .parseable import Parseable
+from .site import Site
+from .state import ZeemanState
+from .transition import Transition
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
@@ -92,9 +93,10 @@ class Isotopomer(Parseable):
         represented by a list of quantum numbers, [m_1, m_2,..m_n], where m_i is the
         quantum number associated with the ith site of the isotopomer.
         """
-        two_I_p_one = [int(2 * site.spin + 1) for site in self.sites]
+        two_I_p_one = [int(2 * site.isotope.spin + 1) for site in self.sites]
         spin_quantum_numbers = [
-            np.arange(2 * site.spin + 1) - site.spin for site in self.sites
+            np.arange(2 * site.isotope.spin + 1) - site.isotope.spin
+            for site in self.sites
         ]
         size = len(spin_quantum_numbers)
 
@@ -107,12 +109,12 @@ class Isotopomer(Parseable):
                 else:
                     k = np.kron(k, np.ones(two_I_p_one[i]))
             lst.append(k)
-        return np.asarray(lst).T
+        return [ZeemanState(len(self.sites), *item) for item in np.asarray(lst).T]
 
     @property
     def all_transitions(self):
         """Returns a list of all possible spin transitions in as isotopomer."""
-        energy_states = self.Zeeman_energy_states
+        energy_states = np.asarray(self.Zeeman_energy_states)
         s = energy_states.shape[0]
         lst = np.arange(s)
         indexes = np.asarray(np.meshgrid(lst, lst)).T.reshape(-1, 2)
@@ -158,31 +160,6 @@ class Isotopomer(Parseable):
         temp_dict.pop("property_units")
         return temp_dict
 
-    def to_dict_with_units(self):
-        """
-        Serialize the Isotopomer object to a JSON compliant python dictionary object
-        where attribute values are physical quantities expressed as a string with a
-        number followed by a unit.
-
-        Return: A python dict
-
-        Example:
-            >>> pprint(isotopomer_1.to_dict_with_units())
-            {'abundance': '100%',
-             'description': '',
-             'name': '',
-             'sites': [{'isotope': '13C',
-                        'isotropic_chemical_shift': '20.0 ppm',
-                        'shielding_symmetric': {'eta': 0.5, 'zeta': '10.0 ppm'}}]}
-        """
-        temp_dict = self.dict()
-        temp_dict["sites"] = [site.to_dict_with_units() for site in self.sites]
-        temp_dict["abundance"] = f"{self.abundance}%"
-        temp_dict.pop("property_units")
-        temp_dict.pop("transitions")
-
-        return temp_dict
-
     def get_isotopes(self, I=None):
         """
         Set of unique isotopes from the list of sites corresponding to the given value
@@ -206,7 +183,9 @@ class Isotopomer(Parseable):
             {'27Al'}
         """
         return set(
-            site.isotope for site in self.sites if site.isotope in allowed_isotopes(I)
+            site.isotope.symbol
+            for site in self.sites
+            if site.isotope.symbol in allowed_isotopes(I)
         )
 
 

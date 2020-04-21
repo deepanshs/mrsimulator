@@ -60,7 +60,6 @@ plt.show()
 
 #%%
 from mrsimulator import Simulator, Site, Isotopomer, Dimension
-from mrsimulator.methods import one_d_spectrum
 
 isotopomers = []
 for i, c, e in zip(iso, Cq, eta):
@@ -87,7 +86,7 @@ sim.dimensions += [Dimension(isotope="27Al", spectral_width=80000, reference_off
 # Observe the static :math:`^{27}\text{Al}` line-shape simulation.
 
 #%%
-x, y = sim.run(method=one_d_spectrum)
+x, y = sim.run()
 
 #%%
 # The plot of the corresponding spectrum.

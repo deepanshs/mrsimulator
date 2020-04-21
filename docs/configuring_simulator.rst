@@ -21,7 +21,6 @@ of the config attributes is as follows,
 .. doctest::
 
     >>> from mrsimulator import Simulator, Isotopomer, Dimension, Site
-    >>> from mrsimulator.methods import one_d_spectrum
     >>> the_simulator = Simulator()
 
     >>> the_simulator.config

@@ -8,7 +8,6 @@ from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
-from mrsimulator.methods import one_d_spectrum
 
 
 def test_simulator_assignments():
@@ -33,16 +32,11 @@ def test_equality():
     c = Simulator(isotopomers=[Isotopomer()])
     assert a is not c
 
-    result = {
-        "isotopomers": [
-            {"abundance": "100%", "description": "", "name": "", "sites": []}
-        ]
-    }
+    result = {"isotopomers": [{"abundance": "100 %", "sites": []}]}
     assert c.to_dict_with_units(include_dimensions=True) == result
 
     result["dimensions"] = [
         {
-            "label": "",
             "magnetic_flux_density": "9.4 T",
             "number_of_points": 1024,
             "reference_offset": "0 Hz",
@@ -87,18 +81,24 @@ def test_csdm_object():
         quadrupole={"Cq": 5.1e6, "eta": 0.5},
     )
     sim.isotopomers = [{"name": "test", "description": "awesome", "sites": [site]}]
-    sim.dimensions = [
-        {
-            "number_of_points": 1024,
-            "spectral_width": 100,
-            "reference_offset": 0,
-            "magnetic_flux_density": 9.4,
-            "rotor_frequency": 0,
-            "rotor_angle": 0.9553166,
-            "isotope": "27Al",
-        }
-    ]
-    x, y = sim.run(method=one_d_spectrum)
+    sim.method = {
+        "isotope": "27Al",
+        "sequences": [
+            {
+                "count": 1024,
+                "spectral_width": 100,
+                "reference_offset": 0,
+                "events": [
+                    {
+                        "magnetic_flux_density": 9.4,
+                        "rotor_frequency": 0,
+                        "rotor_angle": 0.9553166,
+                    }
+                ],
+            }
+        ],
+    }
+    x, y = sim.run()
     csdm_obj = sim.as_csdm_object()
 
     assert np.allclose(csdm_obj.dependent_variables[0].components[0], y)

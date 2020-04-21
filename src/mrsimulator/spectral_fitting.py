@@ -15,23 +15,9 @@ __email__ = "maxvenetos@gmail.com"
 #     Applies appodization filter to the simulated spectrum using either Lorentzian filtering or Gaussian filtering.
 
 #     Args:
-#         csdm_obj: A CSDM type object containing the data to apodize
-
 #     Returns:
 #         Array of appodized intensities.
-
-#     """
-#     x = csdm_obj.dimensions[0]
-#     amp = csdm_obj.dependent_variables[0].components[0]
-#     freq = x.coordinates.to("Hz")
-
 #     TimeDomain = ifft(ifftshift(amp))
-#     TimeDomain = np.roll(TimeDomain, int(x.count / 2))
-#     t = np.arange(x.count) - int(x.count / 2)
-
-#     time = t * 1 / (len(freq) * x.increment.to("Hz").value)
-
-#     # Lorentzian broadening:
 #     if broadType == 0 and sigma != 0:
 #         broadSignal = np.exp(-sigma * np.pi * np.abs(time))
 #     # Gaussian broadening:
@@ -48,7 +34,9 @@ __email__ = "maxvenetos@gmail.com"
 
 def _str_to_html(my_string):
     """
-    LMFIT Parameters class does not allow for names to include special characters. This function converts '[', ']', and '.' to their HTML numbers to comply with LMFIT.
+    LMFIT Parameters class does not allow for names to include special characters.
+    This function converts '[', ']', and '.' to their HTML numbers to comply with
+    LMFIT.
 
     Args:
         my_string: A string object
@@ -63,7 +51,8 @@ def _str_to_html(my_string):
 
 def _html_to_string(my_string):
     """
-    Converts the HTML numbers to '[', ']', and '.' to allow for execution of the parameter name to update the simulator.
+    Converts the HTML numbers to '[', ']', and '.' to allow for execution of the
+    parameter name to update the simulator.
 
     Args:
         my_string: A string object
@@ -77,7 +66,8 @@ def _html_to_string(my_string):
 
 def _list_of_dictionaries(my_list):
     """
-    Helper function for traverse_dictionaries function which will return a list of dictionaries.
+    Helper function for traverse_dictionaries function which will return a list of
+    dictionaries.
 
     Args:
         my_list: A list object
@@ -94,7 +84,8 @@ exclude = ["property_units", "isotope", "name", "description"]
 
 def _traverse_dictionaries(dictionary, parent="isotopomers"):
     """
-    Parses through the dictionary objects contained within the simulator object in order to return a list of all attributes that are populated.
+    Parses through the dictionary objects contained within the simulator object in
+    order to return a list of all attributes that are populated.
 
     Args:
         dictionary: A dictionary or lsit object of the Isotopomer attributes from a simulation object
@@ -126,7 +117,8 @@ def _traverse_dictionaries(dictionary, parent="isotopomers"):
 
 def make_fitting_parameters(sim):
     """
-    Parses through the fitting parameter list to create LMFIT parameters used for fitting.
+    Parses through the fitting parameter list to create LMFIT parameters used for
+    fitting.
 
     Args:
         sim: a Simulator object.
@@ -221,6 +213,62 @@ def min_function(params, data, sim, apodization_function=None):
             exec(executable)
 
     sim.run(method=one_d_spectrum)
+    sim.run()
+    y = sim.apodize(function_mapping[apodization_function], sigma=values["sigma"])
+
+    y_factored = y * values["factor"]
+
+    return (
+        data - y_factored
+    )  # _factored#simulatedData.dependent_variables[0].components[0]
+
+
+def spectral_fitting(experiment, sim, apodization_function, params):
+    """
+    Spectrum fitting routine to fit the mrsimulation to an experimental spectrum.
+    Parameters may be provided or if not provided will be generated based on the
+    simulation object passed through.
+
+    Returns:
+        CSDM object containing the experimental data and the simulated fit.
+
+    """
+    if len(params) == 0:
+        params = make_fitting_parameters(sim)
+        params.add(
+            name="sigma", value=experiment.dimensions[0].increment.to("Hz").value, min=0
+        )
+        params.add(
+            name="factor",
+            value=experiment.dependent_variables[0].components[0].max().real,
+            min=0,
+        )
+    if "sigma" not in params:
+        params.add(
+            name="sigma", value=experiment.dimensions[0].increment.to("Hz").value, min=0
+        )
+    if "factor" not in params:
+        params.add(
+            name="factor",
+            value=experiment.dependent_variables[0].components[0].max().real,
+            min=0,
+        )
+
+    minner = Minimizer(
+        fcn2min,
+        params,
+        fcn_args=(
+            experiment.dependent_variables[0].components[0].real,
+            sim,
+            apodization_function,
+        ),
+    )
+    result = minner.minimize()
+
+    report_fit(result)
+
+    sim.run()
+    sim_data = sim.as_csdm_object()
 
     if apodization_function is not None:
         y = sim.apodize(function_mapping[apodization_function], sigma=values["sigma"])

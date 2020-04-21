@@ -11,12 +11,11 @@
 #define mrsimulator_h
 
 #include "angular_momentum.h"
-#include "averaging_scheme.h"
 #include "config.h"
 #include "fftw3.h"
 #include "frequency_tensor.h"
 #include "isotopomer_ravel.h"
-#include "octahedron.h"
+#include "schemes.h"
 
 typedef struct MRS_dimension {
   int count; /**<  The number of coordinates along the dimension. */
@@ -86,16 +85,15 @@ struct MRS_plan {
   /** The buffer to hold the sideband amplitudes as stride 2 array after
    * mrsimulator processing.
    */
-  fftw_complex *vector;
 
   bool allow_fourth_rank;   // If true, creates buffer and tables for processing
                             // fourth rank tensors.
-  fftw_plan the_fftw_plan;  //  The plan for fftw routine.
   unsigned int size;        //  number of orientations * number of sizebands.
   unsigned int n_octants;   //  number of octants used in the simulation.
   double *norm_amplitudes;  //  array of normalized amplitudes per orientation.
   double *wigner_d2m0_vector;  //  wigner-2j dm0 vector, n ∈ [-2, 2].
   double *wigner_d4m0_vector;  //  wigner-4j dm0 vector, n ∈ [-4, 4].
+  complex128 *pre_phase;    //  generic buffer for sideband phase calculation.
   complex128 *pre_phase_2;  //  buffer for 2nk rank sideband phase calculation.
   complex128 *pre_phase_4;  //  buffer for 4th rank sideband phase calculation.
   complex128 one;           //  holds complex value 1.
@@ -130,10 +128,14 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
  */
 void MRS_free_plan(MRS_plan *plan);
 
-/* Update the MRS plan for the given rotor angle in radians. */
-void MRS_plan_update_rotor_angle_in_rad(MRS_plan *plan,
-                                        double rotor_angle_in_rad,
-                                        bool allow_fourth_rank);
+/* Update the MRS plan when sample rotation frequency change. */
+void MRS_plan_update_from_sample_rotation_frequency_in_Hz(
+    MRS_plan *plan, double increment, double sample_rotation_frequency_in_Hz);
+
+/* Update the MRS plan when the rotor angle chaange. */
+void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan,
+                                             double rotor_angle_in_rad,
+                                             bool allow_fourth_rank);
 
 /**
  * Free the memory from the mrsimulator plan associated with the wigner
@@ -160,9 +162,25 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan);
  * over all orientations. The sideband amplitudes are evaluated using equation
  * [39] of the reference https://doi.org/10.1006/jmre.1998.1427.
  *
+ * @param scheme The pointer to the powder averaging scheme of type
+ *            MRS_averaging_scheme.
  * @param	plan A pointer to the mrsimulator plan of type MRS_plan.
- * @param R2 A pointer to the product of the spatial part coefficients of the
- *            second rank tensor and the spin transition functions. The vector
+ * @param fftw_scheme A pointer to the fftw scheme of type MRS_fftw_scheme.
+ * @param refresh If true, zero the result array `vector` before proceeding,
+ *            else update the result.
+ */
+void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
+                                  MRS_fftw_scheme *fftw_scheme, bool refresh);
+
+/**
+ * @brief Process the plan for normalized frequencies at every orientation.
+ *
+ * @param scheme The pointer to the powder averaging scheme of type
+ *            MRS_averaging_scheme.
+ * @param	plan A pointer to the mrsimulator plan of type MRS_plan.
+ * @param	R0 The irreducible zeroth rank frequency component.
+ * @param R2 A pointer to the product of the spatial coefficients and the spin
+ *            transition functions of the second rank tensor. The vector
  *            @p R2 is a complex128 array of length 5 with the first element
  *            corresponding to the product of the spin transition function and
  *            the coefficient of the @f$T_{2,-2}@f$ spatial irreducible tensor.
@@ -171,21 +189,39 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan);
  *            @p R4 is a complex128 array of length 9 with the first element
  *            corresponding to the product of the spin transition function and
  *            the coefficient of the @f$T_{4,-4}@f$ spatial irreducible tensor.
+ * @param refresh If true, zero the frequencies before update, else self update.
+ * @param normalize_offset
+ * @param inverse_increment The inverse of the increment along the dimension
+ *            (sequence).
  */
-void MRS_get_amplitudes_from_plan(MRS_plan *plan, complex128 *R2,
-                                  complex128 *R4);
+void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
+                                              MRS_plan *plan, double R0,
+                                              complex128 *R2, complex128 *R4,
+                                              bool refresh,
+                                              double normalize_offset,
+                                              double inverse_increment);
 
-/**
- * @brief Process the plan for normalized frequencies at every orientation.
- *
- * @param	plan The pointer to the MRS_plan.
- * @param	dim The pointer to the MRS_dimension.
- * @param	R0 The irreducible zeroth rank frequency component.
- */
-void MRS_get_normalized_frequencies_from_plan(MRS_plan *plan,
-                                              MRS_dimension *dim, double R0);
+void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
+                                   double R0, complex128 *R2, complex128 *R4,
+                                   bool refresh);
 
-void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0);
+void MRS_rotate_components_from_PAS_to_common_frame(
+    isotopomer_ravel *ravel_isotopomer,  // isotopomer structure
+    int site,                            // the site index
+    double mf,  // the spin quantum number of the final state of the
+                // transition.
+    double mi,  // the spin quantum number of the inital state of the
+                // transition.
+    bool allow_fourth_rank,  // if true, pre for 4th rank computation
+    double *R0,              // the R0 components
+    complex128 *R2,          // the R2 components
+    complex128 *R4,          // the R4 components
+    double *R0_temp,         // the temporary R0 components
+    complex128 *R2_temp,     // the temporary R2 components
+    complex128 *R4_temp,     // the temporary R3 components
+    int remove_second_order_quad_isotropic,  // if true, remove second order
+                                             // quad isotropic shift
+    double larmor_frequency);
 
 extern void __get_components(int number_of_sidebands, double spin_frequency,
                              double *restrict pre_phase);

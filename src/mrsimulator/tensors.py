@@ -35,21 +35,21 @@ class SymmetricTensor(Parseable):
     gamma: Optional[float]
 
     property_unit_types: ClassVar = {
-        "zeta": "dimensionless",
+        "zeta": ["dimensionless", "frequency"],
         "Cq": "frequency",
         "alpha": "angle",
         "beta": "angle",
         "gamma": "angle",
     }
     property_default_units: ClassVar = {
-        "zeta": "ppm",
+        "zeta": ["ppm", "Hz"],
         "Cq": "Hz",
         "alpha": "rad",
         "beta": "rad",
         "gamma": "rad",
     }
     property_units: Dict = {
-        "zeta": "ppm",
+        "zeta": ["ppm", "Hz"],
         "Cq": "Hz",
         "alpha": "rad",
         "beta": "rad",
@@ -74,23 +74,6 @@ class SymmetricTensor(Parseable):
         if temp_dict["zeta"] is not None:
             temp_dict["zeta"] *= larmor_frequency
         temp_dict.pop("property_units")
-        return temp_dict
-
-    def to_dict_with_units(self):
-        """
-        Serialize the SymmetricTensor object to a JSON compliant python dictionary
-        with units.
-
-        Return:
-            Python dict
-        """
-        temp_dict = {
-            k: f"{v} {self.property_units[k]}"
-            for k, v in self.dict().items()
-            if v is not None and k not in ["property_units", "eta"]
-        }
-        if self.eta is not None:
-            temp_dict["eta"] = self.eta
         return temp_dict
 
 
@@ -136,19 +119,4 @@ class AntisymmetricTensor(Parseable):
         if temp_dict["zeta"] is not None:
             temp_dict["zeta"] *= larmor_frequency
         temp_dict.pop("property_units")
-        return temp_dict
-
-    def to_dict_with_units(self):
-        """
-        Serialize the AntiSymmetricTensor object to a JSON compliant python dictionary
-        with units.
-
-        Return:
-            Python dict
-        """
-        temp_dict = {
-            k: f"{v} {self.property_units[k]}"
-            for k, v in self.dict().items()
-            if v is not None and k != "property_units"
-        }
         return temp_dict

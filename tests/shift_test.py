@@ -1,30 +1,34 @@
 # -*- coding: utf-8 -*-
 """Test for shift and reference offset."""
 import numpy as np
-from mrsimulator import Dimension
 from mrsimulator import Isotopomer
+from mrsimulator import Method
 from mrsimulator import Simulator
 from mrsimulator import Site
-from mrsimulator.methods import one_d_spectrum
 
 
 def pre_setup(isotope, shift, reference_offset):
     isotopomer = Isotopomer(
         sites=[Site(isotope=isotope, isotropic_chemical_shift=shift)]
     )
-    dimension = Dimension.parse_dict_with_units(
+    method = Method.parse_dict_with_units(
         dict(
-            number_of_points=2046,
             isotope=isotope,
-            magnetic_flux_density="9.4 T",
-            spectral_width="25 kHz",
-            reference_offset=f"{reference_offset} Hz",
+            sequences=[
+                {
+                    "count": 2046,
+                    "spectral_width": "25 kHz",
+                    "reference_offset": f"{reference_offset} Hz",
+                    "events": [{"magnetic_flux_density": "9.4 T"}],
+                }
+            ],
         )
     )
     sim = Simulator()
     sim.isotopomers.append(isotopomer)
-    sim.dimensions.append(dimension)
-    x, y = sim.run(method=one_d_spectrum)
+    sim.method = method
+    # sim.dimensions.append(dimension)
+    x, y = sim.run()
     return x[np.argmax(y)], abs(x[1] - x[0])
 
 

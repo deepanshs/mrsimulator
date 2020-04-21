@@ -21,12 +21,7 @@ def test_direct_init_dimension():
     # ensure the default value is Hz
     assert the_dimension.property_units["spectral_width"] == "Hz"
 
-    assert the_dimension.spin is None
-    assert the_dimension.natural_abundance is None
-    assert the_dimension.gyromagnetic_ratio is None
-    assert the_dimension.quadrupole_moment is None
-    assert the_dimension.atomic_number is None
-    assert the_dimension.larmor_frequency is None
+    assert the_dimension.isotope is None
 
     # rotor angle test
     assert the_dimension.rotor_angle == 0.9553166
@@ -59,9 +54,10 @@ def test_direct_init_dimension():
     assert the_dimension.isotope is None
     the_dimension.isotope = "13C"
     print(the_dimension)
-    assert the_dimension.isotope == "13C"
-    assert the_dimension.gyromagnetic_ratio == 10.7084
-    assert the_dimension.spin == 0.5
+    assert the_dimension.isotope.symbol == "13C"
+    assert the_dimension.isotope.gyromagnetic_ratio == 10.7084
+    assert the_dimension.isotope.spin == 0.5
+
     assert the_dimension.larmor_frequency == -10.7084 * 9.4 * 1e6
 
     coordinate_Hz = (np.arange(1024) - 512) * (100.0 / 1024)
@@ -77,12 +73,6 @@ def test_direct_init_dimension():
     # when isotope is None
     the_dimension.isotope = None
     assert the_dimension.isotope is None
-    assert the_dimension.spin is None
-    assert the_dimension.natural_abundance is None
-    assert the_dimension.gyromagnetic_ratio is None
-    assert the_dimension.quadrupole_moment is None
-    assert the_dimension.atomic_number is None
-    assert the_dimension.larmor_frequency is None
 
     assert np.allclose(the_dimension.coordinates_Hz, coordinate_Hz)
     assert the_dimension.coordinates_ppm is None
@@ -101,7 +91,6 @@ def test_direct_init_dimension():
         "magnetic_flux_density": "9.4 T",
         "rotor_frequency": "1000.0 Hz",
         "rotor_angle": "1.5707963268 rad",
-        "label": "",
     }
     assert the_dimension.to_dict_with_units() == result
 
@@ -114,7 +103,6 @@ def test_direct_init_dimension():
         "magnetic_flux_density": "9.4 T",
         "rotor_frequency": "1000.0 Hz",
         "rotor_angle": "1.5707963268 rad",
-        "label": "",
     }
     assert the_dimension.to_dict_with_units() == result
 
@@ -131,12 +119,12 @@ def test_parse_json_spectrum():
     }
 
     spec = Dimension.parse_dict_with_units(good_json)
-    assert spec.spin == 0.5
-    assert spec.isotope == "1H"
-    assert spec.gyromagnetic_ratio == 42.57748
-    assert spec.natural_abundance == 99.985
-    assert spec.quadrupole_moment == 0.0
-    assert spec.atomic_number == 1
+    assert spec.isotope.spin == 0.5
+    assert spec.isotope.symbol == "1H"
+    assert spec.isotope.gyromagnetic_ratio == 42.57748
+    assert spec.isotope.natural_abundance == 99.985
+    assert spec.isotope.quadrupole_moment == 0.0
+    assert spec.isotope.atomic_number == 1
     assert np.allclose(spec.rotor_angle, 0.95879662)
 
 
@@ -153,10 +141,10 @@ def test_parse_json_spectrum2():
     }
 
     spec = Dimension.parse_dict_with_units(good_json)
-    assert spec.spin == 0.5
-    assert spec.isotope == "29Si"
-    assert spec.gyromagnetic_ratio == -8.465499
-    assert spec.natural_abundance == 4.683
-    assert spec.quadrupole_moment == 0.0
-    assert spec.atomic_number == 14
+    assert spec.isotope.spin == 0.5
+    assert spec.isotope.symbol == "29Si"
+    assert spec.isotope.gyromagnetic_ratio == -8.465499
+    assert spec.isotope.natural_abundance == 4.683
+    assert spec.isotope.quadrupole_moment == 0.0
+    assert spec.isotope.atomic_number == 14
     assert np.allclose(spec.rotor_angle, 0.95879662)
