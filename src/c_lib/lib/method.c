@@ -84,7 +84,7 @@ MRS_sequence *MRS_create_plans_for_sequence(
     double *increment, double *magnetic_flux_density_in_T,
     double *sample_rotation_frequency_in_Hz, double *rotor_angle_in_rad,
     int *n_events, unsigned int n_seq, int number_of_sidebands) {
-  unsigned int i, j;
+  unsigned int i;
   MRS_sequence *sequence = (MRS_sequence *)malloc(n_seq * sizeof(MRS_sequence));
 
   for (i = 0; i < n_seq; i++) {

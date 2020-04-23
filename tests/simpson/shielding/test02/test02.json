@@ -1,48 +1,38 @@
 {
   "method": {
     "isotope": "29Si",
-    "sequences": [
-      {
-        "count": 200,
-        "spectral_width": "10 kHz",
-        "events": [
-          {
-            "magnetic_flux_density": "1 T",
-            "rotor_frequency": "50 Hz",
-            "transition_query": {
-              "transition": {
-                "final": [0.5],
-                "initial": [-0.5]
-              }
-            }
-          }
-        ]
-      }
-    ]
-  },
-  "dimensions": [
-    {
-      "magnetic_flux_density": "1 T",
-      "rotor_frequency": "50 Hz",
-      "number_of_points": 200,
+    "spectral_dimensions": [{
+      "count": 200,
       "spectral_width": "10 kHz",
-      "isotope": "29Si"
-    }
-  ],
-  "isotopomers": [
-    {
-      "sites": [
-        {
-          "isotope": "29Si",
-          "isotropic_chemical_shift": "0 ppm",
-          "shielding_symmetric": {
-            "zeta": "-2e3/8.465 ppm",
-            "eta": 1
+      "events": [{
+        "magnetic_flux_density": "1 T",
+        "rotor_frequency": "50 Hz",
+        "transition_query": {
+          "transition": {
+            "final": [0.5],
+            "initial": [-0.5]
           }
         }
-      ]
-    }
-  ],
+      }]
+    }]
+  },
+  "dimensions": [{
+    "magnetic_flux_density": "1 T",
+    "rotor_frequency": "50 Hz",
+    "number_of_points": 200,
+    "spectral_width": "10 kHz",
+    "isotope": "29Si"
+  }],
+  "isotopomers": [{
+    "sites": [{
+      "isotope": "29Si",
+      "isotropic_chemical_shift": "0 ppm",
+      "shielding_symmetric": {
+        "zeta": "-2e3/8.465 ppm",
+        "eta": 1
+      }
+    }]
+  }],
   "test_data": {
     "source": "simpson",
     "filename": "test02.fid",

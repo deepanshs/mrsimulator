@@ -1,51 +1,41 @@
 {
   "method": {
     "isotope": "23Na",
-    "sequences": [
-      {
-        "count": 1024,
-        "spectral_width": "70 kHz",
-        "events": [
-          {
-            "magnetic_flux_density": "4.7 T",
-            "rotor_frequency": "12.5 kHz",
-            "rotor_angle": "30.56 deg",
-            "transition_query": {
-              "transition": {
-                "final": [0.5],
-                "initial": [-0.5]
-              }
-            }
-          }
-        ]
-      }
-    ]
-  },
-  "dimensions": [
-    {
-      "magnetic_flux_density": "4.7 T",
-      "rotor_frequency": "12.5 kHz",
-      "rotor_angle": "30.56 deg",
-      "number_of_points": 1024,
+    "spectral_dimensions": [{
+      "count": 1024,
       "spectral_width": "70 kHz",
-      "isotope": "23Na"
-    }
-  ],
-  "isotopomers": [
-    {
-      "sites": [
-        {
-          "isotope": "23Na",
-          "isotropic_chemical_shift": "0 ppm",
-          "quadrupolar": {
-            "Cq": "2.5 MHz",
-            "eta": 0.5
+      "events": [{
+        "magnetic_flux_density": "4.7 T",
+        "rotor_frequency": "12.5 kHz",
+        "rotor_angle": "30.56 deg",
+        "transition_query": {
+          "transition": {
+            "final": [0.5],
+            "initial": [-0.5]
           }
         }
-      ],
-      "abundance": "100 %"
-    }
-  ],
+      }]
+    }]
+  },
+  "dimensions": [{
+    "magnetic_flux_density": "4.7 T",
+    "rotor_frequency": "12.5 kHz",
+    "rotor_angle": "30.56 deg",
+    "number_of_points": 1024,
+    "spectral_width": "70 kHz",
+    "isotope": "23Na"
+  }],
+  "isotopomers": [{
+    "sites": [{
+      "isotope": "23Na",
+      "isotropic_chemical_shift": "0 ppm",
+      "quadrupolar": {
+        "Cq": "2.5 MHz",
+        "eta": 0.5
+      }
+    }],
+    "abundance": "100 %"
+  }],
   "test_data": {
     "source": "python",
     "filename": "grid_eta_0.5_angle_30.56 deg.npy",

@@ -118,7 +118,7 @@ def one_d_spectrum(method,
 
 # create sequences____________________________________________________________
 
-    cdef int n_sequence = len(method.sequences)
+    cdef int n_sequence = len(method.spectral_dimensions)
     total_n_points = 1
     cdef ndarray[int] n_event
     cdef ndarray[double] magnetic_flux_density_in_T
@@ -137,7 +137,7 @@ def one_d_spectrum(method,
     coordinates_offset = []
 
     prev_n_sidebands = 0
-    for i, seq in enumerate(method.sequences):
+    for i, seq in enumerate(method.spectral_dimensions):
         for event in seq.events:
             if event.rotor_frequency < 1.0e-3:
                 sample_rotation_frequency_in_Hz = 1.0e9
@@ -152,8 +152,9 @@ def one_d_spectrum(method,
             if prev_n_sidebands != number_of_sidebands:
                 raise ValueError(
                     (
-                        'The library does not support sequences containing both zero and non-zero '
-                        'rotor frequencies. Consider using a smaller value instead of zero.'
+                        'The library does not support spectral dimensions containing '
+                        'both zero and non-zero rotor frequencies. Consider using a '
+                        'smaller value instead of zero.'
                     )
                 )
 
@@ -179,7 +180,7 @@ def one_d_spectrum(method,
     # magnetic_flux_density_in_T = np.asarray([dimension.magnetic_flux_density], dtype=np.float64)
     # srfiH = np.asarray([sample_rotation_frequency_in_Hz], dtype=np.float64)
     # rair = np.asarray([rotor_angle_in_rad], dtype=np.float64)
-    # create sequences
+    # create spectral_dimensions
 
 
 

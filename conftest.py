@@ -5,7 +5,6 @@ from pprint import pprint
 import matplotlib
 import matplotlib.pyplot as plt
 import pytest
-from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
@@ -18,7 +17,6 @@ matplotlib.rc("font", **font)
 @pytest.fixture(autouse=True)
 def add_site(doctest_namespace):
 
-    doctest_namespace["Dimension"] = Dimension
     doctest_namespace["Isotopomer"] = Isotopomer
     doctest_namespace["Simulator"] = Simulator
     doctest_namespace["Site"] = Site
@@ -59,20 +57,21 @@ def add_site(doctest_namespace):
     sim.isotopomers += isotopomers
     doctest_namespace["sim"] = sim
 
-    dim = Dimension(isotope="27Al", spectral_width=50000, rotor_frequency=12000)
-    doctest_namespace["dim"] = dim
+    # dim = Method(isotope="27Al", spectral_dimensions=[
+    #     dict(spectral_width=50000), rotor_frequency=12000)
+    # doctest_namespace["dim"] = dim
 
-    dimension_1 = {
-        "number_of_points": 1024,
-        "spectral_width": "100 Hz",
-        "reference_offset": "0 Hz",
-        "magnetic_flux_density": "9.4 T",
-        "rotor_frequency": "0 Hz",
-        "rotor_angle": "54.935 degree",
-        "isotope": "29Si",
-    }
-    dimension_object = Dimension.parse_dict_with_units(dimension_1)
-    doctest_namespace["dimension_object"] = dimension_object
+    # dimension_1 = {
+    #     "number_of_points": 1024,
+    #     "spectral_width": "100 Hz",
+    #     "reference_offset": "0 Hz",
+    #     "magnetic_flux_density": "9.4 T",
+    #     "rotor_frequency": "0 Hz",
+    #     "rotor_angle": "54.935 degree",
+    #     "isotope": "29Si",
+    # }
+    # dimension_object = Dimension.parse_dict_with_units(dimension_1)
+    # doctest_namespace["dimension_object"] = dimension_object
 
     def plot_save(x, y, filename):
         plt.figure(figsize=(4.5, 2.5))
@@ -122,15 +121,15 @@ def add_site(doctest_namespace):
     abundance = [0.83, 1.05, 2.16, 2.05, 1.90]  # abundance of each isotopomer
     isotopomers = [Isotopomer(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
 
-    dimension = Dimension(
-        isotope="17O",
-        number_of_points=2046,
-        spectral_width=50000,
-        rotor_frequency=14000,
-    )
+    # dimension = Dimension(
+    #     isotope="17O",
+    #     number_of_points=2046,
+    #     spectral_width=50000,
+    #     rotor_frequency=14000,
+    # )
 
-    sim_coesite = Simulator()
-    sim_coesite.isotopomers += isotopomers
-    sim_coesite.dimensions += [dimension]
+    # sim_coesite = Simulator()
+    # sim_coesite.isotopomers += isotopomers
+    # sim_coesite.dimensions += [dimension]
 
-    doctest_namespace["sim_coesite"] = sim_coesite
+    # doctest_namespace["sim_coesite"] = sim_coesite

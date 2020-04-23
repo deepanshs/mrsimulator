@@ -14,7 +14,7 @@ def pre_setup(isotope, shift, reference_offset):
     method = Method.parse_dict_with_units(
         dict(
             isotope=isotope,
-            sequences=[
+            spectral_dimensions=[
                 {
                     "count": 2046,
                     "spectral_width": "25 kHz",
@@ -26,9 +26,9 @@ def pre_setup(isotope, shift, reference_offset):
     )
     sim = Simulator()
     sim.isotopomers.append(isotopomer)
-    sim.method = method
-    # sim.dimensions.append(dimension)
-    x, y = sim.run()
+    sim.methods += [method]
+    sim.run()
+    x, y = sim.methods[0].simulation.to_list()
     return x[np.argmax(y)], abs(x[1] - x[0])
 
 

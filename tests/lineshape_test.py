@@ -109,10 +109,11 @@ def c_setup(data_object, data_source):
         Isotopomer.parse_dict_with_units(item) for item in data_object["isotopomers"]
     ]
 
-    s1 = Simulator(isotopomers=isotopomers, method=method)
+    s1 = Simulator(isotopomers=isotopomers, methods=[method])
     s1.config.integration_density = 120
     s1.config.number_of_sidebands = 90
-    data_mrsimulator = s1.run()[1]
+    s1.run()
+    data_mrsimulator = s1.methods[0].simulation.to_list()[1]
     data_mrsimulator /= data_mrsimulator.max()
 
     return data_mrsimulator, data_source
@@ -131,11 +132,12 @@ def c_setup_random_euler_angles(data_object, data_source):
         isotopomer.sites[0].shielding_symmetric.beta = np.random.rand(1) * 2 * np.pi
         isotopomer.sites[0].shielding_symmetric.gamma = np.random.rand(1) * 2 * np.pi
 
-    s1 = Simulator(isotopomers=isotopomers, method=method)
+    s1 = Simulator(isotopomers=isotopomers, methods=[method])
     s1.config.integration_density = 120
     s1.config.integration_volume = "hemisphere"
     s1.config.number_of_sidebands = 90
-    data_mrsimulator = s1.run()[1]
+    s1.run()
+    data_mrsimulator = s1.methods[0].simulation.to_list()[1]
     data_mrsimulator /= data_mrsimulator.max()
 
     return data_mrsimulator, data_source

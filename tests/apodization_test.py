@@ -30,7 +30,7 @@ sim.isotopomers += [isotopomer_object]
 
 method = {
     "isotope": "1H",
-    "sequences": [
+    "spectral_dimensions": [
         {
             "count": 4096,
             "spectral_width": "25 kHz",
@@ -47,11 +47,11 @@ method = {
 }
 
 
-sim.method = Method.parse_dict_with_units(method)
+sim.methods += [Method.parse_dict_with_units(method)]
 
-freq, amp = sim.run()
+sim.run()
 
-freqHz = sim.method.sequences[0].coordinates_Hz
+freqHz = sim.methods[0].spectral_dimensions[0].coordinates_Hz
 
 
 def test_Lorentzian():
