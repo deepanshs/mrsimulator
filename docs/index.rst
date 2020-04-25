@@ -1,7 +1,7 @@
 
-=======================================
-Welcome to Mrsimulator's documentation!
-=======================================
+================================================
+Welcome to the Mrsimulator project documentation
+================================================
 
 .. .. image:: _static/mrsimulator_cover_light.png
 ..     :align: center

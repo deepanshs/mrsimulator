@@ -17,19 +17,6 @@
 #include "isotopomer_ravel.h"
 #include "schemes.h"
 
-typedef struct MRS_dimension {
-  int count; /**<  The number of coordinates along the dimension. */
-  double coordinates_offset; /**<  Start coordinate of the dimension. */
-  double increment; /**<  Increment of coordinates along the dimension. */
-
-  /* private attributes */
-  double normalize_offset;  // fixed value = 0.5 - coordinate_offset/increment
-  double inverse_increment;
-} MRS_dimension;
-
-MRS_dimension *MRS_create_dimension(int count, double coordinates_offset,
-                                    double increment);
-
 /**
  * @struct MRS_plan
  * An mrsimulator plan for computing lineshapes lineshape. An mrsimulator plan,
@@ -205,13 +192,38 @@ void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                                    double R0, complex128 *R2, complex128 *R4,
                                    bool refresh);
 
+/**
+ * @func MRS_rotate_components_from_PAS_to_common_frame
+ *
+ * The function evaluates the tensor components from the principal axis system
+ * (PAS) to the common frame of the isotopomer.
+ *
+ * @param ravel_isotopomer A pointer to the isotopomer_ravel structure.
+ * @param transition A pointer to the spin quantum numbers from the inital and
+ *        final states of the spin transition packed as initial quantum numbers
+ *        followed by the final quantum numbers.
+ * @param allow_fourth_rank A boolean, if true, also evalute the frequency
+ *        contributions from the fourth rank tensor.
+ * @param R0 A pointer to location where the frequency contributions from the
+ *        zeroth rank tensor is stored.
+ * @param R2 A pointer to location where the frequency contributions from the
+ *        second rank tensor is stored.
+ * @param R4 A pointer to location where the frequency contributions from the
+ *        fourth rank tensor is stored.
+ * @param R0_temp A pointer to location where the frequency contributions from
+ *        the zeroth rank tensor is temporarily stored.
+ * @param R2_temp A pointer to location where the frequency contributions from
+ *        the second rank tensor is temporarily stored.
+ * @param R4_temp A pointer to location where the frequency contributions from
+ *        the fourth rank tensor is temporarily stored.
+ * @param remove_2nd_order_quad_isotropic A boolean, if true, remove the
+ *        isotropic contribution from the fourth rank tensor.
+ * @param B0_in_T The magnetic flux density of the macroscopic external magnetic
+ *        field in units of T.
+ */
 void MRS_rotate_components_from_PAS_to_common_frame(
     isotopomer_ravel *ravel_isotopomer,  // isotopomer structure
-    int site,                            // the site index
-    double mf,  // the spin quantum number of the final state of the
-                // transition.
-    double mi,  // the spin quantum number of the inital state of the
-                // transition.
+    float *transition,                   // the pointer to the spin transition.
     bool allow_fourth_rank,  // if true, pre for 4th rank computation
     double *R0,              // the R0 components
     complex128 *R2,          // the R2 components
@@ -219,9 +231,9 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     double *R0_temp,         // the temporary R0 components
     complex128 *R2_temp,     // the temporary R2 components
     complex128 *R4_temp,     // the temporary R3 components
-    int remove_second_order_quad_isotropic,  // if true, remove second order
-                                             // quad isotropic shift
-    double larmor_frequency);
+    bool remove_2nd_order_quad_isotropic,  // if true, remove 2nd order quad
+                                           // isotropic shift
+    double B0_in_T);
 
 extern void __get_components(int number_of_sidebands, double spin_frequency,
                              double *restrict pre_phase);

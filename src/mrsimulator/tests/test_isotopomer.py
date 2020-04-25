@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """Test for the base Isotopomers class."""
-from random import randint
-
 import pytest
 from mrsimulator import Isotopomer
 from mrsimulator import Site
@@ -115,23 +113,19 @@ def test_isotopomer_methods():
 
 def get_isotopomer_list():
     isotopes = ["19F", "31P", "2H", "6Li", "14N", "27Al", "25Mg", "45Sc", "87Sr"]
-    sites = []
-    for isotope in isotopes:
-        for _ in range(randint(1, 3)):
-            sites.append(Site(isotope=isotope))
-    return Isotopomer(sites=sites)
+    return Isotopomer(sites=[Site(isotope=item) for item in isotopes])
 
 
 def test_get_isotopes():
-    isotopes = {"19F", "31P", "2H", "6Li", "14N", "27Al", "25Mg", "45Sc", "87Sr"}
+    isotopes = ["19F", "31P", "2H", "6Li", "14N", "27Al", "25Mg", "45Sc", "87Sr"]
     isotopomer = get_isotopomer_list()
     assert isotopomer.get_isotopes() == isotopes
-    assert isotopomer.get_isotopes(I=0.5) == {"19F", "31P"}
-    assert isotopomer.get_isotopes(I=1) == {"2H", "6Li", "14N"}
-    assert isotopomer.get_isotopes(I=1.5) == set()
-    assert isotopomer.get_isotopes(I=2.5) == {"27Al", "25Mg"}
-    assert isotopomer.get_isotopes(I=3.5) == {"45Sc"}
-    assert isotopomer.get_isotopes(I=4.5) == {"87Sr"}
+    assert isotopomer.get_isotopes(I=0.5) == ["19F", "31P"]
+    assert isotopomer.get_isotopes(I=1) == ["2H", "6Li", "14N"]
+    assert isotopomer.get_isotopes(I=1.5) == []
+    assert isotopomer.get_isotopes(I=2.5) == ["27Al", "25Mg"]
+    assert isotopomer.get_isotopes(I=3.5) == ["45Sc"]
+    assert isotopomer.get_isotopes(I=4.5) == ["87Sr"]
 
 
 def test_allowed_isotopes():

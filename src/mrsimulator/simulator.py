@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Base Simulator class."""
+import json
 from typing import List
 from typing import Optional
 
@@ -24,14 +25,17 @@ class Simulator(BaseModel):
     The simulator class.
 
     Attributes:
+        name: An optional string containing the sample name.
+        descrition: An optional string containing the sample description.
         isotopomers: List of :ref:`isotopomer_api` objects.
-        dimensions: List of :ref:`dimension_api` objects.
+        methods: List of :ref:`method_api` objects.
         config: :ref:`config_api` object.
     """
 
+    name: Optional[str] = ""
+    description: Optional[str] = ""
     isotopomers: List[Isotopomer] = []
     methods: List[Method] = []
-    simulated_data: Optional[List]
     config: ConfigSimulator = ConfigSimulator()
 
     class Config:
@@ -41,6 +45,8 @@ class Simulator(BaseModel):
     def __eq__(self, other):
         check = [
             isinstance(other, Simulator),
+            self.name == other.name,
+            self.description == other.description,
             self.isotopomers == other.isotopomers,
             self.methods == other.methods,
             self.config == other.config,
@@ -181,6 +187,25 @@ class Simulator(BaseModel):
 
     # freq *= u.Unit("ppm")
     # return freq, amp
+    def save(self, filename):
+        with open(filename, "w", encoding="utf8") as outfile:
+            json.dump(
+                self.to_dict_with_units(include_methods=True),
+                outfile,
+                ensure_ascii=False,
+                sort_keys=False,
+                allow_nan=False,
+            )
+
+    def load(self, filename):
+        sim = Simulator()
+        contents = import_json(filename)
+        i_data = contents["isotopomers"]
+        sim.isotopomers = [Isotopomer.parse_dict_with_units(obj) for obj in i_data]
+
+        m_data = contents["methods"]
+        sim.methods = [Method.parse_dict_with_units(obj) for obj in m_data]
+        return sim
 
     def as_csdm_object(self, data, method):
         """

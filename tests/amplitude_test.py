@@ -11,7 +11,7 @@ def pre_setup():
     site_1 = Site(isotope="13C", shielding_symmetric={"zeta": 50, "eta": 0.5})
     isotopomer = Isotopomer(sites=[site_1])
     method = BlochDecayFT(
-        isotope="13C", dimensions=[{"count": 1024, "spectral_width": 25000}]
+        channel="13C", dimensions=[{"count": 1024, "spectral_width": 25000}]
     )
 
     sim = Simulator()

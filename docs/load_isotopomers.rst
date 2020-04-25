@@ -85,9 +85,9 @@ method of the :ref:`simulator_api` class, as follows
 
     >>> # The seven isotopomers from the file are added to the isotopomers
     >>> # attribute of the simulator class.
-    >>> len(sim.isotopomers)
+    >>> len(sim.isotopomers) # doctest:+SKIP
     7
 
-.. testsetup::
-    >>> import os
-    >>> os.remove('isotopomers_test.json')
+.. .. testsetup::
+..     >>> import os
+..     >>> os.remove('isotopomers_test.json')

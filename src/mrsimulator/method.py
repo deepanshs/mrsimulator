@@ -218,7 +218,7 @@ class SpectralDimension(Parseable):
 class Method(Parseable):
     name: Optional[str] = ""
     description: Optional[str] = ""
-    isotope: Optional[str] = None
+    channel: Optional[str] = None
     spectral_dimensions: List[SpectralDimension]
     simulation: Optional[cp.CSDM]
     experiment: Optional[cp.CSDM]
@@ -227,8 +227,8 @@ class Method(Parseable):
         validate_assignment = True
         arbitrary_types_allowed = True
 
-    @validator("isotope", always=True)
-    def get_isotope(cls, v, *, values, **kwargs):
+    @validator("channel", always=True)
+    def get_channel(cls, v, *, values, **kwargs):
         if v is None:
             return v
         return Isotope(symbol=v)
@@ -247,28 +247,32 @@ class Method(Parseable):
                 SpectralDimension.parse_dict_with_units(s)
                 for s in py_dict_copy["spectral_dimensions"]
             ]
+        if "simulation" in py_dict_copy:
+            py_dict_copy["simulation"] = cp.parse_dict(py_dict_copy["simulation"])
+        if "experiment" in py_dict_copy:
+            py_dict_copy["experiment"] = cp.parse_dict(py_dict_copy["experiment"])
         return super().parse_dict_with_units(py_dict_copy)
 
     def to_dict_with_units(self):
         temp_dict = self.dict(
-            exclude={"spectral_dimensions", "isotope", "simulation", "experiment"}
+            exclude={"spectral_dimensions", "channel", "simulation", "experiment"}
         )
         temp_dict["spectral_dimensions"] = [
             item.to_dict_with_units() for item in self.spectral_dimensions
         ]
-        temp_dict["isotope"] = self.isotope.to_dict_with_units()
+        temp_dict["channel"] = self.channel.to_dict_with_units()
         if self.simulation is not None:
             temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
         if self.experiment is not None:
-            temp_dict["experiment"] = self.experiment.to_dict(update_timestamp=True)
+            temp_dict["experiment"] = self.experiment.to_dict()
         return temp_dict
 
     def dict(self, **kwargs):
         temp_dict = super().dict(**kwargs)
-        if self.simulation is not None:
-            temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
-        if self.experiment is not None:
-            temp_dict["experiment"] = self.experiment.to_dict(update_timestamp=True)
+        # if self.simulation is not None:
+        #     temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
+        # if self.experiment is not None:
+        #     temp_dict["experiment"] = self.experiment.to_dict()
         return temp_dict
 
     def get_transition_pathways(self, isotopomer):

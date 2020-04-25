@@ -162,31 +162,32 @@ class Isotopomer(Parseable):
 
     def get_isotopes(self, I=None):
         """
-        Set of unique isotopes from the list of sites corresponding to the given value
-        of `I`. If `I` is unspecified or None, a set of all defined isotopes is
-        returned instead.
+        An ordered list of isotopes from each site in an isotopomer corresponding to
+        the given value of spin quantum number `I`. If `I` is None, a list of all
+        isotopes is returned instead.
 
         Args:
             I: (optional) The spin quantum number. Valid input are multiples of 0.5.
 
         Returns:
-            A set
+            A list of isotopes.
 
         Example:
-            >>> isotopomers.get_isotopes() # doctest:+SKIP
+            >>> set(isotopomers.get_isotopes()) # doctest:+SKIP
             {'1H', '27Al', '13C'}
-            >>> isotopomers.get_isotopes(I=0.5) # doctest:+SKIP
+            >>> set(isotopomers.get_isotopes(I=0.5)) # doctest:+SKIP
             {'1H', '13C'}
             >>> isotopomers.get_isotopes(I=1.5)
-            set()
+            []
             >>> isotopomers.get_isotopes(I=2.5)
-            {'27Al'}
+            ['27Al']
         """
-        return set(
+        isotope_list = allowed_isotopes(I)
+        return [
             site.isotope.symbol
             for site in self.sites
-            if site.isotope.symbol in allowed_isotopes(I)
-        )
+            if site.isotope.symbol in isotope_list
+        ]
 
 
 def allowed_isotopes(I=None):
@@ -204,7 +205,7 @@ def allowed_isotopes(I=None):
         Set
     """
     if I is None:
-        return list({isotope for isotope, data in ISOTOPE_DATA.items()})
+        return list(ISOTOPE_DATA.keys())
     return list(
         {
             isotope

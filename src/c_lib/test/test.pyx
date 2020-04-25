@@ -274,11 +274,11 @@ def __batch_wigner_rotation(unsigned int octant_orientations,
 
 #         # quad tensor information
 #         quadrupolar_coupling_constant = None,
-#         quadrupole_asymmetry = None,
+#         quadrupolar_eta = None,
 #         quadrupole_orientations = None,
 
 #         second_order_quad = 1,
-#         remove_second_order_quad_isotropic = 0,
+#         remove_2nd_order_quad_isotropic = 0,
 
 #         # dipolar coupling
 #         D = None,
@@ -350,13 +350,13 @@ def __batch_wigner_rotation(unsigned int octant_orientations,
 #     cdef np.ndarray[double, ndim=1] quadrupolar_coupling_constant_c = quadrupolar_coupling_constant
 
 #     # Quad asymmetry value
-#     if quadrupole_asymmetry is None:
-#         quadrupole_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()
+#     if quadrupolar_eta is None:
+#         quadrupolar_eta = np.zeros(number_of_sites, dtype=np.float64).ravel()
 #     else:
-#         quadrupole_asymmetry = np.asarray([quadrupole_asymmetry], dtype=np.float64).ravel()
-#     if quadrupole_asymmetry.size != number_of_sites:
+#         quadrupolar_eta = np.asarray([quadrupolar_eta], dtype=np.float64).ravel()
+#     if quadrupolar_eta.size != number_of_sites:
 #         raise Exception("Number of quad asymmetry are not consistent with the number of spins.")
-#     cdef np.ndarray[double, ndim=1] quadrupole_asymmetry_c = quadrupole_asymmetry
+#     cdef np.ndarray[double, ndim=1] quadrupole_asymmetry_c = quadrupolar_eta
 
 #     # Quadrupolar orientations
 #     if quadrupole_orientations is None:
@@ -391,18 +391,18 @@ def __batch_wigner_rotation(unsigned int octant_orientations,
 #     isotopomer_struct.spin = &spin[0]
 #     isotopomer_struct.gyromagnetic_ratio = &gyromagnetic_ratio[0]
 
-#     isotopomer_struct.isotropic_chemical_shift_in_Hz = &isotropic_chemical_shift_c[0]
-#     isotopomer_struct.shielding_anisotropy_in_Hz = &shielding_anisotropy_c[0]
+#     isotopomer_struct.isotropic_chemical_shift_in_ppm = &isotropic_chemical_shift_c[0]
+#     isotopomer_struct.shielding_symmetric_zeta_in_ppm = &shielding_anisotropy_c[0]
 #     isotopomer_struct.shielding_asymmetry = &shielding_asymmetry_c[0]
 #     isotopomer_struct.shielding_orientation = &shielding_orientations_c[0]
 
-#     isotopomer_struct.quadrupole_coupling_constant_in_Hz = &quadrupolar_coupling_constant_c[0]
-#     isotopomer_struct.quadrupole_asymmetry = &quadrupole_asymmetry_c[0]
-#     isotopomer_struct.quadrupole_orientation = &quadrupole_orientations_c[0]
+#     isotopomer_struct.quadrupolar_Cq_in_Hz = &quadrupolar_coupling_constant_c[0]
+#     isotopomer_struct.quadrupolar_eta = &quadrupole_asymmetry_c[0]
+#     isotopomer_struct.quadrupolar_orientation = &quadrupole_orientations_c[0]
 
 #     isotopomer_struct.dipolar_couplings = &D_c[0]
 
-#     cdef int remove_second_order_quad_isotropic_c = remove_second_order_quad_isotropic
+#     cdef bool_t remove_second_order_quad_isotropic_c = remove_2nd_order_quad_isotropic
 
 #     cdef clib.MRS_sequence *sequence[1]
 #     clib.mrsimulator_core(

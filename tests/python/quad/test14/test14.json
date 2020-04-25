@@ -1,6 +1,6 @@
 {
-  "method": {
-    "isotope": "23Na",
+  "methods": [{
+    "channel": "23Na",
     "spectral_dimensions": [{
       "count": 1024,
       "spectral_width": "70 kHz",
@@ -16,14 +16,6 @@
         }
       }]
     }]
-  },
-  "dimensions": [{
-    "magnetic_flux_density": "4.7 T",
-    "rotor_frequency": "12.5 kHz",
-    "rotor_angle": "70.12 deg",
-    "number_of_points": 1024,
-    "spectral_width": "70 kHz",
-    "isotope": "23Na"
   }],
   "isotopomers": [{
     "sites": [{

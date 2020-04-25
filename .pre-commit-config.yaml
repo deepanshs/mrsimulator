@@ -56,14 +56,14 @@ repos:
         types: [python]
         minimum_pre_commit_version: "0.15.0"
 
-  # - repo: https://github.com/pocc/pre-commit-hooks
-  #   rev: master
-  #   hooks:
-  #     - id: clang-format
-  #       name: clang-format
-  #       entry: hooks/clang-format
-  #       description: Formats C/CPP code
-  #       files: "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$"
-  #       language: script
-  #       additional_dependencies: [clang-format]
-  #       args: [--style=Google, -i]
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: master
+    hooks:
+      - id: clang-format
+        name: clang-format
+        entry: hooks/clang-format
+        description: Formats C/CPP code
+        files: "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$"
+        language: script
+        additional_dependencies: [clang-format]
+        args: [--style=Google, -i]

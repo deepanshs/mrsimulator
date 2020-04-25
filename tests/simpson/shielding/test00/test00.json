@@ -1,6 +1,6 @@
 {
-  "method": {
-    "isotope": "29Si",
+  "methods": [{
+    "channel": "29Si",
     "spectral_dimensions": [{
       "count": 100,
       "spectral_width": "100 kHz",
@@ -15,13 +15,6 @@
         }
       }]
     }]
-  },
-  "dimensions": [{
-    "magnetic_flux_density": "1 T",
-    "rotor_frequency": "1 kHz",
-    "number_of_points": 100,
-    "spectral_width": "100 kHz",
-    "isotope": "29Si"
   }],
   "isotopomers": [{
     "sites": [{

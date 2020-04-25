@@ -35,7 +35,7 @@ def generate_method_from_template(template):
 
         m = Method(
             name=name,
-            isotope=kwargs["isotope"],
+            channel=kwargs["channel"],
             spectral_dimensions=dim,
             description=template["description"],
         )
@@ -76,12 +76,12 @@ Bloch_decay = {
 }
 
 
-def BlochDecayFT(dimensions, isotope, **kwargs):
+def BlochDecayFT(dimensions, channel, **kwargs):
     """A Bloch decay Fourier Transform method.
 
     Args:
         dimensions: A list of Dimension objects or equivalent python dict.
-        isotope: The isotope on which the method will be applied.
+        channel: The isotope on which the method will be applied.
         rotor_frequency: The sample rotation frequency in Hz.
         rotor_angle: The sample holder angle (inn radians) with respect to lab
                 frame z-axis.
@@ -89,5 +89,5 @@ def BlochDecayFT(dimensions, isotope, **kwargs):
                 magetic field.
     """
     return generate_method_from_template(Bloch_decay)(
-        dimensions=dimensions, isotope=isotope, **kwargs
+        dimensions=dimensions, channel=channel, **kwargs
     )

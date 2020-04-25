@@ -627,7 +627,7 @@ void single_wigner_rotation(const int l, const double *euler_angles,
   double *R_out_ = (double *)R_out;
 
   int n1 = 2 * l + 1, n2 = n1 * n1, m, mp, k, two_l = 2 * l, two_n1 = 2 * n1;
-  double real, imag, copy_real, copy_imag, a, b, c, d;
+  double real, imag, copy_real = 0.0, copy_imag = 0.0, a, b, c, d;
   double *wigner = malloc_double(n2);
   double *temp_initial_vector = malloc_double(two_n1);
 

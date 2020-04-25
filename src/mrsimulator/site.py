@@ -79,6 +79,8 @@ class Site(Parseable):
 
     @validator("quadrupolar")
     def spin_must_be_at_least_one(cls, v, values):
+        if v is None:
+            return v
         isotope = values["isotope"]
         isotope = Isotope(symbol=isotope) if isinstance(isotope, str) else isotope
         I = isotope.spin
