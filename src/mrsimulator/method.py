@@ -233,16 +233,23 @@ class Method(Parseable):
 
     def get_transition_pathways(self, isotopomer):
         transitions = isotopomer.all_transitions
+
+        site_list = [atom.isotope.symbol for atom in isotopomer.sites]
+        method_isotope = self.isotope
+        transition_isotope_dict = {
+            'method_isotope': method_isotope, 
+            'site_list': site_list
+            }
         # print(transitions)
-        segments = []
+        segments = [] 
         for seq in self.sequences:
             for ent in seq.events:
                 segments.append(
                     np.asarray(
-                        transitions.filter(**ent.transition_query.to_dict_with_units())
+                        transitions.filter(**ent.transition_query.to_dict_with_units(), isotopes = transition_isotope_dict)
                     )
                 )
-        # print(segments)
+        print('segment list: ', segments)
         return cartesian_product(*segments)
         # pathways = 1
         # for item in segments:

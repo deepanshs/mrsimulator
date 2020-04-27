@@ -29,7 +29,7 @@ class Transition(BaseModel):
     @property
     def p(self):
         """Return the total Δm (m_final-m_initial) value of the spin transition."""
-        return self.delta_ms.sum()
+        return self.P.sum()
 
     @property
     def P(self):
