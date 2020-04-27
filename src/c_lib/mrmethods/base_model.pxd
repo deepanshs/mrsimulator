@@ -47,26 +47,18 @@ cdef extern from "mrsimulator.h":
     void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0, double complex *R2,
                                   double complex *R4, bool_t refresh)
 
-    ctypedef struct MRS_dimension:
-        pass
-
-    MRS_dimension *MRS_create_dimension(int count, double coordinates_offset,
-                                    double increment)
-
-
-
 cdef extern from "isotopomer_ravel.h":
     ctypedef struct isotopomer_ravel:
         int number_of_sites                    # Number of sites
         float *spin                            # The spin quantum number
         double *gyromagnetic_ratio             # gyromagnetic ratio in (MHz/T)
-        double *isotropic_chemical_shift_in_Hz # Isotropic chemical shift (Hz)
-        double *shielding_anisotropy_in_Hz     # Nuclear shielding anisotropy (Hz)
-        double *shielding_asymmetry            # Nuclear shielding asymmetry
+        double *isotropic_chemical_shift_in_ppm # Isotropic chemical shift (Hz)
+        double *shielding_symmetric_zeta_in_ppm     # Nuclear shielding anisotropy (Hz)
+        double *shielding_symmetric_eta            # Nuclear shielding asymmetry
         double *shielding_orientation          # Nuclear shielding PAS to CRS euler angles (rad.)
-        double *quadrupole_coupling_constant_in_Hz     # Quadrupolar coupling constant (Hz)
-        double *quadrupole_asymmetry          # Quadrupolar asymmetry parameter
-        double *quadrupole_orientation        # Quadrupolar PAS to CRS euler angles (rad.)
+        double *quadrupolar_Cq_in_Hz     # Quadrupolar coupling constant (Hz)
+        double *quadrupolar_eta          # Quadrupolar asymmetry parameter
+        double *quadrupolar_orientation        # Quadrupolar PAS to CRS euler angles (rad.)
         double *dipolar_couplings             # dipolar coupling stored as list of lists
 
 cdef extern from "method.h":
@@ -110,7 +102,7 @@ cdef extern from "simulation.h":
         int n_sequence,
 
         int quad_second_order,                    # Quad theory for second order,
-        int remove_second_order_quad_isotropic,   # remove the isotropic contribution from the
+        bool_t remove_2nd_order_quad_isotropic,   # remove the isotropic contribution from the
                                                   # second order quad Hamiltonian.
 
         # spin rate, spin angle and number spinning sidebands
@@ -119,7 +111,7 @@ cdef extern from "simulation.h":
         double rotor_angle_in_rad,
 
         # The transition as transition[0] = mi and transition[1] = mf
-        double *transition,
+        float *transition,
         int integration_density,
         unsigned int integration_volume,  # 0-octant, 1-hemisphere, 2-sphere
         bool_t interpolation
@@ -130,11 +122,11 @@ cdef extern from "simulation.h":
         double * spec,
 
         isotopomer_ravel *ravel_isotopomer,
-        int remove_second_order_quad_isotropic,   # remove the isotropic contribution from the
+        bool_t remove_2nd_order_quad_isotropic,   # remove the isotropic contribution from the
                                                   # second order quad Hamiltonian.
 
         # The transition as transition[0] = mi and transition[1] = mf
-        double *transition,
+        float *transition,
         MRS_sequence *the_sequence, # the sequences within method.
         int n_sequence, # the number of sequences.
         MRS_fftw_scheme *fftw_scheme, # the fftw scheme

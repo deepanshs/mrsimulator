@@ -1,58 +1,40 @@
 {
-  "method": {
-    "isotope": "1H",
-    "sequences": [
-      {
-        "count": 2048,
-        "spectral_width": "100 kHz",
-        "events": [
-          {
-            "magnetic_flux_density": "1 T",
-            "rotor_frequency": "0 kHz",
-            "transition_query": {
-              "transition": {
-                "final": [0.5],
-                "initial": [-0.5]
-              }
-            }
-          }
-        ]
-      }
-    ]
-  },
-  "dimensions": [
-    {
-      "magnetic_flux_density": "1 T",
-      "rotor_frequency": "0 kHz",
-      "number_of_points": 2048,
+  "methods": [{
+    "channel": "1H",
+    "spectral_dimensions": [{
+      "count": 2048,
       "spectral_width": "100 kHz",
-      "isotope": "1H"
-    }
-  ],
-  "isotopomers": [
-    {
-      "sites": [
-        {
-          "isotope": "1H",
-          "isotropic_chemical_shift": "1200/42.57747892 ppm",
-          "shielding_symmetric": {
-            "zeta": "-5310/42.57747892 ppm",
-            "eta": 0.31
+      "events": [{
+        "magnetic_flux_density": "1 T",
+        "rotor_frequency": "0 kHz",
+        "transition_query": {
+          "transition": {
+            "final": [0.5],
+            "initial": [-0.5]
           }
         }
-      ]
+      }]
+    }]
+  }],
+  "isotopomers": [{
+      "sites": [{
+        "isotope": "1H",
+        "isotropic_chemical_shift": "1200/42.57747892 ppm",
+        "shielding_symmetric": {
+          "zeta": "-5310/42.57747892 ppm",
+          "eta": 0.31
+        }
+      }]
     },
     {
-      "sites": [
-        {
-          "isotope": "1H",
-          "isotropic_chemical_shift": "0 ppm",
-          "shielding_symmetric": {
-            "zeta": "3310/42.57747892 ppm",
-            "eta": 0.86
-          }
+      "sites": [{
+        "isotope": "1H",
+        "isotropic_chemical_shift": "0 ppm",
+        "shielding_symmetric": {
+          "zeta": "3310/42.57747892 ppm",
+          "eta": 0.86
         }
-      ]
+      }]
     }
   ],
   "test_data": {

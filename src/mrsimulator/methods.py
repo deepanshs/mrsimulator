@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from .method import Event
 from .method import Method
-from .method import Sequence
+from .method import SpectralDimension
 
 
 # program to create class dynamically
@@ -21,8 +21,8 @@ def generate_method_from_template(template):
                 f"The attribute(s) {common} is fixed for {name} method."
             )
 
-        seq = []
-        for i, s in enumerate(template["sequences"]):
+        dim = []
+        for i, s in enumerate(template["spectral_dimensions"]):
             events = []
             for e in s["events"]:
                 ew = set(e)
@@ -31,12 +31,12 @@ def generate_method_from_template(template):
                 for item in intersection:
                     kw.pop(item)
                 events.append(Event(**e, **kw, **global_events))
-            seq.append(Sequence(**dimensions[i], events=events))
+            dim.append(SpectralDimension(**dimensions[i], events=events))
 
         m = Method(
             name=name,
-            isotope=kwargs["isotope"],
-            sequences=seq,
+            channel=kwargs["channel"],
+            spectral_dimensions=dim,
             description=template["description"],
         )
         return m
@@ -72,16 +72,16 @@ Bloch_decay = {
         "site_isotope_is_quadrupole": None,  # applies to all isotopes
     },
     "global_event_attributes": {},
-    "sequences": [{"events": [{"transition_query": {"P": [-1]}}]}],
+    "spectral_dimensions": [{"events": [{"transition_query": {"P": [-1]}}]}],
 }
 
 
-def BlochDecayFT(dimensions, isotope, **kwargs):
+def BlochDecayFT(dimensions, channel, **kwargs):
     """A Bloch decay Fourier Transform method.
 
     Args:
         dimensions: A list of Dimension objects or equivalent python dict.
-        isotope: The isotope on which the method will be applied.
+        channel: The isotope on which the method will be applied.
         rotor_frequency: The sample rotation frequency in Hz.
         rotor_angle: The sample holder angle (inn radians) with respect to lab
                 frame z-axis.
@@ -89,5 +89,5 @@ def BlochDecayFT(dimensions, isotope, **kwargs):
                 magetic field.
     """
     return generate_method_from_template(Bloch_decay)(
-        dimensions=dimensions, isotope=isotope, **kwargs
+        dimensions=dimensions, channel=channel, **kwargs
     )

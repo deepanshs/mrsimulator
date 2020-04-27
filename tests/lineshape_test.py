@@ -103,16 +103,17 @@ def get_data(filename):
 
 def c_setup(data_object, data_source):
     # mrsimulator
-    method = Method.parse_dict_with_units(data_object["method"])
+    methods = [Method.parse_dict_with_units(_) for _ in data_object["methods"]]
 
     isotopomers = [
         Isotopomer.parse_dict_with_units(item) for item in data_object["isotopomers"]
     ]
 
-    s1 = Simulator(isotopomers=isotopomers, method=method)
+    s1 = Simulator(isotopomers=isotopomers, methods=methods)
     s1.config.integration_density = 120
     s1.config.number_of_sidebands = 90
-    data_mrsimulator = s1.run()[1]
+    s1.run()
+    data_mrsimulator = s1.methods[0].simulation.to_list()[1]
     data_mrsimulator /= data_mrsimulator.max()
 
     return data_mrsimulator, data_source
@@ -120,11 +121,10 @@ def c_setup(data_object, data_source):
 
 def c_setup_random_euler_angles(data_object, data_source, group):
     # mrsimulator
-    method = Method.parse_dict_with_units(data_object["method"])
+    methods = [Method.parse_dict_with_units(_) for _ in data_object["methods"]]
 
     isotopomers = [
-        Isotopomer.parse_dict_with_units(isotopomer)
-        for isotopomer in data_object["isotopomers"]
+        Isotopomer.parse_dict_with_units(_) for _ in data_object["isotopomers"]
     ]
     pix2 = 2 * np.pi
     if group == "shielding_symmetric":
@@ -139,11 +139,12 @@ def c_setup_random_euler_angles(data_object, data_source, group):
             isotopomer.sites[0].quadrupolar.beta = np.random.rand(1) * pix2
             isotopomer.sites[0].quadrupolar.gamma = np.random.rand(1) * pix2
 
-    s1 = Simulator(isotopomers=isotopomers, method=method)
+    s1 = Simulator(isotopomers=isotopomers, methods=methods)
     s1.config.integration_density = 120
     s1.config.integration_volume = "hemisphere"
     s1.config.number_of_sidebands = 90
-    data_mrsimulator = s1.run()[1]
+    s1.run()
+    data_mrsimulator = s1.methods[0].simulation.to_list()[1]
     data_mrsimulator /= data_mrsimulator.max()
 
     return data_mrsimulator, data_source

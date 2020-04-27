@@ -86,13 +86,13 @@ cdef extern from "isotopomer_ravel.h":
         int number_of_sites;                    # Number of sites
         float *spin;                            # The spin quantum number
         double *gyromagnetic_ratio;             # Larmor frequency (MHz)
-        double *isotropic_chemical_shift_in_Hz; # Isotropic chemical shift (Hz)
-        double *shielding_anisotropy_in_Hz;     # Nuclear shielding anisotropy (Hz)
-        double *shielding_asymmetry;            # Nuclear shielding asymmetry parameter
+        double *isotropic_chemical_shift_in_ppm; # Isotropic chemical shift (Hz)
+        double *shielding_symmetric_zeta_in_ppm;     # Nuclear shielding anisotropy (Hz)
+        double *shielding_symmetric_eta;            # Nuclear shielding asymmetry parameter
         double *shielding_orientation;          # Nuclear shielding PAS to CRS euler angles (rad.)
-        double *quadrupole_coupling_constant_in_Hz;     # Quadrupolar coupling constant (Hz)
-        double *quadrupole_asymmetry;          # Quadrupolar asymmetry parameter
-        double *quadrupole_orientation;        # Quadrupolar PAS to CRS euler angles (rad.)
+        double *quadrupolar_Cq_in_Hz;     # Quadrupolar coupling constant (Hz)
+        double *quadrupolar_eta;          # Quadrupolar asymmetry parameter
+        double *quadrupolar_orientation;        # Quadrupolar PAS to CRS euler angles (rad.)
         double *dipolar_couplings;              # dipolar coupling stored as list of lists
 
     ctypedef struct isotopomers_list:
@@ -135,7 +135,7 @@ cdef extern from "simulation.h":
         MRS_sequence *the_sequence[],            # the sequences in the method.
 
         int quad_second_order,                    # Quad theory for second order,
-        int remove_second_order_quad_isotropic,   # remove the isotropic contribution from the
+        bool_t remove_2nd_order_quad_isotropic,   # remove the isotropic contribution from the
                                                   # second order quad Hamiltonian.
 
         # spin rate, spin angle and number spinning sidebands

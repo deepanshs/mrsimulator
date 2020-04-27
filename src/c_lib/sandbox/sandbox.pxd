@@ -47,6 +47,3 @@ cdef extern from "mrsimulator.h":
 
     ctypedef struct MRS_dimension:
         pass
-
-    MRS_dimension *MRS_create_dimension(int count, double coordinates_offset,
-                                    double increment)

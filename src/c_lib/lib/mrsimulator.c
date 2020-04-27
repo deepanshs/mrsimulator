@@ -394,36 +394,25 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
   }
 }
 
-static inline void __zero_components(double *R0, complex128 *R2,
-                                     complex128 *R4) {
-  R0[0] = 0.0;
-  vm_double_zeros(10, (double *)R2);
-  vm_double_zeros(18, (double *)R4);
-}
-
 /**
- * @func __MRS_rotate_components_from_PAS_to_common_frame
+ * @func MRS_rotate_components_from_PAS_to_common_frame
  *
- * The function evaluates the tensor components, at every orientation, from the
- * principal axis system (PAS) to the common frame of the isotopomer.
+ * The function evaluates the tensor components from the principal axis system
+ * (PAS) to the common frame of the isotopomer.
  */
 void MRS_rotate_components_from_PAS_to_common_frame(
     isotopomer_ravel *ravel_isotopomer,  // isotopomer structure
-    int site,                            // the site index
-    double mf,  // the spin quantum number of the final state of the
-                // transition.
-    double mi,  // the spin quantum number of the inital state of the
-                // transition.
-    bool allow_fourth_rank,  // if true, pre for 4th rank computation
+    float *transition,                   // The spin transition
+    bool allow_fourth_rank,  // if true, prep for 4th rank computation
     double *R0,              // the R0 components
     complex128 *R2,          // the R2 components
     complex128 *R4,          // the R4 components
     double *R0_temp,         // the temporary R0 components
     complex128 *R2_temp,     // the temporary R2 components
     complex128 *R4_temp,     // the temporary R3 components
-    int remove_second_order_quad_isotropic,  // if true, remove second order
-                                             // quad isotropic shift
-    double larmor_frequency_in_MHz) {
+    bool remove_2nd_order_quad_isotropic,  // if true, remove 2nd order quad
+                                           // isotropic shift
+    double B0_in_T) {
   /* The following codeblock populates the product of spatial part, Rlm, of
    * the tensor and the spin transition function, T(mf, mi) for
    *      zeroth rank, R0 = [ R00 ] * T(mf, mi)
@@ -436,65 +425,79 @@ void MRS_rotate_components_from_PAS_to_common_frame(
    *   Symmetry pathways in solid-state NMR. PNMRS 2011 59(2):12 1-96.
    *   https://doi.org/10.1016/j.pnmrs.2010.11.003                         */
 
-  /* Initialize with zeroing all spatial components                        */
-  __zero_components(R0, R2, R4);
+  unsigned int site, n_sites = ravel_isotopomer->number_of_sites;
+  double larmor_freq_in_MHz;
+  float *mf = &transition[n_sites], *mi = transition;
 
-  /* Nuclear shielding components ======================================== */
-  /*      Upto the first order                                             */
-  FCF_1st_order_nuclear_shielding_Hamiltonian(
-      R0_temp, R2_temp,
-      ravel_isotopomer->isotropic_chemical_shift_in_Hz[site] *
-          larmor_frequency_in_MHz,
-      ravel_isotopomer->shielding_anisotropy_in_Hz[site] *
-          larmor_frequency_in_MHz,
-      ravel_isotopomer->shielding_asymmetry[site],
-      &ravel_isotopomer->shielding_orientation[3 * site], mf, mi);
+  for (site = 0; site < n_sites; site++) {
+    if (*mi == *mf) {
+      continue;
+    }
+    larmor_freq_in_MHz = -B0_in_T * ravel_isotopomer->gyromagnetic_ratio[site];
+    /* Nuclear shielding components ========================================
+     */
+    /*      Upto the first order */
+    FCF_1st_order_nuclear_shielding_Hamiltonian(
+        R0_temp, R2_temp,
+        ravel_isotopomer->isotropic_chemical_shift_in_ppm[site] *
+            larmor_freq_in_MHz,
+        ravel_isotopomer->shielding_symmetric_zeta_in_ppm[site] *
+            larmor_freq_in_MHz,
+        ravel_isotopomer->shielding_symmetric_eta[site],
+        &ravel_isotopomer->shielding_orientation[3 * site], *mf, *mi);
 
-  // in-place update the R0 and R2 components.
-  *R0 += *R0_temp;
-  vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-  /* ===================================================================== */
+    // in-place update the R0 and R2 components.
+    *R0 += *R0_temp;
+    vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+    /* =====================================================================
+     */
 
-  /* Electric quadrupolar components ===================================== */
-  if (ravel_isotopomer->spin[site] > 0.5) {
-    /*   Upto the first order                                              */
-    FCF_1st_order_electric_quadrupole_Hamiltonian(
-        R2_temp, ravel_isotopomer->spin[site],
-        ravel_isotopomer->quadrupole_coupling_constant_in_Hz[site],
-        ravel_isotopomer->quadrupole_asymmetry[site],
-        &ravel_isotopomer->quadrupole_orientation[3 * site], mf, mi);
+    /* Electric quadrupolar components =====================================
+     */
+    if (ravel_isotopomer->spin[site] > 0.5) {
+      /*   Upto the first order */
+      FCF_1st_order_electric_quadrupole_Hamiltonian(
+          R2_temp, ravel_isotopomer->spin[site],
+          ravel_isotopomer->quadrupolar_Cq_in_Hz[site],
+          ravel_isotopomer->quadrupolar_eta[site],
+          &ravel_isotopomer->quadrupolar_orientation[3 * site], *mf, *mi);
+
+      // in-place update the R2 components.
+      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+
+      /*  Upto the second order */
+      if (allow_fourth_rank) {
+        FCF_2nd_order_electric_quadrupole_Hamiltonian(
+            R0_temp, R2_temp, R4_temp, ravel_isotopomer->spin[site],
+            larmor_freq_in_MHz * 1e6,
+            ravel_isotopomer->quadrupolar_Cq_in_Hz[site],
+            ravel_isotopomer->quadrupolar_eta[site],
+            &ravel_isotopomer->quadrupolar_orientation[3 * site], *mf, *mi);
+
+        // in-place update the R0 component.
+        if (!remove_2nd_order_quad_isotropic) *R0 += *R0_temp;
+
+        // in-place update the R2 and R4 components.
+        vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+        vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+      }
+    }
+
+    /* Weakly coupled direct-dipole components =============================
+     */
+    /*      Upto the first order (to do..-> add orientation dependence) */
+    weakly_coupled_direct_dipole_frequencies_to_first_order(
+        R0, R2_temp, ravel_isotopomer->dipolar_couplings[site], *mf, *mi, 0.5,
+        0.5);
 
     // in-place update the R2 components.
     vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-
-    /*  Upto the second order                                              */
-    if (allow_fourth_rank) {
-      FCF_2nd_order_electric_quadrupole_Hamiltonian(
-          R0_temp, R2_temp, R4_temp, ravel_isotopomer->spin[site],
-          larmor_frequency_in_MHz * 1e6,
-          ravel_isotopomer->quadrupole_coupling_constant_in_Hz[site],
-          ravel_isotopomer->quadrupole_asymmetry[site],
-          &ravel_isotopomer->quadrupole_orientation[3 * site], mf, mi);
-
-      // in-place update the R0 component.
-      if (remove_second_order_quad_isotropic == 0) *R0 += *R0_temp;
-
-      // in-place update the R2 and R4 components.
-      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-      vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
-    }
+    /* =====================================================================
+     */
+    mi++;
+    mf++;
   }
-
-  /* Weakly coupled direct-dipole components ============================= */
-  /*      Upto the first order (to do..-> add orientation dependence)      */
-  weakly_coupled_direct_dipole_frequencies_to_first_order(
-      R0, R2_temp, ravel_isotopomer->dipolar_couplings[site], mf, mi, 0.5, 0.5);
-
-  // in-place update the R2 components.
-  vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-  /* ===================================================================== */
 }
-
 /**
  *  The function calculates the following.
  *   pre_phase(m, t) = I 2π [(exp(I m ωr t) - 1)/(I m ωr)]
@@ -629,14 +632,14 @@ void __get_components(int number_of_sidebands, double sample_rotation_frequency,
   }
 }
 
-MRS_dimension *MRS_create_dimension(int count, double coordinates_offset,
-                                    double increment) {
-  MRS_dimension *dim = malloc(sizeof(MRS_dimension));
-  dim->count = count;
-  dim->coordinates_offset = coordinates_offset;
-  dim->increment = increment;
+// MRS_dimension *MRS_create_dimension(int count, double coordinates_offset,
+//                                     double increment) {
+//   MRS_dimension *dim = malloc(sizeof(MRS_dimension));
+//   dim->count = count;
+//   dim->coordinates_offset = coordinates_offset;
+//   dim->increment = increment;
 
-  dim->inverse_increment = 1.0 / increment;
-  dim->normalize_offset = 0.5 - (coordinates_offset * dim->inverse_increment);
-  return dim;
-}
+//   dim->inverse_increment = 1.0 / increment;
+//   dim->normalize_offset = 0.5 - (coordinates_offset *
+//   dim->inverse_increment); return dim;
+// }

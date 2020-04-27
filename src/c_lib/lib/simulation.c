@@ -9,31 +9,53 @@
 
 #include "simulation.h"
 
+static inline void __zero_components(double *R0, complex128 *R2,
+                                     complex128 *R4) {
+  R0[0] = 0.0;
+  vm_double_zeros(10, (double *)R2);
+  vm_double_zeros(18, (double *)R4);
+}
+
 void __mrsimulator_core(
     // spectrum information and related amplitude
     double *spec,  // amplitude vector representing the spectrum.
 
-    isotopomer_ravel *ravel_isotopomer,  // isotopomer structure
+    // A pointer to the isotopomer_ravel structure containing information about
+    // the sites within an isotopomer.
+    isotopomer_ravel *ravel_isotopomer,
 
-    int remove_second_order_quad_isotropic,  // remove the isotropic
-                                             // contribution from the second
-                                             // order quad Hamiltonian.
+    // remove the isotropic contribution from the second order quad Hamiltonian.
+    bool remove_2nd_order_quad_isotropic,
 
-    // Pointer to the transitions. transition[0] = mi and transition[1] = mf
-    double *transition, MRS_sequence *the_sequence, int n_sequence,
-    MRS_fftw_scheme *fftw_scheme, MRS_averaging_scheme *scheme,
-    bool interpolation  // if true, perform a 1D interpolation
-) {
+    // A pointer to a spin transition packed as quantum numbers from the initial
+    // energy state followed by the quantum numbers from the final energy state.
+    // The energy states are given in Zeeman basis.
+    float *transition,
+
+    // A pointer to MRS_sequence structure containing information on the events
+    // per spectroscopic dimension.
+    MRS_sequence *the_sequence,
+
+    // The total number of spectroscopic dimensions.
+    int n_sequence,
+
+    // A pointer to the fftw scheme.
+    MRS_fftw_scheme *fftw_scheme,
+
+    // A pointer to the powder averaging scheme.
+    MRS_averaging_scheme *scheme,
+
+    // if true, perform a 1D interpolation
+    bool interpolation) {
   /*
   The sideband computation is based on the method described by Eden and Levitt
   et. al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
 
-  unsigned int site, j;
-  int i, seq, evt;
-  double offset, larmor_frequency_in_MHz, B0_in_T;  // for 1D interpolation
-  unsigned int step_vector = 0, address;            // for 1D interpolation
+  unsigned int j, evt, step_vector = 0, address;
+  int i, seq;
+  double offset, B0_in_T;
 
   double R0 = 0.0;
   complex128 *R2 = malloc_complex128(5);
@@ -43,7 +65,6 @@ void __mrsimulator_core(
   complex128 *R2_temp = malloc_complex128(5);
   complex128 *R4_temp = malloc_complex128(9);
 
-  int spec_site;
   double *spec_site_ptr;
 
   MRS_plan *plan;
@@ -58,41 +79,34 @@ void __mrsimulator_core(
       plan = the_sequence[seq].events[evt].plan;
       B0_in_T = the_sequence[seq].events[evt].magnetic_flux_density_in_T;
 
-      // Per site base calculation
-      for (site = 0; site < ravel_isotopomer->number_of_sites; site++) {
-        // gettimeofday(&start_site_time, NULL);
+      /* Initialize with zeroing all spatial components */
+      __zero_components(&R0, R2, R4);
 
-        larmor_frequency_in_MHz =
-            -B0_in_T * ravel_isotopomer->gyromagnetic_ratio[site];
-
-        /* Rotate all frequency components from PAS to a common frame */
-        MRS_rotate_components_from_PAS_to_common_frame(
-            ravel_isotopomer,  // isotopomer structure
-            site,              // the site index
-            transition[ravel_isotopomer->number_of_sites +
-                       site],  // the transition
-            transition[site],
-            plan->allow_fourth_rank,  // if 1, prepare for 4th rank computation
-            &R0,                      // the R0 components
-            R2,                       // the R2 components
-            R4,                       // the R4 components
-            &R0_temp,                 // the temporary R0 components
-            R2_temp,                  // the temporary R2 components
-            R4_temp,                  // the temporary R4 components
-            remove_second_order_quad_isotropic,  // if true, remove second order
-                                                 // quad isotropic shift
-            larmor_frequency_in_MHz              // larmor frequency in MHz
-        );
-      }  // end sites
+      /* Rotate all frequency components from PAS to a common frame */
+      MRS_rotate_components_from_PAS_to_common_frame(
+          ravel_isotopomer,         // isotopomer structure
+          transition,               // the transition
+          plan->allow_fourth_rank,  // if 1, prepare for 4th rank computation
+          &R0,                      // the R0 components
+          R2,                       // the R2 components
+          R4,                       // the R4 components
+          &R0_temp,                 // the temporary R0 components
+          R2_temp,                  // the temporary R2 components
+          R4_temp,                  // the temporary R4 components
+          remove_2nd_order_quad_isotropic,  // if true, remove second order quad
+                                            // isotropic shift
+          B0_in_T                           // magnetic flux density in T.
+      );
 
       // Add a loop over all couplings.. here
 
-      /* Get frequencies and amplitudes per octant ...........................
-       */
+      /* Get frequencies and amplitudes per octant ......................... */
+      /* Always evalute the frequencies before the amplitudes. */
       MRS_get_normalized_frequencies_from_plan(
           scheme, plan, R0, R2, R4, 1, the_sequence[seq].normalize_offset,
           the_sequence[seq].inverse_increment);
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
+
     }  // end events
 
     /* ---------------------------------------------------------------------
@@ -153,13 +167,13 @@ void mrsimulator_core(
     double coordinates_offset,  // The start of the frequency spectrum.
     double increment,           // The increment of the frequency spectrum.
     int count,                  // Number of points on the frequency spectrum.
-    isotopomer_ravel *ravel_isotopomer,      // Isotopomer structure
-    MRS_sequence *the_sequence,              // the sequences in the method.
-    int n_sequence,                          // The number of sequence.
-    int quad_second_order,                   // Quad theory for second order,
-    int remove_second_order_quad_isotropic,  // remove the isotropic
-                                             // contribution from the second
-                                             // order quad interaction.
+    isotopomer_ravel *ravel_isotopomer,    // Isotopomer structure
+    MRS_sequence *the_sequence,            // the sequences in the method.
+    int n_sequence,                        // The number of sequence.
+    int quad_second_order,                 // Quad theory for second order,
+    bool remove_2nd_order_quad_isotropic,  // remove the isotropic
+                                           // contribution from the second
+                                           // order quad interaction.
 
     // spin rate, spin angle and number spinning sidebands
     int number_of_sidebands,                 // The number of sidebands
@@ -167,7 +181,7 @@ void mrsimulator_core(
     double rotor_angle_in_rad,  // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the transitions. transition[0] = mi and transition[1] = mf
-    double *transition,
+    float *transition,
 
     // powder orientation average
     int integration_density,          // The number of triangle along the edge
@@ -207,9 +221,9 @@ void mrsimulator_core(
 
       ravel_isotopomer,  // isotopomer structure
 
-      remove_second_order_quad_isotropic,  // remove the isotropic contribution
-                                           // from the second order quad
-                                           // Hamiltonian.
+      remove_2nd_order_quad_isotropic,  // remove the isotropic contribution
+                                        // from the second order quad
+                                        // Hamiltonian.
 
       // Pointer to the transitions. transition[0] = mi and transition[1] = mf
       transition,

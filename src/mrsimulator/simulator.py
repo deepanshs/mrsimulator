@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 """Base Simulator class."""
+import json
 from typing import List
 from typing import Optional
 
 import csdmpy as cp
 import numpy as np
-from astropy import units as u
-from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator.apodization import Apodization
 from mrsimulator.base_model import one_d_spectrum
@@ -14,6 +13,8 @@ from mrsimulator.importer import import_json
 from mrsimulator.method import Method
 from mrsimulator.simulator_config import ConfigSimulator
 from pydantic import BaseModel
+
+# from astropy import units as u
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
@@ -24,15 +25,17 @@ class Simulator(BaseModel):
     The simulator class.
 
     Attributes:
+        name: An optional string containing the sample name.
+        descrition: An optional string containing the sample description.
         isotopomers: List of :ref:`isotopomer_api` objects.
-        dimensions: List of :ref:`dimension_api` objects.
+        methods: List of :ref:`method_api` objects.
         config: :ref:`config_api` object.
     """
 
+    name: Optional[str] = ""
+    description: Optional[str] = ""
     isotopomers: List[Isotopomer] = []
-    dimensions: List[Dimension] = []
-    method: Optional[Method] = None
-    simulated_data: Optional[List]
+    methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
 
     class Config:
@@ -42,8 +45,10 @@ class Simulator(BaseModel):
     def __eq__(self, other):
         check = [
             isinstance(other, Simulator),
+            self.name == other.name,
+            self.description == other.description,
             self.isotopomers == other.isotopomers,
-            self.method == other.method,
+            self.methods == other.methods,
             self.config == other.config,
         ]
         if np.all(check):
@@ -77,7 +82,7 @@ class Simulator(BaseModel):
             st.update(isotopomer.get_isotopes(I))
         return st
 
-    def to_dict_with_units(self, include_dimensions=False):
+    def to_dict_with_units(self, include_methods=False):
         """
         Serialize the isotopomers and dimensions attribute from the Simulator object
         to a JSON compliant python dictionary with units.
@@ -116,10 +121,10 @@ class Simulator(BaseModel):
         sim = {}
         sim["isotopomers"] = [_.to_dict_with_units() for _ in self.isotopomers]
 
-        if include_dimensions:
-            dimensions = [_.to_dict_with_units() for _ in self.dimensions]
-            if dimensions != []:
-                sim["dimensions"] = dimensions
+        if include_methods:
+            method = [_.to_dict_with_units() for _ in self.methods]
+            if len(method) != 0:
+                sim["methods"] = method
 
         return sim
 
@@ -143,7 +148,7 @@ class Simulator(BaseModel):
         json_data = contents["isotopomers"]
         self.isotopomers = [Isotopomer.parse_dict_with_units(obj) for obj in json_data]
 
-    def run(self, **kwargs):
+    def run(self, method_index=None, **kwargs):
         """Simulate the lineshape.
 
         Args:
@@ -152,37 +157,57 @@ class Simulator(BaseModel):
         Example:
             >>> sim.run(method=one_d_spectrum) # doctest:+SKIP
         """
-        # isotopomers = [
-        #     isotopomer.to_freq_dict(
-        #         self.method.sequences[0].events[0].magnetic_flux_density
-        #     )
-        #     for isotopomer in self.isotopomers
-        # ]
+        if method_index is None:
+            method_index = np.arange(len(self.methods))
+        if isinstance(method_index, int):
+            method_index = [method_index]
+        for index in method_index:
+            method = self.methods[index]
+            amp = one_d_spectrum(
+                method=method,
+                isotopomers=self.isotopomers,
+                **self.config._dict,
+                **kwargs,
+            )
 
-        amp = one_d_spectrum(
-            method=self.method,
-            isotopomers=self.isotopomers,
-            **self.config._dict,
-            **kwargs,
-        )
+            if isinstance(amp, list):
+                simulated_data = amp
+            else:
+                simulated_data = [amp]
 
-        if isinstance(amp, list):
-            self.simulated_data = amp
-        else:
-            self.simulated_data = [amp]
+            method.simulation = self.as_csdm_object(simulated_data, method)
 
-        """The frequency is in the units of Hz."""
-        gamma = self.method.isotope.gyromagnetic_ratio
-        B0 = self.method.sequences[0].events[0].magnetic_flux_density
-        larmor_frequency = -gamma * B0
+    # """The frequency is in the units of Hz."""
+    # gamma = method.isotope.gyromagnetic_ratio
+    # B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
+    # larmor_frequency = -gamma * B0
+    # reference_offset_in_MHz =method.spectral_dimensions[0].reference_offset / 1e6
+    # denom = reference_offset_in_MHz + larmor_frequency
+    # freq = method.spectral_dimensions[0].coordinates_Hz / abs(denom)
 
-        denom = self.method.sequences[0].reference_offset / 1e6 + larmor_frequency
-        freq = self.method.sequences[0].coordinates_Hz / abs(denom)
+    # freq *= u.Unit("ppm")
+    # return freq, amp
+    def save(self, filename):
+        with open(filename, "w", encoding="utf8") as outfile:
+            json.dump(
+                self.to_dict_with_units(include_methods=True),
+                outfile,
+                ensure_ascii=False,
+                sort_keys=False,
+                allow_nan=False,
+            )
 
-        freq *= u.Unit("ppm")
-        return freq, amp
+    def load(self, filename):
+        sim = Simulator()
+        contents = import_json(filename)
+        i_data = contents["isotopomers"]
+        sim.isotopomers = [Isotopomer.parse_dict_with_units(obj) for obj in i_data]
 
-    def as_csdm_object(self):
+        m_data = contents["methods"]
+        sim.methods = [Method.parse_dict_with_units(obj) for obj in m_data]
+        return sim
+
+    def as_csdm_object(self, data, method):
         """
         Converts the data to a CSDM object. Read
         `csdmpy <https://csdmpy.readthedocs.io/en/latest/>`_ for details
@@ -191,7 +216,7 @@ class Simulator(BaseModel):
             CSDM object
         """
         new = cp.new()
-        for dimension in self.method.sequences:
+        for dimension in method.spectral_dimensions:
             new.add_dimension(dimension.to_csdm_dimension())
 
         dependent_variable = {
@@ -199,8 +224,8 @@ class Simulator(BaseModel):
             "quantity_type": "scalar",
             "numeric_type": "float64",
         }
-        for index, datum in enumerate(self.simulated_data):
-            if datum != []:
+        for index, datum in enumerate(data):
+            if len(datum) != 0:
                 dependent_variable["components"] = [datum]
                 name = self.isotopomers[index].name
                 if name not in ["", None]:
@@ -220,16 +245,7 @@ class Simulator(BaseModel):
         return new
 
     def apodize(self, fn, dimension=0, **kwargs):
-        """
-        Applies an appodization filter to the data.
-
-        Args:
-            self: simulation object.
-            fn: the apodization function to be used. A member function of Apodization class.
-            dimension: The dimension to apply the fourier transform to.
-
-        Return:
-            A Numpy array
-        """
-        apodization_filter = Apodization(self.as_csdm_object(), dimension=dimension)
+        apodization_filter = Apodization(
+            self.methods[0].simulation, dimension=dimension
+        )
         return apodization_filter.apodize(fn, **kwargs)

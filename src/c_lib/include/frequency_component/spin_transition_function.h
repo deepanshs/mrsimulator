@@ -2,7 +2,8 @@
 //
 //  spin_transition_function.h
 //
-//  Created by Deepansh J. Srivastava, Apr 11, 2019
+//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  Created by Deepansh J. Srivastava, Apr 11, 2019.
 //  Contact email = deepansh2012@gmail.com
 //
 
@@ -23,10 +24,8 @@
  *
  * @param mi The quantum number associated with the quantized initial energy
  *        level.
- *
  * @param mf The quantum number associated with the quantized final energy
  *        level.
- *
  * @returns The spin transition function @f$\mathbb{p}@f$.
  */
 static inline double STF_p(const double mf, const double mi) {
@@ -46,10 +45,8 @@ static inline double STF_p(const double mf, const double mi) {
  *
  * @param mi The quantum number associated with the quantized initial energy
  *        level.
- *
  * @param mf The quantum number associated with the quantized final energy
  *        level.
- *
  * @returns The spin transition function @f$\mathbb{d}@f$.
  */
 static inline double STF_d(const double mf, const double mi) {
@@ -69,10 +66,8 @@ static inline double STF_d(const double mf, const double mi) {
  *
  * @param mi The quantum number associated with the quantized initial energy
  *        level.
- *
  * @param mf The quantum number associated with the quantized final energy
  *        level.
- *
  * @return The spin transition function @f$\mathbb{f}@f$.
  */
 static inline double STF_f(const double mf, const double mi,
@@ -105,12 +100,9 @@ static inline double STF_f(const double mf, const double mi,
  *
  * @param mi The quantum number associated with the quantized initial energy
  *        level.
- *
  * @param mf The quantum number associated with the quantized final energy
  *        level.
- *
  * @param spin The spin quantum number, @f$I@f$.
- *
  * @param cl_value A pointer to an array of size 3 where the spin transition
  *        functions, @f$\mathbb{c}_{L}@f$, will be stored ordered according to
  *        @f$L=[0,2,4]@f$.
@@ -146,16 +138,12 @@ static inline void STF_cL(double *restrict cl_value, const double mf,
  *
  * @param mIi The quantum number associated with the quantized initial energy
  *        level corresponding to spin I.
- *
  * @param mSi The quantum number associated with the quantized initial energy
  *        level corresponding to spin S.
- *
  * @param mIf The quantum number associated with the quantized final energy
  *        level corresponding to spin I.
- *
  * @param mSf The quantum number associated with the quantized final energy
  *        level corresponding to spin S.
- *
  * @return The spin transition symmetry function @f$\mathbb{d}_{IS}@f$.
  */
 static inline double STF_dIS(const double mIf, const double mIi,

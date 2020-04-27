@@ -8,29 +8,14 @@ from mrsimulator.apodization import Apodization
 
 
 sim = Simulator()
-
 the_site = {"isotope": "1H", "isotropic_chemical_shift": "0 ppm"}
-
 the_isotopomer = {"name": "site A", "sites": [the_site], "abundance": "80%"}
-
 isotopomer_object = Isotopomer.parse_dict_with_units(the_isotopomer)
-
 sim.isotopomers += [isotopomer_object]
 
-
-# dimension = {
-#     "isotope": "1H",
-#     "magnetic_flux_density": "9.4 T",
-#     "rotor_angle": "0 deg",
-#     "rotor_frequency": "0 kHz",
-#     "number_of_points": 4096,
-#     "spectral_width": "25 kHz",
-#     "reference_offset": "0 kHz",
-# }
-
 method = {
-    "isotope": "1H",
-    "sequences": [
+    "channel": "1H",
+    "spectral_dimensions": [
         {
             "count": 4096,
             "spectral_width": "25 kHz",
@@ -47,11 +32,9 @@ method = {
 }
 
 
-sim.method = Method.parse_dict_with_units(method)
-
-freq, amp = sim.run()
-
-freqHz = sim.method.sequences[0].coordinates_Hz
+sim.methods += [Method.parse_dict_with_units(method)]
+sim.run()
+freqHz = sim.methods[0].spectral_dimensions[0].coordinates_Hz
 
 
 def test_Lorentzian():

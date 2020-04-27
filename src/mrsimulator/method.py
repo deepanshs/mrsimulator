@@ -6,8 +6,8 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
+import csdmpy as cp
 import numpy as np
-from csdmpy import Dimension as csdm_dimension
 from mrsimulator import Parseable
 from pydantic import BaseModel
 from pydantic import Field
@@ -18,6 +18,13 @@ from .transition import Transition
 
 
 class TransitionQuery(BaseModel):
+    """Base TransitionQuery class.
+
+    Args:
+        P: A list of p symmetry transition, where p = Δm and Δm is the difference
+                between spin quantum numbers of the final and initial states.
+    """
+
     P: List[float] = [-1.0]
     D: List[float] = Field(default=None)
     f: Optional[float] = Field(default=None)
@@ -32,14 +39,34 @@ class TransitionQuery(BaseModel):
 
 
 class Event(Parseable):
+    r"""Base Event class defines the spin environment and the transitions along a
+    segment of the transition pathway.
+
+    Args:
+        fraction: A `required` float containing the weight of the frequency
+                contribution from the event.
+        magnetic_flux_density: An `optional` float containing the macroscopic magnetic
+                flux density, :math:`H_0`, of the applied external magnetic field
+                during the event in units of T. The default value is ``9.4``.
+        rotor_frequency: An `optional` float containing the sample spinning frequency
+                :math:`\nu_r`, during the event in units of Hz.
+                The default value is ``0``.
+        rotor_angle: An `optional` float containing the angle between the
+                sample rotation axis and the applied external magnetic field,
+                :math:`\theta`, during the event in units of rad.
+                The default value is ``0.9553166``, i.e. the magic angle.
+        transition_query" An `optional` TransitionQuery object or an equivalent dict
+                object listing the queries used in selecting the active transitions
+                during the event. Only the active transitions from this query
+                contribute to the frequency.
+    """
+
     fraction: float = 1
     magnetic_flux_density: Optional[float] = Field(default=9.4, ge=0)
     rotor_frequency: Optional[float] = Field(default=0, ge=0)
     # 54.735 degrees = 0.9553166 radians
     rotor_angle: Optional[float] = Field(default=0.9553166, ge=0, le=1.5707963268)
     transition_query: Optional[TransitionQuery] = None
-    # transitions: List[float] = [[-0.5, 0.5]]
-    # transitions: List[Transition]
 
     property_unit_types: ClassVar = {
         "magnetic_flux_density": "magnetic flux density",
@@ -61,7 +88,6 @@ class Event(Parseable):
 
     class Config:
         validate_assignment = True
-        # arbitrary_types_allowed = True
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
@@ -73,20 +99,22 @@ class Event(Parseable):
         """
         return super().parse_dict_with_units(py_dict)
 
-    # def to_dict_with_units(self):
-    #     """
-    #     Serialize the Event object to a JSON compliant python dictionary with
-    #     units.
-    #     """
-    #     return self._to_dict_with_units(self)
-    #     # temp_dict["transitions"] = self.transitions
 
+class SpectralDimension(Parseable):
+    r"""Base SpectralDimension class defines the dimensions of the method.
 
-class GlobalEvent(Event):
-    pass
+    Args:
+        count: An optional integer with the number of points, :math:`N`,
+                along the dimension. The default value is ``1024``.
+        spectral_width: A `required` float with the spectral width,
+                :math:`\Delta x`, along the dimension in units of Hz.
+        reference_offset: An `optional` float with the reference offset, :math:`x_0`
+                along the dimension in units of Hz. The default value is ``0``.
+        label: An `optional` string label. The default is an empty string.
+        events: A `required` list of Event object or an equivalent list of dict objects
+                describing the series of events along the spectroscopic dimension.
+    """
 
-
-class Sequence(Parseable):
     count: int = Field(1024, gt=0)
     spectral_width: float = Field(..., gt=0)
     reference_offset: Optional[float] = Field(default=0)
@@ -173,17 +201,9 @@ class Sequence(Parseable):
 
         return super().parse_dict_with_units(py_dict_copy)
 
-    # def to_dict_with_units(self):
-    #     """
-    #     Serialize the Dimension object to a JSON compliant python dictionary with
-    #     units.
-
-    #     """
-    #     return self._to_dict_with_units(self)
-
     def to_csdm_dimension(self):
         increment = self.spectral_width / self.count
-        dim = csdm_dimension(
+        dim = cp.Dimension(
             type="linear",
             count=self.count,
             increment=f"{increment} Hz",
@@ -198,14 +218,17 @@ class Sequence(Parseable):
 class Method(Parseable):
     name: Optional[str] = ""
     description: Optional[str] = ""
-    isotope: Optional[str] = None
-    sequences: List[Sequence]
+    channel: Optional[str] = None
+    spectral_dimensions: List[SpectralDimension]
+    simulation: Optional[cp.CSDM]
+    experiment: Optional[cp.CSDM]
 
     class Config:
         validate_assignment = True
+        arbitrary_types_allowed = True
 
-    @validator("isotope", always=True)
-    def get_isotope(cls, v, *, values, **kwargs):
+    @validator("channel", always=True)
+    def get_channel(cls, v, *, values, **kwargs):
         if v is None:
             return v
         return Isotope(symbol=v)
@@ -219,42 +242,50 @@ class Method(Parseable):
             py_dict: Dict object
         """
         py_dict_copy = deepcopy(py_dict)
-        if "sequences" in py_dict_copy:
-            py_dict_copy["sequences"] = [
-                Sequence.parse_dict_with_units(s) for s in py_dict_copy["sequences"]
+        if "spectral_dimensions" in py_dict_copy:
+            py_dict_copy["spectral_dimensions"] = [
+                SpectralDimension.parse_dict_with_units(s)
+                for s in py_dict_copy["spectral_dimensions"]
             ]
+        if "simulation" in py_dict_copy:
+            py_dict_copy["simulation"] = cp.parse_dict(py_dict_copy["simulation"])
+        if "experiment" in py_dict_copy:
+            py_dict_copy["experiment"] = cp.parse_dict(py_dict_copy["experiment"])
         return super().parse_dict_with_units(py_dict_copy)
 
     def to_dict_with_units(self):
-        temp_dict = self.dict(exclude={"sequences", "isotope"})
-        temp_dict["sequences"] = [item.to_dict_with_units() for item in self.sequences]
-        temp_dict["isotope"] = self.isotope.to_dict_with_units()
+        temp_dict = self.dict(
+            exclude={"spectral_dimensions", "channel", "simulation", "experiment"}
+        )
+        temp_dict["spectral_dimensions"] = [
+            item.to_dict_with_units() for item in self.spectral_dimensions
+        ]
+        temp_dict["channel"] = self.channel.to_dict_with_units()
+        if self.simulation is not None:
+            temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
+        if self.experiment is not None:
+            temp_dict["experiment"] = self.experiment.to_dict()
+        return temp_dict
+
+    def dict(self, **kwargs):
+        temp_dict = super().dict(**kwargs)
+        # if self.simulation is not None:
+        #     temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
+        # if self.experiment is not None:
+        #     temp_dict["experiment"] = self.experiment.to_dict()
         return temp_dict
 
     def get_transition_pathways(self, isotopomer):
         transitions = isotopomer.all_transitions
-
-        site_list = [atom.isotope.symbol for atom in isotopomer.sites]
-        method_isotope = self.isotope
-        transition_isotope_dict = {
-            'method_isotope': method_isotope, 
-            'site_list': site_list
-            }
-        # print(transitions)
-        segments = [] 
-        for seq in self.sequences:
+        segments = []
+        for seq in self.spectral_dimensions:
             for ent in seq.events:
                 segments.append(
                     np.asarray(
                         transitions.filter(**ent.transition_query.to_dict_with_units(), isotopes = transition_isotope_dict)
                     )
                 )
-        print('segment list: ', segments)
         return cartesian_product(*segments)
-        # pathways = 1
-        # for item in segments:
-        #     pathways = np.kron(pathways, np.asarray(item))
-        # return pathways
 
 
 def cartesian_product(*arrays):

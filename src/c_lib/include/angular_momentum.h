@@ -123,6 +123,36 @@ extern void wigner_dm0_vector(const int l, const double beta, double *R_out);
 extern void single_wigner_rotation(const int l, const double *euler_angles,
                                    const void *R_in, void *R_out);
 
+/**
+ * ❌ Performs wigner rotations on a batch of wigner matrices and initial tensor
+ * orientation. The wigner matrices corresponds to the beta orientations. The
+ * orientations cover either an octant, hemisphere, or the sphere surface. This
+ * is specified by the value of the `n_octant` variables.
+ *    n_octant = 1 for octant
+ *    n_octant = 4 for hemisphere
+ *    n_octant = 8 for sphere
+ * The function performs both second rank and fourth rank wigner rotations.
+ *
+ * @param octant_orientations Number of orientations on an octant.
+ * @param n_octants Number of octants.
+ * @param wigner_2j_matrices A pointer to a stack of 5x5 second rank wigner
+ *      matrices.
+ * @param R2 A pointer to the second rank tensor coefficients of length 5 to be
+ *      rotated.
+ * @param wigner_4j_matrices A pointer to a stack of 9x9 fourth rank wigner
+ *      matrices.
+ * @param R4 A pointer to the fourth rank tensor coefficients of length 9 to be
+ *      rotated.
+ * @param exp_Im_alpha A pointer to a `4 x octant_orientations` array with the
+ *      exp(-Im α) with `octant_orientations` as the leading dimension and
+ *      ordered as m=[-4,-3,-2,-1].
+ * @param w2 A pointer to a stack of second rank tensor coefficients after
+ *      rotation with second rank wigner matrices. The length of w2 is
+ *      `octant_orientations x n_octants x 5` with 5 as the leading dimension.
+ * @param w4 A pointer to a stack of fourth rank tensor coefficients after
+ *      rotation with fourth rank wigner matrices. The length of w4 is
+ *      `octant_orientations x n_octants x 9` with 9 as the leading dimension.
+ */
 extern void __batch_wigner_rotation(const unsigned int octant_orientations,
                                     const unsigned int n_octants,
                                     double *wigner_2j_matrices, complex128 *R2,
@@ -130,5 +160,10 @@ extern void __batch_wigner_rotation(const unsigned int octant_orientations,
                                     complex128 *exp_Im_alpha, complex128 *w2,
                                     complex128 *w4);
 
+/**
+ * ✅ Calculates exp(-Im alpha) where alpha is an array of size n.
+ * The function accepts cos_alpha = cos(alpha)
+ * The result is stored in exp_Im_alpha as m x n matrix where m = [-4,-3,-2,-1]
+ */
 extern void get_exp_Im_alpha(const unsigned int n, const bool allow_fourth_rank,
                              void *exp_Im_alpha);

@@ -1,7 +1,8 @@
 //
 //  spatial_orientation_tensors.h
 //
-//  Created by Deepansh J. Srivastava, Aug 26, 2019
+//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  Created by Deepansh J. Srivastava, Aug 26, 2019.
 //  Contact email = deepansh2012@gmail.com
 //
 

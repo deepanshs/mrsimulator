@@ -52,13 +52,13 @@ def one_d_spectrum(method,
 # ---------------------------------------------------------------------
 # observed spin _______________________________________________________
     # dimension = dimension[0]
-    isotope = method.isotope.symbol
+    channel = method.channel.symbol
     # spin quantum number of the observed spin
-    cdef double spin_quantum_number = method.isotope.spin
+    cdef double spin_quantum_number = method.channel.spin
 
     # gyromagnetic ratio
     # cdef double larmor_frequency =
-    cdef gyromagnetic_ratio = method.isotope.gyromagnetic_ratio
+    cdef gyromagnetic_ratio = method.channel.gyromagnetic_ratio
     cdef double factor = 1.0
     if gyromagnetic_ratio > 0.0:
         factor = -1.0
@@ -71,7 +71,7 @@ def one_d_spectrum(method,
     #     print((f"and a reference offset of {dimension['reference_offset']} Hz."))
 
     # transitions of the observed spin
-    cdef ndarray[double, ndim=1] transition_array
+    cdef ndarray[float, ndim=1] transition_array
     cdef int number_of_transitions
     # transition_array = np.asarray([-0.5, 0.5]).ravel()
     # number_of_transitions = int(transition_array.size/2)
@@ -82,19 +82,6 @@ def one_d_spectrum(method,
     #     transitions = [ [energy_states[i], energy_states[i+1]] for i in range(number_of_transitions)]
     #     transition_array = np.asarray(transitions).ravel()
 
-
-# Generate the dimension coordinates __________________________________________________
-    # cdef int number_of_points = dimension.number_of_points
-    # cdef double spectral_width = dimension.spectral_width
-    # cdef double increment = spectral_width/number_of_points
-    # cdef double reference_offset = dimension.reference_offset * factor
-
-    # offset = increment*int(number_of_points/2.0)
-    # reference_offset -= offset
-    # # freq = dimension.coordinates_ppm
-
-    # cdef double sample_rotation_frequency_in_Hz = dimension.rotor_frequency
-    # cdef double rotor_angle_in_rad = dimension.rotor_angle
 
 # -------------------------------------------------------------------------------------
 # schemes
@@ -118,7 +105,7 @@ def one_d_spectrum(method,
 
 # create sequences____________________________________________________________
 
-    cdef int n_sequence = len(method.sequences)
+    cdef int n_sequence = len(method.spectral_dimensions)
     total_n_points = 1
     cdef ndarray[int] n_event
     cdef ndarray[double] magnetic_flux_density_in_T
@@ -137,7 +124,7 @@ def one_d_spectrum(method,
     coordinates_offset = []
 
     prev_n_sidebands = 0
-    for i, seq in enumerate(method.sequences):
+    for i, seq in enumerate(method.spectral_dimensions):
         for event in seq.events:
             if event.rotor_frequency < 1.0e-3:
                 sample_rotation_frequency_in_Hz = 1.0e9
@@ -152,8 +139,9 @@ def one_d_spectrum(method,
             if prev_n_sidebands != number_of_sidebands:
                 raise ValueError(
                     (
-                        'The library does not support sequences containing both zero and non-zero '
-                        'rotor frequencies. Consider using a smaller value instead of zero.'
+                        'The library does not support spectral dimensions containing '
+                        'both zero and non-zero rotor frequencies. Consider using a '
+                        'smaller value instead of zero.'
                     )
                 )
 
@@ -179,7 +167,7 @@ def one_d_spectrum(method,
     # magnetic_flux_density_in_T = np.asarray([dimension.magnetic_flux_density], dtype=np.float64)
     # srfiH = np.asarray([sample_rotation_frequency_in_Hz], dtype=np.float64)
     # rair = np.asarray([rotor_angle_in_rad], dtype=np.float64)
-    # create sequences
+    # create spectral_dimensions
 
 
 
@@ -237,9 +225,13 @@ def one_d_spectrum(method,
     # sample _______________________________________________________________
     for isotopomer in isotopomers:
         abundance = isotopomer.abundance
-        sub_sites = [site for site in isotopomer.sites if site.isotope.symbol == isotope]
+        isotopes = [site.isotope.symbol for site in isotopomer.sites]
+        if channel not in isotopes:
+            continue
 
-        number_of_sites= len(sub_sites)
+        # sub_sites = [site for site in isotopomer.sites if site.isotope.symbol == isotope]
+
+        number_of_sites= len(isotopomer.sites)
 
         if number_of_sites > 2:
             continue
@@ -264,10 +256,10 @@ def one_d_spectrum(method,
 
         # cdef int i, size = len(sample)
 
-        amp = np.zeros(total_n_points*number_of_sites)
+        amp = np.zeros(total_n_points)
 
         for i in range(number_of_sites):
-            site = sub_sites[i]
+            site = isotopomer.sites[i]
             spin_i[i] = site.isotope.spin
             gyromagnetic_ratio_i[i] = site.isotope.gyromagnetic_ratio
 
@@ -334,9 +326,11 @@ def one_d_spectrum(method,
 
         if number_of_sites != 0:
             if isotopomer.transitions is not None:
-                transition_array = np.asarray(isotopomer.transitions).ravel()
+                transition_array = np.asarray(
+                    isotopomer.transitions, dtype=np.float32
+                ).ravel()
             else:
-                transition_array = np.asarray([-0.5, 0.5])
+                transition_array = np.asarray([-0.5, 0.5], dtype=np.float32)
             # the number 2 is because of single site transition [mi, mf]
             # it dose not work for coupled sites.
             transition_increment = 2*number_of_sites
@@ -346,14 +340,14 @@ def one_d_spectrum(method,
             isotopomer_struct.spin = &spin_i[0]
             isotopomer_struct.gyromagnetic_ratio = &gyromagnetic_ratio_i[0]
 
-            isotopomer_struct.isotropic_chemical_shift_in_Hz = &iso_n[0]
-            isotopomer_struct.shielding_anisotropy_in_Hz = &zeta_n[0]
-            isotopomer_struct.shielding_asymmetry = &eta_n[0]
+            isotopomer_struct.isotropic_chemical_shift_in_ppm = &iso_n[0]
+            isotopomer_struct.shielding_symmetric_zeta_in_ppm = &zeta_n[0]
+            isotopomer_struct.shielding_symmetric_eta = &eta_n[0]
             isotopomer_struct.shielding_orientation = &ori_n[0]
 
-            isotopomer_struct.quadrupole_coupling_constant_in_Hz = &Cq_e[0]
-            isotopomer_struct.quadrupole_asymmetry = &eta_e[0]
-            isotopomer_struct.quadrupole_orientation = &ori_e[0]
+            isotopomer_struct.quadrupolar_Cq_in_Hz = &Cq_e[0]
+            isotopomer_struct.quadrupolar_eta = &eta_e[0]
+            isotopomer_struct.quadrupolar_orientation = &ori_e[0]
 
             isotopomer_struct.dipolar_couplings = &D_c[0]
 
