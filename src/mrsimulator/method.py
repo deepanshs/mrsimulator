@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """The Event class."""
 from copy import deepcopy
+from itertools import permutations
 from typing import ClassVar
 from typing import Dict
 from typing import List
@@ -25,9 +26,9 @@ class TransitionQuery(BaseModel):
                 between spin quantum numbers of the final and initial states.
     """
 
-    P: List[float] = [-1.0]
-    D: List[float] = Field(default=None)
-    f: Optional[float] = Field(default=None)
+    P: Optional[Dict] = {"channel-1": [[-1.0]]}
+    D: Optional[Dict] = Field(default=None)
+    f: Optional[Dict] = Field(default=None)
     transitions: List[Transition] = None
 
     class Config:
@@ -66,7 +67,7 @@ class Event(Parseable):
     rotor_frequency: Optional[float] = Field(default=0, ge=0)
     # 54.735 degrees = 0.9553166 radians
     rotor_angle: Optional[float] = Field(default=0.9553166, ge=0, le=1.5707963268)
-    transition_query: Optional[TransitionQuery] = None
+    transition_query: Optional[TransitionQuery] = TransitionQuery()
 
     property_unit_types: ClassVar = {
         "magnetic_flux_density": "magnetic flux density",
@@ -119,7 +120,7 @@ class SpectralDimension(Parseable):
     spectral_width: float = Field(..., gt=0)
     reference_offset: Optional[float] = Field(default=0)
     label: Optional[str] = ""
-    events: List[Event] = None
+    events: List[Event]
 
     property_unit_types: ClassVar = {
         "spectral_width": ["frequency", "dimensionless"],
@@ -218,7 +219,7 @@ class SpectralDimension(Parseable):
 class Method(Parseable):
     name: Optional[str] = ""
     description: Optional[str] = ""
-    channel: Optional[str] = None
+    channels: List[str]
     spectral_dimensions: List[SpectralDimension]
     simulation: Optional[cp.CSDM]
     experiment: Optional[cp.CSDM]
@@ -227,11 +228,9 @@ class Method(Parseable):
         validate_assignment = True
         arbitrary_types_allowed = True
 
-    @validator("channel", always=True)
-    def get_channel(cls, v, *, values, **kwargs):
-        if v is None:
-            return v
-        return Isotope(symbol=v)
+    @validator("channels", always=True)
+    def get_channels(cls, v, *, values, **kwargs):
+        return [Isotope(symbol=_) for _ in v]
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
@@ -255,12 +254,12 @@ class Method(Parseable):
 
     def to_dict_with_units(self):
         temp_dict = self.dict(
-            exclude={"spectral_dimensions", "channel", "simulation", "experiment"}
+            exclude={"spectral_dimensions", "channels", "simulation", "experiment"}
         )
         temp_dict["spectral_dimensions"] = [
             item.to_dict_with_units() for item in self.spectral_dimensions
         ]
-        temp_dict["channel"] = self.channel.to_dict_with_units()
+        temp_dict["channels"] = [item.to_dict_with_units() for item in self.channels]
         if self.simulation is not None:
             temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
         if self.experiment is not None:
@@ -269,10 +268,10 @@ class Method(Parseable):
 
     def dict(self, **kwargs):
         temp_dict = super().dict(**kwargs)
-        # if self.simulation is not None:
-        #     temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
-        # if self.experiment is not None:
-        #     temp_dict["experiment"] = self.experiment.to_dict()
+        if self.simulation is not None:
+            temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
+        if self.experiment is not None:
+            temp_dict["experiment"] = self.experiment.to_dict()
         return temp_dict
 
     def get_transition_pathways(self, isotopomer):
@@ -280,11 +279,14 @@ class Method(Parseable):
         segments = []
         for seq in self.spectral_dimensions:
             for ent in seq.events:
-                segments.append(
-                    np.asarray(
-                        transitions.filter(**ent.transition_query.to_dict_with_units(), isotopes = transition_isotope_dict)
-                    )
+                list_of_P = query_permutations(
+                    ent.transition_query.to_dict_with_units(),
+                    isotope=isotopomer.get_isotopes(),
+                    channel=[self.channel.symbol],
                 )
+                for symmetry in list_of_P:
+                    segments.append(np.asarray(transitions.filter(P=symmetry)))
+
         return cartesian_product(*segments)
 
 
@@ -295,3 +297,92 @@ def cartesian_product(*arrays):
     for i, a in enumerate(np.ix_(*arrays)):
         arr[..., i] = a
     return arr.reshape(-1, la)
+
+
+def get_iso_dict(channel, isotope):
+    """
+        Parse the isotopomer sites to determine indecies of each isotope that
+        is part of the method channel.
+
+        Args:
+            channel: List object
+            isotope: List object
+
+    """
+    iso_dict = {}
+
+    # determine channels for P
+    for i, item in enumerate(isotope):
+        if item in channel and item not in iso_dict:
+            iso_dict[item] = [i]
+        elif item in iso_dict:
+            iso_dict[item].append(i)
+
+    return iso_dict
+
+
+def query_permutations(query, isotope, channel):
+    """
+        Determines the transition symmetries that are involved in a given
+        transition query.
+
+        Args:
+            query: Dict bject
+            channel: List object
+            isotope: List object
+
+    """
+
+    P_permutated = []
+    iso_dict = get_iso_dict(channel=channel, isotope=isotope)
+    query_short = query["P"]
+    for i, items in enumerate(query_short):
+        # Check if method isotope is in the isotopomer
+        if channel[i] not in iso_dict:
+            print(
+                f"Method/channel isotope mismatch. Channel asks for {channel[i]} but is not in {isotope}"
+            )
+            return []
+
+        temp_P = []
+        for k in range(len(query_short[items])):
+            # Check transition query doesnt require more isotopes than present
+            if len(query_short[items][k]) > len(iso_dict[channel[i]]):
+                print("Failed: Transition query larger than channel")
+                return []
+            elif len(query_short[items][k]) <= len(iso_dict[channel[i]]):
+                query_short[items][k] += (
+                    len(iso_dict[channel[i]]) - len(query_short[items][k])
+                ) * [k]
+            temp_P += list(permutations(query_short[items][k]))
+        P_permutated += [temp_P]
+        # P_permutated += [list(permutations(query_short[items][k]))]
+
+    transition_symmetry_from_query = []  # rename to transition symmetry from query
+    for i, iso_trans_symmetry in enumerate(P_permutated):
+        print(iso_trans_symmetry)
+        temp_transitions = []
+        for transition in iso_trans_symmetry:
+            P_expanded = len(isotope) * [0]
+            for j, item in enumerate(transition):
+                P_expanded[iso_dict[channel[i]][j]] = item
+            if transition_symmetry_from_query == []:
+                temp_transitions.append(P_expanded)
+            else:
+                for k, intermediate in enumerate(transition_symmetry_from_query[-1]):
+                    temp_transitions.append(
+                        [sum(x) for x in zip(intermediate, P_expanded)]
+                    )
+        # transition_symmetry_from_query += temp_transitions
+
+        transition_symmetry_from_query.append(temp_transitions)
+        print("trans from query: ", transition_symmetry_from_query[-1])
+
+    return transition_symmetry_from_query[-1]
+
+
+#     ['17O', '1H', '29Si', '1H', '17O']
+# [[(1, 0), (0, 1)], [(2, 0), (0, 2)]]
+# Pass 0:  [[[1, 0, 0, 0, 0], [0, 0, 0, 0, 1]]]
+# Pass 1:  [[[1, 0, 0, 0, 0], [0, 0, 0, 0, 1]], [[1, 2, 0, 0, 0], [0, 2, 0, 0, 1], [1, 0, 0, 2, 0], [0, 0, 0, 2, 1]]]
+# [[1, 2, 0, 0, 0], [0, 2, 0, 0, 1], [1, 0, 0, 2, 0], [0, 0, 0, 2, 1]]

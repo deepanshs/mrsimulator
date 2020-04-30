@@ -13,7 +13,7 @@ def pre_setup(isotope, shift, reference_offset):
     )
     method = Method.parse_dict_with_units(
         dict(
-            channel=isotope,
+            channels=[isotope],
             spectral_dimensions=[
                 {
                     "count": 2046,

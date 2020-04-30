@@ -41,16 +41,27 @@ def basic_spectral_dimension_tests(the_dimension):
 
 def test_spectral_dimension():
     # parse dict with units
+    event_dictionary = {
+        "fraction": 0.5,
+        "magnetic_flux_density": "9.6 T",
+        "rotor_frequency": "1 kHz",
+        "rotor_angle": "54.735 deg",
+    }
     dictionary = {
         "count": 1024,
         "spectral_width": "100 Hz",
         "reference_offset": "0 GHz",
+        "events": [event_dictionary],
     }
     the_dimension = SpectralDimension.parse_dict_with_units(dictionary)
     basic_spectral_dimension_tests(the_dimension)
 
     # direct initialization
-    the_dimension = SpectralDimension(count=1024, spectral_width=100)
+    the_dimension = SpectralDimension(
+        count=1024,
+        spectral_width=100,
+        events=[Event.parse_dict_with_units(event_dictionary)],
+    )
     basic_spectral_dimension_tests(the_dimension)
 
     # coordinate in Hz
@@ -76,7 +87,19 @@ def test_spectral_dimension():
 
     # to dict with units
     should_be = dict(
-        count=31, spectral_width="31.0 Hz", reference_offset="0.0 Hz", label="45.0"
+        count=31,
+        spectral_width="31.0 Hz",
+        reference_offset="0.0 Hz",
+        label="45.0",
+        events=[
+            {
+                "fraction": 0.5,
+                "magnetic_flux_density": "9.6 T",
+                "rotor_angle": "0.9553059660790962 rad",
+                "rotor_frequency": "1000.0 Hz",
+                "transition_query": {"P": [-1.0]},
+            }
+        ],
     )
     assert should_be == the_dimension.to_dict_with_units()
 
@@ -145,5 +168,6 @@ def test_events():
         magnetic_flux_density="11.7 T",
         rotor_frequency="25000.0 Hz",
         rotor_angle=f"{angle} rad",
+        transition_query={"P": [-1.0]},
     )
     assert should_be == the_event.to_dict_with_units()

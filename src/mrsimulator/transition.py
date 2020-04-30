@@ -44,3 +44,10 @@ class Transition(BaseModel):
     def delta_m(self, i):
         """Return the Δm element of the transition corresponding to the ith site."""
         return self.final[i] - self.initial[i]
+
+    def tolist(self):
+        """Convert the transition to a list of quantum numbers where the first N
+        quantum numbers corresponds to the initial energy state while the last N
+        corresponds to the final energy state, where N is the number of sites."""
+        lst = self.initial + self.final
+        return lst

@@ -37,6 +37,7 @@ class Simulator(BaseModel):
     isotopomers: List[Isotopomer] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
+    indexes = []
 
     class Config:
         validate_assignment = True
@@ -119,6 +120,8 @@ class Simulator(BaseModel):
                                                                  'zeta': '2.1 ppm'}}]}]}
         """
         sim = {}
+        sim["name"] = self.name
+        sim["description"] = self.description
         sim["isotopomers"] = [_.to_dict_with_units() for _ in self.isotopomers]
 
         if include_methods:
@@ -126,6 +129,8 @@ class Simulator(BaseModel):
             if len(method) != 0:
                 sim["methods"] = method
 
+        sim["config"] = self.config.dict()
+        sim["indexes"] = self.indexes
         return sim
 
     def load_isotopomers(self, filename):
@@ -163,12 +168,14 @@ class Simulator(BaseModel):
             method_index = [method_index]
         for index in method_index:
             method = self.methods[index]
-            amp = one_d_spectrum(
+            amp, indexes = one_d_spectrum(
                 method=method,
                 isotopomers=self.isotopomers,
                 **self.config._dict,
                 **kwargs,
             )
+
+            self.indexes.append(indexes)
 
             if isinstance(amp, list):
                 simulated_data = amp

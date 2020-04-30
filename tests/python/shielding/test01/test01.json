@@ -1,6 +1,6 @@
 {
   "methods": [{
-    "channel": "1H",
+    "channels": ["1H"],
     "spectral_dimensions": [{
       "count": 2048,
       "spectral_width": "100 kHz",

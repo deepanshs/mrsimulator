@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from collections import MutableSequence
+from itertools import permutations
 
 import numpy as np
-from itertools import permutations
 from mrsimulator.transition import Transition
 
 
@@ -78,7 +78,7 @@ class TransitionList(AbstractList):
     def Zeeman_allowed(self):
         return TransitionList([item for item in self._list if item.Zeeman_allowed])
 
-    def filter(self, P=None, D=None, transitions=None, start_state=None, isotopes = None):
+    def filter(self, P=None, D=None, transitions=None, start_state=None, isotopes=None):
         """Filter a list of transitions to satisfy the filtering criterion.
             Args:
                 P: A list of Δm values. If `l` Δm are given for an isotopomer with N
@@ -93,15 +93,11 @@ class TransitionList(AbstractList):
 
         if P is transitions is start_state is None:
             P = -1
-        ts = self._list.copy() 
+        ts = self._list.copy()
 
         # if search is None:
         if P is not None:
-            print(P)
-            P_expanded = P + [0]*(len(isotopes['site_list'])-1)
-            print(P_expanded)
-            P_permutated = permutations(P_expanded)
-            ts = TransitionList([item for item in ts if item.P == P])
+            ts = TransitionList([item for item in ts if np.allclose(item.P, P)])
         if transitions is not None:
             for transition in transitions:
                 ts = TransitionList(

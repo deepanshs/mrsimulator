@@ -86,12 +86,11 @@ class Isotopomer(Parseable):
 
         return super().parse_dict_with_units(py_dict_copy)
 
-    @property
-    def Zeeman_energy_states(self):
+    def _Zeeman_energy_states(self):
         """
-        Return a list of all Zeeman energy states, where the energy states are
-        represented by a list of quantum numbers, [m_1, m_2,..m_n], where m_i is the
-        quantum number associated with the ith site of the isotopomer.
+        Return the energy states as a Numpy array where axis 0 is the number of energy
+        states and axis 1 is the spin quantum numbers. The spin quantum numbers are
+        ordered based on the order of sites in the isotopomer.
         """
         two_I_p_one = [int(2 * site.isotope.spin + 1) for site in self.sites]
         spin_quantum_numbers = [
@@ -109,19 +108,37 @@ class Isotopomer(Parseable):
                 else:
                     k = np.kron(k, np.ones(two_I_p_one[i]))
             lst.append(k)
-        return [ZeemanState(len(self.sites), *item) for item in np.asarray(lst).T]
+        return np.asarray(lst).T
+
+    @property
+    def Zeeman_energy_states(self):
+        """
+        Return a list of all Zeeman energy states, where the energy states are
+        represented by a list of quantum numbers, [m_1, m_2,..m_n], where m_i is the
+        quantum number associated with the ith site of the isotopomer.
+        """
+        states = self._Zeeman_energy_states()
+        return [ZeemanState(len(self.sites), *item) for item in states]
+
+    def _all_transitions(self):
+        """
+        Return transition as a Numpy array where axis 0 is the number of transitions,
+        axis 1 is the initial energy state, and axis 2 is the final energy state.
+        """
+        energy_states = self._Zeeman_energy_states()
+        s = energy_states.shape[0]
+        lst = np.arange(s)
+        indexes = np.asarray(np.meshgrid(lst, lst)).T.reshape(-1, 2)
+        return energy_states[indexes]
 
     @property
     def all_transitions(self):
         """Returns a list of all possible spin transitions in as isotopomer."""
-        energy_states = np.asarray(self.Zeeman_energy_states)
-        s = energy_states.shape[0]
-        lst = np.arange(s)
-        indexes = np.asarray(np.meshgrid(lst, lst)).T.reshape(-1, 2)
+        transitions = self._all_transitions()
         return TransitionList(
             [
                 Transition(initial=item[0].tolist(), final=item[1].tolist())
-                for item in energy_states[indexes]
+                for item in transitions
             ]
         )
 
