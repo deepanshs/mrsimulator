@@ -282,10 +282,27 @@ class Method(Parseable):
                 list_of_P = query_permutations(
                     ent.transition_query.to_dict_with_units(),
                     isotope=isotopomer.get_isotopes(),
-                    channel=[self.channel.symbol],
+                    channel=[item.symbol for item in self.channels],
                 )
+                P_segment = []
+                # delta_P = transitions[:,:]
                 for symmetry in list_of_P:
-                    segments.append(np.asarray(transitions.filter(P=symmetry)))
+                    P_segment += transitions.filter(P=symmetry)
+
+                # if ent.transition_query.D != None:
+                #     list_of_D = query_permutations(
+                #         ent.transition_query.to_dict_with_units(),
+                #         isotope=isotopomer.get_isotopes(),
+                #         channel=[item.symbol for item in self.channels],
+                #         transition_symmetry = "D"
+                #     )
+                #     D_segment = []
+                #     print('list of D: ', list_of_D)
+                #     for symmetry in list_of_D:
+                #         D_segment += transitions.filter(D=symmetry)
+                #     print('D_segment: ', D_segment)
+
+                segments.append(np.asarray(P_segment))  # append the intersection
 
         return cartesian_product(*segments)
 
@@ -321,7 +338,7 @@ def get_iso_dict(channel, isotope):
     return iso_dict
 
 
-def query_permutations(query, isotope, channel):
+def query_permutations(query, isotope, channel, transition_symmetry="P"):
     """
         Determines the transition symmetries that are involved in a given
         transition query.
@@ -330,12 +347,13 @@ def query_permutations(query, isotope, channel):
             query: Dict bject
             channel: List object
             isotope: List object
+            transition_symmetry: str object. Derived from a transition query
 
     """
 
     P_permutated = []
     iso_dict = get_iso_dict(channel=channel, isotope=isotope)
-    query_short = query["P"]
+    query_short = query[transition_symmetry]
     for i, items in enumerate(query_short):
         # Check if method isotope is in the isotopomer
         if channel[i] not in iso_dict:
@@ -358,31 +376,25 @@ def query_permutations(query, isotope, channel):
         P_permutated += [temp_P]
         # P_permutated += [list(permutations(query_short[items][k]))]
 
-    transition_symmetry_from_query = []  # rename to transition symmetry from query
+    transition_symmetry_from_query = []
     for i, iso_trans_symmetry in enumerate(P_permutated):
-        print(iso_trans_symmetry)
+        # creating transition symmetries isotope by isotope
         temp_transitions = []
         for transition in iso_trans_symmetry:
             P_expanded = len(isotope) * [0]
             for j, item in enumerate(transition):
+                # filling indecies of isotopomer with a sites transition symmetries
                 P_expanded[iso_dict[channel[i]][j]] = item
+
             if transition_symmetry_from_query == []:
                 temp_transitions.append(P_expanded)
             else:
+                # Each isotope is added to the previous isotope to create the full transition symmetry
                 for k, intermediate in enumerate(transition_symmetry_from_query[-1]):
                     temp_transitions.append(
                         [sum(x) for x in zip(intermediate, P_expanded)]
                     )
-        # transition_symmetry_from_query += temp_transitions
 
         transition_symmetry_from_query.append(temp_transitions)
-        print("trans from query: ", transition_symmetry_from_query[-1])
 
     return transition_symmetry_from_query[-1]
-
-
-#     ['17O', '1H', '29Si', '1H', '17O']
-# [[(1, 0), (0, 1)], [(2, 0), (0, 2)]]
-# Pass 0:  [[[1, 0, 0, 0, 0], [0, 0, 0, 0, 1]]]
-# Pass 1:  [[[1, 0, 0, 0, 0], [0, 0, 0, 0, 1]], [[1, 2, 0, 0, 0], [0, 2, 0, 0, 1], [1, 0, 0, 2, 0], [0, 0, 0, 2, 1]]]
-# [[1, 2, 0, 0, 0], [0, 2, 0, 0, 1], [1, 0, 0, 2, 0], [0, 0, 0, 2, 1]]
