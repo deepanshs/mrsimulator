@@ -14,7 +14,7 @@ isotopomer_object = Isotopomer.parse_dict_with_units(the_isotopomer)
 sim.isotopomers += [isotopomer_object]
 
 method = {
-    "channel": "1H",
+    "channels": ["1H"],
     "spectral_dimensions": [
         {
             "count": 4096,

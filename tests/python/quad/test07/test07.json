@@ -1,6 +1,6 @@
 {
   "methods": [{
-    "channel": "23Na",
+    "channels": ["23Na"],
     "spectral_dimensions": [{
       "count": 1024,
       "spectral_width": "70 kHz",

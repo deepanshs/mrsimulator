@@ -1,6 +1,6 @@
 {
   "methods": [{
-    "channel": "29Si",
+    "channels": ["29Si"],
     "spectral_dimensions": [{
       "count": 100,
       "spectral_width": "100 kHz",

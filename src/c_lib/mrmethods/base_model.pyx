@@ -52,13 +52,13 @@ def one_d_spectrum(method,
 # ---------------------------------------------------------------------
 # observed spin _______________________________________________________
     # dimension = dimension[0]
-    channel = method.channel.symbol
+    channel = method.channels[0].symbol
     # spin quantum number of the observed spin
-    cdef double spin_quantum_number = method.channel.spin
+    cdef double spin_quantum_number = method.channels[0].spin
 
     # gyromagnetic ratio
     # cdef double larmor_frequency =
-    cdef gyromagnetic_ratio = method.channel.gyromagnetic_ratio
+    cdef gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
     cdef double factor = 1.0
     if gyromagnetic_ratio > 0.0:
         factor = -1.0
@@ -213,24 +213,26 @@ def one_d_spectrum(method,
 
     cdef ndarray[double] D_c
 
-    cdef int trans__
+    cdef int trans__, pathway_increment, pathway_count, transition_count_per_pathway
     cdef ndarray[double, ndim=1] amp
     amp1 = np.zeros(total_n_points, dtype=np.float64)
     amp_individual = []
 
     cdef clib.isotopomer_ravel isotopomer_struct
+
+    index_ = []
     # cdef clib.isotopomers_list *isotopomers_list_c
 
     # ---------------------------------------------------------------------
     # sample _______________________________________________________________
-    for isotopomer in isotopomers:
+    for index, isotopomer in enumerate(isotopomers):
         abundance = isotopomer.abundance
         isotopes = [site.isotope.symbol for site in isotopomer.sites]
         if channel not in isotopes:
             continue
 
         # sub_sites = [site for site in isotopomer.sites if site.isotope.symbol == isotope]
-
+        index_.append(index)
         number_of_sites= len(isotopomer.sites)
 
         if number_of_sites > 2:
@@ -325,16 +327,28 @@ def one_d_spectrum(method,
                 #     print(f'Quadrupolar orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
         if number_of_sites != 0:
-            if isotopomer.transitions is not None:
-                transition_array = np.asarray(
-                    isotopomer.transitions, dtype=np.float32
-                ).ravel()
-            else:
-                transition_array = np.asarray([-0.5, 0.5], dtype=np.float32)
+            transition_pathway = method.get_transition_pathways(isotopomer)
+            pathway_count, transition_count_per_pathway = transition_pathway.shape
+
+            # convert transition objects to list
+            lst = []
+            for item in transition_pathway.ravel():
+                lst += item.tolist()
+
+            transition_array = np.asarray(lst, dtype=np.float32).ravel()
+            pathway_increment = 2*number_of_sites*transition_count_per_pathway
+
+            # if isotopomer.transitions is not None:
+            #     transition_array = np.asarray(
+            #         isotopomer.transitions, dtype=np.float32
+            #     ).ravel()
+            # else:
+            #     transition_array = np.asarray([0.5, -0.5], dtype=np.float32)
+
             # the number 2 is because of single site transition [mi, mf]
             # it dose not work for coupled sites.
-            transition_increment = 2*number_of_sites
-            number_of_transitions = int((transition_array.size)/transition_increment)
+            # transition_increment = 2*number_of_sites
+            # number_of_transitions = int((transition_array.size)/transition_increment)
 
             isotopomer_struct.number_of_sites = number_of_sites
             isotopomer_struct.spin = &spin_i[0]
@@ -352,13 +366,13 @@ def one_d_spectrum(method,
             isotopomer_struct.dipolar_couplings = &D_c[0]
 
             # isotopomers_list_c[i] = isotopomer_struct
-            for trans__ in range(number_of_transitions):
+            for trans__ in range(pathway_count):
                 clib.__mrsimulator_core(
                     # spectrum information and related amplitude
                     &amp[0],
                     &isotopomer_struct,
                     0, # turn off quad second order isotropic contribution
-                    &transition_array[transition_increment*trans__],
+                    &transition_array[pathway_increment*trans__],
                     the_sequence,
                     n_sequence,
                     the_fftw_scheme,
@@ -366,10 +380,10 @@ def one_d_spectrum(method,
                     interpolation,
                     )
 
-            temp = amp.reshape(number_of_sites, total_n_points).sum(axis=0)*abundance
+            temp = amp*abundance
 
             ## reverse the spectrum if gyromagnetic ratio is positive.
-            if gyromagnetic_ratio > 0:
+            if gyromagnetic_ratio < 0:
                 if total_n_points % 2 == 0:
                     temp[1:] = temp[1:][::-1]
                 else:
@@ -383,8 +397,7 @@ def one_d_spectrum(method,
             if decompose:
                 amp_individual.append([])
 
-    if decompose:
+    if decompose and len(amp_individual) != 0:
         amp1 = amp_individual
 
-
-    return amp1
+    return amp1, index_

@@ -66,7 +66,7 @@ void __mrsimulator_core(
   complex128 *R4_temp = malloc_complex128(9);
 
   double *spec_site_ptr;
-
+  int transition_increment = 2 * ravel_isotopomer->number_of_sites;
   MRS_plan *plan;
 
   // spec_site = site * the_sequence[0].count;
@@ -107,6 +107,7 @@ void __mrsimulator_core(
           the_sequence[seq].inverse_increment);
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
 
+      transition += transition_increment;
     }  // end events
 
     /* ---------------------------------------------------------------------

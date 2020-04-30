@@ -66,7 +66,7 @@ class Event(Parseable):
     rotor_frequency: Optional[float] = Field(default=0, ge=0)
     # 54.735 degrees = 0.9553166 radians
     rotor_angle: Optional[float] = Field(default=0.9553166, ge=0, le=1.5707963268)
-    transition_query: Optional[TransitionQuery] = None
+    transition_query: Optional[TransitionQuery] = TransitionQuery()
 
     property_unit_types: ClassVar = {
         "magnetic_flux_density": "magnetic flux density",
@@ -119,7 +119,7 @@ class SpectralDimension(Parseable):
     spectral_width: float = Field(..., gt=0)
     reference_offset: Optional[float] = Field(default=0)
     label: Optional[str] = ""
-    events: List[Event] = None
+    events: List[Event]
 
     property_unit_types: ClassVar = {
         "spectral_width": ["frequency", "dimensionless"],
@@ -218,7 +218,7 @@ class SpectralDimension(Parseable):
 class Method(Parseable):
     name: Optional[str] = ""
     description: Optional[str] = ""
-    channel: Optional[str] = None
+    channels: List[str]
     spectral_dimensions: List[SpectralDimension]
     simulation: Optional[cp.CSDM]
     experiment: Optional[cp.CSDM]
@@ -227,11 +227,9 @@ class Method(Parseable):
         validate_assignment = True
         arbitrary_types_allowed = True
 
-    @validator("channel", always=True)
-    def get_channel(cls, v, *, values, **kwargs):
-        if v is None:
-            return v
-        return Isotope(symbol=v)
+    @validator("channels", always=True)
+    def get_channels(cls, v, *, values, **kwargs):
+        return [Isotope(symbol=_) for _ in v]
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
@@ -255,12 +253,12 @@ class Method(Parseable):
 
     def to_dict_with_units(self):
         temp_dict = self.dict(
-            exclude={"spectral_dimensions", "channel", "simulation", "experiment"}
+            exclude={"spectral_dimensions", "channels", "simulation", "experiment"}
         )
         temp_dict["spectral_dimensions"] = [
             item.to_dict_with_units() for item in self.spectral_dimensions
         ]
-        temp_dict["channel"] = self.channel.to_dict_with_units()
+        temp_dict["channels"] = [item.to_dict_with_units() for item in self.channels]
         if self.simulation is not None:
             temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
         if self.experiment is not None:
@@ -269,10 +267,10 @@ class Method(Parseable):
 
     def dict(self, **kwargs):
         temp_dict = super().dict(**kwargs)
-        # if self.simulation is not None:
-        #     temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
-        # if self.experiment is not None:
-        #     temp_dict["experiment"] = self.experiment.to_dict()
+        if self.simulation is not None:
+            temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
+        if self.experiment is not None:
+            temp_dict["experiment"] = self.experiment.to_dict()
         return temp_dict
 
     def get_transition_pathways(self, isotopomer):

@@ -30,21 +30,19 @@ def test_equality():
     c = Simulator(isotopomers=[Isotopomer()])
     assert a is not c
 
-    result = {"isotopomers": [{"abundance": "100 %", "sites": []}]}
+    result = {
+        "name": "",
+        "description": "",
+        "isotopomers": [{"abundance": "100 %", "sites": []}],
+        "config": {
+            "decompose": False,
+            "integration_density": 70,
+            "integration_volume": "octant",
+            "number_of_sidebands": 64,
+        },
+        "indexes": [],
+    }
     assert c.to_dict_with_units(include_methods=True) == result
-
-    # result["dimensions"] = [
-    #     {
-    #         "magnetic_flux_density": "9.4 T",
-    #         "number_of_points": 1024,
-    #         "reference_offset": "0 Hz",
-    #         "rotor_angle": "0.9553166 rad",
-    #         "rotor_frequency": "0 Hz",
-    #         "spectral_width": "10.0 Hz",
-    #     }
-    # ]
-    # c.dimensions = [Dimension(spectral_width=10)]
-    # assert c.to_dict_with_units(include_dimensions=True) == result
 
 
 def get_simulator():
@@ -68,38 +66,3 @@ def test_get_isotopes():
     assert sim.get_isotopes(I=2.5) == {"27Al", "25Mg"}
     assert sim.get_isotopes(I=3.5) == {"45Sc"}
     assert sim.get_isotopes(I=4.5) == {"87Sr"}
-
-
-# def test_csdm_object():
-#     sim = Simulator()
-#     site = Site(
-#         isotope="27Al",
-#         isotropic_chemical_shift=120,
-#         shielding_symmetric={"zeta": 2.1, "eta": 0.1},
-#         quadrupole={"Cq": 5.1e6, "eta": 0.5},
-#     )
-#     sim.isotopomers = [{"name": "test", "description": "awesome", "sites": [site]}]
-#     sim.methods = [
-#         {
-#             "isotope": "27Al",
-#             "spectral_dimensions": [
-#                 {
-#                     "count": 1024,
-#                     "spectral_width": 100,
-#                     "reference_offset": 0,
-#                     "events": [
-#                         {
-#                             "magnetic_flux_density": 9.4,
-#                             "rotor_frequency": 0,
-#                             "rotor_angle": 0.9553166,
-#                         }
-#                     ],
-#                 }
-#             ],
-#         }
-#     ]
-#     sim.run()
-#     csdm_obj = sim.methods[0].simulation
-
-#     assert np.allclose(csdm_obj.dependent_variables[0].components[0], y)
-#     assert csdm_obj.dimensions[0].count == x.size

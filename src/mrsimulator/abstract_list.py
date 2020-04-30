@@ -94,7 +94,7 @@ class TransitionList(AbstractList):
 
         # if search is None:
         if P is not None:
-            ts = TransitionList([item for item in ts if item.P == P])
+            ts = TransitionList([item for item in ts if np.allclose(item.P, P)])
         if transitions is not None:
             for transition in transitions:
                 ts = TransitionList(
