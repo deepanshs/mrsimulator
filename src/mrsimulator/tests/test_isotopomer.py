@@ -98,7 +98,7 @@ def test_isotopomer_methods():
             }
         ],
         "abundance": 10,
-        "transitions": None,
+        "transition_pathways": None,
     }
     assert iso1 == result
 

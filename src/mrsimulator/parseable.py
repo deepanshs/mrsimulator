@@ -65,6 +65,16 @@ class Parseable(BaseModel):
 
     def to_dict_with_units(self):
         """Parse the class object to a JSON compliant python dict with units."""
+
+        def get_list(member, obj):
+            lst = []
+            for i, item in enumerate(obj):
+                if isinstance(item, list):
+                    lst.append(get_list(member[i], item))
+                else:
+                    lst.append(member[i].to_dict_with_units())
+            return lst
+
         temp_dict = {}
         for k, v in self.dict(exclude={"property_units"}).items():
 
@@ -76,10 +86,7 @@ class Parseable(BaseModel):
 
             # check the list objects
             elif isinstance(v, list):
-                list_len = len(v)
-                temp_dict[k] = [
-                    getattr(self, k)[_].to_dict_with_units() for _ in range(list_len)
-                ]
+                temp_dict[k] = get_list(getattr(self, k), v)
             elif v not in [None, ""]:
                 temp_dict[k] = v
 

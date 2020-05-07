@@ -153,9 +153,11 @@ def one_d_spectrum(method,
 
         count.append(seq.count)
         offset = seq.spectral_width / 2.0
-        coordinates_offset.append(seq.reference_offset * factor - offset)
+        coordinates_offset.append(-seq.reference_offset * factor - offset)
         increment.append(seq.spectral_width / seq.count)
         event_i.append(len(seq.events))
+
+        seq.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
 
     magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
     srfiH = np.asarray(vr, dtype=np.float64)
@@ -297,8 +299,8 @@ def one_d_spectrum(method,
             #     print(f'Shielding orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
             # CSA tensor in Hz
-            iso_n[i] = iso #* factor
-            zeta_n[i] = zeta #* factor
+            iso_n[i] = iso
+            zeta_n[i] = zeta
             eta_n[i] = eta
             ori_n[3*i:3*i+3] = [alpha, beta, gamma]
 
@@ -317,7 +319,7 @@ def one_d_spectrum(method,
                 else:
                     Cq, eta, alpha, beta, gamma = 0.0, 0.0, 0.0, 0.0, 0.0
 
-                Cq_e[i] = Cq #* factor
+                Cq_e[i] = Cq
                 eta_e[i] = eta
                 ori_e[3*i:3*i+3] = [alpha, beta, gamma]
 
@@ -327,7 +329,10 @@ def one_d_spectrum(method,
                 #     print(f'Quadrupolar orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
         if number_of_sites != 0:
-            transition_pathway = method.get_transition_pathways(isotopomer)
+            transition_pathway = isotopomer.transition_pathways
+            if transition_pathway is None:
+                transition_pathway = method.get_transition_pathways(isotopomer)
+            transition_pathway = np.asarray(transition_pathway)
             pathway_count, transition_count_per_pathway = transition_pathway.shape
 
             # convert transition objects to list

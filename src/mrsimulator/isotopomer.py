@@ -33,9 +33,9 @@ class Isotopomer(Parseable):
                 representing a nuclear site. Default value is an empty list.
         abundance: The abundance of the isotopomer in unit of %. The default value is
                 100. This attribute is useful when multiple isotopomers are present.
-        transitions: A list of lists where each list is a transition, given as
-                [initial state, final state]. For examples [[-0.5, 0.5]], [[1.5, 2.5]].
-                You may also provide, multiple transitions, [[-0.5, 0.5], [-1.5, 0.5]].
+        transition_pathways: A list of Transition Pathways, where each Transition
+                Pathway is a list of Transition objects. For examples,
+                [{'initial': -0.5, 'final': 0.5}, {'initial': 1.5, 'final': 2.5}].
                 The resulting spectrum is a sum of resonances from individual
                 transitions.
     """
@@ -49,7 +49,7 @@ class Isotopomer(Parseable):
     property_unit_types: ClassVar = {"abundance": "dimensionless"}
     property_default_units: ClassVar = {"abundance": "pct"}
     property_units: Dict = {"abundance": "pct"}
-    transitions: Optional[List] = None
+    transition_pathways: Optional[List] = None
 
     class Config:
         validate_assignment = True

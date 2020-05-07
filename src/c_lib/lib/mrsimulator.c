@@ -431,6 +431,8 @@ void MRS_rotate_components_from_PAS_to_common_frame(
 
   for (site = 0; site < n_sites; site++) {
     if (*mi == *mf) {
+      mi++;
+      mf++;
       continue;
     }
     larmor_freq_in_MHz = -B0_in_T * ravel_isotopomer->gyromagnetic_ratio[site];

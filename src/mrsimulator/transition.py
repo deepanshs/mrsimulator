@@ -20,6 +20,11 @@ class Transition(BaseModel):
     initial: List[float] = []
     final: List[float] = []
 
+    def __repr__(self):
+        final = ", ".join([str(i) for i in self.final])
+        initial = ", ".join([str(i) for i in self.initial])
+        return f"|{final}⟩⟨{initial}|"
+
     @property
     def Zeeman_allowed(self):
         if abs(self.p) == 1:
@@ -51,3 +56,6 @@ class Transition(BaseModel):
         corresponds to the final energy state, where N is the number of sites."""
         lst = self.initial + self.final
         return lst
+
+    def to_dict_with_units(self):
+        return self.dict()

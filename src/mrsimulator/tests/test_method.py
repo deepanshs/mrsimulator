@@ -7,36 +7,36 @@ from mrsimulator.method import SpectralDimension
 from pydantic import ValidationError
 
 
-def basic_spectral_dimension_tests(the_dimension):
-    assert the_dimension.count == 1024
+def basic_spectral_dimension_tests(the_method):
+    assert the_method.count == 1024
     error = "ensure this value is greater than 0"
     with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
-        the_dimension.count = -1024
+        the_method.count = -1024
     with pytest.raises(ValidationError, match="value is not a valid integer"):
-        the_dimension.count = "test"
+        the_method.count = "test"
 
     # spectral width test
-    assert the_dimension.spectral_width == 100
+    assert the_method.spectral_width == 100
     with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
-        the_dimension.spectral_width = 0
+        the_method.spectral_width = 0
     # ensure the default value is Hz
-    assert the_dimension.property_units["spectral_width"] == "Hz"
+    assert the_method.property_units["spectral_width"] == "Hz"
 
     # reference offset test
-    assert the_dimension.reference_offset == 0
-    the_dimension.reference_offset = -120
-    assert the_dimension.reference_offset == -120
+    assert the_method.reference_offset == 0
+    the_method.reference_offset = -120
+    assert the_method.reference_offset == -120
     # ensure the default value is Hz
-    assert the_dimension.property_units["spectral_width"] == "Hz"
+    assert the_method.property_units["spectral_width"] == "Hz"
     with pytest.raises(ValidationError, match=".*value is not a valid float.*"):
-        the_dimension.reference_offset = "-120 Hz"
+        the_method.reference_offset = "-120 Hz"
 
     # label
-    assert the_dimension.label == ""
-    the_dimension.label = "This is a spectral dimensions"
-    assert the_dimension.label == "This is a spectral dimensions"
-    the_dimension.label = 45.0
-    assert the_dimension.label == "45.0"
+    assert the_method.label == ""
+    the_method.label = "This is a spectral dimensions"
+    assert the_method.label == "This is a spectral dimensions"
+    the_method.label = 45.0
+    assert the_method.label == "45.0"
 
 
 def test_spectral_dimension():
@@ -53,36 +53,36 @@ def test_spectral_dimension():
         "reference_offset": "0 GHz",
         "events": [event_dictionary],
     }
-    the_dimension = SpectralDimension.parse_dict_with_units(dictionary)
-    basic_spectral_dimension_tests(the_dimension)
+    the_method = SpectralDimension.parse_dict_with_units(dictionary)
+    basic_spectral_dimension_tests(the_method)
 
     # direct initialization
-    the_dimension = SpectralDimension(
+    the_method = SpectralDimension(
         count=1024,
         spectral_width=100,
         events=[Event.parse_dict_with_units(event_dictionary)],
     )
-    basic_spectral_dimension_tests(the_dimension)
+    basic_spectral_dimension_tests(the_method)
 
     # coordinate in Hz
-    the_dimension.count = 32
-    the_dimension.reference_offset = 0
-    the_dimension.spectral_width = 32
+    the_method.count = 32
+    the_method.reference_offset = 0
+    the_method.spectral_width = 32
 
     coordinates = np.arange(32) - 16
-    assert np.allclose(the_dimension.coordinates_Hz, coordinates)
+    assert np.allclose(the_method.coordinates_Hz, coordinates)
 
-    the_dimension.reference_offset = -4
-    assert np.allclose(the_dimension.coordinates_Hz, coordinates - 4)
+    the_method.reference_offset = -4
+    assert np.allclose(the_method.coordinates_Hz, coordinates - 4)
 
-    the_dimension.count = 31
-    the_dimension.reference_offset = 0
-    the_dimension.spectral_width = 31
+    the_method.count = 31
+    the_method.reference_offset = 0
+    the_method.spectral_width = 31
     coordinates = np.arange(31) - 15
-    assert np.allclose(the_dimension.coordinates_Hz, coordinates)
+    assert np.allclose(the_method.coordinates_Hz, coordinates)
 
     # CSDM dimension
-    csdm_dimension = the_dimension.to_csdm_dimension()
+    csdm_dimension = the_method.to_csdm_dimension()
     assert np.allclose(csdm_dimension.coordinates.to("Hz").value, coordinates)
 
     # to dict with units
@@ -97,11 +97,11 @@ def test_spectral_dimension():
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
-                "transition_query": {"P": [-1.0]},
+                "transition_query": {"P": {"channel-1": [[-1.0]]}},
             }
         ],
     )
-    assert should_be == the_dimension.to_dict_with_units()
+    assert should_be == the_method.to_dict_with_units()
 
 
 def basic_event_tests(the_event):
@@ -168,6 +168,6 @@ def test_events():
         magnetic_flux_density="11.7 T",
         rotor_frequency="25000.0 Hz",
         rotor_angle=f"{angle} rad",
-        transition_query={"P": [-1.0]},
+        transition_query={"P": {"channel-1": [[-1.0]]}},
     )
     assert should_be == the_event.to_dict_with_units()

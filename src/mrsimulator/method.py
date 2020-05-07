@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """The Event class."""
+import warnings
 from copy import deepcopy
 from itertools import permutations
 from typing import ClassVar
@@ -111,6 +112,8 @@ class SpectralDimension(Parseable):
                 :math:`\Delta x`, along the dimension in units of Hz.
         reference_offset: An `optional` float with the reference offset, :math:`x_0`
                 along the dimension in units of Hz. The default value is ``0``.
+        origin_offset: An `optional` float with the origin offset (Larmor frequency)
+                along the dimension in units of Hz. The default value is ``0``.
         label: An `optional` string label. The default is an empty string.
         events: A `required` list of Event object or an equivalent list of dict objects
                 describing the series of events along the spectroscopic dimension.
@@ -119,20 +122,27 @@ class SpectralDimension(Parseable):
     count: int = Field(1024, gt=0)
     spectral_width: float = Field(..., gt=0)
     reference_offset: Optional[float] = Field(default=0)
+    origin_offset: Optional[float] = None
     label: Optional[str] = ""
     events: List[Event]
 
     property_unit_types: ClassVar = {
         "spectral_width": ["frequency", "dimensionless"],
         "reference_offset": ["frequency", "dimensionless"],
+        "origin_offset": ["frequency", "dimensionless"],
     }
 
     property_default_units: ClassVar = {
         "spectral_width": ["Hz", "ppm"],
         "reference_offset": ["Hz", "ppm"],
+        "origin_offset": ["Hz", "ppm"],
     }
 
-    property_units: Dict = {"spectral_width": "Hz", "reference_offset": "Hz"}
+    property_units: Dict = {
+        "spectral_width": "Hz",
+        "reference_offset": "Hz",
+        "origin_offset": "Hz",
+    }
 
     class Config:
         validate_assignment = True
@@ -158,33 +168,32 @@ class SpectralDimension(Parseable):
         increment = self.spectral_width / self.count
         return (np.arange(n) - Tk) * increment + self.reference_offset
 
-    # @property
-    # def coordinates_ppm(self):
-    #     r"""
-    #     The grid coordinates along the dimension as dimension frequency ratio
-    #     in units of ppm. The coordinates are evaluated as
+    @property
+    def coordinates_ppm(self):
+        r"""
+        The grid coordinates along the dimension as dimension frequency ratio
+        in units of ppm. The coordinates are evaluated as
 
-    #     .. math::
-    #         x_\text{ppm} = \frac{x_\text{Hz}} {x_0 + \omega_0}
+        .. math::
+            x_\text{ppm} = \frac{x_\text{Hz}} {x_0 + \omega_0}
 
-    #     where :math:`\omega_0` is the Larmor frequency.
+        where :math:`\omega_0` is the Larmor frequency.
 
-    #     Example:
-    #         >>> dim.coordinates_ppm[:5]
-    #         array([-239.53462217, -239.06678111, -238.59894005, -238.13109899,
-    #                -237.66325794])
-    #     """
-    #     if self.isotope is None:
-    #         warnings.warn(
-    #             (
-    #                 "The coordinates along the dimension without an assigned "
-    #                 "isotope cannot be converted to dimensionless frequency ratio."
-    #             )
-    #         )
-    #     else:
-
-    #         denominator = (self.coordinates_offset + self.larmor_frequency) / 1e6
-    #         return self.coordinates_Hz / abs(denominator)
+        Example:
+            >>> dim.coordinates_ppm[:5]
+            array([-239.53462217, -239.06678111, -238.59894005, -238.13109899,
+                   -237.66325794])
+        """
+        if self.origin_offset is None:
+            warnings.warn(
+                (
+                    "The coordinates along the dimension without an origin offset "
+                    "cannot be converted to dimensionless frequency ratio."
+                )
+            )
+        else:
+            denominator = (self.reference_offset + self.origin_offset) / 1e6
+            return self.coordinates_Hz / abs(denominator)
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
@@ -209,10 +218,11 @@ class SpectralDimension(Parseable):
             count=self.count,
             increment=f"{increment} Hz",
             coordinates_offset=f"{self.reference_offset} Hz",
-            # origin_offset=f"{np.abs(self.larmor_frequency)} Hz",
             complex_fft=True,
             reciprocal={"coordinates_offset": f"{-1/(2*increment)} s"},
         )
+        if self.origin_offset is not None:
+            dim.origin_offset = f"{self.origin_offset} Hz"
         return dim
 
 
@@ -358,7 +368,8 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
         # Check if method isotope is in the isotopomer
         if channel[i] not in iso_dict:
             print(
-                f"Method/channel isotope mismatch. Channel asks for {channel[i]} but is not in {isotope}"
+                f"Method/channel isotope mismatch. Channel asks for {channel[i]} "
+                f"but is not in {isotope}"
             )
             return []
 
@@ -383,13 +394,14 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
         for transition in iso_trans_symmetry:
             P_expanded = len(isotope) * [0]
             for j, item in enumerate(transition):
-                # filling indecies of isotopomer with a sites transition symmetries
+                # filling indices of isotopomer with a sites transition symmetries
                 P_expanded[iso_dict[channel[i]][j]] = item
 
             if transition_symmetry_from_query == []:
                 temp_transitions.append(P_expanded)
             else:
-                # Each isotope is added to the previous isotope to create the full transition symmetry
+                # Each isotope is added to the previous isotope to create the
+                # full transition symmetry
                 for k, intermediate in enumerate(transition_symmetry_from_query[-1]):
                     temp_transitions.append(
                         [sum(x) for x in zip(intermediate, P_expanded)]

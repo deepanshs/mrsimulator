@@ -73,7 +73,16 @@ Bloch_decay = {
     },
     "global_event_attributes": {},
     "spectral_dimensions": [
-        {"events": [{"transition_query": {"P": {"channel-1": [[-1]]}}}]}
+        {
+            "events": [
+                {
+                    "transition_query": {
+                        "P": {"channel-1": [[-1]]},
+                        "D": {"channel-1": [[0]]},
+                    }
+                }
+            ]
+        }
     ],
 }
 
