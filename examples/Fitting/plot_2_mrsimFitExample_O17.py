@@ -27,6 +27,7 @@ pylab.rcParams.update(params)
 #%%
 # Next we will import `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ and loading the data file.
 import csdmpy as cp
+import numpy as np
 
 
 filename = "https://osu.box.com/shared/static/kfgt0jxgy93srsye9pofdnoha6qy58qf.csdf"
@@ -50,9 +51,9 @@ plt.show()
 
 #%%
 
-from mrsimulator import Simulator, Isotopomer, Site, Dimension
+from mrsimulator import Simulator, Isotopomer, Site
 from mrsimulator import SymmetricTensor as st
-from mrsimulator.methods import one_d_spectrum
+from mrsimulator.methods import BlochDecayFT
 
 sim = Simulator()
 O17_1 = Site(
@@ -66,21 +67,35 @@ O17_2 = Site(
 
 isotopomers = [Isotopomer(sites=[site]) for site in [O17_1, O17_2]]
 
-dimension = Dimension(
-    isotope="17O",
-    magnetic_flux_density=9.4,  # in T
-    number_of_points=oxygen_experiment.dimensions[0].count,
-    spectral_width=oxygen_experiment.dimensions[0].count
-    * oxygen_experiment.dimensions[0].increment.to("Hz").value,  # in Hz
-    reference_offset=oxygen_experiment.dimensions[0]
-    .coordinates_offset.to("Hz")
-    .value,  # in Hz
-    rotor_frequency=14000,  # in Hz
+
+count = oxygen_experiment.dimensions[0].count
+increment = oxygen_experiment.dimensions[0].increment.to("Hz").value
+offset = oxygen_experiment.dimensions[0].coordinates_offset.to("Hz").value
+
+method = BlochDecayFT(
+    channel="17O",
+    magnetic_flux_density=9.4,
+    rotor_frequency=14000,
+    dimensions=[
+        {
+            "count": count,
+            "spectral_width": count * increment,
+            "reference_offset": offset,
+        }
+    ],
 )
 
 sim.isotopomers += isotopomers
-sim.dimensions += [dimension]
-x, y = sim.run(method=one_d_spectrum)
+sim.methods += [method]
+
+# To avoid querying at every iteration we will save the relevant transition pathways
+for iso in isotopomers:
+    iso.transition_pathways = method.get_transition_pathways(iso).tolist()
+sim.run()
+
+sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
+
+x, y = sim.methods[0].simulation.to_list()
 
 plt.plot(x, y)
 plt.xlabel("$^{17}$O frequency / ppm")
@@ -103,10 +118,8 @@ plt.show()
 from mrsimulator.spectral_fitting import make_fitting_parameters
 
 params = make_fitting_parameters(sim)
-params.add(
-    name="sigma", value=oxygen_experiment.dimensions[0].increment.to("Hz").value, min=0
-)
-params.add(name="factor", value=oxygen_experiment.max(), min=0)
+params.add(name="sigma", value=100, min=0)
+params.add(name="factor", value=oxygen_experiment.max() / 4, min=0)
 
 #%%
 # With an experimental spectrum, a simulaton, and a list of parameters we are now
@@ -130,7 +143,6 @@ minner = Minimizer(
     min_function, params, fcn_args=(oxygen_experiment, sim, "Lorentzian")
 )
 result = minner.minimize()
-report_fit(result)
 
 #%%
 # Next, we can compare the fit to the experimental data:
@@ -146,7 +158,7 @@ plt.plot(*(oxygen_experiment - residual).to_list(), "r", alpha=0.5, label="Fit")
 plt.plot(*residual.to_list(), alpha=0.5, label="Residual")
 
 plt.xlim(x.value.max(), x.value.min())
-plt.xlabel("$^{29}$Si frequency / ppm")
+plt.xlabel("$^{17}$O frequency / ppm")
 plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()
 

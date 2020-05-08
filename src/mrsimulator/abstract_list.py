@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from collections import MutableSequence
-from itertools import permutations
 
 import numpy as np
 from mrsimulator.transition import Transition
+
+# from itertools import permutations
 
 
 __author__ = "Deepansh J. Srivastava"
@@ -98,6 +99,8 @@ class TransitionList(AbstractList):
         # if search is None:
         if P is not None:
             ts = TransitionList([item for item in ts if np.allclose(item.P, P)])
+        if D is not None:
+            ts = [item for item in ts if np.allclose(item.D, D)]
         if transitions is not None:
             for transition in transitions:
                 ts = TransitionList(

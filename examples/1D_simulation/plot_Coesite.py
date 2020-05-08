@@ -11,7 +11,6 @@ Coesite
 # dioxide :math:`\text{SiO}_2`. Coesite has five distinct :math:`^{17}\text{O}` sites.
 # We use the :math:`^{17}\text{O}` tensor information from Grandinetti et. al. [#f2]_
 import matplotlib.pyplot as plt
-from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
@@ -45,37 +44,42 @@ isotopomers = [Isotopomer(sites=[s], abundance=a) for s, a in zip(sites, abundan
 
 #%%
 # **Step 3** Create a dimension.
+from mrsimulator.methods import BlochDecayFT
 
-dimension = Dimension(
-    isotope="17O", number_of_points=2046, spectral_width=50000, rotor_frequency=14000
+method = BlochDecayFT(
+    channel="17O",
+    rotor_frequency=14000,
+    dimensions=[{"count": 2046, "spectral_width": 50000}],
 )
+
 
 #%%
 # The above dimension is set up to record the :math:`^{17}\text{O}` resonances at the
 # magic angle, spinning at 14 kHz and 9.4 T external magnetic flux density. The
 # resonances are recorded over 50 kHz using 2046 points. You may also request a full
-# description of the dimension object using the
-# :meth:`mrsimulator.Dimension.to_dict_with_units` method.
+# description of the dimension object by printing the method.
 from pprint import pprint
 
-pprint(dimension.to_dict_with_units())
+pprint(method)
 
 #%%
-# **Step 4** Create the Simulator object and add dimension and isotopomer objects.
+# **Step 4** Create the Simulator object and add method and isotopomer objects.
 
 sim_coesite = Simulator()
 
 # add isotopomers
 sim_coesite.isotopomers += isotopomers
 
-# add dimensions
-sim_coesite.dimensions += [dimension]
+# add method
+sim_coesite.methods += [method]
 
 #%%
 # **Step 5** Simulate the spectrum.
 
 
-x, y = sim_coesite.run()
+sim_coesite.run()
+sim_coesite.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
+x, y = sim_coesite.methods[0].simulation.to_list()
 
 #%%
 # **Step 6** Plot.

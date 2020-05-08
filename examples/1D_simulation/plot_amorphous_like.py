@@ -59,7 +59,7 @@ plt.show()
 # Let's create the site and isotopomer objects from these parameters.
 
 #%%
-from mrsimulator import Simulator, Site, Isotopomer, Dimension
+from mrsimulator import Simulator, Site, Isotopomer
 
 isotopomers = []
 for i, z, e in zip(iso, zeta, eta):
@@ -78,9 +78,12 @@ sim = Simulator()
 # add isotopomers
 sim.isotopomers += isotopomers
 # create and add a dimension
-sim.dimensions += [
-    Dimension(isotope="29Si", spectral_width=25000, reference_offset=-7000)
-]
+from mrsimulator.methods import BlochDecayFT
+
+method = BlochDecayFT(
+    channel="29Si", dimensions=[{"spectral_width": 25000, "reference_offset": -7000}]
+)
+sim.methods += [method]
 
 #%%
 # Static line-shape
@@ -88,7 +91,9 @@ sim.dimensions += [
 # Observe the static :math:`^{29}\text{Si}` line-shape simulation.
 
 #%%
-x, y = sim.run()
+sim.run()
+sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
+x, y = sim.methods[0].simulation.to_list()
 
 #%%
 # The plot of the corresponding spectrum.
@@ -115,10 +120,14 @@ plt.show()
 # Here is another example of a sideband simulation, spinning at a 90-degree angle,
 
 #%%
-sim.dimensions[0].rotor_frequency = 5000  # in Hz
-sim.dimensions[0].rotor_angle = 1.57079  # 90 degree in radian
+sim.methods[0].spectral_dimensions[0].events[0].rotor_frequency = 5000  # in Hz
+sim.methods[0].spectral_dimensions[0].events[
+    0
+].rotor_angle = 1.57079  # 90 degree in radian
 sim.config.number_of_sidebands = 8  # eight sidebands are sufficient for this example
-x, y = sim.run(method=one_d_spectrum)
+sim.run()
+sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
+x, y = sim.methods[0].simulation.to_list()
 
 #%%
 # and the corresponding plot.
@@ -137,10 +146,14 @@ plt.show()
 # -------------------------------------------
 
 #%%
-sim.dimensions[0].rotor_frequency = 1000  # in Hz
-sim.dimensions[0].rotor_angle = 54.735 * np.pi / 180.0  # magic angle in radian
+sim.methods[0].spectral_dimensions[0].events[0].rotor_frequency = 1000  # in Hz
+sim.methods[0].spectral_dimensions[0].events[0].rotor_angle = (
+    54.735 * np.pi / 180.0
+)  # magic angle in radian
 sim.config.number_of_sidebands = 16
-x, y = sim.run(method=one_d_spectrum)
+sim.run()
+sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
+x, y = sim.methods[0].simulation.to_list()
 
 #%% and the corresponding plot.
 

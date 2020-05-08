@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import csdmpy as cp
+from lmfit import minimize
 from lmfit import Parameters
-from mrsimulator.apodization import Apodization
-from mrsimulator.methods import one_d_spectrum
 from mrsimulator import Simulator
+from mrsimulator.apodization import Apodization
 
 
 __author__ = "Maxwell C Venetos"
@@ -12,7 +12,8 @@ __email__ = "maxvenetos@gmail.com"
 
 # def line_broadening(csdm_obj, sigma, broadType):
 #     """
-#     Applies appodization filter to the simulated spectrum using either Lorentzian filtering or Gaussian filtering.
+#     Applies appodization filter to the simulated spectrum using either Lorentzian
+#     filtering or Gaussian filtering.
 
 #     Args:
 #     Returns:
@@ -79,7 +80,7 @@ def _list_of_dictionaries(my_list):
     return [item.dict() for item in my_list]
 
 
-exclude = ["property_units", "isotope", "name", "description"]
+exclude = ["property_units", "isotope", "name", "description", "transition_pathways"]
 
 
 def _traverse_dictionaries(dictionary, parent="isotopomers"):
@@ -88,8 +89,10 @@ def _traverse_dictionaries(dictionary, parent="isotopomers"):
     order to return a list of all attributes that are populated.
 
     Args:
-        dictionary: A dictionary or lsit object of the Isotopomer attributes from a simulation object
-        parent: a string object used to create the addresses of the Isotopomer attributes.
+        dictionary: A dictionary or list object of the Isotopomer attributes from a
+        simulation object
+        parent: a string object used to create the addresses of the Isotopomer
+        attributes.
 
     Returns:
         List Object.
@@ -115,7 +118,7 @@ def _traverse_dictionaries(dictionary, parent="isotopomers"):
     return name_list
 
 
-def make_fitting_parameters(sim):
+def make_fitting_parameters(sim, exclude_key=None):
     """
     Parses through the fitting parameter list to create LMFIT parameters used for
     fitting.
@@ -184,8 +187,10 @@ def min_function(params, data, sim, apodization_function=None):
     Args:
         params: Parameters object containing parameters to vary during minimization.
         data: a CSDM object of the data to fit the simulation to.
-        sim: Simulator object to be fit to data. Initialized with arbitrary fitting parameters.
-        apodization_function: A string indicating the apodization function to use. Currently "Gaussian" and "Lorentzian" are supported.
+        sim: Simulator object to be fit to data. Initialized with arbitrary fitting
+        parameters.
+        apodization_function: A string indicating the apodization function to use.
+        Currently "Gaussian" and "Lorentzian" are supported.
 
     Returns:
         Array of the differences between the simulation and the experimental data.
@@ -204,7 +209,7 @@ def min_function(params, data, sim, apodization_function=None):
             f"Expecting a `string` object, found {type(apodization_function).__name__}."
         )
 
-    intensity_data = data.dependent_variables[0].components[0].real
+    # intensity_data = data.dependent_variables[0].components[0].real
     values = params.valuesdict()
     for items in values:
         if items not in ["sigma", "factor"]:
@@ -212,14 +217,13 @@ def min_function(params, data, sim, apodization_function=None):
             executable = f"{nameString} = {values[items]}"
             exec(executable)
 
-    sim.run(method=one_d_spectrum)
     sim.run()
     y = sim.apodize(function_mapping[apodization_function], sigma=values["sigma"])
 
     y_factored = y * values["factor"]
 
     return (
-        data - y_factored
+        data.dependent_variables[0].components[0].real - y_factored
     )  # _factored#simulatedData.dependent_variables[0].components[0]
 
 
@@ -233,6 +237,7 @@ def spectral_fitting(experiment, sim, apodization_function, params):
         CSDM object containing the experimental data and the simulated fit.
 
     """
+    intensity_data = experiment.dependent_variables[0].components[0].real
     if len(params) == 0:
         params = make_fitting_parameters(sim)
         params.add(
@@ -255,7 +260,7 @@ def spectral_fitting(experiment, sim, apodization_function, params):
         )
 
     minner = Minimizer(
-        fcn2min,
+        min_function,
         params,
         fcn_args=(
             experiment.dependent_variables[0].components[0].real,
@@ -265,15 +270,17 @@ def spectral_fitting(experiment, sim, apodization_function, params):
     )
     result = minner.minimize()
 
-    report_fit(result)
+    # report_fit(result)
+    values = result.params
 
     sim.run()
-    sim_data = sim.as_csdm_object()
+    # sim_data = sim.as_csdm_object()
 
     if apodization_function is not None:
         y = sim.apodize(function_mapping[apodization_function], sigma=values["sigma"])
     else:
-        y = sim.dependent_variables[0].components[0]
+        y = sim.methods[0].simulation.to_list()[1]
+        # y = sim.dependent_variables[0].components[0]
 
     if "factor" in values:
         y_factored = y * values["factor"]
@@ -287,7 +294,9 @@ def spectral_fitting(experiment, sim, apodization_function, params):
 
 # def spectral_fitting(experiment, sim, apodization_function, params):
 #     """
-#     Spectrum fitting routine to fit the mrsimulation to an experimental spectrum. Parameters may be provided or if not provided will be generated based on the simulation object passed through.
+#     Spectrum fitting routine to fit the mrsimulation to an experimental spectrum
+# . Parameters may be provided or if not provided will be generated based on the
+#  simulation object passed through.
 
 #     Returns:
 #         CSDM object containing the experimental data and the simulated fit.
@@ -296,7 +305,8 @@ def spectral_fitting(experiment, sim, apodization_function, params):
 #     if len(params) == 0:
 #         params = make_fitting_parameters(sim)
 #         params.add(
-#             name="sigma", value=experiment.dimensions[0].increment.to("Hz").value, min=0
+#             name="sigma", value=experiment.dimensions[0].
+# increment.to("Hz").value, min=0
 #         )
 #         params.add(
 #             name="factor",
@@ -305,7 +315,8 @@ def spectral_fitting(experiment, sim, apodization_function, params):
 #         )
 #     if "sigma" not in params:
 #         params.add(
-#             name="sigma", value=experiment.dimensions[0].increment.to("Hz").value, min=0
+#             name="sigma", value=experiment.dimensions[0].increment.to("Hz").value,
+#  min=0
 #         )
 #     if "factor" not in params:
 #         params.add(

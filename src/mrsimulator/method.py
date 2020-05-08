@@ -296,8 +296,8 @@ class Method(Parseable):
                 )
                 P_segment = []
                 # delta_P = transitions[:,:]
-                for symmetry in list_of_P:
-                    P_segment += transitions.filter(P=symmetry)
+                # for symmetry in list_of_P:
+                #     P_segment += transitions.filter(P=symmetry)
 
                 # if ent.transition_query.D != None:
                 #     list_of_D = query_permutations(
@@ -306,11 +306,36 @@ class Method(Parseable):
                 #         channel=[item.symbol for item in self.channels],
                 #         transition_symmetry = "D"
                 #     )
+
                 #     D_segment = []
+                #     for D_symmetry in list_of_D:
+                #         D_segment += transitions.filter(D = D_symmetry)
                 #     print('list of D: ', list_of_D)
-                #     for symmetry in list_of_D:
-                #         D_segment += transitions.filter(D=symmetry)
                 #     print('D_segment: ', D_segment)
+
+                for symmetry in list_of_P:
+                    if ent.transition_query.D is None:
+                        P_segment += transitions.filter(P=symmetry)
+                    elif ent.transition_query.D is not None:
+                        list_of_D = query_permutations(
+                            ent.transition_query.to_dict_with_units(),
+                            isotope=isotopomer.get_isotopes(),
+                            channel=[item.symbol for item in self.channels],
+                            transition_symmetry="D",
+                        )
+                        D_transition = []
+                        [
+                            D_transition.append(x)
+                            for x in list_of_D
+                            if x not in D_transition
+                        ]
+                        # D_segment = []
+                        for D_symmetry in D_transition:
+                            P_segment += transitions.filter(P=symmetry, D=D_symmetry)
+                        # print('list of D: ', D_transition)
+                        # for symmetry in list_of_D:
+                        #     D_segment += transitions.filter(D=symmetry)
+                        # print('D_segment: ', D_segment)
 
                 segments.append(np.asarray(P_segment))  # append the intersection
 

@@ -59,7 +59,7 @@ plt.show()
 # Let's create the site and isotopomer objects from these parameters.
 
 #%%
-from mrsimulator import Simulator, Site, Isotopomer, Dimension
+from mrsimulator import Simulator, Site, Isotopomer
 
 isotopomers = []
 for i, c, e in zip(iso, Cq, eta):
@@ -78,7 +78,11 @@ sim = Simulator()
 # add isotopomers
 sim.isotopomers += isotopomers
 # create and add a dimension
-sim.dimensions += [Dimension(isotope="27Al", spectral_width=80000, reference_offset=0)]
+from mrsimulator.methods import BlochDecayFT
+
+method = BlochDecayFT(channel="27Al", dimensions=[{"spectral_width": 80000}])
+
+sim.methods += [method]
 
 #%%
 # Static line-shape
@@ -86,7 +90,9 @@ sim.dimensions += [Dimension(isotope="27Al", spectral_width=80000, reference_off
 # Observe the static :math:`^{27}\text{Al}` line-shape simulation.
 
 #%%
-x, y = sim.run()
+sim.run()
+sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
+x, y = sim.methods[0].simulation.to_list()
 
 #%%
 # The plot of the corresponding spectrum.
@@ -106,12 +112,16 @@ plt.show()
 # Simulation of the same isotopomer system at magic angle and spinning at 25 kHz.
 
 #%%
-sim.dimensions[0].rotor_frequency = 25000  # in Hz
-sim.dimensions[0].spectral_width = 30000  # in Hz
-sim.dimensions[0].reference_offset = -4000  # in Hz
-sim.dimensions[0].rotor_angle = 54.735 * np.pi / 180.0  # magic angle in radian
+sim.methods[0].spectral_dimensions[0].events[0].rotor_frequency = 25000  # in Hz
+sim.methods[0].spectral_dimensions[0].spectral_width = 30000  # in Hz
+sim.methods[0].spectral_dimensions[0].reference_offset = -4000  # in Hz
+sim.methods[0].spectral_dimensions[0].events[0].rotor_angle = (
+    54.735 * np.pi / 180.0
+)  # magic angle in radian
 sim.config.number_of_sidebands = 4
-x, y = sim.run(method=one_d_spectrum)
+sim.run()
+sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
+x, y = sim.methods[0].simulation.to_list()
 
 #%% and the corresponding plot.
 

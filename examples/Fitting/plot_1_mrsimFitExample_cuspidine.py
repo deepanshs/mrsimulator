@@ -28,6 +28,7 @@ pylab.rcParams.update(params)
 #%%
 # Next we will import `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ and loading the data file.
 import csdmpy as cp
+import numpy as np
 
 synthetic_experiment = cp.load("synthetic_cuspidine_test.csdf")
 synthetic_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
@@ -48,8 +49,8 @@ plt.show()
 #%%
 
 
-from mrsimulator import Simulator, Isotopomer, Site, Dimension
-from mrsimulator.methods import one_d_spectrum
+from mrsimulator import Simulator, Isotopomer, Site
+from mrsimulator.methods import BlochDecayFT
 
 S29 = Site(
     isotope="29Si",
@@ -57,19 +58,20 @@ S29 = Site(
     shielding_symmetric={"zeta": -60, "eta": 0.6},
 )
 
-dimension = Dimension(
-    isotope="29Si",
-    magnetic_flux_density=7.1,  # in T
-    number_of_points=2046,
-    spectral_width=25000,  # in Hz
-    reference_offset=-5000,  # in Hz
-    rotor_frequency=780,  # in Hz
+method = BlochDecayFT(
+    channel="29Si",
+    magnetic_flux_density=7.1,
+    rotor_frequency=780,
+    dimensions=[{"count": 2046, "spectral_width": 25000, "reference_offset": -5000}],
 )
 
 sim = Simulator()
 sim.isotopomers += [Isotopomer(name="Si29", sites=[S29], abundance=100)]
-sim.dimensions += [dimension]
-x, y = sim.run(method=one_d_spectrum)
+sim.methods += [method]
+sim.run()
+sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
+
+x, y = sim.methods[0].simulation.to_list()
 
 plt.plot(x, y)
 plt.xlabel("$^{29}$Si frequency / ppm")
@@ -96,7 +98,7 @@ params = Parameters()
 params.add(name="iso", value=-80)
 params.add(name="eta", value=0.6, min=0, max=1)
 params.add(name="zeta", value=-60)
-params.add(name="sigma", value=0)
+params.add(name="sigma", value=200)
 params.add(name="factor", value=1)
 
 
@@ -119,7 +121,7 @@ def test_function(params, data, sim):
     site.shielding_symmetric.zeta = values["zeta"]
 
     # here we run the simulation
-    sim.run(one_d_spectrum)
+    sim.run()
     # here we apodize the signal to simulate line broadening
     y = sim.apodize(Apodization.Lorentzian, sigma=values["sigma"])
 
@@ -149,7 +151,7 @@ plt.plot(*synthetic_experiment.to_list(), label="Spectrum")
 plt.plot(*(synthetic_experiment - residual).to_list(), "r", alpha=0.5, label="Fit")
 plt.plot(*residual.to_list(), alpha=0.5, label="Residual")
 
-plt.xlim(x.value.max(), x.value.min())
+plt.xlim(x1.value.max(), x1.value.min())
 plt.xlabel("Frequency / Hz")
 plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()

@@ -13,7 +13,6 @@ Wollastonite
 # tensor parameters
 # were obtained from Hansen et. al. [#f1]_
 import matplotlib.pyplot as plt
-from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
@@ -45,32 +44,35 @@ sites = [S29_1, S29_2, S29_3]
 isotopomers = [Isotopomer(sites=[site]) for site in sites]
 
 #%%
-# **Step 3** Create a dimension.
+# **Step 3** Create a method.
 
-dimension = Dimension(
-    isotope="29Si",
-    magnetic_flux_density=14.1,  # in T
-    number_of_points=2046,
-    spectral_width=25000,  # in Hz
-    reference_offset=-10000,  # in Hz
-    rotor_frequency=1500,  # in Hz
+from mrsimulator.methods import BlochDecayFT
+
+method = BlochDecayFT(
+    channel="29Si",
+    magnetic_flux_density=14.1,
+    rotor_frequency=1500,
+    dimensions=[{"count": 2046, "spectral_width": 25000, "reference_offset": -10000}],
 )
 
+
 #%%
-# **Step 4** Create the Simulator object and add dimension and isotopomer objects.
+# **Step 4** Create the Simulator object and add method and isotopomer objects.
 
 sim_wollastonite = Simulator()
 
 # add isotopomers
 sim_wollastonite.isotopomers += isotopomers
 
-# add dimensions
-sim_wollastonite.dimensions += [dimension]
+# add method
+sim_wollastonite.methods += [method]
 
 #%%
 # **Step 5** Simulate the spectrum.
 
-x, y = sim_wollastonite.run()
+sim_wollastonite.run()
+sim_wollastonite.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
+x, y = sim_wollastonite.methods[0].simulation.to_list()
 
 #%%
 # **Step 6** Plot.

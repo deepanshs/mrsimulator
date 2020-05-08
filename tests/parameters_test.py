@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Parameter test"""
 from lmfit import Parameters
-from mrsimulator import Dimension
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SymmetricTensor as st
+from mrsimulator.methods import BlochDecayFT
 from mrsimulator.spectral_fitting import make_fitting_parameters
 
 
@@ -16,17 +16,16 @@ H = Site(
 )
 isotopomer = Isotopomer(name="H1", sites=[H], abundance=100)
 
-dimension = Dimension(
-    isotope="1H",
-    magnetic_flux_density=9.4,  # in T
-    number_of_points=2046,
-    spectral_width=20000,  # in Hz
-    reference_offset=0,
-    rotor_frequency=14000,  # in Hz
+method = BlochDecayFT(
+    channel="1H",
+    magnetic_flux_density=9.4,
+    rotor_frequency=14000,
+    dimensions=[{"count": 2046, "spectral_width": 20000, "reference_offset": 0}],
 )
 
+
 sim.isotopomers += [isotopomer]
-sim.dimensions += [dimension]
+sim.methods += [method]
 
 params = make_fitting_parameters(sim)
 
