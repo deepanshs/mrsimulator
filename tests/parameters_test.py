@@ -5,7 +5,7 @@ from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SymmetricTensor as st
-from mrsimulator.methods import BlochDecayFT
+from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.spectral_fitting import make_fitting_parameters
 
 
@@ -16,8 +16,8 @@ H = Site(
 )
 isotopomer = Isotopomer(name="H1", sites=[H], abundance=100)
 
-method = BlochDecayFT(
-    channel="1H",
+method = BlochDecaySpectrum(
+    channels=["1H"],
     magnetic_flux_density=9.4,
     rotor_frequency=14000,
     dimensions=[{"count": 2046, "spectral_width": 20000, "reference_offset": 0}],

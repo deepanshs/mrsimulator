@@ -26,8 +26,11 @@ typedef float complex64[2];
 #else
 
 // #ifdef __APPLE__
-// #include <Accelerate/Accelerate.h>
-#if __has_include("cblas.h")
+
+#if __has_include(<Accelerate/Accelerate.h>)
+#include <Accelerate/Accelerate.h>
+
+#elif __has_include("cblas.h")
 #include "cblas.h"
 
 // installing openblas on cent-os with
@@ -70,11 +73,11 @@ typedef float complex64[2];
 // // printf("Using upto %d threads for simulation.\n", max_threads);
 // #endif
 
-#include "array.h"
-#include "vm_common.h"
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <time.h>
+
+#include "array.h"
+#include "vm_common.h"
 
 #endif

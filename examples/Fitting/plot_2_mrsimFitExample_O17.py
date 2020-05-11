@@ -53,7 +53,7 @@ plt.show()
 
 from mrsimulator import Simulator, Isotopomer, Site
 from mrsimulator import SymmetricTensor as st
-from mrsimulator.methods import BlochDecayFT
+from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
 sim = Simulator()
 O17_1 = Site(
@@ -72,8 +72,8 @@ count = oxygen_experiment.dimensions[0].count
 increment = oxygen_experiment.dimensions[0].increment.to("Hz").value
 offset = oxygen_experiment.dimensions[0].coordinates_offset.to("Hz").value
 
-method = BlochDecayFT(
-    channel="17O",
+method = BlochDecayCentralTransitionSpectrum(
+    channels=["17O"],
     magnetic_flux_density=9.4,
     rotor_frequency=14000,
     dimensions=[

@@ -198,7 +198,8 @@ class SpectralDimension(Parseable):
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantities of a Dimension object from as a python dictionary.
+        Parse the physical quantities of a SpectralDimension object from as a
+        python dictionary object.
 
         Args:
             py_dict: Dict object
@@ -353,7 +354,7 @@ def cartesian_product(*arrays):
 
 def get_iso_dict(channel, isotope):
     """
-        Parse the isotopomer sites to determine indecies of each isotope that
+        Parse the isotopomer sites to determine indices of each isotope that
         is part of the method channel.
 
         Args:
@@ -379,7 +380,7 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
         transition query.
 
         Args:
-            query: Dict bject
+            query: Dict object
             channel: List object
             isotope: List object
             transition_symmetry: str object. Derived from a transition query
@@ -400,7 +401,7 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
 
         temp_P = []
         for k in range(len(query_short[items])):
-            # Check transition query doesnt require more isotopes than present
+            # Check transition query doesn't require more isotopes than present
             if len(query_short[items][k]) > len(iso_dict[channel[i]]):
                 print("Failed: Transition query larger than channel")
                 return []

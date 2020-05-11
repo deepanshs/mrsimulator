@@ -44,12 +44,12 @@ sites = [S29_1, S29_2, S29_3]
 isotopomers = [Isotopomer(sites=[site]) for site in sites]
 
 #%%
-# **Step 3** Create a method.
+# **Step 3** Create a Bloch decay spectrum method.
 
-from mrsimulator.methods import BlochDecayFT
+from mrsimulator.methods import BlochDecaySpectrum
 
-method = BlochDecayFT(
-    channel="29Si",
+method = BlochDecaySpectrum(
+    channels=["29Si"],
     magnetic_flux_density=14.1,
     rotor_frequency=1500,
     dimensions=[{"count": 2046, "spectral_width": 25000, "reference_offset": -10000}],

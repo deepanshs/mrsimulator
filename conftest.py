@@ -10,7 +10,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SymmetricTensor
 
-font = {"family": "Helvetica", "weight": "light", "size": 9}
+font = {"weight": "light", "size": 9}
 matplotlib.rc("font", **font)
 
 
@@ -88,7 +88,17 @@ def add_site(doctest_namespace):
         plt.savefig(pth + ".png", dpi=100)
         plt.close()
 
+    def plot(x, y):
+        plt.figure(figsize=(4.5, 2.5))
+        plt.plot(x, y, linewidth=1)
+        plt.xlim([x.value.max(), x.value.min()])
+        plt.xlabel(f"frequency ratio / {str(x.unit)}", **font)
+        plt.grid(color="gray", linestyle="--", linewidth=0.75, alpha=0.25)
+        plt.tight_layout(pad=0.15)
+        plt.show()
+
     doctest_namespace["plot_save"] = plot_save
+    doctest_namespace["plot"] = plot
 
     # coesite
     O17_1 = Site(

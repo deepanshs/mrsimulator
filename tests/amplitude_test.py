@@ -4,14 +4,14 @@ import numpy as np
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
-from mrsimulator.methods import BlochDecayFT
+from mrsimulator.methods import BlochDecaySpectrum
 
 
 def pre_setup():
     site_1 = Site(isotope="13C", shielding_symmetric={"zeta": 50, "eta": 0.5})
     isotopomer = Isotopomer(sites=[site_1])
-    method = BlochDecayFT(
-        channel="13C", dimensions=[{"count": 1024, "spectral_width": 25000}]
+    method = BlochDecaySpectrum(
+        channels=["13C"], dimensions=[{"count": 1024, "spectral_width": 25000}]
     )
 
     sim = Simulator()

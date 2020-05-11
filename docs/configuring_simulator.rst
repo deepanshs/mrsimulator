@@ -20,7 +20,9 @@ of the config attributes is as follows,
 
 .. doctest::
 
-    >>> from mrsimulator import Simulator, Isotopomer, Dimension, Site
+    >>> from mrsimulator import Simulator, Isotopomer, Site
+    >>> from mrsimulator.methods import BlochDecaySpectrum
+
     >>> the_simulator = Simulator()
 
     >>> the_simulator.config
@@ -46,18 +48,27 @@ advised to increase this value as required. Consider the following example.
     >>> # create a site with a large anisotropy, 100 ppm.
     >>> Si29site = Site(isotope='29Si', shielding_symmetric={'zeta': 100, 'eta': 0.2})
 
-    >>> # create a dimension with a low rotor frequency, 200 Hz
-    >>> dimension = Dimension(isotope='29Si', spectral_width=25000, rotor_frequency=200)
+    >>> # create a method. Set low rotor frequency, 200 Hz
+    >>> method = BlochDecaySpectrum(
+    ...     channels=['29Si'],
+    ...     rotor_frequency=200, # in Hz.
+    ...     dimensions=[dict(count=1024, spectral_width=25000)]
+    ... )
 
-    >>> simulator_1.isotopomers = [Isotopomer(sites=[Si29site])]
-    >>> simulator_1.dimensions = [dimension]
+    >>> simulator_1.isotopomers += [Isotopomer(sites=[Si29site])]
+    >>> simulator_1.methods += [method]
 
     >>> # simulate and plot
-    >>> x, y = simulator_1.run(method=one_d_spectrum)
-    >>> plot(x, y) # doctest:+SKIP
+    >>> simulator_1.run()
 
+    >>> # plotting the simulation
+    >>> # Convert the coordinates from Hz to ppm.
+    >>> simulator_1.methods[0].simulation.dimensions[0].to('ppm', 'nmr_frequency_ratio')
+    >>> plot(*simulator_1.methods[0].simulation.to_list())
+
+ # doctest:+SKIP
 .. .. testsetup::
-..     >>> plot_save(x, y, 'example_sidebands_1')
+..     >>> plot_save(*simulator_1.methods[0].simulation.to_list(), 'example_sidebands_1')
 
 .. figure:: _images/example_sidebands_1.*
     :figclass: figure-polaroid
@@ -76,8 +87,12 @@ observe.
 
     >>> # set the number of sidebands to 90.
     >>> simulator_1.config.number_of_sidebands = 90
-    >>> x, y = simulator_1.run(method=one_d_spectrum)
-    >>> plot(x, y) # doctest:+SKIP
+    >>> simulator_1.run()
+
+    >>> # plotting the simulation
+    >>> # Convert the coordinates from Hz to ppm.
+    >>> simulator_1.methods[0].simulation.dimensions[0].to('ppm', 'nmr_frequency_ratio')
+    >>> plot(*simulator_1.methods[0].simulation.to_list())
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'example_sidebands_2')
@@ -116,11 +131,19 @@ shielding tensor, as follows,
     >>> Si29site.shielding_symmetric.gamma = 2.132 # in rad
 
     >>> # Let's observe the static spectrum which is more intuitive.
-    >>> dimension.rotor_frequency = 0 # in Hz
+    >>> simulator_1.methods[0] = BlochDecaySpectrum(
+    ...     channels=['29Si'],
+    ...     rotor_frequency=0, # in Hz.
+    ...     dimensions=[dict(count=1024, spectral_width=25000)]
+    ... )
 
     >>> # simulate and plot
-    >>> x, y = simulator_1.run(method=one_d_spectrum)
-    >>> plot(x, y) # doctest:+SKIP
+    >>> simulator_1.run()
+    >>>
+    >>> # plotting the simulation
+    >>> # Convert the coordinates from Hz to ppm.
+    >>> simulator_1.methods[0].simulation.dimensions[0].to('ppm', 'nmr_frequency_ratio')
+    >>> plot(*simulator_1.methods[0].simulation.to_list())
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'example_integration_volume_1')
@@ -141,8 +164,12 @@ volume to `hemisphere` and re-simulate.
     >>> simulator_1.config.integration_volume = 'hemisphere'
 
     >>> # simulate and plot
-    >>> x, y = simulator_1.run(method=one_d_spectrum)
-    >>> plot(x, y) # doctest:+SKIP
+    >>> simulator_1.run()
+    >>>
+    >>> # plotting the simulation
+    >>> # Convert the coordinates from Hz to ppm.
+    >>> simulator_1.methods[0].simulation.dimensions[0].to('ppm', 'nmr_frequency_ratio')
+    >>> plot(*simulator_1.methods[0].simulation.to_list())
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'example_integration_volume_2')
@@ -183,17 +210,24 @@ arising from an individual isotopomer. For example,
     >>> site_A = Site(isotope='1H', shielding_symmetric={'zeta': 5, 'eta': 0.1})
     >>> site_B = Site(isotope='1H', shielding_symmetric={'zeta': -2, 'eta': 0.83})
 
-    >>> # Create dimension object
-    >>> dimension = Dimension(isotope='1H', spectral_width=10000)
+    >>> # Create a method object.
+    >>> method = BlochDecaySpectrum(
+    ...     channels=['1H'],
+    ...     dimensions=[dict(count=1024, spectral_width=10000)]
+    ... )
 
-    >>> # Create simulator object
+    >>> # Create simulator object.
     >>> sim = Simulator()
-    >>> sim.isotopomers = [Isotopomer(sites=[s]) for s in [site_A, site_B]]
-    >>> sim.dimensions = [dimension]
+    >>> sim.isotopomers += [Isotopomer(sites=[s]) for s in [site_A, site_B]]
+    >>> sim.methods += [method]
 
     >>> # simulate and run.
-    >>> x, y = sim.run(method=one_d_spectrum)
-    >>> plot(x, y) # doctest:+SKIP
+    >>> sim.run()
+    >>>
+    >>> # plotting the simulation
+    >>> # Convert the coordinates from Hz to ppm.
+    >>> sim.methods[0].simulation.dimensions[0].to('ppm', 'nmr_frequency_ratio')
+    >>> plot(*sim.methods[0].simulation.to_list())
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'example_decompose_1')
@@ -213,7 +247,7 @@ decompose attribute to ``True`` and observe.
     >>> sim.config.decompose = True
 
     >>> # simulate.
-    >>> x, y = sim.run(method=one_d_spectrum)
+    >>> sim.run()
 
 Here, ``y`` is an ordered list of numpy arrays corresponding to the ordered
 list of isotopomers. In this example, ``y`` is a list of two numpy arrays.

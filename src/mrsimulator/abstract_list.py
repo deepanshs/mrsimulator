@@ -130,15 +130,3 @@ class TransitionList(AbstractList):
         #         [item for item in self._list if np.all(item.delta_ms == delta_ms)]
         #     )
         # return TransitionList([item for item in self._list if item.p == p])
-
-
-# class DependentVariableList(AbstractList):
-#     def __init__(self, data=[]):
-#         super().__init__(data)
-
-#     def __setitem__(self, index, item):
-#         if not isinstance(item, DependentVariable):
-#             raise ValueError(
-#                 f"Expecting a DependentVariable object, found {item.__class__.name__}"
-#             )
-#         self._list[index] = item

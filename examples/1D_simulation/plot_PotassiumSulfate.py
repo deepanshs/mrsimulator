@@ -31,12 +31,12 @@ S33 = Site(
 isotopomer = Isotopomer(sites=[S33])
 
 #%%
-# **Step 3** Create the method.
+# **Step 3** Create a central transition selective Bloch decay spectrum method.
 
-from mrsimulator.methods import BlochDecayFT
+from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
-method = BlochDecayFT(
-    channel="33S",
+method = BlochDecayCentralTransitionSpectrum(
+    channels=["33S"],
     magnetic_flux_density=21.14,
     rotor_frequency=14000,
     dimensions=[{"count": 2046, "spectral_width": 5000, "reference_offset": 22500}],

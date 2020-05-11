@@ -43,11 +43,11 @@ abundance = [0.83, 1.05, 2.16, 2.05, 1.90]  # abundance of each isotopomer
 isotopomers = [Isotopomer(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
 
 #%%
-# **Step 3** Create a dimension.
-from mrsimulator.methods import BlochDecayFT
+# **Step 3** Create a central transition selective Bloch decay spectrum method.
+from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
-method = BlochDecayFT(
-    channel="17O",
+method = BlochDecayCentralTransitionSpectrum(
+    channels=["17O"],
     rotor_frequency=14000,
     dimensions=[{"count": 2046, "spectral_width": 50000}],
 )

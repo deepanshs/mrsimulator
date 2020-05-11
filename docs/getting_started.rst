@@ -5,7 +5,7 @@
 Getting started with `Mrsimulator`: The basics
 ==============================================
 
-We have put together a set of guidelines for using various methods and
+We have put together a set of guidelines for using the methods and
 objects of the `Mrsimulator` package. We encourage our users
 to follow these guidelines to promote consistency.
 In `Mrsimulator`, the solid-state nuclear magnetic resonance (ssNMR)
@@ -26,38 +26,43 @@ and create an instance as follows,
 
 Here, the variable ``sim`` is an instance of the
 :ref:`simulator_api` class. The two attributes of this class that you will
-frequently use are :attr:`~mrsimulator.simulator.Simulator.isotopomers` and
-:attr:`~mrsimulator.simulator.Simulator.dimensions`, whose value is a list of
-:ref:`isotopomer_api` and :ref:`dimension_api` objects,
+frequently use are the :attr:`~mrsimulator.Simulator.isotopomers` and
+:attr:`~mrsimulator.Simulator.methods`, whose value is a list of
+:ref:`isotopomer_api` and :ref:`method_api` objects,
 respectively. The default value of these attributes is an empty list.
 
 .. doctest::
 
     >>> sim.isotopomers
     []
-    >>> sim.dimensions
+    >>> sim.methods
     []
 
 
 Before you can start simulating
 NMR lineshapes, you need to understand the role of Isotopomer and
-Dimension objects. The following provides a brief description of the respective
+Method objects. The following provides a brief description of the respective
 objects.
 
 .. For more information, we recommend reading :ref:`dictionary_objects`
 .. and :ref:`dimension`.
 
 
-Setting up Isotopomer objects
------------------------------
-An isotopomer may be described as an isolated
-spin-system containing multiple sites and couplings between them. In the
-current version, we focus on a single site spin-system, that is,
-an isotopomer with a single site. Let's start by building a site.
+Setting up the Isotopomer objects
+---------------------------------
+We consider an isotopomer as an isolated spin-system with multiple sites and couplings
+between the sites.
+You may construct an isotopomer (spin-system) with as many sites and coupling as
+you may desire, for this example, we will stick to a single site spin-system, that
+is, an isotopomer with a single site. Let's start by first building a site.
 
-In NMR, an active site may be described by a second-rank nuclear shielding
-interaction tensor and additionally a second-rank electric quadrupole
-interaction tensor for isotopes with the spin quantum number :math:`I>1/2`.
+A site object is a collection of parameters that describe the single site interactions.
+In NMR, these spin interactions are described by a second-rank tensor. The interactions
+that involve a single site are the nuclear shielding interaction between the magnetic
+dipole moment of the nucleus and the surrounding magnetic field, and the interaction
+between the electric quadrupole moment of the nucleus with the surrounding electric
+field gradient. The later is zero for sites with the spin quantum number, :math:`I=1/2`.
+
 Let's start with a spin-1/2 isotope, :math:`^{29}\text{Si}`, and create
 a site.
 
@@ -82,11 +87,10 @@ a site.
 In the above code, ``the_site`` is a simplified python dictionary
 representation of a :ref:`site_api` object. This site describes a
 :math:`^{29}\text{Si}` isotope with a -101.1 ppm isotropic chemical shift
-along with nuclear shielding anisotropy, described here with parameters `zeta`
-and `eta` using Haeberlen convention.
+along with the symmetric part of the nuclear shielding anisotropy,
+described here with parameters `zeta` and `eta` using Haeberlen convention.
 
-Now that we have our site, we can create an isotopomer with this site, as
-follows,
+That's it! Now that we have the site, we can create an isotopomer as,
 
 .. code-block:: python
 
@@ -100,122 +104,144 @@ follows,
     >>> the_isotopomer = {"name": "site A", "sites": [ the_site ],
     ...     "abundance": "80%"}
 
-The above isotopomer contains ``the_site`` as the value of the `sites`
-attribute of the isotopomer. In addition to the site, we have also provided
-an optional `name` and `abundance` to the isotopomer.
+As mentioned before, an isotopomer is a collection of sites and couplings. In the above
+example, we created an isotopomer with a single site and no coupling. Here, the attribute
+`sites` hold a list of sites. The attributes `name` and `abundance` are optional.
 
 ..  .. seealso:: :ref:`dictionary_objects`, :ref:`isotopomer` and :ref:`site`.
 
-An instance of an Isotopomer class may be created from the above python
-dictionary, using the :meth:`~mrsimulator.Isotopomer.parse_dict_with_units`
-method of the Isotopomer class as follows,
+Until now, we have only created a python dictionary representation of an isotopomer. To
+run the simulation, you first need to create an instance of the Isotopomer class. Use the :meth:`~mrsimulator.Isotopomer.parse_dict_with_units` method of the Isotopomer class to
+create the Isotopomer object, as follows,
 
     >>> from mrsimulator import Isotopomer
     >>> isotopomer_object = Isotopomer.parse_dict_with_units(the_isotopomer)
 
-Here, the ``isotopomer_object`` is an instance of the Isotopomer class.
+.. note:: We provide the :meth:`~mrsimulator.Isotopomer.parse_dict_with_units` method
+    because it allows the user to add isotopomer, where the attribute value is a physical
+    quantity. Physical quantities remove the ambiguity in the units, which is otherwise
+    a source of common confusion within many scientific applications. With this said, parsing
+    physical quantities can add significant overhead when used in an iterative algorithm,
+    such as the least-squares minimization. In such cases, we recommend defining objects
+    directly. See the next section.
+
 You may create as many isotopomer objects as necessary, although in this
-example, we stick with a single isotopomer. Finally, add the isotopomer
-objects, in this case, the variable ``isotopomer_object``, to the instance of
-the Simulator class, ``sim``, as follows,
+example, we stick with a single isotopomer.
+Finally, add the isotopomer objects, in this case, the variable ``isotopomer_object``,
+to the instance of the Simulator class, ``sim``, as follows,
 
     >>> sim.isotopomers += [isotopomer_object]
 
 
-Setting up Dimension objects
-----------------------------
+Setting up the Method objects
+-----------------------------
 
-The :ref:`dimension_api` object describes a spectroscopic dimension of the
-NMR spectrum. The number of dimension objects required in the simulation
-depends on the dimensionality of the problem. For example, a one-pulse acquired
-1-D spectrum requires a single dimension object, while two-dimensional spectrum
-requires two dimension objects. In `Mrsimulator`, the Dimension object is
-designed to include attributes required for evaluating the spectrum/line-shape
-along that dimension.
+A :ref:`method_api` object describes the NMR method.
+Let's start with the simplest NMR method, :func:`~mrsimulator.methods.BlochDecaySpectrum`.
 
-.. code-block:: python
+A Bloch Decay Spectrum method is a single event method. The following a python
+dictionary representation of the BlochDecaySpectrum method.
 
-    dimension = {
-        "isotope": "29Si",
+.. code-block::  python
+
+    method_dict = {
+        "channels": ["29Si"],
         "magnetic_flux_density": "9.4 T",
         "rotor_angle": "54.735 deg",
-        "rotor_frequency": "0 kHz",
-        "number_of_points": 2048,
-        "spectral_width": "25 kHz",
-        "reference_offset": "-8 kHz",
+        "rotor_frequency": "0 Hz",
+        "dimensions": [{
+            "count": 2048,
+            "spectral_width": "25 kHz",
+            "reference_offset": "-8 kHz",
+        }]
     }
 
 .. testsetup::
-    >>> dimension = {
-    ...     "isotope": "29Si",
+    >>> method_dict = {
+    ...     "channels": ["29Si"],
     ...     "magnetic_flux_density": "9.4 T",
     ...     "rotor_angle": "54.735 deg",
-    ...     "rotor_frequency": "0 kHz",
-    ...     "number_of_points": 2048,
-    ...     "spectral_width": "25 kHz",
-    ...     "reference_offset": "-8 kHz"
+    ...     "rotor_frequency": "0 Hz",
+    ...     "dimensions": [{
+    ...         "count": 2048,
+    ...         "spectral_width": "25 kHz",
+    ...         "reference_offset": "-8 kHz",
+    ...     }]
     ... }
 
-In the above example, the variable ``dimension`` holds a python dictionary
-representation of a Dimension object. Here, the value of the
-`isotope` key is the isotope symbol of the observed nucleus. A value, ``29Si``,
-implies that the simulated lineshape will comprise of frequency components
-arising from :math:`^{29}\text{Si}` resonances.
-The keys `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency`
-collectively describe the spin-environment, while the keys `number_of_points`,
-`spectral_width`, and `reference_offset` describes the grid coordinates
-along the dimension at which the spectrum is evaluated.
+Here, the key `channels` is a list of isotope symbols over which the method is applied. A
+Bloch Decay method only has a single channel, which in this example, is given a value
+of ``29Si``, which implies that the simulated lineshape from this method will comprise of
+frequency components arising from :math:`^{29}\text{Si}` resonances.
+The keys `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency` collectively
+describe the spin-environment under which the resonance frequency is evaluated.
+The key `dimensions` is a list of spectral dimensions. A Bloch Decay method has
+a single spectral dimension. Each spectral dimension is described by the keys,
+`count`, `spectral_width`, and `reference_offset`, which collectively define the
+grid coordinates along the spectral dimension,
+
+.. math::
+
+    \text{coordinates} = ([0 ... \text{count}] - N/2) \text{spectral_width}/\text{count} + \text{reference_offset}
+
+where `N=count` when count is even else `N=count-1`
+
+As before, you may parse the above ``method_dict`` to a create an instance the
+method as,
 
 ..  .. seealso:: :ref:`dimension`.
 
+.. doctest::
 
-An instance of a Dimension object may be created from a python dictionary,
-such as the one shown above, using the
-:meth:`~mrsimulator.Dimension.parse_dict_with_units` method from the
-:ref:`dimension_api` class as follows,
+    >>> from mrsimulator.methods import BlochDecaySpectrum
+    >>> method_object = BlochDecaySpectrum.parse_dict_with_units(method_dict)
 
-    >>> from mrsimulator import Dimension
-    >>> dimension_object = Dimension.parse_dict_with_units(dimension)
+In the above example, the variable ``method`` is an instance of the BlochDecaySpectrum
+object.
 
-You may create multiple dimension objects as required by the
-experiment. In this example, we stick with a single dimension.
-Finally, add the dimensions, in this case, ``dimension_object``,
+You may create multiple method objects if required. In this example, we
+stick with a single method. Finally, add the method, in this case, ``method_object``,
 to the instance of the Simulator class, ``sim``, as follows,
 
-    >>> sim.dimensions += [dimension_object]
-
-Setting up the NMR method
--------------------------
-
-Besides, setting up the list of isotopomer and dimension objects, you also need
-to specify an NMR method that will be used in generating the line-shape.
-Note, while the list of isotopomer objects are independent of the NMR method,
-the ordered list of dimension objects dependents on the specified NMR method.
-In this example, we illustrate the use of a single pulse acquisition method,
-referred here as `one_d_spectrum`. This method requires a single
-dimension.
-
-.. seealso:: :ref:`methods_api`
-
-Import the method as
-
 .. doctest::
 
-    >>> from mrsimulator.methods import one_d_spectrum
+    >>> sim.methods += [method_object]
 
-Running the simulator
----------------------
+Running simulation
+------------------
 
 To simulate the line-shape, run the simulator with the
-:meth:`~mrsimulator.simulator.Simulator.run` method, as follows,
+:meth:`~mrsimulator.Simulator.run` method, as follows,
+
+.. note:: In Mrsimulator, the resonant frequencies are calculated assuming the
+    weakly-coupled (Zeeman) basis for the spin-system.
 
 .. doctest::
 
-    >>> freq, amp = sim.run(method=one_d_spectrum)
+    >>> sim.run()
 
-In the above code, ``freq`` and ``amp`` are the dimensionless frequency
-ratio given in `ppm` and the corresponding amplitude of the spectrum. The
-following is a figure of the above lineshape plotted using the matplotlib
+The simulator object, ``sim``, will process all the methods within the object
+and store the result in the :attr:`~mrsimulator.Method.simulation`
+attribute of the Method object. You may access the simulation as follows,
+
+.. doctest::
+
+    >>> data1 = sim.methods[0].simulation
+
+Here, ``data1`` is the CSDM object holding the simulation data from the method
+at index 0 of the :attr:`~mrsimulator.Simulator.methods` attribute. We use CSDM
+format because of its versatility in handling multi-dimensional datasets.
+
+At this point, you may continue with additional post-simulation processing.
+We end this example with the plot of the data from the simulation. Because NMR data
+is visualized on a dimensionless frequency ratio axis, we first convert the frequency
+to a `ppm` scale, following,
+
+.. doctest::
+
+    >>> data1.dimensions[0].to('ppm', 'nmr_frequency_ratio')
+
+The following is the simulated lineshape plotted using the matplotlib
 library.
 
 .. doctest::
@@ -229,10 +255,10 @@ library.
     ...     plt.tight_layout()
     ...     plt.show()
 
-    >>> plot(freq, amp) # doctest: +SKIP
+    >>> plot(*data1.to_list())
 
 .. .. testsetup::
-..    >>> plot_save(freq, amp, "example")
+..    >>> plot_save(freq, amp, "example")  # doctest: +SKIP
 
 .. _fig2:
 .. figure:: _images/example.*

@@ -11,3 +11,4 @@ pytest-cov
 sphinxjp.themes.basicstrap
 sphinx>=2.0
 sphinx-gallery
+breathe>4.18

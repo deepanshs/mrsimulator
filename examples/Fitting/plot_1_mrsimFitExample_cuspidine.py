@@ -50,7 +50,7 @@ plt.show()
 
 
 from mrsimulator import Simulator, Isotopomer, Site
-from mrsimulator.methods import BlochDecayFT
+from mrsimulator.methods import BlochDecaySpectrum
 
 S29 = Site(
     isotope="29Si",
@@ -58,8 +58,8 @@ S29 = Site(
     shielding_symmetric={"zeta": -60, "eta": 0.6},
 )
 
-method = BlochDecayFT(
-    channel="29Si",
+method = BlochDecaySpectrum(
+    channels=["29Si"],
     magnetic_flux_density=7.1,
     rotor_frequency=780,
     dimensions=[{"count": 2046, "spectral_width": 25000, "reference_offset": -5000}],

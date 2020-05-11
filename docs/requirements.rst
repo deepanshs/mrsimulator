@@ -8,15 +8,13 @@ Package dependencies
 
 **Required packages**
 
-- `NumPy>=1.13.3 <http://www.numpy.org>`_
+- `NumPy>=1.17 <http://www.numpy.org>`_
 - openblas
-- `astropy>=3.0 <https://www.astropy.org>`_ for the units library
-- `requests>=2.21.0 <https://pypi.org/project/requests/>`_
-- setuptools>=27.3
-- cython>=0.29.11
-- `matplotlib>=3.0.2 <https://matplotlib.org>`_ for figures and visualization,
-- `csdmpy>=0.1.4 <https://csdmpy.readthedocs.io/en/latest/>`_
-- `pydantic>=0.28 <https://pydantic-docs.helpmanual.io>`_
+- `requests>=2.22 <https://pypi.org/project/requests/>`_
+- cython>=0.29.14
+- `matplotlib>=3.1 <https://matplotlib.org>`_ for figures and visualization,
+- `csdmpy>=0.2 <https://csdmpy.readthedocs.io/en/latest/>`_
+- `pydantic>=1.0 <https://pydantic-docs.helpmanual.io>`_
 - monty>=2.0.4
 
 **Other packages**

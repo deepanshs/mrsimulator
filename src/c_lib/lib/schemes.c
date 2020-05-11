@@ -195,11 +195,11 @@ MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
   // malloc_complex128(plan->size);
   // gettimeofday(&fft_setup_time, NULL);
 
-  int fftw_thread = fftw_init_threads();
-  if (fftw_thread == 0) {
-    printf("failed to initialize fftw threading");
-  }
-  fftw_plan_with_nthreads(4);
+  // int fftw_thread = fftw_init_threads();
+  // if (fftw_thread == 0) {
+  //   printf("failed to initialize fftw threading");
+  // }
+  // fftw_plan_with_nthreads(2);
 
   fftw_scheme->the_fftw_plan = fftw_plan_many_dft(
       1, &number_of_sidebands, total_orientations, fftw_scheme->vector, NULL,

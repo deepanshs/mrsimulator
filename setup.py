@@ -3,6 +3,7 @@ import platform
 import sys
 from os.path import abspath
 from os.path import dirname
+from os.path import exists
 from os.path import join
 from os.path import split
 
@@ -13,6 +14,11 @@ from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
 
+from setting import use_accelerate
+from setting import use_openblas
+
+# from setting import USE_SSE_AVX
+
 # get the version from file
 
 print("python version", sys.version_info)
@@ -22,20 +28,23 @@ with open("src/mrsimulator/__init__.py", "r") as f:
         if "__version__" in line:
             before_keyword, keyword, after_keyword = line.partition("=")
             version = after_keyword.strip()[1:-1]
-            print(version)
+            print("mrsimulator version ", version)
 
 module_dir = dirname(abspath(__file__))
-print(module_dir)
+
+
+extra_compile_args = ["-O3", "-ffast-math"]
+extra_link_args = []
 
 include_dirs = [
-    "/opt/local/include/",
+    # "/opt/local/include/",
     "/usr/include/",
     "/usr/include/openblas",
     "/usr/include/x86_64-linux-gnu/",
 ]
 
 library_dirs = [
-    "/opt/local/lib/",
+    # "/opt/local/lib/",
     "/usr/lib64/",
     "/usr/lib/",
     "/usr/lib/x86_64-linux-gnu/",
@@ -58,12 +67,69 @@ if platform.system() == "Windows":
     libraries += ["fftw3", "openblas"]
     name = "openblas"
 
-    extra_link_args = ["-lm"]
-    extra_compile_args = ["-DFFTW_DLL"]
+    extra_link_args += ["-lm"]
+    extra_compile_args += ["-DFFTW_DLL"]
 
-# this section is important for travis-ci build.
-else:
-    libraries = ["openblas", "fftw3", "fftw3_threads", "pthread"]
+
+def message(lib):
+    return f"Please install {lib} from homebrew with:\n\t$ brew install {lib}"
+
+
+if platform.system() == "Darwin":  # OSX-specific tweaks:
+    # BLAS framework
+    # Apple's Accelerate framework for BLAS:
+    if use_accelerate:
+        acc_info = sysinfo.get_info("accelerate")
+
+        if "extra_compile_args" in acc_info:
+            extra_compile_args += acc_info["extra_compile_args"]
+        if "extra_link_args" in acc_info:
+            extra_link_args += acc_info["extra_link_args"]
+
+    # OpenBLAS framework
+    if use_openblas:
+        BLAS_INCLUDE = "/usr/local/opt/openblas/include"
+        BLAS_LIB = "/usr/local/opt/openblas/lib"
+        libraries += ["openblas"]
+
+        if not exists(BLAS_INCLUDE):
+            print(message("openblas"))
+            sys.exit(1)
+
+        include_dirs += [BLAS_INCLUDE]
+        library_dirs += [BLAS_LIB]
+
+    # # MKL framework
+    # if use_mkl:
+    #     mkl_info = np.__config__.blas_mkl_info
+    #     if mkl_info == {}:
+    #         print("Please enable mkl for numpy before proceeding.")
+    #         sys.exit(1)
+
+    #     BLAS_INCLUDE = mkl_info["include_dirs"]
+    #     BLAS_LIB = mkl_info["library_dirs"]
+    #     libraries += mkl_info["libraries"]
+
+    #     include_dirs += BLAS_INCLUDE
+    #     library_dirs += BLAS_LIB
+
+    # FFTW framework
+    FFTW_INCLUDE = "/usr/local/opt/fftw/include"
+    FFTW_LIB = "/usr/local/opt/fftw/lib"
+    libraries += ["fftw3"]
+
+    if not exists(FFTW_INCLUDE):
+        print(message("fftw"))
+        sys.exit(1)
+
+    include_dirs += [FFTW_INCLUDE]
+    library_dirs += [FFTW_LIB]
+
+    # if USE_SSE_AVX:
+    #     extra_compile_args += ["-Wa,-q"]
+
+if platform.system() == "Linux":
+    libraries = ["openblas", "fftw3"]
     openblas_info = sysinfo.get_info("openblas")
     fftw3_info = sysinfo.get_info("fftw3")
 
@@ -160,7 +226,7 @@ setup(
     url="https://github.com/DeepanshS/MRsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    setup_requires=["numpy>=1.13.3", "setuptools>=27.3", "cython>=0.29.11"],
+    setup_requires=["numpy>=1.13.3", "cython>=0.29.11"],
     install_requires=[
         "numpy>=1.13.3",
         "setuptools>=27.3",

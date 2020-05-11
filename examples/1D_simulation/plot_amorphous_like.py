@@ -77,11 +77,11 @@ for i, z, e in zip(iso, zeta, eta):
 sim = Simulator()
 # add isotopomers
 sim.isotopomers += isotopomers
-# create and add a dimension
-from mrsimulator.methods import BlochDecayFT
+# create and add a Bloch decay spectrum method.
+from mrsimulator.methods import BlochDecaySpectrum
 
-method = BlochDecayFT(
-    channel="29Si", dimensions=[{"spectral_width": 25000, "reference_offset": -7000}]
+method = BlochDecaySpectrum(
+    channels=["29Si"], dimensions=[{"spectral_width": 25000, "reference_offset": -7000}]
 )
 sim.methods += [method]
 
