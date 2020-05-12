@@ -14,7 +14,7 @@ which are useful packages for scientific datasets.
 Using pip
 ---------
 
-Pip is the probably the easiest way to install python packages. We recommend
+Pip is probably the easiest way to install python packages. We recommend
 using pip for installing Mrsimulator. PIP is a package manager for Python
 packages, and is included with python version 3.4 and higher.
 

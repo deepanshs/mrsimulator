@@ -46,8 +46,15 @@ def _str_to_html(my_string):
         String object.
 
     """
+    my_string = my_string.replace("isotopomers[", "ISO_")
+    my_string = my_string.replace("].sites[", "_SITES_")
+    my_string = my_string.replace("].isotropic_chemical_shift", "_isotropic_chemical_shift")
+    my_string = my_string.replace("].shielding_symmetric.", "_shielding_symmetric_")
+    my_string = my_string.replace("].quadrupolar.", "_quadrupolar_")
+    my_string = my_string.replace("].abundance", "_abundance")
 
-    return my_string.replace("[", "91").replace("]", "93").replace(".", "46")
+    return my_string
+    #.replace("isotopomers[", "isotopomers_").replace("]", "93").replace(".", "46")
 
 
 def _html_to_string(my_string):
@@ -62,7 +69,14 @@ def _html_to_string(my_string):
         String Object.
 
     """
-    return my_string.replace("91", "[").replace("93", "]").replace("46", ".")
+    my_string = my_string.replace("ISO_", "isotopomers[")
+    my_string = my_string.replace("_SITES_", "].sites[")
+    my_string = my_string.replace("_isotropic_chemical_shift", "].isotropic_chemical_shift")
+    my_string = my_string.replace("_shielding_symmetric_", "].shielding_symmetric.")
+    my_string = my_string.replace("_quadrupolar_", "].quadrupolar.")
+    my_string = my_string.replace("_abundance", "].abundance")
+
+    return my_string#.replace("91", "[").replace("93", "]").replace("46", ".")
 
 
 def _list_of_dictionaries(my_list):
@@ -137,16 +151,16 @@ def make_fitting_parameters(sim, exclude_key=None):
     temp_list = _traverse_dictionaries(_list_of_dictionaries(sim.isotopomers))
     length = len(sim.isotopomers)
     abundance = 0
-    last_abund = f"{length - 1}9346abundance"
+    last_abund = f"{length - 1}].abundance"
     expression = "100"
     for i in range(length - 1):
-        expression += f"-isotopomers91{i}9346abundance"
+        expression += f"-isotopomers[91]{i}].abundance"
     for i in range(length):
-        abundance += eval("sim." + _html_to_string(f"isotopomers91{i}9346abundance"))
+        abundance += eval("sim." + _html_to_string(f"isotopomers[{i}].abundance"))
 
     for items in temp_list:
-        if "46eta" in items or "abundance" in items and last_abund not in items:
-            if "46eta" in items:
+        if "_eta" in items or "abundance" in items and last_abund not in items:
+            if "_eta" in items:
                 params.add(
                     name=items,
                     value=eval("sim." + _html_to_string(items)),

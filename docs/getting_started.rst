@@ -27,7 +27,7 @@ and create an instance as follows,
 Here, the variable ``sim`` is an instance of the
 :ref:`simulator_api` class. The two attributes of this class that you will
 frequently use are the :attr:`~mrsimulator.Simulator.isotopomers` and
-:attr:`~mrsimulator.Simulator.methods`, whose value is a list of
+:attr:`~mrsimulator.Simulator.methods`, whose values are a list of
 :ref:`isotopomer_api` and :ref:`method_api` objects,
 respectively. The default value of these attributes is an empty list.
 
@@ -118,7 +118,7 @@ create the Isotopomer object, as follows,
     >>> isotopomer_object = Isotopomer.parse_dict_with_units(the_isotopomer)
 
 .. note:: We provide the :meth:`~mrsimulator.Isotopomer.parse_dict_with_units` method
-    because it allows the user to add isotopomer, where the attribute value is a physical
+    because it allows the user to add isotopomers, where the attribute value is a physical
     quantity. Physical quantities remove the ambiguity in the units, which is otherwise
     a source of common confusion within many scientific applications. With this said, parsing
     physical quantities can add significant overhead when used in an iterative algorithm,

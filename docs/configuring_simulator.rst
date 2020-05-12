@@ -6,7 +6,7 @@
 Configuring Simulator object
 ============================
 
-Up till now, we have been using the simulator object with the default setting.
+Up until now, we have been using the simulator object with the default setting.
 In `Mrsimulator`, we choose the default settings such that it applies to a wide
 range of simulations including, static, magic angle spinning (MAS), and
 variable angle spinning (VAS) lineshapes. In certain situations, however, the
