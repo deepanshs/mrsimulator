@@ -85,39 +85,40 @@ class Simulator(BaseModel):
 
     def to_dict_with_units(self, include_methods=False):
         """
-        Serialize the isotopomers and dimensions attribute from the Simulator object
-        to a JSON compliant python dictionary with units.
+        Serialize the Simulator object to a JSON compliant python dictionary object
+        with units.
 
         Args:
-            remove_dimensions: A boolean. If True, the output contains serialized
-                dimension objects. Default is False.
+            include_methods: A boolean. If True, the output dictionary will include
+            a serialized method objects. Default is False.
 
         Returns:
             Dict object
 
         Example:
             >>> pprint(sim.to_dict_with_units())
-            {'isotopomers': [{'abundance': '100%',
-                              'description': '',
-                              'name': '',
+            {'config': {'decompose': False,
+                        'integration_density': 70,
+                        'integration_volume': 'octant',
+                        'number_of_sidebands': 64},
+             'description': '',
+             'indexes': [],
+             'isotopomers': [{'abundance': '100 %',
                               'sites': [{'isotope': '13C',
                                          'isotropic_chemical_shift': '20.0 ppm',
                                          'shielding_symmetric': {'eta': 0.5,
                                                                  'zeta': '10.0 ppm'}}]},
-                             {'abundance': '100%',
-                              'description': '',
-                              'name': '',
+                             {'abundance': '100 %',
                               'sites': [{'isotope': '1H',
                                          'isotropic_chemical_shift': '-4.0 ppm',
                                          'shielding_symmetric': {'eta': 0.1,
                                                                  'zeta': '2.1 ppm'}}]},
-                             {'abundance': '100%',
-                              'description': '',
-                              'name': '',
+                             {'abundance': '100 %',
                               'sites': [{'isotope': '27Al',
                                          'isotropic_chemical_shift': '120.0 ppm',
                                          'shielding_symmetric': {'eta': 0.1,
-                                                                 'zeta': '2.1 ppm'}}]}]}
+                                                                 'zeta': '2.1 ppm'}}]}],
+             'name': ''}
         """
         sim = {}
         sim["name"] = self.name
@@ -153,14 +154,40 @@ class Simulator(BaseModel):
         json_data = contents["isotopomers"]
         self.isotopomers = [Isotopomer.parse_dict_with_units(obj) for obj in json_data]
 
+    def export_isotopomers(self, filename):
+        """
+        Export the list of isotopomers to a JSON serialized isotopomers file.
+
+        See an
+        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
+        /master/isotopomers_ppm.json>`_
+        of JSON serialized isotopomers file. For details, refer to the
+        :ref:`load_isotopomers` section.
+
+        Args:
+            `filename`: A file name.
+        Example:
+            >>> sim.export_isotopomers(filename) # doctest:+SKIP
+        """
+        isotopomers = [Isotopomer.to_dict_with_units(obj) for obj in self.isotopomers]
+        with open(filename, "w", encoding="utf8") as outfile:
+            json.dump(
+                isotopomers,
+                outfile,
+                ensure_ascii=False,
+                sort_keys=False,
+                allow_nan=False,
+            )
+
     def run(self, method_index=None, **kwargs):
         """Simulate the lineshape.
 
         Args:
-            method: The methods used in simulating line-shapes.
+            method_index: If provided, only update the simulate for the method at
+            the given index.
 
         Example:
-            >>> sim.run(method=one_d_spectrum) # doctest:+SKIP
+            >>> sim.run() # doctest:+SKIP
         """
         if method_index is None:
             method_index = np.arange(len(self.methods))
@@ -194,7 +221,13 @@ class Simulator(BaseModel):
 
     # freq *= u.Unit("ppm")
     # return freq, amp
+
     def save(self, filename):
+        """Serialize the simulator object to a JSON file.
+
+        Args:
+            filename: The file name used in serialization.
+        """
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
                 self.to_dict_with_units(include_methods=True),
@@ -205,6 +238,14 @@ class Simulator(BaseModel):
             )
 
     def load(self, filename):
+        """Load the mrsimulator object from the JSON file.
+
+        Args:
+            filename: The name of the file holding a mrsimulator serialization.
+
+        Return:
+            A Simulator object.
+        """
         sim = Simulator()
         contents = import_json(filename)
         i_data = contents["isotopomers"]
@@ -225,6 +266,7 @@ class Simulator(BaseModel):
         new = cp.new()
         for dimension in method.spectral_dimensions:
             new.add_dimension(dimension.to_csdm_dimension())
+            new.dimensions[-1].to("ppm", "nmr_frequency_ratio")
 
         dependent_variable = {
             "type": "internal",

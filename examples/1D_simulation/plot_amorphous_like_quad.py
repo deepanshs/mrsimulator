@@ -81,7 +81,7 @@ sim.isotopomers += isotopomers
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
 method = BlochDecayCentralTransitionSpectrum(
-    channels=["27Al"], dimensions=[{"spectral_width": 80000}]
+    channels=["27Al"], spectral_dimensions=[{"spectral_width": 80000}]
 )
 
 sim.methods += [method]
@@ -93,13 +93,11 @@ sim.methods += [method]
 
 #%%
 sim.run()
-sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
-x, y = sim.methods[0].simulation.to_list()
 
 #%%
 # The plot of the corresponding spectrum.
 
-#%%
+x, y = sim.methods[0].simulation.to_list()
 plt.figure(figsize=(4, 3))
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("$^{27}$Al frequency / ppm")
@@ -122,12 +120,11 @@ sim.methods[0].spectral_dimensions[0].events[0].rotor_angle = (
 )  # magic angle in radian
 sim.config.number_of_sidebands = 4
 sim.run()
-sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
-x, y = sim.methods[0].simulation.to_list()
+
 
 #%% and the corresponding plot.
 
-#%%
+x, y = sim.methods[0].simulation.to_list()
 plt.figure(figsize=(4, 3))
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("$^{27}$Al frequency / ppm")

@@ -71,8 +71,10 @@ class Parseable(BaseModel):
             for i, item in enumerate(obj):
                 if isinstance(item, list):
                     lst.append(get_list(member[i], item))
-                else:
+                elif isinstance(item, dict):
                     lst.append(member[i].to_dict_with_units())
+                elif item not in [None, ""]:
+                    lst.append(item)
             return lst
 
         temp_dict = {}

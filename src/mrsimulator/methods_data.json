@@ -1,0 +1,49 @@
+{
+  "Bloch_decay": {
+    "name": "BlochDecaySpectrum",
+    "description": "A Bloch decay Spectrum.",
+    "global_event_attributes": {},
+    "spectral_dimensions": [{
+      "events": [{
+        "user_variables": [
+          "magnetic_flux_density",
+          "rotor_frequency",
+          "rotor_angle"
+        ],
+        "transition_query": {
+          "P": {
+            "channel-1": [
+              [-1]
+            ]
+          }
+        }
+      }]
+    }]
+  },
+  "Bloch_decay_central_transition": {
+    "name": "BlochDecaySpectrum",
+    "description": "A central transition selective Bloch decay Spectrum.",
+    "global_event_attributes": {},
+    "spectral_dimensions": [{
+      "events": [{
+        "user_variables": [
+          "magnetic_flux_density",
+          "rotor_frequency",
+          "rotor_angle"
+        ],
+        "transition_query": {
+          "P": {
+            "channel-1": [
+              [-1]
+            ]
+          },
+          "D": {
+            "channel-1": [
+              [0]
+            ]
+          }
+        }
+      }]
+    }]
+  }
+}

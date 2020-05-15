@@ -1,12 +1,10 @@
-.. _method_api:
+.. _methods_api:
 
 Methods
 =======
 
 .. currentmodule:: mrsimulator.methods
 
-.. autoclass:: BlochDecaySpectrum
-    :show-inheritance:
+.. autofunction:: BlochDecaySpectrum
 
-.. autoclass:: BlochDecayCentralTransitionSpectrum
-    :show-inheritance:
+.. autofunction:: BlochDecayCentralTransitionSpectrum

@@ -25,7 +25,8 @@ def test_two_site_no_coupling_test():
     sim1.isotopomers += iso_two_site
     sim1.methods += [
         BlochDecaySpectrum(
-            channels=["29Si"], dimensions=[dict(count=2048, spectral_width=25000)]
+            channels=["29Si"],
+            spectral_dimensions=[dict(count=2048, spectral_width=25000)],
         )
     ]
     sim1.run()
@@ -34,7 +35,8 @@ def test_two_site_no_coupling_test():
     sim2.isotopomers += iso_single_sites
     sim2.methods += [
         BlochDecaySpectrum(
-            channels=["29Si"], dimensions=[dict(count=2048, spectral_width=25000)]
+            channels=["29Si"],
+            spectral_dimensions=[dict(count=2048, spectral_width=25000)],
         )
     ]
     sim2.run()

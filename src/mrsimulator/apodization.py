@@ -21,9 +21,10 @@ class Apodization:
     def __init__(self, sim, dimension=0):
         self.dimension = dimension
         self.fft = True
-        self.x = sim.dimensions[dimension].coordinates
+        dim = sim.dimensions[dimension]
+        self.x = dim.coordinates
         self.y = sim.dependent_variables[0].components[0]
-        self.inverse_x = reciprocal_coordinates(self.x)
+        self.inverse_x = dim.reciprocal_coordinates().to("s").value
 
     def Lorentzian(self, sigma):
         """Lorentzian apodization function.
@@ -64,7 +65,8 @@ class Apodization:
 
         Args:
             Self: simulation object
-            fn: The apodization function. See the Apodization member functions for a list of available functions
+            fn: The apodization function. See the Apodization member functions for a
+                list of available functions
 
         Returns:
             A Numpy array

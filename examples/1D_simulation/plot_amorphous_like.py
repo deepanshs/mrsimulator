@@ -8,9 +8,16 @@ Amorphous-like materials
 """
 # sphinx_gallery_thumbnail_number = 2
 #%%
+# One of the advantages of ``Mrsimulator`` is that it is a very fast NMR line-shape
+# simulation library. We can exploit this feature to simulate bulk line-shapes and
+# eventually model amorphous materials.
+#
 # In this section, we illustrate how ``Mrsimulator`` may be used in simulating
-# amorphous materials. We do this by assuming a distribution of tensors. For
-# example, consider the following,
+# NMR spectrum of amorphous materials. We accomplish this by assuming a distribution
+# of interaction tensors in amorphous materials. For example, consider a tri-variate
+# normal distribution of shielding tensor parameters, `i.e.`, the isotropic chemical
+# shift, the anisotropy parameter, :math:`\zeta`, and the asymmetry parameter,
+# :math:`\eta`, as follows,
 import numpy as np
 from scipy.stats import multivariate_normal
 
@@ -56,7 +63,7 @@ plt.tight_layout()
 plt.show()
 #%%
 #
-# Let's create the site and isotopomer objects from these parameters.
+# Let's create the sites and isotopomer objects from these parameters.
 
 #%%
 from mrsimulator import Simulator, Site, Isotopomer
@@ -71,19 +78,26 @@ for i, z, e in zip(iso, zeta, eta):
     isotopomers.append(Isotopomer(sites=[site]))
 
 #%%
-# Now, that we have the isotopomers, create a Simulator object and add the isotopomers.
-
-#%%
-sim = Simulator()
-# add isotopomers
-sim.isotopomers += isotopomers
-# create and add a Bloch decay spectrum method.
+# Let's also create the Bloch decay spectrum method.
 from mrsimulator.methods import BlochDecaySpectrum
 
 method = BlochDecaySpectrum(
-    channels=["29Si"], dimensions=[{"spectral_width": 25000, "reference_offset": -7000}]
+    channels=["29Si"],
+    spectral_dimensions=[
+        {"spectral_width": 25000, "reference_offset": -7000}
+    ],  # values in Hz
 )
-sim.methods += [method]
+
+#%%
+# The above method simulates static :math:`^{29}\text{Si}` line-shapes at 9.4 T field
+# (default value).
+#
+# Now, that we have the isotopomers and the method, create the simulator object and
+# all the respective objects.
+
+sim = Simulator()
+sim.isotopomers += isotopomers  # add isotopomers
+sim.methods += [method]  # add method
 
 #%%
 # Static line-shape
@@ -92,13 +106,11 @@ sim.methods += [method]
 
 #%%
 sim.run()
-sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
+
+#%%
+# The plot of the simulation.
+
 x, y = sim.methods[0].simulation.to_list()
-
-#%%
-# The plot of the corresponding spectrum.
-
-#%%
 plt.figure(figsize=(4, 3))
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("frequency / ppm")
@@ -111,28 +123,29 @@ plt.show()
 # .. note::
 #     The broad lineshape seen in the above spectrum is the result of
 #     lineshapes arising from a distribution of tensors. In this case,
-#     the lineshape is an integral of ``n`` individual spectra. There is no
+#     the lineshape is an integral of ``n=4000`` individual spectra. There is no
 #     lineshape broadening filter applied to the spectrum.
 
 #%%
 # Spinning sideband simulation at :math:`90^\circ`
 # ------------------------------------------------
-# Here is another example of a sideband simulation, spinning at a 90-degree angle,
+# Here is another example of a sideband simulation, spinning at a 90-degree angle.
 
-#%%
-sim.methods[0].spectral_dimensions[0].events[0].rotor_frequency = 5000  # in Hz
-sim.methods[0].spectral_dimensions[0].events[
-    0
-].rotor_angle = 1.57079  # 90 degree in radian
+sim.methods[0] = BlochDecaySpectrum(
+    channels=["29Si"],
+    rotor_frequency=5000,  # in Hz
+    rotor_angle=1.57079,  # in rads, equivalent to 90 deg
+    spectral_dimensions=[
+        {"spectral_width": 25000, "reference_offset": -7000}
+    ],  # values in Hz
+)
 sim.config.number_of_sidebands = 8  # eight sidebands are sufficient for this example
 sim.run()
-sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
+
+#%%
+# The plot of the simulation.
+
 x, y = sim.methods[0].simulation.to_list()
-
-#%%
-# and the corresponding plot.
-
-#%%
 plt.figure(figsize=(4, 3))
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("frequency / ppm")
@@ -145,19 +158,21 @@ plt.show()
 # Spinning sideband simulation at magic angle
 # -------------------------------------------
 
-#%%
-sim.methods[0].spectral_dimensions[0].events[0].rotor_frequency = 1000  # in Hz
-sim.methods[0].spectral_dimensions[0].events[0].rotor_angle = (
-    54.735 * np.pi / 180.0
-)  # magic angle in radian
-sim.config.number_of_sidebands = 16
+sim.methods[0] = BlochDecaySpectrum(
+    channels=["29Si"],
+    rotor_frequency=1000,  # in Hz
+    rotor_angle=54.735 * np.pi / 180.0,  # in rads
+    spectral_dimensions=[
+        {"spectral_width": 25000, "reference_offset": -7000}  # values in Hz
+    ],
+)
+sim.config.number_of_sidebands = 16  # sixteen sidebands are sufficient for this example
 sim.run()
-sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
-x, y = sim.methods[0].simulation.to_list()
-
-#%% and the corresponding plot.
 
 #%%
+# The plot of the simulation.
+
+x, y = sim.methods[0].simulation.to_list()
 plt.figure(figsize=(4, 3))
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("frequency / ppm")

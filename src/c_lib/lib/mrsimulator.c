@@ -293,7 +293,8 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
   }
 
   /* Evaluating the sideband phase exp(vector) */
-  vm_double_complex_exp(plan->size, fftw_scheme->vector, fftw_scheme->vector);
+  vm_double_complex_exp_imag_only(plan->size, fftw_scheme->vector,
+                                  fftw_scheme->vector);
 
   /* Evaluate the Fourier transform of vector, fft(vector). The fft operation
    * updates the value of the array, `vector` */

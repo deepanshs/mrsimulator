@@ -15,7 +15,10 @@ Simulator
     .. automethod:: get_isotopes
     .. automethod:: to_dict_with_units
     .. automethod:: load_isotopomers
+    .. automethod:: export_isotopomers
     .. automethod:: run
+    .. automethod:: save
+    .. automethod:: load
     .. automethod:: as_csdm_object
     .. automethod:: apodize
 
@@ -25,20 +28,9 @@ Simulator
 .. _config_api:
 
 ConfigSimulator
-===============
+---------------
 
 .. currentmodule:: mrsimulator.simulator
 
 .. autoclass:: ConfigSimulator
     :show-inheritance:
-
-
-.. _methods_api:
-
-Methods
-=======
-
-.. automodule:: mrsimulator.methods
-   :members:
-   :undoc-members:
-   :show-inheritance:

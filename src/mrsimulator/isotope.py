@@ -15,6 +15,13 @@ ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
 
 
 class Isotope(BaseModel):
+    """An Isotope class.
+
+    Attributes:
+        symbol: The isotope symbol given as the atomic number followed by the
+            atomic symbol.
+    """
+
     symbol: str
 
     class Config:
@@ -31,10 +38,6 @@ class Isotope(BaseModel):
     def spin(self):
         """
         Spin quantum number, I, of the isotope.
-
-        Example:
-            >>> dim.spin
-            2.5
         """
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["spin"] / 2.0
@@ -43,10 +46,6 @@ class Isotope(BaseModel):
     def natural_abundance(self):
         """
         Natural abundance of the isotope in units of %.
-
-        Example:
-            >>> dim.natural_abundance
-            100.0
         """
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["natural_abundance"]
@@ -55,10 +54,6 @@ class Isotope(BaseModel):
     def gyromagnetic_ratio(self):
         """
         Reduced gyromagnetic ratio of the nucleus given in units of MHz/T.
-
-        Example:
-            >>> dim.gyromagnetic_ratio
-            11.10309
         """
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["gyromagnetic_ratio"]
@@ -67,10 +62,6 @@ class Isotope(BaseModel):
     def quadrupole_moment(self):
         """
         Quadrupole moment of the nucleus given in units of eB (electron-barn).
-
-        Example:
-            >>> dim.quadrupole_moment
-            0.15
         """
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["quadrupole_moment"]
@@ -79,10 +70,6 @@ class Isotope(BaseModel):
     def atomic_number(self):
         """
         Atomic number of the isotope.
-
-        Example:
-            >>> dim.atomic_number
-            13
         """
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["atomic_number"]

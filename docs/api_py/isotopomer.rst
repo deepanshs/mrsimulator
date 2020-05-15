@@ -8,6 +8,9 @@ Isotopomer
 .. autoclass:: Isotopomer
     :show-inheritance:
 
+    .. autoattribute:: all_transitions
+    .. autoattribute:: Zeeman_energy_states
+
     .. rubric:: Method Documentation
 
     .. automethod:: parse_dict_with_units

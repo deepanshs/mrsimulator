@@ -33,7 +33,14 @@ with open("src/mrsimulator/__init__.py", "r") as f:
 module_dir = dirname(abspath(__file__))
 
 
-extra_compile_args = ["-O3", "-ffast-math"]
+extra_compile_args = [
+    "-O3",
+    "-ffast-math",
+    # "-msse4.2",
+    # "-ftree-vectorize",
+    # "-fopt-info-vec-optimized",
+    # "-mavx",
+]
 extra_link_args = []
 
 include_dirs = [

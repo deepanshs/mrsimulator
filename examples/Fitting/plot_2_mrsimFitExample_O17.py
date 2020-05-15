@@ -76,7 +76,7 @@ method = BlochDecayCentralTransitionSpectrum(
     channels=["17O"],
     magnetic_flux_density=9.4,
     rotor_frequency=14000,
-    dimensions=[
+    spectral_dimensions=[
         {
             "count": count,
             "spectral_width": count * increment,
@@ -143,6 +143,7 @@ minner = Minimizer(
     min_function, params, fcn_args=(oxygen_experiment, sim, "Lorentzian")
 )
 result = minner.minimize()
+report_fit(result)
 
 #%%
 # Next, we can compare the fit to the experimental data:

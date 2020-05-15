@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 class ZeemanState:
+    """Zeeman energy state class."""
+
     def __init__(self, n_sites, *args):
         self.n_sites = n_sites
         for i in range(n_sites):

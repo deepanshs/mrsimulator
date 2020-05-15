@@ -62,7 +62,9 @@ method = BlochDecaySpectrum(
     channels=["29Si"],
     magnetic_flux_density=7.1,
     rotor_frequency=780,
-    dimensions=[{"count": 2046, "spectral_width": 25000, "reference_offset": -5000}],
+    spectral_dimensions=[
+        {"count": 2046, "spectral_width": 25000, "reference_offset": -5000}
+    ],
 )
 
 sim = Simulator()

@@ -11,6 +11,7 @@ Python-API References
    isotopomer
    site
    other_objects
+   method
    methods
    fitting
 

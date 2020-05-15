@@ -15,7 +15,7 @@ such cases, the user is advised to modify these settings as required. In the
 following section, we briefly describe the configuration settings.
 
 The :ref:`simulator_api` class is configured using the
-:attr:`~mrsimulator.simulator.Simulator.config` attribute. The default value
+:attr:`~mrsimulator.Simulator.config` attribute. The default value
 of the config attributes is as follows,
 
 .. doctest::
@@ -52,7 +52,7 @@ advised to increase this value as required. Consider the following example.
     >>> method = BlochDecaySpectrum(
     ...     channels=['29Si'],
     ...     rotor_frequency=200, # in Hz.
-    ...     dimensions=[dict(count=1024, spectral_width=25000)]
+    ...     spectral_dimensions=[dict(count=1024, spectral_width=25000)]
     ... )
 
     >>> simulator_1.isotopomers += [Isotopomer(sites=[Si29site])]
@@ -62,12 +62,9 @@ advised to increase this value as required. Consider the following example.
     >>> simulator_1.run()
 
     >>> # plotting the simulation
-    >>> # Convert the coordinates from Hz to ppm.
-    >>> simulator_1.methods[0].simulation.dimensions[0].to('ppm', 'nmr_frequency_ratio')
-    >>> plot(*simulator_1.methods[0].simulation.to_list())
+    >>> plot(*simulator_1.methods[0].simulation.to_list()) # doctest:+SKIP
 
- # doctest:+SKIP
-.. .. testsetup::
+.. .. testsetup:: # doctest:+SKIP
 ..     >>> plot_save(*simulator_1.methods[0].simulation.to_list(), 'example_sidebands_1')
 
 .. figure:: _images/example_sidebands_1.*
@@ -90,9 +87,7 @@ observe.
     >>> simulator_1.run()
 
     >>> # plotting the simulation
-    >>> # Convert the coordinates from Hz to ppm.
-    >>> simulator_1.methods[0].simulation.dimensions[0].to('ppm', 'nmr_frequency_ratio')
-    >>> plot(*simulator_1.methods[0].simulation.to_list())
+    >>> plot(*simulator_1.methods[0].simulation.to_list()) # doctest:+SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'example_sidebands_2')
@@ -134,16 +129,14 @@ shielding tensor, as follows,
     >>> simulator_1.methods[0] = BlochDecaySpectrum(
     ...     channels=['29Si'],
     ...     rotor_frequency=0, # in Hz.
-    ...     dimensions=[dict(count=1024, spectral_width=25000)]
+    ...     spectral_dimensions=[dict(count=1024, spectral_width=25000)]
     ... )
 
     >>> # simulate and plot
     >>> simulator_1.run()
     >>>
     >>> # plotting the simulation
-    >>> # Convert the coordinates from Hz to ppm.
-    >>> simulator_1.methods[0].simulation.dimensions[0].to('ppm', 'nmr_frequency_ratio')
-    >>> plot(*simulator_1.methods[0].simulation.to_list())
+    >>> plot(*simulator_1.methods[0].simulation.to_list()) # doctest:+SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'example_integration_volume_1')
@@ -167,9 +160,7 @@ volume to `hemisphere` and re-simulate.
     >>> simulator_1.run()
     >>>
     >>> # plotting the simulation
-    >>> # Convert the coordinates from Hz to ppm.
-    >>> simulator_1.methods[0].simulation.dimensions[0].to('ppm', 'nmr_frequency_ratio')
-    >>> plot(*simulator_1.methods[0].simulation.to_list())
+    >>> plot(*simulator_1.methods[0].simulation.to_list()) # doctest:+SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'example_integration_volume_2')
@@ -213,7 +204,7 @@ arising from an individual isotopomer. For example,
     >>> # Create a method object.
     >>> method = BlochDecaySpectrum(
     ...     channels=['1H'],
-    ...     dimensions=[dict(count=1024, spectral_width=10000)]
+    ...     spectral_dimensions=[dict(count=1024, spectral_width=10000)]
     ... )
 
     >>> # Create simulator object.
@@ -225,9 +216,7 @@ arising from an individual isotopomer. For example,
     >>> sim.run()
     >>>
     >>> # plotting the simulation
-    >>> # Convert the coordinates from Hz to ppm.
-    >>> sim.methods[0].simulation.dimensions[0].to('ppm', 'nmr_frequency_ratio')
-    >>> plot(*sim.methods[0].simulation.to_list())
+    >>> plot(*sim.methods[0].simulation.to_list()) # doctest:+SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'example_decompose_1')

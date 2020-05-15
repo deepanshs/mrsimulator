@@ -2,6 +2,7 @@
 """The Event class."""
 import warnings
 from copy import deepcopy
+from functools import reduce
 from itertools import permutations
 from typing import ClassVar
 from typing import Dict
@@ -15,6 +16,7 @@ from pydantic import BaseModel
 from pydantic import Field
 from pydantic import validator
 
+from .abstract_list import TransitionList
 from .isotope import Isotope
 from .transition import Transition
 
@@ -22,7 +24,7 @@ from .transition import Transition
 class TransitionQuery(BaseModel):
     """Base TransitionQuery class.
 
-    Args:
+    Attributes:
         P: A list of p symmetry transition, where p = Δm and Δm is the difference
                 between spin quantum numbers of the final and initial states.
     """
@@ -41,10 +43,10 @@ class TransitionQuery(BaseModel):
 
 
 class Event(Parseable):
-    r"""Base Event class defines the spin environment and the transitions along a
+    r"""Base Event class defines the spin environment and the transition query for a
     segment of the transition pathway.
 
-    Args:
+    Attributes:
         fraction: A `required` float containing the weight of the frequency
                 contribution from the event.
         magnetic_flux_density: An `optional` float containing the macroscopic magnetic
@@ -57,7 +59,7 @@ class Event(Parseable):
                 sample rotation axis and the applied external magnetic field,
                 :math:`\theta`, during the event in units of rad.
                 The default value is ``0.9553166``, i.e. the magic angle.
-        transition_query" An `optional` TransitionQuery object or an equivalent dict
+        transition_query: An `optional` TransitionQuery object or an equivalent dict
                 object listing the queries used in selecting the active transitions
                 during the event. Only the active transitions from this query
                 contribute to the frequency.
@@ -69,6 +71,7 @@ class Event(Parseable):
     # 54.735 degrees = 0.9553166 radians
     rotor_angle: Optional[float] = Field(default=0.9553166, ge=0, le=1.5707963268)
     transition_query: Optional[TransitionQuery] = TransitionQuery()
+    user_variables: Optional[List] = None
 
     property_unit_types: ClassVar = {
         "magnetic_flux_density": "magnetic flux density",
@@ -92,9 +95,10 @@ class Event(Parseable):
         validate_assignment = True
 
     @classmethod
-    def parse_dict_with_units(cls, py_dict):
+    def parse_dict_with_units(cls, py_dict: dict):
         """
-        Parse the physical quantities of a Event object from as a python dictionary.
+        Parse the physical quantities of an Event object from a python dictionary
+        object.
 
         Args:
             py_dict: Dict object
@@ -105,7 +109,7 @@ class Event(Parseable):
 class SpectralDimension(Parseable):
     r"""Base SpectralDimension class defines the dimensions of the method.
 
-    Args:
+    Attributes:
         count: An optional integer with the number of points, :math:`N`,
                 along the dimension. The default value is ``1024``.
         spectral_width: A `required` float with the spectral width,
@@ -148,7 +152,7 @@ class SpectralDimension(Parseable):
         validate_assignment = True
 
     @property
-    def coordinates_Hz(self):
+    def coordinates_Hz(self) -> np.ndarray:
         r"""
         The grid coordinates along the dimension in units of Hz, evaluated as
 
@@ -157,11 +161,6 @@ class SpectralDimension(Parseable):
 
         where :math:`T=N/2` and :math:`T=(N-1)/2` for even and odd values of
         :math:`N`, respectively.
-
-        Example:
-            >>> dim.coordinates_Hz[:5]
-            array([-25000.      , -24951.171875, -24902.34375 , -24853.515625,
-                   -24804.6875  ])
         """
         n = self.count
         Tk = int(n / 2)
@@ -169,7 +168,7 @@ class SpectralDimension(Parseable):
         return (np.arange(n) - Tk) * increment + self.reference_offset
 
     @property
-    def coordinates_ppm(self):
+    def coordinates_ppm(self) -> np.ndarray:
         r"""
         The grid coordinates along the dimension as dimension frequency ratio
         in units of ppm. The coordinates are evaluated as
@@ -178,11 +177,6 @@ class SpectralDimension(Parseable):
             x_\text{ppm} = \frac{x_\text{Hz}} {x_0 + \omega_0}
 
         where :math:`\omega_0` is the Larmor frequency.
-
-        Example:
-            >>> dim.coordinates_ppm[:5]
-            array([-239.53462217, -239.06678111, -238.59894005, -238.13109899,
-                   -237.66325794])
         """
         if self.origin_offset is None:
             warnings.warn(
@@ -198,7 +192,7 @@ class SpectralDimension(Parseable):
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantities of a SpectralDimension object from as a
+        Parse the physical quantities of a SpectralDimension object from a
         python dictionary object.
 
         Args:
@@ -228,6 +222,19 @@ class SpectralDimension(Parseable):
 
 
 class Method(Parseable):
+    r"""Base Method class.
+
+    Attributes:
+        name: (string) An optional name of the method.
+        description: (string) A optional description of the method.
+        channels: An required list of isotope symbols over which the given method
+            applies, for example, ['1H'].
+        spectral_dimensions: An required list of SpectralDimension objects or list of
+            equivalent python dictionary objects.
+        simulation: A csdm object holding the result of the simulation.
+        experiment: A csdm object that optionally holds the experimental data, if
+            available.
+    """
     name: Optional[str] = ""
     description: Optional[str] = ""
     channels: List[str]
@@ -235,18 +242,21 @@ class Method(Parseable):
     simulation: Optional[cp.CSDM]
     experiment: Optional[cp.CSDM]
 
+    property_units: Dict = {}
+
     class Config:
         validate_assignment = True
         arbitrary_types_allowed = True
 
     @validator("channels", always=True)
-    def get_channels(cls, v, *, values, **kwargs):
+    def validate_channels(cls, v, *, values, **kwargs):
         return [Isotope(symbol=_) for _ in v]
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantities of a Event object from as a python dictionary.
+        Parse the physical quantities of the Method object from a python dictionary
+        object.
 
         Args:
             py_dict: Dict object
@@ -264,8 +274,15 @@ class Method(Parseable):
         return super().parse_dict_with_units(py_dict_copy)
 
     def to_dict_with_units(self):
+        """Parse the Method object to a JSON compliant python dict with units."""
         temp_dict = self.dict(
-            exclude={"spectral_dimensions", "channels", "simulation", "experiment"}
+            exclude={
+                "spectral_dimensions",
+                "channels",
+                "simulation",
+                "experiment",
+                "property_units",
+            }
         )
         temp_dict["spectral_dimensions"] = [
             item.to_dict_with_units() for item in self.spectral_dimensions
@@ -285,7 +302,56 @@ class Method(Parseable):
             temp_dict["experiment"] = self.experiment.to_dict()
         return temp_dict
 
+    def _get_transition_pathways(self, isotopomer):
+        selected_transitions = isotopomer._all_transitions()
+
+        segments = []
+        for seq in self.spectral_dimensions:
+            for ent in seq.events:
+                list_of_P = query_permutations(
+                    ent.transition_query.to_dict_with_units(),
+                    isotope=isotopomer.get_isotopes(),
+                    channel=[item.symbol for item in self.channels],
+                )
+                indexes = P_symmetry_indexes(selected_transitions, list_of_P)
+                selected_transitions = selected_transitions[indexes]
+
+                if ent.transition_query.D is not None:
+                    list_of_D = query_permutations(
+                        ent.transition_query.to_dict_with_units(),
+                        isotope=isotopomer.get_isotopes(),
+                        channel=[item.symbol for item in self.channels],
+                        transition_symmetry="D",
+                    )
+                    indexes = D_symmetry_indexes(selected_transitions, list_of_D)
+                    selected_transitions = selected_transitions[indexes]
+
+                segments += [selected_transitions]
+        return segments
+
     def get_transition_pathways(self, isotopomer):
+        segments = self._get_transition_pathways(isotopomer)
+        segments = [
+            np.asarray(
+                TransitionList(
+                    [
+                        Transition(initial=_[0].tolist(), final=_[1].tolist())
+                        for _ in item
+                    ]
+                )
+            )
+            for item in segments
+        ]
+        return cartesian_product(*segments)
+
+    def get_transition_pathways_old(self, isotopomer):
+        """
+        Return a list of transition pathways from the given isotopomer that satisfy
+        the query criterion of the method.
+
+        Args:
+            isotopomer: An Isotopomer object.
+        """
         transitions = isotopomer.all_transitions
         segments = []
         for seq in self.spectral_dimensions:
@@ -339,7 +405,6 @@ class Method(Parseable):
                         # print('D_segment: ', D_segment)
 
                 segments.append(np.asarray(P_segment))  # append the intersection
-
         return cartesian_product(*segments)
 
 
@@ -350,6 +415,34 @@ def cartesian_product(*arrays):
     for i, a in enumerate(np.ix_(*arrays)):
         arr[..., i] = a
     return arr.reshape(-1, la)
+
+
+def P_symmetry_indexes(transitions, list_of_P):
+    P = transitions[:, 1, :] - transitions[:, 0, :]
+    n = P.shape[1]
+    return reduce(
+        np.union1d,
+        [
+            reduce(np.intersect1d, [np.where(P[:, i] == search[i]) for i in range(n)])
+            for search in list_of_P
+        ],
+        np.asarray([], dtype=np.int64),
+    )
+
+
+def D_symmetry_indexes(transitions, list_of_D):
+    D = transitions[:, 1, :] ** 2 - transitions[:, 0, :] ** 2
+    return reduce(
+        np.union1d,
+        [
+            reduce(
+                np.intersect1d,
+                [np.where(D[:, i] == search[i]) for i in range(D.shape[1])],
+            )
+            for search in list_of_D
+        ],
+        np.asarray([], dtype=np.int64),
+    )
 
 
 def get_iso_dict(channel, isotope):

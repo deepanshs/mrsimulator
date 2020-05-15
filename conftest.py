@@ -9,6 +9,8 @@ from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SymmetricTensor
+from mrsimulator.isotope import Isotope
+from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
 font = {"weight": "light", "size": 9}
 matplotlib.rc("font", **font)
@@ -23,6 +25,7 @@ def add_site(doctest_namespace):
     doctest_namespace["SymmetricTensor"] = SymmetricTensor
     doctest_namespace["st"] = SymmetricTensor
     doctest_namespace["pprint"] = pprint
+    doctest_namespace["Isotope"] = Isotope
 
     site1 = Site(
         isotope="13C",
@@ -131,15 +134,14 @@ def add_site(doctest_namespace):
     abundance = [0.83, 1.05, 2.16, 2.05, 1.90]  # abundance of each isotopomer
     isotopomers = [Isotopomer(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
 
-    # dimension = Dimension(
-    #     isotope="17O",
-    #     number_of_points=2046,
-    #     spectral_width=50000,
-    #     rotor_frequency=14000,
-    # )
+    method = BlochDecayCentralTransitionSpectrum(
+        channels=["17O"],
+        rotor_frequency=14000,
+        spectral_dimensions=[{"count": 2046, "spectral_width": 50000}],
+    )
 
-    # sim_coesite = Simulator()
-    # sim_coesite.isotopomers += isotopomers
-    # sim_coesite.dimensions += [dimension]
+    sim_coesite = Simulator()
+    sim_coesite.isotopomers += isotopomers
+    sim_coesite.methods += [method]
 
-    # doctest_namespace["sim_coesite"] = sim_coesite
+    doctest_namespace["sim_coesite"] = sim_coesite

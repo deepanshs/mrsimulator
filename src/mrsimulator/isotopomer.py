@@ -24,7 +24,7 @@ class Isotopomer(Parseable):
     """
     Base isotopmer class representing an isolated spin-system with sites and couplings.
 
-    Arguments:
+    Attributes:
         name: An optional string with the isotopomer name. The default is an empty
                 string.
         description: An optional string describing the isotopomer. The default is
@@ -122,8 +122,11 @@ class Isotopomer(Parseable):
 
     def _all_transitions(self):
         """
-        Return transition as a Numpy array where axis 0 is the number of transitions,
-        axis 1 is the initial energy state, and axis 2 is the final energy state.
+        Return all transitions of an isotopomer as a Numpy array of shape (M, 2, N),
+        where M is the number of transitions and N is the number of sites in the
+        isotopomer. The second axis always of length 2, where the entries T[:, 0, :]
+        are the initial energy state, and entries T[:, 1, :] are the corresponding
+        final energy state of the spin transition.
         """
         energy_states = self._Zeeman_energy_states()
         s = energy_states.shape[0]
@@ -170,7 +173,7 @@ class Isotopomer(Parseable):
                                                 'eta': 0.5,
                                                 'gamma': None,
                                                 'zeta': -1006.5895999999999}}],
-             'transitions': None}
+             'transition_pathways': None}
         """
         temp_dict = self.dict()
         temp_dict["sites"] = [site.to_freq_dict(B0) for site in self.sites]

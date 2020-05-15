@@ -16,17 +16,17 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 
 #%%
-# **Step 1** Create sites, in this case, just the one.
+# **Step 1** Create the sites, in this case, just the one.
 
 S33 = Site(
     name="33S",
     isotope="33S",
-    isotropic_chemical_shift=335.7,
-    quadrupolar={"Cq": 0.959e6, "eta": 0.42},
+    isotropic_chemical_shift=335.7,  # in ppm
+    quadrupolar={"Cq": 0.959e6, "eta": 0.42},  # Cq is in Hz
 )
 
 #%%
-# **Step 2** Create isotopomers from these sites.
+# **Step 2** Create the isotopomer from the site.
 
 isotopomer = Isotopomer(sites=[S33])
 
@@ -37,33 +37,35 @@ from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
 method = BlochDecayCentralTransitionSpectrum(
     channels=["33S"],
-    magnetic_flux_density=21.14,
-    rotor_frequency=14000,
-    dimensions=[{"count": 2046, "spectral_width": 5000, "reference_offset": 22500}],
+    magnetic_flux_density=21.14,  # in T
+    rotor_frequency=14000,  # in Hz
+    spectral_dimensions=[
+        {
+            "count": 2046,
+            "spectral_width": 5000,  # in Hz
+            "reference_offset": 22500,  # in Hz
+        }
+    ],
 )
 
 
 #%%
-# **Step 4** Create the Simulator object and add method and isotopomer objects.
+# **Step 4** Create the Simulator object and add the method and isotopomer object.
 
 sim_K2SO3 = Simulator()
-
-# add isotopomers
-sim_K2SO3.isotopomers += [isotopomer]
-
-# add methods
-sim_K2SO3.methods += [method]
+sim_K2SO3.isotopomers += [isotopomer]  # add isotopomer
+sim_K2SO3.methods += [method]  # add method
 
 #%%
 # **Step 5** Simulate the spectrum.
 
 sim_K2SO3.run()
-sim_K2SO3.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
-x, y = sim_K2SO3.methods[0].simulation.to_list()
+
 
 #%%
-# **Step 6** Plot.
+# **Step 6** The plot of the simulation.
 
+x, y = sim_K2SO3.methods[0].simulation.to_list()
 plt.figure(figsize=(4, 3))
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("frequency / ppm")

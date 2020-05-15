@@ -16,7 +16,7 @@ class SymmetricTensor(Parseable):
     Base SymmetricTensor class representing the traceless symmetric part of an
     irreducible second-rank tensor.
 
-    Arguments:
+    Attributes:
         zeta: The anisotropy parameter of a nuclear shielding tensor expressed using
                 Haeberlen convention.
         Cq: The quadrupolar coupling constant derived from an electric field tensor.
@@ -35,21 +35,21 @@ class SymmetricTensor(Parseable):
     gamma: Optional[float]
 
     property_unit_types: ClassVar = {
-        "zeta": ["dimensionless", "frequency"],
+        "zeta": "dimensionless",
         "Cq": "frequency",
         "alpha": "angle",
         "beta": "angle",
         "gamma": "angle",
     }
     property_default_units: ClassVar = {
-        "zeta": ["ppm", "Hz"],
+        "zeta": "ppm",
         "Cq": "Hz",
         "alpha": "rad",
         "beta": "rad",
         "gamma": "rad",
     }
     property_units: Dict = {
-        "zeta": ["ppm", "Hz"],
+        "zeta": "ppm",
         "Cq": "Hz",
         "alpha": "rad",
         "beta": "rad",
@@ -82,7 +82,7 @@ class AntisymmetricTensor(Parseable):
     Base SymmetricTensor class representing the traceless symmetric part of an
     irreducible second-rank tensor.
 
-    Arguments:
+    Attributes:
         zeta: The anisotropy parameter of the AntiSymmetricTensor expressed using
                 Haeberlen convention.
         alpha: Euler angle, alpha, given in radian.

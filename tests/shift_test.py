@@ -28,7 +28,6 @@ def pre_setup(isotope, shift, reference_offset):
     sim.isotopomers.append(isotopomer)
     sim.methods += [method]
     sim.run()
-    sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
     x, y = sim.methods[0].simulation.to_list()
     return x[np.argmax(y)], abs(x[1] - x[0])
 

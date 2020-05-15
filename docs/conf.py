@@ -9,6 +9,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import datetime
 import os
 import subprocess
 import warnings
@@ -18,9 +19,11 @@ from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
 
 # -- Project information -----------------------------------------------------
+now = datetime.datetime.now()
+year = now.year
 
 project = "mrsimulator"
-copyright = "2019, The Mrsimulator project"
+copyright = f"2019-{year}, The Mrsimulator project"
 author = "Deepansh J. Srivastava"
 
 # get version number from the file

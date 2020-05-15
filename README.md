@@ -18,11 +18,10 @@ in python for python users.
 At present, _mrsimulator_ offers fast-simulation of one-dimensional NMR
 line-shape of uncoupled spins for the following scenarios:
 
-- Spin $I=\frac{1}{2}$, and quadrupole $I \ge \frac{1}{2}$,
-  (See the list of supported isotopes),
+- Spin I=1/2, and quadrupole I>1/2,
 - Arbitrary macroscopic magnetic flux density,
 - Magic angle spinning (MAS) at arbitrary spin frequency,
-- Variable angle spinning (VAS) at arbitrary angle and spin frequency,
+- Variable angle spinning (VAS) at arbitrary angles,
 - Static line-shape.
 
 For more information, refer to the

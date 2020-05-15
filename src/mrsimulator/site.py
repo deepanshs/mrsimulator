@@ -19,7 +19,7 @@ class Site(Parseable):
     """
     Base Site class representing a nuclear isotope.
 
-    Arguments:
+    Attributes:
         name: An optional string with a name or id of the site.
         isotope: An optional string expressed as atomic number followed by an
                 isotope symbol, eg. ``13C``, ``17O``. The default value is ``1H``.
@@ -93,24 +93,22 @@ class Site(Parseable):
 
     @validator("shielding_symmetric")
     def shielding_symmetric_must_not_contain_Cq(cls, v, values):
-        if "zeta" in v.property_units:
-            if isinstance(v.property_units["zeta"], list):
-                v.property_units["zeta"] = "ppm"
-            elif v.property_units["zeta"] != "ppm":
-                raise ValueError(
-                    (
-                        "A value in the unit of `ppm` is required for the parameter "
-                        "`zeta` from the shielding symmetric tensor."
-                    )
-                )
+        # if "zeta" in v.property_units:
+        #     if isinstance(v.property_units["zeta"], list):
+        #         v.property_units["zeta"] = "ppm"
+        #     elif v.property_units["zeta"] != "ppm":
+        #         raise ValueError(
+        #             (
+        #                 "A value in the unit of `ppm` is required for the parameter "
+        #                 "`zeta` from the shielding symmetric tensor."
+        #             )
+        #         )
         if "Cq" in v.property_units:
             v.property_units.pop("Cq")
         return v
 
     @validator("isotope", always=True)
-    def get_isotope(cls, v, *, values, **kwargs):
-        if v is None:
-            return v
+    def validate_isotope(cls, v, *, values, **kwargs):
         return Isotope(symbol=v)
 
     class Config:

@@ -63,7 +63,7 @@ Welcome to the Mrsimulator project documentation
 About
 ^^^^^
 
-The `Mrsimulator` package is a c and python based library for simulating fast
+The `Mrsimulator` package is a C and python based library for simulating fast
 solid-state nuclear magnetic resonance (NMR) spectra. The core methods are
 written in C, wrapped, and made available in python for python users.
 
@@ -73,16 +73,16 @@ written in C, wrapped, and made available in python for python users.
 
 ----
 
-  **Features**
+**Features**
 
-  Fast-simulation of one-dimensional NMR spectra of uncoupled spins featuring:
+Fast-simulation of one-dimensional NMR spectra of uncoupled spins featuring:
 
-  - Spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}`,
-    (See the list of supported isotopes),
-  - Arbitrary macroscopic magnetic flux density,
-  - Magic angle spinning (MAS) at arbitrary spin frequency,
-  - Variable angle spinning (VAS) at arbitrary angle and spin frequency,
-  - Static line-shape.
+- Spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}`,
+  (See the list of supported isotopes),
+- Arbitrary macroscopic magnetic flux density,
+- Magic angle spinning (MAS) at arbitrary spin frequency,
+- Variable angle spinning (VAS) at arbitrary angle and spin frequency,
+- Static line-shape.
 
 ----
 

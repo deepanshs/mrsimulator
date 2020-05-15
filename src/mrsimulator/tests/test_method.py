@@ -2,106 +2,11 @@
 """Test for the base Dimension class."""
 import numpy as np
 import pytest
+from mrsimulator.isotope import Isotope
 from mrsimulator.method import Event
+from mrsimulator.method import Method
 from mrsimulator.method import SpectralDimension
 from pydantic import ValidationError
-
-
-def basic_spectral_dimension_tests(the_method):
-    assert the_method.count == 1024
-    error = "ensure this value is greater than 0"
-    with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
-        the_method.count = -1024
-    with pytest.raises(ValidationError, match="value is not a valid integer"):
-        the_method.count = "test"
-
-    # spectral width test
-    assert the_method.spectral_width == 100
-    with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
-        the_method.spectral_width = 0
-    # ensure the default value is Hz
-    assert the_method.property_units["spectral_width"] == "Hz"
-
-    # reference offset test
-    assert the_method.reference_offset == 0
-    the_method.reference_offset = -120
-    assert the_method.reference_offset == -120
-    # ensure the default value is Hz
-    assert the_method.property_units["spectral_width"] == "Hz"
-    with pytest.raises(ValidationError, match=".*value is not a valid float.*"):
-        the_method.reference_offset = "-120 Hz"
-
-    # label
-    assert the_method.label == ""
-    the_method.label = "This is a spectral dimensions"
-    assert the_method.label == "This is a spectral dimensions"
-    the_method.label = 45.0
-    assert the_method.label == "45.0"
-
-
-def test_spectral_dimension():
-    # parse dict with units
-    event_dictionary = {
-        "fraction": 0.5,
-        "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1 kHz",
-        "rotor_angle": "54.735 deg",
-    }
-    dictionary = {
-        "count": 1024,
-        "spectral_width": "100 Hz",
-        "reference_offset": "0 GHz",
-        "events": [event_dictionary],
-    }
-    the_method = SpectralDimension.parse_dict_with_units(dictionary)
-    basic_spectral_dimension_tests(the_method)
-
-    # direct initialization
-    the_method = SpectralDimension(
-        count=1024,
-        spectral_width=100,
-        events=[Event.parse_dict_with_units(event_dictionary)],
-    )
-    basic_spectral_dimension_tests(the_method)
-
-    # coordinate in Hz
-    the_method.count = 32
-    the_method.reference_offset = 0
-    the_method.spectral_width = 32
-
-    coordinates = np.arange(32) - 16
-    assert np.allclose(the_method.coordinates_Hz, coordinates)
-
-    the_method.reference_offset = -4
-    assert np.allclose(the_method.coordinates_Hz, coordinates - 4)
-
-    the_method.count = 31
-    the_method.reference_offset = 0
-    the_method.spectral_width = 31
-    coordinates = np.arange(31) - 15
-    assert np.allclose(the_method.coordinates_Hz, coordinates)
-
-    # CSDM dimension
-    csdm_dimension = the_method.to_csdm_dimension()
-    assert np.allclose(csdm_dimension.coordinates.to("Hz").value, coordinates)
-
-    # to dict with units
-    should_be = dict(
-        count=31,
-        spectral_width="31.0 Hz",
-        reference_offset="0.0 Hz",
-        label="45.0",
-        events=[
-            {
-                "fraction": 0.5,
-                "magnetic_flux_density": "9.6 T",
-                "rotor_angle": "0.9553059660790962 rad",
-                "rotor_frequency": "1000.0 Hz",
-                "transition_query": {"P": {"channel-1": [[-1.0]]}},
-            }
-        ],
-    )
-    assert should_be == the_method.to_dict_with_units()
 
 
 def basic_event_tests(the_event):
@@ -142,13 +47,13 @@ def basic_event_tests(the_event):
 
 def test_events():
     # parse dict with units
-    dictionary = {
+    event_dictionary = {
         "fraction": 0.5,
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "1 kHz",
         "rotor_angle": "54.735 deg",
     }
-    the_event = Event.parse_dict_with_units(dictionary)
+    the_event = Event.parse_dict_with_units(event_dictionary)
     basic_event_tests(the_event)
 
     # direct initialization
@@ -171,3 +76,165 @@ def test_events():
         transition_query={"P": {"channel-1": [[-1.0]]}},
     )
     assert should_be == the_event.to_dict_with_units()
+
+
+def basic_spectral_dimension_tests(the_dimension):
+    assert the_dimension.count == 1024
+    error = "ensure this value is greater than 0"
+    with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
+        the_dimension.count = -1024
+    with pytest.raises(ValidationError, match="value is not a valid integer"):
+        the_dimension.count = "test"
+
+    # spectral width test
+    assert the_dimension.spectral_width == 100
+    with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
+        the_dimension.spectral_width = 0
+    # ensure the default value is Hz
+    assert the_dimension.property_units["spectral_width"] == "Hz"
+
+    # reference offset test
+    assert the_dimension.reference_offset == 0
+    the_dimension.reference_offset = -120
+    assert the_dimension.reference_offset == -120
+    # ensure the default value is Hz
+    assert the_dimension.property_units["spectral_width"] == "Hz"
+    with pytest.raises(ValidationError, match=".*value is not a valid float.*"):
+        the_dimension.reference_offset = "-120 Hz"
+
+    # label
+    assert the_dimension.label == ""
+    the_dimension.label = "This is a spectral dimensions"
+    assert the_dimension.label == "This is a spectral dimensions"
+    the_dimension.label = 45.0
+    assert the_dimension.label == "45.0"
+
+
+def test_spectral_dimension():
+    # parse dict with units
+    event_dictionary = {
+        "fraction": 0.5,
+        "magnetic_flux_density": "9.6 T",
+        "rotor_frequency": "1 kHz",
+        "rotor_angle": "54.735 deg",
+    }
+    dimension_dictionary = {
+        "count": 1024,
+        "spectral_width": "100 Hz",
+        "reference_offset": "0 GHz",
+        "events": [event_dictionary],
+    }
+    the_dimension = SpectralDimension.parse_dict_with_units(dimension_dictionary)
+    basic_spectral_dimension_tests(the_dimension)
+
+    # direct initialization
+    the_dimension = SpectralDimension(
+        count=1024,
+        spectral_width=100,
+        events=[Event.parse_dict_with_units(event_dictionary)],
+    )
+    basic_spectral_dimension_tests(the_dimension)
+
+    # coordinate in Hz
+    the_dimension.count = 32
+    the_dimension.reference_offset = 0
+    the_dimension.spectral_width = 32
+
+    coordinates = np.arange(32) - 16
+    assert np.allclose(the_dimension.coordinates_Hz, coordinates)
+
+    the_dimension.reference_offset = -4
+    assert np.allclose(the_dimension.coordinates_Hz, coordinates - 4)
+
+    the_dimension.count = 31
+    the_dimension.reference_offset = 0
+    the_dimension.spectral_width = 31
+    coordinates = np.arange(31) - 15
+    assert np.allclose(the_dimension.coordinates_Hz, coordinates)
+
+    # CSDM dimension
+    csdm_dimension = the_dimension.to_csdm_dimension()
+    assert np.allclose(csdm_dimension.coordinates.to("Hz").value, coordinates)
+
+    # to dict with units
+    should_be = dict(
+        count=31,
+        spectral_width="31.0 Hz",
+        reference_offset="0.0 Hz",
+        label="45.0",
+        events=[
+            {
+                "fraction": 0.5,
+                "magnetic_flux_density": "9.6 T",
+                "rotor_angle": "0.9553059660790962 rad",
+                "rotor_frequency": "1000.0 Hz",
+                "transition_query": {"P": {"channel-1": [[-1.0]]}},
+            }
+        ],
+    )
+    assert should_be == the_dimension.to_dict_with_units()
+
+
+def basic_method_tests(the_method):
+    assert the_method.name == "test-1-d"
+    the_method.name = "test worked"
+    assert the_method.name == "test worked"
+
+    assert the_method.description == "Test-1"
+    the_method.description = "test worked again"
+    assert the_method.description == "test worked again"
+
+    # spectral width test
+    assert the_method.channels == [Isotope(symbol="29Si")]
+    the_method.channels = ["1H", "17O"]
+    assert the_method.channels == [Isotope(symbol="1H"), Isotope(symbol="17O")]
+
+    with pytest.raises(ValidationError, match=".*value is not a valid list.*"):
+        the_method.channels = "6Li"
+
+    event_dictionary = {
+        "fraction": 0.5,
+        "magnetic_flux_density": "9.6 T",
+        "rotor_frequency": "1 kHz",
+        "rotor_angle": "54.735 deg",
+    }
+    dimension_dictionary = {
+        "count": 1024,
+        "spectral_width": "100 Hz",
+        "reference_offset": "0 GHz",
+        "events": [event_dictionary],
+    }
+    dimension = SpectralDimension.parse_dict_with_units(dimension_dictionary)
+    assert the_method.spectral_dimensions[0] == dimension
+
+    serialize = {
+        "name": "test worked",
+        "description": "test worked again",
+        "channels": ["1H", "17O"],
+        "spectral_dimensions": [dimension.to_dict_with_units()],
+    }
+    assert the_method.to_dict_with_units() == serialize
+
+
+def test_one_d_method():
+    # parse dict with units
+    event_dictionary = {
+        "fraction": 0.5,
+        "magnetic_flux_density": "9.6 T",
+        "rotor_frequency": "1 kHz",
+        "rotor_angle": "54.735 deg",
+    }
+    dimension_dictionary = {
+        "count": 1024,
+        "spectral_width": "100 Hz",
+        "reference_offset": "0 GHz",
+        "events": [event_dictionary],
+    }
+    method_dictionary = {
+        "name": "test-1-d",
+        "description": "Test-1",
+        "channels": ["29Si"],
+        "spectral_dimensions": [dimension_dictionary],
+    }
+    the_method = Method.parse_dict_with_units(method_dictionary)
+    basic_method_tests(the_method)

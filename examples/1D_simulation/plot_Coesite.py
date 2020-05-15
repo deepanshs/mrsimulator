@@ -8,16 +8,18 @@ Coesite
 """
 #%%
 # Coesite is a high-pressure (2-3 GPa) and high-temperature (700°C) polymorph of silicon
-# dioxide :math:`\text{SiO}_2`. Coesite has five distinct :math:`^{17}\text{O}` sites.
-# We use the :math:`^{17}\text{O}` tensor information from Grandinetti et. al. [#f2]_
+# dioxide :math:`\text{SiO}_2`. Coesite has five crystallographic :math:`^{17}\text{O}`
+# sites. In the following, use the :math:`^{17}\text{O}` EFG tensor information from
+# Grandinetti et. al. [#f2]_
 import matplotlib.pyplot as plt
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
 
 #%%
-# **Step 1** Create sites.
+# **Step 1** Create the sites.
 
+# default unit of isotropic_chemical_shift is ppm and Cq is Hz.
 O17_1 = Site(
     isotope="17O", isotropic_chemical_shift=29, quadrupolar={"Cq": 6.05e6, "eta": 0.000}
 )
@@ -34,10 +36,12 @@ O17_5 = Site(
     isotope="17O", isotropic_chemical_shift=58, quadrupolar={"Cq": 5.16e6, "eta": 0.292}
 )
 
+# all five sites.
 sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
 
 #%%
-# **Step 2** Create isotopomers from these sites.
+# **Step 2** Create the isotopomers from these sites. For optimum performance, we
+# create five single-site isotopomers than a five-site single isotopomer.
 
 abundance = [0.83, 1.05, 2.16, 2.05, 1.90]  # abundance of each isotopomer
 isotopomers = [Isotopomer(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
@@ -48,42 +52,33 @@ from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
 method = BlochDecayCentralTransitionSpectrum(
     channels=["17O"],
-    rotor_frequency=14000,
-    dimensions=[{"count": 2046, "spectral_width": 50000}],
+    rotor_frequency=14000,  # in Hz
+    spectral_dimensions=[
+        {"count": 2046, "spectral_width": 50000}
+    ],  # spectral_width is in Hz
 )
 
-
 #%%
-# The above dimension is set up to record the :math:`^{17}\text{O}` resonances at the
+# The above method is set up to record the :math:`^{17}\text{O}` resonances at the
 # magic angle, spinning at 14 kHz and 9.4 T external magnetic flux density. The
-# resonances are recorded over 50 kHz using 2046 points. You may also request a full
-# description of the dimension object by printing the method.
-from pprint import pprint
-
-pprint(method)
+# resonances are recorded over 50 kHz using 2046 points.
 
 #%%
-# **Step 4** Create the Simulator object and add method and isotopomer objects.
+# **Step 4** Create the Simulator object and add the method and isotopomer objects.
 
 sim_coesite = Simulator()
-
-# add isotopomers
-sim_coesite.isotopomers += isotopomers
-
-# add method
-sim_coesite.methods += [method]
+sim_coesite.isotopomers += isotopomers  # add isotopomers
+sim_coesite.methods += [method]  # add method
 
 #%%
 # **Step 5** Simulate the spectrum.
 
-
 sim_coesite.run()
-sim_coesite.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
-x, y = sim_coesite.methods[0].simulation.to_list()
 
 #%%
-# **Step 6** Plot.
+# **Step 6** The plot of the simulation.
 
+x, y = sim_coesite.methods[0].simulation.to_list()
 plt.figure(figsize=(4, 3))
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("frequency / ppm")
