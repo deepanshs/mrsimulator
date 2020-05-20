@@ -15,3 +15,8 @@
     max-width: 100%;
     overflow: visible;
 } */
+
+.sphx-glr-footer.container,
+.sphx-glr-download.container {
+  width: 100%;
+}

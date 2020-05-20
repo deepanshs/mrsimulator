@@ -21,19 +21,19 @@ Args:
         its definition are:
 
         count:
-            An optional integer with the number of points, :math:`N`,
-            along the dimension. The default value is ``1024``.
+            An optional integer with the number of points, :math:`N`, along the
+            dimension. The default value is 1024.
         spectral_width:
-            A `required` float with the spectral width,
-            :math:`\Delta x`, along the dimension in units of Hz.
+            An `optional` float with the spectral width, :math:`\Delta x`, along the
+            dimension in units of Hz. The default is 25 kHz.
         reference_offset:
-            An `optional` float with the reference offset, :math:`x_0`
-            along the dimension in units of Hz. The default value is ``0``.
+            An `optional` float with the reference offset, :math:`x_0` along the
+            dimension in units of Hz. The default value is 0 Hz.
         origin_offset:
-            An `optional` float with the origin offset (Larmor frequency)
-            along the dimension in units of Hz. The default value is ``None``.
+            An `optional` float with the origin offset (Larmor frequency) along the
+            dimension in units of Hz. The default value is None.
 
-    channels: A list of isotope symbols over which the method will be applied.
+    channels: A list of isotope symbols over which the method will be applied. The
     rotor_frequency: An `optional` float containing the sample spinning frequency
         :math:`\nu_r`, in units of Hz. The default value is ``0``.
     rotor_angle: An `optional` float containing the angle between the sample rotation
@@ -50,14 +50,21 @@ Return:
 
 def generate_method_from_template(template, __doc__):
     # constructor
-    def constructor(self, spectral_dimensions, parse=False, **kwargs):
-        prep = {
-            "channels": kwargs["channels"],
-            "name": template["name"],
-            "description": template["description"],
-        }
+    def constructor(self, spectral_dimensions=[{}], parse=False, **kwargs):
+        n_channels = template["number_of_channels"]
+        prep = {"name": template["name"], "description": template["description"]}
+        if "channels" in kwargs:
+            prep["channels"] = kwargs["channels"]
+            given_n_channels = len(prep["channels"])
+            if given_n_channels != n_channels:
+                raise ValueError(
+                    f"The method requires exactly {n_channels} channels, "
+                    f"{given_n_channels} provided."
+                )
+            kwargs.pop("channels")
+        else:
+            prep["channels"] = ["1H" for _ in range(n_channels)]
 
-        kwargs.pop("channels")
         global_events = template["global_event_attributes"]
         ge = set(global_events)
         kw = set(kwargs)

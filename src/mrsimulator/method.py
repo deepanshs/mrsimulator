@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-"""The Event class."""
 import warnings
 from copy import deepcopy
 from functools import reduce
@@ -111,20 +110,21 @@ class SpectralDimension(Parseable):
 
     Attributes:
         count: An optional integer with the number of points, :math:`N`,
-                along the dimension. The default value is ``1024``.
-        spectral_width: A `required` float with the spectral width,
-                :math:`\Delta x`, along the dimension in units of Hz.
+                along the dimension. The default value is 1024.
+        spectral_width: An optional float with the spectral width,
+                :math:`\Delta x`, along the dimension in units of Hz. The default
+                value is 25 kHz.
         reference_offset: An `optional` float with the reference offset, :math:`x_0`
-                along the dimension in units of Hz. The default value is ``0``.
+                along the dimension in units of Hz. The default value is 0.
         origin_offset: An `optional` float with the origin offset (Larmor frequency)
-                along the dimension in units of Hz. The default value is ``0``.
+                along the dimension in units of Hz. The default value is None.
         label: An `optional` string label. The default is an empty string.
         events: A `required` list of Event object or an equivalent list of dict objects
                 describing the series of events along the spectroscopic dimension.
     """
 
     count: int = Field(1024, gt=0)
-    spectral_width: float = Field(..., gt=0)
+    spectral_width: float = Field(default=25000, gt=0)
     reference_offset: Optional[float] = Field(default=0)
     origin_offset: Optional[float] = None
     label: Optional[str] = ""
@@ -234,6 +234,7 @@ class Method(Parseable):
         simulation: A csdm object holding the result of the simulation.
         experiment: A csdm object that optionally holds the experimental data, if
             available.
+        post_simulation: An optional dict with post-simulation parameters.
     """
     name: Optional[str] = ""
     description: Optional[str] = ""
@@ -241,6 +242,7 @@ class Method(Parseable):
     spectral_dimensions: List[SpectralDimension]
     simulation: Optional[cp.CSDM]
     experiment: Optional[cp.CSDM]
+    post_simulation: Optional[Dict]
 
     property_units: Dict = {}
 
@@ -251,6 +253,16 @@ class Method(Parseable):
     @validator("channels", always=True)
     def validate_channels(cls, v, *, values, **kwargs):
         return [Isotope(symbol=_) for _ in v]
+
+    @validator("experiment", pre=True, always=True)
+    def validate_experiment(cls, v, *, values, **kwargs):
+        if v is None:
+            return None
+        if isinstance(v, dict):
+            return cp.parse_dict(v)
+        if isinstance(v, cp.CSDM):
+            return v
+        raise ValueError("Unable to read the data.")
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
@@ -272,6 +284,16 @@ class Method(Parseable):
         if "experiment" in py_dict_copy:
             py_dict_copy["experiment"] = cp.parse_dict(py_dict_copy["experiment"])
         return super().parse_dict_with_units(py_dict_copy)
+
+    def update_spectral_dimension_attributes_from_experiment(self):
+        """Update the spectral dimension attributes of the methods to match the
+        attributes of the experiment."""
+        spectral_dims = self.spectral_dimensions
+        for i, dim in enumerate(self.experiment.dimensions):
+            spectral_dims[i].count = dim.count
+            spectral_dims[i].spectral_width = dim.count * dim.increment.to("Hz").value
+            spectral_dims[i].reference_offset = dim.coordinates_offset.to("Hz").value
+            spectral_dims[i].origin_offset = dim.origin_offset.to("Hz").value
 
     def to_dict_with_units(self):
         """Parse the Method object to a JSON compliant python dict with units."""

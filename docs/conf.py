@@ -208,7 +208,6 @@ pygments_style = "sphinx"
 # 'classic', 'basicstrap'
 html_theme = "basicstrap"
 
-
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
@@ -244,13 +243,13 @@ html_theme_options = {
     # Works only "bootstrap_version = 3"
     "noflatdesign": False,
     # Enable Google Web Font. Defaults to false
-    "googlewebfont": False,
+    # "googlewebfont": True,
     # Set the URL of Google Web Font's CSS.
     # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
-    # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Lily+Script+One",  # NOQA
+    # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
     # Set the Style of Google Web Font's CSS.
     # Defaults to "font-family: 'Text Me One', sans-serif;"
-    # "googlewebfont_style": u"font-family: 'Roboto' Regular 24;",
+    "googlewebfont_style": "font-family: Helvetica",
     # Set 'navbar-inverse' attribute to header navbar. Defaults to false.
     "header_inverse": True,
     # Set 'navbar-inverse' attribute to relbar navbar. Defaults to false.
@@ -393,3 +392,7 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ["search.html"]
+
+
+def setup(app):
+    app.add_stylesheet("style.css")

@@ -1,6 +1,7 @@
 {
   "Bloch_decay": {
-    "name": "BlochDecaySpectrum",
+    "name": "Bloch Decay Spectrum",
+    "number_of_channels": 1,
     "description": "A Bloch decay Spectrum.",
     "global_event_attributes": {},
     "spectral_dimensions": [{
@@ -21,7 +22,8 @@
     }]
   },
   "Bloch_decay_central_transition": {
-    "name": "BlochDecaySpectrum",
+    "name": "Bloch Decay Central Transition Spectrum",
+    "number_of_channels": 1,
     "description": "A central transition selective Bloch decay Spectrum.",
     "global_event_attributes": {},
     "spectral_dimensions": [{

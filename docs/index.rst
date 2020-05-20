@@ -113,6 +113,7 @@ suggestion is greatly appreciated.
    understanding-isotopomers
    getting_started
    using_mrsimulator_objects
+   understanding_system
    load_isotopomers
    configuring_simulator
    benchmark

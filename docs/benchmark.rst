@@ -17,7 +17,7 @@ A benchmark for the number of single-site isotopomers computer per second.
 Higher is better.
 
 .. figure:: _static/benchmark_sites.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     The number of single-site isotopomers computer per seconds.
 
@@ -26,7 +26,7 @@ A similar benchmark showing the execution time of a single-site isotopomer. Lowe
 is better.
 
 .. figure:: _static/benchmark_time.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     The execution time (in ms) in computing a line-shape of a single-site isotopomer.
 

@@ -327,15 +327,6 @@ see the list of transition pathways, for example,
 
 .. doctest::
 
-    >>> print(sim.methods[0].get_transition_pathways(isotopomer_1)) # 13C
-    [[|-0.5⟩⟨0.5|]]
-
-    >>> print(sim.methods[0].get_transition_pathways(isotopomer_2)) # 13C
-    [[|-0.5⟩⟨0.5|]]
-
-    >>> print(sim.methods[0].get_transition_pathways(isotopomer_3)) # 1H
-    [[|-0.5⟩⟨0.5|]]
-
     >>> print(sim.methods[0].get_transition_pathways(isotopomer_4)) # 17O
     [[|-2.5⟩⟨-1.5|]
      [|-1.5⟩⟨-0.5|]

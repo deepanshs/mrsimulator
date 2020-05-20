@@ -5,6 +5,8 @@ from typing import ClassVar
 from csdmpy.units import string_to_quantity
 from pydantic import BaseModel
 
+from .util import _reduce_dict
+
 __author__ = "Shyam Dwaraknath"
 __email__ = "shyamd@lbl.gov"
 
@@ -62,6 +64,16 @@ class Parseable(BaseModel):
                             d for d in zip(pos_values, default_unit) if d[0] is not None
                         ][0]
         return cls(**json_dict, property_units=property_units)
+
+    def reduced_dict(self):
+        """Reduce the dict by removing all key-value pair corresponding to keys listed in
+            the `exclude` argument and keys with value as None.
+
+            Args:
+                exclude: List of keys to exclude from the dict.
+            Return: A dict.
+         """
+        return _reduce_dict(self.dict())
 
     def to_dict_with_units(self):
         """Parse the class object to a JSON compliant python dict with units."""

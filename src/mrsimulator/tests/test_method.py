@@ -212,6 +212,7 @@ def basic_method_tests(the_method):
         "description": "test worked again",
         "channels": ["1H", "17O"],
         "spectral_dimensions": [dimension.to_dict_with_units()],
+        "post_simulation": None,
     }
     assert the_method.to_dict_with_units() == serialize
 
