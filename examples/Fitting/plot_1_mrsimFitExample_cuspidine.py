@@ -30,7 +30,8 @@ pylab.rcParams.update(params)
 import csdmpy as cp
 import numpy as np
 
-synthetic_experiment = cp.load("synthetic_cuspidine_test.csdf")
+filename = "https://osu.box.com/shared/static/a45xj96iekdjrs2beri0nkrow4vjewdh.csdf"
+synthetic_experiment = cp.load(filename)
 synthetic_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
 x1, y1 = synthetic_experiment.to_list()

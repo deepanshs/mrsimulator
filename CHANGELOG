@@ -4,6 +4,7 @@ v0.3.0
    transition pathways, while central transition selective Bloch decay spectrum simulates
    all p=-1 and d=0 transition pathways.
  - Improved simulation performance.
+ - Fixed bug resulting from the rotation of the fourth rank tensor with non-zero euler angles.
 
 v0.2.0
  - Added more isotopes to the simulator. Source NMR Tables (https://apps.apple.com/bn/app/nmr-tables/id1030899609?mt=12)
