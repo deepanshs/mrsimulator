@@ -6,6 +6,7 @@ from typing import Optional
 
 import csdmpy as cp
 import numpy as np
+from mrsimulator import __version__
 from mrsimulator import Isotopomer
 from mrsimulator.apodization import Apodization
 from mrsimulator.base_model import one_d_spectrum
@@ -83,7 +84,7 @@ class Simulator(BaseModel):
             st.update(isotopomer.get_isotopes(I))
         return st
 
-    def to_dict_with_units(self, include_methods=False):
+    def to_dict_with_units(self, include_methods=False, include_version=False):
         """
         Serialize the Simulator object to a JSON compliant python dictionary object
         with units.
@@ -132,6 +133,8 @@ class Simulator(BaseModel):
 
         sim["config"] = self.config.dict()
         sim["indexes"] = self.indexes
+        if include_version:
+            sim["version"] = __version__
         return sim
 
     def load_isotopomers(self, filename):
@@ -230,7 +233,7 @@ class Simulator(BaseModel):
         """
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
-                self.to_dict_with_units(include_methods=True),
+                self.to_dict_with_units(include_methods=True, include_version=True),
                 outfile,
                 ensure_ascii=False,
                 sort_keys=False,

@@ -10,5 +10,7 @@ pytest-cov
 ## Building Docs
 sphinxjp.themes.basicstrap
 sphinx>=2.0
-sphinx-gallery
+sphinx-gallery>0.6.2
+pillow>=7.1.2  # for sphinx-gallery images
 breathe>4.18
+sphinx_copybutton>=0.2.11

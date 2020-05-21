@@ -33,6 +33,9 @@ with open("src/mrsimulator/__init__.py", "r") as f:
 module_dir = dirname(abspath(__file__))
 
 
+libraries = []
+include_dirs = []
+library_dirs = []
 extra_compile_args = [
     "-O3",
     "-ffast-math",
@@ -42,22 +45,6 @@ extra_compile_args = [
     # "-mavx",
 ]
 extra_link_args = []
-
-include_dirs = [
-    # "/opt/local/include/",
-    "/usr/include/",
-    "/usr/include/openblas",
-    "/usr/include/x86_64-linux-gnu/",
-]
-
-library_dirs = [
-    # "/opt/local/lib/",
-    "/usr/lib64/",
-    "/usr/lib/",
-    "/usr/lib/x86_64-linux-gnu/",
-]
-
-libraries = []
 data_files = []
 
 numpy_include = np.get_include()
@@ -84,10 +71,10 @@ def message(lib):
 
 if platform.system() == "Darwin":  # OSX-specific tweaks:
     # BLAS framework
+
     # Apple's Accelerate framework for BLAS:
     if use_accelerate:
         acc_info = sysinfo.get_info("accelerate")
-
         if "extra_compile_args" in acc_info:
             extra_compile_args += acc_info["extra_compile_args"]
         if "extra_link_args" in acc_info:
@@ -136,7 +123,14 @@ if platform.system() == "Darwin":  # OSX-specific tweaks:
     #     extra_compile_args += ["-Wa,-q"]
 
 if platform.system() == "Linux":
-    libraries = ["openblas", "fftw3"]
+    include_dirs += [
+        "/usr/include/",
+        "/usr/include/openblas",
+        "/usr/include/x86_64-linux-gnu/",
+    ]
+
+    library_dirs += ["/usr/lib64/", "/usr/lib/", "/usr/lib/x86_64-linux-gnu/"]
+    libraries += ["openblas", "fftw3"]
     openblas_info = sysinfo.get_info("openblas")
     fftw3_info = sysinfo.get_info("fftw3")
 
@@ -152,8 +146,8 @@ if platform.system() == "Linux":
     if "libraries" in fftw_keys:
         libraries += fftw3_info["libraries"]
 
-    extra_link_args = ["-lm"]
-    extra_compile_args = ["-g", "-O3"]
+    extra_link_args += ["-lm"]
+    extra_compile_args += ["-g"]
 
 include_dirs = list(set(include_dirs))
 library_dirs = list(set(library_dirs))
@@ -161,10 +155,11 @@ libraries = list(set(libraries))
 
 # other include paths
 include_dirs += ["src/c_lib/include/", numpy_include]
+
+# print info
 print(include_dirs)
 print(library_dirs)
 print(libraries)
-
 print(extra_compile_args)
 print(extra_link_args)
 

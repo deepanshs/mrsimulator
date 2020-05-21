@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__version__ = "0.3"
+__version__ = "0.3.0-dev"
 
 from mrsimulator.parseable import Parseable  # lgtm [py/import-own-module]
 from mrsimulator.tensors import SymmetricTensor  # lgtm [py/import-own-module]
