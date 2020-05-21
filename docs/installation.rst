@@ -15,7 +15,7 @@ Using pip
 ---------
 
 PIP is a package manager for Python packages, and is included with python version 3.4
-and higher. PIP is the easiest way to install python packages.
+and higher. PIP is the simplest way to install python packages.
 
 **Mac and Linux system**
 
@@ -52,7 +52,7 @@ Building from source
 
 Mrsimulator utilizes the BLAS and FFTW libraries for computation. To leverage the best
 performance from the mrsimulator package, we recommend installing the BLAS and FFTW
-libraries optimized for your system. In the following, we
+libraries, which may be optimized for your system. In the following, we
 list a few recommendations on how to install the BLAS, FFTW, and mrsimulator libraries.
 
 
