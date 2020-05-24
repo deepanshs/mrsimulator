@@ -11,7 +11,8 @@ The following benchmark shows the performance of the `Mrsimulator` library in co
 the solid-state NMR line-shapes of single-site isotopomers for the shift and
 quadrupolar tensor interaction at static and MAS conditions.
 
-**Computational specs**
+Computational specs
+-------------------
 
 A benchmark for the number of single-site isotopomers computer per second.
 Higher is better.

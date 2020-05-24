@@ -7,28 +7,53 @@
 | License      | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | Metrics      | [![PyPI - Downloads](https://img.shields.io/pypi/dm/mrsimulator.svg)](https://img.shields.io/pypi/dm/mrsimulator)[![Total alerts](https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python) [![codecov](https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/DeepanshS/mrsimulator) |
 
-`Mrsimulator` is a python package with methods and tools for simulating
-fast solid-state nuclear magnetic resonance (NMR) line-shapes. The
-core library is written in C, wrapped and made available
-in python for python users.
+`Mrsimulator` is a python package for computing fast real-time solid-state nuclear
+magnetic resonance (NMR) line-shapes/spectrum. The library is optimized to compute bulk
+solid-state line-shapes, enabling the simulation of both crystalline and amorphous-like
+materials. The core of the `Mrsimulator` library is written in C, wrapped and made
+available in python.
 
 > :warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
 
 ## Features
 
-At present, _mrsimulator_ offers fast-simulation of one-dimensional NMR
-line-shape of uncoupled spins for the following scenarios:
+At present, the `Mrsimulator` package offers a fast real-time simulation of
+one-dimensional solid-state NMR line-shape of
 
-- Spin I=1/2, and quadrupole I>1/2,
-- Arbitrary macroscopic magnetic flux density,
-- Magic angle spinning (MAS) at arbitrary spin frequency,
-- Variable angle spinning (VAS) at arbitrary angles,
-- Static line-shape.
+- Uncoupled spin-system for
+
+  - spin I=1/2, and quadrupole I>1/2` nuclei,
+  - at arbitrary macroscopic magnetic flux density,
+  - at arbitrary rotor angles, and
+  - at arbitrary spinning frequency.
+
+- The library includes the following NMR methods,
+
+  - 1D Bloch decay spectrum, and
+  - 1D Bloch decay central transition spectrum.
+
+## Goals for the near future
+
+Our current objectives for the future are the following
+
+- Include line-shape simulation of coupled spin-systems for
+
+  - spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
+  - at arbitrary macroscopic magnetic flux density,
+  - at arbitrary rotor angles, and
+  - at arbitrary spinning frequency.
+
+- Expand the library of NMR methods. We expect to include the following methods
+
+  - 2D Multi-Quantum Magic Angle Spinning (MQ-MAS),
+  - 2D Dynamic Angle Spinning (DAS),
+  - 2D Magic Angle Flipping (MAF), and
+  - 2D isotropic to anisotropic sideband correlation spectrum (PASS).
 
 For more information, refer to the
 [documentation](https://mrsimulator.readthedocs.io/en/stable/).
 
-> **View the example gallery**
+> **View our example gallery**
 >
 > [![](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/auto_examples/index.html)
 

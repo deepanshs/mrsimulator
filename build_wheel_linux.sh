@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# docker run -it -v $(pwd):/io quay.io/pypa/manylinux2010_x86_64 /io/build_wheel_linux.sh
+#
+
 set -e -x
 cd io
 

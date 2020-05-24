@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Base Parseable class."""
+from copy import deepcopy
 from typing import ClassVar
+from typing import Dict
 
 from csdmpy.units import string_to_quantity
 from pydantic import BaseModel
@@ -22,6 +24,8 @@ class Parseable(BaseModel):
 
     property_default_units: ClassVar = {}
 
+    property_units: Dict = {}
+
     @classmethod
     def parse_dict_with_units(cls, json_dict):
         # Only consider properties with both unit types and default units
@@ -29,7 +33,7 @@ class Parseable(BaseModel):
             set(cls.property_default_units.keys())
         )
 
-        property_units = {}
+        property_units = deepcopy(cls.property_default_units)
         for prop in all_props:
             required_type = cls.property_unit_types[prop]
             default_unit = cls.property_default_units[prop]
@@ -63,20 +67,25 @@ class Parseable(BaseModel):
                         json_dict[prop], property_units[prop] = [
                             d for d in zip(pos_values, default_unit) if d[0] is not None
                         ][0]
+        for k, v in property_units.items():
+            property_units[k] = v[0] if isinstance(v, list) else v
         return cls(**json_dict, property_units=property_units)
 
-    def reduced_dict(self):
-        """Reduce the dict by removing all key-value pair corresponding to keys listed in
-            the `exclude` argument and keys with value as None.
+    def reduced_dict(self, exclude=["property_units"]) -> dict:
+        """Returns a reduced dictionary representation of the class object by removing
+        all key-value pair corresponding to keys listed in the `exclude` argument, and
+        keys with value as None.
 
-            Args:
-                exclude: List of keys to exclude from the dict.
-            Return: A dict.
+        Args:
+            exclude: A list of keys to exclude from the dictionary.
+        Return: A dict.
          """
-        return _reduce_dict(self.dict())
+        return _reduce_dict(self.dict(), exclude)
 
-    def to_dict_with_units(self):
-        """Parse the class object to a JSON compliant python dict with units."""
+    def to_dict_with_units(self) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object where
+        the attribute value with physical quantity is expressed as a string with a
+        value and a unit."""
 
         def get_list(member, obj):
             lst = []

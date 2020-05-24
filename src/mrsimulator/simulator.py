@@ -15,6 +15,8 @@ from mrsimulator.method import Method
 from mrsimulator.simulator_config import ConfigSimulator
 from pydantic import BaseModel
 
+from .util import _reduce_dict
+
 # from astropy import units as u
 
 __author__ = "Deepansh J. Srivastava"
@@ -26,11 +28,16 @@ class Simulator(BaseModel):
     The simulator class.
 
     Attributes:
-        name: An optional string containing the sample name.
-        descrition: An optional string containing the sample description.
-        isotopomers: List of :ref:`isotopomer_api` objects.
-        methods: List of :ref:`method_api` objects.
-        config: :ref:`config_api` object.
+        name: An optional string containing the simulation/sample name. The default
+            value is an empty string.
+        description: An optional string with the simulation/sample description. The
+            default value is an empty string.
+        isotopomers: A list of the :ref:`isotopomer_api` objects or list of equivalent
+            python dictionary object. The default value is an empty list.
+        methods: A list of :ref:`method_api` objects or list of equivalent python
+            dictionary object. The default value is an empty list.
+        config: The :ref:`config_api` object or an equivalent dictionary
+            object.
     """
 
     name: Optional[str] = ""
@@ -57,17 +64,18 @@ class Simulator(BaseModel):
             return True
         return False
 
-    def get_isotopes(self, I=None):
+    def get_isotopes(self, I=None) -> set:
         """
-        Set of unique isotopes from sites in the list of isotopomers corresponding
+        Set of unique isotopes from sites within the list of isotopomers corresponding
         to spin quantum number `I`. If `I` is unspecified or None, a set of all
         unique isotopes is returned instead.
 
         Args:
-            I: (optional) The spin quantum number. Valid input are multiples of 0.5.
+            float I: An optional spin quantum number. The valid input are the multiples
+                of 0.5.
 
         Returns:
-            A Set
+            A Set.
 
         Example:
             >>> sim.get_isotopes() # doctest:+SKIP
@@ -84,17 +92,27 @@ class Simulator(BaseModel):
             st.update(isotopomer.get_isotopes(I))
         return st
 
-    def to_dict_with_units(self, include_methods=False, include_version=False):
+    def dict(self, *args, **kwargs) -> dict:
+        """Return the class object as JSON serializable dictionary object."""
+        py_dict = super().dict(*args, **kwargs)
+        py_dict["config"] = self.config.dict()
+        return py_dict
+
+    def to_dict_with_units(
+        self, include_methods: bool = False, include_version: bool = False
+    ):
         """
         Serialize the Simulator object to a JSON compliant python dictionary object
-        with units.
+        where physical quantities are represented as string with a value and a unit.
 
         Args:
-            include_methods: A boolean. If True, the output dictionary will include
-            a serialized method objects. Default is False.
+            bool include_methods: If True, the output dictionary will include the
+                serialized method objects. The default value is False.
+            bool include_version: If True, adds the version key-value pair
+                to the serialized output dictionary. The default is False.
 
         Returns:
-            Dict object
+            A Dict object.
 
         Example:
             >>> pprint(sim.to_dict_with_units())
@@ -137,19 +155,31 @@ class Simulator(BaseModel):
             sim["version"] = __version__
         return sim
 
-    def load_isotopomers(self, filename):
+    def reduced_dict(self, exclude=["property_units"]) -> dict:
+        """Returns a reduced dictionary representation of the class object by removing
+        all key-value pair corresponding to keys listed in the `exclude` argument, and
+        keys with value as None.
+
+        Args:
+            list exclude: A list of keys to exclude from the dictionary.
+        Return: A dict.
+         """
+        return _reduce_dict(self.dict(), exclude)
+
+    def load_isotopomers(self, filename: str):
         """
-        Load a list of isotopomers from JSON serialized isotopomers file.
+        Load a list of isotopomers from the given JSON serialized isotopomers file.
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
         /master/isotopomers_ppm.json>`_
         of JSON serialized isotopomers file. For details, refer to the
-        :ref:`load_isotopomers` section.
+        :ref:`load_isotopomers` section of this documentation.
 
         Args:
-            `filename`: A local or remote address to the JSON serialized isotopomers
-                        file.
+            str filename: A local or remote address to a JSON serialized isotopomers
+                file.
+
         Example:
             >>> sim.load_isotopomers(filename) # doctest:+SKIP
         """
@@ -157,9 +187,9 @@ class Simulator(BaseModel):
         json_data = contents["isotopomers"]
         self.isotopomers = [Isotopomer.parse_dict_with_units(obj) for obj in json_data]
 
-    def export_isotopomers(self, filename):
+    def export_isotopomers(self, filename: str):
         """
-        Export the list of isotopomers to a JSON serialized isotopomers file.
+        Export a list of isotopomers to a JSON serialized isotopomers file.
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
@@ -168,7 +198,9 @@ class Simulator(BaseModel):
         :ref:`load_isotopomers` section.
 
         Args:
-            `filename`: A file name.
+            str filename: The list of isotopomers will be serialized to a file with
+                the given filename.
+
         Example:
             >>> sim.export_isotopomers(filename) # doctest:+SKIP
         """
@@ -183,11 +215,13 @@ class Simulator(BaseModel):
             )
 
     def run(self, method_index=None, **kwargs):
-        """Simulate the lineshape.
+        """Run the simulation and compute lineshape.
 
         Args:
-            method_index: If provided, only update the simulate for the method at
-            the given index.
+            int list method_index: An interger or a list of integers. If provided, only
+                the simulations corresponding to the methods at the given index/indexes
+                will be computed. The default is None, that is, the simulation for
+                every method will computed.
 
         Example:
             >>> sim.run() # doctest:+SKIP
@@ -212,7 +246,7 @@ class Simulator(BaseModel):
             else:
                 simulated_data = [amp]
 
-            method.simulation = self.as_csdm_object(simulated_data, method)
+            method.simulation = self._as_csdm_object(simulated_data, method)
 
     # """The frequency is in the units of Hz."""
     # gamma = method.isotope.gyromagnetic_ratio
@@ -225,11 +259,11 @@ class Simulator(BaseModel):
     # freq *= u.Unit("ppm")
     # return freq, amp
 
-    def save(self, filename):
+    def save(self, filename: str):
         """Serialize the simulator object to a JSON file.
 
         Args:
-            filename: The file name used in serialization.
+            str filename: A string with the filename of the serialized file.
         """
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
@@ -240,14 +274,15 @@ class Simulator(BaseModel):
                 allow_nan=False,
             )
 
-    def load(self, filename):
-        """Load the mrsimulator object from the JSON file.
+    def load(self, filename: str):
+        """Load the :class:`~mrsimulator.Simulator` object from the JSON file.
 
         Args:
-            filename: The name of the file holding a mrsimulator serialization.
+            str filename: A string with the filename of the file holding a mrsimulator
+                serialized file.
 
         Return:
-            A Simulator object.
+            A :class:`~mrsimulator.Simulator` object.
         """
         sim = Simulator()
         contents = import_json(filename)
@@ -258,13 +293,13 @@ class Simulator(BaseModel):
         sim.methods = [Method.parse_dict_with_units(obj) for obj in m_data]
         return sim
 
-    def as_csdm_object(self, data, method):
+    def _as_csdm_object(self, data: np.ndarray, method: Method) -> cp.CSDM:
         """
-        Converts the data to a CSDM object. Read
+        Converts the simulation data from the given method to a CSDM object. Read
         `csdmpy <https://csdmpy.readthedocs.io/en/latest/>`_ for details
 
         Return:
-            CSDM object
+            A CSDM object.
         """
         new = cp.new()
         for dimension in method.spectral_dimensions:

@@ -12,8 +12,8 @@ Method
 
     .. automethod:: parse_dict_with_units
     .. automethod:: to_dict_with_units
+    .. automethod:: update_spectral_dimension_attributes_from_experiment
     .. automethod:: get_transition_pathways
-    .. automethod:: dict
 
 
 .. _spectral_dimension_api:

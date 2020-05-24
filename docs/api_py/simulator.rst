@@ -19,7 +19,6 @@ Simulator
     .. automethod:: run
     .. automethod:: save
     .. automethod:: load
-    .. automethod:: as_csdm_object
     .. automethod:: apodize
 
 .. seealso::

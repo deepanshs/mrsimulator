@@ -17,19 +17,20 @@ class SymmetricTensor(Parseable):
     irreducible second-rank tensor.
 
     Attributes:
-        zeta: The anisotropy parameter of a nuclear shielding tensor expressed using
-                Haeberlen convention.
-        Cq: The quadrupolar coupling constant derived from an electric field tensor.
+        zeta: The anisotropy parameter of the nuclear shielding tensor expressed
+            using the Haeberlen convention. The default value is None.
+        Cq: The quadrupolar coupling constant derived from the electric field
+            gradient tensor. The default value is None.
         eta: The asymmetry parameter of the SymmetricTensor expressed using
-                Haeberlen convention.
-        alpha: Euler angle, alpha, given in radian.
-        beta: Euler angle, beta, given in radian.
-        gamma: Euler angle, gamma, given in radian.
+            the Haeberlen convention. The default value is None.
+        alpha: Euler angle, alpha, given in radian. The default value is None.
+        beta: Euler angle, beta, given in radian. The default value is None.
+        gamma: Euler angle, gamma, given in radian. The default value is None.
     """
 
     zeta: Optional[float]
     Cq: Optional[float]
-    eta: Optional[float] = Field(default=0, ge=0, le=1)
+    eta: Optional[float] = Field(default=None, ge=0, le=1)
     alpha: Optional[float]
     beta: Optional[float]
     gamma: Optional[float]
@@ -56,7 +57,7 @@ class SymmetricTensor(Parseable):
         "gamma": "rad",
     }
 
-    def to_freq_dict(self, larmor_frequency):
+    def to_freq_dict(self, larmor_frequency: float) -> dict:
         """
         Serialize the SymmetricTensor object to a JSON compliant python dictionary
         where the attribute values are numbers expressed in default units. The default
@@ -65,7 +66,7 @@ class SymmetricTensor(Parseable):
         - angle: `rad`
 
         Args:
-            larmor_frequency: The larmor frequency in MHz.
+            float larmor_frequency: The larmor frequency in MHz.
 
         Return:
             A python dict
@@ -84,9 +85,9 @@ class AntisymmetricTensor(Parseable):
 
     Attributes:
         zeta: The anisotropy parameter of the AntiSymmetricTensor expressed using
-                Haeberlen convention.
-        alpha: Euler angle, alpha, given in radian.
-        beta: Euler angle, beta, given in radian.
+            the Haeberlen convention. The default value is None.
+        alpha: Euler angle, alpha, given in radian. The default value is None.
+        beta: Euler angle, beta, given in radian. The default value is None.
     """
 
     zeta: Optional[float]
@@ -101,7 +102,7 @@ class AntisymmetricTensor(Parseable):
     property_default_units: ClassVar = {"zeta": "ppm", "alpha": "rad", "beta": "rad"}
     property_units: Dict = {"zeta": "ppm", "alpha": "rad", "beta": "rad"}
 
-    def to_freq_dict(self, larmor_frequency):
+    def to_freq_dict(self, larmor_frequency: float) -> dict:
         """
         Serialize the AntisymmetricTensor object to a JSON compliant python dictionary
         where the attribute values are numbers expressed in default units. The default
@@ -110,7 +111,7 @@ class AntisymmetricTensor(Parseable):
         - angle: `rad`
 
         Args:
-            larmor_frequency: The larmor frequency in MHz.
+            float larmor_frequency: The larmor frequency in MHz.
 
         Return:
             Python dict

@@ -96,7 +96,7 @@ That's it! Now that we have the site, we can create an isotopomer as,
 
     the_isotopomer = {
         "name": "site A",
-        "sites": [the_site],  # from previous code
+        "sites": [the_site],  # from the above code
         "abundance": "80%",
     }
 
@@ -279,6 +279,6 @@ library.
 
 .. _fig2:
 .. figure:: _images/example.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     An example static solid state NMR lineshape simulation.

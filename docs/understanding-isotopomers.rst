@@ -28,7 +28,7 @@ the individual isotopes, compositing the isotopomer.
 The observed NMR signal is a sum of the signals arising from individual
 isotopomers, weighted by the respective abundance.
 
-.. cssclass:: table-bordered table-hover
+.. cssclass:: table-bordered table-striped centered
 .. _isotopomers_list:
 .. list-table:: Four isotopomers resulting from H-C structural unit.
    :widths: 15 15 15 15 40
@@ -66,8 +66,8 @@ isotopomers, weighted by the respective abundance.
 
 
 
-Overview of Isotopomer Model
-----------------------------
+Overview of the Isotopomer Model
+--------------------------------
 
 In designing the **Isotopomer** model, we follow a similar premise.
 An isotopomer class consists of `name`, `description`, `sites`, `couplings`,
@@ -164,12 +164,12 @@ EFG tensor with respect to the nuclear shielding tensor.
 
 
 .. note::
-    The current version of `mrsimulator` does not support coupled spin-systems. The
-    isotopomer model for coupling will be made available when we include coupled
-    spin-systems.
+    The current version of the `mrsimulator` package does not support coupled
+    spin-systems. The isotopomer model for couplings will be made available when
+    we include the coupled spin-systems to the package.
 
 
-.. cssclass:: table-bordered table-hover
+.. cssclass:: table-bordered table-striped centered
 .. _table_isotopomer:
 .. list-table:: The attributes of an Isotopomer object.
   :widths: 15 15 70
@@ -206,8 +206,7 @@ EFG tensor with respect to the nuclear shielding tensor.
       when multiple isotopomers are present. The default value is ``100 %``.
 
 
-
-.. cssclass:: table-bordered table-hover
+.. cssclass:: table-bordered table-striped centered
 .. _table_site:
 .. list-table::  The attributes of a Site object.
   :widths: 30 15 50
@@ -242,7 +241,7 @@ EFG tensor with respect to the nuclear shielding tensor.
 
 
 
-.. cssclass:: table-bordered table-hover
+.. cssclass:: table-bordered table-striped centered
 .. _table_symmetric_tensor:
 .. list-table:: The attributes of a SymmetricTensor object.
   :widths: 15 20 65
@@ -282,7 +281,7 @@ EFG tensor with respect to the nuclear shielding tensor.
 
   * - ``beta``
     - ScalarQuantity
-    - An `optional` Euler angle, :math:`\beta`. For example, ``23.5 deg``.
+    - An `optional` Euler angle, :math:`\beta`. For example, ``90 deg``.
       The default value is ``0 rad``.
 
   * - ``gamma``

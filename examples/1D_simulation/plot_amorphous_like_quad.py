@@ -8,9 +8,9 @@ Amorphous-like materials (quadrupolar)
 """
 # sphinx_gallery_thumbnail_number = 2
 #%%
-# In this section, we illustrate the simulation of a quadrupolar spectrum
-# arising from amorphous materials. We proceed by assuming a
-# distribution of electric field gradient (EFG) tensors, as follows,
+# In this section, we illustrate the simulation of a quadrupolar spectrum arising from
+# a distribution of electric field gradient (EFG) tensors of some amorphous material.
+# We proceed by assuming a multi-variate normal distribution, as follows,
 import numpy as np
 from scipy.stats import multivariate_normal
 
@@ -56,7 +56,8 @@ plt.tight_layout()
 plt.show()
 #%%
 #
-# Let's create the site and isotopomer objects from these parameters.
+# Let's create the site and isotopomer objects from these parameters. Note, we create
+# single-site isotopomers for optimum performance.
 
 #%%
 from mrsimulator import Simulator, Site, Isotopomer
@@ -70,21 +71,7 @@ for i, c, e in zip(iso, Cq, eta):
     )
     isotopomers.append(Isotopomer(sites=[site]))
 
-#%%
-# Now, that we have the isotopomers, create a Simulator object and add the isotopomers.
-
-#%%
-sim = Simulator()
-# add isotopomers
-sim.isotopomers += isotopomers
-# create and add a central transition selective Bloch decay spectrum method.
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-
-method = BlochDecayCentralTransitionSpectrum(
-    channels=["27Al"], spectral_dimensions=[{"spectral_width": 80000}]
-)
-
-sim.methods += [method]
+#%% Create a central transition selective Bloch decay spectrum method.
 
 #%%
 # Static line-shape
@@ -92,6 +79,18 @@ sim.methods += [method]
 # Observe the static :math:`^{27}\text{Al}` line-shape simulation.
 
 #%%
+# Now, that we have the isotopomers, create a Simulator object and add the isotopomers.
+from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+
+static_method = BlochDecayCentralTransitionSpectrum(
+    channels=["27Al"], spectral_dimensions=[{"spectral_width": 80000}]
+)
+
+#%%
+# Create the simulator object and add the isotopomers and the method.
+sim = Simulator()
+sim.isotopomers += isotopomers  # add isotopomers
+sim.methods += [static_method]  # add method
 sim.run()
 
 #%%
@@ -111,16 +110,20 @@ plt.show()
 # -------------------------------------------
 # Simulation of the same isotopomer system at magic angle and spinning at 25 kHz.
 
+MAS_method = BlochDecayCentralTransitionSpectrum(
+    channels=["27Al"],
+    rotor_frequency=25000,  # in Hz
+    rotor_angle=54.735 * np.pi / 180.0,  # in rads
+    spectral_dimensions=[
+        {"spectral_width": 30000, "reference_offset": -4000}  # both in Hz
+    ],
+)
+sim.methods[0] = MAS_method
+
 #%%
-sim.methods[0].spectral_dimensions[0].events[0].rotor_frequency = 25000  # in Hz
-sim.methods[0].spectral_dimensions[0].spectral_width = 30000  # in Hz
-sim.methods[0].spectral_dimensions[0].reference_offset = -4000  # in Hz
-sim.methods[0].spectral_dimensions[0].events[0].rotor_angle = (
-    54.735 * np.pi / 180.0
-)  # magic angle in radian
+# Configure the sim object to calculate up to 4 sidebands, and run the simulation.
 sim.config.number_of_sidebands = 4
 sim.run()
-
 
 #%% and the corresponding plot.
 

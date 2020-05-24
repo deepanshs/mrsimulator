@@ -31,51 +31,44 @@ class Isotope(BaseModel):
     def get_isotope(cls, v, *, values, **kwargs):
         return format_isotope_string(v)
 
-    def to_dict_with_units(self):
+    def to_dict_with_units(self) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object where
+        the attribute value with physical quantity is expressed as a string with a
+        value and a unit."""
         return self.symbol
 
     @property
     def spin(self):
-        """
-        Spin quantum number, I, of the isotope.
-        """
+        """Spin quantum number, I, of the isotope."""
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["spin"] / 2.0
 
     @property
     def natural_abundance(self):
-        """
-        Natural abundance of the isotope in units of %.
-        """
+        """Natural abundance of the isotope in units of %."""
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["natural_abundance"]
 
     @property
     def gyromagnetic_ratio(self):
-        """
-        Reduced gyromagnetic ratio of the nucleus given in units of MHz/T.
-        """
+        """Reduced gyromagnetic ratio of the nucleus given in units of MHz/T."""
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["gyromagnetic_ratio"]
 
     @property
     def quadrupole_moment(self):
-        """
-        Quadrupole moment of the nucleus given in units of eB (electron-barn).
-        """
+        """Quadrupole moment of the nucleus given in units of eB (electron-barn)."""
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["quadrupole_moment"]
 
     @property
     def atomic_number(self):
-        """
-        Atomic number of the isotope.
-        """
+        """Atomic number of the isotope."""
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["atomic_number"]
 
 
-def format_isotope_string(isotope_string):
+def format_isotope_string(isotope_string: str) -> str:
     """Format isotope string to {A}{symbol}, where A is the isotope number"""
     result = match(r"(\d+)\s*(\w+)", isotope_string)
 
@@ -91,7 +84,7 @@ def format_isotope_string(isotope_string):
     return formatted_string
 
 
-def get_isotope_data(isotope_string):
+def get_isotope_data(isotope_string: str) -> dict:
     """
     Get the isotope's intrinsinc NMR properties from a JSON
     data file.

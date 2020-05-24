@@ -61,11 +61,13 @@ Welcome to the Mrsimulator project documentation
 ----
 
 About
-^^^^^
+-----
 
-The `Mrsimulator` package is a C and python based library for simulating fast
-solid-state nuclear magnetic resonance (NMR) spectra. The core methods are
-written in C, wrapped, and made available in python for python users.
+`Mrsimulator` is a python package for computing fast real-time solid-state nuclear
+magnetic resonance (NMR) line-shapes/spectrum. The library is optimized to compute bulk
+solid-state line-shapes, enabling the simulation of both crystalline and amorphous-like
+materials. The core of the `Mrsimulator` library is written in C, wrapped and made
+available in python.
 
 .. warning::
     The package is currently under development. We advice using with
@@ -73,20 +75,25 @@ written in C, wrapped, and made available in python for python users.
 
 ----
 
-**Features**
+Features
+--------
 
-Fast-simulation of one-dimensional NMR spectra of uncoupled spins featuring:
+At present, the `Mrsimulator` package offers a fast real-time simulation of
+one-dimensional solid-state NMR line-shape of
 
-- Spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}`,
-  (See the list of supported isotopes),
-- Arbitrary macroscopic magnetic flux density,
-- Magic angle spinning (MAS) at arbitrary spin frequency,
-- Variable angle spinning (VAS) at arbitrary angle and spin frequency,
-- Static line-shape.
+- Uncoupled spin-system for
+    - spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
+    - at arbitrary macroscopic magnetic flux density,
+    - at arbitrary rotor angles, and
+    - at arbitrary spinning frequency.
+
+- The library includes the following NMR methods,
+    - 1D Bloch decay spectrum, and
+    - 1D Bloch decay central transition spectrum.
 
 ----
 
-    **View the example gallery**
+    **View our example gallery**
 
     .. only:: html
 
@@ -95,11 +102,30 @@ Fast-simulation of one-dimensional NMR spectra of uncoupled spins featuring:
 
 ----
 
-**Contribution**
+Goals for the near future
+-------------------------
 
-``Mrsimulator`` is a open source NMR simulation package. We are a small team
-working on developing the package for the NMR community. Any contribution and
-suggestion is greatly appreciated.
+Our current objectives for the future are the following
+
+- Include line-shape simulation of coupled spin-systems for
+    - spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
+    - at arbitrary macroscopic magnetic flux density,
+    - at arbitrary rotor angles, and
+    - at arbitrary spinning frequency.
+
+- Expand the library of NMR methods. We expect to include the following methods
+    - 2D Multi-quantum Magic Angle Spinning (MQ-MAS),
+    - 2D Dynamic Angle Spinning (DAS),
+    - 2D Magic Angle Flipping (MAF), and
+    - 2D isotropic to anisotropic sideband correlation spectrum (PASS).
+
+
+.. Contribution
+.. ------------
+
+.. ``Mrsimulator`` is a open source NMR simulation package. We are a small team
+.. working on developing the package for the NMR community. Any contribution and
+.. suggestion is greatly appreciated.
 
 
 -------
@@ -113,7 +139,6 @@ suggestion is greatly appreciated.
    understanding-isotopomers
    getting_started
    using_mrsimulator_objects
-   understanding_system
    load_isotopomers
    configuring_simulator
    benchmark
@@ -122,7 +147,7 @@ suggestion is greatly appreciated.
    api_py/py_api
    api_c/c_api
 
-
+.. understanding_system
 ..    objects
 ..    spectrum_object
 ..    theory/wigner_rotations
@@ -132,7 +157,7 @@ suggestion is greatly appreciated.
 .. only:: html
 
     Indices and tables
-    ^^^^^^^^^^^^^^^^^^
+    ------------------
 
     * :ref:`genindex`
     * :ref:`modindex`

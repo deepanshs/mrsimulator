@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Test for the base Site class."""
-# import os.path
 import pytest
 from mrsimulator import Site
 from mrsimulator.isotope import Isotope
@@ -54,6 +53,12 @@ def test_direct_init_site1():
 
     with pytest.raises(ValidationError, match=".*{0}.*{1}.*".format(*error)):
         Site.parse_dict_with_units(dict(quadrupolar={"Cq": "5.1 MHz"}))
+
+    ax = Site.parse_dict_with_units({"isotope": "29Si"})
+    assert ax.to_dict_with_units() == {
+        "isotope": "29Si",
+        "isotropic_chemical_shift": "0 ppm",
+    }
 
 
 def test_parse_json_site():

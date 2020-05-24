@@ -6,6 +6,7 @@ import pytest
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
+from mrsimulator.methods import BlochDecaySpectrum
 
 
 def test_simulator_assignments():
@@ -44,6 +45,20 @@ def test_equality():
     }
     assert c.to_dict_with_units(include_methods=True) == result
 
+    assert c.reduced_dict() == {
+        "name": "",
+        "description": "",
+        "isotopomers": [{"abundance": 100, "description": "", "name": "", "sites": []}],
+        "methods": [],
+        "config": {
+            "number_of_sidebands": 64,
+            "integration_volume": "octant",
+            "integration_density": 70,
+            "decompose": False,
+        },
+        "indexes": [],
+    }
+
 
 def get_simulator():
     isotopes = ["19F", "31P", "2H", "6Li", "14N", "27Al", "25Mg", "45Sc", "87Sr"]
@@ -66,3 +81,61 @@ def test_get_isotopes():
     assert sim.get_isotopes(I=2.5) == {"27Al", "25Mg"}
     assert sim.get_isotopes(I=3.5) == {"45Sc"}
     assert sim.get_isotopes(I=4.5) == {"87Sr"}
+
+
+def test_simulator_1():
+    sim = Simulator()
+    sim.isotopomers = [Isotopomer(sites=[Site(isotope="1H"), Site(isotope="23Na")])]
+    sim.methods = [BlochDecaySpectrum()]
+
+    assert sim.reduced_dict() == {
+        "name": "",
+        "description": "",
+        "isotopomers": [
+            {
+                "name": "",
+                "description": "",
+                "sites": [
+                    {"isotope": "1H", "isotropic_chemical_shift": 0},
+                    {"isotope": "23Na", "isotropic_chemical_shift": 0},
+                ],
+                "abundance": 100,
+            }
+        ],
+        "methods": [
+            {
+                "channels": ["1H"],
+                "description": "A Bloch decay Spectrum.",
+                "name": "Bloch Decay Spectrum",
+                "spectral_dimensions": [
+                    {
+                        "count": 1024,
+                        "events": [
+                            {
+                                "fraction": 1.0,
+                                "magnetic_flux_density": 9.4,
+                                "rotor_angle": 0.9553166,
+                                "rotor_frequency": 0.0,
+                                "transition_query": {"P": {"channel-1": [[-1]]}},
+                                "user_variables": [
+                                    "magnetic_flux_density",
+                                    "rotor_frequency",
+                                    "rotor_angle",
+                                ],
+                            }
+                        ],
+                        "label": "",
+                        "reference_offset": 0.0,
+                        "spectral_width": 25000.0,
+                    }
+                ],
+            }
+        ],
+        "config": {
+            "decompose": False,
+            "integration_density": 70,
+            "integration_volume": "octant",
+            "number_of_sidebands": 64,
+        },
+        "indexes": [],
+    }

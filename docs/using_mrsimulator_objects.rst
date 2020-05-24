@@ -150,6 +150,8 @@ A quick run
 Let's do a quick run of the simulator object, and observe the spectrum. But before,
 here is the plotting script we'll use to plot the spectrum for all further examples.
 
+.. _plot_function_def:
+
 .. doctest::
 
     >>> import matplotlib.pyplot as plt
@@ -174,7 +176,7 @@ And now, a quick run.
 ..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_1')
 
 .. figure:: _images/example_1.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     An example of the solid-state :math:`^{13}\text{C}` isotropic lineshape
     simulation.
@@ -202,7 +204,7 @@ Let's add shielding tensors to sites ``C13A`` and ``C13B``.
 ..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_2')
 
 .. figure:: _images/example_2.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     An example of the static-solid state :math:`^{13}\text{C}` CSA lineshape
     simulation.
@@ -233,7 +235,7 @@ method to the ``sim`` object, but update the method at index 0 with a new method
 ..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_3')
 
 .. figure:: _images/example_3.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     An example of the solid-state :math:`^{13}\text{C}` MAS sideband simulation.
 
@@ -259,7 +261,7 @@ method at index 0.
 ..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_4')
 
 .. figure:: _images/example_4.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     An example of the solid-state :math:`^{13}\text{C}` VAS sideband simulation.
 
@@ -285,7 +287,7 @@ method. Here, we change the channel from `13C` to `1H`.
 ..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_5')
 
 .. figure:: _images/example_5.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     An example of solid-state :math:`^{1}\text{H}` VAS sideband simulation.
 
@@ -309,7 +311,7 @@ Likewise, update the value of the `channels` attribute to `17O`.
 ..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_6')
 
 .. figure:: _images/example_6.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     An example of the solid-state :math:`^{17}\text{O}` MAS central-transition
     simulation.
@@ -363,4 +365,4 @@ Now, you may simulate the central transition selective spectrum.
 ..     >>> plot_save(*sim.methods[1].simulation.to_list(), 'example_7')
 
 .. figure:: _images/example_7.*
-    :figclass: figure-polaroid
+    :figclass: figure

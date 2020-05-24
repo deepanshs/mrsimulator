@@ -18,6 +18,11 @@ The :ref:`simulator_api` class is configured using the
 :attr:`~mrsimulator.Simulator.config` attribute. The default value
 of the config attributes is as follows,
 
+.. seealso::
+
+    In the following examples, the function plot refer to the previously defined
+    :ref:`code block <plot_function_def>`.
+
 .. doctest::
 
     >>> from mrsimulator import Simulator, Isotopomer, Site
@@ -62,13 +67,14 @@ advised to increase this value as required. Consider the following example.
     >>> simulator_1.run()
 
     >>> # plotting the simulation
-    >>> plot(*simulator_1.methods[0].simulation.to_list()) # doctest:+SKIP
+    >>> x, y = simulator_1.methods[0].simulation.to_list()
+    >>> plot(x, y) # doctest: +SKIP
 
-.. .. testsetup:: # doctest:+SKIP
+.. .. testsetup::
 ..     >>> plot_save(*simulator_1.methods[0].simulation.to_list(), 'example_sidebands_1')
 
 .. figure:: _images/example_sidebands_1.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     Spinning sidebands evaluated with a relatively low number of sidebands,
     resulting in an inaccurate sideband simulation.
@@ -87,13 +93,14 @@ observe.
     >>> simulator_1.run()
 
     >>> # plotting the simulation
-    >>> plot(*simulator_1.methods[0].simulation.to_list()) # doctest:+SKIP
+    >>> x, y = simulator_1.methods[0].simulation.to_list()
+    >>> plot(x, y) # doctest: +SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'example_sidebands_2')
 
 .. figure:: _images/example_sidebands_2.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     Spinning sideband spectrum evaluated with a large number of sidebands.
 
@@ -136,13 +143,14 @@ shielding tensor, as follows,
     >>> simulator_1.run()
     >>>
     >>> # plotting the simulation
-    >>> plot(*simulator_1.methods[0].simulation.to_list()) # doctest:+SKIP
+    >>> x, y = simulator_1.methods[0].simulation.to_list()
+    >>> plot(x, y) # doctest: +SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'example_integration_volume_1')
 
 .. figure:: _images/example_integration_volume_1.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     An example of an incomplete lineshape integration, lineshape simulation
     resulting from the frequency contributions evaluated over the positive
@@ -160,13 +168,14 @@ volume to `hemisphere` and re-simulate.
     >>> simulator_1.run()
     >>>
     >>> # plotting the simulation
-    >>> plot(*simulator_1.methods[0].simulation.to_list()) # doctest:+SKIP
+    >>> x, y = simulator_1.methods[0].simulation.to_list()
+    >>> plot(x, y) # doctest: +SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'example_integration_volume_2')
 
 .. figure:: _images/example_integration_volume_2.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     The lineshape resulting from the frequency contributions evaluted over the
     top hemisphere.
@@ -216,13 +225,14 @@ arising from an individual isotopomer. For example,
     >>> sim.run()
     >>>
     >>> # plotting the simulation
-    >>> plot(*sim.methods[0].simulation.to_list()) # doctest:+SKIP
+    >>> x, y = sim.methods[0].simulation.to_list()
+    >>> plot(x, y) # doctest: +SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(x, y, 'example_decompose_1')
 
 .. figure:: _images/example_decompose_1.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     By default, the spectrum is an integration of the spectra from individual
     isotopomers.
@@ -238,21 +248,22 @@ decompose attribute to ``True`` and observe.
     >>> # simulate.
     >>> sim.run()
 
-Here, ``y`` is an ordered list of numpy arrays corresponding to the ordered
-list of isotopomers. In this example, ``y`` is a list of two numpy arrays.
-
 .. doctest::
 
     >>> # plot the two spectrum
-    >>> plt.plot(x, y[0]) # arising from site_A # doctest:+SKIP
-    >>> plt.plot(x, y[1]) # arising from site_B # doctest:+SKIP
+    >>> x, y0, y1 = sim.methods[0].simulation.to_list()
+    >>> # The order of the y's corresponds to the order of the isotopomers. Here,
+    >>> # y0 is the frequency response arising from site_A, while y1 is the
+    >>> # frequency response from site_B.
+
+    >>> plot(x, np.asarray([y0, y1]).T) # doctest: +SKIP
 
 .. .. testsetup::
 ..     >>> import numpy as np
 ..     >>> plot_save(x, np.asarray(y).T, 'example_decompose_2')
 
 .. figure:: _images/example_decompose_2.*
-    :figclass: figure-polaroid
+    :figclass: figure
 
     Spectrum from individual isotopomers when the value of the `decompose`
     config is True.

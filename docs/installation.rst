@@ -38,8 +38,8 @@ compile and build the mrsimulator library. Follow the instructions below.
 
     $ conda install -c conda-forge openblas fftw>=3.3.0 numpy>=1.13.3 cython>=0.29.11
 
-2. Build package using pip (you will require a c-compiler, such as,
-`Microsoft Visual C++ <https://visualstudio.microsoft.com/downloads/>`_).
+2. Build package using pip (you will require a c-compiler,
+`Microsoft Visual C++ <(https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019)>`_).
 
 .. code-block:: bash
 
@@ -77,125 +77,124 @@ containing the package (usually, the folder is named mrsimulator).
 Installation
 ''''''''''''
 
-MacOS users
-***********
+.. tabs::
 
-**Installing dependencies**
+   .. tab:: Mac OSX
 
-**Step-1** By default, the mrsimulator package links to the openblas library for BLAS
-operations. Mac users may opt to choose the in-build apple's accelerate library. If you
-opt for apple's accelerate library, skip to step-2. If you wish to link the mrsimulator
-package to the openblas library, follow
+      **Installing dependencies**
 
-.. code-block:: bash
+      **Step-1** By default, the mrsimulator package links to the openblas library for BLAS
+      operations. Mac users may opt to choose the in-build apple's accelerate library. If you
+      opt for apple's accelerate library, skip to step-2. If you wish to link the mrsimulator
+      package to the openblas library, follow
 
-    $ brew install openblas
+      .. code-block:: bash
 
-**Step-2** Install the FFTW library using the `homebrew <https://brew.sh>`_ formulae,
-and the remaining dependencies using pip,
+          $ brew install openblas
 
-.. code-block:: bash
+      **Step-2** Install the FFTW library using the `homebrew <https://brew.sh>`_ formulae,
+      and the remaining dependencies using pip,
 
-    $ brew install fftw
-    $ pip install -r requirements.txt
+      .. code-block:: bash
 
-.. $ conda install -c conda-forge openblas --file requirements.txt
+          $ brew install fftw
+          $ pip install -r requirements.txt
 
-**Building and installing the mrsimulator package**
+      .. $ conda install -c conda-forge openblas --file requirements.txt
 
-Because the core of the mrsimulator package is written in C, you will
-require a C-compiler to build and install the package.
+      **Building and installing the mrsimulator package**
 
-**Step-3** If you choose to link the
-mrsimulator package to openblas library, skip to step-4.
-Open the ``setting.py`` file, which is located at the root level of the mrsimulator
-folder. You should see,
+      Because the core of the mrsimulator package is written in C, you will
+      require a C-compiler to build and install the package.
 
-.. code-block:: python
+      **Step-3** If you choose to link the
+      mrsimulator package to openblas library, skip to step-4.
+      Open the ``setting.py`` file, which is located at the root level of the mrsimulator
+      folder. You should see,
 
-    # -*- coding: utf-8 -*-
-    # BLAS library
-    use_openblas = True
-    # mac-os only
-    use_accelerate = False
+      .. code-block:: python
 
-To link the mrsimulator package to the in-build apple's accelerate library, change the
-fields to
+          # -*- coding: utf-8 -*-
+          # BLAS library
+          use_openblas = True
+          # mac-os only
+          use_accelerate = False
 
-.. code-block:: python
+      To link the mrsimulator package to the in-build apple's accelerate library, change the
+      fields to
 
-    # -*- coding: utf-8 -*-
-    # BLAS library
-    use_openblas = False
-    # mac-os only
-    use_accelerate = True
+      .. code-block:: python
 
-**Step-4** Install the package.
+          # -*- coding: utf-8 -*-
+          # BLAS library
+          use_openblas = False
+          # mac-os only
+          use_accelerate = True
 
-.. code-block:: bash
+      **Step-4** Install the package.
 
-    $ python setup.py install
+      .. code-block:: bash
 
-.. pip install git+https://github.com/DeepanshS/mrsimulator.git@master
+          $ python setup.py install
+
+      .. pip install git+https://github.com/DeepanshS/mrsimulator.git@master
 
 
-Linux(Ubuntu) users
-*******************
+   .. tab:: Linux (Ubuntu)
 
-**Installing dependencies**
+      **Installing dependencies**
 
-**Step-1** For Ubuntu users, openblas and FFTW libraries may already be installed. If
-not, install the libraries with
+      **Step-1** For Ubuntu users, openblas and FFTW libraries may already be installed. If
+      not, install the libraries with
 
-.. code-block:: bash
+      .. code-block:: bash
 
-    $ sudo apt-get install libopenblas-dev libfftw3-dev
+          $ sudo apt-get install libopenblas-dev libfftw3-dev
 
-**Step-2** Install the remaining dependencies using pip.
+      **Step-2** Install the remaining dependencies using pip.
 
-.. code-block:: bash
+      .. code-block:: bash
 
-    $ pip install -r requirements.txt
+          $ pip install -r requirements.txt
 
-**Building and installing the mrsimulator package**
+      **Building and installing the mrsimulator package**
 
-**Step-3** Install the package.
+      **Step-3** Install the package.
 
-.. code-block:: bash
+      .. code-block:: bash
 
-    $ python setup.py install
+          $ python setup.py install
 
-Linux(CentOS) users
-*******************
+   .. tab:: Linux (CentOS)
 
-**Installing dependencies**
+      **Installing dependencies**
 
-**Step-1** Install the openblas and FFTW libraries.
+      **Step-1** Install the openblas and FFTW libraries.
 
-.. code-block:: bash
+      .. code-block:: bash
 
-    $ yum install openblas-devel fftw-devel
+          $ yum install openblas-devel fftw-devel
 
-**Step-2** Install the remaining dependencies using pip.
+      **Step-2** Install the remaining dependencies using pip.
 
-.. code-block:: bash
+      .. code-block:: bash
 
-    $ pip install -r requirements.txt
+          $ pip install -r requirements.txt
 
-**Building and installing the mrsimulator package**
+      **Building and installing the mrsimulator package**
 
-**Step-3** Install the package.
+      **Step-3** Install the package.
 
-.. code-block:: bash
+      .. code-block:: bash
 
-    $ python setup.py install
+          $ python setup.py install
 
 .. We recommend the
 .. following C-compiler for the OS types:
 
 .. - Mac OS - ``clang``
 .. - Linux - ``gcc``
-.. - Windows - ``msvc``
+.. - Windows - ``msvc`` (https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019)
 
 Check your build
 ----------------
@@ -211,4 +210,4 @@ file in your terminal. Download the test file
 This should produce the following figure.
 
 .. figure:: _static/test_output.*
-    :figclass: figure-polaroid
+    :figclass: figure

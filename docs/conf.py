@@ -62,6 +62,7 @@ extensions = [
     "sphinxjp.themes.basicstrap",
     "sphinx_gallery.gen_gallery",
     "sphinx.ext.intersphinx",
+    "sphinx_tabs.tabs",
 ]
 
 
@@ -129,9 +130,12 @@ sphinx_gallery_conf = {
     },
 }
 
+# copybutton_prompt_text = ">>> "
+# copybutton_only_copy_prompt_lines = False
+
 intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org", None),
-    "numpy": ("https://numpy.org", None),
+    "numpy": ("http://docs.scipy.org/doc/numpy/", None),
     "csdmpy": ("https://csdmpy.readthedocs.io/en/stable/", None),
     "lmfit": ("https://lmfit-py.readthedocs.io/en/stable/", None),
 }
@@ -226,7 +230,7 @@ html_theme_options = {
     # Fix navbar to top of screen. Defaults to true
     "nav_fixed_top": True,
     # Fix the width of the sidebar. Defaults to false
-    "nav_fixed": False,
+    "nav_fixed": True,
     # Set the width of the sidebar. Defaults to '900px'
     "nav_width": "900px",
     # Fix the width of the content area. Defaults to false
@@ -267,7 +271,7 @@ html_theme_options = {
     # "h2_size": "1.8em",
     # "h3_size": "1.6em",
     # "h4_size": "1.4em",
-    # "h5_size": "1.4em",
+    # "h5_size": "1.25em",
     # "h6_size": "1.1em",
 }
 
