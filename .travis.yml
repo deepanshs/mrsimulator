@@ -33,15 +33,19 @@ branches:
 jobs:
   include:
     # ===== Mac OS ====== #
-    # Travis images doesn't work for python versions before 3.7.5
-    - name: "Python 3.7.5 running on macOS 10.14.3"
+    - name: "Python 3.6.10"
       os: osx
-      osx_image: xcode10.2 # Python 3.7.5 running on macOS 10.14.3
+      env: PYENV_VERSION=3.6.10
       language: shell
 
-    - name: "Python 3.8.0 on macOS 10.14"
+    - name: "Python 3.7.7"
       os: osx
-      osx_image: xcode11.3 # Python 3.8.0 running on macOS 10.14.6
+      env: PYENV_VERSION=3.7.7
+      language: shell
+
+    - name: "Python 3.8.3"
+      os: osx
+      env: PYENV_VERSION=3.8.3
       language: shell
 
     # ===== Windows ====== #
@@ -53,28 +57,33 @@ jobs:
     #   env: PATH=/c/Python36:/c/Python36/Scripts:$PATH
 
 before_install:
-  - python3 -m pip install --upgrade pip
-  - python3 -m pip install codecov
   - |
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+        brew update
+
+        brew install pyenv
+        brew info pyenv
+        eval "$(pyenv init -)"
+        pyenv install $PYENV_VERSION
+        pyenv global $PYENV_VERSION
+        pyenv rehash
+
         brew install openblas fftw
-        python3 -m pip install --user -r requirements.txt
-        python3 -m pip install --user -r requirements-dev.txt
     fi
-    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-        python3 -m pip install -r requirements.txt
-        python3 -m pip install -r requirements-dev.txt
-    fi
-  - python3 --version || python --version
+  - python -m pip install --upgrade pip
+  - python -m pip install codecov
+  - python -m pip install -r requirements.txt
+  - python -m pip install -r requirements-dev.txt
+  - python --version || python --version
 
 # 'python' points to Python 2.7 on macOS but points to Python 3.8 on Linux and Windows
 # 'python3' is a 'command not found' error on Windows but 'py' works on Windows only
 install:
-  - python3 setup.py develop || python setup.py develop
+  - python setup.py develop
 
 # command to run tests
 script:
-  - python3 -m pytest --cov=./
+  - python -m pytest --cov=./
 
 after_success:
-  - python3 -m codecov
+  - python -m codecov
