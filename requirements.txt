@@ -1,5 +1,5 @@
 
-numpy>=1.16
+numpy>=1.17
 cython>=0.29
 requests>=2.22
 matplotlib>3.1
