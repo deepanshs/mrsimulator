@@ -19,19 +19,15 @@ matrix:
       python: 3.8
       dist: xenial
 
+    - name: "Python 3.6.x on MacOS"
+      os: osx
+      osx_image: xcode9.4
+      language: shell
+
     - name: "Python 3.7.x on MacOS"
       os: osx
       osx_image: xcode11.2
       language: shell
-
-    # - os: osx
-    #   osx_image: xcode10
-    #   language: generic
-    #   env: PYTHON=37
-    # - os: osx
-    #   osx_image: xcode10
-    #   language: generic
-    #   env: PYTHON=36
 
 # os:
 #   - linux
@@ -63,34 +59,43 @@ branches:
     - master
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install openblas fftw; fi
+  - |
+    if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+        brew update
+        brew install openblas fftw
+        pip3 install --upgrade pip
+        pip3 install --user -r requirements.txt
+        pip3 install --user -r requirements-dev.txt
+        python3 --version || python --version
+    fi
+    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+        pip3 install --upgrade pip
+        pip3 install -r requirements.txt
+        pip3 install -r requirements-dev.txt
+        python3 --version || python --version
+    fi
 
-  # - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-  # - bash miniconda.sh -b -p $HOME/miniconda
-  # - export PATH="$HOME/miniconda/bin:$PATH"
-  # - hash -r
-  # - conda config --set always_yes yes --set changeps1 no
-  # - conda update -q conda
-  # - conda info -a
-  # - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pytest pytest-cov
-  # - source activate test-env
-  # - conda install -c anaconda $PKG1 $PKG2 --file conda-requirements.txt
-  # - pip install -r requirements.txt
-  # - pip install -r requirements-dev.txt
+# - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+# - bash miniconda.sh -b -p $HOME/miniconda
+# - export PATH="$HOME/miniconda/bin:$PATH"
+# - hash -r
+# - conda config --set always_yes yes --set changeps1 no
+# - conda update -q conda
+# - conda info -a
+# - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pytest pytest-cov
+# - source activate test-env
+# - conda install -c anaconda $PKG1 $PKG2 --file conda-requirements.txt
+# - pip install -r requirements.txt
+# - pip install -r requirements-dev.txt
 
 # 'python' points to Python 2.7 on macOS but points to Python 3.8 on Linux and Windows
 # 'python3' is a 'command not found' error on Windows but 'py' works on Windows only
 install:
-  - pip3 install --upgrade pip
-  - pip3 install --user -r requirements.txt
-  - pip3 install --user -r requirements-dev.txt
-  - python3 --version || python --version
   - python3 setup.py develop || python setup.py develop
 
 # command to run tests
 script:
-  - pytest --cov=./
+  - python3 -m pytest --cov=./
 
 after_success:
-  - codecov
+  - python3 -m codecov
