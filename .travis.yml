@@ -33,19 +33,19 @@ branches:
 jobs:
   include:
     # ===== Mac OS ====== #
-    - name: "Python 3.6.10"
+    - name: "Python 3.6.7"
       os: osx
-      env: PYENV_VERSION=3.6.10
+      env: PYENV_VERSION=3.6.7
       language: shell
 
-    - name: "Python 3.7.7"
+    - name: "Python 3.7.5"
       os: osx
-      env: PYENV_VERSION=3.7.7
+      env: PYENV_VERSION=3.7.5
       language: shell
 
-    - name: "Python 3.8.3"
+    - name: "Python 3.8.0"
       os: osx
-      env: PYENV_VERSION=3.8.3
+      env: PYENV_VERSION=3.8.0
       language: shell
 
     # ===== Windows ====== #
@@ -68,7 +68,7 @@ before_install:
         pyenv global $PYENV_VERSION
         pyenv rehash
 
-        brew install openblas fftw
+        brew upgrade openblas fftw
     fi
   - python -m pip install --upgrade pip
   - python -m pip install codecov
