@@ -83,13 +83,14 @@ before_install:
 # 'python3' is a 'command not found' error on Windows but 'py' works on Windows only
 install:
   - pip3 install --upgrade pip
-  - pip3 install -r requirements.txt
-  - pip3 install -r requirements-dev.txt
+  - pip3 install --user -r requirements.txt
+  - pip3 install --user -r requirements-dev.txt
+  - python3 --version || python --version
   - python3 setup.py develop || python setup.py develop
 
 # command to run tests
 script:
-  - pytest3 --cov=./ || pytest --cov=./
+  - pytest --cov=./
 
 after_success:
   - codecov
