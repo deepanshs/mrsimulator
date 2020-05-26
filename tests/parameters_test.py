@@ -33,23 +33,13 @@ params = make_fitting_parameters(sim)
 
 
 test_params = Parameters()
-test_params.add(name="isotopomers9109346sites9109346isotropic_chemical_shift", value=10)
-test_params.add(name="isotopomers9109346sites9109346shielding_symmetric46zeta", value=5)
+test_params.add(name="ISO_0_SITES_0_isotropic_chemical_shift", value=10)
+test_params.add(name="ISO_0_SITES_0_shielding_symmetric_zeta", value=5)
+test_params.add(name="ISO_0_SITES_0_shielding_symmetric_eta", value=0.1, min=0, max=1)
 test_params.add(
-    name="isotopomers9109346sites9109346shielding_symmetric46eta",
-    value=0.1,
-    min=0,
-    max=1,
-)
-test_params.add(
-    name="isotopomers9109346abundance",
-    value=100,
-    min=0,
-    max=100,
-    vary=False,
-    expr="100",
+    name="ISO_0_abundance", value=100, min=0, max=100, vary=False, expr="100"
 )
 
 
-def param_test():
+def test_param():
     assert params.valuesdict() == test_params.valuesdict(), "Parameter creation failed"

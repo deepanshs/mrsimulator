@@ -17,6 +17,7 @@ from pydantic import validator
 
 from .abstract_list import TransitionList
 from .isotope import Isotope
+from .post_simulation import PostSimulator
 from .transition import Transition
 
 
@@ -243,6 +244,7 @@ class Method(Parseable):
     channels: List[str]
     spectral_dimensions: List[SpectralDimension]
     simulation: Optional[cp.CSDM]
+    post_simulation: Optional[PostSimulator]
     experiment: Optional[cp.CSDM]
     post_simulation: Optional[Dict]
 
@@ -446,6 +448,31 @@ class Method(Parseable):
 
     #             segments.append(np.asarray(P_segment))  # append the intersection
     #     return cartesian_product(*segments)
+
+    def apodize(self, **kwargs):
+        """Returns the result of passing the selected apodization function .
+
+        Args:
+            csdm: simulation object
+
+        Returns:
+            A Numpy array
+        """
+
+        csdm = self.simulation
+        for dim in csdm.dimensions:
+            dim.to("Hz", "nmr_frequency_ratio")
+        apo = self.post_simulation["apodization"]
+
+        sum_ = 0
+
+        for item in apo:
+            sum_ += item.apodize(csdm)
+
+        for dim in csdm.dimensions:
+            dim.to("ppm", "nmr_frequency_ratio")
+
+        return self.post_simulation["scale"] * sum_
 
 
 def cartesian_product(*arrays):

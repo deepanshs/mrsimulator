@@ -53,6 +53,7 @@ plt.show()
 
 from mrsimulator import Simulator, Isotopomer, Site
 from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.post_simulation import Apodization, PostSimulator
 
 S29 = Site(
     isotope="29Si",
@@ -69,13 +70,23 @@ method = BlochDecaySpectrum(
     ],
 )
 
+PS = PostSimulator(
+    scale=1, apodization=[{"args": [200], "function": "Lorentzian", "dimension": 0}]
+)
+
+
 sim = Simulator()
 sim.isotopomers += [Isotopomer(name="Si29", sites=[S29], abundance=100)]
 sim.methods += [method]
+
+sim.methods[0].experiment = synthetic_experiment
+sim.methods[0].post_simulation = PS
+
 sim.run()
 sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
 x, y = sim.methods[0].simulation.to_list()
+y = sim.methods[0].apodize().real
 
 plt.plot(x, y)
 plt.xlabel("$^{29}$Si frequency / ppm")
@@ -103,14 +114,14 @@ params.add(name="iso", value=-80)
 params.add(name="eta", value=0.6, min=0, max=1)
 params.add(name="zeta", value=-60)
 params.add(name="sigma", value=200)
-params.add(name="factor", value=1)
+params.add(name="scale", value=1)
 
+params.pretty_print()
 
 #%%
 # We will next set up an error function that will update the simulation throughout the minimization.
 # We will construct a simple function here to demonstrate the *LMFIT* library, however, the next examples
 # will showcase a fitting function provided in the *mrsimulator* library which automates the process.
-from mrsimulator.apodization import Apodization
 
 
 def test_function(params, data, sim):
@@ -123,13 +134,15 @@ def test_function(params, data, sim):
     site.isotropic_chemical_shift = values["iso"]
     site.shielding_symmetric.eta = values["eta"]
     site.shielding_symmetric.zeta = values["zeta"]
+    sim.methods[0].post_simulation["scale"] = values["scale"]
+    sim.methods[0].post_simulation["apodization"][0].args = [values["sigma"]]
 
     # here we run the simulation
     sim.run()
     # here we apodize the signal to simulate line broadening
-    y = sim.apodize(Apodization.Lorentzian, sigma=values["sigma"])
+    y = sim.methods[0].apodize().real
 
-    y_factored = y * values["factor"]
+    y_factored = y * values["scale"]
 
     return intensity - y_factored
 
@@ -141,7 +154,7 @@ def test_function(params, data, sim):
 #%%
 
 minner = Minimizer(test_function, params, fcn_args=(synthetic_experiment, sim))
-result = minner.minimize()
+result = minner.minimize(method="powell")
 report_fit(result)
 
 #%%

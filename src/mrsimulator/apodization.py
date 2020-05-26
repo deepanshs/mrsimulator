@@ -6,7 +6,7 @@ from numpy.fft import ifft
 from numpy.fft import ifftshift
 
 
-class Apodization:
+class Apodization_deprecated:
     """
     The Apodization class.
 
@@ -24,7 +24,8 @@ class Apodization:
         dim = sim.dimensions[dimension]
         self.x = dim.coordinates
         self.y = sim.dependent_variables[0].components[0]
-        self.inverse_x = dim.reciprocal_coordinates().to("s").value
+        self.inverse_x = reciprocal_coordinates(dim).to("s").value
+        # self.inverse_x = reciprocal_coordinates(dim.coordinates).to("s").value
 
     def Lorentzian(self, sigma):
         """Lorentzian apodization function.
@@ -81,19 +82,30 @@ class Apodization:
         return fftshift(fft(appodized, axis=axis), axes=axis).real
 
 
-def reciprocal_coordinates(x):
-    """Returns the result of passing the selected apodization function .
+def reciprocal_coordinates(self):
+    """Return reciprocal coordinates assuming Nyquist-shannan theorem."""
+    count = self.count
+    increment = 1.0 / (count * self.increment)
+    coordinates_offset = self.reciprocal.coordinates_offset
+    coordinates = np.arange(count) * increment + coordinates_offset
+    if self.complex_fft:
+        return coordinates
+    return coordinates - int(count / 2) * increment
 
-    Args:
-        x: array of frequency domain coordinates
 
-    Returns:
-        A Numpy array
-    """
-    delta_x = abs(x[1] - x[0]).to("Hz")
-    t_indices = np.arange(x.size) - int(x.size / 2)
-    t_increment = (1 / (x.size * delta_x)).to("s").value
-    return t_indices * t_increment
+# def reciprocal_coordinates(x):
+#     """Returns the result of passing the selected apodization function .
+
+#     Args:
+#         x: array of frequency domain coordinates
+
+#     Returns:
+#         A Numpy array
+#     """
+#     delta_x = abs(x[1] - x[0]).to("Hz", 'nmr_frequency_ratio')
+#     t_indices = np.arange(x.size) - int(x.size / 2)
+#     t_increment = (1 / (x.size * delta_x)).to("s").value
+#     return t_indices * t_increment
 
 
 # def Lorentzian( sigma):

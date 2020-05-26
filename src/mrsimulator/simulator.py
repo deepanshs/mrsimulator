@@ -8,10 +8,10 @@ import csdmpy as cp
 import numpy as np
 from mrsimulator import __version__
 from mrsimulator import Isotopomer
-from mrsimulator.apodization import Apodization
 from mrsimulator.base_model import one_d_spectrum
 from mrsimulator.importer import import_json
 from mrsimulator.method import Method
+from mrsimulator.post_simulation import Apodization
 from mrsimulator.simulator_config import ConfigSimulator
 from pydantic import BaseModel
 
@@ -331,8 +331,8 @@ class Simulator(BaseModel):
                 new.dependent_variables[-1].encoding = "base64"
         return new
 
-    def apodize(self, fn, dimension=0, **kwargs):
+    def apodize(self, fn, dimension=0, method=0, **kwargs):
         apodization_filter = Apodization(
-            self.methods[0].simulation, dimension=dimension
+            self.methods[method].simulation, dimension=dimension
         )
         return apodization_filter.apodize(fn, **kwargs)

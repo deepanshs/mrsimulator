@@ -55,6 +55,7 @@ plt.show()
 from mrsimulator import Simulator, Isotopomer, Site
 from mrsimulator import SymmetricTensor as st
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.post_simulation import Apodization, PostSimulator
 
 sim = Simulator()
 O17_1 = Site(
@@ -86,8 +87,16 @@ method = BlochDecayCentralTransitionSpectrum(
     ],
 )
 
+
+PS = PostSimulator(
+    scale=oxygen_experiment.dependent_variables[0].components[0].max().real / 4,
+    apodization=[{"args": [100], "function": "Lorentzian", "dimension": 0}],
+)
+
 sim.isotopomers += isotopomers
 sim.methods += [method]
+sim.methods[0].post_simulation = PS
+sim.methods[0].experiment = oxygen_experiment
 
 # To avoid querying at every iteration we will save the relevant transition pathways
 for iso in isotopomers:
@@ -97,6 +106,7 @@ sim.run()
 sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
 x, y = sim.methods[0].simulation.to_list()
+y = sim.methods[0].apodize().real
 
 plt.plot(x, y)
 plt.xlabel("$^{17}$O frequency / ppm")
@@ -119,8 +129,7 @@ plt.show()
 from mrsimulator.spectral_fitting import make_fitting_parameters
 
 params = make_fitting_parameters(sim)
-params.add(name="sigma", value=100, min=0)
-params.add(name="factor", value=oxygen_experiment.max() / 4, min=0)
+params.pretty_print()
 
 #%%
 # With an experimental spectrum, a simulaton, and a list of parameters we are now
@@ -140,10 +149,8 @@ params.add(name="factor", value=oxygen_experiment.max() / 4, min=0)
 from mrsimulator.spectral_fitting import min_function
 from lmfit import Minimizer, report_fit
 
-minner = Minimizer(
-    min_function, params, fcn_args=(oxygen_experiment, sim, "Lorentzian")
-)
-result = minner.minimize()
+minner = Minimizer(min_function, params, fcn_args=(sim, "Lorentzian"))
+result = minner.minimize(method="powell")
 report_fit(result)
 
 #%%
