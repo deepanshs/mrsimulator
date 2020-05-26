@@ -37,13 +37,20 @@ h6 {
   border: none;
 }
 
-.sphx-glr-single-img,
+img.sphx-glr-single-img,
 .figure img {
   box-shadow: 0 0 4px 0 lightgray;
   border: 1px solid lightgray;
+  padding: 5px;
+  margin-bottom: 6px;
+  margin-top: 0;
 }
 
-.sphx-glr-single-img:hover,
+.footnote.brackets {
+  padding-top: 8px;
+}
+
+img.sphx-glr-single-img:hover,
 .figure img:hover {
   box-shadow: 0 0 10px 0 lightgray;
 }
@@ -57,7 +64,7 @@ h6 {
   width: 100%;
 }
 
-.body > .section {
+.bodywrapper > .body {
   box-shadow: 0 0 30px 0 rgb(128, 128, 128, 0.3);
   margin-top: 1em;
   margin-bottom: 1em;
@@ -75,7 +82,7 @@ table caption:hover {
 }
 
 .sphx-glr-download-link-note {
-  width: calc(75vw - 4em);
+  box-sizing: border-box;
   max-width: 900px;
 }
 
@@ -156,18 +163,19 @@ table caption:hover {
   padding: 0;
   background-color: #333333;
   width: 25%;
+  /* min-width: 270px; */
   overflow-x: hidden;
   overflow-y: hidden;
-  z-index: 300;
+  z-index: 200;
 }
 
 .sidebar.hidden-xs {
   position: relative;
   overflow-x: hidden;
   overflow-y: scroll;
-  height: 100%;
+  height: calc(100% - 20px);
   padding-top: 1em;
-  padding-bottom: 2em;
+  padding-bottom: 20px;
   box-sizing: border-box;
 }
 
@@ -176,6 +184,8 @@ table caption:hover {
   margin: auto;
   padding-top: 1em;
   padding-bottom: 1em;
+  padding-left: 0.35em;
+  padding-right: 0.35em;
 }
 .sidebar .logo img {
   filter: invert(1);
@@ -189,6 +199,9 @@ table caption:hover {
 #searchbox {
   display: flex;
   justify-content: space-around;
+}
+#searchbox input {
+  flex: 1;
 }
 
 .sidebar.hidden-xs > ul {
@@ -251,7 +264,9 @@ table caption:hover {
 }
 footer {
   margin-left: 25%;
+  box-sizing: border-box;
   width: calc(100% - 25%);
+  max-width: 900px;
   padding-top: 1em;
   padding-bottom: 3.5em;
 }
@@ -263,17 +278,9 @@ ul.this-page-menu a {
   padding-left: 24px;
   color: rgb(209, 209, 209);
 }
-/* .sidebar > ul > li ul {
-  padding-left: 24px;
-} */
-/* .sidebar a {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-} */
 
 @media screen and (max-width: 992px) {
-  .body > .section,
-  .sphx-glr-download-link-note {
+  .bodywrapper > .body {
     width: calc(100vw - 2em);
   }
 
@@ -292,8 +299,7 @@ ul.this-page-menu a {
   #content-wrapper {
     padding: 0;
   }
-  .body > .section,
-  .sphx-glr-download-link-note {
+  .bodywrapper > .body {
     margin-top: 0;
     margin-bottom: 0;
     width: 100vw;

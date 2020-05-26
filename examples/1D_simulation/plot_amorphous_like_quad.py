@@ -115,7 +115,7 @@ MAS_method = BlochDecayCentralTransitionSpectrum(
     rotor_frequency=25000,  # in Hz
     rotor_angle=54.735 * np.pi / 180.0,  # in rads
     spectral_dimensions=[
-        {"spectral_width": 30000, "reference_offset": -4000}  # both in Hz
+        {"spectral_width": 30000, "reference_offset": -4000}  # values in Hz
     ],
 )
 sim.methods[0] = MAS_method

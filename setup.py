@@ -21,7 +21,15 @@ from setting import use_openblas
 
 # get the version from file
 
-print("python version", sys.version_info)
+python_version = sys.version_info
+py_version = ".".join([str(i) for i in python_version[:3]])
+print("Using python version", py_version)
+if python_version.major != 3 and python_version.minor < 6:
+    print(
+        f"Python version 3.6 and higher is required for the setup. You are using "
+        f"version {py_version}"
+    )
+    sys.exit(1)
 
 with open("src/mrsimulator/__init__.py", "r") as f:
     for line in f.readlines():

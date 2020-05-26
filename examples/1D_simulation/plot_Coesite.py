@@ -54,14 +54,15 @@ method = BlochDecayCentralTransitionSpectrum(
     channels=["17O"],
     rotor_frequency=14000,  # in Hz
     spectral_dimensions=[
-        {"count": 2046, "spectral_width": 50000}
-    ],  # spectral_width is in Hz
+        {"count": 2046, "spectral_width": 50000}  # spectral_width is in Hz
+    ],
 )
 
 #%%
 # The above method is set up to record the :math:`^{17}\text{O}` resonances at the
-# magic angle, spinning at 14 kHz and 9.4 T external magnetic flux density. The
-# resonances are recorded over 50 kHz using 2046 points.
+# magic angle, spinning at 14 kHz and 9.4 T (default, if the value is not provided)
+# external magnetic flux density. The resonances are recorded over 50 kHz spectral
+# width using 2046 points.
 
 #%%
 # **Step 4** Create the Simulator object and add the method and isotopomer objects.

@@ -6,6 +6,9 @@
 Installing `Mrsimulator` package
 ================================
 
+.. note::
+    Python version 3.6 or higher is required.
+
 .. We recommend installing `anaconda <https://www.anaconda.com/distribution/>`_
 .. distribution for python version 3.6 or higher. The anaconda distribution
 .. ships with numerous packages and modules including Numpy, Scipy, and Matplotlib

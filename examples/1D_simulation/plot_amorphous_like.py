@@ -136,8 +136,8 @@ sim.methods[0] = BlochDecaySpectrum(
     rotor_frequency=5000,  # in Hz
     rotor_angle=1.57079,  # in rads, equivalent to 90 deg
     spectral_dimensions=[
-        {"spectral_width": 25000, "reference_offset": -7000}
-    ],  # values in Hz
+        {"spectral_width": 25000, "reference_offset": -7000}  # values in Hz
+    ],
 )
 sim.config.number_of_sidebands = 8  # eight sidebands are sufficient for this example
 sim.run()
