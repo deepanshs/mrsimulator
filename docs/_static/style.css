@@ -1,5 +1,6 @@
 body {
-  padding-top: 5rem;
+  padding-top: 4em;
+  padding-bottom: 0;
 }
 
 h1 {
@@ -58,14 +59,14 @@ h6 {
 
 .body > .section {
   box-shadow: 0 0 30px 0 rgb(128, 128, 128, 0.3);
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  width: calc(75vw - 4rem);
+  margin-top: 1em;
+  margin-bottom: 1em;
+  width: calc(75vw - 3em);
   max-width: 900px;
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-  padding-left: 5rem;
-  padding-right: 5rem;
+  padding-top: 3em;
+  padding-bottom: 3em;
+  padding-left: 5em;
+  padding-right: 2em;
 }
 
 table caption:hover {
@@ -74,7 +75,7 @@ table caption:hover {
 }
 
 .sphx-glr-download-link-note {
-  width: calc(75vw - 4rem);
+  width: calc(75vw - 4em);
   max-width: 900px;
 }
 
@@ -105,7 +106,7 @@ table caption:hover {
 
 .ui.segment[class*="bottom attached"] {
   width: 100%;
-  padding: 2rem;
+  padding: 2em;
 }
 
 .ui.segment[class*="bottom attached"]:last-child {
@@ -136,20 +137,135 @@ table caption:hover {
   border-radius: 0;
 }
 
-/* #content-wrapper {
-  height: 100%;
-  max-height: calc(100vh - 4rem);
-  overflow-y: auto;
-} */
+.navbar.navbar-fixed-top {
+  box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.7);
+}
+#content-wrapper {
+  margin-left: 25%;
+  box-sizing: border-box;
+  min-height: 100%;
+}
 
+/* sidebar */
 #sidebar-wrapper {
-  padding: 2rem;
-  background-color: transparent;
+  position: fixed;
+  top: 3.5em;
+  bottom: 0;
+  left: 0;
+  height: calc(100% - 3.5em);
+  padding: 0;
+  background-color: #333333;
+  width: 25%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  z-index: 300;
 }
 
-.sidebar > ul > li ul {
-  padding-left: 24px;
+.sidebar.hidden-xs {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 100%;
+  padding-top: 1em;
+  padding-bottom: 2em;
+  box-sizing: border-box;
 }
+
+/* logo */
+.sidebar > .logo {
+  margin: auto;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+.sidebar .logo img {
+  filter: invert(1);
+}
+
+/* searchbar */
+#searchbox > h3,
+#searchbox > p {
+  display: none;
+}
+#searchbox {
+  display: flex;
+  justify-content: space-around;
+}
+
+.sidebar.hidden-xs > ul {
+  padding: 0;
+}
+
+.sidebar.hidden-xs > h3 > a,
+.sidebar.hidden-xs > div > h3 {
+  display: block;
+  padding-left: 24px;
+  color: white;
+  text-decoration: none;
+}
+
+.sidebar > ul > li:hover {
+  background-color: rgb(66, 66, 66);
+}
+
+.sidebar > ul > li.current,
+.sidebar > ul > li.current:hover {
+  background-color: rgb(255, 255, 255);
+}
+
+.sidebar > ul > li > a {
+  display: block;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  padding-left: 24px;
+  padding-right: 24px;
+  color: rgb(209, 209, 209);
+  text-decoration: none;
+  cursor: pointer;
+}
+.sidebar > ul > li.current > a {
+  color: black;
+}
+
+.sidebar > ul > li.current > ul {
+  padding: 0;
+}
+.sidebar > ul > li.current > ul > li {
+  list-style: none;
+  background-color: rgb(235, 235, 235);
+  color: gray;
+}
+.sidebar > ul > li.current > ul > li > a {
+  display: block;
+  padding: 0.25em;
+  padding-left: 48px;
+  padding-right: 48px;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  color: rgb(58, 58, 58);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#navbar-related {
+  display: none;
+}
+footer {
+  margin-left: 25%;
+  width: calc(100% - 25%);
+  padding-top: 1em;
+  padding-bottom: 3.5em;
+}
+
+ul.this-page-menu {
+  padding-left: 0;
+}
+ul.this-page-menu a {
+  padding-left: 24px;
+  color: rgb(209, 209, 209);
+}
+/* .sidebar > ul > li ul {
+  padding-left: 24px;
+} */
 /* .sidebar a {
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -158,7 +274,13 @@ table caption:hover {
 @media screen and (max-width: 992px) {
   .body > .section,
   .sphx-glr-download-link-note {
-    width: calc(100vw - 3rem);
+    width: calc(100vw - 2em);
+  }
+
+  footer,
+  #content-wrapper {
+    margin: 0;
+    width: 100%;
   }
 
   #sidebar-wrapper {
@@ -175,7 +297,7 @@ table caption:hover {
     margin-top: 0;
     margin-bottom: 0;
     width: 100vw;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
   }
 }

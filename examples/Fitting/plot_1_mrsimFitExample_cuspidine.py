@@ -3,6 +3,7 @@
 """
 Fitting Cusipidine.
 ^^^^^^^^^^^^^^^^^^^
+.. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 """
 # sphinx_gallery_thumbnail_number = 3
 #%%

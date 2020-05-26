@@ -1,7 +1,7 @@
 
-================================================
-Welcome to the Mrsimulator project documentation
-================================================
+########################################
+Welcome to the Mrsimulator documentation
+########################################
 
 .. .. image:: _static/mrsimulator_cover_light.png
 ..     :align: center
@@ -58,10 +58,7 @@ Welcome to the Mrsimulator project documentation
 ..     :target: https://img.shields.io/pypi/dm/mrsimulator
 ..     :alt: PyPI - Downloads
 
-----
-
-About
------
+**About**
 
 `Mrsimulator` is a python package for computing fast real-time solid-state nuclear
 magnetic resonance (NMR) line-shapes/spectrum. The library is optimized to compute bulk
@@ -69,14 +66,9 @@ solid-state line-shapes, enabling the simulation of both crystalline and amorpho
 materials. The core of the `Mrsimulator` library is written in C, wrapped and made
 available in python.
 
-.. warning::
-    The package is currently under development. We advice using with
-    caution. Bug report are greatly appreciated.
-
 ----
 
-Features
---------
+**Features**
 
 At present, the `Mrsimulator` package offers a fast real-time simulation of
 one-dimensional solid-state NMR line-shape of
@@ -91,19 +83,16 @@ one-dimensional solid-state NMR line-shape of
     - 1D Bloch decay spectrum, and
     - 1D Bloch decay central transition spectrum.
 
-----
+.. only:: html
 
     **View our example gallery**
 
-    .. only:: html
-
-        .. image:: https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small
-            :target: auto_examples/index.html
+    .. image:: https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small
+        :target: auto_examples/index.html
 
 ----
 
-Goals for the near future
--------------------------
+**Goals for the near future**
 
 Our current objectives for the future are the following
 
@@ -128,24 +117,54 @@ Our current objectives for the future are the following
 .. suggestion is greatly appreciated.
 
 
--------
+.. warning::
+    The package is currently under development. We advice using with
+    caution. Bug report are greatly appreciated.
+
+----
+
+.. only:: html
+
+	Table of Contents
+	-----------------
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Table of Contents:
+	:maxdepth: 2
 
-   installation
-   requirements
-   understanding-isotopomers
-   getting_started
-   using_mrsimulator_objects
-   load_isotopomers
-   configuring_simulator
-   benchmark
-   auto_examples/index
-   theory/components
-   api_py/py_api
-   api_c/c_api
+	installation
+	requirements
+	understanding-isotopomers
+	getting_started
+	using_mrsimulator_objects
+	load_isotopomers
+	configuring_simulator
+	benchmark
+	auto_examples/index
+	theory/components
+	api_py/py_api
+	api_c/c_api
+
+
+.. .. only:: html
+
+.. 	.. toctree::
+.. 		:maxdepth: 2
+.. 		:caption: Table of Contents:
+
+.. 		about
+.. 		installation
+.. 		requirements
+.. 		understanding-isotopomers
+.. 		getting_started
+.. 		using_mrsimulator_objects
+.. 		load_isotopomers
+.. 		configuring_simulator
+.. 		benchmark
+.. 		auto_examples/index
+.. 		theory/components
+.. 		api_py/py_api
+.. 		api_c/c_api
+
 
 .. understanding_system
 ..    objects

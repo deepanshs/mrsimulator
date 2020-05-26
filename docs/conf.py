@@ -39,7 +39,7 @@ version = __version__
 release = __version__
 
 # -- General configuration ---------------------------------------------------
-
+show_authors = True
 # If your documentation needs a minimal Sphinx version, state it here.
 needs_sphinx = "2.0"
 
@@ -117,6 +117,7 @@ sphinx_gallery_conf = {
     "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
     "within_subsection_order": FileNameSortKey,
     # "show_memory": True,
+    # "line_numbers": True,
     "thumbnail_size": (400, 400),
     # "image_scrapers": (matplotlib_svg_scraper(),),
     "subsection_order": ExplicitOrder(
@@ -232,7 +233,7 @@ html_theme_options = {
     # Fix the width of the sidebar. Defaults to false
     "nav_fixed": True,
     # Set the width of the sidebar. Defaults to '900px'
-    "nav_width": "900px",
+    "nav_width": "300px",
     # Fix the width of the content area. Defaults to false
     "content_fixed": False,
     # Set the width of the content area. Defaults to '900px'
@@ -257,7 +258,7 @@ html_theme_options = {
     # Set 'navbar-inverse' attribute to header navbar. Defaults to false.
     "header_inverse": True,
     # Set 'navbar-inverse' attribute to relbar navbar. Defaults to false.
-    "relbar_inverse": True,
+    "relbar_inverse": False,
     # Enable inner theme by Bootswatch. Defaults to false
     "inner_theme": False,
     # Set the name of inner theme. Defaults to 'bootswatch-simplex'
@@ -275,8 +276,15 @@ html_theme_options = {
     # "h6_size": "1.1em",
 }
 
-# Theme options
+html_style = "style.css"
+html_title = "Mrsimulator Project"
 html_logo = "_static/mrsimulator.png"
+html_favicon = "_static/favicon.ico"
+
+html_sidebars = {
+    "**": ["searchbox.html", "globaltoc.html", "sourcelink.html"],
+    "using/windows": ["searchbox.html", "windowssidebar.html"],
+}
 
 # html_context = {
 #     "display_github": True,
@@ -297,6 +305,7 @@ html_logo = "_static/mrsimulator.png"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
+
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
@@ -306,6 +315,8 @@ htmlhelp_basename = "MRSimulatordoc"
 # -- Options for LaTeX output ------------------------------------------------
 latex_engine = "xelatex"
 latex_logo = "_static/mrsimulator.png"
+latex_show_pagerefs = True
+
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
@@ -315,6 +326,7 @@ latex_elements = {
     "pointsize": "9pt",
     "fontenc": "\\usepackage[utf8]{inputenc}",
     "geometry": "\\usepackage[vmargin=2.5cm, hmargin=2cm]{geometry}",
+    # "fncychap": "\\usepackage[Rejne]{fncychap}",
     # Additional stuff for the LaTeX preamble.
     "preamble": """\
         \\usepackage[T1]{fontenc}
@@ -343,24 +355,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "mrsimulator.tex", "mrsimulator Documentation", author, "manual")
+    (master_doc, "mrsimulator.tex", "MRsimulator Documentation", author, "manual")
 ]
-
-
-# -- Options for manual page output ------------------------------------------
-
-# One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
-man_pages = [
-    (
-        master_doc,
-        "mrsimulator",
-        "mrsimulator Documentation",
-        ["Deepansh J. Srivastava"],
-        1,
-    )
-]
-
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -380,11 +376,28 @@ texinfo_documents = [
 ]
 
 
+# -- Options for manual page output ------------------------------------------
+
+# One entry per manual page. List of tuples
+# (source start file, name, description, authors, manual section).
+man_pages = [
+    (
+        master_doc,
+        "mrsimulator",
+        "mrsimulator Documentation",
+        ["Deepansh J. Srivastava"],
+        1,
+    )
+]
+
+
 # -- Options for Epub output -------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = project
-
+epub_basename = project
+epub_theme = "epub"
+# epub_theme_options = {"relbar1": False, "footer": False}
+epub_cover = ("_static/launch_2048x2732.png", "")
 # The unique identifier of the text. This can be a ISBN number
 # or the project homepage.
 #
@@ -395,7 +408,7 @@ epub_title = project
 # epub_uid = ''
 
 # A list of files that should not be packed into the epub file.
-epub_exclude_files = ["search.html"]
+epub_exclude_files = ["search.html", "_static/style.css"]
 
 
 def setup(app):
