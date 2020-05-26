@@ -30,8 +30,15 @@ pylab.rcParams.update(params)
 import csdmpy as cp
 import numpy as np
 
-wollastonite_1 = cp.load("wollastonite_1500Hz.csdf")
-wollastonite_2 = cp.load("wollastonite_6000Hz.csdf")
+filename_1500Hz = (
+    "https://osu.box.com/shared/static/222qlg06fuxanw6vleiybqsm7vpxxhd0.csdf"
+)
+filename_6000Hz = (
+    "https://osu.box.com/shared/static/remqy02f9oikd5dx6ilus3puzlpsfnow.csdf"
+)
+
+wollastonite_1 = cp.load(filename_1500Hz).real
+wollastonite_2 = cp.load(filename_6000Hz).real
 
 
 wollastonite_1.dimensions[0].to("ppm", "nmr_frequency_ratio")
@@ -47,7 +54,7 @@ ax[0].set_xlim(x1.value.max(), x1.value.min())
 ax[0].grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 
 ax[1].plot(x2, y2)
-ax[1].xlabel("$^{29}$Si frequency / ppm")
+ax[1].set_xlabel("$^{29}$Si frequency / ppm")
 ax[1].set_xlim(x2.value.max(), x2.value.min())
 ax[1].grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 
@@ -141,7 +148,7 @@ ax[0].set_xlim(sim_x_1.value.max(), sim_x_1.value.min())
 ax[0].grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 
 ax[1].plot(sim_x_2, sim_y_2)
-ax[1].xlabel("$^{29}$Si frequency / ppm")
+ax[1].set_xlabel("$^{29}$Si frequency / ppm")
 ax[1].set_xlim(sim_x_2.value.max(), sim_x_2.value.min())
 ax[1].grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 
@@ -172,7 +179,7 @@ params.pretty_print()
 # We will construct a simple function here to demonstrate the *LMFIT* library, however, the next examples
 # will showcase a fitting function provided in the *mrsimulator* library which automates the process.
 minner = Minimizer(spectral_fitting.min_function, params, fcn_args=(sim, "Lorentzian"))
-result = minner.minimize(method="powell")
+result = minner.minimize()
 report_fit(result)
 
 
@@ -203,7 +210,7 @@ ax[1].plot(
 )
 ax[1].plot(*residual_2.to_list(), alpha=0.5, label="Residual")
 
-ax[1].xlabel("$^{29}$Si frequency / ppm")
+ax[1].set_xlabel("$^{29}$Si frequency / ppm")
 ax[1].set_xlim(sim_x_2.value.max(), sim_x_2.value.min())
 ax[1].grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 

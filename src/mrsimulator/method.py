@@ -246,7 +246,7 @@ class Method(Parseable):
     simulation: Optional[cp.CSDM]
     post_simulation: Optional[PostSimulator]
     experiment: Optional[cp.CSDM]
-    post_simulation: Optional[Dict]
+    # post_simulation: Optional[Dict]
 
     property_units: Dict = {}
 
@@ -462,7 +462,7 @@ class Method(Parseable):
         csdm = self.simulation
         for dim in csdm.dimensions:
             dim.to("Hz", "nmr_frequency_ratio")
-        apo = self.post_simulation["apodization"]
+        apo = self.post_simulation.apodization
 
         sum_ = 0
 
@@ -472,7 +472,7 @@ class Method(Parseable):
         for dim in csdm.dimensions:
             dim.to("ppm", "nmr_frequency_ratio")
 
-        return self.post_simulation["scale"] * sum_
+        return self.post_simulation.scale * sum_
 
 
 def cartesian_product(*arrays):

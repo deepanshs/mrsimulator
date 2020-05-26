@@ -134,8 +134,8 @@ def test_function(params, data, sim):
     site.isotropic_chemical_shift = values["iso"]
     site.shielding_symmetric.eta = values["eta"]
     site.shielding_symmetric.zeta = values["zeta"]
-    sim.methods[0].post_simulation["scale"] = values["scale"]
-    sim.methods[0].post_simulation["apodization"][0].args = [values["sigma"]]
+    sim.methods[0].post_simulation.scale = values["scale"]
+    sim.methods[0].post_simulation.apodization[0].args = [values["sigma"]]
 
     # here we run the simulation
     sim.run()

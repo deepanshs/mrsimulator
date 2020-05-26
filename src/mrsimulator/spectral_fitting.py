@@ -3,6 +3,7 @@ import numpy as np
 from lmfit import Parameters
 from mrsimulator import Simulator
 from mrsimulator.post_simulation import Apodization
+
 # from lmfit import minimize
 
 
@@ -34,7 +35,7 @@ def _str_to_html(my_string):
     my_string = my_string.replace("methods[", "METHODS_")  #
     my_string = my_string.replace("].post_simulation", "_POST_SIM_")
     my_string = my_string.replace(".scale", "scale")
-    my_string = my_string.replace("['apodization'][", "APODIZATION_")
+    my_string = my_string.replace(".apodization[", "APODIZATION_")
     my_string = my_string.replace("].args", "_args")
 
     return my_string
@@ -63,8 +64,8 @@ def _html_to_string(my_string):
 
     my_string = my_string.replace("METHODS_", "methods[")  #
     my_string = my_string.replace("_POST_SIM_", "].post_simulation")
-    my_string = my_string.replace("scale", "['scale']")
-    my_string = my_string.replace("APODIZATION_", "['apodization'][")
+    my_string = my_string.replace("scale", ".scale")
+    my_string = my_string.replace("APODIZATION_", ".apodization[")
     my_string = my_string.replace("_args", "].args")
 
     return my_string
@@ -117,8 +118,8 @@ def _traverse_dictionaries(dictionary, parent="isotopomers"):
         for i, items in enumerate(dictionary):
             name_list += _traverse_dictionaries(items, _str_to_html(f"{parent}[{i}]"))
 
-    else:
-        name_list += [_str_to_html(f"{parent}.{dictionary}")]
+    # else:
+    #     name_list += [_str_to_html(f"{parent}.{dictionary}")]
 
     return name_list
 
@@ -143,18 +144,18 @@ def make_fitting_parameters(sim, exclude_key=None):
     for i in range(len(sim.methods)):
         if sim.methods[i].post_simulation is not None:
             parent = f"methods[{i}].post_simulation"
-            temp_list += [
-                item
-                for item in _traverse_dictionaries(
-                    sim.methods[0].post_simulation, parent=parent
-                )
-                if "scale" in item
-            ]
-            if sim.methods[i].post_simulation["apodization"] is not None:
-                for j in range(len(sim.methods[i].post_simulation["apodization"])):
-                    temp_list.append(
-                        _str_to_html(parent + f"['apodization'][{j}].args")
-                    )
+
+            temp_list += [_str_to_html(parent + ".scale")]
+            # temp_list += [
+            #     item
+            #     for item in _traverse_dictionaries(
+            #         sim.methods[0].post_simulation, parent=parent
+            #     )
+            #     if "scale" in item
+            # ]
+            if sim.methods[i].post_simulation.apodization is not None:
+                for j in range(len(sim.methods[i].post_simulation.apodization)):
+                    temp_list.append(_str_to_html(parent + f".apodization[{j}].args"))
 
     length = len(sim.isotopomers)
     abundance = 0
@@ -190,6 +191,7 @@ def make_fitting_parameters(sim, exclude_key=None):
                 expr=expression,
             )
         else:
+            print("the item: ", items)
             value = eval("sim." + _html_to_string(items))
             if type(value) == list:
                 params.add(name=items, value=value[0])
@@ -223,7 +225,6 @@ def min_function(params, sim, apodization_function=None):
     #     raise ValueError(f"Expecting a `CSDM` object, found {type(data).__name__}.")
     if not isinstance(sim, Simulator):
         raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
-
 
     # intensity_data = data.dependent_variables[0].components[0].real
     values = params.valuesdict()
