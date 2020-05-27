@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 """The Event class."""
-import warnings
-from copy import deepcopy
-from typing import ClassVar
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -14,8 +11,6 @@ from numpy.fft import fftshift
 from numpy.fft import ifft
 from numpy.fft import ifftshift
 from pydantic import BaseModel
-from pydantic import Field
-from pydantic import validator
 
 
 class Apodization(Parseable):

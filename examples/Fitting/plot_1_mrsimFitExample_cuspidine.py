@@ -29,7 +29,6 @@ pylab.rcParams.update(params)
 #%%
 # Next we will import `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ and loading the data file.
 import csdmpy as cp
-import numpy as np
 
 filename = "https://osu.box.com/shared/static/a45xj96iekdjrs2beri0nkrow4vjewdh.csdf"
 synthetic_experiment = cp.load(filename)
@@ -53,7 +52,7 @@ plt.show()
 
 from mrsimulator import Simulator, Isotopomer, Site
 from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.post_simulation import Apodization, PostSimulator
+from mrsimulator.post_simulation import PostSimulator
 
 S29 = Site(
     isotope="29Si",

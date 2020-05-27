@@ -28,7 +28,6 @@ pylab.rcParams.update(params)
 #%%
 # Next we will import `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ and loading the data file.
 import csdmpy as cp
-import numpy as np
 
 
 filename = "https://osu.box.com/shared/static/kfgt0jxgy93srsye9pofdnoha6qy58qf.csdf"
@@ -53,9 +52,8 @@ plt.show()
 #%%
 
 from mrsimulator import Simulator, Isotopomer, Site
-from mrsimulator import SymmetricTensor as st
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-from mrsimulator.post_simulation import Apodization, PostSimulator
+from mrsimulator.post_simulation import PostSimulator
 
 sim = Simulator()
 O17_1 = Site(

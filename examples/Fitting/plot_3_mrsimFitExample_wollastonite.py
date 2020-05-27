@@ -28,7 +28,6 @@ pylab.rcParams.update(params)
 #%%
 # Next we will import `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ and loading the data files.
 import csdmpy as cp
-import numpy as np
 
 filename_1500Hz = (
     "https://osu.box.com/shared/static/222qlg06fuxanw6vleiybqsm7vpxxhd0.csdf"
@@ -69,7 +68,7 @@ plt.show()
 
 from mrsimulator import Simulator, Isotopomer, Site
 from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.post_simulation import Apodization, PostSimulator
+from mrsimulator.post_simulation import PostSimulator
 
 sim = Simulator()
 
@@ -169,7 +168,6 @@ plt.show()
 from lmfit import Minimizer, Parameters, report_fit
 from mrsimulator import spectral_fitting
 
-params = Parameters()
 params = spectral_fitting.make_fitting_parameters(sim)
 params.pretty_print()
 
