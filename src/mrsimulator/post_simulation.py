@@ -55,7 +55,6 @@ class Apodization(Parseable):
 
         appodized = TimeDomain * fapp
 
-
         return (
             self.fraction * phase.conj() * fftshift(fft(appodized, axis=axis), axes=axis).real
         )

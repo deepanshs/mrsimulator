@@ -2,7 +2,6 @@
 import numpy as np
 from lmfit import Parameters
 from mrsimulator import Simulator
-from mrsimulator.post_simulation import Apodization
 
 # from lmfit import minimize
 

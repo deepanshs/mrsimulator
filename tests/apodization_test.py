@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Apodization test"""
-import matplotlib.pyplot as plt
 import numpy as np
 from mrsimulator import Isotopomer
 from mrsimulator import Simulator

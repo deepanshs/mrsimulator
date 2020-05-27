@@ -53,13 +53,11 @@ def test_all_transitions():
 
     for i, transition in enumerate(iso_O.all_transitions):
         assert (
-            tuple(transition.initial + transition.final)
-            == list(product(O_Zeeman, O_Zeeman))[i]
+            tuple(transition.initial + transition.final) == list(product(O_Zeeman, O_Zeeman))[i]
         )
 
     for i, transition in enumerate(iso_OH.all_transitions):
         OH_state = list(product(O_Zeeman, H_Zeeman))
         assert (
-            tuple([tuple(transition.initial), tuple(transition.final)])
-            == list(product(OH_state, OH_state))[i]
+            tuple([tuple(transition.initial), tuple(transition.final)]) == list(product(OH_state, OH_state))[i]
         )
