@@ -153,7 +153,7 @@ def test_function(params, data, sim):
 #%%
 
 minner = Minimizer(test_function, params, fcn_args=(synthetic_experiment, sim))
-result = minner.minimize(method="powell")
+result = minner.minimize()
 report_fit(result)
 
 #%%

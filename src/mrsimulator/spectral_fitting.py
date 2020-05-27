@@ -190,7 +190,6 @@ def make_fitting_parameters(sim, exclude_key=None):
                 expr=expression,
             )
         else:
-            print("the item: ", items)
             value = eval("sim." + _html_to_string(items))
             if type(value) == list:
                 params.add(name=items, value=value[0])

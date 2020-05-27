@@ -148,7 +148,7 @@ from mrsimulator.spectral_fitting import min_function
 from lmfit import Minimizer, report_fit
 
 minner = Minimizer(min_function, params, fcn_args=(sim, "Lorentzian"))
-result = minner.minimize(method="powell")
+result = minner.minimize()
 report_fit(result)
 
 #%%

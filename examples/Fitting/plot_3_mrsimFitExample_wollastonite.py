@@ -99,7 +99,7 @@ sim.methods[0].post_simulation = PS
 sim.methods[1].post_simulation = PS
 
 sim.methods[0].experiment = wollastonite_1
-sim.methods[1].experiment = wollastonite_1
+sim.methods[1].experiment = wollastonite_2
 
 #%%
 # Next, we will need a list of parameters that will be used in the fit. the *LMFIT* library allows us to create
@@ -165,7 +165,7 @@ plt.show()
 #%%
 
 
-from lmfit import Minimizer, Parameters, report_fit
+from lmfit import Minimizer, report_fit
 from mrsimulator import spectral_fitting
 
 params = spectral_fitting.make_fitting_parameters(sim)
