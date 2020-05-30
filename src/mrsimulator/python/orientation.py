@@ -141,7 +141,7 @@ def triangle_interpolation(f, spec, amp=1.0):
         spec[p] += f10 * top * 0.5
 
     if p != pmax:
-        p = p_second_half(spec, clip_left2, clip_right2, top, f21, pmax, p, f)
+        p_second_half(spec, clip_left2, clip_right2, top, f21, pmax, p, f)
     elif not clip_right2:
         spec[p] += f21 * top * 0.5
 

@@ -93,6 +93,9 @@ plt.tight_layout()
 plt.show()
 
 #%%
+# Reference
+# ---------
+#
 # .. [#f1] Hansen, M. R., Jakobsen, H. J., Skibsted, J., :math:`^{29}\text{Si}`
 #       Chemical Shift Anisotropies in Calcium Silicates from High-Field
 #       :math:`^{29}\text{Si}` MAS NMR Spectroscopy, Inorg. Chem. 2003,

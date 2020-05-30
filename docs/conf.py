@@ -274,7 +274,7 @@ html_theme_options = {
 }
 
 html_style = "style.css"
-html_title = "Mrsimulator Project"
+html_title = f"Mrsimulator Project v{__version__}"
 html_logo = "_static/mrsimulator.png"
 html_favicon = "_static/favicon.ico"
 

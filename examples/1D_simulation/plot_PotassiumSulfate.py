@@ -22,13 +22,6 @@ from mrsimulator import SpinSystem
 from mrsimulator import Simulator
 from mrsimulator import Site
 
-# global plot config
-import matplotlib as mpl
-
-font = {"weight": "light", "size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
-
 #%%
 # **Step 1** Create the sites, in this case, just the one.
 
@@ -87,6 +80,9 @@ plt.tight_layout()
 plt.show()
 
 #%%
+# Reference
+# ---------
+#
 # .. [#f3] Moudrakovski, I., Lang, S., Patchkovskii, S., and Ripmeester, J. High field
 #       :math:`^{33}\text{S}` solid state NMR and first-principles calculations in
 #       potassium sulfates. J. Phys. Chem. A, 2010, **114**, *1*, 309–316.

@@ -170,7 +170,7 @@ table caption:hover {
   background-color: #333333;
   width: 25%;
   overflow: hidden;
-  z-index: 200;
+  z-index: 50;
 }
 
 .sidebar.hidden-xs {

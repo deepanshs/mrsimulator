@@ -145,7 +145,7 @@ params
 #%%
 
 from mrsimulator.spectral_fitting import min_function
-from lmfit import Minimizer, report_fit
+from lmfit import Minimizer
 
 minner = Minimizer(min_function, params, fcn_args=(sim, "Lorentzian"))
 result = minner.minimize()
@@ -173,6 +173,9 @@ plt.tight_layout()
 plt.show()
 
 #%%
+# Reference
+# ---------
+#
 # .. [#f5] T. M. Clark, P. Florian, J. F. Stebbins, and P. J. Grandinetti,
 #       An :math:`^{17}\text{O}` NMR Investigation of Crystalline Sodium Metasilicate:
 #       Implications for the Determination of Local Structure in Alkali Silicates,

@@ -96,6 +96,9 @@ plt.tight_layout()
 plt.show()
 
 #%%
+# Reference
+# ---------
+#
 # .. [#f2] Grandinetti, P. J., Baltisberger, J. H., Farnan, I., Stebbins, J. F.,
 #       Werner, U. and Pines, A.
 #       Solid-State :math:`^{17}\text{O}` Magic-Angle and Dynamic-Angle Spinning NMR
