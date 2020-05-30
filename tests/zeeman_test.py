@@ -2,7 +2,7 @@
 """Zeeman State Tests"""
 from itertools import product
 
-from mrsimulator import Isotopomer
+from mrsimulator import SpinSystem
 
 
 def test_zeeman_energy_states():
@@ -13,9 +13,9 @@ def test_zeeman_energy_states():
     # Spin 5/2
     site_O = {"isotope": "17O", "isotropic_chemical_shift": 0}
 
-    iso_H = Isotopomer(sites=[site_H])
-    iso_O = Isotopomer(sites=[site_O])
-    iso_OH = Isotopomer(sites=[site_O, site_H])
+    iso_H = SpinSystem(sites=[site_H])
+    iso_O = SpinSystem(sites=[site_O])
+    iso_OH = SpinSystem(sites=[site_O, site_H])
 
     H_Zeeman = [-0.5, 0.5]
     O_Zeeman = [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
@@ -38,26 +38,23 @@ def test_all_transitions():
     # Spin 5/2
     site_O = {"isotope": "17O", "isotropic_chemical_shift": 0}
 
-    iso_H = Isotopomer(sites=[site_H])
-    iso_O = Isotopomer(sites=[site_O])
-    iso_OH = Isotopomer(sites=[site_O, site_H])
+    iso_H = SpinSystem(sites=[site_H])
+    iso_O = SpinSystem(sites=[site_O])
+    iso_OH = SpinSystem(sites=[site_O, site_H])
 
     H_Zeeman = [-0.5, 0.5]
     O_Zeeman = [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
 
     for i, transition in enumerate(iso_H.all_transitions):
-        assert (
-            tuple(transition.initial + transition.final) == list(product(H_Zeeman, H_Zeeman))[i]
-        )
+        res = list(product(H_Zeeman, H_Zeeman))[i]
+        assert tuple(transition.initial + transition.final) == res
         # assert transition.tolist() == list(product(H_Zeeman, H_Zeeman))[i]
 
     for i, transition in enumerate(iso_O.all_transitions):
-        assert (
-            tuple(transition.initial + transition.final) == list(product(O_Zeeman, O_Zeeman))[i]
-        )
+        res = list(product(O_Zeeman, O_Zeeman))[i]
+        assert tuple(transition.initial + transition.final) == res
 
     for i, transition in enumerate(iso_OH.all_transitions):
         OH_state = list(product(O_Zeeman, H_Zeeman))
-        assert (
-            tuple([tuple(transition.initial), tuple(transition.final)]) == list(product(OH_state, OH_state))[i]
-        )
+        res = list(product(OH_state, OH_state))[i]
+        assert tuple([tuple(transition.initial), tuple(transition.final)]) == res

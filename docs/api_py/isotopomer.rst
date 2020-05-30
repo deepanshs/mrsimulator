@@ -1,11 +1,11 @@
-.. _isotopomer_api:
+.. _spin_system_api:
 
-Isotopomer
+SpinSystem
 ==========
 
 .. currentmodule:: mrsimulator
 
-.. autoclass:: Isotopomer
+.. autoclass:: SpinSystem
     :show-inheritance:
 
     .. autoattribute:: Zeeman_energy_states

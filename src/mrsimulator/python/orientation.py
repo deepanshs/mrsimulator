@@ -104,14 +104,11 @@ def cosine_of_polar_angles_and_amplitudes(integration_density: int = 72):
 
 
 def triangle_interpolation(f, spec, amp=1.0):
+    """Interpolate between three points to form a triangle."""
     points = spec.size
     f = np.asarray(f, dtype=np.float64)
 
-    clip_right1 = clip_right2 = False
-    clip_left1 = clip_left2 = False
-
     p = int(f[0])
-    # fint = f.astype(int)
     if int(f[0]) == int(f[1]) == int(f[2]):
         if p >= points or p < 0:
             return
@@ -135,6 +132,25 @@ def triangle_interpolation(f, spec, amp=1.0):
     if p > points:
         return
 
+    clips, p, pmid, pmax = get_clip_conditions(p, pmid, pmax, points)
+    clip_left1, clip_left2, clip_right1, clip_right2 = clips
+
+    if p != pmid:
+        p = p_first_half(spec, clip_left1, clip_right1, top, f10, pmid, p, f)
+    elif not clip_right1 and not clip_left1:
+        spec[p] += f10 * top * 0.5
+
+    if p != pmax:
+        p = p_second_half(spec, clip_left2, clip_right2, top, f21, pmax, p, f)
+    elif not clip_right2:
+        spec[p] += f21 * top * 0.5
+
+
+def get_clip_conditions(p, pmid, pmax, points):
+    """Return True for every clip boundary"""
+    clip_right1 = clip_right2 = False
+    clip_left1 = clip_left2 = False
+
     if pmid >= points:
         pmid = points
         clip_right1 = True
@@ -151,54 +167,56 @@ def triangle_interpolation(f, spec, amp=1.0):
         pmid = 0
         clip_left2 = True
 
-    if p != pmid:
-        df1 = top / f10
-        diff = p + 1.0 - f[0]
-        if not clip_left1:
-            spec[p] += 0.5 * diff * diff * df1
-            p += 1
-        else:
-            spec[p] += (diff - 0.5) * df1
-            p += 1
+    return [clip_left1, clip_left2, clip_right1, clip_right2], p, pmid, pmax
 
-        diff -= 0.5
-        diff *= df1
-        while p != pmid:
-            diff += df1
-            spec[p] += diff
-            p += 1
-        # spec[p:pmid] += diff + (np.arange(pmid - p, dtype=np.float64) + 1) * df1
-        p = pmid
-        if not clip_right1:
-            spec[p] += (f[1] - p) * (f10 + p - f[0]) * 0.5 * df1
 
+def p_first_half(spec, clip_left1, clip_right1, top, f10, pmid, p, f):
+    """Interpolate the first half of the triangle"""
+    df1 = top / f10
+    diff = p + 1.0 - f[0]
+    if not clip_left1:
+        spec[p] += 0.5 * diff * diff * df1
     else:
-        if not clip_right1 and not clip_left1:
-            spec[p] += f10 * top * 0.5
-    if p != pmax:
-        df2 = top / f21
-        diff = f[2] - p - 1.0
+        spec[p] += (diff - 0.5) * df1
 
-        if not clip_left2:
-            spec[p] += (f21 - diff) * (diff + f21) * 0.5 * df2
-            p += 1
-        else:
-            spec[p] += (diff + 0.5) * df2
-            p += 1
+    p += 1
 
-        diff += 0.5
-        diff *= df2
-        while p != pmax:
-            diff -= df2
-            spec[p] += diff
-            p += 1
-        # spec[p:pmax] += diff - (np.arange(pmax - p, dtype=np.float64) + 1) * df2
-        p = pmax
-        if not clip_right2:
-            spec[p] += (f[2] - p) ** 2 * 0.5 * df2
+    diff -= 0.5
+    diff *= df1
+    while p != pmid:
+        diff += df1
+        spec[p] += diff
+        p += 1
+    # spec[p:pmid] += diff + (np.arange(pmid - p, dtype=np.float64) + 1) * df1
+    p = pmid
+    if not clip_right1:
+        spec[p] += (f[1] - p) * (f10 + p - f[0]) * 0.5 * df1
+    return p
+
+
+def p_second_half(spec, clip_left2, clip_right2, top, f21, pmax, p, f):
+    """Interpolate the second half of the triangle"""
+    df2 = top / f21
+    diff = f[2] - p - 1.0
+
+    if not clip_left2:
+        spec[p] += (f21 - diff) * (diff + f21) * 0.5 * df2
     else:
-        if not clip_right2:
-            spec[p] += f21 * top * 0.5
+        spec[p] += (diff + 0.5) * df2
+
+    p += 1
+
+    diff += 0.5
+    diff *= df2
+    while p != pmax:
+        diff -= df2
+        spec[p] += diff
+        p += 1
+    # spec[p:pmax] += diff - (np.arange(pmax - p, dtype=np.float64) + 1) * df2
+    p = pmax
+    if not clip_right2:
+        spec[p] += (f[2] - p) ** 2 * 0.5 * df2
+    return p
 
 
 # def average_over_octant(spec, freq, nt, amp):

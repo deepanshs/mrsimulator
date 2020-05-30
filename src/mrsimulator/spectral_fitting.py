@@ -23,7 +23,7 @@ def _str_to_html(my_string):
         String object.
 
     """
-    my_string = my_string.replace("isotopomers[", "ISO_")
+    my_string = my_string.replace("spin_systems[", "ISO_")
     my_string = my_string.replace("].sites[", "_SITES_")
     my_string = my_string.replace(
         "].isotropic_chemical_shift", "_isotropic_chemical_shift"
@@ -52,7 +52,7 @@ def _html_to_string(my_string):
         String Object.
 
     """
-    my_string = my_string.replace("ISO_", "isotopomers[")
+    my_string = my_string.replace("ISO_", "spin_systems[")
     my_string = my_string.replace("_SITES_", "].sites[")
     my_string = my_string.replace(
         "_isotropic_chemical_shift", "].isotropic_chemical_shift"
@@ -88,15 +88,15 @@ def _list_of_dictionaries(my_list):
 exclude = ["property_units", "isotope", "name", "description", "transition_pathways"]
 
 
-def _traverse_dictionaries(dictionary, parent="isotopomers"):
+def _traverse_dictionaries(dictionary, parent="spin_systems"):
     """
     Parses through the dictionary objects contained within the simulator object in
     order to return a list of all attributes that are populated.
 
     Args:
-        dictionary: A dictionary or list object of the Isotopomer attributes from a
+        dictionary: A dictionary or list object of the SpinSystem attributes from a
         simulation object
-        parent: a string object used to create the addresses of the Isotopomer
+        parent: a string object used to create the addresses of the SpinSystem
         attributes.
 
     Returns:
@@ -139,7 +139,7 @@ def make_fitting_parameters(sim, exclude_key=None):
         raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
 
     params = Parameters()
-    temp_list = _traverse_dictionaries(_list_of_dictionaries(sim.isotopomers))
+    temp_list = _traverse_dictionaries(_list_of_dictionaries(sim.spin_systems))
     for i in range(len(sim.methods)):
         if sim.methods[i].post_simulation is not None:
             parent = f"methods[{i}].post_simulation"
@@ -156,14 +156,14 @@ def make_fitting_parameters(sim, exclude_key=None):
                 for j in range(len(sim.methods[i].post_simulation.apodization)):
                     temp_list.append(_str_to_html(parent + f".apodization[{j}].args"))
 
-    length = len(sim.isotopomers)
+    length = len(sim.spin_systems)
     abundance = 0
     last_abund = f"{length - 1}_abundance"
     expression = "100"
     for i in range(length - 1):
         expression += f"-ISO_{i}_abundance"
     for i in range(length):
-        abundance += eval("sim." + _html_to_string(f"isotopomers[{i}].abundance"))
+        abundance += eval("sim." + _html_to_string(f"spin_systems[{i}].abundance"))
 
     for items in temp_list:
         if "_eta" in items or "abundance" in items and last_abund not in items:

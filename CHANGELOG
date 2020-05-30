@@ -1,12 +1,19 @@
 v0.3.0
- - New Method class for simulation NMR spectrum. Two build-in methods---BlochDecaySpectrum
-   and BlochDecayCentralTransitionSpectrum. The Bloch decay spectrum simulates all p=-1
-   transition pathways, while central transition selective Bloch decay spectrum simulates
-   all p=-1 and d=0 transition pathways.
+ - Renamed `decompose` attribute from the `ConfigSimulator` class to `decompose_spectrum`
+ - Renamed `Dimension` class to `Method` class.
+ - Renamed `Isotopomer` class to `SpinSystem`.
+ - Renamed `isotopomers` attribute from Simulator class to `spin_systems`.
+ - Renamed `dimensions` attribute from Simulator class to `methods`.
+ - New classes for simulation the NMR spectrum. Two build-in methods,
+   `BlochDecaySpectrum` and `BlochDecayCentralTransitionSpectrum`. The Bloch decay
+   spectrum method simulates all p=Δm=-1 transition pathways, while the Bloch decay
+   central transition selective spectrum method simulates all transition pathways with
+   p=Δm=-1 and d=0.
  - Improved simulation performance.
- - Fixed bug resulting from the rotation of the fourth rank tensor with non-zero euler angles.
- - New Isotope, Transition, and ZeemanState classes.
- - Every class object now includes a reduced_dict() method.
+ - Fixed bug resulting from the rotation of the fourth rank tensor with non-zero euler
+   angles.
+ - New `Isotope`, `Transition`, and `ZeemanState` class objects.
+ - Every class now includes a `reduced_dict()` method.
 
 v0.2.0
  - Added more isotopes to the simulator. Source NMR Tables (https://apps.apple.com/bn/app/nmr-tables/id1030899609?mt=12)

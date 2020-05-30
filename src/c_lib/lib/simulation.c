@@ -168,7 +168,7 @@ void mrsimulator_core(
     double coordinates_offset,  // The start of the frequency spectrum.
     double increment,           // The increment of the frequency spectrum.
     int count,                  // Number of points on the frequency spectrum.
-    isotopomer_ravel *ravel_isotopomer,    // Isotopomer structure
+    isotopomer_ravel *ravel_isotopomer,    // SpinSystem structure
     MRS_sequence *the_sequence,            // the sequences in the method.
     int n_sequence,                        // The number of sequence.
     int quad_second_order,                 // Quad theory for second order,

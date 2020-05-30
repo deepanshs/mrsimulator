@@ -24,7 +24,7 @@ def _dmfit():
             "isotope": "1H",
         }
     }
-    isotopomers = [
+    spin_systems = [
         {
             "sites": [
                 {
@@ -36,9 +36,9 @@ def _dmfit():
         }
     ]
     sp = Simulator()
-    sp.isotopomers = isotopomers
+    sp.spin_systems = spin_systems
     sp.spectrum = spectrum
-    f, a = simulator(isotopomers=sp._isotopomers_c, spectrum=sp._spectrum_c)
+    f, a = simulator(spin_systems=sp._isotopomers_c, spectrum=sp._spectrum_c)
     fig, ax = plt.subplots(2, 1)
     ax[0].plot(freq, amp / amp.max(), 'r', label='dmfit')
     ax[0].plot(f, a / a.max(), 'k', label='mrsimulator')

@@ -54,7 +54,7 @@ def test__batch_wigner_rotation():
 
 
 def test_single_2j_rotation_00():
-    l = 2
+    ang_momentum_l = 2
     R_in = np.asarray([0 + 0.5j, 0, 0 + 0.1j, 0, 0 - 0.5j], dtype=np.complex128)
     indexes = np.arange(5) - 2.0
 
@@ -62,11 +62,11 @@ def test_single_2j_rotation_00():
         euler_angle = np.random.rand(3) * 2.0 * np.pi
 
         # single rotation
-        R_out = clib.single_wigner_rotation(l, euler_angle, R_in)
+        R_out = clib.single_wigner_rotation(ang_momentum_l, euler_angle, R_in)
 
         exp_im_alpha = np.exp(-1j * indexes * euler_angle[0])
         R_out_p = R_in * exp_im_alpha
-        wigner = clib.wigner_d_matrices(l, np.asarray([euler_angle[1]]))
+        wigner = clib.wigner_d_matrices(ang_momentum_l, np.asarray([euler_angle[1]]))
         R_out_p = np.dot(wigner.reshape(5, 5), R_out_p)
         exp_im_gamma = np.exp(-1j * indexes * euler_angle[2])
         R_out_p *= exp_im_gamma
@@ -75,7 +75,7 @@ def test_single_2j_rotation_00():
 
 
 def test_single_4j_rotation_00():
-    l = 4
+    ang_momentum_l = 4
     R_in = np.asarray(
         [0 - 0.2j, 0, 0 + 0.5j, 0, 0 + 0.1j, 0, 0 - 0.5j, 0, 0 + 0.2j],
         dtype=np.complex128,
@@ -86,11 +86,11 @@ def test_single_4j_rotation_00():
         euler_angle = np.random.rand(3) * 2.0 * np.pi
 
         # single rotation
-        R_out = clib.single_wigner_rotation(l, euler_angle, R_in)
+        R_out = clib.single_wigner_rotation(ang_momentum_l, euler_angle, R_in)
 
         exp_im_alpha = np.exp(-1j * indexes * euler_angle[0])
         R_out_p = R_in * exp_im_alpha
-        wigner = clib.wigner_d_matrices(l, np.asarray([euler_angle[1]]))
+        wigner = clib.wigner_d_matrices(ang_momentum_l, np.asarray([euler_angle[1]]))
         R_out_p = np.dot(wigner.reshape(9, 9), R_out_p)
         exp_im_gamma = np.exp(-1j * indexes * euler_angle[2])
         R_out_p *= exp_im_gamma

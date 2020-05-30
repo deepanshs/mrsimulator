@@ -248,7 +248,11 @@ class Method(Parseable):
     experiment: Optional[cp.CSDM]
     # post_simulation: Optional[Dict]
 
-    property_units: Dict = {}
+    property_units: Dict = {
+        "magnetic_flux_density": "T",
+        "rotor_angle": "rad",
+        "rotor_frequency": "Hz",
+    }
 
     class Config:
         validate_assignment = True
@@ -367,7 +371,7 @@ class Method(Parseable):
         the query selection criterion of the method.
 
         Args:
-            Isotopomer isotopomer: An Isotopomer object.
+            SpinSystem isotopomer: An SpinSystem object.
 
         Returns: An array of TransitionList objects. Each TransitionList object is a
                 transition pathways containing a series of Transition objects.
@@ -392,7 +396,7 @@ class Method(Parseable):
     #     the query criterion of the method.
 
     #     Args:
-    #         isotopomer: An Isotopomer object.
+    #         isotopomer: An SpinSystem object.
     #     """
     #     transitions = isotopomer.all_transitions
     #     segments = []

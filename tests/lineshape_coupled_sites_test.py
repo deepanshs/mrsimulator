@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
+from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
 
 
@@ -18,11 +18,11 @@ def test_two_site_no_coupling_test():
         shielding_symmetric={"zeta": -5, "eta": 0},
     )
 
-    iso_two_site = [Isotopomer(sites=[site1, site2])]
-    iso_single_sites = [Isotopomer(sites=[site1]), Isotopomer(sites=[site2])]
+    iso_two_site = [SpinSystem(sites=[site1, site2])]
+    iso_single_sites = [SpinSystem(sites=[site1]), SpinSystem(sites=[site2])]
 
     sim1 = Simulator()
-    sim1.isotopomers += iso_two_site
+    sim1.spin_systems += iso_two_site
     sim1.methods += [
         BlochDecaySpectrum(
             channels=["29Si"],
@@ -32,7 +32,7 @@ def test_two_site_no_coupling_test():
     sim1.run()
 
     sim2 = Simulator()
-    sim2.isotopomers += iso_single_sites
+    sim2.spin_systems += iso_single_sites
     sim2.methods += [
         BlochDecaySpectrum(
             channels=["29Si"],

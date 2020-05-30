@@ -9,17 +9,10 @@
 Getting started with `Mrsimulator`: Using objects
 =================================================
 
-In the previous section on getting started, we show an example where
-we parse python dictionaries to create :ref:`isotopomer_api` and
+In the previous section on getting started, we show an example where we parse the
+python dictionaries to create instances of the :ref:`spin_system_api` and
 :ref:`method_api` objects. In this section, we'll illustrate how we can
 achieve the same result using the core `Mrsimulator` objects.
-
-Let's start by importing the objects.
-
-.. doctest::
-
-    >>> from mrsimulator import Simulator, Isotopomer, Site
-    >>> from mrsimulator.methods import BlochDecaySpectrum
 
 .. note::
     Unlike python dictionary objects from our last example, when using
@@ -30,6 +23,27 @@ Let's start by importing the objects.
     For the convenience of our users, we have added an attribute,
     ``property_units``, to every class that holds the default unit of the
     respective class attributes.
+
+Let's start by importing the objects.
+
+.. doctest::
+
+    >>> from mrsimulator import Simulator, SpinSystem, Site
+    >>> from mrsimulator.methods import BlochDecaySpectrum
+    >>> import csdmpy as cp
+
+    >>> # The following code lines configure the global matplotlib parameters.
+    >>> import matplotlib as mpl
+    >>> import matplotlib.pyplot as plt
+    >>> font = {"weight": "light", "size": 9}
+    >>> mpl.rc("font", **font)
+    >>> mpl.rcParams["figure.figsize"] = [4.25, 3.0]
+
+.. .. note::
+..     We will use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_ library to
+..     plot the data for the subsequent simulations. Please refer to the last sub-section
+..     of the :ref:`previous <getting_started>` section for details, if you prefer to use
+..     any other plotting library or apply post-simulation processing.
 
 Site object
 -----------
@@ -71,11 +85,11 @@ chemical shift of -10 ppm.
 In creating the site, ``H1``, we use the dictionary object to
 describe a traceless symmetric second-rank irreducible nuclear shielding
 tensor, using the attributes `zeta` and `eta`, respectively.
-The parameter `zeta` and `eta` are defined as per
+The parameter `zeta` and `eta` are defined as per the
 Haeberlen convention and describes the anisotropy and asymmetry parameter of
 the tensor, respectively.
 The default unit of the attributes from the `shielding_symmetric`
-may be found with the ``property_units`` attribute, such as
+is found with the ``property_units`` attribute, such as
 
 .. doctest::
 
@@ -96,21 +110,21 @@ attribute,
     {'Cq': 'Hz', 'alpha': 'rad', 'beta': 'rad', 'gamma': 'rad'}
 
 
-Isotopomer object
+SpinSystem object
 -----------------
 
-An isotopomer object contains sites and couplings along with the abundance
-of the respective isotopomer. In this version, we focus on isotopomers with a
+A SpinSystem object contains sites and couplings along with the abundance
+of the respective spin-system. In this version, we focus on the spin systems with a
 single site, and therefore the couplings are irrelevant.
 
-Let's use the sites we have already created to set up four isotopomers.
+Let's use the sites we have already created to set up four spin systems.
 
 .. doctest::
 
-    >>> isotopomer_1 = Isotopomer(name='C13A', sites=[C13A], abundance=20)
-    >>> isotopomer_2 = Isotopomer(name='C13B', sites=[C13B], abundance=56)
-    >>> isotopomer_3 = Isotopomer(name='H1', sites=[H1], abundance=100)
-    >>> isotopomer_4 = Isotopomer(name='O17', sites=[O17], abundance=1)
+    >>> system_1 = SpinSystem(name='C13A', sites=[C13A], abundance=20)
+    >>> system_2 = SpinSystem(name='C13B', sites=[C13B], abundance=56)
+    >>> system_3 = SpinSystem(name='H1', sites=[H1], abundance=100)
+    >>> system_4 = SpinSystem(name='O17', sites=[O17], abundance=1)
 
 
 Method object
@@ -123,14 +137,19 @@ object following,
     >>> from mrsimulator.methods import BlochDecaySpectrum
     >>> method_1 = BlochDecaySpectrum(
     ...     channels=["13C"],
-    ...     spectral_dimensions = [dict(count=2046, spectral_width=25000)] # spectral_width is in Hz.
+    ...     spectral_dimensions = [dict(count=2048, spectral_width=25000)] # spectral_width is in Hz.
     ... )
 
-The above method, ``method_1``, is declared to record :math:`^{13}\text{C}`
-resonances over 25 kHz spectral width using 2046 points. The
-unspecified attributes, such as `rotor_frequency`, `rotor_angle`,
-`magnetic_flux_density`, assume their default value.
+The above method, ``method_1``, is defined to record :math:`^{13}\text{C}` resonances
+over 25 kHz spectral width using 2048 points. The unspecified attributes, such as
+`rotor_frequency`, `rotor_angle`, `magnetic_flux_density`, assume their default value.
+The default units of these attributes is once again  found with the
+:attr:`~mrsimulator.Method.propert_units` attribute,
 
+.. doctest::
+
+    >>> method_1.property_units
+    {'magnetic_flux_density': 'T', 'rotor_angle': 'rad', 'rotor_frequency': 'Hz'}
 
 Simulator object
 ----------------
@@ -141,109 +160,127 @@ section.
 .. doctest::
 
     >>> sim = Simulator()
-    >>> sim.isotopomers += [isotopomer_1, isotopomer_2, isotopomer_3, isotopomer_4] # add isotopomers
-    >>> sim.methods += [method_1] # add method
+    >>> sim.spin_systems += [system_1, system_2, system_3, system_4] # add the spin systems
+    >>> sim.methods += [method_1] # add the method
 
-A quick run
------------
 
-Let's do a quick run of the simulator object, and observe the spectrum. But before,
-here is the plotting script we'll use to plot the spectrum for all further examples.
 
-.. _plot_function_def:
+Running simulation
+------------------
 
-.. doctest::
+Let's run the simulator and observe the spectrum.
 
-    >>> import matplotlib.pyplot as plt
-    >>> def plot(csdm):
-    ...     x, y = csdm.to_list()
-    ...     plt.figure(figsize=(4.5, 2.5))
-    ...     plt.plot(x, y, linewidth=1)
-    ...     plt.xlim([x.value.max(), x.value.min()])
-    ...     plt.xlabel(f"frequency ratio / {str(x.unit)}")
-    ...     plt.grid(color='gray', linestyle='--', linewidth=1.0, alpha=0.25)
-    ...     plt.tight_layout()
-    ...     plt.show()
+.. But before, here is the plotting script we'll use to plot the spectrum for all
+.. subsequent examples.
 
-And now, a quick run.
+.. .. doctest::
+
+..     >>> import matplotlib.pyplot as plt
+..     >>> def plot(csdm):
+..     ...     x, y = csdm.to_list()
+..     ...     plt.figure(figsize=(4.5, 2.5))
+..     ...     plt.plot(x, y, linewidth=1)
+..     ...     plt.xlim([x.value.max(), x.value.min()])
+..     ...     plt.xlabel(f"frequency ratio / {str(x.unit)}")
+..     ...     plt.grid(color='gray', linestyle='--', linewidth=1.0, alpha=0.25)
+..     ...     plt.tight_layout()
+..     ...     plt.show()
+
+.. And now, a quick run.
 
 .. doctest::
 
     >>> sim.run()
-    >>> plot(sim.methods[0].simulation) # doctest:+SKIP
+    >>> cp.plot(sim.methods[0].simulation, reverse_axis=[True], linewidth=1) # doctest: +SKIP
+    >>> plt.show() # doctest: +SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_1')
 
+.. _fig1_using_obj:
 .. figure:: _images/example_1.*
     :figclass: figure
 
     An example of the solid-state :math:`^{13}\text{C}` isotropic lineshape
     simulation.
 
-Notice, we added four isotopomers to the ``sim`` object, two :math:`^{13}\text{C}`, one
-:math:`^1\text{H}`, and one :math:`^{17}O` site along with a BlochDecaySpectrum method
-with a :math:`^{13}\text{C}` channel. When you run the simulation, only the resonance
-from the given channel will be recorded, as seen from the above plot, where just the two
-:math:`^{13}\text{C}` isotropic chemical shifts are observed.
+Notice, we have four single-site spin systems within the ``sim`` object, two with
+:math:`^{13}\text{C}` sites, one with :math:`^1\text{H}` site, and one with an
+:math:`^{17}\text{O}` site, along with a BlochDecaySpectrum method which is tuned
+to record the resonances from the :math:`^{13}\text{C}` channel. When you run this
+simulation, only :math:`^{13}\text{C}` resonances are recorded, as seen from
+:numref:`fig1_using_obj`, where just the two :math:`^{13}\text{C}` isotropic
+chemical shifts resonances are observed.
 
 
-Tweak the sites and re-simulate
-*******************************
+Modifying the site attributes
+*****************************
 
-Let's add shielding tensors to sites ``C13A`` and ``C13B``.
+Let's modify the ``C13A`` and ``C13B`` sites by adding the shielding tensors
+information.
 
 .. doctest::
 
-    >>> C13A.shielding_symmetric = dict(zeta=80, eta=0.5)
-    >>> C13B.shielding_symmetric = dict(zeta=-100, eta=0.25)
+    >>> sim.spin_systems[0].sites[0].shielding_symmetric = dict(zeta=80, eta=0.5) # site C13A
+    >>> sim.spin_systems[1].sites[0].shielding_symmetric = dict(zeta=-100, eta=0.25) # site C13B
+
+Running the simulation with the previously defined method will produce two overlapping
+CSA patterns, see :numref:`fig2_using_obj`.
+
+.. doctest::
+
     >>> sim.run()
-    >>> plot(sim.methods[0].simulation) # doctest:+SKIP
+    >>> cp.plot(sim.methods[0].simulation, reverse_axis=[True], linewidth=1) # doctest: +SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_2')
 
+.. _fig2_using_obj:
 .. figure:: _images/example_2.*
     :figclass: figure
 
     An example of the static-solid state :math:`^{13}\text{C}` CSA lineshape
     simulation.
 
-.. note::
-    Because the objects in python are passed by reference, we were able to
-    modify the ``C13A`` and ``C13B`` Site objects without having to reassemble
-    the isotopomer or method objects.
+.. .. note::
+..     Because the objects in python are passed by reference, we were able to
+..     modify the ``C13A`` and ``C13B`` Site objects without having to reassemble
+..     the spin-system or method objects.
 
-Turn up the rotor frequency and re-simulate
+Modifying the rotor frequency of the method
 *******************************************
 
-Let's turn up the rotor frequency from 0 Hz to 1 kHz. Note, that we do not add another
-method to the ``sim`` object, but update the method at index 0 with a new method.
+Let's turn up the rotor frequency from 0 Hz (default) to 1 kHz. Note, that we do not
+add another method to the ``sim`` object, but update the existing method at index 0
+with a new method. :numref:`fig3_using_obj` depicts the simulation from this method.
 
 .. doctest::
 
     >>> # Update the method object at index 0.
     >>> sim.methods[0] = BlochDecaySpectrum(
     ...     channels=["13C"],
-    ...     rotor_frequency=1000, # in Hz
-    ...     spectral_dimensions=[dict(count=2046, spectral_width=25000)] # spectral_width is in Hz.
+    ...     rotor_frequency=1000, # in Hz.  <------------ updated entry
+    ...     spectral_dimensions=[dict(count=2048, spectral_width=25000)] # spectral_width is in Hz.
     ... )
+
     >>> sim.run()
-    >>> plot(sim.methods[0].simulation) # doctest:+SKIP
+    >>> cp.plot(sim.methods[0].simulation, reverse_axis=[True], linewidth=1) # doctest: +SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_3')
 
+.. _fig3_using_obj:
 .. figure:: _images/example_3.*
     :figclass: figure
 
     An example of the solid-state :math:`^{13}\text{C}` MAS sideband simulation.
 
-Change the rotor angle and re-simulate
-**************************************
+Modifying the rotor angle of the method
+***************************************
 
-Let's also set the rotor angle from magic angle to 90 degrees. Again, we update the
-method at index 0.
+Let's also set the rotor angle from magic angle (default) to 90 degrees. Again, we
+update the method at index 0. :numref:`fig4_using_obj` depicts the simulation from
+this method.
 
 .. doctest::
 
@@ -251,48 +288,90 @@ method at index 0.
     >>> sim.methods[0] = BlochDecaySpectrum(
     ...     channels=["13C"],
     ...     rotor_frequency=1000, # in Hz.
-    ...     rotor_angle=90*3.1415926/180, # 90 degree in radians.
-    ...     spectral_dimensions=[dict(count=2046, spectral_width=25000)] # spectral_width is in Hz.
+    ...     rotor_angle=90*3.1415926/180, # 90 degree in radians.  <------------ updated entry
+    ...     spectral_dimensions=[dict(count=2048, spectral_width=25000)] # spectral_width is in Hz.
     ... )
+
     >>> sim.run()
-    >>> plot(sim.methods[0].simulation) # doctest:+SKIP
+    >>> cp.plot(sim.methods[0].simulation, reverse_axis=[True], linewidth=1) # doctest: +SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_4')
 
+.. _fig4_using_obj:
 .. figure:: _images/example_4.*
     :figclass: figure
 
     An example of the solid-state :math:`^{13}\text{C}` VAS sideband simulation.
 
-Switch to 1H and simulate
-*************************
+Switching the detection channels of the method
+**********************************************
 
-To switch the channel, update the value of the `channels` attribute of the
-method. Here, we change the channel from `13C` to `1H`.
+To switch to another channels, update the value of the `channels` attribute of the
+method. Here, we update the method to `1H` channel.
 
 .. doctest::
 
     >>> # Update the method object at index 0.
     >>> sim.methods[0] = BlochDecaySpectrum(
-    ...     channels=["1H"],
+    ...     channels=["1H"], # <------------ updated entry
     ...     rotor_frequency=1000, # in Hz.
     ...     rotor_angle=90*3.1415926/180, # 90 degree in radians.
-    ...     spectral_dimensions=[dict(count=2046, spectral_width=25000)]
+    ...     spectral_dimensions=[dict(count=2048, spectral_width=25000)]
     ... )
+
     >>> sim.run()
-    >>> plot(sim.methods[0].simulation) # doctest:+SKIP
+    >>> cp.plot(sim.methods[0].simulation, reverse_axis=[True], linewidth=1) # doctest: +SKIP
 
 .. .. testsetup::
 ..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_5')
 
+.. _fig5_using_obj:
 .. figure:: _images/example_5.*
     :figclass: figure
 
     An example of solid-state :math:`^{1}\text{H}` VAS sideband simulation.
 
-Switch to 17O and simulate
-**************************
+In :numref:`fig5_using_obj`, we see a :math:`90^\circ` spinning sideband
+:math:`^1\text{H}`-spectrum, whose frequency contributions arise from ``system_3``
+because ``system_3`` is the only spin-system with :math:`^1\text{H}` site.
+
+Note, although you are free to assign any channel to the :attr:`~mrsimulator.Method.channels`
+attribute of the BlochDecaySpectrum method, only channels whose isotopes are also a
+member of the spin systems will produce a spectrum. For example, the following method
+
+.. doctest::
+
+    >>> # Update the method object at index 0.
+    >>> sim.methods[0] = BlochDecaySpectrum(
+    ...     channels=["23Na"], # <------------ updated entry
+    ...     rotor_frequency=1000, # in Hz.
+    ...     rotor_angle=90*3.1415926/180, # 90 degree in radians.
+    ...     spectral_dimensions=[dict(count=2048, spectral_width=25000)]
+    ... )
+
+is defined to collect the resonances from :math:`^{23}\text{Na}` isotope. As you may
+have noticed, we do not have any :math:`^{23}\text{Na}` site in the spin systems.
+Simulating the spectrum from this method will result in a zero amplitude spectrum, see
+:numref:`fig6_using_obj`.
+
+.. doctest::
+
+    >>> sim.run()
+    >>> cp.plot(sim.methods[0].simulation, reverse_axis=[True], linewidth=1) # doctest: +SKIP
+
+.. .. testsetup::
+..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_6')
+
+.. _fig6_using_obj:
+.. figure:: _images/example_6.*
+    :figclass: figure
+
+    An example of a simulation where the isotope from the method's channel attribute
+    does not exist within the spin systems.
+
+Switching the channel to 17O
+''''''''''''''''''''''''''''
 
 Likewise, update the value of the `channels` attribute to `17O`.
 
@@ -302,22 +381,23 @@ Likewise, update the value of the `channels` attribute to `17O`.
     ...     channels=["17O"],
     ...     rotor_frequency= 15000, # in Hz.
     ...     rotor_angle = 0.9553166, # magic angle is rad.
-    ...     spectral_dimensions = [dict(count=2046, spectral_width=25000)]
+    ...     spectral_dimensions = [dict(count=2048, spectral_width=25000)]
     ... )
     >>> sim.run()
-    >>> plot(sim.methods[0].simulation) # doctest:+SKIP
+    >>> cp.plot(sim.methods[0].simulation, reverse_axis=[True], linewidth=1) # doctest: +SKIP
 
 .. .. testsetup::
-..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_6')
+..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_7')
 
-.. figure:: _images/example_6.*
+.. _fig7_using_obj:
+.. figure:: _images/example_7.*
     :figclass: figure
 
-    An example of the solid-state :math:`^{17}\text{O}` MAS central-transition
-    simulation.
+    An example of the solid-state :math:`^{17}\text{O}` BlochDecaySpectrum simulation.
 
 If you are familiar with the quadrupolar line-shapes, you may immediately associate
-this simulation to a second-order quadrupolar line-shape of the central transition.
+the spectrum in :numref:`fig7_using_obj` to a second-order quadrupolar line-shape of
+the central transition.
 You may also notice some unexpected resonances around 50 ppm and -220 ppm. These
 unexpected resonances are the spinning sidebands of the satellite transitions.
 Note, the BlochDecaySpectrum method computes resonances from all transitions with
@@ -329,7 +409,7 @@ see the list of transition pathways, for example,
 
 .. doctest::
 
-    >>> print(sim.methods[0].get_transition_pathways(isotopomer_4)) # 17O
+    >>> print(sim.methods[0].get_transition_pathways(system_4)) # 17O
     [[|-2.5⟩⟨-1.5|]
      [|-1.5⟩⟨-0.5|]
      [|-0.5⟩⟨0.5|]
@@ -344,25 +424,26 @@ the outer-satellites. For central transition selective simulation, use the
 .. doctest::
 
     >>> from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-    >>> method_2 = BlochDecayCentralTransitionSpectrum(
+    >>> sim.methods[0] = BlochDecayCentralTransitionSpectrum(
     ...     channels=["17O"],
     ...     rotor_frequency= 15000, # in Hz.
     ...     rotor_angle = 0.9553166, # magic angle is rad.
-    ...     spectral_dimensions = [dict(count=2046, spectral_width=25000)]
+    ...     spectral_dimensions = [dict(count=2048, spectral_width=25000)]
     ... )
 
     >>> # the transition pathways
-    >>> print(method_2.get_transition_pathways(isotopomer_4)) # 17O
+    >>> print(sim.methods[0].get_transition_pathways(system_4)) # 17O
     [[|-0.5⟩⟨0.5|]]
 
 Now, you may simulate the central transition selective spectrum.
+:numref:`fig8_using_obj` depicts a central transition selective spectrum.
 
-    >>> sim.methods += [method_2]
     >>> sim.run()
-    >>> plot(sim.methods[1].simulation) # doctest:+SKIP
+    >>> cp.plot(sim.methods[0].simulation, reverse_axis=[True], linewidth=1) # doctest: +SKIP
 
 .. .. testsetup::
-..     >>> plot_save(*sim.methods[1].simulation.to_list(), 'example_7')
+..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_8')
 
-.. figure:: _images/example_7.*
+.. _fig8_using_obj:
+.. figure:: _images/example_8.*
     :figclass: figure

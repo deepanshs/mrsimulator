@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Parameter test"""
 from lmfit import Parameters
-from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
+from mrsimulator import SpinSystem
 from mrsimulator import SymmetricTensor as st
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.spectral_fitting import make_fitting_parameters
@@ -14,7 +14,7 @@ sim = Simulator()
 H = Site(
     isotope="1H", isotropic_chemical_shift=10, shielding_symmetric=st(zeta=5, eta=0.1)
 )
-isotopomer = Isotopomer(name="H1", sites=[H], abundance=100)
+isotopomer = SpinSystem(name="H1", sites=[H], abundance=100)
 
 method = BlochDecaySpectrum(
     channels=["1H"],
@@ -26,7 +26,7 @@ method = BlochDecaySpectrum(
 )
 
 
-sim.isotopomers += [isotopomer]
+sim.spin_systems += [isotopomer]
 sim.methods += [method]
 
 params = make_fitting_parameters(sim)

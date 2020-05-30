@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """The Event class."""
-from typing import Dict
 from typing import List
 from typing import Optional
 
@@ -10,7 +9,6 @@ from numpy.fft import fft
 from numpy.fft import fftshift
 from numpy.fft import ifft
 from numpy.fft import ifftshift
-from pydantic import BaseModel
 
 
 class Apodization(Parseable):
@@ -49,10 +47,8 @@ class Apodization(Parseable):
         TimeDomain = ifft(ifftshift(y * phase, axes=axis), axis=axis)
 
         appodized = TimeDomain * fapp
-
-        return (
-            self.fraction * phase.conj() * fftshift(fft(appodized, axis=axis), axes=axis).real
-        )
+        fft_output = fftshift(fft(appodized, axis=axis), axes=axis).real
+        return self.fraction * phase.conj() * fft_output
 
 
 def Lorentzian(csdm, axis, arg, **kwargs):

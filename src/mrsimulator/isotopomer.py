@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Base Isotopomer class."""
+"""Base SpinSystem class."""
 from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
@@ -20,7 +20,7 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
 
 
-class Isotopomer(Parseable):
+class SpinSystem(Parseable):
     """
     Base isotopomer class representing an isolated spin-system containing multiple
     sites and couplings.
@@ -34,7 +34,7 @@ class Isotopomer(Parseable):
             dictionary objects representing an NMR site. The default value is an empty
             list.
         abundance: The abundance of isotopomer in the units of %. The default value
-            is 100. This attribute is useful when multiple isotopomers are present.
+            is 100. This attribute is useful when multiple spin systems are present.
         transition_pathways: A list of lists, where the inner list represents a
             transition pathway, and the outer list is the number of transition
             pathways. Each transition pathways is a list of Transition objects.
@@ -190,7 +190,7 @@ class Isotopomer(Parseable):
             ...         }
             ...     }]
             ... }
-            >>> isotopomer_1 = Isotopomer.parse_dict_with_units(isotopomer_dict)
+            >>> isotopomer_1 = SpinSystem.parse_dict_with_units(isotopomer_dict)
         """
         py_dict_copy = deepcopy(py_dict)
         if "sites" in py_dict_copy:
@@ -202,7 +202,7 @@ class Isotopomer(Parseable):
 
     def to_freq_dict(self, B0: float) -> dict:
         """
-        Serialize the Isotopomer object to a JSON compliant python dictionary object
+        Serialize the SpinSystem object to a JSON compliant python dictionary object
         where the attribute values are numbers expressed in default units. The default
         unit for the attributes with respective dimensionalities are:
 
@@ -236,30 +236,30 @@ class Isotopomer(Parseable):
         temp_dict.pop("property_units")
         return temp_dict
 
-    def get_isotopes(self, I=None) -> list:
+    def get_isotopes(self, spin_I=None) -> list:
         """
         An ordered list of isotopes from sites within the isotopomer corresponding to
         the given value of spin quantum number `I`. If `I` is None, a list of all
         isotopes is returned instead.
 
         Args:
-            float I: An optional spin quantum number. The valid inputs are the
+            float spin_I: An optional spin quantum number. The valid inputs are the
                 multiples of 0.5.
 
         Returns:
             A list of isotopes.
 
         Example:
-            >>> isotopomers.get_isotopes()
+            >>> spin_systems.get_isotopes()
             ['13C', '1H', '27Al']
-            >>> isotopomers.get_isotopes(I=0.5)
+            >>> spin_systems.get_isotopes(spin_I=0.5)
             ['13C', '1H']
-            >>> isotopomers.get_isotopes(I=1.5)
+            >>> spin_systems.get_isotopes(spin_I=1.5)
             []
-            >>> isotopomers.get_isotopes(I=2.5)
+            >>> spin_systems.get_isotopes(spin_I=2.5)
             ['27Al']
         """
-        isotope_list = allowed_isotopes(I)
+        isotope_list = allowed_isotopes(spin_I)
         return [
             site.isotope.symbol
             for site in self.sites
@@ -267,25 +267,25 @@ class Isotopomer(Parseable):
         ]
 
 
-def allowed_isotopes(I=None) -> list:
+def allowed_isotopes(spin_I=None) -> list:
     """
     List of NMR active isotopes currently supported in ``mrsimulator``.
 
     Args:
-        I: An optional float with the spin quantum number. The valid inputs are the
-            multiples of 0.5.
+        spin_I: An optional float with the spin quantum number. The valid inputs are
+            the multiples of 0.5.
 
     Returns:
         A list of all isotopes supported in ``mrsimulator`` with the given spin
         quantum number `I`. If the spin is unspecified or None, a list of all
         allowed isotopes is returned instead.
     """
-    if I is None:
+    if spin_I is None:
         return list(ISOTOPE_DATA.keys())
     return list(
         {
             isotope
             for isotope, data in ISOTOPE_DATA.items()
-            if data["spin"] == int(2 * I)
+            if data["spin"] == int(2 * spin_I)
         }
     )

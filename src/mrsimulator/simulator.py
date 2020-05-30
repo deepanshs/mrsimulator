@@ -7,7 +7,7 @@ from typing import Optional
 import csdmpy as cp
 import numpy as np
 from mrsimulator import __version__
-from mrsimulator import Isotopomer
+from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
 from mrsimulator.importer import import_json
 from mrsimulator.method import Method
@@ -32,7 +32,7 @@ class Simulator(BaseModel):
             value is an empty string.
         description: An optional string with the simulation/sample description. The
             default value is an empty string.
-        isotopomers: A list of the :ref:`isotopomer_api` objects or list of equivalent
+        spin_systems: A list of the :ref:`spin_system_api` objects or list of equivalent
             python dictionary object. The default value is an empty list.
         methods: A list of :ref:`method_api` objects or list of equivalent python
             dictionary object. The default value is an empty list.
@@ -42,7 +42,7 @@ class Simulator(BaseModel):
 
     name: Optional[str] = ""
     description: Optional[str] = ""
-    isotopomers: List[Isotopomer] = []
+    spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
     indexes = []
@@ -56,7 +56,7 @@ class Simulator(BaseModel):
             isinstance(other, Simulator),
             self.name == other.name,
             self.description == other.description,
-            self.isotopomers == other.isotopomers,
+            self.spin_systems == other.spin_systems,
             self.methods == other.methods,
             self.config == other.config,
         ]
@@ -64,15 +64,15 @@ class Simulator(BaseModel):
             return True
         return False
 
-    def get_isotopes(self, I=None) -> set:
+    def get_isotopes(self, spin_I=None) -> set:
         """
-        Set of unique isotopes from sites within the list of isotopomers corresponding
-        to spin quantum number `I`. If `I` is unspecified or None, a set of all
-        unique isotopes is returned instead.
+        Set of unique isotopes from sites within the list of the spin systems
+        corresponding to spin quantum number `I`. If `I` is unspecified or None, a set
+        of all unique isotopes is returned instead.
 
         Args:
-            float I: An optional spin quantum number. The valid input are the multiples
-                of 0.5.
+            float spin_I: An optional spin quantum number. The valid input are the
+                multiples of 0.5.
 
         Returns:
             A Set.
@@ -80,16 +80,16 @@ class Simulator(BaseModel):
         Example:
             >>> sim.get_isotopes() # doctest:+SKIP
             {'1H', '27Al', '13C'}
-            >>> sim.get_isotopes(I=0.5) # doctest:+SKIP
+            >>> sim.get_isotopes(spin_I=0.5) # doctest:+SKIP
             {'1H', '13C'}
-            >>> sim.get_isotopes(I=1.5)
+            >>> sim.get_isotopes(spin_I=1.5)
             set()
-            >>> sim.get_isotopes(I=2.5)
+            >>> sim.get_isotopes(spin_I=2.5)
             {'27Al'}
         """
         st = set()
-        for isotopomer in self.isotopomers:
-            st.update(isotopomer.get_isotopes(I))
+        for isotopomer in self.spin_systems:
+            st.update(isotopomer.get_isotopes(spin_I))
         return st
 
     def dict(self, *args, **kwargs) -> dict:
@@ -116,33 +116,33 @@ class Simulator(BaseModel):
 
         Example:
             >>> pprint(sim.to_dict_with_units())
-            {'config': {'decompose': False,
+            {'config': {'decompose_spectrum': 'none',
                         'integration_density': 70,
                         'integration_volume': 'octant',
                         'number_of_sidebands': 64},
              'description': '',
              'indexes': [],
-             'isotopomers': [{'abundance': '100 %',
-                              'sites': [{'isotope': '13C',
-                                         'isotropic_chemical_shift': '20.0 ppm',
-                                         'shielding_symmetric': {'eta': 0.5,
-                                                                 'zeta': '10.0 ppm'}}]},
-                             {'abundance': '100 %',
-                              'sites': [{'isotope': '1H',
-                                         'isotropic_chemical_shift': '-4.0 ppm',
-                                         'shielding_symmetric': {'eta': 0.1,
-                                                                 'zeta': '2.1 ppm'}}]},
-                             {'abundance': '100 %',
-                              'sites': [{'isotope': '27Al',
-                                         'isotropic_chemical_shift': '120.0 ppm',
-                                         'shielding_symmetric': {'eta': 0.1,
-                                                                 'zeta': '2.1 ppm'}}]}],
-             'name': ''}
+             'name': '',
+             'spin_systems': [{'abundance': '100 %',
+                               'sites': [{'isotope': '13C',
+                                          'isotropic_chemical_shift': '20.0 ppm',
+                                          'shielding_symmetric': {'eta': 0.5,
+                                                                  'zeta': '10.0 ppm'}}]},
+                              {'abundance': '100 %',
+                               'sites': [{'isotope': '1H',
+                                          'isotropic_chemical_shift': '-4.0 ppm',
+                                          'shielding_symmetric': {'eta': 0.1,
+                                                                  'zeta': '2.1 ppm'}}]},
+                              {'abundance': '100 %',
+                               'sites': [{'isotope': '27Al',
+                                          'isotropic_chemical_shift': '120.0 ppm',
+                                          'shielding_symmetric': {'eta': 0.1,
+                                                                  'zeta': '2.1 ppm'}}]}]}
         """
         sim = {}
         sim["name"] = self.name
         sim["description"] = self.description
-        sim["isotopomers"] = [_.to_dict_with_units() for _ in self.isotopomers]
+        sim["spin_systems"] = [_.to_dict_with_units() for _ in self.spin_systems]
 
         if include_methods:
             method = [_.to_dict_with_units() for _ in self.methods]
@@ -166,48 +166,47 @@ class Simulator(BaseModel):
          """
         return _reduce_dict(self.dict(), exclude)
 
-    def load_isotopomers(self, filename: str):
+    def load_spin_systems(self, filename: str):
         """
-        Load a list of isotopomers from the given JSON serialized isotopomers file.
+        Load a list of spin systems from the given JSON serialized file.
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
         /master/isotopomers_ppm.json>`_
-        of JSON serialized isotopomers file. For details, refer to the
-        :ref:`load_isotopomers` section of this documentation.
+        of JSON serialized file. For details, refer to the
+        :ref:`load_spin_systems` section of this documentation.
 
         Args:
-            str filename: A local or remote address to a JSON serialized isotopomers
-                file.
+            str filename: A local or remote address to a JSON serialized file.
 
         Example:
-            >>> sim.load_isotopomers(filename) # doctest:+SKIP
+            >>> sim.load_spin_systems(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
-        json_data = contents["isotopomers"]
-        self.isotopomers = [Isotopomer.parse_dict_with_units(obj) for obj in json_data]
+        json_data = contents["spin_systems"]
+        self.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in json_data]
 
-    def export_isotopomers(self, filename: str):
+    def export_spin_systems(self, filename: str):
         """
-        Export a list of isotopomers to a JSON serialized isotopomers file.
+        Export a list of spin systems to a JSON serialized file.
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
         /master/isotopomers_ppm.json>`_
-        of JSON serialized isotopomers file. For details, refer to the
-        :ref:`load_isotopomers` section.
+        of JSON serialized file. For details, refer to the
+        :ref:`load_spin_systems` section.
 
         Args:
-            str filename: The list of isotopomers will be serialized to a file with
+            str filename: The list of will be serialized to a file with
                 the given filename.
 
         Example:
-            >>> sim.export_isotopomers(filename) # doctest:+SKIP
+            >>> sim.export_spin_systems(filename) # doctest:+SKIP
         """
-        isotopomers = [Isotopomer.to_dict_with_units(obj) for obj in self.isotopomers]
+        spin_systems = [SpinSystem.to_dict_with_units(obj) for obj in self.spin_systems]
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
-                isotopomers,
+                spin_systems,
                 outfile,
                 ensure_ascii=False,
                 sort_keys=False,
@@ -234,7 +233,7 @@ class Simulator(BaseModel):
             method = self.methods[index]
             amp, indexes = one_d_spectrum(
                 method=method,
-                isotopomers=self.isotopomers,
+                spin_systems=self.spin_systems,
                 **self.config._dict,
                 **kwargs,
             )
@@ -286,8 +285,8 @@ class Simulator(BaseModel):
         """
         sim = Simulator()
         contents = import_json(filename)
-        i_data = contents["isotopomers"]
-        sim.isotopomers = [Isotopomer.parse_dict_with_units(obj) for obj in i_data]
+        i_data = contents["spin_systems"]
+        sim.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in i_data]
 
         m_data = contents["methods"]
         sim.methods = [Method.parse_dict_with_units(obj) for obj in m_data]
@@ -304,7 +303,8 @@ class Simulator(BaseModel):
         new = cp.new()
         for dimension in method.spectral_dimensions:
             new.add_dimension(dimension.to_csdm_dimension())
-            new.dimensions[-1].to("ppm", "nmr_frequency_ratio")
+            if new.dimensions[-1].origin_offset != 0:
+                new.dimensions[-1].to("ppm", "nmr_frequency_ratio")
 
         dependent_variable = {
             "type": "internal",
@@ -312,24 +312,45 @@ class Simulator(BaseModel):
             "numeric_type": "float64",
         }
         for index, datum in enumerate(data):
-            if len(datum) != 0:
-                dependent_variable["components"] = [datum]
-                name = self.isotopomers[index].name
-                if name not in ["", None]:
-                    dependent_variable.update({"name": name})
+            if len(datum) == 0:
+                continue
 
-                description = self.isotopomers[index].description
-                if description not in ["", None]:
-                    dependent_variable.update({"description": description})
+            dependent_variable["components"] = [datum]
+            if self.config.decompose_spectrum == "spin_system":
+                self._update_name_description_application(dependent_variable, index)
+            # name = self.spin_systems[index].name
+            # if name not in ["", None]:
+            #     dependent_variable.update({"name": name})
 
-                dependent_variable["application"] = {
-                    "com.github.DeepanshS.mrsimulator": {
-                        "isotopomers": [self.isotopomers[index].to_dict_with_units()]
-                    }
-                }
-                new.add_dependent_variable(dependent_variable)
-                new.dependent_variables[-1].encoding = "base64"
+            # description = self.spin_systems[index].description
+            # if description not in ["", None]:
+            #     dependent_variable.update({"description": description})
+
+            # dependent_variable["application"] = {
+            #     "com.github.DeepanshS.mrsimulator": {
+            #         "spin_systems": [self.spin_systems[index].to_dict_with_units()]
+            #     }
+            # }
+            new.add_dependent_variable(dependent_variable)
+            new.dependent_variables[-1].encoding = "base64"
         return new
+
+    def _update_name_description_application(self, obj, index):
+        """Update the name and description of the dependent variable attributes
+        using fields from the spin-system."""
+        name = self.spin_systems[index].name
+        if name not in ["", None]:
+            obj.update({"name": name})
+
+        description = self.spin_systems[index].description
+        if description not in ["", None]:
+            obj.update({"description": description})
+
+        obj["application"] = {
+            "com.github.DeepanshS.mrsimulator": {
+                "spin_systems": [self.spin_systems[index].to_dict_with_units()]
+            }
+        }
 
     def apodize(self, fn, dimension=0, method=0, **kwargs):
         apodization_filter = Apodization(

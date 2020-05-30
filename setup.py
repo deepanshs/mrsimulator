@@ -14,8 +14,8 @@ from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
 
-from setting import use_accelerate
-from setting import use_openblas
+from settings import use_accelerate
+from settings import use_openblas
 
 # from setting import USE_SSE_AVX
 

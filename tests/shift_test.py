@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """Test for shift and reference offset."""
 import numpy as np
-from mrsimulator import Isotopomer
 from mrsimulator import Method
 from mrsimulator import Simulator
 from mrsimulator import Site
+from mrsimulator import SpinSystem
 
 
 def pre_setup(isotope, shift, reference_offset):
-    isotopomer = Isotopomer(
+    isotopomer = SpinSystem(
         sites=[Site(isotope=isotope, isotropic_chemical_shift=shift)]
     )
     method = Method.parse_dict_with_units(
@@ -25,7 +25,7 @@ def pre_setup(isotope, shift, reference_offset):
         )
     )
     sim = Simulator()
-    sim.isotopomers.append(isotopomer)
+    sim.spin_systems.append(isotopomer)
     sim.methods += [method]
     sim.run()
     x, y = sim.methods[0].simulation.to_list()

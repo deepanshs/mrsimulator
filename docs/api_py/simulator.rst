@@ -14,15 +14,15 @@ Simulator
 
     .. automethod:: get_isotopes
     .. automethod:: to_dict_with_units
-    .. automethod:: load_isotopomers
-    .. automethod:: export_isotopomers
+    .. automethod:: load_spin_systems
+    .. automethod:: export_spin_systems
     .. automethod:: run
     .. automethod:: save
     .. automethod:: load
     .. automethod:: apodize
 
 .. seealso::
-        :ref:`load_isotopomers`
+        :ref:`load_spin_systems`
 
 .. _config_api:
 

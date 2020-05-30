@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 """Test for shift and reference offset."""
 import numpy as np
-from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
+from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
 
 
 def pre_setup():
     site_1 = Site(isotope="13C", shielding_symmetric={"zeta": 50, "eta": 0.5})
-    isotopomer = Isotopomer(sites=[site_1])
+    isotopomer = SpinSystem(sites=[site_1])
     method = BlochDecaySpectrum(
         channels=["13C"], spectral_dimensions=[{"count": 1024, "spectral_width": 25000}]
     )
 
     sim = Simulator()
-    sim.isotopomers.append(isotopomer)
+    sim.spin_systems.append(isotopomer)
     sim.methods += [method]
     return sim
 

@@ -87,17 +87,6 @@ class Parseable(BaseModel):
         the attribute value with physical quantity is expressed as a string with a
         value and a unit."""
 
-        def get_list(member, obj):
-            lst = []
-            for i, item in enumerate(obj):
-                if isinstance(item, list):
-                    lst.append(get_list(member[i], item))
-                elif isinstance(item, dict):
-                    lst.append(member[i].to_dict_with_units())
-                elif item not in [None, ""]:
-                    lst.append(item)
-            return lst
-
         temp_dict = {}
         for k, v in self.dict(exclude={"property_units"}).items():
 
@@ -142,3 +131,15 @@ def enforce_units(value: str, required_type: str, default_unit: str, throw_error
             raise e
         else:
             return None
+
+
+def get_list(member, obj):
+    lst = []
+    for i, item in enumerate(obj):
+        if isinstance(item, list):
+            lst.append(get_list(member[i], item))
+        elif isinstance(item, dict):
+            lst.append(member[i].to_dict_with_units())
+        elif item not in [None, ""]:
+            lst.append(item)
+    return lst

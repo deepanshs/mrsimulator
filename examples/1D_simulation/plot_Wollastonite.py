@@ -6,13 +6,20 @@ Wollastonite
 
 29Si (I=1/2) spinning sideband simulation.
 """
+# global plot configuration
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+font = {"weight": "light", "size": 9}
+mpl.rc("font", **font)
+mpl.rcParams["figure.figsize"] = [4.25, 3.0]
+
 #%%
 # Wollastonite is a high-temperature calcium-silicate,
 # :math:`\beta−\text{Ca}_3\text{Si}_3\text{O}_9`, with three distinct
 # :math:`^{29}\text{Si}` sites. The :math:`^{29}\text{Si}` tensor parameters
 # were obtained from Hansen et. al. [#f1]_
-import matplotlib.pyplot as plt
-from mrsimulator import Isotopomer
+from mrsimulator import SpinSystem
 from mrsimulator import Simulator
 from mrsimulator import Site
 
@@ -38,10 +45,10 @@ S29_3 = Site(
 sites = [S29_1, S29_2, S29_3]  # all sites
 
 #%%
-# **Step 2** Create the isotopomers from these sites. Again, we create three
-# single-site isotopomers for better performance.
+# **Step 2** Create the spin systems from these sites. Again, we create three
+# single-site spin systems for better performance.
 
-isotopomers = [Isotopomer(sites=[site]) for site in sites]
+spin_systems = [SpinSystem(sites=[site]) for site in sites]
 
 #%%
 # **Step 3** Create a Bloch decay spectrum method.
@@ -63,11 +70,11 @@ method = BlochDecaySpectrum(
 
 
 #%%
-# **Step 4** Create the Simulator object and add the method and isotopomer objects.
+# **Step 4** Create the Simulator object and add the method and spin-system objects.
 
 sim_wollastonite = Simulator()
-sim_wollastonite.isotopomers += isotopomers  # add isotopomers
-sim_wollastonite.methods += [method]  # add method
+sim_wollastonite.spin_systems += spin_systems  # add sthe pin systems
+sim_wollastonite.methods += [method]  # add the method
 
 #%%
 # **Step 5** Simulate the spectrum.
@@ -78,7 +85,6 @@ sim_wollastonite.run()
 # **Step 6** The plot of the simulation.
 
 x, y = sim_wollastonite.methods[0].simulation.to_list()
-plt.figure(figsize=(4, 3))
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("frequency / ppm")
 plt.xlim(x.value.max(), x.value.min())

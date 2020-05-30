@@ -6,14 +6,28 @@ Potassium Sulfate
 
 33S (I=3/2) quadrupolar line-shape simulation.
 """
+# global plot configuration
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+font = {"weight": "light", "size": 9}
+mpl.rc("font", **font)
+mpl.rcParams["figure.figsize"] = [4.25, 3.0]
+
 # %%
 # The following example is the :math:`^{33}\text{S}` NMR line-shape simulation of
 # potassium sulfate (:math:`\text{K}_2\text{SO}_4`). The quadrupole tensor parameters
 # for :math:`^{33}\text{S}` is obtained from Moudrakovski et. al. [#f3]_
-import matplotlib.pyplot as plt
-from mrsimulator import Isotopomer
+from mrsimulator import SpinSystem
 from mrsimulator import Simulator
 from mrsimulator import Site
+
+# global plot config
+import matplotlib as mpl
+
+font = {"weight": "light", "size": 9}
+mpl.rc("font", **font)
+mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 
 #%%
 # **Step 1** Create the sites, in this case, just the one.
@@ -26,9 +40,9 @@ S33 = Site(
 )
 
 #%%
-# **Step 2** Create the isotopomer from the site.
+# **Step 2** Create the spin-system from the site.
 
-isotopomer = Isotopomer(sites=[S33])
+spin_system = SpinSystem(sites=[S33])
 
 #%%
 # **Step 3** Create a central transition selective Bloch decay spectrum method.
@@ -50,23 +64,21 @@ method = BlochDecayCentralTransitionSpectrum(
 
 
 #%%
-# **Step 4** Create the Simulator object and add the method and isotopomer object.
+# **Step 4** Create the Simulator object and add the method and the spin-system object.
 
 sim_K2SO3 = Simulator()
-sim_K2SO3.isotopomers += [isotopomer]  # add isotopomer
-sim_K2SO3.methods += [method]  # add method
+sim_K2SO3.spin_systems += [spin_system]  # add the spin-system
+sim_K2SO3.methods += [method]  # add the method
 
 #%%
 # **Step 5** Simulate the spectrum.
 
 sim_K2SO3.run()
 
-
 #%%
 # **Step 6** The plot of the simulation.
 
 x, y = sim_K2SO3.methods[0].simulation.to_list()
-plt.figure(figsize=(4, 3))
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("frequency / ppm")
 plt.xlim(x.value.max(), x.value.min())

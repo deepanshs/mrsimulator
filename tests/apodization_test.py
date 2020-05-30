@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Apodization test"""
 import numpy as np
-from mrsimulator import Isotopomer
 from mrsimulator import Simulator
+from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.post_simulation import PostSimulator
 
@@ -10,8 +10,8 @@ from mrsimulator.post_simulation import PostSimulator
 sim = Simulator()
 the_site = {"isotope": "1H", "isotropic_chemical_shift": "0 ppm"}
 the_isotopomer = {"name": "site A", "sites": [the_site], "abundance": "80%"}
-isotopomer_object = Isotopomer.parse_dict_with_units(the_isotopomer)
-sim.isotopomers += [isotopomer_object]
+isotopomer_object = SpinSystem.parse_dict_with_units(the_isotopomer)
+sim.spin_systems += [isotopomer_object]
 
 method_1 = BlochDecaySpectrum(
     channels=["1H"],

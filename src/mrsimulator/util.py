@@ -26,17 +26,17 @@ def _reduce_dict(dict_obj, exclude=["property_units"]):
                 obj[k] = v
         return obj
 
-    if isinstance(dict_obj, list):
-        obj = []
-        for v in dict_obj:
-            if v is None:
-                continue
-            if isinstance(v, dict):
-                obj.append(_reduce_dict(v))
-            elif isinstance(v, list):
-                obj.append([_reduce_dict(_) for _ in v])
-            else:
-                obj.append(v)
-        return obj
+    # if isinstance(dict_obj, list):
+    #     obj = []
+    #     for v in dict_obj:
+    #         if v is None:
+    #             continue
+    #         if isinstance(v, dict):
+    #             obj.append(_reduce_dict(v))
+    #         elif isinstance(v, list):
+    #             obj.append([_reduce_dict(_) for _ in v])
+    #         else:
+    #             obj.append(v)
+    #     return obj
 
     return dict_obj

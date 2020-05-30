@@ -157,7 +157,7 @@ Our current objectives for the future are the following
 .. 		understanding-isotopomers
 .. 		getting_started
 .. 		using_mrsimulator_objects
-.. 		load_isotopomers
+.. 		load_sample
 .. 		configuring_simulator
 .. 		benchmark
 .. 		auto_examples/index

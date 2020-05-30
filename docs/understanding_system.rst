@@ -18,16 +18,16 @@
 Understanding isotopomer and method
 -----------------------------------
 In the previous two sections, we illustrate how to set up a :class:`~mrsimulator.Simulator`
-object and run simulations as a three-step process---add isotopomers,
+object and run simulations as a three-step process---add spin systems,
 add methods, and run the simulation. The Simulator object is designed to handle
 bulk simulations and hides most steps from the end-user. One of those steps is how
 a method object communications with an isotopomer object to produce a simulation?
-The short answer is---each method communicates differently with different isotopomers.
+The short answer is---each method communicates differently with different spin systems.
 You may even consider a method and an isotopomer pair as a complete problem in itself,
 and the Simulator object solves multiple such problems.
 
 In this section, we focus our discussion on how a method object communicates with the
-isotopomers. To understand this, you may need to refresh your NMR 101, may I suggest
+spin systems. To understand this, you may need to refresh your NMR 101, may I suggest
 chapter 2 of `Understanding NMR spectroscopy` by James Keeler.
 
 Consider the following Bloch decay spectrum method,
@@ -40,7 +40,7 @@ Consider the following Bloch decay spectrum method,
     ...     spectral_dimensions=[{'count': 1024, 'spectral_width': 25000}]
     ... )
 
-and the following isotopomers (spin-system). A single site spin-1/2 isotopomer is a good
+and the following spin systems. A single site spin-1/2 isotopomer is a good
 place to start.
 
 **Single spin-1/2 site**
@@ -55,12 +55,12 @@ Let's create an isotopomer with a single spin-1/2, :math:`^{13}\text{C}` site.
 
 .. doctest::
 
-    >>> from mrsimulator import Isotopomer, Site
+    >>> from mrsimulator import SpinSystem, Site
     >>> C13 = Site(isotope='13C')
-    >>> one_site = Isotopomer(sites=[C13])
+    >>> one_site = SpinSystem(sites=[C13])
 
 To list the Zeeman energy states of an isotopomer, use the
-:attr:`~mrsimulator.Isotopomer.Zeeman_energy_states` attribute of the instance, as
+:attr:`~mrsimulator.SpinSystem.Zeeman_energy_states` attribute of the instance, as
 
 .. doctest::
 

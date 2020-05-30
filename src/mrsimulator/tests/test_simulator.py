@@ -3,19 +3,19 @@
 from random import randint
 
 import pytest
-from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
+from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
 
 
 def test_simulator_assignments():
     a = Simulator()
-    assert a.isotopomers == []
+    assert a.spin_systems == []
 
     error = "value is not a valid list"
     with pytest.raises(Exception, match=".*{0}.*".format(error)):
-        a.isotopomers = ""
+        a.spin_systems = ""
 
     with pytest.raises(Exception, match=".*{0}.*".format(error)):
         a.methods = ""
@@ -28,15 +28,15 @@ def test_equality():
 
     assert a is not {}
 
-    c = Simulator(isotopomers=[Isotopomer()])
+    c = Simulator(spin_systems=[SpinSystem()])
     assert a is not c
 
     result = {
         "name": "",
         "description": "",
-        "isotopomers": [{"abundance": "100 %", "sites": []}],
+        "spin_systems": [{"abundance": "100 %", "sites": []}],
         "config": {
-            "decompose": False,
+            "decompose_spectrum": "none",
             "integration_density": 70,
             "integration_volume": "octant",
             "number_of_sidebands": 64,
@@ -48,13 +48,15 @@ def test_equality():
     assert c.reduced_dict() == {
         "name": "",
         "description": "",
-        "isotopomers": [{"abundance": 100, "description": "", "name": "", "sites": []}],
+        "spin_systems": [
+            {"abundance": 100, "description": "", "name": "", "sites": []}
+        ],
         "methods": [],
         "config": {
             "number_of_sidebands": 64,
             "integration_volume": "octant",
             "integration_density": 70,
-            "decompose": False,
+            "decompose_spectrum": "none",
         },
         "indexes": [],
     }
@@ -67,7 +69,7 @@ def get_simulator():
         for _ in range(randint(1, 3)):
             sites.append(Site(isotope=isotope))
     sim = Simulator()
-    sim.isotopomers.append(Isotopomer(sites=sites))
+    sim.spin_systems.append(SpinSystem(sites=sites))
     return sim
 
 
@@ -75,23 +77,23 @@ def test_get_isotopes():
     isotopes = {"19F", "31P", "2H", "6Li", "14N", "27Al", "25Mg", "45Sc", "87Sr"}
     sim = get_simulator()
     assert sim.get_isotopes() == isotopes
-    assert sim.get_isotopes(I=0.5) == {"19F", "31P"}
-    assert sim.get_isotopes(I=1) == {"2H", "6Li", "14N"}
-    assert sim.get_isotopes(I=1.5) == set()
-    assert sim.get_isotopes(I=2.5) == {"27Al", "25Mg"}
-    assert sim.get_isotopes(I=3.5) == {"45Sc"}
-    assert sim.get_isotopes(I=4.5) == {"87Sr"}
+    assert sim.get_isotopes(spin_I=0.5) == {"19F", "31P"}
+    assert sim.get_isotopes(spin_I=1) == {"2H", "6Li", "14N"}
+    assert sim.get_isotopes(spin_I=1.5) == set()
+    assert sim.get_isotopes(spin_I=2.5) == {"27Al", "25Mg"}
+    assert sim.get_isotopes(spin_I=3.5) == {"45Sc"}
+    assert sim.get_isotopes(spin_I=4.5) == {"87Sr"}
 
 
 def test_simulator_1():
     sim = Simulator()
-    sim.isotopomers = [Isotopomer(sites=[Site(isotope="1H"), Site(isotope="23Na")])]
+    sim.spin_systems = [SpinSystem(sites=[Site(isotope="1H"), Site(isotope="23Na")])]
     sim.methods = [BlochDecaySpectrum()]
 
     assert sim.reduced_dict() == {
         "name": "",
         "description": "",
-        "isotopomers": [
+        "spin_systems": [
             {
                 "name": "",
                 "description": "",
@@ -132,7 +134,7 @@ def test_simulator_1():
             }
         ],
         "config": {
-            "decompose": False,
+            "decompose_spectrum": "none",
             "integration_density": 70,
             "integration_volume": "octant",
             "number_of_sidebands": 64,

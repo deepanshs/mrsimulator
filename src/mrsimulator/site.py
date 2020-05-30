@@ -81,26 +81,18 @@ class Site(Parseable):
             return v
         isotope = values["isotope"]
         isotope = Isotope(symbol=isotope) if isinstance(isotope, str) else isotope
-        I = isotope.spin
-        if I >= 1:
+        spin_I = isotope.spin
+        if spin_I >= 1:
             if "zeta" in v.property_units:
                 v.property_units.pop("zeta")
             return v
-        message = f"with spin quantum number {I} does not allow quadrupolar tensor."
+        message = (
+            f"with spin quantum number {spin_I} does not allow quadrupolar tensor."
+        )
         raise ValueError(f"{isotope} {message}")
 
     @validator("shielding_symmetric")
     def shielding_symmetric_must_not_contain_Cq(cls, v, values):
-        # if "zeta" in v.property_units:
-        #     if isinstance(v.property_units["zeta"], list):
-        #         v.property_units["zeta"] = "ppm"
-        #     elif v.property_units["zeta"] != "ppm":
-        #         raise ValueError(
-        #             (
-        #                 "A value in the unit of `ppm` is required for the parameter "
-        #                 "`zeta` from the shielding symmetric tensor."
-        #             )
-        #         )
         if "Cq" in v.property_units:
             v.property_units.pop("Cq")
         return v

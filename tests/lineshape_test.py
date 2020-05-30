@@ -4,9 +4,9 @@ import json
 from os import path
 
 import numpy as np
-from mrsimulator import Isotopomer
 from mrsimulator import Method
 from mrsimulator import Simulator
+from mrsimulator import SpinSystem
 from numpy.fft import fft
 from numpy.fft import fftshift
 
@@ -105,11 +105,11 @@ def c_setup(data_object, data_source):
     # mrsimulator
     methods = [Method.parse_dict_with_units(_) for _ in data_object["methods"]]
 
-    isotopomers = [
-        Isotopomer.parse_dict_with_units(item) for item in data_object["isotopomers"]
+    spin_systems = [
+        SpinSystem.parse_dict_with_units(item) for item in data_object["spin_systems"]
     ]
 
-    s1 = Simulator(isotopomers=isotopomers, methods=methods)
+    s1 = Simulator(spin_systems=spin_systems, methods=methods)
     s1.config.integration_density = 120
     s1.config.number_of_sidebands = 90
     s1.run()
@@ -123,23 +123,23 @@ def c_setup_random_euler_angles(data_object, data_source, group):
     # mrsimulator
     methods = [Method.parse_dict_with_units(_) for _ in data_object["methods"]]
 
-    isotopomers = [
-        Isotopomer.parse_dict_with_units(_) for _ in data_object["isotopomers"]
+    spin_systems = [
+        SpinSystem.parse_dict_with_units(_) for _ in data_object["spin_systems"]
     ]
     pix2 = 2 * np.pi
     if group == "shielding_symmetric":
-        for isotopomer in isotopomers:
+        for isotopomer in spin_systems:
             isotopomer.sites[0].shielding_symmetric.alpha = np.random.rand(1) * pix2
             isotopomer.sites[0].shielding_symmetric.beta = np.random.rand(1) * pix2
             isotopomer.sites[0].shielding_symmetric.gamma = np.random.rand(1) * pix2
 
     if group == "quadrupolar":
-        for isotopomer in isotopomers:
+        for isotopomer in spin_systems:
             isotopomer.sites[0].quadrupolar.alpha = np.random.rand(1) * pix2
             isotopomer.sites[0].quadrupolar.beta = np.random.rand(1) * pix2
             isotopomer.sites[0].quadrupolar.gamma = np.random.rand(1) * pix2
 
-    s1 = Simulator(isotopomers=isotopomers, methods=methods)
+    s1 = Simulator(spin_systems=spin_systems, methods=methods)
     s1.config.integration_density = 120
     s1.config.integration_volume = "hemisphere"
     s1.config.number_of_sidebands = 90

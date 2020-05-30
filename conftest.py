@@ -6,9 +6,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
+from mrsimulator import SpinSystem
 from mrsimulator import SymmetricTensor
 from mrsimulator.isotope import Isotope
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
@@ -22,7 +22,7 @@ def add_site(doctest_namespace):
 
     doctest_namespace["np"] = np
     doctest_namespace["plt"] = plt
-    doctest_namespace["Isotopomer"] = Isotopomer
+    doctest_namespace["SpinSystem"] = SpinSystem
     doctest_namespace["Simulator"] = Simulator
     doctest_namespace["Site"] = Site
     doctest_namespace["SymmetricTensor"] = SymmetricTensor
@@ -52,18 +52,18 @@ def add_site(doctest_namespace):
     )
     doctest_namespace["site3"] = site3
 
-    isotopomer_1H_13C = Isotopomer(sites=[site1, site2])
+    isotopomer_1H_13C = SpinSystem(sites=[site1, site2])
     doctest_namespace["isotopomer_1H_13C"] = isotopomer_1H_13C
 
-    isotopomer_1 = Isotopomer(sites=[site1])
+    isotopomer_1 = SpinSystem(sites=[site1])
     doctest_namespace["isotopomer_1"] = isotopomer_1
 
-    doctest_namespace["isotopomers"] = Isotopomer(sites=[site1, site2, site3])
+    doctest_namespace["spin_systems"] = SpinSystem(sites=[site1, site2, site3])
 
-    isotopomers = [Isotopomer(sites=[site]) for site in [site1, site2, site3]]
+    spin_systems = [SpinSystem(sites=[site]) for site in [site1, site2, site3]]
 
     sim = Simulator()
-    sim.isotopomers += isotopomers
+    sim.spin_systems += spin_systems
     doctest_namespace["sim"] = sim
 
     def plot_save(x, y, filename):
@@ -121,8 +121,10 @@ def add_site(doctest_namespace):
     )
 
     sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
-    abundance = [0.83, 1.05, 2.16, 2.05, 1.90]  # abundance of each isotopomer
-    isotopomers = [Isotopomer(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
+    abundance = [0.83, 1.05, 2.16, 2.05, 1.90]  # abundance of each spin system
+    spin_systems = [
+        SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)
+    ]
 
     method = BlochDecayCentralTransitionSpectrum(
         channels=["17O"],
@@ -131,7 +133,7 @@ def add_site(doctest_namespace):
     )
 
     sim_coesite = Simulator()
-    sim_coesite.isotopomers += isotopomers
+    sim_coesite.spin_systems += spin_systems
     sim_coesite.methods += [method]
 
     doctest_namespace["sim_coesite"] = sim_coesite

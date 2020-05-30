@@ -49,24 +49,24 @@ def test_config():
     with pytest.raises(ValueError, match=".*{0}.*".format(error)):
         a.config.integration_volume = "sphere"
 
-    # decompose
-    assert a.config.decompose is False
-    a.config.decompose = True
-    assert a.config.decompose is True
+    # decompose spectrum
+    assert a.config.decompose_spectrum == "none"
+    a.config.decompose_spectrum = "spin_system"
+    assert a.config.decompose_spectrum == "spin_system"
 
-    error = "Expecting a boolean."
-    with pytest.raises(ValueError, match=".*{0}.*".format(error)):
-        a.config.decompose = [5, 23]
+    error = "Expecting a string."
+    with pytest.raises(TypeError, match=".*{0}.*".format(error)):
+        a.config.decompose_spectrum = [5, 23]
 
     assert a.config.dict() == {
-        "decompose": True,
+        "decompose_spectrum": "spin_system",
         "number_of_sidebands": 10,
         "integration_volume": "hemisphere",
         "integration_density": 20,
     }
 
     assert a.config._dict == {
-        "decompose": True,
+        "decompose_spectrum": 1,
         "number_of_sidebands": 10,
         "integration_volume": 1,
         "integration_density": 20,
@@ -77,7 +77,7 @@ def test_config():
             "number_of_sidebands": 10,
             "integration_volume": "hemisphere",
             "integration_density": 20,
-            "decompose": True,
+            "decompose_spectrum": "spin_system",
         }
     )
     assert b != a

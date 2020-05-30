@@ -118,16 +118,12 @@ sphinx_gallery_conf = {
     "within_subsection_order": FileNameSortKey,
     # "show_memory": True,
     # "line_numbers": True,
-    "thumbnail_size": (400, 400),
-    # "image_scrapers": (matplotlib_svg_scraper(),),
     "subsection_order": ExplicitOrder(
         ["../examples/1D_simulation", "../examples/Fitting"]
     ),
     "reference_url": {
         # The module you locally document uses None
         "mrsimulator": None,
-        # "matplotlib": "https://matplotlib.org",
-        # "numpy": "https://numpy.org",
     },
 }
 
@@ -136,8 +132,9 @@ sphinx_gallery_conf = {
 
 intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org", None),
-    "numpy": ("http://docs.scipy.org/doc/numpy/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
     "csdmpy": ("https://csdmpy.readthedocs.io/en/stable/", None),
+    "astropy": ("https://docs.astropy.org/en/stable/", None),
     "lmfit": ("https://lmfit-py.readthedocs.io/en/stable/", None),
 }
 # ---------------------------------------------------------------------------- #

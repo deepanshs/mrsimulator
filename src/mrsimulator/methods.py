@@ -48,23 +48,27 @@ Return:
 """
 
 
+def prepare_method_structure(template, **kwargs):
+    n_channels = template["number_of_channels"]
+    prep = {"name": template["name"], "description": template["description"]}
+    if "channels" in kwargs:
+        prep["channels"] = kwargs["channels"]
+        given_n_channels = len(prep["channels"])
+        if given_n_channels != n_channels:
+            raise ValueError(
+                f"The method requires exactly {n_channels} channels, "
+                f"{given_n_channels} provided."
+            )
+        kwargs.pop("channels")
+    else:
+        prep["channels"] = ["1H" for _ in range(n_channels)]
+    return prep
+
+
 def generate_method_from_template(template, __doc__):
     # constructor
     def constructor(self, spectral_dimensions=[{}], parse=False, **kwargs):
-        n_channels = template["number_of_channels"]
-        prep = {"name": template["name"], "description": template["description"]}
-        if "channels" in kwargs:
-            prep["channels"] = kwargs["channels"]
-            given_n_channels = len(prep["channels"])
-            if given_n_channels != n_channels:
-                raise ValueError(
-                    f"The method requires exactly {n_channels} channels, "
-                    f"{given_n_channels} provided."
-                )
-            kwargs.pop("channels")
-        else:
-            prep["channels"] = ["1H" for _ in range(n_channels)]
-
+        prep = prepare_method_structure(template, **kwargs)
         global_events = template["global_event_attributes"]
         ge = set(global_events)
         kw = set(kwargs)

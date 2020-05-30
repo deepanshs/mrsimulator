@@ -1,8 +1,8 @@
 [flake8]
 ignore = C901
 exclude = .eggs,*.egg,build, src/mrsimulator/__init__.py, examples/*
-filename = *.pyx,*.px*, *py
-max-line-length = 88
+filename = *.pyx, *py
+max-line-length = 90
 max-complexity = 10
 select = B,C,E,F,W,T4,B9
 

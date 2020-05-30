@@ -7,9 +7,17 @@ Amorphous-like materials (quadrupolar)
 27Al (I=5/2) simulation of amorphous-like material.
 """
 # sphinx_gallery_thumbnail_number = 2
+# global plot configuration
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+font = {"weight": "light", "size": 9}
+mpl.rc("font", **font)
+mpl.rcParams["figure.figsize"] = [4.25, 3.0]
+
 #%%
 # In this section, we illustrate the simulation of a quadrupolar spectrum arising from
-# a distribution of electric field gradient (EFG) tensors of some amorphous material.
+# a distribution of the electric field gradient (EFG) tensors of an amorphous material.
 # We proceed by assuming a multi-variate normal distribution, as follows,
 import numpy as np
 from scipy.stats import multivariate_normal
@@ -20,19 +28,16 @@ covariance = [[1.98, 0, 0], [0, 4.9, 0], [0, 0, 0.0016]]  # same order as the me
 iso, Cq, eta = multivariate_normal.rvs(mean=mean, cov=covariance, size=n).T
 
 #%%
-# Here, the coordinates ``iso``, ``Cq``, and ``eta`` are drawn
-# from a three-dimension multivariate normal distribution of isotropic chemical
-# shift, electric quadrupole coupling constant, and quadrupole asymmetry
-# parameters, respectively. The mean of the distribution is given by the variable
-# ``mean`` and holds a value of 20 ppm, 6.5 MHz, and 0.3 for the isotropic chemical
-# shift, electric quadrupole coupling constant, and quadrupole asymmetry parameter,
-# respectively. Similarly, the variable ``covariance`` holds the covariance matrix
-# of the multivariate normal distribution. The two-dimensional plots from this
-# three-dimensional distribution are shown below.
+# Here, the coordinates ``iso``, ``Cq``, and ``eta`` are drawn from a three-dimension
+# multivariate normal distribution of the isotropic chemical shift, electric quadrupole
+# coupling constant, and quadrupole asymmetry parameters, respectively. The mean of the
+# distribution is given by the variable ``mean`` and holds a value of 20 ppm, 6.5 MHz,
+# and 0.3 for the isotropic chemical shift, electric quadrupole coupling constant, and
+# quadrupole asymmetry parameter, respectively. Similarly, the variable ``covariance``
+# holds the covariance matrix of the multivariate normal distribution. The
+# two-dimensional plots from this three-dimensional distribution are shown below.
 
 #%%
-import matplotlib.pyplot as plt
-
 _, ax = plt.subplots(1, 3, figsize=(9, 3))
 ax[0].scatter(iso, Cq, color="black", s=0.5, alpha=0.3)
 ax[0].set_xlabel("isotropic chemical shift / ppm")
@@ -56,30 +61,27 @@ plt.tight_layout()
 plt.show()
 #%%
 #
-# Let's create the site and isotopomer objects from these parameters. Note, we create
-# single-site isotopomers for optimum performance.
+# Let's create the site and spin-system objects from these parameters. Note, we create
+# single-site spin systems for optimum performance.
 
 #%%
-from mrsimulator import Simulator, Site, Isotopomer
+from mrsimulator import Simulator, Site, SpinSystem
 
-isotopomers = []
+spin_systems = []
 for i, c, e in zip(iso, Cq, eta):
     site = Site(
         isotope="27Al",
         isotropic_chemical_shift=i,
         quadrupolar={"Cq": c * 1e6, "eta": e},  # Cq in Hz
     )
-    isotopomers.append(Isotopomer(sites=[site]))
-
-#%% Create a central transition selective Bloch decay spectrum method.
+    spin_systems.append(SpinSystem(sites=[site], abundance=2.5e-4))
 
 #%%
 # Static line-shape
 # -----------------
-# Observe the static :math:`^{27}\text{Al}` line-shape simulation.
+# Observe the static :math:`^{27}\text{Al}` line-shape simulation. First,
+# create a central transition selective Bloch decay spectrum method.
 
-#%%
-# Now, that we have the isotopomers, create a Simulator object and add the isotopomers.
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
 static_method = BlochDecayCentralTransitionSpectrum(
@@ -87,17 +89,17 @@ static_method = BlochDecayCentralTransitionSpectrum(
 )
 
 #%%
-# Create the simulator object and add the isotopomers and the method.
+# Create the simulator object and add the spin systems and the method.
 sim = Simulator()
-sim.isotopomers += isotopomers  # add isotopomers
-sim.methods += [static_method]  # add method
+sim.spin_systems += spin_systems  # add the spin systems
+sim.methods += [static_method]  # add the method
 sim.run()
+
 
 #%%
 # The plot of the corresponding spectrum.
 
 x, y = sim.methods[0].simulation.to_list()
-plt.figure(figsize=(4, 3))
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("$^{27}$Al frequency / ppm")
 plt.xlim(x.value.max(), x.value.min())
@@ -106,9 +108,9 @@ plt.tight_layout()
 plt.show()
 
 #%%
-# Spinning sideband simulation at magic angle
-# -------------------------------------------
-# Simulation of the same isotopomer system at magic angle and spinning at 25 kHz.
+# Spinning sideband simulation at the magic angle
+# -----------------------------------------------
+# Simulation of the same spin systems at the magic angle and spinning at 25 kHz.
 
 MAS_method = BlochDecayCentralTransitionSpectrum(
     channels=["27Al"],
@@ -128,7 +130,6 @@ sim.run()
 #%% and the corresponding plot.
 
 x, y = sim.methods[0].simulation.to_list()
-plt.figure(figsize=(4, 3))
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("$^{27}$Al frequency / ppm")
 plt.xlim(x.value.max(), x.value.min())

@@ -10,7 +10,7 @@ Fitting Sodium Silicate.
 # Often, after obtaining an NMR measurement we must fit tensors to our data so we can
 # obtain the tensor parameters. In this example, we will illustrate the use of the *mrsimulator*
 # method to simulate the experimental spectrum and fit the simulation to the data allowing us to
-# extract the tensor parameters for our isotopomers. We will be using the `LMFIT <https://lmfit.github.io/lmfit-py/>`_
+# extract the tensor parameters for our spin systems. We will be using the `LMFIT <https://lmfit.github.io/lmfit-py/>`_
 # methods to establish fitting parameters and fit the spectrum. The following examples will show fitting with
 # two synthetic :math:`^{29}\text{Si}` spectra--cuspidine and wollastonite--as well as the
 # measurements from an :math:`^{17}\text{O}` experiment on :math:`\text{Na}_{2}\text{SiO}_{3}`.
@@ -51,7 +51,7 @@ plt.show()
 
 #%%
 
-from mrsimulator import Simulator, Isotopomer, Site
+from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 from mrsimulator.post_simulation import PostSimulator
 
@@ -65,7 +65,7 @@ O17_2 = Site(
     isotope="17O", isotropic_chemical_shift=40, quadrupolar={"Cq": 2400000, "eta": 0.18}
 )
 
-isotopomers = [Isotopomer(sites=[site]) for site in [O17_1, O17_2]]
+spin_systems = [SpinSystem(sites=[site]) for site in [O17_1, O17_2]]
 
 
 count = oxygen_experiment.dimensions[0].count
@@ -91,13 +91,13 @@ PS = PostSimulator(
     apodization=[{"args": [100], "function": "Lorentzian", "dimension": 0}],
 )
 
-sim.isotopomers += isotopomers
+sim.spin_systems += spin_systems
 sim.methods += [method]
 sim.methods[0].post_simulation = PS
 sim.methods[0].experiment = oxygen_experiment
 
 # To avoid querying at every iteration we will save the relevant transition pathways
-for iso in isotopomers:
+for iso in spin_systems:
     iso.transition_pathways = method.get_transition_pathways(iso).tolist()
 sim.run()
 
@@ -117,7 +117,7 @@ plt.show()
 # Once we have our simulation we must create our list of parameters to use in our
 # fitting. We will be using the `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_ class from *LMFIT*.
 #
-# In each experiment the number of isotopomers and sites present as well as their
+# In each experiment the number of spin systems and sites present as well as their
 # attributes may vary. To simplify the parameter list creation we will use the
 # :func:`~mrsimulator.spectral_fitting.make_fitting_parameters`
 
@@ -127,7 +127,7 @@ plt.show()
 from mrsimulator.spectral_fitting import make_fitting_parameters
 
 params = make_fitting_parameters(sim)
-params.pretty_print()
+params
 
 #%%
 # With an experimental spectrum, a simulaton, and a list of parameters we are now
@@ -149,7 +149,7 @@ from lmfit import Minimizer, report_fit
 
 minner = Minimizer(min_function, params, fcn_args=(sim, "Lorentzian"))
 result = minner.minimize()
-report_fit(result)
+result
 
 #%%
 # Next, we can compare the fit to the experimental data:

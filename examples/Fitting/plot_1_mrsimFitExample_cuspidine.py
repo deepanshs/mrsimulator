@@ -10,7 +10,7 @@ Fitting Cusipidine.
 # Often, after obtaining an NMR measurement we must fit tensors to our data so we can
 # obtain the tensor parameters. In this example, we will illustrate the use of the *mrsimulator*
 # method to simulate the experimental spectrum and fit the simulation to the data allowing us to
-# extract the tensor parameters for our isotopomers. We will be using the `LMFIT <https://lmfit.github.io/lmfit-py/>`_
+# extract the tensor parameters for our spin systems. We will be using the `LMFIT <https://lmfit.github.io/lmfit-py/>`_
 # methods to establish fitting parameters and fit the spectrum. The following examples will show fitting with
 # two synthetic :math:`^{29}\text{Si}` spectra--cuspidine and wollastonite--as well as the
 # measurements from an :math:`^{17}\text{O}` experiment on :math:`\text{Na}_{2}\text{SiO}_{3}`.
@@ -50,7 +50,7 @@ plt.show()
 #%%
 
 
-from mrsimulator import Simulator, Isotopomer, Site
+from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.post_simulation import PostSimulator
 
@@ -75,7 +75,7 @@ PS = PostSimulator(
 
 
 sim = Simulator()
-sim.isotopomers += [Isotopomer(name="Si29", sites=[S29], abundance=100)]
+sim.spin_systems += [SpinSystem(name="Si29", sites=[S29], abundance=100)]
 sim.methods += [method]
 
 sim.methods[0].experiment = synthetic_experiment
@@ -114,8 +114,7 @@ params.add(name="eta", value=0.6, min=0, max=1)
 params.add(name="zeta", value=-60)
 params.add(name="sigma", value=200)
 params.add(name="scale", value=1)
-
-params.pretty_print()
+params
 
 #%%
 # We will next set up an error function that will update the simulation throughout the minimization.
@@ -129,7 +128,7 @@ def test_function(params, data, sim):
     intensity = data.dependent_variables[0].components[0].real
 
     # Here, we update simulation parameters iso, eta, and zeta for the site object
-    site = sim.isotopomers[0].sites[0]
+    site = sim.spin_systems[0].sites[0]
     site.isotropic_chemical_shift = values["iso"]
     site.shielding_symmetric.eta = values["eta"]
     site.shielding_symmetric.zeta = values["zeta"]
@@ -154,7 +153,7 @@ def test_function(params, data, sim):
 
 minner = Minimizer(test_function, params, fcn_args=(synthetic_experiment, sim))
 result = minner.minimize()
-report_fit(result)
+result
 
 #%%
 # After the fit, we can plot the new simulated spectrum.

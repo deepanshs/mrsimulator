@@ -23,7 +23,7 @@
       }]
     }]
   }],
-  "isotopomers": [{
+  "spin_systems": [{
     "sites": [{
       "isotope": "23Na",
       "isotropic_chemical_shift": "0 ppm",

@@ -12,11 +12,11 @@ __email__ = "deepansh2012@gmail.com"
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def one_d_spectrum(method,
-       list isotopomers,
+       list spin_systems,
        int verbose=0,
        int number_of_sidebands=90,
        unsigned int integration_density=72,
-       bool_t decompose=False,
+       unsigned int decompose_spectrum=0,
        unsigned int integration_volume=1,
        bool_t interpolation=True):
     """
@@ -41,9 +41,10 @@ def one_d_spectrum(method,
         frequency will result in a better powder averaging.
         The default value is 72.
         Read more on the `Geodesic polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
-    :ivar decompose:
-        A boolean. If true, returns an ordered list of spectrum corresponding
-        to the ordered list of isotopomers.
+    :ivar decompose_spectrum:
+        An unsigned integer. When value is 0, the spectum is a sum of spectrum from all
+        spin-systems. If value is 1, spectrum from individual spin-systems is stored
+        separately.
     """
 
     cdef int transition_increment
@@ -227,7 +228,7 @@ def one_d_spectrum(method,
 
     # ---------------------------------------------------------------------
     # sample _______________________________________________________________
-    for index, isotopomer in enumerate(isotopomers):
+    for index, isotopomer in enumerate(spin_systems):
         abundance = isotopomer.abundance
         isotopes = [site.isotope.symbol for site in isotopomer.sites]
         if channel not in isotopes:
@@ -394,15 +395,15 @@ def one_d_spectrum(method,
                 else:
                     temp = temp[::-1]
 
-            if decompose:
+            if decompose_spectrum == 1:
                 amp_individual.append(temp)
             else:
                 amp1 += temp
         else:
-            if decompose:
+            if decompose_spectrum == 1:
                 amp_individual.append([])
 
-    if decompose and len(amp_individual) != 0:
+    if decompose_spectrum == 1 and len(amp_individual) != 0:
         amp1 = amp_individual
 
     return amp1, index_
