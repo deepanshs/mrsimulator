@@ -109,7 +109,6 @@ class-diagram*
 *.out
 *.prof
 *.mp4
-*.html
 *.temp
 *.csdf
 test_os.py
