@@ -323,9 +323,6 @@ in units of ppm, and ``y`` is the response array.
 .. .. testsetup::
 ..    >>> plot_save(freq, amp, "example")  # doctest: +SKIP
 
-References
-----------
-
 .. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.
         Core Scientific Dataset Model: A lightweight and portable model and file format
         for multi-dimensional scientific data. PLOS ONE, 2020, **15**, 1.

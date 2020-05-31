@@ -80,8 +80,6 @@ plt.tight_layout()
 plt.show()
 
 #%%
-# Reference
-# ---------
 #
 # .. [#f3] Moudrakovski, I., Lang, S., Patchkovskii, S., and Ripmeester, J. High field
 #       :math:`^{33}\text{S}` solid state NMR and first-principles calculations in

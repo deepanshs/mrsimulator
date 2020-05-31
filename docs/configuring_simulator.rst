@@ -329,9 +329,6 @@ the simulation.
 .. number of transition pathways. When using this configuration, care must be taken, else
 .. one could easily generate gigabytes of data, and run into a memory issue.
 
-Reference
----------
-
 .. [#f4] Edén, M. and Levitt, M. H. Computation of orientational averages in
-         solid-state nmr by gaussian spherical quadrature. J. Mag. Res.,
-         **132**, *2*, 220–239, 1998. `doi:10.1006/jmre.1998.1427 <https://doi.org/10.1006/jmre.1998.1427>`_.
+        solid-state nmr by gaussian spherical quadrature. J. Mag. Res.,
+        **132**, *2*, 220–239, 1998. `doi:10.1006/jmre.1998.1427 <https://doi.org/10.1006/jmre.1998.1427>`_.

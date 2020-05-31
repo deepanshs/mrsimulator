@@ -23,7 +23,7 @@ now = datetime.datetime.now()
 year = now.year
 
 project = "mrsimulator"
-copyright = f"2019-{year}, The Mrsimulator project"
+copyright = f"2019-{year}, The Mrsimulator developers"
 author = "Deepansh J. Srivastava"
 
 # get version number from the file
@@ -42,6 +42,7 @@ release = __version__
 show_authors = True
 # If your documentation needs a minimal Sphinx version, state it here.
 needs_sphinx = "2.0"
+last_updated = True
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -64,9 +65,6 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx_tabs.tabs",
 ]
-
-
-autosummary_generate = True
 
 # ---------------------------------------------------------------------------- #
 #                               Sphinx Gallery config                          #
@@ -125,7 +123,11 @@ sphinx_gallery_conf = {
         # The module you locally document uses None
         "mrsimulator": None,
     },
+    # "compress_images": ("images", "thumbnails"),
+    # "show_memory": True,
 }
+# generate autosummary even if no references
+autosummary_generate = True
 
 # copybutton_prompt_text = ">>> "
 # copybutton_only_copy_prompt_lines = False
@@ -279,7 +281,7 @@ html_logo = "_static/mrsimulator.png"
 html_favicon = "_static/favicon.ico"
 
 html_sidebars = {
-    "**": ["searchbox.html", "globaltoc.html", "sourcelink.html"],
+    "**": ["searchbox.html", "globaltoc.html"],
     "using/windows": ["searchbox.html", "windowssidebar.html"],
 }
 

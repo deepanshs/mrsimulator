@@ -11,15 +11,19 @@ h1 {
 }
 
 h2 {
+  padding-bottom: 1.2em;
   font-size: 1.9em;
+  padding-bottom: 0.2em;
+  border-bottom: 1px solid silver;
+  margin-bottom: 0.6em;
 }
 
 h3 {
-  font-size: 1.6em;
+  font-size: 1.67em;
 }
 
 h4 {
-  font-size: 1.4em;
+  font-size: 1.35em;
 }
 
 h5 {
@@ -114,6 +118,10 @@ table caption:hover {
   padding: 0;
 }
 
+.docutils.container {
+  width: auto;
+}
+
 .ui.segment[class*="bottom attached"] {
   width: 100%;
   padding: 2em;
@@ -129,18 +137,6 @@ table caption:hover {
 
 .sphinx-menu > a > div {
   padding: 0;
-}
-
-.item.docutils.container:nth-child(1) {
-  width: 105px;
-}
-
-.item.docutils.container:nth-child(2) {
-  width: 140px;
-}
-
-.item.docutils.container:nth-child(3) {
-  width: 143px;
 }
 
 #navbar-related {
@@ -298,15 +294,27 @@ footer {
   max-width: 900px;
   padding-left: 2em;
   padding-right: 2em;
-  padding-top: 3.5em;
+  padding-top: 1.5em;
   padding-bottom: 3.5em;
   color: whitesmoke;
   background-color: #333333;
   box-shadow: 0 0 30px 0 rgb(128, 128, 128, 0.3);
 }
 
+footer .flex {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 2em;
+}
+footer .flex a {
+  text-decoration: none;
+}
 footer a {
-  filter: invert(1);
+  color: rgb(255, 166, 94);
+}
+footer a:hover {
+  color: rgb(255, 205, 164);
 }
 
 table:not([class]):not([id]) {

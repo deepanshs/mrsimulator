@@ -171,7 +171,7 @@ are the relative orientation of the EFG tensor from the nuclear shielding tensor
 
 .. cssclass:: table-bordered table-striped centered
 .. _table_spin_system:
-.. list-table:: The attributes of an SpinSystem object.
+.. list-table:: The attributes of a SpinSystem object.
   :widths: 15 15 70
   :header-rows: 1
 

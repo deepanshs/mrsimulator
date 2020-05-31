@@ -173,8 +173,6 @@ plt.tight_layout()
 plt.show()
 
 #%%
-# Reference
-# ---------
 #
 # .. [#f5] T. M. Clark, P. Florian, J. F. Stebbins, and P. J. Grandinetti,
 #       An :math:`^{17}\text{O}` NMR Investigation of Crystalline Sodium Metasilicate:

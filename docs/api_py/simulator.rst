@@ -27,7 +27,7 @@ Simulator
 .. _config_api:
 
 ConfigSimulator
----------------
+===============
 
 .. currentmodule:: mrsimulator.simulator
 

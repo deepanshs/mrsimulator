@@ -1,12 +1,13 @@
 #!/bin/bash
 #
+# docker run -it -v $(pwd):/io quay.io/pypa/manylinux2014_x86_64 /io/build_wheel_linux.sh
 # docker run -it -v $(pwd):/io quay.io/pypa/manylinux2010_x86_64 /io/build_wheel_linux.sh
 #
 
 set -e -x
 cd io
 
-# used with docker image - quay.io/pypa/manylinux2010_x86_64
+# used with docker image - quay.io/pypa/manylinux2014_x86_64
 # Install a system package required by our library
 yum install -y openblas-devel git fftw-devel
 
