@@ -295,7 +295,7 @@ footer {
   padding-left: 2em;
   padding-right: 2em;
   padding-top: 1.5em;
-  padding-bottom: 3.5em;
+  padding-bottom: 2.25em;
   color: whitesmoke;
   background-color: #333333;
   box-shadow: 0 0 30px 0 rgb(128, 128, 128, 0.3);
@@ -305,7 +305,7 @@ footer .flex {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  padding-bottom: 2em;
+  padding-bottom: 0.5em;
 }
 footer .flex a {
   text-decoration: none;
