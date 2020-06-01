@@ -49,7 +49,7 @@
  * @param mi A float containing the spin quantum number of the initial energy
  *      state.
  */
-static inline void FCF_1st_order_nuclear_shielding_Hamiltonian(
+static inline void FCF_1st_order_nuclear_shielding_tensor_components(
     double *restrict Lambda_0, void *restrict Lambda_2,
     const double omega_0_delta_iso_in_Hz, const double omega_0_zeta_sigma_in_Hz,
     const double eta, const double *Theta, const float mf, const float mi) {
@@ -57,7 +57,7 @@ static inline void FCF_1st_order_nuclear_shielding_Hamiltonian(
   double transition_fn = STF_p(mf, mi);
 
   // Spatial orientation function
-  sSOT_1st_order_nuclear_shielding_Hamiltonian(
+  sSOT_1st_order_nuclear_shielding_tensor_components(
       Lambda_0, Lambda_2, omega_0_delta_iso_in_Hz, omega_0_zeta_sigma_in_Hz,
       eta, Theta);
 
@@ -95,15 +95,15 @@ static inline void FCF_1st_order_nuclear_shielding_Hamiltonian(
  * @param mi A float containing the spin quantum number of the initial energy
  *      state.
  */
-static inline void FCF_1st_order_electric_quadrupole_Hamiltonian(
+static inline void FCF_1st_order_electric_quadrupole_tensor_components(
     void *restrict Lambda_2, const double spin, const double Cq_in_Hz,
     const double eta, const double *Theta, const float mf, const float mi) {
   // Spin transition function
   double transition_fn = STF_d(mf, mi);
 
   // Spatial orientation function
-  sSOT_1st_order_electric_quadrupole_Hamiltonian(Lambda_2, spin, Cq_in_Hz, eta,
-                                                 Theta);
+  sSOT_1st_order_electric_quadrupole_tensor_components(Lambda_2, spin, Cq_in_Hz,
+                                                       eta, Theta);
 
   // frequency component function from second-rank irreducible tensor
   cblas_dscal(10, transition_fn, (double *)Lambda_2, 1);
@@ -150,7 +150,7 @@ static inline void FCF_1st_order_electric_quadrupole_Hamiltonian(
  * @param mi A float containing the spin quantum number of the initial energy
  *      state.
  */
-static inline void FCF_2nd_order_electric_quadrupole_Hamiltonian(
+static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
     double *restrict Lambda_0, void *restrict Lambda_2, void *restrict Lambda_4,
     const double spin, const double v0_in_Hz, const double Cq_in_Hz,
     const double eta, const double *Theta, const float mf, const float mi) {
@@ -159,7 +159,7 @@ static inline void FCF_2nd_order_electric_quadrupole_Hamiltonian(
   STF_cL(cl_value, mf, mi, spin);
 
   // Spatial orientation function
-  sSOT_2nd_order_electric_quadrupole_Hamiltonian(
+  sSOT_2nd_order_electric_quadrupole_tensor_components(
       Lambda_0, Lambda_2, Lambda_4, spin, v0_in_Hz, Cq_in_Hz, eta, Theta);
 
   // frequency component function from zeroth-rank irreducible tensor

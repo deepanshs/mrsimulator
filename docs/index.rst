@@ -72,11 +72,10 @@ available in python.
 
 At present, the `Mrsimulator` package offers the following
 
-- Real-time simulation
-    - of one-dimensional solid-state NMR line-shapes. See our :ref:`benchmark` results.
+- **Real-time simulation** of one-dimensional solid-state NMR line-shapes. See our :ref:`benchmark` results.
 
-- Uncoupled spin-system for
-    - spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
+- Uncoupled spin-system
+    - for spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
     - at arbitrary macroscopic magnetic flux density,
     - at arbitrary rotor angles, and
     - at arbitrary spinning frequency.

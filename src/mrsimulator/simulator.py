@@ -213,7 +213,7 @@ class Simulator(BaseModel):
                 allow_nan=False,
             )
 
-    def run(self, method_index=None, **kwargs):
+    def run(self, method_index=None, pack_as_csdm=True, **kwargs):
         """Run the simulation and compute lineshape.
 
         Args:
@@ -245,7 +245,10 @@ class Simulator(BaseModel):
             else:
                 simulated_data = [amp]
 
-            method.simulation = self._as_csdm_object(simulated_data, method)
+            if pack_as_csdm:
+                method.simulation = self._as_csdm_object(simulated_data, method)
+            else:
+                method.simulation = np.asarray(simulated_data)
 
     # """The frequency is in the units of Hz."""
     # gamma = method.isotope.gyromagnetic_ratio

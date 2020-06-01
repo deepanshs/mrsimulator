@@ -42,7 +42,6 @@ release = __version__
 show_authors = True
 # If your documentation needs a minimal Sphinx version, state it here.
 needs_sphinx = "2.0"
-last_updated = True
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -54,11 +53,9 @@ extensions = [
     "sphinx.ext.mathjax",
     # "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
-    # "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
     # "sphinxcontrib.bibtex",
-    # "sphinx.ext.numfig",
     "breathe",
     "sphinxjp.themes.basicstrap",
     "sphinx_gallery.gen_gallery",
@@ -276,9 +273,10 @@ html_theme_options = {
 }
 
 html_style = "style.css"
-html_title = f"Mrsimulator Project v{__version__}"
+html_title = f"Mrsimulator Project:Doc v{__version__}"
 html_logo = "_static/mrsimulator.png"
 html_favicon = "_static/favicon.ico"
+html_last_updated_fmt = ""
 
 html_sidebars = {
     "**": ["searchbox.html", "globaltoc.html"],

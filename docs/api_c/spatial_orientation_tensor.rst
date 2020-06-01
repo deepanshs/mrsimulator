@@ -18,14 +18,14 @@ Single nucleus spatial orientation tensors
 First order Nuclear shielding
 """""""""""""""""""""""""""""
 
-.. doxygenfunction:: sSOT_1st_order_nuclear_shielding_Hamiltonian()
+.. doxygenfunction:: sSOT_1st_order_nuclear_shielding_tensor_components()
 
 First order Electric Quadrupole
 """""""""""""""""""""""""""""""
 
-.. doxygenfunction:: sSOT_1st_order_electric_quadrupole_Hamiltonian()
+.. doxygenfunction:: sSOT_1st_order_electric_quadrupole_tensor_components()
 
 Second order Electric Quadrupole
 """"""""""""""""""""""""""""""""
 
-.. doxygenfunction:: sSOT_2nd_order_electric_quadrupole_Hamiltonian()
+.. doxygenfunction:: sSOT_2nd_order_electric_quadrupole_tensor_components()

@@ -162,9 +162,9 @@ table caption:hover {
   bottom: 0;
   left: 0;
   height: calc(100% - 3.5em);
+  width: 25%;
   padding: 0;
   background-color: #333333;
-  width: 25%;
   overflow: hidden;
   z-index: 50;
 }
@@ -174,19 +174,21 @@ table caption:hover {
   overflow-x: hidden;
   overflow-y: scroll;
   width: calc(100% + 16px);
-  height: calc(100% - 20px);
+  height: calc(100% - 2em);
   padding-top: 1em;
-  padding-bottom: 20px;
-  /* box-sizing: border-box; */
+  padding-right: 15px;
+  /* margin-bottom: 2em; */
+  box-sizing: border-box;
+  padding-bottom: 0.5em;
 }
 
 /* logo */
 .sidebar > .logo {
   margin: auto;
-  padding-top: 1em;
-  padding-bottom: 1em;
-  padding-left: 0.5em;
-  padding-right: 1.5em;
+  padding: 1em;
+  /* padding-bottom: 1em; */
+  /* padding-left: 0.5em;
+  padding-right: 1.5em; */
 }
 
 .sidebar .logo img {
@@ -206,8 +208,10 @@ table caption:hover {
 }
 
 .search.form-inline > .input-append.input-group {
-  width: 22vw;
-  margin-left: -1em;
+  display: flex;
+  width: 25vw;
+  padding-left: 28px;
+  padding-right: 28px;
 }
 
 .sidebar.hidden-xs > ul {

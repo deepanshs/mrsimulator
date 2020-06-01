@@ -7,6 +7,7 @@ from typing import ClassVar
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Union
 
 import csdmpy as cp
 import numpy as np
@@ -111,11 +112,10 @@ class SpectralDimension(Parseable):
     r"""Base SpectralDimension class defines the dimensions of the method.
 
     Attributes:
-        count: An optional integer with the number of points, :math:`N`,
-                along the dimension. The default value is 1024.
-        spectral_width: An optional float with the spectral width,
-                :math:`\Delta x`, along the dimension in units of Hz. The default
-                value is 25 kHz.
+        count: An optional integer with the number of points, :math:`N`, along the
+            dimension. The default value is 1024.
+        spectral_width: An optional float with the spectral width, :math:`\Delta x`,
+            along the dimension in units of Hz. The default value is 25 kHz.
         reference_offset: An `optional` float with the reference offset, :math:`x_0`
                 along the dimension in units of Hz. The default value is 0.
         origin_offset: An `optional` float with the origin offset (Larmor frequency)
@@ -243,9 +243,9 @@ class Method(Parseable):
     description: Optional[str] = ""
     channels: List[str]
     spectral_dimensions: List[SpectralDimension]
-    simulation: Optional[cp.CSDM]
+    simulation: Optional[Union[cp.CSDM, np.ndarray]]
     post_simulation: Optional[PostSimulator]
-    experiment: Optional[cp.CSDM]
+    experiment: Optional[Union[cp.CSDM, np.ndarray]]
     # post_simulation: Optional[Dict]
 
     property_units: Dict = {

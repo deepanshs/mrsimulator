@@ -129,7 +129,7 @@ def add_site(doctest_namespace):
     method = BlochDecayCentralTransitionSpectrum(
         channels=["17O"],
         rotor_frequency=14000,
-        spectral_dimensions=[{"count": 2046, "spectral_width": 50000}],
+        spectral_dimensions=[{"count": 2048, "spectral_width": 50000}],
     )
 
     sim_coesite = Simulator()

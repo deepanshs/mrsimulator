@@ -16,7 +16,7 @@ def pre_setup(isotope, shift, reference_offset):
             channels=[isotope],
             spectral_dimensions=[
                 {
-                    "count": 2046,
+                    "count": 2048,
                     "spectral_width": "25 kHz",
                     "reference_offset": f"{reference_offset} Hz",
                     "events": [{"magnetic_flux_density": "9.4 T"}],

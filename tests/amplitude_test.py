@@ -94,7 +94,7 @@ def test_with_configuration_setting():
 
 def test_number_of_points():
     sim = pre_setup()
-    sim.methods[0].spectral_dimensions[0].count = 2046
+    sim.methods[0].spectral_dimensions[0].count = 2048
     sim.run()
     y_static = sim.methods[0].simulation.dependent_variables[0].components[0]
 

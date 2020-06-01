@@ -21,7 +21,7 @@ method = BlochDecaySpectrum(
     magnetic_flux_density=9.4,
     rotor_frequency=14000,
     spectral_dimensions=[
-        {"count": 2046, "spectral_width": 20000, "reference_offset": 0}
+        {"count": 2048, "spectral_width": 20000, "reference_offset": 0}
     ],
 )
 

@@ -17,7 +17,7 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 
 #%%
 # In this section, we illustrate the simulation of a quadrupolar spectrum arising from
-# a distribution of the electric field gradient (EFG) tensors of an amorphous material.
+# a distribution of the electric field gradient (EFG) tensors from an amorphous material.
 # We proceed by assuming a multi-variate normal distribution, as follows,
 import numpy as np
 from scipy.stats import multivariate_normal
@@ -39,21 +39,25 @@ iso, Cq, eta = multivariate_normal.rvs(mean=mean, cov=covariance, size=n).T
 
 #%%
 _, ax = plt.subplots(1, 3, figsize=(9, 3))
+
+# isotropic shift v.s. quadrupolar coupling constant
 ax[0].scatter(iso, Cq, color="black", s=0.5, alpha=0.3)
 ax[0].set_xlabel("isotropic chemical shift / ppm")
 ax[0].set_ylabel("Cq / MHz")
 ax[0].set_xlim(10, 30)
 ax[0].set_ylim(-10, 20)
 
+# isotropic shift v.s. quadrupolar asymmetry
 ax[1].scatter(iso, eta, color="black", s=0.5, alpha=0.3)
 ax[1].set_xlabel("isotropic chemical shift / ppm")
-ax[1].set_ylabel("quadrupolar asymmetry")
+ax[1].set_ylabel(r"quadrupolar asymmetry, $\eta$")
 ax[1].set_xlim(10, 30)
 ax[1].set_ylim(0, 1)
 
+# quadrupolar coupling constant v.s. quadrupolar asymmetry
 ax[2].scatter(Cq, eta, color="black", s=0.5, alpha=0.3)
 ax[2].set_xlabel("Cq / MHz")
-ax[2].set_ylabel("quadrupolar asymmetry")
+ax[2].set_ylabel(r"quadrupolar asymmetry, $\eta$")
 ax[2].set_xlim(-10, 20)
 ax[2].set_ylim(0, 1)
 
@@ -74,7 +78,7 @@ for i, c, e in zip(iso, Cq, eta):
         isotropic_chemical_shift=i,
         quadrupolar={"Cq": c * 1e6, "eta": e},  # Cq in Hz
     )
-    spin_systems.append(SpinSystem(sites=[site], abundance=2.5e-4))
+    spin_systems += [SpinSystem(sites=[site], abundance=2.5e-4)]
 
 #%%
 # Static line-shape
@@ -89,7 +93,7 @@ static_method = BlochDecayCentralTransitionSpectrum(
 )
 
 #%%
-# Create the simulator object and add the spin systems and the method.
+# Create the simulator object and add the spin systems and method.
 sim = Simulator()
 sim.spin_systems += spin_systems  # add the spin systems
 sim.methods += [static_method]  # add the method

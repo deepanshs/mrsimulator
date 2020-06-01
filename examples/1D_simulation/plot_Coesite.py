@@ -17,7 +17,7 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 #%%
 # Coesite is a high-pressure (2-3 GPa) and high-temperature (700°C) polymorph of silicon
 # dioxide :math:`\text{SiO}_2`. Coesite has five crystallographic :math:`^{17}\text{O}`
-# sites. In the following, use the :math:`^{17}\text{O}` EFG tensor information from
+# sites. In the following, we use the :math:`^{17}\text{O}` EFG tensor information from
 # Grandinetti et. al. [#f2]_
 from mrsimulator import SpinSystem
 from mrsimulator import Simulator
@@ -48,7 +48,7 @@ sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
 
 #%%
 # **Step 2** Create the spin systems from these sites. For optimum performance, we
-# create five single-site spin systems instead of a five-site spin-system. The
+# create five single-site spin systems instead of a single five-site spin-system. The
 # abundance of each spin-system is taken from above reference.
 
 abundance = [0.83, 1.05, 2.16, 2.05, 1.90]
@@ -62,7 +62,7 @@ method = BlochDecayCentralTransitionSpectrum(
     channels=["17O"],
     rotor_frequency=14000,  # in Hz
     spectral_dimensions=[
-        {"count": 2046, "spectral_width": 50000}  # spectral_width is in Hz
+        {"count": 2048, "spectral_width": 50000}  # spectral_width is in Hz
     ],
 )
 
@@ -70,7 +70,7 @@ method = BlochDecayCentralTransitionSpectrum(
 # The above method is set up to record the :math:`^{17}\text{O}` resonances at the
 # magic angle, spinning at 14 kHz and 9.4 T (default, if the value is not provided)
 # external magnetic flux density. The resonances are recorded over 50 kHz spectral
-# width using 2046 points.
+# width using 2048 points.
 
 #%%
 # **Step 4** Create the Simulator object and add the method and spin-system objects.

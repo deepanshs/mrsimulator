@@ -22,7 +22,7 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 #
 # In this section, we illustrate how the ``Mrsimulator`` library may be used in
 # simulating the NMR spectrum of amorphous materials. We model this by assuming a
-# distribution of interaction tensors for the amorphous materials. For example,
+# distribution of interaction tensors. For example,
 # consider a tri-variate normal distribution of the shielding tensor parameters,
 # `i.e.`, the isotropic chemical shift, the anisotropy parameter, :math:`\zeta`,
 # and the asymmetry parameter, :math:`\eta`, as follows,
@@ -46,21 +46,25 @@ iso, zeta, eta = multivariate_normal.rvs(mean=mean, cov=covariance, size=n).T
 
 #%%
 _, ax = plt.subplots(1, 3, figsize=(9, 3))
+
+# isotropic shift v.s. shielding anisotropy
 ax[0].scatter(iso, zeta, color="black", s=0.5, alpha=0.3)
 ax[0].set_xlabel("isotropic chemical shift / ppm")
-ax[0].set_ylabel("shielding anisotropy / ppm")
+ax[0].set_ylabel(r"shielding anisotropy, $\zeta$ / ppm")
 ax[0].set_xlim(-120, -80)
 ax[0].set_ylim(0, 100)
 
+# isotropic shift v.s. shielding asymmetry
 ax[1].scatter(iso, eta, color="black", s=0.5, alpha=0.3)
 ax[1].set_xlabel("isotropic chemical shift / ppm")
-ax[1].set_ylabel("shielding asymmetry")
+ax[1].set_ylabel(r"shielding asymmetry, $\eta$")
 ax[1].set_xlim(-120, -80)
 ax[1].set_ylim(0, 1)
 
+# shielding anisotropy v.s. shielding asymmetry
 ax[2].scatter(zeta, eta, color="black", s=0.5, alpha=0.3)
-ax[2].set_xlabel("shielding anisotropy / ppm")
-ax[2].set_ylabel("shielding asymmetry")
+ax[2].set_xlabel(r"shielding anisotropy, $\zeta$ / ppm")
+ax[2].set_ylabel(r"shielding asymmetry, $\eta$")
 ax[2].set_xlim(0, 100)
 ax[2].set_ylim(0, 1)
 
@@ -80,7 +84,7 @@ for i, z, e in zip(iso, zeta, eta):
         isotropic_chemical_shift=i,
         shielding_symmetric={"zeta": z, "eta": e},
     )
-    spin_systems.append(SpinSystem(sites=[site], abundance=2.5e-4))
+    spin_systems += [SpinSystem(sites=[site], abundance=2.5e-4)]
 
 #%%
 # Let's also create the Bloch decay spectrum method.

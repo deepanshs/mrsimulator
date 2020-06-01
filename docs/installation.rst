@@ -14,14 +14,18 @@ users only),
 
       $ python --version
 
-For `Mac` users, python version 3 is installed under the name `python3`.
-If you do not have python or have an older version of python, visit
-`Python <https://www.python.org/downloads/>`_ or
-`anaconda <https://www.anaconda.com/products/individual/>`_ and follow their
-installation instructions.
+For `Mac` users, python version 3 is installed under the name `python3`. You may replace
+`python` for `python3` in the above command.
 
 For `Windows` users, follow the instruction under the Windows tab in the section
 :ref:`on_local_machine`.
+
+.. seealso::
+
+  If you do not have python or have an older version of python, you may visit
+  `Python <https://www.python.org/downloads/>`_ or
+  `anaconda <https://www.anaconda.com/products/individual/>`_ and follow their
+  instructions to install python.
 
 .. We recommend installing `anaconda <https://www.anaconda.com/distribution/>`_
 .. distribution for python version 3.6 or higher. The anaconda distribution
@@ -211,7 +215,7 @@ The following is an example of a Conda environment.
 .. code-block:: bash
 
     $ conda create -n mrsimulator-dev python=3.7
-    @ conda activate mrsimulator-dev
+    $ conda activate mrsimulator-dev
 
 **Step-B** Clone the mrsimulator repository using git and navigate into the package
 folder.
@@ -254,7 +258,6 @@ Navigate to the ``docs`` folder within the mrsimulator package folder, and type,
 
 .. code-block:: bash
 
-    $ cd docs/
     $ make html
 
 The above command will build the documentation and store the build at
@@ -277,7 +280,7 @@ Check your build
 
 If the installation is successful, you should be able to run the following test
 file in your terminal. Download the test file
-`here <https://raw.github.com/DeepanshS/mrsimulator-test/master/test_file_v0.3.py?raw=true>`_.
+`here <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/master/test_file_v0.3.py?raw=true>`_.
 
 .. code-block:: text
 

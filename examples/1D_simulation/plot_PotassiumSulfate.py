@@ -48,7 +48,7 @@ method = BlochDecayCentralTransitionSpectrum(
     rotor_frequency=14000,  # in Hz
     spectral_dimensions=[
         {
-            "count": 2046,
+            "count": 2048,
             "spectral_width": 5000,  # in Hz
             "reference_offset": 22500,  # in Hz
         }

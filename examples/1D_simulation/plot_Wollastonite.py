@@ -48,7 +48,7 @@ sites = [S29_1, S29_2, S29_3]  # all sites
 # **Step 2** Create the spin systems from these sites. Again, we create three
 # single-site spin systems for better performance.
 
-spin_systems = [SpinSystem(sites=[site]) for site in sites]
+spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 #%%
 # **Step 3** Create a Bloch decay spectrum method.
@@ -61,7 +61,7 @@ method = BlochDecaySpectrum(
     rotor_frequency=1500,  # in Hz
     spectral_dimensions=[
         {
-            "count": 2046,
+            "count": 2048,
             "spectral_width": 25000,  # in Hz
             "reference_offset": -10000,  # in Hz
         }
@@ -73,7 +73,7 @@ method = BlochDecaySpectrum(
 # **Step 4** Create the Simulator object and add the method and spin-system objects.
 
 sim_wollastonite = Simulator()
-sim_wollastonite.spin_systems += spin_systems  # add sthe pin systems
+sim_wollastonite.spin_systems += spin_systems  # add the spin systems
 sim_wollastonite.methods += [method]  # add the method
 
 #%%

@@ -440,7 +440,7 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     /* Nuclear shielding components ========================================
      */
     /*      Upto the first order */
-    FCF_1st_order_nuclear_shielding_Hamiltonian(
+    FCF_1st_order_nuclear_shielding_tensor_components(
         R0_temp, R2_temp,
         ravel_isotopomer->isotropic_chemical_shift_in_ppm[site] *
             larmor_freq_in_MHz,
@@ -459,7 +459,7 @@ void MRS_rotate_components_from_PAS_to_common_frame(
      */
     if (ravel_isotopomer->spin[site] > 0.5) {
       /*   Upto the first order */
-      FCF_1st_order_electric_quadrupole_Hamiltonian(
+      FCF_1st_order_electric_quadrupole_tensor_components(
           R2_temp, ravel_isotopomer->spin[site],
           ravel_isotopomer->quadrupolar_Cq_in_Hz[site],
           ravel_isotopomer->quadrupolar_eta[site],
@@ -470,7 +470,7 @@ void MRS_rotate_components_from_PAS_to_common_frame(
 
       /*  Upto the second order */
       if (allow_fourth_rank) {
-        FCF_2nd_order_electric_quadrupole_Hamiltonian(
+        FCF_2nd_order_electric_quadrupole_tensor_components(
             R0_temp, R2_temp, R4_temp, ravel_isotopomer->spin[site],
             larmor_freq_in_MHz * 1e6,
             ravel_isotopomer->quadrupolar_Cq_in_Hz[site],

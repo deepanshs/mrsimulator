@@ -30,7 +30,7 @@
  * @f$\zeta_\sigma@f$, @f$\eta_\sigma@f$ are the shielding anisotropy and
  * asymmetry parameters from the symmetric second-rank irreducible nuclear
  * shielding tensor defined using Haeberlen convention. Here,
- * @f$\omega_0 = \gamma_I B_0@f$ is the Larmor frequency where, @f$\gamma_I@f$
+ * @f$\omega_0 = -\gamma_I B_0@f$ is the Larmor frequency where, @f$\gamma_I@f$
  * and @f$B_0@f$ are the gyromagnetic ratio of the nucleus and the magnetic
  * flux density of the external magnetic field, respectively.
  *
@@ -79,7 +79,7 @@
  * @param Theta A pointer to an array of length 3 where Euler angles,
  *      ordered as @f$[\alpha, \beta, \gamma]@f$, are stored in radians.
  */
-static inline void sSOT_1st_order_nuclear_shielding_Hamiltonian(
+static inline void sSOT_1st_order_nuclear_shielding_tensor_components(
     double *restrict R_0, void *restrict R_2,
     const double omega_0_delta_iso_in_Hz, const double omega_0_zeta_sigma_in_Hz,
     const double eta, const double *Theta) {
@@ -148,7 +148,7 @@ static inline void sSOT_1st_order_nuclear_shielding_Hamiltonian(
  * @param Theta A pointer to an array of length 3 where Euler angles,
  *      ordered as @f$[\alpha, \beta, \gamma]@f$, are stored in radians.
  */
-static inline void sSOT_1st_order_electric_quadrupole_Hamiltonian(
+static inline void sSOT_1st_order_electric_quadrupole_tensor_components(
     void *restrict R_2, const double spin, const double Cq_in_Hz,
     const double eta, const double *Theta) {
   /* vq is the Quadrupole coupling constant given as vq = 3*Cq/(2I(2I-1)),
@@ -265,7 +265,7 @@ static inline void sSOT_1st_order_electric_quadrupole_Hamiltonian(
  * @param Theta A pointer to an array of length 3 where Euler angles,
  *      ordered as @f$[\alpha, \beta, \gamma]@f$, are stored in radians.
  */
-static inline void sSOT_2nd_order_electric_quadrupole_Hamiltonian(
+static inline void sSOT_2nd_order_electric_quadrupole_tensor_components(
     double *restrict R_0, void *restrict R_2, void *restrict R_4,
     const double spin, const double v0_in_Hz, const double Cq_in_Hz,
     const double eta, const double *Theta) {

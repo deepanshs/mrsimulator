@@ -66,9 +66,9 @@ isotopomers, weighted by their respective abundance.
 In the Mrsimulator library, we consider each isotopomer as a simplified isolated
 spin-system, where only the NMR active sites may reside within the spin-system.
 All NMR inactive sites are ignored. This simplified isolated spin-system is given
-the class name **SpinSystem**. In the following sub-section, we illustrate with
+the class name of **SpinSystem**. In the following sub-section, we illustrate with
 examples of how we represent the isotopomers using the spin-systems. For a detailed
-description of the attributes, refer to :numref:`table_spin_system` to
+description of the class attributes, refer to :numref:`table_spin_system` to
 :numref:`table_symmetric_tensor`.
 
 
@@ -93,6 +93,7 @@ Overview of the SpinSystem Model
                 }
             }
         ],
+        "couplings": [],
         "abundance": "98.915%"
     }
 
@@ -104,15 +105,17 @@ key is the name of the spin-system/isotopomer, here given a value of `1H-12C`. T
 value of the description key is an optional string describing the spin-system. The
 value of the `sites` key is a list of **Site** objects. Here, this list comprises of a
 single **Site** object (lines 5-12).
-.. The value of the `couplings` key is a list of **Coupling** objects.
-The value of the `abundance` key is the abundance of the spin-system, here, given a
+The value of the `couplings` key is a list of **Coupling** objects. In this example,
+there are no  couplings, and hence the value of this attribute is an empty list.
+The value of the `abundance` key is the abundance of the spin-system, here given a
 value of `98.915%` based on the data from :numref:`isotopomers_list`.
 See :numref:`table_spin_system` for further description of the **SpinSystem** class and
 its attributes.
 
-Here, the **Site** object (lines 5-12) is described with three keywords, **isotope**,
+The **Site** object (lines 5-12) is described with three keywords, **isotope**,
 **isotropic_chemical_shift**, and **shielding_symmetric**. The value of the `isotope`
-key is `1H`. The value of the `isotropic_chemical_shift`, `-1.2 ppm`, is the
+key is the spin isotope, here given a value of `1H`.
+The value of the `isotropic_chemical_shift`, `-1.2 ppm`, is the
 :math:`^1\text{H}` isotropic chemical shift. Because :math:`^1\text{H}` is
 :math:`I = 1/2`, we have additionally defined an optional `shielding_symmetric`,
 which represents the components of the second-rank traceless symmetric nuclear
@@ -125,7 +128,7 @@ and its attributes.
 .. _listing_2H-12C:
 .. code-block:: json
    :linenos:
-   :emphasize-lines: 12-17
+   :emphasize-lines: 12-18
    :caption: An example 2H-12C isotopomer in JSON representation.
 
     {
@@ -148,6 +151,7 @@ and its attributes.
                 }
             }
         ],
+        "coupling": [],
         "abundance": "0.148%"
     }
 
@@ -164,7 +168,7 @@ are the relative orientation of the EFG tensor from the nuclear shielding tensor
 
 
 .. note::
-    The current version of the `mrsimulator` package does not support coupled
+    The current version of the `mrsimulator` package does not include coupled
     spin-systems. The SpinSystem model for the couplings will be made available when
     we include the coupled spin-systems to the package.
 
