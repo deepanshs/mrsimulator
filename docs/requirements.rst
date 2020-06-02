@@ -1,5 +1,7 @@
 
 
+.. _requirements:
+
 ====================
 Package dependencies
 ====================

@@ -9,11 +9,13 @@ The line-shape simulation in ``mrsimulator`` is based on the concept of
 `Symmetry Pathways in Solid-State NMR <https://www.sciencedirect.com/
 science/article/pii/S0079656510001135?via%3Dihub>`_.
 
-NMR frequency components
-========================
+.. by Grandinetti `et. al.`[]
+
+Introduction to NMR frequency components
+========================================
 
 The nuclear magnetic resonance (NMR) frequency, :math:`\Omega(\Theta, i, j)`,
-for the :math:`\left|i\right> \rightarrow \left|j\right>` transition where
+for the :math:`\left|i\right> \rightarrow \left|j\right>` transition, where
 :math:`\left|i\right>` and :math:`\left|j\right>` are the eigenstates of the
 stationary-state semi-classical Hamiltonian, can be written as a sum of
 frequency components,
@@ -158,14 +160,15 @@ system of the interaction tensor and corresponds to the
 .. |L| replace:: :math:`L`
 .. |Mth| replace:: :math:`M^\mathrm{th}`
 
-Scaled spatial orientation tensors (sSOT) in PAS, |SOF|
--------------------------------------------------------
 
-Single nucleus scaled spatial orientation tensors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Scaled spatial orientation tensors (sSOT) components in PAS, |SOF|
+==================================================================
+
+Single nucleus scaled spatial orientation tensor components
+-----------------------------------------------------------
 
 Nuclear shielding interaction
-"""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The nuclear shielding tensor, :math:`\boldsymbol{\rho}^{(\sigma)}`, is a second
 rank reducible tensor which can be decomposed into a sum of the zeroth-rank
@@ -228,7 +231,7 @@ external magnetic field, respectively. The relation between
 
 
 Electric quadrupole interaction
-"""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The electric field gradient (efg) tensor, :math:`\boldsymbol{\rho}^{(q)}`, is
 also a second-rank tensor, however, unlike the nuclear shielding tensor, the
@@ -324,7 +327,7 @@ coefficient.
 .. _spin_transition_theory:
 
 Spin transition functions, :math:`\xi_L^{(k)}(i,j)`
----------------------------------------------------
+===================================================
 
 The spin transition function is typically
 manipulated via the coupling of the nuclear magnetic dipole moment with the
@@ -334,7 +337,7 @@ magnitude larger than the internal spin-couplings, the manipulation of spin
 transition functions are described using the orthogonal rotation subgroups.
 
 Single nucleus spin transition functions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------
 
 .. cssclass:: table-bordered table-striped centered
 
@@ -416,11 +419,11 @@ where :math:`I` is the spin quantum number of the nucleus and
 
 .. _frequency_tensor_theory:
 
-Frequency tensors (FT) in PAS, :math:`\varpi_{L, n}^{(k)}(i,j)`
----------------------------------------------------------------
+Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}(i,j)`
+=========================================================================
 
-Single nucleus frequency tensors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Single nucleus frequency tensor components
+------------------------------------------
 
 .. cssclass:: table-bordered table-striped centered
 
@@ -464,3 +467,9 @@ Single nucleus frequency tensors
     - 2
     - 4
     - :math:`\varpi_{4,n}^{(qq)}(i,j) = \varsigma_{4,n}^{(qq)} ~~ \mathbb{c}_4(i, j)`
+
+
+.. .. [#f2] Grandinetti, P. J., Ash, J. T., Trease, N. M. Symmetry pathways in solid-state
+..       NMR, PROG NUCL MAG RES SP
+..       **99**, *32*, 12341-12348.
+..       `DOI: 10.1021/j100032a045 <https://doi.org/10.1021/j100032a045>`_

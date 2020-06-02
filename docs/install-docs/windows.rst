@@ -3,10 +3,11 @@
 
 Skip this step if you already have miniconda or anaconda for python>=3.6 installed on
 your system.
-Download the latest version of conda on your operating system from
-`miniconda <https://docs.conda.io/en/latest/miniconda.html>`_. Make sure you download
-conda for python 3. Double click the downloaded .exe file and follow the installation
-steps.
+Download the latest version of conda on your operating system from either
+`miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ or
+`Anaconda <https://www.anaconda.com/products/individual/>`_ websites. Make sure you
+download conda for python 3. Double click the downloaded .exe file and follow the
+installation steps.
 
 **OpenBLAS/Accelerate and FFTW libraries**
 
