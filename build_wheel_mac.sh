@@ -12,10 +12,14 @@ for PYBIN in py36 py37 py38; do
     pytest
 done
 
+
 # Bundle external shared libraries into the wheels
 for whl in macwheels/*.whl; do
     delocate-wheel "$whl" -w dist/
 done
+
+# generate source dist
+python setup.py develop sdist
 
 # clean up
 rm -r build

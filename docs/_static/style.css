@@ -4,34 +4,42 @@ body {
 }
 
 h1 {
-  font-size: 2.5em;
+  font-size: 2.2em;
+  font-weight: 700;
   padding-bottom: 0.3em;
   border-bottom: 1px solid silver;
-  margin-bottom: 0.7em;
+  margin-bottom: 0.5em;
 }
 
 h2 {
+  font-size: 1.8em;
+  font-weight: 400;
+  color: rgb(112, 54, 15);
   padding-bottom: 1.2em;
-  font-size: 1.9em;
   padding-bottom: 0.2em;
   border-bottom: 1px solid silver;
-  margin-bottom: 0.6em;
+  margin-bottom: 0.4em;
 }
 
 h3 {
-  font-size: 1.67em;
+  font-size: 1.4em;
+  text-decoration: underline;
+  color: rgb(63, 63, 63);
 }
 
 h4 {
-  font-size: 1.35em;
+  margin-top: 1.4em;
+  font-size: 1.2em;
+  color: rgb(128, 74, 74);
 }
 
 h5 {
-  font-size: 1.25em;
+  font-size: 1.1em;
+  color: rgb(53, 53, 53);
 }
 
 h6 {
-  font-size: 1.1em;
+  font-size: 1em;
 }
 
 .sphx-glr-timing {
@@ -116,6 +124,7 @@ table caption:hover {
 .sphinx-tabs {
   width: 100%;
   padding: 0;
+  margin-bottom: 1em;
 }
 
 .docutils.container {
@@ -270,6 +279,10 @@ table caption:hover {
   color: rgb(58, 58, 58);
   text-decoration: none;
   cursor: pointer;
+}
+.sidebar > ul > li.current > ul > li > a:focus {
+  color: black;
+  font-weight: 500;
 }
 
 #navbar-related {

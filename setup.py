@@ -228,7 +228,7 @@ ext_modules += [
 setup(
     name="mrsimulator",
     version=version,
-    description="A python toolbox for simulating NMR spectra",
+    description="A python toolbox for simulating solid-state NMR spectra",
     long_description=open(join(module_dir, "README.md")).read(),
     author="Deepansh J. Srivastava",
     author_email="deepansh2012@gmail.com",
@@ -241,7 +241,6 @@ setup(
         "numpy>=1.16",
         "setuptools>=27.3",
         "cython>=0.29.11",
-        "astropy>=3.0",
         "pydantic>=0.28",
         "requests>=2.21.0",
         "monty>=2.0.4",

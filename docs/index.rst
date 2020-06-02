@@ -86,6 +86,10 @@ At present, the `Mrsimulator` package offers the following
 
 .. only:: html
 
+    .. raw:: html
+
+        <br>
+
     **View our example gallery**
 
     .. image:: https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small

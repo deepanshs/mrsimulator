@@ -238,7 +238,8 @@ The attribute `decompose_spectrum` is an enumeration with two literals, ``none``
 and ``spin_system``. The value of this attribute lets us know
 how the user intends the simulation to be stored.
 
-**1.** ``none``
+``none``
+''''''''
 
 If the value is ``none`` (default), the result of the simulation is a single spectrum
 where the frequency contributions from all the spin-systems are co-added. Consider the
@@ -286,7 +287,8 @@ following example.
 :numref:`fig5_config` depicts the simulation of the line-shape from two spin systems,
 shown in a single spectum.
 
-**2.** ``spin_system``
+``spin_system``
+'''''''''''''''
 
 When the value of this attribute is ``spin_system``, the resulting simulation is a
 series of spectra, each arising from a spin-system. In this case, the number of

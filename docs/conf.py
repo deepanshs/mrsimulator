@@ -273,7 +273,7 @@ html_theme_options = {
 }
 
 html_style = "style.css"
-html_title = f"Mrsimulator Project:Doc v{__version__}"
+html_title = f"Mrsimulator:doc v{__version__}"
 html_logo = "_static/mrsimulator.png"
 html_favicon = "_static/favicon.ico"
 html_last_updated_fmt = ""

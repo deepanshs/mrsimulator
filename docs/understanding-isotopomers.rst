@@ -75,6 +75,9 @@ description of the class attributes, refer to :numref:`table_spin_system` to
 Overview of the SpinSystem Model
 --------------------------------
 
+Uncoupled spin-systems
+''''''''''''''''''''''
+
 .. _listing_1H-12C:
 .. code-block:: json
    :linenos:
@@ -167,11 +170,17 @@ Additionally, we see the Euler angle orientations, `alpha`, `beta`, and `gamma`,
 are the relative orientation of the EFG tensor from the nuclear shielding tensor.
 
 
+Coupled spin-systems
+''''''''''''''''''''
+
 .. note::
     The current version of the `mrsimulator` package does not include coupled
     spin-systems. The SpinSystem model for the couplings will be made available when
     we include the coupled spin-systems to the package.
 
+
+Table of Class Attributes
+-------------------------
 
 .. cssclass:: table-bordered table-striped centered
 .. _table_spin_system:

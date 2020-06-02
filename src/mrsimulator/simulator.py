@@ -17,8 +17,6 @@ from pydantic import BaseModel
 
 from .util import _reduce_dict
 
-# from astropy import units as u
-
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
 
