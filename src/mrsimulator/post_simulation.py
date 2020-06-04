@@ -22,7 +22,7 @@ class Apodization(Parseable):
     class Config:
         validate_assignment = True
 
-    def apodize(self, csdm, **kwargs):
+    def _apodize(self, csdm, index, **kwargs):
         """Returns the result of passing the selected apodization function .
 
         Args:
@@ -33,7 +33,7 @@ class Apodization(Parseable):
         """
         function_mapping = {"Gaussian": Gaussian, "Lorentzian": Lorentzian}
 
-        y = csdm.dependent_variables[0].components[0]
+        y = csdm.dependent_variables[index].components[0]
         # x = csdm.dimensions[self.dimension].coordinates
         axis = -self.dimension - 1
         fapp = function_mapping[self.function](
@@ -48,6 +48,11 @@ class Apodization(Parseable):
 
         appodized = TimeDomain * fapp
         fft_output = fftshift(fft(appodized, axis=axis), axes=axis).real
+
+        csdm.dependent_variables[index].components[0] = (
+            self.fraction * phase.conj() * fft_output
+        )
+
         return self.fraction * phase.conj() * fft_output
 
 
