@@ -79,7 +79,7 @@ before_install:
       fi
       if [ "$PYENV_TYPE" = "native" ]; then
         python3 -m pip install --user --upgrade pip
-        python3 -m pip install codecov
+        python3 -m pip install codecov cython
         python3 -m pip install -r requirements.txt
         python3 -m pip install -r requirements-dev.txt
         python3 --version
@@ -89,7 +89,7 @@ before_install:
   - |
     if [ "$PYENV_TYPE" = "env" ]; then
       python -m pip install --upgrade pip
-      python -m pip install codecov
+      python -m pip install codecov cython
       python -m pip install -r requirements.txt
       python -m pip install -r requirements-dev.txt
       python --version
