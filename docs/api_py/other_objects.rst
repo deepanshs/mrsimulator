@@ -7,7 +7,7 @@ Other Objects
 SymmetricTensor
 ---------------
 
-.. currentmodule:: mrsimulator
+.. currentmodule:: mrsimulator.tensors
 
 .. autoclass:: SymmetricTensor
     :show-inheritance:
@@ -22,7 +22,7 @@ SymmetricTensor
 AntisymmetricTensor
 -------------------
 
-.. currentmodule:: mrsimulator
+.. currentmodule:: mrsimulator.tensors
 
 .. autoclass:: AntisymmetricTensor
     :show-inheritance:

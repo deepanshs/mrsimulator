@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from lmfit import Parameters
 from mrsimulator import Simulator
 
-# from lmfit import minimize
+try:
+    from lmfit import Parameters
+
+    FOUND_LMFIT = True
+except ImportError:
+    FOUND_LMFIT = False
 
 
 __author__ = "Maxwell C Venetos"
@@ -135,6 +139,13 @@ def make_fitting_parameters(sim, exclude_key=None):
         LMFIT Parameters object.
 
     """
+    if not FOUND_LMFIT:
+        error = (
+            f"The helper function {__name__} requires 'lmfit' module to create lmfit "
+            "paramters. Pleae install the lmfit module using\n'pip install lmfit'.",
+        )
+        raise ImportError(error)
+
     if not isinstance(sim, Simulator):
         raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
 

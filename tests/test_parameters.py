@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 """Parameter test"""
-from lmfit import Parameters
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator import SymmetricTensor as st
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.spectral_fitting import make_fitting_parameters
+from mrsimulator.tensors import SymmetricTensor as st
 
 
 sim = Simulator()
@@ -31,15 +30,13 @@ sim.methods += [method]
 
 params = make_fitting_parameters(sim)
 
-
-test_params = Parameters()
-test_params.add(name="ISO_0_SITES_0_isotropic_chemical_shift", value=10)
-test_params.add(name="ISO_0_SITES_0_shielding_symmetric_zeta", value=5)
-test_params.add(name="ISO_0_SITES_0_shielding_symmetric_eta", value=0.1, min=0, max=1)
-test_params.add(
-    name="ISO_0_abundance", value=100, min=0, max=100, vary=False, expr="100"
-)
+valuesdict = {
+    "ISO_0_SITES_0_isotropic_chemical_shift": 10,
+    "ISO_0_SITES_0_shielding_symmetric_zeta": 5,
+    "ISO_0_SITES_0_shielding_symmetric_eta": 0.1,
+    "ISO_0_abundance": 100,
+}
 
 
 def test_param():
-    assert params.valuesdict() == test_params.valuesdict(), "Parameter creation failed"
+    assert params.valuesdict() == valuesdict, "Parameter creation failed"

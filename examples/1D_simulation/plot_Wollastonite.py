@@ -18,7 +18,7 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # Wollastonite is a high-temperature calcium-silicate,
 # :math:`\beta−\text{Ca}_3\text{Si}_3\text{O}_9`, with three distinct
 # :math:`^{29}\text{Si}` sites. The :math:`^{29}\text{Si}` tensor parameters
-# were obtained from Hansen et. al. [#f1]_
+# were obtained from Hansen `et. al.` [#f1]_
 from mrsimulator import SpinSystem
 from mrsimulator import Simulator
 from mrsimulator import Site

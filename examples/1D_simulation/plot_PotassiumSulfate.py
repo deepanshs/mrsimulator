@@ -17,7 +17,7 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # %%
 # The following example is the :math:`^{33}\text{S}` NMR line-shape simulation of
 # potassium sulfate (:math:`\text{K}_2\text{SO}_4`). The quadrupole tensor parameters
-# for :math:`^{33}\text{S}` is obtained from Moudrakovski et. al. [#f3]_
+# for :math:`^{33}\text{S}` is obtained from Moudrakovski `et. al.` [#f3]_
 from mrsimulator import SpinSystem
 from mrsimulator import Simulator
 from mrsimulator import Site

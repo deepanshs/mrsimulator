@@ -9,13 +9,20 @@ from os.path import split
 
 import numpy as np
 import numpy.distutils.system_info as sysinfo
-from Cython.Build import cythonize
 from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
 
 from settings import use_accelerate
 from settings import use_openblas
+
+try:
+    from Cython.Build import cythonize
+
+    USE_CYTHON = True
+except ImportError:
+    USE_CYTHON = False
+    pass
 
 # from setting import USE_SSE_AVX
 
@@ -182,11 +189,13 @@ source = [
     "src/c_lib/lib/method.c",
 ]
 
+ext = ".pyx" if USE_CYTHON else ".c"
+
 # method
 ext_modules = [
     Extension(
         name="mrsimulator.base_model",
-        sources=[*source, "src/c_lib/mrmethods/base_model.pyx"],
+        sources=[*source, "src/c_lib/base/base_model" + ext],
         include_dirs=include_dirs,
         language="c",
         libraries=libraries,
@@ -201,7 +210,7 @@ ext_modules = [
 ext_modules += [
     Extension(
         name="mrsimulator.tests.tests",
-        sources=[*source, "src/c_lib/test/test.pyx"],
+        sources=[*source, "src/c_lib/test/test" + ext],
         include_dirs=include_dirs,
         language="c",
         libraries=libraries,
@@ -215,7 +224,7 @@ ext_modules += [
 ext_modules += [
     Extension(
         name="mrsimulator.sandbox",
-        sources=[*source, "src/c_lib/sandbox/sandbox.pyx"],
+        sources=[*source, "src/c_lib/sandbox/sandbox" + ext],
         include_dirs=include_dirs,
         language="c",
         libraries=libraries,
@@ -225,10 +234,15 @@ ext_modules += [
     )
 ]
 
+if USE_CYTHON:
+    ext_modules = cythonize(ext_modules, language_level=3)
+
+extras = {"lmfit": ["lmfit>=1.0.0"]}
+
 setup(
     name="mrsimulator",
     version=version,
-    description="A python toolbox for simulating solid-state NMR spectra",
+    description="A python toolbox for simulating fast real-time solid-state NMR spectra.",
     long_description=open(join(module_dir, "README.md")).read(),
     author="Deepansh J. Srivastava",
     author_email="deepansh2012@gmail.com",
@@ -236,17 +250,15 @@ setup(
     url="https://github.com/DeepanshS/MRsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    setup_requires=["numpy>=1.13.3", "cython>=0.29.11"],
-    install_requires=[
-        "numpy>=1.16",
-        "setuptools>=27.3",
-        "cython>=0.29.11",
-        "pydantic>=0.28",
-        "requests>=2.21.0",
-        "monty>=2.0.4",
-        "csdmpy>=0.2.1",
-    ],
-    ext_modules=cythonize(ext_modules, language_level=3),
+    # setup_requires=["numpy>=1.16.0"],
+    # install_requires=[
+    #     # "numpy>=1.16.0",
+    #     "csdmpy>0.2.1",
+    #     "pydantic>=1.0",
+    #     "monty>=2.0.4",
+    # ],
+    extras_require=extras,
+    ext_modules=ext_modules,
     include_package_data=True,
     zip_safe=False,
     license="BSD-3-Clause",

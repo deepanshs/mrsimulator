@@ -14,7 +14,7 @@ Requirements
 - `Python <https://www.python.org>`_ 3.6 or later
 - `Numpy <https://numpy.org>`_ 1.16.0 or later
 
-See :ref:`requirements` for a full list of package dependencies.
+See :ref:`requirements` for a full list of requirements.
 
 Make sure you have the required version of python by typing the following in the
 terminal,

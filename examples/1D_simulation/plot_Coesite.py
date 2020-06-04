@@ -18,7 +18,7 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # Coesite is a high-pressure (2-3 GPa) and high-temperature (700°C) polymorph of silicon
 # dioxide :math:`\text{SiO}_2`. Coesite has five crystallographic :math:`^{17}\text{O}`
 # sites. In the following, we use the :math:`^{17}\text{O}` EFG tensor information from
-# Grandinetti et. al. [#f2]_
+# Grandinetti `et. al.` [#f2]_
 from mrsimulator import SpinSystem
 from mrsimulator import Simulator
 from mrsimulator import Site

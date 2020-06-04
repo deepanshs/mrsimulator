@@ -4,11 +4,12 @@ from typing import List
 from typing import Optional
 
 import numpy as np
-from mrsimulator import Parseable
 from numpy.fft import fft
 from numpy.fft import fftshift
 from numpy.fft import ifft
 from numpy.fft import ifftshift
+
+from .parseable import Parseable
 
 
 class Apodization(Parseable):

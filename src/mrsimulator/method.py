@@ -11,13 +11,13 @@ from typing import Union
 
 import csdmpy as cp
 import numpy as np
-from mrsimulator import Parseable
 from pydantic import BaseModel
 from pydantic import Field
 from pydantic import validator
 
 from .abstract_list import TransitionList
 from .isotope import Isotope
+from .parseable import Parseable
 from .post_simulation import PostSimulator
 from .transition import Transition
 

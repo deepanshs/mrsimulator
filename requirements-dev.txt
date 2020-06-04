@@ -1,13 +1,16 @@
-## Formatting
+# Formatting requirements
 black
 pre-commit
 
-## test required
+# Optional requirements
+lmfit==1.0.0
+
+# Test requirements
 sympy
 pytest>=5.3
 pytest-cov
 
-## Building Docs
+# Building Docs requirements
 sphinxjp.themes.basicstrap
 sphinx>=2.0
 sphinx-gallery>0.6.2

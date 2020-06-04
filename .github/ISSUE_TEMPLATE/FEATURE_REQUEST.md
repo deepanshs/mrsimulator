@@ -12,7 +12,7 @@ Provide a clear and concise description of your proposal. Your proposal should c
 
 - Is your proposal related to a problem? For example, "I'm always frustrated when...",
 - Is your proposal to improve a feature of `mrsimulator`? For example, "The code will be more efficient if ...",
-- Is your proposal to request a new feature? For example, "The library is missing this interaction... " 
+- Is your proposal to request a new feature? For example, "The library is missing this interaction... "
 
 (Write your answer here)
 
