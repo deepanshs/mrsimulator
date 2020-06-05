@@ -61,11 +61,19 @@ numpy_include = np.get_include()
 conda_location = numpy_include
 for _ in range(5):
     conda_location = split(conda_location)[0]
+
+# windows system lib and include path
 include_dirs += [join(conda_location, "Library", "include", "fftw")]
 include_dirs += [join(conda_location, "Library", "include", "openblas")]
 include_dirs += [join(conda_location, "Library", "include")]
 include_dirs += [join(conda_location, "include")]
 library_dirs += [join(conda_location, "Library", "lib")]
+
+# unix system lib and include path
+conda_location = split(conda_location)[0]
+include_dirs += [join(conda_location, "include")]
+library_dirs += [join(conda_location, "lib")]
+
 libraries += ["fftw3", "openblas"]
 name = "openblas"
 
