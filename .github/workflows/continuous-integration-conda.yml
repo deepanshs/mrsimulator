@@ -34,10 +34,10 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
       - name: Build and install package from source
-        shell: pwsh
+        # shell: pwsh
         run: python setup_conda.py develop
       - name: Test with pytest
-        shell: pwsh
+        # shell: pwsh
         run: pytest --cov=./ --cov-report=xml
       - name: Upload coverage
         uses: codecov/codecov-action@v1
