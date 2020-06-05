@@ -1,6 +1,7 @@
 name: mrsimulator-dev
 channels:
   - anaconda
+  - conda-forge
 dependencies:
   - fftw>=3.3.0
   - openblas
