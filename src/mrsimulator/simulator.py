@@ -169,10 +169,9 @@ class Simulator(BaseModel):
         Load a list of spin systems from the given JSON serialized file.
 
         See an
-        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
-        /master/isotopomers_ppm.json>`_
-        of JSON serialized file. For details, refer to the
-        :ref:`load_spin_systems` section of this documentation.
+        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
+        master/spin_systems_v0.3.json>`_ of JSON serialized file. For details, refer to
+        the :ref:`load_spin_systems` section of this documentation.
 
         Args:
             str filename: A local or remote address to a JSON serialized file.
@@ -189,10 +188,9 @@ class Simulator(BaseModel):
         Export a list of spin systems to a JSON serialized file.
 
         See an
-        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
-        /master/isotopomers_ppm.json>`_
-        of JSON serialized file. For details, refer to the
-        :ref:`load_spin_systems` section.
+        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
+        master/spin_systems_v0.3.json>`_ of JSON serialized file. For details, refer to
+        the :ref:`load_spin_systems` section.
 
         Args:
             str filename: The list of will be serialized to a file with
