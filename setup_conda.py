@@ -18,10 +18,7 @@ try:
 except ImportError:
     USE_CYTHON = False
 
-# from setting import USE_SSE_AVX
-
 # get the version from file
-
 python_version = sys.version_info
 py_version = ".".join([str(i) for i in python_version[:3]])
 print("Using python version", py_version)
@@ -45,20 +42,12 @@ module_dir = dirname(abspath(__file__))
 libraries = []
 include_dirs = []
 library_dirs = []
-extra_compile_args = [
-    "-O3",
-    "-ffast-math",
-    # "-msse4.2",
-    # "-ftree-vectorize",
-    # "-fopt-info-vec-optimized",
-    # "-mavx",
-]
+extra_compile_args = []
 extra_link_args = []
 data_files = []
 
 numpy_include = np.get_include()
 
-# if platform.system() == "Windows":
 conda_location = numpy_include
 for _ in range(5):
     conda_location = split(conda_location)[0]
@@ -70,19 +59,17 @@ if platform.system() == "Windows":
     include_dirs += [join(conda_location, "Library", "include")]
     include_dirs += [join(conda_location, "include")]
     library_dirs += [join(conda_location, "Library", "lib")]
+    extra_compile_args += ["-DFFTW_DLL"]
 
 else:
     # unix system lib and include path
     conda_location = split(conda_location)[0]
     include_dirs += [join(conda_location, "include")]
     library_dirs += [join(conda_location, "lib")]
+    extra_compile_args = ["-O3", "-ffast-math"]
 
 libraries += ["fftw3", "openblas"]
-name = "openblas"
-
 extra_link_args += ["-lm"]
-extra_compile_args += ["-DFFTW_DLL"]
-
 
 include_dirs = list(set(include_dirs))
 library_dirs = list(set(library_dirs))
