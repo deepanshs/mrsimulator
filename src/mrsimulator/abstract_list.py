@@ -36,8 +36,8 @@ class AbstractList(MutableSequence):
         return self._list[index]
 
     def __delitem__(self, index):
-        raise LookupError("Deleting items is not allowed.")
-        # del self._list[index]
+        """Delete an item from the list."""
+        del self._list[index]
 
     def insert(self, index, item):
         """Insert a list item"""
@@ -65,49 +65,58 @@ class AbstractList(MutableSequence):
 
 class TransitionList(AbstractList):
     def __init__(self, data=[]):
-        super().__init__(data)
+        super().__init__([self._check_for_transition_object(item) for item in data])
 
-    def __setitem__(self, index, item):
+    @staticmethod
+    def _check_for_transition_object(item):
         if isinstance(item, dict):
-            item = Transition(**item)
+            return Transition(**item)
         if not isinstance(item, Transition):
             raise ValueError(
-                f"Expecting a Transition object, found {item.__class__.name__}"
+                "Expecting a Transition object or an equivalent python dict object, "
+                f"instead found {item.__class__.__name__}."
             )
-        self._list[index] = item
+        return item
 
-    def Zeeman_allowed(self):
-        return TransitionList([item for item in self._list if item.Zeeman_allowed])
+    def __setitem__(self, index, item):
+        self._list[index] = self._check_for_transition_object(item)
 
-    def filter(self, P=None, D=None, transitions=None, start_state=None, isotopes=None):
-        """Filter a list of transitions to satisfy the filtering criterion.
-            Args:
-                P: A list of Δm values. If `l` Δm are given for an isotopomer with N
-                    sites, where N >= l, the transitions corresponding to all
-                    combinations of `l` Δm values over N sites is selected.
-                delta_ms: A list of Δm values for the spin transition.
-                transition: A list of single spin transition corresponding to each site
-                    in the isotopomer.
-                isotopes: A dictionary containing the method isotopes and the list of
-                    isotopes in the isotopomer.
+    def append(self, item):
+        super().append(self._check_for_transition_object(item))
+
+    # def Zeeman_allowed(self):
+    #     return TransitionList([item for item in self._list if item.Zeeman_allowed])
+
+    def filter(self, P=None, D=None):
+        """
+        Filter a list of transitions to satisfy the filtering criterion.
+        Args:
+            (list) P: A list of `N` (m_final - m_initial) values, where `N` is the
+                total number of sites within the spin-system.
+            (list) D: A list of `N` (m_final^2 - m_initial^2) values, where `N` is the
+                total number of sites within the spin-system.
         """
 
-        if P is transitions is start_state is None:
-            P = -1
+        # to think
+        # - filter based on transition.
+        # - filter based on state.
+
+        if P is D is None:
+            return self
+
         ts = self._list.copy()
 
-        # if search is None:
         if P is not None:
             ts = TransitionList([item for item in ts if np.allclose(item.P, P)])
         if D is not None:
-            ts = [item for item in ts if np.allclose(item.D, D)]
-        if transitions is not None:
-            for transition in transitions:
-                ts = TransitionList(
-                    [item for item in ts if item == Transition(**transition)]
-                )
-        if start_state is not None:
-            ts = [item for item in ts if ts.initial == start_state]
+            ts = TransitionList([item for item in ts if np.allclose(item.D, D)])
+        # if transitions is not None:
+        #     for transition in transitions:
+        #         ts = TransitionList(
+        #             [item for item in ts if item == Transition(**transition)]
+        #         )
+        # if start_state is not None:
+        #     ts = [item for item in ts if ts.initial == start_state]
         return ts
 
         # lst = self._list
@@ -130,3 +139,11 @@ class TransitionList(AbstractList):
         #         [item for item in self._list if np.all(item.delta_ms == delta_ms)]
         #     )
         # return TransitionList([item for item in self._list if item.p == p])
+
+
+# def to_ndarray(transitions):
+#     array = []
+#     for item in transitions:
+#         array += item.initial
+#         array += item.final
+#     return np.asarray(array)

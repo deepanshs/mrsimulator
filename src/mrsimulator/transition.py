@@ -2,6 +2,7 @@
 """The Transition class."""
 from typing import List
 
+import numpy as np
 from pydantic import BaseModel
 
 
@@ -31,20 +32,25 @@ class Transition(BaseModel):
     #         return True
     #     return False
 
-    # @property
-    # def p(self):
-    #     """Return the total Δm (m_final-m_initial) value of the spin transition."""
-    #     return self.P.sum()
+    @property
+    def p(self):
+        """Return the total Δm (m_final-m_initial) value of the spin transition."""
+        return self.P.sum()
 
-    # @property
-    # def P(self):
-    #     """Return a list of Δm values of the spin transition for each site."""
-    #     return np.asarray(self.final) - np.asarray(self.initial)
+    @property
+    def delta_m(self):
+        """An alias for p"""
+        return self.p
 
-    # @property
-    # def D(self):
-    #     """Return a list of Δm**2 values of the spin transition for each site."""
-    #     return np.asarray(self.final) ** 2 - np.asarray(self.initial) ** 2
+    @property
+    def P(self):
+        """Return a list of Δm values of the spin transition for each site."""
+        return np.asarray(self.final) - np.asarray(self.initial)
+
+    @property
+    def D(self):
+        """Return a list of Δm**2 values of the spin transition for each site."""
+        return np.asarray(self.final) ** 2 - np.asarray(self.initial) ** 2
 
     # def delta_m(self, i):
     #     """Return the Δm element of the transition corresponding to the ith site."""
