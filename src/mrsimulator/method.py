@@ -182,7 +182,7 @@ class SpectralDimension(Parseable):
         """
         if self.origin_offset is None:
             warnings.warn(
-                (
+                UserWarning(
                     "The coordinates along the dimension without an origin offset "
                     "cannot be converted to dimensionless frequency ratio."
                 )
@@ -247,6 +247,12 @@ class Method(Parseable):
     post_simulation: Optional[PostSimulator]
     experiment: Optional[Union[cp.CSDM, np.ndarray]]
     # post_simulation: Optional[Dict]
+
+    property_default_units: ClassVar = {
+        "magnetic_flux_density": "T",
+        "rotor_angle": "rad",
+        "rotor_frequency": "Hz",
+    }
 
     property_units: Dict = {
         "magnetic_flux_density": "T",

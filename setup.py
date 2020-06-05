@@ -22,7 +22,6 @@ try:
     USE_CYTHON = True
 except ImportError:
     USE_CYTHON = False
-    pass
 
 # from setting import USE_SSE_AVX
 

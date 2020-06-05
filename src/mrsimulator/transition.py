@@ -2,7 +2,6 @@
 """The Transition class."""
 from typing import List
 
-import numpy as np
 from pydantic import BaseModel
 
 
@@ -26,30 +25,30 @@ class Transition(BaseModel):
         initial = ", ".join([str(i) for i in self.initial])
         return f"|{final}⟩⟨{initial}|"
 
-    @property
-    def Zeeman_allowed(self):
-        if abs(self.p) == 1:
-            return True
-        return False
+    # @property
+    # def Zeeman_allowed(self):
+    #     if abs(self.p) == 1:
+    #         return True
+    #     return False
 
-    @property
-    def p(self):
-        """Return the total Δm (m_final-m_initial) value of the spin transition."""
-        return self.P.sum()
+    # @property
+    # def p(self):
+    #     """Return the total Δm (m_final-m_initial) value of the spin transition."""
+    #     return self.P.sum()
 
-    @property
-    def P(self):
-        """Return a list of Δm values of the spin transition for each site."""
-        return np.asarray(self.final) - np.asarray(self.initial)
+    # @property
+    # def P(self):
+    #     """Return a list of Δm values of the spin transition for each site."""
+    #     return np.asarray(self.final) - np.asarray(self.initial)
 
-    @property
-    def D(self):
-        """Return a list of Δm**2 values of the spin transition for each site."""
-        return np.asarray(self.final) ** 2 - np.asarray(self.initial) ** 2
+    # @property
+    # def D(self):
+    #     """Return a list of Δm**2 values of the spin transition for each site."""
+    #     return np.asarray(self.final) ** 2 - np.asarray(self.initial) ** 2
 
-    def delta_m(self, i):
-        """Return the Δm element of the transition corresponding to the ith site."""
-        return self.final[i] - self.initial[i]
+    # def delta_m(self, i):
+    #     """Return the Δm element of the transition corresponding to the ith site."""
+    #     return self.final[i] - self.initial[i]
 
     def tolist(self):
         """Convert the transition to a list of quantum numbers where the first N

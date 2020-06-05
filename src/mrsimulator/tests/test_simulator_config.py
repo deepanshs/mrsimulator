@@ -10,7 +10,7 @@ def test_config():
     b = Simulator()
     error = "instance of ConfigSimulator expected"
     with pytest.raises(ValueError, match=".*{0}.*".format(error)):
-        b.config = {}
+        b.config = ""
 
     a = Simulator()
 
@@ -43,8 +43,11 @@ def test_config():
     a.config.integration_volume = "hemisphere"
     assert a.config.integration_volume == "hemisphere"
 
+    with pytest.raises(TypeError, match=".*Expecting a string value.*"):
+        a.config.integration_volume = {}
+
     error = (
-        "value is not a valid enumeration literal; permitted: 'octant', 'hemisphere'"
+        "Value is not a valid enumeration literal; permitted: 'octant', 'hemisphere'"
     )
     with pytest.raises(ValueError, match=".*{0}.*".format(error)):
         a.config.integration_volume = "sphere"
@@ -58,6 +61,10 @@ def test_config():
     with pytest.raises(TypeError, match=".*{0}.*".format(error)):
         a.config.decompose_spectrum = [5, 23]
 
+    with pytest.raises(ValueError, match=".*Value is not a valid enumeration*"):
+        a.config.decompose_spectrum = "haha"
+
+    # overall
     assert a.config.dict() == {
         "decompose_spectrum": "spin_system",
         "number_of_sidebands": 10,

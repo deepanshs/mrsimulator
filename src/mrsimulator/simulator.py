@@ -286,11 +286,20 @@ class Simulator(BaseModel):
         """
         sim = Simulator()
         contents = import_json(filename)
+        sim.name = contents["name"]
+        sim.description = contents["description"]
+
+        # spin_systems
         i_data = contents["spin_systems"]
         sim.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in i_data]
 
+        # methods
         m_data = contents["methods"]
         sim.methods = [Method.parse_dict_with_units(obj) for obj in m_data]
+
+        # config
+        sim.config = ConfigSimulator(**contents["config"])
+        sim.indexes = contents["indexes"]
         return sim
 
     def _as_csdm_object(self, data: np.ndarray, method: Method) -> cp.CSDM:
