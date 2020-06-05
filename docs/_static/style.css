@@ -105,11 +105,6 @@ table caption:hover {
   transform: translateY(12px);
 }
 
-.logo {
-  width: 100%;
-  max-width: 275px;
-}
-
 .ui.sphinx-tab {
   font-size: inherit;
   font-weight: inherit;
@@ -181,7 +176,7 @@ table caption:hover {
 .sidebar.hidden-xs {
   position: relative;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: visible;
   width: calc(100% + 16px);
   height: calc(100% - 2em);
   padding-top: 1em;
@@ -195,6 +190,8 @@ table caption:hover {
 .sidebar > .logo {
   margin: auto;
   padding: 1em;
+  width: 100%;
+  max-width: 275px;
   /* padding-bottom: 1em; */
   /* padding-left: 0.5em;
   padding-right: 1.5em; */
