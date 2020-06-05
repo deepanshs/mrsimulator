@@ -118,7 +118,7 @@ sphinx_gallery_conf = {
     ),
     "reference_url": {
         # The module you locally document uses None
-        "mrsimulator": None,
+        "mrsimulator": None
     },
     # "compress_images": ("images", "thumbnails"),
     # "show_memory": True,

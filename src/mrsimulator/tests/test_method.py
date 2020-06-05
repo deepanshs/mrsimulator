@@ -148,7 +148,7 @@ def basic_spectral_dimension_tests(the_dimension):
     csdm_dimension = the_dimension.to_csdm_dimension()
     assert np.allclose(csdm_dimension.coordinates.to("Hz").value, coordinates)
     csdm_dimension.to("ppm", "nmr_frequency_ratio")
-    assert np.allclose(csdm_dimension.coordinates.value, the_dimension.coordinates_ppm,)
+    assert np.allclose(csdm_dimension.coordinates.value, the_dimension.coordinates_ppm)
 
     # to dict with units
     should_be = dict(
