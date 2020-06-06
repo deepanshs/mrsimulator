@@ -34,8 +34,8 @@ class ConfigSimulator:
             ``(n+1)*(n+2)/2 * number of octant``. The line-shape is an integral over
             the frequency contribution arising from every orientation. The default
             value is ``70``.
-        decompose_spectrum: A boolean. If true, decomposes the line-shape into an array of
-            line-shapes arising from individual isotopomer. If False, the lins-shape
+        decompose_spectrum: A boolean. If true, decomposes the line-shape into an array
+            of line-shapes arising from individual isotopomer. If False, the lins-shape
             is a sum of individual line-shapes instead. The default value is ``False``.
 
     Example:

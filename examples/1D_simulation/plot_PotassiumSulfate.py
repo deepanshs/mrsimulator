@@ -22,9 +22,8 @@ from mrsimulator import SpinSystem
 from mrsimulator import Simulator
 from mrsimulator import Site
 
-#%%
+# %%
 # **Step 1** Create the sites, in this case, just the one.
-
 S33 = Site(
     name="33S",
     isotope="33S",
@@ -32,14 +31,12 @@ S33 = Site(
     quadrupolar={"Cq": 0.959e6, "eta": 0.42},  # Cq is in Hz
 )
 
-#%%
+# %%
 # **Step 2** Create the spin-system from the site.
-
 spin_system = SpinSystem(sites=[S33])
 
-#%%
+# %%
 # **Step 3** Create a central transition selective Bloch decay spectrum method.
-
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
 method = BlochDecayCentralTransitionSpectrum(
@@ -55,22 +52,18 @@ method = BlochDecayCentralTransitionSpectrum(
     ],
 )
 
-
-#%%
+# %%
 # **Step 4** Create the Simulator object and add the method and the spin-system object.
-
 sim_K2SO3 = Simulator()
 sim_K2SO3.spin_systems += [spin_system]  # add the spin-system
 sim_K2SO3.methods += [method]  # add the method
 
-#%%
+# %%
 # **Step 5** Simulate the spectrum.
-
 sim_K2SO3.run()
 
-#%%
+# %%
 # **Step 6** The plot of the simulation.
-
 x, y = sim_K2SO3.methods[0].simulation.to_list()
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("frequency / ppm")
@@ -79,8 +72,7 @@ plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 plt.tight_layout()
 plt.show()
 
-#%%
-#
+# %%
 # .. [#f3] Moudrakovski, I., Lang, S., Patchkovskii, S., and Ripmeester, J. High field
 #       :math:`^{33}\text{S}` solid state NMR and first-principles calculations in
 #       potassium sulfates. J. Phys. Chem. A, 2010, **114**, *1*, 309–316.

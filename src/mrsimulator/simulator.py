@@ -25,17 +25,19 @@ class Simulator(BaseModel):
     """
     The simulator class.
 
-    Attributes:
-        name: An optional string containing the simulation/sample name. The default
-            value is an empty string.
-        description: An optional string with the simulation/sample description. The
-            default value is an empty string.
-        spin_systems: A list of the :ref:`spin_system_api` objects or list of equivalent
-            python dictionary object. The default value is an empty list.
-        methods: A list of :ref:`method_api` objects or list of equivalent python
-            dictionary object. The default value is an empty list.
-        config: The :ref:`config_api` object or an equivalent dictionary
-            object.
+    Attributes
+    ----------
+
+    str name: An optional string containing the simulation/sample name. The default
+        value is an empty string.
+    str description: An optional string with the simulation/sample description. The
+        default value is an empty string.
+    spin_systems: A list of the :ref:`spin_system_api` objects or list of equivalent
+        python dictionary object. The default value is an empty list.
+    methods: A list of :ref:`method_api` objects or list of equivalent python
+        dictionary object. The default value is an empty list.
+    config: The :ref:`config_api` object or an equivalent dictionary
+        object.
     """
 
     name: Optional[str] = ""
@@ -112,30 +114,32 @@ class Simulator(BaseModel):
         Returns:
             A Dict object.
 
-        Example:
-            >>> pprint(sim.to_dict_with_units())
-            {'config': {'decompose_spectrum': 'none',
-                        'integration_density': 70,
-                        'integration_volume': 'octant',
-                        'number_of_sidebands': 64},
-             'description': '',
-             'indexes': [],
-             'name': '',
-             'spin_systems': [{'abundance': '100 %',
-                               'sites': [{'isotope': '13C',
-                                          'isotropic_chemical_shift': '20.0 ppm',
-                                          'shielding_symmetric': {'eta': 0.5,
-                                                                  'zeta': '10.0 ppm'}}]},
-                              {'abundance': '100 %',
-                               'sites': [{'isotope': '1H',
-                                          'isotropic_chemical_shift': '-4.0 ppm',
-                                          'shielding_symmetric': {'eta': 0.1,
-                                                                  'zeta': '2.1 ppm'}}]},
-                              {'abundance': '100 %',
-                               'sites': [{'isotope': '27Al',
-                                          'isotropic_chemical_shift': '120.0 ppm',
-                                          'shielding_symmetric': {'eta': 0.1,
-                                                                  'zeta': '2.1 ppm'}}]}]}
+        Example
+        -------
+
+        >>> pprint(sim.to_dict_with_units())
+        {'config': {'decompose_spectrum': 'none',
+                    'integration_density': 70,
+                    'integration_volume': 'octant',
+                    'number_of_sidebands': 64},
+         'description': '',
+         'indexes': [],
+         'name': '',
+         'spin_systems': [{'abundance': '100 %',
+                           'sites': [{'isotope': '13C',
+                                      'isotropic_chemical_shift': '20.0 ppm',
+                                      'shielding_symmetric': {'eta': 0.5,
+                                                              'zeta': '10.0 ppm'}}]},
+                          {'abundance': '100 %',
+                           'sites': [{'isotope': '1H',
+                                      'isotropic_chemical_shift': '-4.0 ppm',
+                                      'shielding_symmetric': {'eta': 0.1,
+                                                              'zeta': '2.1 ppm'}}]},
+                          {'abundance': '100 %',
+                           'sites': [{'isotope': '27Al',
+                                      'isotropic_chemical_shift': '120.0 ppm',
+                                      'shielding_symmetric': {'eta': 0.1,
+                                                              'zeta': '2.1 ppm'}}]}]}
         """
         sim = {}
         sim["name"] = self.name

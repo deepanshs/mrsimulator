@@ -238,10 +238,11 @@ if USE_CYTHON:
 
 extras = {"lmfit": ["lmfit>=1.0.0"]}
 
+description = "A python toolbox for simulating fast real-time solid-state NMR spectra."
 setup(
     name="mrsimulator",
     version=version,
-    description="A python toolbox for simulating fast real-time solid-state NMR spectra.",
+    description=description,
     long_description=open(join(module_dir, "README.md")).read(),
     author="Deepansh J. Srivastava",
     author_email="deepansh2012@gmail.com",
@@ -249,13 +250,8 @@ setup(
     url="https://github.com/DeepanshS/MRsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    # setup_requires=["numpy>=1.16.0"],
-    # install_requires=[
-    #     # "numpy>=1.16.0",
-    #     "csdmpy>0.2.1",
-    #     "pydantic>=1.0",
-    #     "monty>=2.0.4",
-    # ],
+    setup_requires=["numpy>=1.17"],
+    install_requires=["numpy>=1.17", "csdmpy>=0.2.1", "pydantic>=1.0", "monty>=2.0.4"],
     extras_require=extras,
     ext_modules=ext_modules,
     include_package_data=True,

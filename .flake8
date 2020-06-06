@@ -1,9 +1,9 @@
 [flake8]
-ignore = C901 E265 E402 E501
+ignore = E402 C901 E501 E265
 exclude = .eggs, *.egg,build, src/mrsimulator/__init__.py
 filename = *.pyx, *py
-max-line-length = 90
+max-line-length = 88
 max-complexity = 10
 select = B,C,E,F,W,T4,B9
 
-## E203, E266, E501, F403, F811, F841, F401, C901
+## E203, E266, E501, F403, F811, F841, F401, C901 # C901 E501 E265

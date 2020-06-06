@@ -15,10 +15,10 @@ font = {"weight": "light", "size": 9}
 mpl.rc("font", **font)
 mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 
-#%%
+# %%
 # In this section, we illustrate the simulation of a quadrupolar spectrum arising from
-# a distribution of the electric field gradient (EFG) tensors from an amorphous material.
-# We proceed by assuming a multi-variate normal distribution, as follows,
+# a distribution of the electric field gradient (EFG) tensors from an amorphous
+# material. We proceed by assuming a multi-variate normal distribution, as follows,
 import numpy as np
 from scipy.stats import multivariate_normal
 
@@ -27,7 +27,7 @@ mean = [20, 6.5, 0.3]  # given as [isotropic chemical shift in ppm, Cq in MHz, e
 covariance = [[1.98, 0, 0], [0, 4.9, 0], [0, 0, 0.0016]]  # same order as the mean.
 iso, Cq, eta = multivariate_normal.rvs(mean=mean, cov=covariance, size=n).T
 
-#%%
+# %%
 # Here, the coordinates ``iso``, ``Cq``, and ``eta`` are drawn from a three-dimension
 # multivariate normal distribution of the isotropic chemical shift, electric quadrupole
 # coupling constant, and quadrupole asymmetry parameters, respectively. The mean of the
@@ -36,8 +36,6 @@ iso, Cq, eta = multivariate_normal.rvs(mean=mean, cov=covariance, size=n).T
 # quadrupole asymmetry parameter, respectively. Similarly, the variable ``covariance``
 # holds the covariance matrix of the multivariate normal distribution. The
 # two-dimensional plots from this three-dimensional distribution are shown below.
-
-#%%
 _, ax = plt.subplots(1, 3, figsize=(9, 3))
 
 # isotropic shift v.s. quadrupolar coupling constant
@@ -63,12 +61,10 @@ ax[2].set_ylim(0, 1)
 
 plt.tight_layout()
 plt.show()
-#%%
-#
+
+# %%
 # Let's create the site and spin-system objects from these parameters. Note, we create
 # single-site spin systems for optimum performance.
-
-#%%
 from mrsimulator import Simulator, Site, SpinSystem
 
 spin_systems = []
@@ -80,29 +76,26 @@ for i, c, e in zip(iso, Cq, eta):
     )
     spin_systems += [SpinSystem(sites=[site], abundance=2.5e-4)]
 
-#%%
+# %%
 # Static line-shape
 # -----------------
 # Observe the static :math:`^{27}\text{Al}` line-shape simulation. First,
 # create a central transition selective Bloch decay spectrum method.
-
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
 static_method = BlochDecayCentralTransitionSpectrum(
     channels=["27Al"], spectral_dimensions=[{"spectral_width": 80000}]
 )
 
-#%%
+# %%
 # Create the simulator object and add the spin systems and method.
 sim = Simulator()
 sim.spin_systems += spin_systems  # add the spin systems
 sim.methods += [static_method]  # add the method
 sim.run()
 
-
-#%%
+# %%
 # The plot of the corresponding spectrum.
-
 x, y = sim.methods[0].simulation.to_list()
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("$^{27}$Al frequency / ppm")
@@ -111,11 +104,10 @@ plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 plt.tight_layout()
 plt.show()
 
-#%%
+# %%
 # Spinning sideband simulation at the magic angle
 # -----------------------------------------------
 # Simulation of the same spin systems at the magic angle and spinning at 25 kHz.
-
 MAS_method = BlochDecayCentralTransitionSpectrum(
     channels=["27Al"],
     rotor_frequency=25000,  # in Hz
@@ -126,13 +118,13 @@ MAS_method = BlochDecayCentralTransitionSpectrum(
 )
 sim.methods[0] = MAS_method
 
-#%%
+# %%
 # Configure the sim object to calculate up to 4 sidebands, and run the simulation.
 sim.config.number_of_sidebands = 4
 sim.run()
 
-#%% and the corresponding plot.
-
+# %%
+# and the corresponding plot.
 x, y = sim.methods[0].simulation.to_list()
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("$^{27}$Al frequency / ppm")
