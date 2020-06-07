@@ -38,11 +38,13 @@ class ConfigSimulator:
             of line-shapes arising from individual isotopomer. If False, the lins-shape
             is a sum of individual line-shapes instead. The default value is ``False``.
 
-    Example:
-        >>> a = Simulator()
-        >>> a.config.number_of_sidebands = 128
-        >>> a.config.integration_volume = 'hemisphere'
-        >>> a.config.decompose_spectrum = 'spin_system'
+    Example
+    -------
+
+    >>> a = Simulator()
+    >>> a.config.number_of_sidebands = 128
+    >>> a.config.integration_volume = 'hemisphere'
+    >>> a.config.decompose_spectrum = 'spin_system'
     """
 
     def __init__(self, **kwargs):

@@ -61,6 +61,7 @@ extensions = [
     "sphinx_gallery.gen_gallery",
     "sphinx.ext.intersphinx",
     "sphinx_tabs.tabs",
+    "sphinx.ext.todo",
 ]
 
 # ---------------------------------------------------------------------------- #

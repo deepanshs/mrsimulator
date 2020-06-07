@@ -25,19 +25,17 @@ class Simulator(BaseModel):
     """
     The simulator class.
 
-    Attributes
-    ----------
-
-    str name: An optional string containing the simulation/sample name. The default
-        value is an empty string.
-    str description: An optional string with the simulation/sample description. The
-        default value is an empty string.
-    spin_systems: A list of the :ref:`spin_system_api` objects or list of equivalent
-        python dictionary object. The default value is an empty list.
-    methods: A list of :ref:`method_api` objects or list of equivalent python
-        dictionary object. The default value is an empty list.
-    config: The :ref:`config_api` object or an equivalent dictionary
-        object.
+    Attributes:
+        name: An optional string containing the simulation/sample name. The default
+            value is an empty string.
+        description: An optional string with the simulation/sample description. The
+            default value is an empty string.
+        spin_systems: A list of the :ref:`spin_system_api` objects or list of equivalent
+            python dictionary object. The default value is an empty list.
+        methods: A list of :ref:`method_api` objects or list of equivalent python
+            dictionary object. The default value is an empty list.
+        config: The :ref:`config_api` object or an equivalent dictionary
+            object.
     """
 
     name: Optional[str] = ""
@@ -77,15 +75,17 @@ class Simulator(BaseModel):
         Returns:
             A Set.
 
-        Example:
-            >>> sim.get_isotopes() # doctest:+SKIP
-            {'1H', '27Al', '13C'}
-            >>> sim.get_isotopes(spin_I=0.5) # doctest:+SKIP
-            {'1H', '13C'}
-            >>> sim.get_isotopes(spin_I=1.5)
-            set()
-            >>> sim.get_isotopes(spin_I=2.5)
-            {'27Al'}
+        Example
+        -------
+
+        >>> sim.get_isotopes() # doctest:+SKIP
+        {'1H', '27Al', '13C'}
+        >>> sim.get_isotopes(spin_I=0.5) # doctest:+SKIP
+        {'1H', '13C'}
+        >>> sim.get_isotopes(spin_I=1.5)
+        set()
+        >>> sim.get_isotopes(spin_I=2.5)
+        {'27Al'}
         """
         st = set()
         for isotopomer in self.spin_systems:
@@ -157,6 +157,18 @@ class Simulator(BaseModel):
             sim["version"] = __version__
         return sim
 
+    def parse_dict_with_units(self):
+        """
+        Parse the physical quantities of the Method object from a python dictionary
+        object.
+
+        .. todo::
+
+            Add the methood.
+        """
+        pass
+        # py_dict_copy = deepcopy(py_dict)
+
     def reduced_dict(self, exclude=["property_units"]) -> dict:
         """Returns a reduced dictionary representation of the class object by removing
         all key-value pair corresponding to keys listed in the `exclude` argument, and
@@ -180,8 +192,10 @@ class Simulator(BaseModel):
         Args:
             str filename: A local or remote address to a JSON serialized file.
 
-        Example:
-            >>> sim.load_spin_systems(filename) # doctest:+SKIP
+        Example
+        -------
+
+        >>> sim.load_spin_systems(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
         json_data = contents["spin_systems"]
@@ -200,8 +214,10 @@ class Simulator(BaseModel):
             str filename: The list of will be serialized to a file with
                 the given filename.
 
-        Example:
-            >>> sim.export_spin_systems(filename) # doctest:+SKIP
+        Example
+        -------
+
+        >>> sim.export_spin_systems(filename) # doctest:+SKIP
         """
         spin_systems = [SpinSystem.to_dict_with_units(obj) for obj in self.spin_systems]
         with open(filename, "w", encoding="utf8") as outfile:
@@ -222,8 +238,10 @@ class Simulator(BaseModel):
                 will be computed. The default is None, that is, the simulation for
                 every method will computed.
 
-        Example:
-            >>> sim.run() # doctest:+SKIP
+        Example
+        -------
+
+        >>> sim.run() # doctest:+SKIP
         """
         if method_index is None:
             method_index = np.arange(len(self.methods))
@@ -266,6 +284,11 @@ class Simulator(BaseModel):
 
         Args:
             str filename: A string with the filename of the serialized file.
+
+        Example
+        -------
+
+        >>> sim.save('filename') # doctest: +SKIP
         """
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
@@ -285,6 +308,11 @@ class Simulator(BaseModel):
 
         Return:
             A :class:`~mrsimulator.Simulator` object.
+
+        Example
+        -------
+
+        >>> sim_1 = sim.load('filename') # doctest: +SKIP
         """
         sim = Simulator()
         contents = import_json(filename)

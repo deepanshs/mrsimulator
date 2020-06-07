@@ -466,7 +466,7 @@ class Method(Parseable):
             csdm: simulation object
 
         Returns:
-            A Numpy array
+            A Numpy array.
         """
 
         csdm = self.simulation

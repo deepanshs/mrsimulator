@@ -110,11 +110,13 @@ class SpinSystem(Parseable):
         where :math:`m_i` is the quantum number associated with the :math:`i^\text{th}`
         site within the isotopomer.
 
-        Example:
-            >>> isotopomer_1H_13C.get_isotopes() # two site (spin-1/2) isotopomer
-            ['13C', '1H']
-            >>> isotopomer_1H_13C.Zeeman_energy_states  # four energy level system.
-            [|-0.5, -0.5⟩, |-0.5, 0.5⟩, |0.5, -0.5⟩, |0.5, 0.5⟩]
+        Example
+        -------
+
+        >>> isotopomer_1H_13C.get_isotopes() # two site (spin-1/2) isotopomer
+        ['13C', '1H']
+        >>> isotopomer_1H_13C.Zeeman_energy_states  # four energy level system.
+        [|-0.5, -0.5⟩, |-0.5, 0.5⟩, |0.5, -0.5⟩, |0.5, 0.5⟩]
 
         Return: A list of ZeemanState objects.
         """
@@ -139,26 +141,28 @@ class SpinSystem(Parseable):
     def all_transitions(self) -> TransitionList:
         """Returns a list of all possible spin transitions in the given isotopomer.
 
-        Example:
-            >>> isotopomer_1H_13C.get_isotopes()  # two site (spin-1/2) isotopomer
-            ['13C', '1H']
-            >>> isotopomer_1H_13C.all_transitions  # 16 two energy level transitions
-            [|-0.5, -0.5⟩⟨-0.5, -0.5|,
-            |-0.5, 0.5⟩⟨-0.5, -0.5|,
-            |0.5, -0.5⟩⟨-0.5, -0.5|,
-            |0.5, 0.5⟩⟨-0.5, -0.5|,
-            |-0.5, -0.5⟩⟨-0.5, 0.5|,
-            |-0.5, 0.5⟩⟨-0.5, 0.5|,
-            |0.5, -0.5⟩⟨-0.5, 0.5|,
-            |0.5, 0.5⟩⟨-0.5, 0.5|,
-            |-0.5, -0.5⟩⟨0.5, -0.5|,
-            |-0.5, 0.5⟩⟨0.5, -0.5|,
-            |0.5, -0.5⟩⟨0.5, -0.5|,
-            |0.5, 0.5⟩⟨0.5, -0.5|,
-            |-0.5, -0.5⟩⟨0.5, 0.5|,
-            |-0.5, 0.5⟩⟨0.5, 0.5|,
-            |0.5, -0.5⟩⟨0.5, 0.5|,
-            |0.5, 0.5⟩⟨0.5, 0.5|]
+        Example
+        -------
+
+        >>> isotopomer_1H_13C.get_isotopes()  # two site (spin-1/2) isotopomer
+        ['13C', '1H']
+        >>> isotopomer_1H_13C.all_transitions  # 16 two energy level transitions
+        [|-0.5, -0.5⟩⟨-0.5, -0.5|,
+        |-0.5, 0.5⟩⟨-0.5, -0.5|,
+        |0.5, -0.5⟩⟨-0.5, -0.5|,
+        |0.5, 0.5⟩⟨-0.5, -0.5|,
+        |-0.5, -0.5⟩⟨-0.5, 0.5|,
+        |-0.5, 0.5⟩⟨-0.5, 0.5|,
+        |0.5, -0.5⟩⟨-0.5, 0.5|,
+        |0.5, 0.5⟩⟨-0.5, 0.5|,
+        |-0.5, -0.5⟩⟨0.5, -0.5|,
+        |-0.5, 0.5⟩⟨0.5, -0.5|,
+        |0.5, -0.5⟩⟨0.5, -0.5|,
+        |0.5, 0.5⟩⟨0.5, -0.5|,
+        |-0.5, -0.5⟩⟨0.5, 0.5|,
+        |-0.5, 0.5⟩⟨0.5, 0.5|,
+        |0.5, -0.5⟩⟨0.5, 0.5|,
+        |0.5, 0.5⟩⟨0.5, 0.5|]
         """
         transitions = self._all_transitions()
         return TransitionList(
@@ -179,18 +183,20 @@ class SpinSystem(Parseable):
             dict py_dict: A python dictionary representation of an isotopomer object
                 where attributes values are given as a string with a physical quantity.
 
-        Example:
-            >>> isotopomer_dict = {
-            ...     "sites": [{
-            ...         "isotope":"13C",
-            ...         "isotropic_chemical_shift": "20 ppm",
-            ...         "shielding_symmetric": {
-            ...             "zeta": "10 ppm",
-            ...             "eta": 0.5
-            ...         }
-            ...     }]
-            ... }
-            >>> isotopomer_1 = SpinSystem.parse_dict_with_units(isotopomer_dict)
+        Example
+        -------
+
+        >>> isotopomer_dict = {
+        ...     "sites": [{
+        ...         "isotope":"13C",
+        ...         "isotropic_chemical_shift": "20 ppm",
+        ...         "shielding_symmetric": {
+        ...             "zeta": "10 ppm",
+        ...             "eta": 0.5
+        ...         }
+        ...     }]
+        ... }
+        >>> isotopomer_1 = SpinSystem.parse_dict_with_units(isotopomer_dict)
         """
         py_dict_copy = deepcopy(py_dict)
         if "sites" in py_dict_copy:
@@ -214,22 +220,24 @@ class SpinSystem(Parseable):
 
         Return: A python dict
 
-        Example:
-            >>> pprint(isotopomer_1.to_freq_dict(B0=9.4))
-            {'abundance': 100,
-             'description': '',
-             'name': '',
-             'sites': [{'isotope': '13C',
-                        'isotropic_chemical_shift': -2013.1791999999998,
-                        'name': None,
-                        'quadrupolar': None,
-                        'shielding_antisymmetric': None,
-                        'shielding_symmetric': {'alpha': None,
-                                                'beta': None,
-                                                'eta': 0.5,
-                                                'gamma': None,
-                                                'zeta': -1006.5895999999999}}],
-             'transition_pathways': None}
+        Example
+        -------
+
+        >>> pprint(isotopomer_1.to_freq_dict(B0=9.4))
+        {'abundance': 100,
+         'description': '',
+         'name': '',
+         'sites': [{'isotope': '13C',
+                    'isotropic_chemical_shift': -2013.1791999999998,
+                    'name': None,
+                    'quadrupolar': None,
+                    'shielding_antisymmetric': None,
+                    'shielding_symmetric': {'alpha': None,
+                                            'beta': None,
+                                            'eta': 0.5,
+                                            'gamma': None,
+                                            'zeta': -1006.5895999999999}}],
+         'transition_pathways': None}
         """
         temp_dict = self.dict()
         temp_dict["sites"] = [site.to_freq_dict(B0) for site in self.sites]
@@ -249,15 +257,17 @@ class SpinSystem(Parseable):
         Returns:
             A list of isotopes.
 
-        Example:
-            >>> spin_systems.get_isotopes()
-            ['13C', '1H', '27Al']
-            >>> spin_systems.get_isotopes(spin_I=0.5)
-            ['13C', '1H']
-            >>> spin_systems.get_isotopes(spin_I=1.5)
-            []
-            >>> spin_systems.get_isotopes(spin_I=2.5)
-            ['27Al']
+        Example
+        -------
+
+        >>> spin_systems.get_isotopes()
+        ['13C', '1H', '27Al']
+        >>> spin_systems.get_isotopes(spin_I=0.5)
+        ['13C', '1H']
+        >>> spin_systems.get_isotopes(spin_I=1.5)
+        []
+        >>> spin_systems.get_isotopes(spin_I=2.5)
+        ['27Al']
         """
         isotope_list = allowed_isotopes(spin_I)
         return [

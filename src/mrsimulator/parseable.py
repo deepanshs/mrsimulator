@@ -111,11 +111,7 @@ class Parseable(BaseModel):
 
 
 def enforce_units(value: str, required_type: str, default_unit: str, throw_error=True):
-    """
-    Enforces a required type and default unit on the value
-
-        value
-    """
+    """ Enforces a required type and default unit on the value. """
     try:
         value = string_to_quantity(value)
         data_type = value.unit.physical_type

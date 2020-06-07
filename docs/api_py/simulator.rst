@@ -14,6 +14,7 @@ Simulator
 
     .. automethod:: get_isotopes
     .. automethod:: to_dict_with_units
+    .. automethod:: parse_dict_with_units
     .. automethod:: load_spin_systems
     .. automethod:: export_spin_systems
     .. automethod:: run

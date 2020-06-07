@@ -38,30 +38,32 @@ class Site(Parseable):
                 object representing the irreducible second-rank traceless symmetric
                 part of electric-field gradient tensor. The default value is None.
 
-    Example:
-        Setting up Site objects.
+    Example
+    -------
 
-            >>> site1 = Site(
-            ...           isotope='13C',
-            ...           isotropic_chemical_shift=20, # in ppm
-            ...           shielding_symmetric={
-            ...             "zeta": 10, # in ppm
-            ...             "eta": 0.5
-            ...           },
-            ...           quadrupole={
-            ...             "Cq": 5.1e6, # in Hz
-            ...             "eta": 0.5
-            ...           }
-            ...         )
+    Setting up Site objects.
 
-        Using SymmetricTensor objects.
+    >>> site1 = Site(
+    ...     isotope='13C',
+    ...     isotropic_chemical_shift=20, # in ppm
+    ...     shielding_symmetric={
+    ...         "zeta": 10, # in ppm
+    ...         "eta": 0.5
+    ...     },
+    ...     quadrupole={
+    ...         "Cq": 5.1e6, # in Hz
+    ...         "eta": 0.5
+    ...     }
+    ... )
 
-            >>> site1 = Site(
-            ...           isotope='13C',
-            ...           isotropic_chemical_shift=20, # in ppm
-            ...           shielding_symmetric=SymmetricTensor(zeta=10, eta=0.5),
-            ...           quadrupole=SymmetricTensor(Cq=5.1e6, eta=0.5)
-            ...         )
+    Using SymmetricTensor objects.
+
+    >>> site1 = Site(
+    ...     isotope='13C',
+    ...     isotropic_chemical_shift=20, # in ppm
+    ...     shielding_symmetric=SymmetricTensor(zeta=10, eta=0.5),
+    ...     quadrupole=SymmetricTensor(Cq=5.1e6, eta=0.5)
+    ... )
     """
 
     name: str = None
@@ -116,13 +118,15 @@ class Site(Parseable):
         Returns:
             Site object
 
-        Example:
-            >>> site_dict = {
-            ...    "isotope": "13C",
-            ...    "isotropic_chemical_shift": "20 ppm",
-            ...    "shielding_symmetric": {"zeta": "10 ppm", "eta":0.5}
-            ... }
-            >>> site1 = Site.parse_dict_with_units(site_dict)
+        Example
+        -------
+
+        >>> site_dict = {
+        ...    "isotope": "13C",
+        ...    "isotropic_chemical_shift": "20 ppm",
+        ...    "shielding_symmetric": {"zeta": "10 ppm", "eta":0.5}
+        ... }
+        >>> site1 = Site.parse_dict_with_units(site_dict)
         """
         prop_mapping = {
             "shielding_symmetric": SymmetricTensor,
@@ -150,18 +154,20 @@ class Site(Parseable):
         Return:
             Dict object
 
-        Example:
-            >>> pprint(site1.to_freq_dict(9.4))
-            {'isotope': '13C',
-             'isotropic_chemical_shift': -2013.1791999999998,
-             'name': None,
-             'quadrupolar': None,
-             'shielding_antisymmetric': None,
-             'shielding_symmetric': {'alpha': None,
-                                     'beta': None,
-                                     'eta': 0.5,
-                                     'gamma': None,
-                                     'zeta': -1006.5895999999999}}
+        Example
+        -------
+
+        >>> pprint(site1.to_freq_dict(9.4))
+        {'isotope': '13C',
+         'isotropic_chemical_shift': -2013.1791999999998,
+         'name': None,
+         'quadrupolar': None,
+         'shielding_antisymmetric': None,
+         'shielding_symmetric': {'alpha': None,
+                                 'beta': None,
+                                 'eta': 0.5,
+                                 'gamma': None,
+                                 'zeta': -1006.5895999999999}}
         """
         temp_dict = self.dict(exclude={"isotope"})
         temp_dict["isotope"] = self.isotope.symbol
