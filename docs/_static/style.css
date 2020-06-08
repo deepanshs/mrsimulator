@@ -252,20 +252,30 @@ table caption:hover {
   cursor: pointer;
 }
 
+/* selected list item header */
 .sidebar > ul > li.current > a {
   color: black;
+  font-weight: 500;
 }
 
+/* selected list item's sub-list */
 .sidebar > ul > li.current > ul {
   padding: 0;
 }
 
+/* selected list item's sub-list items */
 .sidebar > ul > li.current > ul > li {
   list-style: none;
   background-color: rgb(235, 235, 235);
   color: gray;
 }
 
+/* selected list item's sub-list's item on hover */
+.sidebar > ul > li.current > ul > li:hover {
+  background-color: rgb(214, 214, 214);
+}
+
+/* selected list item's sub-list's item a tags */
 .sidebar > ul > li.current > ul > li > a {
   display: block;
   padding: 0.25em;
@@ -277,7 +287,8 @@ table caption:hover {
   text-decoration: none;
   cursor: pointer;
 }
-.sidebar > ul > li.current > ul > li > a:focus {
+/* selected list item's sub-list's item selected a tags */
+.sidebar > ul > li.current > ul > li > a.current {
   color: black;
   font-weight: 500;
 }

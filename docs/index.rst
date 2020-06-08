@@ -130,24 +130,25 @@ Our current objectives for the future are the following
 
 .. only:: html
 
-	Table of Contents
-	-----------------
+    Table of Contents
+    -----------------
 
 .. toctree::
-	:maxdepth: 2
+    :maxdepth: 2
 
-	installation
-	requirements
-	understanding-isotopomers
-	getting_started
-	using_mrsimulator_objects
-	load_isotopomers
-	configuring_simulator
-	benchmark
-	auto_examples/index
-	theory/components
-	api_py/py_api
-	api_c/c_api
+    installation
+    requirements
+    understanding-isotopomers
+    getting_started
+    using_mrsimulator_objects
+    load_isotopomers
+    configuring_simulator
+    benchmark
+    auto_examples/index
+    theory/components
+    api_py/py_api
+    api_c/c_api
+    changelog
 
 
 .. .. only:: html
