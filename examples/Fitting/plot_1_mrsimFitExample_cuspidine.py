@@ -17,7 +17,7 @@ Fitting Cusipidine.
 # The *mrsimulator* library and data make use of CSDM compliant files.
 # In this example we will be creating a synthetic spectrum of cuspidine from reported tensor
 # parameters and then fit a simulation to the spectrum to demonstrate a simple fitting procedure.
-# The :math:`^{29}\text{Si}` tensor parameters were obtained from Hansen et. al. [#f1]_
+# The :math:`^{29}\text{Si}` tensor parameters were obtained from Hansen `et. al.` [#f1]_
 #
 # We will begin by importing *matplotlib* and establishing figure size.
 import matplotlib.pylab as pylab
@@ -152,7 +152,7 @@ def test_function(params, data, sim):
 #%%
 
 minner = Minimizer(test_function, params, fcn_args=(synthetic_experiment, sim))
-result = minner.minimize()
+result = minner.minimize(method="powell")
 result
 
 #%%

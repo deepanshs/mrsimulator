@@ -89,10 +89,12 @@ def test_simulator_1():
     sim = Simulator()
     sim.spin_systems = [SpinSystem(sites=[Site(isotope="1H"), Site(isotope="23Na")])]
     sim.methods = [BlochDecaySpectrum()]
+    sim.name = "test"
+    sim.description = "testing-testing 1.2.3"
 
     assert sim.reduced_dict() == {
-        "name": "",
-        "description": "",
+        "name": "test",
+        "description": "testing-testing 1.2.3",
         "spin_systems": [
             {
                 "name": "",
@@ -141,3 +143,13 @@ def test_simulator_1():
         },
         "indexes": [],
     }
+
+    # save
+    sim.save("test_sim_save.json.temp")
+    sim_load = sim.load("test_sim_save.json.temp")
+
+    assert sim_load.spin_systems == sim.spin_systems
+    assert sim_load.methods == sim.methods
+    assert sim_load.name == sim.name
+    assert sim_load.description == sim.description
+    assert sim_load == sim

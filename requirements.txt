@@ -1,9 +1,6 @@
 
 numpy>=1.17
-cython>=0.29
-requests>=2.22
-matplotlib>3.0
+matplotlib>=3.0
 csdmpy>=0.2.1
 pydantic>=1.0
 monty>=2.0.4
-lmfit==1.0.0

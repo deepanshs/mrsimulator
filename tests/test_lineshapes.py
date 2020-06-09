@@ -110,12 +110,19 @@ def c_setup(data_object, data_source):
     ]
 
     s1 = Simulator(spin_systems=spin_systems, methods=methods)
+    s1.config.decompose_spectrum = "spin_system"
+    s1.spin_systems[0].name = "test name"
+    s1.spin_systems[0].description = "test description"
     s1.config.integration_density = 120
     s1.config.number_of_sidebands = 90
     s1.run()
-    data_mrsimulator = s1.methods[0].simulation.to_list()[1]
+    data_mrsimulator = np.asarray(s1.methods[0].simulation.to_list()[1:])
+    data_mrsimulator = data_mrsimulator.sum(axis=0)
     data_mrsimulator /= data_mrsimulator.max()
 
+    dv = s1.methods[0].simulation.dependent_variables[0]
+    assert dv.name == "test name"
+    assert dv.description == "test description"
     return data_mrsimulator, data_source
 
 

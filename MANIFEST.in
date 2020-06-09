@@ -1,8 +1,9 @@
 include README.md
 include requirements.txt
-include conda-requirements.txt
 include LICENSE
 include CHANGELOG
+include pyproject.toml
+include settings.py
 
 recursive-include src/c_lib/include *
 recursive-include src/c_lib/lib *
@@ -10,10 +11,11 @@ recursive-include src/c_lib/lib *
 include src/mrsimulator/isotope_data.json
 include src/mrsimulator/methods_data.json
 
-include src/c_lib/mrmethods/base_model.pxd
-include src/c_lib/mrmethods/base_model.pyx
-exclude src/c_lib/mrmethods/base_model.c
+include src/c_lib/base/base_model.pxd
+include src/c_lib/base/base_model.pyx
 
 include src/c_lib/test/test.pxd
 include src/c_lib/test/test.pyx
-exclude src/c_lib/test/test.c
+
+include src/c_lib/sandbox/sandbox.pxd
+include src/c_lib/sandbox/sandbox.pyx

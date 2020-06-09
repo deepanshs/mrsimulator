@@ -77,15 +77,17 @@ class Simulator(BaseModel):
         Returns:
             A Set.
 
-        Example:
-            >>> sim.get_isotopes() # doctest:+SKIP
-            {'1H', '27Al', '13C'}
-            >>> sim.get_isotopes(spin_I=0.5) # doctest:+SKIP
-            {'1H', '13C'}
-            >>> sim.get_isotopes(spin_I=1.5)
-            set()
-            >>> sim.get_isotopes(spin_I=2.5)
-            {'27Al'}
+        Example
+        -------
+
+        >>> sim.get_isotopes() # doctest:+SKIP
+        {'1H', '27Al', '13C'}
+        >>> sim.get_isotopes(spin_I=0.5) # doctest:+SKIP
+        {'1H', '13C'}
+        >>> sim.get_isotopes(spin_I=1.5)
+        set()
+        >>> sim.get_isotopes(spin_I=2.5)
+        {'27Al'}
         """
         st = set()
         for isotopomer in self.spin_systems:
@@ -114,30 +116,32 @@ class Simulator(BaseModel):
         Returns:
             A Dict object.
 
-        Example:
-            >>> pprint(sim.to_dict_with_units())
-            {'config': {'decompose_spectrum': 'none',
-                        'integration_density': 70,
-                        'integration_volume': 'octant',
-                        'number_of_sidebands': 64},
-             'description': '',
-             'indexes': [],
-             'name': '',
-             'spin_systems': [{'abundance': '100 %',
-                               'sites': [{'isotope': '13C',
-                                          'isotropic_chemical_shift': '20.0 ppm',
-                                          'shielding_symmetric': {'eta': 0.5,
-                                                                  'zeta': '10.0 ppm'}}]},
-                              {'abundance': '100 %',
-                               'sites': [{'isotope': '1H',
-                                          'isotropic_chemical_shift': '-4.0 ppm',
-                                          'shielding_symmetric': {'eta': 0.1,
-                                                                  'zeta': '2.1 ppm'}}]},
-                              {'abundance': '100 %',
-                               'sites': [{'isotope': '27Al',
-                                          'isotropic_chemical_shift': '120.0 ppm',
-                                          'shielding_symmetric': {'eta': 0.1,
-                                                                  'zeta': '2.1 ppm'}}]}]}
+        Example
+        -------
+
+        >>> pprint(sim.to_dict_with_units())
+        {'config': {'decompose_spectrum': 'none',
+                    'integration_density': 70,
+                    'integration_volume': 'octant',
+                    'number_of_sidebands': 64},
+         'description': '',
+         'indexes': [],
+         'name': '',
+         'spin_systems': [{'abundance': '100 %',
+                           'sites': [{'isotope': '13C',
+                                      'isotropic_chemical_shift': '20.0 ppm',
+                                      'shielding_symmetric': {'eta': 0.5,
+                                                              'zeta': '10.0 ppm'}}]},
+                          {'abundance': '100 %',
+                           'sites': [{'isotope': '1H',
+                                      'isotropic_chemical_shift': '-4.0 ppm',
+                                      'shielding_symmetric': {'eta': 0.1,
+                                                              'zeta': '2.1 ppm'}}]},
+                          {'abundance': '100 %',
+                           'sites': [{'isotope': '27Al',
+                                      'isotropic_chemical_shift': '120.0 ppm',
+                                      'shielding_symmetric': {'eta': 0.1,
+                                                              'zeta': '2.1 ppm'}}]}]}
         """
         sim = {}
         sim["name"] = self.name
@@ -155,6 +159,18 @@ class Simulator(BaseModel):
             sim["version"] = __version__
         return sim
 
+    def parse_dict_with_units(self):
+        """
+        Parse the physical quantities of the Method object from a python dictionary
+        object.
+
+        .. todo::
+
+            Add the methood.
+        """
+        pass
+        # py_dict_copy = deepcopy(py_dict)
+
     def reduced_dict(self, exclude=["property_units"]) -> dict:
         """Returns a reduced dictionary representation of the class object by removing
         all key-value pair corresponding to keys listed in the `exclude` argument, and
@@ -171,16 +187,17 @@ class Simulator(BaseModel):
         Load a list of spin systems from the given JSON serialized file.
 
         See an
-        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
-        /master/isotopomers_ppm.json>`_
-        of JSON serialized file. For details, refer to the
-        :ref:`load_spin_systems` section of this documentation.
+        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
+        master/spin_systems_v0.3.json>`_ of JSON serialized file. For details, refer to
+        the :ref:`load_spin_systems` section of this documentation.
 
         Args:
             str filename: A local or remote address to a JSON serialized file.
 
-        Example:
-            >>> sim.load_spin_systems(filename) # doctest:+SKIP
+        Example
+        -------
+
+        >>> sim.load_spin_systems(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
         json_data = contents["spin_systems"]
@@ -191,17 +208,18 @@ class Simulator(BaseModel):
         Export a list of spin systems to a JSON serialized file.
 
         See an
-        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-test
-        /master/isotopomers_ppm.json>`_
-        of JSON serialized file. For details, refer to the
-        :ref:`load_spin_systems` section.
+        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
+        master/spin_systems_v0.3.json>`_ of JSON serialized file. For details, refer to
+        the :ref:`load_spin_systems` section.
 
         Args:
             str filename: The list of will be serialized to a file with
                 the given filename.
 
-        Example:
-            >>> sim.export_spin_systems(filename) # doctest:+SKIP
+        Example
+        -------
+
+        >>> sim.export_spin_systems(filename) # doctest:+SKIP
         """
         spin_systems = [SpinSystem.to_dict_with_units(obj) for obj in self.spin_systems]
         with open(filename, "w", encoding="utf8") as outfile:
@@ -222,8 +240,10 @@ class Simulator(BaseModel):
                 will be computed. The default is None, that is, the simulation for
                 every method will computed.
 
-        Example:
-            >>> sim.run() # doctest:+SKIP
+        Example
+        -------
+
+        >>> sim.run() # doctest:+SKIP
         """
         if method_index is None:
             method_index = np.arange(len(self.methods))
@@ -266,6 +286,11 @@ class Simulator(BaseModel):
 
         Args:
             str filename: A string with the filename of the serialized file.
+
+        Example
+        -------
+
+        >>> sim.save('filename') # doctest: +SKIP
         """
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
@@ -285,14 +310,28 @@ class Simulator(BaseModel):
 
         Return:
             A :class:`~mrsimulator.Simulator` object.
+
+        Example
+        -------
+
+        >>> sim_1 = sim.load('filename') # doctest: +SKIP
         """
         sim = Simulator()
         contents = import_json(filename)
+        sim.name = contents["name"]
+        sim.description = contents["description"]
+
+        # spin_systems
         i_data = contents["spin_systems"]
         sim.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in i_data]
 
+        # methods
         m_data = contents["methods"]
         sim.methods = [Method.parse_dict_with_units(obj) for obj in m_data]
+
+        # config
+        sim.config = ConfigSimulator(**contents["config"])
+        sim.indexes = contents["indexes"]
         return sim
 
     def _as_csdm_object(self, data: np.ndarray, method: Method) -> cp.CSDM:

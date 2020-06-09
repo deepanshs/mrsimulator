@@ -3,18 +3,13 @@ import platform
 import sys
 from os.path import abspath
 from os.path import dirname
-from os.path import exists
 from os.path import join
 from os.path import split
 
 import numpy as np
-import numpy.distutils.system_info as sysinfo
 from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
-
-from settings import use_accelerate
-from settings import use_openblas
 
 try:
     from Cython.Build import cythonize
@@ -23,10 +18,7 @@ try:
 except ImportError:
     USE_CYTHON = False
 
-# from setting import USE_SSE_AVX
-
 # get the version from file
-
 python_version = sys.version_info
 py_version = ".".join([str(i) for i in python_version[:3]])
 print("Using python version", py_version)
@@ -50,118 +42,34 @@ module_dir = dirname(abspath(__file__))
 libraries = []
 include_dirs = []
 library_dirs = []
-extra_compile_args = [
-    "-O3",
-    "-ffast-math",
-    # "-msse4.2",
-    # "-ftree-vectorize",
-    # "-fopt-info-vec-optimized",
-    # "-mavx",
-]
+extra_compile_args = []
 extra_link_args = []
 data_files = []
 
 numpy_include = np.get_include()
 
+conda_location = numpy_include
+for _ in range(5):
+    conda_location = split(conda_location)[0]
+
 if platform.system() == "Windows":
-    conda_location = numpy_include
-    for _ in range(5):
-        conda_location = split(conda_location)[0]
+    # windows system lib and include path
     include_dirs += [join(conda_location, "Library", "include", "fftw")]
     include_dirs += [join(conda_location, "Library", "include", "openblas")]
     include_dirs += [join(conda_location, "Library", "include")]
     include_dirs += [join(conda_location, "include")]
     library_dirs += [join(conda_location, "Library", "lib")]
-    libraries += ["fftw3", "openblas"]
-    name = "openblas"
-
-    extra_link_args += ["-lm"]
     extra_compile_args += ["-DFFTW_DLL"]
 
+else:
+    # unix system lib and include path
+    conda_location = split(conda_location)[0]
+    include_dirs += [join(conda_location, "include")]
+    library_dirs += [join(conda_location, "lib")]
+    extra_compile_args = ["-O3", "-ffast-math"]
 
-def message(lib):
-    return f"Please install {lib} from homebrew with:\n\t$ brew install {lib}"
-
-
-if platform.system() == "Darwin":  # OSX-specific tweaks:
-    # BLAS framework
-
-    # Apple's Accelerate framework for BLAS:
-    if use_accelerate:
-        acc_info = sysinfo.get_info("accelerate")
-        if "extra_compile_args" in acc_info:
-            extra_compile_args += acc_info["extra_compile_args"]
-        if "extra_link_args" in acc_info:
-            extra_link_args += acc_info["extra_link_args"]
-
-    # OpenBLAS framework
-    if use_openblas:
-        BLAS_INCLUDE = "/usr/local/opt/openblas/include"
-        BLAS_LIB = "/usr/local/opt/openblas/lib"
-        libraries += ["openblas"]
-
-        if not exists(BLAS_INCLUDE):
-            print(message("openblas"))
-            sys.exit(1)
-
-        include_dirs += [BLAS_INCLUDE]
-        library_dirs += [BLAS_LIB]
-
-    # # MKL framework
-    # if use_mkl:
-    #     mkl_info = np.__config__.blas_mkl_info
-    #     if mkl_info == {}:
-    #         print("Please enable mkl for numpy before proceeding.")
-    #         sys.exit(1)
-
-    #     BLAS_INCLUDE = mkl_info["include_dirs"]
-    #     BLAS_LIB = mkl_info["library_dirs"]
-    #     libraries += mkl_info["libraries"]
-
-    #     include_dirs += BLAS_INCLUDE
-    #     library_dirs += BLAS_LIB
-
-    # FFTW framework
-    FFTW_INCLUDE = "/usr/local/opt/fftw/include"
-    FFTW_LIB = "/usr/local/opt/fftw/lib"
-    libraries += ["fftw3"]
-
-    if not exists(FFTW_INCLUDE):
-        print(message("fftw"))
-        sys.exit(1)
-
-    include_dirs += [FFTW_INCLUDE]
-    library_dirs += [FFTW_LIB]
-
-    # if USE_SSE_AVX:
-    #     extra_compile_args += ["-Wa,-q"]
-
-if platform.system() == "Linux":
-    include_dirs += [
-        "/usr/include/",
-        "/usr/include/openblas",
-        "/usr/include/x86_64-linux-gnu/",
-    ]
-
-    library_dirs += ["/usr/lib64/", "/usr/lib/", "/usr/lib/x86_64-linux-gnu/"]
-    libraries += ["openblas", "fftw3"]
-    openblas_info = sysinfo.get_info("openblas")
-    fftw3_info = sysinfo.get_info("fftw3")
-
-    if openblas_info != {}:
-        name = "openblas"
-        library_dirs += openblas_info["library_dirs"]
-        libraries += openblas_info["libraries"]
-    fftw_keys = fftw3_info.keys()
-    if "include_dirs" in fftw_keys:
-        include_dirs += fftw3_info["include_dirs"]
-    if "library_dirs" in fftw_keys:
-        library_dirs += fftw3_info["library_dirs"]
-    if "libraries" in fftw_keys:
-        libraries += fftw3_info["libraries"]
-
-    extra_link_args += ["-lm"]
-    extra_compile_args += ["-g"]
+libraries += ["fftw3", "openblas"]
+extra_link_args += ["-lm"]
 
 include_dirs = list(set(include_dirs))
 library_dirs = list(set(library_dirs))
@@ -250,8 +158,13 @@ setup(
     url="https://github.com/DeepanshS/MRsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    setup_requires=["numpy>=1.17"],
-    install_requires=["numpy>=1.17", "csdmpy>=0.2.1", "pydantic>=1.0", "monty>=2.0.4"],
+    # setup_requires=["numpy>=1.17.0"],
+    # install_requires=[
+    #     # "numpy>=1.17.0",
+    #     "csdmpy>0.2.1",
+    #     "pydantic>=1.0",
+    #     "monty>=2.0.4",
+    # ],
     extras_require=extras,
     ext_modules=ext_modules,
     include_package_data=True,

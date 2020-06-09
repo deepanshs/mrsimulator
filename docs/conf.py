@@ -61,6 +61,7 @@ extensions = [
     "sphinx_gallery.gen_gallery",
     "sphinx.ext.intersphinx",
     "sphinx_tabs.tabs",
+    "sphinx.ext.todo",
 ]
 
 # ---------------------------------------------------------------------------- #
@@ -118,7 +119,7 @@ sphinx_gallery_conf = {
     ),
     "reference_url": {
         # The module you locally document uses None
-        "mrsimulator": None,
+        "mrsimulator": None
     },
     # "compress_images": ("images", "thumbnails"),
     # "show_memory": True,

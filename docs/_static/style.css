@@ -105,11 +105,6 @@ table caption:hover {
   transform: translateY(12px);
 }
 
-.logo {
-  width: 100%;
-  max-width: 275px;
-}
-
 .ui.sphinx-tab {
   font-size: inherit;
   font-weight: inherit;
@@ -181,7 +176,7 @@ table caption:hover {
 .sidebar.hidden-xs {
   position: relative;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: visible;
   width: calc(100% + 16px);
   height: calc(100% - 2em);
   padding-top: 1em;
@@ -195,13 +190,15 @@ table caption:hover {
 .sidebar > .logo {
   margin: auto;
   padding: 1em;
+  width: 100%;
+  max-width: 275px;
   /* padding-bottom: 1em; */
   /* padding-left: 0.5em;
   padding-right: 1.5em; */
 }
 
 .sidebar .logo img {
-  filter: invert(1);
+  filter: invert(1) brightness(1.25);
 }
 
 /* searchbar */
@@ -255,20 +252,30 @@ table caption:hover {
   cursor: pointer;
 }
 
+/* selected list item header */
 .sidebar > ul > li.current > a {
   color: black;
+  font-weight: 500;
 }
 
+/* selected list item's sub-list */
 .sidebar > ul > li.current > ul {
   padding: 0;
 }
 
+/* selected list item's sub-list items */
 .sidebar > ul > li.current > ul > li {
   list-style: none;
   background-color: rgb(235, 235, 235);
   color: gray;
 }
 
+/* selected list item's sub-list's item on hover */
+.sidebar > ul > li.current > ul > li:hover {
+  background-color: rgb(214, 214, 214);
+}
+
+/* selected list item's sub-list's item a tags */
 .sidebar > ul > li.current > ul > li > a {
   display: block;
   padding: 0.25em;
@@ -280,7 +287,8 @@ table caption:hover {
   text-decoration: none;
   cursor: pointer;
 }
-.sidebar > ul > li.current > ul > li > a:focus {
+/* selected list item's sub-list's item selected a tags */
+.sidebar > ul > li.current > ul > li > a.current {
   color: black;
   font-weight: 500;
 }

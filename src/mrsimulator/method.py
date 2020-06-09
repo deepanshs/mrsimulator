@@ -11,13 +11,13 @@ from typing import Union
 
 import csdmpy as cp
 import numpy as np
-from mrsimulator import Parseable
 from pydantic import BaseModel
 from pydantic import Field
 from pydantic import validator
 
 from .abstract_list import TransitionList
 from .isotope import Isotope
+from .parseable import Parseable
 from .post_simulation import PostSimulator
 from .transition import Transition
 
@@ -182,7 +182,7 @@ class SpectralDimension(Parseable):
         """
         if self.origin_offset is None:
             warnings.warn(
-                (
+                UserWarning(
                     "The coordinates along the dimension without an origin offset "
                     "cannot be converted to dimensionless frequency ratio."
                 )
@@ -247,6 +247,12 @@ class Method(Parseable):
     post_simulation: Optional[PostSimulator]
     experiment: Optional[Union[cp.CSDM, np.ndarray]]
     # post_simulation: Optional[Dict]
+
+    property_default_units: ClassVar = {
+        "magnetic_flux_density": "T",
+        "rotor_angle": "rad",
+        "rotor_frequency": "Hz",
+    }
 
     property_units: Dict = {
         "magnetic_flux_density": "T",
@@ -460,7 +466,7 @@ class Method(Parseable):
             csdm: simulation object
 
         Returns:
-            A Numpy array
+            A Numpy array.
         """
 
         csdm = self.simulation

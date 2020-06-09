@@ -15,7 +15,7 @@ font = {"weight": "light", "size": 9}
 mpl.rc("font", **font)
 mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 
-#%%
+# %%
 # One of the advantages of the ``Mrsimulator`` package is that it is a very fast NMR
 # line-shape simulation library. We can exploit this feature to simulate bulk
 # line-shapes and eventually model amorphous materials.
@@ -34,7 +34,7 @@ mean = [-100, 50, 0.15]  # given as [isotropic chemical shift in ppm, zeta in pp
 covariance = [[2.25, 0, 0], [0, 26.2, 0], [0, 0, 0.001]]  # same order as the mean.
 iso, zeta, eta = multivariate_normal.rvs(mean=mean, cov=covariance, size=n).T
 
-#%%
+# %%
 # Here, the coordinates ``iso``, ``zeta``, and ``eta`` are drawn from a three-dimension
 # multivariate normal distribution of the isotropic chemical shift, nuclear shielding
 # anisotropy, and nuclear shielding asymmetry parameters, respectively. The mean of the
@@ -43,8 +43,6 @@ iso, zeta, eta = multivariate_normal.rvs(mean=mean, cov=covariance, size=n).T
 # shielding asymmetry parameter, respectively. Similarly, the variable ``covariance``
 # holds the covariance matrix of the multivariate normal distribution. The
 # two-dimensional plots from this three-dimensional distribution are shown below.
-
-#%%
 _, ax = plt.subplots(1, 3, figsize=(9, 3))
 
 # isotropic shift v.s. shielding anisotropy
@@ -70,11 +68,9 @@ ax[2].set_ylim(0, 1)
 
 plt.tight_layout()
 plt.show()
-#%%
-#
-# Let's create the sites and single-site spin-system objects from these parameters.
 
-#%%
+# %%
+# Let's create the sites and single-site spin-system objects from these parameters.
 from mrsimulator import Simulator, Site, SpinSystem
 
 spin_systems = []
@@ -86,7 +82,7 @@ for i, z, e in zip(iso, zeta, eta):
     )
     spin_systems += [SpinSystem(sites=[site], abundance=2.5e-4)]
 
-#%%
+# %%
 # Let's also create the Bloch decay spectrum method.
 from mrsimulator.methods import BlochDecaySpectrum
 
@@ -97,28 +93,24 @@ method = BlochDecaySpectrum(
     ],
 )
 
-#%%
+# %%
 # The above method simulates a static :math:`^{29}\text{Si}` line-shapes at 9.4 T field
 # (default value).
 #
 # Now, that we have the spin systems and the method, create the simulator object and
 # add the respective objects.
-
 sim = Simulator()
 sim.spin_systems += spin_systems  # add the spin systems
 sim.methods += [method]  # add the method
 
-#%%
+# %%
 # Static line-shape
 # -----------------
 # Observe the static :math:`^{29}\text{Si}` line-shape simulation.
-
-#%%
 sim.run()
 
-#%%
+# %%
 # The plot of the simulation.
-
 x, y = sim.methods[0].simulation.to_list()
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("frequency / ppm")
@@ -127,18 +119,17 @@ plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 plt.tight_layout()
 plt.show()
 
-#%%
+# %%
 # .. note::
 #     The broad lineshape seen in the above spectrum is the result of the
 #     lineshapes arising from a distribution of shielding tensors. In this case,
 #     the lineshape is an integral of ``n=4000`` individual spectra. There is no
 #     lineshape broadening filter applied to the spectrum.
 
-#%%
+# %%
 # Spinning sideband simulation at :math:`90^\circ`
 # ------------------------------------------------
-# Here is another example of a sideband simulation, spinning at a 90-degree angle.
-
+# Here is an example of a sideband simulation, spinning at a 90-degree angle.
 sim.methods[0] = BlochDecaySpectrum(
     channels=["29Si"],
     rotor_frequency=5000,  # in Hz
@@ -150,9 +141,8 @@ sim.methods[0] = BlochDecaySpectrum(
 sim.config.number_of_sidebands = 8  # eight sidebands are sufficient for this example
 sim.run()
 
-#%%
+# %%
 # The plot of the simulation.
-
 x, y = sim.methods[0].simulation.to_list()
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("frequency / ppm")
@@ -161,10 +151,10 @@ plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 plt.tight_layout()
 plt.show()
 
-#%%
+# %%
 # Spinning sideband simulation at the magic angle
 # -----------------------------------------------
-
+# Here is another example of a sideband simulation at the magic angle.
 sim.methods[0] = BlochDecaySpectrum(
     channels=["29Si"],
     rotor_frequency=1000,  # in Hz
@@ -176,9 +166,8 @@ sim.methods[0] = BlochDecaySpectrum(
 sim.config.number_of_sidebands = 16  # sixteen sidebands are sufficient for this example
 sim.run()
 
-#%%
+# %%
 # The plot of the simulation.
-
 x, y = sim.methods[0].simulation.to_list()
 plt.plot(x, y, color="black", linewidth=1)
 plt.xlabel("frequency / ppm")

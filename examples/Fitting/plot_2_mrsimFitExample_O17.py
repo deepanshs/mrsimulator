@@ -16,7 +16,7 @@ Fitting Sodium Silicate.
 # measurements from an :math:`^{17}\text{O}` experiment on :math:`\text{Na}_{2}\text{SiO}_{3}`.
 # The *mrsimulator* library and data make use of CSDM compliant files.
 # In this example we will fit a simulation to an experimentally obtained :math:`^{17}\text{O}` spectrum.
-# We use the :math:`^{17}\text{O}` tensor information from Grandinetti et. al. [#f5]_
+# We use the :math:`^{17}\text{O}` tensor information from Grandinetti `et. al.` [#f5]_
 #
 # We will begin by importing *matplotlib* and establishing figure size.
 import matplotlib.pylab as pylab

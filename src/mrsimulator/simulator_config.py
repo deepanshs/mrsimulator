@@ -34,24 +34,37 @@ class ConfigSimulator:
             ``(n+1)*(n+2)/2 * number of octant``. The line-shape is an integral over
             the frequency contribution arising from every orientation. The default
             value is ``70``.
-        decompose_spectrum: A boolean. If true, decomposes the line-shape into an array of
-            line-shapes arising from individual isotopomer. If False, the lins-shape
+        decompose_spectrum: A boolean. If true, decomposes the line-shape into an array
+            of line-shapes arising from individual isotopomer. If False, the lins-shape
             is a sum of individual line-shapes instead. The default value is ``False``.
 
-    Example:
-        >>> a = Simulator()
-        >>> a.config.number_of_sidebands = 128
-        >>> a.config.integration_volume = 'hemisphere'
-        >>> a.config.decompose_spectrum = 'spin_system'
+    Example
+    -------
+
+    >>> a = Simulator()
+    >>> a.config.number_of_sidebands = 128
+    >>> a.config.integration_volume = 'hemisphere'
+    >>> a.config.decompose_spectrum = 'spin_system'
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._dict = {
             "number_of_sidebands": 64,
             "integration_volume": 0,
             "integration_density": 70,
             "decompose_spectrum": 0,
         }
+        if kwargs != {}:
+            self._dict = {
+                "number_of_sidebands": kwargs["number_of_sidebands"],
+                "integration_volume": __integration_volume_enum__[
+                    kwargs["integration_volume"]
+                ],
+                "integration_density": kwargs["integration_density"],
+                "decompose_spectrum": __decompose_spectrum_enum__[
+                    kwargs["decompose_spectrum"]
+                ],
+            }
         self._averaging_scheme = AveragingScheme(
             integration_density=70, integration_volume=0, allow_fourth_rank=True
         )
@@ -78,7 +91,7 @@ class ConfigSimulator:
             return
         raise ValueError(
             (
-                "value is not a valid enumeration literal; "
+                "Value is not a valid enumeration literal; "
                 "permitted: 'none', 'spin_system', found {value}.",
             )
         )
@@ -131,7 +144,7 @@ class ConfigSimulator:
             return
         raise ValueError(
             (
-                "value is not a valid enumeration literal; "
+                "Value is not a valid enumeration literal; "
                 "permitted: 'octant', 'hemisphere', found {value}.",
             )
         )
