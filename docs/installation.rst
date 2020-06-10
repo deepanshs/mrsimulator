@@ -32,8 +32,10 @@ python>3.6. Anaconda distribution for python comes with popular python packages 
 are frequently used in scientific computing.
 Miniconda is a minimal installer for conda. It is a smaller version of Anaconda that
 includes conda, Python, and the packages they depend on, along with other useful
-packages such as pip. You can find more information under the Windows tab in the
-:ref:`building_from_source` section.
+packages such as pip.
+
+.. You can find more information under the Windows tab in the
+.. :ref:`building_from_source` section.
 
 .. seealso::
 
@@ -88,25 +90,28 @@ and higher. PIP is the easiest way to install python packages.
   .. tab:: Windows
 
     .. note:: We currently do not provide binary distributions for windows. You'll need
-      to compile and build the mrsimulator library from source. Please see the
-      :ref:`building_from_source` section.
+      to compile and build the mrsimulator library from source. The following instructions
+      are one-time installation only. If you are upgrading the package, see the
+      :ref:`upgrading_to_a_newer_version` sub-section.
 
-    .. .. include:: install-docs/windows.rst
+    .. include:: install-docs/windows.rst
 
-    .. **Build and install the package**.
+    **Install the package**.
 
-    .. From within the ``Anaconda Prompt``, build and install the mrsimulator package
-    .. using pip.
+    From within the ``Anaconda Prompt``, build and install the mrsimulator package
+    using pip.
 
-    .. .. code-block:: bash
+    .. code-block:: bash
 
-    ..   $ pip install mrsimulator
+      $ pip install mrsimulator
 
 If you get a ``PermissionError``, it usually means that you do not have the required
 administrative access to install new packages to your Python installation. In this
-case, you may consider using the ``--user`` option to install the package into your
-home directory. You can read more about how to do this in the
-`pip documentation <https://pip.pypa.io/en/stable/user_guide/#user-installs>`_.
+case, you may consider adding the ``--user`` option, at the end of the statement, to
+install the package into your home directory. You can read more about how to do this in
+the `pip documentation <https://pip.pypa.io/en/stable/user_guide/#user-installs>`_.
+
+.. _upgrading_to_a_newer_version:
 
 Upgrading to a newer version
 """"""""""""""""""""""""""""
@@ -218,7 +223,6 @@ OS-dependent prerequisites
     operations. Mac users may opt to choose the in-build Apple's Accelerate library. If you
     opt for Apple's Accelerate library, skip to `Step-3`. If you wish to link the mrsimulator
     package to the OpenBLAS library, type the following in the terminal,
-    formulae as follows,
 
     .. code-block:: bash
 
@@ -230,13 +234,13 @@ OS-dependent prerequisites
     *(a)* You will need to install the BLAS development header for Apple's Accelerate
     library. The easiest way is to install the Xcode Command Line Tools. Note, this is a
     one-time installation. If you have previously installed the Xcode Command Line Tools,
-    you can skip this sub-step. Type the following in the terminal,
+    you may skip this sub-step. Type the following in the terminal,
 
     .. code-block:: bash
 
       $ xcode-select --install
 
-    *(b)* This step is to let the mrsimulator setup know your preference.
+    *(b)* The next step is to let the mrsimulator setup know your preference.
     Open the ``settings.py`` file, located at the root level of the mrsimulator source
     code folder, in a text editor. You should see
 
@@ -298,8 +302,8 @@ options as,
 
 ----
 
-Check your build
-----------------
+Test your build
+---------------
 
 If the installation is successful, you should be able to run the following test
 file in your terminal. Download the test file
@@ -363,7 +367,7 @@ please run the setup by binding to the openblas libraries.
 
 As always, if you get an error that you don’t have the permission to install the
 package into the default site-packages directory, you may try installing by adding the
-``--user`` options at the end of the statements in steps D and E.
+``--user`` options at the end of the statements in steps D-F.
 
 Note for the developers and contributors
 ''''''''''''''''''''''''''''''''''''''''
