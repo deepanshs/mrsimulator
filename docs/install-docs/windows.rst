@@ -9,7 +9,7 @@ Download the latest version of conda on your operating system from either
 download conda for python 3. Double click the downloaded .exe file and follow the
 installation steps.
 
-**OpenBLAS/Accelerate and FFTW libraries**
+**OpenBLAS and FFTW libraries**
 
 Launch the ``Anaconda prompt`` (it should be located under the start menu). Within the
 anaconda prompt, type the following to install the package dependencies.

@@ -5,7 +5,6 @@ from os.path import abspath
 from os.path import dirname
 from os.path import exists
 from os.path import join
-from os.path import split
 
 import numpy as np
 import numpy.distutils.system_info as sysinfo
@@ -63,20 +62,38 @@ data_files = []
 
 numpy_include = np.get_include()
 
-if platform.system() == "Windows":
-    conda_location = numpy_include
-    for _ in range(5):
-        conda_location = split(conda_location)[0]
-    include_dirs += [join(conda_location, "Library", "include", "fftw")]
-    include_dirs += [join(conda_location, "Library", "include", "openblas")]
-    include_dirs += [join(conda_location, "Library", "include")]
-    include_dirs += [join(conda_location, "include")]
-    library_dirs += [join(conda_location, "Library", "lib")]
-    libraries += ["fftw3", "openblas"]
-    name = "openblas"
+if sys.platform.startswith("win"):
 
-    extra_link_args += ["-lm"]
-    extra_compile_args += ["-DFFTW_DLL"]
+    extra_link_args += ["-lm", "-Wl,--allow-multiple-definition"]
+    extra_compile_args += ["-DFFTW_DLL", "/O3"]
+
+    # FFTW3 info
+    fftw3_info = sysinfo.get_info("fftw3")
+    fftw_keys = fftw3_info.keys()
+    if "include_dirs" in fftw_keys:
+        include_dirs += fftw3_info["include_dirs"]
+    if "library_dirs" in fftw_keys:
+        library_dirs += fftw3_info["library_dirs"]
+    if "libraries" in fftw_keys:
+        libraries += fftw3_info["libraries"]
+
+    # OpenBLAS info
+    openblas_info = sysinfo.get_info("openblas")
+    if openblas_info != {}:
+        include_dirs += [join(fftw3_info["include_dirs"][0], "openblas")]
+        library_dirs += openblas_info["library_dirs"]
+        libraries += openblas_info["libraries"]
+
+    # conda_location = numpy_include
+    # for _ in range(5):
+    #     conda_location = split(conda_location)[0]
+    # include_dirs += [join(conda_location, "Library", "include", "fftw")]
+    # include_dirs += [join(conda_location, "Library", "include", "openblas")]
+    # include_dirs += [join(conda_location, "Library", "include")]
+    # include_dirs += [join(conda_location, "include")]
+    # library_dirs += [join(conda_location, "Library", "lib")]
+    # libraries += ["fftw3", "openblas"]
+    # name = "openblas"
 
 
 def message(lib):

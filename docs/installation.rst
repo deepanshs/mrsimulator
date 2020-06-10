@@ -33,7 +33,7 @@ are frequently used in scientific computing.
 Miniconda is a minimal installer for conda. It is a smaller version of Anaconda that
 includes conda, Python, and the packages they depend on, along with other useful
 packages such as pip. You can find more information under the Windows tab in the
-section :ref:`on_local_machine`.
+:ref:`building_from_source` section.
 
 .. seealso::
 
@@ -88,24 +88,36 @@ and higher. PIP is the easiest way to install python packages.
   .. tab:: Windows
 
     .. note:: We currently do not provide binary distributions for windows. You'll need
-        to compile and build the mrsimulator library. Follow the instructions below.
+      to compile and build the mrsimulator library from source. Please see the
+      :ref:`building_from_source` section.
 
-    .. include:: install-docs/windows.rst
+    .. .. include:: install-docs/windows.rst
 
-    **Build and install the package**.
+    .. **Build and install the package**.
 
-    From within the ``Anaconda Prompt``, build and install the mrsimulator package
-    using pip.
+    .. From within the ``Anaconda Prompt``, build and install the mrsimulator package
+    .. using pip.
 
-    .. code-block:: bash
+    .. .. code-block:: bash
 
-      $ pip install mrsimulator
+    ..   $ pip install mrsimulator
 
 If you get a ``PermissionError``, it usually means that you do not have the required
 administrative access to install new packages to your Python installation. In this
 case, you may consider using the ``--user`` option to install the package into your
 home directory. You can read more about how to do this in the
 `pip documentation <https://pip.pypa.io/en/stable/user_guide/#user-installs>`_.
+
+Upgrading to a newer version
+""""""""""""""""""""""""""""
+
+If you are upgrading to a newer version of ``mrsimulator``, you have all the prerequisites
+installed on your system. In this case, type the following in the terminal/Prompt
+
+.. code-block::
+
+    $ pip install mrsimulator -U
+
 
 On Google Colab Notebook
 ''''''''''''''''''''''''
@@ -133,12 +145,11 @@ Prerequisites
 You will need a C-compiler suite and the development headers for the BLAS and FFTW
 libraries, along with development headers from Python and Numpy, to build the
 ``mrsimulator`` library from source.
-
-The Mrsimulator package utilizes the BLAS and FFTW routines for computation. To
-leverage the best performance from the mrsimulator library, we recommend installing the
-BLAS and FFTW libraries, which are optimized and tuned for your system. In the following,
+The Mrsimulator package utilizes the BLAS and FFTW routines for numerical computation.
+To leverage the best performance, we recommend installing the BLAS and FFTW libraries,
+which are optimized and tuned for your system. In the following,
 we list recommendations on how to install the c-compiler (if applicable), BLAS, FFTW,
-and build the mrsimulator libraries.
+and building the mrsimulator libraries.
 
 Obtaining the Source Packages
 """""""""""""""""""""""""""""
@@ -147,20 +158,18 @@ Stable packages
 ***************
 
 The latest stable source package for ``mrsimulator`` is available on
-`Github Releases <https://github.com/DeepanshS/mrsimulator/releases>`_ and
 `PyPI <https://pypi.org/project/mrsimulator/#files>`_.
-
-Development Repository
-**********************
-
-The latest development version of the ``mrsimulator`` can be cloned from
-`Github <https://github.com/DeepanshS/mrsimulator>`_.
 
 
 .. _os_dependent_prerequisite:
 
 OS-dependent prerequisites
 """"""""""""""""""""""""""
+
+.. note::
+    Installing OS-dependent prerequisites is a one-time process. If you are
+    upgrading to a newer version of mrsimulator, skip to :ref:`building_and_installing`
+    section.
 
 .. tabs::
 
@@ -186,34 +195,50 @@ OS-dependent prerequisites
 
       $ sudo yum install openblas-devel fftw-devel
 
+    **Install a C/C++ compiler**
+
+    The C-compiler comes with your Linux distribution. No further action is
+    required.
 
   .. tab:: Mac OSX
 
     **OpenBLAS/Accelerate and FFTW libraries**
 
     You will require the ``brew`` package manager to install the development headers for the
-    OpenBLAS (if applicable) and FFTW libraries. Read more on installing brew at
+    OpenBLAS (if applicable) and FFTW libraries. Read more on installing brew from
     `homebrew <https://brew.sh>`_.
 
-    **Step-1** By default, the mrsimulator package links to the openblas library for BLAS
-    operations. Mac users may opt to choose the in-build apple's accelerate library. If you
-    opt for apple's accelerate library, skip to Step-2. If you wish to link the mrsimulator
-    package to the openblas library, install openblas using the `homebrew <https://brew.sh>`_
+    *Step-1* Install the FFTW library using the `homebrew <https://brew.sh>`_ formulae.
+
+    .. code-block:: bash
+
+      $ brew install fftw
+
+    *Step-2* By default, the mrsimulator package links to the openblas library for BLAS
+    operations. Mac users may opt to choose the in-build Apple's Accelerate library. If you
+    opt for Apple's Accelerate library, skip to `Step-3`. If you wish to link the mrsimulator
+    package to the OpenBLAS library, type the following in the terminal,
     formulae as follows,
 
     .. code-block:: bash
 
       $ brew install openblas
 
-    **Step-2** Install the FFTW library using the `homebrew <https://brew.sh>`_ formulae.
+    *Step-3* If you choose to link the mrsimulator package to the OpenBLAS library, skip
+    to the next section, :ref:`building_and_installing`.
+
+    *(a)* You will need to install the BLAS development header for Apple's Accelerate
+    library. The easiest way is to install the Xcode Command Line Tools. Note, this is a
+    one-time installation. If you have previously installed the Xcode Command Line Tools,
+    you can skip this sub-step. Type the following in the terminal,
 
     .. code-block:: bash
 
-      $ brew install fftw
+      $ xcode-select --install
 
-    **Step-3** If you choose to link the mrsimulator package to the OpenBLAS library, skip
-    this step. Open the ``settings.py`` file, located at the root level of the
-    mrsimulator folder, in a text editor. You should see
+    *(b)* This step is to let the mrsimulator setup know your preference.
+    Open the ``settings.py`` file, located at the root level of the mrsimulator source
+    code folder, in a text editor. You should see
 
     .. code-block:: python
 
@@ -223,7 +248,7 @@ OS-dependent prerequisites
       # mac-os only
       use_accelerate = False
 
-    To link the mrsimulator package to the in-build apple's accelerate library, change the
+    To link the mrsimulator package to the Apple's Accelerate library, change the
     fields to
 
     .. code-block:: python
@@ -234,10 +259,17 @@ OS-dependent prerequisites
       # mac-os only
       use_accelerate = True
 
+    **Install a C/C++ compiler**
+
+    The C-compiler installs with the Xcode Command Line Tools. No further action is
+    required.
+
   .. tab:: Windows
 
     .. include:: install-docs/windows.rst
 
+
+.. _building_and_installing:
 
 Building and Installing
 """""""""""""""""""""""
@@ -249,7 +281,8 @@ package (usually, the folder is named mrsimulator),
 
     $ cd mrsimulator
 
-and build and install ``mrsimulator`` using pip,
+From within the source code folder, type the following in the terminal to install the
+library.
 
 .. code-block:: bash
 
@@ -310,13 +343,19 @@ folder.
 :ref:`building_from_source` section. For developers and contributors using mac OSX,
 please run the setup by binding to the openblas libraries.
 
-**Step-D** Build and install the package in the development (editable) mode using pip.
+**Step-D** You will need cython for development build.
+
+.. code-block:: bash
+
+    $ pip install cython
+
+**Step-E** Build and install the package in the development (editable) mode using pip.
 
 .. code-block:: bash
 
     $ pip install -e .
 
-**Step-E**: Install the required packages for developers using pip.
+**Step-F**: Install the required packages for developers using pip.
 
 .. code-block:: bash
 
