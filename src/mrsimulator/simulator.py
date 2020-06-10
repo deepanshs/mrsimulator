@@ -11,11 +11,12 @@ from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
 from mrsimulator.importer import import_json
 from mrsimulator.method import Method
-from mrsimulator.post_simulation import PostSimulator
 from mrsimulator.simulator_config import ConfigSimulator
 from pydantic import BaseModel
 
 from .util import _reduce_dict
+
+# from mrsimulator.post_simulation import PostSimulator
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
@@ -42,7 +43,7 @@ class Simulator(BaseModel):
     description: Optional[str] = ""
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
-    post_simulation: List[PostSimulator] = []
+    # post_simulation: List[PostSimulator] = []
     config: ConfigSimulator = ConfigSimulator()
     indexes = []
 
@@ -57,7 +58,7 @@ class Simulator(BaseModel):
             self.description == other.description,
             self.spin_systems == other.spin_systems,
             self.methods == other.methods,
-            self.post_simulation == other.post_simulation,
+            # self.post_simulation == other.post_simulation,
             self.config == other.config,
         ]
         if np.all(check):
