@@ -6,12 +6,17 @@ __email__ = "deepansh2012@gmail.com"
 
 
 def wigner_rotation(
-    l, R_in, cos_alpha=None, cos_beta=None, wigner_matrix=None, phase_alpha=None
+    ang_momentum_l,
+    R_in,
+    cos_alpha=None,
+    cos_beta=None,
+    wigner_matrix=None,
+    phase_alpha=None,
 ):
-    n = 2 * l + 1
+    n = 2 * ang_momentum_l + 1
     if wigner_matrix is None:
         n_orientation = cos_beta.size
-        wigner = wigner_d_matrix_cosines(l, cos_beta)
+        wigner = wigner_d_matrix_cosines(ang_momentum_l, cos_beta)
     else:
         wigner = wigner_matrix
         n_orientation = wigner.shape[0]
@@ -21,23 +26,23 @@ def wigner_rotation(
 
     R_vec = np.tile(R_in, n_orientation).reshape(n_orientation, n)
 
-    for m in range(1, l + 1):
-        R_vec[:, l + m] *= ph2
-        R_vec[:, l - m] *= ph2.conj()
+    for m in range(1, ang_momentum_l + 1):
+        R_vec[:, ang_momentum_l + m] *= ph2
+        R_vec[:, ang_momentum_l - m] *= ph2.conj()
         ph2 *= pha
 
     R_out = wigner.ravel() * np.tile(R_vec, (1, n)).ravel()
     return R_out.reshape(n_orientation, n, n).sum(axis=-1)
 
 
-def wigner_d_matrix(l, beta):
+def wigner_d_matrix(ang_momentum_l, beta):
     """
-    Evaluates a wigner matrix of rank `l` ev
+    Evaluates a wigner matrix of rank `l` angular momentum.
     """
-    return wigner_d_matrix_cosines(l, np.cos(beta))
+    return wigner_d_matrix_cosines(ang_momentum_l, np.cos(beta))
 
 
-def wigner_d_matrix_cosines(l, cos_beta):
+def wigner_d_matrix_cosines(ang_momentum_l, cos_beta):
     r"""
     Returns a $(2l+1) \times (2l+1)$ wigner-d(cos_beta) matrix for rank $l$ at
     a given `cos_beta`. Currently only rank l=2 and l=4 is supported.
@@ -56,7 +61,7 @@ def wigner_d_matrix_cosines(l, cos_beta):
     cx2 = cx * cx
     sx = np.sqrt(1.0 - cx2)
 
-    if l == 2:
+    if ang_momentum_l == 2:
         wigner = np.empty((25, cx.size), dtype=np.float64)
 
         t1 = 1.0 + cx
@@ -106,7 +111,7 @@ def wigner_d_matrix_cosines(l, cos_beta):
         wigner = wigner.reshape(5, 5, cx.size)
         return np.moveaxis(wigner, -1, 0)
 
-    if l == 4:
+    if ang_momentum_l == 4:
         wigner = np.empty((81, cx.size), dtype=np.float64)
 
         sx2 = sx * sx
@@ -257,11 +262,11 @@ def wigner_d_matrix_cosines(l, cos_beta):
         return np.moveaxis(wigner, -1, 0)
 
 
-def wigner_dm0_vector(l: int, angle):
-    R_out = np.empty(2 * l + 1, dtype=np.float64)
+def wigner_dm0_vector(ang_momentum_l: int, angle):
+    R_out = np.empty(2 * ang_momentum_l + 1, dtype=np.float64)
     sx = np.sin(angle)
     cx = np.cos(angle)
-    if l == 2:
+    if ang_momentum_l == 2:
         R_out[0] = 0.6123724355 * sx * sx
         R_out[1] = 1.224744871 * sx * cx
         R_out[2] = 1.5 * cx * cx - 0.5
@@ -269,7 +274,7 @@ def wigner_dm0_vector(l: int, angle):
         R_out[4] = R_out[0] * 1
         return R_out
 
-    if l == 4:
+    if ang_momentum_l == 4:
         sx2 = sx * sx
         sx3 = sx2 * sx
         cx2 = 1.0 - sx2

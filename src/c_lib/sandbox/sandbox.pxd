@@ -9,7 +9,7 @@
 
 from libcpp cimport bool as bool_t
 
-cdef extern from "averaging_scheme.h":
+cdef extern from "schemes.h":
     ctypedef struct MRS_averaging_scheme:
         unsigned int total_orientations
         unsigned int integration_density
@@ -34,7 +34,7 @@ cdef extern from "mrsimulator.h":
         int number_of_sidebands
         double sample_rotation_frequency_in_Hz
         double rotor_angle_in_rad
-        double complex *vector
+        # double complex *vector
 
     MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
                           double sample_rotation_frequency_in_Hz,
@@ -47,6 +47,3 @@ cdef extern from "mrsimulator.h":
 
     ctypedef struct MRS_dimension:
         pass
-
-    MRS_dimension *MRS_create_dimension(int count, double coordinates_offset,
-                                    double increment)

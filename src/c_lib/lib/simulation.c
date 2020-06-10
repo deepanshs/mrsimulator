@@ -16,117 +16,46 @@ static inline void __zero_components(double *R0, complex128 *R2,
   vm_double_zeros(18, (double *)R4);
 }
 
-/**
- * @func __MRS_rotate_components_from_PAS_to_common_frame
- *
- * The function evaluates the tensor components, at every orientation, from the
- * principal axis system (PAS) to the common frame of the isotopomer.
- */
-static inline void __MRS_rotate_components_from_PAS_to_common_frame(
-    isotopomer_ravel *ravel_isotopomer,  // isotopomer structure
-    int site,                            // the site index
-    double *transition,                  // the  transition
-    bool allow_fourth_rank,  // if true, pre for 4th rank computation
-    double *R0,              // the R0 components
-    complex128 *R2,          // the R2 components
-    complex128 *R4,          // the R4 components
-    double *R0_temp,         // the temporary R0 components
-    complex128 *R2_temp,     // the temporary R2 components
-    complex128 *R4_temp,     // the temporary R3 components
-    int remove_second_order_quad_isotropic  // if true, remove second order quad
-                                            // isotropic shift
-) {
-  /* The following codeblock populates the product of spatial part, Rlm, of
-   * the tensor and the spin transition function, T(mf, mi) for
-   *      zeroth rank, R0 = [ R00 ] * T(mf, mi)
-   *      second rank, R2 = [ R2m ] * T(mf, mi) where m ∈ [-2, 2].
-   *      fourth rank, R4 = [ R4m ] * T(mf, mi) where m ∈ [-4, 4].
-   * Here, mf, mi are the spin quantum numbers of the final and initial
-   * energy state of the spin transition. The term `Rlm` is the coefficient
-   * of the irreducible spherical tensor of rank `l` and order `m`. For more
-   * information, see reference
-   *   Symmetry pathways in solid-state NMR. PNMRS 2011 59(2):12 1-96.
-   *   https://doi.org/10.1016/j.pnmrs.2010.11.003                         */
-
-  /* Initialize with zeroing all spatial components                        */
-  __zero_components(R0, R2, R4);
-
-  /* Nuclear shielding components ======================================== */
-  /*      Upto the first order                                             */
-  FCF_1st_order_nuclear_shielding_Hamiltonian(
-      R0_temp, R2_temp, ravel_isotopomer->isotropic_chemical_shift_in_Hz[site],
-      ravel_isotopomer->shielding_anisotropy_in_Hz[site],
-      ravel_isotopomer->shielding_asymmetry[site],
-      &ravel_isotopomer->shielding_orientation[3 * site], transition);
-
-  // in-place update the R0 and R2 components.
-  *R0 += *R0_temp;
-  vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-  /* ===================================================================== */
-
-  /* Weakly coupled direct-dipole components ============================= */
-  /*      Upto the first order (to do..-> add orientation dependence)      */
-  weakly_coupled_direct_dipole_frequencies_to_first_order(
-      R0, R2_temp, ravel_isotopomer->dipolar_couplings[site], transition);
-
-  // in-place update the R2 components.
-  vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-  /* ===================================================================== */
-
-  /* Electric quadrupolar components ===================================== */
-  if (ravel_isotopomer->spin > 0.5) {
-    /*   Upto the first order                                              */
-    FCF_1st_order_electric_quadrupole_Hamiltonian(
-        R2_temp, ravel_isotopomer->spin,
-        ravel_isotopomer->quadrupole_coupling_constant_in_Hz[site],
-        ravel_isotopomer->quadrupole_asymmetry[site],
-        &ravel_isotopomer->quadrupole_orientation[3 * site], transition);
-
-    // in-place update the R2 components.
-    vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-
-    /*  Upto the second order                                              */
-    if (allow_fourth_rank) {
-      FCF_2nd_order_electric_quadrupole_Hamiltonian(
-          R0_temp, R2_temp, R4_temp, ravel_isotopomer->spin,
-          ravel_isotopomer->larmor_frequency,
-          ravel_isotopomer->quadrupole_coupling_constant_in_Hz[site],
-          ravel_isotopomer->quadrupole_asymmetry[site],
-          &ravel_isotopomer->quadrupole_orientation[3 * site], transition);
-
-      // in-place update the R0 component.
-      if (remove_second_order_quad_isotropic == 0) *R0 += *R0_temp;
-
-      // in-place update the R2 and R4 components.
-      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-      vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
-    }
-  }
-}
-
 void __mrsimulator_core(
     // spectrum information and related amplitude
     double *spec,  // amplitude vector representing the spectrum.
 
-    isotopomer_ravel *ravel_isotopomer,  // isotopomer structure
+    // A pointer to the isotopomer_ravel structure containing information about
+    // the sites within an isotopomer.
+    isotopomer_ravel *ravel_isotopomer,
 
-    int remove_second_order_quad_isotropic,  // remove the isotropic
-                                             // contribution from the second
-                                             // order quad Hamiltonian.
+    // remove the isotropic contribution from the second order quad Hamiltonian.
+    bool remove_2nd_order_quad_isotropic,
 
-    // Pointer to the transitions. transition[0] = mi and transition[1] = mf
-    double *transition, MRS_plan *plan, MRS_dimension *dimension,
-    bool interpolation  // if true, perform a 1D interpolation
-) {
+    // A pointer to a spin transition packed as quantum numbers from the initial
+    // energy state followed by the quantum numbers from the final energy state.
+    // The energy states are given in Zeeman basis.
+    float *transition,
+
+    // A pointer to MRS_sequence structure containing information on the events
+    // per spectroscopic dimension.
+    MRS_sequence *the_sequence,
+
+    // The total number of spectroscopic dimensions.
+    int n_sequence,
+
+    // A pointer to the fftw scheme.
+    MRS_fftw_scheme *fftw_scheme,
+
+    // A pointer to the powder averaging scheme.
+    MRS_averaging_scheme *scheme,
+
+    // if true, perform a 1D interpolation
+    bool interpolation) {
   /*
   The sideband computation is based on the method described by Eden and Levitt
   et. al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
 
-  unsigned int site, i, j;
-  double offset;                          // for 1D interpolation
-  unsigned int step_vector = 0, address;  // for 1D interpolation
+  unsigned int j, evt, step_vector = 0, address;
+  int i, seq;
+  double offset, B0_in_T;
 
   double R0 = 0.0;
   complex128 *R2 = malloc_complex128(5);
@@ -136,68 +65,88 @@ void __mrsimulator_core(
   complex128 *R2_temp = malloc_complex128(5);
   complex128 *R4_temp = malloc_complex128(9);
 
-  int spec_site;
   double *spec_site_ptr;
-  MRS_averaging_scheme *scheme = plan->averaging_scheme;
+  int transition_increment = 2 * ravel_isotopomer->number_of_sites;
+  MRS_plan *plan;
 
-  // Per site base calculation
-  for (site = 0; site < ravel_isotopomer->number_of_sites; site++) {
-    // gettimeofday(&start_site_time, NULL);
+  // spec_site = site * the_sequence[0].count;
+  spec_site_ptr = &spec[0];
 
-    spec_site = site * dimension->count;
-    spec_site_ptr = &spec[spec_site];
+  // Loop over the sequence.
+  for (seq = 0; seq < n_sequence; seq++) {
+    // Loop over the events per sequence.
+    for (evt = 0; evt < the_sequence[seq].n_events; evt++) {
+      plan = the_sequence[seq].events[evt].plan;
+      B0_in_T = the_sequence[seq].events[evt].magnetic_flux_density_in_T;
 
-    /* Rotate all frequency components from PAS to a common frame */
-    __MRS_rotate_components_from_PAS_to_common_frame(
-        ravel_isotopomer,         // isotopomer structure
-        site,                     // the site index
-        transition,               // the  transition
-        plan->allow_fourth_rank,  // if true, prepare for 4th rank computation
-        &R0,                      // the R0 components
-        R2,                       // the R2 components
-        R4,                       // the R4 components
-        &R0_temp,                 // the temporary R0 components
-        R2_temp,                  // the temporary R2 components
-        R4_temp,                  // the temporary R4 components
-        remove_second_order_quad_isotropic  // if true, remove second order quad
+      /* Initialize with zeroing all spatial components */
+      __zero_components(&R0, R2, R4);
+
+      /* Rotate all frequency components from PAS to a common frame */
+      MRS_rotate_components_from_PAS_to_common_frame(
+          ravel_isotopomer,         // isotopomer structure
+          transition,               // the transition
+          plan->allow_fourth_rank,  // if 1, prepare for 4th rank computation
+          &R0,                      // the R0 components
+          R2,                       // the R2 components
+          R4,                       // the R4 components
+          &R0_temp,                 // the temporary R0 components
+          R2_temp,                  // the temporary R2 components
+          R4_temp,                  // the temporary R4 components
+          remove_2nd_order_quad_isotropic,  // if true, remove second order quad
                                             // isotropic shift
-    );
+          B0_in_T                           // magnetic flux density in T.
+      );
 
-    /* Get frequencies and amplitudes per octant ........................... */
-    MRS_get_amplitudes_from_plan(plan, R2, R4);
-    MRS_get_normalized_frequencies_from_plan(plan, dimension, R0);
+      // Add a loop over all couplings.. here
 
-    // ---------------------------------------------------------------------
-    //              Calculating the tent for every sideband
-    // Allowing only sidebands that are within the spectral bandwidth
-    //
-    // for (i = 0; i < plan->number_of_sidebands; i++) {
-    //   offset = plan->vr_freq[i] + plan->isotropic_offset;
-    //   if ((int)offset >= 0 && (int)offset <= dimension->count) {
+      /* Get frequencies and amplitudes per octant ......................... */
+      /* Always evalute the frequencies before the amplitudes. */
+      MRS_get_normalized_frequencies_from_plan(
+          scheme, plan, R0, R2, R4, 1, the_sequence[seq].normalize_offset,
+          the_sequence[seq].inverse_increment);
+      MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
 
-    //     vm_double_ramp(plan->octant_orientations, plan->local_frequency, 1.0,
-    //                    offset, plan->freq_offset);
-    //     octahedronInterpolation(
-    //         spec_site_ptr, plan->freq_offset,
-    //         plan->integration_density,
-    //         (double *)&plan->vector[i * plan->octant_orientations], 2,
-    //         dimension->count);
-    //   }
-    // }
+      transition += transition_increment;
+    }  // end events
+
+    /* ---------------------------------------------------------------------
+     *              Calculating the tent for every sideband
+     * Allowing only sidebands that are within the spectral bandwidth
+     *
+     * for (i = 0; i < plan->number_of_sidebands; i++) {
+     *   offset = plan->vr_freq[i] + plan->isotropic_offset;
+     *   if ((int)offset >= 0 && (int)offset <= dimension->count) {
+
+     *     vm_double_ramp(plan->octant_orientations,
+     plan->local_frequency, 1.0,
+     *                    offset, plan->freq_offset);
+     *     octahedronInterpolation(
+     *         spec_site_ptr, plan->freq_offset,
+     *         plan->integration_density,
+     *         (double *)&plan->vector[i * plan->octant_orientations], 2,
+     *         dimension->count);
+     *   }
+     * }
+     */
     if (interpolation) {
       for (i = 0; i < plan->number_of_sidebands; i++) {
         offset = plan->vr_freq[i] + plan->isotropic_offset;
-        if ((int)offset >= 0 && (int)offset <= dimension->count) {
+        if ((int)offset >= 0 && (int)offset <= the_sequence[0].count) {
           step_vector = i * scheme->total_orientations;
           for (j = 0; j < plan->n_octants; j++) {
             address = j * scheme->octant_orientations;
 
+            // Add offset(isotropic + sideband_order) to the local frequency
+            // from [n to n+octant_orientation]
             vm_double_ramp(scheme->octant_orientations,
                            &scheme->local_frequency[address], 1.0, offset,
                            scheme->freq_offset);
-            octahedronInterpolation(
-                spec_site_ptr, scheme->freq_offset, scheme->integration_density,
-                (double *)&plan->vector[step_vector], 2, dimension->count);
+            // Perform tenting on every sideband order over all orientations
+            octahedronInterpolation(spec_site_ptr, scheme->freq_offset,
+                                    scheme->integration_density,
+                                    (double *)&fftw_scheme->vector[step_vector],
+                                    2, the_sequence[0].count);
             step_vector += scheme->octant_orientations;
           }
         }
@@ -206,7 +155,8 @@ void __mrsimulator_core(
 
     // gettimeofday(&end_site_time, NULL);
     // clock_time =
-    //     (double)(end_site_time.tv_usec - start_site_time.tv_usec) / 1000000.
+    //     (double)(end_site_time.tv_usec - start_site_time.tv_usec) /
+    //     1000000.
     //     + (double)(end_site_time.tv_sec - start_site_time.tv_sec);
     // printf("Total time per site %f \n", clock_time);
   }
@@ -218,11 +168,13 @@ void mrsimulator_core(
     double coordinates_offset,  // The start of the frequency spectrum.
     double increment,           // The increment of the frequency spectrum.
     int count,                  // Number of points on the frequency spectrum.
-    isotopomer_ravel *ravel_isotopomer,      // Isotopomer structure
-    int quad_second_order,                   // Quad theory for second order,
-    int remove_second_order_quad_isotropic,  // remove the isotropic
-                                             // contribution from the second
-                                             // order quad interaction.
+    isotopomer_ravel *ravel_isotopomer,    // SpinSystem structure
+    MRS_sequence *the_sequence,            // the sequences in the method.
+    int n_sequence,                        // The number of sequence.
+    int quad_second_order,                 // Quad theory for second order,
+    bool remove_2nd_order_quad_isotropic,  // remove the isotropic
+                                           // contribution from the second
+                                           // order quad interaction.
 
     // spin rate, spin angle and number spinning sidebands
     int number_of_sidebands,                 // The number of sidebands
@@ -230,7 +182,7 @@ void mrsimulator_core(
     double rotor_angle_in_rad,  // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the transitions. transition[0] = mi and transition[1] = mf
-    double *transition,
+    float *transition,
 
     // powder orientation average
     int integration_density,          // The number of triangle along the edge
@@ -246,7 +198,7 @@ void mrsimulator_core(
   // printf("%d parallel", parallel);
 
   bool allow_fourth_rank = false;
-  if (ravel_isotopomer[0].spin > 0.5 && quad_second_order == 1) {
+  if (ravel_isotopomer[0].spin[0] > 0.5 && quad_second_order == 1) {
     allow_fourth_rank = true;
   }
 
@@ -260,13 +212,8 @@ void mrsimulator_core(
   MRS_averaging_scheme *scheme = MRS_create_averaging_scheme(
       integration_density, allow_fourth_rank, integration_volume);
 
-  MRS_dimension *dimension =
-      MRS_create_dimension(count, coordinates_offset, increment);
-
-  // gettimeofday(&begin, NULL);
-  MRS_plan *plan = MRS_create_plan(
-      scheme, number_of_sidebands, sample_rotation_frequency_in_Hz,
-      rotor_angle_in_rad, increment, allow_fourth_rank);
+  MRS_fftw_scheme *fftw_scheme =
+      create_fftw_scheme(scheme->total_orientations, number_of_sidebands);
 
   // gettimeofday(&all_site_time, NULL);
   __mrsimulator_core(
@@ -275,14 +222,14 @@ void mrsimulator_core(
 
       ravel_isotopomer,  // isotopomer structure
 
-      remove_second_order_quad_isotropic,  // remove the isotropic contribution
-                                           // from the second order quad
-                                           // Hamiltonian.
+      remove_2nd_order_quad_isotropic,  // remove the isotropic contribution
+                                        // from the second order quad
+                                        // Hamiltonian.
 
       // Pointer to the transitions. transition[0] = mi and transition[1] = mf
       transition,
 
-      plan, dimension, interpolation);
+      the_sequence, n_sequence, fftw_scheme, scheme, interpolation);
 
   // gettimeofday(&end, NULL);
   // clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +
@@ -290,5 +237,8 @@ void mrsimulator_core(
   // printf("time %f s\n", clock_time);
   // cpu_time_[0] += clock_time;
 
-  MRS_free_plan(plan); /* clean up */
+  /* clean up */
+  MRS_free_fftw_scheme(fftw_scheme);
+  MRS_free_averaging_scheme(scheme);
+  // MRS_free_plan(plan);
 }

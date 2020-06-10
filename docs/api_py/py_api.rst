@@ -11,7 +11,9 @@ Python-API References
    isotopomer
    site
    other_objects
-   dimension
+   method
+   methods
+   fitting
 
 ..    parameterized_tensor
 ..    interaction

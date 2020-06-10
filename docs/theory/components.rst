@@ -6,14 +6,13 @@ How does `mrsimulator` work?
 ****************************
 
 The line-shape simulation in ``mrsimulator`` is based on the concept of
-`Symmetry Pathways in Solid-State NMR <https://www.sciencedirect.com/
-science/article/pii/S0079656510001135?via%3Dihub>`_.
+`Symmetry Pathways in Solid-State NMR` by Grandinetti `et. al.` [#f1]_
 
-NMR frequency components
-========================
+Introduction to NMR frequency components
+========================================
 
 The nuclear magnetic resonance (NMR) frequency, :math:`\Omega(\Theta, i, j)`,
-for the :math:`\left|i\right> \rightarrow \left|j\right>` transition where
+for the :math:`\left|i\right> \rightarrow \left|j\right>` transition, where
 :math:`\left|i\right>` and :math:`\left|j\right>` are the eigenstates of the
 stationary-state semi-classical Hamiltonian, can be written as a sum of
 frequency components,
@@ -46,11 +45,11 @@ spherical tensors, respectively.
 ----
 
 The spatial orientation function, :math:`\Xi_L^{(k)}(\Theta)`, in Eq.
-:eq:`eq_2`, is defined in the laboratory frame where the :math:`z`-axis is the
+:eq:`eq_2`, is defined in the laboratory frame, where the :math:`z`-axis is the
 direction of the external magnetic field. This function is the spatial
 contribution to the observed frequency component arising from the
 rotation of the :math:`L^\text{th}`-rank irreducible tensor,
-:math:`\varrho_{L,n}^{(k)}`, from the principal axis system to the lab frame
+:math:`\varrho_{L,n}^{(k)}`, from the principal axis system, to the lab frame
 via Wigner rotation which follows,
 
 .. math::
@@ -81,13 +80,13 @@ where :math:`d_{n_i, n_j}^L(\beta)` is Wigner small :math:`d` element.
 
 ----
 
-In the case of single interaction Hamiltonian, that is, in the absence of
+In the case of the single interaction Hamiltonian, that is, in the absence of
 cross-terms, ``mrsimulator`` further defines the product of the size of the
 :math:`k^\text{th}` frequency component, :math:`\omega_k`, and the
-:math:`L^\text{th}`-rank irreducible tensors, :math:`\varrho_{L,n}^{(k)}`, in
+:math:`L^\text{th}`-rank irreducible tensor components, :math:`\varrho_{L,n}^{(k)}`, in
 the principal axis system of the interaction tensor,
 :math:`\boldsymbol{\rho}^{(\lambda)}`, as the scaled spatial orientation
-tensor (sSOT),
+tensor (sSOT) components,
 
 .. math::
     :label: eq_5
@@ -113,8 +112,8 @@ where
 
     \varpi_{L, n}^{(k)}(i,j) = \varsigma_{L,n}^{(k)}~~\xi_L^{(k)}(i, j)
 
-is the frequency tensor (FT) of rank :math:`L` defined in the principal axis
-system of the interaction tensor and corresponds to the
+is the frequency tensor components (FT) of rank :math:`L`, defined in the principal
+axis system of the interaction tensor and corresponds to the
 :math:`\left|i\right> \rightarrow \left|j\right>` spin transition.
 
 
@@ -158,14 +157,15 @@ system of the interaction tensor and corresponds to the
 .. |L| replace:: :math:`L`
 .. |Mth| replace:: :math:`M^\mathrm{th}`
 
-Scaled spatial orientation tensors (sSOT) in PAS, |SOF|
--------------------------------------------------------
 
-Single nucleus scaled spatial orientation tensors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Scaled spatial orientation tensor (sSOT) components in PAS, |SOF|
+=================================================================
+
+Single nucleus scaled spatial orientation tensor components
+-----------------------------------------------------------
 
 Nuclear shielding interaction
-"""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The nuclear shielding tensor, :math:`\boldsymbol{\rho}^{(\sigma)}`, is a second
 rank reducible tensor which can be decomposed into a sum of the zeroth-rank
@@ -228,7 +228,7 @@ external magnetic field, respectively. The relation between
 
 
 Electric quadrupole interaction
-"""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The electric field gradient (efg) tensor, :math:`\boldsymbol{\rho}^{(q)}`, is
 also a second-rank tensor, however, unlike the nuclear shielding tensor, the
@@ -324,7 +324,7 @@ coefficient.
 .. _spin_transition_theory:
 
 Spin transition functions, :math:`\xi_L^{(k)}(i,j)`
----------------------------------------------------
+===================================================
 
 The spin transition function is typically
 manipulated via the coupling of the nuclear magnetic dipole moment with the
@@ -334,7 +334,7 @@ magnitude larger than the internal spin-couplings, the manipulation of spin
 transition functions are described using the orthogonal rotation subgroups.
 
 Single nucleus spin transition functions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------
 
 .. cssclass:: table-bordered table-striped centered
 
@@ -416,11 +416,11 @@ where :math:`I` is the spin quantum number of the nucleus and
 
 .. _frequency_tensor_theory:
 
-Frequency tensors (FT) in PAS, :math:`\varpi_{L, n}^{(k)}(i,j)`
----------------------------------------------------------------
+Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}(i,j)`
+=========================================================================
 
-Single nucleus frequency tensors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Single nucleus frequency tensor components
+------------------------------------------
 
 .. cssclass:: table-bordered table-striped centered
 
@@ -464,3 +464,8 @@ Single nucleus frequency tensors
     - 2
     - 4
     - :math:`\varpi_{4,n}^{(qq)}(i,j) = \varsigma_{4,n}^{(qq)} ~~ \mathbb{c}_4(i, j)`
+
+
+.. [#f1] Grandinetti, P. J., Ash, J. T., Trease, N. M. Symmetry pathways in solid-state
+    NMR, PNMRS 2011 **59**, *2*, 121-196.
+    `DOI: 10.1016/j.pnmrs.2010.11.003 <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_

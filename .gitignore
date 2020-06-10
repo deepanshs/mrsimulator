@@ -109,7 +109,6 @@ class-diagram*
 *.out
 *.prof
 *.mp4
-*.html
 *.temp
 *.csdf
 test_os.py
@@ -123,6 +122,6 @@ test_dash.py
 
 # cython generated files
 test.c
-nmr_methods.c
+base_model.c
 sandbox.c
 *.bib

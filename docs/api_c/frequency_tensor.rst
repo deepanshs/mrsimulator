@@ -20,14 +20,14 @@ Single nucleus frequency tensors
 First order Nuclear shielding
 """""""""""""""""""""""""""""
 
-.. doxygenfunction:: FCF_1st_order_nuclear_shielding_Hamiltonian()
+.. doxygenfunction:: FCF_1st_order_nuclear_shielding_tensor_components()
 
 First order Electric Quadrupole
 """""""""""""""""""""""""""""""
 
-.. doxygenfunction:: FCF_1st_order_electric_quadrupole_Hamiltonian()
+.. doxygenfunction:: FCF_1st_order_electric_quadrupole_tensor_components()
 
 Second order Electric Quadrupole
 """"""""""""""""""""""""""""""""
 
-.. doxygenfunction:: FCF_2nd_order_electric_quadrupole_Hamiltonian()
+.. doxygenfunction:: FCF_2nd_order_electric_quadrupole_tensor_components()

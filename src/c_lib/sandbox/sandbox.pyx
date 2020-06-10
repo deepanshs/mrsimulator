@@ -206,14 +206,3 @@ cdef class MRSPlan:
 # @cython.wraparound(False)
 # def MRS_plan(int integration_density,
 #         int number_of_sidebands)
-
-
-
-cdef class MRSDimension:
-    cdef clib.MRS_dimension *dimension
-
-    def __init__(self, count, coordinates_offset, increment):
-        self.dimension = clib.MRS_create_dimension(count, coordinates_offset, increment)
-
-
-

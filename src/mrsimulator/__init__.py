@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-__version__ = "0.2.2"
+# version has to be specified at the start.
+__version__ = "0.3.0.dev1"
 
-from mrsimulator.parseable import Parseable  # lgtm [py/import-own-module]
-from mrsimulator.tensors import SymmetricTensor  # lgtm [py/import-own-module]
-from mrsimulator.tensors import AntisymmetricTensor  # lgtm [py/import-own-module]
-from mrsimulator.site import Site  # lgtm [py/import-own-module]
-from mrsimulator.dimension import Dimension  # lgtm [py/import-own-module]
-from mrsimulator.isotopomer import Isotopomer  # lgtm [py/import-own-module]
-from mrsimulator.simulator import Simulator  # lgtm [py/import-own-module]
-from mrsimulator.transition import Transition  # lgtm [py/import-own-module]
+from .site import Site  # lgtm [py/import-own-module]
+from .isotopomer import SpinSystem  # lgtm [py/import-own-module]
+from .simulator import Simulator  # lgtm [py/import-own-module]
+from .transition import Transition  # lgtm [py/import-own-module]
+from .method import Event  # lgtm [py/import-own-module]
+from .method import SpectralDimension  # lgtm [py/import-own-module]
+from .method import Method  # lgtm [py/import-own-module]
+
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"

@@ -1,29 +1,39 @@
 {
-  "dimensions": [
-    {
-      "magnetic_flux_density": "4.7 T",
-      "rotor_frequency": "12.5 kHz",
-      "rotor_angle": "30.56 deg",
-      "number_of_points": 1024,
+  "methods": [{
+    "channels": ["23Na"],
+    "spectral_dimensions": [{
+      "count": 1024,
       "spectral_width": "70 kHz",
-      "isotope": "23Na"
-    }
-  ],
-  "isotopomers": [
-    {
-      "sites": [
-        {
-          "isotope": "23Na",
-          "isotropic_chemical_shift": "0 ppm",
-          "quadrupolar": {
-            "Cq": "2.5 MHz",
-            "eta": 0.0
+      "events": [{
+        "magnetic_flux_density": "4.7 T",
+        "rotor_frequency": "12.5 kHz",
+        "rotor_angle": "30.56 deg",
+        "transition_query": {
+          "P": {
+            "channel-1": [
+              [-1]
+            ]
+          },
+          "D": {
+            "channel-1": [
+              [0]
+            ]
           }
         }
-      ],
-      "abundance": "100 %"
-    }
-  ],
+      }]
+    }]
+  }],
+  "spin_systems": [{
+    "sites": [{
+      "isotope": "23Na",
+      "isotropic_chemical_shift": "0 ppm",
+      "quadrupolar": {
+        "Cq": "2.5 MHz",
+        "eta": 0.0
+      }
+    }],
+    "abundance": "100 %"
+  }],
   "test_data": {
     "source": "python",
     "filename": "grid_eta_0.0_angle_30.56 deg.npy",

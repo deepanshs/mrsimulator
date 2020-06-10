@@ -84,19 +84,44 @@ cdef extern from "mrsimulator.h":
 cdef extern from "isotopomer_ravel.h":
     ctypedef struct isotopomer_ravel:
         int number_of_sites;                    # Number of sites
-        float spin;                             # The spin quantum number
-        double larmor_frequency;                # Larmor frequency (MHz)
-        double *isotropic_chemical_shift_in_Hz; # Isotropic chemical shift (Hz)
-        double *shielding_anisotropy_in_Hz;     # Nuclear shielding anisotropy (Hz)
-        double *shielding_asymmetry;            # Nuclear shielding asymmetry parameter
+        float *spin;                            # The spin quantum number
+        double *gyromagnetic_ratio;             # Larmor frequency (MHz)
+        double *isotropic_chemical_shift_in_ppm; # Isotropic chemical shift (Hz)
+        double *shielding_symmetric_zeta_in_ppm;     # Nuclear shielding anisotropy (Hz)
+        double *shielding_symmetric_eta;            # Nuclear shielding asymmetry parameter
         double *shielding_orientation;          # Nuclear shielding PAS to CRS euler angles (rad.)
-        double *quadrupole_coupling_constant_in_Hz;     # Quadrupolar coupling constant (Hz)
-        double *quadrupole_asymmetry;          # Quadrupolar asymmetry parameter
-        double *quadrupole_orientation;        # Quadrupolar PAS to CRS euler angles (rad.)
+        double *quadrupolar_Cq_in_Hz;     # Quadrupolar coupling constant (Hz)
+        double *quadrupolar_eta;          # Quadrupolar asymmetry parameter
+        double *quadrupolar_orientation;        # Quadrupolar PAS to CRS euler angles (rad.)
         double *dipolar_couplings;              # dipolar coupling stored as list of lists
 
     ctypedef struct isotopomers_list:
         isotopomer_ravel *isotopomers
+
+cdef extern from "method.h":
+    ctypedef struct MRS_event:
+        double fraction                    # The weighted frequency contribution from the event.
+        double magnetic_flux_density_in_T  #  he magnetic flux density in T.
+        double rotor_angle_in_rad          # The rotor angle in radians.
+        double sample_rotation_frequency_in_Hz # The sample rotation frequency in Hz.
+
+    ctypedef struct MRS_sequence:
+        int count                       #  The number of coordinates along the dimension.
+        double increment                # Increment of coordinates along the dimension.
+        double coordinates_offset       #  Start coordinate of the dimension.
+        MRS_event *events               # Holds a list of events.
+        unsigned int n_events           # The number of events.
+
+    # MRS_sequence *MRS_create_plans_for_sequence(
+    #     MRS_averaging_scheme *scheme,
+    #     int count,
+    #     double coordinates_offset,
+    #     double increment,
+    #     double *magnetic_flux_density_in_T,
+    #     double *sample_rotation_frequency_in_Hz,
+    #     double *rotor_angle_in_rad,
+    #     unsigned int n_events,
+    #     int number_of_sidebands)
 
 cdef extern from "simulation.h":
     void mrsimulator_core(
@@ -107,9 +132,10 @@ cdef extern from "simulation.h":
         int number_of_points,
 
         isotopomer_ravel *ravel_isotopomer,
+        MRS_sequence *the_sequence[],            # the sequences in the method.
 
         int quad_second_order,                    # Quad theory for second order,
-        int remove_second_order_quad_isotropic,   # remove the isotropic contribution from the
+        bool_t remove_2nd_order_quad_isotropic,   # remove the isotropic contribution from the
                                                   # second order quad Hamiltonian.
 
         # spin rate, spin angle and number spinning sidebands

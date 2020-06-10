@@ -9,6 +9,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import datetime
 import os
 import subprocess
 import warnings
@@ -18,9 +19,11 @@ from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
 
 # -- Project information -----------------------------------------------------
+now = datetime.datetime.now()
+year = now.year
 
 project = "mrsimulator"
-copyright = "2019, The Mrsimulator project"
+copyright = f"2019-{year}, The Mrsimulator developers"
 author = "Deepansh J. Srivastava"
 
 # get version number from the file
@@ -36,7 +39,7 @@ version = __version__
 release = __version__
 
 # -- General configuration ---------------------------------------------------
-
+show_authors = True
 # If your documentation needs a minimal Sphinx version, state it here.
 needs_sphinx = "2.0"
 
@@ -50,19 +53,16 @@ extensions = [
     "sphinx.ext.mathjax",
     # "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
-    # "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
     # "sphinxcontrib.bibtex",
-    # "sphinx.ext.numfig",
     "breathe",
     "sphinxjp.themes.basicstrap",
     "sphinx_gallery.gen_gallery",
     "sphinx.ext.intersphinx",
+    "sphinx_tabs.tabs",
+    "sphinx.ext.todo",
 ]
-
-
-autosummary_generate = True
 
 # ---------------------------------------------------------------------------- #
 #                               Sphinx Gallery config                          #
@@ -113,23 +113,28 @@ sphinx_gallery_conf = {
     "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
     "within_subsection_order": FileNameSortKey,
     # "show_memory": True,
-    "thumbnail_size": (400, 400),
-    # "image_scrapers": (matplotlib_svg_scraper(),),
+    # "line_numbers": True,
     "subsection_order": ExplicitOrder(
         ["../examples/1D_simulation", "../examples/Fitting"]
     ),
     "reference_url": {
         # The module you locally document uses None
-        "mrsimulator": None,
-        # "matplotlib": "https://matplotlib.org",
-        # "numpy": "https://numpy.org",
+        "mrsimulator": None
     },
+    # "compress_images": ("images", "thumbnails"),
+    # "show_memory": True,
 }
+# generate autosummary even if no references
+autosummary_generate = True
+
+# copybutton_prompt_text = ">>> "
+# copybutton_only_copy_prompt_lines = False
 
 intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org", None),
-    "numpy": ("https://numpy.org", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
     "csdmpy": ("https://csdmpy.readthedocs.io/en/stable/", None),
+    "astropy": ("https://docs.astropy.org/en/stable/", None),
     "lmfit": ("https://lmfit-py.readthedocs.io/en/stable/", None),
 }
 # ---------------------------------------------------------------------------- #
@@ -205,7 +210,6 @@ pygments_style = "sphinx"
 # 'classic', 'basicstrap'
 html_theme = "basicstrap"
 
-
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
@@ -224,9 +228,9 @@ html_theme_options = {
     # Fix navbar to top of screen. Defaults to true
     "nav_fixed_top": True,
     # Fix the width of the sidebar. Defaults to false
-    "nav_fixed": False,
+    "nav_fixed": True,
     # Set the width of the sidebar. Defaults to '900px'
-    "nav_width": "900px",
+    "nav_width": "300px",
     # Fix the width of the content area. Defaults to false
     "content_fixed": False,
     # Set the width of the content area. Defaults to '900px'
@@ -241,17 +245,17 @@ html_theme_options = {
     # Works only "bootstrap_version = 3"
     "noflatdesign": False,
     # Enable Google Web Font. Defaults to false
-    "googlewebfont": False,
+    # "googlewebfont": True,
     # Set the URL of Google Web Font's CSS.
     # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
-    # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Lily+Script+One",  # NOQA
+    # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
     # Set the Style of Google Web Font's CSS.
     # Defaults to "font-family: 'Text Me One', sans-serif;"
-    # "googlewebfont_style": u"font-family: 'Roboto' Regular 24;",
+    "googlewebfont_style": "font-family: Helvetica",
     # Set 'navbar-inverse' attribute to header navbar. Defaults to false.
     "header_inverse": True,
     # Set 'navbar-inverse' attribute to relbar navbar. Defaults to false.
-    "relbar_inverse": True,
+    "relbar_inverse": False,
     # Enable inner theme by Bootswatch. Defaults to false
     "inner_theme": False,
     # Set the name of inner theme. Defaults to 'bootswatch-simplex'
@@ -265,12 +269,20 @@ html_theme_options = {
     # "h2_size": "1.8em",
     # "h3_size": "1.6em",
     # "h4_size": "1.4em",
-    # "h5_size": "1.4em",
+    # "h5_size": "1.25em",
     # "h6_size": "1.1em",
 }
 
-# Theme options
+html_style = "style.css"
+html_title = f"Mrsimulator:doc v{__version__}"
 html_logo = "_static/mrsimulator.png"
+html_favicon = "_static/favicon.ico"
+html_last_updated_fmt = ""
+
+html_sidebars = {
+    "**": ["searchbox.html", "globaltoc.html"],
+    "using/windows": ["searchbox.html", "windowssidebar.html"],
+}
 
 # html_context = {
 #     "display_github": True,
@@ -291,6 +303,7 @@ html_logo = "_static/mrsimulator.png"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
+
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
@@ -300,6 +313,8 @@ htmlhelp_basename = "MRSimulatordoc"
 # -- Options for LaTeX output ------------------------------------------------
 latex_engine = "xelatex"
 latex_logo = "_static/mrsimulator.png"
+latex_show_pagerefs = True
+
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
@@ -309,6 +324,7 @@ latex_elements = {
     "pointsize": "9pt",
     "fontenc": "\\usepackage[utf8]{inputenc}",
     "geometry": "\\usepackage[vmargin=2.5cm, hmargin=2cm]{geometry}",
+    # "fncychap": "\\usepackage[Rejne]{fncychap}",
     # Additional stuff for the LaTeX preamble.
     "preamble": """\
         \\usepackage[T1]{fontenc}
@@ -337,24 +353,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "mrsimulator.tex", "mrsimulator Documentation", author, "manual")
+    (master_doc, "mrsimulator.tex", "MRsimulator Documentation", author, "manual")
 ]
-
-
-# -- Options for manual page output ------------------------------------------
-
-# One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
-man_pages = [
-    (
-        master_doc,
-        "mrsimulator",
-        "mrsimulator Documentation",
-        ["Deepansh J. Srivastava"],
-        1,
-    )
-]
-
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -374,11 +374,28 @@ texinfo_documents = [
 ]
 
 
+# -- Options for manual page output ------------------------------------------
+
+# One entry per manual page. List of tuples
+# (source start file, name, description, authors, manual section).
+man_pages = [
+    (
+        master_doc,
+        "mrsimulator",
+        "mrsimulator Documentation",
+        ["Deepansh J. Srivastava"],
+        1,
+    )
+]
+
+
 # -- Options for Epub output -------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = project
-
+epub_basename = project
+epub_theme = "epub"
+# epub_theme_options = {"relbar1": False, "footer": False}
+epub_cover = ("_static/launch_2048x2732.png", "")
 # The unique identifier of the text. This can be a ISBN number
 # or the project homepage.
 #
@@ -389,4 +406,8 @@ epub_title = project
 # epub_uid = ''
 
 # A list of files that should not be packed into the epub file.
-epub_exclude_files = ["search.html"]
+epub_exclude_files = ["search.html", "_static/style.css"]
+
+
+def setup(app):
+    app.add_stylesheet("style.css")

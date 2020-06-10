@@ -1,16 +1,25 @@
-os:
-  - linux
+# .travis.yml
 
-dist: xenial
 language: python
 
+# ===== Linux ====== #
+os: linux
+dist: xenial
 python:
-  - "3.6"
-  - "3.7"
+  - 3.6
+  - 3.7
+  - 3.8
+
+addons:
+  apt:
+    packages:
+      - libopenblas-dev
+      - libfftw3-dev
 
 env:
+  - PYENV_TYPE=env
   # - PKG1=mkl PKG2=mkl-include
-  - PKG1=nomkl PKG2=openblas
+  # - PKG1=nomkl PKG2=openblas
 
 cache:
   pip: true
@@ -22,26 +31,81 @@ branches:
   only:
     - master
 
-before_install:
-  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - hash -r
-  - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
-  - conda info -a
-  - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pytest pytest-cov
-  - source activate test-env
-  - conda install -c anaconda $PKG1 $PKG2 --file conda-requirements.txt
-  - pip install -r requirements.txt
-  - pip install -r requirements-dev.txt
+jobs:
+  include:
+    # ===== Mac OS ====== #
+    - name: "Python 3.6.7"
+      os: osx
+      env: PYENV_VERSION=3.6.7 PYENV_TYPE=env
+      language: shell
 
+    - name: "Python 3.7.5"
+      os: osx
+      env: PYENV_VERSION=3.7.5 PYENV_TYPE=env
+      language: shell
+
+    - name: "Python 3.8.0"
+      os: osx
+      env: PYENV_VERSION=3.8.0 PYENV_TYPE=env
+      language: shell
+
+    - name: "Python 3.7 on macOS"
+      os: osx
+      osx_image: xcode11.2 # Python 3.7.4 running on macOS 10.14.4
+      language: shell # 'language: python' is an error on Travis CI macOS
+      env: PYENV_VERSION=3.7 PYENV_TYPE=native
+
+    # ===== Windows ====== #
+    # - name: "Python 3.6.8 on Windows"
+    #   os: windows # Windows 10.0.17134 N/A Build 17134
+    #   language: shell # 'language: python' is an error on Travis CI Windows
+    #   before_install:
+    #     - choco install python --version 3.6.8
+    #   env: PATH=/c/Python36:/c/Python36/Scripts:$PATH
+
+before_install:
+  - |
+    if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      brew update
+      brew install openblas fftw
+
+      if [ "$PYENV_TYPE" = "env" ]; then
+        brew upgrade pyenv
+        brew info pyenv
+        eval "$(pyenv init -)"
+        pyenv install $PYENV_VERSION
+        pyenv global $PYENV_VERSION
+        pyenv rehash
+      fi
+      if [ "$PYENV_TYPE" = "native" ]; then
+        python3 -m pip install --user --upgrade pip
+        python3 -m pip install codecov cython
+        python3 -m pip install -r requirements.txt
+        python3 -m pip install -r requirements-dev.txt
+        python3 --version
+      fi
+    fi
+
+  - |
+    if [ "$PYENV_TYPE" = "env" ]; then
+      python -m pip install --upgrade pip
+      python -m pip install codecov cython
+      python -m pip install -r requirements.txt
+      python -m pip install -r requirements-dev.txt
+      python --version
+    fi
+
+# 'python' points to Python 2.7 on macOS but points to Python 3.8 on Linux and Windows
+# 'python3' is a 'command not found' error on Windows but 'py' works on Windows only
 install:
-  - python setup.py develop
+  - if [ "$PYENV_TYPE" = "env" ]; then python setup.py develop; fi
+  - if [ "$PYENV_TYPE" = "native" ]; then python3 setup.py develop; fi
 
 # command to run tests
 script:
-  - pytest --cov=./
+  - if [ "$PYENV_TYPE" = "env" ]; then python -m pytest --cov=./; fi
+  - if [ "$PYENV_TYPE" = "native" ]; then python3 -m pytest --cov=./; fi
 
 after_success:
-  - codecov
+  - if [ "$PYENV_TYPE" = "env" ]; then python -m codecov; fi
+  - if [ "$PYENV_TYPE" = "native" ]; then python3 -m codecov; fi

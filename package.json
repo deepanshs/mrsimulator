@@ -1,7 +1,7 @@
 {
     "name": "mrsimulator",
-    "description": "A python toolbox for simulation NMR lineshapes.",
-    "version": "0.1.1",
+    "description": "Fast real-time solid-state NMR line-shape simulation library.",
+    "version": "0.3.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/deepanshS/mrsimulator.git"

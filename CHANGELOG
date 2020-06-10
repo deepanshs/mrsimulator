@@ -1,23 +1,88 @@
-v0.2.0
- - Added more isotopes to the simulator. Source NMR Tables (https://apps.apple.com/bn/app/nmr-tables/id1030899609?mt=12)
- - Added two new keywords: 'atomic_number' and 'quadrupole_moment'
- - Renamed the class Spectrum to Dimension
- - Added documentation for every class.
- - Added examples for simulating NMR quadrupolar lineshapes
- - Added amplitude normalization. The spectral amplitudes no longer change when
-   integral_density, integral_volume, number of sidebands, or number of points
-   along the dimension is changed.
- - Removed plotly-dash app to its own repository.
+Upcoming additions and changes
+------------------------------
+
+Whats new!
+''''''''''
+
+- ⭐ Improved simulation performance. ⭐ See our :ref:`benchmark`.
+- Removed the ``Dimension`` class and added a new ``Method`` class instead.
+- New methods for simulating the NMR spectrum:
+
+  - ``BlochDecaySpectrum`` and
+  - ``BlochDecayCentralTransitionSpectrum``.
+
+  The Bloch decay spectrum method simulates all p=Δm=-1 transition pathways, while the
+  Bloch decay central transition selective spectrum method simulates all transition
+  pathways with p=Δm=-1 and d=0.
+
+- New ``Isotope``, ``Transition``, and ``ZeemanState`` classes.
+- Every class now includes a ``reduced_dict()`` method. The reduced_dict method returns
+  a dictionary with minimal key-value pairs required to simulate the spectrum. Note,
+  this may cause metadata loss, if any.
+
+Bug fixes
+'''''''''
+
+- Fixed bug resulting from the rotation of the fourth rank tensor with non-zero euler
+  angles.
+
+Other changes
+'''''''''''''
+
+- Renamed  the ``decompose`` attribute from the ``ConfigSimulator`` class to
+  ``decompose_spectrum``. The attribute is an enumeration with the following literals:
+
+  - ``none``: Computes a spectrum which is an integration of the spectra from all
+    spin-systems.
+  - ``spin_system``: Computes a series of spectra each corresponding to a single
+    spin-system.
+
+- Renamed ``Isotopomer`` class to ``SpinSystem``.
+- Renamed ``isotopomers`` attribute from ``Simulator`` class to ``spin_systems``.
+- Renamed ``dimensions`` attribute from ``Simulator`` class to ``methods``.
+
+v0.2.x
+------
+
+Whats new!
+''''''''''
+
+- Added more isotopes to the simulator. Source NMR Tables
+  (https://apps.apple.com/bn/app/nmr-tables/id1030899609?mt=12).
+- Added two new keywords: `atomic_number` and `quadrupole_moment`.
+- Added documentation for every class.
+- Added examples for simulating NMR quadrupolar line-shapes.
+
+Bug fixes
+'''''''''
+
+- Fixed amplitude normalization. The spectral amplitude no longer change when the
+  `integration_density`, integration_volume`, or the `number_of_sidebands` attributes
+  change.
+
+Other changes
+'''''''''''''
+
+- Removed plotly-dash app to its own repository.
+- Renamed the class ``Spectrum`` to ``Dimension``
 
 v0.1.3
-    Fixed missing files from source tar.
+------
+
+- Fixed missing files from source tar.
 
 v0.1.2
-    Release on pypi.
+------
+
+- Initial release on pypi.
 
 v0.1.1
-    - Added solid state quadrupolar lineshape simulation.
-    - Added mrsimulator plotly-dash app.
+------
+
+- Added solid state quadrupolar line-shape simulation.
+- Added mrsimulator plotly-dash app.
 
 v0.1.0
-    - Solid state chemical shift anisotropy lineshape simulation
+------
+
+- Solid state chemical shift anisotropy line-shape simulation.

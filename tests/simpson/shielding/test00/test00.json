@@ -1,27 +1,32 @@
 {
-  "dimensions": [
-    {
-      "magnetic_flux_density": "1 T",
-      "rotor_frequency": "1 kHz",
-      "number_of_points": 100,
+  "methods": [{
+    "channels": ["29Si"],
+    "spectral_dimensions": [{
+      "count": 100,
       "spectral_width": "100 kHz",
-      "isotope": "29Si"
-    }
-  ],
-  "isotopomers": [
-    {
-      "sites": [
-        {
-          "isotope": "29Si",
-          "isotropic_chemical_shift": "0 ppm",
-          "shielding_symmetric": {
-            "zeta": "-12e3/8.465 ppm",
-            "eta": 0.5
+      "events": [{
+        "magnetic_flux_density": "1 T",
+        "rotor_frequency": "1 kHz",
+        "transition_query": {
+          "P": {
+            "channel-1": [
+              [-1]
+            ]
           }
         }
-      ]
-    }
-  ],
+      }]
+    }]
+  }],
+  "spin_systems": [{
+    "sites": [{
+      "isotope": "29Si",
+      "isotropic_chemical_shift": "0 ppm",
+      "shielding_symmetric": {
+        "zeta": "-12e3/8.465 ppm",
+        "eta": 0.5
+      }
+    }]
+  }],
   "test_data": {
     "source": "simpson",
     "filename": "test00.fid",

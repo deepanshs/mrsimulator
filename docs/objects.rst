@@ -144,28 +144,28 @@ where ``symmetric_shielding_tensor_example`` and ``quadrupole_tensor_example``
 are the dict object with symmetric tensor attributes from the previous example.
 
 
-.. _isotopomer:
+.. _spin_systems:
 
-Isotopomer
+SpinSystem
 ----------
 
-We define an `Isotopomer` as an object with attributes representing an isolated
+We define an `SpinSystem` as an object with attributes representing an isolated
 spin-system.
 
-.. An `Isotopomer` object is a python
+.. An `SpinSystem` object is a python
 .. `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`__
 .. object which represents an isotopomer.
 .. In `mrsimulator`, each `isotopomer` is treated as a :math:`n`-coupled spin
 .. system where :math:`n` is the number of sites in the isotopomer.
 .. It is recommended that if the sites are uncoupled, it be specified as
-.. individual isotopomers with a single site object, rather than a single
+.. individual spin systems with a single site object, rather than a single
 .. isotopomer with multiple sites.
 
-.. The key-value pairs of the `Isotopomer` object follow,
+.. The key-value pairs of the `SpinSystem` object follow,
 
 .. cssclass:: table-bordered table-hover
 
-.. list-table:: Attributes of an Isotopomer object.
+.. list-table:: Attributes of an SpinSystem object.
   :widths: 15 15 70
   :header-rows: 1
 
@@ -196,12 +196,12 @@ spin-system.
     - String
     - An `optional` quantity representing the abundance of the isotopomer. The
       abundance is given as percent, for example, ``25.4 %``. This value is useful
-      when multiple isotopomers are present. The default value is ``100 %``.
+      when multiple spin systems are present. The default value is ``100 %``.
 
 **Example**
 
 Using python `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`_
-object, Isotopomer may be represented as,
+object, SpinSystem may be represented as,
 
 .. code-block:: python
 

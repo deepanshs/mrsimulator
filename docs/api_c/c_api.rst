@@ -12,5 +12,6 @@ C-API References
    spatial_orientation_tensor
    frequency_tensor
    angular_momentum
-   struct/MRS_averaging_scheme
-   struct/MRS_plan
+
+.. struct/MRS_averaging_scheme
+.. struct/MRS_plan

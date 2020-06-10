@@ -4,29 +4,31 @@ from pprint import pprint
 
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 import pytest
-from mrsimulator import Dimension
-from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
-from mrsimulator import SymmetricTensor
-from mrsimulator.methods import one_d_spectrum
+from mrsimulator import SpinSystem
+from mrsimulator.isotope import Isotope
+from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.tensors import SymmetricTensor
 
-font = {"family": "Helvetica", "weight": "light", "size": 9}
+font = {"weight": "light", "size": 9}
 matplotlib.rc("font", **font)
 
 
 @pytest.fixture(autouse=True)
 def add_site(doctest_namespace):
 
-    doctest_namespace["Dimension"] = Dimension
-    doctest_namespace["Isotopomer"] = Isotopomer
+    doctest_namespace["np"] = np
+    doctest_namespace["plt"] = plt
+    doctest_namespace["SpinSystem"] = SpinSystem
     doctest_namespace["Simulator"] = Simulator
     doctest_namespace["Site"] = Site
     doctest_namespace["SymmetricTensor"] = SymmetricTensor
     doctest_namespace["st"] = SymmetricTensor
     doctest_namespace["pprint"] = pprint
-    doctest_namespace["one_d_spectrum"] = one_d_spectrum
+    doctest_namespace["Isotope"] = Isotope
 
     site1 = Site(
         isotope="13C",
@@ -50,31 +52,19 @@ def add_site(doctest_namespace):
     )
     doctest_namespace["site3"] = site3
 
-    isotopomer_1 = Isotopomer(sites=[site1])
+    isotopomer_1H_13C = SpinSystem(sites=[site1, site2])
+    doctest_namespace["isotopomer_1H_13C"] = isotopomer_1H_13C
+
+    isotopomer_1 = SpinSystem(sites=[site1])
     doctest_namespace["isotopomer_1"] = isotopomer_1
 
-    doctest_namespace["isotopomers"] = Isotopomer(sites=[site1, site2, site3])
+    doctest_namespace["spin_systems"] = SpinSystem(sites=[site1, site2, site3])
 
-    isotopomers = [Isotopomer(sites=[site]) for site in [site1, site2, site3]]
+    spin_systems = [SpinSystem(sites=[site]) for site in [site1, site2, site3]]
 
     sim = Simulator()
-    sim.isotopomers += isotopomers
+    sim.spin_systems += spin_systems
     doctest_namespace["sim"] = sim
-
-    dim = Dimension(isotope="27Al", spectral_width=50000, rotor_frequency=12000)
-    doctest_namespace["dim"] = dim
-
-    dimension_1 = {
-        "number_of_points": 1024,
-        "spectral_width": "100 Hz",
-        "reference_offset": "0 Hz",
-        "magnetic_flux_density": "9.4 T",
-        "rotor_frequency": "0 Hz",
-        "rotor_angle": "54.935 degree",
-        "isotope": "29Si",
-    }
-    dimension_object = Dimension.parse_dict_with_units(dimension_1)
-    doctest_namespace["dimension_object"] = dimension_object
 
     def plot_save(x, y, filename):
         plt.figure(figsize=(4.5, 2.5))
@@ -91,7 +81,17 @@ def add_site(doctest_namespace):
         plt.savefig(pth + ".png", dpi=100)
         plt.close()
 
+    def plot(x, y):
+        plt.figure(figsize=(4.5, 2.5))
+        plt.plot(x, y, linewidth=1)
+        plt.xlim([x.value.max(), x.value.min()])
+        plt.xlabel(f"frequency ratio / {str(x.unit)}", **font)
+        plt.grid(color="gray", linestyle="--", linewidth=0.75, alpha=0.25)
+        plt.tight_layout(pad=0.15)
+        plt.show()
+
     doctest_namespace["plot_save"] = plot_save
+    doctest_namespace["plot"] = plot
 
     # coesite
     O17_1 = Site(
@@ -121,18 +121,19 @@ def add_site(doctest_namespace):
     )
 
     sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
-    abundance = [0.83, 1.05, 2.16, 2.05, 1.90]  # abundance of each isotopomer
-    isotopomers = [Isotopomer(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
+    abundance = [0.83, 1.05, 2.16, 2.05, 1.90]  # abundance of each spin system
+    spin_systems = [
+        SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)
+    ]
 
-    dimension = Dimension(
-        isotope="17O",
-        number_of_points=2046,
-        spectral_width=50000,
+    method = BlochDecayCentralTransitionSpectrum(
+        channels=["17O"],
         rotor_frequency=14000,
+        spectral_dimensions=[{"count": 2048, "spectral_width": 50000}],
     )
 
     sim_coesite = Simulator()
-    sim_coesite.isotopomers += isotopomers
-    sim_coesite.dimensions += [dimension]
+    sim_coesite.spin_systems += spin_systems
+    sim_coesite.methods += [method]
 
     doctest_namespace["sim_coesite"] = sim_coesite

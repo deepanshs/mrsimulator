@@ -2,25 +2,23 @@
 """Test for the base Simulator class."""
 from random import randint
 
-import numpy as np
 import pytest
-from mrsimulator import Dimension
-from mrsimulator import Isotopomer
 from mrsimulator import Simulator
 from mrsimulator import Site
-from mrsimulator.methods import one_d_spectrum
+from mrsimulator import SpinSystem
+from mrsimulator.methods import BlochDecaySpectrum
 
 
 def test_simulator_assignments():
     a = Simulator()
-    assert a.isotopomers == []
+    assert a.spin_systems == []
 
     error = "value is not a valid list"
     with pytest.raises(Exception, match=".*{0}.*".format(error)):
-        a.isotopomers = ""
+        a.spin_systems = ""
 
     with pytest.raises(Exception, match=".*{0}.*".format(error)):
-        a.dimensions = ""
+        a.methods = ""
 
 
 def test_equality():
@@ -30,29 +28,38 @@ def test_equality():
 
     assert a is not {}
 
-    c = Simulator(isotopomers=[Isotopomer()])
+    c = Simulator(spin_systems=[SpinSystem()])
     assert a is not c
 
     result = {
-        "isotopomers": [
-            {"abundance": "100%", "description": "", "name": "", "sites": []}
-        ]
+        "name": "",
+        "description": "",
+        "spin_systems": [{"abundance": "100 %", "sites": []}],
+        "config": {
+            "decompose_spectrum": "none",
+            "integration_density": 70,
+            "integration_volume": "octant",
+            "number_of_sidebands": 64,
+        },
+        "indexes": [],
     }
-    assert c.to_dict_with_units(include_dimensions=True) == result
+    assert c.to_dict_with_units(include_methods=True) == result
 
-    result["dimensions"] = [
-        {
-            "label": "",
-            "magnetic_flux_density": "9.4 T",
-            "number_of_points": 1024,
-            "reference_offset": "0 Hz",
-            "rotor_angle": "0.9553166 rad",
-            "rotor_frequency": "0 Hz",
-            "spectral_width": "10.0 Hz",
-        }
-    ]
-    c.dimensions = [Dimension(spectral_width=10)]
-    assert c.to_dict_with_units(include_dimensions=True) == result
+    assert c.reduced_dict() == {
+        "name": "",
+        "description": "",
+        "spin_systems": [
+            {"abundance": 100, "description": "", "name": "", "sites": []}
+        ],
+        "methods": [],
+        "config": {
+            "number_of_sidebands": 64,
+            "integration_volume": "octant",
+            "integration_density": 70,
+            "decompose_spectrum": "none",
+        },
+        "indexes": [],
+    }
 
 
 def get_simulator():
@@ -62,7 +69,7 @@ def get_simulator():
         for _ in range(randint(1, 3)):
             sites.append(Site(isotope=isotope))
     sim = Simulator()
-    sim.isotopomers.append(Isotopomer(sites=sites))
+    sim.spin_systems.append(SpinSystem(sites=sites))
     return sim
 
 
@@ -70,36 +77,79 @@ def test_get_isotopes():
     isotopes = {"19F", "31P", "2H", "6Li", "14N", "27Al", "25Mg", "45Sc", "87Sr"}
     sim = get_simulator()
     assert sim.get_isotopes() == isotopes
-    assert sim.get_isotopes(I=0.5) == {"19F", "31P"}
-    assert sim.get_isotopes(I=1) == {"2H", "6Li", "14N"}
-    assert sim.get_isotopes(I=1.5) == set()
-    assert sim.get_isotopes(I=2.5) == {"27Al", "25Mg"}
-    assert sim.get_isotopes(I=3.5) == {"45Sc"}
-    assert sim.get_isotopes(I=4.5) == {"87Sr"}
+    assert sim.get_isotopes(spin_I=0.5) == {"19F", "31P"}
+    assert sim.get_isotopes(spin_I=1) == {"2H", "6Li", "14N"}
+    assert sim.get_isotopes(spin_I=1.5) == set()
+    assert sim.get_isotopes(spin_I=2.5) == {"27Al", "25Mg"}
+    assert sim.get_isotopes(spin_I=3.5) == {"45Sc"}
+    assert sim.get_isotopes(spin_I=4.5) == {"87Sr"}
 
 
-def test_csdm_object():
+def test_simulator_1():
     sim = Simulator()
-    site = Site(
-        isotope="27Al",
-        isotropic_chemical_shift=120,
-        shielding_symmetric={"zeta": 2.1, "eta": 0.1},
-        quadrupole={"Cq": 5.1e6, "eta": 0.5},
-    )
-    sim.isotopomers = [{"name": "test", "description": "awesome", "sites": [site]}]
-    sim.dimensions = [
-        {
-            "number_of_points": 1024,
-            "spectral_width": 100,
-            "reference_offset": 0,
-            "magnetic_flux_density": 9.4,
-            "rotor_frequency": 0,
-            "rotor_angle": 0.9553166,
-            "isotope": "27Al",
-        }
-    ]
-    x, y = sim.run(method=one_d_spectrum)
-    csdm_obj = sim.as_csdm_object()
+    sim.spin_systems = [SpinSystem(sites=[Site(isotope="1H"), Site(isotope="23Na")])]
+    sim.methods = [BlochDecaySpectrum()]
+    sim.name = "test"
+    sim.description = "testing-testing 1.2.3"
 
-    assert np.allclose(csdm_obj.dependent_variables[0].components[0], y)
-    assert csdm_obj.dimensions[0].count == x.size
+    assert sim.reduced_dict() == {
+        "name": "test",
+        "description": "testing-testing 1.2.3",
+        "spin_systems": [
+            {
+                "name": "",
+                "description": "",
+                "sites": [
+                    {"isotope": "1H", "isotropic_chemical_shift": 0},
+                    {"isotope": "23Na", "isotropic_chemical_shift": 0},
+                ],
+                "abundance": 100,
+            }
+        ],
+        "methods": [
+            {
+                "channels": ["1H"],
+                "description": "A Bloch decay Spectrum.",
+                "name": "Bloch Decay Spectrum",
+                "spectral_dimensions": [
+                    {
+                        "count": 1024,
+                        "events": [
+                            {
+                                "fraction": 1.0,
+                                "magnetic_flux_density": 9.4,
+                                "rotor_angle": 0.9553166,
+                                "rotor_frequency": 0.0,
+                                "transition_query": {"P": {"channel-1": [[-1]]}},
+                                "user_variables": [
+                                    "magnetic_flux_density",
+                                    "rotor_frequency",
+                                    "rotor_angle",
+                                ],
+                            }
+                        ],
+                        "label": "",
+                        "reference_offset": 0.0,
+                        "spectral_width": 25000.0,
+                    }
+                ],
+            }
+        ],
+        "config": {
+            "decompose_spectrum": "none",
+            "integration_density": 70,
+            "integration_volume": "octant",
+            "number_of_sidebands": 64,
+        },
+        "indexes": [],
+    }
+
+    # save
+    sim.save("test_sim_save.json.temp")
+    sim_load = sim.load("test_sim_save.json.temp")
+
+    assert sim_load.spin_systems == sim.spin_systems
+    assert sim_load.methods == sim.methods
+    assert sim_load.name == sim.name
+    assert sim_load.description == sim.description
+    assert sim_load == sim

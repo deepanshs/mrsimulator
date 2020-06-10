@@ -8,9 +8,14 @@ from mrsimulator.sandbox import AveragingScheme
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
 
+# decompose spectrum
+__decompose_spectrum_enum__ = {"none": 0, "spin_system": 1}
+__decompose_spectrum_enum_rev__ = {0: "none", 1: "spin_system"}
 
+# integration volume
 __integration_volume_enum__ = {"octant": 0, "hemisphere": 1}
 __integration_volume_enum_rev__ = {0: "octant", 1: "hemisphere"}
+__integration_volume_octants__ = [1, 4]
 
 
 class ConfigSimulator:
@@ -29,24 +34,37 @@ class ConfigSimulator:
             ``(n+1)*(n+2)/2 * number of octant``. The line-shape is an integral over
             the frequency contribution arising from every orientation. The default
             value is ``70``.
-        decompose: A boolean. If true, decomposes the line-shape into an array of
-            line-shapes arising from individual isotopomer. If False, the lins-shape
+        decompose_spectrum: A boolean. If true, decomposes the line-shape into an array
+            of line-shapes arising from individual isotopomer. If False, the lins-shape
             is a sum of individual line-shapes instead. The default value is ``False``.
 
-    Example:
-        >>> a = Simulator()
-        >>> a.config.number_of_sidebands = 128
-        >>> a.config.integration_volume = 'hemisphere'
-        >>> a.config.decompose = True
+    Example
+    -------
+
+    >>> a = Simulator()
+    >>> a.config.number_of_sidebands = 128
+    >>> a.config.integration_volume = 'hemisphere'
+    >>> a.config.decompose_spectrum = 'spin_system'
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._dict = {
             "number_of_sidebands": 64,
             "integration_volume": 0,
             "integration_density": 70,
-            "decompose": False,
+            "decompose_spectrum": 0,
         }
+        if kwargs != {}:
+            self._dict = {
+                "number_of_sidebands": kwargs["number_of_sidebands"],
+                "integration_volume": __integration_volume_enum__[
+                    kwargs["integration_volume"]
+                ],
+                "integration_density": kwargs["integration_density"],
+                "decompose_spectrum": __decompose_spectrum_enum__[
+                    kwargs["decompose_spectrum"]
+                ],
+            }
         self._averaging_scheme = AveragingScheme(
             integration_density=70, integration_volume=0, allow_fourth_rank=True
         )
@@ -59,17 +77,24 @@ class ConfigSimulator:
     #     )
 
     # decompose line-shape into array of lineshapes arising from individual
-    # isotopomers.
+    # spin systems.
     @property
-    def decompose(self):
-        return self._dict["decompose"]
+    def decompose_spectrum(self):
+        return __decompose_spectrum_enum_rev__[self._dict["decompose_spectrum"]]
 
-    @decompose.setter
-    def decompose(self, value):
-        if isinstance(value, bool):
-            self._dict["decompose"] = value
+    @decompose_spectrum.setter
+    def decompose_spectrum(self, value):
+        if not isinstance(value, str):
+            raise TypeError("Expecting a string value.")
+        if value in __decompose_spectrum_enum__.keys():
+            self._dict["decompose_spectrum"] = __decompose_spectrum_enum__[value]
             return
-        raise ValueError(f"Expecting a boolean.")
+        raise ValueError(
+            (
+                "Value is not a valid enumeration literal; "
+                "permitted: 'none', 'spin_system', found {value}.",
+            )
+        )
 
     # number of sidebands
     @property
@@ -112,12 +137,14 @@ class ConfigSimulator:
         # self._averaging_scheme.integration_volume = value
         # self._dict["integration_volume"] = value
         # class_dict = self.__class__.integration_volume_enum
+        if not isinstance(value, str):
+            raise TypeError("Expecting a string value.")
         if value in __integration_volume_enum__.keys():
             self._dict["integration_volume"] = __integration_volume_enum__[value]
             return
         raise ValueError(
             (
-                "value is not a valid enumeration literal; "
+                "Value is not a valid enumeration literal; "
                 "permitted: 'octant', 'hemisphere', found {value}.",
             )
         )
@@ -147,17 +174,24 @@ class ConfigSimulator:
     def __repr__(self):
         return (
             "ConfigSimulator(number_of_sidebands={0}, integration_volume={1}, "
-            "integration_density={2}, decompose={3})"
+            "integration_density={2}, decompose_spectrum={3})"
         ).format(
             # self.averaging_scheme,
             self.number_of_sidebands,
             self.integration_volume,
             self.integration_density,
-            self.decompose,
+            self.decompose_spectrum,
         )
 
     # dict
     def dict(self):
         dict_self = deepcopy(self._dict)
         dict_self["integration_volume"] = self.integration_volume
+        dict_self["decompose_spectrum"] = self.decompose_spectrum
         return dict_self
+
+    def get_orientations_count(self):
+        """Return the total number of orientations."""
+        n = self._dict["integration_density"]
+        vol = __integration_volume_octants__[self._dict["integration_volume"]]
+        return int(vol * (n + 1) * (n + 2) / 2)

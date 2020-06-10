@@ -3,7 +3,7 @@
 //  vm.h
 //
 //  @copyright Deepansh J. Srivastava, 2019-2020.
-//  Created by Deepansh J. Srivastava, Jul 26, 2019
+//  Created by Deepansh J. Srivastava, Jul 26, 2019.
 //  Contact email = deepansh2012@gmail.com
 //
 
@@ -118,8 +118,9 @@ static inline void vm_double_multiply_inplace(int count,
  * Divide the elements of vector x by y and store in res of type double.
  * res = x / y
  */
-static inline void vm_double_divide(int count, const double *x, const double *y,
-                                    double *res) {
+static inline void vm_double_divide(int count, const double *restrict x,
+                                    const double *restrict y,
+                                    double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   // res = __builtin_assume_aligned(res, 32);
@@ -180,8 +181,8 @@ static inline void vm_double_square_inplace(int count, double *restrict x) {
  * Square root of the elements of vector x stored in res of type double.
  * res = sqrt(x)
  */
-static inline void vm_double_square_root(int count, const double *x,
-                                         double *res) {
+static inline void vm_double_square_root(int count, const double *restrict x,
+                                         double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
@@ -244,9 +245,9 @@ static inline void vm_double_cosine(int count, const double *restrict x,
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
-    *res = cos(*x);
-    res++;
-    x++;
+    *res++ = cos(*x++);
+    // res++;
+    // x++;
     // x += stride_x;
     // res += stride_res;
   }
@@ -300,17 +301,19 @@ static inline double my_exp(double x) {
   x *= x;  // 10
   return x;
 }
+
 /**
  * Exponent of the elements of vector x stored in res of type double.
  * res = exp(x)
  */
-static inline void vm_double_exp(int count, double *x, double *res, int i) {
+static inline void vm_double_exp(int count, double *restrict x,
+                                 double *restrict res, const int ix) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
     *res = my_exp(*x);
-    x += i;
-    res += i;
+    x += ix;
+    res += ix;
   }
 }
 
@@ -318,7 +321,8 @@ static inline void vm_double_exp(int count, double *x, double *res, int i) {
  * Exponent of the elements of vector x stored in res of type complex128.
  * res = exp(x)
  */
-static inline void vm_double_complex_exp(int count, const void *x, void *res) {
+static inline void vm_double_complex_exp(int count, const void *restrict x,
+                                         void *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   double *x_ = (double *)x;
@@ -330,6 +334,25 @@ static inline void vm_double_complex_exp(int count, const void *x, void *res) {
     temp = my_exp(*x_++);
     *res_++ = cos(*x_) * temp;
     *res_++ = sin(*x_++) * temp;
+  }
+}
+
+/**
+ * Exponent of the elements of vector x stored in res of type complex128.
+ * res = exp(x(imag))
+ */
+static inline void vm_double_complex_exp_imag_only(int count,
+                                                   const void *restrict x,
+                                                   void *restrict res) {
+  // x = __builtin_assume_aligned(x, 32);
+  // res = __builtin_assume_aligned(res, 32);
+  double *x_ = (double *)x;
+  double *res_ = (double *)res;
+
+  while (count-- > 0) {
+    x_++;
+    *res_++ = cos(*x_);
+    *res_++ = sin(*x_++);
   }
 }
 

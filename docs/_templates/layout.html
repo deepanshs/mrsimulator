@@ -1,0 +1,39 @@
+{% extends "!layout.html" %}
+
+{# Add the google webfonts needed for the
+logo #} {% block extrahead %}
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600" rel="stylesheet" type="text/css" />
+{% endblock %} {# Silence the bottom relbar. #} {% block relbar2 %}{% endblock
+%}
+
+{%- block footer %}
+<footer class="footer">
+  <p class="flex">
+    {%- if edit_on_github %}
+    <a href="{{ edit_on_github }}">{{ edit_on_github_page_message }}</a> &nbsp;
+    {%- endif %}
+    {%- if show_source and has_source and sourcename %}
+    <a href="{{ pathto('_sources/' + sourcename, true)|e }}" rel="nofollow">{{ _('Page Source') }}</a>
+    {%- endif %} &nbsp;
+    <a href="#">Back to Top</a>
+  </p>
+  <p>
+    {%- if show_copyright %}
+    {%- if hasdoc('copyright') %}
+    {% trans path=pathto('copyright'), copyright=copyright|e %}&copy;
+    <a href="{{ path }}">Copyright</a> {{ copyright }}.
+    {% endtrans %}<br />
+    {%- else %}
+    {% trans copyright=copyright|e %}&copy; Copyright {{ copyright
+    }}.{% endtrans %}<br />
+    {%- endif %} {%- endif %}
+    {%- if show_sphinx %} {% trans
+    sphinx_version=sphinx_version|e %}Created using
+    <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> {{ sphinx_version
+    }}.{% endtrans %} &nbsp; {%- endif %} {%- if last_updated %} {% trans
+    last_updated=last_updated|e %}Last built {{ last_updated }}.{% endtrans %}
+    <br />
+    {%- endif %}
+  </p>
+</footer>
+{%- endblock %}

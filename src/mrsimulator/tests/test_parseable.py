@@ -13,7 +13,7 @@ class ParseableTestClass(Parseable):
     """
 
     foo: float = 0
-    bar: int = 0
+    bar: float = 0
     property_unit_types: ClassVar = {
         "foo": "angle",
         "bar": ["dimensionless", "frequency"],
@@ -43,11 +43,19 @@ def test_parse_json():
 
     good_json = {"foo": "300 rad", "bar": "300 ppm"}
     pr = ParseableTestClass.parse_dict_with_units(good_json)
-    pr
+    assert pr.dict() == {
+        "foo": 300.0,
+        "bar": 0.03,
+        "property_units": {"foo": "rad", "bar": "pct"},
+    }
 
-    good_json2 = {"foo": "300 rad", "bar": "300 Hz"}
+    good_json2 = {"foo": "300 rad", "bar": "300 kHz"}
     pr = ParseableTestClass.parse_dict_with_units(good_json2)
-    pr
+    assert pr.dict() == {
+        "foo": 300.0,
+        "bar": 300000.0,
+        "property_units": {"foo": "rad", "bar": "Hz"},
+    }
 
     bad_json = {"foo": "300 Hz", "bar": "300 ppm"}
 

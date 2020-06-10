@@ -383,25 +383,27 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
 void wigner_dm0_vector(const int l, const double beta, double *R_out) {
   double cx = cos(beta), sx = sin(beta);
   if (l == 2) {
-    R_out[0] = 0.6123724355 * sx * sx;
-    R_out[1] = 1.224744871 * sx * cx;
-    R_out[2] = 1.5 * cx * cx - 0.5;
-    R_out[3] = -R_out[1];
-    R_out[4] = R_out[0];
+    R_out[0] = 0.6123724355 * sx * sx;  // d^2(-2,0)(beta)
+    R_out[1] = 1.224744871 * sx * cx;   // d^2(-1,0)(beta)
+    R_out[2] = 1.5 * cx * cx - 0.5;     // d^2(0,0)(beta)
+    R_out[3] = -R_out[1];               // d^2(1,0)(beta)
+    R_out[4] = R_out[0];                // d^2(2,0)(beta)
+    return;
   }
   if (l == 4) {
     double sx2 = sx * sx, sx3 = sx2 * sx, cx2 = 1.0 - sx2;
     double cxm1 = 1.0 - cx, cxm12 = cxm1 * cxm1;
     double temp = 4. - 18. * cxm1 + 21. * cxm12 - 7. * cxm12 * cxm1;
-    R_out[0] = 0.5229125166 * sx3 * sx;
-    R_out[1] = 1.4790199458 * sx3 * cx;
-    R_out[2] = 0.3952847075 * sx2 * (7. * cx2 - 1);
-    R_out[3] = 0.5590169944 * temp * sx;
-    R_out[4] = 0.125 * (3. - 30. * cx2 + 35 * cx2 * cx2);
-    R_out[5] = -R_out[3];
-    R_out[6] = R_out[2];
-    R_out[7] = -R_out[1];
-    R_out[8] = R_out[0];
+    R_out[0] = 0.5229125166 * sx3 * sx;                    // d^4(-4,0)(beta)
+    R_out[1] = 1.4790199458 * sx3 * cx;                    // d^4(-3,0)(beta)
+    R_out[2] = 0.3952847075 * sx2 * (7. * cx2 - 1);        // d^4(-2,0)(beta)
+    R_out[3] = 0.5590169944 * temp * sx;                   // d^4(-1,0)(beta)
+    R_out[4] = 0.125 * (3. - 30. * cx2 + 35 * cx2 * cx2);  // d^4(0,0)(beta)
+    R_out[5] = -R_out[3];                                  // d^4(1,0)(beta)
+    R_out[6] = R_out[2];                                   // d^4(2,0)(beta)
+    R_out[7] = -R_out[1];                                  // d^4(3,0)(beta)
+    R_out[8] = R_out[0];                                   // d^4(4,0)(beta)
+    return;
   }
 }
 

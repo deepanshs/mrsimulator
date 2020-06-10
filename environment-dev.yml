@@ -1,23 +1,30 @@
-name: mrsim-dev
+name: mrsimulator-dev
 channels:
   - anaconda
+  - conda-forge
 dependencies:
   - fftw>=3.3.0
   - openblas
-  - pip>=19.1.1
+  - numpy>=1.17
+  - setuptools>=27.3
+  - cython>=0.29
+  - matplotlib>=3.0
+  - pip
   - pip:
-      - numpy>=1.17
-      - setuptools>=27.3
-      - cython>=0.29.11
-      - astropy>=3.0
-      - requests>=2.21.0
-      - matplotlib>=3.0
-      - monty==2.0.4
-      - csdmpy>=0.2
-      - pydantic>=0.28
-      - lmfit>=1.0.0
-      - sphinxjp.themes.basicstrap
-      - breathe>=4.13.0
-      - sphinx-copybutton
-      - sphinx-gallery
+      - monty>=2.0.4
+      - csdmpy>=0.2.1
+      - pydantic>=1.0
+      - flake8
+      # for testing
+      - pytest
+      - pytest-cov
       - sympy
+      - lmfit>=1.0.0
+      # building docs
+      - sphinx>=2.0
+      - sphinxjp.themes.basicstrap
+      - sphinx-copybutton>=0.2.11
+      - sphinx-gallery>0.6.2
+      - pillow>=7.1.2
+      - breathe>=4.18
+      - sphinx-tabs>=1.1.13

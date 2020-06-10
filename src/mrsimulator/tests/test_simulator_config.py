@@ -10,7 +10,7 @@ def test_config():
     b = Simulator()
     error = "instance of ConfigSimulator expected"
     with pytest.raises(ValueError, match=".*{0}.*".format(error)):
-        b.config = {}
+        b.config = ""
 
     a = Simulator()
 
@@ -43,30 +43,37 @@ def test_config():
     a.config.integration_volume = "hemisphere"
     assert a.config.integration_volume == "hemisphere"
 
+    with pytest.raises(TypeError, match=".*Expecting a string value.*"):
+        a.config.integration_volume = {}
+
     error = (
-        "value is not a valid enumeration literal; permitted: 'octant', 'hemisphere'"
+        "Value is not a valid enumeration literal; permitted: 'octant', 'hemisphere'"
     )
     with pytest.raises(ValueError, match=".*{0}.*".format(error)):
         a.config.integration_volume = "sphere"
 
-    # decompose
-    assert a.config.decompose is False
-    a.config.decompose = True
-    assert a.config.decompose is True
+    # decompose spectrum
+    assert a.config.decompose_spectrum == "none"
+    a.config.decompose_spectrum = "spin_system"
+    assert a.config.decompose_spectrum == "spin_system"
 
-    error = "Expecting a boolean."
-    with pytest.raises(ValueError, match=".*{0}.*".format(error)):
-        a.config.decompose = [5, 23]
+    error = "Expecting a string."
+    with pytest.raises(TypeError, match=".*{0}.*".format(error)):
+        a.config.decompose_spectrum = [5, 23]
 
+    with pytest.raises(ValueError, match=".*Value is not a valid enumeration*"):
+        a.config.decompose_spectrum = "haha"
+
+    # overall
     assert a.config.dict() == {
-        "decompose": True,
+        "decompose_spectrum": "spin_system",
         "number_of_sidebands": 10,
         "integration_volume": "hemisphere",
         "integration_density": 20,
     }
 
     assert a.config._dict == {
-        "decompose": True,
+        "decompose_spectrum": 1,
         "number_of_sidebands": 10,
         "integration_volume": 1,
         "integration_density": 20,
@@ -77,7 +84,7 @@ def test_config():
             "number_of_sidebands": 10,
             "integration_volume": "hemisphere",
             "integration_density": 20,
-            "decompose": True,
+            "decompose_spectrum": "spin_system",
         }
     )
     assert b != a
