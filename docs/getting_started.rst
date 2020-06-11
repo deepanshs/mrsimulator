@@ -106,7 +106,7 @@ example, we have created a spin-system with a single site and no couplings. Here
 attribute `sites` hold a list of sites. The attributes `name`, `description`, and
 `abundance` are optional.
 
-..  .. seealso:: :ref:`dictionary_objects`, :ref:`isotopomer` and :ref:`site`.
+..  .. seealso:: :ref:`dictionary_objects`, :ref:`spin_system` and :ref:`site`.
 
 Until now, we have only created a python dictionary representation of a spin-system. To
 run the simulation, you need to create an instance of the

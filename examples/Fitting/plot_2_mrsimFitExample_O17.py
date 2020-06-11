@@ -47,7 +47,7 @@ plt.show()
 #%%
 # Next, we will want to create a ``simulator`` object that we will use to fit to our
 # spectrum. We will need to import the necessary libraries for the *mrsimulator*
-# methods. We will then create ``isotopomer`` objects.
+# methods. We will then create ``SpinSystem`` objects.
 
 #%%
 

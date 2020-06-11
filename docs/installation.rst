@@ -119,7 +119,7 @@ Upgrading to a newer version
 If you are upgrading to a newer version of ``mrsimulator``, you have all the prerequisites
 installed on your system. In this case, type the following in the terminal/Prompt
 
-.. code-block::
+.. code-block:: bash
 
     $ pip install mrsimulator -U
 

@@ -18,7 +18,7 @@ SpinSystem
     .. automethod:: to_dict_with_units
     .. doctest::
 
-        >>> pprint(isotopomer_1.to_dict_with_units())
+        >>> pprint(spin_system_1.to_dict_with_units())
         {'abundance': '100 %',
          'sites': [{'isotope': '13C',
                     'isotropic_chemical_shift': '20.0 ppm',

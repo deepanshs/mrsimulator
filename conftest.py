@@ -52,11 +52,11 @@ def add_site(doctest_namespace):
     )
     doctest_namespace["site3"] = site3
 
-    isotopomer_1H_13C = SpinSystem(sites=[site1, site2])
-    doctest_namespace["isotopomer_1H_13C"] = isotopomer_1H_13C
+    spin_system_1H_13C = SpinSystem(sites=[site1, site2])
+    doctest_namespace["spin_system_1H_13C"] = spin_system_1H_13C
 
-    isotopomer_1 = SpinSystem(sites=[site1])
-    doctest_namespace["isotopomer_1"] = isotopomer_1
+    spin_system_1 = SpinSystem(sites=[site1])
+    doctest_namespace["spin_system_1"] = spin_system_1
 
     doctest_namespace["spin_systems"] = SpinSystem(sites=[site1, site2, site3])
 

@@ -138,10 +138,10 @@ Our current objectives for the future are the following
 
     installation
     requirements
-    understanding-isotopomers
+    understanding-spin_systems
     getting_started
     using_mrsimulator_objects
-    load_isotopomers
+    load_spin_systems
     configuring_simulator
     benchmark
     auto_examples/index
@@ -160,7 +160,7 @@ Our current objectives for the future are the following
 .. 		about
 .. 		installation
 .. 		requirements
-.. 		understanding-isotopomers
+.. 		understanding-spin_systems
 .. 		getting_started
 .. 		using_mrsimulator_objects
 .. 		load_sample

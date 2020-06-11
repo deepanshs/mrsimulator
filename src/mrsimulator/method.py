@@ -344,15 +344,15 @@ class Method(Parseable):
             temp_dict["experiment"] = self.experiment.to_dict()
         return temp_dict
 
-    def _get_transition_pathways(self, isotopomer):
-        selected_transitions = isotopomer._all_transitions()
+    def _get_transition_pathways(self, spin_system):
+        selected_transitions = spin_system._all_transitions()
 
         segments = []
         for seq in self.spectral_dimensions:
             for ent in seq.events:
                 list_of_P = query_permutations(
                     ent.transition_query.to_dict_with_units(),
-                    isotope=isotopomer.get_isotopes(),
+                    isotope=spin_system.get_isotopes(),
                     channel=[item.symbol for item in self.channels],
                 )
                 indexes = P_symmetry_indexes(selected_transitions, list_of_P)
@@ -361,7 +361,7 @@ class Method(Parseable):
                 if ent.transition_query.D is not None:
                     list_of_D = query_permutations(
                         ent.transition_query.to_dict_with_units(),
-                        isotope=isotopomer.get_isotopes(),
+                        isotope=spin_system.get_isotopes(),
                         channel=[item.symbol for item in self.channels],
                         transition_symmetry="D",
                     )
@@ -371,18 +371,18 @@ class Method(Parseable):
                 segments += [selected_transitions]
         return segments
 
-    def get_transition_pathways(self, isotopomer) -> np.ndarray:
+    def get_transition_pathways(self, spin_system) -> np.ndarray:
         """
-        Return a list of transition pathways from the given isotopomer that satisfy
+        Return a list of transition pathways from the given spin_system that satisfy
         the query selection criterion of the method.
 
         Args:
-            SpinSystem isotopomer: An SpinSystem object.
+            SpinSystem spin_system: An SpinSystem object.
 
         Returns: An array of TransitionList objects. Each TransitionList object is a
                 transition pathways containing a series of Transition objects.
         """
-        segments = self._get_transition_pathways(isotopomer)
+        segments = self._get_transition_pathways(spin_system)
         segments = [
             np.asarray(
                 TransitionList(
@@ -396,21 +396,21 @@ class Method(Parseable):
         ]
         return cartesian_product(*segments)
 
-    # def get_transition_pathways_old(self, isotopomer):
+    # def get_transition_pathways_old(self, spin_system):
     #     """
-    #     Return a list of transition pathways from the given isotopomer that satisfy
+    #     Return a list of transition pathways from the given spin_system that satisfy
     #     the query criterion of the method.
 
     #     Args:
-    #         isotopomer: An SpinSystem object.
+    #         spin_system: An SpinSystem object.
     #     """
-    #     transitions = isotopomer.all_transitions
+    #     transitions = spin_system.all_transitions
     #     segments = []
     #     for seq in self.spectral_dimensions:
     #         for ent in seq.events:
     #             list_of_P = query_permutations(
     #                 ent.transition_query.to_dict_with_units(),
-    #                 isotope=isotopomer.get_isotopes(),
+    #                 isotope=spin_system.get_isotopes(),
     #                 channel=[item.symbol for item in self.channels],
     #             )
     #             P_segment = []
@@ -421,7 +421,7 @@ class Method(Parseable):
     #             # if ent.transition_query.D != None:
     #             #     list_of_D = query_permutations(
     #             #         ent.transition_query.to_dict_with_units(),
-    #             #         isotope=isotopomer.get_isotopes(),
+    #             #         isotope=spin_system.get_isotopes(),
     #             #         channel=[item.symbol for item in self.channels],
     #             #         transition_symmetry = "D"
     #             #     )
@@ -438,7 +438,7 @@ class Method(Parseable):
     #                 elif ent.transition_query.D is not None:
     #                     list_of_D = query_permutations(
     #                         ent.transition_query.to_dict_with_units(),
-    #                         isotope=isotopomer.get_isotopes(),
+    #                         isotope=spin_system.get_isotopes(),
     #                         channel=[item.symbol for item in self.channels],
     #                         transition_symmetry="D",
     #                     )
@@ -524,7 +524,7 @@ def D_symmetry_indexes(transitions, list_of_D):
 
 def get_iso_dict(channel, isotope):
     """
-        Parse the isotopomer sites to determine indices of each isotope that
+        Parse the spin-system sites to determine indices of each isotope that
         is part of the method channel.
 
         Args:
@@ -561,7 +561,7 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
     iso_dict = get_iso_dict(channel=channel, isotope=isotope)
     query_short = query[transition_symmetry]
     for i, items in enumerate(query_short):
-        # Check if method isotope is in the isotopomer
+        # Check if method isotope is in the spin-system
         if channel[i] not in iso_dict:
             print(
                 f"Method/channel isotope mismatch. Channel asks for {channel[i]} "
@@ -590,7 +590,7 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
         for transition in iso_trans_symmetry:
             P_expanded = len(isotope) * [0]
             for j, item in enumerate(transition):
-                # filling indices of isotopomer with a sites transition symmetries
+                # filling indices of spin-system with a sites transition symmetries
                 P_expanded[iso_dict[channel[i]][j]] = item
 
             if transition_symmetry_from_query == []:

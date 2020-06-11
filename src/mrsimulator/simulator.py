@@ -91,8 +91,8 @@ class Simulator(BaseModel):
         {'27Al'}
         """
         st = set()
-        for isotopomer in self.spin_systems:
-            st.update(isotopomer.get_isotopes(spin_I))
+        for spin_system in self.spin_systems:
+            st.update(spin_system.get_isotopes(spin_I))
         return st
 
     def dict(self, *args, **kwargs) -> dict:

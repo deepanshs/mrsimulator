@@ -8,7 +8,7 @@ from mrsimulator import SpinSystem
 
 
 def pre_setup(isotope, shift, reference_offset):
-    isotopomer = SpinSystem(
+    spin_system = SpinSystem(
         sites=[Site(isotope=isotope, isotropic_chemical_shift=shift)]
     )
     method = Method.parse_dict_with_units(
@@ -25,7 +25,7 @@ def pre_setup(isotope, shift, reference_offset):
         )
     )
     sim = Simulator()
-    sim.spin_systems.append(isotopomer)
+    sim.spin_systems.append(spin_system)
     sim.methods += [method]
     sim.run()
     x, y = sim.methods[0].simulation.to_list()

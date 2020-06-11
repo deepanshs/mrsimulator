@@ -22,19 +22,20 @@ __email__ = "deepansh2012@gmail.com"
 
 class SpinSystem(Parseable):
     """
-    Base isotopomer class representing an isolated spin-system containing multiple
-    sites and couplings.
+    Base class representing an isolated spin-system containing multiple sites and
+    couplings.
 
     Attributes:
-        name: An optional string with the isotopomer name. The default is an empty
-            string.
-        description: An optional string describing the isotopomer. The default is
-            an empty string.
+        name: An optional name of the spin-system. The default is None.
+        label: An optional label for the spin-system. The default value is None.
+        description: An optional description of the spin-system. The default value is
+            None.
         sites: A list of :ref:`site_api` objects or a list of equivalent python
-            dictionary objects representing an NMR site. The default value is an empty
-            list.
-        abundance: The abundance of isotopomer in the units of %. The default value
-            is 100. This attribute is useful when multiple spin systems are present.
+            dictionary objects representing the single-site nuclear interactions. The
+            default value is an empty list.
+        abundance: The abundance of the spin-system in the units of %. The default
+            value is 100. This attribute is useful when multiple spin systems are
+            present.
         transition_pathways: A list of lists, where the inner list represents a
             transition pathway, and the outer list is the number of transition
             pathways. Each transition pathways is a list of Transition objects.
@@ -43,7 +44,7 @@ class SpinSystem(Parseable):
 
             .. doctest::
 
-                >>> isotopomer_1.transition_pathways = [
+                >>> spin_system_1.transition_pathways = [
                 ...   [{'initial': -0.5, 'final': 0.5}, {'initial': 1.5, 'final': 2.5}]
                 ... ]
 
@@ -60,8 +61,9 @@ class SpinSystem(Parseable):
                 add significant overhead to the computation.
     """
 
-    name: Optional[str] = ""
-    description: Optional[str] = ""
+    name: str = None
+    label: str = None
+    description: str = None
     sites: List[Site] = []
     # couplings: list = [], # TODO: Deepansh what should this look like?
     abundance: float = Field(default=100, ge=0, le=100)
@@ -78,7 +80,7 @@ class SpinSystem(Parseable):
         """
         Return the energy states as a Numpy array where the axis 0 is the number of
         energy states, and axis 1 is the spin quantum numbers. The spin quantum numbers
-        are ordered based on the order of the sites within the isotopomer.
+        are ordered based on the order of the sites within the spin system.
         """
         two_I_p_one = [int(2 * site.isotope.spin + 1) for site in self.sites]
         spin_quantum_numbers = [
@@ -101,21 +103,21 @@ class SpinSystem(Parseable):
     @property
     def Zeeman_energy_states(self) -> list:
         r"""
-        Return a list of all Zeeman energy states of the isotopomer spin-system,
+        Return a list of all Zeeman energy states of the spin-system,
         where the energy states are represented by a list of quantum numbers,
 
         .. math::
             |\text{state}⟩ = [m_1, m_2,.. m_n],
 
         where :math:`m_i` is the quantum number associated with the :math:`i^\text{th}`
-        site within the isotopomer.
+        site within the spin-system.
 
         Example
         -------
 
-        >>> isotopomer_1H_13C.get_isotopes() # two site (spin-1/2) isotopomer
+        >>> spin_system_1H_13C.get_isotopes() # two site (spin-1/2) spin systems
         ['13C', '1H']
-        >>> isotopomer_1H_13C.Zeeman_energy_states  # four energy level system.
+        >>> spin_system_1H_13C.Zeeman_energy_states  # four energy level system.
         [|-0.5, -0.5⟩, |-0.5, 0.5⟩, |0.5, -0.5⟩, |0.5, 0.5⟩]
 
         Return: A list of ZeemanState objects.
@@ -125,9 +127,9 @@ class SpinSystem(Parseable):
 
     def _all_transitions(self) -> np.ndarray:
         """
-        Return all transitions of an isotopomer as a Numpy array of shape (M, 2, N),
+        Return all transitions from a spin system as a Numpy array of shape (M, 2, N),
         where M is the number of transitions, and N is the number of sites in the
-        isotopomer. The second axis is of length 2, where the entries at T[:, 0, :]
+        spin-system. The second axis is of length 2, where the entries at T[:, 0, :]
         are the initial energy states, and the entries at T[:, 1, :], the corresponding
         final energy states of the spin transitions.
         """
@@ -139,14 +141,14 @@ class SpinSystem(Parseable):
 
     @property
     def all_transitions(self) -> TransitionList:
-        """Returns a list of all possible spin transitions in the given isotopomer.
+        """Returns a list of all possible spin transitions in the given spin-system.
 
         Example
         -------
 
-        >>> isotopomer_1H_13C.get_isotopes()  # two site (spin-1/2) isotopomer
+        >>> spin_system_1H_13C.get_isotopes()  # two site (spin-1/2) spin system
         ['13C', '1H']
-        >>> isotopomer_1H_13C.all_transitions  # 16 two energy level transitions
+        >>> spin_system_1H_13C.all_transitions  # 16 two energy level transitions
         [|-0.5, -0.5⟩⟨-0.5, -0.5|,
         |-0.5, 0.5⟩⟨-0.5, -0.5|,
         |0.5, -0.5⟩⟨-0.5, -0.5|,
@@ -175,18 +177,18 @@ class SpinSystem(Parseable):
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict) -> dict:
         """
-        Parse the physical quantity from the attributes of an isotopomer object
+        Parse the physical quantity from the attributes of an SpinSystem object
         when represented as a python dictionary. The physical quantities are
         expressed as a string with a number followed by a unit.
 
         Args:
-            dict py_dict: A python dictionary representation of an isotopomer object
+            dict py_dict: A python dictionary representation of an SpinSystem object
                 where attributes values are given as a string with a physical quantity.
 
         Example
         -------
 
-        >>> isotopomer_dict = {
+        >>> spin_system_dict = {
         ...     "sites": [{
         ...         "isotope":"13C",
         ...         "isotropic_chemical_shift": "20 ppm",
@@ -196,7 +198,7 @@ class SpinSystem(Parseable):
         ...         }
         ...     }]
         ... }
-        >>> isotopomer_1 = SpinSystem.parse_dict_with_units(isotopomer_dict)
+        >>> spin_system_1 = SpinSystem.parse_dict_with_units(spin_system_dict)
         """
         py_dict_copy = deepcopy(py_dict)
         if "sites" in py_dict_copy:
@@ -223,12 +225,15 @@ class SpinSystem(Parseable):
         Example
         -------
 
-        >>> pprint(isotopomer_1.to_freq_dict(B0=9.4))
+        >>> pprint(spin_system_1.to_freq_dict(B0=9.4))
         {'abundance': 100,
-         'description': '',
-         'name': '',
-         'sites': [{'isotope': '13C',
+         'description': None,
+         'label': None,
+         'name': None,
+         'sites': [{'description': None,
+                    'isotope': '13C',
                     'isotropic_chemical_shift': -2013.1791999999998,
+                    'label': None,
                     'name': None,
                     'quadrupolar': None,
                     'shielding_antisymmetric': None,
@@ -246,7 +251,7 @@ class SpinSystem(Parseable):
 
     def get_isotopes(self, spin_I=None) -> list:
         """
-        An ordered list of isotopes from sites within the isotopomer corresponding to
+        An ordered list of isotopes from sites within the spin system corresponding to
         the given value of spin quantum number `I`. If `I` is None, a list of all
         isotopes is returned instead.
 

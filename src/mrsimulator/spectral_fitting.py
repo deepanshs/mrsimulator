@@ -89,7 +89,14 @@ def _list_of_dictionaries(my_list):
     return [item.dict() for item in my_list]
 
 
-exclude = ["property_units", "isotope", "name", "description", "transition_pathways"]
+exclude = [
+    "property_units",
+    "isotope",
+    "name",
+    "label",
+    "description",
+    "transition_pathways",
+]
 
 
 def _traverse_dictionaries(dictionary, parent="spin_systems"):
@@ -142,7 +149,7 @@ def make_fitting_parameters(sim, exclude_key=None):
     if not FOUND_LMFIT:
         error = (
             f"The helper function {__name__} requires 'lmfit' module to create lmfit "
-            "paramters. Pleae install the lmfit module using\n'pip install lmfit'.",
+            "paramters. Please install the lmfit module using\n'pip install lmfit'.",
         )
         raise ImportError(error)
 

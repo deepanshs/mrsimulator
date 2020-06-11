@@ -17,26 +17,28 @@ __email__ = "deepansh2012@gmail.com"
 
 class Site(Parseable):
     """
-    Base Site class representing a nuclear isotope.
+    Base class representing a single-site nuclear spin interaction tensor parameters.
 
     Attributes:
-        name: An optional string with a name or id of the site.
+        name: An optional string with a name or id of the site. The default value is
+            None.
+        label: An optional label for the site. The default value is None.
+        description: An optional description of the site. The default value is None.
         isotope: An optional string expressed as atomic number followed by an
-                isotope symbol, eg. `13C`, `17O`. The default value is `1H`.
+            isotope symbol, eg. `13C`, `17O`. The default value is `1H`.
         isotropic_chemical_shift: An optional floating point number representing
-                the isotropic chemical shift of the site in unit of ppm. The
-                default value is 0.
-        shielding_symmetric: An optional SymmetricTensor object or an equivalent
-                python dict object representing the irreducible second-rank traceless
-                symmetric part of the nuclear shielding tensor. The default value is
-                None.
+            the isotropic chemical shift of the site in unit of ppm. The default value
+            is 0.
+        shielding_symmetric: An optional SymmetricTensor object or an equivalent python
+            dict object representing the irreducible second-rank traceless symmetric
+            part of the nuclear shielding tensor. The default value is None.
         shielding_antisymmetric: An optional AntisymmetricTensor object or an
-                equivalent python dict object representing the irreducible first-rank
-                antisymmetric part of the nuclear shielding tensor. The default value
-                is None.
+            equivalent python dict object representing the irreducible first-rank
+            antisymmetric part of the nuclear shielding tensor. The default value is
+            None.
         quadrupolar: An optional SymmetricTensor object or an equivalent python dict
-                object representing the irreducible second-rank traceless symmetric
-                part of electric-field gradient tensor. The default value is None.
+            object representing the irreducible second-rank traceless symmetric part of
+            the electric-field gradient tensor. The default value is None.
 
     Example
     -------
@@ -67,6 +69,8 @@ class Site(Parseable):
     """
 
     name: str = None
+    label: str = None
+    description: str = None
     isotope: Optional[str] = "1H"
     isotropic_chemical_shift: Optional[float] = 0
     shielding_symmetric: Optional[SymmetricTensor] = None
@@ -158,8 +162,10 @@ class Site(Parseable):
         -------
 
         >>> pprint(site1.to_freq_dict(9.4))
-        {'isotope': '13C',
+        {'description': None,
+         'isotope': '13C',
          'isotropic_chemical_shift': -2013.1791999999998,
+         'label': None,
          'name': None,
          'quadrupolar': None,
          'shielding_antisymmetric': None,

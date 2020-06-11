@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
-"""Test for the base Isotopomers class."""
+"""Test for the base SpinSystem class."""
 import pytest
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.isotopomer import allowed_isotopes
+from mrsimulator.spin_system import allowed_isotopes
 from pydantic import ValidationError
 
 
-def test_direct_init_isotopomer():
+def test_direct_init_spin_system():
     # test-1
-    the_isotopomer = SpinSystem(sites=[], abundance=10)
+    the_spin_system = SpinSystem(sites=[], abundance=10)
 
-    assert the_isotopomer.sites == []
-    assert the_isotopomer.abundance == 10.0
+    assert the_spin_system.sites == []
+    assert the_spin_system.abundance == 10.0
 
-    assert the_isotopomer.to_dict_with_units() == {"sites": [], "abundance": "10.0 %"}
-    assert the_isotopomer.reduced_dict() == {
-        "description": "",
-        "name": "",
+    assert the_spin_system.to_dict_with_units() == {"sites": [], "abundance": "10.0 %"}
+    assert the_spin_system.reduced_dict() == {
         "sites": [],
         "abundance": 10.0,
     }
@@ -39,36 +37,32 @@ def test_direct_init_isotopomer():
     }
 
     # test-3
-    the_isotopomer = SpinSystem(sites=[test_site], abundance=10)
-    assert isinstance(the_isotopomer.sites[0], Site)
-    assert the_isotopomer.abundance == 10.0
-    assert the_isotopomer.to_dict_with_units() == {
+    the_spin_system = SpinSystem(sites=[test_site], abundance=10)
+    assert isinstance(the_spin_system.sites[0], Site)
+    assert the_spin_system.abundance == 10.0
+    assert the_spin_system.to_dict_with_units() == {
         "sites": [{"isotope": "29Si", "isotropic_chemical_shift": "10.0 ppm"}],
         "abundance": "10.0 %",
     }
-    assert the_isotopomer.reduced_dict() == {
-        "description": "",
-        "name": "",
+    assert the_spin_system.reduced_dict() == {
         "sites": [{"isotope": "29Si", "isotropic_chemical_shift": 10.0}],
         "abundance": 10,
     }
 
     # test-4
-    the_isotopomer = SpinSystem(sites=[test_site, test_site], abundance=10)
-    assert isinstance(the_isotopomer.sites[0], Site)
-    assert isinstance(the_isotopomer.sites[1], Site)
-    assert id(the_isotopomer.sites[0]) != id(the_isotopomer.sites[1])
-    assert the_isotopomer.abundance == 10.0
-    assert the_isotopomer.to_dict_with_units() == {
+    the_spin_system = SpinSystem(sites=[test_site, test_site], abundance=10)
+    assert isinstance(the_spin_system.sites[0], Site)
+    assert isinstance(the_spin_system.sites[1], Site)
+    assert id(the_spin_system.sites[0]) != id(the_spin_system.sites[1])
+    assert the_spin_system.abundance == 10.0
+    assert the_spin_system.to_dict_with_units() == {
         "sites": [
             {"isotope": "29Si", "isotropic_chemical_shift": "10.0 ppm"},
             {"isotope": "29Si", "isotropic_chemical_shift": "10.0 ppm"},
         ],
         "abundance": "10.0 %",
     }
-    assert the_isotopomer.reduced_dict() == {
-        "description": "",
-        "name": "",
+    assert the_spin_system.reduced_dict() == {
         "sites": [
             {"isotope": "29Si", "isotropic_chemical_shift": 10.0},
             {"isotope": "29Si", "isotropic_chemical_shift": 10.0},
@@ -77,7 +71,7 @@ def test_direct_init_isotopomer():
     }
 
     # test-5
-    the_isotopomer = SpinSystem(
+    the_spin_system = SpinSystem(
         name="Just a test",
         description="The same",
         sites=[
@@ -90,17 +84,17 @@ def test_direct_init_isotopomer():
         ],
         abundance=4.23,
     )
-    assert the_isotopomer.name == "Just a test"
-    assert the_isotopomer.description == "The same"
-    assert the_isotopomer.sites[0].isotope.symbol == "1H"
-    assert the_isotopomer.sites[0].isotropic_chemical_shift == 0
-    assert the_isotopomer.sites[1].isotope.symbol == "17O"
-    assert the_isotopomer.sites[1].isotropic_chemical_shift == -10
-    assert the_isotopomer.sites[1].quadrupolar.Cq == 5.1e6
-    assert the_isotopomer.sites[1].quadrupolar.eta == 0.5
-    assert the_isotopomer.abundance == 4.23
+    assert the_spin_system.name == "Just a test"
+    assert the_spin_system.description == "The same"
+    assert the_spin_system.sites[0].isotope.symbol == "1H"
+    assert the_spin_system.sites[0].isotropic_chemical_shift == 0
+    assert the_spin_system.sites[1].isotope.symbol == "17O"
+    assert the_spin_system.sites[1].isotropic_chemical_shift == -10
+    assert the_spin_system.sites[1].quadrupolar.Cq == 5.1e6
+    assert the_spin_system.sites[1].quadrupolar.eta == 0.5
+    assert the_spin_system.abundance == 4.23
 
-    assert the_isotopomer.to_dict_with_units() == {
+    assert the_spin_system.to_dict_with_units() == {
         "name": "Just a test",
         "description": "The same",
         "sites": [
@@ -113,7 +107,7 @@ def test_direct_init_isotopomer():
         ],
         "abundance": "4.23 %",
     }
-    assert the_isotopomer.reduced_dict() == {
+    assert the_spin_system.reduced_dict() == {
         "name": "Just a test",
         "description": "The same",
         "sites": [
@@ -128,7 +122,7 @@ def test_direct_init_isotopomer():
     }
 
 
-def test_parse_json_isotopomer():
+def test_parse_json_spin_system():
     good_json = {"sites": [], "abundance": "10%"}
 
     good_json2 = {
@@ -142,8 +136,6 @@ def test_parse_json_isotopomer():
     assert iso1.abundance == 10
     assert iso1.to_dict_with_units() == {"sites": [], "abundance": "10.0 %"}
     assert iso1.reduced_dict() == {
-        "description": "",
-        "name": "",
         "sites": [],
         "abundance": 10,
     }
@@ -158,8 +150,6 @@ def test_parse_json_isotopomer():
         "abundance": "10.0 %",
     }
     assert iso2.reduced_dict() == {
-        "description": "",
-        "name": "",
         "sites": [{"isotope": "1H", "isotropic_chemical_shift": 0}],
         "abundance": 10,
     }
@@ -169,7 +159,7 @@ def test_parse_json_isotopomer():
         SpinSystem.parse_dict_with_units(bad_json)
 
 
-def test_isotopomer_methods():
+def test_spin_system_methods():
     good_json2 = {
         "sites": [{"isotope": "1H", "isotropic_chemical_shift": "2 ppm"}],
         "abundance": "10%",
@@ -178,13 +168,16 @@ def test_isotopomer_methods():
     # to_freq_dict()
     iso1 = SpinSystem.parse_dict_with_units(good_json2).to_freq_dict(9.4)
     result = {
-        "name": "",
-        "description": "",
+        "name": None,
+        "label": None,
+        "description": None,
         "sites": [
             {
                 "isotope": "1H",
                 "isotropic_chemical_shift": -2 * 42.57748 * 9.4,  # -gamma * B0 * iso
                 "name": None,
+                "label": None,
+                "description": None,
                 "quadrupolar": None,
                 "shielding_antisymmetric": None,
                 "shielding_symmetric": None,
@@ -205,28 +198,26 @@ def test_isotopomer_methods():
 
     # reduced_dict()
     assert SpinSystem.parse_dict_with_units(good_json2).reduced_dict() == {
-        "name": "",
-        "description": "",
         "sites": [{"isotope": "1H", "isotropic_chemical_shift": 2.0}],
         "abundance": 10,
     }
 
 
-def get_isotopomer_list():
+def get_spin_system_list():
     isotopes = ["19F", "31P", "2H", "6Li", "14N", "27Al", "25Mg", "45Sc", "87Sr"]
     return SpinSystem(sites=[Site(isotope=item) for item in isotopes])
 
 
 def test_get_isotopes():
     isotopes = ["19F", "31P", "2H", "6Li", "14N", "27Al", "25Mg", "45Sc", "87Sr"]
-    isotopomer = get_isotopomer_list()
-    assert isotopomer.get_isotopes() == isotopes
-    assert isotopomer.get_isotopes(spin_I=0.5) == ["19F", "31P"]
-    assert isotopomer.get_isotopes(spin_I=1) == ["2H", "6Li", "14N"]
-    assert isotopomer.get_isotopes(spin_I=1.5) == []
-    assert isotopomer.get_isotopes(spin_I=2.5) == ["27Al", "25Mg"]
-    assert isotopomer.get_isotopes(spin_I=3.5) == ["45Sc"]
-    assert isotopomer.get_isotopes(spin_I=4.5) == ["87Sr"]
+    spin_system = get_spin_system_list()
+    assert spin_system.get_isotopes() == isotopes
+    assert spin_system.get_isotopes(spin_I=0.5) == ["19F", "31P"]
+    assert spin_system.get_isotopes(spin_I=1) == ["2H", "6Li", "14N"]
+    assert spin_system.get_isotopes(spin_I=1.5) == []
+    assert spin_system.get_isotopes(spin_I=2.5) == ["27Al", "25Mg"]
+    assert spin_system.get_isotopes(spin_I=3.5) == ["45Sc"]
+    assert spin_system.get_isotopes(spin_I=4.5) == ["87Sr"]
 
 
 def test_allowed_isotopes():

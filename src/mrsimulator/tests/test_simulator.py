@@ -48,9 +48,7 @@ def test_equality():
     assert c.reduced_dict() == {
         "name": "",
         "description": "",
-        "spin_systems": [
-            {"abundance": 100, "description": "", "name": "", "sites": []}
-        ],
+        "spin_systems": [{"abundance": 100, "sites": []}],
         "methods": [],
         "config": {
             "number_of_sidebands": 64,
@@ -97,8 +95,6 @@ def test_simulator_1():
         "description": "testing-testing 1.2.3",
         "spin_systems": [
             {
-                "name": "",
-                "description": "",
                 "sites": [
                     {"isotope": "1H", "isotropic_chemical_shift": 0},
                     {"isotope": "23Na", "isotropic_chemical_shift": 0},

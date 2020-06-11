@@ -9,9 +9,9 @@ from mrsimulator.post_simulation import PostSimulator
 
 sim = Simulator()
 the_site = {"isotope": "1H", "isotropic_chemical_shift": "0 ppm"}
-the_isotopomer = {"name": "site A", "sites": [the_site], "abundance": "80%"}
-isotopomer_object = SpinSystem.parse_dict_with_units(the_isotopomer)
-sim.spin_systems += [isotopomer_object]
+the_spin_system = {"name": "site A", "sites": [the_site], "abundance": "80%"}
+spin_system_object = SpinSystem.parse_dict_with_units(the_spin_system)
+sim.spin_systems += [spin_system_object]
 
 method_1 = BlochDecaySpectrum(
     channels=["1H"],

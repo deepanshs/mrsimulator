@@ -130,6 +130,8 @@ def test_site_object_methods():
         "isotropic_chemical_shift": -10.0,
         "property_units": {"isotropic_chemical_shift": "ppm"},
         "name": None,
+        "label": None,
+        "description": None,
         "quadrupolar": None,
         "shielding_symmetric": None,
         "shielding_antisymmetric": None,
@@ -141,6 +143,8 @@ def test_site_object_methods():
         "isotope": "14N",
         "isotropic_chemical_shift": -1 * 3.077706 * 9.4 * -10.0,  # -gamma * B0 * iso
         "name": None,
+        "label": None,
+        "description": None,
         "quadrupolar": None,
         "shielding_symmetric": None,
         "shielding_antisymmetric": None,
@@ -174,6 +178,8 @@ def test_site_object_methods():
     larmor_freq = -1 * 11.10309 * 9.4  # -gamma * B0
     result = {
         "name": None,
+        "label": None,
+        "description": None,
         "isotope": "27Al",
         "isotropic_chemical_shift": 10.0 * larmor_freq,  # larmor_freq * iso
         "shielding_symmetric": {

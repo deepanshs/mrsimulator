@@ -135,16 +135,16 @@ def c_setup_random_euler_angles(data_object, data_source, group):
     ]
     pix2 = 2 * np.pi
     if group == "shielding_symmetric":
-        for isotopomer in spin_systems:
-            isotopomer.sites[0].shielding_symmetric.alpha = np.random.rand(1) * pix2
-            isotopomer.sites[0].shielding_symmetric.beta = np.random.rand(1) * pix2
-            isotopomer.sites[0].shielding_symmetric.gamma = np.random.rand(1) * pix2
+        for spin_system in spin_systems:
+            spin_system.sites[0].shielding_symmetric.alpha = np.random.rand(1) * pix2
+            spin_system.sites[0].shielding_symmetric.beta = np.random.rand(1) * pix2
+            spin_system.sites[0].shielding_symmetric.gamma = np.random.rand(1) * pix2
 
     if group == "quadrupolar":
-        for isotopomer in spin_systems:
-            isotopomer.sites[0].quadrupolar.alpha = np.random.rand(1) * pix2
-            isotopomer.sites[0].quadrupolar.beta = np.random.rand(1) * pix2
-            isotopomer.sites[0].quadrupolar.gamma = np.random.rand(1) * pix2
+        for spin_system in spin_systems:
+            spin_system.sites[0].quadrupolar.alpha = np.random.rand(1) * pix2
+            spin_system.sites[0].quadrupolar.beta = np.random.rand(1) * pix2
+            spin_system.sites[0].quadrupolar.gamma = np.random.rand(1) * pix2
 
     s1 = Simulator(spin_systems=spin_systems, methods=methods)
     s1.config.integration_density = 120

@@ -8,7 +8,7 @@ Python-API References
    :caption: Contents:
 
    simulator
-   isotopomer
+   spin_system
    site
    other_objects
    method
