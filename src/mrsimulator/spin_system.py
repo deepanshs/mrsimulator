@@ -9,12 +9,12 @@ from typing import Optional
 import numpy as np
 from pydantic import Field
 
-from .abstract_list import TransitionList
 from .isotope import ISOTOPE_DATA
 from .parseable import Parseable
 from .site import Site
 from .state import ZeemanState
 from .transition import Transition
+from .transition.transition_list import TransitionList
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"

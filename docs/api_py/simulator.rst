@@ -24,13 +24,3 @@ Simulator
 
 .. seealso::
         :ref:`load_spin_systems`
-
-.. _config_api:
-
-ConfigSimulator
-===============
-
-.. currentmodule:: mrsimulator.simulator
-
-.. autoclass:: ConfigSimulator
-    :show-inheritance:

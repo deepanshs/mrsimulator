@@ -54,20 +54,3 @@ Isotope
     .. rubric:: Method Documentation
 
     .. automethod:: to_dict_with_units
-
-    Example:
-
-    .. doctest::
-
-        >>> # 13C isotope information
-        >>> carbon = Isotope(symbol='13C')
-        >>> carbon.spin
-        0.5
-        >>> carbon.natural_abundance # in %
-        1.11
-        >>> carbon.gyromagnetic_ratio # in MHz/T
-        10.7084
-        >>> carbon.atomic_number
-        6
-        >>> carbon.quadrupole_moment # in eB
-        0.0

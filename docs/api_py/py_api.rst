@@ -8,6 +8,7 @@ Python-API References
    :caption: Contents:
 
    simulator
+   simulator_config
    spin_system
    site
    other_objects

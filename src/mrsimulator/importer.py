@@ -13,6 +13,11 @@ __email__ = "deepansh2012@gmail.com"
 
 
 def download_file_from_url(url):
+    """Download the file from the given url.
+
+    Args:
+        str url: The url address.
+    """
     res = urlparse(url)
     filename = path.split(res[2])[1]
     name, extension = path.splitext(filename)

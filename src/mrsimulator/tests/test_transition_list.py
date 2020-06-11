@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
-from mrsimulator.abstract_list import TransitionList
 from mrsimulator.transition import Transition
+from mrsimulator.transition.transition_list import TransitionList
 
 
 def test_transition_1():

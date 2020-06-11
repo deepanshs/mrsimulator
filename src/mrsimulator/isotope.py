@@ -15,11 +15,28 @@ ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
 
 
 class Isotope(BaseModel):
-    """An Isotope class.
+    """The Isotope class.
 
     Attributes:
         symbol: The isotope symbol given as the atomic number followed by the
             atomic symbol.
+
+    Example
+    -------
+
+    >>> # 13C isotope information
+    >>> carbon = Isotope(symbol='13C')
+    >>> carbon.spin
+    0.5
+    >>> carbon.natural_abundance # in %
+    1.11
+    >>> carbon.gyromagnetic_ratio # in MHz/T
+    10.7084
+    >>> carbon.atomic_number
+    6
+    >>> carbon.quadrupole_moment # in eB
+    0.0
+
     """
 
     symbol: str
@@ -69,7 +86,7 @@ class Isotope(BaseModel):
 
 
 def format_isotope_string(isotope_string: str) -> str:
-    """Format isotope string to {A}{symbol}, where A is the isotope number"""
+    """Format the isotope string to {A}{symbol}, where A is the isotope number."""
     result = match(r"(\d+)\s*(\w+)", isotope_string)
 
     if result is None:
@@ -85,10 +102,7 @@ def format_isotope_string(isotope_string: str) -> str:
 
 
 def get_isotope_data(isotope_string: str) -> dict:
-    """
-    Get the isotope's intrinsinc NMR properties from a JSON
-    data file.
-    """
+    """Get the isotope's intrinsinc properties from a JSON data file."""
     formatted_isotope_string = format_isotope_string(isotope_string)
     isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
     isotope_dict.update({"isotope": formatted_isotope_string})

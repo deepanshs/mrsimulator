@@ -5,6 +5,9 @@ from typing import List
 import numpy as np
 from pydantic import BaseModel
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 class Transition(BaseModel):
     """

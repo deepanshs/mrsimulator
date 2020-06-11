@@ -19,6 +19,8 @@ Whats new!
 - Every class now includes a ``reduced_dict()`` method. The reduced_dict method returns
   a dictionary with minimal key-value pairs required to simulate the spectrum. Note,
   this may cause metadata loss, if any.
+- Added a ``label`` and ``description`` attributes to the ``Site`` class.
+- Added a new ``label`` attribute to the ``SpinSystem`` class.
 
 Bug fixes
 '''''''''
@@ -40,6 +42,8 @@ Other changes
 - Renamed ``Isotopomer`` class to ``SpinSystem``.
 - Renamed ``isotopomers`` attribute from ``Simulator`` class to ``spin_systems``.
 - Renamed ``dimensions`` attribute from ``Simulator`` class to ``methods``.
+- Changed the default value of ``name`` and ``description`` attribute from the
+  ``SpinSystem`` class from ``""`` to ``None``.
 
 v0.2.x
 ------

@@ -4,9 +4,9 @@ import csdmpy as cp
 import numpy as np
 import pytest
 from mrsimulator.isotope import Isotope
-from mrsimulator.method import Event
 from mrsimulator.method import Method
-from mrsimulator.method import SpectralDimension
+from mrsimulator.method.event import Event
+from mrsimulator.method.spectral_dimension import SpectralDimension
 from pydantic import ValidationError
 
 
