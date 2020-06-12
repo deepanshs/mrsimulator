@@ -2,7 +2,7 @@
 """Test for the base Site class."""
 import pytest
 from mrsimulator import Site
-from mrsimulator.isotope import Isotope
+from mrsimulator.spin_system.isotope import Isotope
 from pydantic import ValidationError
 
 

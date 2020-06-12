@@ -1,0 +1,38 @@
+spinsys {
+  channels 87Rb
+  nuclei 87Rb
+  quadrupole 1 0 3.2e6 0.16 0 0 0
+}
+
+par {
+  crystal_file     zcw4180
+  variable dw      0.25
+
+  sw               1e6/dw
+  np               2000
+  proton_frequency 400e6
+  start_operator   I1z
+  method           direct
+  gamma_angles     1
+  spin_rate        0
+  verbose          1101
+
+  variable rf      1137500
+}
+
+proc pulseq {} {
+  global par
+  matrix set detect elements {{1 4}}
+  for {set i 0} {$i < $par(np)} {incr i} {
+    pulse $par(dw) $par(rf) x
+    acq
+  }
+
+}
+
+proc main {} {
+  global par
+
+  set f [fsimpson]
+  fsave $f $par(name).fid
+}

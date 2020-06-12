@@ -4,10 +4,10 @@ from typing import ClassVar
 from typing import Dict
 from typing import Optional
 
+from mrsimulator.parseable import Parseable
 from pydantic import validator
 
 from .isotope import Isotope
-from .parseable import Parseable
 from .tensors import AntisymmetricTensor
 from .tensors import SymmetricTensor
 

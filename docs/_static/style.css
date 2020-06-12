@@ -197,7 +197,7 @@ table caption:hover {
   padding-right: 16px;
   width: 100%;
   max-width: 275px;
-  /* padding-bottom: 1em; */
+  padding-bottom: 1em;
   /* padding-left: 0.5em;
   padding-right: 1.5em; */
 }
@@ -230,7 +230,6 @@ table caption:hover {
   padding: 0;
   padding-bottom: 1em;
   margin-bottom: 1em;
-  border-bottom: 1px solid silver;
 }
 
 .sidebar.hidden-xs > h3 > a,

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
-from mrsimulator.isotope import Isotope
+from mrsimulator.spin_system.isotope import Isotope
 
 
 def test_isotope():

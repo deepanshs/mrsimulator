@@ -2,7 +2,8 @@
 """Test for c functions."""
 import mrsimulator.tests.tests as clib
 import numpy as np
-from mrsimulator.python.utils import pre_phase_components
+
+from .python_test_for_c_code.utils import pre_phase_components
 
 
 def test_phase_components_1():

@@ -7,7 +7,7 @@ Other Objects
 SymmetricTensor
 ---------------
 
-.. currentmodule:: mrsimulator.tensors
+.. currentmodule:: mrsimulator.spin_system.tensors
 
 .. autoclass:: SymmetricTensor
     :show-inheritance:
@@ -22,7 +22,7 @@ SymmetricTensor
 AntisymmetricTensor
 -------------------
 
-.. currentmodule:: mrsimulator.tensors
+.. currentmodule:: mrsimulator.spin_system.tensors
 
 .. autoclass:: AntisymmetricTensor
     :show-inheritance:
@@ -37,7 +37,7 @@ AntisymmetricTensor
 Isotope
 -------
 
-.. currentmodule:: mrsimulator.isotope
+.. currentmodule:: mrsimulator.spin_system.isotope
 
 .. autoclass:: Isotope
     :show-inheritance:

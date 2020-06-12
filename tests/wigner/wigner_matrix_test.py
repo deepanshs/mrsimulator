@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import mrsimulator.tests.tests as clib
 import numpy as np
-from mrsimulator.python.angular_momentum import wigner_d_matrix_cosines
-from mrsimulator.python.angular_momentum import wigner_dm0_vector
 from sympy.physics.quantum.spin import Rotation
+
+from tests.python_test_for_c_code.angular_momentum import wigner_d_matrix_cosines
+from tests.python_test_for_c_code.angular_momentum import wigner_dm0_vector
 
 
 def wigner_dm0_vector_sympy(ang_momentum_l, angle):

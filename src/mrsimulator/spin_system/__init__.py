@@ -7,14 +7,14 @@ from typing import List
 from typing import Optional
 
 import numpy as np
+from mrsimulator.parseable import Parseable
+from mrsimulator.transition import Transition
+from mrsimulator.transition.transition_list import TransitionList
 from pydantic import Field
 
 from .isotope import ISOTOPE_DATA
-from .parseable import Parseable
 from .site import Site
 from .state import ZeemanState
-from .transition import Transition
-from .transition.transition_list import TransitionList
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"

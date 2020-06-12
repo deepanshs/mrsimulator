@@ -9,9 +9,9 @@ import pytest
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.isotope import Isotope
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-from mrsimulator.tensors import SymmetricTensor
+from mrsimulator.spin_system.isotope import Isotope
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 font = {"weight": "light", "size": 9}
 matplotlib.rc("font", **font)

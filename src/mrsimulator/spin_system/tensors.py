@@ -4,9 +4,8 @@ from typing import ClassVar
 from typing import Dict
 from typing import Optional
 
+from mrsimulator.parseable import Parseable
 from pydantic import Field
-
-from .parseable import Parseable
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"

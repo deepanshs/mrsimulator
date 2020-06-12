@@ -2,8 +2,9 @@
 """Test for c functions."""
 import mrsimulator.tests.tests as clib
 import numpy as np
-from mrsimulator.python.orientation import cosine_of_polar_angles_and_amplitudes
-from mrsimulator.python.orientation import triangle_interpolation
+
+from .python_test_for_c_code.orientation import cosine_of_polar_angles_and_amplitudes
+from .python_test_for_c_code.orientation import triangle_interpolation
 
 
 def test_octahedron_averaging_setup():

@@ -3,14 +3,13 @@ from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
-from typing import Optional
 from typing import Union
 
 import csdmpy as cp
 import numpy as np
-from mrsimulator.isotope import Isotope
 from mrsimulator.parseable import Parseable
 from mrsimulator.post_simulation import PostSimulator
+from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import Transition
 from mrsimulator.transition.transition_list import TransitionList
 from pydantic import validator
@@ -26,27 +25,46 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class Method(Parseable):
-    r"""Base Method class.
+    r"""Base Method class. A method class represents the NMR method.
 
     Attributes:
-        name: (string) An optional name of the method.
-        description: (string) A optional description of the method.
-        channels: An required list of isotope symbols over which the given method
-            applies, for example, ['1H'].
-        spectral_dimensions: An required list of SpectralDimension objects or list of
-            equivalent python dictionary objects.
-        simulation: A csdm object holding the result of the simulation.
-        experiment: A csdm object that optionally holds the experimental data, if
-            available.
+        name: The value is an optional string containing the name of the method. The
+            default value is an empty string.
+        label: The value is an optional label for the methods. The default value is
+            None.
+        description: The value is an optional string describing the method. The default
+            value is None.
+        channels: The value is a required list of isotope symbols over which the given
+            method applies. An isotope symbol is given as a string with the atomic
+            number followed by its atomic symbol, for example, '1H', '13C', and '33S'.
+            The number of isotopes in a `channel` depends on the method. For example,
+            a `BlochDecaySpectrum` method is a single channel method, in which case,
+            the value of this attribute is a list with a single isotope symbol,
+            ['13C'].
+        spectral_dimensions: The value is a required list of SpectralDimension objects
+            or a list of equivalent python dictionary objects. The number of spectral
+            dimensions depends on the given method. For example, a `BlochDecaySpectrum`
+            method is a one-dimensional method and thus requires a single spectral
+            dimension.
+        simulation: The value is a `CSDM <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html>`_
+            or a `ndarray <https://numpy.org/doc/1.18/reference/generated/numpy.ndarray.html>`_
+            object holding the result of the simulation. The initial value of this
+            attribute is None. A value is assigned to this attribute when you run the
+            simulation using the :meth:`~mrsimulator.Simulator.run` method.
+        experiment: The value is a `CSDM <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html>`_
+            or a `ndarray <https://numpy.org/doc/1.18/reference/generated/numpy.ndarray.html>`_
+            object holding the experimental measurement for the given method, if
+            available. The default value is None.
         post_simulation: An optional dict with post-simulation parameters.
     """
-    name: Optional[str] = ""
-    description: Optional[str] = ""
+    name: str = None
+    label: str = None
+    description: str = None
     channels: List[str]
     spectral_dimensions: List[SpectralDimension]
-    post_simulation: Optional[PostSimulator]
-    simulation: Optional[Union[cp.CSDM, np.ndarray]]
-    experiment: Optional[Union[cp.CSDM, np.ndarray]]
+    post_simulation: PostSimulator = None
+    simulation: Union[cp.CSDM, np.ndarray] = None
+    experiment: Union[cp.CSDM, np.ndarray] = None
 
     property_default_units: ClassVar = {
         "magnetic_flux_density": "T",
@@ -81,11 +99,14 @@ class Method(Parseable):
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantities of the Method object from a python dictionary
-        object.
+        Parse the physical quantity, given as a string with a number and a unit, from
+        the attribute value of a python dictionary representation of the Method class.
 
         Args:
-            dict py_dict: Dict object
+            dict py_dict: A python dict representation of the Method object.
+
+        Returns:
+            A Method object.
         """
         py_dict_copy = deepcopy(py_dict)
         if "spectral_dimensions" in py_dict_copy:
@@ -111,27 +132,29 @@ class Method(Parseable):
             spectral_dims[i].origin_offset = dim.origin_offset.to("Hz").value
 
     def to_dict_with_units(self):
-        """Parse the class object to a JSON compliant python dictionary object where
+        """
+        Parse the class object to a JSON compliant python dictionary object where
         the attribute value with physical quantity is expressed as a string with a
-        value and a unit."""
-        temp_dict = self.dict(
-            exclude={
-                "spectral_dimensions",
-                "channels",
-                "simulation",
-                "experiment",
-                "property_units",
-                "post_simulation",
-            }
-        )
+        value and a unit.
+
+        Returns:
+            A python dict object.
+        """
+        temp_dict = {}
+        items = ["name", "label", "description"]
+        for en in items:
+            value = self.__getattribute__(en)
+            if value is not None:
+                temp_dict[en] = self.__getattribute__(en)
+
         temp_dict["spectral_dimensions"] = [
             item.to_dict_with_units() for item in self.spectral_dimensions
         ]
         temp_dict["channels"] = [item.to_dict_with_units() for item in self.channels]
-        # if self.simulation is not None:
-        #     temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
-        # if self.experiment is not None:
-        #     temp_dict["experiment"] = self.experiment.to_dict()
+        if self.simulation is not None:
+            temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
+        if self.experiment is not None:
+            temp_dict["experiment"] = self.experiment.to_dict()
         return temp_dict
 
     def dict(self, **kwargs):
@@ -173,14 +196,15 @@ class Method(Parseable):
 
     def get_transition_pathways(self, spin_system) -> np.ndarray:
         """
-        Return a list of transition pathways from the given spin_system that satisfy
+        Return a list of transition pathways from the given spin system that satisfy
         the query selection criterion of the method.
 
         Args:
-            SpinSystem spin_system: An SpinSystem object.
+            SpinSystem spin_system: A SpinSystem object.
 
-        Returns: An array of TransitionList objects. Each TransitionList object is a
-                transition pathways containing a series of Transition objects.
+        Returns:
+            An array of TransitionList objects. Each TransitionList object is a
+            transition pathways containing a series of Transition objects.
         """
         segments = self._get_transition_pathways(spin_system)
         segments = [

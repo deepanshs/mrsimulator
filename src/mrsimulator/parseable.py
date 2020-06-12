@@ -85,7 +85,7 @@ class Parseable(BaseModel):
     def to_dict_with_units(self) -> dict:
         """Parse the class object to a JSON compliant python dictionary object where
         the attribute value with physical quantity is expressed as a string with a
-        value and a unit."""
+        number and a unit."""
 
         temp_dict = {}
         for k, v in self.dict(exclude={"property_units"}).items():

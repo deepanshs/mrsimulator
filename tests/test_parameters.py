@@ -5,7 +5,7 @@ from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.spectral_fitting import make_fitting_parameters
-from mrsimulator.tensors import SymmetricTensor as st
+from mrsimulator.spin_system.tensors import SymmetricTensor as st
 
 
 sim = Simulator()
