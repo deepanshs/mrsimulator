@@ -9,12 +9,12 @@ import numpy as np
 from mrsimulator import __version__
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
-from mrsimulator.importer import import_json
 from mrsimulator.method import Method
-from mrsimulator.simulator_config import ConfigSimulator
+from mrsimulator.util import _reduce_dict
+from mrsimulator.util.importer import import_json
 from pydantic import BaseModel
 
-from .util import _reduce_dict
+from .simulator_config import ConfigSimulator
 
 # from mrsimulator.post_simulation import PostSimulator
 

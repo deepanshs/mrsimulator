@@ -5,7 +5,7 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
-from mrsimulator.parseable import Parseable
+from mrsimulator.util.parseable import Parseable
 from pydantic import Field
 
 from .transition_query import TransitionQuery

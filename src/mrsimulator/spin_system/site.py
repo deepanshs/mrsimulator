@@ -4,7 +4,7 @@ from typing import ClassVar
 from typing import Dict
 from typing import Optional
 
-from mrsimulator.parseable import Parseable
+from mrsimulator.util.parseable import Parseable
 from pydantic import validator
 
 from .isotope import Isotope

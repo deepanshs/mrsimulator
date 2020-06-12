@@ -7,11 +7,11 @@ from typing import Union
 
 import csdmpy as cp
 import numpy as np
-from mrsimulator.parseable import Parseable
 from mrsimulator.post_simulation import PostSimulator
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import Transition
 from mrsimulator.transition.transition_list import TransitionList
+from mrsimulator.util.parseable import Parseable
 from pydantic import validator
 
 from .spectral_dimension import SpectralDimension

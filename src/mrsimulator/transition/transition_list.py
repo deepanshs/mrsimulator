@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from mrsimulator.abstract_list import AbstractList
+from mrsimulator.util.abstract_list import AbstractList
 
 from . import Transition
 

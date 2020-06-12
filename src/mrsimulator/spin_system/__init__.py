@@ -7,9 +7,9 @@ from typing import List
 from typing import Optional
 
 import numpy as np
-from mrsimulator.parseable import Parseable
 from mrsimulator.transition import Transition
 from mrsimulator.transition.transition_list import TransitionList
+from mrsimulator.util.parseable import Parseable
 from pydantic import Field
 
 from .isotope import ISOTOPE_DATA

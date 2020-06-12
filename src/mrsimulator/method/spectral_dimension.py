@@ -8,7 +8,7 @@ from typing import Optional
 
 import csdmpy as cp
 import numpy as np
-from mrsimulator.parseable import Parseable
+from mrsimulator.util.parseable import Parseable
 from pydantic import Field
 
 from .event import Event
