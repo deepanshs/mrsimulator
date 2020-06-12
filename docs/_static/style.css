@@ -198,6 +198,7 @@ table caption:hover {
   width: 100%;
   max-width: 275px;
   padding-bottom: 1em;
+  padding-top: 1em;
   /* padding-left: 0.5em;
   padding-right: 1.5em; */
 }

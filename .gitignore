@@ -18,6 +18,7 @@ eggs/
 .eggs/
 sdist/
 wheels/
+dist_*/
 *.egg-info/
 .installed.cfg
 cython_debug/**
