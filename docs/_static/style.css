@@ -17,7 +17,7 @@ h1 {
 h2 {
   font-size: 1.8em;
   font-weight: 400;
-  color: rgb(112, 54, 15);
+  color: #70360f;
   padding-bottom: 1.2em;
   padding-bottom: 0.2em;
   border-bottom: 1px solid silver;
@@ -55,6 +55,13 @@ h6 {
 }
 .figure.align-default {
   justify-content: space-around;
+  padding: 0;
+}
+.figure.align-default > p {
+  color: rgb(87, 87, 87);
+}
+.figure.align-default > img[alt="_images/null.png"] {
+  display: none;
 }
 img.sphx-glr-single-img,
 .figure img {
@@ -240,7 +247,12 @@ table caption:hover {
   color: white;
   text-decoration: none;
 }
-
+.sidebar > ul > li > a > code {
+  color: white;
+}
+.sidebar > ul > li.current > a > code {
+  color: #c7254e;
+}
 .sidebar > ul > li:hover {
   background-color: rgb(66, 66, 66);
 }
