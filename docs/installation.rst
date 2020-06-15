@@ -40,7 +40,7 @@ packages such as pip.
 .. seealso::
 
   If you do not have python or have an older version of python, you may visit the
-  `Python <https://www.python.org/downloads/>`_ or
+  `Python downloads <https://www.python.org/downloads/>`_ or
   `Anaconda <https://www.anaconda.com/products/individual/>`_ websites and follow their
   instructions on how to install python.
 
@@ -315,8 +315,11 @@ file in your terminal. Download the test file
 
 The above statement should produce the following figure.
 
-.. figure:: _static/test_output.*
-    :figclass: figure
+.. plot:: ../pyplot/test_file.py
+
+.. figure:: _static/null.*
+
+    A test example solid state NMR lineshape simulation.
 
 ----
 

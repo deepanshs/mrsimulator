@@ -14,10 +14,10 @@ def test_simulator_assignments():
     assert a.spin_systems == []
 
     error = "value is not a valid list"
-    with pytest.raises(Exception, match=".*{0}.*".format(error)):
+    with pytest.raises(Exception, match=f".*{error}.*"):
         a.spin_systems = ""
 
-    with pytest.raises(Exception, match=".*{0}.*".format(error)):
+    with pytest.raises(Exception, match=f".*{error}.*"):
         a.methods = ""
 
 
@@ -32,8 +32,6 @@ def test_equality():
     assert a is not c
 
     result = {
-        "name": "",
-        "description": "",
         "spin_systems": [{"abundance": "100 %", "sites": []}],
         "config": {
             "decompose_spectrum": "none",
@@ -46,8 +44,6 @@ def test_equality():
     assert c.to_dict_with_units(include_methods=True) == result
 
     assert c.reduced_dict() == {
-        "name": "",
-        "description": "",
         "spin_systems": [{"abundance": 100, "sites": []}],
         "methods": [],
         "config": {
@@ -124,7 +120,6 @@ def test_simulator_1():
                                 ],
                             }
                         ],
-                        "label": "",
                         "reference_offset": 0.0,
                         "spectral_width": 25000.0,
                     }

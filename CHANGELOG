@@ -1,8 +1,8 @@
 Upcoming additions and changes
 ------------------------------
 
-Whats new!
-''''''''''
+What's new!
+'''''''''''
 
 - ⭐ Improved simulation performance. ⭐ See our :ref:`benchmark`.
 - Removed the ``Dimension`` class and added a new ``Method`` class instead.
@@ -48,8 +48,8 @@ Other changes
 v0.2.x
 ------
 
-Whats new!
-''''''''''
+What's new!
+'''''''''''
 
 - Added more isotopes to the simulator. Source NMR Tables
   (https://apps.apple.com/bn/app/nmr-tables/id1030899609?mt=12).

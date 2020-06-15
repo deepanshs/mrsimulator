@@ -28,6 +28,13 @@ class Parseable(BaseModel):
 
     @classmethod
     def parse_dict_with_units(cls, json_dict):
+        """Parse the physical quantity from a dictionary representation of the class
+        object, where the physical quantity is expressed as a string with a number and
+        a unit.
+
+        Args:
+            dict json_dict: A required python dict object.
+        """
         # Only consider properties with both unit types and default units
         all_props = set(cls.property_unit_types.keys()).intersection(
             set(cls.property_default_units.keys())

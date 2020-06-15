@@ -20,13 +20,13 @@ def test_zeeman_energy_states():
     H_Zeeman = [-0.5, 0.5]
     O_Zeeman = [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
 
-    for i, state in enumerate(iso_H.Zeeman_energy_states):
+    for i, state in enumerate(iso_H.Zeeman_energy_states()):
         assert state.tolist() == [H_Zeeman[i]]
 
-    for i, state in enumerate(iso_O.Zeeman_energy_states):
+    for i, state in enumerate(iso_O.Zeeman_energy_states()):
         assert state.tolist() == [O_Zeeman[i]]
 
-    for i, state in enumerate(iso_OH.Zeeman_energy_states):
+    for i, state in enumerate(iso_OH.Zeeman_energy_states()):
         assert tuple(state.tolist()) == list(product(O_Zeeman, H_Zeeman))[i]
 
 
@@ -45,16 +45,19 @@ def test_all_transitions():
     H_Zeeman = [-0.5, 0.5]
     O_Zeeman = [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
 
-    for i, transition in enumerate(iso_H.all_transitions):
+    iso_H_transitions = iso_H.all_transitions()
+    for i, transition in enumerate(iso_H_transitions):
         res = list(product(H_Zeeman, H_Zeeman))[i]
         assert tuple(transition.initial + transition.final) == res
         # assert transition.tolist() == list(product(H_Zeeman, H_Zeeman))[i]
 
-    for i, transition in enumerate(iso_O.all_transitions):
+    iso_O_transitions = iso_O.all_transitions()
+    for i, transition in enumerate(iso_O_transitions):
         res = list(product(O_Zeeman, O_Zeeman))[i]
         assert tuple(transition.initial + transition.final) == res
 
-    for i, transition in enumerate(iso_OH.all_transitions):
+    iso_OH_transitions = iso_OH.all_transitions()
+    for i, transition in enumerate(iso_OH_transitions):
         OH_state = list(product(O_Zeeman, H_Zeeman))
         res = list(product(OH_state, OH_state))[i]
         assert tuple([tuple(transition.initial), tuple(transition.final)]) == res

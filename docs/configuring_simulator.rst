@@ -6,6 +6,27 @@
 Configuring Simulator object
 ============================
 
+The following code is used to produce the figures in this section.
+
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
+
+    >>> import matplotlib.pyplot as plt
+    >>> import matplotlib as mpl
+    >>> mpl.rcParams["figure.figsize"] = (6, 3.5)
+    >>> mpl.rcParams["font.size"] = 11
+    ...
+    >>> # function to render figures.
+    >>> def plot(csdm_object):
+    ...     # set matplotlib axes projection='csdm' to directly plot CSDM objects.
+    ...     ax = plt.subplot(projection='csdm')
+    ...     ax.plot(csdm_object, linewidth=1.5)
+    ...     ax.invert_xaxis()
+    ...     plt.tight_layout(pad=0.1)
+    ...     plt.show()
+
 Up until now, we have been using the simulator object with the default setting.
 In `Mrsimulator`, we choose the default settings such that it applies to a wide
 range of simulations including, static, magic angle spinning (MAS), and
@@ -18,14 +39,17 @@ The :ref:`simulator_api` class is configured using the
 :attr:`~mrsimulator.Simulator.config` attribute. The default value
 of the config attributes is as follows,
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> from mrsimulator import Simulator, SpinSystem, Site
     >>> from mrsimulator.methods import BlochDecaySpectrum
-
+    ...
     >>> sim = Simulator()
     >>> sim.config
-    ConfigSimulator(number_of_sidebands=64, integration_volume=octant, integration_density=70, decompose_spectrum=none)
+    ConfigSimulator(number_of_sidebands=64, integration_volume='octant', integration_density=70, decompose_spectrum='none')
 
 Here, the configurable attributes are ``number_of_sidebands``,
 ``integration_volume``, ``integration_density``, and ``decompose_spectrum``.
@@ -45,39 +69,32 @@ when used in iterative algorithms, such as least-squares minimization.
 
 The following is an example of when the number of sidebands is insufficient.
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> sim = Simulator()
-
+    ...
     >>> # create a site with a large anisotropy, 100 ppm.
     >>> Si29site = Site(isotope='29Si', shielding_symmetric={'zeta': 100, 'eta': 0.2})
-
+    ...
     >>> # create a method. Set a low rotor frequency, 200 Hz.
     >>> method = BlochDecaySpectrum(
     ...     channels=['29Si'],
     ...     rotor_frequency=200, # in Hz.
     ...     spectral_dimensions=[dict(count=1024, spectral_width=25000)]
     ... )
-
+    ...
     >>> sim.spin_systems += [SpinSystem(sites=[Si29site])]
     >>> sim.methods += [method]
-
+    ...
     >>> # simulate and plot
     >>> sim.run()
-
-    >>> # plotting the simulation
-    >>> import csdmpy as cp
-
-    >>> data = sim.methods[0].simulation # csdm object
-    >>> _ = cp.plot(data, reverse_axis=[True], linewidth=1) # doctest: +SKIP
-
-.. .. testsetup::
-..     >>> x, y = sim.methods[0].simulation.to_list()
-..     >>> plot_save(*sim.methods[0].simulation.to_list(), 'example_sidebands_1')
+    >>> plot(sim.methods[0].simulation) # doctest: +SKIP
 
 .. _fig1_config:
-.. figure:: _images/example_sidebands_1.*
-    :figclass: figure
+.. figure:: _static/null.*
 
     Inaccurate spinning sidebands simulation resulting from computing a relatively low
     number of sidebands.
@@ -87,28 +104,22 @@ simulation spectrum in :numref:`fig1_config` is inaccurate, as evident from the 
 termination of the sideband amplitudes at the edges. As mentioned earlier, this
 inaccuracy arises from evaluating a small number of sidebands relative to the given
 anisotropy. Let's increase the number of sidebands to `90` and observe.
+:numref:`fig2_config` depicts an accurate spinning sideband simulation.
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> # set the number of sidebands to 90.
     >>> sim.config.number_of_sidebands = 90
     >>> sim.run()
-
-    >>> # plotting the simulation
-    >>> data = sim.methods[0].simulation # csdm object
-    >>> _ = cp.plot(data, reverse_axis=[True], linewidth=1) # doctest: +SKIP
-
-.. .. testsetup::
-..     >>> x, y = sim.methods[0].simulation.to_list()
-..     >>> plot_save(x, y, 'example_sidebands_2')
+    >>> plot(sim.methods[0].simulation) # doctest: +SKIP
 
 .. _fig2_config:
-.. figure:: _images/example_sidebands_2.*
-    :figclass: figure
+.. figure:: _static/null.*
 
     Accurate spinning sideband simulation when using a large number of sidebands.
-
-:numref:`fig2_config` depicts an accurate spinning sideband simulation.
 
 
 Integration volume
@@ -136,34 +147,29 @@ integration over the sphere. By adding the Euler angles to this tensor, we break
 symmetry, and the integration over the octant is no longer accurate.
 Consider the following examples.
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> # add Euler angles to the shielding tensor.
     >>> Si29site.shielding_symmetric.alpha = 1.563 # in rad
     >>> Si29site.shielding_symmetric.beta = 1.2131 # in rad
     >>> Si29site.shielding_symmetric.gamma = 2.132 # in rad
-
+    ...
     >>> # Let's observe the static spectrum which is more intuitive.
     >>> sim.methods[0] = BlochDecaySpectrum(
     ...     channels=['29Si'],
     ...     rotor_frequency=0, # in Hz.
     ...     spectral_dimensions=[dict(count=1024, spectral_width=25000)]
     ... )
-
+    ...
     >>> # simulate and plot
     >>> sim.run()
-    >>>
-    >>> # plotting the simulation
-    >>> data = sim.methods[0].simulation # csdm object
-    >>> _ = cp.plot(data, reverse_axis=[True], linewidth=1) # doctest: +SKIP
-
-.. .. testsetup::
-..     >>> x, y = sim.methods[0].simulation.to_list()
-..     >>> plot_save(x, y, 'example_integration_volume_1')
+    >>> plot(sim.methods[0].simulation) # doctest: +SKIP
 
 .. _fig3_config:
-.. figure:: _images/example_integration_volume_1.*
-    :figclass: figure
+.. figure:: _static/null.*
 
     An example of an incomplete lineshape integration, lineshape simulation
     resulting from the frequency contributions evaluated over the positive
@@ -174,25 +180,20 @@ The spectrum in :numref:`fig3_config` is incorrect. To fix this, set the integra
 volume to `hemisphere` and re-simulate. :numref:`fig4_config` depicts the accurate
 simulation of the CSA tensor.
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> # set integration volume to `hemisphere`.
     >>> sim.config.integration_volume = 'hemisphere'
-
+    ...
     >>> # simulate and plot
     >>> sim.run()
-    >>>
-    >>> # plotting the simulation
-    >>> data = sim.methods[0].simulation # csdm object
-    >>> _ = cp.plot(data, reverse_axis=[True], linewidth=1) # doctest: +SKIP
-
-.. .. testsetup::
-..     >>> x, y = sim.methods[0].simulation.to_list()
-..     >>> plot_save(x, y, 'example_integration_volume_2')
+    >>> plot(sim.methods[0].simulation) # doctest: +SKIP
 
 .. _fig4_config:
-.. figure:: _images/example_integration_volume_2.*
-    :figclass: figure
+.. figure:: _static/null.*
 
     The lineshape resulting from the frequency contributions evaluted over the
     top hemisphere.
@@ -215,7 +216,10 @@ this attribute as required by the problem.
 
 Consider the following example.
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> sim = Simulator()
     >>> sim.config.integration_density
@@ -245,41 +249,36 @@ If the value is ``none`` (default), the result of the simulation is a single spe
 where the frequency contributions from all the spin-systems are co-added. Consider the
 following example.
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> # Create two sites
     >>> site_A = Site(isotope='1H', shielding_symmetric={'zeta': 5, 'eta': 0.1})
     >>> site_B = Site(isotope='1H', shielding_symmetric={'zeta': -2, 'eta': 0.83})
-
+    ...
     >>> # Create two spin systems, each with single site.
     >>> system_A = SpinSystem(sites=[site_A])
     >>> system_B = SpinSystem(sites=[site_B])
-
+    ...
     >>> # Create a method object.
     >>> method = BlochDecaySpectrum(
     ...     channels=['1H'],
     ...     spectral_dimensions=[dict(count=1024, spectral_width=10000)]
     ... )
-
+    ...
     >>> # Create simulator object.
     >>> sim = Simulator()
     >>> sim.spin_systems += [system_A,  system_B] # add the spin systems
     >>> sim.methods += [method] # add the method
-
-    >>> # simulate and run.
+    ...
+    >>> # simulate and plot.
     >>> sim.run()
-
-    >>> # plotting the simulation
-    >>> data = sim.methods[0].simulation # csdm object
-    >>> _ = cp.plot(data, reverse_axis=[True], linewidth=1) # doctest: +SKIP
-
-.. .. testsetup::
-..     >>> x, y = sim.methods[0].simulation.to_list()
-..     >>> plot_save(x, y, 'example_decompose_1')
+    >>> plot(sim.methods[0].simulation) # doctest: +SKIP
 
 .. _fig5_config:
-.. figure:: _images/example_decompose_1.*
-    :figclass: figure
+.. figure:: _static/null.*
 
     By default, the spectrum is an integration of the spectra from individual
     spin systems. The value of `decompose_spectrum` is ``none``.
@@ -296,34 +295,26 @@ spectra is the same as the number of spin-system objects.
 Try setting the value of the decompose_spectrum attribute to `spin_system` and observe
 the simulation.
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> # set decompose_spectrum to true.
     >>> sim.config.decompose_spectrum = "spin_system"
-
+    ...
     >>> # simulate.
     >>> sim.run()
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> # plot the two spectrum
-    >>> x, y0, y1 = sim.methods[0].simulation.to_list()
-    >>> # The order of the y's corresponds to the order of the spin systems. Here,
-    >>> # y0 is the frequency response arising from site_A, while y1 is the
-    >>> # frequency response from site_B.
+    >>> plot(sim.methods[0].simulation) # doctest: +SKIP
 
-    >>> import matplotlib.pyplot as plt
-    >>> data = sim.methods[0].simulation.split()
-    >>> _ = cp.plot(data[0], reverse_axis=[True], linewidth=1) # doctest: +SKIP
-    >>> _ = cp.plot(data[1], reverse_axis=[True], linewidth=1) # doctest: +SKIP
-    >>> plt.show()
-
-.. .. testsetup::
-..     >>> import numpy as np
-..     >>> plot_save(x, np.asarray(y).T, 'example_decompose_2')
-
-.. figure:: _images/example_decompose_2.*
-    :figclass: figure
+.. figure:: _static/null.*
 
     Spectrum from individual spin systems when the value of the `decompose_spectrum`
     config is ``spin_system``.

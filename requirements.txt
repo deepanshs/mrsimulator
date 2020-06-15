@@ -4,3 +4,4 @@ matplotlib>=3.0
 csdmpy>=0.2.1
 pydantic>=1.0
 monty>=2.0.4
+typing-extensions>=3.7

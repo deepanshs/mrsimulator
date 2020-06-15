@@ -61,6 +61,7 @@ method = BlochDecaySpectrum(
             "count": 2048,
             "spectral_width": 25000,  # in Hz
             "reference_offset": -10000,  # in Hz
+            "label": r"$^{29}$Si resonances",
         }
     ],
 )
@@ -77,11 +78,9 @@ sim_wollastonite.run()
 
 # %%
 # **Step 6** The plot of the simulation.
-x, y = sim_wollastonite.methods[0].simulation.to_list()
-plt.plot(x, y, color="black", linewidth=1)
-plt.xlabel("frequency / ppm")
-plt.xlim(x.value.max(), x.value.min())
-plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+ax = plt.subplot(projection="csdm")
+ax.plot(sim_wollastonite.methods[0].simulation, color="black", linewidth=1)
+ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
 

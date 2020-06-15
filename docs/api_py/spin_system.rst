@@ -1,4 +1,4 @@
-.. _spin_system_api:
+.. _spin_sys_api:
 
 SpinSystem
 ==========
@@ -8,11 +8,11 @@ SpinSystem
 .. autoclass:: SpinSystem
     :show-inheritance:
 
-    .. autoattribute:: Zeeman_energy_states
-    .. autoattribute:: all_transitions
-
     .. rubric:: Method Documentation
 
+    .. automethod:: get_isotopes
+    .. automethod:: Zeeman_energy_states
+    .. automethod:: all_transitions
     .. automethod:: parse_dict_with_units
     .. automethod:: to_freq_dict
     .. automethod:: to_dict_with_units
@@ -23,5 +23,3 @@ SpinSystem
          'sites': [{'isotope': '13C',
                     'isotropic_chemical_shift': '20.0 ppm',
                     'shielding_symmetric': {'eta': 0.5, 'zeta': '10.0 ppm'}}]}
-
-    .. automethod:: get_isotopes

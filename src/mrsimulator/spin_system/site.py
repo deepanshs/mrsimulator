@@ -18,41 +18,125 @@ __email__ = "deepansh2012@gmail.com"
 class Site(Parseable):
     """
     Base class representing a single-site nuclear spin interaction tensor parameters.
+    The single-site nuclear spin interaction tensors include the nuclear shielding
+    and the electric quadrupolar tensor.
 
-    Attributes:
-        name: An optional string with a name or id of the site. The default value is
-            None.
-        label: An optional label for the site. The default value is None.
-        description: An optional description of the site. The default value is None.
-        isotope: An optional string expressed as atomic number followed by an
-            isotope symbol, eg. `13C`, `17O`. The default value is `1H`.
-        isotropic_chemical_shift: An optional floating point number representing
-            the isotropic chemical shift of the site in unit of ppm. The default value
-            is 0.
-        shielding_symmetric: An optional SymmetricTensor object or an equivalent python
-            dict object representing the irreducible second-rank traceless symmetric
-            part of the nuclear shielding tensor. The default value is None.
-        shielding_antisymmetric: An optional AntisymmetricTensor object or an
-            equivalent python dict object representing the irreducible first-rank
-            antisymmetric part of the nuclear shielding tensor. The default value is
-            None.
-        quadrupolar: An optional SymmetricTensor object or an equivalent python dict
-            object representing the irreducible second-rank traceless symmetric part of
-            the electric-field gradient tensor. The default value is None.
+    .. rubric:: Attribute Documentation
+
+    Attributes
+    ----------
+
+    isotope: str (optional).
+        A string expressed as an atomic number followed by an isotope symbol, eg.,
+        `'13C'`, `'17O'`. The default value is `'1H'`.
+
+        Example
+        -------
+
+        >>> site = Site(isotope='2H')
+
+    isotropic_chemical_shift: float (optional).
+        The value is the isotropic chemical shift of the site in the unit of ppm. The
+        default value is 0.
+
+        Example
+        -------
+
+        >>> site.isotropic_chemical_shift = 43.3
+
+    shielding_symmetric: :ref:`sy_api` or equivalent dict object (optional).
+        The value of this attribute represents the irreducible second-rank traceless
+        symmetric part of the nuclear shielding tensor. The default value is None.
+
+        The allowed attributes of the :ref:`sy_api` class for `shielding_symmetric` are
+        ``zeta``, ``eta``, ``alpha``, ``beta``, and ``gamma``, where ``zeta`` is the
+        shielding anisotropy, in ppm, and ``eta`` is the shielding asymmetry parameter
+        defined using the Haeberlen convention. The Euler angles ``alpha``, ``beta``,
+        and ``gamma`` are in radians.
+
+        Example
+        -------
+
+        >>> site.shielding_symmetric = {'zeta': 10, 'eta': 0.5}
+        >>> # or equivalently
+        >>> site.shielding_symmetric = SymmetricTensor(zeta=10, eta=0.5)
+
+    shielding_antisymmetric: :ref:`asy_api` or equivalent dict object (optional).
+        The value of this attribute represents the irreducible first-rank antisymmetric
+        part of the nuclear shielding tensor. The default value is None.
+
+        The allowed attributes of the :ref:`asy_api` class for
+        `shielding_antisymmetric` are ``zeta``, ``alpha``, and ``beta``, where ``zeta``
+        is the anisotropy parameter of the anti-symmetric first-rank tensor given in
+        ppm. The angles ``alpha`` and ``beta`` are in radians.
+
+        Example
+        -------
+
+        >>> site.shielding_antisymmetric = {'zeta': 20}
+        >>> # or equivalently
+        >>> site.shielding_antisymmetric = AntisymmetricTensor(zeta=20)
+
+    quadrupolar: :ref:`sy_api` or equivalent dict object (optional).
+        The value of this attribute represents the irreducible second-rank traceless
+        symmetric part of the electric-field gradient tensor. The default value is
+        None.
+
+        The allowed attributes of the :ref:`sy_api` class for `quadrupolar` are ``Cq``,
+        ``eta``, ``alpha``, ``beta``, and ``gamma``, where ``Cq`` is the quadrupolar
+        coupling constant, in Hz, and ``eta`` is the quadrupolar asymmetry parameter.
+        The Euler angles ``alpha``, ``beta``, and ``gamma`` are in radians.
+
+        Example
+        -------
+
+        >>> site.quadrupolar = {'Cq': 3.2e6, 'eta': 0.52}
+        >>> # or equivalently
+        >>> site.quadrupolar = SymmetricTensor(Cq=3.2e6, eta=0.52)
+
+    name: str (optional).
+        The value is the name or id of the site. The default value is None.
+
+        Example
+        -------
+
+        >>> site.name = '2H-0'
+        >>> site.name
+        '2H-0'
+
+    label: str (optional).
+        The value is a label for the site. The default value is None.
+
+        Example
+        -------
+
+        >>> site.label = 'Quad site'
+        >>> site.label
+        'Quad site'
+
+    description: str (optional).
+        The value is a description of the site. The default value is None.
+
+        Example
+        -------
+
+        >>> site.description = 'An example Quadrupolar site.'
+        >>> site.description
+        'An example Quadrupolar site.'
 
     Example
     -------
 
-    Setting up Site objects.
+    The following are a few examples of setting the site object.
 
     >>> site1 = Site(
-    ...     isotope='13C',
+    ...     isotope='33S',
     ...     isotropic_chemical_shift=20, # in ppm
     ...     shielding_symmetric={
     ...         "zeta": 10, # in ppm
     ...         "eta": 0.5
     ...     },
-    ...     quadrupole={
+    ...     quadrupolar={
     ...         "Cq": 5.1e6, # in Hz
     ...         "eta": 0.5
     ...     }
@@ -64,7 +148,6 @@ class Site(Parseable):
     ...     isotope='13C',
     ...     isotropic_chemical_shift=20, # in ppm
     ...     shielding_symmetric=SymmetricTensor(zeta=10, eta=0.5),
-    ...     quadrupole=SymmetricTensor(Cq=5.1e6, eta=0.5)
     ... )
     """
 
@@ -86,7 +169,7 @@ class Site(Parseable):
         if v is None:
             return v
         isotope = values["isotope"]
-        isotope = Isotope(symbol=isotope) if isinstance(isotope, str) else isotope
+        isotope = Isotope(**isotope) if isinstance(isotope, dict) else isotope
         spin_I = isotope.spin
         if spin_I >= 1:
             if "zeta" in v.property_units:
@@ -113,14 +196,15 @@ class Site(Parseable):
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantities from a dictionary representation of the Site
-        object.
+        Parse the physical quantity from a dictionary representation of the Site
+        object, where the physical quantity is expressed as a string with a number and
+        a unit.
 
         Args:
-            dict py_dict: A required Dict object.
+            dict py_dict: A required python dict object.
 
         Returns:
-            Site object
+            :ref:`site_api` object.
 
         Example
         -------
@@ -146,22 +230,23 @@ class Site(Parseable):
 
     def to_freq_dict(self, B0):
         """
-        Serialize the Site object to a JSON compliant python dictionary where the
-        attribute values are numbers expressed in default units. The default unit
-        for attributes with respective dimensionalities are:
-        - frequency: `Hz`
-        - angle: `rad`
+        Serialize the Site object to a JSON compliant python dictionary object, where
+        the attribute value is a number expressed in the attribute's default unit.
+        The default unit for the attributes with respective dimensionalities is:
+
+        - frequency: ``Hz``
+        - angle: ``rad``
 
         Args:
-            float B0: A required macroscopic magnetic flux density given in units of T.
+            float B0: A required macroscopic magnetic flux density in units of T.
 
         Return:
-            Dict object
+            Python dict object.
 
         Example
         -------
 
-        >>> pprint(site1.to_freq_dict(9.4))
+        >>> pprint(site1.to_freq_dict(B0=9.4))
         {'description': None,
          'isotope': '13C',
          'isotropic_chemical_shift': -2013.1791999999998,

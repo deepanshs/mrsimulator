@@ -96,11 +96,9 @@ sim.run()
 
 # %%
 # The plot of the corresponding spectrum.
-x, y = sim.methods[0].simulation.to_list()
-plt.plot(x, y, color="black", linewidth=1)
-plt.xlabel("$^{27}$Al frequency / ppm")
-plt.xlim(x.value.max(), x.value.min())
-plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+ax = plt.subplot(projection="csdm")
+ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
 
@@ -125,10 +123,8 @@ sim.run()
 
 # %%
 # and the corresponding plot.
-x, y = sim.methods[0].simulation.to_list()
-plt.plot(x, y, color="black", linewidth=1)
-plt.xlabel("$^{27}$Al frequency / ppm")
-plt.xlim(x.value.max(), x.value.min())
-plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+ax = plt.subplot(projection="csdm")
+ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

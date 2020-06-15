@@ -8,9 +8,10 @@ def test_config():
 
     # set config
     b = Simulator()
-    error = "instance of ConfigSimulator expected"
-    with pytest.raises(ValueError, match=".*{0}.*".format(error)):
-        b.config = ""
+
+    error = "value is not a valid dict"
+    with pytest.raises(ValueError, match=f".*{error}.*"):
+        b.config = 5
 
     a = Simulator()
 
@@ -18,24 +19,28 @@ def test_config():
 
     # number of sidebands
     assert a.config.number_of_sidebands == 64
+
+    a.config.number_of_sidebands = 1.4
+    assert a.config.number_of_sidebands == 1
+
     a.config.number_of_sidebands = 10
     assert a.config.number_of_sidebands == 10
 
-    error = "Expecting a positive integer, found"
-    with pytest.raises(ValueError, match=".*{0}.*".format(error)):
-        a.config.number_of_sidebands = "2"
-    with pytest.raises(ValueError, match=".*{0}.*".format(error)):
-        a.config.number_of_sidebands = 1.4
+    error = "ensure this value is greater than 0"
+    with pytest.raises(ValueError, match=f".*{error}.*"):
+        a.config.number_of_sidebands = 0
 
     # integration density
     assert a.config.integration_density == 70
     a.config.integration_density = 20
     assert a.config.integration_density == 20
 
-    error = "Expecting a positive integer, found"
-    with pytest.raises(ValueError, match=".*{0}.*".format(error)):
+    error = "ensure this value is greater than 0"
+    with pytest.raises(ValueError, match=f".*{error}.*"):
         a.config.integration_density = -12
-    with pytest.raises(ValueError, match=".*{0}.*".format(error)):
+
+    error = "value is not a valid integer"
+    with pytest.raises(ValueError, match=f".*{error}.*"):
         a.config.integration_density = {}
 
     # integration volume
@@ -43,13 +48,8 @@ def test_config():
     a.config.integration_volume = "hemisphere"
     assert a.config.integration_volume == "hemisphere"
 
-    with pytest.raises(TypeError, match=".*Expecting a string value.*"):
-        a.config.integration_volume = {}
-
-    error = (
-        "Value is not a valid enumeration literal; permitted: 'octant', 'hemisphere'"
-    )
-    with pytest.raises(ValueError, match=".*{0}.*".format(error)):
+    error = "unexpected value; permitted: 'octant', 'hemisphere'"
+    with pytest.raises(ValueError, match=f".*{error}.*"):
         a.config.integration_volume = "sphere"
 
     # decompose spectrum
@@ -57,11 +57,8 @@ def test_config():
     a.config.decompose_spectrum = "spin_system"
     assert a.config.decompose_spectrum == "spin_system"
 
-    error = "Expecting a string."
-    with pytest.raises(TypeError, match=".*{0}.*".format(error)):
-        a.config.decompose_spectrum = [5, 23]
-
-    with pytest.raises(ValueError, match=".*Value is not a valid enumeration*"):
+    error = "unexpected value; permitted: 'none', 'spin_system'"
+    with pytest.raises(ValueError, match=f".*{error}.*"):
         a.config.decompose_spectrum = "haha"
 
     # overall
@@ -72,19 +69,14 @@ def test_config():
         "integration_density": 20,
     }
 
-    assert a.config._dict == {
+    assert a.config.get_int_dict() == {
         "decompose_spectrum": 1,
         "number_of_sidebands": 10,
         "integration_volume": 1,
         "integration_density": 20,
     }
 
-    assert str(a.config) == str(
-        {
-            "number_of_sidebands": 10,
-            "integration_volume": "hemisphere",
-            "integration_density": 20,
-            "decompose_spectrum": "spin_system",
-        }
-    )
     assert b != a
+
+    # get orientation count
+    assert a.config.get_orientations_count() == 4 * 21 * 22 / 2

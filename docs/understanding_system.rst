@@ -60,11 +60,11 @@ Let's create an isotopomer with a single spin-1/2, :math:`^{13}\text{C}` site.
     >>> one_site = SpinSystem(sites=[C13])
 
 To list the Zeeman energy states of an isotopomer, use the
-:attr:`~mrsimulator.SpinSystem.Zeeman_energy_states` attribute of the instance, as
+:meth:`~mrsimulator.SpinSystem.Zeeman_energy_states` attribute of the instance, as
 
 .. doctest::
 
-    >>> one_site.Zeeman_energy_states
+    >>> one_site.Zeeman_energy_states()
     [|-0.5⟩, |0.5⟩]
 
 A spin-system with :math:`n` energy states has :math:`^nP_2` total transitions

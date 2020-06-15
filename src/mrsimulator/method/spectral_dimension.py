@@ -4,7 +4,6 @@ from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
-from typing import Optional
 
 import csdmpy as cp
 import numpy as np
@@ -30,16 +29,19 @@ class SpectralDimension(Parseable):
         origin_offset: An `optional` float with the origin offset (Larmor frequency)
                 along the dimension in units of Hz. The default value is None.
         label: An `optional` string label. The default is an empty string.
+        description: An `optional` description of the spectral dimension. The default
+            value is None.
         events: A `required` list of Event object or an equivalent list of dict objects
                 describing the series of events along the spectroscopic dimension.
     """
 
     count: int = Field(1024, gt=0)
     spectral_width: float = Field(default=25000.0, gt=0)
-    reference_offset: Optional[float] = Field(default=0.0)
-    origin_offset: Optional[float] = None
-    label: Optional[str] = ""
-    events: List[Event]
+    reference_offset: float = Field(default=0.0)
+    origin_offset: float = None
+    label: str = None
+    description: str = None
+    events: List[Event] = []
 
     property_unit_types: ClassVar = {
         "spectral_width": ["frequency", "dimensionless"],
@@ -120,11 +122,15 @@ class SpectralDimension(Parseable):
     def to_csdm_dimension(self) -> cp.Dimension:
         """Return the spectral dimension as a CSDM dimension object."""
         increment = self.spectral_width / self.count
+        label = "" if self.label is None else self.label
+        description = "" if self.description is None else self.description
         dim = cp.Dimension(
             type="linear",
             count=self.count,
             increment=f"{increment} Hz",
             coordinates_offset=f"{self.reference_offset} Hz",
+            label=label,
+            description=description,
             complex_fft=True,
             reciprocal={"coordinates_offset": f"{-1/(2*increment)} s"},
         )

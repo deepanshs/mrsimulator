@@ -38,7 +38,7 @@ def test_direct_init_site1():
 
     # test 3 --------------------------------------------------------------------------
     error = "ensure this value is less than or equal to 1"
-    with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
+    with pytest.raises(ValidationError, match=f".*{error}.*"):
         Site(
             isotope="29Si",
             isotropic_chemical_shift=10,
@@ -110,7 +110,7 @@ def test_parse_json_site():
         Site.parse_dict_with_units(bad_json)
 
     error = "Error enforcing units for isotropic_chemical_shift: 10 MHz"
-    with pytest.raises(Exception, match=".*{0}.*".format(error)):
+    with pytest.raises(Exception, match=f".*{error}.*"):
         Site.parse_dict_with_units(
             {
                 "isotope": "29Si",
