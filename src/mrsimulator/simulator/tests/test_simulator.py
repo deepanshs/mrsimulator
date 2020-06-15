@@ -120,7 +120,6 @@ def test_simulator_1():
                                 ],
                             }
                         ],
-                        "label": "",
                         "reference_offset": 0.0,
                         "spectral_width": 25000.0,
                     }

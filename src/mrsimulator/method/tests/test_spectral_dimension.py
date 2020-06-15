@@ -31,7 +31,7 @@ def basic_spectral_dimension_tests(the_dimension):
         the_dimension.reference_offset = "-120 Hz"
 
     # label
-    assert the_dimension.label == ""
+    assert the_dimension.label is None
     the_dimension.label = "This is a spectral dimensions"
     assert the_dimension.label == "This is a spectral dimensions"
     the_dimension.label = 45.0
@@ -186,7 +186,6 @@ def test_spectral_dimension():
         count=1024,
         spectral_width=100,
         reference_offset=0.0,
-        label="",
         events=[
             {
                 "fraction": 0.5,

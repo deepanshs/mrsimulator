@@ -13,7 +13,6 @@ The following code is used to produce the figures in this section.
     :context: close-figs
     :include-source:
 
-    >>> import csdmpy as cp
     >>> import matplotlib.pyplot as plt
     >>> import matplotlib as mpl
     >>> mpl.rcParams["figure.figsize"] = (6, 3.5)
@@ -21,7 +20,10 @@ The following code is used to produce the figures in this section.
     ...
     >>> # function to render figures.
     >>> def plot(csdm_object):
-    ...     cp.plot(csdm_object, reverse_axis=[True], linewidth=1.5)
+    ...     # set matplotlib axes projection='csdm' to directly plot CSDM objects.
+    ...     ax = plt.subplot(projection='csdm')
+    ...     ax.plot(csdm_object, linewidth=1.5)
+    ...     ax.invert_xaxis()
     ...     plt.tight_layout(pad=0.1)
     ...     plt.show()
 
@@ -102,6 +104,7 @@ simulation spectrum in :numref:`fig1_config` is inaccurate, as evident from the 
 termination of the sideband amplitudes at the edges. As mentioned earlier, this
 inaccuracy arises from evaluating a small number of sidebands relative to the given
 anisotropy. Let's increase the number of sidebands to `90` and observe.
+:numref:`fig2_config` depicts an accurate spinning sideband simulation.
 
 .. plot::
     :format: doctest
@@ -117,8 +120,6 @@ anisotropy. Let's increase the number of sidebands to `90` and observe.
 .. figure:: _static/null.*
 
     Accurate spinning sideband simulation when using a large number of sidebands.
-
-:numref:`fig2_config` depicts an accurate spinning sideband simulation.
 
 
 Integration volume

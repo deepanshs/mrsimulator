@@ -162,7 +162,6 @@ def test_method():
         "count": 1024,
         "spectral_width": 100.0,
         "reference_offset": 0.0,
-        "label": "",
         "events": [event_dictionary_, event_dictionary_],
     }
     method_dictionary_ = {

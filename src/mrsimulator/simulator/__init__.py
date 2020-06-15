@@ -506,8 +506,8 @@ class Simulator(BaseModel):
         """Update the name and description of the dependent variable attributes
         using fields from the spin-system."""
         name = self.spin_systems[index].name
-        if name not in ["", None]:
-            obj.update({"name": name})
+        name = name if name not in ["", None] else f"spin-system {index}"
+        obj.update({"name": name})
 
         description = self.spin_systems[index].description
         if description not in ["", None]:

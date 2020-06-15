@@ -33,7 +33,6 @@ Let's start by importing the classes.
 
     >>> from mrsimulator import Simulator, SpinSystem, Site
     >>> from mrsimulator.methods import BlochDecaySpectrum
-    >>> import csdmpy as cp
 
 The following code is used to produce the figures in this section.
 
@@ -49,7 +48,10 @@ The following code is used to produce the figures in this section.
     ...
     >>> # function to render figures.
     >>> def plot(csdm_object):
-    ...     cp.plot(csdm_object, reverse_axis=[True], linewidth=1.5)
+    ...     # set matplotlib axes projection='csdm' to directly plot CSDM objects.
+    ...     ax = plt.subplot(projection='csdm')
+    ...     ax.plot(csdm_object, linewidth=1.5)
+    ...     ax.invert_xaxis()
     ...     plt.tight_layout(pad=0.1)
     ...     plt.show()
 
@@ -477,3 +479,6 @@ Now, you may simulate the central transition selective spectrum.
 
 .. _fig8_using_obj:
 .. figure:: _static/null.*
+
+    An example of the solid-state :math:`^{17}\text{O}`
+    BlochDecayCentralTransitionSpectrum simulation.

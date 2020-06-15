@@ -61,7 +61,11 @@ method = BlochDecayCentralTransitionSpectrum(
     channels=["17O"],
     rotor_frequency=14000,  # in Hz
     spectral_dimensions=[
-        {"count": 2048, "spectral_width": 50000}  # spectral_width is in Hz
+        {
+            "count": 2048,
+            "spectral_width": 50000,  # in Hz
+            "label": r"$^{17}$O resonances",
+        }
     ],
 )
 
@@ -83,11 +87,9 @@ sim_coesite.run()
 
 # %%
 # **Step 6** The plot of the simulation.
-x, y = sim_coesite.methods[0].simulation.to_list()
-plt.plot(x, y, color="black", linewidth=1)
-plt.xlabel("frequency / ppm")
-plt.xlim(x.value.max(), x.value.min())
-plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+ax = plt.subplot(projection="csdm")
+ax.plot(sim_coesite.methods[0].simulation, color="black", linewidth=1)
+ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
 
