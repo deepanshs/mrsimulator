@@ -102,7 +102,6 @@ class Method(Parseable):
         >>> bloch.description
         'Huh!'
 
-    post_simulation: An optional dict with post-simulation parameters.
     """
     name: str = None
     label: str = None

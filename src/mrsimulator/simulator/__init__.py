@@ -16,8 +16,6 @@ from pydantic import BaseModel
 
 from .config import ConfigSimulator
 
-# from mrsimulator.post_simulation import PostSimulator
-
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
 
@@ -128,7 +126,6 @@ class Simulator(BaseModel):
     description: str = None
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
-    # post_simulation: List[PostSimulator] = []
     config: ConfigSimulator = ConfigSimulator()
     indexes = []
 
