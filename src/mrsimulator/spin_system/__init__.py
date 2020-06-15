@@ -23,42 +23,105 @@ __email__ = "deepansh2012@gmail.com"
 class SpinSystem(Parseable):
     """
     Base class representing an isolated spin-system containing multiple sites and
-    couplings.
+    couplings amongst them.
 
-    Attributes:
-        name: An optional name of the spin-system. The default is None.
-        label: An optional label for the spin-system. The default value is None.
-        description: An optional description of the spin-system. The default value is
-            None.
-        sites: A list of :ref:`site_api` objects or a list of equivalent python
-            dictionary objects representing the single-site nuclear interactions. The
-            default value is an empty list.
-        abundance: The abundance of the spin-system in the units of %. The default
-            value is 100. This attribute is useful when multiple spin systems are
-            present.
-        transition_pathways: A list of lists, where the inner list represents a
-            transition pathway, and the outer list is the number of transition
-            pathways. Each transition pathways is a list of Transition objects.
+    .. rubric:: Attribute Documentation
 
-            An example of transition pathways follows
+    Attributes
+    ----------
 
-            .. doctest::
+    sites: A list of :ref:`site_api` objects or equivalent dict objects (optional).
+        The value is a list of sites within the spin-system, where each site represents
+        a single-site nuclear spin interaction tensor parameters. The default value is
+        an empty list.
 
-                >>> spin_system_1.transition_pathways = [
-                ...   [{'initial': -0.5, 'final': 0.5}, {'initial': 1.5, 'final': 2.5}]
-                ... ]
+        Example
+        -------
 
-            The resulting spectrum is a sum of resonances arising from individual
-            transition pathways.
+        >>> sys1 = SpinSystem()
+        >>> sys1.sites = [Site(isotope='17O'), Site(isotope='1H')]
+        >>> # or equivalently
+        >>> sys1.sites = [{'isotope': '17O'}, {'isotope': '1H'}]
 
-            .. note::
-                The `transition_pathways` is a transient attribute that overrides the
-                transition pathway query from the NMR method object. Only use this
-                attribute if you know what you are doing. This attribute may provide
-                a significant improvement in the performance in iterative algorithms,
-                such as the least-squares algorithm, where a one-time query is
-                sufficient. Remember, repeated queries for the transition pathways will
-                add significant overhead to the computation.
+    abundance: float (optional).
+        The abundance of the spin-system in units of %. The default value is 100. The
+        value of this attribute is useful when multiple spin systems are present.
+
+        Example
+        -------
+
+        >>> sys1.abundance = 10
+
+    name: str (optional).
+        The value is the name or id of the spin-system. The default value is None.
+
+        Example
+        -------
+
+        >>> sys1.name = '1H-13-0'
+        >>> sys1.name
+        '1H-13-0'
+
+    label: str (optional).
+        The value is a label for the spin-system. The default value is None.
+
+        Example
+        -------
+
+        >>> sys1.label = 'Heteronuclear spin-system'
+        >>> sys1.label
+        'Heteronuclear spin-system'
+
+    description: str (optional).
+        The value is a description of the spin-system. The default value is None.
+
+        Example
+        -------
+
+        >>> sys1.description = 'A test for the spin-system'
+        >>> sys1.description
+        'A test for the spin-system'
+
+    transition_pathways: list (optional).
+        The value is a list of lists, where the inner list represents a transition
+        pathway, and the outer list is the number of transition pathways. Each
+        transition pathways is a list of Transition objects. The resulting spectrum is
+        a sum of the resonances arising from individual transition pathways. The
+        default value is None.
+
+        Example
+        -------
+        >>> sys1.transition_pathways = [
+        ...     [
+        ...         {'initial': [-2.5, 0.5], 'final': [2.5, 0.5]},
+        ...         {'initial': [0.5, 0.5], 'final': [-0.5, 0.5]}
+        ...     ]
+        ... ]
+
+        .. note::
+            From any given spin-system, the list of relevant transition pathways is
+            determined by the applied NMR method. For example, consider a single site
+            I=3/2 spin-system. For this system, a Bloch decay spectrum method will
+            select three transition pathways, one corresponding to the central and two
+            to the satellite transitions. On the other hand, a Bloch decay central
+            transition selective method will only select one transition pathway,
+            corresponding to the central transition.
+
+            Since the spin-system is independent of the NMR method, the value of this
+            attribute is, therefore, transient. You may use this attribute to override
+            the default transition pathway query selection criterion of the NMR method
+            objects.
+
+            **Only use this attribute if you know what you are doing.**
+
+            At times, this attribute may provide a significant improvement in the
+            performance, especially in iterative algorithms, such as the least-squares
+            algorithm, where a one-time transition pathway query is sufficient.
+            Repeated queries for the transition pathways will add significant overhead
+            to the computation.
+
+            .. seealso::
+                `Fitting example <./../auto_examples/Fitting/plot_2_mrsimFitExample_O17.html>`_
     """
 
     name: str = None
@@ -67,14 +130,46 @@ class SpinSystem(Parseable):
     sites: List[Site] = []
     # couplings: list = [], # TODO: Deepansh what should this look like?
     abundance: float = Field(default=100, ge=0, le=100)
+    transition_pathways: Optional[List] = None
 
     property_unit_types: ClassVar = {"abundance": "dimensionless"}
     property_default_units: ClassVar = {"abundance": "pct"}
     property_units: Dict = {"abundance": "pct"}
-    transition_pathways: Optional[List] = None
 
     class Config:
         validate_assignment = True
+
+    def get_isotopes(self, spin_I=None) -> list:
+        """
+        An ordered list of isotopes from sites within the spin system corresponding to
+        the given value of spin quantum number `I`. If `I` is None, a list of all
+        isotopes is returned instead.
+
+        Args:
+            float spin_I: An optional spin quantum number. The valid inputs are the
+                multiples of 0.5.
+
+        Returns:
+            A list of isotopes.
+
+        Example
+        -------
+
+        >>> spin_systems.get_isotopes() # three spin-system
+        ['13C', '1H', '27Al']
+        >>> spin_systems.get_isotopes(spin_I=0.5) # isotopes with I=0.5
+        ['13C', '1H']
+        >>> spin_systems.get_isotopes(spin_I=1.5) # isotopes with I=1.5
+        []
+        >>> spin_systems.get_isotopes(spin_I=2.5) # isotopes with I=2.5
+        ['27Al']
+        """
+        isotope_list = allowed_isotopes(spin_I)
+        return [
+            site.isotope.symbol
+            for site in self.sites
+            if site.isotope.symbol in isotope_list
+        ]
 
     def _Zeeman_energy_states(self) -> np.ndarray:
         """
@@ -100,27 +195,27 @@ class SpinSystem(Parseable):
             lst.append(k)
         return np.asarray(lst).T
 
-    @property
     def Zeeman_energy_states(self) -> list:
         r"""
         Return a list of all Zeeman energy states of the spin-system,
         where the energy states are represented by a list of quantum numbers,
 
         .. math::
-            |\text{state}⟩ = [m_1, m_2,.. m_n],
+            |\Psi⟩ = [m_1, m_2,.. m_n],
 
         where :math:`m_i` is the quantum number associated with the :math:`i^\text{th}`
-        site within the spin-system.
+        site within the spin-system, and :math:`\Psi` is the energy state.
 
         Example
         -------
 
         >>> spin_system_1H_13C.get_isotopes() # two site (spin-1/2) spin systems
         ['13C', '1H']
-        >>> spin_system_1H_13C.Zeeman_energy_states  # four energy level system.
+        >>> spin_system_1H_13C.Zeeman_energy_states()  # four energy level system.
         [|-0.5, -0.5⟩, |-0.5, 0.5⟩, |0.5, -0.5⟩, |0.5, 0.5⟩]
 
-        Return: A list of ZeemanState objects.
+        Returns
+            A list of :ref:`zeeman_api` objects.
         """
         states = self._Zeeman_energy_states()
         return [ZeemanState(len(self.sites), *item) for item in states]
@@ -139,7 +234,6 @@ class SpinSystem(Parseable):
         indexes = np.asarray(np.meshgrid(lst, lst)).T.reshape(-1, 2)
         return energy_states[indexes]
 
-    @property
     def all_transitions(self) -> TransitionList:
         """Returns a list of all possible spin transitions in the given spin-system.
 
@@ -148,7 +242,7 @@ class SpinSystem(Parseable):
 
         >>> spin_system_1H_13C.get_isotopes()  # two site (spin-1/2) spin system
         ['13C', '1H']
-        >>> spin_system_1H_13C.all_transitions  # 16 two energy level transitions
+        >>> spin_system_1H_13C.all_transitions()  # 16 two energy level transitions
         [|-0.5, -0.5⟩⟨-0.5, -0.5|,
         |-0.5, 0.5⟩⟨-0.5, -0.5|,
         |0.5, -0.5⟩⟨-0.5, -0.5|,
@@ -177,13 +271,15 @@ class SpinSystem(Parseable):
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict) -> dict:
         """
-        Parse the physical quantity from the attributes of an SpinSystem object
-        when represented as a python dictionary. The physical quantities are
-        expressed as a string with a number followed by a unit.
+        Parse the physical quantity from a dictionary representation of the SpinSystem
+        object, where the physical quantity is expressed as a string with a number and
+        a unit.
 
         Args:
-            dict py_dict: A python dictionary representation of an SpinSystem object
-                where attributes values are given as a string with a physical quantity.
+            dict py_dict: A required python dict object.
+
+        Returns:
+            :ref:`spin_system_api` object.
 
         Example
         -------
@@ -210,17 +306,18 @@ class SpinSystem(Parseable):
 
     def to_freq_dict(self, B0: float) -> dict:
         """
-        Serialize the SpinSystem object to a JSON compliant python dictionary object
-        where the attribute values are numbers expressed in default units. The default
-        unit for the attributes with respective dimensionalities are:
+        Serialize the SpinSystem object to a JSON compliant python dictionary object,
+        where the attribute value is a numbers expressed in the attribute's default
+        unit. The default unit for the attributes with respective dimensionalities are:
 
         - frequency: `Hz`
         - angle: `rad`
 
         Args:
-            float B0: The macroscopic magnetic flux density in units of Tesla, T.
+            float B0: A required macroscopic magnetic flux density in units of T.
 
-        Return: A python dict
+        Return:
+            A python dict
 
         Example
         -------
@@ -248,38 +345,6 @@ class SpinSystem(Parseable):
         temp_dict["sites"] = [site.to_freq_dict(B0) for site in self.sites]
         temp_dict.pop("property_units")
         return temp_dict
-
-    def get_isotopes(self, spin_I=None) -> list:
-        """
-        An ordered list of isotopes from sites within the spin system corresponding to
-        the given value of spin quantum number `I`. If `I` is None, a list of all
-        isotopes is returned instead.
-
-        Args:
-            float spin_I: An optional spin quantum number. The valid inputs are the
-                multiples of 0.5.
-
-        Returns:
-            A list of isotopes.
-
-        Example
-        -------
-
-        >>> spin_systems.get_isotopes()
-        ['13C', '1H', '27Al']
-        >>> spin_systems.get_isotopes(spin_I=0.5)
-        ['13C', '1H']
-        >>> spin_systems.get_isotopes(spin_I=1.5)
-        []
-        >>> spin_systems.get_isotopes(spin_I=2.5)
-        ['27Al']
-        """
-        isotope_list = allowed_isotopes(spin_I)
-        return [
-            site.isotope.symbol
-            for site in self.sites
-            if site.isotope.symbol in isotope_list
-        ]
 
 
 def allowed_isotopes(spin_I=None) -> list:

@@ -1,7 +1,7 @@
 .. _site_api:
 
 Site
-----
+====
 
 .. currentmodule:: mrsimulator
 

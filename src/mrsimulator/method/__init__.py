@@ -228,7 +228,7 @@ class Method(Parseable):
     #     Args:
     #         spin_system: An SpinSystem object.
     #     """
-    #     transitions = spin_system.all_transitions
+    #     transitions = spin_system.all_transitions()
     #     segments = []
     #     for seq in self.spectral_dimensions:
     #         for ent in seq.events:
