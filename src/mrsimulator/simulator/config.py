@@ -17,30 +17,52 @@ __integration_volume_octants__ = [1, 4]
 
 
 class ConfigSimulator(BaseModel):
-    """
-    The configurable parametes used in lineshape simulation
+    r"""
+    The configurable parametes for the simulator class used in line-shape simulation.
 
-    Attributes:
-        number_of_sidebands: An integer with the number of sidebands requested in the
-            lineshape simulation. This number cannot be zero or negative. The default
-            value is ``64``.
-        integration_volume: An enumeration literal with valid literals, 'octant',
-            'hemisphere', over which the frequency contributions are evaluated. The
-            default value if ``octant``.
-        integration_density: An positive interger. If `n` is the integration_density,
-            then the total number of orientation is given as
-            ``(n+1)*(n+2)/2 * number of octant``. The line-shape is an integral over
-            the frequency contribution arising from every orientation. The default
-            value is ``70``.
-        decompose_spectrum: A boolean. If true, decomposes the line-shape into an array
-            of line-shapes arising from individual spin systems. If False, the lins-shape
-            is a sum of individual line-shapes instead. The default value is ``False``.
+    Attributes
+    ----------
+
+    number_of_sidebands: int (optional).
+        The value is the requested number of sidebands that will be computed in the
+        line-shape simulation. The value cannot be zero or negative. The default value
+        is 64.
+
+    integration_volume: enum (optional).
+        The value is the volume over which the solid-state line-shape frequency
+        integration is performed. The valid literals of this enumeration are
+
+        - ``octant`` (default), and
+        - ``hemisphere``
+
+    integration_density: int (optional).
+        The value represents the integration density or equivalently the number of
+        orientations over which the frequency integration is performed within a given
+        volume. If :math:`n` is the integration_density, then the total number of
+        orientation is given as
+
+        .. math::
+            n_\text{octants} \frac{(n+1)(n+2)}{2},
+
+        where :math:`n_\text{octants}` is the number of octants in the given volume.
+        The default value is 70.
+
+    decompose_spectrum: enum (optional).
+        The value specifies how a simulation result is decomposed into an array of
+        line-shapes. The valid literals of this enumeration are
+
+        - ``none`` (default): When the value is `none`, the resulting simulation is a
+          single spectrum, which is an integration of the spectra over all spin-systems.
+        - ``spin_system``:  When the value is `spin_system`, the resulting simulation
+          is an array of spectra, where each spectrum arises from a spin-system within
+          the Simulator object.
 
     Example
     -------
 
     >>> a = Simulator()
     >>> a.config.number_of_sidebands = 128
+    >>> a.config.integration_density = 96
     >>> a.config.integration_volume = 'hemisphere'
     >>> a.config.decompose_spectrum = 'spin_system'
     """
@@ -76,7 +98,17 @@ class ConfigSimulator(BaseModel):
         raise ValueError("Expecting an instance of either the AveragingScheme class.")
 
     def get_orientations_count(self):
-        """Return the total number of orientations."""
+        """Return the total number of orientations.
+
+        Example
+        -------
+
+        >>> a = Simulator()
+        >>> a.config.integration_density = 20
+        >>> a.config.integration_volume = 'hemisphere'
+        >>> a.config.get_orientations_count() # (4 * 21 * 22 / 2) = 924
+        924
+        """
         n = self.integration_density
         vol = __integration_volume_octants__[
             __integration_volume_enum__[self.integration_volume]

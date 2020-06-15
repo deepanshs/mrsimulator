@@ -27,41 +27,89 @@ __email__ = "srivastava.89@osu.edu"
 class Method(Parseable):
     r"""Base Method class. A method class represents the NMR method.
 
-    Attributes:
-        name: The value is an optional string containing the name of the method. The
-            default value is an empty string.
-        label: The value is an optional label for the methods. The default value is
-            None.
-        description: The value is an optional string describing the method. The default
-            value is None.
-        channels: The value is a required list of isotope symbols over which the given
-            method applies. An isotope symbol is given as a string with the atomic
-            number followed by its atomic symbol, for example, '1H', '13C', and '33S'.
-            The number of isotopes in a `channel` depends on the method. For example,
-            a `BlochDecaySpectrum` method is a single channel method, in which case,
-            the value of this attribute is a list with a single isotope symbol,
-            ['13C'].
-        spectral_dimensions: The value is a required list of SpectralDimension objects
-            or a list of equivalent python dictionary objects. The number of spectral
-            dimensions depends on the given method. For example, a `BlochDecaySpectrum`
-            method is a one-dimensional method and thus requires a single spectral
-            dimension.
-        simulation: The value is a `CSDM <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html>`_
-            or a `ndarray <https://numpy.org/doc/1.18/reference/generated/numpy.ndarray.html>`_
-            object holding the result of the simulation. The initial value of this
-            attribute is None. A value is assigned to this attribute when you run the
-            simulation using the :meth:`~mrsimulator.Simulator.run` method.
-        experiment: The value is a `CSDM <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html>`_
-            or a `ndarray <https://numpy.org/doc/1.18/reference/generated/numpy.ndarray.html>`_
-            object holding the experimental measurement for the given method, if
-            available. The default value is None.
-        post_simulation: An optional dict with post-simulation parameters.
+    Attributes
+    ----------
+
+    channels: list (optional).
+        The value is a list of isotope symbols over which the given method applies.
+        An isotope symbol is given as a string with the atomic number followed by its
+        atomic symbol, for example, '1H', '13C', and '33S'. The default is an empty
+        list.
+        The number of isotopes in a `channel` depends on the method. For example, a
+        `BlochDecaySpectrum` method is a single channel method, in which case, the
+        value of this attribute is a list with a single isotope symbol, ['13C'].
+
+        Example
+        -------
+
+        >>> bloch = Method()
+        >>> bloch.channels = ['1H']
+
+    spectral_dimensions: list of :ref:`spectral_dim_api` or dict objects (optional).
+        The number of spectral dimensions depends on the given method. For example, a
+        `BlochDecaySpectrum` method is a one-dimensional method and thus requires a
+        single spectral dimension. The default is a single default
+        :ref:`spectral_dim_api` object.
+
+        Example
+        -------
+
+        >>> bloch = Method()
+        >>> bloch.spectral_dimensions = [SpectralDimension(count=8, spectral_width=50)]
+        >>> # or equivalently
+        >>> bloch.spectral_dimensions = [{'count': 8, 'spectral_width': 50}]
+
+    simulation: CSDM or ndarray (N/A).
+        An object holding the result of the simulation. The initial value of this
+        attribute is None. A value is assigned to this attribute when you run the
+        simulation using the :meth:`~mrsimulator.Simulator.run` method.
+
+    experiment: CSDM or ndarray (optional).
+        An object holding the experimental measurement for the given method, if
+        available. The default value is None.
+
+        Example
+        -------
+
+        >>> bloch.experiment = my_data # doctest: +SKIP
+
+    name: str (optional).
+        The value is the name or id of the method. The default value is None.
+
+        Example
+        -------
+
+        >>> bloch.name = 'BlochDecaySpectrum'
+        >>> bloch.name
+        'BlochDecaySpectrum'
+
+    label: str (optional).
+        The value is a label for the method. The default value is None.
+
+        Example
+        -------
+
+        >>> bloch.label = 'One pulse acquired spectrum'
+        >>> bloch.label
+        'One pulse acquired spectrum'
+
+    description: str (optional).
+        The value is a description of the method. The default value is None.
+
+        Example
+        -------
+
+        >>> bloch.description = 'Huh!'
+        >>> bloch.description
+        'Huh!'
+
+    post_simulation: An optional dict with post-simulation parameters.
     """
     name: str = None
     label: str = None
     description: str = None
-    channels: List[str]
-    spectral_dimensions: List[SpectralDimension]
+    channels: List[str] = []
+    spectral_dimensions: List[SpectralDimension] = [{}]
     post_simulation: PostSimulator = None
     simulation: Union[cp.CSDM, np.ndarray] = None
     experiment: Union[cp.CSDM, np.ndarray] = None
@@ -99,14 +147,15 @@ class Method(Parseable):
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantity, given as a string with a number and a unit, from
-        the attribute value of a python dictionary representation of the Method class.
+        Parse the physical quantity from a dictionary representation of the Method
+        object, where the physical quantity is expressed as a string with a number and
+        a unit.
 
         Args:
             dict py_dict: A python dict representation of the Method object.
 
         Returns:
-            A Method object.
+            A :ref:`method_api` object.
         """
         py_dict_copy = deepcopy(py_dict)
         if "spectral_dimensions" in py_dict_copy:

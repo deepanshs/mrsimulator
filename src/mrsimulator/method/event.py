@@ -3,7 +3,6 @@ from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
-from typing import Optional
 
 from mrsimulator.util.parseable import Parseable
 from pydantic import Field
@@ -38,12 +37,12 @@ class Event(Parseable):
     """
 
     fraction: float = 1.0
-    magnetic_flux_density: Optional[float] = Field(default=9.4, ge=0)
-    rotor_frequency: Optional[float] = Field(default=0.0, ge=0)
+    magnetic_flux_density: float = Field(default=9.4, ge=0)
+    rotor_frequency: float = Field(default=0.0, ge=0)
     # 54.735 degrees = 0.9553166 radians
-    rotor_angle: Optional[float] = Field(default=0.9553166, ge=0, le=1.5707963268)
-    transition_query: Optional[TransitionQuery] = TransitionQuery()
-    user_variables: Optional[List] = None
+    rotor_angle: float = Field(default=0.9553166, ge=0, le=1.5707963268)
+    transition_query: TransitionQuery = TransitionQuery()
+    user_variables: List = None
 
     property_unit_types: ClassVar = {
         "magnetic_flux_density": "magnetic flux density",

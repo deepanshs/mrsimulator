@@ -4,7 +4,6 @@ from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
-from typing import Optional
 
 import csdmpy as cp
 import numpy as np
@@ -36,10 +35,10 @@ class SpectralDimension(Parseable):
 
     count: int = Field(1024, gt=0)
     spectral_width: float = Field(default=25000.0, gt=0)
-    reference_offset: Optional[float] = Field(default=0.0)
-    origin_offset: Optional[float] = None
-    label: Optional[str] = ""
-    events: List[Event]
+    reference_offset: float = Field(default=0.0)
+    origin_offset: float = None
+    label: str = ""
+    events: List[Event] = []
 
     property_unit_types: ClassVar = {
         "spectral_width": ["frequency", "dimensionless"],

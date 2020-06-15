@@ -16,7 +16,7 @@ Method
     .. automethod:: get_transition_pathways
 
 
-.. _spectral_dimension_api:
+.. _spectral_dim_api:
 
 SpectralDimension
 -----------------
