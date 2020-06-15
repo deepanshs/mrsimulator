@@ -58,9 +58,9 @@ class SpinSystem(Parseable):
         Example
         -------
 
-        >>> sys1.name = '1H-13-0'
+        >>> sys1.name = '1H-17O-0'
         >>> sys1.name
-        '1H-13-0'
+        '1H-17O-0'
 
     label: str (optional).
         The value is a label for the spin-system. The default value is None.
@@ -279,7 +279,7 @@ class SpinSystem(Parseable):
             dict py_dict: A required python dict object.
 
         Returns:
-            :ref:`spin_system_api` object.
+            :ref:`spin_sys_api` object.
 
         Example
         -------

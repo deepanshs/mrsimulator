@@ -39,7 +39,7 @@ def test_transition_list_1():
         "Expecting a Transition object or an equivalent python dict object, instead "
         "found str."
     )
-    with pytest.raises(ValueError, match=".*{0}.*".format(error)):
+    with pytest.raises(ValueError, match=f".*{error}.*"):
         tran_list.append("test")
 
     # assign an item at a list index.
@@ -47,7 +47,7 @@ def test_transition_list_1():
     tran_list[1] = c
     assert tran_list[1] == Transition(**c)
 
-    with pytest.raises(ValueError, match=".*{0}.*".format(error)):
+    with pytest.raises(ValueError, match=f".*{error}.*"):
         tran_list[1] = "test"
 
     # inset an item to a list.

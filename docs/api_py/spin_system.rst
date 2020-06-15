@@ -1,4 +1,4 @@
-.. _spin_system_api:
+.. _spin_sys_api:
 
 SpinSystem
 ==========

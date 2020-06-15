@@ -10,7 +10,7 @@ Getting started with ``mrsimulator``: Using objects
 ===================================================
 
 In the previous section on getting started, we show an example where we parse the
-python dictionaries to create instances of the :ref:`spin_system_api` and
+python dictionaries to create instances of the :ref:`spin_sys_api` and
 :ref:`method_api` objects. In this section, we'll illustrate how we can
 achieve the same result using the core `Mrsimulator` objects.
 

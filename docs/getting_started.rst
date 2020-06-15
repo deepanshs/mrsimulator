@@ -32,7 +32,7 @@ Here, the variable ``sim`` is an instance of the :ref:`simulator_api` class. The
 attributes of this class that you will frequently use are the
 :attr:`~mrsimulator.Simulator.spin_systems` and
 :attr:`~mrsimulator.Simulator.methods`, whose values are a list of
-:ref:`spin_system_api` and :ref:`method_api` objects,
+:ref:`spin_sys_api` and :ref:`method_api` objects,
 respectively. The default value of these attributes is an empty list.
 
 .. plot::

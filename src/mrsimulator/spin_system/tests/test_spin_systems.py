@@ -241,7 +241,7 @@ def test_allowed_isotopes():
 
 def test_bad_assignments():
     error = "value is not a valid list"
-    with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
+    with pytest.raises(ValidationError, match=f".*{error}.*"):
         SpinSystem(sites=Site())
 
 

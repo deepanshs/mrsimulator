@@ -196,7 +196,7 @@ class Site(Parseable):
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantities from a dictionary representation of the Site
+        Parse the physical quantity from a dictionary representation of the Site
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 

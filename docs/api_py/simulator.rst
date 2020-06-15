@@ -21,6 +21,3 @@ Simulator
     .. automethod:: save
     .. automethod:: load
     .. automethod:: apodize
-
-.. seealso::
-        :ref:`load_spin_systems`

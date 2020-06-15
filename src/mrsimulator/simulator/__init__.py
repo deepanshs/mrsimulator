@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Base Simulator class."""
 import json
+from copy import deepcopy
 from typing import List
-from typing import Optional
 
 import csdmpy as cp
 import numpy as np
@@ -14,7 +14,7 @@ from mrsimulator.util import _reduce_dict
 from mrsimulator.util.importer import import_json
 from pydantic import BaseModel
 
-from .simulator_config import ConfigSimulator
+from .config import ConfigSimulator
 
 # from mrsimulator.post_simulation import PostSimulator
 
@@ -26,21 +26,106 @@ class Simulator(BaseModel):
     """
     The simulator class.
 
-    Attributes:
-        name: An optional string containing the simulation/sample name. The default
-            value is an empty string.
-        description: An optional string with the simulation/sample description. The
-            default value is an empty string.
-        spin_systems: A list of the :ref:`spin_system_api` objects or list of equivalent
-            python dictionary object. The default value is an empty list.
-        methods: A list of :ref:`method_api` objects or list of equivalent python
-            dictionary object. The default value is an empty list.
-        config: The :ref:`config_api` object or an equivalent dictionary
-            object.
+    Attributes
+    ----------
+
+    spin_systems: A list of :ref:`spin_sys_api` or equivalent dict objects (optional).
+        The value is a list of NMR spin systems present within the sample, where each
+        spin-system is an isolated system. The default value is an empty list.
+
+        Example
+        -------
+
+        >>> sim = Simulator()
+        >>> sim.spin_systems = [
+        ...     SpinSystem(sites=[Site(isotope='17O')], abundance=0.015),
+        ...     SpinSystem(sites=[Site(isotope='1H')], abundance=1),
+        ... ]
+        >>> # or equivalently
+        >>> sim.spin_systems = [
+        ...     {'sites': [{'isotope': '17O'}], 'abundance': 0.015},
+        ...     {'sites': [{'isotope': '1H'}], 'abundance': 1},
+        ... ]
+
+    methods: A list of :ref:`method_api` (optional).
+        The value is a list of NMR methods. The default value is an empty list.
+
+        Example
+        -------
+
+        >>> from mrsimulator.methods import BlochDecaySpectrum
+        >>> from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+        >>> sim.methods = [
+        ...     BlochDecaySpectrum(channels=['17O'], spectral_width=50000),
+        ...     BlochDecayCentralTransitionSpectrum(channels=['17O'], spectral_width=50000)
+        ... ]
+
+    config: :ref:`config_api` object or equivalent dict object (optional).
+        The :ref:`config_api` object is used to configure the simulation. The valid
+        attributes of the ConfigSimulator object are
+
+        - ``number_of_sidebands``,
+        - ``integration_density``,
+        - ``integration_volume``, and
+        - ``decompose_spectrum``
+
+        Example
+        -------
+
+        >>> from mrsimulator.simulator.config import ConfigSimulator
+        >>> sim.config = ConfigSimulator(
+        ...     number_of_sidebands=32,
+        ...     integration_density=64,
+        ...     integration_volume='hemisphere',
+        ...     decompose_spectrum='spin_system',
+        ... )
+        >>> # or equivalently
+        >>> sim.config = {
+        ...     'number_of_sidebands': 32,
+        ...     'integration_density': 64,
+        ...     'integration_volume': 'hemisphere',
+        ...     'decompose_spectrum': 'spin_system',
+        ... }
+
+        See :ref:`config_simulator` for details.
+
+    name: str (optional).
+        The value is the name or id of the simulation or sample. The default value is
+        None.
+
+        Example
+        -------
+
+        >>> sim.name = '1H-17O'
+        >>> sim.name
+        '1H-17O'
+
+    label: str (optional).
+        The value is a label for the simulation or sample. The default value is None.
+
+        Example
+        -------
+
+        >>> sim.label = 'Test simulator'
+        >>> sim.label
+        'Test simulator'
+
+    description: str (optional).
+        The value is a description of the simulation or sample. The default value is
+        None.
+
+        Example
+        -------
+
+        >>> sim.description = 'Simulation for sample 1'
+        >>> sim.description
+        'Simulation for sample 1'
+
     """
 
-    name: Optional[str] = ""
-    description: Optional[str] = ""
+    name: str = None
+    label: str = None
+    description: str = None
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
     # post_simulation: List[PostSimulator] = []
@@ -49,27 +134,80 @@ class Simulator(BaseModel):
 
     class Config:
         validate_assignment = True
-        arbitrary_types_allowed = True
 
-    def __eq__(self, other):
-        check = [
-            isinstance(other, Simulator),
-            self.name == other.name,
-            self.description == other.description,
-            self.spin_systems == other.spin_systems,
-            self.methods == other.methods,
-            # self.post_simulation == other.post_simulation,
-            self.config == other.config,
-        ]
-        if np.all(check):
-            return True
-        return False
+    @classmethod
+    def parse_dict_with_units(cls, py_dict):
+        """
+        Parse the physical quantity from a dictionary representation of the Simulator
+        object, where the physical quantity is expressed as a string with a number and
+        a unit.
+
+        Args:
+            dict py_dict: A required python dict object.
+
+        Returns:
+            A :ref:`simulator_api` object.
+
+        Example
+        -------
+
+        >>> sim_py_dict = {
+        ...     'config': {
+        ...         'decompose_spectrum': 'none',
+        ...         'integration_density': 70,
+        ...         'integration_volume': 'octant',
+        ...         'number_of_sidebands': 64
+        ...     },
+        ...     'spin_systems': [
+        ...         {
+        ...             'abundance': '100 %',
+        ...             'sites': [{
+        ...                 'isotope': '13C',
+        ...                 'isotropic_chemical_shift': '20.0 ppm',
+        ...                 'shielding_symmetric': {'eta': 0.5, 'zeta': '10.0 ppm'}
+        ...             }]
+        ...         },
+        ...         {
+        ...             'abundance': '100 %',
+        ...             'sites': [{
+        ...                 'isotope': '1H',
+        ...                     'isotropic_chemical_shift': '-4.0 ppm',
+        ...                     'shielding_symmetric': {'eta': 0.1, 'zeta': '2.1 ppm'}
+        ...             }]
+        ...         },
+        ...         {
+        ...             'abundance': '100 %',
+        ...             'sites': [{
+        ...                 'isotope': '27Al',
+        ...                 'isotropic_chemical_shift': '120.0 ppm',
+        ...                 'shielding_symmetric': {'eta': 0.1, 'zeta': '2.1 ppm'}
+        ...             }]
+        ...         }
+        ...     ]
+        ... }
+        >>> sim = Simulator.parse_dict_with_units(sim_py_dict)
+        >>> len(sim.spin_systems)
+        3
+        """
+        py_copy_dict = deepcopy(py_dict)
+
+        if "spin_systems" in py_copy_dict:
+            spin_sys = py_copy_dict["spin_systems"]
+            spin_sys = [SpinSystem.parse_dict_with_units(obj) for obj in spin_sys]
+            py_copy_dict["spin_systems"] = spin_sys
+
+        if "methods" in py_copy_dict:
+            methods = py_copy_dict["methods"]
+            methods = [Method.parse_dict_with_units(obj) for obj in methods]
+            py_copy_dict["methods"] = methods
+
+        return Simulator(**py_copy_dict)
 
     def get_isotopes(self, spin_I=None) -> set:
         """
-        Set of unique isotopes from sites within the list of the spin systems
-        corresponding to spin quantum number `I`. If `I` is unspecified or None, a set
-        of all unique isotopes is returned instead.
+        Set of unique isotopes from the sites within the list of the spin systems
+        corresponding to spin quantum number `I`. If `I` is None, a set of all unique
+        isotopes is returned instead.
 
         Args:
             float spin_I: An optional spin quantum number. The valid input are the
@@ -95,12 +233,6 @@ class Simulator(BaseModel):
             st.update(spin_system.get_isotopes(spin_I))
         return st
 
-    def dict(self, *args, **kwargs) -> dict:
-        """Return the class object as JSON serializable dictionary object."""
-        py_dict = super().dict(*args, **kwargs)
-        py_dict["config"] = self.config.dict()
-        return py_dict
-
     def to_dict_with_units(
         self, include_methods: bool = False, include_version: bool = False
     ):
@@ -111,8 +243,8 @@ class Simulator(BaseModel):
         Args:
             bool include_methods: If True, the output dictionary will include the
                 serialized method objects. The default value is False.
-            bool include_version: If True, adds the version key-value pair
-                to the serialized output dictionary. The default is False.
+            bool include_version: If True, add a version key-value pair to the
+                serialized output dictionary. The default is False.
 
         Returns:
             A Dict object.
@@ -125,9 +257,7 @@ class Simulator(BaseModel):
                     'integration_density': 70,
                     'integration_volume': 'octant',
                     'number_of_sidebands': 64},
-         'description': '',
          'indexes': [],
-         'name': '',
          'spin_systems': [{'abundance': '100 %',
                            'sites': [{'isotope': '13C',
                                       'isotropic_chemical_shift': '20.0 ppm',
@@ -145,8 +275,16 @@ class Simulator(BaseModel):
                                                               'zeta': '2.1 ppm'}}]}]}
         """
         sim = {}
-        sim["name"] = self.name
-        sim["description"] = self.description
+
+        if self.name is not None:
+            sim["name"] = self.name
+
+        if self.description is not None:
+            sim["description"] = self.description
+
+        if self.label is not None:
+            sim["label"] = self.label
+
         sim["spin_systems"] = [_.to_dict_with_units() for _ in self.spin_systems]
 
         if include_methods:
@@ -159,18 +297,6 @@ class Simulator(BaseModel):
         if include_version:
             sim["version"] = __version__
         return sim
-
-    def parse_dict_with_units(self):
-        """
-        Parse the physical quantities of the Method object from a python dictionary
-        object.
-
-        .. todo::
-
-            Add the methood.
-        """
-        pass
-        # py_dict_copy = deepcopy(py_dict)
 
     def reduced_dict(self, exclude=["property_units"]) -> dict:
         """Returns a reduced dictionary representation of the class object by removing
@@ -189,8 +315,8 @@ class Simulator(BaseModel):
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
-        master/spin_systems_v0.3.json>`_ of JSON serialized file. For details, refer to
-        the :ref:`load_spin_systems` section of this documentation.
+        master/spin_systems_v0.3.json>`_ of a JSON serialized file. For details, refer
+        to the :ref:`load_spin_systems` section of this documentation.
 
         Args:
             str filename: A local or remote address to a JSON serialized file.
@@ -210,12 +336,11 @@ class Simulator(BaseModel):
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
-        master/spin_systems_v0.3.json>`_ of JSON serialized file. For details, refer to
-        the :ref:`load_spin_systems` section.
+        master/spin_systems_v0.3.json>`_ of a JSON serialized file. For details, refer
+        to the :ref:`load_spin_systems` section.
 
         Args:
-            str filename: The list of will be serialized to a file with
-                the given filename.
+            str filename: A filename of the serialized file.
 
         Example
         -------
@@ -233,19 +358,28 @@ class Simulator(BaseModel):
             )
 
     def run(self, method_index=None, pack_as_csdm=True, **kwargs):
-        """Run the simulation and compute lineshape.
+        """Run the simulation and compute lineshapes.
 
         Args:
-            int list method_index: An interger or a list of integers. If provided, only
-                the simulations corresponding to the methods at the given index/indexes
-                will be computed. The default is None, that is, the simulation for
-                every method will computed.
+            method_index: An integer or a list of integers. If provided, only the
+                simulations corresponding to the methods at the given index/indexes
+                will be computed. The default is None, `i.e.`, the simulation for
+                every method will be computed.
+            bool pack_as_csdm: If true, the simulation results are stored as a
+                `CSDM <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html>`_ object,
+                otherwise, as a `ndarray
+                <https://numpy.org/doc/1.18/reference/generated/numpy.ndarray.html>`_
+                object.
+                The simulations are stored as the value of the
+                :attr:`~mrsimulator.Method.simulation` attribute of the corresponding
+                method.
 
         Example
         -------
 
         >>> sim.run() # doctest:+SKIP
         """
+
         if method_index is None:
             method_index = np.arange(len(self.methods))
         if isinstance(method_index, int):
@@ -255,7 +389,7 @@ class Simulator(BaseModel):
             amp, indexes = one_d_spectrum(
                 method=method,
                 spin_systems=self.spin_systems,
-                **self.config._dict,
+                **self.config.get_int_dict(),
                 **kwargs,
             )
 
@@ -286,7 +420,7 @@ class Simulator(BaseModel):
         """Serialize the simulator object to a JSON file.
 
         Args:
-            str filename: A string with the filename of the serialized file.
+            str filename: The filename of the serialized file.
 
         Example
         -------
@@ -303,19 +437,21 @@ class Simulator(BaseModel):
             )
 
     def load(self, filename: str):
-        """Load the :class:`~mrsimulator.Simulator` object from the JSON file.
+        """Load the :class:`~mrsimulator.Simulator` object from a JSON file.
 
         Args:
-            str filename: A string with the filename of the file holding a mrsimulator
-                serialized file.
+            str filename: The filename of a JSON serialized mrsimulator file.
 
-        Return:
+        Returns:
             A :class:`~mrsimulator.Simulator` object.
 
         Example
         -------
 
         >>> sim_1 = sim.load('filename') # doctest: +SKIP
+
+        .. seealso::
+            :ref:`load_spin_systems`
         """
         sim = Simulator()
         contents = import_json(filename)
@@ -361,19 +497,7 @@ class Simulator(BaseModel):
             dependent_variable["components"] = [datum]
             if self.config.decompose_spectrum == "spin_system":
                 self._update_name_description_application(dependent_variable, index)
-            # name = self.spin_systems[index].name
-            # if name not in ["", None]:
-            #     dependent_variable.update({"name": name})
 
-            # description = self.spin_systems[index].description
-            # if description not in ["", None]:
-            #     dependent_variable.update({"description": description})
-
-            # dependent_variable["application"] = {
-            #     "com.github.DeepanshS.mrsimulator": {
-            #         "spin_systems": [self.spin_systems[index].to_dict_with_units()]
-            #     }
-            # }
             new.add_dependent_variable(dependent_variable)
             new.dependent_variables[-1].encoding = "base64"
         return new

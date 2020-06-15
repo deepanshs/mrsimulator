@@ -9,14 +9,14 @@ from pydantic import ValidationError
 def basic_spectral_dimension_tests(the_dimension):
     assert the_dimension.count == 1024
     error = "ensure this value is greater than 0"
-    with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
+    with pytest.raises(ValidationError, match=f".*{error}.*"):
         the_dimension.count = -1024
     with pytest.raises(ValidationError, match="value is not a valid integer"):
         the_dimension.count = "test"
 
     # spectral width test
     assert the_dimension.spectral_width == 100
-    with pytest.raises(ValidationError, match=".*{0}.*".format(error)):
+    with pytest.raises(ValidationError, match=f".*{error}.*"):
         the_dimension.spectral_width = 0
     # ensure the default value is Hz
     assert the_dimension.property_units["spectral_width"] == "Hz"
