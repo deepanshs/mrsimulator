@@ -14,3 +14,4 @@ dependencies:
       - monty>=2.0.4
       - csdmpy>=0.2.1
       - pydantic>=1.0
+      - typing-extensions>=3.7
