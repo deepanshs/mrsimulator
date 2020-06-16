@@ -38,7 +38,7 @@ class abstractOperation(Parseable):
 
 class Scale(abstractOperation):
     """
-    abstractOperation-based class for applying a scaling
+    Class for applying a scaling
     factor to a dependent variable of simulation data
     """
 
@@ -48,18 +48,21 @@ class Scale(abstractOperation):
         """
         Applies the operation for which the class is named for.
 
+        $f(\vec(x)) = scale*\vec(x)$
+
         data: CSDM object
         dep_var: int. The index of the dependent variable to apply operation to
         """
-        data_copy = data.copy()
-        data_copy.dependent_variables[dep_var].components[0] *= self.factor
-        return data_copy
+        data.dependent_variables[dep_var].components[0] *= self.factor
+        return data
 
 
 class Gaussian(abstractOperation):
     """
-    abstractOperation-based class for applying a Gaussian function
+    Class for applying a Gaussian function
     to a dependent variable of simulation data
+
+    $f(\vec{x}) = \vec{x}*e^{-2*(\vec{x} * \sigma * \pi)^2}$
 
     dimension: int. Data dimension to apply the function along
     sigma: float. Standard deviation of Gaussian function
@@ -80,19 +83,20 @@ class Gaussian(abstractOperation):
         dep_var: int. The index of the dependent variable to apply operation to
         """
         # unit = self.property_units["sigma"]
-        data_copy = data.copy()
         # data_copy.dimensions[self.dimension].coordinates.to(unit).value
-        x = data_copy.dimensions[self.dimension].coordinates.value
-        data_copy.dependent_variables[dep_var].components[0] *= np.exp(
+        x = data.dimensions[self.dimension].coordinates.value
+        data.dependent_variables[dep_var].components[0] *= np.exp(
             -((x * self.sigma * np.pi) ** 2) * 2
         )
-        return data_copy
+        return data
 
 
 class Exponential(abstractOperation):
     """
-    abstractOperation-based class for applying an exponential
+    Class for applying an exponential
     Lorentzian function to a dependent variable of simulation data
+
+    $f(\vec{x}) = \vec{x}*e^{-\Lambda * \abs{\vec{x}} * \pi)}$
 
     dimension: int. Data dimension to apply the function along
     Lambda: float. Width parameter
@@ -113,18 +117,17 @@ class Exponential(abstractOperation):
         dep_var: int. The index of the dependent variable to apply operation to
         """
         # unit = self.property_units["Lambda"]
-        data_copy = data.copy()
         # x = data.dimensions[self.dimension].coordinates.to(unit).value
         x = data.dimensions[self.dimension].coordinates.value
-        data_copy.dependent_variables[dep_var].components[0] *= np.exp(
+        data.dependent_variables[dep_var].components[0] *= np.exp(
             -self.Lambda * np.pi * np.abs(x)
         )
-        return data_copy
+        return data
 
 
 class IFFT(abstractOperation):
     """
-    abstractOperation-based class for applying an inverse
+    Class for applying an inverse
     Fourier transform to a dependent variable of simulation data
 
     dimension: int. Data dimension to apply the function along
@@ -140,13 +143,12 @@ class IFFT(abstractOperation):
         data: CSDM object
         dep_var: int. The index of the dependent variable to apply operation to
         """
-        data_copy = data.copy()
-        return data_copy.fft(axis=self.dimension)
+        return data.fft(axis=self.dimension)
 
 
 class FFT(abstractOperation):
     """
-    abstractOperation-based class for applying a
+    Class for applying a
     Fourier transform to a dependent variable of simulation data
 
     dimension: int. Data dimension to apply the function along
@@ -162,8 +164,7 @@ class FFT(abstractOperation):
         data: CSDM object
         dep_var: int. The index of the dependent variable to apply operation to
         """
-        data_copy = data.copy()
-        return data_copy.fft(axis=self.dimension)
+        return data.fft(axis=self.dimension)
 
 
 class OperationList(BaseModel):
@@ -198,9 +199,13 @@ class SignalProcessor(BaseModel):
     def apply_operations(self, **kwargs):
         op_list = self.operations
 
+        copy_data = self.data.copy()
+
         for item in op_list:
             dep_var = item.dependent_variable
             for filters in item.operations:
-                self.data = filters.operate(self.data, dep_var=dep_var)
+                copy_data = filters.operate(copy_data, dep_var=dep_var)
 
-        return self.data
+        self.data = copy_data
+
+        return copy_data
