@@ -40,7 +40,7 @@ packages such as pip.
 .. seealso::
 
   If you do not have python or have an older version of python, you may visit the
-  `Python <https://www.python.org/downloads/>`_ or
+  `Python downloads <https://www.python.org/downloads/>`_ or
   `Anaconda <https://www.anaconda.com/products/individual/>`_ websites and follow their
   instructions on how to install python.
 
@@ -119,7 +119,7 @@ Upgrading to a newer version
 If you are upgrading to a newer version of ``mrsimulator``, you have all the prerequisites
 installed on your system. In this case, type the following in the terminal/Prompt
 
-.. code-block::
+.. code-block:: bash
 
     $ pip install mrsimulator -U
 
@@ -150,7 +150,7 @@ Prerequisites
 You will need a C-compiler suite and the development headers for the BLAS and FFTW
 libraries, along with development headers from Python and Numpy, to build the
 ``mrsimulator`` library from source.
-The Mrsimulator package utilizes the BLAS and FFTW routines for numerical computation.
+The mrsimulator package utilizes the BLAS and FFTW routines for numerical computation.
 To leverage the best performance, we recommend installing the BLAS and FFTW libraries,
 which are optimized and tuned for your system. In the following,
 we list recommendations on how to install the c-compiler (if applicable), BLAS, FFTW,
@@ -315,8 +315,11 @@ file in your terminal. Download the test file
 
 The above statement should produce the following figure.
 
-.. figure:: _static/test_output.*
-    :figclass: figure
+.. plot:: ../pyplot/test_file.py
+
+.. figure:: _static/null.*
+
+    A test example solid state NMR lineshape simulation.
 
 ----
 

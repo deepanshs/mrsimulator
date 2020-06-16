@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import mrsimulator.tests.tests as clib
 import numpy as np
-from mrsimulator.python.angular_momentum import wigner_rotation
+
+from tests.python_test_for_c_code.angular_momentum import wigner_rotation
 
 
 def test__batch_wigner_rotation():

@@ -9,13 +9,13 @@ from mrsimulator.methods import BlochDecaySpectrum
 
 def pre_setup():
     site_1 = Site(isotope="13C", shielding_symmetric={"zeta": 50, "eta": 0.5})
-    isotopomer = SpinSystem(sites=[site_1])
+    spin_system = SpinSystem(sites=[site_1])
     method = BlochDecaySpectrum(
         channels=["13C"], spectral_dimensions=[{"count": 1024, "spectral_width": 25000}]
     )
 
     sim = Simulator()
-    sim.spin_systems.append(isotopomer)
+    sim.spin_systems.append(spin_system)
     sim.methods += [method]
     return sim
 

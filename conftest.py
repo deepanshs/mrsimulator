@@ -9,9 +9,9 @@ import pytest
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.isotope import Isotope
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-from mrsimulator.tensors import SymmetricTensor
+from mrsimulator.spin_system.isotope import Isotope
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 font = {"weight": "light", "size": 9}
 matplotlib.rc("font", **font)
@@ -52,11 +52,11 @@ def add_site(doctest_namespace):
     )
     doctest_namespace["site3"] = site3
 
-    isotopomer_1H_13C = SpinSystem(sites=[site1, site2])
-    doctest_namespace["isotopomer_1H_13C"] = isotopomer_1H_13C
+    spin_system_1H_13C = SpinSystem(sites=[site1, site2])
+    doctest_namespace["spin_system_1H_13C"] = spin_system_1H_13C
 
-    isotopomer_1 = SpinSystem(sites=[site1])
-    doctest_namespace["isotopomer_1"] = isotopomer_1
+    spin_system_1 = SpinSystem(sites=[site1])
+    doctest_namespace["spin_system_1"] = spin_system_1
 
     doctest_namespace["spin_systems"] = SpinSystem(sites=[site1, site2, site3])
 

@@ -1,0 +1,37 @@
+spinsys {
+  channels 17O
+  nuclei 17O
+  quadrupole 1 2 3.1e6 0.3 0.0 0.0 0.0
+}
+
+par {
+  crystal_file     zcw4180
+  variable dw      40
+
+  sw               1e6/dw
+  np               512
+  proton_frequency 400e6
+  start_operator   I1x
+  detect_operator  I1c
+  method           direct
+  gamma_angles     1
+  spin_rate        100000
+  verbose          1101
+}
+
+proc pulseq {} {
+  global par
+
+  for {set i 0} {$i < $par(np)} {incr i} {
+    acq
+    delay $par(dw)
+  }
+
+}
+
+proc main {} {
+  global par
+
+  set f [fsimpson]
+  fsave $f $par(name).fid
+}

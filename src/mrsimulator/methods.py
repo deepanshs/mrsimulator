@@ -4,9 +4,12 @@ from os import path
 
 from monty.serialization import loadfn
 
-from .method import Event
 from .method import Method
-from .method import SpectralDimension
+from .method.event import Event
+from .method.spectral_dimension import SpectralDimension
+
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
 
 # program to create class dynamically
 

@@ -5,7 +5,7 @@ from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.spectral_fitting import make_fitting_parameters
-from mrsimulator.tensors import SymmetricTensor as st
+from mrsimulator.spin_system.tensors import SymmetricTensor as st
 
 
 sim = Simulator()
@@ -13,7 +13,7 @@ sim = Simulator()
 H = Site(
     isotope="1H", isotropic_chemical_shift=10, shielding_symmetric=st(zeta=5, eta=0.1)
 )
-isotopomer = SpinSystem(name="H1", sites=[H], abundance=100)
+spin_system = SpinSystem(name="H1", sites=[H], abundance=100)
 
 method = BlochDecaySpectrum(
     channels=["1H"],
@@ -25,7 +25,7 @@ method = BlochDecaySpectrum(
 )
 
 
-sim.spin_systems += [isotopomer]
+sim.spin_systems += [spin_system]
 sim.methods += [method]
 
 params = make_fitting_parameters(sim)

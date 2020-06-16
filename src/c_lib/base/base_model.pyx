@@ -228,15 +228,15 @@ def one_d_spectrum(method,
 
     # ---------------------------------------------------------------------
     # sample _______________________________________________________________
-    for index, isotopomer in enumerate(spin_systems):
-        abundance = isotopomer.abundance
-        isotopes = [site.isotope.symbol for site in isotopomer.sites]
+    for index, spin_sys in enumerate(spin_systems):
+        abundance = spin_sys.abundance
+        isotopes = [site.isotope.symbol for site in spin_sys.sites]
         if channel not in isotopes:
             continue
 
-        # sub_sites = [site for site in isotopomer.sites if site.isotope.symbol == isotope]
+        # sub_sites = [site for site in spin_sys.sites if site.isotope.symbol == isotope]
         index_.append(index)
-        number_of_sites= len(isotopomer.sites)
+        number_of_sites= len(spin_sys.sites)
 
         if number_of_sites > 2:
             continue
@@ -264,7 +264,7 @@ def one_d_spectrum(method,
         amp = np.zeros(total_n_points)
 
         for i in range(number_of_sites):
-            site = isotopomer.sites[i]
+            site = spin_sys.sites[i]
             spin_i[i] = site.isotope.spin
             gyromagnetic_ratio_i[i] = site.isotope.gyromagnetic_ratio
 
@@ -288,7 +288,7 @@ def one_d_spectrum(method,
 
             # if verbose in [1, 11]:
             #     text = ((
-            #         f"\n{isotope} site {i} from isotopomer {index_isotopomer} "
+            #         f"\n{isotope} site {i} from spin-system {index_isotopomer} "
             #         f"@ {abundance}% abundance"
             #     ))
             #     len_ = len(text)
@@ -330,9 +330,9 @@ def one_d_spectrum(method,
                 #     print(f'Quadrupolar orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
         if number_of_sites != 0:
-            transition_pathway = isotopomer.transition_pathways
+            transition_pathway = spin_sys.transition_pathways
             if transition_pathway is None:
-                transition_pathway = method.get_transition_pathways(isotopomer)
+                transition_pathway = method.get_transition_pathways(spin_sys)
             transition_pathway = np.asarray(transition_pathway)
             pathway_count, transition_count_per_pathway = transition_pathway.shape
 
@@ -344,9 +344,9 @@ def one_d_spectrum(method,
             transition_array = np.asarray(lst, dtype=np.float32).ravel()
             pathway_increment = 2*number_of_sites*transition_count_per_pathway
 
-            # if isotopomer.transitions is not None:
+            # if spin_sys.transitions is not None:
             #     transition_array = np.asarray(
-            #         isotopomer.transitions, dtype=np.float32
+            #         spin_sys.transitions, dtype=np.float32
             #     ).ravel()
             # else:
             #     transition_array = np.asarray([0.5, -0.5], dtype=np.float32)

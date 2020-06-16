@@ -1,25 +1,30 @@
 
 .. _getting_started:
 
-==============================================
-Getting started with `Mrsimulator`: The basics
-==============================================
+================================================
+Getting started with ``mrsimulator``: The basics
+================================================
 
-We have put together a set of guidelines for using the `Mrsimulator` package. We
-encourage our users to follow these guidelines to promote consistency.
-In `Mrsimulator`, the solid-state nuclear magnetic resonance (ssNMR)
-lineshape is calculated through an instance of the :ref:`simulator_api`
-class.
+We have put together a set of guidelines for using the ``mrsimulator`` package. We
+encourage our users to follow these guidelines to promote consistency. In
+``mrsimulator``, the solid-state nuclear magnetic resonance (ssNMR) lineshape is
+calculated through an instance of the :ref:`simulator_api` class.
 
 Import the :ref:`simulator_api` class using
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> from mrsimulator import Simulator
 
 and create an instance as follows,
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> sim = Simulator()
 
@@ -27,10 +32,13 @@ Here, the variable ``sim`` is an instance of the :ref:`simulator_api` class. The
 attributes of this class that you will frequently use are the
 :attr:`~mrsimulator.Simulator.spin_systems` and
 :attr:`~mrsimulator.Simulator.methods`, whose values are a list of
-:ref:`spin_system_api` and :ref:`method_api` objects,
+:ref:`spin_sys_api` and :ref:`method_api` objects,
 respectively. The default value of these attributes is an empty list.
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> sim.spin_systems
     []
@@ -62,22 +70,15 @@ The latter is zero for sites with the spin quantum number, :math:`I=1/2`.
 
 Let's start with a spin-1/2 isotope, :math:`^{29}\text{Si}`, and create a site.
 
-.. code-block:: python
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
-    the_site = {
-        "isotope": "29Si",
-        "isotropic_chemical_shift": "-101.1 ppm",
-        "shielding_symmetric": {"zeta": "70.5 ppm", "eta": 0.5},
-    }
-
-.. testsetup::
     >>> the_site = {
     ...     "isotope": "29Si",
     ...     "isotropic_chemical_shift": "-101.1 ppm",
-    ...     "shielding_symmetric": {
-    ...         "zeta": "70.5 ppm",
-    ...         "eta": 0.5
-    ...     }
+    ...     "shielding_symmetric": {"zeta": "70.5 ppm", "eta": 0.5},
     ... }
 
 In the above code, ``the_site`` is a simplified python dictionary representation of a
@@ -88,31 +89,35 @@ the Haeberlen convention.
 
 That's it! Now that we have a site, we can create a single-site spin-system following,
 
-.. code-block:: python
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
-    the_spin_system = {
-        "name": "site A",
-        "description": "A test 29Si site",
-        "sites": [the_site],  # from the above code
-        "abundance": "80%",
-    }
-
-.. testsetup::
-    >>> the_spin_system = {"name": "site A", "description": "A test 29Si site",
-    ...     "sites": [ the_site ], "abundance": "80%"}
+    >>> the_spin_system = {
+    ...     "name": "site A",
+    ...     "description": "A test 29Si site",
+    ...     "sites": [the_site],  # from the above code
+    ...     "abundance": "80%",
+    ... }
 
 As mentioned before, a spin-system is a collection of sites and couplings. In the above
 example, we have created a spin-system with a single site and no couplings. Here, the
 attribute `sites` hold a list of sites. The attributes `name`, `description`, and
 `abundance` are optional.
 
-..  .. seealso:: :ref:`dictionary_objects`, :ref:`isotopomer` and :ref:`site`.
+..  .. seealso:: :ref:`dictionary_objects`, :ref:`spin_system` and :ref:`site`.
 
 Until now, we have only created a python dictionary representation of a spin-system. To
 run the simulation, you need to create an instance of the
 :class:`~mrsimulator.SpinSystem` class. Import the SpinSystem class and use it's
 :meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method to parse the python
 dictionary and create an instance of the spin-system class, as follows,
+
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> from mrsimulator import SpinSystem
     >>> system_object_1 = SpinSystem.parse_dict_with_units(the_spin_system)
@@ -131,6 +136,11 @@ repeat the above set of instructions. In this example, we stick with a single
 spin-system object. Once all spin-system objects are ready, add these objects to the
 instance of the Simulator class, as follows
 
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
+
     >>> sim.spin_systems += [system_object_1] # add all spin-system objects.
 
 
@@ -138,7 +148,7 @@ Setting up the Method objects
 -----------------------------
 
 A :ref:`method_api` object is a collection of parameters that describe an NMR method.
-In Mrsimulator, all methods are described through five keywords -
+In ``mrsimulator``, all methods are described through five keywords -
 
 .. cssclass:: table-bordered
 
@@ -170,21 +180,11 @@ In Mrsimulator, all methods are described through five keywords -
 Let's start with the simplest method, the :func:`~mrsimulator.methods.BlochDecaySpectrum`.
 The following is a python dictionary representation of the BlochDecaySpectrum method.
 
-.. code-block::  python
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
-    method_dict = {
-        "channels": ["29Si"],
-        "magnetic_flux_density": "9.4 T",
-        "rotor_angle": "54.735 deg",
-        "rotor_frequency": "0 Hz",
-        "spectral_dimensions": [{
-            "count": 2048,
-            "spectral_width": "25 kHz",
-            "reference_offset": "-8 kHz",
-        }]
-    }
-
-.. testsetup::
     >>> method_dict = {
     ...     "channels": ["29Si"],
     ...     "magnetic_flux_density": "9.4 T",
@@ -194,6 +194,7 @@ The following is a python dictionary representation of the BlochDecaySpectrum me
     ...         "count": 2048,
     ...         "spectral_width": "25 kHz",
     ...         "reference_offset": "-8 kHz",
+    ...         "label": r"$^{29}$Si resonances",
     ...     }]
     ... }
 
@@ -213,7 +214,10 @@ Like before, you may parse the above ``method_dict`` using the
 method. Import the BlochDecaySpectrum class and create an instance of the method,
 following,
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> from mrsimulator.methods import BlochDecaySpectrum
     >>> method_object = BlochDecaySpectrum.parse_dict_with_units(method_dict)
@@ -224,7 +228,10 @@ Likewise, you may create multiple method objects. In this example, we
 stick with a single method. Finally, add all the method objects, in this case,
 ``method_object``, to the instance of the Simulator class, ``sim``, as follows,
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> sim.methods += [method_object] # add all methods.
 
@@ -234,11 +241,14 @@ Running simulation
 To simulate the line-shape, run the simulator with the
 :meth:`~mrsimulator.Simulator.run` method, as follows,
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> sim.run()
 
-.. note:: In Mrsimulator, all resonant frequencies are calculated assuming the
+.. note:: In ``mrsimulator``, all resonant frequencies are calculated assuming the
     weakly-coupled (Zeeman) basis for the spin-system.
 
 The simulator object, ``sim``, will process every method over all the spin-systems and
@@ -246,7 +256,10 @@ store the result in the :attr:`~mrsimulator.Method.simulation` attribute of the
 respective Method object. In this example, we have a single method. You may access
 the simulation data for this method as,
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> data_0 = sim.methods[0].simulation
     >>> # data_n = sim.method[n].simulation # when there are multiple methods.
@@ -272,19 +285,20 @@ For a quick plot of the csdm data, you may use the `csdmpy <https://csdmpy.readt
 library. The `csdmpy` package uses the matplotlib library to produce basic plots.
 You may optionally customize the plot using matplotlib methods.
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
-    >>> import csdmpy as cp
-
-    >>> plt.figure(figsize=(4.25, 3)) # set the figure size # doctest: +SKIP
-    >>> # The reverse_axis option plot the data in reverse axis.
-    >>> cp.plot(data_0, reverse_axis=[True]) # doctest: +SKIP
-    >>> plt.tight_layout(pad=0.2) # doctest: +SKIP
+    >>> plt.figure(figsize=(6, 3.5)) # set the figure size # doctest: +SKIP
+    >>> ax = plt.subplot(projection='csdm') # doctest: +SKIP
+    >>> ax.plot(data_0) # doctest: +SKIP
+    >>> ax.invert_xaxis() # reverse x-axis # doctest: +SKIP
+    >>> plt.tight_layout(pad=0.1) # doctest: +SKIP
     >>> plt.show() # doctest: +SKIP
 
 .. _fig1-getting-started:
-.. figure:: _images/example.*
-    :figclass: figure
+.. figure:: _static/null.*
 
     An example static solid state NMR lineshape simulation.
 
@@ -296,7 +310,10 @@ plotting libraries. For those users, you may extract the data from the csdm obje
 as a list of arrays using the `to_list() <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html#csdmpy.CSDM.to_list>`_
 method of the csdm object, following,
 
-.. doctest::
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
     >>> x, y = data_0.to_list()
 

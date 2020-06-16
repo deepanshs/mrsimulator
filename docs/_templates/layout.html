@@ -1,10 +1,12 @@
 {% extends "!layout.html" %}
 
-{# Add the google webfonts needed for the
-logo #} {% block extrahead %}
+{# Add the google webfonts needed for the logo #}
+{% block extrahead %}
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600" rel="stylesheet" type="text/css" />
-{% endblock %} {# Silence the bottom relbar. #} {% block relbar2 %}{% endblock
-%}
+{% endblock %}
+
+{# Silence the bottom relbar. #}
+{% block relbar2 %} {% endblock %}
 
 {%- block footer %}
 <footer class="footer">
@@ -22,16 +24,22 @@ logo #} {% block extrahead %}
     {%- if hasdoc('copyright') %}
     {% trans path=pathto('copyright'), copyright=copyright|e %}&copy;
     <a href="{{ path }}">Copyright</a> {{ copyright }}.
-    {% endtrans %}<br />
+    {% endtrans %}
+    <br />
     {%- else %}
-    {% trans copyright=copyright|e %}&copy; Copyright {{ copyright
-    }}.{% endtrans %}<br />
-    {%- endif %} {%- endif %}
-    {%- if show_sphinx %} {% trans
-    sphinx_version=sphinx_version|e %}Created using
-    <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> {{ sphinx_version
-    }}.{% endtrans %} &nbsp; {%- endif %} {%- if last_updated %} {% trans
-    last_updated=last_updated|e %}Last built {{ last_updated }}.{% endtrans %}
+    {% trans copyright=copyright|e %}&copy; Copyright {{ copyright }}. {% endtrans %}
+    <br />
+    {%- endif %}
+    {%- endif %}
+
+    {%- if show_sphinx %}
+    {% trans sphinx_version=sphinx_version|e %}
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> {{ sphinx_version }}.
+    {% endtrans %} &nbsp;
+    {%- endif %}
+
+    {%- if last_updated %}
+    {% trans last_updated=last_updated|e %} Last built {{ last_updated }}. {% endtrans %}
     <br />
     {%- endif %}
   </p>

@@ -8,7 +8,7 @@ include settings.py
 recursive-include src/c_lib/include *
 recursive-include src/c_lib/lib *
 
-include src/mrsimulator/isotope_data.json
+include src/mrsimulator/spin_system/isotope_data.json
 include src/mrsimulator/methods_data.json
 
 include src/c_lib/base/base_model.pxd

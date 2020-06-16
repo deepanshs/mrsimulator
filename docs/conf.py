@@ -23,7 +23,7 @@ now = datetime.datetime.now()
 year = now.year
 
 project = "mrsimulator"
-copyright = f"2019-{year}, The Mrsimulator developers"
+copyright = f"2019-{year}, The mrsimulator developers"
 author = "Deepansh J. Srivastava"
 
 # get version number from the file
@@ -49,6 +49,7 @@ needs_sphinx = "2.0"
 extensions = [
     # "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
+    "matplotlib.sphinxext.plot_directive",
     # "sphinx.ext.coverage",
     "sphinx.ext.mathjax",
     # "sphinx.ext.githubpages",
@@ -63,6 +64,18 @@ extensions = [
     "sphinx_tabs.tabs",
     "sphinx.ext.todo",
 ]
+
+# ---------------------------------------------------------------------------- #
+#                               Plot directive config                          #
+# ---------------------------------------------------------------------------- #
+plot_html_show_source_link = False
+plot_rcparams = {
+    "figure.figsize": [6, 3],
+    # "font.size": 12,
+    # "font.weight": "light",
+    # "font.family": "sans-serif",
+    # "font.sans-serif": "Helvetica",
+}
 
 # ---------------------------------------------------------------------------- #
 #                               Sphinx Gallery config                          #
@@ -127,8 +140,8 @@ sphinx_gallery_conf = {
 # generate autosummary even if no references
 autosummary_generate = True
 
-# copybutton_prompt_text = ">>> "
-# copybutton_only_copy_prompt_lines = False
+# copybutton_prompt_text = [">>> ", "... "]
+# copybutton_only_copy_prompt_lines = True
 
 intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org", None),
@@ -274,7 +287,7 @@ html_theme_options = {
 }
 
 html_style = "style.css"
-html_title = f"Mrsimulator:doc v{__version__}"
+html_title = f"mrsimulator:doc v{__version__}"
 html_logo = "_static/mrsimulator.png"
 html_favicon = "_static/favicon.ico"
 html_last_updated_fmt = ""
@@ -322,27 +335,27 @@ latex_elements = {
     # The font size ('10pt', '11pt' or '12pt').
     #
     "pointsize": "9pt",
-    "fontenc": "\\usepackage[utf8]{inputenc}",
-    "geometry": "\\usepackage[vmargin=2.5cm, hmargin=2cm]{geometry}",
-    # "fncychap": "\\usepackage[Rejne]{fncychap}",
+    "fontenc": r"\usepackage[utf8]{inputenc}",
+    "geometry": r"\usepackage[vmargin=2.5cm, hmargin=1.5cm]{geometry}",
+    # "fncychap": "\usepackage[Rejne]{fncychap}",
     # Additional stuff for the LaTeX preamble.
-    "preamble": """\
-        \\usepackage[T1]{fontenc}
-        \\usepackage{amsfonts, amsmath, amssymb, mathbbol}
-        \\usepackage{graphicx}
-        \\usepackage{setspace}
-        \\singlespacing
+    "preamble": r"""
+        \usepackage[T1]{fontenc}
+        \usepackage{amsfonts, amsmath, amssymb, mathbbol}
+        \usepackage{graphicx}
+        \usepackage{setspace}
+        \singlespacing
 
-        \\usepackage{fancyhdr}
-        \\pagestyle{fancy}
-        \\fancyhf{}
-        \\fancyhead[L]{
-            \\ifthenelse{\\isodd{\\value{page}}}{ \\small \\nouppercase{\\leftmark} }{}
+        \usepackage{fancyhdr}
+        \pagestyle{fancy}
+        \fancyhf{}
+        \fancyhead[L]{
+            \ifthenelse{\isodd{\value{page}}}{ \small \nouppercase{\leftmark} }{}
         }
-        \\fancyhead[R]{
-            \\ifthenelse{\\isodd{\\value{page}}}{}{ \\small \\nouppercase{\\rightmark} }
+        \fancyhead[R]{
+            \ifthenelse{\isodd{\value{page}}}{}{ \small \nouppercase{\rightmark} }
         }
-        \\fancyfoot[CO, CE]{\\thepage}
+        \fancyfoot[CO, CE]{\thepage}
     """,
     # Latex figure (float) alignment
     #
@@ -353,7 +366,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "mrsimulator.tex", "MRsimulator Documentation", author, "manual")
+    (master_doc, "mrsimulator.tex", "mrsimulator Documentation", author, "manual")
 ]
 
 # -- Options for Texinfo output ----------------------------------------------
