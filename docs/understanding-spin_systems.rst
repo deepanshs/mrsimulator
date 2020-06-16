@@ -63,7 +63,7 @@ isotopomers, weighted by their respective abundance.
      - 1
      - (0.015% x 1.11%) ~ 0.00016%
 
-In the Mrsimulator library, we consider each isotopomer as a simplified isolated
+In the ``mrsimulator`` library, we consider each isotopomer as a simplified isolated
 spin-system, where only the NMR active sites may reside within the spin-system.
 All NMR inactive sites are ignored. This simplified isolated spin-system is given
 the class name of **SpinSystem**. In the following sub-section, we illustrate with
@@ -174,7 +174,7 @@ Coupled spin-systems
 ''''''''''''''''''''
 
 .. note::
-    The current version of the `mrsimulator` package does not include coupled
+    The current version of the ``mrsimulator`` package does not include coupled
     spin-systems. The SpinSystem model for the couplings will be made available when
     we include the coupled spin-systems to the package.
 

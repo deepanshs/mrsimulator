@@ -6,7 +6,7 @@
 Package dependencies
 ====================
 
-`Mrsimulator` depends on the following packages:
+``mrsimulator`` depends on the following packages:
 
 **Required packages**
 

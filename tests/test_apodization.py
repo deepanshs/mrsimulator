@@ -36,7 +36,7 @@ sim.methods += [method_1, method_1]
 sim.run()
 
 
-freqHz = sim.methods[0].spectral_dimensions[0].coordinates_Hz
+freqHz = sim.methods[0].spectral_dimensions[0].coordinates_Hz()
 
 
 def test_Lorentzian():

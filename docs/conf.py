@@ -23,7 +23,7 @@ now = datetime.datetime.now()
 year = now.year
 
 project = "mrsimulator"
-copyright = f"2019-{year}, The Mrsimulator developers"
+copyright = f"2019-{year}, The mrsimulator developers"
 author = "Deepansh J. Srivastava"
 
 # get version number from the file
@@ -287,7 +287,7 @@ html_theme_options = {
 }
 
 html_style = "style.css"
-html_title = f"Mrsimulator:doc v{__version__}"
+html_title = f"mrsimulator:doc v{__version__}"
 html_logo = "_static/mrsimulator.png"
 html_favicon = "_static/favicon.ico"
 html_last_updated_fmt = ""

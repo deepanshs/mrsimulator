@@ -24,11 +24,13 @@ The following code is used to produce the figures in this section.
     ...     ax = plt.subplot(projection='csdm')
     ...     ax.plot(csdm_object, linewidth=1.5)
     ...     ax.invert_xaxis()
-    ...     plt.tight_layout(pad=0.1)
+    ...     plt.tight_layout()
     ...     plt.show()
 
+----
+
 Up until now, we have been using the simulator object with the default setting.
-In `Mrsimulator`, we choose the default settings such that it applies to a wide
+In ``mrsimulator``, we choose the default settings such that it applies to a wide
 range of simulations including, static, magic angle spinning (MAS), and
 variable angle spinning (VAS) lineshapes. In certain situations, however, the
 default settings are not sufficient to accurately represent the lineshapes. In
@@ -103,7 +105,7 @@ If you are familiar with the NMR lineshapes, you may notice that the sideband
 simulation spectrum in :numref:`fig1_config` is inaccurate, as evident from the abrupt
 termination of the sideband amplitudes at the edges. As mentioned earlier, this
 inaccuracy arises from evaluating a small number of sidebands relative to the given
-anisotropy. Let's increase the number of sidebands to `90` and observe.
+anisotropy. Let's increase the number of sidebands to 90 and observe.
 :numref:`fig2_config` depicts an accurate spinning sideband simulation.
 
 .. plot::
@@ -125,12 +127,12 @@ anisotropy. Let's increase the number of sidebands to `90` and observe.
 Integration volume
 ------------------
 
-The attribute `integration_volume` is an enumeration with two literals, `octant` and
-`hemisphere`.
+The attribute `integration_volume` is an enumeration with two literals, ``octant`` and
+``hemisphere``.
 The integration volume refers to the volume of the sphere over which the lineshape
 is integrated. The default value is `octant`, i.e., the lineshape is integrated
 over the positive octant of the sphere.
-The `Mrsimulator` package enables the user to exploit the orientational symmetry of
+The ``mrsimulator`` package enables the user to exploit the orientational symmetry of
 the problem, and thus optimize the simulation by performing a partial integration
 ---`octant` or `hemisphere`. To learn more about the orientational symmetries,
 please refer to Eden et. al. [#f4]_
@@ -202,15 +204,16 @@ Integration density
 -------------------
 
 Integration density controls the number of orientational points sampled over the given
-volume. The NMR resonance frequency is evaluated at these orientations. The total
-number of orientations, :math:`\Theta_\text{count}` is given as
+volume. The resulting spectrum is an integration of the NMR resonance frequency
+evaluated at these orientations. The total
+number of orientations, :math:`\Theta_\text{count}`, is given as
 
 .. math::
     \Theta_\text{count} = M (n + 1)(n + 2)/2
 
 where :math:`M` is the number of octants and :math:`n` is value of this attribute. The
 number of octants is deciphered form the value of the `integration_volume` attribute.
-The default value, ``70``, produces 2556 orientations at which the NMR
+The default value of this attribute, 70, produces 2556 orientations at which the NMR
 frequency contribution is evaluated. The user may increase or decrease the value of
 this attribute as required by the problem.
 
@@ -259,8 +262,8 @@ following example.
     >>> site_B = Site(isotope='1H', shielding_symmetric={'zeta': -2, 'eta': 0.83})
     ...
     >>> # Create two spin systems, each with single site.
-    >>> system_A = SpinSystem(sites=[site_A])
-    >>> system_B = SpinSystem(sites=[site_B])
+    >>> system_A = SpinSystem(sites=[site_A], name='System-A')
+    >>> system_B = SpinSystem(sites=[site_B], name='System-B')
     ...
     >>> # Create a method object.
     >>> method = BlochDecaySpectrum(
@@ -280,8 +283,8 @@ following example.
 .. _fig5_config:
 .. figure:: _static/null.*
 
-    By default, the spectrum is an integration of the spectra from individual
-    spin systems. The value of `decompose_spectrum` is ``none``.
+    The spectrum is an integration of the spectra from individual spin systems when the
+    value of `decompose_spectrum` is ``none``.
 
 :numref:`fig5_config` depicts the simulation of the line-shape from two spin systems,
 shown in a single spectum.

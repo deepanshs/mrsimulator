@@ -1,6 +1,6 @@
 ---
 name: "🚀 Feature request"
-about: Suggest an idea for improving Mrsimulator
+about: Suggest an idea for improving mrsimulator
 title: ""
 labels: "type:Enhancement"
 assignees: ""

@@ -32,6 +32,10 @@ def basic_spectral_dimension_tests(the_dimension):
 
     # label
     assert the_dimension.label is None
+
+    # description
+    assert the_dimension.description is None
+
     the_dimension.label = "This is a spectral dimensions"
     assert the_dimension.label == "This is a spectral dimensions"
     the_dimension.label = 45.0
@@ -43,30 +47,32 @@ def basic_spectral_dimension_tests(the_dimension):
     the_dimension.spectral_width = 32
 
     coordinates = np.arange(32) - 16
-    assert np.allclose(the_dimension.coordinates_Hz, coordinates)
+    assert np.allclose(the_dimension.coordinates_Hz(), coordinates)
 
     with pytest.warns(
         UserWarning, match=".*The coordinates along the dimension without an origin.*"
     ):
-        the_dimension.coordinates_ppm
+        the_dimension.coordinates_ppm()
 
     the_dimension.reference_offset = -4
     the_dimension.origin_offset = 5e6
-    assert np.allclose(the_dimension.coordinates_Hz, coordinates - 4)
-    assert np.allclose(the_dimension.coordinates_ppm, (coordinates - 4) / (5 - 4e-6))
+    assert np.allclose(the_dimension.coordinates_Hz(), coordinates - 4)
+    assert np.allclose(the_dimension.coordinates_ppm(), (coordinates - 4) / (5 - 4e-6))
 
     the_dimension.count = 31
     the_dimension.reference_offset = 0
     the_dimension.spectral_width = 31
     coordinates = np.arange(31) - 15
-    assert np.allclose(the_dimension.coordinates_Hz, coordinates)
-    assert np.allclose(the_dimension.coordinates_ppm, coordinates / 5)
+    assert np.allclose(the_dimension.coordinates_Hz(), coordinates)
+    assert np.allclose(the_dimension.coordinates_ppm(), coordinates / 5)
 
     # CSDM dimension
     csdm_dimension = the_dimension.to_csdm_dimension()
     assert np.allclose(csdm_dimension.coordinates.to("Hz").value, coordinates)
     csdm_dimension.to("ppm", "nmr_frequency_ratio")
-    assert np.allclose(csdm_dimension.coordinates.value, the_dimension.coordinates_ppm)
+    assert np.allclose(
+        csdm_dimension.coordinates.value, the_dimension.coordinates_ppm()
+    )
 
     # to dict with units
     should_be = dict(

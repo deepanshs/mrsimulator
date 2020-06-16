@@ -150,7 +150,7 @@ Prerequisites
 You will need a C-compiler suite and the development headers for the BLAS and FFTW
 libraries, along with development headers from Python and Numpy, to build the
 ``mrsimulator`` library from source.
-The Mrsimulator package utilizes the BLAS and FFTW routines for numerical computation.
+The mrsimulator package utilizes the BLAS and FFTW routines for numerical computation.
 To leverage the best performance, we recommend installing the BLAS and FFTW libraries,
 which are optimized and tuned for your system. In the following,
 we list recommendations on how to install the c-compiler (if applicable), BLAS, FFTW,

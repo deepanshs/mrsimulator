@@ -12,17 +12,15 @@ Getting started with ``mrsimulator``: Using objects
 In the previous section on getting started, we show an example where we parse the
 python dictionaries to create instances of the :ref:`spin_sys_api` and
 :ref:`method_api` objects. In this section, we'll illustrate how we can
-achieve the same result using the core `Mrsimulator` objects.
+achieve the same result using the core ``mrsimulator`` objects.
 
 .. note::
-    Unlike python dictionary objects from our last example, when using
-    Mrsimulator objects, the attribute value is given as a number rather than
-    a string with a number and a unit. We assume default units for the class
-    attributes. To learn more about the default units, please refer to the
-    documentation of the respective class.
-    For the convenience of our users, we have added an attribute,
-    ``property_units``, to every class that holds the default unit of the
-    respective class attributes.
+    Unlike python dictionary objects from our last example, when using ``mrsimulator``
+    objects, the attribute value is given as a number rather than a string with a
+    number and a unit. We assume default units for the class attributes. To learn more
+    about the default units, please refer to the documentation of the respective class.
+    For the convenience of our users, we have added an attribute, ``property_units``,
+    to every class that holds the default unit of the respective class attributes.
 
 Let's start by importing the classes.
 
@@ -33,6 +31,8 @@ Let's start by importing the classes.
 
     >>> from mrsimulator import Simulator, SpinSystem, Site
     >>> from mrsimulator.methods import BlochDecaySpectrum
+
+----
 
 The following code is used to produce the figures in this section.
 
@@ -52,8 +52,10 @@ The following code is used to produce the figures in this section.
     ...     ax = plt.subplot(projection='csdm')
     ...     ax.plot(csdm_object, linewidth=1.5)
     ...     ax.invert_xaxis()
-    ...     plt.tight_layout(pad=0.1)
+    ...     plt.tight_layout()
     ...     plt.show()
+
+----
 
 .. .. note::
 ..     We will use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_ library to
@@ -177,7 +179,11 @@ object following,
     >>> from mrsimulator.methods import BlochDecaySpectrum
     >>> method_1 = BlochDecaySpectrum(
     ...     channels=["13C"],
-    ...     spectral_dimensions = [dict(count=2048, spectral_width=25000)] # spectral_width is in Hz.
+    ...     spectral_dimensions = [dict(
+    ...         count=2048,
+    ...         spectral_width=25000, # in Hz.
+    ...         label=r"$^{13}$C resonances",
+    ...     )]
     ... )
 
 The above method, ``method_1``, is defined to record :math:`^{13}\text{C}` resonances
@@ -291,7 +297,11 @@ with a new method. :numref:`fig3_using_obj` depicts the simulation from this met
     >>> sim.methods[0] = BlochDecaySpectrum(
     ...     channels=["13C"],
     ...     rotor_frequency=1000, # in Hz.  <------------ updated entry
-    ...     spectral_dimensions=[dict(count=2048, spectral_width=25000)] # spectral_width is in Hz.
+    ...     spectral_dimensions=[dict(
+    ...         count=2048,
+    ...         spectral_width=25000, # in Hz.
+    ...         label=r"$^{13}$C resonances",
+    ...     )]
     ... )
 
     >>> sim.run()
@@ -319,7 +329,11 @@ this method.
     ...     channels=["13C"],
     ...     rotor_frequency=1000, # in Hz.
     ...     rotor_angle=90*3.1415926/180, # 90 degree in radians.  <------------ updated entry
-    ...     spectral_dimensions=[dict(count=2048, spectral_width=25000)] # spectral_width is in Hz.
+    ...     spectral_dimensions=[dict(
+    ...         count=2048,
+    ...         spectral_width=25000, # in Hz.
+    ...         label=r"$^{13}$C resonances",
+    ...     )]
     ... )
 
     >>> sim.run()
@@ -346,7 +360,11 @@ method. Here, we update the method to `1H` channel.
     ...     channels=["1H"], # <------------ updated entry
     ...     rotor_frequency=1000, # in Hz.
     ...     rotor_angle=90*3.1415926/180, # 90 degree in radians.
-    ...     spectral_dimensions=[dict(count=2048, spectral_width=25000)]
+    ...     spectral_dimensions=[dict(
+    ...         count=2048,
+    ...         spectral_width=25000, # in Hz.
+    ...         label=r"$^1$H resonances",
+    ...     )]
     ... )
 
     >>> sim.run()
@@ -375,7 +393,11 @@ member of the spin systems will produce a spectrum. For example, the following m
     ...     channels=["23Na"], # <------------ updated entry
     ...     rotor_frequency=1000, # in Hz.
     ...     rotor_angle=90*3.1415926/180, # 90 degree in radians.
-    ...     spectral_dimensions=[dict(count=2048, spectral_width=25000)]
+    ...     spectral_dimensions=[dict(
+    ...         count=2048,
+    ...         spectral_width=25000, # in Hz.
+    ...         label=r"$^{23}$Na resonances",
+    ...     )]
     ... )
 
 is defined to collect the resonances from :math:`^{23}\text{Na}` isotope. As you may
@@ -411,7 +433,11 @@ Likewise, update the value of the `channels` attribute to `17O`.
     ...     channels=["17O"],
     ...     rotor_frequency= 15000, # in Hz.
     ...     rotor_angle = 0.9553166, # magic angle is rad.
-    ...     spectral_dimensions = [dict(count=2048, spectral_width=25000)]
+    ...     spectral_dimensions=[dict(
+    ...         count=2048,
+    ...         spectral_width=25000, # in Hz.
+    ...         label=r"$^{17}$O resonances",
+    ...     )]
     ... )
     >>> sim.run()
     >>> plot(sim.methods[0].simulation) # doctest: +SKIP
@@ -460,7 +486,11 @@ the outer-satellites. For central transition selective simulation, use the
     ...     channels=["17O"],
     ...     rotor_frequency= 15000, # in Hz.
     ...     rotor_angle = 0.9553166, # magic angle is rad.
-    ...     spectral_dimensions = [dict(count=2048, spectral_width=25000)]
+    ...     spectral_dimensions=[dict(
+    ...         count=2048,
+    ...         spectral_width=25000, # in Hz.
+    ...         label=r"$^{17}$O resonances",
+    ...     )]
     ... )
     >>> # the transition pathways
     >>> print(sim.methods[0].get_transition_pathways(system_4)) # 17O

@@ -24,17 +24,16 @@ SpectralDimension
 .. autoclass:: SpectralDimension
     :show-inheritance:
 
-    .. autoattribute:: coordinates_Hz
-    .. autoattribute:: coordinates_ppm
-
     .. rubric:: Method Documentation
 
     .. automethod:: parse_dict_with_units
+    .. automethod:: coordinates_Hz
+    .. automethod:: coordinates_ppm
     .. automethod:: to_dict_with_units
     .. automethod:: to_csdm_dimension
 
 
-.. _event:
+.. _event_api:
 
 Event
 -----
