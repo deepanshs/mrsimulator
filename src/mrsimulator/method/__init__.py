@@ -41,8 +41,8 @@ class Method(Parseable):
         Example
         -------
 
-        >>> bloch = Method()
-        >>> bloch.channels = ['1H']
+        >>> bloch = Method() 
+        >>> bloch.channels = ['1H'] 
 
     spectral_dimensions: list of :ref:`spectral_dim_api` or dict objects (optional).
         The number of spectral dimensions depends on the given method. For example, a
@@ -106,8 +106,8 @@ class Method(Parseable):
     name: str = None
     label: str = None
     description: str = None
-    channels: List[str]
-    spectral_dimensions: List[SpectralDimension]
+    channels: List[str] = []
+    spectral_dimensions: List[SpectralDimension] = [{}]
     simulation: Union[cp.CSDM, np.ndarray] = None
     experiment: Union[cp.CSDM, np.ndarray] = None
 
