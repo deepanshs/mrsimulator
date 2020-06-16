@@ -52,8 +52,7 @@ class Scale(abstractOperation):
         dep_var: int. The index of the dependent variable to apply operation to
         """
         data_copy = data.copy()
-        factored = data_copy.dependent_variables[dep_var].components[0] * self.factor
-        data_copy.dependent_variables[dep_var].components[0] = factored
+        data_copy.dependent_variables[dep_var].components[0] *= self.factor
         return data_copy
 
 

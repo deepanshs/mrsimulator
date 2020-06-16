@@ -158,21 +158,21 @@ def make_fitting_parameters(sim, exclude_key=None):
 
     params = Parameters()
     temp_list = _traverse_dictionaries(_list_of_dictionaries(sim.spin_systems))
-    for i in range(len(sim.methods)):
-        if sim.methods[i].post_simulation is not None:
-            parent = f"methods[{i}].post_simulation"
+    # for i in range(len(sim.methods)):
+    # if sim.methods[i].post_simulation is not None:
+    #     parent = f"methods[{i}].post_simulation"
 
-            temp_list += [_str_to_html(parent + ".scale")]
-            # temp_list += [
-            #     item
-            #     for item in _traverse_dictionaries(
-            #         sim.methods[0].post_simulation, parent=parent
-            #     )
-            #     if "scale" in item
-            # ]
-            if sim.methods[i].post_simulation.apodization is not None:
-                for j in range(len(sim.methods[i].post_simulation.apodization)):
-                    temp_list.append(_str_to_html(parent + f".apodization[{j}].args"))
+    #     temp_list += [_str_to_html(parent + ".scale")]
+    #     # temp_list += [
+    #     #     item
+    #     #     for item in _traverse_dictionaries(
+    #     #         sim.methods[0].post_simulation, parent=parent
+    #     #     )
+    #     #     if "scale" in item
+    #     # ]
+    #     if sim.methods[i].post_simulation.apodization is not None:
+    #         for j in range(len(sim.methods[i].post_simulation.apodization)):
+    #             temp_list.append(_str_to_html(parent + f".apodization[{j}].args"))
 
     length = len(sim.spin_systems)
     abundance = 0

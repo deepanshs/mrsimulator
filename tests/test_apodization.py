@@ -56,11 +56,10 @@ def test_scale():
     x0, y0 = sim.methods[0].simulation.to_list()
     x, y = post_sim.data.to_list()
 
-    assert np.allclose(sum(y0 / y), 10), "Scaling failed"
+    assert y.max() / y0.max() == 10, "Scaling failed"
 
 
 def test_Lorentzian():
-    sim.methods[0].post_simulation = PS_1
     post_sim = SignalProcessor(data=sim.methods[0].simulation, operations=[PS_1])
     post_sim.apply_operations()
     x, y = post_sim.data.to_list()
