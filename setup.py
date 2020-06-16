@@ -22,8 +22,6 @@ try:
 except ImportError:
     USE_CYTHON = False
 
-# from setting import USE_SSE_AVX
-
 # get the version from file
 
 python_version = sys.version_info
@@ -83,17 +81,6 @@ if sys.platform.startswith("win"):
         include_dirs += [join(fftw3_info["include_dirs"][0], "openblas")]
         library_dirs += openblas_info["library_dirs"]
         libraries += openblas_info["libraries"]
-
-    # conda_location = numpy_include
-    # for _ in range(5):
-    #     conda_location = split(conda_location)[0]
-    # include_dirs += [join(conda_location, "Library", "include", "fftw")]
-    # include_dirs += [join(conda_location, "Library", "include", "openblas")]
-    # include_dirs += [join(conda_location, "Library", "include")]
-    # include_dirs += [join(conda_location, "include")]
-    # library_dirs += [join(conda_location, "Library", "lib")]
-    # libraries += ["fftw3", "openblas"]
-    # name = "openblas"
 
 
 def message(lib):
@@ -216,7 +203,6 @@ ext_modules = [
         language="c",
         libraries=libraries,
         library_dirs=library_dirs,
-        # data_files=data_files,
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
     )
@@ -268,7 +254,7 @@ setup(
     packages=find_packages("src"),
     package_dir={"": "src"},
     setup_requires=["numpy>=1.17"],
-    install_requires=["numpy>=1.17", "csdmpy>=0.2.1", "pydantic>=1.0", "monty>=2.0.4"],
+    install_requires=["numpy>=1.17", "csdmpy>=0.3", "pydantic>=1.0", "monty>=2.0.4"],
     extras_require=extras,
     ext_modules=ext_modules,
     include_package_data=True,
@@ -281,7 +267,7 @@ setup(
         "Intended Audience :: Education",
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: BSD License",
         "Programming Language :: C",
         "Programming Language :: Python :: 3",
