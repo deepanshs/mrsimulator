@@ -19,40 +19,50 @@ Welcome to the Mrsimulator documentation
             :target: https://pypi.python.org/pypi/mrsimulator
             :alt: PyPI version
 
+          .. image:: https://img.shields.io/pypi/pyversions/mrsimulator
+            :alt: PyPI - Python Version
+
       * - Build Status
-        - .. image:: https://travis-ci.org/DeepanshS/mrsimulator.svg?branch=master&logo=travis&color=white
-              :target: https://travis-ci.org/DeepanshS/mrsimulator
-              :alt: Build Status
+        - .. image:: https://img.shields.io/travis/deepanshs/mrsimulator?logo=travis
+            :target: https://travis-ci.org/DeepanshS/mrsimulator
+            :alt: Travis (.org)
+
+          .. image:: https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI%20(pip)?logo=GitHub
+            :target: https://github.com/DeepanshS/mrsimulator/actions
+            :alt: GitHub Workflow Status
 
           .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
-              :target: https://mrsimulator.readthedocs.io/en/stable/?badge=stable
-              :alt: Documentation Status
+            :target: https://mrsimulator.readthedocs.io/en/stable/
+            :alt: Documentation Status
 
       * - License
         - .. image:: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
-              :target: https://opensource.org/licenses/BSD-3-Clause
-              :alt: License
+            :target: https://opensource.org/licenses/BSD-3-Clause
+            :alt: License
 
       * - Metrics
-        - .. image:: https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18
-              :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python
-              :alt: Language grade: Python
+        - .. image:: https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm
+            :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python
+            :alt: Language grade: Python
 
           .. image:: https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg
-              :target: https://codecov.io/gh/DeepanshS/mrsimulator
+            :target: https://codecov.io/gh/DeepanshS/mrsimulator
 
-          .. image:: https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm&logoWidth=18
-              :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/
-              :alt: Total alerts
+          .. image:: https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm
+            :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/
+            :alt: Total alerts
 
       * - GitHub
-        - .. image:: https://img.shields.io/github/contributors/DeepanshS/mrsimulator.svg?style=flat&logo=github
-              :target: https://github.com/DeepanshS/mrsimulator/graphs/contributors
-              :alt: GitHub contributors
+        - .. image:: https://img.shields.io/github/contributors/DeepanshS/mrsimulator.svg?logo=github
+            :target: https://github.com/DeepanshS/mrsimulator/graphs/contributors
+            :alt: GitHub contributors
 
-          .. image:: https://img.shields.io/github/issues-raw/deepanshs/mrsimulator
-              :target: https://github.com/DeepanshS/mrsimulator/issues
-              :alt: GitHub issues
+          .. image:: https://img.shields.io/github/issues/deepanshs/mrsimulator?logo=github
+            :target: https://github.com/DeepanshS/mrsimulator/issues
+            :alt: GitHub issues
+
+.. .. image:: https://img.shields.io/github/commits-since/deepanshs/mrsimulator/v0.2.1?logo=github
+..   :alt: GitHub commits since tagged version
 
 .. .. image:: https://img.shields.io/pypi/dm/mrsimulator.svg?style=flat&logo=pypi
 ..     :target: https://img.shields.io/pypi/dm/mrsimulator
@@ -60,17 +70,17 @@ Welcome to the Mrsimulator documentation
 
 **About**
 
-`Mrsimulator` is a python package for computing fast real-time solid-state nuclear
+``mrsimulator`` is a python package for computing fast real-time solid-state nuclear
 magnetic resonance (NMR) line-shapes/spectrum. The library is optimized to compute bulk
 solid-state line-shapes, enabling the simulation of both crystalline and amorphous-like
-materials. The core of the `Mrsimulator` library is written in C, wrapped and made
+materials. The core of the ``mrsimulator`` library is written in C, wrapped and made
 available in python.
 
 ----
 
 **Features**
 
-At present, the `Mrsimulator` package offers the following
+At present, the ``mrsimulator`` package offers the following
 
 - **Real-time simulation** of one-dimensional solid-state NMR line-shapes. See our :ref:`benchmark` results.
 

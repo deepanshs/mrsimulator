@@ -17,22 +17,38 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class SpectralDimension(Parseable):
-    r"""Base SpectralDimension class defines the dimensions of the method.
+    r"""Base SpectralDimension class defines a spectroscopic dimension of the method.
 
-    Attributes:
-        count: An optional integer with the number of points, :math:`N`, along the
-            dimension. The default value is 1024.
-        spectral_width: An optional float with the spectral width, :math:`\Delta x`,
-            along the dimension in units of Hz. The default value is 25 kHz.
-        reference_offset: An `optional` float with the reference offset, :math:`x_0`
-                along the dimension in units of Hz. The default value is 0.
-        origin_offset: An `optional` float with the origin offset (Larmor frequency)
-                along the dimension in units of Hz. The default value is None.
-        label: An `optional` string label. The default is an empty string.
-        description: An `optional` description of the spectral dimension. The default
-            value is None.
-        events: A `required` list of Event object or an equivalent list of dict objects
-                describing the series of events along the spectroscopic dimension.
+    Attributes
+    ----------
+
+    count: int (optional).
+        The number of points, :math:`N`, along the spectroscopic dimension. The default
+        value is 1024.
+
+    spectral_width: float (optional).
+        The spectral width, :math:`\Delta x`, of the spectroscopic dimension in units
+        of Hz. The default value is 25000.
+
+    reference_offset: float (optional).
+        The reference offset, :math:`x_0`, of the spectroscopic dimension in units of
+        Hz. The default value is 0.
+
+    origin_offset: float (optional).
+        The origin offset (Larmor frequency) along the spectroscopic dimension in units
+        of Hz. The default value is None. When the value is None, the origin offset is
+        set to the Larmor frequency of the isotope from the
+        :attr:`~mrsimulator.Method.channels` attribute of the method.
+
+    label: str (optional).
+        The value is a label of the spectroscopic dimension. The default value is None.
+
+    description: str (optional).
+        The value is a description of the spectroscopic dimension. The default value is
+        None.
+
+    events: A list of :ref:`event_api` or equivalent dict objects (optional).
+        The value describes a series of events along the spectroscopic dimension.
     """
 
     count: int = Field(1024, gt=0)
@@ -64,7 +80,23 @@ class SpectralDimension(Parseable):
     class Config:
         validate_assignment = True
 
-    @property
+    @classmethod
+    def parse_dict_with_units(cls, py_dict: dict):
+        """
+        Parse the physical quantities of a SpectralDimension object from a
+        python dictionary object.
+
+        Args:
+            dict py_dict: Dict object
+        """
+        py_dict_copy = deepcopy(py_dict)
+        if "events" in py_dict_copy:
+            py_dict_copy["events"] = [
+                Event.parse_dict_with_units(e) for e in py_dict_copy["events"]
+            ]
+
+        return super().parse_dict_with_units(py_dict_copy)
+
     def coordinates_Hz(self) -> np.ndarray:
         r"""
         The grid coordinates along the dimension in units of Hz, evaluated as
@@ -80,7 +112,6 @@ class SpectralDimension(Parseable):
         increment = self.spectral_width / self.count
         return (np.arange(n) - Tk) * increment + self.reference_offset
 
-    @property
     def coordinates_ppm(self) -> np.ndarray:
         r"""
         The grid coordinates along the dimension as dimension frequency ratio
@@ -100,24 +131,7 @@ class SpectralDimension(Parseable):
             )
         else:
             denominator = (self.reference_offset + self.origin_offset) / 1e6
-            return self.coordinates_Hz / abs(denominator)
-
-    @classmethod
-    def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantities of a SpectralDimension object from a
-        python dictionary object.
-
-        Args:
-            dict py_dict: Dict object
-        """
-        py_dict_copy = deepcopy(py_dict)
-        if "events" in py_dict_copy:
-            py_dict_copy["events"] = [
-                Event.parse_dict_with_units(e) for e in py_dict_copy["events"]
-            ]
-
-        return super().parse_dict_with_units(py_dict_copy)
+            return self.coordinates_Hz() / abs(denominator)
 
     def to_csdm_dimension(self) -> cp.Dimension:
         """Return the spectral dimension as a CSDM dimension object."""

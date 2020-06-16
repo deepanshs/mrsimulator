@@ -5,9 +5,9 @@
 Getting started with ``mrsimulator``: The basics
 ================================================
 
-We have put together a set of guidelines for using the `Mrsimulator` package. We
+We have put together a set of guidelines for using the ``mrsimulator`` package. We
 encourage our users to follow these guidelines to promote consistency. In
-`mrsimulator`, the solid-state nuclear magnetic resonance (ssNMR) lineshape is
+``mrsimulator``, the solid-state nuclear magnetic resonance (ssNMR) lineshape is
 calculated through an instance of the :ref:`simulator_api` class.
 
 Import the :ref:`simulator_api` class using
@@ -148,7 +148,7 @@ Setting up the Method objects
 -----------------------------
 
 A :ref:`method_api` object is a collection of parameters that describe an NMR method.
-In Mrsimulator, all methods are described through five keywords -
+In ``mrsimulator``, all methods are described through five keywords -
 
 .. cssclass:: table-bordered
 
@@ -194,6 +194,7 @@ The following is a python dictionary representation of the BlochDecaySpectrum me
     ...         "count": 2048,
     ...         "spectral_width": "25 kHz",
     ...         "reference_offset": "-8 kHz",
+    ...         "label": r"$^{29}$Si resonances",
     ...     }]
     ... }
 
@@ -247,7 +248,7 @@ To simulate the line-shape, run the simulator with the
 
     >>> sim.run()
 
-.. note:: In Mrsimulator, all resonant frequencies are calculated assuming the
+.. note:: In ``mrsimulator``, all resonant frequencies are calculated assuming the
     weakly-coupled (Zeeman) basis for the spin-system.
 
 The simulator object, ``sim``, will process every method over all the spin-systems and

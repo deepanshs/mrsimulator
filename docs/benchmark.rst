@@ -4,12 +4,12 @@
 Benchmark
 =========
 
-One of the objectives in the design of the ``Mrsimulator`` library is to enable
+One of the objectives in the design of the ``mrsimulator`` library is to enable
 fast NMR line-shape simulation.
 For this, we have put a considerable effort into the optimization of the library.
-The following benchmark shows the performance of the `Mrsimulator` library in computing
-the solid-state NMR line-shapes of single-site spin systems for the shift and
-quadrupolar tensor interaction at static and MAS conditions.
+The following benchmark shows the performance of the library in computing the
+solid-state NMR line-shapes of single-site spin systems for the shift and
+quadrupolar tensor interactions at static and MAS conditions.
 
 Computational specs
 -------------------
