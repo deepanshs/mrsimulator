@@ -136,8 +136,8 @@ sphinx_gallery_conf = {
 # generate autosummary even if no references
 autosummary_generate = True
 
-# copybutton_prompt_text = [">>> ", "... "]
-# copybutton_only_copy_prompt_lines = True
+copybutton_prompt_text = ">>> |\\\\$ |\\[\\d*\\]: |\\.\\.\\.: |[.][.][.] "
+copybutton_prompt_is_regexp = True
 
 intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org", None),
@@ -412,4 +412,4 @@ epub_exclude_files = ["search.html", "_static/style.css"]
 
 
 def setup(app):
-    app.add_stylesheet("style.css")
+    app.add_css_file("style.css")
