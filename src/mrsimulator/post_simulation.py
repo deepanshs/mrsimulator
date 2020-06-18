@@ -4,7 +4,7 @@ from typing import List
 from typing import Optional
 
 import numpy as np
-from mrsimulator.util.parseable import Parseable
+from mrsimulator.utils.parseable import Parseable
 from numpy.fft import fft
 from numpy.fft import fftshift
 from numpy.fft import ifft

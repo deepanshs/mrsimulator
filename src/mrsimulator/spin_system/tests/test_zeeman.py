@@ -20,13 +20,13 @@ def test_zeeman_energy_states():
     H_Zeeman = [-0.5, 0.5]
     O_Zeeman = [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
 
-    for i, state in enumerate(iso_H.Zeeman_energy_states()):
+    for i, state in enumerate(iso_H.zeeman_energy_states()):
         assert state.tolist() == [H_Zeeman[i]]
 
-    for i, state in enumerate(iso_O.Zeeman_energy_states()):
+    for i, state in enumerate(iso_O.zeeman_energy_states()):
         assert state.tolist() == [O_Zeeman[i]]
 
-    for i, state in enumerate(iso_OH.Zeeman_energy_states()):
+    for i, state in enumerate(iso_OH.zeeman_energy_states()):
         assert tuple(state.tolist()) == list(product(O_Zeeman, H_Zeeman))[i]
 
 
