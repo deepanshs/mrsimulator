@@ -9,21 +9,17 @@ class ZeemanState:
 
     def __repr__(self):
         return self.__str__()
-        # lst = "".join(
-        #     [f"m{i}={self.__getattribute__(f'm{i}')}, " for i in range(self.n_sites)]
-        # )
-        # return f"ZeemanState({lst[:-2]})"
+
+    def _repr_html_(self):
+        lst = [int(2 * self.__getattribute__(f"m{i}")) for i in range(self.n_sites)]
+        string = " ".join([rf"m_{i}={{{item} \over 2}}" for i, item in enumerate(lst)])
+        return rf"$|{string}⟩$"
 
     def __str__(self):
-        lst = "".join(
-            [f"{self.__getattribute__(f'm{i}')}, " for i in range(self.n_sites)]
+        lst = ", ".join(
+            [f"{self.__getattribute__(f'm{i}')}" for i in range(self.n_sites)]
         )
-        return f"|{lst[:-2]}⟩"
-
-        # lst = "".join(
-        #     [f"m_{i}={self.__getattribute__(f'm_{i}')} " for i in range(self.n_sites)]
-        # )
-        # return f"{lst[:-1]}"
+        return f"|{lst}⟩"
 
     def tolist(self):
         return [self.__getattribute__(f"m{i}") for i in range(self.n_sites)]

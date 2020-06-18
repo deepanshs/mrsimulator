@@ -14,7 +14,7 @@ from pydantic import Field
 
 from .isotope import ISOTOPE_DATA
 from .site import Site
-from .Zeeman_state import ZeemanState
+from .zeeman_state import ZeemanState
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
