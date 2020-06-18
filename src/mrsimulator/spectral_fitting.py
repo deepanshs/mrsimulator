@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import numpy as np
+import mrsimulator.post_simulation as ps
 from mrsimulator import Simulator
+from mrsimulator.post_simulation import SignalProcessor
 
 try:
     from lmfit import Parameters
@@ -128,19 +129,89 @@ def _traverse_dictionaries(dictionary, parent="spin_systems"):
         for i, items in enumerate(dictionary):
             name_list += _traverse_dictionaries(items, _str_to_html(f"{parent}[{i}]"))
 
-    # else:
-    #     name_list += [_str_to_html(f"{parent}.{dictionary}")]
-
     return name_list
 
 
-def make_fitting_parameters(sim, exclude_key=None):
+def _post_sim_LMFIT_params(post_sim):
+    """
+    Creates an LMFIT Parameters object for SignalProcessor operations
+    involved in spectrum fitting
+
+    post_sim: SignalProcessor object
+
+    returns: Parameters object
+    """
+    temp_dict = {}
+    for item in post_sim.operations:
+        prepend = f"DEP_VAR_{item.dependent_variable}_"
+        for i, operation in enumerate(item.operations):
+            if isinstance(operation, ps.Gaussian):
+                identifier = prepend + f"opIndex_{i}_Gaussian"
+                arg = operation.sigma
+                temp_dict[f"{identifier}"] = arg
+            elif isinstance(operation, ps.Exponential):
+                identifier = prepend + f"opIndex_{i}_Exponential"
+                arg = operation.Lambda
+                temp_dict[f"{identifier}"] = arg
+            elif isinstance(operation, ps.Scale):
+                identifier = prepend + f"opIndex_{i}_Scale"
+                arg = operation.factor
+                temp_dict[f"{identifier}"] = arg
+
+    params = Parameters()
+    for key, val in temp_dict.items():
+        params.add(name=key, value=val)
+
+    return params
+
+
+def _update_post_sim_from_params(params, post_sim):
+    """
+    Updates SignalProcessor operation arguments from an
+    LMFIT Parameters object
+
+    params: LMFIT Parameters object
+    post_sim: SignalProcessor object
+
+    """
+    temp_dict = {}
+    arg_dict = {"Gaussian": "sigma", "Exponential": "Lambda", "Scale": "factor"}
+    for param in params:
+        # iterating through the parameter list looking for only DEP_VAR (ie post_sim params)
+        if "DEP_VAR" in param:
+            # splitting parameter name to obtain
+            # Dependent variable index (var)
+            # index of operation in the operation list (opIndex)
+            # arg value for the operation (val)
+            split_name = param.split("_")
+            var = split_name[split_name.index("VAR") + 1]
+            opIndex = split_name[split_name.index("opIndex") + 1]
+            val = params[param].value
+            # creating a dictionary of operations and arguments for each dependent variablle
+            if f"DepVar_{var}" not in temp_dict.keys():
+                temp_dict[f"DepVar_{var}"] = {}
+            temp_dict[f"DepVar_{var}"][f"{opIndex}_{split_name[-1]}"] = val
+
+    # iterate through list of operation lists
+    for item in post_sim.operations:
+        # iterating through dictionary with corresponding dependent variable index
+        for operation, val in temp_dict[f"DepVar_{item.dependent_variable}"].items():
+            # creating assignment strings to create the correct address for updating each operation
+            split = operation.split("_")
+            dep_var_operation_list = f"post_sim.operations[{item.dependent_variable}]"
+            operation_val_update = f".operations[{split[0]}].{arg_dict[split[-1]]}"
+            assignment = f"={val}"
+            exec(dep_var_operation_list + operation_val_update + assignment)
+
+
+def make_fitting_parameters(sim, post_sim=None, exclude_key=None):
     """
     Parses through the fitting parameter list to create LMFIT parameters used for
     fitting.
 
     Args:
         sim: a Simulator object.
+        post_sim: a SignalProcessor object
 
     Returns:
         LMFIT Parameters object.
@@ -155,69 +226,68 @@ def make_fitting_parameters(sim, exclude_key=None):
 
     if not isinstance(sim, Simulator):
         raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
+    if not isinstance(post_sim, SignalProcessor) or post_sim is None:
+        raise ValueError(
+            f"Expecting a `SignalProcessor` object, found {type(post_sim).__name__}."
+        )
 
-    params = Parameters()
-    temp_list = _traverse_dictionaries(_list_of_dictionaries(sim.spin_systems))
-    # for i in range(len(sim.methods)):
-    # if sim.methods[i].post_simulation is not None:
-    #     parent = f"methods[{i}].post_simulation"
+    if isinstance(sim, Simulator):
+        params = Parameters()
+        temp_list = _traverse_dictionaries(_list_of_dictionaries(sim.spin_systems))
 
-    #     temp_list += [_str_to_html(parent + ".scale")]
-    #     # temp_list += [
-    #     #     item
-    #     #     for item in _traverse_dictionaries(
-    #     #         sim.methods[0].post_simulation, parent=parent
-    #     #     )
-    #     #     if "scale" in item
-    #     # ]
-    #     if sim.methods[i].post_simulation.apodization is not None:
-    #         for j in range(len(sim.methods[i].post_simulation.apodization)):
-    #             temp_list.append(_str_to_html(parent + f".apodization[{j}].args"))
+        length = len(sim.spin_systems)
+        abundance = 0
+        last_abund = f"{length - 1}_abundance"
+        expression = "100"
+        for i in range(length - 1):
+            expression += f"-ISO_{i}_abundance"
+        for i in range(length):
+            abundance += eval("sim." + _html_to_string(f"spin_systems[{i}].abundance"))
 
-    length = len(sim.spin_systems)
-    abundance = 0
-    last_abund = f"{length - 1}_abundance"
-    expression = "100"
-    for i in range(length - 1):
-        expression += f"-ISO_{i}_abundance"
-    for i in range(length):
-        abundance += eval("sim." + _html_to_string(f"spin_systems[{i}].abundance"))
-
-    for items in temp_list:
-        if "_eta" in items or "abundance" in items and last_abund not in items:
-            if "_eta" in items:
+        for items in temp_list:
+            if "_eta" in items or "abundance" in items and last_abund not in items:
+                if "_eta" in items:
+                    params.add(
+                        name=items,
+                        value=eval("sim." + _html_to_string(items)),
+                        min=0,
+                        max=1,
+                    )
+                if "abundance" in items:
+                    params.add(
+                        name=items,
+                        value=eval("sim." + _html_to_string(items)) / abundance * 100,
+                        min=0,
+                        max=100,
+                    )
+            elif last_abund in items:
                 params.add(
                     name=items,
                     value=eval("sim." + _html_to_string(items)),
                     min=0,
-                    max=1,
-                )
-            if "abundance" in items:
-                params.add(
-                    name=items,
-                    value=eval("sim." + _html_to_string(items)) / abundance * 100,
-                    min=0,
                     max=100,
+                    expr=expression,
                 )
-        elif last_abund in items:
-            params.add(
-                name=items,
-                value=eval("sim." + _html_to_string(items)),
-                min=0,
-                max=100,
-                expr=expression,
-            )
-        else:
-            value = eval("sim." + _html_to_string(items))
-            if type(value) == list:
-                params.add(name=items, value=value[0])
             else:
-                params.add(name=items, value=value)
+                value = eval("sim." + _html_to_string(items))
+                if type(value) == list:
+                    params.add(name=items, value=value[0])
+                else:
+                    params.add(name=items, value=value)
+    else:
+        params = Parameters()
+        temp_list = _traverse_dictionaries(_list_of_dictionaries(sim))
+
+    if isinstance(post_sim, SignalProcessor):
+        temp_params = _post_sim_LMFIT_params(post_sim)
+        for item in temp_params:
+            params.add(name=item, value=temp_params[item].value)
+        # params.add_many(temp_params)
 
     return params
 
 
-def min_function(params, sim, apodization_function=None):
+def min_function(params, sim, post_sim=None):
     """
     The simulation routine to establish how the parameters will update the simulation.
 
@@ -237,31 +307,44 @@ def min_function(params, sim, apodization_function=None):
         raise ValueError(
             f"Expecting a `Parameters` object, found {type(params).__name__}."
         )
-    # if not isinstance(data, cp.CSDM):
-    #     raise ValueError(f"Expecting a `CSDM` object, found {type(data).__name__}.")
+    if not isinstance(post_sim, SignalProcessor) or post_sim is None:
+        raise ValueError(
+            f"Expecting a `SignalProcessor` object, found {type(post_sim).__name__}."
+        )
+
     if not isinstance(sim, Simulator):
         raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
 
-    # intensity_data = data.dependent_variables[0].components[0].real
     values = params.valuesdict()
     for items in values:
-        if "args" not in items:
+        if "DEP_VAR" not in items:
             nameString = "sim." + _html_to_string(items)
             executable = f"{nameString} = {values[items]}"
             exec(executable)
-        else:
-            nameString = "sim." + _html_to_string(items)
-            executable = f"{nameString} = [{values[items]}]"
-            exec(executable)
+        elif "DEP_VAR" in items and post_sim is not None:
+            _update_post_sim_from_params(params, post_sim)
 
     sim.run()
-    residual = np.asarray([])
+    post_sim.data = sim.methods[0].simulation
+    post_sim.apply_operations()
+    # residual = np.asarray([])
 
-    for i, method in enumerate(sim.methods):
-        y_factored = method.apodize().real
-        residual = np.append(
-            residual,
-            method.experiment.dependent_variables[0].components[0].real - y_factored,
-        )
+    if sim.config.decompose_spectrum == "spin_system":
+        for decomposed_datum in post_sim.data.dependent_variables:
+            datum = [sum(i) for i in zip(datum, decomposed_datum)]
+    else:
+        datum = post_sim.data.dependent_variables[0].components[0]
 
-    return residual
+    return (
+        sim.methods[0].experiment.dependent_variables[0].components[0].real - datum.real
+    )
+
+    # MULTIPLE EXPERIMENTS
+    # for i, method in enumerate(sim.methods):
+    #     y_factored = method.apodize().real
+    #     residual = np.append(
+    #         residual,
+    #         method.experiment.dependent_variables[0].components[0].real - y_factored,
+    #     )
+
+    # return residual

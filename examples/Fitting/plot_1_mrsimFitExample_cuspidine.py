@@ -6,7 +6,7 @@ Fitting Cusipidine.
 .. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 """
 # sphinx_gallery_thumbnail_number = 3
-#%%
+# %%
 # Often, after obtaining an NMR measurement we must fit tensors to our data so we can
 # obtain the tensor parameters. In this example, we will illustrate the use of the *mrsimulator*
 # method to simulate the experimental spectrum and fit the simulation to the data allowing us to
@@ -20,13 +20,14 @@ Fitting Cusipidine.
 # The :math:`^{29}\text{Si}` tensor parameters were obtained from Hansen `et. al.` [#f1]_
 #
 # We will begin by importing *matplotlib* and establishing figure size.
-import matplotlib.pylab as pylab
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-params = {"figure.figsize": (4.5, 3), "font.size": 9}
-pylab.rcParams.update(params)
+font = {"weight": "light", "size": 9}
+mpl.rc("font", **font)
+mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 
-#%%
+# %%
 # Next we will import `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ and loading the data file.
 import csdmpy as cp
 
@@ -34,63 +35,104 @@ filename = "https://osu.box.com/shared/static/a45xj96iekdjrs2beri0nkrow4vjewdh.c
 synthetic_experiment = cp.load(filename)
 synthetic_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
-x1, y1 = synthetic_experiment.to_list()
-
-plt.plot(x1, y1)
-plt.xlabel("$^{29}$Si frequency / ppm")
-plt.xlim(x1.value.max(), x1.value.min())
-plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+ax = plt.subplot(projection="csdm")
+ax.plot(synthetic_experiment, color="black", linewidth=1)
+ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
 
-#%%
+# %%
 # In order to to fit a simulation to the data we will need to establish a ``Simulator`` object. We will
 # use approximate initial parameters to generate our simulation:
 
-#%%
+from mrsimulator import SpinSystem
+from mrsimulator import Simulator
 
+# %%
+# **Step 1** Create the site.
 
-from mrsimulator import Simulator, SpinSystem, Site
+site = {
+    "isotope": "29Si",
+    "isotropic_chemical_shift": "-80.0 ppm",
+    "shielding_symmetric": {"zeta": "-60 ppm", "eta": 0.6},
+}
+
+# %%
+# **Step 2** Create the spin system for the site.
+
+spin_system = {
+    "name": "Si Site",
+    "description": "A 29Si site in cuspidine",
+    "sites": [site],  # from the above code
+    "abundance": "100%",
+}
+system_object = SpinSystem.parse_dict_with_units(spin_system)
+
+# %%
+# **Step 3** Create the Bloch Decay method.
+
 from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.post_simulation import PostSimulator
-
-S29 = Site(
-    isotope="29Si",
-    isotropic_chemical_shift=-80.0,
-    shielding_symmetric={"zeta": -60, "eta": 0.6},
-)
 
 method = BlochDecaySpectrum(
     channels=["29Si"],
-    magnetic_flux_density=7.1,
-    rotor_frequency=780,
+    magnetic_flux_density=7.1,  # in T
+    rotor_frequency=780,  # in Hz
     spectral_dimensions=[
-        {"count": 2046, "spectral_width": 25000, "reference_offset": -5000}
+        {
+            "count": 2048,
+            "spectral_width": 25000,  # in Hz
+            "reference_offset": -5000,  # in Hz
+        }
     ],
 )
 
-PS = PostSimulator(
-    scale=1, apodization=[{"args": [200], "function": "Lorentzian", "dimension": 0}]
-)
+# %%
+# The above method is set up to record the :math:`^{29}\text{Si}` resonances at the
+# magic angle, spinning at 780 Hz and 7.1 T external magnetic flux density.
+# The resonances are recorded over 25 kHz spectral width ofset by -5000 Hz and
+# using 2046 points.
 
+# %%
+# **Step 4** Create the Simulator object and add the method and spin-system objects.
 
 sim = Simulator()
-sim.spin_systems += [SpinSystem(name="Si29", sites=[S29], abundance=100)]
+sim.spin_systems += [system_object]
 sim.methods += [method]
 
 sim.methods[0].experiment = synthetic_experiment
-sim.methods[0].post_simulation = PS
+
+# %%
+# **Step 5** simulate the spectrum.
 
 sim.run()
-sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
-x, y = sim.methods[0].simulation.to_list()
-y = sim.methods[0].apodize().real
+# %%
+# **Step 6** Create a SignalProcessor
 
-plt.plot(x, y)
-plt.xlabel("$^{29}$Si frequency / ppm")
-plt.xlim(x.value.max(), x.value.min())
-plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+import mrsimulator.post_simulation as ps
+from mrsimulator.post_simulation import SignalProcessor
+
+op_list = {
+    "dependent_variable": 0,
+    "operations": [
+        ps.IFFT(dimension=0),
+        ps.Exponential(Lambda=200, dimension=0),
+        ps.FFT(dimension=0),
+        ps.Scale(factor=1),
+    ],
+}
+
+post_sim = SignalProcessor(data=sim.methods[0].simulation, operations=[op_list])
+
+
+# %%
+# ** Step 7** Process and plot the spectrum.
+
+post_sim.apply_operations()
+
+ax = plt.subplot(projection="csdm")
+ax.plot(post_sim.data, color="black", linewidth=1)
+ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
 
@@ -105,15 +147,15 @@ plt.show()
 #%%
 
 
-from lmfit import Minimizer, Parameters
+from lmfit import Minimizer, Parameters, fit_report
 
 params = Parameters()
 
 params.add(name="iso", value=-80)
 params.add(name="eta", value=0.6, min=0, max=1)
 params.add(name="zeta", value=-60)
-params.add(name="sigma", value=200)
-params.add(name="scale", value=1)
+params.add(name="Lambda", value=200)
+params.add(name="factor", value=1)
 params
 
 #%%
@@ -132,31 +174,33 @@ def test_function(params, data, sim):
     site.isotropic_chemical_shift = values["iso"]
     site.shielding_symmetric.eta = values["eta"]
     site.shielding_symmetric.zeta = values["zeta"]
-    sim.methods[0].post_simulation.scale = values["scale"]
-    sim.methods[0].post_simulation.apodization[0].args = [values["sigma"]]
 
     # here we run the simulation
     sim.run()
+
+    post_sim = SignalProcessor(data=sim.methods[0].simulation, operations=[op_list])
+    post_sim.operations[0].operations[3].factor = values["factor"]
+    post_sim.operations[0].operations[1].Lambda = values["Lambda"]
     # here we apodize the signal to simulate line broadening
-    y = sim.methods[0].apodize().real
+    post_sim.apply_operations()
 
-    y_factored = y * values["scale"]
-
-    return intensity - y_factored
+    return intensity - post_sim.data.dependent_variables[0].components[0].real
 
 
 #%%
 # With the synthetic data, simulation, and the parameters we are ready to perform the fit. To fit, we use
 # the *LMFIT* `Minimizer <https://lmfit.github.io/lmfit-py/fitting.html>`_ class.
+# One consideration for the case of magic angle spinning fitting is we must use a discrete minimization method
+# such as 'powell' as the chemical shift varies discretely
 
-#%%
+# %% **Step 8** Perform minimization.
 
 minner = Minimizer(test_function, params, fcn_args=(synthetic_experiment, sim))
 result = minner.minimize(method="powell")
-result
+print(fit_report(result))
 
 #%%
-# After the fit, we can plot the new simulated spectrum.
+# **Step 9** Plot the fitted spectrum.
 
 
 plt.figsize = (4, 3)
@@ -166,7 +210,6 @@ plt.plot(*synthetic_experiment.to_list(), label="Spectrum")
 plt.plot(*(synthetic_experiment - residual).to_list(), "r", alpha=0.5, label="Fit")
 plt.plot(*residual.to_list(), alpha=0.5, label="Residual")
 
-plt.xlim(x1.value.max(), x1.value.min())
 plt.xlabel("Frequency / Hz")
 plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()

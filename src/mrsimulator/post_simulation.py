@@ -32,9 +32,6 @@ class abstractOperation(Parseable):
             my_dict_copy.pop("function")
         return super().parse_dict_with_units(my_dict_copy)
 
-    def operate(self, data):
-        return data
-
 
 class Scale(abstractOperation):
     """
@@ -48,7 +45,8 @@ class Scale(abstractOperation):
         """
         Applies the operation for which the class is named for.
 
-        $f(\vec(x)) = scale*\vec(x)$
+        .. math::
+            f(\vec(x)) = scale*\vec(x)
 
         data: CSDM object
         dep_var: int. The index of the dependent variable to apply operation to
@@ -62,7 +60,8 @@ class Gaussian(abstractOperation):
     Class for applying a Gaussian function
     to a dependent variable of simulation data
 
-    $f(\vec{x}) = \vec{x}*e^{-2*(\vec{x} * \sigma * \pi)^2}$
+    .. math::
+        f(\vec{x}) = \vec{x}*e^{-2*(\vec{x} * \sigma * \pi)^2}
 
     dimension: int. Data dimension to apply the function along
     sigma: float. Standard deviation of Gaussian function
@@ -96,7 +95,8 @@ class Exponential(abstractOperation):
     Class for applying an exponential
     Lorentzian function to a dependent variable of simulation data
 
-    $f(\vec{x}) = \vec{x}*e^{-\Lambda * \abs{\vec{x}} * \pi)}$
+    .. math::
+        f(\vec{x}) = \vec{x}*e^{-\Lambda * \abs{\vec{x}} * \pi)}
 
     dimension: int. Data dimension to apply the function along
     Lambda: float. Width parameter

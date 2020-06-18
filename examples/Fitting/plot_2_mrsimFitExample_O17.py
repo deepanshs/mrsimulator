@@ -19,11 +19,12 @@ Fitting Sodium Silicate.
 # We use the :math:`^{17}\text{O}` tensor information from Grandinetti `et. al.` [#f5]_
 #
 # We will begin by importing *matplotlib* and establishing figure size.
-import matplotlib.pylab as pylab
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-params = {"figure.figsize": (4.5, 3), "font.size": 9}
-pylab.rcParams.update(params)
+font = {"weight": "light", "size": 9}
+mpl.rc("font", **font)
+mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 
 #%%
 # Next we will import `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ and loading the data file.
@@ -34,12 +35,9 @@ filename = "https://osu.box.com/shared/static/kfgt0jxgy93srsye9pofdnoha6qy58qf.c
 oxygen_experiment = cp.load(filename).real
 oxygen_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
-x1, y1 = oxygen_experiment.to_list()
-
-plt.plot(x1, y1)
-plt.xlabel("$^{17}$O frequency / ppm")
-plt.xlim(x1.value.max(), x1.value.min())
-plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+ax = plt.subplot(projection="csdm")
+ax.plot(oxygen_experiment, color="black", linewidth=1)
+ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
 
@@ -49,24 +47,36 @@ plt.show()
 # spectrum. We will need to import the necessary libraries for the *mrsimulator*
 # methods. We will then create ``SpinSystem`` objects.
 
-#%%
 
-from mrsimulator import Simulator, SpinSystem, Site
+from mrsimulator import SpinSystem
+from mrsimulator import Simulator
+
+# %%
+# **Step 1** Create the site.
+
+O17_1 = {
+    "isotope": "17O",
+    "isotropic_chemical_shift": "60.0 ppm",
+    "quadrupolar": {"Cq": "4200000 Hz", "eta": 0.5},
+}
+
+O17_2 = {
+    "isotope": "17O",
+    "isotropic_chemical_shift": "40.0 ppm",
+    "quadrupolar": {"Cq": "2400000 Hz", "eta": 0.5},
+}
+
+# %%
+# **Step 2** Create the spin system for the site.
+
+spin_system = {"sites": [O17_1, O17_2], "abundance": "100%"}  # from the above code
+
+system_object = SpinSystem.parse_dict_with_units(spin_system)
+
+# %%
+# **Step 3** Create the Bloch Decay method.
+
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-from mrsimulator.post_simulation import PostSimulator
-
-sim = Simulator()
-O17_1 = Site(
-    isotope="17O",
-    isotropic_chemical_shift=60.0,
-    quadrupolar={"Cq": 4200000, "eta": 0.5},
-)
-O17_2 = Site(
-    isotope="17O", isotropic_chemical_shift=40, quadrupolar={"Cq": 2400000, "eta": 0.18}
-)
-
-spin_systems = [SpinSystem(sites=[site]) for site in [O17_1, O17_2]]
-
 
 count = oxygen_experiment.dimensions[0].count
 increment = oxygen_experiment.dimensions[0].increment.to("Hz").value
@@ -74,42 +84,62 @@ offset = oxygen_experiment.dimensions[0].coordinates_offset.to("Hz").value
 
 method = BlochDecayCentralTransitionSpectrum(
     channels=["17O"],
-    magnetic_flux_density=9.4,
-    rotor_frequency=14000,
+    magnetic_flux_density=9.4,  # in T
+    rotor_frequency=14000,  # in Hz
     spectral_dimensions=[
         {
             "count": count,
-            "spectral_width": count * increment,
-            "reference_offset": offset,
+            "spectral_width": count * increment,  # in Hz
+            "reference_offset": offset,  # in Hz
         }
     ],
 )
 
+# %%
+# **Step 4** Create the Simulator object and add the method and spin-system objects.
 
-PS = PostSimulator(
-    scale=oxygen_experiment.dependent_variables[0].components[0].max().real / 4,
-    apodization=[{"args": [100], "function": "Lorentzian", "dimension": 0}],
-)
-
-sim.spin_systems += spin_systems
+sim = Simulator()
+sim.spin_systems += [system_object]
 sim.methods += [method]
-sim.methods[0].post_simulation = PS
+
 sim.methods[0].experiment = oxygen_experiment
 
-# To avoid querying at every iteration we will save the relevant transition pathways
-for iso in spin_systems:
+# %%
+# **Step 5** simulate the spectrum.
+
+for iso in sim.spin_systems:
+    # To avoid querying at every iteration we will save the relevant transition pathways
     iso.transition_pathways = method.get_transition_pathways(iso).tolist()
 sim.run()
 
-sim.methods[0].simulation.dimensions[0].to("ppm", "nmr_frequency_ratio")
+# %%
+# **Step 6** Create a SignalProcessor
 
-x, y = sim.methods[0].simulation.to_list()
-y = sim.methods[0].apodize().real
+import mrsimulator.post_simulation as ps
+from mrsimulator.post_simulation import SignalProcessor
 
-plt.plot(x, y)
-plt.xlabel("$^{17}$O frequency / ppm")
-plt.xlim(x.value.max(), x.value.min())
-plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
+factor = oxygen_experiment.dependent_variables[0].components[0].max().real / 4
+
+op_list = {
+    "dependent_variable": 0,
+    "operations": [
+        ps.IFFT(dimension=0),
+        ps.Exponential(Lambda=100, dimension=0),
+        ps.FFT(dimension=0),
+        ps.Scale(factor=factor),
+    ],
+}
+
+post_sim = SignalProcessor(data=sim.methods[0].simulation, operations=[op_list])
+
+# %%
+# ** Step 7** Process and plot the spectrum.
+
+post_sim.apply_operations()
+
+ax = plt.subplot(projection="csdm")
+ax.plot(post_sim.data, color="black", linewidth=1)
+ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
 
@@ -121,40 +151,26 @@ plt.show()
 # attributes may vary. To simplify the parameter list creation we will use the
 # :func:`~mrsimulator.spectral_fitting.make_fitting_parameters`
 
-#%%
+# %%
+# **Step 8** Create a list of parameters to vary during fitting.
 
 
 from mrsimulator.spectral_fitting import make_fitting_parameters
 
-params = make_fitting_parameters(sim)
-params
-
-#%%
-# With an experimental spectrum, a simulaton, and a list of parameters we are now
-# ready to perform a fit. This fit will be performed using the *LMFIT* library as
-# well as our error function, :func:`~mrsimulator.spectral_fitting.min_function`. The arguments
-# for ``min_function`` are the intensities from the experimental data and the simulation
-# CSDM object. Reporting the results of the fit will give us our tensor parameters.
-#
-# One thing to note is that the names of our parameters must correspond to their addresses within the simulation object
-# in order to update the simulation during the fit. The *LMFIT* library does not allow for the use of special characters
-# such as "\[", "\]", or "." so our current workaround is converting the special characters to their corresponding HTML
-# character code numbers and converting back to the special character when updating the simulation.
-
-
-#%%
+params = make_fitting_parameters(sim, post_sim)
+params.pretty_print()
+# %%
+# **Step 9** Perform minimization.
 
 from mrsimulator.spectral_fitting import min_function
-from lmfit import Minimizer
+from lmfit import Minimizer, report_fit
 
-minner = Minimizer(min_function, params, fcn_args=(sim, "Lorentzian"))
+minner = Minimizer(min_function, params, fcn_args=(sim, post_sim))
 result = minner.minimize()
-result
+report_fit(result)
 
-#%%
-# Next, we can compare the fit to the experimental data:
-
-#%%
+# %%
+# **Step 10** Plot the fitted spectrum.
 
 
 plt.figsize = (4, 3)
@@ -164,7 +180,6 @@ plt.plot(*oxygen_experiment.to_list(), label="Spectrum")
 plt.plot(*(oxygen_experiment - residual).to_list(), "r", alpha=0.5, label="Fit")
 plt.plot(*residual.to_list(), alpha=0.5, label="Residual")
 
-plt.xlim(x.value.max(), x.value.min())
 plt.xlabel("$^{17}$O frequency / ppm")
 plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()
