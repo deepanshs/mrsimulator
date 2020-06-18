@@ -472,3 +472,8 @@ tr td {
 .ethical-fixedfooter {
   width: 100%;
 }
+
+.ethical-fixedfooter .ethical-close {
+  right: 0;
+  left: 5px;
+}

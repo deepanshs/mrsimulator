@@ -158,13 +158,6 @@ setup(
     url="https://github.com/DeepanshS/MRsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    # setup_requires=["numpy>=1.17.0"],
-    # install_requires=[
-    #     # "numpy>=1.17.0",
-    #     "csdmpy>0.2.1",
-    #     "pydantic>=1.0",
-    #     "monty>=2.0.4",
-    # ],
     extras_require=extras,
     ext_modules=ext_modules,
     include_package_data=True,

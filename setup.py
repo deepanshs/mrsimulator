@@ -239,7 +239,7 @@ ext_modules += [
 if USE_CYTHON:
     ext_modules = cythonize(ext_modules, language_level=3)
 
-extras = {"lmfit": ["lmfit>=1.0.0"]}
+extras = {"lmfit": ["lmfit>=1.0.0"], "matplotlib": ["matplotlib>=3.0"]}
 
 description = "A python toolbox for simulating fast real-time solid-state NMR spectra."
 setup(
@@ -247,6 +247,7 @@ setup(
     version=version,
     description=description,
     long_description=open(join(module_dir, "README.md")).read(),
+    long_description_content_type="text/markdown",
     author="Deepansh J. Srivastava",
     author_email="deepansh2012@gmail.com",
     python_requires=">=3.6",
@@ -254,7 +255,13 @@ setup(
     packages=find_packages("src"),
     package_dir={"": "src"},
     setup_requires=["numpy>=1.17"],
-    install_requires=["numpy>=1.17", "csdmpy>=0.3", "pydantic>=1.0", "monty>=2.0.4"],
+    install_requires=[
+        "numpy>=1.17",
+        "csdmpy>=0.3",
+        "pydantic>=1.0",
+        "monty>=2.0.4",
+        "typing-extensions>=3.7",
+    ],
     extras_require=extras,
     ext_modules=ext_modules,
     include_package_data=True,

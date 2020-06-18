@@ -71,10 +71,6 @@ extensions = [
 plot_html_show_source_link = False
 plot_rcparams = {
     "figure.figsize": [6, 3],
-    # "font.size": 12,
-    # "font.weight": "light",
-    # "font.family": "sans-serif",
-    # "font.sans-serif": "Helvetica",
 }
 
 # ---------------------------------------------------------------------------- #
@@ -140,8 +136,8 @@ sphinx_gallery_conf = {
 # generate autosummary even if no references
 autosummary_generate = True
 
-# copybutton_prompt_text = [">>> ", "... "]
-# copybutton_only_copy_prompt_lines = True
+copybutton_prompt_text = ">>> |\\\\$ |\\[\\d*\\]: |\\.\\.\\.: |[.][.][.] "
+copybutton_prompt_is_regexp = True
 
 intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org", None),
@@ -277,13 +273,6 @@ html_theme_options = {
     "bootstrap_version": "3",
     # Show "theme preview" button in header navbar. Defaults to false.
     "theme_preview": False,
-    # Set the Size of Heading text. Defaults to None
-    # "h1_size": "3.0em",
-    # "h2_size": "1.8em",
-    # "h3_size": "1.6em",
-    # "h4_size": "1.4em",
-    # "h5_size": "1.25em",
-    # "h6_size": "1.1em",
 }
 
 html_style = "style.css"
@@ -423,4 +412,4 @@ epub_exclude_files = ["search.html", "_static/style.css"]
 
 
 def setup(app):
-    app.add_stylesheet("style.css")
+    app.add_css_file("style.css")

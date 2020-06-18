@@ -11,8 +11,6 @@ Amorphous-like materials (quadrupolar)
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-font = {"weight": "light", "size": 9}
-mpl.rc("font", **font)
 mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 
 # %%
