@@ -2,7 +2,7 @@
   "Bloch_decay": {
     "name": "Bloch Decay Spectrum",
     "number_of_channels": 1,
-    "description": "A Bloch decay Spectrum.",
+    "description": "Method for simulating Bloch decay spectrum.",
     "global_event_attributes": {},
     "spectral_dimensions": [{
       "events": [{
@@ -24,7 +24,7 @@
   "Bloch_decay_central_transition": {
     "name": "Bloch Decay Central Transition Spectrum",
     "number_of_channels": 1,
-    "description": "A central transition selective Bloch decay Spectrum.",
+    "description": "Method for simulating central transition selective Bloch decay spectrum.",
     "global_event_attributes": {},
     "spectral_dimensions": [{
       "events": [{
