@@ -2,56 +2,109 @@
 
 .. _load_spin_systems:
 
+``mrsimulator`` I/O
+===================
 
-Exporting/Importing spin systems
-================================
+Simulator object
+----------------
 
-**Exporting spin systems to a JSON file**
+**Export simulator object to a JSON file**
 
-The spin systems from the :ref:`simulator_api` class object may be serialized to a JSON
-compliant file-format using the :meth:`~mrsimulator.Simulator.export_spin_systems`
-method with the following syntax,
+To serialize a :ref:`simulator_api` object to a JSON-compliant file, use the
+:meth:`~mrsimulator.Simulator.save` method of the object.
 
 .. doctest::
 
-    >>> sim_coesite.export_spin_systems('coesite_sample.json')
+    >>> sim_coesite.save('sample_with_units.json')
+
+where ``sim_coesite`` is a :ref:`simulator_api` object.
+By default, the attribute values are serialized as physical quantities, represented
+as a string with a value and a unit. You may also serialize the file without the
+units, in which case, follow
+
+.. doctest::
+
+    >>> sim_coesite.save('sample_no_units.json', with_units=False)
+
+
+**Load simulator object from a JSON file**
+
+To load a JSON-compliant :ref:`simulator_api` serialized file, use the
+:meth:`~mrsimulator.Simulator.load` method of the class. By default, the load method
+parses the file for units.
+
+.. doctest::
+
+    >>> from mrsimulator import Simulator
+    >>> sim_load_with_units = Simulator.load('sample_with_units.json')
+    >>> sim_coesite == sim_load_with_units
+    True
+
+If the file is serialized without the units, you may load the file as follows
+
+.. doctest::
+
+    >>> sim_load_no_units = Simulator.load('sample_no_units.json', parse_units=False)
+    >>> sim_coesite == sim_load_no_units
+    True
 
 .. testsetup::
     >>> import os
-    >>> os.remove('coesite_sample.json')
+    >>> os.remove('sample_with_units.json')
+    >>> os.remove('sample_no_units.json')
 
-**Importing spin systems from a JSON file**
+
+Spin systems objects from Simulator class
+-----------------------------------------
+
+**Export spin systems to a JSON file**
+
+You may also serialize the spin system objects from the :ref:`simulator_api` object to
+a JSON-compliant file using the :meth:`~mrsimulator.Simulator.export_spin_systems`
+method as
+
+.. doctest::
+
+    >>> sim_coesite.export_spin_systems('coesite_spin_systems.json')
+
+where ``sim_coesite`` is a :ref:`simulator_api` object.
+
+**Import spin systems from a JSON file**
 
 Similarly, a list of spin systems can be directly imported from a JSON serialized
 file. To import the spin systems, use the
 :meth:`~mrsimulator.Simulator.load_spin_systems` method of the :ref:`simulator_api`
-class with the syntax
+class as
 
-.. code-block:: python
+.. doctest::
 
-    sim.load_spin_systems(filename)
+    >>> sim.load_spin_systems('coesite_spin_systems.json')
 
-Here is an example.
+.. testsetup::
+    >>> import os
+    >>> os.remove('coesite_spin_systems.json')
+
+**Importing spin-systems from URL**
 
 .. testsetup::
     >>> from mrsimulator import Simulator
     >>> sim = Simulator()
-    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/spin_systems_v0.3.json'
+    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/spin_systems.json'
     >>> sim.load_spin_systems(filename)
-    Downloading '/DeepanshS/mrsimulator-test/master/spin_systems_v0.3.json'
-    from 'raw.githubusercontent.com' to file 'spin_systems_v0.3.json'.
-    [████████████████████████████████████]
+    Downloading '/DeepanshS/mrsimulator-test/master/spin_systems.json'
+    from 'raw.githubusercontent.com' to file 'spin_systems.json'.
+    [███████████████████████]
 
 .. doctest::
 
     >>> from mrsimulator import Simulator # doctest:+SKIP
     >>> sim = Simulator() # doctest:+SKIP
 
-    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/spin_systems_v0.3.json'
+    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/spin_systems.json'
 
     >>> sim.load_spin_systems(filename) # doctest:+SKIP
-    Downloading '/DeepanshS/mrsimulator-test/master/spin_systems_v0.3.json'
-    from 'raw.githubusercontent.com' to file 'spin_systems_v0.3.json'.
+    Downloading '/DeepanshS/mrsimulator-test/master/spin_systems.json'
+    from 'raw.githubusercontent.com' to file 'spin_systems.json'.
     [████████████████████████████████████]
 
     >>> # The seven spin systems from the file are added to the sim object.
@@ -60,4 +113,4 @@ Here is an example.
 
 .. testsetup::
     >>> import os
-    >>> os.remove('spin_systems_v0.3.json')
+    >>> os.remove('spin_systems.json')
