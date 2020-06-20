@@ -89,9 +89,9 @@ class as
 .. testsetup::
     >>> from mrsimulator import Simulator
     >>> sim = Simulator()
-    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/spin_systems.json'
+    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/master/spin_systems.json'
     >>> sim.load_spin_systems(filename)
-    Downloading '/DeepanshS/mrsimulator-test/master/spin_systems.json'
+    Downloading '/DeepanshS/mrsimulator-examples/master/spin_systems.json'
     from 'raw.githubusercontent.com' to file 'spin_systems.json'.
     [███████████████████████]
 
@@ -100,12 +100,12 @@ class as
     >>> from mrsimulator import Simulator # doctest:+SKIP
     >>> sim = Simulator() # doctest:+SKIP
 
-    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/spin_systems.json'
+    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/master/spin_systems.json'
 
     >>> sim.load_spin_systems(filename) # doctest:+SKIP
-    Downloading '/DeepanshS/mrsimulator-test/master/spin_systems.json'
+    Downloading '/DeepanshS/mrsimulator-examples/master/spin_systems.json'
     from 'raw.githubusercontent.com' to file 'spin_systems.json'.
-    [████████████████████████████████████]
+    [███████████████████████]
 
     >>> # The seven spin systems from the file are added to the sim object.
     >>> len(sim.spin_systems)
