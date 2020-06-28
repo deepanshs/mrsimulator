@@ -151,7 +151,7 @@ Our current objectives for the future are the following
     understanding-spin_systems
     getting_started
     using_mrsimulator_objects
-    load_spin_systems
+    mrsim_IO
     configuring_simulator
     benchmark
     auto_examples/index

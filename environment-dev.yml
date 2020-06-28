@@ -28,5 +28,5 @@ dependencies:
       - sphinx-copybutton>=0.2.12
       - sphinx-gallery>0.6.2
       - pillow>=7.1.2
-      - breathe>=4.18
+      - breathe>=4.19
       - sphinx-tabs>=1.1.13

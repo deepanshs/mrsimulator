@@ -54,6 +54,9 @@ If the file is serialized without the units, you may load the file as follows
     >>> os.remove('sample_no_units.json')
 
 
+----
+
+
 Spin systems objects from Simulator class
 -----------------------------------------
 
@@ -67,7 +70,6 @@ method as
 
     >>> sim_coesite.export_spin_systems('coesite_spin_systems.json')
 
-where ``sim_coesite`` is a :ref:`simulator_api` object.
 
 **Import spin systems from a JSON file**
 
