@@ -286,8 +286,8 @@ following example.
     The spectrum is an integration of the spectra from individual spin systems when the
     value of `decompose_spectrum` is ``none``.
 
-:numref:`fig5_config` depicts the simulation of the line-shape from two spin systems,
-shown in a single spectum.
+:numref:`fig5_config` depicts the simulation of the line-shape from two spin systems
+where the contributions from individual spin-systems are co-added.
 
 ``spin_system``
 '''''''''''''''
@@ -308,13 +308,8 @@ the simulation.
     ...
     >>> # simulate.
     >>> sim.run()
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> # plot the two spectrum
+    ...
+    >>> # plot of the two spectrum
     >>> plot(sim.methods[0].simulation) # doctest: +SKIP
 
 .. figure:: _static/null.*

@@ -135,7 +135,12 @@ table caption:hover {
 .docutils.container {
   width: auto;
 }
-
+.highlighttable .code {
+  max-width: 100%;
+}
+.highlighttable .linenos {
+  width: auto;
+}
 .ui.segment[class*="bottom attached"] {
   width: 100%;
   padding: 2em;
