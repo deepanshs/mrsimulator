@@ -216,7 +216,7 @@ table caption:hover {
 }
 
 .sidebar .logo img {
-  filter: invert(1) brightness(1.25);
+  filter: invert(1) brightness(1.75);
 }
 
 /* searchbar */
