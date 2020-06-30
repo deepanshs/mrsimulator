@@ -324,8 +324,8 @@ class Simulator(BaseModel):
         >>> sim.load_spin_systems(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
-        json_data = contents["spin_systems"]
-        self.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in json_data]
+        # json_data = contents["spin_systems"]
+        self.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in contents]
 
     def export_spin_systems(self, filename: str):
         """

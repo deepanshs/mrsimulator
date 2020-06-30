@@ -15,6 +15,7 @@ Python-API References
    method
    methods
    fitting
+   signal_processing
 
 ..    parameterized_tensor
 ..    interaction

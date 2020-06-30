@@ -115,30 +115,27 @@ sim.run()
 # %%
 # **Step 6** Create a SignalProcessor
 
-import mrsimulator.post_simulation as ps
-from mrsimulator.post_simulation import SignalProcessor
+import mrsimulator.signal_processing as sp
+import mrsimulator.signal_processing.apodization as apo
 
 factor = oxygen_experiment.dependent_variables[0].components[0].max().real / 4
 
-op_list = {
-    "dependent_variable": 0,
-    "operations": [
-        ps.IFFT(dimension=0),
-        ps.Exponential(Lambda=100, dimension=0),
-        ps.FFT(dimension=0),
-        ps.Scale(factor=factor),
-    ],
-}
+op_list = [
+    sp.IFFT(dim_indx=0),
+    apo.Exponential(Lambda=100, dim_indx=0, dep_var_indx=0),
+    sp.FFT(dim_indx=0),
+    sp.Scale(factor=factor),
+]
 
-post_sim = SignalProcessor(data=sim.methods[0].simulation, operations=[op_list])
+post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=op_list)
 
 # %%
 # ** Step 7** Process and plot the spectrum.
 
-post_sim.apply_operations()
+processed_data = post_sim.apply_operations()
 
 ax = plt.subplot(projection="csdm")
-ax.plot(post_sim.data, color="black", linewidth=1)
+ax.plot(processed_data, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -155,17 +152,17 @@ plt.show()
 # **Step 8** Create a list of parameters to vary during fitting.
 
 
-from mrsimulator.spectral_fitting import make_fitting_parameters
+from mrsimulator.spectral_fitting import make_LMFIT_parameters
 
-params = make_fitting_parameters(sim, post_sim)
+params = make_LMFIT_parameters(sim, post_sim)
 params.pretty_print()
 # %%
 # **Step 9** Perform minimization.
 
-from mrsimulator.spectral_fitting import min_function
+from mrsimulator.spectral_fitting import LMFIT_min_function
 from lmfit import Minimizer, report_fit
 
-minner = Minimizer(min_function, params, fcn_args=(sim, post_sim))
+minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, post_sim))
 result = minner.minimize()
 report_fit(result)
 
@@ -181,6 +178,7 @@ plt.plot(*(oxygen_experiment - residual).to_list(), "r", alpha=0.5, label="Fit")
 plt.plot(*residual.to_list(), alpha=0.5, label="Residual")
 
 plt.xlabel("$^{17}$O frequency / ppm")
+plt.gca().invert_xaxis()
 plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()
 

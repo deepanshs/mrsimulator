@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import mrsimulator.post_simulation as ps
+import mrsimulator.signal_processing as sp
+import mrsimulator.signal_processing.apodization as apo
 from mrsimulator import Simulator
-from mrsimulator.post_simulation import SignalProcessor
 
 try:
     from lmfit import Parameters
@@ -142,21 +142,21 @@ def _post_sim_LMFIT_params(post_sim):
     returns: Parameters object
     """
     temp_dict = {}
-    for item in post_sim.operations:
-        prepend = f"DEP_VAR_{item.dependent_variable}_"
-        for i, operation in enumerate(item.operations):
-            if isinstance(operation, ps.Gaussian):
-                identifier = prepend + f"opIndex_{i}_Gaussian"
-                arg = operation.sigma
-                temp_dict[f"{identifier}"] = arg
-            elif isinstance(operation, ps.Exponential):
-                identifier = prepend + f"opIndex_{i}_Exponential"
-                arg = operation.Lambda
-                temp_dict[f"{identifier}"] = arg
-            elif isinstance(operation, ps.Scale):
-                identifier = prepend + f"opIndex_{i}_Scale"
-                arg = operation.factor
-                temp_dict[f"{identifier}"] = arg
+    # for item in post_sim.operations:
+    #     prepend = f"DEP_VAR_{item.dependent_variable}_"
+    for i, operation in enumerate(post_sim.operations):
+        if isinstance(operation, apo.Gaussian):
+            identifier = f"operation_{i}_Gaussian"
+            arg = operation.sigma
+            temp_dict[f"{identifier}"] = arg
+        elif isinstance(operation, apo.Exponential):
+            identifier = f"operation_{i}_Exponential"
+            arg = operation.Lambda
+            temp_dict[f"{identifier}"] = arg
+        elif isinstance(operation, sp.Scale):
+            identifier = f"operation_{i}_Scale"
+            arg = operation.factor
+            temp_dict[f"{identifier}"] = arg
 
     params = Parameters()
     for key, val in temp_dict.items():
@@ -165,7 +165,7 @@ def _post_sim_LMFIT_params(post_sim):
     return params
 
 
-def _update_post_sim_from_params(params, post_sim):
+def _update_post_sim_from_LMFIT_params(params, post_sim):
     """
     Updates SignalProcessor operation arguments from an
     LMFIT Parameters object
@@ -178,33 +178,33 @@ def _update_post_sim_from_params(params, post_sim):
     arg_dict = {"Gaussian": "sigma", "Exponential": "Lambda", "Scale": "factor"}
     for param in params:
         # iterating through the parameter list looking for only DEP_VAR (ie post_sim params)
-        if "DEP_VAR" in param:
+        if "operation_" in param:
             # splitting parameter name to obtain
             # Dependent variable index (var)
             # index of operation in the operation list (opIndex)
             # arg value for the operation (val)
             split_name = param.split("_")
-            var = split_name[split_name.index("VAR") + 1]
-            opIndex = split_name[split_name.index("opIndex") + 1]
+            # var = split_name[split_name.index("VAR") + 1]
+            opIndex = split_name[split_name.index("operation") + 1]
             val = params[param].value
             # creating a dictionary of operations and arguments for each dependent variablle
-            if f"DepVar_{var}" not in temp_dict.keys():
-                temp_dict[f"DepVar_{var}"] = {}
-            temp_dict[f"DepVar_{var}"][f"{opIndex}_{split_name[-1]}"] = val
+            # if f"DepVar_{var}" not in temp_dict.keys():
+            #     temp_dict[f"DepVar_{var}"] = {}
+            temp_dict[f"{opIndex}_{split_name[-1]}"] = val
 
     # iterate through list of operation lists
-    for item in post_sim.operations:
-        # iterating through dictionary with corresponding dependent variable index
-        for operation, val in temp_dict[f"DepVar_{item.dependent_variable}"].items():
-            # creating assignment strings to create the correct address for updating each operation
-            split = operation.split("_")
-            dep_var_operation_list = f"post_sim.operations[{item.dependent_variable}]"
-            operation_val_update = f".operations[{split[0]}].{arg_dict[split[-1]]}"
-            assignment = f"={val}"
-            exec(dep_var_operation_list + operation_val_update + assignment)
+    # for item in post_sim.operations:
+    # iterating through dictionary with corresponding dependent variable index
+    for operation, val in temp_dict.items():
+        # creating assignment strings to create the correct address for updating each operation
+        split = operation.split("_")
+        # dep_var_operation_list = f"post_sim.operations[{item.dependent_variable}]"
+        operation_val_update = f"post_sim.operations[{split[0]}].{arg_dict[split[-1]]}"
+        assignment = f"={val}"
+        exec(operation_val_update + assignment)
 
 
-def make_fitting_parameters(sim, post_sim=None, exclude_key=None):
+def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
     """
     Parses through the fitting parameter list to create LMFIT parameters used for
     fitting.
@@ -226,7 +226,7 @@ def make_fitting_parameters(sim, post_sim=None, exclude_key=None):
 
     if not isinstance(sim, Simulator):
         raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
-    if not isinstance(post_sim, SignalProcessor) or post_sim is None:
+    if not isinstance(post_sim, sp.SignalProcessor) or post_sim is None:
         raise ValueError(
             f"Expecting a `SignalProcessor` object, found {type(post_sim).__name__}."
         )
@@ -278,7 +278,7 @@ def make_fitting_parameters(sim, post_sim=None, exclude_key=None):
         params = Parameters()
         temp_list = _traverse_dictionaries(_list_of_dictionaries(sim))
 
-    if isinstance(post_sim, SignalProcessor):
+    if isinstance(post_sim, sp.SignalProcessor):
         temp_params = _post_sim_LMFIT_params(post_sim)
         for item in temp_params:
             params.add(name=item, value=temp_params[item].value)
@@ -287,7 +287,7 @@ def make_fitting_parameters(sim, post_sim=None, exclude_key=None):
     return params
 
 
-def min_function(params, sim, post_sim=None):
+def LMFIT_min_function(params, sim, post_sim=None):
     """
     The simulation routine to establish how the parameters will update the simulation.
 
@@ -307,7 +307,7 @@ def min_function(params, sim, post_sim=None):
         raise ValueError(
             f"Expecting a `Parameters` object, found {type(params).__name__}."
         )
-    if not isinstance(post_sim, SignalProcessor) or post_sim is None:
+    if not isinstance(post_sim, sp.SignalProcessor) or post_sim is None:
         raise ValueError(
             f"Expecting a `SignalProcessor` object, found {type(post_sim).__name__}."
         )
@@ -317,23 +317,23 @@ def min_function(params, sim, post_sim=None):
 
     values = params.valuesdict()
     for items in values:
-        if "DEP_VAR" not in items:
+        if "operation_" not in items:
             nameString = "sim." + _html_to_string(items)
             executable = f"{nameString} = {values[items]}"
             exec(executable)
-        elif "DEP_VAR" in items and post_sim is not None:
-            _update_post_sim_from_params(params, post_sim)
+        elif "operation_" in items and post_sim is not None:
+            _update_post_sim_from_LMFIT_params(params, post_sim)
 
     sim.run()
     post_sim.data = sim.methods[0].simulation
-    post_sim.apply_operations()
+    processed_data = post_sim.apply_operations()
     # residual = np.asarray([])
 
     if sim.config.decompose_spectrum == "spin_system":
-        for decomposed_datum in post_sim.data.dependent_variables:
+        for decomposed_datum in processed_data.dependent_variables:
             datum = [sum(i) for i in zip(datum, decomposed_datum)]
     else:
-        datum = post_sim.data.dependent_variables[0].components[0]
+        datum = processed_data.dependent_variables[0].components[0]
 
     return (
         sim.methods[0].experiment.dependent_variables[0].components[0].real - datum.real

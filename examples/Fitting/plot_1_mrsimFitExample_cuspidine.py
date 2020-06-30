@@ -109,29 +109,26 @@ sim.run()
 # %%
 # **Step 6** Create a SignalProcessor
 
-import mrsimulator.post_simulation as ps
-from mrsimulator.post_simulation import SignalProcessor
+import mrsimulator.signal_processing as sp
+import mrsimulator.signal_processing.apodization as apo
 
-op_list = {
-    "dependent_variable": 0,
-    "operations": [
-        ps.IFFT(dimension=0),
-        ps.Exponential(Lambda=200, dimension=0),
-        ps.FFT(dimension=0),
-        ps.Scale(factor=1),
-    ],
-}
+op_list = [
+    sp.IFFT(dim_indx=0),
+    apo.Exponential(Lambda=200, dim_indx=0, dep_var_indx=0),
+    sp.FFT(dim_indx=0),
+    sp.Scale(factor=1),
+]
 
-post_sim = SignalProcessor(data=sim.methods[0].simulation, operations=[op_list])
+post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=op_list)
 
 
 # %%
 # ** Step 7** Process and plot the spectrum.
 
-post_sim.apply_operations()
+processed_data = post_sim.apply_operations()
 
 ax = plt.subplot(projection="csdm")
-ax.plot(post_sim.data, color="black", linewidth=1)
+ax.plot(processed_data, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -164,10 +161,10 @@ params
 # will showcase a fitting function provided in the *mrsimulator* library which automates the process.
 
 
-def test_function(params, data, sim):
+def test_function(params, sim, post_sim):
     values = params.valuesdict()
 
-    intensity = data.dependent_variables[0].components[0].real
+    intensity = sim.methods[0].experiment.dependent_variables[0].components[0].real
 
     # Here, we update simulation parameters iso, eta, and zeta for the site object
     site = sim.spin_systems[0].sites[0]
@@ -178,13 +175,12 @@ def test_function(params, data, sim):
     # here we run the simulation
     sim.run()
 
-    post_sim = SignalProcessor(data=sim.methods[0].simulation, operations=[op_list])
-    post_sim.operations[0].operations[3].factor = values["factor"]
-    post_sim.operations[0].operations[1].Lambda = values["Lambda"]
+    post_sim.operations[3].factor = values["factor"]
+    post_sim.operations[1].Lambda = values["Lambda"]
     # here we apodize the signal to simulate line broadening
-    post_sim.apply_operations()
+    processed_data = post_sim.apply_operations()
 
-    return intensity - post_sim.data.dependent_variables[0].components[0].real
+    return intensity - processed_data.dependent_variables[0].components[0].real
 
 
 #%%
@@ -195,7 +191,7 @@ def test_function(params, data, sim):
 
 # %% **Step 8** Perform minimization.
 
-minner = Minimizer(test_function, params, fcn_args=(synthetic_experiment, sim))
+minner = Minimizer(test_function, params, fcn_args=(sim, post_sim))
 result = minner.minimize(method="powell")
 print(fit_report(result))
 
@@ -211,6 +207,7 @@ plt.plot(*(synthetic_experiment - residual).to_list(), "r", alpha=0.5, label="Fi
 plt.plot(*residual.to_list(), alpha=0.5, label="Residual")
 
 plt.xlabel("Frequency / Hz")
+plt.gca().invert_xaxis()
 plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()
 

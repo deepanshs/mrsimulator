@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Apodization test"""
-import mrsimulator.post_simulation as ps
+import mrsimulator.signal_processing as sp
+import mrsimulator.signal_processing.apodization as apo
 import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.post_simulation import SignalProcessor
 
 sim = Simulator()
 the_site = {"isotope": "1H", "isotropic_chemical_shift": "0 ppm"}
@@ -23,25 +23,19 @@ method_1 = BlochDecaySpectrum(
     ],
 )
 
-PS_0 = {"dependent_variable": 0, "operations": [ps.Scale(factor=10)]}
+PS_0 = [sp.Scale(factor=10)]
 
-PS_1 = {
-    "dependent_variable": 0,
-    "operations": [
-        ps.IFFT(dimension=0),
-        ps.Exponential(Lambda=200, dimension=0),
-        ps.FFT(dimension=0),
-    ],
-}
+PS_1 = [
+    sp.IFFT(dim_indx=0),
+    apo.Exponential(Lambda=200, dim_indx=0, dep_var_indx=0),
+    sp.FFT(dim_indx=0),
+]
 
-PS_2 = {
-    "dependent_variable": 0,
-    "operations": [
-        ps.IFFT(dimension=0),
-        ps.Gaussian(sigma=20, dimension=0),
-        ps.FFT(dimension=0),
-    ],
-}
+PS_2 = [
+    sp.IFFT(dim_indx=0),
+    apo.Gaussian(sigma=20, dim_indx=0, dep_var_indx=0),
+    sp.FFT(dim_indx=0),
+]
 
 sim.methods += [method_1]
 sim.run()
@@ -51,18 +45,18 @@ freqHz = sim.methods[0].spectral_dimensions[0].coordinates_Hz()
 
 
 def test_scale():
-    post_sim = SignalProcessor(data=sim.methods[0].simulation, operations=[PS_0])
-    post_sim.apply_operations()
+    post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=PS_0)
+    data = post_sim.apply_operations()
     x0, y0 = sim.methods[0].simulation.to_list()
-    x, y = post_sim.data.to_list()
+    x, y = data.to_list()
 
     assert y.max() / y0.max() == 10, "Scaling failed"
 
 
 def test_Lorentzian():
-    post_sim = SignalProcessor(data=sim.methods[0].simulation, operations=[PS_1])
-    post_sim.apply_operations()
-    x, y = post_sim.data.to_list()
+    post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=PS_1)
+    data = post_sim.apply_operations()
+    x, y = data.to_list()
 
     sigma = 200
     test = (sigma / 2) / (np.pi * (freqHz ** 2 + (sigma / 2) ** 2))
@@ -73,9 +67,9 @@ def test_Lorentzian():
 
 
 def test_Gaussian():
-    post_sim = SignalProcessor(data=sim.methods[0].simulation, operations=[PS_2])
-    post_sim.apply_operations()
-    x, y = post_sim.data.to_list()
+    post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=PS_2)
+    data = post_sim.apply_operations()
+    x, y = data.to_list()
 
     sigma = 20
     test = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-((freqHz / sigma) ** 2) / 2)

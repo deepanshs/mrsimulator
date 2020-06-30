@@ -37,7 +37,7 @@ Here is an example.
     >>> from mrsimulator import Simulator
     >>> sim = Simulator()
     >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-test/master/spin_systems_v0.3.json'
-    >>> sim.load_spin_systems(filename)
+    >>> sim.load_spin_systems(filename) # doctest:+SKIP
     Downloading '/DeepanshS/mrsimulator-test/master/spin_systems_v0.3.json'
     from 'raw.githubusercontent.com' to file 'spin_systems_v0.3.json'.
     [████████████████████████████████████]
@@ -55,7 +55,7 @@ Here is an example.
     [████████████████████████████████████]
 
     >>> # The seven spin systems from the file are added to the sim object.
-    >>> len(sim.spin_systems)
+    >>> len(sim.spin_systems) # doctest:+SKIP
     7
 
 .. testsetup::
