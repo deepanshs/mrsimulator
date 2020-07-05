@@ -15,7 +15,8 @@ def test_extended_czjzek_eta_distribution_1():
         data = np.load(f)
 
     print(data.shape)
-    _, eta1 = extended_czjzek_distribution(1, 0.1, eps=0.05, n=np.int(1e6))
+    S0 = {"zeta": 1, "eta": 0.1}
+    _, eta1 = extended_czjzek_distribution(S0, eps=0.05, n=np.int(1e6))
     hist1, _ = np.histogram(eta1, bins=100, range=[0, 1])
 
     message = "failed to compare values with file eps=0.05.npy"
@@ -28,7 +29,8 @@ def test_extended_czjzek_eta_distribution_2():
         data = np.load(f)
 
     print(data.shape)
-    _, eta1 = extended_czjzek_distribution(1, 0.3, eps=0.2, n=np.int(2.5e6))
+    S0 = {"Cq": 1e6, "eta": 0.3}
+    _, eta1 = extended_czjzek_distribution(S0, eps=0.2, n=np.int(2.5e6))
     hist1, _ = np.histogram(eta1, bins=100, range=[0, 1])
 
     message = "failed to compare values with file eps=0.2.npy"
@@ -41,7 +43,8 @@ def test_extended_czjzek_eta_distribution_3():
         data = np.load(f)
 
     print(data.shape)
-    _, eta1 = extended_czjzek_distribution(1, 0.7, eps=0.65, n=np.int(2.5e6))
+    S0 = {"Cq": 1e6, "eta": 0.7}
+    _, eta1 = extended_czjzek_distribution(S0, eps=0.65, n=np.int(2.5e6))
     hist1, _ = np.histogram(eta1, bins=100, range=[0, 1])
 
     message = "failed to compare values with file eps=0.05.npy"

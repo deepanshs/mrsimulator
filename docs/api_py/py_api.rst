@@ -14,7 +14,9 @@ Python-API References
    other_objects
    method
    methods
+   models/czjzek
    fitting
+   utils
 
 ..    parameterized_tensor
 ..    interaction

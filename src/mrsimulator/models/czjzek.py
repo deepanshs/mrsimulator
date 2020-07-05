@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 from .utils import get_Haeberlen_components
 from .utils import get_principal_components
@@ -61,15 +62,8 @@ def _czjzek_random_distribution_tensors(sigma, n):
     return tensors
 
 
-def czjzek_distribution(sigma, n):
+def czjzek_distribution(sigma: float, n: int):
     r"""Draw `N` samples of zeta and eta from the Czjzek distribution model.
-
-    Args:
-        float sigma: The Gaussian standard deviation.
-        int n:  Number of samples drawn from the Czjzek distribution model.
-
-    Description
-    -----------
 
     The Czjzek distribution model is a random sampling of second-rank traceless
     symmetric tensors whose explicit matrix form follows
@@ -83,16 +77,17 @@ def czjzek_distribution(sigma, n):
         \end{array}
         \right],
 
-    where the components, $U_i$, are randomly drawn from a five-dimensional
-    multivariate normal distribution.
-    Each component, $U_i$, is a dimension of the five-dimensional uncorrelated
-    multivariate normal distribution with the mean of :math:`<U_i>=0` and the variance
-    :math:`<U_iU_i>=\sigma^2`. Because the :math:`U_i`s are uncorrelated, the
-    covariance matrix, :math:`\Lambda=\sigma^2 {\bf I}_5`, where :math:`{\bf I}_5` is a
-    5 x 5 identity matrix.
+    where the components, :math:`U_i`, are randomly drawn from a five-dimensional
+    multivariate normal distribution. Each component, :math:`U_i`, is a dimension of
+    the five-dimensional uncorrelated multivariate normal distribution with the mean
+    of :math:`<U_i>=0` and the variance :math:`<U_iU_i>=\sigma^2`.
 
     .. math::
         S_T = S_C(\sigma),
+
+    Args:
+        float sigma: The Gaussian standard deviation.
+        int n:  Number of samples drawn from the Czjzek distribution model.
 
     Example
     -------
@@ -103,14 +98,11 @@ def czjzek_distribution(sigma, n):
     return get_Haeberlen_components(tensors)
 
 
-def extended_czjzek_distribution(zeta, eta, eps, n):
+def extended_czjzek_distribution(symmetric_tensor: SymmetricTensor, eps: float, n: int):
     r"""Draw `N` samples of zeta and eta from the extended czjzek distribution model.
 
-    Description
-    -----------
-
-    The extended Czjzek random distribution model is an extension of the Czjzek model,
-    given as
+    The extended Czjzek random distribution [#f1]_ model is an extension of the Czjzek
+    model, given as
 
     .. math::
         S_T = S(0) + \rho S_C(\sigma=1),
@@ -128,29 +120,33 @@ def extended_czjzek_distribution(zeta, eta, eps, n):
     where :math:`\|S(0)\|` is the 2-norm of the tensor, and :math:`\epsilon` is a
     fraction.
 
+    .. [#f1] Gérard Le Caër, Bruno Bureau, and Dominique Massiot,
+        An extension of the Czjzek model for the distributions of electric field
+        gradients in disordered solids and an application to NMR spectra of 71Ga in
+        chalcogenide glasses. Journal of Physics: Condensed Matter, 2010, 22, 065402.
+        DOI: 10.1088/0953-8984/22/6/065402
+
     Args:
-        float zeta: The size of the anisotropy of the dominant tensor.
-        float eta: The asymmetry parameter of the dominant tensor.
+        SymmetricTensor symmetric_tensor: A shielding or quadrupolar symmetric tensor
+            or equivalent dict object.
         float eps: A fraction determining the extent of perturbation.
         int n: Number of samples drawn from the extended Czjzek distribution model.
-
-    Reference
-    ---------
-
-    Gérard Le Caër, Bruno Bureau, and Dominique Massiot,
-    An extension of the Czjzek model for the distributions of electric field gradients
-    in disordered solids and an application to NMR spectra of 71Ga in chalcogenide
-    glasses. Journal of Physics: Condensed Matter, 2010, 22, 065402.
-    DOI: 10.1088/0953-8984/22/6/065402
 
     Example
     -------
 
     >>> from mrsimulator.models import extended_czjzek_distribution
-    >>> Vzz_dist, eta_dist = extended_czjzek_distribution(1, 0.3, eps=0.35, n=1000000)
+    >>> S0 = {"Cq": 1e6, "eta": 0.3}
+    >>> Cq_dist, eta_dist = extended_czjzek_distribution(S0, eps=0.35, n=1000000)
     """
     # czjzek_random_distribution model
     tensors = _czjzek_random_distribution_tensors(1, n)
+
+    if isinstance(symmetric_tensor, dict):
+        symmetric_tensor = SymmetricTensor(**symmetric_tensor)
+
+    zeta = symmetric_tensor.zeta or symmetric_tensor.Cq
+    eta = symmetric_tensor.eta
 
     # the traceless second-rank symmetric Cartesian tensor in PAS
     T0 = [0.0, 0.0, 0.0]

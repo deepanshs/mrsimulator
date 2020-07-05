@@ -153,6 +153,7 @@ Our current objectives for the future are the following
     using_mrsimulator_objects
     mrsim_IO
     configuring_simulator
+    model/readme
     benchmark
     auto_examples/index
     theory/components
