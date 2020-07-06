@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Potassium Sulfate
-^^^^^^^^^^^^^^^^^
+Potassium Sulfate, 33S (I=3/2)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 33S (I=3/2) quadrupolar line-shape simulation.
 """

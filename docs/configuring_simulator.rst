@@ -209,7 +209,7 @@ evaluated at these orientations. The total
 number of orientations, :math:`\Theta_\text{count}`, is given as
 
 .. math::
-    \Theta_\text{count} = M (n + 1)(n + 2)/2
+    \Theta_\text{count} = M (n + 1)(n + 2)/2,
 
 where :math:`M` is the number of octants and :math:`n` is value of this attribute. The
 number of octants is deciphered form the value of the `integration_volume` attribute.
