@@ -15,6 +15,30 @@ __author__ = "Maxwell C Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 
+ENCRYPTION_PAIRS = [
+    ["spin_systems[", "ISO_"],
+    ["].sites[", "_SITES_"],
+    ["].isotropic_chemical_shift", "_isotropic_chemical_shift"],
+    ["].shielding_symmetric.", "_shielding_symmetric_"],
+    ["].quadrupolar.", "_quadrupolar_"],
+    ["].abundance", "_abundance"],
+    ["methods[", "METHODS_"],  # why does methods needs to be parameterized?
+    ["].post_simulation", "_POST_SIM_"],
+    [".scale", "scale"],
+    [".apodization[", "APODIZATION_"],
+    ["].args", "_args"],
+]
+
+EXCLUDE = [
+    "property_units",
+    "isotope",
+    "name",
+    "label",
+    "description",
+    "transition_pathways",
+]
+
+
 def _str_to_html(my_string):
     """
     LMFIT Parameters class does not allow for names to include special characters.
@@ -28,20 +52,8 @@ def _str_to_html(my_string):
         String object.
 
     """
-    my_string = my_string.replace("spin_systems[", "ISO_")
-    my_string = my_string.replace("].sites[", "_SITES_")
-    my_string = my_string.replace(
-        "].isotropic_chemical_shift", "_isotropic_chemical_shift"
-    )
-    my_string = my_string.replace("].shielding_symmetric.", "_shielding_symmetric_")
-    my_string = my_string.replace("].quadrupolar.", "_quadrupolar_")
-    my_string = my_string.replace("].abundance", "_abundance")
-    my_string = my_string.replace("methods[", "METHODS_")  #
-    my_string = my_string.replace("].post_simulation", "_POST_SIM_")
-    my_string = my_string.replace(".scale", "scale")
-    my_string = my_string.replace(".apodization[", "APODIZATION_")
-    my_string = my_string.replace("].args", "_args")
-
+    for item in ENCRYPTION_PAIRS:
+        my_string = my_string.replace(*item)
     return my_string
 
 
@@ -57,21 +69,8 @@ def _html_to_string(my_string):
         String Object.
 
     """
-    my_string = my_string.replace("ISO_", "spin_systems[")
-    my_string = my_string.replace("_SITES_", "].sites[")
-    my_string = my_string.replace(
-        "_isotropic_chemical_shift", "].isotropic_chemical_shift"
-    )
-    my_string = my_string.replace("_shielding_symmetric_", "].shielding_symmetric.")
-    my_string = my_string.replace("_quadrupolar_", "].quadrupolar.")
-    my_string = my_string.replace("_abundance", "].abundance")
-
-    my_string = my_string.replace("METHODS_", "methods[")  #
-    my_string = my_string.replace("_POST_SIM_", "].post_simulation")
-    my_string = my_string.replace("scale", ".scale")
-    my_string = my_string.replace("APODIZATION_", ".apodization[")
-    my_string = my_string.replace("_args", "].args")
-
+    for item in ENCRYPTION_PAIRS:
+        my_string = my_string.replace(*item[::-1])
     return my_string
 
 
@@ -88,16 +87,6 @@ def _list_of_dictionaries(my_list):
 
     """
     return [item.dict() for item in my_list]
-
-
-exclude = [
-    "property_units",
-    "isotope",
-    "name",
-    "label",
-    "description",
-    "transition_pathways",
-]
 
 
 def _traverse_dictionaries(dictionary, parent="spin_systems"):
@@ -118,7 +107,7 @@ def _traverse_dictionaries(dictionary, parent="spin_systems"):
     name_list = []
     if isinstance(dictionary, dict):
         for key, vals in dictionary.items():
-            if key not in exclude and vals is not None:
+            if key not in EXCLUDE and vals is not None:
                 if isinstance(vals, (dict, list)):
                     name_list += _traverse_dictionaries(
                         vals, _str_to_html(f"{parent}.{key}")
