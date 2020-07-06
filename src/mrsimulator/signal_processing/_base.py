@@ -21,6 +21,11 @@ class abstractOperation(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
+        """Parse dictionary for SignalProcessor
+
+        Args:
+            py_dict (dict): A python dictionary representation of the operation.
+        """
         my_dict_copy = py_dict.copy()
         if "function" in my_dict_copy.keys():
             my_dict_copy.pop("function")

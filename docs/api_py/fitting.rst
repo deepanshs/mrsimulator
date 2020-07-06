@@ -5,5 +5,5 @@ Fitting Utility Functions
 
 .. currentmodule:: mrsimulator.spectral_fitting
 
-.. autofunction:: make_fitting_parameters
-.. autofunction:: min_function
+.. autofunction:: make_LMFIT_parameters
+.. autofunction:: LMFIT_min_function
