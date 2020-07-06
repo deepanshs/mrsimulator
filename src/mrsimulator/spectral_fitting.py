@@ -187,7 +187,7 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
             # var = split_name[split_name.index("VAR") + 1]
             opIndex = split_name[split_name.index("operation") + 1]
             val = params[param].value
-            # creating a dictionary of operations and arguments for each dependent variablle
+            # creating a dictionary of operations and arguments for each dependent variable
             # if f"DepVar_{var}" not in temp_dict.keys():
             #     temp_dict[f"DepVar_{var}"] = {}
             temp_dict[f"{opIndex}_{split_name[-1]}"] = val
@@ -330,8 +330,10 @@ def LMFIT_min_function(params, sim, post_sim=None):
     # residual = np.asarray([])
 
     if sim.config.decompose_spectrum == "spin_system":
+        datum = 0
         for decomposed_datum in processed_data.dependent_variables:
-            datum = [sum(i) for i in zip(datum, decomposed_datum)]
+            datum += decomposed_datum.components[0]
+            # datum = [sum(i) for i in zip(datum, decomposed_datum)]
     else:
         datum = processed_data.dependent_variables[0].components[0]
 
