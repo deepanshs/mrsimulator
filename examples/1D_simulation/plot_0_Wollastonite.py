@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Wollastonite
-^^^^^^^^^^^^
+Wollastonite, 29Si (I=1/2)
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 29Si (I=1/2) spinning sideband simulation.
 """

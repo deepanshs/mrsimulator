@@ -10,8 +10,8 @@ from mrsimulator import __version__
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
 from mrsimulator.method import Method
-from mrsimulator.util import _reduce_dict
-from mrsimulator.util.importer import import_json
+from mrsimulator.utils import _reduce_dict
+from mrsimulator.utils.importer import import_json
 from pydantic import BaseModel
 
 from .config import ConfigSimulator
@@ -327,8 +327,8 @@ class Simulator(BaseModel):
         >>> sim.load_spin_systems(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
-        json_data = contents["spin_systems"]
-        self.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in json_data]
+        # json_data = contents["spin_systems"]
+        self.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in contents]
 
     def export_spin_systems(self, filename: str):
         """
@@ -416,10 +416,13 @@ class Simulator(BaseModel):
     # freq *= u.Unit("ppm")
     # return freq, amp
 
-    def save(self, filename: str):
+    def save(self, filename: str, with_units=True):
         """Serialize the simulator object to a JSON file.
 
         Args:
+            bool with_units: If true, the attribute values are serialized as physical
+                quantities expressed as a string with a value and a unit. If false,
+                the attribute values are serialized as floats.
             str filename: The filename of the serialized file.
 
         Example
@@ -427,6 +430,17 @@ class Simulator(BaseModel):
 
         >>> sim.save('filename') # doctest: +SKIP
         """
+        if not with_units:
+            with open(filename, "w", encoding="utf8") as outfile:
+                json.dump(
+                    self.reduced_dict(),
+                    outfile,
+                    ensure_ascii=False,
+                    sort_keys=False,
+                    allow_nan=False,
+                )
+            return
+
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
                 self.to_dict_with_units(include_methods=True, include_version=True),
@@ -436,10 +450,14 @@ class Simulator(BaseModel):
                 allow_nan=False,
             )
 
-    def load(self, filename: str):
-        """Load the :class:`~mrsimulator.Simulator` object from a JSON file.
+    @classmethod
+    def load(cls, filename: str, parse_units=True):
+        """Load the :class:`~mrsimulator.Simulator` object from a JSON file by parsing.
 
         Args:
+            bool parse_units: If true, parse the attribute values from the serialized
+                file for physical quantities, expressed as a string with a value and a
+                unit.
             str filename: The filename of a JSON serialized mrsimulator file.
 
         Returns:
@@ -453,23 +471,12 @@ class Simulator(BaseModel):
         .. seealso::
             :ref:`load_spin_systems`
         """
-        sim = Simulator()
         contents = import_json(filename)
-        sim.name = contents["name"]
-        sim.description = contents["description"]
 
-        # spin_systems
-        i_data = contents["spin_systems"]
-        sim.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in i_data]
+        if not parse_units:
+            return Simulator(**contents)
 
-        # methods
-        m_data = contents["methods"]
-        sim.methods = [Method.parse_dict_with_units(obj) for obj in m_data]
-
-        # config
-        sim.config = ConfigSimulator(**contents["config"])
-        sim.indexes = contents["indexes"]
-        return sim
+        return Simulator.parse_dict_with_units(contents)
 
     def _as_csdm_object(self, data: np.ndarray, method: Method) -> cp.CSDM:
         """

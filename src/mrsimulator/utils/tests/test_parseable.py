@@ -3,8 +3,8 @@
 from typing import ClassVar
 
 import pytest
-from mrsimulator.util.parseable import enforce_units
-from mrsimulator.util.parseable import Parseable
+from mrsimulator.utils.parseable import enforce_units
+from mrsimulator.utils.parseable import Parseable
 
 
 class ParseableTestClass(Parseable):

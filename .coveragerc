@@ -1,5 +1,0 @@
-[run]
-omit =
-    setup.py
-    docs/conf.py
-    conftest.py

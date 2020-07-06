@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from os import path
 from pprint import pprint
 
 import matplotlib
@@ -65,33 +64,6 @@ def add_site(doctest_namespace):
     sim = Simulator()
     sim.spin_systems += spin_systems
     doctest_namespace["sim"] = sim
-
-    def plot_save(x, y, filename):
-        plt.figure(figsize=(4.5, 2.5))
-        plt.plot(x, y, linewidth=1)
-        plt.xlim([x.value.max(), x.value.min()])
-        plt.xlabel(f"frequency ratio / {str(x.unit)}", **font)
-        plt.grid(color="gray", linestyle="--", linewidth=0.75, alpha=0.25)
-        plt.tight_layout(pad=0.15)
-
-        filename = path.split(filename)[1]
-        filepath = "./docs/_images"
-        pth = path.join(filepath, filename)
-        plt.savefig(pth + ".pdf")
-        plt.savefig(pth + ".png", dpi=100)
-        plt.close()
-
-    def plot(x, y):
-        plt.figure(figsize=(4.5, 2.5))
-        plt.plot(x, y, linewidth=1)
-        plt.xlim([x.value.max(), x.value.min()])
-        plt.xlabel(f"frequency ratio / {str(x.unit)}", **font)
-        plt.grid(color="gray", linestyle="--", linewidth=0.75, alpha=0.25)
-        plt.tight_layout(pad=0.15)
-        plt.show()
-
-    doctest_namespace["plot_save"] = plot_save
-    doctest_namespace["plot"] = plot
 
     # coesite
     O17_1 = Site(

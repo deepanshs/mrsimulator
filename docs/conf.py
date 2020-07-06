@@ -12,11 +12,13 @@
 import datetime
 import os
 import subprocess
+import sys
 import warnings
 
-from sphinx_gallery.scrapers import matplotlib_scraper
 from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
+
+sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 now = datetime.datetime.now()
@@ -34,7 +36,7 @@ with open("../src/mrsimulator/__init__.py", "r") as f:
             __version__ = after_keyword.strip()[1:-1]
 
 # The short X.Y version
-version = __version__
+version = ".".join(__version__.split(".")[:2])
 # The full version, including alpha/beta/rc tags
 release = __version__
 
@@ -47,12 +49,10 @@ needs_sphinx = "2.0"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    # "sphinx.ext.autodoc",
+    "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
     "matplotlib.sphinxext.plot_directive",
-    # "sphinx.ext.coverage",
     "sphinx.ext.mathjax",
-    # "sphinx.ext.githubpages",
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
@@ -64,6 +64,9 @@ extensions = [
     "sphinx_tabs.tabs",
     "sphinx.ext.todo",
 ]
+
+# generate autosummary even if no references
+autosummary_generate = True
 
 # ---------------------------------------------------------------------------- #
 #                               Plot directive config                          #
@@ -106,15 +109,6 @@ warnings.filterwarnings(
 )
 
 
-# matplotlib svg plots
-class matplotlib_svg_scraper(object):
-    def __repr__(self):
-        return self.__class__.__name__
-
-    def __call__(self, *args, **kwargs):
-        return matplotlib_scraper(*args, format="svg", **kwargs)
-
-
 # sphinx gallery config
 sphinx_gallery_conf = {
     "examples_dirs": "../examples",  # path to your example scripts
@@ -133,11 +127,6 @@ sphinx_gallery_conf = {
     # "compress_images": ("images", "thumbnails"),
     # "show_memory": True,
 }
-# generate autosummary even if no references
-autosummary_generate = True
-
-copybutton_prompt_text = ">>> |\\\\$ |\\[\\d*\\]: |\\.\\.\\.: |[.][.][.] "
-copybutton_prompt_is_regexp = True
 
 intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org", None),
@@ -148,6 +137,8 @@ intersphinx_mapping = {
 }
 # ---------------------------------------------------------------------------- #
 
+copybutton_prompt_text = ">>> |\\\\$ |\\[\\d*\\]: |\\.\\.\\.: |[.][.][.] "
+copybutton_prompt_is_regexp = True
 
 # ---------------------------------------------------------------------------- #
 #                               Doxygen C docs config                          #
@@ -207,7 +198,7 @@ language = None
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
+pygments_style = None
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -285,20 +276,6 @@ html_sidebars = {
     "**": ["searchbox.html", "globaltoc.html"],
     "using/windows": ["searchbox.html", "windowssidebar.html"],
 }
-
-# html_context = {
-#     "display_github": True,
-#     "github_user": "DeepanshS",
-#     "github_repo": "mrsimulator",
-#     "github_version": "master/docs/",
-#     "css_files": [
-#         # "_static/button.css",
-#         #     "_static/theme_overrides.css",  # override wide tables in RTD theme
-#         #     "_static/style.css",
-#         #     "_static/custom.css",
-#         #     "_static/bootstrap-toc.css",
-#     ],
-# }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

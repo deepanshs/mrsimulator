@@ -3,15 +3,14 @@ from copy import deepcopy
 from os import path
 
 from monty.serialization import loadfn
-
-from .method import Method
-from .method.event import Event
-from .method.spectral_dimension import SpectralDimension
+from mrsimulator.method import Method
+from mrsimulator.method.event import Event
+from mrsimulator.method.spectral_dimension import SpectralDimension
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
-# program to create class dynamically
+# create class dynamically
 
 MODULE_DIR = path.dirname(path.abspath(__file__))
 METHODS_DATA = loadfn(path.join(MODULE_DIR, "methods_data.json"))
@@ -68,7 +67,7 @@ def prepare_method_structure(template, **kwargs):
     return prep
 
 
-def generate_method_from_template(template, __doc__):
+def generate_method_from_template(template):
     # constructor
     def constructor(self, spectral_dimensions=[{}], parse=False, **kwargs):
         prep = prepare_method_structure(template, **kwargs)
@@ -121,24 +120,24 @@ def generate_method_from_template(template, __doc__):
             0, spectral_dimensions=spectral_dimensions, parse=True, **dict_copy
         )
 
+    description = template["description"]
     method = type(
         template["name"],
         (object,),
         {
             "__new__": constructor,
-            "__str__": template["description"],
-            "__doc__": __doc__ + __doc_args__,
+            "__str__": description,
+            "__doc__": description + __doc_args__,
             "parse_dict_with_units": parse_dict_with_units,
         },
     )
     return method
 
 
-BlochDecaySpectrum = generate_method_from_template(
-    METHODS_DATA["Bloch_decay"], "Method for simulating Bloch decay spectrum."
-)
+# BlochDecaySpectrum
+
+BlochDecaySpectrum = generate_method_from_template(METHODS_DATA["Bloch_decay"])
 
 BlochDecayCentralTransitionSpectrum = generate_method_from_template(
     METHODS_DATA["Bloch_decay_central_transition"],
-    "Method for simulating central transition selective Bloch decay spectrum.",
 )

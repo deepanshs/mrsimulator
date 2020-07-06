@@ -9,12 +9,12 @@ from typing import Optional
 import numpy as np
 from mrsimulator.transition import Transition
 from mrsimulator.transition.transition_list import TransitionList
-from mrsimulator.util.parseable import Parseable
+from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
 from .isotope import ISOTOPE_DATA
 from .site import Site
-from .Zeeman_state import ZeemanState
+from .zeeman_state import ZeemanState
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
@@ -171,7 +171,7 @@ class SpinSystem(Parseable):
             if site.isotope.symbol in isotope_list
         ]
 
-    def _Zeeman_energy_states(self) -> np.ndarray:
+    def _zeeman_energy_states(self) -> np.ndarray:
         """
         Return the energy states as a Numpy array where the axis 0 is the number of
         energy states, and axis 1 is the spin quantum numbers. The spin quantum numbers
@@ -195,7 +195,7 @@ class SpinSystem(Parseable):
             lst.append(k)
         return np.asarray(lst).T
 
-    def Zeeman_energy_states(self) -> list:
+    def zeeman_energy_states(self) -> list:
         r"""
         Return a list of all Zeeman energy states of the spin-system,
         where the energy states are represented by a list of quantum numbers,
@@ -211,13 +211,13 @@ class SpinSystem(Parseable):
 
         >>> spin_system_1H_13C.get_isotopes() # two site (spin-1/2) spin systems
         ['13C', '1H']
-        >>> spin_system_1H_13C.Zeeman_energy_states()  # four energy level system.
+        >>> spin_system_1H_13C.zeeman_energy_states()  # four energy level system.
         [|-0.5, -0.5⟩, |-0.5, 0.5⟩, |0.5, -0.5⟩, |0.5, 0.5⟩]
 
         Returns
             A list of :ref:`zeeman_api` objects.
         """
-        states = self._Zeeman_energy_states()
+        states = self._zeeman_energy_states()
         return [ZeemanState(len(self.sites), *item) for item in states]
 
     def _all_transitions(self) -> np.ndarray:
@@ -228,7 +228,7 @@ class SpinSystem(Parseable):
         are the initial energy states, and the entries at T[:, 1, :], the corresponding
         final energy states of the spin transitions.
         """
-        energy_states = self._Zeeman_energy_states()
+        energy_states = self._zeeman_energy_states()
         s = energy_states.shape[0]
         lst = np.arange(s)
         indexes = np.asarray(np.meshgrid(lst, lst)).T.reshape(-1, 2)

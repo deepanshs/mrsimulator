@@ -4,7 +4,7 @@ from typing import ClassVar
 from typing import Dict
 from typing import List
 
-from mrsimulator.util.parseable import Parseable
+from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
 from .transition_query import TransitionQuery
