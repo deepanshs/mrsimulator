@@ -67,7 +67,8 @@ before_install:
   - |
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       brew update
-      brew install openblas fftw
+      brew install fftw
+      brew upgrade openblas
 
       if [ "$PYENV_TYPE" = "env" ]; then
         brew upgrade pyenv
@@ -79,9 +80,9 @@ before_install:
       fi
       if [ "$PYENV_TYPE" = "native" ]; then
         python3 -m pip install --user --upgrade pip
-        python3 -m pip install codecov cython
-        python3 -m pip install -r requirements.txt
-        python3 -m pip install -r requirements-dev.txt
+        python3 -m pip install codecov cython --user
+        python3 -m pip install -r requirements.txt --user
+        python3 -m pip install -r requirements-dev.txt --user
         python3 --version
       fi
     fi

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Coesite
-^^^^^^^
+Coesite, 17O (I=5/2)
+^^^^^^^^^^^^^^^^^^^^
 
 17O (I=5/2) quadrupolar line-shape simulation.
 """
