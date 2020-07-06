@@ -113,39 +113,39 @@ The plot of the :math:`\zeta`-:math:`\eta` distribution.
     >>> plt.tight_layout() # doctest: +SKIP
     >>> plt.show() # doctest: +SKIP
 
-The following is a simulation resulting from a Czjzek distribution of the symmetric
-shielding tensors.
+.. The following is a simulation resulting from a Czjzek distribution of the symmetric
+.. shielding tensors.
 
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
+.. .. plot::
+..     :format: doctest
+..     :context: close-figs
+..     :include-source:
 
-    >>> from mrsimulator import Simulator, SpinSystem, SpinSystem
-    >>> from mrsimulator.methods import BlochDecaySpectrum
-    ...
-    >>> systems = [
-    ...     SpinSystem(
-    ...         sites=[Site(isotope='13C', shielding_symmetric={'zeta': z, 'eta': e})],
-    ...         abundance=1e-4,
-    ...     )
-    ...     for z, e in zip(zeta_dist, eta_dist)
-    ... ]
-    >>> method = BlochDecaySpectrum(
-    ...     channels=['13C'],
-    ...     spectral_dimensions=[{'count': 1024, 'spectral_width': 1e4}]
-    ... )
-    ...
-    >>> sim = Simulator()
-    >>> sim.spin_systems = systems
-    >>> sim.methods = [method]
-    >>> sim.run()
-    ...
-    >>> ax = plt.gca(projection='csdm') # doctest: +SKIP
-    >>> ax.plot(sim.methods[0].simulation) # doctest: +SKIP
-    >>> ax.invert_xaxis() # doctest: +SKIP
-    >>> plt.tight_layout() # doctest: +SKIP
-    >>> plt.show() # doctest: +SKIP
+..     >>> from mrsimulator import Simulator, SpinSystem, SpinSystem
+..     >>> from mrsimulator.methods import BlochDecaySpectrum
+..     ...
+..     >>> systems = [
+..     ...     SpinSystem(
+..     ...         sites=[Site(isotope='13C', shielding_symmetric={'zeta': z, 'eta': e})],
+..     ...         abundance=1e-4,
+..     ...     )
+..     ...     for z, e in zip(zeta_dist, eta_dist)
+..     ... ]
+..     >>> method = BlochDecaySpectrum(
+..     ...     channels=['13C'],
+..     ...     spectral_dimensions=[{'count': 1024, 'spectral_width': 1e4}]
+..     ... )
+..     ...
+..     >>> sim = Simulator()
+..     >>> sim.spin_systems = systems
+..     >>> sim.methods = [method]
+..     >>> sim.run()
+..     ...
+..     >>> ax = plt.gca(projection='csdm') # doctest: +SKIP
+..     >>> ax.plot(sim.methods[0].simulation) # doctest: +SKIP
+..     >>> ax.invert_xaxis() # doctest: +SKIP
+..     >>> plt.tight_layout() # doctest: +SKIP
+..     >>> plt.show() # doctest: +SKIP
 
 
 ----
@@ -179,42 +179,45 @@ The plot of the :math:`\zeta`-:math:`\eta` distribution.
     >>> plt.tight_layout() # doctest: +SKIP
     >>> plt.show() # doctest: +SKIP
 
-The following is a simulation resulting from a Czjzek distribution of the quadrupolar
-tensors.
+.. The following is a simulation resulting from a Czjzek distribution of the quadrupolar
+.. tensors.
 
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
+.. .. plot::
+..     :format: doctest
+..     :context: close-figs
+..     :include-source:
 
-    >>> from mrsimulator import Simulator, SpinSystem, SpinSystem
-    >>> from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-    ...
-    >>> systems = [
-    ...     SpinSystem(
-    ...         sites=[Site(isotope='71Ga', quadrupolar={'Cq': c * 1e6, 'eta': e})],
-    ...         abundance=1e-4,
-    ...     )
-    ...     for c, e in zip(Cq_dist, eta_dist)
-    ... ]
-    >>> method = BlochDecayCentralTransitionSpectrum(
-    ...     channels=['71Ga'],
-    ...     magnnetic_flux_density=4.6,
-    ...     spectral_dimensions=[
-    ...         {'count': 1024, 'spectral_width': 1.2e5, 'reference_offset': -1e4}
-    ...     ]
-    ... )
-    ...
-    >>> sim = Simulator()
-    >>> sim.spin_systems = systems
-    >>> sim.methods = [method]
-    >>> sim.run()
-    ...
-    >>> ax = plt.gca(projection='csdm') # doctest: +SKIP
-    >>> ax.plot(sim.methods[0].simulation) # doctest: +SKIP
-    >>> ax.invert_xaxis() # doctest: +SKIP
-    >>> plt.tight_layout() # doctest: +SKIP
-    >>> plt.show() # doctest: +SKIP
+..     >>> from mrsimulator import Simulator, SpinSystem, SpinSystem
+..     >>> from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+..     ...
+..     >>> systems = [
+..     ...     SpinSystem(
+..     ...         sites=[Site(isotope='71Ga', quadrupolar={'Cq': c * 1e6, 'eta': e})],
+..     ...         abundance=1e-4,
+..     ...     )
+..     ...     for c, e in zip(Cq_dist, eta_dist)
+..     ... ]
+..     >>> method = BlochDecayCentralTransitionSpectrum(
+..     ...     channels=['71Ga'],
+..     ...     magnnetic_flux_density=4.6,
+..     ...     spectral_dimensions=[
+..     ...         {'count': 1024, 'spectral_width': 1.2e5, 'reference_offset': -1e4}
+..     ...     ]
+..     ... )
+..     ...
+..     >>> sim = Simulator()
+..     >>> sim.spin_systems = systems
+..     >>> sim.methods = [method]
+..     >>> sim.run()
+..     ...
+..     >>> ax = plt.gca(projection='csdm') # doctest: +SKIP
+..     >>> ax.plot(sim.methods[0].simulation) # doctest: +SKIP
+..     >>> ax.invert_xaxis() # doctest: +SKIP
+..     >>> plt.tight_layout() # doctest: +SKIP
+..     >>> plt.show() # doctest: +SKIP
+
+References
+----------
 
 .. [#f1] Czjzek, G., Fink, J., Götz, F., Schmidt, H., Coey, J. M. D., Atomic
     coordination and the distribution of electric field gradients in amorphous solids
@@ -230,3 +233,8 @@ tensors.
 .. [#f3] Grandinetti, P. J., Ash, J. T., Trease, N. M. Symmetry pathways in solid-state
     NMR, PNMRS 2011 **59**, *2*, 121-196.
     `DOI: 10.1016/j.pnmrs.2010.11.003 <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_
+
+
+.. minigallery:: mrsimulator.models.czjzek_distribution
+    :add-heading: Mini-gallery using czjzek distributions
+    :heading-level: -

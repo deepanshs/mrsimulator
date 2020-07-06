@@ -20,7 +20,7 @@ def test_extended_czjzek_eta_distribution_1():
     hist1, _ = np.histogram(eta1, bins=100, range=[0, 1])
 
     message = "failed to compare values with file eps=0.05.npy"
-    np.testing.assert_almost_equal(hist1 / 1e6, data[0], decimal=3, err_msg=message)
+    np.testing.assert_almost_equal(hist1 / 1e6, data[0], decimal=2, err_msg=message)
 
 
 def test_extended_czjzek_eta_distribution_2():
@@ -34,7 +34,7 @@ def test_extended_czjzek_eta_distribution_2():
     hist1, _ = np.histogram(eta1, bins=100, range=[0, 1])
 
     message = "failed to compare values with file eps=0.2.npy"
-    np.testing.assert_almost_equal(hist1 / 2.5e6, data[1], decimal=3, err_msg=message)
+    np.testing.assert_almost_equal(hist1 / 2.5e6, data[1], decimal=2, err_msg=message)
 
 
 def test_extended_czjzek_eta_distribution_3():
@@ -48,4 +48,4 @@ def test_extended_czjzek_eta_distribution_3():
     hist1, _ = np.histogram(eta1, bins=100, range=[0, 1])
 
     message = "failed to compare values with file eps=0.05.npy"
-    np.testing.assert_almost_equal(hist1 / 2.5e6, data[3], decimal=3, err_msg=message)
+    np.testing.assert_almost_equal(hist1 / 2.5e6, data[3], decimal=2, err_msg=message)
