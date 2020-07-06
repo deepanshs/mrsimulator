@@ -14,9 +14,9 @@ except ImportError:
 __author__ = "Maxwell C Venetos"
 __email__ = "maxvenetos@gmail.com"
 
-
+START = "ISO_"
 ENCRYPTION_PAIRS = [
-    ["spin_systems[", "ISO_"],
+    ["spin_systems[", START],
     ["].sites[", "_SITES_"],
     ["].isotropic_chemical_shift", "_isotropic_chemical_shift"],
     ["].shielding_symmetric.", "_shielding_symmetric_"],
@@ -209,69 +209,60 @@ def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
     if not FOUND_LMFIT:
         error = (
             f"The helper function {__name__} requires 'lmfit' module to create lmfit "
-            "paramters. Please install the lmfit module using\n'pip install lmfit'.",
+            r"paramters. Please install the lmfit module using\n'pip install lmfit'.",
         )
         raise ImportError(error)
 
     if not isinstance(sim, Simulator):
         raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
-    if not isinstance(post_sim, sp.SignalProcessor) or post_sim is None:
+
+    params = Parameters()
+    temp_list = _traverse_dictionaries(_list_of_dictionaries(sim.spin_systems))
+
+    # get total abundance scaling factor
+    length = len(sim.spin_systems)
+    abundance_scale = 100 / sum([sim.spin_systems[i].abundance for i in range(length)])
+
+    # expression for the last abundance.
+    last_abund = f"{length - 1}_abundance"
+    expression = "100" + "-".join([f"{START}{i}_abundance" for i in range(length - 1)])
+
+    for items in temp_list:
+        if "_eta" in items:
+            params.add(
+                name=items, value=eval("sim." + _html_to_string(items)), min=0, max=1,
+            )
+        # last_abund should come before abundance
+        elif last_abund in items:
+            params.add(
+                name=items,
+                value=eval("sim." + _html_to_string(items)),
+                min=0,
+                max=100,
+                expr=expression,
+            )
+        elif "abundance" in items:
+            params.add(
+                name=items,
+                value=eval("sim." + _html_to_string(items)) * abundance_scale,
+                min=0,
+                max=100,
+            )
+        else:
+            value = eval("sim." + _html_to_string(items))
+            params.add(name=items, value=value)
+
+    if post_sim is None:
+        return params
+
+    if not isinstance(post_sim, sp.SignalProcessor):
         raise ValueError(
             f"Expecting a `SignalProcessor` object, found {type(post_sim).__name__}."
         )
-
-    if isinstance(sim, Simulator):
-        params = Parameters()
-        temp_list = _traverse_dictionaries(_list_of_dictionaries(sim.spin_systems))
-
-        length = len(sim.spin_systems)
-        abundance = 0
-        last_abund = f"{length - 1}_abundance"
-        expression = "100"
-        for i in range(length - 1):
-            expression += f"-ISO_{i}_abundance"
-        for i in range(length):
-            abundance += eval("sim." + _html_to_string(f"spin_systems[{i}].abundance"))
-
-        for items in temp_list:
-            if "_eta" in items or "abundance" in items and last_abund not in items:
-                if "_eta" in items:
-                    params.add(
-                        name=items,
-                        value=eval("sim." + _html_to_string(items)),
-                        min=0,
-                        max=1,
-                    )
-                if "abundance" in items:
-                    params.add(
-                        name=items,
-                        value=eval("sim." + _html_to_string(items)) / abundance * 100,
-                        min=0,
-                        max=100,
-                    )
-            elif last_abund in items:
-                params.add(
-                    name=items,
-                    value=eval("sim." + _html_to_string(items)),
-                    min=0,
-                    max=100,
-                    expr=expression,
-                )
-            else:
-                value = eval("sim." + _html_to_string(items))
-                if type(value) == list:
-                    params.add(name=items, value=value[0])
-                else:
-                    params.add(name=items, value=value)
-    else:
-        params = Parameters()
-        temp_list = _traverse_dictionaries(_list_of_dictionaries(sim))
-
-    if isinstance(post_sim, sp.SignalProcessor):
-        temp_params = _post_sim_LMFIT_params(post_sim)
-        for item in temp_params:
-            params.add(name=item, value=temp_params[item].value)
-        # params.add_many(temp_params)
+    temp_params = _post_sim_LMFIT_params(post_sim)
+    for item in temp_params:
+        params.add(name=item, value=temp_params[item].value)
+    # params.add_many(temp_params)
 
     return params
 
