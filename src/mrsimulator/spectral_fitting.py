@@ -22,7 +22,7 @@ ENCRYPTION_PAIRS = [
     ["].shielding_symmetric.", "_shielding_symmetric_"],
     ["].quadrupolar.", "_quadrupolar_"],
     ["].abundance", "_abundance"],
-    ["methods[", "METHODS_"],  # why does methods needs to be parameterized?
+    ["methods[", "METHODS_"],  # why does methods need to be parameterized?
     ["].post_simulation", "_POST_SIM_"],
     [".scale", "scale"],
     [".apodization[", "APODIZATION_"],

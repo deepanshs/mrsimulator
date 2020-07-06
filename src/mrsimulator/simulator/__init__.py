@@ -55,7 +55,7 @@ class Simulator(BaseModel):
         >>> from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
         >>> sim.methods = [
         ...     BlochDecaySpectrum(channels=['17O'], spectral_width=50000),
-        ...     BlochDecayCentralTransitionSpectrum(channels=['17O'], spectral_width=50000)
+        ...     BlochDecayCentralTransitionSpectrum(channels=['17O'])
         ... ]
 
     config: :ref:`config_api` object or equivalent dict object (optional).

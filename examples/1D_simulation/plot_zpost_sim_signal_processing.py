@@ -154,7 +154,7 @@ plt.show()
 sim.config.decompose_spectrum = "spin_system"
 sim.run()
 
-#%%
+# %%
 # **Step 5** Plot spectrum.
 
 x, y0, y1 = sim.methods[0].simulation.to_list()
@@ -166,7 +166,7 @@ plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 plt.tight_layout()
 plt.show()
 
-#%%
+# %%
 # **Step 6** Create Post Simulation.
 
 op_list2 = [
@@ -189,7 +189,7 @@ post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=op_list
 
 processed_data = post_sim.apply_operations()
 
-#%%
+# %%
 # **Step 8** Plot the processed spectrum
 
 x, y0, y1 = processed_data.to_list()

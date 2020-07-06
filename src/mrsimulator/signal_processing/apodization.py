@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """The Event class."""
-from copy import deepcopy
 from sys import modules
 from typing import ClassVar
 from typing import Dict
@@ -8,19 +7,19 @@ from typing import Union
 
 import numpy as np
 
-from ._base import abstractOperation
+from ._base import AbstractOperation
+
+__author__ = "Maxwell C. Venetos"
+__email__ = "maxvenetos@gmail.com"
 
 
-class AbstractApodization(abstractOperation):
+class AbstractApodization(AbstractOperation):
     dim_indx: int = 0
     dep_var_indx: Union[int, list, tuple] = None  # if none apply to all
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
-        copy_dict = deepcopy(py_dict)
-        copy_dict.pop("type")
-
-        obj = super().parse_dict_with_units(copy_dict)
+        obj = super().parse_dict_with_units(py_dict)
         return getattr(modules[__name__], py_dict["type"])(**obj.dict())
 
     @property
@@ -29,6 +28,7 @@ class AbstractApodization(abstractOperation):
 
     @property
     def type(self):
+        """The type apodization function."""
         return self.__class__.__name__
 
     def set_property_units(self, unit, prop):
@@ -80,9 +80,8 @@ class AbstractApodization(abstractOperation):
 
 
 class Gaussian(AbstractApodization):
-    r"""
-    Class for applying a Gaussian function
-    to a dependent variable of simulation data
+    r"""Class for applying a Gaussian function to a dependent variable of simulation
+    data.
 
     .. math::
         f(\vec{x}) = \vec{x}*e^{-2*(\vec{x} * \sigma * \pi)^2}
@@ -92,7 +91,6 @@ class Gaussian(AbstractApodization):
         sigma: float. Standard deviation of Gaussian function
         dep_var_indx: int. Data dependent variable index to apply the function to.
             If type None, will be applied to every dependent variable.
-
     """
 
     sigma: float = 0
@@ -119,9 +117,8 @@ class Gaussian(AbstractApodization):
 
 
 class Exponential(AbstractApodization):
-    r"""
-    Class for applying an exponential
-    Lorentzian function to a dependent variable of simulation data
+    r"""Class for applying an exponential Lorentzian function to a dependent variable
+    of simulation data.
 
     .. math::
         f(\vec{x}) = \vec{x}*e^{-\Lambda * \abs{\vec{x}} * \pi)}
@@ -131,7 +128,6 @@ class Exponential(AbstractApodization):
         Lambda: float. Width parameter
         dep_var_indx: int. Data dependent variable index to apply the function to.
             If type None, will be applied to every dependent variable.
-
     """
 
     Lambda: float = 0

@@ -6,7 +6,7 @@ Fitting Sodium Silicate.
 .. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 """
 # sphinx_gallery_thumbnail_number = 3
-#%%
+# %%
 # Often, after obtaining an NMR measurement we must fit tensors to our data so we can
 # obtain the tensor parameters. In this example, we will illustrate the use of the *mrsimulator*
 # method to simulate the experimental spectrum and fit the simulation to the data allowing us to
@@ -26,7 +26,7 @@ font = {"weight": "light", "size": 9}
 mpl.rc("font", **font)
 mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 
-#%%
+# %%
 # Next we will import `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ and loading the data file.
 import csdmpy as cp
 
@@ -42,7 +42,7 @@ plt.tight_layout()
 plt.show()
 
 
-#%%
+# %%
 # Next, we will want to create a ``simulator`` object that we will use to fit to our
 # spectrum. We will need to import the necessary libraries for the *mrsimulator*
 # methods. We will then create ``SpinSystem`` objects.
@@ -140,7 +140,7 @@ ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
 
-#%%
+# %%
 # Once we have our simulation we must create our list of parameters to use in our
 # fitting. We will be using the `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_ class from *LMFIT*.
 #
@@ -185,7 +185,7 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
-#%%
+# %%
 #
 # .. [#f5] T. M. Clark, P. Florian, J. F. Stebbins, and P. J. Grandinetti,
 #       An :math:`^{17}\text{O}` NMR Investigation of Crystalline Sodium Metasilicate:

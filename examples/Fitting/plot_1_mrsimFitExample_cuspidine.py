@@ -133,7 +133,7 @@ ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
 
-#%%
+# %%
 # Next, we will need a list of parameters that will be used in the fit. the *LMFIT* library allows us to create
 # a list of parameters rather easily using the `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_ class.
 # We have created a function to parse the
@@ -141,7 +141,7 @@ plt.show()
 # examples on fitting. Here, however, we will construct the parameter list explicitly to demonstrate how the parameters
 # are created.
 
-#%%
+# %%
 
 
 from lmfit import Minimizer, Parameters, fit_report
@@ -155,7 +155,7 @@ params.add(name="Lambda", value=200)
 params.add(name="factor", value=1)
 params
 
-#%%
+# %%
 # We will next set up an error function that will update the simulation throughout the minimization.
 # We will construct a simple function here to demonstrate the *LMFIT* library, however, the next examples
 # will showcase a fitting function provided in the *mrsimulator* library which automates the process.
@@ -183,7 +183,7 @@ def test_function(params, sim, post_sim):
     return intensity - processed_data.dependent_variables[0].components[0].real
 
 
-#%%
+# %%
 # With the synthetic data, simulation, and the parameters we are ready to perform the fit. To fit, we use
 # the *LMFIT* `Minimizer <https://lmfit.github.io/lmfit-py/fitting.html>`_ class.
 # One consideration for the case of magic angle spinning fitting is we must use a discrete minimization method
@@ -195,7 +195,7 @@ minner = Minimizer(test_function, params, fcn_args=(sim, post_sim))
 result = minner.minimize(method="powell")
 print(fit_report(result))
 
-#%%
+# %%
 # **Step 9** Plot the fitted spectrum.
 
 
@@ -214,7 +214,7 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
-#%%
+# %%
 #
 # .. [#f1] Hansen, M. R., Jakobsen, H. J., Skibsted, J., :math:`^{29}\text{Si}`
 #       Chemical Shift Anisotropies in Calcium Silicates from High-Field
