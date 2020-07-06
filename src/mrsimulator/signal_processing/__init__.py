@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """The Event class."""
 from typing import List
-from typing import Union
 
 import csdmpy as cp
-import numpy as np
 from pydantic import BaseModel
 
 from ._base import abstractOperation
@@ -33,7 +31,7 @@ class SignalProcessor(BaseModel):
     >>> post_sim = SignalProcessor(data = csdm_object, operations = [op1, op2]) # doctest: +SKIP
     """
 
-    data: Union[cp.CSDM, np.ndarray] = None
+    data: cp.CSDM = None
     operations: List[abstractOperation]
 
     class Config:
