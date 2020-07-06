@@ -10,14 +10,14 @@ import numpy as np
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import Transition
 from mrsimulator.transition.transition_list import TransitionList
-from mrsimulator.util.parseable import Parseable
+from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
 
 from .spectral_dimension import SpectralDimension
-from .util import cartesian_product
-from .util import D_symmetry_indexes
-from .util import P_symmetry_indexes
-from .util import query_permutations
+from .utils import cartesian_product
+from .utils import D_symmetry_indexes
+from .utils import P_symmetry_indexes
+from .utils import query_permutations
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"

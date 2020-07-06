@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Amorphous-like materials (quadrupolar)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Amorphous material, 27Al (I=5/2)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 27Al (I=5/2) simulation of amorphous-like material.
 """

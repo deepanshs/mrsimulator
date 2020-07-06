@@ -11,7 +11,7 @@ SpinSystem
     .. rubric:: Method Documentation
 
     .. automethod:: get_isotopes
-    .. automethod:: Zeeman_energy_states
+    .. automethod:: zeeman_energy_states
     .. automethod:: all_transitions
     .. automethod:: parse_dict_with_units
     .. automethod:: to_freq_dict

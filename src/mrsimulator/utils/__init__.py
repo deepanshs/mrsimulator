@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+
 def _reduce_dict(dict_obj, exclude=["property_units"]):
     """Reduce the dict by removing all key-value pair corresponding to keys listed in
     the `exclude` argument and keys with value as None.

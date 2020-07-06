@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from collections import MutableSequence
+from collections.abc import MutableSequence
 
 import numpy as np
 
@@ -55,11 +55,3 @@ class AbstractList(MutableSequence):
         if np.all(check):
             return True
         return False
-
-
-# def to_ndarray(transitions):
-#     array = []
-#     for item in transitions:
-#         array += item.initial
-#         array += item.final
-#     return np.asarray(array)

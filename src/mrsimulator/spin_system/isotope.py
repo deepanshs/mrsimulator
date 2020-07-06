@@ -17,9 +17,11 @@ ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
 class Isotope(BaseModel):
     """The Isotope class.
 
-    Attributes:
-        symbol: The isotope symbol given as the atomic number followed by the
-            atomic symbol.
+    Attributes
+    ----------
+
+    symbol: str (required)
+        The isotope symbol given as the atomic number followed by the atomic symbol.
 
     Example
     -------

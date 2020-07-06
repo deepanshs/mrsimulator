@@ -3,7 +3,7 @@
 ZeemanState
 -----------
 
-.. currentmodule:: mrsimulator.spin_system.Zeeman_state
+.. currentmodule:: mrsimulator.spin_system.zeeman_state
 
 .. autoclass:: ZeemanState
     :show-inheritance:

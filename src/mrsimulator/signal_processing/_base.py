@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """The abstractOperation class."""
-from mrsimulator.util.parseable import Parseable
+from mrsimulator.utils.parseable import Parseable
 
 
 class abstractOperation(Parseable):

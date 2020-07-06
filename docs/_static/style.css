@@ -135,7 +135,12 @@ table caption:hover {
 .docutils.container {
   width: auto;
 }
-
+.highlighttable .code {
+  max-width: 100%;
+}
+.highlighttable .linenos {
+  width: auto;
+}
 .ui.segment[class*="bottom attached"] {
   width: 100%;
   padding: 2em;
@@ -211,7 +216,7 @@ table caption:hover {
 }
 
 .sidebar .logo img {
-  filter: invert(1) brightness(1.25);
+  filter: invert(1) brightness(1.75);
 }
 
 /* searchbar */
@@ -466,14 +471,4 @@ tr td {
   .navbar-nav {
     overflow-x: hidden;
   }
-}
-
-/* ads */
-.ethical-fixedfooter {
-  width: 100%;
-}
-
-.ethical-fixedfooter .ethical-close {
-  right: 0;
-  left: 5px;
 }

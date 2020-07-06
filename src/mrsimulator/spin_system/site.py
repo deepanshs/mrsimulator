@@ -2,9 +2,8 @@
 """Base Site class."""
 from typing import ClassVar
 from typing import Dict
-from typing import Optional
 
-from mrsimulator.util.parseable import Parseable
+from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
 
 from .isotope import Isotope
@@ -154,11 +153,11 @@ class Site(Parseable):
     name: str = None
     label: str = None
     description: str = None
-    isotope: Optional[str] = "1H"
-    isotropic_chemical_shift: Optional[float] = 0
-    shielding_symmetric: Optional[SymmetricTensor] = None
-    shielding_antisymmetric: Optional[AntisymmetricTensor] = None
-    quadrupolar: Optional[SymmetricTensor] = None
+    isotope: str = "1H"
+    isotropic_chemical_shift: float = 0
+    shielding_symmetric: SymmetricTensor = None
+    shielding_antisymmetric: AntisymmetricTensor = None
+    quadrupolar: SymmetricTensor = None
 
     property_unit_types: ClassVar = {"isotropic_chemical_shift": "dimensionless"}
     property_default_units: ClassVar = {"isotropic_chemical_shift": "ppm"}

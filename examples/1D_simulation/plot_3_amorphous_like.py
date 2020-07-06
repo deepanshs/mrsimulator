@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Amorphous-like materials
-^^^^^^^^^^^^^^^^^^^^^^^^
+Amorphous material, 29Si (I=1/2)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 29Si (I=1/2) simulation of amorphous-like material.
 """
