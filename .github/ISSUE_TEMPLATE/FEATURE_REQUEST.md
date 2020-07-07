@@ -14,15 +14,15 @@ Provide a clear and concise description of your proposal. Your proposal should c
 - Is your proposal to improve a feature of `mrsimulator`? For example, "The code will be more efficient if ...",
 - Is your proposal to request a new feature? For example, "The library is missing..."
 
-(Write your answer here)
+(Write your answer here.)
 
 **Describe the solution you'd like**
 
-(Write your answer here)
+(Write your answer here.)
 
 **Describe what other alternatives you've considered**
 
-(Write your answer here)
+(Write your answer here, if applicable.)
 
 **Additional context**
 
