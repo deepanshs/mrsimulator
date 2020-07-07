@@ -50,7 +50,6 @@ def _str_to_html(my_string):
 
     Returns:
         String object.
-
     """
     for item in ENCRYPTION_PAIRS:
         my_string = my_string.replace(*item)
@@ -67,7 +66,6 @@ def _html_to_string(my_string):
 
     Returns:
         String Object.
-
     """
     for item in ENCRYPTION_PAIRS:
         my_string = my_string.replace(*item[::-1])
@@ -84,7 +82,6 @@ def _list_of_dictionaries(my_list):
 
     Returns:
         List Object.
-
     """
     return [item.dict() for item in my_list]
 
@@ -96,13 +93,12 @@ def _traverse_dictionaries(dictionary, parent="spin_systems"):
 
     Args:
         dictionary: A dictionary or list object of the SpinSystem attributes from a
-        simulation object
+            simulation object
         parent: a string object used to create the addresses of the SpinSystem
-        attributes.
+            attributes.
 
     Returns:
         List Object.
-
     """
     name_list = []
     if isinstance(dictionary, dict):
@@ -126,9 +122,11 @@ def _post_sim_LMFIT_params(post_sim):
     Creates an LMFIT Parameters object for SignalProcessor operations
     involved in spectrum fitting
 
-    post_sim: SignalProcessor object
+    Args:
+        post_sim: SignalProcessor object
 
-    returns: Parameters object
+    Returns:
+        Parameters object
     """
     temp_dict = {}
     # for item in post_sim.operations:
@@ -155,13 +153,11 @@ def _post_sim_LMFIT_params(post_sim):
 
 
 def _update_post_sim_from_LMFIT_params(params, post_sim):
-    """
-    Updates SignalProcessor operation arguments from an
-    LMFIT Parameters object
+    """Updates SignalProcessor operation arguments from an LMFIT Parameters object
 
-    params: LMFIT Parameters object
-    post_sim: SignalProcessor object
-
+    Args:
+        params: LMFIT Parameters object
+        post_sim: SignalProcessor object
     """
     temp_dict = {}
     arg_dict = {"Gaussian": "sigma", "Exponential": "Lambda", "Scale": "factor"}
@@ -204,7 +200,6 @@ def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
 
     Returns:
         LMFIT Parameters object.
-
     """
     if not FOUND_LMFIT:
         error = (
@@ -281,7 +276,6 @@ def LMFIT_min_function(params, sim, post_sim=None):
 
     Returns:
         Array of the differences between the simulation and the experimental data.
-
     """
     if not isinstance(params, Parameters):
         raise ValueError(

@@ -5,7 +5,6 @@ Post Simulation Signal Processing.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 """
-# sphinx_gallery_thumbnail_number = 5
 # %%
 # After running a simulation, we often want to process the resulting spectrum.
 # For example, we may want to scale the intensities to match the experiment or
@@ -13,6 +12,7 @@ Post Simulation Signal Processing.
 # demonstrate the use of the `SignalProcessor` class to apply various operations
 # to simulation data.
 # global plot configuration
+# sphinx_gallery_thumbnail_number = 5
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
@@ -23,8 +23,7 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # %%
 # We will create a hypothetical two-site Si simulation to illustrate post-simulation
 # signal processing. We will begin by processing the entire spectrum and follow up by
-# decomposing the spectrum and processing each signal indepenently.
-
+# decomposing the spectrum and processing each signal independently.
 from mrsimulator import SpinSystem
 from mrsimulator import Simulator
 

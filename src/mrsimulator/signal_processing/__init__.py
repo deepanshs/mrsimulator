@@ -21,10 +21,10 @@ class SignalProcessor(BaseModel):
     ----------
 
     data: CSDM object.
-        From simulation
+        The data from the simulation.
 
     operations: List
-        List of operation lists
+        A list of operations.
 
     Examples
     --------
@@ -93,7 +93,17 @@ class SignalProcessor(BaseModel):
 
 class Scale(AbstractOperation):
     """
-    Class for applying a scaling factor to a dependent variable of simulation data.
+    Scale the amplitudes of the dependent variables from the simulation data object.
+
+    Args:
+        float factor: The scaling factor applied to all the dependent variables in the
+            simulation data. The default value is 1.
+
+    Example
+    -------
+
+    >>> import mrsimulator.signal_processing as sp
+    >>> operation1 = sp.Scale(factor=20)
     """
 
     factor: float = 1
@@ -113,11 +123,16 @@ class Scale(AbstractOperation):
 
 class IFFT(AbstractOperation):
     """
-    Class for applying an inverse Fourier transform to a dependent variable of
-    simulation data.
+    Apply an inverse Fourier transform on the dependent variables from the simulation
+    data object.
 
     Args:
-        dim_indx: int. Data dimension to apply the function along
+        int dim_indx: Data dimension index along which the function is applied.
+
+    Example
+    -------
+
+    >>> operation2 = sp.IFFT(dim_indx=0)
     """
 
     dim_indx: int = 0
@@ -132,6 +147,19 @@ class IFFT(AbstractOperation):
 
 
 class FFT(IFFT):
+    """
+    Apply a forward Fourier transform on the dependent variables from the simulation
+    data object.
+
+    Args:
+        int dim_indx: Data dimension index along which the function is applied.
+
+    Example
+    -------
+
+    >>> operation3 = sp.FFT(dim_indx=0)
+    """
+
     pass
 
 

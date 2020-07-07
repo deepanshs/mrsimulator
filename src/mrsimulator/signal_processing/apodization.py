@@ -80,17 +80,28 @@ class AbstractApodization(AbstractOperation):
 
 
 class Gaussian(AbstractApodization):
-    r"""Class for applying a Gaussian function to a dependent variable of simulation
-    data.
+    r"""Apodize a dependent variable of the simulation data object by a Gaussian
+    function. The function follows
 
     .. math::
-        f(\vec{x}) = \vec{x}*e^{-2*(\vec{x} * \sigma * \pi)^2}
+        f(x) = e^{-2 x^2  \sigma^2  \pi^2},
+
+    where :math:`x` are the coordinates of the data dimension and :math:`\sigma` is
+    the standard deviation.
 
     Args:
-        dim_indx: int. Data dimension to apply the function along.
-        sigma: float. Standard deviation of Gaussian function
-        dep_var_indx: int. Data dependent variable index to apply the function to.
-            If type None, will be applied to every dependent variable.
+        int dim_indx: Data dimension index to apply the function along. The default
+            value is 0.
+        float sigma: The standard deviation, :math:`\sigma`, of the Gaussian function.
+            The default value is 0.
+        int dep_var_indx: Data dependent variable index to apply the function to. If
+            the type None, the operation will be applied to every dependent variable.
+
+    Example
+    -------
+
+    >>> import mrsimulator.signal_processing.apodization as apo
+    >>> operation4 = apo.Gaussian(sigma=143.4, dim_indx=0, dep_var_indx=0)
     """
 
     sigma: float = 0
@@ -101,7 +112,7 @@ class Gaussian(AbstractApodization):
 
     @staticmethod
     def fn(x, arg):
-        return np.exp(-((x * arg * np.pi) ** 2) * 2)
+        return np.exp(-2 * ((x * arg * np.pi) ** 2))
 
     def operate(self, data):
         """
@@ -117,17 +128,25 @@ class Gaussian(AbstractApodization):
 
 
 class Exponential(AbstractApodization):
-    r"""Class for applying an exponential Lorentzian function to a dependent variable
-    of simulation data.
+    r"""Apodize a dependent variable of the simulation data object by an exponential
+    function. The function follows
 
     .. math::
-        f(\vec{x}) = \vec{x}*e^{-\Lambda * \abs{\vec{x}} * \pi)}
+        f(x) = e^{-\Lambda |{x}| \pi},
+
+    where :math:`x` are the coordinates of the data dimension and :math:`\Lambda` is
+    the width parameter.
 
     Args:
-        dim_indx: int. Data dimension to apply the function along.
-        Lambda: float. Width parameter
-        dep_var_indx: int. Data dependent variable index to apply the function to.
-            If type None, will be applied to every dependent variable.
+        int dim_indx: Data dimension index to apply the function along.
+        float Lambda: The width parameter, :math:`\Lambda`.
+        int dep_var_indx: Data dependent variable index to apply the function to. If
+            the type None, the operation will be applied to every dependent variable.
+
+    Example
+    -------
+
+    >>> operation5 = apo.Exponential(sigma=143.4, dim_indx=0, dep_var_indx=0)
     """
 
     Lambda: float = 0
