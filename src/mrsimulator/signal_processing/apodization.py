@@ -55,7 +55,7 @@ class AbstractApodization(AbstractOperation):
         if isinstance(indexes, (list, tuple)):
             return np.asarray(indexes)
 
-    def operate(self, data, fn, prop_name, prop_value):
+    def _operate(self, data, fn, prop_name, prop_value):
         """A generic operation function.
 
         Args:
@@ -122,9 +122,7 @@ class Gaussian(AbstractApodization):
         dep_var: int. The index of the dependent variable to apply operation to
         """
 
-        return super().operate(
-            data, fn=self.fn, prop_name="sigma", prop_value=self.sigma
-        )
+        return self._operate(data, fn=self.fn, prop_name="sigma", prop_value=self.sigma)
 
 
 class Exponential(AbstractApodization):
@@ -167,6 +165,6 @@ class Exponential(AbstractApodization):
         dep_var: int. The index of the dependent variable to apply operation to
         """
 
-        return super().operate(
+        return self._operate(
             data, fn=self.fn, prop_name="Lambda", prop_value=self.Lambda
         )
