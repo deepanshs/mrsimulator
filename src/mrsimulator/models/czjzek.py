@@ -38,11 +38,11 @@ def _czjzek_random_distribution_tensors(sigma, n):
     # The random sampling U1, U2, ... U5
     U1 = np.random.normal(0.0, sigma, n)
 
-    sqrt_3_sigmal = np.sqrt(3) * sigma
-    sqrt_3_U2 = np.random.normal(0.0, sqrt_3_sigmal, n)
-    sqrt_3_U3 = np.random.normal(0.0, sqrt_3_sigmal, n)
-    sqrt_3_U4 = np.random.normal(0.0, sqrt_3_sigmal, n)
-    sqrt_3_U5 = np.random.normal(0.0, sqrt_3_sigmal, n)
+    sqrt_3_sigma = np.sqrt(3) * sigma
+    sqrt_3_U2 = np.random.normal(0.0, sqrt_3_sigma, n)
+    sqrt_3_U3 = np.random.normal(0.0, sqrt_3_sigma, n)
+    sqrt_3_U4 = np.random.normal(0.0, sqrt_3_sigma, n)
+    sqrt_3_U5 = np.random.normal(0.0, sqrt_3_sigma, n)
 
     # Create N random tensors
     tensors = np.zeros((n, 3, 3))  # n x 3 x 3 tensors
@@ -89,10 +89,13 @@ def czjzek_distribution(sigma: float, n: int):
         float sigma: The Gaussian standard deviation.
         int n:  Number of samples drawn from the Czjzek distribution model.
 
+    .. note:: In the original Czjzek paper, the parameter :math:`\sigma` is given as
+        two times the standard deviation of the multi-variate normal distribution.
+
     Example
     -------
 
-    >>> Vzz_dist, eta_dist = czjzek_distribution(0.5, n=1000000)
+    >>> Vzz_dist, eta_dist = czjzek_distribution(0.5, n=1000000) # doctest: +SKIP
     """
     tensors = _czjzek_random_distribution_tensors(sigma, n)
     return get_Haeberlen_components(tensors)
@@ -137,7 +140,8 @@ def extended_czjzek_distribution(symmetric_tensor: SymmetricTensor, eps: float, 
 
     >>> from mrsimulator.models import extended_czjzek_distribution
     >>> S0 = {"Cq": 1e6, "eta": 0.3}
-    >>> Cq_dist, eta_dist = extended_czjzek_distribution(S0, eps=0.35, n=1000000)
+    >>> n = 1000000
+    >>> Cq, eta = extended_czjzek_distribution(S0, eps=0.35, n=n)  # doctest: +SKIP
     """
     # czjzek_random_distribution model
     tensors = _czjzek_random_distribution_tensors(1, n)
