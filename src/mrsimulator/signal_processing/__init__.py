@@ -29,7 +29,7 @@ class SignalProcessor(BaseModel):
     Examples
     --------
 
-    >>> post_sim = SignalProcessor(data = csdm_object, operations = [op1, op2]) # doctest: +SKIP
+    >>> post_sim = SignalProcessor(data=csdm_data, operations=[o1, o2]) # doctest: +SKIP
     """
 
     data: cp.CSDM = None
@@ -62,8 +62,9 @@ class SignalProcessor(BaseModel):
 
     def to_dict_with_units(self):
         """
-        Serialize the SignalProcessor object to a JSON compliant python dictionary object
-        where physical quantities are represented as string with a value and a unit.
+        Serialize the SignalProcessor object to a JSON compliant python dictionary
+        object where physical quantities are represented as string with a value and a
+        unit.
 
         Returns:
             A Dict object.

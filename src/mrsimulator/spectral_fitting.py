@@ -162,7 +162,8 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
     temp_dict = {}
     arg_dict = {"Gaussian": "sigma", "Exponential": "Lambda", "Scale": "factor"}
     for param in params:
-        # iterating through the parameter list looking for only DEP_VAR (ie post_sim params)
+        # iterating through the parameter list looking for only DEP_VAR
+        # (ie post_sim params)
         if "operation_" in param:
             # splitting parameter name to obtain
             # Dependent variable index (var)
@@ -172,7 +173,8 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
             # var = split_name[split_name.index("VAR") + 1]
             opIndex = split_name[split_name.index("operation") + 1]
             val = params[param].value
-            # creating a dictionary of operations and arguments for each dependent variable
+            # creating a dictionary of operations and arguments for each dependent
+            # variable
             # if f"DepVar_{var}" not in temp_dict.keys():
             #     temp_dict[f"DepVar_{var}"] = {}
             temp_dict[f"{opIndex}_{split_name[-1]}"] = val
@@ -181,7 +183,8 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
     # for item in post_sim.operations:
     # iterating through dictionary with corresponding dependent variable index
     for operation, val in temp_dict.items():
-        # creating assignment strings to create the correct address for updating each operation
+        # creating assignment strings to create the correct address for updating each
+        # operation
         split = operation.split("_")
         # dep_var_operation_list = f"post_sim.operations[{item.dependent_variable}]"
         operation_val_update = f"post_sim.operations[{split[0]}].{arg_dict[split[-1]]}"

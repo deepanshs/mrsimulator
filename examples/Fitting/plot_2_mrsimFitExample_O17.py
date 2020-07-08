@@ -5,17 +5,18 @@ Fitting Sodium Silicate.
 ^^^^^^^^^^^^^^^^^^^^^^^^
 .. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 """
-# sphinx_gallery_thumbnail_number = 3
 # %%
 # Often, after obtaining an NMR measurement we must fit tensors to our data so we can
-# obtain the tensor parameters. In this example, we will illustrate the use of the *mrsimulator*
-# method to simulate the experimental spectrum and fit the simulation to the data allowing us to
-# extract the tensor parameters for our spin systems. We will be using the `LMFIT <https://lmfit.github.io/lmfit-py/>`_
-# methods to establish fitting parameters and fit the spectrum. The following examples will show fitting with
-# two synthetic :math:`^{29}\text{Si}` spectra--cuspidine and wollastonite--as well as the
-# measurements from an :math:`^{17}\text{O}` experiment on :math:`\text{Na}_{2}\text{SiO}_{3}`.
-# The *mrsimulator* library and data make use of CSDM compliant files.
-# In this example we will fit a simulation to an experimentally obtained :math:`^{17}\text{O}` spectrum.
+# obtain the tensor parameters. In this example, we will illustrate the use of the
+# *mrsimulator* method to simulate the experimental spectrum and fit the simulation to
+# the data allowing us to extract the tensor parameters for our spin systems. We will
+# be using the `LMFIT <https://lmfit.github.io/lmfit-py/>`_ methods to establish
+# fitting parameters and fit the spectrum. The following examples will show fitting with
+# two synthetic :math:`^{29}\text{Si}` spectra--cuspidine and wollastonite--as well as
+# the measurements from an :math:`^{17}\text{O}` experiment on
+# :math:`\text{Na}_{2}\text{SiO}_{3}`. The *mrsimulator* library and data make use of
+# CSDM compliant files. In this example we will fit a simulation to an experimentally
+# obtained :math:`^{17}\text{O}` spectrum.
 # We use the :math:`^{17}\text{O}` tensor information from Grandinetti `et. al.` [#f5]_
 #
 # We will begin by importing *matplotlib* and establishing figure size.
@@ -25,9 +26,11 @@ import matplotlib.pyplot as plt
 font = {"weight": "light", "size": 9}
 mpl.rc("font", **font)
 mpl.rcParams["figure.figsize"] = [4.25, 3.0]
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
-# Next we will import `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ and loading the data file.
+# Next we will import `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_
+# and loading the data file.
 import csdmpy as cp
 
 
@@ -142,7 +145,8 @@ plt.show()
 
 # %%
 # Once we have our simulation we must create our list of parameters to use in our
-# fitting. We will be using the `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_ class from *LMFIT*.
+# fitting. We will be using the
+# `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_ class from *LMFIT*.
 #
 # In each experiment the number of spin systems and sites present as well as their
 # attributes may vary. To simplify the parameter list creation we will use the

@@ -11,14 +11,14 @@ Post Simulation Signal Processing.
 # apodize the signal to simulate line broadening. The following example will
 # demonstrate the use of the `SignalProcessor` class to apply various operations
 # to simulation data.
-# global plot configuration
-# sphinx_gallery_thumbnail_number = 5
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+# global plot configuration
 font = {"weight": "light", "size": 9}
 mpl.rc("font", **font)
 mpl.rcParams["figure.figsize"] = [4.25, 3.0]
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # We will create a hypothetical two-site Si simulation to illustrate post-simulation

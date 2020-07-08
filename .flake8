@@ -1,7 +1,9 @@
 [flake8]
-ignore = E402 #C901 E265 E402 E501
+ignore = E402
 exclude = .eggs, *.egg,build, src/mrsimulator/__init__.py
 filename = *.pyx, *py
 max-line-length = 88
 max-complexity = 12
 select = C,E,F,W,N8
+count = True
+statistics = True
