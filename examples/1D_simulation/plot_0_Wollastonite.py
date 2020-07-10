@@ -6,21 +6,20 @@ Wollastonite, 29Si (I=1/2)
 
 29Si (I=1/2) spinning sideband simulation.
 """
-# global plot configuration
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
-
 # %%
 # Wollastonite is a high-temperature calcium-silicate,
 # :math:`\beta−\text{Ca}_3\text{Si}_3\text{O}_9`, with three distinct
 # :math:`^{29}\text{Si}` sites. The :math:`^{29}\text{Si}` tensor parameters
 # were obtained from Hansen `et. al.` [#f1]_
-from mrsimulator import SpinSystem
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 from mrsimulator import Simulator
 from mrsimulator import Site
+from mrsimulator import SpinSystem
+from mrsimulator.methods import BlochDecaySpectrum
 
+# global plot configuration
+mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # %%
 # **Step 1** Create the sites.
 S29_1 = Site(
@@ -48,8 +47,6 @@ spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
 # **Step 3** Create a Bloch decay spectrum method.
-from mrsimulator.methods import BlochDecaySpectrum
-
 method = BlochDecaySpectrum(
     channels=["29Si"],
     magnetic_flux_density=14.1,  # in T

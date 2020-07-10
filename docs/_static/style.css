@@ -57,10 +57,16 @@ h6 {
   justify-content: space-around;
   padding: 0;
 }
-.figure.align-default > p {
+.figure.align-default > p,
+.figure.align-left > p {
   color: rgb(87, 87, 87);
 }
-.figure.align-default > img[alt="_images/null.png"] {
+div.figure {
+  margin-top: 0;
+  padding-top: 0;
+}
+.figure.align-default > img[alt="_images/null.png"],
+.figure.align-left > img[alt="_images/null.png"] {
   display: none;
 }
 img.sphx-glr-single-img,
@@ -471,4 +477,8 @@ tr td {
   .navbar-nav {
     overflow-x: hidden;
   }
+}
+
+.doctest.highlight-default {
+  margin: 1em 0;
 }

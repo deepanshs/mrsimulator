@@ -6,21 +6,20 @@ Coesite, 17O (I=5/2)
 
 17O (I=5/2) quadrupolar line-shape simulation.
 """
-# global plot configuration
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
-
 # %%
 # Coesite is a high-pressure (2-3 GPa) and high-temperature (700°C) polymorph of silicon
 # dioxide :math:`\text{SiO}_2`. Coesite has five crystallographic :math:`^{17}\text{O}`
 # sites. In the following, we use the :math:`^{17}\text{O}` EFG tensor information from
 # Grandinetti `et. al.` [#f2]_
-from mrsimulator import SpinSystem
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 from mrsimulator import Simulator
 from mrsimulator import Site
+from mrsimulator import SpinSystem
+from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
+# global plot configuration
+mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # %%
 # **Step 1** Create the sites.
 
@@ -53,8 +52,6 @@ spin_systems = [SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abunda
 
 # %%
 # **Step 3** Create a central transition selective Bloch decay spectrum method.
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-
 method = BlochDecayCentralTransitionSpectrum(
     channels=["17O"],
     rotor_frequency=14000,  # in Hz
