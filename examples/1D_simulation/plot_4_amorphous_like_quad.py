@@ -7,19 +7,22 @@ Amorphous material, 27Al (I=5/2)
 27Al (I=5/2) simulation of amorphous-like material.
 """
 # sphinx_gallery_thumbnail_number = 2
-# global plot configuration
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
+from mrsimulator import Simulator
+from mrsimulator import Site
+from mrsimulator import SpinSystem
+from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from scipy.stats import multivariate_normal
 
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
+# global plot configuration
+mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 
 # %%
 # In this section, we illustrate the simulation of a quadrupolar spectrum arising from
 # a distribution of the electric field gradient (EFG) tensors from an amorphous
 # material. We proceed by assuming a multi-variate normal distribution, as follows,
-import numpy as np
-from scipy.stats import multivariate_normal
-
 n = 4000
 mean = [20, 6.5, 0.3]  # given as [isotropic chemical shift in ppm, Cq in MHz, eta].
 covariance = [[1.98, 0, 0], [0, 4.9, 0], [0, 0, 0.0016]]  # same order as the mean.
@@ -63,8 +66,6 @@ plt.show()
 # %%
 # Let's create the site and spin-system objects from these parameters. Note, we create
 # single-site spin systems for optimum performance.
-from mrsimulator import Simulator, Site, SpinSystem
-
 spin_systems = []
 for i, c, e in zip(iso, Cq, eta):
     site = Site(
@@ -79,8 +80,6 @@ for i, c, e in zip(iso, Cq, eta):
 # -----------------
 # Observe the static :math:`^{27}\text{Al}` line-shape simulation. First,
 # create a central transition selective Bloch decay spectrum method.
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-
 static_method = BlochDecayCentralTransitionSpectrum(
     channels=["27Al"], spectral_dimensions=[{"spectral_width": 80000}]
 )
