@@ -6,20 +6,19 @@ Potassium Sulfate, 33S (I=3/2)
 
 33S (I=3/2) quadrupolar line-shape simulation.
 """
-# global plot configuration
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
-
 # %%
 # The following example is the :math:`^{33}\text{S}` NMR line-shape simulation of
 # potassium sulfate (:math:`\text{K}_2\text{SO}_4`). The quadrupole tensor parameters
 # for :math:`^{33}\text{S}` is obtained from Moudrakovski `et. al.` [#f3]_
-from mrsimulator import SpinSystem
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 from mrsimulator import Simulator
 from mrsimulator import Site
+from mrsimulator import SpinSystem
+from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
+# global plot configuration
+mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # %%
 # **Step 1** Create the sites, in this case, just the one.
 S33 = Site(
@@ -35,8 +34,6 @@ spin_system = SpinSystem(sites=[S33])
 
 # %%
 # **Step 3** Create a central transition selective Bloch decay spectrum method.
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-
 method = BlochDecayCentralTransitionSpectrum(
     channels=["33S"],
     magnetic_flux_density=21.14,  # in T

@@ -7,26 +7,29 @@ Amorphous material, 29Si (I=1/2)
 29Si (I=1/2) simulation of amorphous-like material.
 """
 # sphinx_gallery_thumbnail_number = 2
-# global plot configuration
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
+from mrsimulator import Simulator
+from mrsimulator import Site
+from mrsimulator import SpinSystem
+from mrsimulator.methods import BlochDecaySpectrum
+from scipy.stats import multivariate_normal
 
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
+# global plot configuration
+mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 
 # %%
-# One of the advantages of the ``Mrsimulator`` package is that it is a very fast NMR
+# One of the advantages of the ``mrsimulator`` package is that it is a very fast NMR
 # line-shape simulation library. We can exploit this feature to simulate bulk
 # line-shapes and eventually model amorphous materials.
 #
-# In this section, we illustrate how the ``Mrsimulator`` library may be used in
+# In this section, we illustrate how the ``mrsimulator`` library may be used in
 # simulating the NMR spectrum of amorphous materials. We model this by assuming a
 # distribution of interaction tensors. For example,
 # consider a tri-variate normal distribution of the shielding tensor parameters,
 # `i.e.`, the isotropic chemical shift, the anisotropy parameter, :math:`\zeta`,
 # and the asymmetry parameter, :math:`\eta`, as follows,
-import numpy as np
-from scipy.stats import multivariate_normal
-
 n = 4000
 mean = [-100, 50, 0.15]  # given as [isotropic chemical shift in ppm, zeta in ppm, eta].
 covariance = [[2.25, 0, 0], [0, 26.2, 0], [0, 0, 0.001]]  # same order as the mean.
@@ -68,9 +71,11 @@ plt.tight_layout()
 plt.show()
 
 # %%
+# Create the Simulator object
+# ---------------------------
+#
+# **Spin-system:**
 # Let's create the sites and single-site spin-system objects from these parameters.
-from mrsimulator import Simulator, Site, SpinSystem
-
 spin_systems = []
 for i, z, e in zip(iso, zeta, eta):
     site = Site(
@@ -81,9 +86,8 @@ for i, z, e in zip(iso, zeta, eta):
     spin_systems += [SpinSystem(sites=[site], abundance=2.5e-4)]
 
 # %%
+# **Method:**
 # Let's also create the Bloch decay spectrum method.
-from mrsimulator.methods import BlochDecaySpectrum
-
 method = BlochDecaySpectrum(
     channels=["29Si"],
     spectral_dimensions=[
@@ -95,6 +99,7 @@ method = BlochDecaySpectrum(
 # The above method simulates a static :math:`^{29}\text{Si}` line-shapes at 9.4 T field
 # (default value).
 #
+# **Simulator:**
 # Now, that we have the spin systems and the method, create the simulator object and
 # add the respective objects.
 sim = Simulator()
