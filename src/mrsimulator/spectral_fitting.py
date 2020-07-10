@@ -223,8 +223,8 @@ def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
 
     # expression for the last abundance.
     last_abund = f"{length - 1}_abundance"
-    expression = "100" + "-".join([f"{START}{i}_abundance" for i in range(length - 1)])
-
+    expression = "-".join([f"{START}{i}_abundance" for i in range(length - 1)])
+    expression = "100" if expression == "" else f"100-{expression}"
     for items in temp_list:
         if "_eta" in items:
             params.add(
