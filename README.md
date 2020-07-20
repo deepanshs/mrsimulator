@@ -53,7 +53,7 @@ Our current objectives for the future are the following
   - 2D isotropic to anisotropic sideband correlation spectrum (PASS).
 
 For more information, refer to the
-[documentation](https://mrsimulator.readthedocs.io/en/stable/).
+[documentation](https://mrsimulator.readthedocs.io/en/latest/).
 
 > **View our example gallery**
 >
