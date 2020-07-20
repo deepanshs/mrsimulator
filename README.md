@@ -20,7 +20,7 @@ available in python.
 At present, the `mrsimulator` package offers the following
 
 - **Real-time simulation** of one-dimensional solid-state NMR line-shapes. See our
-  [benchmark results](https://mrsimulator.readthedocs.io/en/stable/benchmark.html).
+  [benchmark results](https://mrsimulator.readthedocs.io/en/latest/benchmark.html).
 
 - **Uncoupled spin-system**
 
@@ -57,13 +57,13 @@ For more information, refer to the
 
 > **View our example gallery**
 >
-> [![](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/auto_examples/index.html)
+> [![](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/latest/auto_examples/index.html)
 
 ## Installation
 
     $ pip install mrsimulator
 
-Please read our [installation document](https://mrsimulator.readthedocs.io/en/stable/installation.html) for details.
+Please read our [installation document](https://mrsimulator.readthedocs.io/en/latest/installation.html) for details.
 
 ## Check your build
 
