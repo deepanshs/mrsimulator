@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Fitting Cusipidine.
-^^^^^^^^^^^^^^^^^^^
+Fitting Cusipidine
+==================
 .. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 """
 # %%
@@ -25,12 +25,14 @@ Fitting Cusipidine.
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-font = {"weight": "light", "size": 9}
+font = {"size": 9}
 mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
+mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
+# Import the dataset
+# ------------------
 # Next we will import `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_
 # and loading the data file.
 import csdmpy as cp
@@ -46,33 +48,36 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# In order to to fit a simulation to the data we will need to establish a``Simulator``
-# object. We will use approximate initial parameters to generate our simulation:
-from mrsimulator import SpinSystem
-from mrsimulator import Simulator
-
-# %%
-# **Step 1** Create the site.
-site = {
-    "isotope": "29Si",
-    "isotropic_chemical_shift": "-80.0 ppm",
-    "shielding_symmetric": {"zeta": "-60 ppm", "eta": 0.6},
-}
-
-# %%
-# **Step 2** Create the spin system for the site.
-spin_system = {
-    "name": "Si Site",
-    "description": "A 29Si site in cuspidine",
-    "sites": [site],  # from the above code
-    "abundance": "100%",
-}
-system_object = SpinSystem.parse_dict_with_units(spin_system)
-
-# %%
-# **Step 3** Create the Bloch Decay method.
+# Create a "fitting model"
+# ------------------------
+# Before you can fit a simulation to the data, you will first need to create a
+# "fitting model." We will use the ``mrsimulator`` objects as tools in creating a model
+# for the least-squares fitting.
+from mrsimulator import SpinSystem, Simulator
 from mrsimulator.methods import BlochDecaySpectrum
 
+# %%
+# **Step 1:** Create the guess sites and spin systems. Since it is most likely that you
+# will be fitting for the spin-system parameters using some non-linear fitting
+# algorithm, as a general recommendation, the guess spin-system(s) should be a good
+# starting point.
+site = dict(
+    isotope="29Si",
+    isotropic_chemical_shift=-80.0,  # in ppm,
+    shielding_symmetric={"zeta": -60, "eta": 0.6},  # zeta in ppm
+)
+
+system_object = SpinSystem(
+    name="Si Site",
+    description="A 29Si site in cuspidine",
+    sites=[site],  # from the above code
+    abundance=100,
+)
+
+# %%
+# **Step 2:** Create the method. It is highly likely that the method used in the
+# simulator and its parameters are well known. When creating the method object, set the
+# value of the method parameters to the respective values used in the experiment.
 method = BlochDecaySpectrum(
     channels=["29Si"],
     magnetic_flux_density=7.1,  # in T
@@ -87,16 +92,10 @@ method = BlochDecaySpectrum(
 )
 
 # %%
-# The above method is set up to record the :math:`^{29}\text{Si}` resonances at the
-# magic angle, spinning at 780 Hz and 7.1 T external magnetic flux density.
-# The resonances are recorded over 25 kHz spectral width ofset by -5000 Hz and
-# using 2046 points.
-
-# %%
-# **Step 4** Create the Simulator object and add the method and spin-system objects.
+# **Step 3:** Create the Simulator object and add the method and spin-system objects.
 sim = Simulator()
-sim.spin_systems += [system_object]
-sim.methods += [method]
+sim.spin_systems = [system_object]
+sim.methods = [method]
 
 sim.methods[0].experiment = synthetic_experiment
 
@@ -105,23 +104,22 @@ sim.methods[0].experiment = synthetic_experiment
 sim.run()
 
 # %%
-# **Step 6** Create a SignalProcessor
+# **Step 6** Create a SignalProcessor and apply post simulation processing.
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
 
 op_list = [
-    sp.IFFT(dim_indx=0),
-    apo.Exponential(Lambda=200, dim_indx=0, dep_var_indx=0),
-    sp.FFT(dim_indx=0),
+    sp.IFFT(),
+    apo.Exponential(Lambda=200),
+    sp.FFT(),
     sp.Scale(factor=1),
 ]
 
 post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=op_list)
-
-# %%
-# ** Step 7** Process and plot the spectrum.
 processed_data = post_sim.apply_operations()
 
+# %%
+# **Step 7** The plot the spectrum.
 ax = plt.subplot(projection="csdm")
 ax.plot(processed_data, color="black", linewidth=1)
 ax.invert_xaxis()

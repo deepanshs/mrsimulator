@@ -141,7 +141,7 @@ sim.run()
 # scaling and a Lorentzian line-broadening function. Here, the Lorentzian
 # line-broadening is defined as an exponential apodization operation sandwiched
 # between two Fourier transformations.
-factor = oxygen_experiment.max().real
+factor = oxygen_experiment.max()
 op_list = [
     sp.IFFT(),
     apo.Exponential(Lambda=100),
