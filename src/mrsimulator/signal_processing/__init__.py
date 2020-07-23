@@ -14,14 +14,11 @@ __email__ = "maxvenetos@gmail.com"
 
 class SignalProcessor(BaseModel):
     """
-    Signal processing class to apply lists of various operations to individual
-    dependent variables of the data.
+    Signal processing class to apply a series of operations to the dependent variables
+    of the simulation dataset.
 
     Attributes
     ----------
-
-    data: CSDM object.
-        The data from the simulation.
 
     operations: List
         A list of operations.
@@ -29,10 +26,10 @@ class SignalProcessor(BaseModel):
     Examples
     --------
 
-    >>> post_sim = SignalProcessor(data=csdm_data, operations=[o1, o2]) # doctest: +SKIP
+    >>> post_sim = SignalProcessor(operations=[o1, o2]) # doctest: +SKIP
     """
 
-    data: cp.CSDM = None
+    processed_data: cp.CSDM = None
     operations: List[AbstractOperation] = []
 
     class Config:
@@ -63,7 +60,7 @@ class SignalProcessor(BaseModel):
     def to_dict_with_units(self):
         """
         Serialize the SignalProcessor object to a JSON compliant python dictionary
-        object where physical quantities are represented as string with a value and a
+        object, where physical quantities are represented as string with a value and a
         unit.
 
         Returns:
@@ -77,7 +74,7 @@ class SignalProcessor(BaseModel):
         op["operations"] = lst
         return op
 
-    def apply_operations(self, **kwargs):
+    def apply_operations(self, data, **kwargs):
         """
         Function to apply all the operation functions in the operations member of a
         SignalProcessor object. Operations applied sequentially over the data member.
@@ -85,9 +82,12 @@ class SignalProcessor(BaseModel):
         Returns:
             CSDM object: A copy of the data member with the operations applied to it.
         """
-        copy_data = self.data.copy()
+        if not isinstance(data, cp.CSDM):
+            raise ValueError("The data must be a CSDM object.")
+        copy_data = data.copy()
         for filters in self.operations:
             copy_data = filters.operate(copy_data)
+        self.processed_data = copy_data
 
         return copy_data
 

@@ -302,8 +302,7 @@ def LMFIT_min_function(params, sim, post_sim=None):
             _update_post_sim_from_LMFIT_params(params, post_sim)
 
     sim.run()
-    post_sim.data = sim.methods[0].simulation
-    processed_data = post_sim.apply_operations()
+    processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
     # residual = np.asarray([])
 
     if sim.config.decompose_spectrum == "spin_system":

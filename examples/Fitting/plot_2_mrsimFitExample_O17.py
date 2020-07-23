@@ -65,8 +65,8 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# Create Simulator object
-# -----------------------
+# Create a "fitting model"
+# ------------------------
 #
 # Next, we will want to create a ``simulator`` object that we will use to fit to our
 # spectrum. We will start by creating a guess ``SpinSystem`` objects.
@@ -85,7 +85,7 @@ O17_2 = Site(
 )
 
 # %%
-# **Step 2** Create the spin systems for the guessed sites.
+# **Step 2** Create the spin systems for the guess sites.
 system_object = [SpinSystem(sites=[s]) for s in [O17_1, O17_2]]  # from the above code
 
 # %%
@@ -96,7 +96,7 @@ system_object = [SpinSystem(sites=[s]) for s in [O17_1, O17_2]]  # from the abov
 # magnetic flux density, rotor angle, rotor frequency, and the spectral/spectroscopic
 # dimension. In the following example, we set up a central transition selective Bloch
 # decay spectrum method, where the spectral/spectroscopic information is obtained from
-# the experiment dimension metadata. The remaining attribute values are set to
+# the dimension metadata of the dimension. The remaining attribute values are set to
 # the experimental conditions.
 
 # get the count, increment, and coordinates_offset info from the experiment dimension.
@@ -148,11 +148,11 @@ op_list = [
     sp.FFT(),
     sp.Scale(factor=factor),
 ]
-post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=op_list)
+post_sim = sp.SignalProcessor(operations=op_list)
 
 # %%
 # **Step 7** Process and plot the spectrum.
-processed_data = post_sim.apply_operations()
+processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
 
 ax = plt.subplot(projection="csdm")
 ax.plot(processed_data.real, color="black", linewidth=1)

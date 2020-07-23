@@ -52,8 +52,8 @@ freqHz = sim.methods[0].spectral_dimensions[0].coordinates_Hz()
 
 
 def test_scale():
-    post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=PS_0)
-    data = post_sim.apply_operations()
+    post_sim = sp.SignalProcessor(operations=PS_0)
+    data = post_sim.apply_operations(data=sim.methods[0].simulation)
     _, y0, y1, y2 = sim.methods[0].simulation.to_list()
     _, y0_, y1_, y2_ = data.to_list()
 
@@ -63,8 +63,8 @@ def test_scale():
 
 
 def test_Lorentzian():
-    post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=PS_1)
-    data = post_sim.apply_operations()
+    post_sim = sp.SignalProcessor(operations=PS_1)
+    data = post_sim.apply_operations(data=sim.methods[0].simulation)
     _, y0, y1, y2 = data.to_list()
 
     sigma = 200
@@ -78,8 +78,8 @@ def test_Lorentzian():
 
 
 def test_Gaussian():
-    post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=PS_2)
-    data = post_sim.apply_operations()
+    post_sim = sp.SignalProcessor(operations=PS_2)
+    data = post_sim.apply_operations(data=sim.methods[0].simulation)
     _, y0, y1, _ = data.to_list()
 
     sigma = 20
@@ -91,8 +91,8 @@ def test_Gaussian():
     ), "Gaussian apodization amplitude failed"
 
     # test None for dep_var_indx
-    post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=PS_3)
-    data = post_sim.apply_operations()
+    post_sim = sp.SignalProcessor(operations=PS_3)
+    data = post_sim.apply_operations(data=sim.methods[0].simulation)
     _, y0, y1, y2 = data.to_list()
 
     sigma = 20

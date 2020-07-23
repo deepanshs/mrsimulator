@@ -4,13 +4,21 @@ Post Simulation Signal Processing
 .. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 
 
-After running a simulation, we often want to process the resulting spectrum.
-For example, we may want to scale the intensities to match the experiment or
-apodize the signal to simulate line-broadening. The following section will
-demonstrate the use of the `SignalProcessor` class in applying various operations
-to the simulation data.
+After running a simulation, you may find yourself in need of some
+post-simulation signal processing operations.
+For example, you may want to scale the intensities to match the experiment or
+add line-broadening. There are many signal-processing libraries, such
+as Numpy and Scipy, that you may use to accomplish this. Although, in NMR,
+certain operations like applying line-broadening, is so regularly used that it
+soon becomes inconvenient to having to write your own set of code.
+For this reason, the ``mrsimulator`` package offers some frequently used
+signal-processing operations.
 
-Import the relevent modules.
+The following section will demonstrate the use of the
+:class:`~mrsimulator.signal_processing.SignalProcessor` class in applying various
+operations to the simulation data.
+
+**Setup for the figures**
 
 .. plot::
     :format: doctest
@@ -32,7 +40,8 @@ Simulating spectrum
 -------------------
 Please refer to the :ref:`previous section <using_objects>` for a detailed description
 of how to set up a simulation. Here, we will create a hypothetical simulation from two
-single-site spin-systems to illustrate the post-simulation signal processing steps.
+single-site spin-systems to illustrate the use of the post-simulation signal processing
+module.
 
 .. plot::
     :format: doctest
@@ -98,17 +107,14 @@ The plot the spectrum is shown below.
 Post-simulating processing
 --------------------------
 
-Processing single spectrum
-''''''''''''''''''''''''''
-
-.. We will begin by illustrating the signal processing of a entire spectrum, that is,
-.. the combined spectrum arsing from the above two spin-systems.
+Setting a list of operations
+''''''''''''''''''''''''''''
 
 All signal processing operations are located in the `signal_processing` module of the
-``mrsimulator`` library. Within the module is the `apodization` sub-module, which is
-used in apodizing the signal. An apodization is a point-wise multiplication operation of
-the input signal with the apodization method. Please read our :ref:`operations_api`
-documentation for a complete list of operations.
+``mrsimulator`` library. Within the module is the `apodization` sub-module. An
+apodization is a point-wise multiplication operation of the input signal with the
+apodizing vector. Please read our :ref:`operations_api` documentation for a complete
+list of operations.
 
 Let's see how we can use this module and its operations. Import the module and
 sub-module as
@@ -121,14 +127,11 @@ sub-module as
     >>> import mrsimulator.signal_processing as sp
     >>> import mrsimulator.signal_processing.apodization as apo
 
-The signal processing operations are given as an ordered list of operations. In this
-workflow, the result from the previous operation becomes the input for the next operation.
-The following example shows an application of a single operation---a Gaussian
-line-broadening. Note, for almost all NMR spectrum simulation, the
-post-simulation processing is a convolution, including the line-broadening. You may
-achieve this convolution by sandwiching the corresponding apodization operation between
-the two Fourier transformations. In this case, the Gaussian convolution is defined as
-a set of three operations, as follows,
+The signal processing is a series of operations applied to the dataset. In this workflow,
+the result from the previous operation becomes the input for the next operation. In the
+``mrsimulator`` library, we define this series as a list of operations. In the following
+example, we show the application of a single operation—-a Gaussian line-broadening--using
+the :class:`~mrsimulator.signal_processing.SignalProcessor` class, as follows,
 
 .. plot::
     :format: doctest
@@ -136,30 +139,43 @@ a set of three operations, as follows,
     :include-source:
 
     >>> # list of processing operations
-    >>> op_list1 = [sp.IFFT(), apo.Gaussian(sigma=100), sp.FFT()]
+    >>> post_sim = sp.SignalProcessor(
+    ...     operations=[
+    ...         sp.IFFT(), apo.Gaussian(sigma=100), sp.FFT()
+    ...     ]
+    ... )
 
-The above signal processing procedure is set to sequentially apply the list of
-operations to simulate a Gaussian broadening of the spectrum.
-The operation procedure will first perform an inverse Fourier Transform to convert the
-frequency domain data to the time domain. Next, the time domain signal is apodized by a
+The required attribute of the ``SignalProcessor`` class, `operations`, holds the list of
+operations that gets applied to the simulation dataset. In the above example, the
+operations list will first perform an inverse Fourier Transform to convert the frequency
+domain signal to the time domain. Next, the time domain signal is apodized by a
 Gaussian function with a broadening factor of 100 Hz, followed by a forward Fourier
-transformation transforming the resulting time-domain signal back to the frequency domain.
+transformation transforming the signal back to the frequency domain.
+
+.. note::
+    For almost all NMR spectrum, the post-simulation processing is a convolution, including
+    the line-broadening. The convolution theorem states that under suitable conditions, the
+    Fourier transform of a convolution of two signals is the pointwise product of their
+    Fourier transforms.
+
+
+Applying operation to the spectrum
+''''''''''''''''''''''''''''''''''
 
 To apply the above list of operations to the simulation data, use the
-:class:`~mrsimulator.signal_processing.SignalProcessor` class instance as follows
+:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method of the
+instance as follows
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=op_list1)
-    >>> processed_data = post_sim.apply_operations()
+    >>> processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
 
-Here, the first line creates an instance of the `SignalProcessor` class whose attributes,
-`data` and `operations`, hold the simulation data and the list of operations, respectively.
-The second line applies the operations and returns a processed data. The plot of the
-processed signal is shown below.
+The `data` is the required argument of the `apply_operations` method, whose value is a
+CSDM object holding the dataset. The variable `processed_data` holds the output of the
+signal processing operations. The plot of the processed signal is shown below.
 
 .. plot::
     :format: doctest
@@ -173,8 +189,8 @@ processed signal is shown below.
     >>> plt.show() # doctest: +SKIP
 
 
-Processing individual sub-spectra
-'''''''''''''''''''''''''''''''''
+Applying operation to the sub-spectra
+'''''''''''''''''''''''''''''''''''''
 
 .. spectrum and follow up by decomposing the spectrum and processing each signal
 .. independently.
@@ -230,8 +246,8 @@ The plot of the spectra are shown below
     >>> plt.tight_layout() # doctest: +SKIP
     >>> plt.show() # doctest: +SKIP
 
-Because the simulation is stored as a CSDM object, each sub-spectrum is a
-dependent-variable of the simulation dataset, each sharing the same frequency dimension.
+Because the simulation is stored as a CSDM [#f1]_ object, each sub-spectrum is a
+dependent-variable of the simulation dataset, sharing the same frequency dimension.
 When using the list of the operations, you may selectively apply a given operation to a
 specific dependent-variable by specifying the index of the corresponding
 dependent-variable as an argument to the operation class. Note, the order of the
@@ -244,29 +260,30 @@ operations.
     :context: close-figs
     :include-source:
 
-    >>> op_list2 = [
-    ...     sp.IFFT(),
-    ...     apo.Gaussian(sigma=50, dep_var_indx=0),
-    ...     apo.Exponential(Lambda=200, dep_var_indx=1),
-    ...     sp.FFT(),
-    ... ]
+    >>> post_sim = sp.SignalProcessor(
+    ...     operations=[
+    ...         sp.IFFT(), # convert to time-domain
+    ...         apo.Gaussian(sigma=50, dep_var_indx=0),
+    ...         apo.Exponential(Lambda=200, dep_var_indx=1),
+    ...         sp.FFT(), # convert to frequency-domain
+    ...     ]
+    ... )
 
-The above signal processing procedure will first apply an inverse Fourier transformation,
-followed by a Gaussian apodization on the dependent variable at index 0 (spin-system labeled as
-`sys1`), followed by an Exponential apodization on the dependent variable at index 1
-(spin-system labeled as `sys2`), and finally a forward Fourier transform. Note, the FFT and
-IFFT operations apply on all dependent-variables.
+The above operations list first applies an inverse Fourier transformation,
+followed by a Gaussian apodization on the dependent variable at index 0 (spin-system
+labeled as `sys1`), followed by an Exponential apodization on the dependent
+variable at index 1 (spin-system labeled as `sys2`), and finally a forward Fourier
+transform. Note, the FFT and IFFT operations apply on all dependent-variables.
 
-As before, create the ``SignalProcessor`` class, add the data and the list of operations,
-and apply the operations.
+As before, apply the operations with the
+:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method.
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> post_sim = sp.SignalProcessor(data=sim.methods[0].simulation, operations=op_list2)
-    >>> processed_data = post_sim.apply_operations()
+    >>> processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
 
 The plot of the processed spectrum is shown below.
 
@@ -279,3 +296,35 @@ The plot of the processed spectrum is shown below.
     >>> ax.plot(processed_data, alpha=0.75)  # doctest: +SKIP
     >>> plt.tight_layout()  # doctest: +SKIP
     >>> plt.show()  # doctest: +SKIP
+
+
+Serializing the operations list
+-------------------------------
+
+You may serialize the operations list using the
+:meth:`~mrsimulator.signal_processing.SignalProcessor.to_dict_with_units`
+method, as follows
+
+.. doctest::
+
+    >>> from pprint import pprint
+    >>> pprint(post_sim.to_dict_with_units())
+    {'operations': [{'dim_indx': 0, 'function': 'IFFT'},
+                    {'dep_var_indx': 0,
+                     'dim_indx': 0,
+                     'function': 'apodization',
+                     'sigma': '50.0 Hz',
+                     'type': 'Gaussian'},
+                    {'Lambda': '200.0 Hz',
+                     'dep_var_indx': 1,
+                     'dim_indx': 0,
+                     'function': 'apodization',
+                     'type': 'Exponential'},
+                    {'dim_indx': 0, 'function': 'FFT'}]}
+
+
+.. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.,
+            Core Scientific Dataset Model: A lightweight and portable model and
+            file format for multi-dimensional scientific data, PLOS ONE,
+            **15**, 1-38, (2020).
+            `DOI:10.1371/journal.pone.0225953 <https://doi.org/10.1371/journal.pone.0225953>`_

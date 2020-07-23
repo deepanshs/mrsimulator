@@ -1,3 +1,5 @@
 1D Data Fitting (Least Squares)
 -------------------------------
-Using LMFIT nonlinear least squares minimization routine to fit a simulation object to experimental data.
+The ``mrsimulator`` library is easily integrable with other python-based libraries.
+In the following examples, we illustrate the use of LMFIT non-linear least-squares
+minimization python package to fit a simulation object to experimental data.

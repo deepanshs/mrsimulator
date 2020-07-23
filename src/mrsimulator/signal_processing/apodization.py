@@ -36,9 +36,9 @@ class AbstractApodization(AbstractOperation):
         Populate the property unit attribute of the class based on the dimension unit.
         """
         if unit.physical_type == "frequency":
-            self.property_units = dict(prop="s")
+            self.property_units = {f"{prop}": "s"}
             return
-        self.property_units = dict(prop="Hz")
+        self.property_units = {f"{prop}": "Hz"}
 
     @staticmethod
     def _get_dv_indexes(indexes, n):
