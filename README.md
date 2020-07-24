@@ -7,7 +7,7 @@
 | License      | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | Metrics      | [![PyPI - Downloads](https://img.shields.io/pypi/dm/mrsimulator.svg)](https://img.shields.io/pypi/dm/mrsimulator) [![Total alerts](https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python) [![codecov](https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/DeepanshS/mrsimulator) |
 
-`mrsimulator` is a python package for computing fast real-time solid-state nuclear
+`mrsimulator` is a python package for computing fast real-time solid-state
 magnetic resonance (NMR) line-shapes/spectrum. The library is optimized to compute bulk
 solid-state line-shapes, enabling the simulation of both crystalline and amorphous-like
 materials. The core of the `mrsimulator` library is written in C, wrapped and made
@@ -20,7 +20,7 @@ available in python.
 At present, the `mrsimulator` package offers the following
 
 - **Real-time simulation** of one-dimensional solid-state NMR line-shapes. See our
-  [benchmark results](https://mrsimulator.readthedocs.io/en/stable/benchmark.html).
+  [benchmark results](https://mrsimulator.readthedocs.io/en/latest/benchmark.html).
 
 - **Uncoupled spin-system**
 
@@ -53,17 +53,17 @@ Our current objectives for the future are the following
   - 2D isotropic to anisotropic sideband correlation spectrum (PASS).
 
 For more information, refer to the
-[documentation](https://mrsimulator.readthedocs.io/en/stable/).
+[documentation](https://mrsimulator.readthedocs.io/en/latest/).
 
 > **View our example gallery**
 >
-> [![](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/auto_examples/index.html)
+> [![](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/latest/auto_examples/index.html)
 
 ## Installation
 
     $ pip install mrsimulator
 
-Please read our [installation document](https://mrsimulator.readthedocs.io/en/stable/installation.html) for details.
+Please read our [installation document](https://mrsimulator.readthedocs.io/en/latest/installation.html) for details.
 
 ## Check your build
 

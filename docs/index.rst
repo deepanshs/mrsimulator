@@ -70,7 +70,7 @@ Welcome to the Mrsimulator documentation
 
 **About**
 
-``mrsimulator`` is a python package for computing fast real-time solid-state nuclear
+``mrsimulator`` is a python package for computing fast real-time solid-state
 magnetic resonance (NMR) line-shapes/spectrum. The library is optimized to compute bulk
 solid-state line-shapes, enabling the simulation of both crystalline and amorphous-like
 materials. The core of the ``mrsimulator`` library is written in C, wrapped and made
