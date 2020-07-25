@@ -15,7 +15,7 @@ __author__ = "Maxwell C Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 START = "ISO_"
-ENCRYPTION_PAIRS = [
+ENCODING_PAIRS = [
     ["spin_systems[", START],
     ["].sites[", "_SITES_"],
     ["].isotropic_chemical_shift", "_isotropic_chemical_shift"],
@@ -39,7 +39,7 @@ EXCLUDE = [
 ]
 
 
-def _str_to_html(my_string):
+def _str_encode(my_string):
     """
     LMFIT Parameters class does not allow for names to include special characters.
     This function converts '[', ']', and '.' to their HTML numbers to comply with
@@ -51,12 +51,12 @@ def _str_to_html(my_string):
     Returns:
         String object.
     """
-    for item in ENCRYPTION_PAIRS:
+    for item in ENCODING_PAIRS:
         my_string = my_string.replace(*item)
     return my_string
 
 
-def _html_to_string(my_string):
+def _str_decode(my_string):
     """
     Converts the HTML numbers to '[', ']', and '.' to allow for execution of the
     parameter name to update the simulator.
@@ -67,7 +67,7 @@ def _html_to_string(my_string):
     Returns:
         String Object.
     """
-    for item in ENCRYPTION_PAIRS:
+    for item in ENCODING_PAIRS:
         my_string = my_string.replace(*item[::-1])
     return my_string
 
@@ -106,13 +106,13 @@ def _traverse_dictionaries(dictionary, parent="spin_systems"):
             if key not in EXCLUDE and vals is not None:
                 if isinstance(vals, (dict, list)):
                     name_list += _traverse_dictionaries(
-                        vals, _str_to_html(f"{parent}.{key}")
+                        vals, _str_encode(f"{parent}.{key}")
                     )
                 else:
-                    name_list += [_str_to_html(f"{parent}.{key}")]
+                    name_list += [_str_encode(f"{parent}.{key}")]
     elif isinstance(dictionary, list):
         for i, items in enumerate(dictionary):
-            name_list += _traverse_dictionaries(items, _str_to_html(f"{parent}[{i}]"))
+            name_list += _traverse_dictionaries(items, _str_encode(f"{parent}[{i}]"))
 
     return name_list
 
@@ -138,7 +138,7 @@ def _post_sim_LMFIT_params(post_sim):
             temp_dict[f"{identifier}"] = arg
         elif isinstance(operation, apo.Exponential):
             identifier = f"operation_{i}_Exponential"
-            arg = operation.Lambda
+            arg = operation.FWHM
             temp_dict[f"{identifier}"] = arg
         elif isinstance(operation, sp.Scale):
             identifier = f"operation_{i}_Scale"
@@ -160,7 +160,7 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
         post_sim: SignalProcessor object
     """
     temp_dict = {}
-    arg_dict = {"Gaussian": "sigma", "Exponential": "Lambda", "Scale": "factor"}
+    arg_dict = {"Gaussian": "sigma", "Exponential": "FWHM", "Scale": "factor"}
     for param in params:
         # iterating through the parameter list looking for only DEP_VAR
         # (ie post_sim params)
@@ -228,13 +228,13 @@ def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
     for items in temp_list:
         if "_eta" in items:
             params.add(
-                name=items, value=eval("sim." + _html_to_string(items)), min=0, max=1,
+                name=items, value=eval("sim." + _str_decode(items)), min=0, max=1,
             )
         # last_abund should come before abundance
         elif last_abund in items:
             params.add(
                 name=items,
-                value=eval("sim." + _html_to_string(items)),
+                value=eval("sim." + _str_decode(items)),
                 min=0,
                 max=100,
                 expr=expression,
@@ -242,12 +242,12 @@ def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
         elif "abundance" in items:
             params.add(
                 name=items,
-                value=eval("sim." + _html_to_string(items)) * abundance_scale,
+                value=eval("sim." + _str_decode(items)) * abundance_scale,
                 min=0,
                 max=100,
             )
         else:
-            value = eval("sim." + _html_to_string(items))
+            value = eval("sim." + _str_decode(items))
             params.add(name=items, value=value)
 
     if post_sim is None:
@@ -295,7 +295,7 @@ def LMFIT_min_function(params, sim, post_sim=None):
     values = params.valuesdict()
     for items in values:
         if "operation_" not in items:
-            nameString = "sim." + _html_to_string(items)
+            nameString = "sim." + _str_decode(items)
             executable = f"{nameString} = {values[items]}"
             exec(executable)
         elif "operation_" in items and post_sim is not None:

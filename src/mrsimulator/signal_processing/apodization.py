@@ -125,33 +125,76 @@ class Gaussian(AbstractApodization):
         return self._operate(data, fn=self.fn, prop_name="sigma", prop_value=self.sigma)
 
 
+# class ExponentialAbs(AbstractApodization):
+#     r"""Apodize a dependent variable of the simulation data object by an exponential
+#     function. The function follows
+
+#     .. math::
+#         f(x) = e^{-\Tau |x| \pi},
+
+#     where :math:`x` are the coordinates of the data dimension and :math:`\Tau` is
+#     the width parameter.
+
+#     Args:
+#         int dim_indx: Data dimension index to apply the function along.
+#         float FWHM: The full width at half maximum parameter, :math:`\Tau`.
+#         int dep_var_indx: Data dependent variable index to apply the function to. If
+#             the type None, the operation will be applied to every dependent variable.
+
+#     Example
+#     -------
+
+#     >>> operation5 = apo.Exponential(sigma=143.4, dim_indx=0, dep_var_indx=0)
+#     """
+
+#     FWHM: float = 0
+
+#     property_unit_types: ClassVar = {"FWHM": ["time", "frequency"]}
+#     property_default_units: ClassVar = {"FWHM": ["s", "Hz"]}
+#     property_units: Dict = {"FWHM": "Hz"}
+
+#     @staticmethod
+#     def fn(x, arg):
+#         return np.exp(-arg * np.pi * np.abs(x))
+
+#     def operate(self, data):
+#         """
+#         Applies the operation for which the class is named for.
+
+#         data: CSDM object
+#         dep_var: int. The index of the dependent variable to apply operation to
+#         """
+
+#         return self._operate(data, fn=self.fn, prop_name="FWHM", prop_value=self.FWHM)
+
+
 class Exponential(AbstractApodization):
     r"""Apodize a dependent variable of the simulation data object by an exponential
     function. The function follows
 
     .. math::
-        f(x) = e^{-\Lambda |{x}| \pi},
+        f(x) = e^{-\Tau |x| \pi},
 
-    where :math:`x` are the coordinates of the data dimension and :math:`\Lambda` is
+    where :math:`x` are the coordinates of the data dimension and :math:`\Tau` is
     the width parameter.
 
     Args:
         int dim_indx: Data dimension index to apply the function along.
-        float Lambda: The width parameter, :math:`\Lambda`.
+        float FWHM: The full width at half maximum parameter, :math:`\Tau`.
         int dep_var_indx: Data dependent variable index to apply the function to. If
             the type None, the operation will be applied to every dependent variable.
 
     Example
     -------
 
-    >>> operation5 = apo.Exponential(sigma=143.4, dim_indx=0, dep_var_indx=0)
+    >>> operation5 = apo.Exponential(FWHM=143.4, dim_indx=0, dep_var_indx=0)
     """
 
-    Lambda: float = 0
+    FWHM: float = 0
 
-    property_unit_types: ClassVar = {"Lambda": ["time", "frequency"]}
-    property_default_units: ClassVar = {"Lambda": ["s", "Hz"]}
-    property_units: Dict = {"Lambda": "Hz"}
+    property_unit_types: ClassVar = {"FWHM": ["time", "frequency"]}
+    property_default_units: ClassVar = {"FWHM": ["s", "Hz"]}
+    property_units: Dict = {"FWHM": "Hz"}
 
     @staticmethod
     def fn(x, arg):
@@ -165,6 +208,4 @@ class Exponential(AbstractApodization):
         dep_var: int. The index of the dependent variable to apply operation to
         """
 
-        return self._operate(
-            data, fn=self.fn, prop_name="Lambda", prop_value=self.Lambda
-        )
+        return self._operate(data, fn=self.fn, prop_name="FWHM", prop_value=self.FWHM)

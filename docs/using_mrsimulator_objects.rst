@@ -2,9 +2,6 @@
 
 .. _using_objects:
 
-.. .. image:: https://mybinder.org/badge_logo.svg
-..  :target: https://mybinder.org/v2/gh/DeepanshS/mrsimulator/master?filepath=jupyternotebooks%2F
-
 ===================================================
 Getting started with ``mrsimulator``: Using objects
 ===================================================

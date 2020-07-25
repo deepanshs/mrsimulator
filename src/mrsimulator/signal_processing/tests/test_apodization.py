@@ -28,7 +28,7 @@ PS_0 = [sp.Scale(factor=10)]
 
 PS_1 = [
     sp.IFFT(dim_indx=0),
-    apo.Exponential(Lambda=200, dim_indx=0, dep_var_indx=0),
+    apo.Exponential(FWHM=200, dim_indx=0, dep_var_indx=0),
     sp.FFT(dim_indx=0),
 ]
 
@@ -128,10 +128,10 @@ def test_scale_class():
 
 def test_Exponential_class():
     # direct initialization
-    a = apo.Exponential(Lambda=200, dim_indx=0, dep_var_indx=0)
+    a = apo.Exponential(FWHM=200, dim_indx=0, dep_var_indx=0)
 
-    assert a.Lambda == 200
-    assert a.property_units == {"Lambda": "Hz"}
+    assert a.FWHM == 200
+    assert a.property_units == {"FWHM": "Hz"}
     assert a.dim_indx == 0
     assert a.dep_var_indx == 0
 
@@ -141,7 +141,7 @@ def test_Exponential_class():
     assert dict_ == {
         "function": "apodization",
         "type": "Exponential",
-        "Lambda": "200.0 Hz",
+        "FWHM": "200.0 Hz",
         "dim_indx": 0,
         "dep_var_indx": 0,
     }

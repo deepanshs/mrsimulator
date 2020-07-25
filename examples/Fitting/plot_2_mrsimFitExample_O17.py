@@ -144,7 +144,7 @@ sim.run()
 factor = oxygen_experiment.max()
 op_list = [
     sp.IFFT(),
-    apo.Exponential(Lambda=100),
+    apo.Exponential(FWHM=100),
     sp.FFT(),
     sp.Scale(factor=factor),
 ]

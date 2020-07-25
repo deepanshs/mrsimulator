@@ -6,12 +6,12 @@ Fitting Cusipidine
 .. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 """
 # %%
-# Often, after acquiring an NMR spectrum, we require some form of least-squares analysis
-# to quantify our measurement. A typical recipe for any least-squares analysis comprises
-# of two steps:
+# Often, after acquiring an NMR spectrum, we may require some form of least-squares
+# analysis to quantify our measurement. A typical recipe for any least-squares analysis
+# comprises of two steps:
 #
 # - Create a "fitting model," and
-# - optimize the model parameters.
+# - optimize the parameters of the model.
 #
 # Here, we will use the mrsimulator objects to create a "fitting model," and use the
 # `LMFIT <https://lmfit.github.io/lmfit-py/>`_ library for performing the least-squares
@@ -116,14 +116,9 @@ sim.run()
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
 
-op_list = [
-    sp.IFFT(),
-    apo.Exponential(Lambda=200),
-    sp.FFT(),
-    sp.Scale(factor=1),
-]
-
-post_sim = sp.SignalProcessor(operations=op_list)
+post_sim = sp.SignalProcessor(
+    operations=[sp.IFFT(), apo.Exponential(FWHM=200), sp.FFT(), sp.Scale(factor=0.3)]
+)
 processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
 
 # %%
@@ -142,17 +137,16 @@ plt.show()
 #
 # Now that our model is ready, the next step is to set up a least-squares minimization.
 # You may use any optimization package of choice, here we show an application using
-# LMFIT. You may read more on LMFIT on its
+# LMFIT. You may read more on the LMFIT
 # `documentation page <https://lmfit.github.io/lmfit-py/index.html>`_.
 #
 # Create fitting parameters
 # '''''''''''''''''''''''''
 #
 # Next, you will need a list of parameters that will be used in the fit. The *LMFIT*
-# library, provides a `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_
-# class to create a list of parameters rather easily. , as follows
+# library provides a `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_
+# class to create a list of parameters rather easily.
 from lmfit import Minimizer, Parameters, fit_report
-
 
 site1 = system_object.sites[0]
 params = Parameters()
@@ -160,7 +154,7 @@ params = Parameters()
 params.add(name="iso", value=site1.isotropic_chemical_shift)
 params.add(name="eta", value=site1.shielding_symmetric.eta, min=0, max=1)
 params.add(name="zeta", value=site1.shielding_symmetric.zeta)
-params.add(name="Lambda", value=post_sim.operations[1].Lambda)
+params.add(name="FWHM", value=post_sim.operations[1].FWHM)
 params.add(name="factor", value=post_sim.operations[3].factor)
 
 # %%
@@ -193,7 +187,7 @@ def minimization_function(params, sim, post_sim):
 
     # update the SignalProcessor parameter and apply line broadening.
     post_sim.operations[3].factor = values["factor"]
-    post_sim.operations[1].Lambda = values["Lambda"]
+    post_sim.operations[1].FWHM = values["FWHM"]
     processed_data = post_sim.apply_operations(sim.methods[0].simulation)
 
     # return the difference vector.
@@ -202,14 +196,14 @@ def minimization_function(params, sim, post_sim):
 
 # %%
 # .. note::
-#       To automate the fitting process, we provide a function to automatically parse
+#       To automate the fitting process, we provide a function to parse
 #       the ``simulator`` object for parameters and construct an *LMFIT* ``Parameters``
 #       object. Similarly, a minimization function, analogous to the above
 #       `minimization_function`, is also included in the *mrsimulator* library. See the
 #       next example for usage instructions.
 #
-# Perform least-squares minimization
-# ''''''''''''''''''''''''''''''''''
+# Perform the least-squares minimization
+# ''''''''''''''''''''''''''''''''''''''
 #
 # With the synthetic data, simulation, and the parameters, we are ready to perform the
 # fit. To fit, we use the *LMFIT*

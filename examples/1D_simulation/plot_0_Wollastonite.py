@@ -13,6 +13,8 @@ Wollastonite, 29Si (I=1/2)
 # were obtained from Hansen `et. al.` [#f1]_
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import mrsimulator.signal_processing as sp
+import mrsimulator.signal_processing.apodization as apo
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
@@ -72,9 +74,16 @@ sim_wollastonite.methods += [method]  # add the method
 sim_wollastonite.run()
 
 # %%
-# **Step 6** The plot of the simulation.
+# **Step 6** Add post-simulation processing.
+post_sim = sp.SignalProcessor(
+    operations=[sp.IFFT(), apo.Exponential(FWHM=70), sp.FFT()]
+)
+processed_data = post_sim.apply_operations(data=sim_wollastonite.methods[0].simulation)
+
+# %%
+# **Step 7** The plot of the simulation.
 ax = plt.subplot(projection="csdm")
-ax.plot(sim_wollastonite.methods[0].simulation, color="black", linewidth=1)
+ax.plot(processed_data.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

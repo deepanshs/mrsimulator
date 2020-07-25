@@ -4,15 +4,14 @@ Post Simulation Signal Processing
 .. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 
 
-After running a simulation, you may find yourself in need of some
-post-simulation signal processing operations.
-For example, you may want to scale the intensities to match the experiment or
-add line-broadening. There are many signal-processing libraries, such
-as Numpy and Scipy, that you may use to accomplish this. Although, in NMR,
-certain operations like applying line-broadening, is so regularly used that it
-soon becomes inconvenient to having to write your own set of code.
-For this reason, the ``mrsimulator`` package offers some frequently used
-signal-processing operations.
+After running a simulation, you may often find yourself in need of some post-simulation
+signal processing operations. For example, you may want to scale the intensities to
+match the experiment, add line-broadening, or simulate signal artifact such as sinc
+wiggles. There are many signal-processing libraries, such as Numpy and Scipy, that you
+may use to accomplish this. Although, in NMR, certain operations like applying
+line-broadening, is so regularly used that it soon becomes inconvenient to having to
+write your own set of code. For this reason, the ``mrsimulator`` package offers some
+frequently used signal-processing operations.
 
 The following section will demonstrate the use of the
 :class:`~mrsimulator.signal_processing.SignalProcessor` class in applying various
@@ -27,8 +26,6 @@ operations to the simulation data.
 
     >>> import matplotlib as mpl
     >>> import matplotlib.pyplot as plt
-    >>> import mrsimulator.signal_processing as sp
-    >>> import mrsimulator.signal_processing.apodization as apo
     ...
     >>> # global plot configuration
     >>> font = {"weight": "light", "size": 9}
@@ -38,7 +35,7 @@ operations to the simulation data.
 
 Simulating spectrum
 -------------------
-Please refer to the :ref:`previous section <using_objects>` for a detailed description
+Please refer to the :ref:`using_objects` for a detailed description
 of how to set up a simulation. Here, we will create a hypothetical simulation from two
 single-site spin-systems to illustrate the use of the post-simulation signal processing
 module.
@@ -77,7 +74,7 @@ module.
     ...         {
     ...             "count": 2048,
     ...             "spectral_width": 25000,  # in Hz
-    ...             "reference_offset": -5000,  # in Hz
+    ...             "reference_offset": -5070,  # in Hz
     ...             "label": "$^{29}$Si resonances",
     ...         }
     ...     ],
@@ -107,6 +104,10 @@ The plot the spectrum is shown below.
 Post-simulating processing
 --------------------------
 
+Signal processing is a series of operations that are applied to the dataset. In this
+workflow, the result from the previous operation becomes the input for the next
+operation. In the ``mrsimulator`` library, we define this series as a list of operations.
+
 Setting a list of operations
 ''''''''''''''''''''''''''''
 
@@ -116,8 +117,7 @@ apodization is a point-wise multiplication operation of the input signal with th
 apodizing vector. Please read our :ref:`operations_api` documentation for a complete
 list of operations.
 
-Let's see how we can use this module and its operations. Import the module and
-sub-module as
+Import the module and sub-module as
 
 .. plot::
     :format: doctest
@@ -127,11 +127,10 @@ sub-module as
     >>> import mrsimulator.signal_processing as sp
     >>> import mrsimulator.signal_processing.apodization as apo
 
-The signal processing is a series of operations applied to the dataset. In this workflow,
-the result from the previous operation becomes the input for the next operation. In the
-``mrsimulator`` library, we define this series as a list of operations. In the following
-example, we show the application of a single operation—-a Gaussian line-broadening--using
-the :class:`~mrsimulator.signal_processing.SignalProcessor` class, as follows,
+In the following example, we show the application of a single operation—-convoluting
+the frequency spectrum with a Gaussian lineshape, that is, simulating a Gaussian
+line-broadening--using the :class:`~mrsimulator.signal_processing.SignalProcessor`
+class.
 
 .. plot::
     :format: doctest
@@ -146,10 +145,11 @@ the :class:`~mrsimulator.signal_processing.SignalProcessor` class, as follows,
     ... )
 
 The required attribute of the ``SignalProcessor`` class, `operations`, holds the list of
-operations that gets applied to the simulation dataset. In the above example, the
-operations list will first perform an inverse Fourier Transform to convert the frequency
-domain signal to the time domain. Next, the time domain signal is apodized by a
-Gaussian function with a broadening factor of 100 Hz, followed by a forward Fourier
+operations that gets applied to the input dataset. The above set of operations is for a
+frequency domain input signal undergoing a Gaussian convolution of 100 Hz. In this scheme,
+the operations list will first perform an inverse Fourier Transform to convert
+the frequency domain signal to the time domain. Next, the time domain signal is apodized
+by a Gaussian function with a broadening factor of 100 Hz, followed by a forward Fourier
 transformation transforming the signal back to the frequency domain.
 
 .. note::
@@ -162,9 +162,9 @@ transformation transforming the signal back to the frequency domain.
 Applying operation to the spectrum
 ''''''''''''''''''''''''''''''''''
 
-To apply the above list of operations to the simulation data, use the
+To apply the above list of operations to the simulation/input data, use the
 :meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method of the
-instance as follows
+``SignalProcessor`` instance as follows,
 
 .. plot::
     :format: doctest
@@ -174,8 +174,8 @@ instance as follows
     >>> processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
 
 The `data` is the required argument of the `apply_operations` method, whose value is a
-CSDM object holding the dataset. The variable `processed_data` holds the output of the
-signal processing operations. The plot of the processed signal is shown below.
+CSDM object holding the dataset. The variable `processed_data` holds the output, that is,
+the processed data. The plot of the processed signal is shown below.
 
 .. plot::
     :format: doctest
@@ -234,7 +234,7 @@ Refer to the :ref:`config_simulator` section for further details.
 ..  plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 
 The above code generates two spectra, each corresponding to a spin-system.
-The plot of the spectra are shown below
+The plot of the spectra is shown below.
 
 .. plot::
     :format: doctest
@@ -247,7 +247,7 @@ The plot of the spectra are shown below
     >>> plt.show() # doctest: +SKIP
 
 Because the simulation is stored as a CSDM [#f1]_ object, each sub-spectrum is a
-dependent-variable of the simulation dataset, sharing the same frequency dimension.
+dependent-variable of the CSDM object, sharing the same frequency dimension.
 When using the list of the operations, you may selectively apply a given operation to a
 specific dependent-variable by specifying the index of the corresponding
 dependent-variable as an argument to the operation class. Note, the order of the
@@ -264,7 +264,7 @@ operations.
     ...     operations=[
     ...         sp.IFFT(), # convert to time-domain
     ...         apo.Gaussian(sigma=50, dep_var_indx=0),
-    ...         apo.Exponential(Lambda=200, dep_var_indx=1),
+    ...         apo.Exponential(FWHM=200, dep_var_indx=1),
     ...         sp.FFT(), # convert to frequency-domain
     ...     ]
     ... )
@@ -301,7 +301,7 @@ The plot of the processed spectrum is shown below.
 Serializing the operations list
 -------------------------------
 
-You may serialize the operations list using the
+You may also serialize the operations list using the
 :meth:`~mrsimulator.signal_processing.SignalProcessor.to_dict_with_units`
 method, as follows
 
@@ -315,13 +315,12 @@ method, as follows
                      'function': 'apodization',
                      'sigma': '50.0 Hz',
                      'type': 'Gaussian'},
-                    {'Lambda': '200.0 Hz',
+                    {'FWHM': '200.0 Hz',
                      'dep_var_indx': 1,
                      'dim_indx': 0,
                      'function': 'apodization',
                      'type': 'Exponential'},
                     {'dim_indx': 0, 'function': 'FFT'}]}
-
 
 .. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.,
             Core Scientific Dataset Model: A lightweight and portable model and

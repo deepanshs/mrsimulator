@@ -14,8 +14,8 @@ def test_01():
     str2 = "spin_systems[0].sites[0].quadrupolar.Cq"
     str2_encoded = "ISO_0_SITES_0_quadrupolar_Cq"
 
-    assert sf._str_to_html(str1) == str1_encoded
-    assert sf._str_to_html(str2) == str2_encoded
+    assert sf._str_encode(str1) == str1_encoded
+    assert sf._str_encode(str2) == str2_encoded
 
 
 def test_02():
@@ -26,15 +26,15 @@ def test_02():
     str2 = "spin_systems[0].sites[0].quadrupolar.Cq"
     str2_encoded = "ISO_0_SITES_0_quadrupolar_Cq"
 
-    assert sf._html_to_string(str1_encoded) == str1
-    assert sf._html_to_string(str2_encoded) == str2
+    assert sf._str_decode(str1_encoded) == str1
+    assert sf._str_decode(str2_encoded) == str2
 
 
 def test_03():
     # post_sim_LMFIT_params
     op_list = [
         sp.IFFT(dim_indx=0),
-        apo.Exponential(Lambda=100, dim_indx=0, dep_var_indx=0),
+        apo.Exponential(FWHM=100, dim_indx=0, dep_var_indx=0),
         sp.FFT(dim_indx=0),
         sp.Scale(factor=10),
     ]
@@ -52,7 +52,7 @@ def test_04():
     # update_post_sim_from_LMFIT_params
     op_list = [
         sp.IFFT(dim_indx=0),
-        apo.Exponential(Lambda=100, dim_indx=0, dep_var_indx=0),
+        apo.Exponential(FWHM=100, dim_indx=0, dep_var_indx=0),
         sp.FFT(dim_indx=0),
         sp.Scale(factor=10),
     ]
@@ -65,7 +65,7 @@ def test_04():
 
     sf._update_post_sim_from_LMFIT_params(params, post_sim)
 
-    assert post_sim.operations[1].Lambda == 10
+    assert post_sim.operations[1].FWHM == 10
     assert post_sim.operations[3].factor == 1
 
 
@@ -84,7 +84,7 @@ def test_5():
 
     op_list = [
         sp.IFFT(dim_indx=0),
-        apo.Exponential(Lambda=100, dim_indx=0, dep_var_indx=0),
+        apo.Exponential(FWHM=100, dim_indx=0, dep_var_indx=0),
         sp.FFT(dim_indx=0),
         sp.Scale(factor=10),
     ]
