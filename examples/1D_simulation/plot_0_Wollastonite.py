@@ -22,6 +22,8 @@ from mrsimulator.methods import BlochDecaySpectrum
 
 # global plot configuration
 mpl.rcParams["figure.figsize"] = [4.5, 3.0]
+# sphinx_gallery_thumbnail_number = 2
+
 # %%
 # **Step 1** Create the sites.
 S29_1 = Site(
@@ -73,6 +75,13 @@ sim_wollastonite.methods += [method]  # add the method
 # **Step 5** Simulate the spectrum.
 sim_wollastonite.run()
 
+# The plot of the simulation before post-processing.
+ax = plt.subplot(projection="csdm")
+ax.plot(sim_wollastonite.methods[0].simulation.real, color="black", linewidth=1)
+ax.invert_xaxis()
+plt.tight_layout()
+plt.show()
+
 # %%
 # **Step 6** Add post-simulation processing.
 post_sim = sp.SignalProcessor(
@@ -80,8 +89,7 @@ post_sim = sp.SignalProcessor(
 )
 processed_data = post_sim.apply_operations(data=sim_wollastonite.methods[0].simulation)
 
-# %%
-# **Step 7** The plot of the simulation.
+# The plot of the simulation after post-processing.
 ax = plt.subplot(projection="csdm")
 ax.plot(processed_data.real, color="black", linewidth=1)
 ax.invert_xaxis()

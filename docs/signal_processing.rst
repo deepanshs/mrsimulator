@@ -243,6 +243,7 @@ The plot of the spectra is shown below.
 
     >>> ax = plt.gca(projection="csdm") # doctest: +SKIP
     >>> ax.plot(sim.methods[0].simulation) # doctest: +SKIP
+    >>> ax.invert_xaxis() # doctest: +SKIP
     >>> plt.tight_layout() # doctest: +SKIP
     >>> plt.show() # doctest: +SKIP
 
@@ -294,6 +295,7 @@ The plot of the processed spectrum is shown below.
 
     >>> ax = plt.gca(projection="csdm") # doctest: +SKIP
     >>> ax.plot(processed_data, alpha=0.75)  # doctest: +SKIP
+    >>> ax.invert_xaxis() # doctest: +SKIP
     >>> plt.tight_layout()  # doctest: +SKIP
     >>> plt.show()  # doctest: +SKIP
 

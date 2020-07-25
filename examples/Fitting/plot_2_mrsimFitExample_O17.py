@@ -57,6 +57,9 @@ oxygen_experiment = oxygen_experiment.real
 # Convert the dimension coordinates from Hz to ppm.
 oxygen_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
+# Normalize the spectrum
+oxygen_experiment /= oxygen_experiment.sum()
+
 # plot of the dataset.
 ax = plt.subplot(projection="csdm")
 ax.plot(oxygen_experiment, color="black", linewidth=1)
@@ -155,8 +158,10 @@ post_sim = sp.SignalProcessor(operations=op_list)
 processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
 
 ax = plt.subplot(projection="csdm")
-ax.plot(processed_data.real, color="black", linewidth=1)
+ax.plot(processed_data.real, color="black", linewidth=1, label="guess spectrum")
+ax.plot(oxygen_experiment.real, c="r", linewidth=1.5, alpha=0.5, label="experiment")
 ax.invert_xaxis()
+plt.legend()
 plt.tight_layout()
 plt.show()
 
