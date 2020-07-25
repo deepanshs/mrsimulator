@@ -80,25 +80,25 @@ Uncoupled spin-systems
 
 .. _listing_1H-12C:
 .. code-block:: json
-   :linenos:
-   :caption: An example 1H-12C isotopomer in JSON representation.
+  :linenos:
+  :caption: An example 1H-12C isotopomer in JSON representation.
 
-    {
-        "name": "1H-12C",
-        "description": "An optional description of the spin-system/isotopomer",
-        "sites": [
-            {
-                "isotope": "1H",
-                "isotropic_chemical_shift": "-1.2 ppm",
-                "shielding_symmetric": {
-                    "zeta": "4.12 ppm",
-                    "eta": 0.12
-                }
-            }
-        ],
-        "couplings": [],
-        "abundance": "98.915%"
-    }
+  {
+      "name": "1H-12C",
+      "description": "An optional description of the spin-system/isotopomer",
+      "sites": [
+          {
+              "isotope": "1H",
+              "isotropic_chemical_shift": "-1.2 ppm",
+              "shielding_symmetric": {
+                  "zeta": "4.12 ppm",
+                  "eta": 0.12
+              }
+          }
+      ],
+      "couplings": [],
+      "abundance": "98.915%"
+  }
 
 :numref:`listing_1H-12C` is an example of the spin-system corresponding to the
 `1H-12C` isotopomer, serialized using the JavaScript Object Notation (JSON). At the
@@ -130,33 +130,33 @@ and its attributes.
 
 .. _listing_2H-12C:
 .. code-block:: json
-   :linenos:
-   :emphasize-lines: 12-18
-   :caption: An example 2H-12C isotopomer in JSON representation.
+  :linenos:
+  :emphasize-lines: 12-18
+  :caption: An example 2H-12C isotopomer in JSON representation.
 
-    {
-        "name": "2H-12C",
-        "description": "An optional description on the isotopomer",
-        "sites": [
-            {
-                "isotope": "2H",
-                "isotropic_chemical_shift": "4.1 ppm",
-                "shielding_symmetric": {
-                    "zeta": "12.12 ppm",
-                    "eta": 0.82
-                },
-                "quadrupolar": {
-                    "Cq": "1.47 MHz",
-                    "eta": 0.27,
-                    "alpha": "0.212 rad",
-                    "beta": "1.231 rad",
-                    "gamma": "3.1415 rad"
-                }
-            }
-        ],
-        "coupling": [],
-        "abundance": "0.148%"
-    }
+  {
+      "name": "2H-12C",
+      "description": "An optional description on the isotopomer",
+      "sites": [
+          {
+              "isotope": "2H",
+              "isotropic_chemical_shift": "4.1 ppm",
+              "shielding_symmetric": {
+                  "zeta": "12.12 ppm",
+                  "eta": 0.82
+              },
+              "quadrupolar": {
+                  "Cq": "1.47 MHz",
+                  "eta": 0.27,
+                  "alpha": "0.212 rad",
+                  "beta": "1.231 rad",
+                  "gamma": "3.1415 rad"
+              }
+          }
+      ],
+      "coupling": [],
+      "abundance": "0.148%"
+  }
 
 :numref:`listing_2H-12C` is an example of a spin-system representing the `2H-12C`
 isotopomer. This example is similar to the example from :numref:`listing_1H-12C`,
