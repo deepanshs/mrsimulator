@@ -179,6 +179,8 @@ def one_d_spectrum(method,
         &incre[0], &magnetic_flux_density_in_T[0], &srfiH[0],
         &rair[0], &n_event[0], n_sequence, number_of_sidebands)
 
+# normalization factor for the spectrum
+    norm = np.prod(incre)
 
 # create fftw scheme __________________________________________________________
 
@@ -386,7 +388,7 @@ def one_d_spectrum(method,
                     interpolation,
                     )
 
-            temp = amp*abundance
+            temp = amp*abundance/norm
 
             ## reverse the spectrum if gyromagnetic ratio is positive.
             if gyromagnetic_ratio < 0:

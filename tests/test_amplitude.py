@@ -80,7 +80,7 @@ def test_with_configuration_setting():
         err_msg="Integral error from νr, integration density, integration volume.",
     )
 
-    sim.methods[0].spectral_dimensions[0].count = 256
+    sim.config.number_of_sidebands = 256
     sim.run()
     y_spinning_MAS_1 = sim.methods[0].simulation.dependent_variables[0].components[0]
 
@@ -97,14 +97,17 @@ def test_number_of_points():
     sim.methods[0].spectral_dimensions[0].count = 2048
     sim.run()
     y_static = sim.methods[0].simulation.dependent_variables[0].components[0]
+    inc = sim.methods[0].simulation.dimensions[0].increment.to("Hz").value
 
     sim.methods[0].spectral_dimensions[0].count = 4096
     sim.run()
     y_static_1 = sim.methods[0].simulation.dependent_variables[0].components[0]
+    inc_1 = sim.methods[0].simulation.dimensions[0].increment.to("Hz").value
 
+    print(inc, inc_1)
     np.testing.assert_almost_equal(
-        y_static.sum(),
-        y_static_1.sum(),
+        y_static.sum() * inc,
+        y_static_1.sum() * inc_1,
         decimal=8,
         err_msg="Integral error from number_of_points",
     )

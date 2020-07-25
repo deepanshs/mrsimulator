@@ -27,6 +27,8 @@ Bug fixes
 
 - Fixed bug resulting from the rotation of the fourth rank tensor with non-zero euler
   angles.
+- Fixed bug causing a change in the spectral area as the sampling points change. Now the
+  area is constant.
 
 Other changes
 '''''''''''''
