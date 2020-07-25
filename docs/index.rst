@@ -148,7 +148,7 @@ Our current objectives for the future are the following
 
     installation
     requirements
-    understanding-spin_systems
+    introduction
     getting_started
     using_mrsimulator_objects
     configuring_simulator
