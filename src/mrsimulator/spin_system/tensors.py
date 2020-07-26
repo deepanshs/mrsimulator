@@ -79,7 +79,7 @@ class SymmetricTensor(Parseable):
     Example
     -------
 
-    >>> shielding = SymmetricTensor(zeta=10, eta=0.1, alpha=0.15, beta=3.1415, gamma=2.1)
+    >>> shielding = SymmetricTensor(zeta=10, eta=0.1, alpha=0.15, beta=3.14, gamma=2.1)
     >>> efg = SymmetricTensor(Cq=10e6, eta=0.5, alpha=1.5, beta=1.1451, gamma=0)
     """
 

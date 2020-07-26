@@ -7,7 +7,6 @@ from typing import Union
 
 import csdmpy as cp
 import numpy as np
-from mrsimulator.post_simulation import PostSimulator
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import Transition
 from mrsimulator.transition.transition_list import TransitionList
@@ -103,14 +102,12 @@ class Method(Parseable):
         >>> bloch.description
         'Huh!'
 
-    post_simulation: An optional dict with post-simulation parameters.
     """
     name: str = None
     label: str = None
     description: str = None
     channels: List[str] = []
     spectral_dimensions: List[SpectralDimension] = [{}]
-    post_simulation: PostSimulator = None
     simulation: Union[cp.CSDM, np.ndarray] = None
     experiment: Union[cp.CSDM, np.ndarray] = None
 
@@ -208,8 +205,6 @@ class Method(Parseable):
 
     def dict(self, **kwargs):
         temp_dict = super().dict(**kwargs)
-        if self.post_simulation is not None:
-            temp_dict["post_simulation"] = self.post_simulation.dict()
         if self.simulation is not None:
             temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
         if self.experiment is not None:
@@ -331,28 +326,3 @@ class Method(Parseable):
 
     #             segments.append(np.asarray(P_segment))  # append the intersection
     #     return cartesian_product(*segments)
-
-    def apodize(self, **kwargs):
-        """Returns the result of passing the selected apodization function .
-
-        Args:
-            csdm: simulation object
-
-        Returns:
-            A Numpy array.
-        """
-
-        csdm = self.simulation
-        for dim in csdm.dimensions:
-            dim.to("Hz", "nmr_frequency_ratio")
-        apo = self.post_simulation.apodization
-
-        sum_ = 0
-
-        for item in apo:
-            sum_ += item.apodize(csdm)
-
-        for dim in csdm.dimensions:
-            dim.to("ppm", "nmr_frequency_ratio")
-
-        return self.post_simulation.scale * sum_

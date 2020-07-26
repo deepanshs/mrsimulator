@@ -16,8 +16,6 @@ from pydantic import BaseModel
 
 from .config import ConfigSimulator
 
-# from mrsimulator.post_simulation import PostSimulator
-
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
 
@@ -57,7 +55,7 @@ class Simulator(BaseModel):
         >>> from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
         >>> sim.methods = [
         ...     BlochDecaySpectrum(channels=['17O'], spectral_width=50000),
-        ...     BlochDecayCentralTransitionSpectrum(channels=['17O'], spectral_width=50000)
+        ...     BlochDecayCentralTransitionSpectrum(channels=['17O'])
         ... ]
 
     config: :ref:`config_api` object or equivalent dict object (optional).
@@ -128,7 +126,6 @@ class Simulator(BaseModel):
     description: str = None
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
-    # post_simulation: List[PostSimulator] = []
     config: ConfigSimulator = ConfigSimulator()
     indexes = []
 
@@ -529,39 +526,3 @@ class Simulator(BaseModel):
                 "spin_systems": [self.spin_systems[index].to_dict_with_units()]
             }
         }
-
-    def apodize(self, dimension=0, method=0, **kwargs):
-        if self.config.decompose_spectrum is False:
-            self.config.decompose_spectrum = True
-            self.run(method_index=method)
-
-        csdm = self.methods[method].simulation
-
-        for dim in csdm.dimensions:
-            dim.to("Hz", "nmr_frequency_ratio")
-
-        for i, apodization_filter in enumerate(self.post_simulation):
-            apodization_filter.apodization[0]._apodize(csdm, i)
-
-        for dim in csdm.dimensions:
-            dim.to("ppm", "nmr_frequency_ratio")
-
-        # apodization_filter = Apodization(
-        #     self.methods[method].simulation, dimension=dimension
-        # )
-        # return apodization_filter.apodize(fn, **kwargs)
-
-        # csdm = self.simulation
-        # for dim in csdm.dimensions:
-        #     dim.to("Hz", "nmr_frequency_ratio")
-        # apo = self.post_simulation.apodization
-
-        # sum_ = 0
-
-        # for item in apo:
-        #     sum_ += item.apodize(csdm)
-
-        # for dim in csdm.dimensions:
-        #     dim.to("ppm", "nmr_frequency_ratio")
-
-        # return self.post_simulation.scale * sum_

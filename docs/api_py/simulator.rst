@@ -20,4 +20,3 @@ Simulator
     .. automethod:: run
     .. automethod:: save
     .. automethod:: load
-    .. automethod:: apodize

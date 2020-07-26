@@ -121,7 +121,8 @@ class SpinSystem(Parseable):
             to the computation.
 
             .. seealso::
-                `Fitting example <./../auto_examples/Fitting/plot_2_mrsimFitExample_O17.html>`_
+                `Fitting example
+                <./../auto_examples/Fitting/plot_2_mrsimFitExample_O17.html>`_
     """
 
     name: str = None

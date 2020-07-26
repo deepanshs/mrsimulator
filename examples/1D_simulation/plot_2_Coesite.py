@@ -13,6 +13,8 @@ Coesite, 17O (I=5/2)
 # Grandinetti `et. al.` [#f2]_
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import mrsimulator.signal_processing as sp
+import mrsimulator.signal_processing.apodization as apo
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
@@ -20,8 +22,10 @@ from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
 # global plot configuration
 mpl.rcParams["figure.figsize"] = [4.5, 3.0]
+# sphinx_gallery_thumbnail_number = 2
+
 # %%
-# **Step 1** Create the sites.
+# **Step 1:** Create the sites.
 
 # default unit of isotropic_chemical_shift is ppm and Cq is Hz.
 O17_1 = Site(
@@ -44,14 +48,14 @@ O17_5 = Site(
 sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
 
 # %%
-# **Step 2** Create the spin systems from these sites. For optimum performance, we
+# **Step 2:** Create the spin systems from these sites. For optimum performance, we
 # create five single-site spin systems instead of a single five-site spin-system. The
 # abundance of each spin-system is taken from above reference.
 abundance = [0.83, 1.05, 2.16, 2.05, 1.90]
 spin_systems = [SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
 
 # %%
-# **Step 3** Create a central transition selective Bloch decay spectrum method.
+# **Step 3:** Create a central transition selective Bloch decay spectrum method.
 method = BlochDecayCentralTransitionSpectrum(
     channels=["17O"],
     rotor_frequency=14000,  # in Hz
@@ -71,19 +75,32 @@ method = BlochDecayCentralTransitionSpectrum(
 # width using 2048 points.
 
 # %%
-# **Step 4** Create the Simulator object and add the method and spin-system objects.
+# **Step 4:** Create the Simulator object and add the method and spin-system objects.
 sim_coesite = Simulator()
 sim_coesite.spin_systems += spin_systems  # add the spin systems
 sim_coesite.methods += [method]  # add the method
 
 # %%
-# **Step 5** Simulate the spectrum.
+# **Step 5:** Simulate the spectrum.
 sim_coesite.run()
 
-# %%
-# **Step 6** The plot of the simulation.
+# The plot of the simulation before post-processing.
 ax = plt.subplot(projection="csdm")
-ax.plot(sim_coesite.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim_coesite.methods[0].simulation.real, color="black", linewidth=1)
+ax.invert_xaxis()
+plt.tight_layout()
+plt.show()
+
+# %%
+# **Step 6:** Add post-simulation processing.
+post_sim = sp.SignalProcessor(
+    operations=[sp.IFFT(), apo.Exponential(FWHM=30), apo.Gaussian(sigma=80), sp.FFT()]
+)
+processed_data = post_sim.apply_operations(data=sim_coesite.methods[0].simulation)
+
+# The plot of the simulation after post-processing.
+ax = plt.subplot(projection="csdm")
+ax.plot(processed_data.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

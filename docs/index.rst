@@ -152,6 +152,7 @@ Our current objectives for the future are the following
     getting_started
     using_mrsimulator_objects
     configuring_simulator
+    signal_processing
     mrsim_IO
     benchmark
     auto_examples/index
