@@ -42,9 +42,13 @@ synthetic_experiment = cp.load(filename)
 # convert the dimension coordinates from Hz to ppm
 synthetic_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
+# Normalize the spectrum
+synthetic_experiment /= synthetic_experiment.max()
+
 # plot of the synthetic dataset.
 ax = plt.subplot(projection="csdm")
 ax.plot(synthetic_experiment, color="black", linewidth=1)
+ax.set_xlim(-200, 50)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -108,24 +112,25 @@ sim.methods = [method]
 sim.methods[0].experiment = synthetic_experiment
 
 # %%
-# **Step 5** simulate the spectrum.
+# **Step 5:** simulate the spectrum.
 sim.run()
 
 # %%
-# **Step 6** Create a SignalProcessor class and apply post simulation processing.
+# **Step 6:** Create a SignalProcessor class and apply post simulation processing.
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
 
 post_sim = sp.SignalProcessor(
-    operations=[sp.IFFT(), apo.Exponential(FWHM=200), sp.FFT(), sp.Scale(factor=0.3)]
+    operations=[sp.IFFT(), apo.Exponential(FWHM=200), sp.FFT(), sp.Scale(factor=1.5)]
 )
 processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
 
 # %%
-# **Step 7** The plot the spectrum. We also plot the synthetic dataset for comparison.
+# **Step 7:** The plot the spectrum. We also plot the synthetic dataset for comparison.
 ax = plt.subplot(projection="csdm")
 ax.plot(processed_data.real, c="k", linewidth=1, label="guess spectrum")
 ax.plot(synthetic_experiment.real, c="r", linewidth=1.5, alpha=0.5, label="experiment")
+ax.set_xlim(-200, 50)
 ax.invert_xaxis()
 plt.legend()
 plt.tight_layout()
@@ -224,10 +229,10 @@ plt.plot(x, y_data - residual, "r", alpha=0.5, label="Fit")
 plt.plot(x, residual, alpha=0.5, label="Residual")
 
 plt.xlabel("Frequency / Hz")
+plt.xlim(-200, 50)
 plt.gca().invert_xaxis()
 plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()
-
 plt.tight_layout()
 plt.show()
 

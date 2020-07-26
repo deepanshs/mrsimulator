@@ -25,7 +25,7 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
-# **Step 1** Create the sites.
+# **Step 1:** Create the sites.
 S29_1 = Site(
     isotope="29Si",
     isotropic_chemical_shift=-89.0,  # in ppm
@@ -45,12 +45,12 @@ S29_3 = Site(
 sites = [S29_1, S29_2, S29_3]  # all sites
 
 # %%
-# **Step 2** Create the spin systems from these sites. Again, we create three
+# **Step 2:** Create the spin systems from these sites. Again, we create three
 # single-site spin systems for better performance.
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# **Step 3** Create a Bloch decay spectrum method.
+# **Step 3:** Create a Bloch decay spectrum method.
 method = BlochDecaySpectrum(
     channels=["29Si"],
     magnetic_flux_density=14.1,  # in T
@@ -66,13 +66,13 @@ method = BlochDecaySpectrum(
 )
 
 # %%
-# **Step 4** Create the Simulator object and add the method and spin-system objects.
+# **Step 4:** Create the Simulator object and add the method and spin-system objects.
 sim_wollastonite = Simulator()
 sim_wollastonite.spin_systems += spin_systems  # add the spin systems
 sim_wollastonite.methods += [method]  # add the method
 
 # %%
-# **Step 5** Simulate the spectrum.
+# **Step 5:** Simulate the spectrum.
 sim_wollastonite.run()
 
 # The plot of the simulation before post-processing.
@@ -83,7 +83,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# **Step 6** Add post-simulation processing.
+# **Step 6:** Add post-simulation processing.
 post_sim = sp.SignalProcessor(
     operations=[sp.IFFT(), apo.Exponential(FWHM=70), sp.FFT()]
 )

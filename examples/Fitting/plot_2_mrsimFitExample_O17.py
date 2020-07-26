@@ -43,7 +43,6 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # Import the dataset
 # ------------------
 #
-# **Step 0**
 # Import the experimental data. In this example, we will import the data file serialized
 # with the CSDM file-format. We use the
 # `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ module to load the
@@ -58,11 +57,12 @@ oxygen_experiment = oxygen_experiment.real
 oxygen_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
 # Normalize the spectrum
-oxygen_experiment /= oxygen_experiment.sum()
+oxygen_experiment /= oxygen_experiment.max()
 
 # plot of the dataset.
 ax = plt.subplot(projection="csdm")
 ax.plot(oxygen_experiment, color="black", linewidth=1)
+ax.set_xlim(-50, 100)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -74,7 +74,7 @@ plt.show()
 # Next, we will want to create a ``simulator`` object that we will use to fit to our
 # spectrum. We will start by creating a guess ``SpinSystem`` objects.
 #
-# **Step 1** Create the guess sites.
+# **Step 1:** Create the guess sites.
 O17_1 = Site(
     isotope="17O",
     isotropic_chemical_shift=60.0,  # in ppm,
@@ -88,11 +88,11 @@ O17_2 = Site(
 )
 
 # %%
-# **Step 2** Create the spin systems for the guess sites.
+# **Step 2:** Create the spin systems for the guess sites.
 system_object = [SpinSystem(sites=[s]) for s in [O17_1, O17_2]]  # from the above code
 
 # %%
-# **Step 3** Create the method object. Note, when fitting, you must create an
+# **Step 3:** Create the method object. Note, when fitting, you must create an
 # appropriate method object which matches the method used in acquiring the experimental
 # data. The attribute values of this method must be set to match the exact conditions
 # under which the experiment was acquired. This including the acquisition channels, the
@@ -125,41 +125,41 @@ method = BlochDecayCentralTransitionSpectrum(
 method.experiment = oxygen_experiment
 
 # %%
-# **Step 4** Create the Simulator object and add the method and spin-system objects.
+# **Step 4:** Create the Simulator object and add the method and spin-system objects.
 sim = Simulator()
 sim.spin_systems = system_object
 sim.methods = [method]
 
 # %%
-# **Step 5** Simulate the spectrum.
+# **Step 5:** Simulate the spectrum.
 for iso in sim.spin_systems:
     # To avoid querying at every iteration we will save the relevant transition pathways
     iso.transition_pathways = method.get_transition_pathways(iso).tolist()
 sim.run()
 
 # %%
-# **Step 6** Create the SignalProcessor class object and add to it the list of
+# **Step 6:** Create the SignalProcessor class object and add to it the list of
 # operations that will be applied to the simulated spectrum. The generic list of
 # operations in NMR includes the line-broadening function. In the following, we add a
 # scaling and a Lorentzian line-broadening function. Here, the Lorentzian
 # line-broadening is defined as an exponential apodization operation sandwiched
 # between two Fourier transformations.
-factor = oxygen_experiment.max()
 op_list = [
     sp.IFFT(),
-    apo.Exponential(FWHM=100),
+    apo.Exponential(FWHM=40),
     sp.FFT(),
-    sp.Scale(factor=factor),
+    sp.Scale(factor=0.6),
 ]
 post_sim = sp.SignalProcessor(operations=op_list)
 
 # %%
-# **Step 7** Process and plot the spectrum.
+# **Step 7:** Process and plot the spectrum.
 processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
 
 ax = plt.subplot(projection="csdm")
 ax.plot(processed_data.real, color="black", linewidth=1, label="guess spectrum")
 ax.plot(oxygen_experiment.real, c="r", linewidth=1.5, alpha=0.5, label="experiment")
+ax.set_xlim(-50, 100)
 ax.invert_xaxis()
 plt.legend()
 plt.tight_layout()
@@ -177,7 +177,7 @@ plt.show()
 # attributes may vary. To simplify the parameter list creation we will use the
 # :func:`~mrsimulator.spectral_fitting.make_LMFIT_parameters`
 #
-# **Step 8** Create a list of parameters to vary during fitting.
+# **Step 8:** Create a list of parameters to vary during fitting.
 params = make_LMFIT_parameters(sim, post_sim)
 
 # %%
@@ -189,25 +189,25 @@ params["ISO_0_abundance"].vary = False  # fix the abundance
 params.pretty_print()
 
 # %%
-# **Step 9** Perform the minimization.
+# **Step 9:** Perform the minimization.
 minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, post_sim))
 result = minner.minimize()
 report_fit(result)
 
 # %%
-# **Step 10** Plot the fitted spectrum.
+# **Step 10:** Plot the fitted spectrum.
 plt.figsize = (4, 3)
-residual = oxygen_experiment.copy()
-residual[:] = result.residual
-plt.plot(*oxygen_experiment.to_list(), label="Spectrum")
-plt.plot(*(oxygen_experiment - residual).to_list(), "r", alpha=0.5, label="Fit")
-plt.plot(*residual.to_list(), alpha=0.5, label="Residual")
+x, y_data = oxygen_experiment.to_list()
+residual = result.residual
+plt.plot(x, y_data, label="Spectrum")
+plt.plot(x, y_data - residual, "r", alpha=0.5, label="Fit")
+plt.plot(x, residual, alpha=0.5, label="Residual")
 
 plt.xlabel("$^{17}$O frequency / ppm")
+plt.xlim(-50, 100)
 plt.gca().invert_xaxis()
 plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()
-
 plt.tight_layout()
 plt.show()
 

@@ -24,7 +24,7 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
-# **Step 1** Create the sites, in this case, just the one.
+# **Step 1:** Create the sites, in this case, just the one.
 S33 = Site(
     name="33S",
     isotope="33S",
@@ -33,11 +33,11 @@ S33 = Site(
 )
 
 # %%
-# **Step 2** Create the spin-system from the site.
+# **Step 2:** Create the spin-system from the site.
 spin_system = SpinSystem(sites=[S33])
 
 # %%
-# **Step 3** Create a central transition selective Bloch decay spectrum method.
+# **Step 3:** Create a central transition selective Bloch decay spectrum method.
 method = BlochDecayCentralTransitionSpectrum(
     channels=["33S"],
     magnetic_flux_density=21.14,  # in T
@@ -53,13 +53,13 @@ method = BlochDecayCentralTransitionSpectrum(
 )
 
 # %%
-# **Step 4** Create the Simulator object and add the method and the spin-system object.
+# **Step 4:** Create the Simulator object and add the method and the spin-system object.
 sim_K2SO3 = Simulator()
 sim_K2SO3.spin_systems += [spin_system]  # add the spin-system
 sim_K2SO3.methods += [method]  # add the method
 
 # %%
-# **Step 5** Simulate the spectrum.
+# **Step 5:** Simulate the spectrum.
 sim_K2SO3.run()
 
 # The plot of the simulation before post-processing.
@@ -71,7 +71,7 @@ plt.show()
 
 
 # %%
-# **Step 6** Add post-simulation processing.
+# **Step 6:** Add post-simulation processing.
 post_sim = sp.SignalProcessor(
     operations=[sp.IFFT(), apo.Exponential(FWHM=10), sp.FFT()]
 )
