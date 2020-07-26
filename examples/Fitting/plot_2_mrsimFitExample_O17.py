@@ -182,10 +182,11 @@ params["sys_0_abundance"].vary = False  # fix the abundance
 params.pretty_print()
 
 # %%
-# **Step 9:** Perform least-squares minimization. We also provide a utility function,
-# :func:`~mrsimulator.spectral_fitting.LMFIT_min_function`, for  evaluating the
-# difference vector between the simulation and experiment. You can use this function
-# directly as the argument of the LMFIT Minimizer class, as follows,
+# **Step 9:** Perform least-squares minimization. For the user's convenience, we also
+# provide a utility function, :func:`~mrsimulator.spectral_fitting.LMFIT_min_function`,
+# for  evaluating the difference vector between the simulation and experiment, based on
+# the parameters update. You may use this function directly as the argument of the
+# LMFIT Minimizer class, as follows,
 minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, post_sim))
 result = minner.minimize()
 report_fit(result)
