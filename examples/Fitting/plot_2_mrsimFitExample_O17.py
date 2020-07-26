@@ -6,18 +6,16 @@ Fitting Crystalline Sodium Metasilicate
 .. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 """
 # %%
-# Often, after obtaining an NMR measurement we must fit tensors to our data so we can
-# obtain the tensor parameters. In this example, we will illustrate the use of the
-# *mrsimulator* method to simulate the experimental spectrum and fit the simulation to
-# the data allowing us to extract the tensor parameters for our spin systems. We will
-# be using the `LMFIT <https://lmfit.github.io/lmfit-py/>`_ methods to establish
-# fitting parameters and fit the spectrum. The following examples will show fitting with
-# two synthetic :math:`^{29}\text{Si}` spectra--cuspidine and wollastonite--as well as
-# the measurements from an :math:`^{17}\text{O}` experiment on
-# :math:`\text{Na}_{2}\text{SiO}_{3}`. The *mrsimulator* library and data make use of
-# CSDM compliant files. In this example we will fit a simulation to an experimentally
-# obtained :math:`^{17}\text{O}` spectrum.
-# We use the :math:`^{17}\text{O}` tensor information from Grandinetti `et. al.` [#f5]_
+# In this example, we illustrate the use of the mrsimulator objects to
+#
+# - create a spin-system model,
+# - use the model to perform a least-squares fit on the experimental, and
+# - extract the tensor parameters of the spin - system model.
+#
+# We will be using the `LMFIT <https://lmfit.github.io/lmfit-py/>`_ methods to
+# establish fitting parameters and fit the spectrum. The following example illustrates
+# the least-squares fitting on a :math:`^{17}\text{O}` measurement of
+# :math:`\text{Na}_{2}\text{SiO}_{3}` [#f5]_.
 #
 # We will begin by importing relevant modules and presetting figure style and layout.
 import csdmpy as cp
@@ -44,9 +42,8 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # ------------------
 #
 # Import the experimental data. In this example, we will import the data file serialized
-# with the CSDM file-format. We use the
-# `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ module to load the
-# dataset.
+# with the CSDM file-format, using the
+# `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ module.
 filename = "https://osu.box.com/shared/static/kfgt0jxgy93srsye9pofdnoha6qy58qf.csdf"
 oxygen_experiment = cp.load(filename)
 
@@ -71,8 +68,8 @@ plt.show()
 # Create a "fitting model"
 # ------------------------
 #
-# Next, we will want to create a ``simulator`` object that we will use to fit to our
-# spectrum. We will start by creating a guess ``SpinSystem`` objects.
+# Next, we will create a ``simulator`` object that we use to fit the spectrum. We will
+# start by creating the guess ``SpinSystem`` objects.
 #
 # **Step 1:** Create the guess sites.
 O17_1 = Site(
@@ -88,19 +85,19 @@ O17_2 = Site(
 )
 
 # %%
-# **Step 2:** Create the spin systems for the guess sites.
+# **Step 2:** Create the spin-systems for the guess sites.
 system_object = [SpinSystem(sites=[s]) for s in [O17_1, O17_2]]  # from the above code
 
 # %%
-# **Step 3:** Create the method object. Note, when fitting, you must create an
-# appropriate method object which matches the method used in acquiring the experimental
-# data. The attribute values of this method must be set to match the exact conditions
-# under which the experiment was acquired. This including the acquisition channels, the
-# magnetic flux density, rotor angle, rotor frequency, and the spectral/spectroscopic
-# dimension. In the following example, we set up a central transition selective Bloch
-# decay spectrum method, where the spectral/spectroscopic information is obtained from
-# the dimension metadata of the dimension. The remaining attribute values are set to
-# the experimental conditions.
+# **Step 3:** Create the method object. Note, when performing the least-squares fit, you
+# must create an appropriate method object which matches the method used in acquiring
+# the experimental data. The attribute values of this method must be set to match the
+# exact conditions under which the experiment was acquired. This including the
+# acquisition channels, the magnetic flux density, rotor angle, rotor frequency, and
+# the spectral/spectroscopic dimension. In the following example, we set up a central
+# transition selective Bloch decay spectrum method, where the spectral/spectroscopic
+# information is obtained from the metadata of the CSDM dimension. The remaining
+# attribute values are set to the experimental conditions.
 
 # get the count, increment, and coordinates_offset info from the experiment dimension.
 count = oxygen_experiment.dimensions[0].count
@@ -133,29 +130,22 @@ sim.methods = [method]
 # %%
 # **Step 5:** Simulate the spectrum.
 for iso in sim.spin_systems:
-    # To avoid querying at every iteration we will save the relevant transition pathways
+    # To avoid querying at every iteration, save the relevant transition pathways info
     iso.transition_pathways = method.get_transition_pathways(iso).tolist()
+
 sim.run()
 
 # %%
-# **Step 6:** Create the SignalProcessor class object and add to it the list of
-# operations that will be applied to the simulated spectrum. The generic list of
-# operations in NMR includes the line-broadening function. In the following, we add a
-# scaling and a Lorentzian line-broadening function. Here, the Lorentzian
-# line-broadening is defined as an exponential apodization operation sandwiched
-# between two Fourier transformations.
-op_list = [
-    sp.IFFT(),
-    apo.Exponential(FWHM=40),
-    sp.FFT(),
-    sp.Scale(factor=0.6),
-]
-post_sim = sp.SignalProcessor(operations=op_list)
-
-# %%
-# **Step 7:** Process and plot the spectrum.
+# **Step 6:** Create the SignalProcessor class object and add and apply the list of
+# post-simulation operations.
+post_sim = sp.SignalProcessor(
+    operations=[sp.IFFT(), apo.Exponential(FWHM=40), sp.FFT(), sp.Scale(factor=0.6)]
+)
 processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
 
+# %%
+# **Step 7:** The plot the guess simulation (black) along with the spectrum (red) is
+# shown below.
 ax = plt.subplot(projection="csdm")
 ax.plot(processed_data.real, color="black", linewidth=1, label="guess spectrum")
 ax.plot(oxygen_experiment.real, c="r", linewidth=1.5, alpha=0.5, label="experiment")
@@ -169,33 +159,39 @@ plt.show()
 # Least-squares minimization with LMFIT
 # -------------------------------------
 #
-# Once we have our simulation we must create our list of parameters to use in our
-# fitting. We will be using the
-# `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_ class from *LMFIT*.
+# Once you have a fitting model, you need to create the list of parameters to use in the
+# least-squares fitting. For this, you may use the
+# `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_ class from *LMFIT*,
+# as described in the previous example.
+# Here, we make use of a utility function,
+# :func:`~mrsimulator.spectral_fitting.make_LMFIT_parameters`, that considerably
+# simplifies the generation of the parameters object.
 #
-# In each experiment the number of spin systems and sites present as well as their
-# attributes may vary. To simplify the parameter list creation we will use the
-# :func:`~mrsimulator.spectral_fitting.make_LMFIT_parameters`
-#
-# **Step 8:** Create a list of parameters to vary during fitting.
+# **Step 8:** Create a list of parameters.
 params = make_LMFIT_parameters(sim, post_sim)
 
 # %%
+# The `make_LMFIT_parameters` parses the instances of the ``Simulator`` and the
+# ``PostSimulator`` objects for parameters and returns an LMFIT `Parameters` object.
+#
 # **Customize the Parameters:**
 # You may customize the parameters list, ``params``, as desired. Here, we add a
-# constraint on the fit by fixing the site abundances for the spin systems at index
+# constraint on the fit by fixing the site abundances for the spin-systems at index
 # 1 and 2 to 50%.
-params["ISO_0_abundance"].vary = False  # fix the abundance
+params["sys_0_abundance"].vary = False  # fix the abundance
 params.pretty_print()
 
 # %%
-# **Step 9:** Perform the minimization.
+# **Step 9:** Perform least-squares minimization. We also provide a utility function,
+# :func:`~mrsimulator.spectral_fitting.LMFIT_min_function`, for  evaluating the
+# difference vector between the simulation and experiment. You can use this function
+# directly as the argument of the LMFIT Minimizer class, as follows,
 minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, post_sim))
 result = minner.minimize()
 report_fit(result)
 
 # %%
-# **Step 10:** Plot the fitted spectrum.
+# **Step 10:** The plot of the fit, measurement and the residuals is shown below.
 plt.figsize = (4, 3)
 x, y_data = oxygen_experiment.to_list()
 residual = result.residual

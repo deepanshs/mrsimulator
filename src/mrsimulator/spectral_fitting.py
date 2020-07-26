@@ -14,10 +14,10 @@ except ImportError:
 __author__ = "Maxwell C Venetos"
 __email__ = "maxvenetos@gmail.com"
 
-START = "ISO_"
+START = "sys_"
 ENCODING_PAIRS = [
     ["spin_systems[", START],
-    ["].sites[", "_SITES_"],
+    ["].sites[", "_site_"],
     ["].isotropic_chemical_shift", "_isotropic_chemical_shift"],
     ["].shielding_symmetric.", "_shielding_symmetric_"],
     ["].quadrupolar.", "_quadrupolar_"],
@@ -194,8 +194,12 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
 
 def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
     """
-    Parses through the fitting parameter list to create LMFIT parameters used for
-    fitting.
+    Parses the Simulator and PostSimulator objects for a list of LMFIT parameters.
+    The parameter name is generated using the following syntax:
+
+    ``sys_i_site_j_attribute1_attribute2``
+
+    for spin-system attribute with signature sys[i].sites[j].attribute1.attribute2
 
     Args:
         sim: a Simulator object.
@@ -267,15 +271,15 @@ def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
 
 def LMFIT_min_function(params, sim, post_sim=None):
     """
-    The simulation routine to establish how the parameters will update the simulation.
+    The simulation routine to calculate the vector difference between simulation and
+    experiment based on the parameters update.
 
     Args:
         params: Parameters object containing parameters to vary during minimization.
-        data: a CSDM object of the data to fit the simulation to.
-        sim: Simulator object to be fit to data. Initialized with arbitrary fitting
-        parameters.
-        apodization_function: A string indicating the apodization function to use.
-        Currently "Gaussian" and "Lorentzian" are supported.
+        sim: Simulator object used in the simulation. Initialized with guess fitting
+            parameters.
+        post_sim: PostSimulator object used in the simulation. Initialized with guess
+            fitting parameters.
 
     Returns:
         Array of the differences between the simulation and the experimental data.

@@ -220,7 +220,7 @@ result = minner.minimize(method="powell")
 print(fit_report(result))
 
 # %%
-# **The plot the fitted spectrum**
+# The plot of the fit, measurement and the residuals is shown below.
 plt.figsize = (4, 3)
 x, y_data = synthetic_experiment.to_list()
 residual = result.residual

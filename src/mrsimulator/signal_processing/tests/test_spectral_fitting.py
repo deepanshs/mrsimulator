@@ -9,10 +9,10 @@ from mrsimulator import SpinSystem
 def test_01():
     # str_to_html
     str1 = "spin_systems[0].sites[0].isotropic_chemical_shift"
-    str1_encoded = "ISO_0_SITES_0_isotropic_chemical_shift"
+    str1_encoded = "sys_0_site_0_isotropic_chemical_shift"
 
     str2 = "spin_systems[0].sites[0].quadrupolar.Cq"
-    str2_encoded = "ISO_0_SITES_0_quadrupolar_Cq"
+    str2_encoded = "sys_0_site_0_quadrupolar_Cq"
 
     assert sf._str_encode(str1) == str1_encoded
     assert sf._str_encode(str2) == str2_encoded
@@ -21,10 +21,10 @@ def test_01():
 def test_02():
     # html_to_str
     str1 = "spin_systems[0].sites[0].isotropic_chemical_shift"
-    str1_encoded = "ISO_0_SITES_0_isotropic_chemical_shift"
+    str1_encoded = "sys_0_site_0_isotropic_chemical_shift"
 
     str2 = "spin_systems[0].sites[0].quadrupolar.Cq"
-    str2_encoded = "ISO_0_SITES_0_quadrupolar_Cq"
+    str2_encoded = "sys_0_site_0_quadrupolar_Cq"
 
     assert sf._str_decode(str1_encoded) == str1
     assert sf._str_decode(str2_encoded) == str2
@@ -93,10 +93,10 @@ def test_5():
     params = sf.make_LMFIT_parameters(sim, post_sim)
 
     valuesdict = {
-        "ISO_0_SITES_0_isotropic_chemical_shift": 10,
-        "ISO_0_SITES_0_shielding_symmetric_zeta": 5,
-        "ISO_0_SITES_0_shielding_symmetric_eta": 0.1,
-        "ISO_0_abundance": 100,
+        "sys_0_site_0_isotropic_chemical_shift": 10,
+        "sys_0_site_0_shielding_symmetric_zeta": 5,
+        "sys_0_site_0_shielding_symmetric_eta": 0.1,
+        "sys_0_abundance": 100,
         "operation_1_Exponential": 100,
         "operation_3_Scale": 10,
     }
