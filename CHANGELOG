@@ -21,6 +21,9 @@ What's new!
   this may cause metadata loss, if any.
 - Added a ``label`` and ``description`` attributes to the ``Site`` class.
 - Added a new ``label`` attribute to the ``SpinSystem`` class.
+- New ``SignalProcessor`` class for post-simulation signal processing.
+- Improved usage of least-squares minimization using python
+  `LMFIT <https://lmfit.github.io/lmfit-py/>`_ package.
 
 Bug fixes
 '''''''''
