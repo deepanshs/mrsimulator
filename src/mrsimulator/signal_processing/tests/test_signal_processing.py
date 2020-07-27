@@ -10,7 +10,7 @@ def test_01():
     post_sim = sp.SignalProcessor()
     operations = [
         sp.IFFT(),
-        apo.Gaussian(sigma=12, dim_indx=0, dep_var_indx=0),
+        apo.Gaussian(FWHM=12, dim_indx=0, dv_indx=0),
         sp.FFT(),
     ]
 
@@ -30,9 +30,9 @@ def test_01():
             {
                 "function": "apodization",
                 "type": "Gaussian",
-                "sigma": "12.0 Hz",
+                "FWHM": "12.0 Hz",
                 "dim_indx": 0,
-                "dep_var_indx": 0,
+                "dv_indx": 0,
             },
             {"dim_indx": 0, "function": "FFT"},
         ],

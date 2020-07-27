@@ -94,7 +94,7 @@ plt.show()
 # %%
 # **Step 6:** Add post-simulation processing.
 post_sim = sp.SignalProcessor(
-    operations=[sp.IFFT(), apo.Exponential(FWHM=30), apo.Gaussian(sigma=80), sp.FFT()]
+    operations=[sp.IFFT(), apo.Exponential(FWHM=30), apo.Gaussian(FWHM=80), sp.FFT()]
 )
 processed_data = post_sim.apply_operations(data=sim_coesite.methods[0].simulation)
 

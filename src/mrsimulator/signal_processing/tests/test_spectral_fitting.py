@@ -34,7 +34,7 @@ def test_03():
     # post_sim_LMFIT_params
     op_list = [
         sp.IFFT(dim_indx=0),
-        apo.Exponential(FWHM=100, dim_indx=0, dep_var_indx=0),
+        apo.Exponential(FWHM=100, dim_indx=0, dv_indx=0),
         sp.FFT(dim_indx=0),
         sp.Scale(factor=10),
     ]
@@ -52,7 +52,7 @@ def test_04():
     # update_post_sim_from_LMFIT_params
     op_list = [
         sp.IFFT(dim_indx=0),
-        apo.Exponential(FWHM=100, dim_indx=0, dep_var_indx=0),
+        apo.Exponential(FWHM=100, dim_indx=0, dv_indx=0),
         sp.FFT(dim_indx=0),
         sp.Scale(factor=10),
     ]
@@ -84,7 +84,7 @@ def test_5():
 
     op_list = [
         sp.IFFT(dim_indx=0),
-        apo.Exponential(FWHM=100, dim_indx=0, dep_var_indx=0),
+        apo.Exponential(FWHM=100, dim_indx=0, dv_indx=0),
         sp.FFT(dim_indx=0),
         sp.Scale(factor=10),
     ]

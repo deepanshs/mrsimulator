@@ -134,7 +134,7 @@ def _post_sim_LMFIT_params(post_sim):
     for i, operation in enumerate(post_sim.operations):
         if isinstance(operation, apo.Gaussian):
             identifier = f"operation_{i}_Gaussian"
-            arg = operation.sigma
+            arg = operation.FWHM
             temp_dict[f"{identifier}"] = arg
         elif isinstance(operation, apo.Exponential):
             identifier = f"operation_{i}_Exponential"
@@ -160,7 +160,7 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
         post_sim: SignalProcessor object
     """
     temp_dict = {}
-    arg_dict = {"Gaussian": "sigma", "Exponential": "FWHM", "Scale": "factor"}
+    arg_dict = {"Gaussian": "FWHM", "Exponential": "FWHM", "Scale": "factor"}
     for param in params:
         # iterating through the parameter list looking for only DEP_VAR
         # (ie post_sim params)

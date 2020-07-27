@@ -15,7 +15,7 @@ __email__ = "maxvenetos@gmail.com"
 
 class AbstractApodization(AbstractOperation):
     dim_indx: int = 0
-    dep_var_indx: Union[int, list, tuple] = None  # if none apply to all
+    dv_indx: Union[int, list, tuple] = None  # if none apply to all
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
@@ -72,7 +72,7 @@ class AbstractApodization(AbstractOperation):
         apodization_vactor = fn(x_value, prop_value)
 
         n = len(data.dependent_variables)
-        dv_indexes = self._get_dv_indexes(self.dep_var_indx, n=n)
+        dv_indexes = self._get_dv_indexes(self.dv_indx, n=n)
 
         for i in dv_indexes:
             data.dependent_variables[i].components[0] *= apodization_vactor
@@ -84,35 +84,39 @@ class Gaussian(AbstractApodization):
     function. The function follows
 
     .. math::
-        f(x) = e^{-2 x^2  \sigma^2  \pi^2},
+        f(x) = e^{-2 \pi^2 \frac{\text{FWHM}{2\sqrt{2\ln 2}}}^2  x^2},
 
-    where :math:`x` are the coordinates of the data dimension and :math:`\sigma` is
-    the standard deviation.
+    where :math:`x` are the coordinates of the data dimension and FWHM is the full
+    width at half maximum of the Gaussian.
 
     Args:
-        int dim_indx: Data dimension index to apply the function along. The default
-            value is 0.
-        float sigma: The standard deviation, :math:`\sigma`, of the Gaussian function.
-            The default value is 0.
-        int dep_var_indx: Data dependent variable index to apply the function to. If
-            the type None, the operation will be applied to every dependent variable.
+        float FWHM: The full width at half maximum of the Gaussian, FWHM. The default
+            value is 0 and the default unit is the reciprocal of the unit associated
+            with the dimension at index `dim_indx`.
+        int dim_indx: The index of the CSDM dimension along which the operation is
+            applied. The default is the dimension at index 0.
+        int dv_indx: The index of the CSDM dependent variable where the operation is
+            applied. If the value is None, the operation will be applied to every
+            dependent variable.
 
     Example
     -------
 
     >>> import mrsimulator.signal_processing.apodization as apo
-    >>> operation4 = apo.Gaussian(sigma=143.4, dim_indx=0, dep_var_indx=0)
+    >>> operation4 = apo.Gaussian(FWHM=143.4, dim_indx=0, dv_indx=0)
     """
 
-    sigma: float = 0
+    FWHM: float = 0
 
-    property_unit_types: ClassVar = {"sigma": ["time", "frequency"]}
-    property_default_units: ClassVar = {"sigma": ["s", "Hz"]}
-    property_units: Dict = {"sigma": "Hz"}
+    property_unit_types: ClassVar = {"FWHM": ["time", "frequency"]}
+    property_default_units: ClassVar = {"FWHM": ["s", "Hz"]}
+    property_units: Dict = {"FWHM": "Hz"}
 
     @staticmethod
     def fn(x, arg):
-        return np.exp(-2 * ((x * arg * np.pi) ** 2))
+        # arg is FWHM
+        sigma = arg / 2.354820045030949
+        return np.exp(-2 * ((x * sigma * np.pi) ** 2))
 
     def operate(self, data):
         """
@@ -122,7 +126,7 @@ class Gaussian(AbstractApodization):
         dep_var: int. The index of the dependent variable to apply operation to
         """
 
-        return self._operate(data, fn=self.fn, prop_name="sigma", prop_value=self.sigma)
+        return self._operate(data, fn=self.fn, prop_name="FWHM", prop_value=self.FWHM)
 
 
 # class ExponentialAbs(AbstractApodization):
@@ -138,13 +142,13 @@ class Gaussian(AbstractApodization):
 #     Args:
 #         int dim_indx: Data dimension index to apply the function along.
 #         float FWHM: The full width at half maximum parameter, :math:`\Tau`.
-#         int dep_var_indx: Data dependent variable index to apply the function to. If
+#         int dv_indx: Data dependent variable index to apply the function to. If
 #             the type None, the operation will be applied to every dependent variable.
 
 #     Example
 #     -------
 
-#     >>> operation5 = apo.Exponential(sigma=143.4, dim_indx=0, dep_var_indx=0)
+#     >>> operation5 = apo.Exponential(FWHM=143.4, dim_indx=0, dv_indx=0)
 #     """
 
 #     FWHM: float = 0
@@ -179,15 +183,19 @@ class Exponential(AbstractApodization):
     the width parameter.
 
     Args:
-        int dim_indx: Data dimension index to apply the function along.
-        float FWHM: The full width at half maximum parameter, :math:`\Tau`.
-        int dep_var_indx: Data dependent variable index to apply the function to. If
-            the type None, the operation will be applied to every dependent variable.
+        float FWHM: The full width at half maximum parameter, :math:`\Tau`. The default
+            value is 0 and the default unit is the reciprocal of the unit associated
+            with the dimension at index `dim_indx`.
+        int dim_indx: The index of the CSDM dimension along which the operation is
+            applied. The default is the dimension at index 0.
+        int dv_indx: The index of the CSDM dependent variable where the operation is
+            applied. If the value is None, the operation will be applied to every
+            dependent variable.
 
     Example
     -------
 
-    >>> operation5 = apo.Exponential(FWHM=143.4, dim_indx=0, dep_var_indx=0)
+    >>> operation5 = apo.Exponential(FWHM=143.4, dim_indx=0, dv_indx=0)
     """
 
     FWHM: float = 0

@@ -146,7 +146,7 @@ class.
     >>> # list of processing operations
     >>> post_sim = sp.SignalProcessor(
     ...     operations=[
-    ...         sp.IFFT(), apo.Gaussian(sigma=100), sp.FFT()
+    ...         sp.IFFT(), apo.Gaussian(FWHM=100), sp.FFT()
     ...     ]
     ... )
 
@@ -271,7 +271,7 @@ dependent-variable of the CSDM object, sharing the same frequency dimension.
 When using the list of the operations, you may selectively apply a given operation to a
 specific dependent-variable by specifying the index of the corresponding
 dependent-variable as an argument to the operation class. Note, the order of the
-dependent-variables is the same as the order of the spin systems. Use the `dep_var_indx`
+dependent-variables is the same as the order of the spin systems. Use the `dv_indx`
 argument of the operation to specify the index. Consider the following list of
 operations.
 
@@ -283,8 +283,8 @@ operations.
     >>> post_sim = sp.SignalProcessor(
     ...     operations=[
     ...         sp.IFFT(), # convert to time-domain
-    ...         apo.Gaussian(sigma=50, dep_var_indx=0),
-    ...         apo.Exponential(FWHM=200, dep_var_indx=1),
+    ...         apo.Gaussian(FWHM=50, dv_indx=0),
+    ...         apo.Exponential(FWHM=200, dv_indx=1),
     ...         sp.FFT(), # convert to frequency-domain
     ...     ]
     ... )
@@ -338,14 +338,14 @@ method, as follows
     >>> from pprint import pprint
     >>> pprint(post_sim.to_dict_with_units())
     {'operations': [{'dim_indx': 0, 'function': 'IFFT'},
-                    {'dep_var_indx': 0,
+                    {'FWHM': '50.0 Hz',
                      'dim_indx': 0,
+                     'dv_indx': 0,
                      'function': 'apodization',
-                     'sigma': '50.0 Hz',
                      'type': 'Gaussian'},
                     {'FWHM': '200.0 Hz',
-                     'dep_var_indx': 1,
                      'dim_indx': 0,
+                     'dv_indx': 1,
                      'function': 'apodization',
                      'type': 'Exponential'},
                     {'dim_indx': 0, 'function': 'FFT'}]}
