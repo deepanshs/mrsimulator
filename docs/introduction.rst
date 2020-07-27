@@ -1,9 +1,9 @@
 
 .. _isotopomers_docs:
 
-********************************************
-Introduction to Isotopomers and Spin systems
-********************************************
+****************************
+Introduction to Spin systems
+****************************
 
 .. Malcolm H. Levitt defines isotopomers, in his book “Spin Dynamics,” as
 .. “Molecules differing only in the mass numbers of the nuclei are called
