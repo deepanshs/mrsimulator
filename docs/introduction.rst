@@ -5,12 +5,12 @@
 Introduction to Isotopomers and Spin systems
 ********************************************
 
-Malcolm H. Levitt defines isotopomers, in his book “Spin Dynamics,” as
-“Molecules differing only in the mass numbers of the nuclei are called
-isotopomer.”
-We can, however, generalize the concept of isotopomers by replacing the term
-`molecules` with `structural units` as “Structural units differing only in the
-mass numbers of the nuclei.”
+.. Malcolm H. Levitt defines isotopomers, in his book “Spin Dynamics,” as
+.. “Molecules differing only in the mass numbers of the nuclei are called
+.. isotopomer.”
+.. We can, however, generalize the concept of isotopomers by replacing the term
+.. `molecules` with `structural units` as “Structural units differing only in the
+.. mass numbers of the nuclei.”
 
 It is best to illustrate isotopomers using examples. Consider a structural
 unit, H-C. The most abundant isotopes of H and C are :math:`^1\text{H}`
