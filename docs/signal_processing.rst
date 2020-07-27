@@ -1,11 +1,11 @@
 
 Post Simulation Signal Processing
 =================================
-.. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 
+Introduction
+------------
 
-After running a simulation, you may often find yourself in need of some post-simulation
-signal processing operations. For example, you may want to scale the intensities to
+After running a simulation, you may need to apply some post-simulation signal processing. For example, you may want to scale the intensities to
 match the experiment, add line-broadening, or simulate signal artifact such as sinc
 wiggles. There are many signal-processing libraries, such as Numpy and Scipy, that you
 may use to accomplish this. Although, in NMR, certain operations like applying
@@ -28,16 +28,16 @@ operations to the simulation data.
     >>> import matplotlib.pyplot as plt
     ...
     >>> # global plot configuration
-    >>> font = {"weight": "light", "size": 9}
+    >>> font = {"size": 11}
     >>> mpl.rc("font", **font)
-    >>> mpl.rcParams["figure.figsize"] = [4.5, 3]
+    >>> mpl.rcParams["figure.figsize"] = [6, 3.5]
 
 
 Simulating spectrum
 -------------------
 Please refer to the :ref:`using_objects` for a detailed description
 of how to set up a simulation. Here, we will create a hypothetical simulation from two
-single-site spin-systems to illustrate the use of the post-simulation signal processing
+single-site spin systems to illustrate the use of the post-simulation signal processing
 module.
 
 .. plot::
@@ -97,9 +97,15 @@ The plot the spectrum is shown below.
 
     >>> ax = plt.subplot(projection="csdm") # doctest: +SKIP
     >>> ax.plot(sim.methods[0].simulation, color="black", linewidth=1) # doctest: +SKIP
+    >>> ax.set_xlim(-200, 50) # doctest: +SKIP
     >>> ax.invert_xaxis() # doctest: +SKIP
     >>> plt.tight_layout() # doctest: +SKIP
     >>> plt.show() # doctest: +SKIP
+
+.. _fig1_signal_process:
+.. figure:: _static/null.*
+
+    1D :math:`^{29}\text{Si}` MAS simulation of two single-site spin system.
 
 Post-simulating processing
 --------------------------
@@ -184,10 +190,16 @@ the processed data. The plot of the processed signal is shown below.
 
     >>> ax = plt.gca(projection="csdm") # doctest: +SKIP
     >>> ax.plot(processed_data, color="black", linewidth=1) # doctest: +SKIP
+    >>> ax.set_xlim(-200, 50) # doctest: +SKIP
     >>> ax.invert_xaxis() # doctest: +SKIP
     >>> plt.tight_layout() # doctest: +SKIP
     >>> plt.show() # doctest: +SKIP
 
+.. _fig2_signal_process:
+.. figure:: _static/null.*
+
+    1D :math:`^{29}\text{Si}` MAS simulation of two single-site spin system with a
+    100 Hz Gaussian convolution.
 
 Applying operation to the sub-spectra
 '''''''''''''''''''''''''''''''''''''
@@ -206,9 +218,9 @@ using the operations list.
 
 Before we can move forward, you will first need to identify these sub-systems and
 simulate individual spectra for these systems. In this example, we will treat the two
-spin-systems as the two different spin environments exhibiting different
+spin systems as the two different spin environments exhibiting different
 relaxations/line-broadening. To simulate the sub-spectrum from the individual
-spin-systems, modify the value of the :attr:`~mrsimulator.Simulator.config` attribute
+spin systems, modify the value of the :attr:`~mrsimulator.Simulator.config` attribute
 as follows, and re-run the simulation.
 Refer to the :ref:`config_simulator` section for further details.
 
@@ -220,7 +232,7 @@ Refer to the :ref:`config_simulator` section for further details.
     >>> sim.config.decompose_spectrum = "spin_system"
     >>> sim.run()
 
-.. Note, in the previous example, both sites/spin-systems got the same extent of Gaussian
+.. Note, in the previous example, both sites/spin systems got the same extent of Gaussian
 .. line-broadening. The following example illustrates how you can apply you might want to apply a different set of
 .. In order to apply different processes to each signal,
 .. we must set the simulation config to decompose the spectrum.
@@ -233,7 +245,7 @@ Refer to the :ref:`config_simulator` section for further details.
 ..  plt.xlim(x.value.max(), x.value.min())
 ..  plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
 
-The above code generates two spectra, each corresponding to a spin-system.
+The above code generates two spectra, each corresponding to a spin system.
 The plot of the spectra is shown below.
 
 .. plot::
@@ -243,16 +255,23 @@ The plot of the spectra is shown below.
 
     >>> ax = plt.gca(projection="csdm") # doctest: +SKIP
     >>> ax.plot(sim.methods[0].simulation) # doctest: +SKIP
+    >>> ax.set_xlim(-200, 50) # doctest: +SKIP
     >>> ax.invert_xaxis() # doctest: +SKIP
     >>> plt.tight_layout() # doctest: +SKIP
     >>> plt.show() # doctest: +SKIP
+
+.. _fig3_signal_process:
+.. figure:: _static/null.*
+
+    Two 1D :math:`^{29}\text{Si}` MAS simulations, shown in blue and organe, for the two
+    single-site spin systems.
 
 Because the simulation is stored as a CSDM [#f1]_ object, each sub-spectrum is a
 dependent-variable of the CSDM object, sharing the same frequency dimension.
 When using the list of the operations, you may selectively apply a given operation to a
 specific dependent-variable by specifying the index of the corresponding
 dependent-variable as an argument to the operation class. Note, the order of the
-dependent-variables is the same as the order of the spin-systems. Use the `dep_var_indx`
+dependent-variables is the same as the order of the spin systems. Use the `dep_var_indx`
 argument of the operation to specify the index. Consider the following list of
 operations.
 
@@ -271,9 +290,9 @@ operations.
     ... )
 
 The above operations list first applies an inverse Fourier transformation,
-followed by a Gaussian apodization on the dependent variable at index 0 (spin-system
+followed by a Gaussian apodization on the dependent variable at index 0 (spin system
 labeled as `sys1`), followed by an Exponential apodization on the dependent
-variable at index 1 (spin-system labeled as `sys2`), and finally a forward Fourier
+variable at index 1 (spin system labeled as `sys2`), and finally a forward Fourier
 transform. Note, the FFT and IFFT operations apply on all dependent-variables.
 
 As before, apply the operations with the
@@ -294,11 +313,18 @@ The plot of the processed spectrum is shown below.
     :include-source:
 
     >>> ax = plt.gca(projection="csdm") # doctest: +SKIP
-    >>> ax.plot(processed_data, alpha=0.75)  # doctest: +SKIP
+    >>> ax.plot(processed_data, alpha=0.9)  # doctest: +SKIP
+    >>> ax.set_xlim(-200, 50) # doctest: +SKIP
     >>> ax.invert_xaxis() # doctest: +SKIP
     >>> plt.tight_layout()  # doctest: +SKIP
     >>> plt.show()  # doctest: +SKIP
 
+.. _fig4_signal_process:
+.. figure:: _static/null.*
+
+    Two 1D :math:`^{29}\text{Si}` MAS simulations, shown in blue and organe, for the two
+    single-site spin systems with a 50 Hz Gaussian and 200 Hz Lorentzian convolution,
+    respectively.
 
 Serializing the operations list
 -------------------------------

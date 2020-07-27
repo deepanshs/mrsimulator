@@ -52,9 +52,9 @@ class ConfigSimulator(BaseModel):
         line-shapes. The valid literals of this enumeration are
 
         - ``none`` (default): When the value is `none`, the resulting simulation is a
-          single spectrum, which is an integration of the spectra over all spin-systems.
+          single spectrum, which is an integration of the spectra over all spin systems.
         - ``spin_system``:  When the value is `spin_system`, the resulting simulation
-          is an array of spectra, where each spectrum arises from a spin-system within
+          is an array of spectra, where each spectrum arises from a spin system within
           the Simulator object.
 
     Example

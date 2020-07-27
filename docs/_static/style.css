@@ -15,7 +15,7 @@ h1 {
 }
 
 h2 {
-  font-size: 1.8em;
+  font-size: 1.6em;
   font-weight: 400;
   color: #70360f;
   padding-bottom: 1.2em;
@@ -25,20 +25,20 @@ h2 {
 }
 
 h3 {
-  font-size: 1.4em;
+  font-size: 1.45em;
   text-decoration: underline;
-  color: rgb(63, 63, 63);
+  color: #3f3f3f;
 }
 
 h4 {
   margin-top: 1.4em;
   font-size: 1.2em;
-  color: rgb(128, 74, 74);
+  color: #663d3d;
 }
 
 h5 {
   font-size: 1.1em;
-  color: rgb(53, 53, 53);
+  color: #353535;
 }
 
 h6 {
@@ -244,9 +244,27 @@ table caption:hover {
   padding-left: 24px;
   padding-right: 24px;
 }
-
+.sidebar.hidden-xs > h3 {
+  display: none;
+}
+.toctree-wrapper.compound > p.caption {
+  display: none;
+}
+.sidebar.hidden-xs > p.caption {
+  padding-left: 24px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-size: 1.1em;
+  font-weight: 500;
+  /* text-decoration: underline; */
+  background-color: #5a5a5a;
+  color: #ffffff;
+  margin: 10px 0 0 0;
+}
 .sidebar.hidden-xs > ul {
   padding: 0;
+}
+.sidebar.hidden-xs > ul:last-child {
   padding-bottom: 1em;
   margin-bottom: 1em;
 }

@@ -22,7 +22,7 @@ __email__ = "deepansh2012@gmail.com"
 
 class SpinSystem(Parseable):
     """
-    Base class representing an isolated spin-system containing multiple sites and
+    Base class representing an isolated spin system containing multiple sites and
     couplings amongst them.
 
     .. rubric:: Attribute Documentation
@@ -31,7 +31,7 @@ class SpinSystem(Parseable):
     ----------
 
     sites: A list of :ref:`site_api` objects or equivalent dict objects (optional).
-        The value is a list of sites within the spin-system, where each site represents
+        The value is a list of sites within the spin system, where each site represents
         a single-site nuclear spin interaction tensor parameters. The default value is
         an empty list.
 
@@ -44,7 +44,7 @@ class SpinSystem(Parseable):
         >>> sys1.sites = [{'isotope': '17O'}, {'isotope': '1H'}]
 
     abundance: float (optional).
-        The abundance of the spin-system in units of %. The default value is 100. The
+        The abundance of the spin system in units of %. The default value is 100. The
         value of this attribute is useful when multiple spin systems are present.
 
         Example
@@ -53,7 +53,7 @@ class SpinSystem(Parseable):
         >>> sys1.abundance = 10
 
     name: str (optional).
-        The value is the name or id of the spin-system. The default value is None.
+        The value is the name or id of the spin system. The default value is None.
 
         Example
         -------
@@ -63,24 +63,24 @@ class SpinSystem(Parseable):
         '1H-17O-0'
 
     label: str (optional).
-        The value is a label for the spin-system. The default value is None.
+        The value is a label for the spin system. The default value is None.
 
         Example
         -------
 
-        >>> sys1.label = 'Heteronuclear spin-system'
+        >>> sys1.label = 'Heteronuclear spin system'
         >>> sys1.label
-        'Heteronuclear spin-system'
+        'Heteronuclear spin system'
 
     description: str (optional).
-        The value is a description of the spin-system. The default value is None.
+        The value is a description of the spin system. The default value is None.
 
         Example
         -------
 
-        >>> sys1.description = 'A test for the spin-system'
+        >>> sys1.description = 'A test for the spin system'
         >>> sys1.description
-        'A test for the spin-system'
+        'A test for the spin system'
 
     transition_pathways: list (optional).
         The value is a list of lists, where the inner list represents a transition
@@ -99,15 +99,15 @@ class SpinSystem(Parseable):
         ... ]
 
         .. note::
-            From any given spin-system, the list of relevant transition pathways is
+            From any given spin system, the list of relevant transition pathways is
             determined by the applied NMR method. For example, consider a single site
-            I=3/2 spin-system. For this system, a Bloch decay spectrum method will
+            I=3/2 spin system. For this system, a Bloch decay spectrum method will
             select three transition pathways, one corresponding to the central and two
             to the satellite transitions. On the other hand, a Bloch decay central
             transition selective method will only select one transition pathway,
             corresponding to the central transition.
 
-            Since the spin-system is independent of the NMR method, the value of this
+            Since the spin system is independent of the NMR method, the value of this
             attribute is, therefore, transient. You may use this attribute to override
             the default transition pathway query selection criterion of the NMR method
             objects.
@@ -156,7 +156,7 @@ class SpinSystem(Parseable):
         Example
         -------
 
-        >>> spin_systems.get_isotopes() # three spin-system
+        >>> spin_systems.get_isotopes() # three spin systems
         ['13C', '1H', '27Al']
         >>> spin_systems.get_isotopes(spin_I=0.5) # isotopes with I=0.5
         ['13C', '1H']
@@ -198,14 +198,14 @@ class SpinSystem(Parseable):
 
     def zeeman_energy_states(self) -> list:
         r"""
-        Return a list of all Zeeman energy states of the spin-system,
+        Return a list of all Zeeman energy states of the spin system,
         where the energy states are represented by a list of quantum numbers,
 
         .. math::
             |\Psi⟩ = [m_1, m_2,.. m_n],
 
         where :math:`m_i` is the quantum number associated with the :math:`i^\text{th}`
-        site within the spin-system, and :math:`\Psi` is the energy state.
+        site within the spin system, and :math:`\Psi` is the energy state.
 
         Example
         -------
@@ -225,7 +225,7 @@ class SpinSystem(Parseable):
         """
         Return all transitions from a spin system as a Numpy array of shape (M, 2, N),
         where M is the number of transitions, and N is the number of sites in the
-        spin-system. The second axis is of length 2, where the entries at T[:, 0, :]
+        spin system. The second axis is of length 2, where the entries at T[:, 0, :]
         are the initial energy states, and the entries at T[:, 1, :], the corresponding
         final energy states of the spin transitions.
         """
@@ -236,7 +236,7 @@ class SpinSystem(Parseable):
         return energy_states[indexes]
 
     def all_transitions(self) -> TransitionList:
-        """Returns a list of all possible spin transitions in the given spin-system.
+        """Returns a list of all possible spin transitions in the given spin system.
 
         Example
         -------

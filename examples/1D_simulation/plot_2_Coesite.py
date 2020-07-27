@@ -49,8 +49,8 @@ sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
 
 # %%
 # **Step 2:** Create the spin systems from these sites. For optimum performance, we
-# create five single-site spin systems instead of a single five-site spin-system. The
-# abundance of each spin-system is taken from above reference.
+# create five single-site spin systems instead of a single five-site spin system. The
+# abundance of each spin system is taken from above reference.
 abundance = [0.83, 1.05, 2.16, 2.05, 1.90]
 spin_systems = [SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
 
@@ -75,7 +75,7 @@ method = BlochDecayCentralTransitionSpectrum(
 # width using 2048 points.
 
 # %%
-# **Step 4:** Create the Simulator object and add the method and spin-system objects.
+# **Step 4:** Create the Simulator object and add the method and spin system objects.
 sim_coesite = Simulator()
 sim_coesite.spin_systems += spin_systems  # add the spin systems
 sim_coesite.methods += [method]  # add the method

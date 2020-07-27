@@ -8,7 +8,7 @@ capable of simulating line-shapes from both crystalline and amorphous-like mater
 
 
 It aims to provide simple and efficient solutions to the solid-state NMR line-shape
-simulation problem. It includes tools for users to create their model spin-systems,
+simulation problem. It includes tools for users to create their model spin systems,
 simulate and compare the line-shapes with the measurement, and perform least-squares
 minimization, using a collection of pre-defined NMR methods.
 

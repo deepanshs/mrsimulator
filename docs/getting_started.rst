@@ -56,9 +56,9 @@ respective objects.
 
 Setting up the SpinSystem objects
 ---------------------------------
-An NMR spin-system is an isolated system of sites (spins) and couplings. You may
-construct a spin-system with as many sites and couplings, as necessary, for this
-example, we stick to a single-site spin-system. Let’s start by first building
+An NMR spin system is an isolated system of sites (spins) and couplings. You may
+construct a spin system with as many sites and couplings, as necessary, for this
+example, we stick to a single-site spin system. Let’s start by first building
 a site.
 
 A site object is a collection of parameters that describe site-specific interactions.
@@ -87,7 +87,7 @@ In the above code, ``the_site`` is a simplified python dictionary representation
 shielding anisotropy tensor, described here with the parameters `zeta` and `eta` using
 the Haeberlen convention.
 
-That's it! Now that we have a site, we can create a single-site spin-system following,
+That's it! Now that we have a site, we can create a single-site spin system following,
 
 .. plot::
     :format: doctest
@@ -101,18 +101,18 @@ That's it! Now that we have a site, we can create a single-site spin-system foll
     ...     "abundance": "80%",
     ... }
 
-As mentioned before, a spin-system is a collection of sites and couplings. In the above
-example, we have created a spin-system with a single site and no couplings. Here, the
+As mentioned before, a spin system is a collection of sites and couplings. In the above
+example, we have created a spin system with a single site and no couplings. Here, the
 attribute `sites` hold a list of sites. The attributes `name`, `description`, and
 `abundance` are optional.
 
 ..  .. seealso:: :ref:`dictionary_objects`, :ref:`spin_system` and :ref:`site`.
 
-Until now, we have only created a python dictionary representation of a spin-system. To
+Until now, we have only created a python dictionary representation of a spin system. To
 run the simulation, you need to create an instance of the
 :class:`~mrsimulator.SpinSystem` class. Import the SpinSystem class and use it's
 :meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method to parse the python
-dictionary and create an instance of the spin-system class, as follows,
+dictionary and create an instance of the spin system class, as follows,
 
 .. plot::
     :format: doctest
@@ -123,7 +123,7 @@ dictionary and create an instance of the spin-system class, as follows,
     >>> system_object_1 = SpinSystem.parse_dict_with_units(the_spin_system)
 
 .. note:: We provide the :meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method
-    because it allows the user to create spin-systems, where the attribute value is a
+    because it allows the user to create spin systems, where the attribute value is a
     physical quantity, represented as a string with a value and a unit.
     Physical quantities remove the ambiguity in the units, which is otherwise
     a source of common confusion within many scientific applications. With this said,
@@ -131,9 +131,9 @@ dictionary and create an instance of the spin-system class, as follows,
     algorithm, such as the least-squares minimization. In such cases, we recommend
     defining objects directly. See the next topic for details.
 
-We have successfully created a spin-system object. To create more spin-system objects,
+We have successfully created a spin system object. To create more spin system objects,
 repeat the above set of instructions. In this example, we stick with a single
-spin-system object. Once all spin-system objects are ready, add these objects to the
+spin system object. Once all spin system objects are ready, add these objects to the
 instance of the Simulator class, as follows
 
 .. plot::
@@ -141,7 +141,7 @@ instance of the Simulator class, as follows
     :context: close-figs
     :include-source:
 
-    >>> sim.spin_systems += [system_object_1] # add all spin-system objects.
+    >>> sim.spin_systems += [system_object_1] # add all spin system objects.
 
 
 Setting up the Method objects
@@ -249,9 +249,9 @@ To simulate the line-shape, run the simulator with the
     >>> sim.run()
 
 .. note:: In ``mrsimulator``, all resonant frequencies are calculated assuming the
-    weakly-coupled (Zeeman) basis for the spin-system.
+    weakly-coupled (Zeeman) basis for the spin system.
 
-The simulator object, ``sim``, will process every method over all the spin-systems and
+The simulator object, ``sim``, will process every method over all the spin systems and
 store the result in the :attr:`~mrsimulator.Method.simulation` attribute of the
 respective Method object. In this example, we have a single method. You may access
 the simulation data for this method as,

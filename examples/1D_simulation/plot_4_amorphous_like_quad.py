@@ -64,7 +64,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# Let's create the site and spin-system objects from these parameters. Note, we create
+# Let's create the site and spin system objects from these parameters. Note, we create
 # single-site spin systems for optimum performance.
 spin_systems = []
 for i, c, e in zip(iso, Cq, eta):

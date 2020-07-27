@@ -33,7 +33,7 @@ S33 = Site(
 )
 
 # %%
-# **Step 2:** Create the spin-system from the site.
+# **Step 2:** Create the spin system from the site.
 spin_system = SpinSystem(sites=[S33])
 
 # %%
@@ -53,9 +53,9 @@ method = BlochDecayCentralTransitionSpectrum(
 )
 
 # %%
-# **Step 4:** Create the Simulator object and add the method and the spin-system object.
+# **Step 4:** Create the Simulator object and add the method and the spin system object.
 sim_K2SO3 = Simulator()
-sim_K2SO3.spin_systems += [spin_system]  # add the spin-system
+sim_K2SO3.spin_systems += [spin_system]  # add the spin system
 sim_K2SO3.methods += [method]  # add the method
 
 # %%

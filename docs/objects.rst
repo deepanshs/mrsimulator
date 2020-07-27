@@ -6,9 +6,9 @@
 Understanding Isotopomers
 *************************
 
-Isotopomers are collection of isolated spin-systems where each isolated
-spin-system is a collection of sites and couplings. We refer an isolated
-spin-system as an isotopomer. In our model, each isotopomer is composed
+Isotopomers are collection of isolated spin systems where each isolated
+spin system is a collection of sites and couplings. We refer an isolated
+spin system as an isotopomer. In our model, each isotopomer is composed
 of various objects. In the following, we list and describe these objects.
 
 .. _symmetric_tensor:
@@ -150,7 +150,7 @@ SpinSystem
 ----------
 
 We define an `SpinSystem` as an object with attributes representing an isolated
-spin-system.
+spin system.
 
 .. An `SpinSystem` object is a python
 .. `dict <https://docs.python.org/3/library/stdtypes.html?highlight=dict#dict>`__

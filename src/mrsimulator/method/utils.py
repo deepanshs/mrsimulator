@@ -47,7 +47,7 @@ def D_symmetry_indexes(transitions, list_of_D):
 
 def get_iso_dict(channel, isotope):
     """
-        Parse the spin-system sites to determine indices of each isotope that
+        Parse the spin system sites to determine indices of each isotope that
         is part of the method channel.
 
         Args:
@@ -84,7 +84,7 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
     iso_dict = get_iso_dict(channel=channel, isotope=isotope)
     query_short = query[transition_symmetry]
     for i, items in enumerate(query_short):
-        # Check if method isotope is in the spin-system
+        # Check if method isotope is in the spin system
         if channel[i] not in iso_dict:
             print(
                 f"Method/channel isotope mismatch. Channel asks for {channel[i]} "
@@ -113,7 +113,7 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
         for transition in iso_trans_symmetry:
             P_expanded = len(isotope) * [0]
             for j, item in enumerate(transition):
-                # filling indices of spin-system with a sites transition symmetries
+                # filling indices of spin system with a sites transition symmetries
                 P_expanded[iso_dict[channel[i]][j]] = item
 
             if transition_symmetry_from_query == []:

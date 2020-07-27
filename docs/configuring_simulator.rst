@@ -249,7 +249,7 @@ how the user intends the simulation to be stored.
 ''''''''
 
 If the value is ``none`` (default), the result of the simulation is a single spectrum
-where the frequency contributions from all the spin-systems are co-added. Consider the
+where the frequency contributions from all the spin systems are co-added. Consider the
 following example.
 
 .. plot::
@@ -287,14 +287,14 @@ following example.
     value of `decompose_spectrum` is ``none``.
 
 :numref:`fig5_config` depicts the simulation of the line-shape from two spin systems
-where the contributions from individual spin-systems are co-added.
+where the contributions from individual spin systems are co-added.
 
 ``spin_system``
 '''''''''''''''
 
 When the value of this attribute is ``spin_system``, the resulting simulation is a
-series of spectra, each arising from a spin-system. In this case, the number of
-spectra is the same as the number of spin-system objects.
+series of spectra, each arising from a spin system. In this case, the number of
+spectra is the same as the number of spin system objects.
 Try setting the value of the decompose_spectrum attribute to `spin_system` and observe
 the simulation.
 
@@ -320,7 +320,7 @@ the simulation.
 
 .. Unlike the `spin_system`, where the user is aware of the number of spin systems within
 .. the simulator object, the number of transition pathways may not always be intuitive.
-.. Note, even a small spin-system, depending on the NMR method, can generate a massive
+.. Note, even a small spin system, depending on the NMR method, can generate a massive
 .. number of transition pathways. When using this configuration, care must be taken, else
 .. one could easily generate gigabytes of data, and run into a memory issue.
 

@@ -147,7 +147,7 @@ SpinSystem object
 -----------------
 
 A SpinSystem object contains sites and couplings along with the abundance
-of the respective spin-system. In this version, we focus on the spin systems with a
+of the respective spin system. In this version, we focus on the spin systems with a
 single site, and therefore the couplings are irrelevant.
 
 Let's use the sites we have already created to set up four spin systems.
@@ -276,7 +276,7 @@ CSA patterns, see :numref:`fig2_using_obj`.
 .. .. note::
 ..     Because the objects in python are passed by reference, we were able to
 ..     modify the ``C13A`` and ``C13B`` Site objects without having to reassemble
-..     the spin-system or method objects.
+..     the spin system or method objects.
 
 Modifying the rotor frequency of the method
 *******************************************
@@ -374,7 +374,7 @@ method. Here, we update the method to `1H` channel.
 
 In :numref:`fig5_using_obj`, we see a :math:`90^\circ` spinning sideband
 :math:`^1\text{H}`-spectrum, whose frequency contributions arise from ``system_3``
-because ``system_3`` is the only spin-system with :math:`^1\text{H}` site.
+because ``system_3`` is the only spin system with :math:`^1\text{H}` site.
 
 Note, although you are free to assign any channel to the :attr:`~mrsimulator.Method.channels`
 attribute of the BlochDecaySpectrum method, only channels whose isotopes are also a

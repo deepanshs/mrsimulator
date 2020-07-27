@@ -29,7 +29,7 @@ class Simulator(BaseModel):
 
     spin_systems: A list of :ref:`spin_sys_api` or equivalent dict objects (optional).
         The value is a list of NMR spin systems present within the sample, where each
-        spin-system is an isolated system. The default value is an empty list.
+        spin system is an isolated system. The default value is an empty list.
 
         Example
         -------
@@ -508,13 +508,13 @@ class Simulator(BaseModel):
 
     def _update_name_description_application(self, obj, index):
         """Update the name and description of the dependent variable attributes
-        using fields from the spin-system."""
+        using fields from the spin system."""
         label = self.spin_systems[index].label
         if label not in ["", None]:
             obj.update({"components_label": [label]})
 
         name = self.spin_systems[index].name
-        name = name if name not in ["", None] else f"spin-system {index}"
+        name = name if name not in ["", None] else f"spin system {index}"
         obj.update({"name": name})
 
         description = self.spin_systems[index].description

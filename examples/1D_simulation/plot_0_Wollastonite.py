@@ -66,7 +66,7 @@ method = BlochDecaySpectrum(
 )
 
 # %%
-# **Step 4:** Create the Simulator object and add the method and spin-system objects.
+# **Step 4:** Create the Simulator object and add the method and spin system objects.
 sim_wollastonite = Simulator()
 sim_wollastonite.spin_systems += spin_systems  # add the spin systems
 sim_wollastonite.methods += [method]  # add the method

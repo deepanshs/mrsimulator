@@ -74,8 +74,8 @@ plt.show()
 # Create the Simulator object
 # ---------------------------
 #
-# **Spin-system:**
-# Let's create the sites and single-site spin-system objects from these parameters.
+# **Spin system:**
+# Let's create the sites and single-site spin system objects from these parameters.
 spin_systems = []
 for i, z, e in zip(iso, zeta, eta):
     site = Site(

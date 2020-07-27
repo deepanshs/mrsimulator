@@ -8,7 +8,7 @@ Fitting Crystalline Sodium Metasilicate
 # %%
 # In this example, we illustrate the use of the mrsimulator objects to
 #
-# - create a spin-system model,
+# - create a spin system model,
 # - use the model to perform a least-squares fit on the experimental, and
 # - extract the tensor parameters of the spin - system model.
 #
@@ -85,7 +85,7 @@ O17_2 = Site(
 )
 
 # %%
-# **Step 2:** Create the spin-systems for the guess sites.
+# **Step 2:** Create the spin systems for the guess sites.
 system_object = [SpinSystem(sites=[s]) for s in [O17_1, O17_2]]  # from the above code
 
 # %%
@@ -122,7 +122,7 @@ method = BlochDecayCentralTransitionSpectrum(
 method.experiment = oxygen_experiment
 
 # %%
-# **Step 4:** Create the Simulator object and add the method and spin-system objects.
+# **Step 4:** Create the Simulator object and add the method and spin system objects.
 sim = Simulator()
 sim.spin_systems = system_object
 sim.methods = [method]
@@ -176,7 +176,7 @@ params = make_LMFIT_parameters(sim, post_sim)
 #
 # **Customize the Parameters:**
 # You may customize the parameters list, ``params``, as desired. Here, we add a
-# constraint on the fit by fixing the site abundances for the spin-systems at index
+# constraint on the fit by fixing the site abundances for the spin systems at index
 # 1 and 2 to 50%.
 params["sys_0_abundance"].vary = False  # fix the abundance
 params.pretty_print()

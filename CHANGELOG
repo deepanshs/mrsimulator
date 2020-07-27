@@ -40,9 +40,9 @@ Other changes
   ``decompose_spectrum``. The attribute is an enumeration with the following literals:
 
   - ``none``: Computes a spectrum which is an integration of the spectra from all
-    spin-systems.
+    spin systems.
   - ``spin_system``: Computes a series of spectra each corresponding to a single
-    spin-system.
+    spin system.
 
 - Renamed ``Isotopomer`` class to ``SpinSystem``.
 - Renamed ``isotopomers`` attribute from ``Simulator`` class to ``spin_systems``.

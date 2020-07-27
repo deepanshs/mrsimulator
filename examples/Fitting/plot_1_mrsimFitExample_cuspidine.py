@@ -3,7 +3,6 @@
 """
 Fitting Cusipidine
 ==================
-.. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 """
 # %%
 # Often, after acquiring an NMR spectrum, we may require some form of least-squares
@@ -67,7 +66,7 @@ from mrsimulator.methods import BlochDecaySpectrum
 # **Step 1:** Create the guess sites and spin systems. The guess is often based on some
 # prior knowledge. For the current example, we know that Cuspidine is a crystalline
 # silica polymorph with one crystallographic Si site. Therefore, our guess model is a
-# single :math:`^{29}\text{Si}` site spin-system. For non-linear fitting algorithms,
+# single :math:`^{29}\text{Si}` site spin system. For non-linear fitting algorithms,
 # as a general recommendation, the guess model parameters should be a good starting
 # point for the algorithms to converge.
 
@@ -104,7 +103,7 @@ method = BlochDecaySpectrum(
 )
 
 # %%
-# **Step 3:** Create the Simulator object and add the method and spin-system objects.
+# **Step 3:** Create the Simulator object and add the method and spin system objects.
 sim = Simulator()
 sim.spin_systems = [system_object]
 sim.methods = [method]

@@ -43,7 +43,7 @@ def one_d_spectrum(method,
         Read more on the `Geodesic polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
     :ivar decompose_spectrum:
         An unsigned integer. When value is 0, the spectum is a sum of spectrum from all
-        spin-systems. If value is 1, spectrum from individual spin-systems is stored
+        spin systems. If value is 1, spectrum from individual spin systems is stored
         separately.
     """
 
@@ -290,7 +290,7 @@ def one_d_spectrum(method,
 
             # if verbose in [1, 11]:
             #     text = ((
-            #         f"\n{isotope} site {i} from spin-system {index_isotopomer} "
+            #         f"\n{isotope} site {i} from spin system {index_isotopomer} "
             #         f"@ {abundance}% abundance"
             #     ))
             #     len_ = len(text)

@@ -199,7 +199,7 @@ def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
 
     ``sys_i_site_j_attribute1_attribute2``
 
-    for spin-system attribute with signature sys[i].sites[j].attribute1.attribute2
+    for spin system attribute with signature sys[i].sites[j].attribute1.attribute2
 
     Args:
         sim: a Simulator object.

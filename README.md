@@ -22,7 +22,7 @@ At present, the `mrsimulator` package offers the following
 - **Real-time simulation** of one-dimensional solid-state NMR line-shapes. See our
   [benchmark results](https://mrsimulator.readthedocs.io/en/latest/benchmark.html).
 
-- **Uncoupled spin-system**
+- **Uncoupled spin system**
 
   - for spin I=1/2, and quadrupole I>1/2 nuclei,
   - at arbitrary macroscopic magnetic flux density,
@@ -38,7 +38,7 @@ At present, the `mrsimulator` package offers the following
 
 Our current objectives for the future are the following
 
-- Include line-shape simulation of coupled spin-systems for
+- Include line-shape simulation of coupled spin systems for
 
   - spin I=1/2, and quadrupole I>1/2 nuclei,
   - at arbitrary macroscopic magnetic flux density,
