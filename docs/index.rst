@@ -151,6 +151,8 @@ Getting Started
     using_mrsimulator_objects
     configuring_simulator
     mrsim_IO
+    api_py/py-simulator
+    api_c/c_api
 
 Signal Processing (``mrsimulator.SignalProcessor``)
 ---------------------------------------------------
@@ -160,6 +162,7 @@ Signal Processing (``mrsimulator.SignalProcessor``)
     :caption: Signal Processing
 
     signal_processing
+    api_py/py-signal-processing
 
 Examples and Benchmarks
 -----------------------
@@ -179,10 +182,6 @@ Theory
     :caption: Theory
 
     theory/components
-    api_py/py_api
-    api_c/c_api
-    changelog
-
 
 Project details
 ---------------
@@ -191,10 +190,10 @@ Project details
     :maxdepth: 1
     :caption: Project details
 
+    changelog
     credits/contributors
     credits/license
     credits/acknowledgment
-
 
 .. .. only:: html
 

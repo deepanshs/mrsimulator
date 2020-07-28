@@ -35,7 +35,7 @@ Args:
             An `optional` float with the origin offset (Larmor frequency) along the
             dimension in units of Hz. The default value is None.
 
-    channels: A list of isotope symbols over which the method will be applied. The
+    channels: A list of isotope symbols over which the method will be applied.
     rotor_frequency: An `optional` float containing the sample spinning frequency
         :math:`\nu_r`, in units of Hz. The default value is ``0``.
     rotor_angle: An `optional` float containing the angle between the sample rotation
@@ -135,7 +135,6 @@ def generate_method_from_template(template):
 
 
 # BlochDecaySpectrum
-
 BlochDecaySpectrum = generate_method_from_template(METHODS_DATA["Bloch_decay"])
 
 BlochDecayCentralTransitionSpectrum = generate_method_from_template(

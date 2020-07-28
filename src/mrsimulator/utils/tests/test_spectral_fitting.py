@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
-import mrsimulator.spectral_fitting as sf
+import mrsimulator.utils.spectral_fitting as sf
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 

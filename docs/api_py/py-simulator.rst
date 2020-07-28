@@ -13,10 +13,7 @@ Python-API References
    site
    other_objects
    method
-   methods
-   fitting
-   signal_processing
-   operations/operations_summary
+   methods-summary
 
 ..    parameterized_tensor
 ..    interaction

@@ -101,8 +101,8 @@ def test_simulator_1():
         "methods": [
             {
                 "channels": ["1H"],
-                "description": "Method for simulating Bloch decay spectrum.",
-                "name": "Bloch Decay Spectrum",
+                "description": "Simulate a 1D Bloch decay spectrum.",
+                "name": "BlochDecaySpectrum",
                 "spectral_dimensions": [
                     {
                         "count": 1024,

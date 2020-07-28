@@ -3,7 +3,6 @@
 """
 Fitting Crystalline Sodium Metasilicate
 =======================================
-.. sectionauthor:: Maxwell C. Venetos <maxvenetos@gmail.com>
 """
 # %%
 # In this example, we illustrate the use of the mrsimulator objects to
@@ -29,8 +28,8 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-from mrsimulator.spectral_fitting import LMFIT_min_function
-from mrsimulator.spectral_fitting import make_LMFIT_parameters
+from mrsimulator.utils.spectral_fitting import LMFIT_min_function
+from mrsimulator.utils.spectral_fitting import make_LMFIT_parameters
 
 font = {"size": 9}
 mpl.rc("font", **font)
@@ -164,7 +163,7 @@ plt.show()
 # `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_ class from *LMFIT*,
 # as described in the previous example.
 # Here, we make use of a utility function,
-# :func:`~mrsimulator.spectral_fitting.make_LMFIT_parameters`, that considerably
+# :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_parameters`, that considerably
 # simplifies the generation of the parameters object.
 #
 # **Step 8:** Create a list of parameters.
@@ -183,8 +182,9 @@ params.pretty_print()
 
 # %%
 # **Step 9:** Perform least-squares minimization. For the user's convenience, we also
-# provide a utility function, :func:`~mrsimulator.spectral_fitting.LMFIT_min_function`,
-# for  evaluating the difference vector between the simulation and experiment, based on
+# provide a utility function,
+# :func:`~mrsimulator.utils.spectral_fitting.LMFIT_min_function`, for evaluating the
+# difference vector between the simulation and experiment, based on
 # the parameters update. You may use this function directly as the argument of the
 # LMFIT Minimizer class, as follows,
 minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, post_sim))
