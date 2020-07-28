@@ -286,7 +286,7 @@ following example.
     The spectrum is an integration of the spectra from individual spin systems when the
     value of `decompose_spectrum` is ``none``.
 
-:numref:`fig5_config` depicts the simulation of the line-shape from two spin systems
+:numref:`fig5_config` depicts the simulation of the spectrum from two spin systems
 where the contributions from individual spin systems are co-added.
 
 ``spin_system``

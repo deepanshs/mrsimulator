@@ -15,9 +15,9 @@
 
 /**
  * @struct MRS_averaging_scheme
- * A powder orientation scheme for simulating solid-state NMR line-shapes. An
+ * A powder orientation scheme for simulating solid-state NMR spectra. An
  * orientation scheme creates buffers and tabulates values for faster
- * computation of bulk NMR line-shapes.
+ * computation of bulk NMR spectra.
  *
  * The scheme includes
  *   - pre-calculating an array of orientations over the surface of the sphere
@@ -34,7 +34,7 @@
  * Creating a new orientation averaging scheme adds an overhead to the
  * computation. Once created, however, the scheme may be re-used for as long as
  * required. This is especially efficient when performing a batch simulation,
- * such as line-shape simulation from thousands of sites.
+ * such as simulations from thousands of sites.
  */
 typedef struct MRS_averaging_scheme {
   unsigned int total_orientations; /**< The total number of orientations. */
@@ -67,7 +67,7 @@ typedef struct MRS_averaging_scheme {
  *      polyhedra in calculating the orientation average. Currently, we only
  *      support octahedral as the frequency 1 polyhedra. Higher the geodesic
  *      polyhedron frequency, the closer the polyhedra resemblance a spherical
- *      geometry. For line-shape simulation, a higher geodesic polyhedron
+ *      geometry. For spectrum simulation, a higher geodesic polyhedron
  *      frequency will result in an improved orientation averaging. Read more on
  *      the <a href="https://en.wikipedia.org/wiki/Geodesic_polyhedron">Geodesic
  *      polyhedron</a>.

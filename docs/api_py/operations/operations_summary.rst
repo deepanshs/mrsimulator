@@ -17,7 +17,7 @@ Import the module as
 .. rubric:: Operation Summary
 
 The following list of operations apply to **all dependent variables** within the
-simulation data object.
+CSDM object.
 
 .. autosummary::
     :nosignatures:
@@ -40,7 +40,7 @@ Import the module as
 .. rubric:: Operation Summary
 
 The following list of operations apply to **selected dependent variables** within
-the simulation data object.
+the CSDM object.
 
 .. autosummary::
     :nosignatures:

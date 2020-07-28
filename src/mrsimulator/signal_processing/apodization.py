@@ -80,19 +80,25 @@ class AbstractApodization(AbstractOperation):
 
 
 class Gaussian(AbstractApodization):
-    r"""Apodize a dependent variable of the simulation data object by a Gaussian
-    function. The function follows
+    r"""Apodize a dependent variable of the CSDM object with a Gaussian function.
+
+    The apodization function follows
 
     .. math::
-        f(x) = e^{-2 \pi^2 \frac{\text{FWHM}{2\sqrt{2\ln 2}}}^2  x^2},
+        f(x) = e^{-2 \pi^2 \sigma^2  x^2},
 
-    where :math:`x` are the coordinates of the data dimension and FWHM is the full
-    width at half maximum of the Gaussian.
+    where :math:`x` are the coordinates of the dimension, and :math:`\sigma` is the
+    standard deviation. The relationship between the standard deviation, :math:`\sigma`,
+    and the full width at half maximum of the reciprocal domain Gaussian function
+    follows
+
+    .. math::
+        \sigma = \frac{\text{FWHM}}{2\sqrt{2\ln 2}}.
 
     Args:
-        float FWHM: The full width at half maximum of the Gaussian, FWHM. The default
-            value is 0 and the default unit is the reciprocal of the unit associated
-            with the dimension at index `dim_indx`.
+        float FWHM: The full width at half maximum, FWHM, of the reciprocal domain
+            Gaussian function. The default value is 0, and the default unit is the
+            reciprocal of the unit associated with the dimension at index `dim_indx`.
         int dim_indx: The index of the CSDM dimension along which the operation is
             applied. The default is the dimension at index 0.
         int dv_indx: The index of the CSDM dependent variable where the operation is
@@ -123,7 +129,60 @@ class Gaussian(AbstractApodization):
         Applies the operation for which the class is named for.
 
         data: CSDM object
-        dep_var: int. The index of the dependent variable to apply operation to
+        dep_var: int. The index of the dependent variable to apply operation to.
+        """
+
+        return self._operate(data, fn=self.fn, prop_name="FWHM", prop_value=self.FWHM)
+
+
+class Exponential(AbstractApodization):
+    r"""Apodize a dependent variable of the CSDM object by an exponential function.
+
+    The apodization function follows
+
+    .. math::
+        f(x) = e^{-\Gamma |x| \pi},
+
+    where :math:`x` are the coordinates of the dimension, and :math:`\Gamma` is the
+    width parameter. The relationship between the width parameter, :math:`\Gamma`, and
+    the full width at half maximum for the reciprocal domain Lorentzian function
+    follows
+
+    .. math::
+        \text{FWHM} = \Gamma.
+
+    Args:
+        float FWHM: The full width at half maximum, FWHM, of the reciprocal domain
+            Lorentzian function. The default value is 0, and the default unit is the
+            reciprocal of the unit associated with the dimension at index `dim_indx`.
+        int dim_indx: The index of the CSDM dimension along which the operation is
+            applied. The default is the dimension at index 0.
+        int dv_indx: The index of the CSDM dependent variable where the operation is
+            applied. If the value is None, the operation will be applied to every
+            dependent variable.
+
+    Example
+    -------
+
+    >>> operation5 = apo.Exponential(FWHM=143.4, dim_indx=0, dv_indx=0)
+    """
+
+    FWHM: float = 0
+
+    property_unit_types: ClassVar = {"FWHM": ["time", "frequency"]}
+    property_default_units: ClassVar = {"FWHM": ["s", "Hz"]}
+    property_units: Dict = {"FWHM": "Hz"}
+
+    @staticmethod
+    def fn(x, arg):
+        return np.exp(-arg * np.pi * np.abs(x))
+
+    def operate(self, data):
+        """
+        Applies the operation for which the class is named for.
+
+        data: CSDM object
+        dep_var: int. The index of the dependent variable to apply operation to.
         """
 
         return self._operate(data, fn=self.fn, prop_name="FWHM", prop_value=self.FWHM)
@@ -170,50 +229,3 @@ class Gaussian(AbstractApodization):
 #         """
 
 #         return self._operate(data, fn=self.fn, prop_name="FWHM", prop_value=self.FWHM)
-
-
-class Exponential(AbstractApodization):
-    r"""Apodize a dependent variable of the simulation data object by an exponential
-    function. The function follows
-
-    .. math::
-        f(x) = e^{-\Tau |x| \pi},
-
-    where :math:`x` are the coordinates of the data dimension and :math:`\Tau` is
-    the width parameter.
-
-    Args:
-        float FWHM: The full width at half maximum parameter, :math:`\Tau`. The default
-            value is 0 and the default unit is the reciprocal of the unit associated
-            with the dimension at index `dim_indx`.
-        int dim_indx: The index of the CSDM dimension along which the operation is
-            applied. The default is the dimension at index 0.
-        int dv_indx: The index of the CSDM dependent variable where the operation is
-            applied. If the value is None, the operation will be applied to every
-            dependent variable.
-
-    Example
-    -------
-
-    >>> operation5 = apo.Exponential(FWHM=143.4, dim_indx=0, dv_indx=0)
-    """
-
-    FWHM: float = 0
-
-    property_unit_types: ClassVar = {"FWHM": ["time", "frequency"]}
-    property_default_units: ClassVar = {"FWHM": ["s", "Hz"]}
-    property_units: Dict = {"FWHM": "Hz"}
-
-    @staticmethod
-    def fn(x, arg):
-        return np.exp(-arg * np.pi * np.abs(x))
-
-    def operate(self, data):
-        """
-        Applies the operation for which the class is named for.
-
-        data: CSDM object
-        dep_var: int. The index of the dependent variable to apply operation to
-        """
-
-        return self._operate(data, fn=self.fn, prop_name="FWHM", prop_value=self.FWHM)

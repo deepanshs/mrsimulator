@@ -83,9 +83,8 @@ def cosine_of_polar_angles_and_amplitudes(integration_density: int = 72):
         geodesic polyhedra. These polyhedra are used in calculating the
         spherical average. Presently we only use octahedral as the frequency1
         polyhedra. As the frequency of the geodesic polyhedron increases, the
-        polyhedra approach a sphere geometry. For line-shape simulation, a
-        higher  frequency will result in a better powder averaging.
-        The default value is 72.
+        polyhedra approach a sphere geometry. A higher frequency will result in
+        a better powder averaging. The default value is 72.
         Read more on the `Geodesic polyhedron
         <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
 

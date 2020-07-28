@@ -70,7 +70,7 @@ Welcome to the Mrsimulator documentation
 
 **About**
 
-``mrsimulator`` is a python package for computing fast real-time solid-state magnetic
+``mrsimulator`` is a python package for computing fast solid-state magnetic
 resonance (NMR) spectra. The library is optimized to compute both crystalline and
 amorphous-like materials. The core of the ``mrsimulator`` library is written in C,
 wrapped and made available in python.
@@ -81,7 +81,7 @@ wrapped and made available in python.
 
 The ``mrsimulator`` package currently offers the following
 
-- **Real-time simulation** of one-dimensional solid-state NMR spectra. See our :ref:`benchmark` results.
+- **Fast simulation** of one-dimensional solid-state NMR spectra. See our :ref:`benchmark` results.
 
 - Uncoupled spin system
     - for spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
@@ -118,9 +118,9 @@ Our current objectives for the future are the following
 
 - Expand the library of NMR methods. We expect to include the following methods
     - 2D Multi-quantum Magic Angle Spinning (MQ-MAS),
-    - 2D isotropic to anisotropic sideband correlation spectrum (e.g. PASS and MAT).
-    - 2D Dynamic Angle Spinning (DAS),
-    - 2D Magic Angle Flipping (MAF), and
+    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT).
+    - 2D Dynamic Angle Spinning (DAS), and
+    - 2D Magic Angle Flipping (MAF).
 
 
 .. Contribution
@@ -164,8 +164,8 @@ Signal Processing (``mrsimulator.SignalProcessor``)
     signal_processing
     api_py/py-signal-processing
 
-Examples and Benchmarks
------------------------
+Benchmark and Examples
+----------------------
 
 .. toctree::
     :maxdepth: 2

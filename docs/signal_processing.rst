@@ -283,7 +283,7 @@ operations.
     >>> post_sim = sp.SignalProcessor(
     ...     operations=[
     ...         sp.IFFT(), # convert to time-domain
-    ...         apo.Gaussian(FWHM=50, dv_indx=0),
+    ...         apo.Gaussian(FWHM=120, dv_indx=0),
     ...         apo.Exponential(FWHM=200, dv_indx=1),
     ...         sp.FFT(), # convert to frequency-domain
     ...     ]
@@ -338,7 +338,7 @@ method, as follows
     >>> from pprint import pprint
     >>> pprint(post_sim.to_dict_with_units())
     {'operations': [{'dim_indx': 0, 'function': 'IFFT'},
-                    {'FWHM': '50.0 Hz',
+                    {'FWHM': '120.0 Hz',
                      'dim_indx': 0,
                      'dv_indx': 0,
                      'function': 'apodization',

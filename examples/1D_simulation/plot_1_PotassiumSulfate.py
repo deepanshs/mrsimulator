@@ -4,10 +4,10 @@
 Potassium Sulfate, 33S (I=3/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-33S (I=3/2) quadrupolar line-shape simulation.
+33S (I=3/2) quadrupolar spectrum simulation.
 """
 # %%
-# The following example is the :math:`^{33}\text{S}` NMR line-shape simulation of
+# The following example is the :math:`^{33}\text{S}` NMR spectrum simulation of
 # potassium sulfate (:math:`\text{K}_2\text{SO}_4`). The quadrupole tensor parameters
 # for :math:`^{33}\text{S}` is obtained from Moudrakovski `et. al.` [#f3]_
 import matplotlib as mpl
