@@ -5,8 +5,8 @@
 How does ``mrsimulator`` work?
 ******************************
 
-The frequency based spectrum simulation in ``mrsimulator`` is based on the concept
-of `Symmetry Pathways in Solid-State NMR` by Grandinetti `et. al.` [#f1]_
+The NMR spectral simulation in ``mrsimulator`` is based on
+`Symmetry Pathways in Solid-State NMR` by Grandinetti `et. al.` [#f1]_
 
 Introduction to NMR frequency components
 ========================================

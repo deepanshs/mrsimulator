@@ -5,23 +5,32 @@ Fitting Cusipidine
 ==================
 """
 # %%
-# Often, after acquiring an NMR spectrum, we may require some form of least-squares
-# analysis to quantify our measurement. A typical recipe for any least-squares analysis
+# After acquiring an NMR spectrum, we often require a least-squares analysis to
+# determine site populations and nuclear spin interaction parameters. Generally, this
 # comprises of two steps:
 #
-# - Create a "fitting model," and
-# - optimize the parameters of the model.
+# - create a fitting model, and
+# - determine the model parameters that give the best fit to the spectrum.
 #
-# Here, we will use the mrsimulator objects to create a "fitting model," and use the
+# Here, we will use the mrsimulator objects to create a fitting model, and use the
 # `LMFIT <https://lmfit.github.io/lmfit-py/>`_ library for performing the least-squares
 # fitting optimization.
 # In this example, we use a synthetic :math:`^{29}\text{Si}` NMR spectrum of cuspidine,
 # generated from the tensor parameters reported by Hansen `et. al.` [#f1]_, to
 # demonstrate a simple fitting procedure.
 #
-# We will begin by importing *matplotlib* and establishing figure size.
+# We will begin by importing relevant modules and establishing figure size.
+import csdmpy as cp
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import mrsimulator.signal_processing as sp
+import mrsimulator.signal_processing.apodization as apo
+from lmfit import fit_report
+from lmfit import Minimizer
+from lmfit import Parameters
+from mrsimulator import Simulator
+from mrsimulator import SpinSystem
+from mrsimulator.methods import BlochDecaySpectrum
 
 font = {"size": 9}
 mpl.rc("font", **font)
@@ -31,10 +40,8 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # %%
 # Import the dataset
 # ------------------
-# We will import the `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_
-# module and load the synthetic dataset as a CSDM object.
-import csdmpy as cp
-
+# Use the `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_
+# module to load the synthetic dataset as a CSDM object.
 filename = "https://osu.box.com/shared/static/a45xj96iekdjrs2beri0nkrow4vjewdh.csdf"
 synthetic_experiment = cp.load(filename)
 
@@ -44,7 +51,7 @@ synthetic_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
 # Normalize the spectrum
 synthetic_experiment /= synthetic_experiment.max()
 
-# plot of the synthetic dataset.
+# Plot of the synthetic dataset.
 ax = plt.subplot(projection="csdm")
 ax.plot(synthetic_experiment, color="black", linewidth=1)
 ax.set_xlim(-200, 50)
@@ -53,21 +60,19 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# Create a "fitting model"
-# ------------------------
+# Create a fitting model
+# ----------------------
 #
 # Before you can fit a simulation to an experiment, in this case, the synthetic dataset,
-# you will first need to create a "fitting model." We will use the ``mrsimulator``
-# objects as tools in creating a model for the least-squares fitting.
-from mrsimulator import SpinSystem, Simulator
-from mrsimulator.methods import BlochDecaySpectrum
-
-# %%
-# **Step 1:** Create the guess sites and spin systems. The guess is often based on some
-# prior knowledge. For the current example, we know that Cuspidine is a crystalline
-# silica polymorph with one crystallographic Si site. Therefore, our guess model is a
-# single :math:`^{29}\text{Si}` site spin system. For non-linear fitting algorithms,
-# as a general recommendation, the guess model parameters should be a good starting
+# you will first need to create a fitting model. We will use the ``mrsimulator`` objects
+# as tools in creating a model for the least-squares fitting.
+#
+# **Step 1:** Create initial guess sites and spin systems. The initial guess is
+# often based on some prior knowledge about the system under investigation. For the
+# current example, we know that Cuspidine is a crystalline silica polymorph with one
+# crystallographic Si site. Therefore, our initial guess model is a single
+# :math:`^{29}\text{Si}` site spin system. For non-linear fitting algorithms, as a
+# general recommendation, the initial guess model parameters should be a good starting
 # point for the algorithms to converge.
 
 # the guess model comprising of a single site spin system
@@ -111,15 +116,12 @@ sim.methods = [method]
 sim.methods[0].experiment = synthetic_experiment
 
 # %%
-# **Step 5:** simulate the spectrum.
+# **Step 5:** Simulate the spectrum.
 sim.run()
 
 # %%
 # **Step 6:** Create a SignalProcessor class and apply post simulation processing.
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
-
-post_sim = sp.SignalProcessor(
+processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
         apo.Exponential(FWHM="200 Hz"),
@@ -127,7 +129,7 @@ post_sim = sp.SignalProcessor(
         sp.Scale(factor=1.5),
     ]
 )
-processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
+processed_data = processor.apply_operations(data=sim.methods[0].simulation)
 
 # %%
 # **Step 7:** The plot the spectrum. We also plot the synthetic dataset for comparison.
@@ -154,8 +156,8 @@ plt.show()
 #
 # Next, you will need a list of parameters that will be used in the fit. The *LMFIT*
 # library provides a `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_
-# class to create a list of parameters rather easily.
-from lmfit import Minimizer, Parameters, fit_report
+# class to create a list of parameters.
+
 
 site1 = system_object.sites[0]
 params = Parameters()
@@ -163,15 +165,15 @@ params = Parameters()
 params.add(name="iso", value=site1.isotropic_chemical_shift)
 params.add(name="eta", value=site1.shielding_symmetric.eta, min=0, max=1)
 params.add(name="zeta", value=site1.shielding_symmetric.zeta)
-params.add(name="FWHM", value=post_sim.operations[1].FWHM)
-params.add(name="factor", value=post_sim.operations[3].factor)
+params.add(name="FWHM", value=processor.operations[1].FWHM)
+params.add(name="factor", value=processor.operations[3].factor)
 
 # %%
 # Create a minimization function
 # ''''''''''''''''''''''''''''''
 #
-# Note, the above set of parameters are does not know the model. You will need to set up
-# a function that will
+# Note, the above set of parameters does not know about the model. You will need to
+# set up a function that will
 #
 # - update the parameters of the `Simulator` and `SignalProcessor` object based on the
 #   LMFIT parameter updates,
@@ -179,7 +181,7 @@ params.add(name="factor", value=post_sim.operations[3].factor)
 # - return the difference between the experiment and simulation.
 
 
-def minimization_function(params, sim, post_sim):
+def minimization_function(params, sim, processor):
     values = params.valuesdict()
 
     # the experiment data as a Numpy array
@@ -195,9 +197,13 @@ def minimization_function(params, sim, post_sim):
     sim.run()
 
     # update the SignalProcessor parameter and apply line broadening.
-    post_sim.operations[3].factor = values["factor"]
-    post_sim.operations[1].FWHM = values["FWHM"]
-    processed_data = post_sim.apply_operations(sim.methods[0].simulation)
+    # update the scaling factor parameter at index 3 of operations list.
+    processor.operations[3].factor = values["factor"]
+    # update the exponential apodization FWHM parameter at index 1 of operations list.
+    processor.operations[1].FWHM = values["FWHM"]
+
+    # apply signal processing
+    processed_data = processor.apply_operations(sim.methods[0].simulation)
 
     # return the difference vector.
     return intensity - processed_data.dependent_variables[0].components[0].real
@@ -205,21 +211,19 @@ def minimization_function(params, sim, post_sim):
 
 # %%
 # .. note::
-#       To automate the fitting process, we provide a function to parse
-#       the ``simulator`` object for parameters and construct an *LMFIT* ``Parameters``
-#       object. Similarly, a minimization function, analogous to the above
-#       `minimization_function`, is also included in the *mrsimulator* library. See the
-#       next example for usage instructions.
+#       To automate the fitting process, we provide a function to parse the
+#       ``Simulator`` and ``SignalProcessor`` objects for parameters and construct an
+#       *LMFIT* ``Parameters`` object. Similarly, a minimization function, analogous to
+#       the above `minimization_function`, is also included in the *mrsimulator*
+#       library. See the next example for usage instructions.
 #
 # Perform the least-squares minimization
 # ''''''''''''''''''''''''''''''''''''''
 #
-# With the synthetic data, simulation, and the parameters, we are ready to perform the
-# fit. To fit, we use the *LMFIT*
-# `Minimizer <https://lmfit.github.io/lmfit-py/fitting.html>`_ class. One consideration
-# for the case of the magic-angle spinning fitting is we must use a discrete
-# minimization method, such as 'powell', as the chemical shift varies discretely.
-minner = Minimizer(minimization_function, params, fcn_args=(sim, post_sim))
+# With the synthetic dataset, simulation, and the initial guess parameters, we are ready
+# to perform the fit. To fit, we use the *LMFIT*
+# `Minimizer <https://lmfit.github.io/lmfit-py/fitting.html>`_ class.
+minner = Minimizer(minimization_function, params, fcn_args=(sim, processor))
 result = minner.minimize(method="powell")
 print(fit_report(result))
 
