@@ -28,19 +28,20 @@ PS_0 = [sp.Scale(factor=10)]
 
 PS_1 = [
     sp.IFFT(dim_indx=0),
-    apo.Exponential(FWHM=200, dim_indx=0, dv_indx=0),
+    apo.Exponential(FWHM="200 Hz", dim_indx=0, dv_indx=0),
     sp.FFT(dim_indx=0),
 ]
 
+sigma = 20 * 2.354820045030949
 PS_2 = [
     sp.IFFT(dim_indx=0),
-    apo.Gaussian(FWHM=20 * 2.354820045030949, dim_indx=0, dv_indx=[0, 1]),
+    apo.Gaussian(FWHM=f"{sigma} Hz", dim_indx=0, dv_indx=[0, 1]),
     sp.FFT(dim_indx=0),
 ]
 
 PS_3 = [
     sp.IFFT(dim_indx=0),
-    apo.Gaussian(FWHM=20 * 2.354820045030949, dim_indx=0, dv_indx=None),
+    apo.Gaussian(FWHM=f"{sigma} Hz", dim_indx=0, dv_indx=None),
     sp.FFT(dim_indx=0),
 ]
 
@@ -128,10 +129,10 @@ def test_scale_class():
 
 def test_Exponential_class():
     # direct initialization
-    a = apo.Exponential(FWHM=200, dim_indx=0, dv_indx=0)
+    a = apo.Exponential(FWHM="200 s", dim_indx=0, dv_indx=0)
 
     assert a.FWHM == 200
-    assert a.property_units == {"FWHM": "Hz"}
+    assert a.property_units == {"FWHM": "s"}
     assert a.dim_indx == 0
     assert a.dv_indx == 0
 
@@ -141,7 +142,7 @@ def test_Exponential_class():
     assert dict_ == {
         "function": "apodization",
         "type": "Exponential",
-        "FWHM": "200.0 Hz",
+        "FWHM": "200.0 s",
         "dim_indx": 0,
         "dv_indx": 0,
     }
@@ -154,10 +155,10 @@ def test_Exponential_class():
 
 def test_Gaussian_class():
     # direct initialization
-    a = apo.Gaussian(FWHM=200, dim_indx=0, dv_indx=0)
+    a = apo.Gaussian(FWHM="200 km/s", dim_indx=0, dv_indx=0)
 
     assert a.FWHM == 200
-    assert a.property_units == {"FWHM": "Hz"}
+    assert a.property_units == {"FWHM": "km / s"}
     assert a.dim_indx == 0
     assert a.dv_indx == 0
 
@@ -167,7 +168,7 @@ def test_Gaussian_class():
     assert dict_ == {
         "function": "apodization",
         "type": "Gaussian",
-        "FWHM": "200.0 Hz",
+        "FWHM": "200.0 km / s",
         "dim_indx": 0,
         "dv_indx": 0,
     }

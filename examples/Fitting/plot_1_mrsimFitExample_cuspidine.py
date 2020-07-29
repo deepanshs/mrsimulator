@@ -120,7 +120,12 @@ import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
 
 post_sim = sp.SignalProcessor(
-    operations=[sp.IFFT(), apo.Exponential(FWHM=200), sp.FFT(), sp.Scale(factor=1.5)]
+    operations=[
+        sp.IFFT(),
+        apo.Exponential(FWHM="200 Hz"),
+        sp.FFT(),
+        sp.Scale(factor=1.5),
+    ]
 )
 processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
 

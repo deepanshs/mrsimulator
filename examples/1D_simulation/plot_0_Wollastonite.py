@@ -85,7 +85,7 @@ plt.show()
 # %%
 # **Step 6:** Add post-simulation processing.
 post_sim = sp.SignalProcessor(
-    operations=[sp.IFFT(), apo.Exponential(FWHM=70), sp.FFT()]
+    operations=[sp.IFFT(), apo.Exponential(FWHM="70 Hz"), sp.FFT()]
 )
 processed_data = post_sim.apply_operations(data=sim_wollastonite.methods[0].simulation)
 

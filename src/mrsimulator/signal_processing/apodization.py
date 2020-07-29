@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """The Event class."""
 from sys import modules
-from typing import ClassVar
 from typing import Dict
 from typing import Union
 
 import numpy as np
+from csdmpy.units import string_to_quantity
+from pydantic import validator
 
 from ._base import AbstractOperation
 
@@ -65,9 +66,12 @@ class AbstractApodization(AbstractOperation):
             prop_value: The argument value for the function fn.
         """
         x = data.dimensions[self.dim_indx].coordinates
-        x_value, x_unit = x.value, x.unit
 
-        self.set_property_units(x_unit, prop_name)
+        unit = 1 / string_to_quantity(self.property_units[prop_name]).unit
+        x = x.to(unit)
+        x_value = x.value
+
+        # self.set_property_units(x_unit, prop_name)
 
         apodization_vactor = fn(x_value, prop_value)
 
@@ -96,9 +100,9 @@ class Gaussian(AbstractApodization):
         \sigma = \frac{\text{FWHM}}{2\sqrt{2\ln 2}}.
 
     Args:
-        float FWHM: The full width at half maximum, FWHM, of the reciprocal domain
-            Gaussian function. The default value is 0, and the default unit is the
-            reciprocal of the unit associated with the dimension at index `dim_indx`.
+        str FWHM: The full width at half maximum, FWHM, of the reciprocal domain
+            Gaussian function, given as a string with a value and a unit. The default
+            value is 0.
         int dim_indx: The index of the CSDM dimension along which the operation is
             applied. The default is the dimension at index 0.
         int dv_indx: The index of the CSDM dependent variable where the operation is
@@ -109,14 +113,24 @@ class Gaussian(AbstractApodization):
     -------
 
     >>> import mrsimulator.signal_processing.apodization as apo
-    >>> operation4 = apo.Gaussian(FWHM=143.4, dim_indx=0, dv_indx=0)
+    >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_indx=0, dv_indx=0)
     """
 
-    FWHM: float = 0
+    FWHM: Union[float, str] = 0
+    property_units: Dict = {"FWHM": ""}
 
-    property_unit_types: ClassVar = {"FWHM": ["time", "frequency"]}
-    property_default_units: ClassVar = {"FWHM": ["s", "Hz"]}
-    property_units: Dict = {"FWHM": "Hz"}
+    @validator("FWHM")
+    def str_to_quantity(cls, v, values):
+        if isinstance(v, str):
+            quantity = string_to_quantity(v)
+            values["property_units"] = {"FWHM": str(quantity.unit)}
+            return quantity.value
+        if isinstance(v, float):
+            return v
+        raise ValueError("Error parsing the value.")
+
+    # class Config:
+    #     validate_assignment = True
 
     @staticmethod
     def fn(x, arg):
@@ -152,9 +166,9 @@ class Exponential(AbstractApodization):
         \text{FWHM} = \Gamma.
 
     Args:
-        float FWHM: The full width at half maximum, FWHM, of the reciprocal domain
-            Lorentzian function. The default value is 0, and the default unit is the
-            reciprocal of the unit associated with the dimension at index `dim_indx`.
+        str FWHM: The full width at half maximum, FWHM, of the reciprocal domain
+            Lorentzian function given as a string with a value and a unit. The default
+            value is 0.
         int dim_indx: The index of the CSDM dimension along which the operation is
             applied. The default is the dimension at index 0.
         int dv_indx: The index of the CSDM dependent variable where the operation is
@@ -164,14 +178,24 @@ class Exponential(AbstractApodization):
     Example
     -------
 
-    >>> operation5 = apo.Exponential(FWHM=143.4, dim_indx=0, dv_indx=0)
+    >>> operation5 = apo.Exponential(FWHM='143.4 m', dim_indx=0, dv_indx=0)
     """
 
-    FWHM: float = 0
+    FWHM: Union[float, str] = 0
+    property_units: Dict = {"FWHM": ""}
 
-    property_unit_types: ClassVar = {"FWHM": ["time", "frequency"]}
-    property_default_units: ClassVar = {"FWHM": ["s", "Hz"]}
-    property_units: Dict = {"FWHM": "Hz"}
+    @validator("FWHM")
+    def str_to_quantity(cls, v, values):
+        if isinstance(v, str):
+            quantity = string_to_quantity(v)
+            values["property_units"] = {"FWHM": str(quantity.unit)}
+            return quantity.value
+        if isinstance(v, float):
+            return v
+        raise ValueError("Error parsing the value.")
+
+    # class Config:
+    #     validate_assignment = True
 
     @staticmethod
     def fn(x, arg):

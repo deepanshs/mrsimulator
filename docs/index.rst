@@ -148,7 +148,7 @@ Getting Started
     requirements
     introduction
     getting_started
-    using_mrsimulator_objects
+    getting_started-objects
     configuring_simulator
     mrsim_IO
     api_py/py-simulator

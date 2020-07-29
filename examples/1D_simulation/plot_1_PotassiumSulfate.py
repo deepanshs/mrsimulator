@@ -73,7 +73,7 @@ plt.show()
 # %%
 # **Step 6:** Add post-simulation processing.
 post_sim = sp.SignalProcessor(
-    operations=[sp.IFFT(), apo.Exponential(FWHM=10), sp.FFT()]
+    operations=[sp.IFFT(), apo.Exponential(FWHM="10 Hz"), sp.FFT()]
 )
 processed_data = post_sim.apply_operations(data=sim_K2SO3.methods[0].simulation)
 

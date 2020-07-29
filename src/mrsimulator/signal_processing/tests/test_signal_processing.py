@@ -10,7 +10,7 @@ def test_01():
     post_sim = sp.SignalProcessor()
     operations = [
         sp.IFFT(),
-        apo.Gaussian(FWHM=12, dim_indx=0, dv_indx=0),
+        apo.Gaussian(FWHM="12 K", dim_indx=0, dv_indx=0),
         sp.FFT(),
     ]
 
@@ -20,6 +20,7 @@ def test_01():
         post_sim.apply_operations([])
 
     data = cp.as_csdm(np.arange(20))
+    data.dimensions[0] = cp.LinearDimension(count=20, increment="10 K")
     post_sim.apply_operations(data)
 
     # to dict with units
@@ -30,7 +31,7 @@ def test_01():
             {
                 "function": "apodization",
                 "type": "Gaussian",
-                "FWHM": "12.0 Hz",
+                "FWHM": "12.0 K",
                 "dim_indx": 0,
                 "dv_indx": 0,
             },

@@ -32,8 +32,8 @@ The following code is used to produce the figures in this section.
 Up until now, we have been using the simulator object with the default setting.
 In ``mrsimulator``, we choose the default settings such that it applies to a wide
 range of simulations including, static, magic angle spinning (MAS), and
-variable angle spinning (VAS) lineshapes. In certain situations, however, the
-default settings are not sufficient to accurately represent the lineshapes. In
+variable angle spinning (VAS) spectra. In certain situations, however, the
+default settings are not sufficient to accurately represent the spectrum. In
 such cases, the user is advised to modify these settings as required. In the
 following section, we briefly describe the configuration settings.
 
@@ -60,12 +60,12 @@ Here, the configurable attributes are ``number_of_sidebands``,
 Number of sidebands
 -------------------
 The value of this attribute is the number of sidebands requested in evaluating the
-lineshapes. The default value is 64 and is sufficient for most cases, as seen from our
+spectrum. The default value is 64 and is sufficient for most cases, as seen from our
 previous examples. In certain circumstances, especially when the anisotropy is large
 or the rotor spin frequency is low, 64 sidebands might not be sufficient. In such
-cases, the user is advised to increase the value of this attribute as required.
+cases, the user will need to increase the value of this attribute as required.
 Conversely, 64 sidebands might be redundant for other problems, in which case the user
-is advised to reduce the value of this attribute. Note, reducing the number of sidebands
+may want to reduce the value of this attribute. Note, reducing the number of sidebands
 will significantly improve computation performance, which might save computation time
 when used in iterative algorithms, such as least-squares minimization.
 
@@ -101,11 +101,11 @@ The following is an example of when the number of sidebands is insufficient.
     Inaccurate spinning sidebands simulation resulting from computing a relatively low
     number of sidebands.
 
-If you are familiar with the NMR lineshapes, you may notice that the sideband
-simulation spectrum in :numref:`fig1_config` is inaccurate, as evident from the abrupt
-termination of the sideband amplitudes at the edges. As mentioned earlier, this
-inaccuracy arises from evaluating a small number of sidebands relative to the given
-anisotropy. Let's increase the number of sidebands to 90 and observe.
+If you are familiar with the NMR spinning sideband patterns, you may notice that the
+sideband simulation spectrum in :numref:`fig1_config` is inaccurate, as evident from
+the abrupt termination of the sideband amplitudes at the edges. As mentioned earlier,
+this inaccuracy arises from evaluating a small number of sidebands relative to the
+given anisotropy. Let's increase the number of sidebands to 90 and observe.
 :numref:`fig2_config` depicts an accurate spinning sideband simulation.
 
 .. plot::

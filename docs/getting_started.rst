@@ -270,7 +270,7 @@ object.
 
 .. seealso::
     The core scientific dataset model (CSDM) [#f1]_ is a lightweight and portable file
-    format model for multi-dimensional scientific datasets and is supported by most
+    format model for multi-dimensional scientific datasets and is supported by numerous
     NMR software---DMFIT, SIMPSON, jsNMR, and RMN. We also provide a python package
     `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_.
 
@@ -303,22 +303,22 @@ You may optionally customize the plot using matplotlib methods.
     An example static solid state NMR lineshape simulation.
 
 
-**For advanced users**
+.. **For advanced users**
 
-Advanced uses may prefer to apply some additional processing or use some other
-plotting libraries. For those users, you may extract the data from the csdm object
-as a list of arrays using the `to_list() <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html#csdmpy.CSDM.to_list>`_
-method of the csdm object, following,
+.. Advanced uses may prefer to apply some more sophisticated processing or use some other
+.. plotting libraries. For those users, you may extract the data from the csdm object
+.. as a list of arrays using the `to_list() <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html#csdmpy.CSDM.to_list>`_
+.. method of the csdm object, following,
 
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
+.. .. plot::
+..     :format: doctest
+..     :context: close-figs
+..     :include-source:
 
-    >>> x, y = data_0.to_list()
+..     >>> x, y = data_0.to_list()
 
-Here, ``x`` is a quantity array and contains the coordinates of the spectral dimension
-in units of ppm, and ``y`` is the response array.
+.. Here, ``x`` is a quantity array and contains the coordinates of the spectral dimension
+.. in units of ppm, and ``y`` is the response array.
 
 .. The following is a matplotlib script
 .. which uses the above ``x``, and ``y`` variables to generate a similar plot shown in

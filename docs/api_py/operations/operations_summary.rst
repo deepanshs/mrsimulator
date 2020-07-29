@@ -47,3 +47,7 @@ the CSDM object.
 
       ~Gaussian
       ~Exponential
+
+.. seealso::
+
+    :ref:`signal_processing` for a details.

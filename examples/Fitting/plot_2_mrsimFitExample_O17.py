@@ -138,7 +138,12 @@ sim.run()
 # **Step 6:** Create the SignalProcessor class object and add and apply the list of
 # post-simulation operations.
 post_sim = sp.SignalProcessor(
-    operations=[sp.IFFT(), apo.Exponential(FWHM=40), sp.FFT(), sp.Scale(factor=0.6)]
+    operations=[
+        sp.IFFT(),
+        apo.Exponential(FWHM="40 Hz"),
+        sp.FFT(),
+        sp.Scale(factor=0.6),
+    ]
 )
 processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
 
@@ -153,6 +158,7 @@ ax.invert_xaxis()
 plt.legend()
 plt.tight_layout()
 plt.show()
+
 
 # %%
 # Least-squares minimization with LMFIT
