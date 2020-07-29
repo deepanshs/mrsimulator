@@ -5,10 +5,10 @@ Benchmark
 =========
 
 One of the objectives in the design of the ``mrsimulator`` library is to enable
-fast NMR line-shape simulation.
+fast NMR spectrum simulation.
 For this, we have put a considerable effort into the optimization of the library.
 The following benchmark shows the performance of the library in computing the
-solid-state NMR line-shapes of single-site spin systems for the shift and
+solid-state NMR spectra from single-site spin systems for the shift and
 quadrupolar tensor interactions at static and MAS conditions.
 
 Computational specs
@@ -29,7 +29,7 @@ is better.
 .. figure:: _static/benchmark_time.*
     :figclass: figure
 
-    The execution time (in ms) in computing a line-shape of a single-site spin system.
+    The execution time (in ms) in computing spectrum from a single-site spin system.
 
 The benchmarks were performed on a 2.3 GHz Quad-Core Intel Core i5 Laptop using 8
 GB 2133 MHz LPDDR3 memory. For consistent benchmarking, 1000 single-site

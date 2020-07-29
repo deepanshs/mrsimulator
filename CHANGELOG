@@ -60,7 +60,7 @@ What's new!
   (https://apps.apple.com/bn/app/nmr-tables/id1030899609?mt=12).
 - Added two new keywords: `atomic_number` and `quadrupole_moment`.
 - Added documentation for every class.
-- Added examples for simulating NMR quadrupolar line-shapes.
+- Added examples for simulating NMR quadrupolar spectrum.
 
 Bug fixes
 '''''''''
@@ -88,10 +88,10 @@ v0.1.2
 v0.1.1
 ------
 
-- Added solid state quadrupolar line-shape simulation.
+- Added solid state quadrupolar spectrum simulation.
 - Added mrsimulator plotly-dash app.
 
 v0.1.0
 ------
 
-- Solid state chemical shift anisotropy line-shape simulation.
+- Solid state chemical shift anisotropy spectrum simulation.

@@ -37,9 +37,8 @@ def one_d_spectrum(method,
         geodesic polyhedra. These polyhedra are used in calculating the
         spherical average. Presently we only use octahedral as the frequency1
         polyhedra. As the frequency of the geodesic polyhedron increases, the
-        polyhedra approach a sphere geometry. For line-shape simulation, a higher
-        frequency will result in a better powder averaging.
-        The default value is 72.
+        polyhedra approach a sphere geometry. A higher frequency will result in a
+        better powder averaging. The default value is 72.
         Read more on the `Geodesic polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
     :ivar decompose_spectrum:
         An unsigned integer. When value is 0, the spectum is a sum of spectrum from all

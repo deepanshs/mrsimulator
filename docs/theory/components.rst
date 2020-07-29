@@ -5,7 +5,7 @@
 How does ``mrsimulator`` work?
 ******************************
 
-The line-shape simulation in ``mrsimulator`` is based on the concept of
+The NMR spectral simulation in ``mrsimulator`` is based on
 `Symmetry Pathways in Solid-State NMR` by Grandinetti `et. al.` [#f1]_
 
 Introduction to NMR frequency components

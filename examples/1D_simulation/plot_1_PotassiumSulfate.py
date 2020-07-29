@@ -4,10 +4,10 @@
 Potassium Sulfate, 33S (I=3/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-33S (I=3/2) quadrupolar line-shape simulation.
+33S (I=3/2) quadrupolar spectrum simulation.
 """
 # %%
-# The following example is the :math:`^{33}\text{S}` NMR line-shape simulation of
+# The following example is the :math:`^{33}\text{S}` NMR spectrum simulation of
 # potassium sulfate (:math:`\text{K}_2\text{SO}_4`). The quadrupole tensor parameters
 # for :math:`^{33}\text{S}` is obtained from Moudrakovski `et. al.` [#f3]_
 import matplotlib as mpl
@@ -73,7 +73,7 @@ plt.show()
 # %%
 # **Step 6:** Add post-simulation processing.
 post_sim = sp.SignalProcessor(
-    operations=[sp.IFFT(), apo.Exponential(FWHM=10), sp.FFT()]
+    operations=[sp.IFFT(), apo.Exponential(FWHM="10 Hz"), sp.FFT()]
 )
 processed_data = post_sim.apply_operations(data=sim_K2SO3.methods[0].simulation)
 

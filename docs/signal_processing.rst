@@ -1,126 +1,52 @@
+.. _signal_processing:
 
-Post Simulation Signal Processing
-=================================
+Signal Processing
+=================
 
 Introduction
 ------------
 
-After running a simulation, you may need to apply some post-simulation signal processing. For example, you may want to scale the intensities to
-match the experiment, add line-broadening, or simulate signal artifact such as sinc
-wiggles. There are many signal-processing libraries, such as Numpy and Scipy, that you
-may use to accomplish this. Although, in NMR, certain operations like applying
-line-broadening, is so regularly used that it soon becomes inconvenient to having to
-write your own set of code. For this reason, the ``mrsimulator`` package offers some
-frequently used signal-processing operations.
+After running a simulation, you may need to apply some post-simulation signal processing.
+For example, you may want to scale the intensities to match the experiment or convolve the
+spectrum with a Lorentzian, Gaussian, or sinc line-broadening functions. There are many
+signal-processing libraries, such as Numpy and Scipy, that you may use to accomplish this.
+Although, in NMR, certain operations like convolutions, Fourier transform, and apodizations
+are so regularly used that it soon becomes inconvenient to have to write your own set of
+code. For this reason, the ``mrsimulator`` package offers some frequently used NMR signal
+processing tools.
 
-The following section will demonstrate the use of the
-:class:`~mrsimulator.signal_processing.SignalProcessor` class in applying various
-operations to the simulation data.
-
-**Setup for the figures**
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> import matplotlib as mpl
-    >>> import matplotlib.pyplot as plt
-    ...
-    >>> # global plot configuration
-    >>> font = {"size": 11}
-    >>> mpl.rc("font", **font)
-    >>> mpl.rcParams["figure.figsize"] = [6, 3.5]
+.. note::
+    The simulation object in `mrsimulator` is a CSDM object. A CSDM object is the python
+    support for the core scientific dataset model (CSDM) [#f1]_, which is a new open-source
+    universal file format for multi-dimensional datasets. Since CSDM objects hold a generic
+    multi-dimensional scientific dataset, the following signal processing operation can
+    be applied to any CSDM dataset, `i.e.`, NMR, EPR, FTIR, GC, etc.
 
 
-Simulating spectrum
--------------------
-Please refer to the :ref:`using_objects` for a detailed description
-of how to set up a simulation. Here, we will create a hypothetical simulation from two
-single-site spin systems to illustrate the use of the post-simulation signal processing
-module.
+In the following section, we demonstrate the use of the
+:class:`~mrsimulator.signal_processing.SignalProcessor` class in applying various operations
+to a generic CSDM object. But before we start explaining signal processing with CSDM
+objects, it seems necessary to first describe the construct of CSDM objects. Each CSDM object
+has two main attributes, `dimensions` and `dependent_variables`. The `dimensions` attribute
+holds a list of Dimension objects, which collectively form a multi-dimensional Cartesian
+coordinates grid system. A Dimension object can represent both physical and non-physical
+dimensions. The `dependent_variables` attribute holds the responses of the multi-dimensional
+grid points. You may have as many dependent variables as you like, as long as all dependent
+variables share the same coordinates grid, `i.e.`, dimensions.
 
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
 
-    >>> from mrsimulator import Simulator, SpinSystem, Site
-    >>> from mrsimulator.methods import BlochDecaySpectrum
-    ...
-    >>> # **Step 1** Create the site and spin system objects
-    >>> site1 = Site(
-    ...     isotope="29Si",
-    ...     isotropic_chemical_shift=-75.0,  # in ppm
-    ...     shielding_symmetric={"zeta": -60, "eta": 0.6},  # zeta in ppm
-    ... )
-    >>> site2 = Site(
-    ...     isotope="29Si",
-    ...     isotropic_chemical_shift=-80.0,  # in ppm
-    ...     shielding_symmetric={"zeta": -70, "eta": 0.5},  # zeta in ppm
-    ... )
-    ...
-    >>> sites = [site1, site2]
-    >>> labels = ["Sys-1", "Sys-2"]
-    >>> spin_systems = [SpinSystem(name=l, sites=[s]) for l, s in zip(labels, sites)]
-    ...
-    >>> # **Step 2** Create a Bloch decay spectrum method.
-    >>> method_object = BlochDecaySpectrum(
-    ...     channels=["29Si"],
-    ...     magnetic_flux_density=7.1,  # in T
-    ...     rotor_angle=54.735 * 3.1415 / 180,  # in rads
-    ...     rotor_frequency=780,  # in Hz
-    ...     spectral_dimensions=[
-    ...         {
-    ...             "count": 2048,
-    ...             "spectral_width": 25000,  # in Hz
-    ...             "reference_offset": -5070,  # in Hz
-    ...             "label": "$^{29}$Si resonances",
-    ...         }
-    ...     ],
-    ... )
-    ...
-    >>> # **Step 3** Create the simulation and add the spin system and method objects.
-    >>> sim = Simulator()
-    >>> sim.spin_systems = spin_systems
-    >>> sim.methods = [method_object]
-    ...
-    >>> # **Step 4** Simulate the spectra.
-    >>> sim.run()
 
-The plot the spectrum is shown below.
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> ax = plt.subplot(projection="csdm") # doctest: +SKIP
-    >>> ax.plot(sim.methods[0].simulation, color="black", linewidth=1) # doctest: +SKIP
-    >>> ax.set_xlim(-200, 50) # doctest: +SKIP
-    >>> ax.invert_xaxis() # doctest: +SKIP
-    >>> plt.tight_layout() # doctest: +SKIP
-    >>> plt.show() # doctest: +SKIP
-
-.. _fig1_signal_process:
-.. figure:: _static/null.*
-
-    1D :math:`^{29}\text{Si}` MAS simulation of two single-site spin system.
-
-Post-simulating processing
---------------------------
+``SignalProcessor`` class
+-------------------------
 
 Signal processing is a series of operations that are applied to the dataset. In this
 workflow, the result from the previous operation becomes the input for the next
-operation. In the ``mrsimulator`` library, we define this series as a list of operations.
+operation.
 
-Setting a list of operations
-''''''''''''''''''''''''''''
-
-All signal processing operations are located in the `signal_processing` module of the
-``mrsimulator`` library. Within the module is the `apodization` sub-module. An
+In the ``mrsimulator`` library, all signal processing operations are accessed through the
+`signal_processing` module. Within the module is the `apodization` sub-module. An
 apodization is a point-wise multiplication operation of the input signal with the
-apodizing vector. Please read our :ref:`operations_api` documentation for a complete
+apodizing vector. See :ref:`operations_api` documentation for a complete
 list of operations.
 
 Import the module and sub-module as
@@ -133,43 +59,63 @@ Import the module and sub-module as
     >>> import mrsimulator.signal_processing as sp
     >>> import mrsimulator.signal_processing.apodization as apo
 
-In the following example, we show the application of a single operation—-convoluting
-the frequency spectrum with a Gaussian lineshape, that is, simulating a Gaussian
-line-broadening--using the :class:`~mrsimulator.signal_processing.SignalProcessor`
-class.
+Convolution
+'''''''''''
+
+The convolution theorem states that under suitable conditions, the Fourier transform of a
+convolution of two signals is the pointwise product (apodization) of their Fourier transforms.
+In the following example, we employ this theorem to demonstrate how to apply a Gaussian
+convoluting to a dataset.
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> # list of processing operations
-    >>> post_sim = sp.SignalProcessor(
+    >>> processor = sp.SignalProcessor(
     ...     operations=[
-    ...         sp.IFFT(), apo.Gaussian(sigma=100), sp.FFT()
+    ...         sp.IFFT(), apo.Gaussian(FWHM='0.1 km'), sp.FFT()
     ...     ]
     ... )
 
-The required attribute of the ``SignalProcessor`` class, `operations`, holds the list of
-operations that gets applied to the input dataset. The above set of operations is for a
-frequency domain input signal undergoing a Gaussian convolution of 100 Hz. In this scheme,
-the operations list will first perform an inverse Fourier Transform to convert
-the frequency domain signal to the time domain. Next, the time domain signal is apodized
-by a Gaussian function with a broadening factor of 100 Hz, followed by a forward Fourier
-transformation transforming the signal back to the frequency domain.
+Here, the `processor` is an instance of the :class:`~mrsimulator.signal_processing.SignalProcessor`
+class. The required attribute of this class, `operations`, is a list of operations. In the
+above example, we employ the convolution theorem by sandwiching the Gaussian apodization
+function between two Fourier transformations.
+
+In this scheme, first, an inverse Fourier transform is applied to the datasets. On the
+resulting dataset, a Gaussian apodization, equivalent to a full width at half maximum of
+0.1 km in the reciprocal dimension, is applied. The unit that you use for the FWHM attribute
+depends on the dimensionality of the dataset dimension. By choosing the unit as km, we imply
+that the corresponding dimension of the CSDM object undergoing the above series of operations
+has a dimensionality of length.
+Finally, a forward Fourier transform is applied to the apodized dataset.
+
+Let's create a CSDM object and then apply the above signal processing operations.
+
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
+
+    >>> import csdmpy as cp
+    >>> import numpy as np
+    ...
+    >>> # Creating a test CSDM object.
+    >>> test_data = np.zeros(500)
+    >>> test_data[250] = 1
+    >>> csdm_object = cp.CSDM(
+    ...     dependent_variables=[cp.as_dependent_variable(test_data)],
+    ...     dimensions=[cp.LinearDimension(count=500, increment='1 m')]
+    ... )
 
 .. note::
-    For almost all NMR spectrum, the post-simulation processing is a convolution, including
-    the line-broadening. The convolution theorem states that under suitable conditions, the
-    Fourier transform of a convolution of two signals is the pointwise product of their
-    Fourier transforms.
+    See `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_ for a detailed description of
+    generating CSDM objects. In ``mrsimulator``, the simulation data is already stored as a
+    CSDM object.
 
-
-Applying operation to the spectrum
-''''''''''''''''''''''''''''''''''
-
-To apply the above list of operations to the simulation/input data, use the
-:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method of the
+To apply the previously defined signal processing operations to the above CSDM object, use
+the :meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method of the
 ``SignalProcessor`` instance as follows,
 
 .. plot::
@@ -177,123 +123,71 @@ To apply the above list of operations to the simulation/input data, use the
     :context: close-figs
     :include-source:
 
-    >>> processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
+    >>> processed_data = processor.apply_operations(data=csdm_object)
 
 The `data` is the required argument of the `apply_operations` method, whose value is a
 CSDM object holding the dataset. The variable `processed_data` holds the output, that is,
-the processed data. The plot of the processed signal is shown below.
+the processed data as a CSDM object. The plot of the original and the processed data is
+shown below.
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> ax = plt.gca(projection="csdm") # doctest: +SKIP
-    >>> ax.plot(processed_data, color="black", linewidth=1) # doctest: +SKIP
-    >>> ax.set_xlim(-200, 50) # doctest: +SKIP
-    >>> ax.invert_xaxis() # doctest: +SKIP
+    >>> _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"}) # doctest: +SKIP
+    >>> ax[0].plot(csdm_object, color="black", linewidth=1) # doctest: +SKIP
+    >>> ax[0].set_title('Before') # doctest: +SKIP
+    >>> ax[1].plot(processed_data.real, color="black", linewidth=1) # doctest: +SKIP
+    >>> ax[1].set_title('After') # doctest: +SKIP
     >>> plt.tight_layout() # doctest: +SKIP
     >>> plt.show() # doctest: +SKIP
 
 .. _fig2_signal_process:
 .. figure:: _static/null.*
 
-    1D :math:`^{29}\text{Si}` MAS simulation of two single-site spin system with a
-    100 Hz Gaussian convolution.
+    The figure depicts an application of Gaussian convolution on a CSDM object.
 
-Applying operation to the sub-spectra
-'''''''''''''''''''''''''''''''''''''
 
-.. spectrum and follow up by decomposing the spectrum and processing each signal
-.. independently.
-.. The above code resulted in the same processing to be applied
-.. to both signals because in the simulation the signals were not
-.. seperated.
+Multiple convolutions
+'''''''''''''''''''''
 
-It is not uncommon for the NMR spectrum to compose of sub-spectrum, from different
-sites/systems, exhibiting differential relaxations, and therefore, have different
-extents of line-broadening. The reason for this differential relaxation behavior is
-not the focus of this sub-section. Here, we show how one can simulate such spectra
-using the operations list.
-
-Before we can move forward, you will first need to identify these sub-systems and
-simulate individual spectra for these systems. In this example, we will treat the two
-spin systems as the two different spin environments exhibiting different
-relaxations/line-broadening. To simulate the sub-spectrum from the individual
-spin systems, modify the value of the :attr:`~mrsimulator.Simulator.config` attribute
-as follows, and re-run the simulation.
-Refer to the :ref:`config_simulator` section for further details.
+As mentioned before, a CSDM object may hold multiple dependent variables. When using the
+list of the operations, you may selectively apply a given operation to a specific
+dependent-variable by specifying the index of the corresponding dependent-variable as an
+argument to the operation class. Consider the following list of operations.
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> sim.config.decompose_spectrum = "spin_system"
-    >>> sim.run()
-
-.. Note, in the previous example, both sites/spin systems got the same extent of Gaussian
-.. line-broadening. The following example illustrates how you can apply you might want to apply a different set of
-.. In order to apply different processes to each signal,
-.. we must set the simulation config to decompose the spectrum.
-.. Steps 1-3 will be the same and we will start at step 4.
-.. #
-.. **Step 4** Decompose spectrum and run simulation.
-.. sim.config.decompose_spectrum = "spin_system"
-.. sim.run()
-..  plt.xlabel("$^{29}$Si frequency / ppm")
-..  plt.xlim(x.value.max(), x.value.min())
-..  plt.grid(color="gray", linestyle="--", linewidth=0.5, alpha=0.5)
-
-The above code generates two spectra, each corresponding to a spin system.
-The plot of the spectra is shown below.
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> ax = plt.gca(projection="csdm") # doctest: +SKIP
-    >>> ax.plot(sim.methods[0].simulation) # doctest: +SKIP
-    >>> ax.set_xlim(-200, 50) # doctest: +SKIP
-    >>> ax.invert_xaxis() # doctest: +SKIP
-    >>> plt.tight_layout() # doctest: +SKIP
-    >>> plt.show() # doctest: +SKIP
-
-.. _fig3_signal_process:
-.. figure:: _static/null.*
-
-    Two 1D :math:`^{29}\text{Si}` MAS simulations, shown in blue and organe, for the two
-    single-site spin systems.
-
-Because the simulation is stored as a CSDM [#f1]_ object, each sub-spectrum is a
-dependent-variable of the CSDM object, sharing the same frequency dimension.
-When using the list of the operations, you may selectively apply a given operation to a
-specific dependent-variable by specifying the index of the corresponding
-dependent-variable as an argument to the operation class. Note, the order of the
-dependent-variables is the same as the order of the spin systems. Use the `dep_var_indx`
-argument of the operation to specify the index. Consider the following list of
-operations.
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> post_sim = sp.SignalProcessor(
+    >>> processor = sp.SignalProcessor(
     ...     operations=[
-    ...         sp.IFFT(), # convert to time-domain
-    ...         apo.Gaussian(sigma=50, dep_var_indx=0),
-    ...         apo.Exponential(FWHM=200, dep_var_indx=1),
-    ...         sp.FFT(), # convert to frequency-domain
+    ...         sp.IFFT(),
+    ...         apo.Gaussian(FWHM='0.1 km', dv_indx=0),
+    ...         apo.Exponential(FWHM='50 m', dv_indx=1),
+    ...         sp.FFT(),
     ...     ]
     ... )
 
-The above operations list first applies an inverse Fourier transformation,
-followed by a Gaussian apodization on the dependent variable at index 0 (spin system
-labeled as `sys1`), followed by an Exponential apodization on the dependent
-variable at index 1 (spin system labeled as `sys2`), and finally a forward Fourier
-transform. Note, the FFT and IFFT operations apply on all dependent-variables.
+The above signal processing operations first applies an inverse Fourier transform,
+followed by a Gaussian apodization on the dependent variable at index 0, followed
+by an Exponential apodization on the dependent variable at index 1, and finally a
+forward Fourier transform. Note, the FFT and IFFT operations apply on all
+dependent-variables.
+
+Let's add another dependent variable to the previously created CSDM object.
+
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
+
+    >>> # Add a dependent variable to the test CSDM object.
+    >>> test_data = np.zeros(500)
+    >>> test_data[150] = 1
+    >>> csdm_object.add_dependent_variable(cp.as_dependent_variable(test_data))
 
 As before, apply the operations with the
 :meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method.
@@ -303,7 +197,7 @@ As before, apply the operations with the
     :context: close-figs
     :include-source:
 
-    >>> processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
+    >>> processed_data = processor.apply_operations(data=csdm_object)
 
 The plot of the processed spectrum is shown below.
 
@@ -312,19 +206,19 @@ The plot of the processed spectrum is shown below.
     :context: close-figs
     :include-source:
 
-    >>> ax = plt.gca(projection="csdm") # doctest: +SKIP
-    >>> ax.plot(processed_data, alpha=0.9)  # doctest: +SKIP
-    >>> ax.set_xlim(-200, 50) # doctest: +SKIP
-    >>> ax.invert_xaxis() # doctest: +SKIP
-    >>> plt.tight_layout()  # doctest: +SKIP
-    >>> plt.show()  # doctest: +SKIP
+    >>> _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"}) # doctest: +SKIP
+    >>> ax[0].plot(csdm_object, linewidth=1) # doctest: +SKIP
+    >>> ax[0].set_title('Before') # doctest: +SKIP
+    >>> ax[1].plot(processed_data.real, linewidth=1) # doctest: +SKIP
+    >>> ax[1].set_title('After') # doctest: +SKIP
+    >>> plt.tight_layout() # doctest: +SKIP
+    >>> plt.show() # doctest: +SKIP
 
 .. _fig4_signal_process:
 .. figure:: _static/null.*
 
-    Two 1D :math:`^{29}\text{Si}` MAS simulations, shown in blue and organe, for the two
-    single-site spin systems with a 50 Hz Gaussian and 200 Hz Lorentzian convolution,
-    respectively.
+    Gaussian and Lorentzian convolution applied to two different dependent variables of the
+    CSDM object.
 
 Serializing the operations list
 -------------------------------
@@ -336,16 +230,16 @@ method, as follows
 .. doctest::
 
     >>> from pprint import pprint
-    >>> pprint(post_sim.to_dict_with_units())
+    >>> pprint(processor.to_dict_with_units())
     {'operations': [{'dim_indx': 0, 'function': 'IFFT'},
-                    {'dep_var_indx': 0,
+                    {'FWHM': '0.1 km',
                      'dim_indx': 0,
+                     'dv_indx': 0,
                      'function': 'apodization',
-                     'sigma': '50.0 Hz',
                      'type': 'Gaussian'},
-                    {'FWHM': '200.0 Hz',
-                     'dep_var_indx': 1,
+                    {'FWHM': '50.0 m',
                      'dim_indx': 0,
+                     'dv_indx': 1,
                      'function': 'apodization',
                      'type': 'Exponential'},
                     {'dim_indx': 0, 'function': 'FFT'}]}
@@ -355,3 +249,7 @@ method, as follows
             file format for multi-dimensional scientific data, PLOS ONE,
             **15**, 1-38, (2020).
             `DOI:10.1371/journal.pone.0225953 <https://doi.org/10.1371/journal.pone.0225953>`_
+
+.. seealso::
+
+    :ref:`example_gallery` for application of signal processing on NMR simulations.
