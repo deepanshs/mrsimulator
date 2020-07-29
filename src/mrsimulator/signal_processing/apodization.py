@@ -32,15 +32,6 @@ class AbstractApodization(AbstractOperation):
         """The type apodization function."""
         return self.__class__.__name__
 
-    def set_property_units(self, unit, prop):
-        """
-        Populate the property unit attribute of the class based on the dimension unit.
-        """
-        if unit.physical_type == "frequency":
-            self.property_units = {f"{prop}": "s"}
-            return
-        self.property_units = {f"{prop}": "Hz"}
-
     @staticmethod
     def _get_dv_indexes(indexes, n):
         """Return a list of dependent variable indexes.
@@ -71,8 +62,6 @@ class AbstractApodization(AbstractOperation):
         x = x.to(unit)
         x_value = x.value
 
-        # self.set_property_units(x_unit, prop_name)
-
         apodization_vactor = fn(x_value, prop_value)
 
         n = len(data.dependent_variables)
@@ -81,6 +70,15 @@ class AbstractApodization(AbstractOperation):
         for i in dv_indexes:
             data.dependent_variables[i].components[0] *= apodization_vactor
         return data
+
+
+def _str_to_quantity(v, values):
+    if isinstance(v, str):
+        quantity = string_to_quantity(v)
+        values["property_units"] = {"FWHM": str(quantity.unit)}
+        return quantity.value
+    if isinstance(v, float):
+        return v
 
 
 class Gaussian(AbstractApodization):
@@ -121,13 +119,7 @@ class Gaussian(AbstractApodization):
 
     @validator("FWHM")
     def str_to_quantity(cls, v, values):
-        if isinstance(v, str):
-            quantity = string_to_quantity(v)
-            values["property_units"] = {"FWHM": str(quantity.unit)}
-            return quantity.value
-        if isinstance(v, float):
-            return v
-        raise ValueError("Error parsing the value.")
+        return _str_to_quantity(v, values)
 
     # class Config:
     #     validate_assignment = True
@@ -186,13 +178,7 @@ class Exponential(AbstractApodization):
 
     @validator("FWHM")
     def str_to_quantity(cls, v, values):
-        if isinstance(v, str):
-            quantity = string_to_quantity(v)
-            values["property_units"] = {"FWHM": str(quantity.unit)}
-            return quantity.value
-        if isinstance(v, float):
-            return v
-        raise ValueError("Error parsing the value.")
+        return _str_to_quantity(v, values)
 
     # class Config:
     #     validate_assignment = True

@@ -58,7 +58,7 @@ def prepare_method_structure(template, **kwargs):
         given_n_channels = len(prep["channels"])
         if given_n_channels != n_channels:
             raise ValueError(
-                f"The method requires exactly {n_channels} channels, "
+                f"The method requires exactly {n_channels} channel(s), "
                 f"{given_n_channels} provided."
             )
         kwargs.pop("channels")
@@ -76,10 +76,9 @@ def generate_method_from_template(template):
         kw = set(kwargs)
         common = kw.intersection(ge)
 
+        e = f"The attribute(s) {common} connot be modified for {prep['name']} method."
         if common != set():
-            raise AttributeError(
-                f"The attribute(s) {common} is fixed for {prep['name']} method."
-            )
+            raise AttributeError(e)
 
         dim = []
         for i, s in enumerate(template["spectral_dimensions"]):
