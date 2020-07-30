@@ -88,7 +88,7 @@ Generating Czjzek distribution
 Czjzek distribution of symmetric shielding tensors
 ''''''''''''''''''''''''''''''''''''''''''''''''''
 
-To generate a Czjzek distribution, use the :func:`mrsimulator.models.czjzek_distribution`
+To generate a Czjzek distribution, use the :func:`~mrsimulator.models.czjzek_distribution`
 function as follows,
 
 .. plot::

@@ -169,9 +169,9 @@ Models
 
 .. toctree::
     :maxdepth: 2
-    :caption: Signal Processing
+    :caption: Models
 
-    model/readme
+    model/czjzek
     api_py/models/czjzek
 
 Benchmark and Examples

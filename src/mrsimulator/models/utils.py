@@ -41,7 +41,8 @@ def get_Haeberlen_components(tensors):
 
 
 def x_y_from_zeta_eta(zeta, eta):
-    """Convert the zeta, eta coordinates from the Haeberlen convention to the x-y notation."""
+    """Convert the zeta, eta coordinates from the Haeberlen convention to the
+    x-y notation."""
     xa = np.empty(zeta.size)
     ya = np.empty(zeta.size)
 

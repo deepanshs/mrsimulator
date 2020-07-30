@@ -17,10 +17,12 @@ def _czjzek_random_distribution_tensors(sigma, n):
     Description
     -----------
 
-    U is an array of the coordinates randomly drawn from an uncorrelated five-dimensional
-    multivariate normal distribution with standard deviation `sigma` and zero mean.
+    U is an array of the coordinates randomly drawn from an uncorrelated
+    five-dimensional multivariate normal distribution with standard deviation `sigma`
+    and zero mean.
 
-    The components of the traceless second-rank symmetric cartesian tensor, S_ij, follows
+    The components of the traceless second-rank symmetric cartesian tensor, S_ij,
+    follows
 
     Sxx = sqrt(3) * U5 - U1
 
