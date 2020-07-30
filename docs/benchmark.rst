@@ -11,8 +11,7 @@ The following benchmark shows the performance of the library in computing the
 solid-state NMR spectra from single-site spin systems for the shift and
 quadrupolar tensor interactions at static and MAS conditions.
 
-Computational specs
--------------------
+**Computational specs**
 
 A benchmark for the number of single-site spin systems computer per second.
 Higher is better.

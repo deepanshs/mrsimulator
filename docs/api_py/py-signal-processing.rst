@@ -1,7 +1,7 @@
 
-==============
-API References
-==============
+=====================
+Signal-processing API
+=====================
 
 .. toctree::
    :maxdepth: 2
