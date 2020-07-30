@@ -1,7 +1,7 @@
 
-=====================
-Python-API References
-=====================
+==============
+Simulation API
+==============
 
 .. toctree::
    :maxdepth: 2
