@@ -2,7 +2,7 @@
 
 |              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Deployment   | [![PyPI version](https://badge.fury.io/py/mrsimulator.svg)](https://badge.fury.io/py/mrsimulator) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mrsimulator)                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Deployment   | [![PyPI version](https://img.shields.io/pypi/v/mrsimulator.svg?style=flat&logo=pypi&logoColor=white)](https://pypi.python.org/pypi/mrsimulator) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mrsimulator)                                                                                                                                                                                                                                                                                                                                                                |
 | Build Status | [![Travis (.org)](https://img.shields.io/travis/deepanshs/mrsimulator?logo=travis)](https://travis-ci.org/github/DeepanshS/mrsimulator) [![GitHub Workflow Status](<https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI%20(pip)?logo=GitHub>)](https://github.com/DeepanshS/mrsimulator/actions) [![Read the Docs](https://img.shields.io/readthedocs/mrsimulator)](https://mrsimulator.readthedocs.io/en/latest/)                                                                                                                                                       |
 | License      | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | Metrics      | [![PyPI - Downloads](https://img.shields.io/pypi/dm/mrsimulator.svg)](https://img.shields.io/pypi/dm/mrsimulator) [![Total alerts](https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python) [![codecov](https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/DeepanshS/mrsimulator) |
@@ -13,6 +13,20 @@ materials. The core of the `mrsimulator` library is written in C, wrapped and ma
 available in python.
 
 > :warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
+
+## Why use mrsimulator?
+
+- It is a fast solid-state NMR simulator library.
+- Compatible with other packages such as NumPy, SciPy, scikit-learn, LMFIT, etc.
+- Provides you with the necessary tools to build new models, and thus providing
+  opportunities for the development of new problem-solving techniques.
+- Packages using mrsimulator -
+  - [mrinversion](https://mrinversion.readthedocs.io/en/latest/): A python package that
+    utilized mrsimulator tools in combination with scikit-learn to invert 2D NMR
+    isotropic/anisotropic correlation spectrum into a distribution of NMR tensor principal
+    components. The examples within shows that inversion of the glass spectrum can provide
+    a wealth of information into the glass structure.
+- Can be used with machine learning packages, such as scikit-learn, Keras, etc.
 
 ## Features
 

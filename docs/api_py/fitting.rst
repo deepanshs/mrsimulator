@@ -8,6 +8,6 @@ Utility Functions
 .. autofunction:: make_LMFIT_parameters
 .. autofunction:: LMFIT_min_function
 
-.. currentmodule:: mrsimulator.method.utils
+.. currentmodule:: mrsimulator.utils
 
 .. autofunction:: get_spectral_dimensions

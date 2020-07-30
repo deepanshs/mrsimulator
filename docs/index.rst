@@ -77,6 +77,26 @@ wrapped and made available in python.
 
 ----
 
+**Why use mrsimulator?**
+
+- It is a fast solid-state NMR simulator library.
+- Compatible with other packages such as NumPy, SciPy, scikit-learn
+  (see `mrinversion <https://mrinversion.readthedocs.io/en/latest/>`_),
+  LMFIT (see :ref:`example_gallery`), etc.
+- Provides you with the necessary tools to build new models, and thus providing
+  opportunities for the development of new problem-solving techniques.
+- Packages using mrsimulator -
+
+  - `mrinversion <https://mrinversion.readthedocs.io/en/latest/>`_: A python package that
+    utilized mrsimulator tools in combination with scikit-learn to invert 2D NMR
+    isotropic/anisotropic correlation spectrum into a distribution of NMR tensor principal
+    components. The examples within shows that inversion of the glass spectrum can provide
+    a wealth of information into the glass structure.
+
+- Can be used with machine learning packages, such as scikit-learn, Keras, etc.
+
+----
+
 **Features**
 
 The ``mrsimulator`` package currently offers the following
