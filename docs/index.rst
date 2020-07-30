@@ -151,8 +151,6 @@ Getting Started
     getting_started-objects
     configuring_simulator
     mrsim_IO
-    api_py/py-simulator
-    api_c/c_api
 
 Signal Processing (``mrsimulator.SignalProcessor``)
 ---------------------------------------------------
@@ -162,7 +160,6 @@ Signal Processing (``mrsimulator.SignalProcessor``)
     :caption: Signal Processing
 
     signal_processing
-    api_py/py-signal-processing
 
 Models
 ------
@@ -192,6 +189,18 @@ Theory
     :caption: Theory
 
     theory/components
+
+API and references
+------------------
+
+.. toctree::
+    :maxdepth: 2
+    :caption: API and references
+
+    api_py/py-simulator
+    api_py/py-signal-processing
+    api_c/c_api
+
 
 Project details
 ---------------

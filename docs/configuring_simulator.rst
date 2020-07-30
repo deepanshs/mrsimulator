@@ -129,9 +129,9 @@ Integration volume
 
 The attribute `integration_volume` is an enumeration with two literals, ``octant`` and
 ``hemisphere``.
-The integration volume refers to the volume of the sphere over which the lineshape
-is integrated. The default value is `octant`, i.e., the lineshape is integrated
-over the positive octant of the sphere.
+The integration volume refers to the volume of the sphere over which the NMR frequencies
+are integrated. The default value is `octant`, i.e., the spectrum comprises of integrated
+frequencies arising from the positive octant of the sphere.
 The ``mrsimulator`` package enables the user to exploit the orientational symmetry of
 the problem, and thus optimize the simulation by performing a partial integration
 ---`octant` or `hemisphere`. To learn more about the orientational symmetries,
@@ -144,7 +144,7 @@ please refer to Eden et. al. [#f4]_
 Consider the :math:`^{29}\text{Si}` site, ``Si29site``, from the previous example. This
 site has a symmetric shielding tensor with `zeta` and `eta` as 100 ppm and 0.2,
 respectively. With only `zeta` and `eta`, we can exploit the symmetry of the problem,
-and evaluate the lineshape integral over the octant, which is equivalent to the
+and evaluate the frequency integral over the octant, which is equivalent to the
 integration over the sphere. By adding the Euler angles to this tensor, we break the
 symmetry, and the integration over the octant is no longer accurate.
 Consider the following examples.
@@ -173,9 +173,8 @@ Consider the following examples.
 .. _fig3_config:
 .. figure:: _static/null.*
 
-    An example of an incomplete lineshape integration, lineshape simulation
-    resulting from the frequency contributions evaluated over the positive
-    octant.
+    An example of an incomplete spectral averaging, where the simulation comprises of
+    frequency contributions evaluated over the positive octant.
 
 
 The spectrum in :numref:`fig3_config` is incorrect. To fix this, set the integration
@@ -197,8 +196,8 @@ simulation of the CSA tensor.
 .. _fig4_config:
 .. figure:: _static/null.*
 
-    The lineshape resulting from the frequency contributions evaluted over the
-    top hemisphere.
+    The spectrum resulting from the frequency contributions evaluated over the top
+    hemisphere.
 
 Integration density
 -------------------
