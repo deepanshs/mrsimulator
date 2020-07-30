@@ -24,6 +24,8 @@ What's new!
 - New ``SignalProcessor`` class for post-simulation signal processing.
 - Improved usage of least-squares minimization using python
   `LMFIT <https://lmfit.github.io/lmfit-py/>`_ package.
+- Added a new ``get_spectral_dimensions`` utility function to extract the spectral
+  dimensions information from the CSDM object.
 
 Bug fixes
 '''''''''
