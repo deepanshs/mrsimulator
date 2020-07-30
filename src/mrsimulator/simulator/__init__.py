@@ -355,7 +355,7 @@ class Simulator(BaseModel):
             )
 
     def run(self, method_index=None, pack_as_csdm=True, **kwargs):
-        """Run the simulation and compute lineshapes.
+        """Run the simulation and compute spectrum.
 
         Args:
             method_index: An integer or a list of integers. If provided, only the

@@ -19,7 +19,7 @@
 
 /**
  * @struct MRS_plan
- * An mrsimulator plan for computing lineshapes lineshape. An mrsimulator plan,
+ * An mrsimulator plan for computing spectra. An mrsimulator plan,
  * MRS_plan includes,
  *    - a pre-calculated MRS_averaging_scheme.
  *    - pre-calculating stacked arrays of irreducible second rank,
@@ -34,7 +34,7 @@
  * Creating a plan adds an overhead to the lineshape simulation. We suggest
  * creating a plan at the start and re-using it as necessary. This is
  * especially efficient when performing a batch simulation, such as,
- * simulating lineshapes from thousands of sites.
+ * simulating spectra from thousands of sites.
  */
 
 struct MRS_plan {

@@ -133,11 +133,11 @@ def _post_sim_LMFIT_params(post_sim):
     #     prepend = f"DEP_VAR_{item.dependent_variable}_"
     for i, operation in enumerate(post_sim.operations):
         if isinstance(operation, apo.Gaussian):
-            identifier = f"operation_{i}_Gaussian"
-            arg = operation.sigma
+            identifier = f"operation_{i}_Gaussian_FWHM"
+            arg = operation.FWHM
             temp_dict[f"{identifier}"] = arg
         elif isinstance(operation, apo.Exponential):
-            identifier = f"operation_{i}_Exponential"
+            identifier = f"operation_{i}_Exponential_FWHM"
             arg = operation.FWHM
             temp_dict[f"{identifier}"] = arg
         elif isinstance(operation, sp.Scale):
@@ -160,7 +160,7 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
         post_sim: SignalProcessor object
     """
     temp_dict = {}
-    arg_dict = {"Gaussian": "sigma", "Exponential": "FWHM", "Scale": "factor"}
+    arg_dict = {"Gaussian": "FWHM", "Exponential": "FWHM", "Scale": "factor"}
     for param in params:
         # iterating through the parameter list looking for only DEP_VAR
         # (ie post_sim params)
@@ -177,7 +177,7 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
             # variable
             # if f"DepVar_{var}" not in temp_dict.keys():
             #     temp_dict[f"DepVar_{var}"] = {}
-            temp_dict[f"{opIndex}_{split_name[-1]}"] = val
+            temp_dict[f"{opIndex}_{split_name[2]}"] = val
 
     # iterate through list of operation lists
     # for item in post_sim.operations:

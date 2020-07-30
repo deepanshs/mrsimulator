@@ -19,6 +19,12 @@ See :ref:`requirements` for a full list of requirements.
 Make sure you have the required version of python by typing the following in the
 terminal,
 
+.. tip::
+    You may also click the copy-button located at the top-right corner of the code cell
+    area in the HTML docs, to copy the code lines without the prompts and then paste it
+    as usual.
+    Thanks to `Sphinx-copybutton <https://sphinx-copybutton.readthedocs.io/en/latest/>`_)
+
 .. code-block:: shell
 
       $ python --version
@@ -51,6 +57,20 @@ packages such as pip.
 
 Installing ``mrsimulator``
 --------------------------
+
+On Google Colab Notebook
+''''''''''''''''''''''''
+
+Colaboratory is a Google research project. It is a Jupyter notebook environment that
+runs entirely in the cloud. Launch a new notebook on
+`Colab <http://colab.research.google.com>`_. To install the mrsimulator package, type
+
+.. code-block:: shell
+
+      !pip install mrsimulator
+
+in the first cell, and execute. All done! You may now proceed to the next section and
+start using the library.
 
 .. _on_local_machine:
 
@@ -122,20 +142,6 @@ installed on your system. In this case, type the following in the terminal/Promp
 .. code-block:: bash
 
     $ pip install mrsimulator -U
-
-
-On Google Colab Notebook
-''''''''''''''''''''''''
-
-Colaboratory is a Google research project. It is a Jupyter notebook environment that
-runs entirely in the cloud. Launch a new notebook on
-`Colab <http://colab.research.google.com>`_. To install the mrsimulator package, type
-
-.. code-block:: shell
-
-      !pip install mrsimulator
-
-in the first cell, and execute. All done! You may now start using the library.
 
 ----
 

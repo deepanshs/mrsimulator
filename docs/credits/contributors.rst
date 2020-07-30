@@ -2,5 +2,6 @@ Authors and Credits
 ===================
 
 - Deepansh Srivastava
-- Shyam Dwaraknath
 - Maxwell C. Venetos
+- Philip J. Grandinetti
+- Shyam Dwaraknath

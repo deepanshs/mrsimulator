@@ -4,7 +4,7 @@ License
 Mrsimulator License
 -------------------
 
-Mrsimulator if licensed under BSD 3-Clause License
+Mrsimulator is licensed under BSD 3-Clause License
 
 Copyright (c) 2019-2020, Mrsimulator Developors,
 

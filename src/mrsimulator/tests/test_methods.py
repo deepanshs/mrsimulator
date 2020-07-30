@@ -23,8 +23,8 @@ def test_BlochDecaySpectrum():
     }
 
     should_be = {
-        "name": "Bloch Decay Spectrum",
-        "description": "Method for simulating Bloch decay spectrum.",
+        "name": "BlochDecaySpectrum",
+        "description": "Simulate a 1D Bloch decay spectrum.",
         "channels": ["1H"],
         "spectral_dimensions": [dimension_dictionary_],
     }
@@ -56,8 +56,8 @@ def test_BlochDecaySpectrum():
     }
 
     should_be = {
-        "name": "Bloch Decay Spectrum",
-        "description": "Method for simulating Bloch decay spectrum.",
+        "name": "BlochDecaySpectrum",
+        "description": "Simulate a 1D Bloch decay spectrum.",
         "channels": ["29Si"],
         "spectral_dimensions": [dimension_dictionary_],
     }

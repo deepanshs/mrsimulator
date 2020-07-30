@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
-import mrsimulator.spectral_fitting as sf
+import mrsimulator.utils.spectral_fitting as sf
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 
@@ -34,7 +34,7 @@ def test_03():
     # post_sim_LMFIT_params
     op_list = [
         sp.IFFT(dim_indx=0),
-        apo.Exponential(FWHM=100, dim_indx=0, dep_var_indx=0),
+        apo.Exponential(FWHM=100, dim_indx=0, dv_indx=0),
         sp.FFT(dim_indx=0),
         sp.Scale(factor=10),
     ]
@@ -44,7 +44,7 @@ def test_03():
 
     val = params.valuesdict()
 
-    assert val["operation_1_Exponential"] == 100
+    assert val["operation_1_Exponential_FWHM"] == 100
     assert val["operation_3_Scale"] == 10
 
 
@@ -52,7 +52,7 @@ def test_04():
     # update_post_sim_from_LMFIT_params
     op_list = [
         sp.IFFT(dim_indx=0),
-        apo.Exponential(FWHM=100, dim_indx=0, dep_var_indx=0),
+        apo.Exponential(FWHM=100, dim_indx=0, dv_indx=0),
         sp.FFT(dim_indx=0),
         sp.Scale(factor=10),
     ]
@@ -60,7 +60,7 @@ def test_04():
 
     params = sf._post_sim_LMFIT_params(post_sim)
 
-    params["operation_1_Exponential"].value = 10
+    params["operation_1_Exponential_FWHM"].value = 10
     params["operation_3_Scale"].value = 1
 
     sf._update_post_sim_from_LMFIT_params(params, post_sim)
@@ -84,7 +84,7 @@ def test_5():
 
     op_list = [
         sp.IFFT(dim_indx=0),
-        apo.Exponential(FWHM=100, dim_indx=0, dep_var_indx=0),
+        apo.Exponential(FWHM=100, dim_indx=0, dv_indx=0),
         sp.FFT(dim_indx=0),
         sp.Scale(factor=10),
     ]
@@ -97,7 +97,7 @@ def test_5():
         "sys_0_site_0_shielding_symmetric_zeta": 5,
         "sys_0_site_0_shielding_symmetric_eta": 0.1,
         "sys_0_abundance": 100,
-        "operation_1_Exponential": 100,
+        "operation_1_Exponential_FWHM": 100,
         "operation_3_Scale": 10,
     }
 

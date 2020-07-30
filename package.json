@@ -1,6 +1,6 @@
 {
     "name": "mrsimulator",
-    "description": "Fast real-time solid-state NMR line-shape simulation library.",
+    "description": "Incredibly fast solid-state NMR spectra simulation library.",
     "version": "0.3.0",
     "repository": {
         "type": "git",

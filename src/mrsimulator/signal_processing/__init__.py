@@ -94,11 +94,10 @@ class SignalProcessor(BaseModel):
 
 class Scale(AbstractOperation):
     """
-    Scale the amplitudes of the dependent variables from the simulation data object.
+    Scale the amplitudes of all dependent variables from a CSDM object.
 
     Args:
-        float factor: The scaling factor applied to all the dependent variables in the
-            simulation data. The default value is 1.
+        float factor: The scaling factor. The default value is 1.
 
     Example
     -------
@@ -124,11 +123,10 @@ class Scale(AbstractOperation):
 
 class IFFT(AbstractOperation):
     """
-    Apply an inverse Fourier transform on the dependent variables from the simulation
-    data object.
+    Apply an inverse Fourier transform on all dependent variables of the CSDM object.
 
     Args:
-        int dim_indx: Data dimension index along which the function is applied.
+        int dim_indx: Dimension index along which the function is applied.
 
     Example
     -------
@@ -149,11 +147,10 @@ class IFFT(AbstractOperation):
 
 class FFT(IFFT):
     """
-    Apply a forward Fourier transform on the dependent variables from the simulation
-    data object.
+    Apply a forward Fourier transform on all dependent variables of the CSDM object.
 
     Args:
-        int dim_indx: Data dimension index along which the function is applied.
+        int dim_indx: Dimension index along which the function is applied.
 
     Example
     -------

@@ -28,10 +28,11 @@ def test_equality():
 
     assert a is not {}
 
-    c = Simulator(spin_systems=[SpinSystem()])
+    c = Simulator(spin_systems=[SpinSystem()], label="test")
     assert a is not c
 
     result = {
+        "label": "test",
         "spin_systems": [{"abundance": "100 %", "sites": []}],
         "config": {
             "decompose_spectrum": "none",
@@ -44,6 +45,7 @@ def test_equality():
     assert c.to_dict_with_units(include_methods=True) == result
 
     assert c.reduced_dict() == {
+        "label": "test",
         "spin_systems": [{"abundance": 100, "sites": []}],
         "methods": [],
         "config": {
@@ -84,10 +86,12 @@ def test_simulator_1():
     sim.spin_systems = [SpinSystem(sites=[Site(isotope="1H"), Site(isotope="23Na")])]
     sim.methods = [BlochDecaySpectrum()]
     sim.name = "test"
+    sim.label = "test0"
     sim.description = "testing-testing 1.2.3"
 
     assert sim.reduced_dict() == {
         "name": "test",
+        "label": "test0",
         "description": "testing-testing 1.2.3",
         "spin_systems": [
             {
@@ -101,8 +105,8 @@ def test_simulator_1():
         "methods": [
             {
                 "channels": ["1H"],
-                "description": "Method for simulating Bloch decay spectrum.",
-                "name": "Bloch Decay Spectrum",
+                "description": "Simulate a 1D Bloch decay spectrum.",
+                "name": "BlochDecaySpectrum",
                 "spectral_dimensions": [
                     {
                         "count": 1024,

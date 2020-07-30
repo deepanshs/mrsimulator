@@ -35,7 +35,7 @@ Args:
             An `optional` float with the origin offset (Larmor frequency) along the
             dimension in units of Hz. The default value is None.
 
-    channels: A list of isotope symbols over which the method will be applied. The
+    channels: A list of isotope symbols over which the method will be applied.
     rotor_frequency: An `optional` float containing the sample spinning frequency
         :math:`\nu_r`, in units of Hz. The default value is ``0``.
     rotor_angle: An `optional` float containing the angle between the sample rotation
@@ -58,7 +58,7 @@ def prepare_method_structure(template, **kwargs):
         given_n_channels = len(prep["channels"])
         if given_n_channels != n_channels:
             raise ValueError(
-                f"The method requires exactly {n_channels} channels, "
+                f"The method requires exactly {n_channels} channel(s), "
                 f"{given_n_channels} provided."
             )
         kwargs.pop("channels")
@@ -76,10 +76,9 @@ def generate_method_from_template(template):
         kw = set(kwargs)
         common = kw.intersection(ge)
 
+        e = f"The attribute(s) {common} connot be modified for {prep['name']} method."
         if common != set():
-            raise AttributeError(
-                f"The attribute(s) {common} is fixed for {prep['name']} method."
-            )
+            raise AttributeError(e)
 
         dim = []
         for i, s in enumerate(template["spectral_dimensions"]):
@@ -135,7 +134,6 @@ def generate_method_from_template(template):
 
 
 # BlochDecaySpectrum
-
 BlochDecaySpectrum = generate_method_from_template(METHODS_DATA["Bloch_decay"])
 
 BlochDecayCentralTransitionSpectrum = generate_method_from_template(
