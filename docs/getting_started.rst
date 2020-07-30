@@ -6,7 +6,7 @@ Getting started with ``mrsimulator``: The basics
 ================================================
 
 We have put together a set of guidelines for using the ``mrsimulator`` package. We
-encourage our users to follow these guidelines to promote consistency. In
+encourage our users to follow these guidelines for consistency. In
 ``mrsimulator``, the solid-state nuclear magnetic resonance (ssNMR) lineshape is
 calculated through an instance of the :ref:`simulator_api` class.
 
@@ -46,7 +46,7 @@ respectively. The default value of these attributes is an empty list.
     []
 
 
-Before you can start simulating the NMR lineshapes, you need to understand the role of
+Before you can start simulating the NMR spectrum, you need to understand the role of
 the SpinSystem and Method objects. The following provides a brief description of the
 respective objects.
 
@@ -56,12 +56,12 @@ respective objects.
 
 Setting up the SpinSystem objects
 ---------------------------------
-An NMR spin-system is an isolated system of sites (spins) and couplings. You may
-construct a spin-system with as many sites and couplings, as necessary, for this
-example, we stick to a single-site spin-system. Let’s start by first building
+An NMR spin system is an isolated system of sites (spins) and couplings. You may
+construct a spin system with as many sites and couplings, as necessary, for this
+example, we stick to a single-site spin system. Let’s start by first building
 a site.
 
-A site object is a collection of parameters that describe site-specific interactions.
+A site object is a collection of attributes that describe site-specific interactions.
 In NMR, these spin interactions are described by a second-rank tensor.
 Site-specific interactions include the interaction between the magnetic dipole moment
 of the nucleus and the surrounding magnetic field and the interaction between the
@@ -87,7 +87,7 @@ In the above code, ``the_site`` is a simplified python dictionary representation
 shielding anisotropy tensor, described here with the parameters `zeta` and `eta` using
 the Haeberlen convention.
 
-That's it! Now that we have a site, we can create a single-site spin-system following,
+That's it! Now that we have a site, we can create a single-site spin system following,
 
 .. plot::
     :format: doctest
@@ -101,18 +101,18 @@ That's it! Now that we have a site, we can create a single-site spin-system foll
     ...     "abundance": "80%",
     ... }
 
-As mentioned before, a spin-system is a collection of sites and couplings. In the above
-example, we have created a spin-system with a single site and no couplings. Here, the
+As mentioned before, a spin system is a collection of sites and couplings. In the above
+example, we have created a spin system with a single site and no couplings. Here, the
 attribute `sites` hold a list of sites. The attributes `name`, `description`, and
 `abundance` are optional.
 
 ..  .. seealso:: :ref:`dictionary_objects`, :ref:`spin_system` and :ref:`site`.
 
-Until now, we have only created a python dictionary representation of a spin-system. To
+Until now, we have only created a python dictionary representation of a spin system. To
 run the simulation, you need to create an instance of the
 :class:`~mrsimulator.SpinSystem` class. Import the SpinSystem class and use it's
 :meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method to parse the python
-dictionary and create an instance of the spin-system class, as follows,
+dictionary and create an instance of the spin system class, as follows,
 
 .. plot::
     :format: doctest
@@ -123,17 +123,17 @@ dictionary and create an instance of the spin-system class, as follows,
     >>> system_object_1 = SpinSystem.parse_dict_with_units(the_spin_system)
 
 .. note:: We provide the :meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method
-    because it allows the user to create spin-systems, where the attribute value is a
+    because it allows the user to create spin systems, where the attribute value is a
     physical quantity, represented as a string with a value and a unit.
     Physical quantities remove the ambiguity in the units, which is otherwise
-    a source of common confusion within many scientific applications. With this said,
+    a source of general confusion within many scientific applications. With this said,
     parsing physical quantities can add significant overhead when used in an iterative
     algorithm, such as the least-squares minimization. In such cases, we recommend
-    defining objects directly. See the next topic for details.
+    defining objects directly. See the :ref:`using_objects` for details.
 
-We have successfully created a spin-system object. To create more spin-system objects,
+We have successfully created a spin system object. To create more spin system objects,
 repeat the above set of instructions. In this example, we stick with a single
-spin-system object. Once all spin-system objects are ready, add these objects to the
+spin system object. Once all spin system objects are ready, add these objects to the
 instance of the Simulator class, as follows
 
 .. plot::
@@ -141,13 +141,13 @@ instance of the Simulator class, as follows
     :context: close-figs
     :include-source:
 
-    >>> sim.spin_systems += [system_object_1] # add all spin-system objects.
+    >>> sim.spin_systems += [system_object_1] # add all spin system objects.
 
 
 Setting up the Method objects
 -----------------------------
 
-A :ref:`method_api` object is a collection of parameters that describe an NMR method.
+A :ref:`method_api` object is a collection of attributes that describe an NMR method.
 In ``mrsimulator``, all methods are described through five keywords -
 
 .. cssclass:: table-bordered
@@ -200,10 +200,10 @@ The following is a python dictionary representation of the BlochDecaySpectrum me
 
 Here, the key `channels` is a list of isotope symbols over which the method is applied.
 A Bloch Decay method only has a single channel. In this example, it is given a value
-of ``29Si``, which implies that the simulated line-shape from this method will comprise
+of ``29Si``, which implies that the simulated spectrum from this method will comprise
 frequency components arising from the :math:`^{29}\text{Si}` resonances.
 The keys `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency` collectively
-describe the spin-environment under which the resonance frequency is evaluated.
+describe the spin environment under which the resonance frequency is evaluated.
 The key `spectral_dimensions` is a list of spectral dimensions. A Bloch Decay method
 only has one spectral dimension. In this example, the spectral dimension defines a
 frequency dimension with 2048 points, spanning for 25 kHz with a reference offset of
@@ -238,8 +238,8 @@ stick with a single method. Finally, add all the method objects, in this case,
 Running simulation
 ------------------
 
-To simulate the line-shape, run the simulator with the
-:meth:`~mrsimulator.Simulator.run` method, as follows,
+To simulate the spectrum, run the simulator with the :meth:`~mrsimulator.Simulator.run`
+method, as follows,
 
 .. plot::
     :format: doctest
@@ -249,9 +249,9 @@ To simulate the line-shape, run the simulator with the
     >>> sim.run()
 
 .. note:: In ``mrsimulator``, all resonant frequencies are calculated assuming the
-    weakly-coupled (Zeeman) basis for the spin-system.
+    weakly-coupled (Zeeman) basis for the spin system.
 
-The simulator object, ``sim``, will process every method over all the spin-systems and
+The simulator object, ``sim``, will process every method over all the spin systems and
 store the result in the :attr:`~mrsimulator.Method.simulation` attribute of the
 respective Method object. In this example, we have a single method. You may access
 the simulation data for this method as,
@@ -270,7 +270,7 @@ object.
 
 .. seealso::
     The core scientific dataset model (CSDM) [#f1]_ is a lightweight and portable file
-    format model for multi-dimensional scientific datasets and is supported by most
+    format model for multi-dimensional scientific datasets and is supported by numerous
     NMR software---DMFIT, SIMPSON, jsNMR, and RMN. We also provide a python package
     `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_.
 
@@ -279,7 +279,7 @@ Visualizing the dataset
 
 At this point, you may continue with additional post-simulation processing.
 We end this example with a plot of the data from the simulation.
-:numref:`fig1-getting-started` depicts the plot of the simulated line-shape.
+:numref:`fig1-getting-started` depicts the plot of the simulated spectrum.
 
 For a quick plot of the csdm data, you may use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_
 library. The `csdmpy` package uses the matplotlib library to produce basic plots.
@@ -303,22 +303,22 @@ You may optionally customize the plot using matplotlib methods.
     An example static solid state NMR lineshape simulation.
 
 
-**For advanced users**
+.. **For advanced users**
 
-Advanced uses may prefer to apply some additional processing or use some other
-plotting libraries. For those users, you may extract the data from the csdm object
-as a list of arrays using the `to_list() <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html#csdmpy.CSDM.to_list>`_
-method of the csdm object, following,
+.. Advanced uses may prefer to apply some more sophisticated processing or use some other
+.. plotting libraries. For those users, you may extract the data from the csdm object
+.. as a list of arrays using the `to_list() <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html#csdmpy.CSDM.to_list>`_
+.. method of the csdm object, following,
 
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
+.. .. plot::
+..     :format: doctest
+..     :context: close-figs
+..     :include-source:
 
-    >>> x, y = data_0.to_list()
+..     >>> x, y = data_0.to_list()
 
-Here, ``x`` is a quantity array and contains the coordinates of the spectral dimension
-in units of ppm, and ``y`` is the response array.
+.. Here, ``x`` is a quantity array and contains the coordinates of the spectral dimension
+.. in units of ppm, and ``y`` is the response array.
 
 .. The following is a matplotlib script
 .. which uses the above ``x``, and ``y`` variables to generate a similar plot shown in

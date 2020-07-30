@@ -64,7 +64,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# Let's create the site and spin-system objects from these parameters. Note, we create
+# Let's create the site and spin system objects from these parameters. Note, we create
 # single-site spin systems for optimum performance.
 spin_systems = []
 for i, c, e in zip(iso, Cq, eta):
@@ -76,9 +76,9 @@ for i, c, e in zip(iso, Cq, eta):
     spin_systems += [SpinSystem(sites=[site], abundance=2.5e-4)]
 
 # %%
-# Static line-shape
-# -----------------
-# Observe the static :math:`^{27}\text{Al}` line-shape simulation. First,
+# Static spectrum
+# ---------------
+# Observe the static :math:`^{27}\text{Al}` NMR spectrum simulation. First,
 # create a central transition selective Bloch decay spectrum method.
 static_method = BlochDecayCentralTransitionSpectrum(
     channels=["27Al"], spectral_dimensions=[{"spectral_width": 80000}]

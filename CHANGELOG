@@ -21,12 +21,17 @@ What's new!
   this may cause metadata loss, if any.
 - Added a ``label`` and ``description`` attributes to the ``Site`` class.
 - Added a new ``label`` attribute to the ``SpinSystem`` class.
+- New ``SignalProcessor`` class for post-simulation signal processing.
+- Improved usage of least-squares minimization using python
+  `LMFIT <https://lmfit.github.io/lmfit-py/>`_ package.
 
 Bug fixes
 '''''''''
 
 - Fixed bug resulting from the rotation of the fourth rank tensor with non-zero euler
   angles.
+- Fixed bug causing a change in the spectral area as the sampling points change. Now the
+  area is constant.
 
 Other changes
 '''''''''''''
@@ -35,9 +40,9 @@ Other changes
   ``decompose_spectrum``. The attribute is an enumeration with the following literals:
 
   - ``none``: Computes a spectrum which is an integration of the spectra from all
-    spin-systems.
+    spin systems.
   - ``spin_system``: Computes a series of spectra each corresponding to a single
-    spin-system.
+    spin system.
 
 - Renamed ``Isotopomer`` class to ``SpinSystem``.
 - Renamed ``isotopomers`` attribute from ``Simulator`` class to ``spin_systems``.
@@ -55,7 +60,7 @@ What's new!
   (https://apps.apple.com/bn/app/nmr-tables/id1030899609?mt=12).
 - Added two new keywords: `atomic_number` and `quadrupole_moment`.
 - Added documentation for every class.
-- Added examples for simulating NMR quadrupolar line-shapes.
+- Added examples for simulating NMR quadrupolar spectrum.
 
 Bug fixes
 '''''''''
@@ -83,10 +88,10 @@ v0.1.2
 v0.1.1
 ------
 
-- Added solid state quadrupolar line-shape simulation.
+- Added solid state quadrupolar spectrum simulation.
 - Added mrsimulator plotly-dash app.
 
 v0.1.0
 ------
 
-- Solid state chemical shift anisotropy line-shape simulation.
+- Solid state chemical shift anisotropy spectrum simulation.

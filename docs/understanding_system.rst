@@ -46,7 +46,7 @@ place to start.
 **Single spin-1/2 site**
 
 From the introductory quantum mechanic, we know that a single spin-1/2 system is a two
-energy levels spin-system, where the two energy states are represented as :math:`|\alpha⟩`
+energy levels spin system, where the two energy states are represented as :math:`|\alpha⟩`
 and :math:`|\beta⟩` following the bra-ket notation. Here, the energy states
 :math:`|\alpha⟩` and :math:`|\beta⟩` corresponds to the quantum numbers :math:`m=+1/2`
 and :math:`m=-1/2`, respectively.
@@ -67,7 +67,7 @@ To list the Zeeman energy states of an isotopomer, use the
     >>> one_site.zeeman_energy_states()
     [|-0.5⟩, |0.5⟩]
 
-A spin-system with :math:`n` energy states has :math:`^nP_2` total transitions
+A spin system with :math:`n` energy states has :math:`^nP_2` total transitions
 connecting any two states, and :math:`n` population. In a single spin-1/2 case,
 this accounts to 2 transitions and 2 populations. The two transitions, in bra-ket
 notation, follows
@@ -92,6 +92,6 @@ the method object, as
 
 **Two spin-1/2 sites**
 
-A two spin-1/2 system is a four energy level spin-system, where the energy state are
+A two spin-1/2 system is a four energy level spin system, where the energy state are
 represented as :math:`|\alpha \alpha⟩`, :math:`|\alpha \beta⟩`, :math:`|\beta \alpha⟩`,
 and :math:`|\beta \beta⟩`. There are a total of 12 transitions and 4 populations.

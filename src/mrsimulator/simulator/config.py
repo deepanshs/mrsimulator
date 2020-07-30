@@ -18,18 +18,18 @@ __integration_volume_octants__ = [1, 4]
 
 class ConfigSimulator(BaseModel):
     r"""
-    The configurable parametes for the simulator class used in line-shape simulation.
+    The configurable attributes for the Simulator class used in simulation.
 
     Attributes
     ----------
 
     number_of_sidebands: int (optional).
         The value is the requested number of sidebands that will be computed in the
-        line-shape simulation. The value cannot be zero or negative. The default value
+        simulation. The value cannot be zero or negative. The default value
         is 64.
 
     integration_volume: enum (optional).
-        The value is the volume over which the solid-state line-shape frequency
+        The value is the volume over which the solid-state spectral frequency
         integration is performed. The valid literals of this enumeration are
 
         - ``octant`` (default), and
@@ -49,12 +49,12 @@ class ConfigSimulator(BaseModel):
 
     decompose_spectrum: enum (optional).
         The value specifies how a simulation result is decomposed into an array of
-        line-shapes. The valid literals of this enumeration are
+        spectra. The valid literals of this enumeration are
 
         - ``none`` (default): When the value is `none`, the resulting simulation is a
-          single spectrum, which is an integration of the spectra over all spin-systems.
+          single spectrum, which is an integration of the spectra over all spin systems.
         - ``spin_system``:  When the value is `spin_system`, the resulting simulation
-          is an array of spectra, where each spectrum arises from a spin-system within
+          is an array of spectra, where each spectrum arises from a spin system within
           the Simulator object.
 
     Example
@@ -85,7 +85,7 @@ class ConfigSimulator(BaseModel):
         ]
         return py_dict
 
-    # averaging scheme. This contains the c pointer used in line-shape evaluation
+    # averaging scheme. This contains the c pointer used in frequency evaluation
     # at c-level.
     @property
     def averaging_scheme(self):

@@ -26,7 +26,8 @@ year = now.year
 
 project = "mrsimulator"
 copyright = f"2019-{year}, The mrsimulator developers"
-author = "Deepansh J. Srivastava"
+author = "Mrsimulator Developers"
+
 
 # get version number from the file
 with open("../src/mrsimulator/__init__.py", "r") as f:
@@ -139,7 +140,7 @@ intersphinx_mapping = {
 }
 # ---------------------------------------------------------------------------- #
 
-copybutton_prompt_text = ">>> |\\\\$ |\\[\\d*\\]: |\\.\\.\\.: |[.][.][.] "
+copybutton_prompt_text = ">>> |\\$ |\\[\\d*\\]: |\\.\\.\\.: |[.][.][.] "
 copybutton_prompt_is_regexp = True
 
 # ---------------------------------------------------------------------------- #

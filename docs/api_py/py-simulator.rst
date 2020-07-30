@@ -13,10 +13,7 @@ Python-API References
    site
    other_objects
    method
-   methods
-   models/czjzek
-   fitting
-   utils
+   methods-summary
 
 ..    parameterized_tensor
 ..    interaction

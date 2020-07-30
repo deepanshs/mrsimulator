@@ -37,9 +37,9 @@ class TransitionList(AbstractList):
         Filter a list of transitions to satisfy the filtering criterion.
         Args:
             list P: A list of `N` (m_final - m_initial) values, where `N` is the
-                total number of sites within the spin-system.
+                total number of sites within the spin system.
             list D: A list of `N` (m_final^2 - m_initial^2) values, where `N` is the
-                total number of sites within the spin-system.
+                total number of sites within the spin system.
         """
 
         # to think

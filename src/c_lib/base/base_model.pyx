@@ -37,13 +37,12 @@ def one_d_spectrum(method,
         geodesic polyhedra. These polyhedra are used in calculating the
         spherical average. Presently we only use octahedral as the frequency1
         polyhedra. As the frequency of the geodesic polyhedron increases, the
-        polyhedra approach a sphere geometry. For line-shape simulation, a higher
-        frequency will result in a better powder averaging.
-        The default value is 72.
+        polyhedra approach a sphere geometry. A higher frequency will result in a
+        better powder averaging. The default value is 72.
         Read more on the `Geodesic polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
     :ivar decompose_spectrum:
         An unsigned integer. When value is 0, the spectum is a sum of spectrum from all
-        spin-systems. If value is 1, spectrum from individual spin-systems is stored
+        spin systems. If value is 1, spectrum from individual spin systems is stored
         separately.
     """
 
@@ -179,6 +178,8 @@ def one_d_spectrum(method,
         &incre[0], &magnetic_flux_density_in_T[0], &srfiH[0],
         &rair[0], &n_event[0], n_sequence, number_of_sidebands)
 
+# normalization factor for the spectrum
+    norm = np.prod(incre)
 
 # create fftw scheme __________________________________________________________
 
@@ -288,7 +289,7 @@ def one_d_spectrum(method,
 
             # if verbose in [1, 11]:
             #     text = ((
-            #         f"\n{isotope} site {i} from spin-system {index_isotopomer} "
+            #         f"\n{isotope} site {i} from spin system {index_isotopomer} "
             #         f"@ {abundance}% abundance"
             #     ))
             #     len_ = len(text)
@@ -386,7 +387,7 @@ def one_d_spectrum(method,
                     interpolation,
                     )
 
-            temp = amp*abundance
+            temp = amp*abundance/norm
 
             ## reverse the spectrum if gyromagnetic ratio is positive.
             if gyromagnetic_ratio < 0:

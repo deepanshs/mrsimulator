@@ -21,8 +21,8 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 
 # %%
 # One of the advantages of the ``mrsimulator`` package is that it is a very fast NMR
-# line-shape simulation library. We can exploit this feature to simulate bulk
-# line-shapes and eventually model amorphous materials.
+# spectrum simulation library. We can exploit this feature to simulate bulk spectra and
+# eventually model amorphous materials.
 #
 # In this section, we illustrate how the ``mrsimulator`` library may be used in
 # simulating the NMR spectrum of amorphous materials. We model this by assuming a
@@ -74,8 +74,8 @@ plt.show()
 # Create the Simulator object
 # ---------------------------
 #
-# **Spin-system:**
-# Let's create the sites and single-site spin-system objects from these parameters.
+# **Spin system:**
+# Let's create the sites and single-site spin system objects from these parameters.
 spin_systems = []
 for i, z, e in zip(iso, zeta, eta):
     site = Site(
@@ -96,7 +96,7 @@ method = BlochDecaySpectrum(
 )
 
 # %%
-# The above method simulates a static :math:`^{29}\text{Si}` line-shapes at 9.4 T field
+# The above method simulates a static :math:`^{29}\text{Si}` spectrum at 9.4 T field
 # (default value).
 #
 # **Simulator:**
@@ -107,9 +107,9 @@ sim.spin_systems += spin_systems  # add the spin systems
 sim.methods += [method]  # add the method
 
 # %%
-# Static line-shape
-# -----------------
-# Observe the static :math:`^{29}\text{Si}` line-shape simulation.
+# Static spectrum
+# ---------------
+# Observe the static :math:`^{29}\text{Si}` NMR spectrum simulation.
 sim.run()
 
 # %%

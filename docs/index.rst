@@ -70,21 +70,20 @@ Welcome to the Mrsimulator documentation
 
 **About**
 
-``mrsimulator`` is a python package for computing fast real-time solid-state nuclear
-magnetic resonance (NMR) line-shapes/spectrum. The library is optimized to compute bulk
-solid-state line-shapes, enabling the simulation of both crystalline and amorphous-like
-materials. The core of the ``mrsimulator`` library is written in C, wrapped and made
-available in python.
+``mrsimulator`` is a python package for computing fast solid-state magnetic
+resonance (NMR) spectra. The library is optimized to compute both crystalline and
+amorphous-like materials. The core of the ``mrsimulator`` library is written in C,
+wrapped and made available in python.
 
 ----
 
 **Features**
 
-At present, the ``mrsimulator`` package offers the following
+The ``mrsimulator`` package currently offers the following
 
-- **Real-time simulation** of one-dimensional solid-state NMR line-shapes. See our :ref:`benchmark` results.
+- **Fast simulation** of one-dimensional solid-state NMR spectra. See our :ref:`benchmark` results.
 
-- Uncoupled spin-system
+- Uncoupled spin system
     - for spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
     - at arbitrary macroscopic magnetic flux density,
     - at arbitrary rotor angles, and
@@ -111,7 +110,7 @@ At present, the ``mrsimulator`` package offers the following
 
 Our current objectives for the future are the following
 
-- Include line-shape simulation of coupled spin-systems for
+- Include spectral simulation of coupled spin systems for
     - spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
     - at arbitrary macroscopic magnetic flux density,
     - at arbitrary rotor angles, and
@@ -119,9 +118,9 @@ Our current objectives for the future are the following
 
 - Expand the library of NMR methods. We expect to include the following methods
     - 2D Multi-quantum Magic Angle Spinning (MQ-MAS),
-    - 2D Dynamic Angle Spinning (DAS),
-    - 2D Magic Angle Flipping (MAF), and
-    - 2D isotropic to anisotropic sideband correlation spectrum (PASS).
+    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT).
+    - 2D Dynamic Angle Spinning (DAS), and
+    - 2D Magic Angle Flipping (MAF).
 
 
 .. Contribution
@@ -138,29 +137,73 @@ Our current objectives for the future are the following
 
 ----
 
-.. only:: html
-
-    Table of Contents
-    -----------------
+Getting Started
+---------------
 
 .. toctree::
     :maxdepth: 2
+    :caption: Getting Started
 
     installation
     requirements
-    understanding-spin_systems
+    introduction
     getting_started
-    using_mrsimulator_objects
+    getting_started-objects
     configuring_simulator
     mrsim_IO
+    api_py/py-simulator
+    api_c/c_api
+
+Signal Processing (``mrsimulator.SignalProcessor``)
+---------------------------------------------------
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Signal Processing
+
+    signal_processing
+    api_py/py-signal-processing
+
+Models
+------
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Signal Processing
+
     model/readme
+    api_py/models/czjzek
+
+Benchmark and Examples
+----------------------
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Examples and Benchmarks
+
     benchmark
     auto_examples/index
-    theory/components
-    api_py/py_api
-    api_c/c_api
-    changelog
 
+Theory
+------
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Theory
+
+    theory/components
+
+Project details
+---------------
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Project details
+
+    changelog
+    credits/contributors
+    credits/license
+    credits/acknowledgment
 
 .. .. only:: html
 
@@ -192,8 +235,8 @@ Our current objectives for the future are the following
 
 .. only:: html
 
-    Indices and tables
-    ------------------
+    Index
+    -----
 
     * :ref:`genindex`
     * :ref:`modindex`

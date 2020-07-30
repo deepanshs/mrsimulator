@@ -86,7 +86,7 @@ class as
     >>> import os
     >>> os.remove('coesite_spin_systems.json')
 
-**Importing spin-systems from URL**
+**Importing spin systems from URL**
 
 .. testsetup::
     >>> from mrsimulator import Simulator

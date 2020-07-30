@@ -3,6 +3,8 @@ from pprint import pprint
 
 import matplotlib
 import matplotlib.pyplot as plt
+import mrsimulator.signal_processing as sp
+import mrsimulator.signal_processing.apodization as apo
 import numpy as np
 import pytest
 from mrsimulator import Simulator
@@ -28,6 +30,8 @@ def add_site(doctest_namespace):
     doctest_namespace["st"] = SymmetricTensor
     doctest_namespace["pprint"] = pprint
     doctest_namespace["Isotope"] = Isotope
+    doctest_namespace["sp"] = sp
+    doctest_namespace["apo"] = apo
 
     site1 = Site(
         isotope="13C",

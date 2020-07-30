@@ -16,8 +16,6 @@ from pydantic import BaseModel
 
 from .config import ConfigSimulator
 
-# from mrsimulator.post_simulation import PostSimulator
-
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
 
@@ -31,7 +29,7 @@ class Simulator(BaseModel):
 
     spin_systems: A list of :ref:`spin_sys_api` or equivalent dict objects (optional).
         The value is a list of NMR spin systems present within the sample, where each
-        spin-system is an isolated system. The default value is an empty list.
+        spin system is an isolated system. The default value is an empty list.
 
         Example
         -------
@@ -57,7 +55,7 @@ class Simulator(BaseModel):
         >>> from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
         >>> sim.methods = [
         ...     BlochDecaySpectrum(channels=['17O'], spectral_width=50000),
-        ...     BlochDecayCentralTransitionSpectrum(channels=['17O'], spectral_width=50000)
+        ...     BlochDecayCentralTransitionSpectrum(channels=['17O'])
         ... ]
 
     config: :ref:`config_api` object or equivalent dict object (optional).
@@ -128,7 +126,6 @@ class Simulator(BaseModel):
     description: str = None
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
-    # post_simulation: List[PostSimulator] = []
     config: ConfigSimulator = ConfigSimulator()
     indexes = []
 
@@ -358,7 +355,7 @@ class Simulator(BaseModel):
             )
 
     def run(self, method_index=None, pack_as_csdm=True, **kwargs):
-        """Run the simulation and compute lineshapes.
+        """Run the simulation and compute spectrum.
 
         Args:
             method_index: An integer or a list of integers. If provided, only the
@@ -511,13 +508,13 @@ class Simulator(BaseModel):
 
     def _update_name_description_application(self, obj, index):
         """Update the name and description of the dependent variable attributes
-        using fields from the spin-system."""
+        using fields from the spin system."""
         label = self.spin_systems[index].label
         if label not in ["", None]:
             obj.update({"components_label": [label]})
 
         name = self.spin_systems[index].name
-        name = name if name not in ["", None] else f"spin-system {index}"
+        name = name if name not in ["", None] else f"spin system {index}"
         obj.update({"name": name})
 
         description = self.spin_systems[index].description
@@ -529,39 +526,3 @@ class Simulator(BaseModel):
                 "spin_systems": [self.spin_systems[index].to_dict_with_units()]
             }
         }
-
-    def apodize(self, dimension=0, method=0, **kwargs):
-        if self.config.decompose_spectrum is False:
-            self.config.decompose_spectrum = True
-            self.run(method_index=method)
-
-        csdm = self.methods[method].simulation
-
-        for dim in csdm.dimensions:
-            dim.to("Hz", "nmr_frequency_ratio")
-
-        for i, apodization_filter in enumerate(self.post_simulation):
-            apodization_filter.apodization[0]._apodize(csdm, i)
-
-        for dim in csdm.dimensions:
-            dim.to("ppm", "nmr_frequency_ratio")
-
-        # apodization_filter = Apodization(
-        #     self.methods[method].simulation, dimension=dimension
-        # )
-        # return apodization_filter.apodize(fn, **kwargs)
-
-        # csdm = self.simulation
-        # for dim in csdm.dimensions:
-        #     dim.to("Hz", "nmr_frequency_ratio")
-        # apo = self.post_simulation.apodization
-
-        # sum_ = 0
-
-        # for item in apo:
-        #     sum_ += item.apodize(csdm)
-
-        # for dim in csdm.dimensions:
-        #     dim.to("ppm", "nmr_frequency_ratio")
-
-        # return self.post_simulation.scale * sum_
