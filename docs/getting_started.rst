@@ -7,7 +7,7 @@ Getting started with ``mrsimulator``: The basics
 
 We have put together a set of guidelines for using the ``mrsimulator`` package. We
 encourage our users to follow these guidelines for consistency. In
-``mrsimulator``, the solid-state nuclear magnetic resonance (ssNMR) lineshape is
+``mrsimulator``, the solid-state nuclear magnetic resonance (ssNMR) spectrum is
 calculated through an instance of the :ref:`simulator_api` class.
 
 Import the :ref:`simulator_api` class using
@@ -300,7 +300,7 @@ You may optionally customize the plot using matplotlib methods.
 .. _fig1-getting-started:
 .. figure:: _static/null.*
 
-    An example static solid state NMR lineshape simulation.
+    An example of solid-state static NMR spectrum simulation.
 
 
 .. **For advanced users**

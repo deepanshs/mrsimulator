@@ -122,10 +122,10 @@ plt.show()
 
 # %%
 # .. note::
-#     The broad lineshape seen in the above spectrum is the result of the
-#     lineshapes arising from a distribution of shielding tensors. In this case,
-#     the lineshape is an integral of ``n=4000`` individual spectra. There is no
-#     lineshape broadening filter applied to the spectrum.
+#     The broad spectrum seen in the above figure is a result of spectral averaging
+#     of spectra arising from a distribution of shielding tensors. In this case, the
+#     spectrum is an average of ``n=4000`` individual spectra. There is no
+#     line-broadening filter applied to the spectrum.
 
 # %%
 # Spinning sideband simulation at :math:`90^\circ`
