@@ -197,6 +197,7 @@ void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan,
 /* Return a copy of thr mrsimulator plan. */
 MRS_plan *MRS_copy_plan(MRS_plan *plan) {
   MRS_plan *new_plan = malloc(sizeof(MRS_plan));
+  new_plan->averaging_scheme = plan->averaging_scheme;
   new_plan->number_of_sidebands = plan->number_of_sidebands;
   new_plan->sample_rotation_frequency_in_Hz =
       plan->sample_rotation_frequency_in_Hz;
@@ -211,6 +212,7 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
   new_plan->norm_amplitudes = plan->norm_amplitudes;
   new_plan->wigner_d2m0_vector = plan->wigner_d2m0_vector;
   new_plan->wigner_d4m0_vector = plan->wigner_d4m0_vector;
+  new_plan->pre_phase = plan->pre_phase;
   new_plan->pre_phase_2 = plan->pre_phase_2;
   new_plan->pre_phase_4 = plan->pre_phase_4;
   new_plan->one[0] = plan->one[0];

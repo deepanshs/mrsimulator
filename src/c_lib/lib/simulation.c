@@ -54,7 +54,7 @@ void __mrsimulator_core(
   */
 
   unsigned int j, evt, step_vector = 0, address;
-  int i, seq;
+  int i, seq, refresh;
   double offset, B0_in_T;
 
   double R0 = 0.0;
@@ -74,6 +74,7 @@ void __mrsimulator_core(
 
   // Loop over the sequence.
   for (seq = 0; seq < n_sequence; seq++) {
+    refresh = 1;
     // Loop over the events per sequence.
     for (evt = 0; evt < the_sequence[seq].n_events; evt++) {
       plan = the_sequence[seq].events[evt].plan;
@@ -103,11 +104,12 @@ void __mrsimulator_core(
       /* Get frequencies and amplitudes per octant ......................... */
       /* Always evalute the frequencies before the amplitudes. */
       MRS_get_normalized_frequencies_from_plan(
-          scheme, plan, R0, R2, R4, 1, the_sequence[seq].normalize_offset,
+          scheme, plan, R0, R2, R4, refresh, the_sequence[seq].normalize_offset,
           the_sequence[seq].inverse_increment);
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
 
       transition += transition_increment;
+      refresh = 0;
     }  // end events
 
     /* ---------------------------------------------------------------------
