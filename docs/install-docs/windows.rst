@@ -16,7 +16,7 @@ anaconda prompt, type the following to install the package dependencies.
 
 .. code-block:: bash
 
-    $ conda install -c conda-forge openblas fftw>=3.3.0
+    $ conda install -c conda-forge openblas fftw
 
 **Install a C/C++ compiler**
 

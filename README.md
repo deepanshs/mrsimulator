@@ -16,19 +16,19 @@ available in python.
 
 ## Why use mrsimulator?
 
-- It is a fast solid-state NMR simulator library.
-- Compatible with other packages such as NumPy, SciPy, scikit-learn, LMFIT, etc.
-- Provides you with the necessary tools to build new models, and thus providing
-  opportunities for the development of new problem-solving techniques.
+- It is open source and free.
+- It is a fast and versatile solid-state NMR simulator of one-dimensional static, MAS,
+  and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
+  coupling interactions.
+- Future release will include simulations of weakly coupled nuclei experiencing J and dipolar
+  couplings, and multi-dimensional NMR spectra.
+- It is fully documented with a stable and simple API and is easily incorporated into your
+  python scripts and web apps.
+- It is compatible with modern python package, such as scikit-learn, Keras, etc.
 - Packages using mrsimulator -
-  - [mrinversion](https://mrinversion.readthedocs.io/en/latest/): A python package that
-    utilized mrsimulator tools in combination with scikit-learn to invert 2D NMR
-    isotropic/anisotropic correlation spectrum into a distribution of NMR tensor principal
-    components. The examples within shows that inversion of the glass spectrum can provide
-    a wealth of information into the glass structure.
-- Can be used with machine learning packages, such as scikit-learn, Keras, etc.
+  - [mrinversion](https://mrinversion.readthedocs.io/en/latest/)
 
-## Features
+### Features
 
 The `mrsimulator` package currently offers the following
 
@@ -47,7 +47,7 @@ The `mrsimulator` package currently offers the following
   - 1D Bloch decay spectrum, and
   - 1D Bloch decay central transition spectrum.
 
-## Goals for the near future
+### Goals for the near future
 
 Our current objectives for the future are the following
 
