@@ -52,9 +52,9 @@ void __mrsimulator_core(
   et. al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
-
+  bool refresh;
   unsigned int j, evt, step_vector = 0, address;
-  int i, seq, refresh;
+  int i, seq;
   double offset, B0_in_T;
 
   double R0 = 0.0;
