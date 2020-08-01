@@ -84,7 +84,7 @@ sim_coesite.methods += [method]  # add the method
 # **Step 5:** Simulate the spectrum.
 sim_coesite.run()
 
-# The plot of the simulation before post-processing.
+# The plot of the simulation before signal processing.
 ax = plt.subplot(projection="csdm")
 ax.plot(sim_coesite.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
@@ -92,8 +92,8 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# **Step 6:** Add post-simulation processing.
-post_sim = sp.SignalProcessor(
+# **Step 6:** Add post-simulation signal processing.
+processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
         apo.Exponential(FWHM="30 Hz"),
@@ -101,9 +101,9 @@ post_sim = sp.SignalProcessor(
         sp.FFT(),
     ]
 )
-processed_data = post_sim.apply_operations(data=sim_coesite.methods[0].simulation)
+processed_data = processor.apply_operations(data=sim_coesite.methods[0].simulation)
 
-# The plot of the simulation after post-processing.
+# The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
 ax.plot(processed_data.real, color="black", linewidth=1)
 ax.invert_xaxis()

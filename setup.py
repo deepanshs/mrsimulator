@@ -28,10 +28,7 @@ python_version = sys.version_info
 py_version = ".".join([str(i) for i in python_version[:3]])
 print("Using python version", py_version)
 if python_version.major != 3 and python_version.minor < 6:
-    print(
-        f"Python version 3.6 and higher is required for the setup. You are using "
-        f"version {py_version}"
-    )
+    print(f"Python>=3.6 is required for the setup. You are using version {py_version}")
     sys.exit(1)
 
 with open("src/mrsimulator/__init__.py", "r") as f:
@@ -62,8 +59,8 @@ numpy_include = np.get_include()
 
 if sys.platform.startswith("win"):
 
-    extra_link_args += ["-lm", "-Wl,--allow-multiple-definition"]
-    extra_compile_args += ["-DFFTW_DLL", "/O3"]
+    extra_link_args += ["-Wl,--allow-multiple-definition"]
+    extra_compile_args = ["-DFFTW_DLL"]
 
     # FFTW3 info
     fftw3_info = sysinfo.get_info("fftw3")
@@ -274,7 +271,7 @@ setup(
         "Intended Audience :: Education",
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "License :: OSI Approved :: BSD License",
         "Programming Language :: C",
         "Programming Language :: Python :: 3",

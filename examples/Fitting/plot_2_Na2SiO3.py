@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Fitting Crystalline Sodium Metasilicate
-=======================================
+Fitting 17O MAS NMR of crystalline Na2SiO3
+==========================================
 """
 # %%
 # In this example, we illustrate the use of the mrsimulator objects to
@@ -28,6 +28,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.spectral_fitting import LMFIT_min_function
 from mrsimulator.utils.spectral_fitting import make_LMFIT_parameters
 
@@ -83,7 +84,7 @@ O17_2 = Site(
     quadrupolar={"Cq": 2.4e6, "eta": 0.5},  # Cq in Hz
 )
 
-system_object = [SpinSystem(sites=[s]) for s in [O17_1, O17_2]]  # from the above code
+system_object = [SpinSystem(sites=[s], abundance=50) for s in [O17_1, O17_2]]
 
 # %%
 # **Step 2:** Create the method object. Note, when performing the least-squares fit, you
@@ -93,25 +94,20 @@ system_object = [SpinSystem(sites=[s]) for s in [O17_1, O17_2]]  # from the abov
 # acquisition channels, the magnetic flux density, rotor angle, rotor frequency, and
 # the spectral/spectroscopic dimension. In the following example, we set up a central
 # transition selective Bloch decay spectrum method, where we obtain the
-# spectral/spectroscopic information from the metadata of the CSDM dimension. The
-# remaining attribute values are set to the experimental conditions.
+# spectral/spectroscopic information from the metadata of the CSDM dimension. Use the
+# :func:`~mrsimulator.method.get_spectral_dimensions` utility function for quick
+# extraction of the spectroscopic information, `i.e.`, count, spectral_width, and
+# reference_offset from the CSDM object. The remaining attribute values are set to the
+# experimental conditions.
 
-# get the count, increment, and coordinates_offset info from experiment CSDM dimension.
-count = oxygen_experiment.dimensions[0].count
-increment = oxygen_experiment.dimensions[0].increment.to("Hz").value
-offset = oxygen_experiment.dimensions[0].coordinates_offset.to("Hz").value
+# get the count, spectral_width, and reference_offset information from the experiment.
+spectral_dims = get_spectral_dimensions(oxygen_experiment)
 
 method = BlochDecayCentralTransitionSpectrum(
     channels=["17O"],
     magnetic_flux_density=9.4,  # in T
     rotor_frequency=14000,  # in Hz
-    spectral_dimensions=[
-        {
-            "count": count,
-            "spectral_width": count * increment,  # in Hz
-            "reference_offset": offset,  # in Hz
-        }
-    ],
+    spectral_dimensions=spectral_dims,
 )
 
 # %%
@@ -127,10 +123,14 @@ sim.methods = [method]
 # %%
 # **Step 4:** Simulate the spectrum.
 for iso in sim.spin_systems:
-    # To avoid querying for transition pathways at every iteration, evaluate it once
-    # and save the transition pathways information following
+    # A method object queries every spin system for a list of transition pathways that
+    # are relevant for the given method. Since the method and the number of spin systems
+    # remain the same during the least-squares fit, a one-time query is sufficient. To
+    # avoid querying for the transition pathways at every iteration in a least-squares
+    # fitting, evaluate the transition pathways once and store it as follows
     iso.transition_pathways = method.get_transition_pathways(iso).tolist()
 
+# Now simulate as usual.
 sim.run()
 
 # %%
@@ -141,7 +141,7 @@ processor = sp.SignalProcessor(
         sp.IFFT(),
         apo.Exponential(FWHM="40 Hz"),
         sp.FFT(),
-        sp.Scale(factor=0.6),
+        sp.Scale(factor=1.0),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation)
@@ -179,10 +179,10 @@ params = make_LMFIT_parameters(sim, processor)
 # ``PostSimulator`` objects for parameters and returns an LMFIT `Parameters` object.
 #
 # **Customize the Parameters:**
-# You may customize the parameters list, ``params``, as desired. Here, we add a
-# constraint on the fit by fixing the site abundances for the spin systems at index
-# 1 and 2 to 50%.
-params["sys_0_abundance"].vary = False  # fix the abundance
+# You may customize the parameters list, ``params``, as desired. Here, we remove the
+# abundance of the two spin systems and constrain it to the initial value of 50% each.
+params.pop("sys_0_abundance")
+params.pop("sys_1_abundance")
 params.pretty_print()
 
 # %%

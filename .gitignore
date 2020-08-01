@@ -112,6 +112,7 @@ class-diagram*
 *.mp4
 *.temp
 *.csdf
+*.csdfe
 test_os.py
 note.txt
 simulate_lineshape.py

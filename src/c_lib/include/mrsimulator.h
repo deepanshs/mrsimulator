@@ -31,7 +31,7 @@
  *    - allocating buffer for storing the evaluated frequencies and their
  *      respective amplitudes.
  *
- * Creating a plan adds an overhead to the lineshape simulation. We suggest
+ * Creating a plan adds an overhead to the simulation. We suggest
  * creating a plan at the start and re-using it as necessary. This is
  * especially efficient when performing a batch simulation, such as,
  * simulating spectra from thousands of sites.
