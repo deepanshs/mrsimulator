@@ -59,8 +59,8 @@ numpy_include = np.get_include()
 
 if sys.platform.startswith("win"):
 
-    extra_link_args += ["-lm", "-Wl,--allow-multiple-definition"]
-    extra_compile_args += ["-DFFTW_DLL", "/O3"]
+    extra_link_args += ["-Wl,--allow-multiple-definition"]
+    extra_compile_args = ["-DFFTW_DLL"]
 
     # FFTW3 info
     fftw3_info = sysinfo.get_info("fftw3")
@@ -271,7 +271,7 @@ setup(
         "Intended Audience :: Education",
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "License :: OSI Approved :: BSD License",
         "Programming Language :: C",
         "Programming Language :: Python :: 3",
