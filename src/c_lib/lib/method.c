@@ -14,7 +14,8 @@ void MRS_free_event(MRS_event *the_event) { MRS_free_plan(the_event->plan); }
 
 void MRS_set_event(MRS_event *event, double magnetic_flux_density_in_T,
                    double sample_rotation_frequency_in_Hz,
-                   double rotor_angle_in_rad, int increment, MRS_plan *plan) {
+                   double rotor_angle_in_rad, double increment,
+                   MRS_plan *plan) {
   event->sample_rotation_frequency_in_Hz = sample_rotation_frequency_in_Hz;
   event->rotor_angle_in_rad = rotor_angle_in_rad;
   event->magnetic_flux_density_in_T = magnetic_flux_density_in_T;

@@ -39,7 +39,7 @@ typedef struct MRS_sequence {
 
 void MRS_set_event(MRS_event *event, double magnetic_flux_density_in_T,
                    double sample_rotation_frequency_in_Hz,
-                   double rotor_angle_in_rad, int increment, MRS_plan *plan);
+                   double rotor_angle_in_rad, double increment, MRS_plan *plan);
 
 void MRS_free_event(MRS_event *the_event);
 
