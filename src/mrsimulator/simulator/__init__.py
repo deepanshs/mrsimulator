@@ -484,7 +484,7 @@ class Simulator(BaseModel):
             A CSDM object.
         """
         new = cp.new()
-        for dimension in method.spectral_dimensions:
+        for dimension in method.spectral_dimensions[::-1]:
             new.add_dimension(dimension.to_csdm_dimension())
             if new.dimensions[-1].origin_offset != 0:
                 new.dimensions[-1].to("ppm", "nmr_frequency_ratio")

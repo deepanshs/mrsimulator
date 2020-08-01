@@ -327,7 +327,7 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
  */
 void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                                    double R0, complex128 *R2, complex128 *R4,
-                                   bool refresh) {
+                                   bool refresh, MRS_sequence *seq) {
   __batch_wigner_rotation(scheme->octant_orientations, plan->n_octants,
                           scheme->wigner_2j_matrices, R2,
                           scheme->wigner_4j_matrices, R4, scheme->exp_Im_alpha,
@@ -338,32 +338,30 @@ void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
 
   /* If refresh is true, zero the local_frequencies before update */
   if (refresh) {
-    cblas_dscal(scheme->total_orientations, 0.0, scheme->local_frequency, 1);
+    cblas_dscal(scheme->total_orientations, 0.0, seq->local_frequency, 1);
   }
 
   /* Calculating the local anisotropic frequency contributions from the      *
    * second rank tensor. */
   plan->buffer = plan->wigner_d2m0_vector[2];
   cblas_daxpy(scheme->total_orientations, plan->buffer,
-              (double *)&scheme->w2[2], 10, scheme->local_frequency, 1);
+              (double *)&scheme->w2[2], 10, seq->local_frequency, 1);
   if (plan->allow_fourth_rank) {
     /* Calculating the local anisotropic frequency contributions from the    *
      * fourth rank tensor. */
     plan->buffer = plan->wigner_d4m0_vector[4];
     cblas_daxpy(scheme->total_orientations, plan->buffer,
-                (double *)&scheme->w4[4], 18, scheme->local_frequency, 1);
+                (double *)&scheme->w4[4], 18, seq->local_frequency, 1);
   }
 }
 
 void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0,
                                               complex128 *R2, complex128 *R4,
-                                              bool refresh,
-                                              double normalize_offset,
-                                              double inverse_increment) {
-  /* Rotate the R2 and R4 components from the common frame to the rotor frame
-   * over all the orientations. The componets are stored in w2 and w4 of the
-   * averaging scheme, respectively.*/
+                                              bool refresh, MRS_sequence *seq) {
+  /* Rotate the R2 and R4 components from the common frame to the rotor
+   * frame over all the orientations. The componets are stored in w2 and
+   * w4 of the averaging scheme, respectively.*/
   __batch_wigner_rotation(scheme->octant_orientations, plan->n_octants,
                           scheme->wigner_2j_matrices, R2,
                           scheme->wigner_4j_matrices, R4, scheme->exp_Im_alpha,
@@ -371,11 +369,11 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
 
   /* The normalized isotropic frequency contribution from the zeroth rank
    * tensor. */
-  plan->isotropic_offset = normalize_offset + R0 * inverse_increment;
+  plan->isotropic_offset = R0 * seq->inverse_increment;
 
   /* If refresh is true, zero the local_frequencies before update */
   if (refresh) {
-    cblas_dscal(scheme->total_orientations, 0.0, scheme->local_frequency, 1);
+    cblas_dscal(scheme->total_orientations, 0.0, seq->local_frequency, 1);
   }
 
   /* Rotate w2 and w4 components from the rotor frame to the lab frame. Since
@@ -384,16 +382,16 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
    * d^2(0,0)(rotor_angle). The normalized local anisotropic frequency
    * contributions from the second rank tensor.
    */
-  plan->buffer = inverse_increment * plan->wigner_d2m0_vector[2];
+  plan->buffer = seq->inverse_increment * plan->wigner_d2m0_vector[2];
   cblas_daxpy(scheme->total_orientations, plan->buffer,
-              (double *)&scheme->w2[2], 10, scheme->local_frequency, 1);
+              (double *)&scheme->w2[2], 10, seq->local_frequency, 1);
   if (plan->allow_fourth_rank) {
     /* Calculating the normalized local anisotropic frequency contributions  *
      * from the fourth rank tensor. The `wigner_d2m0_vector[4]` is
      * d^4(0,0)(rotor_angle). */
-    plan->buffer = inverse_increment * plan->wigner_d4m0_vector[4];
+    plan->buffer = seq->inverse_increment * plan->wigner_d4m0_vector[4];
     cblas_daxpy(scheme->total_orientations, plan->buffer,
-                (double *)&scheme->w4[4], 18, scheme->local_frequency, 1);
+                (double *)&scheme->w4[4], 18, seq->local_frequency, 1);
   }
 }
 

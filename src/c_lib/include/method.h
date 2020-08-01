@@ -31,6 +31,8 @@ typedef struct MRS_sequence {
   unsigned int n_events; /**< The number of events. */
 
   /* private attributes */
+  double *local_frequency;  //  buffer for local frequencies.
+  double *freq_offset;      //  buffer for local + sideband frequencies.
   double normalize_offset;  // fixed value = 0.5 - coordinate_offset/increment
   double inverse_increment;
 } MRS_sequence;

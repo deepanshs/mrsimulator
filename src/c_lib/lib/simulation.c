@@ -55,7 +55,7 @@ void __mrsimulator_core(
   bool refresh;
   unsigned int j, evt, step_vector = 0, address;
   int i, seq;
-  double offset, B0_in_T;
+  double B0_in_T;
 
   double R0 = 0.0;
   complex128 *R2 = malloc_complex128(5);
@@ -64,7 +64,7 @@ void __mrsimulator_core(
   double R0_temp = 0.0;
   complex128 *R2_temp = malloc_complex128(5);
   complex128 *R4_temp = malloc_complex128(9);
-
+  double *offset = malloc_double(2);
   double *spec_site_ptr;
   int transition_increment = 2 * ravel_isotopomer->number_of_sites;
   MRS_plan *plan;
@@ -100,52 +100,61 @@ void __mrsimulator_core(
       );
 
       // Add a loop over all couplings.. here
-
-      /* Get frequencies and amplitudes per octant ......................... */
+      /* Get frequencies and amplitudes per octant .........................
+       */
       /* Always evalute the frequencies before the amplitudes. */
-      MRS_get_normalized_frequencies_from_plan(
-          scheme, plan, R0, R2, R4, refresh, the_sequence[seq].normalize_offset,
-          the_sequence[seq].inverse_increment);
+      MRS_get_normalized_frequencies_from_plan(scheme, plan, R0, R2, R4,
+                                               refresh, &the_sequence[seq]);
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
 
       transition += transition_increment;
       refresh = 0;
     }  // end events
+  }    // end sequence
 
-    /* ---------------------------------------------------------------------
-     *              Calculating the tent for every sideband
-     * Allowing only sidebands that are within the spectral bandwidth
-     *
-     * for (i = 0; i < plan->number_of_sidebands; i++) {
-     *   offset = plan->vr_freq[i] + plan->isotropic_offset;
-     *   if ((int)offset >= 0 && (int)offset <= dimension->count) {
+  /* ---------------------------------------------------------------------
+   *              Calculating the tent for every sideband
+   * Allowing only sidebands that are within the spectral bandwidth
+   *
+   * for (i = 0; i < plan->number_of_sidebands; i++) {
+   *   offset = plan->vr_freq[i] + plan->isotropic_offset;
+   *   if ((int)offset >= 0 && (int)offset <= dimension->count) {
 
-     *     vm_double_ramp(plan->octant_orientations,
-     plan->local_frequency, 1.0,
-     *                    offset, plan->freq_offset);
-     *     octahedronInterpolation(
-     *         spec_site_ptr, plan->freq_offset,
-     *         plan->integration_density,
-     *         (double *)&plan->vector[i * plan->octant_orientations], 2,
-     *         dimension->count);
-     *   }
-     * }
-     */
-    if (interpolation) {
+   *     vm_double_ramp(plan->octant_orientations,
+   plan->local_frequency, 1.0,
+   *                    offset, plan->freq_offset);
+   *     octahedronInterpolation(
+   *         spec_site_ptr, plan->freq_offset,
+   *         plan->integration_density,
+   *         (double *)&plan->vector[i * plan->octant_orientations], 2,
+   *         dimension->count);
+   *   }
+   * }
+   */
+  if (interpolation) {
+    if (n_sequence == 1) {
       for (i = 0; i < plan->number_of_sidebands; i++) {
-        offset = plan->vr_freq[i] + plan->isotropic_offset;
-        if ((int)offset >= 0 && (int)offset <= the_sequence[0].count) {
+        for (seq = 0; seq < n_sequence; seq++) {
+          offset[seq] = plan->vr_freq[i] + the_sequence[seq].normalize_offset;
+          // Loop over the events per sequence.
+          for (evt = 0; evt < the_sequence[seq].n_events; evt++) {
+            plan = the_sequence[seq].events[evt].plan;
+            offset[seq] += plan->isotropic_offset;
+          }
+        }
+        // offset = plan->vr_freq[i] + plan->isotropic_offset +
+        //          the_sequence[seq].normalize_offset;
+        if ((int)offset[0] >= 0 && (int)offset[0] <= the_sequence[0].count) {
           step_vector = i * scheme->total_orientations;
           for (j = 0; j < plan->n_octants; j++) {
             address = j * scheme->octant_orientations;
-
             // Add offset(isotropic + sideband_order) to the local frequency
             // from [n to n+octant_orientation]
             vm_double_ramp(scheme->octant_orientations,
-                           &scheme->local_frequency[address], 1.0, offset,
-                           scheme->freq_offset);
+                           &the_sequence[0].local_frequency[address], 1.0,
+                           offset[0], the_sequence[0].freq_offset);
             // Perform tenting on every sideband order over all orientations
-            octahedronInterpolation(spec_site_ptr, scheme->freq_offset,
+            octahedronInterpolation(spec_site_ptr, the_sequence[0].freq_offset,
                                     scheme->integration_density,
                                     (double *)&fftw_scheme->vector[step_vector],
                                     2, the_sequence[0].count);
@@ -155,13 +164,49 @@ void __mrsimulator_core(
       }
     }
 
-    // gettimeofday(&end_site_time, NULL);
-    // clock_time =
-    //     (double)(end_site_time.tv_usec - start_site_time.tv_usec) /
-    //     1000000.
-    //     + (double)(end_site_time.tv_sec - start_site_time.tv_sec);
-    // printf("Total time per site %f \n", clock_time);
+    if (n_sequence == 2) {
+      for (i = 0; i < plan->number_of_sidebands; i++) {
+        for (seq = 0; seq < n_sequence; seq++) {
+          offset[seq] = plan->vr_freq[i] + the_sequence[seq].normalize_offset;
+          // Loop over the events per sequence.
+          for (evt = 0; evt < the_sequence[seq].n_events; evt++) {
+            plan = the_sequence[seq].events[evt].plan;
+            offset[seq] += plan->isotropic_offset;
+          }
+        }
+        if ((int)offset[0] >= -10 &&
+            (int)offset[0] <= 2 * the_sequence[0].count) {
+          step_vector = i * scheme->total_orientations;
+          for (j = 0; j < plan->n_octants; j++) {
+            address = j * scheme->octant_orientations;
+
+            // Add offset(isotropic + sideband_order) to the local frequency
+            // from [n to n+octant_orientation]
+            vm_double_ramp(scheme->octant_orientations,
+                           &the_sequence[0].local_frequency[address], 1.0,
+                           offset[0], the_sequence[0].freq_offset);
+            vm_double_ramp(scheme->octant_orientations,
+                           &the_sequence[1].local_frequency[address], 1.0,
+                           offset[1], the_sequence[1].freq_offset);
+            // Perform tenting on every sideband order over all orientations
+            octahedronInterpolation2D(
+                spec_site_ptr, the_sequence[0].freq_offset,
+                the_sequence[1].freq_offset, scheme->integration_density,
+                (double *)&fftw_scheme->vector[step_vector], 2,
+                the_sequence[0].count, the_sequence[1].count);
+            step_vector += scheme->octant_orientations;
+          }
+        }
+      }
+    }
   }
+
+  // gettimeofday(&end_site_time, NULL);
+  // clock_time =
+  //     (double)(end_site_time.tv_usec - start_site_time.tv_usec) /
+  //     1000000.
+  //     + (double)(end_site_time.tv_sec - start_site_time.tv_sec);
+  // printf("Total time per site %f \n", clock_time);
 }
 
 void mrsimulator_core(

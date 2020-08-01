@@ -107,11 +107,6 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
      * fourth rank tensors. */
     scheme->w4 = malloc_complex128(9 * scheme->total_orientations);
   }
-
-  /* buffer to hold the local frequencies and frequency offset. The buffer   *
-   * is useful when the rotor angle is off magic angle (54.735 deg). */
-  scheme->local_frequency = malloc_double(scheme->total_orientations);
-  scheme->freq_offset = malloc_double(scheme->octant_orientations);
 }
 
 /* Free the memory from the mrsimulator plan associated with the spherical
@@ -123,8 +118,6 @@ void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
   free(scheme->w4);
   free(scheme->wigner_2j_matrices);
   free(scheme->wigner_4j_matrices);
-  free(scheme->local_frequency);
-  free(scheme->freq_offset);
 }
 
 /* Create a new orientation averaging scheme. */

@@ -77,6 +77,10 @@ static inline void create_plans_for_events_in_sequence(
   sequence->inverse_increment = 1.0 / increment;
   sequence->normalize_offset =
       0.5 - (coordinates_offset * sequence->inverse_increment);
+  /* buffer to hold the local frequencies and frequency offset. The buffer   *
+   * is useful when the rotor angle is off magic angle (54.735 deg). */
+  sequence->local_frequency = malloc_double(scheme->total_orientations);
+  sequence->freq_offset = malloc_double(scheme->octant_orientations);
 }
 
 MRS_sequence *MRS_create_plans_for_sequence(
@@ -101,7 +105,7 @@ MRS_sequence *MRS_create_plans_for_sequence(
     // printf("\tcount %d\n", sequence[i].count);
     // printf("\tincrement %f Hz\n", sequence[i].increment);
     // printf("\tcoordinates offset %f Hz\n", sequence[i].coordinates_offset);
-    // for (j = 0; j < n_events[i]; j++) {
+    // for (int j = 0; j < n_events[i]; j++) {
     //   printf("\tEvent %d\n", j);
     //   printf("\t\trotor frequency %f Hz\n",
     //          sequence[i].events[j].sample_rotation_frequency_in_Hz);

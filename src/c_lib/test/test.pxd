@@ -56,6 +56,18 @@ cdef extern from "interpolation.h":
         double *spec,
         int *points)
 
+    void triangle_interpolation2D(
+        double *freq11,
+        double *freq12,
+        double *freq13,
+        double *freq21,
+        double *freq22,
+        double *freq23,
+        double *amp,
+        double *spec,
+        int m0,
+        int m1)
+
 cdef extern from "octahedron.h":
     void octahedronInterpolation(
         double *spec,
