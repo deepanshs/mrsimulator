@@ -187,7 +187,7 @@ The above method, ``method_1``, is defined to record :math:`^{13}\text{C}` reson
 over 25 kHz spectral width using 2048 points. The unspecified attributes, such as
 `rotor_frequency`, `rotor_angle`, `magnetic_flux_density`, assume their default value.
 The default units of these attributes is once again  found with the
-:attr:`~mrsimulator.Method.propert_units` attribute,
+:attr:`~mrsimulator.Method.property_units` attribute,
 
 .. plot::
     :format: doctest
