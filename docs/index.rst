@@ -185,8 +185,8 @@ Benchmark and Examples
     :maxdepth: 2
     :caption: Examples and Benchmarks
 
-    benchmark
     auto_examples/index
+    benchmark
 
 Theory
 ------
