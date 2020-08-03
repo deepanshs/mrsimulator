@@ -325,7 +325,7 @@ The above statement should produce the following figure.
 
 .. figure:: _static/null.*
 
-    A test example solid state NMR lineshape simulation.
+    A test example simulation of solid-state NMR spectrum.
 
 ----
 

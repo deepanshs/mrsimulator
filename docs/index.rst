@@ -77,6 +77,23 @@ wrapped and made available in python.
 
 ----
 
+**Why use mrsimulator?**
+
+- It is open source and free.
+- It is a fast and versatile solid-state NMR simulator of one-dimensional static, MAS,
+  and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
+  coupling interactions.
+- Future release will include simulations of weakly coupled nuclei experiencing J and dipolar
+  couplings, and multi-dimensional NMR spectra.
+- It is fully documented with a stable and simple API and is easily incorporated into your
+  python scripts and web apps.
+- It is compatible with modern python package, such as scikit-learn, Keras, etc.
+- Packages using mrsimulator -
+
+  - `mrinversion <https://mrinversion.readthedocs.io/en/latest/>`_
+
+----
+
 **Features**
 
 The ``mrsimulator`` package currently offers the following
@@ -151,8 +168,6 @@ Getting Started
     getting_started-objects
     configuring_simulator
     mrsim_IO
-    api_py/py-simulator
-    api_c/c_api
 
 Signal Processing (``mrsimulator.SignalProcessor``)
 ---------------------------------------------------
@@ -162,7 +177,6 @@ Signal Processing (``mrsimulator.SignalProcessor``)
     :caption: Signal Processing
 
     signal_processing
-    api_py/py-signal-processing
 
 Benchmark and Examples
 ----------------------
@@ -171,8 +185,8 @@ Benchmark and Examples
     :maxdepth: 2
     :caption: Examples and Benchmarks
 
-    benchmark
     auto_examples/index
+    benchmark
 
 Theory
 ------
@@ -182,6 +196,18 @@ Theory
     :caption: Theory
 
     theory/components
+
+API and references
+------------------
+
+.. toctree::
+    :maxdepth: 2
+    :caption: API and references
+
+    api_py/py-simulator
+    api_py/py-signal-processing
+    api_c/c_api
+
 
 Project details
 ---------------

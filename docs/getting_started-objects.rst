@@ -187,7 +187,7 @@ The above method, ``method_1``, is defined to record :math:`^{13}\text{C}` reson
 over 25 kHz spectral width using 2048 points. The unspecified attributes, such as
 `rotor_frequency`, `rotor_angle`, `magnetic_flux_density`, assume their default value.
 The default units of these attributes is once again  found with the
-:attr:`~mrsimulator.Method.propert_units` attribute,
+:attr:`~mrsimulator.Method.property_units` attribute,
 
 .. plot::
     :format: doctest
@@ -230,8 +230,7 @@ Let's run the simulator and observe the spectrum.
 .. _fig1_using_obj:
 .. figure:: _static/null.*
 
-    An example of the solid-state :math:`^{13}\text{C}` isotropic lineshape
-    simulation.
+    An example solid-state NMR simulation of :math:`^{13}\text{C}` isotropic spectrum.
 
 Notice, we have four single-site spin systems within the ``sim`` object, two with
 :math:`^{13}\text{C}` sites, one with :math:`^1\text{H}` site, and one with an
@@ -270,8 +269,7 @@ CSA patterns, see :numref:`fig2_using_obj`.
 .. _fig2_using_obj:
 .. figure:: _static/null.*
 
-    An example of the static-solid state :math:`^{13}\text{C}` CSA lineshape
-    simulation.
+    An example state-solid NMR simulation of static :math:`^{13}\text{C}` CSA spectrum.
 
 .. .. note::
 ..     Because the objects in python are passed by reference, we were able to
