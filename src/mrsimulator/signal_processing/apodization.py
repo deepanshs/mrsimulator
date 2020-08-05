@@ -15,7 +15,7 @@ __email__ = "maxvenetos@gmail.com"
 
 
 class AbstractApodization(AbstractOperation):
-    dim_indx: int = 0
+    dim_indx: Union[int, list, tuple] = 0
     dv_indx: Union[int, list, tuple] = None  # if none apply to all
 
     @classmethod
@@ -56,29 +56,49 @@ class AbstractApodization(AbstractOperation):
             prop_name: The argument name for the function fn.
             prop_value: The argument value for the function fn.
         """
-        x = data.dimensions[self.dim_indx].coordinates
+        dims = data.dimensions
+        ndim = len(dims)
 
-        unit = 1 / string_to_quantity(self.property_units[prop_name]).unit
-        x = x.to(unit)
-        x_value = x.value
+        dim_index = self.dim_indx
+        if isinstance(dim_index, int):
+            dim_index = [dim_index]
 
-        apodization_vactor = fn(x_value, prop_value)
+        for dim_index_ in dim_index:
+            x = dims[dim_index_].coordinates
+            unit = 1 / self.property_units[prop_name]
+            x = x.to(unit)
+            x_value = x.value
 
-        n = len(data.dependent_variables)
-        dv_indexes = self._get_dv_indexes(self.dv_indx, n=n)
+            apodization_vactor = _get_broadcast_shape(
+                fn(x_value, prop_value), dim_index_, ndim
+            )
 
-        for i in dv_indexes:
-            data.dependent_variables[i].components[0] *= apodization_vactor
+            n = len(data.dependent_variables)
+            dv_indexes = self._get_dv_indexes(self.dv_indx, n=n)
+
+            for i in dv_indexes:
+                data.dependent_variables[i].components *= apodization_vactor
         return data
 
 
 def _str_to_quantity(v, values):
     if isinstance(v, str):
         quantity = string_to_quantity(v)
-        values["property_units"] = {"FWHM": str(quantity.unit)}
+        values["property_units"] = {"FWHM": quantity.unit}
         return quantity.value
     if isinstance(v, float):
         return v
+
+
+def _get_broadcast_shape(array, dim, ndim):
+    """Return the broadcast shape of a vector `array` at dimension `dim` for `ndim`
+    total dimensions. """
+    none = [None for _ in range(ndim + 1)]
+    if isinstance(dim, int):
+        dim = [dim]
+    for dim_ in dim:
+        none[-dim_ - 1] = slice(None, None, None)
+    return array[tuple(none)]
 
 
 class Gaussian(AbstractApodization):
