@@ -2,6 +2,7 @@
 """The Event class."""
 from sys import modules
 from typing import List
+from typing import Union
 
 import csdmpy as cp
 from pydantic import BaseModel
@@ -134,7 +135,7 @@ class IFFT(AbstractOperation):
     >>> operation2 = sp.IFFT(dim_indx=0)
     """
 
-    dim_indx: int = 0
+    dim_indx: Union[int, list, tuple] = 0
 
     def operate(self, data):
         """Applies the operation for which the class is named for.
@@ -142,7 +143,13 @@ class IFFT(AbstractOperation):
         Args:
             data: CSDM object
         """
-        return data.fft(axis=self.dim_indx)
+        dim_index = self.dim_indx
+        if isinstance(dim_index, int):
+            dim_index = [dim_index]
+
+        for i in dim_index:
+            data = data.fft(axis=i)
+        return data
 
 
 class FFT(IFFT):
