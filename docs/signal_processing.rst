@@ -288,18 +288,16 @@ method, as follows
 
     >>> from pprint import pprint
     >>> pprint(processor.to_dict_with_units())
-    {'operations': [{'dim_indx': 0, 'function': 'IFFT'},
-                    {'FWHM': '0.1 km',
+    {'operations': [{'dim_indx': [0, 1], 'function': 'IFFT'},
+                    {'FWHM': '0.5 ms',
                      'dim_indx': 0,
-                     'dv_indx': 0,
                      'function': 'apodization',
                      'type': 'Gaussian'},
-                    {'FWHM': '50.0 m',
-                     'dim_indx': 0,
-                     'dv_indx': 1,
+                    {'FWHM': '10.0 cm / s',
+                     'dim_indx': 1,
                      'function': 'apodization',
                      'type': 'Exponential'},
-                    {'dim_indx': 0, 'function': 'FFT'}]}
+                    {'dim_indx': [0, 1], 'function': 'FFT'}]}
 
 .. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.,
             Core Scientific Dataset Model: A lightweight and portable model and
