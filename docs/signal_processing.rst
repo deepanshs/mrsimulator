@@ -165,8 +165,8 @@ argument to the operation class. Consider the following list of operations.
     >>> processor = sp.SignalProcessor(
     ...     operations=[
     ...         sp.IFFT(),
-    ...         apo.Gaussian(FWHM='0.1 km', dv_indx=0),
-    ...         apo.Exponential(FWHM='50 m', dv_indx=1),
+    ...         apo.Gaussian(FWHM='0.1 km', dv_index=0),
+    ...         apo.Exponential(FWHM='50 m', dv_index=1),
     ...         sp.FFT(),
     ...     ]
     ... )
@@ -251,10 +251,10 @@ operations
 
     >>> processor = sp.SignalProcessor(
     ...     operations=[
-    ...         sp.IFFT(dim_indx=(0, 1)),
-    ...         apo.Gaussian(FWHM='0.5 ms', dim_indx=0),
-    ...         apo.Exponential(FWHM='10 cm/s', dim_indx=1),
-    ...         sp.FFT(dim_indx=(0, 1)),
+    ...         sp.IFFT(dim_index=(0, 1)),
+    ...         apo.Gaussian(FWHM='0.5 ms', dim_index=0),
+    ...         apo.Exponential(FWHM='10 cm/s', dim_index=1),
+    ...         sp.FFT(dim_index=(0, 1)),
     ...     ]
     ... )
     >>> processed_data = processor.apply_operations(data=csdm_data)
@@ -288,16 +288,16 @@ method, as follows
 
     >>> from pprint import pprint
     >>> pprint(processor.to_dict_with_units())
-    {'operations': [{'dim_indx': [0, 1], 'function': 'IFFT'},
+    {'operations': [{'dim_index': [0, 1], 'function': 'IFFT'},
                     {'FWHM': '0.5 ms',
-                     'dim_indx': 0,
+                     'dim_index': 0,
                      'function': 'apodization',
                      'type': 'Gaussian'},
                     {'FWHM': '10.0 cm / s',
-                     'dim_indx': 1,
+                     'dim_index': 1,
                      'function': 'apodization',
                      'type': 'Exponential'},
-                    {'dim_indx': [0, 1], 'function': 'FFT'}]}
+                    {'dim_index': [0, 1], 'function': 'FFT'}]}
 
 .. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.,
             Core Scientific Dataset Model: A lightweight and portable model and

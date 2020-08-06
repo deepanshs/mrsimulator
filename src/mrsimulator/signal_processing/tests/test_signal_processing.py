@@ -10,7 +10,7 @@ def test_01():
     post_sim = sp.SignalProcessor()
     operations = [
         sp.IFFT(),
-        apo.Gaussian(FWHM="12 K", dim_indx=0, dv_indx=0),
+        apo.Gaussian(FWHM="12 K", dim_index=0, dv_index=0),
         sp.FFT(),
     ]
 
@@ -27,15 +27,15 @@ def test_01():
     dict_ = post_sim.to_dict_with_units()
     assert dict_ == {
         "operations": [
-            {"dim_indx": 0, "function": "IFFT"},
+            {"dim_index": 0, "function": "IFFT"},
             {
                 "function": "apodization",
                 "type": "Gaussian",
                 "FWHM": "12.0 K",
-                "dim_indx": 0,
-                "dv_indx": 0,
+                "dim_index": 0,
+                "dv_index": 0,
             },
-            {"dim_indx": 0, "function": "FFT"},
+            {"dim_index": 0, "function": "FFT"},
         ],
     }
 

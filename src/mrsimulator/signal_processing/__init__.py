@@ -127,15 +127,15 @@ class IFFT(AbstractOperation):
     Apply an inverse Fourier transform on all dependent variables of the CSDM object.
 
     Args:
-        int dim_indx: Dimension index along which the function is applied.
+        int dim_index: Dimension index along which the function is applied.
 
     Example
     -------
 
-    >>> operation2 = sp.IFFT(dim_indx=0)
+    >>> operation2 = sp.IFFT(dim_index=0)
     """
 
-    dim_indx: Union[int, list, tuple] = 0
+    dim_index: Union[int, list, tuple] = 0
 
     def operate(self, data):
         """Applies the operation for which the class is named for.
@@ -143,7 +143,7 @@ class IFFT(AbstractOperation):
         Args:
             data: CSDM object
         """
-        dim_index = self.dim_indx
+        dim_index = self.dim_index
         if isinstance(dim_index, int):
             dim_index = [dim_index]
 
@@ -157,12 +157,12 @@ class FFT(IFFT):
     Apply a forward Fourier transform on all dependent variables of the CSDM object.
 
     Args:
-        int dim_indx: Dimension index along which the function is applied.
+        int dim_index: Dimension index along which the function is applied.
 
     Example
     -------
 
-    >>> operation3 = sp.FFT(dim_indx=0)
+    >>> operation3 = sp.FFT(dim_index=0)
     """
 
     pass

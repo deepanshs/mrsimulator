@@ -33,9 +33,9 @@ def test_02():
 def test_03():
     # post_sim_LMFIT_params
     op_list = [
-        sp.IFFT(dim_indx=0),
-        apo.Exponential(FWHM=100, dim_indx=0, dv_indx=0),
-        sp.FFT(dim_indx=0),
+        sp.IFFT(dim_index=0),
+        apo.Exponential(FWHM=100, dim_index=0, dv_index=0),
+        sp.FFT(dim_index=0),
         sp.Scale(factor=10),
     ]
     post_sim = sp.SignalProcessor(data=None, operations=op_list)
@@ -51,9 +51,9 @@ def test_03():
 def test_04():
     # update_post_sim_from_LMFIT_params
     op_list = [
-        sp.IFFT(dim_indx=0),
-        apo.Exponential(FWHM=100, dim_indx=0, dv_indx=0),
-        sp.FFT(dim_indx=0),
+        sp.IFFT(dim_index=0),
+        apo.Exponential(FWHM=100, dim_index=0, dv_index=0),
+        sp.FFT(dim_index=0),
         sp.Scale(factor=10),
     ]
     post_sim = sp.SignalProcessor(data=None, operations=op_list)
@@ -83,9 +83,9 @@ def test_5():
     sim.spin_systems += [system_object]
 
     op_list = [
-        sp.IFFT(dim_indx=0),
-        apo.Exponential(FWHM=100, dim_indx=0, dv_indx=0),
-        sp.FFT(dim_indx=0),
+        sp.IFFT(dim_index=0),
+        apo.Exponential(FWHM=100, dim_index=0, dv_index=0),
+        sp.FFT(dim_index=0),
         sp.Scale(factor=10),
     ]
     post_sim = sp.SignalProcessor(data=None, operations=op_list)
