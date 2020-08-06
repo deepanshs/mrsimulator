@@ -95,7 +95,7 @@ static inline void sSOT_1st_order_nuclear_shielding_tensor_components(
   R_2_[4] = -omega_0_zeta_sigma_in_Hz;  // R2 0 real
   R_2_[8] = temp;                       // R2 2 real
 
-  if (Theta[0] != 0.0 && Theta[1] != 0.0 && Theta[2] != 0.0) {
+  if (Theta[0] != 0.0 || Theta[1] != 0.0 || Theta[2] != 0.0) {
     single_wigner_rotation(2, Theta, R_2, R_2);
   }
 }
@@ -167,7 +167,7 @@ static inline void sSOT_1st_order_electric_quadrupole_tensor_components(
   R_2_[4] = 0.4082482905 * vq;  // R2 0 real
   R_2_[8] = temp;               // R2 2 real
 
-  if (Theta[0] != 0.0 && Theta[1] != 0.0 && Theta[2] != 0.0) {
+  if (Theta[0] != 0.0 || Theta[1] != 0.0 || Theta[2] != 0.0) {
     single_wigner_rotation(2, Theta, R_2, R_2);
   }
 }
@@ -292,7 +292,7 @@ static inline void sSOT_2nd_order_electric_quadrupole_tensor_components(
   R_2_[4] = temp2;  // R2 0 real
   R_2_[8] = temp;   // R2 2 real
 
-  if (Theta[0] != 0.0 && Theta[1] != 0.0 && Theta[2] != 0.0) {
+  if (Theta[0] != 0.0 || Theta[1] != 0.0 || Theta[2] != 0.0) {
     single_wigner_rotation(2, Theta, R_2, R_2);
   }
 
@@ -310,7 +310,7 @@ static inline void sSOT_2nd_order_electric_quadrupole_tensor_components(
   R_4_[12] = temp2;  // R4 2 real
   R_4_[16] = temp;   // R4 4 real
 
-  if (Theta[0] != 0.0 && Theta[1] != 0.0 && Theta[2] != 0.0) {
+  if (Theta[0] != 0.0 || Theta[1] != 0.0 || Theta[2] != 0.0) {
     single_wigner_rotation(4, Theta, R_4, R_4);
   }
 }
