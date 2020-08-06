@@ -15,8 +15,8 @@ __email__ = "maxvenetos@gmail.com"
 
 
 class AbstractApodization(AbstractOperation):
-    dim_indx: Union[int, list, tuple] = 0
-    dv_indx: Union[int, list, tuple] = None  # if none apply to all
+    dim_index: Union[int, list, tuple] = 0
+    dv_index: Union[int, list, tuple] = None  # if none apply to all
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
@@ -59,7 +59,7 @@ class AbstractApodization(AbstractOperation):
         dims = data.dimensions
         ndim = len(dims)
 
-        dim_index = self.dim_indx
+        dim_index = self.dim_index
         if isinstance(dim_index, int):
             dim_index = [dim_index]
 
@@ -74,7 +74,7 @@ class AbstractApodization(AbstractOperation):
             )
 
             n = len(data.dependent_variables)
-            dv_indexes = self._get_dv_indexes(self.dv_indx, n=n)
+            dv_indexes = self._get_dv_indexes(self.dv_index, n=n)
 
             for i in dv_indexes:
                 data.dependent_variables[i].components *= apodization_vactor
@@ -121,9 +121,9 @@ class Gaussian(AbstractApodization):
         str FWHM: The full width at half maximum, FWHM, of the reciprocal domain
             Gaussian function, given as a string with a value and a unit. The default
             value is 0.
-        int dim_indx: The index of the CSDM dimension along which the operation is
+        int dim_index: The index of the CSDM dimension along which the operation is
             applied. The default is the dimension at index 0.
-        int dv_indx: The index of the CSDM dependent variable where the operation is
+        int dv_index: The index of the CSDM dependent variable where the operation is
             applied. If the value is None, the operation will be applied to every
             dependent variable.
 
@@ -131,7 +131,7 @@ class Gaussian(AbstractApodization):
     -------
 
     >>> import mrsimulator.signal_processing.apodization as apo
-    >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_indx=0, dv_indx=0)
+    >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
     """
 
     FWHM: Union[float, str] = 0
@@ -181,16 +181,16 @@ class Exponential(AbstractApodization):
         str FWHM: The full width at half maximum, FWHM, of the reciprocal domain
             Lorentzian function given as a string with a value and a unit. The default
             value is 0.
-        int dim_indx: The index of the CSDM dimension along which the operation is
+        int dim_index: The index of the CSDM dimension along which the operation is
             applied. The default is the dimension at index 0.
-        int dv_indx: The index of the CSDM dependent variable where the operation is
+        int dv_index: The index of the CSDM dependent variable where the operation is
             applied. If the value is None, the operation will be applied to every
             dependent variable.
 
     Example
     -------
 
-    >>> operation5 = apo.Exponential(FWHM='143.4 m', dim_indx=0, dv_indx=0)
+    >>> operation5 = apo.Exponential(FWHM='143.4 m', dim_index=0, dv_index=0)
     """
 
     FWHM: Union[float, str] = 0
@@ -229,15 +229,15 @@ class Exponential(AbstractApodization):
 #     the width parameter.
 
 #     Args:
-#         int dim_indx: Data dimension index to apply the function along.
+#         int dim_index: Data dimension index to apply the function along.
 #         float FWHM: The full width at half maximum parameter, :math:`\Tau`.
-#         int dv_indx: Data dependent variable index to apply the function to. If
+#         int dv_index: Data dependent variable index to apply the function to. If
 #             the type None, the operation will be applied to every dependent variable.
 
 #     Example
 #     -------
 
-#     >>> operation5 = apo.Exponential(FWHM=143.4, dim_indx=0, dv_indx=0)
+#     >>> operation5 = apo.Exponential(FWHM=143.4, dim_index=0, dv_index=0)
 #     """
 
 #     FWHM: float = 0
