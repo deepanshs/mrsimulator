@@ -27,22 +27,22 @@ method_1 = BlochDecaySpectrum(
 PS_0 = [sp.Scale(factor=10)]
 
 PS_1 = [
-    sp.IFFT(dim_indx=0),
-    apo.Exponential(FWHM="200 Hz", dim_indx=0, dv_indx=0),
-    sp.FFT(dim_indx=0),
+    sp.IFFT(dim_index=0),
+    apo.Exponential(FWHM="200 Hz", dim_index=0, dv_index=0),
+    sp.FFT(dim_index=0),
 ]
 
 sigma = 20 * 2.354820045030949
 PS_2 = [
-    sp.IFFT(dim_indx=0),
-    apo.Gaussian(FWHM=f"{sigma} Hz", dim_indx=0, dv_indx=[0, 1]),
-    sp.FFT(dim_indx=0),
+    sp.IFFT(dim_index=0),
+    apo.Gaussian(FWHM=f"{sigma} Hz", dim_index=0, dv_index=[0, 1]),
+    sp.FFT(dim_index=0),
 ]
 
 PS_3 = [
-    sp.IFFT(dim_indx=0),
-    apo.Gaussian(FWHM=f"{sigma} Hz", dim_indx=0, dv_indx=None),
-    sp.FFT(dim_indx=0),
+    sp.IFFT(dim_index=0),
+    apo.Gaussian(FWHM=f"{sigma} Hz", dim_index=0, dv_index=None),
+    sp.FFT(dim_index=0),
 ]
 
 sim.methods += [method_1]
@@ -91,7 +91,7 @@ def test_Gaussian():
         test / test.max(), y0 / y0.max(), atol=1e-04
     ), "Gaussian apodization amplitude failed"
 
-    # test None for dv_indx
+    # test None for dv_index
     post_sim = sp.SignalProcessor(operations=PS_3)
     data = post_sim.apply_operations(data=sim.methods[0].simulation)
     _, y0, y1, y2 = data.to_list()
@@ -129,12 +129,12 @@ def test_scale_class():
 
 def test_Exponential_class():
     # direct initialization
-    a = apo.Exponential(FWHM="200 s", dim_indx=0, dv_indx=0)
+    a = apo.Exponential(FWHM="200 s", dim_index=0, dv_index=0)
 
     assert a.FWHM == 200
     assert a.property_units == {"FWHM": "s"}
-    assert a.dim_indx == 0
-    assert a.dv_indx == 0
+    assert a.dim_index == 0
+    assert a.dv_index == 0
 
     # class to dict with units
     dict_ = a.to_dict_with_units()
@@ -143,8 +143,8 @@ def test_Exponential_class():
         "function": "apodization",
         "type": "Exponential",
         "FWHM": "200.0 s",
-        "dim_indx": 0,
-        "dv_indx": 0,
+        "dim_index": 0,
+        "dv_index": 0,
     }
 
     # read from dictionary
@@ -155,12 +155,12 @@ def test_Exponential_class():
 
 def test_Gaussian_class():
     # direct initialization
-    a = apo.Gaussian(FWHM="200 km/s", dim_indx=0, dv_indx=0)
+    a = apo.Gaussian(FWHM="200 km/s", dim_index=0, dv_index=0)
 
     assert a.FWHM == 200
     assert a.property_units == {"FWHM": "km / s"}
-    assert a.dim_indx == 0
-    assert a.dv_indx == 0
+    assert a.dim_index == 0
+    assert a.dv_index == 0
 
     # class to dict with units
     dict_ = a.to_dict_with_units()
@@ -169,8 +169,8 @@ def test_Gaussian_class():
         "function": "apodization",
         "type": "Gaussian",
         "FWHM": "200.0 km / s",
-        "dim_indx": 0,
-        "dv_indx": 0,
+        "dim_index": 0,
+        "dv_index": 0,
     }
 
     # read from dictionary

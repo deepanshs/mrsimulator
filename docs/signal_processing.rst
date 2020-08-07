@@ -46,8 +46,8 @@ operation.
 In the ``mrsimulator`` library, all signal processing operations are accessed through the
 `signal_processing` module. Within the module is the `apodization` sub-module. An
 apodization is a point-wise multiplication operation of the input signal with the
-apodizing vector. See :ref:`operations_api` documentation for a complete
-list of operations.
+apodizing vector. See :ref:`operations_api` documentation for a complete list of
+operations.
 
 Import the module and sub-module as
 
@@ -60,7 +60,7 @@ Import the module and sub-module as
     >>> import mrsimulator.signal_processing.apodization as apo
 
 Convolution
-'''''''''''
+-----------
 
 The convolution theorem states that under suitable conditions, the Fourier transform of a
 convolution of two signals is the pointwise product (apodization) of their Fourier transforms.
@@ -165,8 +165,8 @@ argument to the operation class. Consider the following list of operations.
     >>> processor = sp.SignalProcessor(
     ...     operations=[
     ...         sp.IFFT(),
-    ...         apo.Gaussian(FWHM='0.1 km', dv_indx=0),
-    ...         apo.Exponential(FWHM='50 m', dv_indx=1),
+    ...         apo.Gaussian(FWHM='0.1 km', dv_index=0),
+    ...         apo.Exponential(FWHM='50 m', dv_index=1),
     ...         sp.FFT(),
     ...     ]
     ... )
@@ -199,7 +199,7 @@ As before, apply the operations with the
 
     >>> processed_data = processor.apply_operations(data=csdm_object)
 
-The plot of the processed spectrum is shown below.
+The plot of the dataset before and after signal processing is shown below.
 
 .. plot::
     :format: doctest
@@ -220,6 +220,63 @@ The plot of the processed spectrum is shown below.
     Gaussian and Lorentzian convolution applied to two different dependent variables of the
     CSDM object.
 
+
+Convolution along multiple dimensions
+'''''''''''''''''''''''''''''''''''''
+
+In the case of multi-dimensional datasets, besides the dependent-variable index, you may
+also specify a dimension index along which a particular operation will apply. For example,
+consider the following 2D datasets as a CSDM object,
+
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
+
+    >>> # Add a dependent variable to the test CSDM object.
+    >>> test_data = np.zeros(600).reshape(30, 20)
+    >>> test_data[15, 10] = 1
+    >>> dv = cp.as_dependent_variable(test_data)
+    >>> dim1 = cp.LinearDimension(count=20, increment='0.1 ms', coordinates_offset='-1 ms', label='t1')
+    >>> dim2 = cp.LinearDimension(count=30, increment='1 cm/s', label='s1')
+    >>> csdm_data = cp.CSDM(dependent_variables=[dv], dimensions=[dim1, dim2])
+
+where ``csdm_data`` is a two-dimensional dataset. Now consider the following signal processing
+operations
+
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
+
+    >>> processor = sp.SignalProcessor(
+    ...     operations=[
+    ...         sp.IFFT(dim_index=(0, 1)),
+    ...         apo.Gaussian(FWHM='0.5 ms', dim_index=0),
+    ...         apo.Exponential(FWHM='10 cm/s', dim_index=1),
+    ...         sp.FFT(dim_index=(0, 1)),
+    ...     ]
+    ... )
+    >>> processed_data = processor.apply_operations(data=csdm_data)
+
+The above set of operations first performs an inverse FFT on the dataset along the dimension
+index 0 and 1. The second and third operations apply a Gaussian and Lorentzian apodization
+along dimensions 0 and 1, respectively. The last operation is a forward Fourier transform.
+The before and after plots of the datasets are shown below.
+
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
+
+    >>> _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"}) # doctest: +SKIP
+    >>> ax[0].imshow(csdm_data, aspect='auto') # doctest: +SKIP
+    >>> ax[0].set_title('Before') # doctest: +SKIP
+    >>> ax[1].imshow(processed_data.real, aspect='auto') # doctest: +SKIP
+    >>> ax[1].set_title('After') # doctest: +SKIP
+    >>> plt.tight_layout() # doctest: +SKIP
+    >>> plt.show() # doctest: +SKIP
+
 Serializing the operations list
 -------------------------------
 
@@ -231,18 +288,16 @@ method, as follows
 
     >>> from pprint import pprint
     >>> pprint(processor.to_dict_with_units())
-    {'operations': [{'dim_indx': 0, 'function': 'IFFT'},
-                    {'FWHM': '0.1 km',
-                     'dim_indx': 0,
-                     'dv_indx': 0,
+    {'operations': [{'dim_index': [0, 1], 'function': 'IFFT'},
+                    {'FWHM': '0.5 ms',
+                     'dim_index': 0,
                      'function': 'apodization',
                      'type': 'Gaussian'},
-                    {'FWHM': '50.0 m',
-                     'dim_indx': 0,
-                     'dv_indx': 1,
+                    {'FWHM': '10.0 cm / s',
+                     'dim_index': 1,
                      'function': 'apodization',
                      'type': 'Exponential'},
-                    {'dim_indx': 0, 'function': 'FFT'}]}
+                    {'dim_index': [0, 1], 'function': 'FFT'}]}
 
 .. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.,
             Core Scientific Dataset Model: A lightweight and portable model and
