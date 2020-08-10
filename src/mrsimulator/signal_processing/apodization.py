@@ -15,8 +15,8 @@ __email__ = "maxvenetos@gmail.com"
 
 
 class AbstractApodization(AbstractOperation):
-    dim_indx: int = 0
-    dv_indx: Union[int, list, tuple] = None  # if none apply to all
+    dim_index: Union[int, list, tuple] = 0
+    dv_index: Union[int, list, tuple] = None  # if none apply to all
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
@@ -56,29 +56,49 @@ class AbstractApodization(AbstractOperation):
             prop_name: The argument name for the function fn.
             prop_value: The argument value for the function fn.
         """
-        x = data.dimensions[self.dim_indx].coordinates
+        dims = data.dimensions
+        ndim = len(dims)
 
-        unit = 1 / string_to_quantity(self.property_units[prop_name]).unit
-        x = x.to(unit)
-        x_value = x.value
+        dim_index = self.dim_index
+        if isinstance(dim_index, int):
+            dim_index = [dim_index]
 
-        apodization_vactor = fn(x_value, prop_value)
+        for dim_index_ in dim_index:
+            x = dims[dim_index_].coordinates
+            unit = 1 / self.property_units[prop_name]
+            x = x.to(unit)
+            x_value = x.value
 
-        n = len(data.dependent_variables)
-        dv_indexes = self._get_dv_indexes(self.dv_indx, n=n)
+            apodization_vactor = _get_broadcast_shape(
+                fn(x_value, prop_value), dim_index_, ndim
+            )
 
-        for i in dv_indexes:
-            data.dependent_variables[i].components[0] *= apodization_vactor
+            n = len(data.dependent_variables)
+            dv_indexes = self._get_dv_indexes(self.dv_index, n=n)
+
+            for i in dv_indexes:
+                data.dependent_variables[i].components *= apodization_vactor
         return data
 
 
 def _str_to_quantity(v, values):
     if isinstance(v, str):
         quantity = string_to_quantity(v)
-        values["property_units"] = {"FWHM": str(quantity.unit)}
+        values["property_units"] = {"FWHM": quantity.unit}
         return quantity.value
     if isinstance(v, float):
         return v
+
+
+def _get_broadcast_shape(array, dim, ndim):
+    """Return the broadcast shape of a vector `array` at dimension `dim` for `ndim`
+    total dimensions. """
+    none = [None for _ in range(ndim + 1)]
+    if isinstance(dim, int):
+        dim = [dim]
+    for dim_ in dim:
+        none[-dim_ - 1] = slice(None, None, None)
+    return array[tuple(none)]
 
 
 class Gaussian(AbstractApodization):
@@ -101,9 +121,9 @@ class Gaussian(AbstractApodization):
         str FWHM: The full width at half maximum, FWHM, of the reciprocal domain
             Gaussian function, given as a string with a value and a unit. The default
             value is 0.
-        int dim_indx: The index of the CSDM dimension along which the operation is
+        int dim_index: The index of the CSDM dimension along which the operation is
             applied. The default is the dimension at index 0.
-        int dv_indx: The index of the CSDM dependent variable where the operation is
+        int dv_index: The index of the CSDM dependent variable where the operation is
             applied. If the value is None, the operation will be applied to every
             dependent variable.
 
@@ -111,7 +131,7 @@ class Gaussian(AbstractApodization):
     -------
 
     >>> import mrsimulator.signal_processing.apodization as apo
-    >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_indx=0, dv_indx=0)
+    >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
     """
 
     FWHM: Union[float, str] = 0
@@ -161,16 +181,16 @@ class Exponential(AbstractApodization):
         str FWHM: The full width at half maximum, FWHM, of the reciprocal domain
             Lorentzian function given as a string with a value and a unit. The default
             value is 0.
-        int dim_indx: The index of the CSDM dimension along which the operation is
+        int dim_index: The index of the CSDM dimension along which the operation is
             applied. The default is the dimension at index 0.
-        int dv_indx: The index of the CSDM dependent variable where the operation is
+        int dv_index: The index of the CSDM dependent variable where the operation is
             applied. If the value is None, the operation will be applied to every
             dependent variable.
 
     Example
     -------
 
-    >>> operation5 = apo.Exponential(FWHM='143.4 m', dim_indx=0, dv_indx=0)
+    >>> operation5 = apo.Exponential(FWHM='143.4 m', dim_index=0, dv_index=0)
     """
 
     FWHM: Union[float, str] = 0
@@ -209,15 +229,15 @@ class Exponential(AbstractApodization):
 #     the width parameter.
 
 #     Args:
-#         int dim_indx: Data dimension index to apply the function along.
+#         int dim_index: Data dimension index to apply the function along.
 #         float FWHM: The full width at half maximum parameter, :math:`\Tau`.
-#         int dv_indx: Data dependent variable index to apply the function to. If
+#         int dv_index: Data dependent variable index to apply the function to. If
 #             the type None, the operation will be applied to every dependent variable.
 
 #     Example
 #     -------
 
-#     >>> operation5 = apo.Exponential(FWHM=143.4, dim_indx=0, dv_indx=0)
+#     >>> operation5 = apo.Exponential(FWHM=143.4, dim_index=0, dv_index=0)
 #     """
 
 #     FWHM: float = 0

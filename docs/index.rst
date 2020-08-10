@@ -188,15 +188,15 @@ Models
     model/czjzek
     api_py/models/czjzek
 
-Benchmark and Examples
-----------------------
+Examples and Benchmarks
+-----------------------
 
 .. toctree::
     :maxdepth: 2
     :caption: Examples and Benchmarks
 
-    benchmark
     auto_examples/index
+    benchmark
 
 Theory
 ------

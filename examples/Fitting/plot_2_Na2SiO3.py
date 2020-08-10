@@ -95,7 +95,7 @@ system_object = [SpinSystem(sites=[s], abundance=50) for s in [O17_1, O17_2]]
 # the spectral/spectroscopic dimension. In the following example, we set up a central
 # transition selective Bloch decay spectrum method, where we obtain the
 # spectral/spectroscopic information from the metadata of the CSDM dimension. Use the
-# :func:`~mrsimulator.method.get_spectral_dimensions` utility function for quick
+# :func:`~mrsimulator.utils.get_spectral_dimensions` utility function for quick
 # extraction of the spectroscopic information, `i.e.`, count, spectral_width, and
 # reference_offset from the CSDM object. The remaining attribute values are set to the
 # experimental conditions.

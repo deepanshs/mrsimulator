@@ -290,6 +290,7 @@ You may optionally customize the plot using matplotlib methods.
     :context: close-figs
     :include-source:
 
+    >>> import matplotlib.pyplot as plt
     >>> plt.figure(figsize=(6, 3.5)) # set the figure size # doctest: +SKIP
     >>> ax = plt.subplot(projection='csdm') # doctest: +SKIP
     >>> ax.plot(data_0) # doctest: +SKIP

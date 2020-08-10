@@ -88,9 +88,9 @@ def get_data(filename):
     if test_data_object["quantity"] == "time":
         if periodic:
             data_source = fftshift(fft(data_source)).real
-        # else:
-        #     data_source[0] /= 2.0
-        #     data_source = fftshift(fft(data_source)).real
+        else:
+            data_source[0] /= 2.0
+            data_source = fftshift(fft(data_source)).real
 
     data_source /= data_source.max()
 
@@ -101,7 +101,7 @@ def get_data(filename):
     return data_object, data_source
 
 
-def c_setup(data_object, data_source):
+def c_setup(data_object, data_source, integration_volume="octant"):
     # mrsimulator
     methods = [Method.parse_dict_with_units(_) for _ in data_object["methods"]]
 
@@ -115,6 +115,7 @@ def c_setup(data_object, data_source):
     s1.spin_systems[0].description = "test description"
     s1.config.integration_density = 120
     s1.config.number_of_sidebands = 90
+    s1.config.integration_volume = integration_volume
     s1.run()
     data_mrsimulator = np.asarray(s1.methods[0].simulation.to_list()[1:])
     data_mrsimulator = data_mrsimulator.sum(axis=0)
@@ -159,20 +160,16 @@ def c_setup_random_euler_angles(data_object, data_source, group):
 
 # --------------------------------------------------------------------------- #
 # Test against simpson calculations
-path_for_simpson_test_shielding = path.join(
-    "tests", "simpson_simulated_lineshapes", "shielding"
-)
 
 
-def test_shielding_simulation_against_simpson():
+def test_pure_shielding_sideband_simulation_against_simpson():
     error_message = (
         "failed to compare shielding lineshape with simpson simulation from file"
     )
+    path_ = path.join("tests", "simpson_simulated_lineshapes", "shielding")
     for i in range(8):
         message = f"{error_message} test0{i}.json"
-        filename = path.join(
-            path_for_simpson_test_shielding, f"test{i:02d}", f"test{i:02d}.json"
-        )
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
 
         error_message = (
             f"failed to compare shielding simulation with file test0{i}.json"
@@ -195,20 +192,16 @@ def test_shielding_simulation_against_simpson():
 # --------------------------------------------------------------------------- #
 # Test against brute-force NMR calculation where lineshapes
 # are averaged over a billion orientations.
-path_for_python_test_shielding = path.join(
-    "tests", "python_brute_force_lineshapes", "shielding"
-)
 
 
-def test_shielding_against_brute_force_lineshape_simulation():
+def test_pure_shielding_static_simulation_against_brute_force_lineshapes():
     error_message = (
         "failed to compare shielding lineshape with brute force simulation from file"
     )
+    path_ = path.join("tests", "python_brute_force_lineshapes", "shielding")
     for i in range(5):
         message = f"{error_message} test0{i}.json"
-        filename = path.join(
-            path_for_python_test_shielding, f"test{i:02d}", f"test{i:02d}.json"
-        )
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
 
         # euler angle all zero
         data_mrsimulator, data_source = c_setup(*get_data(filename))
@@ -225,21 +218,14 @@ def test_shielding_against_brute_force_lineshape_simulation():
         )
 
 
-# Test pure quadrupole lineshape simulation
-path_for_quad_test_mrsimulator = path.join(
-    "tests", "python_brute_force_lineshapes", "quad"
-)
-
-
 def test_pure_quadrupolar_lineshapes():
     error_message = (
         "failed to compare quadrupolar lineshape simulation with data from file"
     )
+    path_ = path.join("tests", "python_brute_force_lineshapes", "quad")
     for i in range(19):
         message = f"{error_message} test0{i:02d}.json"
-        filename = path.join(
-            path_for_quad_test_mrsimulator, f"test{i:02d}", f"test{i:02d}.json"
-        )
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         data_mrsimulator, data_source = c_setup(*get_data(filename))
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=2, err_msg=message
@@ -248,6 +234,38 @@ def test_pure_quadrupolar_lineshapes():
         # random euler angle. Euler angles should not affect the spectrum.
         data_mrsimulator, data_source = c_setup_random_euler_angles(
             *get_data(filename), "quadrupolar"
+        )
+        np.testing.assert_almost_equal(
+            data_mrsimulator, data_source, decimal=1, err_msg=message
+        )
+
+
+def test_pure_quadrupolar_simpson_sidebands():
+    error_message = (
+        "failed to compare quadrupolar lineshape simulation with data from file"
+    )
+    path_ = path.join("tests", "simpson_simulated_lineshapes", "quad_sidebands")
+    for i in range(2):
+        message = f"{error_message} test0{i:02d}.json"
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+        data_mrsimulator, data_source = c_setup(
+            *get_data(filename), integration_volume="hemisphere"
+        )
+        np.testing.assert_almost_equal(
+            data_mrsimulator, data_source, decimal=1, err_msg=message
+        )
+
+
+def test_csa_plus_quadrupolar_simpson_lineshapes():
+    error_message = (
+        "failed to compare quadrupolar lineshape simulation with data from file"
+    )
+    path_ = path.join("tests", "simpson_simulated_lineshapes", "quad")
+    for i in range(6):
+        message = f"{error_message} test0{i:02d}.json"
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+        data_mrsimulator, data_source = c_setup(
+            *get_data(filename), integration_volume="hemisphere"
         )
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=1, err_msg=message
