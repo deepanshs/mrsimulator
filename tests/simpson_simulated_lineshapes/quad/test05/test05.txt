@@ -2,13 +2,13 @@ spinsys {
   channels 17O
   nuclei 17O
   shift 1 0p 50p 0.1 0 0 0
-  quadrupole 1 2 1.5e6 0.5 0 0 0
+  quadrupole 1 2 1.5e6 0.5 0 70 0
 }
 
 par {
   crystal_file     zcw28656
   variable rf      37500
-  variable tsw     20
+  variable tsw     10
 
   sw               1e6/tsw
   np               1024
