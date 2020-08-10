@@ -1,31 +1,33 @@
 spinsys {
-  channels 87Rb
-  nuclei 87Rb
-  quadrupole 1 0 3.2e6 0.16 0 0 0
+  channels 17O
+  nuclei 17O
+  shift 1 0p 50p 0.1 45 50 120
+  quadrupole 1 2 1.5e6 0.5 0 0 0
 }
 
 par {
-  crystal_file     zcw4180
-  variable dw      0.25
+  crystal_file     zcw28656
+  variable rf      37500
+  variable tsw     10
 
-  sw               1e6/dw
-  np               2000
+  sw               1e6/tsw
+  np               1024
   proton_frequency 400e6
-  start_operator   I1z
+  start_operator   I1x
+  detect_operator  I1c
   method           direct
   gamma_angles     1
   spin_rate        0
   verbose          1101
-
-  variable rf      1137500
 }
 
 proc pulseq {} {
   global par
-  matrix set detect elements {{1 4}}
+
+  reset
   for {set i 0} {$i < $par(np)} {incr i} {
-    pulse $par(dw) $par(rf) x
     acq
+    delay $par(tsw)
   }
 
 }

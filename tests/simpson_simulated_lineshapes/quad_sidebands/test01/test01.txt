@@ -1,33 +1,30 @@
 spinsys {
   channels 17O
   nuclei 17O
-  shift 1 0p 50p 0.1 0 0 0
-  quadrupole 1 2 1.5e6 0.5 0 0 0
+  quadrupole 1 2 3.1e6 0.5 0 0 0
 }
 
 par {
   crystal_file     zcw28656
-  variable rf      37500
-  variable tsw     20
+  variable dw      40
 
-  sw               1e6/tsw
+  sw               1e6/dw
   np               1024
   proton_frequency 400e6
   start_operator   I1x
   detect_operator  I1c
   method           direct
-  gamma_angles     1
-  spin_rate        0
+  gamma_angles     8
+  spin_rate        2000
   verbose          1101
 }
 
 proc pulseq {} {
   global par
 
-  reset
   for {set i 0} {$i < $par(np)} {incr i} {
     acq
-    delay $par(tsw)
+    delay $par(dw)
   }
 
 }

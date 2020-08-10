@@ -212,10 +212,11 @@ class Method(Parseable):
         return temp_dict
 
     def _get_transition_pathways(self, spin_system):
-        selected_transitions = spin_system._all_transitions()
+        all_transitions = spin_system._all_transitions()
 
         segments = []
         for seq in self.spectral_dimensions:
+            selected_transitions = all_transitions[:]
             for ent in seq.events:
                 list_of_P = query_permutations(
                     ent.transition_query.to_dict_with_units(),
