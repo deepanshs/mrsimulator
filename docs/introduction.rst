@@ -235,73 +235,7 @@ Coupled spin systems
 .. note::
     The current version of the ``mrsimulator`` package does not include coupled
     spin systems. The SpinSystem model for the couplings will be made available when
-    we include the coupled spin systems to the package.
+    we include the coupled spin systems to the package.  The ``mrsimulator`` package
+    will eventually handle coupled spin systems, but only in the weak coupling limit.
 
-
-The ``mrsimulator`` package will eventually handle coupled spin systems, but only in the weak coupling limit.
-
-In the following sub-section, we examine how a spin system is represented by the **SpinSystem** object in mrsimulator. For a detailed
-description of the class attributes, refer to :numref:`table_spin_system` to
-:numref:`table_symmetric_tensor`.
-
-
-
-SpinSystem Collections
-----------------------
-
-More often than not, a NMR spectrum is described by a collection of (non-interacting) 
-spin systems.  Let's illustrate this using the example of isotopomers.  Consider a 
-structural unit, H-C. The most abundant isotopes of H and C are :math:`^1\text{H}`
-(99.985%), :math:`^2\text{H}` (0.015%), and :math:`^{12}\text{C}` (98.93%),
-:math:`^{13}\text{C}` (1.11%), respectively, where we consider only the top two
-most abundant isotopes. From this, we can create four H-C isotopomers, as
-listed in :numref:`isotopomers_list`. Here, each isotopomer consists of two
-isotopes. From an NMR viewpoint, the isotopomers at index 1 and 2, are
-considered as a single-site spin system, because the corresponding isotope of
-carbon, :math:`^{12}\text{C}`, is NMR inactive. The
-isotopomers at index 3 and 4 are two-site spin system with a single coupling.
-Here, the isotopomer abundance is given as the product of the natural abundance of
-the individual isotopes, compositing the isotopomer.
-The observed NMR signal is the sum of the signals arising from individual
-isotopomers, weighted by their respective abundance.
-
-.. cssclass:: table-bordered table-striped centered
-.. _isotopomers_list:
-.. list-table:: Four isotopomers resulting from H-C structural unit.
-   :widths: 15 15 15 15 40
-   :header-rows: 1
-
-   * - Index
-     - Isotopomers
-     - Sites
-     - Coupled pairs
-     - Abundance
-
-   * - 1
-     - 1H - 12C
-     - 1
-     - 0
-     - (99.985% x 98.93%) ~ 98.915%
-
-   * - 2
-     - 2H - 12C
-     - 1
-     - 0
-     - (0.015% x 98.93%) ~ 0.148%
-
-   * - 3
-     - 1H - 13C
-     - 2
-     - 1
-     - (99.985% x 1.11%) ~ 1.11%
-
-   * - 4
-     - 2H - 13C
-     - 2
-     - 1
-     - (0.015% x 1.11%) ~ 0.00016%
-
-In the ``mrsimulator`` library, we consider each isolated
-spin system, where only the NMR active sites may reside within the spin system.
-All NMR inactive sites are ignored. 
 
