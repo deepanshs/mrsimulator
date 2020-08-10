@@ -6,7 +6,9 @@ Introduction to Spin Systems
 ****************************
 
 
-At the heart of any ``mrsimulator`` calculation is the definition of a **SpinSystem** object describing the sites and couplings within a spin system.  We begin by examining the definition of a **Site** object. 
+At the heart of any ``mrsimulator`` calculation is the definition of a **SpinSystem**
+object describing the sites and couplings within a spin system.  We begin by examining
+the definition of a **Site** object.
 
 Site
 ''''
@@ -34,18 +36,21 @@ Consider the example below of the JSON serialization of a **Site** object for a 
 		}
   }
 
-The value of the `isotope` key holds the spin isotope, here given a value of `2H`. 
-The value of the `isotropic_chemical_shift` is the optional :math:`^2\text{H}` isotropic chemical shift, here given as `4.1 ppm`. We have additionally defined an optional `shielding_symmetric`, whose value holds a dictionary with the components of the second-rank traceless symmetric nuclear
+The value of the `isotope` key holds the spin isotope, here given a value of `2H`.
+The value of the `isotropic_chemical_shift` is the optional :math:`^2\text{H}`
+isotropic chemical shift, here given as `4.1 ppm`. We have additionally defined an
+optional `shielding_symmetric`, whose value holds a dictionary with the components
+of the second-rank traceless symmetric nuclear
 shielding tensor. We parameterize this tensor using the Haeberlen convention with
 parameters `zeta` and `eta`, defined as the strength of the anisotropy and asymmetry,
 respectively.  Since deuterium is a quadrupolar nucleus, :math:`I>1/2`, there also can
 be a quadrupolar coupling interaction between the nuclear quadrupole moment and the
-surrounding electric field gradient (EFG) tensor, defined in a dictionary held in the optional 
+surrounding electric field gradient (EFG) tensor, defined in a dictionary held in the optional
 key `quadrupolar`.  An EFG tensor is a second-rank traceless symmetric tensor, and we describe
-the quadrupolar coupling with the parameters `Cq` and `eta`, i.e., the quadrupolar coupling constant 
-and asymmetry parameter, respectively.  Additionally, we see the Euler angle orientations, 
-`alpha`, `beta`, and `gamma`, which are the relative orientation of the EFG tensor from the 
-nuclear shielding tensor. 
+the quadrupolar coupling with the parameters `Cq` and `eta`, i.e., the quadrupolar coupling constant
+and asymmetry parameter, respectively.  Additionally, we see the Euler angle orientations,
+`alpha`, `beta`, and `gamma`, which are the relative orientation of the EFG tensor from the
+nuclear shielding tensor.
 
 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on the **Site** and **SymmetricTensor** objects and their attributes, respectively.
@@ -140,13 +145,15 @@ Table of Site Class Attributes
 SpinSystem
 ''''''''''
 
-As mentioned earlier, the **SpinSystem** object, used in the ``mrsimulator`` package, describes the sites and couplings within a spin system. 
+As mentioned earlier, the **SpinSystem** object, used in the ``mrsimulator`` package,
+describes the sites and couplings within a spin system.
 
 
 Uncoupled spin systems
 ----------------------
 
-Using the previous **Site** object example, we construct a simple single site **SpinSystem** object shown below.
+Using the previous **Site** object example, we construct a simple single site
+**SpinSystem** object shown below.
 
 .. _listing_2H:
 .. code-block:: json
@@ -176,17 +183,17 @@ Using the previous **Site** object example, we construct a simple single site **
       "couplings": [],
       "abundance": "0.148%"
   }
-  
+
 At the root level of the **SpinSystem** object, we find four keywords, **name**,
 **description**, **sites**, and **abundance**. The value of the `name`
 key is the name of the spin system, here given a value of `2H spin system`. The
 value of the description key is an optional string describing the spin system. The
 value of the `sites` key is a list of **Site** objects. Here, this list comprises of a
-single **Site** object (lines 5-19). The value of the `abundance` key is the 
+single **Site** object (lines 5-19). The value of the `abundance` key is the
 abundance of the spin system, here given a value of `0.148%`.
-The value of the `couplings` key is a list 
-of **Coupling** objects. In this example, there are no  couplings, and hence the value of 
-this attribute is an empty list. See :numref:`table_spin_system` for further 
+The value of the `couplings` key is a list
+of **Coupling** objects. In this example, there are no  couplings, and hence the value of
+this attribute is an empty list. See :numref:`table_spin_system` for further
 description of the **SpinSystem** class and its attributes.
 
 
@@ -237,5 +244,3 @@ Coupled spin systems
     spin systems. The SpinSystem model for the couplings will be made available when
     we include the coupled spin systems to the package.  The ``mrsimulator`` package
     will eventually handle coupled spin systems, but only in the weak coupling limit.
-
-

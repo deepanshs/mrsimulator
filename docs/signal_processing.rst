@@ -135,7 +135,7 @@ shown below.
     :context: close-figs
     :include-source:
 
-	>>> import matplotlib.pyplot as plt
+    >>> import matplotlib.pyplot as plt
     >>> _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"}) # doctest: +SKIP
     >>> ax[0].plot(csdm_object, color="black", linewidth=1) # doctest: +SKIP
     >>> ax[0].set_title('Before') # doctest: +SKIP

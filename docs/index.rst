@@ -178,8 +178,8 @@ Signal Processing (``mrsimulator.SignalProcessor``)
 
     signal_processing
 
-Benchmark and Examples
-----------------------
+Examples and Benchmarks
+-----------------------
 
 .. toctree::
     :maxdepth: 2
