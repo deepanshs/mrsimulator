@@ -48,7 +48,7 @@ and asymmetry parameter, respectively.  Additionally, we see the Euler angle ori
 nuclear shielding tensor. 
 
 
-See :numref:`_table_site` and :numref:`table_symmetric_tensor` for further information on the **Site** and **SymmetricTensor** objects and their attributes, respectively.
+See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on the **Site** and **SymmetricTensor** objects and their attributes, respectively.
 
 
 Table of Site Class Attributes
@@ -182,9 +182,9 @@ At the root level of the **SpinSystem** object, we find four keywords, **name**,
 key is the name of the spin system, here given a value of `2H spin system`. The
 value of the description key is an optional string describing the spin system. The
 value of the `sites` key is a list of **Site** objects. Here, this list comprises of a
-single **Site** object (lines 5-12). The value of the `abundance` key is the 
-abundance of the spin system, here given a value of `0.148%` based on the data 
-from :numref:`isotopomers_list`. The value of the `couplings` key is a list 
+single **Site** object (lines 5-19). The value of the `abundance` key is the 
+abundance of the spin system, here given a value of `0.148%`.
+The value of the `couplings` key is a list 
 of **Coupling** objects. In this example, there are no  couplings, and hence the value of 
 this attribute is an empty list. See :numref:`table_spin_system` for further 
 description of the **SpinSystem** class and its attributes.
