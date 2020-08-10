@@ -3,7 +3,7 @@
     "channels": ["17O"],
     "spectral_dimensions": [{
       "count": 1024,
-      "spectral_width": "50 kHz",
+      "spectral_width": "100 kHz",
       "events": [{
         "magnetic_flux_density": "9.4 T",
         "rotor_frequency": "0 kHz",
@@ -33,13 +33,16 @@
       },
       "quadrupolar": {
         "Cq": "1.5 MHz",
-        "eta": 0.5
+        "eta": 0.5,
+        "alpha": "45 deg",
+        "beta": "50 deg",
+        "gamma": "120 deg"
       }
     }]
   }],
   "test_data": {
     "source": "simpson",
-    "filename": "test00.fid",
+    "filename": "test02.fid",
     "quantity": "time",
     "type": "complex",
     "periodic": false
