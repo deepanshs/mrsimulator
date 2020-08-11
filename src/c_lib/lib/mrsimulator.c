@@ -229,7 +229,7 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
  */
 void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                                   MRS_fftw_scheme *fftw_scheme, bool refresh) {
-  unsigned int i;
+  // unsigned int i;
 
   /* If the number of sidebands is 1, the sideband amplitude at every sideband
    * order is one. In this case, update the `fftw_scheme->vector` is the same as

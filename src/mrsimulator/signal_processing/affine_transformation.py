@@ -51,46 +51,6 @@ class AbstractAffineTransformation(AbstractOperation):
         if isinstance(indexes, (list, tuple)):
             return np.asarray(indexes)
 
-    def _operate(self, data, fn, prop_name, prop_value):
-        """A generic operation function.
-
-        Args:
-            data: A CSDM object.
-            fn: The apodization function.
-            prop_name: The argument name for the function fn.
-            prop_value: The argument value for the function fn.
-        """
-        dims = data.dimensions
-        ndim = len(dims)
-
-        if hasattr(dims[self.normal], "subtype"):
-            y = dims[self.normal].subtype._coordinates
-            x = dims[self.dim_index].subtype._coordinates
-        else:
-            y = dims[self.normal]._coordinates
-            x = dims[self.dim_index]._coordinates
-        # y += dims[self.normal].coordinates_offset
-        # print(x, y)
-
-        vector_x = _get_broadcast_shape(x, self.normal, ndim)
-        vector_y = _get_broadcast_shape(y, self.dim_index, ndim)
-
-        xy = vector_x * vector_y
-        unit = 1 / self.property_units[prop_name]
-        xy = xy.to(unit)
-        xy_value = xy.value
-
-        apodization_vector = fn(xy_value, prop_value)
-        # apodization_vector[0] /= 2
-        # apodization_vector[-1] /= 2
-
-        n = len(data.dependent_variables)
-        dv_indexes = self._get_dv_indexes(self.dv_index, n=n)
-
-        for i in dv_indexes:
-            data.dependent_variables[i].components *= apodization_vector
-        return data
-
 
 def _get_broadcast_shape(array, dim, ndim):
     """Return the broadcast shape of a vector `array` at dimension `dim` for `ndim`
@@ -227,7 +187,7 @@ class Scale(AbstractAffineTransformation):
     >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
     """
 
-    factor: float = 0
+    factor: Union[float, str] = 1
     property_units: Dict = {"factor": const}
 
     @validator("factor")

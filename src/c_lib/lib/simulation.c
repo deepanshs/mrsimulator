@@ -53,8 +53,8 @@ void __mrsimulator_core(
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
   bool refresh;
-  unsigned int j, evt, step_vector = 0, address;
-  int i, seq;
+  unsigned int evt;
+  int seq;
   double B0_in_T;
 
   double R0 = 0.0;
@@ -64,7 +64,6 @@ void __mrsimulator_core(
   double R0_temp = 0.0;
   complex128 *R2_temp = malloc_complex128(5);
   complex128 *R4_temp = malloc_complex128(9);
-  double *offset = malloc_double(2);
   double *spec_site_ptr;
   int transition_increment = 2 * ravel_isotopomer->number_of_sites;
   MRS_plan *plan;
@@ -384,7 +383,7 @@ void two_dimensional_averaging(MRS_sequence *the_sequence,
                                MRS_averaging_scheme *scheme,
                                MRS_fftw_scheme *fftw_scheme, double *spec,
                                int number_of_sidebands) {
-  unsigned int i, j, k, m, evt;
+  unsigned int i, j, k, evt;
   unsigned int step_vector_i = 0, step_vector_k = 0, address;
   MRS_plan *plan;
   MRS_event *event;
