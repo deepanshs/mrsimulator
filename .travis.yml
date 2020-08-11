@@ -15,6 +15,10 @@ addons:
     packages:
       - libopenblas-dev
       - libfftw3-dev
+  homebrew:
+    packages:
+      - fftw
+      - openblas
 
 env:
   - PYENV_TYPE=env
@@ -66,8 +70,6 @@ jobs:
 before_install:
   - |
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-      brew install fftw
-
       if [ "$PYENV_TYPE" = "env" ]; then
         brew info pyenv
         eval "$(pyenv init -)"
