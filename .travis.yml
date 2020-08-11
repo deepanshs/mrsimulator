@@ -70,6 +70,8 @@ jobs:
 before_install:
   - |
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      brew install fftw
+
       if [ "$PYENV_TYPE" = "env" ]; then
         brew info pyenv
         eval "$(pyenv init -)"
