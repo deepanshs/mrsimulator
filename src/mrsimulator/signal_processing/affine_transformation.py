@@ -60,8 +60,6 @@ def _get_broadcast_shape(array, dim, ndim):
         dim = [dim]
     for dim_ in dim:
         none[-dim_ - 1] = slice(None, None, None)
-
-    print(none)
     return array[tuple(none)]
 
 
@@ -72,6 +70,34 @@ def _str_to_quantity(v, values, prop_name):
         return quantity.value
     if isinstance(v, float):
         return v
+
+
+def get_coordinates(dim):
+    """Return the coordinates of dimension, dim, without equivalence units"""
+    if hasattr(dim, "subtype"):
+        equivalent_fn = dim.subtype._equivalencies
+        equivalent_unit = dim.subtype._equivalent_unit
+        dim.subtype._equivalencies = None
+        dim.subtype._equivalent_unit = None
+
+        coordinates = dim.coordinates
+
+        dim.subtype._equivalencies = equivalent_fn
+        dim.subtype._equivalent_unit = equivalent_unit
+
+        return coordinates
+
+    equivalent_fn = dim._equivalencies
+    equivalent_unit = dim._equivalent_unit
+    dim._equivalencies = None
+    dim._equivalent_unit = None
+
+    coordinates = dim.coordinates
+
+    dim._equivalencies = equivalent_fn
+    dim._equivalent_unit = equivalent_unit
+
+    return coordinates
 
 
 class Shear(AbstractAffineTransformation):
@@ -125,18 +151,21 @@ class Shear(AbstractAffineTransformation):
         dep_var: int. The index of the dependent variable to apply operation to.
         """
         data = data.fft(axis=self.dim_index)
-
         dims = data.dimensions
         n_dim = len(dims)
 
         x = dims[self.dim_index]
         y = dims[self.normal]
 
-        vector_x = _get_broadcast_shape(x.coordinates.value, self.dim_index, n_dim)
-        vector_y = _get_broadcast_shape(y.coordinates.value, self.normal, n_dim)
+        x_value = get_coordinates(x).value
+        y_value = get_coordinates(y).value
+
+        vector_x = _get_broadcast_shape(x_value, self.dim_index, n_dim)
+        vector_y = _get_broadcast_shape(y_value, self.normal, n_dim)
 
         xy = vector_x * vector_y
         unit = 1 / self.property_units["factor"]
+
         multiplier = unit.to(x.increment.unit * y.increment.unit).value
 
         # apodization by exp(-i 2π w t a), where w is freq, t is time, and

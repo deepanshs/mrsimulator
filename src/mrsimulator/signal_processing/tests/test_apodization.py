@@ -54,7 +54,7 @@ freqHz = sim.methods[0].spectral_dimensions[0].coordinates_Hz()
 
 def test_scale():
     post_sim = sp.SignalProcessor(operations=PS_0)
-    data = post_sim.apply_operations(data=sim.methods[0].simulation)
+    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
     _, y0, y1, y2 = sim.methods[0].simulation.to_list()
     _, y0_, y1_, y2_ = data.to_list()
 
