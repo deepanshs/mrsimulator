@@ -9,14 +9,14 @@
 
 `mrsimulator` is a python package for computing fast solid-state magnetic resonance
 (NMR) spectra. The library is optimized to compute both crystalline and amorphous-like
-materials. The core of the `mrsimulator` library is written in C, wrapped and made
+materials. The core of the `mrsimulator` library is written in C, wrapped, and made
 available in python.
 
 > :warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
 
 ## Why use mrsimulator?
 
-- It is open source and free.
+- It is open-source and free.
 - It is a fast and versatile solid-state NMR simulator of one-dimensional static, MAS,
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
@@ -24,7 +24,7 @@ available in python.
   couplings, and multi-dimensional NMR spectra.
 - It is fully documented with a stable and simple API and is easily incorporated into your
   python scripts and web apps.
-- It is compatible with modern python package, such as scikit-learn, Keras, etc.
+- It is compatible with modern python packages, such as scikit-learn, Keras, etc.
 - Packages using mrsimulator -
   - [mrinversion](https://mrinversion.readthedocs.io/en/latest/)
 
