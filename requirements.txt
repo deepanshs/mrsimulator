@@ -5,3 +5,4 @@ csdmpy>=0.3.2
 pydantic>=1.0
 monty>=2.0.4
 typing-extensions>=3.7
+lmfit==1.0.0

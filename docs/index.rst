@@ -61,6 +61,10 @@ Welcome to the Mrsimulator documentation
             :target: https://github.com/DeepanshS/mrsimulator/issues
             :alt: GitHub issues
 
+      * - Citation
+        - .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3978780.svg
+            :target: https://doi.org/10.5281/zenodo.3978780
+
 .. .. image:: https://img.shields.io/github/commits-since/deepanshs/mrsimulator/v0.2.1?logo=github
 ..   :alt: GitHub commits since tagged version
 
@@ -73,13 +77,13 @@ Welcome to the Mrsimulator documentation
 ``mrsimulator`` is a python package for computing fast solid-state magnetic
 resonance (NMR) spectra. The library is optimized to compute both crystalline and
 amorphous-like materials. The core of the ``mrsimulator`` library is written in C,
-wrapped and made available in python.
+wrapped, and made available in python.
 
 ----
 
 **Why use mrsimulator?**
 
-- It is open source and free.
+- It is open-source and free.
 - It is a fast and versatile solid-state NMR simulator of one-dimensional static, MAS,
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
@@ -87,7 +91,7 @@ wrapped and made available in python.
   couplings, and multi-dimensional NMR spectra.
 - It is fully documented with a stable and simple API and is easily incorporated into your
   python scripts and web apps.
-- It is compatible with modern python package, such as scikit-learn, Keras, etc.
+- It is compatible with modern python packages, such as scikit-learn, Keras, etc.
 - Packages using mrsimulator -
 
   - `mrinversion <https://mrinversion.readthedocs.io/en/latest/>`_
@@ -178,8 +182,8 @@ Signal Processing (``mrsimulator.SignalProcessor``)
 
     signal_processing
 
-Benchmark and Examples
-----------------------
+Examples and Benchmarks
+-----------------------
 
 .. toctree::
     :maxdepth: 2

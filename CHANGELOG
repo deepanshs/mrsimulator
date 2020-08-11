@@ -1,5 +1,5 @@
-Upcoming additions and changes
-------------------------------
+v0.3.0
+------
 
 What's new!
 '''''''''''
@@ -34,6 +34,10 @@ Bug fixes
   angles.
 - Fixed bug causing a change in the spectral area as the sampling points change. Now the
   area is constant.
+- Fixed bug resulting in an incorrect spectrum when non-coincidental quad and shielding
+  tensors are given.
+- Fixed bug causing incorrect generation of transition pathways when multiple events are
+  present.
 
 Other changes
 '''''''''''''
