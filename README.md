@@ -6,17 +6,18 @@
 | Build Status | [![Travis (.org)](https://img.shields.io/travis/deepanshs/mrsimulator?logo=travis)](https://travis-ci.org/github/DeepanshS/mrsimulator) [![GitHub Workflow Status](<https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI%20(pip)?logo=GitHub>)](https://github.com/DeepanshS/mrsimulator/actions) [![Read the Docs](https://img.shields.io/readthedocs/mrsimulator)](https://mrsimulator.readthedocs.io/en/latest/)                                     |
 | License      | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)                                                                                                                                                                                                                                                                                                                                                 |
 | Metrics      | [![Total alerts](https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python) [![codecov](https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/DeepanshS/mrsimulator) |
+| Citation     | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3978780.svg)](https://doi.org/10.5281/zenodo.3978780)                                                                                                                                                                                                                                                                                                                                                                 |
 
 `mrsimulator` is a python package for computing fast solid-state magnetic resonance
 (NMR) spectra. The library is optimized to compute both crystalline and amorphous-like
-materials. The core of the `mrsimulator` library is written in C, wrapped and made
+materials. The core of the `mrsimulator` library is written in C, wrapped, and made
 available in python.
 
 > :warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
 
 ## Why use mrsimulator?
 
-- It is open source and free.
+- It is open-source and free.
 - It is a fast and versatile solid-state NMR simulator of one-dimensional static, MAS,
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
@@ -24,7 +25,7 @@ available in python.
   couplings, and multi-dimensional NMR spectra.
 - It is fully documented with a stable and simple API and is easily incorporated into your
   python scripts and web apps.
-- It is compatible with modern python package, such as scikit-learn, Keras, etc.
+- It is compatible with modern python packages, such as scikit-learn, Keras, etc.
 - Packages using mrsimulator -
   - [mrinversion](https://mrinversion.readthedocs.io/en/latest/)
 
