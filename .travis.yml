@@ -66,12 +66,9 @@ jobs:
 before_install:
   - |
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-      brew update
       brew install fftw
-      brew upgrade openblas
 
       if [ "$PYENV_TYPE" = "env" ]; then
-        brew upgrade pyenv
         brew info pyenv
         eval "$(pyenv init -)"
         pyenv install $PYENV_VERSION
