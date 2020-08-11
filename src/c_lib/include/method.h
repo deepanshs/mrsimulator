@@ -19,7 +19,8 @@ typedef struct MRS_event {
   double sample_rotation_frequency_in_Hz; /**<  The sample rotation frequency in
                                              Hz. */
 
-  MRS_plan *plan; /**< The plan for every event. */
+  MRS_plan *plan;          /**< The plan for every event. */
+  double *freq_amplitude;  // buffer for event amplitude
 } MRS_event;
 
 typedef struct MRS_sequence {
@@ -31,6 +32,9 @@ typedef struct MRS_sequence {
   unsigned int n_events; /**< The number of events. */
 
   /* private attributes */
+  double R0_offset;  // holds the isotropic offset. This is used in determining
+                     // if or not to bin the frequencies, especially for
+                     // sideband order.
   double *local_frequency;  //  buffer for local frequencies.
   double *freq_offset;      //  buffer for local + sideband frequencies.
   double normalize_offset;  // fixed value = 0.5 - coordinate_offset/increment

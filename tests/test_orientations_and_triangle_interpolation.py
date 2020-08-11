@@ -52,6 +52,9 @@ def test_triangle_rasterization():
         [[1.5, 10.9, 1.0], [16.0, 1.2, 2.4]],
         [[1.5, 10.9, 1.6], [15.0, 2.0, 1.0]],
         [[1.5, 2.0, 7.4], [1.5, 2.0, 7.3]],
+        [[1.5, 9.0, 9.4], [1.5, 9.0, 9.4]],
+        [[1.5, 6.0, 9.4], [1.5, 6.0, 9.4]],
+        [[1.5, 1.5, 1.5], [1.5, 6.0, 9.4]],
     ]
     for list_ in f_list:
         lst1, lst2 = np.asarray(list_)
@@ -68,11 +71,27 @@ def test_triangle_rasterization():
 
     # triangles with one or more vertices outside the 2D grids
     f_list2 = [
-        [[5.5, -8.0, 17.4], [4.5, 12.0, 17.3]],
-        [[5.5, 8.0, 27.4], [4.5, 12.0, 17.3]],
-        [[25.5, -8.0, 17.4], [4.5, 12.0, 17.3]],
-        [[25.5, -8.0, 27.4], [4.5, 12.0, 17.3]],
-        [[17.5, -8.0, -27.4], [4.5, 12.0, 3.0]],
+        [[5.5, -8.0, 17.4], [4.5, 12.0, 17.3]],  # one point up
+        [[5.5, 8.0, 27.4], [4.5, 12.0, 17.3]],  # one point down
+        [[25.5, -8.0, 17.4], [4.5, 12.0, 17.3]],  # one point up and down each
+        [[25.5, -8.0, 27.4], [4.5, 12.0, 17.3]],  # two points down
+        [[17.5, -8.0, -27.4], [4.5, 12.0, 3.0]],  # two points up
+    ]
+    for list_ in f_list2:
+        lst1, lst2 = np.asarray(list_)
+        amp1 = np.zeros((20, 20), dtype=np.float64)
+        amp2 = np.zeros(20, dtype=np.float64)
+
+        clib.triangle_interpolation2D(lst1, lst2, amp1)
+        clib.triangle_interpolation(lst1, amp2)
+
+        assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
+
+    # triangles with one or more vertices outside a grid voxel
+    f_list2 = [
+        [[15.0, 15.5, 15.9], [12.0, 12.5, 12.9]],  # all in
+        [[15.0, 15.5, 16.2], [12.0, 12.5, 12.9]],  # one out
+        [[15.0, 15.5, 16.2], [12.0, 12.5, 13.9]],  # one out on each dimension
     ]
     for list_ in f_list2:
         lst1, lst2 = np.asarray(list_)

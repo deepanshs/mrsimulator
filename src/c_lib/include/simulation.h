@@ -55,3 +55,13 @@ extern void __mrsimulator_core(
     float *transition, MRS_sequence *the_sequence, int n_sequence,
     MRS_fftw_scheme *fftw_scheme, MRS_averaging_scheme *scheme,
     bool interpolation);
+
+void one_dimensional_averaging(MRS_sequence *the_sequence,
+                               MRS_averaging_scheme *scheme,
+                               MRS_fftw_scheme *fftw_scheme, double *spec,
+                               int number_of_sidebands);
+
+void two_dimensional_averaging(MRS_sequence *the_sequence,
+                               MRS_averaging_scheme *scheme,
+                               MRS_fftw_scheme *fftw_scheme, double *spec,
+                               int number_of_sidebands);

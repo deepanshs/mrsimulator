@@ -235,6 +235,9 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
                                  &area_down_triangle, &spec[p * m1], &m1);
           triangle_interpolation(&freq00_01, &freq11_02, &freq01_02,
                                  &area_up_triangle, &spec[p * m1], &m1);
+        } else {
+          triangle_interpolation(&freq00_01, &freq11_02, &freq10_01,
+                                 &amp_section, &spec[p * m1], &m1);
         }
         p++;
       }
@@ -263,6 +266,9 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
                                  &area_down_triangle, &spec[p * m1], &m1);
           triangle_interpolation(&freq00_01, &freq11_02, &freq01_02,
                                  &area_up_triangle, &spec[p * m1], &m1);
+        } else {
+          triangle_interpolation(&freq00_01, &freq11_02, &freq10_01,
+                                 &amp_section, &spec[p * m1], &m1);
         }
         line_up += abs_slope_diff;
         line_down += abs_slope_diff;
@@ -288,6 +294,9 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
                                  &area_down_triangle, &spec[p * m1], &m1);
           triangle_interpolation(&freq00_01, &freq11_02, &freq01_02,
                                  &area_up_triangle, &spec[p * m1], &m1);
+        } else {
+          triangle_interpolation(&freq00_01, &freq11_02, &freq10_01,
+                                 &amp_section, &spec[p * m1], &m1);
         }
       }
     } else {
@@ -330,6 +339,9 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
                                &area_down_triangle, &spec[p * m1], &m1);
         triangle_interpolation(&freq00_12, &freq11_02, &freq01_02,
                                &area_up_triangle, &spec[p * m1], &m1);
+      } else {
+        triangle_interpolation(&freq00_12, &freq11_02, &freq10_12, &amp_section,
+                               &spec[p * m1], &m1);
       }
       p++;
     } else {
@@ -349,6 +361,9 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
                                &area_down_triangle, &spec[p * m1], &m1);
         triangle_interpolation(&freq00_12, &freq11_02, &freq01_02,
                                &area_up_triangle, &spec[p * m1], &m1);
+      } else {
+        triangle_interpolation(&freq00_12, &freq11_02, &freq10_12, &amp_section,
+                               &spec[p * m1], &m1);
       }
       p++;
     }
@@ -375,6 +390,9 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
                                &area_down_triangle, &spec[p * m1], &m1);
         triangle_interpolation(&freq00_12, &freq11_02, &freq01_02,
                                &area_up_triangle, &spec[p * m1], &m1);
+      } else {
+        triangle_interpolation(&freq00_12, &freq11_02, &freq10_12, &amp_section,
+                               &spec[p * m1], &m1);
       }
       line_up -= abs_slope_diff;
       line_down -= abs_slope_diff;

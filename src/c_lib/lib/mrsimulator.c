@@ -60,19 +60,14 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
   plan->zero[0] = 0.0;
   plan->zero[1] = 0.0;
 
-  // /**
-  //  * Update the mrsimulator plan with the given spherical averaging scheme.
-  //  We
-  //  * create the coordinates on the surface of the unit sphere by projecting
-  //  the
-  //  * points on the face of the octahedron to a unit sphere.
-  //  * Usually, before updating the averaging scheme, the memory allocated by
-  //  the
-  //  * previous scheme must be freed. Since, we are creating the scheme for
-  //  this
-  //  * plan for the very first time, there is no need to call
-  //  * MRS_free_averaging_plan() method.
-  //  */
+  /**
+   * Update the mrsimulator plan with the given spherical averaging scheme. We
+   * create the coordinates on the surface of the unit sphere by projecting the
+   * points on the face of the octahedron to a unit sphere. Usually, before
+   * updating the averaging scheme, the memory allocated by the previous scheme
+   * must be freed. Since, we are creating the scheme for this plan for the very
+   * first time, there is no need to call MRS_free_averaging_plan() method.
+   */
 
   plan->n_octants = 1;
   if (scheme->integration_volume == 1) plan->n_octants = 4;
@@ -203,8 +198,6 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
       plan->sample_rotation_frequency_in_Hz;
   new_plan->rotor_angle_in_rad = plan->rotor_angle_in_rad;
   new_plan->vr_freq = plan->vr_freq;
-  new_plan->isotropic_offset = plan->isotropic_offset;
-  // new_plan->vector = plan->vector;
   new_plan->allow_fourth_rank = plan->allow_fourth_rank;
   // new_plan->the_fftw_plan = plan->the_fftw_plan;
   new_plan->size = plan->size;
@@ -246,11 +239,12 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
     /* Scaling the absolute value square with the powder scheme weights. Only
      * the real part is scaled and the imaginary part is left as is.
      */
-    for (i = 0; i < plan->n_octants; i++) {
-      cblas_dcopy(
-          scheme->octant_orientations, plan->norm_amplitudes, 1,
-          (double *)&fftw_scheme->vector[i * scheme->octant_orientations], 2);
-    }
+    // for (i = 0; i < plan->n_octants; i++) {
+    //   cblas_dcopy(
+    //       scheme->octant_orientations, plan->norm_amplitudes, 1,
+    //       (double *)&fftw_scheme->vector[i * scheme->octant_orientations],
+    //       2);
+    // }
     return;
   }
 
@@ -312,11 +306,11 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
   /* Scaling the absolute value square with the powder scheme weights. Only
    * the real part is scaled and the imaginary part is left as is.
    */
-  for (i = 0; i < scheme->octant_orientations; i++) {
-    cblas_dscal(plan->n_octants * plan->number_of_sidebands,
-                plan->norm_amplitudes[i], (double *)&fftw_scheme->vector[i],
-                2 * scheme->octant_orientations);
-  }
+  // for (i = 0; i < scheme->octant_orientations; i++) {
+  //   cblas_dscal(plan->n_octants * plan->number_of_sidebands,
+  //               plan->norm_amplitudes[i], (double *)&fftw_scheme->vector[i],
+  //               2 * scheme->octant_orientations);
+  // }
 }
 
 /**
@@ -333,13 +327,16 @@ void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                           scheme->wigner_4j_matrices, R4, scheme->exp_Im_alpha,
                           scheme->w2, scheme->w4);
 
-  /* Setting isotropic frequency contribution from the zeroth rank tensor. */
-  plan->isotropic_offset = R0;
-
   /* If refresh is true, zero the local_frequencies before update */
   if (refresh) {
     cblas_dscal(scheme->total_orientations, 0.0, seq->local_frequency, 1);
+    seq->R0_offset = 0.0;
   }
+
+  /* Setting isotropic frequency contribution from the zeroth rank tensor. */
+  seq->R0_offset += R0;
+  // vm_double_add_offset_inplace(scheme->total_orientations, plan->R0_offset,
+  //                              seq->local_frequency);
 
   /* Calculating the local anisotropic frequency contributions from the      *
    * second rank tensor. */
@@ -367,14 +364,17 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                           scheme->wigner_4j_matrices, R4, scheme->exp_Im_alpha,
                           scheme->w2, scheme->w4);
 
-  /* The normalized isotropic frequency contribution from the zeroth rank
-   * tensor. */
-  plan->isotropic_offset = R0 * seq->inverse_increment;
-
   /* If refresh is true, zero the local_frequencies before update */
   if (refresh) {
     cblas_dscal(scheme->total_orientations, 0.0, seq->local_frequency, 1);
+    seq->R0_offset = 0.0;
   }
+
+  /* The normalized isotropic frequency contribution from the zeroth rank
+   * tensor. */
+  seq->R0_offset += R0 * seq->inverse_increment;
+  // vm_double_add_offset_inplace(scheme->total_orientations, plan->R0_offset,
+  //                              seq->local_frequency);
 
   /* Rotate w2 and w4 components from the rotor frame to the lab frame. Since
    * only zeroth order is relevent in the lab-frame, this is equivalent to

@@ -71,6 +71,8 @@ static inline void create_plans_for_events_in_sequence(
       rotor_angle_in_rad[0], increment, scheme->allow_fourth_rank);
 
   for (i = 0; i < n_events; i++) {
+    sequence->events[i].freq_amplitude = malloc_double(the_plan->size);
+    vm_double_ones(the_plan->size, sequence->events[i].freq_amplitude);
     MRS_set_event(&(sequence->events[i]), *magnetic_flux_density_in_T++,
                   *sample_rotation_frequency_in_Hz++, *rotor_angle_in_rad++,
                   increment, the_plan);
@@ -78,6 +80,7 @@ static inline void create_plans_for_events_in_sequence(
   sequence->inverse_increment = 1.0 / increment;
   sequence->normalize_offset =
       0.5 - (coordinates_offset * sequence->inverse_increment);
+  sequence->R0_offset = 0.0;
   /* buffer to hold the local frequencies and frequency offset. The buffer   *
    * is useful when the rotor angle is off magic angle (54.735 deg). */
   sequence->local_frequency = malloc_double(scheme->total_orientations);

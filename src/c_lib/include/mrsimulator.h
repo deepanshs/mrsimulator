@@ -64,10 +64,6 @@ struct MRS_plan {
    */
   double *vr_freq;
 
-  /** The isotropic frequency offset ratio. The ratio is similarly defined as
-   * before. */
-  double isotropic_offset;
-
   /** The buffer to hold the sideband amplitudes as stride 2 array after
    * mrsimulator processing.
    */
