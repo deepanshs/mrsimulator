@@ -173,7 +173,7 @@ def one_d_spectrum(method,
 
 
 
-    the_sequence = clib.MRS_create_plans_for_sequence(
+    the_sequence = clib.MRS_create_sequences(
         the_averaging_scheme, &cnt[0], &coord_off[0],
         &incre[0], &magnetic_flux_density_in_T[0], &srfiH[0],
         &rair[0], &n_event[0], n_sequence, number_of_sidebands)
@@ -407,4 +407,7 @@ def one_d_spectrum(method,
     if decompose_spectrum == 1 and len(amp_individual) != 0:
         amp1 = amp_individual
 
+    clib.MRS_free_sequence(the_sequence, n_sequence)
+    clib.MRS_free_averaging_scheme(the_averaging_scheme)
+    clib.MRS_free_fftw_scheme(the_fftw_scheme)
     return amp1, index_

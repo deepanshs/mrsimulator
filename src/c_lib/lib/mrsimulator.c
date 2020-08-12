@@ -199,7 +199,6 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
   new_plan->rotor_angle_in_rad = plan->rotor_angle_in_rad;
   new_plan->vr_freq = plan->vr_freq;
   new_plan->allow_fourth_rank = plan->allow_fourth_rank;
-  // new_plan->the_fftw_plan = plan->the_fftw_plan;
   new_plan->size = plan->size;
   new_plan->n_octants = plan->n_octants;
   new_plan->norm_amplitudes = plan->norm_amplitudes;

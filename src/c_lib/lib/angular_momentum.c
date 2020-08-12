@@ -377,6 +377,7 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
       R_out_ += 2;
     }
   }
+  free(temp_initial_vector);
 }
 
 // ✅ .. note: (wigner_dm0_vector) monitored with pytest .....................

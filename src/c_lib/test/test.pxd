@@ -124,7 +124,7 @@ cdef extern from "method.h":
         MRS_event *events               # Holds a list of events.
         unsigned int n_events           # The number of events.
 
-    # MRS_sequence *MRS_create_plans_for_sequence(
+    # MRS_sequence *MRS_create_sequences(
     #     MRS_averaging_scheme *scheme,
     #     int count,
     #     double coordinates_offset,

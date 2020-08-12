@@ -10,12 +10,15 @@
 #include "method.h"
 
 /* free the buffer and pre-calculated tables from the mrsimulator plan. */
-void MRS_free_event(MRS_event *the_event) { MRS_free_plan(the_event->plan); }
+void MRS_free_event(MRS_event *the_event) {
+  MRS_free_plan(the_event->plan);
+  free(the_event->freq_amplitude);
+}
 
-void MRS_set_event(MRS_event *event, double magnetic_flux_density_in_T,
-                   double sample_rotation_frequency_in_Hz,
-                   double rotor_angle_in_rad, double increment,
-                   MRS_plan *plan) {
+inline void MRS_set_event(MRS_event *event, double magnetic_flux_density_in_T,
+                          double sample_rotation_frequency_in_Hz,
+                          double rotor_angle_in_rad, double increment,
+                          MRS_plan *plan) {
   event->sample_rotation_frequency_in_Hz = sample_rotation_frequency_in_Hz;
   event->rotor_angle_in_rad = rotor_angle_in_rad;
   event->magnetic_flux_density_in_T = magnetic_flux_density_in_T;
@@ -87,7 +90,7 @@ static inline void create_plans_for_events_in_sequence(
   sequence->freq_offset = malloc_double(scheme->octant_orientations);
 }
 
-MRS_sequence *MRS_create_plans_for_sequence(
+MRS_sequence *MRS_create_sequences(
     MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
     double *increment, double *magnetic_flux_density_in_T,
     double *sample_rotation_frequency_in_Hz, double *rotor_angle_in_rad,
@@ -121,4 +124,17 @@ MRS_sequence *MRS_create_plans_for_sequence(
     // }
   }
   return sequence;
+}
+
+void MRS_free_sequence(MRS_sequence *the_sequence, unsigned int n) {
+  unsigned int seq, evt;
+  MRS_sequence *sequence;
+  for (seq = 0; seq < n; seq++) {
+    sequence = &the_sequence[seq];
+    for (evt = 0; evt < sequence->n_events; evt++) {
+      MRS_free_event(&sequence->events[evt]);
+    }
+    free(sequence->local_frequency);
+    free(sequence->freq_offset);
+  }
 }

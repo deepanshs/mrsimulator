@@ -27,8 +27,9 @@ cdef extern from "schemes.h":
         pass
 
     MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
-                                    int number_of_sidebands)
+                                    unsigned int number_of_sidebands)
 
+    void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme)
 cdef extern from "mrsimulator.h":
 
     ctypedef struct MRS_plan:
@@ -75,9 +76,7 @@ cdef extern from "method.h":
         MRS_event *events               # Holds a list of events.
         unsigned int n_events           # The number of events.
 
-    MRS_sequence *MRS_sequence_malloc(int n)
-
-    MRS_sequence *MRS_create_plans_for_sequence(
+    MRS_sequence *MRS_create_sequences(
         MRS_averaging_scheme *scheme,
         int *count,
         double *coordinates_offset,
@@ -88,6 +87,8 @@ cdef extern from "method.h":
         int *n_events,
         unsigned int n_seq,
         int number_of_sidebands)
+
+    void MRS_free_sequence(MRS_sequence *the_sequence, int n)
 
 cdef extern from "simulation.h":
     void mrsimulator_core(

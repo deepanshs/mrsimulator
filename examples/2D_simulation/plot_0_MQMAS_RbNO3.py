@@ -77,6 +77,7 @@ sim = Simulator()
 sim.spin_systems += spin_systems  # add the spin systems
 sim.methods += [method]  # add the method.
 
+sim.config.number_of_sidebands = 1
 sim.run()
 
 # %%

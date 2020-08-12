@@ -114,7 +114,7 @@ void __mrsimulator_core(
       transition += transition_increment;
       refresh = 0;
     }  // end events
-  }    // end sequence
+  }    // end sequences
 
   /* If the number of sidebands is 1, the sideband amplitude at every sideband
    * order is one. In this case, update the `fftw_scheme->vector` is the same as
@@ -166,78 +166,11 @@ void __mrsimulator_core(
     if (n_sequence == 1) {
       one_dimensional_averaging(the_sequence, scheme, fftw_scheme, spec,
                                 plan->number_of_sidebands);
-
-      // for (i = 0; i < plan->number_of_sidebands; i++) {
-      //   for (seq = 0; seq < n_sequence; seq++) {
-      //     offset[seq] = plan->vr_freq[i] +
-      //     the_sequence[seq].normalize_offset;
-      //     // Loop over the events per sequence.
-      //     for (evt = 0; evt < the_sequence[seq].n_events; evt++) {
-      //       plan = the_sequence[seq].events[evt].plan;
-      //       offset[seq] += plan->isotropic_offset;
-      //     }
-      //   }
-      //   // offset = plan->vr_freq[i] + plan->isotropic_offset +
-      //   //          the_sequence[seq].normalize_offset;
-      //   if ((int)offset[0] >= 0 && (int)offset[0] <= the_sequence[0].count) {
-      //     step_vector = i * scheme->total_orientations;
-      //     for (j = 0; j < plan->n_octants; j++) {
-      //       address = j * scheme->octant_orientations;
-      //       // Add offset(isotropic + sideband_order) to the local frequency
-      //       // from [n to n+octant_orientation]
-      //       vm_double_ramp(scheme->octant_orientations,
-      //                      &the_sequence[0].local_frequency[address], 1.0,
-      //                      offset[0], the_sequence[0].freq_offset);
-      //       // Perform tenting on every sideband order over all orientations
-      //       octahedronInterpolation(
-      //           spec_site_ptr, the_sequence[0].freq_offset,
-      //           scheme->integration_density,
-      //           &the_sequence[0].events[0].freq_amplitude[step_vector], 1,
-      //           the_sequence[0].count);
-      //       step_vector += scheme->octant_orientations;
-      //     }
-      //   }
-      // }
     }
 
     if (n_sequence == 2) {
       two_dimensional_averaging(the_sequence, scheme, fftw_scheme, spec,
                                 plan->number_of_sidebands);
-
-      //   for (i = 0; i < plan->number_of_sidebands; i++) {
-      //     for (seq = 0; seq < n_sequence; seq++) {
-      //       offset[seq] = plan->vr_freq[i] +
-      //       the_sequence[seq].normalize_offset;
-      //       // Loop over the events per sequence.
-      //       for (evt = 0; evt < the_sequence[seq].n_events; evt++) {
-      //         plan = the_sequence[seq].events[evt].plan;
-      //         offset[seq] += plan->isotropic_offset;
-      //       }
-      //     }
-      // if ((int)offset[0] >= -10 &&
-      //     (int)offset[0] <= 2 * the_sequence[0].count) {
-      //   step_vector = i * scheme->total_orientations;
-      //   for (j = 0; j < plan->n_octants; j++) {
-      //     address = j * scheme->octant_orientations;
-
-      //     // Add offset(isotropic + sideband_order) to the local  frequency
-      //     // from [n to n+octant_orientation]
-      //     vm_double_ramp(scheme->octant_orientations,
-      //                    &the_sequence[0].local_frequency[address], 1.0,
-      //                    offset[0], the_sequence[0].freq_offset);
-      //     vm_double_ramp(scheme->octant_orientations,
-      //                    &the_sequence[1].local_frequency[address], 1.0,
-      //                    offset[1], the_sequence[1].freq_offset);
-      //     // Perform tenting on every sideband order over all orientations
-      //     octahedronInterpolation2D(
-      //         spec_site_ptr, the_sequence[0].freq_offset,
-      //         the_sequence[1].freq_offset, scheme->integration_density,
-      //         (double *)&fftw_scheme->vector[step_vector], 2,
-      //         the_sequence[0].count, the_sequence[1].count);
-      //     step_vector += scheme->octant_orientations;
-      //   }
-      // }
-      //   }
     }
   }
 
@@ -377,6 +310,7 @@ void one_dimensional_averaging(MRS_sequence *the_sequence,
       }
     }
   }
+  free(freq_amp);
 }
 
 void two_dimensional_averaging(MRS_sequence *the_sequence,
@@ -454,4 +388,7 @@ void two_dimensional_averaging(MRS_sequence *the_sequence,
       }
     }
   }
+  free(freq_amp);
+  free(freq_ampA);
+  free(freq_ampB);
 }
