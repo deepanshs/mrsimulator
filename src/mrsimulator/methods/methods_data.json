@@ -47,5 +47,54 @@
         }
       }]
     }]
+  },
+  "MQVAS": {
+    "name": "MQVAS template",
+    "number_of_channels": 1,
+    "description": "Multi-quantum variable-angle spinning",
+    "global_event_attributes": {
+      "rotor_frequency": 1e12
+    },
+    "spectral_dimensions": [{
+        "events": [{
+          "user_variables": [
+            "magnetic_flux_density",
+            "rotor_angle"
+          ],
+          "transition_query": {
+            "P": {
+              "channel-1": [
+                [-3]
+              ]
+            },
+            "D": {
+              "channel-1": [
+                [0]
+              ]
+            }
+          }
+        }]
+      },
+      {
+        "events": [{
+          "user_variables": [
+            "magnetic_flux_density",
+            "rotor_angle"
+          ],
+          "transition_query": {
+            "P": {
+              "channel-1": [
+                [-1]
+              ]
+            },
+            "D": {
+              "channel-1": [
+                [0]
+              ]
+            }
+          }
+        }]
+      }
+    ]
   }
 }

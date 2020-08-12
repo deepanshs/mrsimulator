@@ -20,7 +20,11 @@ csdm_object2 = csdm_object.copy()
 
 def test_shear_01():
     processor = sp.SignalProcessor(
-        operations=[af.Shear(factor="-1 K/s", dim_index=1, normal=0)]
+        operations=[
+            sp.IFFT(dim_index=1),
+            af.Shear(factor="-1 K/s", dim_index=1, normal=0),
+            sp.FFT(dim_index=1),
+        ]
     )
 
     shear_data = processor.apply_operations(data=csdm_object)

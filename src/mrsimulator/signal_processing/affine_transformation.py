@@ -150,7 +150,6 @@ class Shear(AbstractAffineTransformation):
         data: CSDM object
         dep_var: int. The index of the dependent variable to apply operation to.
         """
-        data = data.fft(axis=self.dim_index)
         dims = data.dimensions
         n_dim = len(dims)
 
@@ -179,7 +178,6 @@ class Shear(AbstractAffineTransformation):
             datum = data.dependent_variables[i].components
             datum *= apodization_vector
 
-        data = data.fft(axis=self.dim_index)
         return data
 
 
@@ -226,10 +224,6 @@ class Scale(AbstractAffineTransformation):
     # class Config:
     #     validate_assignment = True
 
-    @staticmethod
-    def fn(wt, factor):
-        return np.exp(-2j * np.pi * wt * factor)
-
     def operate(self, data):
         """
         Applies the operation for which the class is named for.
@@ -239,4 +233,62 @@ class Scale(AbstractAffineTransformation):
         """
         data.dimensions[self.dim_index].increment *= self.factor
         data.dimensions[self.dim_index].coordinates_offset *= self.factor
+        data.dimensions[self.dim_index].reciprocal.coordinates_offset /= self.factor
+        return data
+
+
+class Translate(AbstractAffineTransformation):
+    r"""Apodize a dependent variable of the CSDM object with a Gaussian function.
+
+    The apodization function follows
+
+    .. math::
+        f(x) = e^{-2 \pi^2 \sigma^2  x^2},
+
+    where :math:`x` are the coordinates of the dimension, and :math:`\sigma` is the
+    standard deviation. The relationship between the standard deviation, :math:`\sigma`,
+    and the full width at half maximum of the reciprocal domain Gaussian function
+    follows
+
+    .. math::
+        \sigma = \frac{\text{FWHM}}{2\sqrt{2\ln 2}}.
+
+    Args:
+        str FWHM: The full width at half maximum, FWHM, of the reciprocal domain
+            Gaussian function, given as a string with a value and a unit. The default
+            value is 0.
+        int dim_index: The index of the CSDM dimension along which the operation is
+            applied. The default is the dimension at index 0.
+        int dv_index: The index of the CSDM dependent variable where the operation is
+            applied. If the value is None, the operation will be applied to every
+            dependent variable.
+
+    Example
+    -------
+
+    >>> import mrsimulator.signal_processing.apodization as apo
+    >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
+    """
+
+    factor: Union[float, str] = 1
+    property_units: Dict = {"factor": const}
+
+    @validator("factor")
+    def str_to_quantity(cls, v, values):
+        return _str_to_quantity(v, values, "factor")
+
+    # class Config:
+    #     validate_assignment = True
+
+    def operate(self, data):
+        """
+        Applies the operation for which the class is named for.
+
+        data: CSDM object
+        dep_var: int. The index of the dependent variable to apply operation to.
+        """
+        # data.dimensions[self.dim_index].increment *= self.factor
+        data.dimensions[self.dim_index].coordinates_offset += (
+            self.factor * self.property_units["factor"]
+        )
         return data

@@ -137,5 +137,7 @@ def generate_method_from_template(template):
 BlochDecaySpectrum = generate_method_from_template(METHODS_DATA["Bloch_decay"])
 
 BlochDecayCentralTransitionSpectrum = generate_method_from_template(
-    METHODS_DATA["Bloch_decay_central_transition"],
+    METHODS_DATA["Bloch_decay_central_transition"]
 )
+
+MQVAS = generate_method_from_template(METHODS_DATA["MQVAS"])
