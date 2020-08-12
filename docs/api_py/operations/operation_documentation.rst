@@ -13,3 +13,8 @@ Documentation
 
 .. autoclass:: Gaussian
 .. autoclass:: Exponential
+
+.. currentmodule:: mrsimulator.signal_processing.affine
+
+.. autoclass:: Shear
+.. autoclass:: Scale

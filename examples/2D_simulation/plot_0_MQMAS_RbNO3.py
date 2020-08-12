@@ -13,7 +13,7 @@ RbNO3, 87Rb (I=3/2) MQMAS
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.affine_transformation as af
+import mrsimulator.signal_processing.affine as af
 import mrsimulator.signal_processing.apodization as apo
 import numpy as np
 from mrsimulator import Simulator
@@ -56,13 +56,13 @@ method = MQVAS(
     rotor_angle=54.735 * np.pi / 180,  # in radians
     spectral_dimensions=[
         {
-            "count": 1024,
+            "count": 256,
             "spectral_width": 2e4,  # in Hz
             "reference_offset": -5e3,  # in Hz
             "label": "3Q dimension - 1",
         },
         {
-            "count": 1024,
+            "count": 512,
             "spectral_width": 1e4,  # in Hz
             "reference_offset": -4e3,  # in Hz
             "label": "MAS dimension - 0",
@@ -106,7 +106,7 @@ processor = sp.SignalProcessor(
     operations=[
         # shear parallel to MAS dimension.
         sp.IFFT(dim_index=1),
-        af.Shear(factor=-21 / 27, dim_index=1, normal=0),
+        af.Shear(factor=-21 / 27, dim_index=1, parallel=0),
         sp.FFT(dim_index=1),
         # scale the 3Q-dimension
         af.Scale(factor=27 / 48, dim_index=1),

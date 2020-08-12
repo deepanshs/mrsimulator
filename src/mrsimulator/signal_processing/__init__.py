@@ -46,10 +46,10 @@ class SignalProcessor(BaseModel):
         """
         lst = []
         for op in py_dict["operations"]:
-            if op["function"] == "apodization":
+            if "type" in op.keys():
                 lst.append(
                     getattr(
-                        modules[__name__].apodization, op["type"]
+                        getattr(modules[__name__], op["function"]), op["type"]
                     ).parse_dict_with_units(op)
                 )
             else:
