@@ -83,26 +83,29 @@ def generate_method_from_template(template):
         dim = []
         for i, s in enumerate(template["spectral_dimensions"]):
             events = []
-            for e in s["events"]:
+            for j, e in enumerate(s["events"]):
                 ew = set(e)
-                intersection = ew.intersection(kw)
-                kw = kwargs.copy()
-                for item in intersection:
-                    kw.pop(item)
-                if parse:
-                    events.append({**e, **kw, **global_events})
-                else:
-                    events.append(Event(**e, **kw, **global_events))
-            if parse:
-                dim.append({**spectral_dimensions[i], "events": events})
-            else:
-                dim.append(SpectralDimension(**spectral_dimensions[i], events=events))
 
-        if parse:
-            method = {**prep, "spectral_dimensions": dim}
-            return Method.parse_dict_with_units(method)
-        else:
-            return Method(**prep, spectral_dimensions=dim)
+                kw = kwargs.copy()
+                if "events" in spectral_dimensions[i]:
+                    for key, val in spectral_dimensions[i]["events"][j].items():
+                        kw[key] = val
+                    spectral_dimensions[i].pop("events")
+
+                intersection = ew.intersection(kw)
+                [e.pop(item) for item in intersection]
+
+                params = {**e, **kw, **global_events}
+                params = params if parse else Event(**params)
+                events.append(params)
+
+            params = {**spectral_dimensions[i], "events": events}
+            params = params if parse else SpectralDimension(**params)
+            dim.append(params)
+
+        method = {**prep, "spectral_dimensions": dim}
+        method = Method.parse_dict_with_units(method) if parse else Method(**method)
+        return method
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
@@ -140,4 +143,19 @@ BlochDecayCentralTransitionSpectrum = generate_method_from_template(
     METHODS_DATA["Bloch_decay_central_transition"]
 )
 
-MQVAS = generate_method_from_template(METHODS_DATA["MQVAS"])
+Custom2D = generate_method_from_template(METHODS_DATA["Custom2D"])
+
+
+def MQVAS(spectral_dimensions=[{}, {}], **kwargs):
+    for dim in spectral_dimensions:
+        if "events" in dim.keys():
+            for evt in dim["events"]:
+                if "transition_query" in evt.keys():
+                    t_query = evt["transition_query"]
+                    if "P" in t_query.keys():
+                        t_query["P"] = {"channel-1": [[i] for i in t_query["P"]]}
+                    if "D" in t_query.keys():
+                        t_query["D"] = {"channel-1": [[i] for i in t_query["D"]]}
+
+    MQVAS_ = generate_method_from_template(deepcopy(METHODS_DATA["MQVAS"]))
+    return MQVAS_(spectral_dimensions, **kwargs)

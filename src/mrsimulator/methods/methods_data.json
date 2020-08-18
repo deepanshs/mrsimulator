@@ -49,7 +49,7 @@
     }]
   },
   "MQVAS": {
-    "name": "MQVAS template",
+    "name": "MQVAS",
     "number_of_channels": 1,
     "description": "Multi-quantum variable-angle spinning",
     "global_event_attributes": {
@@ -94,6 +94,37 @@
             }
           }
         }]
+      }
+    ]
+  },
+  "Custom2D": {
+    "name": "Custom 2D method template",
+    "number_of_channels": 1,
+    "description": "Custom 2D method template",
+    "global_event_attributes": {
+      "user_variables": [
+        "magnetic_flux_density",
+        "rotor_angle",
+        "rotor_frequency"
+      ],
+      "transition_query": {
+        "P": {
+          "channel-1": [
+            [-1]
+          ]
+        },
+        "D": {
+          "channel-1": [
+            [0]
+          ]
+        }
+      }
+    },
+    "spectral_dimensions": [{
+        "events": [{}]
+      },
+      {
+        "events": [{}]
       }
     ]
   }
