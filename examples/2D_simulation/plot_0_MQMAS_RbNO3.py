@@ -104,17 +104,17 @@ plt.show()
 # respectively.
 processor = sp.SignalProcessor(
     operations=[
-        # Gaussian convolution along both dimensions.
-        sp.IFFT(dim_index=(0, 1)),
-        apo.Gaussian(FWHM="0.2 kHz", dim_index=0),
-        apo.Gaussian(FWHM="0.2 kHz", dim_index=1),
-        sp.FFT(dim_index=(0, 1)),
         # shear parallel to MAS dimension.
         sp.IFFT(dim_index=1),
         af.Shear(factor=-21 / 27, dim_index=1, parallel=0),
         sp.FFT(dim_index=1),
         # scale the 3Q-dimension
         af.Scale(factor=27 / 48, dim_index=1),
+        # Gaussian convolution along both dimensions.
+        sp.IFFT(dim_index=(0, 1)),
+        apo.Gaussian(FWHM="0.2 kHz", dim_index=0),
+        apo.Gaussian(FWHM="0.2 kHz", dim_index=1),
+        sp.FFT(dim_index=(0, 1)),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation)
