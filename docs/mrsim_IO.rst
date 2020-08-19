@@ -15,7 +15,7 @@ To serialize a :ref:`simulator_api` object to a JSON-compliant file, use the
 
 .. doctest::
 
-    >>> sim_coesite.save('sample_with_units.json')
+    >>> sim_coesite.save('sample_with_units.mrsim')
 
 where ``sim_coesite`` is a :ref:`simulator_api` object.
 By default, the attribute values are serialized as physical quantities, represented
@@ -36,7 +36,7 @@ parses the file for units.
 .. doctest::
 
     >>> from mrsimulator import Simulator
-    >>> sim_load_with_units = Simulator.load('sample_with_units.json')
+    >>> sim_load_with_units = Simulator.load('sample_with_units.mrsim')
     >>> sim_coesite == sim_load_with_units
     True
 
@@ -50,7 +50,7 @@ If the file is serialized without the units, you may load the file as follows
 
 .. testsetup::
     >>> import os
-    >>> os.remove('sample_with_units.json')
+    >>> os.remove('sample_with_units.mrsim')
     >>> os.remove('sample_no_units.json')
 
 
@@ -68,7 +68,7 @@ method as
 
 .. doctest::
 
-    >>> sim_coesite.export_spin_systems('coesite_spin_systems.json')
+    >>> sim_coesite.export_spin_systems('coesite_spin_systems.mrsys')
 
 
 **Import spin systems from a JSON file**
@@ -80,11 +80,11 @@ class as
 
 .. doctest::
 
-    >>> sim.load_spin_systems('coesite_spin_systems.json')
+    >>> sim.load_spin_systems('coesite_spin_systems.mrsys')
 
 .. testsetup::
     >>> import os
-    >>> os.remove('coesite_spin_systems.json')
+    >>> os.remove('coesite_spin_systems.mrsys')
 
 **Importing spin systems from URL**
 
