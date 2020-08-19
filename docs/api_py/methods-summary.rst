@@ -15,3 +15,4 @@ List of methods
 
       ~BlochDecaySpectrum
       ~BlochDecayCentralTransitionSpectrum
+      ~MQVAS

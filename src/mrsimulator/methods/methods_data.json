@@ -24,7 +24,7 @@
   "Bloch_decay_central_transition": {
     "name": "BlochDecayCentralTransitionSpectrum",
     "number_of_channels": 1,
-    "description": "Simulate a central transition selective 1S Bloch decay spectrum.",
+    "description": "Simulate a central transition selective 1D Bloch decay spectrum.",
     "global_event_attributes": {},
     "spectral_dimensions": [{
       "events": [{
@@ -51,7 +51,7 @@
   "MQVAS": {
     "name": "MQVAS",
     "number_of_channels": 1,
-    "description": "Multi-quantum variable-angle spinning",
+    "description": "Simulate a multi-quantum variable-angle spinning spectrum",
     "global_event_attributes": {
       "rotor_frequency": 1e12
     },
