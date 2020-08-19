@@ -39,7 +39,7 @@ def test_03():
 
     serialize = {
         "name": "MQVAS",
-        "description": "Multi-quantum variable-angle spinning",
+        "description": "Simulate a multi-quantum variable-angle spinning spectrum",
         "spectral_dimensions": [
             {
                 "count": 1024,
@@ -117,7 +117,7 @@ def test_04():
 
     serialize = {
         "name": "MQVAS",
-        "description": "Multi-quantum variable-angle spinning",
+        "description": "Simulate a multi-quantum variable-angle spinning spectrum",
         "spectral_dimensions": [
             {
                 "count": 512,
@@ -195,7 +195,7 @@ def test_05():
 
     serialize = {
         "name": "MQVAS",
-        "description": "Multi-quantum variable-angle spinning",
+        "description": "Simulate a multi-quantum variable-angle spinning spectrum",
         "spectral_dimensions": [
             {
                 "count": 512,
