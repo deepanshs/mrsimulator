@@ -234,7 +234,7 @@ consider the following 2D datasets as a CSDM object,
     :context: close-figs
     :include-source:
 
-    >>> # Add a dependent variable to the test CSDM object.
+    >>> # Create a two-dimensional CSDM object.
     >>> test_data = np.zeros(600).reshape(30, 20)
     >>> test_data[15, 10] = 1
     >>> dv = cp.as_dependent_variable(test_data)
