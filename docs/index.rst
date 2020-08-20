@@ -190,7 +190,8 @@ Models
     :caption: Models
 
     model/czjzek
-    api_py/models/czjzek
+    model/extended_czjzek
+
 
 Examples and Benchmarks
 -----------------------
@@ -210,6 +211,7 @@ Theory
     :caption: Theory
 
     theory/components
+    theory/models
 
 API and references
 ------------------
@@ -220,6 +222,7 @@ API and references
 
     api_py/py-simulator
     api_py/py-signal-processing
+    api_py/py-model
     api_c/c_api
 
 

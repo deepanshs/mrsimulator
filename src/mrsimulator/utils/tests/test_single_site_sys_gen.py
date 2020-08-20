@@ -189,3 +189,73 @@ def test_quad_shield():
         assert sys[i].sites[0].quadrupolar.alpha is None
         assert sys[i].sites[0].quadrupolar.beta is None
         assert sys[i].sites[0].quadrupolar.gamma == gamma_dist[i]
+
+
+def test_abundance_01():
+    Cq_dist = np.arange(10)
+    eta_dist = np.ones(10) * 0.5
+    abundance = 0.6
+    sys = single_site_system_generator(
+        isotopes="27Al",
+        quadrupolar={"Cq": Cq_dist, "eta": eta_dist},
+        abundance=abundance,
+    )
+
+    for i in range(10):
+        assert sys[i].sites[0].isotope.symbol == "27Al"
+        assert sys[i].sites[0].isotropic_chemical_shift == 0
+        assert sys[i].sites[0].shielding_symmetric is None
+        assert sys[i].sites[0].quadrupolar.Cq == Cq_dist[i]
+        assert sys[i].sites[0].quadrupolar.eta == eta_dist[i]
+        assert sys[i].sites[0].quadrupolar.alpha is None
+        assert sys[i].sites[0].quadrupolar.beta is None
+        assert sys[i].sites[0].quadrupolar.gamma is None
+        assert sys[i].abundance == 0.6
+
+
+def test_abundance_02():
+    Cq_dist = np.arange(10)
+    eta_dist = np.ones(10) * 0.5
+    abundance = np.zeros(10)
+    sys = single_site_system_generator(
+        isotopes="27Al",
+        quadrupolar={"Cq": Cq_dist, "eta": eta_dist},
+        abundance=abundance,
+    )
+    assert sys == []
+
+
+def test_abundance_03():
+    Cq_dist = np.arange(10)
+    eta_dist = np.ones(10) * 0.5
+    gamma = np.random.rand(10)
+    abundance = np.zeros(10)
+
+    print(gamma)
+    indexes = [2, 5, 8]
+    for i in indexes:
+        abundance[i] = 1
+
+    sys = single_site_system_generator(
+        isotopes="27Al",
+        shielding_symmetric={"gamma": gamma},
+        quadrupolar={"Cq": Cq_dist, "eta": eta_dist},
+        abundance=abundance,
+    )
+    assert len(sys) == 3
+
+    for i, j in enumerate(indexes):
+        print(sys[i].sites[0].shielding_symmetric.gamma, gamma[j])
+        assert sys[i].sites[0].isotope.symbol == "27Al"
+        assert sys[i].sites[0].isotropic_chemical_shift == 0
+        assert sys[i].sites[0].shielding_symmetric.zeta is None
+        assert sys[i].sites[0].shielding_symmetric.eta is None
+        assert sys[i].sites[0].shielding_symmetric.alpha is None
+        assert sys[i].sites[0].shielding_symmetric.beta is None
+        assert sys[i].sites[0].shielding_symmetric.gamma == gamma[j]
+        assert sys[i].sites[0].quadrupolar.Cq == Cq_dist[j]
+        assert sys[i].sites[0].quadrupolar.eta == eta_dist[j]
+        assert sys[i].sites[0].quadrupolar.alpha is None
+        assert sys[i].sites[0].quadrupolar.beta is None
+        assert sys[i].sites[0].quadrupolar.gamma is None
+        assert sys[i].abundance == abundance[j]

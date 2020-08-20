@@ -5,10 +5,15 @@ from mrsimulator import SpinSystem
 
 
 def single_site_system_generator(
-    isotopes, isotropic_chemical_shifts=0, shielding_symmetric=None, quadrupolar=None
+    isotopes,
+    isotropic_chemical_shifts=0,
+    shielding_symmetric=None,
+    quadrupolar=None,
+    abundance=None,
 ):
     n_isotopes = get_length(isotopes)
     n_iso = get_length(isotropic_chemical_shifts)
+    n_abd = get_length(abundance)
 
     n_ss = []
     if shielding_symmetric is not None:
@@ -28,19 +33,23 @@ def single_site_system_generator(
             if item in quad_keys
         ]
 
-    n = np.asarray([n_isotopes, n_iso, *n_ss, *n_q])
+    n = np.asarray([n_isotopes, n_iso, *n_ss, *n_q, n_abd])
     n_len = check_size(n)
-    fraction = 1 / n_len
+
+    if abundance is None:
+        abundance = 1 / n_len
 
     # system with only isotope and isotropic shifts parameters
     isotopes_ = get_default_lists(isotopes, n_len)
-    isotropic_chemical_shifts_ = get_default_lists(isotropic_chemical_shifts, n_len)
+    iso_chemical_shifts_ = get_default_lists(isotropic_chemical_shifts, n_len)
+    abundance_ = get_default_lists(abundance, n_len)
+
     sys = [
         SpinSystem(
             sites=[Site(isotope=ist__, isotropic_chemical_shift=iso__,)],
-            abundance=fraction,
+            abundance=abd__,
         )
-        for ist__, iso__ in zip(isotopes_, isotropic_chemical_shifts_,)
+        for ist__, iso__, abd__ in zip(isotopes_, iso_chemical_shifts_, abundance_)
     ]
 
     # system with additional shielding symmetric parameters
@@ -64,11 +73,12 @@ def single_site_system_generator(
 
         _populate_quadrupolar(sys, lst)
 
-    return sys
+    sys_ = [item for item in sys if item.abundance != 0]
+    return sys_
 
 
 def _populate_quadrupolar(sys, items):
-    n = items[0].size
+    n = len(items[0])
     for i in range(n):
         sys[i].sites[0].quadrupolar = {
             "Cq": items[0][i],
@@ -80,7 +90,7 @@ def _populate_quadrupolar(sys, items):
 
 
 def _populate_shielding(sys, items):
-    n = items[0].size
+    n = len(items[0])
     for i in range(n):
         sys[i].sites[0].shielding_symmetric = {
             "zeta": items[0][i],

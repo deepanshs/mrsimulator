@@ -1,14 +1,14 @@
 
-Czjzek and extended Czjzek distribution
-=======================================
+Czjzek distribution Model
+=========================
 
 .. currentmodule:: mrsimulator.models
 
-.. autofunction:: czjzek_distribution
+.. autoclass:: CzjzekDistribution
 
-.. autofunction:: extended_czjzek_distribution
+    .. automethod:: rvs
+    .. automethod:: pdf
 
-
-.. minigallery:: mrsimulator.models.czjzek_distribution mrsimulator.models.extended_czjzek_distribution
-    :add-heading: Mini-gallery using czjzek and extended czjzek distributions
-    :heading-level: -
+.. minigallery:: mrsimulator.models.CzjzekDistribution
+    :add-heading: Mini-gallery using czjzek distributions
+    :heading-level: '

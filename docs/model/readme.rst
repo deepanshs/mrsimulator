@@ -1,4 +1,4 @@
-.. _models:
+.. _models_tree:
 
 Models
 ======
@@ -6,3 +6,4 @@ Models
 .. toctree::
 
     czjzek
+    extended_czjzek

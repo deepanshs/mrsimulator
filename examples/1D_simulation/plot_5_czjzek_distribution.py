@@ -4,7 +4,7 @@ Czjzek distribution (Shielding and Quadrupolar)
 ===============================================
 
 In this example, we illustrate the simulation of spectrum originating from a Czjzek
-distribution of traceless symmetric tensors. We show two cases, a Czjzek distribution
+distribution of traceless symmetric tensors. We show two cases, the Czjzek distribution
 of the shielding and quadrupolar tensor parameters, respectively.
 
 """
@@ -12,14 +12,16 @@ of the shielding and quadrupolar tensor parameters, respectively.
 # Import the required modules.
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
 from mrsimulator import Simulator
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.models import czjzek_distribution
+from mrsimulator.models import CzjzekDistribution
 from mrsimulator.utils.collection import single_site_system_generator
 
 # pre config the figures
 mpl.rcParams["figure.figsize"] = [4.25, 3.0]
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Symmetric shielding tensor
@@ -29,18 +31,24 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # ''''''''''''''''''''''''''''''
 #
 # First, create a distribution of the zeta and eta parameters of the shielding tensors
-# using the Czjzek distribution model as follows,
-zeta_dist, eta_dist = czjzek_distribution(sigma=3.1415, n=5000)
+# using the :ref:`czjzek_distribution` model as follows.
+
+# The range of zeta and eta coordinates over which the distribution is sampled.
+z_range = np.arange(100) - 50  # in ppm
+e_range = np.arange(21) / 20
+z_dist, e_dist, amp = CzjzekDistribution(sigma=3.1415).pdf(pos=[z_range, e_range])
 
 # %%
-# where `sigma` is the standard deviation of the second-rank tensor parameters, and `n`
-# is the number of tensor parameters sampled from the Czjzek distribution model.
+# Here ``z_range`` and ``e_range`` are the coordinates along the :math:`\zeta` and
+# :math:`\eta` dimensions that form a two-dimensional :math:`\zeta`-:math:`\eta` grid.
+# The argument `sigma` of the CzjzekDistribution class is the standard deviation of the
+# second-rank tensor parameters used in generating the distribution, and `pos` hold the
+# one-dimensional arrays of :math:`\zeta` and :math:`\eta` coordinates, respectively.
 #
-# The following is the plot of the Czjzek distribution.
-plt.scatter(zeta_dist, eta_dist, s=2)
+# The following is the contour plot of the Czjzek distribution.
+plt.contourf(z_dist, e_dist, amp, levels=10)
 plt.xlabel(r"$\zeta$ / ppm")
 plt.ylabel(r"$\eta$")
-plt.ylim(0, 1)
 plt.tight_layout()
 plt.show()
 
@@ -48,19 +56,24 @@ plt.show()
 # Simulate the spectrum
 # '''''''''''''''''''''
 #
-# To quickly create the spin-systems from the above :math:`\zeta` and :math:`\eta`
-# parameters, use the
+# To quickly generate single-site spin systems from the above :math:`\zeta` and
+# :math:`\eta` parameters, use the
 # :func:`~mrsimulator.utils.collection.single_site_system_generator` utility function.
 systems = single_site_system_generator(
-    isotopes="13C", shielding_symmetric={"zeta": zeta_dist, "eta": eta_dist}
+    isotopes="13C",
+    shielding_symmetric={"zeta": z_dist.ravel(), "eta": e_dist.ravel()},
+    abundance=amp.ravel(),
 )
 
 # %%
-# Here, the variable ``systems`` holds 5000 single-site spin systems.
+# Here, the variable ``systems`` hold an array of single-site spin systems. Note, the
+# original :math:`\zeta`-:math:`\eta` grid (100 x 21) should produce 2100 spin systems.
+# The resulting number of spin systems from the above method is, however, less than
+# the expected number. The spin systems with zero abundance are dropped.
 print(len(systems))
 
 # %%
-# Create a simulator object and add the above system.
+# Create a simulator object and add the above system and a method.
 sim = Simulator()
 sim.spin_systems = systems  # add the systems
 sim.methods = [BlochDecaySpectrum(channels=["13C"])]  # add the method
@@ -69,9 +82,9 @@ sim.run()
 # %%
 # The following is the static spectrum arising from a Czjzek distribution of the
 # second-rank traceless shielding tensors.
-plt.figure(figsize=(4.25, 3.0))
+plt.figure(figsize=(4.5, 3.0))
 ax = plt.gca(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black")
+ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
 plt.tight_layout()
 plt.show()
 
@@ -84,7 +97,18 @@ plt.show()
 #
 # Similarly, you may also create a Czjzek distribution of the electric field gradient
 # (EFG) tensor parameters.
-Cq_dist, eta_dist = czjzek_distribution(sigma=2.3, n=5000)
+
+# The range of Cq and eta coordinates over which the distribution is sampled.
+cq_range = np.arange(100) * 0.6 - 30  # in MHz
+e_range = np.arange(21) / 20
+cq_dist, e_dist, amp = CzjzekDistribution(sigma=2.3).pdf(pos=[cq_range, e_range])
+
+# The following is the contour plot of the Czjzek distribution.
+plt.contourf(cq_dist, e_dist, amp, levels=10)
+plt.xlabel(r"Cq / MHz")
+plt.ylabel(r"$\eta$")
+plt.tight_layout()
+plt.show()
 
 # %%
 # Simulate the spectrum
@@ -92,7 +116,9 @@ Cq_dist, eta_dist = czjzek_distribution(sigma=2.3, n=5000)
 #
 # Create the spin systems.
 systems = single_site_system_generator(
-    isotopes="71Ga", quadrupolar={"Cq": Cq_dist * 1e6, "eta": eta_dist}
+    isotopes="71Ga",
+    quadrupolar={"Cq": cq_dist.ravel() * 1e6, "eta": e_dist.ravel()},
+    abundance=amp.ravel(),
 )
 
 # %%
@@ -113,7 +139,7 @@ sim.run()
 # second-rank traceless EFG tensors.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.gca(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black")
+ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

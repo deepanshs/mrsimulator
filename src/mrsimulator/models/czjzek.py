@@ -64,8 +64,44 @@ def _czjzek_random_distribution_tensors(sigma, n):
     return tensors
 
 
-def czjzek_distribution(sigma: float, n: int):
-    r"""Draw `N` samples of zeta and eta from the Czjzek distribution model.
+class AbstractDistribution:
+    def pdf(self, pos, n: int = 400000):
+        """Generates a probability distribution function by binning the `n` random
+        variates of the distribution onto the given grid.
+
+        Args:
+            pos: A list of coordinates along the two dimensions given as NumPy arrays.
+            n:
+                The number of random variates drawn in generating the pdf. The default
+                is 400000.
+
+        Returns:
+            A list of x and y coordinates and the corresponding amplitudes.
+
+        Example:
+            >>> import numpy as np
+            >>> cq = np.arange(50) - 25
+            >>> eta = np.arange(21)/20
+            >>> Cq_dist, eta_dist, amp = cz_model.pdf(pos=[cq, eta])
+        """
+        delta_z = (pos[0][1] - pos[0][0]) / 2
+        delta_e = (pos[1][1] - pos[1][0]) / 2
+        x = [pos[0][0] - delta_z, pos[0][-1] + delta_z]
+        y = [pos[1][0] - delta_e, pos[1][-1] + delta_e]
+
+        x_size = pos[0].size
+        y_size = pos[1].size
+        zeta, eta = self.rvs(n)
+        hist, _, _ = np.histogram2d(zeta, eta, bins=[x_size, y_size], range=[x, y])
+
+        hist /= hist.sum()
+
+        x_, y_ = np.meshgrid(pos[0], pos[1])
+        return x_, y_, hist.T
+
+
+class CzjzekDistribution(AbstractDistribution):
+    r"""A Czjzek distribution model class.
 
     The Czjzek distribution model is a random sampling of second-rank traceless
     symmetric tensors whose explicit matrix form follows
@@ -89,21 +125,38 @@ def czjzek_distribution(sigma: float, n: int):
 
     Args:
         float sigma: The Gaussian standard deviation.
-        int n:  Number of samples drawn from the Czjzek distribution model.
 
     .. note:: In the original Czjzek paper, the parameter :math:`\sigma` is given as
-        two times the standard deviation of the multi-variate normal distribution.
+        two times the standard deviation of the multi-variate normal distribution used
+        here.
 
-    Example
-    -------
-
-    >>> Vzz_dist, eta_dist = czjzek_distribution(0.5, n=1000000) # doctest: +SKIP
+    Example:
+        >>> from mrsimulator.models import CzjzekDistribution
+        >>> cz_model = CzjzekDistribution(0.5)
     """
-    tensors = _czjzek_random_distribution_tensors(sigma, n)
-    return get_Haeberlen_components(tensors)
+
+    def __init__(self, sigma: float):
+        self.sigma = sigma
+
+    def rvs(self, n: int):
+        """Draw `n` random variates from the distribution.
+
+        Args:
+            n: The number of random points to draw.
+
+        Returns:
+            A list of two NumPy array, where the first and the second array are the
+            anisotropic/quadrupolar coupling constant and asymmetry parameter,
+            respectively.
+
+        Example:
+            >>> Cq_dist, eta_dist = cz_model.rvs(n=1000000)
+        """
+        tensors = _czjzek_random_distribution_tensors(self.sigma, n)
+        return get_Haeberlen_components(tensors)
 
 
-def extended_czjzek_distribution(symmetric_tensor: SymmetricTensor, eps: float, n: int):
+class ExtCzjzekDistribution(AbstractDistribution):
     r"""Draw `N` samples of zeta and eta from the extended czjzek distribution model.
 
     The extended Czjzek random distribution [#f1]_ model is an extension of the Czjzek
@@ -122,8 +175,8 @@ def extended_czjzek_distribution(symmetric_tensor: SymmetricTensor, eps: float, 
     .. math::
         \rho = \frac{||S(0)|| \epsilon}{\sqrt{30}},
 
-    where :math:`\|S(0)\|` is the 2-norm of the tensor, and :math:`\epsilon` is a
-    fraction.
+    where :math:`\|S(0)\|` is the 2-norm of the dominant tensor, and :math:`\epsilon`
+    is a fraction.
 
     .. [#f1] Gérard Le Caër, Bruno Bureau, and Dominique Massiot,
         An extension of the Czjzek model for the distributions of electric field
@@ -135,37 +188,57 @@ def extended_czjzek_distribution(symmetric_tensor: SymmetricTensor, eps: float, 
         SymmetricTensor symmetric_tensor: A shielding or quadrupolar symmetric tensor
             or equivalent dict object.
         float eps: A fraction determining the extent of perturbation.
-        int n: Number of samples drawn from the extended Czjzek distribution model.
 
     Example
     -------
 
-    >>> from mrsimulator.models import extended_czjzek_distribution
+    >>> from mrsimulator.models import ExtCzjzekDistribution
     >>> S0 = {"Cq": 1e6, "eta": 0.3}
-    >>> n = 1000000
-    >>> Cq, eta = extended_czjzek_distribution(S0, eps=0.35, n=n)  # doctest: +SKIP
+    >>> ext_cz_model = ExtCzjzekDistribution(S0, eps=0.35)
     """
-    # czjzek_random_distribution model
-    tensors = _czjzek_random_distribution_tensors(1, n)
 
-    if isinstance(symmetric_tensor, dict):
-        symmetric_tensor = SymmetricTensor(**symmetric_tensor)
+    def __init__(self, symmetric_tensor: SymmetricTensor, eps: float):
+        self.symmetric_tensor = symmetric_tensor
+        self.eps = eps
 
-    zeta = symmetric_tensor.zeta or symmetric_tensor.Cq
-    eta = symmetric_tensor.eta
+    def rvs(self, n: int):
+        """Draw `n` random variates from the distribution.
 
-    # the traceless second-rank symmetric Cartesian tensor in PAS
-    T0 = [0.0, 0.0, 0.0]
-    if zeta != 0 and eta != 0:
-        T0 = get_principal_components(zeta, eta)
+        Args:
+            n: The number of random points to draw.
 
-    # 2-norm of the tensor
-    norm_T0 = np.linalg.norm(T0)
+        Returns:
+            A list of two NumPy array, where the first and the second array are the
+            anisotropic/quadrupolar coupling constant and asymmetry parameter,
+            respectively.
 
-    # the perturbation factor
-    rho = eps * norm_T0 / np.sqrt(30)
+        Example:
+            >>> Cq_dist, eta_dist = ext_cz_model.rvs(n=1000000)
+        """
 
-    # total tensor
-    total_tensors = np.diag(T0) + rho * tensors
+        # czjzek_random_distribution model
+        tensors = _czjzek_random_distribution_tensors(1, n)
 
-    return get_Haeberlen_components(total_tensors)
+        symmetric_tensor = self.symmetric_tensor
+
+        if isinstance(symmetric_tensor, dict):
+            symmetric_tensor = SymmetricTensor(**symmetric_tensor)
+
+        zeta = symmetric_tensor.zeta or symmetric_tensor.Cq
+        eta = symmetric_tensor.eta
+
+        # the traceless second-rank symmetric Cartesian tensor in PAS
+        T0 = [0.0, 0.0, 0.0]
+        if zeta != 0 and eta != 0:
+            T0 = get_principal_components(zeta, eta)
+
+        # 2-norm of the tensor
+        norm_T0 = np.linalg.norm(T0)
+
+        # the perturbation factor
+        rho = self.eps * norm_T0 / np.sqrt(30)
+
+        # total tensor
+        total_tensors = np.diag(T0) + rho * tensors
+
+        return get_Haeberlen_components(total_tensors)
