@@ -9,7 +9,7 @@ Fitting 17O MAS NMR of crystalline Na2SiO3
 #
 # - create a spin system fitting model,
 # - use the fitting model to perform a least-squares fit on the experimental, and
-# - extract the tensor parameters of the spin-system model.
+# - extract the tensor parameters of the spin system model.
 #
 # We will be using the `LMFIT <https://lmfit.github.io/lmfit-py/>`_ methods to
 # establish fitting parameters and fit the spectrum. The following example illustrates

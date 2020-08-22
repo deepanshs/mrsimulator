@@ -11,11 +11,23 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.models import CzjzekDistribution
+from mrsimulator.models import ExtCzjzekDistribution
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 font = {"weight": "light", "size": 9}
 matplotlib.rc("font", **font)
+
+
+@pytest.fixture(autouse=True)
+def test_models(doctest_namespace):
+    cz_model = CzjzekDistribution(0.5)
+    doctest_namespace["cz_model"] = cz_model
+
+    S0 = {"Cq": 1e6, "eta": 0.3}
+    ext_cz_model = ExtCzjzekDistribution(S0, eps=0.35)
+    doctest_namespace["ext_cz_model"] = ext_cz_model
 
 
 @pytest.fixture(autouse=True)

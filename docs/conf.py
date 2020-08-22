@@ -125,6 +125,8 @@ sphinx_gallery_conf = {
         # The module you locally document uses None
         "mrsimulator": None
     },
+    "backreferences_dir": "auto_examples",
+    "doc_module": ("mrsimulator")
     # "compress_images": ("images", "thumbnails"),
     # "show_memory": True,
 }

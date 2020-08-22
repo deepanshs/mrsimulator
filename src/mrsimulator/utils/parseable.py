@@ -7,7 +7,7 @@ from typing import Dict
 from csdmpy.units import string_to_quantity
 from pydantic import BaseModel
 
-from . import _reduce_dict
+from .extra import _reduce_dict
 
 __author__ = "Shyam Dwaraknath"
 __email__ = "shyamd@lbl.gov"
