@@ -10,23 +10,74 @@ def single_site_system_generator(
     shielding_symmetric=None,
     quadrupolar=None,
     abundance=None,
+    rtol=1e-3,
 ):
+    r"""Generate and return a list of single-site spin systems from the input parameters.
+
+    Args:
+
+        isotopes:
+            A string or a list of isotopes.
+        isotropic_chemical_shifts:
+            A float or a list/ndarray of values. The default value is 0.
+        shielding_symmetric:
+            A shielding symmetric like dict object, where the keyword value can either
+            be a float or a list/ndarray of floats. The default value is None. The
+            allowed keywords are ``zeta``, ``eta``, ``alpha``, ``beta``, and ``gamma``.
+        quadrupolar:
+            A quadrupolar like dict object, where the keyword value can either be a
+            float or a list/ndarray of floats. The default value is None. The allowed
+            keywords are ``Cq``, ``eta``, ``alpha``, ``beta``, and ``gamma``.
+        abundance:
+            A float or a list/ndarray of floats describing the abundance of each spin
+            system.
+        rtol:
+            The relative tolerance. This value is used in determining the cutoff
+            abundance given as
+            :math:`\tt{abundance}_\tt{cutoff} = \tt{rtol} * \tt{max(abundance)}.`
+            The spin systems with abundance below this threshold are ignored.
+
+    .. note::
+        The parameter value can either be a float or a list/ndarray. If the parameter
+        value is a float, the given value is assigned to the respective parameter in all
+        the spin systems. If the parameter value is a list or ndarray, its ith value is
+        assigned to the respective parameter of the ith spin system. When multiple
+        parameter values are given as lists/ndarrays, the length of all the lists must
+        be the same.
+    """
+    isotopes = fix_item(isotopes)
     n_isotopes = get_length(isotopes)
+
+    isotropic_chemical_shifts = fix_item(isotropic_chemical_shifts)
     n_iso = get_length(isotropic_chemical_shifts)
+
+    abundance = fix_item(abundance)
     n_abd = get_length(abundance)
 
     n_ss = []
     if shielding_symmetric is not None:
         shield_keys = shielding_symmetric.keys()
         shielding_symmetric_keys = ["zeta", "eta", "alpha", "beta", "gamma"]
-        for item in shielding_symmetric_keys:
-            if item in shield_keys:
-                n_ss.append(get_length(shielding_symmetric[item]))
+        shielding_symmetric = {
+            item: fix_item(shielding_symmetric[item])
+            for item in shielding_symmetric_keys
+            if item in shield_keys
+        }
+        n_ss = [
+            get_length(shielding_symmetric[item])
+            for item in shielding_symmetric_keys
+            if item in shield_keys
+        ]
 
     n_q = []
     if quadrupolar is not None:
         quad_keys = quadrupolar.keys()
         quadrupolar_keys = ["Cq", "eta", "alpha", "beta", "gamma"]
+        quadrupolar = {
+            item: fix_item(quadrupolar[item])
+            for item in quadrupolar_keys
+            if item in quad_keys
+        }
         n_q = [
             get_length(quadrupolar[item])
             for item in quadrupolar_keys
@@ -44,12 +95,16 @@ def single_site_system_generator(
     iso_chemical_shifts_ = get_default_lists(isotropic_chemical_shifts, n_len)
     abundance_ = get_default_lists(abundance, n_len)
 
+    index = np.where(abundance_ > rtol * abundance_.max())[0]
+
     sys = [
         SpinSystem(
-            sites=[Site(isotope=ist__, isotropic_chemical_shift=iso__,)],
+            sites=[Site(isotope=ist__, isotropic_chemical_shift=iso__)],
             abundance=abd__,
         )
-        for ist__, iso__, abd__ in zip(isotopes_, iso_chemical_shifts_, abundance_)
+        for ist__, iso__, abd__ in zip(
+            isotopes_[index], iso_chemical_shifts_[index], abundance_[index]
+        )
     ]
 
     # system with additional shielding symmetric parameters
@@ -57,9 +112,9 @@ def single_site_system_generator(
         lst = []
         for item in shielding_symmetric_keys:
             if item in shield_keys:
-                lst.append(get_default_lists(shielding_symmetric[item], n_len))
+                lst.append(get_default_lists(shielding_symmetric[item], n_len)[index])
             else:
-                lst.append([None for _ in range(n_len)])
+                lst.append([None for _ in range(index.size)])
         _populate_shielding(sys, lst)
 
     # system with additional quadrupolar parameters
@@ -67,14 +122,13 @@ def single_site_system_generator(
         lst = []
         for item in quadrupolar_keys:
             if item in quad_keys:
-                lst.append(get_default_lists(quadrupolar[item], n_len))
+                lst.append(get_default_lists(quadrupolar[item], n_len)[index])
             else:
-                lst.append([None for _ in range(n_len)])
+                lst.append([None for _ in range(index.size)])
 
         _populate_quadrupolar(sys, lst)
 
-    sys_ = [item for item in sys if item.abundance != 0]
-    return sys_
+    return sys
 
 
 def _populate_quadrupolar(sys, items):
@@ -106,6 +160,12 @@ def get_default_lists(item, n):
         return np.asarray(item)
 
     return np.asarray([item for _ in range(n)])
+
+
+def fix_item(item):
+    if isinstance(item, (list, np.ndarray)):
+        return np.asarray(item).ravel()
+    return item
 
 
 def get_length(item):
