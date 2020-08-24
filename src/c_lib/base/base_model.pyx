@@ -14,7 +14,7 @@ __email__ = "deepansh2012@gmail.com"
 def one_d_spectrum(method,
        list spin_systems,
        int verbose=0,
-       int number_of_sidebands=90,
+       unsigned int number_of_sidebands=90,
        unsigned int integration_density=72,
        unsigned int decompose_spectrum=0,
        unsigned int integration_volume=1,
@@ -98,7 +98,8 @@ def one_d_spectrum(method,
 # create averaging scheme _____________________________________________________
     cdef clib.MRS_averaging_scheme *the_averaging_scheme
     the_averaging_scheme = clib.MRS_create_averaging_scheme(
-        integration_density=integration_density, allow_fourth_rank=allow_fourth_rank, integration_volume=integration_volume
+        integration_density=integration_density, allow_fourth_rank=allow_fourth_rank,
+        integration_volume=integration_volume
     )
 
     max_n_sidebands = number_of_sidebands

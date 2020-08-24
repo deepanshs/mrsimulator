@@ -16,6 +16,138 @@ static inline void __zero_components(double *R0, complex128 *R2,
   vm_double_zeros(18, (double *)R4);
 }
 
+static inline void one_dimensional_averaging(MRS_sequence *the_sequence,
+                                             MRS_averaging_scheme *scheme,
+                                             MRS_fftw_scheme *fftw_scheme,
+                                             double *spec,
+                                             unsigned int number_of_sidebands) {
+  unsigned int i, j, evt, step_vector = 0, address;
+  MRS_plan *plan;
+  MRS_event *event;
+  int size = scheme->total_orientations * number_of_sidebands;
+  double *freq_amp = malloc_double(size);
+  double offset, offset1;
+
+  vm_double_ones(size, freq_amp);
+
+  // offset = plan->vr_freq[i] + plan->isotropic_offset +
+  //          the_sequence[seq].normalize_offset;
+  offset = the_sequence[0].normalize_offset + the_sequence[0].R0_offset;
+  for (evt = 0; evt < the_sequence[0].n_events; evt++) {
+    event = &the_sequence[0].events[evt];
+    plan = event->plan;
+    // offset += plan->R0_offset;
+    vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_amp, 1);
+  }
+
+  for (j = 0; j < scheme->octant_orientations; j++) {
+    cblas_dscal(plan->n_octants * number_of_sidebands, plan->norm_amplitudes[j],
+                &freq_amp[j], scheme->octant_orientations);
+  }
+
+  for (i = 0; i < number_of_sidebands; i++) {
+    offset1 = offset + plan->vr_freq[i];
+    if ((int)offset1 >= 0 && (int)offset1 <= the_sequence[0].count) {
+      step_vector = i * scheme->total_orientations;
+      for (j = 0; j < plan->n_octants; j++) {
+        address = j * scheme->octant_orientations;
+        // Add offset(isotropic + sideband_order) to the local frequency
+        // from [n to n+octant_orientation]
+        vm_double_add_offset(scheme->octant_orientations,
+                             &the_sequence[0].local_frequency[address], offset1,
+                             the_sequence[0].freq_offset);
+        // Perform tenting on every sideband order over all orientations
+        octahedronInterpolation(
+            spec, the_sequence[0].freq_offset, scheme->integration_density,
+            &freq_amp[step_vector], 1, the_sequence[0].count);
+        step_vector += scheme->octant_orientations;
+      }
+    }
+  }
+  free(freq_amp);
+}
+
+static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
+                                             MRS_averaging_scheme *scheme,
+                                             MRS_fftw_scheme *fftw_scheme,
+                                             double *spec,
+                                             unsigned int number_of_sidebands) {
+  unsigned int i, k, j, evt;
+  unsigned int step_vector_i = 0, step_vector_k = 0, address;
+  MRS_plan *plan;
+  MRS_event *event;
+  int size = scheme->total_orientations * number_of_sidebands;
+  double *freq_ampA = malloc_double(size);
+  double *freq_ampB = malloc_double(size);
+  double *freq_amp = malloc_double(scheme->total_orientations);
+  double offset0, offset1, offsetA, offsetB;
+
+  vm_double_ones(size, freq_ampA);
+  vm_double_ones(size, freq_ampB);
+
+  // offset = plan->vr_freq[i] + plan->isotropic_offset +
+  //          the_sequence[seq].normalize_offset;
+  offset0 = the_sequence[0].normalize_offset + the_sequence[0].R0_offset;
+  for (evt = 0; evt < the_sequence[0].n_events; evt++) {
+    event = &the_sequence[0].events[evt];
+    plan = event->plan;
+    // offset0 += plan->R0_offset;
+    vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_ampA, 1);
+  }
+
+  offset1 = the_sequence[1].normalize_offset + the_sequence[1].R0_offset;
+  for (evt = 0; evt < the_sequence[1].n_events; evt++) {
+    event = &the_sequence[1].events[evt];
+    plan = event->plan;
+    // offset1 += plan->R0_offset;
+    vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_ampB, 1);
+  }
+
+  for (j = 0; j < scheme->octant_orientations; j++) {
+    cblas_dscal(plan->n_octants * number_of_sidebands, plan->norm_amplitudes[j],
+                &freq_ampB[j], scheme->octant_orientations);
+  }
+
+  for (i = 0; i < number_of_sidebands; i++) {
+    offsetA = offset0 + plan->vr_freq[i];
+    if ((int)offsetA >= 0 && (int)offsetA <= the_sequence[0].count) {
+      step_vector_i = i * scheme->total_orientations;
+      for (k = 0; k < number_of_sidebands; k++) {
+        offsetB = offset1 + plan->vr_freq[k];
+        if ((int)offsetB >= 0 && (int)offsetB <= the_sequence[1].count) {
+          step_vector_k = k * scheme->total_orientations;
+
+          // step_vector = 0;
+          for (j = 0; j < plan->n_octants; j++) {
+            address = j * scheme->octant_orientations;
+            // Add offset(isotropic + sideband_order) to the local frequency
+            // from [n to n+octant_orientation]
+            vm_double_add_offset(scheme->octant_orientations,
+                                 &the_sequence[0].local_frequency[address],
+                                 offsetA, the_sequence[0].freq_offset);
+            vm_double_add_offset(scheme->octant_orientations,
+                                 &the_sequence[1].local_frequency[address],
+                                 offsetB, the_sequence[1].freq_offset);
+
+            vm_double_multiply(scheme->total_orientations,
+                               &freq_ampA[step_vector_i + address],
+                               &freq_ampB[step_vector_k + address], freq_amp);
+            // Perform tenting on every sideband order over all orientations
+            octahedronInterpolation2D(
+                spec, the_sequence[0].freq_offset, the_sequence[1].freq_offset,
+                scheme->integration_density, freq_amp, 1, the_sequence[0].count,
+                the_sequence[1].count);
+            // step_vector += scheme->octant_orientations;
+          }
+        }
+      }
+    }
+  }
+  free(freq_amp);
+  free(freq_ampA);
+  free(freq_ampB);
+}
+
 void __mrsimulator_core(
     // spectrum information and related amplitude
     double *spec,  // amplitude vector representing the spectrum.
@@ -101,8 +233,7 @@ void __mrsimulator_core(
       );
 
       // Add a loop over all couplings.. here
-      /* Get frequencies and amplitudes per octant .........................
-       */
+      /* Get frequencies and amplitudes per octant ......................... */
       /* Always evalute the frequencies before the amplitudes. */
       MRS_get_normalized_frequencies_from_plan(scheme, plan, R0, R2, R4,
                                                refresh, &the_sequence[seq]);
@@ -115,33 +246,6 @@ void __mrsimulator_core(
       refresh = 0;
     }  // end events
   }    // end sequences
-
-  /* If the number of sidebands is 1, the sideband amplitude at every sideband
-   * order is one. In this case, update the `fftw_scheme->vector` is the same as
-   * the weights from the orientation averaging,
-   */
-  // if (plan->number_of_sidebands == 1) {
-  //   /* Scaling the absolute value square with the powder scheme weights. Only
-  //    * the real part is scaled and the imaginary part is left as is.
-  //    */
-  //   for (i = 0; i < plan->n_octants; i++) {
-  //     cblas_dcopy(scheme->octant_orientations, plan->norm_amplitudes, 1,
-  //                 &the_sequence[0]
-  //                      .events[0]
-  //                      .freq_amplitude[i * scheme->octant_orientations],
-  //                 1);
-  //   }
-  // } else {
-  //   /* Scaling the absolute value square with the powder scheme weights. Only
-  //    * the real part is scaled and the imaginary part is left as is.
-  //    */
-  //   for (i = 0; i < scheme->octant_orientations; i++) {
-  //     cblas_dscal(plan->n_octants * plan->number_of_sidebands,
-  //                 plan->norm_amplitudes[i],
-  //                 &the_sequence[0].events[0].freq_amplitude[i],
-  //                 scheme->octant_orientations);
-  //   }
-  // }
 
   /* ---------------------------------------------------------------------
    *              Calculating the tent for every sideband
@@ -162,24 +266,72 @@ void __mrsimulator_core(
    *   }
    * }
    */
+  unsigned int i, j, step_vector, address;
+  double offset, offset0;
+  if (n_sequence == 1 && the_sequence[0].n_events == 1) {
+    /**
+     * If the number of sidebands is 1, the sideband amplitude at every
+     * sideband order is one. In this case, update the `fftw_scheme->vector` is
+     * the same as the weights from the orientation averaging,
+     */
+    if (plan->number_of_sidebands == 1) {
+      /* Copy the plan->norm_amplitudes to fftw_scheme->vector. */
+      for (j = 0; j < plan->n_octants; j++) {
+        cblas_dcopy(
+            scheme->octant_orientations, plan->norm_amplitudes, 1,
+            (double *)&fftw_scheme->vector[j * scheme->octant_orientations], 2);
+      }
+    } else {
+      /**
+       * Scale the absolute value square with the powder scheme weights. Only
+       * the real part is scaled and the imaginary part is left as is.
+       */
+      for (j = 0; j < scheme->octant_orientations; j++) {
+        cblas_dscal(plan->n_octants * plan->number_of_sidebands,
+                    plan->norm_amplitudes[j], (double *)&fftw_scheme->vector[j],
+                    2 * scheme->octant_orientations);
+      }
+    }
+
+    offset0 = the_sequence[0].normalize_offset + the_sequence[0].R0_offset;
+
+    for (i = 0; i < plan->number_of_sidebands; i++) {
+      offset = plan->vr_freq[i] + offset0;
+      if ((int)offset >= 0 && (int)offset <= the_sequence[0].count) {
+        step_vector = i * scheme->total_orientations;
+        for (j = 0; j < plan->n_octants; j++) {
+          address = j * scheme->octant_orientations;
+
+          // Add offset(isotropic + sideband_order) to the local frequency
+          // from [n to n+octant_orientation]
+          vm_double_add_offset(scheme->octant_orientations,
+                               &the_sequence[0].local_frequency[address],
+                               offset, the_sequence[0].freq_offset);
+          // Perform tenting on every sideband order over all orientations.
+          octahedronInterpolation(spec_site_ptr, the_sequence[0].freq_offset,
+                                  scheme->integration_density,
+                                  (double *)&fftw_scheme->vector[step_vector],
+                                  2, the_sequence[0].count);
+          step_vector += scheme->octant_orientations;
+        }
+      }
+    }
+    return;
+  }
+
   if (interpolation) {
     if (n_sequence == 1) {
       one_dimensional_averaging(the_sequence, scheme, fftw_scheme, spec,
                                 plan->number_of_sidebands);
+      return;
     }
 
     if (n_sequence == 2) {
       two_dimensional_averaging(the_sequence, scheme, fftw_scheme, spec,
                                 plan->number_of_sidebands);
+      return;
     }
   }
-
-  // gettimeofday(&end_site_time, NULL);
-  // clock_time =
-  //     (double)(end_site_time.tv_usec - start_site_time.tv_usec) /
-  //     1000000.
-  //     + (double)(end_site_time.tv_sec - start_site_time.tv_sec);
-  // printf("Total time per site %f \n", clock_time);
 }
 
 void mrsimulator_core(
@@ -197,7 +349,7 @@ void mrsimulator_core(
                                            // order quad interaction.
 
     // spin rate, spin angle and number spinning sidebands
-    int number_of_sidebands,                 // The number of sidebands
+    unsigned int number_of_sidebands,        // The number of sidebands
     double sample_rotation_frequency_in_Hz,  // The rotor spin frequency
     double rotor_angle_in_rad,  // The rotor angle relative to lab-frame z-axis
 
@@ -246,7 +398,8 @@ void mrsimulator_core(
                                         // from the second order quad
                                         // Hamiltonian.
 
-      // Pointer to the transitions. transition[0] = mi and transition[1] = mf
+      // Pointer to the transitions. transition[0] = mi and transition[1] =
+      // mf
       transition,
 
       the_sequence, n_sequence, fftw_scheme, scheme, interpolation);
@@ -261,134 +414,4 @@ void mrsimulator_core(
   MRS_free_fftw_scheme(fftw_scheme);
   MRS_free_averaging_scheme(scheme);
   // MRS_free_plan(plan);
-}
-
-void one_dimensional_averaging(MRS_sequence *the_sequence,
-                               MRS_averaging_scheme *scheme,
-                               MRS_fftw_scheme *fftw_scheme, double *spec,
-                               int number_of_sidebands) {
-  unsigned int i, j, evt, step_vector = 0, address;
-  MRS_plan *plan;
-  MRS_event *event;
-  int size = scheme->total_orientations * number_of_sidebands;
-  double *freq_amp = malloc_double(size);
-  double offset, offset1;
-
-  vm_double_ones(size, freq_amp);
-
-  // offset = plan->vr_freq[i] + plan->isotropic_offset +
-  //          the_sequence[seq].normalize_offset;
-  offset = the_sequence[0].normalize_offset + the_sequence[0].R0_offset;
-  for (evt = 0; evt < the_sequence[0].n_events; evt++) {
-    event = &the_sequence[0].events[evt];
-    plan = event->plan;
-    // offset += plan->R0_offset;
-    vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_amp, 1);
-  }
-
-  for (j = 0; j < scheme->octant_orientations; j++) {
-    cblas_dscal(plan->n_octants * number_of_sidebands, plan->norm_amplitudes[j],
-                &freq_amp[j], scheme->octant_orientations);
-  }
-
-  for (i = 0; i < number_of_sidebands; i++) {
-    offset1 = offset + plan->vr_freq[i];
-    if ((int)offset1 >= 0 && (int)offset1 <= the_sequence[0].count) {
-      step_vector = i * scheme->total_orientations;
-      for (j = 0; j < plan->n_octants; j++) {
-        address = j * scheme->octant_orientations;
-        // Add offset(isotropic + sideband_order) to the local frequency
-        // from [n to n+octant_orientation]
-        vm_double_ramp(scheme->octant_orientations,
-                       &the_sequence[0].local_frequency[address], 1.0, offset1,
-                       the_sequence[0].freq_offset);
-        // Perform tenting on every sideband order over all orientations
-        octahedronInterpolation(
-            spec, the_sequence[0].freq_offset, scheme->integration_density,
-            &freq_amp[step_vector], 1, the_sequence[0].count);
-        step_vector += scheme->octant_orientations;
-      }
-    }
-  }
-  free(freq_amp);
-}
-
-void two_dimensional_averaging(MRS_sequence *the_sequence,
-                               MRS_averaging_scheme *scheme,
-                               MRS_fftw_scheme *fftw_scheme, double *spec,
-                               int number_of_sidebands) {
-  unsigned int i, j, k, evt;
-  unsigned int step_vector_i = 0, step_vector_k = 0, address;
-  MRS_plan *plan;
-  MRS_event *event;
-  int size = scheme->total_orientations * number_of_sidebands;
-  double *freq_ampA = malloc_double(size);
-  double *freq_ampB = malloc_double(size);
-  double *freq_amp = malloc_double(scheme->total_orientations);
-  double offset0, offset1, offsetA, offsetB;
-
-  vm_double_ones(size, freq_ampA);
-  vm_double_ones(size, freq_ampB);
-
-  // offset = plan->vr_freq[i] + plan->isotropic_offset +
-  //          the_sequence[seq].normalize_offset;
-  offset0 = the_sequence[0].normalize_offset + the_sequence[0].R0_offset;
-  for (evt = 0; evt < the_sequence[0].n_events; evt++) {
-    event = &the_sequence[0].events[evt];
-    plan = event->plan;
-    // offset0 += plan->R0_offset;
-    vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_ampA, 1);
-  }
-
-  offset1 = the_sequence[1].normalize_offset + the_sequence[1].R0_offset;
-  for (evt = 0; evt < the_sequence[1].n_events; evt++) {
-    event = &the_sequence[1].events[evt];
-    plan = event->plan;
-    // offset1 += plan->R0_offset;
-    vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_ampB, 1);
-  }
-
-  for (j = 0; j < scheme->octant_orientations; j++) {
-    cblas_dscal(plan->n_octants * number_of_sidebands, plan->norm_amplitudes[j],
-                &freq_ampB[j], scheme->octant_orientations);
-  }
-
-  for (i = 0; i < number_of_sidebands; i++) {
-    offsetA = offset0 + plan->vr_freq[i];
-    if ((int)offsetA >= 0 && (int)offsetA <= the_sequence[0].count) {
-      step_vector_i = i * scheme->total_orientations;
-      for (k = 0; k < number_of_sidebands; k++) {
-        offsetB = offset1 + plan->vr_freq[k];
-        if ((int)offsetB >= 0 && (int)offsetB <= the_sequence[1].count) {
-          step_vector_k = k * scheme->total_orientations;
-
-          // step_vector = 0;
-          for (j = 0; j < plan->n_octants; j++) {
-            address = j * scheme->octant_orientations;
-            // Add offset(isotropic + sideband_order) to the local frequency
-            // from [n to n+octant_orientation]
-            vm_double_ramp(scheme->octant_orientations,
-                           &the_sequence[0].local_frequency[address], 1.0,
-                           offsetA, the_sequence[0].freq_offset);
-            vm_double_ramp(scheme->octant_orientations,
-                           &the_sequence[1].local_frequency[address], 1.0,
-                           offsetB, the_sequence[1].freq_offset);
-
-            vm_double_multiply(scheme->total_orientations,
-                               &freq_ampA[step_vector_i + address],
-                               &freq_ampB[step_vector_k + address], freq_amp);
-            // Perform tenting on every sideband order over all orientations
-            octahedronInterpolation2D(
-                spec, the_sequence[0].freq_offset, the_sequence[1].freq_offset,
-                scheme->integration_density, freq_amp, 1, the_sequence[0].count,
-                the_sequence[1].count);
-            // step_vector += scheme->octant_orientations;
-          }
-        }
-      }
-    }
-  }
-  free(freq_amp);
-  free(freq_ampA);
-  free(freq_ampB);
 }

@@ -42,7 +42,7 @@ struct MRS_plan {
    */
   MRS_averaging_scheme *averaging_scheme;
 
-  int number_of_sidebands; /**< The number of sidebands to compute. */
+  unsigned int number_of_sidebands; /**< The number of sidebands to compute. */
 
   double sample_rotation_frequency_in_Hz; /**< The sample rotation frequency in
                                              Hz. */
@@ -98,7 +98,8 @@ typedef struct MRS_plan MRS_plan;
  *            processing the fourth rank tensor.
  * @return A pointer to the MRS_plan.
  */
-MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
+MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
+                          unsigned int number_of_sidebands,
                           double sample_rotation_frequency_in_Hz,
                           double rotor_angle_in_rad, double increment,
                           bool allow_fourth_rank);
@@ -231,7 +232,7 @@ void MRS_rotate_components_from_PAS_to_common_frame(
                                            // isotropic shift
     double B0_in_T);
 
-extern void __get_components(int number_of_sidebands, double spin_frequency,
-                             double *restrict pre_phase);
+extern void __get_components(unsigned int number_of_sidebands,
+                             double spin_frequency, double *restrict pre_phase);
 
 #endif /* mrsimulator_h */

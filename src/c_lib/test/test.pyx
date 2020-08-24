@@ -137,7 +137,7 @@ def get_exp_Im_alpha(int n, np.ndarray[double] cos_alpha, bool_t allow_fourth_ra
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def pre_phase_components(int number_of_sidebands, double sample_rotation_frequency_in_Hz):
+def pre_phase_components(unsigned int number_of_sidebands, double sample_rotation_frequency_in_Hz):
     r"""
 
     """

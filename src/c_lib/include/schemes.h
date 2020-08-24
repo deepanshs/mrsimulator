@@ -122,7 +122,7 @@ typedef struct MRS_fftw_scheme {
 } MRS_fftw_scheme;
 
 MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
-                                    int number_of_sidebands);
+                                    unsigned int number_of_sidebands);
 
 void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme);
 

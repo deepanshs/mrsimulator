@@ -34,12 +34,12 @@ cdef extern from "mrsimulator.h":
 
     ctypedef struct MRS_plan:
         MRS_averaging_scheme *averaging_scheme
-        int number_of_sidebands
+        unsigned int number_of_sidebands
         double sample_rotation_frequency_in_Hz
         double rotor_angle_in_rad
         # double complex *vector
 
-    MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
+    MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, unsigned int number_of_sidebands,
                           double sample_rotation_frequency_in_Hz,
                           double rotor_angle_in_rad, double increment,
                           bool_t allow_fourth_rank)
@@ -86,7 +86,7 @@ cdef extern from "method.h":
         double *rotor_angle_in_rad,
         int *n_events,
         unsigned int n_seq,
-        int number_of_sidebands)
+        unsigned int number_of_sidebands)
 
     void MRS_free_sequence(MRS_sequence *the_sequence, int n)
 
@@ -107,7 +107,7 @@ cdef extern from "simulation.h":
                                                   # second order quad Hamiltonian.
 
         # spin rate, spin angle and number spinning sidebands
-        int number_of_sidebands,
+        unsigned int number_of_sidebands,
         double sample_rotation_frequency_in_Hz,
         double rotor_angle_in_rad,
 

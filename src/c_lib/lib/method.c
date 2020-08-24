@@ -61,7 +61,7 @@ static inline void create_plans_for_events_in_sequence(
     MRS_sequence *sequence, MRS_averaging_scheme *scheme, int count,
     double increment, double coordinates_offset, int n_events,
     double *sample_rotation_frequency_in_Hz, double *rotor_angle_in_rad,
-    double *magnetic_flux_density_in_T, int number_of_sidebands) {
+    double *magnetic_flux_density_in_T, unsigned int number_of_sidebands) {
   int i;
   sequence->count = count;
   sequence->coordinates_offset = coordinates_offset;
@@ -94,7 +94,7 @@ MRS_sequence *MRS_create_sequences(
     MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
     double *increment, double *magnetic_flux_density_in_T,
     double *sample_rotation_frequency_in_Hz, double *rotor_angle_in_rad,
-    int *n_events, unsigned int n_seq, int number_of_sidebands) {
+    int *n_events, unsigned int n_seq, unsigned int number_of_sidebands) {
   unsigned int i;
   MRS_sequence *sequence = (MRS_sequence *)malloc(n_seq * sizeof(MRS_sequence));
 

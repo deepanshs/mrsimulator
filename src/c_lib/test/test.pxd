@@ -79,7 +79,7 @@ cdef extern from "octahedron.h":
 
 cdef extern from "mrsimulator.h":
     void __get_components(
-        int number_of_sidebands,
+        unsigned int number_of_sidebands,
         double spin_frequency,
         double *pre_phase)
 
@@ -151,7 +151,7 @@ cdef extern from "simulation.h":
                                                   # second order quad Hamiltonian.
 
         # spin rate, spin angle and number spinning sidebands
-        int number_of_sidebands,
+        unsigned int number_of_sidebands,
         double sample_rotation_frequency_in_Hz,
         double rotor_angle_in_rad,
 

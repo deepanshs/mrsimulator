@@ -29,7 +29,7 @@ extern void mrsimulator_core(
                                            // order quad Hamiltonian.
 
     // spin rate, spin angle and number spinning sidebands
-    int number_of_sidebands,                 // The number of sidebands
+    unsigned int number_of_sidebands,        // The number of sidebands
     double sample_rotation_frequency_in_Hz,  // The rotor spin frequency
     double rotor_angle_in_rad,  // The rotor angle relative to lab-frame z-axis
 
@@ -55,13 +55,3 @@ extern void __mrsimulator_core(
     float *transition, MRS_sequence *the_sequence, int n_sequence,
     MRS_fftw_scheme *fftw_scheme, MRS_averaging_scheme *scheme,
     bool interpolation);
-
-void one_dimensional_averaging(MRS_sequence *the_sequence,
-                               MRS_averaging_scheme *scheme,
-                               MRS_fftw_scheme *fftw_scheme, double *spec,
-                               int number_of_sidebands);
-
-void two_dimensional_averaging(MRS_sequence *the_sequence,
-                               MRS_averaging_scheme *scheme,
-                               MRS_fftw_scheme *fftw_scheme, double *spec,
-                               int number_of_sidebands);

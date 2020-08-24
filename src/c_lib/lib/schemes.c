@@ -178,9 +178,9 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
 /* fftw routine setup .................................................... */
 /* ....................................................................... */
 MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
-                                    int number_of_sidebands) {
+                                    unsigned int number_of_sidebands) {
   unsigned int size = total_orientations * number_of_sidebands;
-
+  int nssb = (int)number_of_sidebands;
   MRS_fftw_scheme *fftw_scheme = malloc(sizeof(MRS_fftw_scheme));
 
   fftw_scheme->vector =
@@ -194,10 +194,10 @@ MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
   // }
   // fftw_plan_with_nthreads(2);
 
-  fftw_scheme->the_fftw_plan = fftw_plan_many_dft(
-      1, &number_of_sidebands, total_orientations, fftw_scheme->vector, NULL,
-      total_orientations, 1, fftw_scheme->vector, NULL, total_orientations, 1,
-      FFTW_FORWARD, FFTW_ESTIMATE);
+  fftw_scheme->the_fftw_plan =
+      fftw_plan_many_dft(1, &nssb, total_orientations, fftw_scheme->vector,
+                         NULL, total_orientations, 1, fftw_scheme->vector, NULL,
+                         total_orientations, 1, FFTW_FORWARD, FFTW_ESTIMATE);
 
   // char *filename = "128_sidebands.wisdom";
   // int status = fftw_export_wisdom_to_filename(filename);
