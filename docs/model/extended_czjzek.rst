@@ -111,6 +111,6 @@ The plot of the extended Czjzek probability distribution is shown below.
     by first drawing random points from the distribution and then binning it
     onto a pre-defined grid.
 
-.. minigallery:: mrsimulator.models.CzjzekDistribution
+.. minigallery:: mrsimulator.models.ExtCzjzekDistribution
     :add-heading: Mini-gallery using the extended Czjzek distributions
     :heading-level: '
