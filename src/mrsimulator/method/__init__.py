@@ -207,7 +207,7 @@ class Method(Parseable):
         temp_dict = super().dict(**kwargs)
         if self.simulation is not None:
             temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
-        if self.experiment is not None:
+        if self.experiment is not None and isinstance(self.experiment, cp.CSDM):
             temp_dict["experiment"] = self.experiment.to_dict()
         return temp_dict
 

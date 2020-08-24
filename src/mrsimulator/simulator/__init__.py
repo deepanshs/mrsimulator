@@ -10,7 +10,7 @@ from mrsimulator import __version__
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
 from mrsimulator.method import Method
-from mrsimulator.utils import _reduce_dict
+from mrsimulator.utils.extra import _reduce_dict
 from mrsimulator.utils.importer import import_json
 from pydantic import BaseModel
 
