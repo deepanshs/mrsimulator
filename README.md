@@ -8,10 +8,9 @@
 | Metrics      | [![Total alerts](https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python) [![codecov](https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/DeepanshS/mrsimulator) |
 | Citation     | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3978780.svg)](https://doi.org/10.5281/zenodo.3978780)                                                                                                                                                                                                                                                                                                                                                                 |
 
-`mrsimulator` is a python package for computing fast solid-state magnetic resonance
-(NMR) spectra. The library is optimized to compute both crystalline and amorphous-like
-materials. The core of the `mrsimulator` library is written in C, wrapped, and made
-available in python.
+`mrsimulator` is an open-source python package for fast computation/analysis of solid-state
+magnetic resonance (NMR) spectra of both crystalline and amorphous materials. The core
+of the `mrsimulator` library is written in C, wrapped, and made available in python.
 
 > :warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
 

@@ -74,10 +74,9 @@ Welcome to the Mrsimulator documentation
 
 **About**
 
-``mrsimulator`` is a python package for computing fast solid-state magnetic
-resonance (NMR) spectra. The library is optimized to compute both crystalline and
-amorphous-like materials. The core of the ``mrsimulator`` library is written in C,
-wrapped, and made available in python.
+``mrsimulator`` is an open-source python package for fast computation/analysis of solid-state
+magnetic resonance (NMR) spectra of both crystalline and amorphous materials. The core of
+the ``mrsimulator`` library is written in C, wrapped, and made available in python.
 
 ----
 
