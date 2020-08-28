@@ -129,8 +129,8 @@ def test_ThreeQ_MAS_spin_3halves():
     # ref: D. Massiot et al. / Solid State Nuclear Magnetic Resonance 6 (1996) 73-83
     spin = method.channels[0].spin
     v0 = method.channels[0].gyromagnetic_ratio * 9.4 * 1e6
-    vq = 3 * 3.5e6 / (2 * spin * (2 * spin - 1))
-    v_iso = -9 * 17 / 8 + 1e6 / 8 * (vq / v0) ** 2 * ((0.36 ** 2) / 3 + 1)
+    vq = (3 * 3.5e6) / (2 * spin * (2 * spin - 1))
+    v_iso = -9 * 17 / 8 + 1e6 / 8 * ((vq / v0) ** 2) * ((0.36 ** 2) / 3 + 1)
 
     # the coordinate from spectrum along the iso dimension must be equal to v_iso
     v_iso_spectrum = data.dimensions[1].coordinates[index[0]].value

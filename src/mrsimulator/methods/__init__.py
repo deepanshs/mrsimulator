@@ -263,19 +263,21 @@ class MQ_MAS_:
         spin = method.channels[0].spin
 
         # select the coherence for the first event
-        p = int(2 * mq)
-        P = -p if mq == spin else p
+        P = int(2 * mq)
+        nQ = P
+        P = -P if mq == spin else P
 
-        method.spectral_dimensions[0].events[0].transition_query.P["channel-1"] = [[P]]
-        method.spectral_dimensions[0].events[0].transition_query.D["channel-1"] = [[0]]
+        method.spectral_dimensions[0].events[0].transition_query.P = {
+            "channel-1": [[P]]
+        }
 
-        k = cls.k_MQ_MAS[p][spin]
+        k = cls.k_MQ_MAS[nQ][spin]
 
         # Update the fractions for the events in the t1 spectral dimension.
         method.spectral_dimensions[0].events[0].fraction = 1 / (1 + k)
         method.spectral_dimensions[0].events[1].fraction = k / (1 + k)
 
-        method.description = f"Simulate a {p}Q magic-angle spinning spectrum."
+        method.description = f"Simulate a {nQ}Q magic-angle spinning spectrum."
         return method
 
 
