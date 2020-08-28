@@ -216,8 +216,8 @@ class Method(Parseable):
 
         segments = []
         for seq in self.spectral_dimensions:
-            selected_transitions = all_transitions[:]
             for ent in seq.events:
+                selected_transitions = all_transitions[:]
                 list_of_P = query_permutations(
                     ent.transition_query.to_dict_with_units(),
                     isotope=spin_system.get_isotopes(),

@@ -81,6 +81,7 @@ cdef extern from "method.h":
         int *count,
         double *coordinates_offset,
         double *increment,
+        double *fraction,
         double *magnetic_flux_density_in_T,
         double *sample_rotation_frequency_in_Hz,
         double *rotor_angle_in_rad,

@@ -15,13 +15,16 @@
  * Free the buffers and pre-calculated tables from the mrsimulator plan.
  */
 void MRS_free_plan(MRS_plan *the_plan) {
-  free(the_plan->vr_freq);
-  free(the_plan->wigner_d2m0_vector);
-  free(the_plan->wigner_d4m0_vector);
-  free(the_plan->norm_amplitudes);
-  free(the_plan->pre_phase);
-  free(the_plan->pre_phase_2);
-  free(the_plan->pre_phase_4);
+  if (the_plan->vr_freq != NULL) {
+    free(the_plan->vr_freq);
+    the_plan->vr_freq = NULL;
+    free(the_plan->wigner_d2m0_vector);
+    free(the_plan->wigner_d4m0_vector);
+    free(the_plan->norm_amplitudes);
+    free(the_plan->pre_phase);
+    free(the_plan->pre_phase_2);
+    free(the_plan->pre_phase_4);
+  }
 }
 
 /**
@@ -116,7 +119,8 @@ void MRS_plan_update_from_sample_rotation_frequency_in_Hz(
 
   plan->vr_freq = __get_frequency_in_FFT_order(plan->number_of_sidebands,
                                                sample_rotation_frequency_in_Hz);
-  cblas_dscal(plan->number_of_sidebands, increment_inverse, plan->vr_freq, 1);
+  // cblas_dscal(plan->number_of_sidebands, increment_inverse, plan->vr_freq,
+  // 1);
 
   /**
    * calculating the sideband phase multiplier.
@@ -408,7 +412,8 @@ void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
 void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0,
                                               complex128 *R2, complex128 *R4,
-                                              bool refresh, MRS_sequence *seq) {
+                                              bool refresh, MRS_sequence *seq,
+                                              double fraction) {
   /**
    * Rotate the R2 and R4 components from the common frame to the rotor frame
    * over all the orientations. The componets are stored in w2 and w4 of the
@@ -426,8 +431,8 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
   }
 
   /* Normalized isotropic frequency contribution from the zeroth-rank tensor. */
-  seq->R0_offset += R0 * seq->inverse_increment;
-  // vm_double_add_offset_inplace(scheme->total_orientations, plan->R0_offset,
+  seq->R0_offset += R0 * seq->inverse_increment * fraction;
+  // vm_double_add_offset_inplace(scheme->total_orientations, seq->R0_offset,
   //                              seq->local_frequency);
 
   /**
@@ -441,7 +446,8 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
    * Normalized local anisotropic frequency contributions from the 2nd-rank
    * tensor.
    */
-  plan->buffer = seq->inverse_increment * plan->wigner_d2m0_vector[2];
+  plan->buffer =
+      seq->inverse_increment * plan->wigner_d2m0_vector[2] * fraction;
   cblas_daxpy(scheme->total_orientations, plan->buffer,
               (double *)&scheme->w2[2], 10, seq->local_frequency, 1);
   if (plan->allow_fourth_rank) {
@@ -450,7 +456,8 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
      * contributions from the fourth-rank tensor. The `wigner_d2m0_vector[4]` is
      * d^4(0,0)(rotor_angle).
      */
-    plan->buffer = seq->inverse_increment * plan->wigner_d4m0_vector[4];
+    plan->buffer =
+        seq->inverse_increment * plan->wigner_d4m0_vector[4] * fraction;
     cblas_daxpy(scheme->total_orientations, plan->buffer,
                 (double *)&scheme->w4[4], 18, seq->local_frequency, 1);
   }

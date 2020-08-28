@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.methods import MQVAS
+from mrsimulator.methods import ThreeQ_MAS
 
 
 def test_01():
@@ -12,7 +13,7 @@ def test_01():
 
 
 def test_02():
-    error = " {'rotor_frequency'} connot be modified for MQVAS method."
+    error = " `rotor_frequency` cannot be modified for MQVAS method."
     with pytest.raises(AttributeError, match=f".*{error}.*"):
         MQVAS(channels=["87Rb"], rotor_frequency=10, spectral_dimensions=[{}, {}])
 
@@ -52,7 +53,7 @@ def test_03():
                         "rotor_frequency": "1000000000000.0 Hz",
                         "rotor_angle": "0.9553166 rad",
                         "transition_query": {
-                            "P": {"channel-1": [[-3]]},
+                            "P": {"channel-1": [[-1]]},
                             "D": {"channel-1": [[0]]},
                         },
                         "user_variables": ["magnetic_flux_density", "rotor_angle"],
@@ -230,6 +231,83 @@ def test_05():
                             "D": {"channel-1": [[0]]},
                         },
                         "user_variables": ["magnetic_flux_density", "rotor_angle"],
+                    }
+                ],
+            },
+        ],
+        "channels": ["87Rb"],
+    }
+
+    assert serialize == mth.to_dict_with_units()
+
+
+def test_3QMAS():
+    """3Q MAS correlation method declaration"""
+    mth = ThreeQ_MAS(
+        channels=["87Rb"],
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
+            {
+                "count": 512,
+                "spectral_width": 5e6,  # in Hz
+                "reference_offset": 0,  # in Hz
+            },
+            {
+                "count": 128,
+                "spectral_width": 5e4,  # in Hz
+                "reference_offset": 0,  # in Hz
+            },
+        ],
+    )
+
+    serialize = {
+        "name": "ThreeQ_MAS",
+        "description": "Simulate a 3Q magic-angle spinning spectrum.",
+        "spectral_dimensions": [
+            {
+                "count": 512,
+                "spectral_width": "5000000.0 Hz",
+                "reference_offset": "0.0 Hz",
+                "events": [
+                    {
+                        "fraction": 0.5625,
+                        "magnetic_flux_density": "9.4 T",
+                        "rotor_frequency": "1000000000000.0 Hz",
+                        "rotor_angle": "0.9553166 rad",
+                        "transition_query": {
+                            "P": {"channel-1": [[-3]]},
+                            "D": {"channel-1": [[0]]},
+                        },
+                        "user_variables": ["magnetic_flux_density"],
+                    },
+                    {
+                        "fraction": 0.43750000000000006,
+                        "magnetic_flux_density": "9.4 T",
+                        "rotor_frequency": "1000000000000.0 Hz",
+                        "rotor_angle": "0.9553166 rad",
+                        "transition_query": {
+                            "P": {"channel-1": [[-1]]},
+                            "D": {"channel-1": [[0]]},
+                        },
+                        "user_variables": ["magnetic_flux_density"],
+                    },
+                ],
+            },
+            {
+                "count": 128,
+                "spectral_width": "50000.0 Hz",
+                "reference_offset": "0.0 Hz",
+                "events": [
+                    {
+                        "fraction": 1.0,
+                        "magnetic_flux_density": "9.4 T",
+                        "rotor_frequency": "1000000000000.0 Hz",
+                        "rotor_angle": "0.9553166 rad",
+                        "transition_query": {
+                            "P": {"channel-1": [[-1]]},
+                            "D": {"channel-1": [[0]]},
+                        },
+                        "user_variables": ["magnetic_flux_density"],
                     }
                 ],
             },

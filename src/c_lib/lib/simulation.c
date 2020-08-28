@@ -46,7 +46,7 @@ static inline void one_dimensional_averaging(MRS_sequence *the_sequence,
   }
 
   for (i = 0; i < number_of_sidebands; i++) {
-    offset1 = offset + plan->vr_freq[i];
+    offset1 = offset + plan->vr_freq[i] * the_sequence[0].inverse_increment;
     if ((int)offset1 >= 0 && (int)offset1 <= the_sequence[0].count) {
       step_vector = i * scheme->total_orientations;
       for (j = 0; j < plan->n_octants; j++) {
@@ -109,11 +109,12 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
   }
 
   for (i = 0; i < number_of_sidebands; i++) {
-    offsetA = offset0 + plan->vr_freq[i];
+    offsetA = offset0 + plan->vr_freq[i] * the_sequence[0].inverse_increment;
     if ((int)offsetA >= 0 && (int)offsetA <= the_sequence[0].count) {
       step_vector_i = i * scheme->total_orientations;
       for (k = 0; k < number_of_sidebands; k++) {
-        offsetB = offset1 + plan->vr_freq[k];
+        offsetB =
+            offset1 + plan->vr_freq[k] * the_sequence[1].inverse_increment;
         if ((int)offsetB >= 0 && (int)offsetB <= the_sequence[1].count) {
           step_vector_k = k * scheme->total_orientations;
 
@@ -187,7 +188,7 @@ void __mrsimulator_core(
   bool refresh;
   unsigned int evt;
   int seq;
-  double B0_in_T;
+  double B0_in_T, fraction;
 
   double R0 = 0.0;
   complex128 *R2 = malloc_complex128(5);
@@ -212,6 +213,7 @@ void __mrsimulator_core(
       event = &the_sequence[seq].events[evt];
       plan = event->plan;
       B0_in_T = event->magnetic_flux_density_in_T;
+      fraction = event->fraction;
 
       /* Initialize with zeroing all spatial components */
       __zero_components(&R0, R2, R4);
@@ -235,8 +237,8 @@ void __mrsimulator_core(
       // Add a loop over all couplings.. here
       /* Get frequencies and amplitudes per octant ......................... */
       /* Always evalute the frequencies before the amplitudes. */
-      MRS_get_normalized_frequencies_from_plan(scheme, plan, R0, R2, R4,
-                                               refresh, &the_sequence[seq]);
+      MRS_get_normalized_frequencies_from_plan(
+          scheme, plan, R0, R2, R4, refresh, &the_sequence[seq], fraction);
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
       if (plan->number_of_sidebands != 1) {
         cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2,
@@ -296,7 +298,7 @@ void __mrsimulator_core(
     offset0 = the_sequence[0].normalize_offset + the_sequence[0].R0_offset;
 
     for (i = 0; i < plan->number_of_sidebands; i++) {
-      offset = plan->vr_freq[i] + offset0;
+      offset = plan->vr_freq[i] * the_sequence[0].inverse_increment + offset0;
       if ((int)offset >= 0 && (int)offset <= the_sequence[0].count) {
         step_vector = i * scheme->total_orientations;
         for (j = 0; j < plan->n_octants; j++) {

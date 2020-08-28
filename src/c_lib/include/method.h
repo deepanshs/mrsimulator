@@ -77,7 +77,7 @@ MRS_sequence *MRS_sequence_malloc(int n);
  */
 MRS_sequence *MRS_create_sequences(
     MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
-    double *increment, double *magnetic_flux_density_in_T,
+    double *increment, double *fractions, double *magnetic_flux_density_in_T,
     double *sample_rotation_frequency_in_Hz, double *rotor_angle_in_rad,
     int *n_events, unsigned int n_seq, unsigned int number_of_sidebands);
 

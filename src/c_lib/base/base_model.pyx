@@ -57,7 +57,6 @@ def one_d_spectrum(method,
     cdef double spin_quantum_number = method.channels[0].spin
 
     # gyromagnetic ratio
-    # cdef double larmor_frequency =
     cdef gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
     cdef double factor = 1.0
     if gyromagnetic_ratio > 0.0:
@@ -83,17 +82,9 @@ def one_d_spectrum(method,
     #     transition_array = np.asarray(transitions).ravel()
 
 
-# -------------------------------------------------------------------------------------
-# schemes
-
     cdef bool_t allow_fourth_rank = 0
     if spin_quantum_number > 0.5:
         allow_fourth_rank = 1
-
-    # if sample_rotation_frequency_in_Hz < 1.0e-3:
-    #     sample_rotation_frequency_in_Hz = 1.0e9
-    #     rotor_angle_in_rad = 0.0
-    #     number_of_sidebands = 1
 
 # create averaging scheme _____________________________________________________
     cdef clib.MRS_averaging_scheme *the_averaging_scheme
@@ -102,20 +93,24 @@ def one_d_spectrum(method,
         integration_volume=integration_volume
     )
 
-    max_n_sidebands = number_of_sidebands
-
 # create sequences____________________________________________________________
 
     cdef int n_sequence = len(method.spectral_dimensions)
+    # if n_sequence > 1:
+    #     number_of_sidebands = 1
+
+    max_n_sidebands = number_of_sidebands
+
     total_n_points = 1
     cdef ndarray[int] n_event
-    cdef ndarray[double] magnetic_flux_density_in_T
+    cdef ndarray[double] magnetic_flux_density_in_T, frac
     cdef ndarray[double] srfiH
     cdef ndarray[double] rair
     cdef ndarray[int] cnt
     cdef ndarray[double] coord_off
     cdef ndarray[double] incre
 
+    fr = []
     Bo = []
     vr = []
     th = []
@@ -146,6 +141,7 @@ def one_d_spectrum(method,
                     )
                 )
 
+            fr.append(event.fraction) # fraction
             Bo.append(event.magnetic_flux_density)  # in T
             vr.append(sample_rotation_frequency_in_Hz) # in Hz
             th.append(rotor_angle_in_rad) # in rad
@@ -160,6 +156,7 @@ def one_d_spectrum(method,
 
         seq.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
 
+    frac = np.asarray(fr, dtype=np.float64)
     magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
     srfiH = np.asarray(vr, dtype=np.float64)
     rair = np.asarray(th, dtype=np.float64)
@@ -167,17 +164,11 @@ def one_d_spectrum(method,
     incre = np.asarray(increment, dtype=np.float64)
     coord_off = np.asarray(coordinates_offset, dtype=np.float64)
     n_event = np.asarray(event_i, dtype=np.int32)
-    # magnetic_flux_density_in_T = np.asarray([dimension.magnetic_flux_density], dtype=np.float64)
-    # srfiH = np.asarray([sample_rotation_frequency_in_Hz], dtype=np.float64)
-    # rair = np.asarray([rotor_angle_in_rad], dtype=np.float64)
+
     # create spectral_dimensions
-
-
-
-    the_sequence = clib.MRS_create_sequences(
-        the_averaging_scheme, &cnt[0], &coord_off[0],
-        &incre[0], &magnetic_flux_density_in_T[0], &srfiH[0],
-        &rair[0], &n_event[0], n_sequence, number_of_sidebands)
+    the_sequence = clib.MRS_create_sequences(the_averaging_scheme, &cnt[0],
+        &coord_off[0], &incre[0], &frac[0], &magnetic_flux_density_in_T[0],
+        &srfiH[0], &rair[0], &n_event[0], n_sequence, number_of_sidebands)
 
 # normalization factor for the spectrum
     norm = np.prod(incre)

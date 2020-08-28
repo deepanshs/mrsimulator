@@ -11,14 +11,18 @@
 
 /* free the buffer and pre-calculated tables from the mrsimulator plan. */
 void MRS_free_event(MRS_event *the_event) {
-  MRS_free_plan(the_event->plan);
+  if (the_event->plan != NULL) {
+    MRS_free_plan(the_event->plan);
+  }
   free(the_event->freq_amplitude);
 }
 
-inline void MRS_set_event(MRS_event *event, double magnetic_flux_density_in_T,
-                          double sample_rotation_frequency_in_Hz,
-                          double rotor_angle_in_rad, double increment,
-                          MRS_plan *plan) {
+static inline void MRS_set_event(MRS_event *event, double fraction,
+                                 double magnetic_flux_density_in_T,
+                                 double sample_rotation_frequency_in_Hz,
+                                 double rotor_angle_in_rad, double increment,
+                                 MRS_plan *plan) {
+  event->fraction = fraction;
   event->sample_rotation_frequency_in_Hz = sample_rotation_frequency_in_Hz;
   event->rotor_angle_in_rad = rotor_angle_in_rad;
   event->magnetic_flux_density_in_T = magnetic_flux_density_in_T;
@@ -59,7 +63,7 @@ MRS_sequence *MRS_sequence_malloc(int n) {
 
 static inline void create_plans_for_events_in_sequence(
     MRS_sequence *sequence, MRS_averaging_scheme *scheme, int count,
-    double increment, double coordinates_offset, int n_events,
+    double increment, double coordinates_offset, int n_events, double *fraction,
     double *sample_rotation_frequency_in_Hz, double *rotor_angle_in_rad,
     double *magnetic_flux_density_in_T, unsigned int number_of_sidebands) {
   int i;
@@ -76,7 +80,8 @@ static inline void create_plans_for_events_in_sequence(
   for (i = 0; i < n_events; i++) {
     sequence->events[i].freq_amplitude = malloc_double(the_plan->size);
     vm_double_ones(the_plan->size, sequence->events[i].freq_amplitude);
-    MRS_set_event(&(sequence->events[i]), *magnetic_flux_density_in_T++,
+    MRS_set_event(&(sequence->events[i]), *fraction++,
+                  *magnetic_flux_density_in_T++,
                   *sample_rotation_frequency_in_Hz++, *rotor_angle_in_rad++,
                   increment, the_plan);
   }
@@ -92,7 +97,7 @@ static inline void create_plans_for_events_in_sequence(
 
 MRS_sequence *MRS_create_sequences(
     MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
-    double *increment, double *magnetic_flux_density_in_T,
+    double *increment, double *fractions, double *magnetic_flux_density_in_T,
     double *sample_rotation_frequency_in_Hz, double *rotor_angle_in_rad,
     int *n_events, unsigned int n_seq, unsigned int number_of_sidebands) {
   unsigned int i;
@@ -101,9 +106,10 @@ MRS_sequence *MRS_create_sequences(
   for (i = 0; i < n_seq; i++) {
     create_plans_for_events_in_sequence(
         &(sequence[i]), scheme, count[i], increment[i], coordinates_offset[i],
-        n_events[i], sample_rotation_frequency_in_Hz, rotor_angle_in_rad,
-        magnetic_flux_density_in_T, number_of_sidebands);
+        n_events[i], fractions, sample_rotation_frequency_in_Hz,
+        rotor_angle_in_rad, magnetic_flux_density_in_T, number_of_sidebands);
 
+    fractions += n_events[i];
     sample_rotation_frequency_in_Hz += n_events[i];
     rotor_angle_in_rad += n_events[i];
     magnetic_flux_density_in_T += n_events[i];
@@ -114,6 +120,7 @@ MRS_sequence *MRS_create_sequences(
     // printf("\tcoordinates offset %f Hz\n", sequence[i].coordinates_offset);
     // for (int j = 0; j < n_events[i]; j++) {
     //   printf("\tEvent %d\n", j);
+    //   printf("\t\tfraction %f\n", sequence[i].events[j].fraction);
     //   printf("\t\trotor frequency %f Hz\n",
     //          sequence[i].events[j].sample_rotation_frequency_in_Hz);
     //   printf("\t\trotor angle %f rad\n",

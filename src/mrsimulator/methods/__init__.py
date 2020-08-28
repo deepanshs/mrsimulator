@@ -68,6 +68,7 @@ def prepare_method_structure(template, **kwargs):
 
 
 def generate_method_from_template(template):
+    """Generate method object from json template."""
     # constructor
     def constructor(self, spectral_dimensions=[{}], parse=False, **kwargs):
         prep = prepare_method_structure(template, **kwargs)
@@ -76,8 +77,12 @@ def generate_method_from_template(template):
         kw = set(kwargs)
         common = kw.intersection(ge)
 
-        e = f"The attribute(s) {common} connot be modified for {prep['name']} method."
         if common != set():
+            info = "`, `".join(list(common))
+            e = (
+                f"The attribute(s) `{info}` cannot be modified for {prep['name']} "
+                "method."
+            )
             raise AttributeError(e)
 
         dim = []
@@ -191,7 +196,6 @@ def MQVAS(spectral_dimensions=[{}, {}], **kwargs):
 
     Return:
         A :class:`~mrsimulator.Method` instance.
-
     """
 
     for dim in spectral_dimensions:
@@ -206,3 +210,84 @@ def MQVAS(spectral_dimensions=[{}, {}], **kwargs):
 
     MQVAS_ = generate_method_from_template(deepcopy(METHODS_DATA["MQVAS"]))
     return MQVAS_(spectral_dimensions, **kwargs)
+
+
+class MQ_MAS_:
+    r"""Simulate a triple-quantum magic-angle spinning spectrum.
+    Args:
+        channels: A list of isotope symbols over which the method will be applied.
+        spectral_dimensions: A list of python dict. Each dict is contains keywords that
+            describe the coordinates along a spectral dimension. The keywords along with
+            its definition are:
+
+            - count:
+                An optional integer with the number of points, :math:`N`, along the
+                dimension. The default value is 1024.
+            - spectral_width:
+                An `optional` float with the spectral width, :math:`\Delta x`, along the
+                dimension in units of Hz. The default is 25 kHz.
+            - reference_offset:
+                An `optional` float with the reference offset, :math:`x_0` along the
+                dimension in units of Hz. The default value is 0 Hz.
+            - origin_offset:
+                An `optional` float with the origin offset (Larmor frequency) along the
+                dimension in units of Hz. The default value is None.
+        magetic_flux_density: An `optional` float containing the macroscopic magnetic
+            flux density, :math:`H_0`, of the applied external magnetic field in units
+            of T. The default value is ``9.4``.
+
+    note:
+        The `rotor_frequency` and `rotor_angle` parameters are fixed for this method.
+        The method produces an infinite spinning speed spectrum.
+
+    Return:
+        A :class:`~mrsimulator.Method` instance.
+    """
+
+    k_MQ_MAS = {
+        3: {1.5: 21 / 27, 2.5: 114 / 72, 3.5: 303 / 135, 4.5: 546 / 216},
+        5: {2.5: 150 / 72, 3.5: 165 / 135, 4.5: 570 / 216},
+        7: {3.5: 483 / 135, 4.5: 84 / 216},
+        9: {4.5: 1116 / 216},
+    }
+
+    def __new__(cls, mq=1.5, spectral_dimensions=[{}, {}], **kwargs):
+        if "rotor_angle" in kwargs:
+            e = "`rotor_angle` is fixed to the magic-angle and cannot be modified."
+            raise AttributeError(e)
+
+        template = deepcopy(METHODS_DATA["MQMAS_sheared"])
+        template["name"] = cls.__name__
+        method = generate_method_from_template(template)(spectral_dimensions, **kwargs)
+
+        spin = method.channels[0].spin
+
+        # select the coherence for the first event
+        p = int(2 * mq)
+        P = -p if mq == spin else p
+
+        method.spectral_dimensions[0].events[0].transition_query.P["channel-1"] = [[P]]
+        method.spectral_dimensions[0].events[0].transition_query.D["channel-1"] = [[0]]
+
+        k = cls.k_MQ_MAS[p][spin]
+
+        # Update the fractions for the events in the t1 spectral dimension.
+        method.spectral_dimensions[0].events[0].fraction = 1 / (1 + k)
+        method.spectral_dimensions[0].events[1].fraction = k / (1 + k)
+
+        method.description = f"Simulate a {p}Q magic-angle spinning spectrum."
+        return method
+
+
+class ThreeQ_MAS(MQ_MAS_):
+    def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
+        return super().__new__(
+            self, mq=1.5, spectral_dimensions=spectral_dimensions, **kwargs
+        )
+
+
+class FiveQ_MAS(MQ_MAS_):
+    def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
+        return super().__new__(
+            self, mq=2.5, spectral_dimensions=spectral_dimensions, **kwargs
+        )
