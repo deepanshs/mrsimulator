@@ -260,62 +260,9 @@ def test_3QMAS():
         ],
     )
 
-    serialize = {
-        "name": "ThreeQ_MAS",
-        "description": "Simulate a 3Q magic-angle spinning spectrum.",
-        "spectral_dimensions": [
-            {
-                "count": 512,
-                "spectral_width": "5000000.0 Hz",
-                "reference_offset": "0.0 Hz",
-                "events": [
-                    {
-                        "fraction": 0.5625,
-                        "magnetic_flux_density": "9.4 T",
-                        "rotor_frequency": "1000000000000.0 Hz",
-                        "rotor_angle": "0.9553166 rad",
-                        "transition_query": {
-                            "P": {"channel-1": [[-3]]},
-                            "D": {"channel-1": [[0]]},
-                        },
-                        "user_variables": ["magnetic_flux_density"],
-                    },
-                    {
-                        "fraction": 0.43750000000000006,
-                        "magnetic_flux_density": "9.4 T",
-                        "rotor_frequency": "1000000000000.0 Hz",
-                        "rotor_angle": "0.9553166 rad",
-                        "transition_query": {
-                            "P": {"channel-1": [[-1]]},
-                            "D": {"channel-1": [[0]]},
-                        },
-                        "user_variables": ["magnetic_flux_density"],
-                    },
-                ],
-            },
-            {
-                "count": 128,
-                "spectral_width": "50000.0 Hz",
-                "reference_offset": "0.0 Hz",
-                "events": [
-                    {
-                        "fraction": 1.0,
-                        "magnetic_flux_density": "9.4 T",
-                        "rotor_frequency": "1000000000000.0 Hz",
-                        "rotor_angle": "0.9553166 rad",
-                        "transition_query": {
-                            "P": {"channel-1": [[-1]]},
-                            "D": {"channel-1": [[0]]},
-                        },
-                        "user_variables": ["magnetic_flux_density"],
-                    }
-                ],
-            },
-        ],
-        "channels": ["87Rb"],
-    }
-
-    assert serialize == mth.to_dict_with_units()
+    assert np.allclose(mth.spectral_dimensions[0].events[0].fraction, 0.5625)
+    assert np.allclose(mth.spectral_dimensions[0].events[1].fraction, 0.4375)
+    assert mth.spectral_dimensions[1].events[0].fraction == 1
 
 
 def test_06():
