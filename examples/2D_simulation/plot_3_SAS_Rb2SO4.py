@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Rb2CrO4, 87Rb (I=3/2) SAS
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Rb2SO4, 87Rb (I=3/2) SAS
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 87Rb (I=3/2) Switched-angle spinning (SAS) simulation.
 """
 # %%
 # The following is a switched-angle spinning (SAS) simulation of
-# :math:`\text{Rb}_2\text{CrO}_4`. While :math:`\text{Rb}_2\text{CrO}_4` has two
-# rubidium sites, the site with the smaller quadrupolar interaction was selectively
-# observed and reported by Shore `et. al.` [#f1]_. The following is the simulation
-# of the reported tensor parameters.
+# :math:`\text{Rb}_2\text{SO}_4` acquired at 9.4 T. There are two rubidium sites in
+# :math:`\text{Rb}_2\text{SO}_4`. The tensor parameters for the two sites, used in this
+# simulation, is taken from Shore `et. al.` [#f1]_.
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,19 +27,19 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 
 # %%
 # **Step 1:** Create the site and the spin systems.
-site = Site(
-    isotope="87Rb",
-    isotropic_chemical_shift=-7,  # in ppm
-    shielding_symmetric={"zeta": 110, "eta": 0},
-    quadrupolar={
-        "Cq": 3.5e6,  # in Hz
-        "eta": 0.3,
-        "alpha": 0,  # in rads
-        "beta": 70 * np.pi / 180,  # in rads
-        "gamma": 0,  # in rads
-    },
-)
-spin_system = SpinSystem(sites=[site])
+sites = [
+    Site(
+        isotope="87Rb",
+        isotropic_chemical_shift=16,  # in ppm
+        quadrupolar={"Cq": 5.3e6, "eta": 0.1},  # Cq in Hz
+    ),
+    Site(
+        isotope="87Rb",
+        isotropic_chemical_shift=40,  # in ppm
+        quadrupolar={"Cq": 2.6e6, "eta": 1.0},  # Cq in Hz
+    ),
+]
+spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
 # **Step 2:** Create a Multi Quantum variable angle spinning method. For SAS
@@ -52,16 +51,16 @@ method = MQVAS(
     spectral_dimensions=[
         {
             "count": 256,
-            "spectral_width": 1.2e4,  # in Hz
-            "reference_offset": -3e3,  # in Hz
-            "label": "70.12 dimension - 1",
-            "events": [{"rotor_angle": 70.12 * np.pi / 180}],  # in radians
+            "spectral_width": 3.2e4,  # in Hz
+            "reference_offset": -1e3,  # in Hz
+            "label": "90 dimension",
+            "events": [{"rotor_angle": 90 * np.pi / 180}],  # in radians
         },
         {
-            "count": 512,
-            "spectral_width": 8e3,  # in Hz
+            "count": 256,
+            "spectral_width": 22e3,  # in Hz
             "reference_offset": -4e3,  # in Hz
-            "label": "MAS dimension - 0",
+            "label": "MAS dimension",
             "events": [{"rotor_angle": 54.74 * np.pi / 180}],  # in radians
         },
     ],
@@ -71,11 +70,10 @@ method = MQVAS(
 # **Step 3:** Create the Simulator object, add the method and spin system objects, and
 # run the simulation
 sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin systems
+sim.spin_systems = spin_systems  # add the spin systems
 sim.methods = [method]  # add the method.
 
 # configure the simulator object
-sim.config.integration_volume = "hemisphere"
 sim.run()
 
 # %%
@@ -85,6 +83,7 @@ data = sim.methods[0].simulation
 ax = plt.subplot(projection="csdm")
 ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
 ax.invert_xaxis()
+ax.set_ylim(-70, 90)
 plt.tight_layout()
 plt.show()
 

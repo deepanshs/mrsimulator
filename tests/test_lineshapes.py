@@ -166,7 +166,7 @@ def test_pure_shielding_sideband_simulation_against_simpson():
     error_message = (
         "failed to compare shielding lineshape with simpson simulation from file"
     )
-    path_ = path.join("tests", "simpson_simulated_lineshapes", "shielding")
+    path_ = path.join("tests", "simpson_simulated_lineshapes", "shielding_sidebands")
     for i in range(8):
         message = f"{error_message} test0{i}.json"
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
@@ -260,7 +260,7 @@ def test_csa_plus_quadrupolar_simpson_lineshapes():
     error_message = (
         "failed to compare quadrupolar lineshape simulation with data from file"
     )
-    path_ = path.join("tests", "simpson_simulated_lineshapes", "quad")
+    path_ = path.join("tests", "simpson_simulated_lineshapes", "csa_quad")
     for i in range(6):
         message = f"{error_message} test0{i:02d}.json"
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
