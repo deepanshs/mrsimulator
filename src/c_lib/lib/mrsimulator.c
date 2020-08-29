@@ -486,17 +486,19 @@ void MRS_rotate_components_from_PAS_to_common_frame(
       }
     }
 
-    /* Weakly coupled direct-dipole components =============================
-     */
-    /*      Upto the first order (to do..-> add orientation dependence) */
-    weakly_coupled_direct_dipole_frequencies_to_first_order(
-        R0, R2_temp, ravel_isotopomer->dipolar_couplings[site], *mf, *mi, 0.5,
-        0.5);
+    if (n_sites > 1) {
+      /* Weakly coupled direct-dipole components =============================
+       */
+      /*      Upto the first order (to do..-> add orientation dependence) */
+      weakly_coupled_direct_dipole_frequencies_to_first_order(
+          R0, R2_temp, ravel_isotopomer->dipolar_couplings[site], *mf, *mi, 0.5,
+          0.5);
 
-    // in-place update the R2 components.
-    vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-    /* =====================================================================
-     */
+      // in-place update the R2 components.
+      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+      /* =====================================================================
+       */
+    }
     mi++;
     mf++;
   }
