@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Albite, 27Al (I=5/2) MQMAS
+Albite, 27Al (I=5/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-27Al (I=5/2) triple-quantum magic-angle (3Q-MAS) simulation.
+27Al (I=5/2) triple-quantum magic-angle spinning (3Q-MAS) simulation.
 """
 # %%
-# The following is an :math:`^{27}\text{Al}` MQMAS simulation of albite
-# :math:`\text{NaSi}_3\text{AlO}_8`. The :math:`^{87}\text{Rb}` tensor parameters were
+# The following is an example of :math:`^{27}\text{Al}` 3QMAS simulation of albite
+# :math:`\text{NaSi}_3\text{AlO}_8`. The :math:`^{27}\text{Al}` tensor parameters were
 # obtained from Massiot `et. al.` [#f1]_.
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -36,7 +36,8 @@ site = Site(
 spin_systems = [SpinSystem(sites=[site])]
 
 # %%
-# **Step 2:** Create a Triple Quantum magic-angle spinning method.
+# **Step 2:** Create a Triple Quantum magic-angle spinning method. Note, all MQMAS
+# methods simulate an infinite spinning speed spectrum.
 method = ThreeQ_MAS(
     channels=["27Al"],
     magnetic_flux_density=7,  # in T
@@ -58,7 +59,7 @@ method = ThreeQ_MAS(
 
 # %%
 # **Step 3:** Create the Simulator object, add the method and spin system objects, and
-# run the simulation
+# run the simulation.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
 sim.methods = [method]  # add the method.
@@ -77,15 +78,6 @@ plt.show()
 
 # %%
 # **Step 5:** Add post-simulation signal processing.
-#
-# Note, the above spectrum is a correlation between the triple quantum and MAS
-# dimension, that is, the spectrum as acquired. To obtain an isotropic vs. MAS spectrum,
-# we need to apply skew, and scaling transformations. For spin 3/2 undergoing a triple
-# quantum excitation, apply a shear transformation parallel to the MAS dimension with
-# a shear factor of 21/27 and then scale the 3Q dimension by 27/48. The following signal
-# processing scheme first applies a shear and scaling transformation, followed by the
-# line-broadening convolutions. Note, the MAS and 3Q dimensions are at index 0 and 1,
-# respectively.
 processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.

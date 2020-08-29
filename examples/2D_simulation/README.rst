@@ -3,4 +3,6 @@
 -----------------
 
 The following examples are the NMR spectrum simulation of
-- MQMAS
+
+- Triple-quantum magic angle spinning (3QMAS)
+- Switched angle spinning (SAS)

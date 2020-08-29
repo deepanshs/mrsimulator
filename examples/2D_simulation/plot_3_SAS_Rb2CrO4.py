@@ -11,9 +11,11 @@ Rb2CrO4, 87Rb (I=3/2) SAS
 # :math:`\text{Rb}_2\text{CrO}_4`. While :math:`\text{Rb}_2\text{CrO}_4` has two
 # rubidium sites, the site with the smaller quadrupolar interaction was selectively
 # observed and reported by Shore `et. al.` [#f1]_. The following is the simulation
-# of the reported tensor parameters.
+# based on the published tensor parameters.
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import mrsimulator.signal_processing as sp
+import mrsimulator.signal_processing.apodization as apo
 import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
@@ -24,7 +26,7 @@ from mrsimulator.methods import MQVAS
 font = {"size": 9}
 mpl.rc("font", **font)
 mpl.rcParams["figure.figsize"] = [4.25, 3.0]
-# sphinx_gallery_thumbnail_number = 1
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # **Step 1:** Create the site and the spin systems.
@@ -43,25 +45,25 @@ site = Site(
 spin_system = SpinSystem(sites=[site])
 
 # %%
-# **Step 2:** Create a Multi Quantum variable angle spinning method. For SAS
-# simulation, we use the same method as we used for MQ-MAS, but with modified
-# parameters, as shown below.
+# **Step 2:** Create a Multiple-Quantum variable angle spinning, MQVAS, method, and
+# modify the method parameters for a SAS method, as shown below. Note, the MQVAS method
+# simulates an infinite spinning speed spectrum.
 method = MQVAS(
     channels=["87Rb"],
-    magnetic_flux_density=9.4,  # in T
+    magnetic_flux_density=4.2,  # in T
     spectral_dimensions=[
         {
             "count": 256,
-            "spectral_width": 1.2e4,  # in Hz
-            "reference_offset": -3e3,  # in Hz
-            "label": "70.12 dimension - 1",
+            "spectral_width": 1.5e4,  # in Hz
+            "reference_offset": -5e3,  # in Hz
+            "label": "70.12 dimension",
             "events": [{"rotor_angle": 70.12 * np.pi / 180}],  # in radians
         },
         {
             "count": 512,
-            "spectral_width": 8e3,  # in Hz
-            "reference_offset": -4e3,  # in Hz
-            "label": "MAS dimension - 0",
+            "spectral_width": 15e3,  # in Hz
+            "reference_offset": -7e3,  # in Hz
+            "label": "MAS dimension",
             "events": [{"rotor_angle": 54.74 * np.pi / 180}],  # in radians
         },
     ],
@@ -69,7 +71,7 @@ method = MQVAS(
 
 # %%
 # **Step 3:** Create the Simulator object, add the method and spin system objects, and
-# run the simulation
+# run the simulation.
 sim = Simulator()
 sim.spin_systems = [spin_system]  # add the spin systems
 sim.methods = [method]  # add the method.
@@ -84,6 +86,29 @@ sim.run()
 data = sim.methods[0].simulation
 ax = plt.subplot(projection="csdm")
 ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
+ax.invert_xaxis()
+plt.tight_layout()
+plt.show()
+
+# %%
+# **Step 5:** Add post-simulation signal processing.
+#
+processor = sp.SignalProcessor(
+    operations=[
+        # Gaussian convolution along both dimensions.
+        sp.IFFT(dim_index=(0, 1)),
+        apo.Gaussian(FWHM="0.2 kHz", dim_index=0),
+        apo.Gaussian(FWHM="0.2 kHz", dim_index=1),
+        sp.FFT(dim_index=(0, 1)),
+    ]
+)
+processed_data = processor.apply_operations(data=data)
+processed_data /= processed_data.max()
+
+# %%
+# **Step 6:** The plot of the simulation after signal processing.
+ax = plt.subplot(projection="csdm")
+ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

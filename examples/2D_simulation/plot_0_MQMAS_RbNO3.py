@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-RbNO3, 87Rb (I=3/2) MQMAS
+RbNO3, 87Rb (I=3/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-87Rb (I=3/2) triple-quantum magic-angle (3Q-MAS) simulation.
+87Rb (I=3/2) triple-quantum magic-angle spinning (3Q-MAS) simulation.
 """
 # %%
-# The following is an MQMAS simulation of :math:`\text{RbNO}_3`, which has three
-# distinct :math:`^{87}\text{Rb}` sites. The :math:`^{87}\text{Rb}` tensor parameters
-# were obtained from Massiot `et. al.` [#f1]_.
+# The following is an example of the 3QMAS simulation of :math:`\text{RbNO}_3`, which
+# has three distinct :math:`^{87}\text{Rb}` sites. The :math:`^{87}\text{Rb}` tensor
+# parameters were obtained from Massiot `et. al.` [#f1]_.
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
@@ -47,7 +47,8 @@ sites = [Rb87_1, Rb87_2, Rb87_3]  # all sites
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# **Step 2:** Create a Triple Quantum magic-angle spinning method.
+# **Step 2:** Create a Triple Quantum magic-angle spinning method. Note, all MQMAS
+# methods simulate the infinite spinning speed spectrum.
 method = ThreeQ_MAS(
     channels=["87Rb"],
     magnetic_flux_density=7,  # in T
@@ -69,7 +70,7 @@ method = ThreeQ_MAS(
 
 # %%
 # **Step 3:** Create the Simulator object, add the method and spin system objects, and
-# run the simulation
+# run the simulation.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
 sim.methods = [method]  # add the method.
@@ -79,7 +80,7 @@ sim.run()
 # **Step 4:**
 # The plot of the simulation.
 data = sim.methods[0].simulation
-ax = plt.subplot(projection="csdm")
+ax = plt.gca(projection="csdm")
 ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
 ax.invert_xaxis()
 ax.invert_yaxis()

@@ -7,12 +7,13 @@ Rb2SO4, 87Rb (I=3/2) SAS
 87Rb (I=3/2) Switched-angle spinning (SAS) simulation.
 """
 # %%
-# The following is a switched-angle spinning (SAS) simulation of
-# :math:`\text{Rb}_2\text{SO}_4` acquired at 9.4 T. There are two rubidium sites in
-# :math:`\text{Rb}_2\text{SO}_4`. The tensor parameters for the two sites, used in this
-# simulation, is taken from Shore `et. al.` [#f1]_.
+# The following is an example of switched-angle spinning (SAS) simulation of
+# :math:`\text{Rb}_2\text{SO}_4`, which has two distinct rubidium sites. The NMR tensor
+# parameters for these sites are taken from Shore `et. al.` [#f1]_.
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import mrsimulator.signal_processing as sp
+import mrsimulator.signal_processing.apodization as apo
 import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
@@ -23,7 +24,7 @@ from mrsimulator.methods import MQVAS
 font = {"size": 9}
 mpl.rc("font", **font)
 mpl.rcParams["figure.figsize"] = [4.25, 3.0]
-# sphinx_gallery_thumbnail_number = 1
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # **Step 1:** Create the site and the spin systems.
@@ -42,17 +43,18 @@ sites = [
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# **Step 2:** Create a Multi Quantum variable angle spinning method. For SAS
-# simulation, we use the same method as we used for MQ-MAS, but with modified
-# parameters, as shown below.
+# **Step 2:** Create a Multiple-Quantum variable angle spinning, MQVAS, method. MQVAS
+# is a generalized method which, with the right set of parameters, can be used to
+# simulate a SAS spectrum, as shown below. Note, the MQVAS method simulates an infinite
+# spinning speed spectrum.
 method = MQVAS(
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
     spectral_dimensions=[
         {
             "count": 256,
-            "spectral_width": 3.2e4,  # in Hz
-            "reference_offset": -1e3,  # in Hz
+            "spectral_width": 3.5e4,  # in Hz
+            "reference_offset": 1e3,  # in Hz
             "label": "90 dimension",
             "events": [{"rotor_angle": 90 * np.pi / 180}],  # in radians
         },
@@ -68,7 +70,7 @@ method = MQVAS(
 
 # %%
 # **Step 3:** Create the Simulator object, add the method and spin system objects, and
-# run the simulation
+# run the simulation.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
 sim.methods = [method]  # add the method.
@@ -83,7 +85,30 @@ data = sim.methods[0].simulation
 ax = plt.subplot(projection="csdm")
 ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
 ax.invert_xaxis()
-ax.set_ylim(-70, 90)
+# ax.set_ylim(-70, 90)
+plt.tight_layout()
+plt.show()
+
+# %%
+# **Step 5:** Add post-simulation signal processing.
+processor = sp.SignalProcessor(
+    operations=[
+        # Gaussian convolution along both dimensions.
+        sp.IFFT(dim_index=(0, 1)),
+        apo.Gaussian(FWHM="0.4 kHz", dim_index=0),
+        apo.Gaussian(FWHM="0.4 kHz", dim_index=1),
+        sp.FFT(dim_index=(0, 1)),
+    ]
+)
+processed_data = processor.apply_operations(data=data)
+processed_data /= processed_data.max()
+
+# %%
+# **Step 6:** The plot of the simulation after signal processing.
+ax = plt.subplot(projection="csdm")
+ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
+ax.invert_xaxis()
+# ax.set_ylim(-70, 90)
 plt.tight_layout()
 plt.show()
 
