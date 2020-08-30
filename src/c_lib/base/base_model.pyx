@@ -8,7 +8,7 @@ from mrsimulator import sandbox as sb
 __author__ = "Deepansh J. Srivastava"
 __email__ = "deepansh2012@gmail.com"
 
-
+@cython.profile(False)
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def one_d_spectrum(method,
@@ -243,13 +243,12 @@ def one_d_spectrum(method,
             continue
         # site specification
         # CSA
-
         spin_i = np.empty(number_of_sites, dtype=np.float32)
         gyromagnetic_ratio_i = np.empty(number_of_sites, dtype=np.float64)
 
-        iso_n = np.empty(number_of_sites, dtype=np.float64)
-        zeta_n = np.empty(number_of_sites, dtype=np.float64)
-        eta_n = np.empty(number_of_sites, dtype=np.float64)
+        iso_n = np.zeros(number_of_sites, dtype=np.float64)
+        zeta_n = np.zeros(number_of_sites, dtype=np.float64)
+        eta_n = np.zeros(number_of_sites, dtype=np.float64)
         ori_n = np.zeros(3*number_of_sites, dtype=np.float64)
 
         # quad
@@ -260,32 +259,30 @@ def one_d_spectrum(method,
         # for n sites, coupling grows as sum_{i=1}^{n-1}(i)
         D_c = np.zeros(number_of_sites, dtype=np.float64)
 
-        # cdef int i, size = len(sample)
-
         amp = np.zeros(total_n_points)
 
         for i in range(number_of_sites):
             site = spin_sys.sites[i]
             spin_i[i] = site.isotope.spin
             gyromagnetic_ratio_i[i] = site.isotope.gyromagnetic_ratio
-
+            i3 = 3*i
 
             # CSA tensor
-            iso = site.isotropic_chemical_shift
-            if iso is None: iso = 0.0
+            if site.isotropic_chemical_shift is not None:
+                iso_n[i] = site.isotropic_chemical_shift
 
             shielding = site.shielding_symmetric
             if shielding is not None:
-                zeta = shielding.zeta
-                if zeta is None: zeta = 0.0
-                eta = shielding.eta
-                if eta is None: eta = 0.0
-                alpha, beta, gamma = shielding.alpha, shielding.beta, shielding.gamma
-                if alpha is None: alpha = 0.0
-                if beta is None: beta = 0.0
-                if gamma is None: gamma = 0.0
-            else:
-                zeta, eta, alpha, beta, gamma = 0.0, 0.0, 0.0, 0.0, 0.0
+                if shielding.zeta is not None:
+                    zeta_n[i] = shielding.zeta
+                if shielding.eta is not None:
+                    eta_n[i] = shielding.eta
+                if shielding.alpha is not None:
+                    ori_n[i3] = shielding.alpha
+                if shielding.beta is not None:
+                    ori_n[i3+1] = shielding.beta
+                if shielding.gamma is not None:
+                    ori_n[i3+2] = shielding.gamma
 
             # if verbose in [1, 11]:
             #     text = ((
@@ -300,30 +297,20 @@ def one_d_spectrum(method,
             #     print(f'Shielding asymmetry (η) = {eta}')
             #     print(f'Shielding orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
-            # CSA tensor in Hz
-            iso_n[i] = iso
-            zeta_n[i] = zeta
-            eta_n[i] = eta
-            ori_n[3*i:3*i+3] = [alpha, beta, gamma]
-
             # quad tensor
             if spin_quantum_number > 0.5:
                 quad = site.quadrupolar
                 if quad is not None:
-                    Cq = quad.Cq
-                    if Cq is None: Cq = 0.0
-                    eta = quad.eta
-                    if eta is None: eta = 0.0
-                    alpha, beta, gamma = quad.alpha, quad.beta, quad.gamma
-                    if alpha is None: alpha = 0.0
-                    if beta is None: beta = 0.0
-                    if gamma is None: gamma = 0.0
-                else:
-                    Cq, eta, alpha, beta, gamma = 0.0, 0.0, 0.0, 0.0, 0.0
-
-                Cq_e[i] = Cq
-                eta_e[i] = eta
-                ori_e[3*i:3*i+3] = [alpha, beta, gamma]
+                    if quad.Cq is not None:
+                        Cq_e[i] = quad.Cq
+                    if quad.eta is not None:
+                        eta_e[i] = quad.eta
+                    if quad.alpha is not None:
+                        ori_e[i3] = quad.alpha
+                    if quad.beta is not None:
+                        ori_e[i3+1] = quad.beta
+                    if quad.gamma is not None:
+                        ori_e[i3+2] = quad.gamma
 
                 # if verbose in [1, 11]:
                 #     print(f'Quadrupolar coupling constant (Cq) = {Cq_e[i]/1e6} MHz')
@@ -333,17 +320,24 @@ def one_d_spectrum(method,
         if number_of_sites != 0:
             transition_pathway = spin_sys.transition_pathways
             if transition_pathway is None:
-                transition_pathway = method.get_transition_pathways(spin_sys)
-            transition_pathway = np.asarray(transition_pathway)
-            pathway_count, transition_count_per_pathway = transition_pathway.shape
+                transition_pathway = np.asarray(
+                    method._get_transition_pathways_np(spin_sys), dtype=np.float32
+                )
+                pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
+                transition_array = transition_pathway.ravel()
+                pathway_increment = 2*number_of_sites*transition_count_per_pathway
 
-            # convert transition objects to list
-            lst = []
-            for item in transition_pathway.ravel():
-                lst += item.tolist()
+            else:
+                transition_pathway = np.asarray(transition_pathway)
+                pathway_count, transition_count_per_pathway = transition_pathway.shape
 
-            transition_array = np.asarray(lst, dtype=np.float32).ravel()
-            pathway_increment = 2*number_of_sites*transition_count_per_pathway
+                # convert transition objects to list
+                lst = []
+                for item in transition_pathway.ravel():
+                    lst += item.tolist()
+
+                transition_array = np.asarray(lst, dtype=np.float32).ravel()
+                pathway_increment = 2*number_of_sites*transition_count_per_pathway
 
             # if spin_sys.transitions is not None:
             #     transition_array = np.asarray(
