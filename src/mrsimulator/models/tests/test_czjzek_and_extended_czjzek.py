@@ -15,7 +15,7 @@ def test_extended_czjzek_eta_distribution_1():
         data = np.load(f)
 
     S0 = {"zeta": 1, "eta": 0.1}
-    _, eta1 = ExtCzjzekDistribution(S0, eps=0.05).rvs(n=COUNT)
+    _, eta1 = ExtCzjzekDistribution(S0, eps=0.05).rvs(size=COUNT)
     hist1, _ = np.histogram(eta1, bins=100, range=[0, 1])
 
     message = "failed to compare values with file eps=0.05.npy"
@@ -28,7 +28,7 @@ def test_extended_czjzek_eta_distribution_2():
         data = np.load(f)
 
     S0 = {"Cq": 1e6, "eta": 0.3}
-    _, eta1 = ExtCzjzekDistribution(S0, eps=0.2).rvs(n=COUNT)
+    _, eta1 = ExtCzjzekDistribution(S0, eps=0.2).rvs(size=COUNT)
     hist1, _ = np.histogram(eta1, bins=100, range=[0, 1])
 
     message = "failed to compare values with file eps=0.2.npy"
@@ -41,7 +41,7 @@ def test_extended_czjzek_eta_distribution_3():
         data = np.load(f)
 
     S0 = {"Cq": 1e6, "eta": 0.7}
-    _, eta1 = ExtCzjzekDistribution(S0, eps=0.65).rvs(n=COUNT)
+    _, eta1 = ExtCzjzekDistribution(S0, eps=0.65).rvs(size=COUNT)
     hist1, _ = np.histogram(eta1, bins=100, range=[0, 1])
 
     message = "failed to compare values with file eps=0.05.npy"
@@ -53,7 +53,7 @@ def test_czjzek_distribution():
 
     # numerical Czjzek distribution
     count_ = COUNT
-    zeta, eta = CzjzekDistribution(sigma).rvs(n=count_)
+    zeta, eta = CzjzekDistribution(sigma).rvs(size=count_)
 
     # eta projection
     e_hist, ran_e = np.histogram(eta, bins=15, range=[0, 1])
