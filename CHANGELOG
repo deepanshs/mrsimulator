@@ -1,12 +1,13 @@
 
-Upcoming additions and changes
-------------------------------
+v0.4.0
+------
 
 What's new!
 '''''''''''
 
-- Czjzek and extended Czjzek second-rank symmetric tensor distribution models.
-- A new utility function, ``single_site_system_generator``, for generating a list of
+- ⭐ Improved simulation performance. ⭐ See our :ref:`benchmark`.
+- Added Czjzek and extended Czjzek second-rank symmetric tensor distribution models.
+- Add a new utility function, ``single_site_system_generator``, for generating a list of
   single-site spin systems from a 1D list/array of respective tensor parameters.
 
 v0.3.0
