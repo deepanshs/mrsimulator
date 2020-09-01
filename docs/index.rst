@@ -74,10 +74,9 @@ Welcome to the Mrsimulator documentation
 
 **About**
 
-``mrsimulator`` is a python package for computing fast solid-state magnetic
-resonance (NMR) spectra. The library is optimized to compute both crystalline and
-amorphous-like materials. The core of the ``mrsimulator`` library is written in C,
-wrapped, and made available in python.
+``mrsimulator`` is an open-source python package for fast computation/analysis of solid-state
+magnetic resonance (NMR) spectra of both crystalline and amorphous materials. The core of
+the ``mrsimulator`` library is written in C, wrapped, and made available in python.
 
 ----
 
@@ -98,22 +97,6 @@ wrapped, and made available in python.
 
 ----
 
-**Features**
-
-The ``mrsimulator`` package currently offers the following
-
-- **Fast simulation** of one-dimensional solid-state NMR spectra. See our :ref:`benchmark` results.
-
-- Uncoupled spin system
-    - for spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
-    - at arbitrary macroscopic magnetic flux density,
-    - at arbitrary rotor angles, and
-    - at arbitrary spinning frequency.
-
-- The library includes the following NMR methods,
-    - 1D Bloch decay spectrum, and
-    - 1D Bloch decay central transition spectrum.
-
 .. only:: html
 
     .. raw:: html
@@ -127,9 +110,31 @@ The ``mrsimulator`` package currently offers the following
 
 ----
 
+**Features**
+
+The ``mrsimulator`` package currently offers the following
+
+- **Fast simulation** of one-dimensional solid-state NMR spectra. See our :ref:`benchmark` results.
+
+- Simulation of **uncoupled spin system**
+    - for spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
+    - at arbitrary macroscopic magnetic flux density,
+    - at arbitrary rotor angles, and
+    - at arbitrary spinning frequency.
+
+- The library includes the following **NMR methods**,
+    - 1D Bloch decay spectrum, and
+    - 1D Bloch decay central transition spectrum.
+
+- **Models** for tensor parameter distribution in amorphous materials.
+    - Czjzek
+    - Extendend Czjzek
+
+----
+
 **Goals for the near future**
 
-Our current objectives for the future are the following
+Our current objectives are the following
 
 - Include spectral simulation of coupled spin systems for
     - spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,

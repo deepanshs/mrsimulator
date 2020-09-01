@@ -56,6 +56,14 @@ static inline void FCF_1st_order_nuclear_shielding_tensor_components(
   // Spin transition function
   double transition_fn = STF_p(mf, mi);
 
+  // Return if the transition is zero
+  if (transition_fn == 0.0) {
+    // zero the R0 and R2 components before populating with shielding components
+    *Lambda_0 = 0.0;
+    vm_double_zeros(10, (double *)Lambda_2);
+    return;
+  }
+
   // Spatial orientation function
   sSOT_1st_order_nuclear_shielding_tensor_components(
       Lambda_0, Lambda_2, omega_0_delta_iso_in_Hz, omega_0_zeta_sigma_in_Hz,
@@ -100,6 +108,13 @@ static inline void FCF_1st_order_electric_quadrupole_tensor_components(
     const double eta, const double *Theta, const float mf, const float mi) {
   // Spin transition function
   double transition_fn = STF_d(mf, mi);
+
+  // Return if the transition is zero
+  if (transition_fn == 0.0) {
+    // zero the R2 components before populating with quad components
+    vm_double_zeros(10, (double *)Lambda_2);
+    return;
+  }
 
   // Spatial orientation function
   sSOT_1st_order_electric_quadrupole_tensor_components(Lambda_2, spin, Cq_in_Hz,

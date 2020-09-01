@@ -8,10 +8,9 @@
 | Metrics      | [![Total alerts](https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python) [![codecov](https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/DeepanshS/mrsimulator) |
 | Citation     | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3978780.svg)](https://doi.org/10.5281/zenodo.3978780)                                                                                                                                                                                                                                                                                                                                                                 |
 
-`mrsimulator` is a python package for computing fast solid-state magnetic resonance
-(NMR) spectra. The library is optimized to compute both crystalline and amorphous-like
-materials. The core of the `mrsimulator` library is written in C, wrapped, and made
-available in python.
+`mrsimulator` is an open-source python package for fast computation/analysis of solid-state
+magnetic resonance (NMR) spectra of both crystalline and amorphous materials. The core
+of the `mrsimulator` library is written in C, wrapped, and made available in python.
 
 > :warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
 
@@ -29,6 +28,10 @@ available in python.
 - Packages using mrsimulator -
   - [mrinversion](https://mrinversion.readthedocs.io/en/latest/)
 
+> **View our example gallery**
+>
+> [![](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/latest/auto_examples/index.html)
+
 ### Features
 
 The `mrsimulator` package currently offers the following
@@ -36,7 +39,7 @@ The `mrsimulator` package currently offers the following
 - **Fast simulation** of one-dimensional solid-state NMR spectra. See our
   [benchmark results](https://mrsimulator.readthedocs.io/en/latest/benchmark.html).
 
-- **Uncoupled spin system**
+- Simulation of **uncoupled spin system**
 
   - for spin I=1/2, and quadrupole I>1/2 nuclei,
   - at arbitrary macroscopic magnetic flux density,
@@ -47,6 +50,11 @@ The `mrsimulator` package currently offers the following
 
   - 1D Bloch decay spectrum, and
   - 1D Bloch decay central transition spectrum.
+
+- **Models** for tensor parameter distribution in amorphous materials.
+
+  - Czjzek
+  - Extendend Czjzek
 
 ### Goals for the near future
 
@@ -68,10 +76,6 @@ Our current objectives for the future are the following
 
 For more information, refer to the
 [documentation](https://mrsimulator.readthedocs.io/en/latest/).
-
-> **View our example gallery**
->
-> [![](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/latest/auto_examples/index.html)
 
 ## Installation
 

@@ -60,20 +60,12 @@ plt.show()
 # :math:`\eta` parameters, use the
 # :func:`~mrsimulator.utils.collection.single_site_system_generator` utility function.
 systems = single_site_system_generator(
-    isotopes="13C",
-    shielding_symmetric={"zeta": z_dist.ravel(), "eta": e_dist.ravel()},
-    abundance=amp.ravel(),
+    isotopes="13C", shielding_symmetric={"zeta": z_dist, "eta": e_dist}, abundance=amp,
 )
 
 # %%
-# Here, the variable ``systems`` hold an array of single-site spin systems. Note, the
-# original :math:`\zeta`-:math:`\eta` grid (100 x 21) should produce 2100 spin systems.
-# The resulting number of spin systems from the above method is, however, less than
-# the expected number. The spin systems with zero abundance are dropped.
-print(len(systems))
-
-# %%
-# Create a simulator object and add the above system and a method.
+# Here, the variable ``systems`` hold an array of single-site spin systems.
+# Next, create a simulator object and add the above system and a method.
 sim = Simulator()
 sim.spin_systems = systems  # add the systems
 sim.methods = [BlochDecaySpectrum(channels=["13C"])]  # add the method
@@ -116,9 +108,7 @@ plt.show()
 #
 # Create the spin systems.
 systems = single_site_system_generator(
-    isotopes="71Ga",
-    quadrupolar={"Cq": cq_dist.ravel() * 1e6, "eta": e_dist.ravel()},
-    abundance=amp.ravel(),
+    isotopes="71Ga", quadrupolar={"Cq": cq_dist * 1e6, "eta": e_dist}, abundance=amp,
 )
 
 # %%

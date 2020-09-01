@@ -221,10 +221,6 @@ table caption:hover {
   padding-right: 1.5em; */
 }
 
-.sidebar .logo img {
-  filter: invert(1) brightness(1.75);
-}
-
 /* searchbar */
 #searchbox > h3,
 #searchbox > p {
@@ -383,10 +379,12 @@ footer .flex {
 footer .flex a {
   text-decoration: none;
 }
-footer a {
+footer a,
+footer a:visited {
   color: rgb(255, 166, 94);
 }
-footer a:hover {
+footer a:hover,
+footer a:active {
   color: rgb(255, 205, 164);
 }
 

@@ -4,13 +4,13 @@ Extended Czjzek distribution
 ----------------------------
 
 An Extended Czjzek distribution model is a random perturbation of the second-rank
-traceless symmetric tensors about a non-zero tensor. See :ref:`czjzek_model` and
+traceless symmetric tensors about a non-zero tensor. See :ref:`ext_czjzek_model` and
 references within for a brief description of the model.
 
 Extendend Czjzek distribution of symmetric shielding tensors
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-To generate an extendend Czjzek distribution, use the
+To generate an extended Czjzek distribution, use the
 :class:`~mrsimulator.models.ExtCzjzekDistribution` class as follows.
 
 .. plot::
@@ -41,10 +41,11 @@ the :meth:`~mrsimulator.models.ExtCzjzekDistribution.rvs` method of the instance
     :context: close-figs
     :include-source:
 
-    >>> zeta_dist, eta_dist = shielding_model.rvs(n=50000)
+    >>> zeta_dist, eta_dist = shielding_model.rvs(size=50000)
 
-In the above example, we draw `n=50000` random points of the distribution. The output
-``zeta_dist`` and ``eta_dist`` hold the coordinates of the points.
+In the above example, we draw `size=50000` random points of the distribution. The output
+``zeta_dist`` and ``eta_dist`` hold the tensor parameter coordinates of the points, defined
+in the Haeberlen convention.
 The scatter plot of these coordinates is shown below.
 
 .. plot::

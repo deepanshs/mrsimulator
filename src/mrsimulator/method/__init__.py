@@ -239,6 +239,14 @@ class Method(Parseable):
                 segments += [selected_transitions]
         return segments
 
+    def _get_transition_pathways_np(self, spin_system):
+        segments = self._get_transition_pathways(spin_system)
+        segments_index = [np.arange(item.shape[0]) for item in segments]
+        cartesian_index = cartesian_product(*segments_index)
+        return [
+            [segments[i][j] for i, j in enumerate(item)] for item in cartesian_index
+        ]
+
     def get_transition_pathways(self, spin_system) -> np.ndarray:
         """
         Return a list of transition pathways from the given spin system that satisfy
@@ -251,79 +259,15 @@ class Method(Parseable):
             An array of TransitionList objects. Each TransitionList object is a
             transition pathways containing a series of Transition objects.
         """
-        segments = self._get_transition_pathways(spin_system)
-        segments = [
-            np.asarray(
+        segments = self._get_transition_pathways_np(spin_system)
+        return np.asarray(
+            [
                 TransitionList(
                     [
-                        Transition(initial=_[0].tolist(), final=_[1].tolist())
-                        for _ in item
+                        Transition(initial=tr[0].tolist(), final=tr[1].tolist())
+                        for tr in item
                     ]
                 )
-            )
-            for item in segments
-        ]
-        return cartesian_product(*segments)
-
-    # def get_transition_pathways_old(self, spin_system):
-    #     """
-    #     Return a list of transition pathways from the given spin_system that satisfy
-    #     the query criterion of the method.
-
-    #     Args:
-    #         spin_system: An SpinSystem object.
-    #     """
-    #     transitions = spin_system.all_transitions()
-    #     segments = []
-    #     for seq in self.spectral_dimensions:
-    #         for ent in seq.events:
-    #             list_of_P = query_permutations(
-    #                 ent.transition_query.to_dict_with_units(),
-    #                 isotope=spin_system.get_isotopes(),
-    #                 channel=[item.symbol for item in self.channels],
-    #             )
-    #             P_segment = []
-    #             # delta_P = transitions[:,:]
-    #             # for symmetry in list_of_P:
-    #             #     P_segment += transitions.filter(P=symmetry)
-
-    #             # if ent.transition_query.D != None:
-    #             #     list_of_D = query_permutations(
-    #             #         ent.transition_query.to_dict_with_units(),
-    #             #         isotope=spin_system.get_isotopes(),
-    #             #         channel=[item.symbol for item in self.channels],
-    #             #         transition_symmetry = "D"
-    #             #     )
-
-    #             #     D_segment = []
-    #             #     for D_symmetry in list_of_D:
-    #             #         D_segment += transitions.filter(D = D_symmetry)
-    #             #     print('list of D: ', list_of_D)
-    #             #     print('D_segment: ', D_segment)
-
-    #             for symmetry in list_of_P:
-    #                 if ent.transition_query.D is None:
-    #                     P_segment += transitions.filter(P=symmetry)
-    #                 elif ent.transition_query.D is not None:
-    #                     list_of_D = query_permutations(
-    #                         ent.transition_query.to_dict_with_units(),
-    #                         isotope=spin_system.get_isotopes(),
-    #                         channel=[item.symbol for item in self.channels],
-    #                         transition_symmetry="D",
-    #                     )
-    #                     D_transition = []
-    #                     [
-    #                         D_transition.append(x)
-    #                         for x in list_of_D
-    #                         if x not in D_transition
-    #                     ]
-    #                     # D_segment = []
-    #                     for D_symmetry in D_transition:
-    #                         P_segment += transitions.filter(P=symmetry, D=D_symmetry)
-    #                     # print('list of D: ', D_transition)
-    #                     # for symmetry in list_of_D:
-    #                     #     D_segment += transitions.filter(D=symmetry)
-    #                     # print('D_segment: ', D_segment)
-
-    #             segments.append(np.asarray(P_segment))  # append the intersection
-    #     return cartesian_product(*segments)
+                for item in segments
+            ]
+        )

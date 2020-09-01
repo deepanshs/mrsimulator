@@ -55,9 +55,7 @@ plt.show()
 #
 # Create the spin systems from the above :math:`\zeta` and :math:`\eta` parameters.
 systems = single_site_system_generator(
-    isotopes="13C",
-    shielding_symmetric={"zeta": z_dist.ravel(), "eta": e_dist.ravel()},
-    abundance=amp.ravel(),
+    isotopes="13C", shielding_symmetric={"zeta": z_dist, "eta": e_dist}, abundance=amp,
 )
 print(len(systems))
 
@@ -110,9 +108,7 @@ plt.show()
 # **Static spectrum**
 # Create the spin systems.
 systems = single_site_system_generator(
-    isotopes="71Ga",
-    quadrupolar={"Cq": cq_dist.ravel() * 1e6, "eta": e_dist.ravel()},
-    abundance=amp.ravel(),
+    isotopes="71Ga", quadrupolar={"Cq": cq_dist * 1e6, "eta": e_dist}, abundance=amp,
 )
 
 # %%
