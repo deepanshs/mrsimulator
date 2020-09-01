@@ -28,6 +28,10 @@ of the `mrsimulator` library is written in C, wrapped, and made available in pyt
 - Packages using mrsimulator -
   - [mrinversion](https://mrinversion.readthedocs.io/en/latest/)
 
+> **View our example gallery**
+>
+> [![](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/latest/auto_examples/index.html)
+
 ### Features
 
 The `mrsimulator` package currently offers the following
@@ -35,7 +39,7 @@ The `mrsimulator` package currently offers the following
 - **Fast simulation** of one-dimensional solid-state NMR spectra. See our
   [benchmark results](https://mrsimulator.readthedocs.io/en/latest/benchmark.html).
 
-- **Uncoupled spin system**
+- Simulation of **uncoupled spin system**
 
   - for spin I=1/2, and quadrupole I>1/2 nuclei,
   - at arbitrary macroscopic magnetic flux density,
@@ -46,6 +50,11 @@ The `mrsimulator` package currently offers the following
 
   - 1D Bloch decay spectrum, and
   - 1D Bloch decay central transition spectrum.
+
+- **Models** for tensor parameter distribution in amorphous materials.
+
+  - Czjzek
+  - Extendend Czjzek
 
 ### Goals for the near future
 
@@ -67,10 +76,6 @@ Our current objectives for the future are the following
 
 For more information, refer to the
 [documentation](https://mrsimulator.readthedocs.io/en/latest/).
-
-> **View our example gallery**
->
-> [![](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/latest/auto_examples/index.html)
 
 ## Installation
 

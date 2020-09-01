@@ -65,14 +65,13 @@ def _czjzek_random_distribution_tensors(sigma, n):
 
 
 class AbstractDistribution:
-    def pdf(self, pos, n: int = 400000):
-        """Generates a probability distribution function by binning the `n` random
-        variates of the distribution onto the given grid.
+    def pdf(self, pos, size: int = 400000):
+        """Generates a probability distribution function by binning the random
+        variates of length size onto the given grid system.
 
         Args:
             pos: A list of coordinates along the two dimensions given as NumPy arrays.
-            n:
-                The number of random variates drawn in generating the pdf. The default
+            size: The number of random variates drawn in generating the pdf. The default
                 is 400000.
 
         Returns:
@@ -91,7 +90,7 @@ class AbstractDistribution:
 
         x_size = pos[0].size
         y_size = pos[1].size
-        zeta, eta = self.rvs(n)
+        zeta, eta = self.rvs(size)
         hist, _, _ = np.histogram2d(zeta, eta, bins=[x_size, y_size], range=[x, y])
 
         hist /= hist.sum()
@@ -138,11 +137,11 @@ class CzjzekDistribution(AbstractDistribution):
     def __init__(self, sigma: float):
         self.sigma = sigma
 
-    def rvs(self, n: int):
-        """Draw `n` random variates from the distribution.
+    def rvs(self, size: int):
+        """Draw random variates of length `size` from the distribution.
 
         Args:
-            n: The number of random points to draw.
+            size: The number of random points to draw.
 
         Returns:
             A list of two NumPy array, where the first and the second array are the
@@ -150,14 +149,14 @@ class CzjzekDistribution(AbstractDistribution):
             respectively.
 
         Example:
-            >>> Cq_dist, eta_dist = cz_model.rvs(n=1000000)
+            >>> Cq_dist, eta_dist = cz_model.rvs(size=1000000)
         """
-        tensors = _czjzek_random_distribution_tensors(self.sigma, n)
+        tensors = _czjzek_random_distribution_tensors(self.sigma, size)
         return get_Haeberlen_components(tensors)
 
 
 class ExtCzjzekDistribution(AbstractDistribution):
-    r"""Draw `N` samples of zeta and eta from the extended czjzek distribution model.
+    r"""An extended czjzek distribution distribution model.
 
     The extended Czjzek random distribution [#f1]_ model is an extension of the Czjzek
     model, given as
@@ -201,11 +200,11 @@ class ExtCzjzekDistribution(AbstractDistribution):
         self.symmetric_tensor = symmetric_tensor
         self.eps = eps
 
-    def rvs(self, n: int):
-        """Draw `n` random variates from the distribution.
+    def rvs(self, size: int):
+        """Draw random variates of length `size` from the distribution.
 
         Args:
-            n: The number of random points to draw.
+            size: The number of random points to draw.
 
         Returns:
             A list of two NumPy array, where the first and the second array are the
@@ -213,11 +212,11 @@ class ExtCzjzekDistribution(AbstractDistribution):
             respectively.
 
         Example:
-            >>> Cq_dist, eta_dist = ext_cz_model.rvs(n=1000000)
+            >>> Cq_dist, eta_dist = ext_cz_model.rvs(size=1000000)
         """
 
         # czjzek_random_distribution model
-        tensors = _czjzek_random_distribution_tensors(1, n)
+        tensors = _czjzek_random_distribution_tensors(1, size)
 
         symmetric_tensor = self.symmetric_tensor
 

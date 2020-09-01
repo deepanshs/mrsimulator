@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Base ConfigSimulator class."""
-from mrsimulator.sandbox import AveragingScheme
+# from mrsimulator.sandbox import AveragingScheme
 from pydantic import BaseModel
 from pydantic import Field
 from typing_extensions import Literal
@@ -87,15 +87,15 @@ class ConfigSimulator(BaseModel):
 
     # averaging scheme. This contains the c pointer used in frequency evaluation
     # at c-level.
-    @property
-    def averaging_scheme(self):
-        return self._averaging_scheme
+    # @property
+    # def averaging_scheme(self):
+    #     return self._averaging_scheme
 
-    @averaging_scheme.setter
-    def averaging_scheme(self, other):
-        if isinstance(other, AveragingScheme):
-            self._averaging_scheme = other
-        raise ValueError("Expecting an instance of either the AveragingScheme class.")
+    # @averaging_scheme.setter
+    # def averaging_scheme(self, other):
+    #     if isinstance(other, AveragingScheme):
+    #         self._averaging_scheme = other
+    #     raise ValueError("Expecting an instance of either the AveragingScheme class.")
 
     def get_orientations_count(self):
         """Return the total number of orientations.

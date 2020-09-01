@@ -87,6 +87,7 @@ and the explicit matrix form the :math:`{\bf S}` is
 In a shorthand notation, we denote a Czjzek distribution of second-rank traceless
 symmetric tensor as :math:`S_C(\sigma)`.
 
+.. _ext_czjzek_model:
 
 Extended Czjzek distribution
 ----------------------------
