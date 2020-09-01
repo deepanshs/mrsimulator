@@ -64,14 +64,8 @@ systems = single_site_system_generator(
 )
 
 # %%
-# Here, the variable ``systems`` hold an array of single-site spin systems. Note, the
-# original :math:`\zeta`-:math:`\eta` grid (100 x 21) should produce 2100 spin systems.
-# The resulting number of spin systems from the above method is, however, less than
-# the expected number. The spin systems with zero abundance are dropped.
-print(len(systems))
-
-# %%
-# Create a simulator object and add the above system and a method.
+# Here, the variable ``systems`` hold an array of single-site spin systems.
+# Next, create a simulator object and add the above system and a method.
 sim = Simulator()
 sim.spin_systems = systems  # add the systems
 sim.methods = [BlochDecaySpectrum(channels=["13C"])]  # add the method

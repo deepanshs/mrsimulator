@@ -39,7 +39,8 @@ function. Let's first draw points from this distribution, using the
     >>> zeta_dist, eta_dist = cz_model.rvs(size=50000)
 
 In the above example, we draw `size=50000` random points of the distribution. The output
-``zeta_dist`` and ``eta_dist`` hold the coordinates of the points.
+``zeta_dist`` and ``eta_dist`` hold the tensor parameter coordinates of the points, defined
+in the Haeberlen convention.
 The scatter plot of these coordinates is shown below.
 
 .. plot::
