@@ -13,6 +13,7 @@ List of methods
 
 .. autosummary::
 
-      ~BlochDecaySpectrum
-      ~BlochDecayCentralTransitionSpectrum
-      ~MQVAS
+    ~BlochDecaySpectrum
+    ~BlochDecayCentralTransitionSpectrum
+    ~MQVAS
+    ~ThreeQ_VAS

@@ -99,7 +99,6 @@
     "description": "Simulate a multi-quantum magic-angle spinning spectrum",
     "global_event_attributes": {
       "rotor_frequency": 1e12,
-      "rotor_angle": 0.9553166,
       "user_variables": [
         "magnetic_flux_density"
       ],

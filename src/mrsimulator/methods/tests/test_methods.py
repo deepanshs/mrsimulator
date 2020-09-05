@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.methods import MQVAS
-from mrsimulator.methods import ThreeQ_MAS
+from mrsimulator.methods import ThreeQ_VAS
 
 
 def test_01():
@@ -243,7 +243,7 @@ def test_05():
 
 def test_3QMAS():
     """3Q MAS correlation method declaration"""
-    mth = ThreeQ_MAS(
+    mth = ThreeQ_VAS(
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
         spectral_dimensions=[

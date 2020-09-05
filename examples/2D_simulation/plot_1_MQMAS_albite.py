@@ -17,7 +17,7 @@ import mrsimulator.signal_processing.apodization as apo
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import ThreeQ_MAS
+from mrsimulator.methods import ThreeQ_VAS
 
 # global plot configuration
 font = {"size": 9}
@@ -36,16 +36,16 @@ site = Site(
 spin_systems = [SpinSystem(sites=[site])]
 
 # %%
-# **Step 2:** Create a Triple Quantum magic-angle spinning method. Note, all MQMAS
-# methods simulate an infinite spinning speed spectrum.
-method = ThreeQ_MAS(
+# **Step 2:** Create a Triple Quantum variable-angle spinning method. You may optionally
+# provide a `rotor_angle` to the method. The default `rotor_angle` is the magic-angle.
+method = ThreeQ_VAS(
     channels=["27Al"],
     magnetic_flux_density=7,  # in T
     spectral_dimensions=[
         {
             "count": 512,
             "spectral_width": 1e4,  # in Hz
-            "reference_offset": -2.5e3,  # in Hz
+            "reference_offset": -3e3,  # in Hz
             "label": "Isotropic dimension",
         },
         {

@@ -8,7 +8,7 @@ from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 from mrsimulator.methods import MQVAS
-from mrsimulator.methods import ThreeQ_MAS
+from mrsimulator.methods import ThreeQ_VAS
 
 
 def test_MQMAS():
@@ -94,7 +94,7 @@ def test_MQMAS():
     assert np.allclose(data / data.max(), mas_slice / mas_slice.max())
 
 
-def test_ThreeQ_MAS_spin_3halves():
+def test_ThreeQ_VAS_spin_3halves():
     spin_system = SpinSystem(
         sites=[
             Site(
@@ -106,7 +106,7 @@ def test_ThreeQ_MAS_spin_3halves():
         ]
     )
 
-    method = ThreeQ_MAS(
+    method = ThreeQ_VAS(
         channels=["87Rb"],
         magnetic_flux_density=9.4,
         spectral_dimensions=[
@@ -169,7 +169,7 @@ def test_MQMAS_spin_5halves():
         ]
     )
 
-    method = ThreeQ_MAS(
+    method = ThreeQ_VAS(
         channels=["27Al"],
         magnetic_flux_density=7,
         spectral_dimensions=[

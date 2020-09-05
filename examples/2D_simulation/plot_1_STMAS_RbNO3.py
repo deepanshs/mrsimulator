@@ -1,23 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-RbNO3, 87Rb (I=3/2) 3QMAS
+RbNO3, 87Rb (I=3/2) STMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-87Rb (I=3/2) triple-quantum magic-angle spinning (3Q-MAS) simulation.
+87Rb (I=3/2) staellite-transition off magic-angle spinning simulation.
 """
 # %%
-# The following is an example of the 3QMAS simulation of :math:`\text{RbNO}_3`, which
-# has three distinct :math:`^{87}\text{Rb}` sites. The :math:`^{87}\text{Rb}` tensor
-# parameters were obtained from Massiot `et. al.` [#f1]_.
+# The following is an example of the STMAS simulation of :math:`\text{RbNO}_3`. The
+# :math:`^{87}\text{Rb}` tensor parameters were obtained from Massiot `et. al.` [#f1]_.
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
+import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import ThreeQ_VAS
+from mrsimulator.methods import ST1_VAS
 
 # global plot configuration
 font = {"size": 9}
@@ -47,21 +47,25 @@ sites = [Rb87_1, Rb87_2, Rb87_3]  # all sites
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# **Step 2:** Create a Triple Quantum variable-angle spinning method. You may optionally
-# provide a `rotor_angle` to the method. The default `rotor_angle` is the magic-angle.
-method = ThreeQ_VAS(
+# **Step 2:** Create a satellite-transition variable-angle spinning method. The
+# following `ST1_VAS` method correlates the frequencies from the two inner-satellite
+# transitions to the central transition. Note, STMAS measurements are highly suspectable
+# to rotor angle mismatch. The following method deliberately miss-sets the rotor angle
+# by approximately 0.05 degrees.
+method = ST1_VAS(
     channels=["87Rb"],
     magnetic_flux_density=7,  # in T
+    rotor_angle=54.73 * np.pi / 180,  # in rad (magic angle ~ 54.735 degrees)
     spectral_dimensions=[
         {
             "count": 256,
-            "spectral_width": 4e3,  # in Hz
-            "reference_offset": -5e3,  # in Hz
+            "spectral_width": 3e3,  # in Hz
+            "reference_offset": -2.4e3,  # in Hz
             "label": "Isotropic dimension",
         },
         {
             "count": 512,
-            "spectral_width": 1e4,  # in Hz
+            "spectral_width": 5e3,  # in Hz
             "reference_offset": -4e3,  # in Hz
             "label": "MAS dimension",
         },
@@ -94,8 +98,8 @@ processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
         sp.IFFT(dim_index=(0, 1)),
-        apo.Gaussian(FWHM="0.2 kHz", dim_index=0),
-        apo.Gaussian(FWHM="0.2 kHz", dim_index=1),
+        apo.Gaussian(FWHM="50 Hz", dim_index=0),
+        apo.Gaussian(FWHM="50 Hz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
     ]
 )
@@ -106,8 +110,8 @@ processed_data /= processed_data.max()
 # **Step 6:** The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
 ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
-ax.set_xlim(-15, -70)
-ax.set_ylim(-35, -65)
+ax.invert_xaxis()
+ax.invert_yaxis()
 plt.tight_layout()
 plt.show()
 

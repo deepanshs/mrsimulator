@@ -1,22 +1,16 @@
 # -*- coding: utf-8 -*-
 import pytest
 from mrsimulator.method.transition_query import TransitionQuery
-from mrsimulator.methods import ThreeQ_MAS
+from mrsimulator.methods import ThreeQ_VAS
 
 
-def test_3QMAS_rotor_freq():
-    error = " `rotor_frequency` cannot be modified for ThreeQ_MAS method."
+def test_3Q_VAS_rotor_freq():
+    error = " `rotor_frequency` cannot be modified for ThreeQ_VAS method."
     with pytest.raises(AttributeError, match=f".*{error}.*"):
-        ThreeQ_MAS(channels=["87Rb"], rotor_frequency=10, spectral_dimensions=[{}, {}])
+        ThreeQ_VAS(channels=["87Rb"], rotor_frequency=10, spectral_dimensions=[{}, {}])
 
 
-def test_3QMAS_rotor_amgle():
-    error = "rotor_angle` is fixed to the magic-angle and cannot be modified"
-    with pytest.raises(AttributeError, match=f".*{error}.*"):
-        ThreeQ_MAS(channels=["87Rb"], rotor_angle=0, spectral_dimensions=[{}, {}])
-
-
-def test_3QMAS_fractions():
+def test_3Q_VAS_fractions():
     sites = ["87Rb", "27Al"]
     spins = [1.5, 2.5]
     k_MQ_MAS = {
@@ -26,16 +20,16 @@ def test_3QMAS_fractions():
         9: {4.5: 1116 / 216},
     }
     for i, isotope in zip(spins, sites):
-        meth = ThreeQ_MAS(channels=[isotope])
+        meth = ThreeQ_VAS(channels=[isotope])
         k = k_MQ_MAS[3][i]
         assert meth.spectral_dimensions[0].events[0].fraction == 1 / (1 + k)
         assert meth.spectral_dimensions[0].events[1].fraction == k / (1 + k)
         assert meth.spectral_dimensions[1].events[0].fraction == 1
 
 
-def test_3QMAS_general():
+def test_3Q_VAS_general():
     """MQMAS method declaration"""
-    mth = ThreeQ_MAS(
+    mth = ThreeQ_VAS(
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
         # rotor_angle=54.735 * np.pi / 180,
@@ -52,9 +46,9 @@ def test_3QMAS_general():
             },
         ],
     )
-    assert mth.name == "ThreeQ_MAS"
+    assert mth.name == "ThreeQ_VAS"
 
-    assert mth.description == "Simulate a 3Q magic-angle spinning spectrum."
+    assert mth.description == "Simulate a 3Q variable-angle spinning spectrum."
 
     assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
         P={"channel-1": [[-3]]}, D={"channel-1": [[0]]},
