@@ -217,18 +217,20 @@ class Method(Parseable):
         segments = []
         for seq in self.spectral_dimensions:
             for ent in seq.events:
+                # query the transitions for P symmetry
                 selected_transitions = all_transitions[:]
                 list_of_P = query_permutations(
-                    ent.transition_query.to_dict_with_units(),
+                    ent.transition_query.dict(),
                     isotope=spin_system.get_isotopes(),
                     channel=[item.symbol for item in self.channels],
                 )
                 indexes = P_symmetry_indexes(selected_transitions, list_of_P)
                 selected_transitions = selected_transitions[indexes]
 
+                # query the transitions for D symmetry
                 if ent.transition_query.D is not None:
                     list_of_D = query_permutations(
-                        ent.transition_query.to_dict_with_units(),
+                        ent.transition_query.dict(),
                         isotope=spin_system.get_isotopes(),
                         channel=[item.symbol for item in self.channels],
                         transition_symmetry="D",

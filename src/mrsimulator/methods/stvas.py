@@ -48,9 +48,6 @@ class ST_VAS_:
     }
 
     def __new__(cls, st=1.5, spectral_dimensions=[{}, {}], **kwargs):
-        # if "rotor_angle" in kwargs:
-        #     e = "`rotor_angle` is fixed to the magic-angle and cannot be modified."
-        #     raise AttributeError(e)
 
         template = deepcopy(METHODS_DATA["MQMAS_sheared"])
         template["name"] = cls.__name__
@@ -78,12 +75,25 @@ class ST_VAS_:
 
 
 class ST1_VAS(ST_VAS_):
-    """Simulate a inner satellite to central transition ST-MAS correlation spectrum.
+    """Simulate an inner satellite to the central transition correlation spectrum.
 
-    The inner satellite are |3/2> -> |1/2> and |-1/2> -> |-3/2>.
+    The inner satellites are |3/2> -> |1/2> and |-1/2> -> |-3/2>.
     """
 
     def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
         return super().__new__(
             self, st=1.5, spectral_dimensions=spectral_dimensions, **kwargs
+        )
+
+
+class ST2_VAS(ST_VAS_):
+    """Simulate a second to inner satellite to the central transition correlation
+    spectrum.
+
+    The second to inner satellites are |5/2> -> |3/2> and |-3/2> -> |-5/2>.
+    """
+
+    def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
+        return super().__new__(
+            self, st=2.5, spectral_dimensions=spectral_dimensions, **kwargs
         )

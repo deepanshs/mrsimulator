@@ -22,7 +22,7 @@ Custom2D = generate_method_from_template(METHODS_DATA["Custom2D"])
 
 
 def MQVAS(spectral_dimensions=[{}, {}], **kwargs):
-    r"""Simulate a multi-quantum variable angle spinning spectrum.
+    r"""A generic 2D multiple-quantum variable angle spinning correlation method.
 
     Args:
         channels: A list of isotope symbols over which the method will be applied.

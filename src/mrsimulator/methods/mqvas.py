@@ -85,10 +85,10 @@ class MQ_VAS_:
 
 
 class ThreeQ_VAS(MQ_VAS_):
-    r"""
-    Simulate a sheared triple-quantum variable angle spinning spectrum correlating the
-    symmetric :math:`|\frac{3}{2}\rangle \rightarrow -|\frac{3}{2}\rangle\` to the
-    central transition.
+    r"""Simulate a sheared triple-quantum variable angle spinning spectrum correlating
+    the symmetric triple-quantum transition,
+    :math:`\left|\frac{3}{2}\right\rangle \rightarrow \left|-\frac{3}{2}\right\rangle`,
+    to the central transition.
 
     Args:
         channels: A list of isotope symbols over which the method will be applied.
