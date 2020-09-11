@@ -94,3 +94,7 @@ in your terminal.
 This should produce the following figure.
 
 ![alt text](https://mrsimulator.readthedocs.io/en/master/_images/test_file.png)
+
+## Reporting Bugs
+
+The preferred location for submitting feature requests and bugs reported is the [github issue tracker](https://github.com/DeepanshS/mrsimulator/issues). Reports are also welcomed on the [mrsimulator mailing list](https://groups.google.com/group/mrsimulator-users) or by directly contacting [Deepansh Srivastava](mailto:srivastava.89@osu.edu).

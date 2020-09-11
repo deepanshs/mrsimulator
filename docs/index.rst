@@ -270,6 +270,13 @@ Project details
 ..    theory/wigner_rotations
 ..    examples
 
+Reporting Bugs
+--------------
+
+The preferred location for submitting feature requests and bugs reported is the
+`github issue tracker <https://github.com/DeepanshS/mrsimulator/issues>`_. Reports
+are also welcomed on the `mrsimulator mailing list <https://groups.google.com/group/mrsimulator-users>`_ or
+by directly contacting `Deepansh Srivastava <mailto:srivastava.89@osu.edu>`_.
 
 .. only:: html
 
