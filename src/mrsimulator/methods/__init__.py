@@ -4,6 +4,7 @@ from copy import deepcopy
 from .mqvas import FiveQ_VAS  # noqa:F401
 from .mqvas import ThreeQ_VAS  # noqa:F401
 from .stvas import ST1_VAS  # noqa:F401
+from .stvas import ST2_VAS  # noqa:F401
 from .utils import generate_method_from_template
 from .utils import METHODS_DATA
 

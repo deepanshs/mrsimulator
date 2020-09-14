@@ -62,8 +62,8 @@ Welcome to the Mrsimulator documentation
             :alt: GitHub issues
 
       * - Citation
-        - .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3978780.svg
-            :target: https://doi.org/10.5281/zenodo.3978780
+        - .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3978779.svg
+            :target: https://doi.org/10.5281/zenodo.3978779
 
 .. .. image:: https://img.shields.io/github/commits-since/deepanshs/mrsimulator/v0.2.1?logo=github
 ..   :alt: GitHub commits since tagged version

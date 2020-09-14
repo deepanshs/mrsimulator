@@ -69,7 +69,7 @@ class ST_VAS_:
 
         method.description = (
             f"Simulate a {st} -> {st-1} and {-st+1} -> {-st} satellite-transition "
-            "magic-angle spinning spectrum."
+            "variable-angle spinning spectrum."
         )
         return method
 

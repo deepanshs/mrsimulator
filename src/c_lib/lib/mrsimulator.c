@@ -15,14 +15,31 @@
  * Free the buffers and pre-calculated tables from the mrsimulator plan.
  */
 void MRS_free_plan(MRS_plan *the_plan) {
-  if (the_plan->vr_freq != NULL) {
+  if (!the_plan->vr_freq) {
     free(the_plan->vr_freq);
-    the_plan->vr_freq = NULL;
+  }
+
+  if (!the_plan->wigner_d2m0_vector) {
     free(the_plan->wigner_d2m0_vector);
+  }
+
+  if (!the_plan->wigner_d4m0_vector) {
     free(the_plan->wigner_d4m0_vector);
+  }
+
+  if (!the_plan->norm_amplitudes) {
     free(the_plan->norm_amplitudes);
+  }
+
+  if (!the_plan->pre_phase) {
     free(the_plan->pre_phase);
+  }
+
+  if (!the_plan->pre_phase_2) {
     free(the_plan->pre_phase_2);
+  }
+
+  if (!the_plan->pre_phase_4) {
     free(the_plan->pre_phase_4);
   }
 }
@@ -114,7 +131,7 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
 void MRS_plan_update_from_sample_rotation_frequency_in_Hz(
     MRS_plan *plan, double increment, double sample_rotation_frequency_in_Hz) {
   unsigned int size_4;
-  double increment_inverse = 1.0 / increment;
+  // double increment_inverse = 1.0 / increment;
   plan->sample_rotation_frequency_in_Hz = sample_rotation_frequency_in_Hz;
 
   plan->vr_freq = __get_frequency_in_FFT_order(plan->number_of_sidebands,

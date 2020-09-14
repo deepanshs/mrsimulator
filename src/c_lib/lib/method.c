@@ -11,7 +11,7 @@
 
 /* free the buffer and pre-calculated tables from the mrsimulator plan. */
 void MRS_free_event(MRS_event *the_event) {
-  if (the_event->plan != NULL) {
+  if (!the_event->plan) {
     MRS_free_plan(the_event->plan);
   }
   free(the_event->freq_amplitude);

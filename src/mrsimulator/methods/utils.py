@@ -85,8 +85,19 @@ def generate_method_from_template(template):
             raise AttributeError(e)
 
         dim = []
+        n_sp = len(spectral_dimensions)
+        n_tem = len(template["spectral_dimensions"])
+
+        if n_tem < n_sp:
+            raise ValueError(
+                f"The method allows {n_tem} spectral dimension(s), {n_sp} given."
+            )
+
         for i, s in enumerate(template["spectral_dimensions"]):
             events = []
+
+            _fill_missing_events_in_template(spectral_dimensions[i], s)
+
             for j, e in enumerate(s["events"]):
                 ew = set(e)
 
@@ -94,14 +105,21 @@ def generate_method_from_template(template):
                 if "events" in spectral_dimensions[i]:
                     for key, val in spectral_dimensions[i]["events"][j].items():
                         kw[key] = val
-                    spectral_dimensions[i].pop("events")
 
                 intersection = ew.intersection(kw)
                 [e.pop(item) for item in intersection]
 
-                params = {**e, **kw, **global_events}
+                # prioritize the keyword arguments over the global arguments.
+                common = set(kw).intersection(set(global_events))
+                ge = deepcopy(global_events)
+                [ge.pop(item) for item in common]
+
+                params = {**e, **kw, **ge}
                 params = params if parse else Event(**params)
                 events.append(params)
+
+            if "events" in spectral_dimensions[i]:
+                spectral_dimensions[i].pop("events")
 
             params = {**spectral_dimensions[i], "events": events}
             params = params if parse else SpectralDimension(**params)
@@ -138,3 +156,15 @@ def generate_method_from_template(template):
         },
     )
     return method
+
+
+def _fill_missing_events_in_template(spectral_dimensions, s_template):
+    """Fill the missing events in the template relative to the spectral dimensions."""
+    if "events" not in spectral_dimensions:
+        return
+
+    s_tem_len = len(s_template["events"])
+    sp_evt_len = len(spectral_dimensions["events"])
+    if s_tem_len < sp_evt_len:
+        diff = sp_evt_len - s_tem_len
+        [s_template["events"].append(Event().dict()) for _ in range(diff)]

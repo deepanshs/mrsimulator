@@ -57,39 +57,25 @@
         "magnetic_flux_density",
         "rotor_angle"
       ],
-      "rotor_frequency": 1e12
+      "rotor_frequency": 1e12,
+      "transition_query": {
+        "P": {
+          "channel-1": [
+            [-1]
+          ]
+        },
+        "D": {
+          "channel-1": [
+            [0]
+          ]
+        }
+      }
     },
     "spectral_dimensions": [{
-        "events": [{
-          "transition_query": {
-            "P": {
-              "channel-1": [
-                [-1]
-              ]
-            },
-            "D": {
-              "channel-1": [
-                [0]
-              ]
-            }
-          }
-        }]
+        "events": [{}]
       },
       {
-        "events": [{
-          "transition_query": {
-            "P": {
-              "channel-1": [
-                [-1]
-              ]
-            },
-            "D": {
-              "channel-1": [
-                [0]
-              ]
-            }
-          }
-        }]
+        "events": [{}]
       }
     ]
   },
@@ -124,9 +110,9 @@
     ]
   },
   "Custom2D": {
-    "name": "Custom 2D method template",
+    "name": "Custom2D",
     "number_of_channels": 1,
-    "description": "Custom 2D method template",
+    "description": "A custom 2D method template",
     "global_event_attributes": {
       "user_variables": [
         "magnetic_flux_density",
