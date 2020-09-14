@@ -7,7 +7,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-from mrsimulator.methods import MQVAS
+from mrsimulator.methods import Method2D
 from mrsimulator.methods import ThreeQ_VAS
 
 
@@ -23,7 +23,7 @@ def test_MQMAS():
         ]
     )
 
-    method = MQVAS(
+    method = Method2D(
         channels=["87Rb"],
         magnetic_flux_density=9.4,
         spectral_dimensions=[

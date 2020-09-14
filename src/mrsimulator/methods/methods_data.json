@@ -48,10 +48,10 @@
       }]
     }]
   },
-  "MQVAS": {
-    "name": "MQVAS",
+  "Method2D": {
+    "name": "Method2D",
     "number_of_channels": 1,
-    "description": "Simulate a multi-quantum variable-angle spinning spectrum",
+    "description": "Simulate a generic two-dimensional correlation spectrum",
     "global_event_attributes": {
       "user_variables": [
         "magnetic_flux_density",
@@ -103,37 +103,6 @@
     },
     "spectral_dimensions": [{
         "events": [{}, {}]
-      },
-      {
-        "events": [{}]
-      }
-    ]
-  },
-  "Custom2D": {
-    "name": "Custom2D",
-    "number_of_channels": 1,
-    "description": "A custom 2D method template",
-    "global_event_attributes": {
-      "user_variables": [
-        "magnetic_flux_density",
-        "rotor_angle",
-        "rotor_frequency"
-      ],
-      "transition_query": {
-        "P": {
-          "channel-1": [
-            [-1]
-          ]
-        },
-        "D": {
-          "channel-1": [
-            [0]
-          ]
-        }
-      }
-    },
-    "spectral_dimensions": [{
-        "events": [{}]
       },
       {
         "events": [{}]

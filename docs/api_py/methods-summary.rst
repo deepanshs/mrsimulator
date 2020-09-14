@@ -15,5 +15,5 @@ List of methods
 
     ~BlochDecaySpectrum
     ~BlochDecayCentralTransitionSpectrum
-    ~MQVAS
+    ~Method2D
     ~ThreeQ_VAS

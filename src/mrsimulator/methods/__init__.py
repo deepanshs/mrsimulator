@@ -19,11 +19,9 @@ BlochDecayCentralTransitionSpectrum = generate_method_from_template(
     METHODS_DATA["Bloch_decay_central_transition"]
 )
 
-Custom2D = generate_method_from_template(METHODS_DATA["Custom2D"])
 
-
-def MQVAS(spectral_dimensions=[{}, {}], **kwargs):
-    r"""A generic 2D multiple-quantum variable angle spinning correlation method.
+def Method2D(spectral_dimensions=[{}, {}], **kwargs):
+    r"""A generic 2D correlation method.
 
     Args:
         channels: A list of isotope symbols over which the method will be applied.
@@ -79,5 +77,5 @@ def MQVAS(spectral_dimensions=[{}, {}], **kwargs):
                     if "D" in t_query.keys():
                         t_query["D"] = {"channel-1": [[i] for i in t_query["D"]]}
 
-    MQVAS_ = generate_method_from_template(deepcopy(METHODS_DATA["MQVAS"]))
-    return MQVAS_(spectral_dimensions, **kwargs)
+    Method2d_ = generate_method_from_template(deepcopy(METHODS_DATA["Method2D"]))
+    return Method2d_(spectral_dimensions, **kwargs)

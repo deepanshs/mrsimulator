@@ -18,7 +18,7 @@ import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import MQVAS
+from mrsimulator.methods import Method2D
 
 # global plot configuration
 font = {"size": 9}
@@ -43,11 +43,10 @@ sites = [
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# **Step 2:** Create a Multiple-Quantum variable angle spinning, MQVAS, method. MQVAS
-# is a generalized method which, with the right set of parameters, can be used to
-# simulate a SAS spectrum, as shown below. Note, the MQVAS method simulates an infinite
-# spinning speed spectrum.
-method = MQVAS(
+# **Step 2:** Create a generic 2D method, `Method2D`, method. To simulate a SAS
+# spectrum, customize the method parameters, as shown below. Note, the Method2D method
+# simulates an infinite spinning speed spectrum.
+method = Method2D(
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
     spectral_dimensions=[

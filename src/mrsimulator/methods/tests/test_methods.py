@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.methods import MQVAS
+from mrsimulator.methods import Method2D
 from mrsimulator.methods import ThreeQ_VAS
 
 
@@ -19,14 +19,14 @@ def test_01():
 
 
 def test_02():
-    error = " `rotor_frequency` cannot be modified for MQVAS method."
+    error = " `rotor_frequency` cannot be modified for Method2D method."
     with pytest.raises(AttributeError, match=f".*{error}.*"):
-        MQVAS(channels=["87Rb"], rotor_frequency=10, spectral_dimensions=[{}, {}])
+        Method2D(channels=["87Rb"], rotor_frequency=10, spectral_dimensions=[{}, {}])
 
 
 def test_03():
     """MQMAS method declaration"""
-    mth = MQVAS(
+    mth = Method2D(
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
         # rotor_angle=54.735 * np.pi / 180,
@@ -45,8 +45,8 @@ def test_03():
     )
 
     serialize = {
-        "name": "MQVAS",
-        "description": "Simulate a multi-quantum variable-angle spinning spectrum",
+        "name": "Method2D",
+        "description": "Simulate a generic two-dimensional correlation spectrum",
         "spectral_dimensions": [
             {
                 "count": 1024,
@@ -93,7 +93,7 @@ def test_03():
 
 def test_04():
     """SAS method declaration"""
-    mth = MQVAS(
+    mth = Method2D(
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
         spectral_dimensions=[
@@ -123,8 +123,8 @@ def test_04():
     )
 
     serialize = {
-        "name": "MQVAS",
-        "description": "Simulate a multi-quantum variable-angle spinning spectrum",
+        "name": "Method2D",
+        "description": "Simulate a generic two-dimensional correlation spectrum",
         "spectral_dimensions": [
             {
                 "count": 512,
@@ -171,7 +171,7 @@ def test_04():
 
 def test_05():
     """Satellite to central correlation method declaration"""
-    mth = MQVAS(
+    mth = Method2D(
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
         spectral_dimensions=[
@@ -201,8 +201,8 @@ def test_05():
     )
 
     serialize = {
-        "name": "MQVAS",
-        "description": "Simulate a multi-quantum variable-angle spinning spectrum",
+        "name": "Method2D",
+        "description": "Simulate a generic two-dimensional correlation spectrum",
         "spectral_dimensions": [
             {
                 "count": 512,
@@ -280,8 +280,8 @@ def test_06():
 
 def test_methods():
     res = {
-        "name": "MQVAS",
-        "description": "Simulate a multi-quantum variable-angle spinning spectrum",
+        "name": "Method2D",
+        "description": "Simulate a generic two-dimensional correlation spectrum",
         "spectral_dimensions": [
             {
                 "count": 256,
@@ -336,7 +336,7 @@ def test_methods():
         "channels": ["87Rb"],
     }
 
-    method = MQVAS(
+    method = Method2D(
         channels=["87Rb"],
         magnetic_flux_density=4.2,  # in T
         spectral_dimensions=[

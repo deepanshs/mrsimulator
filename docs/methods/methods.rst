@@ -6,4 +6,4 @@ Methods
    :maxdepth: 1
    :caption: Contents:
 
-   MQVAS
+   Method2D
