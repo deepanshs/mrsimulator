@@ -27,7 +27,7 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
-# **Step 1:** Create the site and the spin systems.
+# Generate the site and spin system objects.
 sites = [
     Site(
         isotope="87Rb",
@@ -43,10 +43,10 @@ sites = [
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# **Step 2:** Create a generic 2D method, `Method2D`, method. To simulate a SAS
-# spectrum, customize the method parameters, as shown below. Note, the Method2D method
-# simulates an infinite spinning speed spectrum.
-method = Method2D(
+# Use the generic 2D method, `Method2D`, to simulate a SAS spectrum by customizing the
+# method parameters, as shown below. Note, the Method2D method simulates an infinite
+# spinning speed spectrum.
+sas = Method2D(
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
     spectral_dimensions=[
@@ -68,28 +68,24 @@ method = Method2D(
 )
 
 # %%
-# **Step 3:** Create the Simulator object, add the method and spin system objects, and
+# Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method.
-
-# configure the simulator object
+sim.methods = [sas]  # add the method.
 sim.run()
 
 # %%
-# **Step 4:**
 # The plot of the simulation.
 data = sim.methods[0].simulation
 ax = plt.subplot(projection="csdm")
 ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
 ax.invert_xaxis()
-# ax.set_ylim(-70, 90)
 plt.tight_layout()
 plt.show()
 
 # %%
-# **Step 5:** Add post-simulation signal processing.
+# Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
@@ -103,11 +99,10 @@ processed_data = processor.apply_operations(data=data)
 processed_data /= processed_data.max()
 
 # %%
-# **Step 6:** The plot of the simulation after signal processing.
+# The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
 ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
 ax.invert_xaxis()
-# ax.set_ylim(-70, 90)
 plt.tight_layout()
 plt.show()
 

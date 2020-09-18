@@ -459,6 +459,7 @@ see the list of transition pathways, for example,
     :context: close-figs
     :include-source:
 
+    >>> from pprint import pprint
     >>> pprint(sim.methods[0].get_transition_pathways(system_4)) # 17O
     [TransitionPathway(|-2.5⟩⟨-1.5|),
      TransitionPathway(|-1.5⟩⟨-0.5|),

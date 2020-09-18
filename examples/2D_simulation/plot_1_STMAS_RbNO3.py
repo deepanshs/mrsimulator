@@ -13,7 +13,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
-import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
@@ -26,7 +25,7 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
-# **Step 1:** Create sites and spin systems.
+# Generate the site and spin system objects.
 Rb87_1 = Site(
     isotope="87Rb",
     isotropic_chemical_shift=-27.4,  # in ppm
@@ -47,15 +46,15 @@ sites = [Rb87_1, Rb87_2, Rb87_3]  # all sites
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# **Step 2:** Create a satellite-transition variable-angle spinning method. The
+# **Step 2:** Select a satellite-transition variable-angle spinning method. The
 # following `ST1_VAS` method correlates the frequencies from the two inner-satellite
 # transitions to the central transition. Note, STMAS measurements are highly suspectable
 # to rotor angle mismatch. The following method deliberately miss-sets the rotor angle
-# by approximately 0.05 degrees.
+# by approximately 0.005 degrees.
 method = ST1_VAS(
     channels=["87Rb"],
     magnetic_flux_density=7,  # in T
-    rotor_angle=54.73 * np.pi / 180,  # in rad (magic angle ~ 54.735 degrees)
+    rotor_angle=54.73 * 3.1415 / 180,  # in rad (magic angle ~ 54.735 degrees)
     spectral_dimensions=[
         {
             "count": 256,
@@ -73,7 +72,7 @@ method = ST1_VAS(
 )
 
 # %%
-# **Step 3:** Create the Simulator object, add the method and spin system objects, and
+# Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
@@ -81,7 +80,6 @@ sim.methods = [method]  # add the method.
 sim.run()
 
 # %%
-# **Step 4:**
 # The plot of the simulation.
 data = sim.methods[0].simulation
 ax = plt.gca(projection="csdm")
@@ -92,8 +90,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# **Step 5:** Add post-simulation signal processing.
-#
+# Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
@@ -107,7 +104,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation)
 processed_data /= processed_data.max()
 
 # %%
-# **Step 6:** The plot of the simulation after signal processing.
+# The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
 ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
 ax.invert_xaxis()

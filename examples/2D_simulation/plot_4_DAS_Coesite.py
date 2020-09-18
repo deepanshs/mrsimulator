@@ -24,23 +24,24 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
-# Create the Simulator object and load the spin systems.
+# Create the Simulator object and load the spin systems database or url address.
 sim = Simulator()
 
-# load the spin systems from the file
+# load the spin systems from url.
 filename = "https://bit.ly/3iKij9H"
 sim.load_spin_systems(filename)
 
 # %%
-# Use the generic 2D method class, `Method2D`, to generate a DAS method as shown below.
-# Note, the Method2D method simulates an infinite spinning speed spectrum.
-method = Method2D(
+# Use the generic 2D method, `Method2D`, to simulate a DAS spectrum by customizing the
+# method parameters, as shown below. Note, the Method2D method simulates an infinite
+# spinning speed spectrum.
+das = Method2D(
     channels=["17O"],
     magnetic_flux_density=11.7,  # in T
     spectral_dimensions=[
         {
             "count": 256,
-            "spectral_width": 8e3,  # in Hz
+            "spectral_width": 5e3,  # in Hz
             "reference_offset": 0,  # in Hz
             "label": "DAS isotropic dimension",
             "events": [
@@ -58,7 +59,7 @@ method = Method2D(
         },
     ],
 )
-sim.methods = [method]  # add the method.
+sim.methods = [das]  # add the method.
 
 # %%
 # Run the simulation

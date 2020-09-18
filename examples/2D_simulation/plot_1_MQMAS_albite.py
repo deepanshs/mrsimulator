@@ -26,7 +26,7 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
-# **Step 1:** Create the site and spin system.
+# Generate the site and spin system objects.
 site = Site(
     isotope="27Al",
     isotropic_chemical_shift=64.7,  # in ppm
@@ -36,7 +36,7 @@ site = Site(
 spin_systems = [SpinSystem(sites=[site])]
 
 # %%
-# **Step 2:** Create a Triple Quantum variable-angle spinning method. You may optionally
+# Select a Triple Quantum variable-angle spinning method. You may optionally
 # provide a `rotor_angle` to the method. The default `rotor_angle` is the magic-angle.
 method = ThreeQ_VAS(
     channels=["27Al"],
@@ -58,7 +58,7 @@ method = ThreeQ_VAS(
 )
 
 # %%
-# **Step 3:** Create the Simulator object, add the method and spin system objects, and
+# Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
@@ -66,7 +66,6 @@ sim.methods = [method]  # add the method.
 sim.run()
 
 # %%
-# **Step 4:**
 # The plot of the simulation.
 data = sim.methods[0].simulation
 ax = plt.subplot(projection="csdm")
@@ -77,7 +76,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# **Step 5:** Add post-simulation signal processing.
+# Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
@@ -91,7 +90,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation)
 processed_data /= processed_data.max()
 
 # %%
-# **Step 6:** The plot of the simulation after signal processing.
+# The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
 ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
 ax.set_xlim(75, 25)

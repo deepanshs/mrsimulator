@@ -11,7 +11,6 @@ from ._base import AbstractOperation
 from .utils import _get_broadcast_shape
 from .utils import _str_to_quantity
 
-
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
 
@@ -115,7 +114,11 @@ class Gaussian(AbstractApodization):
     def fn(x, arg):
         # arg is FWHM
         sigma = arg / 2.354820045030949
-        return np.exp(-2 * ((x * sigma * np.pi) ** 2))
+        xinv = np.fft.ifftshift(np.arange(x.size, dtype=np.float64) - int(x.size / 2))
+        xinv /= x[-1] - x[0]
+        amp = np.fft.ifftshift(np.fft.ifft(np.exp(-0.5 * (xinv / sigma) ** 2)))
+        return amp.real / (sigma * np.sqrt(2 * np.pi))
+        # return np.exp(-2 * ((x * sigma * np.pi) ** 2))
 
     def operate(self, data):
         """
