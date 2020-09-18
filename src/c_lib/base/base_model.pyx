@@ -179,6 +179,15 @@ def one_d_spectrum(method,
     the_fftw_scheme = clib.create_fftw_scheme(the_averaging_scheme.total_orientations, number_of_sidebands)
 # # _____________________________________________________________________________
 
+# affine transformation
+
+    cdef ndarray[double] affine_matrix_c
+    if method.affine_matrix is None:
+        affine_matrix_c = np.asarray([1, 0, 0, 1], dtype=np.float64)
+    else:
+        increment_fraction = [incre/item for item in incre]
+        matrix = method.affine_matrix * np.asarray(increment_fraction).ravel()
+        affine_matrix_c = np.asarray(matrix, dtype=np.float64)
 
     # B0 = dimension.magnetic_flux_density
 
@@ -208,6 +217,7 @@ def one_d_spectrum(method,
     cdef ndarray[double] ori_e
 
     cdef ndarray[double] D_c
+
 
     cdef int trans__, pathway_increment, pathway_count, transition_count_per_pathway
     cdef ndarray[double, ndim=1] amp
@@ -371,6 +381,7 @@ def one_d_spectrum(method,
                     the_fftw_scheme,
                     the_averaging_scheme,
                     interpolation,
+                    &affine_matrix_c[0],
                     )
 
             temp = amp*abundance/norm

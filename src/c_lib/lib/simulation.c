@@ -71,7 +71,8 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
                                              MRS_averaging_scheme *scheme,
                                              MRS_fftw_scheme *fftw_scheme,
                                              double *spec,
-                                             unsigned int number_of_sidebands) {
+                                             unsigned int number_of_sidebands,
+                                             double *affine_matrix) {
   unsigned int i, k, j, evt;
   unsigned int step_vector_i = 0, step_vector_k = 0, address;
   MRS_plan *plan;
@@ -81,13 +82,41 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
   double *freq_ampB = malloc_double(size);
   double *freq_amp = malloc_double(scheme->total_orientations);
   double offset0, offset1, offsetA, offsetB;
+  double *dim0, *dim1;
+  double norm0, norm1;
 
   vm_double_ones(size, freq_ampA);
   vm_double_ones(size, freq_ampB);
 
+  dim0 = the_sequence[0].local_frequency;
+  dim1 = the_sequence[1].local_frequency;
+
+  // scale and shear the first dimension.
+  if (affine_matrix[0] != 1) {
+    cblas_dscal(scheme->total_orientations, affine_matrix[0], dim0, 1);
+    // the_sequence[0].R0_offset *= affine_matrix[0];
+  }
+  if (affine_matrix[1] != 0) {
+    cblas_daxpy(scheme->total_orientations, affine_matrix[1], dim1, 1, dim0, 1);
+    // the_sequence[0].R0_offset += affine_matrix[1] *
+    // the_sequence[1].R0_offset;
+  }
+
+  // scale and shear the second dimension.
+  if (affine_matrix[3] != 1) {
+    cblas_dscal(scheme->total_orientations, affine_matrix[3], dim1, 1);
+    // the_sequence[1].R0_offset *= affine_matrix[3];
+  }
+  if (affine_matrix[2] != 0) {
+    cblas_daxpy(scheme->total_orientations, affine_matrix[2], dim1, 1, dim0, 1);
+    // the_sequence[1].R0_offset += affine_matrix[2] *
+    // the_sequence[0].R0_offset;
+  }
+
   // offset = plan->vr_freq[i] + plan->isotropic_offset +
   //          the_sequence[seq].normalize_offset;
-  offset0 = the_sequence[0].normalize_offset + the_sequence[0].R0_offset;
+
+  offset0 = the_sequence[0].R0_offset;
   for (evt = 0; evt < the_sequence[0].n_events; evt++) {
     event = &the_sequence[0].events[evt];
     plan = event->plan;
@@ -95,7 +124,7 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
     vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_ampA, 1);
   }
 
-  offset1 = the_sequence[1].normalize_offset + the_sequence[1].R0_offset;
+  offset1 = the_sequence[1].R0_offset;
   for (evt = 0; evt < the_sequence[1].n_events; evt++) {
     event = &the_sequence[1].events[evt];
     plan = event->plan;
@@ -110,12 +139,35 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
 
   for (i = 0; i < number_of_sidebands; i++) {
     offsetA = offset0 + plan->vr_freq[i] * the_sequence[0].inverse_increment;
-    if ((int)offsetA >= 0 && (int)offsetA <= the_sequence[0].count) {
-      step_vector_i = i * scheme->total_orientations;
-      for (k = 0; k < number_of_sidebands; k++) {
-        offsetB =
-            offset1 + plan->vr_freq[k] * the_sequence[1].inverse_increment;
-        if ((int)offsetB >= 0 && (int)offsetB <= the_sequence[1].count) {
+    for (k = 0; k < number_of_sidebands; k++) {
+      offsetB = offset1 + plan->vr_freq[k] * the_sequence[1].inverse_increment;
+
+      norm0 = offsetA;
+      norm1 = offsetB;
+
+      // scale and shear the offsets
+      if (affine_matrix[0] != 1) {
+        norm0 *= affine_matrix[0];
+      }
+      if (affine_matrix[1] != 0) {
+        norm0 += affine_matrix[1] * offsetB;
+      }
+      if (affine_matrix[3] != 1) {
+        norm1 *= affine_matrix[3];
+      }
+      if (affine_matrix[2] != 0) {
+        norm1 += affine_matrix[2] * offsetA;
+      }
+      norm0 += the_sequence[0].normalize_offset;
+      norm1 += the_sequence[1].normalize_offset;
+
+      if ((int)norm0 >= 0 && (int)norm0 <= the_sequence[0].count) {
+        step_vector_i = i * scheme->total_orientations;
+        // for (k = 0; k < number_of_sidebands; k++) {
+        //   offsetB =
+        //       offset1 + plan->vr_freq[k] * the_sequence[1].inverse_increment;
+        //   norm1 = offsetB + the_sequence[1].normalize_offset;
+        if ((int)norm1 >= 0 && (int)norm1 <= the_sequence[1].count) {
           step_vector_k = k * scheme->total_orientations;
 
           // step_vector = 0;
@@ -123,12 +175,10 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
             address = j * scheme->octant_orientations;
             // Add offset(isotropic + sideband_order) to the local frequency
             // from [n to n+octant_orientation]
-            vm_double_add_offset(scheme->octant_orientations,
-                                 &the_sequence[0].local_frequency[address],
-                                 offsetA, the_sequence[0].freq_offset);
-            vm_double_add_offset(scheme->octant_orientations,
-                                 &the_sequence[1].local_frequency[address],
-                                 offsetB, the_sequence[1].freq_offset);
+            vm_double_add_offset(scheme->octant_orientations, &dim0[address],
+                                 norm0, the_sequence[0].freq_offset);
+            vm_double_add_offset(scheme->octant_orientations, &dim1[address],
+                                 norm1, the_sequence[1].freq_offset);
 
             vm_double_multiply(scheme->total_orientations,
                                &freq_ampA[step_vector_i + address],
@@ -179,7 +229,9 @@ void __mrsimulator_core(
     MRS_averaging_scheme *scheme,
 
     // if true, perform a 1D interpolation
-    bool interpolation) {
+    bool interpolation,
+
+    double *affine_matrix) {
   /*
   The sideband computation is based on the method described by Eden and Levitt
   et. al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
@@ -330,7 +382,7 @@ void __mrsimulator_core(
 
     if (n_sequence == 2) {
       two_dimensional_averaging(the_sequence, scheme, fftw_scheme, spec,
-                                plan->number_of_sidebands);
+                                plan->number_of_sidebands, affine_matrix);
       return;
     }
   }
@@ -362,7 +414,7 @@ void mrsimulator_core(
     int integration_density,          // The number of triangle along the edge
                                       // of octahedron
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
-    bool interpolation) {
+    bool interpolation, double *affine_matrix) {
   // int num_process = openblas_get_num_procs();
   // int num_threads = openblas_get_num_threads();
   // // openblas_set_num_threads(1);
@@ -404,7 +456,8 @@ void mrsimulator_core(
       // mf
       transition,
 
-      the_sequence, n_sequence, fftw_scheme, scheme, interpolation);
+      the_sequence, n_sequence, fftw_scheme, scheme, interpolation,
+      affine_matrix);
 
   // gettimeofday(&end, NULL);
   // clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +

@@ -43,7 +43,7 @@ method = ThreeQ_VAS(
     magnetic_flux_density=7,  # in T
     spectral_dimensions=[
         {
-            "count": 512,
+            "count": 256,
             "spectral_width": 1e4,  # in Hz
             "reference_offset": -3e3,  # in Hz
             "label": "Isotropic dimension",

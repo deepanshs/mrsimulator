@@ -116,7 +116,8 @@ cdef extern from "simulation.h":
         float *transition,
         int integration_density,
         unsigned int integration_volume,  # 0-octant, 1-hemisphere, 2-sphere
-        bool_t interpolation
+        bool_t interpolation,
+        double *affine_matrix,
         )
 
     void __mrsimulator_core(
@@ -133,5 +134,6 @@ cdef extern from "simulation.h":
         int n_sequence, # the number of sequences.
         MRS_fftw_scheme *fftw_scheme, # the fftw scheme
         MRS_averaging_scheme *scheme, # the powder averaging scheme
-        bool_t interpolation
+        bool_t interpolation,
+        double *affine_matrix,
         )

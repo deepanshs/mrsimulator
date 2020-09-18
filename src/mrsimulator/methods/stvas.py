@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-from copy import deepcopy
-
-from .utils import generate_method_from_template
-from .utils import METHODS_DATA
+from .base import Method2D
+from .base import NamedMethod
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-class ST_VAS_:
+class ST_VAS_(NamedMethod):
     r"""Simulate a satellite-transition magic-angle spinning spectrum.
     Args:
         channels: A list of isotope symbols over which the method will be applied.
@@ -48,11 +46,8 @@ class ST_VAS_:
     }
 
     def __new__(cls, st=1.5, spectral_dimensions=[{}, {}], **kwargs):
-
-        template = deepcopy(METHODS_DATA["MQMAS_sheared"])
-        template["name"] = cls.__name__
-        method = generate_method_from_template(template)(spectral_dimensions, **kwargs)
-
+        super().check_transition_query(spectral_dimensions)
+        method = Method2D(spectral_dimensions, name=cls.__name__, **kwargs)
         spin = method.channels[0].spin
 
         # select the coherence for the first event
@@ -61,11 +56,9 @@ class ST_VAS_:
 
         method.spectral_dimensions[0].events[0].transition_query.D = {"channel-1": D}
 
+        # Add the affine matrix
         k = cls.k_ST_MAS[int(2 * st)][spin]
-
-        # Update the fractions for the events in the t1 spectral dimension.
-        method.spectral_dimensions[0].events[0].fraction = 1 / (1 + k)
-        method.spectral_dimensions[0].events[1].fraction = k / (1 + k)
+        method.affine_matrix = [1 / (1 + k), k / (1 + k), 0, 1]
 
         method.description = (
             f"Simulate a {st} -> {st-1} and {-st+1} -> {-st} satellite-transition "
@@ -75,9 +68,13 @@ class ST_VAS_:
 
 
 class ST1_VAS(ST_VAS_):
-    """Simulate an inner satellite to the central transition correlation spectrum.
+    """Simulate a sheared and scaled inner satellite and central transition correlation
+    spectrum.
 
     The inner satellites are |3/2> -> |1/2> and |-1/2> -> |-3/2>.
+
+    Return:
+        A :class:`~mrsimulator.Method` instance.
     """
 
     def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
@@ -87,10 +84,13 @@ class ST1_VAS(ST_VAS_):
 
 
 class ST2_VAS(ST_VAS_):
-    """Simulate a second to inner satellite to the central transition correlation
-    spectrum.
+    """Simulate a sheared and scaled second to inner satellite and central transition
+    correlation spectrum.
 
     The second to inner satellites are |5/2> -> |3/2> and |-3/2> -> |-5/2>.
+
+    Return:
+        A :class:`~mrsimulator.Method` instance.
     """
 
     def __new__(self, spectral_dimensions=[{}, {}], **kwargs):

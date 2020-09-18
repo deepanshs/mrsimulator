@@ -19,7 +19,7 @@ def test_01():
 
 
 def test_02():
-    error = " `rotor_frequency` cannot be modified for Method2D method."
+    error = " `rotor_frequency` cannot be modified for Method2D class."
     with pytest.raises(AttributeError, match=f".*{error}.*"):
         Method2D(channels=["87Rb"], rotor_frequency=10, spectral_dimensions=[{}, {}])
 
@@ -266,9 +266,7 @@ def test_3QMAS():
         ],
     )
 
-    assert np.allclose(mth.spectral_dimensions[0].events[0].fraction, 0.5625)
-    assert np.allclose(mth.spectral_dimensions[0].events[1].fraction, 0.4375)
-    assert mth.spectral_dimensions[1].events[0].fraction == 1
+    assert np.allclose(mth.affine_matrix, [0.5625, 0.4375, 0, 1])
 
 
 def test_06():

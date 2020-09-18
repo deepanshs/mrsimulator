@@ -51,7 +51,8 @@ Return:
 
 def prepare_method_structure(template, **kwargs):
     n_channels = template["number_of_channels"]
-    prep = {"name": template["name"], "description": template["description"]}
+    name = template["name"] if "name" not in kwargs.keys() else kwargs["name"]
+    prep = {"name": name, "description": template["description"]}
     if "channels" in kwargs:
         prep["channels"] = kwargs["channels"]
         given_n_channels = len(prep["channels"])
@@ -80,7 +81,7 @@ def generate_method_from_template(template):
             info = "`, `".join(list(common))
             e = (
                 f"The attribute(s) `{info}` cannot be modified for {prep['name']} "
-                "method."
+                "class."
             )
             raise AttributeError(e)
 

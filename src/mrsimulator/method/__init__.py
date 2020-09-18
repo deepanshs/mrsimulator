@@ -108,6 +108,7 @@ class Method(Parseable):
     description: str = None
     channels: List[str] = []
     spectral_dimensions: List[SpectralDimension] = [{}]
+    affine_matrix: Union[np.ndarray, List] = None
     simulation: Union[cp.CSDM, np.ndarray] = None
     experiment: Union[cp.CSDM, np.ndarray] = None
 
