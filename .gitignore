@@ -113,6 +113,7 @@ class-diagram*
 *.temp
 *.csdf
 *.csdfe
+*.mrsys
 test_os.py
 note.txt
 simulate_lineshape.py

@@ -80,7 +80,7 @@ class MQ_VAS_(NamedMethod):
 
 
 class ThreeQ_VAS(MQ_VAS_):
-    r"""Simulate a sheared and scaled triple-quantum variable-angle spinning spectrum.
+    r"""Simulate a sheared and scaled 3Q variable-angle spinning spectrum.
 
     Return:
         A :class:`~mrsimulator.Method` instance.
@@ -105,8 +105,8 @@ class ThreeQ_VAS(MQ_VAS_):
         ...     ],
         ... )
         >>> sys = SpinSystem(sites=[Site(isotope='87Rb')])
-        >>> method.get_transition_pathways(sys)
-        array([[|-1.5⟩⟨1.5|, |-0.5⟩⟨0.5|]], dtype=object)
+        >>> print(method.get_transition_pathways(sys))
+        [[|-1.5⟩⟨1.5|, |-0.5⟩⟨0.5|]]
     """
 
     def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
@@ -116,7 +116,7 @@ class ThreeQ_VAS(MQ_VAS_):
 
 
 class FiveQ_VAS(MQ_VAS_):
-    r"""Simulate a sheared and scaled five-quantum variable-angle spinning spectrum.
+    r"""Simulate a sheared and scaled 5Q variable-angle spinning spectrum.
 
     Return:
         A :class:`~mrsimulator.Method` instance.
@@ -141,11 +141,47 @@ class FiveQ_VAS(MQ_VAS_):
         ...     ],
         ... )
         >>> sys = SpinSystem(sites=[Site(isotope='17O')])
-        >>> method.get_transition_pathways(sys)
-        array([[|-2.5⟩⟨2.5|, |-0.5⟩⟨0.5|]], dtype=object)
+        >>> print(method.get_transition_pathways(sys))
+        [[|-2.5⟩⟨2.5|, |-0.5⟩⟨0.5|]]
     """
 
     def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
         return super().__new__(
             self, mq=2.5, spectral_dimensions=spectral_dimensions, **kwargs
+        )
+
+
+class SevenQ_VAS(MQ_VAS_):
+    r"""Simulate a sheared and scaled 7Q variable-angle spinning spectrum.
+
+    Return:
+        A :class:`~mrsimulator.Method` instance.
+
+    Example:
+        >>> method = SevenQ_VAS(
+        ...     channels=["51V"],
+        ...     magnetic_flux_density=9.4,  # in T
+        ...     spectral_dimensions=[
+        ...         {
+        ...             "count": 256,
+        ...             "spectral_width": 4e3,  # in Hz
+        ...             "reference_offset": -5e3,  # in Hz
+        ...             "label": "Isotropic dimension",
+        ...         },
+        ...         {
+        ...             "count": 512,
+        ...             "spectral_width": 1e4,  # in Hz
+        ...             "reference_offset": -4e3,  # in Hz
+        ...             "label": "MAS dimension",
+        ...         },
+        ...     ],
+        ... )
+        >>> sys = SpinSystem(sites=[Site(isotope='51V')])
+        >>> print(method.get_transition_pathways(sys))
+        [[|-3.5⟩⟨3.5|, |-0.5⟩⟨0.5|]]
+    """
+
+    def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
+        return super().__new__(
+            self, mq=3.5, spectral_dimensions=spectral_dimensions, **kwargs
         )

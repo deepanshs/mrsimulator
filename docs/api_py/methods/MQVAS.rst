@@ -1,62 +1,7 @@
-.. _mqvas_ref:
+
 
 Multi-quantum variable-angle spinning
 -------------------------------------
-
-The following classes are used in simulating a multi-quantum variable-angle spinning spectrum.
-The resulting spectrum is sheared and scaled, such that the frequencies along the indirect
-dimension is given as
-
-.. math::
-    \langle \Omega\rangle_\text{MQ-VAS} =  \frac{1}{1+\kappa}\Omega_{m, -m} +
-            \frac{\kappa}{1+\kappa}\Omega_{1/2, -1/2}.
-
-Here, :math:`\langle \Omega\rangle_\text{MQ-VAS}` is the average frequency along the indirect
-dimension, :math:`\Omega_{m, -m}` and :math:`\Omega_{1/2, -1/2}` are the frequency
-contributions from the :math:`|m\rangle \rightarrow |-m\rangle` symmetric multi-quantum
-transition and the central transition, respectively, and :math:`\kappa` is the shear factor.
-The values for the shear factor for various satellite transitions are listed below.
-
-.. cssclass:: table-bordered
-
-.. list-table:: The shear factor, :math:`\kappa`, for various symmetric multi-quantum transitions
-        in an MQ-VAS method.
-    :widths: 30 40 30
-    :header-rows: 1
-
-    * - Spin
-      - Symmetric multi-quantum transition
-      - :math:`\kappa`
-
-    * - 3/2
-      - :math:`\left(\frac{3}{2} \rightarrow -\frac{3}{2}\right)`
-      - 21/27
-
-    * - 5/2
-      - :math:`\left(-\frac{3}{2} \rightarrow \frac{3}{2}\right)`
-      - 114/72
-
-    * - 5/2
-      - :math:`\left(\frac{5}{2} \rightarrow -\frac{5}{2}\right)`
-      - 150/72
-
-    * - 7/2
-      - :math:`\left(-\frac{3}{2} \rightarrow \frac{3}{2}\right)`
-      - 303/135
-
-    * - 7/2
-      - :math:`\left(-\frac{5}{2} \rightarrow \frac{5}{2}\right)`
-      - 165/135
-
-    * - 9/2
-      - :math:`\left(-\frac{3}{2} \rightarrow \frac{3}{2}\right)`
-      - 546/216
-
-    * - 9/2
-      - :math:`\left(-\frac{5}{2} \rightarrow \frac{5}{2}\right)`
-      - 570/216
-
-
 
 .. cssclass:: table-bordered
 
@@ -104,17 +49,31 @@ The values for the shear factor for various satellite transitions are listed bel
     The `rotor_frequency` parameter is fixed for this method. The method produces an
     infinite spinning speed spectrum.
 
-
 .. currentmodule:: mrsimulator.methods
 
 .. _threeQ_vas_ref:
+
 Triple-quantum variable-angle spinning method
 '''''''''''''''''''''''''''''''''''''''''''''
 
 .. autoclass:: ThreeQ_VAS
+.. seealso::
+    Read :ref:`mqvas_ref` for details.
 
 .. _fiveQ_vas_ref:
+
 Five-quantum variable-angle spinning method
 '''''''''''''''''''''''''''''''''''''''''''
 
 .. autoclass:: FiveQ_VAS
+.. seealso::
+    Read :ref:`mqvas_ref` for details.
+
+.. _sevenQ_vas_ref:
+
+Seven-quantum variable-angle spinning method
+''''''''''''''''''''''''''''''''''''''''''''
+
+.. autoclass:: SevenQ_VAS
+.. seealso::
+    Read :ref:`mqvas_ref` for details.

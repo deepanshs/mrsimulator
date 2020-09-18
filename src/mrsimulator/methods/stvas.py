@@ -71,10 +71,31 @@ class ST1_VAS(ST_VAS_):
     """Simulate a sheared and scaled inner satellite and central transition correlation
     spectrum.
 
-    The inner satellites are |3/2> -> |1/2> and |-1/2> -> |-3/2>.
-
     Return:
         A :class:`~mrsimulator.Method` instance.
+
+    Example:
+        >>> method = ST1_VAS(
+        ...     channels=["87Rb"],
+        ...     magnetic_flux_density=9.4,  # in T
+        ...     spectral_dimensions=[
+        ...         {
+        ...             "count": 256,
+        ...             "spectral_width": 4e3,  # in Hz
+        ...             "reference_offset": -5e3,  # in Hz
+        ...             "label": "Isotropic dimension",
+        ...         },
+        ...         {
+        ...             "count": 512,
+        ...             "spectral_width": 1e4,  # in Hz
+        ...             "reference_offset": -4e3,  # in Hz
+        ...             "label": "MAS dimension",
+        ...         },
+        ...     ],
+        ... )
+        >>> sys = SpinSystem(sites=[Site(isotope='87Rb')])
+        >>> print(method.get_transition_pathways(sys))
+        [[|-1.5⟩⟨-0.5|, |-0.5⟩⟨0.5|], [|0.5⟩⟨1.5|, |-0.5⟩⟨0.5|]]
     """
 
     def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
@@ -87,10 +108,31 @@ class ST2_VAS(ST_VAS_):
     """Simulate a sheared and scaled second to inner satellite and central transition
     correlation spectrum.
 
-    The second to inner satellites are |5/2> -> |3/2> and |-3/2> -> |-5/2>.
-
     Return:
         A :class:`~mrsimulator.Method` instance.
+
+    Example:
+        >>> method = ST2_VAS(
+        ...     channels=["17O"],
+        ...     magnetic_flux_density=9.4,  # in T
+        ...     spectral_dimensions=[
+        ...         {
+        ...             "count": 256,
+        ...             "spectral_width": 4e3,  # in Hz
+        ...             "reference_offset": -5e3,  # in Hz
+        ...             "label": "Isotropic dimension",
+        ...         },
+        ...         {
+        ...             "count": 512,
+        ...             "spectral_width": 1e4,  # in Hz
+        ...             "reference_offset": -4e3,  # in Hz
+        ...             "label": "MAS dimension",
+        ...         },
+        ...     ],
+        ... )
+        >>> sys = SpinSystem(sites=[Site(isotope='17O')])
+        >>> print(method.get_transition_pathways(sys))
+        [[|-2.5⟩⟨-1.5|, |-0.5⟩⟨0.5|], [|1.5⟩⟨2.5|, |-0.5⟩⟨0.5|]]
     """
 
     def __new__(self, spectral_dimensions=[{}, {}], **kwargs):

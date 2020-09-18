@@ -10,7 +10,7 @@ Coesite, 17O (I=5/2)
 # Coesite is a high-pressure (2-3 GPa) and high-temperature (700°C) polymorph of silicon
 # dioxide :math:`\text{SiO}_2`. Coesite has five crystallographic :math:`^{17}\text{O}`
 # sites. In the following, we use the :math:`^{17}\text{O}` EFG tensor information from
-# Grandinetti `et. al.` [#f2]_
+# Grandinetti `et. al.` [#f1]_
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
@@ -111,7 +111,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# .. [#f2] Grandinetti, P. J., Baltisberger, J. H., Farnan, I., Stebbins, J. F.,
+# .. [#f1] Grandinetti, P. J., Baltisberger, J. H., Farnan, I., Stebbins, J. F.,
 #       Werner, U. and Pines, A.
 #       Solid-State :math:`^{17}\text{O}` Magic-Angle and Dynamic-Angle Spinning NMR
 #       Study of the :math:`\text{SiO}_2` Polymorph Coesite, J. Phys. Chem. 1995,

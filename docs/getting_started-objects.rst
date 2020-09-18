@@ -460,11 +460,7 @@ see the list of transition pathways, for example,
     :include-source:
 
     >>> print(sim.methods[0].get_transition_pathways(system_4)) # 17O
-    [[|-2.5⟩⟨-1.5|]
-     [|-1.5⟩⟨-0.5|]
-     [|-0.5⟩⟨0.5|]
-     [|0.5⟩⟨1.5|]
-     [|1.5⟩⟨2.5|]]
+    [[|-2.5⟩⟨-1.5|], [|-1.5⟩⟨-0.5|], [|-0.5⟩⟨0.5|], [|0.5⟩⟨1.5|], [|1.5⟩⟨2.5|]]
 
 Notice, there are five transition pathways for the :math:`^{17}\text{O}` site, one
 associated with the central-transition, two with the inner-satellites, and two with

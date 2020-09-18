@@ -1,3 +1,4 @@
+.. _generic_2d_method:
 
 Generic two-dimensional correlation method
 ------------------------------------------

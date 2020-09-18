@@ -162,9 +162,11 @@ class Method(Parseable):
                 for s in py_dict_copy["spectral_dimensions"]
             ]
         if "simulation" in py_dict_copy:
-            py_dict_copy["simulation"] = cp.parse_dict(py_dict_copy["simulation"])
+            if py_dict_copy["simulation"] is not None:
+                py_dict_copy["simulation"] = cp.parse_dict(py_dict_copy["simulation"])
         if "experiment" in py_dict_copy:
-            py_dict_copy["experiment"] = cp.parse_dict(py_dict_copy["experiment"])
+            if py_dict_copy["experiment"] is not None:
+                py_dict_copy["experiment"] = cp.parse_dict(py_dict_copy["experiment"])
         return super().parse_dict_with_units(py_dict_copy)
 
     def update_spectral_dimension_attributes_from_experiment(self):
@@ -250,7 +252,7 @@ class Method(Parseable):
             [segments[i][j] for i, j in enumerate(item)] for item in cartesian_index
         ]
 
-    def get_transition_pathways(self, spin_system) -> np.ndarray:
+    def get_transition_pathways(self, spin_system) -> list:
         """
         Return a list of transition pathways from the given spin system that satisfy
         the query selection criterion of the method.
@@ -263,14 +265,12 @@ class Method(Parseable):
             transition pathways containing a series of Transition objects.
         """
         segments = self._get_transition_pathways_np(spin_system)
-        return np.asarray(
-            [
-                TransitionList(
-                    [
-                        Transition(initial=tr[0].tolist(), final=tr[1].tolist())
-                        for tr in item
-                    ]
-                )
-                for item in segments
-            ]
-        )
+        return [
+            TransitionList(
+                [
+                    Transition(initial=tr[0].tolist(), final=tr[1].tolist())
+                    for tr in item
+                ]
+            )
+            for item in segments
+        ]

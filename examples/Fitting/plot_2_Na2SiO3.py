@@ -128,7 +128,7 @@ for iso in sim.spin_systems:
     # remain the same during the least-squares fit, a one-time query is sufficient. To
     # avoid querying for the transition pathways at every iteration in a least-squares
     # fitting, evaluate the transition pathways once and store it as follows
-    iso.transition_pathways = method.get_transition_pathways(iso).tolist()
+    iso.transition_pathways = method.get_transition_pathways(iso)
 
 # Now simulate as usual.
 sim.run()

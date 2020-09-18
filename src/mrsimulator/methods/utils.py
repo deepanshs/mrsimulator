@@ -50,9 +50,24 @@ Return:
 
 
 def prepare_method_structure(template, **kwargs):
+    keys = kwargs.keys()
     n_channels = template["number_of_channels"]
-    name = template["name"] if "name" not in kwargs.keys() else kwargs["name"]
-    prep = {"name": name, "description": template["description"]}
+    name = template["name"] if "name" not in keys else kwargs["name"]
+    desc = (
+        template["description"] if "description" not in keys else kwargs["description"]
+    )
+    label = None if "label" not in keys else kwargs["label"]
+    experiment = None if "experiment" not in keys else kwargs["experiment"]
+    affine_matrix = None if "affine_matrix" not in keys else kwargs["affine_matrix"]
+
+    prep = {
+        "name": name,
+        "description": desc,
+        "label": label,
+        "experiment": experiment,
+        "affine_matrix": affine_matrix,
+    }
+
     if "channels" in kwargs:
         prep["channels"] = kwargs["channels"]
         given_n_channels = len(prep["channels"])
@@ -70,7 +85,10 @@ def prepare_method_structure(template, **kwargs):
 def generate_method_from_template(template):
     """Generate method object from json template."""
     # constructor
-    def constructor(self, spectral_dimensions=[{}], parse=False, **kwargs):
+    def constructor(self, spectral_dimensions=[{}], **kwargs):
+        parse = False
+        if "parse" in kwargs:
+            parse = kwargs["parse"]
         prep = prepare_method_structure(template, **kwargs)
         global_events = template["global_event_attributes"]
         ge = set(global_events)
@@ -79,10 +97,7 @@ def generate_method_from_template(template):
 
         if common != set():
             info = "`, `".join(list(common))
-            e = (
-                f"The attribute(s) `{info}` cannot be modified for {prep['name']} "
-                "class."
-            )
+            e = f"`{info}` attribute cannot be modified for {prep['name']} class."
             raise AttributeError(e)
 
         dim = []

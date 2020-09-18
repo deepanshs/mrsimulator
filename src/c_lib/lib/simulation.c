@@ -108,7 +108,7 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
     // the_sequence[1].R0_offset *= affine_matrix[3];
   }
   if (affine_matrix[2] != 0) {
-    cblas_daxpy(scheme->total_orientations, affine_matrix[2], dim1, 1, dim0, 1);
+    cblas_daxpy(scheme->total_orientations, affine_matrix[2], dim0, 1, dim1, 1);
     // the_sequence[1].R0_offset += affine_matrix[2] *
     // the_sequence[0].R0_offset;
   }
