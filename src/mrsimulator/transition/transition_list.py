@@ -84,3 +84,9 @@ class TransitionList(AbstractList):
         #         [item for item in self._list if np.all(item.delta_ms == delta_ms)]
         #     )
         # return TransitionList([item for item in self._list if item.p == p])
+
+
+class TransitionPathway(TransitionList):
+    def __str__(self):
+        transitions = ", ".join([repr(item) for item in self._list])
+        return f"TransitionPathway({transitions})"

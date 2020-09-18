@@ -9,7 +9,7 @@ import csdmpy as cp
 import numpy as np
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import Transition
-from mrsimulator.transition.transition_list import TransitionList
+from mrsimulator.transition.transition_list import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
 
@@ -261,12 +261,12 @@ class Method(Parseable):
             SpinSystem spin_system: A SpinSystem object.
 
         Returns:
-            An array of TransitionList objects. Each TransitionList object is a
-            transition pathways containing a series of Transition objects.
+            An array of TransitionPathway objects. Each TransitionPathway object is an
+            ordered collection of Transition objects.
         """
         segments = self._get_transition_pathways_np(spin_system)
         return [
-            TransitionList(
+            TransitionPathway(
                 [
                     Transition(initial=tr[0].tolist(), final=tr[1].tolist())
                     for tr in item
