@@ -119,7 +119,11 @@ sphinx_gallery_conf = {
     # "show_memory": True,
     # "line_numbers": True,
     "subsection_order": ExplicitOrder(
-        ["../examples/1D_simulation", "../examples/Fitting"]
+        [
+            "../examples/1D_simulation",
+            "../examples/Fitting",
+            "../examples/2D_simulation",
+        ]
     ),
     "reference_url": {
         # The module you locally document uses None

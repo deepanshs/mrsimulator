@@ -9,7 +9,7 @@ import csdmpy as cp
 import numpy as np
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import Transition
-from mrsimulator.transition.transition_list import TransitionList
+from mrsimulator.transition.transition_list import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
 
@@ -108,6 +108,7 @@ class Method(Parseable):
     description: str = None
     channels: List[str] = []
     spectral_dimensions: List[SpectralDimension] = [{}]
+    affine_matrix: Union[np.ndarray, List] = None
     simulation: Union[cp.CSDM, np.ndarray] = None
     experiment: Union[cp.CSDM, np.ndarray] = None
 
@@ -161,9 +162,11 @@ class Method(Parseable):
                 for s in py_dict_copy["spectral_dimensions"]
             ]
         if "simulation" in py_dict_copy:
-            py_dict_copy["simulation"] = cp.parse_dict(py_dict_copy["simulation"])
+            if py_dict_copy["simulation"] is not None:
+                py_dict_copy["simulation"] = cp.parse_dict(py_dict_copy["simulation"])
         if "experiment" in py_dict_copy:
-            py_dict_copy["experiment"] = cp.parse_dict(py_dict_copy["experiment"])
+            if py_dict_copy["experiment"] is not None:
+                py_dict_copy["experiment"] = cp.parse_dict(py_dict_copy["experiment"])
         return super().parse_dict_with_units(py_dict_copy)
 
     def update_spectral_dimension_attributes_from_experiment(self):
@@ -216,19 +219,21 @@ class Method(Parseable):
 
         segments = []
         for seq in self.spectral_dimensions:
-            selected_transitions = all_transitions[:]
             for ent in seq.events:
+                # query the transitions for P symmetry
+                selected_transitions = all_transitions[:]
                 list_of_P = query_permutations(
-                    ent.transition_query.to_dict_with_units(),
+                    ent.transition_query.dict(),
                     isotope=spin_system.get_isotopes(),
                     channel=[item.symbol for item in self.channels],
                 )
                 indexes = P_symmetry_indexes(selected_transitions, list_of_P)
                 selected_transitions = selected_transitions[indexes]
 
+                # query the transitions for D symmetry
                 if ent.transition_query.D is not None:
                     list_of_D = query_permutations(
-                        ent.transition_query.to_dict_with_units(),
+                        ent.transition_query.dict(),
                         isotope=spin_system.get_isotopes(),
                         channel=[item.symbol for item in self.channels],
                         transition_symmetry="D",
@@ -247,7 +252,7 @@ class Method(Parseable):
             [segments[i][j] for i, j in enumerate(item)] for item in cartesian_index
         ]
 
-    def get_transition_pathways(self, spin_system) -> np.ndarray:
+    def get_transition_pathways(self, spin_system) -> list:
         """
         Return a list of transition pathways from the given spin system that satisfy
         the query selection criterion of the method.
@@ -256,18 +261,16 @@ class Method(Parseable):
             SpinSystem spin_system: A SpinSystem object.
 
         Returns:
-            An array of TransitionList objects. Each TransitionList object is a
-            transition pathways containing a series of Transition objects.
+            An array of TransitionPathway objects. Each TransitionPathway object is an
+            ordered collection of Transition objects.
         """
         segments = self._get_transition_pathways_np(spin_system)
-        return np.asarray(
-            [
-                TransitionList(
-                    [
-                        Transition(initial=tr[0].tolist(), final=tr[1].tolist())
-                        for tr in item
-                    ]
-                )
-                for item in segments
-            ]
-        )
+        return [
+            TransitionPathway(
+                [
+                    Transition(initial=tr[0].tolist(), final=tr[1].tolist())
+                    for tr in item
+                ]
+            )
+            for item in segments
+        ]

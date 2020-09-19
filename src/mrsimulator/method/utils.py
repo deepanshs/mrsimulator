@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import warnings
 from functools import reduce
 from itertools import permutations
 
@@ -82,50 +83,54 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
 
     P_permutated = []
     iso_dict = get_iso_dict(channel=channel, isotope=isotope)
+
+    # get the query symmetry element.
     query_short = query[transition_symmetry]
+
     for i, items in enumerate(query_short):
         # Check if method isotope is in the spin system
         if channel[i] not in iso_dict:
-            print(
+            warnings.warn(
                 f"Method/channel isotope mismatch. Channel asks for {channel[i]} "
                 f"but is not in {isotope}"
             )
             return []
 
         temp_P = []
+        iso_ch_length = len(iso_dict[channel[i]])
         for k in range(len(query_short[items])):
+            query_item_len = len(query_short[items][k])
             # Check transition query doesn't require more isotopes than present
-            if len(query_short[items][k]) > len(iso_dict[channel[i]]):
-                print("Failed: Transition query larger than channel")
-                return []
-            elif len(query_short[items][k]) <= len(iso_dict[channel[i]]):
-                query_short[items][k] += (
-                    len(iso_dict[channel[i]]) - len(query_short[items][k])
-                ) * [k]
+            if query_item_len > iso_ch_length:
+                raise AttributeError(
+                    "Failed: The length of the transition query symmetry elements "
+                    "cannot larger than the number of channel"
+                )
+
+            query_short[items][k] += (iso_ch_length - query_item_len) * [k]
             temp_P += list(permutations(query_short[items][k]))
         P_permutated += [temp_P]
+
         # P_permutated += [list(permutations(query_short[items][k]))]
 
-    transition_symmetry_from_query = []
+    previous_sets = []
     for i, iso_trans_symmetry in enumerate(P_permutated):
         # creating transition symmetries isotope by isotope
         temp_transitions = []
+        iso_ch_i = iso_dict[channel[i]]
         for transition in iso_trans_symmetry:
-            P_expanded = len(isotope) * [0]
-            for j, item in enumerate(transition):
-                # filling indices of spin system with a sites transition symmetries
-                P_expanded[iso_dict[channel[i]][j]] = item
+            P_expanded = np.zeros(len(isotope))
 
-            if transition_symmetry_from_query == []:
-                temp_transitions.append(P_expanded)
+            # fill indices of spin system with the sites transition symmetries
+            P_expanded[iso_ch_i] = transition
+
+            if previous_sets == []:
+                temp_transitions += [P_expanded]
             else:
                 # Each isotope is added to the previous isotope to create the
                 # full transition symmetry
-                for k, intermediate in enumerate(transition_symmetry_from_query[-1]):
-                    temp_transitions.append(
-                        [sum(x) for x in zip(intermediate, P_expanded)]
-                    )
+                temp_transitions += np.asarray(previous_sets) + P_expanded
 
-        transition_symmetry_from_query.append(temp_transitions)
+        previous_sets = temp_transitions
 
-    return transition_symmetry_from_query[-1]
+    return temp_transitions

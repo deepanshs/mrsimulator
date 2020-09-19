@@ -81,7 +81,7 @@ O17_1 = Site(
 O17_2 = Site(
     isotope="17O",
     isotropic_chemical_shift=40.0,  # in ppm,
-    quadrupolar={"Cq": 2.4e6, "eta": 0.5},  # Cq in Hz
+    quadrupolar={"Cq": 2.4e6, "eta": 0},  # Cq in Hz
 )
 
 system_object = [SpinSystem(sites=[s], abundance=50) for s in [O17_1, O17_2]]
@@ -128,7 +128,7 @@ for iso in sim.spin_systems:
     # remain the same during the least-squares fit, a one-time query is sufficient. To
     # avoid querying for the transition pathways at every iteration in a least-squares
     # fitting, evaluate the transition pathways once and store it as follows
-    iso.transition_pathways = method.get_transition_pathways(iso).tolist()
+    iso.transition_pathways = method.get_transition_pathways(iso)
 
 # Now simulate as usual.
 sim.run()

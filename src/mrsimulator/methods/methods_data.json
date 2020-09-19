@@ -24,7 +24,7 @@
   "Bloch_decay_central_transition": {
     "name": "BlochDecayCentralTransitionSpectrum",
     "number_of_channels": 1,
-    "description": "Simulate a central transition selective 1S Bloch decay spectrum.",
+    "description": "Simulate a central transition selective 1D Bloch decay spectrum.",
     "global_event_attributes": {},
     "spectral_dimensions": [{
       "events": [{
@@ -47,5 +47,66 @@
         }
       }]
     }]
+  },
+  "Method2D": {
+    "name": "Method2D",
+    "number_of_channels": 1,
+    "description": "Simulate a generic two-dimensional correlation spectrum",
+    "global_event_attributes": {
+      "user_variables": [
+        "magnetic_flux_density",
+        "rotor_angle"
+      ],
+      "rotor_frequency": 1e12,
+      "transition_query": {
+        "P": {
+          "channel-1": [
+            [-1]
+          ]
+        },
+        "D": {
+          "channel-1": [
+            [0]
+          ]
+        }
+      }
+    },
+    "spectral_dimensions": [{
+        "events": [{}]
+      },
+      {
+        "events": [{}]
+      }
+    ]
+  },
+  "MQMAS_sheared": {
+    "name": "MQ-MAS",
+    "number_of_channels": 1,
+    "description": "Simulate a multi-quantum magic-angle spinning spectrum",
+    "global_event_attributes": {
+      "rotor_frequency": 1e12,
+      "user_variables": [
+        "magnetic_flux_density"
+      ],
+      "transition_query": {
+        "P": {
+          "channel-1": [
+            [-1]
+          ]
+        },
+        "D": {
+          "channel-1": [
+            [0]
+          ]
+        }
+      }
+    },
+    "spectral_dimensions": [{
+        "events": [{}, {}]
+      },
+      {
+        "events": [{}]
+      }
+    ]
   }
 }

@@ -459,12 +459,13 @@ see the list of transition pathways, for example,
     :context: close-figs
     :include-source:
 
-    >>> print(sim.methods[0].get_transition_pathways(system_4)) # 17O
-    [[|-2.5⟩⟨-1.5|]
-     [|-1.5⟩⟨-0.5|]
-     [|-0.5⟩⟨0.5|]
-     [|0.5⟩⟨1.5|]
-     [|1.5⟩⟨2.5|]]
+    >>> from pprint import pprint
+    >>> pprint(sim.methods[0].get_transition_pathways(system_4)) # 17O
+    [TransitionPathway(|-2.5⟩⟨-1.5|),
+     TransitionPathway(|-1.5⟩⟨-0.5|),
+     TransitionPathway(|-0.5⟩⟨0.5|),
+     TransitionPathway(|0.5⟩⟨1.5|),
+     TransitionPathway(|1.5⟩⟨2.5|)]
 
 Notice, there are five transition pathways for the :math:`^{17}\text{O}` site, one
 associated with the central-transition, two with the inner-satellites, and two with
@@ -489,7 +490,7 @@ the outer-satellites. For central transition selective simulation, use the
     ... )
     >>> # the transition pathways
     >>> print(sim.methods[0].get_transition_pathways(system_4)) # 17O
-    [[|-0.5⟩⟨0.5|]]
+    [TransitionPathway(|-0.5⟩⟨0.5|)]
 
 Now, you may simulate the central transition selective spectrum.
 :numref:`fig8_using_obj` depicts a central transition selective spectrum.

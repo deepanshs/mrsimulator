@@ -16,7 +16,6 @@
 #include "frequency_tensor.h"
 #include "isotopomer_ravel.h"
 #include "schemes.h"
-
 /**
  * @struct MRS_plan
  * An mrsimulator plan for computing spectra. An mrsimulator plan,
@@ -43,7 +42,7 @@ struct MRS_plan {
    */
   MRS_averaging_scheme *averaging_scheme;
 
-  int number_of_sidebands; /**< The number of sidebands to compute. */
+  unsigned int number_of_sidebands; /**< The number of sidebands to compute. */
 
   double sample_rotation_frequency_in_Hz; /**< The sample rotation frequency in
                                              Hz. */
@@ -64,10 +63,6 @@ struct MRS_plan {
    * dimension.
    */
   double *vr_freq;
-
-  /** The isotropic frequency offset ratio. The ratio is similarly defined as
-   * before. */
-  double isotropic_offset;
 
   /** The buffer to hold the sideband amplitudes as stride 2 array after
    * mrsimulator processing.
@@ -103,7 +98,8 @@ typedef struct MRS_plan MRS_plan;
  *            processing the fourth rank tensor.
  * @return A pointer to the MRS_plan.
  */
-MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
+MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
+                          unsigned int number_of_sidebands,
                           double sample_rotation_frequency_in_Hz,
                           double rotor_angle_in_rad, double increment,
                           bool allow_fourth_rank);
@@ -159,6 +155,9 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan);
 void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                                   MRS_fftw_scheme *fftw_scheme, bool refresh);
 
+// method.h  must be included after defining MRS_plan.
+#include "method.h"
+
 /**
  * @brief Process the plan for normalized frequencies at every orientation.
  *
@@ -184,13 +183,12 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
 void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0,
                                               complex128 *R2, complex128 *R4,
-                                              bool refresh,
-                                              double normalize_offset,
-                                              double inverse_increment);
+                                              bool refresh, MRS_sequence *seq,
+                                              double fraction);
 
 void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                                    double R0, complex128 *R2, complex128 *R4,
-                                   bool refresh);
+                                   bool refresh, MRS_sequence *seq);
 
 /**
  * @func MRS_rotate_components_from_PAS_to_common_frame
@@ -235,7 +233,7 @@ void MRS_rotate_components_from_PAS_to_common_frame(
                                            // isotropic shift
     double B0_in_T);
 
-extern void __get_components(int number_of_sidebands, double spin_frequency,
-                             double *restrict pre_phase);
+extern void __get_components(unsigned int number_of_sidebands,
+                             double spin_frequency, double *restrict pre_phase);
 
 #endif /* mrsimulator_h */

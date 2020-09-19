@@ -14,12 +14,12 @@ def wigner_rotation(
     phase_alpha=None,
 ):
     n = 2 * ang_momentum_l + 1
-    if wigner_matrix is None:
-        n_orientation = cos_beta.size
-        wigner = wigner_d_matrix_cosines(ang_momentum_l, cos_beta)
-    else:
-        wigner = wigner_matrix
-        n_orientation = wigner.shape[0]
+    # if wigner_matrix is None:
+    n_orientation = cos_beta.size
+    wigner = wigner_d_matrix_cosines(ang_momentum_l, cos_beta)
+    # else:
+    #     wigner = wigner_matrix
+    #     n_orientation = wigner.shape[0]
 
     pha = cos_alpha - 1j * np.sqrt(1.0 - cos_alpha ** 2)
     ph2 = np.copy(pha)
@@ -35,11 +35,11 @@ def wigner_rotation(
     return R_out.reshape(n_orientation, n, n).sum(axis=-1)
 
 
-def wigner_d_matrix(ang_momentum_l, beta):
-    """
-    Evaluates a wigner matrix of rank `l` angular momentum.
-    """
-    return wigner_d_matrix_cosines(ang_momentum_l, np.cos(beta))
+# def wigner_d_matrix(ang_momentum_l, beta):
+#     """
+#     Evaluates a wigner matrix of rank `l` angular momentum.
+#     """
+#     return wigner_d_matrix_cosines(ang_momentum_l, np.cos(beta))
 
 
 def wigner_d_matrix_cosines(ang_momentum_l, cos_beta):
@@ -54,8 +54,8 @@ def wigner_d_matrix_cosines(ang_momentum_l, cos_beta):
     :ivar cos_beta: An 1D numpy array or a scalar representing the cosine of
                     $\beta$ angles.
     """
-    if not isinstance(cos_beta, np.ndarray):
-        cos_beta = np.asarray([cos_beta]).ravel()
+    # if not isinstance(cos_beta, np.ndarray):
+    #     cos_beta = np.asarray([cos_beta]).ravel()
 
     cx = cos_beta
     cx2 = cx * cx

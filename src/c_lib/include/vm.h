@@ -104,13 +104,15 @@ static inline void vm_double_multiply(int count, const double *restrict x,
  */
 static inline void vm_double_multiply_inplace(int count,
                                               const double *restrict x,
-                                              double *restrict y) {
+                                              const int stride_x,
+                                              double *restrict y,
+                                              const int stride_y) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   while (count-- > 0) {
-    *y++ *= *x++;
-    // x += stride_x;
-    // y += stride_y;
+    *y *= *x;
+    x += stride_x;
+    y += stride_y;
   }
 }
 

@@ -56,6 +56,18 @@ cdef extern from "interpolation.h":
         double *spec,
         int *points)
 
+    void triangle_interpolation2D(
+        double *freq11,
+        double *freq12,
+        double *freq13,
+        double *freq21,
+        double *freq22,
+        double *freq23,
+        double *amp,
+        double *spec,
+        int m0,
+        int m1)
+
 cdef extern from "octahedron.h":
     void octahedronInterpolation(
         double *spec,
@@ -67,7 +79,7 @@ cdef extern from "octahedron.h":
 
 cdef extern from "mrsimulator.h":
     void __get_components(
-        int number_of_sidebands,
+        unsigned int number_of_sidebands,
         double spin_frequency,
         double *pre_phase)
 
@@ -112,7 +124,7 @@ cdef extern from "method.h":
         MRS_event *events               # Holds a list of events.
         unsigned int n_events           # The number of events.
 
-    # MRS_sequence *MRS_create_plans_for_sequence(
+    # MRS_sequence *MRS_create_sequences(
     #     MRS_averaging_scheme *scheme,
     #     int count,
     #     double coordinates_offset,
@@ -139,7 +151,7 @@ cdef extern from "simulation.h":
                                                   # second order quad Hamiltonian.
 
         # spin rate, spin angle and number spinning sidebands
-        int number_of_sidebands,
+        unsigned int number_of_sidebands,
         double sample_rotation_frequency_in_Hz,
         double rotor_angle_in_rad,
 

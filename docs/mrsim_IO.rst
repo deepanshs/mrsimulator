@@ -88,27 +88,12 @@ class as
 
 **Importing spin systems from URL**
 
-.. testsetup::
+.. doctest::
+
     >>> from mrsimulator import Simulator
     >>> sim = Simulator()
     >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/master/spin_systems.json'
     >>> sim.load_spin_systems(filename)
-    Downloading '/DeepanshS/mrsimulator-examples/master/spin_systems.json'
-    from 'raw.githubusercontent.com' to file 'spin_systems.json'.
-    [███████████████████████]
-
-.. doctest::
-
-    >>> from mrsimulator import Simulator # doctest:+SKIP
-    >>> sim = Simulator() # doctest:+SKIP
-
-    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/master/spin_systems.json'
-
-    >>> sim.load_spin_systems(filename) # doctest:+SKIP
-    Downloading '/DeepanshS/mrsimulator-examples/master/spin_systems.json'
-    from 'raw.githubusercontent.com' to file 'spin_systems.json'.
-    [███████████████████████]
-
     >>> # The seven spin systems from the file are added to the sim object.
     >>> len(sim.spin_systems)
     7

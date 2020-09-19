@@ -1,3 +1,29 @@
+Upcoming changes
+----------------
+
+What's new
+''''''''''
+
+- A generic two-dimensional methods, :class:`~mrsimulator.methods.Method2D`
+- Specialized two-dimensional methods for multi-quantum variable-angle spinning
+  with build-in post-simulation affine transformations.
+
+  - :class:`~mrsimulator.methods.ThreeQ_VAS`,
+  - :class:`~mrsimulator.methods.FiveQ_VAS`,
+  - :class:`~mrsimulator.methods.SevenQ_VAS`
+
+- Specialized two-dimensional methods for satellite-transition variable-angle spinning
+  with build-in post simulation affine transformations.
+
+  - :class:`~mrsimulator.methods.ST1_VAS`,
+  - :class:`~mrsimulator.methods.ST2_VAS`,
+  - :class:`~mrsimulator.methods.ST3_VAS`
+
+Other changes
+'''''''''''''
+
+- The :meth:`~mrsimulator.Method.get_transition_pathways` method no longer return a
+  numpy array, instead a python list.
 
 v0.4.0
 ------
@@ -6,10 +32,13 @@ What's new!
 '''''''''''
 
 - ⭐ Improved simulation performance. ⭐ See our :ref:`benchmark`.
-- Added Czjzek and extended Czjzek second-rank symmetric tensor distribution models
-  for creating spin systems for amorphous materials.
-- Add a new utility function, ``single_site_system_generator``, for generating a list of
-  single-site spin systems from a 1D list/array of respective tensor parameters.
+- New :class:`~mrsimulator.models.CzjzekDistribution` and
+  :class:`~mrsimulator.models.ExtCzjzekDistribution` classes for generating Czjzek and
+  extended Czjzek second-rank symmetric tensor distribution models for use in simulating
+  amorphous materials.
+- New utility function, :func:`~mrsimulator.utils.collection.single_site_system_generator`,
+  for generating a list of single-site spin systems from a 1D list/array of respective
+  tensor parameters.
 
 v0.3.0
 ------

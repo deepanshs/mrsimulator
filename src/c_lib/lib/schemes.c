@@ -107,11 +107,6 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
      * fourth rank tensors. */
     scheme->w4 = malloc_complex128(9 * scheme->total_orientations);
   }
-
-  /* buffer to hold the local frequencies and frequency offset. The buffer   *
-   * is useful when the rotor angle is off magic angle (54.735 deg). */
-  scheme->local_frequency = malloc_double(scheme->total_orientations);
-  scheme->freq_offset = malloc_double(scheme->octant_orientations);
 }
 
 /* Free the memory from the mrsimulator plan associated with the spherical
@@ -123,8 +118,6 @@ void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
   free(scheme->w4);
   free(scheme->wigner_2j_matrices);
   free(scheme->wigner_4j_matrices);
-  free(scheme->local_frequency);
-  free(scheme->freq_offset);
 }
 
 /* Create a new orientation averaging scheme. */
@@ -185,9 +178,9 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
 /* fftw routine setup .................................................... */
 /* ....................................................................... */
 MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
-                                    int number_of_sidebands) {
+                                    unsigned int number_of_sidebands) {
   unsigned int size = total_orientations * number_of_sidebands;
-
+  int nssb = (int)number_of_sidebands;
   MRS_fftw_scheme *fftw_scheme = malloc(sizeof(MRS_fftw_scheme));
 
   fftw_scheme->vector =
@@ -201,10 +194,10 @@ MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
   // }
   // fftw_plan_with_nthreads(2);
 
-  fftw_scheme->the_fftw_plan = fftw_plan_many_dft(
-      1, &number_of_sidebands, total_orientations, fftw_scheme->vector, NULL,
-      total_orientations, 1, fftw_scheme->vector, NULL, total_orientations, 1,
-      FFTW_FORWARD, FFTW_ESTIMATE);
+  fftw_scheme->the_fftw_plan =
+      fftw_plan_many_dft(1, &nssb, total_orientations, fftw_scheme->vector,
+                         NULL, total_orientations, 1, fftw_scheme->vector, NULL,
+                         total_orientations, 1, FFTW_FORWARD, FFTW_ESTIMATE);
 
   // char *filename = "128_sidebands.wisdom";
   // int status = fftw_export_wisdom_to_filename(filename);

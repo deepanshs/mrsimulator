@@ -50,8 +50,8 @@ typedef struct MRS_averaging_scheme {
   complex128 *w4;              //  buffer for 4nd rank frequency calculation.
   double *wigner_2j_matrices;  //  wigner-d 2j matrix per orientation.
   double *wigner_4j_matrices;  //  wigner-d 4j matrix per orientation.
-  double *local_frequency;     //  buffer for local frequencies.
-  double *freq_offset;         //  buffer for local + sideband frequencies.
+  // double *local_frequency;     //  buffer for local frequencies.
+  // double *freq_offset;         //  buffer for local + sideband frequencies.
   unsigned int integration_volume;  //  0-octant, 1-hemisphere, 2-sphere.
   bool allow_fourth_rank;  // If true, compute wigner matrices for wigner-d 4j.
 } MRS_averaging_scheme;
@@ -122,7 +122,7 @@ typedef struct MRS_fftw_scheme {
 } MRS_fftw_scheme;
 
 MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
-                                    int number_of_sidebands);
+                                    unsigned int number_of_sidebands);
 
 void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme);
 

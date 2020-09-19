@@ -20,7 +20,7 @@ method_1 = BlochDecaySpectrum(
     rotor_angle=0,
     rotor_frequency=0,
     spectral_dimensions=[
-        {"count": 4096, "spectral_width": 25000, "reference_offset": 0}
+        {"count": 65536, "spectral_width": 25000, "reference_offset": 0}
     ],
 )
 
@@ -54,7 +54,7 @@ freqHz = sim.methods[0].spectral_dimensions[0].coordinates_Hz()
 
 def test_scale():
     post_sim = sp.SignalProcessor(operations=PS_0)
-    data = post_sim.apply_operations(data=sim.methods[0].simulation)
+    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
     _, y0, y1, y2 = sim.methods[0].simulation.to_list()
     _, y0_, y1_, y2_ = data.to_list()
 
@@ -87,6 +87,8 @@ def test_Gaussian():
     test = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-((freqHz / sigma) ** 2) / 2)
 
     assert np.allclose(y0, y1)
+
+    print((test / test.max() - y0 / y0.max()).max())
     assert np.allclose(
         test / test.max(), y0 / y0.max(), atol=1e-04
     ), "Gaussian apodization amplitude failed"

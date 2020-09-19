@@ -46,10 +46,10 @@ class SignalProcessor(BaseModel):
         """
         lst = []
         for op in py_dict["operations"]:
-            if op["function"] == "apodization":
+            if "type" in op.keys():
                 lst.append(
                     getattr(
-                        modules[__name__].apodization, op["type"]
+                        getattr(modules[__name__], op["function"]), op["type"]
                     ).parse_dict_with_units(op)
                 )
             else:
@@ -85,12 +85,12 @@ class SignalProcessor(BaseModel):
         """
         if not isinstance(data, cp.CSDM):
             raise ValueError("The data must be a CSDM object.")
-        copy_data = data.copy()
+        # copy_data = data.copy()
         for filters in self.operations:
-            copy_data = filters.operate(copy_data)
-        self.processed_data = copy_data
+            data = filters.operate(data)
+        self.processed_data = data
 
-        return copy_data
+        return data
 
 
 class Scale(AbstractOperation):

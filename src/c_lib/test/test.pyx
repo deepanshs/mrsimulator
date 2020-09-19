@@ -137,7 +137,7 @@ def get_exp_Im_alpha(int n, np.ndarray[double] cos_alpha, bool_t allow_fourth_ra
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def pre_phase_components(int number_of_sidebands, double sample_rotation_frequency_in_Hz):
+def pre_phase_components(unsigned int number_of_sidebands, double sample_rotation_frequency_in_Hz):
     r"""
 
     """
@@ -216,7 +216,7 @@ def triangle_interpolation(vector, np.ndarray[double, ndim=1] spectrum_amp,
     order.
 
     :ivar vector: 1-D array of three points.
-    :ivar spectrum_amp: A numpy array of amplitudes. This array is updated.
+    :ivar spectrum_amp: A numpy array of amplitudes. This array is output.
     :ivar offset: A float specifying the offset. The points from array `vector`
                   are incremented or decremented based in this values. The
                   default value is 0.
@@ -235,6 +235,38 @@ def triangle_interpolation(vector, np.ndarray[double, ndim=1] spectrum_amp,
 
     clib.triangle_interpolation(f1, f2, f3, &amp_[0], &spectrum_amp[0], &points[0])
 
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def triangle_interpolation2D(vector1, vector2, np.ndarray[double, ndim=2] spectrum_amp,
+                            double amp=1):
+    r"""
+    Given a vector of three points, this method interpolates the
+    between the points to form a triangle. The height of the triangle is given
+    as `2.0/(f[2]-f[1])` where `f` is the array `vector` sorted in an ascending
+    order.
+
+    :ivar vector1: 1-D array of three points.
+    :ivar vector2: 1-D array of three points.
+    :ivar spectrum_amp: A numpy array of amplitudes. This array is the output.
+    """
+    shape = np.asarray([spectrum_amp.shape[0], spectrum_amp.shape[1]], dtype=np.int32)
+    # cdef np.ndarray[int, ndim=1] points = shape
+    cdef np.ndarray[double, ndim=1] f1_vector = np.asarray(vector1, dtype=np.float64)
+    cdef np.ndarray[double, ndim=1] f2_vector = np.asarray(vector2, dtype=np.float64)
+
+    cdef double *f11 = &f1_vector[0]
+    cdef double *f12 = &f1_vector[1]
+    cdef double *f13 = &f1_vector[2]
+
+    cdef double *f21 = &f2_vector[0]
+    cdef double *f22 = &f2_vector[1]
+    cdef double *f23 = &f2_vector[2]
+
+    cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
+
+    clib.triangle_interpolation2D(f11, f12, f13, f21, f22, f23, &amp_[0],
+                &spectrum_amp[0, 0], shape[0], shape[1])
 
 @cython.boundscheck(False)
 @cython.wraparound(False)

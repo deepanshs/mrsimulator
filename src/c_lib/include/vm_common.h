@@ -35,6 +35,33 @@ static inline void vm_double_ramp(int count, const double *restrict x,
 }
 
 /**
+ * Add an offset to a vector of type double.
+ * res = x + offset
+ */
+static inline void vm_double_add_offset(int count, const double *restrict x,
+                                        const double offset,
+                                        double *restrict res) {
+  // x = __builtin_assume_aligned(x, 32);
+  // res = __builtin_assume_aligned(res, 32);
+  while (count-- > 0) {
+    *res++ = *x++ + offset;
+  }
+}
+
+/**
+ * Add an offset to a vector inplace of type double.
+ * x += offset
+ */
+static inline void vm_double_add_offset_inplace(int count, const double offset,
+                                                double *restrict res) {
+  // x = __builtin_assume_aligned(x, 32);
+  // res = __builtin_assume_aligned(res, 32);
+  while (count-- > 0) {
+    *res++ += offset;
+  }
+}
+
+/**
  * Create a vector x = [0 .. count-1]
  * res = 0 .. count-1
  */

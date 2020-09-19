@@ -29,7 +29,7 @@ extern void mrsimulator_core(
                                            // order quad Hamiltonian.
 
     // spin rate, spin angle and number spinning sidebands
-    int number_of_sidebands,                 // The number of sidebands
+    unsigned int number_of_sidebands,        // The number of sidebands
     double sample_rotation_frequency_in_Hz,  // The rotor spin frequency
     double rotor_angle_in_rad,  // The rotor angle relative to lab-frame z-axis
 
@@ -40,7 +40,7 @@ extern void mrsimulator_core(
     // The number of triangle along the edge of octahedron.
     int integration_density,
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
-    bool interpolation);
+    bool interpolation, double *affine_matrix);
 
 extern void __mrsimulator_core(
     // spectrum information and related amplitude
@@ -54,4 +54,4 @@ extern void __mrsimulator_core(
     // Pointer to the transitions. transition[0] = mi and transition[1] = mf
     float *transition, MRS_sequence *the_sequence, int n_sequence,
     MRS_fftw_scheme *fftw_scheme, MRS_averaging_scheme *scheme,
-    bool interpolation);
+    bool interpolation, double *affine_matrix);

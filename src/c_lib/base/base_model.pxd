@@ -27,18 +27,19 @@ cdef extern from "schemes.h":
         pass
 
     MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
-                                    int number_of_sidebands)
+                                    unsigned int number_of_sidebands)
 
+    void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme)
 cdef extern from "mrsimulator.h":
 
     ctypedef struct MRS_plan:
         MRS_averaging_scheme *averaging_scheme
-        int number_of_sidebands
+        unsigned int number_of_sidebands
         double sample_rotation_frequency_in_Hz
         double rotor_angle_in_rad
         # double complex *vector
 
-    MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
+    MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, unsigned int number_of_sidebands,
                           double sample_rotation_frequency_in_Hz,
                           double rotor_angle_in_rad, double increment,
                           bool_t allow_fourth_rank)
@@ -75,19 +76,20 @@ cdef extern from "method.h":
         MRS_event *events               # Holds a list of events.
         unsigned int n_events           # The number of events.
 
-    MRS_sequence *MRS_sequence_malloc(int n)
-
-    MRS_sequence *MRS_create_plans_for_sequence(
+    MRS_sequence *MRS_create_sequences(
         MRS_averaging_scheme *scheme,
         int *count,
         double *coordinates_offset,
         double *increment,
+        double *fraction,
         double *magnetic_flux_density_in_T,
         double *sample_rotation_frequency_in_Hz,
         double *rotor_angle_in_rad,
         int *n_events,
         unsigned int n_seq,
-        int number_of_sidebands)
+        unsigned int number_of_sidebands)
+
+    void MRS_free_sequence(MRS_sequence *the_sequence, int n)
 
 cdef extern from "simulation.h":
     void mrsimulator_core(
@@ -106,7 +108,7 @@ cdef extern from "simulation.h":
                                                   # second order quad Hamiltonian.
 
         # spin rate, spin angle and number spinning sidebands
-        int number_of_sidebands,
+        unsigned int number_of_sidebands,
         double sample_rotation_frequency_in_Hz,
         double rotor_angle_in_rad,
 
@@ -114,7 +116,8 @@ cdef extern from "simulation.h":
         float *transition,
         int integration_density,
         unsigned int integration_volume,  # 0-octant, 1-hemisphere, 2-sphere
-        bool_t interpolation
+        bool_t interpolation,
+        double *affine_matrix,
         )
 
     void __mrsimulator_core(
@@ -131,5 +134,6 @@ cdef extern from "simulation.h":
         int n_sequence, # the number of sequences.
         MRS_fftw_scheme *fftw_scheme, # the fftw scheme
         MRS_averaging_scheme *scheme, # the powder averaging scheme
-        bool_t interpolation
+        bool_t interpolation,
+        double *affine_matrix,
         )

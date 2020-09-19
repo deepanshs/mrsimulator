@@ -16,7 +16,7 @@ Import the module as
 
 .. rubric:: Operation Summary
 
-The following list of operations apply to **all dependent variables** within the
+The following list of operations applies to **all dependent variables** within the
 CSDM object.
 
 .. autosummary::
@@ -39,7 +39,7 @@ Import the module as
 
 .. rubric:: Operation Summary
 
-The following list of operations apply to **selected dependent variables** within
+The following list of operations applies to **selected dependent variables** within
 the CSDM object.
 
 .. autosummary::
@@ -47,6 +47,33 @@ the CSDM object.
 
       ~Gaussian
       ~Exponential
+
+.. seealso::
+
+    :ref:`signal_processing` for a details.
+
+
+Affine Transformation
+---------------------
+
+.. currentmodule:: mrsimulator.signal_processing.affine
+
+Import the module as
+
+.. doctest::
+
+    >>> import mrsimulator.signal_processing.affine as af
+
+.. rubric:: Operation Summary
+
+The following list of operations applies to **selected dependent variables** within
+the CSDM object.
+
+.. autosummary::
+    :nosignatures:
+
+      ~Shear
+      ~Scale
 
 .. seealso::
 

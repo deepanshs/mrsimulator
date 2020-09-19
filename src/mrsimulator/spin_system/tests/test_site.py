@@ -206,6 +206,12 @@ def test_site_object_methods():
     assert the_site.to_freq_dict(9.4) == result, "Failed Site.to_dict_with_units()"
 
 
+def test_site_quad_set_to_None():
+    a = Site(isotope="27Al", quadrupolar=None)
+    assert a.isotope.symbol == "27Al"
+    assert a.quadrupolar is None
+
+
 def test_equality():
     a = Site(isotope="1H")
     b = Site(isotope="1H")

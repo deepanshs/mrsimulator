@@ -5,10 +5,11 @@ from typing import Dict
 from typing import Union
 
 import numpy as np
-from csdmpy.units import string_to_quantity
 from pydantic import validator
 
 from ._base import AbstractOperation
+from .utils import _get_broadcast_shape
+from .utils import _str_to_quantity
 
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
@@ -31,21 +32,6 @@ class AbstractApodization(AbstractOperation):
     def type(self):
         """The type apodization function."""
         return self.__class__.__name__
-
-    @staticmethod
-    def _get_dv_indexes(indexes, n):
-        """Return a list of dependent variable indexes.
-
-        Args:
-            indexes: An interger, list of integers, or None indicating the dv indexes.
-            n: Total number of dependent variables in the CSDM object.
-        """
-        if indexes is None:
-            return np.arange(n)
-        if isinstance(indexes, int):
-            return [indexes]
-        if isinstance(indexes, (list, tuple)):
-            return np.asarray(indexes)
 
     def _operate(self, data, fn, prop_name, prop_value):
         """A generic operation function.
@@ -79,26 +65,6 @@ class AbstractApodization(AbstractOperation):
             for i in dv_indexes:
                 data.dependent_variables[i].components *= apodization_vactor
         return data
-
-
-def _str_to_quantity(v, values):
-    if isinstance(v, str):
-        quantity = string_to_quantity(v)
-        values["property_units"] = {"FWHM": quantity.unit}
-        return quantity.value
-    if isinstance(v, float):
-        return v
-
-
-def _get_broadcast_shape(array, dim, ndim):
-    """Return the broadcast shape of a vector `array` at dimension `dim` for `ndim`
-    total dimensions. """
-    none = [None for _ in range(ndim + 1)]
-    if isinstance(dim, int):
-        dim = [dim]
-    for dim_ in dim:
-        none[-dim_ - 1] = slice(None, None, None)
-    return array[tuple(none)]
 
 
 class Gaussian(AbstractApodization):
@@ -139,7 +105,7 @@ class Gaussian(AbstractApodization):
 
     @validator("FWHM")
     def str_to_quantity(cls, v, values):
-        return _str_to_quantity(v, values)
+        return _str_to_quantity(v, values, "FWHM")
 
     # class Config:
     #     validate_assignment = True
@@ -148,7 +114,11 @@ class Gaussian(AbstractApodization):
     def fn(x, arg):
         # arg is FWHM
         sigma = arg / 2.354820045030949
-        return np.exp(-2 * ((x * sigma * np.pi) ** 2))
+        xinv = np.fft.ifftshift(np.arange(x.size, dtype=np.float64) - int(x.size / 2))
+        xinv /= x[-1] - x[0]
+        amp = np.fft.ifftshift(np.fft.ifft(np.exp(-0.5 * (xinv / sigma) ** 2)))
+        return amp.real / (sigma * np.sqrt(2 * np.pi))
+        # return np.exp(-2 * ((x * sigma * np.pi) ** 2))
 
     def operate(self, data):
         """
@@ -198,7 +168,7 @@ class Exponential(AbstractApodization):
 
     @validator("FWHM")
     def str_to_quantity(cls, v, values):
-        return _str_to_quantity(v, values)
+        return _str_to_quantity(v, values, "FWHM")
 
     # class Config:
     #     validate_assignment = True

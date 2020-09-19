@@ -1,0 +1,29 @@
+# -*- coding: utf-8 -*-
+import numpy as np
+from csdmpy.units import string_to_quantity
+
+
+__author__ = "Deepansh Srivastava"
+__email__ = "deepansh2012@gmail.com"
+
+const = string_to_quantity("1")
+
+
+def _get_broadcast_shape(array, dim, ndim):
+    """Return the broadcast shape of a vector `array` at dimension `dim` for `ndim`
+    total dimensions. """
+    none = [np.newaxis for _ in range(ndim + 1)]
+    if isinstance(dim, int):
+        dim = [dim]
+    for dim_ in dim:
+        none[-dim_ - 1] = slice(None, None, None)
+    return array[tuple(none)]
+
+
+def _str_to_quantity(v, values, prop_name):
+    if isinstance(v, str):
+        quantity = string_to_quantity(v)
+        values["property_units"] = {prop_name: quantity.unit}
+        return quantity.value
+    if isinstance(v, float):
+        return v

@@ -287,8 +287,8 @@ table caption:hover {
 
 .sidebar > ul > li > a {
   display: block;
-  padding-top: 0.25em;
-  padding-bottom: 0.25em;
+  padding-top: 0.15em;
+  padding-bottom: 0.15em;
   padding-left: 24px;
   padding-right: 24px;
   color: rgb(209, 209, 209);
@@ -322,11 +322,10 @@ table caption:hover {
 /* selected list item's sub-list's item a tags */
 .sidebar > ul > li.current > ul > li > a {
   display: block;
-  padding: 0.25em;
   padding-left: 48px;
   padding-right: 48px;
-  padding-top: 0.25em;
-  padding-bottom: 0.25em;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
   color: rgb(58, 58, 58);
   text-decoration: none;
   cursor: pointer;
