@@ -120,9 +120,11 @@ sphinx_gallery_conf = {
     # "line_numbers": True,
     "subsection_order": ExplicitOrder(
         [
-            "../examples/1D_simulation",
+            "../examples/1D_simulation(crystalline)",
+            "../examples/1D_simulation(macro_amorphous)",
             "../examples/Fitting",
-            "../examples/2D_simulation",
+            "../examples/2D_simulation(crystalline)",
+            "../examples/2D_simulation(macro_amorphous)",
         ]
     ),
     "reference_url": {
@@ -151,7 +153,7 @@ copybutton_prompt_is_regexp = True
 # ---------------------------------------------------------------------------- #
 #                               Doxygen C docs config                          #
 # ---------------------------------------------------------------------------- #
-subprocess.run("doxygen", shell=True)
+subprocess.run("doxygen", shell=False)
 doxy_output = os.path.abspath("./xml")
 
 # Setup the breathe extension

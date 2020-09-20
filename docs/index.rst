@@ -52,6 +52,10 @@ Welcome to the Mrsimulator documentation
             :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/
             :alt: Total alerts
 
+          .. image:: https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge
+            :target: https://www.codefactor.io/repository/github/deepanshs/mrsimulator
+            :alt: CodeFactor
+
       * - GitHub
         - .. image:: https://img.shields.io/github/contributors/DeepanshS/mrsimulator.svg?logo=github
             :target: https://github.com/DeepanshS/mrsimulator/graphs/contributors
