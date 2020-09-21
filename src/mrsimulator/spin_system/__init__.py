@@ -129,7 +129,7 @@ class SpinSystem(Parseable):
     label: str = None
     description: str = None
     sites: List[Site] = []
-    # couplings: list = [], # TODO: Deepansh what should this look like?
+    # couplings: list = []
     abundance: float = Field(default=100, ge=0, le=100)
     transition_pathways: Optional[List] = None
 

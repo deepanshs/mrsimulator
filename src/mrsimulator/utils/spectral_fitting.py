@@ -1,18 +1,11 @@
 # -*- coding: utf-8 -*-
 import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+from lmfit import Parameters
 from mrsimulator import Simulator
 
-try:
-    from lmfit import Parameters
 
-    FOUND_LMFIT = True
-except ImportError:
-    FOUND_LMFIT = False
-
-
-__author__ = "Maxwell C Venetos"
-__email__ = "maxvenetos@gmail.com"
+__author__ = ["Maxwell C Venetos", "Deepansh Srivastava"]
+__email__ = ["maxvenetos@gmail.com", "srivastava.89@osu.edu"]
 
 START = "sys_"
 ENCODING_PAIRS = [
@@ -22,11 +15,19 @@ ENCODING_PAIRS = [
     ["].shielding_symmetric.", "_shielding_symmetric_"],
     ["].quadrupolar.", "_quadrupolar_"],
     ["].abundance", "_abundance"],
-    ["methods[", "METHODS_"],  # why does methods need to be parameterized?
     ["].post_simulation", "_POST_SIM_"],
     [".scale", "scale"],
     [".apodization[", "APODIZATION_"],
     ["].args", "_args"],
+]
+
+DECODING_PAIRS = [
+    ["spin_systems.", "sys_"],
+    [".sites.", "_site_"],
+    [".isotropic_chemical_shift", "_isotropic_chemical_shift"],
+    [".shielding_symmetric.", "_shielding_symmetric_"],
+    [".quadrupolar.", "_quadrupolar_"],
+    [".abundance", "_abundance"],
 ]
 
 EXCLUDE = [
@@ -37,6 +38,8 @@ EXCLUDE = [
     "description",
     "transition_pathways",
 ]
+
+POST_SIM_DICT = {"Gaussian": "FWHM", "Exponential": "FWHM", "Scale": "factor"}
 
 
 def _str_encode(my_string):
@@ -58,18 +61,86 @@ def _str_encode(my_string):
 
 def _str_decode(my_string):
     """
-    Converts the HTML numbers to '[', ']', and '.' to allow for execution of the
-    parameter name to update the simulator.
+    Parse the string for objects and indexes and return a list.
 
     Args:
         my_string: A string object
 
     Returns:
-        String Object.
+        List of strings with strings resresenting mrsimulator objects and indexes.
+
+    Example:
+        >>> string = 'sys_0_site_0_isotropic_chemical_shift'
+        >>> _str_decode(string)
+        ['spin_systems', '0', 'sites', '0', 'isotropic_chemical_shift']
+
+        >>> string = 'sys_10_abundance'
+        >>> _str_decode(string)
+        ['spin_systems', '10', 'abundance']
     """
-    for item in ENCODING_PAIRS:
+    for item in DECODING_PAIRS:
         my_string = my_string.replace(*item[::-1])
+    my_string = my_string.split(".")
     return my_string
+
+
+def _get_simulator_object_value(sim, string):
+    """Parse the string representing the Simulator object dictionary tree format, and
+    return its value.
+
+    Args:
+        sim: The simulator object.
+        string: A string representing the Simulator object dictionary tree format.
+
+    Returns:
+        Float. The value of the object.
+
+    Example:
+        >>> site = Site(isotropic_chemical_shift=-431)
+        >>> sys = SpinSystem(sites=[site], abundance=23)
+        >>> sim = Simulator()
+        >>> sim.spin_systems.append(sys)
+
+        >>> string = 'sys_0_site_0_isotropic_chemical_shift'
+        >>> _get_simulator_object_value(sim, string)
+        -431.0
+
+        >>> string = 'sys_0_abundance'
+        >>> _get_simulator_object_value(sim, string)
+        23.0
+    """
+    string = _str_decode(string)
+    obj = sim
+    for attr in string:
+        obj = obj[int(attr)] if attr.isnumeric() else obj.__getattribute__(attr)
+    return obj
+
+
+def _set_simulator_object_value(sim, string, value):
+    """Parse the string representing the Simulator object dictionary tree format, and
+    set its value to the input.
+
+    Args:
+        sim: The simulator object.
+        string: A string representing the Simulator object dictionary tree format.
+        value: The value to assign.
+
+    Example:
+        >>> site = Site(isotropic_chemical_shift=-431)
+        >>> sys = SpinSystem(sites=[site], abundance=23)
+        >>> sim = Simulator()
+        >>> sim.spin_systems.append(sys)
+
+        >>> string = 'sys_0_site_0_isotropic_chemical_shift'
+        >>> _set_simulator_object_value(sim, string, 120)
+        >>> sim.spin_systems[0].sites[0].isotropic_chemical_shift
+        120.0
+    """
+    string = _str_decode(string)
+    obj = sim
+    for attr in string[:-1]:
+        obj = obj[int(attr)] if attr.isnumeric() else obj.__getattribute__(attr)
+    obj.__setattr__(string[-1], value)
 
 
 def _list_of_dictionaries(my_list):
@@ -120,7 +191,7 @@ def _traverse_dictionaries(dictionary, parent="spin_systems"):
 def _post_sim_LMFIT_params(post_sim):
     """
     Creates an LMFIT Parameters object for SignalProcessor operations
-    involved in spectrum fitting
+    involved in spectrum fitting.
 
     Args:
         post_sim: SignalProcessor object
@@ -128,26 +199,15 @@ def _post_sim_LMFIT_params(post_sim):
     Returns:
         Parameters object
     """
-    temp_dict = {}
-    # for item in post_sim.operations:
-    #     prepend = f"DEP_VAR_{item.dependent_variable}_"
-    for i, operation in enumerate(post_sim.operations):
-        if isinstance(operation, apo.Gaussian):
-            identifier = f"operation_{i}_Gaussian_FWHM"
-            arg = operation.FWHM
-            temp_dict[f"{identifier}"] = arg
-        elif isinstance(operation, apo.Exponential):
-            identifier = f"operation_{i}_Exponential_FWHM"
-            arg = operation.FWHM
-            temp_dict[f"{identifier}"] = arg
-        elif isinstance(operation, sp.Scale):
-            identifier = f"operation_{i}_Scale"
-            arg = operation.factor
-            temp_dict[f"{identifier}"] = arg
-
     params = Parameters()
-    for key, val in temp_dict.items():
-        params.add(name=key, value=val)
+
+    for i, operation in enumerate(post_sim.operations):
+        name = operation.__class__.__name__
+        if name in POST_SIM_DICT:
+            attr = POST_SIM_DICT[name]
+            key = f"operation_{i}_{name}_{attr}"
+            val = operation.__getattribute__(attr)
+            params.add(name=key, value=val)
 
     return params
 
@@ -159,37 +219,18 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
         params: LMFIT Parameters object
         post_sim: SignalProcessor object
     """
-    temp_dict = {}
-    arg_dict = {"Gaussian": "FWHM", "Exponential": "FWHM", "Scale": "factor"}
-    for param in params:
-        # iterating through the parameter list looking for only DEP_VAR
-        # (ie post_sim params)
-        if "operation_" in param:
-            # splitting parameter name to obtain
-            # Dependent variable index (var)
-            # index of operation in the operation list (opIndex)
-            # arg value for the operation (val)
-            split_name = param.split("_")
-            # var = split_name[split_name.index("VAR") + 1]
-            opIndex = split_name[split_name.index("operation") + 1]
-            val = params[param].value
-            # creating a dictionary of operations and arguments for each dependent
-            # variable
-            # if f"DepVar_{var}" not in temp_dict.keys():
-            #     temp_dict[f"DepVar_{var}"] = {}
-            temp_dict[f"{opIndex}_{split_name[2]}"] = val
 
-    # iterate through list of operation lists
-    # for item in post_sim.operations:
-    # iterating through dictionary with corresponding dependent variable index
-    for operation, val in temp_dict.items():
-        # creating assignment strings to create the correct address for updating each
-        # operation
-        split = operation.split("_")
-        # dep_var_operation_list = f"post_sim.operations[{item.dependent_variable}]"
-        operation_val_update = f"post_sim.operations[{split[0]}].{arg_dict[split[-1]]}"
-        assignment = f"={val}"
-        exec(operation_val_update + assignment)
+    for param in params:
+        # iterating through the parameter list looking for only post_sim params
+        if "operation_" in param:
+            # splitting parameter name to obtain operations index, operation argument,
+            # and its value
+            split_name = param.split("_")
+            opIndex = int(split_name[1])  # The operation index
+            val = params[param].value  # The value of operation argument parameter
+
+            # update the post_sim object with the parameter updated value.
+            post_sim.operations[opIndex].__setattr__(POST_SIM_DICT[split_name[2]], val)
 
 
 def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
@@ -208,13 +249,6 @@ def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
     Returns:
         LMFIT Parameters object.
     """
-    if not FOUND_LMFIT:
-        error = (
-            f"The helper function {__name__} requires 'lmfit' module to create lmfit "
-            r"paramters. Please install the lmfit module using\n'pip install lmfit'.",
-        )
-        raise ImportError(error)
-
     if not isinstance(sim, Simulator):
         raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
 
@@ -226,32 +260,21 @@ def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
     abundance_scale = 100 / sum([sim.spin_systems[i].abundance for i in range(length)])
 
     # expression for the last abundance.
-    last_abund = f"{length - 1}_abundance"
+    last_abundance = f"{length - 1}_abundance"
     expression = "-".join([f"{START}{i}_abundance" for i in range(length - 1)])
     expression = "100" if expression == "" else f"100-{expression}"
     for items in temp_list:
+        value = _get_simulator_object_value(sim, items)
         if "_eta" in items:
-            params.add(
-                name=items, value=eval("sim." + _str_decode(items)), min=0, max=1,
-            )
-        # last_abund should come before abundance
-        elif last_abund in items:
-            params.add(
-                name=items,
-                value=eval("sim." + _str_decode(items)),
-                min=0,
-                max=100,
-                expr=expression,
-            )
+            params.add(name=items, value=value, min=0, max=1)
+
+        # last_abundance should come before abundance
+        elif last_abundance in items:
+            params.add(name=items, value=value, min=0, max=100, expr=expression)
+
         elif "abundance" in items:
-            params.add(
-                name=items,
-                value=eval("sim." + _str_decode(items)) * abundance_scale,
-                min=0,
-                max=100,
-            )
+            params.add(name=items, value=value * abundance_scale, min=0, max=100)
         else:
-            value = eval("sim." + _str_decode(items))
             params.add(name=items, value=value)
 
     if post_sim is None:
@@ -299,9 +322,7 @@ def LMFIT_min_function(params, sim, post_sim=None):
     values = params.valuesdict()
     for items in values:
         if "operation_" not in items:
-            nameString = "sim." + _str_decode(items)
-            executable = f"{nameString} = {values[items]}"
-            exec(executable)
+            _set_simulator_object_value(sim, items, values[items])
         elif "operation_" in items and post_sim is not None:
             _update_post_sim_from_LMFIT_params(params, post_sim)
 

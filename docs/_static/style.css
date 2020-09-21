@@ -166,6 +166,7 @@ table caption:hover {
 
 #navbar-related {
   border-radius: 0;
+  display: none;
 }
 
 .navbar.navbar-fixed-top {
@@ -334,10 +335,6 @@ table caption:hover {
 .sidebar > ul > li.current > ul > li > a.current {
   color: black;
   font-weight: 500;
-}
-
-#navbar-related {
-  display: none;
 }
 
 ul.this-page-menu {
