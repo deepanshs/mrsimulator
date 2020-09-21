@@ -26,10 +26,10 @@ def test_equality():
     b = Simulator()
     assert a == b
 
-    assert a is not {}
+    assert a != {}
 
     c = Simulator(spin_systems=[SpinSystem()], label="test")
-    assert a is not c
+    assert a != c
 
     result = {
         "label": "test",

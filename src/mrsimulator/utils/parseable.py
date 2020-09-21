@@ -70,10 +70,10 @@ class Parseable(BaseModel):
                     # else choose the first good one
                     if not ([val is not None for val in pos_values]):
                         raise Exception(f"Could not enforce any units on {prop}")
-                    else:
-                        json_dict[prop], property_units[prop] = [
-                            d for d in zip(pos_values, default_unit) if d[0] is not None
-                        ][0]
+
+                    json_dict[prop], property_units[prop] = [
+                        d for d in zip(pos_values, default_unit) if d[0] is not None
+                    ][0]
         for k, v in property_units.items():
             property_units[k] = v[0] if isinstance(v, list) else v
         return cls(**json_dict, property_units=property_units)
@@ -132,8 +132,7 @@ def enforce_units(value: str, required_type: str, default_unit: str, throw_error
     except Exception as e:
         if throw_error:
             raise e
-        else:
-            return None
+        return None
 
 
 def get_list(member, obj):

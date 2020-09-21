@@ -36,7 +36,8 @@ def test_bad_units():
 
 def test_blank_init():
     pr = ParseableTestClass()
-    pr
+    assert pr.foo == 0
+    assert pr.bar == 0
 
 
 def test_parse_json():

@@ -123,12 +123,12 @@ def generate_method_from_template(template):
                         kw[key] = val
 
                 intersection = ew.intersection(kw)
-                [e.pop(item) for item in intersection]
+                _ = [e.pop(item) for item in intersection]
 
                 # prioritize the keyword arguments over the global arguments.
                 common = set(kw).intersection(set(global_events))
                 ge = deepcopy(global_events)
-                [ge.pop(item) for item in common]
+                _ = [ge.pop(item) for item in common]
 
                 params = {**e, **kw, **ge}
                 params = params if parse else Event(**params)
@@ -183,4 +183,4 @@ def _fill_missing_events_in_template(spectral_dimensions, s_template):
     sp_evt_len = len(spectral_dimensions["events"])
     if s_tem_len < sp_evt_len:
         diff = sp_evt_len - s_tem_len
-        [s_template["events"].append(Event().dict()) for _ in range(diff)]
+        _ = [s_template["events"].append(Event().dict()) for _ in range(diff)]
