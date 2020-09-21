@@ -5,6 +5,9 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 from .utils import get_Haeberlen_components
 from .utils import get_principal_components
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 def _czjzek_random_distribution_tensors(sigma, n):
     r"""Czjzek random distribution model.

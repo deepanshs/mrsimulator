@@ -5,8 +5,8 @@ from pydantic import BaseModel
 from pydantic import Field
 from typing_extensions import Literal
 
-__author__ = "Deepansh J. Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
 
 # decompose spectrum
 __decompose_spectrum_enum__ = {"none": 0, "spin_system": 1}

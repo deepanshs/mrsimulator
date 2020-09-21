@@ -3,6 +3,9 @@ import pytest
 from mrsimulator.transition import Transition
 from mrsimulator.transition.transition_list import TransitionList
 
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 def test_transition_1():
     # set up

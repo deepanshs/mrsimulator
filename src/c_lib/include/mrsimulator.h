@@ -4,7 +4,7 @@
 //
 //  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Jun 30, 2019
-//  Contact email = deepansh2012@gmail.com
+//  Contact email = srivastava.89@osu.edu
 //
 
 #ifndef mrsimulator_h

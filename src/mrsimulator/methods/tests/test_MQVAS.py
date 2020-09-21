@@ -6,6 +6,9 @@ from mrsimulator.methods import FiveQ_VAS
 from mrsimulator.methods import SevenQ_VAS
 from mrsimulator.methods import ThreeQ_VAS
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 methods = [ThreeQ_VAS, FiveQ_VAS, SevenQ_VAS]
 names = ["ThreeQ_VAS", "FiveQ_VAS", "SevenQ_VAS"]
 

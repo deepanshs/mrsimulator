@@ -4,7 +4,7 @@ from csdmpy.units import string_to_quantity
 
 
 __author__ = "Deepansh Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__email__ = "srivastava.89@osu.edu"
 
 const = string_to_quantity("1")
 

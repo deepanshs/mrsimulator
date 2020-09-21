@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 def get_spectral_dimensions(csdm_object):
     """

@@ -5,6 +5,9 @@ from mrsimulator import Site
 from mrsimulator.spin_system.isotope import Isotope
 from pydantic import ValidationError
 
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 # Test Site ===========================================================================
 def test_direct_init_site1():

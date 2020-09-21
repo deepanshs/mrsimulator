@@ -5,6 +5,9 @@ from mrsimulator.method.transition_query import TransitionQuery
 from mrsimulator.methods import ST1_VAS
 from mrsimulator.methods import ST2_VAS
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 methods = [ST1_VAS, ST2_VAS]
 names = ["ST1_VAS", "ST2_VAS"]
 

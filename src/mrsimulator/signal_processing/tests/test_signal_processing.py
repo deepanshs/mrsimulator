@@ -5,6 +5,9 @@ import mrsimulator.signal_processing.apodization as apo
 import numpy as np
 import pytest
 
+__author__ = "Maxwell C. Venetos"
+__email__ = "maxvenetos@gmail.com"
+
 
 def test_01():
     post_sim = sp.SignalProcessor()

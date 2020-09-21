@@ -3,6 +3,9 @@ import numpy as np
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 def single_site_system_generator(
     isotopes,

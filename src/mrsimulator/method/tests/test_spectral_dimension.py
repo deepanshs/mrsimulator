@@ -5,6 +5,9 @@ from mrsimulator.method.event import Event
 from mrsimulator.method.spectral_dimension import SpectralDimension
 from pydantic import ValidationError
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 def basic_spectral_dimension_tests(the_dimension):
     assert the_dimension.count == 1024

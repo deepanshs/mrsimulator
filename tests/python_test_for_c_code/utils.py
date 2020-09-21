@@ -2,7 +2,7 @@
 import numpy as np
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__email__ = "srivastava.89@osu.edu"
 
 
 def pre_phase_components(number_of_sidebands, spin_frequency):

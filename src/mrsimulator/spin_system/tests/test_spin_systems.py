@@ -6,6 +6,9 @@ from mrsimulator import SpinSystem
 from mrsimulator.spin_system import allowed_isotopes
 from pydantic import ValidationError
 
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 def test_direct_init_spin_system():
     # test-1

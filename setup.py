@@ -246,7 +246,7 @@ setup(
     long_description=open(join(module_dir, "README.md")).read(),
     long_description_content_type="text/markdown",
     author="Deepansh J. Srivastava",
-    author_email="deepansh2012@gmail.com",
+    author_email="srivastava.89@osu.edu",
     python_requires=">=3.6",
     url="https://github.com/DeepanshS/MRsimulator/",
     packages=find_packages("src"),

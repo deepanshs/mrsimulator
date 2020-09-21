@@ -8,6 +8,9 @@ from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.spin_system.isotope import Isotope
 from pydantic import ValidationError
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 def basic_method_tests(the_method):
     assert the_method.name == "test-1-d"

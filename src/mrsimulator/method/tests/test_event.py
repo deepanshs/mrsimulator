@@ -4,6 +4,9 @@ import pytest
 from mrsimulator.method.event import Event
 from pydantic import ValidationError
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 def basic_event_tests(the_event):
     # fraction

@@ -16,8 +16,8 @@ from .isotope import ISOTOPE_DATA
 from .site import Site
 from .zeeman_state import ZeemanState
 
-__author__ = "Deepansh J. Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
 
 
 class SpinSystem(Parseable):

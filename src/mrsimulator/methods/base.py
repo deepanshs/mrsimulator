@@ -6,6 +6,9 @@ import numpy as np
 from .utils import generate_method_from_template
 from .utils import METHODS_DATA
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 # BlochDecaySpectrum
 BlochDecaySpectrum = generate_method_from_template(METHODS_DATA["Bloch_decay"])
 
@@ -75,20 +78,15 @@ def Method2D(spectral_dimensions=[{}, {}], **kwargs):
     return Method2d_(spectral_dimensions, **kwargs)
 
 
-class NamedMethod:
-    """Named methods have restricted transition query."""
+def check_transition_query(name, spectral_dimensions=[{}, {}]):
+    check = [
+        "transition_query" in event.keys()
+        for item in spectral_dimensions
+        if "events" in item.keys()
+        for event in item["events"]
+    ]
 
-    @classmethod
-    def check_transition_query(cls, spectral_dimensions=[{}, {}]):
-        check = [
-            "transition_query" in event.keys()
-            for item in spectral_dimensions
-            if "events" in item.keys()
-            for event in item["events"]
-        ]
-
-        if np.any(check):
-            raise AttributeError(
-                f"`transition_query` attribute cannot be modified for {cls.__name__} "
-                "class."
-            )
+    if np.any(check):
+        raise AttributeError(
+            f"`transition_query` attribute cannot be modified for {name} class."
+        )

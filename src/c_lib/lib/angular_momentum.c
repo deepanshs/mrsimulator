@@ -3,7 +3,7 @@
 //  angular_momentum.c
 //
 //  Created by Philip Grandinetti on 4/12/17.
-//  Contribution: Deepansh J. Srivatava. contact: deepansh2012@gmail.com
+//  Contribution: Deepansh J. Srivatava. contact: srivastava.89@osu.edu
 //
 
 #include "angular_momentum.h"

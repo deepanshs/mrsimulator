@@ -16,8 +16,8 @@ from pydantic import BaseModel
 
 from .config import ConfigSimulator
 
-__author__ = "Deepansh J. Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
 
 
 class Simulator(BaseModel):
