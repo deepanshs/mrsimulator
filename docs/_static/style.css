@@ -254,7 +254,7 @@ table caption:hover {
   font-size: 1.11em;
   font-weight: 400;
   color: #6e6e6e;
-  margin: 10px 0 0 0;
+  margin: 10px 0 0;
 }
 .sidebar.hidden-xs > ul {
   padding: 0;
