@@ -45,6 +45,10 @@ h6 {
   font-size: 1em;
 }
 
+pre {
+  line-height: 143%;
+}
+
 .sphx-glr-timing {
   padding-top: 1em;
 }
