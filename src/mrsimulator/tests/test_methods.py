@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.methods import BlochDecaySpectrum
 
 
@@ -9,6 +10,7 @@ def test_BlochDecaySpectrum():
 
     event_dictionary_ = {
         "fraction": 1.0,
+        "freq_contrib": freq_default,
         "magnetic_flux_density": "9.4 T",
         "rotor_frequency": "0.0 Hz",
         "rotor_angle": "0.9553166 rad",
@@ -42,6 +44,7 @@ def test_BlochDecaySpectrum():
     angle = 90 * np.pi / 180
     event_dictionary_ = {
         "fraction": 1.0,
+        "freq_contrib": freq_default,
         "magnetic_flux_density": "11.7 T",
         "rotor_frequency": "0.0 Hz",
         "rotor_angle": f"{angle} rad",

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Base Parseable class."""
 from copy import deepcopy
+from enum import Enum
 from typing import ClassVar
 from typing import Dict
 
@@ -98,7 +99,7 @@ class Parseable(BaseModel):
         for k, v in self.dict(exclude={"property_units"}).items():
 
             # check the dict objects
-            if isinstance(v, dict):
+            if isinstance(v, (dict, Enum)):
                 val = getattr(self, k).to_dict_with_units()
                 if val is not None:
                     temp_dict[k] = val
@@ -140,7 +141,7 @@ def get_list(member, obj):
     for i, item in enumerate(obj):
         if isinstance(item, list):
             lst.append(get_list(member[i], item))
-        elif isinstance(item, dict):
+        elif isinstance(item, (dict, Enum)):
             lst.append(member[i].to_dict_with_units())
         elif item not in [None, ""]:
             lst.append(item)

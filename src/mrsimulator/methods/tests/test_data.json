@@ -8,6 +8,14 @@
                 "reference_offset": "0.0 Hz",
                 "events": [{
                     "fraction": 1.0,
+                    "freq_contrib": [
+                        "Shielding1_0",
+                        "Shielding1_2",
+                        "Quad1_2",
+                        "Quad2_0",
+                        "Quad2_2",
+                        "Quad2_4"
+                    ],
                     "magnetic_flux_density": "9.4 T",
                     "rotor_frequency": "1000000000000.0 Hz",
                     "rotor_angle": "0.9553166 rad",
@@ -32,6 +40,14 @@
                 "reference_offset": "0.0 Hz",
                 "events": [{
                     "fraction": 1.0,
+                    "freq_contrib": [
+                        "Shielding1_0",
+                        "Shielding1_2",
+                        "Quad1_2",
+                        "Quad2_0",
+                        "Quad2_2",
+                        "Quad2_4"
+                    ],
                     "magnetic_flux_density": "9.4 T",
                     "rotor_frequency": "1000000000000.0 Hz",
                     "rotor_angle": "0.9553166 rad",
@@ -62,6 +78,14 @@
                 "reference_offset": "0.0 Hz",
                 "events": [{
                     "fraction": 1.0,
+                    "freq_contrib": [
+                        "Shielding1_0",
+                        "Shielding1_2",
+                        "Quad1_2",
+                        "Quad2_0",
+                        "Quad2_2",
+                        "Quad2_4"
+                    ],
                     "magnetic_flux_density": "9.4 T",
                     "rotor_frequency": "1000000000000.0 Hz",
                     "rotor_angle": "1.223824871498424 rad",
@@ -86,6 +110,14 @@
                 "reference_offset": "0.0 Hz",
                 "events": [{
                     "fraction": 1.0,
+                    "freq_contrib": [
+                        "Shielding1_0",
+                        "Shielding1_2",
+                        "Quad1_2",
+                        "Quad2_0",
+                        "Quad2_2",
+                        "Quad2_4"
+                    ],
                     "magnetic_flux_density": "9.4 T",
                     "rotor_frequency": "1000000000000.0 Hz",
                     "rotor_angle": "0.9553059660790962 rad",
@@ -116,6 +148,14 @@
                 "reference_offset": "0.0 Hz",
                 "events": [{
                     "fraction": 1.0,
+                    "freq_contrib": [
+                        "Shielding1_0",
+                        "Shielding1_2",
+                        "Quad1_2",
+                        "Quad2_0",
+                        "Quad2_2",
+                        "Quad2_4"
+                    ],
                     "magnetic_flux_density": "9.4 T",
                     "rotor_frequency": "1000000000000.0 Hz",
                     "rotor_angle": "0.0 rad",
@@ -141,6 +181,14 @@
                 "reference_offset": "0.0 Hz",
                 "events": [{
                     "fraction": 1.0,
+                    "freq_contrib": [
+                        "Shielding1_0",
+                        "Shielding1_2",
+                        "Quad1_2",
+                        "Quad2_0",
+                        "Quad2_2",
+                        "Quad2_4"
+                    ],
                     "magnetic_flux_density": "9.4 T",
                     "rotor_frequency": "1000000000000.0 Hz",
                     "rotor_angle": "0.9553059660790962 rad",
@@ -172,6 +220,14 @@
                 "label": "70.12 dimension",
                 "events": [{
                         "fraction": 1.0,
+                        "freq_contrib": [
+                            "Shielding1_0",
+                            "Shielding1_2",
+                            "Quad1_2",
+                            "Quad2_0",
+                            "Quad2_2",
+                            "Quad2_4"
+                        ],
                         "magnetic_flux_density": "4.2 T",
                         "rotor_frequency": "1000000000000.0 Hz",
                         "rotor_angle": "1.223788777777778 rad",
@@ -191,6 +247,14 @@
                     },
                     {
                         "fraction": 1.0,
+                        "freq_contrib": [
+                            "Shielding1_0",
+                            "Shielding1_2",
+                            "Quad1_2",
+                            "Quad2_0",
+                            "Quad2_2",
+                            "Quad2_4"
+                        ],
                         "magnetic_flux_density": "4.2 T",
                         "rotor_frequency": "1000000000000.0 Hz",
                         "rotor_angle": "0.5256776666666667 rad",
@@ -217,6 +281,14 @@
                 "label": "MAS dimension",
                 "events": [{
                     "fraction": 1.0,
+                    "freq_contrib": [
+                        "Shielding1_0",
+                        "Shielding1_2",
+                        "Quad1_2",
+                        "Quad2_0",
+                        "Quad2_2",
+                        "Quad2_4"
+                    ],
                     "magnetic_flux_density": "4.2 T",
                     "rotor_frequency": "1000000000000.0 Hz",
                     "rotor_angle": "0.9552777916666667 rad",

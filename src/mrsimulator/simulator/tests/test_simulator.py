@@ -6,6 +6,7 @@ import pytest
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.methods import BlochDecaySpectrum
 
 __author__ = "Deepansh Srivastava"
@@ -116,6 +117,7 @@ def test_simulator_1():
                         "events": [
                             {
                                 "fraction": 1.0,
+                                "freq_contrib": freq_default,
                                 "magnetic_flux_density": 9.4,
                                 "rotor_angle": 0.9553166,
                                 "rotor_frequency": 0.0,

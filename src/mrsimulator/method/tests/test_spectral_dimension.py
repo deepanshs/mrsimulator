@@ -2,6 +2,7 @@
 import numpy as np
 import pytest
 from mrsimulator.method.event import Event
+from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.method.spectral_dimension import SpectralDimension
 from pydantic import ValidationError
 
@@ -87,6 +88,7 @@ def basic_spectral_dimension_tests(the_dimension):
         events=[
             {
                 "fraction": 0.5,
+                "freq_contrib": freq_default,
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
@@ -106,6 +108,7 @@ def basic_spectral_dimension_tests(the_dimension):
         events=[
             {
                 "fraction": 0.5,
+                "freq_contrib": freq_default,
                 "magnetic_flux_density": 9.6,
                 "rotor_angle": 0.9553059660790962,
                 "rotor_frequency": 1000,
@@ -121,6 +124,7 @@ def test_spectral_dimension():
     # parse dict with units
     event_dictionary = {
         "fraction": 0.5,
+        "freq_contrib": freq_default,
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "1 kHz",
         "rotor_angle": "54.735 deg",
@@ -146,6 +150,7 @@ def test_spectral_dimension():
     # parse dict with units
     event_dictionary = {
         "fraction": 0.5,
+        "freq_contrib": freq_default,
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "1 kHz",
         "rotor_angle": "54.735 deg",
@@ -173,6 +178,7 @@ def test_spectral_dimension():
         events=[
             {
                 "fraction": 0.5,
+                "freq_contrib": freq_default,
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
@@ -180,6 +186,7 @@ def test_spectral_dimension():
             },
             {
                 "fraction": 0.5,
+                "freq_contrib": freq_default,
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
@@ -198,6 +205,7 @@ def test_spectral_dimension():
         events=[
             {
                 "fraction": 0.5,
+                "freq_contrib": freq_default,
                 "magnetic_flux_density": 9.6,
                 "rotor_angle": 0.9553059660790962,
                 "rotor_frequency": 1000,
@@ -205,6 +213,7 @@ def test_spectral_dimension():
             },
             {
                 "fraction": 0.5,
+                "freq_contrib": freq_default,
                 "magnetic_flux_density": 9.6,
                 "rotor_angle": 0.9553059660790962,
                 "rotor_frequency": 1000,

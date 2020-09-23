@@ -7,6 +7,9 @@ from typing import List
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
+from .frequency_contrib import default_freq_contrib
+from .frequency_contrib import freq_list_all
+from .frequency_contrib import FrequencyEnum
 from .transition_query import TransitionQuery
 
 __author__ = "Deepansh J. Srivastava"
@@ -41,6 +44,7 @@ class Event(Parseable):
     rotor_frequency: float = Field(default=0.0, ge=0)
     # 54.735 degrees = 0.9553166 radians
     rotor_angle: float = Field(default=0.9553166, ge=0, le=1.5707963268)
+    freq_contrib: List[FrequencyEnum] = default_freq_contrib
     transition_query: TransitionQuery = TransitionQuery()
     user_variables: List = None
 
@@ -76,3 +80,8 @@ class Event(Parseable):
         """
         py_dict_copy = deepcopy(py_dict)
         return super().parse_dict_with_units(py_dict_copy)
+
+    def get_value_int(self):
+        lst_ = set([item.value for item in self.freq_contrib])
+        intersect = lst_.intersection(set(freq_list_all))
+        return [1 if item in intersect else 0 for item in freq_list_all]

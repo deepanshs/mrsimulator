@@ -4,6 +4,7 @@ import csdmpy as cp
 import numpy as np
 import pytest
 from mrsimulator.method import Method
+from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.spin_system.isotope import Isotope
 from pydantic import ValidationError
@@ -31,6 +32,7 @@ def basic_method_tests(the_method):
 
     event_dictionary = {
         "fraction": 0.5,
+        "freq_contrib": freq_default,
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "1 kHz",
         "rotor_angle": "54.735 deg",
@@ -68,6 +70,7 @@ def test_method():
     # parse dict with units
     event_dictionary = {
         "fraction": 0.5,
+        "freq_contrib": freq_default,
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "1 kHz",
         "rotor_angle": "54.735 deg",
@@ -92,6 +95,7 @@ def test_method():
     # parse dict with units
     event_dictionary = {
         "fraction": 0.5,
+        "freq_contrib": freq_default,
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "1 kHz",
         "rotor_angle": "54.735 deg",
@@ -133,6 +137,7 @@ def test_method():
     # to_dict_with_unit()
     event_dictionary_ = {
         "fraction": 0.5,
+        "freq_contrib": freq_default,
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "1000.0 Hz",
         "rotor_angle": "0.9553059660790962 rad",
@@ -156,6 +161,7 @@ def test_method():
     # reduced_dict()
     event_dictionary_ = {
         "fraction": 0.5,
+        "freq_contrib": freq_default,
         "magnetic_flux_density": 9.6,
         "rotor_frequency": 1000.0,
         "rotor_angle": 0.9553059660790962,
