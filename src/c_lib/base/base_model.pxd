@@ -104,8 +104,6 @@ cdef extern from "simulation.h":
         int n_sequence,
 
         int quad_second_order,                    # Quad theory for second order,
-        bool_t remove_2nd_order_quad_isotropic,   # remove the isotropic contribution from the
-                                                  # second order quad Hamiltonian.
 
         # spin rate, spin angle and number spinning sidebands
         unsigned int number_of_sidebands,
@@ -117,16 +115,14 @@ cdef extern from "simulation.h":
         int integration_density,
         unsigned int integration_volume,  # 0-octant, 1-hemisphere, 2-sphere
         bool_t interpolation,
+        bool_t *freq_contrib,
         double *affine_matrix,
         )
 
     void __mrsimulator_core(
         # spectrum information and related amplitude
         double * spec,
-
         isotopomer_ravel *ravel_isotopomer,
-        bool_t remove_2nd_order_quad_isotropic,   # remove the isotropic contribution from the
-                                                  # second order quad Hamiltonian.
 
         # The transition as transition[0] = mi and transition[1] = mf
         float *transition,
@@ -135,5 +131,6 @@ cdef extern from "simulation.h":
         MRS_fftw_scheme *fftw_scheme, # the fftw scheme
         MRS_averaging_scheme *scheme, # the powder averaging scheme
         bool_t interpolation,
+        bool_t *freq_contrib,
         double *affine_matrix,
         )

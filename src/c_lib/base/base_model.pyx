@@ -93,7 +93,7 @@ def one_d_spectrum(method,
         integration_volume=integration_volume
     )
 
-# create sequences____________________________________________________________
+# create spectral dimensions _______________________________________________
 
     cdef int n_sequence = len(method.spectral_dimensions)
     # if n_sequence > 1:
@@ -109,6 +109,7 @@ def one_d_spectrum(method,
     cdef ndarray[int] cnt
     cdef ndarray[double] coord_off
     cdef ndarray[double] incre
+    freq_contrib = np.asarray([])
 
     fr = []
     Bo = []
@@ -122,6 +123,7 @@ def one_d_spectrum(method,
     prev_n_sidebands = 0
     for i, seq in enumerate(method.spectral_dimensions):
         for event in seq.events:
+            freq_contrib = np.append(freq_contrib, event.get_value_int())
             if event.rotor_frequency < 1.0e-3:
                 sample_rotation_frequency_in_Hz = 1.0e9
                 rotor_angle_in_rad = 0.0
@@ -178,6 +180,9 @@ def one_d_spectrum(method,
     cdef clib.MRS_fftw_scheme *the_fftw_scheme
     the_fftw_scheme = clib.create_fftw_scheme(the_averaging_scheme.total_orientations, number_of_sidebands)
 # # _____________________________________________________________________________
+
+# frequency contrib
+    cdef ndarray[bool_t] freq_contrib_c = np.asarray(freq_contrib, dtype=np.bool)
 
 # affine transformation
 
@@ -374,13 +379,13 @@ def one_d_spectrum(method,
                     # spectrum information and related amplitude
                     &amp[0],
                     &isotopomer_struct,
-                    0, # turn off quad second order isotropic contribution
                     &transition_array[pathway_increment*trans__],
                     the_sequence,
                     n_sequence,
                     the_fftw_scheme,
                     the_averaging_scheme,
                     interpolation,
+                    &freq_contrib_c[0],
                     &affine_matrix_c[0],
                     )
 

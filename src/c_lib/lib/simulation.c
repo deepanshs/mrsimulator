@@ -207,9 +207,6 @@ void __mrsimulator_core(
     // the sites within an isotopomer.
     isotopomer_ravel *ravel_isotopomer,
 
-    // remove the isotropic contribution from the second order quad Hamiltonian.
-    bool remove_2nd_order_quad_isotropic,
-
     // A pointer to a spin transition packed as quantum numbers from the initial
     // energy state followed by the quantum numbers from the final energy state.
     // The energy states are given in Zeeman basis.
@@ -231,6 +228,22 @@ void __mrsimulator_core(
     // if true, perform a 1D interpolation
     bool interpolation,
 
+    /**
+     * Each event consists of the following freq contrib ordered as
+     * 1. Shielding 1st order 0th rank
+     * 2. Shielding 1st order 2th rank
+     * 3. Quad 1st order 2th rank
+     * 4. Quad 2st order 0th rank
+     * 5. Quad 2st order 2th rank
+     * 6. Quad 2st order 4th rank
+     *
+     * The freq contrib from each event is a list of boolean, where 1 mean allow
+     * frequency contribution and 0 means remove. The `freq_contrib` variable is
+     * a stack of boolean list, where the stack is ordered according to the
+     * events.
+     */
+    bool *freq_contrib,
+
     double *affine_matrix) {
   /*
   The sideband computation is based on the method described by Eden and Levitt
@@ -249,6 +262,7 @@ void __mrsimulator_core(
   double R0_temp = 0.0;
   complex128 *R2_temp = malloc_complex128(5);
   complex128 *R4_temp = malloc_complex128(9);
+
   double *spec_site_ptr;
   int transition_increment = 2 * ravel_isotopomer->number_of_sites;
   MRS_plan *plan;
@@ -281,9 +295,8 @@ void __mrsimulator_core(
           &R0_temp,                 // the temporary R0 components
           R2_temp,                  // the temporary R2 components
           R4_temp,                  // the temporary R4 components
-          remove_2nd_order_quad_isotropic,  // if true, remove second order quad
-                                            // isotropic shift
-          B0_in_T                           // magnetic flux density in T.
+          B0_in_T,                  // magnetic flux density in T
+          freq_contrib              // the pointer to freq contribs boolean
       );
 
       // Add a loop over all couplings.. here
@@ -300,6 +313,11 @@ void __mrsimulator_core(
       refresh = 0;
     }  // end events
   }    // end sequences
+
+  free(R2);
+  free(R4);
+  free(R2_temp);
+  free(R4_temp);
 
   /* ---------------------------------------------------------------------
    *              Calculating the tent for every sideband
@@ -394,13 +412,10 @@ void mrsimulator_core(
     double coordinates_offset,  // The start of the frequency spectrum.
     double increment,           // The increment of the frequency spectrum.
     int count,                  // Number of points on the frequency spectrum.
-    isotopomer_ravel *ravel_isotopomer,    // SpinSystem structure
-    MRS_sequence *the_sequence,            // the sequences in the method.
-    int n_sequence,                        // The number of sequence.
-    int quad_second_order,                 // Quad theory for second order,
-    bool remove_2nd_order_quad_isotropic,  // remove the isotropic
-                                           // contribution from the second
-                                           // order quad interaction.
+    isotopomer_ravel *ravel_isotopomer,  // SpinSystem structure
+    MRS_sequence *the_sequence,          // the sequences in the method.
+    int n_sequence,                      // The number of sequence.
+    int quad_second_order,               // Quad theory for second order,
 
     // spin rate, spin angle and number spinning sidebands
     unsigned int number_of_sidebands,        // The number of sidebands
@@ -414,7 +429,7 @@ void mrsimulator_core(
     int integration_density,          // The number of triangle along the edge
                                       // of octahedron
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
-    bool interpolation, double *affine_matrix) {
+    bool interpolation, bool *freq_contrib, double *affine_matrix) {
   // int num_process = openblas_get_num_procs();
   // int num_threads = openblas_get_num_threads();
   // // openblas_set_num_threads(1);
@@ -448,16 +463,11 @@ void mrsimulator_core(
 
       ravel_isotopomer,  // isotopomer structure
 
-      remove_2nd_order_quad_isotropic,  // remove the isotropic contribution
-                                        // from the second order quad
-                                        // Hamiltonian.
-
-      // Pointer to the transitions. transition[0] = mi and transition[1] =
-      // mf
+      // Pointer to the transitions.
       transition,
 
       the_sequence, n_sequence, fftw_scheme, scheme, interpolation,
-      affine_matrix);
+      freq_contrib, affine_matrix);
 
   // gettimeofday(&end, NULL);
   // clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +
