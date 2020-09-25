@@ -9,8 +9,8 @@ Protein GB1, 13C and 15N (I=1/2)
 # %%
 # The following is the spinning sideband simulation of a macromolecule, protein GB1. The
 # :math:`^{13}\text{C}` and :math:`^{15}\text{N}` CSA tensor parameters were obtained
-# from Hung `et. al.` [#f1]_, which consists of 44 :math:`^{13}\text{C}\alpha`,
-# 44 :math:`^{13}\text{CO}`, and 50 :math:`^{15}\text{NH}` tensors. In the following
+# from Hung `et. al.` [#f1]_, which consists of 42 :math:`^{13}\text{C}\alpha`,
+# 44 :math:`^{13}\text{CO}`, and 44 :math:`^{15}\text{NH}` tensors. In the following
 # example, instead of creating 130 spin systems, we download the spin systems from
 # a remote file and load it directly to the Simulator object.
 import matplotlib as mpl
@@ -30,6 +30,7 @@ sim = Simulator()
 
 filename = "https://bit.ly/2RFKYke"
 sim.load_spin_systems(filename)  # load the spin systems.
+print(f"number of spin systems = {len(sim.spin_systems)}")
 
 # %%
 # Create a :math:`^{13}\text{C}` Bloch decay spectrum method.

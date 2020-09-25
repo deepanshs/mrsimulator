@@ -69,8 +69,9 @@ def MQ_VAS_(mq=1.5, name="MQ_MAS", spectral_dimensions=[{}, {}], **kwargs):
     method.spectral_dimensions[0].events[0].transition_query.P = {"channel-1": [[P]]}
 
     # Add the affine matrix
-    k = k_MQ_MAS[nQ][spin]
-    method.affine_matrix = [1 / (1 + k), k / (1 + k), 0, 1]
+    if method.affine_matrix is None:
+        k = k_MQ_MAS[nQ][spin]
+        method.affine_matrix = [1 / (1 + k), k / (1 + k), 0, 1]
 
     method.description = f"Simulate a {nQ}Q variable-angle spinning spectrum."
     return method
@@ -109,10 +110,6 @@ def ThreeQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
     return MQ_VAS_(
         mq=1.5, name="ThreeQ_VAS", spectral_dimensions=spectral_dimensions, **kwargs
     )
-    # def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
-    #     return super().__new__(
-    #         self, mq=1.5, spectral_dimensions=spectral_dimensions, **kwargs
-    #     )
 
 
 def FiveQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
@@ -147,10 +144,6 @@ def FiveQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
     return MQ_VAS_(
         mq=2.5, name="FiveQ_VAS", spectral_dimensions=spectral_dimensions, **kwargs
     )
-    # def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
-    #     return super().__new__(
-    #         self, mq=2.5, spectral_dimensions=spectral_dimensions, **kwargs
-    #     )
 
 
 def SevenQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
@@ -185,7 +178,3 @@ def SevenQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
     return MQ_VAS_(
         mq=3.5, name="SevenQ_VAS", spectral_dimensions=spectral_dimensions, **kwargs
     )
-    # def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
-    #     return super().__new__(
-    #         self, mq=3.5, spectral_dimensions=spectral_dimensions, **kwargs
-    #     )

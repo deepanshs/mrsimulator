@@ -122,7 +122,7 @@ def test_ThreeQ_VAS_spin_3halves():
 
     data = sim.methods[0].simulation
     dat = data.dependent_variables[0].components[0]
-    index = np.where(dat == dat.max())
+    index = np.where(dat == dat.max())[0]
 
     # The isotropic coordinate of this peak is given by
     # v_iso = (17/8)*iso_shift + 1e6/8 * (vq/v0)^2 * (eta^2 / 3 + 1)
@@ -185,7 +185,7 @@ def test_MQMAS_spin_5halves():
 
     data = sim.methods[0].simulation
     dat = data.dependent_variables[0].components[0]
-    index = np.where(dat == dat.max())
+    index = np.where(dat == dat.max())[0]
 
     # The isotropic coordinate of this peak is given by
     # v_iso = -(17/31)*iso_shift + 8e6/93 * (vq/v0)^2 * (eta^2 / 3 + 1)

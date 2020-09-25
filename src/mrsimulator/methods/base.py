@@ -70,9 +70,11 @@ def Method2D(spectral_dimensions=[{}, {}], **kwargs):
                 if "transition_query" in evt.keys():
                     t_query = evt["transition_query"]
                     if "P" in t_query.keys():
-                        t_query["P"] = {"channel-1": [[i] for i in t_query["P"]]}
+                        if isinstance(t_query["P"], list):
+                            t_query["P"] = {"channel-1": [[i] for i in t_query["P"]]}
                     if "D" in t_query.keys():
-                        t_query["D"] = {"channel-1": [[i] for i in t_query["D"]]}
+                        if isinstance(t_query["D"], list):
+                            t_query["D"] = {"channel-1": [[i] for i in t_query["D"]]}
 
     Method2d_ = generate_method_from_template(deepcopy(METHODS_DATA["Method2D"]))
     return Method2d_(spectral_dimensions, **kwargs)

@@ -56,8 +56,9 @@ def ST_VAS_(st=1.5, name="ST_MAS", spectral_dimensions=[{}, {}], **kwargs):
     method.spectral_dimensions[0].events[0].transition_query.D = {"channel-1": D}
 
     # Add the affine matrix
-    k = k_ST_MAS[int(2 * st)][spin]
-    method.affine_matrix = [1 / (1 + k), k / (1 + k), 0, 1]
+    if method.affine_matrix is None:
+        k = k_ST_MAS[int(2 * st)][spin]
+        method.affine_matrix = [1 / (1 + k), k / (1 + k), 0, 1]
 
     method.description = (
         f"Simulate a {st} -> {st-1} and {-st+1} -> {-st} satellite-transition "

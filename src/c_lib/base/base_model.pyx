@@ -399,7 +399,7 @@ def one_d_spectrum(method,
                     temp = temp[::-1]
 
             if decompose_spectrum == 1:
-                amp_individual.append(temp)
+                amp_individual.append(temp.reshape(method.shape()))
             else:
                 amp1 += temp
         else:
@@ -408,6 +408,8 @@ def one_d_spectrum(method,
 
     if decompose_spectrum == 1 and len(amp_individual) != 0:
         amp1 = amp_individual
+    else:
+        amp1.shape = method.shape()
 
     clib.MRS_free_sequence(the_sequence, n_sequence)
     clib.MRS_free_averaging_scheme(the_averaging_scheme)

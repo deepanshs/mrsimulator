@@ -107,7 +107,7 @@ class Method(Parseable):
     label: str = None
     description: str = None
     channels: List[str] = []
-    spectral_dimensions: List[SpectralDimension] = [{}]
+    spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
     affine_matrix: Union[np.ndarray, List] = None
     simulation: Union[cp.CSDM, np.ndarray] = None
     experiment: Union[cp.CSDM, np.ndarray] = None
@@ -274,3 +274,16 @@ class Method(Parseable):
             )
             for item in segments
         ]
+
+    def shape(self):
+        """The shape of the method's spectral dimension array.
+
+        Returns: list
+
+        Example:
+            >>> from mrsimulator.methods import Method2D
+            >>> method = Method2D(spectral_dimensions=[{'count': 40}, {'count': 10}])
+            >>> method.shape()
+            [40, 10]
+        """
+        return [item.count for item in self.spectral_dimensions]
