@@ -537,8 +537,8 @@ void MRS_rotate_components_from_PAS_to_common_frame(
         &ravel_isotopomer->shielding_orientation[3 * site], *mf, *mi);
 
     // in-place update the R0 and R2 components.
-    if (freq_contrib++) *R0 += *R0_temp;
-    if (freq_contrib++) {
+    if (*freq_contrib++) *R0 += *R0_temp;
+    if (*freq_contrib++) {
       vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
     }
     /* ===================================================================== */
@@ -546,7 +546,7 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     /* Electric quadrupolar components ===================================== */
     if (ravel_isotopomer->spin[site] > 0.5) {
       /*  Upto the first order */
-      if (freq_contrib++) {
+      if (*freq_contrib++) {
         FCF_1st_order_electric_quadrupole_tensor_components(
             R2_temp, ravel_isotopomer->spin[site],
             ravel_isotopomer->quadrupolar_Cq_in_Hz[site],
@@ -567,14 +567,14 @@ void MRS_rotate_components_from_PAS_to_common_frame(
             &ravel_isotopomer->quadrupolar_orientation[3 * site], *mf, *mi);
 
         // in-place update the R0 component.
-        if (freq_contrib++) *R0 += *R0_temp;
+        if (*freq_contrib++) *R0 += *R0_temp;
 
         // in-place update the R2 components.
-        if (freq_contrib++) {
+        if (*freq_contrib++) {
           vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
         }
         // in-place update the R4 components.
-        if (freq_contrib++) {
+        if (*freq_contrib++) {
           vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
         }
       }

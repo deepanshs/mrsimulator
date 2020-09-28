@@ -75,7 +75,7 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
                                              double *affine_matrix) {
   unsigned int i, k, j, evt;
   unsigned int step_vector_i = 0, step_vector_k = 0, address;
-  MRS_plan *plan;
+  MRS_plan *planA, *planB;
   MRS_event *event;
   int size = scheme->total_orientations * number_of_sidebands;
   double *freq_ampA = malloc_double(size);
@@ -119,7 +119,7 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
   offset0 = the_sequence[0].R0_offset;
   for (evt = 0; evt < the_sequence[0].n_events; evt++) {
     event = &the_sequence[0].events[evt];
-    plan = event->plan;
+    planA = event->plan;
     // offset0 += plan->R0_offset;
     vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_ampA, 1);
   }
@@ -127,20 +127,21 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
   offset1 = the_sequence[1].R0_offset;
   for (evt = 0; evt < the_sequence[1].n_events; evt++) {
     event = &the_sequence[1].events[evt];
-    plan = event->plan;
+    planB = event->plan;
     // offset1 += plan->R0_offset;
     vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_ampB, 1);
   }
 
   for (j = 0; j < scheme->octant_orientations; j++) {
-    cblas_dscal(plan->n_octants * number_of_sidebands, plan->norm_amplitudes[j],
-                &freq_ampB[j], scheme->octant_orientations);
+    cblas_dscal(planA->n_octants * number_of_sidebands,
+                planA->norm_amplitudes[j], &freq_ampB[j],
+                scheme->octant_orientations);
   }
 
   for (i = 0; i < number_of_sidebands; i++) {
-    offsetA = offset0 + plan->vr_freq[i] * the_sequence[0].inverse_increment;
+    offsetA = offset0 + planA->vr_freq[i] * the_sequence[0].inverse_increment;
     for (k = 0; k < number_of_sidebands; k++) {
-      offsetB = offset1 + plan->vr_freq[k] * the_sequence[1].inverse_increment;
+      offsetB = offset1 + planB->vr_freq[k] * the_sequence[1].inverse_increment;
 
       norm0 = offsetA;
       norm1 = offsetB;
@@ -171,7 +172,7 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
           step_vector_k = k * scheme->total_orientations;
 
           // step_vector = 0;
-          for (j = 0; j < plan->n_octants; j++) {
+          for (j = 0; j < planA->n_octants; j++) {
             address = j * scheme->octant_orientations;
             // Add offset(isotropic + sideband_order) to the local frequency
             // from [n to n+octant_orientation]
@@ -251,6 +252,7 @@ void __mrsimulator_core(
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
   bool refresh;
+  bool *freq_contrib_ptr = freq_contrib;
   unsigned int evt;
   int seq;
   double B0_in_T, fraction;
@@ -296,8 +298,10 @@ void __mrsimulator_core(
           R2_temp,                  // the temporary R2 components
           R4_temp,                  // the temporary R4 components
           B0_in_T,                  // magnetic flux density in T
-          freq_contrib              // the pointer to freq contribs boolean
+          freq_contrib_ptr          // the pointer to freq contribs boolean
       );
+
+      freq_contrib_ptr += 6;
 
       // Add a loop over all couplings.. here
       /* Get frequencies and amplitudes per octant ......................... */

@@ -28,7 +28,7 @@ def test_01():
 
 
 def test_02():
-    e = "`rotor_frequency` attribute cannot be modified for Method2D class."
+    e = "`rotor_frequency` attribute cannot be modified for Method2D method."
     with pytest.raises(AttributeError, match=f".*{e}.*"):
         Method2D(channels=["87Rb"], rotor_frequency=10, spectral_dimensions=[{}, {}])
 

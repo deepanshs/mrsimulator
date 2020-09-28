@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from .base import check_transition_query
-from .base import Method2D
+from . import base as bs
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -56,8 +55,8 @@ def MQ_VAS_(mq=1.5, name="MQ_MAS", spectral_dimensions=[{}, {}], **kwargs):
         A :class:`~mrsimulator.Method` instance.
     """
 
-    check_transition_query(name, spectral_dimensions)
-    method = Method2D(spectral_dimensions, name=name, **kwargs)
+    bs.check_for_transition_query(name, spectral_dimensions)
+    method = bs.Method2D(spectral_dimensions, name=name, **kwargs)
 
     spin = method.channels[0].spin
 

@@ -80,7 +80,11 @@ def Method2D(spectral_dimensions=[{}, {}], **kwargs):
     return Method2d_(spectral_dimensions, **kwargs)
 
 
-def check_transition_query(name, spectral_dimensions=[{}, {}]):
+def message(attr, name):
+    return f"`{attr}` attribute cannot be modified for {name} method."
+
+
+def check_for_transition_query(name, spectral_dimensions=[{}, {}]):
     check = [
         "transition_query" in event.keys()
         for item in spectral_dimensions
@@ -89,6 +93,11 @@ def check_transition_query(name, spectral_dimensions=[{}, {}]):
     ]
 
     if np.any(check):
-        raise AttributeError(
-            f"`transition_query` attribute cannot be modified for {name} class."
-        )
+        raise AttributeError(message("transition_query", name))
+
+
+def check_for_events(name, spectral_dimensions=[{}, {}]):
+    check = ["events" in item.keys() for item in spectral_dimensions]
+
+    if np.any(check):
+        raise AttributeError(message("events", name))

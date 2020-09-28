@@ -14,7 +14,7 @@ names = ["ST1_VAS", "ST2_VAS"]
 
 def test_ST_VAS_rotor_freq():
     def error(name):
-        return f"`rotor_frequency` attribute cannot be modified for {name} class."
+        return f"`rotor_frequency` attribute cannot be modified for {name} method."
 
     for name, method in zip(names, methods):
         e = error(name)
@@ -24,7 +24,7 @@ def test_ST_VAS_rotor_freq():
 
 def test_ST_VAS_setting_transition_query():
     def error(name):
-        return f"`transition_query` attribute cannot be modified for {name} class."
+        return f"`transition_query` attribute cannot be modified for {name} method."
 
     for name, method in zip(names, methods):
         e = error(name)

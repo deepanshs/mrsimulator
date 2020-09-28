@@ -97,7 +97,7 @@ def generate_method_from_template(template):
 
         if common != set():
             info = "`, `".join(list(common))
-            e = f"`{info}` attribute cannot be modified for {prep['name']} class."
+            e = f"`{info}` attribute cannot be modified for {prep['name']} method."
             raise AttributeError(e)
 
         dim = []
