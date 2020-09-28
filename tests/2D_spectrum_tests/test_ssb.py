@@ -7,8 +7,6 @@ from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.methods import SSB2D
 
-# default unit of isotropic_chemical_shift and zeta is ppm.
-
 
 def SSB2D_setup(ist, vr):
     sites = [

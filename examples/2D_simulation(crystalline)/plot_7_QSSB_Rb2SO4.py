@@ -22,7 +22,7 @@ from mrsimulator.methods import SSB2D
 font = {"size": 9}
 mpl.rc("font", **font)
 mpl.rcParams["figure.figsize"] = [4.5, 3.0]
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 1
 
 # %%
 # Generate the site and spin system objects.
