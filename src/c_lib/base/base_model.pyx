@@ -391,13 +391,6 @@ def one_d_spectrum(method,
 
             temp = amp*abundance/norm
 
-            ## reverse the spectrum if gyromagnetic ratio is positive.
-            if gyromagnetic_ratio < 0:
-                if total_n_points % 2 == 0:
-                    temp[1:] = temp[1:][::-1]
-                else:
-                    temp = temp[::-1]
-
             if decompose_spectrum == 1:
                 amp_individual.append(temp.reshape(method.shape()))
             else:
@@ -406,10 +399,16 @@ def one_d_spectrum(method,
             if decompose_spectrum == 1:
                 amp_individual.append([])
 
+    # reverse the spectrum if gyromagnetic ratio is positive.
     if decompose_spectrum == 1 and len(amp_individual) != 0:
-        amp1 = amp_individual
+        if gyromagnetic_ratio < 0:
+            amp1 = [np.fft.fftn(np.fft.ifftn(item).conj()).real for item in amp_individual]
+        else:
+            amp1 = amp_individual
     else:
         amp1.shape = method.shape()
+        if gyromagnetic_ratio < 0:
+            amp1 = np.fft.fftn(np.fft.ifftn(amp1).conj()).real
 
     clib.MRS_free_sequence(the_sequence, n_sequence)
     clib.MRS_free_averaging_scheme(the_averaging_scheme)

@@ -150,7 +150,6 @@ Our current objectives are the following
     - at arbitrary spinning frequency.
 
 - Expand the library of NMR methods. We expect to include the following methods
-
     - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT), and
     - 2D Magic Angle Flipping (MAF).
 
