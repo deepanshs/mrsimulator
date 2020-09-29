@@ -17,11 +17,11 @@ dependencies:
       - pydantic>=1.0
       - typing-extensions>=3.7
       - flake8
+      - lmfit>=1.0.0
       # for testing
       - pytest
       - pytest-cov
       - sympy
-      - lmfit>=1.0.0
       # building docs
       - sphinx>=2.0
       - sphinxjp.themes.basicstrap
