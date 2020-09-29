@@ -122,7 +122,7 @@ class SpinSystem(Parseable):
 
             .. seealso::
                 `Fitting example
-                <./../auto_examples/Fitting/plot_2_mrsimFitExample_O17.html>`_
+                <./../examples/Fitting/plot_2_mrsimFitExample_O17.html>`_
     """
 
     name: str = None

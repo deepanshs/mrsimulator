@@ -30,7 +30,7 @@ of the `mrsimulator` library is written in C, wrapped, and made available in pyt
 
 > **View our example gallery**
 >
-> [![](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/latest/auto_examples/index.html)
+> [![](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/latest/examples/index.html)
 
 ### Features
 

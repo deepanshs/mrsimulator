@@ -51,8 +51,16 @@ qmat = SSB2D(
     magnetic_flux_density=9.4,
     rotor_frequency=2604,
     spectral_dimensions=[
-        {"count": 32 * 4, "spectral_width": 2604 * 32},  # width value in Hz
-        {"count": 512, "spectral_width": 50000},  # width value in Hz
+        {
+            "count": 32 * 4,
+            "spectral_width": 2604 * 32,  # in Hz
+            "label": "Anisotropic dimension",
+        },
+        {
+            "count": 512,
+            "spectral_width": 50000,  # in Hz
+            "label": "High speed MAS dimension",
+        },
     ],
 )
 
@@ -62,6 +70,11 @@ qmat = SSB2D(
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
 sim.methods = [qmat]  # add the method.
+
+# For 2D spinning sideband simulation, set the number of spinning sidebands in the
+# Simulator.config object to `spectral_width/rotor_frequency` along the sideband
+# dimension.
+sim.config.number_of_sidebands = 32
 sim.run()
 
 # %%

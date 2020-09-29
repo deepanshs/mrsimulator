@@ -112,29 +112,41 @@ warnings.filterwarnings(
 
 # sphinx gallery config
 sphinx_gallery_conf = {
-    "examples_dirs": "../examples",  # path to your example scripts
+    "examples_dirs": "../examples_source",  # path to your example scripts
     "remove_config_comments": True,
-    "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
+    "gallery_dirs": "examples",  # path to where to save gallery generated output
     "within_subsection_order": FileNameSortKey,
     # "show_memory": True,
     # "line_numbers": True,
     "subsection_order": ExplicitOrder(
         [
-            "../examples/1D_simulation(crystalline)",
-            "../examples/1D_simulation(macro_amorphous)",
-            "../examples/Fitting",
-            "../examples/2D_simulation(crystalline)",
-            "../examples/2D_simulation(macro_amorphous)",
+            "../examples_source/1D_simulation(crystalline)",
+            "../examples_source/1D_simulation(macro_amorphous)",
+            "../examples_source/Fitting",
+            "../examples_source/2D_simulation(crystalline)",
+            "../examples_source/2D_simulation(macro_amorphous)",
         ]
     ),
     "reference_url": {
         # The module you locally document uses None
         "mrsimulator": None
     },
-    "backreferences_dir": "auto_examples",
-    "doc_module": ("mrsimulator")
+    "backreferences_dir": "examples",
+    "doc_module": ("mrsimulator"),
     # "compress_images": ("images", "thumbnails"),
     # "show_memory": True,
+    "binder": {
+        # Required keys
+        "org": "DeepanshS",
+        "repo": "mrsimulator",
+        "branch": "master",
+        "binderhub_url": "https://mybinder.org",
+        "dependencies": "../environment.yml",
+        # Optional keys
+        # 'filepath_prefix': '<prefix>'
+        # "notebooks_dir": "notebooks/",
+        "use_jupyter_lab": True,
+    },
 }
 
 intersphinx_mapping = {

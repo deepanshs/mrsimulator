@@ -59,6 +59,11 @@ PASS = SSB2D(
 )
 sim.methods = [PASS]  # add the method.
 
+# For 2D spinning sideband simulation, set the number of spinning sidebands in the
+# Simulator.config object to `spectral_width/rotor_frequency` along the sideband
+# dimension.
+sim.config.number_of_sidebands = 20
+
 # run the simulation.
 sim.run()
 

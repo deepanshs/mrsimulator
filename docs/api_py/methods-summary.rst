@@ -5,8 +5,20 @@ Methods
 
 .. currentmodule:: mrsimulator.methods
 
-The following are the list of methods currently offers in ``mrsimulator`` as a part
-of the ``mrsimulator.methods`` module.
+The following are the list of methods currently supported by ``mrsimulator`` as a part
+of the ``mrsimulator.methods`` module. To import a method, for example the
+`BlochDecaySpectrum`, used
+
+.. doctest::
+
+    >>> from mrsimulator.methods import BlochDecaySpectrum
+
+All methods categorize into two groups, generic and specialized methods. A generic
+method is general and bases itself on the number of spectral dimensions. At present,
+there are two generic methods. All specialized methods are derived from their respective
+generic method objects. The purpose of the specialized methods is to facilitate user ease
+when setting up some commonly used methods, such as MQMAS, STMAS, PASS, MAT, etc.
+
 
 Generic methods
 ---------------
@@ -18,9 +30,16 @@ Generic methods
 Specialized methods
 -------------------
 
+Specialized one-dimensional methods
+'''''''''''''''''''''''''''''''''''
+
 .. autosummary::
     ~BlochDecaySpectrum
     ~BlochDecayCentralTransitionSpectrum
+
+
+Specialized two-dimensional methods
+'''''''''''''''''''''''''''''''''''
 
 .. _mqvas_ref:
 

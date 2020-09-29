@@ -110,7 +110,7 @@ the ``mrsimulator`` library is written in C, wrapped, and made available in pyth
     **View our example gallery**
 
     .. image:: https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small
-        :target: auto_examples/index.html
+        :target: examples/index.html
 
 ----
 
@@ -210,7 +210,7 @@ Examples and Benchmarks
     :maxdepth: 2
     :caption: Examples and Benchmarks
 
-    auto_examples/index
+    examples/index
     benchmark
 
 Theory
@@ -263,7 +263,7 @@ Project details
 .. 		load_sample
 .. 		configuring_simulator
 .. 		benchmark
-.. 		auto_examples/index
+.. 		examples/index
 .. 		theory/components
 .. 		api_py/py_api
 .. 		api_c/c_api
