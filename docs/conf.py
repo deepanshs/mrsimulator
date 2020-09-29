@@ -64,6 +64,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx_tabs.tabs",
     "sphinx.ext.todo",
+    "recommonmark",
 ]
 
 # generate autosummary even if no references
@@ -135,6 +136,13 @@ sphinx_gallery_conf = {
     "doc_module": ("mrsimulator"),
     # "compress_images": ("images", "thumbnails"),
     # "show_memory": True,
+    "first_notebook_cell": (
+        "# This cell is added by sphinx-gallery\n\n"
+        "%matplotlib inline\n"
+        "!pip install mrsimulator -q\n\n"
+        "import mrsimulator\n"
+        "print(f'You are using mrsimulator v{mrsimulator.__version__}')"
+    ),
     "binder": {
         # Required keys
         "org": "DeepanshS",
@@ -202,7 +210,11 @@ templates_path = ["_templates"]
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = ".rst"
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".txt": "markdown",
+    ".md": "markdown",
+}
 
 # The master toctree document.
 master_doc = "index"

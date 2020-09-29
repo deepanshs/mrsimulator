@@ -25,3 +25,4 @@ pillow>=7.1.2  # for sphinx-gallery images
 breathe>=4.19
 sphinx_copybutton>=0.3.0
 sphinx-tabs>=1.1.13
+recommonmark
