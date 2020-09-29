@@ -141,7 +141,7 @@ sphinx_gallery_conf = {
         "repo": "mrsimulator",
         "branch": "local",
         "binderhub_url": "https://mybinder.org",
-        "dependencies": "../environment.yml",
+        "dependencies": "../requirements.txt",
         # Optional keys
         "filepath_prefix": "docs/_build/html",
         "notebooks_dir": "../../notebooks",

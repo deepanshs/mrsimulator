@@ -17,4 +17,3 @@ dependencies:
       - pydantic>=1.0
       - typing-extensions>=3.7
       - lmfit>=1.0.0
-      - setup.py
