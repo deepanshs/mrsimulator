@@ -36,6 +36,7 @@ repos:
         language: python
       - id: end-of-file-fixer
         language: python
+        exclude: docs/notebooks/
       - id: trailing-whitespace
         language: python
         types: [text]
