@@ -14,9 +14,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
-from mrsimulator import Simulator
-from mrsimulator import Site
-from mrsimulator import SpinSystem
+from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
 # global plot configuration

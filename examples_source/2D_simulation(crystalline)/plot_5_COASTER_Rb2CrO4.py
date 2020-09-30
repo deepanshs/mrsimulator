@@ -16,9 +16,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
-from mrsimulator import Simulator
-from mrsimulator import Site
-from mrsimulator import SpinSystem
+from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
 
 # global plot configuration
@@ -37,7 +35,7 @@ site = Site(
         "Cq": 3.5e6,  # in Hz
         "eta": 0.36,
         "alpha": 0,  # in rads
-        "beta": 70 * 3.1415 / 180,  # in rads
+        "beta": 70 * 3.14159 / 180,  # in rads
         "gamma": 0,  # in rads
     },
 )
@@ -50,7 +48,7 @@ spin_system = SpinSystem(sites=[site])
 coaster = Method2D(
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
-    rotor_angle=70.12 * 3.1415 / 180,  # in rads
+    rotor_angle=70.12 * 3.14159 / 180,  # in rads
     spectral_dimensions=[
         {
             "count": 256,

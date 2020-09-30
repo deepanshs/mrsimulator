@@ -132,7 +132,7 @@ def test_04():
 
 
 def test_5():
-    # make_LMFIT_parameters
+    # make_LMFIT_params
     sim = Simulator()
 
     H = {
@@ -161,13 +161,13 @@ def test_5():
 
     e = "Expecting a `Simulator` object, found"
     with pytest.raises(ValueError, match=f".*{e}.*"):
-        sf.make_LMFIT_parameters(12, 21)
+        sf.make_LMFIT_params(12, 21)
 
     e = "Expecting a `SignalProcessor` object, found"
     with pytest.raises(ValueError, match=f".*{e}.*"):
-        sf.make_LMFIT_parameters(sim, 21)
+        sf.make_LMFIT_params(sim, 21)
 
-    params = sf.make_LMFIT_parameters(sim, post_sim)
+    params = sf.make_LMFIT_params(sim, post_sim)
     valuesdict = {
         "sys_0_site_0_isotropic_chemical_shift": 10,
         "sys_0_site_0_shielding_symmetric_zeta": 5,
@@ -182,7 +182,7 @@ def test_5():
     }
     assert params.valuesdict() == valuesdict, "Parameter creation failed"
 
-    params = sf.make_LMFIT_parameters(sim)
+    params = sf.make_LMFIT_params(sim)
     valuesdict = {
         "sys_0_site_0_isotropic_chemical_shift": 10,
         "sys_0_site_0_shielding_symmetric_zeta": 5,

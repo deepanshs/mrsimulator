@@ -15,8 +15,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from mrsimulator import Simulator
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.methods import BlochDecaySpectrum, BlochDecayCentralTransitionSpectrum
 from mrsimulator.models import ExtCzjzekDistribution
 from mrsimulator.utils.collection import single_site_system_generator
 

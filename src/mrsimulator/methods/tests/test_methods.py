@@ -164,11 +164,11 @@ def test_methods():
                 "label": "70.12 dimension",
                 "events": [
                     {
-                        "rotor_angle": 70.12 * 3.1415 / 180,  # in rads
+                        "rotor_angle": 70.12 * 3.14159 / 180,  # in rads
                         "transition_query": {"P": [-1], "D": [0]},
                     },
                     {
-                        "rotor_angle": 30.12 * 3.1415 / 180,  # in rads
+                        "rotor_angle": 30.12 * 3.14159 / 180,  # in rads
                         "transition_query": {"P": [-1], "D": [0]},
                     },
                 ],
@@ -181,7 +181,7 @@ def test_methods():
                 "label": "MAS dimension",
                 "events": [
                     {
-                        "rotor_angle": 54.735 * 3.1415 / 180,  # in rads
+                        "rotor_angle": 54.735 * 3.14159 / 180,  # in rads
                         "transition_query": {"P": [-1], "D": [0]},
                     }
                 ],

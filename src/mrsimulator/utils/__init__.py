@@ -31,6 +31,8 @@ def get_spectral_dimensions(csdm_object):
         else:
             dim_i["reference_offset"] = coordinates_offset + spectral_width / 2.0
 
+        if dim.label != "":
+            dim_i["label"] = dim.label
         result.append(dim_i)
 
-    return result
+    return result[::-1]

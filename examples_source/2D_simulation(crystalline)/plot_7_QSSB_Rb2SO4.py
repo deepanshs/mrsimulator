@@ -13,9 +13,7 @@ simulation.
 # spectrum. The parameters for the simulation are obtained from Walder `et. al.` [#f1]_.
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from mrsimulator import Simulator
-from mrsimulator import Site
-from mrsimulator import SpinSystem
+from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import SSB2D
 
 # global plot configuration

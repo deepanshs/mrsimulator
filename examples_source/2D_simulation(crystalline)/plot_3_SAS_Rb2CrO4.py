@@ -16,10 +16,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
-import numpy as np
-from mrsimulator import Simulator
-from mrsimulator import Site
-from mrsimulator import SpinSystem
+from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
 
 # global plot configuration
@@ -38,7 +35,7 @@ site = Site(
         "Cq": 3.5e6,  # in Hz
         "eta": 0.3,
         "alpha": 0,  # in rads
-        "beta": 70 * np.pi / 180,  # in rads
+        "beta": 70 * 3.14159 / 180,  # in rads
         "gamma": 0,  # in rads
     },
 )
@@ -57,14 +54,14 @@ sas = Method2D(
             "spectral_width": 1.5e4,  # in Hz
             "reference_offset": -5e3,  # in Hz
             "label": "70.12 dimension",
-            "events": [{"rotor_angle": 70.12 * np.pi / 180}],  # in radians
+            "events": [{"rotor_angle": 70.12 * 3.14159 / 180}],  # in radians
         },
         {
             "count": 512,
             "spectral_width": 15e3,  # in Hz
             "reference_offset": -7e3,  # in Hz
             "label": "MAS dimension",
-            "events": [{"rotor_angle": 54.74 * np.pi / 180}],  # in radians
+            "events": [{"rotor_angle": 54.74 * 3.14159 / 180}],  # in radians
         },
     ],
 )

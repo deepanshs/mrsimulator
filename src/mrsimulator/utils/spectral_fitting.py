@@ -233,7 +233,7 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
             post_sim.operations[opIndex].__setattr__(POST_SIM_DICT[split_name[2]], val)
 
 
-def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
+def make_LMFIT_params(sim, post_sim=None, exclude_key=None):
     """
     Parses the Simulator and PostSimulator objects for a list of LMFIT parameters.
     The parameter name is generated using the following syntax:

@@ -53,8 +53,8 @@ def test_DAS():
                 "reference_offset": 0,  # in Hz
                 "label": "DAS isotropic dimension",
                 "events": [
-                    {"fraction": 0.5, "rotor_angle": 37.38 * 3.1415 / 180},
-                    {"fraction": 0.5, "rotor_angle": 79.19 * 3.1415 / 180},
+                    {"fraction": 0.5, "rotor_angle": 37.38 * 3.14159 / 180},
+                    {"fraction": 0.5, "rotor_angle": 79.19 * 3.14159 / 180},
                 ],
             },
             # The last spectral dimension block is the direct-dimension
@@ -63,7 +63,7 @@ def test_DAS():
                 "spectral_width": 2e4,  # in Hz
                 "reference_offset": 0,  # in Hz
                 "label": "MAS dimension",
-                "events": [{"rotor_angle": 54.735 * 3.1415 / 180}],
+                "events": [{"rotor_angle": 54.735 * 3.14159 / 180}],
             },
         ],
     )
@@ -82,7 +82,7 @@ def test_DAS():
         channels=["17O"],
         magnetic_flux_density=B0,  # in T
         rotor_frequency=1e9,  # in Hz
-        rotor_angle=54.735 * 3.1415 / 180,
+        rotor_angle=54.735 * 3.14159 / 180,
         spectral_dimensions=[
             {
                 "count": 2048,

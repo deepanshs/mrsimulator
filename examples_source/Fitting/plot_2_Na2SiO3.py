@@ -22,15 +22,11 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
-from lmfit import Minimizer
-from lmfit import report_fit
-from mrsimulator import Simulator
-from mrsimulator import Site
-from mrsimulator import SpinSystem
+from lmfit import Minimizer, report_fit
+from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 from mrsimulator.utils import get_spectral_dimensions
-from mrsimulator.utils.spectral_fitting import LMFIT_min_function
-from mrsimulator.utils.spectral_fitting import make_LMFIT_parameters
+from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
 
 font = {"size": 9}
 mpl.rc("font", **font)
@@ -168,14 +164,14 @@ plt.show()
 # `Parameters <https://lmfit.github.io/lmfit-py/parameters.html>`_ class from *LMFIT*,
 # as described in the previous example.
 # Here, we make use of a utility function,
-# :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_parameters`, that considerably
+# :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params`, that considerably
 # simplifies the LMFIT parameters generation process.
 #
 # **Step 7:** Create a list of parameters.
-params = make_LMFIT_parameters(sim, processor)
+params = make_LMFIT_params(sim, processor)
 
 # %%
-# The `make_LMFIT_parameters` parses the instances of the ``Simulator`` and the
+# The `make_LMFIT_params` parses the instances of the ``Simulator`` and the
 # ``PostSimulator`` objects for parameters and returns an LMFIT `Parameters` object.
 #
 # **Customize the Parameters:**

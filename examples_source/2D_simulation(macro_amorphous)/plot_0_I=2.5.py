@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Amorphous material, 27Al (I=5/2)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Czjzek distribution, 27Al (I=5/2) 3QMAS
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-27Al (I=5/2) simulation of amorphous material.
+27Al (I=5/2) 3QMAS simulation of amorphous material.
 """
 # sphinx_gallery_thumbnail_number = 2
 import matplotlib as mpl
@@ -22,7 +22,7 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # %%
 # In this section, we illustrate the simulation of a quadrupolar MQMAS spectrum arising
 # from a distribution of the electric field gradient (EFG) tensors from amorphous
-# material. We proceed by employing  the Czjzek distribution model.
+# material. We proceed by employing the Czjzek distribution model.
 
 # The range of isotropic chemical shifts, the quadrupolar coupling constant, and
 # asymmetry parameters used in generating a 3D grid.

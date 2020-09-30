@@ -13,9 +13,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
-from mrsimulator import Simulator
-from mrsimulator import Site
-from mrsimulator import SpinSystem
+from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import ST1_VAS
 
 # global plot configuration
@@ -54,7 +52,7 @@ spin_systems = [SpinSystem(sites=[s]) for s in sites]
 method = ST1_VAS(
     channels=["87Rb"],
     magnetic_flux_density=7,  # in T
-    rotor_angle=54.73 * 3.1415 / 180,  # in rad (magic angle ~ 54.735 degrees)
+    rotor_angle=54.73 * 3.14159 / 180,  # in rad (magic angle ~ 54.735 degrees)
     spectral_dimensions=[
         {
             "count": 256,

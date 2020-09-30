@@ -45,8 +45,8 @@ das = Method2D(
             "reference_offset": 0,  # in Hz
             "label": "DAS isotropic dimension",
             "events": [
-                {"fraction": 0.5, "rotor_angle": 37.38 * 3.1415 / 180},
-                {"fraction": 0.5, "rotor_angle": 79.19 * 3.1415 / 180},
+                {"fraction": 0.5, "rotor_angle": 37.38 * 3.14159 / 180},
+                {"fraction": 0.5, "rotor_angle": 79.19 * 3.14159 / 180},
             ],
         },
         # The last spectral dimension block is the direct-dimension
@@ -55,9 +55,10 @@ das = Method2D(
             "spectral_width": 2e4,  # in Hz
             "reference_offset": 0,  # in Hz
             "label": "MAS dimension",
-            "events": [{"rotor_angle": 54.735 * 3.1415 / 180}],
+            "events": [{"rotor_angle": 54.735 * 3.14159 / 180}],
         },
     ],
+    affine_matrix=[1, 0, -1, 1],
 )
 sim.methods = [das]  # add the method.
 

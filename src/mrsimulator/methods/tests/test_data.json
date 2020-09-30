@@ -230,7 +230,7 @@
                         ],
                         "magnetic_flux_density": "4.2 T",
                         "rotor_frequency": "1000000000000.0 Hz",
-                        "rotor_angle": "1.223788777777778 rad",
+                        "rotor_angle": "1.2238238377777777 rad",
                         "transition_query": {
                             "P": {
                                 "channel-1": [
@@ -257,7 +257,7 @@
                         ],
                         "magnetic_flux_density": "4.2 T",
                         "rotor_frequency": "1000000000000.0 Hz",
-                        "rotor_angle": "0.5256776666666667 rad",
+                        "rotor_angle": "0.5256927266666667 rad",
                         "transition_query": {
                             "P": {
                                 "channel-1": [
@@ -291,7 +291,7 @@
                     ],
                     "magnetic_flux_density": "4.2 T",
                     "rotor_frequency": "1000000000000.0 Hz",
-                    "rotor_angle": "0.9552777916666667 rad",
+                    "rotor_angle": "0.9553051591666667 rad",
                     "transition_query": {
                         "P": {
                             "channel-1": [
