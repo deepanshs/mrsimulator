@@ -25,12 +25,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
-from lmfit import fit_report
-from lmfit import Minimizer
-from lmfit import Parameters
-from mrsimulator import Simulator
-from mrsimulator import SpinSystem
+from mrsimulator import Simulator, SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
+from lmfit import Minimizer, Parameters, fit_report
 
 font = {"size": 9}
 mpl.rc("font", **font)

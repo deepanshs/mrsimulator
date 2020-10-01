@@ -82,7 +82,8 @@ sim.run()
 # The plot of the simulation.
 data = sim.methods[0].simulation
 ax = plt.subplot(projection="csdm")
-ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
+plt.colorbar(cb)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -104,7 +105,8 @@ processed_data /= processed_data.max()
 # %%
 # The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
-ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
+plt.colorbar(cb)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

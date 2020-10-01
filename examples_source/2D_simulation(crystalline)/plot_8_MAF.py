@@ -94,7 +94,8 @@ processed_data /= processed_data.max()
 # %%
 # The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
-ax.imshow(processed_data, aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(processed_data, aspect="auto", cmap="gist_ncar_r")
+plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()
 plt.tight_layout()

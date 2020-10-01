@@ -81,7 +81,8 @@ sim.run()
 # The plot of the simulation.
 data = sim.methods[0].simulation
 ax = plt.gca(projection="csdm")
-ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
+plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()
 plt.tight_layout()
@@ -104,7 +105,8 @@ processed_data /= processed_data.max()
 # %%
 # The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
-ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
+plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()
 plt.tight_layout()

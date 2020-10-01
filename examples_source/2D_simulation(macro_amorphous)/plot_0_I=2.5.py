@@ -113,7 +113,8 @@ data = sim.methods[0].simulation
 # %%
 # The plot of the corresponding spectrum.
 ax = plt.subplot(projection="csdm")
-ax.imshow(data / data.max(), cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(data / data.max(), cmap="gist_ncar_r", aspect="auto")
+plt.colorbar(cb)
 ax.set_ylim(-20, -50)
 ax.set_xlim(80, 20)
 plt.tight_layout()

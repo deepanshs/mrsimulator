@@ -23,3 +23,4 @@ help:
 clean:
 	rm -rf $(BUILDDIR)/*
 	rm -rf examples/
+	rm -rf fitting/

@@ -1,8 +1,8 @@
 .. _example_gallery:
 
-===============
-Example Gallery
-===============
+===================
+Simulation Examples
+===================
 
 In this section, we use the ``mrsimulator`` tools to create spin systems and
 simulations with practical/experimental applications. The examples illustrate

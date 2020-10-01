@@ -113,9 +113,12 @@ warnings.filterwarnings(
 
 # sphinx gallery config
 sphinx_gallery_conf = {
-    "examples_dirs": "../examples_source",  # path to your example scripts
+    "examples_dirs": ["../examples_source", "../fitting_source"],
     "remove_config_comments": True,
-    "gallery_dirs": "examples",  # path to where to save gallery generated output
+    "gallery_dirs": [
+        "examples",
+        "fitting",
+    ],  # path to where to save gallery generated output
     "within_subsection_order": FileNameSortKey,
     # "show_memory": True,
     # "line_numbers": True,
@@ -123,9 +126,10 @@ sphinx_gallery_conf = {
         [
             "../examples_source/1D_simulation(crystalline)",
             "../examples_source/1D_simulation(macro_amorphous)",
-            "../examples_source/Fitting",
             "../examples_source/2D_simulation(crystalline)",
             "../examples_source/2D_simulation(macro_amorphous)",
+            "../fitting_source/1D_fitting",
+            "../fitting_source/2D_fitting",
         ]
     ),
     "reference_url": {

@@ -109,8 +109,10 @@ the ``mrsimulator`` library is written in C, wrapped, and made available in pyth
 
     **View our example gallery**
 
-    .. image:: https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small
+    .. image:: https://img.shields.io/badge/View-Simulation%20Examples-Purple?s=small
         :target: examples/index.html
+    .. image:: https://img.shields.io/badge/View-Fitting%20Examples-Purple?s=small
+        :target: fitting/index.html
 
 ----
 
@@ -182,6 +184,7 @@ Getting Started
     getting_started-objects
     configuring_simulator
     mrsim_IO
+    designing_methods
 
 Signal Processing (``mrsimulator.SignalProcessor``)
 ---------------------------------------------------
@@ -211,6 +214,7 @@ Examples and Benchmarks
     :caption: Examples and Benchmarks
 
     examples/index
+    fitting/index
     benchmark
 
 Theory

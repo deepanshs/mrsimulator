@@ -79,7 +79,8 @@ sim.run()
 # The plot of the simulation.
 data = sim.methods[0].simulation
 ax = plt.subplot(projection="csdm")
-ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r", vmax=0.15)
+cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r", vmax=0.15)
+plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(200, -200)
 plt.tight_layout()

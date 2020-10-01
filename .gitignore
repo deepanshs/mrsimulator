@@ -104,6 +104,7 @@ src/c_lib/test_c/**
 tests/simpson/quad/**
 version/
 docs/examples/
+docs/fitting/
 
 # files
 class-diagram*

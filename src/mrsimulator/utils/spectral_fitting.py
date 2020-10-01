@@ -233,6 +233,11 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
             post_sim.operations[opIndex].__setattr__(POST_SIM_DICT[split_name[2]], val)
 
 
+def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
+    """An alias of `make_LMFIT_params` function."""
+    return make_LMFIT_params(sim, post_sim, exclude_key)
+
+
 def make_LMFIT_params(sim, post_sim=None, exclude_key=None):
     """
     Parses the Simulator and PostSimulator objects for a list of LMFIT parameters.
@@ -332,15 +337,13 @@ def LMFIT_min_function(params, sim, post_sim=None):
 
     if sim.config.decompose_spectrum == "spin_system":
         datum = 0
-        for decomposed_datum in processed_data.dependent_variables:
+        for decomposed_datum in processed_data.y:
             datum += decomposed_datum.components[0]
             # datum = [sum(i) for i in zip(datum, decomposed_datum)]
     else:
-        datum = processed_data.dependent_variables[0].components[0]
+        datum = processed_data.y[0].components[0]
 
-    return (
-        sim.methods[0].experiment.dependent_variables[0].components[0].real - datum.real
-    )
+    return sim.methods[0].experiment.y[0].components[0].real - datum.real
 
     # MULTIPLE EXPERIMENTS
     # for i, method in enumerate(sim.methods):
