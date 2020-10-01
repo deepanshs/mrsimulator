@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
+import csdmpy as cp
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
 import mrsimulator.utils.spectral_fitting as sf
+import numpy as np
 import pytest
+from lmfit import Parameters
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
 
 def test_str_encode():
@@ -194,3 +198,56 @@ def test_5():
         "sys_1_abundance": 37.5,
     }
     assert params.valuesdict() == valuesdict, "Parameter creation failed"
+
+    params = sf.make_LMFIT_parameters(sim)
+    valuesdict = {
+        "sys_0_site_0_isotropic_chemical_shift": 10,
+        "sys_0_site_0_shielding_symmetric_zeta": 5,
+        "sys_0_site_0_shielding_symmetric_eta": 0.1,
+        "sys_0_abundance": 62.5,
+        "sys_1_site_0_isotropic_chemical_shift": -10,
+        "sys_1_site_0_shielding_symmetric_zeta": 15,
+        "sys_1_site_0_shielding_symmetric_eta": 0.2,
+        "sys_1_abundance": 37.5,
+    }
+    assert params.valuesdict() == valuesdict, "Parameter creation failed"
+
+
+def test_6():
+    # LMFIT_min_function
+    e = "Expecting a `Parameters` object, found"
+    with pytest.raises(ValueError, match=f".*{e}.*"):
+        _ = sf.LMFIT_min_function([], [], [])
+
+    params = Parameters()
+
+    e = "Expecting a `SignalProcessor` object, found"
+    with pytest.raises(ValueError, match=f".*{e}.*"):
+        _ = sf.LMFIT_min_function(params, [], [])
+
+    processor = sp.SignalProcessor()
+    e = "Expecting a `Simulator` object, found"
+    with pytest.raises(ValueError, match=f".*{e}.*"):
+        _ = sf.LMFIT_min_function(params, [], processor)
+
+    site = Site(isotope="23Na")
+    sys = SpinSystem(sites=[site], abundance=100)
+    sim = Simulator()
+    sim.spin_systems.append(sys)
+    sim.methods = [BlochDecayCentralTransitionSpectrum(channels=["23Na"])]
+    sim.methods[0].experiment = cp.as_csdm(np.zeros(1024))
+
+    processor = sp.SignalProcessor(
+        operations=[
+            sp.IFFT(dim_index=0),
+            apo.Gaussian(FWHM="0.2 kHz", dim_index=0),
+            sp.FFT(dim_index=0),
+        ]
+    )
+
+    sim.run()
+    data = processor.apply_operations(sim.methods[0].simulation)
+
+    params = sf.make_LMFIT_params(sim, processor)
+    a = sf.LMFIT_min_function(params, sim, processor)
+    np.testing.assert_almost_equal(-a.sum(), data.sum().real, decimal=8)
