@@ -127,7 +127,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
-ax.contour(processed_data, colors="r", levels=levels, alpha=0.5, linewidths=0.5)
+ax.contour(processed_data, colors="r", levels=levels, alpha=0.75, linewidths=0.5)
 cb = ax.contour(oxygen_experiment, colors="k", levels=levels, alpha=0.5, linewidths=0.5)
 plt.colorbar(cb)
 ax.invert_xaxis()
@@ -165,7 +165,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # %%
 # Plot the spectrum
 ax = plt.subplot(projection="csdm")
-ax.contour(processed_data, colors="r", levels=levels, alpha=0.5, linewidths=0.5)
+ax.contour(processed_data, colors="r", levels=levels, alpha=0.75, linewidths=0.5)
 cb = ax.contour(oxygen_experiment, colors="k", levels=levels, alpha=0.5, linewidths=0.5)
 plt.colorbar(cb)
 ax.invert_xaxis()

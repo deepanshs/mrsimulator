@@ -78,10 +78,10 @@ def test_ST1_VAS_general():
     )
     assert mth.description == des
     assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[2], [-2]]},
+        P={"channel-1": [[-1]]}, D={"channel-1": [[2], [-2]]}
     )
     assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]},
+        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
     )
 
 
@@ -111,8 +111,8 @@ def test_ST2_VAS_general():
     )
     assert mth.description == des
     assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[4], [-4]]},
+        P={"channel-1": [[-1]]}, D={"channel-1": [[4], [-4]]}
     )
     assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]},
+        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
     )

@@ -20,7 +20,7 @@ def test_SSB_rotor_freq():
 def test_SSB_setting_events():
     e = "`events` attribute cannot be modified for SSB2D method."
     with pytest.raises(AttributeError, match=f".*{e}.*"):
-        SSB2D(spectral_dimensions=[{"events": [{}]}],)
+        SSB2D(spectral_dimensions=[{"events": [{}]}])
 
 
 def test_SSB_affine():

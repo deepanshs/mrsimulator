@@ -11,7 +11,7 @@ const = string_to_quantity("1")
 
 def _get_broadcast_shape(array, dim, ndim):
     """Return the broadcast shape of a vector `array` at dimension `dim` for `ndim`
-    total dimensions. """
+    total dimensions."""
     none = [np.newaxis for _ in range(ndim + 1)]
     if isinstance(dim, int):
         dim = [dim]

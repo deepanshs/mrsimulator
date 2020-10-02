@@ -83,8 +83,8 @@ processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
         sp.IFFT(dim_index=(0, 1)),
-        apo.Gaussian(FWHM="0.1 kHz", dim_index=0),
-        apo.Gaussian(FWHM="0.1 kHz", dim_index=1),
+        apo.Gaussian(FWHM="0.3 kHz", dim_index=0),
+        apo.Gaussian(FWHM="0.15 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
     ]
 )

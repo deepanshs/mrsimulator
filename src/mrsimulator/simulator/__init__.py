@@ -303,7 +303,7 @@ class Simulator(BaseModel):
         Args:
             list exclude: A list of keys to exclude from the dictionary.
         Return: A dict.
-         """
+        """
         return _reduce_dict(self.dict(), exclude)
 
     def load_spin_systems(self, filename: str):

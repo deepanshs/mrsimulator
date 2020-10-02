@@ -45,7 +45,7 @@ PASS = SSB2D(
     rotor_frequency=2000,
     spectral_dimensions=[
         {
-            "count": 20,
+            "count": 20 * 4,
             "spectral_width": 2000 * 20,  # value in Hz
             "label": "Anisotropic dimension",
         },
