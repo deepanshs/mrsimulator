@@ -30,7 +30,7 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # %%
 # Import the dataset
 # ------------------
-filename = "DASCoesite.csdf"
+filename = "https://osu.box.com/shared/static/htq8cq01yco32a1b9e7fi18k92qgic1g.csdf"
 oxygen_experiment = cp.load(filename)
 
 # For spectral fitting, we only focus on the real part of the complex dataset
@@ -55,7 +55,7 @@ plt.show()
 # %%
 # Create a fitting model
 # ----------------------
-# The fitting model includes the Simulator and the SignalProcessor objects. First
+# The fitting model includes the Simulator and SignalProcessor objects. First,
 # create the Simulator object.
 
 # Create the guess sites and spin systems.
@@ -109,7 +109,7 @@ sim.run()
 
 # %%
 
-# Add Post simulation processing
+# Add Post simulation processing.
 processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
@@ -120,7 +120,7 @@ processor = sp.SignalProcessor(
         sp.Scale(factor=1 / 8),
     ]
 )
-# Apply post simulation operations
+# Apply post simulation operations.
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # %%
@@ -139,7 +139,7 @@ plt.show()
 # %%
 # Least-squares minimization with LMFIT
 # -------------------------------------
-# First create the fitting parameters.
+# First, create the fitting parameters.
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup.
 params = make_LMFIT_params(sim, processor)
