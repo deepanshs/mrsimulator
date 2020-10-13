@@ -31,21 +31,21 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # Import the dataset
 # ------------------
 filename = "https://osu.box.com/shared/static/htq8cq01yco32a1b9e7fi18k92qgic1g.csdf"
-oxygen_experiment = cp.load(filename)
+experiment = cp.load(filename)
 
 # For spectral fitting, we only focus on the real part of the complex dataset
-oxygen_experiment = oxygen_experiment.real
+experiment = experiment.real
 
 # Convert the coordinates along each dimension from Hz to ppm.
-[item.to("ppm", "nmr_frequency_ratio") for item in oxygen_experiment.dimensions]
+_ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
 # Normalize the spectrum
-oxygen_experiment /= oxygen_experiment.max()
+experiment /= experiment.max()
 
 # plot of the dataset.
 levels = (np.arange(10) + 0.3) / 15  # contours are drawn at these levels.
 ax = plt.subplot(projection="csdm")
-cb = ax.contour(oxygen_experiment, colors="k", levels=levels, alpha=0.5, linewidths=0.5)
+cb = ax.contour(experiment, colors="k", levels=levels, alpha=0.5, linewidths=0.5)
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
@@ -74,7 +74,7 @@ spin_systems = single_site_system_generator(
 
 # Create the DAS method.
 # Get the spectral dimension paramters from the experiment.
-spectral_dims = get_spectral_dimensions(oxygen_experiment)
+spectral_dims = get_spectral_dimensions(experiment)
 
 # %%
 das = Method2D(
@@ -91,7 +91,7 @@ das = Method2D(
         # The last spectral dimension block is the direct-dimension
         {**spectral_dims[1], "events": [{"rotor_angle": 54.735 * 3.14159 / 180}]},
     ],
-    experiment=oxygen_experiment,  # also add the measurement to the method.
+    experiment=experiment,  # also add the measurement to the method.
 )
 
 # Optimize the script by pre-setting the transition pathways for each spin system from
@@ -128,7 +128,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
 ax.contour(processed_data, colors="r", levels=levels, alpha=0.75, linewidths=0.5)
-cb = ax.contour(oxygen_experiment, colors="k", levels=levels, alpha=0.5, linewidths=0.5)
+cb = ax.contour(experiment, colors="k", levels=levels, alpha=0.5, linewidths=0.5)
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
@@ -148,7 +148,7 @@ params = make_LMFIT_params(sim, processor)
 for i in range(5):
     params[f"sys_{i}_abundance"].vary = False
 
-params
+params.pretty_print()
 
 # %%
 # Run the minimization using LMFIT
@@ -166,7 +166,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # Plot the spectrum
 ax = plt.subplot(projection="csdm")
 ax.contour(processed_data, colors="r", levels=levels, alpha=0.75, linewidths=0.5)
-cb = ax.contour(oxygen_experiment, colors="k", levels=levels, alpha=0.5, linewidths=0.5)
+cb = ax.contour(experiment, colors="k", levels=levels, alpha=0.5, linewidths=0.5)
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)

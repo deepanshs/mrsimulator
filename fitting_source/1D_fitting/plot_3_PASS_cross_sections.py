@@ -36,7 +36,7 @@ pass_data = cp.load(filename)
 pass_data = pass_data.real.T
 
 # Convert the coordinates along each dimension from Hz to ppm.
-[item.to("ppm", "nmr_frequency_ratio") for item in pass_data.dimensions]
+_ = [item.to("ppm", "nmr_frequency_ratio") for item in pass_data.dimensions]
 
 # Normalize the spectrum.
 pass_data /= pass_data.max()
@@ -137,7 +137,7 @@ params = make_LMFIT_params(sim, processor)
 # Fix the value of the isotropic chemical shift to zero for pure anisotropic sideband
 # amplitude simulation.
 params["sys_0_site_0_isotropic_chemical_shift"].vary = False
-params
+params.pretty_print()
 
 # %%
 # Run the minimization using LMFIT
