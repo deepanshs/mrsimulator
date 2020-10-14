@@ -84,13 +84,20 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
     # get the query symmetry element.
     query_short = query[transition_symmetry]
 
+    def warn_message(id_):
+        return (
+            f"Channel asks for isotope `{id_}` but it is not present in the list of "
+            "spin systems."
+        )
+
+    on_fail_message = (
+        "The length of the transition query symmetry elements cannot exceed than the "
+        "number of channels."
+    )
     for i, items in enumerate(query_short):
         # Check if method isotope is in the spin system
         if channel[i] not in iso_dict:
-            warnings.warn(
-                f"Method/channel isotope mismatch. Channel asks for {channel[i]} "
-                f"but is not in {isotope}"
-            )
+            warnings.warn(warn_message(channel[i]))
             return []
 
         temp_P = []
@@ -99,10 +106,7 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
             query_item_len = len(query_short[items][k])
             # Check transition query doesn't require more isotopes than present
             if query_item_len > iso_ch_length:
-                raise AttributeError(
-                    "Failed: The length of the transition query symmetry elements "
-                    "cannot larger than the number of channel"
-                )
+                raise ValueError(on_fail_message)
 
             query_short[items][k] += (iso_ch_length - query_item_len) * [k]
             temp_P += list(permutations(query_short[items][k]))

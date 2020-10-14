@@ -13,41 +13,6 @@ METHODS_DATA = loadfn(path.join(MODULE_DIR, "methods_data.json"))
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
-# create class dynamically
-__doc_args__ = r"""
-
-Args:
-    spectral_dimensions: A list of python dict. Each dict is contains keywords that
-        describe the coordinates along a spectral dimension. The keywords along with
-        its definition are:
-
-        count:
-            An optional integer with the number of points, :math:`N`, along the
-            dimension. The default value is 1024.
-        spectral_width:
-            An `optional` float with the spectral width, :math:`\Delta x`, along the
-            dimension in units of Hz. The default is 25 kHz.
-        reference_offset:
-            An `optional` float with the reference offset, :math:`x_0` along the
-            dimension in units of Hz. The default value is 0 Hz.
-        origin_offset:
-            An `optional` float with the origin offset (Larmor frequency) along the
-            dimension in units of Hz. The default value is None.
-
-    channels: A list of isotope symbols over which the method will be applied.
-    rotor_frequency: An `optional` float containing the sample spinning frequency
-        :math:`\nu_r`, in units of Hz. The default value is ``0``.
-    rotor_angle: An `optional` float containing the angle between the sample rotation
-        axis and the applied external magnetic field, :math:`\theta`, in units of rad.
-        The default value is ``0.9553166``, i.e. the magic angle.
-    magetic_flux_density: An `optional` float containing the macroscopic magnetic
-        flux density, :math:`H_0`, of the applied external magnetic field in units of
-        T. The default value is ``9.4``.
-
-Return:
-    A :class:`~mrsimulator.Method` instance.
-"""
-
 
 def prepare_method_structure(template, **kwargs):
     keys = kwargs.keys()
@@ -82,15 +47,33 @@ def prepare_method_structure(template, **kwargs):
     return prep
 
 
-def generate_method_from_template(template):
+def parse_spectral_dimensions(spectral_dimensions):
+    for dim in spectral_dimensions:
+        if "events" in dim.keys():
+            for evt in dim["events"]:
+                if "transition_query" in evt.keys():
+                    t_query = evt["transition_query"]
+                    if "P" in t_query.keys():
+                        if isinstance(t_query["P"], list):
+                            t_query["P"] = {"channel-1": [[i] for i in t_query["P"]]}
+                    if "D" in t_query.keys():
+                        if isinstance(t_query["D"], list):
+                            t_query["D"] = {"channel-1": [[i] for i in t_query["D"]]}
+    return spectral_dimensions
+
+
+def generate_method_from_template(template, docstring=""):
     """Generate method object from json template."""
     # constructor
     def constructor(self, spectral_dimensions=[{}], **kwargs):
         parse = False
         if "parse" in kwargs:
             parse = kwargs["parse"]
-        prep = prepare_method_structure(template, **kwargs)
-        global_events = template["global_event_attributes"]
+
+        local_template = deepcopy(template)
+        spectral_dimensions = parse_spectral_dimensions(spectral_dimensions)
+        prep = prepare_method_structure(local_template, **kwargs)
+        global_events = local_template["global_event_attributes"]
         ge = set(global_events)
         kw = set(kwargs)
         common = kw.intersection(ge)
@@ -102,37 +85,32 @@ def generate_method_from_template(template):
 
         dim = []
         n_sp = len(spectral_dimensions)
-        n_tem = len(template["spectral_dimensions"])
+        n_tem = len(local_template["spectral_dimensions"])
 
         if n_tem < n_sp:
             raise ValueError(
                 f"The method allows {n_tem} spectral dimension(s), {n_sp} given."
             )
 
-        for i, s in enumerate(template["spectral_dimensions"]):
+        for i, s in enumerate(local_template["spectral_dimensions"]):
             events = []
 
             _fill_missing_events_in_template(spectral_dimensions[i], s)
 
             for j, e in enumerate(s["events"]):
-                ew = set(e)
-
-                kw = kwargs.copy()
-                if "events" in spectral_dimensions[i]:
-                    for key, val in spectral_dimensions[i]["events"][j].items():
-                        kw[key] = val
-
-                intersection = ew.intersection(kw)
-                _ = [e.pop(item) for item in intersection]
-
-                # prioritize the keyword arguments over the global arguments.
-                common = set(kw).intersection(set(global_events))
+                # ew = set(e)
+                kw = deepcopy(kwargs)
                 ge = deepcopy(global_events)
-                _ = [ge.pop(item) for item in common]
+                if "events" in spectral_dimensions[i]:
+                    kw.update(spectral_dimensions[i]["events"][j])
 
-                params = {**e, **kw, **ge}
-                params = params if parse else Event(**params)
-                events.append(params)
+                e.update(kw)
+                # prioritize the keyword arguments over the global arguments.
+                ge.update(kw)
+                e.update(ge)
+
+                e = e if e else Event(**e)
+                events.append(e)
 
             if "events" in spectral_dimensions[i]:
                 spectral_dimensions[i].pop("events")
@@ -153,12 +131,7 @@ def generate_method_from_template(template):
         Args:
             py_dict: Dict object.
         """
-        dict_copy = deepcopy(py_dict)
-        spectral_dimensions = dict_copy["spectral_dimensions"]
-        dict_copy.pop("spectral_dimensions")
-        return cls.__new__(
-            0, spectral_dimensions=spectral_dimensions, parse=True, **dict_copy
-        )
+        return cls.__new__(0, parse=True, **deepcopy(py_dict))
 
     description = template["description"]
     method = type(
@@ -167,7 +140,7 @@ def generate_method_from_template(template):
         {
             "__new__": constructor,
             "__str__": description,
-            "__doc__": description + __doc_args__,
+            "__doc__": description + docstring,
             "parse_dict_with_units": parse_dict_with_units,
         },
     )

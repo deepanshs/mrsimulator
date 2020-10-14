@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 from monty.serialization import loadfn
 from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.methods import Method1D
 from mrsimulator.methods import Method2D
 from mrsimulator.methods import ThreeQ_VAS
 
@@ -53,6 +54,16 @@ def test_03():
     )
 
     assert TESTDATA["generic"] == mth.to_dict_with_units()
+
+
+def test_method_1D():
+    error = "Expecting a 1x1 affine matrix."
+    with pytest.raises(ValueError, match=f".*{error}.*"):
+        Method1D(spectral_dimensions=[{}], affine_matrix=[1, 2, 3, 4])
+
+    error = r"The method allows 1 spectral dimension\(s\), 2 given."
+    with pytest.raises(ValueError, match=f".*{error}.*"):
+        Method1D(spectral_dimensions=[{}, {}])
 
 
 def test_04():

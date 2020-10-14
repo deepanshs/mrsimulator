@@ -48,6 +48,33 @@
       }]
     }]
   },
+  "Method1D": {
+    "name": "Method1D",
+    "number_of_channels": 1,
+    "description": "Simulate a generic one-dimensional spectrum",
+    "global_event_attributes": {
+      "user_variables": [
+        "magnetic_flux_density",
+        "rotor_angle",
+        "rotor_frequency"
+      ],
+      "transition_query": {
+        "P": {
+          "channel-1": [
+            [-1]
+          ]
+        },
+        "D": {
+          "channel-1": [
+            [0]
+          ]
+        }
+      }
+    },
+    "spectral_dimensions": [{
+      "events": [{}]
+    }]
+  },
   "Method2D": {
     "name": "Method2D",
     "number_of_channels": 1,

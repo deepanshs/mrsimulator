@@ -142,6 +142,16 @@ class Method(Parseable):
             return v
         raise ValueError("Unable to read the data.")
 
+    @validator("affine_matrix", pre=True, always=True)
+    def validate_affine_matrix(cls, v, *, values, **kwargs):
+        if v is None:
+            return None
+        v = np.asarray(v)
+        dim_len = len(values["spectral_dimensions"])
+        if v.size == dim_len ** 2:
+            return v
+        raise ValueError(f"Expecting a {dim_len}x{dim_len} affine matrix.")
+
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
