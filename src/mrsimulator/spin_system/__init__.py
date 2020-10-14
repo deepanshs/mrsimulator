@@ -16,8 +16,8 @@ from .isotope import ISOTOPE_DATA
 from .site import Site
 from .zeeman_state import ZeemanState
 
-__author__ = "Deepansh J. Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
 
 
 class SpinSystem(Parseable):
@@ -122,14 +122,14 @@ class SpinSystem(Parseable):
 
             .. seealso::
                 `Fitting example
-                <./../auto_examples/Fitting/plot_2_mrsimFitExample_O17.html>`_
+                <./../examples/Fitting/plot_2_mrsimFitExample_O17.html>`_
     """
 
     name: str = None
     label: str = None
     description: str = None
     sites: List[Site] = []
-    # couplings: list = [], # TODO: Deepansh what should this look like?
+    # couplings: list = []
     abundance: float = Field(default=100, ge=0, le=100)
     transition_pathways: Optional[List] = None
 

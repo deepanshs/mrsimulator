@@ -7,6 +7,9 @@ from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
 
+__author__ = "Maxwell C. Venetos"
+__email__ = "maxvenetos@gmail.com"
+
 sim = Simulator()
 the_site = {"isotope": "1H", "isotropic_chemical_shift": "0 ppm"}
 the_spin_system = {"name": "site A", "sites": [the_site], "abundance": "80%"}

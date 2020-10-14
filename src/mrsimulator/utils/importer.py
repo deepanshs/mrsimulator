@@ -7,7 +7,7 @@ from csdmpy.dependent_variables.download import download_file_from_url
 
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__email__ = "srivastava.89@osu.edu"
 
 
 def import_json(filename):

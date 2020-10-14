@@ -7,8 +7,8 @@ from monty.serialization import loadfn
 from pydantic import BaseModel
 from pydantic import validator
 
-__author__ = "Deepansh J. Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
 
 MODULE_DIR = path.dirname(path.abspath(__file__))
 ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))

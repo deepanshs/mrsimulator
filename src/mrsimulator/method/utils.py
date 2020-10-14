@@ -48,13 +48,12 @@ def D_symmetry_indexes(transitions, list_of_D):
 
 def get_iso_dict(channel, isotope):
     """
-        Parse the spin system sites to determine indices of each isotope that
-        is part of the method channel.
+    Parse the spin system sites to determine indices of each isotope that is part of
+    the method channel.
 
-        Args:
-            channel: List object
-            isotope: List object
-
+    Args:
+        channel: List object
+        isotope: List object
     """
     iso_dict = {}
 
@@ -70,15 +69,13 @@ def get_iso_dict(channel, isotope):
 
 def query_permutations(query, isotope, channel, transition_symmetry="P"):
     """
-        Determines the transition symmetries that are involved in a given
-        transition query.
+    Determines the transition symmetries that are involved in a given transition query.
 
-        Args:
-            query: Dict object
-            channel: List object
-            isotope: List object
-            transition_symmetry: str object. Derived from a transition query
-
+    Args:
+        query: Dict object
+        channel: List object
+        isotope: List object
+        transition_symmetry: str object. Derived from a transition query
     """
 
     P_permutated = []

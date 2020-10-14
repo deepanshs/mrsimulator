@@ -4,7 +4,7 @@
 //
 //  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Apr 11, 2019.
-//  Contact email = deepansh2012@gmail.com
+//  Contact email = srivastava.89@osu.edu
 //
 
 #include "method.h"
@@ -23,10 +23,7 @@ extern void mrsimulator_core(
     MRS_sequence *the_sequence,          // the transition sequence.
     int n_sequence,                      // number of sequences.
 
-    int quad_second_order,                 // Quad theory for second order,
-    bool remove_2nd_order_quad_isotropic,  // remove the isotropic
-                                           // contribution from the second
-                                           // order quad Hamiltonian.
+    int quad_second_order,  // Quad theory for second order,
 
     // spin rate, spin angle and number spinning sidebands
     unsigned int number_of_sidebands,        // The number of sidebands
@@ -40,18 +37,14 @@ extern void mrsimulator_core(
     // The number of triangle along the edge of octahedron.
     int integration_density,
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
-    bool interpolation, double *affine_matrix);
+    bool interpolation, bool *freq_contrib, double *affine_matrix);
 
 extern void __mrsimulator_core(
     // spectrum information and related amplitude
-    double *
-        spec,  // The pointer to the amplitude vector representing the spectrum.
-    isotopomer_ravel *ravel_isotopomer,    // isotopomer structure
-    bool remove_2nd_order_quad_isotropic,  // remove the isotropic
-                                           // contribution from the second
-                                           // order quad Hamiltonian.
+    double *spec,  // The pointer to the vector representing the spectrum.
+    isotopomer_ravel *ravel_isotopomer,  // isotopomer structure
 
     // Pointer to the transitions. transition[0] = mi and transition[1] = mf
     float *transition, MRS_sequence *the_sequence, int n_sequence,
     MRS_fftw_scheme *fftw_scheme, MRS_averaging_scheme *scheme,
-    bool interpolation, double *affine_matrix);
+    bool interpolation, bool *freq_contrib, double *affine_matrix);

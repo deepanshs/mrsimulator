@@ -3,6 +3,9 @@
 import pytest
 from mrsimulator import Simulator
 
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 def test_config():
 

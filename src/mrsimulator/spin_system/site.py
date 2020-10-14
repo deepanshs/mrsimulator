@@ -10,8 +10,8 @@ from .isotope import Isotope
 from .tensors import AntisymmetricTensor
 from .tensors import SymmetricTensor
 
-__author__ = "Deepansh J. Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
 
 
 class Site(Parseable):

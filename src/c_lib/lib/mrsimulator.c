@@ -4,7 +4,7 @@
 //
 //  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Jun 9, 2019
-//  Contact email = deepansh2012@gmail.com
+//  Contact email = srivastava.89@osu.edu
 //
 
 #include "mrsimulator.h"
@@ -496,9 +496,9 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     double *R0_temp,         // the temporary R0 components
     complex128 *R2_temp,     // the temporary R2 components
     complex128 *R4_temp,     // the temporary R3 components
-    bool remove_2nd_order_quad_isotropic,  // if true, remove 2nd order quad
-                                           // isotropic shift
-    double B0_in_T) {
+    double B0_in_T,          // magnetic flux density in T
+    bool *freq_contrib       // the pointer to freq contribs boolean
+) {
   /* The following codeblock populates the product of spatial part, Rlm, of
    * the tensor and the spin transition function, T(mf, mi) for
    *      zeroth rank, R0 = [ R00 ] * T(mf, mi)
@@ -537,21 +537,25 @@ void MRS_rotate_components_from_PAS_to_common_frame(
         &ravel_isotopomer->shielding_orientation[3 * site], *mf, *mi);
 
     // in-place update the R0 and R2 components.
-    *R0 += *R0_temp;
-    vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+    if (*freq_contrib++) *R0 += *R0_temp;
+    if (*freq_contrib++) {
+      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+    }
     /* ===================================================================== */
 
     /* Electric quadrupolar components ===================================== */
     if (ravel_isotopomer->spin[site] > 0.5) {
       /*  Upto the first order */
-      FCF_1st_order_electric_quadrupole_tensor_components(
-          R2_temp, ravel_isotopomer->spin[site],
-          ravel_isotopomer->quadrupolar_Cq_in_Hz[site],
-          ravel_isotopomer->quadrupolar_eta[site],
-          &ravel_isotopomer->quadrupolar_orientation[3 * site], *mf, *mi);
+      if (*freq_contrib++) {
+        FCF_1st_order_electric_quadrupole_tensor_components(
+            R2_temp, ravel_isotopomer->spin[site],
+            ravel_isotopomer->quadrupolar_Cq_in_Hz[site],
+            ravel_isotopomer->quadrupolar_eta[site],
+            &ravel_isotopomer->quadrupolar_orientation[3 * site], *mf, *mi);
 
-      // in-place update the R2 components.
-      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+        // in-place update the R2 components.
+        vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+      }
 
       /*  Upto the second order */
       if (allow_fourth_rank) {
@@ -563,11 +567,16 @@ void MRS_rotate_components_from_PAS_to_common_frame(
             &ravel_isotopomer->quadrupolar_orientation[3 * site], *mf, *mi);
 
         // in-place update the R0 component.
-        if (!remove_2nd_order_quad_isotropic) *R0 += *R0_temp;
+        if (*freq_contrib++) *R0 += *R0_temp;
 
-        // in-place update the R2 and R4 components.
-        vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-        vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+        // in-place update the R2 components.
+        if (*freq_contrib++) {
+          vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+        }
+        // in-place update the R4 components.
+        if (*freq_contrib++) {
+          vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+        }
       }
     }
 

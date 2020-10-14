@@ -64,6 +64,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx_tabs.tabs",
     "sphinx.ext.todo",
+    "recommonmark",
 ]
 
 # generate autosummary even if no references
@@ -112,27 +113,52 @@ warnings.filterwarnings(
 
 # sphinx gallery config
 sphinx_gallery_conf = {
-    "examples_dirs": "../examples",  # path to your example scripts
+    "examples_dirs": ["../examples_source", "../fitting_source"],
     "remove_config_comments": True,
-    "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
+    "gallery_dirs": [
+        "examples",
+        "fitting",
+    ],  # path to where to save gallery generated output
     "within_subsection_order": FileNameSortKey,
     # "show_memory": True,
     # "line_numbers": True,
     "subsection_order": ExplicitOrder(
         [
-            "../examples/1D_simulation",
-            "../examples/Fitting",
-            "../examples/2D_simulation",
+            "../examples_source/1D_simulation(crystalline)",
+            "../examples_source/1D_simulation(macro_amorphous)",
+            "../examples_source/2D_simulation(crystalline)",
+            "../examples_source/2D_simulation(macro_amorphous)",
+            "../fitting_source/1D_fitting",
+            "../fitting_source/2D_fitting",
         ]
     ),
     "reference_url": {
         # The module you locally document uses None
         "mrsimulator": None
     },
-    "backreferences_dir": "auto_examples",
-    "doc_module": ("mrsimulator")
+    "backreferences_dir": "examples",
+    "doc_module": ("mrsimulator"),
     # "compress_images": ("images", "thumbnails"),
     # "show_memory": True,
+    "first_notebook_cell": (
+        "# This cell is added by sphinx-gallery\n\n"
+        "%matplotlib inline\n"
+        "!pip install mrsimulator -q\n\n"
+        "import mrsimulator\n"
+        "print(f'You are using mrsimulator v{mrsimulator.__version__}')"
+    ),
+    "binder": {
+        # Required keys
+        "org": "DeepanshS",
+        "repo": "mrsimulator",
+        "branch": "local",
+        "binderhub_url": "https://mybinder.org",
+        "dependencies": "../requirements.txt",
+        # Optional keys
+        "filepath_prefix": "docs/_build/html",
+        "notebooks_dir": "../../notebooks",
+        "use_jupyter_lab": True,
+    },
 }
 
 intersphinx_mapping = {
@@ -151,7 +177,7 @@ copybutton_prompt_is_regexp = True
 # ---------------------------------------------------------------------------- #
 #                               Doxygen C docs config                          #
 # ---------------------------------------------------------------------------- #
-subprocess.run("doxygen", shell=True)
+subprocess.run("doxygen", shell=False)
 doxy_output = os.path.abspath("./xml")
 
 # Setup the breathe extension
@@ -188,7 +214,11 @@ templates_path = ["_templates"]
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = ".rst"
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".txt": "markdown",
+    ".md": "markdown",
+}
 
 # The master toctree document.
 master_doc = "index"

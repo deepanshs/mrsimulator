@@ -6,7 +6,11 @@ import pytest
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.methods import BlochDecaySpectrum
+
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
 
 
 def test_simulator_assignments():
@@ -26,10 +30,10 @@ def test_equality():
     b = Simulator()
     assert a == b
 
-    assert a is not {}
+    assert a != {}
 
     c = Simulator(spin_systems=[SpinSystem()], label="test")
-    assert a is not c
+    assert a != c
 
     result = {
         "label": "test",
@@ -113,6 +117,7 @@ def test_simulator_1():
                         "events": [
                             {
                                 "fraction": 1.0,
+                                "freq_contrib": freq_default,
                                 "magnetic_flux_density": 9.4,
                                 "rotor_angle": 0.9553166,
                                 "rotor_frequency": 0.0,

@@ -52,6 +52,10 @@ Welcome to the Mrsimulator documentation
             :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/
             :alt: Total alerts
 
+          .. image:: https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge
+            :target: https://www.codefactor.io/repository/github/deepanshs/mrsimulator
+            :alt: CodeFactor
+
       * - GitHub
         - .. image:: https://img.shields.io/github/contributors/DeepanshS/mrsimulator.svg?logo=github
             :target: https://github.com/DeepanshS/mrsimulator/graphs/contributors
@@ -105,8 +109,10 @@ the ``mrsimulator`` library is written in C, wrapped, and made available in pyth
 
     **View our example gallery**
 
-    .. image:: https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small
-        :target: auto_examples/index.html
+    .. image:: https://img.shields.io/badge/View-Simulation%20Examples-Purple?s=small
+        :target: examples/index.html
+    .. image:: https://img.shields.io/badge/View-Fitting%20Examples-Purple?s=small
+        :target: fitting/index.html
 
 ----
 
@@ -125,6 +131,9 @@ The ``mrsimulator`` package currently offers the following
 - The library includes the following **NMR methods**,
     - 1D Bloch decay spectrum, and
     - 1D Bloch decay central transition spectrum.
+    - 2D Multi-quantum Variable Angle Spinning (MQ-VAS),
+    - 2D Satellite-transition Variable Angle Spinning (MQ-VAS), and
+    - 2D Dynamic Angle Spinning (DAS).
 
 - **Models** for tensor parameter distribution in amorphous materials.
     - Czjzek
@@ -143,9 +152,7 @@ Our current objectives are the following
     - at arbitrary spinning frequency.
 
 - Expand the library of NMR methods. We expect to include the following methods
-    - 2D Multi-quantum Magic Angle Spinning (MQ-MAS),
-    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT).
-    - 2D Dynamic Angle Spinning (DAS), and
+    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT), and
     - 2D Magic Angle Flipping (MAF).
 
 
@@ -177,6 +184,7 @@ Getting Started
     getting_started-objects
     configuring_simulator
     mrsim_IO
+    designing_methods
 
 Signal Processing (``mrsimulator.SignalProcessor``)
 ---------------------------------------------------
@@ -205,7 +213,8 @@ Examples and Benchmarks
     :maxdepth: 2
     :caption: Examples and Benchmarks
 
-    auto_examples/index
+    examples/index
+    fitting/index
     benchmark
 
 Theory
@@ -258,7 +267,7 @@ Project details
 .. 		load_sample
 .. 		configuring_simulator
 .. 		benchmark
-.. 		auto_examples/index
+.. 		examples/index
 .. 		theory/components
 .. 		api_py/py_api
 .. 		api_c/c_api

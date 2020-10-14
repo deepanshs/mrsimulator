@@ -6,12 +6,15 @@ dependencies:
   - fftw>=3.3.0
   - openblas
   - numpy>=1.17
+  - nomkl
   - setuptools>=27.3
   - cython>=0.29
   - matplotlib>=3.0
   - pip
   - pip:
       - monty>=2.0.4
-      - csdmpy>=0.3.2
+      - csdmpy>=0.3.4
+      - numexpr>=2.7.0
       - pydantic>=1.0
       - typing-extensions>=3.7
+      - lmfit>=1.0.0

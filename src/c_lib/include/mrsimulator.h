@@ -4,7 +4,7 @@
 //
 //  @copyright Deepansh J. Srivastava, 2019-2020.
 //  Created by Deepansh J. Srivastava, Jun 30, 2019
-//  Contact email = deepansh2012@gmail.com
+//  Contact email = srivastava.89@osu.edu
 //
 
 #ifndef mrsimulator_h
@@ -214,10 +214,16 @@ void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
  *        the second rank tensor is temporarily stored.
  * @param R4_temp A pointer to location where the frequency contributions from
  *        the fourth rank tensor is temporarily stored.
- * @param remove_2nd_order_quad_isotropic A boolean, if true, remove the
- *        isotropic contribution from the fourth rank tensor.
  * @param B0_in_T The magnetic flux density of the macroscopic external magnetic
  *        field in units of T.
+ * @param freq_contrib A pointer to a stack of boolean freq contribs from a list
+ *        of events. The order of the freq contribs follow
+ *          1. Shielding 1st order 0th rank
+ *          2. Shielding 1st order 2th rank
+ *          3. Quad 1st order 2th rank
+ *          4. Quad 2st order 0th rank
+ *          5. Quad 2st order 2th rank
+ *          6. Quad 2st order 4th rank
  */
 void MRS_rotate_components_from_PAS_to_common_frame(
     isotopomer_ravel *ravel_isotopomer,  // isotopomer structure
@@ -229,9 +235,9 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     double *R0_temp,         // the temporary R0 components
     complex128 *R2_temp,     // the temporary R2 components
     complex128 *R4_temp,     // the temporary R3 components
-    bool remove_2nd_order_quad_isotropic,  // if true, remove 2nd order quad
-                                           // isotropic shift
-    double B0_in_T);
+    double B0_in_T,          // magnetic flux density in T
+    bool *freq_contrib       // the pointer to freq contribs boolean
+);
 
 extern void __get_components(unsigned int number_of_sidebands,
                              double spin_frequency, double *restrict pre_phase);

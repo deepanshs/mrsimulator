@@ -103,7 +103,8 @@ venv.bak/
 src/c_lib/test_c/**
 tests/simpson/quad/**
 version/
-docs/auto_examples/
+docs/examples/
+docs/fitting/
 
 # files
 class-diagram*
@@ -129,3 +130,5 @@ base_model.c
 sandbox.c
 *.bib
 3iKij9H
+2RFKYke
+337Oqe4

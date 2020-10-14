@@ -4,14 +4,14 @@ from csdmpy.units import string_to_quantity
 
 
 __author__ = "Deepansh Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__email__ = "srivastava.89@osu.edu"
 
 const = string_to_quantity("1")
 
 
 def _get_broadcast_shape(array, dim, ndim):
     """Return the broadcast shape of a vector `array` at dimension `dim` for `ndim`
-    total dimensions. """
+    total dimensions."""
     none = [np.newaxis for _ in range(ndim + 1)]
     if isinstance(dim, int):
         dim = [dim]

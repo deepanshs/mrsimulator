@@ -73,7 +73,7 @@ In terms of :math:`U_i`, the traceless second-rank symmetric Cartesian tensor el
     S_{yz} &= S_{zy} = \sqrt{3} U_3,
     \end{align}
 
-and the explicit matrix form the :math:`{\bf S}` is
+and the explicit matrix form of :math:`{\bf S}` is
 
 .. math::
     {\bf S} = \left[
@@ -92,17 +92,17 @@ symmetric tensor as :math:`S_C(\sigma)`.
 Extended Czjzek distribution
 ----------------------------
 
-The extended Czjzek random distribution [#f2]_ model is an extension of the Czjzek
-model, given as
+An Extended Czjzek distribution model [#f2]_ is a random perturbation of the second-rank
+traceless symmetric tensors about a non-zero tensor, which is given as
 
 .. math::
     S_T = S(0) + \rho S_C(\sigma=1),
 
-where :math:`S_T` is the total tensor, :math:`S(0)` is the dominant second-rank tensor,
-:math:`S_C(\sigma=1)` is the Czjzek random model attributing to the random perturbation
-of the tensor about the dominant tensor, :math:`S(0)`, and :math:`\rho` is the size of
-the perturbation. Note, in the above equation, the :math:`\sigma` parameter from the
-Czjzek random model, :math:`S_C`, has no meaning and is set to one. The factor,
+where :math:`S_T` is the total tensor, :math:`S(0)` is the non-zero dominant second-rank
+tensor, :math:`S_C(\sigma=1)` is the Czjzek random model attributing to the random
+perturbation of the tensor about the dominant tensor, :math:`S(0)`, and :math:`\rho` is
+the size of the perturbation. Note, in the above equation, the :math:`\sigma` parameter
+from the Czjzek random model, :math:`S_C`, has no meaning and is set to one. The factor,
 :math:`\rho`, is defined as
 
 .. math::

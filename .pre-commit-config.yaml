@@ -36,6 +36,7 @@ repos:
         language: python
       - id: end-of-file-fixer
         language: python
+        exclude: docs/notebooks/
       - id: trailing-whitespace
         language: python
         types: [text]
@@ -55,6 +56,7 @@ repos:
         language: python
         types: [python]
         minimum_pre_commit_version: "0.15.0"
+        exclude: (examples_source|fitting_source)
   # - repo: https://github.com/pocc/pre-commit-hooks
   #   rev: master
   #   hooks:

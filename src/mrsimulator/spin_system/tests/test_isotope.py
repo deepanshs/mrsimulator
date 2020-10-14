@@ -2,6 +2,9 @@
 import pytest
 from mrsimulator.spin_system.isotope import Isotope
 
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 def test_isotope():
     silicon = Isotope(symbol="29Si")

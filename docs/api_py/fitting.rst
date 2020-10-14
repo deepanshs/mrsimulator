@@ -5,7 +5,7 @@ Utility Functions
 
 .. currentmodule:: mrsimulator.utils.spectral_fitting
 
-.. autofunction:: make_LMFIT_parameters
+.. autofunction:: make_LMFIT_params
 .. autofunction:: LMFIT_min_function
 
 .. currentmodule:: mrsimulator.utils

@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
-from .base import Method2D
-from .base import NamedMethod
+from . import base as bs
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
+k_MQ_MAS = {
+    3: {1.5: 21 / 27, 2.5: 114 / 72, 3.5: 303 / 135, 4.5: 546 / 216},
+    5: {2.5: 150 / 72, 3.5: 165 / 135, 4.5: 570 / 216},
+    7: {3.5: 483 / 135, 4.5: 84 / 216},
+    9: {4.5: 1116 / 216},
+}
 
-class MQ_VAS_(NamedMethod):
+
+def MQ_VAS_(mq=1.5, name="MQ_MAS", spectral_dimensions=[{}, {}], **kwargs):
     r"""A generic multiple-quantum variable-angle spinning method for simulating average
     frequencies. The resulting spectrum is sheared such that the correlating dimensions
     are the isotropic dimension and the VAS dimension, respectively, where the isotropic
@@ -49,37 +55,28 @@ class MQ_VAS_(NamedMethod):
         A :class:`~mrsimulator.Method` instance.
     """
 
-    k_MQ_MAS = {
-        3: {1.5: 21 / 27, 2.5: 114 / 72, 3.5: 303 / 135, 4.5: 546 / 216},
-        5: {2.5: 150 / 72, 3.5: 165 / 135, 4.5: 570 / 216},
-        7: {3.5: 483 / 135, 4.5: 84 / 216},
-        9: {4.5: 1116 / 216},
-    }
+    bs.check_for_transition_query(name, spectral_dimensions)
+    method = bs.Method2D(spectral_dimensions, name=name, **kwargs)
 
-    def __new__(cls, mq=1.5, spectral_dimensions=[{}, {}], **kwargs):
-        super().check_transition_query(spectral_dimensions)
-        method = Method2D(spectral_dimensions, name=cls.__name__, **kwargs)
+    spin = method.channels[0].spin
 
-        spin = method.channels[0].spin
+    # select the coherence for the first event
+    P = int(2 * mq)
+    nQ = P
+    P = -P if mq == spin else P
 
-        # select the coherence for the first event
-        P = int(2 * mq)
-        nQ = P
-        P = -P if mq == spin else P
+    method.spectral_dimensions[0].events[0].transition_query.P = {"channel-1": [[P]]}
 
-        method.spectral_dimensions[0].events[0].transition_query.P = {
-            "channel-1": [[P]]
-        }
-
-        # Add the affine matrix
-        k = cls.k_MQ_MAS[nQ][spin]
+    # Add the affine matrix
+    if method.affine_matrix is None:
+        k = k_MQ_MAS[nQ][spin]
         method.affine_matrix = [1 / (1 + k), k / (1 + k), 0, 1]
 
-        method.description = f"Simulate a {nQ}Q variable-angle spinning spectrum."
-        return method
+    method.description = f"Simulate a {nQ}Q variable-angle spinning spectrum."
+    return method
 
 
-class ThreeQ_VAS(MQ_VAS_):
+def ThreeQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
     r"""Simulate a sheared and scaled 3Q variable-angle spinning spectrum.
 
     Return:
@@ -109,13 +106,12 @@ class ThreeQ_VAS(MQ_VAS_):
         [TransitionPathway(|-1.5⟩⟨1.5|, |-0.5⟩⟨0.5|)]
     """
 
-    def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
-        return super().__new__(
-            self, mq=1.5, spectral_dimensions=spectral_dimensions, **kwargs
-        )
+    return MQ_VAS_(
+        mq=1.5, name="ThreeQ_VAS", spectral_dimensions=spectral_dimensions, **kwargs
+    )
 
 
-class FiveQ_VAS(MQ_VAS_):
+def FiveQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
     r"""Simulate a sheared and scaled 5Q variable-angle spinning spectrum.
 
     Return:
@@ -144,14 +140,12 @@ class FiveQ_VAS(MQ_VAS_):
         >>> method.get_transition_pathways(sys)
         [TransitionPathway(|-2.5⟩⟨2.5|, |-0.5⟩⟨0.5|)]
     """
-
-    def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
-        return super().__new__(
-            self, mq=2.5, spectral_dimensions=spectral_dimensions, **kwargs
-        )
+    return MQ_VAS_(
+        mq=2.5, name="FiveQ_VAS", spectral_dimensions=spectral_dimensions, **kwargs
+    )
 
 
-class SevenQ_VAS(MQ_VAS_):
+def SevenQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
     r"""Simulate a sheared and scaled 7Q variable-angle spinning spectrum.
 
     Return:
@@ -180,8 +174,6 @@ class SevenQ_VAS(MQ_VAS_):
         >>> method.get_transition_pathways(sys)
         [TransitionPathway(|-3.5⟩⟨3.5|, |-0.5⟩⟨0.5|)]
     """
-
-    def __new__(self, spectral_dimensions=[{}, {}], **kwargs):
-        return super().__new__(
-            self, mq=3.5, spectral_dimensions=spectral_dimensions, **kwargs
-        )
+    return MQ_VAS_(
+        mq=3.5, name="SevenQ_VAS", spectral_dimensions=spectral_dimensions, **kwargs
+    )

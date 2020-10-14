@@ -6,7 +6,7 @@ import numpy as np
 import cython
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__email__ = "srivastava.89@osu.edu"
 
 __integration_volume_enum__ = {"octant": 0, "hemisphere": 1}
 __integration_volume_enum_rev__ = {0: "octant", 1: "hemisphere"}

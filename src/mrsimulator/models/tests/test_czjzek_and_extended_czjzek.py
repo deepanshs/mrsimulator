@@ -5,6 +5,9 @@ import numpy as np
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.models import ExtCzjzekDistribution
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 MODULE_DIR = path.dirname(path.abspath(__file__))
 COUNT = np.int(1e6)
 

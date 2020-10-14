@@ -5,13 +5,16 @@ from mrsimulator.method.transition_query import TransitionQuery
 from mrsimulator.methods import ST1_VAS
 from mrsimulator.methods import ST2_VAS
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 methods = [ST1_VAS, ST2_VAS]
 names = ["ST1_VAS", "ST2_VAS"]
 
 
 def test_ST_VAS_rotor_freq():
     def error(name):
-        return f"`rotor_frequency` attribute cannot be modified for {name} class."
+        return f"`rotor_frequency` attribute cannot be modified for {name} method."
 
     for name, method in zip(names, methods):
         e = error(name)
@@ -21,7 +24,7 @@ def test_ST_VAS_rotor_freq():
 
 def test_ST_VAS_setting_transition_query():
     def error(name):
-        return f"`transition_query` attribute cannot be modified for {name} class."
+        return f"`transition_query` attribute cannot be modified for {name} method."
 
     for name, method in zip(names, methods):
         e = error(name)
@@ -75,10 +78,10 @@ def test_ST1_VAS_general():
     )
     assert mth.description == des
     assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[2], [-2]]},
+        P={"channel-1": [[-1]]}, D={"channel-1": [[2], [-2]]}
     )
     assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]},
+        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
     )
 
 
@@ -108,8 +111,8 @@ def test_ST2_VAS_general():
     )
     assert mth.description == des
     assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[4], [-4]]},
+        P={"channel-1": [[-1]]}, D={"channel-1": [[4], [-4]]}
     )
     assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]},
+        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
     )

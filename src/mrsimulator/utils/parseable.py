@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Base Parseable class."""
 from copy import deepcopy
+from enum import Enum
 from typing import ClassVar
 from typing import Dict
 
@@ -70,10 +71,10 @@ class Parseable(BaseModel):
                     # else choose the first good one
                     if not ([val is not None for val in pos_values]):
                         raise Exception(f"Could not enforce any units on {prop}")
-                    else:
-                        json_dict[prop], property_units[prop] = [
-                            d for d in zip(pos_values, default_unit) if d[0] is not None
-                        ][0]
+
+                    json_dict[prop], property_units[prop] = [
+                        d for d in zip(pos_values, default_unit) if d[0] is not None
+                    ][0]
         for k, v in property_units.items():
             property_units[k] = v[0] if isinstance(v, list) else v
         return cls(**json_dict, property_units=property_units)
@@ -86,7 +87,7 @@ class Parseable(BaseModel):
         Args:
             exclude: A list of keys to exclude from the dictionary.
         Return: A dict.
-         """
+        """
         return _reduce_dict(self.dict(), exclude)
 
     def to_dict_with_units(self) -> dict:
@@ -98,7 +99,7 @@ class Parseable(BaseModel):
         for k, v in self.dict(exclude={"property_units"}).items():
 
             # check the dict objects
-            if isinstance(v, dict):
+            if isinstance(v, (dict, Enum)):
                 val = getattr(self, k).to_dict_with_units()
                 if val is not None:
                     temp_dict[k] = val
@@ -132,8 +133,7 @@ def enforce_units(value: str, required_type: str, default_unit: str, throw_error
     except Exception as e:
         if throw_error:
             raise e
-        else:
-            return None
+        return None
 
 
 def get_list(member, obj):
@@ -141,7 +141,7 @@ def get_list(member, obj):
     for i, item in enumerate(obj):
         if isinstance(item, list):
             lst.append(get_list(member[i], item))
-        elif isinstance(item, dict):
+        elif isinstance(item, (dict, Enum)):
             lst.append(member[i].to_dict_with_units())
         elif item not in [None, ""]:
             lst.append(item)

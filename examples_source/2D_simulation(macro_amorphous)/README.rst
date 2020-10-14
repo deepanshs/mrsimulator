@@ -1,0 +1,9 @@
+2D NMR simulation (Amorphous solids)
+------------------------------------
+
+The following examples are the NMR spectrum simulation for amorphous solids. The
+examples include the illustrations for the following methods:
+
+- Triple-quantum variable-angle spinning (:func:`~mrsimulator.methods.ThreeQ_VAS`)
+
+.. - Double hop Dynamic angle spinning (DAS)

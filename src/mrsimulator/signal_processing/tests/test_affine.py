@@ -4,6 +4,10 @@ import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.affine as af
 import numpy as np
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
+
 # Creating a test CSDM object.
 test_data = np.zeros((40, 40))
 test_data[20, :] = 1

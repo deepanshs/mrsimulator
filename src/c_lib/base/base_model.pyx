@@ -6,7 +6,7 @@ import cython
 from mrsimulator import sandbox as sb
 
 __author__ = "Deepansh J. Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__email__ = "srivastava.89@osu.edu"
 
 @cython.profile(False)
 @cython.boundscheck(False)
@@ -93,7 +93,7 @@ def one_d_spectrum(method,
         integration_volume=integration_volume
     )
 
-# create sequences____________________________________________________________
+# create spectral dimensions _______________________________________________
 
     cdef int n_sequence = len(method.spectral_dimensions)
     # if n_sequence > 1:
@@ -109,6 +109,7 @@ def one_d_spectrum(method,
     cdef ndarray[int] cnt
     cdef ndarray[double] coord_off
     cdef ndarray[double] incre
+    freq_contrib = np.asarray([])
 
     fr = []
     Bo = []
@@ -122,6 +123,7 @@ def one_d_spectrum(method,
     prev_n_sidebands = 0
     for i, seq in enumerate(method.spectral_dimensions):
         for event in seq.events:
+            freq_contrib = np.append(freq_contrib, event.get_value_int())
             if event.rotor_frequency < 1.0e-3:
                 sample_rotation_frequency_in_Hz = 1.0e9
                 rotor_angle_in_rad = 0.0
@@ -178,6 +180,9 @@ def one_d_spectrum(method,
     cdef clib.MRS_fftw_scheme *the_fftw_scheme
     the_fftw_scheme = clib.create_fftw_scheme(the_averaging_scheme.total_orientations, number_of_sidebands)
 # # _____________________________________________________________________________
+
+# frequency contrib
+    cdef ndarray[bool_t] freq_contrib_c = np.asarray(freq_contrib, dtype=np.bool)
 
 # affine transformation
 
@@ -374,35 +379,36 @@ def one_d_spectrum(method,
                     # spectrum information and related amplitude
                     &amp[0],
                     &isotopomer_struct,
-                    0, # turn off quad second order isotropic contribution
                     &transition_array[pathway_increment*trans__],
                     the_sequence,
                     n_sequence,
                     the_fftw_scheme,
                     the_averaging_scheme,
                     interpolation,
+                    &freq_contrib_c[0],
                     &affine_matrix_c[0],
                     )
 
             temp = amp*abundance/norm
 
-            ## reverse the spectrum if gyromagnetic ratio is positive.
-            if gyromagnetic_ratio < 0:
-                if total_n_points % 2 == 0:
-                    temp[1:] = temp[1:][::-1]
-                else:
-                    temp = temp[::-1]
-
             if decompose_spectrum == 1:
-                amp_individual.append(temp)
+                amp_individual.append(temp.reshape(method.shape()))
             else:
                 amp1 += temp
         else:
             if decompose_spectrum == 1:
                 amp_individual.append([])
 
+    # reverse the spectrum if gyromagnetic ratio is positive.
     if decompose_spectrum == 1 and len(amp_individual) != 0:
-        amp1 = amp_individual
+        if gyromagnetic_ratio < 0:
+            amp1 = [np.fft.fftn(np.fft.ifftn(item).conj()).real for item in amp_individual]
+        else:
+            amp1 = amp_individual
+    else:
+        amp1.shape = method.shape()
+        if gyromagnetic_ratio < 0:
+            amp1 = np.fft.fftn(np.fft.ifftn(amp1).conj()).real
 
     clib.MRS_free_sequence(the_sequence, n_sequence)
     clib.MRS_free_averaging_scheme(the_averaging_scheme)

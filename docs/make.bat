@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set AUTOEX=auto_examples
+set AUTOEX=examples
 
 if "%1" == "" goto help
 

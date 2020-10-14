@@ -3,6 +3,9 @@ import pytest
 from mrsimulator.transition import Transition
 from mrsimulator.transition.transition_list import TransitionList
 
+__author__ = "Deepansh Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 def test_transition_1():
     # set up
@@ -65,9 +68,9 @@ def test_transition_list_1():
     assert tran_list[1] == Transition(**c)
 
     # equality test
-    assert not tran_list == "a"
-    assert not tran_list == TransitionList([a])
-    assert not tran_list == TransitionList([a, b])
+    assert tran_list != "a"
+    assert tran_list != TransitionList([a])
+    assert tran_list != TransitionList([a, b])
     assert tran_list == TransitionList([a, c])
 
     # appending b for furthur filter tests.

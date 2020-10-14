@@ -13,7 +13,7 @@ from .utils import _str_to_quantity
 from .utils import const
 
 __author__ = "Deepansh Srivastava"
-__email__ = "deepansh2012@gmail.com"
+__email__ = "srivastava.89@osu.edu"
 
 
 class AbstractAffineTransformation(AbstractOperation):

@@ -2,7 +2,25 @@
 import numpy as np
 import pytest
 from mrsimulator.method.event import Event
+from mrsimulator.method.frequency_contrib import freq_default
 from pydantic import ValidationError
+
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
+
+def test_freq_contrib():
+    event = Event(freq_contrib=["Quad2_4", "Quad2_0"])
+    assert event.to_dict_with_units()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
+    assert event.dict()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
+    assert event.reduced_dict()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
+    assert event.get_value_int() == [0, 0, 0, 1, 0, 1]
+
+    event = Event()
+    assert event.to_dict_with_units()["freq_contrib"] == freq_default
+    assert event.dict()["freq_contrib"] == freq_default
+    assert event.reduced_dict()["freq_contrib"] == freq_default
+    assert event.get_value_int() == [1, 1, 1, 1, 1, 1]
 
 
 def basic_event_tests(the_event):
@@ -44,6 +62,7 @@ def basic_event_tests(the_event):
     angle = 90 * np.pi / 180
     should_be = dict(
         fraction=1.2,
+        freq_contrib=freq_default,
         magnetic_flux_density="11.7 T",
         rotor_frequency="25000.0 Hz",
         rotor_angle=f"{angle} rad",
@@ -54,6 +73,7 @@ def basic_event_tests(the_event):
     # reduced_dict()
     assert the_event.reduced_dict() == {
         "fraction": 1.2,
+        "freq_contrib": freq_default,
         "magnetic_flux_density": 11.7,
         "rotor_frequency": 25000,
         "rotor_angle": angle,

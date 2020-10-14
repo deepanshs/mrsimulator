@@ -4,6 +4,9 @@ from mrsimulator.models.utils import get_Haeberlen_components
 from mrsimulator.models.utils import get_principal_components
 from mrsimulator.models.utils import x_y_from_zeta_eta
 
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
 
 def test_get_principal_components():
     # 1

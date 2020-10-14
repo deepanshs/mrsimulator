@@ -27,3 +27,9 @@ def test_get_spectral_dimensions():
 
     res = {"count": 10, "spectral_width": 10, "reference_offset": 5}
     assert get_spectral_dimensions(csdm)[0] == res
+
+    # 4
+    csdm.dimensions[0] = cp.LinearDimension(count=10, increment="1 Hz", label="1H")
+
+    res = {"count": 10, "spectral_width": 10, "reference_offset": 5, "label": "1H"}
+    assert get_spectral_dimensions(csdm)[0] == res

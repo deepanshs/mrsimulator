@@ -13,15 +13,16 @@ dependencies:
   - pip
   - pip:
       - monty>=2.0.4
-      - csdmpy>=0.3.2
+      - csdmpy>=0.3.4
+      - numexpr>=2.7.0
       - pydantic>=1.0
       - typing-extensions>=3.7
       - flake8
+      - lmfit>=1.0.0
       # for testing
       - pytest
       - pytest-cov
       - sympy
-      - lmfit>=1.0.0
       # building docs
       - sphinx>=2.0
       - sphinxjp.themes.basicstrap
@@ -30,3 +31,4 @@ dependencies:
       - pillow>=7.1.2
       - breathe>=4.19
       - sphinx-tabs>=1.1.13
+      - recommonmark
