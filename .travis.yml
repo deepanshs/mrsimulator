@@ -9,6 +9,7 @@ python:
   - 3.6
   - 3.7
   - 3.8
+  - 3.9
 
 addons:
   apt:
@@ -49,6 +50,11 @@ jobs:
       language: shell
 
     - name: "Python 3.8.0"
+      os: osx
+      env: PYENV_VERSION=3.8.0 PYENV_TYPE=env
+      language: shell
+
+    - name: "Python 3.9.0"
       os: osx
       env: PYENV_VERSION=3.8.0 PYENV_TYPE=env
       language: shell
