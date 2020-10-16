@@ -7,11 +7,19 @@ from mrsimulator.method import Method
 from mrsimulator.method.event import Event
 from mrsimulator.method.spectral_dimension import SpectralDimension
 
+
 MODULE_DIR = path.dirname(path.abspath(__file__))
 METHODS_DATA = loadfn(path.join(MODULE_DIR, "methods_data.json"))
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+
+default_units = {
+    "magnetic_flux_density": "T",
+    "rotor_frequency": "Hz",
+    "rotor_angle": "rad",
+}
 
 
 def prepare_method_structure(template, **kwargs):
@@ -69,6 +77,7 @@ def generate_method_from_template(template, docstring=""):
         parse = False
         if "parse" in kwargs:
             parse = kwargs["parse"]
+            kwargs.pop("parse")
 
         local_template = deepcopy(template)
         spectral_dimensions = parse_spectral_dimensions(spectral_dimensions)
@@ -98,9 +107,13 @@ def generate_method_from_template(template, docstring=""):
             _fill_missing_events_in_template(spectral_dimensions[i], s)
 
             for j, e in enumerate(s["events"]):
-                # ew = set(e)
                 kw = deepcopy(kwargs)
                 ge = deepcopy(global_events)
+
+                # Remove `property_units` from default events instance.
+                if "property_units" in e:
+                    e.pop("property_units")
+
                 if "events" in spectral_dimensions[i]:
                     kw.update(spectral_dimensions[i]["events"][j])
 
@@ -109,8 +122,8 @@ def generate_method_from_template(template, docstring=""):
                 ge.update(kw)
                 e.update(ge)
 
-                e = e if e else Event(**e)
-                events.append(e)
+                params = _fix_strings_in_events(e) if parse else Event(**e)
+                events.append(params)
 
             if "events" in spectral_dimensions[i]:
                 spectral_dimensions[i].pop("events")
@@ -145,6 +158,16 @@ def generate_method_from_template(template, docstring=""):
         },
     )
     return method
+
+
+def _fix_strings_in_events(event):
+    """Fix the default float values to string with units when parse dict with units
+    function is called."""
+    for key, val in event.items():
+        if key in default_units and isinstance(val, float):
+            unit = default_units[key]
+            event[key] = f"{val} {unit}"
+    return event
 
 
 def _fill_missing_events_in_template(spectral_dimensions, s_template):

@@ -65,6 +65,101 @@ def test_method_1D():
     with pytest.raises(ValueError, match=f".*{error}.*"):
         Method1D(spectral_dimensions=[{}, {}])
 
+    # parse dict with units test
+    dict_1d = {
+        "channels": ["87Rb"],
+        "magnetic_flux_density": "7 T",  # in T
+        "rotor_angle": "54.735 deg",
+        "rotor_frequency": "1e9 Hz",
+        "spectral_dimensions": [
+            {
+                "count": 1024,
+                "spectral_width": "10 kHz",  # in Hz
+                "reference_offset": "-4 kHz",  # in Hz
+                "events": [
+                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
+                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
+                ],
+            }
+        ],
+    }
+    method1a = Method1D.parse_dict_with_units(dict_1d)
+
+    method1b = Method1D(
+        channels=["87Rb"],
+        magnetic_flux_density=7,  # in T
+        rotor_angle=54.735 * np.pi / 180,
+        rotor_frequency=1e9,
+        spectral_dimensions=[
+            {
+                "count": 1024,
+                "spectral_width": 1e4,  # in Hz
+                "reference_offset": -4e3,  # in Hz
+                "events": [
+                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
+                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
+                ],
+            }
+        ],
+    )
+
+    assert method1a == method1b
+
+
+def test_method_2D():
+
+    # parse dict with units test
+    dict_1d = {
+        "channels": ["87Rb"],
+        "magnetic_flux_density": "7 T",  # in T
+        "rotor_angle": "54.735 deg",
+        "spectral_dimensions": [
+            {
+                "count": 1024,
+                "spectral_width": "10 kHz",  # in Hz
+                "events": [
+                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
+                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
+                ],
+            },
+            {
+                "count": 1024,
+                "spectral_width": "10 kHz",  # in Hz
+                "events": [
+                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
+                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
+                ],
+            },
+        ],
+    }
+    method1a = Method2D.parse_dict_with_units(dict_1d)
+
+    method1b = Method2D(
+        channels=["87Rb"],
+        magnetic_flux_density=7,  # in T
+        rotor_angle=54.735 * np.pi / 180,
+        spectral_dimensions=[
+            {
+                "count": 1024,
+                "spectral_width": 1e4,  # in Hz
+                "events": [
+                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
+                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
+                ],
+            },
+            {
+                "count": 1024,
+                "spectral_width": 1e4,  # in Hz
+                "events": [
+                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
+                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
+                ],
+            },
+        ],
+    )
+
+    assert method1a == method1b
+
 
 def test_04():
     """SAS method declaration"""

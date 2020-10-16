@@ -9,7 +9,7 @@ Generic one-dimensional method
 
 **Example**
 
-Simulating triple-quantum 1D spectrum.
+Example method for simulating triple-quantum 1D spectrum.
 
 .. doctest::
 
