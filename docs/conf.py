@@ -151,7 +151,7 @@ sphinx_gallery_conf = {
         # Required keys
         "org": "DeepanshS",
         "repo": "mrsimulator",
-        "branch": "local",
+        "branch": "master",
         "binderhub_url": "https://mybinder.org",
         "dependencies": "../requirements.txt",
         # Optional keys

@@ -129,8 +129,8 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
             else:
                 # Each isotope is added to the previous isotope to create the
                 # full transition symmetry
-                temp_transitions += np.asarray(previous_sets) + P_expanded
+                temp_transitions += list(np.asarray(previous_sets) + P_expanded)
 
         previous_sets = temp_transitions
 
-    return temp_transitions
+    return np.asarray(temp_transitions)
