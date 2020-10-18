@@ -143,7 +143,6 @@ installed on your system. In this case, type the following in the terminal/Promp
 
     $ pip install mrsimulator -U
 
-----
 
 .. _building_from_source:
 
@@ -306,7 +305,6 @@ options as,
 
     $ pip install . --user
 
-----
 
 Test your build
 ---------------
@@ -327,7 +325,6 @@ The above statement should produce the following figure.
 
     A test example simulation of solid-state NMR spectrum.
 
-----
 
 Setup for developers and contributors
 -------------------------------------
