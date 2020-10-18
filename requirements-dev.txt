@@ -1,7 +1,6 @@
 numpy>=1.17
 matplotlib>=3.0
 csdmpy>=0.3.4
-numexpr>=2.7.0
 pydantic>=1.0
 monty>=2.0.4
 typing-extensions>=3.7
