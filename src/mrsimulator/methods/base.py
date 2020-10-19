@@ -121,6 +121,17 @@ def check_for_transition_query(name, spectral_dimensions=[{}, {}]):
         raise AttributeError(message("transition_query", name))
 
 
+def check_for_spectral_dimensions(py_dict, n=1):
+    """If spectral_dimensions is in py_dict, extract it and then remove from py_dict."""
+
+    if "spectral_dimensions" not in py_dict:
+        spectral_dimensions = [{}] * n
+    else:
+        spectral_dimensions = py_dict["spectral_dimensions"]
+        py_dict.pop("spectral_dimensions")
+    return spectral_dimensions
+
+
 def check_for_events(name, spectral_dimensions=[{}, {}]):
     check = ["events" in item.keys() for item in spectral_dimensions]
 

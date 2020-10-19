@@ -218,11 +218,12 @@ def test_BlochDecaySpectrum():
 
     should_be = {
         "name": "BlochDecaySpectrum",
-        "description": "Simulate a 1D Bloch decay spectrum.",
         "channels": ["1H"],
         "spectral_dimensions": [dimension_dictionary_],
     }
-    assert m1.to_dict_with_units() == should_be
+    dict_ = m1.to_dict_with_units()
+    dict_.pop("description")
+    assert dict_ == should_be
 
     # test-2
     m2_dict = {
@@ -252,12 +253,13 @@ def test_BlochDecaySpectrum():
 
     should_be = {
         "name": "BlochDecaySpectrum",
-        "description": "Simulate a 1D Bloch decay spectrum.",
         "channels": ["29Si"],
         "spectral_dimensions": [dimension_dictionary_],
     }
 
-    assert m2.to_dict_with_units() == should_be
+    dict_ = m2.to_dict_with_units()
+    dict_.pop("description")
+    assert dict_ == should_be
 
 
 def test_05():

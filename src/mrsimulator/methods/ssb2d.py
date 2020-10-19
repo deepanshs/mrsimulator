@@ -5,7 +5,7 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-def SSB2D(spectral_dimensions=[{}, {}], **kwargs):
+def SSB2D(**kwargs):
     r"""A specialized method for simulating 2D finite speed to infinite speed MAS
     correlation spectum. For spin I=1/2, the infinite speed MAS is the isotropic
     dimension. The resulting spectrum is sheared.
@@ -66,6 +66,8 @@ def SSB2D(spectral_dimensions=[{}, {}], **kwargs):
         [TransitionPathway(|-0.5⟩⟨0.5|, |-0.5⟩⟨0.5|)]
     """
     name = "SSB2D"
+
+    spectral_dimensions = bs.check_for_spectral_dimensions(kwargs, 2)
     bs.check_for_events(name, spectral_dimensions)
 
     # check for rotor frequency
