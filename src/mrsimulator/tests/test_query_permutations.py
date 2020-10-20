@@ -73,7 +73,9 @@ def basic_transition_query_tests(iso):
         isotope=iso[2].get_isotopes(),
         channel=["29Si", "17O"],
     )
-    assert np.array_equal(test_6, [[-1.0, 2.0, 0.0], [0.0, 2.0, -1.0]])
+    test_6_check = [[-1.0, 2.0, 0.0], [0.0, 2.0, -1.0]]
+    for item in test_6_check:
+        assert item in test_6
 
 
 def test_transition_query():
