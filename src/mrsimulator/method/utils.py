@@ -17,32 +17,26 @@ def cartesian_product(*arrays):
     return arr.reshape(-1, la)
 
 
-def P_symmetry_indexes(transitions, list_of_P):
-    P = transitions[:, 1, :] - transitions[:, 0, :]
-    n = P.shape[1]
+def get_symmetry_indexes(fn, list_of_sym):
+    n = fn.shape[1]
     return reduce(
         np.union1d,
         [
-            reduce(np.intersect1d, [np.where(P[:, i] == search[i]) for i in range(n)])
-            for search in list_of_P
+            reduce(np.intersect1d, [np.where(fn[:, i] == search[i]) for i in range(n)])
+            for search in list_of_sym
         ],
         np.asarray([], dtype=np.int64),
     )
+
+
+def P_symmetry_indexes(transitions, list_of_P):
+    P_fn = transitions[:, 1, :] - transitions[:, 0, :]
+    return get_symmetry_indexes(P_fn, list_of_P)
 
 
 def D_symmetry_indexes(transitions, list_of_D):
-    D = transitions[:, 1, :] ** 2 - transitions[:, 0, :] ** 2
-    return reduce(
-        np.union1d,
-        [
-            reduce(
-                np.intersect1d,
-                [np.where(D[:, i] == search[i]) for i in range(D.shape[1])],
-            )
-            for search in list_of_D
-        ],
-        np.asarray([], dtype=np.int64),
-    )
+    D_fn = transitions[:, 1, :] ** 2 - transitions[:, 0, :] ** 2
+    return get_symmetry_indexes(D_fn, list_of_D)
 
 
 def get_iso_dict(channel, isotope):
@@ -54,16 +48,9 @@ def get_iso_dict(channel, isotope):
         channel: List object
         isotope: List object
     """
-    iso_dict = {}
-
-    # determine channels for P
-    for i, item in enumerate(isotope):
-        if item in channel and item not in iso_dict:
-            iso_dict[item] = [i]
-        elif item in iso_dict:
-            iso_dict[item].append(i)
-
-    return iso_dict
+    intersection = set(isotope).intersection(set(channel))
+    isotope = np.asarray(isotope)
+    return {item: (np.where(isotope == item))[0] for item in intersection}
 
 
 def query_permutations(query, isotope, channel, transition_symmetry="P"):
@@ -108,10 +95,8 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
                 raise ValueError(on_fail_message)
 
             query_short[items][k] += (iso_ch_length - query_item_len) * [k]
-            temp_P += list(permutations(query_short[items][k]))
+            temp_P += list(set(permutations(query_short[items][k])))
         P_permutated += [temp_P]
-
-        # P_permutated += [list(permutations(query_short[items][k]))]
 
     previous_sets = []
     for i, iso_trans_symmetry in enumerate(P_permutated):

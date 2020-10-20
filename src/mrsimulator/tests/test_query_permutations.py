@@ -43,22 +43,37 @@ def basic_transition_query_tests(iso):
         [0.0, -1.0, 1.0],
         [0.0, 1.0, -1.0],
     ]
-    assert np.array_equal(test_3, test_3_check)
+    for item in test_3_check:
+        assert item in test_3
 
     # Multi sites same channel tests
     test_4 = query_permutations(
+        query={"P": {"channel-1": [[-1, -1]]}},
+        isotope=iso[1].get_isotopes(),
+        channel=["1H"],
+    )
+    test_4_check = [
+        [-1.0, -1.0, 0.0],
+        [-1.0, 0.0, -1.0],
+        [0.0, -1.0, -1.0],
+    ]
+    for item in test_4_check:
+        assert item in test_4
+
+    # Multi sites same channel tests
+    test_5 = query_permutations(
         query={"P": {"channel-1": [[-1]]}},
         isotope=iso[2].get_isotopes(),
         channel=["17O"],
     )
-    assert np.array_equal(test_4, [[0.0, -1.0, 0.0]])
+    assert np.array_equal(test_5, [[0.0, -1.0, 0.0]])
 
-    test_5 = query_permutations(
+    test_6 = query_permutations(
         query={"P": {"channel-1": [[-1]], "channel-2": [[2]]}},
         isotope=iso[2].get_isotopes(),
         channel=["29Si", "17O"],
     )
-    assert np.array_equal(test_5, [[-1.0, 2.0, 0.0], [0.0, 2.0, -1.0]])
+    assert np.array_equal(test_6, [[-1.0, 2.0, 0.0], [0.0, 2.0, -1.0]])
 
 
 def test_transition_query():

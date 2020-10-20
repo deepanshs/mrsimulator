@@ -7,6 +7,7 @@ from typing import List
 from typing import Optional
 
 import numpy as np
+from mrsimulator.base_model import get_zeeman_states
 from mrsimulator.transition import Transition
 from mrsimulator.transition.transition_list import TransitionList
 from mrsimulator.utils.parseable import Parseable
@@ -178,23 +179,24 @@ class SpinSystem(Parseable):
         energy states, and axis 1 is the spin quantum numbers. The spin quantum numbers
         are ordered based on the order of the sites within the spin system.
         """
-        two_I_p_one = [int(2 * site.isotope.spin + 1) for site in self.sites]
-        spin_quantum_numbers = [
-            np.arange(2 * site.isotope.spin + 1) - site.isotope.spin
-            for site in self.sites
-        ]
-        size = len(spin_quantum_numbers)
+        return get_zeeman_states(self)
+        # two_I_p_one = [int(2 * site.isotope.spin + 1) for site in self.sites]
+        # spin_quantum_numbers = [
+        #     np.arange(2 * site.isotope.spin + 1) - site.isotope.spin
+        #     for site in self.sites
+        # ]
+        # size = len(spin_quantum_numbers)
 
-        lst = []
-        for j in range(size):
-            k = 1
-            for i in range(size):
-                if i == j:
-                    k = np.kron(k, spin_quantum_numbers[i])
-                else:
-                    k = np.kron(k, np.ones(two_I_p_one[i]))
-            lst.append(k)
-        return np.asarray(lst).T
+        # lst = []
+        # for j in range(size):
+        #     k = 1
+        #     for i in range(size):
+        #         if i == j:
+        #             k = np.kron(k, spin_quantum_numbers[i])
+        #         else:
+        #             k = np.kron(k, np.ones(two_I_p_one[i]))
+        #     lst.append(k)
+        # return np.asarray(lst).T
 
     def zeeman_energy_states(self) -> list:
         r"""

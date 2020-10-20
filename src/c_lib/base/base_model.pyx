@@ -327,24 +327,16 @@ def one_d_spectrum(method,
         if number_of_sites != 0:
             transition_pathway = spin_sys.transition_pathways
             if transition_pathway is None:
-                transition_pathway = np.asarray(
-                    method._get_transition_pathways_np(spin_sys), dtype=np.float32
-                )
-                pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
-                transition_array = transition_pathway.ravel()
-                pathway_increment = 2*number_of_sites*transition_count_per_pathway
-
+                transition_pathway = np.asarray(method._get_transition_pathways_np(spin_sys))
+                transition_array = np.asarray(transition_pathway, dtype=np.float32).ravel()
             else:
                 transition_pathway = np.asarray(transition_pathway)
-                pathway_count, transition_count_per_pathway = transition_pathway.shape
-
                 # convert transition objects to list
-                lst = []
-                for item in transition_pathway.ravel():
-                    lst += item.tolist()
-
+                lst = [item.tolist() for item in transition_pathway.ravel()]
                 transition_array = np.asarray(lst, dtype=np.float32).ravel()
-                pathway_increment = 2*number_of_sites*transition_count_per_pathway
+
+            pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
+            pathway_increment = 2*number_of_sites*transition_count_per_pathway
 
             # if spin_sys.transitions is not None:
             #     transition_array = np.asarray(
@@ -414,3 +406,26 @@ def one_d_spectrum(method,
     clib.MRS_free_averaging_scheme(the_averaging_scheme)
     clib.MRS_free_fftw_scheme(the_fftw_scheme)
     return amp1, index_
+
+
+@cython.profile(False)
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def get_zeeman_states(sys):
+    cdef int i, j, n_site = len(sys.sites)
+
+    two_Ip1 = [int(2 * site.isotope.spin + 1) for site in sys.sites]
+    spin_quantum_numbers = [
+        np.arange(two_Ip1[i]) - site.isotope.spin for i, site in enumerate(sys.sites)
+    ]
+
+    lst = []
+    for j in range(n_site):
+        k = 1
+        for i in range(n_site):
+            if i == j:
+                k = np.kron(k, spin_quantum_numbers[i])
+            else:
+                k = np.kron(k, np.ones(two_Ip1[i]))
+        lst.append(k)
+    return np.asarray(lst).T
