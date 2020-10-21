@@ -65,6 +65,7 @@ extensions = [
     "sphinx_tabs.tabs",
     "sphinx.ext.todo",
     "recommonmark",
+    "versionwarning.extension",
 ]
 
 # generate autosummary even if no references
