@@ -71,6 +71,13 @@ extensions = [
 # generate autosummary even if no references
 autosummary_generate = True
 
+
+# Show warning at top of page
+versionwarning_body_selector = "div.document"
+# versionwarning_banner_title = ""
+# For debugging locally
+# versionwarning_project_version = "latest"
+
 # ---------------------------------------------------------------------------- #
 #                               Plot directive config                          #
 # ---------------------------------------------------------------------------- #
