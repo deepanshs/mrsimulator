@@ -132,8 +132,10 @@ The ``mrsimulator`` package currently offers the following
     - 1D Bloch decay spectrum, and
     - 1D Bloch decay central transition spectrum.
     - 2D Multi-quantum Variable Angle Spinning (MQ-VAS),
-    - 2D Satellite-transition Variable Angle Spinning (MQ-VAS), and
-    - 2D Dynamic Angle Spinning (DAS).
+    - 2D Satellite-transition Variable Angle Spinning (ST-VAS), and
+    - 2D Dynamic Angle Spinning (DAS),
+    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT), and
+    - 2D Magic Angle Flipping (MAF).
 
 - **Models** for tensor parameter distribution in amorphous materials.
     - Czjzek

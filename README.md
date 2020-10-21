@@ -53,6 +53,8 @@ The `mrsimulator` package currently offers the following
   - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS),
   - 2D Satellite-transition Variable Angle Spinning (MQ-VAS), and
   - 2D Dynamic Angle Spinning (DAS),
+  - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT), and
+  - 2D Magic Angle Flipping (MAF).
 
 - **Models** for tensor parameter distribution in amorphous materials.
 
@@ -63,17 +65,7 @@ The `mrsimulator` package currently offers the following
 
 Our current objectives for the future are the following
 
-- Include spectral simulation of coupled spin systems for
-
-  - spin I=1/2, and quadrupole I>1/2 nuclei,
-  - at arbitrary macroscopic magnetic flux density,
-  - at arbitrary rotor angles, and
-  - at arbitrary spinning frequency.
-
-- Expand the library of NMR methods. We expect to include the following methods
-
-  - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT), and
-  - 2D Magic Angle Flipping (MAF).
+- Include spectral simulation of coupled spin systems.
 
 For more information, refer to the
 [documentation](https://mrsimulator.readthedocs.io/en/latest/).
