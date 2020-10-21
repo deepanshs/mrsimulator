@@ -478,7 +478,7 @@ class Simulator(BaseModel):
     def _as_csdm_object(self, data: np.ndarray, method: Method) -> cp.CSDM:
         """
         Converts the simulation data from the given method to a CSDM object. Read
-        `csdmpy <https://csdmpy.readthedocs.io/en/latest/>`_ for details
+        `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_ for details
 
         Return:
             A CSDM object.

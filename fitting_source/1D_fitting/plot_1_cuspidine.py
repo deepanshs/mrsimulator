@@ -37,7 +37,7 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # %%
 # Import the dataset
 # ------------------
-# Use the `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_
+# Use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_
 # module to load the synthetic dataset as a CSDM object.
 filename = "https://osu.box.com/shared/static/a45xj96iekdjrs2beri0nkrow4vjewdh.csdf"
 synthetic_experiment = cp.load(filename)

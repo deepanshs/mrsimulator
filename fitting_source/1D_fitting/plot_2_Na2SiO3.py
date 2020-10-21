@@ -39,7 +39,7 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 #
 # Import the experimental data. In this example, we will import the dataset file
 # serialized with the CSDM file-format, using the
-# `csdmpy <https://csdmpy.readthedocs.io/en/latest/index.html>`_ module.
+# `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_ module.
 filename = "https://osu.box.com/shared/static/kfgt0jxgy93srsye9pofdnoha6qy58qf.csdf"
 oxygen_experiment = cp.load(filename)
 

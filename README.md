@@ -3,7 +3,7 @@
 |              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Deployment   | [![PyPI version](https://img.shields.io/pypi/v/mrsimulator.svg?style=flat&logo=pypi&logoColor=white)](https://pypi.python.org/pypi/mrsimulator) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mrsimulator)                                                                                                                                                                                                                                                                                                                                                                                                          |
-| Build Status | [![Travis (.org)](https://img.shields.io/travis/deepanshs/mrsimulator?logo=travis)](https://travis-ci.org/github/DeepanshS/mrsimulator) [![GitHub Workflow Status](<https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI%20(pip)?logo=GitHub>)](https://github.com/DeepanshS/mrsimulator/actions) [![Read the Docs](https://img.shields.io/readthedocs/mrsimulator)](https://mrsimulator.readthedocs.io/en/latest/)                                                                                                                                                                                                 |
+| Build Status | [![Travis (.org)](https://img.shields.io/travis/deepanshs/mrsimulator?logo=travis)](https://travis-ci.org/github/DeepanshS/mrsimulator) [![GitHub Workflow Status](<https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI%20(pip)?logo=GitHub>)](https://github.com/DeepanshS/mrsimulator/actions) [![Read the Docs](https://img.shields.io/readthedocs/mrsimulator)](https://mrsimulator.readthedocs.io/en/stable/)                                                                                                                                                                                                 |
 | License      | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | Metrics      | [![Total alerts](https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python) [![codecov](https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/DeepanshS/mrsimulator) [![CodeFactor](https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge)](https://www.codefactor.io/repository/github/deepanshs/mrsimulator) |
 | Citation     | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3978780.svg)](https://doi.org/10.5281/zenodo.3978779)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
@@ -26,18 +26,18 @@ of the `mrsimulator` library is written in C, wrapped, and made available in pyt
   python scripts and web apps.
 - It is compatible with modern python packages, such as scikit-learn, Keras, etc.
 - Packages using mrsimulator -
-  - [mrinversion](https://mrinversion.readthedocs.io/en/latest/)
+  - [mrinversion](https://mrinversion.readthedocs.io/en/stable/)
 
 > **View our example gallery**
 >
-> [![Example](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/latest/examples/index.html)
+> [![Example](https://img.shields.io/badge/View-Example%20Gallery-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/examples/index.html)
 
 ### Features
 
 The `mrsimulator` package currently offers the following
 
 - **Fast simulation** of one-dimensional solid-state NMR spectra. See our
-  [benchmark results](https://mrsimulator.readthedocs.io/en/latest/benchmark.html).
+  [benchmark results](https://mrsimulator.readthedocs.io/en/stable/benchmark.html).
 
 - Simulation of **uncoupled spin system**
 
@@ -68,13 +68,13 @@ Our current objectives for the future are the following
 - Include spectral simulation of coupled spin systems.
 
 For more information, refer to the
-[documentation](https://mrsimulator.readthedocs.io/en/latest/).
+[documentation](https://mrsimulator.readthedocs.io/en/stable/).
 
 ## Installation
 
     $ pip install mrsimulator
 
-Please read our [installation document](https://mrsimulator.readthedocs.io/en/latest/installation.html) for details.
+Please read our [installation document](https://mrsimulator.readthedocs.io/en/stable/installation.html) for details.
 
 ## Check your build
 

@@ -97,7 +97,7 @@ bio macro-molecules, and even amorphous materials. Simulate the NMR spectrum of 
 - It is compatible with modern python packages, such as scikit-learn, Keras, etc.
 - Packages using mrsimulator -
 
-  - `mrinversion <https://mrinversion.readthedocs.io/en/latest/>`_
+  - `mrinversion <https://mrinversion.readthedocs.io/en/stable/>`_
 
 ----
 
