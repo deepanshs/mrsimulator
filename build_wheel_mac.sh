@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /Users/deepansh/opt/anaconda3/bin/activate
+source /Users/deepansh/anaconda3/bin/activate
 
 # python 3.6, 3.7
 for PYBIN in py36 py37 py38; do

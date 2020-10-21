@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Function list:
+    - ThreeQ_VAS
+    - FiveQ_VAS
+    - SevenQ_VAS
+"""
 from . import base as bs
 
 __author__ = "Deepansh J. Srivastava"
@@ -12,7 +18,7 @@ k_MQ_MAS = {
 }
 
 
-def MQ_VAS_(mq=1.5, name="MQ_MAS", spectral_dimensions=[{}, {}], **kwargs):
+def MQ_VAS_(mq=1.5, name="MQ_MAS", **kwargs):
     r"""A generic multiple-quantum variable-angle spinning method for simulating average
     frequencies. The resulting spectrum is sheared such that the correlating dimensions
     are the isotropic dimension and the VAS dimension, respectively, where the isotropic
@@ -55,7 +61,9 @@ def MQ_VAS_(mq=1.5, name="MQ_MAS", spectral_dimensions=[{}, {}], **kwargs):
         A :class:`~mrsimulator.Method` instance.
     """
 
+    spectral_dimensions = bs.check_for_spectral_dimensions(kwargs, 2)
     bs.check_for_transition_query(name, spectral_dimensions)
+
     method = bs.Method2D(spectral_dimensions, name=name, **kwargs)
 
     spin = method.channels[0].spin
@@ -76,7 +84,7 @@ def MQ_VAS_(mq=1.5, name="MQ_MAS", spectral_dimensions=[{}, {}], **kwargs):
     return method
 
 
-def ThreeQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
+def ThreeQ_VAS(**kwargs):
     r"""Simulate a sheared and scaled 3Q variable-angle spinning spectrum.
 
     Return:
@@ -106,12 +114,10 @@ def ThreeQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
         [TransitionPathway(|-1.5⟩⟨1.5|, |-0.5⟩⟨0.5|)]
     """
 
-    return MQ_VAS_(
-        mq=1.5, name="ThreeQ_VAS", spectral_dimensions=spectral_dimensions, **kwargs
-    )
+    return MQ_VAS_(mq=1.5, name="ThreeQ_VAS", **kwargs)
 
 
-def FiveQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
+def FiveQ_VAS(**kwargs):
     r"""Simulate a sheared and scaled 5Q variable-angle spinning spectrum.
 
     Return:
@@ -140,12 +146,10 @@ def FiveQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
         >>> method.get_transition_pathways(sys)
         [TransitionPathway(|-2.5⟩⟨2.5|, |-0.5⟩⟨0.5|)]
     """
-    return MQ_VAS_(
-        mq=2.5, name="FiveQ_VAS", spectral_dimensions=spectral_dimensions, **kwargs
-    )
+    return MQ_VAS_(mq=2.5, name="FiveQ_VAS", **kwargs)
 
 
-def SevenQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
+def SevenQ_VAS(**kwargs):
     r"""Simulate a sheared and scaled 7Q variable-angle spinning spectrum.
 
     Return:
@@ -174,6 +178,4 @@ def SevenQ_VAS(spectral_dimensions=[{}, {}], **kwargs):
         >>> method.get_transition_pathways(sys)
         [TransitionPathway(|-3.5⟩⟨3.5|, |-0.5⟩⟨0.5|)]
     """
-    return MQ_VAS_(
-        mq=3.5, name="SevenQ_VAS", spectral_dimensions=spectral_dimensions, **kwargs
-    )
+    return MQ_VAS_(mq=3.5, name="SevenQ_VAS", **kwargs)

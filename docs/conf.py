@@ -65,6 +65,7 @@ extensions = [
     "sphinx_tabs.tabs",
     "sphinx.ext.todo",
     "recommonmark",
+    "versionwarning.extension",
 ]
 
 # generate autosummary even if no references
@@ -151,7 +152,7 @@ sphinx_gallery_conf = {
         # Required keys
         "org": "DeepanshS",
         "repo": "mrsimulator",
-        "branch": "local",
+        "branch": "master",
         "binderhub_url": "https://mybinder.org",
         "dependencies": "../requirements.txt",
         # Optional keys

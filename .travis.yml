@@ -53,6 +53,11 @@ jobs:
       env: PYENV_VERSION=3.8.0 PYENV_TYPE=env
       language: shell
 
+    # - name: "Python 3.9.0"
+    #   os: osx
+    #   env: PYENV_VERSION=3.9.0 PYENV_TYPE=env
+    #   language: shell
+
     - name: "Python 3.7 on macOS"
       os: osx
       osx_image: xcode11.2 # Python 3.7.4 running on macOS 10.14.4

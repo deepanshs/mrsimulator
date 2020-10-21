@@ -14,7 +14,6 @@ dependencies:
   - pip:
       - monty>=2.0.4
       - csdmpy>=0.3.4
-      - numexpr>=2.7.0
       - pydantic>=1.0
       - typing-extensions>=3.7
       - flake8
@@ -32,3 +31,4 @@ dependencies:
       - breathe>=4.19
       - sphinx-tabs>=1.1.13
       - recommonmark
+      - sphinx-version-warning

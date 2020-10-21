@@ -78,16 +78,16 @@ Welcome to the Mrsimulator documentation
 
 **About**
 
-``mrsimulator`` is an open-source python package for fast computation/analysis of solid-state
-magnetic resonance (NMR) spectra of both crystalline and amorphous materials. The core of
-the ``mrsimulator`` library is written in C, wrapped, and made available in python.
+``mrsimulator`` is an open-source python package for fast simulation and analysis of
+multi-dimensional solid-state magnetic resonance (NMR) spectra of crystalline materials,
+bio macro-molecules, and even amorphous materials. Simulate the NMR spectrum of macro-molecules or amorphous in just a few seconds.
 
 ----
 
 **Why use mrsimulator?**
 
 - It is open-source and free.
-- It is a fast and versatile solid-state NMR simulator of one-dimensional static, MAS,
+- It is a fast and versatile multi-dimensional solid-state NMR spectra simulator including, MAS
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
 - Future release will include simulations of weakly coupled nuclei experiencing J and dipolar
@@ -145,16 +145,7 @@ The ``mrsimulator`` package currently offers the following
 
 Our current objectives are the following
 
-- Include spectral simulation of coupled spin systems for
-    - spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
-    - at arbitrary macroscopic magnetic flux density,
-    - at arbitrary rotor angles, and
-    - at arbitrary spinning frequency.
-
-- Expand the library of NMR methods. We expect to include the following methods
-    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT), and
-    - 2D Magic Angle Flipping (MAF).
-
+- Include spectral simulation of coupled spin systems.
 
 .. Contribution
 .. ------------

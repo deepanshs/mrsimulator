@@ -147,18 +147,12 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
       norm1 = offsetB;
 
       // scale and shear the offsets
-      // if (affine_matrix[0] != 1) {
       norm0 *= affine_matrix[0];
-      // }
-      // if (affine_matrix[1] != 0) {
       norm0 += affine_matrix[1] * offsetB;
-      // }
-      // if (affine_matrix[3] != 1) {
+
       norm1 *= affine_matrix[3];
-      // }
-      // if (affine_matrix[2] != 0) {
-      norm1 += affine_matrix[2] * offsetA;
-      // }
+      norm1 += affine_matrix[2] * norm0;
+
       norm0 += the_sequence[0].normalize_offset;
       norm1 += the_sequence[1].normalize_offset;
 

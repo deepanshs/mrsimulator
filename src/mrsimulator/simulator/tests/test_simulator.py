@@ -93,7 +93,10 @@ def test_simulator_1():
     sim.label = "test0"
     sim.description = "testing-testing 1.2.3"
 
-    assert sim.reduced_dict() == {
+    red_dict = sim.reduced_dict()
+    _ = [item.pop("description") for item in red_dict["methods"]]
+
+    assert red_dict == {
         "name": "test",
         "label": "test0",
         "description": "testing-testing 1.2.3",
@@ -109,7 +112,6 @@ def test_simulator_1():
         "methods": [
             {
                 "channels": ["1H"],
-                "description": "Simulate a 1D Bloch decay spectrum.",
                 "name": "BlochDecaySpectrum",
                 "spectral_dimensions": [
                     {

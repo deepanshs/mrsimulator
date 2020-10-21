@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+Function list:
+    - ST1_VAS
+    - ST2_VAS
+"""
 from . import base as bs
 
 __author__ = "Deepansh J. Srivastava"
@@ -12,7 +17,7 @@ k_ST_MAS = {
 }
 
 
-def ST_VAS_(st=1.5, name="ST_MAS", spectral_dimensions=[{}, {}], **kwargs):
+def ST_VAS_(st=1.5, name="ST_MAS", **kwargs):
     r"""Simulate a satellite-transition magic-angle spinning spectrum.
     Args:
         channels: A list of isotope symbols over which the method will be applied.
@@ -44,7 +49,9 @@ def ST_VAS_(st=1.5, name="ST_MAS", spectral_dimensions=[{}, {}], **kwargs):
         A :class:`~mrsimulator.Method` instance.
     """
 
+    spectral_dimensions = bs.check_for_spectral_dimensions(kwargs, 2)
     bs.check_for_transition_query(name, spectral_dimensions)
+
     method = bs.Method2D(spectral_dimensions, name=name, **kwargs)
     spin = method.channels[0].spin
 
@@ -66,7 +73,7 @@ def ST_VAS_(st=1.5, name="ST_MAS", spectral_dimensions=[{}, {}], **kwargs):
     return method
 
 
-def ST1_VAS(spectral_dimensions=[{}, {}], **kwargs):
+def ST1_VAS(**kwargs):
     """Simulate a sheared and scaled inner satellite and central transition correlation
     spectrum.
 
@@ -98,12 +105,10 @@ def ST1_VAS(spectral_dimensions=[{}, {}], **kwargs):
          TransitionPathway(|0.5⟩⟨1.5|, |-0.5⟩⟨0.5|)]
     """
 
-    return ST_VAS_(
-        st=1.5, name="ST1_VAS", spectral_dimensions=spectral_dimensions, **kwargs
-    )
+    return ST_VAS_(st=1.5, name="ST1_VAS", **kwargs)
 
 
-def ST2_VAS(spectral_dimensions=[{}, {}], **kwargs):
+def ST2_VAS(**kwargs):
     """Simulate a sheared and scaled second to inner satellite and central transition
     correlation spectrum.
 
@@ -135,6 +140,4 @@ def ST2_VAS(spectral_dimensions=[{}, {}], **kwargs):
          TransitionPathway(|1.5⟩⟨2.5|, |-0.5⟩⟨0.5|)]
     """
 
-    return ST_VAS_(
-        st=2.5, name="ST2_VAS", spectral_dimensions=spectral_dimensions, **kwargs
-    )
+    return ST_VAS_(st=2.5, name="ST2_VAS", **kwargs)

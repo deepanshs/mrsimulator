@@ -165,8 +165,6 @@ class FFT(IFFT):
     >>> operation3 = sp.FFT(dim_index=0)
     """
 
-    pass
-
 
 class complex_conjugate(AbstractOperation):
     pass
