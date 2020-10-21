@@ -32,7 +32,7 @@ Here, :math:`\langle \Omega\rangle_\text{ST-VAS}` is the average frequency along
 dimension, :math:`\Omega_{m, m-1}` and :math:`\Omega_{1/2, -1/2}` are the frequency
 contributions from the :math:`|m\rangle \rightarrow |m-1\rangle` satellite transition and the
 central transition, respectively, and :math:`\kappa` is the shear factor. The values of the
-shear factor for various satellite transitions are listed in :numref:`tb_stvas`..
+shear factor for various satellite transitions are listed in :numref:`tb_stvas`.
 
 
 .. cssclass:: table-bordered

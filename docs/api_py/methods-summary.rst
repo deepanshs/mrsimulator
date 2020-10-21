@@ -21,41 +21,36 @@ methods is to facilitate user ease when setting up some commonly used methods, s
 the MQMAS, STMAS, PASS, MAT, etc.
 
 
-Generic methods
----------------
+Summary
+-------
+
+**Generic methods**
 
 .. autosummary::
     ~Method1D
     ~Method2D
 
-Specialized methods
--------------------
-
-Specialized one-dimensional methods
-'''''''''''''''''''''''''''''''''''
+**Specialized methods**
 
 .. autosummary::
     ~BlochDecaySpectrum
     ~BlochDecayCentralTransitionSpectrum
-
-
-Specialized two-dimensional methods
-'''''''''''''''''''''''''''''''''''
-
-:ref:`mqvas_ref`
-
-.. autosummary::
     ~ThreeQ_VAS
     ~FiveQ_VAS
     ~SevenQ_VAS
-
-:ref:`stvas_ref`
-
-.. autosummary::
     ~ST1_VAS
     ~ST2_VAS
-
-Spinning sidebands
-
-.. autosummary::
     ~SSB2D
+
+
+Table of contents
+-----------------
+
+.. toctree::
+    methods/method1D
+    methods/BlochDecaySpectrum
+    methods/BlochDecayCTSpectrum
+    methods/method2D
+    methods/MQVAS
+    methods/stvas
+    methods/SSB2D

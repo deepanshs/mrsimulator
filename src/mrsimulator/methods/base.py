@@ -9,7 +9,7 @@ __email__ = "srivastava.89@osu.edu"
 
 generic_args = r"""
 
-Attributes
+Parameters
 ----------
 
 name: str (optional).
@@ -61,10 +61,7 @@ affine_matrix: np.ndarray or list (optional)
     An affine transformation square matrix,
     :math:`\mathbf{A} \in \mathbb{R}^{n \times n}`, where `n` is the number of
     spectral dimensions. The affine operation follows
-
-    .. math::
-        \mathbf{V}\prime = \mathbf{A} \cdot \mathbf{V},
-
+    :math:`\mathbf{V}\prime = \mathbf{A} \cdot \mathbf{V}`,
     where :math:`\mathbf{V}\in\mathbb{R}^n` and :math:`\mathbf{V}\in\mathbb{R}^n`
     are the initial and transformed frequency coordinates.
 """
@@ -87,14 +84,15 @@ assign parameter values to individual events.
 """
 
 docstring_generic = "".join([generic_args, restrictive_args_freq, returns, notes])
+docstring_1D = "".join([generic_args, restrictive_args_freq, returns])
 
 # BlochDecaySpectrum
 BlochDecaySpectrum = generate_method_from_template(
-    METHODS_DATA["Bloch_decay"], docstring_generic
+    METHODS_DATA["Bloch_decay"], docstring_1D
 )
 
 BlochDecayCentralTransitionSpectrum = generate_method_from_template(
-    METHODS_DATA["Bloch_decay_central_transition"], docstring_generic
+    METHODS_DATA["Bloch_decay_central_transition"], docstring_1D
 )
 
 # generic 1D method

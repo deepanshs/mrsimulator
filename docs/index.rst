@@ -84,6 +84,17 @@ bio macro-molecules, and even amorphous materials. Simulate the NMR spectrum of 
 
 ----
 
+.. only:: html
+
+    **View our example gallery**
+
+    .. image:: https://img.shields.io/badge/View-Simulation%20Examples-Purple?s=small
+        :target: examples/index.html
+    .. image:: https://img.shields.io/badge/View-Fitting%20Examples-Purple?s=small
+        :target: fitting/index.html
+
+----
+
 **Why use mrsimulator?**
 
 - It is open-source and free.
@@ -101,20 +112,6 @@ bio macro-molecules, and even amorphous materials. Simulate the NMR spectrum of 
 
 ----
 
-.. only:: html
-
-    .. raw:: html
-
-        <br>
-
-    **View our example gallery**
-
-    .. image:: https://img.shields.io/badge/View-Simulation%20Examples-Purple?s=small
-        :target: examples/index.html
-    .. image:: https://img.shields.io/badge/View-Fitting%20Examples-Purple?s=small
-        :target: fitting/index.html
-
-----
 
 **Features**
 

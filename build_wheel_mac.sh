@@ -6,9 +6,8 @@ source /Users/deepansh/anaconda3/bin/activate
 for PYBIN in py36 py37 py38; do
     conda activate "${PYBIN}"
     python --version
-    pip install -r requirements.txt
+    cat requirements-dev.txt | sed -e '/^\s*#.*$/d' -e '/^\s*$/d' | xargs -n 1 pip install
     python setup.py develop bdist_wheel -d macwheels
-    pip install -r requirements-dev.txt
     pytest
 done
 
