@@ -1,6 +1,6 @@
 .. currentmodule:: mrsimulator.methods
 
-Spinning sideband coorelation method
+Spinning sideband correlation method
 ------------------------------------
 
 .. autoclass:: SSB2D
