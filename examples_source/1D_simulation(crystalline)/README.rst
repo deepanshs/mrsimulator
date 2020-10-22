@@ -7,3 +7,4 @@ following methods:
 
 - Bloch decay method (:class:`~mrsimulator.methods.BlochDecaySpectrum`),
 - Central transition selective Bloch decay method (:class:`~mrsimulator.methods.BlochDecayCentralTransitionSpectrum`).
+- Generic one-dimensional method (:class:`~mrsimulator.methods.Method1D`).

@@ -150,8 +150,7 @@ sphinx_gallery_conf = {
     # "show_memory": True,
     "first_notebook_cell": (
         "# This cell is added by sphinx-gallery\n\n"
-        "%matplotlib inline\n"
-        "!pip install mrsimulator -q\n\n"
+        "%matplotlib inline\n\n"
         "import mrsimulator\n"
         "print(f'You are using mrsimulator v{mrsimulator.__version__}')"
     ),
