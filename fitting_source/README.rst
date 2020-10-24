@@ -1,3 +1,4 @@
+.. _fitting_examples:
 
 ================================
 Fitting Examples (Least Squares)

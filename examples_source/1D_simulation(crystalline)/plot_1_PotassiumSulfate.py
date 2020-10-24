@@ -22,20 +22,17 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
-# **Step 1:** Create the sites, in this case, just the one.
-S33 = Site(
+# **Step 1:** Create the spin system
+site = Site(
     name="33S",
     isotope="33S",
     isotropic_chemical_shift=335.7,  # in ppm
     quadrupolar={"Cq": 0.959e6, "eta": 0.42},  # Cq is in Hz
 )
+spin_system = SpinSystem(sites=[site])
 
 # %%
-# **Step 2:** Create the spin system from the site.
-spin_system = SpinSystem(sites=[S33])
-
-# %%
-# **Step 3:** Create a central transition selective Bloch decay spectrum method.
+# **Step 2:** Create a central transition selective Bloch decay spectrum method.
 method = BlochDecayCentralTransitionSpectrum(
     channels=["33S"],
     magnetic_flux_density=21.14,  # in T
@@ -51,29 +48,28 @@ method = BlochDecayCentralTransitionSpectrum(
 )
 
 # %%
-# **Step 4:** Create the Simulator object and add the method and the spin system object.
-sim_K2SO3 = Simulator()
-sim_K2SO3.spin_systems += [spin_system]  # add the spin system
-sim_K2SO3.methods += [method]  # add the method
+# **Step 3:** Create the Simulator object and add method and spin system objects.
+sim = Simulator()
+sim.spin_systems += [spin_system]  # add the spin system
+sim.methods += [method]  # add the method
 
 # %%
-# **Step 5:** Simulate the spectrum.
-sim_K2SO3.run()
+# **Step 4:** Simulate the spectrum.
+sim.run()
 
 # The plot of the simulation before signal processing.
 ax = plt.subplot(projection="csdm")
-ax.plot(sim_K2SO3.methods[0].simulation.real, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
 
-
 # %%
-# **Step 6:** Add post-simulation signal processing.
+# **Step 5:** Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[sp.IFFT(), apo.Exponential(FWHM="10 Hz"), sp.FFT()]
 )
-processed_data = processor.apply_operations(data=sim_K2SO3.methods[0].simulation)
+processed_data = processor.apply_operations(data=sim.methods[0].simulation)
 
 # The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")

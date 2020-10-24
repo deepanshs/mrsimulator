@@ -7,11 +7,11 @@ Simulate arbitrary transitions (single-quantum)
 27Al (I=5/2) quadrupolar spectrum simulation.
 """
 # %%
-# The ``mrsimulator`` library does not offer any pre-defined method for simulating
-# individual transitions. A BlochDecaySpectrum method simulates all single quantum
-# transitions, while a BlochDecayCentralTransitionSpectrum method only simulates the
-# central transition. In this example, we show how you can simulate
-# any arbitrary transition using the generic Method1D method.
+# The mrsimulator built-in one-dimensional methods, BlochDecaySpectrum and
+# BlochDecayCentralTransitionSpectrum, are designed to simulate spectrum from all single
+# quantum transitions or central transition selective transition, respectively. In this
+# example, we show how you can simulate any arbitrary transition using the generic
+# Method1D method.
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
@@ -32,20 +32,31 @@ site = Site(
 spin_system = SpinSystem(sites=[site])
 
 # %%
-# Selecting the inner-satellite transition
-# ----------------------------------------
+# Selecting spin transitions for simulation
+# -----------------------------------------
 #
-# The arguments of the following Method1D object is the same as the BlochDecaySpectrum
-# method. One extra argument is the `events` item in the `spectral_dimension` object.
-# The event object is where you define the `transition_query` to select one or more
-# transitions to simulate. The two attributes of the `transition_query` are `P` and `D`,
-# which are given as, :math:`m_f-m_i` and :math:`m_f^2 - m_i^2`, where :math:`m_f` and
-# :math:`m_i` are the spin quantum numbers for the final and initial energy states.
+# The arguments of the Method1D object are the same as the arguments of the
+# BlochDecaySpectrum method; however, unlike a BlochDecaySpectrum method, the
+# :ref:`spectral_dim_api` object in Method1D contains additional argument---`events`.
 #
-# In the following example, we assign the values of P and D as -1 and 2, respectively.
-# In the case of a single-site spin 5/2 spin system, there is only one transition,
-# :math:`|-1/2\rangle\rightarrow|-3/2\rangle`, that satisfy this query selection
-# criterion and thus will be selected.
+# The :ref:`event_api` object is a collection of attributes, which are local to the
+# event. It is here where we define a `transition_query` to select one or more
+# transitions for simulating the spectrum. The two attributes of the `transition_query`
+# are `P` and `D`, which are given as,
+#
+# .. math::
+#       P = m_f - m_i \\
+#       D = m_f^2 - m_f^2,
+#
+# where :math:`m_f` and :math:`m_i` are the spin quantum numbers for the final and
+# initial energy states. Based on the query, the method selects all transitions from
+# the spin system that satisfy the query selection criterion. For example, to simulate
+# a spectrum for the satellite transition, :math:`|-1/2\rangle\rightarrow|-3/2\rangle`,
+# set the value of
+#
+# .. math::
+#       P &= (-3/2) - (-1/2) = -1 \\
+#       D &= (9/4) - (1/4) = 2.
 #
 # For illustrative purposes, let's look at the infinite speed spectrum from this
 # satellite transition.
@@ -83,8 +94,8 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# Selecting both inner and outer-satellite transition
-# ---------------------------------------------------
+# Selecting both inner and outer-satellite transitions
+# ----------------------------------------------------
 # You may use the same transition query selection criterion to select multiple
 # transitions. Consider the following transitions with respective P and D values.
 #

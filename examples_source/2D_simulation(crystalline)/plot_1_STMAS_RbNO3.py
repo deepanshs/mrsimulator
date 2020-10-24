@@ -47,44 +47,54 @@ spin_systems = [SpinSystem(sites=[s]) for s in sites]
 # **Step 2:** Select a satellite-transition variable-angle spinning method. The
 # following `ST1_VAS` method correlates the frequencies from the two inner-satellite
 # transitions to the central transition. Note, STMAS measurements are highly suspectable
-# to rotor angle mismatch. The following method deliberately miss-sets the rotor angle
-# by approximately 0.005 degrees.
-method = ST1_VAS(
-    channels=["87Rb"],
-    magnetic_flux_density=7,  # in T
-    rotor_angle=54.73 * 3.14159 / 180,  # in rad (magic angle ~ 54.735 degrees)
-    spectral_dimensions=[
-        {
-            "count": 256,
-            "spectral_width": 3e3,  # in Hz
-            "reference_offset": -2.4e3,  # in Hz
-            "label": "Isotropic dimension",
-        },
-        {
-            "count": 512,
-            "spectral_width": 5e3,  # in Hz
-            "reference_offset": -4e3,  # in Hz
-            "label": "MAS dimension",
-        },
-    ],
-)
+# to rotor angle mismatch. In the following, we show two methods, first set to
+# magic-angle and the second deliberately miss-sets by approximately 0.005 degrees.
+
+angles = [54.735, 54.73]
+method = []
+for angle in angles:
+    method.append(
+        ST1_VAS(
+            channels=["87Rb"],
+            magnetic_flux_density=7,  # in T
+            rotor_angle=angle * 3.14159 / 180,  # in rad (magic angle)
+            spectral_dimensions=[
+                {
+                    "count": 256,
+                    "spectral_width": 3e3,  # in Hz
+                    "reference_offset": -2.4e3,  # in Hz
+                    "label": "Isotropic dimension",
+                },
+                {
+                    "count": 512,
+                    "spectral_width": 5e3,  # in Hz
+                    "reference_offset": -4e3,  # in Hz
+                    "label": "MAS dimension",
+                },
+            ],
+        )
+    )
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method.
+sim.methods = method  # add the methods.
 sim.run()
 
 # %%
 # The plot of the simulation.
-data = sim.methods[0].simulation
-ax = plt.gca(projection="csdm")
-cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
-plt.colorbar(cb)
-ax.invert_xaxis()
-ax.invert_yaxis()
+data = [sim.methods[0].simulation, sim.methods[1].simulation]
+fig, ax = plt.subplots(1, 2, figsize=(8.5, 3), subplot_kw={"projection": "csdm"})
+
+titles = ["STVAS @ magic-angle", "STVAS @ 0.005 deg off magic-angle"]
+for i, item in enumerate(data):
+    cb1 = ax[i].imshow(item / item.max(), aspect="auto", cmap="gist_ncar_r")
+    ax[i].set_title(titles[i])
+    plt.colorbar(cb1, ax=ax[i])
+    ax[i].invert_xaxis()
+    ax[i].invert_yaxis()
 plt.tight_layout()
 plt.show()
 
@@ -99,13 +109,15 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation)
-processed_data /= processed_data.max()
+processed_data = []
+for item in data:
+    processed_data.append(processor.apply_operations(data=item))
+    processed_data[-1] /= processed_data[-1].max()
 
 # %%
 # The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(processed_data[1].real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()

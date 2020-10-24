@@ -58,7 +58,6 @@ das = Method2D(
             "events": [{"rotor_angle": 54.735 * 3.14159 / 180}],
         },
     ],
-    affine_matrix=[1, 0, -1, 1],
 )
 sim.methods = [das]  # add the method.
 

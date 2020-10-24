@@ -65,17 +65,17 @@ method = BlochDecaySpectrum(
 
 # %%
 # **Step 4:** Create the Simulator object and add the method and spin system objects.
-sim_wollastonite = Simulator()
-sim_wollastonite.spin_systems += spin_systems  # add the spin systems
-sim_wollastonite.methods += [method]  # add the method
+sim = Simulator()
+sim.spin_systems += spin_systems  # add the spin systems
+sim.methods += [method]  # add the method
 
 # %%
 # **Step 5:** Simulate the spectrum.
-sim_wollastonite.run()
+sim.run()
 
 # The plot of the simulation before signal processing.
 ax = plt.subplot(projection="csdm")
-ax.plot(sim_wollastonite.methods[0].simulation.real, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -85,7 +85,7 @@ plt.show()
 processor = sp.SignalProcessor(
     operations=[sp.IFFT(), apo.Exponential(FWHM="70 Hz"), sp.FFT()]
 )
-processed_data = processor.apply_operations(data=sim_wollastonite.methods[0].simulation)
+processed_data = processor.apply_operations(data=sim.methods[0].simulation)
 
 # The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
