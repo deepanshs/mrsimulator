@@ -10,7 +10,7 @@ simulate spectrum with practical/experimental applications. The examples illustr
 - building spin systems,
 - building NMR methods,
 - simulating spectrum, and
-- spectrum processing (e.g., adding line-broadening).
+- processing spectrum (e.g. adding line-broadening).
 
 For mrsimulator applications related to least-squares fitting, see the
 :ref:`fitting_examples`.

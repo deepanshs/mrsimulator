@@ -6,6 +6,16 @@ Non-coincidental Quad and CSA, 17O (I=5/2)
 
 17O (I=5/2) quadrupolar static spectrum simulation.
 """
+# %%
+# The following example illustrates the simulation of NMR spectra arising from
+# non-coincidental quadrupolar and shielding tensors. The tensor parameter values for
+# the simulation are obtained from Yamada `et. al.` [#f1]_, for the
+# :math:`^{17}\text{O}` site in benzanilide.
+#
+# .. warning::
+#     The Euler angles representation using by Yamada `et. al` is different from the
+#     representation used in mrsimulator. The resulting simulation might not resemble
+#     the published spectrum.
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
@@ -68,3 +78,10 @@ ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
+
+
+# %%
+# .. [#f1] Yamada, K., Dong, S., Wu, G., Solid-State 17O NMR Investigation of the
+#       Carbonyl Oxygen Electric-Field-Gradient Tensor and Chemical Shielding Tensor in
+#       Amides, J. Am. Chem. Soc. 2000, **122**, 11602-11609.
+#       `DOI: 10.1021/ja0008315 <https://doi.org/10.1021/ja0008315>`_
