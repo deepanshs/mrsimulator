@@ -148,9 +148,11 @@ class Method(Parseable):
             return None
         v = np.asarray(v)
         dim_len = len(values["spectral_dimensions"])
-        if v.size == dim_len ** 2:
-            return v
-        raise ValueError(f"Expecting a {dim_len}x{dim_len} affine matrix.")
+        if v.size != dim_len ** 2:
+            raise ValueError(f"Expecting a {dim_len}x{dim_len} affine matrix.")
+        if v.ravel()[0] == 0:
+            raise ValueError("The first element of the affine matrix cannot be zero.")
+        return v
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):

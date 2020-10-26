@@ -41,4 +41,5 @@ Generic two-dimensional correlation method
     ...             ]
     ...         },
     ...     ],
+    ...     affine_matrix=[[1, -1], [0, 1]],
     ... )

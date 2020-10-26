@@ -1,5 +1,5 @@
-2D NMR simulation (Amorphous solids)
-------------------------------------
+2D NMR simulation (Disordered/Amorphous solids)
+-----------------------------------------------
 
 The following examples are the NMR spectrum simulation for amorphous solids. The
 examples include the illustrations for the following methods:

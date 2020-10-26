@@ -66,7 +66,7 @@ maf = Method2D(
             "events": [{"rotor_angle": 54.735 * 3.14159 / 180}],
         },
     ],
-    affine_matrix=[1, -1, 0, 1],
+    affine_matrix=[[1, -1], [0, 1]],
 )
 
 # %%
@@ -94,7 +94,7 @@ processed_data /= processed_data.max()
 # %%
 # The plot of the simulation after signal processing.
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_data, aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(processed_data.T, aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()

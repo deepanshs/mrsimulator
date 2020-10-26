@@ -109,6 +109,10 @@ def test_method_1D():
 
 def test_method_2D():
 
+    error = "The first element of the affine matrix cannot be zero."
+    with pytest.raises(ValueError, match=f".*{error}.*"):
+        Method2D(spectral_dimensions=[{}, {}], affine_matrix=[0, 1, 2, 3])
+
     # parse dict with units test
     dict_1d = {
         "channels": ["87Rb"],

@@ -80,7 +80,7 @@ def test_three_half():
         isotropic_chemical_shift=-38.5,  # in ppm
         quadrupolar={"Cq": 1.94e6, "eta": 1.0},  # Cq is in Hz
     )
-    setup_simulation(site, affine_matrix=[9 / 16, 7 / 16, -8 / 17, 1])
+    setup_simulation(site, affine_matrix=[9 / 16, 7 / 16, -9 / 34, 27 / 34])
 
 
 def test_five_half():
@@ -90,11 +90,11 @@ def test_five_half():
         quadrupolar={"Cq": 3.22e6, "eta": 0.66},  # Cq is in Hz
     )
     # 3Q-MAS
-    affine_matrix = [12 / 31, 19 / 31, 31 / 17, 1]
+    affine_matrix = [[12 / 31, 19 / 31], [12 / 17, 36 / 17]]
     setup_simulation(site, affine_matrix=affine_matrix)
 
     # 5Q-MAS
-    affine_matrix = [12 / 37, 25 / 37, -37 / 85, 1]
+    affine_matrix = [12 / 37, 25 / 37, -12 / 85, 12 / 17]
     setup_simulation(site, affine_matrix=affine_matrix, class_id=1)
 
 
@@ -105,13 +105,13 @@ def test_seven_half():
         quadrupolar={"Cq": 6.68e6, "eta": 0.2},  # Cq is in Hz
     )
     # 3Q-MAS
-    affine_matrix = [45 / 146, 101 / 146, 73 / 17, 1]
+    affine_matrix = [45 / 146, 101 / 146, 45 / 34, 135 / 34]
     setup_simulation(site, affine_matrix=affine_matrix)
 
     # 5Q-MAS
-    affine_matrix = [9 / 20, 11 / 20, 10 / 17, 1]
+    affine_matrix = [9 / 20, 11 / 20, 9 / 34, 45 / 34]
     setup_simulation(site, affine_matrix=affine_matrix, class_id=1)
 
     # 7Q-MAS
-    affine_matrix = [45 / 206, 161 / 206, -103 / 238, 1]
+    affine_matrix = [45 / 206, 161 / 206, -45 / 476, 45 / 68]
     setup_simulation(site, affine_matrix=affine_matrix, class_id=2)
