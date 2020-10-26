@@ -174,7 +174,7 @@ Getting Started
     getting_started-objects
     configuring_simulator
     mrsim_IO
-    designing_methods
+.. designing_methods
 
 Signal Processing (``mrsimulator.SignalProcessor``)
 ---------------------------------------------------

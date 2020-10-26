@@ -50,23 +50,23 @@ rotor_angle: float (optional)
     value is ``0.9553166``, i.e. the magic angle.
 """
 
-restrictive_args_freq = r"""
+args_freq = r"""
 rotor_frequency: float (optional)
     A global value for the sample spinning frequency, :math:`\nu_r`, in units of Hz.
     The default value is ``0``.
 """
 
-restrictive_args_affine = r"""
+args_affine = r"""
 affine_matrix: np.ndarray or list (optional)
     An affine transformation square matrix,
     :math:`\mathbf{A} \in \mathbb{R}^{n \times n}`, where `n` is the number of
     spectral dimensions. The affine operation follows
-    :math:`\mathbf{V}\prime = \mathbf{A} \cdot \mathbf{V}`,
-    where :math:`\mathbf{V}\in\mathbb{R}^n` and :math:`\mathbf{V}\in\mathbb{R}^n`
+    :math:`\mathbf{V}^\prime = \mathbf{A} \cdot \mathbf{V}`,
+    where :math:`\mathbf{V}\in\mathbb{R}^n` and :math:`\mathbf{V}^\prime\in\mathbb{R}^n`
     are the initial and transformed frequency coordinates.
 """
 
-restrictive_args = restrictive_args_freq + restrictive_args_affine
+# additional_args = args_freq + args_affine
 
 returns = r"""
 Return
@@ -83,8 +83,8 @@ of those parameters is considered global. In a multi-event method, you may also
 assign parameter values to individual events.
 """
 
-docstring_generic = "".join([generic_args, restrictive_args_freq, returns, notes])
-docstring_1D = "".join([generic_args, restrictive_args_freq, returns])
+docstring_generic = "".join([generic_args, args_freq, returns, notes])
+docstring_1D = "".join([generic_args, args_freq, returns])
 
 # BlochDecaySpectrum
 BlochDecaySpectrum = generate_method_from_template(
@@ -99,7 +99,7 @@ BlochDecayCentralTransitionSpectrum = generate_method_from_template(
 Method1D = generate_method_from_template(METHODS_DATA["Method1D"], docstring_generic)
 
 # generic 2D method
-docstring_2D = "".join([generic_args, restrictive_args_affine, returns, notes])
+docstring_2D = "".join([generic_args, args_affine, returns, notes])
 Method2D = generate_method_from_template(METHODS_DATA["Method2D"], docstring_2D)
 
 
