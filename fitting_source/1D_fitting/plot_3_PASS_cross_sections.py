@@ -27,7 +27,7 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # %%
 # Import the dataset
 # ------------------
-filename = "https://osu.box.com/shared/static/dghyf4h66pd10llbj0qmrsizkwzb5llm.csdf"
+filename = "https://sandbox.zenodo.org/record/687656/files/1H13C_CPPASS_LHistidine.csdf"
 pass_data = cp.load(filename)
 
 # For the spectral fitting, we only focus on the real part of the complex dataset.

@@ -28,7 +28,7 @@ mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 sim = Simulator()
 
 # load the spin systems from url.
-filename = "https://bit.ly/3iKij9H"
+filename = "https://sandbox.zenodo.org/record/687656/files/coesite.mrsys"
 sim.load_spin_systems(filename)
 
 # %%

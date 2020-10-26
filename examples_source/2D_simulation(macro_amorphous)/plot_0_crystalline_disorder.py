@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Simulating site disorders (crystalline)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Simulating site disorder (crystalline)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 87Rb (I=3/2) 3QMAS simulation with site disorder.
 """
@@ -111,7 +111,7 @@ method = ThreeQ_VAS(
             "count": 96,
             "spectral_width": 7e3,  # in Hz
             "reference_offset": -7e3,  # in Hz
-            "label": "isotropic",
+            "label": "Isotropic dimension",
         },
         {
             "count": 256,

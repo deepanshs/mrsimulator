@@ -39,8 +39,8 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # ------------------
 # Use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_
 # module to load the synthetic dataset as a CSDM object.
-filename = "https://osu.box.com/shared/static/a45xj96iekdjrs2beri0nkrow4vjewdh.csdf"
-synthetic_experiment = cp.load(filename)
+file_ = "https://sandbox.zenodo.org/record/687656/files/synthetic_cuspidine_test.csdf"
+synthetic_experiment = cp.load(file_)
 
 # convert the dimension coordinates from Hz to ppm
 synthetic_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")

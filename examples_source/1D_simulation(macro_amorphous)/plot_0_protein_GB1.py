@@ -28,8 +28,8 @@ mpl.rcParams["figure.figsize"] = [9, 4]
 # Create the Simulator object and load the spin systems from an external file.
 sim = Simulator()
 
-filename = "https://bit.ly/2RFKYke"
-sim.load_spin_systems(filename)  # load the spin systems.
+file_ = "https://sandbox.zenodo.org/record/687656/files/protein_GB1_15N_13CA_13CO.mrsys"
+sim.load_spin_systems(file_)  # load the spin systems.
 print(f"number of spin systems = {len(sim.spin_systems)}")
 
 # %%

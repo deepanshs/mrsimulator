@@ -9,7 +9,8 @@ RbNO3, 87Rb (I=3/2) 3QMAS
 # %%
 # The following is an example of the 3QMAS simulation of :math:`\text{RbNO}_3`, which
 # has three distinct :math:`^{87}\text{Rb}` sites. The :math:`^{87}\text{Rb}` tensor
-# parameters were obtained from Massiot `et. al.` [#f1]_.
+# parameters were obtained from Massiot `et. al.` [#f1]_. In this simulation, a Gaussian
+# broadening is applied to the spectrum as a post-simulation step.
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
@@ -49,16 +50,16 @@ spin_systems = [SpinSystem(sites=[s]) for s in sites]
 # provide a `rotor_angle` to the method. The default `rotor_angle` is the magic-angle.
 method = ThreeQ_VAS(
     channels=["87Rb"],
-    magnetic_flux_density=7,  # in T
+    magnetic_flux_density=9.4,  # in T
     spectral_dimensions=[
         {
-            "count": 256,
-            "spectral_width": 4e3,  # in Hz
-            "reference_offset": -5e3,  # in Hz
+            "count": 128,
+            "spectral_width": 7e3,  # in Hz
+            "reference_offset": -7e3,  # in Hz
             "label": "Isotropic dimension",
         },
         {
-            "count": 512,
+            "count": 256,
             "spectral_width": 1e4,  # in Hz
             "reference_offset": -4e3,  # in Hz
             "label": "MAS dimension",
@@ -91,8 +92,8 @@ processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
         sp.IFFT(dim_index=(0, 1)),
-        apo.Gaussian(FWHM="0.2 kHz", dim_index=0),
-        apo.Gaussian(FWHM="0.2 kHz", dim_index=1),
+        apo.Gaussian(FWHM="0.08 kHz", dim_index=0),
+        apo.Gaussian(FWHM="0.22 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
     ]
 )
@@ -104,8 +105,8 @@ processed_data /= processed_data.max()
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)
-ax.set_xlim(-15, -70)
-ax.set_ylim(-35, -65)
+ax.set_ylim(-40, -70)
+ax.set_xlim(-20, -60)
 plt.tight_layout()
 plt.show()
 
@@ -115,3 +116,7 @@ plt.show()
 #       reconstruction sequences for quadrupolar nuclei, ssnmr, (1996), **6**, *1*,
 #       73-83. `DOI: 10.1016/0926-2040(95)01210-9
 #       <https://doi.org/10.1016/0926-2040(95)01210-9>`_
+#
+# .. seealso::
+#   :ref:`sphx_glr_examples_2D_simulation(macro_amorphous)_plot_0_crystalline_disorder.py`
+#   for RbNO3.

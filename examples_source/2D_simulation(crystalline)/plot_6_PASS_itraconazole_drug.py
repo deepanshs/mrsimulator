@@ -32,7 +32,7 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 
 sim = Simulator()
 
-filename = "https://bit.ly/337Oqe4"
+filename = "https://sandbox.zenodo.org/record/687656/files/itraconazole_13C.mrsys"
 sim.load_spin_systems(filename)
 
 
