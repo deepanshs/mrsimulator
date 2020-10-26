@@ -4,6 +4,8 @@ Upcoming changes
 What's new
 ''''''''''
 
+- ⭐ Improved simulation performance. ⭐ See our :ref:`benchmark`.
+
 The update introduces various two-dimensional methods for simulating NMR spectrum.
 
 - Introdues a generic one-dimensional method, :class:`~mrsimulator.methods.Method1D`.

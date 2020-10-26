@@ -206,8 +206,9 @@ def one_d_spectrum(method,
     #     print (f'Sample rotation frequency (𝜈r) = {sample_rotation_frequency_in_Hz} Hz')
 
 # sites _______________________________________________________________________________
+    p_isotopes = None
     # CSA
-    cdef int number_of_sites
+    cdef int number_of_sites, p_number_of_sites=0
     cdef ndarray[float] spin_i
     cdef ndarray[double] gyromagnetic_ratio_i
 
@@ -325,18 +326,22 @@ def one_d_spectrum(method,
                 #     print(f'Quadrupolar orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
         if number_of_sites != 0:
-            transition_pathway = spin_sys.transition_pathways
-            if transition_pathway is None:
-                transition_pathway = np.asarray(method._get_transition_pathways_np(spin_sys))
-                transition_array = np.asarray(transition_pathway, dtype=np.float32).ravel()
-            else:
-                transition_pathway = np.asarray(transition_pathway)
-                # convert transition objects to list
-                lst = [item.tolist() for item in transition_pathway.ravel()]
-                transition_array = np.asarray(lst, dtype=np.float32).ravel()
+            if number_of_sites != p_number_of_sites and isotopes != p_isotopes:
+                transition_pathway = spin_sys.transition_pathways
+                if transition_pathway is None:
+                    transition_pathway = np.asarray(method._get_transition_pathways_np(spin_sys))
+                    transition_array = np.asarray(transition_pathway, dtype=np.float32).ravel()
+                else:
+                    transition_pathway = np.asarray(transition_pathway)
+                    # convert transition objects to list
+                    lst = [item.tolist() for item in transition_pathway.ravel()]
+                    transition_array = np.asarray(lst, dtype=np.float32).ravel()
 
-            pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
-            pathway_increment = 2*number_of_sites*transition_count_per_pathway
+                pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
+                pathway_increment = 2*number_of_sites*transition_count_per_pathway
+
+                p_number_of_sites = number_of_sites
+                p_isotopes = isotopes
 
             # if spin_sys.transitions is not None:
             #     transition_array = np.asarray(
