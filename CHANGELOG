@@ -8,8 +8,8 @@ What's new
 
 The update introduces various two-dimensional methods for simulating NMR spectrum.
 
-- Introdues a generic one-dimensional method, :class:`~mrsimulator.methods.Method1D`.
-- Introdues a generic two-dimensional method, :class:`~mrsimulator.methods.Method2D`.
+- Introduces a generic one-dimensional method, :class:`~mrsimulator.methods.Method1D`.
+- Introduces a generic two-dimensional method, :class:`~mrsimulator.methods.Method2D`.
 - Specialized two-dimensional methods for multi-quantum variable-angle spinning
   with build-in affine transformations.
 
