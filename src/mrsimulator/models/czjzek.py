@@ -4,6 +4,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 
 from .utils import get_Haeberlen_components
 from .utils import get_principal_components
+from .utils import x_y_from_zeta_eta
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -137,8 +138,9 @@ class CzjzekDistribution(AbstractDistribution):
         >>> cz_model = CzjzekDistribution(0.5)
     """
 
-    def __init__(self, sigma: float):
+    def __init__(self, sigma: float, polar=False):
         self.sigma = sigma
+        self.polar = polar
 
     def rvs(self, size: int):
         """Draw random variates of length `size` from the distribution.
@@ -155,7 +157,9 @@ class CzjzekDistribution(AbstractDistribution):
             >>> Cq_dist, eta_dist = cz_model.rvs(size=1000000)
         """
         tensors = _czjzek_random_distribution_tensors(self.sigma, size)
-        return get_Haeberlen_components(tensors)
+        if not self.polar:
+            return get_Haeberlen_components(tensors)
+        return x_y_from_zeta_eta(*get_Haeberlen_components(tensors))
 
 
 class ExtCzjzekDistribution(AbstractDistribution):
@@ -199,9 +203,10 @@ class ExtCzjzekDistribution(AbstractDistribution):
     >>> ext_cz_model = ExtCzjzekDistribution(S0, eps=0.35)
     """
 
-    def __init__(self, symmetric_tensor: SymmetricTensor, eps: float):
+    def __init__(self, symmetric_tensor: SymmetricTensor, eps: float, polar=False):
         self.symmetric_tensor = symmetric_tensor
         self.eps = eps
+        self.polar = polar
 
     def rvs(self, size: int):
         """Draw random variates of length `size` from the distribution.
@@ -243,4 +248,6 @@ class ExtCzjzekDistribution(AbstractDistribution):
         # total tensor
         total_tensors = np.diag(T0) + rho * tensors
 
-        return get_Haeberlen_components(total_tensors)
+        if not self.polar:
+            return get_Haeberlen_components(total_tensors)
+        return x_y_from_zeta_eta(*get_Haeberlen_components(total_tensors))

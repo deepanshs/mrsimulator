@@ -48,26 +48,26 @@ def single_site_system_generator(
         parameter values are given as lists/ndarrays, the length of all the lists must
         be the same.
     """
-    isotopes = fix_item(isotopes)
-    n_isotopes = get_length(isotopes)
+    isotopes = _fix_item(isotopes)
+    n_isotopes = _get_length(isotopes)
 
-    isotropic_chemical_shifts = fix_item(isotropic_chemical_shifts)
-    n_iso = get_length(isotropic_chemical_shifts)
+    isotropic_chemical_shifts = _fix_item(isotropic_chemical_shifts)
+    n_iso = _get_length(isotropic_chemical_shifts)
 
-    abundance = fix_item(abundance)
-    n_abd = get_length(abundance)
+    abundance = _fix_item(abundance)
+    n_abd = _get_length(abundance)
 
     n_ss = []
     if shielding_symmetric is not None:
         shield_keys = shielding_symmetric.keys()
         shielding_symmetric_keys = ["zeta", "eta", "alpha", "beta", "gamma"]
         shielding_symmetric = {
-            item: fix_item(shielding_symmetric[item])
+            item: _fix_item(shielding_symmetric[item])
             for item in shielding_symmetric_keys
             if item in shield_keys
         }
         n_ss = [
-            get_length(shielding_symmetric[item])
+            _get_length(shielding_symmetric[item])
             for item in shielding_symmetric_keys
             if item in shield_keys
         ]
@@ -77,26 +77,26 @@ def single_site_system_generator(
         quad_keys = quadrupolar.keys()
         quadrupolar_keys = ["Cq", "eta", "alpha", "beta", "gamma"]
         quadrupolar = {
-            item: fix_item(quadrupolar[item])
+            item: _fix_item(quadrupolar[item])
             for item in quadrupolar_keys
             if item in quad_keys
         }
         n_q = [
-            get_length(quadrupolar[item])
+            _get_length(quadrupolar[item])
             for item in quadrupolar_keys
             if item in quad_keys
         ]
 
     n = np.asarray([n_isotopes, n_iso, *n_ss, *n_q, n_abd])
-    n_len = check_size(n)
+    n_len = _check_size(n)
 
     if abundance is None:
         abundance = 1 / n_len
 
     # system with only isotope and isotropic shifts parameters
-    isotopes_ = get_default_lists(isotopes, n_len)
-    iso_chemical_shifts_ = get_default_lists(isotropic_chemical_shifts, n_len)
-    abundance_ = get_default_lists(abundance, n_len)
+    isotopes_ = _get_default_lists(isotopes, n_len)
+    iso_chemical_shifts_ = _get_default_lists(isotropic_chemical_shifts, n_len)
+    abundance_ = _get_default_lists(abundance, n_len)
 
     index = np.where(abundance_ > rtol * abundance_.max())[0]
 
@@ -115,7 +115,7 @@ def single_site_system_generator(
         lst = []
         for item in shielding_symmetric_keys:
             if item in shield_keys:
-                lst.append(get_default_lists(shielding_symmetric[item], n_len)[index])
+                lst.append(_get_default_lists(shielding_symmetric[item], n_len)[index])
             else:
                 lst.append([None for _ in range(index.size)])
         _populate_shielding(sys, lst)
@@ -125,7 +125,7 @@ def single_site_system_generator(
         lst = []
         for item in quadrupolar_keys:
             if item in quad_keys:
-                lst.append(get_default_lists(quadrupolar[item], n_len)[index])
+                lst.append(_get_default_lists(quadrupolar[item], n_len)[index])
             else:
                 lst.append([None for _ in range(index.size)])
 
@@ -158,27 +158,27 @@ def _populate_shielding(sys, items):
         }
 
 
-def get_default_lists(item, n):
+def _get_default_lists(item, n):
     if isinstance(item, (list, np.ndarray)):
         return np.asarray(item)
 
     return np.asarray([item for _ in range(n)])
 
 
-def fix_item(item):
+def _fix_item(item):
     if isinstance(item, (list, np.ndarray)):
         return np.asarray(item).ravel()
     return item
 
 
-def get_length(item):
+def _get_length(item):
     """Return the length of item it item is a list, else 0."""
     if isinstance(item, (list, np.ndarray)):
         return np.asarray(item).size
     return 0
 
 
-def check_size(n_list):
+def _check_size(n_list):
     index = np.where(n_list > 0)
     n_list_reduced = n_list[index]
     first_item = n_list_reduced[0]

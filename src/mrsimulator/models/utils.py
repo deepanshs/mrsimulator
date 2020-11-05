@@ -63,3 +63,19 @@ def x_y_from_zeta_eta(zeta, eta):
     del zeta, eta
 
     return xa, ya
+
+
+def x_y_to_zeta_eta(x, y):
+    """Same as def x_y_to_zeta_eta, but for ndarrays."""
+    x = np.abs(x)
+    y = np.abs(y)
+    zeta = np.sqrt(x ** 2 + y ** 2)  # + offset
+    eta = np.ones(zeta.shape)
+    index = np.where(x > y)
+    zeta[index] = -zeta[index]
+    eta[index] = (4.0 / np.pi) * np.arctan(y[index] / x[index])
+
+    index = np.where(x < y)
+    eta[index] = (4.0 / np.pi) * np.arctan(x[index] / y[index])
+
+    return zeta.ravel(), eta.ravel()

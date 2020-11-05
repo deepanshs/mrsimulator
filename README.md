@@ -59,7 +59,7 @@ The `mrsimulator` package currently offers the following
 - **Models** for tensor parameter distribution in amorphous materials.
 
   - Czjzek
-  - Extendend Czjzek
+  - Extended Czjzek
 
 ### Goals for the near future
 
