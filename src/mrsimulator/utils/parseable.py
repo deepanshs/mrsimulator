@@ -6,10 +6,11 @@ from typing import ClassVar
 from typing import Dict
 
 from csdmpy.units import string_to_quantity
-from IPython.display import JSON
 from pydantic import BaseModel
 
 from .extra import _reduce_dict
+
+# from IPython.display import JSON
 
 __author__ = "Shyam Dwaraknath"
 __email__ = "shyamd@lbl.gov"
@@ -91,8 +92,8 @@ class Parseable(BaseModel):
         """
         return _reduce_dict(self.dict(), exclude)
 
-    def pretty(self):
-        return JSON(self.json())
+    # def pretty(self):
+    #     return JSON(self.json())
 
     def json(self) -> dict:
         """Parse the class object to a JSON compliant python dictionary object where

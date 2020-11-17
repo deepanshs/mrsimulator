@@ -6,7 +6,6 @@ from typing import List
 
 import csdmpy as cp
 import numpy as np
-from IPython.display import JSON
 from mrsimulator import __version__
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
@@ -16,6 +15,8 @@ from mrsimulator.utils.importer import import_json
 from pydantic import BaseModel
 
 from .config import ConfigSimulator
+
+# from IPython.display import JSON
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -307,8 +308,8 @@ class Simulator(BaseModel):
         """
         return _reduce_dict(self.dict(), exclude)
 
-    def pretty(self):
-        return JSON(self.json(include_methods=True, include_version=True))
+    # def pretty(self):
+    #     return JSON(self.json(include_methods=True, include_version=True))
 
     def load_spin_systems(self, filename: str):
         """
