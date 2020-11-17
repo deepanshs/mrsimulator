@@ -53,6 +53,7 @@ def SSB2D_update(method):
     # Add the affine matrix
     if method.affine_matrix is None:
         method.affine_matrix = [1, -1, 0, 1]
+    method.description = "Simulate a 2D sideband separation method."
 
     return method
 

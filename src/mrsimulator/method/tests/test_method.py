@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test for the base Dimension class."""
+from copy import deepcopy
+
 import csdmpy as cp
 import numpy as np
 import pytest
@@ -14,6 +16,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 def basic_method_tests(the_method):
+    assert the_method != "r"
     assert the_method.name == "test-1-d"
     the_method.name = "test worked"
     assert the_method.name == "test worked"
@@ -45,6 +48,10 @@ def basic_method_tests(the_method):
     }
     dimension = SpectralDimension.parse_dict_with_units(dimension_dictionary)
     assert the_method.spectral_dimensions[0] == dimension
+
+    the_method2 = deepcopy(the_method)
+    the_method2.affine_matrix = [1]
+    assert the_method2 != the_method
 
     # to_dict_with_unit()
     serialize = {
