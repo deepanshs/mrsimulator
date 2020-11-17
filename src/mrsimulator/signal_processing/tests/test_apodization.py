@@ -119,7 +119,7 @@ def test_scale_class():
     assert a.property_units == {}
 
     # class to dict with units
-    dict_ = a.to_dict_with_units()
+    dict_ = a.json()
 
     assert dict_ == {
         "function": "Scale",
@@ -142,7 +142,7 @@ def test_Exponential_class():
     assert a.dv_index == 0
 
     # class to dict with units
-    dict_ = a.to_dict_with_units()
+    dict_ = a.json()
 
     assert dict_ == {
         "function": "apodization",
@@ -168,7 +168,7 @@ def test_Gaussian_class():
     assert a.dv_index == 0
 
     # class to dict with units
-    dict_ = a.to_dict_with_units()
+    dict_ = a.json()
 
     assert dict_ == {
         "function": "apodization",

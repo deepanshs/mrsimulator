@@ -168,7 +168,28 @@ class Method(Parseable):
             A :ref:`method_api` object.
         """
         py_dict_copy = deepcopy(py_dict)
+
+        # method_name = py_dict_copy["name"]
+        # named = True if method_name not in ["Method1D", "Method2D"] else False
+        # if named:
+        #     return namedMethod(py_dict_copy)
+
+        glb = {}
+        list_g = ["magnetic_flux_density", "rotor_frequency", "rotor_angle"]
+        for item in list_g:
+            if item in py_dict_copy.keys():
+                glb[item] = py_dict_copy[item]
+        glb_keys = glb.keys()
+
         if "spectral_dimensions" in py_dict_copy:
+
+            for dim in py_dict_copy["spectral_dimensions"]:
+                for ev in dim["events"]:
+                    intersect = set(ev.keys()).intersection(set(glb_keys))
+                    for k in glb:
+                        if k not in intersect:
+                            ev[k] = glb[k]
+
             py_dict_copy["spectral_dimensions"] = [
                 SpectralDimension.parse_dict_with_units(s)
                 for s in py_dict_copy["spectral_dimensions"]
@@ -179,7 +200,14 @@ class Method(Parseable):
         if "experiment" in py_dict_copy:
             if py_dict_copy["experiment"] is not None:
                 py_dict_copy["experiment"] = cp.parse_dict(py_dict_copy["experiment"])
+
         return super().parse_dict_with_units(py_dict_copy)
+
+        # method_name = method.name
+        # named = True if method_name not in ["Method1D", "Method2D"] else False
+        # if named:
+        #     return getattr(named_method, method_name).update_method(method)
+        # return method
 
     def update_spectral_dimension_attributes_from_experiment(self):
         """Update the spectral dimension attributes of the method to match the
@@ -192,7 +220,7 @@ class Method(Parseable):
             spectral_dims[i].reference_offset = dim.coordinates_offset.to("Hz").value
             spectral_dims[i].origin_offset = dim.origin_offset.to("Hz").value
 
-    def to_dict_with_units(self):
+    def json(self):
         """
         Parse the class object to a JSON compliant python dictionary object where
         the attribute value with physical quantity is expressed as a string with a
@@ -202,20 +230,49 @@ class Method(Parseable):
             A python dict object.
         """
         temp_dict = {}
+
+        # add metadata
         items = ["name", "label", "description"]
+
         for en in items:
             value = self.__getattribute__(en)
             if value is not None:
                 temp_dict[en] = self.__getattribute__(en)
 
+        # add channels
+        temp_dict["channels"] = [item.json() for item in self.channels]
+
+        # add global parameters
+        ev0 = self.spectral_dimensions[0].events[0]
+        list_g = ["magnetic_flux_density", "rotor_frequency", "rotor_angle"]
+        unit_g = ["T", "Hz", "rad"]
+        global_ = [f"{ev0.__getattribute__(k)} {u}" for k, u in zip(list_g, unit_g)]
+        for key, val in zip(list_g, global_):
+            temp_dict[key] = val
+
+        # add spectral dimensions
         temp_dict["spectral_dimensions"] = [
-            item.to_dict_with_units() for item in self.spectral_dimensions
+            item.json() for item in self.spectral_dimensions
         ]
-        temp_dict["channels"] = [item.to_dict_with_units() for item in self.channels]
+
+        # named = True if temp_dict["name"] not in ["Method1D", "Method2D"] else False
+        for dim in temp_dict["spectral_dimensions"]:
+            for ev in dim["events"]:
+                # remove event objects with global values.
+                for key, val in zip(list_g, global_):
+                    ev.pop(key) if ev[key] == val else 0
+
+                # remove transition query objects for named methods
+                # ev.pop("transition_query") if named else 0
+
+        # add simulation
         if self.simulation is not None:
             temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
+
+        # add experiment
         if self.experiment is not None:
             temp_dict["experiment"] = self.experiment.to_dict()
+
         return temp_dict
 
     def dict(self, **kwargs):

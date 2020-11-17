@@ -22,6 +22,11 @@ default_units = {
 }
 
 
+# class namedMethod:
+#     def __new__(cls, py_dict):
+#         method_name = py_dict["name"]
+
+
 def prepare_method_structure(template, **kwargs):
     keys = kwargs.keys()
     n_channels = template["number_of_channels"]
@@ -74,6 +79,8 @@ def generate_method_from_template(template, docstring=""):
     """Generate method object from json template."""
     # constructor
     def constructor(self, spectral_dimensions=[{}], **kwargs):
+        # spectral_dimensions_root = deepcopy(spectral_dimensions)
+        # kwargs_root = deepcopy(kwargs)
         parse = False
         if "parse" in kwargs:
             parse = kwargs["parse"]

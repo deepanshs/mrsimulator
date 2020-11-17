@@ -18,7 +18,7 @@ k_MQ_MAS = {
 }
 
 
-def MQ_VAS_(mq=1.5, name="MQ_MAS", **kwargs):
+class MQ_VAS_:
     r"""A generic multiple-quantum variable-angle spinning method for simulating average
     frequencies. The resulting spectrum is sheared such that the correlating dimensions
     are the isotropic dimension and the VAS dimension, respectively, where the isotropic
@@ -61,30 +61,37 @@ def MQ_VAS_(mq=1.5, name="MQ_MAS", **kwargs):
         A :class:`~mrsimulator.Method` instance.
     """
 
-    spectral_dimensions = bs.check_for_spectral_dimensions(kwargs, 2)
-    bs.check_for_transition_query(name, spectral_dimensions)
+    def __new__(cls, mq=1.5, name="MQ_MAS", **kwargs):
+        spectral_dimensions = bs.check_for_spectral_dimensions(kwargs, 2)
+        bs.check_for_transition_query(name, spectral_dimensions)
 
-    method = bs.Method2D(spectral_dimensions, name=name, **kwargs)
+        method = bs.Method2D(spectral_dimensions, name=name, **kwargs)
 
-    spin = method.channels[0].spin
+        cls.update_method(method, mq)
+        return method
 
-    # select the coherence for the first event
-    P = int(2 * mq)
-    nQ = P
-    P = -P if mq == spin else P
+    @classmethod
+    def update_method(self, method, mq=1.5):
+        spin = method.channels[0].spin
 
-    method.spectral_dimensions[0].events[0].transition_query.P = {"channel-1": [[P]]}
+        # select the coherence for the first event
+        P = int(2 * mq)
+        nQ = P
+        P = -P if mq == spin else P
 
-    # Add the affine matrix
-    if method.affine_matrix is None:
-        k = k_MQ_MAS[nQ][spin]
-        method.affine_matrix = [1 / (1 + k), k / (1 + k), 0, 1]
+        method.spectral_dimensions[0].events[0].transition_query.P = {
+            "channel-1": [[P]]
+        }
 
-    method.description = f"Simulate a {nQ}Q variable-angle spinning spectrum."
-    return method
+        # Add the affine matrix
+        if method.affine_matrix is None:
+            k = k_MQ_MAS[nQ][spin]
+            method.affine_matrix = [1 / (1 + k), k / (1 + k), 0, 1]
+
+        method.description = f"Simulate a {nQ}Q variable-angle spinning spectrum."
 
 
-def ThreeQ_VAS(**kwargs):
+class ThreeQ_VAS(MQ_VAS_):
     r"""Simulate a sheared and scaled 3Q 2D variable-angle spinning spectrum.
 
     Args:
@@ -144,10 +151,15 @@ def ThreeQ_VAS(**kwargs):
         [TransitionPathway(|-1.5⟩⟨1.5|, |-0.5⟩⟨0.5|)]
     """
 
-    return MQ_VAS_(mq=1.5, name="ThreeQ_VAS", **kwargs)
+    def __new__(cls, **kwargs):
+        return MQ_VAS_(mq=1.5, name="ThreeQ_VAS", **kwargs)
+
+    @classmethod
+    def update_method(self, method):
+        super().update_method(method, mq=1.5)
 
 
-def FiveQ_VAS(**kwargs):
+class FiveQ_VAS(MQ_VAS_):
     r"""Simulate a sheared and scaled 5Q variable-angle spinning spectrum.
 
     Args:
@@ -206,10 +218,16 @@ def FiveQ_VAS(**kwargs):
         >>> method.get_transition_pathways(sys)
         [TransitionPathway(|-2.5⟩⟨2.5|, |-0.5⟩⟨0.5|)]
     """
-    return MQ_VAS_(mq=2.5, name="FiveQ_VAS", **kwargs)
+
+    def __new__(cls, **kwargs):
+        return MQ_VAS_(mq=2.5, name="FiveQ_VAS", **kwargs)
+
+    @classmethod
+    def update_method(self, method):
+        return super().update_method(method, mq=2.5)
 
 
-def SevenQ_VAS(**kwargs):
+class SevenQ_VAS(MQ_VAS_):
     r"""Simulate a sheared and scaled 7Q variable-angle spinning spectrum.
 
     Args:
@@ -268,4 +286,10 @@ def SevenQ_VAS(**kwargs):
         >>> method.get_transition_pathways(sys)
         [TransitionPathway(|-3.5⟩⟨3.5|, |-0.5⟩⟨0.5|)]
     """
-    return MQ_VAS_(mq=3.5, name="SevenQ_VAS", **kwargs)
+
+    def __new__(cls, **kwargs):
+        return MQ_VAS_(mq=3.5, name="SevenQ_VAS", **kwargs)
+
+    @classmethod
+    def update_method(self, method):
+        return super().update_method(method, mq=3.5)

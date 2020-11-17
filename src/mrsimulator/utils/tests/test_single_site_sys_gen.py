@@ -231,7 +231,6 @@ def test_abundance_03():
     gamma = np.random.rand(10)
     abundance = np.zeros(10)
 
-    print(gamma)
     indexes = [2, 5, 8]
     for i in indexes:
         abundance[i] = 1
@@ -245,7 +244,6 @@ def test_abundance_03():
     assert len(sys) == 3
 
     for i, j in enumerate(indexes):
-        print(sys[i].sites[0].shielding_symmetric.gamma, gamma[j])
         assert sys[i].sites[0].isotope.symbol == "27Al"
         assert sys[i].sites[0].isotropic_chemical_shift == 0
         assert sys[i].sites[0].shielding_symmetric.zeta is None

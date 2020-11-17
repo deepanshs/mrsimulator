@@ -44,9 +44,8 @@ def test_equality():
             "integration_volume": "octant",
             "number_of_sidebands": 64,
         },
-        "indexes": [],
     }
-    assert c.to_dict_with_units(include_methods=True) == result
+    assert c.json(include_methods=True) == result
 
     assert c.reduced_dict() == {
         "label": "test",
@@ -58,7 +57,6 @@ def test_equality():
             "integration_density": 70,
             "decompose_spectrum": "none",
         },
-        "indexes": [],
     }
 
 
@@ -143,7 +141,6 @@ def test_simulator_1():
             "integration_volume": "octant",
             "number_of_sidebands": 64,
         },
-        "indexes": [],
     }
 
     # save

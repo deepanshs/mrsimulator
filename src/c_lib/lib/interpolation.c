@@ -19,6 +19,24 @@ int triangle_interpolation(double *freq1, double *freq2, double *freq3,
   int clip_right1 = 0, clip_left1 = 0, clip_right2 = 0, clip_left2 = 0;
 
   p = (int)(freq1[0]);
+  // if (freq1[0] == freq2[0] && freq1[0] == freq3[0]) {
+  //   diff = freq1[0] - (double)p;
+  //   if (diff == 0.5) {
+  //     spec[p] += amp[0];
+  //     return 0;
+  //   }
+  //   if (diff < 0.5) {
+  //     if (p != 0) spec[p - 1] += amp[0] * (0.5 - diff);
+  //     spec[p] += amp[0] * (0.5 + diff);
+  //     return 0;
+  //   }
+  //   if (diff > 0.5) {
+  //     if (p + 1 != points[0]) spec[p + 1] += amp[0] * (diff - 0.5);
+  //     spec[p] += amp[0] * (1.5 - diff);
+  //     return 0;
+  //   }
+  // }
+
   if ((int)freq1[0] == (int)freq2[0] && (int)freq1[0] == (int)freq3[0]) {
     if (p >= points[0] || p < 0) {
       return 0;
@@ -26,7 +44,6 @@ int triangle_interpolation(double *freq1, double *freq2, double *freq3,
     spec[p] += amp[0];
     return 0;
   }
-
   double f[3] = {freq1[0], freq2[0], freq3[0]};
 
   // arrange the numbers in ascending order

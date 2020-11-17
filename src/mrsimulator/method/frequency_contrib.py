@@ -22,7 +22,7 @@ class FrequencyEnum(str, Enum):
     Quad2_2 = freq_list_all[4]
     Quad2_4 = freq_list_all[5]
 
-    def to_dict_with_units(self):
+    def json(self):
         return self.value
 
 

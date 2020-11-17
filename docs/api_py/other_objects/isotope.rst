@@ -19,4 +19,4 @@ Isotope
 
     .. rubric:: Method Documentation
 
-    .. automethod:: to_dict_with_units
+    .. automethod:: json

@@ -8,6 +8,7 @@ from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
 from .frequency_contrib import default_freq_contrib
+from .frequency_contrib import freq_default
 from .frequency_contrib import freq_list_all
 from .frequency_contrib import FrequencyEnum
 from .transition_query import TransitionQuery
@@ -80,6 +81,15 @@ class Event(Parseable):
         """
         py_dict_copy = deepcopy(py_dict)
         return super().parse_dict_with_units(py_dict_copy)
+
+    def json(self):
+        dict_ = super().json()
+        # dict_.pop("user_variables")
+        if dict_["fraction"] == 1.0:
+            dict_.pop("fraction")
+        if dict_["freq_contrib"] == freq_default:
+            dict_.pop("freq_contrib")
+        return dict_
 
     def get_value_int(self):
         lst_ = set([item.value for item in self.freq_contrib])

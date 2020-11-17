@@ -36,4 +36,4 @@ def test_isotope():
     with pytest.raises(Exception, match="Could not parse isotope string"):
         Isotope(symbol="14F")
 
-    assert nitrogen.to_dict_with_units() == "14N"
+    assert nitrogen.json() == "14N"

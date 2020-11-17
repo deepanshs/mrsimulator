@@ -312,17 +312,17 @@ def LMFIT_min_function(params, sim, post_sim=None):
     Returns:
         Array of the differences between the simulation and the experimental data.
     """
-    if not isinstance(params, Parameters):
-        raise ValueError(
-            f"Expecting a `Parameters` object, found {type(params).__name__}."
-        )
-    if not isinstance(post_sim, sp.SignalProcessor) or post_sim is None:
-        raise ValueError(
-            f"Expecting a `SignalProcessor` object, found {type(post_sim).__name__}."
-        )
+    # if not isinstance(params, Parameters):
+    #     raise ValueError(
+    #         f"Expecting a `Parameters` object, found {type(params).__name__}."
+    #     )
+    # if not isinstance(post_sim, sp.SignalProcessor) or post_sim is None:
+    #     raise ValueError(
+    #         f"Expecting a `SignalProcessor` object, found {type(post_sim).__name__}."
+    #     )
 
-    if not isinstance(sim, Simulator):
-        raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
+    # if not isinstance(sim, Simulator):
+    #  raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
 
     values = params.valuesdict()
     for items in values:
@@ -338,12 +338,12 @@ def LMFIT_min_function(params, sim, post_sim=None):
     if sim.config.decompose_spectrum == "spin_system":
         datum = 0
         for decomposed_datum in processed_data.y:
-            datum += decomposed_datum.components[0]
+            datum += decomposed_datum.components[0].real
             # datum = [sum(i) for i in zip(datum, decomposed_datum)]
     else:
-        datum = processed_data.y[0].components[0]
+        datum = processed_data.y[0].components[0].real
 
-    return sim.methods[0].experiment.y[0].components[0].real - datum.real
+    return sim.methods[0].experiment.y[0].components[0] - datum
 
     # MULTIPLE EXPERIMENTS
     # for i, method in enumerate(sim.methods):

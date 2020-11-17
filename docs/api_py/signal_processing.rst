@@ -11,5 +11,5 @@ Signal Processing
     .. rubric:: Method Documentation
 
     .. automethod:: parse_dict_with_units
-    .. automethod:: to_dict_with_units
+    .. automethod:: json
     .. automethod:: apply_operations

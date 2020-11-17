@@ -10,4 +10,4 @@ AntisymmetricTensor
 
     .. rubric:: Method Documentation
     .. automethod:: to_freq_dict
-    .. automethod:: to_dict_with_units
+    .. automethod:: json

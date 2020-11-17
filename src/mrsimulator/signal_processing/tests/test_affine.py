@@ -80,7 +80,7 @@ def test_serialization_and_parse():
             sp.FFT(dim_index=1),
         ]
     )
-    serialize = processor.to_dict_with_units()
+    serialize = processor.json()
 
     expected = {
         "operations": [

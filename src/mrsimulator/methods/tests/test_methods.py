@@ -4,7 +4,6 @@ from os import path
 import numpy as np
 import pytest
 from monty.serialization import loadfn
-from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.methods import Method1D
 from mrsimulator.methods import Method2D
@@ -54,7 +53,7 @@ def test_03():
         ],
     )
 
-    assert TESTDATA["generic"] == mth.to_dict_with_units()
+    assert TESTDATA["generic"] == mth.json()
 
 
 def test_method_1D():
@@ -197,7 +196,7 @@ def test_04():
         ],
     )
 
-    assert TESTDATA["SAS"] == mth.to_dict_with_units()
+    assert TESTDATA["SAS"] == mth.json()
 
 
 def test_BlochDecaySpectrum():
@@ -205,11 +204,6 @@ def test_BlochDecaySpectrum():
     m1 = BlochDecaySpectrum()
 
     event_dictionary_ = {
-        "fraction": 1.0,
-        "freq_contrib": freq_default,
-        "magnetic_flux_density": "9.4 T",
-        "rotor_frequency": "0.0 Hz",
-        "rotor_angle": "0.9553166 rad",
         "transition_query": {"P": {"channel-1": [[-1.0]]}},
         "user_variables": ["magnetic_flux_density", "rotor_frequency", "rotor_angle"],
     }
@@ -223,9 +217,12 @@ def test_BlochDecaySpectrum():
     should_be = {
         "name": "BlochDecaySpectrum",
         "channels": ["1H"],
+        "magnetic_flux_density": "9.4 T",
+        "rotor_frequency": "0.0 Hz",
+        "rotor_angle": "0.9553166 rad",
         "spectral_dimensions": [dimension_dictionary_],
     }
-    dict_ = m1.to_dict_with_units()
+    dict_ = m1.json()
     dict_.pop("description")
     assert dict_ == should_be
 
@@ -240,11 +237,6 @@ def test_BlochDecaySpectrum():
 
     angle = 90 * np.pi / 180
     event_dictionary_ = {
-        "fraction": 1.0,
-        "freq_contrib": freq_default,
-        "magnetic_flux_density": "11.7 T",
-        "rotor_frequency": "0.0 Hz",
-        "rotor_angle": f"{angle} rad",
         "transition_query": {"P": {"channel-1": [[-1.0]]}},
         "user_variables": ["magnetic_flux_density", "rotor_frequency", "rotor_angle"],
     }
@@ -258,10 +250,13 @@ def test_BlochDecaySpectrum():
     should_be = {
         "name": "BlochDecaySpectrum",
         "channels": ["29Si"],
+        "magnetic_flux_density": "11.7 T",
+        "rotor_frequency": "0.0 Hz",
+        "rotor_angle": f"{angle} rad",
         "spectral_dimensions": [dimension_dictionary_],
     }
 
-    dict_ = m2.to_dict_with_units()
+    dict_ = m2.json()
     dict_.pop("description")
     assert dict_ == should_be
 
@@ -297,7 +292,7 @@ def test_05():
         ],
     )
 
-    assert TESTDATA["STMAS"] == mth.to_dict_with_units()
+    assert TESTDATA["STMAS"] == mth.json()
 
 
 def test_3QMAS():
@@ -367,4 +362,4 @@ def test_methods():
     )
 
     assert das.affine_matrix is None
-    assert das.to_dict_with_units() == TESTDATA["DAS"]
+    assert das.json() == TESTDATA["DAS"]

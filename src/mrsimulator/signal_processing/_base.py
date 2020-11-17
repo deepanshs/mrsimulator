@@ -14,8 +14,8 @@ class AbstractOperation(Parseable):
     def function(self):
         return self.__class__.__name__
 
-    def to_dict_with_units(self):
-        my_dict = super().to_dict_with_units()
+    def json(self):
+        my_dict = super().json()
         my_dict["function"] = self.function
         if hasattr(self, "type"):
             my_dict["type"] = self.type
