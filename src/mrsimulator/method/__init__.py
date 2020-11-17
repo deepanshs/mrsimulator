@@ -273,6 +273,10 @@ class Method(Parseable):
                 # remove transition query objects for named methods
                 _ = ev.pop("transition_query") if named else 0
 
+        # add affine-matrix
+        if self.affine_matrix is not None:
+            temp_dict["affine_matrix"] = self.affine_matrix.tolist()
+
         # add simulation
         if self.simulation is not None:
             temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)

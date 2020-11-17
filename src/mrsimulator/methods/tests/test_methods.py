@@ -208,9 +208,7 @@ def test_BlochDecaySpectrum():
     # test-1
     m1 = BlochDecaySpectrum()
 
-    event_dictionary_ = {
-        "user_variables": ["magnetic_flux_density", "rotor_frequency", "rotor_angle"],
-    }
+    event_dictionary_ = {}
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "25000.0 Hz",
@@ -242,9 +240,7 @@ def test_BlochDecaySpectrum():
     m2 = BlochDecaySpectrum.parse_dict_with_units(m2_dict)
 
     angle = 90 * np.pi / 180
-    event_dictionary_ = {
-        "user_variables": ["magnetic_flux_density", "rotor_frequency", "rotor_angle"],
-    }
+    event_dictionary_ = {}
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "25000.0 Hz",

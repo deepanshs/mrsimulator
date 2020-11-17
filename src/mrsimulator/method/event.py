@@ -47,7 +47,7 @@ class Event(Parseable):
     rotor_angle: float = Field(default=0.9553166, ge=0, le=1.5707963268)
     freq_contrib: List[FrequencyEnum] = default_freq_contrib
     transition_query: TransitionQuery = TransitionQuery()
-    user_variables: List = None
+    # user_variables: List = None
 
     property_unit_types: ClassVar = {
         "magnetic_flux_density": "magnetic flux density",
@@ -84,7 +84,8 @@ class Event(Parseable):
 
     def json(self):
         dict_ = super().json()
-        # dict_.pop("user_variables")
+        # if "user_variables" in dict_.keys():
+        #     dict_.pop("user_variables")
         if dict_["fraction"] == 1.0:
             dict_.pop("fraction")
         if dict_["freq_contrib"] == freq_default:

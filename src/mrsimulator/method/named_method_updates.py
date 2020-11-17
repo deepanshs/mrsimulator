@@ -50,6 +50,10 @@ def SSB2D_update(method):
         dim.events[0].transition_query.P = {"channel-1": [[-1]]}
         dim.events[0].transition_query.D = {"channel-1": [[0]]}
 
+    # Add the affine matrix
+    if method.affine_matrix is None:
+        method.affine_matrix = [1, -1, 0, 1]
+
     return method
 
 
@@ -115,4 +119,6 @@ def update_method(method):
         return MQ_VAS_update(method)
     if method.name in ST_p_symmetry.keys():
         return ST_VAS_update(method)
+    if method.name == "SSB2D":
+        return SSB2D_update(method)
     return method

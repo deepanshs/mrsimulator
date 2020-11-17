@@ -122,11 +122,6 @@ def test_simulator_1():
                                 "rotor_angle": 0.9553166,
                                 "rotor_frequency": 0.0,
                                 "transition_query": {"P": {"channel-1": [[-1]]}},
-                                "user_variables": [
-                                    "magnetic_flux_density",
-                                    "rotor_frequency",
-                                    "rotor_angle",
-                                ],
                             }
                         ],
                         "reference_offset": 0.0,

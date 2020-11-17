@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
+from mrsimulator.method import Method
 from mrsimulator.method.transition_query import TransitionQuery
 from mrsimulator.methods import ST1_VAS
 from mrsimulator.methods import ST2_VAS
@@ -83,6 +84,7 @@ def test_ST1_VAS_general():
     assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
         P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
     )
+    assert Method.parse_dict_with_units(mth.json()) == mth
 
 
 def test_ST2_VAS_general():
@@ -116,3 +118,4 @@ def test_ST2_VAS_general():
     assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
         P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
     )
+    assert Method.parse_dict_with_units(mth.json()) == mth

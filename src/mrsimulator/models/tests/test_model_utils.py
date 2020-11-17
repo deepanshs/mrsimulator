@@ -3,6 +3,8 @@ import numpy as np
 from mrsimulator.models.utils import get_Haeberlen_components
 from mrsimulator.models.utils import get_principal_components
 from mrsimulator.models.utils import x_y_from_zeta_eta
+from mrsimulator.models.utils import x_y_to_zeta_eta
+
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -59,3 +61,32 @@ def test_x_y_from_zeta_eta():
 
     assert np.allclose(x, x_)
     assert np.allclose(y, y_)
+
+
+def test_x_y_to_zeta_eta():
+    x = np.random.rand(16) * 3000
+    y = np.random.rand(16) * 3000
+    x[-1] = y[-1] = 56.0
+    x[-2] = y[-2] = 0.0
+    factor_ = 4 / np.pi
+    zeta_ = []
+    eta_ = []
+    for x_, y_ in zip(x, y):
+        z = np.sqrt(x_ ** 2 + y_ ** 2)
+        if x_ < y_:
+            eta_.append(factor_ * np.arctan(x_ / y_))
+            zeta_.append(z)
+        elif x_ > y_:
+            eta_.append(factor_ * np.arctan(y_ / x_))
+            zeta_.append(-z)
+        else:
+            zeta_.append(z)
+            eta_.append(1.0)
+
+        z_temp, e_temp = x_y_to_zeta_eta([x_], [y_])
+        assert np.allclose(zeta_[-1], z_temp)
+        assert np.allclose(eta_[-1], e_temp)
+
+    zeta, eta = x_y_to_zeta_eta(x, y)
+    assert np.allclose(zeta, np.asarray(zeta_))
+    assert np.allclose(eta, np.asarray(eta_))
