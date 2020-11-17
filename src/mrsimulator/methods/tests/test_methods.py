@@ -4,6 +4,7 @@ from os import path
 import numpy as np
 import pytest
 from monty.serialization import loadfn
+from mrsimulator.method import Method
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.methods import Method1D
 from mrsimulator.methods import Method2D
@@ -54,6 +55,7 @@ def test_03():
     )
 
     assert TESTDATA["generic"] == mth.json()
+    assert Method.parse_dict_with_units(mth.json()) == mth
 
 
 def test_method_1D():
@@ -84,6 +86,7 @@ def test_method_1D():
         ],
     }
     method1a = Method1D.parse_dict_with_units(dict_1d)
+    assert Method.parse_dict_with_units(method1a.json()) == method1a
 
     method1b = Method1D(
         channels=["87Rb"],
@@ -137,6 +140,7 @@ def test_method_2D():
         ],
     }
     method1a = Method2D.parse_dict_with_units(dict_1d)
+    assert Method.parse_dict_with_units(method1a.json()) == method1a
 
     method1b = Method2D(
         channels=["87Rb"],
@@ -197,6 +201,7 @@ def test_04():
     )
 
     assert TESTDATA["SAS"] == mth.json()
+    assert Method.parse_dict_with_units(mth.json()) == mth
 
 
 def test_BlochDecaySpectrum():
@@ -204,7 +209,6 @@ def test_BlochDecaySpectrum():
     m1 = BlochDecaySpectrum()
 
     event_dictionary_ = {
-        "transition_query": {"P": {"channel-1": [[-1.0]]}},
         "user_variables": ["magnetic_flux_density", "rotor_frequency", "rotor_angle"],
     }
     dimension_dictionary_ = {
@@ -223,6 +227,8 @@ def test_BlochDecaySpectrum():
         "spectral_dimensions": [dimension_dictionary_],
     }
     dict_ = m1.json()
+    assert Method.parse_dict_with_units(dict_) == m1
+
     dict_.pop("description")
     assert dict_ == should_be
 
@@ -237,7 +243,6 @@ def test_BlochDecaySpectrum():
 
     angle = 90 * np.pi / 180
     event_dictionary_ = {
-        "transition_query": {"P": {"channel-1": [[-1.0]]}},
         "user_variables": ["magnetic_flux_density", "rotor_frequency", "rotor_angle"],
     }
     dimension_dictionary_ = {
@@ -257,6 +262,8 @@ def test_BlochDecaySpectrum():
     }
 
     dict_ = m2.json()
+    assert Method.parse_dict_with_units(dict_) == m2
+
     dict_.pop("description")
     assert dict_ == should_be
 
@@ -293,6 +300,7 @@ def test_05():
     )
 
     assert TESTDATA["STMAS"] == mth.json()
+    assert Method.parse_dict_with_units(TESTDATA["STMAS"]) == mth
 
 
 def test_3QMAS():
@@ -315,6 +323,7 @@ def test_3QMAS():
     )
 
     assert np.allclose(mth.affine_matrix, [0.5625, 0.4375, 0, 1])
+    assert Method.parse_dict_with_units(mth.json()) == mth
 
 
 def test_06():
@@ -363,3 +372,4 @@ def test_methods():
 
     assert das.affine_matrix is None
     assert das.json() == TESTDATA["DAS"]
+    assert Method.parse_dict_with_units(das.json()) == das

@@ -521,14 +521,14 @@ tr td {
   box-shadow: 0 0 15px 0 #3b3b3b8a;
 }
 .sim-gallery div:first-child p {
-  margin: 1em 0em;
+  margin: 1em 0;
   width: 170px;
   height: 160px;
   background-image: url("sim.png");
   background-size: 170px 160px;
 }
 .sim-gallery div:last-child p {
-  margin: 1em 0em;
+  margin: 1em 0;
   width: 170px;
   height: 160px;
   background-image: url("fit.png");

@@ -4,20 +4,15 @@ Function list:
     - ST1_VAS
     - ST2_VAS
 """
+from mrsimulator.method.named_method_updates import ST_VAS_update
+
 from . import base as bs
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
-k_ST_MAS = {
-    3: {1.5: 24 / 27, 2.5: 21 / 72, 3.5: 84 / 135, 4.5: 165 / 216},
-    5: {2.5: 132 / 72, 3.5: 69 / 135, 4.5: 12 / 216},
-    7: {3.5: 324 / 135, 4.5: 243 / 216},
-    9: {4.5: 600 / 216},
-}
 
-
-def ST_VAS_(st=1.5, name="ST_MAS", **kwargs):
+class ST_VAS:
     r"""Simulate a satellite-transition magic-angle spinning spectrum.
     Args:
         channels: A list of isotope symbols over which the method will be applied.
@@ -49,31 +44,15 @@ def ST_VAS_(st=1.5, name="ST_MAS", **kwargs):
         A :class:`~mrsimulator.Method` instance.
     """
 
-    spectral_dimensions = bs.check_for_spectral_dimensions(kwargs, 2)
-    bs.check_for_transition_query(name, spectral_dimensions)
+    def __new__(cls, name="ST_VAS", **kwargs):
 
-    method = bs.Method2D(spectral_dimensions, name=name, **kwargs)
-    spin = method.channels[0].spin
+        spectral_dimensions = bs.check_for_spectral_dimensions(kwargs, 2)
+        bs.check_for_transition_query(name, spectral_dimensions)
 
-    # select the coherence for the first event
-    d = st ** 2 - (st - 1) ** 2
-    D = [[d], [-d]]
-
-    method.spectral_dimensions[0].events[0].transition_query.D = {"channel-1": D}
-
-    # Add the affine matrix
-    if method.affine_matrix is None:
-        k = k_ST_MAS[int(2 * st)][spin]
-        method.affine_matrix = [1 / (1 + k), k / (1 + k), 0, 1]
-
-    method.description = (
-        f"Simulate a {st} -> {st-1} and {-st+1} -> {-st} satellite-transition "
-        "variable-angle spinning spectrum."
-    )
-    return method
+        return ST_VAS_update(bs.Method2D(spectral_dimensions, name=name, **kwargs))
 
 
-def ST1_VAS(**kwargs):
+class ST1_VAS(ST_VAS):
     r"""Simulate a sheared and scaled inner satellite and central transition correlation
     spectrum.
 
@@ -135,10 +114,11 @@ def ST1_VAS(**kwargs):
          TransitionPathway(|0.5⟩⟨1.5|, |-0.5⟩⟨0.5|)]
     """
 
-    return ST_VAS_(st=1.5, name="ST1_VAS", **kwargs)
+    def __new__(cls, **kwargs):
+        return super().__new__(cls, name=__class__.__name__, **kwargs)
 
 
-def ST2_VAS(**kwargs):
+class ST2_VAS(ST_VAS):
     r"""Simulate a sheared and scaled second to inner satellite and central transition
     correlation spectrum.
 
@@ -200,4 +180,5 @@ def ST2_VAS(**kwargs):
          TransitionPathway(|1.5⟩⟨2.5|, |-0.5⟩⟨0.5|)]
     """
 
-    return ST_VAS_(st=2.5, name="ST2_VAS", **kwargs)
+    def __new__(cls, **kwargs):
+        return super().__new__(cls, name=__class__.__name__, **kwargs)

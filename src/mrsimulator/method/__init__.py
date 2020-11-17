@@ -13,6 +13,8 @@ from mrsimulator.transition.transition_list import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
 
+from .named_method_updates import named_methods
+from .named_method_updates import update_method
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
 from .utils import D_symmetry_indexes
@@ -128,6 +130,23 @@ class Method(Parseable):
         validate_assignment = True
         arbitrary_types_allowed = True
 
+    def __eq__(self, other):
+        if not isinstance(other, Method):
+            return False
+        check = [
+            self.name == other.name,
+            self.label == other.label,
+            self.description == other.description,
+            self.channels == other.channels,
+            self.spectral_dimensions == other.spectral_dimensions,
+            np.all(self.affine_matrix == other.affine_matrix),
+            self.simulation == other.simulation,
+            self.experiment == other.experiment,
+        ]
+        if np.all(check):
+            return True
+        return False
+
     @validator("channels", always=True)
     def validate_channels(cls, v, *, values, **kwargs):
         return [Isotope(symbol=_) for _ in v]
@@ -169,11 +188,6 @@ class Method(Parseable):
         """
         py_dict_copy = deepcopy(py_dict)
 
-        # method_name = py_dict_copy["name"]
-        # named = True if method_name not in ["Method1D", "Method2D"] else False
-        # if named:
-        #     return namedMethod(py_dict_copy)
-
         glb = {}
         list_g = ["magnetic_flux_density", "rotor_frequency", "rotor_angle"]
         for item in list_g:
@@ -201,13 +215,7 @@ class Method(Parseable):
             if py_dict_copy["experiment"] is not None:
                 py_dict_copy["experiment"] = cp.parse_dict(py_dict_copy["experiment"])
 
-        return super().parse_dict_with_units(py_dict_copy)
-
-        # method_name = method.name
-        # named = True if method_name not in ["Method1D", "Method2D"] else False
-        # if named:
-        #     return getattr(named_method, method_name).update_method(method)
-        # return method
+        return update_method(super().parse_dict_with_units(py_dict_copy))
 
     def update_spectral_dimension_attributes_from_experiment(self):
         """Update the spectral dimension attributes of the method to match the
@@ -255,15 +263,15 @@ class Method(Parseable):
             item.json() for item in self.spectral_dimensions
         ]
 
-        # named = True if temp_dict["name"] not in ["Method1D", "Method2D"] else False
+        named = True if temp_dict["name"] in named_methods else False
         for dim in temp_dict["spectral_dimensions"]:
             for ev in dim["events"]:
                 # remove event objects with global values.
                 for key, val in zip(list_g, global_):
-                    ev.pop(key) if ev[key] == val else 0
+                    _ = ev.pop(key) if ev[key] == val else 0
 
                 # remove transition query objects for named methods
-                # ev.pop("transition_query") if named else 0
+                _ = ev.pop("transition_query") if named else 0
 
         # add simulation
         if self.simulation is not None:

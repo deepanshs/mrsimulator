@@ -134,6 +134,22 @@ class Simulator(BaseModel):
     class Config:
         validate_assignment = True
 
+    def __eq__(self, other):
+        if not isinstance(other, Simulator):
+            return False
+        check = [
+            self.name == other.name,
+            self.label == other.label,
+            self.description == other.description,
+            self.spin_systems == other.spin_systems,
+            self.methods == other.methods,
+            self.config == other.config,
+            np.all(self.indexes == other.indexes),
+        ]
+        if np.all(check):
+            return True
+        return False
+
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
