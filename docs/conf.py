@@ -15,11 +15,11 @@ import subprocess
 import sys
 import warnings
 
-import plotly.io as pio
 from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
 
-pio.renderers.default = "sphinx_gallery"
+# import plotly.io as pio
+# pio.renderers.default = "sphinx_gallery"
 
 sys.path.insert(0, os.path.abspath("../.."))
 
