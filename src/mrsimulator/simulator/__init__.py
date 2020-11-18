@@ -248,8 +248,22 @@ class Simulator(BaseModel):
             st.update(spin_system.get_isotopes(spin_I))
         return st
 
-    # def to_mpcontribs(self):
-    #     return self.json()
+    # def mpcontribs(self, mp_id, composition=None, temperature=None, pressure=None):
+    #     data = self.json(include_methods=True)
+    #     # for sys in data["spin_systems"]:
+    #     #     for site in sys["sites"]:
+    #     #         site["δiso"] = site.pop("isotropic_chemical_shift")
+    #     #         if "shielding_symmetric" in site:
+    #     #             ss = site["shielding_symmetric"]
+    #     #             ss["η"] = ss.pop("eta")
+    #     #             ss["ζσ"] = ss.pop("zeta")
+    #     if temperature is not None:
+    #         data["temperature"] = temperature
+    #     if pressure is not None:
+    #         data["pressure"] = pressure
+    #     if composition is not None:
+    #         data["composition"] = composition
+    #     return {"identifier": mp_id, "data": data}
 
     def json(self, include_methods: bool = False, include_version: bool = False):
         """

@@ -333,13 +333,11 @@ def LMFIT_min_function(params, sim, post_sim=None):
 
     sim.run()
     processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
-    # residual = np.asarray([])
 
+    datum = 0
     if sim.config.decompose_spectrum == "spin_system":
-        datum = 0
         for decomposed_datum in processed_data.y:
             datum += decomposed_datum.components[0].real
-            # datum = [sum(i) for i in zip(datum, decomposed_datum)]
     else:
         datum = processed_data.y[0].components[0].real
 

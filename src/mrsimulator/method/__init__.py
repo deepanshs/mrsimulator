@@ -18,6 +18,7 @@ from .named_method_updates import update_method
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
 from .utils import D_symmetry_indexes
+from .utils import expand_spectral_dimension_object
 from .utils import P_symmetry_indexes
 from .utils import query_permutations
 
@@ -188,26 +189,13 @@ class Method(Parseable):
         """
         py_dict_copy = deepcopy(py_dict)
 
-        glb = {}
-        list_g = ["magnetic_flux_density", "rotor_frequency", "rotor_angle"]
-        for item in list_g:
-            if item in py_dict_copy.keys():
-                glb[item] = py_dict_copy[item]
-        glb_keys = glb.keys()
-
         if "spectral_dimensions" in py_dict_copy:
-
-            for dim in py_dict_copy["spectral_dimensions"]:
-                for ev in dim["events"]:
-                    intersect = set(ev.keys()).intersection(set(glb_keys))
-                    for k in glb:
-                        if k not in intersect:
-                            ev[k] = glb[k]
-
+            py_dict_copy = expand_spectral_dimension_object(py_dict_copy)
             py_dict_copy["spectral_dimensions"] = [
                 SpectralDimension.parse_dict_with_units(s)
                 for s in py_dict_copy["spectral_dimensions"]
             ]
+
         if "simulation" in py_dict_copy:
             if py_dict_copy["simulation"] is not None:
                 py_dict_copy["simulation"] = cp.parse_dict(py_dict_copy["simulation"])
@@ -245,7 +233,7 @@ class Method(Parseable):
         for en in items:
             value = self.__getattribute__(en)
             if value is not None:
-                temp_dict[en] = self.__getattribute__(en)
+                temp_dict[en] = value
 
         # add channels
         temp_dict["channels"] = [item.json() for item in self.channels]
@@ -272,6 +260,9 @@ class Method(Parseable):
 
                 # remove transition query objects for named methods
                 _ = ev.pop("transition_query") if named else 0
+
+            if dim["events"] == [{} for _ in range(len(dim["events"]))]:
+                dim.pop("events")
 
         # add affine-matrix
         if self.affine_matrix is not None:
