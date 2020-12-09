@@ -15,16 +15,18 @@ To serialize a :ref:`simulator_api` object to a JSON-compliant file, use the
 
 .. doctest::
 
-    >>> sim_coesite.save('sample_with_units.mrsim')
+    >>> sim_coesite.save('sample.mrsim')
 
 where ``sim_coesite`` is a :ref:`simulator_api` object.
 By default, the attribute values are serialized as physical quantities, represented
-as a string with a value and a unit. You may also serialize the file without the
-units, in which case, follow
+as a string with a value and a unit.
 
-.. doctest::
+.. You may also serialize the file without the
+.. units, in which case, follow
 
-    >>> sim_coesite.save('sample_no_units.json', with_units=False)
+.. .. doctest::
+
+..     >>> sim_coesite.save('sample_no_units.json', with_units=False)
 
 
 **Load simulator object from a JSON file**
@@ -36,22 +38,21 @@ parses the file for units.
 .. doctest::
 
     >>> from mrsimulator import Simulator
-    >>> sim_load_with_units = Simulator.load('sample_with_units.mrsim')
-    >>> sim_coesite == sim_load_with_units
+    >>> sim_load = Simulator.load('sample.mrsim')
+    >>> sim_coesite == sim_load
     True
 
-If the file is serialized without the units, you may load the file as follows
+.. If the file is serialized without the units, you may load the file as follows
 
-.. doctest::
+.. .. doctest::
 
-    >>> sim_load_no_units = Simulator.load('sample_no_units.json', parse_units=False)
-    >>> sim_coesite == sim_load_no_units
-    True
+..     >>> sim_load_no_units = Simulator.load('sample_no_units.json', parse_units=False)
+..     >>> sim_coesite == sim_load_no_units
+..     True
 
 .. testsetup::
     >>> import os
-    >>> os.remove('sample_with_units.mrsim')
-    >>> os.remove('sample_no_units.json')
+    >>> os.remove('sample.mrsim')
 
 
 ----

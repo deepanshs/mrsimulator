@@ -9,33 +9,40 @@
 
 #include "interpolation.h"
 
+double TOL = 1.0e-6;
 // triangle_interpolation is an optimized version of tent. Still plenty of
 // room for optimization.
 
 int triangle_interpolation(double *freq1, double *freq2, double *freq3,
                            double *amp, double *spec, int *points) {
-  double df1, df2, top = 0.0, t, diff, f10 = 0.0, f21 = 0.0, temp;
+  double df1, df2, top = 0.0, t, diff, f10 = 0.0, f21 = 0.0, temp, n_i;
+
   int p, pmid, pmax, i, j;
   int clip_right1 = 0, clip_left1 = 0, clip_right2 = 0, clip_left2 = 0;
 
   p = (int)(freq1[0]);
-  // if (freq1[0] == freq2[0] && freq1[0] == freq3[0]) {
-  //   diff = freq1[0] - (double)p;
-  //   if (diff == 0.5) {
-  //     spec[p] += amp[0];
-  //     return 0;
-  //   }
-  //   if (diff < 0.5) {
-  //     if (p != 0) spec[p - 1] += amp[0] * (0.5 - diff);
-  //     spec[p] += amp[0] * (0.5 + diff);
-  //     return 0;
-  //   }
-  //   if (diff > 0.5) {
-  //     if (p + 1 != points[0]) spec[p + 1] += amp[0] * (diff - 0.5);
-  //     spec[p] += amp[0] * (1.5 - diff);
-  //     return 0;
-  //   }
-  // }
+  if (fabs(freq1[0] - freq2[0]) < TOL && fabs(freq1[0] - freq3[0]) < TOL) {
+    if (p >= points[0] || p < 0) {
+      return 0;
+    }
+    diff = freq1[0] - (double)p;
+    n_i = 0.5;
+    if (fabs(diff - n_i) < TOL) {
+      spec[p] += amp[0];
+      return 0;
+    }
+    if (diff < n_i) {
+      if (p != 0) spec[p - 1] += amp[0] * (n_i - diff);
+      spec[p] += amp[0] * (n_i + diff);
+      return 0;
+    }
+    if (diff > n_i) {
+      if (p + 1 != points[0]) spec[p + 1] += amp[0] * (diff - n_i);
+      spec[p] += amp[0] * (1 + n_i - diff);
+      return 0;
+    }
+    return 0;
+  }
 
   if ((int)freq1[0] == (int)freq2[0] && (int)freq1[0] == (int)freq3[0]) {
     if (p >= points[0] || p < 0) {
@@ -145,7 +152,7 @@ int triangle_interpolation(double *freq1, double *freq2, double *freq3,
 int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
                              double *freq21, double *freq22, double *freq23,
                              double *amp, double *spec, int m0, int m1) {
-  double df1, df2, top = 0.0, t1, t2, diff, f10 = 0.0, f21 = 0.0, temp;
+  double df1, df2, top = 0.0, t1, t2, diff, f10 = 0.0, f21 = 0.0, temp, n_i;
   double slope_diff, abs_slope_diff, line_up, line_down;
   int p, pmid, pmax, i, j;
   int clip_right1 = 0, clip_left1 = 0, clip_right2 = 0, clip_left2 = 0;
@@ -154,6 +161,40 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
   double freq00_01, freq01_02, freq10_01, freq11_02, freq00_12, freq10_12;
 
   p = (int)(freq11[0]);
+
+  if (fabs(freq11[0] - freq12[0]) < TOL && fabs(freq11[0] - freq13[0]) < TOL) {
+    if (p >= m0 || p < 0) {
+      return 0;
+    }
+    diff = freq11[0] - (double)p;
+    n_i = 0.5;
+    if (fabs(diff - n_i) < TOL) {
+      triangle_interpolation(freq21, freq22, freq23, amp, &spec[p * m1], &m1);
+      return 0;
+    }
+    if (diff < n_i) {
+      if (p != 0) {
+        temp = amp[0] * (n_i - diff);
+        triangle_interpolation(freq21, freq22, freq23, &temp,
+                               &spec[(p - 1) * m1], &m1);
+      }
+      temp = amp[0] * (n_i + diff);
+      triangle_interpolation(freq21, freq22, freq23, &temp, &spec[p * m1], &m1);
+      return 0;
+    }
+    if (diff > n_i) {
+      if (p + 1 != m0) {
+        temp = amp[0] * (diff - n_i);
+        triangle_interpolation(freq21, freq22, freq23, &temp,
+                               &spec[(p + 1) * m1], &m1);
+      }
+      temp = amp[0] * (1 + n_i - diff);
+      triangle_interpolation(freq21, freq22, freq23, &temp, &spec[p * m1], &m1);
+      return 0;
+    }
+    return 0;
+  }
+
   if ((int)freq11[0] == (int)freq12[0] && (int)freq11[0] == (int)freq13[0]) {
     if (p >= m0 || p < 0) {
       return 0;

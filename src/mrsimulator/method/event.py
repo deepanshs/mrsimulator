@@ -44,7 +44,7 @@ class Event(Parseable):
     magnetic_flux_density: float = Field(default=9.4, ge=0)
     rotor_frequency: float = Field(default=0.0, ge=0)
     # 54.735 degrees = 0.9553166 radians
-    rotor_angle: float = Field(default=0.9553166, ge=0, le=1.5707963268)
+    rotor_angle: float = Field(default=0.955316618, ge=0, le=1.5707963268)
     freq_contrib: List[FrequencyEnum] = default_freq_contrib
     transition_query: TransitionQuery = TransitionQuery()
     # user_variables: List = None

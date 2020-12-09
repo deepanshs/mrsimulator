@@ -219,7 +219,7 @@ def test_BlochDecaySpectrum():
         "channels": ["1H"],
         "magnetic_flux_density": "9.4 T",
         "rotor_frequency": "0.0 Hz",
-        "rotor_angle": "0.9553166 rad",
+        "rotor_angle": "0.955316618 rad",
         "spectral_dimensions": [dimension_dictionary_],
     }
     dict_ = m1.json()
