@@ -91,7 +91,9 @@ def test_MQMAS():
     sim.run()
 
     data = sim.methods[0].simulation.dependent_variables[0].components[0]
-    assert np.allclose(data / data.max(), mas_slice / mas_slice.max())
+    np.testing.assert_almost_equal(
+        data / data.max(), mas_slice / mas_slice.max(), decimal=6, err_msg="not equal"
+    )
 
 
 def test_ThreeQ_VAS_spin_3halves():
