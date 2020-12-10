@@ -498,3 +498,54 @@ tr td {
 .doctest.highlight-default {
   margin: 1em 0;
 }
+
+.sim-gallery {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* .sim-gallery a:first-child {
+  background-color: #ffeeee;
+}
+.sim-gallery a:last-child {
+  background-color: #e5f6fd;
+} */
+.sim-gallery div {
+  display: block;
+  justify-content: center;
+  margin: 1em 3em;
+  padding: 1em;
+  border-radius: 0.5em;
+  border: 1px solid silver;
+  /* cursor: pointer; */
+  box-shadow: 0 0 15px 0 #3b3b3b8a;
+}
+.sim-gallery div:first-child p {
+  margin: 1em 0;
+  width: 170px;
+  height: 160px;
+  background-image: url("sim.png");
+  background-size: 170px 160px;
+}
+.sim-gallery div:last-child p {
+  margin: 1em 0;
+  width: 170px;
+  height: 160px;
+  background-image: url("fit.png");
+  background-size: 170px 160px;
+}
+.sim-gallery a {
+  /* margin: 1em; */
+  /* padding: 3em 1.5em; */
+  text-decoration: none;
+  font-size: 1.2em;
+  text-align: center;
+  font-weight: 1000;
+}
+.sim-gallery div:hover {
+  box-shadow: 0 0 30px 0 #3b3b3b8a;
+}
+
+h6.center {
+  text-align: center;
+}

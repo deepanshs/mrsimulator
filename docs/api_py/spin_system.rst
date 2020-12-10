@@ -15,10 +15,10 @@ SpinSystem
     .. automethod:: all_transitions
     .. automethod:: parse_dict_with_units
     .. automethod:: to_freq_dict
-    .. automethod:: to_dict_with_units
+    .. automethod:: json
     .. doctest::
 
-        >>> pprint(spin_system_1.to_dict_with_units())
+        >>> pprint(spin_system_1.json())
         {'abundance': '100 %',
          'sites': [{'isotope': '13C',
                     'isotropic_chemical_shift': '20.0 ppm',

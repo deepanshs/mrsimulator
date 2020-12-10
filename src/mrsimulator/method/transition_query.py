@@ -28,5 +28,5 @@ class TransitionQuery(BaseModel):
         validate_assignment = True
         arbitrary_types_allowed = True
 
-    def to_dict_with_units(self):
+    def json(self):
         return {k: v for k, v in self.dict().items() if v is not None}

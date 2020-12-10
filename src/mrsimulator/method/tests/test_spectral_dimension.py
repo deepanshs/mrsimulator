@@ -88,7 +88,6 @@ def basic_spectral_dimension_tests(the_dimension):
         events=[
             {
                 "fraction": 0.5,
-                "freq_contrib": freq_default,
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
@@ -96,7 +95,7 @@ def basic_spectral_dimension_tests(the_dimension):
             }
         ],
     )
-    assert should_be == the_dimension.to_dict_with_units()
+    assert should_be == the_dimension.json()
 
     # reduced_dict()
     assert the_dimension.reduced_dict() == dict(
@@ -178,7 +177,6 @@ def test_spectral_dimension():
         events=[
             {
                 "fraction": 0.5,
-                "freq_contrib": freq_default,
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
@@ -186,7 +184,6 @@ def test_spectral_dimension():
             },
             {
                 "fraction": 0.5,
-                "freq_contrib": freq_default,
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
@@ -194,8 +191,8 @@ def test_spectral_dimension():
             },
         ],
     )
-    assert should_be == the_dimension.to_dict_with_units()
-    assert should_be == the_dimension2.to_dict_with_units()
+    assert should_be == the_dimension.json()
+    assert should_be == the_dimension2.json()
 
     # reduced_dict()
     reduced_dict = dict(

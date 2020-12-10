@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from mrsimulator.method.named_method_updates import SSB2D_update
+
 from . import base as bs
 
 __author__ = "Deepansh J. Srivastava"
@@ -93,10 +95,4 @@ def SSB2D(**kwargs):
     #         "product of the `spin_frequency` and `count` of the dimension."
     #     )
 
-    method.description = "Simulate a 2D sideband separation method."
-
-    # Add the affine matrix
-    if method.affine_matrix is None:
-        method.affine_matrix = [1, -1, 0, 1]
-
-    return method
+    return SSB2D_update(method)

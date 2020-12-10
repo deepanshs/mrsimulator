@@ -2,8 +2,8 @@
 
 source /Users/deepansh/anaconda3/bin/activate
 
-# python 3.6, 3.7
-for PYBIN in py36 py37 py38; do
+# python 3.6 - 3.9
+for PYBIN in py36 py37 py38 py39; do
     conda activate "${PYBIN}"
     python --version
     cat requirements-dev.txt | sed -e '/^\s*#.*$/d' -e '/^\s*$/d' | xargs -n 1 pip install

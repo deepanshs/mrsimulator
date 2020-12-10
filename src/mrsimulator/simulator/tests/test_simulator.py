@@ -44,9 +44,8 @@ def test_equality():
             "integration_volume": "octant",
             "number_of_sidebands": 64,
         },
-        "indexes": [],
     }
-    assert c.to_dict_with_units(include_methods=True) == result
+    assert c.json(include_methods=True) == result
 
     assert c.reduced_dict() == {
         "label": "test",
@@ -58,7 +57,6 @@ def test_equality():
             "integration_density": 70,
             "decompose_spectrum": "none",
         },
-        "indexes": [],
     }
 
 
@@ -121,14 +119,9 @@ def test_simulator_1():
                                 "fraction": 1.0,
                                 "freq_contrib": freq_default,
                                 "magnetic_flux_density": 9.4,
-                                "rotor_angle": 0.9553166,
+                                "rotor_angle": 0.955316618,
                                 "rotor_frequency": 0.0,
                                 "transition_query": {"P": {"channel-1": [[-1]]}},
-                                "user_variables": [
-                                    "magnetic_flux_density",
-                                    "rotor_frequency",
-                                    "rotor_angle",
-                                ],
                             }
                         ],
                         "reference_offset": 0.0,
@@ -143,15 +136,19 @@ def test_simulator_1():
             "integration_volume": "octant",
             "number_of_sidebands": 64,
         },
-        "indexes": [],
     }
 
     # save
-    sim.save("test_sim_save.json.temp")
-    sim_load = sim.load("test_sim_save.json.temp")
+    sim.save("test_sim_save.temp")
+    sim_load = sim.load("test_sim_save.temp")
 
     assert sim_load.spin_systems == sim.spin_systems
     assert sim_load.methods == sim.methods
     assert sim_load.name == sim.name
     assert sim_load.description == sim.description
+    assert sim_load == sim
+
+    # without units
+    sim.save("test_sim_save_no_unit.temp", with_units=False)
+    sim_load = sim.load("test_sim_save_no_unit.temp", parse_units=False)
     assert sim_load == sim

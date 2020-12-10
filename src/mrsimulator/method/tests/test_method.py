@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test for the base Dimension class."""
+from copy import deepcopy
+
 import csdmpy as cp
 import numpy as np
 import pytest
@@ -14,6 +16,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 def basic_method_tests(the_method):
+    assert the_method != "r"
     assert the_method.name == "test-1-d"
     the_method.name = "test worked"
     assert the_method.name == "test worked"
@@ -46,14 +49,33 @@ def basic_method_tests(the_method):
     dimension = SpectralDimension.parse_dict_with_units(dimension_dictionary)
     assert the_method.spectral_dimensions[0] == dimension
 
+    the_method2 = deepcopy(the_method)
+    the_method2.affine_matrix = [1]
+    assert the_method2 != the_method
+
     # to_dict_with_unit()
     serialize = {
         "name": "test worked",
         "description": "test worked again",
         "channels": ["1H", "17O"],
-        "spectral_dimensions": [dimension.to_dict_with_units()],
+        "magnetic_flux_density": "9.6 T",
+        "rotor_frequency": "1000.0 Hz",
+        "rotor_angle": "0.9553059660790962 rad",
+        "spectral_dimensions": [
+            {
+                "count": 1024,
+                "spectral_width": "100.0 Hz",
+                "reference_offset": "0.0 Hz",
+                "events": [
+                    {
+                        "fraction": 0.5,
+                        "transition_query": {"P": {"channel-1": [[-1.0]]}},
+                    }
+                ],
+            }
+        ],
     }
-    assert the_method.to_dict_with_units() == serialize
+    assert the_method.json() == serialize
 
     # reduced_dict()
     assert the_method.reduced_dict() == {
@@ -137,10 +159,6 @@ def test_method():
     # to_dict_with_unit()
     event_dictionary_ = {
         "fraction": 0.5,
-        "freq_contrib": freq_default,
-        "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1000.0 Hz",
-        "rotor_angle": "0.9553059660790962 rad",
         "transition_query": {"P": {"channel-1": [[-1.0]]}},
     }
     dimension_dictionary_ = {
@@ -153,10 +171,13 @@ def test_method():
         "name": "test-1-d",
         "description": "Test-1",
         "channels": ["29Si"],
+        "magnetic_flux_density": "9.6 T",
+        "rotor_frequency": "1000.0 Hz",
+        "rotor_angle": "0.9553059660790962 rad",
         "spectral_dimensions": [dimension_dictionary_, dimension_dictionary_],
         "experiment": csdm_data.to_dict(),
     }
-    assert the_method.to_dict_with_units() == method_dictionary_
+    assert the_method.json() == method_dictionary_
 
     # reduced_dict()
     event_dictionary_ = {

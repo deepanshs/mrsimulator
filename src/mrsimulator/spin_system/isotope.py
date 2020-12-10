@@ -50,7 +50,7 @@ class Isotope(BaseModel):
     def get_isotope(cls, v, *, values, **kwargs):
         return format_isotope_string(v)
 
-    def to_dict_with_units(self) -> dict:
+    def json(self) -> dict:
         """Parse the class object to a JSON compliant python dictionary object where
         the attribute value with physical quantity is expressed as a string with a
         value and a unit."""

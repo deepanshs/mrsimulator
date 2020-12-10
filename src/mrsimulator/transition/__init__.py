@@ -66,5 +66,5 @@ class Transition(BaseModel):
         lst = self.initial + self.final
         return lst
 
-    def to_dict_with_units(self):
+    def json(self):
         return self.dict()

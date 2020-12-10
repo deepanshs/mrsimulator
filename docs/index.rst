@@ -86,12 +86,23 @@ bio macro-molecules, and even amorphous materials. Simulate the NMR spectrum of 
 
 .. only:: html
 
-    **View our example gallery**
+    .. raw:: html
 
-    .. image:: https://img.shields.io/badge/View-Simulation%20Examples-Purple?s=small
-        :target: examples/index.html
-    .. image:: https://img.shields.io/badge/View-Fitting%20Examples-Purple?s=small
-        :target: fitting/index.html
+        <h3>See our example gallery</h3>
+        <div class='sim-gallery'>
+          <div>
+            <a href="examples/index.html">Gallery
+              <p></p>
+              Simulation Examples
+            </a>
+          </div>
+          <div>
+            <a href="fitting/index.html">Gallery
+              <p></p>
+              <a href="fitting/index.html">Fitting Examples
+            </a>
+          </div>
+        </div>
 
 ----
 
@@ -136,7 +147,7 @@ The ``mrsimulator`` package currently offers the following
 
 - **Models** for tensor parameter distribution in amorphous materials.
     - Czjzek
-    - Extendend Czjzek
+    - Extended Czjzek
 
 ----
 

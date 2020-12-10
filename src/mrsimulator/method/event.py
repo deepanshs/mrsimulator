@@ -8,6 +8,7 @@ from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
 from .frequency_contrib import default_freq_contrib
+from .frequency_contrib import freq_default
 from .frequency_contrib import freq_list_all
 from .frequency_contrib import FrequencyEnum
 from .transition_query import TransitionQuery
@@ -43,10 +44,10 @@ class Event(Parseable):
     magnetic_flux_density: float = Field(default=9.4, ge=0)
     rotor_frequency: float = Field(default=0.0, ge=0)
     # 54.735 degrees = 0.9553166 radians
-    rotor_angle: float = Field(default=0.9553166, ge=0, le=1.5707963268)
+    rotor_angle: float = Field(default=0.955316618, ge=0, le=1.5707963268)
     freq_contrib: List[FrequencyEnum] = default_freq_contrib
     transition_query: TransitionQuery = TransitionQuery()
-    user_variables: List = None
+    # user_variables: List = None
 
     property_unit_types: ClassVar = {
         "magnetic_flux_density": "magnetic flux density",
@@ -80,6 +81,16 @@ class Event(Parseable):
         """
         py_dict_copy = deepcopy(py_dict)
         return super().parse_dict_with_units(py_dict_copy)
+
+    def json(self):
+        dict_ = super().json()
+        # if "user_variables" in dict_.keys():
+        #     dict_.pop("user_variables")
+        if dict_["fraction"] == 1.0:
+            dict_.pop("fraction")
+        if dict_["freq_contrib"] == freq_default:
+            dict_.pop("freq_contrib")
+        return dict_
 
     def get_value_int(self):
         lst_ = set([item.value for item in self.freq_contrib])

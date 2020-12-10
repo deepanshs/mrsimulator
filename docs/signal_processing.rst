@@ -282,13 +282,13 @@ Serializing the operations list
 -------------------------------
 
 You may also serialize the operations list using the
-:meth:`~mrsimulator.signal_processing.SignalProcessor.to_dict_with_units`
+:meth:`~mrsimulator.signal_processing.SignalProcessor.json`
 method, as follows
 
 .. doctest::
 
     >>> from pprint import pprint
-    >>> pprint(processor.to_dict_with_units())
+    >>> pprint(processor.json())
     {'operations': [{'dim_index': [0, 1], 'function': 'IFFT'},
                     {'FWHM': '0.5 ms',
                      'dim_index': 0,

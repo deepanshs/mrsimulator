@@ -58,7 +58,7 @@ class SignalProcessor(BaseModel):
                 )
         return SignalProcessor(operations=lst)
 
-    def to_dict_with_units(self):
+    def json(self):
         """
         Serialize the SignalProcessor object to a JSON compliant python dictionary
         object, where physical quantities are represented as string with a value and a
@@ -69,7 +69,7 @@ class SignalProcessor(BaseModel):
         """
         lst = []
         for i in self.operations:
-            lst += [i.to_dict_with_units()]
+            lst += [i.json()]
         op = {}
 
         op["operations"] = lst

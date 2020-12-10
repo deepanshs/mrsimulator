@@ -58,7 +58,7 @@ def test_direct_init_site1():
         Site.parse_dict_with_units(dict(quadrupolar={"Cq": "5.1 MHz"}))
 
     ax = Site.parse_dict_with_units({"isotope": "29Si"})
-    assert ax.to_dict_with_units() == {
+    assert ax.json() == {
         "isotope": "29Si",
         "isotropic_chemical_shift": "0 ppm",
     }
@@ -154,9 +154,9 @@ def test_site_object_methods():
     }
     assert the_site.to_freq_dict(B0=9.4) == result, "Failed Site.to_freq_dict()"
 
-    # testing method to_dict_with_units()
+    # testing method json()
     result = {"isotope": "14N", "isotropic_chemical_shift": "-10.0 ppm"}
-    assert the_site.to_dict_with_units() == result, "Failed Site.to_dict_with_units()"
+    assert the_site.json() == result, "Failed Site.json()"
 
     result = {
         "isotope": "27Al",
@@ -176,7 +176,7 @@ def test_site_object_methods():
         shielding_antisymmetric={"zeta": -1.1, "alpha": 0.1, "beta": 2.5},
         quadrupolar={"Cq": 10e6, "eta": 0.6},
     )
-    assert the_site.to_dict_with_units() == result, "Failed Site.to_dict_with_units()"
+    assert the_site.json() == result, "Failed Site.json()"
 
     larmor_freq = -1 * 11.10309 * 9.4  # -gamma * B0
     result = {
@@ -206,7 +206,7 @@ def test_site_object_methods():
             "gamma": None,
         },
     }
-    assert the_site.to_freq_dict(9.4) == result, "Failed Site.to_dict_with_units()"
+    assert the_site.to_freq_dict(9.4) == result, "Failed Site.json()"
 
 
 def test_site_quad_set_to_None():

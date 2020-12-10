@@ -7,8 +7,8 @@ An Extended Czjzek distribution model is a random perturbation of the second-ran
 traceless symmetric tensors about a non-zero tensor. See :ref:`ext_czjzek_model` and
 references within for a brief description of the model.
 
-Extendend Czjzek distribution of symmetric shielding tensors
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Extended Czjzek distribution of symmetric shielding tensors
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 To generate an extended Czjzek distribution, use the
 :class:`~mrsimulator.models.ExtCzjzekDistribution` class as follows.

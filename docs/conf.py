@@ -18,6 +18,9 @@ import warnings
 from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
 
+# import plotly.io as pio
+# pio.renderers.default = "sphinx_gallery"
+
 sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------

@@ -13,7 +13,7 @@ Simulator
     .. rubric:: Method Documentation
 
     .. automethod:: get_isotopes
-    .. automethod:: to_dict_with_units
+    .. automethod:: json
     .. automethod:: parse_dict_with_units
     .. automethod:: load_spin_systems
     .. automethod:: export_spin_systems

@@ -16,6 +16,8 @@ from pydantic import BaseModel
 
 from .config import ConfigSimulator
 
+# from IPython.display import JSON
+
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
@@ -132,6 +134,22 @@ class Simulator(BaseModel):
     class Config:
         validate_assignment = True
 
+    def __eq__(self, other):
+        if not isinstance(other, Simulator):
+            return False
+        check = [
+            self.name == other.name,
+            self.label == other.label,
+            self.description == other.description,
+            self.spin_systems == other.spin_systems,
+            self.methods == other.methods,
+            self.config == other.config,
+            np.all(self.indexes == other.indexes),
+        ]
+        if np.all(check):
+            return True
+        return False
+
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
@@ -230,9 +248,24 @@ class Simulator(BaseModel):
             st.update(spin_system.get_isotopes(spin_I))
         return st
 
-    def to_dict_with_units(
-        self, include_methods: bool = False, include_version: bool = False
-    ):
+    # def mpcontribs(self, mp_id, composition=None, temperature=None, pressure=None):
+    #     data = self.json(include_methods=True)
+    #     # for sys in data["spin_systems"]:
+    #     #     for site in sys["sites"]:
+    #     #         site["δiso"] = site.pop("isotropic_chemical_shift")
+    #     #         if "shielding_symmetric" in site:
+    #     #             ss = site["shielding_symmetric"]
+    #     #             ss["η"] = ss.pop("eta")
+    #     #             ss["ζσ"] = ss.pop("zeta")
+    #     if temperature is not None:
+    #         data["temperature"] = temperature
+    #     if pressure is not None:
+    #         data["pressure"] = pressure
+    #     if composition is not None:
+    #         data["composition"] = composition
+    #     return {"identifier": mp_id, "data": data}
+
+    def json(self, include_methods: bool = False, include_version: bool = False):
         """
         Serialize the Simulator object to a JSON compliant python dictionary object
         where physical quantities are represented as string with a value and a unit.
@@ -249,12 +282,11 @@ class Simulator(BaseModel):
         Example
         -------
 
-        >>> pprint(sim.to_dict_with_units())
+        >>> pprint(sim.json())
         {'config': {'decompose_spectrum': 'none',
                     'integration_density': 70,
                     'integration_volume': 'octant',
                     'number_of_sidebands': 64},
-         'indexes': [],
          'spin_systems': [{'abundance': '100 %',
                            'sites': [{'isotope': '13C',
                                       'isotropic_chemical_shift': '20.0 ppm',
@@ -282,20 +314,20 @@ class Simulator(BaseModel):
         if self.label is not None:
             sim["label"] = self.label
 
-        sim["spin_systems"] = [_.to_dict_with_units() for _ in self.spin_systems]
+        sim["spin_systems"] = [_.json() for _ in self.spin_systems]
 
         if include_methods:
-            method = [_.to_dict_with_units() for _ in self.methods]
+            method = [_.json() for _ in self.methods]
             if len(method) != 0:
                 sim["methods"] = method
 
         sim["config"] = self.config.dict()
-        sim["indexes"] = self.indexes
+        # sim["indexes"] = self.indexes
         if include_version:
             sim["version"] = __version__
         return sim
 
-    def reduced_dict(self, exclude=["property_units"]) -> dict:
+    def reduced_dict(self, exclude=["property_units", "indexes"]) -> dict:
         """Returns a reduced dictionary representation of the class object by removing
         all key-value pair corresponding to keys listed in the `exclude` argument, and
         keys with value as None.
@@ -305,6 +337,9 @@ class Simulator(BaseModel):
         Return: A dict.
         """
         return _reduce_dict(self.dict(), exclude)
+
+    # def pretty(self):
+    #     return JSON(self.json(include_methods=True, include_version=True))
 
     def load_spin_systems(self, filename: str):
         """
@@ -344,7 +379,7 @@ class Simulator(BaseModel):
 
         >>> sim.export_spin_systems(filename) # doctest:+SKIP
         """
-        spin_systems = [SpinSystem.to_dict_with_units(obj) for obj in self.spin_systems]
+        spin_systems = [SpinSystem.json(obj) for obj in self.spin_systems]
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
                 spin_systems,
@@ -440,7 +475,7 @@ class Simulator(BaseModel):
 
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
-                self.to_dict_with_units(include_methods=True, include_version=True),
+                self.json(include_methods=True, include_version=True),
                 outfile,
                 ensure_ascii=False,
                 sort_keys=False,
@@ -523,6 +558,6 @@ class Simulator(BaseModel):
 
         obj["application"] = {
             "com.github.DeepanshS.mrsimulator": {
-                "spin_systems": [self.spin_systems[index].to_dict_with_units()]
+                "spin_systems": [self.spin_systems[index].json()]
             }
         }

@@ -15,10 +15,10 @@ def test_transition_1():
     assert tran.final == [-0.5, 1.5]
 
     # to dict with unit
-    assert tran.to_dict_with_units() == a
+    assert tran.json() == a
 
     assert tran.tolist() == [0.5, 1.5, -0.5, 1.5]
-    assert tran.to_dict_with_units() == a
+    assert tran.json() == a
 
     # p and Δm
     assert tran.p == -1

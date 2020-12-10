@@ -1,28 +1,28 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
-from mrsimulator.utils.collection import get_default_lists
-from mrsimulator.utils.collection import get_length
+from mrsimulator.utils.collection import _get_default_lists
+from mrsimulator.utils.collection import _get_length
 from mrsimulator.utils.collection import single_site_system_generator
 
 
 def test_get_default_lists():
     a = 2.0
-    assert np.all(get_default_lists(a, 5) == np.asarray([2.0] * 5))
+    assert np.all(_get_default_lists(a, 5) == np.asarray([2.0] * 5))
 
     a = "32G"
-    assert np.all(get_default_lists(a, 5) == np.asarray(["32G"] * 5))
+    assert np.all(_get_default_lists(a, 5) == np.asarray(["32G"] * 5))
 
 
 def test_get_length():
     a = 2.0
-    assert get_length(a) == 0
+    assert _get_length(a) == 0
 
     a = [1, 2, 3, 4, 5]
-    assert get_length(a) == 5
+    assert _get_length(a) == 5
 
     a = np.arange(43)
-    assert get_length(a) == 43
+    assert _get_length(a) == 43
 
 
 def test_unbalanced_lists():
@@ -231,7 +231,6 @@ def test_abundance_03():
     gamma = np.random.rand(10)
     abundance = np.zeros(10)
 
-    print(gamma)
     indexes = [2, 5, 8]
     for i in indexes:
         abundance[i] = 1
@@ -245,7 +244,6 @@ def test_abundance_03():
     assert len(sys) == 3
 
     for i, j in enumerate(indexes):
-        print(sys[i].sites[0].shielding_symmetric.gamma, gamma[j])
         assert sys[i].sites[0].isotope.symbol == "27Al"
         assert sys[i].sites[0].isotropic_chemical_shift == 0
         assert sys[i].sites[0].shielding_symmetric.zeta is None

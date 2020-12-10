@@ -13,9 +13,12 @@ from mrsimulator.transition.transition_list import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
 
+from .named_method_updates import named_methods
+from .named_method_updates import update_method
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
 from .utils import D_symmetry_indexes
+from .utils import expand_spectral_dimension_object
 from .utils import P_symmetry_indexes
 from .utils import query_permutations
 
@@ -128,6 +131,23 @@ class Method(Parseable):
         validate_assignment = True
         arbitrary_types_allowed = True
 
+    def __eq__(self, other):
+        if not isinstance(other, Method):
+            return False
+        check = [
+            self.name == other.name,
+            self.label == other.label,
+            self.description == other.description,
+            self.channels == other.channels,
+            self.spectral_dimensions == other.spectral_dimensions,
+            np.all(self.affine_matrix == other.affine_matrix),
+            self.simulation == other.simulation,
+            self.experiment == other.experiment,
+        ]
+        if np.all(check):
+            return True
+        return False
+
     @validator("channels", always=True)
     def validate_channels(cls, v, *, values, **kwargs):
         return [Isotope(symbol=_) for _ in v]
@@ -168,18 +188,22 @@ class Method(Parseable):
             A :ref:`method_api` object.
         """
         py_dict_copy = deepcopy(py_dict)
+
         if "spectral_dimensions" in py_dict_copy:
+            py_dict_copy = expand_spectral_dimension_object(py_dict_copy)
             py_dict_copy["spectral_dimensions"] = [
                 SpectralDimension.parse_dict_with_units(s)
                 for s in py_dict_copy["spectral_dimensions"]
             ]
+
         if "simulation" in py_dict_copy:
             if py_dict_copy["simulation"] is not None:
                 py_dict_copy["simulation"] = cp.parse_dict(py_dict_copy["simulation"])
         if "experiment" in py_dict_copy:
             if py_dict_copy["experiment"] is not None:
                 py_dict_copy["experiment"] = cp.parse_dict(py_dict_copy["experiment"])
-        return super().parse_dict_with_units(py_dict_copy)
+
+        return update_method(super().parse_dict_with_units(py_dict_copy))
 
     def update_spectral_dimension_attributes_from_experiment(self):
         """Update the spectral dimension attributes of the method to match the
@@ -192,7 +216,7 @@ class Method(Parseable):
             spectral_dims[i].reference_offset = dim.coordinates_offset.to("Hz").value
             spectral_dims[i].origin_offset = dim.origin_offset.to("Hz").value
 
-    def to_dict_with_units(self):
+    def json(self):
         """
         Parse the class object to a JSON compliant python dictionary object where
         the attribute value with physical quantity is expressed as a string with a
@@ -202,20 +226,56 @@ class Method(Parseable):
             A python dict object.
         """
         temp_dict = {}
+
+        # add metadata
         items = ["name", "label", "description"]
+
         for en in items:
             value = self.__getattribute__(en)
             if value is not None:
-                temp_dict[en] = self.__getattribute__(en)
+                temp_dict[en] = value
 
+        # add channels
+        temp_dict["channels"] = [item.json() for item in self.channels]
+
+        # add global parameters
+        ev0 = self.spectral_dimensions[0].events[0]
+        list_g = ["magnetic_flux_density", "rotor_frequency", "rotor_angle"]
+        unit_g = ["T", "Hz", "rad"]
+        global_ = [f"{ev0.__getattribute__(k)} {u}" for k, u in zip(list_g, unit_g)]
+        for key, val in zip(list_g, global_):
+            temp_dict[key] = val
+
+        # add spectral dimensions
         temp_dict["spectral_dimensions"] = [
-            item.to_dict_with_units() for item in self.spectral_dimensions
+            item.json() for item in self.spectral_dimensions
         ]
-        temp_dict["channels"] = [item.to_dict_with_units() for item in self.channels]
+
+        named = True if temp_dict["name"] in named_methods else False
+        for dim in temp_dict["spectral_dimensions"]:
+            for ev in dim["events"]:
+                # remove event objects with global values.
+                for key, val in zip(list_g, global_):
+                    _ = ev.pop(key) if ev[key] == val else 0
+
+                # remove transition query objects for named methods
+                _ = ev.pop("transition_query") if named else 0
+
+            if dim["events"] == [{} for _ in range(len(dim["events"]))]:
+                dim.pop("events")
+
+        # add affine-matrix
+        if self.affine_matrix is not None:
+            temp_dict["affine_matrix"] = self.affine_matrix.tolist()
+
+        # add simulation
         if self.simulation is not None:
             temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
+
+        # add experiment
         if self.experiment is not None:
             temp_dict["experiment"] = self.experiment.to_dict()
+
         return temp_dict
 
     def dict(self, **kwargs):

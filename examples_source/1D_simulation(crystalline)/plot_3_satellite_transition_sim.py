@@ -46,7 +46,7 @@ spin_system = SpinSystem(sites=[site])
 #
 # .. math::
 #       P = m_f - m_i \\
-#       D = m_f^2 - m_f^2,
+#       D = m_f^2 - m_i^2,
 #
 # where :math:`m_f` and :math:`m_i` are the spin quantum numbers for the final and
 # initial energy states. Based on the query, the method selects all transitions from

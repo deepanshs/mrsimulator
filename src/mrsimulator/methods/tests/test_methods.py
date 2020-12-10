@@ -4,7 +4,7 @@ from os import path
 import numpy as np
 import pytest
 from monty.serialization import loadfn
-from mrsimulator.method.frequency_contrib import freq_default
+from mrsimulator.method import Method
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.methods import Method1D
 from mrsimulator.methods import Method2D
@@ -54,7 +54,8 @@ def test_03():
         ],
     )
 
-    assert TESTDATA["generic"] == mth.to_dict_with_units()
+    assert TESTDATA["generic"] == mth.json()
+    assert Method.parse_dict_with_units(mth.json()) == mth
 
 
 def test_method_1D():
@@ -85,6 +86,7 @@ def test_method_1D():
         ],
     }
     method1a = Method1D.parse_dict_with_units(dict_1d)
+    assert Method.parse_dict_with_units(method1a.json()) == method1a
 
     method1b = Method1D(
         channels=["87Rb"],
@@ -138,6 +140,7 @@ def test_method_2D():
         ],
     }
     method1a = Method2D.parse_dict_with_units(dict_1d)
+    assert Method.parse_dict_with_units(method1a.json()) == method1a
 
     method1b = Method2D(
         channels=["87Rb"],
@@ -197,35 +200,31 @@ def test_04():
         ],
     )
 
-    assert TESTDATA["SAS"] == mth.to_dict_with_units()
+    assert TESTDATA["SAS"] == mth.json()
+    assert Method.parse_dict_with_units(mth.json()) == mth
 
 
 def test_BlochDecaySpectrum():
     # test-1
     m1 = BlochDecaySpectrum()
 
-    event_dictionary_ = {
-        "fraction": 1.0,
-        "freq_contrib": freq_default,
-        "magnetic_flux_density": "9.4 T",
-        "rotor_frequency": "0.0 Hz",
-        "rotor_angle": "0.9553166 rad",
-        "transition_query": {"P": {"channel-1": [[-1.0]]}},
-        "user_variables": ["magnetic_flux_density", "rotor_frequency", "rotor_angle"],
-    }
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "25000.0 Hz",
         "reference_offset": "0.0 Hz",
-        "events": [event_dictionary_],
     }
 
     should_be = {
         "name": "BlochDecaySpectrum",
         "channels": ["1H"],
+        "magnetic_flux_density": "9.4 T",
+        "rotor_frequency": "0.0 Hz",
+        "rotor_angle": "0.955316618 rad",
         "spectral_dimensions": [dimension_dictionary_],
     }
-    dict_ = m1.to_dict_with_units()
+    dict_ = m1.json()
+    assert Method.parse_dict_with_units(dict_) == m1
+
     dict_.pop("description")
     assert dict_ == should_be
 
@@ -239,29 +238,24 @@ def test_BlochDecaySpectrum():
     m2 = BlochDecaySpectrum.parse_dict_with_units(m2_dict)
 
     angle = 90 * np.pi / 180
-    event_dictionary_ = {
-        "fraction": 1.0,
-        "freq_contrib": freq_default,
-        "magnetic_flux_density": "11.7 T",
-        "rotor_frequency": "0.0 Hz",
-        "rotor_angle": f"{angle} rad",
-        "transition_query": {"P": {"channel-1": [[-1.0]]}},
-        "user_variables": ["magnetic_flux_density", "rotor_frequency", "rotor_angle"],
-    }
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "25000.0 Hz",
         "reference_offset": "0.0 Hz",
-        "events": [event_dictionary_],
     }
 
     should_be = {
         "name": "BlochDecaySpectrum",
         "channels": ["29Si"],
+        "magnetic_flux_density": "11.7 T",
+        "rotor_frequency": "0.0 Hz",
+        "rotor_angle": f"{angle} rad",
         "spectral_dimensions": [dimension_dictionary_],
     }
 
-    dict_ = m2.to_dict_with_units()
+    dict_ = m2.json()
+    assert Method.parse_dict_with_units(dict_) == m2
+
     dict_.pop("description")
     assert dict_ == should_be
 
@@ -297,7 +291,8 @@ def test_05():
         ],
     )
 
-    assert TESTDATA["STMAS"] == mth.to_dict_with_units()
+    assert TESTDATA["STMAS"] == mth.json()
+    assert Method.parse_dict_with_units(TESTDATA["STMAS"]) == mth
 
 
 def test_3QMAS():
@@ -320,6 +315,7 @@ def test_3QMAS():
     )
 
     assert np.allclose(mth.affine_matrix, [0.5625, 0.4375, 0, 1])
+    assert Method.parse_dict_with_units(mth.json()) == mth
 
 
 def test_06():
@@ -367,4 +363,5 @@ def test_methods():
     )
 
     assert das.affine_matrix is None
-    assert das.to_dict_with_units() == TESTDATA["DAS"]
+    assert das.json() == TESTDATA["DAS"]
+    assert Method.parse_dict_with_units(das.json()) == das

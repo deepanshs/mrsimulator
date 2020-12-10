@@ -135,9 +135,9 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        apo.Exponential(FWHM="40 Hz"),
+        apo.Gaussian(FWHM="100 Hz"),
         sp.FFT(),
-        sp.Scale(factor=1.0),
+        sp.Scale(factor=20000.0),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation)

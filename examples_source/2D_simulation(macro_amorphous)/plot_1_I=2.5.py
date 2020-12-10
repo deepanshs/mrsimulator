@@ -32,7 +32,7 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # asymmetry parameters used in generating a 3D grid.
 iso_r = np.arange(101) / 1.5 + 30  # in ppm
 Cq_r = np.arange(100) / 4  # in MHz
-eta_r = np.arange(7) / 6
+eta_r = np.arange(10) / 9
 
 # The 3D mesh grid over which the distribution amplitudes are evaluated.
 iso, Cq, eta = np.meshgrid(iso_r, Cq_r, eta_r, indexing="ij")

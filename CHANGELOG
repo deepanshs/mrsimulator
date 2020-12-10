@@ -1,3 +1,20 @@
+Upcoming changes
+----------------
+
+What's new
+''''''''''
+
+Other changes
+'''''''''''''
+
+- The ``to_dict_with_units()`` method is deprecated and is replaced with ``json()``
+- The ``json()`` function returns a python dictionary object with minimal required keywords,
+  where the event keys are globally serialized at the root method object. In the case where
+  the event key value is different from the global value, the respective key is serialized
+  within the event object.
+- The ``json()`` function will no longer serialize the `transition_query` objects for the
+  named objects.
+
 v0.5.0
 ------
 

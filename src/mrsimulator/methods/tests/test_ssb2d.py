@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
+from mrsimulator.method import Method
 from mrsimulator.method.transition_query import TransitionQuery
 from mrsimulator.methods import SSB2D
 
@@ -24,8 +25,9 @@ def test_SSB_setting_events():
 
 
 def test_SSB_affine():
-    meth = SSB2D(channels=["13C"], rotor_frequency=1200)
-    np.allclose(meth.affine_matrix, [1, -1, 0, 0])
+    mth = SSB2D(channels=["13C"], rotor_frequency=1200)
+    np.allclose(mth.affine_matrix, [1, -1, 0, 0])
+    assert Method.parse_dict_with_units(mth.json()) == mth
 
 
 def test_SSB_general():
@@ -59,3 +61,6 @@ def test_SSB_general():
     # test rotor_frequency
     assert mth.spectral_dimensions[0].events[0].rotor_frequency == 1200
     assert mth.spectral_dimensions[1].events[0].rotor_frequency == 1e9
+
+    # check serialization
+    assert Method.parse_dict_with_units(mth.json()) == mth

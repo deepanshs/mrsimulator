@@ -27,7 +27,7 @@ def test_01():
     post_sim.apply_operations(data)
 
     # to dict with units
-    dict_ = post_sim.to_dict_with_units()
+    dict_ = post_sim.json()
     assert dict_ == {
         "operations": [
             {"dim_index": 0, "function": "IFFT"},

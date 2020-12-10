@@ -221,7 +221,7 @@ def minimization_function(params, sim, processor):
 # to perform the fit. To fit, we use the *LMFIT*
 # `Minimizer <https://lmfit.github.io/lmfit-py/fitting.html>`_ class.
 minner = Minimizer(minimization_function, params, fcn_args=(sim, processor))
-result = minner.minimize(method="powell")
+result = minner.minimize()
 print(fit_report(result))
 
 # %%

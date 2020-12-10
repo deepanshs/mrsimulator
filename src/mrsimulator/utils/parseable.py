@@ -10,6 +10,8 @@ from pydantic import BaseModel
 
 from .extra import _reduce_dict
 
+# from IPython.display import JSON
+
 __author__ = "Shyam Dwaraknath"
 __email__ = "shyamd@lbl.gov"
 
@@ -90,7 +92,10 @@ class Parseable(BaseModel):
         """
         return _reduce_dict(self.dict(), exclude)
 
-    def to_dict_with_units(self) -> dict:
+    # def pretty(self):
+    #     return JSON(self.json())
+
+    def json(self) -> dict:
         """Parse the class object to a JSON compliant python dictionary object where
         the attribute value with physical quantity is expressed as a string with a
         number and a unit."""
@@ -100,7 +105,7 @@ class Parseable(BaseModel):
 
             # check the dict objects
             if isinstance(v, (dict, Enum)):
-                val = getattr(self, k).to_dict_with_units()
+                val = getattr(self, k).json()
                 if val is not None:
                     temp_dict[k] = val
 
@@ -142,7 +147,7 @@ def get_list(member, obj):
         if isinstance(item, list):
             lst.append(get_list(member[i], item))
         elif isinstance(item, (dict, Enum)):
-            lst.append(member[i].to_dict_with_units())
+            lst.append(member[i].json())
         elif item not in [None, ""]:
             lst.append(item)
     return lst

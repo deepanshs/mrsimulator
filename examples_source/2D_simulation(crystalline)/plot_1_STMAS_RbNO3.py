@@ -48,9 +48,9 @@ spin_systems = [SpinSystem(sites=[s]) for s in sites]
 # following `ST1_VAS` method correlates the frequencies from the two inner-satellite
 # transitions to the central transition. Note, STMAS measurements are highly suspectable
 # to rotor angle mismatch. In the following, we show two methods, first set to
-# magic-angle and the second deliberately miss-sets by approximately 0.005 degrees.
+# magic-angle and the second deliberately miss-sets by approximately 0.0059 degrees.
 
-angles = [54.735, 54.73]
+angles = [54.7359, 54.73]
 method = []
 for angle in angles:
     method.append(
@@ -88,7 +88,7 @@ sim.run()
 data = [sim.methods[0].simulation, sim.methods[1].simulation]
 fig, ax = plt.subplots(1, 2, figsize=(8.5, 3), subplot_kw={"projection": "csdm"})
 
-titles = ["STVAS @ magic-angle", "STVAS @ 0.005 deg off magic-angle"]
+titles = ["STVAS @ magic-angle", "STVAS @ 0.0059 deg off magic-angle"]
 for i, item in enumerate(data):
     cb1 = ax[i].imshow(item / item.max(), aspect="auto", cmap="gist_ncar_r")
     ax[i].set_title(titles[i])
