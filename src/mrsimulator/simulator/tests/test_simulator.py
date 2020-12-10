@@ -139,11 +139,16 @@ def test_simulator_1():
     }
 
     # save
-    sim.save("test_sim_save.json.temp")
-    sim_load = sim.load("test_sim_save.json.temp")
+    sim.save("test_sim_save.temp")
+    sim_load = sim.load("test_sim_save.temp")
 
     assert sim_load.spin_systems == sim.spin_systems
     assert sim_load.methods == sim.methods
     assert sim_load.name == sim.name
     assert sim_load.description == sim.description
+    assert sim_load == sim
+
+    # without units
+    sim.save("test_sim_save_no_unit.temp", with_units=False)
+    sim_load = sim.load("test_sim_save_no_unit.temp", parse_units=False)
     assert sim_load == sim

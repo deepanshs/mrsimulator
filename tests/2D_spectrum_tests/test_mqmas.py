@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Lineshape Test."""
+import csdmpy as cp
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.affine as aft
 import numpy as np
@@ -223,3 +224,31 @@ def test_MQMAS_spin_5halves():
 
     data = sim.methods[0].simulation.dependent_variables[0].components[0]
     assert np.allclose(data / data.max(), mas_slice / mas_slice.max())
+
+
+def test_method_exp_sim():
+    spin_system = SpinSystem(
+        sites=[
+            Site(
+                isotope="27Al",
+                isotropic_chemical_shift=64.5,  # in ppm
+                quadrupolar={"Cq": 3.22e6, "eta": 0.66},  # Cq is in Hz
+            )
+        ]
+    )
+
+    data = cp.as_csdm(np.random.rand(1024, 512))
+    method = ThreeQ_VAS(
+        channels=["27Al"],
+        magnetic_flux_density=7,
+        spectral_dimensions=[
+            {"count": 1024, "spectral_width": 5000, "reference_offset": -3e3},
+            {"count": 512, "spectral_width": 10000, "reference_offset": 4e3},
+        ],
+        experiment=data,
+    )
+
+    sim = Simulator()
+    sim.spin_systems = [spin_system]
+    sim.methods = [method]
+    sim.run()
