@@ -1,8 +1,11 @@
-Upcoming changes
-----------------
+v0.5.1
+------
 
-What's new
-''''''''''
+Bug fixes
+'''''''''
+
+- Fixed a bug that was causing incorrect spectral binning when the frequency
+  contribution is pure isotropic.
 
 Other changes
 '''''''''''''
