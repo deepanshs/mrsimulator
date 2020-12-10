@@ -23,11 +23,7 @@ Welcome to the Mrsimulator documentation
             :alt: PyPI - Python Version
 
       * - Build Status
-        - .. image:: https://img.shields.io/travis/deepanshs/mrsimulator?logo=travis
-            :target: https://travis-ci.org/DeepanshS/mrsimulator
-            :alt: Travis (.org)
-
-          .. image:: https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI%20(pip)?logo=GitHub
+        - .. image:: https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI%20(pip)?logo=GitHub
             :target: https://github.com/DeepanshS/mrsimulator/actions
             :alt: GitHub Workflow Status
 

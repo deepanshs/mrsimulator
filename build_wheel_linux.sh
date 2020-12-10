@@ -11,7 +11,7 @@ cd io
 yum install -y openblas-devel git fftw-devel
 
 # Compile wheels
-for PYBIN in /opt/python/cp3[6-8]*/bin; do
+for PYBIN in /opt/python/cp3[6-9]*/bin; do
     "${PYBIN}/python" --version
     "${PYBIN}/pip" install --upgrade pip
     "${PYBIN}/pip" install -r requirements.txt
