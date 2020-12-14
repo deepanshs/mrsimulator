@@ -137,7 +137,7 @@ params = make_LMFIT_params(sim, processor)
 # Fix the value of the isotropic chemical shift to zero for pure anisotropic sideband
 # amplitude simulation.
 params["sys_0_site_0_isotropic_chemical_shift"].vary = False
-params.pretty_print()
+print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # Run the minimization using LMFIT

@@ -549,3 +549,7 @@ tr td {
 h6.center {
   text-align: center;
 }
+
+.sphx-glr-script-out .highlight {
+  font-size: smaller;
+}

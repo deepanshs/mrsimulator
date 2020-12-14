@@ -179,7 +179,7 @@ params = make_LMFIT_params(sim, processor)
 # abundance of the two spin systems and constrain it to the initial value of 50% each.
 params.pop("sys_0_abundance")
 params.pop("sys_1_abundance")
-params.pretty_print()
+print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Step 8:** Perform least-squares minimization. For the user's convenience, we also

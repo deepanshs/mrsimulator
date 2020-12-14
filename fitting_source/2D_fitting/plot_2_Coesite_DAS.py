@@ -25,6 +25,7 @@ from lmfit import Minimizer, report_fit
 
 # global plot configuration
 mpl.rcParams["figure.figsize"] = [4.5, 3.0]
+mpl.rcParams["lines.linewidth"] = 0.5
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
@@ -45,7 +46,7 @@ experiment /= experiment.max()
 # plot of the dataset.
 levels = (np.arange(10) + 0.3) / 15  # contours are drawn at these levels.
 ax = plt.subplot(projection="csdm")
-cb = ax.contour(experiment, colors="k", levels=levels, alpha=0.5, linewidths=0.5)
+cb = ax.contour(experiment, colors="k", levels=levels, alpha=0.75)
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
@@ -55,11 +56,9 @@ plt.show()
 # %%
 # Create a fitting model
 # ----------------------
-# The fitting model includes the Simulator and SignalProcessor objects. First,
-# create the Simulator object.
+# **Guess model**
+# Create a guess list of spin systems.
 
-# Create the guess sites and spin systems.
-# default unit of isotropic_chemical_shift is ppm and Cq is Hz.
 shifts = [29, 41, 57, 53, 58]  # in ppm
 Cq = [6.1e6, 5.4e6, 5.5e6, 5.5e6, 5.1e6]  # in  Hz
 eta = [0.1, 0.2, 0.1, 0.1, 0.3]
@@ -72,11 +71,13 @@ spin_systems = single_site_system_generator(
     abundance=abundance,
 )
 
+# %%
+# **Method**
+
 # Create the DAS method.
 # Get the spectral dimension paramters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-# %%
 das = Method2D(
     channels=["17O"],
     magnetic_flux_density=11.7,  # in T
@@ -100,16 +101,17 @@ for sys in spin_systems:
     sys.transition_pathways = das.get_transition_pathways(sys)
 
 # %%
+# **Guess Spectrum**
 
-# Create the Simulator object and add the method and spin system objects.
+# Simulation
+# ----------
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
 sim.methods = [das]  # add the method
 sim.run()
 
-# %%
-
-# Add Post simulation processing.
+# Post Simulation Processing
+# --------------------------
 processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
@@ -120,15 +122,13 @@ processor = sp.SignalProcessor(
         sp.Scale(factor=1 / 8),
     ]
 )
-# Apply post simulation operations.
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
-# %%
-
-# The plot of the simulation after signal processing.
+# Plot of the guess Spectrum
+# --------------------------
 ax = plt.subplot(projection="csdm")
-ax.contour(processed_data, colors="r", levels=levels, alpha=0.75, linewidths=0.5)
-cb = ax.contour(experiment, colors="k", levels=levels, alpha=0.5, linewidths=0.5)
+cb = ax.contour(experiment, colors="k", levels=levels, alpha=0.75)
+ax.contour(processed_data, colors="r", linestyles="--", levels=levels, alpha=0.75)
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
@@ -139,34 +139,33 @@ plt.show()
 # %%
 # Least-squares minimization with LMFIT
 # -------------------------------------
-# First, create the fitting parameters.
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
-# setup.
+# setup of the fitting parameters.
 params = make_LMFIT_params(sim, processor)
 
 # Here, we fix the abundance parameters to their initial value.
-for i in range(5):
-    params[f"sys_{i}_abundance"].vary = False
+# for i in range(5):
+#     params[f"sys_{i}_abundance"].vary = False
 
-params.pretty_print()
+print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
-# Run the minimization using LMFIT
+# **Solve the minimizer using LMFIT**
 minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor))
 result = minner.minimize()
 report_fit(result)
 
 
 # %%
-# Simulate the spectrum corresponding to the optimum parameters
+# The best fit solution
+# ---------------------
 sim.run()
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
-# %%
 # Plot the spectrum
 ax = plt.subplot(projection="csdm")
-ax.contour(processed_data, colors="r", levels=levels, alpha=0.75, linewidths=0.5)
-cb = ax.contour(experiment, colors="k", levels=levels, alpha=0.5, linewidths=0.5)
+cb = ax.contour(experiment, colors="k", levels=levels, alpha=0.75)
+ax.contour(processed_data, colors="r", linestyles="--", levels=levels, alpha=0.75)
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
