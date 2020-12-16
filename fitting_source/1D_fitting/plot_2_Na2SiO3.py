@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Fitting 17O MAS NMR of crystalline Na2SiO3
-==========================================
+17O MAS NMR of crystalline Na2SiO3
+==================================
 """
 # %%
 # In this example, we illustrate the use of the mrsimulator objects to
@@ -31,6 +31,7 @@ from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_pa
 font = {"size": 9}
 mpl.rc("font", **font)
 mpl.rcParams["figure.figsize"] = [4.25, 3.0]
+mpl.rcParams["grid.linestyle"] = "--"
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
@@ -54,7 +55,7 @@ oxygen_experiment /= oxygen_experiment.max()
 
 # plot of the dataset.
 ax = plt.subplot(projection="csdm")
-ax.plot(oxygen_experiment, color="black", linewidth=1)
+ax.plot(oxygen_experiment, "k", alpha=0.5)
 ax.set_xlim(-50, 100)
 ax.invert_xaxis()
 plt.tight_layout()
@@ -140,17 +141,18 @@ processor = sp.SignalProcessor(
         sp.Scale(factor=20000.0),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation)
+processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # %%
 # **Step 6:** The plot of initial guess simulation (black) along with the experiment
 # (red) is shown below.
 ax = plt.subplot(projection="csdm")
-ax.plot(processed_data.real, color="black", linewidth=1, label="guess spectrum")
-ax.plot(oxygen_experiment, c="r", linewidth=1.5, alpha=0.5, label="experiment")
+ax.plot(oxygen_experiment, "k", alpha=0.5, linewidth=2, label="Experiment")
+ax.plot(processed_data, "r", label="guess spectrum")
 ax.set_xlim(-50, 100)
 ax.invert_xaxis()
 plt.legend()
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -194,18 +196,18 @@ report_fit(result)
 
 # %%
 # **Step 9:** The plot of the fit, measurement and the residuals is shown below.
-plt.figsize = (4, 3)
-x, y_data = oxygen_experiment.to_list()
-residual = result.residual
-plt.plot(x, y_data, label="Spectrum")
-plt.plot(x, y_data - residual, "r", alpha=0.5, label="Fit")
-plt.plot(x, residual, alpha=0.5, label="Residual")
 
+# Best fit spectrum
+sim.run()
+processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+
+ax = plt.subplot(projection="csdm")
+plt.plot(oxygen_experiment, "k", alpha=0.5, linewidth=2, label="Experiment")
+plt.plot(processed_data, "r--", label="Best Fit")
 plt.xlabel("$^{17}$O frequency / ppm")
-plt.xlim(-50, 100)
-plt.gca().invert_xaxis()
-plt.grid(which="major", axis="both", linestyle="--")
+plt.xlim(100, -50)
 plt.legend()
+plt.grid()
 plt.tight_layout()
 plt.show()
 

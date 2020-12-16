@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-17O DAS NMR of Coesite
-^^^^^^^^^^^^^^^^^^^^^^
+17O 2D DAS NMR of Coesite
+^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # Coesite is a high-pressure (2-3 GPa) and high-temperature (700°C) polymorph of silicon
@@ -26,6 +26,7 @@ from lmfit import Minimizer, report_fit
 # global plot configuration
 mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 mpl.rcParams["lines.linewidth"] = 0.5
+mpl.rcParams["grid.linestyle"] = "--"
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
@@ -57,6 +58,7 @@ plt.show()
 # Create a fitting model
 # ----------------------
 # **Guess model**
+#
 # Create a guess list of spin systems.
 
 shifts = [29, 41, 57, 53, 58]  # in ppm
@@ -132,6 +134,7 @@ ax.contour(processed_data, colors="r", linestyles="--", levels=levels, alpha=0.7
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -142,11 +145,6 @@ plt.show()
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
 params = make_LMFIT_params(sim, processor)
-
-# Here, we fix the abundance parameters to their initial value.
-# for i in range(5):
-#     params[f"sys_{i}_abundance"].vary = False
-
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
@@ -169,6 +167,7 @@ ax.contour(processed_data, colors="r", linestyles="--", levels=levels, alpha=0.7
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
+plt.grid()
 plt.tight_layout()
 plt.show()
 

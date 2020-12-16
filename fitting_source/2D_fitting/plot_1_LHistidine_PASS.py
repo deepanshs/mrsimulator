@@ -23,6 +23,7 @@ from lmfit import Minimizer, report_fit
 # global plot configuration
 mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 mpl.rcParams["lines.linewidth"] = 0.5
+mpl.rcParams["grid.linestyle"] = "--"
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
@@ -60,6 +61,7 @@ plt.show()
 # Create a fitting model
 # ----------------------
 # **Guess model**
+#
 # Create a guess list of spin systems.
 
 shifts = [120, 128, 135, 175, 55, 25]  # in ppm
@@ -123,6 +125,7 @@ cb = ax.contour(mat_data, colors="k", levels=levels, alpha=0.75)
 ax.contour(processed_data, colors="r", linestyles="--", levels=levels, alpha=0.75)
 plt.colorbar(cb)
 ax.set_xlim(200, 10)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -154,6 +157,7 @@ cb = ax.contour(mat_data, colors="k", levels=levels, alpha=0.75)
 ax.contour(processed_data, colors="r", linestyles="--", levels=levels, alpha=0.75)
 plt.colorbar(cb)
 ax.set_xlim(200, 10)
+plt.grid()
 plt.tight_layout()
 plt.show()
 

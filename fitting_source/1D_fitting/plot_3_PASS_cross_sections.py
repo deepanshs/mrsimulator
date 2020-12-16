@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Fitting PASS/MAT cross-sections
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1D PASS/MAT sideband order cross-section
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # This example illustrates the use of mrsimulator and LMFIT modules in fitting the
@@ -22,6 +22,7 @@ from lmfit import Minimizer, report_fit
 
 # global plot configuration
 mpl.rcParams["figure.figsize"] = [4.5, 3.0]
+mpl.rcParams["grid.linestyle"] = "--"
 # sphinx_gallery_thumbnail_number = 4
 
 # %%
@@ -71,22 +72,19 @@ print(isotropic_shift)
 # %%
 # Create a fitting model
 # ----------------------
+# **Guess model**
 #
-# The fitting model includes the Simulator and SignalProcessor objects. First,
-# create the Simulator object.
-
-# Create the guess site and spin system for the 1D cross-section.
-zeta = -70  # in ppm
-eta = 0.8
-
+# Create a guess list of spin systems.
 site = Site(
     isotope="13C",
     isotropic_chemical_shift=0,
-    shielding_symmetric={"zeta": zeta, "eta": eta},
+    shielding_symmetric={"zeta": -70, "eta": 0.8},
 )
 spin_systems = [SpinSystem(sites=[site])]
 
 # %%
+# **Method**
+#
 # For the sideband only cross-section, use the BlochDecaySpectrum method.
 
 # Get the dimension information from the experiment. Note, the following function
@@ -107,21 +105,29 @@ method = BlochDecaySpectrum(
 for sys in spin_systems:
     sys.transition_pathways = method.get_transition_pathways(sys)
 
-# Create the Simulator object and add the method and spin system objects.
+# %%
+# **Guess Spectrum**
+
+# Simulation
+# ----------
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
 sim.methods = [method]  # add the method
 sim.run()
 
-# Add and apply Post simulation processing.
+# Post Simulation Processing
+# --------------------------
 processor = sp.SignalProcessor(operations=[sp.Scale(factor=1)])
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
-# The plot of the simulation from the guess model and experiment cross-section.
+# Plot of the guess Spectrum
+# --------------------------
 ax = plt.subplot(projection="csdm")
-ax.plot(processed_data, color="r", label="guess")
-ax.plot(data1D, color="k", label="experiment")
+ax.plot(data1D, color="k", linewidth=2, alpha=0.5, label="Experiment")
+ax.plot(processed_data, color="r", label="guess spectrum")
+plt.grid()
 ax.invert_xaxis()
+plt.legend()
 plt.tight_layout()
 plt.show()
 
@@ -145,17 +151,18 @@ minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor))
 result = minner.minimize()
 report_fit(result)
 
-
 # %%
-# Simulate the spectrum corresponding to the optimum parameters
+# The best fit solution
+# ---------------------
 sim.run()
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
-# %%
 # Plot the spectrum
 ax = plt.subplot(projection="csdm")
-ax.plot(processed_data, color="r", label="fit")
-ax.plot(data1D, color="k", label="experiment")
+ax.plot(data1D, color="k", linewidth=2, alpha=0.5, label="Experiment")
+ax.plot(processed_data, color="r", label="Best Fit")
 ax.invert_xaxis()
+plt.grid()
+plt.legend()
 plt.tight_layout()
 plt.show()

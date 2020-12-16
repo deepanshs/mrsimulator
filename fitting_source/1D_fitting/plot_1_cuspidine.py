@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Fitting Cusipidine
-==================
+29Si 1D MAS spinning sideband
+=============================
 """
 # %%
 # After acquiring an NMR spectrum, we often require a least-squares analysis to
@@ -25,13 +25,14 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
-from mrsimulator import Simulator, SpinSystem
+from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
 from lmfit import Minimizer, Parameters, fit_report
 
 font = {"size": 9}
 mpl.rc("font", **font)
 mpl.rcParams["figure.figsize"] = [4.5, 3.0]
+mpl.rcParams["grid.linestyle"] = "--"
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
@@ -40,7 +41,7 @@ mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # Use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_
 # module to load the synthetic dataset as a CSDM object.
 file_ = "https://sandbox.zenodo.org/record/687656/files/synthetic_cuspidine_test.csdf"
-synthetic_experiment = cp.load(file_)
+synthetic_experiment = cp.load(file_).real
 
 # convert the dimension coordinates from Hz to ppm
 synthetic_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
@@ -50,7 +51,7 @@ synthetic_experiment /= synthetic_experiment.max()
 
 # Plot of the synthetic dataset.
 ax = plt.subplot(projection="csdm")
-ax.plot(synthetic_experiment, color="black", linewidth=1)
+ax.plot(synthetic_experiment, "k", alpha=0.5)
 ax.set_xlim(-200, 50)
 ax.invert_xaxis()
 plt.tight_layout()
@@ -64,22 +65,23 @@ plt.show()
 # you will first need to create a fitting model. We will use the ``mrsimulator`` objects
 # as tools in creating a model for the least-squares fitting.
 #
-# **Step 1:** Create initial guess sites and spin systems. The initial guess is
-# often based on some prior knowledge about the system under investigation. For the
-# current example, we know that Cuspidine is a crystalline silica polymorph with one
-# crystallographic Si site. Therefore, our initial guess model is a single
-# :math:`^{29}\text{Si}` site spin system. For non-linear fitting algorithms, as a
-# general recommendation, the initial guess model parameters should be a good starting
+# **Step 1:** Create initial guess sites and spin systems.
+#
+# The initial guess is often based on some prior knowledge about the system under
+# investigation. For the current example, we know that Cuspidine is a crystalline silica
+# polymorph with one crystallographic Si site. Therefore, our initial guess model is a
+# single :math:`^{29}\text{Si}` site spin system. For non-linear fitting algorithms, as
+# a general recommendation, the initial guess model parameters should be a good starting
 # point for the algorithms to converge.
 
 # the guess model comprising of a single site spin system
-site = dict(
+site = Site(
     isotope="29Si",
     isotropic_chemical_shift=-82.0,  # in ppm,
     shielding_symmetric={"zeta": -63, "eta": 0.4},  # zeta in ppm
 )
 
-system_object = SpinSystem(
+spin_system = SpinSystem(
     name="Si Site",
     description="A 29Si site in cuspidine",
     sites=[site],  # from the above code
@@ -87,7 +89,9 @@ system_object = SpinSystem(
 )
 
 # %%
-# **Step 2:** Create the method object. The method should be the same as the one used
+# **Step 2:** Create the method object.
+#
+# The method should be the same as the one used
 # in the measurement. In this example, we use the `BlochDecaySpectrum` method. Note,
 # when creating the method object, the value of the method parameters must match the
 # respective values used in the experiment.
@@ -102,40 +106,38 @@ method = BlochDecaySpectrum(
             "reference_offset": -5000,  # in Hz
         }
     ],
+    experiment=synthetic_experiment,  # add the measurement to the method.
 )
 
 # %%
-# **Step 3:** Create the Simulator object and add the method and spin system objects.
+# **Step 3:** Create the Simulator object, add the method and spin system objects, and
+# run the simulation.
 sim = Simulator()
-sim.spin_systems = [system_object]
+sim.spin_systems = [spin_system]
 sim.methods = [method]
-
-sim.methods[0].experiment = synthetic_experiment
-
-# %%
-# **Step 5:** Simulate the spectrum.
 sim.run()
 
 # %%
-# **Step 6:** Create a SignalProcessor class and apply post simulation processing.
+# **Step 4:** Create a SignalProcessor class and apply post simulation processing.
 processor = sp.SignalProcessor(
     operations=[
-        sp.IFFT(),
-        apo.Exponential(FWHM="200 Hz"),
-        sp.FFT(),
-        sp.Scale(factor=1.5),
+        sp.IFFT(),  # inverse FFT to convert frequency based spectrum to time domain.
+        apo.Exponential(FWHM="200 Hz"),  # apodization of time domain signal.
+        sp.FFT(),  # forward FFT to convert time domain signal to frequency spectrum.
+        sp.Scale(factor=1.5),  # scale the frequency spectrum.
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation)
+processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # %%
-# **Step 7:** The plot the spectrum. We also plot the synthetic dataset for comparison.
+# **Step 5:** The plot the spectrum. We also plot the synthetic dataset for comparison.
 ax = plt.subplot(projection="csdm")
-ax.plot(processed_data.real, c="k", linewidth=1, label="guess spectrum")
-ax.plot(synthetic_experiment.real, c="r", linewidth=1.5, alpha=0.5, label="experiment")
+ax.plot(synthetic_experiment, "k", linewidth=2, alpha=0.5, label="Experiment")
+ax.plot(processed_data, "r", label="guess spectrum")
 ax.set_xlim(-200, 50)
 ax.invert_xaxis()
 plt.legend()
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -156,7 +158,7 @@ plt.show()
 # class to create a list of parameters.
 
 
-site1 = system_object.sites[0]
+site1 = spin_system.sites[0]
 params = Parameters()
 
 params.add(name="iso", value=site1.isotropic_chemical_shift)
@@ -229,15 +231,15 @@ print(fit_report(result))
 plt.figsize = (4, 3)
 x, y_data = synthetic_experiment.to_list()
 residual = result.residual
-plt.plot(x, y_data, label="Spectrum")
-plt.plot(x, y_data - residual, "r", alpha=0.5, label="Fit")
+plt.plot(x, y_data, "k", linewidth=2, label="Experiment")
+plt.plot(x, y_data - residual, "r--", label="Best Fit")
 plt.plot(x, residual, alpha=0.5, label="Residual")
 
 plt.xlabel("Frequency / Hz")
 plt.xlim(-200, 50)
 plt.gca().invert_xaxis()
-plt.grid(which="major", axis="both", linestyle="--")
 plt.legend()
+plt.grid()
 plt.tight_layout()
 plt.show()
 

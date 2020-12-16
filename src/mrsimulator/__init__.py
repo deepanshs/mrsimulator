@@ -15,7 +15,7 @@ minimization, using a collection of pre-defined NMR methods.
 See https://mrsimulator.readthedocs.io/en/stable/ for complete documentation.
 """
 # version has to be specified at the start.
-__version__ = "0.5.1"
+__version__ = "0.6.0.dev0"
 
 from .spin_system import Site  # lgtm [py/import-own-module]
 from .spin_system import SpinSystem  # lgtm [py/import-own-module]
