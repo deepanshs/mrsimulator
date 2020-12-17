@@ -47,8 +47,7 @@ experiment /= experiment.max()
 # plot of the dataset.
 levels = (np.arange(10) + 0.3) / 15  # contours are drawn at these levels.
 ax = plt.subplot(projection="csdm")
-cb = ax.contour(experiment, colors="k", levels=levels, alpha=0.75)
-plt.colorbar(cb)
+ax.contour(experiment, colors="k", levels=levels, alpha=0.75)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
 plt.tight_layout()
@@ -129,9 +128,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # Plot of the guess Spectrum
 # --------------------------
 ax = plt.subplot(projection="csdm")
-cb = ax.contour(experiment, colors="k", levels=levels, alpha=0.75)
+ax.contour(experiment, colors="k", levels=levels, alpha=0.75)
 ax.contour(processed_data, colors="r", linestyles="--", levels=levels, alpha=0.75)
-plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
 plt.grid()
@@ -162,9 +160,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot the spectrum
 ax = plt.subplot(projection="csdm")
-cb = ax.contour(experiment, colors="k", levels=levels, alpha=0.75)
+ax.contour(experiment, colors="k", levels=levels, alpha=0.75)
 ax.contour(processed_data, colors="r", linestyles="--", levels=levels, alpha=0.75)
-plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
 plt.grid()

@@ -49,8 +49,7 @@ mat_data = mat_data.T  # transpose
 # plot of the dataset.
 levels = (np.arange(10) + 0.3) / 15  # contours are drawn at these levels.
 ax = plt.subplot(projection="csdm")
-cb = ax.contour(mat_data, colors="k", levels=levels, alpha=0.75)
-plt.colorbar(cb)
+ax.contour(mat_data, colors="k", levels=levels, alpha=0.75)
 ax.set_xlim(200, 10)
 ax.invert_yaxis()
 plt.tight_layout()
@@ -121,9 +120,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # Plot of the guess Spectrum
 # --------------------------
 ax = plt.subplot(projection="csdm")
-cb = ax.contour(mat_data, colors="k", levels=levels, alpha=0.75)
+ax.contour(mat_data, colors="k", levels=levels, alpha=0.75)
 ax.contour(processed_data, colors="r", linestyles="--", levels=levels, alpha=0.75)
-plt.colorbar(cb)
 ax.set_xlim(200, 10)
 plt.grid()
 plt.tight_layout()
@@ -153,9 +151,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the best fit solution
 ax = plt.subplot(projection="csdm")
-cb = ax.contour(mat_data, colors="k", levels=levels, alpha=0.75)
+ax.contour(mat_data, colors="k", levels=levels, alpha=0.75)
 ax.contour(processed_data, colors="r", linestyles="--", levels=levels, alpha=0.75)
-plt.colorbar(cb)
 ax.set_xlim(200, 10)
 plt.grid()
 plt.tight_layout()
