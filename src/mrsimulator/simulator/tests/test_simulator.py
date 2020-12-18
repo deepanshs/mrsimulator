@@ -8,6 +8,7 @@ from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.simulator import Sites
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -152,3 +153,54 @@ def test_simulator_1():
     sim.save("test_sim_save_no_unit.temp", with_units=False)
     sim_load = sim.load("test_sim_save_no_unit.temp", parse_units=False)
     assert sim_load == sim
+
+
+def test_sites():
+    iso = [1.02, 2.12, 13.2, 5.2, 2.1, 1.2]
+    zeta = [1.02, 2.12, 13.2, 5.2, 2.1, 1.2]
+    eta = [0.1, 0.4, 0.3, 0.6, 0.9, 1.0]
+    sites = [
+        Site(
+            isotope="13C",
+            isotropic_chemical_shift=i,
+            shielding_symmetric={"zeta": z, "eta": e},
+        )
+        for i, z, e in zip(iso, zeta, eta)
+    ]
+    sim = Simulator()
+    sim.spin_systems = [SpinSystem(sites=[s]) for s in sites]
+    r_sites = sim.sites()
+    for i in range(len(sites)):
+        assert r_sites[i] == sites[i]
+
+    # test sites to pd
+    sites_table = sim.sites().to_pd()
+
+    assert list(sites_table["isotope"]) == ["13C"] * len(iso)
+    assert list(sites_table["isotropic_chemical_shift"]) == [
+        f"{i} ppm" if i is not None else None for i in iso
+    ]
+    assert list(sites_table["shielding_symmetric.zeta"]) == [
+        f"{i} ppm" if i is not None else None for i in zeta
+    ]
+    assert list(sites_table["shielding_symmetric.eta"]) == [
+        i if i is not None else None for i in eta
+    ]
+
+    # test Sites Class
+    a = Sites([])
+
+    site = Site(isotope="1H")
+    a.append(site)
+    assert a[0] == site
+
+    site2 = Site(isotope="17O")
+    a[0] = site2
+    assert a[0] == site2
+
+    site_dict = {"isotope": "13C"}
+    a[0] = site_dict
+    assert a[0] == Site(**site_dict)
+
+    with pytest.raises(ValueError, match="Only object of type Site is allowed."):
+        a[0] = ""

@@ -6,10 +6,14 @@ from typing import List
 
 import csdmpy as cp
 import numpy as np
+import pandas as pd
 from mrsimulator import __version__
+from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
 from mrsimulator.method import Method
+from mrsimulator.utils import flatten_dict
+from mrsimulator.utils.abstract_list import AbstractList
 from mrsimulator.utils.extra import _reduce_dict
 from mrsimulator.utils.importer import import_json
 from pydantic import BaseModel
@@ -250,19 +254,13 @@ class Simulator(BaseModel):
 
     # def mpcontribs(self, mp_id, composition=None, temperature=None, pressure=None):
     #     data = self.json(include_methods=True)
-    #     # for sys in data["spin_systems"]:
-    #     #     for site in sys["sites"]:
-    #     #         site["δiso"] = site.pop("isotropic_chemical_shift")
-    #     #         if "shielding_symmetric" in site:
-    #     #             ss = site["shielding_symmetric"]
-    #     #             ss["η"] = ss.pop("eta")
-    #     #             ss["ζσ"] = ss.pop("zeta")
     #     if temperature is not None:
     #         data["temperature"] = temperature
     #     if pressure is not None:
     #         data["pressure"] = pressure
     #     if composition is not None:
     #         data["composition"] = composition
+
     #     return {"identifier": mp_id, "data": data}
 
     def json(self, include_methods: bool = False, include_version: bool = False):
@@ -510,6 +508,24 @@ class Simulator(BaseModel):
 
         return Simulator.parse_dict_with_units(contents)
 
+    def sites(self):
+        """Unique sites within the Simulator object as a list of Site objects.
+
+        Returns:
+            A list of Site object.
+
+        Example
+        -------
+
+        >>> sites = sim.sites() # doctest: +SKIP
+        """
+        sites_list = []
+        for sys in self.spin_systems:
+            for site in sys.sites:
+                if site not in sites_list:
+                    sites_list.append(site)
+        return Sites(sites_list)
+
     def _as_csdm_object(self, data: np.ndarray, method: Method) -> cp.CSDM:
         """
         Converts the simulation data from the given method to a CSDM object. Read
@@ -561,3 +577,45 @@ class Simulator(BaseModel):
                 "spin_systems": [self.spin_systems[index].json()]
             }
         }
+
+
+class Sites(AbstractList):
+    def __init__(self, data=[]):
+        super().__init__(data)
+        euler = ["alpha", "beta", "gamma"]
+        self.site_labels = [
+            "name",
+            "label",
+            "description",
+            "isotope",
+            "isotropic_chemical_shift",
+            *[f"shielding_symmetric.{_}" for _ in ["zeta", "eta", *euler]],
+            *[f"quadrupolar.{_}" for _ in ["Cq", "eta", *euler]],
+        ]
+
+    def __setitem__(self, index, item):
+        """Set an item to the list at index"""
+        if isinstance(item, Site):
+            self._list[index] = item
+        elif isinstance(item, dict):
+            self._list[index] = Site(**item)
+        else:
+            raise ValueError("Only object of type Site is allowed.")
+
+    def to_pd(self):
+        row = {item: [] for item in self.site_labels}
+        sites = [item.json() for item in self._list]
+        for site in sites:
+            site_ = flatten_dict(site)
+            keys = site_.keys()
+            for item in self.site_labels:
+                val = None if item not in keys else site_[item]
+                row[item].append(val)
+
+        row_len = len(row["name"])
+        nones = [None] * row_len
+        for item in self.site_labels:
+            if row[item] == nones:
+                row.pop(item)
+
+        return pd.DataFrame(row)
