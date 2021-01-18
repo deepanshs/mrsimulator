@@ -13,6 +13,7 @@ from mrsimulator.transition.transition_list import TransitionList
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
+from .coupling import Coupling
 from .isotope import ISOTOPE_DATA
 from .site import Site
 from .zeeman_state import ZeemanState
@@ -31,10 +32,10 @@ class SpinSystem(Parseable):
     Attributes
     ----------
 
-    sites: A list of :ref:`site_api` objects or equivalent dict objects (optional).
-        The value is a list of sites within the spin system, where each site represents
-        a single-site nuclear spin interaction tensor parameters. The default value is
-        an empty list.
+    sites: A list of :ref:`site_api` objects or equivalent dict objects (optional),
+        within the spin system. Each site object represents single-site nuclear spin
+        interaction (nuclear shielding and EFG) tensor parameters. The default value
+        is an empty list.
 
         Example
         -------
@@ -43,6 +44,25 @@ class SpinSystem(Parseable):
         >>> sys1.sites = [Site(isotope='17O'), Site(isotope='1H')]
         >>> # or equivalently
         >>> sys1.sites = [{'isotope': '17O'}, {'isotope': '1H'}]
+
+    couplings: A list of :ref:`coupling_api` objects or equivalent dict objects
+        (optional), within the spin system. Each coupling object represents two-site
+        coupled spin interaction (J-coupling and Dipolar) tensor parameters. The
+        default value is an empty list.
+
+        Example
+        -------
+
+        >>> sys1 = SpinSystem()
+        >>> sys1.couplings = [
+        ...     Coupling(site_index=[0, 1], isotropic_j=10.1),
+        ...     Coupling(site_index=[2, 1], isotropic_j=22.9)
+        ... ]
+        >>> # or equivalently
+        >>> sys1.sites = [
+        ...     {'site_index': [0, 1], 'isotropic_j': '10.1 Hz'},
+        ...     {'site_index': [2, 1], 'isotropic_j': '22.9 Hz'}
+        ... ]
 
     abundance: float (optional).
         The abundance of the spin system in units of %. The default value is 100. The
@@ -130,7 +150,7 @@ class SpinSystem(Parseable):
     label: str = None
     description: str = None
     sites: List[Site] = []
-    # couplings: list = []
+    couplings: List[Coupling] = None
     abundance: float = Field(default=100, ge=0, le=100)
     transition_pathways: Optional[List] = None
 
@@ -180,23 +200,6 @@ class SpinSystem(Parseable):
         are ordered based on the order of the sites within the spin system.
         """
         return get_zeeman_states(self)
-        # two_I_p_one = [int(2 * site.isotope.spin + 1) for site in self.sites]
-        # spin_quantum_numbers = [
-        #     np.arange(2 * site.isotope.spin + 1) - site.isotope.spin
-        #     for site in self.sites
-        # ]
-        # size = len(spin_quantum_numbers)
-
-        # lst = []
-        # for j in range(size):
-        #     k = 1
-        #     for i in range(size):
-        #         if i == j:
-        #             k = np.kron(k, spin_quantum_numbers[i])
-        #         else:
-        #             k = np.kron(k, np.ones(two_I_p_one[i]))
-        #     lst.append(k)
-        # return np.asarray(lst).T
 
     def zeeman_energy_states(self) -> list:
         r"""
@@ -305,49 +308,56 @@ class SpinSystem(Parseable):
                 Site.parse_dict_with_units(s) for s in py_dict_copy["sites"]
             ]
 
+        if "couplings" in py_dict_copy:
+            py_dict_copy["couplings"] = [
+                Coupling.parse_dict_with_units(s) for s in py_dict_copy["couplings"]
+            ]
+
         return super().parse_dict_with_units(py_dict_copy)
 
-    def to_freq_dict(self, B0: float) -> dict:
-        """
-        Serialize the SpinSystem object to a JSON compliant python dictionary object,
-        where the attribute value is a numbers expressed in the attribute's default
-        unit. The default unit for the attributes with respective dimensionalities are:
+    # Deprecated
+    # def to_freq_dict(self, B0: float) -> dict:
+    #     """
+    #     Serialize the SpinSystem object to a JSON compliant python dictionary object,
+    #     where the attribute value is a numbers expressed in the attribute's default
+    #     unit. The default unit for the attributes with respective dimensionalities
+    #     are:
 
-        - frequency: `Hz`
-        - angle: `rad`
+    #     - frequency: `Hz`
+    #     - angle: `rad`
 
-        Args:
-            float B0: A required macroscopic magnetic flux density in units of T.
+    #     Args:
+    #         float B0: A required macroscopic magnetic flux density in units of T.
 
-        Return:
-            A python dict
+    #     Return:
+    #         A python dict
 
-        Example
-        -------
+    #     Example
+    #     -------
 
-        >>> pprint(spin_system_1.to_freq_dict(B0=9.4))
-        {'abundance': 100,
-         'description': None,
-         'label': None,
-         'name': None,
-         'sites': [{'description': None,
-                    'isotope': '13C',
-                    'isotropic_chemical_shift': -2013.1791999999998,
-                    'label': None,
-                    'name': None,
-                    'quadrupolar': None,
-                    'shielding_antisymmetric': None,
-                    'shielding_symmetric': {'alpha': None,
-                                            'beta': None,
-                                            'eta': 0.5,
-                                            'gamma': None,
-                                            'zeta': -1006.5895999999999}}],
-         'transition_pathways': None}
-        """
-        temp_dict = self.dict()
-        temp_dict["sites"] = [site.to_freq_dict(B0) for site in self.sites]
-        temp_dict.pop("property_units")
-        return temp_dict
+    #     >>> pprint(spin_system_1.to_freq_dict(B0=9.4))
+    #     {'abundance': 100,
+    #      'description': None,
+    #      'label': None,
+    #      'name': None,
+    #      'sites': [{'description': None,
+    #                 'isotope': '13C',
+    #                 'isotropic_chemical_shift': -2013.1791999999998,
+    #                 'label': None,
+    #                 'name': None,
+    #                 'quadrupolar': None,
+    #                 'shielding_antisymmetric': None,
+    #                 'shielding_symmetric': {'alpha': None,
+    #                                         'beta': None,
+    #                                         'eta': 0.5,
+    #                                         'gamma': None,
+    #                                         'zeta': -1006.5895999999999}}],
+    #      'transition_pathways': None}
+    #     """
+    #     temp_dict = self.dict()
+    #     temp_dict["sites"] = [site.to_freq_dict(B0) for site in self.sites]
+    #     temp_dict.pop("property_units")
+    #     return temp_dict
 
 
 def allowed_isotopes(spin_I=None) -> list:

@@ -194,6 +194,7 @@ static inline void two_dimensional_averaging(MRS_sequence *the_sequence,
   free(freq_ampB);
 }
 
+// Calculate spectrum from the spin systems for a single transition.
 void __mrsimulator_core(
     // spectrum information and related amplitude
     double *spec,  // amplitude vector representing the spectrum.
@@ -295,6 +296,7 @@ void __mrsimulator_core(
           freq_contrib_ptr          // the pointer to freq contribs boolean
       );
 
+      // The number 6 comes from the six types of pre-listed freq contributions.
       freq_contrib_ptr += 6;
 
       // Add a loop over all couplings.. here

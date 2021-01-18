@@ -7,6 +7,7 @@ import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
 import numpy as np
 import pytest
+from mrsimulator import Coupling
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
@@ -51,6 +52,13 @@ def add_site(doctest_namespace):
         shielding_symmetric=SymmetricTensor(zeta=10, eta=0.5),
     )
     doctest_namespace["site1"] = site1
+
+    coupling1 = Coupling(
+        site_index=[0, 1],
+        isotropic_j=20,
+        j_symmetric=SymmetricTensor(zeta=10, eta=0.5),
+    )
+    doctest_namespace["coupling1"] = coupling1
 
     site2 = Site(
         isotope="1H",

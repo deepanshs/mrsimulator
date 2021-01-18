@@ -1,3 +1,17 @@
+Upcoming changes
+----------------
+
+What's new
+''''''''''
+
+- Simulation of coupled spin systems.
+
+Changes
+'''''''
+
+- The ``to_freq_dict()`` function is deprecated.
+
+
 v0.5.1
 ------
 

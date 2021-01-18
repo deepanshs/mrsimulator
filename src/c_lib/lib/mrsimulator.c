@@ -634,7 +634,7 @@ void __get_components_2(unsigned int number_of_sidebands,
   vm_double_arrange(number_of_sidebands, input);
 
   // Calculate the spin angular frequency
-  spin_angular_freq = sample_rotation_frequency_in_Hz * PI2;
+  spin_angular_freq = sample_rotation_frequency_in_Hz * TWO_PI;
 
   // Calculate tau, where tau = (rotor period / number of phase steps)
   tau = 1.0 / ((double)number_of_sidebands * sample_rotation_frequency_in_Hz);
@@ -650,7 +650,7 @@ void __get_components_2(unsigned int number_of_sidebands,
      * and scale = 2π/m_wr[m].
      */
     i = m * number_of_sidebands;
-    scale = PI2 / m_wr[m];
+    scale = TWO_PI / m_wr[m];
 
     // step 1. calculate phase
     vm_double_ramp(number_of_sidebands, input, m_wr[m] * tau, 0.0, phase);
@@ -706,7 +706,7 @@ void __get_components(unsigned int number_of_sidebands,
   // double *pre_phase_ = (double *)pre_phase;
 
   // Calculate the spin angular frequency
-  spin_angular_freq = sample_rotation_frequency * PI2;
+  spin_angular_freq = sample_rotation_frequency * TWO_PI;
 
   // Calculate tau increments, where tau = (rotor period / number of phase
   // steps)
@@ -720,7 +720,7 @@ void __get_components(unsigned int number_of_sidebands,
     if (m != 4) {
       wrt = m_wr[m] * tau;
       pht = 0.0;
-      scale = PI2 / m_wr[m];
+      scale = TWO_PI / m_wr[m];
       for (step = 0; step < number_of_sidebands; step++) {
         *pre_phase++ = scale * (cos(pht) - 1.0);
         *pre_phase++ = scale * sin(pht);

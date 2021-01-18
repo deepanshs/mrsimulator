@@ -141,18 +141,19 @@ def test_site_object_methods():
     }
     assert the_site.dict() == result, "Failed Site.dict()"
 
+    # Deprecated `to_freq_dict`
     # testing method to_freq_dict()
-    result = {
-        "isotope": "14N",
-        "isotropic_chemical_shift": -1 * 3.077706 * 9.4 * -10.0,  # -gamma * B0 * iso
-        "name": None,
-        "label": None,
-        "description": None,
-        "quadrupolar": None,
-        "shielding_symmetric": None,
-        "shielding_antisymmetric": None,
-    }
-    assert the_site.to_freq_dict(B0=9.4) == result, "Failed Site.to_freq_dict()"
+    # result = {
+    #     "isotope": "14N",
+    #     "isotropic_chemical_shift": -1 * 3.077706 * 9.4 * -10.0,  # -gamma * B0 * iso
+    #     "name": None,
+    #     "label": None,
+    #     "description": None,
+    #     "quadrupolar": None,
+    #     "shielding_symmetric": None,
+    #     "shielding_antisymmetric": None,
+    # }
+    # assert the_site.to_freq_dict(B0=9.4) == result, "Failed Site.to_freq_dict()"
 
     # testing method json()
     result = {"isotope": "14N", "isotropic_chemical_shift": "-10.0 ppm"}
@@ -178,35 +179,36 @@ def test_site_object_methods():
     )
     assert the_site.json() == result, "Failed Site.json()"
 
-    larmor_freq = -1 * 11.10309 * 9.4  # -gamma * B0
-    result = {
-        "name": None,
-        "label": None,
-        "description": None,
-        "isotope": "27Al",
-        "isotropic_chemical_shift": 10.0 * larmor_freq,  # larmor_freq * iso
-        "shielding_symmetric": {
-            "zeta": 12.1 * larmor_freq,
-            "eta": 0.1,
-            "alpha": 2.1,
-            "beta": None,
-            "gamma": None,
-        },
-        "shielding_antisymmetric": {
-            "zeta": -1.1 * larmor_freq,
-            "alpha": 0.1,
-            "beta": 2.5,
-        },
-        "quadrupolar": {
-            "Cq": 10000000.0,
-            "zeta": None,
-            "eta": 0.6,
-            "alpha": None,
-            "beta": None,
-            "gamma": None,
-        },
-    }
-    assert the_site.to_freq_dict(9.4) == result, "Failed Site.json()"
+    # Deprecated `to_freq_dict`
+    # larmor_freq = -1 * 11.10309 * 9.4  # -gamma * B0
+    # result = {
+    #     "name": None,
+    #     "label": None,
+    #     "description": None,
+    #     "isotope": "27Al",
+    #     "isotropic_chemical_shift": 10.0 * larmor_freq,  # larmor_freq * iso
+    #     "shielding_symmetric": {
+    #         "zeta": 12.1 * larmor_freq,
+    #         "eta": 0.1,
+    #         "alpha": 2.1,
+    #         "beta": None,
+    #         "gamma": None,
+    #     },
+    #     "shielding_antisymmetric": {
+    #         "zeta": -1.1 * larmor_freq,
+    #         "alpha": 0.1,
+    #         "beta": 2.5,
+    #     },
+    #     "quadrupolar": {
+    #         "Cq": 10000000.0,
+    #         "zeta": None,
+    #         "eta": 0.6,
+    #         "alpha": None,
+    #         "beta": None,
+    #         "gamma": None,
+    #     },
+    # }
+    # assert the_site.to_freq_dict(9.4) == result, "Failed Site.json()"
 
 
 def test_site_quad_set_to_None():

@@ -65,7 +65,7 @@ def SSB2D(**kwargs):
         ... )
         >>> sys = SpinSystem(sites=[Site(isotope='13C')])
         >>> method.get_transition_pathways(sys)
-        [TransitionPathway(|-0.5⟩⟨0.5|, |-0.5⟩⟨0.5|)]
+        [|-0.5⟩⟨0.5| ⟶ |-0.5⟩⟨0.5|]
     """
     name = "SSB2D"
 

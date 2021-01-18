@@ -52,8 +52,8 @@ typedef float complex64[2];
 #include "vm.h"
 
 // user definition
-#define PI2 6.2831853072
-#define PI2I PI2 *I
+#define TWO_PI 6.2831853072
+#define IOTA_TWO_PI TWO_PI *I
 
 // #ifdef linux
 // #include "mkl.h"

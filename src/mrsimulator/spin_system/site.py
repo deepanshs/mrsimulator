@@ -227,47 +227,48 @@ class Site(Parseable):
 
         return super().parse_dict_with_units(py_dict)
 
-    def to_freq_dict(self, B0):
-        """
-        Serialize the Site object to a JSON compliant python dictionary object, where
-        the attribute value is a number expressed in the attribute's default unit.
-        The default unit for the attributes with respective dimensionalities is:
+    # Deprecated
+    # def to_freq_dict(self, B0):
+    #     """
+    #     Serialize the Site object to a JSON compliant python dictionary object, where
+    #     the attribute value is a number expressed in the attribute's default unit.
+    #     The default unit for the attributes with respective dimensionalities is:
 
-        - frequency: ``Hz``
-        - angle: ``rad``
+    #     - frequency: ``Hz``
+    #     - angle: ``rad``
 
-        Args:
-            float B0: A required macroscopic magnetic flux density in units of T.
+    #     Args:
+    #         float B0: A required macroscopic magnetic flux density in units of T.
 
-        Return:
-            Python dict object.
+    #     Return:
+    #         Python dict object.
 
-        Example
-        -------
+    #     Example
+    #     -------
 
-        >>> pprint(site1.to_freq_dict(B0=9.4))
-        {'description': None,
-         'isotope': '13C',
-         'isotropic_chemical_shift': -2013.1791999999998,
-         'label': None,
-         'name': None,
-         'quadrupolar': None,
-         'shielding_antisymmetric': None,
-         'shielding_symmetric': {'alpha': None,
-                                 'beta': None,
-                                 'eta': 0.5,
-                                 'gamma': None,
-                                 'zeta': -1006.5895999999999}}
-        """
-        temp_dict = self.dict(exclude={"isotope"})
-        temp_dict["isotope"] = self.isotope.symbol
-        larmor_frequency = -self.isotope.gyromagnetic_ratio * B0  # in MHz
-        for k in ["shielding_symmetric", "shielding_antisymmetric", "quadrupolar"]:
-            if getattr(self, k):
-                temp_dict[k] = getattr(self, k).to_freq_dict(larmor_frequency)
-                if k == "shielding_symmetric":
-                    temp_dict[k].pop("Cq")
+    #     >>> pprint(site1.to_freq_dict(B0=9.4))
+    #     {'description': None,
+    #      'isotope': '13C',
+    #      'isotropic_chemical_shift': -2013.1791999999998,
+    #      'label': None,
+    #      'name': None,
+    #      'quadrupolar': None,
+    #      'shielding_antisymmetric': None,
+    #      'shielding_symmetric': {'alpha': None,
+    #                              'beta': None,
+    #                              'eta': 0.5,
+    #                              'gamma': None,
+    #                              'zeta': -1006.5895999999999}}
+    #     """
+    #     temp_dict = self.dict(exclude={"isotope"})
+    #     temp_dict["isotope"] = self.isotope.symbol
+    #     larmor_frequency = -self.isotope.gyromagnetic_ratio * B0  # in MHz
+    #     for k in ["shielding_symmetric", "shielding_antisymmetric", "quadrupolar"]:
+    #         if getattr(self, k):
+    #             temp_dict[k] = getattr(self, k).to_freq_dict(larmor_frequency)
+    #             if k == "shielding_symmetric":
+    #                 temp_dict[k].pop("Cq")
 
-        temp_dict["isotropic_chemical_shift"] *= larmor_frequency
-        temp_dict.pop("property_units")
-        return temp_dict
+    #     temp_dict["isotropic_chemical_shift"] *= larmor_frequency
+    #     temp_dict.pop("property_units")
+    #     return temp_dict

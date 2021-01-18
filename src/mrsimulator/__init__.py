@@ -18,6 +18,7 @@ See https://mrsimulator.readthedocs.io/en/stable/ for complete documentation.
 __version__ = "0.6.0.dev0"
 
 from .spin_system import Site  # lgtm [py/import-own-module]
+from .spin_system import Coupling  # lgtm [py/import-own-module]
 from .spin_system import SpinSystem  # lgtm [py/import-own-module]
 from .simulator import Simulator  # lgtm [py/import-own-module]
 from .transition import Transition  # lgtm [py/import-own-module]

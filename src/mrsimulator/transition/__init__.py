@@ -29,6 +29,9 @@ class Transition(BaseModel):
         initial = ", ".join([str(i) for i in self.initial])
         return f"|{final}⟩⟨{initial}|"
 
+    def __str__(self):
+        return self.__repr__()
+
     # @property
     # def Zeeman_allowed(self):
     #     if abs(self.p) == 1:
@@ -49,6 +52,11 @@ class Transition(BaseModel):
     def P(self):
         """Return a list of Δm values of the spin transition for each site."""
         return np.asarray(self.final) - np.asarray(self.initial)
+
+    # @property
+    # def PP(self):
+    #     """Return a list of Δm values of the spin transition for each site."""
+    #     return np.prod(np.asarray(self.final)) - np.prod(np.asarray(self.initial))
 
     @property
     def D(self):

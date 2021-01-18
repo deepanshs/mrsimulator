@@ -32,7 +32,7 @@ class TransitionList(AbstractList):
     # def Zeeman_allowed(self):
     #     return TransitionList([item for item in self._list if item.Zeeman_allowed])
 
-    def filter(self, P=None, D=None):
+    def filter(self, P=None, PP=None, D=None):
         """
         Filter a list of transitions to satisfy the filtering criterion.
         Args:
@@ -46,13 +46,17 @@ class TransitionList(AbstractList):
         # - filter based on transition.
         # - filter based on state.
 
-        if P is D is None:
+        if P is PP is D is None:
             return self
 
         ts = self._list.copy()
 
         if P is not None:
             ts = TransitionList([item for item in ts if np.allclose(item.P, P)])
+
+        # if PP is not None:
+        #     ts = TransitionList([item for item in ts if np.allclose(item.PP, PP)])
+
         if D is not None:
             ts = TransitionList([item for item in ts if np.allclose(item.D, D)])
         # if transitions is not None:
@@ -88,5 +92,7 @@ class TransitionList(AbstractList):
 
 class TransitionPathway(TransitionList):
     def __str__(self):
-        transitions = ", ".join([repr(item) for item in self._list])
-        return f"TransitionPathway({transitions})"
+        return self.__repr__()
+
+    def __repr__(self):
+        return " ⟶ ".join([repr(item) for item in self._list])

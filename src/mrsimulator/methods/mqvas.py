@@ -121,7 +121,7 @@ class ThreeQ_VAS(MQ_VAS):
         ... )
         >>> sys = SpinSystem(sites=[Site(isotope='87Rb')])
         >>> method.get_transition_pathways(sys)
-        [TransitionPathway(|-1.5⟩⟨1.5|, |-0.5⟩⟨0.5|)]
+        [|-1.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|]
     """
 
     def __new__(cls, **kwargs):
@@ -185,7 +185,7 @@ class FiveQ_VAS(MQ_VAS):
         ... )
         >>> sys = SpinSystem(sites=[Site(isotope='17O')])
         >>> method.get_transition_pathways(sys)
-        [TransitionPathway(|-2.5⟩⟨2.5|, |-0.5⟩⟨0.5|)]
+        [|-2.5⟩⟨2.5| ⟶ |-0.5⟩⟨0.5|]
     """
 
     def __new__(cls, **kwargs):
@@ -249,7 +249,7 @@ class SevenQ_VAS(MQ_VAS):
         ... )
         >>> sys = SpinSystem(sites=[Site(isotope='51V')])
         >>> method.get_transition_pathways(sys)
-        [TransitionPathway(|-3.5⟩⟨3.5|, |-0.5⟩⟨0.5|)]
+        [|-3.5⟩⟨3.5| ⟶ |-0.5⟩⟨0.5|]
     """
 
     def __new__(cls, **kwargs):

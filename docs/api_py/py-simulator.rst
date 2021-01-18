@@ -11,6 +11,7 @@ Simulation API
    simulator_config
    spin_system
    site
+   coupling
    other_objects
    method
    methods-summary

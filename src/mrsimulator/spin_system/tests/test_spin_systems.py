@@ -168,28 +168,29 @@ def test_spin_system_methods():
         "abundance": "10%",
     }
 
+    # Deprecated `to_freq_dict`
     # to_freq_dict()
-    iso1 = SpinSystem.parse_dict_with_units(good_json2).to_freq_dict(9.4)
-    result = {
-        "name": None,
-        "label": None,
-        "description": None,
-        "sites": [
-            {
-                "isotope": "1H",
-                "isotropic_chemical_shift": -2 * 42.57748 * 9.4,  # -gamma * B0 * iso
-                "name": None,
-                "label": None,
-                "description": None,
-                "quadrupolar": None,
-                "shielding_antisymmetric": None,
-                "shielding_symmetric": None,
-            }
-        ],
-        "abundance": 10,
-        "transition_pathways": None,
-    }
-    assert iso1 == result
+    # iso1 = SpinSystem.parse_dict_with_units(good_json2).to_freq_dict(9.4)
+    # result = {
+    #     "name": None,
+    #     "label": None,
+    #     "description": None,
+    #     "sites": [
+    #         {
+    #             "isotope": "1H",
+    #             "isotropic_chemical_shift": -2 * 42.57748 * 9.4,  # -gamma * B0 * iso
+    #             "name": None,
+    #             "label": None,
+    #             "description": None,
+    #             "quadrupolar": None,
+    #             "shielding_antisymmetric": None,
+    #             "shielding_symmetric": None,
+    #         }
+    #     ],
+    #     "abundance": 10,
+    #     "transition_pathways": None,
+    # }
+    # assert iso1 == result
 
     # json()
     iso1 = SpinSystem.parse_dict_with_units(good_json2).json()
