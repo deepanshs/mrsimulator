@@ -12,26 +12,25 @@ cdef extern from "angular_momentum.h":
     void wigner_d_matrices_from_exp_I_beta(int l, int n, void *exp_I_beta,
                                   double *wigner)
 
+
 cdef extern from "schemes.h":
     ctypedef struct MRS_averaging_scheme:
         unsigned int total_orientations
+
+    ctypedef struct MRS_fftw_scheme:
+        pass
 
     MRS_averaging_scheme *MRS_create_averaging_scheme(
                             unsigned int integration_density,
                             bool_t allow_fourth_rank,
                             unsigned int integration_volume)
-
     void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme)
-
-    ctypedef struct MRS_fftw_scheme:
-        pass
-
     MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
                                     unsigned int number_of_sidebands)
-
     void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme)
-cdef extern from "mrsimulator.h":
 
+
+cdef extern from "mrsimulator.h":
     ctypedef struct MRS_plan:
         MRS_averaging_scheme *averaging_scheme
         unsigned int number_of_sidebands
@@ -48,19 +47,30 @@ cdef extern from "mrsimulator.h":
     void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0, double complex *R2,
                                   double complex *R4, bool_t refresh)
 
-cdef extern from "isotopomer_ravel.h":
-    ctypedef struct isotopomer_ravel:
-        int number_of_sites                    # Number of sites
-        float *spin                            # The spin quantum number
-        double *gyromagnetic_ratio             # gyromagnetic ratio in (MHz/T)
+cdef extern from "object_struct.h":
+    ctypedef struct site_struct:
+        int number_of_sites                     # Number of sites
+        float *spin                             # The spin quantum number
+        double *gyromagnetic_ratio              # gyromagnetic ratio in (MHz/T)
         double *isotropic_chemical_shift_in_ppm # Isotropic chemical shift (Hz)
-        double *shielding_symmetric_zeta_in_ppm     # Nuclear shielding anisotropy (Hz)
-        double *shielding_symmetric_eta            # Nuclear shielding asymmetry
-        double *shielding_orientation          # Nuclear shielding PAS to CRS euler angles (rad.)
-        double *quadrupolar_Cq_in_Hz     # Quadrupolar coupling constant (Hz)
-        double *quadrupolar_eta          # Quadrupolar asymmetry parameter
-        double *quadrupolar_orientation        # Quadrupolar PAS to CRS euler angles (rad.)
-        double *dipolar_couplings             # dipolar coupling stored as list of lists
+        double *shielding_symmetric_zeta_in_ppm # Nuclear shielding anisotropy (Hz)
+        double *shielding_symmetric_eta         # Nuclear shielding asymmetry
+        double *shielding_orientation           # Nuclear shielding PAS to CRS euler angles (rad.)
+        double *quadrupolar_Cq_in_Hz            # Quadrupolar coupling constant (Hz)
+        double *quadrupolar_eta                 # Quadrupolar asymmetry parameter
+        double *quadrupolar_orientation         # Quadrupolar PAS to CRS euler angles (rad.)
+
+    ctypedef struct coupling_struct:
+        int number_of_couplings            # Number of couplings
+        int *site_index                    # The site indexes of the coupled sites.
+        double *isotropic_j_in_Hz          # isotropic J-coupling (Hz).
+        double *j_symmetric_zeta_in_Hz     # J-coupling anisotropy (Hz).
+        double *j_symmetric_eta            # J-coupling asymmetry.
+        double *j_orientation              # J tensor PAS to CRS euler angles (rad.)
+        double *dipolar_zeta_in_Hz         # Dipolar coupling constant (Hz)
+        double *dipolar_eta                # Dipolar asymmetry parameter
+        double *dipolar_orientation        # Dipolar tensor PAS to CRS euler angles (rad.)
+
 
 cdef extern from "method.h":
     ctypedef struct MRS_event:
@@ -91,6 +101,7 @@ cdef extern from "method.h":
 
     void MRS_free_sequence(MRS_sequence *the_sequence, int n)
 
+
 cdef extern from "simulation.h":
     void mrsimulator_core(
         # spectrum information and related amplitude
@@ -99,7 +110,9 @@ cdef extern from "simulation.h":
         double spectral_increment,
         int number_of_points,
 
-        isotopomer_ravel *ravel_isotopomer,
+        site_struct *sites,
+        coupling_struct *couplings,
+
         MRS_sequence *the_sequence[],
         int n_sequence,
 
@@ -122,7 +135,8 @@ cdef extern from "simulation.h":
     void __mrsimulator_core(
         # spectrum information and related amplitude
         double * spec,
-        isotopomer_ravel *ravel_isotopomer,
+        site_struct *sites,
+        coupling_struct *couplings,
 
         # The transition as transition[0] = mi and transition[1] = mf
         float *transition,

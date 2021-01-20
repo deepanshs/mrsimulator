@@ -15,17 +15,25 @@ Scaled spatial orientation tensors (sSOT), :math:`\varsigma_{L,n}^{(k)}`
 Single nucleus spatial orientation tensors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-First order Nuclear shielding
+First-order Nuclear shielding
 """""""""""""""""""""""""""""
 
 .. doxygenfunction:: sSOT_1st_order_nuclear_shielding_tensor_components()
 
-First order Electric Quadrupole
+
+First-order Electric Quadrupole
 """""""""""""""""""""""""""""""
 
 .. doxygenfunction:: sSOT_1st_order_electric_quadrupole_tensor_components()
 
-Second order Electric Quadrupole
+
+Second-order Electric Quadrupole
 """"""""""""""""""""""""""""""""
 
 .. doxygenfunction:: sSOT_2nd_order_electric_quadrupole_tensor_components()
+
+
+First-order J-coupling (weak coupling limit)
+""""""""""""""""""""""""""""""""""""""""""""
+
+.. doxygenfunction:: sSOT_1st_order_weakly_coupled_J_tensor_components()

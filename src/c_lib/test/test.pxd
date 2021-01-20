@@ -93,8 +93,8 @@ cdef extern from "mrsimulator.h":
 #         bool_t allow_fourth_rank)
 
 
-cdef extern from "isotopomer_ravel.h":
-    ctypedef struct isotopomer_ravel:
+cdef extern from "object_struct.h":
+    ctypedef struct site_struct:
         int number_of_sites;                    # Number of sites
         float *spin;                            # The spin quantum number
         double *gyromagnetic_ratio;             # Larmor frequency (MHz)
@@ -105,10 +105,6 @@ cdef extern from "isotopomer_ravel.h":
         double *quadrupolar_Cq_in_Hz;     # Quadrupolar coupling constant (Hz)
         double *quadrupolar_eta;          # Quadrupolar asymmetry parameter
         double *quadrupolar_orientation;        # Quadrupolar PAS to CRS euler angles (rad.)
-        double *dipolar_couplings;              # dipolar coupling stored as list of lists
-
-    ctypedef struct isotopomers_list:
-        isotopomer_ravel *isotopomers
 
 cdef extern from "method.h":
     ctypedef struct MRS_event:
@@ -143,7 +139,7 @@ cdef extern from "simulation.h":
         double spectral_increment,
         int number_of_points,
 
-        isotopomer_ravel *ravel_isotopomer,
+        site_struct *sites,
         MRS_sequence *the_sequence[],            # the sequences in the method.
 
         int quad_second_order,                    # Quad theory for second order,

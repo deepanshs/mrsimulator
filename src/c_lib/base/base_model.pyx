@@ -210,11 +210,13 @@ def one_d_spectrum(method,
 
 # sites _______________________________________________________________________________
     p_isotopes = None
-    # CSA
-    cdef int number_of_sites, p_number_of_sites=0
+
+    cdef int number_of_sites, number_of_couplings, p_number_of_sites=0
+    cdef ndarray[int] spin_index_ij
     cdef ndarray[float] spin_i
     cdef ndarray[double] gyromagnetic_ratio_i
 
+    # CSA
     cdef ndarray[double] iso_n
     cdef ndarray[double] zeta_n
     cdef ndarray[double] eta_n
@@ -225,7 +227,17 @@ def one_d_spectrum(method,
     cdef ndarray[double] eta_e
     cdef ndarray[double] ori_e
 
-    cdef ndarray[double] D_c
+    # J-coupling
+    cdef ndarray[double] iso_j
+    cdef ndarray[double] zeta_j
+    cdef ndarray[double] eta_j
+    cdef ndarray[double] ori_j
+
+    # quad
+    cdef ndarray[double] zeta_d
+    cdef ndarray[double] eta_d
+    cdef ndarray[double] ori_d
+
 
 
     cdef int trans__, pathway_increment, pathway_count, transition_count_per_pathway
@@ -233,13 +245,13 @@ def one_d_spectrum(method,
     amp1 = np.zeros(total_n_points, dtype=np.float64)
     amp_individual = []
 
-    cdef clib.isotopomer_ravel isotopomer_struct
+    cdef clib.site_struct sites_c
+    cdef clib.coupling_struct couplings_c
 
     index_ = []
-    # cdef clib.isotopomers_list *isotopomers_list_c
 
-    # ---------------------------------------------------------------------
-    # sample _______________________________________________________________
+    # -------------------------------------------------------------------------
+    # sample __________________________________________________________________
     for index, spin_sys in enumerate(spin_systems):
         abundance = spin_sys.abundance
         isotopes = [site.isotope.symbol for site in spin_sys.sites]
@@ -248,11 +260,11 @@ def one_d_spectrum(method,
 
         # sub_sites = [site for site in spin_sys.sites if site.isotope.symbol == isotope]
         index_.append(index)
-        number_of_sites= len(spin_sys.sites)
+        number_of_sites = len(spin_sys.sites)
 
-        if number_of_sites > 2:
-            continue
-        # site specification
+        # ------------------------------------------------------------------------
+        #                          Site specification
+        # ------------------------------------------------------------------------
         # CSA
         spin_i = np.empty(number_of_sites, dtype=np.float32)
         gyromagnetic_ratio_i = np.empty(number_of_sites, dtype=np.float64)
@@ -262,16 +274,13 @@ def one_d_spectrum(method,
         eta_n = np.zeros(number_of_sites, dtype=np.float64)
         ori_n = np.zeros(3*number_of_sites, dtype=np.float64)
 
-        # quad
+        # Quad
         Cq_e = np.zeros(number_of_sites, dtype=np.float64)
         eta_e = np.zeros(number_of_sites, dtype=np.float64)
         ori_e = np.zeros(3*number_of_sites, dtype=np.float64)
 
-        # for n sites, coupling grows as sum_{i=1}^{n-1}(i)
-        D_c = np.zeros(number_of_sites, dtype=np.float64)
-
-        amp = np.zeros(total_n_points)
-
+        # Extract and assign site information from Site objects to C structure
+        # ---------------------------------------------------------------------
         for i in range(number_of_sites):
             site = spin_sys.sites[i]
             spin_i[i] = site.isotope.spin
@@ -297,7 +306,7 @@ def one_d_spectrum(method,
 
             # if verbose in [1, 11]:
             #     text = ((
-            #         f"\n{isotope} site {i} from spin system {index_isotopomer} "
+            #         f"\n{isotope} site {i} from spin system {index} "
             #         f"@ {abundance}% abundance"
             #     ))
             #     len_ = len(text)
@@ -327,6 +336,109 @@ def one_d_spectrum(method,
                 #     print(f'Quadrupolar coupling constant (Cq) = {Cq_e[i]/1e6} MHz')
                 #     print(f'Quadrupolar asymmetry (η) = {eta}')
                 #     print(f'Quadrupolar orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
+
+        # sites packed as c struct
+        sites_c.number_of_sites = number_of_sites
+        sites_c.spin = &spin_i[0]
+        sites_c.gyromagnetic_ratio = &gyromagnetic_ratio_i[0]
+
+        sites_c.isotropic_chemical_shift_in_ppm = &iso_n[0]
+        sites_c.shielding_symmetric_zeta_in_ppm = &zeta_n[0]
+        sites_c.shielding_symmetric_eta = &eta_n[0]
+        sites_c.shielding_orientation = &ori_n[0]
+
+        sites_c.quadrupolar_Cq_in_Hz = &Cq_e[0]
+        sites_c.quadrupolar_eta = &eta_e[0]
+        sites_c.quadrupolar_orientation = &ori_e[0]
+        # ------------------------------------------------------------------------
+        #                           Coupling specification
+        # ------------------------------------------------------------------------
+        # J-coupling
+        if spin_sys.couplings is not None:
+            number_of_couplings = len(spin_sys.couplings)
+            spin_index_ij = np.empty(2*number_of_couplings, dtype=np.int32)
+
+            iso_j = np.zeros(number_of_couplings, dtype=np.float64)
+            zeta_j = np.zeros(number_of_couplings, dtype=np.float64)
+            eta_j = np.zeros(number_of_couplings, dtype=np.float64)
+            ori_j = np.zeros(3*number_of_couplings, dtype=np.float64)
+
+            # Dipolar
+            zeta_d = np.zeros(number_of_couplings, dtype=np.float64)
+            eta_d = np.zeros(number_of_couplings, dtype=np.float64)
+            ori_d = np.zeros(3*number_of_couplings, dtype=np.float64)
+
+            # Extract and assign coupling information from Site objects to C structure
+            for i in range(number_of_couplings):
+                coupling = spin_sys.couplings[i]
+                spin_index_ij[2*i: 2*i+2] = coupling.site_index
+                i3 = 3*i
+
+                # J tensor
+                if coupling.isotropic_j is not None:
+                    iso_j[i] = coupling.isotropic_j
+
+                J_sym = coupling.j_symmetric
+                if J_sym is not None:
+                    if J_sym.zeta is not None:
+                        zeta_j[i] = J_sym.zeta
+                    if J_sym.eta is not None:
+                        eta_j[i] = J_sym.eta
+                    if J_sym.alpha is not None:
+                        ori_j[i3] = J_sym.alpha
+                    if J_sym.beta is not None:
+                        ori_j[i3+1] = J_sym.beta
+                    if J_sym.gamma is not None:
+                        ori_j[i3+2] = J_sym.gamma
+
+                if verbose in [1, 11]:
+                    # text = ((
+                    #     f"\n{isotope} site {i} from spin system {index} "
+                    #     f"@ {abundance}% abundance"
+                    # ))
+                    # len_ = len(text)
+                    # print(text)
+                    # print(f"{'-'*(len_-1)}")
+                    print(f'Isotropic J (δ) = {iso_j} Hz')
+                    print(f'J anisotropy (ζ) = {zeta_j} Hz')
+                    print(f'J asymmetry (η) = {eta_j}')
+                    print(f'J orientation = {ori_j}')
+
+                # quad tensor
+                dipolar = coupling.dipolar
+                if dipolar is not None:
+                    if dipolar.zeta is not None:
+                        zeta_d[i] = dipolar.zeta
+                    if dipolar.eta is not None:
+                        eta_d[i] = dipolar.eta
+                    if dipolar.alpha is not None:
+                        ori_d[i3] = dipolar.alpha
+                    if dipolar.beta is not None:
+                        ori_d[i3+1] = dipolar.beta
+                    if dipolar.gamma is not None:
+                        ori_d[i3+2] = dipolar.gamma
+
+                if verbose in [1, 11]:
+                    print(f'Dipolar coupling constant (Cq) = {zeta_d} Hz')
+                    print(f'Dipolar asymmetry (η) = {eta_d}')
+                    print(f'Dipolar orientation = {ori_d}')
+
+            # couplings packed as c struct
+            couplings_c.number_of_couplings = number_of_couplings
+            couplings_c.site_index = &spin_index_ij[0]
+
+            couplings_c.isotropic_j_in_Hz = &iso_j[0]
+            couplings_c.j_symmetric_zeta_in_Hz = &zeta_j[0]
+            couplings_c.j_symmetric_eta = &eta_j[0]
+            couplings_c.j_orientation = &ori_j[0]
+
+            couplings_c.dipolar_zeta_in_Hz = &zeta_d[0]
+            couplings_c.dipolar_eta = &eta_d[0]
+            couplings_c.dipolar_orientation = &ori_d[0]
+
+
+        # Spectrum amplitude vector -------------------------------------------
+        amp = np.zeros(total_n_points)
 
         if number_of_sites != 0:
             if number_of_sites != p_number_of_sites and isotopes != p_isotopes:
@@ -358,27 +470,12 @@ def one_d_spectrum(method,
             # transition_increment = 2*number_of_sites
             # number_of_transitions = int((transition_array.size)/transition_increment)
 
-            isotopomer_struct.number_of_sites = number_of_sites
-            isotopomer_struct.spin = &spin_i[0]
-            isotopomer_struct.gyromagnetic_ratio = &gyromagnetic_ratio_i[0]
-
-            isotopomer_struct.isotropic_chemical_shift_in_ppm = &iso_n[0]
-            isotopomer_struct.shielding_symmetric_zeta_in_ppm = &zeta_n[0]
-            isotopomer_struct.shielding_symmetric_eta = &eta_n[0]
-            isotopomer_struct.shielding_orientation = &ori_n[0]
-
-            isotopomer_struct.quadrupolar_Cq_in_Hz = &Cq_e[0]
-            isotopomer_struct.quadrupolar_eta = &eta_e[0]
-            isotopomer_struct.quadrupolar_orientation = &ori_e[0]
-
-            isotopomer_struct.dipolar_couplings = &D_c[0]
-
-            # isotopomers_list_c[i] = isotopomer_struct
             for trans__ in range(pathway_count):
                 clib.__mrsimulator_core(
                     # spectrum information and related amplitude
                     &amp[0],
-                    &isotopomer_struct,
+                    &sites_c,
+                    &couplings_c,
                     &transition_array[pathway_increment*trans__],
                     the_sequence,
                     n_sequence,

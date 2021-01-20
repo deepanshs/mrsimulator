@@ -484,20 +484,20 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
  * @func MRS_rotate_components_from_PAS_to_common_frame
  *
  * The function evaluates the tensor components from the principal axis system
- * (PAS) to the common frame of the isotopomer.
+ * (PAS) to the common frame of the spin system.
  */
 void MRS_rotate_components_from_PAS_to_common_frame(
-    isotopomer_ravel *ravel_isotopomer,  // isotopomer structure
-    float *transition,                   // The spin transition
-    bool allow_fourth_rank,  // if true, prep for 4th rank computation
-    double *R0,              // the R0 components
-    complex128 *R2,          // the R2 components
-    complex128 *R4,          // the R4 components
-    double *R0_temp,         // the temporary R0 components
-    complex128 *R2_temp,     // the temporary R2 components
-    complex128 *R4_temp,     // the temporary R3 components
-    double B0_in_T,          // magnetic flux density in T
-    bool *freq_contrib       // the pointer to freq contribs boolean
+    site_struct *sites,  // A pointer to a list of sites within a spin system.
+    float *transition,   // The spin transition.
+    bool allow_fourth_rank,  // if true, prep for 4th rank computation.
+    double *R0,              // The R0 components.
+    complex128 *R2,          // The R2 components.
+    complex128 *R4,          // The R4 components.
+    double *R0_temp,         // The temporary R0 components.
+    complex128 *R2_temp,     // The temporary R2 components.
+    complex128 *R4_temp,     // The temporary R3 components.
+    double B0_in_T,          // Magnetic flux density in T.
+    bool *freq_contrib       // The pointer to freq contribs boolean.
 ) {
   /* The following codeblock populates the product of spatial part, Rlm, of
    * the tensor and the spin transition function, T(mf, mi) for
@@ -514,7 +514,7 @@ void MRS_rotate_components_from_PAS_to_common_frame(
    *
    */
 
-  unsigned int site, n_sites = ravel_isotopomer->number_of_sites;
+  unsigned int site, n_sites = sites->number_of_sites;
   double larmor_freq_in_MHz;
   float *mf = &transition[n_sites], *mi = transition;
 
@@ -524,17 +524,15 @@ void MRS_rotate_components_from_PAS_to_common_frame(
       mf++;
       continue;
     }
-    larmor_freq_in_MHz = -B0_in_T * ravel_isotopomer->gyromagnetic_ratio[site];
+    larmor_freq_in_MHz = -B0_in_T * sites->gyromagnetic_ratio[site];
     /* Nuclear shielding components ======================================== */
     /*  Upto the first order */
     FCF_1st_order_nuclear_shielding_tensor_components(
         R0_temp, R2_temp,
-        ravel_isotopomer->isotropic_chemical_shift_in_ppm[site] *
-            larmor_freq_in_MHz,
-        ravel_isotopomer->shielding_symmetric_zeta_in_ppm[site] *
-            larmor_freq_in_MHz,
-        ravel_isotopomer->shielding_symmetric_eta[site],
-        &ravel_isotopomer->shielding_orientation[3 * site], *mf, *mi);
+        sites->isotropic_chemical_shift_in_ppm[site] * larmor_freq_in_MHz,
+        sites->shielding_symmetric_zeta_in_ppm[site] * larmor_freq_in_MHz,
+        sites->shielding_symmetric_eta[site],
+        &sites->shielding_orientation[3 * site], *mf, *mi);
 
     // in-place update the R0 and R2 components.
     if (*freq_contrib++) *R0 += *R0_temp;
@@ -544,14 +542,13 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     /* ===================================================================== */
 
     /* Electric quadrupolar components ===================================== */
-    if (ravel_isotopomer->spin[site] > 0.5) {
+    if (sites->spin[site] > 0.5) {
       /*  Upto the first order */
       if (*freq_contrib++) {
         FCF_1st_order_electric_quadrupole_tensor_components(
-            R2_temp, ravel_isotopomer->spin[site],
-            ravel_isotopomer->quadrupolar_Cq_in_Hz[site],
-            ravel_isotopomer->quadrupolar_eta[site],
-            &ravel_isotopomer->quadrupolar_orientation[3 * site], *mf, *mi);
+            R2_temp, sites->spin[site], sites->quadrupolar_Cq_in_Hz[site],
+            sites->quadrupolar_eta[site],
+            &sites->quadrupolar_orientation[3 * site], *mf, *mi);
 
         // in-place update the R2 components.
         vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
@@ -560,11 +557,10 @@ void MRS_rotate_components_from_PAS_to_common_frame(
       /*  Upto the second order */
       if (allow_fourth_rank) {
         FCF_2nd_order_electric_quadrupole_tensor_components(
-            R0_temp, R2_temp, R4_temp, ravel_isotopomer->spin[site],
-            larmor_freq_in_MHz * 1e6,
-            ravel_isotopomer->quadrupolar_Cq_in_Hz[site],
-            ravel_isotopomer->quadrupolar_eta[site],
-            &ravel_isotopomer->quadrupolar_orientation[3 * site], *mf, *mi);
+            R0_temp, R2_temp, R4_temp, sites->spin[site],
+            larmor_freq_in_MHz * 1e6, sites->quadrupolar_Cq_in_Hz[site],
+            sites->quadrupolar_eta[site],
+            &sites->quadrupolar_orientation[3 * site], *mf, *mi);
 
         // in-place update the R0 component.
         if (*freq_contrib++) *R0 += *R0_temp;
@@ -580,17 +576,19 @@ void MRS_rotate_components_from_PAS_to_common_frame(
       }
     }
 
-    if (n_sites > 1) {
-      /* Weakly coupled direct-dipole components =========================== */
-      /*      Upto the first order (to do..-> add orientation dependence)    */
-      weakly_coupled_direct_dipole_frequencies_to_first_order(
-          R0, R2_temp, ravel_isotopomer->dipolar_couplings[site], *mf, *mi, 0.5,
-          0.5);
+    // if (n_sites > 1) {
+    //   /* Weakly coupled direct-dipole components ===========================
+    //   */
+    //   /*      Upto the first order (to do..-> add orientation dependence) */
+    //   weakly_coupled_direct_dipole_frequencies_to_first_order(
+    //       R0, R2_temp, sites->dipolar_couplings[site], *mf, *mi,
+    //       0.5, 0.5);
 
-      // in-place update the R2 components.
-      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-      /* =================================================================== */
-    }
+    //   // in-place update the R2 components.
+    //   vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+    //   /* ===================================================================
+    //   */
+    // }
     mi++;
     mf++;
   }

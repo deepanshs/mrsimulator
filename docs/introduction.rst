@@ -1,5 +1,5 @@
 
-.. _isotopomers_docs:
+.. _spin_systems_docs:
 
 ****************************
 Introduction to Spin Systems

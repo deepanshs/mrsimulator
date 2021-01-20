@@ -12,8 +12,8 @@
 // Single nucleus spin transition functions................................. //
 
 /**
- * @brief Single nucleus spin transition function from irreducible tensor of
- * rank @f$L=1@f$, given as
+ * @brief Single nucleus spin transition function from the irreducible spherical
+ * tensor of rank @f$L=1@f$ is given as
  * @f[
  *    \mathbb{p}(m_f, m_i) &= \left< m_f | \hat{T}_{10} | m_f \right> -
  *                            \left< m_i | \hat{T}_{10} | m_i \right> \\
@@ -33,8 +33,8 @@ static inline double STF_p(const double mf, const double mi) {
 }
 
 /**
- * Single nucleus spin transition function from irreducible tensor of rank
- * @f$L=2@f$, given as
+ * Single nucleus spin transition function from the irreducible spherical tensor
+ * of rank @f$L=2@f$ is given as
  * @f[
  *    \mathbb{d}(m_f, m_i) &= \left< m_f | \hat{T}_{20} | m_f \right> -
  *                            \left< m_i | \hat{T}_{20} | m_i \right> \\
@@ -54,8 +54,8 @@ static inline double STF_d(const double mf, const double mi) {
 }
 
 /**
- * Single nucleus spin transition function from irreducible tensor of rank
- * @f$L=3@f$, given as
+ * Single nucleus spin transition function from the irreducible spherical tensor
+ * of rank @f$L=3@f$ is given as
  * @f[
  *    \mathbb{f}(m_f, m_i) &= \left< m_f | \hat{T}_{30} | m_f \right> -
  *                            \left< m_i | \hat{T}_{30} | m_i \right> \\
@@ -80,9 +80,10 @@ static inline double STF_f(const double mf, const double mi,
 }
 
 /**
- * Single nucleus composite spin transition functions corresponding to rank
- * @f$L=[0,2,4]@f$ irreducible tensors resulting from the second-order
- * corrections to the quadrupole frequency. The functions are defined as
+ * The following single nucleus composite spin transition functions
+ * corresponding to rank @f$L=[0,2,4]@f$ irreducible tensors results from the
+ * second-order corrections to the quadrupole frequency. The functions are
+ * defined as
  * @f[
  *   \mathbb{c}_{0}(m_f, m_i) &= \frac{4}{\sqrt{125}} \left[I(I+1) -
  *          \frac{3}{4}\right] \mathbb{p}(m_f, m_i) +
@@ -124,25 +125,26 @@ static inline void STF_cL(double *restrict cl_value, const double mf,
 /**
  * @brief The @f$\mathbb{d}_{IS}@f$ spin transition symmetry function.
  *
- * Two weakly coupled nuclei transition symmetry function from the irreducible
- * 1st-rank tensors, defined as
+ * Two weakly coupled nuclei spin transition function from the irreducible
+ * spherical tensors is given as
  * @f[
- *   \mathbb{d}_{IS}(m_{If}, m_{Sf}, m_{Ii}, m_{Si}) &=
- *   \left<m_{If}m_{Sf}|\hat{T}_{10}(I)~\hat{T}_{10}(S)|m_{If} m_{Sf}\right>
- * -\left<m_{Ii}m_{Si}|\hat{T}_{10}(I)~\hat{T}_{10}(S)|m_{Ii} m_{Si}\right> \\
- *   &= m_{If} m_{Sf} - m_{Ii} m_{Si},
+ *   \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S}) &=
+ *   \left<m_{f_I}m_{f_S}|\hat{T}_{10}(I)~\hat{T}_{10}(S)|m_{f_I} m_{f_S}\right>
+ * -\left<m_{i_I}m_{i_S}|\hat{T}_{10}(I)~\hat{T}_{10}(S)|m_{i_I} m_{i_S}\right>
+ * \\
+ *   &= m_{f_I} m_{f_S} - m_{i_I} m_{i_S},
  * @f]
- * where @f$\hat{T}_{10}(I)@f$ and @f$\hat{T}_{10}(S)@f$ are the irreducible 1st
- * rank spherical tensor operators in the rotating tilted frame for spin I and
- * S, respectively.
+ * where @f$\hat{T}_{10}(I)@f$ and @f$\hat{T}_{10}(S)@f$ are the irreducible
+ * first-rank spherical tensor operators in the rotating tilted frame for spin I
+ * and S, respectively.
  *
- * @param mIi The quantum number associated with the quantized initial energy
- *        level corresponding to spin I.
- * @param mSi The quantum number associated with the quantized initial energy
- *        level corresponding to spin S.
  * @param mIf The quantum number associated with the quantized final energy
  *        level corresponding to spin I.
  * @param mSf The quantum number associated with the quantized final energy
+ *        level corresponding to spin S.
+ * @param mIi The quantum number associated with the quantized initial energy
+ *        level corresponding to spin I.
+ * @param mSi The quantum number associated with the quantized initial energy
  *        level corresponding to spin S.
  * @return The spin transition symmetry function @f$\mathbb{d}_{IS}@f$.
  */

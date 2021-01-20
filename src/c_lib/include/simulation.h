@@ -19,9 +19,11 @@ extern void mrsimulator_core(
     double spectral_increment,  // The increment of the frequency spectrum.
     int number_of_points,       // Number of points on the frequency spectrum.
 
-    isotopomer_ravel *ravel_isotopomer,  // isotopomer structure
-    MRS_sequence *the_sequence,          // the transition sequence.
-    int n_sequence,                      // number of sequences.
+    site_struct *sites,  // A pointer to a list of sites within a spin system.
+    coupling_struct
+        *couplings,  // A pointer to a list of couplings within a spin system.
+    MRS_sequence *the_sequence,  // The event sequence.
+    int n_sequence,              // Number of sequences.
 
     int quad_second_order,  // Quad theory for second order,
 
@@ -41,8 +43,11 @@ extern void mrsimulator_core(
 
 extern void __mrsimulator_core(
     // spectrum information and related amplitude
-    double *spec,  // The pointer to the vector representing the spectrum.
-    isotopomer_ravel *ravel_isotopomer,  // isotopomer structure
+    double *spec,        // The pointer to the vector representing the spectrum.
+    site_struct *sites,  // A pointer to a list of sites within a spin system.
+
+    coupling_struct
+        *couplings,  // A pointer to a list of couplings within a spin system.
 
     // Pointer to the transitions. transition[0] = mi and transition[1] = mf
     float *transition, MRS_sequence *the_sequence, int n_sequence,

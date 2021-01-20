@@ -199,9 +199,10 @@ void __mrsimulator_core(
     // spectrum information and related amplitude
     double *spec,  // amplitude vector representing the spectrum.
 
-    // A pointer to the isotopomer_ravel structure containing information about
-    // the sites within an isotopomer.
-    isotopomer_ravel *ravel_isotopomer,
+    site_struct *sites,  // A pointer to a list of sites within a spin system.
+
+    coupling_struct
+        *couplings,  // A pointer to a list of couplings within a spin system.
 
     // A pointer to a spin transition packed as quantum numbers from the initial
     // energy state followed by the quantum numbers from the final energy state.
@@ -261,7 +262,7 @@ void __mrsimulator_core(
   complex128 *R4_temp = malloc_complex128(9);
 
   double *spec_site_ptr;
-  int transition_increment = 2 * ravel_isotopomer->number_of_sites;
+  int transition_increment = 2 * sites->number_of_sites;
   MRS_plan *plan;
   MRS_event *event;
 
@@ -283,17 +284,18 @@ void __mrsimulator_core(
 
       /* Rotate all frequency components from PAS to a common frame */
       MRS_rotate_components_from_PAS_to_common_frame(
-          ravel_isotopomer,         // isotopomer structure
-          transition,               // the transition
-          plan->allow_fourth_rank,  // if 1, prepare for 4th rank computation
-          &R0,                      // the R0 components
-          R2,                       // the R2 components
-          R4,                       // the R4 components
-          &R0_temp,                 // the temporary R0 components
-          R2_temp,                  // the temporary R2 components
-          R4_temp,                  // the temporary R4 components
-          B0_in_T,                  // magnetic flux density in T
-          freq_contrib_ptr          // the pointer to freq contribs boolean
+          sites,       // A pointer to a list of sites within a spin system.
+          transition,  // A pointer to the initial and final spin quantum
+                       // numbers of the spin transition.
+          plan->allow_fourth_rank,  // If 1, prepare for 4th rank computation.
+          &R0,                      // The R0 components.
+          R2,                       // The R2 components.
+          R4,                       // The R4 components.
+          &R0_temp,                 // The temporary R0 components.
+          R2_temp,                  // The temporary R2 components.
+          R4_temp,                  // The temporary R4 components.
+          B0_in_T,                  // Magnetic flux density in T.
+          freq_contrib_ptr          // The pointer to freq contribs boolean.
       );
 
       // The number 6 comes from the six types of pre-listed freq contributions.
@@ -412,10 +414,12 @@ void mrsimulator_core(
     double coordinates_offset,  // The start of the frequency spectrum.
     double increment,           // The increment of the frequency spectrum.
     int count,                  // Number of points on the frequency spectrum.
-    isotopomer_ravel *ravel_isotopomer,  // SpinSystem structure
-    MRS_sequence *the_sequence,          // the sequences in the method.
-    int n_sequence,                      // The number of sequence.
-    int quad_second_order,               // Quad theory for second order,
+    site_struct *sites,  // A pointer to a list of sites wiithin a spin system.
+    coupling_struct
+        *couplings,  // A pointer to a list of couplings within a spin system.
+    MRS_sequence *the_sequence,  // the sequences in the method.
+    int n_sequence,              // The number of sequence.
+    int quad_second_order,       // Quad theory for second order,
 
     // spin rate, spin angle and number spinning sidebands
     unsigned int number_of_sidebands,        // The number of sidebands
@@ -439,7 +443,7 @@ void mrsimulator_core(
   // printf("%d parallel", parallel);
 
   bool allow_fourth_rank = false;
-  if (ravel_isotopomer[0].spin[0] > 0.5 && quad_second_order == 1) {
+  if (sites[0].spin[0] > 0.5 && quad_second_order == 1) {
     allow_fourth_rank = true;
   }
 
@@ -461,10 +465,11 @@ void mrsimulator_core(
       // spectrum information and related amplitude
       spec,  // The amplitude of the spectrum.
 
-      ravel_isotopomer,  // isotopomer structure
+      sites,      // A pointer to a list of sites within the spin system.
+      couplings,  // A pointer to a list of couplings within a spin system.
 
-      // Pointer to the transitions.
-      transition,
+      transition,  // A pointer to the initial and final spin quantum numbers of
+                   // the spin transition.
 
       the_sequence, n_sequence, fftw_scheme, scheme, interpolation,
       freq_contrib, affine_matrix);

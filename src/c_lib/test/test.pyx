@@ -124,7 +124,6 @@ def __wigner_rotation_2(int l, np.ndarray[double] cos_alpha,
     return R_out.reshape(n, n1)
 
 
-
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def get_exp_Im_alpha(int n, np.ndarray[double] cos_alpha, bool_t allow_fourth_rank):
@@ -145,14 +144,6 @@ def pre_phase_components(unsigned int number_of_sidebands, double sample_rotatio
     cdef np.ndarray[double] pre_phase = np.zeros(2*n1, dtype=np.float64)
     clib.__get_components(number_of_sidebands, sample_rotation_frequency_in_Hz, &pre_phase[0])
     return pre_phase.view(dtype=np.complex128).reshape(9, number_of_sidebands)
-
-
-
-
-
-
-
-
 
 
 @cython.boundscheck(False)
@@ -416,22 +407,21 @@ def __batch_wigner_rotation(unsigned int octant_orientations,
 
 #     cdef np.ndarray[double, ndim=1] amp = np.zeros(number_of_points * number_of_sites)
 
-#     cdef clib.isotopomer_ravel isotopomer_struct
+#     cdef clib.site_struct sites_c
 
-#     isotopomer_struct.number_of_sites = number_of_sites
-#     isotopomer_struct.spin = &spin[0]
-#     isotopomer_struct.gyromagnetic_ratio = &gyromagnetic_ratio[0]
+#     sites_c.number_of_sites = number_of_sites
+#     sites_c.spin = &spin[0]
+#     sites_c.gyromagnetic_ratio = &gyromagnetic_ratio[0]
 
-#     isotopomer_struct.isotropic_chemical_shift_in_ppm = &isotropic_chemical_shift_c[0]
-#     isotopomer_struct.shielding_symmetric_zeta_in_ppm = &shielding_anisotropy_c[0]
-#     isotopomer_struct.shielding_asymmetry = &shielding_asymmetry_c[0]
-#     isotopomer_struct.shielding_orientation = &shielding_orientations_c[0]
+#     sites_c.isotropic_chemical_shift_in_ppm = &isotropic_chemical_shift_c[0]
+#     sites_c.shielding_symmetric_zeta_in_ppm = &shielding_anisotropy_c[0]
+#     sites_c.shielding_asymmetry = &shielding_asymmetry_c[0]
+#     sites_c.shielding_orientation = &shielding_orientations_c[0]
 
-#     isotopomer_struct.quadrupolar_Cq_in_Hz = &quadrupolar_coupling_constant_c[0]
-#     isotopomer_struct.quadrupolar_eta = &quadrupole_asymmetry_c[0]
-#     isotopomer_struct.quadrupolar_orientation = &quadrupole_orientations_c[0]
+#     sites_c.quadrupolar_Cq_in_Hz = &quadrupolar_coupling_constant_c[0]
+#     sites_c.quadrupolar_eta = &quadrupole_asymmetry_c[0]
+#     sites_c.quadrupolar_orientation = &quadrupole_orientations_c[0]
 
-#     isotopomer_struct.dipolar_couplings = &D_c[0]
 
 #     cdef bool_t remove_second_order_quad_isotropic_c = remove_2nd_order_quad_isotropic
 
@@ -443,7 +433,7 @@ def __batch_wigner_rotation(unsigned int octant_orientations,
 #             increment,
 #             number_of_points,
 
-#             &isotopomer_struct,
+#             &sites_c,
 #             sequence,
 
 #             second_order_quad_c,
