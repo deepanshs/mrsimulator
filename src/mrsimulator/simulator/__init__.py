@@ -392,7 +392,7 @@ class Simulator(BaseModel):
                 allow_nan=False,
             )
 
-    def run(self, method_index=None, n_jobs=-1, verbose=0, pack_as_csdm=True, **kwargs):
+    def run(self, method_index=None, n_jobs=1, verbose=0, pack_as_csdm=True, **kwargs):
         """Run the simulation and compute spectrum.
 
         Args:
