@@ -250,10 +250,12 @@ static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
 static inline void FCF_1st_order_weak_J_coupling_tensor_components(
     double *restrict Lambda_0, void *restrict Lambda_2,
     const double J_iso_in_Hz, const double J_aniso_in_Hz, const double J_eta,
-    const double *Theta, const double mIf, const double mIi, const double mSf,
-    const double mSi) {
+    const double *Theta, const float mIf, const float mIi, const float mSf,
+    const float mSi) {
   // Spin transition function
   double transition_fn = STF_dIS(mIf, mIi, mSf, mSi);
+
+  // printf("transition fn %f\n", transition_fn);
 
   // Return if the transition is zero
   if (transition_fn == 0.0) {

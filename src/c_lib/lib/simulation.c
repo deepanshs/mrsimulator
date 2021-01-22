@@ -285,6 +285,7 @@ void __mrsimulator_core(
       /* Rotate all frequency components from PAS to a common frame */
       MRS_rotate_components_from_PAS_to_common_frame(
           sites,       // A pointer to a list of sites within a spin system.
+          couplings,   // A pointer to a list of couplings within a spin system.
           transition,  // A pointer to the initial and final spin quantum
                        // numbers of the spin transition.
           plan->allow_fourth_rank,  // If 1, prepare for 4th rank computation.

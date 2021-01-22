@@ -256,6 +256,8 @@ def one_d_spectrum(method,
         abundance = spin_sys.abundance
         isotopes = [site.isotope.symbol for site in spin_sys.sites]
         if channel not in isotopes:
+            if decompose_spectrum == 1:
+                amp_individual.append([])
             continue
 
         # sub_sites = [site for site in spin_sys.sites if site.isotope.symbol == isotope]
@@ -354,9 +356,10 @@ def one_d_spectrum(method,
         #                           Coupling specification
         # ------------------------------------------------------------------------
         # J-coupling
+        couplings_c.number_of_couplings = 0
         if spin_sys.couplings is not None:
             number_of_couplings = len(spin_sys.couplings)
-            spin_index_ij = np.empty(2*number_of_couplings, dtype=np.int32)
+            spin_index_ij = np.zeros(2*number_of_couplings, dtype=np.int32)
 
             iso_j = np.zeros(number_of_couplings, dtype=np.float64)
             zeta_j = np.zeros(number_of_couplings, dtype=np.float64)
@@ -391,20 +394,7 @@ def one_d_spectrum(method,
                     if J_sym.gamma is not None:
                         ori_j[i3+2] = J_sym.gamma
 
-                if verbose in [1, 11]:
-                    # text = ((
-                    #     f"\n{isotope} site {i} from spin system {index} "
-                    #     f"@ {abundance}% abundance"
-                    # ))
-                    # len_ = len(text)
-                    # print(text)
-                    # print(f"{'-'*(len_-1)}")
-                    print(f'Isotropic J (δ) = {iso_j} Hz')
-                    print(f'J anisotropy (ζ) = {zeta_j} Hz')
-                    print(f'J asymmetry (η) = {eta_j}')
-                    print(f'J orientation = {ori_j}')
-
-                # quad tensor
+                # dipolar tensor
                 dipolar = coupling.dipolar
                 if dipolar is not None:
                     if dipolar.zeta is not None:
@@ -418,10 +408,17 @@ def one_d_spectrum(method,
                     if dipolar.gamma is not None:
                         ori_d[i3+2] = dipolar.gamma
 
-                if verbose in [1, 11]:
-                    print(f'Dipolar coupling constant (Cq) = {zeta_d} Hz')
-                    print(f'Dipolar asymmetry (η) = {eta_d}')
-                    print(f'Dipolar orientation = {ori_d}')
+            if verbose in [1, 11]:
+                print(f'N couplings = {number_of_couplings}')
+                print(f'site index J = {spin_index_ij}')
+                print(f'Isotropic J = {iso_j} Hz')
+                print(f'J anisotropy = {zeta_j} Hz')
+                print(f'J asymmetry = {eta_j}')
+                print(f'J orientation = {ori_j}')
+
+                print(f'Dipolar coupling constant = {zeta_d} Hz')
+                print(f'Dipolar asymmetry = {eta_d}')
+                print(f'Dipolar orientation = {ori_d}')
 
             # couplings packed as c struct
             couplings_c.number_of_couplings = number_of_couplings
@@ -440,61 +437,65 @@ def one_d_spectrum(method,
         # Spectrum amplitude vector -------------------------------------------
         amp = np.zeros(total_n_points)
 
-        if number_of_sites != 0:
-            if number_of_sites != p_number_of_sites and isotopes != p_isotopes:
-                transition_pathway = spin_sys.transition_pathways
-                if transition_pathway is None:
-                    transition_pathway = np.asarray(method._get_transition_pathways_np(spin_sys))
-                    transition_array = np.asarray(transition_pathway, dtype=np.float32).ravel()
-                else:
-                    transition_pathway = np.asarray(transition_pathway)
-                    # convert transition objects to list
-                    lst = [item.tolist() for item in transition_pathway.ravel()]
-                    transition_array = np.asarray(lst, dtype=np.float32).ravel()
+        # if number_of_sites == 0:
+        #     if decompose_spectrum == 1:
+        #         amp_individual.append([])
+        #     continue
 
-                pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
-                pathway_increment = 2*number_of_sites*transition_count_per_pathway
-
-                p_number_of_sites = number_of_sites
-                p_isotopes = isotopes
-
-            # if spin_sys.transitions is not None:
-            #     transition_array = np.asarray(
-            #         spin_sys.transitions, dtype=np.float32
-            #     ).ravel()
-            # else:
-            #     transition_array = np.asarray([0.5, -0.5], dtype=np.float32)
-
-            # the number 2 is because of single site transition [mi, mf]
-            # it dose not work for coupled sites.
-            # transition_increment = 2*number_of_sites
-            # number_of_transitions = int((transition_array.size)/transition_increment)
-
-            for trans__ in range(pathway_count):
-                clib.__mrsimulator_core(
-                    # spectrum information and related amplitude
-                    &amp[0],
-                    &sites_c,
-                    &couplings_c,
-                    &transition_array[pathway_increment*trans__],
-                    the_sequence,
-                    n_sequence,
-                    the_fftw_scheme,
-                    the_averaging_scheme,
-                    interpolation,
-                    &freq_contrib_c[0],
-                    &affine_matrix_c[0],
-                    )
-
-            temp = amp*abundance/norm
-
-            if decompose_spectrum == 1:
-                amp_individual.append(temp.reshape(method.shape()))
+        if number_of_sites != p_number_of_sites and isotopes != p_isotopes:
+            transition_pathway = spin_sys.transition_pathways
+            if transition_pathway is None:
+                transition_pathway = np.asarray(method._get_transition_pathways_np(spin_sys))
+                transition_array = np.asarray(transition_pathway, dtype=np.float32).ravel()
             else:
-                amp1 += temp
+                transition_pathway = np.asarray(transition_pathway)
+                # convert transition objects to list
+                lst = [item.tolist() for item in transition_pathway.ravel()]
+                transition_array = np.asarray(lst, dtype=np.float32).ravel()
+
+            pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
+            pathway_increment = 2*number_of_sites*transition_count_per_pathway
+
+            p_number_of_sites = number_of_sites
+            p_isotopes = isotopes
+
+        # if spin_sys.transitions is not None:
+        #     transition_array = np.asarray(
+        #         spin_sys.transitions, dtype=np.float32
+        #     ).ravel()
+        # else:
+        #     transition_array = np.asarray([0.5, -0.5], dtype=np.float32)
+
+        # the number 2 is because of single site transition [mi, mf]
+        # it dose not work for coupled sites.
+        # transition_increment = 2*number_of_sites
+        # number_of_transitions = int((transition_array.size)/transition_increment)
+
+        for trans__ in range(pathway_count):
+            clib.__mrsimulator_core(
+                # spectrum information and related amplitude
+                &amp[0],
+                &sites_c,
+                &couplings_c,
+                &transition_array[pathway_increment*trans__],
+                the_sequence,
+                n_sequence,
+                the_fftw_scheme,
+                the_averaging_scheme,
+                interpolation,
+                &freq_contrib_c[0],
+                &affine_matrix_c[0],
+                )
+
+        temp = amp*abundance/norm
+
+        if decompose_spectrum == 1:
+            amp_individual.append(temp.reshape(method.shape()))
         else:
-            if decompose_spectrum == 1:
-                amp_individual.append([])
+            amp1 += temp
+        # else:
+        #     if decompose_spectrum == 1:
+        #         amp_individual.append([])
 
     # reverse the spectrum if gyromagnetic ratio is positive.
     if decompose_spectrum == 1 and len(amp_individual) != 0:

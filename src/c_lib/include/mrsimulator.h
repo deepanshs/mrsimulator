@@ -225,7 +225,9 @@ void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
  *          6. Quad 2st order 4th rank
  */
 void MRS_rotate_components_from_PAS_to_common_frame(
-    site_struct *sites,      // A list of sites in the spin system.
+    site_struct *sites,  // A list of sites in the spin system.
+    coupling_struct
+        *couplings,  // A pointer to a list of couplings within a spin system.
     float *transition,       // The pointer to the spin transition.
     bool allow_fourth_rank,  // If true, pre for 4th rank computation.
     double *R0,              // The R0 components.
@@ -236,6 +238,32 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     complex128 *R4_temp,     // The temporary R3 components.
     double B0_in_T,          // Magnetic flux density in T.
     bool *freq_contrib       // The pointer to freq contribs boolean.
+);
+
+void __MRS_rotate_single_site_interaction_components(
+    site_struct *sites,  // A pointer to a list of sites within a spin system.
+    float *transition,   // The spin transition.
+    bool allow_fourth_rank,  // if true, prep for 4th rank computation.
+    double *R0,              // The R0 components.
+    complex128 *R2,          // The R2 components.
+    complex128 *R4,          // The R4 components.
+    double *R0_temp,         // The temporary R0 components.
+    complex128 *R2_temp,     // The temporary R2 components.
+    complex128 *R4_temp,     // The temporary R3 components.
+    double B0_in_T,          // Magnetic flux density in T.
+    bool *freq_contrib       // The pointer to freq contribs boolean.
+);
+
+void __MRS_rotate_coupled_site_interaction_components(
+    coupling_struct *couplings,  // A pointer to a list of couplings within
+                                 // a spin system.
+    float *transition,           // The spin transition.
+    unsigned int n_sites,        // The number of sites.
+    double *R0,                  // The R0 components.
+    complex128 *R2,              // The R2 components.
+    double *R0_temp,             // The temporary R0 components.
+    complex128 *R2_temp,         // The temporary R2 components.
+    bool *freq_contrib           // The pointer to freq contribs boolean.
 );
 
 extern void __get_components(unsigned int number_of_sidebands,
