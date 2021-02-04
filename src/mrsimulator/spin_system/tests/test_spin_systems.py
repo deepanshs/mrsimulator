@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test for the base SpinSystem class."""
 import pytest
+from mrsimulator import Coupling
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.spin_system import allowed_isotopes
@@ -11,7 +12,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 def test_direct_init_spin_system():
-    # test-1
+    # test-1 # empty spin system
     the_spin_system = SpinSystem(sites=[], abundance=10)
 
     assert the_spin_system.sites == []
@@ -23,7 +24,7 @@ def test_direct_init_spin_system():
         "abundance": 10.0,
     }
 
-    # test-2
+    # test-2 # site
     test_site = Site(isotope="29Si", isotropic_chemical_shift=10)
 
     assert test_site.isotope.symbol == "29Si"
@@ -39,7 +40,7 @@ def test_direct_init_spin_system():
         "isotropic_chemical_shift": 10.0,
     }
 
-    # test-3
+    # test-3 # one site spin system
     the_spin_system = SpinSystem(sites=[test_site], abundance=10)
     assert isinstance(the_spin_system.sites[0], Site)
     assert the_spin_system.abundance == 10.0
@@ -52,7 +53,7 @@ def test_direct_init_spin_system():
         "abundance": 10,
     }
 
-    # test-4
+    # test-4 # two sites spin system
     the_spin_system = SpinSystem(sites=[test_site, test_site], abundance=10)
     assert isinstance(the_spin_system.sites[0], Site)
     assert isinstance(the_spin_system.sites[1], Site)
@@ -73,6 +74,61 @@ def test_direct_init_spin_system():
         "abundance": 10,
     }
 
+    # test-5 # coupling
+    test_coupling = Coupling(site_index=[0, 1], isotropic_j=10, dipolar={"zeta": 100})
+
+    assert test_coupling.site_index == [0, 1]
+    assert test_coupling.isotropic_j == 10.0
+    assert test_coupling.property_units["isotropic_j"] == "Hz"
+
+    assert test_coupling.dipolar.zeta == 100.0
+    assert test_coupling.dipolar.property_units["zeta"] == "Hz"
+
+    assert test_coupling.json() == {
+        "site_index": [0, 1],
+        "isotropic_j": "10.0 Hz",
+        "dipolar": {"zeta": "100.0 Hz"},
+    }
+    assert test_coupling.reduced_dict() == {
+        "site_index": [0, 1],
+        "isotropic_j": 10.0,
+        "dipolar": {"zeta": 100.0},
+    }
+
+    # test-6 #  two sites and one coupling spin system
+    the_spin_system = SpinSystem(
+        sites=[test_site, test_site], couplings=[test_coupling], abundance=10
+    )
+    assert isinstance(the_spin_system.sites[0], Site)
+    assert isinstance(the_spin_system.sites[1], Site)
+    assert isinstance(the_spin_system.couplings[0], Coupling)
+    assert id(the_spin_system.sites[0]) != id(the_spin_system.sites[1])
+    assert the_spin_system.abundance == 10.0
+    assert the_spin_system.json() == {
+        "sites": [
+            {"isotope": "29Si", "isotropic_chemical_shift": "10.0 ppm"},
+            {"isotope": "29Si", "isotropic_chemical_shift": "10.0 ppm"},
+        ],
+        "couplings": [
+            {
+                "site_index": [0, 1],
+                "isotropic_j": "10.0 Hz",
+                "dipolar": {"zeta": "100.0 Hz"},
+            }
+        ],
+        "abundance": "10.0 %",
+    }
+    assert the_spin_system.reduced_dict() == {
+        "sites": [
+            {"isotope": "29Si", "isotropic_chemical_shift": 10.0},
+            {"isotope": "29Si", "isotropic_chemical_shift": 10.0},
+        ],
+        "couplings": [
+            {"site_index": [0, 1], "isotropic_j": 10.0, "dipolar": {"zeta": 100.0}}
+        ],
+        "abundance": 10,
+    }
+
     # test-5
     the_spin_system = SpinSystem(
         name="Just a test",
@@ -85,6 +141,7 @@ def test_direct_init_spin_system():
                 "quadrupolar": {"Cq": 5.1e6, "eta": 0.5},
             },
         ],
+        couplings=[{"site_index": [0, 1], "isotropic_j": 34}],
         abundance=4.23,
     )
     assert the_spin_system.name == "Just a test"
@@ -95,9 +152,12 @@ def test_direct_init_spin_system():
     assert the_spin_system.sites[1].isotropic_chemical_shift == -10
     assert the_spin_system.sites[1].quadrupolar.Cq == 5.1e6
     assert the_spin_system.sites[1].quadrupolar.eta == 0.5
+    assert the_spin_system.couplings[0].site_index == [0, 1]
+    assert the_spin_system.couplings[0].isotropic_j == 34.0
     assert the_spin_system.abundance == 4.23
 
-    assert the_spin_system.json() == {
+    serialize = the_spin_system.json()
+    assert serialize == {
         "name": "Just a test",
         "description": "The same",
         "sites": [
@@ -108,9 +168,13 @@ def test_direct_init_spin_system():
                 "quadrupolar": {"Cq": "5100000.0 Hz", "eta": 0.5},
             },
         ],
+        "couplings": [{"site_index": [0, 1], "isotropic_j": "34.0 Hz"}],
         "abundance": "4.23 %",
     }
-    assert the_spin_system.reduced_dict() == {
+    assert the_spin_system == SpinSystem.parse_dict_with_units(serialize)
+
+    reduced_dict = the_spin_system.reduced_dict()
+    assert reduced_dict == {
         "name": "Just a test",
         "description": "The same",
         "sites": [
@@ -121,8 +185,10 @@ def test_direct_init_spin_system():
                 "quadrupolar": {"Cq": 5100000, "eta": 0.5},
             },
         ],
+        "couplings": [{"site_index": [0, 1], "isotropic_j": 34.0}],
         "abundance": 4.23,
     }
+    assert the_spin_system == SpinSystem(**reduced_dict)
 
 
 def test_parse_json_spin_system():

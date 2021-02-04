@@ -15,7 +15,7 @@
 #include "mrsimulator.h"
 
 // =================================================================================
-//          First order nuclear shielding spatial orientation tensor
+//          First-order nuclear shielding spatial orientation tensor
 // =================================================================================
 
 /**
@@ -111,7 +111,7 @@ static inline void sSOT_1st_order_nuclear_shielding_tensor_components(
 }
 
 // =================================================================================
-//          First order electric quadrupolar spatial orientation tensor
+//          First-order electric quadrupolar spatial orientation tensor
 // =================================================================================
 
 /**
@@ -188,7 +188,7 @@ static inline void sSOT_1st_order_electric_quadrupole_tensor_components(
 }
 
 // =================================================================================
-//           Second order electric quadrupolar spatial orientation tensor
+//           Second-order electric quadrupolar spatial orientation tensor
 // =================================================================================
 
 /**
@@ -335,7 +335,7 @@ static inline void sSOT_2nd_order_electric_quadrupole_tensor_components(
 }
 
 // =================================================================================
-//   First order J-coupling spatial orientation tensor for weakly coupled sites
+//   First-order J-coupling spatial orientation tensor for weakly coupled sites
 // =================================================================================
 
 /**
@@ -419,3 +419,70 @@ static inline void sSOT_1st_order_weakly_coupled_J_tensor_components(
   }
   single_wigner_rotation(2, Theta, R_2, R_2);
 }
+
+// // =================================================================================
+// //     First-order dipolar spatial orientation tensor for weakly coupled sites
+// // =================================================================================
+
+// /**
+//  * The scaled spatial orientation tensors (sSOT) from the first-order
+//  * perturbation expansion of the dipolar-coupling Hamiltonian under
+//  * weak-coupling limit, in the principal axis system (PAS), include
+//  * contributions from the second-rank irreducible tensors which
+//  * follow,
+//  * @f[ \left.
+//  *      \begin{aligned}
+//  *      \varsigma_{2,0}^{(d)} &= 4\pi D, \\
+//  *      \varsigma_{2,\pm1}^{(d)} &= 0, \\
+//  *      \varsigma_{2,\pm2}^{(d)} &= 0,
+//  *      \end{aligned}
+//  *     \right\} \text{Rank-2},
+//  * @f]
+//  * where @f$D@f$ is the dipolar-coupling, and
+//  * @f$\zeta_J@f$, @f$\eta_J@f$ are the @f$J@f$-coupling tensor anisotropy and
+//  * asymmetry parameters from the symmetric second-rank irreducible @f$J@f$
+//  * tensor, defined using Haeberlen convention.
+//  *
+//  * For non-zero Euler angles, @f$\Theta = [\alpha, \beta, \gamma]@f$, Wigner
+//  * rotation of @f$\varsigma_{2,n}^{(J)}@f$ is applied following,
+//  * @f[ \mathcal{R'}_{2,n}^{(J)}(\Theta) =
+//  *                                \sum_{m = -2}^2 D^2_{m, n}(\Theta)
+//  *                                \varsigma_{2,n}^{(J)},
+//  * @f]
+//  * where @f$\mathcal{R'}_{2,n}^{(J)}(\Theta)@f$ are the tensor components in the
+//  * frame defined by the Euler angles, @f$\Theta@f$.
+//  *
+//  * @note
+//  *  - When @f$\Theta = [0,0,0]@f$,
+//  *    @f$\mathcal{R'}_{2,n}^{(d)}(\Theta) = \varsigma_{2,n}^{(J)}@f$ where
+//  *    @f$ n \in [-2,2]@f$.
+//  *  - @f$\mathcal{R'}_{0,0}^{(J)}(\Theta) = \varsigma_{0,0}^{(J)} ~~~
+//  *    \forall ~ \Theta@f$.
+//  *  - The method returns @f$\mathcal{R'}_{0,0}^{(J)}(\Theta)/2\pi@f$ and
+//  *    @f$\mathcal{R'}_{2,n}^{(J)}(\Theta)/2\pi@f$, that is, in **units of
+//  *    frequency**.
+//  *
+//  * @param R_2 A pointer to a complex array of length 5, where the second-rank
+//  *      irreducible tensor, @f$\mathcal{R'}_{2,n}^{(d)}(\Theta)/2\pi@f$,
+//  *      is stored ordered as
+//  *      @f$\left[\mathcal{R'}_{2,n}^{(d)}(\Theta)/2\pi\right]_{n=-2}^2@f$.
+//  *
+//  * @param D_in_Hz The dipolar coupling, @f$D@f$, in Hz.
+//  *
+//  * @param Theta A pointer to an array of Euler angles, in radians, of length 3,
+//  *      ordered as @f$[\alpha, \beta, \gamma]@f$.
+//  */
+// static inline void sSOT_1st_order_weakly_coupled_dipolar_tensor_components(
+//     void *restrict R_2, const double D_in_Hz, const double *Theta) {
+
+//   // contribution from the second-rank dipolar tensor.
+//   vm_double_zeros(10, (double *)R_2);
+//   double *R_2_ = (double *)R_2;
+//   R_2_[4] = 2*D_in_Hz;  // R2 0 real
+
+//   // wigner rotations
+//   if (Theta[0] == 0.0 && Theta[1] == 0.0 && Theta[2] == 0.0) {
+//     return;
+//   }
+//   single_wigner_rotation(2, Theta, R_2, R_2);
+// }

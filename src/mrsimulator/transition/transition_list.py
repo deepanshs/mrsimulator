@@ -29,9 +29,6 @@ class TransitionList(AbstractList):
     def append(self, item):
         super().append(self._check_for_transition_object(item))
 
-    # def Zeeman_allowed(self):
-    #     return TransitionList([item for item in self._list if item.Zeeman_allowed])
-
     def filter(self, P=None, PP=None, D=None):
         """
         Filter a list of transitions to satisfy the filtering criterion.
@@ -96,3 +93,11 @@ class TransitionPathway(TransitionList):
 
     def __repr__(self):
         return " ⟶ ".join([repr(item) for item in self._list])
+
+    def json(self):
+        """Serialize TransitionPathway to a JSON object"""
+        return [item.json() for item in self._list]
+
+    def tolist(self):
+        """Expand TransitionPathway to a Python list"""
+        return list(np.asarray([item.tolist() for item in self._list]).ravel())

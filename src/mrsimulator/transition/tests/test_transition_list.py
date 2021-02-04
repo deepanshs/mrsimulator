@@ -18,11 +18,12 @@ def test_transition_1():
     assert tran.json() == a
 
     assert tran.tolist() == [0.5, 1.5, -0.5, 1.5]
-    assert tran.json() == a
 
     # p and Δm
     assert tran.p == -1
     assert tran.delta_m == -1
+
+    assert str(tran) == "|-0.5, 1.5⟩⟨0.5, 1.5|"
 
 
 def test_transition_list_1():
@@ -95,10 +96,3 @@ def test_transition_list_1():
     # test for P and D
     tran_filter_1 = tran_list.filter(P=[3, 0], D=[0, 0])
     assert tran_filter_1 == TransitionList([c])
-
-
-# def test_transition_list_1():
-#     a = TransitionList()
-#     assert a == list()
-
-#     a.append({})

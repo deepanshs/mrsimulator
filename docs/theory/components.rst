@@ -86,7 +86,7 @@ cross-terms, ``mrsimulator`` further defines the product of the size of the
 :math:`L^\text{th}`-rank irreducible tensor components, :math:`\varrho_{L,n}^{(k)}`, in
 the principal axis system of the interaction tensor,
 :math:`\boldsymbol{\rho}^{(\lambda)}`, as the scaled spatial orientation
-tensor (sSOT) components,
+tensor (sSOT) component,
 
 .. math::
     :label: eq_5
@@ -94,8 +94,7 @@ tensor (sSOT) components,
     \varsigma_{L,n}^{(k)} = \omega_k \varrho_{L,n}^{(k)},
 
 of rank :math:`L`, also defined in the principal axis system of the interaction
-tensor, :math:`\boldsymbol{\rho}^{(\lambda)}`.
-Using Eqs. :eq:`eq_3` and :eq:`eq_5`, we re-express Eq. :eq:`eq_2` as
+tensor. Using Eqs. :eq:`eq_3` and :eq:`eq_5`, we re-express Eq. :eq:`eq_2` as
 
 .. math::
     :label: eq_6
@@ -103,16 +102,16 @@ Using Eqs. :eq:`eq_3` and :eq:`eq_5`, we re-express Eq. :eq:`eq_2` as
     \Omega_k(\Theta, i, j) =  \sum_{n_0=-L}^L D^L_{n_0,0}(\Theta_0)
                               \sum_{n_1=-L}^L D^L_{n_1,n_0}(\Theta_1) ~ ... ~
                               \sum_{n_i=-L}^L D^L_{n_i,n}(\Theta_i) ~~
-                              \varpi_{L, n}^{(k)}(i,j),
+                              \varpi_{L, n}^{(k)},
 
 where
 
 .. math::
     :label: eq_7
 
-    \varpi_{L, n}^{(k)}(i,j) = \varsigma_{L,n}^{(k)}~~\xi_L^{(k)}(i, j)
+    \varpi_{L, n}^{(k)} = \varsigma_{L,n}^{(k)}~~\xi_L^{(k)}(i, j)
 
-is the frequency tensor components (FT) of rank :math:`L`, defined in the principal
+is the frequency tensor component (FT) of rank :math:`L`, defined in the principal
 axis system of the interaction tensor and corresponds to the
 :math:`\left|i\right> \rightarrow \left|j\right>` spin transition.
 
@@ -169,7 +168,7 @@ Nuclear shielding interaction
 
 The nuclear shielding tensor, :math:`\boldsymbol{\rho}^{(\sigma)}`, is a second
 rank reducible tensor which can be decomposed into a sum of the zeroth-rank
-isotropic, first-rank anti-symmetric and second-rank traceless symmetric
+isotropic, first-rank anti-symmetric, and second-rank traceless symmetric
 irreducible spherical tensors.
 In the principal axis system, the zeroth-rank, :math:`\rho_{0,0}^{(\sigma)}`
 and the second-rank, :math:`\rho_{2,n}^{(\sigma)}`, irreducible tensors follow,
@@ -191,7 +190,7 @@ using Haeberlen notation.
 
 The size of the frequency component, :math:`\omega_k`, from the first-order
 perturbation expansion of Nuclear shielding Hamiltonian is
-:math:`\omega_0=-\gamma B_0`, where :math:`\omega_0` is the Larmor angular
+:math:`-\omega_0=\gamma B_0`, where :math:`\omega_0` is the Larmor angular
 frequency of the nucleus, and :math:`\gamma`, :math:`B_0` are the gyromagnetic
 ratio of the nucleus and the macroscopic magnetic flux density of the applied
 external magnetic field, respectively. The relation between
@@ -321,6 +320,70 @@ coefficient.
       :math:`\varsigma_{4,\pm4}^{(qq)} = \frac{\omega_q^2}{\omega_0} \frac{1}{36} \eta_q^2`
 
 
+Coupled nucleus scaled spatial orientation tensor components
+------------------------------------------------------------
+
+Weak :math:`J`-coupling interaction
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The :math:`J`-coupling tensor, :math:`\boldsymbol{\rho}^{(J)}`, is a second
+rank reducible tensor which can be decomposed into a sum of the zeroth-rank
+isotropic, first-rank anti-symmetric, and second-rank traceless symmetric
+irreducible spherical tensors.
+In the principal axis system, the zeroth-rank, :math:`\rho_{0,0}^{(J)}`
+and the second-rank, :math:`\rho_{2,n}^{(J)}`, irreducible tensors follow,
+
+.. math::
+    \begin{array}{c c c c}
+    \rho_{0,0}^{(J)} = -\sqrt{3} J_\text{iso}, &
+    \rho_{2,0}^{(J)} = \sqrt{\frac{3}{2}} \zeta_J, &
+    \rho_{2,\pm1}^{(J)} = 0, &
+    \rho_{2,\pm2}^{(J)} = - \frac{1}{2}\eta_J \zeta_J,
+    \end{array}
+
+where :math:`J_\text{iso}, \zeta_J`, and :math:`\eta_J` are the isotropic
+:math:`J`-coupling, coupling anisotropy and asymmetry parameters, respectively.
+The :math:`J` anisotropy and asymmetry are defined using Haeberlen notation.
+
+**First-order perturbation**
+
+The relation between :math:`\varrho_{L,n}^{(J)}` and :math:`\rho_{L,n}^{(J)}` follows,
+
+.. math::
+    \varrho_{0,0}^{(J)} &= -\frac{1}{\sqrt{3}} \rho_{0,0}^{(J)} \\
+    \varrho_{2,n}^{(J)} &=\sqrt{\frac{2}{3}} \rho_{2,n}^{(J)}
+
+.. cssclass:: table-bordered table-striped centered
+
+.. list-table:: A list of scaled spatial orientation tensors in the principal
+  axis system of the nuclear shielding tensor, |SOF|, from Eq. :eq:`eq_5` of
+  rank L resulting from the Mth order perturbation
+  expansion of the Nuclear shielding Hamiltonian is presented.
+  :widths: 25 25 50
+  :header-rows: 1
+
+  * - Order, :math:`M`
+    - Rank, :math:`L`
+    - :math:`\varsigma_{L,n}^{(k)} = \omega_k\varrho_{L,n}^{(k)}`
+
+  * - 1
+    - 0
+    - :math:`\varsigma_{0,0}^{(J)} = 2\pi J_\text{iso}`
+
+  * - 1
+    - 2
+    - :math:`\varsigma_{2,0}^{(J)} = 2\pi \zeta_J`,
+
+      :math:`\varsigma_{2,\pm1}^{(J)} = 0`,
+
+      :math:`\varsigma_{2,\pm2}^{(J)} = -\frac{1}{\sqrt{6}} 2\pi\eta_J \zeta_J`
+
+
+
+
+
+
+
 .. _spin_transition_theory:
 
 Spin transition functions, :math:`\xi_L^{(k)}(i,j)`
@@ -371,7 +434,8 @@ Single nucleus spin transition functions
 .. _irreducible_tensors:
 
 Here, :math:`\hat{T}_{L,k}(\bf{I})` are the irreducible spherical tensor
-operators of rank :math:`L`, and :math:`k \in [-L, L]`.
+operators of rank :math:`L`, :math:`k \in [-L, L]`, for transition
+:math:`|i\rangle \rightarrow |j\rangle`.
 In terms of the tensor product of the Cartesian operators, the above spherical
 tensors are expressed as follows,
 
@@ -414,57 +478,89 @@ where :math:`I` is the spin quantum number of the nucleus and
   * - :math:`\mathbb{c}_4(i,j)`
     - :math:`-\sqrt{\frac{18}{875}} \left[I(I+1) - \frac{3}{4}\right] \mathbb{p}(i, j) - \frac{17}{\sqrt{175}} \mathbb{f}(i, j)`
 
+
+Coupled nucleus spin transition functions
+-----------------------------------------
+
+.. cssclass:: table-bordered table-striped centered
+
+.. list-table:: A list of coupled nucleus spin transition functions,
+                :math:`\xi_L^{(k)}(m_{I_f}, m_{S_f}, m_{I_i}, m_{S_i})`.
+  :widths: 22 22 56
+  :header-rows: 1
+
+  * - :math:`\xi_L^{(k)}(m_{I_f}, m_{S_f}, m_{I_i}, m_{S_i})`
+    - Value
+    - Description
+
+  * - :math:`\mathbb{d}_{IS}(m_{I_f}, m_{S_f}, m_{I_i}, m_{S_i})`
+    - :math:`m_{I_f} m_{S_f} - m_{I_i} m_{S_i}`
+    - :math:`\left< m_{I_f} m_{S_f} | \hat{T}_{10}(I) \hat{T}_{10}(S) | m_{I_f} m_{S_f} \right>` – :math:`\left< m_{I_i} m_{S_i} | \hat{T}_{10}(I) \hat{T}_{10}(S) | m_{I_i} m_{S_i} \right>`
+
+Here, :math:`\hat{T}_{L,k}(\bf{I})` are the irreducible spherical tensor
+operators of rank :math:`L`, :math:`k \in [-L, L]`, for transition
+:math:`|m_{I_i} m_{S_i}\rangle \rightarrow |m_{I_f} m_{S_f}\rangle`
+in weakly coupled basis.
+
 .. _frequency_tensor_theory:
 
-Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}(i,j)`
-=========================================================================
-
-Single nucleus frequency tensor components
-------------------------------------------
+Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}`
+====================================================================
 
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: The table presents a list of frequency tensors defined in the principal
   axis system of the respective interaction tensor from Eq. :eq:`eq_7`,
-  :math:`\varpi_{L,n}^{(k)}(i,j)`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonians supported in ``mrsimulator``.
+  :math:`\varpi_{L,n}^{(k)}`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonians supported in ``mrsimulator``.
   :widths: 20 15 15 50
   :header-rows: 1
 
   * - Interaction
     - Order, :math:`M`
     - Rank, :math:`L`
-    - :math:`\varpi_{L,n}^{(k)}(i,j)`
+    - :math:`\varpi_{L,n}^{(k)}`
 
   * - Nuclear shielding
     - 1
     - 0
-    - :math:`\varpi_{0,0}^{(\sigma)}(i,j) = \varsigma_{0,0}^{(\sigma)} ~~ \mathbb{p}(i, j)`
+    - :math:`\varpi_{0,0}^{(\sigma)} = \varsigma_{0,0}^{(\sigma)} ~~ \mathbb{p}(i, j)`
 
   * - Nuclear shielding
     - 1
     - 2
-    - :math:`\varpi_{2,n}^{(\sigma)}(i,j) = \varsigma_{2,n}^{(\sigma)} ~~ \mathbb{p}(i, j)`
+    - :math:`\varpi_{2,n}^{(\sigma)} = \varsigma_{2,n}^{(\sigma)} ~~ \mathbb{p}(i, j)`
 
   * - Electric Quadrupole
     - 1
     - 2
-    - :math:`\varpi_{2,n}^{(q)}(i,j) = \varsigma_{2,n}^{(q)} ~~ \mathbb{d}(i, j)`
+    - :math:`\varpi_{2,n}^{(q)} = \varsigma_{2,n}^{(q)} ~~ \mathbb{d}(i, j)`
 
   * - Electric Quadrupole
     - 2
     - 0
-    - :math:`\varpi_{0,0}^{(qq)}(i,j) = \varsigma_{0,0}^{(qq)} ~~ \mathbb{c}_0(i, j)`
+    - :math:`\varpi_{0,0}^{(qq)} = \varsigma_{0,0}^{(qq)} ~~ \mathbb{c}_0(i, j)`
 
   * - Electric Quadrupole
     - 2
     - 2
-    - :math:`\varpi_{2,n}^{(qq)}(i,j) = \varsigma_{2,n}^{(qq)} ~~ \mathbb{c}_2(i, j)`
+    - :math:`\varpi_{2,n}^{(qq)} = \varsigma_{2,n}^{(qq)} ~~ \mathbb{c}_2(i, j)`
 
   * - Electric Quadrupole
     - 2
     - 4
-    - :math:`\varpi_{4,n}^{(qq)}(i,j) = \varsigma_{4,n}^{(qq)} ~~ \mathbb{c}_4(i, j)`
+    - :math:`\varpi_{4,n}^{(qq)} = \varsigma_{4,n}^{(qq)} ~~ \mathbb{c}_4(i, j)`
 
+  * - Weak :math:`J`-coupling
+    - 1
+    - 0
+    - :math:`\varpi_{0,0}^{(J)} = \varsigma_{0,0}^{(J)} ~~ \mathbb{d}_{IS}(m_{I_f}, m_{S_f}, m_{I_i}, m_{S_i})`
+
+  * - Weak :math:`J`-coupling
+    - 1
+    - 2
+    - :math:`\varpi_{2,n}^{(J)} = \varsigma_{2,n}^{(J)} ~~ \mathbb{d}_{IS}(m_{I_f}, m_{S_f}, m_{I_i}, m_{S_i})`
+
+**References**
 
 .. [#f1] Grandinetti, P. J., Ash, J. T., Trease, N. M. Symmetry pathways in solid-state
     NMR, PNMRS 2011 **59**, *2*, 121-196.
