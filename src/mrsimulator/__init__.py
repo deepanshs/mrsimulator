@@ -15,6 +15,13 @@ minimization, using a collection of pre-defined NMR methods.
 See https://mrsimulator.readthedocs.io/en/stable/ for complete documentation.
 """
 # version has to be specified at the start.
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+__copyright__ = "Copyright 2019-2021, The mrsimulator Project."
+__credits__ = ["Deepansh J. Srivastava"]
+__license__ = "BSD License"
+__maintainer__ = "Deepansh J. Srivastava"
+__status__ = "Beta"
 __version__ = "0.6.0.dev0"
 
 from .spin_system import Site  # lgtm [py/import-own-module]

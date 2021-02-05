@@ -187,8 +187,7 @@ copybutton_prompt_is_regexp = True
 # ---------------------------------------------------------------------------- #
 #                               Doxygen C docs config                          #
 # ---------------------------------------------------------------------------- #
-# subprocess.call('make clean', shell=True)
-subprocess.call("doxygen", shell=True)
+subprocess.run("doxygen", shell=False)
 doxy_output = os.path.abspath("./xml")
 
 # Setup the breathe extension
