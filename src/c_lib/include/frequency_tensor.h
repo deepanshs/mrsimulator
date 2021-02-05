@@ -188,7 +188,7 @@ static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
 }
 
 // =================================================================================
-//    First order J-coupling frequency tensor components (weakly coupling limit)
+//    First-order J-coupling frequency tensor components (weakly coupling limit)
 // =================================================================================
 
 /**
@@ -255,25 +255,54 @@ static inline void FCF_1st_order_weak_J_coupling_tensor_components(
   cblas_dscal(10, transition_fn, (double *)Lambda_2, 1);
 }
 
-/*
-===============================================================================
-        First order Weakly coupled Magnetic Dipole frequency in the PAS.
--------------------------------------------------------------------------------
-The frequency includes the product of second rank tensor and the
-spin transition functions in the weak coupling limit.
-*/
-static inline void weakly_coupled_direct_dipole_frequencies_to_first_order(
-    double *restrict Lambda_0, void *restrict Lambda_2, const double D,
+// =================================================================================
+//         First-order Weakly coupled Magnetic Dipole frequency in the PAS.
+// =================================================================================
+
+/**
+ * The frequency tensor (FT) components from the first-order perturbation
+ * expansion of the direct dipolar coupling Hamiltonian (weak coupling limit),
+ * in a given frame, @f$\mathcal{F}@f$, described by the Euler angles @f$\Theta
+ * = [\alpha, \beta, \gamma]@f$ are
+ * @f[
+ *    {\Lambda'}_{2,n}^{(d)} = \mathcal{R'}_{2,n}^{(d)}(\Theta)
+ *                     ~~  \mathbb{d}_{IS}(m_{i_I}, m_{i_S}, m_{f_I}, m_{f_S}),
+ * @f]
+ * where @f$\mathcal{R'}_{2,n}^{(d)}(\Theta)@f$ are the spatial orientation
+ * functions in frame @f$\mathcal{F}@f$, and @f$\mathbb{d}_{IS}(m_{i_I},
+ * m_{i_S}, m_{f_I}, m_{f_S})@f$ is the spin transition function for
+ * @f$\left|m_{i_I}, m_{i_S}\right> \rightarrow \left|m_{f_I}, m_{f_S}\right>@f$
+ * transition.
+ *
+ * @param Lambda_2 A pointer to a complex array of length 5, where the frequency
+ *      components from @f${\Lambda'}_{2,n}^{(d)}@f$ is stored ordered as
+ *      @f$\left[{\Lambda'}_{2,n}^{(d)}\right]_{n=-2}^2@f$.
+ * @param D The dipolar coupling, @f$D@f$, in Hz.
+ * @param Theta A pointer to an array of Euler angles of length 3 ordered as
+ *      @f$[\alpha, \beta, \gamma]@f$.
+ * @param mIf The spin quantum number of the final energy state of site @f$I@f$.
+ * @param mIi The spin quantum number of the initial energy state of site
+ *      @f$I@f$.
+ * @param mSf The spin quantum number of the final energy state of site @f$S@f$.
+ * @param mSi The spin quantum number of the initial energy state of site
+ *      @f$S@f$.
+ */
+static inline void FCF_1st_order_weak_dipolar_coupling_tensor_components(
+    void *restrict Lambda_2, const double D_in_Hz, const double *Theta,
     const float mIf, const float mIi, const float mSf, const float mSi) {
-  // Spin transition contribution
+  // Spin transition function
   double transition_fn = STF_dIS(mIf, mIi, mSf, mSi);
 
-  // Scaled R00
-  *Lambda_0 += 0.0;
+  // Return if the transition is zero
+  if (transition_fn == 0.0) {
+    // zero the R0 and R2 components before populating with shielding components
+    vm_double_zeros(10, (double *)Lambda_2);
+    return;
+  }
 
-  /* Scaled R2m containing the components of the magnetic dipole second rank
-  tensor in its principal axis frame. */
-  vm_double_zeros(10, (double *)Lambda_2);
-  double *Lambda_2_ = (double *)Lambda_2;
-  Lambda_2_[4] = 2.0 * D * transition_fn;  // Lambda_2 0 real
+  // Spatial orientation function
+  sSOT_1st_order_weakly_coupled_dipolar_tensor_components(Lambda_2, D_in_Hz,
+                                                          Theta);
+  // frequency component function from the second-rank irreducible tensor.
+  cblas_dscal(10, transition_fn, (double *)Lambda_2, 1);
 }

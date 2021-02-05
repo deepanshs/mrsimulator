@@ -37,3 +37,9 @@ First-order J-coupling (weak coupling limit)
 """"""""""""""""""""""""""""""""""""""""""""
 
 .. doxygenfunction:: sSOT_1st_order_weakly_coupled_J_tensor_components()
+
+
+First-order dipolar-coupling (weak coupling limit)
+""""""""""""""""""""""""""""""""""""""""""""""""""
+
+.. doxygenfunction:: sSOT_1st_order_weakly_coupled_dipolar_tensor_components()

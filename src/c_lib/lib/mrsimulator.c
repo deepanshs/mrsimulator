@@ -634,15 +634,12 @@ void __MRS_rotate_coupled_site_interaction_components(
     site_index_i = couplings->site_index[j++];
     site_index_j = couplings->site_index[j];
 
-    // printf("site_index_i %d\n", site_index_i);
-    // printf("site_index_j %d\n", site_index_j);
     mIi = transition[site_index_i];
     mSi = transition[site_index_j];
     mIf = transition[site_index_i + n_sites];
     mSf = transition[site_index_j + n_sites];
 
-    // printf("mIi=%f, mSi=%f, mIf=%f, mSf=%f", mIi, mSi, mIf, mSf);
-
+    // Weakly coupled J-couplings
     FCF_1st_order_weak_J_coupling_tensor_components(
         R0_temp, R2_temp, couplings->isotropic_j_in_Hz[i],
         couplings->j_symmetric_zeta_in_Hz[i], couplings->j_symmetric_eta[i],
@@ -650,21 +647,14 @@ void __MRS_rotate_coupled_site_interaction_components(
 
     *R0 += *R0_temp;
     vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+
+    // Weakly coupled dipolar-couplings
+    FCF_1st_order_weak_dipolar_coupling_tensor_components(
+        R2_temp, couplings->dipolar_zeta_in_Hz[i],
+        &couplings->dipolar_orientation[3 * i], mIf, mIi, mSf, mSi);
+
+    vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
   }
-
-  // if (n_sites > 1) {
-  //   /* Weakly coupled direct-dipole components ===========================
-  //   */
-  //   /*      Upto the first order (to do..-> add orientation dependence) */
-  //   weakly_coupled_direct_dipole_frequencies_to_first_order(
-  //       R0, R2_temp, sites->dipolar_couplings[site], *mf, *mi,
-  //       0.5, 0.5);
-
-  //   // in-place update the R2 components.
-  //   vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-  //   /* ===================================================================
-  //   */
-  // }
 }
 
 /**

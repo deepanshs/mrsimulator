@@ -436,33 +436,27 @@ static inline void sSOT_1st_order_weakly_coupled_J_tensor_components(
  *      \end{aligned}
  *     \right\} \text{Rank-2},
  * @f]
- * where @f$D@f$ is the dipolar-coupling, and @f$\zeta_J@f$, @f$\eta_J@f$ are
- * the @f$J@f$-coupling tensor anisotropy and asymmetry parameters from the
- * symmetric second-rank irreducible @f$J@f$ tensor, defined using Haeberlen
- * convention.
+ * where @f$D@f$ is the dipolar-coupling.
  *
  * For non-zero Euler angles, @f$\Theta = [\alpha, \beta, \gamma]@f$, Wigner
- * rotation of @f$\varsigma_{2,n}^{(J)}@f$ is applied following,
+ * rotation of @f$\varsigma_{2,n}^{(d)}@f$ is applied following,
  * @f[
- *    \mathcal{R'}_{2,n}^{(J)}(\Theta) = \sum_{m = -2}^2 D^2_{m, n}(\Theta)
- *                                \varsigma_{2,n}^{(J)},
+ *    \mathcal{R'}_{2,n}^{(d)}(\Theta) = \sum_{m = -2}^2 D^2_{m, n}(\Theta)
+ *                                \varsigma_{2,n}^{(d)},
  * @f]
- * where @f$\mathcal{R'}_{2,n}^{(J)}(\Theta)@f$ are the tensor components in the
+ * where @f$\mathcal{R'}_{2,n}^{(d)}(\Theta)@f$ are the tensor components in the
  * frame defined by the Euler angles, @f$\Theta@f$.
  *
  * @note
  *  - When @f$\Theta = [0,0,0]@f$,
- *    @f$\mathcal{R'}_{2,n}^{(d)}(\Theta) = \varsigma_{2,n}^{(J)}@f$ where
+ *    @f$\mathcal{R'}_{2,n}^{(d)}(\Theta) = \varsigma_{2,n}^{(d)}@f$ where
  *    @f$ n \in [-2,2]@f$.
- *  - @f$\mathcal{R'}_{0,0}^{(J)}(\Theta) = \varsigma_{0,0}^{(J)} ~~~
- *    \forall ~ \Theta@f$.
- *  - The method returns @f$\mathcal{R'}_{0,0}^{(J)}(\Theta)/2\pi@f$ and
- *    @f$\mathcal{R'}_{2,n}^{(J)}(\Theta)/2\pi@f$, that is, in **units of
- *    frequency**.
+ *  - The method returns @f$\mathcal{R'}_{2,n}^{(d)}(\Theta)/2\pi@f$, that is,
+ *    in **units of frequency**.
  *
  * @param R_2 A pointer to a complex array of length 5, where the second-rank
- *      irreducible tensor, @f$\mathcal{R'}_{2,n}^{(d)}(\Theta)/2\pi@f$,
- *      is stored ordered as
+ *      irreducible tensor, @f$\mathcal{R'}_{2,n}^{(d)}(\Theta)/2\pi@f$, is
+ *      stored ordered as
  *      @f$\left[\mathcal{R'}_{2,n}^{(d)}(\Theta)/2\pi\right]_{n=-2}^2@f$.
  *
  * @param D_in_Hz The dipolar coupling, @f$D@f$, in Hz.
@@ -470,17 +464,17 @@ static inline void sSOT_1st_order_weakly_coupled_J_tensor_components(
  * @param Theta A pointer to an array of Euler angles, in radians, of length 3,
  *      ordered as @f$[\alpha, \beta, \gamma]@f$.
  */
-// static inline void sSOT_1st_order_weakly_coupled_dipolar_tensor_components(
-//     void *restrict R_2, const double D_in_Hz, const double *Theta) {
+static inline void sSOT_1st_order_weakly_coupled_dipolar_tensor_components(
+    void *restrict R_2, const double D_in_Hz, const double *Theta) {
+  // contribution from the second-rank dipolar tensor.
+  vm_double_zeros(10, (double *)R_2);
+  double *R_2_ = (double *)R_2;
 
-//   // contribution from the second-rank dipolar tensor.
-//   vm_double_zeros(10, (double *)R_2);
-//   double *R_2_ = (double *)R_2;
-//   R_2_[4] = 2*D_in_Hz;  // R2 0 real
+  R_2_[4] = 2 * D_in_Hz;  // R2 0 real
 
-//   // wigner rotations
-//   if (Theta[0] == 0.0 && Theta[1] == 0.0 && Theta[2] == 0.0) {
-//     return;
-//   }
-//   single_wigner_rotation(2, Theta, R_2, R_2);
-// }
+  // wigner rotations
+  if (Theta[0] == 0.0 && Theta[1] == 0.0 && Theta[2] == 0.0) {
+    return;
+  }
+  single_wigner_rotation(2, Theta, R_2, R_2);
+}
