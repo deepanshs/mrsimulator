@@ -32,6 +32,9 @@ mpl.rcParams["grid.linestyle"] = "--"
 filename = "https://sandbox.zenodo.org/record/687656/files/1H13C_CPPASS_LHistidine.csdf"
 mat_data = cp.load(filename)
 
+# standard deviation of noise from the dataset
+sigma = 0.002204629
+
 # For the spectral fitting, we only focus on the real part of the complex dataset.
 mat_data = mat_data.real
 
@@ -39,7 +42,9 @@ mat_data = mat_data.real
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in mat_data.dimensions]
 
 # Normalize the spectrum
-mat_data /= mat_data.max()
+max_amp = mat_data.max()
+mat_data /= max_amp
+sigma /= max_amp
 
 # %%
 # When using the SSB2D method, ensure the horizontal dimension of the dataset is the
@@ -138,7 +143,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor))
+minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
 report_fit(result)
 

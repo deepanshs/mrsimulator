@@ -297,7 +297,7 @@ def make_LMFIT_params(sim, post_sim=None, exclude_key=None):
     return params
 
 
-def LMFIT_min_function(params, sim, post_sim=None):
+def LMFIT_min_function(params, sim, post_sim=None, sigma=1):
     """
     The simulation routine to calculate the vector difference between simulation and
     experiment based on the parameters update.
@@ -341,7 +341,8 @@ def LMFIT_min_function(params, sim, post_sim=None):
     else:
         datum = processed_data.y[0].components[0].real
 
-    return sim.methods[0].experiment.y[0].components[0] - datum
+    diff = sim.methods[0].experiment.y[0].components[0] - datum
+    return diff / sigma
 
     # MULTIPLE EXPERIMENTS
     # for i, method in enumerate(sim.methods):
