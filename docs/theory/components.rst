@@ -479,27 +479,27 @@ where :math:`I` is the spin quantum number of the nucleus and
     - :math:`-\sqrt{\frac{18}{875}} \left[I(I+1) - \frac{3}{4}\right] \mathbb{p}(i, j) - \frac{17}{\sqrt{175}} \mathbb{f}(i, j)`
 
 
-Coupled nucleus spin transition functions
------------------------------------------
+Weakly coupled nucleus spin transition functions
+------------------------------------------------
 
 .. cssclass:: table-bordered table-striped centered
 
-.. list-table:: A list of coupled nucleus spin transition functions,
-                :math:`\xi_L^{(k)}(m_{I_f}, m_{S_f}, m_{I_i}, m_{S_i})`.
+.. list-table:: A list of weakly coupled nucleus spin transition functions,
+                :math:`\xi_L^{(k)}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`.
   :widths: 22 22 56
   :header-rows: 1
 
-  * - :math:`\xi_L^{(k)}(m_{I_f}, m_{S_f}, m_{I_i}, m_{S_i})`
+  * - :math:`\xi_L^{(k)}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
     - Value
     - Description
 
-  * - :math:`\mathbb{d}_{IS}(m_{I_f}, m_{S_f}, m_{I_i}, m_{S_i})`
-    - :math:`m_{I_f} m_{S_f} - m_{I_i} m_{S_i}`
-    - :math:`\left< m_{I_f} m_{S_f} | \hat{T}_{10}(I) \hat{T}_{10}(S) | m_{I_f} m_{S_f} \right>` – :math:`\left< m_{I_i} m_{S_i} | \hat{T}_{10}(I) \hat{T}_{10}(S) | m_{I_i} m_{S_i} \right>`
+  * - :math:`\mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
+    - :math:`m_{f_I} m_{f_S} - m_{i_I} m_{i_S}`
+    - :math:`\left< m_{f_I} m_{f_S} | \hat{T}_{10}(I) \hat{T}_{10}(S) | m_{f_I} m_{f_S} \right>` – :math:`\left< m_{i_I} m_{i_S} | \hat{T}_{10}(I) \hat{T}_{10}(S) | m_{i_I} m_{i_S} \right>`
 
 Here, :math:`\hat{T}_{L,k}(\bf{I})` are the irreducible spherical tensor
 operators of rank :math:`L`, :math:`k \in [-L, L]`, for transition
-:math:`|m_{I_i} m_{S_i}\rangle \rightarrow |m_{I_f} m_{S_f}\rangle`
+:math:`|m_{i_I} m_{i_S}\rangle \rightarrow |m_{f_I} m_{f_S}\rangle`
 in weakly coupled basis.
 
 .. _frequency_tensor_theory:
@@ -553,12 +553,12 @@ Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}`
   * - Weak :math:`J`-coupling
     - 1
     - 0
-    - :math:`\varpi_{0,0}^{(J)} = \varsigma_{0,0}^{(J)} ~~ \mathbb{d}_{IS}(m_{I_f}, m_{S_f}, m_{I_i}, m_{S_i})`
+    - :math:`\varpi_{0,0}^{(J)} = \varsigma_{0,0}^{(J)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
 
   * - Weak :math:`J`-coupling
     - 1
     - 2
-    - :math:`\varpi_{2,n}^{(J)} = \varsigma_{2,n}^{(J)} ~~ \mathbb{d}_{IS}(m_{I_f}, m_{S_f}, m_{I_i}, m_{S_i})`
+    - :math:`\varpi_{2,n}^{(J)} = \varsigma_{2,n}^{(J)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
 
 **References**
 

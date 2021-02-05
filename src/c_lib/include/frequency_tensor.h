@@ -11,7 +11,7 @@
 #include "frequency_component/spin_transition_function.h"
 
 // =================================================================================
-//             First order nuclear shielding frequency tensor components
+//             First-order nuclear shielding frequency tensor components
 // =================================================================================
 
 /**
@@ -20,11 +20,9 @@
  * @f$\mathcal{F}@f$, described by the Euler angles @f$\Theta = [\alpha, \beta,
  * \gamma]@f$ are
  * @f[
- *    {\Lambda'}_{0,0}^{(\sigma)}(\Theta, i,j) &=
- *                                    \mathcal{R'}_{0,0}^{(\sigma)}(\Theta)
+ *    {\Lambda'}_{0,0}^{(\sigma)} &= \mathcal{R'}_{0,0}^{(\sigma)}(\Theta)
  *                                    ~~  \mathbb{p}(i, j),~\text{and} \\
- *    {\Lambda'}_{2,n}^{(\sigma)}(\Theta, i,j) &=
- *                                    \mathcal{R'}_{2,n}^{(\sigma)}(\Theta)
+ *    {\Lambda'}_{2,n}^{(\sigma)} &= \mathcal{R'}_{2,n}^{(\sigma)}(\Theta)
  *                                    ~~  \mathbb{p}(i, j),
  * @f]
  * where @f$\mathcal{R'}_{0,0}^{(\sigma)}(\Theta)@f$ and
@@ -34,26 +32,20 @@
  * @f$\left|i\right> \rightarrow \left|j\right>@f$ transition.
  *
  * @param Lambda_0 A pointer to an array of length 1, where the frequency
- *      component from @f${\Lambda'}_{0,0}^{(\sigma)}(\Theta, i,j)@f$ is
- *      stored.
+ *      component from @f${\Lambda'}_{0,0}^{(\sigma)}@f$ is stored.
  * @param Lambda_2 A pointer to a complex array of length 5, where the frequency
- *      components from @f${\Lambda'}_{2,n}^{(\sigma)}(\Theta, i,j)@f$ is stored
- *      ordered as
- *      @f$\left[{\Lambda'}_{2,n}^{(\sigma)}(\Theta, i,j)\right]_{n=-2}^2@f$.
- * @param omega_0_delta_iso_in_Hz The quantity
- *      @f$\omega_0\delta_\text{iso}/2\pi@f$, in Hz, as the isotropic chemical
- *      shift.
- * @param omega_0_zeta_sigma_in_Hz The quantity @f$\omega_0\zeta_\sigma/2\pi@f$,
- *      in Hz, as the strength of the nuclear shielding anisotropy, defined
+ *      components from @f${\Lambda'}_{2,n}^{(\sigma)}@f$ is stored ordered as
+ *      @f$\left[{\Lambda'}_{2,n}^{(\sigma)}\right]_{n=-2}^2@f$.
+ * @param omega_0_delta_iso_in_Hz The isotropic chemical shift in Hz
+ *      (@f$\omega_0\delta_\text{iso}/2\pi@f$).
+ * @param omega_0_zeta_sigma_in_Hz The shielding anisotropy quantity in Hz
+ *      (@f$\omega_0\zeta_\sigma/2\pi@f$) defined using Haeberlen convention.
+ * @param eta The shielding asymmetry, @f$\eta_\sigma \in [-1,1]@f$, defined
  *      using Haeberlen convention.
- * @param eta The nuclear shielding asymmetry parameter,
- *      @f$\eta_\sigma \in [-1,1]@f$, defined using Haeberlen convention.
  * @param Theta A pointer to an array of Euler angles, in radians, of length 3,
  *      ordered as @f$[\alpha, \beta, \gamma]@f$.
- * @param mf A float containing the spin quantum number of the final energy
- *      state.
- * @param mi A float containing the spin quantum number of the initial energy
- *      state.
+ * @param mf The spin quantum number of the final energy state.
+ * @param mi The spin quantum number of the initial energy state.
  */
 static inline void FCF_1st_order_nuclear_shielding_tensor_components(
     double *restrict Lambda_0, void *restrict Lambda_2,
@@ -83,7 +75,7 @@ static inline void FCF_1st_order_nuclear_shielding_tensor_components(
 }
 
 // =================================================================================
-//           First order electric quadrupolar frequency tensor components
+//           First-order electric quadrupolar frequency tensor components
 // =================================================================================
 
 /**
@@ -92,8 +84,8 @@ static inline void FCF_1st_order_nuclear_shielding_tensor_components(
  * @f$\mathcal{F}@f$, described by the Euler angles @f$\Theta = [\alpha, \beta,
  * \gamma]@f$ are
  * @f[
- *    {\Lambda'}_{2,n}^{(q)}(\Theta,i,j) =
- *                \mathcal{R'}_{2,n}^{(q)}(\Theta) ~~ \mathbb{d}(i, j),
+ *    {\Lambda'}_{2,n}^{(q)} = \mathcal{R'}_{2,n}^{(q)}(\Theta)
+ *                             ~~ \mathbb{d}(i, j),
  * @f]
  * where @f$\mathcal{R}_{2,n}^{(q)}(\Theta)@f$ are the spatial orientation
  * functions in frame @f$\mathcal{F}@f$, and @f$\mathbb{d}(i, j)@f$ is the
@@ -101,18 +93,15 @@ static inline void FCF_1st_order_nuclear_shielding_tensor_components(
  * transition.
  *
  * @param Lambda_2 A pointer to a complex array of length 5, where the frequency
- *      components from @f${\Lambda'}_{2,n}^{(q)}(\Theta,i,j)@f$ is stored
- *      ordered as
- *      @f$\left[{\Lambda'}_{2,n}^{(q)}(\Theta,i,j)\right]_{n=-2}^2@f$.
+ *      components from @f${\Lambda'}_{2,n}^{(q)}@f$ is stored ordered as
+ *      @f$\left[{\Lambda'}_{2,n}^{(q)}\right]_{n=-2}^2@f$.
  * @param spin The spin quantum number, @f$I@f$.
  * @param Cq_in_Hz The quadrupole coupling constant, @f$C_q@f$, in Hz.
  * @param eta The quadrupole asymmetry parameter, @f$\eta_q \in [0, 1]@f$.
  * @param Theta A pointer to an array of Euler angles, in radians, of length 3,
  *      ordered as @f$[\alpha, \beta, \gamma]@f$.
- * @param mf A float containing the spin quantum number of the final energy
- *      state.
- * @param mi A float containing the spin quantum number of the initial energy
- *      state.
+ * @param mf The spin quantum number of the final energy state.
+ * @param mi The spin quantum number of the initial energy state.
  */
 static inline void FCF_1st_order_electric_quadrupole_tensor_components(
     void *restrict Lambda_2, const double spin, const double Cq_in_Hz,
@@ -136,7 +125,7 @@ static inline void FCF_1st_order_electric_quadrupole_tensor_components(
 }
 
 // =================================================================================
-//           Second order electric quadrupolar frequency tensor components
+//           Second-order electric quadrupolar frequency tensor components
 // =================================================================================
 
 /**
@@ -145,40 +134,36 @@ static inline void FCF_1st_order_electric_quadrupole_tensor_components(
  * @f$\mathcal{F}@f$, described by the Euler angles @f$\Theta = [\alpha, \beta,
  * \gamma]@f$, are
  * @f[
- *    {\Lambda'}_{0,0}^{(qq)}(\Theta, i,j) &= \mathcal{R'}_{0,0}^{(qq)}(\Theta)
+ *    {\Lambda'}_{0,0}^{(qq)} &= \mathcal{R'}_{0,0}^{(qq)}(\Theta)
  *                                      ~~ \mathbb{c}_0(i, j), \\
- *    {\Lambda'}_{2,n}^{(qq)}(\Theta, i,j) &= \mathcal{R'}_{2,n}^{(qq)}(\Theta)
+ *    {\Lambda'}_{2,n}^{(qq)} &= \mathcal{R'}_{2,n}^{(qq)}(\Theta)
  *                                      ~~ \mathbb{c}_2(i, j),~\text{and} \\
- *    {\Lambda'}_{4,n}^{(qq)}(\Theta, i,j) &= \mathcal{R'}_{4,n}^{(qq)}(\Theta)
+ *    {\Lambda'}_{4,n}^{(qq)} &= \mathcal{R'}_{4,n}^{(qq)}(\Theta)
  *                                      ~~ \mathbb{c}_4(i, j),
  * @f]
  * where @f$\mathcal{R'}_{0,0}^{(qq)}(\Theta)@f$,
  * @f$\mathcal{R'}_{2,n}^{(qq)}(\Theta)@f$, and,
  * @f$\mathcal{R'}_{4,n}^{(qq)}(\Theta)@f$ are the spatial orientation
- * functions in frame @f$\mathcal{F}@f$, and @f$\mathbb{c}_i(i, j)@f$ are the
+ * functions in frame @f$\mathcal{F}@f$, and @f$\mathbb{c}_k(i, j)@f$ are the
  * composite spin transition functions for
  * @f$\left|i\right> \rightarrow \left|j\right>@f$ transition.
  *
  * @param Lambda_0 A pointer to an array of length 1, where the frequency
- *      component from @f${\Lambda'}_{0,0}^{(qq)}(\Theta, i,j)@f$ is stored.
+ *      component from @f${\Lambda'}_{0,0}^{(qq)}@f$ is stored.
  * @param Lambda_2 A pointer to a complex array of length 5, where the frequency
- *      components from @f$\Lambda_{2,n}^{(qq)}(\Theta, i,j)@f$ are stored
- *      ordered as
- *      @f$\left[{\Lambda'}_{2,n}^{(qq)}(\Theta, i,j)\right]_{n=-2}^2@f$.
+ *      components from @f$\Lambda_{2,n}^{(qq)}@f$ are stored ordered as
+ *      @f$\left[{\Lambda'}_{2,n}^{(qq)}\right]_{n=-2}^2@f$.
  * @param Lambda_4 A pointer to a complex array of length 9, where the frequency
- *      components from @f${\Lambda'}_{4,n}^{(qq)}(\Theta, i,j)@f$ are stored
- *      ordered as
- *      @f$\left[{\Lambda'}_{4,n}^{(qq)}(\Theta, i,j)\right]_{n=-4}^4@f$.
+ *      components from @f${\Lambda'}_{4,n}^{(qq)}@f$ are stored ordered as
+ *      @f$\left[{\Lambda'}_{4,n}^{(qq)}\right]_{n=-4}^4@f$.
  * @param spin The spin quantum number, @f$I@f$.
  * @param Cq_in_Hz The quadrupole coupling constant, @f$C_q@f$, in Hz.
  * @param eta The quadrupole asymmetry parameter, @f$\eta_q \in [0, 1]@f$.
  * @param v0_in_Hz The Larmor frequency, @f$\nu_0@f$, in Hz.
  * @param Theta A pointer to an array of Euler angles, in radians, of length 3,
  *      ordered as @f$[\alpha, \beta, \gamma]@f$.
- * @param mf A float containing the spin quantum number of the final energy
- *      state.
- * @param mi A float containing the spin quantum number of the initial energy
- *      state.
+ * @param mf The spin quantum number of the final energy state.
+ * @param mi The spin quantum number of the initial energy state.
  */
 static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
     double *restrict Lambda_0, void *restrict Lambda_2, void *restrict Lambda_4,
@@ -212,40 +197,36 @@ static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
  * frame, @f$\mathcal{F}@f$, described by the Euler angles @f$\Theta = [\alpha,
  * \beta, \gamma]@f$ are
  * @f[
- *    {\Lambda'}_{0,0}^{(J)}(\Theta, i,j) &= \mathcal{R'}_{0,0}^{(J)}(\Theta)
+ *    {\Lambda'}_{0,0}^{(J)} &= \mathcal{R'}_{0,0}^{(J)}(\Theta)
  *                     ~~  \mathbb{d}_{IS}(m_{i_I}, m_{i_S}, m_{f_I}, m_{f_S}),
  *                     ~\text{and} \\
- *    {\Lambda'}_{2,n}^{(J)}(\Theta, i,j) &=
- *                                    \mathcal{R'}_{2,n}^{(J)}(\Theta)
+ *    {\Lambda'}_{2,n}^{(J)} &= \mathcal{R'}_{2,n}^{(J)}(\Theta)
  *                     ~~  \mathbb{d}_{IS}(m_{i_I}, m_{i_S}, m_{f_I}, m_{f_S}),
  * @f]
  * where @f$\mathcal{R'}_{0,0}^{(J)}(\Theta)@f$ and
  * @f$\mathcal{R'}_{2,n}^{(J)}(\Theta)@f$ are the spatial orientation functions
- * in frame @f$\mathcal{F}@f$, and
- * @f$\mathbb{d}_{IS}(m_{i_I}, m_{i_S}, m_{f_I}, m_{f_S})@f$
- * is the spin transition function for
- * @f$\left|m_{i,I}, m_{i_S}\right> \rightarrow \left|m_{f,I}, m_{f_S}\right>@f$
- * transition.
+ * in frame @f$\mathcal{F}@f$, and @f$\mathbb{d}_{IS}(m_{i_I}, m_{i_S}, m_{f_I},
+ * m_{f_S})@f$ is the spin transition function for @f$\left|m_{i_I},
+ * m_{i_S}\right> \rightarrow \left|m_{f_I}, m_{f_S}\right>@f$ transition.
  *
  * @param Lambda_0 A pointer to an array of length 1, where the frequency
- *      component from @f${\Lambda'}_{0,0}^{(J)}(\Theta, i,j)@f$ is stored.
+ *      component from @f${\Lambda'}_{0,0}^{(J)}@f$ is stored.
  * @param Lambda_2 A pointer to a complex array of length 5, where the frequency
- *      components from @f${\Lambda'}_{2,n}^{(J)}(\Theta, i,j)@f$ is stored
- *      ordered as
- *      @f$\left[{\Lambda'}_{2,n}^{(J)}(\Theta, i,j)\right]_{n=-2}^2@f$.
- * @param omega_0_delta_iso_in_Hz The quantity,
- *      @f$2\pi\omega_0\delta_\text{iso}@f$, given in Hz.
- * @param omega_0_zeta_sigma_in_Hz The quantity, @f$2\pi\omega_0\zeta_sigma@f$,
- *      representing the strength of the nuclear shielding anisotropy, given in
- *      Hz, defined using Haeberlen convention.
- * @param eta The nuclear shielding asymmetry parameter,
- *      @f$\eta_\sigma \in [-1,1]@f$, defined using Haeberlen convention.
+ *      components from @f${\Lambda'}_{2,n}^{(J)}@f$ is stored ordered as
+ *      @f$\left[{\Lambda'}_{2,n}^{(J)}\right]_{n=-2}^2@f$.
+ * @param J_iso_in_Hz The isotropic J-coupling, @f$J_\text{iso}@f$, in Hz.
+ * @param J_aniso_in_Hz The J-coupling anisotropy, @f$\zeta_J@f$, in Hz and
+ *      defined using Haeberlen convention.
+ * @param J_eta The J-coupling anisotropy asymmetry parameter, @f$\eta_J \in
+ *      [-1,1]@f$, defined using Haeberlen convention.
  * @param Theta A pointer to an array of Euler angles of length 3 ordered as
  *      @f$[\alpha, \beta, \gamma]@f$.
- * @param mf A float containing the spin quantum number of the final energy
- *      state.
- * @param mi A float containing the spin quantum number of the initial energy
- *      state.
+ * @param mIf The spin quantum number of the final energy state of site @f$I@f$.
+ * @param mIi The spin quantum number of the initial energy state of site
+ *      @f$I@f$.
+ * @param mSf The spin quantum number of the final energy state of site @f$S@f$.
+ * @param mSi The spin quantum number of the initial energy state of site
+ *      @f$S@f$.
  */
 static inline void FCF_1st_order_weak_J_coupling_tensor_components(
     double *restrict Lambda_0, void *restrict Lambda_2,
@@ -254,8 +235,6 @@ static inline void FCF_1st_order_weak_J_coupling_tensor_components(
     const float mSi) {
   // Spin transition function
   double transition_fn = STF_dIS(mIf, mIi, mSf, mSi);
-
-  // printf("transition fn %f\n", transition_fn);
 
   // Return if the transition is zero
   if (transition_fn == 0.0) {

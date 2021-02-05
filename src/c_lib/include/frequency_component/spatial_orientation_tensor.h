@@ -6,11 +6,9 @@
 //  Contact email = srivastava.89@osu.edu
 //
 
-/**
- * The file contains the spatial orientation tensor components associated with
- * lower order perturbation expansion of the nuclear spin interations
- *Hamiltonian.
- **/
+// The file contains the spatial orientation tensor components associated with
+// lower order perturbation expansion of the nuclear spin interations
+// Hamiltonian.
 
 #include "mrsimulator.h"
 
@@ -55,9 +53,9 @@
  *
  * @note
  *  - The method accepts frequency physical quantities, that is,
- *    @f$\omega_0\sigma_\text{iso}/2\pi@f$ and
- *    @f$\omega_0\zeta_\sigma/2\pi@f$, as the isotropic
- *    nuclear shielding and nuclear shielding anisotropy, respectively.
+ *    @f$\omega_0\delta_\text{iso}/2\pi@f$ and @f$\omega_0\zeta_\sigma/2\pi@f$,
+ *    as the isotropic chemical shift and nuclear shielding anisotropy,
+ *    respectively.
  *  - When @f$\Theta = [0,0,0]@f$,
  *    @f$\mathcal{R'}_{2,n}^{(\sigma)}(\Theta) = \varsigma_{2,n}^{(\sigma)}@f$
  *    where @f$ n \in [-2,2]@f$.
@@ -76,13 +74,13 @@
  *      @f$\mathcal{R'}_{2,n}^{(\sigma)}(\Theta)/2\pi@f$, is stored ordered as
  *      @f$\left[\mathcal{R'}_{2,n}^{(\sigma)}(\Theta)/2\pi\right]_{n=-2}^2@f$.
  *
- * @param omega_0_delta_iso_in_Hz The quantity,
- *      @f$\omega_0\sigma_\text{iso}/2\pi@f$, in units of Hz.
+ * @param omega_0_delta_iso_in_Hz The isotropic chemical shift in Hz,
+ *      @f$\omega_0\sigma_\text{iso}/2\pi@f$.
  *
- * @param omega_0_zeta_sigma_in_Hz The quantity,
- *      @f$\omega_0\zeta_\sigma/2\pi@f$, in units of Hz.
+ * @param omega_0_zeta_sigma_in_Hz The shielding anisotropy in Hz,
+ *      @f$\omega_0\zeta_\sigma/2\pi@f$.
  *
- * @param eta The nuclear shielding asymmetry, @f$\eta_\sigma \in [0, 1]@f$.
+ * @param eta The shielding asymmetry, @f$\eta_\sigma \in [0, 1]@f$.
  *
  * @param Theta A pointer to an array of Euler angles, in radians, of length 3,
  *      ordered as @f$[\alpha, \beta, \gamma]@f$.
@@ -420,58 +418,58 @@ static inline void sSOT_1st_order_weakly_coupled_J_tensor_components(
   single_wigner_rotation(2, Theta, R_2, R_2);
 }
 
-// // =================================================================================
-// //     First-order dipolar spatial orientation tensor for weakly coupled sites
-// // =================================================================================
+// =================================================================================
+//    First-order dipolar spatial orientation tensor for weakly coupled sites
+// =================================================================================
 
-// /**
-//  * The scaled spatial orientation tensors (sSOT) from the first-order
-//  * perturbation expansion of the dipolar-coupling Hamiltonian under
-//  * weak-coupling limit, in the principal axis system (PAS), include
-//  * contributions from the second-rank irreducible tensors which
-//  * follow,
-//  * @f[ \left.
-//  *      \begin{aligned}
-//  *      \varsigma_{2,0}^{(d)} &= 4\pi D, \\
-//  *      \varsigma_{2,\pm1}^{(d)} &= 0, \\
-//  *      \varsigma_{2,\pm2}^{(d)} &= 0,
-//  *      \end{aligned}
-//  *     \right\} \text{Rank-2},
-//  * @f]
-//  * where @f$D@f$ is the dipolar-coupling, and
-//  * @f$\zeta_J@f$, @f$\eta_J@f$ are the @f$J@f$-coupling tensor anisotropy and
-//  * asymmetry parameters from the symmetric second-rank irreducible @f$J@f$
-//  * tensor, defined using Haeberlen convention.
-//  *
-//  * For non-zero Euler angles, @f$\Theta = [\alpha, \beta, \gamma]@f$, Wigner
-//  * rotation of @f$\varsigma_{2,n}^{(J)}@f$ is applied following,
-//  * @f[ \mathcal{R'}_{2,n}^{(J)}(\Theta) =
-//  *                                \sum_{m = -2}^2 D^2_{m, n}(\Theta)
-//  *                                \varsigma_{2,n}^{(J)},
-//  * @f]
-//  * where @f$\mathcal{R'}_{2,n}^{(J)}(\Theta)@f$ are the tensor components in the
-//  * frame defined by the Euler angles, @f$\Theta@f$.
-//  *
-//  * @note
-//  *  - When @f$\Theta = [0,0,0]@f$,
-//  *    @f$\mathcal{R'}_{2,n}^{(d)}(\Theta) = \varsigma_{2,n}^{(J)}@f$ where
-//  *    @f$ n \in [-2,2]@f$.
-//  *  - @f$\mathcal{R'}_{0,0}^{(J)}(\Theta) = \varsigma_{0,0}^{(J)} ~~~
-//  *    \forall ~ \Theta@f$.
-//  *  - The method returns @f$\mathcal{R'}_{0,0}^{(J)}(\Theta)/2\pi@f$ and
-//  *    @f$\mathcal{R'}_{2,n}^{(J)}(\Theta)/2\pi@f$, that is, in **units of
-//  *    frequency**.
-//  *
-//  * @param R_2 A pointer to a complex array of length 5, where the second-rank
-//  *      irreducible tensor, @f$\mathcal{R'}_{2,n}^{(d)}(\Theta)/2\pi@f$,
-//  *      is stored ordered as
-//  *      @f$\left[\mathcal{R'}_{2,n}^{(d)}(\Theta)/2\pi\right]_{n=-2}^2@f$.
-//  *
-//  * @param D_in_Hz The dipolar coupling, @f$D@f$, in Hz.
-//  *
-//  * @param Theta A pointer to an array of Euler angles, in radians, of length 3,
-//  *      ordered as @f$[\alpha, \beta, \gamma]@f$.
-//  */
+/**
+ * The scaled spatial orientation tensors (sSOT) from the first-order
+ * perturbation expansion of the dipolar-coupling Hamiltonian under
+ * weak-coupling limit, in the principal axis system (PAS), include
+ * contributions from the second-rank irreducible tensors which
+ * follow,
+ * @f[ \left.
+ *      \begin{aligned}
+ *      \varsigma_{2,0}^{(d)} &= 4\pi D, \\
+ *      \varsigma_{2,\pm1}^{(d)} &= 0, \\
+ *      \varsigma_{2,\pm2}^{(d)} &= 0,
+ *      \end{aligned}
+ *     \right\} \text{Rank-2},
+ * @f]
+ * where @f$D@f$ is the dipolar-coupling, and @f$\zeta_J@f$, @f$\eta_J@f$ are
+ * the @f$J@f$-coupling tensor anisotropy and asymmetry parameters from the
+ * symmetric second-rank irreducible @f$J@f$ tensor, defined using Haeberlen
+ * convention.
+ *
+ * For non-zero Euler angles, @f$\Theta = [\alpha, \beta, \gamma]@f$, Wigner
+ * rotation of @f$\varsigma_{2,n}^{(J)}@f$ is applied following,
+ * @f[
+ *    \mathcal{R'}_{2,n}^{(J)}(\Theta) = \sum_{m = -2}^2 D^2_{m, n}(\Theta)
+ *                                \varsigma_{2,n}^{(J)},
+ * @f]
+ * where @f$\mathcal{R'}_{2,n}^{(J)}(\Theta)@f$ are the tensor components in the
+ * frame defined by the Euler angles, @f$\Theta@f$.
+ *
+ * @note
+ *  - When @f$\Theta = [0,0,0]@f$,
+ *    @f$\mathcal{R'}_{2,n}^{(d)}(\Theta) = \varsigma_{2,n}^{(J)}@f$ where
+ *    @f$ n \in [-2,2]@f$.
+ *  - @f$\mathcal{R'}_{0,0}^{(J)}(\Theta) = \varsigma_{0,0}^{(J)} ~~~
+ *    \forall ~ \Theta@f$.
+ *  - The method returns @f$\mathcal{R'}_{0,0}^{(J)}(\Theta)/2\pi@f$ and
+ *    @f$\mathcal{R'}_{2,n}^{(J)}(\Theta)/2\pi@f$, that is, in **units of
+ *    frequency**.
+ *
+ * @param R_2 A pointer to a complex array of length 5, where the second-rank
+ *      irreducible tensor, @f$\mathcal{R'}_{2,n}^{(d)}(\Theta)/2\pi@f$,
+ *      is stored ordered as
+ *      @f$\left[\mathcal{R'}_{2,n}^{(d)}(\Theta)/2\pi\right]_{n=-2}^2@f$.
+ *
+ * @param D_in_Hz The dipolar coupling, @f$D@f$, in Hz.
+ *
+ * @param Theta A pointer to an array of Euler angles, in radians, of length 3,
+ *      ordered as @f$[\alpha, \beta, \gamma]@f$.
+ */
 // static inline void sSOT_1st_order_weakly_coupled_dipolar_tensor_components(
 //     void *restrict R_2, const double D_in_Hz, const double *Theta) {
 
