@@ -9,7 +9,7 @@ import csdmpy as cp
 import numpy as np
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import Transition
-from mrsimulator.transition.transition_list import TransitionPathway
+from mrsimulator.transition import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
 

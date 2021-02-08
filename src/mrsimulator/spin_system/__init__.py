@@ -9,7 +9,7 @@ from typing import Optional
 import numpy as np
 from mrsimulator.base_model import get_zeeman_states
 from mrsimulator.transition import Transition
-from mrsimulator.transition.transition_list import TransitionList
+from mrsimulator.transition.pathway import TransitionList
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 

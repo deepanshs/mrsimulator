@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from mrsimulator.transition.transition_list import TransitionPathway
+from mrsimulator.transition import TransitionPathway
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"

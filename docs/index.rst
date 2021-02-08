@@ -123,11 +123,11 @@ or amorphous in just a few seconds.
 
 **Features**
 
-The ``mrsimulator`` package currently offers the following
+The ``mrsimulator`` package offers the following
 
 - **Fast simulation** of one/two-dimensional solid-state NMR spectra. See our :ref:`benchmark` results.
 
-- Simulation of **uncoupled spin system**
+- Simulation of **coupled and uncoupled spin system**
     - for spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
     - at arbitrary macroscopic magnetic flux density,
     - at arbitrary rotor angles, and
@@ -147,12 +147,6 @@ The ``mrsimulator`` package currently offers the following
     - Extended Czjzek
 
 ----
-
-**Goals for the near future**
-
-Our current objectives are the following
-
-- Include spectral simulation of coupled spin systems.
 
 .. Contribution
 .. ------------

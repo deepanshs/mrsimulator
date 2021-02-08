@@ -293,7 +293,7 @@ You may optionally customize the plot using matplotlib methods.
     >>> import matplotlib.pyplot as plt
     >>> plt.figure(figsize=(6, 3.5)) # set the figure size # doctest: +SKIP
     >>> ax = plt.subplot(projection='csdm') # doctest: +SKIP
-    >>> ax.plot(data_0) # doctest: +SKIP
+    >>> ax.plot(data_0, linewidth=1.5) # doctest: +SKIP
     >>> ax.invert_xaxis() # reverse x-axis # doctest: +SKIP
     >>> plt.tight_layout(pad=0.1) # doctest: +SKIP
     >>> plt.show() # doctest: +SKIP

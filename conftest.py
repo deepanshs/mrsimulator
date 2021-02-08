@@ -16,6 +16,8 @@ from mrsimulator.models import CzjzekDistribution
 from mrsimulator.models import ExtCzjzekDistribution
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.transition import Transition
+from mrsimulator.transition import TransitionPathway
 
 font = {"weight": "light", "size": 9}
 matplotlib.rc("font", **font)
@@ -133,3 +135,13 @@ def add_site(doctest_namespace):
     sim_coesite.methods += [method]
 
     doctest_namespace["sim_coesite"] = sim_coesite
+
+    # Transitions
+    t1 = Transition(initial=[0.5, 0.5], final=[0.5, -0.5])
+    doctest_namespace["t1"] = t1
+
+    t2 = Transition(initial=[0.5, 0.5], final=[-0.5, 0.5])
+    doctest_namespace["t2"] = t2
+
+    path = TransitionPathway([t1, t2])
+    doctest_namespace["path"] = path

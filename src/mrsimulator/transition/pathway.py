@@ -88,6 +88,18 @@ class TransitionList(AbstractList):
 
 
 class TransitionPathway(TransitionList):
+    """
+    Base TransitionPathway class is a list of connected Transitions.
+
+    Example:
+        >>> from mrsimulator.transition import TransitionPathway, Transition
+        >>> t1 = Transition(initial = [0.5, 0.5], final = [0.5, -0.5])
+        >>> t2 = Transition(initial=[0.5, 0.5], final=[-0.5, 0.5])
+        >>> path = TransitionPathway([t1, t2])
+        >>> path
+        |0.5, -0.5⟩⟨0.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|
+    """
+
     def __str__(self):
         return self.__repr__()
 
@@ -95,9 +107,20 @@ class TransitionPathway(TransitionList):
         return " ⟶ ".join([repr(item) for item in self._list])
 
     def json(self):
-        """Serialize TransitionPathway to a JSON object"""
+        """Serialize TransitionPathway to a JSON object.
+
+        Example:
+            >>> pprint(path.json())
+            [{'final': [0.5, -0.5], 'initial': [0.5, 0.5]},
+             {'final': [-0.5, 0.5], 'initial': [0.5, 0.5]}]
+        """
         return [item.json() for item in self._list]
 
     def tolist(self):
-        """Expand TransitionPathway to a Python list"""
+        """Expand TransitionPathway to a Python list.
+
+        Example:
+            >>> path.tolist()
+            [0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5]
+        """
         return list(np.asarray([item.tolist() for item in self._list]).ravel())

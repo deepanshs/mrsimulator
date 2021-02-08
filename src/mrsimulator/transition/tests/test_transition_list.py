@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 from mrsimulator.transition import Transition
-from mrsimulator.transition.transition_list import TransitionList
+from mrsimulator.transition.pathway import TransitionList
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
