@@ -9,11 +9,12 @@ from .utils import c_setup_random_euler_angles
 
 # import matplotlib.pyplot as plt
 
+SHOW_PLOTS = False
+
 COMMON_PATH = path.join("tests", "spectral_integration_tests")
 SIMPSON_TEST_PATH = path.join(COMMON_PATH, "simpson_simulated_lineshapes")
 PYTHON_BRUTE_TEST_PATH = path.join(COMMON_PATH, "python_brute_force_lineshapes")
 
-SHOW_PLOTS = False
 # --------------------------------------------------------------------------- #
 # Test against brute-force NMR calculation where lineshapes
 # are averaged over a billion orientations.
@@ -175,7 +176,7 @@ def test_j_coupling_lineshape_simpson():
         "failed to compare j-coupling lineshape simulation with data from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "j-coupling")
-    for i in range(17):
+    for i in range(19):
         message = f"{error_message} test0{i:02d}.json"
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         data_mrsimulator, data_source = c_setup(
@@ -199,7 +200,7 @@ def test_dipolar_coupling_lineshape_simpson():
         "failed to compare dipolar-coupling lineshape simulation with data from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "dipolar-coupling")
-    for i in range(6):
+    for i in range(7):
         message = f"{error_message} test0{i:02d}.json"
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         data_mrsimulator, data_source = c_setup(
