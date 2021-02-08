@@ -2,12 +2,12 @@
   "methods": [{
     "channels": ["17O"],
     "spectral_dimensions": [{
-      "count": 1024,
-      "spectral_width": "25 kHz",
+      "count": 2048,
+      "spectral_width": "40 kHz",
       "events": [{
         "magnetic_flux_density": "9.4 T",
-        "rotor_frequency": "5 kHz",
-        "rotor_angle": "54.735 deg",
+        "rotor_frequency": "1 kHz",
+        "rotor_angle": "54.7356 deg",
         "transition_query": {
           "P": {
             "channel-1": [
@@ -25,11 +25,25 @@
   }],
   "spin_systems": [{
     "sites": [{
-      "isotope": "17O",
-      "isotropic_chemical_shift": "0 ppm",
-      "quadrupolar": {
-        "Cq": "3.1 MHz",
-        "eta": 0.1
+        "isotope": "17O",
+        "isotropic_chemical_shift": "0.0 ppm",
+        "shielding_symmetric": {
+          "zeta": "-10 ppm"
+        },
+        "quadrupolar": {
+          "Cq": "1 MHz",
+          "eta": 0
+        }
+      },
+      {
+        "isotope": "1H",
+        "isotropic_chemical_shift": "0.0 ppm"
+      }
+    ],
+    "couplings": [{
+      "site_index": [0, 1],
+      "dipolar": {
+        "zeta": "10000.0 Hz"
       }
     }]
   }],
@@ -50,7 +64,7 @@
   ],
   "test_data": {
     "source": "simpson",
-    "filename": "test00.fid",
+    "filename": "test05.fid",
     "quantity": "time",
     "type": "complex",
     "periodic": false

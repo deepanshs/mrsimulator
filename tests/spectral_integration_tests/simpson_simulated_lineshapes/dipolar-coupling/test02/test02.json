@@ -1,13 +1,13 @@
 {
   "methods": [{
-    "channels": ["17O"],
+    "channels": ["29Si"],
     "spectral_dimensions": [{
       "count": 1024,
-      "spectral_width": "25 kHz",
+      "spectral_width": "20 kHz",
       "events": [{
         "magnetic_flux_density": "9.4 T",
-        "rotor_frequency": "5 kHz",
-        "rotor_angle": "54.735 deg",
+        "rotor_frequency": "0 kHz",
+        "rotor_angle": "54.7356 deg",
         "transition_query": {
           "P": {
             "channel-1": [
@@ -25,11 +25,21 @@
   }],
   "spin_systems": [{
     "sites": [{
-      "isotope": "17O",
-      "isotropic_chemical_shift": "0 ppm",
-      "quadrupolar": {
-        "Cq": "3.1 MHz",
-        "eta": 0.1
+        "isotope": "29Si",
+        "isotropic_chemical_shift": "0.0 ppm",
+        "shielding_symmetric": {
+          "zeta": "-10 ppm"
+        }
+      },
+      {
+        "isotope": "27Al",
+        "isotropic_chemical_shift": "0.0 ppm"
+      }
+    ],
+    "couplings": [{
+      "site_index": [0, 1],
+      "dipolar": {
+        "zeta": "1200.0 Hz"
       }
     }]
   }],
@@ -39,7 +49,7 @@
     },
     {
       "dim_index": 0,
-      "FWHM": "100.0 Hz",
+      "FWHM": "15.0 Hz",
       "function": "apodization",
       "type": "Exponential"
     },
@@ -50,7 +60,7 @@
   ],
   "test_data": {
     "source": "simpson",
-    "filename": "test00.fid",
+    "filename": "test02.fid",
     "quantity": "time",
     "type": "complex",
     "periodic": false

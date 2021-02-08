@@ -48,7 +48,7 @@
     },
     {
       "dim_index": 0,
-      "FWHM": "10.0 Hz",
+      "FWHM": "30.0 Hz",
       "function": "apodization",
       "type": "Exponential"
     },

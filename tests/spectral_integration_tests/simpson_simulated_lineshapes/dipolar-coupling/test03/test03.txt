@@ -1,21 +1,23 @@
 spinsys {
-  channels 17O
-  nuclei 17O
-  quadrupole 1 2 3.1e6 0.5 0 0 0
+  channels 29Si
+  nuclei 29Si 27Al
+  shift 1 0 10p 0 0 0 0
+  shift 2 0 0 0 0 0 0
+  dipole 1 2 1200 0 0 0
 }
 
 par {
   crystal_file     zcw4180
-  variable dw      40
+  variable dw      50
 
   sw               1e6/dw
-  np               1024
+  np               2048
   proton_frequency 400e6
   start_operator   I1x
-  detect_operator  I1c
+  detect_operator  I1p
   method           direct
-  gamma_angles     16
-  spin_rate        2000
+  gamma_angles     32
+  spin_rate        1000
   verbose          1101
 }
 
@@ -33,6 +35,6 @@ proc main {} {
   global par
 
   set f [fsimpson]
-  faddlb $f 100 0
+  faddlb $f 50 0
   fsave $f $par(name).fid
 }

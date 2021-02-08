@@ -4,7 +4,9 @@ Upcoming changes
 What's new
 ''''''''''
 
-- Simulation of coupled spin systems.
+- Simulation of coupled spin systems. The frequency contribution from coupled sites include
+  weak J-couplings and weak dipolar couplings.
+
 
 Changes
 '''''''

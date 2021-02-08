@@ -203,9 +203,9 @@ external magnetic field, respectively. The relation between
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of scaled spatial orientation tensors in the principal
-  axis system of the nuclear shielding tensor, |SOF|, from Eq. :eq:`eq_5` of
-  rank L resulting from the Mth order perturbation
-  expansion of the Nuclear shielding Hamiltonian is presented.
+  axis system of the nuclear shielding tensor, |SOF| from Eq. :eq:`eq_5`, of
+  rank L resulting from the Mth order perturbation expansion of the Nuclear
+  shielding Hamiltonian is presented.
   :widths: 25 25 50
   :header-rows: 1
 
@@ -277,7 +277,7 @@ coefficient.
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of scaled spatial orientation tensors in the principal
-                axis system of the efg tensor, |SOF|, from Eq. :eq:`eq_5` of
+                axis system of the efg tensor, |SOF| from Eq. :eq:`eq_5`, of
                 rank L resulting from the Mth order perturbation expansion
                 of the Electric Quadrupole Hamiltonian is presented.
   :widths: 25 25 50
@@ -347,6 +347,8 @@ The :math:`J` anisotropy and asymmetry are defined using Haeberlen notation.
 
 **First-order perturbation**
 
+The size of the frequency component from the first-order perturbation expansion
+of weak J-coupling Hamiltonian is :math:`\omega_k = 2\pi`.
 The relation between :math:`\varrho_{L,n}^{(J)}` and :math:`\rho_{L,n}^{(J)}` follows,
 
 .. math::
@@ -356,9 +358,9 @@ The relation between :math:`\varrho_{L,n}^{(J)}` and :math:`\rho_{L,n}^{(J)}` fo
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of scaled spatial orientation tensors in the principal
-  axis system of the nuclear shielding tensor, |SOF|, from Eq. :eq:`eq_5` of
-  rank L resulting from the Mth order perturbation
-  expansion of the Nuclear shielding Hamiltonian is presented.
+  axis system of the J-coupling tensor, |SOF| from Eq. :eq:`eq_5`, of rank L
+  resulting from the Mth order perturbation expansion of the J-coupling
+  Hamiltonian is presented.
   :widths: 25 25 50
   :header-rows: 1
 
@@ -379,8 +381,64 @@ The relation between :math:`\varrho_{L,n}^{(J)}` and :math:`\rho_{L,n}^{(J)}` fo
       :math:`\varsigma_{2,\pm2}^{(J)} = -\frac{1}{\sqrt{6}} 2\pi\eta_J \zeta_J`
 
 
+Weak dipolar-coupling interaction
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+The dipolar-coupling tensor, :math:`\boldsymbol{\rho}^{(d)}`, is a second
+rank reducible tensor which can be decomposed as a second-rank traceless
+symmetric irreducible spherical tensors.
+In the principal axis system, the second-rank, :math:`\rho_{2,n}^{(d)}`,
+irreducible tensors follow,
 
+.. math::
+    \begin{array}{c c c c}
+    \rho_{2,0}^{(d)} = \sqrt{\frac{3}{2}} \zeta_d, &
+    \rho_{2,\pm1}^{(d)} = 0, &
+    \rho_{2,\pm2}^{(d)} = 0,
+    \end{array}
+
+where :math:`\zeta_d` is second-rank symmetric dipolar coupling tensor anisotropy
+given as
+
+.. math::
+    \zeta_d = \frac{2}{r^3}
+
+where :math:`r` is the distance between two coupled magnetic dipoles. The dipolar
+splitting is given as
+
+.. math::
+    \omega_d = - \frac{\mu_0}{4\pi} \frac{\gamma_1 \gamma_2 \hbar}{r^3}
+             = - \frac{\mu_0}{8\pi} \zeta_d \gamma_1 \gamma_2 \hbar
+
+**First-order perturbation**
+
+The size of the frequency component from the first-order perturbation expansion
+of weak J-coupling Hamiltonian is :math:`\omega_k = \frac{2\omega_d}{\zeta_d}`.
+The relation between :math:`\varrho_{L,n}^{(d)}` and :math:`\rho_{L,n}^{(d)}` follows,
+
+.. math::
+    \varrho_{2,n}^{(d)} =\sqrt{\frac{2}{3}} \rho_{2,n}^{(d)}
+
+.. cssclass:: table-bordered table-striped centered
+
+.. list-table:: A list of scaled spatial orientation tensors in the principal
+  axis system of the dipolar-coupling tensor, |SOF| from Eq. :eq:`eq_5`, of
+  rank L resulting from the Mth order perturbation expansion of the
+  dipolar-coupling Hamiltonian is presented.
+  :widths: 25 25 50
+  :header-rows: 1
+
+  * - Order, :math:`M`
+    - Rank, :math:`L`
+    - :math:`\varsigma_{L,n}^{(k)} = \omega_k\varrho_{L,n}^{(k)}`
+
+  * - 1
+    - 2
+    - :math:`\varsigma_{2,0}^{(d)} = 2\omega_d`,
+
+      :math:`\varsigma_{2,\pm1}^{(d)} = 0`,
+
+      :math:`\varsigma_{2,\pm2}^{(d)} = 0`
 
 
 
@@ -559,6 +617,11 @@ Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}`
     - 1
     - 2
     - :math:`\varpi_{2,n}^{(J)} = \varsigma_{2,n}^{(J)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
+
+  * - Weak dipolar-coupling
+    - 1
+    - 2
+    - :math:`\varpi_{2,n}^{(d)} = \varsigma_{2,n}^{(d)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
 
 **References**
 

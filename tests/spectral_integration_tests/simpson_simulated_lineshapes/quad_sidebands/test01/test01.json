@@ -33,6 +33,21 @@
       }
     }]
   }],
+  "operations": [{
+      "dim_index": 0,
+      "function": "IFFT"
+    },
+    {
+      "dim_index": 0,
+      "FWHM": "100.0 Hz",
+      "function": "apodization",
+      "type": "Exponential"
+    },
+    {
+      "dim_index": 0,
+      "function": "FFT"
+    }
+  ],
   "test_data": {
     "source": "simpson",
     "filename": "test01.fid",
