@@ -2,11 +2,12 @@
 """Lineshape Test."""
 from os import path
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 from .utils import c_setup
 from .utils import c_setup_random_euler_angles
+
+# import matplotlib.pyplot as plt
 
 COMMON_PATH = path.join("tests", "spectral_integration_tests")
 SIMPSON_TEST_PATH = path.join(COMMON_PATH, "simpson_simulated_lineshapes")
@@ -39,12 +40,12 @@ def test_pure_shielding_static_lineshape_python_brute():
             filename, "shielding_symmetric"
         )
 
-        if SHOW_PLOTS:
-            plt.plot(data_mrsimulator, label="mrsims")
-            plt.plot(data_source, label="simpson")
-            plt.title("Shielding Static Lineshape")
-            plt.legend()
-            plt.show()
+        # if SHOW_PLOTS:
+        #     plt.plot(data_mrsimulator, label="mrsims")
+        #     plt.plot(data_source, label="simpson")
+        #     plt.title("Shielding Static Lineshape")
+        #     plt.legend()
+        #     plt.show()
 
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=1.5, err_msg=message
@@ -69,12 +70,12 @@ def test_pure_quadrupolar_lineshape_python_brute():
             filename, "quadrupolar"
         )
 
-        if SHOW_PLOTS:
-            plt.plot(data_mrsimulator, label="mrsims")
-            plt.plot(data_source, label="simpson")
-            plt.title("Quad Static Lineshape")
-            plt.legend()
-            plt.show()
+        # if SHOW_PLOTS:
+        #     plt.plot(data_mrsimulator, label="mrsims")
+        #     plt.plot(data_source, label="simpson")
+        #     plt.title("Quad Static Lineshape")
+        #     plt.legend()
+        #     plt.show()
 
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=1.5, err_msg=message
@@ -109,12 +110,12 @@ def test_pure_shielding_sideband_simpson():
             filename, "shielding_symmetric"
         )
 
-        if SHOW_PLOTS:
-            plt.plot(data_mrsimulator, label="mrsims")
-            plt.plot(data_source, label="simpson")
-            plt.title("Shielding Sidebands")
-            plt.legend()
-            plt.show()
+        # if SHOW_PLOTS:
+        #     plt.plot(data_mrsimulator, label="mrsims")
+        #     plt.plot(data_source, label="simpson")
+        #     plt.title("Shielding Sidebands")
+        #     plt.legend()
+        #     plt.show()
 
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=2.3, err_msg=message
@@ -133,12 +134,12 @@ def test_pure_quadrupolar_sidebands_simpson():
             filename, integration_volume="hemisphere"
         )
 
-        if SHOW_PLOTS:
-            plt.plot(data_mrsimulator, label="mrsims")
-            plt.plot(data_source, label="simpson")
-            plt.title("Quad Sidebands")
-            plt.legend()
-            plt.show()
+        # if SHOW_PLOTS:
+        #     plt.plot(data_mrsimulator, label="mrsims")
+        #     plt.plot(data_source, label="simpson")
+        #     plt.title("Quad Sidebands")
+        #     plt.legend()
+        #     plt.show()
 
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=1.8, err_msg=message
@@ -157,12 +158,12 @@ def test_csa_plus_quadrupolar_lineshape_simpson():
             filename, integration_volume="hemisphere"
         )
 
-        if SHOW_PLOTS:
-            plt.plot(data_mrsimulator, label="mrsims")
-            plt.plot(data_source, label="simpson")
-            plt.title("Quad + Shielding Sidebands")
-            plt.legend()
-            plt.show()
+        # if SHOW_PLOTS:
+        #     plt.plot(data_mrsimulator, label="mrsims")
+        #     plt.plot(data_source, label="simpson")
+        #     plt.title("Quad + Shielding Sidebands")
+        #     plt.legend()
+        #     plt.show()
 
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=1.1, err_msg=message
@@ -181,12 +182,12 @@ def test_j_coupling_lineshape_simpson():
             filename, integration_volume="hemisphere"
         )
 
-        if SHOW_PLOTS:
-            plt.plot(data_mrsimulator, label="mrsims")
-            plt.plot(data_source, label="simpson")
-            plt.title("J-coupling Spectra")
-            plt.legend()
-            plt.show()
+        # if SHOW_PLOTS:
+        #     plt.plot(data_mrsimulator, label="mrsims")
+        #     plt.plot(data_source, label="simpson")
+        #     plt.title("J-coupling Spectra")
+        #     plt.legend()
+        #     plt.show()
 
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source.real, decimal=1.25, err_msg=message
@@ -205,12 +206,12 @@ def test_dipolar_coupling_lineshape_simpson():
             filename, integration_volume="hemisphere"
         )
 
-        if SHOW_PLOTS:
-            plt.plot(data_mrsimulator, label="mrsims")
-            plt.plot(data_source, label="simpson")
-            plt.title("Dipolar-coupling Spectra")
-            plt.legend()
-            plt.show()
+        # if SHOW_PLOTS:
+        #     plt.plot(data_mrsimulator, label="mrsims")
+        #     plt.plot(data_source, label="simpson")
+        #     plt.title("Dipolar-coupling Spectra")
+        #     plt.legend()
+        #     plt.show()
 
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=1.3, err_msg=message
