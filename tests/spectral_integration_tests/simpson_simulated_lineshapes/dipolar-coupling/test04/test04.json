@@ -43,7 +43,7 @@
     "couplings": [{
       "site_index": [0, 1],
       "dipolar": {
-        "zeta": "5000.0 Hz"
+        "D": "5000.0 Hz"
       }
     }]
   }],

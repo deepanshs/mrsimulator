@@ -75,24 +75,24 @@ def test_direct_init_spin_system():
     }
 
     # test-5 # coupling
-    test_coupling = Coupling(site_index=[0, 1], isotropic_j=10, dipolar={"zeta": 100})
+    test_coupling = Coupling(site_index=[0, 1], isotropic_j=10, dipolar={"D": 100})
 
     assert test_coupling.site_index == [0, 1]
     assert test_coupling.isotropic_j == 10.0
     assert test_coupling.property_units["isotropic_j"] == "Hz"
 
-    assert test_coupling.dipolar.zeta == 100.0
-    assert test_coupling.dipolar.property_units["zeta"] == "Hz"
+    assert test_coupling.dipolar.D == 100.0
+    assert test_coupling.dipolar.property_units["D"] == "Hz"
 
     assert test_coupling.json() == {
         "site_index": [0, 1],
         "isotropic_j": "10.0 Hz",
-        "dipolar": {"zeta": "100.0 Hz"},
+        "dipolar": {"D": "100.0 Hz"},
     }
     assert test_coupling.reduced_dict() == {
         "site_index": [0, 1],
         "isotropic_j": 10.0,
-        "dipolar": {"zeta": 100.0},
+        "dipolar": {"D": 100.0},
     }
 
     # test-6 #  two sites and one coupling spin system
@@ -113,7 +113,7 @@ def test_direct_init_spin_system():
             {
                 "site_index": [0, 1],
                 "isotropic_j": "10.0 Hz",
-                "dipolar": {"zeta": "100.0 Hz"},
+                "dipolar": {"D": "100.0 Hz"},
             }
         ],
         "abundance": "10.0 %",
@@ -124,7 +124,7 @@ def test_direct_init_spin_system():
             {"isotope": "29Si", "isotropic_chemical_shift": 10.0},
         ],
         "couplings": [
-            {"site_index": [0, 1], "isotropic_j": 10.0, "dipolar": {"zeta": 100.0}}
+            {"site_index": [0, 1], "isotropic_j": 10.0, "dipolar": {"D": 100.0}}
         ],
         "abundance": 10,
     }

@@ -410,6 +410,8 @@ splitting is given as
     \omega_d = - \frac{\mu_0}{4\pi} \frac{\gamma_1 \gamma_2 \hbar}{r^3}
              = - \frac{\mu_0}{8\pi} \zeta_d \gamma_1 \gamma_2 \hbar
 
+and the dipolar coupling constant, :math:`D = \frac{\omega_d}{2\pi}`.
+
 **First-order perturbation**
 
 The size of the frequency component from the first-order perturbation expansion

@@ -98,7 +98,7 @@ def test_parse_json_site():
     good_json_2 = {
         "site_index": [5, 3],
         "isotropic_j": "-10 Hz",
-        "dipolar": {"zeta": "5.12 kHz", "eta": 0.5},
+        "dipolar": {"D": "5.12 kHz", "eta": 0.5},
     }
 
     the_coupling = Coupling.parse_dict_with_units(good_json_2)
@@ -109,7 +109,7 @@ def test_parse_json_site():
     assert the_coupling.j_antisymmetric is None
     assert the_coupling.j_symmetric is None
 
-    assert the_coupling.dipolar.zeta == 5120.0
+    assert the_coupling.dipolar.D == 5120.0
     assert the_coupling.dipolar.eta == 0.5
 
     # test 3 bad input ----------------------------------------------------------------
@@ -161,14 +161,14 @@ def test_site_object_methods():
             "alpha": "0.1 rad",
             "beta": "2.5 rad",
         },
-        "dipolar": {"zeta": "10000.0 Hz", "eta": 0.6},
+        "dipolar": {"D": "10000.0 Hz", "eta": 0.6},
     }
     the_coupling = Coupling(
         site_index=[1, 2],
         isotropic_j=10,
         j_symmetric={"zeta": 12.1, "eta": 0.1, "alpha": 2.1},
         j_antisymmetric={"zeta": -1.1, "alpha": 0.1, "beta": 2.5},
-        dipolar={"zeta": 10e3, "eta": 0.6},
+        dipolar={"D": 10e3, "eta": 0.6},
     )
     assert the_coupling.json() == result, "Failed Coupling.json()"
 

@@ -234,7 +234,7 @@ def one_d_spectrum(method,
     cdef ndarray[double] ori_j
 
     # quad
-    cdef ndarray[double] zeta_d
+    cdef ndarray[double] D_d
     cdef ndarray[double] eta_d
     cdef ndarray[double] ori_d
 
@@ -367,7 +367,7 @@ def one_d_spectrum(method,
             ori_j = np.zeros(3*number_of_couplings, dtype=np.float64)
 
             # Dipolar
-            zeta_d = np.zeros(number_of_couplings, dtype=np.float64)
+            D_d = np.zeros(number_of_couplings, dtype=np.float64)
             eta_d = np.zeros(number_of_couplings, dtype=np.float64)
             ori_d = np.zeros(3*number_of_couplings, dtype=np.float64)
 
@@ -397,8 +397,8 @@ def one_d_spectrum(method,
                 # dipolar tensor
                 dipolar = coupling.dipolar
                 if dipolar is not None:
-                    if dipolar.zeta is not None:
-                        zeta_d[i] = dipolar.zeta
+                    if dipolar.D is not None:
+                        D_d[i] = dipolar.D
                     if dipolar.eta is not None:
                         eta_d[i] = dipolar.eta
                     if dipolar.alpha is not None:
@@ -416,7 +416,7 @@ def one_d_spectrum(method,
                 print(f'J asymmetry = {eta_j}')
                 print(f'J orientation = {ori_j}')
 
-                print(f'Dipolar coupling constant = {zeta_d} Hz')
+                print(f'Dipolar coupling constant = {D_d} Hz')
                 print(f'Dipolar asymmetry = {eta_d}')
                 print(f'Dipolar orientation = {ori_d}')
 
@@ -429,7 +429,7 @@ def one_d_spectrum(method,
             couplings_c.j_symmetric_eta = &eta_j[0]
             couplings_c.j_orientation = &ori_j[0]
 
-            couplings_c.dipolar_zeta_in_Hz = &zeta_d[0]
+            couplings_c.dipolar_coupling_in_Hz = &D_d[0]
             couplings_c.dipolar_eta = &eta_d[0]
             couplings_c.dipolar_orientation = &ori_d[0]
 

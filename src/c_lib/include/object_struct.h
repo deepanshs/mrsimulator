@@ -98,7 +98,7 @@ struct __coupling_struct {
 
   /* Pointer to an array of direct-dipolar coupling constants in Hz for each
    * pair within the spin system. */
-  double *dipolar_zeta_in_Hz;
+  double *dipolar_coupling_in_Hz;
 
   /* Pointer to an array of direct-dipolar asymmetry parameters (eta) for each
    * pair within the spin system. */

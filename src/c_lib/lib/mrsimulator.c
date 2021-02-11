@@ -650,7 +650,7 @@ void __MRS_rotate_coupled_site_interaction_components(
 
     // Weakly coupled dipolar-couplings
     FCF_1st_order_weak_dipolar_coupling_tensor_components(
-        R2_temp, couplings->dipolar_zeta_in_Hz[i],
+        R2_temp, couplings->dipolar_coupling_in_Hz[i],
         &couplings->dipolar_orientation[3 * i], mIf, mIi, mSf, mSi);
 
     vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);

@@ -85,6 +85,7 @@ class SymmetricTensor(Parseable):
 
     zeta: float = None
     Cq: float = None
+    D: float = None
     eta: float = Field(default=None, ge=0, le=1)
     alpha: float = None
     beta: float = None
@@ -93,6 +94,7 @@ class SymmetricTensor(Parseable):
     property_unit_types: ClassVar = {
         "zeta": ["dimensionless", "frequency"],
         "Cq": "frequency",
+        "D": "frequency",
         "alpha": "angle",
         "beta": "angle",
         "gamma": "angle",
@@ -100,6 +102,7 @@ class SymmetricTensor(Parseable):
     property_default_units: ClassVar = {
         "zeta": ["ppm", "Hz"],
         "Cq": "Hz",
+        "D": "Hz",
         "alpha": "rad",
         "beta": "rad",
         "gamma": "rad",
@@ -107,6 +110,7 @@ class SymmetricTensor(Parseable):
     property_units: Dict = {
         "zeta": "ppm",
         "Cq": "Hz",
+        "D": "Hz",
         "alpha": "rad",
         "beta": "rad",
         "gamma": "rad",

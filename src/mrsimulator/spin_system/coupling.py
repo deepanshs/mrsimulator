@@ -91,9 +91,9 @@ class Coupling(Parseable):
         Example
         -------
 
-        >>> coupling.dipolar = {'zeta': 320}
+        >>> coupling.dipolar = {'D': 320}
         >>> # or equivalently
-        >>> coupling.dipolar = SymmetricTensor(zeta=320)
+        >>> coupling.dipolar = SymmetricTensor(D=320)
 
     name: str (optional).
         The value is the name or id of the coupling. The default value is None.
@@ -137,7 +137,7 @@ class Coupling(Parseable):
     ...         "zeta": 10, # in Hz
     ...         "eta": 0.5
     ...     },
-    ...     dipolar={"zeta": 5.1e3}, # in Hz
+    ...     dipolar={"D": 5.1e3}, # in Hz
     ... )
 
     Using SymmetricTensor objects.
@@ -162,12 +162,24 @@ class Coupling(Parseable):
     property_default_units: ClassVar = {"isotropic_j": "Hz"}
     property_units: Dict = {"isotropic_j": "Hz"}
 
-    @validator("j_symmetric", "j_antisymmetric", "dipolar")
-    def couplings_symmetric_must_not_contain_Cq(cls, v, values):
+    @validator("dipolar")
+    def dipolar_must_not_contain_Cq_and_zeta(cls, v, values):
         if v is None:
             return v
-        if "Cq" in v.property_units:
-            v.property_units.pop("Cq")
+        [
+            v.property_units.pop(item) if item in v.property_units else None
+            for item in ["Cq", "zeta"]
+        ]
+        return v
+
+    @validator("j_symmetric", "j_antisymmetric")
+    def j_symmetric_must_not_contain_Cq_and_D(cls, v, values):
+        if v is None:
+            return v
+        [
+            v.property_units.pop(item) if item in v.property_units else None
+            for item in ["Cq", "D"]
+        ]
         v.property_units["zeta"] = "Hz"
         return v
 
@@ -214,7 +226,7 @@ class Coupling(Parseable):
         for k, v in prop_mapping.items():
             if k in py_dict:
                 py_dict[k] = v.parse_dict_with_units(py_dict[k])
-                if py_dict[k].property_units["zeta"] == "ppm":
+                if py_dict[k].property_units["zeta"] == "ppm" and k != "dipolar":
                     raise ValueError(
                         f"Error enforcing units for {k}.zeta: ppm. Use frequency units."
                     )

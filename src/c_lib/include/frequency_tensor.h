@@ -277,7 +277,7 @@ static inline void FCF_1st_order_weak_J_coupling_tensor_components(
  * @param Lambda_2 A pointer to a complex array of length 5, where the frequency
  *      components from @f${\Lambda'}_{2,n}^{(d)}@f$ is stored ordered as
  *      @f$\left[{\Lambda'}_{2,n}^{(d)}\right]_{n=-2}^2@f$.
- * @param D The dipolar coupling, @f$D@f$, in Hz.
+ * @param D_in_Hz The dipolar coupling, @f$D@f$, in Hz.
  * @param Theta A pointer to an array of Euler angles of length 3 ordered as
  *      @f$[\alpha, \beta, \gamma]@f$.
  * @param mIf The spin quantum number of the final energy state of site @f$I@f$.

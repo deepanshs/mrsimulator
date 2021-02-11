@@ -76,7 +76,7 @@ Consider the example below of the JSON serialization of a **Coupling** object.
           "eta": 0.82
       },
       "dipolar": {
-          "zeta": "1.7 kHz",
+          "D": "1.7 kHz",
           "alpha": "0.12 rad",
           "beta": "0.231 rad",
           "gamma": "1.1415 rad"
@@ -92,7 +92,7 @@ convention with parameters `zeta` and `eta`, defined as the `J`-coupling anisotr
 asymmetry parameters, respectively. Additionally, the dipolar coupling interaction between the
 coupled nuclei is defined with an optional `dipolar` key. A dipolar tensor is a second-rank
 traceless symmetric tensor, and we describe the dipolar coupling constant with the parameter
-`zeta`.  The Euler angle orientations, `alpha`, `beta`, and `gamma` are the relative orientation
+`D`.  The Euler angle orientations, `alpha`, `beta`, and `gamma` are the relative orientation
 of the dipolar tensor from the `J`-coupling tensor.
 
 See :numref:`table_coupling` and :numref:`table_symmetric_tensor` for further information on
@@ -108,7 +108,7 @@ The **SpinSystem** object is a collection of sites and couplings within a spin s
 Uncoupled Spin System
 ---------------------
 
-Using the previous 2H **Site** object example, we construct a simple single site
+Using the previous 2H **Site** object example, we construct a simple single-site
 **SpinSystem** object, as shown below.
 
 .. _listing_uncoupled_spin_system:
@@ -154,8 +154,8 @@ its attributes.
 Coupled Spin System
 -------------------
 
-Appending to the previous single site spin system example from
-:numref:`listing_uncoupled_spin_system`, we construct a two spin coupled spin system,
+Appending to the previous single-site spin system example from
+:numref:`listing_uncoupled_spin_system`, we construct a two-spin coupled spin system,
 as follows.
 
 .. _listing_coupled_spin_system:
@@ -200,7 +200,7 @@ as follows.
               "eta": 0.82
           },
           "dipolar": {
-              "zeta": "1.7 kHz",
+              "D": "1.7 kHz",
               "alpha": "0.12 rad",
               "beta": "0.231 rad",
               "gamma": "1.1415 rad"
@@ -210,15 +210,14 @@ as follows.
       "abundance": "0.48%"
   }
 
-Similar to the previous example, there are four keywords at the root level of the
-**SpinSystem** object, **name**, **description**, **sites**, and **abundance**. In this
-example, the value of the `sites` key holds a list of two **Site** objects. At index 0
+In comparision to the previous example, there are five keywords at the root level of the
+**SpinSystem** object, **name**, **description**, **sites**, **couplings**, and **abundance**.
+In this example, the value of the `sites` key holds a list of two **Site** objects. At index 0
 (lines 5-19) is the `2H` site from :numref:`listing_site`, and at index 1 (lines 20-27) is
 a `13C` site. The value of the `couplings` key is a list of **Coupling** objects. In this
-example, we define a single coupling object (lines 30-43) described in :numref:`listing_coupling`.
+example, we define a single coupling object (lines 30-43) from :numref:`listing_coupling`.
 The value of the `site_index` key within the coupling object, line 31, corresponds to the site
-index from the `sites` list. The `abundance` key is the abundance of the spin system,
-here given a value of `0.48%`.
+index from the `sites` list.
 
 
 Table of Class Attributes
@@ -345,6 +344,10 @@ Table of Class Attributes
 
       ``Cq``
 
+      or
+
+      ``D``
+
     - ScalarQuantity
     - A `required` quantity.
 
@@ -360,8 +363,8 @@ Table of Class Attributes
       using the Haeberlen convention. The value is a physical quantity given in
       frequency unit, for example, ``10 Hz`` or ``0.3 kHz``.
 
-      **Dipolar-coupling:** The dipolar-coupling constant. The value is a physical
-      quantity given in frequency unit, for example, ``1 kHz`` or ``9 kHz``.
+      **Dipolar-coupling:** The dipolar-coupling constant, ``D``. The value is a
+      physical quantity given in frequency unit, for example, ``1 kHz`` or ``9 kHz``.
 
   * - ``eta``
     - Float

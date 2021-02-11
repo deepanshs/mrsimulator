@@ -67,7 +67,7 @@ cdef extern from "object_struct.h":
         double *j_symmetric_zeta_in_Hz     # J-coupling anisotropy (Hz).
         double *j_symmetric_eta            # J-coupling asymmetry.
         double *j_orientation              # J tensor PAS to CRS euler angles (rad.)
-        double *dipolar_zeta_in_Hz         # Dipolar coupling constant (Hz)
+        double *dipolar_coupling_in_Hz         # Dipolar coupling constant (Hz)
         double *dipolar_eta                # Dipolar asymmetry parameter
         double *dipolar_orientation        # Dipolar tensor PAS to CRS euler angles (rad.)
 
