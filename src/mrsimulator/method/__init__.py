@@ -216,6 +216,14 @@ class Method(Parseable):
             spectral_dims[i].reference_offset = dim.coordinates_offset.to("Hz").value
             spectral_dims[i].origin_offset = dim.origin_offset.to("Hz").value
 
+    def dict(self, **kwargs):
+        temp_dict = super().dict(**kwargs)
+        if self.simulation is not None:
+            temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
+        if self.experiment is not None and isinstance(self.experiment, cp.CSDM):
+            temp_dict["experiment"] = self.experiment.to_dict()
+        return temp_dict
+
     def json(self) -> dict:
         """Parse the class object to a JSON compliant python dictionary object, where
         the attribute value with physical quantity is expressed as a string with a
@@ -275,14 +283,6 @@ class Method(Parseable):
         if self.experiment is not None:
             temp_dict["experiment"] = self.experiment.to_dict()
 
-        return temp_dict
-
-    def dict(self, **kwargs):
-        temp_dict = super().dict(**kwargs)
-        if self.simulation is not None:
-            temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
-        if self.experiment is not None and isinstance(self.experiment, cp.CSDM):
-            temp_dict["experiment"] = self.experiment.to_dict()
         return temp_dict
 
     def _get_transition_pathways(self, spin_system):
