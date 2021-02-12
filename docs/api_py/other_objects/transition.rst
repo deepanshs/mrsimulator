@@ -8,11 +8,20 @@ Transition
 .. autoclass:: Transition
     :show-inheritance:
 
+    .. autosummary::
+        p
+        delta_m
+        P
+        D
+
+    .. rubric:: Attribute Documentation
+
+    .. autoattribute:: p
+    .. autoattribute:: delta_m
+    .. autoattribute:: P
+    .. autoattribute:: D
+
     .. rubric:: Method Documentation
 
-    .. automethod:: p
-    .. automethod:: delta_m
-    .. automethod:: P
-    .. automethod:: D
     .. automethod:: tolist
     .. automethod:: json

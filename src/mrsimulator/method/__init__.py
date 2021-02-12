@@ -216,9 +216,8 @@ class Method(Parseable):
             spectral_dims[i].reference_offset = dim.coordinates_offset.to("Hz").value
             spectral_dims[i].origin_offset = dim.origin_offset.to("Hz").value
 
-    def json(self):
-        """
-        Parse the class object to a JSON compliant python dictionary object where
+    def json(self) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object, where
         the attribute value with physical quantity is expressed as a string with a
         value and a unit.
 
@@ -296,7 +295,7 @@ class Method(Parseable):
                 selected_transitions = all_transitions[:]
                 list_of_P = query_permutations(
                     ent.transition_query.dict(),
-                    isotope=spin_system.get_isotopes(),
+                    isotope=spin_system.get_isotopes(symbol=True),
                     channel=[item.symbol for item in self.channels],
                 )
                 indexes = P_symmetry_indexes(selected_transitions, list_of_P)
@@ -306,7 +305,7 @@ class Method(Parseable):
                 if ent.transition_query.D is not None:
                     list_of_D = query_permutations(
                         ent.transition_query.dict(),
-                        isotope=spin_system.get_isotopes(),
+                        isotope=spin_system.get_isotopes(symbol=True),
                         channel=[item.symbol for item in self.channels],
                         transition_symmetry="D",
                     )

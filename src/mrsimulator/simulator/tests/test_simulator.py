@@ -8,6 +8,7 @@ from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.spin_system.tests.test_spin_systems import generate_isotopes
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -72,15 +73,23 @@ def get_simulator():
 
 
 def test_get_isotopes():
-    isotopes = {"19F", "31P", "2H", "6Li", "14N", "27Al", "25Mg", "45Sc", "87Sr"}
+    isotopes = ["14N", "19F", "25Mg", "27Al", "2H", "31P", "45Sc", "6Li", "87Sr"]
     sim = get_simulator()
-    assert sim.get_isotopes() == isotopes
-    assert sim.get_isotopes(spin_I=0.5) == {"19F", "31P"}
-    assert sim.get_isotopes(spin_I=1) == {"2H", "6Li", "14N"}
-    assert sim.get_isotopes(spin_I=1.5) == set()
-    assert sim.get_isotopes(spin_I=2.5) == {"27Al", "25Mg"}
-    assert sim.get_isotopes(spin_I=3.5) == {"45Sc"}
-    assert sim.get_isotopes(spin_I=4.5) == {"87Sr"}
+    assert sim.get_isotopes() == generate_isotopes(isotopes)
+    assert sim.get_isotopes(spin_I=0.5) == generate_isotopes(["19F", "31P"])
+    assert sim.get_isotopes(spin_I=1) == generate_isotopes(["14N", "2H", "6Li"])
+    assert sim.get_isotopes(spin_I=1.5) == []
+    assert sim.get_isotopes(spin_I=2.5) == generate_isotopes(["25Mg", "27Al"])
+    assert sim.get_isotopes(spin_I=3.5) == generate_isotopes(["45Sc"])
+    assert sim.get_isotopes(spin_I=4.5) == generate_isotopes(["87Sr"])
+
+    assert sim.get_isotopes(symbol=True) == isotopes
+    assert sim.get_isotopes(spin_I=0.5, symbol=True) == ["19F", "31P"]
+    assert sim.get_isotopes(spin_I=1, symbol=True) == ["14N", "2H", "6Li"]
+    assert sim.get_isotopes(spin_I=1.5, symbol=True) == []
+    assert sim.get_isotopes(spin_I=2.5, symbol=True) == ["25Mg", "27Al"]
+    assert sim.get_isotopes(spin_I=3.5, symbol=True) == ["45Sc"]
+    assert sim.get_isotopes(spin_I=4.5, symbol=True) == ["87Sr"]
 
 
 def test_simulator_1():

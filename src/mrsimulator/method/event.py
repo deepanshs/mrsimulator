@@ -82,7 +82,10 @@ class Event(Parseable):
         py_dict_copy = deepcopy(py_dict)
         return super().parse_dict_with_units(py_dict_copy)
 
-    def json(self):
+    def json(self) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object, where
+        the attribute value with physical quantity is expressed as a string with a
+        value and a unit."""
         dict_ = super().json()
         # if "user_variables" in dict_.keys():
         #     dict_.pop("user_variables")

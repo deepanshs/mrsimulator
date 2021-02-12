@@ -10,6 +10,7 @@ from mrsimulator import __version__
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
 from mrsimulator.method import Method
+from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.utils.extra import _reduce_dict
 from mrsimulator.utils.importer import import_json
 from pydantic import BaseModel
@@ -30,8 +31,9 @@ class Simulator(BaseModel):
     ----------
 
     spin_systems: A list of :ref:`spin_sys_api` or equivalent dict objects (optional).
-        The value is a list of NMR spin systems present within the sample, where each
-        spin system is an isolated system. The default value is an empty list.
+        A list of :ref:`spin_sys_api` or equivalent dict objects representing a
+        collection of isolated NMR spin systems present within the sample. The default
+        value is an empty list.
 
         Example
         -------
@@ -41,14 +43,16 @@ class Simulator(BaseModel):
         ...     SpinSystem(sites=[Site(isotope='17O')], abundance=0.015),
         ...     SpinSystem(sites=[Site(isotope='1H')], abundance=1),
         ... ]
+
         >>> # or equivalently
         >>> sim.spin_systems = [
         ...     {'sites': [{'isotope': '17O'}], 'abundance': 0.015},
         ...     {'sites': [{'isotope': '1H'}], 'abundance': 1},
         ... ]
 
-    methods: A list of :ref:`method_api` (optional).
-        The value is a list of NMR methods. The default value is an empty list.
+    methods: A list of :ref:`method_api` or equivalent dict objects (optional).
+        A list of :ref:`method_api`  or equivalent dict objects representing an NMR
+        methods. The default value is an empty list.
 
         Example
         -------
@@ -79,6 +83,7 @@ class Simulator(BaseModel):
         ...     integration_volume='hemisphere',
         ...     decompose_spectrum='spin_system',
         ... )
+
         >>> # or equivalently
         >>> sim.config = {
         ...     'number_of_sidebands': 32,
@@ -90,8 +95,7 @@ class Simulator(BaseModel):
         See :ref:`config_simulator` for details.
 
     name: str (optional).
-        The value is the name or id of the simulation or sample. The default value is
-        None.
+        The name or id of the simulation or sample. The default value is None.
 
         Example
         -------
@@ -101,7 +105,7 @@ class Simulator(BaseModel):
         '1H-17O'
 
     label: str (optional).
-        The value is a label for the simulation or sample. The default value is None.
+        The label for the simulation or sample. The default value is None.
 
         Example
         -------
@@ -111,8 +115,7 @@ class Simulator(BaseModel):
         'Test simulator'
 
     description: str (optional).
-        The value is a description of the simulation or sample. The default value is
-        None.
+        A description of the simulation or sample. The default value is None.
 
         Example
         -------
@@ -151,7 +154,7 @@ class Simulator(BaseModel):
         return False
 
     @classmethod
-    def parse_dict_with_units(cls, py_dict):
+    def parse_dict_with_units(cls, py_dict: dict):
         """
         Parse the physical quantity from a dictionary representation of the Simulator
         object, where the physical quantity is expressed as a string with a number and
@@ -218,35 +221,48 @@ class Simulator(BaseModel):
 
         return Simulator(**py_copy_dict)
 
-    def get_isotopes(self, spin_I=None) -> set:
+    def get_isotopes(self, spin_I: float = None, symbol: bool = False) -> list:
         """
-        Set of unique isotopes from the sites within the list of the spin systems
-        corresponding to spin quantum number `I`. If `I` is None, a set of all unique
+        List of unique isotopes from the sites within the list of the spin systems
+        corresponding to spin quantum number `I`. If `I` is None, a list of all unique
         isotopes is returned instead.
 
         Args:
             float spin_I: An optional spin quantum number. The valid input are the
                 multiples of 0.5.
+            bool symbol: If true, return a list of str with isotope symbols.
 
         Returns:
-            A Set.
+            A list of :ref:`isotope_api` objects.
 
         Example
         -------
 
-        >>> sim.get_isotopes() # doctest:+SKIP
-        {'1H', '27Al', '13C'}
-        >>> sim.get_isotopes(spin_I=0.5) # doctest:+SKIP
-        {'1H', '13C'}
+        >>> sim.get_isotopes()
+        [Isotope(symbol='13C'), Isotope(symbol='1H'), Isotope(symbol='27Al')]
+        >>> sim.get_isotopes(symbol=True)
+        ['13C', '1H', '27Al']
+
+        >>> sim.get_isotopes(spin_I=0.5)
+        [Isotope(symbol='13C'), Isotope(symbol='1H')]
+        >>> sim.get_isotopes(spin_I=0.5, symbol=True)
+        ['13C', '1H']
+
         >>> sim.get_isotopes(spin_I=1.5)
-        set()
+        []
+
         >>> sim.get_isotopes(spin_I=2.5)
-        {'27Al'}
+        [Isotope(symbol='27Al')]
+        >>> sim.get_isotopes(spin_I=2.5, symbol=True)
+        ['27Al']
         """
-        st = set()
-        for spin_system in self.spin_systems:
-            st.update(spin_system.get_isotopes(spin_I))
-        return st
+        st = []
+        for sys in self.spin_systems:
+            st += sys.get_isotopes(spin_I, symbol=True)
+        st = np.unique(st)
+        if not symbol:
+            return [Isotope(symbol=item) for item in st]
+        return list(st)
 
     # def mpcontribs(self, mp_id, composition=None, temperature=None, pressure=None):
     #     data = self.json(include_methods=True)
@@ -266,9 +282,9 @@ class Simulator(BaseModel):
     #     return {"identifier": mp_id, "data": data}
 
     def json(self, include_methods: bool = False, include_version: bool = False):
-        """
-        Serialize the Simulator object to a JSON compliant python dictionary object
-        where physical quantities are represented as string with a value and a unit.
+        """Parse the class object to a JSON compliant python dictionary object, where
+        the attribute value with physical quantity is expressed as a string with a
+        value and a unit.
 
         Args:
             bool include_methods: If True, the output dictionary will include the
@@ -389,14 +405,14 @@ class Simulator(BaseModel):
                 allow_nan=False,
             )
 
-    def run(self, method_index=None, pack_as_csdm=True, **kwargs):
+    def run(self, method_index: list = None, pack_as_csdm: bool = True, **kwargs):
         """Run the simulation and compute spectrum.
 
         Args:
             method_index: An integer or a list of integers. If provided, only the
                 simulations corresponding to the methods at the given index/indexes
                 will be computed. The default is None, `i.e.`, the simulation for
-                every method will be computed.
+                all method will be computed.
             bool pack_as_csdm: If true, the simulation results are stored as a
                 `CSDM <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html>`_ object,
                 otherwise, as a `ndarray
@@ -448,7 +464,7 @@ class Simulator(BaseModel):
     # freq *= u.Unit("ppm")
     # return freq, amp
 
-    def save(self, filename: str, with_units=True):
+    def save(self, filename: str, with_units: bool = True):
         """Serialize the simulator object to a JSON file.
 
         Args:
@@ -483,7 +499,7 @@ class Simulator(BaseModel):
             )
 
     @classmethod
-    def load(cls, filename: str, parse_units=True):
+    def load(cls, filename: str, parse_units: bool = True):
         """Load the :class:`~mrsimulator.Simulator` object from a JSON file by parsing.
 
         Args:

@@ -6,11 +6,17 @@ What's new
 
 - Simulation of coupled spin systems. The frequency contribution from coupled sites include
   weak J-couplings and weak dipolar couplings.
-
+- New :class:`~mrsimulator.Coupling` class.
 
 Changes
 '''''''
 
+- The :meth:`~mrsimulator.SpinSystem.get_isotopes` method from the SpinSystem object,
+  will now return :class:`~mrsimulator.spin_system.isotope.Isotope` objects by default.
+  Use the `symbol=True` argument of the method to get a list of string isotopes.
+- The :meth:`~mrsimulator.Simulator.get_isotopes` method from the Simulator object,
+  will now return :class:`~mrsimulator.spin_system.isotope.Isotope` objects by default.
+  Use the `symbol=True` argument of the method to get a list of string isotopes.
 - The ``to_freq_dict()`` function is deprecated.
 
 

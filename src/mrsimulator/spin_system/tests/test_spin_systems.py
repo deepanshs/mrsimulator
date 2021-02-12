@@ -5,6 +5,7 @@ from mrsimulator import Coupling
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.spin_system import allowed_isotopes
+from mrsimulator.spin_system.isotope import Isotope
 from pydantic import ValidationError
 
 __author__ = "Deepansh Srivastava"
@@ -13,10 +14,11 @@ __email__ = "srivastava.89@osu.edu"
 
 def test_direct_init_spin_system():
     # test-1 # empty spin system
-    the_spin_system = SpinSystem(sites=[], abundance=10)
+    the_spin_system = SpinSystem(sites=[], abundance=10, transition_pathways=None)
 
     assert the_spin_system.sites == []
     assert the_spin_system.abundance == 10.0
+    assert the_spin_system.transition_pathways is None
 
     assert the_spin_system.json() == {"sites": [], "abundance": "10.0 %"}
     assert the_spin_system.reduced_dict() == {
@@ -278,16 +280,28 @@ def get_spin_system_list():
     return SpinSystem(sites=[Site(isotope=item) for item in isotopes])
 
 
+def generate_isotopes(isotopes):
+    return [Isotope(symbol=item) for item in isotopes]
+
+
 def test_get_isotopes():
     isotopes = ["19F", "31P", "2H", "6Li", "14N", "27Al", "25Mg", "45Sc", "87Sr"]
     spin_system = get_spin_system_list()
-    assert spin_system.get_isotopes() == isotopes
-    assert spin_system.get_isotopes(spin_I=0.5) == ["19F", "31P"]
-    assert spin_system.get_isotopes(spin_I=1) == ["2H", "6Li", "14N"]
+    assert spin_system.get_isotopes() == generate_isotopes(isotopes)
+    assert spin_system.get_isotopes(spin_I=0.5) == generate_isotopes(["19F", "31P"])
+    assert spin_system.get_isotopes(spin_I=1) == generate_isotopes(["2H", "6Li", "14N"])
     assert spin_system.get_isotopes(spin_I=1.5) == []
-    assert spin_system.get_isotopes(spin_I=2.5) == ["27Al", "25Mg"]
-    assert spin_system.get_isotopes(spin_I=3.5) == ["45Sc"]
-    assert spin_system.get_isotopes(spin_I=4.5) == ["87Sr"]
+    assert spin_system.get_isotopes(spin_I=2.5) == generate_isotopes(["27Al", "25Mg"])
+    assert spin_system.get_isotopes(spin_I=3.5) == generate_isotopes(["45Sc"])
+    assert spin_system.get_isotopes(spin_I=4.5) == generate_isotopes(["87Sr"])
+
+    assert spin_system.get_isotopes(symbol=True) == isotopes
+    assert spin_system.get_isotopes(spin_I=0.5, symbol=True) == ["19F", "31P"]
+    assert spin_system.get_isotopes(spin_I=1, symbol=True) == ["2H", "6Li", "14N"]
+    assert spin_system.get_isotopes(spin_I=1.5, symbol=True) == []
+    assert spin_system.get_isotopes(spin_I=2.5, symbol=True) == ["27Al", "25Mg"]
+    assert spin_system.get_isotopes(spin_I=3.5, symbol=True) == ["45Sc"]
+    assert spin_system.get_isotopes(spin_I=4.5, symbol=True) == ["87Sr"]
 
 
 def test_allowed_isotopes():

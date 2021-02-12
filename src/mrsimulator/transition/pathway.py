@@ -9,7 +9,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class TransitionList(AbstractList):
-    def __init__(self, data=[]):
+    def __init__(self, data: list = []):
         super().__init__([self._check_for_transition_object(item) for item in data])
 
     @staticmethod
@@ -106,8 +106,8 @@ class TransitionPathway(TransitionList):
     def __repr__(self):
         return " ⟶ ".join([repr(item) for item in self._list])
 
-    def json(self):
-        """Serialize TransitionPathway to a JSON object.
+    def json(self) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object.
 
         Example:
             >>> pprint(path.json())

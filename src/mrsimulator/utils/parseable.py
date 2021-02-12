@@ -30,7 +30,7 @@ class Parseable(BaseModel):
     property_units: Dict = {}
 
     @classmethod
-    def parse_dict_with_units(cls, json_dict):
+    def parse_dict_with_units(cls, json_dict: dict):
         """Parse the physical quantity from a dictionary representation of the class
         object, where the physical quantity is expressed as a string with a number and
         a unit.
@@ -96,7 +96,7 @@ class Parseable(BaseModel):
     #     return JSON(self.json())
 
     def json(self) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object where
+        """Parse the class object to a JSON compliant python dictionary object, where
         the attribute value with physical quantity is expressed as a string with a
         number and a unit."""
 

@@ -21,6 +21,12 @@ def test_direct_init_coupling1():
     assert the_coupling.dipolar is None
 
     # test 2 --------------------------------------------------------------------------
+    the_coupling = Coupling(site_index=[0, 1], isotropic_j=10, j_symmetric=None)
+    assert the_coupling.j_symmetric is None
+    assert the_coupling.j_antisymmetric is None
+    assert the_coupling.dipolar is None
+
+    # test 3 --------------------------------------------------------------------------
     the_coupling = Coupling(
         site_index=[2, 3],
         isotropic_j=10,
@@ -38,7 +44,7 @@ def test_direct_init_coupling1():
     assert the_coupling.j_symmetric.property_units["zeta"] == "Hz"
     assert the_coupling.j_symmetric.eta == 0.1
 
-    # test 3 --------------------------------------------------------------------------
+    # test 4 --------------------------------------------------------------------------
     error = "ensure this value is less than or equal to 1"
     with pytest.raises(ValidationError, match=f".*{error}.*"):
         Coupling(

@@ -144,7 +144,7 @@ def generate_method_from_template(template, docstring=""):
         return method
 
     @classmethod
-    def parse_dict_with_units(cls, py_dict):
+    def parse_dict_with_units(cls, py_dict: dict):
         """
         Parse the physical quantities of the method object from as a python dictionary.
 

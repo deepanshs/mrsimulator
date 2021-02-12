@@ -16,9 +16,8 @@ __email__ = "srivastava.89@osu.edu"
 
 class Coupling(Parseable):
     """
-    Base class representing a single-site nuclear spin interaction tensor parameters.
-    The single-site nuclear spin interaction tensors include the nuclear shielding
-    and the electric quadrupolar tensor.
+    Base class representing a two-site coupled nuclear spin interaction tensor
+    parameters, which include the J-coupling and dipolar tensor.
 
     .. rubric:: Attribute Documentation
 
@@ -27,8 +26,6 @@ class Coupling(Parseable):
 
     site_index: list of int (required).
         A list of two integers, each corresponding to the index of the coupled sites.
-        expressed as an atomic number followed by an isotope symbol, eg.,
-        `'13C'`, `'17O'`. The default value is `'1H'`.
 
         Example
         -------
@@ -36,8 +33,7 @@ class Coupling(Parseable):
         >>> coupling = Coupling(site_index=[0, 1])
 
     isotropic_j: float (optional).
-        The value is the isotropic j-coupling between the coupled sites in the unit of
-        Hz. The default value is 0.
+        The isotropic j-coupling, in Hz, between the coupled sites. The default is 0.
 
         Example
         -------
@@ -45,7 +41,7 @@ class Coupling(Parseable):
         >>> coupling.isotropic_j = 43.3
 
     j_symmetric: :ref:`sy_api` or equivalent dict object (optional).
-        The value of this attribute represents the irreducible second-rank traceless
+        The attribute represents the parameters of the irreducible second-rank traceless
         symmetric part of the J-coupling tensor. The default value is None.
 
         The allowed attributes of the :ref:`sy_api` class for `j_symmetric` are
@@ -58,12 +54,13 @@ class Coupling(Parseable):
         -------
 
         >>> coupling.j_symmetric = {'zeta': 10, 'eta': 0.5}
+
         >>> # or equivalently
         >>> coupling.j_symmetric = SymmetricTensor(zeta=10, eta=0.5)
 
     j_antisymmetric: :ref:`asy_api` or equivalent dict object (optional).
-        The value of this attribute represents the irreducible first-rank antisymmetric
-        part of the J tensor. The default value is None.
+        The attribute represents the parameters of the irreducible first-rank
+        antisymmetric part of the J tensor. The default value is None.
 
         The allowed attributes of the :ref:`asy_api` class for `j_antisymmetric` are
         ``zeta``, ``alpha``, and ``beta``, where ``zeta`` is the anisotropy parameter
@@ -74,29 +71,29 @@ class Coupling(Parseable):
         -------
 
         >>> coupling.j_antisymmetric = {'zeta': 20}
+
         >>> # or equivalently
         >>> coupling.j_antisymmetric = AntisymmetricTensor(zeta=20)
 
     dipolar: :ref:`sy_api` or equivalent dict object (optional).
-        The value of this attribute represents the irreducible second-rank traceless
-        symmetric part of the direct dipolar coupling tensor. The default value is
-        None.
+        The attribute represents the parameters of the irreducible second-rank traceless
+        symmetric part of the direct-dipolar coupling tensor. The default value is None.
 
-        The allowed attributes of the :ref:`sy_api` class for `dipolar` are ``zeta``,
-        ``eta``, ``alpha``, ``beta``, and ``gamma``, where ``zeta`` is the dipolar
-        coupling constant, in Hz, and ``eta`` is the dipolar asymmetry parameter,
-        which is usually zero. The Euler angles ``alpha``, ``beta``, and ``gamma``
-        are in radians.
+        The allowed attributes of the :ref:`sy_api` class for `dipolar` are ``D``,
+        ``alpha``, ``beta``, and ``gamma``, where ``D`` is the dipolar coupling
+        constant, in Hz. The Euler angles ``alpha``, ``beta``, and ``gamma`` are in
+        radians.
 
         Example
         -------
 
         >>> coupling.dipolar = {'D': 320}
+
         >>> # or equivalently
         >>> coupling.dipolar = SymmetricTensor(D=320)
 
     name: str (optional).
-        The value is the name or id of the coupling. The default value is None.
+        The name or id of the coupling. The default value is None.
 
         Example
         -------
@@ -106,7 +103,7 @@ class Coupling(Parseable):
         '1H-1H'
 
     label: str (optional).
-        The value is a label for the coupling. The default value is None.
+        The label for the coupling. The default value is None.
 
         Example
         -------
@@ -116,7 +113,7 @@ class Coupling(Parseable):
         'Weak coupling'
 
     description: str (optional).
-        The value is a description of the coupling. The default value is None.
+        A description of the coupling. The default value is None.
 
         Example
         -------
@@ -146,6 +143,7 @@ class Coupling(Parseable):
     ...     site_index=[0, 1],
     ...     isotropic_j=20, # in Hz
     ...     j_symmetric=SymmetricTensor(zeta=10, eta=0.5),
+    ...     dipolar=SymmetricTensor(D=5.1e3), # in Hz
     ... )
     """
 
@@ -166,7 +164,7 @@ class Coupling(Parseable):
     def dipolar_must_not_contain_Cq_and_zeta(cls, v, values):
         if v is None:
             return v
-        [
+        _ = [
             v.property_units.pop(item) if item in v.property_units else None
             for item in ["Cq", "zeta"]
         ]
@@ -176,7 +174,7 @@ class Coupling(Parseable):
     def j_symmetric_must_not_contain_Cq_and_D(cls, v, values):
         if v is None:
             return v
-        [
+        _ = [
             v.property_units.pop(item) if item in v.property_units else None
             for item in ["Cq", "D"]
         ]
@@ -195,7 +193,7 @@ class Coupling(Parseable):
         validate_assignment = True
 
     @classmethod
-    def parse_dict_with_units(cls, py_dict):
+    def parse_dict_with_units(cls, py_dict: dict):
         """
         Parse the physical quantity from a dictionary representation of the Coupling
         object, where the physical quantity is expressed as a string with a number and

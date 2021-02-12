@@ -12,16 +12,16 @@ __email__ = "srivastava.89@osu.edu"
 class Transition(BaseModel):
     r"""
     Base Transition class describes a spin transition between two energy states, where
-    the energy states are described with weakly coupled basis.
+    the energy states are described using the weakly coupled basis.
 
     .. math::
         |m_{i,0}, m_{i,1}, ... m_{i,N} \rangle \rightarrow
             |m_{f,0}, m_{f,1}, ... m_{f,N} \rangle
 
     Arguments:
-        initial: The initial Zeeman energy state represented as a list of quantum
+        list initial: The initial Zeeman energy state represented as a list of quantum
             numbers :math:`m_{i,n}`.
-        final: The final Zeeman energy state represented as a list of quantum
+        list final: The final Zeeman energy state represented as a list of quantum
             numbers :math:`m_{f,n}`.
 
     Example:
@@ -66,7 +66,8 @@ class Transition(BaseModel):
 
     @property
     def P(self):
-        """Return a list of Δm values of the spin transition for each site.
+        """Return a list of Δm values of the spin transition for each site in a
+        weakly coupled basis.
 
         Example:
             >>> t1.P
@@ -81,7 +82,8 @@ class Transition(BaseModel):
 
     @property
     def D(self):
-        """Return a list of Δm**2 values of the spin transition for each site.
+        """Return a list of Δm**2 values of the spin transition for each site in a
+        weakly coupled basis.
 
         Example:
             >>> t1.D
@@ -93,7 +95,7 @@ class Transition(BaseModel):
     #     """Return the Δm element of the transition corresponding to the ith site."""
     #     return self.final[i] - self.initial[i]
 
-    def tolist(self):
+    def tolist(self) -> list:
         """Convert the transition to a list of quantum numbers where the first N
         quantum numbers corresponds to the initial energy state, while the last N
         corresponds to the final energy state, where N is the number of sites.
@@ -105,8 +107,8 @@ class Transition(BaseModel):
         lst = self.initial + self.final
         return lst
 
-    def json(self):
-        """Retrun the transition as a JSON serialization.
+    def json(self) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object.
 
         Example:
             >>> t1.json()
