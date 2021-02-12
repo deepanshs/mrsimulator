@@ -82,7 +82,7 @@ the isotropic chemical shift assume their default value.
     :include-source:
 
     >>> C13A.isotropic_chemical_shift # value is given in ppm
-    0
+    0.0
 
 Here, the isotropic chemical shift is given in ppm. This information is also
 present in the ``property_units`` attribute of the instance. For example,

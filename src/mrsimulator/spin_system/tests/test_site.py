@@ -60,7 +60,7 @@ def test_direct_init_site1():
     ax = Site.parse_dict_with_units({"isotope": "29Si"})
     assert ax.json() == {
         "isotope": "29Si",
-        "isotropic_chemical_shift": "0 ppm",
+        "isotropic_chemical_shift": "0.0 ppm",
     }
 
 

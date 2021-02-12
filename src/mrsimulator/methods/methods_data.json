@@ -22,7 +22,7 @@
     }]
   },
   "Bloch_decay_central_transition": {
-    "name": "BlochDecayCentralTransitionSpectrum",
+    "name": "BlochDecayCTSpectrum",
     "number_of_channels": 1,
     "description": "A one-dimensional central transition selective Bloch decay spectrum method.",
     "global_event_attributes": {},

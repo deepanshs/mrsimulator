@@ -153,7 +153,7 @@ class SpinSystem(Parseable):
     description: str = None
     sites: List[Site] = []
     couplings: List[Coupling] = None
-    abundance: float = Field(default=100, ge=0, le=100)
+    abundance: float = Field(default=100.0, ge=0.0, le=100.0)
     transition_pathways: List = None
 
     property_unit_types: ClassVar = {"abundance": "dimensionless"}

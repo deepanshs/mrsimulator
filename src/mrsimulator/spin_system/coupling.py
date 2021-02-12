@@ -151,7 +151,7 @@ class Coupling(Parseable):
     label: str = None
     description: str = None
     site_index: List[int]
-    isotropic_j: float = 0
+    isotropic_j: float = 0.0
     j_symmetric: SymmetricTensor = None
     j_antisymmetric: AntisymmetricTensor = None
     dipolar: SymmetricTensor = None

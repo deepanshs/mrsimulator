@@ -96,8 +96,8 @@ def generate_method_from_template(template, docstring=""):
 
         if common != set():
             info = "`, `".join(list(common))
-            e = f"`{info}` attribute cannot be modified for {prep['name']} method."
-            raise AttributeError(e)
+            e = f"`{info}` value cannot be modified for {prep['name']} method."
+            raise ValueError(e)
 
         dim = []
         n_sp = len(spectral_dimensions)

@@ -114,7 +114,7 @@ def ST_VAS_update(method):
 def update_method(method):
     if method.name == "BlochDecaySpectrum":
         return Bloch_decay_update(method)
-    if method.name == "BlochDecayCentralTransitionSpectrum":
+    if method.name == "BlochDecayCTSpectrum":
         return Bloch_decay_CT_update(method)
     if method.name in MQ_p_symmetry.keys():
         return MQ_VAS_update(method)

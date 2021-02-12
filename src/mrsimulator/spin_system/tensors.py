@@ -86,7 +86,7 @@ class SymmetricTensor(Parseable):
     zeta: float = None
     Cq: float = None
     D: float = None
-    eta: float = Field(default=None, ge=0, le=1)
+    eta: float = Field(default=None, ge=0.0, le=1.0)
     alpha: float = None
     beta: float = None
     gamma: float = None

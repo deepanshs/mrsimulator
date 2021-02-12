@@ -2,7 +2,10 @@
 """Test for the base Simulator class."""
 from random import randint
 
+import csdmpy as cp
+import numpy as np
 import pytest
+from mrsimulator import Coupling
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
@@ -38,7 +41,7 @@ def test_equality():
 
     result = {
         "label": "test",
-        "spin_systems": [{"abundance": "100 %", "sites": []}],
+        "spin_systems": [{"abundance": "100.0 %", "sites": []}],
         "config": {
             "decompose_spectrum": "none",
             "integration_density": 70,
@@ -161,3 +164,41 @@ def test_simulator_1():
     sim.save("test_sim_save_no_unit.temp", with_units=False)
     sim_load = sim.load("test_sim_save_no_unit.temp", parse_units=False)
     assert sim_load == sim
+
+
+def test_simulator_2():
+    sim = Simulator()
+    sim.spin_systems = [
+        SpinSystem(
+            sites=[Site(isotope="1H"), Site(isotope="23Na")],
+            couplings=[Coupling(site_index=[0, 1], isotropic_j=15)],
+        )
+    ]
+    sim.methods = [
+        BlochDecaySpectrum(
+            channel=["1H"],
+            spectral_dimensions=[{"count": 10}],
+            experiment=cp.as_csdm(np.arange(10)),
+        )
+    ]
+    sim.name = "test"
+    sim.label = "test0"
+    sim.description = "testing-testing 1.2.3"
+
+    sim.run()
+
+    # save
+    sim.save("test_sim_save.temp")
+    sim_load = sim.load("test_sim_save.temp")
+
+    sim_load_data = sim_load.methods[0].simulation
+    sim_data = sim.methods[0].simulation
+    sim_load_data._timestamp = ""
+    assert sim_load_data.dict() == sim_data.dict()
+
+    sim_load.methods[0].simulation = None
+    sim.methods[0].simulation = None
+    assert sim_load.spin_systems == sim.spin_systems
+    assert sim_load.methods == sim.methods
+    assert sim_load.name == sim.name
+    assert sim_load.description == sim.description
