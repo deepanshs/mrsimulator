@@ -2,14 +2,14 @@
 //
 //  octahedron.c
 //
-//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
 //  Contact email = srivastava.89@osu.edu
 //
 
 #include "octahedron.h"
 
-void octahedronGetDirectionCosineSquareOverOctantAndWeights(int nt, double *xr,
+void octahedronGetDirectionCosineSquareAndWeightsOverOctant(int nt, double *xr,
                                                             double *yr,
                                                             double *zr,
                                                             double *amp) {
@@ -43,8 +43,8 @@ void octahedronGetDirectionCosineSquareOverOctantAndWeights(int nt, double *xr,
   amp[k] = scale / (r2 * r2 * r2);
 }
 
-void octahedronGetPolarAngleTrigOverAnOctant(int nt, double *cos_alpha,
-                                             double *cos_beta, double *amp) {
+void octahedronGetPolarAngleTrigOverOctant(int nt, double *cos_alpha,
+                                           double *cos_beta, double *amp) {
   int points = (nt + 1) * (nt + 2) / 2;
   double *xr = malloc_double(points);
   double *yr = malloc_double(points);
@@ -53,7 +53,7 @@ void octahedronGetPolarAngleTrigOverAnOctant(int nt, double *cos_alpha,
 
   // The values xr = x^2, yr = y^2, zr = z^2, where x, y, and z are the
   // direction cosines.
-  octahedronGetDirectionCosineSquareOverOctantAndWeights(nt, xr, yr, zr, amp);
+  octahedronGetDirectionCosineSquareAndWeightsOverOctant(nt, xr, yr, zr, amp);
 
   // Evaluate sqrt of zr to get cos(beta) ---> cos(beta) = sqrt(z^2)
   vm_double_square_root(points, zr, cos_beta);
@@ -90,7 +90,7 @@ void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
   double *yr = malloc_double(points);
   double *zr = malloc_double(points);
 
-  octahedronGetDirectionCosineSquareOverOctantAndWeights(nt, xr, yr, zr, amp);
+  octahedronGetDirectionCosineSquareAndWeightsOverOctant(nt, xr, yr, zr, amp);
   // At this point the variables
   //    xr = x^2,
   //    yr = y^2,

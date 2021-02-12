@@ -2,7 +2,7 @@
 //
 //  powder_setup.h
 //
-//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava, Apr 11, 2019.
 //  Contact email = srivastava.89@osu.edu
 //
@@ -10,12 +10,12 @@
 #include "config.h"
 #include "interpolation.h"
 
-extern void octahedronGetDirectionCosineSquareOverOctantAndWeights(
+extern void octahedronGetDirectionCosineSquareAndWeightsOverOctant(
     int nt, double *xr, double *yr, double *zr, double *amp);
 
-extern void octahedronGetPolarAngleTrigOverAnOctant(int nt, double *cos_alpha,
-                                                    double *cos_beta,
-                                                    double *amp);
+extern void octahedronGetPolarAngleTrigOverOctant(int nt, double *cos_alpha,
+                                                  double *cos_beta,
+                                                  double *amp);
 
 extern void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
     int nt, void *exp_I_alpha, void *exp_I_beta, double *amp);

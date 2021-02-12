@@ -2,7 +2,7 @@
 //
 //  config.h
 //
-//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava, Aug 10, 2019
 //  Contact email = srivastava.89@osu.edu
 //
@@ -52,7 +52,7 @@ typedef float complex64[2];
 #include "vm.h"
 
 // user definition
-#define PI2 6.2831853072
+#define PI2 6.283185307179586
 #define PI2I PI2 *I
 
 // #ifdef linux

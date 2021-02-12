@@ -2,7 +2,7 @@
 //
 //  frequency_component_function.h
 //
-//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava, Apr 11, 2019.
 //  Contact email = srivastava.89@osu.edu
 //
