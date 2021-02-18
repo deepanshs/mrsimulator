@@ -11,14 +11,17 @@
 #include "interpolation.h"
 
 extern void octahedronGetDirectionCosineSquareAndWeightsOverOctant(
-    int nt, double *xr, double *yr, double *zr, double *amp);
+    int nt, double *restrict xr, double *restrict yr, double *restrict zr,
+    double *restrict amp);
 
 extern void octahedronGetPolarAngleTrigOverOctant(int nt, double *cos_alpha,
                                                   double *cos_beta,
                                                   double *amp);
 
-extern void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
-    int nt, void *exp_I_alpha, void *exp_I_beta, double *amp);
+extern void octahedronGetComplexExpOfPolarAngleOverOctant(int nt,
+                                                          void *exp_I_alpha,
+                                                          void *exp_I_beta,
+                                                          double *amp);
 
 extern void octahedronInterpolation(double *spec, double *freq, int nt,
                                     double *amp, int stride, int m);

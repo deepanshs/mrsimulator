@@ -424,6 +424,8 @@ void mrsimulator_core(
     float *transition,
 
     // powder orientation average
+    unsigned int integration_type,    // Sampling type for integration
+                                      // 0-octaheron, 1-spherical
     int integration_density,          // The number of triangle along the edge
                                       // of octahedron
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
@@ -448,8 +450,9 @@ void mrsimulator_core(
     number_of_sidebands = 1;
   }
 
-  MRS_averaging_scheme *scheme = MRS_create_averaging_scheme(
-      integration_density, allow_fourth_rank, integration_volume);
+  MRS_averaging_scheme *scheme =
+      MRS_create_averaging_scheme(integration_type, integration_density,
+                                  integration_volume, allow_fourth_rank);
 
   MRS_fftw_scheme *fftw_scheme =
       create_fftw_scheme(scheme->total_orientations, number_of_sidebands);

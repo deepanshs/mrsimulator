@@ -10,10 +10,18 @@
 #include "powder_setup.h"
 
 #include "octahedron.h"
+#include "spherical.h"
 
-void octahedron_averaging_setup(int nt, void *exp_I_alpha, void *exp_I_beta,
-                                double *amp) {
-  // octahedronGetPolarAngleTrigOverOctant(nt, cos_alpha, cos_beta, amp);
-  octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(nt, exp_I_alpha,
-                                                             exp_I_beta, amp);
+void averaging_setup(unsigned int integration_type, int nt, void *exp_I_alpha,
+                     void *exp_I_beta, double *amp) {
+  //   octahedronGetPolarAngleTrigOverOctant(nt, cos_alpha, cos_beta, amp);
+  if (integration_type == 0) {
+    octahedronGetComplexExpOfPolarAngleOverOctant(nt, exp_I_alpha, exp_I_beta,
+                                                  amp);
+    return;
+  }
+  if (integration_type == 1) {
+    sphericalGetComplexExpOfPolarAngleOverOctant(nt, exp_I_alpha, exp_I_beta,
+                                                 amp);
+  }
 }

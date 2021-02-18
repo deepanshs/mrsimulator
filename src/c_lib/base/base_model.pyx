@@ -15,6 +15,7 @@ def one_d_spectrum(method,
        list spin_systems,
        int verbose=0,
        unsigned int number_of_sidebands=90,
+       unsigned int integration_type=1,
        unsigned int integration_density=72,
        unsigned int decompose_spectrum=0,
        unsigned int integration_volume=1,
@@ -89,8 +90,8 @@ def one_d_spectrum(method,
 # create averaging scheme _____________________________________________________
     cdef clib.MRS_averaging_scheme *the_averaging_scheme
     the_averaging_scheme = clib.MRS_create_averaging_scheme(
-        integration_density=integration_density, allow_fourth_rank=allow_fourth_rank,
-        integration_volume=integration_volume
+        integration_type=integration_type, integration_density=integration_density,
+        integration_volume=integration_volume, allow_fourth_rank=allow_fourth_rank
     )
 
 # create spectral dimensions _______________________________________________

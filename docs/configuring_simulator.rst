@@ -51,9 +51,9 @@ of the config attributes is as follows,
     ...
     >>> sim = Simulator()
     >>> sim.config
-    ConfigSimulator(number_of_sidebands=64, integration_volume='octant', integration_density=70, decompose_spectrum='none')
+    ConfigSimulator(number_of_sidebands=64, integration_type='Alderman', integration_volume='octant', integration_density=70, decompose_spectrum='none')
 
-Here, the configurable attributes are ``number_of_sidebands``,
+Here, the configurable attributes are ``number_of_sidebands``, ``integration_type``,
 ``integration_volume``, ``integration_density``, and ``decompose_spectrum``.
 
 

@@ -243,15 +243,16 @@ static inline void vm_double_complex_multiply(int count, const void *restrict x,
  * res = cos(x)
  */
 static inline void vm_double_cosine(int count, const double *restrict x,
-                                    double *restrict res) {
+                                    int stride_x, double *restrict res,
+                                    int stride_res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
-    *res++ = cos(*x++);
+    *res = cos(*x);
     // res++;
     // x++;
-    // x += stride_x;
-    // res += stride_res;
+    x += stride_x;
+    res += stride_res;
   }
 }
 
@@ -260,13 +261,14 @@ static inline void vm_double_cosine(int count, const double *restrict x,
  * res = sin(x)
  */
 static inline void vm_double_sine(int count, const double *restrict x,
-                                  double *restrict res) {
+                                  int stride_x, double *restrict res,
+                                  int stride_res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
-    *res++ = sin(*x++);
-    // x += stride_x;
-    // res += stride_res;
+    *res = sin(*x);
+    x += stride_x;
+    res += stride_res;
   }
 }
 

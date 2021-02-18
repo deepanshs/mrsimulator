@@ -9,11 +9,10 @@
 
 #include "octahedron.h"
 
-void octahedronGetDirectionCosineSquareAndWeightsOverOctant(int nt, double *xr,
-                                                            double *yr,
-                                                            double *zr,
-                                                            double *amp) {
-  int i, j, k = 0;
+void octahedronGetDirectionCosineSquareAndWeightsOverOctant(
+    int nt, double *restrict xr, double *restrict yr, double *restrict zr,
+    double *restrict amp) {
+  int i, j;
   double x2, y2, z2, r2, scale = (double)nt;
 
   /* Do the (x + y + z = nt) face of the octahedron
@@ -28,19 +27,18 @@ void octahedronGetDirectionCosineSquareAndWeightsOverOctant(int nt, double *xr,
       y2 = pow(i, 2);
       z2 = pow(j, 2);
       r2 = x2 + y2 + z2;
-      xr[k] = x2 / r2;
-      yr[k] = y2 / r2;
-      zr[k] = z2 / r2;
-      amp[k] = scale / (r2 * sqrt(r2));
-      k++;
+      *xr++ = x2 / r2;
+      *yr++ = y2 / r2;
+      *zr++ = z2 / r2;
+      *amp++ = scale / (r2 * sqrt(r2));
     }
   }
 
-  xr[k] = 0.0;
-  yr[k] = 0.0;
-  zr[k] = 1.0;
+  *xr = 0.0;
+  *yr = 0.0;
+  *zr = 1.0;
   r2 = (double)nt;
-  amp[k] = scale / (r2 * r2 * r2);
+  *amp = 1.0 / (r2 * r2);
 }
 
 void octahedronGetPolarAngleTrigOverOctant(int nt, double *cos_alpha,
@@ -83,8 +81,9 @@ void octahedronGetPolarAngleTrigOverOctant(int nt, double *cos_alpha,
   free(sin_beta);
 }
 
-void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
-    int nt, void *exp_I_alpha, void *exp_I_beta, double *amp) {
+void octahedronGetComplexExpOfPolarAngleOverOctant(int nt, void *exp_I_alpha,
+                                                   void *exp_I_beta,
+                                                   double *amp) {
   int points = (nt + 1) * (nt + 2) / 2;
   double *xr = malloc_double(points);
   double *yr = malloc_double(points);
@@ -99,29 +98,29 @@ void octahedronGetPolarAngleCosineAzimuthalAnglePhaseOverOctant(
 
   // Cos beta .............................................................. //
   // cos(beta) = sqrt(z^2) ... (1)
-  // In terms of the variables, Eq (1) is given as sqrt(zr)
-  // Evaluate zr = sqrt(zr)         ==>> sqrt(z^2)
+  // In terms of the variables, Eq (1) is given as sqrt(zr).
+  // Evaluate zr = sqrt(zr)         ==>> sqrt(z^2).
   vm_double_square_root(points, zr, zr);
-  // Copy cos(beta), aka zr, to the even addresses of exp_I_beta
+  // Copy cos(beta), aka zr, to the even addresses of exp_I_beta.
   cblas_dcopy(points, zr, 1, (double *)exp_I_beta, 2);
 
   // Sin beta .............................................................. //
   // sin^2(beta) = x^2 + y^2 ... (2)
-  // In terms of the variables, Eq (2) is given as xr + yr
+  // In terms of the variables, Eq (2) is given as xr + yr.
   // Evaluate zr = xr + yr.
   vm_double_add(points, xr, yr, zr);
   // Take the square root of zr to get sin(beta).
-  // Evaluate zr = sqrt(zr)         ==>> sqrt(x^2 + y^2)
+  // Evaluate zr = sqrt(zr)         ==>> sqrt(x^2 + y^2).
   vm_double_square_root(points, zr, zr);
-  // Copy sin(beta), aka zr, to the odd addresses of exp_I_beta
+  // Copy sin(beta), aka zr, to the odd addresses of exp_I_beta.
   cblas_dcopy(points, zr, 1, (double *)exp_I_beta + 1, 2);
 
   // Evaluate squate root of xr
-  // xr = sqrt(xr)        ==>> sqrt(x^2)
+  // xr = sqrt(xr)        ==>> sqrt(x^2).
   vm_double_square_root(points, xr, xr);
 
   // Evaluate squate root of yr
-  // yr = sqrt(yr)        ==>> sqrt(y^2)
+  // yr = sqrt(yr)        ==>> sqrt(y^2).
   vm_double_square_root(points, yr, yr);
 
   // .. note

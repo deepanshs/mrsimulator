@@ -53,6 +53,7 @@ typedef float complex64[2];
 
 // user definition
 #define PI2 6.283185307179586
+#define PIby2 1.570796326794897
 #define PI2I PI2 *I
 
 // #ifdef linux

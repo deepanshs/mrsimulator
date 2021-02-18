@@ -35,6 +35,7 @@ extern void mrsimulator_core(
 
     // powder orientation average
     // The number of triangle along the edge of octahedron.
+    unsigned int integration_type,  // 0-octahedron, 1-sphere
     int integration_density,
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
     bool interpolation, bool *freq_contrib, double *affine_matrix);

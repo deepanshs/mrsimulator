@@ -15,6 +15,8 @@ __decompose_spectrum_enum__ = {"none": 0, "spin_system": 1}
 __integration_volume_enum__ = {"octant": 0, "hemisphere": 1}
 __integration_volume_octants__ = [1, 4]
 
+__integration_type_enum__ = {"Alderman": 0, "spherical": 1}
+
 
 class ConfigSimulator(BaseModel):
     r"""
@@ -28,23 +30,27 @@ class ConfigSimulator(BaseModel):
         simulation. The value cannot be zero or negative. The default value
         is 64.
 
+    integration_type: enum (optional).
+        Orientation sampling type. The valid literals of this enumeration are
+
+        - ``Spherical`` (default), and
+        - ``Aldermans``
+
     integration_volume: enum (optional).
-        The value is the volume over which the solid-state spectral frequency
-        integration is performed. The valid literals of this enumeration are
+        The volume over which the solid-state spectral frequency integral is evaluated.
+        The valid literals of this enumeration are
 
         - ``octant`` (default), and
         - ``hemisphere``
 
     integration_density: int (optional).
-        The value represents the integration density or equivalently the number of
-        orientations over which the frequency integration is performed within a given
-        volume. If :math:`n` is the integration_density, then the total number of
-        orientation is given as
+        The integration density or equivalently the number of orientations sampled over
+        an octant. If :math:`n` is the integration_density, then the total number of
+        orientation, :math:`N`, sampled over an octant is
 
         .. math::
-            n_\text{octants} \frac{(n+1)(n+2)}{2},
+            N = \frac{(n+1)(n+2)}{2}.
 
-        where :math:`n_\text{octants}` is the number of octants in the given volume.
         The default value is 70.
 
     decompose_spectrum: enum (optional).
@@ -62,12 +68,14 @@ class ConfigSimulator(BaseModel):
 
     >>> a = Simulator()
     >>> a.config.number_of_sidebands = 128
+    >>> a.config.integration_type = 'Alderman'
     >>> a.config.integration_density = 96
     >>> a.config.integration_volume = 'hemisphere'
     >>> a.config.decompose_spectrum = 'spin_system'
     """
 
     number_of_sidebands: int = Field(default=64, gt=0)
+    integration_type: Literal["Alderman", "spherical"] = "Alderman"
     integration_volume: Literal["octant", "hemisphere"] = "octant"
     integration_density: int = Field(default=70, gt=0)
     decompose_spectrum: Literal["none", "spin_system"] = "none"
@@ -83,6 +91,7 @@ class ConfigSimulator(BaseModel):
         py_dict["decompose_spectrum"] = __decompose_spectrum_enum__[
             self.decompose_spectrum
         ]
+        py_dict["integration_type"] = __integration_type_enum__[self.integration_type]
         return py_dict
 
     # averaging scheme. This contains the c pointer used in frequency evaluation

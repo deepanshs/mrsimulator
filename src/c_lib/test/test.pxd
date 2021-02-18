@@ -41,7 +41,8 @@ cdef extern from "angular_momentum.h":
 
 
 cdef extern from "powder_setup.h":
-    void octahedron_averaging_setup(
+    void averaging_setup(
+        unsigned int integration_type,
         int nt,
         double complex *exp_I_alpha,
         double complex *exp_I_beta,
@@ -157,6 +158,7 @@ cdef extern from "simulation.h":
 
         # The transition as transition[0] = mi and transition[1] = mf
         double *transition,
+        unsigned int integration_type,        # 0-octahedron, 1-sphere
         int integration_density,
         unsigned int integration_volume,      # 0-octant, 1-hemisphere, 2-sphere.
         bool_t interpolation

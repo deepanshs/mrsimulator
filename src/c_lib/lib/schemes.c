@@ -9,6 +9,70 @@
 
 #include "schemes.h"
 
+/* Free the memory from the mrsimulator plan associated with the spherical
+ * averaging scheme */
+void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
+  free(scheme->amplitudes);
+  free(scheme->exp_Im_alpha);
+  free(scheme->w2);
+  free(scheme->w4);
+  free(scheme->wigner_2j_matrices);
+  free(scheme->wigner_4j_matrices);
+}
+
+/* Create a new orientation averaging scheme. */
+MRS_averaging_scheme *MRS_create_averaging_scheme(
+    unsigned int integration_type, unsigned int integration_density,
+    unsigned int integration_volume, bool allow_fourth_rank) {
+  MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
+
+  scheme->integration_density = integration_density;
+  scheme->integration_volume = integration_volume;
+  scheme->allow_fourth_rank = allow_fourth_rank;
+
+  scheme->octant_orientations =
+      ((integration_density + 1) * (integration_density + 2)) / 2;
+
+  /* Calculate α, β, and weights over the positive octant. ................. */
+  /* ....................................................................... */
+  // The 4 * octant_orientations memory allocation is for m=-4, -3, -2, and -1
+  scheme->exp_Im_alpha = malloc_complex128(4 * scheme->octant_orientations);
+  complex128 *exp_I_beta = malloc_complex128(scheme->octant_orientations);
+  scheme->amplitudes = malloc_double(scheme->octant_orientations);
+
+  averaging_setup(integration_type, integration_density,
+                  &scheme->exp_Im_alpha[3 * scheme->octant_orientations],
+                  exp_I_beta, scheme->amplitudes);
+
+  averaging_scheme_setup(scheme, exp_I_beta, allow_fourth_rank);
+  return scheme;
+}
+
+/* Create a new orientation averaging scheme. */
+MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
+    double *alpha, double *beta, double *weight, unsigned int n_angles,
+    bool allow_fourth_rank) {
+  MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
+
+  scheme->octant_orientations = n_angles;
+  scheme->integration_volume = 0;
+  scheme->total_orientations = n_angles;
+
+  scheme->exp_Im_alpha = malloc_complex128(4 * scheme->total_orientations);
+  complex128 *exp_I_beta = malloc_complex128(scheme->total_orientations);
+  scheme->amplitudes = weight;
+
+  /* Calculate cos(α) + isin(α) from α. .................................... */
+  vm_cosine_I_sine(n_angles, alpha,
+                   scheme->exp_Im_alpha[3 * scheme->octant_orientations]);
+
+  /* Calculate cos(β) + isin(β) from β. .................................... */
+  vm_cosine_I_sine(n_angles, beta, exp_I_beta);
+
+  averaging_scheme_setup(scheme, exp_I_beta, allow_fourth_rank);
+  return scheme;
+}
+
 static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
                                           complex128 *exp_I_beta,
                                           bool allow_fourth_rank) {
@@ -107,71 +171,6 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
      * fourth rank tensors. */
     scheme->w4 = malloc_complex128(9 * scheme->total_orientations);
   }
-}
-
-/* Free the memory from the mrsimulator plan associated with the spherical
- * averaging scheme */
-void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
-  free(scheme->amplitudes);
-  free(scheme->exp_Im_alpha);
-  free(scheme->w2);
-  free(scheme->w4);
-  free(scheme->wigner_2j_matrices);
-  free(scheme->wigner_4j_matrices);
-}
-
-/* Create a new orientation averaging scheme. */
-MRS_averaging_scheme *MRS_create_averaging_scheme(
-    unsigned int integration_density, bool allow_fourth_rank,
-    unsigned int integration_volume) {
-  MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
-
-  scheme->integration_density = integration_density;
-  scheme->integration_volume = integration_volume;
-  scheme->allow_fourth_rank = allow_fourth_rank;
-
-  scheme->octant_orientations =
-      ((integration_density + 1) * (integration_density + 2)) / 2;
-
-  /* Calculate α, β, and weights over the positive octant. ................. */
-  /* ....................................................................... */
-  // The 4 * octant_orientations memory allocation is for m=-4, -3, -2, and -1
-  scheme->exp_Im_alpha = malloc_complex128(4 * scheme->octant_orientations);
-  complex128 *exp_I_beta = malloc_complex128(scheme->octant_orientations);
-  scheme->amplitudes = malloc_double(scheme->octant_orientations);
-
-  octahedron_averaging_setup(
-      integration_density,
-      &scheme->exp_Im_alpha[3 * scheme->octant_orientations], exp_I_beta,
-      scheme->amplitudes);
-
-  averaging_scheme_setup(scheme, exp_I_beta, allow_fourth_rank);
-  return scheme;
-}
-
-/* Create a new orientation averaging scheme. */
-MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
-    double *alpha, double *beta, double *weight, unsigned int n_angles,
-    bool allow_fourth_rank) {
-  MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
-
-  scheme->octant_orientations = n_angles;
-  scheme->integration_volume = 0;
-  scheme->total_orientations = n_angles;
-
-  scheme->exp_Im_alpha = malloc_complex128(4 * scheme->total_orientations);
-  complex128 *exp_I_beta = malloc_complex128(scheme->total_orientations);
-  scheme->amplitudes = weight;
-
-  /* Calculate cos(α) + isin(α) from α. .................................... */
-  vm_cosine_I_sine(n_angles, alpha,
-                   scheme->exp_Im_alpha[3 * scheme->octant_orientations]);
-
-  /* Calculate cos(β) + isin(β) from β. .................................... */
-  vm_cosine_I_sine(n_angles, beta, exp_I_beta);
-
-  averaging_scheme_setup(scheme, exp_I_beta, allow_fourth_rank);
-  return scheme;
 }
 
 /* ----------------------------------------------------------------------- */
