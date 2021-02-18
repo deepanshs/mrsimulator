@@ -6,11 +6,18 @@ from typing import List
 
 import csdmpy as cp
 import numpy as np
+import pandas as pd
+import psutil
+from joblib import delayed
+from joblib import Parallel
 from mrsimulator import __version__
+from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
 from mrsimulator.method import Method
 from mrsimulator.spin_system.isotope import Isotope
+from mrsimulator.utils import flatten_dict
+from mrsimulator.utils.abstract_list import AbstractList
 from mrsimulator.utils.extra import _reduce_dict
 from mrsimulator.utils.importer import import_json
 from pydantic import BaseModel
@@ -21,6 +28,8 @@ from .config import ConfigSimulator
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+__CPU_count__ = psutil.cpu_count()
 
 
 class Simulator(BaseModel):
@@ -266,19 +275,13 @@ class Simulator(BaseModel):
 
     # def mpcontribs(self, mp_id, composition=None, temperature=None, pressure=None):
     #     data = self.json(include_methods=True)
-    #     # for sys in data["spin_systems"]:
-    #     #     for site in sys["sites"]:
-    #     #         site["δiso"] = site.pop("isotropic_chemical_shift")
-    #     #         if "shielding_symmetric" in site:
-    #     #             ss = site["shielding_symmetric"]
-    #     #             ss["η"] = ss.pop("eta")
-    #     #             ss["ζσ"] = ss.pop("zeta")
     #     if temperature is not None:
     #         data["temperature"] = temperature
     #     if pressure is not None:
     #         data["pressure"] = pressure
     #     if composition is not None:
     #         data["composition"] = composition
+
     #     return {"identifier": mp_id, "data": data}
 
     def json(self, include_methods: bool = False, include_version: bool = False):
@@ -405,7 +408,14 @@ class Simulator(BaseModel):
                 allow_nan=False,
             )
 
-    def run(self, method_index: list = None, pack_as_csdm: bool = True, **kwargs):
+    def run(
+        self,
+        method_index: list = None,
+        n_jobs: int = 1,
+        verbose: int = 0,
+        pack_as_csdm: bool = True,
+        **kwargs,
+    ):
         """Run the simulation and compute spectrum.
 
         Args:
@@ -434,35 +444,45 @@ class Simulator(BaseModel):
             method_index = [method_index]
         for index in method_index:
             method = self.methods[index]
-            amp, indexes = one_d_spectrum(
-                method=method,
-                spin_systems=self.spin_systems,
-                **self.config.get_int_dict(),
-                **kwargs,
+            spin_sys = get_chunks(self.spin_systems, n_jobs)
+            kwargs_dict = self.config.get_int_dict()
+            jobs = (
+                delayed(one_d_spectrum)(
+                    method=method, spin_systems=sys, **kwargs_dict, **kwargs
+                )
+                for sys in spin_sys
             )
+            amp = Parallel(
+                n_jobs=n_jobs,
+                verbose=verbose,
+                # **{
+                #     "backend": {
+                #         "threads": "threading",
+                #         "processes": "multiprocessing",
+                #         None: None,
+                #     }["threads"]
+                # },
+            )(jobs)
 
-            self.indexes.append(indexes)
+            # self.indexes.append(indexes)
 
-            if isinstance(amp, list):
-                simulated_data = amp
-            else:
-                simulated_data = [amp]
+            gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
+            B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
+            origin_offset = np.abs(B0 * gyromagnetic_ratio * 1e6)
+            for seq in method.spectral_dimensions:
+                seq.origin_offset = origin_offset
+
+            if isinstance(amp[0], list):
+                simulated_data = []
+                for item in amp:
+                    simulated_data += item
+            if isinstance(amp[0], np.ndarray):
+                simulated_data = [np.asarray(amp).sum(axis=0)]
 
             if pack_as_csdm:
                 method.simulation = self._as_csdm_object(simulated_data, method)
             else:
                 method.simulation = np.asarray(simulated_data)
-
-    # """The frequency is in the units of Hz."""
-    # gamma = method.isotope.gyromagnetic_ratio
-    # B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
-    # larmor_frequency = -gamma * B0
-    # reference_offset_in_MHz =method.spectral_dimensions[0].reference_offset / 1e6
-    # denom = reference_offset_in_MHz + larmor_frequency
-    # freq = method.spectral_dimensions[0].coordinates_Hz / abs(denom)
-
-    # freq *= u.Unit("ppm")
-    # return freq, amp
 
     def save(self, filename: str, with_units: bool = True):
         """Serialize the simulator object to a JSON file.
@@ -526,6 +546,24 @@ class Simulator(BaseModel):
 
         return Simulator.parse_dict_with_units(contents)
 
+    def sites(self):
+        """Unique sites within the Simulator object as a list of Site objects.
+
+        Returns:
+            A list of Site object.
+
+        Example
+        -------
+
+        >>> sites = sim.sites() # doctest: +SKIP
+        """
+        sites_list = []
+        for sys in self.spin_systems:
+            for site in sys.sites:
+                if site not in sites_list:
+                    sites_list.append(site)
+        return Sites(sites_list)
+
     def _as_csdm_object(self, data: np.ndarray, method: Method) -> cp.CSDM:
         """
         Converts the simulation data from the given method to a CSDM object. Read
@@ -577,3 +615,67 @@ class Simulator(BaseModel):
                 "spin_systems": [self.spin_systems[index].json()]
             }
         }
+
+
+class Sites(AbstractList):
+    def __init__(self, data=[]):
+        super().__init__(data)
+        euler = ["alpha", "beta", "gamma"]
+        self.site_labels = [
+            "name",
+            "label",
+            "description",
+            "isotope",
+            "isotropic_chemical_shift",
+            *[f"shielding_symmetric.{_}" for _ in ["zeta", "eta", *euler]],
+            *[f"quadrupolar.{_}" for _ in ["Cq", "eta", *euler]],
+        ]
+
+    def __setitem__(self, index, item):
+        """Set an item to the list at index"""
+        if isinstance(item, Site):
+            self._list[index] = item
+        elif isinstance(item, dict):
+            self._list[index] = Site(**item)
+        else:
+            raise ValueError("Only object of type Site is allowed.")
+
+    def to_pd(self):
+        row = {item: [] for item in self.site_labels}
+        sites = [item.json() for item in self._list]
+        for site in sites:
+            site_ = flatten_dict(site)
+            keys = site_.keys()
+            for item in self.site_labels:
+                val = None if item not in keys else site_[item]
+                row[item].append(val)
+
+        row_len = len(row["name"])
+        nones = [None] * row_len
+        for item in self.site_labels:
+            if row[item] == nones:
+                row.pop(item)
+
+        return pd.DataFrame(row)
+
+
+def get_chunks(items_list, n_jobs):
+    """Return the chucks of into list into roughly n_jobs equal chunks
+
+    Args:
+        (list) items_list: The input list to divide into n_jobs chunks.
+        (int) n_jobs: Number of chunks of input list.
+    """
+    if n_jobs < 0:
+        n_jobs += __CPU_count__ + 1
+    list_len = len(items_list)
+    n_blocks, n_left = list_len // n_jobs, list_len % n_jobs
+
+    chunks = [0] + [n_blocks] * n_jobs
+    for i in range(n_left):
+        chunks[i + 1] += 1
+
+    for i in range(1, n_jobs + 1):
+        chunks[i] += chunks[i - 1]
+
+    return [items_list[chunks[i] : chunks[i + 1]] for i in range(n_jobs)]
