@@ -13,33 +13,29 @@
 #define method_h
 
 typedef struct MRS_event {
-  double fraction; /**< The weighted frequency contribution from the event. */
+  double fraction;                   /**< The weighted frequency contribution from the event. */
   double magnetic_flux_density_in_T; /**<  The magnetic flux density in T. */
   double rotor_angle_in_rad;         /**<  The rotor angle in radians. */
-  double sample_rotation_frequency_in_Hz; /**<  The sample rotation frequency in
-                                             Hz. */
-
-  MRS_plan *plan;          /**< The plan for every event. */
-  double *freq_amplitude;  // buffer for event amplitude
+  double sample_rotation_frequency_in_Hz; /**<  The sample rotation frequency in Hz. */
+  MRS_plan *plan;                         /**< The plan for every event. */
+  double *freq_amplitude;                 // buffer for event amplitude
 } MRS_event;
 
-typedef struct MRS_sequence {
-  int count;        /**<  The number of coordinates along the dimension. */
-  double increment; /**<  Increment of coordinates along the dimension. */
+typedef struct MRS_dimension {
+  int count;                 /**<  The number of coordinates along the dimension. */
+  double increment;          /**<  Increment of coordinates along the dimension. */
   double coordinates_offset; /**<  Start coordinate of the dimension. */
-
-  MRS_event *events;     /**< Holds a list of events. */
-  unsigned int n_events; /**< The number of events. */
+  MRS_event *events;         /**< Holds a list of events. */
+  unsigned int n_events;     /**< The number of events. */
 
   /* private attributes */
-  double R0_offset;  // holds the isotropic offset. This is used in determining
-                     // if or not to bin the frequencies, especially for
-                     // sideband order.
-  double *local_frequency;  //  buffer for local frequencies.
-  double *freq_offset;      //  buffer for local + sideband frequencies.
-  double normalize_offset;  // fixed value = 0.5 - coordinate_offset/increment
+  double R0_offset; // holds the isotropic offset. This is used in determining if or not to bin
+                    // the frequencies, especially for sideband order.
+  double *local_frequency; // buffer for local frequencies.
+  double *freq_offset;     // buffer for local + sideband frequencies.
+  double normalize_offset; // fixed value = 0.5 - coordinate_offset/increment
   double inverse_increment;
-} MRS_sequence;
+} MRS_dimension;
 
 /**
  * @brief Free the memory allocation for the MRS event.
@@ -49,45 +45,39 @@ typedef struct MRS_sequence {
 void MRS_free_event(MRS_event *the_event);
 
 /**
- * @brief Allocate memory for the MRS sequences.
+ * @brief Allocate memory for `n` MRS dimensions.
  *
- * @param	n An interger defining the number of MRS_sequence structs for
- *     which the memory is allocated.
+ * @param	n An interger. Number of MRS_dimension structs for which the memory is allocated.
  */
-MRS_sequence *MRS_sequence_malloc(int n);
+MRS_dimension *MRS_dimension_malloc(int n);
 
 /**
- * @brief Create plans for every event with the array of sequences.
+ * @brief Create plans for every event with the array of dimensions.
  *
- * @param scheme A pointer to the MRS_averaging_scheme.
- * @param count A pointer to an array of number of points along each sequence.
- * @param coordinates_offset A pointer to an array of coordinates_offsets along
- *      each sequence.
- * @param increment A pointer to an array of increments along each sequence.
- * @param magnetic_flux_density_in_T A pointer to an array of magnetic flux
- *      density given in T along each sequence.
- * @param sample_rotation_frequency_in_Hz A pointer to an array of the sample
- *      rotation frequency given in Hz along each sequence.
- * @param rotor_angle_in_rad A pointer to an array of the the rotor angle given
- *      in radians along each sequence.
- * @param	n_events A pointer to a list of number of events within each
- *      sequence.
- * @param n_seq An unsigned int with the number of sequences.
+ * @param scheme Pointer to the MRS_averaging_scheme.
+ * @param count Pointer to number of points array along each dimension.
+ * @param coordinates_offset Pointer to coordinates_offsets array along each dimension.
+ * @param increment Pointer to increment array along each dimension.
+ * @param magnetic_flux_density_in_T Pointer to magnetic flux density array along each dimension.
+ * @param sample_rotation_frequency_in_Hz Pointer to rotation frequency array along each dimension.
+ * @param rotor_angle_in_rad Pointer to rotor angle array along each dimension.
+ * @param	n_events Pointer to number of events list within each dimension.
+ * @param n_dim Unsigned int with the number of dimensions.
  * @param number_of_sidebands An int with the number of sidebands.
  */
-MRS_sequence *MRS_create_sequences(
-    MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
-    double *increment, double *fractions, double *magnetic_flux_density_in_T,
-    double *sample_rotation_frequency_in_Hz, double *rotor_angle_in_rad,
-    int *n_events, unsigned int n_seq, unsigned int number_of_sidebands);
+MRS_dimension *MRS_create_dimensions(MRS_averaging_scheme *scheme, int *count,
+                                     double *coordinates_offset, double *increment,
+                                     double *fractions, double *magnetic_flux_density_in_T,
+                                     double *sample_rotation_frequency_in_Hz,
+                                     double *rotor_angle_in_rad, int *n_events, unsigned int n_dim,
+                                     unsigned int number_of_sidebands);
 
 /**
- * @brief Free the memory allocation for the MRS sequences.
+ * @brief Free the memory allocation for the MRS dimensions.
  *
- * @param the_sequence The pointer to an array of MRS_sequence structs.
- * @param	n An interger defining the number of MRS_sequence structs in
- *     `the_sequence`.
+ * @param dimensions The pointer to an array of MRS_dimension structs.
+ * @param	n An interger defining the number of MRS_dimension structs in `dimensions`.
  */
-void MRS_free_sequence(MRS_sequence *the_sequence, unsigned int n);
+void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n);
 
 #endif /* method_h */

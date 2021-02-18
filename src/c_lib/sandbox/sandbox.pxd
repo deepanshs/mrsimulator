@@ -44,6 +44,3 @@ cdef extern from "mrsimulator.h":
     void MRS_get_amplitudes_from_plan(MRS_plan *plan, double complex *R2,
                                   double complex *R4)
     void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0)
-
-    ctypedef struct MRS_dimension:
-        pass

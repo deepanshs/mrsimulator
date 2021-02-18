@@ -425,7 +425,7 @@ def __batch_wigner_rotation(unsigned int octant_orientations,
 
 #     cdef bool_t remove_second_order_quad_isotropic_c = remove_2nd_order_quad_isotropic
 
-#     cdef clib.MRS_sequence *sequence[1]
+#     cdef clib.MRS_dimension *dimension[1]
 #     clib.mrsimulator_core(
 #             # spectrum information and related amplitude
 #             &amp[0],
@@ -434,7 +434,7 @@ def __batch_wigner_rotation(unsigned int octant_orientations,
 #             number_of_points,
 
 #             &sites_c,
-#             sequence,
+#             dimension,
 
 #             second_order_quad_c,
 #             remove_second_order_quad_isotropic_c,

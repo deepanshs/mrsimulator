@@ -95,8 +95,8 @@ def one_d_spectrum(method,
 
 # create spectral dimensions _______________________________________________
 
-    cdef int n_sequence = len(method.spectral_dimensions)
-    # if n_sequence > 1:
+    cdef int n_dimension = len(method.spectral_dimensions)
+    # if n_dimension > 1:
     #     number_of_sidebands = 1
 
     max_n_sidebands = number_of_sidebands
@@ -121,8 +121,8 @@ def one_d_spectrum(method,
     coordinates_offset = []
 
     prev_n_sidebands = 0
-    for i, seq in enumerate(method.spectral_dimensions):
-        for event in seq.events:
+    for i, dim in enumerate(method.spectral_dimensions):
+        for event in dim.events:
             freq_contrib = np.append(freq_contrib, event.get_value_int())
             if event.rotor_frequency < 1.0e-3:
                 sample_rotation_frequency_in_Hz = 1.0e9
@@ -148,15 +148,15 @@ def one_d_spectrum(method,
             vr.append(sample_rotation_frequency_in_Hz) # in Hz
             th.append(rotor_angle_in_rad) # in rad
 
-        total_n_points *= seq.count
+        total_n_points *= dim.count
 
-        count.append(seq.count)
-        offset = seq.spectral_width / 2.0
-        coordinates_offset.append(-seq.reference_offset * factor - offset)
-        increment.append(seq.spectral_width / seq.count)
-        event_i.append(len(seq.events))
+        count.append(dim.count)
+        offset = dim.spectral_width / 2.0
+        coordinates_offset.append(-dim.reference_offset * factor - offset)
+        increment.append(dim.spectral_width / dim.count)
+        event_i.append(len(dim.events))
 
-        seq.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
+        dim.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
 
     frac = np.asarray(fr, dtype=np.float64)
     magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
@@ -168,9 +168,9 @@ def one_d_spectrum(method,
     n_event = np.asarray(event_i, dtype=np.int32)
 
     # create spectral_dimensions
-    the_sequence = clib.MRS_create_sequences(the_averaging_scheme, &cnt[0],
+    dimensions = clib.MRS_create_dimensions(the_averaging_scheme, &cnt[0],
         &coord_off[0], &incre[0], &frac[0], &magnetic_flux_density_in_T[0],
-        &srfiH[0], &rair[0], &n_event[0], n_sequence, number_of_sidebands)
+        &srfiH[0], &rair[0], &n_event[0], n_dimension, number_of_sidebands)
 
 # normalization factor for the spectrum
     norm = np.prod(incre)
@@ -478,8 +478,8 @@ def one_d_spectrum(method,
                 &sites_c,
                 &couplings_c,
                 &transition_array[pathway_increment*trans__],
-                the_sequence,
-                n_sequence,
+                dimensions,
+                n_dimension,
                 the_fftw_scheme,
                 the_averaging_scheme,
                 interpolation,
@@ -508,7 +508,7 @@ def one_d_spectrum(method,
         if gyromagnetic_ratio < 0:
             amp1 = np.fft.fftn(np.fft.ifftn(amp1).conj()).real
 
-    clib.MRS_free_sequence(the_sequence, n_sequence)
+    clib.MRS_free_dimension(dimensions, n_dimension)
     clib.MRS_free_averaging_scheme(the_averaging_scheme)
     clib.MRS_free_fftw_scheme(the_fftw_scheme)
     return amp1, index_

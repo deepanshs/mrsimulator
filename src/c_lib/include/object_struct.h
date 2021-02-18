@@ -19,20 +19,18 @@
 struct __site_struct {
   unsigned int number_of_sites; /**< Number of sites */
 
-  /* Pointer to an array of the spin quantum numbers of each site within a spin
-   * system. */
+  /* Pointer to an array of the spin quantum numbers of each site within a spin system. */
   float *spin;
 
-  /* Pointer to an array of the gyromagnetic ratio in MHz/T of each site within
-   * a spin system. */
+  /* Pointer to an array of the gyromagnetic ratio in MHz/T of each site within a spin system. */
   double *gyromagnetic_ratio;
 
-  /* Pointer to an array of the isotropic chemical shifts in ppm of each
-   * site within a spin system. */
+  /* Pointer to an array of the isotropic chemical shifts in ppm of each site within a
+  spin system. */
   double *isotropic_chemical_shift_in_ppm;
 
-  /* Pointer to an array of symmetric nuclear shielding tensor anisotropies
-   * (zeta) in ppm of each site within a spin system. */
+  /* Pointer to an array of symmetric nuclear shielding tensor anisotropies (zeta) in ppm of
+  each site within a spin system. */
   double *shielding_symmetric_zeta_in_ppm;
 
   /* Pointer to an array of symmetric nuclear shielding tensor asymmetry

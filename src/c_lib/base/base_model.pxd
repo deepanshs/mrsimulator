@@ -79,14 +79,14 @@ cdef extern from "method.h":
         double rotor_angle_in_rad          # The rotor angle in radians.
         double sample_rotation_frequency_in_Hz # The sample rotation frequency in Hz.
 
-    ctypedef struct MRS_sequence:
+    ctypedef struct MRS_dimension:
         int count                       #  The number of coordinates along the dimension.
         double increment                # Increment of coordinates along the dimension.
         double coordinates_offset       #  Start coordinate of the dimension.
         MRS_event *events               # Holds a list of events.
         unsigned int n_events           # The number of events.
 
-    MRS_sequence *MRS_create_sequences(
+    MRS_dimension *MRS_create_dimensions(
         MRS_averaging_scheme *scheme,
         int *count,
         double *coordinates_offset,
@@ -96,10 +96,10 @@ cdef extern from "method.h":
         double *sample_rotation_frequency_in_Hz,
         double *rotor_angle_in_rad,
         int *n_events,
-        unsigned int n_seq,
+        unsigned int n_dim,
         unsigned int number_of_sidebands)
 
-    void MRS_free_sequence(MRS_sequence *the_sequence, int n)
+    void MRS_free_dimension(MRS_dimension *dimensions, int n)
 
 
 cdef extern from "simulation.h":
@@ -113,8 +113,8 @@ cdef extern from "simulation.h":
         site_struct *sites,
         coupling_struct *couplings,
 
-        MRS_sequence *the_sequence[],
-        int n_sequence,
+        MRS_dimension *dimensions[],
+        int n_dimension,
 
         int quad_second_order,                    # Quad theory for second order,
 
@@ -140,8 +140,8 @@ cdef extern from "simulation.h":
 
         # The transition as transition[0] = mi and transition[1] = mf
         float *transition,
-        MRS_sequence *the_sequence, # the sequences within method.
-        int n_sequence, # the number of sequences.
+        MRS_dimension *dimensions,    # the dimensions within method.
+        int n_dimension,              # the number of dimensions.
         MRS_fftw_scheme *fftw_scheme, # the fftw scheme
         MRS_averaging_scheme *scheme, # the powder averaging scheme
         bool_t interpolation,

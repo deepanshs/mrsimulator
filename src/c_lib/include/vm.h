@@ -15,10 +15,9 @@
 
 /**
  * Add the elements of vector x and y and store in res of type double.
- * res = x + y
+ *      res = x + y
  */
-static inline void vm_double_add(int count, const double *restrict x,
-                                 const double *restrict y,
+static inline void vm_double_add(int count, const double *restrict x, const double *restrict y,
                                  double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
@@ -33,10 +32,9 @@ static inline void vm_double_add(int count, const double *restrict x,
 
 /**
  * Add the elements of vector y inplace with the elements from vector x.
- * y += x
+ *      y += x
  */
-static inline void vm_double_add_inplace(int count, const double *restrict x,
-                                         double *restrict y) {
+static inline void vm_double_add_inplace(int count, const double *restrict x, double *restrict y) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   while (count-- > 0) {
@@ -48,10 +46,9 @@ static inline void vm_double_add_inplace(int count, const double *restrict x,
 
 /**
  * Subtract the elements of vector x from y and store in res of type double.
- * res = x - y
+ *      res = x - y
  */
-static inline void vm_double_subtract(int count, const double *restrict x,
-                                      const double *restrict y,
+static inline void vm_double_subtract(int count, const double *restrict x, const double *restrict y,
                                       double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
@@ -66,10 +63,9 @@ static inline void vm_double_subtract(int count, const double *restrict x,
 
 /**
  * Subtract the elements of vector y inplace with the elements from vector x.
- * y -= x
+ *      y -= x
  */
-static inline void vm_double_subtract_inplace(int count,
-                                              const double *restrict x,
+static inline void vm_double_subtract_inplace(int count, const double *restrict x,
                                               double *restrict y) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
@@ -82,10 +78,9 @@ static inline void vm_double_subtract_inplace(int count,
 
 /**
  * Multiply the elements of vector x and y and store in res of type double.
- * res = x * y
+ *      res = x * y
  */
-static inline void vm_double_multiply(int count, const double *restrict x,
-                                      const double *restrict y,
+static inline void vm_double_multiply(int count, const double *restrict x, const double *restrict y,
                                       double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
@@ -100,12 +95,10 @@ static inline void vm_double_multiply(int count, const double *restrict x,
 
 /**
  * Multiply the elements of vector y inplace with the elements from vector x.
- * y *= x
+ *      y *= x
  */
-static inline void vm_double_multiply_inplace(int count,
-                                              const double *restrict x,
-                                              const int stride_x,
-                                              double *restrict y,
+static inline void vm_double_multiply_inplace(int count, const double *restrict x,
+                                              const int stride_x, double *restrict y,
                                               const int stride_y) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
@@ -118,10 +111,9 @@ static inline void vm_double_multiply_inplace(int count,
 
 /**
  * Divide the elements of vector x by y and store in res of type double.
- * res = x / y
+ *      res = x / y
  */
-static inline void vm_double_divide(int count, const double *restrict x,
-                                    const double *restrict y,
+static inline void vm_double_divide(int count, const double *restrict x, const double *restrict y,
                                     double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
@@ -136,7 +128,7 @@ static inline void vm_double_divide(int count, const double *restrict x,
 
 /**
  * Divide the elements of vector y inplace with the elements from vector x.
- * y /= x
+ *      y /= x
  */
 static inline void vm_double_divide_inplace(int count, const double *restrict x,
                                             double *restrict y) {
@@ -151,10 +143,9 @@ static inline void vm_double_divide_inplace(int count, const double *restrict x,
 
 /**
  * Square the elements of vector x and store in res of type double.
- * res = x * x
+ *      res = x * x
  */
-static inline void vm_double_square(int count, const double *restrict x,
-                                    double *restrict res) {
+static inline void vm_double_square(int count, const double *restrict x, double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
@@ -165,7 +156,7 @@ static inline void vm_double_square(int count, const double *restrict x,
 
 /**
  * Square the elements of vector y inplace.
- * x *= x
+ *      x *= x
  */
 static inline void vm_double_square_inplace(int count, double *restrict x) {
   // x = __builtin_assume_aligned(x, 32);
@@ -181,7 +172,7 @@ static inline void vm_double_square_inplace(int count, double *restrict x) {
 /** Power and roots suit =================================================== */
 /**
  * Square root of the elements of vector x stored in res of type double.
- * res = sqrt(x)
+ *    res = sqrt(x)
  */
 static inline void vm_double_square_root(int count, const double *restrict x,
                                          double *restrict res) {
@@ -194,10 +185,9 @@ static inline void vm_double_square_root(int count, const double *restrict x,
 
 /**
  * Square root of the elements of vector x inplace.
- * x = sqrt(x)
+ *      x = sqrt(x)
  */
-static inline void vm_double_square_root_inplace(int count,
-                                                 double *restrict x) {
+static inline void vm_double_square_root_inplace(int count, double *restrict x) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
@@ -209,11 +199,10 @@ static inline void vm_double_square_root_inplace(int count,
 /**
  * Multiply the elements of vector x and y and store in res of type double
  * complex.
- * res = x * y
+ *    res = x * y
  */
 static inline void vm_double_complex_multiply(int count, const void *restrict x,
-                                              const void *restrict y,
-                                              void *restrict res) {
+                                              const void *restrict y, void *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   // res = __builtin_assume_aligned(res, 32);
@@ -225,10 +214,10 @@ static inline void vm_double_complex_multiply(int count, const void *restrict x,
   while (count-- > 0) {
     real = *x_++;
     imag = *x_++;
-    a = real * *y_;    // real real
-    c = imag * *y_++;  // imag real
-    b = imag * *y_;    // imag imag
-    d = real * *y_++;  // real imag
+    a = real * *y_;   // real real
+    c = imag * *y_++; // imag real
+    b = imag * *y_;   // imag imag
+    d = real * *y_++; // real imag
     *res_++ = a - b;
     *res_++ = c + d;
 
@@ -240,10 +229,9 @@ static inline void vm_double_complex_multiply(int count, const void *restrict x,
 
 /**
  * Cosine of the elements of vector x stored in res of type double.
- * res = cos(x)
+ *    res = cos(x)
  */
-static inline void vm_double_cosine(int count, const double *restrict x,
-                                    double *restrict res) {
+static inline void vm_double_cosine(int count, const double *restrict x, double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
@@ -257,10 +245,9 @@ static inline void vm_double_cosine(int count, const double *restrict x,
 
 /**
  * Sine of the elements of vector x stored in res of type double.
- * res = sin(x)
+ *      res = sin(x)
  */
-static inline void vm_double_sine(int count, const double *restrict x,
-                                  double *restrict res) {
+static inline void vm_double_sine(int count, const double *restrict x, double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
@@ -271,12 +258,10 @@ static inline void vm_double_sine(int count, const double *restrict x,
 }
 
 /**
- * Cosine + I Sine of the elements of vector x in rad and stored in
- * res of type complex128.
- * res = cos(x) + I sin(x)
+ * Cosine + I Sine of the elements of vector x in rad and stored in res of type complex128.
+ *      res = cos(x) + I sin(x)
  */
-static inline void vm_cosine_I_sine(int count, const double *restrict x,
-                                    void *restrict res) {
+static inline void vm_cosine_I_sine(int count, const double *restrict x, void *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   double *res_ = (double *)res;
@@ -291,25 +276,25 @@ static inline void vm_cosine_I_sine(int count, const double *restrict x,
 static inline double my_exp(double x) {
   x /= 1024.0;
   x += 1.0;
-  x *= x;  // 1
-  x *= x;  // 2
-  x *= x;  // 3
-  x *= x;  // 4
-  x *= x;  // 5
-  x *= x;  // 6
-  x *= x;  // 7
-  x *= x;  // 8
-  x *= x;  // 9
-  x *= x;  // 10
+  x *= x; // 1
+  x *= x; // 2
+  x *= x; // 3
+  x *= x; // 4
+  x *= x; // 5
+  x *= x; // 6
+  x *= x; // 7
+  x *= x; // 8
+  x *= x; // 9
+  x *= x; // 10
   return x;
 }
 
 /**
  * Exponent of the elements of vector x stored in res of type double.
- * res = exp(x)
+ *      res = exp(x)
  */
-static inline void vm_double_exp(int count, double *restrict x,
-                                 double *restrict res, const int ix) {
+static inline void vm_double_exp(int count, double *restrict x, double *restrict res,
+                                 const int ix) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
@@ -321,10 +306,9 @@ static inline void vm_double_exp(int count, double *restrict x,
 
 /**
  * Exponent of the elements of vector x stored in res of type complex128.
- * res = exp(x)
+ *      res = exp(x)
  */
-static inline void vm_double_complex_exp(int count, const void *restrict x,
-                                         void *restrict res) {
+static inline void vm_double_complex_exp(int count, const void *restrict x, void *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   double *x_ = (double *)x;
@@ -341,10 +325,9 @@ static inline void vm_double_complex_exp(int count, const void *restrict x,
 
 /**
  * Exponent of the elements of vector x stored in res of type complex128.
- * res = exp(x(imag))
+ *      res = exp(x(imag))
  */
-static inline void vm_double_complex_exp_imag_only(int count,
-                                                   const void *restrict x,
+static inline void vm_double_complex_exp_imag_only(int count, const void *restrict x,
                                                    void *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
@@ -368,8 +351,7 @@ static inline void vm_double_complex_exp_imag_only(int count,
  * x *= a
  * Equivalent to cblas_dscal.
  */
-static inline void cblas_dscal(int count, const double a, double *restrict x,
-                               const int stride_x) {
+static inline void cblas_dscal(int count, const double a, double *restrict x, const int stride_x) {
   // x = __builtin_assume_aligned(x, 32);
   while (count-- > 0) {
     *x *= a;
@@ -382,8 +364,7 @@ static inline void cblas_dscal(int count, const double a, double *restrict x,
  * x *= a
  * Equivalent to cblas_zdscal.
  */
-static inline void cblas_zdscal(int count, const double a, void *restrict x,
-                                const int stride_x) {
+static inline void cblas_zdscal(int count, const double a, void *restrict x, const int stride_x) {
   // x = __builtin_assume_aligned(x, 32);
   double *x_ = (double *)x;
   int stride_xp = stride_x * 2 - 1;
@@ -399,9 +380,8 @@ static inline void cblas_zdscal(int count, const double a, void *restrict x,
  * y = x
  * Equivalent to cblas_dcopy.
  */
-static inline void cblas_dcopy(int count, const double *restrict x,
-                               const int stride_x, double *restrict y,
-                               const int stride_y) {
+static inline void cblas_dcopy(int count, const double *restrict x, const int stride_x,
+                               double *restrict y, const int stride_y) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   while (count-- > 0) {
@@ -416,9 +396,8 @@ static inline void cblas_dcopy(int count, const double *restrict x,
  * y = x
  * Equivalent to cblas_zcopy.
  */
-static inline void cblas_zcopy(int count, const void *restrict x,
-                               const int stride_x, void *restrict y,
-                               const int stride_y) {
+static inline void cblas_zcopy(int count, const void *restrict x, const int stride_x,
+                               void *restrict y, const int stride_y) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   double *x_ = (double *)x;
@@ -438,9 +417,8 @@ static inline void cblas_zcopy(int count, const void *restrict x,
  * y = a*x + y
  * Equivalent to cblas_daxpy.
  */
-static inline void cblas_daxpy(int count, const double a,
-                               const double *restrict x, const int stride_x,
-                               double *restrict y, const int stride_y) {
+static inline void cblas_daxpy(int count, const double a, const double *restrict x,
+                               const int stride_x, double *restrict y, const int stride_y) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   while (count-- > 0) {
@@ -455,9 +433,8 @@ static inline void cblas_daxpy(int count, const double a,
  * y = a*x + b*y
  * Equivalent to catlas_daxpby.
  */
-static inline void catlas_daxpby(int count, const double a,
-                                 const double *restrict x, const int stride_x,
-                                 const double b, double *restrict y,
+static inline void catlas_daxpby(int count, const double a, const double *restrict x,
+                                 const int stride_x, const double b, double *restrict y,
                                  const int stride_y) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);

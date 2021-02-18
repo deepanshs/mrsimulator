@@ -7,7 +7,7 @@
 //  Contact email = srivastava.89@osu.edu
 //
 
-#include <stdlib.h>  // to use calloc, malloc, and free methods
+#include <stdlib.h> // to use calloc, malloc, and free methods
 
 // allocate memory for array of size m for a given type.
 #define malloc_complex128(m) (complex128 *)malloc(m * sizeof(complex128))

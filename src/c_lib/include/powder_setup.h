@@ -9,5 +9,4 @@
 
 #include "config.h"
 
-extern void octahedron_averaging_setup(int nt, void *exp_I_alpha,
-                                       void *exp_I_beta, double *amp);
+extern void octahedron_averaging_setup(int nt, void *exp_I_alpha, void *exp_I_beta, double *amp);

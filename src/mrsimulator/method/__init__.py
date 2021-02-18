@@ -289,8 +289,8 @@ class Method(Parseable):
         all_transitions = spin_system._all_transitions()
 
         segments = []
-        for seq in self.spectral_dimensions:
-            for ent in seq.events:
+        for dim in self.spectral_dimensions:
+            for ent in dim.events:
                 # query the transitions for P symmetry
                 selected_transitions = all_transitions[:]
                 list_of_P = query_permutations(

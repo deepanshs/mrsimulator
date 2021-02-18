@@ -16,7 +16,7 @@ typedef float complex64[2];
 
 #if __STDC_VERSION__ >= 199901L
 #define MKL_Complex16 complex128
-#else  // not C99
+#else // not C99
 #define restrict __restrict
 #endif
 
