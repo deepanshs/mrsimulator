@@ -10,6 +10,7 @@ dependencies:
   - setuptools>=27.3
   - cython>=0.29
   - matplotlib>=3.0
+  - pandas>=1.1.3
   - pip
   - pip:
       - monty>=2.0.4
@@ -18,6 +19,8 @@ dependencies:
       - typing-extensions>=3.7
       - flake8
       - lmfit>=1.0.0
+      - psutil>=5.7.2
+      - joblib>=1.0.0
       # for testing
       - pytest
       - pytest-cov

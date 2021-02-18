@@ -1,3 +1,23 @@
+Upcoming
+--------
+
+What's new!
+'''''''''''
+
+- Added a new ``Sites`` class that holds a list of Site objects. The Sites class method,
+  ``to_pd()``, exports the sites as a pandas data frame.
+- A new method, ``sites()``, is added to the Simulator object, which returns the ``Sites``
+  object containing a list of unique sites within the Simulator object across multiple
+  spin systems.
+- Added three new arguments to the ``single_site_system_generator()`` method,
+  'site_labels', 'site_names', and 'site_descriptions'.
+
+Bug fixes
+'''''''''
+
+- Fix a bug related to `get_spectral_dimensions()` utility method in cases when CSDM
+  dimension objects have negative increment.
+
 v0.5.1
 ------
 
