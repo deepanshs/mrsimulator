@@ -175,8 +175,8 @@ def test_sites():
     sim = Simulator()
     sim.spin_systems = [SpinSystem(sites=[s]) for s in sites]
     r_sites = sim.sites()
-    for i in range(len(sites)):
-        assert r_sites[i] == sites[i]
+    for i, site in enumerate(sites):
+        assert r_sites[i] == site
 
     # test sites to pd
     sites_table = sim.sites().to_pd()
