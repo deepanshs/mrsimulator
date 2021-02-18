@@ -9,6 +9,7 @@ from mrsimulator import SpinSystem
 from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.simulator import Sites
+from mrsimulator.utils.collection import single_site_system_generator
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -204,3 +205,41 @@ def test_sites():
 
     with pytest.raises(ValueError, match="Only object of type Site is allowed."):
         a[0] = ""
+
+
+def test_sites_to_pandas_df():
+    isotopes = ["29Si"] * 3 + ["17O"]
+    shifts = [-89.0, -89.5, -87.8, 15.0]
+    zeta = [59.8, 52.1, 69.4, 12.4]
+    eta_n = [0.62, 0.68, 0.6, 0.5]
+    Cq = [None, None, None, 5.3e6]
+    eta_q = [None, None, None, 0.34]
+
+    spin_systems = single_site_system_generator(
+        isotopes=isotopes,
+        isotropic_chemical_shifts=shifts,
+        shielding_symmetric={"zeta": zeta, "eta": eta_n},
+        quadrupolar={"Cq": Cq, "eta": eta_q},
+        abundance=1,
+    )
+
+    sim = Simulator()
+    sim.spin_systems = spin_systems
+    pd_o = sim.sites().to_pd()
+
+    assert list(pd_o["isotope"]) == isotopes
+    assert list(pd_o["isotropic_chemical_shift"]) == [
+        f"{i} ppm" if i is not None else None for i in shifts
+    ]
+    assert list(pd_o["shielding_symmetric.zeta"]) == [
+        f"{i} ppm" if i is not None else None for i in zeta
+    ]
+    assert list(pd_o["shielding_symmetric.eta"]) == [
+        i if i is not None else None for i in eta_n
+    ]
+    assert list(pd_o["quadrupolar.Cq"]) == [
+        f"{i} Hz" if i is not None else None for i in Cq
+    ]
+    # assert list(pd_o["quadrupolar.eta"]) == [
+    #     i if i is not None else None for i in eta_q
+    # ]
