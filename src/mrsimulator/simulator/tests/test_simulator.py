@@ -2,14 +2,18 @@
 """Test for the base Simulator class."""
 from random import randint
 
+import numpy as np
 import pytest
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.simulator import __CPU_count__
+from mrsimulator.simulator import get_chunks
 from mrsimulator.simulator import Sites
 from mrsimulator.utils.collection import single_site_system_generator
+
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -243,3 +247,40 @@ def test_sites_to_pandas_df():
     # assert list(pd_o["quadrupolar.eta"]) == [
     #     i if i is not None else None for i in eta_q
     # ]
+
+
+def test_parallel_chunks():
+    def check_chunks(items_list, n_jobs, block):
+        chunks = get_chunks(items_list, n_jobs)
+        final = get_blocks(block)
+        assert chunks == final
+
+    def get_blocks(indexes):
+        lst = [np.arange(i) for i in indexes]
+        sum_ = 0
+        for i, item in enumerate(lst[1:]):
+            sum_ += indexes[i]
+            item += sum_
+        return [item.tolist() for item in lst]
+
+    items_list = np.arange(120).tolist()
+    check_chunks(items_list, 3, [40, 40, 40])
+
+    items_list = np.arange(130).tolist()
+    check_chunks(items_list, 3, [44, 43, 43])
+
+    items_list = np.arange(185).tolist()
+    check_chunks(items_list, 6, [31, 31, 31, 31, 31, 30])
+
+    items_list = np.arange(185).tolist()
+    check_chunks(items_list, 8, [24, 23, 23, 23, 23, 23, 23, 23])
+
+    items_list = np.arange(85).tolist()
+    check_chunks(items_list, 8, [11, 11, 11, 11, 11, 10, 10, 10])
+
+    div, rem = 85 // __CPU_count__, 85 % __CPU_count__
+    lst = [div] * __CPU_count__
+    for i in range(rem):
+        lst[i] += 1
+    items_list = np.arange(85).tolist()
+    check_chunks(items_list, -1, lst)

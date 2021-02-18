@@ -88,30 +88,83 @@ def one_d_spectrum(method,
         integration_volume=integration_volume
     )
 
-# # create spectral dimensions _______________________________________________
-    # The number of dimensions in the methods
+# create spectral dimensions _______________________________________________
     cdef int n_sequence = len(method.spectral_dimensions)
     # if n_sequence > 1:
     #     number_of_sidebands = 1
 
-    ravel_list, total_n_points = method_sequence_ravel(
-        method, number_of_sidebands, factor, gyromagnetic_ratio
-    )
-    cdef ndarray[double] frac = ravel_list[0]
-    cdef ndarray[double] magnetic_flux_density_in_T = ravel_list[1]
-    cdef ndarray[double] rotor_freq_in_Hz = ravel_list[2]
-    cdef ndarray[double] rotor_angle_in_radians = ravel_list[3]
-    cdef ndarray[int] number_of_points = ravel_list[4]
-    cdef ndarray[double] incre = ravel_list[5]
-    cdef ndarray[double] coord_off = ravel_list[6]
-    cdef ndarray[int] n_event = ravel_list[7]
-    cdef ndarray[bool_t] freq_contrib_c = ravel_list[8]
+    max_n_sidebands = number_of_sidebands
 
-# create spectral dimensions _______________________________________________
-    cdef clib.MRS_sequence *the_sequence
-    the_sequence = clib.MRS_create_sequences(the_averaging_scheme, &number_of_points[0],
+    total_n_points = 1
+    cdef ndarray[int] n_event
+    cdef ndarray[double] magnetic_flux_density_in_T, frac
+    cdef ndarray[double] srfiH
+    cdef ndarray[double] rair
+    cdef ndarray[int] cnt
+    cdef ndarray[double] coord_off
+    cdef ndarray[double] incre
+    freq_contrib = np.asarray([])
+
+    fr = []
+    Bo = []
+    vr = []
+    th = []
+    event_i = []
+    count = []
+    increment = []
+    coordinates_offset = []
+
+    prev_n_sidebands = 0
+    for i, seq in enumerate(method.spectral_dimensions):
+        for event in seq.events:
+            freq_contrib = np.append(freq_contrib, event.get_value_int())
+            if event.rotor_frequency < 1.0e-3:
+                sample_rotation_frequency_in_Hz = 1.0e9
+                rotor_angle_in_rad = 0.0
+                number_of_sidebands = 1
+                if prev_n_sidebands == 0: prev_n_sidebands = 1
+            else:
+                sample_rotation_frequency_in_Hz = event.rotor_frequency
+                rotor_angle_in_rad = event.rotor_angle
+                if prev_n_sidebands == 0: prev_n_sidebands = number_of_sidebands
+
+            if prev_n_sidebands != number_of_sidebands:
+                raise ValueError(
+                    (
+                        'The library does not support spectral dimensions containing '
+                        'both zero and non-zero rotor frequencies. Consider using a '
+                        'smaller value instead of zero.'
+                    )
+                )
+
+            fr.append(event.fraction) # fraction
+            Bo.append(event.magnetic_flux_density)  # in T
+            vr.append(sample_rotation_frequency_in_Hz) # in Hz
+            th.append(rotor_angle_in_rad) # in rad
+
+        total_n_points *= seq.count
+
+        count.append(seq.count)
+        offset = seq.spectral_width / 2.0
+        coordinates_offset.append(-seq.reference_offset * factor - offset)
+        increment.append(seq.spectral_width / seq.count)
+        event_i.append(len(seq.events))
+
+        seq.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
+
+    frac = np.asarray(fr, dtype=np.float64)
+    magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
+    srfiH = np.asarray(vr, dtype=np.float64)
+    rair = np.asarray(th, dtype=np.float64)
+    cnt = np.asarray(count, dtype=np.int32)
+    incre = np.asarray(increment, dtype=np.float64)
+    coord_off = np.asarray(coordinates_offset, dtype=np.float64)
+    n_event = np.asarray(event_i, dtype=np.int32)
+
+    # create spectral_dimensions
+    the_sequence = clib.MRS_create_sequences(the_averaging_scheme, &cnt[0],
         &coord_off[0], &incre[0], &frac[0], &magnetic_flux_density_in_T[0],
-        &rotor_freq_in_Hz[0], &rotor_angle_in_radians[0], &n_event[0], n_sequence, number_of_sidebands)
+        &srfiH[0], &rair[0], &n_event[0], n_sequence, number_of_sidebands)
 
 # normalization factor for the spectrum
     norm = np.prod(incre)
@@ -122,6 +175,8 @@ def one_d_spectrum(method,
 
 # _____________________________________________________________________________
 
+# frequency contrib
+    cdef ndarray[bool_t] freq_contrib_c = np.asarray(freq_contrib, dtype=np.bool)
 
 # affine transformation
     cdef ndarray[double] affine_matrix_c
@@ -179,7 +234,6 @@ def one_d_spectrum(method,
     # ---------------------------------------------------------------------
     # sample _______________________________________________________________
     for index, spin_sys in enumerate(spin_systems):
-        # evaluate_spectrum_from_spin_system(index, spin_sys, method)
         abundance = spin_sys.abundance
         isotopes = [site.isotope.symbol for site in spin_sys.sites]
         if channel not in isotopes:
@@ -353,90 +407,6 @@ def one_d_spectrum(method,
     clib.MRS_free_averaging_scheme(the_averaging_scheme)
     clib.MRS_free_fftw_scheme(the_fftw_scheme)
     return amp1
-
-
-@cython.profile(False)
-@cython.boundscheck(False)
-@cython.wraparound(False)
-def method_sequence_ravel(
-    method, number_of_sidebands, factor, gyromagnetic_ratio
-):
-    total_n_points = 1
-
-    freq_contrib = np.asarray([])
-    fr = []
-    Bo = []
-    vr = []
-    th = []
-    event_i = []
-    count = []
-    increment = []
-    coordinates_offset = []
-
-    prev_n_sidebands = 0
-    for i, seq in enumerate(method.spectral_dimensions):
-        for event in seq.events:
-            freq_contrib = np.append(freq_contrib, event.get_value_int())
-            if event.rotor_frequency < 1.0e-3:
-                sample_rotation_frequency_in_Hz = 1.0e9
-                rotor_angle_in_rad = 0.0
-                number_of_sidebands = 1
-                if prev_n_sidebands == 0: prev_n_sidebands = 1
-            else:
-                sample_rotation_frequency_in_Hz = event.rotor_frequency
-                rotor_angle_in_rad = event.rotor_angle
-                if prev_n_sidebands == 0: prev_n_sidebands = number_of_sidebands
-
-            if prev_n_sidebands != number_of_sidebands:
-                raise ValueError(
-                    (
-                        'The library does not support spectral dimensions containing '
-                        'both zero and non-zero rotor frequencies. Consider using a '
-                        'smaller value instead of zero.'
-                    )
-                )
-
-            fr.append(event.fraction) # fraction
-            Bo.append(event.magnetic_flux_density)  # in T
-            vr.append(sample_rotation_frequency_in_Hz) # in Hz
-            th.append(rotor_angle_in_rad) # in rad
-
-        total_n_points *= seq.count
-
-        count.append(seq.count)
-        offset = seq.spectral_width / 2.0
-        coordinates_offset.append(-seq.reference_offset * factor - offset)
-        increment.append(seq.spectral_width / seq.count)
-        event_i.append(len(seq.events))
-
-        # seq.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
-
-    frac = np.asarray(fr, dtype=np.float64)
-    magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
-    rotor_freq_in_Hz = np.asarray(vr, dtype=np.float64)
-    rotor_angle_in_radians = np.asarray(th, dtype=np.float64)
-    number_of_points = np.asarray(count, dtype=np.int32)
-    incre = np.asarray(increment, dtype=np.float64)
-    coord_off = np.asarray(coordinates_offset, dtype=np.float64)
-    n_event = np.asarray(event_i, dtype=np.int32)
-
-    # frequency contrib
-    freq_contrib = np.asarray(freq_contrib, dtype=np.bool)
-
-    return [
-        [
-            frac,
-            magnetic_flux_density_in_T,
-            rotor_freq_in_Hz,
-            rotor_angle_in_radians,
-            number_of_points,
-            incre,
-            coord_off,
-            n_event,
-            freq_contrib
-        ],
-        total_n_points
-    ]
 
 
 @cython.profile(False)
