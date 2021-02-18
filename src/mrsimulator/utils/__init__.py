@@ -20,19 +20,36 @@ def get_spectral_dimensions(csdm_object):
     for dim in csdm_object.dimensions:
         count = dim.count
         increment = dim.increment.to("Hz").value
-        coordinates_offset = dim.coordinates_offset.to("Hz").value
-        spectral_width = count * increment
+        ref = dim.coordinates_offset.to("Hz").value
+        sw = count * increment
+        co = ref if dim.complex_fft is True else ref + sw / 2.0
+
+        if sw < 0:
+            sw = -sw
+            co = ref + increment * ((count + 1) // 2 - 1)
 
         dim_i = {}
         dim_i["count"] = dim.count
-        dim_i["spectral_width"] = spectral_width
-        if dim.complex_fft is True:
-            dim_i["reference_offset"] = coordinates_offset
-        else:
-            dim_i["reference_offset"] = coordinates_offset + spectral_width / 2.0
+        dim_i["spectral_width"] = sw
+        dim_i["reference_offset"] = co
 
         if dim.label != "":
             dim_i["label"] = dim.label
+        if dim.origin_offset not in ["", None, 0]:
+            dim_i["origin_offset"] = dim.origin_offset.to("Hz").value
         result.append(dim_i)
 
     return result[::-1]
+
+
+def flatten_dict(obj, previous_key=None):
+    """Flatten a nested dictionary with keys as obj1.obj2... and so on"""
+    result = {}
+    for k, v in obj.items():
+        if not isinstance(v, dict):
+            key = f"{previous_key}.{k}" if previous_key is not None else k
+            result.update({key: v})
+        else:
+            result.update(**flatten_dict(v, previous_key=k))
+
+    return result

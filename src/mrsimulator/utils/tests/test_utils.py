@@ -33,3 +33,35 @@ def test_get_spectral_dimensions():
 
     res = {"count": 10, "spectral_width": 10, "reference_offset": 5, "label": "1H"}
     assert get_spectral_dimensions(csdm)[0] == res
+
+    # 5
+    csdm.dimensions[0] = cp.LinearDimension(count=10, increment="-1 Hz", label="1H")
+
+    res = {"count": 10, "spectral_width": 10, "reference_offset": -4, "label": "1H"}
+    assert get_spectral_dimensions(csdm)[0] == res
+
+    # 6
+    csdm.dimensions[0] = cp.LinearDimension(
+        count=10, increment="-1 Hz", coordinates_offset="-10 Hz", label="1H"
+    )
+
+    res = {"count": 10, "spectral_width": 10, "reference_offset": -14, "label": "1H"}
+    assert get_spectral_dimensions(csdm)[0] == res
+
+    # 7
+    csdm.dimensions[0] = cp.LinearDimension(
+        count=10,
+        increment="-1 Hz",
+        coordinates_offset="-10 Hz",
+        origin_offset="100 MHz",
+        label="1H",
+    )
+
+    res = {
+        "count": 10,
+        "spectral_width": 10,
+        "reference_offset": -14,
+        "origin_offset": 100e6,
+        "label": "1H",
+    }
+    assert get_spectral_dimensions(csdm)[0] == res
