@@ -105,7 +105,7 @@ def test_direct_init_spin_system():
             {
                 "isotope": "17O",
                 "isotropic_chemical_shift": "-10.0 ppm",
-                "quadrupolar": {"Cq": "5100000.0 Hz", "eta": 0.5},
+                "quadrupolar": {"Cq": "5.1 MHz", "eta": 0.5},
             },
         ],
         "abundance": "4.23 %",

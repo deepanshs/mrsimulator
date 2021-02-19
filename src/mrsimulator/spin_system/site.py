@@ -227,6 +227,13 @@ class Site(Parseable):
 
         return super().parse_dict_with_units(py_dict)
 
+    def json(self):
+        py_dict = super().json()
+        if "quadrupolar" in py_dict:
+            value = float(py_dict["quadrupolar"]["Cq"][:-2]) / 1e6
+            py_dict["quadrupolar"]["Cq"] = f"{value} MHz"
+        return py_dict
+
     def to_freq_dict(self, B0):
         """
         Serialize the Site object to a JSON compliant python dictionary object, where

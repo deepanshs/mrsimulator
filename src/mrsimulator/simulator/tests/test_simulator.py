@@ -217,6 +217,7 @@ def test_sites_to_pandas_df():
     zeta = [59.8, 52.1, 69.4, 12.4]
     eta_n = [0.62, 0.68, 0.6, 0.5]
     Cq = [None, None, None, 5.3e6]
+    Cq_test = [None, None, None, 5.3]
     eta_q = [None, None, None, 0.34]
 
     spin_systems = single_site_system_generator(
@@ -242,7 +243,7 @@ def test_sites_to_pandas_df():
         i if i is not None else None for i in eta_n
     ]
     assert list(pd_o["quadrupolar.Cq"]) == [
-        f"{i} Hz" if i is not None else None for i in Cq
+        f"{i} MHz" if i is not None else None for i in Cq_test
     ]
     # assert list(pd_o["quadrupolar.eta"]) == [
     #     i if i is not None else None for i in eta_q
