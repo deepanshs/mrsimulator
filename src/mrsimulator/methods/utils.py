@@ -68,10 +68,20 @@ def parse_spectral_dimensions(spectral_dimensions):
                     t_query = evt["transition_query"]
                     if "P" in t_query.keys():
                         if isinstance(t_query["P"], list):
-                            t_query["P"] = {"channel-1": [[i] for i in t_query["P"]]}
+                            t_query["P"] = {
+                                "channel-1": [
+                                    [i] if not isinstance(i, (list, tuple)) else i
+                                    for i in t_query["P"]
+                                ]
+                            }
                     if "D" in t_query.keys():
                         if isinstance(t_query["D"], list):
-                            t_query["D"] = {"channel-1": [[i] for i in t_query["D"]]}
+                            t_query["D"] = {
+                                "channel-1": [
+                                    [i] if not isinstance(i, (list, tuple)) else i
+                                    for i in t_query["D"]
+                                ]
+                            }
     return spectral_dimensions
 
 

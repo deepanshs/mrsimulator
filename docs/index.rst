@@ -109,8 +109,7 @@ or amorphous in just a few seconds.
 - It is a fast and versatile multi-dimensional solid-state NMR spectra simulator including, MAS
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
-- Future release will include simulations of weakly coupled nuclei experiencing J and dipolar
-  couplings, and multi-dimensional NMR spectra.
+- Includes simulation of weakly coupled nuclei experiencing J and dipolar couplings.
 - It is fully documented with a stable and simple API and is easily incorporated into your
   python scripts and web apps.
 - It is compatible with modern python packages, such as scikit-learn, Keras, etc.
@@ -173,6 +172,7 @@ Getting Started
     requirements
     introduction
     getting_started
+    getting_started_coupled
     getting_started-objects
     configuring_simulator
     mrsim_IO

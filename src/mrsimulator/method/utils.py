@@ -117,24 +117,13 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
             temp_P += list(set(permutations(query_short[items][k])))
         P_permutated += [temp_P]
 
-    previous_sets = []
+    # Expand the permutation to the number of sites in the spin system
+    P_expanded = np.zeros((len(P_permutated[0]), len(isotope)))
     for i, iso_trans_symmetry in enumerate(P_permutated):
-        # creating transition symmetries isotope by isotope
-        temp_transitions = []
+        # iso_ch_i is the index of channel-i sites within the spin system.
         iso_ch_i = iso_dict[channel[i]]
-        for transition in iso_trans_symmetry:
-            P_expanded = np.zeros(len(isotope))
 
-            # fill indices of spin system with the sites transition symmetries
-            P_expanded[iso_ch_i] = transition
+        # Update the channel-i indexes with the permuted symmetry.
+        P_expanded[:, iso_ch_i] = iso_trans_symmetry
 
-            if previous_sets == []:
-                temp_transitions += [P_expanded]
-            else:
-                # Each isotope is added to the previous isotope to create the
-                # full transition symmetry
-                temp_transitions += list(np.asarray(previous_sets) + P_expanded)
-
-        previous_sets = temp_transitions
-
-    return np.asarray(temp_transitions)
+    return P_expanded

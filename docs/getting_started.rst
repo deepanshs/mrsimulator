@@ -1,9 +1,9 @@
 
 .. _getting_started:
 
-================================================
-Getting started with ``mrsimulator``: The basics
-================================================
+=================================
+The Basics: Uncoupled Spin System
+=================================
 
 We have put together a set of guidelines for using the ``mrsimulator`` package. We
 encourage our users to follow these guidelines for consistency. In
@@ -57,7 +57,7 @@ respective objects.
 Setting up the SpinSystem objects
 ---------------------------------
 An NMR spin system is an isolated system of sites (spins) and couplings. You may
-construct a spin system with as many sites and couplings, as necessary, for this
+construct a spin system with as many sites and couplings as necessary; for this
 example, we stick to a single-site spin system. Let’s start by first building
 a site.
 
@@ -102,7 +102,7 @@ That's it! Now that we have a site, we can create a single-site spin system foll
     ... }
 
 As mentioned before, a spin system is a collection of sites and couplings. In the above
-example, we have created a spin system with a single site and no couplings. Here, the
+example, we have created a spin system with a single site and no coupling. Here, the
 attribute `sites` hold a list of sites. The attributes `name`, `description`, and
 `abundance` are optional.
 
@@ -170,7 +170,7 @@ In ``mrsimulator``, all methods are described through five keywords -
     - A list of spectral dimensions. The coordinates along each spectral dimension is
       described with the keywords, `count` (:math:`N`), `spectral_width`
       (:math:`\nu_\text{sw}`), and `reference_offset` (:math:`\nu_0`). The
-      coordinates are given as,
+      coordinates are evaluated as,
 
       .. math::
         \left([0, 1, 2, ... N-1] - \frac{T}{2}\right) \frac{\nu_\text{sw}}{N} + \nu_0
@@ -206,7 +206,7 @@ The keys `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency` collectiv
 describe the spin environment under which the resonance frequency is evaluated.
 The key `spectral_dimensions` is a list of spectral dimensions. A Bloch Decay method
 only has one spectral dimension. In this example, the spectral dimension defines a
-frequency dimension with 2048 points, spanning for 25 kHz with a reference offset of
+frequency dimension with 2048 points, spanning 25 kHz with a reference offset of
 -8 kHz.
 
 Like before, you may parse the above ``method_dict`` using the
@@ -222,7 +222,7 @@ following,
     >>> from mrsimulator.methods import BlochDecaySpectrum
     >>> method_object = BlochDecaySpectrum.parse_dict_with_units(method_dict)
 
-Here, ``method_object``, is an instance of the :class:`~mrsimulator.Method` class.
+Here, ``method_object`` is an instance of the :class:`~mrsimulator.Method` class.
 
 Likewise, you may create multiple method objects. In this example, we
 stick with a single method. Finally, add all the method objects, in this case,
@@ -269,8 +269,8 @@ at index 0 of the :attr:`~mrsimulator.Simulator.methods` attribute from the ``si
 object.
 
 .. seealso::
-    The core scientific dataset model (CSDM) [#f1]_ is a lightweight and portable file
-    format model for multi-dimensional scientific datasets and is supported by numerous
+    **CSDM:** The core scientific dataset model (CSDM) [#f1]_ is a lightweight and portable
+    file format model for multi-dimensional scientific datasets and is supported by numerous
     NMR software---DMFIT, SIMPSON, jsNMR, and RMN. We also provide a python package
     `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_.
 

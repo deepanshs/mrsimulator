@@ -2,17 +2,17 @@
 
 .. _using_objects:
 
-===================================================
-Getting started with ``mrsimulator``: Using objects
-===================================================
+=========================
+The Basics: Using objects
+=========================
 
-In the previous section on getting started, we show an example where we parse the
+In the previous section on getting started, we show an examples where we parse the
 python dictionaries to create instances of the :ref:`spin_sys_api` and
 :ref:`method_api` objects. In this section, we'll illustrate how we can
 achieve the same result using the core ``mrsimulator`` objects.
 
 .. note::
-    Unlike python dictionary objects from our last example, when using ``mrsimulator``
+    Unlike python dictionary objects from previous examples, when using ``mrsimulator``
     objects, the attribute value is given as a number rather than a string with a
     number and a unit. We assume default units for the class attributes. To learn more
     about the default units, please refer to the documentation of the respective class.

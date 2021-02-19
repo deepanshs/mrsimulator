@@ -15,7 +15,7 @@ Site
 
 A site object holds single site NMR interaction paramters, which includes the nuclear
 shielding and quadrupolar interaction parameters.
-Consider the example below of the JSON serialization of a **Site** object for a deuterium nucleus.
+Consider the example below of a JSON serialization of a **Site** object for a deuterium nucleus.
 
 .. _listing_site:
 .. code-block:: json
@@ -27,7 +27,10 @@ Consider the example below of the JSON serialization of a **Site** object for a 
       "isotropic_chemical_shift": "4.1 ppm",
       "shielding_symmetric": {
           "zeta": "12.12 ppm",
-          "eta": 0.82
+          "eta": 0.82,
+          "alpha": "5.45 rad",
+          "beta": "4.82 rad",
+          "gamma": "0.5 rad"
       },
       "quadrupolar": {
           "Cq": "1.47 MHz",
@@ -38,20 +41,21 @@ Consider the example below of the JSON serialization of a **Site** object for a 
       }
   }
 
-The value of the `isotope` key holds the spin isotope, here given a value of `2H`.
-The value of the `isotropic_chemical_shift` is the optional :math:`^2\text{H}`
-isotropic chemical shift, here given as `4.1 ppm`. We have additionally defined an
-optional `shielding_symmetric` key, whose value holds a dictionary with the components
-of the second-rank traceless symmetric nuclear shielding tensor. We parameterize this tensor
-using the Haeberlen convention with parameters `zeta` and `eta`, defined as the shielding
-anisotropy and asymmetry, respectively.  Since deuterium is a quadrupolar nucleus, :math:`I>1/2`,
-there also can be a quadrupolar coupling interaction between the nuclear quadrupole moment and the
-surrounding electric field gradient (EFG) tensor, defined in a dictionary held in the optional
-key `quadrupolar`.  An EFG tensor is a second-rank traceless symmetric tensor, and we describe
-the quadrupolar coupling with the parameters `Cq` and `eta`, i.e., the quadrupolar coupling constant
-and asymmetry parameter, respectively.  Additionally, we see the Euler angle orientations,
-`alpha`, `beta`, and `gamma`, which are the relative orientation of the EFG tensor from the
-nuclear shielding tensor.
+The `isotope` key holds the spin isotope, here given a value of `2H`.
+The `isotropic_chemical_shift` is the isotropic chemical shift of the site isotope, :math:`^2\text{H}`,
+here given as `4.1 ppm`. We have additionally defined an optional `shielding_symmetric` key, whose
+value holds a dictionary with the components of the second-rank traceless symmetric nuclear shielding
+tensor. We parameterize this tensor using the Haeberlen convention with parameters `zeta` and `eta`,
+defined as the shielding anisotropy and asymmetry, respectively. The Euler angle orientations, `alpha`,
+`beta`, and `gamma` are the relative orientation of the nuclear shielding tensor from a common reference
+frame.
+
+Since deuterium is a quadrupolar nucleus, :math:`I>1/2`, there also can be a quadrupolar coupling
+interaction between the nuclear quadrupole moment and the surrounding electric field gradient (EFG) tensor,
+defined in a dictionary held in the optional key `quadrupolar`. An EFG tensor is a second-rank traceless
+symmetric tensor, and we describe its components with `Cq` and `eta`, i.e., the quadrupolar coupling constant
+and asymmetry parameter, respectively.  Additionally, we see the Euler angle orientations, `alpha`, `beta`,
+and `gamma`, which are the relative orientation of the EFG tensor from a common reference frame.
 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
 the **Site** and **SymmetricTensor** objects and their attributes, respectively.
@@ -61,7 +65,7 @@ Coupling
 
 A coupling object holds two site NMR interaction paramters, which includes the `J`-coupling
 and  the dipolar coupling interaction parameters.
-Consider the example below of the JSON serialization of a **Coupling** object.
+Consider the example below of a JSON serialization of a **Coupling** object.
 
 .. _listing_coupling:
 .. code-block:: json
@@ -73,7 +77,10 @@ Consider the example below of the JSON serialization of a **Coupling** object.
       "isotropic_j": "15 Hz",
       "j_symmetric": {
           "zeta": "12.12 Hz",
-          "eta": 0.82
+          "eta": 0.82,
+          "alpha": "2.45 rad",
+          "beta": "1.75 rad",
+          "gamma": "0.15 rad"
       },
       "dipolar": {
           "D": "1.7 kHz",
@@ -83,17 +90,18 @@ Consider the example below of the JSON serialization of a **Coupling** object.
       }
   }
 
-The value of the `site_index` key holds a list of two integers corresponding to the
-index of the two coupled sites within the spin system. The value of the `isotropic_j` is
-the isotropic `J`-coupling, here given as `15 Hz`. We have additionally defined an optional
-`j_symmetric` key, whose value holds a dictionary with the components of the second-rank
-traceless symmetric `J`-coupling tensor. We parameterize this tensor using the Haeberlen
-convention with parameters `zeta` and `eta`, defined as the `J`-coupling anisotropy and
-asymmetry parameters, respectively. Additionally, the dipolar coupling interaction between the
-coupled nuclei is defined with an optional `dipolar` key. A dipolar tensor is a second-rank
-traceless symmetric tensor, and we describe the dipolar coupling constant with the parameter
-`D`.  The Euler angle orientations, `alpha`, `beta`, and `gamma` are the relative orientation
-of the dipolar tensor from the `J`-coupling tensor.
+The `site_index` key holds a list of two integers corresponding to the index of the two coupled sites
+within the spin system. The value of the `isotropic_j` is the isotropic `J`-coupling, here given as
+`15 Hz`. We have additionally defined an optional `j_symmetric` key, whose value holds a dictionary
+with the components of the second-rank traceless symmetric `J`-coupling tensor. We parameterize this
+tensor using the Haeberlen convention with parameters `zeta` and `eta`, defined as the `J`-coupling
+anisotropy and asymmetry parameters, respectively. The Euler angle orientations, `alpha`, `beta`, and
+`gamma` are the relative orientation of the `J`-coupling tensor from a common reference frame.
+
+Additionally, the dipolar coupling interaction between the coupled nuclei is defined with an optional
+`dipolar` key. A dipolar tensor is a second-rank traceless symmetric tensor, and we describe the dipolar
+coupling constant with the parameter `D`.  The Euler angle orientations, `alpha`, `beta`, and `gamma`
+are the relative orientation of the dipolar tensor from a common reference frame.
 
 See :numref:`table_coupling` and :numref:`table_symmetric_tensor` for further information on
 the **Site** and **SymmetricTensor** objects and their attributes, respectively.
@@ -125,7 +133,10 @@ Using the previous 2H **Site** object example, we construct a simple single-site
           "isotropic_chemical_shift": "4.1 ppm",
           "shielding_symmetric": {
               "zeta": "12.12 ppm",
-              "eta": 0.82
+              "eta": 0.82,
+              "alpha": "5.45 rad",
+              "beta": "4.82 rad",
+              "gamma": "0.5 rad"
           },
           "quadrupolar": {
               "Cq": "1.47 MHz",
@@ -144,7 +155,7 @@ At the root level of the **SpinSystem** object, we find four keywords, **name**,
 optional name of the spin system, here given a value of `2H uncoupled spin system`. The
 value of the description key is an optional string describing the spin system. The
 value of the `sites` key is a list of **Site** objects. Here, this list comprises of
-single **Site** object (lines 5-19) from :numref:`listing_site`. The value of the
+single **Site** object (lines 5-22) from :numref:`listing_site`. The value of the
 `abundance` key is the abundance of the spin system, here given a value of `0.148%`.
 
 See :numref:`table_spin_system` for further description of the **SpinSystem** class and
@@ -172,7 +183,10 @@ as follows.
           "isotropic_chemical_shift": "4.1 ppm",
           "shielding_symmetric": {
               "zeta": "12.12 ppm",
-              "eta": 0.82
+              "eta": 0.82,
+              "alpha": "5.45 rad",
+              "beta": "4.82 rad",
+              "gamma": "0.5 rad"
           },
           "quadrupolar": {
               "Cq": "1.47 MHz",
@@ -197,7 +211,10 @@ as follows.
           "isotropic_j": "15 Hz",
           "j_symmetric": {
               "zeta": "12.12 Hz",
-              "eta": 0.82
+              "eta": 0.82,
+              "alpha": "2.45 rad",
+              "beta": "1.75 rad",
+              "gamma": "0.15 rad"
           },
           "dipolar": {
               "D": "1.7 kHz",
@@ -213,10 +230,10 @@ as follows.
 In comparision to the previous example, there are five keywords at the root level of the
 **SpinSystem** object, **name**, **description**, **sites**, **couplings**, and **abundance**.
 In this example, the value of the `sites` key holds a list of two **Site** objects. At index 0
-(lines 5-19) is the `2H` site from :numref:`listing_site`, and at index 1 (lines 20-27) is
+(lines 5-22) is the `2H` site from :numref:`listing_site`, and at index 1 (lines 23-30) is
 a `13C` site. The value of the `couplings` key is a list of **Coupling** objects. In this
-example, we define a single coupling object (lines 30-43) from :numref:`listing_coupling`.
-The value of the `site_index` key within the coupling object, line 31, corresponds to the site
+example, we define a single coupling object (lines 33-49) from :numref:`listing_coupling`.
+The value of the `site_index` key within the coupling object, line 34, corresponds to the site
 index from the `sites` list.
 
 
