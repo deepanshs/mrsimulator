@@ -101,7 +101,7 @@ def query_permutations(query, isotope, channel, transition_symmetry="P"):
         # Check if method's channel isotope is present in the spin system
         if channel_id not in iso_dict:
             # warnings.warn(warn_message(channel_id))
-            return []
+            return np.asarray([])
 
         n_sites_channel_i = iso_dict[channel_id].size
         channel_query = query_symmetry[f"channel-{i+1}"]
