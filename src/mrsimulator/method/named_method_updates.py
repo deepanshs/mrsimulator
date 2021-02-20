@@ -5,6 +5,7 @@ __email__ = "srivastava.89@osu.edu"
 named_methods = [
     "BlochDecaySpectrum",
     "BlochDecayCentralTransitionSpectrum",
+    "BlochDecayCTSpectrum",
     "ThreeQ_VAS",
     "FiveQ_VAS",
     "SevenQ_VAS",
@@ -114,7 +115,7 @@ def ST_VAS_update(method):
 def update_method(method):
     if method.name == "BlochDecaySpectrum":
         return Bloch_decay_update(method)
-    if method.name == "BlochDecayCTSpectrum":
+    if method.name in ["BlochDecayCTSpectrum", "BlochDecayCentralTransitionSpectrum"]:
         return Bloch_decay_CT_update(method)
     if method.name in MQ_p_symmetry.keys():
         return MQ_VAS_update(method)

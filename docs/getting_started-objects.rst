@@ -466,15 +466,15 @@ see the list of transition pathways, for example,
 Notice, there are five transition pathways for the :math:`^{17}\text{O}` site, one
 associated with the central-transition, two with the inner-satellites, and two with
 the outer-satellites. For central transition selective simulation, use the
-:class:`~mrsimulator.methods.BlochDecayCentralTransitionSpectrum` method.
+:class:`~mrsimulator.methods.BlochDecayCTSpectrum` method.
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-    >>> sim.methods[0] = BlochDecayCentralTransitionSpectrum(
+    >>> from mrsimulator.methods import BlochDecayCTSpectrum
+    >>> sim.methods[0] = BlochDecayCTSpectrum(
     ...     channels=["17O"],
     ...     rotor_frequency= 15000, # in Hz.
     ...     rotor_angle = 0.9553166, # magic angle is rad.
@@ -503,4 +503,4 @@ Now, you may simulate the central transition selective spectrum.
 .. figure:: _static/null.*
 
     An example of the solid-state :math:`^{17}\text{O}`
-    BlochDecayCentralTransitionSpectrum simulation.
+    BlochDecayCTSpectrum simulation.

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Test for the base Simulator class."""
+import os
 from random import randint
 
 import csdmpy as cp
@@ -10,6 +11,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method.frequency_contrib import freq_default
+from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.simulator import __CPU_count__
 from mrsimulator.simulator import get_chunks
@@ -169,6 +171,57 @@ def test_simulator_1():
     sim.save("test_sim_save_no_unit.temp", with_units=False)
     sim_load = sim.load("test_sim_save_no_unit.temp", parse_units=False)
     assert sim_load == sim
+
+
+def test_sim_coesite():
+    # coesite
+    O17_1 = Site(
+        isotope="17O",
+        isotropic_chemical_shift=29,
+        quadrupolar=dict(Cq=6.05e6, eta=0.000),
+    )
+    O17_2 = Site(
+        isotope="17O",
+        isotropic_chemical_shift=41,
+        quadrupolar=dict(Cq=5.43e6, eta=0.166),
+    )
+    O17_3 = Site(
+        isotope="17O",
+        isotropic_chemical_shift=57,
+        quadrupolar=dict(Cq=5.45e6, eta=0.168),
+    )
+    O17_4 = Site(
+        isotope="17O",
+        isotropic_chemical_shift=53,
+        quadrupolar=dict(Cq=5.52e6, eta=0.169),
+    )
+    O17_5 = Site(
+        isotope="17O",
+        isotropic_chemical_shift=58,
+        quadrupolar=dict(Cq=5.16e6, eta=0.292),
+    )
+
+    sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
+    abundance = [0.83, 1.05, 2.16, 2.05, 1.90]  # abundance of each spin system
+    spin_systems = [
+        SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)
+    ]
+
+    method = BlochDecayCTSpectrum(
+        channels=["17O"],
+        rotor_frequency=14000,
+        spectral_dimensions=[{"count": 2048, "spectral_width": 50000}],
+    )
+
+    sim_coesite = Simulator()
+    sim_coesite.spin_systems += spin_systems
+    sim_coesite.methods += [method]
+
+    sim_coesite.save("sample.mrsim")
+    sim_load = Simulator.load("sample.mrsim")
+    assert sim_coesite == sim_load
+
+    os.remove("sample.mrsim")
 
 
 def test_simulator_2():

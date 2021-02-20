@@ -94,6 +94,7 @@ BlochDecaySpectrum = generate_method_from_template(
 BlochDecayCentralTransitionSpectrum = generate_method_from_template(
     METHODS_DATA["Bloch_decay_central_transition"], docstring_1D
 )
+BlochDecayCTSpectrum = BlochDecayCentralTransitionSpectrum
 
 # generic 1D method
 Method1D = generate_method_from_template(METHODS_DATA["Method1D"], docstring_generic)

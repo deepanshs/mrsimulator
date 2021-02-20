@@ -34,7 +34,7 @@ Summary
 
 .. autosummary::
     ~BlochDecaySpectrum
-    ~BlochDecayCentralTransitionSpectrum
+    ~BlochDecayCTSpectrum
     ~ThreeQ_VAS
     ~FiveQ_VAS
     ~SevenQ_VAS

@@ -4,7 +4,7 @@ import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.methods import Method2D
 
 
@@ -91,7 +91,7 @@ def test_DAS():
     data_das_coords_ppm = das.spectral_dimensions[0].coordinates_ppm()
 
     # Bloch decay central transition method
-    bloch = BlochDecayCentralTransitionSpectrum(
+    bloch = BlochDecayCTSpectrum(
         channels=["17O"],
         magnetic_flux_density=B0,  # in T
         rotor_frequency=1e9,  # in Hz

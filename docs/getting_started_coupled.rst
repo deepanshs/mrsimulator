@@ -163,7 +163,7 @@ only has one spectral dimension. In this example, the spectral dimension defines
 frequency dimension with 2048 points, spanning 25 kHz with a reference offset of
 -8 kHz.
 
-Let's create another method, :func:`~mrsimulator.methods.BlochDecayCentralTransitionSpectrum` method,
+Let's create another method, :func:`~mrsimulator.methods.BlochDecayCTSpectrum` method,
 which is a central transition selective Bloch decay spectrum method. The method is defined similarly
 to the Bloch decay spectrum method. The following is a python dictionary representation of the method.
 
@@ -194,9 +194,9 @@ methods. Import the two method class and create an instance of the methods as fo
     :context: close-figs
     :include-source:
 
-    >>> from mrsimulator.methods import BlochDecaySpectrum, BlochDecayCentralTransitionSpectrum
+    >>> from mrsimulator.methods import BlochDecaySpectrum, BlochDecayCTSpectrum
     >>> method_object_Si = BlochDecaySpectrum.parse_dict_with_units(method_dict_Si)
-    >>> method_object_Al = BlochDecayCentralTransitionSpectrum.parse_dict_with_units(method_dict_Al)
+    >>> method_object_Al = BlochDecayCTSpectrum.parse_dict_with_units(method_dict_Al)
 
 Here, ``method_object_Si`` and ``method_object_Al`` are the instances of the
 :class:`~mrsimulator.Method` class.

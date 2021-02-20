@@ -7,7 +7,7 @@ import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.methods import Method2D
 from mrsimulator.methods import ThreeQ_VAS
 
@@ -82,7 +82,7 @@ def test_MQMAS():
     mas_slice = processed_data.sum(axis=1).dependent_variables[0].components[0]
 
     # MAS spectrum
-    method = BlochDecayCentralTransitionSpectrum(
+    method = BlochDecayCTSpectrum(
         channels=["87Rb"],
         magnetic_flux_density=9.4,
         rotor_frequency=1e9,
@@ -148,7 +148,7 @@ def test_ThreeQ_VAS_spin_3halves():
     mas_slice = data.sum(axis=1).dependent_variables[0].components[0]
 
     # MAS spectrum
-    method = BlochDecayCentralTransitionSpectrum(
+    method = BlochDecayCTSpectrum(
         channels=["87Rb"],
         magnetic_flux_density=9.4,
         rotor_frequency=1e9,
@@ -211,7 +211,7 @@ def test_MQMAS_spin_5halves():
     mas_slice = data.sum(axis=1).dependent_variables[0].components[0]
 
     # MAS spectrum
-    method = BlochDecayCentralTransitionSpectrum(
+    method = BlochDecayCTSpectrum(
         channels=["27Al"],
         magnetic_flux_density=7,
         rotor_frequency=1e9,

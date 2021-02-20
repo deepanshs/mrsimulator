@@ -11,7 +11,7 @@ from mrsimulator import Coupling
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.models import ExtCzjzekDistribution
 from mrsimulator.spin_system.isotope import Isotope
@@ -124,7 +124,7 @@ def add_site(doctest_namespace):
         SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)
     ]
 
-    method = BlochDecayCentralTransitionSpectrum(
+    method = BlochDecayCTSpectrum(
         channels=["17O"],
         rotor_frequency=14000,
         spectral_dimensions=[{"count": 2048, "spectral_width": 50000}],

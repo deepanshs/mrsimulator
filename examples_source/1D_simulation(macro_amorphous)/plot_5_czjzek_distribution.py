@@ -14,7 +14,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from mrsimulator import Simulator
-from mrsimulator.methods import BlochDecaySpectrum, BlochDecayCentralTransitionSpectrum
+from mrsimulator.methods import BlochDecaySpectrum, BlochDecayCTSpectrum
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.utils.collection import single_site_system_generator
 
@@ -115,7 +115,7 @@ systems = single_site_system_generator(
 sim = Simulator()
 sim.spin_systems = systems  # add the systems
 sim.methods = [
-    BlochDecayCentralTransitionSpectrum(
+    BlochDecayCTSpectrum(
         channels=["71Ga"],
         magnetic_flux_density=4.8,  # in T
         spectral_dimensions=[{"count": 2048, "spectral_width": 1.2e6}],
