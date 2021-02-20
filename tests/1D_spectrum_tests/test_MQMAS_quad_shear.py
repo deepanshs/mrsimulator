@@ -49,8 +49,16 @@ def setup_simulation(site, affine_matrix, class_id=0):
                 "spectral_width": 1e4,  # in Hz
                 "reference_offset": -4e3,  # in Hz
                 "events": [
-                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
-                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
+                    {
+                        "fraction": 27 / 17,
+                        "freq_contrib": ["Quad2_0"],
+                        "transition_query": {"P": [-1], "D": [0]},
+                    },
+                    {
+                        "fraction": 1,
+                        "freq_contrib": ["Quad2_4"],
+                        "transition_query": {"P": [-1], "D": [0]},
+                    },
                 ],
             }
         ],

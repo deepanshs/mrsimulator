@@ -25,7 +25,7 @@ Changes
   will now return :class:`~mrsimulator.spin_system.isotope.Isotope` objects by default.
   Use the `symbol=True` argument of the method to get a list of string isotopes.
 - The ``to_freq_dict()`` function is deprecated.
-
+- The `D` symmetry of `transition_query` attribute from `Method2D` method is now None by default.
 
 Bug fixes
 '''''''''

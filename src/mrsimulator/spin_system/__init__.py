@@ -4,6 +4,7 @@ from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
+from typing import Union
 
 import numpy as np
 from mrsimulator.base_model import get_zeeman_states
@@ -151,8 +152,8 @@ class SpinSystem(Parseable):
     name: str = None
     label: str = None
     description: str = None
-    sites: List[Site] = []
-    couplings: List[Coupling] = None
+    sites: Union[List[Site], np.ndarray] = []
+    couplings: Union[List[Coupling], np.ndarray] = None
     abundance: float = Field(default=100.0, ge=0.0, le=100.0)
     transition_pathways: List = None
 
@@ -169,6 +170,20 @@ class SpinSystem(Parseable):
         if v is None:
             return v
         return [TransitionPathway(item) for item in v]
+
+    @validator("sites")
+    def check_sites(cls, v, values):
+        if isinstance(v, np.ndarray):
+            if not np.all([isinstance(item, Site) for item in v]):
+                raise ValueError("All entries must be of type `Site`.")
+        return list(v)
+
+    @validator("couplings")
+    def check_couplings(cls, v, values):
+        if isinstance(v, np.ndarray):
+            if not np.all([isinstance(item, Coupling) for item in v]):
+                raise ValueError("All entries must be of type `Coupling`.")
+        return list(v)
 
     def get_isotopes(self, spin_I: float = None, symbol: bool = False) -> list:
         """
