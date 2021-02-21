@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Test for the base SpinSystem class."""
+import numpy as np
 import pytest
 from mrsimulator import Coupling
 from mrsimulator import Site
@@ -10,6 +11,17 @@ from pydantic import ValidationError
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+
+def test_failure():
+    site = Site(isotope="29Si")
+    e = "All entries must be of type `Site`."
+    with pytest.raises(ValueError, match=f".*{e}.*"):
+        SpinSystem(sites=np.asarray(["a", site]))
+
+    e = "All entries must be of type `Coupling`."
+    with pytest.raises(ValueError, match=f".*{e}.*"):
+        SpinSystem(sites=[site, site], couplings=np.asarray(["a"]))
 
 
 def test_direct_init_spin_system():
