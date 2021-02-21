@@ -2,7 +2,7 @@
 //
 //  interpolation.h
 //
-//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
 //  Contact email = srivastava.89@osu.edu
 //
@@ -21,8 +21,8 @@
  * @param spec A pointer to the starting of the array of one dimensional grid.
  * @param m0 A pointer to the number of points on the 1D grid.
  */
-extern int triangle_interpolation(double *f1, double *f2, double *f3, double *amp, double *spec,
-                                  int *m0);
+extern int triangle_interpolation(double *f1, double *f2, double *f3, double *amp,
+                                  double *spec, int *m0);
 
 /**
  * @func triangle_interpolation2D
@@ -41,5 +41,6 @@ extern int triangle_interpolation(double *f1, double *f2, double *f3, double *am
  * @param m0 An interger with the rows in the 2D grid.
  * @param m1 An interger with the columns in the 2D grid.
  */
-extern int triangle_interpolation2D(double *f11, double *f12, double *f13, double *f21, double *f22,
-                                    double *f23, double *amp, double *spec, int m0, int m1);
+extern int triangle_interpolation2D(double *f11, double *f12, double *f13, double *f21,
+                                    double *f22, double *f23, double *amp, double *spec,
+                                    int m0, int m1);

@@ -2,7 +2,7 @@
 //
 //  vm_common.h
 //
-//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava, Jul 26, 2019.
 //  Contact email = srivastava.89@osu.edu
 //
@@ -24,8 +24,9 @@
  * Multiply a vector of type double by `scale` and add an `offset` to its elements.
  *      res = scale*x + offset
  */
-static inline void vm_double_ramp(int count, const double *restrict x, const double scale,
-                                  const double offset, double *restrict res) {
+static inline void vm_double_ramp(int count, const double *restrict x,
+                                  const double scale, const double offset,
+                                  double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0)
@@ -36,8 +37,8 @@ static inline void vm_double_ramp(int count, const double *restrict x, const dou
  * Add an offset to a vector of type double.
  *      res = x + offset
  */
-static inline void vm_double_add_offset(int count, const double *restrict x, const double offset,
-                                        double *restrict res) {
+static inline void vm_double_add_offset(int count, const double *restrict x,
+                                        const double offset, double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0)

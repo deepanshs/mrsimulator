@@ -6,7 +6,7 @@ Mrsimulator License
 
 Mrsimulator is licensed under BSD 3-Clause License
 
-Copyright (c) 2019-2020, Mrsimulator Developors,
+Copyright (c) 2019-2021, Mrsimulator Developors,
 
 All rights reserved.
 

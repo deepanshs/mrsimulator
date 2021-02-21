@@ -182,7 +182,7 @@ def cosine_of_polar_angles_and_amplitudes(int integration_density=72):
     cdef np.ndarray[double complex] exp_I_beta = np.empty(octant_orientations, dtype=np.complex128)
     cdef np.ndarray[double] amp = np.empty(octant_orientations, dtype=np.float64)
 
-    clib.octahedron_averaging_setup(nt, &exp_I_alpha[0], &exp_I_beta[0], &amp[0])
+    clib.averaging_setup(nt, &exp_I_alpha[0], &exp_I_beta[0], &amp[0])
 
     return exp_I_alpha, exp_I_beta, amp
 

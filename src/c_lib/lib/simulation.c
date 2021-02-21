@@ -2,15 +2,14 @@
 //
 //  sideband_simulator.c
 //
-//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava, Apr 11, 2019
 //  Contact email = srivastava.89@osu.edu
 //
 
 #include "simulation.h"
 
-static inline void __zero_components(double *R0, complex128 *R2,
-                                     complex128 *R4) {
+static inline void __zero_components(double *R0, complex128 *R2, complex128 *R4) {
   R0[0] = 0.0;
   vm_double_zeros(10, (double *)R2);
   vm_double_zeros(18, (double *)R4);
@@ -18,8 +17,7 @@ static inline void __zero_components(double *R0, complex128 *R2,
 
 static inline void one_dimensional_averaging(MRS_dimension *dimensions,
                                              MRS_averaging_scheme *scheme,
-                                             MRS_fftw_scheme *fftw_scheme,
-                                             double *spec,
+                                             MRS_fftw_scheme *fftw_scheme, double *spec,
                                              unsigned int number_of_sidebands) {
   unsigned int i, j, evt, step_vector = 0, address;
   MRS_plan *plan;
@@ -58,8 +56,8 @@ static inline void one_dimensional_averaging(MRS_dimension *dimensions,
                              dimensions[0].freq_offset);
         // Perform tenting on every sideband order over all orientations
         octahedronInterpolation(spec, dimensions[0].freq_offset,
-                                scheme->integration_density,
-                                &freq_amp[step_vector], 1, dimensions[0].count);
+                                scheme->integration_density, &freq_amp[step_vector], 1,
+                                dimensions[0].count);
         step_vector += scheme->octant_orientations;
       }
     }
@@ -69,8 +67,7 @@ static inline void one_dimensional_averaging(MRS_dimension *dimensions,
 
 static inline void two_dimensional_averaging(MRS_dimension *dimensions,
                                              MRS_averaging_scheme *scheme,
-                                             MRS_fftw_scheme *fftw_scheme,
-                                             double *spec,
+                                             MRS_fftw_scheme *fftw_scheme, double *spec,
                                              unsigned int number_of_sidebands,
                                              double *affine_matrix) {
   unsigned int i, k, j, evt;
@@ -133,9 +130,8 @@ static inline void two_dimensional_averaging(MRS_dimension *dimensions,
   }
 
   for (j = 0; j < scheme->octant_orientations; j++) {
-    cblas_dscal(planA->n_octants * number_of_sidebands,
-                planA->norm_amplitudes[j], &freq_ampB[j],
-                scheme->octant_orientations);
+    cblas_dscal(planA->n_octants * number_of_sidebands, planA->norm_amplitudes[j],
+                &freq_ampB[j], scheme->octant_orientations);
   }
 
   for (i = 0; i < number_of_sidebands; i++) {
@@ -170,10 +166,10 @@ static inline void two_dimensional_averaging(MRS_dimension *dimensions,
             address = j * scheme->octant_orientations;
             // Add offset(isotropic + sideband_order) to the local frequency
             // from [n to n+octant_orientation]
-            vm_double_add_offset(scheme->octant_orientations, &dim0[address],
-                                 norm0, dimensions[0].freq_offset);
-            vm_double_add_offset(scheme->octant_orientations, &dim1[address],
-                                 norm1, dimensions[1].freq_offset);
+            vm_double_add_offset(scheme->octant_orientations, &dim0[address], norm0,
+                                 dimensions[0].freq_offset);
+            vm_double_add_offset(scheme->octant_orientations, &dim1[address], norm1,
+                                 dimensions[1].freq_offset);
 
             vm_double_multiply(scheme->total_orientations,
                                &freq_ampA[step_vector_i + address],
@@ -197,10 +193,10 @@ static inline void two_dimensional_averaging(MRS_dimension *dimensions,
 // Calculate spectrum from the spin systems for a single transition.
 void __mrsimulator_core(
     // spectrum information and related amplitude
-    double *spec,  // amplitude vector representing the spectrum.
+    double *spec, // amplitude vector representing the spectrum.
 
-    site_struct *sites,          // Pointer to sites within a spin system.
-    coupling_struct *couplings,  // Pointer to couplings within a spin system.
+    site_struct *sites,         // Pointer to sites within a spin system.
+    coupling_struct *couplings, // Pointer to couplings within a spin system.
 
     // A pointer to a spin transition packed as quantum numbers from the initial
     // energy state followed by the quantum numbers from the final energy state.
@@ -282,19 +278,19 @@ void __mrsimulator_core(
 
       /* Rotate all frequency components from PAS to a common frame */
       MRS_rotate_components_from_PAS_to_common_frame(
-          sites,       // Pointer to sites within a spin system.
-          couplings,   // Pointer to couplings within a spin system.
-          transition,  // Pointer to initial and final spin quantum
-                       // numbers of the spin transition.
-          plan->allow_fourth_rank,  // If 1, prepare for 4th rank computation.
-          &R0,                      // The R0 components.
-          R2,                       // The R2 components.
-          R4,                       // The R4 components.
-          &R0_temp,                 // The temporary R0 components.
-          R2_temp,                  // The temporary R2 components.
-          R4_temp,                  // The temporary R4 components.
-          B0_in_T,                  // Magnetic flux density in T.
-          freq_contrib_ptr          // The pointer to freq contribs boolean.
+          sites,                   // Pointer to sites within a spin system.
+          couplings,               // Pointer to couplings within a spin system.
+          transition,              // Pointer to initial and final spin quantum
+                                   // numbers of the spin transition.
+          plan->allow_fourth_rank, // If 1, prepare for 4th rank computation.
+          &R0,                     // The R0 components.
+          R2,                      // The R2 components.
+          R4,                      // The R4 components.
+          &R0_temp,                // The temporary R0 components.
+          R2_temp,                 // The temporary R2 components.
+          R4_temp,                 // The temporary R4 components.
+          B0_in_T,                 // Magnetic flux density in T.
+          freq_contrib_ptr         // The pointer to freq contribs boolean.
       );
 
       // The number 6 comes from the six types of pre-listed freq contributions.
@@ -303,17 +299,17 @@ void __mrsimulator_core(
       // Add a loop over all couplings.. here
       /* Get frequencies and amplitudes per octant ......................... */
       /* Always evalute the frequencies before the amplitudes. */
-      MRS_get_normalized_frequencies_from_plan(
-          scheme, plan, R0, R2, R4, refresh, &dimensions[dim], fraction);
+      MRS_get_normalized_frequencies_from_plan(scheme, plan, R0, R2, R4, refresh,
+                                               &dimensions[dim], fraction);
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
       if (plan->number_of_sidebands != 1) {
-        cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2,
-                    event->freq_amplitude, 1);
+        cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2, event->freq_amplitude,
+                    1);
       }
       transition += transition_increment;
       refresh = 0;
-    }  // end events
-  }    // end dimensions
+    } // end events
+  }   // end dimensions
 
   free(R2);
   free(R4);
@@ -350,9 +346,8 @@ void __mrsimulator_core(
     if (plan->number_of_sidebands == 1) {
       /* Copy the plan->norm_amplitudes to fftw_scheme->vector. */
       for (j = 0; j < plan->n_octants; j++) {
-        cblas_dcopy(
-            scheme->octant_orientations, plan->norm_amplitudes, 1,
-            (double *)&fftw_scheme->vector[j * scheme->octant_orientations], 2);
+        cblas_dcopy(scheme->octant_orientations, plan->norm_amplitudes, 1,
+                    (double *)&fftw_scheme->vector[j * scheme->octant_orientations], 2);
       }
     } else {
       /**
@@ -381,10 +376,9 @@ void __mrsimulator_core(
                                &dimensions[0].local_frequency[address], offset,
                                dimensions[0].freq_offset);
           // Perform tenting on every sideband order over all orientations.
-          octahedronInterpolation(spec_site_ptr, dimensions[0].freq_offset,
-                                  scheme->integration_density,
-                                  (double *)&fftw_scheme->vector[step_vector],
-                                  2, dimensions[0].count);
+          octahedronInterpolation(
+              spec_site_ptr, dimensions[0].freq_offset, scheme->integration_density,
+              (double *)&fftw_scheme->vector[step_vector], 2, dimensions[0].count);
           step_vector += scheme->octant_orientations;
         }
       }
@@ -413,25 +407,23 @@ void mrsimulator_core(
     double coordinates_offset,  // The start of the frequency spectrum.
     double increment,           // The increment of the frequency spectrum.
     int count,                  // Number of points on the frequency spectrum.
-    site_struct *sites,  // A pointer to a list of sites wiithin a spin system.
-    coupling_struct
-        *couplings,  // A pointer to a list of couplings within a spin system.
+    site_struct *sites,         // Pointer to a list of sites wiithin a spin system.
+    coupling_struct *couplings, // Pointer to a list of couplings within a spin system.
     MRS_dimension *dimensions,  // the dimensions in the method.
     int n_dimension,            // The number of dimension.
     int quad_second_order,      // Quad theory for second order,
 
     // spin rate, spin angle and number spinning sidebands
-    unsigned int number_of_sidebands,        // The number of sidebands
-    double sample_rotation_frequency_in_Hz,  // The rotor spin frequency
-    double rotor_angle_in_rad,  // The rotor angle relative to lab-frame z-axis
+    unsigned int number_of_sidebands,       // The number of sidebands
+    double sample_rotation_frequency_in_Hz, // The rotor spin frequency
+    double rotor_angle_in_rad, // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the transitions. transition[0] = mi and transition[1] = mf
     float *transition,
 
     // powder orientation average
-    int integration_density,          // The number of triangle along the edge
-                                      // of octahedron
-    unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
+    int integration_density, // The number of triangle along the edge of octahedron
+    unsigned int integration_volume, // 0-octant, 1-hemisphere, 2-sphere.
     bool interpolation, bool *freq_contrib, double *affine_matrix) {
   // int num_process = openblas_get_num_procs();
   // int num_threads = openblas_get_num_threads();
@@ -462,13 +454,13 @@ void mrsimulator_core(
   // gettimeofday(&all_site_time, NULL);
   __mrsimulator_core(
       // spectrum information and related amplitude
-      spec,  // The amplitude of the spectrum.
+      spec, // The amplitude of the spectrum.
 
-      sites,      // A pointer to a list of sites within the spin system.
-      couplings,  // A pointer to a list of couplings within a spin system.
+      sites,     // A pointer to a list of sites within the spin system.
+      couplings, // A pointer to a list of couplings within a spin system.
 
-      transition,  // A pointer to the initial and final spin quantum numbers of
-                   // the spin transition.
+      transition, // A pointer to the initial and final spin quantum numbers of
+                  // the spin transition.
 
       dimensions, n_dimension, fftw_scheme, scheme, interpolation, freq_contrib,
       affine_matrix);

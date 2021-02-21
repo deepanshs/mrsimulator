@@ -4,6 +4,7 @@ Upcoming changes
 What's new
 ''''''''''
 
+- Parallel processing.
 - Simulation of coupled spin systems. The frequency contribution from coupled sites include
   weak J-couplings and weak dipolar couplings.
 - New :class:`~mrsimulator.Coupling` class.

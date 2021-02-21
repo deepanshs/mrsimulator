@@ -2,7 +2,7 @@
 //
 //  vm_mkl.h
 //
-//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava, Jul 26, 2019.
 //  Contact email = srivastava.89@osu.edu
 //
@@ -21,8 +21,7 @@ static inline void vm_double_add(int count, const double *x, const double *y,
  * Add the elements of vector y inplace with the elements from vector x.
  * y += x
  */
-static inline void vm_double_add_inplace(int count, const double *x,
-                                         double *y) {
+static inline void vm_double_add_inplace(int count, const double *x, double *y) {
   vdAdd(count, x, y, y);
 }
 
@@ -30,8 +29,8 @@ static inline void vm_double_add_inplace(int count, const double *x,
  * Subtract the elements of vector x from y and store in res of type double.
  * res = x - y
  */
-static inline void vm_double_subtract(int count, const double *x,
-                                      const double *y, double *res) {
+static inline void vm_double_subtract(int count, const double *x, const double *y,
+                                      double *res) {
   vdSub(count, x, y, res);
 }
 
@@ -39,8 +38,8 @@ static inline void vm_double_subtract(int count, const double *x,
  * Multiply the elements of vector x and y and store in res of type double.
  * res = x * y
  */
-static inline void vm_double_multiply(int count, const double *x,
-                                      const double *y, double *res) {
+static inline void vm_double_multiply(int count, const double *x, const double *y,
+                                      double *res) {
   vdMul(count, x, y, res);
 }
 
@@ -73,8 +72,7 @@ static inline void vm_double_square_inplace(int count, double *x) {
  * Square root of the elements of vector x stored in res of type double.
  * res = sqrt(x)
  */
-static inline void vm_double_square_root(int count, const double *x,
-                                         double *res) {
+static inline void vm_double_square_root(int count, const double *x, double *res) {
   vdSqrt(count, x, res);
 }
 
@@ -83,8 +81,8 @@ static inline void vm_double_square_root(int count, const double *x,
  * complex.
  * res = x * y
  */
-static inline void vm_double_complex_multiply(int count, const void *x,
-                                              const void *y, void *res) {
+static inline void vm_double_complex_multiply(int count, const void *x, const void *y,
+                                              void *res) {
   vzMul(count, x, y, res);
 }
 

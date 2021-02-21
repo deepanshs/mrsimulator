@@ -2,7 +2,7 @@
 #
 #  test.pxd
 #
-#  @copyright Deepansh J. Srivastava, 2019-2020.
+#  @copyright Deepansh J. Srivastava, 2019-2021.
 #  Created by Deepansh J. Srivastava.
 #  Contact email = srivastava.89@osu.edu
 #
@@ -41,7 +41,7 @@ cdef extern from "angular_momentum.h":
 
 
 cdef extern from "powder_setup.h":
-    void octahedron_averaging_setup(
+    void averaging_setup(
         int nt,
         double complex *exp_I_alpha,
         double complex *exp_I_beta,

@@ -2,7 +2,7 @@
 //
 //  method.c
 //
-//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava, Apr 15, 2020
 //  Contact email = srivastava.89@osu.edu
 //
@@ -27,15 +27,13 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
   event->rotor_angle_in_rad = rotor_angle_in_rad;
   event->magnetic_flux_density_in_T = magnetic_flux_density_in_T;
 
-  if (sample_rotation_frequency_in_Hz ==
-          plan->sample_rotation_frequency_in_Hz &&
+  if (sample_rotation_frequency_in_Hz == plan->sample_rotation_frequency_in_Hz &&
       rotor_angle_in_rad == plan->rotor_angle_in_rad) {
     event->plan = plan;
     return;
   }
 
-  if (sample_rotation_frequency_in_Hz !=
-          plan->sample_rotation_frequency_in_Hz &&
+  if (sample_rotation_frequency_in_Hz != plan->sample_rotation_frequency_in_Hz &&
       rotor_angle_in_rad == plan->rotor_angle_in_rad) {
     MRS_plan *new_plan = MRS_copy_plan(plan);
     MRS_plan_update_from_sample_rotation_frequency_in_Hz(
@@ -44,8 +42,7 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
     return;
   }
 
-  if (sample_rotation_frequency_in_Hz ==
-          plan->sample_rotation_frequency_in_Hz &&
+  if (sample_rotation_frequency_in_Hz == plan->sample_rotation_frequency_in_Hz &&
       rotor_angle_in_rad != plan->rotor_angle_in_rad) {
     MRS_plan *new_plan = MRS_copy_plan(plan);
     MRS_plan_update_from_rotor_angle_in_rad(new_plan, rotor_angle_in_rad,
@@ -57,14 +54,13 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
 }
 
 MRS_dimension *MRS_dimension_malloc(int n) {
-  MRS_dimension *dimensions =
-      (MRS_dimension *)malloc(n * sizeof(MRS_dimension));
+  MRS_dimension *dimensions = (MRS_dimension *)malloc(n * sizeof(MRS_dimension));
   return dimensions;
 }
 
 static inline void create_plans_for_events_in_dimension(
-    MRS_dimension *dimension, MRS_averaging_scheme *scheme, int count,
-    double increment, double coordinates_offset, int n_events, double *fraction,
+    MRS_dimension *dimension, MRS_averaging_scheme *scheme, int count, double increment,
+    double coordinates_offset, int n_events, double *fraction,
     double *sample_rotation_frequency_in_Hz, double *rotor_angle_in_rad,
     double *magnetic_flux_density_in_T, unsigned int number_of_sidebands) {
   int i;
@@ -74,17 +70,16 @@ static inline void create_plans_for_events_in_dimension(
   dimension->n_events = n_events;
   dimension->events = (MRS_event *)malloc(n_events * sizeof(MRS_event));
 
-  MRS_plan *the_plan = MRS_create_plan(
-      scheme, number_of_sidebands, sample_rotation_frequency_in_Hz[0],
-      rotor_angle_in_rad[0], increment, scheme->allow_fourth_rank);
+  MRS_plan *the_plan =
+      MRS_create_plan(scheme, number_of_sidebands, sample_rotation_frequency_in_Hz[0],
+                      rotor_angle_in_rad[0], increment, scheme->allow_fourth_rank);
 
   for (i = 0; i < n_events; i++) {
     dimension->events[i].freq_amplitude = malloc_double(the_plan->size);
     vm_double_ones(the_plan->size, dimension->events[i].freq_amplitude);
-    MRS_set_event(&(dimension->events[i]), *fraction++,
-                  *magnetic_flux_density_in_T++,
-                  *sample_rotation_frequency_in_Hz++, *rotor_angle_in_rad++,
-                  increment, the_plan);
+    MRS_set_event(&(dimension->events[i]), *fraction++, *magnetic_flux_density_in_T++,
+                  *sample_rotation_frequency_in_Hz++, *rotor_angle_in_rad++, increment,
+                  the_plan);
   }
   dimension->inverse_increment = 1.0 / increment;
   dimension->normalize_offset =
@@ -99,17 +94,16 @@ static inline void create_plans_for_events_in_dimension(
 MRS_dimension *MRS_create_dimensions(
     MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
     double *increment, double *fractions, double *magnetic_flux_density_in_T,
-    double *sample_rotation_frequency_in_Hz, double *rotor_angle_in_rad,
-    int *n_events, unsigned int n_dim, unsigned int number_of_sidebands) {
+    double *sample_rotation_frequency_in_Hz, double *rotor_angle_in_rad, int *n_events,
+    unsigned int n_dim, unsigned int number_of_sidebands) {
   unsigned int i;
-  MRS_dimension *dimension =
-      (MRS_dimension *)malloc(n_dim * sizeof(MRS_dimension));
+  MRS_dimension *dimension = (MRS_dimension *)malloc(n_dim * sizeof(MRS_dimension));
 
   for (i = 0; i < n_dim; i++) {
     create_plans_for_events_in_dimension(
         &(dimension[i]), scheme, count[i], increment[i], coordinates_offset[i],
-        n_events[i], fractions, sample_rotation_frequency_in_Hz,
-        rotor_angle_in_rad, magnetic_flux_density_in_T, number_of_sidebands);
+        n_events[i], fractions, sample_rotation_frequency_in_Hz, rotor_angle_in_rad,
+        magnetic_flux_density_in_T, number_of_sidebands);
 
     fractions += n_events[i];
     sample_rotation_frequency_in_Hz += n_events[i];
