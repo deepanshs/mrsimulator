@@ -84,9 +84,12 @@ plt.show()
 # ---------------------------
 #
 # **Spin system:**
+#
 # Let's create the sites and single-site spin system objects from these parameters.
 # Use the :func:`~mrsimulator.utils.collection.single_site_system_generator` utility
-# function to generate single-site spin systems.
+# function to generate single-site spin systems. # Here, ``iso``, ``zeta``, and ``eta``
+# are the array of tensor parameter coordinates, and ``pdf`` is the array of the
+# corresponding amplitudes.
 spin_systems = single_site_system_generator(
     isotopes="29Si",
     isotropic_chemical_shifts=iso,
@@ -95,12 +98,9 @@ spin_systems = single_site_system_generator(
 )
 
 # %%
-# Here, ``iso``, ``zeta``, and ``eta`` are the array of tensor parameter coordinates,
-# and ``pdf`` is the array of corresponding amplitudes.
-#
-#
 # **Method:**
-# Let's also create the Bloch decay spectrum method.
+#
+# Let's also create a Bloch decay spectrum method.
 method = BlochDecaySpectrum(
     channels=["29Si"],
     spectral_dimensions=[
@@ -113,6 +113,7 @@ method = BlochDecaySpectrum(
 # (default value).
 #
 # **Simulator:**
+#
 # Now, that we have the spin systems and the method, create the simulator object and
 # add the respective objects.
 sim = Simulator()

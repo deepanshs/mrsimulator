@@ -47,12 +47,7 @@ def one_d_spectrum(method,
         separately.
     """
 
-    cdef int transition_increment
-
-
-# ---------------------------------------------------------------------
 # observed spin _______________________________________________________
-    # dimension = dimension[0]
     channel = method.channels[0].symbol
     # spin quantum number of the observed spin
     cdef double spin_quantum_number = method.channels[0].spin
@@ -71,6 +66,7 @@ def one_d_spectrum(method,
     #     print((f"and a reference offset of {dimension['reference_offset']} Hz."))
 
     # transitions of the observed spin
+    cdef int transition_increment
     cdef ndarray[float, ndim=1] transition_array
     cdef int number_of_transitions
     # transition_array = np.asarray([-0.5, 0.5]).ravel()
@@ -81,7 +77,6 @@ def one_d_spectrum(method,
     #     energy_states = np.arange(energy_level_count) - spin_quantum_number
     #     transitions = [ [energy_states[i], energy_states[i+1]] for i in range(number_of_transitions)]
     #     transition_array = np.asarray(transitions).ravel()
-
 
     cdef bool_t allow_fourth_rank = 0
     if spin_quantum_number > 0.5:
@@ -95,7 +90,6 @@ def one_d_spectrum(method,
     )
 
 # create spectral dimensions _______________________________________________
-
     cdef int n_sequence = len(method.spectral_dimensions)
     # if n_sequence > 1:
     #     number_of_sidebands = 1
@@ -177,16 +171,15 @@ def one_d_spectrum(method,
     norm = np.prod(incre)
 
 # create fftw scheme __________________________________________________________
-
     cdef clib.MRS_fftw_scheme *the_fftw_scheme
     the_fftw_scheme = clib.create_fftw_scheme(the_averaging_scheme.total_orientations, number_of_sidebands)
-# # _____________________________________________________________________________
+
+# _____________________________________________________________________________
 
 # frequency contrib
     cdef ndarray[bool_t] freq_contrib_c = np.asarray(freq_contrib, dtype=np.bool)
 
 # affine transformation
-
     cdef ndarray[double] affine_matrix_c
     if method.affine_matrix is None:
         affine_matrix_c = np.asarray([1, 0, 0, 1], dtype=np.float64)
@@ -414,7 +407,7 @@ def one_d_spectrum(method,
     clib.MRS_free_sequence(the_sequence, n_sequence)
     clib.MRS_free_averaging_scheme(the_averaging_scheme)
     clib.MRS_free_fftw_scheme(the_fftw_scheme)
-    return amp1, index_
+    return amp1
 
 
 @cython.profile(False)

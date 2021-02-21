@@ -10,6 +10,8 @@ dependencies:
   - setuptools>=27.3
   - cython>=0.29
   - matplotlib>=3.0
+  - pandas>=1.1.3
+  - joblib>=1.0.0
   - pip
   - pip:
       - monty>=2.0.4
@@ -17,4 +19,5 @@ dependencies:
       - pydantic>=1.0
       - typing-extensions>=3.7
       - lmfit>=1.0.0
+      - psutil>=5.7.2
       - git+https://github.com/DeepanshS/mrsimulator.git@master

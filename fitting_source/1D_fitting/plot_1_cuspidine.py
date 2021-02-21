@@ -43,11 +43,16 @@ mpl.rcParams["grid.linestyle"] = "--"
 file_ = "https://sandbox.zenodo.org/record/687656/files/synthetic_cuspidine_test.csdf"
 synthetic_experiment = cp.load(file_).real
 
+# standard deviation of noise from the dataset
+sigma = 0.3298179
+
 # convert the dimension coordinates from Hz to ppm
 synthetic_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
 # Normalize the spectrum
-synthetic_experiment /= synthetic_experiment.max()
+max_amp = synthetic_experiment.max()
+synthetic_experiment /= max_amp
+sigma /= max_amp
 
 # Plot of the synthetic dataset.
 ax = plt.subplot(projection="csdm")
@@ -180,7 +185,7 @@ params.add(name="factor", value=processor.operations[3].factor)
 # - return the difference between the experiment and simulation.
 
 
-def minimization_function(params, sim, processor):
+def minimization_function(params, sim, processor, sigma=1):
     values = params.valuesdict()
 
     # the experiment data as a Numpy array
@@ -205,7 +210,8 @@ def minimization_function(params, sim, processor):
     processed_data = processor.apply_operations(sim.methods[0].simulation)
 
     # return the difference vector.
-    return intensity - processed_data.dependent_variables[0].components[0].real
+    diff = intensity - processed_data.dependent_variables[0].components[0].real
+    return diff / sigma
 
 
 # %%
@@ -222,7 +228,7 @@ def minimization_function(params, sim, processor):
 # With the synthetic dataset, simulation, and the initial guess parameters, we are ready
 # to perform the fit. To fit, we use the *LMFIT*
 # `Minimizer <https://lmfit.github.io/lmfit-py/fitting.html>`_ class.
-minner = Minimizer(minimization_function, params, fcn_args=(sim, processor))
+minner = Minimizer(minimization_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
 print(fit_report(result))
 
@@ -230,10 +236,12 @@ print(fit_report(result))
 # The plot of the fit, measurement and the residuals is shown below.
 plt.figsize = (4, 3)
 x, y_data = synthetic_experiment.to_list()
-residual = result.residual
+residuals = minimization_function(result.params, sim, processor)
+fit = y_data - residuals
+
 plt.plot(x, y_data, "k", linewidth=2, label="Experiment")
-plt.plot(x, y_data - residual, "r--", label="Best Fit")
-plt.plot(x, residual, alpha=0.5, label="Residual")
+plt.plot(x, fit, "r--", label="Best Fit")
+plt.plot(x, residuals, alpha=0.5, label="Residual")
 
 plt.xlabel("Frequency / Hz")
 plt.xlim(-200, 50)

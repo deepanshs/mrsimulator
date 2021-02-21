@@ -13,6 +13,9 @@ def single_site_system_generator(
     shielding_symmetric=None,
     quadrupolar=None,
     abundance=None,
+    site_labels=None,
+    site_names=None,
+    site_descriptions=None,
     rtol=1e-3,
 ):
     r"""Generate and return a list of single-site spin systems from the input parameters.
@@ -20,7 +23,7 @@ def single_site_system_generator(
     Args:
 
         isotopes:
-            A string or a list of isotopes.
+            A string or a list of site isotopes.
         isotropic_chemical_shifts:
             A float or a list/ndarray of values. The default value is 0.
         shielding_symmetric:
@@ -34,6 +37,12 @@ def single_site_system_generator(
         abundance:
             A float or a list/ndarray of floats describing the abundance of each spin
             system.
+        site_labels:
+            A string or a list of strings each with a site label. The default is None.
+        site_names:
+            A string or a list of strings each with a site name. The default is None.
+        site_descriptions:
+            A string or a list of strings each with a site description. Default is None.
         rtol:
             The relative tolerance. This value is used in determining the cutoff
             abundance given as
@@ -56,6 +65,15 @@ def single_site_system_generator(
 
     abundance = _fix_item(abundance)
     n_abd = _get_length(abundance)
+
+    site_labels = _fix_item(site_labels)
+    n_site_labels = _get_length(site_labels)
+
+    site_names = _fix_item(site_names)
+    n_site_names = _get_length(site_names)
+
+    site_descriptions = _fix_item(site_descriptions)
+    n_site_descriptions = _get_length(site_descriptions)
 
     n_ss = []
     if shielding_symmetric is not None:
@@ -87,7 +105,18 @@ def single_site_system_generator(
             if item in quad_keys
         ]
 
-    n = np.asarray([n_isotopes, n_iso, *n_ss, *n_q, n_abd])
+    n = np.asarray(
+        [
+            n_isotopes,
+            n_iso,
+            *n_ss,
+            *n_q,
+            n_abd,
+            n_site_labels,
+            n_site_names,
+            n_site_descriptions,
+        ]
+    )
     n_len = _check_size(n)
 
     if abundance is None:
@@ -97,16 +126,32 @@ def single_site_system_generator(
     isotopes_ = _get_default_lists(isotopes, n_len)
     iso_chemical_shifts_ = _get_default_lists(isotropic_chemical_shifts, n_len)
     abundance_ = _get_default_lists(abundance, n_len)
+    site_labels_ = _get_default_lists(site_labels, n_len)
+    site_names_ = _get_default_lists(site_names, n_len)
+    site_descriptions_ = _get_default_lists(site_descriptions, n_len)
 
     index = np.where(abundance_ > rtol * abundance_.max())[0]
 
     sys = [
         SpinSystem(
-            sites=[Site(isotope=ist__, isotropic_chemical_shift=iso__)],
+            sites=[
+                Site(
+                    isotope=ist__,
+                    isotropic_chemical_shift=iso__,
+                    label=lab__,
+                    name=name__,
+                    description=dis__,
+                )
+            ],
             abundance=abd__,
         )
-        for ist__, iso__, abd__ in zip(
-            isotopes_[index], iso_chemical_shifts_[index], abundance_[index]
+        for ist__, iso__, lab__, name__, dis__, abd__ in zip(
+            isotopes_[index],
+            iso_chemical_shifts_[index],
+            site_labels_[index],
+            site_names_[index],
+            site_descriptions_[index],
+            abundance_[index],
         )
     ]
 
@@ -137,13 +182,14 @@ def single_site_system_generator(
 def _populate_quadrupolar(sys, items):
     n = len(items[0])
     for i in range(n):
-        sys[i].sites[0].quadrupolar = {
-            "Cq": items[0][i],
-            "eta": items[1][i],
-            "alpha": items[2][i],
-            "beta": items[3][i],
-            "gamma": items[4][i],
-        }
+        if sys[i].sites[0].isotope.spin > 0.5:
+            sys[i].sites[0].quadrupolar = {
+                "Cq": items[0][i],
+                "eta": items[1][i],
+                "alpha": items[2][i],
+                "beta": items[3][i],
+                "gamma": items[4][i],
+            }
 
 
 def _populate_shielding(sys, items):

@@ -10,6 +10,7 @@ dependencies:
   - setuptools>=27.3
   - cython>=0.29
   - matplotlib>=3.0
+  - pandas>=1.1.3
   - pip
   - pip:
       - monty>=2.0.4
@@ -18,6 +19,8 @@ dependencies:
       - typing-extensions>=3.7
       - flake8
       - lmfit>=1.0.0
+      - psutil>=5.7.2
+      - joblib>=1.0.0
       # for testing
       - pytest
       - pytest-cov
@@ -28,7 +31,7 @@ dependencies:
       - sphinx-copybutton>=0.2.12
       - sphinx-gallery>0.6.2
       - pillow>=7.1.2
-      - breathe>=4.19
+      - breathe==4.23
       - sphinx-tabs>=1.1.13
       - recommonmark
       - sphinx-version-warning
