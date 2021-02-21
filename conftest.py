@@ -41,6 +41,7 @@ def add_site(doctest_namespace):
     doctest_namespace["SpinSystem"] = SpinSystem
     doctest_namespace["Simulator"] = Simulator
     doctest_namespace["Site"] = Site
+    doctest_namespace["Coupling"] = Coupling
     doctest_namespace["SymmetricTensor"] = SymmetricTensor
     doctest_namespace["st"] = SymmetricTensor
     doctest_namespace["pprint"] = pprint

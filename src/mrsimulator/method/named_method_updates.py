@@ -111,6 +111,18 @@ def ST_VAS_update(method):
     return method
 
 
+def Cosy_update(method):
+
+    # setting transition symmetry elements
+    method.spectral_dimensions[0].events[0].transition_query.P = {"channel-1": [[-1]]}
+    method.spectral_dimensions[1].events[0].transition_query.P = {"channel-1": [[-1]]}
+
+    method.description = (
+        "Simulate an infinite spinning COrrelation SpectroscopY spectrum."
+    )
+    return method
+
+
 # Generic method update
 def update_method(method):
     if method.name == "BlochDecaySpectrum":
