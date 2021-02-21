@@ -46,6 +46,7 @@ def test_equality():
         "spin_systems": [{"abundance": "100 %", "sites": []}],
         "config": {
             "decompose_spectrum": "none",
+            "integration_type": "Alderman",
             "integration_density": 70,
             "integration_volume": "octant",
             "number_of_sidebands": 64,
@@ -59,6 +60,7 @@ def test_equality():
         "methods": [],
         "config": {
             "number_of_sidebands": 64,
+            "integration_type": "Alderman",
             "integration_volume": "octant",
             "integration_density": 70,
             "decompose_spectrum": "none",
@@ -138,6 +140,7 @@ def test_simulator_1():
         ],
         "config": {
             "decompose_spectrum": "none",
+            "integration_type": "Alderman",
             "integration_density": 70,
             "integration_volume": "octant",
             "number_of_sidebands": 64,

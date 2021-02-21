@@ -228,7 +228,7 @@ def test_pure_quadrupolar_lineshapes():
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         data_mrsimulator, data_source = c_setup(*get_data(filename))
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=2, err_msg=message
+            data_mrsimulator, data_source, decimal=1, err_msg=message
         )
 
         # random euler angle. Euler angles should not affect the spectrum.

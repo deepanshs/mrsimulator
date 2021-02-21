@@ -69,7 +69,7 @@ cdef class AveragingScheme:
     cdef clib.MRS_averaging_scheme *scheme
     cdef bool_t allow_fourth_rank
 
-    def __init__(self, int integration_density, integration_volume='octant', bool_t allow_fourth_rank=False):
+    def __init__(self, int integration_density, integration_type='sphere', integration_volume='octant', bool_t allow_fourth_rank=False):
         """Create the octahedral interpolation averaging scheme for the simulation.
 
         Args:
@@ -79,9 +79,9 @@ cdef class AveragingScheme:
         """
         self.allow_fourth_rank = allow_fourth_rank
         integration_volume_ = 0
-        if integration_volume == 'hemisphere':
-            integration_volume_=1
-        self.scheme = clib.MRS_create_averaging_scheme(integration_density,
+        integration_volume_ = 1 if integration_volume == 'hemisphere' else 0
+        integration_type_ = 1 if integration_type == 'sphere' else 0
+        self.scheme = clib.MRS_create_averaging_scheme(integration_type, integration_density,
                                     allow_fourth_rank, integration_volume_)
 
     @property
@@ -101,9 +101,9 @@ cdef class AveragingScheme:
     def integration_density(self, value):
         if isinstance(value, int):
             if value > 0:
-                self.scheme = clib.MRS_create_averaging_scheme(value,
-                                self.allow_fourth_rank,
-                                self.scheme.integration_volume)
+                self.scheme = clib.MRS_create_averaging_scheme(0, value,
+                                self.scheme.integration_volume,
+                                self.allow_fourth_rank)
                 return
         raise ValueError(f"Expecting a positive integer, found {value}.")
 
@@ -116,9 +116,9 @@ cdef class AveragingScheme:
     def integration_volume(self, value):
         if value in __integration_volume_enum__.keys():
             self.scheme.integration_volume = __integration_volume_enum__[value]
-            self.scheme = clib.MRS_create_averaging_scheme(
-                    self.scheme.integration_density,
-                    self.allow_fourth_rank, value
+            self.scheme = clib.MRS_create_averaging_scheme(0,
+                    self.scheme.integration_density, value,
+                    self.allow_fourth_rank
                 )
             return
         raise ValueError(

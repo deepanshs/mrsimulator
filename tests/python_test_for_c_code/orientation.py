@@ -5,101 +5,161 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-# def octahedral_coordinate(nt: int):
+class Octahedron:
+    def __init__(self, nt):
+        """Octahedron class. nt is the number of triangles along the edge of the
+        octahedron."""
+        self.nt = nt
 
-#     # Do the (x + y + z = nt) face of the octahedron
-#     # z -> 0 to nt-1
-#     # y -> 0 to nt-z
-#     # x -> nt - y - z
+    def coordinates(self, nt: int):
+        """Coordinates over the position octant face of a octahedron.
 
-#     n = int((nt + 1) * (nt + 2) / 2)
-#     x = np.empty(n, dtype=np.float64)
-#     y = np.empty(n, dtype=np.float64)
-#     z = np.empty(n, dtype=np.float64)
+        Args:
+            nt: Number of triangles along the edge of the octahedron face.
+        """
+        # Do the (x + y + z = nt) face of the octahedron
+        # z -> 0 to nt-1
+        # y -> 0 to nt-z
+        # x -> nt - y - z
 
-#     k = 0
-#     for j in range(nt + 1):
-#         for i in range(nt - j + 1):
-#             # x = nt-i-j;
-#             # y = i;
-#             # z = j;
-#             x[k] = nt - i - j
-#             y[k] = i
-#             z[k] = j
-#             k += 1
+        n = int((nt + 1) * (nt + 2) / 2)
+        x = np.empty(n, dtype=np.float64)
+        y = np.empty(n, dtype=np.float64)
+        z = np.empty(n, dtype=np.float64)
 
-#     return x, y, z
+        k = 0
+        for j in range(nt):
+            for i in range(nt - j + 1):
+                x[k] = nt - i - j
+                y[k] = i
+                z[k] = j
+                k += 1
+
+        x[k] = 0
+        y[k] = 0
+        z[k] = nt
+
+        return x, y, z
+
+    def projected_coordinates(self, nt: int):
+        """The coordinates over the face of octahedron projected onto the sphere."""
+        x, y, z = self.coordinates(nt)
+        r = np.sqrt(x * x + y * y + z * z)
+        return x / r, y / r, z / r
+
+    def _direction_cosine_squares_and_amplitudes(self, nt: int):
+        x, y, z = self.coordinates(nt)
+
+        x *= x
+        y *= y
+        z *= z
+
+        r2 = x + y + z
+
+        x /= r2
+        y /= r2
+        z /= r2
+        amp = nt / (r2 * np.sqrt(r2))
+
+        return x, y, z, amp
+
+    def cosines_and_amplitudes(self, integration_density: int = 72):
+        r"""
+        Calculates and return the direction cosines and the related amplitudes for
+        the positive quadrant of the sphere. The direction cosines corresponds to
+        angle $\alpha$ and $\beta$, where $\alpha$ is the azimuthal angle and
+        $\beta$ is the polar angle. The amplitudes are evaluated as $\frac{1}{r^3}$
+        where $r$ is the distance from the origin to the face of the unit
+        octahedron in the positive quadrant along the line given by the values of
+        $\alpha$ and $\beta$.
+
+        :ivar integration_density:
+            The value is an integer which represents the frequency of class I
+            geodesic polyhedra. These polyhedra are used in calculating the
+            spherical average. Presently we only use octahedral as the frequency1
+            polyhedra. As the frequency of the geodesic polyhedron increases, the
+            polyhedra approach a sphere geometry. A higher frequency will result in
+            a better powder averaging. The default value is 72.
+            Read more on the `Geodesic polyhedron
+            <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
+
+        :return cos_alpha: The cosine of the azimuthal angle.
+        :return cos_beta: The cosine of the polar angle.
+        :return amp: The amplitude at the given $\alpha$ and $\beta$.
+        """
+        nt = integration_density
+        xr, yr, zr, amp = self._direction_cosine_squares_and_amplitudes(nt)
+
+        cos_beta = np.sqrt(zr)
+        cos_alpha = np.zeros(xr.size, dtype=np.float64)
+        cos_alpha[:-1] = np.sqrt(xr[:-1] / (xr[:-1] + yr[:-1]))
+        cos_alpha[-1] = 0.0
+        return cos_alpha, cos_beta, amp
 
 
-def octahedral_direction_cosine_squares_and_amplitudes(nt: int):
+class Sphere:
+    def __init__(self, nt):
+        """Sphere class. nt is the number of spherical triangles along the edge of the
+        sphere."""
+        self.nt = nt
 
-    # Do the (x + y + z = nt) face of the octahedron
-    # z -> 0 to nt-1
-    # y -> 0 to nt-z
-    # x -> nt - y - z
+    def coordinates(self, nt: int):
+        """Coordinates over the position octant face of the sphere.
 
-    n = int((nt + 1) * (nt + 2) / 2)
-    x = np.empty(n, dtype=np.float64)
-    y = np.empty(n, dtype=np.float64)
-    z = np.empty(n, dtype=np.float64)
+        Args:
+            nt: Number of spherical triangles along the edge of the spherical face.
+        """
 
-    k = 0
-    for j in range(nt + 1):
-        for i in range(nt - j + 1):
-            # x = nt-i-j;
-            # y = i;
-            # z = j;
-            x[k] = nt - i - j
-            y[k] = i
-            z[k] = j
-            k += 1
+        # Equal area triangle mapping from octahedron to sphere.
+        # Reference: Computers and Mathematics with Applications 67 (2014) 1092–1107
 
-    x *= x
-    y *= y
-    z *= z
+        octa = Octahedron(nt)
+        x, y, z = octa.coordinates(nt)
 
-    r2 = x + y + z
+        z_adj = z / nt
+        factor1 = np.pi / 2 * (y / (x + y))
+        factor1[-1] = 0
+        z_sphere = 2 * z_adj * (1 - z_adj / 2)
 
-    x /= r2
-    y /= r2
-    z /= r2
-    amp = nt / (r2 * np.sqrt(r2))
+        factor2 = np.sqrt(1 - z_sphere ** 2)
+        factor2[-1] = 0
 
-    return x, y, z, amp
+        x_sphere = factor2 * np.cos(factor1)
+        y_sphere = factor2 * np.sin(factor1)
 
+        return x_sphere, y_sphere, z_sphere
 
-def cosine_of_polar_angles_and_amplitudes(integration_density: int = 72):
-    r"""
-    Calculates and return the direction cosines and the related amplitudes for
-    the positive quadrant of the sphere. The direction cosines corresponds to
-    angle $\alpha$ and $\beta$, where $\alpha$ is the azimuthal angle and
-    $\beta$ is the polar angle. The amplitudes are evaluated as $\frac{1}{r^3}$
-    where $r$ is the distance from the origin to the face of the unit
-    octahedron in the positive quadrant along the line given by the values of
-    $\alpha$ and $\beta$.
+    def cosines_and_amplitudes(self, integration_density: int = 72):
+        r"""
+        Calculates and return the direction cosines and the related amplitudes for
+        the positive quadrant of the sphere. The direction cosines corresponds to
+        angle $\alpha$ and $\beta$, where $\alpha$ is the azimuthal angle and
+        $\beta$ is the polar angle. The amplitudes are evaluated as $\frac{1}{r^3}$
+        where $r$ is the distance from the origin to the face of the unit
+        octahedron in the positive quadrant along the line given by the values of
+        $\alpha$ and $\beta$.
 
-    :ivar integration_density:
-        The value is an integer which represents the frequency of class I
-        geodesic polyhedra. These polyhedra are used in calculating the
-        spherical average. Presently we only use octahedral as the frequency1
-        polyhedra. As the frequency of the geodesic polyhedron increases, the
-        polyhedra approach a sphere geometry. A higher frequency will result in
-        a better powder averaging. The default value is 72.
-        Read more on the `Geodesic polyhedron
-        <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
+        :ivar integration_density:
+            The value is an integer which represents the frequency of class I
+            geodesic polyhedra. These polyhedra are used in calculating the
+            spherical average. Presently we only use octahedral as the frequency1
+            polyhedra. As the frequency of the geodesic polyhedron increases, the
+            polyhedra approach a sphere geometry. A higher frequency will result in
+            a better powder averaging. The default value is 72.
+            Read more on the `Geodesic polyhedron
+            <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
 
-    :return cos_alpha: The cosine of the azimuthal angle.
-    :return cos_beta: The cosine of the polar angle.
-    :return amp: The amplitude at the given $\alpha$ and $\beta$.
-    """
-    nt = integration_density
-    xr, yr, zr, amp = octahedral_direction_cosine_squares_and_amplitudes(nt)
+        :return cos_alpha: The cosine of the azimuthal angle.
+        :return cos_beta: The cosine of the polar angle.
+        :return amp: The amplitude at the given $\alpha$ and $\beta$.
+        """
+        nt = integration_density
+        x, y, z = self.coordinates(nt)
 
-    cos_beta = np.sqrt(zr)
-    cos_alpha = np.zeros(xr.size, dtype=np.float64)
-    cos_alpha[:-1] = np.sqrt(xr[:-1] / (xr[:-1] + yr[:-1]))
-    cos_alpha[-1] = 0.0
-    return cos_alpha, cos_beta, amp
+        cos_beta = z
+        cos_alpha = np.cos(0.5 * np.pi * (y / (x + y)))
+        amp = np.ones(cos_beta.size)
+        return cos_alpha, cos_beta, amp
 
 
 def triangle_interpolation(f, spec, amp=1.0):

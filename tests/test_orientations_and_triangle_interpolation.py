@@ -3,14 +3,19 @@
 import mrsimulator.tests.tests as clib
 import numpy as np
 
-from .python_test_for_c_code.orientation import cosine_of_polar_angles_and_amplitudes
+from .python_test_for_c_code.orientation import Octahedron
 from .python_test_for_c_code.orientation import triangle_interpolation
+
+# import matplotlib.pyplot as plt
 
 
 def test_octahedron_averaging_setup():
     nt = 64
-    cos_alpha_py, cos_beta_py, amp_py = cosine_of_polar_angles_and_amplitudes(nt)
-    exp_I_alpha_c, exp_I_beta_c, amp_c = clib.cosine_of_polar_angles_and_amplitudes(nt)
+    octa = Octahedron(nt)
+    cos_alpha_py, cos_beta_py, amp_py = octa.cosines_and_amplitudes(nt)
+    exp_I_alpha_c, exp_I_beta_c, amp_c = clib.cosine_of_polar_angles_and_amplitudes(
+        nt, integration_type=0
+    )
 
     assert np.allclose(cos_alpha_py, exp_I_alpha_c.real, atol=1e-15)
     assert np.allclose(cos_beta_py, exp_I_beta_c.real, atol=1e-15)
@@ -37,6 +42,12 @@ def test_triangle_interpolation():
 
         amp_c = np.zeros(100)
         clib.triangle_interpolation(list_, amp_c)
+
+        # plt.plot(amp_py, 'b', label='py')
+        # plt.plot(amp_c, 'r--', label='c')
+        # plt.plot(list_, [0, 2/(list_[2]-list_[0]), 0], 'k*', label='c')
+        # plt.legend()
+        # plt.show()
 
         assert np.allclose(amp_py, amp_c, atol=1e-15)
 
@@ -66,6 +77,13 @@ def test_triangle_rasterization():
         clib.triangle_interpolation(lst1, amp2)
         clib.triangle_interpolation(lst2, amp3)
 
+        # plt.imshow(amp1, origin='lower', cmap='gray', aspect='auto')
+        # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
+        # plt.plot(x_t, y_t, 'r', label='vertex')
+        # plt.scatter(lst2-0.5, lst1-0.5, s=20, color='yellow', label='vertex')
+        # plt.legend()
+        # plt.show()
+
         assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
         assert np.allclose(amp3, amp1.sum(axis=0), atol=1e-15)
 
@@ -85,6 +103,13 @@ def test_triangle_rasterization():
         clib.triangle_interpolation2D(lst1, lst2, amp1)
         clib.triangle_interpolation(lst1, amp2)
 
+        # plt.imshow(amp1, origin='lower', cmap='gray', aspect='auto')
+        # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
+        # plt.plot(x_t, y_t, 'r', label='vertex')
+        # plt.scatter(lst2-0.5, lst1-0.5, s=20, color='yellow', label='vertex')
+        # plt.legend()
+        # plt.show()
+
         assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
 
     # triangles with one or more vertices outside a grid voxel
@@ -100,5 +125,12 @@ def test_triangle_rasterization():
 
         clib.triangle_interpolation2D(lst1, lst2, amp1)
         clib.triangle_interpolation(lst1, amp2)
+
+        # plt.imshow(amp1, origin='lower', cmap='gray', aspect='auto')
+        # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
+        # plt.plot(x_t, y_t, 'r', label='vertex')
+        # plt.scatter(lst2-0.5, lst1-0.5, s=20, color='yellow', label='vertex')
+        # plt.legend()
+        # plt.show()
 
         assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)

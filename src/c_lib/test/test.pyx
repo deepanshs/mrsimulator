@@ -157,7 +157,8 @@ def pre_phase_components(unsigned int number_of_sidebands, double sample_rotatio
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def cosine_of_polar_angles_and_amplitudes(int integration_density=72):
+def cosine_of_polar_angles_and_amplitudes(int integration_density=72,
+                                    unsigned int integration_type=1):
     r"""
     Calculate the direction cosines and the related amplitudes for
     the positive quadrant of the sphere. The direction cosines corresponds to
@@ -191,7 +192,9 @@ def cosine_of_polar_angles_and_amplitudes(int integration_density=72):
     cdef np.ndarray[double complex] exp_I_beta = np.empty(octant_orientations, dtype=np.complex128)
     cdef np.ndarray[double] amp = np.empty(octant_orientations, dtype=np.float64)
 
-    clib.octahedron_averaging_setup(nt, &exp_I_alpha[0], &exp_I_beta[0], &amp[0])
+    clib.averaging_setup(
+        integration_type, nt, &exp_I_alpha[0], &exp_I_beta[0], &amp[0]
+    )
 
     return exp_I_alpha, exp_I_beta, amp
 

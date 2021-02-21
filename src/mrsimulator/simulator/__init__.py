@@ -288,6 +288,7 @@ class Simulator(BaseModel):
         >>> pprint(sim.json())
         {'config': {'decompose_spectrum': 'none',
                     'integration_density': 70,
+                    'integration_type': 'Alderman',
                     'integration_volume': 'octant',
                     'number_of_sidebands': 64},
          'spin_systems': [{'abundance': '100 %',

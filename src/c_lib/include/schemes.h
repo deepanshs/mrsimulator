@@ -2,7 +2,7 @@
 //
 //  schemes.h
 //
-//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava, Sep 3, 2019.
 //  Contact email = srivastava.89@osu.edu
 //
@@ -40,8 +40,11 @@ typedef struct MRS_averaging_scheme {
   unsigned int total_orientations; /**< The total number of orientations. */
 
   /** \privatesection */
-  unsigned int integration_density;  // number of triangles along the edge of
-                                     // the octahedron.
+  unsigned int integration_type;     // Sampling type for integration
+                                     // 0-octaheron, 1-spherical
+  unsigned int integration_density;  // number of triangles along the edge
+                                     // of the octahedron.
+  unsigned int integration_volume;   //  0-octant, 1-hemisphere, 2-sphere.
   unsigned int octant_orientations;  //  number of unique orientations on the
                                      //  face of an octant.
   double *amplitudes;          //  array of amplitude scaling per orientation.
@@ -52,7 +55,6 @@ typedef struct MRS_averaging_scheme {
   double *wigner_4j_matrices;  //  wigner-d 4j matrix per orientation.
   // double *local_frequency;     //  buffer for local frequencies.
   // double *freq_offset;         //  buffer for local + sideband frequencies.
-  unsigned int integration_volume;  //  0-octant, 1-hemisphere, 2-sphere.
   bool allow_fourth_rank;  // If true, compute wigner matrices for wigner-d 4j.
 } MRS_averaging_scheme;
 
@@ -77,8 +79,8 @@ typedef struct MRS_averaging_scheme {
  * @param integration_volume An enumeration. 0=octant, 1=hemisphere
  */
 MRS_averaging_scheme *MRS_create_averaging_scheme(
-    unsigned int integration_density, bool allow_fourth_rank,
-    unsigned int integration_volume);
+    unsigned int integration_type, unsigned int integration_density,
+    unsigned int integration_volume, bool allow_fourth_rank);
 
 /**
  * Create a new orientation averaging scheme from given alpha and beta.
@@ -104,6 +106,10 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
  * @param scheme A pointer to the MRS_averaging_scheme.
  */
 void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme);
+
+static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
+                                          complex128 *exp_I_beta,
+                                          bool allow_fourth_rank);
 
 #endif  // averaging_scheme_h
 

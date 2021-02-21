@@ -2,7 +2,7 @@
 #
 #  sandbox.pxd
 #
-#  @copyright Deepansh J. Srivastava, 2019-2020.
+#  @copyright Deepansh J. Srivastava, 2019-2021.
 #  Created by Deepansh J. Srivastava
 #  Contact email = srivastava.89@osu.edu
 #
@@ -12,13 +12,15 @@ from libcpp cimport bool as bool_t
 cdef extern from "schemes.h":
     ctypedef struct MRS_averaging_scheme:
         unsigned int total_orientations
+        unsigned int integration_type
         unsigned int integration_density
         unsigned int integration_volume
 
     MRS_averaging_scheme * MRS_create_averaging_scheme(
+                            unsigned int integration_type,
                             unsigned int integration_density,
-                            bool_t allow_fourth_rank,
-                            unsigned int integration_volume)
+                            unsigned int integration_volume,
+                            bool_t allow_fourth_rank)
 
     MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
                             double *alpha, double *beta,

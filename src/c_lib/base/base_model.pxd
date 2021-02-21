@@ -2,7 +2,7 @@
 #
 #  nmr_method.pxd
 #
-#  @copyright Deepansh J. Srivastava, 2019-2020.
+#  @copyright Deepansh J. Srivastava, 2019-2021.
 #  Created by Deepansh J. Srivastava.
 #  Contact email = srivastava.89@osu.edu
 #
@@ -17,9 +17,10 @@ cdef extern from "schemes.h":
         unsigned int total_orientations
 
     MRS_averaging_scheme *MRS_create_averaging_scheme(
+                            unsigned int integration_type,
                             unsigned int integration_density,
-                            bool_t allow_fourth_rank,
-                            unsigned int integration_volume)
+                            unsigned int integration_volume,
+                            bool_t allow_fourth_rank)
 
     void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme)
 
@@ -112,6 +113,7 @@ cdef extern from "simulation.h":
 
         # The transition as transition[0] = mi and transition[1] = mf
         float *transition,
+        unsigned int integration_type,  # 0-octahedron, 1-sphere
         int integration_density,
         unsigned int integration_volume,  # 0-octant, 1-hemisphere, 2-sphere
         bool_t interpolation,

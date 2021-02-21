@@ -12,6 +12,21 @@ def test_config():
     # set config
     b = Simulator()
 
+    assert b.config.dict() == {
+        "decompose_spectrum": "none",
+        "number_of_sidebands": 64,
+        "integration_type": "Alderman",
+        "integration_volume": "octant",
+        "integration_density": 70,
+    }
+    assert b.config.get_int_dict() == {
+        "decompose_spectrum": 0,
+        "number_of_sidebands": 64,
+        "integration_type": 0,
+        "integration_volume": 0,
+        "integration_density": 70,
+    }
+
     error = "value is not a valid dict"
     with pytest.raises(ValueError, match=f".*{error}.*"):
         b.config = 5
@@ -32,6 +47,15 @@ def test_config():
     error = "ensure this value is greater than 0"
     with pytest.raises(ValueError, match=f".*{error}.*"):
         a.config.number_of_sidebands = 0
+
+    # integration type
+    assert a.config.integration_type == "Alderman"
+    a.config.integration_type = "spherical"
+    assert a.config.integration_type == "spherical"
+
+    error = "unexpected value; permitted: 'Alderman', 'spherical'"
+    with pytest.raises(ValueError, match=f".*{error}.*"):
+        a.config.integration_type = "haha"
 
     # integration density
     assert a.config.integration_density == 70
@@ -68,6 +92,7 @@ def test_config():
     assert a.config.dict() == {
         "decompose_spectrum": "spin_system",
         "number_of_sidebands": 10,
+        "integration_type": "spherical",
         "integration_volume": "hemisphere",
         "integration_density": 20,
     }
@@ -75,6 +100,7 @@ def test_config():
     assert a.config.get_int_dict() == {
         "decompose_spectrum": 1,
         "number_of_sidebands": 10,
+        "integration_type": 1,
         "integration_volume": 1,
         "integration_density": 20,
     }
