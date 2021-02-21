@@ -44,6 +44,9 @@ mpl.rcParams["grid.linestyle"] = "--"
 filename = "https://sandbox.zenodo.org/record/687656/files/Na2SiO3_O17.csdf"
 oxygen_experiment = cp.load(filename)
 
+# standard deviation of noise from the dataset
+sigma = 1212275
+
 # For spectral fitting, we only focus on the real part of the complex dataset
 oxygen_experiment = oxygen_experiment.real
 
@@ -51,7 +54,9 @@ oxygen_experiment = oxygen_experiment.real
 oxygen_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
 # Normalize the spectrum
-oxygen_experiment /= oxygen_experiment.max()
+max_amp = oxygen_experiment.max()
+oxygen_experiment /= max_amp
+sigma /= max_amp
 
 # plot of the dataset.
 ax = plt.subplot(projection="csdm")
@@ -190,7 +195,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # difference vector between the simulation and experiment, based on
 # the parameters update. You may use this function directly as the argument of the
 # LMFIT Minimizer class, as follows,
-minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor))
+minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
 report_fit(result)
 

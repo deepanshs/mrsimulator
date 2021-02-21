@@ -35,6 +35,9 @@ mpl.rcParams["grid.linestyle"] = "--"
 filename = "https://sandbox.zenodo.org/record/687656/files/DASCoesite.csdf"
 experiment = cp.load(filename)
 
+# standard deviation of noise from the dataset
+sigma = 0.1888026
+
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
 
@@ -42,7 +45,9 @@ experiment = experiment.real
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
 # Normalize the spectrum
+max_amp = experiment.max()
 experiment /= experiment.max()
+sigma /= max_amp
 
 # plot of the dataset.
 levels = (np.arange(10) + 0.3) / 15  # contours are drawn at these levels.
@@ -147,7 +152,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor))
+minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
 report_fit(result)
 
