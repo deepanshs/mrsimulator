@@ -21,8 +21,8 @@
  * @param spec A pointer to the starting of the array of one dimensional grid.
  * @param m0 A pointer to the number of points on the 1D grid.
  */
-extern int triangle_interpolation(double *f1, double *f2, double *f3, double *amp,
-                                  double *spec, int *m0);
+extern void triangle_interpolation(double *f1, double *f2, double *f3, double *amp,
+                                   double *spec, int *m0);
 
 /**
  * @func triangle_interpolation2D

@@ -62,18 +62,16 @@ void MRS_plan_free_rotor_angle_in_rad(MRS_plan *plan) {
  *
  * Create a new mrsimulator plan.
  *
- * A plan for mrsimulator contains buffers and tabulated values to produce
- * faster simulation. The plan includes,
+ * A plan for mrsimulator contains buffers and tabulated values to produce faster
+ * simulation. The plan includes,
  * 1) calculating an array of orientations over the surface of a sphere. Each
- * orientation is described by an azimuthal angle, (α), a polar angle, (β),
- * and a weighting factor describing the spherical average.
- * 2) calculating wigner-2j(β) and wigner-4j(β) matrices at every orientation
- * angle β,
- * 3) pre-calculating the exponent of the sideband order phase,
- * exp(-Imα), at every orientation angle α,
- * 4) creating the fftw plan,
- * 4) allocating buffer for storing the evaluated frequencies and their
- * respective amplitudes.
+ *    orientation is described by an azimuthal angle, (α), a polar angle, (β), and a
+ *    weighting factor describing the spherical average.
+ * 2) calculating wigner-2j(β) and wigner-4j(β) matrices at every orientation angle β,
+ * 3) pre-calculating the exponent of the sideband order phase, exp(-Imα), at every
+ *    orientation angle α,
+ * 4) creating the fftw plan, 4) allocating buffer for storing the evaluated frequencies
+ *    and their respective amplitudes.
  */
 MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
                           unsigned int number_of_sidebands,
@@ -92,12 +90,12 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
   plan->zero[1] = 0.0;
 
   /**
-   * Update the mrsimulator plan with the given spherical averaging scheme. We
-   * create the coordinates on the surface of the unit sphere by projecting the
-   * points on the face of the octahedron to a unit sphere. Usually, before
-   * updating the averaging scheme, the memory allocated by the previous scheme
-   * must be freed. Since, we are creating the scheme for this plan for the very
-   * first time, there is no need to call MRS_free_averaging_plan() method.
+   * Update the mrsimulator plan with the given spherical averaging scheme. We create
+   * the coordinates on the surface of the unit sphere by projecting the points on the
+   * face of the octahedron to a unit sphere. Usually, before updating the averaging
+   * scheme, the memory allocated by the previous scheme must be freed. Since, we are
+   * creating the scheme for this plan for the very first time, there is no need to call
+   * MRS_free_averaging_plan() method.
    */
 
   plan->n_octants = 1;
@@ -105,8 +103,8 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
   if (scheme->integration_volume == 2) plan->n_octants = 8;
 
   /**
-   * Normalizing amplitudes from the spherical averaging scheme by the number
-   * of sidebands square times the number of octants.
+   * Normalizing amplitudes from the spherical averaging scheme by the number of
+   * sidebands square times the number of octants.
    */
   plan->norm_amplitudes = malloc_double(scheme->octant_orientations);
   cblas_dcopy(scheme->octant_orientations, scheme->amplitudes, 1, plan->norm_amplitudes,
@@ -151,10 +149,9 @@ void MRS_plan_update_from_sample_rotation_frequency_in_Hz(
                    (double *)plan->pre_phase);
 
   /**
-   * Update the mrsimulator plan with the given rotor angle in radian.
-   * This method updates the wigner d^l_{m,0}(rotor_angle_in_rad) vectors used
-   * in tranforming the l-rank tensors from the rotor frame to lab frame. Here l
-   * is either 2 or 4.
+   * Update the mrsimulator plan with the given rotor angle in radian. This method
+   * updates the wigner d^l_{m,0}(rotor_angle_in_rad) vectors used in tranforming the
+   * l-rank tensors from the rotor frame to lab frame. Here l is either 2 or 4.
    */
   MRS_plan_update_from_rotor_angle_in_rad(plan, plan->rotor_angle_in_rad,
                                           plan->allow_fourth_rank);
@@ -170,9 +167,8 @@ void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_
   unsigned int size_2, size_4, i, j;
   plan->rotor_angle_in_rad = rotor_angle_in_rad;
   /**
-   * Calculate wigner-2j d^2_{m,0} vector where m ∈ [-2, 2]. This vector is
-   * used to rotate the second-rank tensors from the rotor frame to the lab
-   * frame.
+   * Calculate wigner-2j d^2_{m,0} vector where m ∈ [-2, 2]. This vector is used to
+   * rotate the second-rank tensors from the rotor frame to the lab frame.
    * @see wigner_dm0_vector()
    */
   plan->wigner_d2m0_vector = malloc_double(5);
@@ -181,9 +177,8 @@ void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_
   plan->wigner_d4m0_vector = NULL;
   if (allow_fourth_rank) {
     /**
-     * Calculate wigner-4j d^4_{m,0} vector where m ∈ [-4, 4]. This vector is
-     * used to rotate the fourth-rank tensors from the rotor frame to the lab
-     * frame.
+     * Calculate wigner-4j d^4_{m,0} vector where m ∈ [-4, 4]. This vector is used to
+     * rotate the fourth-rank tensors from the rotor frame to the lab frame.
      * @see wigner_dm0_vector()
      */
     plan->wigner_d4m0_vector = malloc_double(9);
@@ -197,12 +192,12 @@ void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_
   cblas_zcopy(size_2, (double *)(plan->pre_phase[2 * plan->number_of_sidebands]), 1,
               (double *)(plan->pre_phase_2), 1);
   /**
-   * Multiply the wigner-2j d^2_{m,0}(rotor_angle_in_rad) vector to the sideband
-   * phase multiplier, pre_phase2. This multiplication accounts for the rotation
-   * of the second-rank tensors from the rotor-frame to the lab-frame, thereby,
-   * reducing the number of calculations involved per site. This step assumes
-   * that the Euler angles invloved in the rotation of the 2nd-rank tensors to
-   * the lab frame is (0, rotor_angle_in_rad, 0).
+   * Multiply the wigner-2j d^2_{m,0}(rotor_angle_in_rad) vector to the sideband phase
+   * multiplier, pre_phase2. This multiplication accounts for the rotation of the
+   * second-rank tensors from the rotor-frame to the lab-frame, thereby, reducing the
+   * number of calculations involved per site. This step assumes that the Euler angles
+   * invloved in the rotation of the 2nd-rank tensors to the lab frame is (0,
+   * rotor_angle_in_rad, 0).
    */
 
   j = 0;
@@ -224,11 +219,11 @@ void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_
 
     /**
      * Multiply the wigner-4j d^4_{m,0} vector to the sideband phase multiplier,
-     * pre_phase4. This multiplication accounts for the rotation of the fourth
-     * rank tensors from the-rotor frame to the lab-frame, thereby, reducing the
-     * number of calculations involved per site. This step assumes that the
-     * Euler angles involved in the rotation of the 4th rank tensors to the lab
-     * frame is (0, rotor_angle_in_rad, 0).
+     * pre_phase4. This multiplication accounts for the rotation of the fourth rank
+     * tensors from the-rotor frame to the lab-frame, thereby, reducing the number of
+     * calculations involved per site. This step assumes that the Euler angles involved
+     * in the rotation of the 4th rank tensors to the lab frame is (0,
+     * rotor_angle_in_rad, 0).
      */
 
     j = 0;
@@ -272,42 +267,39 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
 /**
  * @func MRS_get_amplitudes_from_plan
  *
- * The function evaluates the amplitudes at every orientation and at every
- * sideband per orientation. This is done in two steps.
- * 1) Rotate R2 and R4, given in the crystal or common frame to w2 and w4 in
- *    the lab frame using wigner 2j and 4j rotation matrices, respectively,
- *    at all orientations.
+ * The function evaluates the amplitudes at every orientation and at every sideband per
+ * orientation. This is done in two steps.
+ * 1) Rotate R2 and R4, given in the crystal or common frame to w2 and w4 in the lab
+ *    frame using wigner 2j and 4j rotation matrices, respectively, at all orientations.
  * 2) Evalute the sideband amplitudes using equation [39] of the reference
  *    https://doi.org/10.1006/jmre.1998.1427.
  */
 void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                                   MRS_fftw_scheme *fftw_scheme, bool refresh) {
-  /* If the number of sidebands is 1, the sideband amplitude at every sideband
-   * order is one. In this case, return null,
+  /* If the number of sidebands is 1, the sideband amplitude at every sideband order is
+   * one. In this case, return null,
    */
-  if (plan->number_of_sidebands == 1) {
-    return;
-  }
+  if (plan->number_of_sidebands == 1) return;
 
-  /* =========== Calculate the spinning sideband amplitude. ================= */
+  /* ================ Calculate the spinning sideband amplitude. ==================== */
 
   // if (refresh) {
   //   cblas_dscal(2 * plan->size, 0.0, (double *)(fftw_scheme->vector), 1);
   // }
 
   /**
-   * Evaluate the exponent of the sideband phase w.r.t the second-rank tensors.
-   * The exponent is given as,
+   * Evaluate the exponent of the sideband phase w.r.t the second-rank tensor
+   * components. The exponent is given as,
    *
-   * w2(Θ)*d^2_{m,0}(rotor_angle_in_rad) * 2πI [(exp(I m ωr t) - 1)/(I m ωr)]
-   * |----lab frame 2nd-rank tensors---|
-   *       |------------------------- pre_phase_2 ---------------------------|
+   * w2(Θ) * d^2_{m,0}(rotor_angle_in_rad) * 2πI [(exp(I m ωr t) - 1)/(I m ωr)]
+   * |-----lab frame 2nd-rank tensors----|
+   *         |------------------------- pre_phase_2 --------------------------|
    *
-   * where `pre_phase_2` is pre-calculated and stored in the plan. The product
-   * is stored in the fftw_scheme as a complex double array under the variable
-   * `vector`, which is interpreted as a row major matrix of shape
-   * `number_of_sidebands` x `total_orientations` with `total_orientations`
-   * as the leading dimension.
+   * where `pre_phase_2` is pre-calculated and stored in the plan. The calculated
+   * product is stored in the fftw_scheme as a complex double array under the variable
+   * name `vector`, which is interpreted as a row major matrix of shape
+   * `number_of_sidebands` x `total_orientations` with `total_orientations` as the
+   * leading dimension.
    */
   cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans, plan->number_of_sidebands,
               scheme->total_orientations, 5, (double *)(plan->one),
@@ -317,15 +309,15 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
 
   if (scheme->w4 != NULL) {
     /**
-     * Similarly, evaluate the exponent of the sideband phase w.r.t the fourth
-     * rank tensors. The exponent is given as,
+     * Similarly, evaluate the exponent of the sideband phase w.r.t the fourth-rank
+     * tensor components. The exponent is given as,
      *
-     * w4(Θ)*d^4_{m, 0}(rotor_angle_in_rad) * 2πI[(exp(I m ωr t) - 1)/(I m ωr)]
-     * |----lab frame 4th rank tensors----|
-     *       |-------------------------- pre_phase_4--------------------------|
+     * w4(Θ) * d^4_{m, 0}(rotor_angle_in_rad) * 2πI[(exp(I m ωr t) - 1)/(I m ωr)]
+     * |-----lab frame 4th rank tensors-----|
+     *         |-------------------------- pre_phase_4--------------------------|
      *
-     * where `pre_phase_4` is pre-calculated and stored in the plan. This
-     * operation will add and update the values stored in the variable `vector`.
+     * where `pre_phase_4` is pre-calculated and stored in the plan. This operation will
+     * add and update the values stored in the variable `vector`.
      */
     cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans, plan->number_of_sidebands,
                 scheme->total_orientations, 9, (double *)(plan->one),
@@ -335,29 +327,26 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
   }
 
   /**
-   * Evaluate the sideband phase -> exp(vector). Since the real part of the
-   * complex data is zero, evaluate the exponential for only imaginary part.
-   * The evaluated value is overwritten on the variable `vector`.
-   */
+   * Evaluate the sideband phase -> exp(vector). Since the real part of the complex data
+   * is zero, evaluate the exponential for only the imaginary part. The evaluated value
+   * is overwritten on the variable `vector`. */
   vm_double_complex_exp_imag_only(plan->size, fftw_scheme->vector, fftw_scheme->vector);
 
   /**
-   * Evaluate the Fourier transform of the variable, `vector`, -> fft(vector).
-   * The fft operation again updates the values of the array, `vector`.
-   */
+   * Evaluate the Fourier transform of the variable, `vector`, -> fft(vector). The fft
+   * operation again updates the values of the array, `vector`. */
   fftw_execute(fftw_scheme->the_fftw_plan);
 
   /**
-   * Evaluate the absolute value square of the vector array. The absolute value
-   * square is stores as the real part of the `vector` array. The imaginary
-   * part is now garbage. This method avoids creating new arrays.
-   */
+   * Evaluate the absolute value square of the `vector` array. The absolute value square
+   * is stores as the real part of the `vector` array. The imaginary part is now
+   * garbage. This method avoids creating new arrays. */
   vm_double_square_inplace(2 * plan->size, (double *)fftw_scheme->vector);
   cblas_daxpy(plan->size, 1.0, (double *)fftw_scheme->vector + 1, 2,
               (double *)fftw_scheme->vector, 2);
 
-  /* Scaling the absolute value square with the powder scheme weights. Only
-   * the real part is scaled and the imaginary part is left as is.
+  /* Scaling the absolute value square with the powder scheme weights. Only the real
+   * part is scaled and the imaginary part is left as is.
    */
   // for (i = 0; i < scheme->octant_orientations; i++) {
   //   cblas_dscal(plan->n_octants * plan->number_of_sidebands,
@@ -369,16 +358,16 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
 /**
  * @func MRS_get_frequencies_from_plan
  *
- * Get the lab-frame frequency contributions from the zeroth, second,
- * fourth-rank tensors.
+ * Get the lab-frame frequency contributions from the zeroth, second, fourth-rank
+ * tensors.
  */
 void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                                    double R0, complex128 *R2, complex128 *R4,
                                    bool refresh, MRS_dimension *dim) {
   /**
-   * Rotate the R2 and R4 components from the common frame to the rotor frame
-   * over all the orientations. The componets are stored in w2 and w4 of the
-   * averaging scheme, respectively.
+   * Rotate the R2 and R4 components from the common frame to the rotor frame over all
+   * the orientations. The componets are stored in w2 and w4 of the averaging scheme,
+   * respectively.
    */
   __batch_wigner_rotation(scheme->octant_orientations, plan->n_octants,
                           scheme->wigner_2j_matrices, R2, scheme->wigner_4j_matrices,
@@ -396,10 +385,9 @@ void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
   //                              dim->local_frequency);
 
   /**
-   * Calculate the local anisotropic frequency contributions from the 2nd-rank
-   * tensor. The w2 and w4 frequencies from the plan are in the rotor-frame. Use
-   * the wigner-2j and 4j rotations to transform the frequencies in the
-   * lab-frame.
+   * Calculate the local anisotropic frequency contributions from the 2nd-rank tensor.
+   * The w2 and w4 frequencies from the plan are in the rotor-frame. Use the wigner-2j
+   * and 4j rotations to transform the frequencies in the lab-frame.
    */
   /* Wigner 2j rotation for the second-rank tensor frequency contributions. */
   plan->buffer = plan->wigner_d2m0_vector[2];
@@ -417,23 +405,25 @@ void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
  * @func MRS_get_normalized_frequencies_from_plan
  *
  * Get the lab-frame normalized frequency contributions from the zeroth, second,
- * fourth-rank tensors. Here, normalization refers to dividing the frequencies
- * by the increment of the spectral dimension.
+ * fourth-rank tensors. Here, normalization refers to dividing the calculated
+ * frequencies by the increment of the respective spectral dimension. Normalization
+ * makes binning of frequencies on the spectrum faster as bins can then be of 1 unit
+ * increments.
  */
 void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0, complex128 *R2,
                                               complex128 *R4, bool refresh,
                                               MRS_dimension *dim, double fraction) {
   /**
-   * Rotate the R2 and R4 components from the common frame to the rotor frame
-   * over all the orientations. The componets are stored in w2 and w4 of the
-   * averaging scheme, respectively.
+   * Rotate the R2 and R4 components from the common frame to the rotor frame over all
+   * the orientations. The componets are stored in w2 and w4 of the averaging scheme,
+   * respectively.
    */
   __batch_wigner_rotation(scheme->octant_orientations, plan->n_octants,
                           scheme->wigner_2j_matrices, R2, scheme->wigner_4j_matrices,
                           R4, scheme->exp_Im_alpha, scheme->w2, scheme->w4);
 
-  /* If refresh is true, zero the local_frequencies before update */
+  /* If refresh is true, zero the local_frequencies before update. */
   if (refresh) {
     cblas_dscal(scheme->total_orientations, 0.0, dim->local_frequency, 1);
     dim->R0_offset = 0.0;
@@ -445,24 +435,20 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
   //                              dim->local_frequency);
 
   /**
-   * Rotate the w2 and w4 components from the rotor-frame to the lab-frame.
-   * Since only the zeroth-order is relevent in the lab-frame, only evalute the
-   * R20 and R40 components. This is equivalent to scaling the w2(0) term by
+   * Rotate the w2 and w4 components from the rotor-frame to the lab-frame. Since only
+   * the zeroth-order is relevent in the lab-frame, only evalute the R20 and R40
+   * components. This is equivalent to scaling the w2(0) term by
    * `wigner_d2m0_vector[2]`, that is, d^2(0,0)(rotor_angle).
    */
 
-  /**
-   * Normalized local anisotropic frequency contributions from the 2nd-rank
-   * tensor.
-   */
+  /* Normalized local anisotropic frequency contributions from the 2nd-rank tensor. */
   plan->buffer = dim->inverse_increment * plan->wigner_d2m0_vector[2] * fraction;
   cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&scheme->w2[2], 10,
               dim->local_frequency, 1);
   if (plan->allow_fourth_rank) {
     /**
-     * Similarly, calculate the normalized local anisotropic frequency
-     * contributions from the fourth-rank tensor. The `wigner_d2m0_vector[4]` is
-     * d^4(0,0)(rotor_angle).
+     * Similarly, calculate the normalized local anisotropic frequency contributions
+     * from the fourth-rank tensor. `wigner_d2m0_vector[4] = d^4(0,0)(rotor_angle)`.
      */
     plan->buffer = dim->inverse_increment * plan->wigner_d4m0_vector[4] * fraction;
     cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&scheme->w4[4], 18,
@@ -470,57 +456,8 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
   }
 }
 
-/**
- * @func MRS_rotate_components_from_PAS_to_common_frame
- *
- * The function evaluates the tensor components from the principal axis system
- * (PAS) to the common frame of the spin system.
- */
-void MRS_rotate_components_from_PAS_to_common_frame(
-    site_struct *sites, // A pointer to a list of sites within a spin system.
-    coupling_struct
-        *couplings,         // A pointer to a list of couplings within a spin system.
-    float *transition,      // The spin transition.
-    bool allow_fourth_rank, // if true, prep for 4th rank computation.
-    double *R0,             // The R0 components.
-    complex128 *R2,         // The R2 components.
-    complex128 *R4,         // The R4 components.
-    double *R0_temp,        // The temporary R0 components.
-    complex128 *R2_temp,    // The temporary R2 components.
-    complex128 *R4_temp,    // The temporary R3 components.
-    double B0_in_T,         // Magnetic flux density in T.
-    bool *freq_contrib      // The pointer to freq contribs boolean.
-) {
-  /* The following codeblock populates the product of spatial part, Rlm, of
-   * the tensor and the spin transition function, T(mf, mi) for
-   *      zeroth rank, R0 = [ R00 ] * T(mf, mi)
-   *      second rank, R2 = [ R2m ] * T(mf, mi) where m ∈ [-2, 2].
-   *      fourth rank, R4 = [ R4m ] * T(mf, mi) where m ∈ [-4, 4].
-   * Here, mf, mi are the spin quantum numbers of the final and initial
-   * energy state of the spin transition. The term `Rlm` is the coefficient
-   * of the irreducible spherical tensor of rank `l` and order `m`. For more
-   * information, see reference
-   *
-   *   Symmetry pathways in solid-state NMR. PNMRS 2011 59(2):12 1-96.
-   *   https://doi.org/10.1016/j.pnmrs.2010.11.003
-   *
-   */
-  unsigned int n_sites = sites->number_of_sites;
-
-  __MRS_rotate_single_site_interaction_components(sites, transition, allow_fourth_rank,
-                                                  R0, R2, R4, R0_temp, R2_temp, R4_temp,
-                                                  B0_in_T, freq_contrib);
-
-  if (couplings->number_of_couplings == 0) {
-    return;
-  }
-
-  __MRS_rotate_coupled_site_interaction_components(couplings, transition, n_sites, R0,
-                                                   R2, R0_temp, R2_temp, freq_contrib);
-}
-
-void __MRS_rotate_single_site_interaction_components(
-    site_struct *sites,     // A pointer to a list of sites within a spin system.
+static inline void MRS_rotate_single_site_interaction_components(
+    site_struct *sites,     // Pointer to a list of sites within a spin system.
     float *transition,      // The spin transition.
     bool allow_fourth_rank, // if true, prep for 4th rank computation.
     double *R0,             // The R0 components.
@@ -544,8 +481,7 @@ void __MRS_rotate_single_site_interaction_components(
       continue;
     }
     larmor_freq_in_MHz = -B0_in_T * sites->gyromagnetic_ratio[i];
-    /* Nuclear shielding components ========================================
-     */
+    /* Nuclear shielding components ================================================= */
     /*  Upto the first order */
     FCF_1st_order_nuclear_shielding_tensor_components(
         R0_temp, R2_temp,
@@ -556,14 +492,10 @@ void __MRS_rotate_single_site_interaction_components(
 
     // in-place update the R0 and R2 components.
     if (*freq_contrib++) *R0 += *R0_temp;
-    if (*freq_contrib++) {
-      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-    }
-    /* =====================================================================
-     */
+    if (*freq_contrib++) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+    /* ============================================================================== */
 
-    /* Electric quadrupolar components =====================================
-     */
+    /* Electric quadrupolar components ============================================== */
     if (sites->spin[i] > 0.5) {
       /*  Upto the first order */
       if (*freq_contrib++) {
@@ -583,17 +515,10 @@ void __MRS_rotate_single_site_interaction_components(
             sites->quadrupolar_Cq_in_Hz[i], sites->quadrupolar_eta[i],
             &sites->quadrupolar_orientation[3 * i], *mf, *mi);
 
-        // in-place update the R0 component.
+        // in-place update the R0, R2, and R4 components.
         if (*freq_contrib++) *R0 += *R0_temp;
-
-        // in-place update the R2 components.
-        if (*freq_contrib++) {
-          vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-        }
-        // in-place update the R4 components.
-        if (*freq_contrib++) {
-          vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
-        }
+        if (*freq_contrib++) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+        if (*freq_contrib++) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
       }
     }
     mi++;
@@ -601,33 +526,29 @@ void __MRS_rotate_single_site_interaction_components(
   }
 }
 
-void __MRS_rotate_coupled_site_interaction_components(
-    coupling_struct
-        *couplings,       // A pointer to a list of couplings within a spin system.
-    float *transition,    // The spin transition.
-    unsigned int n_sites, // The number of sites.
-    double *R0,           // The R0 components.
-    complex128 *R2,       // The R2 components.
-    double *R0_temp,      // The temporary R0 components.
-    complex128 *R2_temp,  // The temporary R2 components.
-    bool *freq_contrib    // The pointer to freq contribs boolean.
+static inline void MRS_rotate_coupled_site_interaction_components(
+    coupling_struct *couplings, // Pointer to a list of couplings within a spin system.
+    float *transition,          // The spin transition.
+    unsigned int n_sites,       // The number of sites.
+    double *R0,                 // The R0 components.
+    complex128 *R2,             // The R2 components.
+    double *R0_temp,            // The temporary R0 components.
+    complex128 *R2_temp,        // The temporary R2 components.
+    bool *freq_contrib          // The pointer to freq contribs boolean.
 ) {
-  unsigned int i, j, n_couplings = couplings->number_of_couplings;
-  int site_index_i, site_index_j;
+  unsigned int i, j = 0, n_couplings = couplings->number_of_couplings;
+  int site_index_A, site_index_X;
   float mIf, mSf, mIi, mSi;
-
-  // printf("number_of_couplings %d\n", n_couplings);
 
   /* Frequency computation for couplings */
   for (i = 0; i < n_couplings; i++) {
-    j = 2 * i;
-    site_index_i = couplings->site_index[j++];
-    site_index_j = couplings->site_index[j];
+    site_index_A = couplings->site_index[j++];
+    site_index_X = couplings->site_index[j++];
 
-    mIi = transition[site_index_i];
-    mSi = transition[site_index_j];
-    mIf = transition[site_index_i + n_sites];
-    mSf = transition[site_index_j + n_sites];
+    mIi = transition[site_index_A];
+    mSi = transition[site_index_X];
+    mIf = transition[site_index_A + n_sites];
+    mSf = transition[site_index_X + n_sites];
 
     // Weakly coupled J-couplings
     FCF_1st_order_weak_J_coupling_tensor_components(
@@ -635,6 +556,7 @@ void __MRS_rotate_coupled_site_interaction_components(
         couplings->j_symmetric_zeta_in_Hz[i], couplings->j_symmetric_eta[i],
         &couplings->j_orientation[3 * i], mIf, mIi, mSf, mSi);
 
+    // in-place update the R0 and R2 components.
     *R0 += *R0_temp;
     vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
 
@@ -643,8 +565,52 @@ void __MRS_rotate_coupled_site_interaction_components(
         R2_temp, couplings->dipolar_coupling_in_Hz[i],
         &couplings->dipolar_orientation[3 * i], mIf, mIi, mSf, mSi);
 
+    // in-place update the R2 components.
     vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
   }
+}
+
+/**
+ * @func MRS_rotate_components_from_PAS_to_common_frame
+ *
+ * The function evaluates the tensor components from the principal axis system (PAS) to
+ * the common frame of the spin system.
+ */
+void MRS_rotate_components_from_PAS_to_common_frame(
+    site_struct *sites,         // Pointer to a list of sites within a spin system.
+    coupling_struct *couplings, // Pointer to a list of couplings within a spin system.
+    float *transition,          // The spin transition.
+    bool allow_fourth_rank,     // If true, prep for 4th rank computation.
+    double *R0,                 // The R0 components.
+    complex128 *R2,             // The R2 components.
+    complex128 *R4,             // The R4 components.
+    double *R0_temp,            // The temporary R0 components.
+    complex128 *R2_temp,        // The temporary R2 components.
+    complex128 *R4_temp,        // The temporary R3 components.
+    double B0_in_T,             // Magnetic flux density in T.
+    bool *freq_contrib          // The pointer to freq contribs boolean.
+) {
+  /* The following codeblock populates the product of spatial part, Rlm, of the tensor
+   * and the spin transition function, T(mf, mi) for
+   *      zeroth rank, R0 = [ R00 ] * T(mf, mi)
+   *      second rank, R2 = [ R2m ] * T(mf, mi) where m ∈ [-2, 2].
+   *      fourth rank, R4 = [ R4m ] * T(mf, mi) where m ∈ [-4, 4].
+   * Here, mf, mi are the spin quantum numbers of the final and initial energy state of
+   * the spin transition. The term `Rlm` is the coefficient of the irreducible spherical
+   * tensor of rank `l` and order `m`. For more information, see reference
+   *
+   *   Symmetry pathways in solid-state NMR. PNMRS 2011 59(2):12 1-96.
+   *   https://doi.org/10.1016/j.pnmrs.2010.11.003
+   *
+   */
+  MRS_rotate_single_site_interaction_components(sites, transition, allow_fourth_rank,
+                                                R0, R2, R4, R0_temp, R2_temp, R4_temp,
+                                                B0_in_T, freq_contrib);
+
+  if (couplings->number_of_couplings == 0) return;
+  MRS_rotate_coupled_site_interaction_components(couplings, transition,
+                                                 sites->number_of_sites, R0, R2,
+                                                 R0_temp, R2_temp, freq_contrib);
 }
 
 /**
@@ -658,8 +624,8 @@ void __MRS_rotate_coupled_site_interaction_components(
  *                   = scale (exp(I m ωr t) - 1)
  *                   = scale [[cos(m ωr t) -1] +Isin(m ωr t)],
  *
- * where ωr is the sample spinning frequency in Hz, m goes from -4 to 4,
- * t is a vector of length `number_of_sidebands` given as
+ * where ωr is the sample spinning frequency in Hz, m goes from -4 to 4, t is a vector
+ * of length `number_of_sidebands` given as
  *
  *    t = [0, 1, ... number_of_sidebands-1]/(ωr*number_of_sidebands),
  *
@@ -695,9 +661,9 @@ void __get_components_2(unsigned int number_of_sidebands,
 
   for (m = 0; m <= 3; m++) {
     /**
-     * Evaluate pre_phase = scale * (cexp(I * phase) - 1.0)
-     * where phase = m_wr[m] * tau * [0 .. number_of_sidebands-1]
-     * and scale = 2π/m_wr[m].
+     * Evaluate pre_phase = scale * (cexp(I * phase) - 1.0), where
+     *    phase = m_wr[m] * tau * [0 .. number_of_sidebands-1] and
+     *    scale = 2π/m_wr[m].
      */
     i = m * number_of_sidebands;
     scale = TWO_PI / m_wr[m];
@@ -715,8 +681,8 @@ void __get_components_2(unsigned int number_of_sidebands,
     cblas_zdscal(number_of_sidebands, scale, (double *)(pre_phase[i]), 1);
 
     /**
-     * The expression pre_phase[m] = scale * (cexp(I * phase) - 1.0) given
-     * above for positive m is related to -m as
+     * The expression pre_phase[m] = scale * (cexp(I * phase) - 1.0) given above for
+     * positive m is related to -m as
      *
      * pre_phase[-m] = -Re(pre_phase[m]) + Im(pre_phase[m])
      */
@@ -740,12 +706,13 @@ void __get_components_2(unsigned int number_of_sidebands,
  *                   = (2π / m ωr) (exp(I m ωr t) - 1)
  *                     |--scale--|
  *                   = scale * (exp(I m ωr t) - 1)
- * where ωr is the sample spinning frequency in Hz, m goes from -4 to 4, and
- * t is a vector of length `number_of_sidebands` given as
- *    t = [0, 1, ... number_of_sidebands-1]/(ωr*number_of_sidebands)
- * `pre_phase` is a matrix of shape, `9 x number_of_sidebands`, with
- * number_of_sidebands as the leading dimension. The first number_of_sidebands
- * entries corresponds to m_wr=-4.
+ * where ωr is the sample spinning frequency in Hz, m goes from -4 to 4, and t is a
+ * vector of length `number_of_sidebands` given as
+ *    t = [0, 1, ... number_of_sidebands-1]/(ωr*number_of_sidebands).
+ *
+ * `pre_phase` is a matrix of shape, `9 x number_of_sidebands`, with number_of_sidebands
+ * as the leading dimension. The first number_of_sidebands entries corresponds to
+ * m_wr=-4.
  */
 void __get_components(unsigned int number_of_sidebands,
                       double sample_rotation_frequency, double *restrict pre_phase) {
@@ -756,8 +723,7 @@ void __get_components(unsigned int number_of_sidebands,
   // Calculate the spin angular frequency
   spin_angular_freq = sample_rotation_frequency * TWO_PI;
 
-  // Calculate tau increments, where tau = (rotor period / number of phase
-  // steps)
+  // Calculate tau increments, where tau = (rotor period / number of phase steps)
   tau = 1.0 / ((double)number_of_sidebands * sample_rotation_frequency);
 
   // pre-calculate the m omega spinning frequencies

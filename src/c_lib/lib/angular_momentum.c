@@ -8,10 +8,12 @@
 
 #include "angular_momentum.h"
 
+complex128 IOTA = {0.0, 1.0};
+complex128 NEGATIVE_IOTA = {0.0, -1.0};
+
 /* calculate Wigner rotation matrices */
 
 /* This routine calculates the factorial of x */
-
 double fac(double x) {
   double sum = 1;
   int ix;
@@ -331,7 +333,7 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
   double *R_out_ = (double *)R_out;
   double *R_in_ = (double *)R_in;
 
-  int orientation;
+  int orientation, two_l_pm, two_l_mm;
   int n1 = 2 * l + 1, m, mp, two_l = 2 * l, two_n1 = 2 * n1;
   double a, b, c, d, *temp;
   double *temp_initial_vector = malloc_double(two_n1);
@@ -345,23 +347,25 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
 
     // scale the temp initial vector with exp[-I m alpha]
     for (m = 2; m <= two_l; m += 2) {
+      two_l_pm = two_l + m;
+      two_l_mm = two_l - m;
       temp = &exp_Im_alpha_[(8 - m) * n + 2 * orientation];
 
       // temp_initial_vector[l - m] *= temp;
-      a = R_in_[two_l - m] * *temp;
-      b = R_in_[two_l - m + 1] * *(temp + 1);
-      c = R_in_[two_l - m] * *(temp + 1);
-      d = R_in_[two_l - m + 1] * *temp;
-      temp_initial_vector[two_l - m] = a - b;
-      temp_initial_vector[two_l - m + 1] = c + d;
+      a = R_in_[two_l_mm] * *temp;
+      b = R_in_[two_l_mm + 1] * *(temp + 1);
+      c = R_in_[two_l_mm] * *(temp + 1);
+      d = R_in_[two_l_mm + 1] * *temp;
+      temp_initial_vector[two_l_mm] = a - b;
+      temp_initial_vector[two_l_mm + 1] = c + d;
 
       // temp_initial_vector[l + m] *= conj(temp);
-      a = R_in_[two_l + m] * *temp;
-      b = R_in_[two_l + m + 1] * *(temp + 1);
-      c = R_in_[two_l + m] * *(temp + 1);
-      d = R_in_[two_l + m + 1] * *temp;
-      temp_initial_vector[two_l + m] = a + b;
-      temp_initial_vector[two_l + m + 1] = -c + d;
+      a = R_in_[two_l_pm] * *temp;
+      b = R_in_[two_l_pm + 1] * *(temp + 1);
+      c = R_in_[two_l_pm] * *(temp + 1);
+      d = R_in_[two_l_pm + 1] * *temp;
+      temp_initial_vector[two_l_pm] = a + b;
+      temp_initial_vector[two_l_pm + 1] = -c + d;
     }
 
     // Apply wigner rotation to the temp inital vector
@@ -751,23 +755,17 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
                              const unsigned int n_octants, double *wigner_2j_matrices,
                              complex128 *R2, double *wigner_4j_matrices, complex128 *R4,
                              complex128 *exp_Im_alpha, complex128 *w2, complex128 *w4) {
-  unsigned int j, index_25, index_81, w2_increment, w4_increment = 0;
+  unsigned int j, index_25, index_81, w2_increment, w4_increment;
 
-  complex128 iota, negative_iota;
-  iota[0] = 0.0;
-  iota[1] = 1.0;
-  negative_iota[0] = 0.0;
-  negative_iota[1] = -1.0;
-  index_25 = 25 * octant_orientations;
-  index_81 = 81 * octant_orientations;
   w2_increment = 5 * octant_orientations;
+  index_25 = 5 * w2_increment; // equal to 25 * octant_orientations;
   if (w4 != NULL) {
     w4_increment = 9 * octant_orientations;
+    index_81 = 9 * w4_increment; // equal to 81 * octant_orientations;
   }
 
   for (j = 0; j < n_octants; j++) {
-    /* Wigner second rank rotation from crystal/common frame to rotor frame.
-     */
+    /* Second-rank Wigner rotation from crystal/common frame to rotor frame. */
     __wigner_rotation_2(2, octant_orientations, wigner_2j_matrices, exp_Im_alpha, R2,
                         w2);
     w2 += w2_increment;
@@ -777,8 +775,7 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
       w2 += w2_increment;
     }
     if (w4 != NULL) {
-      /* Wigner fourth rank rotation from crystal/common frame to rotor frame.
-       */
+      /* Fourth-rank Wigner rotation from crystal/common frame to rotor frame. */
       __wigner_rotation_2(4, octant_orientations, wigner_4j_matrices, exp_Im_alpha, R4,
                           w4);
       w4 += w4_increment;
@@ -797,8 +794,7 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
      * The array exp_Im_alpha is a two-dimensional array of shape
      * `4 x number_of_sidebands`, where
      *
-     * exp_Im_alpha[m, :] = exp(-I (m-4) alpha) for m=[0, 1, 2, 3]
-     * when alpha += π/2
+     * exp_Im_alpha[m, :] = exp(-I (m-4) alpha) for m=[0, 1, 2, 3] when alpha += π/2
      *
      *    exp_Im_alpha[0, :] = exp(I 4alpha) * exp(I 4π/2) = exp(I 4alpha)
      *    exp_Im_alpha[0, :] *= 1
@@ -815,12 +811,12 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
      * After four iterations, exp_Im_alpha restores to its original value.
      */
     if (n_octants != 1) {
-      cblas_zscal(octant_orientations, (double *)negative_iota,
+      cblas_zscal(octant_orientations, (double *)NEGATIVE_IOTA,
                   &(((double *)exp_Im_alpha)[6 * octant_orientations]), 1);
       cblas_zdscal(octant_orientations, -1,
                    &(((double *)exp_Im_alpha)[4 * octant_orientations]), 1);
       if (w4 != NULL) {
-        cblas_zscal(octant_orientations, (double *)iota,
+        cblas_zscal(octant_orientations, (double *)IOTA,
                     &(((double *)exp_Im_alpha)[2 * octant_orientations]), 1);
       }
     }

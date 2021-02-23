@@ -9,6 +9,22 @@
 
 #include "simulation.h"
 
+/**
+ * Each event consists of the following freq contrib ordered as
+ * 1. Shielding 1st order 0th rank
+ * 2. Shielding 1st order 2th rank
+ * 3. Quad 1st order 2th rank
+ * 4. Quad 2st order 0th rank
+ * 5. Quad 2st order 2th rank
+ * 6. Quad 2st order 4th rank
+ *
+ * The freq contrib from each event is a list of boolean, where 1 mean include frequency
+ * contribution and 0 means exclude. The `freq_contrib` variable is a stack of boolean
+ * list, where the stack is ordered according to the events. The variable
+ * `FREQ_CONTRIB_INCREMENT` is the length of the freq contribs.
+ */
+int FREQ_CONTRIB_INCREMENT = 6;
+
 static inline void __zero_components(double *R0, complex128 *R2, complex128 *R4) {
   R0[0] = 0.0;
   vm_double_zeros(10, (double *)R2);
@@ -193,31 +209,20 @@ static inline void two_dimensional_averaging(MRS_dimension *dimensions,
 // Calculate spectrum from the spin systems for a single transition.
 void __mrsimulator_core(
     // spectrum information and related amplitude
-    double *spec, // amplitude vector representing the spectrum.
+    double *spec,               // Pointer to the spectrum array.
+    site_struct *sites,         // Pointer to a list of sites within a spin system.
+    coupling_struct *couplings, // Pointer to a list of couplings within a spin system.
 
-    site_struct *sites,         // Pointer to sites within a spin system.
-    coupling_struct *couplings, // Pointer to couplings within a spin system.
-
-    // A pointer to a spin transition packed as quantum numbers from the initial
-    // energy state followed by the quantum numbers from the final energy state.
+    // A pointer to a spin transition pathway packed as a series of transitions. Each
+    // transition is a list of quantum numbers packed as quantum numbers from the
+    // initial energy state followed by the quantum numbers from the final energy state.
     // The energy states are given in Zeeman basis.
-    float *transition,
-
-    // A pointer to MRS_dimension structure containing information on the events
-    // per spectroscopic dimension.
-    MRS_dimension *dimensions,
-
-    // The total number of spectroscopic dimensions.
-    int n_dimension,
-
-    // A pointer to the fftw scheme.
-    MRS_fftw_scheme *fftw_scheme,
-
-    // A pointer to the powder averaging scheme.
-    MRS_averaging_scheme *scheme,
-
-    // if true, perform a 1D interpolation
-    bool interpolation,
+    float *transition_pathway,
+    int n_dimension,              // The total number of spectroscopic dimensions.
+    MRS_dimension *dimensions,    // Pointer to MRS_dimension structure.
+    MRS_fftw_scheme *fftw_scheme, // Pointer to the fftw scheme.
+    MRS_averaging_scheme *scheme, // Pointer to the powder averaging scheme.
+    bool interpolation,           // If true, perform a 1D interpolation.
 
     /**
      * Each event consists of the following freq contrib ordered as
@@ -234,31 +239,36 @@ void __mrsimulator_core(
      * events.
      */
     bool *freq_contrib,
-
-    double *affine_matrix) {
+    double *affine_matrix // Affine transformation matrix.
+) {
   /*
   The sideband computation is based on the method described by Eden and Levitt
   et. al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
   bool refresh;
-  bool *freq_contrib_ptr = freq_contrib;
   unsigned int evt;
   int dim;
   double B0_in_T, fraction;
 
+  // Allocate memory for zeroth, second, and fourth-rank tensor components.
   double R0 = 0.0;
   complex128 *R2 = malloc_complex128(5);
   complex128 *R4 = malloc_complex128(9);
 
+  // Allocate memory for zeroth, second, and fourth-rank temporary tensor components.
   double R0_temp = 0.0;
   complex128 *R2_temp = malloc_complex128(5);
   complex128 *R4_temp = malloc_complex128(9);
 
   double *spec_site_ptr;
+  // `transition_increment` is the step size to the next transition within the pathway.
   int transition_increment = 2 * sites->number_of_sites;
+
   MRS_plan *plan;
   MRS_event *event;
+
+  openblas_set_num_threads(1);
 
   // spec_site = site * dimensions[0].count;
   spec_site_ptr = &spec[0];
@@ -278,10 +288,9 @@ void __mrsimulator_core(
 
       /* Rotate all frequency components from PAS to a common frame */
       MRS_rotate_components_from_PAS_to_common_frame(
-          sites,                   // Pointer to sites within a spin system.
-          couplings,               // Pointer to couplings within a spin system.
-          transition,              // Pointer to initial and final spin quantum
-                                   // numbers of the spin transition.
+          sites,              // Pointer to a list of sites within a spin system.
+          couplings,          // Pointer to a list of couplings within a spin system.
+          transition_pathway, // Pointer to a list of transition.
           plan->allow_fourth_rank, // If 1, prepare for 4th rank computation.
           &R0,                     // The R0 components.
           R2,                      // The R2 components.
@@ -290,23 +299,25 @@ void __mrsimulator_core(
           R2_temp,                 // The temporary R2 components.
           R4_temp,                 // The temporary R4 components.
           B0_in_T,                 // Magnetic flux density in T.
-          freq_contrib_ptr         // The pointer to freq contribs boolean.
+          freq_contrib             // The pointer to freq contribs boolean.
       );
 
       // The number 6 comes from the six types of pre-listed freq contributions.
-      freq_contrib_ptr += 6;
+      freq_contrib += FREQ_CONTRIB_INCREMENT;
 
-      // Add a loop over all couplings.. here
-      /* Get frequencies and amplitudes per octant ......................... */
-      /* Always evalute the frequencies before the amplitudes. */
+      /* Get frequencies and amplitudes per octant .................................. */
+      /* IMPORTANT: Always evalute the frequencies before the amplitudes. */
       MRS_get_normalized_frequencies_from_plan(scheme, plan, R0, R2, R4, refresh,
                                                &dimensions[dim], fraction);
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
+
+      /* Copy the amplitudes from the `fftw_scheme->vector` to the
+       * `event->freq_amplitude` for each event within the dimension.*/
       if (plan->number_of_sidebands != 1) {
         cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2, event->freq_amplitude,
                     1);
       }
-      transition += transition_increment;
+      transition_pathway += transition_increment;
       refresh = 0;
     } // end events
   }   // end dimensions
@@ -418,8 +429,8 @@ void mrsimulator_core(
     double sample_rotation_frequency_in_Hz, // The rotor spin frequency
     double rotor_angle_in_rad, // The rotor angle relative to lab-frame z-axis
 
-    // Pointer to the transitions. transition[0] = mi and transition[1] = mf
-    float *transition,
+    // Pointer to the a list of transitions.
+    float *transition_pathway,
 
     // powder orientation average
     int integration_density, // The number of triangle along the edge of octahedron
@@ -427,7 +438,7 @@ void mrsimulator_core(
     bool interpolation, bool *freq_contrib, double *affine_matrix) {
   // int num_process = openblas_get_num_procs();
   // int num_threads = openblas_get_num_threads();
-  // // openblas_set_num_threads(1);
+  openblas_set_num_threads(1);
   // printf("%d processors", num_process);
   // printf("%d threads", num_threads);
   // int parallel = openblas_get_parallel();
@@ -456,13 +467,11 @@ void mrsimulator_core(
       // spectrum information and related amplitude
       spec, // The amplitude of the spectrum.
 
-      sites,     // A pointer to a list of sites within the spin system.
-      couplings, // A pointer to a list of couplings within a spin system.
+      sites,              // Pointer to a list of sites within the spin system.
+      couplings,          // Pointer to a list of couplings within a spin system.
+      transition_pathway, // Pointer to a list of transition.
 
-      transition, // A pointer to the initial and final spin quantum numbers of
-                  // the spin transition.
-
-      dimensions, n_dimension, fftw_scheme, scheme, interpolation, freq_contrib,
+      n_dimension, dimensions, fftw_scheme, scheme, interpolation, freq_contrib,
       affine_matrix);
 
   // gettimeofday(&end, NULL);

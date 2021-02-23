@@ -66,16 +66,16 @@ def one_d_spectrum(method,
 
     # transitions of the observed spin
     cdef int transition_increment
-    cdef ndarray[float, ndim=1] transition_array
+    cdef ndarray[float, ndim=1] transition_pathway_c
     cdef int number_of_transitions
-    # transition_array = np.asarray([-0.5, 0.5]).ravel()
-    # number_of_transitions = int(transition_array.size/2)
+    # transition_pathway_c = np.asarray([-0.5, 0.5]).ravel()
+    # number_of_transitions = int(transition_pathway_c.size/2)
     # else:
     #     energy_level_count = int(2*spin_quantum_number+1)
     #     number_of_transitions = energy_level_count-1
     #     energy_states = np.arange(energy_level_count) - spin_quantum_number
     #     transitions = [ [energy_states[i], energy_states[i+1]] for i in range(number_of_transitions)]
-    #     transition_array = np.asarray(transitions).ravel()
+    #     transition_pathway_c = np.asarray(transitions).ravel()
 
     cdef bool_t allow_fourth_rank = 0
     if spin_quantum_number > 0.5:
@@ -439,12 +439,12 @@ def one_d_spectrum(method,
             transition_pathway = spin_sys.transition_pathways
             if transition_pathway is None:
                 transition_pathway = np.asarray(method._get_transition_pathways_np(spin_sys))
-                transition_array = np.asarray(transition_pathway, dtype=np.float32).ravel()
+                transition_pathway_c = np.asarray(transition_pathway, dtype=np.float32).ravel()
             else:
                 transition_pathway = np.asarray(transition_pathway)
                 # convert transition objects to list
                 lst = [item.tolist() for item in transition_pathway.ravel()]
-                transition_array = np.asarray(lst, dtype=np.float32).ravel()
+                transition_pathway_c = np.asarray(lst, dtype=np.float32).ravel()
 
             pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
             pathway_increment = 2*number_of_sites*transition_count_per_pathway
@@ -453,16 +453,16 @@ def one_d_spectrum(method,
             p_isotopes = isotopes
 
         # if spin_sys.transitions is not None:
-        #     transition_array = np.asarray(
+        #     transition_pathway_c = np.asarray(
         #         spin_sys.transitions, dtype=np.float32
         #     ).ravel()
         # else:
-        #     transition_array = np.asarray([0.5, -0.5], dtype=np.float32)
+        #     transition_pathway_c = np.asarray([0.5, -0.5], dtype=np.float32)
 
         # the number 2 is because of single site transition [mi, mf]
         # it dose not work for coupled sites.
         # transition_increment = 2*number_of_sites
-        # number_of_transitions = int((transition_array.size)/transition_increment)
+        # number_of_transitions = int((transition_pathway_c.size)/transition_increment)
 
         for trans__ in range(pathway_count):
             clib.__mrsimulator_core(
@@ -470,11 +470,11 @@ def one_d_spectrum(method,
                 &amp[0],
                 &sites_c,
                 &couplings_c,
-                &transition_array[pathway_increment*trans__],
-                dimensions,
-                n_dimension,
-                the_fftw_scheme,
-                the_averaging_scheme,
+                &transition_pathway_c[pathway_increment*trans__],
+                n_dimension,          # The total number of spectroscopic dimensions.
+                dimensions,           # Pointer to MRS_dimension structure
+                the_fftw_scheme,      # Pointer to the fftw scheme.
+                the_averaging_scheme, # Pointer to the powder averaging scheme.
                 interpolation,
                 &freq_contrib_c[0],
                 &affine_matrix_c[0],

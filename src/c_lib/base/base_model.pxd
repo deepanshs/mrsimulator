@@ -123,8 +123,7 @@ cdef extern from "simulation.h":
         double sample_rotation_frequency_in_Hz,
         double rotor_angle_in_rad,
 
-        # The transition as transition[0] = mi and transition[1] = mf
-        float *transition,
+        float *transition_pathway, # Pointer to a list of transitions.
         int integration_density,
         unsigned int integration_volume,  # 0-octant, 1-hemisphere, 2-sphere
         bool_t interpolation,
@@ -137,11 +136,9 @@ cdef extern from "simulation.h":
         double * spec,
         site_struct *sites,
         coupling_struct *couplings,
-
-        # The transition as transition[0] = mi and transition[1] = mf
-        float *transition,
-        MRS_dimension *dimensions,    # the dimensions within method.
+        float *transition_pathway,    # Pointer to a list of transitions.
         int n_dimension,              # the number of dimensions.
+        MRS_dimension *dimensions,    # the dimensions within method.
         MRS_fftw_scheme *fftw_scheme, # the fftw scheme
         MRS_averaging_scheme *scheme, # the powder averaging scheme
         bool_t interpolation,
