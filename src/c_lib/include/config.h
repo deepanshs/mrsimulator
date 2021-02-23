@@ -51,6 +51,8 @@ typedef float complex64[2];
 #define __blas_activate
 #include "vm.h"
 
+void openblas_set_num_threads(int num_threads);
+
 // user definition
 #define TWO_PI 6.2831853072
 #define IOTA_TWO_PI TWO_PI *I
