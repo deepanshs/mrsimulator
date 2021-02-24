@@ -28,5 +28,8 @@ class TransitionQuery(BaseModel):
         validate_assignment = True
         arbitrary_types_allowed = True
 
-    def json(self):
+    def json(self) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object, where
+        the attribute value with physical quantity is expressed as a string with a
+        value and a unit."""
         return {k: v for k, v in self.dict().items() if v is not None}

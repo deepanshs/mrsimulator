@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.methods import BlochDecayCTSpectrum
 
 # global plot configuration
 mpl.rcParams["figure.figsize"] = [4.5, 3.0]
@@ -54,7 +54,7 @@ spin_systems = [SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abunda
 
 # %%
 # **Step 3:** Create a central transition selective Bloch decay spectrum method.
-method = BlochDecayCentralTransitionSpectrum(
+method = BlochDecayCTSpectrum(
     channels=["17O"],
     rotor_frequency=14000,  # in Hz
     spectral_dimensions=[

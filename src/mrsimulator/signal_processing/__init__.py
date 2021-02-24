@@ -38,7 +38,7 @@ class SignalProcessor(BaseModel):
         arbitrary_types_allowed = True
 
     @classmethod
-    def parse_dict_with_units(self, py_dict):
+    def parse_dict_with_units(self, py_dict: dict):
         """Parse a list of operations dictionary to a SignalProcessor class object.
 
         Args:
@@ -58,11 +58,10 @@ class SignalProcessor(BaseModel):
                 )
         return SignalProcessor(operations=lst)
 
-    def json(self):
-        """
-        Serialize the SignalProcessor object to a JSON compliant python dictionary
-        object, where physical quantities are represented as string with a value and a
-        unit.
+    def json(self) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object, where
+        the attribute value with physical quantity is expressed as a string with a
+        value and a unit.
 
         Returns:
             A Dict object.

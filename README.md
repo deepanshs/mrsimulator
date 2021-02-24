@@ -20,8 +20,7 @@ of the `mrsimulator` library is written in C, wrapped, and made available in pyt
 - It is a fast and versatile solid-state NMR simulator of one-dimensional static, MAS,
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
-- Future release will include simulations of weakly coupled nuclei experiencing J and dipolar
-  couplings, and multi-dimensional NMR spectra.
+- Include simulations of weakly coupled nuclei experiencing J and dipolar couplings.
 - It is fully documented with a stable and simple API and is easily incorporated into your
   python scripts and web apps.
 - It is compatible with modern python packages, such as scikit-learn, Keras, etc.
@@ -41,7 +40,7 @@ The `mrsimulator` package currently offers the following
 - **Fast simulation** of one-dimensional solid-state NMR spectra. See our
   [benchmark results](https://mrsimulator.readthedocs.io/en/stable/benchmark.html).
 
-- Simulation of **uncoupled spin system**
+- Simulation of **coupled and uncoupled spin system**
 
   - for spin I=1/2, and quadrupole I>1/2 nuclei,
   - at arbitrary macroscopic magnetic flux density,
@@ -62,12 +61,6 @@ The `mrsimulator` package currently offers the following
 
   - Czjzek
   - Extended Czjzek
-
-### Goals for the near future
-
-Our current objectives for the future are the following
-
-- Include spectral simulation of coupled spin systems.
 
 For more information, refer to the
 [documentation](https://mrsimulator.readthedocs.io/en/stable/).

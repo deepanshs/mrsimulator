@@ -8,9 +8,9 @@ __email__ = "srivastava.89@osu.edu"
 
 
 def SSB2D(**kwargs):
-    r"""A specialized method for simulating 2D finite speed to infinite speed MAS
-    correlation spectum. For spin I=1/2, the infinite speed MAS is the isotropic
-    dimension. The resulting spectrum is sheared.
+    r"""Simulating a sheared 2D finite to infinite speed MAS correlation spectum.
+
+    For spin I=1/2, the infinite speed MAS is the isotropic dimension.
 
     Args:
         channels: A list of isotope symbols over which the method will be applied.
@@ -65,7 +65,7 @@ def SSB2D(**kwargs):
         ... )
         >>> sys = SpinSystem(sites=[Site(isotope='13C')])
         >>> method.get_transition_pathways(sys)
-        [TransitionPathway(|-0.5⟩⟨0.5|, |-0.5⟩⟨0.5|)]
+        [|-0.5⟩⟨0.5| ⟶ |-0.5⟩⟨0.5|]
     """
     name = "SSB2D"
 

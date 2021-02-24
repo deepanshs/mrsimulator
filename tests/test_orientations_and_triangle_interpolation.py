@@ -6,6 +6,8 @@ import numpy as np
 from .python_test_for_c_code.orientation import cosine_of_polar_angles_and_amplitudes
 from .python_test_for_c_code.orientation import triangle_interpolation
 
+# import matplotlib.pyplot as plt
+
 
 def test_octahedron_averaging_setup():
     nt = 64
@@ -38,7 +40,55 @@ def test_triangle_interpolation():
         amp_c = np.zeros(100)
         clib.triangle_interpolation(list_, amp_c)
 
+        # plt.plot(amp_py, 'b', label='py')
+        # plt.plot(amp_c, 'r--', label='c')
+        # plt.plot(list_-0.5, [0, 2/(list_[2]-list_[0]), 0], 'k*', label='c')
+        # plt.legend()
+        # plt.show()
+
         assert np.allclose(amp_py, amp_c, atol=1e-15)
+
+
+def test_delta_interpolation():
+    f_list = [
+        5.5,
+        6.0,
+        6.2,
+        6.4,
+        6.6,
+        6.8,
+        7.0,
+        7.1,
+        7.5,
+        7.9,
+        8.0,
+        -0.1,
+        -0.9,
+        -1.0,
+        -5.2,
+        9.23,
+        10.2,
+    ]
+
+    for item in f_list:
+        list_ = np.asarray([item + 0.5] * 3)
+
+        # should be
+        amp_ = np.zeros(10)
+        x1 = int(np.floor(item))
+        if x1 >= -1 and x1 <= 8:
+            amp_[x1 + 1] = item - x1
+        if x1 >= 0 and x1 <= 9:
+            amp_[x1] = 1 - (item - x1)
+
+        # from delta interpolarion
+        amp_c = np.zeros(10)
+        clib.triangle_interpolation(list_, amp_c)
+
+        # plt.bar(np.arange(10), amp_c, width=1)
+        # plt.show()
+
+        assert np.allclose(amp_, amp_c, atol=1e-15)
 
 
 def test_triangle_rasterization():
@@ -66,6 +116,13 @@ def test_triangle_rasterization():
         clib.triangle_interpolation(lst1, amp2)
         clib.triangle_interpolation(lst2, amp3)
 
+        # plt.imshow(amp1, origin='lower', cmap='gray', aspect='auto')
+        # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
+        # plt.plot(x_t, y_t, 'r', label='vertex')
+        # plt.scatter(lst2-0.5, lst1-0.5, s=20, color='yellow', label='vertex')
+        # plt.legend()
+        # plt.show()
+
         assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
         assert np.allclose(amp3, amp1.sum(axis=0), atol=1e-15)
 
@@ -85,6 +142,13 @@ def test_triangle_rasterization():
         clib.triangle_interpolation2D(lst1, lst2, amp1)
         clib.triangle_interpolation(lst1, amp2)
 
+        # plt.imshow(amp1, origin='lower', cmap='gray', aspect='auto')
+        # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
+        # plt.plot(x_t, y_t, 'r', label='vertex')
+        # plt.scatter(lst2-0.5, lst1-0.5, s=20, color='yellow', label='vertex')
+        # plt.legend()
+        # plt.show()
+
         assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
 
     # triangles with one or more vertices outside a grid voxel
@@ -100,5 +164,12 @@ def test_triangle_rasterization():
 
         clib.triangle_interpolation2D(lst1, lst2, amp1)
         clib.triangle_interpolation(lst1, amp2)
+
+        # plt.imshow(amp1, origin='lower', cmap='gray', aspect='auto')
+        # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
+        # plt.plot(x_t, y_t, 'r', label='vertex')
+        # plt.scatter(lst2-0.5, lst1-0.5, s=20, color='yellow', label='vertex')
+        # plt.legend()
+        # plt.show()
 
         assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)

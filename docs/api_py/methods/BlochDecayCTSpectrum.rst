@@ -4,14 +4,14 @@ Bloch Decay Central Transition Spectrum method
 
 .. currentmodule:: mrsimulator.methods
 
-.. autofunction:: BlochDecayCentralTransitionSpectrum
+.. autofunction:: BlochDecayCTSpectrum
 
 **Example**
 
 .. doctest::
 
-    >>> from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-    >>> Bloch_CT_method = BlochDecayCentralTransitionSpectrum(
+    >>> from mrsimulator.methods import BlochDecayCTSpectrum
+    >>> Bloch_CT_method = BlochDecayCTSpectrum(
     ...     channels=['1H'],
     ...     rotor_frequency=5000, # in Hz
     ...     rotor_angle=0.95531, # in rad
@@ -29,7 +29,7 @@ Bloch decay central transition selective method is a special case of
 .. doctest::
 
     >>> from mrsimulator.methods import Method1D
-    >>> BlochdecayCT = BlochDecayCentralTransitionSpectrum(
+    >>> BlochdecayCT = BlochDecayCTSpectrum(
     ...     channels=['1H'],
     ...     rotor_frequency=5000, # in Hz
     ...     rotor_angle=0.95531, # in rad

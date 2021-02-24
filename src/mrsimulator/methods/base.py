@@ -94,6 +94,7 @@ BlochDecaySpectrum = generate_method_from_template(
 BlochDecayCentralTransitionSpectrum = generate_method_from_template(
     METHODS_DATA["Bloch_decay_central_transition"], docstring_1D
 )
+BlochDecayCTSpectrum = BlochDecayCentralTransitionSpectrum
 
 # generic 1D method
 Method1D = generate_method_from_template(METHODS_DATA["Method1D"], docstring_generic)
@@ -104,7 +105,7 @@ Method2D = generate_method_from_template(METHODS_DATA["Method2D"], docstring_2D)
 
 
 def message(attr, name):
-    return f"`{attr}` attribute cannot be modified for {name} method."
+    return f"`{attr}` value cannot be modified for {name} method."
 
 
 def check_for_transition_query(name, spectral_dimensions=[{}, {}]):
@@ -116,17 +117,20 @@ def check_for_transition_query(name, spectral_dimensions=[{}, {}]):
     ]
 
     if np.any(check):
-        raise AttributeError(message("transition_query", name))
+        raise ValueError(message("transition_query", name))
 
 
 def check_for_spectral_dimensions(py_dict, n=1):
     """If spectral_dimensions is in py_dict, extract it and then remove from py_dict."""
 
     if "spectral_dimensions" not in py_dict:
-        spectral_dimensions = [{}] * n
-    else:
-        spectral_dimensions = py_dict["spectral_dimensions"]
-        py_dict.pop("spectral_dimensions")
+        return [{}] * n
+
+    spectral_dimensions = py_dict["spectral_dimensions"]
+    m = len(spectral_dimensions)
+    if m != n:
+        raise ValueError(f"Method requires exactly {n} spectral dimensions, given {m}.")
+    py_dict.pop("spectral_dimensions")
     return spectral_dimensions
 
 
@@ -134,4 +138,4 @@ def check_for_events(name, spectral_dimensions=[{}, {}]):
     check = ["events" in item.keys() for item in spectral_dimensions]
 
     if np.any(check):
-        raise AttributeError(message("events", name))
+        raise ValueError(message("events", name))

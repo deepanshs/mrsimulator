@@ -110,8 +110,7 @@ class ST1_VAS(ST_VAS):
         ... )
         >>> sys = SpinSystem(sites=[Site(isotope='87Rb')])
         >>> pprint(method.get_transition_pathways(sys))
-        [TransitionPathway(|-1.5⟩⟨-0.5|, |-0.5⟩⟨0.5|),
-         TransitionPathway(|0.5⟩⟨1.5|, |-0.5⟩⟨0.5|)]
+        [|-1.5⟩⟨-0.5| ⟶ |-0.5⟩⟨0.5|, |0.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|]
     """
 
     def __new__(cls, **kwargs):
@@ -176,8 +175,7 @@ class ST2_VAS(ST_VAS):
         ... )
         >>> sys = SpinSystem(sites=[Site(isotope='17O')])
         >>> pprint(method.get_transition_pathways(sys))
-        [TransitionPathway(|-2.5⟩⟨-1.5|, |-0.5⟩⟨0.5|),
-         TransitionPathway(|1.5⟩⟨2.5|, |-0.5⟩⟨0.5|)]
+        [|-2.5⟩⟨-1.5| ⟶ |-0.5⟩⟨0.5|, |1.5⟩⟨2.5| ⟶ |-0.5⟩⟨0.5|]
     """
 
     def __new__(cls, **kwargs):

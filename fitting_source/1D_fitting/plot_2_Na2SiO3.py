@@ -24,7 +24,7 @@ import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
 from lmfit import Minimizer, report_fit
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
 
@@ -105,7 +105,7 @@ system_object = [SpinSystem(sites=[s], abundance=50) for s in [O17_1, O17_2]]
 # get the count, spectral_width, and reference_offset information from the experiment.
 spectral_dims = get_spectral_dimensions(oxygen_experiment)
 
-method = BlochDecayCentralTransitionSpectrum(
+method = BlochDecayCTSpectrum(
     channels=["17O"],
     magnetic_flux_density=9.4,  # in T
     rotor_frequency=14000,  # in Hz

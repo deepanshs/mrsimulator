@@ -76,7 +76,8 @@ Welcome to the Mrsimulator documentation
 
 ``mrsimulator`` is an open-source python package for fast simulation and analysis of
 multi-dimensional solid-state magnetic resonance (NMR) spectra of crystalline materials,
-bio macro-molecules, and even amorphous materials. Simulate the NMR spectrum of macro-molecules or amorphous in just a few seconds.
+bio macro-molecules, and amorphous materials. Simulate the NMR spectrum of macro-molecules
+or amorphous in just a few seconds.
 
 ----
 
@@ -108,8 +109,7 @@ bio macro-molecules, and even amorphous materials. Simulate the NMR spectrum of 
 - It is a fast and versatile multi-dimensional solid-state NMR spectra simulator including, MAS
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
-- Future release will include simulations of weakly coupled nuclei experiencing J and dipolar
-  couplings, and multi-dimensional NMR spectra.
+- Includes simulation of weakly coupled nuclei experiencing J and dipolar couplings.
 - It is fully documented with a stable and simple API and is easily incorporated into your
   python scripts and web apps.
 - It is compatible with modern python packages, such as scikit-learn, Keras, etc.
@@ -122,17 +122,17 @@ bio macro-molecules, and even amorphous materials. Simulate the NMR spectrum of 
 
 **Features**
 
-The ``mrsimulator`` package currently offers the following
+The ``mrsimulator`` package offers the following
 
-- **Fast simulation** of one-dimensional solid-state NMR spectra. See our :ref:`benchmark` results.
+- **Fast simulation** of one/two-dimensional solid-state NMR spectra. See our :ref:`benchmark` results.
 
-- Simulation of **uncoupled spin system**
+- Simulation of **coupled and uncoupled spin system**
     - for spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
     - at arbitrary macroscopic magnetic flux density,
     - at arbitrary rotor angles, and
     - at arbitrary spinning frequency.
 
-- The library includes the following **NMR methods**,
+- The library of included **NMR methods** follow,
     - 1D Bloch decay spectrum, and
     - 1D Bloch decay central transition spectrum.
     - 2D Multi-quantum Variable Angle Spinning (MQ-VAS),
@@ -146,12 +146,6 @@ The ``mrsimulator`` package currently offers the following
     - Extended Czjzek
 
 ----
-
-**Goals for the near future**
-
-Our current objectives are the following
-
-- Include spectral simulation of coupled spin systems.
 
 .. Contribution
 .. ------------
@@ -178,6 +172,7 @@ Getting Started
     requirements
     introduction
     getting_started
+    getting_started_coupled
     getting_started-objects
     configuring_simulator
     mrsim_IO
