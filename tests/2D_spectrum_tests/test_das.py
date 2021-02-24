@@ -4,7 +4,7 @@ import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.methods import Method2D
 
 
@@ -53,8 +53,16 @@ def test_DAS():
                 "reference_offset": 0,  # in Hz
                 "label": "DAS isotropic dimension",
                 "events": [
-                    {"fraction": 0.5, "rotor_angle": 37.38 * 3.14159 / 180},
-                    {"fraction": 0.5, "rotor_angle": 79.19 * 3.14159 / 180},
+                    {
+                        "fraction": 0.5,
+                        "rotor_angle": 37.38 * 3.14159 / 180,
+                        "transition_query": {"P": [[-1]], "D": [[0]]},
+                    },
+                    {
+                        "fraction": 0.5,
+                        "rotor_angle": 79.19 * 3.14159 / 180,
+                        "transition_query": {"P": [[-1]], "D": [[0]]},
+                    },
                 ],
             },
             # The last spectral dimension block is the direct-dimension
@@ -63,7 +71,12 @@ def test_DAS():
                 "spectral_width": 2e4,  # in Hz
                 "reference_offset": 0,  # in Hz
                 "label": "MAS dimension",
-                "events": [{"rotor_angle": 54.735 * 3.14159 / 180}],
+                "events": [
+                    {
+                        "rotor_angle": 54.735 * 3.14159 / 180,
+                        "transition_query": {"P": [[-1]], "D": [[0]]},
+                    }
+                ],
             },
         ],
     )
@@ -78,7 +91,7 @@ def test_DAS():
     data_das_coords_ppm = das.spectral_dimensions[0].coordinates_ppm()
 
     # Bloch decay central transition method
-    bloch = BlochDecayCentralTransitionSpectrum(
+    bloch = BlochDecayCTSpectrum(
         channels=["17O"],
         magnetic_flux_density=B0,  # in T
         rotor_frequency=1e9,  # in Hz

@@ -87,7 +87,7 @@ the method object, as
 
     >>> relevant_pathways = Bloch_decay_method.get_transition_pathways(one_site)
     >>> print(relevant_pathways)
-    [TransitionPathway(|-0.5⟩⟨0.5|)]
+    [|-0.5⟩⟨0.5|]
 
 
 **Two spin-1/2 sites**

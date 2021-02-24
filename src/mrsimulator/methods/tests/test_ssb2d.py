@@ -18,10 +18,16 @@ def test_SSB_rotor_freq():
         SSB2D(rotor_frequency=0, spectral_dimensions=[{}, {}])
 
 
+def test_spectral_dimension_count():
+    e = "Method requires exactly 2 spectral dimensions, given 1."
+    with pytest.raises(ValueError, match=f".*{e}.*"):
+        SSB2D(spectral_dimensions=[{}])
+
+
 def test_SSB_setting_events():
-    e = "`events` attribute cannot be modified for SSB2D method."
-    with pytest.raises(AttributeError, match=f".*{e}.*"):
-        SSB2D(spectral_dimensions=[{"events": [{}]}])
+    e = "`events` value cannot be modified for SSB2D method."
+    with pytest.raises(ValueError, match=f".*{e}.*"):
+        SSB2D(spectral_dimensions=[{"events": [{}]}, {}])
 
 
 def test_SSB_affine():

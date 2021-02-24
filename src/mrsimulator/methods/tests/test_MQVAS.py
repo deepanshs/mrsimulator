@@ -16,23 +16,33 @@ names = ["ThreeQ_VAS", "FiveQ_VAS", "SevenQ_VAS"]
 
 def test_MQ_VAS_rotor_freq():
     def error(name):
-        return f"`rotor_frequency` attribute cannot be modified for {name} method."
+        return f"`rotor_frequency` value cannot be modified for {name} method."
 
     for name, method in zip(names, methods):
         e = error(name)
-        with pytest.raises(AttributeError, match=f".*{e}.*"):
+        with pytest.raises(ValueError, match=f".*{e}.*"):
             method(rotor_frequency=10, spectral_dimensions=[{}, {}])
+
+
+def test_MQ_VAS_spectral_dimension_count():
+    e = "Method requires exactly 2 spectral dimensions, given 1."
+    for _, method in zip(names, methods):
+        with pytest.raises(ValueError, match=f".*{e}.*"):
+            method(spectral_dimensions=[{}])
 
 
 def test_MQ_VAS_setting_transition_query():
     def error(name):
-        return f"`transition_query` attribute cannot be modified for {name} method."
+        return f"`transition_query` value cannot be modified for {name} method."
 
     for name, method in zip(names, methods):
         e = error(name)
-        with pytest.raises(AttributeError, match=f".*{e}.*"):
+        with pytest.raises(ValueError, match=f".*{e}.*"):
             method(
-                spectral_dimensions=[{"events": [{"transition_query": {"P": [-1]}}]}],
+                spectral_dimensions=[
+                    {"events": [{"transition_query": {"P": [-1]}}]},
+                    {},
+                ],
             )
 
 

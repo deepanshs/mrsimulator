@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
 from mrsimulator import Simulator, Site, SpinSystem
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
 from lmfit import Minimizer, report_fit
@@ -72,7 +72,7 @@ spin_systems = [SpinSystem(sites=[B11])]
 # Get the spectral dimension paramters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = BlochDecayCentralTransitionSpectrum(
+method = BlochDecayCTSpectrum(
     channels=["11B"],
     magnetic_flux_density=14.1,  # in T
     rotor_frequency=12500,  # in Hz

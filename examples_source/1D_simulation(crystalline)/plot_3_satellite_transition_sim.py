@@ -8,7 +8,7 @@ Simulate arbitrary transitions (single-quantum)
 """
 # %%
 # The mrsimulator built-in one-dimensional methods, BlochDecaySpectrum and
-# BlochDecayCentralTransitionSpectrum, are designed to simulate spectrum from all single
+# BlochDecayCTSpectrum, are designed to simulate spectrum from all single
 # quantum transitions or central transition selective transition, respectively. In this
 # example, we show how you can simulate any arbitrary transition using the generic
 # Method1D method.

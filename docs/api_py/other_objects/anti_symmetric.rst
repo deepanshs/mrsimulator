@@ -9,5 +9,4 @@ AntisymmetricTensor
     :show-inheritance:
 
     .. rubric:: Method Documentation
-    .. automethod:: to_freq_dict
     .. automethod:: json

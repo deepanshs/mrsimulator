@@ -19,7 +19,7 @@ Non-coincidental Quad and CSA, 17O (I=5/2)
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.methods import BlochDecayCTSpectrum
 import numpy as np
 
 # global plot configuration
@@ -44,7 +44,7 @@ spin_system = SpinSystem(sites=[site])
 
 # %%
 # **Step 2:** Create a central transition selective Bloch decay spectrum method.
-method = BlochDecayCentralTransitionSpectrum(
+method = BlochDecayCTSpectrum(
     channels=["17O"],
     magnetic_flux_density=11.74,  # in T
     rotor_frequency=0,  # in Hz

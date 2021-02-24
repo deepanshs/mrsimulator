@@ -102,3 +102,16 @@ class as
 .. testsetup::
     >>> import os
     >>> os.remove('spin_systems.json')
+
+
+Simulation object from Method class as CSDM compliant file
+----------------------------------------------------------
+
+**Export simulation to a JSON file**
+
+You may serialize the simulation object from the method object to a CSDM compliant JSON file using the
+save function as a follows,
+
+.. doctest::
+
+    >>> sim_coesite.method[0].simulation.save('coesite_simulation.csdf') # doctest:+SKIP

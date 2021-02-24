@@ -66,16 +66,16 @@ def one_d_spectrum(method,
 
     # transitions of the observed spin
     cdef int transition_increment
-    cdef ndarray[float, ndim=1] transition_array
+    cdef ndarray[float, ndim=1] transition_pathway_c
     cdef int number_of_transitions
-    # transition_array = np.asarray([-0.5, 0.5]).ravel()
-    # number_of_transitions = int(transition_array.size/2)
+    # transition_pathway_c = np.asarray([-0.5, 0.5]).ravel()
+    # number_of_transitions = int(transition_pathway_c.size/2)
     # else:
     #     energy_level_count = int(2*spin_quantum_number+1)
     #     number_of_transitions = energy_level_count-1
     #     energy_states = np.arange(energy_level_count) - spin_quantum_number
     #     transitions = [ [energy_states[i], energy_states[i+1]] for i in range(number_of_transitions)]
-    #     transition_array = np.asarray(transitions).ravel()
+    #     transition_pathway_c = np.asarray(transitions).ravel()
 
     cdef bool_t allow_fourth_rank = 0
     if spin_quantum_number > 0.5:
@@ -89,7 +89,7 @@ def one_d_spectrum(method,
     )
 
 # create spectral dimensions _______________________________________________
-    cdef int n_sequence = len(method.spectral_dimensions)
+    cdef int n_dimension = len(method.spectral_dimensions)
     # if n_sequence > 1:
     #     number_of_sidebands = 1
 
@@ -115,8 +115,8 @@ def one_d_spectrum(method,
     coordinates_offset = []
 
     prev_n_sidebands = 0
-    for i, seq in enumerate(method.spectral_dimensions):
-        for event in seq.events:
+    for i, dim in enumerate(method.spectral_dimensions):
+        for event in dim.events:
             freq_contrib = np.append(freq_contrib, event.get_value_int())
             if event.rotor_frequency < 1.0e-3:
                 sample_rotation_frequency_in_Hz = 1.0e9
@@ -142,15 +142,15 @@ def one_d_spectrum(method,
             vr.append(sample_rotation_frequency_in_Hz) # in Hz
             th.append(rotor_angle_in_rad) # in rad
 
-        total_n_points *= seq.count
+        total_n_points *= dim.count
 
-        count.append(seq.count)
-        offset = seq.spectral_width / 2.0
-        coordinates_offset.append(-seq.reference_offset * factor - offset)
-        increment.append(seq.spectral_width / seq.count)
-        event_i.append(len(seq.events))
+        count.append(dim.count)
+        offset = dim.spectral_width / 2.0
+        coordinates_offset.append(-dim.reference_offset * factor - offset)
+        increment.append(dim.spectral_width / dim.count)
+        event_i.append(len(dim.events))
 
-        seq.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
+        dim.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
 
     frac = np.asarray(fr, dtype=np.float64)
     magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
@@ -162,9 +162,9 @@ def one_d_spectrum(method,
     n_event = np.asarray(event_i, dtype=np.int32)
 
     # create spectral_dimensions
-    the_sequence = clib.MRS_create_sequences(the_averaging_scheme, &cnt[0],
+    dimensions = clib.MRS_create_dimensions(the_averaging_scheme, &cnt[0],
         &coord_off[0], &incre[0], &frac[0], &magnetic_flux_density_in_T[0],
-        &srfiH[0], &rair[0], &n_event[0], n_sequence, number_of_sidebands)
+        &srfiH[0], &rair[0], &n_event[0], n_dimension, number_of_sidebands)
 
 # normalization factor for the spectrum
     norm = np.prod(incre)
@@ -203,11 +203,13 @@ def one_d_spectrum(method,
 
 # sites _______________________________________________________________________________
     p_isotopes = None
-    # CSA
-    cdef int number_of_sites, p_number_of_sites=0
+
+    cdef int number_of_sites, number_of_couplings, p_number_of_sites=0
+    cdef ndarray[int] spin_index_ij
     cdef ndarray[float] spin_i
     cdef ndarray[double] gyromagnetic_ratio_i
 
+    # CSA
     cdef ndarray[double] iso_n
     cdef ndarray[double] zeta_n
     cdef ndarray[double] eta_n
@@ -218,7 +220,17 @@ def one_d_spectrum(method,
     cdef ndarray[double] eta_e
     cdef ndarray[double] ori_e
 
-    cdef ndarray[double] D_c
+    # J-coupling
+    cdef ndarray[double] iso_j
+    cdef ndarray[double] zeta_j
+    cdef ndarray[double] eta_j
+    cdef ndarray[double] ori_j
+
+    # quad
+    cdef ndarray[double] D_d
+    cdef ndarray[double] eta_d
+    cdef ndarray[double] ori_d
+
 
 
     cdef int trans__, pathway_increment, pathway_count, transition_count_per_pathway
@@ -226,26 +238,28 @@ def one_d_spectrum(method,
     amp1 = np.zeros(total_n_points, dtype=np.float64)
     amp_individual = []
 
-    cdef clib.isotopomer_ravel isotopomer_struct
+    cdef clib.site_struct sites_c
+    cdef clib.coupling_struct couplings_c
 
     index_ = []
-    # cdef clib.isotopomers_list *isotopomers_list_c
 
-    # ---------------------------------------------------------------------
-    # sample _______________________________________________________________
+    # -------------------------------------------------------------------------
+    # sample __________________________________________________________________
     for index, spin_sys in enumerate(spin_systems):
         abundance = spin_sys.abundance
         isotopes = [site.isotope.symbol for site in spin_sys.sites]
         if channel not in isotopes:
+            if decompose_spectrum == 1:
+                amp_individual.append([])
             continue
 
         # sub_sites = [site for site in spin_sys.sites if site.isotope.symbol == isotope]
         index_.append(index)
-        number_of_sites= len(spin_sys.sites)
+        number_of_sites = len(spin_sys.sites)
 
-        if number_of_sites > 2:
-            continue
-        # site specification
+        # ------------------------------------------------------------------------
+        #                          Site specification
+        # ------------------------------------------------------------------------
         # CSA
         spin_i = np.empty(number_of_sites, dtype=np.float32)
         gyromagnetic_ratio_i = np.empty(number_of_sites, dtype=np.float64)
@@ -255,16 +269,13 @@ def one_d_spectrum(method,
         eta_n = np.zeros(number_of_sites, dtype=np.float64)
         ori_n = np.zeros(3*number_of_sites, dtype=np.float64)
 
-        # quad
+        # Quad
         Cq_e = np.zeros(number_of_sites, dtype=np.float64)
         eta_e = np.zeros(number_of_sites, dtype=np.float64)
         ori_e = np.zeros(3*number_of_sites, dtype=np.float64)
 
-        # for n sites, coupling grows as sum_{i=1}^{n-1}(i)
-        D_c = np.zeros(number_of_sites, dtype=np.float64)
-
-        amp = np.zeros(total_n_points)
-
+        # Extract and assign site information from Site objects to C structure
+        # ---------------------------------------------------------------------
         for i in range(number_of_sites):
             site = spin_sys.sites[i]
             spin_i[i] = site.isotope.spin
@@ -290,7 +301,7 @@ def one_d_spectrum(method,
 
             # if verbose in [1, 11]:
             #     text = ((
-            #         f"\n{isotope} site {i} from spin system {index_isotopomer} "
+            #         f"\n{isotope} site {i} from spin system {index} "
             #         f"@ {abundance}% abundance"
             #     ))
             #     len_ = len(text)
@@ -321,76 +332,163 @@ def one_d_spectrum(method,
                 #     print(f'Quadrupolar asymmetry (η) = {eta}')
                 #     print(f'Quadrupolar orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
 
-        if number_of_sites != 0:
-            if number_of_sites != p_number_of_sites and isotopes != p_isotopes:
-                transition_pathway = spin_sys.transition_pathways
-                if transition_pathway is None:
-                    transition_pathway = np.asarray(method._get_transition_pathways_np(spin_sys))
-                    transition_array = np.asarray(transition_pathway, dtype=np.float32).ravel()
-                else:
-                    transition_pathway = np.asarray(transition_pathway)
-                    # convert transition objects to list
-                    lst = [item.tolist() for item in transition_pathway.ravel()]
-                    transition_array = np.asarray(lst, dtype=np.float32).ravel()
+        # sites packed as c struct
+        sites_c.number_of_sites = number_of_sites
+        sites_c.spin = &spin_i[0]
+        sites_c.gyromagnetic_ratio = &gyromagnetic_ratio_i[0]
 
-                pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
-                pathway_increment = 2*number_of_sites*transition_count_per_pathway
+        sites_c.isotropic_chemical_shift_in_ppm = &iso_n[0]
+        sites_c.shielding_symmetric_zeta_in_ppm = &zeta_n[0]
+        sites_c.shielding_symmetric_eta = &eta_n[0]
+        sites_c.shielding_orientation = &ori_n[0]
 
-                p_number_of_sites = number_of_sites
-                p_isotopes = isotopes
+        sites_c.quadrupolar_Cq_in_Hz = &Cq_e[0]
+        sites_c.quadrupolar_eta = &eta_e[0]
+        sites_c.quadrupolar_orientation = &ori_e[0]
+        # ------------------------------------------------------------------------
+        #                           Coupling specification
+        # ------------------------------------------------------------------------
+        # J-coupling
+        couplings_c.number_of_couplings = 0
+        if spin_sys.couplings is not None:
+            number_of_couplings = len(spin_sys.couplings)
+            spin_index_ij = np.zeros(2*number_of_couplings, dtype=np.int32)
 
-            # if spin_sys.transitions is not None:
-            #     transition_array = np.asarray(
-            #         spin_sys.transitions, dtype=np.float32
-            #     ).ravel()
-            # else:
-            #     transition_array = np.asarray([0.5, -0.5], dtype=np.float32)
+            iso_j = np.zeros(number_of_couplings, dtype=np.float64)
+            zeta_j = np.zeros(number_of_couplings, dtype=np.float64)
+            eta_j = np.zeros(number_of_couplings, dtype=np.float64)
+            ori_j = np.zeros(3*number_of_couplings, dtype=np.float64)
 
-            # the number 2 is because of single site transition [mi, mf]
-            # it dose not work for coupled sites.
-            # transition_increment = 2*number_of_sites
-            # number_of_transitions = int((transition_array.size)/transition_increment)
+            # Dipolar
+            D_d = np.zeros(number_of_couplings, dtype=np.float64)
+            eta_d = np.zeros(number_of_couplings, dtype=np.float64)
+            ori_d = np.zeros(3*number_of_couplings, dtype=np.float64)
 
-            isotopomer_struct.number_of_sites = number_of_sites
-            isotopomer_struct.spin = &spin_i[0]
-            isotopomer_struct.gyromagnetic_ratio = &gyromagnetic_ratio_i[0]
+            # Extract and assign coupling information from Site objects to C structure
+            for i in range(number_of_couplings):
+                coupling = spin_sys.couplings[i]
+                spin_index_ij[2*i: 2*i+2] = coupling.site_index
+                i3 = 3*i
 
-            isotopomer_struct.isotropic_chemical_shift_in_ppm = &iso_n[0]
-            isotopomer_struct.shielding_symmetric_zeta_in_ppm = &zeta_n[0]
-            isotopomer_struct.shielding_symmetric_eta = &eta_n[0]
-            isotopomer_struct.shielding_orientation = &ori_n[0]
+                # J tensor
+                if coupling.isotropic_j is not None:
+                    iso_j[i] = coupling.isotropic_j
 
-            isotopomer_struct.quadrupolar_Cq_in_Hz = &Cq_e[0]
-            isotopomer_struct.quadrupolar_eta = &eta_e[0]
-            isotopomer_struct.quadrupolar_orientation = &ori_e[0]
+                J_sym = coupling.j_symmetric
+                if J_sym is not None:
+                    if J_sym.zeta is not None:
+                        zeta_j[i] = J_sym.zeta
+                    if J_sym.eta is not None:
+                        eta_j[i] = J_sym.eta
+                    if J_sym.alpha is not None:
+                        ori_j[i3] = J_sym.alpha
+                    if J_sym.beta is not None:
+                        ori_j[i3+1] = J_sym.beta
+                    if J_sym.gamma is not None:
+                        ori_j[i3+2] = J_sym.gamma
 
-            isotopomer_struct.dipolar_couplings = &D_c[0]
+                # dipolar tensor
+                dipolar = coupling.dipolar
+                if dipolar is not None:
+                    if dipolar.D is not None:
+                        D_d[i] = dipolar.D
+                    if dipolar.eta is not None:
+                        eta_d[i] = dipolar.eta
+                    if dipolar.alpha is not None:
+                        ori_d[i3] = dipolar.alpha
+                    if dipolar.beta is not None:
+                        ori_d[i3+1] = dipolar.beta
+                    if dipolar.gamma is not None:
+                        ori_d[i3+2] = dipolar.gamma
 
-            # isotopomers_list_c[i] = isotopomer_struct
-            for trans__ in range(pathway_count):
-                clib.__mrsimulator_core(
-                    # spectrum information and related amplitude
-                    &amp[0],
-                    &isotopomer_struct,
-                    &transition_array[pathway_increment*trans__],
-                    the_sequence,
-                    n_sequence,
-                    the_fftw_scheme,
-                    the_averaging_scheme,
-                    interpolation,
-                    &freq_contrib_c[0],
-                    &affine_matrix_c[0],
-                    )
+            if verbose in [1, 11]:
+                print(f'N couplings = {number_of_couplings}')
+                print(f'site index J = {spin_index_ij}')
+                print(f'Isotropic J = {iso_j} Hz')
+                print(f'J anisotropy = {zeta_j} Hz')
+                print(f'J asymmetry = {eta_j}')
+                print(f'J orientation = {ori_j}')
 
-            temp = amp*abundance/norm
+                print(f'Dipolar coupling constant = {D_d} Hz')
+                print(f'Dipolar asymmetry = {eta_d}')
+                print(f'Dipolar orientation = {ori_d}')
 
-            if decompose_spectrum == 1:
-                amp_individual.append(temp.reshape(method.shape()))
+            # couplings packed as c struct
+            couplings_c.number_of_couplings = number_of_couplings
+            couplings_c.site_index = &spin_index_ij[0]
+
+            couplings_c.isotropic_j_in_Hz = &iso_j[0]
+            couplings_c.j_symmetric_zeta_in_Hz = &zeta_j[0]
+            couplings_c.j_symmetric_eta = &eta_j[0]
+            couplings_c.j_orientation = &ori_j[0]
+
+            couplings_c.dipolar_coupling_in_Hz = &D_d[0]
+            couplings_c.dipolar_eta = &eta_d[0]
+            couplings_c.dipolar_orientation = &ori_d[0]
+
+
+        # Spectrum amplitude vector -------------------------------------------
+        amp = np.zeros(total_n_points)
+
+        # if number_of_sites == 0:
+        #     if decompose_spectrum == 1:
+        #         amp_individual.append([])
+        #     continue
+
+        if number_of_sites != p_number_of_sites and isotopes != p_isotopes:
+            transition_pathway = spin_sys.transition_pathways
+            if transition_pathway is None:
+                transition_pathway = np.asarray(method._get_transition_pathways_np(spin_sys))
+                transition_pathway_c = np.asarray(transition_pathway, dtype=np.float32).ravel()
             else:
-                amp1 += temp
+                transition_pathway = np.asarray(transition_pathway)
+                # convert transition objects to list
+                lst = [item.tolist() for item in transition_pathway.ravel()]
+                transition_pathway_c = np.asarray(lst, dtype=np.float32).ravel()
+
+            pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
+            pathway_increment = 2*number_of_sites*transition_count_per_pathway
+
+            p_number_of_sites = number_of_sites
+            p_isotopes = isotopes
+
+        # if spin_sys.transitions is not None:
+        #     transition_pathway_c = np.asarray(
+        #         spin_sys.transitions, dtype=np.float32
+        #     ).ravel()
+        # else:
+        #     transition_pathway_c = np.asarray([0.5, -0.5], dtype=np.float32)
+
+        # the number 2 is because of single site transition [mi, mf]
+        # it dose not work for coupled sites.
+        # transition_increment = 2*number_of_sites
+        # number_of_transitions = int((transition_pathway_c.size)/transition_increment)
+
+        for trans__ in range(pathway_count):
+            clib.__mrsimulator_core(
+                # spectrum information and related amplitude
+                &amp[0],
+                &sites_c,
+                &couplings_c,
+                &transition_pathway_c[pathway_increment*trans__],
+                n_dimension,          # The total number of spectroscopic dimensions.
+                dimensions,           # Pointer to MRS_dimension structure
+                the_fftw_scheme,      # Pointer to the fftw scheme.
+                the_averaging_scheme, # Pointer to the powder averaging scheme.
+                interpolation,
+                &freq_contrib_c[0],
+                &affine_matrix_c[0],
+                )
+
+        temp = amp*abundance/norm
+
+        if decompose_spectrum == 1:
+            amp_individual.append(temp.reshape(method.shape()))
         else:
-            if decompose_spectrum == 1:
-                amp_individual.append([])
+            amp1 += temp
+        # else:
+        #     if decompose_spectrum == 1:
+        #         amp_individual.append([])
 
     # reverse the spectrum if gyromagnetic ratio is positive.
     if decompose_spectrum == 1 and len(amp_individual) != 0:
@@ -403,7 +501,7 @@ def one_d_spectrum(method,
         if gyromagnetic_ratio < 0:
             amp1 = np.fft.fftn(np.fft.ifftn(amp1).conj()).real
 
-    clib.MRS_free_sequence(the_sequence, n_sequence)
+    clib.MRS_free_dimension(dimensions, n_dimension)
     clib.MRS_free_averaging_scheme(the_averaging_scheme)
     clib.MRS_free_fftw_scheme(the_fftw_scheme)
     return amp1

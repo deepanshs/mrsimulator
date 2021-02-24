@@ -1,0 +1,67 @@
+{
+  "methods": [{
+    "channels": ["27Al"],
+    "spectral_dimensions": [{
+      "count": 512,
+      "spectral_width": "5 kHz",
+      "events": [{
+        "magnetic_flux_density": "9.4 T",
+        "rotor_frequency": "0 kHz",
+        "rotor_angle": "54.7356 deg",
+        "transition_query": {
+          "P": {
+            "channel-1": [
+              [-1]
+            ]
+          },
+          "D": {
+            "channel-1": [
+              [0]
+            ]
+          }
+        }
+      }]
+    }]
+  }],
+  "spin_systems": [{
+    "sites": [{
+        "isotope": "27Al",
+        "isotropic_chemical_shift": "0.0 ppm"
+      },
+      {
+        "isotope": "93Nb",
+        "isotropic_chemical_shift": "0.0 ppm"
+      }
+    ],
+    "couplings": [{
+      "site_index": [0, 1],
+      "isotropic_j": "200.0 Hz",
+      "j_symmetric": {
+        "zeta": "20.0 Hz",
+        "eta": 0
+      }
+    }]
+  }],
+  "operations": [{
+      "dim_index": 0,
+      "function": "IFFT"
+    },
+    {
+      "dim_index": 0,
+      "FWHM": "30.0 Hz",
+      "function": "apodization",
+      "type": "Exponential"
+    },
+    {
+      "dim_index": 0,
+      "function": "FFT"
+    }
+  ],
+  "test_data": {
+    "source": "simpson",
+    "filename": "test12.fid",
+    "quantity": "time",
+    "type": "complex",
+    "periodic": false
+  }
+}

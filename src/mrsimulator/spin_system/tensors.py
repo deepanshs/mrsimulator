@@ -85,21 +85,24 @@ class SymmetricTensor(Parseable):
 
     zeta: float = None
     Cq: float = None
-    eta: float = Field(default=None, ge=0, le=1)
+    D: float = None
+    eta: float = Field(default=None, ge=0.0, le=1.0)
     alpha: float = None
     beta: float = None
     gamma: float = None
 
     property_unit_types: ClassVar = {
-        "zeta": "dimensionless",
+        "zeta": ["dimensionless", "frequency"],
         "Cq": "frequency",
+        "D": "frequency",
         "alpha": "angle",
         "beta": "angle",
         "gamma": "angle",
     }
     property_default_units: ClassVar = {
-        "zeta": "ppm",
+        "zeta": ["ppm", "Hz"],
         "Cq": "Hz",
+        "D": "Hz",
         "alpha": "rad",
         "beta": "rad",
         "gamma": "rad",
@@ -107,30 +110,32 @@ class SymmetricTensor(Parseable):
     property_units: Dict = {
         "zeta": "ppm",
         "Cq": "Hz",
+        "D": "Hz",
         "alpha": "rad",
         "beta": "rad",
         "gamma": "rad",
     }
 
-    def to_freq_dict(self, larmor_frequency: float) -> dict:
-        """
-        Serialize the SymmetricTensor object to a JSON compliant python dictionary
-        where the attribute values are numbers expressed in default units. The default
-        unit for attributes with respective dimensionalities are:
-        - frequency: `Hz`
-        - angle: `rad`
+    # Deprecated
+    # def to_freq_dict(self, larmor_frequency: float) -> dict:
+    #     """
+    #     Serialize the SymmetricTensor object to a JSON compliant python dictionary
+    #     where the attribute values are numbers expressed in default units. The default
+    #     unit for attributes with respective dimensionalities are:
+    #     - frequency: `Hz`
+    #     - angle: `rad`
 
-        Args:
-            float larmor_frequency: The larmor frequency in MHz.
+    #     Args:
+    #         float larmor_frequency: The larmor frequency in MHz.
 
-        Return:
-            A python dict
-        """
-        temp_dict = self.dict()
-        if temp_dict["zeta"] is not None:
-            temp_dict["zeta"] *= larmor_frequency
-        temp_dict.pop("property_units")
-        return temp_dict
+    #     Return:
+    #         A python dict
+    #     """
+    #     temp_dict = self.dict()
+    #     if temp_dict["zeta"] is not None:
+    #         temp_dict["zeta"] *= larmor_frequency
+    #     temp_dict.pop("property_units")
+    #     return temp_dict
 
 
 class AntisymmetricTensor(Parseable):
@@ -157,22 +162,23 @@ class AntisymmetricTensor(Parseable):
     property_default_units: ClassVar = {"zeta": "ppm", "alpha": "rad", "beta": "rad"}
     property_units: Dict = {"zeta": "ppm", "alpha": "rad", "beta": "rad"}
 
-    def to_freq_dict(self, larmor_frequency: float) -> dict:
-        """
-        Serialize the AntisymmetricTensor object to a JSON compliant python dictionary
-        where the attribute values are numbers expressed in default units. The default
-        unit for attributes with respective dimensionalities are:
-        - frequency: `Hz`
-        - angle: `rad`
+    # Deprecated
+    # def to_freq_dict(self, larmor_frequency: float) -> dict:
+    #     """
+    #     Serialize the AntisymmetricTensor object to a JSON compliant python dictionary
+    #     where the attribute values are numbers expressed in default units. The default
+    #     unit for attributes with respective dimensionalities are:
+    #     - frequency: `Hz`
+    #     - angle: `rad`
 
-        Args:
-            float larmor_frequency: The larmor frequency in MHz.
+    #     Args:
+    #         float larmor_frequency: The larmor frequency in MHz.
 
-        Return:
-            Python dict
-        """
-        temp_dict = self.dict()
-        if temp_dict["zeta"] is not None:
-            temp_dict["zeta"] *= larmor_frequency
-        temp_dict.pop("property_units")
-        return temp_dict
+    #     Return:
+    #         Python dict
+    #     """
+    #     temp_dict = self.dict()
+    #     if temp_dict["zeta"] is not None:
+    #         temp_dict["zeta"] *= larmor_frequency
+    #     temp_dict.pop("property_units")
+    #     return temp_dict
