@@ -158,7 +158,6 @@ class ThreeQ_VAS(MQ_VAS):
         >>> method.get_transition_pathways(sys)
         [|-1.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|]
     """
-    pass
 
 
 class FiveQ_VAS(MQ_VAS):
@@ -220,7 +219,6 @@ class FiveQ_VAS(MQ_VAS):
         >>> method.get_transition_pathways(sys)
         [|-2.5⟩⟨2.5| ⟶ |-0.5⟩⟨0.5|]
     """
-    pass
 
 
 class SevenQ_VAS(MQ_VAS):
@@ -282,4 +280,3 @@ class SevenQ_VAS(MQ_VAS):
         >>> method.get_transition_pathways(sys)
         [|-3.5⟩⟨3.5| ⟶ |-0.5⟩⟨0.5|]
     """
-    pass

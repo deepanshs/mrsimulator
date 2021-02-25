@@ -145,7 +145,6 @@ class ST1_VAS(ST_VAS):
         >>> pprint(method.get_transition_pathways(sys))
         [|-1.5⟩⟨-0.5| ⟶ |-0.5⟩⟨0.5|, |0.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|]
     """
-    pass
 
 
 class ST2_VAS(ST_VAS):
@@ -208,4 +207,3 @@ class ST2_VAS(ST_VAS):
         >>> pprint(method.get_transition_pathways(sys))
         [|-2.5⟩⟨-1.5| ⟶ |-0.5⟩⟨0.5|, |1.5⟩⟨2.5| ⟶ |-0.5⟩⟨0.5|]
     """
-    pass
