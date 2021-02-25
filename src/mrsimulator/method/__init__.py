@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from copy import deepcopy
+from os import path
 from typing import ClassVar
 from typing import Dict
 from typing import List
@@ -7,14 +8,13 @@ from typing import Union
 
 import csdmpy as cp
 import numpy as np
+from monty.serialization import loadfn
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import Transition
 from mrsimulator.transition import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
 
-from .named_method_updates import named_methods
-from .named_method_updates import update_method
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
 from .utils import D_symmetry_indexes
@@ -24,6 +24,9 @@ from .utils import query_permutations
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+MODULE_DIR = path.dirname(path.abspath(__file__))
+NAMED_METHODS = loadfn(path.join(MODULE_DIR, "named_methods.json"))["named_methods"]
 
 
 class Method(Parseable):
@@ -203,7 +206,7 @@ class Method(Parseable):
             if py_dict_copy["experiment"] is not None:
                 py_dict_copy["experiment"] = cp.parse_dict(py_dict_copy["experiment"])
 
-        return update_method(super().parse_dict_with_units(py_dict_copy))
+        return super().parse_dict_with_units(py_dict_copy)
 
     def update_spectral_dimension_attributes_from_experiment(self):
         """Update the spectral dimension attributes of the method to match the
@@ -258,7 +261,7 @@ class Method(Parseable):
             item.json() for item in self.spectral_dimensions
         ]
 
-        named = True if temp_dict["name"] in named_methods else False
+        named = True if temp_dict["name"] in NAMED_METHODS else False
         for dim in temp_dict["spectral_dimensions"]:
             for ev in dim["events"]:
                 # remove event objects with global values.
@@ -284,6 +287,30 @@ class Method(Parseable):
             temp_dict["experiment"] = self.experiment.to_dict()
 
         return temp_dict
+
+    # def _get_symmetry_pathways(self, spin_system):
+    #     list_of_P = []
+    #     list_of_D = []
+    #     for dim in self.spectral_dimensions:
+    #         for ent in dim.events:
+    #             list_of_P.append(
+    #                 query_permutations(
+    #                     ent.transition_query.dict(),
+    #                     isotope=spin_system.get_isotopes(symbol=True),
+    #                     channel=[item.symbol for item in self.channels],
+    #                 )
+    #             )
+    #             if ent.transition_query.D is not None:
+    #                 list_of_D.append(
+    #                     query_permutations(
+    #                         ent.transition_query.dict(),
+    #                         isotope=spin_system.get_isotopes(symbol=True),
+    #                         channel=[item.symbol for item in self.channels],
+    #                         transition_symmetry="D",
+    #                     )
+    #                 )
+
+    #     return {"P": list_of_P, "D": list_of_D}
 
     def _get_transition_pathways(self, spin_system):
         all_transitions = spin_system._all_transitions()

@@ -11,6 +11,7 @@ import psutil
 from joblib import delayed
 from joblib import Parallel
 from mrsimulator import __version__
+from mrsimulator import methods as NamedMethods
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
@@ -30,6 +31,12 @@ __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 __CPU_count__ = psutil.cpu_count()
+
+__named_methods__ = [
+    val for k, val in NamedMethods.__dict__.items() if isinstance(val, type)
+]
+__method_names__ = [item.__name__ for item in __named_methods__]
+__sim_methods__ = {k: v for k, v in zip(__method_names__, __named_methods__)}
 
 
 class Simulator(BaseModel):
@@ -225,7 +232,16 @@ class Simulator(BaseModel):
 
         if "methods" in py_copy_dict:
             methods = py_copy_dict["methods"]
-            methods = [Method.parse_dict_with_units(obj) for obj in methods]
+            method_cls = [
+                Method
+                if obj["name"] not in __method_names__
+                else __sim_methods__[obj["name"]]
+                for obj in methods
+            ]
+
+            methods = [
+                fn.parse_dict_with_units(obj) for obj, fn in zip(methods, method_cls)
+            ]
             py_copy_dict["methods"] = methods
 
         return Simulator(**py_copy_dict)

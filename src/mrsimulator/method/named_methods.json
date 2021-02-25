@@ -1,0 +1,15 @@
+{
+    "named_methods": [
+        "BlochDecaySpectrum",
+        "BlochDecayCentralTransitionSpectrum",
+        "BlochDecayCTSpectrum",
+        "ThreeQ_VAS",
+        "FiveQ_VAS",
+        "SevenQ_VAS",
+        "ST1_VAS",
+        "ST2_VAS",
+        "SSB2D",
+        "Cosy",
+        "Inadequate"
+    ]
+}

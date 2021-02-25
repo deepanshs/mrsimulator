@@ -24,6 +24,9 @@ def expand_spectral_dimension_object(py_dict):
             for k in glb:
                 if k not in intersect:
                     ev[k] = glb[k]
+
+    _ = [py_dict.pop(item) for item in glb_keys]
+
     return py_dict
 
 

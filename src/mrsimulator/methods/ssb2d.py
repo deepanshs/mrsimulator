@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-from mrsimulator.method.named_method_updates import SSB2D_update
+import numpy as np
+from mrsimulator.method.spectral_dimension import SpectralDimension
 
-from . import base as bs
+from .base import BaseNamedMethod2D
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-def SSB2D(**kwargs):
+class SSB2D(BaseNamedMethod2D):
     r"""Simulating a sheared 2D finite to infinite speed MAS correlation spectum.
 
     For spin I=1/2, the infinite speed MAS is the isotropic dimension.
@@ -67,32 +68,57 @@ def SSB2D(**kwargs):
         >>> method.get_transition_pathways(sys)
         [|-0.5⟩⟨0.5| ⟶ |-0.5⟩⟨0.5|]
     """
-    name = "SSB2D"
 
-    spectral_dimensions = bs.check_for_spectral_dimensions(kwargs, 2)
-    bs.check_for_events(name, spectral_dimensions)
+    def __new__(cls, **kwargs):
+        # check for rotor frequency
+        if "spectral_dimensions" not in kwargs:
+            kwargs["spectral_dimensions"] = [{}, {}]
+        token = isinstance(kwargs["spectral_dimensions"][0], SpectralDimension)
+        error = f"`rotor_frequency` cannot be zero for {__class__.__name__} method."
 
-    # check for rotor frequency
-    error = f"`rotor_frequency` cannot be zero for {name} method."
-    if "rotor_frequency" not in kwargs:
-        raise ValueError(error)
-    if kwargs["rotor_frequency"] == 0:
-        raise ValueError(error)
+        if not token:
+            check = [
+                "rotor_frequency" not in ev
+                for item in kwargs["spectral_dimensions"]
+                if "events" in item
+                for ev in item["events"]
+            ]
+            if "rotor_frequency" not in kwargs and np.all(check):
+                raise ValueError(error)
+            if kwargs["rotor_frequency"] == 0:
+                raise ValueError(error)
 
-    spin_freq = kwargs["rotor_frequency"]
-    kwargs.pop("rotor_frequency")
+            rotor_frequency = kwargs.pop("rotor_frequency")
 
-    method = bs.Method2D(spectral_dimensions, name=name, **kwargs)
-    method.spectral_dimensions[0].events[0].rotor_frequency = spin_freq
-    method.spectral_dimensions[1].events[0].rotor_frequency = 1e9
+        method = super().__new__(cls, **kwargs)
 
-    # check that the spectral width for the first dimension is equal to
-    # spin frequency * count
-    # count = method.spectral_dimensions[0].count
-    # if method.spectral_dimensions[0].spectral_width != spin_freq * count:
-    #     raise ValueError(
-    #         "The spectral width along the dimension at index 0 must be equal to the "
-    #         "product of the `spin_frequency` and `count` of the dimension."
-    #     )
+        if not token:
+            # update rotor frequency for the first dimension to user defined speed.
+            method.spectral_dimensions[0].events[0].rotor_frequency = rotor_frequency
 
-    return SSB2D_update(method)
+        # check that the spectral width for the first dimension is equal to the product
+        # of rotor_frequency * count
+        # count = method.spectral_dimensions[0].count
+        # if method.spectral_dimensions[0].spectral_width != rotor_frequency * count:
+        #     raise ValueError(
+        #         "The spectral width along the dimension at index 0 must be equal to "
+        #         "the product of the `rotor_frequency` and dimension `count`."
+        #     )
+
+        return cls.update(method)
+
+    @staticmethod
+    def update(method):
+        # setting transition symmetry elements
+        for dim in method.spectral_dimensions:
+            dim.events[0].transition_query.P = {"channel-1": [[-1]]}
+            dim.events[0].transition_query.D = {"channel-1": [[0]]}
+
+        # method affine matrix
+        if method.affine_matrix is None:
+            method.affine_matrix = [1, -1, 0, 1]
+
+        # method description
+        method.description = "Simulate a 2D sideband separation method."
+
+        return method

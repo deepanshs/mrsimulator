@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
-from mrsimulator.method import Method
 from mrsimulator.method.transition_query import TransitionQuery
 from mrsimulator.methods import FiveQ_VAS
 from mrsimulator.methods import SevenQ_VAS
@@ -75,7 +74,32 @@ def test_3Q_VAS_general():
     assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
         P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
     )
-    assert Method.parse_dict_with_units(mth.json()) == mth
+    assert ThreeQ_VAS.parse_dict_with_units(mth.json()) == mth
+
+    assert np.allclose(mth.affine_matrix, [0.5625, 0.4375, 0.0, 1.0])
+
+    serialize = mth.json()
+    _ = serialize.pop("affine_matrix")
+    assert serialize == {
+        "channels": ["87Rb"],
+        "description": "Simulate a 3Q variable-angle spinning spectrum.",
+        "magnetic_flux_density": "9.4 T",
+        "name": "ThreeQ_VAS",
+        "rotor_angle": "0.955316618 rad",
+        "rotor_frequency": "1000000000000.0 Hz",
+        "spectral_dimensions": [
+            {
+                "count": 1024,
+                "reference_offset": "0.0 Hz",
+                "spectral_width": "25000.0 Hz",
+            },
+            {
+                "count": 1024,
+                "reference_offset": "0.0 Hz",
+                "spectral_width": "25000.0 Hz",
+            },
+        ],
+    }
 
 
 def test_5Q_VAS_general():
@@ -90,7 +114,35 @@ def test_5Q_VAS_general():
     assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
         P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
     )
-    assert Method.parse_dict_with_units(mth.json()) == mth
+    assert FiveQ_VAS.parse_dict_with_units(mth.json()) == mth
+
+    assert np.allclose(
+        mth.affine_matrix, [0.3243243243243243, 0.6756756756756757, 0.0, 1.0]
+    )
+
+    serialize = mth.json()
+    _ = serialize.pop("affine_matrix")
+
+    assert serialize == {
+        "channels": ["17O"],
+        "description": "Simulate a 5Q variable-angle spinning spectrum.",
+        "magnetic_flux_density": "9.4 T",
+        "name": "FiveQ_VAS",
+        "rotor_angle": "0.955316618 rad",
+        "rotor_frequency": "1000000000000.0 Hz",
+        "spectral_dimensions": [
+            {
+                "count": 1024,
+                "reference_offset": "0.0 Hz",
+                "spectral_width": "25000.0 Hz",
+            },
+            {
+                "count": 1024,
+                "reference_offset": "0.0 Hz",
+                "spectral_width": "25000.0 Hz",
+            },
+        ],
+    }
 
 
 def test_7Q_VAS_general():
@@ -105,4 +157,30 @@ def test_7Q_VAS_general():
     assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
         P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
     )
-    assert Method.parse_dict_with_units(mth.json()) == mth
+    assert SevenQ_VAS.parse_dict_with_units(mth.json()) == mth
+
+    assert np.allclose(mth.affine_matrix, [0.2184466, 0.7815534, 0.0, 1.0])
+
+    serialize = mth.json()
+    _ = serialize.pop("affine_matrix")
+
+    assert serialize == {
+        "channels": ["51V"],
+        "description": "Simulate a 7Q variable-angle spinning spectrum.",
+        "magnetic_flux_density": "9.4 T",
+        "name": "SevenQ_VAS",
+        "rotor_angle": "0.955316618 rad",
+        "rotor_frequency": "1000000000000.0 Hz",
+        "spectral_dimensions": [
+            {
+                "count": 1024,
+                "reference_offset": "0.0 Hz",
+                "spectral_width": "25000.0 Hz",
+            },
+            {
+                "count": 1024,
+                "reference_offset": "0.0 Hz",
+                "spectral_width": "25000.0 Hz",
+            },
+        ],
+    }
