@@ -1,0 +1,39 @@
+spinsys {
+  channels 1H
+  nuclei 1H 13C 29Si
+  jcoupling 1 2 200 0 0 0 0 0
+  jcoupling 1 3 300 0 0 0 0 0
+}
+
+par {
+  crystal_file     zcw20
+  variable dw      100
+
+  sw               1e6/dw
+  np               1024
+  proton_frequency 400e6
+  start_operator   I1x
+  detect_operator  I1p
+  method           direct
+  gamma_angles     1
+  spin_rate        0
+  verbose          1101
+}
+
+proc pulseq {} {
+  global par
+
+  for {set i 0} {$i < $par(np)} {incr i} {
+    acq
+    delay $par(dw)
+  }
+
+}
+
+proc main {} {
+  global par
+
+  set f [fsimpson]
+  faddlb $f 20 0
+  fsave $f $par(name).fid
+}

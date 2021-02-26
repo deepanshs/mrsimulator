@@ -30,17 +30,22 @@ Summary
     ~Method1D
     ~Method2D
 
-**Specialized methods**
+**Specialized 1D methods**
 
 .. autosummary::
     ~BlochDecaySpectrum
-    ~BlochDecayCentralTransitionSpectrum
+    ~BlochDecayCTSpectrum
+
+**Specialized 2D methods**
+
+.. autosummary::
     ~ThreeQ_VAS
     ~FiveQ_VAS
     ~SevenQ_VAS
     ~ST1_VAS
     ~ST2_VAS
     ~SSB2D
+    ~Cosy
 
 
 Table of contents
@@ -51,6 +56,7 @@ Table of contents
     methods/BlochDecaySpectrum
     methods/BlochDecayCTSpectrum
     methods/method2D
-    methods/MQVAS
+    methods/mqvas
     methods/stvas
-    methods/SSB2D
+    methods/ssb2d
+    methods/cosy

@@ -21,7 +21,7 @@ class AbstractAffineTransformation(AbstractOperation):
     dv_index: Union[int, list, tuple] = None  # if none apply to all
 
     @classmethod
-    def parse_dict_with_units(cls, py_dict):
+    def parse_dict_with_units(cls, py_dict: dict):
         obj = super().parse_dict_with_units(py_dict)
         return getattr(modules[__name__], py_dict["type"])(**obj.dict())
 

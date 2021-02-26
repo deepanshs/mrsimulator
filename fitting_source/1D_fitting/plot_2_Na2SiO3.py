@@ -24,7 +24,7 @@ import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
 from lmfit import Minimizer, report_fit
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
 
@@ -44,6 +44,9 @@ mpl.rcParams["grid.linestyle"] = "--"
 filename = "https://sandbox.zenodo.org/record/687656/files/Na2SiO3_O17.csdf"
 oxygen_experiment = cp.load(filename)
 
+# standard deviation of noise from the dataset
+sigma = 1212275
+
 # For spectral fitting, we only focus on the real part of the complex dataset
 oxygen_experiment = oxygen_experiment.real
 
@@ -51,7 +54,9 @@ oxygen_experiment = oxygen_experiment.real
 oxygen_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
 # Normalize the spectrum
-oxygen_experiment /= oxygen_experiment.max()
+max_amp = oxygen_experiment.max()
+oxygen_experiment /= max_amp
+sigma /= max_amp
 
 # plot of the dataset.
 ax = plt.subplot(projection="csdm")
@@ -100,7 +105,7 @@ system_object = [SpinSystem(sites=[s], abundance=50) for s in [O17_1, O17_2]]
 # get the count, spectral_width, and reference_offset information from the experiment.
 spectral_dims = get_spectral_dimensions(oxygen_experiment)
 
-method = BlochDecayCentralTransitionSpectrum(
+method = BlochDecayCTSpectrum(
     channels=["17O"],
     magnetic_flux_density=9.4,  # in T
     rotor_frequency=14000,  # in Hz
@@ -190,7 +195,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # difference vector between the simulation and experiment, based on
 # the parameters update. You may use this function directly as the argument of the
 # LMFIT Minimizer class, as follows,
-minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor))
+minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
 report_fit(result)
 

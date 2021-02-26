@@ -68,10 +68,20 @@ def parse_spectral_dimensions(spectral_dimensions):
                     t_query = evt["transition_query"]
                     if "P" in t_query.keys():
                         if isinstance(t_query["P"], list):
-                            t_query["P"] = {"channel-1": [[i] for i in t_query["P"]]}
+                            t_query["P"] = {
+                                "channel-1": [
+                                    [i] if not isinstance(i, (list, tuple)) else i
+                                    for i in t_query["P"]
+                                ]
+                            }
                     if "D" in t_query.keys():
                         if isinstance(t_query["D"], list):
-                            t_query["D"] = {"channel-1": [[i] for i in t_query["D"]]}
+                            t_query["D"] = {
+                                "channel-1": [
+                                    [i] if not isinstance(i, (list, tuple)) else i
+                                    for i in t_query["D"]
+                                ]
+                            }
     return spectral_dimensions
 
 
@@ -96,8 +106,8 @@ def generate_method_from_template(template, docstring=""):
 
         if common != set():
             info = "`, `".join(list(common))
-            e = f"`{info}` attribute cannot be modified for {prep['name']} method."
-            raise AttributeError(e)
+            e = f"`{info}` value cannot be modified for {prep['name']} method."
+            raise ValueError(e)
 
         dim = []
         n_sp = len(spectral_dimensions)
@@ -144,7 +154,7 @@ def generate_method_from_template(template, docstring=""):
         return method
 
     @classmethod
-    def parse_dict_with_units(cls, py_dict):
+    def parse_dict_with_units(cls, py_dict: dict):
         """
         Parse the physical quantities of the method object from as a python dictionary.
 

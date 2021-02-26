@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from .base import BlochDecayCentralTransitionSpectrum  # noqa:F401
+from .base import BlochDecayCTSpectrum  # noqa:F401
 from .base import BlochDecaySpectrum  # noqa:F401
 from .base import Method1D  # noqa:F401
 from .base import Method2D  # noqa:F401
+from .cosy import Cosy  # noqa:F401
 from .mqvas import FiveQ_VAS  # noqa:F401
 from .mqvas import SevenQ_VAS  # noqa:F401
 from .mqvas import ThreeQ_VAS  # noqa:F401

@@ -2,7 +2,7 @@
 //
 //  config.h
 //
-//  @copyright Deepansh J. Srivastava, 2019-2020.
+//  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava, Aug 10, 2019
 //  Contact email = srivastava.89@osu.edu
 //
@@ -51,9 +51,11 @@ typedef float complex64[2];
 #define __blas_activate
 #include "vm.h"
 
+void openblas_set_num_threads(int num_threads);
+
 // user definition
-#define PI2 6.2831853072
-#define PI2I PI2 *I
+#define TWO_PI 6.2831853072
+#define IOTA_TWO_PI TWO_PI *I
 
 // #ifdef linux
 // #include "mkl.h"

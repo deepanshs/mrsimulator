@@ -52,14 +52,24 @@ sas = Method2D(
             "spectral_width": 3.5e4,  # in Hz
             "reference_offset": 1e3,  # in Hz
             "label": "90 dimension",
-            "events": [{"rotor_angle": 90 * 3.14159 / 180}],  # in radians
+            "events": [
+                {
+                    "rotor_angle": 90 * 3.14159 / 180,
+                    "transition_query": {"P": [-1], "D": [0]},
+                }
+            ],  # in radians
         },
         {
             "count": 256,
             "spectral_width": 22e3,  # in Hz
             "reference_offset": -4e3,  # in Hz
             "label": "MAS dimension",
-            "events": [{"rotor_angle": 54.74 * 3.14159 / 180}],  # in radians
+            "events": [
+                {
+                    "rotor_angle": 54.74 * 3.14159 / 180,
+                    "transition_query": {"P": [-1], "D": [0]},
+                }
+            ],  # in radians
         },
     ],
 )

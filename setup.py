@@ -181,12 +181,12 @@ print(extra_link_args)
 source = [
     "src/c_lib/lib/angular_momentum.c",
     "src/c_lib/lib/interpolation.c",
+    "src/c_lib/lib/method.c",
     "src/c_lib/lib/mrsimulator.c",
     "src/c_lib/lib/octahedron.c",
-    "src/c_lib/lib/simulation.c",
     "src/c_lib/lib/powder_setup.c",
     "src/c_lib/lib/schemes.c",
-    "src/c_lib/lib/method.c",
+    "src/c_lib/lib/simulation.c",
 ]
 
 ext = ".pyx" if USE_CYTHON else ".c"

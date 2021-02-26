@@ -2,7 +2,7 @@
 #
 #  test.pxd
 #
-#  @copyright Deepansh J. Srivastava, 2019-2020.
+#  @copyright Deepansh J. Srivastava, 2019-2021.
 #  Created by Deepansh J. Srivastava.
 #  Contact email = srivastava.89@osu.edu
 #
@@ -41,7 +41,7 @@ cdef extern from "angular_momentum.h":
 
 
 cdef extern from "powder_setup.h":
-    void octahedron_averaging_setup(
+    void averaging_setup(
         int nt,
         double complex *exp_I_alpha,
         double complex *exp_I_beta,
@@ -93,8 +93,8 @@ cdef extern from "mrsimulator.h":
 #         bool_t allow_fourth_rank)
 
 
-cdef extern from "isotopomer_ravel.h":
-    ctypedef struct isotopomer_ravel:
+cdef extern from "object_struct.h":
+    ctypedef struct site_struct:
         int number_of_sites;                    # Number of sites
         float *spin;                            # The spin quantum number
         double *gyromagnetic_ratio;             # Larmor frequency (MHz)
@@ -105,10 +105,6 @@ cdef extern from "isotopomer_ravel.h":
         double *quadrupolar_Cq_in_Hz;     # Quadrupolar coupling constant (Hz)
         double *quadrupolar_eta;          # Quadrupolar asymmetry parameter
         double *quadrupolar_orientation;        # Quadrupolar PAS to CRS euler angles (rad.)
-        double *dipolar_couplings;              # dipolar coupling stored as list of lists
-
-    ctypedef struct isotopomers_list:
-        isotopomer_ravel *isotopomers
 
 cdef extern from "method.h":
     ctypedef struct MRS_event:
@@ -117,14 +113,14 @@ cdef extern from "method.h":
         double rotor_angle_in_rad          # The rotor angle in radians.
         double sample_rotation_frequency_in_Hz # The sample rotation frequency in Hz.
 
-    ctypedef struct MRS_sequence:
+    ctypedef struct MRS_dimension:
         int count                       #  The number of coordinates along the dimension.
         double increment                # Increment of coordinates along the dimension.
         double coordinates_offset       #  Start coordinate of the dimension.
         MRS_event *events               # Holds a list of events.
         unsigned int n_events           # The number of events.
 
-    # MRS_sequence *MRS_create_sequences(
+    # MRS_dimension *MRS_create_dimensions(
     #     MRS_averaging_scheme *scheme,
     #     int count,
     #     double coordinates_offset,
@@ -143,8 +139,8 @@ cdef extern from "simulation.h":
         double spectral_increment,
         int number_of_points,
 
-        isotopomer_ravel *ravel_isotopomer,
-        MRS_sequence *the_sequence[],            # the sequences in the method.
+        site_struct *sites,
+        MRS_dimension *dimensions[],            # the dimensions in the method.
 
         int quad_second_order,                    # Quad theory for second order,
         bool_t remove_2nd_order_quad_isotropic,   # remove the isotropic contribution from the

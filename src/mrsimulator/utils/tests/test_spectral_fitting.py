@@ -8,7 +8,7 @@ import pytest
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.methods import BlochDecayCTSpectrum
 
 # from lmfit import Parameters
 
@@ -235,7 +235,7 @@ def test_6():
     sys = SpinSystem(sites=[site], abundance=100)
     sim = Simulator()
     sim.spin_systems.append(sys)
-    sim.methods = [BlochDecayCentralTransitionSpectrum(channels=["23Na"])]
+    sim.methods = [BlochDecayCTSpectrum(channels=["23Na"])]
     sim.methods[0].experiment = cp.as_csdm(np.zeros(1024))
 
     processor = sp.SignalProcessor(
