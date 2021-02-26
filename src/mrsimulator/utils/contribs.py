@@ -17,14 +17,14 @@ SITE_KEYWORDS = {
 
 
 def parse_sites(site):
+    if site.shielding_symmetric is not None:
+        site.shielding_symmetric.zeta *= -1
     site_ = flatten_dict(site.json())
     dict_ = {"ChemicalShift": {}, "Quadrupolar": {}}
     for k, v in site_.items():
         new_key = SITE_KEYWORDS[k] if k in SITE_KEYWORDS else k
         if "shielding_symmetric" in k:
-            dict_["ChemicalShift"][new_key] = (
-                f"-{site_[k]}" if "zeta" in k else site_[k]
-            )
+            dict_["ChemicalShift"][new_key] = site_[k]
         elif "quadrupolar" in k:
             dict_["Quadrupolar"][new_key] = site_[k]
         elif "isotropic_chemical_shift" in k:
@@ -54,14 +54,14 @@ def parse_method(method):
     }
 
 
-def contribs_data(sim, project, chemical_formula=None, identifier=None, exp_dict={}):
+def contribs_data(sim, project, composition=None, identifier=None, exp_dict={}):
     """Generate mpcontribs cards for every site in the Simulator object.
 
     Arguments
     ---------
         sim: Simulator object from where the sites are extracted.
         project: mpcontribs project name.
-        chemical_formula: Chemical formula for the sample (optional).
+        composition: Chemical composition for the sample (optional).
         identifier: The mp-id of the sample (optional).
         exp_dict: Additional metadata to use in contribs card.
 
@@ -83,11 +83,11 @@ def contribs_data(sim, project, chemical_formula=None, identifier=None, exp_dict
             card = {
                 "data": data,
                 "project": project,
-                "formula": chemical_formula,
+                "composition": composition,
                 "identifier": identifier,
             }
-            if chemical_formula is None:
-                card.pop("formula")
+            if composition is None:
+                card.pop("composition")
             if identifier is None:
                 card.pop("identifier")
             contrib.append(card)
