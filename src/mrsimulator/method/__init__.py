@@ -236,23 +236,16 @@ class Method(Parseable):
         Returns:
             A python dict object.
         """
-        mth = {}
 
-        for en in ["name", "label", "description"]:
-            value = self.__getattribute__(en)
-            mth[en] = None if value is None else value
-
-        # add channels
+        mth = {_: self.__getattribute__(_) for _ in ["name", "label", "description"]}
         mth["channels"] = [item.json() for item in self.channels]
+        mth["spectral_dimensions"] = [item.json() for item in self.spectral_dimensions]
 
         # add global parameters
         ev0 = self.spectral_dimensions[0].events[0]
         evt_d = Event.property_default_units
         global_ = {k: f"{ev0.__getattribute__(k)} {u}" for k, u in evt_d.items()}
         mth.update(global_)
-
-        # add spectral dimensions
-        mth["spectral_dimensions"] = [item.json() for item in self.spectral_dimensions]
 
         named = True if mth["name"] in NAMED_METHODS else False
         for dim in mth["spectral_dimensions"]:
