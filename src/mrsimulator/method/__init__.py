@@ -15,6 +15,7 @@ from mrsimulator.transition import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
 
+from .event import Event
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
 from .utils import D_symmetry_indexes
@@ -250,11 +251,9 @@ class Method(Parseable):
 
         # add global parameters
         ev0 = self.spectral_dimensions[0].events[0]
-        list_g = ["magnetic_flux_density", "rotor_frequency", "rotor_angle"]
-        unit_g = ["T", "Hz", "rad"]
-        global_ = [f"{ev0.__getattribute__(k)} {u}" for k, u in zip(list_g, unit_g)]
-        for key, val in zip(list_g, global_):
-            temp_dict[key] = val
+        evt_d = Event.property_default_units
+        global_ = {k: f"{ev0.__getattribute__(k)} {u}" for k, u in evt_d.items()}
+        temp_dict.update(global_)
 
         # add spectral dimensions
         temp_dict["spectral_dimensions"] = [
@@ -265,8 +264,7 @@ class Method(Parseable):
         for dim in temp_dict["spectral_dimensions"]:
             for ev in dim["events"]:
                 # remove event objects with global values.
-                for key, val in zip(list_g, global_):
-                    _ = ev.pop(key) if ev[key] == val else 0
+                _ = [ev.pop(k) if ev[k] == v else 0 for k, v in global_.items()]
 
                 # remove transition query objects for named methods
                 _ = ev.pop("transition_query") if named else 0
@@ -287,6 +285,20 @@ class Method(Parseable):
             temp_dict["experiment"] = self.experiment.to_dict()
 
         return temp_dict
+
+    # def _simplify_events_json(self, py_dict):
+    #     named = True if py_dict["name"] in NAMED_METHODS else False
+    #     for dim in py_dict["spectral_dimensions"]:
+    #         for ev in dim["events"]:
+    #             # remove event objects with global values.
+    #             for key, val in zip(list_g, global_):
+    #                 _ = ev.pop(key) if ev[key] == val else 0
+
+    #             # remove transition query objects for named methods
+    #             _ = ev.pop("transition_query") if named else 0
+
+    #         if dim["events"] == [{} for _ in range(len(dim["events"]))]:
+    #             dim.pop("events")
 
     # def _get_symmetry_pathways(self, spin_system):
     #     list_of_P = []

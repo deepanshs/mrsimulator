@@ -495,10 +495,11 @@ class Simulator(BaseModel):
             if isinstance(amp[0], np.ndarray):
                 simulated_data = [np.asarray(amp).sum(axis=0)]
 
-            if pack_as_csdm:
-                method.simulation = self._as_csdm_object(simulated_data, method)
-            else:
-                method.simulation = np.asarray(simulated_data)
+            method.simulation = (
+                self._as_csdm_object(simulated_data, method)
+                if pack_as_csdm
+                else np.asarray(simulated_data)
+            )
 
     def save(self, filename: str, with_units: bool = True):
         """Serialize the simulator object to a JSON file.

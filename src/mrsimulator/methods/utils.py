@@ -67,25 +67,28 @@ def parse_spectral_dimensions(spectral_dimensions):
     for dim in spectral_dimensions:
         if "events" in dim.keys():
             for evt in dim["events"]:
-                if "transition_query" in evt.keys():
-                    t_query = evt["transition_query"]
-                    if "P" in t_query.keys():
-                        if isinstance(t_query["P"], list):
-                            t_query["P"] = {
-                                "channel-1": [
-                                    [i] if not isinstance(i, (list, tuple)) else i
-                                    for i in t_query["P"]
-                                ]
-                            }
-                    if "D" in t_query.keys():
-                        if isinstance(t_query["D"], list):
-                            t_query["D"] = {
-                                "channel-1": [
-                                    [i] if not isinstance(i, (list, tuple)) else i
-                                    for i in t_query["D"]
-                                ]
-                            }
+                parse_events(evt)
     return spectral_dimensions
+
+
+def parse_events(evt):
+    if "transition_query" not in evt.keys():
+        return
+
+    t_query = evt["transition_query"]
+    if "P" in t_query.keys():
+        t_query["P"] = parse_transition_query(t_query["P"])
+
+    if "D" in t_query.keys():
+        t_query["D"] = parse_transition_query(t_query["D"])
+
+
+def parse_transition_query(query):
+    if not isinstance(query, list):
+        return query
+    return {
+        "channel-1": [[i] if not isinstance(i, (list, tuple)) else i for i in query]
+    }
 
 
 def generate_method_from_template(template, docstring=""):
