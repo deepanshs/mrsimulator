@@ -56,14 +56,24 @@ maf = Method2D(
             "count": 128,
             "spectral_width": 2e4,  # in Hz
             "label": "Anisotropic dimension",
-            "events": [{"rotor_angle": 90 * 3.14159 / 180}],
+            "events": [
+                {
+                    "rotor_angle": 90 * 3.14159 / 180,
+                    "transition_query": {"P": [-1], "D": [0]},
+                }
+            ],
         },
         {
             "count": 128,
             "spectral_width": 3e3,  # in Hz
             "reference_offset": -1.05e4,  # in Hz
             "label": "Isotropic dimension",
-            "events": [{"rotor_angle": 54.735 * 3.14159 / 180}],
+            "events": [
+                {
+                    "rotor_angle": 54.735 * 3.14159 / 180,
+                    "transition_query": {"P": [-1], "D": [0]},
+                }
+            ],
         },
     ],
     affine_matrix=[[1, -1], [0, 1]],

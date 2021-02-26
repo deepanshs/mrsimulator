@@ -57,7 +57,7 @@ qmat = SSB2D(
         {
             "count": 512,
             "spectral_width": 50000,  # in Hz
-            "label": "High speed MAS dimension",
+            "label": "Fast MAS dimension",
         },
     ],
 )

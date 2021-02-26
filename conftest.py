@@ -7,14 +7,17 @@ import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.apodization as apo
 import numpy as np
 import pytest
+from mrsimulator import Coupling
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.models import ExtCzjzekDistribution
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.transition import Transition
+from mrsimulator.transition import TransitionPathway
 
 font = {"weight": "light", "size": 9}
 matplotlib.rc("font", **font)
@@ -38,6 +41,7 @@ def add_site(doctest_namespace):
     doctest_namespace["SpinSystem"] = SpinSystem
     doctest_namespace["Simulator"] = Simulator
     doctest_namespace["Site"] = Site
+    doctest_namespace["Coupling"] = Coupling
     doctest_namespace["SymmetricTensor"] = SymmetricTensor
     doctest_namespace["st"] = SymmetricTensor
     doctest_namespace["pprint"] = pprint
@@ -51,6 +55,13 @@ def add_site(doctest_namespace):
         shielding_symmetric=SymmetricTensor(zeta=10, eta=0.5),
     )
     doctest_namespace["site1"] = site1
+
+    coupling1 = Coupling(
+        site_index=[0, 1],
+        isotropic_j=20,
+        j_symmetric=SymmetricTensor(zeta=10, eta=0.5),
+    )
+    doctest_namespace["coupling1"] = coupling1
 
     site2 = Site(
         isotope="1H",
@@ -114,7 +125,7 @@ def add_site(doctest_namespace):
         SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)
     ]
 
-    method = BlochDecayCentralTransitionSpectrum(
+    method = BlochDecayCTSpectrum(
         channels=["17O"],
         rotor_frequency=14000,
         spectral_dimensions=[{"count": 2048, "spectral_width": 50000}],
@@ -125,3 +136,13 @@ def add_site(doctest_namespace):
     sim_coesite.methods += [method]
 
     doctest_namespace["sim_coesite"] = sim_coesite
+
+    # Transitions
+    t1 = Transition(initial=[0.5, 0.5], final=[0.5, -0.5])
+    doctest_namespace["t1"] = t1
+
+    t2 = Transition(initial=[0.5, 0.5], final=[-0.5, 0.5])
+    doctest_namespace["t2"] = t2
+
+    path = TransitionPathway([t1, t2])
+    doctest_namespace["path"] = path

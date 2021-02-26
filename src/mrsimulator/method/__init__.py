@@ -9,7 +9,7 @@ import csdmpy as cp
 import numpy as np
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import Transition
-from mrsimulator.transition.transition_list import TransitionPathway
+from mrsimulator.transition import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
 
@@ -216,9 +216,16 @@ class Method(Parseable):
             spectral_dims[i].reference_offset = dim.coordinates_offset.to("Hz").value
             spectral_dims[i].origin_offset = dim.origin_offset.to("Hz").value
 
-    def json(self):
-        """
-        Parse the class object to a JSON compliant python dictionary object where
+    def dict(self, **kwargs):
+        temp_dict = super().dict(**kwargs)
+        if self.simulation is not None:
+            temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
+        if self.experiment is not None and isinstance(self.experiment, cp.CSDM):
+            temp_dict["experiment"] = self.experiment.to_dict()
+        return temp_dict
+
+    def json(self) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object, where
         the attribute value with physical quantity is expressed as a string with a
         value and a unit.
 
@@ -278,25 +285,17 @@ class Method(Parseable):
 
         return temp_dict
 
-    def dict(self, **kwargs):
-        temp_dict = super().dict(**kwargs)
-        if self.simulation is not None:
-            temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
-        if self.experiment is not None and isinstance(self.experiment, cp.CSDM):
-            temp_dict["experiment"] = self.experiment.to_dict()
-        return temp_dict
-
     def _get_transition_pathways(self, spin_system):
         all_transitions = spin_system._all_transitions()
 
         segments = []
-        for seq in self.spectral_dimensions:
-            for ent in seq.events:
+        for dim in self.spectral_dimensions:
+            for ent in dim.events:
                 # query the transitions for P symmetry
                 selected_transitions = all_transitions[:]
                 list_of_P = query_permutations(
                     ent.transition_query.dict(),
-                    isotope=spin_system.get_isotopes(),
+                    isotope=spin_system.get_isotopes(symbol=True),
                     channel=[item.symbol for item in self.channels],
                 )
                 indexes = P_symmetry_indexes(selected_transitions, list_of_P)
@@ -306,7 +305,7 @@ class Method(Parseable):
                 if ent.transition_query.D is not None:
                     list_of_D = query_permutations(
                         ent.transition_query.dict(),
-                        isotope=spin_system.get_isotopes(),
+                        isotope=spin_system.get_isotopes(symbol=True),
                         channel=[item.symbol for item in self.channels],
                         transition_symmetry="D",
                     )

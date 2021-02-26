@@ -35,8 +35,7 @@ class Site(Parseable):
         >>> site = Site(isotope='2H')
 
     isotropic_chemical_shift: float (optional).
-        The value is the isotropic chemical shift of the site in the unit of ppm. The
-        default value is 0.
+        The isotropic chemical shift of the site in ppm. The default value is 0.
 
         Example
         -------
@@ -44,7 +43,7 @@ class Site(Parseable):
         >>> site.isotropic_chemical_shift = 43.3
 
     shielding_symmetric: :ref:`sy_api` or equivalent dict object (optional).
-        The value of this attribute represents the irreducible second-rank traceless
+        The attribute represents the parameters of the irreducible second-rank traceless
         symmetric part of the nuclear shielding tensor. The default value is None.
 
         The allowed attributes of the :ref:`sy_api` class for `shielding_symmetric` are
@@ -57,29 +56,30 @@ class Site(Parseable):
         -------
 
         >>> site.shielding_symmetric = {'zeta': 10, 'eta': 0.5}
+
         >>> # or equivalently
         >>> site.shielding_symmetric = SymmetricTensor(zeta=10, eta=0.5)
 
     shielding_antisymmetric: :ref:`asy_api` or equivalent dict object (optional).
-        The value of this attribute represents the irreducible first-rank antisymmetric
-        part of the nuclear shielding tensor. The default value is None.
+        The attribute represents the parameters of the irreducible first-rank
+        antisymmetric part of the nuclear shielding tensor. The default value is None.
 
         The allowed attributes of the :ref:`asy_api` class for
         `shielding_antisymmetric` are ``zeta``, ``alpha``, and ``beta``, where ``zeta``
-        is the anisotropy parameter of the anti-symmetric first-rank tensor given in
-        ppm. The angles ``alpha`` and ``beta`` are in radians.
+        is the anisotropy parameter, in ppm, of the anti-symmetric first-rank tensor.
+        The angles ``alpha`` and ``beta`` are in radians.
 
         Example
         -------
 
         >>> site.shielding_antisymmetric = {'zeta': 20}
+
         >>> # or equivalently
         >>> site.shielding_antisymmetric = AntisymmetricTensor(zeta=20)
 
     quadrupolar: :ref:`sy_api` or equivalent dict object (optional).
-        The value of this attribute represents the irreducible second-rank traceless
-        symmetric part of the electric-field gradient tensor. The default value is
-        None.
+        The attribute represents the parameters of the traceless irreducible second-rank
+        symmetric part of the electric-field gradient tensor. The default value is None.
 
         The allowed attributes of the :ref:`sy_api` class for `quadrupolar` are ``Cq``,
         ``eta``, ``alpha``, ``beta``, and ``gamma``, where ``Cq`` is the quadrupolar
@@ -90,11 +90,12 @@ class Site(Parseable):
         -------
 
         >>> site.quadrupolar = {'Cq': 3.2e6, 'eta': 0.52}
+
         >>> # or equivalently
         >>> site.quadrupolar = SymmetricTensor(Cq=3.2e6, eta=0.52)
 
     name: str (optional).
-        The value is the name or id of the site. The default value is None.
+        The name or id of the site. The default value is None.
 
         Example
         -------
@@ -104,7 +105,7 @@ class Site(Parseable):
         '2H-0'
 
     label: str (optional).
-        The value is a label for the site. The default value is None.
+        The label for the site. The default value is None.
 
         Example
         -------
@@ -114,7 +115,7 @@ class Site(Parseable):
         'Quad site'
 
     description: str (optional).
-        The value is a description of the site. The default value is None.
+        A description of the site. The default value is None.
 
         Example
         -------
@@ -126,7 +127,7 @@ class Site(Parseable):
     Example
     -------
 
-    The following are a few examples of setting the site object.
+    The following are a few examples of the site object.
 
     >>> site1 = Site(
     ...     isotope='33S',
@@ -154,7 +155,7 @@ class Site(Parseable):
     label: str = None
     description: str = None
     isotope: str = "1H"
-    isotropic_chemical_shift: float = 0
+    isotropic_chemical_shift: float = 0.0
     shielding_symmetric: SymmetricTensor = None
     shielding_antisymmetric: AntisymmetricTensor = None
     quadrupolar: SymmetricTensor = None
@@ -170,19 +171,23 @@ class Site(Parseable):
         isotope = values["isotope"]
         isotope = Isotope(**isotope) if isinstance(isotope, dict) else isotope
         spin_I = isotope.spin
-        if spin_I >= 1:
-            if "zeta" in v.property_units:
-                v.property_units.pop("zeta")
-            return v
-        message = (
-            f"with spin quantum number {spin_I} does not allow quadrupolar tensor."
-        )
-        raise ValueError(f"{isotope} {message}")
+        if spin_I < 1:
+            message = (
+                f"with spin quantum number {spin_I} does not allow quadrupolar tensor."
+            )
+            raise ValueError(f"{isotope} {message}")
+        _ = [
+            v.property_units.pop(item) if item in v.property_units else None
+            for item in ["D", "zeta"]
+        ]
+        return v
 
-    @validator("shielding_symmetric")
-    def shielding_symmetric_must_not_contain_Cq(cls, v, values):
-        if "Cq" in v.property_units:
-            v.property_units.pop("Cq")
+    @validator("shielding_symmetric", "shielding_antisymmetric")
+    def shielding_symmetric_must_not_contain_Cq_and_D(cls, v, values):
+        _ = [
+            v.property_units.pop(item) if item in v.property_units else None
+            for item in ["Cq", "D"]
+        ]
         return v
 
     @validator("isotope", always=True)
@@ -193,7 +198,7 @@ class Site(Parseable):
         validate_assignment = True
 
     @classmethod
-    def parse_dict_with_units(cls, py_dict):
+    def parse_dict_with_units(cls, py_dict: dict):
         """
         Parse the physical quantity from a dictionary representation of the Site
         object, where the physical quantity is expressed as a string with a number and
@@ -234,47 +239,48 @@ class Site(Parseable):
             py_dict["quadrupolar"]["Cq"] = f"{value} MHz"
         return py_dict
 
-    def to_freq_dict(self, B0):
-        """
-        Serialize the Site object to a JSON compliant python dictionary object, where
-        the attribute value is a number expressed in the attribute's default unit.
-        The default unit for the attributes with respective dimensionalities is:
+    # Deprecated
+    # def to_freq_dict(self, B0):
+    #     """
+    #     Serialize the Site object to a JSON compliant python dictionary object, where
+    #     the attribute value is a number expressed in the attribute's default unit.
+    #     The default unit for the attributes with respective dimensionalities is:
 
-        - frequency: ``Hz``
-        - angle: ``rad``
+    #     - frequency: ``Hz``
+    #     - angle: ``rad``
 
-        Args:
-            float B0: A required macroscopic magnetic flux density in units of T.
+    #     Args:
+    #         float B0: A required macroscopic magnetic flux density in units of T.
 
-        Return:
-            Python dict object.
+    #     Return:
+    #         Python dict object.
 
-        Example
-        -------
+    #     Example
+    #     -------
 
-        >>> pprint(site1.to_freq_dict(B0=9.4))
-        {'description': None,
-         'isotope': '13C',
-         'isotropic_chemical_shift': -2013.1791999999998,
-         'label': None,
-         'name': None,
-         'quadrupolar': None,
-         'shielding_antisymmetric': None,
-         'shielding_symmetric': {'alpha': None,
-                                 'beta': None,
-                                 'eta': 0.5,
-                                 'gamma': None,
-                                 'zeta': -1006.5895999999999}}
-        """
-        temp_dict = self.dict(exclude={"isotope"})
-        temp_dict["isotope"] = self.isotope.symbol
-        larmor_frequency = -self.isotope.gyromagnetic_ratio * B0  # in MHz
-        for k in ["shielding_symmetric", "shielding_antisymmetric", "quadrupolar"]:
-            if getattr(self, k):
-                temp_dict[k] = getattr(self, k).to_freq_dict(larmor_frequency)
-                if k == "shielding_symmetric":
-                    temp_dict[k].pop("Cq")
+    #     >>> pprint(site1.to_freq_dict(B0=9.4))
+    #     {'description': None,
+    #      'isotope': '13C',
+    #      'isotropic_chemical_shift': -2013.1791999999998,
+    #      'label': None,
+    #      'name': None,
+    #      'quadrupolar': None,
+    #      'shielding_antisymmetric': None,
+    #      'shielding_symmetric': {'alpha': None,
+    #                              'beta': None,
+    #                              'eta': 0.5,
+    #                              'gamma': None,
+    #                              'zeta': -1006.5895999999999}}
+    #     """
+    #     temp_dict = self.dict(exclude={"isotope"})
+    #     temp_dict["isotope"] = self.isotope.symbol
+    #     larmor_frequency = -self.isotope.gyromagnetic_ratio * B0  # in MHz
+    #     for k in ["shielding_symmetric", "shielding_antisymmetric", "quadrupolar"]:
+    #         if getattr(self, k):
+    #             temp_dict[k] = getattr(self, k).to_freq_dict(larmor_frequency)
+    #             if k == "shielding_symmetric":
+    #                 temp_dict[k].pop("Cq")
 
-        temp_dict["isotropic_chemical_shift"] *= larmor_frequency
-        temp_dict.pop("property_units")
-        return temp_dict
+    #     temp_dict["isotropic_chemical_shift"] *= larmor_frequency
+    #     temp_dict.pop("property_units")
+    #     return temp_dict

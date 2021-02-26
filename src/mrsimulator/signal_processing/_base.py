@@ -14,7 +14,10 @@ class AbstractOperation(Parseable):
     def function(self):
         return self.__class__.__name__
 
-    def json(self):
+    def json(self) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object, where
+        the attribute value with physical quantity is expressed as a string with a
+        value and a unit."""
         my_dict = super().json()
         my_dict["function"] = self.function
         if hasattr(self, "type"):
@@ -37,7 +40,7 @@ class AbstractOperation(Parseable):
             return np.asarray(indexes)
 
     @classmethod
-    def parse_dict_with_units(cls, py_dict):
+    def parse_dict_with_units(cls, py_dict: dict):
         """Parse dictionary for SignalProcessor
 
         Args:

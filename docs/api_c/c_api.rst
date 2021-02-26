@@ -11,7 +11,7 @@ C-API References
    spin_transition_function
    spatial_orientation_tensor
    frequency_tensor
-   angular_momentum
 
+.. angular_momentum
 .. struct/MRS_averaging_scheme
 .. struct/MRS_plan

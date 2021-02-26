@@ -91,12 +91,28 @@ das = Method2D(
         {
             **spectral_dims[0],
             "events": [
-                {"fraction": 0.5, "rotor_angle": 37.38 * 3.14159 / 180},
-                {"fraction": 0.5, "rotor_angle": 79.19 * 3.14159 / 180},
+                {
+                    "fraction": 0.5,
+                    "rotor_angle": 37.38 * 3.14159 / 180,
+                    "transition_query": {"P": [-1], "D": [0]},
+                },
+                {
+                    "fraction": 0.5,
+                    "rotor_angle": 79.19 * 3.14159 / 180,
+                    "transition_query": {"P": [-1], "D": [0]},
+                },
             ],
         },
         # The last spectral dimension block is the direct-dimension
-        {**spectral_dims[1], "events": [{"rotor_angle": 54.735 * 3.14159 / 180}]},
+        {
+            **spectral_dims[1],
+            "events": [
+                {
+                    "rotor_angle": 54.735 * 3.14159 / 180,
+                    "transition_query": {"P": [-1], "D": [0]},
+                }
+            ],
+        },
     ],
     experiment=experiment,  # also add the measurement to the method.
 )

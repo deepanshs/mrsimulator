@@ -46,7 +46,7 @@ def SSB2D_setup(ist, vr, method_type):
                     "count": 2048,
                     "spectral_width": 2e4,  # in Hz
                     "reference_offset": 5e3,  # in Hz
-                    "label": "High speed MAS dimension",
+                    "label": "Fast MAS dimension",
                 },
             ],
         )
@@ -66,7 +66,7 @@ def SSB2D_setup(ist, vr, method_type):
                     "count": 2048,
                     "spectral_width": 2e4,  # in Hz
                     "reference_offset": 5e3,  # in Hz
-                    "label": "High speed MAS dimension",
+                    "label": "Fast MAS dimension",
                 },
             ],
             affine_matrix=np.asarray([1, -1, 0, 1]).reshape(2, 2),

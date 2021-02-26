@@ -2,17 +2,17 @@
 
 .. _using_objects:
 
-===================================================
-Getting started with ``mrsimulator``: Using objects
-===================================================
+=========================
+The Basics: Using objects
+=========================
 
-In the previous section on getting started, we show an example where we parse the
+In the previous section on getting started, we show an examples where we parse the
 python dictionaries to create instances of the :ref:`spin_sys_api` and
 :ref:`method_api` objects. In this section, we'll illustrate how we can
 achieve the same result using the core ``mrsimulator`` objects.
 
 .. note::
-    Unlike python dictionary objects from our last example, when using ``mrsimulator``
+    Unlike python dictionary objects from previous examples, when using ``mrsimulator``
     objects, the attribute value is given as a number rather than a string with a
     number and a unit. We assume default units for the class attributes. To learn more
     about the default units, please refer to the documentation of the respective class.
@@ -82,7 +82,7 @@ the isotropic chemical shift assume their default value.
     :include-source:
 
     >>> C13A.isotropic_chemical_shift # value is given in ppm
-    0
+    0.0
 
 Here, the isotropic chemical shift is given in ppm. This information is also
 present in the ``property_units`` attribute of the instance. For example,
@@ -461,24 +461,20 @@ see the list of transition pathways, for example,
 
     >>> from pprint import pprint
     >>> pprint(sim.methods[0].get_transition_pathways(system_4)) # 17O
-    [TransitionPathway(|-2.5⟩⟨-1.5|),
-     TransitionPathway(|-1.5⟩⟨-0.5|),
-     TransitionPathway(|-0.5⟩⟨0.5|),
-     TransitionPathway(|0.5⟩⟨1.5|),
-     TransitionPathway(|1.5⟩⟨2.5|)]
+    [|-2.5⟩⟨-1.5|, |-1.5⟩⟨-0.5|, |-0.5⟩⟨0.5|, |0.5⟩⟨1.5|, |1.5⟩⟨2.5|]
 
 Notice, there are five transition pathways for the :math:`^{17}\text{O}` site, one
 associated with the central-transition, two with the inner-satellites, and two with
 the outer-satellites. For central transition selective simulation, use the
-:class:`~mrsimulator.methods.BlochDecayCentralTransitionSpectrum` method.
+:class:`~mrsimulator.methods.BlochDecayCTSpectrum` method.
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-    >>> sim.methods[0] = BlochDecayCentralTransitionSpectrum(
+    >>> from mrsimulator.methods import BlochDecayCTSpectrum
+    >>> sim.methods[0] = BlochDecayCTSpectrum(
     ...     channels=["17O"],
     ...     rotor_frequency= 15000, # in Hz.
     ...     rotor_angle = 0.9553166, # magic angle is rad.
@@ -490,7 +486,7 @@ the outer-satellites. For central transition selective simulation, use the
     ... )
     >>> # the transition pathways
     >>> print(sim.methods[0].get_transition_pathways(system_4)) # 17O
-    [TransitionPathway(|-0.5⟩⟨0.5|)]
+    [|-0.5⟩⟨0.5|]
 
 Now, you may simulate the central transition selective spectrum.
 :numref:`fig8_using_obj` depicts a central transition selective spectrum.
@@ -507,4 +503,4 @@ Now, you may simulate the central transition selective spectrum.
 .. figure:: _static/null.*
 
     An example of the solid-state :math:`^{17}\text{O}`
-    BlochDecayCentralTransitionSpectrum simulation.
+    BlochDecayCTSpectrum simulation.

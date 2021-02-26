@@ -45,8 +45,16 @@ das = Method2D(
             "reference_offset": 0,  # in Hz
             "label": "DAS isotropic dimension",
             "events": [
-                {"fraction": 0.5, "rotor_angle": 37.38 * 3.14159 / 180},
-                {"fraction": 0.5, "rotor_angle": 79.19 * 3.14159 / 180},
+                {
+                    "fraction": 0.5,
+                    "rotor_angle": 37.38 * 3.14159 / 180,
+                    "transition_query": {"P": [-1], "D": [0]},
+                },
+                {
+                    "fraction": 0.5,
+                    "rotor_angle": 79.19 * 3.14159 / 180,
+                    "transition_query": {"P": [-1], "D": [0]},
+                },
             ],
         },
         # The last spectral dimension block is the direct-dimension
@@ -55,7 +63,12 @@ das = Method2D(
             "spectral_width": 2e4,  # in Hz
             "reference_offset": 0,  # in Hz
             "label": "MAS dimension",
-            "events": [{"rotor_angle": 54.735 * 3.14159 / 180}],
+            "events": [
+                {
+                    "rotor_angle": 54.735 * 3.14159 / 180,
+                    "transition_query": {"P": [-1], "D": [0]},
+                }
+            ],
         },
     ],
 )

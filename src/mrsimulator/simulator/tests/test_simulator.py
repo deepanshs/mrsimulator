@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
 """Test for the base Simulator class."""
+import os
 from random import randint
 
+import csdmpy as cp
 import numpy as np
 import pytest
+from mrsimulator import Coupling
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method.frequency_contrib import freq_default
+from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.simulator import __CPU_count__
 from mrsimulator.simulator import get_chunks
 from mrsimulator.simulator import Sites
+from mrsimulator.spin_system.tests.test_spin_systems import generate_isotopes
 from mrsimulator.utils.collection import single_site_system_generator
 
 
@@ -43,7 +48,7 @@ def test_equality():
 
     result = {
         "label": "test",
-        "spin_systems": [{"abundance": "100 %", "sites": []}],
+        "spin_systems": [{"abundance": "100.0 %", "sites": []}],
         "config": {
             "decompose_spectrum": "none",
             "integration_density": 70,
@@ -78,15 +83,23 @@ def get_simulator():
 
 
 def test_get_isotopes():
-    isotopes = {"19F", "31P", "2H", "6Li", "14N", "27Al", "25Mg", "45Sc", "87Sr"}
+    isotopes = ["14N", "19F", "25Mg", "27Al", "2H", "31P", "45Sc", "6Li", "87Sr"]
     sim = get_simulator()
-    assert sim.get_isotopes() == isotopes
-    assert sim.get_isotopes(spin_I=0.5) == {"19F", "31P"}
-    assert sim.get_isotopes(spin_I=1) == {"2H", "6Li", "14N"}
-    assert sim.get_isotopes(spin_I=1.5) == set()
-    assert sim.get_isotopes(spin_I=2.5) == {"27Al", "25Mg"}
-    assert sim.get_isotopes(spin_I=3.5) == {"45Sc"}
-    assert sim.get_isotopes(spin_I=4.5) == {"87Sr"}
+    assert sim.get_isotopes() == generate_isotopes(isotopes)
+    assert sim.get_isotopes(spin_I=0.5) == generate_isotopes(["19F", "31P"])
+    assert sim.get_isotopes(spin_I=1) == generate_isotopes(["14N", "2H", "6Li"])
+    assert sim.get_isotopes(spin_I=1.5) == []
+    assert sim.get_isotopes(spin_I=2.5) == generate_isotopes(["25Mg", "27Al"])
+    assert sim.get_isotopes(spin_I=3.5) == generate_isotopes(["45Sc"])
+    assert sim.get_isotopes(spin_I=4.5) == generate_isotopes(["87Sr"])
+
+    assert sim.get_isotopes(symbol=True) == isotopes
+    assert sim.get_isotopes(spin_I=0.5, symbol=True) == ["19F", "31P"]
+    assert sim.get_isotopes(spin_I=1, symbol=True) == ["14N", "2H", "6Li"]
+    assert sim.get_isotopes(spin_I=1.5, symbol=True) == []
+    assert sim.get_isotopes(spin_I=2.5, symbol=True) == ["25Mg", "27Al"]
+    assert sim.get_isotopes(spin_I=3.5, symbol=True) == ["45Sc"]
+    assert sim.get_isotopes(spin_I=4.5, symbol=True) == ["87Sr"]
 
 
 def test_simulator_1():
@@ -158,6 +171,95 @@ def test_simulator_1():
     sim.save("test_sim_save_no_unit.temp", with_units=False)
     sim_load = sim.load("test_sim_save_no_unit.temp", parse_units=False)
     assert sim_load == sim
+
+
+def test_sim_coesite():
+    # coesite
+    O17_1 = Site(
+        isotope="17O",
+        isotropic_chemical_shift=29,
+        quadrupolar=dict(Cq=6.05e6, eta=0.000),
+    )
+    O17_2 = Site(
+        isotope="17O",
+        isotropic_chemical_shift=41,
+        quadrupolar=dict(Cq=5.43e6, eta=0.166),
+    )
+    O17_3 = Site(
+        isotope="17O",
+        isotropic_chemical_shift=57,
+        quadrupolar=dict(Cq=5.45e6, eta=0.168),
+    )
+    O17_4 = Site(
+        isotope="17O",
+        isotropic_chemical_shift=53,
+        quadrupolar=dict(Cq=5.52e6, eta=0.169),
+    )
+    O17_5 = Site(
+        isotope="17O",
+        isotropic_chemical_shift=58,
+        quadrupolar=dict(Cq=5.16e6, eta=0.292),
+    )
+
+    sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
+    abundance = [0.83, 1.05, 2.16, 2.05, 1.90]  # abundance of each spin system
+    spin_systems = [
+        SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)
+    ]
+
+    method = BlochDecayCTSpectrum(
+        channels=["17O"],
+        rotor_frequency=14000,
+        spectral_dimensions=[{"count": 2048, "spectral_width": 50000}],
+    )
+
+    sim_coesite = Simulator()
+    sim_coesite.spin_systems += spin_systems
+    sim_coesite.methods += [method]
+
+    sim_coesite.save("sample.mrsim")
+    sim_load = Simulator.load("sample.mrsim")
+    assert sim_coesite == sim_load
+
+    os.remove("sample.mrsim")
+
+
+def test_simulator_2():
+    sim = Simulator()
+    sim.spin_systems = [
+        SpinSystem(
+            sites=[Site(isotope="1H"), Site(isotope="23Na")],
+            couplings=[Coupling(site_index=[0, 1], isotropic_j=15)],
+        )
+    ]
+    sim.methods = [
+        BlochDecaySpectrum(
+            channel=["1H"],
+            spectral_dimensions=[{"count": 10}],
+            experiment=cp.as_csdm(np.arange(10)),
+        )
+    ]
+    sim.name = "test"
+    sim.label = "test0"
+    sim.description = "testing-testing 1.2.3"
+
+    sim.run()
+
+    # save
+    sim.save("test_sim_save.temp")
+    sim_load = sim.load("test_sim_save.temp")
+
+    sim_load_data = sim_load.methods[0].simulation
+    sim_data = sim.methods[0].simulation
+    sim_load_data._timestamp = ""
+    assert sim_load_data.dict() == sim_data.dict()
+
+    sim_load.methods[0].simulation = None
+    sim.methods[0].simulation = None
+    assert sim_load.spin_systems == sim.spin_systems
+    assert sim_load.methods == sim.methods
+    assert sim_load.name == sim.name
+    assert sim_load.description == sim.description
 
 
 def test_sites():
