@@ -27,11 +27,11 @@ dependencies:
       - sympy
       # building docs
       - sphinx>=2.0
-      - sphinxjp.themes.basicstrap
+      - sphinx-book-theme
       - sphinx-copybutton>=0.2.12
       - sphinx-gallery>0.6.2
       - pillow>=7.1.2
-      - breathe==4.23
+      - breathe==4.26
       - sphinx-tabs>=1.1.13
       - recommonmark
       - sphinx-version-warning
