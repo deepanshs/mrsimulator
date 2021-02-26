@@ -32,7 +32,7 @@ def test_read_write_methods():
         sim2 = Simulator.load("test.mrsim")
         for mth in sim2.methods:
             mth.simulation._timestamp = ""
-            [item.to("ppm", "nmr_frequency_ratio") for item in mth.simulation.x]
+            _ = [item.to("ppm", "nmr_frequency_ratio") for item in mth.simulation.x]
 
         assert sim == sim2, f"Error with {item} parse from Simulator.load()."
 
