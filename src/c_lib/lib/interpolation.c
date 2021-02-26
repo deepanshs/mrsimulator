@@ -13,36 +13,112 @@ double TOL = 1.0e-6;
 // triangle_interpolation is an optimized version of tent. Still plenty of
 // room for optimization.
 
-void triangle_interpolation(double *freq1, double *freq2, double *freq3, double *amp,
-                            double *spec, int *points) {
-  double df1, df2, top = 0.0, t, diff, f10 = 0.0, f21 = 0.0, temp, n_i;
+static void inline delta_fn_interpolation(double *freq1, int p, int *points,
+                                          double *amp, double *spec) {
+  double diff, n_i;
+  if (p >= points[0] || p < 0) return;
 
-  int p, pmid, pmax, i, j;
-  int clip_right1 = 0, clip_left1 = 0, clip_right2 = 0, clip_left2 = 0;
+  diff = freq1[0] - (double)p;
+  n_i = 0.5;
+  if (fabs(diff - n_i) < TOL) {
+    spec[p] += amp[0];
+    return;
+  }
+  if (diff < n_i) {
+    if (p != 0) spec[p - 1] += amp[0] * (n_i - diff);
+    spec[p] += amp[0] * (n_i + diff);
+    return;
+  }
+  if (diff > n_i) {
+    if (p + 1 != points[0]) spec[p + 1] += amp[0] * (diff - n_i);
+    spec[p] += amp[0] * (1 + n_i - diff);
+    return;
+  }
+}
 
-  p = (int)(freq1[0]);
-  if (fabs(freq1[0] - freq2[0]) < TOL && fabs(freq1[0] - freq3[0]) < TOL) {
-    if (p >= points[0] || p < 0) return;
-
-    diff = freq1[0] - (double)p;
-    n_i = 0.5;
-    if (fabs(diff - n_i) < TOL) {
-      spec[p] += amp[0];
-      return;
-    }
-    if (diff < n_i) {
-      if (p != 0) spec[p - 1] += amp[0] * (n_i - diff);
-      spec[p] += amp[0] * (n_i + diff);
-      return;
-    }
-    if (diff > n_i) {
-      if (p + 1 != points[0]) spec[p + 1] += amp[0] * (diff - n_i);
-      spec[p] += amp[0] * (1 + n_i - diff);
-      return;
-    }
+// interpolate first half of the triangle.
+//        /|                /|                    / |
+//       /*|              /**|                 /    |
+//      /**|            /****|              /*|     |
+//     /***|          /|*****|           /|***|     |
+//    /____|        /  |_____|        /   |___|_____|
+//   p    pmid         p    pmid          p        pmid
+// clips are off     left clip on   both left and right clips on
+static inline void left_triangle_interpolate(int p, int pmid, bool clip_left1,
+                                             bool clip_right1, double top, double f10,
+                                             double *f, double *spec) {
+  if (p == pmid) {
+    if (!clip_right1 && !clip_left1) spec[p] += f10 * top * 0.5;
     return;
   }
 
+  double df1, diff;
+  if (p != pmid) {
+    df1 = top / f10;
+    diff = (double)p + 1. - f[0];
+
+    if (!clip_left1)
+      spec[p++] += 0.5 * diff * diff * df1;
+    else
+      spec[p++] += (diff - 0.5) * df1;
+
+    diff -= 0.5;
+    diff *= df1;
+    while (p != pmid) {
+      diff += df1;
+      spec[p++] += diff;
+    }
+    if (!clip_right1)
+      spec[p] += (f[1] - (double)p) * (f10 + ((double)p - f[0])) * 0.5 * df1;
+  }
+}
+
+// interpolate second half of the triangle.
+static inline void right_triangle_interpolate(int p, int pmax, bool clip_left2,
+                                              bool clip_right2, double top, double f21,
+                                              double *f, double *spec) {
+  if (p == pmax) {
+    if (!clip_right2) spec[p] += f21 * top * 0.5;
+    return;
+  }
+
+  double df1, diff;
+  if (p != pmax) {
+    df1 = top / f21;
+    diff = f[2] - (double)p - 1.;
+
+    if (!clip_left2)
+      spec[p++] += (f21 - diff) * (diff + f21) * 0.5 * df1;
+    else
+      spec[p++] += (diff + 0.5) * df1;
+
+    diff += 0.5;
+    diff *= df1;
+    while (p != pmax) {
+      diff -= df1;
+      spec[p++] += diff;
+    }
+    if (!clip_right2) {
+      diff = (f[2] - (double)p);
+      spec[p] += diff * diff * 0.5 * df1;
+    }
+  }
+}
+
+void triangle_interpolation(double *freq1, double *freq2, double *freq3, double *amp,
+                            double *spec, int *points) {
+  double top = 0.0, t, f10 = 0.0, f21 = 0.0;
+
+  int p, pmid, pmax, i, j;
+  bool clip_right1 = false, clip_left1 = false, clip_right2 = false, clip_left2 = false;
+
+  p = (int)(freq1[0]);
+
+  // check for delta function. If yes, bin with delta_fn_interpolation.
+  if (fabs(freq1[0] - freq2[0]) < TOL && fabs(freq1[0] - freq3[0]) < TOL)
+    return delta_fn_interpolation(freq1, p, points, amp, spec);
+
+  // check if the three points lie within a bin interval.
   if ((int)freq1[0] == (int)freq2[0] && (int)freq1[0] == (int)freq3[0]) {
     if (p >= points[0] || p < 0) return;
     spec[p] += amp[0];
@@ -61,85 +137,42 @@ void triangle_interpolation(double *freq1, double *freq2, double *freq3, double 
     f[i + 1] = t;
   }
 
+  // if min frequency is higher than the last bin, return
   p = (int)f[0];
   if (p > points[0]) return;
 
+  // if max frequency is lower than the first bin, return
   pmax = (int)f[2];
   if (pmax < 0) return;
 
   pmid = (int)f[1];
   if (pmid >= points[0]) {
     pmid = points[0];
-    clip_right1 = 1;
+    clip_right1 = true;
   }
 
   if (pmax >= points[0]) {
     pmax = points[0];
-    clip_right2 = 1;
+    clip_right2 = true;
   }
 
   if (p < 0) {
     p = 0;
-    clip_left1 = 1;
+    clip_left1 = true;
   }
 
   if (pmid < 0) {
     pmid = 0;
-    clip_left2 = 1;
+    clip_left2 = true;
   }
 
   top += (amp[0] * 2.0 / (f[2] - f[0]));
   f10 += f[1] - f[0];
   f21 += f[2] - f[1];
 
-  if (p != pmid) {
-    df1 = top / f10;
-    diff = (double)p + 1. - f[0];
-    if (clip_left1 == 0) {
-      spec[p++] += 0.5 * diff * diff * df1;
-    } else {
-      spec[p++] += (diff - 0.5) * df1;
-    }
-    diff -= 0.5;
-    diff *= df1;
-    while (p != pmid) {
-      diff += df1;
-      spec[p++] += diff;
-    }
-    if (clip_right1 == 0) {
-      spec[p] += (f[1] - (double)p) * (f10 + ((double)p - f[0])) * 0.5 * df1;
-    }
-  } else {
-    if (clip_right1 == 0 && clip_left1 == 0) {
-      spec[p] += f10 * top * 0.5;
-    }
-  }
+  left_triangle_interpolate(p, pmid, clip_left1, clip_right1, top, f10, f, spec);
+  right_triangle_interpolate(pmid, pmax, clip_left2, clip_right2, top, f21, f, spec);
 
-  if (p != pmax) {
-    df2 = top / f21;
-    diff = f[2] - (double)p - 1.;
-
-    if (clip_left2 == 0) {
-      spec[p++] += (f21 - diff) * (diff + f21) * 0.5 * df2;
-    } else {
-      spec[p++] += (diff + 0.5) * df2;
-    }
-
-    diff += 0.5;
-    diff *= df2;
-    while (p != pmax) {
-      diff -= df2;
-      spec[p++] += diff;
-    }
-    if (clip_right2 == 0) {
-      temp = (f[2] - (double)p);
-      spec[p] += temp * temp * 0.5 * df2;
-    }
-  } else {
-    if (clip_right2 == 0) {
-      spec[p] += f21 * top * 0.5;
-    }
-  }
   return;
 }
 

@@ -22,7 +22,7 @@ __credits__ = ["Deepansh J. Srivastava"]
 __license__ = "BSD License"
 __maintainer__ = "Deepansh J. Srivastava"
 __status__ = "Beta"
-__version__ = "0.6.0.dev1"
+__version__ = "0.6.0.dev2"
 
 from .spin_system import Site  # lgtm [py/import-own-module]
 from .spin_system import Coupling  # lgtm [py/import-own-module]
