@@ -352,7 +352,7 @@ class Simulator(BaseModel):
         # sim["indexes"] = self.indexes
         sim["version"] = __version__ if include_version else None
 
-        [sim.pop(item) for item in [k for k, v in sim.items() if v is None]]
+        _ = [sim.pop(item) for item in [k for k, v in sim.items() if v is None]]
         return sim
 
     def reduced_dict(self, exclude=["property_units", "indexes"]) -> dict:

@@ -275,7 +275,7 @@ class Method(Parseable):
         exp = self.experiment
         mth["experiment"] = None if exp is None else exp.to_dict()
 
-        [mth.pop(item) for item in [k for k, v in mth.items() if v is None]]
+        _ = [mth.pop(item) for item in [k for k, v in mth.items() if v is None]]
         return mth
 
     # def _simplify_events_json(self, py_dict):

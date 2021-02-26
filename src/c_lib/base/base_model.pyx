@@ -176,7 +176,7 @@ def one_d_spectrum(method,
 # _____________________________________________________________________________
 
 # frequency contrib
-    cdef ndarray[bool_t] freq_contrib_c = np.asarray(freq_contrib, dtype=np.bool)
+    cdef ndarray[bool_t] freq_contrib_c = np.asarray(freq_contrib, dtype=bool)
 
 # affine transformation
     cdef ndarray[double] affine_matrix_c
