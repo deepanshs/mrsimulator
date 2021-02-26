@@ -19,7 +19,7 @@ def test01():
 
     assert output_site == {
         "isotope": "1H",
-        "ChemicalShift": {"Isotropic": "0 ppm", "zeta": "-10.0 ppm", "eta": 0.1},
+        "ChemicalShift": {"Isotropic": "0.0 ppm", "zeta": "-10.0 ppm", "eta": 0.1},
     }
 
     omega_0 = abs(method.channels[0].gyromagnetic_ratio * 9.4)
@@ -40,7 +40,7 @@ def test02():
 
     assert output_site == {
         "isotope": "27Al",
-        "ChemicalShift": {"Isotropic": "0 ppm"},
+        "ChemicalShift": {"Isotropic": "0.0 ppm"},
         "Quadrupolar": {"Cq": "10.0 MHz", "eta": 0.4},
     }
 
@@ -68,7 +68,7 @@ def test_contrib_card():
             "simulation": "simulation goes here",
             "site": {
                 "isotope": "27Al",
-                "ChemicalShift": {"Isotropic": "0 ppm"},
+                "ChemicalShift": {"Isotropic": "0.0 ppm"},
                 "Quadrupolar": {"Cq": "10.0 MHz", "eta": 0.4},
             },
             "method": {
