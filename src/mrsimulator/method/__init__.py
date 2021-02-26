@@ -221,12 +221,12 @@ class Method(Parseable):
             spectral_dims[i].origin_offset = dim.origin_offset.to("Hz").value
 
     def dict(self, **kwargs):
-        temp_dict = super().dict(**kwargs)
+        mth = super().dict(**kwargs)
         if self.simulation is not None:
-            temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
+            mth["simulation"] = self.simulation.to_dict(update_timestamp=True)
         if self.experiment is not None and isinstance(self.experiment, cp.CSDM):
-            temp_dict["experiment"] = self.experiment.to_dict()
-        return temp_dict
+            mth["experiment"] = self.experiment.to_dict()
+        return mth
 
     def json(self) -> dict:
         """Parse the class object to a JSON compliant python dictionary object, where
@@ -236,32 +236,26 @@ class Method(Parseable):
         Returns:
             A python dict object.
         """
-        temp_dict = {}
+        mth = {}
 
-        # add metadata
-        items = ["name", "label", "description"]
-
-        for en in items:
+        for en in ["name", "label", "description"]:
             value = self.__getattribute__(en)
-            if value is not None:
-                temp_dict[en] = value
+            mth[en] = None if value is None else value
 
         # add channels
-        temp_dict["channels"] = [item.json() for item in self.channels]
+        mth["channels"] = [item.json() for item in self.channels]
 
         # add global parameters
         ev0 = self.spectral_dimensions[0].events[0]
         evt_d = Event.property_default_units
         global_ = {k: f"{ev0.__getattribute__(k)} {u}" for k, u in evt_d.items()}
-        temp_dict.update(global_)
+        mth.update(global_)
 
         # add spectral dimensions
-        temp_dict["spectral_dimensions"] = [
-            item.json() for item in self.spectral_dimensions
-        ]
+        mth["spectral_dimensions"] = [item.json() for item in self.spectral_dimensions]
 
-        named = True if temp_dict["name"] in NAMED_METHODS else False
-        for dim in temp_dict["spectral_dimensions"]:
+        named = True if mth["name"] in NAMED_METHODS else False
+        for dim in mth["spectral_dimensions"]:
             for ev in dim["events"]:
                 # remove event objects with global values.
                 _ = [ev.pop(k) if ev[k] == v else 0 for k, v in global_.items()]
@@ -269,22 +263,20 @@ class Method(Parseable):
                 # remove transition query objects for named methods
                 _ = ev.pop("transition_query") if named else 0
 
-            if dim["events"] == [{} for _ in range(len(dim["events"]))]:
+            if dim["events"] == [{} for _ in dim["events"]]:
                 dim.pop("events")
 
-        # add affine-matrix
-        if self.affine_matrix is not None:
-            temp_dict["affine_matrix"] = self.affine_matrix.tolist()
+        afm = self.affine_matrix
+        mth["affine_matrix"] = None if afm is None else afm.tolist()
 
-        # add simulation
-        if self.simulation is not None:
-            temp_dict["simulation"] = self.simulation.to_dict(update_timestamp=True)
+        sim = self.simulation
+        mth["simulation"] = None if sim is None else sim.to_dict(update_timestamp=True)
 
-        # add experiment
-        if self.experiment is not None:
-            temp_dict["experiment"] = self.experiment.to_dict()
+        exp = self.experiment
+        mth["experiment"] = None if exp is None else exp.to_dict()
 
-        return temp_dict
+        [mth.pop(item) for item in [k for k, v in mth.items() if v is None]]
+        return mth
 
     # def _simplify_events_json(self, py_dict):
     #     named = True if py_dict["name"] in NAMED_METHODS else False

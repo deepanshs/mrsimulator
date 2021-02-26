@@ -339,27 +339,20 @@ class Simulator(BaseModel):
                                                               'zeta': '2.1 ppm'}}]}]}
         """
         sim = {}
-
-        if self.name is not None:
-            sim["name"] = self.name
-
-        if self.description is not None:
-            sim["description"] = self.description
-
-        if self.label is not None:
-            sim["label"] = self.label
-
+        sim["name"] = None or self.name
+        sim["description"] = None or self.description
+        sim["label"] = None or self.label
         sim["spin_systems"] = [_.json() for _ in self.spin_systems]
 
         if include_methods:
             method = [_.json() for _ in self.methods]
-            if len(method) != 0:
-                sim["methods"] = method
+            sim["methods"] = method if method != [] else None
 
         sim["config"] = self.config.dict()
         # sim["indexes"] = self.indexes
-        if include_version:
-            sim["version"] = __version__
+        sim["version"] = __version__ if include_version else None
+
+        [sim.pop(item) for item in [k for k, v in sim.items() if v is None]]
         return sim
 
     def reduced_dict(self, exclude=["property_units", "indexes"]) -> dict:
