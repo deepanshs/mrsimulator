@@ -25,7 +25,7 @@ def wigner_d_matrices(int l, np.ndarray[double] angle):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def wigner_d_matrices_from_exp_I_beta(int l, np.ndarray[double complex] exp_I_beta):
+def wigner_d_matrices_from_exp_I_beta(int l, bool_t half, np.ndarray[double complex] exp_I_beta):
     r"""
     Returns a :math:`(2l+1) \times (2l+1)` wigner-d(beta) matrix of rank $l$ at
     a given angle `beta` in the form of `exp(i\beta)`. Currently only rank l=2 and
@@ -35,14 +35,21 @@ def wigner_d_matrices_from_exp_I_beta(int l, np.ndarray[double complex] exp_I_be
     `n x (2l+1) x (2l+1)` matrix is returned instead.
 
     :ivar l: The angular momentum quantum number.
+    :ivar half: Compute only half of wigner matrix
     :ivar exp_I_beta: An 1D numpy array or a scalar representing $\exp\beta$.
     """
     n1 = (2 * l + 1)
     cdef int n = exp_I_beta.size
-    cdef np.ndarray[double, ndim=1] wigner = np.empty(n * n1**2)
-    clib.wigner_d_matrices_from_exp_I_beta(l, n, &exp_I_beta[0], &wigner[0])
-    return wigner.reshape(n, n1, n1)
+    size = n * n1*(l+1) if half else n * n1**2
 
+    cdef np.ndarray[double, ndim=1] wigner = np.empty(size)
+
+    clib.wigner_d_matrices_from_exp_I_beta(l, n, half, &exp_I_beta[0], &wigner[0])
+
+    if half:
+        return wigner.reshape(n, (l+1), n1)
+
+    return wigner.reshape(n, n1, n1)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -63,37 +70,8 @@ def wigner_dm0_vector(int l, double beta):
 def single_wigner_rotation(int l, np.ndarray[double] euler_angles, np.ndarray[double complex] R_in):
     cdef int n1 = (2 * l + 1)
     cdef np.ndarray[double complex] R_out = np.zeros(n1, dtype=np.complex128)
-    clib.single_wigner_rotation(l, &euler_angles[0],
-                            &R_in[0], &R_out[0])
+    clib.single_wigner_rotation(l, &euler_angles[0], &R_in[0], &R_out[0])
     return R_out
-
-
-# @cython.boundscheck(False)
-# @cython.wraparound(False)
-# def wigner_rotation(int l, np.ndarray[double complex] R_in,
-#                     cos_alpha = None, cos_beta = None,
-#                     wigner_matrix=None):
-#     r"""
-
-#     """
-#     cdef int n1 = 2 * l + 1
-#     cdef np.ndarray[double, ndim=1] wigner, cos_alpha_c, cos_beta_c
-#     cos_alpha_c = np.asarray(cos_alpha, dtype=np.float64)
-
-#     if wigner_matrix is None:
-#         n = cos_beta.size
-#         wigner = np.empty(n1**2 * n)
-#         cos_beta_c = np.asarray(cos_beta, dtype=np.float64)
-#         clib.wigner_d_matrices_from_cosines(l, n, &cos_beta_c[0], &wigner[0])
-#     else:
-#         n = wigner_matrix.shape[0]
-#         wigner = np.asarray(wigner_matrix.ravel(), dtype=np.float64)
-
-#     cdef np.ndarray[complex] R_out = np.zeros(n1*n, dtype=np.complex128)
-
-#     clib.__wigner_rotation(l, n, &wigner[0],
-#                            &cos_alpha_c[0], &R_in[0], &R_out[0])
-#     return R_out.reshape(n, n1)
 
 
 @cython.boundscheck(False)
@@ -106,10 +84,10 @@ def __wigner_rotation_2(int l, np.ndarray[double] cos_alpha,
     cdef int n = cos_alpha.size
     cdef np.ndarray[double, ndim=1] wigner
     cdef np.ndarray[double complex, ndim=1] exp_I_beta
-    wigner = np.empty(n1**2 * n, dtype=np.float64)
+    wigner = np.empty(n1 * (l+1) * n, dtype=np.float64)
     sin_beta = np.sqrt(1 - cos_beta**2)
     exp_I_beta = np.asarray(cos_beta + 1j*sin_beta, dtype=np.complex128)
-    clib.wigner_d_matrices_from_exp_I_beta(l, n, &exp_I_beta[0], &wigner[0])
+    clib.wigner_d_matrices_from_exp_I_beta(l, n, True, &exp_I_beta[0], &wigner[0])
 
     cdef np.ndarray[double complex] exp_im_alpha
     exp_im_alpha = np.empty(4 * n, dtype=np.complex128)
@@ -119,8 +97,7 @@ def __wigner_rotation_2(int l, np.ndarray[double] cos_alpha,
     cdef np.ndarray[complex] R_out = np.zeros((l + 1)*n, dtype=np.complex128)
 
 
-    clib.__wigner_rotation_2(l, n, &wigner[0],
-                           &exp_im_alpha[0], &R_in[0], &R_out[0])
+    clib.__wigner_rotation_2(l, n, &wigner[0], &exp_im_alpha[0], &R_in[0], &R_out[0])
     return R_out.reshape(n, (l + 1))
 
 

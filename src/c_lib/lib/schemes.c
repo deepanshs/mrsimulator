@@ -45,8 +45,8 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
    */
 
   // calculating the required space for storing wigner matrices.
-  allocate_size_2 = 25 * scheme->octant_orientations;
-  allocate_size_4 = 81 * scheme->octant_orientations;
+  allocate_size_2 = 15 * scheme->octant_orientations; // (5 x 3) half-matrix
+  allocate_size_4 = 45 * scheme->octant_orientations; // (9 x 5) half-matrix
   if (scheme->integration_volume == 2) {
     allocate_size_2 *= 2;
     allocate_size_4 *= 2;
@@ -55,7 +55,7 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
   /* Second-rank reduced wigner matrices at every β orientation from the positive upper
    * octant. */
   scheme->wigner_2j_matrices = malloc_double(allocate_size_2);
-  wigner_d_matrices_from_exp_I_beta(2, scheme->octant_orientations, exp_I_beta,
+  wigner_d_matrices_from_exp_I_beta(2, scheme->octant_orientations, true, exp_I_beta,
                                     scheme->wigner_2j_matrices);
 
   scheme->wigner_4j_matrices = NULL;
@@ -63,7 +63,7 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
     /* Fourt-rank reduced wigner matrices at every β orientation from the positive upper
      * octant. */
     scheme->wigner_4j_matrices = malloc_double(allocate_size_4);
-    wigner_d_matrices_from_exp_I_beta(4, scheme->octant_orientations, exp_I_beta,
+    wigner_d_matrices_from_exp_I_beta(4, scheme->octant_orientations, true, exp_I_beta,
                                       scheme->wigner_4j_matrices);
   }
 
@@ -82,16 +82,19 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
    * only one set of second rank and fourth rank reduced  wigner matrices should
    * suffice. */
   if (scheme->integration_volume == 2) {
+    allocate_size_2 /= 2;
+    allocate_size_4 /= 2;
     /* cos(beta) is negative in the lower hemisphere */
     cblas_dscal(scheme->octant_orientations, -1.0, (double *)exp_I_beta, 2);
 
     /* Second-rank reduced wigner matrices at every β orientation over an octant from
      * the lower hemisphere */
-    wigner_d_matrices_from_exp_I_beta(2, scheme->octant_orientations, exp_I_beta,
+    wigner_d_matrices_from_exp_I_beta(2, scheme->octant_orientations, true, exp_I_beta,
                                       &scheme->wigner_2j_matrices[allocate_size_2]);
     if (allow_fourth_rank) {
       /* Fourth-rank reduced wigner matrices at every β orientation. */
-      wigner_d_matrices_from_exp_I_beta(4, scheme->octant_orientations, exp_I_beta,
+      wigner_d_matrices_from_exp_I_beta(4, scheme->octant_orientations, true,
+                                        exp_I_beta,
                                         &scheme->wigner_4j_matrices[allocate_size_4]);
     }
   }
@@ -138,7 +141,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
 
   /* Calculate α, β, and weights over the positive octant. .......................... */
   /* ................................................................................ */
-  // The 4 * octant_orientations memory allocation is for m=-4, -3, -2, and -1
+  // The 4 * octant_orientations memory allocation is for m=4, 3, 2, and1
   scheme->exp_Im_alpha = malloc_complex128(4 * scheme->octant_orientations);
   complex128 *exp_I_beta = malloc_complex128(scheme->octant_orientations);
   scheme->amplitudes = malloc_double(scheme->octant_orientations);

@@ -46,11 +46,11 @@ double my_power(double x, int n) {
 void wigner_d_matrices(const int l, const int n, const double *beta, double *wigner) {
   complex128 *exp_I_beta = malloc_complex128(n);
   vm_cosine_I_sine(n, beta, exp_I_beta);
-  wigner_d_matrices_from_exp_I_beta(l, n, exp_I_beta, wigner);
+  wigner_d_matrices_from_exp_I_beta(l, n, false, exp_I_beta, wigner);
   free(exp_I_beta);
 }
 
-// Compute wigner 4j matrix
+// Compute full wigner 2j (5 x 5) matrix.
 static inline void wigner_2j(const int n, const void *restrict exp_I_beta,
                              double *wigner) {
   double cx, cx2, sx, temp, *exp_I_beta_ = (double *)exp_I_beta, t1;
@@ -108,7 +108,55 @@ static inline void wigner_2j(const int n, const void *restrict exp_I_beta,
   }
 }
 
-// Compute wigner 4j matrix
+// Compute half wigner 4j (5 x 3) matrix.
+static inline void wigner_2j_half(const int n, const void *restrict exp_I_beta,
+                                  double *wigner) {
+  double cx, cx2, sx, temp, *exp_I_beta_ = (double *)exp_I_beta, t1;
+  int i;
+  for (i = 0; i < n; i++) {
+    cx = *exp_I_beta_++;
+    sx = *exp_I_beta_++;
+    cx2 = cx * cx;
+
+    t1 = (1. + cx);
+    temp = t1 * t1 * 0.25;
+    wigner[0] = temp; // -2, -2 //  0
+
+    temp = -sx * t1 * 0.5;
+    wigner[1] = temp;  // -1, -2 //  1
+    wigner[5] = -temp; // -2, -1 //  5
+
+    t1 = (1. - cx);
+    temp = -sx * t1 * 0.5;
+    wigner[3] = temp; //  1, -2 //  3
+    wigner[9] = temp; //  2, -1 //  9
+
+    temp = t1 * t1 * 0.25;
+    wigner[4] = temp; //  2, -2 //  4
+
+    temp = 0.6123724355 * sx * sx;
+    wigner[2] = temp;  //  0, -2 //  2
+    wigner[14] = temp; //  2,  0 // 14
+    wigner[10] = temp; // -2,  0 // 10
+
+    temp = 1.224744871 * sx * cx;
+    wigner[7] = -temp;  //  0, -1 //  7
+    wigner[11] = temp;  // -1,  0 // 11
+    wigner[13] = -temp; //  1,  0 // 13
+
+    temp = (2.0 * cx2 + cx - 1.) * 0.5;
+    wigner[6] = temp; // -1, -1 //  6
+
+    temp = -(2.0 * cx2 - cx - 1.) * 0.5;
+    wigner[8] = temp; //  1, -1 //  8
+
+    wigner[12] = 1.5 * cx2 - 0.5; // 0,  0 // 12
+
+    wigner += 15; // increment counter to next matrix
+  }
+}
+
+// Compute full wigner 4j (9 x 9) matrix.
 static inline void wigner_4j(const int n, const void *restrict exp_I_beta,
                              double *wigner) {
   double cx, cx2, sx, temp, *exp_I_beta_ = (double *)exp_I_beta;
@@ -264,11 +312,142 @@ static inline void wigner_4j(const int n, const void *restrict exp_I_beta,
   }
 }
 
+// Compute half wigner 4j (9 x 5) matrix.
+static inline void wigner_4j_half(const int n, const void *restrict exp_I_beta,
+                                  double *wigner) {
+  double cx, cx2, sx, temp, *exp_I_beta_ = (double *)exp_I_beta;
+  double sx2, sx3, cxp1, cxm1, cxp12, cxm12, cxm13, cxp13;
+  int i;
+  for (i = 0; i < n; i++) {
+    cx = *exp_I_beta_++;
+    sx = *exp_I_beta_++;
+    cx2 = cx * cx;
+
+    sx2 = sx * sx;
+    sx3 = sx2 * sx;
+
+    cxp1 = (1. + cx);
+    cxm1 = (1. - cx);
+    cxp12 = cxp1 * cxp1;
+    cxm12 = cxm1 * cxm1;
+    cxm13 = cxm12 * cxm1;
+    cxp13 = cxp12 * cxp1;
+
+    temp = 0.0625 * cxp12 * cxp12;
+    wigner[0] = temp; // -4, -4 //  0
+
+    temp = 0.0625 * cxm12 * cxm12;
+    wigner[8] = temp; //  4, -4 //  8
+
+    temp = -0.1767766953 * cxp13 * sx;
+    wigner[1] = temp;  // -3, -4 //  1
+    wigner[9] = -temp; // -4, -3 //  9
+
+    temp = -0.1767766953 * cxm13 * sx;
+    wigner[7] = temp;  //  3, -4 //  7
+    wigner[17] = temp; //  4, -3 // 17
+
+    temp = -0.4677071733 * cxp1 * sx3;
+    wigner[27] = -temp; // -4, -1 // 27
+    wigner[3] = temp;   // -1, -4 //  3
+
+    temp = -0.4677071733 * cxm1 * sx3;
+    wigner[35] = temp; //  4, -1 // 35
+    wigner[5] = temp;  //  1, -4 //  5
+
+    temp = 0.5229125166 * sx3 * sx;
+    wigner[44] = temp; //  4,  0 // 44
+    wigner[36] = temp; // -4,  0 // 36
+    wigner[4] = temp;  //  0, -4 //  4
+
+    temp = -1.4790199458 * sx3 * cx;
+    wigner[43] = temp;  //  3,  0 // 43
+    wigner[37] = -temp; // -3,  0 // 37
+    wigner[13] = temp;  //  0, -3 // 13
+
+    temp = 0.3307189139 * sx2 * cxp12;
+    wigner[2] = temp;  // -2, -4 //  2
+    wigner[18] = temp; // -4, -2 // 18
+
+    temp = 0.3307189139 * sx2 * cxm12;
+    wigner[6] = temp;  //  2, -4 //  6
+    wigner[26] = temp; //  4, -2 // 26
+
+    temp = 0.4677071733 * cxp12 * sx * (2. * cx - 1.);
+    wigner[11] = -temp; // -2, -3 // 11
+    wigner[19] = temp;  // -3, -2 // 19
+
+    temp = 0.4677071733 * cxm12 * sx * (-2. * cx - 1.);
+    wigner[15] = temp; //  2, -3 // 15
+    wigner[25] = temp; //  3, -2 // 25
+
+    temp = 0.25 * cxp12 * (1. - 7. * cxm1 + 7. * cxm12);
+    wigner[20] = temp; // -2, -2 // 20
+
+    temp = 0.25 * cxm12 * (1. - 7. * cxp1 + 7. * cxp12);
+    wigner[24] = temp; //  2, -2 // 24
+
+    temp = 0.3952847075 * sx2 * (7. * cx2 - 1.0);
+    wigner[42] = temp; //  2,  0 // 42
+    wigner[38] = temp; // -2,  0 // 38
+    wigner[22] = temp; //  0, -2 // 22
+
+    temp = 0.125 * cxp13 * (-3. + 4. * cx);
+    wigner[10] = temp; // -3, -3 // 10
+
+    temp = 0.125 * cxm13 * (3. + 4. * cx);
+    wigner[16] = temp; //  3, -3 // 16
+
+    temp = 0.3307189139 * cxm1 * cxp12 * (-1. + 4. * cx);
+    wigner[12] = temp; // -1, -3 // 12
+    wigner[28] = temp; // -3, -1 // 28
+
+    temp = 0.3307189139 * cxm12 * cxp1 * (1. + 4. * cx);
+    wigner[14] = temp; //  1, -3 // 14
+    wigner[34] = temp; //  3, -1 // 34
+
+    temp = -0.5590169944 * (4. - 18. * cxm1 + 21. * cxm12 - 7. * cxm13) * sx;
+    wigner[41] = temp;  //  1,  0 // 41
+    wigner[39] = -temp; // -1,  0 // 39
+    wigner[31] = temp;  //  0, -1 // 31
+
+    temp = -0.3535533906 * (3. - 10.5 * cxm1 + 7. * cxm12) * sx * cxp1;
+    wigner[29] = -temp; // -2, -1 // 29
+    wigner[21] = temp;  // -1, -2 // 21
+
+    temp = -0.3535533906 * (10. - 17.5 * cxm1 + 7. * cxm12) * sx * cxm1;
+    wigner[23] = temp; //  1, -2 // 23
+    wigner[33] = temp; //  2, -1 // 33
+
+    temp = 0.5 * (1. - 9. * cxm1 + 15.75 * cxm12 - 7. * cxm13) * cxp1;
+    wigner[30] = temp; // -1, -1 // 30
+
+    temp = 0.5 * (10. - 30. * cxm1 + 26.25 * cxm12 - 7. * cxm13) * cxm1;
+    wigner[32] = temp; //  1, -1 // 32
+
+    temp = 0.125 * (3. - 30. * cx2 + 35.0 * cx2 * cx2);
+    wigner[40] = temp; //  0,  0 // 40
+
+    wigner += 45; // increment counter to next matrix
+  }
+}
+
 // ✅ .. note: (wigner_d_matrices_from_exp_I_beta) monitored with pytest
 // ................
-void wigner_d_matrices_from_exp_I_beta(const int l, const int n,
+void wigner_d_matrices_from_exp_I_beta(const int l, const int n, const bool half,
                                        const void *restrict exp_I_beta,
                                        double *wigner) {
+  if (half) {
+    switch (l) {
+    case 2:
+      wigner_2j_half(n, exp_I_beta, wigner);
+      break;
+    case 4:
+      wigner_4j_half(n, exp_I_beta, wigner);
+      break;
+    }
+    return;
+  }
   switch (l) {
   case 2:
     wigner_2j(n, exp_I_beta, wigner);
@@ -338,68 +517,6 @@ void wigner_d_matrices_from_exp_I_beta(const int l, const int n,
 //   }
 // }
 
-// ✅ .. note: (__wigner_rotation_4)
-void __wigner_rotation_4(const int l, const int n, const double *wigner,
-                         const void *exp_Im_alpha, const void *R_in, void *R_out) {
-  double *exp_Im_alpha_ = (double *)exp_Im_alpha;
-  double *R_out_ = (double *)R_out;
-  double *R_in_ = (double *)R_in;
-
-  int orientation, two_l_pm, two_l_mm, one = 1, mm = 0;
-  int n1 = 2 * l + 1, m, mp, two_l = 2 * l, two_n1 = 2 * n1;
-  double a, b, c, d, *temp;
-  double *temp_initial_vector = malloc_double(two_n1 * n);
-
-  for (orientation = 0; orientation < n; orientation++) {
-    // copy the initial vector
-    // cblas_dcopy(two_n1, (double *)R_in, 1, temp_initial_vector, 1);
-
-    temp_initial_vector[two_l + mm] = R_in_[two_l];
-    temp_initial_vector[two_l + 1 + mm] = R_in_[two_l + 1];
-
-    // scale the temp initial vector with exp[-I m alpha]
-    for (m = 2; m <= two_l; m += 2) {
-      two_l_pm = two_l + m;
-      two_l_mm = two_l - m;
-      temp = &exp_Im_alpha_[(8 - m) * n + 2 * orientation];
-
-      // temp_initial_vector[l - m] *= temp;
-      a = R_in_[two_l_mm] * *temp;
-      b = R_in_[two_l_mm + 1] * *(temp + 1);
-      c = R_in_[two_l_mm] * *(temp + 1);
-      d = R_in_[two_l_mm + 1] * *temp;
-      temp_initial_vector[two_l_mm + mm] = a - b;
-      temp_initial_vector[two_l_mm + 1 + mm] = c + d;
-
-      // temp_initial_vector[l + m] *= conj(temp);
-      a = R_in_[two_l_pm] * *temp;
-      b = R_in_[two_l_pm + 1] * *(temp + 1);
-      c = R_in_[two_l_pm] * *(temp + 1);
-      d = R_in_[two_l_pm + 1] * *temp;
-      temp_initial_vector[two_l_pm + mm] = a + b;
-      temp_initial_vector[two_l_pm + 1 + mm] = -c + d;
-    }
-    mm += two_n1;
-  }
-
-  mm = 0;
-  for (orientation = 0; orientation < n; orientation++) {
-    // Apply wigner rotation to the temp inital vector
-    for (m = 0; m < n1; m++) {
-      *R_out_ = 0.0;
-      *(R_out_ + 1) = 0.0;
-      mp = 0;
-      while (mp < two_n1) {
-        *R_out_ += *wigner * temp_initial_vector[mp++ + mm];
-        *(R_out_ + 1) += *wigner++ * temp_initial_vector[mp++ + mm];
-      }
-      R_out_ += 2;
-    }
-    mm += two_n1;
-  }
-  free(temp_initial_vector);
-}
-
 // ✅ .. note: (__wigner_rotation_2) monitored with pytest .....................
 void __wigner_rotation_2(const int l, const int n, const double *wigner,
                          const void *exp_Im_alpha, const void *R_in, void *R_out) {
@@ -434,7 +551,6 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
 
     two_l_pm = two_l;
     two_l_mm = two_l;
-    // scale the temp initial vector with exp[-I m alpha]
     for (m = 1; m <= l; m++) {
       two_l_pm += 2;
       two_l_mm -= 2;
@@ -464,71 +580,6 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
 
     // Apply wigner rotation to the temp inital vector
     for (m = 0; m <= l; m++) {
-      *R_out_ = 0.0;
-      *(R_out_ + 1) = 0.0;
-      mp = 0;
-      while (mp < two_n1) {
-        *R_out_ += *wigner * temp_initial_vector[mp++];
-        *(R_out_ + 1) += *wigner++ * temp_initial_vector[mp++];
-      }
-      R_out_ += 2;
-    }
-    wigner += (n1 * l);
-  }
-  free(temp_initial_vector);
-}
-
-// ✅ .. note: (__wigner_rotation_3)
-void __wigner_rotation_3(const int l, const int n, const double *wigner,
-                         const void *exp_Im_alpha, const void *R_in, void *R_out) {
-  double *exp_Im_alpha_ = (double *)exp_Im_alpha;
-  double *R_out_ = (double *)R_out;
-  double *R_in_ = (double *)R_in;
-
-  int orientation, two_l_pm, two_l_mm;
-  int n1 = 2 * l + 1, m, mp, two_l = 2 * l, two_n1 = 2 * n1;
-  double ac, bd, ad, bc, *temp;
-  double *temp_initial_vector = malloc_double(two_n1);
-
-  for (orientation = 0; orientation < n; orientation++) {
-    // copy the initial vector
-    // cblas_dcopy(two_n1, (double *)R_in, 1, temp_initial_vector, 1);
-
-    temp_initial_vector[two_l] = R_in_[two_l];
-    temp_initial_vector[two_l + 1] = R_in_[two_l + 1];
-
-    // scale the temp initial vector with exp[-I m alpha]
-    for (m = 2; m <= two_l; m += 2) {
-      two_l_pm = two_l + m;
-      two_l_mm = two_l - m;
-      temp = &exp_Im_alpha_[(8 - m) * n + 2 * orientation];
-
-      // complex multiplication
-      // a = R_in_[two_l_mm]
-      // b = R_in_[two_l_mm + 1]
-      // c = *temp
-      // d = *(temp + 1
-      // temp_initial_vector[l - m] *= temp;
-      // (a + ib) (c + id) = ac - bd + i(ad + bc)
-      ac = R_in_[two_l_mm] * *temp;
-      bd = R_in_[two_l_mm + 1] * *(temp + 1);
-      ad = R_in_[two_l_mm] * *(temp + 1);
-      bc = R_in_[two_l_mm + 1] * *temp;
-      temp_initial_vector[two_l_mm] = ac - bd;
-      temp_initial_vector[two_l_mm + 1] = ad + bc;
-
-      // temp_initial_vector[l + m] *= conj(temp);
-      // (a + ib) (c - id) = ac + bd + i(-ad + bc)
-      ac = R_in_[two_l_pm] * *temp;
-      bd = R_in_[two_l_pm + 1] * *(temp + 1);
-      ad = R_in_[two_l_pm] * *(temp + 1);
-      bc = R_in_[two_l_pm + 1] * *temp;
-      temp_initial_vector[two_l_pm] = ac + bd;
-      temp_initial_vector[two_l_pm + 1] = -ad + bc;
-    }
-
-    // Apply wigner rotation to the temp inital vector
-    for (m = 0; m < n1; m++) {
       *R_out_ = 0.0;
       *(R_out_ + 1) = 0.0;
       mp = 0;
@@ -604,113 +655,8 @@ static inline double generic_wigner_d_element(const int l, const int m1, const i
 double wigner_d_element(const int l, const int m1, const int m2, const double beta) {
   if (l != 2) return generic_wigner_d_element(l, m1, m2, beta);
 
-  double cx, sx;
-  switch (m1) {
-  case 2:
-    switch (m2) {
-    case 2:
-      cx = cos(beta);
-      return ((1 + cx) * (1. + cx) / 4.);
-    case 1:
-      sx = sin(beta);
-      cx = cos(beta);
-      return (-sx * (1. + cx) / 2.);
-    case 0:
-      sx = sin(beta);
-      return (0.6123724355 * sx * sx);
-    case -1:
-      sx = sin(beta);
-      cx = cos(beta);
-      return (-sx * (1. - cx) / 2.);
-    case -2:
-      cx = cos(beta);
-      return ((1 - cx) * (1. - cx) / 4.);
-    }
-  case -2:
-    switch (m2) {
-    case 2:
-      cx = cos(beta);
-      return ((1 - cx) * (1. - cx) / 4.);
-    case 1:
-      sx = sin(beta);
-      cx = cos(beta);
-      return (sx * (1. - cx) / 2.);
-    case 0:
-      sx = sin(beta);
-      return (0.6123724355 * sx * sx);
-    case -1:
-      sx = sin(beta);
-      cx = cos(beta);
-      return (sx * (1. + cx) / 2.);
-    case -2:
-      cx = cos(beta);
-      return ((1 + cx) * (1. + cx) / 4.);
-    }
-  case 1:
-    switch (m2) {
-    case 2:
-      sx = sin(beta);
-      cx = cos(beta);
-      return (sx * (1 + cx) / 2.);
-    case 1:
-      cx = cos(beta);
-      return ((2 * cx * cx + cx - 1.) / 2.);
-    case 0:
-      sx = sin(beta);
-      cx = cos(beta);
-      return (-1.224744871 * sx * cx);
-    case -1:
-      cx = cos(beta);
-      return (-(2 * cx * cx - cx - 1.) / 2.);
-    case -2:
-      sx = sin(beta);
-      cx = cos(beta);
-      return (-sx * (1 - cx) / 2.);
-    }
-  case 0:
-    switch (m2) {
-    case 2:
-      sx = sin(beta);
-      return (0.6123724355 * sx * sx);
-    case 1:
-      sx = sin(beta);
-      cx = cos(beta);
-      return (1.224744871 * sx * cx);
-    case 0:
-      cx = cos(beta);
-      return (1.5 * cx * cx - .5);
-    case -1:
-      sx = sin(beta);
-      cx = cos(beta);
-      return (-1.224744871 * sx * cx);
-    case -2:
-      sx = sin(beta);
-      return (0.6123724355 * sx * sx);
-    }
-  case -1:
-    switch (m2) {
-    case 2:
-      sx = sin(beta);
-      cx = cos(beta);
-      return (sx * (1 - cx) / 2.);
-    case 1:
-      cx = cos(beta);
-      return (-(2 * cx * cx - cx - 1.) / 2.);
-    case 0:
-      sx = sin(beta);
-      cx = cos(beta);
-      return (1.224744871 * sx * cx);
-    case -1:
-      cx = cos(beta);
-      return ((2 * cx * cx + cx - 1.) / 2.);
-    case -2:
-      sx = sin(beta);
-      cx = cos(beta);
-      return (-sx * (1 + cx) / 2.);
-    }
-  default:
-    return 0;
-  }
+  double exp_I_beta[] = {cos(beta), sin(beta)};
+  return wigner_d_element_from_exp_I_beta(1, m1, m2, exp_I_beta);
 }
 
 // ❌.. note: (wigner_d_element_from_cosine) not tested
@@ -939,13 +885,13 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
                              const unsigned int n_octants, double *wigner_2j_matrices,
                              complex128 *R2, double *wigner_4j_matrices, complex128 *R4,
                              complex128 *exp_Im_alpha, complex128 *w2, complex128 *w4) {
-  unsigned int j, index_25, index_81, w2_increment, w4_increment;
+  unsigned int j, wigner_2j_inc, wigner_4j_inc, w2_increment, w4_increment;
 
   w2_increment = 3 * octant_orientations;
-  index_25 = 3 * w2_increment; // equal to 9 * octant_orientations;
+  wigner_2j_inc = 5 * w2_increment; // equal to 5 x 3 x octant_orientations;
   if (w4 != NULL) {
     w4_increment = 5 * octant_orientations;
-    index_81 = 5 * w4_increment; // equal to 25 * octant_orientations;
+    wigner_4j_inc = 9 * w4_increment; // equal to 9 x 5 x octant_orientations;
   }
 
   for (j = 0; j < n_octants; j++) {
@@ -954,7 +900,7 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
                         w2);
     w2 += w2_increment;
     if (n_octants == 8) {
-      __wigner_rotation_2(2, octant_orientations, &wigner_2j_matrices[index_25],
+      __wigner_rotation_2(2, octant_orientations, &wigner_2j_matrices[wigner_2j_inc],
                           exp_Im_alpha, R2, w2);
       w2 += w2_increment;
     }
@@ -964,7 +910,7 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
                           w4);
       w4 += w4_increment;
       if (n_octants == 8) {
-        __wigner_rotation_2(4, octant_orientations, &wigner_4j_matrices[index_81],
+        __wigner_rotation_2(4, octant_orientations, &wigner_4j_matrices[wigner_4j_inc],
                             exp_Im_alpha, R4, w4);
         w4 += w4_increment;
       }
@@ -978,7 +924,7 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
      * The array exp_Im_alpha is a two-dimensional array of shape
      * `4 x number_of_sidebands`, where
      *
-     * exp_Im_alpha[m, :] = exp(-I (m-4) alpha) for m=[0, 1, 2, 3] when alpha += π/2
+     * exp_Im_alpha[m, :] = exp(I (4-m) alpha) for m=[0, 1, 2, 3]. When alpha += π/2
      *
      *    exp_Im_alpha[0, :] = exp(I 4alpha) * exp(I 4π/2) = exp(I 4alpha)
      *    exp_Im_alpha[0, :] *= 1

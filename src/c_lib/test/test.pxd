@@ -12,32 +12,27 @@ from libcpp cimport bool as bool_t
 cdef extern from "angular_momentum.h":
     void wigner_d_matrices(const int l, const int n, const double *angle, double *wigner)
 
-    void wigner_d_matrices_from_exp_I_beta(const int l, const int n, const double complex *exp_I_beta,
-                                  double *wigner)
+    void wigner_d_matrices_from_exp_I_beta(const int l, const int n, const bool_t half,
+                            const double complex *exp_I_beta, double *wigner)
 
     # void __wigner_rotation(const int l, const int n, const double *wigner, const double *cos_alpha,
     #                        const double complex *R_in, double complex *R_out)
 
     void __wigner_rotation_2(const int l, const int n, const double *wigner,
-                             const void *exp_Im_alpha, const void *R_in,
-                             void *R_out)
+                            const void *exp_Im_alpha, const void *R_in, void *R_out)
 
-    void single_wigner_rotation(const int l, const double *euler_angles,
-                            const void *R_in, void *R_out)
+    void single_wigner_rotation(const int l, const double *euler_angles, const void *R_in,
+                            void *R_out)
 
     void wigner_dm0_vector(const int l, const double beta, double *R_out)
 
     void get_exp_Im_alpha(const unsigned int octant_orientations,
-                          const bool_t allow_fourth_rank, void *exp_Im_alpha)
+                            const bool_t allow_fourth_rank, void *exp_Im_alpha)
 
     void __batch_wigner_rotation(const unsigned int octant_orientations,
-                             const unsigned int n_octants,
-                             double *wigner_2j_matrices,
-                             void *R2,
-                             double *wigner_4j_matrices,
-                             void *R4,
-                             void *exp_Im_alpha,
-                             void *w2, void *w4)
+                            const unsigned int n_octants, double *wigner_2j_matrices, void *R2,
+                            double *wigner_4j_matrices, void *R4, void *exp_Im_alpha, void *w2,
+                            void *w4)
 
 
 cdef extern from "powder_setup.h":

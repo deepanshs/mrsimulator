@@ -23,8 +23,11 @@ def wigner(ang_momentum_l, cos_beta):
     wigner_py = wigner_d_matrix_cosines(ang_momentum_l, cos_beta)
 
     # c test
-    wigner_c = clib.wigner_d_matrices_from_exp_I_beta(ang_momentum_l, exp_I_beta)
-    return wigner_py.ravel(), wigner_c.ravel()
+    wigner_c = clib.wigner_d_matrices_from_exp_I_beta(ang_momentum_l, False, exp_I_beta)
+    wigner_c_half = clib.wigner_d_matrices_from_exp_I_beta(
+        ang_momentum_l, True, exp_I_beta
+    )
+    return wigner_py, wigner_c, wigner_c_half
 
 
 # All wigner matrix are tested against the wigner matrix computed using
@@ -42,10 +45,11 @@ def test_wigner_2j_matrix_angle_00():
 def test_wigner_2j_matrix_cosine_00():
     ang_momentum_l = 2
     cos_beta = 0.5
-    wigner_py, wigner_c = wigner(ang_momentum_l, cos_beta)
+    wigner_py, wigner_c, wigner_c_half = wigner(ang_momentum_l, cos_beta)
     array = np.load("tests/wigner/l=2_cx=0.5.npy")
-    np.testing.assert_almost_equal(array, wigner_py, decimal=8)
-    np.testing.assert_almost_equal(array, wigner_c, decimal=8)
+    np.testing.assert_almost_equal(array, wigner_py.ravel(), decimal=8)
+    np.testing.assert_almost_equal(array, wigner_c.ravel(), decimal=8)
+    np.testing.assert_almost_equal(wigner_c[:, :3, :], wigner_c_half, decimal=8)
 
 
 def test_wigner_2j_matrix_angle_01():
@@ -60,10 +64,11 @@ def test_wigner_2j_matrix_angle_01():
 def test_wigner_2j_matrix_cosine_01():
     ang_momentum_l = 2
     cos_beta = [-0.5498, 0.230]
-    wigner_py, wigner_c = wigner(ang_momentum_l, cos_beta)
+    wigner_py, wigner_c, wigner_c_half = wigner(ang_momentum_l, cos_beta)
     array = np.load("tests/wigner/l=2_cx=[-0.5498, 0.230].npy")
-    np.testing.assert_almost_equal(array, wigner_py, decimal=8)
-    np.testing.assert_almost_equal(array, wigner_c, decimal=8)
+    np.testing.assert_almost_equal(array, wigner_py.ravel(), decimal=8)
+    np.testing.assert_almost_equal(array, wigner_c.ravel(), decimal=8)
+    np.testing.assert_almost_equal(wigner_c[:, :3, :], wigner_c_half, decimal=8)
 
 
 def test_wigner_4j_matrix_angle_02():
@@ -78,10 +83,11 @@ def test_wigner_4j_matrix_angle_02():
 def test_wigner_4j_matrix_cosine_02():
     ang_momentum_l = 4
     cos_beta = [-0.8459]
-    wigner_py, wigner_c = wigner(ang_momentum_l, cos_beta)
+    wigner_py, wigner_c, wigner_c_half = wigner(ang_momentum_l, cos_beta)
     array = np.load("tests/wigner/l=4_cx=-0.8459.npy")
-    np.testing.assert_almost_equal(array, wigner_py, decimal=8)
-    np.testing.assert_almost_equal(array, wigner_c, decimal=8)
+    np.testing.assert_almost_equal(array, wigner_py.ravel(), decimal=8)
+    np.testing.assert_almost_equal(array, wigner_c.ravel(), decimal=8)
+    np.testing.assert_almost_equal(wigner_c[:, :5, :], wigner_c_half, decimal=8)
 
 
 def test_wigner_4j_matrix_angle_03():
@@ -96,10 +102,11 @@ def test_wigner_4j_matrix_angle_03():
 def test_wigner_4j_matrix_cosine_03():
     ang_momentum_l = 4
     cos_beta = [-0.934, 0.4958]
-    wigner_py, wigner_c = wigner(ang_momentum_l, cos_beta)
+    wigner_py, wigner_c, wigner_c_half = wigner(ang_momentum_l, cos_beta)
     array = np.load("tests/wigner/l=4_cx=[-0.934, 0.4958].npy")
-    np.testing.assert_almost_equal(array, wigner_py, decimal=8)
-    np.testing.assert_almost_equal(array, wigner_c, decimal=8)
+    np.testing.assert_almost_equal(array, wigner_py.ravel(), decimal=8)
+    np.testing.assert_almost_equal(array, wigner_c.ravel(), decimal=8)
+    np.testing.assert_almost_equal(wigner_c[:, :5, :], wigner_c_half, decimal=8)
 
 
 def test_wigner_2j_dm0_vector():

@@ -9,8 +9,8 @@
 from libcpp cimport bool as bool_t
 
 cdef extern from "angular_momentum.h":
-    void wigner_d_matrices_from_exp_I_beta(int l, int n, void *exp_I_beta,
-                                  double *wigner)
+    void wigner_d_matrices_from_exp_I_beta(int l, int n, bool_t half,
+                                void *exp_I_beta, double *wigner)
 
 
 cdef extern from "schemes.h":
