@@ -112,7 +112,7 @@ def test_wigner_2j_rotation_00():
     R_out_py = wigner_rotation(2, R_in, cos_alpha, cos_beta)
 
     # np.testing.assert_almost_equal(R_out_py, R_out_c, decimal=8)
-    np.testing.assert_almost_equal(R_out_py, R_out_c2, decimal=8)
+    np.testing.assert_almost_equal(R_out_py[:, :3], R_out_c2, decimal=8)
 
 
 def test_wigner_2j_rotation_01():
@@ -128,7 +128,7 @@ def test_wigner_2j_rotation_01():
     R_out_py = wigner_rotation(2, R_in, cos_alpha, cos_beta)
 
     # np.testing.assert_almost_equal(R_out_py, R_out_c, decimal=8)
-    np.testing.assert_almost_equal(R_out_py, R_out_c2, decimal=8)
+    np.testing.assert_almost_equal(R_out_py[:, :3], R_out_c2, decimal=8)
 
 
 def test_wigner_2j_rotation_02():
@@ -144,7 +144,7 @@ def test_wigner_2j_rotation_02():
     R_out_py = wigner_rotation(2, R_in, cos_alpha, cos_beta)
 
     # np.testing.assert_almost_equal(R_out_py, R_out_c, decimal=8)
-    np.testing.assert_almost_equal(R_out_py, R_out_c2, decimal=8)
+    np.testing.assert_almost_equal(R_out_py[:, :3], R_out_c2, decimal=8)
 
 
 def test_wigner_4j_rotation_03():
@@ -163,7 +163,7 @@ def test_wigner_4j_rotation_03():
     R_out_py = wigner_rotation(4, R_in, cos_alpha, cos_beta)
 
     # np.testing.assert_almost_equal(R_out_py, R_out_c, decimal=8)
-    np.testing.assert_almost_equal(R_out_py, R_out_c2, decimal=8)
+    np.testing.assert_almost_equal(R_out_py[:, :5], R_out_c2, decimal=8)
 
 
 def test_wigner_4j_rotation_04():
@@ -182,4 +182,4 @@ def test_wigner_4j_rotation_04():
     R_out_py = wigner_rotation(4, R_in, cos_alpha, cos_beta)
 
     # np.testing.assert_almost_equal(R_out_py, R_out_c, decimal=8)
-    np.testing.assert_almost_equal(R_out_py, R_out_c2, decimal=8)
+    np.testing.assert_almost_equal(R_out_py[:, :5], R_out_c2, decimal=8)

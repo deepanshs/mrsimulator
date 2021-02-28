@@ -55,6 +55,7 @@ void openblas_set_num_threads(int num_threads);
 
 // user definition
 #define TWO_PI 6.2831853072
+#define Four_PI 12.56637061436
 #define IOTA_TWO_PI TWO_PI *I
 
 // #ifdef linux

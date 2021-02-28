@@ -156,9 +156,8 @@ void octahedronGetComplexExpOfPolarAngleOverOctant(int nt, void *exp_I_alpha,
 void octahedronInterpolation(double *spec, double *freq, int nt, double *amp,
                              int stride, int m) {
   int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
-  unsigned int int_i_stride, int_j_stride;
-  double amp1 = 0.0, temp;
-  double *amp_address, *freq_address;
+  unsigned int int_i_stride = 0, int_j_stride = 0;
+  double amp1, temp, *amp_address, *freq_address;
 
   /* Interpolate between 1d points by setting up triangles of unit area */
 
@@ -167,34 +166,32 @@ void octahedronInterpolation(double *spec, double *freq, int nt, double *amp,
   freq_address = &freq[nt + 1];
 
   while (i < n_pts - 1) {
-    int_i_stride = i * stride;
-    int_j_stride = j * stride;
     temp = amp[int_i_stride + stride] + amp_address[int_j_stride];
-    amp1 = temp;
-    amp1 += amp[int_i_stride];
+    amp1 = temp + amp[int_i_stride];
 
     triangle_interpolation(&freq[i], &freq[i + 1], &freq_address[j], &amp1, spec, &m);
 
     if (i < local_index) {
-      amp1 = temp;
-      amp1 += amp_address[int_j_stride + stride];
+      temp += amp_address[int_j_stride + stride];
       triangle_interpolation(&freq[i + 1], &freq_address[j], &freq_address[j + 1],
-                             &amp1, spec, &m);
+                             &temp, spec, &m);
     } else {
       local_index = j + nt;
       i++;
+      int_i_stride += stride;
     }
     i++;
     j++;
+    int_i_stride += stride;
+    int_j_stride += stride;
   }
 }
 
 void octahedronInterpolation2D(double *spec, double *freq1, double *freq2, int nt,
                                double *amp, int stride, int m0, int m1) {
   int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
-  unsigned int int_i_stride, int_j_stride;
-  double amp1 = 0.0, temp;
-  double *amp_address, *freq1_address, *freq2_address;
+  unsigned int int_i_stride = 0, int_j_stride = 0;
+  double amp1, temp, *amp_address, *freq1_address, *freq2_address;
 
   /* Interpolate between 1d points by setting up triangles of unit area */
 
@@ -204,26 +201,25 @@ void octahedronInterpolation2D(double *spec, double *freq1, double *freq2, int n
   freq2_address = &freq2[nt + 1];
 
   while (i < n_pts - 1) {
-    int_i_stride = i * stride;
-    int_j_stride = j * stride;
     temp = amp[int_i_stride + stride] + amp_address[int_j_stride];
-    amp1 = temp;
-    amp1 += amp[int_i_stride];
+    amp1 = temp + amp[int_i_stride];
 
     triangle_interpolation2D(&freq1[i], &freq1[i + 1], &freq1_address[j], &freq2[i],
                              &freq2[i + 1], &freq2_address[j], &amp1, spec, m0, m1);
 
     if (i < local_index) {
-      amp1 = temp;
-      amp1 += amp_address[int_j_stride + stride];
+      temp += amp_address[int_j_stride + stride];
       triangle_interpolation2D(&freq1[i + 1], &freq1_address[j], &freq1_address[j + 1],
                                &freq2[i + 1], &freq2_address[j], &freq2_address[j + 1],
-                               &amp1, spec, m0, m1);
+                               &temp, spec, m0, m1);
     } else {
       local_index = j + nt;
       i++;
+      int_i_stride += stride;
     }
     i++;
     j++;
+    int_i_stride += stride;
+    int_j_stride += stride;
   }
 }

@@ -116,12 +116,12 @@ def __wigner_rotation_2(int l, np.ndarray[double] cos_alpha,
     exp_im_alpha[3*n:] = cos_alpha + 1j*np.sqrt(1.0 - cos_alpha**2)
     clib.get_exp_Im_alpha(n, 1, &exp_im_alpha[0])
 
-    cdef np.ndarray[complex] R_out = np.zeros(n1*n, dtype=np.complex128)
+    cdef np.ndarray[complex] R_out = np.zeros((l + 1)*n, dtype=np.complex128)
 
 
     clib.__wigner_rotation_2(l, n, &wigner[0],
                            &exp_im_alpha[0], &R_in[0], &R_out[0])
-    return R_out.reshape(n, n1)
+    return R_out.reshape(n, (l + 1))
 
 
 @cython.boundscheck(False)
@@ -140,10 +140,10 @@ def pre_phase_components(unsigned int number_of_sidebands, double sample_rotatio
     r"""
 
     """
-    cdef int n1 = 9 * number_of_sidebands
+    cdef int n1 = 4 * number_of_sidebands
     cdef np.ndarray[double] pre_phase = np.zeros(2*n1, dtype=np.float64)
     clib.__get_components(number_of_sidebands, sample_rotation_frequency_in_Hz, &pre_phase[0])
-    return pre_phase.view(dtype=np.complex128).reshape(9, number_of_sidebands)
+    return pre_phase.view(dtype=np.complex128).reshape(4, number_of_sidebands)
 
 
 @cython.boundscheck(False)
@@ -269,8 +269,8 @@ def __batch_wigner_rotation(unsigned int octant_orientations,
                             np.ndarray[double complex] R4,
                             np.ndarray[double complex] exp_Im_alpha):
 
-    cdef np.ndarray[double complex] w2 = np.empty(5*octant_orientations*n_octants, dtype=np.complex128)
-    cdef np.ndarray[double complex] w4 = np.empty(9*octant_orientations*n_octants, dtype=np.complex128)
+    cdef np.ndarray[double complex] w2 = np.empty(3*octant_orientations*n_octants, dtype=np.complex128)
+    cdef np.ndarray[double complex] w4 = np.empty(5*octant_orientations*n_octants, dtype=np.complex128)
     clib.__batch_wigner_rotation(octant_orientations, n_octants,
                             &wigner_2j_matrices[0], &R2[0], &wigner_4j_matrices[0],
                             &R4[0], &exp_Im_alpha[0], &w2[0], &w4[0])

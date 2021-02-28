@@ -14,12 +14,17 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
                                           bool allow_fourth_rank) {
   unsigned int allocate_size_2, allocate_size_4;
 
-  if (scheme->integration_volume == 0) { // positive octant
-    scheme->total_orientations = scheme->octant_orientations;
-  } else if (scheme->integration_volume == 1) { // positive hemisphere
-    scheme->total_orientations = 4 * scheme->octant_orientations;
-  } else if (scheme->integration_volume == 2) { // sphere
-    scheme->total_orientations = 8 * scheme->octant_orientations;
+  scheme->total_orientations = scheme->octant_orientations;
+
+  switch (scheme->integration_volume) {
+  case 0: // positive octant
+    break;
+  case 1: // positive hemisphere
+    scheme->total_orientations *= 4;
+    break;
+  case 2: // full sphere
+    scheme->total_orientations *= 8;
+    break;
   }
 
   /**
@@ -96,14 +101,14 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
   /* Setting up buffers and tables for processing the second rank tensors. . */
   /* ................................................................................ */
   /* w2 is the buffer for storing the frequencies calculated from the second-rank
-   * tensors. */
-  scheme->w2 = malloc_complex128(5 * scheme->total_orientations);
+   * tensors. Only calcuate the -2, -1, and 0 tensor components.*/
+  scheme->w2 = malloc_complex128(3 * scheme->total_orientations);
 
   scheme->w4 = NULL;
   if (allow_fourth_rank) {
     /* w4 is the buffer for storing the frequencies calculated from the fourth-rank
-     * tensors. */
-    scheme->w4 = malloc_complex128(9 * scheme->total_orientations);
+     * tensors. Only calcuate the -4, -3, -2, -1, and 0 tensor components.*/
+    scheme->w4 = malloc_complex128(5 * scheme->total_orientations);
   }
 }
 
