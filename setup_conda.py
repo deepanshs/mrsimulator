@@ -6,10 +6,11 @@ from os.path import dirname
 from os.path import join
 from os.path import split
 
-import numpy as np
 from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
+
+import numpy as np
 
 try:
     from Cython.Build import cythonize

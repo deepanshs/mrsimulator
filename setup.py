@@ -6,11 +6,12 @@ from os.path import dirname
 from os.path import exists
 from os.path import join
 
-import numpy as np
-import numpy.distutils.system_info as sysinfo
 from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
+
+import numpy as np
+import numpy.distutils.system_info as sysinfo
 
 from settings import use_accelerate
 from settings import use_openblas
