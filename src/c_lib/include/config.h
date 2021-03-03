@@ -50,8 +50,7 @@ typedef float complex64[2];
 
 #define __blas_activate
 
-#include "tables/cos_0_0002.h"
-#include "tables/sin_0_0002.h"
+#include "tables/trig.h"
 
 // user definition
 #define CONST_PI 3.14159265358979323846264338327950288419716939937510

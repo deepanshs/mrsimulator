@@ -3,10 +3,11 @@ from libcpp cimport bool as bool_t
 from numpy cimport ndarray
 import numpy as np
 import cython
-from mrsimulator import sandbox as sb
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+clib.generate_table()
 
 @cython.profile(False)
 @cython.boundscheck(False)

@@ -9,6 +9,9 @@
 
 from libcpp cimport bool as bool_t
 
+cdef extern from "tables/trig.h":
+    void generate_table()
+
 cdef extern from "angular_momentum.h":
     void wigner_d_matrices(const int l, const int n, const double *angle, double *wigner)
 
