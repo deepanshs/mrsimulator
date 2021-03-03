@@ -10,9 +10,9 @@ static inline void generate_table() {
   extern double sin_table[62833];
   extern double table_precision_inverse;
 
-  int i, n = 62833; // total values are 31417.
+  int i, n = 62833;
   double precision = 0.0001;
-  table_precision_inverse = 1 / precision;
+  table_precision_inverse = 1.0 / precision;
 
   for (i = 0; i < n - 1; i++) {
     cos_table[i] = cos(i * precision);

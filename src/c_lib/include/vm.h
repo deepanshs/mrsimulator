@@ -15,7 +15,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 static inline double absd(double a) {
-  *((unsigned long *)&a) &= ~(1UL << 63);
+  *((unsigned __int64_ *)&a) &= ~(1ULL << 63);
   return a;
 }
 
