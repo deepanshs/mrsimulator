@@ -3,7 +3,7 @@
 //  array.h
 //
 //  @copyright Deepansh J. Srivastava, 2019-2021.
-//  Created by Deepansh J. Srivastava, Apr 11, 2019
+//  Created by Deepansh J. Srivastava, Apr 11, 2019.
 //  Contact email = srivastava.89@osu.edu
 //
 

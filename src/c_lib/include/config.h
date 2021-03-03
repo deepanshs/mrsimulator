@@ -3,7 +3,7 @@
 //  config.h
 //
 //  @copyright Deepansh J. Srivastava, 2019-2021.
-//  Created by Deepansh J. Srivastava, Aug 10, 2019
+//  Created by Deepansh J. Srivastava, Aug 10, 2019.
 //  Contact email = srivastava.89@osu.edu
 //
 
@@ -49,14 +49,22 @@ typedef float complex64[2];
 #endif
 
 #define __blas_activate
-#include "vm.h"
 
-void openblas_set_num_threads(int num_threads);
+#include "tables/cos_0_0002.h"
+#include "tables/sin_0_0002.h"
 
 // user definition
-#define TWO_PI 6.2831853072
-#define Four_PI 12.56637061436
-#define IOTA_TWO_PI TWO_PI *I
+#define CONST_PI 3.14159265358979323846264338327950288419716939937510
+#define CONST_2PI 6.28318530717958623199592693708837032318115234375000
+#define CONST_4PI 2 * CONST_2PI
+#define CONST_iPI CONST_2PI *I
+#define TOL 1.0e-6
+
+#define modd(x, y) ((x) - (int)((x) / (y)) * (y)) // fold x within range y
+#define lerp(w, v1, v2) ((1.0 - (w)) * (v1) + (w) * (v2))
+#define sign(x) (int)(((x) > 0) - ((x) < 0)) // return sign of x
+
+void openblas_set_num_threads(int num_threads);
 
 // #ifdef linux
 // #include "mkl.h"
@@ -76,6 +84,8 @@ void openblas_set_num_threads(int num_threads);
 // // printf("Using upto %d threads for simulation.\n", max_threads);
 // #endif
 
+#include "vm.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <time.h>
@@ -83,4 +93,4 @@ void openblas_set_num_threads(int num_threads);
 #include "array.h"
 #include "vm_common.h"
 
-#endif
+#endif /* __config__ */

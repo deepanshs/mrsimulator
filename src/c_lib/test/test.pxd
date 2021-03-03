@@ -35,7 +35,7 @@ cdef extern from "angular_momentum.h":
                             void *w4)
 
 
-cdef extern from "powder_setup.h":
+cdef extern from "octahedron.h":
     void averaging_setup(
         int nt,
         double complex *exp_I_alpha,
@@ -63,7 +63,6 @@ cdef extern from "interpolation.h":
         int m0,
         int m1)
 
-cdef extern from "octahedron.h":
     void octahedronInterpolation(
         double *spec,
         double *freq,

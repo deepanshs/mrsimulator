@@ -9,29 +9,29 @@
 
 #include "interpolation.h"
 
-double TOL = 1.0e-6;
 // triangle_interpolation is an optimized version of tent. Still plenty of
 // room for optimization.
 
-static void inline delta_fn_interpolation(double *freq1, int p, int *points,
+static void inline delta_fn_interpolation(const double *freq1, const int *points,
                                           double *amp, double *spec) {
   double diff, n_i;
+  int p = (int)*freq1;
   if (p >= *points || p < 0) return;
 
-  diff = freq1[0] - (double)p;
+  diff = *freq1 - (double)p;
   n_i = 0.5;
   if (fabs(diff - n_i) < TOL) {
-    spec[p] += amp[0];
+    spec[p] += *amp;
     return;
   }
   if (diff < n_i) {
-    if (p != 0) spec[p - 1] += amp[0] * (n_i - diff);
-    spec[p] += amp[0] * (n_i + diff);
+    if (p != 0) spec[p - 1] += *amp * (n_i - diff);
+    spec[p] += *amp * (n_i + diff);
     return;
   }
   if (diff > n_i) {
-    if (p + 1 != *points) spec[p + 1] += amp[0] * (diff - n_i);
-    spec[p] += amp[0] * (1 + n_i - diff);
+    if (p + 1 != *points) spec[p + 1] += *amp * (diff - n_i);
+    spec[p] += *amp * (1 + n_i - diff);
     return;
   }
 }
@@ -90,23 +90,19 @@ static inline void right_triangle_interpolate(int p, int pmax, bool l_clip, bool
   }
 }
 
-void triangle_interpolation(double *freq1, double *freq2, double *freq3, double *amp,
-                            double *spec, int *points) {
+static inline void __triangle_interpolation(double *freq1, double *freq2, double *freq3,
+                                            double *amp, double *spec, int *points) {
   double top, t;
 
   int p, pmid, pmax, i, j;
   bool clip_right1 = false, clip_left1 = false, clip_right2 = false, clip_left2 = false;
 
-  p = (int)(freq1[0]);
-
-  // check for delta function. If yes, bin with delta_fn_interpolation.
-  if (fabs(freq1[0] - freq2[0]) < TOL && fabs(freq1[0] - freq3[0]) < TOL)
-    return delta_fn_interpolation(freq1, p, points, amp, spec);
+  p = (int)(*freq1);
 
   // check if the three points lie within a bin interval.
   if ((int)freq1[0] == (int)freq2[0] && (int)freq1[0] == (int)freq3[0]) {
     if (p >= *points || p < 0) return;
-    spec[p] += amp[0];
+    spec[p] += *amp;
     return;
   }
 
@@ -151,7 +147,7 @@ void triangle_interpolation(double *freq1, double *freq2, double *freq3, double 
     clip_left2 = true;
   }
 
-  top = (amp[0] * 2.0 / (f[2] - f[0]));
+  top = (*amp * 2.0 / (f[2] - f[0]));
 
   left_triangle_interpolate(p, pmid, clip_left1, clip_right1, top, f, spec);
   right_triangle_interpolate(pmid, pmax, clip_left2, clip_right2, top, f, spec);
@@ -179,25 +175,27 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
     diff = freq11[0] - (double)p;
     n_i = 0.5;
     if (fabs(diff - n_i) < TOL) {
-      triangle_interpolation(freq21, freq22, freq23, amp, &spec[p * m1], &m1);
+      __triangle_interpolation(freq21, freq22, freq23, amp, &spec[p * m1], &m1);
       return 0;
     }
     if (diff < n_i) {
       if (p != 0) {
         temp = amp[0] * (n_i - diff);
-        triangle_interpolation(freq21, freq22, freq23, &temp, &spec[(p - 1) * m1], &m1);
+        __triangle_interpolation(freq21, freq22, freq23, &temp, &spec[(p - 1) * m1],
+                                 &m1);
       }
       temp = amp[0] * (n_i + diff);
-      triangle_interpolation(freq21, freq22, freq23, &temp, &spec[p * m1], &m1);
+      __triangle_interpolation(freq21, freq22, freq23, &temp, &spec[p * m1], &m1);
       return 0;
     }
     if (diff > n_i) {
       if (p + 1 != m0) {
         temp = amp[0] * (diff - n_i);
-        triangle_interpolation(freq21, freq22, freq23, &temp, &spec[(p + 1) * m1], &m1);
+        __triangle_interpolation(freq21, freq22, freq23, &temp, &spec[(p + 1) * m1],
+                                 &m1);
       }
       temp = amp[0] * (1 + n_i - diff);
-      triangle_interpolation(freq21, freq22, freq23, &temp, &spec[p * m1], &m1);
+      __triangle_interpolation(freq21, freq22, freq23, &temp, &spec[p * m1], &m1);
       return 0;
     }
     return 0;
@@ -207,7 +205,7 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
     if (p >= m0 || p < 0) {
       return 0;
     }
-    triangle_interpolation(freq21, freq22, freq23, amp, &spec[p * m1], &m1);
+    __triangle_interpolation(freq21, freq22, freq23, amp, &spec[p * m1], &m1);
     return 0;
   }
 
@@ -281,8 +279,8 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
         freq00_01 = f2[0];
         freq10_01 = f01_slope * diff + f2[0];
         freq11_02 = f02_slope * diff + f2[0];
-        triangle_interpolation(&freq00_01, &freq11_02, &freq10_01, &amp_section,
-                               &spec[p * m1], &m1);
+        __triangle_interpolation(&freq00_01, &freq11_02, &freq10_01, &amp_section,
+                                 &spec[p * m1], &m1);
         p++;
       } else {
         amp_section = (diff - 0.5) * df1;
@@ -297,13 +295,13 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
         if (denom != 0) {
           area_down_triangle = line_down / denom * amp_section;
           area_up_triangle = line_up / denom * amp_section;
-          triangle_interpolation(&freq00_01, &freq11_02, &freq10_01,
-                                 &area_down_triangle, &spec[p * m1], &m1);
-          triangle_interpolation(&freq00_01, &freq11_02, &freq01_02, &area_up_triangle,
-                                 &spec[p * m1], &m1);
+          __triangle_interpolation(&freq00_01, &freq11_02, &freq10_01,
+                                   &area_down_triangle, &spec[p * m1], &m1);
+          __triangle_interpolation(&freq00_01, &freq11_02, &freq01_02,
+                                   &area_up_triangle, &spec[p * m1], &m1);
         } else {
-          triangle_interpolation(&freq00_01, &freq11_02, &freq10_01, &amp_section,
-                                 &spec[p * m1], &m1);
+          __triangle_interpolation(&freq00_01, &freq11_02, &freq10_01, &amp_section,
+                                   &spec[p * m1], &m1);
         }
         p++;
       }
@@ -328,13 +326,13 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
           area_down_triangle = line_down / denom * amp_section;
           area_up_triangle = line_up / denom * amp_section;
 
-          triangle_interpolation(&freq00_01, &freq11_02, &freq10_01,
-                                 &area_down_triangle, &spec[p * m1], &m1);
-          triangle_interpolation(&freq00_01, &freq11_02, &freq01_02, &area_up_triangle,
-                                 &spec[p * m1], &m1);
+          __triangle_interpolation(&freq00_01, &freq11_02, &freq10_01,
+                                   &area_down_triangle, &spec[p * m1], &m1);
+          __triangle_interpolation(&freq00_01, &freq11_02, &freq01_02,
+                                   &area_up_triangle, &spec[p * m1], &m1);
         } else {
-          triangle_interpolation(&freq00_01, &freq11_02, &freq10_01, &amp_section,
-                                 &spec[p * m1], &m1);
+          __triangle_interpolation(&freq00_01, &freq11_02, &freq10_01, &amp_section,
+                                   &spec[p * m1], &m1);
         }
         line_up += abs_slope_diff;
         line_down += abs_slope_diff;
@@ -354,13 +352,13 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
           denom = fabs(freq11_02 - freq10_01) + line_up;
           area_down_triangle = fabs(freq11_02 - freq10_01) / denom * amp_section;
           area_up_triangle = line_up / denom * amp_section;
-          triangle_interpolation(&freq00_01, &freq11_02, &freq10_01,
-                                 &area_down_triangle, &spec[p * m1], &m1);
-          triangle_interpolation(&freq00_01, &freq11_02, &freq01_02, &area_up_triangle,
-                                 &spec[p * m1], &m1);
+          __triangle_interpolation(&freq00_01, &freq11_02, &freq10_01,
+                                   &area_down_triangle, &spec[p * m1], &m1);
+          __triangle_interpolation(&freq00_01, &freq11_02, &freq01_02,
+                                   &area_up_triangle, &spec[p * m1], &m1);
         } else {
-          triangle_interpolation(&freq00_01, &freq11_02, &freq10_01, &amp_section,
-                                 &spec[p * m1], &m1);
+          __triangle_interpolation(&freq00_01, &freq11_02, &freq10_01, &amp_section,
+                                   &spec[p * m1], &m1);
         }
       }
     } else {
@@ -368,8 +366,8 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
         amp_section = f10 * top * 0.5;
         freq10_01 = f2[1];
         freq11_02 = f02_slope * (f1[1] - f1[0]) + f2[0];
-        triangle_interpolation(&f2[0], &freq10_01, &freq11_02, &amp_section,
-                               &spec[p * m1], &m1);
+        __triangle_interpolation(&f2[0], &freq10_01, &freq11_02, &amp_section,
+                                 &spec[p * m1], &m1);
       }
     }
   }
@@ -399,13 +397,13 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
       if (denom != 0) {
         area_down_triangle = fabs(line_down) / denom * amp_section;
         area_up_triangle = fabs(line_up) / denom * amp_section;
-        triangle_interpolation(&freq00_12, &freq11_02, &freq10_12, &area_down_triangle,
-                               &spec[p * m1], &m1);
-        triangle_interpolation(&freq00_12, &freq11_02, &freq01_02, &area_up_triangle,
-                               &spec[p * m1], &m1);
+        __triangle_interpolation(&freq00_12, &freq11_02, &freq10_12,
+                                 &area_down_triangle, &spec[p * m1], &m1);
+        __triangle_interpolation(&freq00_12, &freq11_02, &freq01_02, &area_up_triangle,
+                                 &spec[p * m1], &m1);
       } else {
-        triangle_interpolation(&freq00_12, &freq11_02, &freq10_12, &amp_section,
-                               &spec[p * m1], &m1);
+        __triangle_interpolation(&freq00_12, &freq11_02, &freq10_12, &amp_section,
+                                 &spec[p * m1], &m1);
       }
       p++;
     } else {
@@ -421,13 +419,13 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
       if (denom != 0) {
         area_down_triangle = line_down / denom * amp_section;
         area_up_triangle = line_up / denom * amp_section;
-        triangle_interpolation(&freq00_12, &freq11_02, &freq10_12, &area_down_triangle,
-                               &spec[p * m1], &m1);
-        triangle_interpolation(&freq00_12, &freq11_02, &freq01_02, &area_up_triangle,
-                               &spec[p * m1], &m1);
+        __triangle_interpolation(&freq00_12, &freq11_02, &freq10_12,
+                                 &area_down_triangle, &spec[p * m1], &m1);
+        __triangle_interpolation(&freq00_12, &freq11_02, &freq01_02, &area_up_triangle,
+                                 &spec[p * m1], &m1);
       } else {
-        triangle_interpolation(&freq00_12, &freq11_02, &freq10_12, &amp_section,
-                               &spec[p * m1], &m1);
+        __triangle_interpolation(&freq00_12, &freq11_02, &freq10_12, &amp_section,
+                                 &spec[p * m1], &m1);
       }
       p++;
     }
@@ -450,13 +448,13 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
       if (denom != 0) {
         area_down_triangle = line_down / denom * amp_section;
         area_up_triangle = line_up / denom * amp_section;
-        triangle_interpolation(&freq00_12, &freq11_02, &freq10_12, &area_down_triangle,
-                               &spec[p * m1], &m1);
-        triangle_interpolation(&freq00_12, &freq11_02, &freq01_02, &area_up_triangle,
-                               &spec[p * m1], &m1);
+        __triangle_interpolation(&freq00_12, &freq11_02, &freq10_12,
+                                 &area_down_triangle, &spec[p * m1], &m1);
+        __triangle_interpolation(&freq00_12, &freq11_02, &freq01_02, &area_up_triangle,
+                                 &spec[p * m1], &m1);
       } else {
-        triangle_interpolation(&freq00_12, &freq11_02, &freq10_12, &amp_section,
-                               &spec[p * m1], &m1);
+        __triangle_interpolation(&freq00_12, &freq11_02, &freq10_12, &amp_section,
+                                 &spec[p * m1], &m1);
       }
       line_up -= abs_slope_diff;
       line_down -= abs_slope_diff;
@@ -471,14 +469,14 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
       freq00_12 = freq10_12;
       freq01_02 = freq11_02;
       freq11_02 = f2[2];
-      triangle_interpolation(&freq00_12, &freq11_02, &freq01_02, &amp_section,
-                             &spec[p * m1], &m1);
+      __triangle_interpolation(&freq00_12, &freq11_02, &freq01_02, &amp_section,
+                               &spec[p * m1], &m1);
     }
   } else {
     if (clip_right2 == 0) {
       amp_section = f21 * top * 0.5;
-      triangle_interpolation(&freq11_02, &f2[1], &f2[2], &amp_section, &spec[p * m1],
-                             &m1);
+      __triangle_interpolation(&freq11_02, &f2[1], &f2[2], &amp_section, &spec[p * m1],
+                               &m1);
     }
   }
   return 0;
@@ -635,3 +633,110 @@ void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,
 //         clipped_line = (self.x0 + t0*xdelta, self.y0 + t0*ydelta,
 //                         self.x0 + t1*xdelta, self.y0 + t1*ydelta)
 //         return [clipped_line]
+
+void triangle_interpolation(double *freq1, double *freq2, double *freq3, double *amp,
+                            double *spec, int *points) {
+  if (fabs(*freq1 - *freq2) < TOL && fabs(*freq1 - *freq3) < TOL)
+    return delta_fn_interpolation(freq1, points, amp, spec);
+
+  __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
+}
+
+void octahedronDeltaInterpolation(const unsigned int nt, double *freq, double *amp,
+                                  int stride, int n_spec, double *spec) {
+  int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
+  unsigned int int_i_stride = 0, int_j_stride = 0;
+  double amp1, temp, *amp_address;
+
+  local_index = nt - 1;
+  amp_address = &amp[(nt + 1) * stride];
+  amp1 = 0.0;
+  while (i < n_pts - 1) {
+    temp = amp[int_i_stride + stride] + amp_address[int_j_stride];
+    amp1 += temp + amp[int_i_stride];
+
+    if (i < local_index) {
+      temp += amp_address[int_j_stride + stride];
+      amp1 += temp;
+    } else {
+      local_index = j + nt;
+      i++;
+      int_i_stride += stride;
+    }
+    i++;
+    j++;
+    int_i_stride += stride;
+    int_j_stride += stride;
+  }
+  return delta_fn_interpolation(freq, &n_spec, &amp1, spec);
+}
+
+void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,
+                             double *amp, int stride, int m) {
+  int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
+  unsigned int int_i_stride = 0, int_j_stride = 0;
+  double amp1, temp, *amp_address, *freq_address;
+
+  /* Interpolate between 1d points by setting up triangles of unit area */
+  local_index = nt - 1;
+  amp_address = &amp[(nt + 1) * stride];
+  freq_address = &freq[nt + 1];
+
+  while (i < n_pts - 1) {
+    temp = amp[int_i_stride + stride] + amp_address[int_j_stride];
+    amp1 = temp + amp[int_i_stride];
+
+    __triangle_interpolation(&freq[i], &freq[i + 1], &freq_address[j], &amp1, spec, &m);
+
+    if (i < local_index) {
+      temp += amp_address[int_j_stride + stride];
+      __triangle_interpolation(&freq[i + 1], &freq_address[j], &freq_address[j + 1],
+                               &temp, spec, &m);
+    } else {
+      local_index = j + nt;
+      i++;
+      int_i_stride += stride;
+    }
+    i++;
+    j++;
+    int_i_stride += stride;
+    int_j_stride += stride;
+  }
+}
+
+void octahedronInterpolation2D(double *spec, double *freq1, double *freq2, int nt,
+                               double *amp, int stride, int m0, int m1) {
+  int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
+  unsigned int int_i_stride = 0, int_j_stride = 0;
+  double amp1, temp, *amp_address, *freq1_address, *freq2_address;
+
+  /* Interpolate between 1d points by setting up triangles of unit area */
+
+  local_index = nt - 1;
+  amp_address = &amp[(nt + 1) * stride];
+  freq1_address = &freq1[nt + 1];
+  freq2_address = &freq2[nt + 1];
+
+  while (i < n_pts - 1) {
+    temp = amp[int_i_stride + stride] + amp_address[int_j_stride];
+    amp1 = temp + amp[int_i_stride];
+
+    triangle_interpolation2D(&freq1[i], &freq1[i + 1], &freq1_address[j], &freq2[i],
+                             &freq2[i + 1], &freq2_address[j], &amp1, spec, m0, m1);
+
+    if (i < local_index) {
+      temp += amp_address[int_j_stride + stride];
+      triangle_interpolation2D(&freq1[i + 1], &freq1_address[j], &freq1_address[j + 1],
+                               &freq2[i + 1], &freq2_address[j], &freq2_address[j + 1],
+                               &temp, spec, m0, m1);
+    } else {
+      local_index = j + nt;
+      i++;
+      int_i_stride += stride;
+    }
+    i++;
+    j++;
+    int_i_stride += stride;
+    int_j_stride += stride;
+  }
+}

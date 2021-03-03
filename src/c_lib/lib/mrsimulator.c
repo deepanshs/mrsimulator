@@ -3,11 +3,14 @@
 //  mrsimulator.c
 //
 //  @copyright Deepansh J. Srivastava, 2019-2021.
-//  Created by Deepansh J. Srivastava, Jun 9, 2019
+//  Created by Deepansh J. Srivastava, Jun 9, 2019.
 //  Contact email = srivastava.89@osu.edu
 //
 
 #include "mrsimulator.h"
+
+double ONE[] = {1.0, 0.0};
+double ZERO[] = {0.0, 0.0};
 
 /**
  * @func MRS_free_plan
@@ -15,33 +18,13 @@
  * Free the buffers and pre-calculated tables from the mrsimulator plan.
  */
 void MRS_free_plan(MRS_plan *the_plan) {
-  if (!the_plan->vr_freq) {
-    free(the_plan->vr_freq);
-  }
-
-  if (!the_plan->wigner_d2m0_vector) {
-    free(the_plan->wigner_d2m0_vector);
-  }
-
-  if (!the_plan->wigner_d4m0_vector) {
-    free(the_plan->wigner_d4m0_vector);
-  }
-
-  if (!the_plan->norm_amplitudes) {
-    free(the_plan->norm_amplitudes);
-  }
-
-  if (!the_plan->pre_phase) {
-    free(the_plan->pre_phase);
-  }
-
-  if (!the_plan->pre_phase_2) {
-    free(the_plan->pre_phase_2);
-  }
-
-  if (!the_plan->pre_phase_4) {
-    free(the_plan->pre_phase_4);
-  }
+  if (!the_plan->vr_freq) free(the_plan->vr_freq);
+  if (!the_plan->wigner_d2m0_vector) free(the_plan->wigner_d2m0_vector);
+  if (!the_plan->wigner_d4m0_vector) free(the_plan->wigner_d4m0_vector);
+  if (!the_plan->norm_amplitudes) free(the_plan->norm_amplitudes);
+  if (!the_plan->pre_phase) free(the_plan->pre_phase);
+  if (!the_plan->pre_phase_2) free(the_plan->pre_phase_2);
+  if (!the_plan->pre_phase_4) free(the_plan->pre_phase_4);
 }
 
 /**
@@ -84,10 +67,6 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
   plan->rotor_angle_in_rad = rotor_angle_in_rad;
 
   plan->allow_fourth_rank = allow_fourth_rank;
-  plan->one[0] = 1.0;
-  plan->one[1] = 0.0;
-  plan->zero[0] = 0.0;
-  plan->zero[1] = 0.0;
 
   /**
    * Update the mrsimulator plan with the given spherical averaging scheme. We create
@@ -260,10 +239,6 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
   new_plan->pre_phase = plan->pre_phase;
   new_plan->pre_phase_2 = plan->pre_phase_2;
   new_plan->pre_phase_4 = plan->pre_phase_4;
-  new_plan->one[0] = plan->one[0];
-  new_plan->one[1] = plan->one[1];
-  new_plan->zero[0] = plan->zero[0];
-  new_plan->zero[1] = plan->zero[1];
   new_plan->buffer = plan->buffer;
   return new_plan;
 }
@@ -323,9 +298,8 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
    * leading dimension.
    */
   cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans, plan->number_of_sidebands,
-              scheme->total_orientations, 2, (double *)(plan->one),
-              (double *)(plan->pre_phase_2), plan->number_of_sidebands,
-              (double *)(scheme->w2), 3, (double *)(plan->zero),
+              scheme->total_orientations, 2, ONE, (double *)(plan->pre_phase_2),
+              plan->number_of_sidebands, (double *)(scheme->w2), 3, ZERO,
               (double *)(fftw_scheme->vector), scheme->total_orientations);
 
   if (scheme->w4 != NULL) {
@@ -358,9 +332,8 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
      * add and update the values stored in the variable `vector`.
      */
     cblas_zgemm(CblasRowMajor, CblasTrans, CblasTrans, plan->number_of_sidebands,
-                scheme->total_orientations, 4, (double *)(plan->one),
-                (double *)(plan->pre_phase_4), plan->number_of_sidebands,
-                (double *)(scheme->w4), 5, (double *)(plan->one),
+                scheme->total_orientations, 4, ONE, (double *)(plan->pre_phase_4),
+                plan->number_of_sidebands, (double *)(scheme->w4), 5, ONE,
                 (double *)(fftw_scheme->vector), scheme->total_orientations);
   }
 
@@ -471,10 +444,8 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
     dim->R0_offset = 0.0;
   }
 
-  /* Normalized isotropic frequency contribution from the zeroth-rank tensor. */
+  /* Normalized the isotropic frequency contribution from the zeroth-rank tensor. */
   dim->R0_offset += R0 * dim->inverse_increment * fraction;
-  // vm_double_add_offset_inplace(scheme->total_orientations, dim->R0_offset,
-  //                              dim->local_frequency);
 
   /**
    * Rotate the w2 and w4 components from the rotor-frame to the lab-frame. Since only
@@ -485,7 +456,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
 
   /* Normalized local anisotropic frequency contributions from the 2nd-rank tensor. */
   plan->buffer = dim->inverse_increment * plan->wigner_d2m0_vector[2] * fraction;
-  cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&scheme->w2[2], 6,
+  cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&(scheme->w2[2]), 6,
               dim->local_frequency, 1);
   if (plan->allow_fourth_rank) {
     /**
@@ -695,7 +666,7 @@ void __get_components_2(unsigned int number_of_sidebands,
   vm_double_arrange(number_of_sidebands, input);
 
   // Calculate the spin angular frequency
-  spin_angular_freq = sample_rotation_frequency_in_Hz * TWO_PI;
+  spin_angular_freq = sample_rotation_frequency_in_Hz * CONST_2PI;
 
   // Calculate tau, where tau = (rotor period / number of phase steps)
   tau = 1.0 / ((double)number_of_sidebands * sample_rotation_frequency_in_Hz);
@@ -711,7 +682,7 @@ void __get_components_2(unsigned int number_of_sidebands,
      *    scale = 2π/m_wr[m].
      */
     i = m * number_of_sidebands;
-    scale = TWO_PI / m_wr[m];
+    scale = CONST_2PI / m_wr[m];
 
     // step 1. calculate phase
     vm_double_ramp(number_of_sidebands, input, m_wr[m] * tau, 0.0, phase);
@@ -765,7 +736,7 @@ void __get_components(unsigned int number_of_sidebands,
   unsigned int step, m;
 
   // Calculate the spin angular frequency
-  spin_angular_freq = sample_rotation_frequency * TWO_PI;
+  spin_angular_freq = sample_rotation_frequency * CONST_2PI;
 
   // Calculate tau increments, where tau = (rotor period / number of phase steps)
   tau = 1.0 / ((double)number_of_sidebands * sample_rotation_frequency);
@@ -776,8 +747,8 @@ void __get_components(unsigned int number_of_sidebands,
   for (m = 0; m < 4; m++) {
     wrt = m_wr[m] * tau;
     pht = 0.0;
-    // scale = 2 * TWO_PI / m_wr[m]. See Eq.(2) and (4) for reason for the factor 2.
-    scale = Four_PI / m_wr[m];
+    // scale = 2 * CONST_2PI / m_wr[m]. See Eq.(2) and (4) for reason for the factor 2.
+    scale = CONST_4PI / m_wr[m];
     for (step = 0; step < number_of_sidebands; step++) {
       *pre_phase++ = scale * (cos(pht) - 1.0);
       *pre_phase++ = scale * sin(pht);

@@ -7,9 +7,9 @@
 //  Contact email = srivastava.89@osu.edu
 //
 
-#include "mrsimulator.h"
-
-// Single nucleus spin transition functions.......................................... //
+// =====================================================================================
+//                      Single nucleus spin transition functions
+// =====================================================================================
 
 /**
  * @brief Single nucleus spin transition function from the irreducible spherical tensor
@@ -108,8 +108,9 @@ static inline void STF_cL(double *restrict cl_value, const double mf, const doub
   *cl_value++ = -0.1434274331 * temp + -1.2850792082 * f_value;
 }
 
-// Two weakly coupled nuclei spin transition functions .............................. //
-
+// =====================================================================================
+//              Two weakly coupled nuclei spin transition functions
+// =====================================================================================
 /**
  * @brief The @f$\mathbb{d}_{IS}@f$ spin transition symmetry function.
  *

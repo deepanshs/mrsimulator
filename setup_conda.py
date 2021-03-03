@@ -91,7 +91,7 @@ source = [
     "src/c_lib/lib/mrsimulator.c",
     "src/c_lib/lib/octahedron.c",
     "src/c_lib/lib/simulation.c",
-    "src/c_lib/lib/powder_setup.c",
+    "src/c_lib/lib/frequency_averaging.c",
     "src/c_lib/lib/schemes.c",
     "src/c_lib/lib/method.c",
 ]
