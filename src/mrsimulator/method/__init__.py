@@ -156,15 +156,25 @@ class Method(Parseable):
     def validate_channels(cls, v, *, values, **kwargs):
         return [Isotope(symbol=_) for _ in v]
 
+    @staticmethod
+    def __check_csdm__(data):
+        if data is None:
+            return None
+        if isinstance(data, dict):
+            return cp.parse_dict(data)
+        if isinstance(data, cp.CSDM):
+            return data
+        raise ValueError("Unable to read the data.")
+
     @validator("experiment", pre=True, always=True)
     def validate_experiment(cls, v, *, values, **kwargs):
-        if v is None:
-            return None
-        if isinstance(v, dict):
-            return cp.parse_dict(v)
-        if isinstance(v, cp.CSDM):
+        return cls.__check_csdm__(v)
+
+    @validator("simulation", pre=True, always=True)
+    def validate_simulation(cls, v, *, values, **kwargs):
+        if isinstance(v, np.ndarray):
             return v
-        raise ValueError("Unable to read the data.")
+        return cls.__check_csdm__(v)
 
     @validator("affine_matrix", pre=True, always=True)
     def validate_affine_matrix(cls, v, *, values, **kwargs):
