@@ -10,7 +10,15 @@
 #include <math.h>
 #include <string.h>
 
+#include "config.h"
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+static inline double absd(double a) {
+  *((unsigned __int64_ *)&a) &= ~(1ULL << 63);
+  return a;
+}
+
 /** Arithmetic suit ======================================================== */
 
 /**
@@ -234,16 +242,21 @@ static inline void vm_double_complex_multiply(int count, const void *restrict x,
  * Cosine of the elements of vector x stored in res of type double.
  *    res = cos(x)
  */
+static inline double get_cos_from_table(double x) {
+  x = absd(x);
+  x = modd(x, CONST_2PI);
+  double res = x * table_precision_inverse;
+  int index = (int)res;
+  return lerp(res - index, cos_table[index], cos_table[index + 1]);
+}
+
 static inline void vm_double_cosine(int count, const double *restrict x,
                                     double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
-    *res++ = cos(*x++);
-    // res++;
-    // x++;
-    // x += stride_x;
-    // res += stride_res;
+    *res++ = get_cos_from_table(*x++);
+    // *res++ = cos(*x++);
   }
 }
 
@@ -251,14 +264,23 @@ static inline void vm_double_cosine(int count, const double *restrict x,
  * Sine of the elements of vector x stored in res of type double.
  *      res = sin(x)
  */
+static inline double get_sin_from_table(double x) {
+  x = absd(x);
+  x = modd(x, CONST_2PI);
+  double res = x * table_precision_inverse;
+  int index = (int)res;
+  res = lerp(res - index, sin_table[index], sin_table[index + 1]);
+  res *= sign(x);
+  return res;
+}
+
 static inline void vm_double_sine(int count, const double *restrict x,
                                   double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
-    *res++ = sin(*x++);
-    // x += stride_x;
-    // res += stride_res;
+    *res++ = get_sin_from_table(*x++);
+    // *res++ = sin(*x++);
   }
 }
 
@@ -266,14 +288,27 @@ static inline void vm_double_sine(int count, const double *restrict x,
  * Cosine + I Sine of the elements of vector x in rad and stored in res of type
  * complex128. res = cos(x) + I sin(x)
  */
+static inline void get_cos_sin_from_table(double x, double *restrict res_) {
+  x = absd(x);
+  x = modd(x, CONST_2PI);
+  x *= table_precision_inverse;
+  int i = (int)x;
+  double wt = x - i;
+  *res_++ = lerp(wt, cos_table[i], cos_table[i + 1]);
+  *res_ = lerp(wt, sin_table[i], sin_table[i + 1]);
+  *res_ *= sign(x);
+}
+
 static inline void vm_cosine_I_sine(int count, const double *restrict x,
                                     void *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   double *res_ = (double *)res;
   while (count-- > 0) {
-    *res_++ = cos(*x);
-    *res_++ = sin(*x++);
+    get_cos_sin_from_table(*x++, res_);
+    res_ += 2;
+    // *res_++ = cos(*x);
+    // *res_++ = sin(*x++);
   }
 }
 
@@ -340,11 +375,26 @@ static inline void vm_double_complex_exp_imag_only(int count, const void *restri
   // res = __builtin_assume_aligned(res, 32);
   double *x_ = (double *)x;
   double *res_ = (double *)res;
+  double y, wt;
+  int i;
 
   while (count-- > 0) {
     x_++;
-    *res_++ = cos(*x_);
-    *res_++ = sin(*x_++);
+    y = absd(*x_);
+    y = modd(y, CONST_2PI);
+    y *= table_precision_inverse;
+    i = (int)y;
+    wt = y - i;
+    *res_++ = lerp(wt, cos_table[i], cos_table[i + 1]);
+    *res_ = lerp(wt, sin_table[i], sin_table[i + 1]);
+    *res_ *= sign(*x_);
+
+    res_++;
+    x_++;
+
+    // x_++;
+    // *res_++ = cos(*x_);
+    // *res_++ = sin(*x_++);
   }
 }
 

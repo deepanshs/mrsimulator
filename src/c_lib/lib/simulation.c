@@ -3,11 +3,12 @@
 //  sideband_simulator.c
 //
 //  @copyright Deepansh J. Srivastava, 2019-2021.
-//  Created by Deepansh J. Srivastava, Apr 11, 2019
+//  Created by Deepansh J. Srivastava, Apr 11, 2019.
 //  Contact email = srivastava.89@osu.edu
 //
 
 #include "simulation.h"
+#include "frequency_averaging.h"
 
 /**
  * Each event consists of the following freq contrib ordered as
@@ -26,184 +27,9 @@
 int FREQ_CONTRIB_INCREMENT = 6;
 
 static inline void __zero_components(double *R0, complex128 *R2, complex128 *R4) {
-  R0[0] = 0.0;
+  *R0 = 0.0;
   vm_double_zeros(10, (double *)R2);
   vm_double_zeros(18, (double *)R4);
-}
-
-static inline void one_dimensional_averaging(MRS_dimension *dimensions,
-                                             MRS_averaging_scheme *scheme,
-                                             MRS_fftw_scheme *fftw_scheme, double *spec,
-                                             unsigned int number_of_sidebands) {
-  unsigned int i, j, evt, step_vector = 0, address;
-  MRS_plan *plan;
-  MRS_event *event;
-  int size = scheme->total_orientations * number_of_sidebands;
-  double *freq_amp = malloc_double(size);
-  double offset, offset1;
-
-  vm_double_ones(size, freq_amp);
-
-  // offset = plan->vr_freq[i] + plan->isotropic_offset +
-  //          dimensions[dim].normalize_offset;
-  offset = dimensions[0].normalize_offset + dimensions[0].R0_offset;
-  for (evt = 0; evt < dimensions[0].n_events; evt++) {
-    event = &dimensions[0].events[evt];
-    plan = event->plan;
-    // offset += plan->R0_offset;
-    vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_amp, 1);
-  }
-
-  for (j = 0; j < scheme->octant_orientations; j++) {
-    cblas_dscal(plan->n_octants * number_of_sidebands, plan->norm_amplitudes[j],
-                &freq_amp[j], scheme->octant_orientations);
-  }
-
-  for (i = 0; i < number_of_sidebands; i++) {
-    offset1 = offset + plan->vr_freq[i] * dimensions[0].inverse_increment;
-    if ((int)offset1 >= 0 && (int)offset1 <= dimensions[0].count) {
-      step_vector = i * scheme->total_orientations;
-      for (j = 0; j < plan->n_octants; j++) {
-        address = j * scheme->octant_orientations;
-        // Add offset(isotropic + sideband_order) to the local frequency
-        // from [n to n+octant_orientation]
-        vm_double_add_offset(scheme->octant_orientations,
-                             &dimensions[0].local_frequency[address], offset1,
-                             dimensions[0].freq_offset);
-        // Perform tenting on every sideband order over all orientations
-        octahedronInterpolation(spec, dimensions[0].freq_offset,
-                                scheme->integration_density, &freq_amp[step_vector], 1,
-                                dimensions[0].count);
-        step_vector += scheme->octant_orientations;
-      }
-    }
-  }
-  free(freq_amp);
-}
-
-static inline void two_dimensional_averaging(MRS_dimension *dimensions,
-                                             MRS_averaging_scheme *scheme,
-                                             MRS_fftw_scheme *fftw_scheme, double *spec,
-                                             unsigned int number_of_sidebands,
-                                             double *affine_matrix) {
-  unsigned int i, k, j, evt;
-  unsigned int step_vector_i = 0, step_vector_k = 0, address;
-  MRS_plan *planA, *planB;
-  MRS_event *event;
-  int size = scheme->total_orientations * number_of_sidebands;
-  double *freq_ampA = malloc_double(size);
-  double *freq_ampB = malloc_double(size);
-  double *freq_amp = malloc_double(scheme->total_orientations);
-  double offset0, offset1, offsetA, offsetB;
-  double *dim0, *dim1;
-  double norm0, norm1;
-
-  vm_double_ones(size, freq_ampA);
-  vm_double_ones(size, freq_ampB);
-
-  dim0 = dimensions[0].local_frequency;
-  dim1 = dimensions[1].local_frequency;
-
-  // scale and shear the first dimension.
-  if (affine_matrix[0] != 1) {
-    cblas_dscal(scheme->total_orientations, affine_matrix[0], dim0, 1);
-    // dimensions[0].R0_offset *= affine_matrix[0];
-  }
-  if (affine_matrix[1] != 0) {
-    cblas_daxpy(scheme->total_orientations, affine_matrix[1], dim1, 1, dim0, 1);
-    // dimensions[0].R0_offset += affine_matrix[1] *
-    // dimensions[1].R0_offset;
-  }
-
-  // scale and shear the second dimension.
-  if (affine_matrix[3] != 1) {
-    cblas_dscal(scheme->total_orientations, affine_matrix[3], dim1, 1);
-    // dimensions[1].R0_offset *= affine_matrix[3];
-  }
-  if (affine_matrix[2] != 0) {
-    cblas_daxpy(scheme->total_orientations, affine_matrix[2], dim0, 1, dim1, 1);
-    // dimensions[1].R0_offset += affine_matrix[2] *
-    // dimensions[0].R0_offset;
-  }
-
-  // offset = plan->vr_freq[i] + plan->isotropic_offset +
-  //          dimensions[dim].normalize_offset;
-
-  offset0 = dimensions[0].R0_offset;
-  for (evt = 0; evt < dimensions[0].n_events; evt++) {
-    event = &dimensions[0].events[evt];
-    planA = event->plan;
-    // offset0 += plan->R0_offset;
-    vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_ampA, 1);
-  }
-
-  offset1 = dimensions[1].R0_offset;
-  for (evt = 0; evt < dimensions[1].n_events; evt++) {
-    event = &dimensions[1].events[evt];
-    planB = event->plan;
-    // offset1 += plan->R0_offset;
-    vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_ampB, 1);
-  }
-
-  for (j = 0; j < scheme->octant_orientations; j++) {
-    cblas_dscal(planA->n_octants * number_of_sidebands, planA->norm_amplitudes[j],
-                &freq_ampB[j], scheme->octant_orientations);
-  }
-
-  for (i = 0; i < number_of_sidebands; i++) {
-    offsetA = offset0 + planA->vr_freq[i] * dimensions[0].inverse_increment;
-    for (k = 0; k < number_of_sidebands; k++) {
-      offsetB = offset1 + planB->vr_freq[k] * dimensions[1].inverse_increment;
-
-      norm0 = offsetA;
-      norm1 = offsetB;
-
-      // scale and shear the offsets
-      norm0 *= affine_matrix[0];
-      norm0 += affine_matrix[1] * offsetB;
-
-      norm1 *= affine_matrix[3];
-      norm1 += affine_matrix[2] * norm0;
-
-      norm0 += dimensions[0].normalize_offset;
-      norm1 += dimensions[1].normalize_offset;
-
-      if ((int)norm0 >= 0 && (int)norm0 <= dimensions[0].count) {
-        step_vector_i = i * scheme->total_orientations;
-        // for (k = 0; k < number_of_sidebands; k++) {
-        //   offsetB =
-        //       offset1 + plan->vr_freq[k] * dimensions[1].inverse_increment;
-        //   norm1 = offsetB + dimensions[1].normalize_offset;
-        if ((int)norm1 >= 0 && (int)norm1 <= dimensions[1].count) {
-          step_vector_k = k * scheme->total_orientations;
-
-          // step_vector = 0;
-          for (j = 0; j < planA->n_octants; j++) {
-            address = j * scheme->octant_orientations;
-            // Add offset(isotropic + sideband_order) to the local frequency
-            // from [n to n+octant_orientation]
-            vm_double_add_offset(scheme->octant_orientations, &dim0[address], norm0,
-                                 dimensions[0].freq_offset);
-            vm_double_add_offset(scheme->octant_orientations, &dim1[address], norm1,
-                                 dimensions[1].freq_offset);
-
-            vm_double_multiply(scheme->total_orientations,
-                               &freq_ampA[step_vector_i + address],
-                               &freq_ampB[step_vector_k + address], freq_amp);
-            // Perform tenting on every sideband order over all orientations
-            octahedronInterpolation2D(spec, dimensions[0].freq_offset,
-                                      dimensions[1].freq_offset,
-                                      scheme->integration_density, freq_amp, 1,
-                                      dimensions[0].count, dimensions[1].count);
-            // step_vector += scheme->octant_orientations;
-          }
-        }
-      }
-    }
-  }
-  free(freq_amp);
-  free(freq_ampA);
-  free(freq_ampB);
 }
 
 // Calculate spectrum from the spin systems for a single transition.
@@ -312,7 +138,8 @@ void __mrsimulator_core(
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
 
       /* Copy the amplitudes from the `fftw_scheme->vector` to the
-       * `event->freq_amplitude` for each event within the dimension.*/
+       * `event->freq_amplitude` for each event within the dimension. If the number of
+       * sidebands is 1, skip, because `fftw_scheme->vector` is not evaluated.*/
       if (plan->number_of_sidebands != 1) {
         cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2, event->freq_amplitude,
                     1);
@@ -328,87 +155,17 @@ void __mrsimulator_core(
   free(R4_temp);
 
   /* ---------------------------------------------------------------------
-   *              Calculating the tent for every sideband
-   * Allowing only sidebands that are within the spectral bandwidth
-   *
-   * for (i = 0; i < plan->number_of_sidebands; i++) {
-   *   offset = plan->vr_freq[i] + plan->isotropic_offset;
-   *   if ((int)offset >= 0 && (int)offset <= dimension->count) {
-
-   *     vm_double_ramp(plan->octant_orientations,
-   plan->local_frequency, 1.0,
-   *                    offset, plan->freq_offset);
-   *     octahedronInterpolation(
-   *         spec_site_ptr, plan->freq_offset,
-   *         plan->integration_density,
-   *         (double *)&plan->vector[i * plan->octant_orientations], 2,
-   *         dimension->count);
-   *   }
-   * }
+   *              Delta and triangle tenting interpolation
    */
-  unsigned int i, j, step_vector, address;
-  double offset, offset0;
-  if (n_dimension == 1 && dimensions[0].n_events == 1) {
-    /**
-     * If the number of sidebands is 1, the sideband amplitude at every
-     * sideband order is one. In this case, update the `fftw_scheme->vector` is
-     * the same as the weights from the orientation averaging,
-     */
-    if (plan->number_of_sidebands == 1) {
-      /* Copy the plan->norm_amplitudes to fftw_scheme->vector. */
-      for (j = 0; j < plan->n_octants; j++) {
-        cblas_dcopy(scheme->octant_orientations, plan->norm_amplitudes, 1,
-                    (double *)&fftw_scheme->vector[j * scheme->octant_orientations], 2);
-      }
-    } else {
-      /**
-       * Scale the absolute value square with the powder scheme weights. Only
-       * the real part is scaled and the imaginary part is left as is.
-       */
-      for (j = 0; j < scheme->octant_orientations; j++) {
-        cblas_dscal(plan->n_octants * plan->number_of_sidebands,
-                    plan->norm_amplitudes[j], (double *)&fftw_scheme->vector[j],
-                    2 * scheme->octant_orientations);
-      }
-    }
 
-    offset0 = dimensions[0].normalize_offset + dimensions[0].R0_offset;
-
-    for (i = 0; i < plan->number_of_sidebands; i++) {
-      offset = plan->vr_freq[i] * dimensions[0].inverse_increment + offset0;
-      if ((int)offset >= 0 && (int)offset <= dimensions[0].count) {
-        step_vector = i * scheme->total_orientations;
-        for (j = 0; j < plan->n_octants; j++) {
-          address = j * scheme->octant_orientations;
-
-          // Add offset(isotropic + sideband_order) to the local frequency
-          // from [n to n+octant_orientation]
-          vm_double_add_offset(scheme->octant_orientations,
-                               &dimensions[0].local_frequency[address], offset,
-                               dimensions[0].freq_offset);
-          // Perform tenting on every sideband order over all orientations.
-          octahedronInterpolation(
-              spec_site_ptr, dimensions[0].freq_offset, scheme->integration_density,
-              (double *)&fftw_scheme->vector[step_vector], 2, dimensions[0].count);
-          step_vector += scheme->octant_orientations;
-        }
-      }
-    }
-    return;
-  }
-
-  if (interpolation) {
-    if (n_dimension == 1) {
-      one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
-                                plan->number_of_sidebands);
-      return;
-    }
-
-    if (n_dimension == 2) {
-      two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
-                                plan->number_of_sidebands, affine_matrix);
-      return;
-    }
+  switch (n_dimension) {
+  case 1:
+    one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec);
+    break;
+  case 2:
+    two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
+                              plan->number_of_sidebands, affine_matrix);
+    break;
   }
 }
 

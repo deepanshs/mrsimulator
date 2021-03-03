@@ -35,13 +35,16 @@ def prepare_method_structure(template, **kwargs):
         template["description"] if "description" not in keys else kwargs["description"]
     )
     label = None if "label" not in keys else kwargs["label"]
-    experiment = None if "experiment" not in keys else kwargs["experiment"]
     affine_matrix = None if "affine_matrix" not in keys else kwargs["affine_matrix"]
+
+    simulation = None if "simulation" not in keys else kwargs["simulation"]
+    experiment = None if "experiment" not in keys else kwargs["experiment"]
 
     prep = {
         "name": name,
         "description": desc,
         "label": label,
+        "simulation": simulation,
         "experiment": experiment,
         "affine_matrix": affine_matrix,
     }
@@ -64,25 +67,28 @@ def parse_spectral_dimensions(spectral_dimensions):
     for dim in spectral_dimensions:
         if "events" in dim.keys():
             for evt in dim["events"]:
-                if "transition_query" in evt.keys():
-                    t_query = evt["transition_query"]
-                    if "P" in t_query.keys():
-                        if isinstance(t_query["P"], list):
-                            t_query["P"] = {
-                                "channel-1": [
-                                    [i] if not isinstance(i, (list, tuple)) else i
-                                    for i in t_query["P"]
-                                ]
-                            }
-                    if "D" in t_query.keys():
-                        if isinstance(t_query["D"], list):
-                            t_query["D"] = {
-                                "channel-1": [
-                                    [i] if not isinstance(i, (list, tuple)) else i
-                                    for i in t_query["D"]
-                                ]
-                            }
+                parse_events(evt)
     return spectral_dimensions
+
+
+def parse_events(evt):
+    if "transition_query" not in evt.keys():
+        return
+
+    t_query = evt["transition_query"]
+    if "P" in t_query.keys():
+        t_query["P"] = parse_transition_query(t_query["P"])
+
+    if "D" in t_query.keys():
+        t_query["D"] = parse_transition_query(t_query["D"])
+
+
+def parse_transition_query(query):
+    if not isinstance(query, list):
+        return query
+    return {
+        "channel-1": [[i] if not isinstance(i, (list, tuple)) else i for i in query]
+    }
 
 
 def generate_method_from_template(template, docstring=""):
@@ -91,6 +97,9 @@ def generate_method_from_template(template, docstring=""):
     def constructor(self, spectral_dimensions=[{}], **kwargs):
         # spectral_dimensions_root = deepcopy(spectral_dimensions)
         # kwargs_root = deepcopy(kwargs)
+        if isinstance(spectral_dimensions[0], SpectralDimension):
+            return Method(spectral_dimensions=spectral_dimensions, **kwargs)
+
         parse = False
         if "parse" in kwargs:
             parse = kwargs["parse"]
@@ -104,10 +113,7 @@ def generate_method_from_template(template, docstring=""):
         kw = set(kwargs)
         common = kw.intersection(ge)
 
-        if common != set():
-            info = "`, `".join(list(common))
-            e = f"`{info}` value cannot be modified for {prep['name']} method."
-            raise ValueError(e)
+        _check_rotor_frequency(common, prep["name"], kwargs)
 
         dim = []
         n_sp = len(spectral_dimensions)
@@ -119,28 +125,7 @@ def generate_method_from_template(template, docstring=""):
             )
 
         for i, s in enumerate(local_template["spectral_dimensions"]):
-            events = []
-
-            _fill_missing_events_in_template(spectral_dimensions[i], s)
-
-            for j, e in enumerate(s["events"]):
-                kw = deepcopy(kwargs)
-                ge = deepcopy(global_events)
-
-                # Remove `property_units` from default events instance.
-                if "property_units" in e:
-                    e.pop("property_units")
-
-                if "events" in spectral_dimensions[i]:
-                    kw.update(spectral_dimensions[i]["events"][j])
-
-                e.update(kw)
-                # prioritize the keyword arguments over the global arguments.
-                ge.update(kw)
-                e.update(ge)
-
-                params = _fix_strings_in_events(e) if parse else Event(**e)
-                events.append(params)
+            events = _gen_event(s, spectral_dimensions[i], global_events, parse, kwargs)
 
             if "events" in spectral_dimensions[i]:
                 spectral_dimensions[i].pop("events")
@@ -172,6 +157,7 @@ def generate_method_from_template(template, docstring=""):
             "__str__": description,
             "__doc__": description + docstring,
             "parse_dict_with_units": parse_dict_with_units,
+            "ndim": len(template["spectral_dimensions"]),
         },
     )
     return method
@@ -197,3 +183,42 @@ def _fill_missing_events_in_template(spectral_dimensions, s_template):
     if s_tem_len < sp_evt_len:
         diff = sp_evt_len - s_tem_len
         _ = [s_template["events"].append(Event().dict()) for _ in range(diff)]
+
+
+def _check_rotor_frequency(common, name, kwargs):
+    if common == set():
+        return
+
+    r_freq = kwargs["rotor_frequency"]
+    if "rotor_frequency" in common and r_freq == "1000000000000.0 Hz":
+        return
+
+    info = "`, `".join(list(common))
+    raise ValueError(f"`{info}` value cannot be modified for {name} method.")
+
+
+def _gen_event(dim_template, dim_i, global_events, parse, kwargs):
+
+    events = []
+    _fill_missing_events_in_template(dim_i, dim_template)
+
+    for j, e in enumerate(dim_template["events"]):
+        kw = deepcopy(kwargs)
+        ge = deepcopy(global_events)
+
+        # Remove `property_units` from default events instance.
+        if "property_units" in e:
+            e.pop("property_units")
+
+        if "events" in dim_i:
+            kw.update(dim_i["events"][j])
+
+        e.update(kw)
+        # prioritize the keyword arguments over the global arguments.
+        ge.update(kw)
+        e.update(ge)
+
+        params = _fix_strings_in_events(e) if parse else Event(**e)
+        events.append(params)
+
+    return events

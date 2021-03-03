@@ -21,14 +21,14 @@ def wigner_rotation(
     #     wigner = wigner_matrix
     #     n_orientation = wigner.shape[0]
 
-    pha = cos_alpha - 1j * np.sqrt(1.0 - cos_alpha ** 2)
+    pha = cos_alpha + 1j * np.sqrt(1.0 - cos_alpha ** 2)
     ph2 = np.copy(pha)
 
     R_vec = np.tile(R_in, n_orientation).reshape(n_orientation, n)
 
     for m in range(1, ang_momentum_l + 1):
-        R_vec[:, ang_momentum_l + m] *= ph2
-        R_vec[:, ang_momentum_l - m] *= ph2.conj()
+        R_vec[:, ang_momentum_l - m] *= ph2
+        R_vec[:, ang_momentum_l + m] *= ph2.conj()
         ph2 *= pha
 
     R_out = wigner.ravel() * np.tile(R_vec, (1, n)).ravel()

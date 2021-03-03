@@ -8,9 +8,10 @@ include settings.py
 recursive-include src/c_lib/include *
 recursive-include src/c_lib/lib *
 
-include src/mrsimulator/spin_system/isotope_data.json
-include src/mrsimulator/methods/methods_data.json
+include src/mrsimulator/method/named_methods.json
 include src/mrsimulator/methods/tests/test_data.json
+include src/mrsimulator/methods/methods_data.json
+include src/mrsimulator/spin_system/isotope_data.json
 
 include src/c_lib/base/base_model.pxd
 include src/c_lib/base/base_model.pyx

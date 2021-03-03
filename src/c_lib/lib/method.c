@@ -3,7 +3,7 @@
 //  method.c
 //
 //  @copyright Deepansh J. Srivastava, 2019-2021.
-//  Created by Deepansh J. Srivastava, Apr 15, 2020
+//  Created by Deepansh J. Srivastava, Apr 15, 2020.
 //  Contact email = srivastava.89@osu.edu
 //
 

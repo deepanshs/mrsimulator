@@ -21,7 +21,7 @@ class TransitionQuery(BaseModel):
 
     P: Optional[Dict] = {"channel-1": [[-1.0]]}
     D: Optional[Dict] = Field(default=None)
-    f: Optional[Dict] = Field(default=None)
+    F: Optional[Dict] = Field(default=None)
     transitions: List[Transition] = None
 
     class Config:

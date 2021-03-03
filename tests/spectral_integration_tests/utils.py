@@ -101,25 +101,32 @@ def get_data(filename):
     return data_object, data_source
 
 
-def c_setup(filename, integration_volume="octant"):
-    # mrsimulator
-    data_object, data_source = get_data(filename)
+def simulator_setup(
+    data_object,
+    integration_volume="octant",
+    integration_density=120,
+    number_of_sidebands=90,
+):
     methods = [Method.parse_dict_with_units(_) for _ in data_object["methods"]]
 
     spin_systems = [
         SpinSystem.parse_dict_with_units(item) for item in data_object["spin_systems"]
     ]
-
     s1 = Simulator(spin_systems=spin_systems, methods=methods)
     s1.config.decompose_spectrum = "spin_system"
     s1.spin_systems[0].name = "test name"
     s1.spin_systems[0].description = "test description"
-    s1.config.integration_density = 120
-    s1.config.number_of_sidebands = 90
+    s1.config.integration_density = integration_density
+    s1.config.number_of_sidebands = number_of_sidebands
     s1.config.integration_volume = integration_volume
-    s1.run()
 
-    sim_data = s1.methods[0].simulation
+    return s1
+
+
+def simulator_process(sim, data_object):
+    sim.run()
+
+    sim_data = sim.methods[0].simulation
 
     if "operations" in data_object:
         processor = sp.SignalProcessor.parse_dict_with_units(
@@ -129,41 +136,50 @@ def c_setup(filename, integration_volume="octant"):
 
     data_mrsimulator = np.asarray(sim_data.to_list()[1:])
     data_mrsimulator = data_mrsimulator.sum(axis=0)
-    data_mrsimulator /= data_mrsimulator.max()
+    data_mrsimulator /= data_mrsimulator.sum()
 
     dv = sim_data.dependent_variables[0]
     assert dv.name == "test name"
     assert dv.description == "test description"
+
+    return data_mrsimulator
+
+
+def c_setup(
+    filename,
+    integration_volume="octant",
+    integration_density=120,
+    number_of_sidebands=90,
+):
+    # mrsimulator
+    data_object, data_source = get_data(filename)
+    data_source /= data_source.sum()
+
+    sim = simulator_setup(
+        data_object, integration_volume, integration_density, number_of_sidebands
+    )
+    data_mrsimulator = simulator_process(sim, data_object)
     return data_mrsimulator, data_source
 
 
 def c_setup_random_euler_angles(filename, group):
     # mrsimulator
     data_object, data_source = get_data(filename)
-    methods = [Method.parse_dict_with_units(_) for _ in data_object["methods"]]
+    data_source /= data_source.sum()
 
-    spin_systems = [
-        SpinSystem.parse_dict_with_units(_) for _ in data_object["spin_systems"]
-    ]
+    sim = simulator_setup(data_object, integration_volume="hemisphere")
     pix2 = 2 * np.pi
     if group == "shielding_symmetric":
-        for spin_system in spin_systems:
+        for spin_system in sim.spin_systems:
             spin_system.sites[0].shielding_symmetric.alpha = np.random.rand(1) * pix2
             spin_system.sites[0].shielding_symmetric.beta = np.random.rand(1) * pix2
             spin_system.sites[0].shielding_symmetric.gamma = np.random.rand(1) * pix2
 
     if group == "quadrupolar":
-        for spin_system in spin_systems:
+        for spin_system in sim.spin_systems:
             spin_system.sites[0].quadrupolar.alpha = np.random.rand(1) * pix2
             spin_system.sites[0].quadrupolar.beta = np.random.rand(1) * pix2
             spin_system.sites[0].quadrupolar.gamma = np.random.rand(1) * pix2
 
-    s1 = Simulator(spin_systems=spin_systems, methods=methods)
-    s1.config.integration_density = 120
-    s1.config.integration_volume = "hemisphere"
-    s1.config.number_of_sidebands = 90
-    s1.run()
-    data_mrsimulator = s1.methods[0].simulation.to_list()[1]
-    data_mrsimulator /= data_mrsimulator.max()
-
+    data_mrsimulator = simulator_process(sim, data_object)
     return data_mrsimulator, data_source
