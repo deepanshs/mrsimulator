@@ -5,7 +5,7 @@ What's new
 ''''''''''
 
 - Parallel processing.
-- Simulation of coupled spin systems. The frequency contribution from coupled sites include
+- Simulation of coupled spin systems. The frequency contributions from coupled sites include
   weak J-couplings and weak dipolar couplings.
 - New :class:`~mrsimulator.Coupling` class.
 - Added a new ``Sites`` class that holds a list of Site objects. The Sites class method,

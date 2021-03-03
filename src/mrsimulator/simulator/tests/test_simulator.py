@@ -159,7 +159,7 @@ def test_simulator_1():
 
     # save
     sim.save("test_sim_save.temp")
-    sim_load = sim.load("test_sim_save.temp")
+    sim_load = Simulator.load("test_sim_save.temp")
 
     assert sim_load.spin_systems == sim.spin_systems
     assert sim_load.methods == sim.methods
@@ -169,8 +169,11 @@ def test_simulator_1():
 
     # without units
     sim.save("test_sim_save_no_unit.temp", with_units=False)
-    sim_load = sim.load("test_sim_save_no_unit.temp", parse_units=False)
+    sim_load = Simulator.load("test_sim_save_no_unit.temp", parse_units=False)
     assert sim_load == sim
+
+    os.remove("test_sim_save.temp")
+    os.remove("test_sim_save_no_unit.temp")
 
 
 def test_sim_coesite():
@@ -247,7 +250,7 @@ def test_simulator_2():
 
     # save
     sim.save("test_sim_save.temp")
-    sim_load = sim.load("test_sim_save.temp")
+    sim_load = Simulator.load("test_sim_save.temp")
 
     sim_load_data = sim_load.methods[0].simulation
     sim_data = sim.methods[0].simulation
@@ -260,6 +263,8 @@ def test_simulator_2():
     assert sim_load.methods == sim.methods
     assert sim_load.name == sim.name
     assert sim_load.description == sim.description
+
+    os.remove("test_sim_save.temp")
 
 
 def test_sites():

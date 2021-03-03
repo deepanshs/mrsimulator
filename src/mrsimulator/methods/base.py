@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+from typing import ClassVar
+
 import numpy as np
+from mrsimulator.method import Method
 
 from .utils import generate_method_from_template
 from .utils import METHODS_DATA
@@ -104,38 +107,63 @@ docstring_2D = "".join([generic_args, args_affine, returns, notes])
 Method2D = generate_method_from_template(METHODS_DATA["Method2D"], docstring_2D)
 
 
-def message(attr, name):
-    return f"`{attr}` value cannot be modified for {name} method."
+class BaseNamedMethod(Method):
+    def __new__(cls, **kwargs):
+        n_dim = cls.ndim
+        spectral_dimensions = cls.check_for_spectral_dimensions(kwargs, n_dim)
+        cls.check_for_transition_query(spectral_dimensions)
+        cls.check_for_events(spectral_dimensions)
 
+        if "name" not in kwargs:
+            kwargs["name"] = cls.__name__
 
-def check_for_transition_query(name, spectral_dimensions=[{}, {}]):
-    check = [
-        "transition_query" in event.keys()
-        for item in spectral_dimensions
-        if "events" in item.keys()
-        for event in item["events"]
-    ]
+        method_fn = Method1D if n_dim == 1 else Method2D
 
-    if np.any(check):
-        raise ValueError(message("transition_query", name))
+        return method_fn(spectral_dimensions, **kwargs)
 
+    @staticmethod
+    def check_for_spectral_dimensions(py_dict, n=1):
+        """If spectral_dimensions in py_dict, extract and then remove from py_dict."""
 
-def check_for_spectral_dimensions(py_dict, n=1):
-    """If spectral_dimensions is in py_dict, extract it and then remove from py_dict."""
+        if "spectral_dimensions" not in py_dict:
+            return [{}] * n
 
-    if "spectral_dimensions" not in py_dict:
-        return [{}] * n
-
-    spectral_dimensions = py_dict["spectral_dimensions"]
-    m = len(spectral_dimensions)
-    if m != n:
+        spectral_dimensions = py_dict["spectral_dimensions"]
+        m = len(spectral_dimensions)
+        if m == n:
+            py_dict.pop("spectral_dimensions")
+            return spectral_dimensions
         raise ValueError(f"Method requires exactly {n} spectral dimensions, given {m}.")
-    py_dict.pop("spectral_dimensions")
-    return spectral_dimensions
+
+    @classmethod
+    def message(cls, attr):
+        return f"`{attr}` value cannot be modified for {cls.__name__} method."
+
+    @classmethod
+    def check_for_transition_query(cls, spectral_dimensions=[{}, {}]):
+        """Check for transition_query attribute inside the spectral_dimensions.
+        The transition query are not allowed for NamedMethods."""
+        if isinstance(spectral_dimensions[0], dict):
+            check = [
+                "transition_query" in event.keys()
+                for item in spectral_dimensions
+                if "events" in item.keys()
+                for event in item["events"]
+            ]
+
+            if np.any(check):
+                raise ValueError(cls.message("transition_query"))
+
+    @classmethod
+    def check_for_events(cls, spectral_dimensions=[{}, {}]):
+        """Check for events attribute inside the spectral_dimensions. Events are not
+        allowed for NamedMethods."""
+        if isinstance(spectral_dimensions[0], dict):
+            check = ["events" in item.keys() for item in spectral_dimensions]
+
+            if np.any(check):
+                raise ValueError(cls.message("events"))
 
 
-def check_for_events(name, spectral_dimensions=[{}, {}]):
-    check = ["events" in item.keys() for item in spectral_dimensions]
-
-    if np.any(check):
-        raise ValueError(message("events", name))
+class BaseNamedMethod2D(BaseNamedMethod):
+    ndim: ClassVar[int] = 2

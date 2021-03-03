@@ -3,7 +3,7 @@
 //  mrsimulator.h
 //
 //  @copyright Deepansh J. Srivastava, 2019-2021.
-//  Created by Deepansh J. Srivastava, Jun 30, 2019
+//  Created by Deepansh J. Srivastava, Jun 30, 2019.
 //  Contact email = srivastava.89@osu.edu
 //
 
@@ -13,7 +13,7 @@
 #include "angular_momentum.h"
 #include "config.h"
 #include "fftw3.h"
-#include "frequency_tensor.h"
+#include "frequency/frequency_tensor_components.h"
 #include "object_struct.h"
 #include "schemes.h"
 /**
@@ -73,8 +73,6 @@ struct MRS_plan {
   complex128 *pre_phase;      // temp buffer to hold sideband phase calculation.
   complex128 *pre_phase_2;    // buffer for 2nk rank sideband phase calculation.
   complex128 *pre_phase_4;    // buffer for 4th rank sideband phase calculation.
-  complex128 one;             // holds complex value 1.
-  complex128 zero;            // holds complex value 0.
   double buffer;              // buffer for temporary storage.
 };
 

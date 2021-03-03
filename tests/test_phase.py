@@ -12,7 +12,7 @@ def test_phase_components_1():
     pre_phase_py = pre_phase_components(number_of_sidebands, spin_frequency)
     pre_phase_c = clib.pre_phase_components(number_of_sidebands, spin_frequency)
 
-    assert np.allclose(pre_phase_c, pre_phase_py)
+    assert np.allclose(pre_phase_c, 2 * pre_phase_py[:4, :])
 
 
 def test_phase_components_2():
@@ -21,7 +21,7 @@ def test_phase_components_2():
     pre_phase_py = pre_phase_components(number_of_sidebands, spin_frequency)
     pre_phase_c = clib.pre_phase_components(number_of_sidebands, spin_frequency)
 
-    assert np.allclose(pre_phase_c, pre_phase_py)
+    assert np.allclose(pre_phase_c, 2 * pre_phase_py[:4, :])
 
 
 def test_phase_components_3():
@@ -30,4 +30,4 @@ def test_phase_components_3():
     pre_phase_py = pre_phase_components(number_of_sidebands, spin_frequency)
     pre_phase_c = clib.pre_phase_components(number_of_sidebands, spin_frequency)
 
-    assert np.allclose(pre_phase_c, pre_phase_py)
+    assert np.allclose(pre_phase_c, 2 * pre_phase_py[:4, :])

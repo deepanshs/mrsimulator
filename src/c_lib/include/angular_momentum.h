@@ -77,11 +77,12 @@ double wigner_d_element_from_exp_I_beta(const int l, const int m1, const int m2,
  *
  * @param l The rank of the wigner-d matrix.
  * @param n The number of wigner-d matrix to evaluate.
+ * @param half Boolean. If true, calculate half of the wigner matrix.
  * @param exp_I_beta A pointer to an array of length `2*n`, where the cosine and sine of
  *      the angles are stored.
  * @param wigner A pointer to an array of length `n*(2*l+1)*(2*l+1)`.
  */
-extern void wigner_d_matrices_from_exp_I_beta(const int l, const int n,
+extern void wigner_d_matrices_from_exp_I_beta(const int l, const int n, const bool half,
                                               const void *restrict exp_I_beta,
                                               double *wigner);
 

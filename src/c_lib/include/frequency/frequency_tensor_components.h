@@ -1,14 +1,14 @@
 // -*- coding: utf-8 -*-
 //
-//  frequency_component_function.h
+//  frequency_tensor.h
 //
 //  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava, Apr 11, 2019.
 //  Contact email = srivastava.89@osu.edu
 //
 
-#include "frequency_component/spatial_orientation_tensor.h"
-#include "frequency_component/spin_transition_function.h"
+#include "frequency/spatial_orientation_tensor_components.h"
+#include "frequency/spin_transition_functions.h"
 
 // =====================================================================================
 //               First-order nuclear shielding frequency tensor components
