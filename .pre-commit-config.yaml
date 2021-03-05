@@ -16,7 +16,7 @@ repos:
     rev: v1.9.2
     hooks:
       - id: blacken-docs
-        additional_dependencies: [black==19.3b0]
+        additional_dependencies: [black]
         language: python
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -44,7 +44,7 @@ repos:
         types: [python]
 
   - repo: https://gitlab.com/pycqa/flake8
-    rev: "6de8252c035844f1e679f509b5f37340b44d5c39"
+    rev: "3.8.4"
     hooks:
       - id: flake8
         language: python
@@ -61,14 +61,18 @@ repos:
         minimum_pre_commit_version: "0.15.0"
         exclude: (examples_source|fitting_source|setup.py|setup_conda.py)
 
-  # - repo: https://github.com/pocc/pre-commit-hooks
-  #   rev: master
-  #   hooks:
-  #     - id: clang-format
-  #       name: clang-format
-  #       entry: hooks/clang-format
-  #       description: Formats C/CPP code
-  #       files: "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$"
-  #       language: script
-  #       additional_dependencies: [clang-format]
-  #       args: [--style=Google, -i]
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.1.1
+    hooks:
+      - id: clang-format
+        name: clang-format
+        # entry: hooks/clang-format
+        description: Formats C/CPP code
+        files: "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$"
+        # language: script
+        # additional_dependencies: [clang-format]
+        args: [--style=file, -i]
+      # - id: clang-tidy
+      #   args: [-checks=clang-diagnostic-return-type]
+      # - id: oclint
+      #   args: [-enable-clang-static-analyzer, -enable-global-analysis]

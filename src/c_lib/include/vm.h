@@ -225,10 +225,10 @@ static inline void vm_double_complex_multiply(int count, const void *restrict x,
   while (count-- > 0) {
     real = *x_++;
     imag = *x_++;
-    a = real * *y_;   // real real
-    c = imag * *y_++; // imag real
-    b = imag * *y_;   // imag imag
-    d = real * *y_++; // real imag
+    a = real * *y_;    // real real
+    c = imag * *y_++;  // imag real
+    b = imag * *y_;    // imag imag
+    d = real * *y_++;  // real imag
     *res_++ = a - b;
     *res_++ = c + d;
 
@@ -317,16 +317,16 @@ static inline void vm_cosine_I_sine(int count, const double *restrict x,
 static inline double my_exp(double x) {
   x /= 1024.0;
   x += 1.0;
-  x *= x; // 1
-  x *= x; // 2
-  x *= x; // 3
-  x *= x; // 4
-  x *= x; // 5
-  x *= x; // 6
-  x *= x; // 7
-  x *= x; // 8
-  x *= x; // 9
-  x *= x; // 10
+  x *= x;  // 1
+  x *= x;  // 2
+  x *= x;  // 3
+  x *= x;  // 4
+  x *= x;  // 5
+  x *= x;  // 6
+  x *= x;  // 7
+  x *= x;  // 8
+  x *= x;  // 9
+  x *= x;  // 10
   return x;
 }
 

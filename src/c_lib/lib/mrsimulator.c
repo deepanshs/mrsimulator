@@ -191,7 +191,6 @@ void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_
 
   /* Setup for processing the fourth rank tensors. */
   if (allow_fourth_rank) {
-
     /* pre_phase_4 is only calculated for m=-4, -3, -2, and -1 for l=4 rank tensor
      * calculation. */
     size_4 = 4 * plan->number_of_sidebands;
@@ -470,17 +469,17 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
 }
 
 static inline void MRS_rotate_single_site_interaction_components(
-    site_struct *sites,     // Pointer to a list of sites within a spin system.
-    float *transition,      // The spin transition.
-    bool allow_fourth_rank, // if true, prep for 4th rank computation.
-    double *R0,             // The R0 components.
-    complex128 *R2,         // The R2 components.
-    complex128 *R4,         // The R4 components.
-    double *R0_temp,        // The temporary R0 components.
-    complex128 *R2_temp,    // The temporary R2 components.
-    complex128 *R4_temp,    // The temporary R3 components.
-    double B0_in_T,         // Magnetic flux density in T.
-    bool *freq_contrib      // The pointer to freq contribs boolean.
+    site_struct *sites,      // Pointer to a list of sites within a spin system.
+    float *transition,       // The spin transition.
+    bool allow_fourth_rank,  // if true, prep for 4th rank computation.
+    double *R0,              // The R0 components.
+    complex128 *R2,          // The R2 components.
+    complex128 *R4,          // The R4 components.
+    double *R0_temp,         // The temporary R0 components.
+    complex128 *R2_temp,     // The temporary R2 components.
+    complex128 *R4_temp,     // The temporary R3 components.
+    double B0_in_T,          // Magnetic flux density in T.
+    bool *freq_contrib       // The pointer to freq contribs boolean.
 ) {
   unsigned int i, n_sites = sites->number_of_sites;
   double larmor_freq_in_MHz;
@@ -543,14 +542,14 @@ static inline void MRS_rotate_single_site_interaction_components(
 }
 
 static inline void MRS_rotate_coupled_site_interaction_components(
-    coupling_struct *couplings, // Pointer to a list of couplings within a spin system.
-    float *transition,          // The spin transition.
-    unsigned int n_sites,       // The number of sites.
-    double *R0,                 // The R0 components.
-    complex128 *R2,             // The R2 components.
-    double *R0_temp,            // The temporary R0 components.
-    complex128 *R2_temp,        // The temporary R2 components.
-    bool *freq_contrib          // The pointer to freq contribs boolean.
+    coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
+    float *transition,           // The spin transition.
+    unsigned int n_sites,        // The number of sites.
+    double *R0,                  // The R0 components.
+    complex128 *R2,              // The R2 components.
+    double *R0_temp,             // The temporary R0 components.
+    complex128 *R2_temp,         // The temporary R2 components.
+    bool *freq_contrib           // The pointer to freq contribs boolean.
 ) {
   unsigned int i, j = 0, n_couplings = couplings->number_of_couplings;
   int site_index_A, site_index_X;
@@ -593,18 +592,18 @@ static inline void MRS_rotate_coupled_site_interaction_components(
  * the common frame of the spin system.
  */
 void MRS_rotate_components_from_PAS_to_common_frame(
-    site_struct *sites,         // Pointer to a list of sites within a spin system.
-    coupling_struct *couplings, // Pointer to a list of couplings within a spin system.
-    float *transition,          // The spin transition.
-    bool allow_fourth_rank,     // If true, prep for 4th rank computation.
-    double *R0,                 // The R0 components.
-    complex128 *R2,             // The R2 components.
-    complex128 *R4,             // The R4 components.
-    double *R0_temp,            // The temporary R0 components.
-    complex128 *R2_temp,        // The temporary R2 components.
-    complex128 *R4_temp,        // The temporary R3 components.
-    double B0_in_T,             // Magnetic flux density in T.
-    bool *freq_contrib          // The pointer to freq contribs boolean.
+    site_struct *sites,          // Pointer to a list of sites within a spin system.
+    coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
+    float *transition,           // The spin transition.
+    bool allow_fourth_rank,      // If true, prep for 4th rank computation.
+    double *R0,                  // The R0 components.
+    complex128 *R2,              // The R2 components.
+    complex128 *R4,              // The R4 components.
+    double *R0_temp,             // The temporary R0 components.
+    complex128 *R2_temp,         // The temporary R2 components.
+    complex128 *R4_temp,         // The temporary R3 components.
+    double B0_in_T,              // Magnetic flux density in T.
+    bool *freq_contrib           // The pointer to freq contribs boolean.
 ) {
   /* The following codeblock populates the product of spatial part, Rlm, of the tensor
    * and the spin transition function, T(mf, mi) for

@@ -14,7 +14,7 @@
 // Compiler version check
 #if __STDC_VERSION__ >= 199901L
 #define MKL_Complex16 complex128
-#else // not C99
+#else  // not C99
 #define restrict __restrict
 #endif
 
@@ -51,11 +51,11 @@
 
 // OS base definitions -------------------------------------------------------- //
 // ---------------------------------------------------------------------------- //
-#ifdef __APPLE__ // mac-os
+#ifdef __APPLE__  // mac-os
 #define __int64_ long
 #endif
 
-#ifdef linux // linux
+#ifdef linux  // linux
 #define __int64_ long
 // #ifdef linux
 // #include "mkl.h"
@@ -66,7 +66,7 @@
 // // printf("Using upto %d threads for simulation.\n", max_threads);
 #endif
 
-#ifdef _WIN32 // Windows 32-bit or 64-bit
+#ifdef _WIN32  // Windows 32-bit or 64-bit
 #define __int64_ long long
 // #include "mkl.h"
 // #include "vm_mkl.h"
@@ -90,21 +90,20 @@ typedef float complex64[2];
 #define CONST_iPI CONST_2PI *I
 #define TOL 1.0e-6
 
-#define modd(x, y) ((x) - (int)((x) / (y)) * (y)) // fold x within range y
+#define modd(x, y) ((x) - (int)((x) / (y)) * (y))  // fold x within range y
 #define lerp(w, v1, v2) ((1.0 - (w)) * (v1) + (w) * (v2))
-#define sign(x) (int)(((x) > 0) - ((x) < 0)) // return sign of x
+#define sign(x) (int)(((x) > 0) - ((x) < 0))  // return sign of x
 // ---------------------------------------------------------------------------- //
 
 #define __blas_activate
 void openblas_set_num_threads(int num_threads);
-
-#include "vm.h"
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <time.h>
 
 #include "array.h"
+#include "vm.h"
 #include "vm_common.h"
 
 #endif /* __config__ */

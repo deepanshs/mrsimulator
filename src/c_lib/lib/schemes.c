@@ -17,12 +17,12 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
   scheme->total_orientations = scheme->octant_orientations;
 
   switch (scheme->integration_volume) {
-  case 0: // positive octant
+  case 0:  // positive octant
     break;
-  case 1: // positive hemisphere
+  case 1:  // positive hemisphere
     scheme->total_orientations *= 4;
     break;
-  case 2: // full sphere
+  case 2:  // full sphere
     scheme->total_orientations *= 8;
     break;
   }
@@ -45,8 +45,8 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
    */
 
   // calculating the required space for storing wigner matrices.
-  allocate_size_2 = 15 * scheme->octant_orientations; // (5 x 3) half-matrix
-  allocate_size_4 = 45 * scheme->octant_orientations; // (9 x 5) half-matrix
+  allocate_size_2 = 15 * scheme->octant_orientations;  // (5 x 3) half-matrix
+  allocate_size_4 = 45 * scheme->octant_orientations;  // (9 x 5) half-matrix
   if (scheme->integration_volume == 2) {
     allocate_size_2 *= 2;
     allocate_size_4 *= 2;

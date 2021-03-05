@@ -29,8 +29,7 @@ static inline void vm_double_ramp(int count, const double *restrict x,
                                   double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
-  while (count-- > 0)
-    *res++ = scale * *x++ + offset;
+  while (count-- > 0) *res++ = scale * *x++ + offset;
 }
 
 /**
@@ -41,8 +40,7 @@ static inline void vm_double_add_offset(int count, const double *restrict x,
                                         const double offset, double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
-  while (count-- > 0)
-    *res++ = *x++ + offset;
+  while (count-- > 0) *res++ = *x++ + offset;
 }
 
 /**
@@ -53,8 +51,7 @@ static inline void vm_double_add_offset_inplace(int count, const double offset,
                                                 double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
-  while (count-- > 0)
-    *res++ += offset;
+  while (count-- > 0) *res++ += offset;
 }
 
 /**
@@ -65,8 +62,7 @@ static inline void vm_double_arrange(int count, double *restrict res) {
   //   x = __builtin_assume_aligned(x, 32);
   //   res = __builtin_assume_aligned(res, 32);
   double i = 0.0;
-  while (count-- > 0)
-    *res++ = i++;
+  while (count-- > 0) *res++ = i++;
 }
 
 /**
@@ -76,8 +72,7 @@ static inline void vm_double_arrange(int count, double *restrict res) {
 static inline void vm_double_zeros(int count, double *restrict res) {
   //   x = __builtin_assume_aligned(x, 32);
   //   res = __builtin_assume_aligned(res, 32);
-  while (count-- > 0)
-    *res++ = 0.0;
+  while (count-- > 0) *res++ = 0.0;
   // memset(res, 0, count * sizeof(double));
 }
 
@@ -88,8 +83,7 @@ static inline void vm_double_zeros(int count, double *restrict res) {
 static inline void vm_double_ones(int count, double *restrict res) {
   //   x = __builtin_assume_aligned(x, 32);
   //   res = __builtin_assume_aligned(res, 32);
-  while (count-- > 0)
-    *res++ = 1.0;
+  while (count-- > 0) *res++ = 1.0;
   // memset(res, 0, count * sizeof(double));
 }
 

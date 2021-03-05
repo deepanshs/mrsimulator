@@ -59,8 +59,7 @@ static inline void left_triangle_interpolate(int p, int pmid, bool l_clip, bool 
 
   diff -= 0.5;
   diff *= df1;
-  while (p != pmid)
-    spec[p++] += diff += df1;
+  while (p != pmid) spec[p++] += diff += df1;
 
   spec[p] +=
       (!r_clip) ? (f[1] - (double)p) * (f10 + ((double)p - f[0])) * 0.5 * df1 : 0.0;
@@ -81,8 +80,7 @@ static inline void right_triangle_interpolate(int p, int pmax, bool l_clip, bool
 
   diff += 0.5;
   diff *= df1;
-  while (p != pmax)
-    spec[p++] += diff -= df1;
+  while (p != pmax) spec[p++] += diff -= df1;
 
   if (!r_clip) {
     diff = (f[2] - (double)p);
@@ -525,10 +523,10 @@ void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,
     for (j = minX_; j <= maxX_; j++) {
       // If p is on or inside all edges, render pixel.
       if ((int)w0 >= 0 && (int)w1 >= 0 && (int)w2 >= 0) {
-        grid[i_ + j] += 1.; //(w0+w1+w2);
+        grid[i_ + j] += 1.;  //(w0+w1+w2);
       }
       if ((int)w0 <= 0 && (int)w1 <= 0 && (int)w2 <= 0) {
-        grid[i_ + j] += -1.; //(w0+w1+w2);
+        grid[i_ + j] += -1.;  //(w0+w1+w2);
       }
       // i_++;
 
