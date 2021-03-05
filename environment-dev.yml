@@ -18,7 +18,7 @@ dependencies:
       - pydantic>=1.0
       - typing-extensions>=3.7
       - flake8
-      - lmfit>=1.0.0
+      - lmfit>=1.0.2
       - psutil>=5.7.2
       - joblib>=1.0.0
       # for testing
