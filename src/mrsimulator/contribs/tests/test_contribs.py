@@ -2,10 +2,10 @@
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.contribs import contribs_data
+from mrsimulator.contribs import parse_method
+from mrsimulator.contribs import parse_sites
 from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.utils.contribs import contribs_data
-from mrsimulator.utils.contribs import parse_method
-from mrsimulator.utils.contribs import parse_sites
 
 
 def test01():

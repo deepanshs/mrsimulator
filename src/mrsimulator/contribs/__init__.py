@@ -1,10 +1,42 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from mrsimulator.utils import flatten_dict
 
-from . import flatten_dict
+# import csdmpy as cp
+# from pydantic import BaseModel
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+
+# class MethodInfo(BaseModel):
+#     LarmorFrequency: str
+#     SpinningFrequency: str
+#     SpectralWidth: str
+#     RotorAngle: str
+
+# class ChemicalShiftInfo(BaseModel):
+#     Isotropic: str
+#     zeta: str = None
+#     eta: float = None
+
+# class QuadrupolarInfo(BaseModel):
+#     Cq: str
+#     eta: float
+
+# class SiteInfo(BaseModel):
+#     ChemicalShift: ChemicalShiftInfo = None
+#     Quadrupolar: QuadrupolarInfo = None
+
+# class SimulatorContrib(BaseModel):
+#     experiment: str = None
+#     simulation: str = None
+#     site: SiteInfo = None
+#     method: MethodInfo = None
+
+#     class config:
+#         validate_assignment = True
+#         arbitrary_types_allowed = True
 
 
 SITE_KEYWORDS = {
@@ -74,10 +106,12 @@ def contribs_data(sim, project, composition=None, identifier=None, exp_dict={}):
     for sys in sim.spin_systems:
         for site in sys.sites:
             data = {
-                "experiment": "experiment goes here",
-                "simulation": "simulation goes here",
-                "site": {**parse_sites(site)},
-                "method": {**parse_method(sim.methods[0]), **exp_dict},
+                **dict(
+                    experiment="experiment goes here",
+                    simulation="simulation goes here",
+                    site={**parse_sites(site)},
+                    method={**parse_method(sim.methods[0]), **exp_dict},
+                )
             }
 
             card = {
