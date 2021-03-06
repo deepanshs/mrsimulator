@@ -7,6 +7,7 @@ from typing import List
 
 import csdmpy as cp
 import numpy as np
+import pandas as pd
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
@@ -151,3 +152,17 @@ class SpectralDimension(Parseable):
         if self.origin_offset is not None:
             dim.origin_offset = f"{self.origin_offset} Hz"
         return dim
+
+    def events_to_dataframe(self) -> pd.DataFrame:
+        """Returns events list as DataFrame with event number as columns"""
+        attributes = list(Event().property_units.keys())
+        attributes.append("fraction")
+        rows = attributes.copy()
+        rows.extend(["p", "d"])
+        df = pd.DataFrame(index=rows)
+        for i in range(len(self.events)):
+            _lst = [getattr(self.events[i], att) for att in attributes]
+            _lst.append(self.events[i].transition_query.get_p())
+            _lst.append(self.events[i].transition_query.get_d())
+            df[i] = _lst
+        return df

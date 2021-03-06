@@ -7,6 +7,9 @@ from typing import Union
 
 import csdmpy as cp
 import numpy as np
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import Transition
 from mrsimulator.transition import TransitionPathway
@@ -285,6 +288,42 @@ class Method(Parseable):
 
         return temp_dict
 
+    def events_to_dataframe(self) -> pd.DataFrame:
+        """Returns events array as DataFrame with
+        event number as columns and parameters as indexes
+
+        Returns:
+            Pandas DataFrame object
+
+        """
+        events = []
+        for dim in self.spectral_dimensions:
+            events.extend(dim.events)
+
+        data = [ev.json() for ev in events]
+        # Formatting here
+        df = pd.DataFrame(data)
+        print(df.columns)
+        print(df)
+        return df
+
+    def _df_remove_properties(self, df, properties) -> pd.DataFrame:
+        """Removes indexes from df not in properties
+        and places fraction row at end of data frame
+
+        Returns:
+            Altered Pandas DataFrame object
+        """
+        fraction_row = df.pop("fraction")
+        if properties is not None:
+            df.drop(columns=np.setdiff1d(df.columns, properties), inplace=True)
+        else:
+            for col in df.columns:
+                if len(set(df[col])) == 1:
+                    df.drop(columns=col, inplace=True)
+        df["fraction"] = fraction_row
+        return df
+
     def _get_transition_pathways(self, spin_system):
         all_transitions = spin_system._all_transitions()
 
@@ -346,6 +385,22 @@ class Method(Parseable):
             for item in segments
         ]
 
+    def get_symmetry_pathways(self, lst):
+        """
+        Return a list of symmetry pathways from a given list of transitions
+        queries from a sequence of events
+
+        Args:
+            List lst: list of transition queries by event
+
+        Returns:
+            Array of transition pathways
+        """
+        max_len = max(len(_) for _ in lst)
+        lst = [_ + [0] * (max_len - len(_)) for _ in lst]
+        lst = [[lst[r][c] for r in range(len(lst))] for c in range(len(lst[0]))]
+        return lst
+
     def shape(self):
         """The shape of the method's spectral dimension array.
 
@@ -358,3 +413,65 @@ class Method(Parseable):
             [40, 10]
         """
         return [item.count for item in self.spectral_dimensions]
+
+    def plot(self, properties=None):
+        """
+        Creates figure for method from events in spectral_dimensions.
+        If no properties are provided, ony properties which vary over
+        events will be plotted, except 'p' and 'd' which are always plotted
+
+        Args:
+            List properties: list of properties to plot
+
+        Returns:
+            Matplotlib fig: Figure to be plotted
+        """
+
+        # Replace once events array implemented
+        # df = self.events_to_dataframe()
+
+        # Remove once events array implemented
+
+        df = self.events_to_dataframe()
+        df = self._df_remove_properties(df, properties)
+
+        # Construct plot
+        fig, axs = plt.subplots(
+            nrows=(df.shape[0] - 1),
+            ncols=1,
+            figsize=(len(self.spectral_dimensions) * 2, df.shape[0] * 2),
+            sharex=True,
+            gridspec_kw={'hspace': 0.0}
+        )
+
+        axs = [axs] if not isinstance(axs, np.ndarray) else axs
+        f_lst = [0] + [sum(df["fraction"][:i + 1]) for i in range(df.shape[0])]
+        x_data = [x for i in range(len(f_lst) - 1) for x in (f_lst[i], f_lst[i + 1])]
+
+        axs[0].set_xlim([0, len(self.spectral_dimensions)])
+        axs[0].set_xticks(np.arange(0.0, len(self.spectral_dimensions), 1.0))
+
+        # Plot data and simple formatting for subplots y axis
+        for i, ax in enumerate(axs):
+            colors = ['b', 'r', 'g', 'orange']
+            if df.columns[i] is "p" or df.columns[i] is "d":
+                for path in self.get_symmetry_pathways(df.iloc[i]):
+                    ax.plot(x_data, [num for j in path for num in (j, j)],
+                            color=colors.pop(0), alpha=0.6)
+            else:
+                ax.plot(x_data, [num for j in df.iloc[i] for num in (j, j)],
+                        color='b', alpha=0.6)
+
+            # Formatting of y axis
+            _ylabel = " ".join(df.index[i].split("_"))
+            if df.index[i] in self.property_units:
+                _ylabel += " ({})".format(self.property_units[df.index[i]])
+            ax.set_ylabel(ylabel=_ylabel)
+            ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%.2f'))
+            ax.grid(axis='both', color='g', alpha=0.2)
+            for side in ['top', 'bottom', 'left', 'right']:
+                ax.spines[side].set_linewidth(1.5)  # Set thickness of axis
+
+        fig.suptitle(self.name if self.name is not None else "Method Name")
+        fig.tight_layout()
+        return fig
