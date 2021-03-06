@@ -22,12 +22,14 @@ __credits__ = ["Deepansh J. Srivastava"]
 __license__ = "BSD License"
 __maintainer__ = "Deepansh J. Srivastava"
 __status__ = "Beta"
-__version__ = "0.6.0.dev1"
+__version__ = "0.6.0.dev2"
 
-from .spin_system import Site  # lgtm [py/import-own-module]
-from .spin_system import Coupling  # lgtm [py/import-own-module]
-from .spin_system import SpinSystem  # lgtm [py/import-own-module]
-from .simulator import Simulator  # lgtm [py/import-own-module]
-from .method.event import Event  # lgtm [py/import-own-module]
-from .method.spectral_dimension import SpectralDimension  # lgtm [py/import-own-module]
-from .method import Method  # lgtm [py/import-own-module]
+from .spin_system import Site  # lgtm [py/import-own-module] # noqa:F401
+from .spin_system import Coupling  # lgtm [py/import-own-module]  # noqa:F401
+from .spin_system import SpinSystem  # lgtm [py/import-own-module] # noqa:F401
+from .simulator import Simulator  # lgtm [py/import-own-module] # noqa:F401
+from .method.event import Event  # lgtm [py/import-own-module] # noqa:F401
+from .method.spectral_dimension import (  # lgtm [py/import-own-module] # noqa:F401
+    SpectralDimension,
+)
+from .method import Method  # lgtm [py/import-own-module] # noqa:F401

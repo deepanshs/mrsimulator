@@ -202,6 +202,7 @@ def test_04():
 
     assert TESTDATA["SAS"] == mth.json()
     assert Method.parse_dict_with_units(mth.json()) == mth
+    assert Method2D.parse_dict_with_units(mth.json()) == mth
 
 
 def test_BlochDecaySpectrum():
@@ -293,6 +294,7 @@ def test_05():
 
     assert TESTDATA["STMAS"] == mth.json()
     assert Method.parse_dict_with_units(TESTDATA["STMAS"]) == mth
+    assert Method2D.parse_dict_with_units(TESTDATA["STMAS"]) == mth
 
 
 def test_3QMAS():
@@ -315,7 +317,7 @@ def test_3QMAS():
     )
 
     assert np.allclose(mth.affine_matrix, [0.5625, 0.4375, 0, 1])
-    assert Method.parse_dict_with_units(mth.json()) == mth
+    assert ThreeQ_VAS.parse_dict_with_units(mth.json()) == mth
 
 
 def test_06():
@@ -365,3 +367,4 @@ def test_methods():
     assert das.affine_matrix is None
     assert das.json() == TESTDATA["DAS"]
     assert Method.parse_dict_with_units(das.json()) == das
+    assert Method2D.parse_dict_with_units(das.json()) == das

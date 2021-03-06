@@ -147,14 +147,20 @@ def test_method():
 
     csdm_data.dimensions[0] *= cp.ScalarQuantity("Hz")
     csdm_data.dimensions[1] *= cp.ScalarQuantity("Hz")
-    the_method.experiment = csdm_data
 
+    the_method.experiment = csdm_data
+    the_method.simulation = csdm_data
     assert isinstance(the_method.experiment, cp.CSDM)
+    assert isinstance(the_method.simulation, cp.CSDM)
 
     csdm_dict = csdm_data.to_dict()
     the_method.experiment = csdm_dict
     assert isinstance(the_method.experiment, cp.CSDM)
     assert the_method.experiment == csdm_data
+
+    the_method.simulation = csdm_dict
+    assert isinstance(the_method.simulation, cp.CSDM)
+    assert the_method.simulation == csdm_data
 
     # to_dict_with_unit()
     event_dictionary_ = {
@@ -175,9 +181,12 @@ def test_method():
         "rotor_frequency": "1000.0 Hz",
         "rotor_angle": "0.9553059660790962 rad",
         "spectral_dimensions": [dimension_dictionary_, dimension_dictionary_],
+        "simulation": csdm_data.to_dict(),
         "experiment": csdm_data.to_dict(),
     }
-    assert the_method.json() == method_dictionary_
+    serialize = the_method.json()
+    serialize["simulation"]["csdm"].pop("timestamp")
+    assert serialize == method_dictionary_
 
     # reduced_dict()
     event_dictionary_ = {
@@ -199,9 +208,12 @@ def test_method():
         "description": "Test-1",
         "channels": ["29Si"],
         "spectral_dimensions": [dimension_dictionary_, dimension_dictionary_],
+        "simulation": csdm_data.to_dict(),
         "experiment": csdm_data.to_dict(),
     }
-    assert the_method.reduced_dict() == method_dictionary_
+    serialize = the_method.reduced_dict()
+    serialize["simulation"]["csdm"].pop("timestamp")
+    assert serialize == method_dictionary_
 
     # update_spectral_dimension_attributes_from_experiment
     the_method.update_spectral_dimension_attributes_from_experiment()

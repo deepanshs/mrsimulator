@@ -51,15 +51,9 @@ class Parseable(BaseModel):
             if prop in json_dict:
                 # If we have a single option
                 if isinstance(required_type, str) and isinstance(default_unit, str):
-                    try:
-                        json_dict[prop] = enforce_units(
-                            json_dict[prop], required_type, default_unit
-                        )
-                        property_units[prop] = default_unit
-                    except Exception as e:
-                        raise Exception(
-                            f"Error enforcing units for {prop}: {json_dict[prop]}\n{e}"
-                        )
+                    _update_json_dict(
+                        prop, json_dict, required_type, default_unit, property_units
+                    )
 
                 # If there are multiple type/unit combinations
                 elif isinstance(required_type, list) and isinstance(default_unit, list):
@@ -69,8 +63,8 @@ class Parseable(BaseModel):
                         )
                         for r_type, d_unit in zip(required_type, default_unit)
                     ]
-                    # If none of the units were enforceable, error
-                    # else choose the first good one
+                    # If none of the units were enforceable, error! else,
+                    # choose the first good one
                     if not ([val is not None for val in pos_values]):
                         raise Exception(f"Could not enforce any units on {prop}")
 
@@ -151,3 +145,11 @@ def get_list(member, obj):
         elif item not in [None, ""]:
             lst.append(item)
     return lst
+
+
+def _update_json_dict(prop, json_dict, required_type, default_unit, property_units):
+    try:
+        json_dict[prop] = enforce_units(json_dict[prop], required_type, default_unit)
+        property_units[prop] = default_unit
+    except Exception as e:
+        raise Exception(f"Error enforcing units for {prop}: {json_dict[prop]}\n{e}")

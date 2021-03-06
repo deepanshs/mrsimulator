@@ -11,6 +11,7 @@ import psutil
 from joblib import delayed
 from joblib import Parallel
 from mrsimulator import __version__
+from mrsimulator import methods as NamedMethods
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
@@ -30,6 +31,12 @@ __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 __CPU_count__ = psutil.cpu_count()
+
+__named_methods__ = [
+    val for k, val in NamedMethods.__dict__.items() if isinstance(val, type)
+]
+__method_names__ = [item.__name__ for item in __named_methods__]
+__sim_methods__ = {k: v for k, v in zip(__method_names__, __named_methods__)}
 
 
 class Simulator(BaseModel):
@@ -225,7 +232,16 @@ class Simulator(BaseModel):
 
         if "methods" in py_copy_dict:
             methods = py_copy_dict["methods"]
-            methods = [Method.parse_dict_with_units(obj) for obj in methods]
+            method_cls = [
+                Method
+                if obj["name"] not in __method_names__
+                else __sim_methods__[obj["name"]]
+                for obj in methods
+            ]
+
+            methods = [
+                fn.parse_dict_with_units(obj) for obj, fn in zip(methods, method_cls)
+            ]
             py_copy_dict["methods"] = methods
 
         return Simulator(**py_copy_dict)
@@ -331,8 +347,7 @@ class Simulator(BaseModel):
         sim["config"] = self.config.dict()
         sim["version"] = __version__ if include_version else None
 
-        empty = [k for k in sim.keys() if sim[k] in [None, []]]
-        [sim.pop(k) for k in empty]
+        _ = [sim.pop(k) for k in [k for k in sim.keys() if sim[k] in [None, []]]]
         return sim
 
     def reduced_dict(self, exclude=["property_units", "indexes"]) -> dict:
@@ -468,10 +483,11 @@ class Simulator(BaseModel):
             if isinstance(amp[0], np.ndarray):
                 simulated_data = [np.asarray(amp).sum(axis=0)]
 
-            if pack_as_csdm:
-                method.simulation = self._as_csdm_object(simulated_data, method)
-            else:
-                method.simulation = np.asarray(simulated_data)
+            method.simulation = (
+                self._as_csdm_object(simulated_data, method)
+                if pack_as_csdm
+                else np.asarray(simulated_data)
+            )
 
     def save(self, filename: str, with_units: bool = True):
         """Serialize the simulator object to a JSON file.

@@ -6,10 +6,11 @@ from os.path import dirname
 from os.path import join
 from os.path import split
 
-import numpy as np
 from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
+
+import numpy as np
 
 try:
     from Cython.Build import cythonize
@@ -91,7 +92,7 @@ source = [
     "src/c_lib/lib/mrsimulator.c",
     "src/c_lib/lib/octahedron.c",
     "src/c_lib/lib/simulation.c",
-    "src/c_lib/lib/powder_setup.c",
+    "src/c_lib/lib/frequency_averaging.c",
     "src/c_lib/lib/schemes.c",
     "src/c_lib/lib/method.c",
 ]

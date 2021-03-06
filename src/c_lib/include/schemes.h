@@ -11,7 +11,7 @@
 #define averaging_scheme_h
 #include "angular_momentum.h"
 #include "config.h"
-#include "powder_setup.h"
+#include "octahedron.h"
 
 /**
  * @struct MRS_averaging_scheme
@@ -39,18 +39,16 @@ typedef struct MRS_averaging_scheme {
   unsigned int total_orientations; /**< The total number of orientations. */
 
   /** \privatesection */
-  unsigned int
-      integration_density; //  number of triangles along the edge of the octahedron.
-  unsigned int integration_volume; //  0-octant, 1-hemisphere, 2-sphere.
-  unsigned int
-      octant_orientations;  //  number of unique orientations on the face of an octant.
-  double *amplitudes;       //  array of amplitude scaling per orientation.
-  complex128 *exp_Im_alpha; //  array of cos_alpha per orientation.
-  complex128 *w2;           //  buffer for 2nd rank frequency calculation.
-  complex128 *w4;           //  buffer for 4nd rank frequency calculation.
-  double *wigner_2j_matrices; //  wigner-d 2j matrix per orientation.
-  double *wigner_4j_matrices; //  wigner-d 4j matrix per orientation.
-  bool allow_fourth_rank;     //  If true, compute wigner matrices for wigner-d 4j.
+  unsigned int integration_density; //  # triangles along the edge of the octahedron.
+  unsigned int integration_volume;  //  0-octant, 1-hemisphere, 2-sphere.
+  unsigned int octant_orientations; //  # unique orientations on the face of an octant.
+  double *amplitudes;               //  array of amplitude scaling per orientation.
+  complex128 *exp_Im_alpha;         //  array of cos_alpha per orientation.
+  complex128 *w2;                   //  buffer for 2nd rank frequency calculation.
+  complex128 *w4;                   //  buffer for 4nd rank frequency calculation.
+  double *wigner_2j_matrices;       //  wigner-d 2j matrix per orientation.
+  double *wigner_4j_matrices;       //  wigner-d 4j matrix per orientation.
+  bool allow_fourth_rank; //  If true, compute wigner matrices for wigner-d 4j.
 } MRS_averaging_scheme;
 
 // typedef struct MRS_averaging_scheme;
