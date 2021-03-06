@@ -36,7 +36,7 @@ class Method(Parseable):
     Attributes
     ----------
 
-    channels: list (optional).
+    channels: List[str] (optional).
         The value is a list of isotope symbols over which the given method applies.
         An isotope symbol is given as a string with the atomic number followed by its
         atomic symbol, for example, '1H', '13C', and '33S'. The default is an empty
@@ -51,7 +51,7 @@ class Method(Parseable):
         >>> bloch = Method()
         >>> bloch.channels = ['1H']
 
-    spectral_dimensions: list of :ref:`spectral_dim_api` or dict objects (optional).
+    spectral_dimensions: List[:ref:`spectral_dim_api`] or List[dict] (optional).
         The number of spectral dimensions depends on the given method. For example, a
         `BlochDecaySpectrum` method is a one-dimensional method and thus requires a
         single spectral dimension. The default is a single default
@@ -80,7 +80,7 @@ class Method(Parseable):
         >>> bloch.experiment = my_data # doctest: +SKIP
 
     name: str (optional).
-        The value is the name or id of the method. The default value is None.
+        Name or id of the method. The default value is None.
 
         Example
         -------
@@ -90,7 +90,7 @@ class Method(Parseable):
         'BlochDecaySpectrum'
 
     label: str (optional).
-        The value is a label for the method. The default value is None.
+        Label for the method. The default value is None.
 
         Example
         -------
@@ -100,7 +100,7 @@ class Method(Parseable):
         'One pulse acquired spectrum'
 
     description: str (optional).
-        The value is a description of the method. The default value is None.
+        A description of the method. The default value is None.
 
         Example
         -------
@@ -109,6 +109,20 @@ class Method(Parseable):
         >>> bloch.description
         'Huh!'
 
+    affine_matrix: np.ndarray or 2D list (optional)
+        A (`n` x `n`) affine transformation matrix, where `n` is the number of
+        spectral_dimensions. If provided, the corresponding affine transformation is
+        applied to the computed frequencies. The default is None, i.e., no
+        transformation is applied.
+
+        Example
+        -------
+
+        >>> method = Method2D()
+        >>> method.affine_matrix = [[1, -1], [0, 1]]
+        >>> print(method.affine_matrix)
+        [[ 1 -1]
+         [ 0  1]]
     """
     name: str = None
     label: str = None
@@ -357,7 +371,7 @@ class Method(Parseable):
             [segments[i][j] for i, j in enumerate(item)] for item in cartesian_index
         ]
 
-    def get_transition_pathways(self, spin_system) -> list:
+    def get_transition_pathways(self, spin_system) -> List[TransitionPathway]:
         """
         Return a list of transition pathways from the given spin system that satisfy
         the query selection criterion of the method.
@@ -366,8 +380,19 @@ class Method(Parseable):
             SpinSystem spin_system: A SpinSystem object.
 
         Returns:
-            An array of TransitionPathway objects. Each TransitionPathway object is an
-            ordered collection of Transition objects.
+            An array of :ref:`transition_pathway_api` objects. Each TransitionPathway
+            object is an ordered collection of Transition objects.
+
+        Example:
+            >>> from mrsimulator import SpinSystem
+            >>> from mrsimulator.methods import ThreeQ_VAS
+            >>> sys = SpinSystem(sites=[{'isotope': '27Al'}, {'isotope': '29Si'}])
+            >>> method = ThreeQ_VAS(channels=['27Al'])
+            >>> pprint(method.get_transition_pathways(sys))
+            [|1.5, -0.5⟩⟨-1.5, -0.5| ⟶ |-0.5, -0.5⟩⟨0.5, -0.5|,
+             |1.5, -0.5⟩⟨-1.5, -0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|,
+             |1.5, 0.5⟩⟨-1.5, 0.5| ⟶ |-0.5, -0.5⟩⟨0.5, -0.5|,
+             |1.5, 0.5⟩⟨-1.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|]
         """
         segments = self._get_transition_pathways_np(spin_system)
         return [
@@ -380,15 +405,16 @@ class Method(Parseable):
             for item in segments
         ]
 
-    def shape(self):
+    def shape(self) -> tuple:
         """The shape of the method's spectral dimension array.
 
-        Returns: list
+        Returns:
+            tuple
 
         Example:
             >>> from mrsimulator.methods import Method2D
             >>> method = Method2D(spectral_dimensions=[{'count': 40}, {'count': 10}])
             >>> method.shape()
-            [40, 10]
+            (40, 10)
         """
-        return [item.count for item in self.spectral_dimensions]
+        return tuple([item.count for item in self.spectral_dimensions])

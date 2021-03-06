@@ -39,16 +39,16 @@ typedef struct MRS_averaging_scheme {
   unsigned int total_orientations; /**< The total number of orientations. */
 
   /** \privatesection */
-  unsigned int integration_density; //  # triangles along the edge of the octahedron.
-  unsigned int integration_volume;  //  0-octant, 1-hemisphere, 2-sphere.
-  unsigned int octant_orientations; //  # unique orientations on the face of an octant.
-  double *amplitudes;               //  array of amplitude scaling per orientation.
-  complex128 *exp_Im_alpha;         //  array of cos_alpha per orientation.
-  complex128 *w2;                   //  buffer for 2nd rank frequency calculation.
-  complex128 *w4;                   //  buffer for 4nd rank frequency calculation.
-  double *wigner_2j_matrices;       //  wigner-d 2j matrix per orientation.
-  double *wigner_4j_matrices;       //  wigner-d 4j matrix per orientation.
-  bool allow_fourth_rank; //  If true, compute wigner matrices for wigner-d 4j.
+  unsigned int integration_density;  //  # triangles along the edge of the octahedron.
+  unsigned int integration_volume;   //  0-octant, 1-hemisphere, 2-sphere.
+  unsigned int octant_orientations;  //  # unique orientations on the face of an octant.
+  double *amplitudes;                //  array of amplitude scaling per orientation.
+  complex128 *exp_Im_alpha;          //  array of cos_alpha per orientation.
+  complex128 *w2;                    //  buffer for 2nd rank frequency calculation.
+  complex128 *w4;                    //  buffer for 4nd rank frequency calculation.
+  double *wigner_2j_matrices;        //  wigner-d 2j matrix per orientation.
+  double *wigner_4j_matrices;        //  wigner-d 4j matrix per orientation.
+  bool allow_fourth_rank;  //  If true, compute wigner matrices for wigner-d 4j.
 } MRS_averaging_scheme;
 
 // typedef struct MRS_averaging_scheme;
@@ -98,7 +98,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
  */
 void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme);
 
-#endif // averaging_scheme_h
+#endif  // averaging_scheme_h
 
 #ifndef fftw_scheme_h
 #define fftw_scheme_h
@@ -108,9 +108,8 @@ typedef struct MRS_fftw_scheme {
   /** \privatesection */
   /** The buffer to hold the sideband amplitudes as stride 2 array after mrsimulator
    * processing. */
-  fftw_complex *vector; // holds the amplitude of sidebands.
-
-  fftw_plan the_fftw_plan; //  The plan for fftw routine.
+  fftw_complex *vector;     // holds the amplitude of sidebands.
+  fftw_plan the_fftw_plan;  //  The plan for fftw routine.
 } MRS_fftw_scheme;
 
 MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
@@ -118,4 +117,4 @@ MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
 
 void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme);
 
-#endif // fftw_scheme_h
+#endif  // fftw_scheme_h

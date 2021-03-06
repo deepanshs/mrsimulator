@@ -12,9 +12,9 @@ Simulation API
    spin_system
    site
    coupling
-   other_objects
    method
    methods-summary
+   other_objects
 
 ..    parameterized_tensor
 ..    interaction

@@ -237,7 +237,7 @@ ext_modules += [
 if USE_CYTHON:
     ext_modules = cythonize(ext_modules, language_level=3)
 
-extras = {"lmfit": ["lmfit>=1.0.0"], "matplotlib": ["matplotlib>=3.0"]}
+extras = {"lmfit": ["lmfit>=1.0.2"], "matplotlib": ["matplotlib>=3.3.3"]}
 
 description = "A python toolbox for simulating fast real-time solid-state NMR spectra."
 setup(
