@@ -12,11 +12,13 @@ Simulator
 
     .. rubric:: Method Documentation
 
-    .. automethod:: get_isotopes
-    .. automethod:: json
     .. automethod:: parse_dict_with_units
+    .. automethod:: json
+    .. automethod:: reduced_dict
+    .. automethod:: get_isotopes
     .. automethod:: load_spin_systems
     .. automethod:: export_spin_systems
     .. automethod:: run
     .. automethod:: save
     .. automethod:: load
+    .. automethod:: sites

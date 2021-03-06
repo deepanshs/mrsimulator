@@ -289,17 +289,6 @@ class Simulator(BaseModel):
             return [Isotope(symbol=item) for item in st]
         return list(st)
 
-    # def mpcontribs(self, mp_id, composition=None, temperature=None, pressure=None):
-    #     data = self.json(include_methods=True)
-    #     if temperature is not None:
-    #         data["temperature"] = temperature
-    #     if pressure is not None:
-    #         data["pressure"] = pressure
-    #     if composition is not None:
-    #         data["composition"] = composition
-
-    #     return {"identifier": mp_id, "data": data}
-
     def json(self, include_methods: bool = False, include_version: bool = False):
         """Parse the class object to a JSON compliant python dictionary object, where
         the attribute value with physical quantity is expressed as a string with a
@@ -416,7 +405,6 @@ class Simulator(BaseModel):
         self,
         method_index: list = None,
         n_jobs: int = 1,
-        verbose: int = 0,
         pack_as_csdm: bool = True,
         **kwargs,
     ):
@@ -441,7 +429,7 @@ class Simulator(BaseModel):
 
         >>> sim.run() # doctest:+SKIP
         """
-
+        verbose = 0
         if method_index is None:
             method_index = np.arange(len(self.methods))
         if isinstance(method_index, int):
@@ -555,7 +543,7 @@ class Simulator(BaseModel):
         """Unique sites within the Simulator object as a list of Site objects.
 
         Returns:
-            A list of Site object.
+            A :ref:`sites_api` object.
 
         Example
         -------
@@ -623,6 +611,8 @@ class Simulator(BaseModel):
 
 
 class Sites(AbstractList):
+    """A list of unique :ref:`site_api` objects within a simulator object."""
+
     def __init__(self, data=[]):
         super().__init__(data)
         euler = ["alpha", "beta", "gamma"]
@@ -646,6 +636,7 @@ class Sites(AbstractList):
             raise ValueError("Only object of type Site is allowed.")
 
     def to_pd(self):
+        """Return sites as a pandas dataframe."""
         row = {item: [] for item in self.site_labels}
         sites = [item.json() for item in self._list]
         for site in sites:
