@@ -123,8 +123,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # Plot of the guess Spectrum
 # --------------------------
 ax = plt.subplot(projection="csdm")
-ax.plot(data1D, color="k", linewidth=2, alpha=0.5, label="Experiment")
-ax.plot(processed_data, color="r", label="guess spectrum")
+ax.plot(data1D, color="k", linewidth=1, label="Experiment")
+ax.plot(processed_data, color="r", alpha=0.5, linewidth=2.5, label="guess spectrum")
 plt.grid()
 ax.invert_xaxis()
 plt.legend()
@@ -159,8 +159,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot the spectrum
 ax = plt.subplot(projection="csdm")
-ax.plot(data1D, color="k", linewidth=2, alpha=0.5, label="Experiment")
-ax.plot(processed_data, color="r", label="Best Fit")
+ax.plot(data1D, color="k", linewidth=1, label="Experiment")
+ax.plot(processed_data, color="r", alpha=0.5, linewidth=2.5, label="Best Fit")
 ax.invert_xaxis()
 plt.grid()
 plt.legend()

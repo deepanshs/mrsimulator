@@ -137,8 +137,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # %%
 # **Step 5:** The plot the spectrum. We also plot the synthetic dataset for comparison.
 ax = plt.subplot(projection="csdm")
-ax.plot(synthetic_experiment, "k", linewidth=2, alpha=0.5, label="Experiment")
-ax.plot(processed_data, "r", label="guess spectrum")
+ax.plot(synthetic_experiment, "k", linewidth=1, label="Experiment")
+ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="guess spectrum")
 ax.set_xlim(-200, 50)
 ax.invert_xaxis()
 plt.legend()
@@ -239,8 +239,8 @@ x, y_data = synthetic_experiment.to_list()
 residuals = minimization_function(result.params, sim, processor)
 fit = y_data - residuals
 
-plt.plot(x, y_data, "k", linewidth=2, label="Experiment")
-plt.plot(x, fit, "r--", label="Best Fit")
+plt.plot(x, y_data, "k", linewidth=1, label="Experiment")
+plt.plot(x, fit, "r", alpha=0.5, linewidth=2.5, label="Best Fit")
 plt.plot(x, residuals, alpha=0.5, label="Residual")
 
 plt.xlabel("Frequency / Hz")

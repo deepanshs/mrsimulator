@@ -152,8 +152,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # **Step 6:** The plot of initial guess simulation (black) along with the experiment
 # (red) is shown below.
 ax = plt.subplot(projection="csdm")
-ax.plot(oxygen_experiment, "k", alpha=0.5, linewidth=2, label="Experiment")
-ax.plot(processed_data, "r", label="guess spectrum")
+ax.plot(oxygen_experiment, "k", linewidth=1, label="Experiment")
+ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="guess spectrum")
 ax.set_xlim(-50, 100)
 ax.invert_xaxis()
 plt.legend()
@@ -207,8 +207,8 @@ sim.run()
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 ax = plt.subplot(projection="csdm")
-plt.plot(oxygen_experiment, "k", alpha=0.5, linewidth=2, label="Experiment")
-plt.plot(processed_data, "r--", label="Best Fit")
+plt.plot(oxygen_experiment, "k", linewidth=1, label="Experiment")
+plt.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="Best Fit")
 plt.xlabel("$^{17}$O frequency / ppm")
 plt.xlim(100, -50)
 plt.legend()
