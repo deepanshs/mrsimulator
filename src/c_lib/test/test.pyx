@@ -13,8 +13,13 @@ __email__ = "srivastava.89@osu.edu"
 
 clib.generate_table()
 
-## wigner matrices
+## wigner d elements
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def wigner_d_element(float l, float m1, float m2, double beta):
+    return clib.wigner_d_element(l, m1, m2, beta)
 
+## wigner matrices
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def wigner_d_matrices(int l, np.ndarray[double] angle):

@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 //
-//  angular_momentum.c
+//  wigner_matrix.h
 //
 //  @copyright Deepansh J. Srivastava, 2019-2021.
 //  Created by Deepansh J. Srivastava.
@@ -9,19 +9,6 @@
 #include "config.h"
 
 // Generic function ................................................................. //
-
-/**
- * @brief Evaluates @f$d^{l}_{m_1, m_2}(\beta)@f$ wigner-d element of the given angle
- * @f$\beta@f$.
- *
- * @param l The rank of the wigner-d matrix element.
- * @param m1 The quantum number @f$m_1@f$.
- * @param m2 The quantum number @f$m_2@f$.
- * @param beta The angle @f$\beta@f$ given in radian.
- * @return The wigner-d element, @f$d^{l}_{m_1, m_2}(\beta)@f$.
- */
-extern double wigner_d_element(const int l, const int m1, const int m2,
-                               const double beta);
 
 /**
  * @brief Evaluates @f$n@f$ wigner-d matrices of rank @f$l@f$ at @f$n@f$ angles given in

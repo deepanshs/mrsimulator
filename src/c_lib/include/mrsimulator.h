@@ -10,7 +10,7 @@
 #ifndef mrsimulator_h
 #define mrsimulator_h
 
-#include "angular_momentum.h"
+#include "angular_momentum/wigner_matrix.h"
 #include "config.h"
 #include "fftw3.h"
 #include "frequency/frequency_tensor_components.h"

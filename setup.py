@@ -180,7 +180,8 @@ print(extra_compile_args)
 print(extra_link_args)
 
 source = [
-    "src/c_lib/lib/angular_momentum.c",
+    "src/c_lib/lib/angular_momentum/wigner_element.c",
+    "src/c_lib/lib/angular_momentum/wigner_matrix.c",
     "src/c_lib/lib/interpolation.c",
     "src/c_lib/lib/method.c",
     "src/c_lib/lib/mrsimulator.c",
