@@ -237,7 +237,7 @@ ext_modules += [
 if USE_CYTHON:
     ext_modules = cythonize(ext_modules, language_level=3)
 
-extras = {"lmfit": ["lmfit>=1.0.2"], "matplotlib": ["matplotlib>=3.3.3"]}
+extras = {"all": ["lmfit>=1.0.2", "matplotlib>=3.3.3"]}
 
 description = "A python toolbox for simulating fast real-time solid-state NMR spectra."
 setup(
@@ -252,9 +252,9 @@ setup(
     url="https://github.com/DeepanshS/MRsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    setup_requires=["numpy>=1.17"],
+    setup_requires=["numpy>=1.17,<1.20"],
     install_requires=[
-        "numpy>=1.17",
+        "numpy>=1.17,<1.20",
         "csdmpy>=0.3.4",
         "pydantic>=1.0",
         "monty>=2.0.4",
