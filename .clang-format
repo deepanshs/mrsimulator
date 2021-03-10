@@ -1,4 +1,3 @@
----
 BasedOnStyle: Google
 UseTab: Never
 IndentWidth: 2
@@ -10,4 +9,3 @@ ColumnLimit: 88
 AccessModifierOffset: -4
 NamespaceIndentation: All
 FixNamespaceComments: false
----
