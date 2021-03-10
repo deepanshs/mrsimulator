@@ -222,18 +222,18 @@ ext_modules += [
 ]
 
 # sandbox
-ext_modules += [
-    Extension(
-        name="mrsimulator.sandbox",
-        sources=[*source, "src/c_lib/sandbox/sandbox" + ext],
-        include_dirs=include_dirs,
-        language="c",
-        libraries=libraries,
-        library_dirs=library_dirs,
-        extra_compile_args=extra_compile_args,
-        extra_link_args=extra_link_args,
-    )
-]
+# ext_modules += [
+#     Extension(
+#         name="mrsimulator.sandbox",
+#         sources=[*source, "src/c_lib/sandbox/sandbox" + ext],
+#         include_dirs=include_dirs,
+#         language="c",
+#         libraries=libraries,
+#         library_dirs=library_dirs,
+#         extra_compile_args=extra_compile_args,
+#         extra_link_args=extra_link_args,
+#     )
+# ]
 
 if USE_CYTHON:
     ext_modules = cythonize(ext_modules, language_level=3)
