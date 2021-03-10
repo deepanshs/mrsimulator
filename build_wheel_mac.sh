@@ -1,6 +1,9 @@
 #!/bin/bash
 
 source /Users/deepansh/opt/anaconda3/bin/activate
+export DYLD_FALLBACK_LIBRARY_PATH="/usr/local/opt/fftw/lib:/usr/local/opt/openblas/lib"
+export PATH="/Users/deepansh/opt/anaconda3/bin:$PATH"
+export MACOSX_DEPLOYMENT_TARGET=10.9
 
 # python 3.7 - 3.9
 for PYBIN in py37 py38 py39; do
@@ -12,8 +15,6 @@ for PYBIN in py37 py38 py39; do
 done
 
 # Bundle external shared libraries into the wheels
-export DYLD_FALLBACK_LIBRARY_PATH="/usr/local/opt/fftw/lib:/usr/local/opt/openblas/lib"
-export PATH="/Users/deepansh/opt/anaconda3/bin:$PATH"
 echo $DYLD_FALLBACK_LIBRARY_PATH
 for whl in macwheels/*.whl; do
     delocate-wheel "$whl" -w dist/ -v
