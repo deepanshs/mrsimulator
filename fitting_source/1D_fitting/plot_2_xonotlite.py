@@ -27,9 +27,7 @@ mpl.rcParams["grid.linestyle"] = "--"
 # %%
 # Import the dataset
 # ------------------
-# Use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_
-# module to load the synthetic dataset as a CSDM object.
-filename = "xonotlite.csdf"
+filename = "https://sandbox.zenodo.org/record/744498/files/xonotlite.csdf"
 exp_data = cp.load(filename).real
 
 # standard deviation of noise from the dataset
@@ -60,7 +58,7 @@ plt.show()
 s1 = Site(
     isotope="29Si",
     isotropic_chemical_shift=-97.17,  # in ppm,
-    shielding_symmetric={"zeta": 33, "eta": 0.01},  # zeta in ppm
+    shielding_symmetric={"zeta": 35.0, "eta": 0.0},  # zeta in ppm
 )
 s2 = Site(
     isotope="29Si",
