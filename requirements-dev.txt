@@ -11,7 +11,7 @@ psutil>=5.7.2
 joblib>=1.0.0
 
 # Formatting requirements
-black>=20.7
+black
 pre-commit>=2.11.1
 
 # Test requirements
