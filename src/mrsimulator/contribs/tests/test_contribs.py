@@ -2,7 +2,7 @@
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.contribs import contribs_data
+from mrsimulator.contribs import mpcontribs_export
 from mrsimulator.contribs import parse_method
 from mrsimulator.contribs import parse_sites
 from mrsimulator.methods import BlochDecaySpectrum
@@ -81,10 +81,10 @@ def test_contrib_card():
         "project": "test",
     }
 
-    output = contribs_data(sim, "test")
+    output = mpcontribs_export(sim, "test")
     assert output == [card]
 
     sim.spin_systems = [SpinSystem(sites=[site, site, site])]
-    output = contribs_data(sim, "test", identifier="mp-5733")
+    output = mpcontribs_export(sim, "test", identifier="mp-5733")
     card["identifier"] = "mp-5733"
     assert output == [card, card, card]

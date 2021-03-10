@@ -86,7 +86,7 @@ def parse_method(method):
     }
 
 
-def contribs_data(sim, project, composition=None, identifier=None, exp_dict={}):
+def mpcontribs_export(sim, project, composition=None, identifier=None, exp_dict={}):
     """Generate mpcontribs cards for every site in the Simulator object.
 
     Arguments
@@ -100,7 +100,7 @@ def contribs_data(sim, project, composition=None, identifier=None, exp_dict={}):
     Example
     -------
 
-        >>> contribution_data = contribs_data(sim, 'myproject') # doctest:+SKIP
+        >>> contribution_data = mpcontribs_export(sim, 'myproject') # doctest:+SKIP
     """
     contrib = []
     for sys in sim.spin_systems:

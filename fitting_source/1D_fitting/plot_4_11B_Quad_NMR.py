@@ -5,8 +5,8 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
-# The following is a quadrupolar lineshape fitting example for the 11B MAS NMR of
-# lithium orthoborate crystal. The dataset was provided by Nathan Barrow.
+# The following is a quadrupolar lineshape fitting example for :math:`^{11}\text{B}`
+# MAS NMR of lithium orthoborate crystal. The dataset was provided by Nathan Barrow.
 import numpy as np
 import csdmpy as cp
 import matplotlib as mpl

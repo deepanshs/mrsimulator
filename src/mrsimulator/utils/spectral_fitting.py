@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import mrsimulator.signal_processing as sp
+import numpy as np
 from lmfit import Parameters
 from mrsimulator import Simulator
-
 
 __author__ = ["Maxwell C Venetos", "Deepansh Srivastava"]
 __email__ = ["maxvenetos@gmail.com", "srivastava.89@osu.edu"]
@@ -341,7 +341,15 @@ def LMFIT_min_function(params, sim, post_sim=None, sigma=1):
     else:
         datum = processed_data.y[0].components[0].real
 
-    diff = sim.methods[0].experiment.y[0].components[0] - datum
+    exp_data = sim.methods[0].experiment
+    exp_data_y = exp_data.y[0].components[0]
+
+    # If data has negative increment, reverse the data before taking the difference.
+    index = [-i - 1 for i, item in enumerate(exp_data.x) if item.increment.value < 0]
+    exp_data_y = exp_data_y if index == [] else np.flip(exp_data_y, axis=tuple(index))
+
+    diff = exp_data_y - datum
+
     return diff / sigma
 
     # MULTIPLE EXPERIMENTS
