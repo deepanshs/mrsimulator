@@ -180,12 +180,11 @@ void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                                    bool refresh, MRS_dimension *dim);
 
 /**
- * @func MRS_rotate_components_from_PAS_to_common_frame
- *
- * The function rotates the tensor components from the principal axis system (PAS) to
- * the common frame of the spin system.
+ * @brief The function rotates the tensor components from the principal axis system
+ * (PAS) to the common frame of the spin system.
  *
  * @param sites A pointer to the site_struct structure.
+ * @param couplings A pointer to the coupling_struct structure.
  * @param transition A pointer to the spin quantum numbers from the inital and final
  *      states of the spin transition packed as initial quantum numbers followed by the
  *      final quantum numbers.
