@@ -289,8 +289,8 @@ class Method(Parseable):
         return temp_dict
 
     def events_to_dataframe(self) -> pd.DataFrame:
-        """Returns events array as DataFrame with
-        event number as columns and parameters as indexes
+        """Returns events array as DataFrame with event number as column and
+        attribute names as indexes
 
         Returns:
             Pandas DataFrame object
@@ -303,25 +303,45 @@ class Method(Parseable):
         data = [ev.json() for ev in events]
         # Formatting here
         df = pd.DataFrame(data)
-        print(df.columns)
-        print(df)
         return df
 
     def _df_remove_properties(self, df, properties) -> pd.DataFrame:
-        """Removes indexes from df not in properties
-        and places fraction row at end of data frame
+        """Removes indexes from df not in properties if properties is not None.
+        Otherwise removes constant parameters. places fraction row at end of
+        data frame regardless of properties
+
+        Parameters:
+            df: DataFrame to be altered
+            properties: List of properties to keep
 
         Returns:
             Altered Pandas DataFrame object
+
         """
         fraction_row = df.pop("fraction")
         if properties is not None:
             df.drop(columns=np.setdiff1d(df.columns, properties), inplace=True)
         else:
             for col in df.columns:
-                if len(set(df[col])) == 1:
+                print(col)
+                print(df[col].value_counts().size)
+                if df[col].value_counts().size == 1:
                     df.drop(columns=col, inplace=True)
         df["fraction"] = fraction_row
+        return df
+
+    def _df_expand_transition_pathways(self, df) -> pd.DataFrame:
+        """Takes the transition_query dict from each event number in dataframe
+        and adds columns for symmetry pathways
+
+        Parameters:
+            df: DataFrame to expand into
+
+        Returns:
+            Altered Pandas DataFrame object
+
+         """
+
         return df
 
     def _get_transition_pathways(self, spin_system):
@@ -385,22 +405,6 @@ class Method(Parseable):
             for item in segments
         ]
 
-    def get_symmetry_pathways(self, lst):
-        """
-        Return a list of symmetry pathways from a given list of transitions
-        queries from a sequence of events
-
-        Args:
-            List lst: list of transition queries by event
-
-        Returns:
-            Array of transition pathways
-        """
-        max_len = max(len(_) for _ in lst)
-        lst = [_ + [0] * (max_len - len(_)) for _ in lst]
-        lst = [[lst[r][c] for r in range(len(lst))] for c in range(len(lst[0]))]
-        return lst
-
     def shape(self):
         """The shape of the method's spectral dimension array.
 
@@ -427,13 +431,11 @@ class Method(Parseable):
             Matplotlib fig: Figure to be plotted
         """
 
-        # Replace once events array implemented
-        # df = self.events_to_dataframe()
-
-        # Remove once events array implemented
-
         df = self.events_to_dataframe()
         df = self._df_remove_properties(df, properties)
+
+        f_lst = [0] + [sum(df["fraction"][:i + 1]) for i in range(df.shape[0])]
+        x_data = [x for i in range(len(f_lst) - 1) for x in (f_lst[i], f_lst[i + 1])]
 
         # Construct plot
         fig, axs = plt.subplots(
@@ -445,9 +447,6 @@ class Method(Parseable):
         )
 
         axs = [axs] if not isinstance(axs, np.ndarray) else axs
-        f_lst = [0] + [sum(df["fraction"][:i + 1]) for i in range(df.shape[0])]
-        x_data = [x for i in range(len(f_lst) - 1) for x in (f_lst[i], f_lst[i + 1])]
-
         axs[0].set_xlim([0, len(self.spectral_dimensions)])
         axs[0].set_xticks(np.arange(0.0, len(self.spectral_dimensions), 1.0))
 
