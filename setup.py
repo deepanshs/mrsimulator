@@ -19,9 +19,12 @@ from settings import use_openblas
 try:
     import conda.cli.python_api as Conda
 except ModuleNotFoundError as e:
-    msg = "\nIf you are using conda env, install 'conda' with\n\tconda install conda"
-    print(f"{e}{msg}")
-    sys.exit(1)
+    if sys.platform.startswith("win"):
+        msg = (
+            "\nIf you are using conda env, install 'conda' with\n\tconda install conda"
+        )
+        print(f"{e}{msg}")
+        sys.exit(1)
 
 try:
     from Cython.Build import cythonize
