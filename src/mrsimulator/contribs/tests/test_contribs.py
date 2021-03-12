@@ -80,17 +80,26 @@ def test_contrib_card():
             },
         },
         "project": "test",
+        "formula": "ABX",
         "identifier": "blah-blah",
     }
 
     output = mpcontribs_export(
-        sim, project="test", identifier="blah-blah", exp_dict={"blah": "blah"}
+        sim,
+        project="test",
+        identifier="blah-blah",
+        exp_dict={"blah": "blah"},
+        formula="ABX",
     )
     assert output == [card]
 
     sim.spin_systems = [SpinSystem(sites=[site, site, site])]
     output = mpcontribs_export(
-        sim, project="test", identifier="mp-5733", exp_dict={"blah": "blah"}
+        sim,
+        project="test",
+        identifier="mp-5733",
+        exp_dict={"blah": "blah"},
+        formula="ABX",
     )
     card["identifier"] = "mp-5733"
     assert output == [card, card, card]

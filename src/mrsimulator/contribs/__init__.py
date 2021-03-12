@@ -2,7 +2,7 @@
 import numpy as np
 from mrsimulator.utils import flatten_dict
 
-from .base import ContribInfo
+from .base import ContribSchema
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -55,33 +55,32 @@ def parse_method(method):
     }
 
 
-def mpcontribs_export(sim, project, identifier, composition=None, exp_dict={}):
-    """Generate mpcontribs cards for every site in the Simulator object.
+def mpcontribs_export(sim, project, identifier, exp_dict={}, **kwargs):
+    """Generate mpcontribs contribution entries for every site in the Simulator object.
 
     Arguments
     ---------
-        sim: Simulator object from where the sites are extracted.
-        project: mpcontribs project name.
-        composition: Chemical composition for the sample (optional).
-        identifier: The mp-id of the sample (optional).
-        exp_dict: Additional metadata to use in contribs card.
+        sim: Simulator object from where the site contributions are extracted.
+        str project: mpcontribs project name (reqiuired).
+        str identifier: mpcontribs identifier (required).
+        exp_dict: Additional metadata to use in contribution.
+        **kwargs: Optional keyword arguments from mpcontribs ContributionsSchema
 
     Example
     -------
-
         >>> contribution_data = mpcontribs_export(sim, 'myproject') # doctest:+SKIP
     """
     contribs = [
-        ContribInfo(
+        ContribSchema(
+            project=project,
+            identifier=identifier,
             data={
                 "experiment": "experiment goes here",
                 "simulation": "simulation goes here",
                 "site": {**parse_sites(site)},
                 "method": {**parse_method(sim.methods[0])},
             },
-            project=project,
-            composition=composition,
-            identifier=identifier,
+            **kwargs,
         ).json()
         for sys in sim.spin_systems
         for site in sys.sites

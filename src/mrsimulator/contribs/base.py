@@ -25,7 +25,7 @@ class Base(BaseModel):
         return Base.simplify(initial)
 
 
-class ChemicalShiftInfo(Base):
+class ChemicalShiftSchema(Base):
     isotropic: str
     zeta: str = None
     eta: float = None
@@ -34,7 +34,7 @@ class ChemicalShiftInfo(Base):
     gamma: str = None
 
 
-class QuadrupolarInfo(Base):
+class QuadrupolarSchema(Base):
     Cq: str
     eta: float
     alpha: str = None
@@ -42,32 +42,36 @@ class QuadrupolarInfo(Base):
     gamma: str = None
 
 
-class SiteInfo(Base):
+class SiteSchema(Base):
     isotope: str
-    ChemicalShift: ChemicalShiftInfo = None
-    Quadrupolar: QuadrupolarInfo = None
+    ChemicalShift: ChemicalShiftSchema = None
+    Quadrupolar: QuadrupolarSchema = None
 
 
-class MethodInfo(Base):
+class MethodSchema(Base):
     larmorFrequency: str
     spinningFrequency: str
     spectralWidth: str
     rotorAngle: str
 
 
-class SimulatorInfo(Base):
+class SimulatorSchema(Base):
     experiment: str = None
     simulation: str = None
-    site: SiteInfo = None
-    method: MethodInfo = None
+    site: SiteSchema = None
+    method: MethodSchema = None
 
     class config:
         validate_assignment = True
         arbitrary_types_allowed = True
 
 
-class ContribInfo(Base):
-    data: SimulatorInfo
+class ContribSchema(Base):
     project: str
     identifier: str
-    composition: str = None
+    formula: str = None
+    is_public: bool = None
+    data: SimulatorSchema
+    structures: list = None
+    tables: list = None
+    notebook: dict = None
