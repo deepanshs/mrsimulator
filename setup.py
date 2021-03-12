@@ -17,14 +17,121 @@ from settings import use_accelerate
 from settings import use_openblas
 
 try:
+    import conda.cli.python_api as Conda
+except ModuleNotFoundError as e:
+    msg = "\nIf you are using conda env, install 'conda' with\n\tconda install conda"
+    print(f"{e}{msg}")
+    sys.exit(1)
+
+try:
     from Cython.Build import cythonize
 
     USE_CYTHON = True
 except ImportError:
     USE_CYTHON = False
 
-# get the version from file
 
+def message(lib, env, command, key):
+    arg = f"{key} {lib}" if key != "" else f"{lib}"
+    print("Error---------------------------------------------------------------")
+    print(f"Libraries not found: {lib}")
+    print(f"Please install {lib} from {env} with:\n\t{command} install {arg}")
+    sys.exit(1)
+
+
+class Setup:
+    def __init__(self):
+        self.libraries = []
+        self.include_dirs = []
+        self.library_dirs = []
+        self.extra_compile_args = [
+            "-O3",
+            "-ffast-math",
+            # "-msse4.2",
+            # "-ftree-vectorize",
+            # "-fopt-info-vec-optimized",
+            # "-mavx",
+        ]
+        self.extra_link_args = []
+        self.data_files = []
+
+    def check_valid_path(self, pathlist):
+        return [pth for pth in pathlist if exists(pth)]
+
+
+class WindowsSetup(Setup):
+    def __init__(self):
+        super().__init__()
+
+        self.extra_link_args += ["-Wl,--allow-multiple-definition"]
+        self.extra_compile_args = ["-DFFTW_DLL"]
+
+        # FFTW3 info
+        fftw3_info = sysinfo.get_info("fftw3")
+        fftw_keys = fftw3_info.keys()
+        if "include_dirs" in fftw_keys:
+            self.include_dirs += fftw3_info["include_dirs"]
+        if "library_dirs" in fftw_keys:
+            self.library_dirs += fftw3_info["library_dirs"]
+        if "libraries" in fftw_keys:
+            self.libraries += fftw3_info["libraries"]
+
+        # OpenBLAS info
+        openblas_info = sysinfo.get_info("openblas")
+        if openblas_info != {}:
+            self.include_dirs += [join(fftw3_info["include_dirs"][0], "openblas")]
+            self.library_dirs += openblas_info["library_dirs"]
+            self.libraries += openblas_info["libraries"]
+
+        # conda paths
+        self.get_conda_paths()
+
+    def get_conda_paths(self):
+        info, error, status = Conda.run_command(Conda.Commands.INFO)
+        if status:
+            print(f"Error locating conda. Following error was produced\n {error}")
+            sys.exit(1)
+
+        pack = [item.strip() for item in info.split("\n")]
+        pack = [item for item in pack if item != ""]
+        for item in pack:
+            if "active env location" in item:
+                loc = item.split(" : ")[1].strip()
+                break
+
+        print("Found Conda installation:", loc)
+
+        self.include_dirs += self.check_valid_path(
+            [
+                join(loc, "Library", "include", "fftw"),
+                join(loc, "Library", "include", "openblas"),
+                join(loc, "Library", "include"),
+                join(loc, "include"),
+            ]
+        )
+
+        self.library_dirs += self.check_valid_path([join(loc, "Library", "lib")])
+
+        BLAS_FOUND, FFTW_FOUND = [
+            np.any([exists(join(pth, lib)) for pth in self.library_dirs])
+            for lib in ["openblas.lib", "fftw3.lib"]
+        ]
+
+        cmd_list = ["conda", "conda", "-c conda-forge"]
+
+        if not BLAS_FOUND and not FFTW_FOUND:
+            message("openblas fftw", *cmd_list)
+
+        if not BLAS_FOUND:
+            message("openblas", *cmd_list)
+
+        if not FFTW_FOUND:
+            message("fftw", *cmd_list)
+
+        self.libraries += ["fftw3", "openblas"]
+
+
+# get the version from file
 python_version = sys.version_info
 py_version = ".".join([str(i) for i in python_version[:3]])
 print("Using python version", py_version)
@@ -59,31 +166,13 @@ data_files = []
 numpy_include = np.get_include()
 
 if sys.platform.startswith("win"):
+    win = WindowsSetup()
 
-    extra_link_args += ["-Wl,--allow-multiple-definition"]
-    extra_compile_args = ["-DFFTW_DLL"]
-
-    # FFTW3 info
-    fftw3_info = sysinfo.get_info("fftw3")
-    fftw_keys = fftw3_info.keys()
-    if "include_dirs" in fftw_keys:
-        include_dirs += fftw3_info["include_dirs"]
-    if "library_dirs" in fftw_keys:
-        library_dirs += fftw3_info["library_dirs"]
-    if "libraries" in fftw_keys:
-        libraries += fftw3_info["libraries"]
-
-    # OpenBLAS info
-    openblas_info = sysinfo.get_info("openblas")
-    if openblas_info != {}:
-        include_dirs += [join(fftw3_info["include_dirs"][0], "openblas")]
-        library_dirs += openblas_info["library_dirs"]
-        libraries += openblas_info["libraries"]
-
-
-def message(lib):
-    return f"Please install {lib} from homebrew with:\n\t$ brew install {lib}"
-
+    extra_link_args = win.extra_link_args
+    extra_compile_args = win.extra_compile_args
+    library_dirs = win.library_dirs
+    include_dirs = win.include_dirs
+    libraries = win.libraries
 
 if platform.system() == "Darwin":  # OSX-specific tweaks:
     # BLAS framework
@@ -103,7 +192,7 @@ if platform.system() == "Darwin":  # OSX-specific tweaks:
         libraries += ["openblas"]
 
         if not exists(BLAS_INCLUDE):
-            print(message("openblas"))
+            print(message("openblas", "homebrew", "brew", ""))
             sys.exit(1)
 
         include_dirs += [BLAS_INCLUDE]
@@ -129,7 +218,7 @@ if platform.system() == "Darwin":  # OSX-specific tweaks:
     libraries += ["fftw3"]
 
     if not exists(FFTW_INCLUDE):
-        print(message("fftw"))
+        print(message("fftw", "homebrew", "brew", ""))
         sys.exit(1)
 
     include_dirs += [FFTW_INCLUDE]
@@ -237,7 +326,7 @@ ext_modules += [
 if USE_CYTHON:
     ext_modules = cythonize(ext_modules, language_level=3)
 
-extras = {"all": ["lmfit>=1.0.2", "matplotlib>=3.3.3"]}
+extras = {"all": ["matplotlib>=3.3.3"]}
 
 description = "A python toolbox for simulating fast real-time solid-state NMR spectra."
 setup(
@@ -259,6 +348,10 @@ setup(
         "pydantic>=1.0",
         "monty>=2.0.4",
         "typing-extensions>=3.7",
+        "psutil>=5.7.2",
+        "joblib>=1.0.0",
+        "pandas>=1.1.3",
+        "lmfit>=1.0.2",
     ],
     extras_require=extras,
     ext_modules=ext_modules,
