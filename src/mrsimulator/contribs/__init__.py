@@ -2,45 +2,14 @@
 import numpy as np
 from mrsimulator.utils import flatten_dict
 
-# import csdmpy as cp
-# from pydantic import BaseModel
+from .base import ContribInfo
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-# class MethodInfo(BaseModel):
-#     LarmorFrequency: str
-#     SpinningFrequency: str
-#     SpectralWidth: str
-#     RotorAngle: str
-
-# class ChemicalShiftInfo(BaseModel):
-#     Isotropic: str
-#     zeta: str = None
-#     eta: float = None
-
-# class QuadrupolarInfo(BaseModel):
-#     Cq: str
-#     eta: float
-
-# class SiteInfo(BaseModel):
-#     ChemicalShift: ChemicalShiftInfo = None
-#     Quadrupolar: QuadrupolarInfo = None
-
-# class SimulatorContrib(BaseModel):
-#     experiment: str = None
-#     simulation: str = None
-#     site: SiteInfo = None
-#     method: MethodInfo = None
-
-#     class config:
-#         validate_assignment = True
-#         arbitrary_types_allowed = True
-
-
 SITE_KEYWORDS = {
-    "isotropic_chemical_shift": "Isotropic",
+    "isotropic_chemical_shift": "isotropic",
     "shielding_symmetric.zeta": "zeta",
     "shielding_symmetric.eta": "eta",
     "quadrupolar.Cq": "Cq",
@@ -74,19 +43,19 @@ def parse_method(method):
     gamma = method.channels[0].gyromagnetic_ratio
     B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
     larmor_frequency = abs(gamma * B0)  # MHz
-    nu_r = method.spectral_dimensions[0].events[0].rotor_frequency  # Hz
-    nu_delta = method.spectral_dimensions[0].spectral_width  # Hz
+    rotor_frequency = method.spectral_dimensions[0].events[0].rotor_frequency  # Hz
+    spectral_width = method.spectral_dimensions[0].spectral_width  # Hz
     rotor_angle = method.spectral_dimensions[0].events[0].rotor_angle * 180 / np.pi
 
     return {
-        "LarmorFrequency": f"{larmor_frequency} MHz",
-        "SpinningFrequency": f"{nu_r} Hz",
-        "SpectralWidth": f"{nu_delta} Hz",
-        "RotorAngle": f"{rotor_angle:.4f} degree",
+        "larmorFrequency": f"{larmor_frequency} MHz",
+        "spinningFrequency": f"{rotor_frequency} Hz",
+        "spectralWidth": f"{spectral_width} Hz",
+        "rotorAngle": f"{rotor_angle:.4f} degree",
     }
 
 
-def mpcontribs_export(sim, project, composition=None, identifier=None, exp_dict={}):
+def mpcontribs_export(sim, project, identifier, composition=None, exp_dict={}):
     """Generate mpcontribs cards for every site in the Simulator object.
 
     Arguments
@@ -102,28 +71,23 @@ def mpcontribs_export(sim, project, composition=None, identifier=None, exp_dict=
 
         >>> contribution_data = mpcontribs_export(sim, 'myproject') # doctest:+SKIP
     """
-    contrib = []
-    for sys in sim.spin_systems:
-        for site in sys.sites:
-            data = {
-                **dict(
-                    experiment="experiment goes here",
-                    simulation="simulation goes here",
-                    site={**parse_sites(site)},
-                    method={**parse_method(sim.methods[0]), **exp_dict},
-                )
-            }
+    contribs = [
+        ContribInfo(
+            data={
+                "experiment": "experiment goes here",
+                "simulation": "simulation goes here",
+                "site": {**parse_sites(site)},
+                "method": {**parse_method(sim.methods[0])},
+            },
+            project=project,
+            composition=composition,
+            identifier=identifier,
+        ).json()
+        for sys in sim.spin_systems
+        for site in sys.sites
+    ]
 
-            card = {
-                "data": data,
-                "project": project,
-                "composition": composition,
-                "identifier": identifier,
-            }
-            if composition is None:
-                card.pop("composition")
-            if identifier is None:
-                card.pop("identifier")
-            contrib.append(card)
+    for item in contribs:
+        item["data"]["method"] = {**item["data"]["method"], **exp_dict}
 
-    return contrib
+    return contribs

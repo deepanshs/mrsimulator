@@ -19,15 +19,15 @@ def test01():
 
     assert output_site == {
         "isotope": "1H",
-        "ChemicalShift": {"Isotropic": "0.0 ppm", "zeta": "-10.0 ppm", "eta": 0.1},
+        "ChemicalShift": {"isotropic": "0.0 ppm", "zeta": "-10.0 ppm", "eta": 0.1},
     }
 
     omega_0 = abs(method.channels[0].gyromagnetic_ratio * 9.4)
     assert output_method == {
-        "LarmorFrequency": f"{omega_0} MHz",
-        "SpinningFrequency": "15000.0 Hz",
-        "SpectralWidth": "25000.0 Hz",
-        "RotorAngle": "54.7356 degree",
+        "larmorFrequency": f"{omega_0} MHz",
+        "spinningFrequency": "15000.0 Hz",
+        "spectralWidth": "25000.0 Hz",
+        "rotorAngle": "54.7356 degree",
     }
 
 
@@ -40,16 +40,16 @@ def test02():
 
     assert output_site == {
         "isotope": "27Al",
-        "ChemicalShift": {"Isotropic": "0.0 ppm"},
+        "ChemicalShift": {"isotropic": "0.0 ppm"},
         "Quadrupolar": {"Cq": "10.0 MHz", "eta": 0.4},
     }
 
     omega_0 = abs(method.channels[0].gyromagnetic_ratio * 11.7)
     assert output_method == {
-        "LarmorFrequency": f"{omega_0} MHz",
-        "SpinningFrequency": "0.0 Hz",
-        "SpectralWidth": "25000.0 Hz",
-        "RotorAngle": "54.7356 degree",
+        "larmorFrequency": f"{omega_0} MHz",
+        "spinningFrequency": "0.0 Hz",
+        "spectralWidth": "25000.0 Hz",
+        "rotorAngle": "54.7356 degree",
     }
 
 
@@ -68,23 +68,29 @@ def test_contrib_card():
             "simulation": "simulation goes here",
             "site": {
                 "isotope": "27Al",
-                "ChemicalShift": {"Isotropic": "0.0 ppm"},
+                "ChemicalShift": {"isotropic": "0.0 ppm"},
                 "Quadrupolar": {"Cq": "10.0 MHz", "eta": 0.4},
             },
             "method": {
-                "LarmorFrequency": f"{omega_0} MHz",
-                "SpinningFrequency": "0.0 Hz",
-                "SpectralWidth": "25000.0 Hz",
-                "RotorAngle": "54.7356 degree",
+                "larmorFrequency": f"{omega_0} MHz",
+                "spinningFrequency": "0.0 Hz",
+                "spectralWidth": "25000.0 Hz",
+                "rotorAngle": "54.7356 degree",
+                "blah": "blah",
             },
         },
         "project": "test",
+        "identifier": "blah-blah",
     }
 
-    output = mpcontribs_export(sim, "test")
+    output = mpcontribs_export(
+        sim, project="test", identifier="blah-blah", exp_dict={"blah": "blah"}
+    )
     assert output == [card]
 
     sim.spin_systems = [SpinSystem(sites=[site, site, site])]
-    output = mpcontribs_export(sim, "test", identifier="mp-5733")
+    output = mpcontribs_export(
+        sim, project="test", identifier="mp-5733", exp_dict={"blah": "blah"}
+    )
     card["identifier"] = "mp-5733"
     assert output == [card, card, card]
