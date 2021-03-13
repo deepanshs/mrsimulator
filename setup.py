@@ -17,16 +17,6 @@ from settings import use_accelerate
 from settings import use_openblas
 
 try:
-    import conda.cli.python_api as Conda
-except ModuleNotFoundError as e:
-    if sys.platform.startswith("win"):
-        msg = (
-            "\nIf you are using conda env, install 'conda' with\n\tconda install conda"
-        )
-        print(f"{e}{msg}")
-        sys.exit(1)
-
-try:
     from Cython.Build import cythonize
 
     USE_CYTHON = True
@@ -90,18 +80,7 @@ class WindowsSetup(Setup):
         self.get_conda_paths()
 
     def get_conda_paths(self):
-        info, error, status = Conda.run_command(Conda.Commands.INFO)
-        if status:
-            print(f"Error locating conda. Following error was produced\n {error}")
-            sys.exit(1)
-
-        pack = [item.strip() for item in info.split("\n")]
-        pack = [item for item in pack if item != ""]
-        for item in pack:
-            if "active env location" in item:
-                loc = item.split(" : ")[1].strip()
-                break
-
+        loc = dirname(sys.executable)
         print("Found Conda installation:", loc)
 
         self.include_dirs += self.check_valid_path(
