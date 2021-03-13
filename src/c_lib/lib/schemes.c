@@ -188,7 +188,7 @@ MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
   int nssb = (int)number_of_sidebands;
   MRS_fftw_scheme *fftw_scheme = malloc(sizeof(MRS_fftw_scheme));
 
-  fftw_scheme->vector = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * size);
+  fftw_scheme->vector = fftw_alloc_complex(size);
   // malloc_complex128(plan->size);
   // gettimeofday(&fft_setup_time, NULL);
 

@@ -10,4 +10,4 @@ Other Objects
     other_objects/transition
     other_objects/transition_pathway
 
-.. other_objects/zeeman_state
+.. other_objects/zeemanstate
