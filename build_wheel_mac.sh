@@ -9,7 +9,7 @@ export MACOSX_DEPLOYMENT_TARGET=10.9
 for PYBIN in py37 py38 py39; do
     conda activate "${PYBIN}"
     python --version
-    cat requirements-dev.txt | sed -e '/^\s*#.*$/d' -e '/^\s*$/d' | xargs -n 1 python -m pip install
+    < requirements-dev.txt sed -e '/^\s*#.*$/d' -e '/^\s*$/d' | xargs -n 1 python -m pip install
     python setup.py develop bdist_wheel -d macwheels
     pytest
 done
