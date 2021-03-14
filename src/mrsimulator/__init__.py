@@ -24,6 +24,14 @@ __maintainer__ = "Deepansh J. Srivastava"
 __status__ = "Beta"
 __version__ = "0.6.0rc2"
 
+import os
+
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+# os.environ["NUMEXPR_NUM_THREADS"] = "1"
+
 from .spin_system import Site  # lgtm [py/import-own-module] # noqa:F401
 from .spin_system import Coupling  # lgtm [py/import-own-module]  # noqa:F401
 from .spin_system import SpinSystem  # lgtm [py/import-own-module] # noqa:F401

@@ -95,7 +95,7 @@ void __mrsimulator_core(
   MRS_plan *plan;
   MRS_event *event;
 
-  openblas_set_num_threads(1);
+  // openblas_set_num_threads(1);
 
   // spec_site = site * dimensions[0].count;
   spec_site_ptr = &spec[0];
@@ -196,7 +196,7 @@ void mrsimulator_core(
     bool interpolation, bool *freq_contrib, double *affine_matrix) {
   // int num_process = openblas_get_num_procs();
   // int num_threads = openblas_get_num_threads();
-  openblas_set_num_threads(1);
+  // openblas_set_num_threads(1);
   // printf("%d processors", num_process);
   // printf("%d threads", num_threads);
   // int parallel = openblas_get_parallel();
