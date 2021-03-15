@@ -112,14 +112,27 @@ def time_string(time):
         return f"{time:.3f} µs", color
 
 
-def blocks(n_blocks, fn_string, n, n_jobs=1):
+def blocks(n_blocks, fn_string, n, level, n_jobs=1):
     description = [
-        "Static CSA spectrum",
-        "Static quadrupolar (1st + 2nd order) spectrum",
-        "CSA MAS sidebands spectrum",
-        "CSA VAS spectrum",
-        "MAS quadrupolar (1st + 2nd order) spectrum",
+        "Static CSA only spectrum",
+        "Static quadrupolar (1st + 2nd order) only spectrum",
+        "MAS CSA only sidebands spectrum",
+        "VAS CSA only spectrum",
+        "MAS quadrupolar (1st + 2nd order) only spectrum",
     ]
+    print(f"\nLevel {level} results.")
+    print("Average computation time for simulation one single-site spin system.")
+    print(
+        f"Reported value is the average time took to simulate {n} spectra for random "
+        "tensor parameters."
+    )
+    size = os.get_terminal_size().columns
+    delmit = "-"
+    print(f"{delmit:-<{size}}")
+    left_align = "Computation method"
+    right_align = "Average time"
+    print(f"{left_align:<{size-15}}{right_align:>15}")
+    print(f"{delmit:-<{size}}")
     for i in range(n_blocks):
         t = timeit.timeit(
             f"execute(sim[{i}], {n_jobs})",
@@ -164,19 +177,15 @@ class Benchmark:
     @staticmethod
     def prep():
         print(f"Benchmarking using mrsimulator version {mrsimulator.__version__}")
-        left_align = "Computation method"
-        right_align = "Average time"
-        size = os.get_terminal_size().columns - 15
-        print(f"{left_align:.<{size}}{right_align:>15}")
 
     @staticmethod
     def l0(n_jobs):
-        blocks(5, "level_n_CSA_static", 10, n_jobs)
+        blocks(5, "level_n_CSA_static", 10, 0, n_jobs)
 
     @staticmethod
     def l1(n_jobs):
-        blocks(5, "level_n_CSA_static", 2000, n_jobs)
+        blocks(5, "level_n_CSA_static", 2000, 1, n_jobs)
 
     @staticmethod
     def l2(n_jobs):
-        blocks(5, "level_n_CSA_static", 10000, n_jobs)
+        blocks(5, "level_n_CSA_static", 10000, 2, n_jobs)
