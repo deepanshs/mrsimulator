@@ -132,8 +132,7 @@ def blocks(n_blocks, fn_string, n, n_jobs=1):
         end = "\033[0m"
         # end = '' if os_system == 'Windows' else "\033[0m"
         size = os.get_terminal_size().columns - 15
-        left_align = f"Average time for {description[i]}"
-        print(f"{end}{left_align:.<{size}}{color}{t:>15}{end}")
+        print(f"{end}{description[i]:.<{size}}{color}{t:>15}{end}")
 
 
 def level_n_CSA_static(n):

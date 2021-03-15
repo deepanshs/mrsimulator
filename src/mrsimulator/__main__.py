@@ -23,7 +23,6 @@ if __name__ == "__main__":
         if opt in ("-n", "--n_jobs"):  # n_jobs
             n_jobs = arg
 
-    print(benchmark_level, n_jobs)
     if benchmark_level is not None:
         getattr(Benchmark, "prep")()
         getattr(Benchmark, benchmark_level)(n_jobs=int(n_jobs))
