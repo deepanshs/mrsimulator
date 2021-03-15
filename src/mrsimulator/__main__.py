@@ -13,9 +13,8 @@ if __name__ == "__main__":
         sys.exit(2)
 
     for opt, arg in opts:
-        if opt == "-h":
+        if opt == "-h":  # help
             print("--benchmark=<option>")
-        elif opt in ("-b", "--benchmark"):
-            benchmark_option = arg
-
-    getattr(Benchmark, benchmark_option)()
+        elif opt in ("-b", "--benchmark"):  # benchmark
+            getattr(Benchmark, "prep")()
+            getattr(Benchmark, arg)()

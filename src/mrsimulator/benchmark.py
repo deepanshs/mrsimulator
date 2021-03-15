@@ -10,12 +10,6 @@ from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 from mrsimulator.methods import BlochDecaySpectrum
 
-print(f"Benchmarking using mrsimulator version {mrsimulator.__version__}")
-left_align = "Computation method"
-right_align = "Average time"
-size = os.get_terminal_size().columns - 15
-print(f"{left_align:.<{size}}{right_align:>15}")
-
 
 def generate_spin_half_spin_system(n=1000):
     iso = np.random.normal(loc=0.0, scale=10.0, size=n)
@@ -162,6 +156,14 @@ def level_n_CSA_static(n):
 
 
 class Benchmark:
+    @staticmethod
+    def prep():
+        print(f"Benchmarking using mrsimulator version {mrsimulator.__version__}")
+        left_align = "Computation method"
+        right_align = "Average time"
+        size = os.get_terminal_size().columns - 15
+        print(f"{left_align:.<{size}}{right_align:>15}")
+
     @staticmethod
     def l0():
         blocks(5, "level_n_CSA_static", 10)
