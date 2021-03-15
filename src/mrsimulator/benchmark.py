@@ -10,6 +10,9 @@ from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 from mrsimulator.methods import BlochDecaySpectrum
 
+# import platform
+# os_system = platform.system()
+
 
 def generate_spin_half_spin_system(n=1000):
     iso = np.random.normal(loc=0.0, scale=10.0, size=n)
@@ -46,8 +49,8 @@ def generate_simulator(spin_systems, method):
     return sim
 
 
-def execute(sim):
-    sim.run()
+def execute(sim, n_jobs=1):
+    sim.run(n_jobs=n_jobs)
 
 
 def CSA_static_method():
@@ -96,6 +99,8 @@ def time_string(time):
     if time >= 0.005:
         color = "\033[91m"
 
+    # color = '' if os_system == 'Windows' else color
+
     while time < 1:
         time *= 1000  # ms
         count += 1
@@ -107,7 +112,7 @@ def time_string(time):
         return f"{time:.3f} µs", color
 
 
-def blocks(n_blocks, fn_string, n):
+def blocks(n_blocks, fn_string, n, n_jobs=1):
     description = [
         "Static CSA spectrum",
         "Static quadrupolar (1st + 2nd order) spectrum",
@@ -117,7 +122,7 @@ def blocks(n_blocks, fn_string, n):
     ]
     for i in range(n_blocks):
         t = timeit.timeit(
-            f"execute(sim[{i}])",
+            f"execute(sim[{i}], {n_jobs})",
             setup=f"sim={fn_string}({n})",
             globals=globals(),
             number=1,
@@ -125,6 +130,7 @@ def blocks(n_blocks, fn_string, n):
         t /= n  # s
         t, color = time_string(t)
         end = "\033[0m"
+        # end = '' if os_system == 'Windows' else "\033[0m"
         size = os.get_terminal_size().columns - 15
         left_align = f"Average time for {description[i]}"
         print(f"{end}{left_align:.<{size}}{color}{t:>15}{end}")
@@ -165,13 +171,13 @@ class Benchmark:
         print(f"{left_align:.<{size}}{right_align:>15}")
 
     @staticmethod
-    def l0():
-        blocks(5, "level_n_CSA_static", 10)
+    def l0(n_jobs):
+        blocks(5, "level_n_CSA_static", 10, n_jobs)
 
     @staticmethod
-    def l1():
-        blocks(5, "level_n_CSA_static", 2000)
+    def l1(n_jobs):
+        blocks(5, "level_n_CSA_static", 2000, n_jobs)
 
     @staticmethod
-    def l2():
-        blocks(5, "level_n_CSA_static", 10000)
+    def l2(n_jobs):
+        blocks(5, "level_n_CSA_static", 10000, n_jobs)
