@@ -24,7 +24,7 @@ done
 python setup.py develop sdist
 
 # clean up
-rm -r build
+rm -r build/*macosx*
 rm macwheels/*.whl
 rm src/mrsimulator/*-darwin.so
 rm src/mrsimulator/tests/*-darwin.so

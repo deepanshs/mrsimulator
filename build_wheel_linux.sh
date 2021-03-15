@@ -26,7 +26,7 @@ for whl in linuxwheels/*.whl; do
 done
 
 # clean up
+rm -r build/*linux*
+rm linuxwheels/*.whl
 rm src/mrsimulator/*-linux-gnu.so
 rm src/mrsimulator/tests/*-linux-gnu.so
-rm linuxwheels/*.whl
-rm -r build
