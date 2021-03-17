@@ -60,14 +60,14 @@ if platform.system() == "Windows":
     include_dirs += [join(conda_location, "Library", "include")]
     include_dirs += [join(conda_location, "include")]
     library_dirs += [join(conda_location, "Library", "lib")]
-    extra_compile_args += ["-DFFTW_DLL"]
+    extra_compile_args += ["-DFFTW_DLL", "/DUSE_OPENBLAS"]
 
 else:
     # unix system lib and include path
     conda_location = split(conda_location)[0]
     include_dirs += [join(conda_location, "include")]
     library_dirs += [join(conda_location, "lib")]
-    extra_compile_args = ["-O3", "-ffast-math"]
+    extra_compile_args = ["-O3", "-ffast-math", "-DUSE_OPENBLAS"]
 
 libraries += ["fftw3", "openblas"]
 extra_link_args += ["-lm"]

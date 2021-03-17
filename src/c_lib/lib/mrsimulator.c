@@ -13,8 +13,6 @@ double ONE[] = {1.0, 0.0};
 double ZERO[] = {0.0, 0.0};
 
 /**
- * @func MRS_free_plan
- *
  * Free the buffers and pre-calculated tables from the mrsimulator plan.
  */
 void MRS_free_plan(MRS_plan *the_plan) {
@@ -28,8 +26,6 @@ void MRS_free_plan(MRS_plan *the_plan) {
 }
 
 /**
- * @func MRS_plan_free_rotor_angle_in_rad
- *
  * Free the memory from the mrsimulator plan associated with the wigner
  * d^l_{m,0}(rotor_angle_in_rad) vectors. Here, l=2 or 4.
  */
@@ -41,8 +37,6 @@ void MRS_plan_free_rotor_angle_in_rad(MRS_plan *plan) {
 }
 
 /**
- * @func MRS_create_plan
- *
  * Create a new mrsimulator plan.
  *
  * A plan for mrsimulator contains buffers and tabulated values to produce faster
@@ -101,8 +95,6 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
 }
 
 /**
- * @func MRS_plan_update_from_sample_rotation_frequency_in_Hz
- *
  * Update the MRS plan for the given sample rotation frequency in Hz.
  */
 void MRS_plan_update_from_sample_rotation_frequency_in_Hz(
@@ -137,8 +129,6 @@ void MRS_plan_update_from_sample_rotation_frequency_in_Hz(
 }
 
 /**
- * @func MRS_plan_update_from_rotor_angle_in_rad
- *
  * Update the MRS plan for the given rotor angle in radians.
  */
 void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_in_rad,
@@ -218,8 +208,6 @@ void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_
 }
 
 /**
- * @func MRS_copy_plan
- *
  * Returns a copy of the mrsimulator plan.
  */
 MRS_plan *MRS_copy_plan(MRS_plan *plan) {
@@ -243,8 +231,6 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
 }
 
 /**
- * @func MRS_get_amplitudes_from_plan
- *
  * The function evaluates the amplitudes at every orientation and at every sideband per
  * orientation. This is done in two steps.
  * 1) Rotate R2 and R4, given in the crystal or common frame to w2 and w4 in the lab
@@ -275,7 +261,7 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
    *
    * A given element of this product is given as the summation,
    *
-   *           res[i, j] = \sum_{m=-2}^2 w2[i, m] * pre_phase_2[m, j],          (1)
+   *           res[i, j] = \sum_{m=-2}^2 w2[i, m] * pre_phase_2[m, j],              (1)
    *
    * where the following symmetry holds,
    *
@@ -283,7 +269,7 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
    *
    * The above symmetry simplifies Eq (1) to
    *
-   *         res[i, j] = \sum_{m=1}^2 2*imag(w2[i, m] * pre_phase_2[m, j]).     (2)
+   *         res[i, j] = \sum_{m=1}^2 2*imag(w2[i, m] * pre_phase_2[m, j]).         (2)
    *
    * From Eq(2), we find that evaluting half the calculations is sufficient. Since
    * pre_phase_2[0, j] is zero, the m=0 term is dropped from Eq. (2). Notice the scaling
@@ -312,7 +298,7 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
      *
      * * A given element of this product is given as the summation,
      *
-     *           res[i, j] = \sum_{m=-4}^4 w4[i, m] * pre_phase_4[m, j],          (3)
+     *           res[i, j] = \sum_{m=-4}^4 w4[i, m] * pre_phase_4[m, j],            (3)
      *
      * where the following symmetry holds,
      *
@@ -320,7 +306,7 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
      *
      * The above symmetry simplifies Eq (3) to
      *
-     *         res[i, j] = \sum_{m=1}^4 2*imag(w4[i, m] * pre_phase_4[m, j]).     (4)
+     *         res[i, j] = \sum_{m=1}^4 2*imag(w4[i, m] * pre_phase_4[m, j]).       (4)
      *
      * From Eq(2), we find that evaluting half the calculations is sufficient. Since
      * pre_phase_4[0, j] is zero, the m=0 term is dropped from Eq. (4). Notice the
@@ -366,8 +352,6 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
 }
 
 /**
- * @func MRS_get_frequencies_from_plan
- *
  * Get the lab-frame frequency contributions from the zeroth, second, fourth-rank
  * tensors.
  */
@@ -416,8 +400,6 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
 // }
 
 /**
- * @func MRS_get_normalized_frequencies_from_plan
- *
  * Get the lab-frame normalized frequency contributions from the zeroth, second,
  * fourth-rank tensors. Here, normalization refers to dividing the calculated
  * frequencies by the increment of the respective spectral dimension. Normalization
@@ -586,8 +568,6 @@ static inline void MRS_rotate_coupled_site_interaction_components(
 }
 
 /**
- * @func MRS_rotate_components_from_PAS_to_common_frame
- *
  * The function evaluates the tensor components from the principal axis system (PAS) to
  * the common frame of the spin system.
  */
@@ -629,8 +609,6 @@ void MRS_rotate_components_from_PAS_to_common_frame(
 }
 
 /**
- * @func __get_components_2
- *
  * The function calculates the following.
  *
  *   pre_phase(m, t) = I 2π [(exp(I m ωr t) - 1)/(I m ωr)]
@@ -714,8 +692,6 @@ void __get_components_2(unsigned int number_of_sidebands,
 }
 
 /**
- * @func __get_components
- *
  * The function calculates the following.
  *   pre_phase(m, t) = I 2π [(exp(I m ωr t) - 1)/(I m ωr)]
  *                   = (2π / m ωr) (exp(I m ωr t) - 1)

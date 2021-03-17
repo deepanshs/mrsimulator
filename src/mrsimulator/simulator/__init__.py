@@ -447,6 +447,7 @@ class Simulator(BaseModel):
             amp = Parallel(
                 n_jobs=n_jobs,
                 verbose=verbose,
+                backend="loky",
                 # **{
                 #     "backend": {
                 #         "threads": "threading",

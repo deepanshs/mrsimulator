@@ -57,8 +57,9 @@ plt.show()
 # **Guess model**
 #
 # Create a guess list of spin systems. There are two spin systems present in this
-# example, 1) an uncoupled :math:`^{119}\text{Sn}` and 2) a coupled
-# :math:`^{119}\text{Sn}`-:math:`^{117}\text{Sn}` spin systems.
+# example,
+# - 1) an uncoupled :math:`^{119}\text{Sn}` and
+# - 2) a coupled :math:`^{119}\text{Sn}`-:math:`^{117}\text{Sn}` spin systems.
 sn119 = Site(
     isotope="119Sn",
     isotropic_chemical_shift=-210,
@@ -73,14 +74,12 @@ j_sn = Coupling(
     isotropic_j=8150.0,
 )
 
-sn_117_natural_abundance = 7.68  # in %
+sn117_abundance = 7.68  # in %
 spin_systems = [
     # uncoupled spin system
-    SpinSystem(sites=[sn119], abundance=100 - sn_117_natural_abundance),
+    SpinSystem(sites=[sn119], abundance=100 - sn117_abundance),
     # coupled spin systems
-    SpinSystem(
-        sites=[sn119, sn117], couplings=[j_sn], abundance=sn_117_natural_abundance
-    ),
+    SpinSystem(sites=[sn119, sn117], couplings=[j_sn], abundance=sn117_abundance),
 ]
 
 # %%
@@ -144,13 +143,12 @@ plt.show()
 # setup of the fitting parameters.
 params = make_LMFIT_params(sim, processor)
 
-# Remove the abundance and 117Sn isotropic chemical shift parameters. The 117Sn is the
-# at site index 1 in the spin system at index 1.
+# Remove the abundance parameters from params. Since the measurement detects 119Sn, we
+# also remove the isotropic chemical shift parameter of 117Sn site from params. The
+# 117Sn is the site at index 1 of the spin system at index 1.
 params.pop("sys_0_abundance")
 params.pop("sys_1_abundance")
 params.pop("sys_1_site_1_isotropic_chemical_shift")
-
-params["sys_1_coupling_0_isotropic_j"].max = 10000
 
 # Since the 119Sn site is shared between the two spin systems, we add constraints to the
 # 119Sn site parameters from the spin system at index 1 to be the same as 119Sn site

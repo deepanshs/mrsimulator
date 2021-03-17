@@ -370,7 +370,7 @@ static inline void sSOT_2nd_order_electric_quadrupole_tensor_components(
  *
  * @param J_aniso_in_Hz The @f$J@f$-coupling anisotropy, @f$\zeta_J@f$, in Hz.
  *
- * @param eta The @f$J@f$-coupling asymmetry, @f$\eta_J \in [0, 1]@f$.
+ * @param J_eta The @f$J@f$-coupling asymmetry, @f$\eta_J \in [0, 1]@f$.
  *
  * @param Theta A pointer to an array of Euler angles, in radians, of length 3, ordered
  *    as @f$[\alpha, \beta, \gamma]@f$.

@@ -86,7 +86,7 @@ O17_2 = Site(
     quadrupolar={"Cq": 2.4e6, "eta": 0},  # Cq in Hz
 )
 
-system_object = [SpinSystem(sites=[s], abundance=50) for s in [O17_1, O17_2]]
+spin_systems = [SpinSystem(sites=[s], abundance=50) for s in [O17_1, O17_2]]
 
 # %%
 # **Step 2:** Create the method object. Note, when performing the least-squares fit, you
@@ -110,33 +110,26 @@ method = BlochDecayCTSpectrum(
     magnetic_flux_density=9.4,  # in T
     rotor_frequency=14000,  # in Hz
     spectral_dimensions=spectral_dims,
+    experiment=oxygen_experiment,  # experimental dataset
 )
 
-# %%
-# Assign the experimental dataset to the ``experiment`` attribute of the above method.
-method.experiment = oxygen_experiment
+# A method object queries every spin system for a list of transition pathways that are
+# relevant for the given method. Since the method and the number of spin systems remain
+# the same during the least-squares fit, a one-time query is sufficient. To avoid
+# querying for the transition pathways at every iteration in a least-squares fitting,
+# evaluate the transition pathways once and store it as follows
+for sys in spin_systems:
+    sys.transition_pathways = method.get_transition_pathways(sys)
 
 # %%
 # **Step 3:** Create the Simulator object and add the method and spin system objects.
 sim = Simulator()
-sim.spin_systems = system_object
-sim.methods = [method]
-
-# %%
-# **Step 4:** Simulate the spectrum.
-for iso in sim.spin_systems:
-    # A method object queries every spin system for a list of transition pathways that
-    # are relevant for the given method. Since the method and the number of spin systems
-    # remain the same during the least-squares fit, a one-time query is sufficient. To
-    # avoid querying for the transition pathways at every iteration in a least-squares
-    # fitting, evaluate the transition pathways once and store it as follows
-    iso.transition_pathways = method.get_transition_pathways(iso)
-
-# Now simulate as usual.
+sim.spin_systems = spin_systems  # add the spin systems
+sim.methods = [method]  # add the method
 sim.run()
 
 # %%
-# **Step 5:** Create the SignalProcessor class object and apply the post-simulation
+# **Step 4:** Create a SignalProcessor class object and apply the post-simulation
 # signal processing operations.
 processor = sp.SignalProcessor(
     operations=[
@@ -149,8 +142,7 @@ processor = sp.SignalProcessor(
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # %%
-# **Step 6:** The plot of initial guess simulation (black) along with the experiment
-# (red) is shown below.
+# **Step 5:** The plot of the data and the guess spectrum.
 ax = plt.subplot(projection="csdm")
 ax.plot(oxygen_experiment, "k", linewidth=1, label="Experiment")
 ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="guess spectrum")
@@ -174,7 +166,7 @@ plt.show()
 # :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params`, that considerably
 # simplifies the LMFIT parameters generation process.
 #
-# **Step 7:** Create a list of parameters.
+# **Step 6:** Create a list of parameters.
 params = make_LMFIT_params(sim, processor)
 
 # %%
@@ -189,7 +181,7 @@ params.pop("sys_1_abundance")
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
-# **Step 8:** Perform least-squares minimization. For the user's convenience, we also
+# **Step 7:** Perform least-squares minimization. For the user's convenience, we also
 # provide a utility function,
 # :func:`~mrsimulator.utils.spectral_fitting.LMFIT_min_function`, for evaluating the
 # difference vector between the simulation and experiment, based on
@@ -200,7 +192,7 @@ result = minner.minimize()
 report_fit(result)
 
 # %%
-# **Step 9:** The plot of the fit, measurement and the residuals is shown below.
+# **Step 8:** The plot of the fit and the measurement data.
 
 # Best fit spectrum
 sim.run()
