@@ -26,9 +26,7 @@
  * @param mf The quantum number associated with the quantized final energy level.
  * @returns The spin transition function @f$\mathbb{p}@f$.
  */
-static inline double STF_p(const double mf, const double mi) {
-  return (mf - mi);
-}
+static inline double STF_p(const double mf, const double mi) { return (mf - mi); }
 
 /**
  * Single nucleus spin transition function from the irreducible spherical tensor of rank
@@ -62,6 +60,7 @@ static inline double STF_d(const double mf, const double mi) {
  *
  * @param mi The quantum number associated with the quantized initial energy level.
  * @param mf The quantum number associated with the quantized final energy level.
+ * @param spin The spin quantum angular momentum number.
  * @return The spin transition function @f$\mathbb{f}@f$.
  */
 static inline double STF_f(const double mf, const double mi, const double spin) {

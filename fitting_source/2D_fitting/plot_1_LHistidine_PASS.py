@@ -95,7 +95,7 @@ ssb = SSB2D(
 )
 
 # Optimize the script by pre-setting the transition pathways for each spin system from
-# the das method.
+# the method.
 for sys in spin_systems:
     sys.transition_pathways = ssb.get_transition_pathways(sys)
 

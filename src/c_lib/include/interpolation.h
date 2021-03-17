@@ -10,9 +10,7 @@
 #include "config.h"
 
 /**
- * @func triangle_interpolation
- *
- * Create a triangle with coordinates (f1, f2, f2) onto a 1D grid.
+ * @brief Create a triangle with coordinates (f1, f2, f2) onto a 1D grid.
  *
  * @param f1 A pointer to the coordinate f11.
  * @param f2 A pointer to the coordinate f12.
@@ -25,9 +23,7 @@ extern void triangle_interpolation(double *f1, double *f2, double *f3, double *a
                                    double *spec, int *m0);
 
 /**
- * @func triangle_interpolation2D
- *
- * Rasterize a vector triangle with coordinates ((f11, f21), (f12, f22), (f13,
+ * @brief Rasterize a vector triangle with coordinates ((f11, f21), (f12, f22), (f13,
  * f23)) onto a 2D grid.
  *
  * @param f11 A pointer to the coordinate f11.
@@ -46,10 +42,8 @@ extern int triangle_interpolation2D(double *f11, double *f12, double *f13, doubl
                                     int m0, int m1);
 
 /**
- * @func octahedronDeltaInterpolation
- *
- * Sum amplitudes from the triangles interpolations over the region of an octant. The
- * samplings over the octant is as per Alderman and Grand scheme.
+ * @brief Sum amplitudes from the triangles interpolations over the region of an octant.
+ * The samplings over the octant is as per Alderman and Grand scheme.
  *
  * @param nt Number of triangles along the edge of the octant.
  * @param freq A pointer to an array of frequencies evaluated at octant coordinates.

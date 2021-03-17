@@ -8,7 +8,6 @@
 # This example illustrates the use of mrsimulator and LMFIT modules in fitting the
 # sideband intensity profile across the isotropic chemical shift cross-section from a
 # PASS/MAT dataset.
-import numpy as np
 import csdmpy as cp
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -23,61 +22,46 @@ from lmfit import Minimizer, report_fit
 # global plot configuration
 mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 mpl.rcParams["grid.linestyle"] = "--"
-# sphinx_gallery_thumbnail_number = 4
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/687656/files/1H13C_CPPASS_LHistidine.csdf"
-pass_data = cp.load(filename)
+name = "https://sandbox.zenodo.org/record/745068/files/LHistidine_cross_section.csdf"
+pass_cross_section = cp.load(name)
+
+# standard deviation of noise from the dataset
+sigma = 0.01285316
 
 # For the spectral fitting, we only focus on the real part of the complex dataset.
-# The script assumes that the dimension at index 0 is the isotropic dimension.
-# Transpose the dataset as required.
-pass_data = pass_data.real.T
+pass_cross_section = pass_cross_section.real
 
 # Convert the coordinates along each dimension from Hz to ppm.
-_ = [item.to("ppm", "nmr_frequency_ratio") for item in pass_data.dimensions]
+_ = [item.to("ppm", "nmr_frequency_ratio") for item in pass_cross_section.dimensions]
 
 # Normalize the spectrum.
-pass_data /= pass_data.max()
+max_amp = pass_cross_section.max()
+pass_cross_section /= max_amp
+sigma /= max_amp
 
 # The plot of the dataset.
-levels = (np.arange(10) + 0.3) / 15  # contours are drawn at these levels.
 ax = plt.subplot(projection="csdm")
-cb = ax.contour(pass_data, colors="k", levels=levels, alpha=0.5, linewidths=0.5)
-plt.colorbar(cb)
-ax.set_xlim(200, 10)
-ax.invert_yaxis()
-plt.tight_layout()
-plt.show()
-
-# %%
-# Extract a 1D sideband intensity cross-section from the 2D dataset using the array
-# indexing.
-data1D = pass_data[1100]  # sideband dataset
-
-# The plot of the cross-section.
-ax = plt.subplot(projection="csdm")
-ax.plot(data1D, color="k")
+ax.plot(pass_cross_section, "k", alpha=0.5)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
-
-# %%
-# The isotropic chemical shift coordinate of the cross-section is
-isotropic_shift = pass_data.x[0].coords[1100]
-print(isotropic_shift)
 
 # %%
 # Create a fitting model
 # ----------------------
 # **Guess model**
 #
-# Create a guess list of spin systems.
+# Create a guess list of spin systems. For fitting the sideband profile at an isotropic
+# chemical shift cross-section from PASS/MAT datasets, set the isotropic_chemical_shift
+# parameter of the site object as zero.
 site = Site(
     isotope="13C",
-    isotropic_chemical_shift=0,
+    isotropic_chemical_shift=0,  #
     shielding_symmetric={"zeta": -70, "eta": 0.8},
 )
 spin_systems = [SpinSystem(sites=[site])]
@@ -85,19 +69,17 @@ spin_systems = [SpinSystem(sites=[site])]
 # %%
 # **Method**
 #
-# For the sideband only cross-section, use the BlochDecaySpectrum method.
+# For the sideband-only cross-section, use the BlochDecaySpectrum method.
 
-# Get the dimension information from the experiment. Note, the following function
-# returns an array of two spectral dimensions corresponding to the 2D PASS dimensions.
-# Use the spectral dimension that is along the anisotropic dimensions for the
-# BlochDecaySpectrum method.
-spectral_dims = get_spectral_dimensions(pass_data)
+# Get the dimension information from the experiment.
+spectral_dims = get_spectral_dimensions(pass_cross_section)
+
 method = BlochDecaySpectrum(
     channels=["13C"],
     magnetic_flux_density=9.4,  # in T
     rotor_frequency=1500,  # in Hz
-    spectral_dimensions=[spectral_dims[0]],
-    experiment=data1D,  # also add the measurement to the method.
+    spectral_dimensions=spectral_dims,
+    experiment=pass_cross_section,  # also add the measurement to the method.
 )
 
 # Optimize the script by pre-setting the transition pathways for each spin system from
@@ -117,14 +99,14 @@ sim.run()
 
 # Post Simulation Processing
 # --------------------------
-processor = sp.SignalProcessor(operations=[sp.Scale(factor=1)])
+processor = sp.SignalProcessor(operations=[sp.Scale(factor=10)])
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 ax = plt.subplot(projection="csdm")
-ax.plot(data1D, color="k", linewidth=2, alpha=0.5, label="Experiment")
-ax.plot(processed_data, color="r", label="guess spectrum")
+ax.plot(pass_cross_section, color="k", linewidth=1, label="Experiment")
+ax.plot(processed_data, color="r", alpha=0.5, linewidth=2.5, label="guess spectrum")
 plt.grid()
 ax.invert_xaxis()
 plt.legend()
@@ -147,7 +129,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # Run the minimization using LMFIT
-minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor))
+minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
 report_fit(result)
 
@@ -159,8 +141,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot the spectrum
 ax = plt.subplot(projection="csdm")
-ax.plot(data1D, color="k", linewidth=2, alpha=0.5, label="Experiment")
-ax.plot(processed_data, color="r", label="Best Fit")
+ax.plot(pass_cross_section, color="k", linewidth=1, label="Experiment")
+ax.plot(processed_data, color="r", alpha=0.5, linewidth=2.5, label="Best Fit")
 ax.invert_xaxis()
 plt.grid()
 plt.legend()

@@ -1,0 +1,41 @@
+spinsys {
+  channels 27Al 93Nb
+  nuclei 27Al 93Nb
+  shift 1 0 0 0 0 0 0
+  shift 2 0 0 0 0 0 0
+  quadrupole 1 2 5e6 0 0 0 0
+  jcoupling 1 2 200 0 0 0 0 0
+}
+
+par {
+  crystal_file     zcw4180
+  variable dw      25
+
+  sw               1e6/dw
+  np               2048
+  proton_frequency 400e6
+  start_operator   I1x
+  detect_operator  I1c
+  method           direct
+  gamma_angles     16
+  spin_rate        5e3
+  verbose          1101
+}
+
+proc pulseq {} {
+  global par
+
+  for {set i 0} {$i < $par(np)} {incr i} {
+    acq
+    delay $par(dw)
+  }
+
+}
+
+proc main {} {
+  global par
+
+  set f [fsimpson]
+  faddlb $f 30 0
+  fsave $f $par(name).fid
+}

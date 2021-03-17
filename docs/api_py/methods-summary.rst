@@ -45,7 +45,8 @@ Summary
     ~ST1_VAS
     ~ST2_VAS
     ~SSB2D
-    ~Cosy
+
+.. ~Cosy
 
 
 Table of contents
@@ -59,4 +60,5 @@ Table of contents
     methods/mqvas
     methods/stvas
     methods/ssb2d
-    methods/cosy
+
+.. methods/cosy

@@ -10,11 +10,18 @@ __email__ = ["maxvenetos@gmail.com", "srivastava.89@osu.edu"]
 START = "sys_"
 ENCODING_PAIRS = [
     ["spin_systems[", START],
+    ["].abundance", "_abundance"],
+    # site
     ["].sites[", "_site_"],
     ["].isotropic_chemical_shift", "_isotropic_chemical_shift"],
     ["].shielding_symmetric.", "_shielding_symmetric_"],
     ["].quadrupolar.", "_quadrupolar_"],
-    ["].abundance", "_abundance"],
+    # coupling
+    ["].couplings[", "_coupling_"],
+    ["].isotropic_j", "_isotropic_j"],
+    ["].j_symmetric.", "_j_symmetric_"],
+    ["].dipolar.", "_dipolar_"],
+    # post simulation
     ["].post_simulation", "_POST_SIM_"],
     [".scale", "scale"],
     [".apodization[", "APODIZATION_"],
@@ -23,11 +30,17 @@ ENCODING_PAIRS = [
 
 DECODING_PAIRS = [
     ["spin_systems.", "sys_"],
+    [".abundance", "_abundance"],
+    # site
     [".sites.", "_site_"],
     [".isotropic_chemical_shift", "_isotropic_chemical_shift"],
     [".shielding_symmetric.", "_shielding_symmetric_"],
     [".quadrupolar.", "_quadrupolar_"],
-    [".abundance", "_abundance"],
+    # coupling
+    [".couplings.", "_coupling_"],
+    [".isotropic_j", "_isotropic_j"],
+    [".shielding_j.", "_shielding_j_"],
+    [".dipolar.", "_dipolar_"],
 ]
 
 EXCLUDE = [

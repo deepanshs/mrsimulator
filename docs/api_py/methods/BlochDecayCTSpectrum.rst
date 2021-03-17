@@ -12,15 +12,13 @@ Bloch Decay Central Transition Spectrum method
 
     >>> from mrsimulator.methods import BlochDecayCTSpectrum
     >>> Bloch_CT_method = BlochDecayCTSpectrum(
-    ...     channels=['1H'],
-    ...     rotor_frequency=5000, # in Hz
-    ...     rotor_angle=0.95531, # in rad
-    ...     magnetic_flux_density=9.4, # in T
-    ...     spectral_dimensions=[dict(
-    ...         count=1024,
-    ...         spectral_width=50000, # in Hz
-    ...         reference_offset=-8000, # in Hz
-    ...     )]
+    ...     channels=["1H"],
+    ...     rotor_frequency=5000,  # in Hz
+    ...     rotor_angle=0.95531,  # in rad
+    ...     magnetic_flux_density=9.4,  # in T
+    ...     spectral_dimensions=[
+    ...         dict(count=1024, spectral_width=50000, reference_offset=-8000)
+    ...     ],
     ... )
 
 Bloch decay central transition selective method is a special case of
@@ -30,18 +28,16 @@ Bloch decay central transition selective method is a special case of
 
     >>> from mrsimulator.methods import Method1D
     >>> BlochdecayCT = BlochDecayCTSpectrum(
-    ...     channels=['1H'],
-    ...     rotor_frequency=5000, # in Hz
-    ...     rotor_angle=0.95531, # in rad
-    ...     magnetic_flux_density=9.4, # in T
+    ...     channels=["1H"],
+    ...     rotor_frequency=5000,  # in Hz
+    ...     rotor_angle=0.95531,  # in rad
+    ...     magnetic_flux_density=9.4,  # in T
     ...     spectral_dimensions=[
     ...         {
     ...             "count": 1024,
-    ...             "spectral_width": 50000, # in Hz
-    ...             "reference_offset": -8000, # in Hz
-    ...             "events": [{
-    ...                 "transition_query": {"P": [-1], "D": [0]}
-    ...             }]
+    ...             "spectral_width": 50000,  # in Hz
+    ...             "reference_offset": -8000,  # in Hz
+    ...             "events": [{"transition_query": {"P": [-1], "D": [0]}}],
     ...         }
-    ...     ]
+    ...     ],
     ... )

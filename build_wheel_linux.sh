@@ -6,7 +6,7 @@
 set -e -x
 cd io
 
-# used with docker image - quay.io/pypa/manylinux2014_x86_64
+# used with docker image - quay.io/pypa/manylinux2010_x86_64
 # Install a system package required by our library
 yum install -y openblas-devel git fftw-devel
 
@@ -26,7 +26,7 @@ for whl in linuxwheels/*.whl; do
 done
 
 # clean up
+rm -r build/*linux*
+rm linuxwheels/*.whl
 rm src/mrsimulator/*-linux-gnu.so
 rm src/mrsimulator/tests/*-linux-gnu.so
-rm linuxwheels/*.whl
-rm -r build

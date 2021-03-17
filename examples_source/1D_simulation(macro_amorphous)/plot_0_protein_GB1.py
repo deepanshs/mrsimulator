@@ -33,6 +33,10 @@ sim.load_spin_systems(file_)  # load the spin systems.
 print(f"number of spin systems = {len(sim.spin_systems)}")
 
 # %%
+all_sites = sim.sites().to_pd()
+all_sites.head()
+
+# %%
 # Create a :math:`^{13}\text{C}` Bloch decay spectrum method.
 method_13C = BlochDecaySpectrum(
     channels=["13C"],

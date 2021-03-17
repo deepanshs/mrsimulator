@@ -12,6 +12,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator.methods import Method2D
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.models import ExtCzjzekDistribution
 from mrsimulator.spin_system.isotope import Isotope
@@ -48,6 +49,7 @@ def add_site(doctest_namespace):
     doctest_namespace["Isotope"] = Isotope
     doctest_namespace["sp"] = sp
     doctest_namespace["apo"] = apo
+    doctest_namespace["Method2D"] = Method2D
 
     site1 = Site(
         isotope="13C",

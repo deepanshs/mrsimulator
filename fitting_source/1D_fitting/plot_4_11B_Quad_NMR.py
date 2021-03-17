@@ -7,7 +7,6 @@
 # %%
 # The following is a quadrupolar lineshape fitting example for the 11B MAS NMR of
 # lithium orthoborate crystal. The dataset was provided by Nathan Barrow.
-import numpy as np
 import csdmpy as cp
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -45,7 +44,6 @@ experiment /= max_amp
 sigma /= max_amp
 
 # plot of the dataset.
-levels = (np.arange(10) + 0.3) / 15  # contours are drawn at these levels.
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 ax.set_xlim(100, -100)
@@ -81,7 +79,7 @@ method = BlochDecayCTSpectrum(
 )
 
 # Optimize the script by pre-setting the transition pathways for each spin system from
-# the das method.
+# the method.
 for sys in spin_systems:
     sys.transition_pathways = method.get_transition_pathways(sys)
 
@@ -111,8 +109,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # Plot of the guess Spectrum
 # --------------------------
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5, linewidth=2, label="Experiment")
-ax.plot(processed_data, "r", label="guess spectrum")
+ax.plot(experiment, "k", linewidth=1, label="Experiment")
+ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="guess spectrum")
 ax.set_xlim(100, -100)
 plt.grid()
 plt.legend()
@@ -126,6 +124,7 @@ plt.show()
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
 params = make_LMFIT_params(sim, processor)
+params.pop("sys_0_abundance")
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
@@ -142,8 +141,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot the spectrum
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5, linewidth=2, label="Experiment")
-ax.plot(processed_data, "r--", label="Best Fit")
+ax.plot(experiment, "k", linewidth=1, label="Experiment")
+ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="Best Fit")
 ax.set_xlim(100, -100)
 plt.grid()
 plt.legend()
