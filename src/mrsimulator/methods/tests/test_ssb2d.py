@@ -59,9 +59,9 @@ def test_SSB_general():
     assert mth.description == "Simulate a 2D sideband separation method."
 
     # test transition query
-    tq = TransitionQuery(P={"channel-1": [[-1]]}, D={"channel-1": [[0]]})
-    assert mth.spectral_dimensions[0].events[0].transition_query == tq
-    assert mth.spectral_dimensions[1].events[0].transition_query == tq
+    tq = TransitionQuery(ch1={"P": [-1], "D": [0]})
+    assert mth.spectral_dimensions[0].events[0].transition_query[0] == tq
+    assert mth.spectral_dimensions[1].events[0].transition_query[0] == tq
 
     # test rotor_frequency
     assert mth.spectral_dimensions[0].events[0].rotor_frequency == 1200

@@ -140,7 +140,7 @@ def test_simulator_1():
                                 "magnetic_flux_density": 9.4,
                                 "rotor_angle": 0.955316618,
                                 "rotor_frequency": 0.0,
-                                "transition_query": {"P": {"channel-1": [[-1]]}},
+                                "transition_query": [{"ch1": {"P": [-1]}}],
                             }
                         ],
                         "reference_offset": 0.0,

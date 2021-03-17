@@ -96,8 +96,8 @@ class Cosy(BaseNamedMethod2D):
     def update(method):
         # setting transition symmetry elements
         sd = method.spectral_dimensions
-        sd[0].events[0].transition_query.P = {"channel-1": [[-1]]}
-        sd[1].events[0].transition_query.P = {"channel-1": [[-1]]}
+        sd[0].events[0].transition_query[0].ch1.P = [-1]
+        sd[1].events[0].transition_query[0].ch1.P = [-1]
 
         # method description
         method.description = (
@@ -181,8 +181,8 @@ class Inadequate(BaseNamedMethod2D):
     def update(method):
         # setting transition symmetry elements
         sd = method.spectral_dimensions
-        sd[0].events[0].transition_query.P = {"channel-1": [[-1, -1]]}
-        sd[1].events[0].transition_query.P = {"channel-1": [[-1]]}
+        sd[0].events[0].transition_query[0].ch1.P = [-1, -1]
+        sd[1].events[0].transition_query[0].ch1.P = [-1]
 
         # method description
         method.description = (

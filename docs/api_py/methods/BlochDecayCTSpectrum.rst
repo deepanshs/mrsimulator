@@ -37,7 +37,7 @@ Bloch decay central transition selective method is a special case of
     ...             "count": 1024,
     ...             "spectral_width": 50000,  # in Hz
     ...             "reference_offset": -8000,  # in Hz
-    ...             "events": [{"transition_query": {"P": [-1], "D": [0]}}],
+    ...             "events": [{"transition_query": [{"P": [-1], "D": [0]}]}],
     ...         }
     ...     ],
     ... )

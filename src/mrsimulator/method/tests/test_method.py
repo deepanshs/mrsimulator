@@ -69,7 +69,7 @@ def basic_method_tests(the_method):
                 "events": [
                     {
                         "fraction": 0.5,
-                        "transition_query": {"P": {"channel-1": [[-1.0]]}},
+                        "transition_query": [{"ch1": {"P": [-1.0]}}],
                     }
                 ],
             }
@@ -165,7 +165,7 @@ def test_method():
     # to_dict_with_unit()
     event_dictionary_ = {
         "fraction": 0.5,
-        "transition_query": {"P": {"channel-1": [[-1.0]]}},
+        "transition_query": [{"ch1": {"P": [-1.0]}}],
     }
     dimension_dictionary_ = {
         "count": 1024,
@@ -195,7 +195,7 @@ def test_method():
         "magnetic_flux_density": 9.6,
         "rotor_frequency": 1000.0,
         "rotor_angle": 0.9553059660790962,
-        "transition_query": {"P": {"channel-1": [[-1.0]]}},
+        "transition_query": [{"ch1": {"P": [-1.0]}}],
     }
     dimension_dictionary_ = {
         "count": 1024,

@@ -10,13 +10,11 @@
 				"spectral_width": "50000.0 Hz",
 				"reference_offset": "0.0 Hz",
 				"events": [{
-					"transition_query": {
-						"P": {
-							"channel-1": [
-								[-1]
-							]
+					"transition_query": [{
+						"ch1": {
+							"P": [-1]
 						}
-					}
+					}]
 				}]
 			},
 			{
@@ -24,13 +22,11 @@
 				"spectral_width": "50000.0 Hz",
 				"reference_offset": "0.0 Hz",
 				"events": [{
-					"transition_query": {
-						"P": {
-							"channel-1": [
-								[-1]
-							]
+					"transition_query": [{
+						"ch1": {
+							"P": [-1]
 						}
-					}
+					}]
 				}]
 			}
 		],
@@ -47,18 +43,12 @@
 				"spectral_width": "50000.0 Hz",
 				"reference_offset": "0.0 Hz",
 				"events": [{
-					"transition_query": {
-						"P": {
-							"channel-1": [
-								[-1]
-							]
-						},
-						"D": {
-							"channel-1": [
-								[0]
-							]
+					"transition_query": [{
+						"ch1": {
+							"P": [-1],
+							"D": [0]
 						}
-					}
+					}]
 				}]
 			},
 			{
@@ -67,18 +57,12 @@
 				"reference_offset": "0.0 Hz",
 				"events": [{
 					"rotor_angle": "0.9553059660790962 rad",
-					"transition_query": {
-						"P": {
-							"channel-1": [
-								[-1]
-							]
-						},
-						"D": {
-							"channel-1": [
-								[0]
-							]
+					"transition_query": [{
+						"ch1": {
+							"P": [-1],
+							"D": [0]
 						}
-					}
+					}]
 				}]
 			}
 		],
@@ -95,19 +79,19 @@
 				"spectral_width": "5000000.0 Hz",
 				"reference_offset": "0.0 Hz",
 				"events": [{
-					"transition_query": {
-						"P": {
-							"channel-1": [
-								[-1]
-							]
+					"transition_query": [{
+							"ch1": {
+								"P": [-1],
+								"D": [2]
+							}
 						},
-						"D": {
-							"channel-1": [
-								[2],
-								[-2]
-							]
+						{
+							"ch1": {
+								"P": [-1],
+								"D": [-2]
+							}
 						}
-					}
+					]
 				}]
 			},
 			{
@@ -116,18 +100,12 @@
 				"reference_offset": "0.0 Hz",
 				"events": [{
 					"rotor_angle": "0.9553059660790962 rad",
-					"transition_query": {
-						"P": {
-							"channel-1": [
-								[-1]
-							]
-						},
-						"D": {
-							"channel-1": [
-								[0]
-							]
+					"transition_query": [{
+						"ch1": {
+							"P": [-1],
+							"D": [0]
 						}
-					}
+					}]
 				}]
 			}
 		],
@@ -145,34 +123,22 @@
 				"reference_offset": "-5000.0 Hz",
 				"label": "70.12 dimension",
 				"events": [{
-						"transition_query": {
-							"P": {
-								"channel-1": [
-									[-1]
-								]
-							},
-							"D": {
-								"channel-1": [
-									[0]
-								]
+						"transition_query": [{
+							"ch1": {
+								"P": [-1],
+								"D": [0]
 							}
-						}
+						}]
 					},
 					{
 
 						"rotor_angle": "0.5256927266666667 rad",
-						"transition_query": {
-							"P": {
-								"channel-1": [
-									[-1]
-								]
-							},
-							"D": {
-								"channel-1": [
-									[0]
-								]
+						"transition_query": [{
+							"ch1": {
+								"P": [-1],
+								"D": [0]
 							}
-						}
+						}]
 					}
 				]
 			},
@@ -183,18 +149,12 @@
 				"label": "MAS dimension",
 				"events": [{
 					"rotor_angle": "0.9553051591666667 rad",
-					"transition_query": {
-						"P": {
-							"channel-1": [
-								[-1]
-							]
-						},
-						"D": {
-							"channel-1": [
-								[0]
-							]
+					"transition_query": [{
+						"ch1": {
+							"P": [-1],
+							"D": [0]
 						}
-					}
+					}]
 				}]
 			}
 		],

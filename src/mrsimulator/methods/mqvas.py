@@ -83,11 +83,11 @@ class MQ_VAS(BaseNamedMethod2D):
 
         # setting transition symmetry elements
         sd = method.spectral_dimensions
-        sd[0].events[0].transition_query.P = {"channel-1": [[P]]}
-        sd[0].events[0].transition_query.D = {"channel-1": [[0]]}
+        sd[0].events[0].transition_query[0].ch1.P = [P]
+        sd[0].events[0].transition_query[0].ch1.D = [0]
 
-        sd[1].events[0].transition_query.P = {"channel-1": [[-1]]}
-        sd[1].events[0].transition_query.D = {"channel-1": [[0]]}
+        sd[1].events[0].transition_query[0].ch1.P = [-1]
+        sd[1].events[0].transition_query[0].ch1.D = [0]
 
         # method affine matrix
         if method.affine_matrix is None:

@@ -16,6 +16,25 @@ __author__ = "Shyam Dwaraknath"
 __email__ = "shyamd@lbl.gov"
 
 
+class Base(BaseModel):
+    def json(self):
+        return Base.fullsimplify(super().dict())
+
+    @staticmethod
+    def simplify(val):
+        """Remove value if it is None."""
+        return {k: v for k, v in val.items() if v is not None}
+
+    @staticmethod
+    def fullsimplify(val):
+        """Iteratively remove None values from a nested dict."""
+        initial = {
+            k: Base.simplify(Base.fullsimplify(v)) if isinstance(v, dict) else v
+            for k, v in val.items()
+        }
+        return Base.simplify(initial)
+
+
 class Parseable(BaseModel):
     """
     Base class for all objects that can be parsed easily from JSON with units
@@ -106,7 +125,8 @@ class Parseable(BaseModel):
             # check the list objects
             elif isinstance(v, list):
                 temp_dict[k] = get_list(getattr(self, k), v)
-            elif v not in [None, ""]:
+
+            elif v is not None:
                 temp_dict[k] = v
 
         temp_keys = temp_dict.keys()

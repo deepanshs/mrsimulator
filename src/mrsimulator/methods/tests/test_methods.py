@@ -182,7 +182,7 @@ def test_04():
                 "events": [
                     {
                         "rotor_angle": 70.12 * np.pi / 180,
-                        "transition_query": {"P": [-1], "D": [0]},
+                        "transition_query": [{"P": [-1], "D": [0]}],
                     },
                 ],
             },
@@ -193,7 +193,7 @@ def test_04():
                 "events": [
                     {
                         "rotor_angle": 54.735 * np.pi / 180,
-                        "transition_query": {"P": [-1], "D": [0]},
+                        "transition_query": [{"P": [-1], "D": [0]}],
                     },
                 ],
             },
@@ -274,7 +274,10 @@ def test_05():
                 "events": [
                     {
                         "rotor_angle": 0 * np.pi / 180,
-                        "transition_query": {"P": [-1], "D": [2, -2]},
+                        "transition_query": [
+                            {"P": [-1], "D": [2]},
+                            {"P": [-1], "D": [-2]},
+                        ],
                     },
                 ],
             },
@@ -285,7 +288,7 @@ def test_05():
                 "events": [
                     {
                         "rotor_angle": 54.735 * np.pi / 180,
-                        "transition_query": {"P": [-1], "D": [0]},
+                        "transition_query": [{"P": [-1], "D": [0]}],
                     },
                 ],
             },
@@ -340,11 +343,11 @@ def test_methods():
                 "events": [
                     {
                         "rotor_angle": 70.12 * 3.14159 / 180,  # in rads
-                        "transition_query": {"P": [-1], "D": [0]},
+                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                     {
                         "rotor_angle": 30.12 * 3.14159 / 180,  # in rads
-                        "transition_query": {"P": [-1], "D": [0]},
+                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                 ],
             },
@@ -357,7 +360,7 @@ def test_methods():
                 "events": [
                     {
                         "rotor_angle": 54.735 * 3.14159 / 180,  # in rads
-                        "transition_query": {"P": [-1], "D": [0]},
+                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
                     }
                 ],
             },

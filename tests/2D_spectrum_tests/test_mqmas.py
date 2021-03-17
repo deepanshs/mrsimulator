@@ -31,12 +31,12 @@ def test_MQMAS():
             {
                 "count": 128,
                 "spectral_width": 20000,
-                "events": [{"transition_query": {"P": [-3], "D": [0]}}],
+                "events": [{"transition_query": [{"P": [-3], "D": [0]}]}],
             },
             {
                 "count": 128,
                 "spectral_width": 20000,
-                "events": [{"transition_query": {"P": [-1], "D": [0]}}],
+                "events": [{"transition_query": [{"P": [-1], "D": [0]}]}],
             },
         ],
     )

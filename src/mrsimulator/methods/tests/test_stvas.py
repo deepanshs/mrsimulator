@@ -87,12 +87,13 @@ def test_ST1_VAS_general():
         "spinning spectrum."
     )
     assert mth.description == des
-    assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[2], [-2]]}
-    )
-    assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
-    )
+    assert mth.spectral_dimensions[0].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-1], "D": [2]}),
+        TransitionQuery(ch1={"P": [-1], "D": [-2]}),
+    ]
+    assert mth.spectral_dimensions[1].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-1], "D": [0]})
+    ]
     assert ST1_VAS.parse_dict_with_units(mth.json()) == mth
 
     assert np.allclose(mth.affine_matrix, [0.52941176, 0.47058824, 0.0, 1.0])
@@ -147,12 +148,13 @@ def test_ST2_VAS_general():
         "spinning spectrum."
     )
     assert mth.description == des
-    assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[4], [-4]]}
-    )
-    assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
-    )
+    assert mth.spectral_dimensions[0].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-1], "D": [4]}),
+        TransitionQuery(ch1={"P": [-1], "D": [-4]}),
+    ]
+    assert mth.spectral_dimensions[1].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-1], "D": [0]})
+    ]
     assert ST2_VAS.parse_dict_with_units(mth.json()) == mth
 
     assert np.allclose(mth.affine_matrix, [0.35294118, 0.64705882, 0.0, 1.0])

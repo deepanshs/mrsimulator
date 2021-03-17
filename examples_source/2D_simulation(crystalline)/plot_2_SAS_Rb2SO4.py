@@ -55,7 +55,7 @@ sas = Method2D(
             "events": [
                 {
                     "rotor_angle": 90 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
+                    "transition_query": [{"P": [-1], "D": [0]}],
                 }
             ],  # in radians
         },
@@ -67,7 +67,7 @@ sas = Method2D(
             "events": [
                 {
                     "rotor_angle": 54.74 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
+                    "transition_query": [{"P": [-1], "D": [0]}],
                 }
             ],  # in radians
         },

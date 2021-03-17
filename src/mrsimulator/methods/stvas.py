@@ -4,6 +4,8 @@ Function list:
     - ST1_VAS
     - ST2_VAS
 """
+from mrsimulator.method.transition_query import TransitionQuery
+
 from .base import BaseNamedMethod2D
 
 __author__ = "Deepansh J. Srivastava"
@@ -62,15 +64,19 @@ class ST_VAS(BaseNamedMethod2D):
 
         # select the coherence for the first event
         d = st ** 2 - (st - 1) ** 2
-        D = [[d], [-d]]
+        # D = [[d], [-d]]
 
         # setting transition symmetry elements
         sd = method.spectral_dimensions
-        sd[0].events[0].transition_query.P = {"channel-1": [[-1]]}
-        sd[0].events[0].transition_query.D = {"channel-1": D}
+        sd[0].events[0].transition_query[0].ch1.P = [-1]
+        sd[0].events[0].transition_query[0].ch1.D = [d]
 
-        sd[1].events[0].transition_query.P = {"channel-1": [[-1]]}
-        sd[1].events[0].transition_query.D = {"channel-1": [[0]]}
+        sd[0].events[0].transition_query += [
+            TransitionQuery(ch1={"P": [-1], "D": [-d]})
+        ]
+
+        sd[1].events[0].transition_query[0].ch1.P = [-1]
+        sd[1].events[0].transition_query[0].ch1.D = [0]
 
         # method affine matrix
         if method.affine_matrix is None:

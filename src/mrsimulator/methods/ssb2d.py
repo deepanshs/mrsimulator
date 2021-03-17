@@ -111,8 +111,8 @@ class SSB2D(BaseNamedMethod2D):
     def update(method):
         # setting transition symmetry elements
         for dim in method.spectral_dimensions:
-            dim.events[0].transition_query.P = {"channel-1": [[-1]]}
-            dim.events[0].transition_query.D = {"channel-1": [[0]]}
+            dim.events[0].transition_query[0].ch1.P = [-1]
+            dim.events[0].transition_query[0].ch1.D = [0]
 
         # method affine matrix
         if method.affine_matrix is None:

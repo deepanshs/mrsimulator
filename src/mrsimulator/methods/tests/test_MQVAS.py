@@ -68,12 +68,12 @@ def test_3Q_VAS_general():
     mth = ThreeQ_VAS(channels=["87Rb"], spectral_dimensions=[{}, {}])
     assert mth.name == "ThreeQ_VAS"
     assert mth.description == "Simulate a 3Q variable-angle spinning spectrum."
-    assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-3]]}, D={"channel-1": [[0]]}
-    )
-    assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
-    )
+    assert mth.spectral_dimensions[0].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-3], "D": [0]})
+    ]
+    assert mth.spectral_dimensions[1].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-1], "D": [0]})
+    ]
     assert ThreeQ_VAS.parse_dict_with_units(mth.json()) == mth
 
     assert np.allclose(mth.affine_matrix, [0.5625, 0.4375, 0.0, 1.0])
@@ -108,12 +108,12 @@ def test_5Q_VAS_general():
 
     assert mth.name == "FiveQ_VAS"
     assert mth.description == "Simulate a 5Q variable-angle spinning spectrum."
-    assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-5]]}, D={"channel-1": [[0]]}
-    )
-    assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
-    )
+    assert mth.spectral_dimensions[0].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-5], "D": [0]})
+    ]
+    assert mth.spectral_dimensions[1].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-1], "D": [0]})
+    ]
     assert FiveQ_VAS.parse_dict_with_units(mth.json()) == mth
 
     assert np.allclose(
@@ -151,12 +151,12 @@ def test_7Q_VAS_general():
 
     assert mth.name == "SevenQ_VAS"
     assert mth.description == "Simulate a 7Q variable-angle spinning spectrum."
-    assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-7]]}, D={"channel-1": [[0]]}
-    )
-    assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
-    )
+    assert mth.spectral_dimensions[0].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-7], "D": [0]})
+    ]
+    assert mth.spectral_dimensions[1].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-1], "D": [0]})
+    ]
     assert SevenQ_VAS.parse_dict_with_units(mth.json()) == mth
 
     assert np.allclose(mth.affine_matrix, [0.2184466, 0.7815534, 0.0, 1.0])

@@ -25,7 +25,7 @@ Example method for simulating triple-quantum 1D spectrum.
     ...             "spectral_width": 1e4,  # in Hz
     ...             "reference_offset": -4e3,  # in Hz
     ...             "label": "quad only",
-    ...             "events": [{"transition_query": {"P": [-3], "D": [0]}}],
+    ...             "events": [{"transition_query": [{"P": [-3], "D": [0]}]}],
     ...         }
     ...     ],
     ... )

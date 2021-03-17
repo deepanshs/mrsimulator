@@ -67,7 +67,7 @@ def basic_event_tests(the_event):
         magnetic_flux_density="11.7 T",
         rotor_frequency="25000.0 Hz",
         rotor_angle=f"{angle} rad",
-        transition_query={"P": {"channel-1": [[-1.0]]}},
+        transition_query=[{"ch1": {"P": [-1.0]}}],
     )
     assert should_be == the_event.json()
 
@@ -78,7 +78,7 @@ def basic_event_tests(the_event):
         "magnetic_flux_density": 11.7,
         "rotor_frequency": 25000,
         "rotor_angle": angle,
-        "transition_query": {"P": {"channel-1": [[-1.0]]}},
+        "transition_query": [{"ch1": {"P": [-1.0]}}],
     }
 
 
@@ -102,3 +102,30 @@ def test_events():
         rotor_angle=magic_angle_in_rad,
     )
     basic_event_tests(the_event)
+
+
+def check_equal(query, isotopes, channels, res):
+    test = Event(transition_query=query).permutation(isotopes, channels)
+    for i, item in enumerate(res):
+        assert np.allclose(test[i]["P"], item[0])
+        assert np.allclose(test[i]["D"], item[1])
+
+
+def test_event_permutation():
+    # P = -1 D = -1 on A B B A system, channel A, B
+    # P = +1 D = -1 on A B B A system, channel A, B
+    query = [
+        {"ch1": {"P": [-1], "D": [1]}},
+        {"ch1": {"P": [1], "D": [-1]}},
+    ]
+    res = [
+        [
+            [-1, 0, 0, 0],
+            [0, 0, -1, 0],
+        ],
+        [
+            [1, 0, 0, 0],
+            [0, 0, 1, 0],
+        ],
+    ], [[[1, 0, 0, 0], [0, 0, 1, 0]], [[-1, 0, 0, 0], [0, 0, -1, 0]]]
+    check_equal(query, ["A", "B", "A", "B"], ["A", "B"], res)

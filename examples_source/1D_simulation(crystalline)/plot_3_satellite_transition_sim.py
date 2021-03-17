@@ -70,7 +70,11 @@ method = Method1D(
             "spectral_width": 1e4,  # in Hz
             "reference_offset": 1e4,  # in Hz
             "events": [
-                {"transition_query": {"P": [-1], "D": [2]}}  # <-- select transitions
+                {
+                    "transition_query": [
+                        {"P": [-1], "D": [2]}  # <-- select inner satellite transitions
+                    ]
+                }
             ],
         }
     ],
@@ -111,7 +115,12 @@ method2 = Method1D(
             "spectral_width": 1e4,  # in Hz
             "reference_offset": 1e4,  # in Hz
             "events": [
-                {"transition_query": {"P": [-1], "D": [2, 4]}}  # <-- select transitions
+                {
+                    "transition_query": [
+                        {"P": [-1], "D": [2]},  # <-- select inter satellite transitions
+                        {"P": [-1], "D": [4]},  # <-- select outer satellite transitions
+                    ]
+                }
             ],
         }
     ],

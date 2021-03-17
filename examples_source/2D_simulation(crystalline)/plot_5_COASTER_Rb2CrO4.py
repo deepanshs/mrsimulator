@@ -55,7 +55,7 @@ coaster = Method2D(
             "spectral_width": 4e4,  # in Hz
             "reference_offset": -8e3,  # in Hz
             "label": "3Q dimension",
-            "events": [{"transition_query": {"P": [3], "D": [0]}}],
+            "events": [{"transition_query": [{"P": [3], "D": [0]}]}],
         },
         # The last spectral dimension block is the direct-dimension
         {
@@ -63,7 +63,7 @@ coaster = Method2D(
             "spectral_width": 2e4,  # in Hz
             "reference_offset": -3e3,  # in Hz
             "label": "70.12 dimension",
-            "events": [{"transition_query": {"P": [-1], "D": [0]}}],
+            "events": [{"transition_query": [{"P": [-1], "D": [0]}]}],
         },
     ],
 )

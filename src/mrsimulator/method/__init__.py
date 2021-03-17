@@ -18,10 +18,7 @@ from pydantic import validator
 from .event import Event
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
-from .utils import D_symmetry_indexes
 from .utils import expand_spectral_dimension_object
-from .utils import P_symmetry_indexes
-from .utils import query_permutations
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -333,38 +330,24 @@ class Method(Parseable):
 
     #     return {"P": list_of_P, "D": list_of_D}
 
-    def _get_transition_pathways(self, spin_system):
+    def _get_transition_pathway_segments(self, spin_system):
         all_transitions = spin_system._all_transitions()
 
-        segments = []
-        for dim in self.spectral_dimensions:
-            for ent in dim.events:
-                # query the transitions for P symmetry
-                selected_transitions = all_transitions[:]
-                list_of_P = query_permutations(
-                    ent.transition_query.dict(),
-                    isotope=spin_system.get_isotopes(symbol=True),
-                    channel=[item.symbol for item in self.channels],
-                )
-                indexes = P_symmetry_indexes(selected_transitions, list_of_P)
-                selected_transitions = selected_transitions[indexes]
+        isotopes = spin_system.get_isotopes(symbol=True)
+        channels = [item.symbol for item in self.channels]
+        if np.any([item not in isotopes for item in channels]):
+            return []
 
-                # query the transitions for D symmetry
-                if ent.transition_query.D is not None:
-                    list_of_D = query_permutations(
-                        ent.transition_query.dict(),
-                        isotope=spin_system.get_isotopes(symbol=True),
-                        channel=[item.symbol for item in self.channels],
-                        transition_symmetry="D",
-                    )
-                    indexes = D_symmetry_indexes(selected_transitions, list_of_D)
-                    selected_transitions = selected_transitions[indexes]
-
-                segments += [selected_transitions]
-        return segments
+        return [
+            evt.filter_transitions(all_transitions, isotopes, channels)
+            for dim in self.spectral_dimensions
+            for evt in dim.events
+        ]
 
     def _get_transition_pathways_np(self, spin_system):
-        segments = self._get_transition_pathways(spin_system)
+        segments = self._get_transition_pathway_segments(spin_system)
+        if segments == []:
+            return []
         segments_index = [np.arange(item.shape[0]) for item in segments]
         cartesian_index = cartesian_product(*segments_index)
         return [

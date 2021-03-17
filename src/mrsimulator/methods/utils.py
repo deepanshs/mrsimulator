@@ -78,19 +78,10 @@ def parse_events(evt):
         return
 
     t_query = evt["transition_query"]
-    if "P" in t_query.keys():
-        t_query["P"] = parse_transition_query(t_query["P"])
-
-    if "D" in t_query.keys():
-        t_query["D"] = parse_transition_query(t_query["D"])
-
-
-def parse_transition_query(query):
-    if not isinstance(query, list):
-        return query
-    return {
-        "channel-1": [[i] if not isinstance(i, (list, tuple)) else i for i in query]
-    }
+    for item in t_query:
+        keys = item.keys()
+        if "ch1" not in keys and "ch2" not in keys and "ch3" not in keys:
+            item["ch1"] = item
 
 
 def generate_method_from_template(template, docstring=""):

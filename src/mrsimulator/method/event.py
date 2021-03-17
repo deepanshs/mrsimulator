@@ -13,6 +13,8 @@ from .frequency_contrib import freq_default
 from .frequency_contrib import freq_list_all
 from .frequency_contrib import FrequencyEnum
 from .transition_query import TransitionQuery
+from .utils import D_symmetry_indexes
+from .utils import P_symmetry_indexes
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -56,8 +58,7 @@ class Event(Parseable):
     # 54.735 degrees = 0.9553166 radians
     rotor_angle: float = Field(default=0.955316618, ge=0, le=1.5707963268)
     freq_contrib: List[FrequencyEnum] = default_freq_contrib
-    transition_query: TransitionQuery = TransitionQuery()
-    # user_variables: List = None
+    transition_query: List[TransitionQuery] = [TransitionQuery()]
 
     property_unit_types: ClassVar = {
         "magnetic_flux_density": "magnetic flux density",
@@ -110,3 +111,37 @@ class Event(Parseable):
         array = np.zeros(len(freq_list_all), dtype=int)
         array[lst_] = 1
         return array
+
+    def permutation(self, isotopes, channels):
+        """Permutate the event queries over the given channels and list of isotopes.
+
+        Args:
+            (list) isotopes: List of isotopes in the spin system.
+            (list) channels: List of method channels.
+        """
+        return [item.permutation(isotopes, channels) for item in self.transition_query]
+
+    def filter_transitions(self, all_transitions, isotopes, channels):
+        """Filter transitions based on the transition query.
+
+        Args:
+            (list)  all_transitions: List of all transitions from the spin system.
+            (list) isotopes: List of isotopes in the spin system.
+            (list) channels: List of method channels.
+        """
+
+        symmetry_permutations = self.permutation(isotopes, channels)
+
+        segment = []
+        for item in symmetry_permutations:
+            selected_transitions = all_transitions[:]
+            if item["P"].size > 0:
+                indexes = P_symmetry_indexes(selected_transitions, item["P"])
+                selected_transitions = selected_transitions[indexes]
+
+            if item["D"].size > 0:
+                indexes = D_symmetry_indexes(selected_transitions, item["D"])
+                selected_transitions = selected_transitions[indexes]
+
+            segment += [selected_transitions]
+        return np.vstack(segment)

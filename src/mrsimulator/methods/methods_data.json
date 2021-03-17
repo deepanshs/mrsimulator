@@ -11,13 +11,11 @@
           "rotor_frequency",
           "rotor_angle"
         ],
-        "transition_query": {
-          "P": {
-            "channel-1": [
-              [-1]
-            ]
+        "transition_query": [{
+          "ch1": {
+            "P": [-1]
           }
-        }
+        }]
       }]
     }]
   },
@@ -33,18 +31,12 @@
           "rotor_frequency",
           "rotor_angle"
         ],
-        "transition_query": {
-          "P": {
-            "channel-1": [
-              [-1]
-            ]
-          },
-          "D": {
-            "channel-1": [
-              [0]
-            ]
+        "transition_query": [{
+          "ch1": {
+            "P": [-1],
+            "D": [0]
           }
-        }
+        }]
       }]
     }]
   },
@@ -58,13 +50,11 @@
         "rotor_angle",
         "rotor_frequency"
       ],
-      "transition_query": {
-        "P": {
-          "channel-1": [
-            [-1]
-          ]
+      "transition_query": [{
+        "ch1": {
+          "P": [-1]
         }
-      }
+      }]
     },
     "spectral_dimensions": [{
       "events": [{}]
@@ -80,13 +70,11 @@
         "rotor_angle"
       ],
       "rotor_frequency": 1e12,
-      "transition_query": {
-        "P": {
-          "channel-1": [
-            [-1]
-          ]
+      "transition_query": [{
+        "ch1": {
+          "P": [-1]
         }
-      }
+      }]
     },
     "spectral_dimensions": [{
         "events": [{}]

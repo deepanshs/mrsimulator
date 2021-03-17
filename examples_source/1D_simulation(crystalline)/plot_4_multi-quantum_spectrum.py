@@ -50,7 +50,7 @@ method = Method1D(
             "reference_offset": 2.5e4,  # in Hz
             "events": [
                 {  # symmetric triple quantum transitions
-                    "transition_query": {"P": [-3], "D": [0]}
+                    "transition_query": [{"P": [-3], "D": [0]}]
                 }
             ],
         }
