@@ -17,6 +17,23 @@ MODULE_DIR = path.dirname(path.abspath(__file__))
 TESTDATA = loadfn(path.join(MODULE_DIR, "test_data.json"))
 
 
+sample_method_dict = dict(
+    magnetic_flux_density=9.4,
+    spectral_dimensions=[
+        {"count": 1024, "spectral_width": 5e4},
+        {"count": 1024, "spectral_width": 5e4},
+    ],
+)
+
+sample_test_output = {
+    "count": 1024,
+    "events": [
+        {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
+        {"fraction": 1, "freq_contrib": ["Quad2_4"]},
+    ],
+}
+
+
 def test_more_spectral_dimensions():
     error = "The method allows 1 spectral dimension"
     with pytest.raises(ValueError, match=f".*{error}.*"):
@@ -37,24 +54,8 @@ def test_02():
 
 def test_03():
     """generic method declaration"""
-    mth = Method2D(
-        channels=["87Rb"],
-        magnetic_flux_density=9.4,  # in T
-        spectral_dimensions=[
-            {
-                "count": 1024,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
-            {
-                "count": 1024,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
-        ],
-    )
-
-    assert TESTDATA["generic"] == mth.json()
+    mth = Method2D(channels=["87Rb"], **sample_method_dict)
+    assert mth.json() == TESTDATA["generic"]
     assert Method.parse_dict_with_units(mth.json()) == mth
 
 
@@ -75,13 +76,9 @@ def test_method_1D():
         "rotor_frequency": "1e9 Hz",
         "spectral_dimensions": [
             {
-                "count": 1024,
-                "spectral_width": "10 kHz",  # in Hz
-                "reference_offset": "-4 kHz",  # in Hz
-                "events": [
-                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
-                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
-                ],
+                "spectral_width": "10 kHz",
+                "reference_offset": "-4 kHz",
+                **sample_test_output,
             }
         ],
     }
@@ -95,13 +92,9 @@ def test_method_1D():
         rotor_frequency=1e9,
         spectral_dimensions=[
             {
-                "count": 1024,
-                "spectral_width": 1e4,  # in Hz
-                "reference_offset": -4e3,  # in Hz
-                "events": [
-                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
-                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
-                ],
+                "spectral_width": 1e4,
+                "reference_offset": -4e3,
+                **sample_test_output,
             }
         ],
     )
@@ -121,22 +114,8 @@ def test_method_2D():
         "magnetic_flux_density": "7 T",  # in T
         "rotor_angle": "54.735 deg",
         "spectral_dimensions": [
-            {
-                "count": 1024,
-                "spectral_width": "10 kHz",  # in Hz
-                "events": [
-                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
-                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
-                ],
-            },
-            {
-                "count": 1024,
-                "spectral_width": "10 kHz",  # in Hz
-                "events": [
-                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
-                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
-                ],
-            },
+            {"spectral_width": "10 kHz", **sample_test_output},
+            {"spectral_width": "10 kHz", **sample_test_output},
         ],
     }
     method1a = Method2D.parse_dict_with_units(dict_1d)
@@ -147,22 +126,8 @@ def test_method_2D():
         magnetic_flux_density=7,  # in T
         rotor_angle=54.735 * np.pi / 180,
         spectral_dimensions=[
-            {
-                "count": 1024,
-                "spectral_width": 1e4,  # in Hz
-                "events": [
-                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
-                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
-                ],
-            },
-            {
-                "count": 1024,
-                "spectral_width": 1e4,  # in Hz
-                "events": [
-                    {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
-                    {"fraction": 1, "freq_contrib": ["Quad2_4"]},
-                ],
-            },
+            {"spectral_width": 1e4, **sample_test_output},
+            {"spectral_width": 1e4, **sample_test_output},
         ],
     )
 
@@ -178,7 +143,6 @@ def test_04():
             {
                 "count": 512,
                 "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
                 "events": [
                     {
                         "rotor_angle": 70.12 * np.pi / 180,
@@ -189,7 +153,6 @@ def test_04():
             {
                 "count": 128,
                 "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
                 "events": [
                     {
                         "rotor_angle": 54.735 * np.pi / 180,
@@ -200,7 +163,7 @@ def test_04():
         ],
     )
 
-    assert TESTDATA["SAS"] == mth.json()
+    assert mth.json() == TESTDATA["SAS"]
     assert Method.parse_dict_with_units(mth.json()) == mth
     assert Method2D.parse_dict_with_units(mth.json()) == mth
 
@@ -212,7 +175,6 @@ def test_BlochDecaySpectrum():
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "25000.0 Hz",
-        "reference_offset": "0.0 Hz",
     }
 
     should_be = {
@@ -242,7 +204,6 @@ def test_BlochDecaySpectrum():
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "25000.0 Hz",
-        "reference_offset": "0.0 Hz",
     }
 
     should_be = {
@@ -270,7 +231,6 @@ def test_05():
             {
                 "count": 512,
                 "spectral_width": 5e6,  # in Hz
-                "reference_offset": 0,  # in Hz
                 "events": [
                     {
                         "rotor_angle": 0 * np.pi / 180,
@@ -284,7 +244,6 @@ def test_05():
             {
                 "count": 128,
                 "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
                 "events": [
                     {
                         "rotor_angle": 54.735 * np.pi / 180,
@@ -295,7 +254,7 @@ def test_05():
         ],
     )
 
-    assert TESTDATA["STMAS"] == mth.json()
+    assert mth.json() == TESTDATA["STMAS"]
     assert Method.parse_dict_with_units(TESTDATA["STMAS"]) == mth
     assert Method2D.parse_dict_with_units(TESTDATA["STMAS"]) == mth
 
@@ -306,16 +265,8 @@ def test_3QMAS():
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
         spectral_dimensions=[
-            {
-                "count": 512,
-                "spectral_width": 5e6,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
-            {
-                "count": 128,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
+            {"count": 512, "spectral_width": 5e6},
+            {"count": 128, "spectral_width": 5e4},
         ],
     )
 

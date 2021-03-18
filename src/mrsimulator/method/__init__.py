@@ -118,15 +118,14 @@ class Method(Parseable):
         >>> method = Method2D()
         >>> method.affine_matrix = [[1, -1], [0, 1]]
         >>> print(method.affine_matrix)
-        [[ 1 -1]
-         [ 0  1]]
+        [[1, -1], [0, 1]]
     """
     name: str = None
     label: str = None
     description: str = None
     channels: List[str] = []
     spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
-    affine_matrix: Union[np.ndarray, List] = None
+    affine_matrix: List = None
     simulation: Union[cp.CSDM, np.ndarray] = None
     experiment: Union[cp.CSDM, np.ndarray] = None
 
@@ -145,23 +144,6 @@ class Method(Parseable):
     class Config:
         validate_assignment = True
         arbitrary_types_allowed = True
-
-    def __eq__(self, other):
-        if not isinstance(other, Method):
-            return False
-        check = [
-            self.name == other.name,
-            self.label == other.label,
-            self.description == other.description,
-            self.channels == other.channels,
-            self.spectral_dimensions == other.spectral_dimensions,
-            np.all(self.affine_matrix == other.affine_matrix),
-            self.simulation == other.simulation,
-            self.experiment == other.experiment,
-        ]
-        if np.all(check):
-            return True
-        return False
 
     @validator("channels", always=True)
     def validate_channels(cls, v, *, values, **kwargs):
@@ -190,12 +172,12 @@ class Method(Parseable):
     @validator("affine_matrix", pre=True, always=True)
     def validate_affine_matrix(cls, v, *, values, **kwargs):
         if v is None:
-            return None
-        v = np.asarray(v)
+            return
+        v1 = np.asarray(v)
         dim_len = len(values["spectral_dimensions"])
-        if v.size != dim_len ** 2:
+        if v1.size != dim_len ** 2:
             raise ValueError(f"Expecting a {dim_len}x{dim_len} affine matrix.")
-        if v.ravel()[0] == 0:
+        if v1.ravel()[0] == 0:
             raise ValueError("The first element of the affine matrix cannot be zero.")
         return v
 
@@ -269,19 +251,27 @@ class Method(Parseable):
         mth.update(global_)
 
         named = True if mth["name"] in NAMED_METHODS else False
-        for dim in mth["spectral_dimensions"]:
-            for ev in dim["events"]:
-                # remove event objects with global values.
-                _ = [ev.pop(k) if ev[k] == v else 0 for k, v in global_.items()]
 
-                # remove transition query objects for named methods
-                _ = ev.pop("transition_query") if named else 0
+        # remove event objects with global values.
+        # remove transition query objects for named methods
+        _ = [
+            (
+                [
+                    ev.pop(k) if k in ev and ev[k] == v else 0
+                    for k, v in global_.items()
+                ],
+                ev.pop("transition_query") if "transition_query" in ev and named else 0,
+            )
+            for dim in mth["spectral_dimensions"]
+            for ev in dim["events"]
+        ]
 
-            if dim["events"] == [{} for _ in dim["events"]]:
-                dim.pop("events")
+        _ = [
+            dim.pop("events") if dim["events"] == [{}] * len(dim["events"]) else None
+            for dim in mth["spectral_dimensions"]
+        ]
 
-        afm = self.affine_matrix
-        mth["affine_matrix"] = None if afm is None else afm.tolist()
+        mth["affine_matrix"] = self.affine_matrix
 
         sim = self.simulation
         mth["simulation"] = None if sim is None else sim.to_dict(update_timestamp=True)
@@ -330,7 +320,7 @@ class Method(Parseable):
 
     #     return {"P": list_of_P, "D": list_of_D}
 
-    def _get_transition_pathway_segments(self, spin_system):
+    def _get_transition_pathways_np(self, spin_system):
         all_transitions = spin_system._all_transitions()
 
         isotopes = spin_system.get_isotopes(symbol=True)
@@ -338,16 +328,15 @@ class Method(Parseable):
         if np.any([item not in isotopes for item in channels]):
             return []
 
-        return [
+        segments = [
             evt.filter_transitions(all_transitions, isotopes, channels)
             for dim in self.spectral_dimensions
             for evt in dim.events
         ]
 
-    def _get_transition_pathways_np(self, spin_system):
-        segments = self._get_transition_pathway_segments(spin_system)
         if segments == []:
             return []
+
         segments_index = [np.arange(item.shape[0]) for item in segments]
         cartesian_index = cartesian_product(*segments_index)
         return [

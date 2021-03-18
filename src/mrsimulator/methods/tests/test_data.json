@@ -7,27 +7,11 @@
 		"rotor_angle": "0.955316618 rad",
 		"spectral_dimensions": [{
 				"count": 1024,
-				"spectral_width": "50000.0 Hz",
-				"reference_offset": "0.0 Hz",
-				"events": [{
-					"transition_query": [{
-						"ch1": {
-							"P": [-1]
-						}
-					}]
-				}]
+				"spectral_width": "50000.0 Hz"
 			},
 			{
 				"count": 1024,
-				"spectral_width": "50000.0 Hz",
-				"reference_offset": "0.0 Hz",
-				"events": [{
-					"transition_query": [{
-						"ch1": {
-							"P": [-1]
-						}
-					}]
-				}]
+				"spectral_width": "50000.0 Hz"
 			}
 		],
 		"channels": ["87Rb"]
@@ -41,7 +25,6 @@
 		"spectral_dimensions": [{
 				"count": 512,
 				"spectral_width": "50000.0 Hz",
-				"reference_offset": "0.0 Hz",
 				"events": [{
 					"transition_query": [{
 						"ch1": {
@@ -54,7 +37,6 @@
 			{
 				"count": 128,
 				"spectral_width": "50000.0 Hz",
-				"reference_offset": "0.0 Hz",
 				"events": [{
 					"rotor_angle": "0.9553059660790962 rad",
 					"transition_query": [{
@@ -77,7 +59,6 @@
 		"spectral_dimensions": [{
 				"count": 512,
 				"spectral_width": "5000000.0 Hz",
-				"reference_offset": "0.0 Hz",
 				"events": [{
 					"transition_query": [{
 							"ch1": {
@@ -97,7 +78,6 @@
 			{
 				"count": 128,
 				"spectral_width": "50000.0 Hz",
-				"reference_offset": "0.0 Hz",
 				"events": [{
 					"rotor_angle": "0.9553059660790962 rad",
 					"transition_query": [{

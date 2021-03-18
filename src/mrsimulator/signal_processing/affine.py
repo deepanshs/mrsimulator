@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from sys import modules
 from typing import Dict
 from typing import Union
 
 import numpy as np
 from pydantic import validator
 
-from ._base import AbstractOperation
+from ._base import Operations
 from .utils import _get_broadcast_shape
 from .utils import _str_to_quantity
 from .utils import const
@@ -15,23 +14,16 @@ __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-class AbstractAffineTransformation(AbstractOperation):
+class AffineTransformation(Operations):
     dim_index: int = 0
     dv_index: Union[int, list, tuple] = None  # if none apply to all
+    function: str = "affine"
+    type: str
 
-    @classmethod
-    def parse_dict_with_units(cls, py_dict: dict):
-        obj = super().parse_dict_with_units(py_dict)
-        return getattr(modules[__name__], py_dict["type"])(**obj.dict())
-
-    @property
-    def function(self):
-        return "affine"
-
-    @property
-    def type(self):
-        """The type apodization function."""
-        return self.__class__.__name__
+    # @classmethod
+    # def parse_dict_with_units(cls, py_dict: dict):
+    #     obj = super().parse_dict_with_units(py_dict)
+    #     return getattr(modules[__name__], py_dict["type"])(**obj.dict())
 
 
 def get_coordinates(dim):
@@ -62,7 +54,7 @@ def get_coordinates(dim):
     return coordinates
 
 
-class Shear(AbstractAffineTransformation):
+class Shear(AffineTransformation):
     r"""Apply a shear parallel to dimension at index parallel and normal to dimension
     at index dim_index.
 
@@ -92,7 +84,7 @@ class Shear(AbstractAffineTransformation):
     >>> import mrsimulator.signal_processing.affine as af
     >>> operation = af.Shear(factor='143.4 Hz', dim_index=0, parallel=1)
     """
-
+    type: str = "Shear"
     factor: Union[float, str] = 0
     parallel: int = 1
     property_units: Dict = {"factor": const}
@@ -100,9 +92,6 @@ class Shear(AbstractAffineTransformation):
     @validator("factor")
     def str_to_quantity(cls, v, values):
         return _str_to_quantity(v, values, "factor")
-
-    # class Config:
-    #     validate_assignment = True
 
     def operate(self, data):
         """
@@ -141,7 +130,7 @@ class Shear(AbstractAffineTransformation):
         return data
 
 
-class Scale(AbstractAffineTransformation):
+class Scale(AffineTransformation):
     r"""Scale the dimension along the specified dimension index.
 
     Args:
@@ -155,7 +144,7 @@ class Scale(AbstractAffineTransformation):
     >>> import mrsimulator.signal_processing.affine as af
     >>> operation = af.Scale(factor=2.14, dim_index=0)
     """
-
+    type: str = "Scale"
     factor: Union[float, str] = 1
     property_units: Dict = {"factor": const}
 
@@ -175,7 +164,7 @@ class Scale(AbstractAffineTransformation):
         return data
 
 
-# class Translate(AbstractAffineTransformation):
+# class Translate(AffineTransformation):
 #     r"""Apodize a dependent variable of the CSDM object with a Gaussian function.
 
 #     The apodization function follows

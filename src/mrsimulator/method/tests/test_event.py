@@ -78,25 +78,31 @@ def basic_spectral_event_tests(the_event, type_="spectral"):
         magnetic_flux_density="11.7 T",
         rotor_frequency="25000.0 Hz",
         rotor_angle=f"{angle} rad",
-        transition_query=[{"ch1": {"P": [-1.0]}}],
     )
     should_be = {
         "freq_contrib": freq_default,
         "magnetic_flux_density": 11.7,
-        "rotor_frequency": 25000,
+        "rotor_frequency": 25000.0,
         "rotor_angle": angle,
-        "transition_query": [{"ch1": {"P": [-1.0]}}],
     }
 
     if type_ == "spectral":
         should_be_units = dict(fraction=1.2, **should_be_units)
-        assert should_be_units == the_event.json()
-        assert the_event.reduced_dict() == {"fraction": 1.2, **should_be}
+        assert the_event.json() == should_be_units
+        assert the_event.reduced_dict() == {
+            "fraction": 1.2,
+            **should_be,
+            "transition_query": [{"ch1": {"P": [-1.0]}}],
+        }
 
     if type_ == "constant_duration":
         should_be_units = dict(duration="1.2 µs", **should_be_units)
-        assert should_be_units == the_event.json()
-        assert the_event.reduced_dict() == {"duration": 1.2, **should_be}
+        assert the_event.json() == should_be_units
+        assert the_event.reduced_dict() == {
+            "duration": 1.2,
+            **should_be,
+            "transition_query": [{"ch1": {"P": [-1.0]}}],
+        }
 
 
 def test_spectral_and_constant_time_events():

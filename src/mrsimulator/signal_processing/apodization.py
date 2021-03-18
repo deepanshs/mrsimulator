@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from sys import modules
 from typing import Dict
 from typing import Union
 
 import numpy as np
 from pydantic import validator
 
-from ._base import AbstractOperation
+from ._base import Operations
 from .utils import _get_broadcast_shape
 from .utils import _str_to_quantity
 
@@ -14,23 +13,16 @@ __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 
-class AbstractApodization(AbstractOperation):
+class Apodization(Operations):
     dim_index: Union[int, list, tuple] = 0
     dv_index: Union[int, list, tuple] = None  # if none apply to all
+    function: str = "apodization"
+    type: str
 
-    @classmethod
-    def parse_dict_with_units(cls, py_dict: dict):
-        obj = super().parse_dict_with_units(py_dict)
-        return getattr(modules[__name__], py_dict["type"])(**obj.dict())
-
-    @property
-    def function(self):
-        return "apodization"
-
-    @property
-    def type(self):
-        """The type apodization function."""
-        return self.__class__.__name__
+    # @classmethod
+    # def parse_dict_with_units(cls, py_dict: dict):
+    #     obj = super().parse_dict_with_units(py_dict)
+    #     return getattr(modules[__name__], py_dict["type"])(**obj.dict())
 
     @staticmethod
     def _get_correct_units(x, unit):
@@ -61,8 +53,8 @@ class AbstractApodization(AbstractOperation):
         return data
 
 
-class Gaussian(AbstractApodization):
-    r"""Apodize a dependent variable of the CSDM object with a Gaussian function.
+class Gaussian(Apodization):
+    r"""Apodize dependent variable objects of the CSDM data with a Gaussian function.
 
     The apodization function follows
 
@@ -77,15 +69,20 @@ class Gaussian(AbstractApodization):
     .. math::
         \sigma = \frac{\text{FWHM}}{2\sqrt{2\ln 2}}.
 
-    Args:
-        str FWHM: The full width at half maximum, FWHM, of the reciprocal domain
-            Gaussian function, given as a string with a value and a unit. The default
-            value is 0.
-        int dim_index: The index of the CSDM dimension along which the operation is
-            applied. The default is the dimension at index 0.
-        int dv_index: The index of the CSDM dependent variable where the operation is
-            applied. If the value is None, the operation will be applied to every
-            dependent variable.
+    Arguments
+    ---------
+
+    FWHM:
+        The full width at half maximum, FWHM, of the reciprocal domain Gaussian
+        function given as a string with a value and a unit. The default value is 0.
+
+    dim_index:
+        The index of the CSDM dimension along which the operation is applied. The
+        default is the dimension at index 0.
+
+    dv_index:
+        The index of the CSDM dependent variable, where the operation is applied. If
+        not provided, the operation will be applied to every dependent variable.
 
     Example
     -------
@@ -93,7 +90,7 @@ class Gaussian(AbstractApodization):
     >>> import mrsimulator.signal_processing.apodization as apo
     >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
     """
-
+    type: str = "Gaussian"
     FWHM: Union[float, str] = 0
     property_units: Dict = {"FWHM": ""}
 
@@ -110,8 +107,8 @@ class Gaussian(AbstractApodization):
         return amp.real / (sigma * np.sqrt(2 * np.pi))
 
 
-class Exponential(AbstractApodization):
-    r"""Apodize a dependent variable of the CSDM object by an exponential function.
+class Exponential(Apodization):
+    r"""Apodize dependent variable objects of CSDM data by an exponential function.
 
     The apodization function follows
 
@@ -126,22 +123,27 @@ class Exponential(AbstractApodization):
     .. math::
         \text{FWHM} = \Gamma.
 
-    Args:
-        str FWHM: The full width at half maximum, FWHM, of the reciprocal domain
-            Lorentzian function given as a string with a value and a unit. The default
-            value is 0.
-        int dim_index: The index of the CSDM dimension along which the operation is
-            applied. The default is the dimension at index 0.
-        int dv_index: The index of the CSDM dependent variable where the operation is
-            applied. If the value is None, the operation will be applied to every
-            dependent variable.
+    Arguments
+    ---------
+
+    FWHM:
+        The full width at half maximum, FWHM, of the reciprocal domain Lorentzian
+        function given as a string with a value and a unit. The default value is 0.
+
+    dim_index:
+        The index of the CSDM dimension along which the operation is applied. The
+        default is the dimension at index 0.
+
+    dv_index:
+        The index of the CSDM dependent variable, where the operation is applied. If
+        not provided, the operation will be applied to every dependent variable.
 
     Example
     -------
 
     >>> operation5 = apo.Exponential(FWHM='143.4 m', dim_index=0, dv_index=0)
     """
-
+    type: str = "Exponential"
     FWHM: Union[float, str] = 0
     property_units: Dict = {"FWHM": ""}
 
@@ -154,7 +156,7 @@ class Exponential(AbstractApodization):
         return np.exp(-self.FWHM * np.pi * np.abs(x))
 
 
-# class ExponentialAbs(AbstractApodization):
+# class ExponentialAbs(Apodization):
 #     r"""Apodize a dependent variable of the simulation data object by an exponential
 #     function. The function follows
 

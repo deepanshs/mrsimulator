@@ -4,6 +4,8 @@ import pytest
 from mrsimulator.method.transition_query import TransitionQuery
 from mrsimulator.methods import SSB2D
 
+from .test_methods import sample_method_dict
+
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
@@ -37,23 +39,7 @@ def test_SSB_affine():
 
 def test_SSB_general():
     """Inner satellite-transition variable-angle spinning method"""
-    mth = SSB2D(
-        channels=["87Rb"],
-        magnetic_flux_density=9.4,  # in T
-        rotor_frequency=1200,
-        spectral_dimensions=[
-            {
-                "count": 1024,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
-            {
-                "count": 1024,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
-        ],
-    )
+    mth = SSB2D(channels=["87Rb"], rotor_frequency=1200, **sample_method_dict)
     assert mth.name == "SSB2D"
 
     assert mth.description == "Simulate a 2D sideband separation method."
@@ -85,13 +71,11 @@ def test_SSB_general():
         "spectral_dimensions": [
             {
                 "count": 1024,
-                "reference_offset": "0.0 Hz",
                 "spectral_width": "50000.0 Hz",
             },
             {
                 "count": 1024,
                 "events": [{"rotor_frequency": "1000000000000.0 Hz"}],
-                "reference_offset": "0.0 Hz",
                 "spectral_width": "50000.0 Hz",
             },
         ],

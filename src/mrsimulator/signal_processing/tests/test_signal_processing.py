@@ -28,6 +28,7 @@ def test_01():
 
     # to dict with units
     dict_ = post_sim.json()
+    dict_.pop("processed_data")
     assert dict_ == {
         "operations": [
             {"dim_index": 0, "function": "IFFT"},

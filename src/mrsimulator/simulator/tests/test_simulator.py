@@ -48,7 +48,7 @@ def test_equality():
 
     result = {
         "label": "test",
-        "spin_systems": [{"abundance": "100.0 %", "sites": []}],
+        "spin_systems": [{}],
         "config": {
             "decompose_spectrum": "none",
             "integration_density": 70,
@@ -56,7 +56,7 @@ def test_equality():
             "number_of_sidebands": 64,
         },
     }
-    assert c.json(include_methods=True) == result
+    assert c.json() == result
 
     assert c.reduced_dict() == {
         "label": "test",

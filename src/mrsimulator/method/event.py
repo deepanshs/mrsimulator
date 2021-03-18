@@ -10,7 +10,6 @@ from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
 from .frequency_contrib import default_freq_contrib
-from .frequency_contrib import freq_default
 from .frequency_contrib import freq_list_all
 from .frequency_contrib import FrequencyEnum
 from .transition_query import TransitionQuery
@@ -51,7 +50,6 @@ class BaseEvent(Parseable):
 
     magnetic_flux_density: float = Field(default=9.4, ge=0.0)
     rotor_frequency: float = Field(default=0.0, ge=0.0)
-    # 54.735 degrees = 0.9553166 radians
     rotor_angle: float = Field(default=0.955316618, ge=0.0, le=1.5707963268)
     freq_contrib: List[FrequencyEnum] = default_freq_contrib
     transition_query: List[TransitionQuery] = [TransitionQuery()]
@@ -89,22 +87,9 @@ class BaseEvent(Parseable):
         py_dict_copy = deepcopy(py_dict)
         return super().parse_dict_with_units(py_dict_copy)
 
-    def json(self) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object, where
-        the attribute value with physical quantity is expressed as a string with a
-        value and a unit."""
-        dict_ = super().json()
-        # if "user_variables" in dict_.keys():
-        #     dict_.pop("user_variables")
-        if "fraction" in dict_:
-            dict_.pop("fraction") if dict_["fraction"] == 1.0 else None
-        dict_.pop("freq_contrib") if dict_["freq_contrib"] == freq_default else None
-        return dict_
-
     def _freq_contrib_flags(self) -> np.ndarray:
-        lst_ = [item.index() for item in self.freq_contrib]
         array = np.zeros(len(freq_list_all), dtype=int)
-        array[lst_] = 1
+        array[[item.index() for item in self.freq_contrib]] = 1
         return array
 
     def permutation(self, isotopes, channels):
@@ -129,16 +114,10 @@ class BaseEvent(Parseable):
 
         segment = []
         for item in symmetry_permutations:
-            selected_transitions = all_transitions[:]
-            if item["P"].size > 0:
-                indexes = P_symmetry_indexes(selected_transitions, item["P"])
-                selected_transitions = selected_transitions[indexes]
-
-            if item["D"].size > 0:
-                indexes = D_symmetry_indexes(selected_transitions, item["D"])
-                selected_transitions = selected_transitions[indexes]
-
-            segment += [selected_transitions]
+            st = all_transitions[:]
+            st = st[P_symmetry_indexes(st, item["P"])] if item["P"].size > 0 else st
+            st = st[D_symmetry_indexes(st, item["D"])] if item["D"].size > 0 else st
+            segment += [st]
         return np.vstack(segment)
 
 
@@ -225,6 +204,8 @@ class ConstantDurationEvent(BaseEvent):
         "duration": "µs",
         **BaseEvent().property_default_units,
     }
+
+    test_vars: ClassVar = {"duration": 0.0}
 
     class Config:
         validate_assignment = True

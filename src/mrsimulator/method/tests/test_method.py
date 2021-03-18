@@ -65,11 +65,9 @@ def basic_method_tests(the_method):
             {
                 "count": 1024,
                 "spectral_width": "100.0 Hz",
-                "reference_offset": "0.0 Hz",
                 "events": [
                     {
                         "fraction": 0.5,
-                        "transition_query": [{"ch1": {"P": [-1.0]}}],
                     }
                 ],
             }
@@ -165,12 +163,10 @@ def test_method():
     # to_dict_with_unit()
     event_dictionary_ = {
         "fraction": 0.5,
-        "transition_query": [{"ch1": {"P": [-1.0]}}],
     }
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "100.0 Hz",
-        "reference_offset": "0.0 Hz",
         "events": [event_dictionary_, event_dictionary_],
     }
     method_dictionary_ = {

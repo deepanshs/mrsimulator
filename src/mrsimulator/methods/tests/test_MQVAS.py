@@ -12,6 +12,22 @@ __email__ = "srivastava.89@osu.edu"
 methods = [ThreeQ_VAS, FiveQ_VAS, SevenQ_VAS]
 names = ["ThreeQ_VAS", "FiveQ_VAS", "SevenQ_VAS"]
 
+sample_test_output = {
+    "magnetic_flux_density": "9.4 T",
+    "rotor_angle": "0.955316618 rad",
+    "rotor_frequency": "1000000000000.0 Hz",
+    "spectral_dimensions": [
+        {
+            "count": 1024,
+            "spectral_width": "25000.0 Hz",
+        },
+        {
+            "count": 1024,
+            "spectral_width": "25000.0 Hz",
+        },
+    ],
+}
+
 
 def test_MQ_VAS_rotor_freq():
     def error(name):
@@ -83,22 +99,8 @@ def test_3Q_VAS_general():
     assert serialize == {
         "channels": ["87Rb"],
         "description": "Simulate a 3Q variable-angle spinning spectrum.",
-        "magnetic_flux_density": "9.4 T",
         "name": "ThreeQ_VAS",
-        "rotor_angle": "0.955316618 rad",
-        "rotor_frequency": "1000000000000.0 Hz",
-        "spectral_dimensions": [
-            {
-                "count": 1024,
-                "reference_offset": "0.0 Hz",
-                "spectral_width": "25000.0 Hz",
-            },
-            {
-                "count": 1024,
-                "reference_offset": "0.0 Hz",
-                "spectral_width": "25000.0 Hz",
-            },
-        ],
+        **sample_test_output,
     }
 
 
@@ -126,22 +128,8 @@ def test_5Q_VAS_general():
     assert serialize == {
         "channels": ["17O"],
         "description": "Simulate a 5Q variable-angle spinning spectrum.",
-        "magnetic_flux_density": "9.4 T",
         "name": "FiveQ_VAS",
-        "rotor_angle": "0.955316618 rad",
-        "rotor_frequency": "1000000000000.0 Hz",
-        "spectral_dimensions": [
-            {
-                "count": 1024,
-                "reference_offset": "0.0 Hz",
-                "spectral_width": "25000.0 Hz",
-            },
-            {
-                "count": 1024,
-                "reference_offset": "0.0 Hz",
-                "spectral_width": "25000.0 Hz",
-            },
-        ],
+        **sample_test_output,
     }
 
 
@@ -167,20 +155,6 @@ def test_7Q_VAS_general():
     assert serialize == {
         "channels": ["51V"],
         "description": "Simulate a 7Q variable-angle spinning spectrum.",
-        "magnetic_flux_density": "9.4 T",
         "name": "SevenQ_VAS",
-        "rotor_angle": "0.955316618 rad",
-        "rotor_frequency": "1000000000000.0 Hz",
-        "spectral_dimensions": [
-            {
-                "count": 1024,
-                "reference_offset": "0.0 Hz",
-                "spectral_width": "25000.0 Hz",
-            },
-            {
-                "count": 1024,
-                "reference_offset": "0.0 Hz",
-                "spectral_width": "25000.0 Hz",
-            },
-        ],
+        **sample_test_output,
     }

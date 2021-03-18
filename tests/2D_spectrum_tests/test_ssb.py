@@ -69,7 +69,7 @@ def SSB2D_setup(ist, vr, method_type):
                     "label": "Fast MAS dimension",
                 },
             ],
-            affine_matrix=np.asarray([1, -1, 0, 1]).reshape(2, 2),
+            affine_matrix=[[1, -1], [0, 1]],
         )
     sim = Simulator()
     sim.spin_systems = spin_systems  # add spin systems

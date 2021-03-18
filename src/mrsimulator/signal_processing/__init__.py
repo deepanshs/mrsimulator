@@ -4,16 +4,16 @@ from typing import List
 from typing import Union
 
 import csdmpy as cp
-from pydantic import BaseModel
+from mrsimulator.utils.parseable import Parseable
 from pydantic import Extra
 
-from ._base import AbstractOperation
+from ._base import Operations
 
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 
-class SignalProcessor(BaseModel):
+class SignalProcessor(Parseable):
     """
     Signal processing class to apply a series of operations to the dependent variables
     of the simulation dataset.
@@ -31,7 +31,7 @@ class SignalProcessor(BaseModel):
     """
 
     processed_data: cp.CSDM = None
-    operations: List[AbstractOperation] = []
+    operations: List[Operations] = []
 
     class Config:
         validate_assignment = True
@@ -45,35 +45,14 @@ class SignalProcessor(BaseModel):
         Args:
             pt_dict: A python dict object.
         """
-        lst = []
-        for op in py_dict["operations"]:
-            if "type" in op.keys():
-                lst.append(
-                    getattr(
-                        getattr(modules[__name__], op["function"]), op["type"]
-                    ).parse_dict_with_units(op)
-                )
-            else:
-                lst.append(
-                    getattr(modules[__name__], op["function"]).parse_dict_with_units(op)
-                )
+        mod = modules[__name__]
+        lst = [
+            getattr(getattr(mod, op["function"]), op["type"]).parse_dict_with_units(op)
+            if "type" in op.keys()
+            else getattr(mod, op["function"]).parse_dict_with_units(op)
+            for op in py_dict["operations"]
+        ]
         return SignalProcessor(operations=lst)
-
-    def json(self) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object, where
-        the attribute value with physical quantity is expressed as a string with a
-        value and a unit.
-
-        Returns:
-            A Dict object.
-        """
-        lst = []
-        for i in self.operations:
-            lst += [i.json()]
-        op = {}
-
-        op["operations"] = lst
-        return op
 
     def apply_operations(self, data, **kwargs):
         """
@@ -92,12 +71,18 @@ class SignalProcessor(BaseModel):
         return data
 
 
-class Scale(AbstractOperation):
+class Scale(Operations):
     """
     Scale the amplitudes of all dependent variables from a CSDM object.
 
-    Args:
-        float factor: The scaling factor. The default value is 1.
+    .. math::
+        f(\vec(x)) = scale*\vec(x)
+
+    Arguments
+    ---------
+
+    factor:
+        The scaling factor. The default value is 1.
 
     Example
     -------
@@ -107,13 +92,10 @@ class Scale(AbstractOperation):
     """
 
     factor: float = 1
+    function: str = "Scale"
 
     def operate(self, data):
-        r"""Applies the operation for which the class is named for.
-
-        .. math::
-            f(\vec(x)) = scale*\vec(x)
-
+        r"""Applies the operation.
         Args:
             data: CSDM object
         """
@@ -121,12 +103,15 @@ class Scale(AbstractOperation):
         return data
 
 
-class IFFT(AbstractOperation):
+class IFFT(Operations):
     """
     Apply an inverse Fourier transform on all dependent variables of the CSDM object.
 
-    Args:
-        int dim_index: Dimension index along which the function is applied.
+    Arguments
+    ---------
+
+    dim_index:
+        Dimension index along which the function is applied.
 
     Example
     -------
@@ -135,10 +120,10 @@ class IFFT(AbstractOperation):
     """
 
     dim_index: Union[int, list, tuple] = 0
+    function: str = "IFFT"
 
     def operate(self, data):
-        """Applies the operation for which the class is named for.
-
+        r"""Applies the operation.
         Args:
             data: CSDM object
         """
@@ -155,8 +140,11 @@ class FFT(IFFT):
     """
     Apply a forward Fourier transform on all dependent variables of the CSDM object.
 
-    Args:
-        int dim_index: Dimension index along which the function is applied.
+    Arguments
+    ---------
+
+    dim_index:
+        Dimension index along which the function is applied.
 
     Example
     -------
@@ -164,6 +152,8 @@ class FFT(IFFT):
     >>> operation3 = sp.FFT(dim_index=0)
     """
 
+    function: str = "FFT"
 
-class complex_conjugate(AbstractOperation):
+
+class complex_conjugate(Operations):
     pass

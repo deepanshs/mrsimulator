@@ -58,10 +58,7 @@ def test_direct_init_site1():
         Site.parse_dict_with_units(dict(quadrupolar={"Cq": "5.1 MHz"}))
 
     ax = Site.parse_dict_with_units({"isotope": "29Si"})
-    assert ax.json() == {
-        "isotope": "29Si",
-        "isotropic_chemical_shift": "0.0 ppm",
-    }
+    assert ax.json() == {"isotope": "29Si"}
 
 
 def test_parse_json_site():

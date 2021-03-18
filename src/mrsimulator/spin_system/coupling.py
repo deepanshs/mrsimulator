@@ -160,6 +160,7 @@ class Coupling(Parseable):
     property_unit_types: ClassVar = {"isotropic_j": "frequency"}
     property_default_units: ClassVar = {"isotropic_j": "Hz"}
     property_units: Dict = {"isotropic_j": "Hz"}
+    test_vars: ClassVar = {"site_index": [0, 1]}
 
     @validator("dipolar")
     def dipolar_must_not_contain_Cq_and_zeta(cls, v, values):

@@ -2,6 +2,7 @@
 """Base Isotope class."""
 from os import path
 from re import match
+from typing import ClassVar
 
 from monty.serialization import loadfn
 from pydantic import BaseModel
@@ -39,10 +40,10 @@ class Isotope(BaseModel):
     6
     >>> carbon.quadrupole_moment # in eB
     0.0
-
     """
 
     symbol: str
+    test_vars: ClassVar = {"symbol": "1H"}
 
     class Config:
         validate_assignment = True
