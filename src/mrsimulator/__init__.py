@@ -36,7 +36,6 @@ from .spin_system import Site  # lgtm [py/import-own-module] # noqa:F401
 from .spin_system import Coupling  # lgtm [py/import-own-module]  # noqa:F401
 from .spin_system import SpinSystem  # lgtm [py/import-own-module] # noqa:F401
 from .simulator import Simulator  # lgtm [py/import-own-module] # noqa:F401
-from .method.event import Event  # lgtm [py/import-own-module] # noqa:F401
 from .method.spectral_dimension import (  # lgtm [py/import-own-module] # noqa:F401
     SpectralDimension,
 )

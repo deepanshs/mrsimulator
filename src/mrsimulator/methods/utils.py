@@ -5,6 +5,7 @@ from os import path
 from monty.serialization import loadfn
 from mrsimulator.method import Method
 from mrsimulator.method.event import Event
+from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.spectral_dimension import SpectralDimension
 
 
@@ -20,11 +21,6 @@ default_units = {
     "rotor_frequency": "Hz",
     "rotor_angle": "rad",
 }
-
-
-# class namedMethod:
-#     def __new__(cls, py_dict):
-#         method_name = py_dict["name"]
 
 
 def prepare_method_structure(template, **kwargs):
@@ -174,7 +170,7 @@ def _fill_missing_events_in_template(spectral_dimensions, s_template):
     sp_evt_len = len(spectral_dimensions["events"])
     if s_tem_len < sp_evt_len:
         diff = sp_evt_len - s_tem_len
-        _ = [s_template["events"].append(Event().dict()) for _ in range(diff)]
+        _ = [s_template["events"].append(SpectralEvent().dict()) for _ in range(diff)]
 
 
 def _check_rotor_frequency(common, name, kwargs):
@@ -209,8 +205,9 @@ def _gen_event(dim_template, dim_i, global_events, parse, kwargs):
         # prioritize the keyword arguments over the global arguments.
         ge.update(kw)
         e.update(ge)
+        # e.pop("channels")
 
-        params = _fix_strings_in_events(e) if parse else Event(**e)
+        params = _fix_strings_in_events(e) if parse else Event(event=e).event
         events.append(params)
 
     return events

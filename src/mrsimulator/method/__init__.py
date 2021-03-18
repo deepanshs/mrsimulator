@@ -15,7 +15,7 @@ from mrsimulator.transition import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
 
-from .event import Event
+from .event import BaseEvent
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
 from .utils import expand_spectral_dimension_object
@@ -264,7 +264,7 @@ class Method(Parseable):
 
         # add global parameters
         ev0 = self.spectral_dimensions[0].events[0]
-        evt_d = Event.property_default_units
+        evt_d = BaseEvent.property_default_units
         global_ = {k: f"{ev0.__getattribute__(k)} {u}" for k, u in evt_d.items()}
         mth.update(global_)
 

@@ -162,7 +162,7 @@ def test_5():
         sp.FFT(dim_index=0),
         sp.Scale(factor=10),
     ]
-    post_sim = sp.SignalProcessor(data=None, operations=op_list)
+    post_sim = sp.SignalProcessor(operations=op_list)
 
     e = "Expecting a `Simulator` object, found"
     with pytest.raises(ValueError, match=f".*{e}.*"):

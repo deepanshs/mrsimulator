@@ -3,6 +3,7 @@ from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
+from typing import Union
 
 import numpy as np
 from mrsimulator.utils.parseable import Parseable
@@ -20,15 +21,11 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-class Event(Parseable):
-    r"""Base Event class defines the spin environment and the transition query for a
-    segment of the transition pathway.
+class BaseEvent(Parseable):
+    """Base BaseEvent class.
 
     Attributes
     ----------
-
-    fraction:
-        The weight of the frequency contribution from the event. The default is 1.
 
     magnetic_flux_density:
         The macroscopic magnetic flux density, :math:`H_0`, of the applied external
@@ -52,11 +49,10 @@ class Event(Parseable):
         from this query will contribute to the net frequency.
     """
 
-    fraction: float = 1.0
-    magnetic_flux_density: float = Field(default=9.4, ge=0)
-    rotor_frequency: float = Field(default=0.0, ge=0)
+    magnetic_flux_density: float = Field(default=9.4, ge=0.0)
+    rotor_frequency: float = Field(default=0.0, ge=0.0)
     # 54.735 degrees = 0.9553166 radians
-    rotor_angle: float = Field(default=0.955316618, ge=0, le=1.5707963268)
+    rotor_angle: float = Field(default=0.955316618, ge=0.0, le=1.5707963268)
     freq_contrib: List[FrequencyEnum] = default_freq_contrib
     transition_query: List[TransitionQuery] = [TransitionQuery()]
 
@@ -100,10 +96,9 @@ class Event(Parseable):
         dict_ = super().json()
         # if "user_variables" in dict_.keys():
         #     dict_.pop("user_variables")
-        if dict_["fraction"] == 1.0:
-            dict_.pop("fraction")
-        if dict_["freq_contrib"] == freq_default:
-            dict_.pop("freq_contrib")
+        if "fraction" in dict_:
+            dict_.pop("fraction") if dict_["fraction"] == 1.0 else None
+        dict_.pop("freq_contrib") if dict_["freq_contrib"] == freq_default else None
         return dict_
 
     def _freq_contrib_flags(self) -> np.ndarray:
@@ -145,3 +140,95 @@ class Event(Parseable):
 
             segment += [selected_transitions]
         return np.vstack(segment)
+
+
+class SpectralEvent(BaseEvent):
+    r"""Base SpectralEvent class defines the spin environment and the transition query
+    for a segment of the transition pathway.
+
+    Attributes
+    ----------
+
+    fraction:
+        The weight of the frequency contribution from the event. The default is 1.
+
+    magnetic_flux_density:
+        The macroscopic magnetic flux density, :math:`H_0`, of the applied external
+        magnetic field during the event in units of T. The default value is ``9.4``.
+
+    rotor_frequency:
+        The sample spinning frequency :math:`\nu_r`, during the event in units of Hz.
+        The default value is ``0``.
+
+    rotor_angle:
+        The angle between the sample rotation axis and the applied external magnetic
+        field vector, :math:`\theta`, during the event in units of rad.
+        The default value is ``0.9553166``, i.e. the magic angle.
+
+    freq_contrib:
+        A list of FrequencyEnum enumeration. The default is all frequency enumerations.
+
+    transition_query:
+        A TransitionQuery or an equivalent dict object listing the queries used in
+        selecting the active transitions during the event. Only the active transitions
+        from this query will contribute to the net frequency.
+    """
+    fraction: float = 1.0
+
+    class Config:
+        validate_assignment = True
+
+
+class ConstantDurationEvent(BaseEvent):
+    r"""Base ConstantDurationEvent class defines the spin environment and the
+    transition query for a segment of the transition pathway. The frequency from this
+    event contribute to the spectrum as amplitudes.
+
+    Attributes
+    ----------
+
+    duration:
+        The duration of the event in units of µs. The default is 0.
+
+    magnetic_flux_density:
+        The macroscopic magnetic flux density, :math:`H_0`, of the applied external
+        magnetic field during the event in units of T. The default value is ``9.4``.
+
+    rotor_frequency:
+        The sample spinning frequency :math:`\nu_r`, during the event in units of Hz.
+        The default value is ``0``.
+
+    rotor_angle:
+        The angle between the sample rotation axis and the applied external magnetic
+        field vector, :math:`\theta`, during the event in units of rad.
+        The default value is ``0.9553166``, i.e. the magic angle.
+
+    freq_contrib:
+        A list of FrequencyEnum enumeration. The default is all frequency enumerations.
+
+    transition_query:
+        A TransitionQuery or an equivalent dict object listing the queries used in
+        selecting the active transitions during the event. Only the active transitions
+        from this query will contribute to the net frequency.
+    """
+    duration: float
+
+    property_unit_types: ClassVar = {
+        "duration": "time",
+        **BaseEvent.property_unit_types,
+    }
+    property_default_units: ClassVar = {
+        "duration": "µs",
+        **BaseEvent.property_default_units,
+    }
+    property_units: Dict = {
+        "duration": "µs",
+        **BaseEvent().property_default_units,
+    }
+
+    class Config:
+        validate_assignment = True
+
+
+class Event(Parseable):
+    event: Union[ConstantDurationEvent, SpectralEvent]

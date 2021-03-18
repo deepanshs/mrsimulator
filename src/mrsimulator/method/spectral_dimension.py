@@ -4,13 +4,15 @@ from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
+from typing import Union
 
 import csdmpy as cp
 import numpy as np
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
-from .event import Event
+from .event import ConstantDurationEvent
+from .event import SpectralEvent
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -57,7 +59,7 @@ class SpectralDimension(Parseable):
     origin_offset: float = None
     label: str = None
     description: str = None
-    events: List[Event] = []
+    events: List[Union[ConstantDurationEvent, SpectralEvent]] = []
 
     property_unit_types: ClassVar = {
         "spectral_width": ["frequency", "dimensionless"],
@@ -92,7 +94,10 @@ class SpectralDimension(Parseable):
         py_dict_copy = deepcopy(py_dict)
         if "events" in py_dict_copy:
             py_dict_copy["events"] = [
-                Event.parse_dict_with_units(e) for e in py_dict_copy["events"]
+                ConstantDurationEvent.parse_dict_with_units(e)
+                if "duration" in e
+                else SpectralEvent.parse_dict_with_units(e)
+                for e in py_dict_copy["events"]
             ]
 
         return super().parse_dict_with_units(py_dict_copy)

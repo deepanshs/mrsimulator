@@ -111,7 +111,7 @@ class TransitionQuery(Base):
             np.arange(len(item)) for item in P_permutated if len(item) != 0
         ]
         if permutation_length == []:
-            return []
+            return np.asarray([])
         # print("perm length", permutation_length)
         cartesian_index = cartesian_product(*permutation_length)
         # print("cartesian_index", cartesian_index)
@@ -196,7 +196,7 @@ class TransitionQuery(Base):
 
         symmetry_expanded = TransitionQuery.cartesian_product_indexing(P_permutated)
 
-        if symmetry_expanded == []:
+        if symmetry_expanded.size == 0:
             return symmetry_expanded
 
         # print("symm", symmetry_expanded)

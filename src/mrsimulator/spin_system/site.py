@@ -164,6 +164,9 @@ class Site(Parseable):
     property_default_units: ClassVar = {"isotropic_chemical_shift": "ppm"}
     property_units: Dict = {"isotropic_chemical_shift": "ppm"}
 
+    class Config:
+        validate_assignment = True
+
     @validator("quadrupolar")
     def spin_must_be_at_least_one(cls, v, values):
         if v is None:
@@ -193,9 +196,6 @@ class Site(Parseable):
     @validator("isotope", always=True)
     def validate_isotope(cls, v, *, values, **kwargs):
         return Isotope(symbol=v)
-
-    class Config:
-        validate_assignment = True
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):

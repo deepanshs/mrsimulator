@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import numpy as np
 from mrsimulator.method.transition_query import TransitionQuery
 
 __author__ = "Maxwell Venetos"
@@ -12,8 +11,11 @@ __email__ = "mvenetos@berkeley.edu"
 
 def check_equal(query, isotopes, channels, res):
     test = TransitionQuery(**query).permutation(isotopes, channels)
-    assert np.allclose(test["P"], res[0])
-    assert np.allclose(test["D"], res[1])
+    for item in res[0]:
+        assert item in test["P"]
+
+    for item in res[1]:
+        assert item in test["D"]
 
 
 def tests_00():

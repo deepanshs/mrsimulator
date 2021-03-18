@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""The Event class."""
 from sys import modules
 from typing import List
 from typing import Union
 
 import csdmpy as cp
 from pydantic import BaseModel
+from pydantic import Extra
 
 from ._base import AbstractOperation
 
@@ -36,6 +36,7 @@ class SignalProcessor(BaseModel):
     class Config:
         validate_assignment = True
         arbitrary_types_allowed = True
+        extra = Extra.forbid
 
     @classmethod
     def parse_dict_with_units(self, py_dict: dict):

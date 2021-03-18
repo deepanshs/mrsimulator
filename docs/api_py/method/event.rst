@@ -1,11 +1,20 @@
 .. _event_api:
 
-Event
------
+Events
+------
 
-.. currentmodule:: mrsimulator
+.. currentmodule:: mrsimulator.method.event
 
-.. autoclass:: Event
+.. autoclass:: SpectralEvent
+    :show-inheritance:
+
+    .. rubric:: Method Documentation
+
+    .. automethod:: parse_dict_with_units
+    .. automethod:: json
+
+
+.. autoclass:: ConstantDurationEvent
     :show-inheritance:
 
     .. rubric:: Method Documentation

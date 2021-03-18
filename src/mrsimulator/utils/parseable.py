@@ -124,7 +124,10 @@ class Parseable(BaseModel):
 
             # check the list objects
             elif isinstance(v, list):
-                temp_dict[k] = get_list(getattr(self, k), v)
+                temp_dict[k] = [
+                    item if not hasattr(item, "json") else item.json()
+                    for item in getattr(self, k)
+                ]
 
             elif v is not None:
                 temp_dict[k] = v
@@ -153,18 +156,6 @@ def enforce_units(value: str, required_type: str, default_unit: str, throw_error
         if throw_error:
             raise e
         return None
-
-
-def get_list(member, obj):
-    lst = []
-    for i, item in enumerate(obj):
-        if isinstance(item, list):
-            lst.append(get_list(member[i], item))
-        elif isinstance(item, (dict, Enum)):
-            lst.append(member[i].json())
-        elif item not in [None, ""]:
-            lst.append(item)
-    return lst
 
 
 def _update_json_dict(prop, json_dict, required_type, default_unit, property_units):

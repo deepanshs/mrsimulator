@@ -2,6 +2,7 @@
 """Base ConfigSimulator class."""
 # from mrsimulator.sandbox import AveragingScheme
 from pydantic import BaseModel
+from pydantic import Extra
 from pydantic import Field
 from typing_extensions import Literal
 
@@ -74,6 +75,7 @@ class ConfigSimulator(BaseModel):
 
     class Config:
         validate_assignment = True
+        extra = Extra.forbid
 
     def get_int_dict(self):
         py_dict = self.dict()

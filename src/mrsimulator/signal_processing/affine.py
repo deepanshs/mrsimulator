@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-"""The Event class."""
 from sys import modules
 from typing import Dict
 from typing import Union
