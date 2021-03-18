@@ -51,6 +51,10 @@ def tests_00():
     res = [[-1, 0, 0, -1]], []
     check_equal(query, ["A", "B", "B", "A"], ["A"], res)
 
+    # P = -1 -1 on A B B A system, channel A
+    res = [[], []]
+    check_equal(query, ["A"], ["A"], res)
+
     # P = -1 -1 on A B B A system, channel A, B
     check_equal(query, ["A", "B", "B", "A"], ["A", "B"], res)
 

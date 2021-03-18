@@ -66,3 +66,9 @@ def test_parse_json():
         str(err.value) == "Error enforcing units for foo: 300 Hz\n"
         "A angle value is required but got a frequency instead"
     )
+
+    bad_json = {"foo": "300 rad", "bar": "300 Pa"}
+
+    with pytest.raises(Exception) as err:
+        ParseableTestClass.parse_dict_with_units(bad_json)
+    assert str(err.value) == "Could not enforce any units on bar"

@@ -25,7 +25,6 @@ from mrsimulator.utils.parseable import Parseable
 from .config import ConfigSimulator
 
 # from mrsimulator import __version__
-
 # from IPython.display import JSON
 
 __author__ = "Deepansh Srivastava"
@@ -154,21 +153,21 @@ class Simulator(Parseable):
     class Config:
         validate_assignment = True
 
-    def __eq__(self, other):
-        if not isinstance(other, Simulator):
-            return False
-        check = [
-            self.name == other.name,
-            self.label == other.label,
-            self.description == other.description,
-            self.spin_systems == other.spin_systems,
-            self.methods == other.methods,
-            self.config == other.config,
-            np.all(self.indexes == other.indexes),
-        ]
-        if np.all(check):
-            return True
-        return False
+    # def __eq__(self, other):
+    #     if not isinstance(other, Simulator):
+    #         return False
+    #     check = [
+    #         self.name == other.name,
+    #         self.label == other.label,
+    #         self.description == other.description,
+    #         self.spin_systems == other.spin_systems,
+    #         self.methods == other.methods,
+    #         self.config == other.config,
+    #         np.all(self.indexes == other.indexes),
+    #     ]
+    #     if np.all(check):
+    #         return True
+    #     return False
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
@@ -290,16 +289,16 @@ class Simulator(Parseable):
             return [Isotope(symbol=item) for item in st]
         return list(st)
 
-    # def json(self, exclude={}):
+    # def json(self, exclude={"methods", "version"}):
     #     """Parse the class object to a JSON compliant python dictionary object, where
     #     the attribute value with physical quantity is expressed as a string with a
     #     value and a unit.
 
-    #     Args:
-    #         bool include_methods: If True, the output dictionary will include the
-    #             serialized method objects. The default value is False.
-    #         bool include_version: If True, add a version key-value pair to the
-    #             serialized output dictionary. The default is False.
+    #     Arguments
+    #     ---------
+    #     exclude:
+    #         A list od arguments to exclude. The default value is
+    #         {"methods", "version"}.
 
     #     Returns:
     #         A Dict object.
@@ -325,17 +324,19 @@ class Simulator(Parseable):
     #                                   'shielding_symmetric': {'eta': 0.1,
     #                                                           'zeta': '2.1 ppm'}}]}]}
     #     """
-    # sim = {}
-    # sim["name"] = self.name
-    # sim["description"] = self.description
-    # sim["label"] = self.label
-    # sim["spin_systems"] = [_.json() for _ in self.spin_systems]
-    # sim["methods"] = [_.json() for _ in self.methods] if include_methods else None
-    # sim["config"] = self.config.dict()
-    # sim["version"] = __version__ if include_version else None
+    #     sim = {}
+    #     sim["name"] = self.name
+    #     sim["description"] = self.description
+    #     sim["label"] = self.label
+    #     sim["spin_systems"] = [_.json() for _ in self.spin_systems]
+    #     sim["methods"] = (
+    #         None if "methods" in exclude else [_.json() for _ in self.methods]
+    #     )
+    #     sim["config"] = self.config.json()
+    #     sim["version"] = None if "version" in exclude else __version__
 
-    # _ = [sim.pop(k) for k in [k for k in sim.keys() if sim[k] in [None, []]]]
-    # return sim
+    #     _ = [sim.pop(k) for k in [k for k in sim.keys() if sim[k] in [None, []]]]
+    #     return sim
 
     def reduced_dict(self, exclude=["property_units", "indexes"]) -> dict:
         """Returns a reduced dictionary representation of the class object by removing

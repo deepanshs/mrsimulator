@@ -34,6 +34,12 @@ def test_read_write_methods():
             mth.simulation._timestamp = ""
             _ = [item.to("ppm", "nmr_frequency_ratio") for item in mth.simulation.x]
 
-        assert sim == sim2, f"Error with {item} parse from Simulator.load()."
+        data1 = sim.methods[0].simulation.copy()
+        sim.methods[0].simulation = None
+        data2 = sim2.methods[0].simulation.copy()
+        sim2.methods[0].simulation = None
+
+        assert data1 == data2, f"data saved and loaded is not equal: method {item}."
+        assert sim == sim2, f"Error in method {item} when using Simulator.load()."
 
     os.remove("test.mrsim")

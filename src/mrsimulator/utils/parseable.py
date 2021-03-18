@@ -100,7 +100,7 @@ class Parseable(BaseModel):
                     ]
                     # If none of the units were enforceable, error! else,
                     # choose the first good one
-                    if not ([val is not None for val in pos_values]):
+                    if not any([val is not None for val in pos_values]):
                         raise Exception(f"Could not enforce any units on {prop}")
 
                     json_dict[prop], property_units[prop] = [
