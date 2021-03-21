@@ -64,7 +64,6 @@ class ST_VAS(BaseNamedMethod2D):
         return {
             "name": name,
             "description": description,
-            "rotor_frequency": 1.0e12,
             "spectral_dimensions": [{"events": events_0}, {"events": events_1}],
             "affine_matrix": [1 / (1 + k), k / (1 + k), 0, 1],
         }

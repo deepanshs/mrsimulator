@@ -66,7 +66,7 @@ class Cosy(BaseNamedMethod2D):
          |0.5, -0.5⟩⟨0.5, 0.5| ⟶ |0.5, -0.5⟩⟨0.5, 0.5|]
     """
 
-    name: str = "COSY"
+    name: str = "Cosy"
     description: str = (
         "Simulate an infinite spinning COrrelation SpectroscopY spectrum."
     )

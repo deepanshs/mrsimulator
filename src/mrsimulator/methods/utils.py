@@ -1,20 +1,45 @@
 # -*- coding: utf-8 -*-
-# from copy import deepcopy
-# from os import path
-# from monty.serialization import loadfn
-# from mrsimulator.method import Method
-# from mrsimulator.method.event import Event
-# from mrsimulator.method.event import SpectralEvent
-# from mrsimulator.method.spectral_dimension import SpectralDimension
-# MODULE_DIR = path.dirname(path.abspath(__file__))
-# METHODS_DATA = loadfn(path.join(MODULE_DIR, "methods_data.json"))
-# __author__ = "Deepansh J. Srivastava"
-# __email__ = "srivastava.89@osu.edu"
-# default_units = {
-#     "magnetic_flux_density": "T",
-#     "rotor_frequency": "Hz",
-#     "rotor_angle": "rad",
-# }
+
+__author__ = "Deepansh J. Srivastava"
+__email__ = "srivastava.89@osu.edu"
+
+
+def check_for_number_of_spectral_dimensions(py_dict, n=1):
+    """If spectral_dimensions in py_dict, extract and then remove from py_dict."""
+
+    if "spectral_dimensions" not in py_dict:
+        py_dict["spectral_dimensions"] = [{} for _ in range(n)]
+        return
+
+    m = len(py_dict["spectral_dimensions"])
+    if m == n:
+        return
+    raise ValueError(f"Method requires exactly {n} spectral dimensions, given {m}.")
+
+
+def parse_spectral_dimensions(py_dict):
+    """Convert transition_query->P->... to transition_query->ch1->P->... if no channel
+    is defined."""
+    _ = [
+        item.update({"ch1": item})
+        for dim in py_dict["spectral_dimensions"]
+        if "events" in dim.keys()
+        for evt in dim["events"]
+        if "transition_query" in evt.keys()
+        for item in evt["transition_query"]
+        if {"ch1", "ch2", "ch3"}.intersection(item.keys()) == set()
+    ]
+
+
+def check_for_atleast_one_events(py_dict):
+    """Update events to [{}] if not present."""
+    _ = [
+        item.update({"events": [{}]})
+        for item in py_dict["spectral_dimensions"]
+        if "events" not in item
+    ]
+
+
 # def prepare_method_structure(template, **kwargs):
 #     keys = kwargs.keys()
 #     n_channels = template["number_of_channels"]

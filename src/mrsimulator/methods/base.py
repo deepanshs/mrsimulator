@@ -6,6 +6,12 @@ from mrsimulator.method import Method
 from mrsimulator.method import SpectralDimension
 from mrsimulator.utils.error import ImmutableEventError
 from mrsimulator.utils.error import NamedMethodError
+from pydantic import Field
+from pydantic import validator
+
+from .utils import check_for_atleast_one_events
+from .utils import check_for_number_of_spectral_dimensions
+from .utils import parse_spectral_dimensions
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -26,6 +32,18 @@ class BaseMethod(Method):
         if isinstance(kwargs["spectral_dimensions"][0], dict):
             parse_spectral_dimensions(kwargs)
             check_for_atleast_one_events(kwargs)
+
+    @validator("rotor_frequency", pre=True, always=True)
+    def check_rotor_frequency(cls, v, *, values, **kwargs):
+        a = (
+            True if "name" not in values else values["name"] == "SSB2D",
+            v in ["1000000000000.0 Hz", 1.0e12],
+            cls.ndim == 1,
+        )
+        if any(a):
+            return v
+        e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
+        raise ValueError(e)
 
 
 class Method1D(BaseMethod):
@@ -54,10 +72,6 @@ class Method1D(BaseMethod):
     ndim: ClassVar[int] = 1
     name: str = "Method1D"
     description: str = "A generic one-dimensional spectrum method."
-
-    def __init__(self, **kwargs):
-        # kwargs_copy = deepcopy(kwargs)
-        super().__init__(**kwargs)
 
 
 class Method2D(BaseMethod):
@@ -102,22 +116,7 @@ class Method2D(BaseMethod):
     ndim: ClassVar[int] = 2
     name: str = "Method2D"
     description: str = "A generic two-dimensional correlation spectrum method."
-    rotor_frequency: float = 1.0e12
-
-    def __init__(self, **kwargs):
-        kwargs_copy = deepcopy(kwargs)
-        # super().check(kwargs_copy, self.__class__.ndim)
-
-        # des = "A generic two-dimensional correlation spectrum method."
-        # if "name" not in kwargs_copy:
-        #     kwargs_copy["name"] = "Method2D"
-        # if "description" not in kwargs_copy:
-        #     kwargs_copy["description"] = des
-        check_rotor_frequency(kwargs_copy, self.__class__.__name__)
-        # if "rotor_frequency" not in kwargs_copy:
-        #     kwargs_copy["rotor_frequency"] = 1.0e12
-
-        super().__init__(**kwargs_copy)
+    rotor_frequency: float = Field(default=1.0e12, ge=0.0)
 
 
 class BaseNamedMethod(BaseMethod):
@@ -126,12 +125,14 @@ class BaseNamedMethod(BaseMethod):
     def __init__(self, **kwargs):
         kwargs_copy = deepcopy(kwargs)
         super().check(kwargs_copy, self.__class__.ndim)
-        cls_name = self.__class__.__name__
         self.__class__.check_method_compatibility(kwargs_copy)
-        check_for_method_name(kwargs_copy, cls_name)
-        if self.__class__.ndim > 1:
-            check_rotor_frequency(kwargs_copy, cls_name)
         super().__init__(**kwargs_copy)
+
+    @validator("name", pre=True, always=True)
+    def check_for_method_name(cls, v, *, values, **kwargs):
+        if v == cls.__name__:
+            return v
+        raise NamedMethodError(v, cls.__name__)
 
     @classmethod
     def update(cls, **kwargs):
@@ -203,6 +204,7 @@ class BaseNamedMethod2D(BaseNamedMethod):
     """Base class for named one-dimensional simulation simulation method."""
 
     ndim: ClassVar[int] = 2
+    rotor_frequency: float = Field(default=1.0e12, ge=0.0)
 
 
 class BlochDecaySpectrum(BaseNamedMethod1D):
@@ -237,67 +239,3 @@ class BlochDecayCTSpectrum(BaseNamedMethod1D):
 
 class BlochDecayCentralTransitionSpectrum(BlochDecayCTSpectrum):
     name: str = "BlochDecayCentralTransitionSpectrum"
-    pass
-
-
-def check_for_number_of_spectral_dimensions(py_dict, n=1):
-    """If spectral_dimensions in py_dict, extract and then remove from py_dict."""
-
-    if "spectral_dimensions" not in py_dict:
-        py_dict["spectral_dimensions"] = [{} for _ in range(n)]
-        return
-
-    m = len(py_dict["spectral_dimensions"])
-    if m == n:
-        return
-    raise ValueError(f"Method requires exactly {n} spectral dimensions, given {m}.")
-
-
-def parse_spectral_dimensions(py_dict):
-    for dim in py_dict["spectral_dimensions"]:
-        if "events" in dim.keys():
-            for evt in dim["events"]:
-                parse_events(evt)
-    # return spectral_dimensions
-
-
-def parse_events(evt):
-    if "transition_query" not in evt.keys():
-        return
-
-    t_query = evt["transition_query"]
-    for item in t_query:
-        keys = item.keys()
-        if "ch1" not in keys and "ch2" not in keys and "ch3" not in keys:
-            item["ch1"] = item
-
-
-def check_for_atleast_one_events(py_dict):
-    for item in py_dict["spectral_dimensions"]:
-        if "events" not in item:
-            item["events"] = [{}]
-
-
-def check_for_method_name(py_dict, cls_name):
-    if "name" not in py_dict:
-        py_dict["name"] = cls_name
-        return
-    if py_dict["name"] == cls_name:
-        return
-    name = py_dict["name"]
-    raise NamedMethodError(
-        f"`name={name} != classname={cls_name}`. Use the class with the same name as "
-        "the attribute name or use `Method1D` or `Method2D` class."
-    )
-
-
-def check_rotor_frequency(kwargs, cls_name):
-    if "name" in kwargs:
-        if kwargs["name"] == "SSB2D":
-            return
-    if "rotor_frequency" not in kwargs:
-        return
-    if kwargs["rotor_frequency"] in ["1000000000000.0 Hz", 1.0e12]:
-        return
-    e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
-    raise ValueError(e)
