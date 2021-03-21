@@ -212,6 +212,10 @@ def _post_sim_LMFIT_params(post_sim):
     Returns:
         Parameters object
     """
+    if not isinstance(post_sim, sp.SignalProcessor):
+        raise ValueError(
+            f"Expecting a `SignalProcessor` object, found {type(post_sim).__name__}."
+        )
     params = Parameters()
 
     for i, operation in enumerate(post_sim.operations):
@@ -298,14 +302,8 @@ def make_LMFIT_params(sim, post_sim=None, exclude_key=None):
     if post_sim is None:
         return params
 
-    if not isinstance(post_sim, sp.SignalProcessor):
-        raise ValueError(
-            f"Expecting a `SignalProcessor` object, found {type(post_sim).__name__}."
-        )
     temp_params = _post_sim_LMFIT_params(post_sim)
-    for item in temp_params:
-        params.add(name=item, value=temp_params[item].value)
-    # params.add_many(temp_params)
+    _ = [params.add(name=item, value=temp_params[item].value) for item in temp_params]
 
     return params
 

@@ -5,7 +5,7 @@ from typing import Optional
 
 import numpy as np
 from mrsimulator.transition import Transition
-from mrsimulator.utils.parseable import Base
+from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
 from .utils import cartesian_product
@@ -20,7 +20,7 @@ ON_FAIL_MESSAGE = (
 )
 
 
-class SymmetryQuery(Base):
+class SymmetryQuery(Parseable):
     """Base SymmetryQuery class.
 
     Attributes
@@ -33,7 +33,7 @@ class SymmetryQuery(Base):
         Example
         -------
 
-        >>> method = Method2D()
+        >>> method = Method2D(channels=['1H'])
         >>> method.spectral_dimensions[0].events[0].transition_query[0].ch1.P = [-1]
 
     D:
@@ -80,7 +80,7 @@ class SymmetryQuery(Base):
         return list(set(permutations(query)))
 
 
-class TransitionQuery(Base):
+class TransitionQuery(Parseable):
     """Base TransitionQuery class.
 
     Attributes

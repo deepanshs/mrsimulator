@@ -89,6 +89,9 @@ Inner satellite variable-angle spinning method
 ''''''''''''''''''''''''''''''''''''''''''''''
 
 .. autoclass:: ST1_VAS
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel
 
 .. _st2_vas_ref:
 
@@ -96,3 +99,6 @@ Second to inner satellite variable-angle spinning method
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 .. autoclass:: ST2_VAS
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel

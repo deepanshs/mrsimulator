@@ -7,8 +7,5 @@ TransitionPathway
 
 .. autoclass:: TransitionPathway
     :show-inheritance:
-
-    .. rubric:: Method Documentation
-
-    .. automethod:: tolist
-    .. automethod:: json
+    :members:
+    :inherited-members: BaseModel

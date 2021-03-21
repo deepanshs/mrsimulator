@@ -47,7 +47,7 @@ class FrequencyEnum(str, Enum):
     Quad2_2 = freq_list_all[4]
     Quad2_4 = freq_list_all[5]
 
-    def json(self) -> dict:
+    def json(self, **kwargs) -> dict:
         """Parse the class object to a JSON compliant python dictionary object."""
         return self.value
 

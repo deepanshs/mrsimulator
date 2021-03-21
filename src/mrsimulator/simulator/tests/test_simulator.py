@@ -10,7 +10,6 @@ from mrsimulator import Coupling
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.simulator import __CPU_count__
@@ -58,10 +57,9 @@ def test_equality():
     }
     assert c.json() == result
 
-    assert c.reduced_dict() == {
+    assert c.json(unit=False) == {
         "label": "test",
-        "spin_systems": [{"abundance": 100, "sites": []}],
-        "methods": [],
+        "spin_systems": [{}],
         "config": {
             "number_of_sidebands": 64,
             "integration_volume": "octant",
@@ -105,12 +103,12 @@ def test_get_isotopes():
 def test_simulator_1():
     sim = Simulator()
     sim.spin_systems = [SpinSystem(sites=[Site(isotope="1H"), Site(isotope="23Na")])]
-    sim.methods = [BlochDecaySpectrum()]
+    sim.methods = [BlochDecaySpectrum(channels=["1H"])]
     sim.name = "test"
     sim.label = "test0"
     sim.description = "testing-testing 1.2.3"
 
-    red_dict = sim.reduced_dict()
+    red_dict = sim.json(unit=False)
     _ = [item.pop("description") for item in red_dict["methods"]]
 
     assert red_dict == {
@@ -120,30 +118,22 @@ def test_simulator_1():
         "spin_systems": [
             {
                 "sites": [
-                    {"isotope": "1H", "isotropic_chemical_shift": 0},
-                    {"isotope": "23Na", "isotropic_chemical_shift": 0},
+                    {"isotope": "1H", "isotropic_chemical_shift": 0.0},
+                    {"isotope": "23Na", "isotropic_chemical_shift": 0.0},
                 ],
-                "abundance": 100,
             }
         ],
         "methods": [
             {
                 "channels": ["1H"],
                 "name": "BlochDecaySpectrum",
+                "magnetic_flux_density": 9.4,
+                "rotor_angle": 0.955316618,
+                "rotor_frequency": 0.0,
                 "spectral_dimensions": [
                     {
                         "count": 1024,
-                        "events": [
-                            {
-                                "fraction": 1.0,
-                                "freq_contrib": freq_default,
-                                "magnetic_flux_density": 9.4,
-                                "rotor_angle": 0.955316618,
-                                "rotor_frequency": 0.0,
-                                "transition_query": [{"ch1": {"P": [-1]}}],
-                            }
-                        ],
-                        "reference_offset": 0.0,
+                        "events": [{"transition_query": [{"ch1": {"P": [-1]}}]}],
                         "spectral_width": 25000.0,
                     }
                 ],
@@ -237,7 +227,7 @@ def test_simulator_2():
     ]
     sim.methods = [
         BlochDecaySpectrum(
-            channel=["1H"],
+            channels=["1H"],
             spectral_dimensions=[{"count": 10}],
             experiment=cp.as_csdm(np.arange(10)),
         )

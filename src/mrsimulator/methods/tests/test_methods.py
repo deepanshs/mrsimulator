@@ -35,19 +35,19 @@ sample_test_output = {
 
 
 def test_more_spectral_dimensions():
-    error = "The method allows 1 spectral dimension"
+    error = "Method requires exactly 1 spectral dimensions, given 2."
     with pytest.raises(ValueError, match=f".*{error}.*"):
         BlochDecaySpectrum(spectral_dimensions=[{}, {}])
 
 
-def test_01():
-    error = "method requires exactly 1 channel"
-    with pytest.raises(ValueError, match=f".*{error}.*"):
-        BlochDecaySpectrum(channels=["1H", "29Si"])
+# def test_01():
+#     error = "method requires exactly 1 channel"
+#     with pytest.raises(ValueError, match=f".*{error}.*"):
+#         BlochDecaySpectrum(channels=["1H", "29Si"])
 
 
 def test_02():
-    e = "`rotor_frequency` value cannot be modified for Method2D method."
+    e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
     with pytest.raises(ValueError, match=f".*{e}.*"):
         Method2D(channels=["87Rb"], rotor_frequency=10, spectral_dimensions=[{}, {}])
 
@@ -64,7 +64,7 @@ def test_method_1D():
     with pytest.raises(ValueError, match=f".*{error}.*"):
         Method1D(spectral_dimensions=[{}], affine_matrix=[1, 2, 3, 4])
 
-    error = r"The method allows 1 spectral dimension\(s\), 2 given."
+    error = "Method requires exactly 1 spectral dimensions, given 2."
     with pytest.raises(ValueError, match=f".*{error}.*"):
         Method1D(spectral_dimensions=[{}, {}])
 
@@ -139,15 +139,13 @@ def test_04():
     mth = Method2D(
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
+        rotor_angle=70.12 * np.pi / 180,
         spectral_dimensions=[
             {
                 "count": 512,
                 "spectral_width": 5e4,  # in Hz
                 "events": [
-                    {
-                        "rotor_angle": 70.12 * np.pi / 180,
-                        "transition_query": [{"P": [-1], "D": [0]}],
-                    },
+                    {"transition_query": [{"P": [-1], "D": [0]}]},
                 ],
             },
             {
@@ -170,11 +168,12 @@ def test_04():
 
 def test_BlochDecaySpectrum():
     # test-1
-    m1 = BlochDecaySpectrum()
+    m1 = BlochDecaySpectrum(channels=["1H"])
 
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "25000.0 Hz",
+        "events": [{"transition_query": [{"ch1": {"P": [-1]}}]}],
     }
 
     should_be = {
@@ -204,6 +203,7 @@ def test_BlochDecaySpectrum():
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "25000.0 Hz",
+        "events": [{"transition_query": [{"ch1": {"P": [-1]}}]}],
     }
 
     should_be = {
@@ -227,13 +227,13 @@ def test_05():
     mth = Method2D(
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
+        rotor_angle=0,
         spectral_dimensions=[
             {
                 "count": 512,
                 "spectral_width": 5e6,  # in Hz
                 "events": [
                     {
-                        "rotor_angle": 0 * np.pi / 180,
                         "transition_query": [
                             {"P": [-1], "D": [2]},
                             {"P": [-1], "D": [-2]},
@@ -285,6 +285,7 @@ def test_methods():
     das = Method2D(
         channels=["87Rb"],
         magnetic_flux_density=4.2,  # in T
+        rotor_angle=54.735 * 3.14159 / 180,  # in rads
         spectral_dimensions=[
             {
                 "count": 256,
@@ -308,12 +309,7 @@ def test_methods():
                 "spectral_width": 3e4,  # in Hz
                 "reference_offset": -7e3,  # in Hz
                 "label": "MAS dimension",
-                "events": [
-                    {
-                        "rotor_angle": 54.735 * 3.14159 / 180,  # in rads
-                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
-                    }
-                ],
+                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
             },
         ],
     )

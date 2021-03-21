@@ -15,7 +15,7 @@ def test_freq_contrib():
     event = BaseEvent(freq_contrib=["Quad2_4", "Quad2_0"])
     assert event.json()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
     assert event.dict()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
-    assert event.reduced_dict()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
+    assert event.json(unit=False)["freq_contrib"] == ["Quad2_4", "Quad2_0"]
     assert np.all(event._freq_contrib_flags() == [0, 0, 0, 1, 0, 1])
 
     event = BaseEvent(freq_contrib=["Shielding1_2"])
@@ -23,7 +23,6 @@ def test_freq_contrib():
 
     event = BaseEvent()
     assert event.dict()["freq_contrib"] == freq_default
-    assert event.reduced_dict()["freq_contrib"] == freq_default
     assert np.all(event._freq_contrib_flags() == [1, 1, 1, 1, 1, 1])
 
 
@@ -78,9 +77,9 @@ def basic_spectral_event_tests(the_event, type_="spectral"):
         magnetic_flux_density="11.7 T",
         rotor_frequency="25000.0 Hz",
         rotor_angle=f"{angle} rad",
+        transition_query=[{"ch1": {"P": [-1]}}],
     )
     should_be = {
-        "freq_contrib": freq_default,
         "magnetic_flux_density": 11.7,
         "rotor_frequency": 25000.0,
         "rotor_angle": angle,
@@ -89,16 +88,16 @@ def basic_spectral_event_tests(the_event, type_="spectral"):
     if type_ == "spectral":
         should_be_units = dict(fraction=1.2, **should_be_units)
         assert the_event.json() == should_be_units
-        assert the_event.reduced_dict() == {
+        assert the_event.json(unit=False) == {
             "fraction": 1.2,
             **should_be,
-            "transition_query": [{"ch1": {"P": [-1.0]}}],
+            "transition_query": [{"ch1": {"P": [-1]}}],
         }
 
     if type_ == "constant_duration":
         should_be_units = dict(duration="1.2 µs", **should_be_units)
         assert the_event.json() == should_be_units
-        assert the_event.reduced_dict() == {
+        assert the_event.json(unit=False) == {
             "duration": 1.2,
             **should_be,
             "transition_query": [{"ch1": {"P": [-1.0]}}],

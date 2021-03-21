@@ -7,7 +7,5 @@ ConfigSimulator
 
 .. autoclass:: ConfigSimulator
     :show-inheritance:
-
-    .. rubric:: Method Documentation
-
-    .. automethod:: get_orientations_count
+    :members:
+    :inherited-members: BaseModel

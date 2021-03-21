@@ -53,7 +53,9 @@ def basic_method_tests(the_method):
     the_method2.affine_matrix = [1]
     assert the_method2 != the_method
 
-    # to_dict_with_unit()
+    # json()
+
+    evt = [{"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}]
     serialize = {
         "name": "test worked",
         "description": "test worked again",
@@ -65,22 +67,27 @@ def basic_method_tests(the_method):
             {
                 "count": 1024,
                 "spectral_width": "100.0 Hz",
-                "events": [
-                    {
-                        "fraction": 0.5,
-                    }
-                ],
+                "events": evt,
             }
         ],
     }
     assert the_method.json() == serialize
 
-    # reduced_dict()
-    assert the_method.reduced_dict() == {
+    # json(unit=False)
+    assert the_method.json(unit=False) == {
         "name": "test worked",
         "description": "test worked again",
         "channels": ["1H", "17O"],
-        "spectral_dimensions": [dimension.reduced_dict()],
+        "magnetic_flux_density": 9.6,
+        "rotor_frequency": 1000.0,
+        "rotor_angle": 0.9553059660790962,
+        "spectral_dimensions": [
+            {
+                "count": 1024,
+                "spectral_width": 100.0,
+                "events": evt,
+            }
+        ],
     }
 
 
@@ -91,9 +98,6 @@ def test_method():
     event_dictionary = {
         "fraction": 0.5,
         "freq_contrib": freq_default,
-        "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1 kHz",
-        "rotor_angle": "54.735 deg",
     }
     dimension_dictionary = {
         "count": 1024,
@@ -105,6 +109,9 @@ def test_method():
         "name": "test-1-d",
         "description": "Test-1",
         "channels": ["29Si"],
+        "magnetic_flux_density": "9.6 T",
+        "rotor_frequency": "1 kHz",
+        "rotor_angle": "54.735 deg",
         "spectral_dimensions": [dimension_dictionary],
     }
     the_method = Method.parse_dict_with_units(method_dictionary)
@@ -116,9 +123,6 @@ def test_method():
     event_dictionary = {
         "fraction": 0.5,
         "freq_contrib": freq_default,
-        "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1 kHz",
-        "rotor_angle": "54.735 deg",
     }
     dimension_dictionary = {
         "count": 1024,
@@ -130,6 +134,9 @@ def test_method():
         "name": "test-1-d",
         "description": "Test-1",
         "channels": ["29Si"],
+        "magnetic_flux_density": "9.6 T",
+        "rotor_frequency": "1 kHz",
+        "rotor_angle": "54.735 deg",
         "spectral_dimensions": [dimension_dictionary, dimension_dictionary],
     }
     the_method = Method.parse_dict_with_units(method_dictionary)
@@ -160,10 +167,8 @@ def test_method():
     assert isinstance(the_method.simulation, cp.CSDM)
     assert the_method.simulation == csdm_data
 
-    # to_dict_with_unit()
-    event_dictionary_ = {
-        "fraction": 0.5,
-    }
+    # json()
+    event_dictionary_ = {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "100.0 Hz",
@@ -184,30 +189,25 @@ def test_method():
     serialize["simulation"]["csdm"].pop("timestamp")
     assert serialize == method_dictionary_
 
-    # reduced_dict()
-    event_dictionary_ = {
-        "fraction": 0.5,
-        "freq_contrib": freq_default,
-        "magnetic_flux_density": 9.6,
-        "rotor_frequency": 1000.0,
-        "rotor_angle": 0.9553059660790962,
-        "transition_query": [{"ch1": {"P": [-1.0]}}],
-    }
+    # json(unit=False)
+    event_dictionary_ = {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": 100.0,
-        "reference_offset": 0.0,
         "events": [event_dictionary_, event_dictionary_],
     }
     method_dictionary_ = {
         "name": "test-1-d",
         "description": "Test-1",
         "channels": ["29Si"],
+        "magnetic_flux_density": 9.6,
+        "rotor_frequency": 1000.0,
+        "rotor_angle": 0.9553059660790962,
         "spectral_dimensions": [dimension_dictionary_, dimension_dictionary_],
         "simulation": csdm_data.to_dict(),
         "experiment": csdm_data.to_dict(),
     }
-    serialize = the_method.reduced_dict()
+    serialize = the_method.json(unit=False)
     serialize["simulation"]["csdm"].pop("timestamp")
     assert serialize == method_dictionary_
 

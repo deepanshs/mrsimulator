@@ -4,7 +4,10 @@ Bloch Decay Spectrum method
 
 .. currentmodule:: mrsimulator.methods
 
-.. autofunction:: BlochDecaySpectrum
+.. autoclass:: BlochDecaySpectrum
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel
 
 **Example**
 

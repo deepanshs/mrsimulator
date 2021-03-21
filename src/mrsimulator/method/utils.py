@@ -10,21 +10,17 @@ __email__ = ["srivastava.89@osu.edu", "maxvenetos@gmail.com"]
 def expand_spectral_dimension_object(py_dict):
     glb = {}
     list_g = ["magnetic_flux_density", "rotor_frequency", "rotor_angle"]
-    for item in list_g:
-        if item in py_dict.keys():
-            glb[item] = py_dict[item]
+    _ = [glb.update({item: py_dict[item]}) for item in list_g if item in py_dict.keys()]
     glb_keys = glb.keys()
 
     for dim in py_dict["spectral_dimensions"]:
-        if "events" not in dim:
-            dim["events"] = [{}]
-        for ev in dim["events"]:
-            intersect = set(ev.keys()).intersection(set(glb_keys))
-            for k in glb:
-                if k not in intersect:
-                    ev[k] = glb[k]
-
-    _ = [py_dict.pop(item) for item in glb_keys]
+        _ = None if "events" in dim else dim.update({"events": [{}]})
+        _ = [
+            ev.update({k: glb[k]})
+            for ev in dim["events"]
+            for k in glb
+            if k not in set(ev.keys()).intersection(set(glb_keys))
+        ]
 
     return py_dict
 

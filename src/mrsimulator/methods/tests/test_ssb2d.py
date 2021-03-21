@@ -13,22 +13,10 @@ __email__ = "srivastava.89@osu.edu"
 def test_SSB_rotor_freq():
     e = "`rotor_frequency` cannot be zero for SSB2D method."
     with pytest.raises(ValueError, match=f".*{e}.*"):
-        SSB2D(spectral_dimensions=[{}, {}])
+        SSB2D(channels=["1H"], spectral_dimensions=[{}, {}])
 
     with pytest.raises(ValueError, match=f".*{e}.*"):
-        SSB2D(rotor_frequency=0, spectral_dimensions=[{}, {}])
-
-
-def test_spectral_dimension_count():
-    e = "Method requires exactly 2 spectral dimensions, given 1."
-    with pytest.raises(ValueError, match=f".*{e}.*"):
-        SSB2D(rotor_frequency=1e4, spectral_dimensions=[{}])
-
-
-def test_SSB_setting_events():
-    e = "`events` value cannot be modified for SSB2D method."
-    with pytest.raises(ValueError, match=f".*{e}.*"):
-        SSB2D(rotor_frequency=1e4, spectral_dimensions=[{"events": [{}]}, {}])
+        SSB2D(channels=["1H"], rotor_frequency=0, spectral_dimensions=[{}, {}])
 
 
 def test_SSB_affine():
@@ -72,10 +60,16 @@ def test_SSB_general():
             {
                 "count": 1024,
                 "spectral_width": "50000.0 Hz",
+                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
             },
             {
                 "count": 1024,
-                "events": [{"rotor_frequency": "1000000000000.0 Hz"}],
+                "events": [
+                    {
+                        "rotor_frequency": "1000000000000.0 Hz",
+                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                    }
+                ],
                 "spectral_width": "50000.0 Hz",
             },
         ],

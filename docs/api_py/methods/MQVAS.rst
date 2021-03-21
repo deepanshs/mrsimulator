@@ -99,6 +99,9 @@ Triple-quantum variable-angle spinning method
 '''''''''''''''''''''''''''''''''''''''''''''
 
 .. autoclass:: ThreeQ_VAS
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel
 
 .. _fiveQ_vas_ref:
 
@@ -106,6 +109,9 @@ Five-quantum variable-angle spinning method
 '''''''''''''''''''''''''''''''''''''''''''
 
 .. autoclass:: FiveQ_VAS
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel
 
 .. _sevenQ_vas_ref:
 
@@ -113,3 +119,6 @@ Seven-quantum variable-angle spinning method
 ''''''''''''''''''''''''''''''''''''''''''''
 
 .. autoclass:: SevenQ_VAS
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel

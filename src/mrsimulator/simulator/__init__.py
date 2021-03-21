@@ -18,7 +18,6 @@ from mrsimulator.method import Method
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.utils import flatten_dict
 from mrsimulator.utils.abstract_list import AbstractList
-from mrsimulator.utils.extra import _reduce_dict
 from mrsimulator.utils.importer import import_json
 from mrsimulator.utils.parseable import Parseable
 
@@ -289,66 +288,6 @@ class Simulator(Parseable):
             return [Isotope(symbol=item) for item in st]
         return list(st)
 
-    # def json(self, exclude={"methods", "version"}):
-    #     """Parse the class object to a JSON compliant python dictionary object, where
-    #     the attribute value with physical quantity is expressed as a string with a
-    #     value and a unit.
-
-    #     Arguments
-    #     ---------
-    #     exclude:
-    #         A list od arguments to exclude. The default value is
-    #         {"methods", "version"}.
-
-    #     Returns:
-    #         A Dict object.
-
-    #     Example
-    #     -------
-
-    #     >>> pprint(sim.json())
-    #     {'config': {'decompose_spectrum': 'none',
-    #                 'integration_density': 70,
-    #                 'integration_volume': 'octant',
-    #                 'number_of_sidebands': 64},
-    #      'spin_systems': [{'sites': [{'isotope': '13C',
-    #                                   'isotropic_chemical_shift': '20.0 ppm',
-    #                                   'shielding_symmetric': {'eta': 0.5,
-    #                                                           'zeta': '10.0 ppm'}}]},
-    #                       {'sites': [{'isotope': '1H',
-    #                                   'isotropic_chemical_shift': '-4.0 ppm',
-    #                                   'shielding_symmetric': {'eta': 0.1,
-    #                                                           'zeta': '2.1 ppm'}}]},
-    #                       {'sites': [{'isotope': '27Al',
-    #                                   'isotropic_chemical_shift': '120.0 ppm',
-    #                                   'shielding_symmetric': {'eta': 0.1,
-    #                                                           'zeta': '2.1 ppm'}}]}]}
-    #     """
-    #     sim = {}
-    #     sim["name"] = self.name
-    #     sim["description"] = self.description
-    #     sim["label"] = self.label
-    #     sim["spin_systems"] = [_.json() for _ in self.spin_systems]
-    #     sim["methods"] = (
-    #         None if "methods" in exclude else [_.json() for _ in self.methods]
-    #     )
-    #     sim["config"] = self.config.json()
-    #     sim["version"] = None if "version" in exclude else __version__
-
-    #     _ = [sim.pop(k) for k in [k for k in sim.keys() if sim[k] in [None, []]]]
-    #     return sim
-
-    def reduced_dict(self, exclude=["property_units", "indexes"]) -> dict:
-        """Returns a reduced dictionary representation of the class object by removing
-        all key-value pair corresponding to keys listed in the `exclude` argument, and
-        keys with value as None.
-
-        Args:
-            list exclude: A list of keys to exclude from the dictionary.
-        Return: A dict.
-        """
-        return _reduce_dict(self.dict(), exclude)
-
     # def pretty(self):
     #     return JSON(self.json(include_methods=True, include_version=True))
 
@@ -494,7 +433,7 @@ class Simulator(Parseable):
         if not with_units:
             with open(filename, "w", encoding="utf8") as outfile:
                 json.dump(
-                    self.reduced_dict(),
+                    self.json(unit=False),
                     outfile,
                     ensure_ascii=False,
                     sort_keys=False,

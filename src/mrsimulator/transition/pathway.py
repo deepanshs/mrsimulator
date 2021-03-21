@@ -106,7 +106,7 @@ class TransitionPathway(TransitionList):
     def __repr__(self):
         return " ⟶ ".join([repr(item) for item in self._list])
 
-    def json(self) -> dict:
+    def json(self, **kwargs) -> dict:
         """Parse the class object to a JSON compliant python dictionary object.
 
         Example:

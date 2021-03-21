@@ -18,10 +18,10 @@ class SignalProcessor(Parseable):
     Signal processing class to apply a series of operations to the dependent variables
     of the simulation dataset.
 
-    Attributes
-    ----------
+    Arguments
+    ---------
 
-    operations: List
+    operations:
         A list of operations.
 
     Examples
@@ -72,7 +72,7 @@ class SignalProcessor(Parseable):
 
 
 class Scale(Operations):
-    """
+    r"""
     Scale the amplitudes of all dependent variables from a CSDM object.
 
     .. math::

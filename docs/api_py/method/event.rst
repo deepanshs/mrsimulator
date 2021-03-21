@@ -7,17 +7,11 @@ Events
 
 .. autoclass:: SpectralEvent
     :show-inheritance:
-
-    .. rubric:: Method Documentation
-
-    .. automethod:: parse_dict_with_units
-    .. automethod:: json
+    :members:
+    :inherited-members: BaseModel
 
 
 .. autoclass:: ConstantDurationEvent
     :show-inheritance:
-
-    .. rubric:: Method Documentation
-
-    .. automethod:: parse_dict_with_units
-    .. automethod:: json
+    :members:
+    :inherited-members: BaseModel

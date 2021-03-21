@@ -13,9 +13,9 @@ from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import Transition
 from mrsimulator.transition import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
+from pydantic import Field
 from pydantic import validator
 
-from .event import BaseEvent
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
 from .utils import expand_spectral_dimension_object
@@ -33,7 +33,7 @@ class Method(Parseable):
     Attributes
     ----------
 
-    channels: List[str] (optional).
+    channels:
         The value is a list of isotope symbols over which the given method applies.
         An isotope symbol is given as a string with the atomic number followed by its
         atomic symbol, for example, '1H', '13C', and '33S'. The default is an empty
@@ -45,10 +45,10 @@ class Method(Parseable):
         Example
         -------
 
-        >>> bloch = Method()
+        >>> bloch = Method(channels=['1H'])
         >>> bloch.channels = ['1H']
 
-    spectral_dimensions: List[:ref:`spectral_dim_api`] or List[dict] (optional).
+    spectral_dimensions:
         The number of spectral dimensions depends on the given method. For example, a
         `BlochDecaySpectrum` method is a one-dimensional method and thus requires a
         single spectral dimension. The default is a single default
@@ -57,17 +57,17 @@ class Method(Parseable):
         Example
         -------
 
-        >>> bloch = Method()
+        >>> bloch = Method(channels=['1H'])
         >>> bloch.spectral_dimensions = [SpectralDimension(count=8, spectral_width=50)]
         >>> # or equivalently
         >>> bloch.spectral_dimensions = [{'count': 8, 'spectral_width': 50}]
 
-    simulation: CSDM or ndarray (N/A).
+    simulation:
         An object holding the result of the simulation. The initial value of this
         attribute is None. A value is assigned to this attribute when you run the
         simulation using the :meth:`~mrsimulator.Simulator.run` method.
 
-    experiment: CSDM or ndarray (optional).
+    experiment:
         An object holding the experimental measurement for the given method, if
         available. The default value is None.
 
@@ -76,7 +76,7 @@ class Method(Parseable):
 
         >>> bloch.experiment = my_data # doctest: +SKIP
 
-    name: str (optional).
+    name:
         Name or id of the method. The default value is None.
 
         Example
@@ -86,7 +86,7 @@ class Method(Parseable):
         >>> bloch.name
         'BlochDecaySpectrum'
 
-    label: str (optional).
+    label:
         Label for the method. The default value is None.
 
         Example
@@ -96,7 +96,7 @@ class Method(Parseable):
         >>> bloch.label
         'One pulse acquired spectrum'
 
-    description: str (optional).
+    description:
         A description of the method. The default value is None.
 
         Example
@@ -106,7 +106,7 @@ class Method(Parseable):
         >>> bloch.description
         'Huh!'
 
-    affine_matrix: np.ndarray or 2D list (optional)
+    affine_matrix:
         A (`n` x `n`) affine transformation matrix, where `n` is the number of
         spectral_dimensions. If provided, the corresponding affine transformation is
         applied to the computed frequencies. The default is None, i.e., no
@@ -115,7 +115,7 @@ class Method(Parseable):
         Example
         -------
 
-        >>> method = Method2D()
+        >>> method = Method2D(channels=['1H'])
         >>> method.affine_matrix = [[1, -1], [0, 1]]
         >>> print(method.affine_matrix)
         [[1, -1], [0, 1]]
@@ -123,11 +123,21 @@ class Method(Parseable):
     name: str = None
     label: str = None
     description: str = None
-    channels: List[str] = []
+    channels: List[str]
     spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
     affine_matrix: List = None
     simulation: Union[cp.CSDM, np.ndarray] = None
     experiment: Union[cp.CSDM, np.ndarray] = None
+
+    magnetic_flux_density: float = Field(default=9.4, ge=0.0)
+    rotor_frequency: float = Field(default=0.0, ge=0.0)
+    rotor_angle: float = Field(default=0.955316618, ge=0.0, le=1.5707963268)
+
+    property_unit_types: ClassVar = {
+        "magnetic_flux_density": "magnetic flux density",
+        "rotor_frequency": "frequency",
+        "rotor_angle": "angle",
+    }
 
     property_default_units: ClassVar = {
         "magnetic_flux_density": "T",
@@ -140,6 +150,7 @@ class Method(Parseable):
         "rotor_angle": "rad",
         "rotor_frequency": "Hz",
     }
+    test_vars: ClassVar = {"channels": ["1H"]}
 
     class Config:
         validate_assignment = True
@@ -148,6 +159,16 @@ class Method(Parseable):
     @validator("channels", always=True)
     def validate_channels(cls, v, *, values, **kwargs):
         return [Isotope(symbol=_) for _ in v]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        _ = [
+            setattr(ev, item, getattr(self, item))
+            for sd in self.spectral_dimensions
+            for ev in sd.events
+            for item in self.property_units.keys()
+            if getattr(ev, item) is None
+        ]
 
     @staticmethod
     def __check_csdm__(data):
@@ -231,43 +252,40 @@ class Method(Parseable):
             mth["experiment"] = self.experiment.to_dict()
         return mth
 
-    def json(self) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object, where
-        the attribute value with physical quantity is expressed as a string with a
-        value and a unit.
+    def json(self, unit=True) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object.
 
-        Returns:
-            A python dict object.
+        Args:
+            units: If true, the attribute value is a physical quantity expressed as a
+                string with a number and a unit, else a float.
+
+        Returns: dict
         """
-
+        # mth = super().json(unit=unit)
         mth = {_: self.__getattribute__(_) for _ in ["name", "label", "description"]}
         mth["channels"] = [item.json() for item in self.channels]
-        mth["spectral_dimensions"] = [item.json() for item in self.spectral_dimensions]
+        mth["spectral_dimensions"] = [
+            item.json(unit=unit) for item in self.spectral_dimensions
+        ]
 
         # add global parameters
-        ev0 = self.spectral_dimensions[0].events[0]
-        evt_d = BaseEvent.property_default_units
-        global_ = {k: f"{ev0.__getattribute__(k)} {u}" for k, u in evt_d.items()}
+        evt_d = self.property_units.items()
+        global_ = (
+            {k: f"{self.__getattribute__(k)} {u}" for k, u in evt_d}
+            if unit
+            else {k: self.__getattribute__(k) for k, u in evt_d}
+        )
         mth.update(global_)
 
-        named = True if mth["name"] in NAMED_METHODS else False
-
         # remove event objects with global values.
-        # remove transition query objects for named methods
         _ = [
-            (
-                [
-                    ev.pop(k) if k in ev and ev[k] == v else 0
-                    for k, v in global_.items()
-                ],
-                ev.pop("transition_query") if "transition_query" in ev and named else 0,
-            )
+            [ev.pop(k) if k in ev and ev[k] == v else 0 for k, v in global_.items()]
             for dim in mth["spectral_dimensions"]
             for ev in dim["events"]
         ]
 
         _ = [
-            dim.pop("events") if dim["events"] == [{}] * len(dim["events"]) else None
+            dim.pop("events") if dim["events"] == [{} for _ in dim["events"]] else None
             for dim in mth["spectral_dimensions"]
         ]
 
@@ -281,20 +299,6 @@ class Method(Parseable):
 
         _ = [mth.pop(item) for item in [k for k, v in mth.items() if v is None]]
         return mth
-
-    # def _simplify_events_json(self, py_dict):
-    #     named = True if py_dict["name"] in NAMED_METHODS else False
-    #     for dim in py_dict["spectral_dimensions"]:
-    #         for ev in dim["events"]:
-    #             # remove event objects with global values.
-    #             for key, val in zip(list_g, global_):
-    #                 _ = ev.pop(key) if ev[key] == val else 0
-
-    #             # remove transition query objects for named methods
-    #             _ = ev.pop("transition_query") if named else 0
-
-    #         if dim["events"] == [{} for _ in range(len(dim["events"]))]:
-    #             dim.pop("events")
 
     # def _get_symmetry_pathways(self, spin_system):
     #     list_of_P = []
@@ -385,7 +389,10 @@ class Method(Parseable):
 
         Example:
             >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(spectral_dimensions=[{'count': 40}, {'count': 10}])
+            >>> method = Method2D(
+            ...     channels=['1H'],
+            ...     spectral_dimensions=[{'count': 40}, {'count': 10}]
+            ... )
             >>> method.shape()
             (40, 10)
         """

@@ -13,53 +13,39 @@ __email__ = "srivastava.89@osu.edu"
 methods = [ST1_VAS, ST2_VAS]
 names = ["ST1_VAS", "ST2_VAS"]
 
-sample_test_output = {
-    "magnetic_flux_density": "9.4 T",
-    "rotor_angle": "0.955316618 rad",
-    "rotor_frequency": "1000000000000.0 Hz",
-    "spectral_dimensions": [
-        {
-            "count": 1024,
-            "spectral_width": "50000.0 Hz",
-        },
-        {
-            "count": 1024,
-            "spectral_width": "50000.0 Hz",
-        },
-    ],
-}
+
+def sample_test_output(n):
+    return {
+        "magnetic_flux_density": "9.4 T",
+        "rotor_angle": "0.955316618 rad",
+        "rotor_frequency": "1000000000000.0 Hz",
+        "spectral_dimensions": [
+            {
+                "count": 1024,
+                "spectral_width": "50000.0 Hz",
+                "events": [
+                    {
+                        "transition_query": [
+                            {"ch1": {"P": [-1], "D": [i]}} for i in [n, -n]
+                        ]
+                    }
+                ],
+            },
+            {
+                "count": 1024,
+                "spectral_width": "50000.0 Hz",
+                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
+            },
+        ],
+    }
 
 
 def test_ST_VAS_rotor_freq():
-    def error(name):
-        return f"`rotor_frequency` value cannot be modified for {name} method."
-
-    for name, method in zip(names, methods):
-        e = error(name)
+    e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
+    isotope = ["87Rb", "27Al"]
+    for iso, method in zip(isotope, methods):
         with pytest.raises(ValueError, match=f".*{e}.*"):
-            method(rotor_frequency=10, spectral_dimensions=[{}, {}])
-
-
-def test_ST_VAS_spectral_dimension_count():
-    e = "Method requires exactly 2 spectral dimensions, given 1."
-    for _, method in zip(names, methods):
-        with pytest.raises(ValueError, match=f".*{e}.*"):
-            method(spectral_dimensions=[{}])
-
-
-def test_ST_VAS_setting_transition_query():
-    def error(name):
-        return f"`transition_query` value cannot be modified for {name} method."
-
-    for name, method in zip(names, methods):
-        e = error(name)
-        with pytest.raises(ValueError, match=f".*{e}.*"):
-            method(
-                spectral_dimensions=[
-                    {"events": [{"transition_query": {"P": [-1]}}]},
-                    {},
-                ],
-            )
+            method(channels=[iso], rotor_frequency=10, spectral_dimensions=[{}, {}])
 
 
 def test_ST_VAS_affine():
@@ -111,7 +97,7 @@ def test_ST1_VAS_general():
         "channels": ["87Rb"],
         "description": des,
         "name": "ST1_VAS",
-        **sample_test_output,
+        **sample_test_output(2),
     }
 
 
@@ -146,5 +132,5 @@ def test_ST2_VAS_general():
         "channels": ["17O"],
         "description": des,
         "name": "ST2_VAS",
-        **sample_test_output,
+        **sample_test_output(4),
     }

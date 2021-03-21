@@ -12,53 +12,33 @@ __email__ = "srivastava.89@osu.edu"
 methods = [ThreeQ_VAS, FiveQ_VAS, SevenQ_VAS]
 names = ["ThreeQ_VAS", "FiveQ_VAS", "SevenQ_VAS"]
 
-sample_test_output = {
-    "magnetic_flux_density": "9.4 T",
-    "rotor_angle": "0.955316618 rad",
-    "rotor_frequency": "1000000000000.0 Hz",
-    "spectral_dimensions": [
-        {
-            "count": 1024,
-            "spectral_width": "25000.0 Hz",
-        },
-        {
-            "count": 1024,
-            "spectral_width": "25000.0 Hz",
-        },
-    ],
-}
+
+def sample_test_output(n):
+    return {
+        "magnetic_flux_density": "9.4 T",
+        "rotor_angle": "0.955316618 rad",
+        "rotor_frequency": "1000000000000.0 Hz",
+        "spectral_dimensions": [
+            {
+                "count": 1024,
+                "spectral_width": "25000.0 Hz",
+                "events": [{"transition_query": [{"ch1": {"P": [n], "D": [0]}}]}],
+            },
+            {
+                "count": 1024,
+                "spectral_width": "25000.0 Hz",
+                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
+            },
+        ],
+    }
 
 
 def test_MQ_VAS_rotor_freq():
-    def error(name):
-        return f"`rotor_frequency` value cannot be modified for {name} method."
-
-    for name, method in zip(names, methods):
-        e = error(name)
+    e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
+    isotopes = ["87Rb", "27Al", "51V"]
+    for iso, method in zip(isotopes, methods):
         with pytest.raises(ValueError, match=f".*{e}.*"):
-            method(rotor_frequency=10, spectral_dimensions=[{}, {}])
-
-
-def test_MQ_VAS_spectral_dimension_count():
-    e = "Method requires exactly 2 spectral dimensions, given 1."
-    for _, method in zip(names, methods):
-        with pytest.raises(ValueError, match=f".*{e}.*"):
-            method(spectral_dimensions=[{}])
-
-
-def test_MQ_VAS_setting_transition_query():
-    def error(name):
-        return f"`transition_query` value cannot be modified for {name} method."
-
-    for name, method in zip(names, methods):
-        e = error(name)
-        with pytest.raises(ValueError, match=f".*{e}.*"):
-            method(
-                spectral_dimensions=[
-                    {"events": [{"transition_query": {"P": [-1]}}]},
-                    {},
-                ],
-            )
+            method(channels=[iso], rotor_frequency=10, spectral_dimensions=[{}, {}])
 
 
 def test_MQ_VAS_affine():
@@ -100,7 +80,7 @@ def test_3Q_VAS_general():
         "channels": ["87Rb"],
         "description": "Simulate a 3Q variable-angle spinning spectrum.",
         "name": "ThreeQ_VAS",
-        **sample_test_output,
+        **sample_test_output(-3),
     }
 
 
@@ -129,7 +109,7 @@ def test_5Q_VAS_general():
         "channels": ["17O"],
         "description": "Simulate a 5Q variable-angle spinning spectrum.",
         "name": "FiveQ_VAS",
-        **sample_test_output,
+        **sample_test_output(-5),
     }
 
 
@@ -156,5 +136,5 @@ def test_7Q_VAS_general():
         "channels": ["51V"],
         "description": "Simulate a 7Q variable-angle spinning spectrum.",
         "name": "SevenQ_VAS",
-        **sample_test_output,
+        **sample_test_output(-7),
     }

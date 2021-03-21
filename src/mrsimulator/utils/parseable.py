@@ -8,7 +8,7 @@ from typing import Dict
 from csdmpy.units import string_to_quantity
 from pydantic import BaseModel
 
-from .extra import _reduce_dict
+# from .extra import _reduce_dict
 
 # from IPython.display import JSON
 
@@ -18,12 +18,15 @@ __email__ = "shyamd@lbl.gov"
 INCLUDE_LIST = [
     "count",
     "magnetic_flux_density",
+    "rotor_angle",
+    "rotor_frequency",
     "spectral_width",
     "dim_index",
     "dv_index",
     "duration",
     "site_index",
     "isotope",
+    "isotropic_chemical_shift",
     "type",
     "function",
     "config",
@@ -31,26 +34,31 @@ INCLUDE_LIST = [
     "integration_density",
     "integration_volume",
     "number_of_sidebands",
+    "name",
+    "description",
+    "transition_query",
+    "ch1",
+    "P",
 ]
 
 
-class Base(BaseModel):
-    def json(self):
-        return Base.fullsimplify(super().dict())
+# class Base(BaseModel):
+#     def json(self):
+#         return Base.fullsimplify(super().dict())
 
-    @staticmethod
-    def simplify(val):
-        """Remove value if it is None."""
-        return {k: v for k, v in val.items() if v is not None}
+#     @staticmethod
+#     def simplify(val):
+#         """Remove value if it is None."""
+#         return {k: v for k, v in val.items() if v is not None}
 
-    @staticmethod
-    def fullsimplify(val):
-        """Iteratively remove None values from a nested dict."""
-        initial = {
-            k: Base.simplify(Base.fullsimplify(v)) if isinstance(v, dict) else v
-            for k, v in val.items()
-        }
-        return Base.simplify(initial)
+#     @staticmethod
+#     def fullsimplify(val):
+#         """Iteratively remove None values from a nested dict."""
+#         initial = {
+#             k: Base.simplify(Base.fullsimplify(v)) if isinstance(v, dict) else v
+#             for k, v in val.items()
+#         }
+#         return Base.simplify(initial)
 
 
 class Parseable(BaseModel):
@@ -111,60 +119,70 @@ class Parseable(BaseModel):
             property_units[k] = v[0] if isinstance(v, list) else v
         return cls(**json_dict, property_units=property_units)
 
-    def reduced_dict(self, exclude=["property_units"]) -> dict:
-        """Returns a reduced dictionary representation of the class object by removing
-        all key-value pair corresponding to keys listed in the `exclude` argument, and
-        keys with value as None.
+    # def reduced_dict(self, exclude={}) -> dict:
+    #     """Returns a reduced dictionary representation of the class object by removing
+    #     all key-value pair corresponding to keys listed in the `exclude` argument, and
+    #     keys with value as None.
+
+    #     Args:
+    #         exclude: A list of keys to exclude from the dictionary.
+    #     Return: A dict.
+    #     """
+    #     return self.__json(exclude, unit=False)
+
+    def json(self, exclude={}, unit=True) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object.
 
         Args:
-            exclude: A list of keys to exclude from the dictionary.
-        Return: A dict.
-        """
-        return _reduce_dict(self.dict(), exclude)
+            exclude: Set of keys that will be excluded from the result.
+            units: If true, the attribute value is a physical quantity expressed as a
+                string with a number and a unit, else a float.
 
-    def json(self, exclude={}) -> dict:
+        Returns: dict
+        """
+        return self.__json(exclude, unit)
+
+    def __json(self, exclude={}, unit=True) -> dict:
         """Parse the class object to a JSON compliant python dictionary object, where
         the attribute value with physical quantity is expressed as a string with a
         number and a unit."""
 
         temp_dict = {}
-
         for k, v in self.dict(exclude={"property_units", *exclude}).items():
             attr_val = getattr(self, k)
             if k not in INCLUDE_LIST:
-                if attr_val == default_val_from_exclude_list_items(self.__class__, k):
+                if attr_val == get_default_class_value(self.__class__, k):
                     continue
 
             # check the dict objects
             if isinstance(v, (dict, Enum)):
-                val = attr_val.json()
-                if val is not None:
-                    temp_dict[k] = val
+                val = attr_val.json(unit=unit)
+                _ = None if val is None else temp_dict.update({k: val})
 
             # check the list objects
             elif isinstance(v, list):
                 temp_dict[k] = [
-                    item if not hasattr(item, "json") else item.json()
+                    item if not hasattr(item, "json") else item.json(unit=unit)
                     for item in attr_val
                 ]
 
-            elif v is not None:
+            elif v is not None and v != "":
                 temp_dict[k] = v
 
-        if hasattr(self, "property_units"):
-            self.clean_property_units(temp_dict)
-
-        return temp_dict
+        return temp_dict if not unit else self.clean_property_units(temp_dict)
 
     def clean_property_units(self, temp_dict):
+        if not hasattr(self, "property_units"):
+            return temp_dict
         temp_keys = temp_dict.keys()
         for key, unit in getattr(self, "property_units").items():
             if key in temp_keys:
                 u = unit if unit != "pct" else "%"
                 temp_dict[key] = f"{temp_dict[key]} {u}"
+        return temp_dict
 
 
-def default_val_from_exclude_list_items(obj, k):
+def get_default_class_value(obj, k):
     return (
         getattr(obj(), k)
         if not hasattr(obj, "test_vars")
