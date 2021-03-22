@@ -96,8 +96,8 @@ def basic_spectral_dimension_tests(the_dimension):
     )
     assert the_dimension.json() == should_be
 
-    # json(unit=False)
-    assert the_dimension.json(unit=False) == dict(
+    # json(units=False)
+    assert the_dimension.json(units=False) == dict(
         count=31,
         spectral_width=31.0,
         origin_offset=5000000.0,
@@ -192,7 +192,7 @@ def test_spectral_dimension():
     assert the_dimension.json() == should_be
     assert the_dimension2.json() == should_be
 
-    # json(unit=False)
+    # json(units=False)
     json_no_unit = dict(
         count=1024,
         spectral_width=100.0,
@@ -215,5 +215,5 @@ def test_spectral_dimension():
             },
         ],
     )
-    assert the_dimension.json(unit=False) == json_no_unit
-    assert the_dimension2.json(unit=False) == json_no_unit
+    assert the_dimension.json(units=False) == json_no_unit
+    assert the_dimension2.json(units=False) == json_no_unit

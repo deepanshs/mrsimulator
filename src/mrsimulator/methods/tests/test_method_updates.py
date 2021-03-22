@@ -23,7 +23,7 @@ def test_read_write_methods():
         fn2 = method.parse_dict_with_units(fn1.json())
         assert fn1 == fn2, f"Error with {method} parse with units."
 
-        fn3 = method(**fn1.json(unit=False))
+        fn3 = method(**fn1.json(units=False))
         assert fn1 == fn3, f"Error with {method} parse with units."
 
         event_error = "Event objects are immutable for"

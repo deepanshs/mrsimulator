@@ -250,7 +250,7 @@ class Method(Parseable):
             for dim in py_dict["spectral_dimensions"]
         ]
 
-    def json(self, unit=True) -> dict:
+    def json(self, units=True) -> dict:
         """Parse the class object to a JSON compliant python dictionary object.
 
         Args:
@@ -259,18 +259,18 @@ class Method(Parseable):
 
         Returns: dict
         """
-        # mth = super().json(unit=unit)
+        # mth = super().json(units=unit)
         mth = {_: self.__getattribute__(_) for _ in ["name", "label", "description"]}
         mth["channels"] = [item.json() for item in self.channels]
         mth["spectral_dimensions"] = [
-            item.json(unit=unit) for item in self.spectral_dimensions
+            item.json(units=units) for item in self.spectral_dimensions
         ]
 
         # add global parameters
         evt_d = self.property_units.items()
         global_ = (
             {k: f"{self.__getattribute__(k)} {u}" for k, u in evt_d}
-            if unit
+            if units
             else {k: self.__getattribute__(k) for k, u in evt_d}
         )
         mth.update(global_)
@@ -280,11 +280,6 @@ class Method(Parseable):
             [ev.pop(k) if k in ev and ev[k] == v else 0 for k, v in global_.items()]
             for dim in mth["spectral_dimensions"]
             for ev in dim["events"]
-        ]
-
-        _ = [
-            dim.pop("events") if dim["events"] == [{} for _ in dim["events"]] else None
-            for dim in mth["spectral_dimensions"]
         ]
 
         mth["affine_matrix"] = self.affine_matrix

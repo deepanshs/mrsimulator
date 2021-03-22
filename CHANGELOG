@@ -4,7 +4,7 @@ Upcoming Changes
 Changes
 '''''''
 
-- `reduced_dict` function is deprecated, use `json(unit=False)` instead.
+- `reduced_dict` function is deprecated, use `json(units=False)` instead.
 
 
 v0.6.0

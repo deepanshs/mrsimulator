@@ -130,7 +130,7 @@ class Parseable(BaseModel):
     #     """
     #     return self.__json(exclude, unit=False)
 
-    def json(self, exclude={}, unit=True) -> dict:
+    def json(self, exclude={}, units=True) -> dict:
         """Parse the class object to a JSON compliant python dictionary object.
 
         Args:
@@ -140,9 +140,9 @@ class Parseable(BaseModel):
 
         Returns: dict
         """
-        return self.__json(exclude, unit)
+        return self.__json(exclude, units)
 
-    def __json(self, exclude={}, unit=True) -> dict:
+    def __json(self, exclude={}, units=True) -> dict:
         """Parse the class object to a JSON compliant python dictionary object, where
         the attribute value with physical quantity is expressed as a string with a
         number and a unit."""
@@ -156,13 +156,13 @@ class Parseable(BaseModel):
 
             # check the dict objects
             if isinstance(v, (dict, Enum)):
-                val = attr_val.json(unit=unit)
+                val = attr_val.json(units=units)
                 _ = None if val in [None, {}] else temp_dict.update({k: val})
 
             # check the list objects
             elif isinstance(v, list):
                 val = [
-                    item if not hasattr(item, "json") else item.json(unit=unit)
+                    item if not hasattr(item, "json") else item.json(units=units)
                     for item in attr_val
                 ]
                 _ = None if val == [] else temp_dict.update({k: val})
@@ -170,7 +170,7 @@ class Parseable(BaseModel):
             elif v is not None and v != "":
                 temp_dict[k] = v
 
-        return temp_dict if not unit else self.clean_property_units(temp_dict)
+        return temp_dict if not units else self.clean_property_units(temp_dict)
 
     def clean_property_units(self, temp_dict):
         if not hasattr(self, "property_units"):

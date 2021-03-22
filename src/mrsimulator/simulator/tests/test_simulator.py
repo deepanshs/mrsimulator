@@ -57,7 +57,7 @@ def test_equality():
     }
     assert c.json() == result
 
-    assert c.json(unit=False) == {
+    assert c.json(units=False) == {
         "label": "test",
         "spin_systems": [{}],
         "config": {
@@ -108,7 +108,7 @@ def test_simulator_1():
     sim.label = "test0"
     sim.description = "testing-testing 1.2.3"
 
-    red_dict = sim.json(unit=False)
+    red_dict = sim.json(units=False)
     _ = [item.pop("description") for item in red_dict["methods"]]
 
     assert red_dict == {

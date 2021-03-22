@@ -424,7 +424,7 @@ class Simulator(Parseable):
         if not with_units:
             with open(filename, "w", encoding="utf8") as outfile:
                 json.dump(
-                    self.json(unit=False),
+                    self.json(units=False),
                     outfile,
                     ensure_ascii=False,
                     sort_keys=False,

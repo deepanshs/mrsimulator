@@ -73,8 +73,8 @@ def basic_method_tests(the_method):
     }
     assert the_method.json() == serialize
 
-    # json(unit=False)
-    assert the_method.json(unit=False) == {
+    # json(units=False)
+    assert the_method.json(units=False) == {
         "name": "test worked",
         "description": "test worked again",
         "channels": ["1H", "17O"],
@@ -189,7 +189,7 @@ def test_method():
     serialize["simulation"]["csdm"].pop("timestamp")
     assert serialize == method_dictionary_
 
-    # json(unit=False)
+    # json(units=False)
     event_dictionary_ = {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}
     dimension_dictionary_ = {
         "count": 1024,
@@ -207,6 +207,6 @@ def test_method():
         "simulation": csdm_data.to_dict(),
         "experiment": csdm_data.to_dict(),
     }
-    serialize = the_method.json(unit=False)
+    serialize = the_method.json(units=False)
     serialize["simulation"]["csdm"].pop("timestamp")
     assert serialize == method_dictionary_
