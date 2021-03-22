@@ -157,14 +157,15 @@ class Parseable(BaseModel):
             # check the dict objects
             if isinstance(v, (dict, Enum)):
                 val = attr_val.json(unit=unit)
-                _ = None if val is None else temp_dict.update({k: val})
+                _ = None if val in [None, {}] else temp_dict.update({k: val})
 
             # check the list objects
             elif isinstance(v, list):
-                temp_dict[k] = [
+                val = [
                     item if not hasattr(item, "json") else item.json(unit=unit)
                     for item in attr_val
                 ]
+                _ = None if val == [] else temp_dict.update({k: val})
 
             elif v is not None and v != "":
                 temp_dict[k] = v

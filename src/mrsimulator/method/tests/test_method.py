@@ -210,11 +210,3 @@ def test_method():
     serialize = the_method.json(unit=False)
     serialize["simulation"]["csdm"].pop("timestamp")
     assert serialize == method_dictionary_
-
-    # update_spectral_dimension_attributes_from_experiment
-    the_method.update_spectral_dimension_attributes_from_experiment()
-    for i in range(2):
-        assert the_method.spectral_dimensions[i].count == 10
-        assert the_method.spectral_dimensions[i].spectral_width == 10
-        assert the_method.spectral_dimensions[i].reference_offset == 0
-        assert the_method.spectral_dimensions[i].origin_offset == 0

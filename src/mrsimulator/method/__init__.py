@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from copy import deepcopy
-from os import path
 from typing import ClassVar
 from typing import Dict
 from typing import List
@@ -8,7 +7,6 @@ from typing import Union
 
 import csdmpy as cp
 import numpy as np
-from monty.serialization import loadfn
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import Transition
 from mrsimulator.transition import TransitionPathway
@@ -18,13 +16,9 @@ from pydantic import validator
 
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
-from .utils import expand_spectral_dimension_object
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
-
-MODULE_DIR = path.dirname(path.abspath(__file__))
-NAMED_METHODS = loadfn(path.join(MODULE_DIR, "named_methods.json"))["named_methods"]
 
 
 class Method(Parseable):
@@ -218,7 +212,7 @@ class Method(Parseable):
         py_dict_copy = deepcopy(py_dict)
 
         if "spectral_dimensions" in py_dict_copy:
-            py_dict_copy = expand_spectral_dimension_object(py_dict_copy)
+            Method.expand_spectral_dimension_object(py_dict_copy)
             py_dict_copy["spectral_dimensions"] = [
                 SpectralDimension.parse_dict_with_units(s)
                 for s in py_dict_copy["spectral_dimensions"]
@@ -233,24 +227,28 @@ class Method(Parseable):
 
         return super().parse_dict_with_units(py_dict_copy)
 
-    def update_spectral_dimension_attributes_from_experiment(self):
-        """Update the spectral dimension attributes of the method to match the
-        attributes of the experiment from the :attr:`~mrsimulator.Method.experiment`
-        attribute."""
-        spectral_dims = self.spectral_dimensions
-        for i, dim in enumerate(self.experiment.dimensions):
-            spectral_dims[i].count = dim.count
-            spectral_dims[i].spectral_width = dim.count * dim.increment.to("Hz").value
-            spectral_dims[i].reference_offset = dim.coordinates_offset.to("Hz").value
-            spectral_dims[i].origin_offset = dim.origin_offset.to("Hz").value
+    @staticmethod
+    def expand_spectral_dimension_object(py_dict):
+        glb = {}
+        _ = [
+            glb.update({item: py_dict[item]})
+            for item in Method.property_unit_types.keys()
+            if item in py_dict.keys()
+        ]
+        glb_keys = set(glb.keys())
 
-    def dict(self, **kwargs):
-        mth = super().dict(**kwargs)
-        if self.simulation is not None:
-            mth["simulation"] = self.simulation.to_dict(update_timestamp=True)
-        if self.experiment is not None and isinstance(self.experiment, cp.CSDM):
-            mth["experiment"] = self.experiment.to_dict()
-        return mth
+        _ = [
+            (
+                None if "events" in dim else dim.update({"events": [{}]}),
+                [
+                    ev.update({k: glb[k]})
+                    for ev in dim["events"]
+                    for k in glb
+                    if k not in set(ev.keys()).intersection(glb_keys)
+                ],
+            )
+            for dim in py_dict["spectral_dimensions"]
+        ]
 
     def json(self, unit=True) -> dict:
         """Parse the class object to a JSON compliant python dictionary object.

@@ -42,7 +42,7 @@ def test_read_write_methods():
                 ent.append({"transition_query": [{"ch1": {"P": [-100]}}]})
                 method.parse_dict_with_units(serialize)
 
-    def check_sim_save(sim1, sim2):
+    def check_sim_save(sim1, sim2, message):
         for mth in sim2.methods:
             mth.simulation._timestamp = ""
             _ = [item.to("ppm", "nmr_frequency_ratio") for item in mth.simulation.x]
@@ -52,8 +52,8 @@ def test_read_write_methods():
         data2 = sim2.methods[0].simulation.copy()
         sim2.methods[0].simulation = None
 
-        assert data1 == data2, f"data saved and loaded is not equal: method {item}."
-        assert sim == sim2, f"Error in method {item} when using Simulator.load()."
+        assert data1 == data2, f"data saved and loaded is not equal: type {message}."
+        assert sim == sim2, f".mrsim saved and loaded is not equal: type {message}."
 
     for item in methods:
         kwargs = {
@@ -85,12 +85,12 @@ def test_read_write_methods():
         sim.run()
         sim.save("test.mrsim")
         sim2 = Simulator.load("test.mrsim")
-        check_sim_save(sim, sim2)
+        check_sim_save(sim, sim2, "with units")
 
         # save/load with out units
         sim.run()
         sim.save("test.mrsim", with_units=False)
         sim2 = Simulator.load("test.mrsim", parse_units=False)
-        check_sim_save(sim, sim2)
+        check_sim_save(sim, sim2, "without units")
 
     os.remove("test.mrsim")

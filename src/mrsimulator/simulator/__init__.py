@@ -231,16 +231,7 @@ class Simulator(Parseable):
 
         if "methods" in py_copy_dict:
             methods = py_copy_dict["methods"]
-            method_cls = [
-                Method
-                if obj["name"] not in __method_names__
-                else __sim_methods__[obj["name"]]
-                for obj in methods
-            ]
-
-            methods = [
-                fn.parse_dict_with_units(obj) for obj, fn in zip(methods, method_cls)
-            ]
+            methods = [Method.parse_dict_with_units(obj) for obj in methods]
             py_copy_dict["methods"] = methods
 
         return Simulator(**py_copy_dict)
