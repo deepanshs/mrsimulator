@@ -209,9 +209,10 @@ class TransitionQuery(Parseable):
             #     symmetry_expanded[:, linear_iso_dict[live_channel[i]]],
             # )
             # print("live_channel_index", live_channel_index, live_channel)
-            P_expanded[
-                :, iso_dict[channels[live_channel_index[i]]]
-            ] = symmetry_expanded[:, linear_iso_dict[live_channel[i]]]
+            P_expanded.__setitem__(
+                (slice(None, None, None), iso_dict[channels[live_channel_index[i]]]),
+                symmetry_expanded[:, linear_iso_dict[live_channel[i]]],
+            )
 
         # print("P_expanded", P_expanded)
         return P_expanded

@@ -250,6 +250,14 @@ class Method(Parseable):
             for dim in py_dict["spectral_dimensions"]
         ]
 
+    def dict(self, **kwargs):
+        mth = super().dict(**kwargs)
+        if isinstance(self.simulation, cp.CSDM):
+            mth["simulation"] = self.simulation.to_dict(update_timestamp=True)
+        if isinstance(self.experiment, cp.CSDM):
+            mth["experiment"] = self.experiment.to_dict()
+        return mth
+
     def json(self, units=True) -> dict:
         """Parse the class object to a JSON compliant python dictionary object.
 
@@ -331,8 +339,8 @@ class Method(Parseable):
             for evt in dim.events
         ]
 
-        if segments == []:
-            return []
+        # if segments == []:
+        #     return []
 
         segments_index = [np.arange(item.shape[0]) for item in segments]
         cartesian_index = cartesian_product(*segments_index)
