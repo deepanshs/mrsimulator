@@ -12,7 +12,8 @@ from pydantic import Field
 from .frequency_contrib import default_freq_contrib
 from .frequency_contrib import freq_list_all
 from .frequency_contrib import FrequencyEnum
-from .transition_query import TransitionQuery
+from .query import MixingQuery
+from .query import TransitionQuery
 from .utils import D_symmetry_indexes
 from .utils import P_symmetry_indexes
 
@@ -158,7 +159,7 @@ class SpectralEvent(BaseEvent):
         validate_assignment = True
 
 
-class ConstantDurationEvent(BaseEvent):
+class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
     r"""Base ConstantDurationEvent class defines the spin environment and the
     transition query for a segment of the transition pathway. The frequency from this
     event contribute to the spectrum as amplitudes.
@@ -211,5 +212,43 @@ class ConstantDurationEvent(BaseEvent):
         validate_assignment = True
 
 
+class MixingEvent(Parseable):  # TransitionMixingEvent
+    """Transition mixing class
+
+    Attributes
+    ----------
+
+    mixing_query:
+        The transition mixing query.
+    """
+
+    mixing_query: MixingQuery
+
+    test_vars: ClassVar = {"mixing_query": {}}
+
+    class Config:
+        validate_assignment = True
+
+    @classmethod
+    def parse_dict_with_units(cls, py_dict):
+        """
+        Parse the physical quantity from a dictionary representation of the Method
+        object, where the physical quantity is expressed as a string with a number and
+        a unit.
+
+        Args:
+            dict py_dict: A python dict representation of the Method object.
+
+        Returns:
+            A :ref:`method_api` object.
+        """
+        py_dict_copy = deepcopy(py_dict)
+        obj = MixingQuery.parse_dict_with_units(py_dict_copy["mixing_query"])
+        py_dict_copy["mixing_query"] = obj
+        return super().parse_dict_with_units(py_dict_copy)
+
+
 class Event(Parseable):
-    event: Union[ConstantDurationEvent, SpectralEvent]
+    """Event class Object"""
+
+    event: Union[MixingEvent, ConstantDurationEvent, SpectralEvent]

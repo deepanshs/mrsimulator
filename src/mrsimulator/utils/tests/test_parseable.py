@@ -6,6 +6,8 @@ import pytest
 from mrsimulator.utils.parseable import enforce_units
 from mrsimulator.utils.parseable import Parseable
 
+default = {"name": None, "description": None, "label": None}
+
 
 class ParseableTestClass(Parseable):
     """
@@ -47,6 +49,7 @@ def test_parse_json():
     assert pr.dict() == {
         "foo": 300.0,
         "bar": 0.03,
+        **default,
         "property_units": {"foo": "rad", "bar": "pct"},
     }
 
@@ -55,6 +58,7 @@ def test_parse_json():
     assert pr.dict() == {
         "foo": 300.0,
         "bar": 300000.0,
+        **default,
         "property_units": {"foo": "rad", "bar": "Hz"},
     }
 

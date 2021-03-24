@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+from copy import deepcopy
 from itertools import permutations
+from typing import ClassVar
+from typing import Dict
 from typing import List
 from typing import Optional
 
@@ -27,8 +30,8 @@ class SymmetryQuery(Parseable):
     ----------
 
     P:
-        A list of p symmetry functions per site. Here p = Δm is the difference between
-        spin quantum numbers of the final and initial states.
+        A list of p symmetry functions per site. Here p = Δm = :math:`m_f - m_i` is the
+        difference between the spin quantum numbers of the final and initial states.
 
         Example
         -------
@@ -37,8 +40,9 @@ class SymmetryQuery(Parseable):
         >>> method.spectral_dimensions[0].events[0].transition_query[0].ch1.P = [-1]
 
     D:
-        A list of d symmetry functions per site. Here p = Δm is the difference between
-        spin quantum numbers of the final and initial states.
+        A list of d symmetry functions per site. Here d = :math:`m_f^2 - m_i^2` is the
+        difference between the square of the spin quantum numbers of the final and
+        initial states.
 
         Example
         -------
@@ -46,14 +50,26 @@ class SymmetryQuery(Parseable):
         >>> method.spectral_dimensions[0].events[0].transition_query[0].ch1.D = [0]
     """
 
-    P: List[int] = Field(default=[-1])
-    D: List[int] = Field(default=None)
+    P: List[int] = Field(
+        default=[-1],
+        description=(
+            "A list of p symmetry functions per site. Here p = Δm = (m_f-m_i) is the "
+            "difference between spin quantum numbers of the final and initial states."
+        ),
+    )
+    D: List[int] = Field(
+        default=None,
+        description=(
+            "A list of d symmetry functions per site. Here d = m_f^2 - m_i^2 is the "
+            "difference between the square of the spin quantum numbers of the final "
+            "and initial states."
+        ),
+    )
     F: List[float] = Field(default=None)
     transitions: List[Transition] = None
 
     class Config:
         validate_assignment = True
-        arbitrary_types_allowed = True
 
     def permutate_query(self, symmetry, n_site_at_channel_id):
         """Permutation of symmetry query based on the number of sites in given channel.
@@ -81,19 +97,22 @@ class SymmetryQuery(Parseable):
 
 
 class TransitionQuery(Parseable):
-    """Base TransitionQuery class.
+    """TransitionQuery class for quering transition symmetry funciton.
 
     Attributes
     ----------
 
-    ch1: SymmetryQuery
-        An optional SymmetryQuery object for quering isotopes at channel index 0 of the
-        method's channels array.
+    ch1:
+        An optional SymmetryQuery object for quering symmetry functions at channel
+        index 0 of the method's channels array."
 
+    ch2:
+        An optional SymmetryQuery object for quering symmetry functions at channel
+        index 1 of the method's channels array."
 
-    ch2: SymmetryQuery
-        An optional SymmetryQuery object for quering isotopes at channel index 1 of the
-        method's channels array.
+    ch3:
+        An optional SymmetryQuery object for quering symmetry functions at channel
+        index 2 of the method's channels array."
 
     Example
     -------
@@ -101,9 +120,33 @@ class TransitionQuery(Parseable):
         >>> query = TransitionQuery(ch1={'P': [1], 'D': [0]}, ch2={'P': [-1]})
     """
 
-    ch1: Optional[SymmetryQuery] = Field(default=SymmetryQuery())
-    ch2: Optional[SymmetryQuery] = Field(default=None)
-    ch3: Optional[SymmetryQuery] = Field(default=None)
+    ch1: Optional[SymmetryQuery] = Field(
+        title="ch1",
+        default=SymmetryQuery(),
+        description=(
+            "An optional SymmetryQuery object for quering symmetry functions at "
+            "channel index 0 of the method's channels array."
+        ),
+    )
+    ch2: Optional[SymmetryQuery] = Field(
+        title="ch2",
+        default=None,
+        description=(
+            "An optional SymmetryQuery object for quering symmetry functions at "
+            "channel index 1 of the method's channels array."
+        ),
+    )
+    ch3: Optional[SymmetryQuery] = Field(
+        title="ch3",
+        default=None,
+        description=(
+            "An optional SymmetryQuery object for quering symmetry functions at "
+            "channel index 1 of the method's channels array."
+        ),
+    )
+
+    class Config:
+        validate_assignment = True
 
     @staticmethod
     def cartesian_product_indexing(P_permutated):
@@ -130,23 +173,11 @@ class TransitionQuery(Parseable):
         )
 
     def permutation(self, isotopes, channels):
-        """Permutation of SymmetryQuery based on the number of sites per channel.
+        """Permutation of TransitionQuery based on the number of sites per channel.
 
         Args:
             (list) isotopes: List of isotope symbols, ['29Si , '13C', '13C', '1H'].
             (int) channels: List of method channels, ['29Si , '13C'].
-
-        # Example:
-        #     >>> from mrsimulator.method.transition_query import SymmetryQuery
-        #     >>> ss = SymmetryQuery(ch1=[-1], ch2=[1])
-        #     >>> symmetry = ss.permutation(
-        #     ...     isotopes=['1H', '13C', '1H', '13C'], channels=['1H', '13C']
-        #     ... )
-        #     >>> pprint(symmetry)
-        #     [[-1.0, 1.0, 0.0, 0.0],
-        #      [-1.0, 0.0, 0.0, 1.0],
-        #      [0.0, 1.0, -1.0, 0.0],
-        #      [0.0, 0.0, -1.0, 1.0]]
         """
 
         iso_dict = get_iso_dict(channels=channels, isotopes=isotopes)
@@ -216,3 +247,85 @@ class TransitionQuery(Parseable):
 
         # print("P_expanded", P_expanded)
         return P_expanded
+
+
+class RFRotation(Parseable):
+    """Base RFRotation class.
+
+    Attributes
+    ----------
+
+    tip_angle:
+        The rf rotation angle in units of radians.
+
+    phase:
+        The rf rotation phase in units of radians.
+    """
+
+    tip_angle: float = Field(default=None, ge=0.0, le=6.283185307179586)
+    phase: float = Field(default=None, ge=-3.141592653589793, le=3.141592653589793)
+
+    property_unit_types: ClassVar = {
+        "tip_angle": "angle",
+        "phase": "angle",
+    }
+
+    property_default_units: ClassVar = {
+        "tip_angle": "rad",
+        "phase": "rad",
+    }
+
+    property_units: Dict = {
+        "tip_angle": "rad",
+        "phase": "rad",
+    }
+
+    class Config:
+        validate_assignment = True
+
+
+class MixingQuery(Parseable):
+    """MixingQuery class for quering transition mixing between events.
+
+    Attributes
+    ----------
+
+    ch1:
+        An optional RFRotation object for channel at index 0 of the method's channels."
+
+    ch2:
+        An optional RFRotation object for channel at index 1 of the method's channels."
+
+    ch3:
+        An optional RFRotation object for channel at index 2 of the method's channels."
+
+    Example
+    -------
+
+        >>> query = TransitionQuery(ch1={'P': [1], 'D': [0]}, ch2={'P': [-1]})
+    """
+
+    ch1: RFRotation = None
+    ch2: RFRotation = None
+    ch3: RFRotation = None
+
+    class Config:
+        validate_assignment = True
+
+    @classmethod
+    def parse_dict_with_units(cls, py_dict):
+        """
+        Parse the physical quantity from a dictionary representation of the Method
+        object, where the physical quantity is expressed as a string with a number and
+        a unit.
+
+        Args:
+            dict py_dict: A python dict representation of the Method object.
+
+        Returns:
+            A :ref:`method_api` object.
+        """
+        py_dict_copy = deepcopy(py_dict)
+        obj = {k: RFRotation.parse_dict_with_units(v) for k, v in py_dict_copy.items()}
+        py_dict_copy.update(obj)
+        return super().parse_dict_with_units(py_dict_copy)

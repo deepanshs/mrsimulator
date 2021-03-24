@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
-from mrsimulator.method.transition_query import TransitionQuery
+from mrsimulator.method.query import TransitionQuery
 from mrsimulator.methods import FiveQ_VAS
 from mrsimulator.methods import SevenQ_VAS
 from mrsimulator.methods import ThreeQ_VAS

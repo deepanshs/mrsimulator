@@ -70,6 +70,9 @@ def test_config():
         "number_of_sidebands": 10,
         "integration_volume": "hemisphere",
         "integration_density": 20,
+        "name": None,
+        "description": None,
+        "label": None,
     }
 
     assert a.config.get_int_dict() == {

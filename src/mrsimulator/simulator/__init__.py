@@ -10,7 +10,6 @@ import pandas as pd
 import psutil
 from joblib import delayed
 from joblib import Parallel
-from mrsimulator import methods as NamedMethods
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
@@ -30,12 +29,6 @@ __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 __CPU_count__ = psutil.cpu_count()
-
-__named_methods__ = [
-    val for k, val in NamedMethods.__dict__.items() if isinstance(val, type)
-]
-__method_names__ = [item.__name__ for item in __named_methods__]
-__sim_methods__ = {k: v for k, v in zip(__method_names__, __named_methods__)}
 
 
 class Simulator(Parseable):
@@ -141,9 +134,6 @@ class Simulator(Parseable):
 
     """
 
-    name: str = None
-    label: str = None
-    description: str = None
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
@@ -151,22 +141,6 @@ class Simulator(Parseable):
 
     class Config:
         validate_assignment = True
-
-    # def __eq__(self, other):
-    #     if not isinstance(other, Simulator):
-    #         return False
-    #     check = [
-    #         self.name == other.name,
-    #         self.label == other.label,
-    #         self.description == other.description,
-    #         self.spin_systems == other.spin_systems,
-    #         self.methods == other.methods,
-    #         self.config == other.config,
-    #         np.all(self.indexes == other.indexes),
-    #     ]
-    #     if np.all(check):
-    #         return True
-    #     return False
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
@@ -279,9 +253,6 @@ class Simulator(Parseable):
             return [Isotope(symbol=item) for item in st]
         return list(st)
 
-    # def pretty(self):
-    #     return JSON(self.json(include_methods=True, include_version=True))
-
     def load_spin_systems(self, filename: str):
         """
         Load a list of spin systems from the given JSON serialized file.
@@ -300,7 +271,6 @@ class Simulator(Parseable):
         >>> sim.load_spin_systems(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
-        # json_data = contents["spin_systems"]
         self.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in contents]
 
     def export_spin_systems(self, filename: str):

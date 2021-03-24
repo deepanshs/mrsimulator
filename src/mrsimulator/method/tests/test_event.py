@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 from mrsimulator.method.event import BaseEvent
 from mrsimulator.method.event import ConstantDurationEvent
+from mrsimulator.method.event import MixingEvent
 from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import freq_default
 from pydantic import ValidationError
@@ -26,7 +27,7 @@ def test_freq_contrib():
     assert np.all(event._freq_contrib_flags() == [1, 1, 1, 1, 1, 1])
 
 
-def basic_spectral_event_tests(the_event, type_="spectral"):
+def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
     # fraction
     if type_ == "spectral":
         assert the_event.fraction == 0.5
@@ -113,11 +114,11 @@ def test_spectral_and_constant_time_events():
     }
     evt_dict = {"fraction": 0.5, **base_event_dictionary}
     the_event = SpectralEvent.parse_dict_with_units(evt_dict)
-    basic_spectral_event_tests(the_event, type_="spectral")
+    basic_spectral_and_constant_time_event_tests(the_event, type_="spectral")
 
     evt_dict = {"duration": "0.5 µs", **base_event_dictionary}
     the_event = ConstantDurationEvent.parse_dict_with_units(evt_dict)
-    basic_spectral_event_tests(the_event, type_="constant_duration")
+    basic_spectral_and_constant_time_event_tests(the_event, type_="constant_duration")
 
     # direct initialization
     magic_angle_in_rad = 54.735 * np.pi / 180
@@ -125,10 +126,48 @@ def test_spectral_and_constant_time_events():
         magnetic_flux_density=9.6, rotor_frequency=1000, rotor_angle=magic_angle_in_rad
     )
     the_event = SpectralEvent(fraction=0.5, **base_event_dict)
-    basic_spectral_event_tests(the_event, type_="spectral")
+    basic_spectral_and_constant_time_event_tests(the_event, type_="spectral")
 
     the_event = ConstantDurationEvent(duration=0.5, **base_event_dict)
-    basic_spectral_event_tests(the_event, type_="constant_time")
+    basic_spectral_and_constant_time_event_tests(the_event, type_="constant_time")
+
+
+def basic_mixing_event_tests(the_event):
+    mix = the_event.mixing_query.ch1
+
+    # tip angle
+    assert mix.tip_angle == np.pi / 2
+    mix.tip_angle = 3.2123
+    assert mix.tip_angle == 3.2123
+    with pytest.raises(ValidationError, match="value is not a valid float"):
+        mix.tip_angle = "test"
+    # ensure the default value is rad
+    assert mix.property_units["tip_angle"] == "rad"
+
+    # phase
+    assert mix.phase == 0.0
+    mix.phase = 1.745
+    assert mix.phase == 1.745
+    with pytest.raises(ValidationError, match="value is not a valid float"):
+        mix.phase = "test"
+    # ensure the default value is rad
+    assert mix.property_units["phase"] == "rad"
+
+    # json()
+    should_be_units = dict(ch1=dict(tip_angle="3.2123 rad", phase="1.745 rad"))
+    should_be = dict(ch1=dict(tip_angle=3.2123, phase=1.745))
+
+    should_be_units = dict(mixing_query=should_be_units)
+    assert the_event.json() == should_be_units
+    assert the_event.json(units=False) == {"mixing_query": should_be}
+
+
+def test_Mixing_event():
+    mix_event_dict = {
+        "mixing_query": {"ch1": {"tip_angle": "90 degree", "phase": "0 rad"}}
+    }
+    the_event = MixingEvent.parse_dict_with_units(mix_event_dict)
+    basic_mixing_event_tests(the_event)
 
 
 def check_equal(query, isotopes, channels, res):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
-from mrsimulator.method.transition_query import TransitionQuery
+from mrsimulator.method.query import TransitionQuery
 from mrsimulator.methods import SSB2D
 
 from .test_methods import sample_method_dict

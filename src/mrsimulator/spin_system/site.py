@@ -151,9 +151,6 @@ class Site(Parseable):
     ... )
     """
 
-    name: str = None
-    label: str = None
-    description: str = None
     isotope: str = "1H"
     isotropic_chemical_shift: float = 0.0
     shielding_symmetric: SymmetricTensor = None

@@ -6,6 +6,6 @@ Isotope
 .. currentmodule:: mrsimulator.spin_system.isotope
 
 .. autoclass:: Isotope
-    ::show-inheritance:
+    :show-inheritance:
     :members:
     :inherited-members: BaseModel

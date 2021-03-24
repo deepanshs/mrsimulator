@@ -114,15 +114,13 @@ class Method(Parseable):
         >>> print(method.affine_matrix)
         [[1, -1], [0, 1]]
     """
-    name: str = None
-    label: str = None
-    description: str = None
     channels: List[str]
     spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
     affine_matrix: List = None
     simulation: Union[cp.CSDM, np.ndarray] = None
     experiment: Union[cp.CSDM, np.ndarray] = None
 
+    # global
     magnetic_flux_density: float = Field(default=9.4, ge=0.0)
     rotor_frequency: float = Field(default=0.0, ge=0.0)
     rotor_angle: float = Field(default=0.955316618, ge=0.0, le=1.5707963268)
@@ -161,7 +159,7 @@ class Method(Parseable):
             for sd in self.spectral_dimensions
             for ev in sd.events
             for item in self.property_units.keys()
-            if getattr(ev, item) is None
+            if hasattr(ev, item) and getattr(ev, item) is None
         ]
 
     @staticmethod

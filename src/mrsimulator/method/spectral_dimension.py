@@ -12,6 +12,7 @@ from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
 from .event import ConstantDurationEvent
+from .event import MixingEvent
 from .event import SpectralEvent
 
 __author__ = "Deepansh J. Srivastava"
@@ -57,9 +58,7 @@ class SpectralDimension(Parseable):
     spectral_width: float = Field(default=25000.0, gt=0)
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
-    label: str = None
-    description: str = None
-    events: List[Union[ConstantDurationEvent, SpectralEvent]] = []
+    events: List[Union[MixingEvent, ConstantDurationEvent, SpectralEvent]] = []
 
     property_unit_types: ClassVar = {
         "spectral_width": ["frequency", "dimensionless"],

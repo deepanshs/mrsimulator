@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from mrsimulator.method.transition_query import TransitionQuery
+from mrsimulator.method.query import TransitionQuery
 
 __author__ = "Maxwell Venetos"
 __email__ = "mvenetos@berkeley.edu"

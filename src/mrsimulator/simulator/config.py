@@ -78,7 +78,7 @@ class ConfigSimulator(Parseable):
         extra = Extra.forbid
 
     def get_int_dict(self):
-        py_dict = self.dict(exclude={"property_units"})
+        py_dict = self.dict(exclude={"property_units", "name", "description", "label"})
         py_dict["integration_volume"] = __integration_volume_enum__[
             self.integration_volume
         ]

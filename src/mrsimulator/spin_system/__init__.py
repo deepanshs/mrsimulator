@@ -150,9 +150,6 @@ class SpinSystem(Parseable):
                 <./../examples/Fitting/plot_2_mrsimFitExample_O17.html>`_
     """
 
-    name: str = None
-    label: str = None
-    description: str = None
     sites: Union[List[Site], np.ndarray] = []
     couplings: Union[List[Coupling], np.ndarray] = None
     abundance: float = Field(default=100.0, ge=0.0, le=100.0)
