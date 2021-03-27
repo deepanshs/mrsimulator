@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+
+IGNORE = ["simulation", "experiment"]
+
+
 def _reduce_dict(dict_obj, exclude=["property_units"]):
     """Reduce the dict by removing all key-value pair corresponding to keys listed in
     the `exclude` argument and keys with value as None.
@@ -10,6 +14,9 @@ def _reduce_dict(dict_obj, exclude=["property_units"]):
     if isinstance(dict_obj, dict):
         obj = {}
         for k, v in dict_obj.items():
+            if k in IGNORE and v is not None:
+                obj[k] = v
+                continue
             if k in exclude or v is None:
                 continue
             if k == "isotope":
