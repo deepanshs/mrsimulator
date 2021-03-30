@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Base Parseable class."""
+import warnings
 from copy import copy
 from enum import Enum
 from typing import ClassVar
@@ -8,9 +9,6 @@ from typing import Dict
 from csdmpy.units import string_to_quantity
 from pydantic import BaseModel
 
-# from .extra import _reduce_dict
-
-# from IPython.display import JSON
 
 __author__ = "Shyam Dwaraknath"
 __email__ = "shyamd@lbl.gov"
@@ -39,6 +37,7 @@ INCLUDE_LIST = [
     "transition_query",
     "ch1",
     "P",
+    "channels",
 ]
 
 
@@ -122,16 +121,20 @@ class Parseable(BaseModel):
             property_units[k] = v[0] if isinstance(v, list) else v
         return cls(**json_dict, property_units=property_units)
 
-    # def reduced_dict(self, exclude={}) -> dict:
-    #     """Returns a reduced dictionary representation of the class object by removing
-    #     all key-value pair corresponding to keys listed in the `exclude` argument, and
-    #     keys with value as None.
+    def reduced_dict(self, exclude={}) -> dict:
+        """Returns a reduced dictionary representation of the class object by removing
+        all key-value pair corresponding to keys listed in the `exclude` argument, and
+        keys with value as None.
 
-    #     Args:
-    #         exclude: A list of keys to exclude from the dictionary.
-    #     Return: A dict.
-    #     """
-    #     return self.__json(exclude, unit=False)
+        Args:
+            exclude: A list of keys to exclude from the dictionary.
+        Return: A dict.
+        """
+        warnings.warn(
+            "reduced_dict() is deprecated in v0.7, use json(units=True) instead.",
+            category=DeprecationWarning,
+        )
+        return self.__json(exclude, units=False)
 
     def json(self, exclude={}, units=True) -> dict:
         """Parse the class object to a JSON compliant python dictionary object.
@@ -173,9 +176,9 @@ class Parseable(BaseModel):
             elif v is not None and v != "":
                 temp_dict[k] = v
 
-        return temp_dict if not units else self.clean_property_units(temp_dict)
+        return temp_dict if not units else self.clear_property_units(temp_dict)
 
-    def clean_property_units(self, temp_dict):
+    def clear_property_units(self, temp_dict):
         if not hasattr(self, "property_units"):
             return temp_dict
         temp_keys = temp_dict.keys()

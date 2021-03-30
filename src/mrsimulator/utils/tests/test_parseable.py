@@ -76,3 +76,9 @@ def test_parse_json():
     with pytest.raises(Exception) as err:
         ParseableTestClass.parse_dict_with_units(bad_json)
     assert str(err.value) == "Could not enforce any units on bar"
+
+
+def test_reduced_dict():
+    obj = {"foo": "300 rad", "bar": "300 ppm"}
+    pr = ParseableTestClass.parse_dict_with_units(obj)
+    assert pr.reduced_dict() == {"foo": 300, "bar": 0.03}
