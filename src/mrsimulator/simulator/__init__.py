@@ -573,5 +573,5 @@ def get_chunks(items_list, n_jobs):
 
     for i in range(1, n_jobs + 1):
         chunks[i] += chunks[i - 1]
-
-    return [items_list[chunks[i] : chunks[i + 1]] for i in range(n_jobs)]
+    slices = [slice(chunks[i], chunks[i + 1], None) for i in range(n_jobs)]
+    return [items_list[item] for item in slices]
