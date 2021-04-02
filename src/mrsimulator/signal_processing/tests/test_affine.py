@@ -34,16 +34,16 @@ def test_shear_01():
     )
 
     shear_data = processor.apply_operations(data=csdm_object)
-    index = np.where(shear_data.dependent_variables[0].components[0] > 0.99999999)
+    index = np.where(shear_data.y[0].components[0] > 0.99999999)
 
     a = np.arange(40)
     assert np.allclose(index, [a, a])
 
     # complex_fft dim=0 to false
-    csdm_object.dimensions[0].complex_fft = False
-    csdm_object.dimensions[1].complex_fft = True
+    csdm_object.x[0].complex_fft = False
+    csdm_object.x[1].complex_fft = True
     shear_data = processor.apply_operations(data=csdm_object)
-    index = np.where(shear_data.dependent_variables[0].components[0] > 0.99999999)
+    index = np.where(shear_data.y[0].components[0] > 0.99999999)
 
     a1 = np.arange(20)
     b1 = a1 + 20
@@ -51,20 +51,20 @@ def test_shear_01():
     assert np.allclose(index, [a, b])
 
     # complex_fft dim=1 to false
-    csdm_object.dimensions[0].complex_fft = True
-    csdm_object.dimensions[1].complex_fft = False
+    csdm_object.x[0].complex_fft = True
+    csdm_object.x[1].complex_fft = False
     shear_data = processor.apply_operations(data=csdm_object)
-    index = np.where(shear_data.dependent_variables[0].components[0] > 0.99999999)
+    index = np.where(shear_data.y[0].components[0] > 0.99999999)
 
     b = np.arange(40)
     b[1:] = a[::-1][:-1]
     assert np.allclose(index, [a, b])
 
     # both complex_fft set to false
-    csdm_object.dimensions[0].complex_fft = False
-    csdm_object.dimensions[1].complex_fft = False
+    csdm_object.x[0].complex_fft = False
+    csdm_object.x[1].complex_fft = False
     shear_data = processor.apply_operations(data=csdm_object)
-    index = np.where(shear_data.dependent_variables[0].components[0] > 0.99999999)
+    index = np.where(shear_data.y[0].components[0] > 0.99999999)
 
     a1 = np.arange(21)[::-1]
     b1 = a1[1:-1] + 20
@@ -103,14 +103,14 @@ def test_serialization_and_parse():
 
 
 def test_scale():
-    c_inc = csdm_object.dimensions[1].increment.value
-    c_off = csdm_object.dimensions[1].coordinates_offset.value
+    c_inc = csdm_object.x[1].increment.value
+    c_off = csdm_object.x[1].coordinates_offset.value
 
     processor = sp.SignalProcessor(operations=[af.Scale(factor=2, dim_index=1)])
     scaled_data = processor.apply_operations(data=csdm_object)
 
-    s_inc = scaled_data.dimensions[1].increment.value
-    s_off = scaled_data.dimensions[1].coordinates_offset.value
+    s_inc = scaled_data.x[1].increment.value
+    s_off = scaled_data.x[1].coordinates_offset.value
 
     assert s_inc == 2 * c_inc
     assert s_off == 2 * c_off

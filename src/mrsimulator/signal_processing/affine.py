@@ -153,7 +153,7 @@ class Scale(AbstractAffineTransformation):
 
         data: CSDM object.
         """
-        data_ref = data.dimensions[self.dim_index]
+        data_ref = data.x[self.dim_index]
         data_ref.increment *= self.factor
         data_ref.coordinates_offset *= self.factor
         data_ref.reciprocal.coordinates_offset /= self.factor
@@ -211,8 +211,8 @@ class Scale(AbstractAffineTransformation):
 #         data: CSDM object
 #         dep_var: int. The index of the dependent variable to apply operation to.
 #         """
-#         # data.dimensions[self.dim_index].increment *= self.factor
-#         data.dimensions[self.dim_index].coordinates_offset += (
+#         # data.x[self.dim_index].increment *= self.factor
+#         data.x[self.dim_index].coordinates_offset += (
 #             self.factor * self.property_units["factor"]
 #         )
 #         return data

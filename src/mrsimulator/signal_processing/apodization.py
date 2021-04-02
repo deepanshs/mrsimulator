@@ -54,11 +54,11 @@ class AbstractApodization(AbstractOperation):
             x = dims[dim_index_].coordinates
             apodization_vactor = _get_broadcast_shape(self.fn(x), dim_index_, ndim)
 
-            n = len(data.dependent_variables)
+            n = len(data.y)
             dv_indexes = self._get_dv_indexes(self.dv_index, n=n)
 
             for i in dv_indexes:
-                data.dependent_variables[i].components *= apodization_vactor
+                data.y[i].components *= apodization_vactor
         return data
 
 

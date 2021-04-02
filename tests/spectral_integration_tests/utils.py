@@ -138,7 +138,7 @@ def simulator_process(sim, data_object):
     data_mrsimulator = data_mrsimulator.sum(axis=0)
     data_mrsimulator /= data_mrsimulator.sum()
 
-    dv = sim_data.dependent_variables[0]
+    dv = sim_data.y[0]
     assert dv.name == "test name"
     assert dv.description == "test description"
 

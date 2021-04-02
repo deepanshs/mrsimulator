@@ -145,8 +145,8 @@ def test_method():
     data = np.random.rand(100).reshape(10, 10)
     csdm_data = cp.as_csdm(data)
 
-    csdm_data.dimensions[0] *= cp.ScalarQuantity("Hz")
-    csdm_data.dimensions[1] *= cp.ScalarQuantity("Hz")
+    csdm_data.x[0] *= cp.ScalarQuantity("Hz")
+    csdm_data.x[1] *= cp.ScalarQuantity("Hz")
 
     the_method.experiment = csdm_data
     the_method.simulation = csdm_data

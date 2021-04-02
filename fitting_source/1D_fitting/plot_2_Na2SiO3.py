@@ -51,7 +51,7 @@ sigma = 1212275
 oxygen_experiment = oxygen_experiment.real
 
 # Convert the dimension coordinates from Hz to ppm.
-oxygen_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
+oxygen_experiment.x[0].to("ppm", "nmr_frequency_ratio")
 
 # Normalize the spectrum
 max_amp = oxygen_experiment.max()

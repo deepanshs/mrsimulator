@@ -569,8 +569,8 @@ class Simulator(BaseModel):
         new = cp.new()
         for dimension in method.spectral_dimensions[::-1]:
             new.add_dimension(dimension.to_csdm_dimension())
-            if new.dimensions[-1].origin_offset != 0:
-                new.dimensions[-1].to("ppm", "nmr_frequency_ratio")
+            if new.x[-1].origin_offset != 0:
+                new.x[-1].to("ppm", "nmr_frequency_ratio")
 
         dependent_variable = {
             "type": "internal",
@@ -586,7 +586,7 @@ class Simulator(BaseModel):
                 self._update_name_description_application(dependent_variable, index)
 
             new.add_dependent_variable(dependent_variable)
-            new.dependent_variables[-1].encoding = "base64"
+            new.y[-1].encoding = "base64"
         return new
 
     def _update_name_description_application(self, obj, index):

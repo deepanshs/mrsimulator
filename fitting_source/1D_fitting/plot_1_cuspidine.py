@@ -47,7 +47,7 @@ synthetic_experiment = cp.load(file_).real
 sigma = 0.3298179
 
 # convert the dimension coordinates from Hz to ppm
-synthetic_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
+synthetic_experiment.x[0].to("ppm", "nmr_frequency_ratio")
 
 # Normalize the spectrum
 max_amp = synthetic_experiment.max()
@@ -189,7 +189,7 @@ def minimization_function(params, sim, processor, sigma=1):
     values = params.valuesdict()
 
     # the experiment data as a Numpy array
-    intensity = sim.methods[0].experiment.dependent_variables[0].components[0].real
+    intensity = sim.methods[0].experiment.y[0].components[0].real
 
     # Here, we update simulation parameters iso, eta, and zeta for the site object
     site = sim.spin_systems[0].sites[0]
@@ -210,7 +210,7 @@ def minimization_function(params, sim, processor, sigma=1):
     processed_data = processor.apply_operations(sim.methods[0].simulation)
 
     # return the difference vector.
-    diff = intensity - processed_data.dependent_variables[0].components[0].real
+    diff = intensity - processed_data.y[0].components[0].real
     return diff / sigma
 
 

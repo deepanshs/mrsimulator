@@ -362,7 +362,7 @@ def LMFIT_min_function(params, sim, post_sim=None, sigma=1):
     #     y_factored = method.apodize().real
     #     residual = np.append(
     #         residual,
-    #         method.experiment.dependent_variables[0].components[0].real - y_factored,
+    #         method.experiment.y[0].components[0].real - y_factored,
     #     )
 
     # return residual

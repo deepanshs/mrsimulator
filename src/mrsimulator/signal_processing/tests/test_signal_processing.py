@@ -23,7 +23,7 @@ def test_01():
         post_sim.apply_operations([])
 
     data = cp.as_csdm(np.arange(20))
-    data.dimensions[0] = cp.LinearDimension(count=20, increment="10 K")
+    data.x[0] = cp.LinearDimension(count=20, increment="10 K")
     post_sim.apply_operations(data)
 
     # to dict with units
