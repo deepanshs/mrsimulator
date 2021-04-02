@@ -104,7 +104,6 @@ def test_number_of_points():
     y_static_1 = sim.methods[0].simulation.dependent_variables[0].components[0]
     inc_1 = sim.methods[0].simulation.dimensions[0].increment.to("Hz").value
 
-    print(inc, inc_1)
     np.testing.assert_almost_equal(
         y_static.sum() * inc,
         y_static_1.sum() * inc_1,

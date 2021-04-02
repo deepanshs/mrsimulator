@@ -13,8 +13,7 @@ def _get_broadcast_shape(array, dim, ndim):
     """Return the broadcast shape of a vector `array` at dimension `dim` for `ndim`
     total dimensions."""
     none = [np.newaxis for _ in range(ndim + 1)]
-    if isinstance(dim, int):
-        dim = [dim]
+    dim = [dim] if isinstance(dim, int) else dim
     for dim_ in dim:
         none[-dim_ - 1] = slice(None, None, None)
     return array[tuple(none)]

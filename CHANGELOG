@@ -28,8 +28,9 @@ Changes
 Bug fixes
 '''''''''
 
-- Fix a bug related to `get_spectral_dimensions()` utility method in cases when CSDM
+- Fixed a bug related to `get_spectral_dimensions()` utility method in cases when CSDM
   dimension objects have negative increment.
+- Fixed a bug resulting in the unconserved spectral area after a Gaussian apodization.
 
 v0.5.1
 ------

@@ -103,12 +103,12 @@ class Gaussian(AbstractApodization):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
+        if self.FWHM == 0:
+            return 1.0
+
         x = self._get_correct_units(x, unit=1 / self.property_units["FWHM"])
         sigma = self.FWHM / 2.354820045030949
-        xinv = np.fft.ifftshift(np.arange(x.size, dtype=np.float64) - int(x.size / 2))
-        xinv /= x[-1] - x[0]
-        amp = np.fft.ifftshift(np.fft.ifft(np.exp(-0.5 * (xinv / sigma) ** 2)))
-        return amp.real / (sigma * np.sqrt(2 * np.pi))
+        return np.exp(-2.0 * (np.pi * sigma * x) ** 2)
 
 
 class Exponential(AbstractApodization):
@@ -117,7 +117,7 @@ class Exponential(AbstractApodization):
     The apodization function follows
 
     .. math::
-        f(x) = e^{-\Gamma |x| \pi},
+        f(x) = e^{-\Gamma \pi |x|},
 
     where :math:`x` are the coordinates of the dimension, and :math:`\Gamma` is the
     width parameter. The relationship between the width parameter, :math:`\Gamma`, and
@@ -151,48 +151,8 @@ class Exponential(AbstractApodization):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
+        if self.FWHM == 0:
+            return 1.0
+
         x = self._get_correct_units(x, unit=1 / self.property_units["FWHM"])
         return np.exp(-self.FWHM * np.pi * np.abs(x))
-
-
-# class ExponentialAbs(AbstractApodization):
-#     r"""Apodize a dependent variable of the simulation data object by an exponential
-#     function. The function follows
-
-#     .. math::
-#         f(x) = e^{-\Tau |x| \pi},
-
-#     where :math:`x` are the coordinates of the data dimension and :math:`\Tau` is
-#     the width parameter.
-
-#     Args:
-#         int dim_index: Data dimension index to apply the function along.
-#         float FWHM: The full width at half maximum parameter, :math:`\Tau`.
-#         int dv_index: Data dependent variable index to apply the function to. If
-#             the type None, the operation will be applied to every dependent variable.
-
-#     Example
-#     -------
-
-#     >>> operation5 = apo.Exponential(FWHM=143.4, dim_index=0, dv_index=0)
-#     """
-
-#     FWHM: float = 0
-
-#     property_unit_types: ClassVar = {"FWHM": ["time", "frequency"]}
-#     property_default_units: ClassVar = {"FWHM": ["s", "Hz"]}
-#     property_units: Dict = {"FWHM": "Hz"}
-
-#     @staticmethod
-#     def fn(x, arg):
-#         return np.exp(-arg * np.pi * np.abs(x))
-
-#     def operate(self, data):
-#         """
-#         Applies the operation for which the class is named for.
-
-#         data: CSDM object
-#         dep_var: int. The index of the dependent variable to apply operation to
-#         """
-
-#         return self._operate(data, fn=self.fn, prop_name="FWHM", prop_value=self.FWHM)
