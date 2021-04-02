@@ -391,14 +391,10 @@ class Simulator(BaseModel):
 
         >>> sim.export_spin_systems(filename) # doctest:+SKIP
         """
-        spin_systems = [SpinSystem.json(obj) for obj in self.spin_systems]
+        spin_sys = [SpinSystem.json(obj) for obj in self.spin_systems]
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
-                spin_systems,
-                outfile,
-                ensure_ascii=False,
-                sort_keys=False,
-                allow_nan=False,
+                spin_sys, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
     def run(
@@ -492,24 +488,10 @@ class Simulator(BaseModel):
 
         >>> sim.save('filename') # doctest: +SKIP
         """
-        if not with_units:
-            with open(filename, "w", encoding="utf8") as outfile:
-                json.dump(
-                    self.reduced_dict(),
-                    outfile,
-                    ensure_ascii=False,
-                    sort_keys=False,
-                    allow_nan=False,
-                )
-            return
-
+        sim = self.json(True, True) if with_units else self.reduced_dict()
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
-                self.json(include_methods=True, include_version=True),
-                outfile,
-                ensure_ascii=False,
-                sort_keys=False,
-                allow_nan=False,
+                sim, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
     @classmethod
@@ -533,12 +515,8 @@ class Simulator(BaseModel):
         .. seealso::
             :ref:`load_spin_systems`
         """
-        contents = import_json(filename)
-
-        if not parse_units:
-            return Simulator(**contents)
-
-        return Simulator.parse_dict_with_units(contents)
+        val = import_json(filename)
+        return Simulator.parse_dict_with_units(val) if parse_units else Simulator(**val)
 
     def sites(self):
         """Unique sites within the Simulator object as a list of Site objects.
@@ -551,12 +529,13 @@ class Simulator(BaseModel):
 
         >>> sites = sim.sites() # doctest: +SKIP
         """
-        sites_list = []
+        unique_sites = []
         for sys in self.spin_systems:
             for site in sys.sites:
-                if site not in sites_list:
-                    sites_list.append(site)
-        return Sites(sites_list)
+                if site not in unique_sites:
+                    unique_sites.append(site)
+
+        return Sites(unique_sites)
 
     def _as_csdm_object(self, data: np.ndarray, method: Method) -> cp.CSDM:
         """
