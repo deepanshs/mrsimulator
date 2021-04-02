@@ -46,11 +46,9 @@ _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
 # Normalize the spectrum
 max_amp = experiment.max()
-experiment /= experiment.max()
-sigma /= max_amp
 
 # plot of the dataset.
-levels = (np.arange(10) + 0.3) / 15  # contours are drawn at these levels.
+levels = (np.arange(14) + 1) * max_amp / 15  # contours are drawn at these levels.
 ax = plt.subplot(projection="csdm")
 ax.contour(experiment, colors="k", levels=levels, alpha=0.75)
 ax.invert_xaxis()
@@ -68,7 +66,8 @@ plt.show()
 shifts = [29, 41, 57, 53, 58]  # in ppm
 Cq = [6.1e6, 5.4e6, 5.5e6, 5.5e6, 5.1e6]  # in  Hz
 eta = [0.1, 0.2, 0.1, 0.1, 0.3]
-abundance = [1, 1, 2, 2, 2]
+abundance_ratio = [1, 1, 2, 2, 2]
+abundance = np.asarray(abundance_ratio) / 8 * 100  # in %
 
 spin_systems = single_site_system_generator(
     isotopes="17O",
@@ -141,7 +140,7 @@ processor = sp.SignalProcessor(
         apo.Gaussian(FWHM="0.15 kHz", dim_index=0),
         apo.Gaussian(FWHM="0.15 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
-        sp.Scale(factor=1 / 8),
+        sp.Scale(factor=5e-4),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real

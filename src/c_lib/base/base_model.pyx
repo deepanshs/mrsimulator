@@ -402,17 +402,17 @@ def one_d_spectrum(method,
                     if dipolar.gamma is not None:
                         ori_d[i3+2] = dipolar.gamma
 
-            if verbose in [1, 11]:
-                print(f'N couplings = {number_of_couplings}')
-                print(f'site index J = {spin_index_ij}')
-                print(f'Isotropic J = {iso_j} Hz')
-                print(f'J anisotropy = {zeta_j} Hz')
-                print(f'J asymmetry = {eta_j}')
-                print(f'J orientation = {ori_j}')
+            # if verbose in [1, 11]:
+            #     print(f'N couplings = {number_of_couplings}')
+            #     print(f'site index J = {spin_index_ij}')
+            #     print(f'Isotropic J = {iso_j} Hz')
+            #     print(f'J anisotropy = {zeta_j} Hz')
+            #     print(f'J asymmetry = {eta_j}')
+            #     print(f'J orientation = {ori_j}')
 
-                print(f'Dipolar coupling constant = {D_d} Hz')
-                print(f'Dipolar asymmetry = {eta_d}')
-                print(f'Dipolar orientation = {ori_d}')
+            #     print(f'Dipolar coupling constant = {D_d} Hz')
+            #     print(f'Dipolar asymmetry = {eta_d}')
+            #     print(f'Dipolar orientation = {ori_d}')
 
             # couplings packed as c struct
             couplings_c.number_of_couplings = number_of_couplings

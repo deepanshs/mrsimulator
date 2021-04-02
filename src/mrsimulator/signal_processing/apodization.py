@@ -10,6 +10,7 @@ from pydantic import validator
 from ._base import AbstractOperation
 from .utils import _get_broadcast_shape
 from .utils import _str_to_quantity
+from .utils import CONST
 
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
@@ -34,7 +35,7 @@ class AbstractApodization(AbstractOperation):
         return self.__class__.__name__
 
     @staticmethod
-    def _get_correct_units(x, unit):
+    def _get_correct_coordinates(x, unit):
         return x.to(unit).value
 
     def operate(self, data):
@@ -96,19 +97,16 @@ class Gaussian(AbstractApodization):
     """
 
     FWHM: Union[float, str] = 0
-    property_units: Dict = {"FWHM": ""}
+    property_units: Dict = {"FWHM": CONST}
 
     @validator("FWHM")
     def str_to_quantity(cls, v, values):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
-        if self.FWHM == 0:
-            return 1.0
-
-        x = self._get_correct_units(x, unit=1 / self.property_units["FWHM"])
+        x = self._get_correct_coordinates(x, unit=1.0 / self.property_units["FWHM"])
         sigma = self.FWHM / 2.354820045030949
-        return np.exp(-2.0 * (np.pi * sigma * x) ** 2)
+        return 1.0 if self.FWHM == 0.0 else np.exp(-2.0 * (np.pi * sigma * x) ** 2)
 
 
 class Exponential(AbstractApodization):
@@ -144,15 +142,12 @@ class Exponential(AbstractApodization):
     """
 
     FWHM: Union[float, str] = 0
-    property_units: Dict = {"FWHM": ""}
+    property_units: Dict = {"FWHM": CONST}
 
     @validator("FWHM")
     def str_to_quantity(cls, v, values):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
-        if self.FWHM == 0:
-            return 1.0
-
-        x = self._get_correct_units(x, unit=1 / self.property_units["FWHM"])
-        return np.exp(-self.FWHM * np.pi * np.abs(x))
+        x = self._get_correct_coordinates(x, unit=1.0 / self.property_units["FWHM"])
+        return 1.0 if self.FWHM == 0.0 else np.exp(-self.FWHM * np.pi * np.abs(x))

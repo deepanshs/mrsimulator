@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Apodization test"""
+import csdmpy as cp
 import mrsimulator.signal_processing as sp
 import numpy as np
 from mrsimulator import Simulator
@@ -172,3 +173,37 @@ def test_Gaussian_class():
     b = sp.apodization.Gaussian.parse_dict_with_units(dict_)
 
     assert a == b
+
+
+def test_2D_area():
+    data = np.zeros((256, 128), dtype=float)
+    data[128, 64] = 1.0
+    csdm_obj = cp.as_csdm(data)
+
+    # test00
+    PS = [
+        sp.IFFT(dim_index=(0, 1)),
+        sp.apodization.Gaussian(FWHM="35", dim_index=0),
+        sp.apodization.Gaussian(FWHM="55", dim_index=1),
+        sp.FFT(dim_index=(0, 1)),
+    ]
+
+    post_sim = sp.SignalProcessor(operations=PS)
+    data_new = post_sim.apply_operations(data=csdm_obj.copy())
+    _, __, y1 = data_new.to_list()
+
+    assert np.allclose(y1.sum(), data.sum())
+
+    # test01
+    PS = [
+        sp.IFFT(dim_index=(0, 1)),
+        sp.apodization.Gaussian(FWHM="35", dim_index=0),
+        sp.apodization.Exponential(FWHM="55", dim_index=1),
+        sp.FFT(dim_index=(0, 1)),
+    ]
+
+    post_sim = sp.SignalProcessor(operations=PS)
+    data_new = post_sim.apply_operations(data=csdm_obj.copy())
+    _, __, y1 = data_new.to_list()
+
+    assert np.allclose(y1.sum(), data.sum())

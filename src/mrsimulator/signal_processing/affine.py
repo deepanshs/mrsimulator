@@ -10,7 +10,7 @@ from pydantic import validator
 from ._base import AbstractOperation
 from .utils import _get_broadcast_shape
 from .utils import _str_to_quantity
-from .utils import const
+from .utils import CONST
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -83,7 +83,7 @@ class Shear(AbstractAffineTransformation):
 
     factor: Union[float, str] = 0
     parallel: int = 1
-    property_units: Dict = {"factor": const}
+    property_units: Dict = {"factor": CONST}
 
     @validator("factor")
     def str_to_quantity(cls, v, values):
@@ -141,7 +141,7 @@ class Scale(AbstractAffineTransformation):
     """
 
     factor: Union[float, str] = 1
-    property_units: Dict = {"factor": const}
+    property_units: Dict = {"factor": CONST}
 
     @validator("factor")
     def str_to_quantity(cls, v, values):
@@ -195,7 +195,7 @@ class Scale(AbstractAffineTransformation):
 #     """
 
 #     factor: Union[float, str] = 1
-#     property_units: Dict = {"factor": const}
+#     property_units: Dict = {"factor": CONST}
 
 #     @validator("factor")
 #     def str_to_quantity(cls, v, values):

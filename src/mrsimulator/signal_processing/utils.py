@@ -6,7 +6,7 @@ from csdmpy.units import string_to_quantity
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
-const = string_to_quantity("1")
+CONST = string_to_quantity("1")
 
 
 def _get_broadcast_shape(array, dim, ndim):
