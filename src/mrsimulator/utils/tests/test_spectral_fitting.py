@@ -35,7 +35,7 @@ def test_str_decode():
     assert sf._str_decode(str2_encoded) == str2
 
 
-def test_get_and_set_simulator_object_value():
+def test_get_and_update_sim_from_LMFIT_params():
     site = Site(
         isotope="23Na",
         isotropic_chemical_shift=32,
@@ -48,47 +48,47 @@ def test_get_and_set_simulator_object_value():
 
     string = "sys_0_site_0_isotropic_chemical_shift"
     assert sf._get_simulator_object_value(sim, string) == 32
-    sf._set_simulator_object_value(sim, string, -32)
+    sf._update_sim_from_LMFIT_params(sim, string, -32)
     assert sf._get_simulator_object_value(sim, string) == -32
 
     string = "sys_0_site_0_shielding_symmetric_eta"
     assert sf._get_simulator_object_value(sim, string) == 0.1
-    sf._set_simulator_object_value(sim, string, 0.4)
+    sf._update_sim_from_LMFIT_params(sim, string, 0.4)
     assert sf._get_simulator_object_value(sim, string) == 0.4
 
     string = "sys_0_site_0_shielding_symmetric_zeta"
     assert sf._get_simulator_object_value(sim, string) == -120.0
-    sf._set_simulator_object_value(sim, string, 134.2)
+    sf._update_sim_from_LMFIT_params(sim, string, 134.2)
     assert sf._get_simulator_object_value(sim, string) == 134.2
 
     string = "sys_0_site_0_quadrupolar_eta"
     assert sf._get_simulator_object_value(sim, string) == 0.31
-    sf._set_simulator_object_value(sim, string, 0.98)
+    sf._update_sim_from_LMFIT_params(sim, string, 0.98)
     assert sf._get_simulator_object_value(sim, string) == 0.98
 
     string = "sys_0_site_0_quadrupolar_Cq"
     assert sf._get_simulator_object_value(sim, string) == 1e5
-    sf._set_simulator_object_value(sim, string, 2.3e6)
+    sf._update_sim_from_LMFIT_params(sim, string, 2.3e6)
     assert sf._get_simulator_object_value(sim, string) == 2.3e6
 
     string = "sys_0_site_0_quadrupolar_alpha"
     assert sf._get_simulator_object_value(sim, string) is None
-    sf._set_simulator_object_value(sim, string, 1.32)
+    sf._update_sim_from_LMFIT_params(sim, string, 1.32)
     assert sf._get_simulator_object_value(sim, string) == 1.32
 
     string = "sys_0_site_0_quadrupolar_beta"
     assert sf._get_simulator_object_value(sim, string) == 5.12
-    sf._set_simulator_object_value(sim, string, None)
+    sf._update_sim_from_LMFIT_params(sim, string, None)
     assert sf._get_simulator_object_value(sim, string) is None
 
     string = "sys_0_site_0_quadrupolar_gamma"
     assert sf._get_simulator_object_value(sim, string) is None
-    sf._set_simulator_object_value(sim, string, 1.2)
+    sf._update_sim_from_LMFIT_params(sim, string, 1.2)
     assert sf._get_simulator_object_value(sim, string) == 1.2
 
     string = "sys_0_abundance"
     assert sf._get_simulator_object_value(sim, string) == 0.123
-    sf._set_simulator_object_value(sim, string, 45)
+    sf._update_sim_from_LMFIT_params(sim, string, 45)
     assert sf._get_simulator_object_value(sim, string) == 45
 
 
@@ -103,37 +103,40 @@ def test_03():
     ]
     post_sim = sp.SignalProcessor(operations=op_list)
 
-    params = sf._post_sim_LMFIT_params(post_sim)
+    params = sf.make_signal_processor_params(post_sim)
 
     val = params.valuesdict()
 
-    assert val["operation_1_Exponential_FWHM"] == 100
-    assert val["operation_2_Gaussian_FWHM"] == 200
-    assert val["operation_4_Scale_factor"] == 10
+    assert val["SP_0_operation_1_Exponential_FWHM"] == 100
+    assert val["SP_0_operation_2_Gaussian_FWHM"] == 200
+    assert val["SP_0_operation_4_Scale_factor"] == 10
 
 
 def test_04():
     # update_post_sim_from_LMFIT_params
-    op_list = [
+    op_list1 = [sp.Scale(factor=20)]
+    op_list2 = [
         sp.IFFT(dim_index=0),
         apo.Gaussian(FWHM=130, dim_index=0, dv_index=0),
         apo.Exponential(FWHM=100, dim_index=1, dv_index=0),
         sp.FFT(dim_index=0),
         sp.Scale(factor=10),
     ]
-    post_sim = sp.SignalProcessor(operations=op_list)
+    post_sim = [sp.SignalProcessor(operations=lst) for lst in [op_list1, op_list2]]
 
-    params = sf._post_sim_LMFIT_params(post_sim)
+    params = sf.make_signal_processor_params(post_sim)
 
-    params["operation_1_Gaussian_FWHM"].value = 30
-    params["operation_2_Exponential_FWHM"].value = 10
-    params["operation_4_Scale_factor"].value = 1
+    params["SP_0_operation_0_Scale_factor"].value = 300
+    params["SP_1_operation_1_Gaussian_FWHM"].value = 30
+    params["SP_1_operation_2_Exponential_FWHM"].value = 10
+    params["SP_1_operation_4_Scale_factor"].value = 1
 
     sf._update_post_sim_from_LMFIT_params(params, post_sim)
 
-    assert post_sim.operations[1].FWHM == 30
-    assert post_sim.operations[2].FWHM == 10
-    assert post_sim.operations[4].factor == 1
+    assert post_sim[0].operations[0].factor == 300
+    assert post_sim[1].operations[1].FWHM == 30
+    assert post_sim[1].operations[2].FWHM == 10
+    assert post_sim[1].operations[4].factor == 1
 
 
 def test_5():
@@ -162,7 +165,7 @@ def test_5():
         sp.FFT(dim_index=0),
         sp.Scale(factor=10),
     ]
-    post_sim = sp.SignalProcessor(data=None, operations=op_list)
+    post_sim = sp.SignalProcessor(operations=op_list)
 
     e = "Expecting a `Simulator` object, found"
     with pytest.raises(ValueError, match=f".*{e}.*"):
@@ -182,8 +185,8 @@ def test_5():
         "sys_1_site_0_shielding_symmetric_zeta": 15,
         "sys_1_site_0_shielding_symmetric_eta": 0.2,
         "sys_1_abundance": 37.5,
-        "operation_1_Exponential_FWHM": 100,
-        "operation_3_Scale_factor": 10,
+        "SP_0_operation_1_Exponential_FWHM": 100,
+        "SP_0_operation_3_Scale_factor": 10,
     }
     assert params.valuesdict() == valuesdict, "Parameter creation failed"
 
@@ -201,16 +204,6 @@ def test_5():
     assert params.valuesdict() == valuesdict, "Parameter creation failed"
 
     params = sf.make_LMFIT_parameters(sim)
-    valuesdict = {
-        "sys_0_site_0_isotropic_chemical_shift": 10,
-        "sys_0_site_0_shielding_symmetric_zeta": 5,
-        "sys_0_site_0_shielding_symmetric_eta": 0.1,
-        "sys_0_abundance": 62.5,
-        "sys_1_site_0_isotropic_chemical_shift": -10,
-        "sys_1_site_0_shielding_symmetric_zeta": 15,
-        "sys_1_site_0_shielding_symmetric_eta": 0.2,
-        "sys_1_abundance": 37.5,
-    }
     assert params.valuesdict() == valuesdict, "Parameter creation failed"
 
 
