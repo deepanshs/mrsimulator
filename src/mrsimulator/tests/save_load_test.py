@@ -34,7 +34,7 @@ def test_save_and_load():
     sim_r, processors_r, report_r = load("test.mrsim")
 
     assert sim_r == sim
-    assert processors_r == processors_r
+    assert processors_r == processors
     assert report_r is None
 
     os.remove("test.mrsim")

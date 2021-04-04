@@ -516,7 +516,21 @@ class Simulator(BaseModel):
             :ref:`load_spin_systems`
         """
         val = import_json(filename)
-        return Simulator.parse_dict_with_units(val) if parse_units else Simulator(**val)
+        return Simulator.parse(val, parse_units)
+
+    @classmethod
+    def parse(cls, py_dict: dict, parse_units: bool = True):
+        """Parse a dictionary for Simulator object.
+
+        Args:
+            dict py_dict: Disctionary object.
+            bool parse_units: It true, parse quantity from string.
+        """
+        return (
+            Simulator.parse_dict_with_units(py_dict)
+            if parse_units
+            else Simulator(**py_dict)
+        )
 
     def sites(self):
         """Unique sites within the Simulator object as a list of Site objects.

@@ -73,18 +73,24 @@ def save(
 
 def load(filename: str, parse_units: bool = True):
     val = import_json(filename)
+    return parse(val, parse_units)
 
-    sim = Simulator.load(filename)
+
+def parse(py_dict, parse_units: bool = True):
+    sim = Simulator.parse(py_dict, parse_units)
 
     signal_processors = (
         [
             SignalProcessor.parse_dict_with_units(item)
-            for item in val["signal_processor"]
+            for item in py_dict["signal_processors"]
         ]
-        if "signal_processor" in val
+        if "signal_processors" in py_dict
         else None
     )
 
-    params = None if val["params"] is None else Parameters().loads(s=val["params"])
+    params = None
+    if "params" in py_dict:
+        val = py_dict["params"]
+        params = None if val is None else Parameters().loads(s=val)
 
     return sim, signal_processors, params
