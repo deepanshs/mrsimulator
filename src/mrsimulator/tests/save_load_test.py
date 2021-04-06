@@ -17,7 +17,12 @@ def test_save_and_load():
     spin_sys = SpinSystem(sites=[site, site], abundance=45)
 
     method = BlochDecaySpectrum(channels=["1H"])
-    sim = Simulator(spin_systems=[spin_sys], methods=[method])
+    sim = Simulator(spin_systems=[spin_sys, spin_sys], methods=[method, method])
+
+    sim.run(method_index=0)
+
+    assert sim.methods[0].simulation is not None
+    assert sim.methods[1].simulation is None
 
     processor = sp.SignalProcessor(
         operations=[
@@ -33,6 +38,8 @@ def test_save_and_load():
 
     sim_r, processors_r, report_r = load("test.mrsim")
 
+    sim_r.methods[0].simulation = None
+    sim.methods[0].simulation = None
     assert sim_r == sim
     assert processors_r == processors
     assert report_r is None
