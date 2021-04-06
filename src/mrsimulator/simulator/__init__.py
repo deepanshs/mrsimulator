@@ -336,7 +336,7 @@ class Simulator(BaseModel):
         sim["config"] = self.config.dict()
         sim["version"] = __version__ if include_version else None
 
-        _ = [sim.pop(k) for k in [k for k in sim.keys() if sim[k] in [None, []]]]
+        _ = [sim.pop(k) for k in [k for k in sim.keys() if sim[k] is None]]
         return sim
 
     def reduced_dict(self, exclude=["property_units", "indexes"]) -> dict:
@@ -428,7 +428,7 @@ class Simulator(BaseModel):
         verbose = 0
         if method_index is None:
             method_index = np.arange(len(self.methods))
-        if isinstance(method_index, int):
+        elif isinstance(method_index, int):
             method_index = [method_index]
         for index in method_index:
             method = self.methods[index]

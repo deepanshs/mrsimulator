@@ -49,6 +49,7 @@ def test_equality():
     result = {
         "label": "test",
         "spin_systems": [{"abundance": "100.0 %", "sites": []}],
+        "methods": [],
         "config": {
             "decompose_spectrum": "none",
             "integration_density": 70,
