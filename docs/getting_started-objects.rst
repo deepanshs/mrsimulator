@@ -229,6 +229,7 @@ Let's run the simulator and observe the spectrum.
 
 .. _fig1_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example solid-state NMR simulation of :math:`^{13}\text{C}` isotropic spectrum.
 
@@ -268,6 +269,7 @@ CSA patterns, see :numref:`fig2_using_obj`.
 
 .. _fig2_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example state-solid NMR simulation of static :math:`^{13}\text{C}` CSA spectrum.
 
@@ -304,6 +306,7 @@ with a new method. :numref:`fig3_using_obj` depicts the simulation from this met
 
 .. _fig3_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of the solid-state :math:`^{13}\text{C}` MAS sideband simulation.
 
@@ -336,6 +339,7 @@ this method.
 
 .. _fig4_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of the solid-state :math:`^{13}\text{C}` VAS sideband simulation.
 
@@ -367,6 +371,7 @@ method. Here, we update the method to `1H` channel.
 
 .. _fig5_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of solid-state :math:`^{1}\text{H}` VAS sideband simulation.
 
@@ -410,6 +415,7 @@ Simulating the spectrum from this method will result in a zero amplitude spectru
 
 .. _fig6_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of a simulation where the isotope from the method's channel attribute
     does not exist within the spin systems.
@@ -439,6 +445,7 @@ Likewise, update the value of the `channels` attribute to `17O`.
 
 .. _fig7_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of the solid-state :math:`^{17}\text{O}` BlochDecaySpectrum simulation.
 
@@ -501,6 +508,6 @@ Now, you may simulate the central transition selective spectrum.
 
 .. _fig8_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
-    An example of the solid-state :math:`^{17}\text{O}`
-    BlochDecayCTSpectrum simulation.
+    An example of the solid-state :math:`^{17}\text{O}` BlochDecayCTSpectrum simulation.

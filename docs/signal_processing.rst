@@ -146,6 +146,7 @@ shown below.
 
 .. _fig2_signal_process:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     The figure depicts an application of Gaussian convolution on a CSDM object.
 
@@ -217,6 +218,7 @@ The plot of the dataset before and after signal processing is shown below.
 
 .. _fig4_signal_process:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     Gaussian and Lorentzian convolution applied to two different dependent variables of the
     CSDM object.

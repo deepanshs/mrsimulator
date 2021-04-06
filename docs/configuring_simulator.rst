@@ -97,6 +97,7 @@ The following is an example of when the number of sidebands is insufficient.
 
 .. _fig1_config:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     Inaccurate spinning sidebands simulation resulting from computing a relatively low
     number of sidebands.
@@ -120,6 +121,7 @@ given anisotropy. Let's increase the number of sidebands to 90 and observe.
 
 .. _fig2_config:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     Accurate spinning sideband simulation when using a large number of sidebands.
 
@@ -172,6 +174,7 @@ Consider the following examples.
 
 .. _fig3_config:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of an incomplete spectral averaging, where the simulation comprises of
     frequency contributions evaluated over the positive octant.
@@ -195,6 +198,7 @@ simulation of the CSA tensor.
 
 .. _fig4_config:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     The spectrum resulting from the frequency contributions evaluated over the top
     hemisphere.
@@ -281,6 +285,7 @@ following example.
 
 .. _fig5_config:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     The spectrum is an integration of the spectra from individual spin systems when the
     value of `decompose_spectrum` is ``none``.
@@ -312,6 +317,7 @@ the simulation.
     >>> plot(sim.methods[0].simulation) # doctest: +SKIP
 
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     Spectrum from individual spin systems when the value of the `decompose_spectrum`
     config is ``spin_system``.

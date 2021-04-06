@@ -16,7 +16,7 @@ quadrupolar tensor interactions at static and MAS conditions.
 .. A benchmark for the number of single-site spin systems computer per second.
 
 .. figure:: _static/benchmark.*
-    :figclass: figure
+    :alt:
 
     (Left) The number of single-site spin systems computer per seconds. (Right)
     The execution time (in ms) in computing spectrum from a single-site spin system.
@@ -47,7 +47,7 @@ Benchmark for the previous versions
 -----------------------------------
 
 .. figure:: _static/benchmark_previous.*
-    :figclass: figure
+    :alt:
 
     (Left) The number of single-site spin systems computer per seconds. (Right)
     The execution time (in ms) in computing spectrum from a single-site spin system.

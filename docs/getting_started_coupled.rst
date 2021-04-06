@@ -280,6 +280,7 @@ You may optionally customize the plot using matplotlib methods.
 
 .. _fig1-getting-started-coupled:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example :math:`^{29}\text{Si}` NMR simulation from a coupled Si-Al spin system.
 
@@ -297,6 +298,7 @@ You may optionally customize the plot using matplotlib methods.
 
 .. _fig2-getting-started-coupled:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example :math:`^{27}\text{Al}` NMR simulation from a coupled Si-Al spin system.
 

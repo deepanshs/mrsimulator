@@ -300,6 +300,7 @@ You may optionally customize the plot using matplotlib methods.
 
 .. _fig1-getting-started:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of solid-state static NMR spectrum simulation.
 

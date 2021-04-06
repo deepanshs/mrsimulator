@@ -168,8 +168,7 @@ Getting Started
     :maxdepth: 2
     :caption: Getting Started
 
-    installation
-    requirements
+    installation/installation
     introduction
     getting_started
     getting_started_coupled
