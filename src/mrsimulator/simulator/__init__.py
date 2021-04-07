@@ -523,7 +523,7 @@ class Simulator(BaseModel):
         """Parse a dictionary for Simulator object.
 
         Args:
-            dict py_dict: Disctionary object.
+            dict py_dict: Dictionary object.
             bool parse_units: It true, parse quantity from string.
         """
         return (

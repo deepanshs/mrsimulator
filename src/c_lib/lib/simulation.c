@@ -183,9 +183,9 @@ void mrsimulator_core(
     int quad_second_order,       // Quad theory for second order,
 
     // spin rate, spin angle and number spinning sidebands
-    unsigned int number_of_sidebands,        // The number of sidebands
-    double sample_rotation_frequency_in_Hz,  // The rotor spin frequency
-    double rotor_angle_in_rad,  // The rotor angle relative to lab-frame z-axis
+    unsigned int number_of_sidebands,  // The number of sidebands
+    double rotor_frequency_in_Hz,      // The rotor spin frequency
+    double rotor_angle_in_rad,         // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the a list of transitions.
     float *transition_pathway,
@@ -208,8 +208,8 @@ void mrsimulator_core(
   }
 
   // check for spinning speed
-  if (sample_rotation_frequency_in_Hz < 1.0e-3) {
-    sample_rotation_frequency_in_Hz = 1.0e9;
+  if (rotor_frequency_in_Hz < 1.0e-3) {
+    rotor_frequency_in_Hz = 1.0e9;
     rotor_angle_in_rad = 0.0;
     number_of_sidebands = 1;
   }

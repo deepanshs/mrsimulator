@@ -42,7 +42,7 @@ def one_d_spectrum(method,
         better powder averaging. The default value is 72.
         Read more on the `Geodesic polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
     :ivar decompose_spectrum:
-        An unsigned integer. When value is 0, the spectum is a sum of spectrum from all
+        An unsigned integer. When value is 0, the spectrum is a sum of spectrum from all
         spin systems. If value is 1, spectrum from individual spin systems is stored
         separately.
     """
@@ -120,12 +120,12 @@ def one_d_spectrum(method,
         for event in dim.events:
             freq_contrib = np.append(freq_contrib, event._freq_contrib_flags())
             if event.rotor_frequency < 1.0e-3:
-                sample_rotation_frequency_in_Hz = 1.0e9
+                rotor_frequency_in_Hz = 1.0e9
                 rotor_angle_in_rad = 0.0
                 number_of_sidebands = 1
                 if prev_n_sidebands == 0: prev_n_sidebands = 1
             else:
-                sample_rotation_frequency_in_Hz = event.rotor_frequency
+                rotor_frequency_in_Hz = event.rotor_frequency
                 rotor_angle_in_rad = event.rotor_angle
                 if prev_n_sidebands == 0: prev_n_sidebands = number_of_sidebands
 
@@ -140,7 +140,7 @@ def one_d_spectrum(method,
 
             fr.append(event.fraction) # fraction
             Bo.append(event.magnetic_flux_density)  # in T
-            vr.append(sample_rotation_frequency_in_Hz) # in Hz
+            vr.append(rotor_frequency_in_Hz) # in Hz
             th.append(rotor_angle_in_rad) # in rad
 
         total_n_points *= dim.count
@@ -200,7 +200,7 @@ def one_d_spectrum(method,
     #     print(f"{'-'*(len_-1)}")
     #     print (f'Macroscopic magnetic flux density (B0) = {B0} T')
     #     print (f'Sample rotation angle is (θ) = {rotor_angle_in_rad} rad')
-    #     print (f'Sample rotation frequency (𝜈r) = {sample_rotation_frequency_in_Hz} Hz')
+    #     print (f'Sample rotation frequency (𝜈r) = {rotor_frequency_in_Hz} Hz')
 
 # sites _______________________________________________________________________________
     p_isotopes = None
