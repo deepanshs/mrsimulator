@@ -139,95 +139,129 @@ def test_04():
     assert post_sim[1].operations[4].factor == 1
 
 
-def test_5():
-    # make_LMFIT_params
-    sim = Simulator()
-
-    H = {
-        "isotope": "1H",
-        "isotropic_chemical_shift": "10 ppm",
-        "shielding_symmetric": {"zeta": "5 ppm", "eta": 0.1},
-    }
-    C = {
-        "isotope": "13C",
-        "isotropic_chemical_shift": "-10 ppm",
-        "shielding_symmetric": {"zeta": "15 ppm", "eta": 0.2},
-    }
-    spin_system1 = {"sites": [H], "abundance": "100%"}
-    system_object1 = SpinSystem.parse_dict_with_units(spin_system1)
-    spin_system2 = {"sites": [C], "abundance": "60%"}
-    system_object2 = SpinSystem.parse_dict_with_units(spin_system2)
-    sim.spin_systems += [system_object1, system_object2]
-
-    op_list = [
-        sp.IFFT(dim_index=0),
-        apo.Exponential(FWHM=100, dim_index=0, dv_index=0),
-        sp.FFT(dim_index=0),
-        sp.Scale(factor=10),
-    ]
-    post_sim = sp.SignalProcessor(operations=op_list)
-
+def test_raise_messages():
     e = "Expecting a `Simulator` object, found"
     with pytest.raises(ValueError, match=f".*{e}.*"):
         sf.make_LMFIT_params(12, 21)
 
     e = "Expecting a `SignalProcessor` object, found"
     with pytest.raises(ValueError, match=f".*{e}.*"):
-        sf.make_LMFIT_params(sim, 21)
+        sf.make_LMFIT_params(Simulator(spin_systems=[SpinSystem()]), 21)
+
+
+H = {
+    "isotope": "1H",
+    "isotropic_chemical_shift": "10 ppm",
+    "shielding_symmetric": {
+        "zeta": "5 ppm",
+        "eta": 0.1,
+        "alpha": "3.12 rad",
+        "gamma": "0.341 rad",
+    },
+}
+C = {
+    "isotope": "13C",
+    "isotropic_chemical_shift": "-10 ppm",
+    "shielding_symmetric": {"zeta": "15 ppm", "eta": 0.2, "beta": "4.12 rad"},
+}
+CH = {
+    "site_index": [0, 1],
+    "isotropic_j": "10 Hz",
+    "j_symmetric": {"zeta": "60 Hz", "eta": 0.4},
+}
+op_list = [
+    sp.IFFT(dim_index=0),
+    apo.Exponential(FWHM=100, dim_index=0, dv_index=0),
+    sp.FFT(dim_index=0),
+    sp.Scale(factor=10),
+]
+
+
+def test_5_multi_spin_systems():
+    sim = Simulator()
+    spin_system1 = {"sites": [H], "abundance": "100%"}
+    system_object1 = SpinSystem.parse_dict_with_units(spin_system1)
+    spin_system2 = {"sites": [C], "abundance": "60%"}
+    system_object2 = SpinSystem.parse_dict_with_units(spin_system2)
+    sim.spin_systems += [system_object1, system_object2]
+    post_sim = sp.SignalProcessor(operations=op_list)
 
     params = sf.make_LMFIT_params(sim, post_sim)
-    valuesdict = {
+    valuesdict_system = {
         "sys_0_site_0_isotropic_chemical_shift": 10,
         "sys_0_site_0_shielding_symmetric_zeta": 5,
         "sys_0_site_0_shielding_symmetric_eta": 0.1,
+        "sys_0_site_0_shielding_symmetric_alpha": 3.12,
+        "sys_0_site_0_shielding_symmetric_gamma": 0.341,
         "sys_0_abundance": 62.5,
         "sys_1_site_0_isotropic_chemical_shift": -10,
         "sys_1_site_0_shielding_symmetric_zeta": 15,
         "sys_1_site_0_shielding_symmetric_eta": 0.2,
+        "sys_1_site_0_shielding_symmetric_beta": 4.12,
         "sys_1_abundance": 37.5,
+    }
+    valuedict_proc = {
         "SP_0_operation_1_Exponential_FWHM": 100,
         "SP_0_operation_3_Scale_factor": 10,
     }
-    assert params.valuesdict() == valuesdict, "Parameter creation failed"
+    assert params.valuesdict() == {
+        **valuesdict_system,
+        **valuedict_proc,
+    }, "Parameter creation failed"
 
     params = sf.make_LMFIT_params(sim)
-    valuesdict = {
+    assert params.valuesdict() == valuesdict_system, "Parameter creation failed"
+
+    # alias
+    params = sf.make_LMFIT_parameters(sim)
+    assert params.valuesdict() == valuesdict_system, "Parameter creation failed"
+
+
+def test_6_coupled():
+    sim = Simulator()
+    spin_system = {"sites": [H, C], "couplings": [CH], "abundance": "100%"}
+    system_object = SpinSystem.parse_dict_with_units(spin_system)
+    sim.spin_systems += [system_object]
+    post_sim = sp.SignalProcessor(operations=op_list)
+
+    params = sf.make_LMFIT_params(sim, post_sim)
+    valuesdict_system = {
         "sys_0_site_0_isotropic_chemical_shift": 10,
         "sys_0_site_0_shielding_symmetric_zeta": 5,
         "sys_0_site_0_shielding_symmetric_eta": 0.1,
-        "sys_0_abundance": 62.5,
-        "sys_1_site_0_isotropic_chemical_shift": -10,
-        "sys_1_site_0_shielding_symmetric_zeta": 15,
-        "sys_1_site_0_shielding_symmetric_eta": 0.2,
-        "sys_1_abundance": 37.5,
+        "sys_0_site_0_shielding_symmetric_alpha": 3.12,
+        "sys_0_site_0_shielding_symmetric_gamma": 0.341,
+        "sys_0_site_1_isotropic_chemical_shift": -10,
+        "sys_0_site_1_shielding_symmetric_zeta": 15,
+        "sys_0_site_1_shielding_symmetric_eta": 0.2,
+        "sys_0_site_1_shielding_symmetric_beta": 4.12,
+        "sys_0_coupling_0_isotropic_j": 10,
+        "sys_0_coupling_0_j_symmetric_zeta": 60,
+        "sys_0_coupling_0_j_symmetric_eta": 0.4,
+        "sys_0_abundance": 100,
     }
-    assert params.valuesdict() == valuesdict, "Parameter creation failed"
+    valuedict_proc = {
+        "SP_0_operation_1_Exponential_FWHM": 100,
+        "SP_0_operation_3_Scale_factor": 10,
+    }
+    assert params.valuesdict() == {
+        **valuesdict_system,
+        **valuedict_proc,
+    }, "Parameter creation failed"
 
+    params = sf.make_LMFIT_params(sim)
+    assert params.valuesdict() == valuesdict_system, "Parameter creation failed"
+
+    # alias
     params = sf.make_LMFIT_parameters(sim)
-    assert params.valuesdict() == valuesdict, "Parameter creation failed"
+    assert params.valuesdict() == valuesdict_system, "Parameter creation failed"
 
 
-def test_6():
-    # LMFIT_min_function
-    # e = "Expecting a `Parameters` object, found"
-    # with pytest.raises(ValueError, match=f".*{e}.*"):
-    #     _ = sf.LMFIT_min_function([], [], [])
-
-    # params = Parameters()
-
-    # e = "Expecting a `SignalProcessor` object, found"
-    # with pytest.raises(ValueError, match=f".*{e}.*"):
-    #     _ = sf.LMFIT_min_function(params, [], [])
-
-    # processor = sp.SignalProcessor()
-    # e = "Expecting a `Simulator` object, found"
-    # with pytest.raises(ValueError, match=f".*{e}.*"):
-    #     _ = sf.LMFIT_min_function(params, [], processor)
-
+def test_7():
     site = Site(isotope="23Na")
-    sys = SpinSystem(sites=[site], abundance=100)
+    sys = SpinSystem(sites=[site], abundance=50)
     sim = Simulator()
-    sim.spin_systems.append(sys)
+    sim.spin_systems = [sys, sys]
     sim.methods = [BlochDecayCTSpectrum(channels=["23Na"])]
     sim.methods[0].experiment = cp.as_csdm(np.zeros(1024))
 
@@ -239,9 +273,25 @@ def test_6():
         ]
     )
 
-    sim.run()
-    data = processor.apply_operations(sim.methods[0].simulation)
+    def test_array():
+        sim.run()
+        data = processor.apply_operations(sim.methods[0].simulation)
 
-    params = sf.make_LMFIT_params(sim, processor)
-    a = sf.LMFIT_min_function(params, sim, processor)
-    np.testing.assert_almost_equal(-a.sum(), data.sum().real, decimal=8)
+        data_sum = 0
+        for dv in data.y:
+            data_sum += dv.components[0]
+
+        params = sf.make_LMFIT_params(sim, processor)
+        a = sf.LMFIT_min_function(params, sim, processor)
+        np.testing.assert_almost_equal(-a, data_sum, decimal=8)
+
+    test_array()
+
+    sim.config.decompose_spectrum = "spin_system"
+    test_array()
+
+    # data = processor.apply_operations(sim.methods[0].simulation)
+
+    # params = sf.make_LMFIT_params(sim, processor)
+    # a = sf.LMFIT_min_function(params, sim, processor)
+    # np.testing.assert_almost_equal(-a.sum(), data.sum().real, decimal=8)

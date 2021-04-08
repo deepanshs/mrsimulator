@@ -39,7 +39,7 @@ DECODING_PAIRS = [
     # coupling
     [".couplings.", "_coupling_"],
     [".isotropic_j", "_isotropic_j"],
-    [".shielding_j.", "_shielding_j_"],
+    [".j_symmetric.", "_j_symmetric_"],
     [".dipolar.", "_dipolar_"],
 ]
 
@@ -184,23 +184,26 @@ def _traverse_dictionaries(dictionary, parent="spin_systems"):
     Returns:
         List Object.
     """
-    name_list = []
-    if isinstance(dictionary, dict):
-        for key, vals in dictionary.items():
-            if key not in EXCLUDE and vals is not None:
-                # if isinstance(vals, (dict, list)):
-                name_list += (
-                    _traverse_dictionaries(vals, _str_encode(f"{parent}.{key}"))
-                    if isinstance(vals, (dict, list))
-                    else [_str_encode(f"{parent}.{key}")]
-                )
-                # else:
-                #     name_list += [_str_encode(f"{parent}.{key}")]
-    elif isinstance(dictionary, list):
-        for i, items in enumerate(dictionary):
-            name_list += _traverse_dictionaries(items, _str_encode(f"{parent}[{i}]"))
+    if isinstance(dictionary, list):
+        return [
+            value
+            for i, obj in enumerate(dictionary)
+            for value in _traverse_dictionaries(obj, _str_encode(f"{parent}[{i}]"))
+        ]
 
-    return name_list
+    if isinstance(dictionary, dict):
+        return [
+            item
+            for key, value in dictionary.items()
+            if key not in EXCLUDE and value is not None
+            for item in (
+                _traverse_dictionaries(value, _str_encode(f"{parent}.{key}"))
+                if isinstance(value, (dict, list))
+                else [_str_encode(f"{parent}.{key}")]
+            )
+        ]
+
+    return []
 
 
 def _post_sim_LMFIT_params(params, post_sim, index):
@@ -214,8 +217,6 @@ def _post_sim_LMFIT_params(params, post_sim, index):
     Returns:
         Parameters object
     """
-    # params = Parameters()
-
     for i, operation in enumerate(post_sim.operations):
         name = operation.__class__.__name__
         if name in POST_SIM_DICT:
@@ -223,8 +224,6 @@ def _post_sim_LMFIT_params(params, post_sim, index):
             key = f"SP_{index}_operation_{i}_{name}_{attr}"
             val = operation.__getattribute__(attr)
             params.add(name=key, value=val)
-
-    # return params
 
 
 def _update_post_sim_from_LMFIT_params(params, post_sim):
