@@ -111,11 +111,11 @@ chemical shift of -10 ppm.
 
 In creating the site, ``H1``, we use the dictionary object to
 describe a traceless symmetric second-rank irreducible nuclear shielding
-tensor, using the attributes `zeta` and `eta`, respectively.
-The parameter `zeta` and `eta` are defined as per the
+tensor, using the attributes *zeta* and *eta*, respectively.
+The parameter *zeta* and *eta* are defined as per the
 Haeberlen convention and describes the anisotropy and asymmetry parameter of
 the tensor, respectively.
-The default unit of the attributes from the `shielding_symmetric`
+The default unit of the attributes from the *shielding_symmetric*
 is found with the ``property_units`` attribute, such as
 
 .. plot::
@@ -128,8 +128,8 @@ is found with the ``property_units`` attribute, such as
 
 For site, ``O17``, we once again make use of the dictionary object, only this time
 to describe a traceless symmetric second-rank irreducible electric quadrupole
-tensor, using the attributes `Cq` and `eta`, respectively. The parameter `Cq`
-is the quadrupole coupling constant, and `eta` is the asymmetry parameters of
+tensor, using the attributes *Cq* and *eta*, respectively. The parameter *Cq*
+is the quadrupole coupling constant, and *eta* is the asymmetry parameters of
 the quadrupole tensor, respectively.
 The default unit of these attributes is once again found with the ``property_units``
 attribute,
@@ -185,7 +185,7 @@ object following,
 
 The above method, ``method_1``, is defined to record :math:`^{13}\text{C}` resonances
 over 25 kHz spectral width using 2048 points. The unspecified attributes, such as
-`rotor_frequency`, `rotor_angle`, `magnetic_flux_density`, assume their default value.
+*rotor_frequency*, *rotor_angle*, *magnetic_flux_density*, assume their default value.
 The default units of these attributes is once again  found with the
 :attr:`~mrsimulator.Method.property_units` attribute,
 
@@ -346,8 +346,8 @@ this method.
 Switching the detection channels of the method
 **********************************************
 
-To switch to another channels, update the value of the `channels` attribute of the
-method. Here, we update the method to `1H` channel.
+To switch to another channels, update the value of the *channels* attribute of the
+method. Here, we update the method to *1H* channel.
 
 .. plot::
     :format: doctest
@@ -423,7 +423,7 @@ Simulating the spectrum from this method will result in a zero amplitude spectru
 Switching the channel to 17O
 ''''''''''''''''''''''''''''
 
-Likewise, update the value of the `channels` attribute to `17O`.
+Likewise, update the value of the *channels* attribute to *17O*.
 
 .. plot::
     :format: doctest

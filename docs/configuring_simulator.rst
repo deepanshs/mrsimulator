@@ -129,14 +129,14 @@ given anisotropy. Let's increase the number of sidebands to 90 and observe.
 Integration volume
 ------------------
 
-The attribute `integration_volume` is an enumeration with two literals, ``octant`` and
+The attribute *integration_volume* is an enumeration with two literals, ``octant`` and
 ``hemisphere``.
 The integration volume refers to the volume of the sphere over which the NMR frequencies
-are integrated. The default value is `octant`, i.e., the spectrum comprises of integrated
+are integrated. The default value is *octant*, i.e., the spectrum comprises of integrated
 frequencies arising from the positive octant of the sphere.
 The ``mrsimulator`` package enables the user to exploit the orientational symmetry of
 the problem, and thus optimize the simulation by performing a partial integration
----`octant` or `hemisphere`. To learn more about the orientational symmetries,
+---*octant* or *hemisphere*. To learn more about the orientational symmetries,
 please refer to Eden et. al. [#f4]_
 
 .. In previous examples, we exploited the :math:`\text{D}_{2h}` symmetry
@@ -144,8 +144,8 @@ please refer to Eden et. al. [#f4]_
 .. the line-shape over an octant. Observe what happens when this symmetry breaks.
 
 Consider the :math:`^{29}\text{Si}` site, ``Si29site``, from the previous example. This
-site has a symmetric shielding tensor with `zeta` and `eta` as 100 ppm and 0.2,
-respectively. With only `zeta` and `eta`, we can exploit the symmetry of the problem,
+site has a symmetric shielding tensor with *zeta* and *eta* as 100 ppm and 0.2,
+respectively. With only *zeta* and *eta*, we can exploit the symmetry of the problem,
 and evaluate the frequency integral over the octant, which is equivalent to the
 integration over the sphere. By adding the Euler angles to this tensor, we break the
 symmetry, and the integration over the octant is no longer accurate.
@@ -181,7 +181,7 @@ Consider the following examples.
 
 
 The spectrum in :numref:`fig3_config` is incorrect. To fix this, set the integration
-volume to `hemisphere` and re-simulate. :numref:`fig4_config` depicts the accurate
+volume to *hemisphere* and re-simulate. :numref:`fig4_config` depicts the accurate
 simulation of the CSA tensor.
 
 .. plot::
@@ -189,7 +189,7 @@ simulation of the CSA tensor.
     :context: close-figs
     :include-source:
 
-    >>> # set integration volume to `hemisphere`.
+    >>> # set integration volume to 'hemisphere'.
     >>> sim.config.integration_volume = 'hemisphere'
     ...
     >>> # simulate and plot
@@ -215,7 +215,7 @@ number of orientations, :math:`\Theta_\text{count}`, is given as
     \Theta_\text{count} = M (n + 1)(n + 2)/2,
 
 where :math:`M` is the number of octants and :math:`n` is value of this attribute. The
-number of octants is deciphered form the value of the `integration_volume` attribute.
+number of octants is deciphered form the value of the *integration_volume* attribute.
 The default value of this attribute, 70, produces 2556 orientations at which the NMR
 frequency contribution is evaluated. The user may increase or decrease the value of
 this attribute as required by the problem.
@@ -244,7 +244,7 @@ Decompose spectrum
 
     Add literal ``transition_pathway``.
 
-The attribute `decompose_spectrum` is an enumeration with two literals, ``none``,
+The attribute *decompose_spectrum* is an enumeration with two literals, ``none``,
 and ``spin_system``. The value of this attribute lets us know
 how the user intends the simulation to be stored.
 
@@ -288,7 +288,7 @@ following example.
     :alt: _images/null.png
 
     The spectrum is an integration of the spectra from individual spin systems when the
-    value of `decompose_spectrum` is ``none``.
+    value of *decompose_spectrum* is ``none``.
 
 :numref:`fig5_config` depicts the simulation of the spectrum from two spin systems
 where the contributions from individual spin systems are co-added.
@@ -299,7 +299,7 @@ where the contributions from individual spin systems are co-added.
 When the value of this attribute is ``spin_system``, the resulting simulation is a
 series of spectra, each arising from a spin system. In this case, the number of
 spectra is the same as the number of spin system objects.
-Try setting the value of the decompose_spectrum attribute to `spin_system` and observe
+Try setting the value of the decompose_spectrum attribute to *spin_system* and observe
 the simulation.
 
 .. plot::
@@ -319,11 +319,11 @@ the simulation.
 .. figure:: _static/null.*
     :alt: _images/null.png
 
-    Spectrum from individual spin systems when the value of the `decompose_spectrum`
+    Spectrum from individual spin systems when the value of the *decompose_spectrum*
     config is ``spin_system``.
 
 
-.. Unlike the `spin_system`, where the user is aware of the number of spin systems within
+.. Unlike the *spin_system*, where the user is aware of the number of spin systems within
 .. the simulator object, the number of transition pathways may not always be intuitive.
 .. Note, even a small spin system, depending on the NMR method, can generate a massive
 .. number of transition pathways. When using this configuration, care must be taken, else

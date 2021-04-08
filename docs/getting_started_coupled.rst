@@ -52,9 +52,9 @@ isotopes, and create sites.
 In the above code, the variable ``sites`` is a list of two sites. The site at index 0
 describes a :math:`^{29}\text{Si}` isotope with a -101.1 ppm isotropic chemical shift along
 with the symmetric part of the nuclear shielding tensor, described here with the parameters
-`zeta` and `eta` using the Haeberlen convention. The site at index 1 describes a
+*zeta* and *eta* using the Haeberlen convention. The site at index 1 describes a
 :math:`^{27}\text{Al}` isotope with a 50.1 ppm isotropic chemical shift along with the
-symmetric quadrupolar tensor, described here with the parameters `Cq` and `eta`.
+symmetric quadrupolar tensor, described here with the parameters *Cq* and *eta*.
 
 That's it for the sites! Now let's create the coupling between the two sites.
 
@@ -70,8 +70,8 @@ That's it for the sites! Now let's create the coupling between the two sites.
 
 In the above code, ``coupling_AX`` is a simplified python dictionary representation of the
 :ref:`coupling_api` object. Here, the coupling is between the sites at index 0 and 1 from the
-previously defined ``sites`` list. In addition, we also provide a 200 Hz isotropic `J`-coupling
-between the sites with the key `isotropic_j`.
+previously defined ``sites`` list. In addition, we also provide a 200 Hz isotropic *J*-coupling
+between the sites with the key *isotropic_j*.
 
 Now that we have the sites and coupling, we can create a two-site coupled spin system as follows,
 
@@ -90,8 +90,8 @@ Now that we have the sites and coupling, we can create a two-site coupled spin s
 
 As mentioned before, a spin system is a collection of sites and couplings. In the above
 example, we have created a coupled spin system with two sites and one coupling. Here,
-the attribute `sites` hold a list of two sites. The attributes `name`, `description`, and
-`abundance` are optional.
+the attribute *sites* hold a list of two sites. The attributes *name*, *description*, and
+*abundance* are optional.
 
 
 Similar to the previous example, import the SpinSystem class and use its
@@ -152,13 +152,13 @@ The following is a python dictionary representation of the BlochDecaySpectrum me
     ...     }]
     ... }
 
-Here, the key `channels` is a list of isotope symbols over which the method is applied.
+Here, the key *channels* is a list of isotope symbols over which the method is applied.
 A Bloch Decay method only has a single channel. In this example, it is given a value
 of ``29Si``, which implies that the simulated spectrum from this method will comprise
 frequency components arising from the :math:`^{29}\text{Si}` resonances.
-The keys `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency` collectively
+The keys *magnetic_flux_density*, *rotor_angle*, and *rotor_frequency* collectively
 describe the spin environment under which the resonance frequency is evaluated.
-The key `spectral_dimensions` is a list of spectral dimensions. A Bloch Decay method
+The key *spectral_dimensions* is a list of spectral dimensions. A Bloch Decay method
 only has one spectral dimension. In this example, the spectral dimension defines a
 frequency dimension with 2048 points, spanning 25 kHz with a reference offset of
 -8 kHz.
@@ -262,7 +262,7 @@ and :numref:`fig2-getting-started-coupled` depicts the plot of :math:`^{29}\text
 :math:`^{27}\text{Al}` NMR simulated spectrum.
 
 For a quick plot of the csdm data, you may use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_
-library. The `csdmpy` package uses the matplotlib library to produce basic plots.
+library. The *csdmpy* package uses the matplotlib library to produce basic plots.
 You may optionally customize the plot using matplotlib methods.
 
 .. plot::

@@ -261,7 +261,7 @@ Table of Class Attributes
 
   * - ``sites``
     - List
-    - An *optional* list of :ref:`site` objects. The default value is an empty list.
+    - An *optional* list of :ref:`site_api` objects. The default value is an empty list.
 
   * - ``couplings``
     - List
@@ -297,16 +297,16 @@ Table of Class Attributes
       for example, ``10 ppm`` or ``10 µHz/Hz``. The default value is ``0 ppm``.
 
   * - ``shielding_symmetric``
-    - :ref:`symmetric_tensor`
+    - :ref:`sy_api`
     - An *optional* object describing the second-rank traceless symmetric
       nuclear shielding tensor following the Haeberlen convention. The default is a
-      ``NULL`` object. See the description for the :ref:`symmetric_tensor` object.
+      ``NULL`` object. See the description for the :ref:`sy_api` object.
 
   * - ``quadrupolar``
-    - :ref:`symmetric_tensor`
+    - :ref:`sy_api`
     - An *optional* object describing the second-rank traceless electric
       quadrupole tensor. The default is a ``NULL`` object.
-      See the description for the :ref:`symmetric_tensor` object.
+      See the description for the :ref:`sy_api` object.
 
 
 .. cssclass:: table-bordered table-striped centered
@@ -330,15 +330,15 @@ Table of Class Attributes
       The default value is ``0 Hz``.
 
   * - ``j_symmetric``
-    - :ref:`symmetric_tensor`
+    - :ref:`sy_api`
     - An *optional* object describing the second-rank traceless symmetric *J*-coupling
       tensor following the Haeberlen convention. The default is a ``NULL`` object. See
-      the description for the :ref:`symmetric_tensor` object.
+      the description for the :ref:`sy_api` object.
 
   * - ``dipolar``
-    - :ref:`symmetric_tensor`
+    - :ref:`sy_api`
     - An *optional* object describing the second-rank traceless dipolar tensor. The
-      default is a ``NULL`` object. See the description for the :ref:`symmetric_tensor`
+      default is a ``NULL`` object. See the description for the :ref:`sy_api`
       object.
 
 

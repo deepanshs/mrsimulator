@@ -110,6 +110,33 @@ should display something like
 Build the development version of mrsimulator
 ''''''''''''''''''''''''''''''''''''''''''''
 
+OS-dependent prerequisites
+""""""""""""""""""""""""""
+
+.. note::
+    Installing OS-dependent prerequisites is a one-time process. If you are
+    upgrading to a newer version of mrsimulator, skip to next section.
+
+.. tabs::
+
+  .. tab:: Linux
+    :tabid: linus_source
+
+    .. include:: source_install/linux.rst
+
+  .. tab:: Mac OSX
+    :tabid: macosx_source
+
+    .. include:: source_install/macosx.rst
+
+  .. tab:: Windows
+    :tabid: windows_source
+
+    .. include:: source_install/windows.rst
+
+Build and install
+"""""""""""""""""
+
 Before building the development version of mrsimulator, install the development requirement
 packages with pip. In the directory where your copy of mrsimulator is, type:
 

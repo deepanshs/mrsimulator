@@ -84,7 +84,7 @@ Let's start with a spin-1/2 isotope, :math:`^{29}\text{Si}`, and create a site.
 In the above code, ``the_site`` is a simplified python dictionary representation of a
 :ref:`site_api` object. This site describes a :math:`^{29}\text{Si}` isotope with a
 -101.1 ppm isotropic chemical shift along with the symmetric part of the nuclear
-shielding anisotropy tensor, described here with the parameters `zeta` and `eta` using
+shielding anisotropy tensor, described here with the parameters *zeta* and *eta* using
 the Haeberlen convention.
 
 That's it! Now that we have a site, we can create a single-site spin system following,
@@ -103,8 +103,8 @@ That's it! Now that we have a site, we can create a single-site spin system foll
 
 As mentioned before, a spin system is a collection of sites and couplings. In the above
 example, we have created a spin system with a single site and no coupling. Here, the
-attribute `sites` hold a list of sites. The attributes `name`, `description`, and
-`abundance` are optional.
+attribute *sites* hold a list of sites. The attributes *name*, *description*, and
+*abundance* are optional.
 
 ..  .. seealso:: :ref:`dictionary_objects`, :ref:`spin_system` and :ref:`site`.
 
@@ -168,8 +168,8 @@ In ``mrsimulator``, all methods are described through five keywords -
     - The sample rotation frequency.
   * - spectral_dimensions
     - A list of spectral dimensions. The coordinates along each spectral dimension is
-      described with the keywords, `count` (:math:`N`), `spectral_width`
-      (:math:`\nu_\text{sw}`), and `reference_offset` (:math:`\nu_0`). The
+      described with the keywords, *count* (:math:`N`), *spectral_width*
+      (:math:`\nu_\text{sw}`), and *reference_offset* (:math:`\nu_0`). The
       coordinates are evaluated as,
 
       .. math::
@@ -198,13 +198,13 @@ The following is a python dictionary representation of the BlochDecaySpectrum me
     ...     }]
     ... }
 
-Here, the key `channels` is a list of isotope symbols over which the method is applied.
+Here, the key *channels* is a list of isotope symbols over which the method is applied.
 A Bloch Decay method only has a single channel. In this example, it is given a value
 of ``29Si``, which implies that the simulated spectrum from this method will comprise
 frequency components arising from the :math:`^{29}\text{Si}` resonances.
-The keys `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency` collectively
+The keys *magnetic_flux_density*, *rotor_angle*, and *rotor_frequency* collectively
 describe the spin environment under which the resonance frequency is evaluated.
-The key `spectral_dimensions` is a list of spectral dimensions. A Bloch Decay method
+The key *spectral_dimensions* is a list of spectral dimensions. A Bloch Decay method
 only has one spectral dimension. In this example, the spectral dimension defines a
 frequency dimension with 2048 points, spanning 25 kHz with a reference offset of
 -8 kHz.
@@ -282,7 +282,7 @@ We end this example with a plot of the data from the simulation.
 :numref:`fig1-getting-started` depicts the plot of the simulated spectrum.
 
 For a quick plot of the csdm data, you may use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_
-library. The `csdmpy` package uses the matplotlib library to produce basic plots.
+library. The *csdmpy* package uses the matplotlib library to produce basic plots.
 You may optionally customize the plot using matplotlib methods.
 
 .. plot::

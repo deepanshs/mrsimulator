@@ -11,7 +11,7 @@ Frequency Tensors (FT), :math:`\Lambda_{L, n}^{(k)}(i,j)`
 .. raw:: html
 
     <a class="btn btn-default"
-       href=./source/frequency_tensor_source.html> Source
+       href=./source/frequency_tensor_components.html> Source
     </a>
 
 Single nucleus frequency tensor components
