@@ -46,7 +46,7 @@ cdef extern from "octahedron.h":
         double *amp)
 
 cdef extern from "interpolation.h":
-    void triangle_interpolation(
+    void triangle_interpolation1D(
         double *freq1,
         double *freq2,
         double *freq3,

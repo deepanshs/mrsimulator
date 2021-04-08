@@ -117,7 +117,8 @@ void __mrsimulator_core(
       MRS_rotate_components_from_PAS_to_common_frame(
           sites,               // Pointer to a list of sites within a spin system.
           couplings,           // Pointer to a list of couplings within a spin system.
-          transition_pathway,  // Pointer to a list of transition.
+          transition_pathway,  // Pointer to a list of transition. Here, only a
+                               // transition is processed.
           plan->allow_fourth_rank,  // If 1, prepare for 4th rank computation.
           &R0,                      // The R0 components.
           R2,                       // The R2 components.
@@ -145,7 +146,7 @@ void __mrsimulator_core(
         cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2, event->freq_amplitude,
                     1);
       }
-      transition_pathway += transition_increment;
+      transition_pathway += transition_increment;  // increment to next transition
       refresh = 0;
     }  // end events
   }    // end dimensions

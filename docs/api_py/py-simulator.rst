@@ -20,4 +20,4 @@ Simulation API
 ..    parameterized_tensor
 ..    interaction
 
-..    powder_triangle_interpolation
+..    powder_triangle_interpolation1D

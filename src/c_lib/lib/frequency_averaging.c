@@ -10,8 +10,8 @@
 #include "frequency_averaging.h"
 
 // Multiply the amplitudes from each event to the amplitudes from the first event.
-static inline void __get_multi_event_amplitudes(int n_events, MRS_event *restrict event,
-                                                int size) {
+static inline void get_multi_event_amplitudes(int n_events, MRS_event *restrict event,
+                                              int size) {
   double *amp = event->freq_amplitude;
   n_events--;
   while (n_events-- > 0) {
@@ -20,9 +20,8 @@ static inline void __get_multi_event_amplitudes(int n_events, MRS_event *restric
   }
 }
 
-static inline void __1D_averaging(MRS_dimension *dimensions,
-                                  MRS_averaging_scheme *scheme,
-                                  MRS_fftw_scheme *fftw_scheme, double *spec) {
+static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
+                                MRS_fftw_scheme *fftw_scheme, double *spec) {
   unsigned int i, j, k1, address;
   unsigned int nt = scheme->integration_density, npts = scheme->octant_orientations;
 
@@ -99,10 +98,10 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                                MRS_fftw_scheme *fftw_scheme, double *spec) {
   // multiply amplitudes from all events to the amplitude array from the first event.
   if (dimensions->n_events != 1) {
-    __get_multi_event_amplitudes(dimensions->n_events, dimensions->events,
-                                 dimensions->events->plan->size);
+    get_multi_event_amplitudes(dimensions->n_events, dimensions->events,
+                               dimensions->events->plan->size);
   }
-  __1D_averaging(dimensions, scheme, fftw_scheme, spec);
+  averaging_1D(dimensions, scheme, fftw_scheme, spec);
 }
 
 void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
