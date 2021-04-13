@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import mrsimulator.signal_processing as sp
+import numpy as np
 from lmfit import Parameters
 from mrsimulator import Simulator
-
 
 __author__ = ["Maxwell C Venetos", "Deepansh Srivastava"]
 __email__ = ["maxvenetos@gmail.com", "srivastava.89@osu.edu"]
@@ -324,7 +324,7 @@ def make_simulator_params(params, sim):
 
 
 def LMFIT_min_function(
-    params: Parameters, sim: Simulator, post_sim: list = None, sigma: list = [1.0]
+    params: Parameters, sim: Simulator, post_sim: list = None, sigma: list = None
 ):
     """
     The simulation routine to calculate the vector difference between simulation and
@@ -341,6 +341,8 @@ def LMFIT_min_function(
         Array of the differences between the simulation and the experimental data.
     """
     post_sim = post_sim if isinstance(post_sim, list) else [post_sim]
+    if sigma is None:
+        sigma = [1.0 for _ in sim.methods]
     sigma = sigma if isinstance(sigma, list) else [sigma]
 
     values = params.valuesdict()
@@ -357,7 +359,7 @@ def LMFIT_min_function(
         for item, data in zip(post_sim, sim.methods)
     ]
 
-    diff = 0
+    diff = np.asarray([])
     for processed_datum, mth, sigma_ in zip(processed_data, sim.methods, sigma):
         datum = 0
         if sim.config.decompose_spectrum == "spin_system":
@@ -366,6 +368,6 @@ def LMFIT_min_function(
         else:
             datum = processed_datum.y[0].components[0].real
 
-        diff = (mth.experiment.y[0].components[0] - datum) / sigma_
+        diff = np.append(diff, (mth.experiment.y[0].components[0] - datum) / sigma_)
 
     return diff
