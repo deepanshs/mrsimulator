@@ -275,8 +275,10 @@ Reporting Bugs
 
 The preferred location for submitting feature requests and bug reports is the
 `Github issue tracker <https://github.com/DeepanshS/mrsimulator/issues>`_. Reports
-are also welcomed on the `mrsimulator mailing list <https://groups.google.com/group/mrsimulator-users>`_ or
-by directly contacting `Deepansh Srivastava <mailto:srivastava.89@osu.edu>`_.
+are also welcomed  by directly contacting `Deepansh Srivastava <mailto:srivastava.89@osu.edu>`_.
+
+Discussions are welcome on `Github discussion <https://github.com/DeepanshS/mrsimulator/discussions>`_
+
 
 .. only:: html
 

@@ -251,7 +251,7 @@ def one_d_spectrum(method,
         isotopes = [site.isotope.symbol for site in spin_sys.sites]
         if channel not in isotopes:
             if decompose_spectrum == 1:
-                amp_individual.append([])
+                amp_individual.append(np.zeros(method.shape()))
             continue
 
         # sub_sites = [site for site in spin_sys.sites if site.isotope.symbol == isotope]

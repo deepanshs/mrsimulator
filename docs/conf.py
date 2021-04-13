@@ -187,20 +187,23 @@ copybutton_prompt_is_regexp = True
 # ---------------------------------------------------------------------------- #
 #                               Doxygen C docs config                          #
 # ---------------------------------------------------------------------------- #
-subprocess.run("doxygen", shell=False)
-doxy_output = os.path.abspath("./xml")
+try:
+    subprocess.run("doxygen", shell=False)
+    doxy_output = os.path.abspath("./xml")
 
-# Setup the breathe extension
-breathe_projects = {"My Project": doxy_output}
-breathe_default_project = "My Project"
-breathe_domain_by_extension = {"h": "c", "py": "py"}
-breathe_use_project_refids = True
-breathe_doxygen_config_options = {
-    "PREDEFINED": "DOXYGEN_SHOULD_SKIP_THIS",
-    # "GENERATE_XML": True,
-    # "XML_PROGRAMLISTING": True,
-    # "INPUT": "../../src/c_lib/include",
-}
+    # Setup the breathe extension
+    breathe_projects = {"My Project": doxy_output}
+    breathe_default_project = "My Project"
+    breathe_domain_by_extension = {"h": "c", "py": "py"}
+    breathe_use_project_refids = True
+    breathe_doxygen_config_options = {
+        "PREDEFINED": "DOXYGEN_SHOULD_SKIP_THIS",
+        # "GENERATE_XML": True,
+        # "XML_PROGRAMLISTING": True,
+        # "INPUT": "../../src/c_lib/include",
+    }
+except Exception:
+    print("Skipping C-docs (doxygen)....")
 # ---------------------------------------------------------------------------- #
 
 # numfig config
