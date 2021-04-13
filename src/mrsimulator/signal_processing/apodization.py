@@ -33,14 +33,15 @@ class AbstractApodization(AbstractOperation):
         """The type apodization function."""
         return self.__class__.__name__
 
-    def _operate(self, data, fn, prop_name, prop_value):
-        """A generic operation function.
+    @staticmethod
+    def _get_correct_units(x, unit):
+        return x.to(unit).value
+
+    def operate(self, data):
+        """Apply the operation function.
 
         Args:
             data: A CSDM object.
-            fn: The apodization function.
-            prop_name: The argument name for the function fn.
-            prop_value: The argument value for the function fn.
         """
         dims = data.dimensions
         ndim = len(dims)
@@ -51,13 +52,7 @@ class AbstractApodization(AbstractOperation):
 
         for dim_index_ in dim_index:
             x = dims[dim_index_].coordinates
-            unit = 1 / self.property_units[prop_name]
-            x = x.to(unit)
-            x_value = x.value
-
-            apodization_vactor = _get_broadcast_shape(
-                fn(x_value, prop_value), dim_index_, ndim
-            )
+            apodization_vactor = _get_broadcast_shape(self.fn(x), dim_index_, ndim)
 
             n = len(data.dependent_variables)
             dv_indexes = self._get_dv_indexes(self.dv_index, n=n)
@@ -107,28 +102,13 @@ class Gaussian(AbstractApodization):
     def str_to_quantity(cls, v, values):
         return _str_to_quantity(v, values, "FWHM")
 
-    # class Config:
-    #     validate_assignment = True
-
-    @staticmethod
-    def fn(x, arg):
-        # arg is FWHM
-        sigma = arg / 2.354820045030949
+    def fn(self, x):
+        x = self._get_correct_units(x, unit=1 / self.property_units["FWHM"])
+        sigma = self.FWHM / 2.354820045030949
         xinv = np.fft.ifftshift(np.arange(x.size, dtype=np.float64) - int(x.size / 2))
         xinv /= x[-1] - x[0]
         amp = np.fft.ifftshift(np.fft.ifft(np.exp(-0.5 * (xinv / sigma) ** 2)))
         return amp.real / (sigma * np.sqrt(2 * np.pi))
-        # return np.exp(-2 * ((x * sigma * np.pi) ** 2))
-
-    def operate(self, data):
-        """
-        Applies the operation for which the class is named for.
-
-        data: CSDM object
-        dep_var: int. The index of the dependent variable to apply operation to.
-        """
-
-        return self._operate(data, fn=self.fn, prop_name="FWHM", prop_value=self.FWHM)
 
 
 class Exponential(AbstractApodization):
@@ -170,22 +150,9 @@ class Exponential(AbstractApodization):
     def str_to_quantity(cls, v, values):
         return _str_to_quantity(v, values, "FWHM")
 
-    # class Config:
-    #     validate_assignment = True
-
-    @staticmethod
-    def fn(x, arg):
-        return np.exp(-arg * np.pi * np.abs(x))
-
-    def operate(self, data):
-        """
-        Applies the operation for which the class is named for.
-
-        data: CSDM object
-        dep_var: int. The index of the dependent variable to apply operation to.
-        """
-
-        return self._operate(data, fn=self.fn, prop_name="FWHM", prop_value=self.FWHM)
+    def fn(self, x):
+        x = self._get_correct_units(x, unit=1 / self.property_units["FWHM"])
+        return np.exp(-self.FWHM * np.pi * np.abs(x))
 
 
 # class ExponentialAbs(AbstractApodization):

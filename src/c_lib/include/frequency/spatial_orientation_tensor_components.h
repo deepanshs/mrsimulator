@@ -86,16 +86,16 @@ static inline void sSOT_1st_order_nuclear_shielding_tensor_components(
     double *restrict R_0, void *restrict R_2, const double omega_0_delta_iso_in_Hz,
     const double omega_0_zeta_sigma_in_Hz, const double eta, const double *Theta) {
   // contribution from the zeroth-rank.
-  *R_0 = omega_0_delta_iso_in_Hz; // R0 0 real
+  *R_0 = omega_0_delta_iso_in_Hz;  // R0 0 real
 
   // contribution from the shielding symmetric second-rank.
   vm_double_zeros(10, (double *)R_2);
   double *R_2_ = (double *)R_2;
 
   double temp = 0.4082482905 * (omega_0_zeta_sigma_in_Hz * eta);
-  R_2_[0] = temp;                      // R2-2 real
-  R_2_[4] = -omega_0_zeta_sigma_in_Hz; // R2 0 real
-  R_2_[8] = temp;                      // R2 2 real
+  R_2_[0] = temp;                       // R2-2 real
+  R_2_[4] = -omega_0_zeta_sigma_in_Hz;  // R2 0 real
+  R_2_[8] = temp;                       // R2 2 real
 
   // wigner rotations
   if (Theta[0] == 0.0 && Theta[1] == 0.0 && Theta[2] == 0.0) {
@@ -168,9 +168,9 @@ static inline void sSOT_1st_order_electric_quadrupole_tensor_components(
 
   double temp = -0.1666666667 * (vq * eta);
 
-  R_2_[0] = temp;              // R2-2 real
-  R_2_[4] = 0.4082482905 * vq; // R2 0 real
-  R_2_[8] = temp;              // R2 2 real
+  R_2_[0] = temp;               // R2-2 real
+  R_2_[4] = 0.4082482905 * vq;  // R2 0 real
+  R_2_[8] = temp;               // R2 2 real
 
   // wigner rotations
   if (Theta[0] == 0.0 && Theta[1] == 0.0 && Theta[2] == 0.0) {
@@ -281,7 +281,7 @@ static inline void sSOT_2nd_order_electric_quadrupole_tensor_components(
   double eta2 = eta * eta;
 
   // contribution from the zeroth-rank.
-  *R_0 = (eta2 * 0.33333333333 + 1.0) * 0.07453559925 * scale; // R0 0 real
+  *R_0 = (eta2 * 0.33333333333 + 1.0) * 0.07453559925 * scale;  // R0 0 real
 
   // contribution from the second-rank.
   vm_double_zeros(10, (double *)R_2);
@@ -290,9 +290,9 @@ static inline void sSOT_2nd_order_electric_quadrupole_tensor_components(
   double temp = -eta * 0.07273929675 * scale;
   double temp2 = 0.08908708064 * scale * (eta2 * 0.33333333333 - 1.0);
 
-  R_2_[0] = temp;  // R2-2 real
-  R_2_[4] = temp2; // R2 0 real
-  R_2_[8] = temp;  // R2 2 real
+  R_2_[0] = temp;   // R2-2 real
+  R_2_[4] = temp2;  // R2 0 real
+  R_2_[8] = temp;   // R2 2 real
 
   // contribution from the fourth-rank.
   vm_double_zeros(18, (double *)R_4);
@@ -302,11 +302,11 @@ static inline void sSOT_2nd_order_electric_quadrupole_tensor_components(
   temp2 = -0.06299407883 * eta * scale;
   double temp4 = 0.1195228609 * scale * (eta2 * 0.05555555556 + 1.0);
 
-  R_4_[0] = temp;   // R4-4 real
-  R_4_[4] = temp2;  // R4-2 real
-  R_4_[8] = temp4;  // R4 0 real
-  R_4_[12] = temp2; // R4 2 real
-  R_4_[16] = temp;  // R4 4 real
+  R_4_[0] = temp;    // R4-4 real
+  R_4_[4] = temp2;   // R4-2 real
+  R_4_[8] = temp4;   // R4 0 real
+  R_4_[12] = temp2;  // R4 2 real
+  R_4_[16] = temp;   // R4 4 real
 
   // wigner rotations
   if (Theta[0] == 0.0 && Theta[1] == 0.0 && Theta[2] == 0.0) {
@@ -370,7 +370,7 @@ static inline void sSOT_2nd_order_electric_quadrupole_tensor_components(
  *
  * @param J_aniso_in_Hz The @f$J@f$-coupling anisotropy, @f$\zeta_J@f$, in Hz.
  *
- * @param eta The @f$J@f$-coupling asymmetry, @f$\eta_J \in [0, 1]@f$.
+ * @param J_eta The @f$J@f$-coupling asymmetry, @f$\eta_J \in [0, 1]@f$.
  *
  * @param Theta A pointer to an array of Euler angles, in radians, of length 3, ordered
  *    as @f$[\alpha, \beta, \gamma]@f$.
@@ -379,16 +379,16 @@ static inline void sSOT_1st_order_weakly_coupled_J_tensor_components(
     double *restrict R_0, void *restrict R_2, const double J_iso_in_Hz,
     const double J_aniso_in_Hz, const double J_eta, const double *Theta) {
   // contribution from the zeroth-rank.
-  *R_0 = J_iso_in_Hz; // R0 0 real
+  *R_0 = J_iso_in_Hz;  // R0 0 real
 
   // contribution from the shielding symmetric second-rank.
   vm_double_zeros(10, (double *)R_2);
   double *R_2_ = (double *)R_2;
 
   double temp = -0.4082482905 * (J_aniso_in_Hz * J_eta);
-  R_2_[0] = temp;          // R2-2 real
-  R_2_[4] = J_aniso_in_Hz; // R2 0 real
-  R_2_[8] = temp;          // R2 2 real
+  R_2_[0] = temp;           // R2-2 real
+  R_2_[4] = J_aniso_in_Hz;  // R2 0 real
+  R_2_[8] = temp;           // R2 2 real
 
   // wigner rotations
   if (Theta[0] == 0.0 && Theta[1] == 0.0 && Theta[2] == 0.0) {
@@ -446,7 +446,7 @@ static inline void sSOT_1st_order_weakly_coupled_dipolar_tensor_components(
   vm_double_zeros(10, (double *)R_2);
   double *R_2_ = (double *)R_2;
 
-  R_2_[4] = 2 * D_in_Hz; // R2 0 real
+  R_2_[4] = 2 * D_in_Hz;  // R2 0 real
 
   // wigner rotations
   if (Theta[0] == 0.0 && Theta[1] == 0.0 && Theta[2] == 0.0) {

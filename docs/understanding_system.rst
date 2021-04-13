@@ -36,8 +36,7 @@ Consider the following Bloch decay spectrum method,
 
     >>> from mrsimulator.methods import BlochDecaySpectrum
     >>> Bloch_decay_method = BlochDecaySpectrum(
-    ...     channels=['13C'],
-    ...     spectral_dimensions=[{'count': 1024, 'spectral_width': 25000}]
+    ...     channels=["13C"], spectral_dimensions=[{"count": 1024, "spectral_width": 25000}]
     ... )
 
 and the following spin systems. A single site spin-1/2 isotopomer is a good
@@ -56,7 +55,7 @@ Let's create an isotopomer with a single spin-1/2, :math:`^{13}\text{C}` site.
 .. doctest::
 
     >>> from mrsimulator import SpinSystem, Site
-    >>> C13 = Site(isotope='13C')
+    >>> C13 = Site(isotope="13C")
     >>> one_site = SpinSystem(sites=[C13])
 
 To list the Zeeman energy states of an isotopomer, use the

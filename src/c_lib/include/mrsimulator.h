@@ -63,17 +63,16 @@ struct MRS_plan {
    * processing.
    */
 
-  bool allow_fourth_rank;     // If true, creates buffer and tables for processing
-                              // fourth-rank tensors.
-  unsigned int size;          // # of angular orientations * number of sizebands.
-  unsigned int n_octants;     // # of octants used in the orientational averaging.
-  double *norm_amplitudes;    // array of normalized amplitudes per orientation.
-  double *wigner_d2m0_vector; // wigner-2j dm0 vector, n ∈ [-2, 2].
-  double *wigner_d4m0_vector; // wigner-4j dm0 vector, n ∈ [-4, 4].
-  complex128 *pre_phase;      // temp buffer to hold sideband phase calculation.
-  complex128 *pre_phase_2;    // buffer for 2nk rank sideband phase calculation.
-  complex128 *pre_phase_4;    // buffer for 4th rank sideband phase calculation.
-  double buffer;              // buffer for temporary storage.
+  bool allow_fourth_rank;      // If true, creates buffer/tables for 4th-rank tensors.
+  unsigned int size;           // # of angular orientations * number of sizebands.
+  unsigned int n_octants;      // # of octants used in the orientational averaging.
+  double *norm_amplitudes;     // array of normalized amplitudes per orientation.
+  double *wigner_d2m0_vector;  // wigner-2j dm0 vector, n ∈ [-2, 2].
+  double *wigner_d4m0_vector;  // wigner-4j dm0 vector, n ∈ [-4, 4].
+  complex128 *pre_phase;       // temp buffer to hold sideband phase calculation.
+  complex128 *pre_phase_2;     // buffer for 2nk rank sideband phase calculation.
+  complex128 *pre_phase_4;     // buffer for 4th rank sideband phase calculation.
+  double buffer;               // buffer for temporary storage.
 };
 
 typedef struct MRS_plan MRS_plan;
@@ -181,12 +180,11 @@ void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                                    bool refresh, MRS_dimension *dim);
 
 /**
- * @func MRS_rotate_components_from_PAS_to_common_frame
- *
- * The function rotates the tensor components from the principal axis system (PAS) to
- * the common frame of the spin system.
+ * @brief The function rotates the tensor components from the principal axis system
+ * (PAS) to the common frame of the spin system.
  *
  * @param sites A pointer to the site_struct structure.
+ * @param couplings A pointer to the coupling_struct structure.
  * @param transition A pointer to the spin quantum numbers from the inital and final
  *      states of the spin transition packed as initial quantum numbers followed by the
  *      final quantum numbers.
@@ -216,18 +214,18 @@ void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
  *          	6. Quad 2st order 4th rank
  */
 void MRS_rotate_components_from_PAS_to_common_frame(
-    site_struct *sites,         // Pointer to a list of sites in the spin system.
-    coupling_struct *couplings, // Pointer to a list of couplings within a spin system.
-    float *transition,          // The pointer to the spin transition.
-    bool allow_fourth_rank,     // If true, pre for 4th rank computation.
-    double *R0,                 // The R0 components.
-    complex128 *R2,             // The R2 components.
-    complex128 *R4,             // The R4 components.
-    double *R0_temp,            // The temporary R0 components.
-    complex128 *R2_temp,        // The temporary R2 components.
-    complex128 *R4_temp,        // The temporary R3 components.
-    double B0_in_T,             // Magnetic flux density in T.
-    bool *freq_contrib          // The pointer to freq contribs boolean.
+    site_struct *sites,          // Pointer to a list of sites in the spin system.
+    coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
+    float *transition,           // The pointer to the spin transition.
+    bool allow_fourth_rank,      // If true, pre for 4th rank computation.
+    double *R0,                  // The R0 components.
+    complex128 *R2,              // The R2 components.
+    complex128 *R4,              // The R4 components.
+    double *R0_temp,             // The temporary R0 components.
+    complex128 *R2_temp,         // The temporary R2 components.
+    complex128 *R4_temp,         // The temporary R3 components.
+    double B0_in_T,              // Magnetic flux density in T.
+    bool *freq_contrib           // The pointer to freq contribs boolean.
 );
 
 extern void __get_components(unsigned int number_of_sidebands, double spin_frequency,

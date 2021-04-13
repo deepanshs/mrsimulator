@@ -18,7 +18,7 @@ from pydantic import validator
 from .coupling import Coupling
 from .isotope import ISOTOPE_DATA
 from .site import Site
-from .zeeman_state import ZeemanState
+from .zeemanstate import ZeemanState
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"

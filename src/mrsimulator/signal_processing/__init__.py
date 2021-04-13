@@ -84,7 +84,6 @@ class SignalProcessor(BaseModel):
         """
         if not isinstance(data, cp.CSDM):
             raise ValueError("The data must be a CSDM object.")
-        # copy_data = data.copy()
         for filters in self.operations:
             data = filters.operate(data)
         self.processed_data = data

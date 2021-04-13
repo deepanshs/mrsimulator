@@ -1,8 +1,8 @@
-.. currentmodule:: mrsimulator.methods
+.. .. currentmodule:: mrsimulator.methods
 
-.. _cosy_ref:
+.. .. _cosy_ref:
 
-Correlation Spectroscopy (Cosy)
-"""""""""""""""""""""""""""""""
+.. Correlation Spectroscopy (Cosy)
+.. """""""""""""""""""""""""""""""
 
-.. autoclass:: Cosy
+.. .. autoclass:: Cosy

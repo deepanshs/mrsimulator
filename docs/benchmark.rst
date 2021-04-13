@@ -42,3 +42,12 @@ standard deviation.
 
 All calculations were performed using the default Simulator
 :attr:`~mrsimulator.Simulator.config` attribute values.
+
+Benchmark for the previous versions
+-----------------------------------
+
+.. figure:: _static/benchmark_previous.*
+    :figclass: figure
+
+    (Left) The number of single-site spin systems computer per seconds. (Right)
+    The execution time (in ms) in computing spectrum from a single-site spin system.

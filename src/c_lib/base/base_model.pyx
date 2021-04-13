@@ -118,7 +118,7 @@ def one_d_spectrum(method,
     prev_n_sidebands = 0
     for i, dim in enumerate(method.spectral_dimensions):
         for event in dim.events:
-            freq_contrib = np.append(freq_contrib, event.get_value_int())
+            freq_contrib = np.append(freq_contrib, event._freq_contrib_flags())
             if event.rotor_frequency < 1.0e-3:
                 sample_rotation_frequency_in_Hz = 1.0e9
                 rotor_angle_in_rad = 0.0

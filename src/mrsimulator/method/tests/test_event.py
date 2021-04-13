@@ -14,12 +14,15 @@ def test_freq_contrib():
     assert event.json()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
     assert event.dict()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
     assert event.reduced_dict()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
-    assert event.get_value_int() == [0, 0, 0, 1, 0, 1]
+    assert np.all(event._freq_contrib_flags() == [0, 0, 0, 1, 0, 1])
+
+    event = Event(freq_contrib=["Shielding1_2"])
+    assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 0])
 
     event = Event()
     assert event.dict()["freq_contrib"] == freq_default
     assert event.reduced_dict()["freq_contrib"] == freq_default
-    assert event.get_value_int() == [1, 1, 1, 1, 1, 1]
+    assert np.all(event._freq_contrib_flags() == [1, 1, 1, 1, 1, 1])
 
 
 def basic_event_tests(the_event):

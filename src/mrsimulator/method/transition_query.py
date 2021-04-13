@@ -14,9 +14,33 @@ __email__ = "srivastava.89@osu.edu"
 class TransitionQuery(BaseModel):
     """Base TransitionQuery class.
 
-    Attributes:
-        P: A list of p symmetry transition, where p = Δm and Δm is the difference
-                between spin quantum numbers of the final and initial states.
+    Attributes
+    ----------
+
+    P:
+        A dict of channels, with each channel as a list of p symmetry functions per
+        site. Here p = Δm is the difference between spin quantum numbers of the final
+        and initial states.
+
+        Example
+        -------
+
+        >>> method = Method2D()
+        >>> method.spectral_dimensions[0].events[0].transition_query.P = {
+        ...     'channel-1': [[-1]]
+        ... }
+
+    D:
+        A dict of channels, with each channel as a list of d symmetry functions per
+        site. Here p = Δm is the difference between spin quantum numbers of the final
+        and initial states.
+
+        Example
+        -------
+
+        >>> method.spectral_dimensions[0].events[0].transition_query.D = {
+        ...     'channel-1': [[0]]
+        ... }
     """
 
     P: Optional[Dict] = {"channel-1": [[-1.0]]}

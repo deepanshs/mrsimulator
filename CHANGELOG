@@ -1,18 +1,17 @@
-Upcoming changes
-----------------
+v0.6.0
+------
 
 What's new
 ''''''''''
 
-- Parallel processing.
-- Simulation of coupled spin systems. The frequency contributions from coupled sites include
-  weak J-couplings and weak dipolar couplings.
+- ⭐ Improved simulation performance. ⭐ See our :ref:`benchmark`.
+- Simulation of one-dimensional spectra of coupled spin systems. The frequency contributions
+  from the coupled sites include weak J-couplings and weak dipolar couplings.
 - New :class:`~mrsimulator.Coupling` class.
 - Added a new ``Sites`` class that holds a list of Site objects. The Sites class method,
   ``to_pd()``, exports the sites as a pandas data frame.
-- A new method, ``sites()``, is added to the Simulator object, which returns the ``Sites``
-  object containing a list of unique sites within the Simulator object across multiple
-  spin systems.
+- A new method, ``sites()``, is added to the Simulator object, which returns a list of
+  unique ``Sites`` objects within the Simulator object across multiple spin systems.
 - Added three new arguments to the ``single_site_system_generator()`` method,
   'site_labels', 'site_names', and 'site_descriptions'.
 
@@ -20,9 +19,6 @@ Changes
 '''''''
 
 - The :meth:`~mrsimulator.SpinSystem.get_isotopes` method from the SpinSystem object,
-  will now return :class:`~mrsimulator.spin_system.isotope.Isotope` objects by default.
-  Use the `symbol=True` argument of the method to get a list of string isotopes.
-- The :meth:`~mrsimulator.Simulator.get_isotopes` method from the Simulator object,
   will now return :class:`~mrsimulator.spin_system.isotope.Isotope` objects by default.
   Use the `symbol=True` argument of the method to get a list of string isotopes.
 - The ``to_freq_dict()`` function is deprecated.

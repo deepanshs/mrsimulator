@@ -4,6 +4,7 @@ from typing import ClassVar
 from typing import Dict
 from typing import List
 
+import numpy as np
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
@@ -21,23 +22,32 @@ class Event(Parseable):
     r"""Base Event class defines the spin environment and the transition query for a
     segment of the transition pathway.
 
-    Attributes:
-        fraction: A `required` float containing the weight of the frequency
-            contribution from the event.
-        magnetic_flux_density: An `optional` float containing the macroscopic magnetic
-            flux density, :math:`H_0`, of the applied external magnetic field
-            during the event in units of T. The default value is ``9.4``.
-        rotor_frequency: An `optional` float containing the sample spinning frequency
-            :math:`\nu_r`, during the event in units of Hz.
-            The default value is ``0``.
-        rotor_angle: An `optional` float containing the angle between the
-            sample rotation axis and the applied external magnetic field,
-            :math:`\theta`, during the event in units of rad.
-            The default value is ``0.9553166``, i.e. the magic angle.
-        transition_query: An `optional` TransitionQuery object or an equivalent dict
-            object listing the queries used in selecting the active transitions
-            during the event. Only the active transitions from this query
-            contribute to the frequency.
+    Attributes
+    ----------
+
+    fraction:
+        The weight of the frequency contribution from the event. The default is 1.
+
+    magnetic_flux_density:
+        The macroscopic magnetic flux density, :math:`H_0`, of the applied external
+        magnetic field during the event in units of T. The default value is ``9.4``.
+
+    rotor_frequency:
+        The sample spinning frequency :math:`\nu_r`, during the event in units of Hz.
+        The default value is ``0``.
+
+    rotor_angle:
+        The angle between the sample rotation axis and the applied external magnetic
+        field vector, :math:`\theta`, during the event in units of rad.
+        The default value is ``0.9553166``, i.e. the magic angle.
+
+    freq_contrib:
+        A list of FrequencyEnum enumeration. The default is all frequency enumerations.
+
+    transition_query:
+        A TransitionQuery or an equivalent dict object listing the queries used in
+        selecting the active transitions during the event. Only the active transitions
+        from this query will contribute to the net frequency.
     """
 
     fraction: float = 1.0
@@ -95,7 +105,8 @@ class Event(Parseable):
             dict_.pop("freq_contrib")
         return dict_
 
-    def get_value_int(self):
-        lst_ = set([item.value for item in self.freq_contrib])
-        intersect = lst_.intersection(set(freq_list_all))
-        return [1 if item in intersect else 0 for item in freq_list_all]
+    def _freq_contrib_flags(self) -> np.ndarray:
+        lst_ = [item.index() for item in self.freq_contrib]
+        array = np.zeros(len(freq_list_all), dtype=int)
+        array[lst_] = 1
+        return array

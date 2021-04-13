@@ -163,7 +163,7 @@ class CzjzekDistribution(AbstractDistribution):
 
 
 class ExtCzjzekDistribution(AbstractDistribution):
-    r"""An extended czjzek distribution distribution model.
+    r"""An extended Czjzek distribution distribution model.
 
     The extended Czjzek random distribution [#f1]_ model is an extension of the Czjzek
     model, given as

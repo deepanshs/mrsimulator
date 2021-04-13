@@ -63,7 +63,9 @@ def prepare_method_structure(template, **kwargs):
     return prep
 
 
-def parse_spectral_dimensions(spectral_dimensions):
+def parse_spectral_dimensions(spectral_dimensions, n):
+    if spectral_dimensions == [{}]:
+        return [{}] * n
     for dim in spectral_dimensions:
         if "events" in dim.keys():
             for evt in dim["events"]:
@@ -106,7 +108,9 @@ def generate_method_from_template(template, docstring=""):
             kwargs.pop("parse")
 
         local_template = deepcopy(template)
-        spectral_dimensions = parse_spectral_dimensions(spectral_dimensions)
+        n_tem = len(local_template["spectral_dimensions"])
+
+        spectral_dimensions = parse_spectral_dimensions(spectral_dimensions, n_tem)
         prep = prepare_method_structure(local_template, **kwargs)
         global_events = local_template["global_event_attributes"]
         ge = set(global_events)
@@ -115,15 +119,12 @@ def generate_method_from_template(template, docstring=""):
 
         _check_rotor_frequency(common, prep["name"], kwargs)
 
-        dim = []
         n_sp = len(spectral_dimensions)
-        n_tem = len(local_template["spectral_dimensions"])
-
         if n_tem < n_sp:
             raise ValueError(
                 f"The method allows {n_tem} spectral dimension(s), {n_sp} given."
             )
-
+        dim = []
         for i, s in enumerate(local_template["spectral_dimensions"]):
             events = _gen_event(s, spectral_dimensions[i], global_events, parse, kwargs)
 
