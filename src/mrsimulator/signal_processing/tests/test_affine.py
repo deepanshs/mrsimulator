@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import csdmpy as cp
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.affine as af
 import numpy as np
+from mrsimulator import signal_processing as sp
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -28,7 +27,7 @@ def test_shear_01():
     processor = sp.SignalProcessor(
         operations=[
             sp.IFFT(dim_index=1),
-            af.Shear(factor="-1 K/s", dim_index=1, parallel=0),
+            sp.affine.Shear(factor="-1 K/s", dim_index=1, parallel=0),
             sp.FFT(dim_index=1),
         ]
     )
@@ -76,7 +75,7 @@ def test_serialization_and_parse():
     processor = sp.SignalProcessor(
         operations=[
             sp.IFFT(dim_index=1),
-            af.Shear(factor="-1 K/s", dim_index=1, parallel=0),
+            sp.affine.Shear(factor="-1 K/s", dim_index=1, parallel=0),
             sp.FFT(dim_index=1),
         ]
     )
@@ -106,7 +105,7 @@ def test_scale():
     c_inc = csdm_object.x[1].increment.value
     c_off = csdm_object.x[1].coordinates_offset.value
 
-    processor = sp.SignalProcessor(operations=[af.Scale(factor=2, dim_index=1)])
+    processor = sp.SignalProcessor(operations=[sp.affine.Scale(factor=2, dim_index=1)])
     scaled_data = processor.apply_operations(data=csdm_object)
 
     s_inc = scaled_data.x[1].increment.value

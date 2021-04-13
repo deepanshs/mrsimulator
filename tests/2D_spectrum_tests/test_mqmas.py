@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Lineshape Test."""
 import csdmpy as cp
-import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.affine as aft
 import numpy as np
+from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem

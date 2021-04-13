@@ -92,8 +92,7 @@ class Gaussian(AbstractApodization):
     Example
     -------
 
-    >>> import mrsimulator.signal_processing.apodization as apo
-    >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
+    >>> operation4 = sp.apodization.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
     """
 
     FWHM: Union[float, str] = 0
@@ -138,7 +137,7 @@ class Exponential(AbstractApodization):
     Example
     -------
 
-    >>> operation5 = apo.Exponential(FWHM='143.4 m', dim_index=0, dv_index=0)
+    >>> operation5 = sp.apodization.Exponential(FWHM='143.4 m', dim_index=0, dv_index=0)
     """
 
     FWHM: Union[float, str] = 0

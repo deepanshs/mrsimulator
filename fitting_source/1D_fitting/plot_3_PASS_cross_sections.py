@@ -9,19 +9,15 @@
 # sideband intensity profile across the isotropic chemical shift cross-section from a
 # PASS/MAT dataset.
 import csdmpy as cp
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.utils import get_spectral_dimensions
-from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
 from lmfit import Minimizer, report_fit
 
+from mrsimulator import Simulator, SpinSystem, Site
+from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator import signal_processing as sp
+from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
-mpl.rcParams["grid.linestyle"] = "--"
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
@@ -45,6 +41,7 @@ pass_cross_section /= max_amp
 sigma /= max_amp
 
 # The plot of the dataset.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(pass_cross_section, "k", alpha=0.5)
 ax.invert_xaxis()
@@ -104,6 +101,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(pass_cross_section, color="k", linewidth=1, label="Experiment")
 ax.plot(processed_data, color="r", alpha=0.5, linewidth=2.5, label="guess spectrum")
@@ -140,6 +138,7 @@ sim.run()
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot the spectrum
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(pass_cross_section, color="k", linewidth=1, label="Experiment")
 ax.plot(processed_data, color="r", alpha=0.5, linewidth=2.5, label="Best Fit")

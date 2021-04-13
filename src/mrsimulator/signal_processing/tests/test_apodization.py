@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Apodization test"""
 import csdmpy as cp
-import mrsimulator.signal_processing as sp
 import numpy as np
+from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum

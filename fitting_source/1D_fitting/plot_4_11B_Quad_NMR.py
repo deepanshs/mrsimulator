@@ -8,19 +8,15 @@
 # The following is a quadrupolar lineshape fitting example for the 11B MAS NMR of
 # lithium orthoborate crystal. The dataset was provided by Nathan Barrow.
 import csdmpy as cp
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
-from mrsimulator import Simulator, Site, SpinSystem
-from mrsimulator.methods import BlochDecayCTSpectrum
-from mrsimulator.utils import get_spectral_dimensions
-from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
 from lmfit import Minimizer, report_fit
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
-mpl.rcParams["grid.linestyle"] = "--"
+from mrsimulator import Simulator, Site, SpinSystem
+from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator import signal_processing as sp
+from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
+
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
@@ -44,6 +40,7 @@ experiment /= max_amp
 sigma /= max_amp
 
 # plot of the dataset.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 ax.set_xlim(100, -100)
@@ -99,7 +96,7 @@ processor = sp.SignalProcessor(
     operations=[
         # Lorentzian convolution along both dimensions.
         sp.IFFT(),
-        apo.Exponential(FWHM="100 Hz"),
+        sp.apodization.Exponential(FWHM="100 Hz"),
         sp.FFT(),
         sp.Scale(factor=1),
     ]
@@ -108,6 +105,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", linewidth=1, label="Experiment")
 ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="guess spectrum")
@@ -140,6 +138,7 @@ sim.run()
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot the spectrum
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", linewidth=1, label="Experiment")
 ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="Best Fit")

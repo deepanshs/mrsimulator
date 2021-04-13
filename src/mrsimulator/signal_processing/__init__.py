@@ -94,7 +94,7 @@ class Scale(AbstractOperation):
     Example
     -------
 
-    >>> import mrsimulator.signal_processing as sp
+    >>> from mrsimulator import signal_processing as sp
     >>> operation1 = sp.Scale(factor=20)
     """
 

@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import csdmpy as cp
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
 import numpy as np
 import pytest
+from mrsimulator import signal_processing as sp
 
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
@@ -13,7 +12,7 @@ def test_01():
     post_sim = sp.SignalProcessor()
     operations = [
         sp.IFFT(),
-        apo.Gaussian(FWHM="12 K", dim_index=0, dv_index=0),
+        sp.apodization.Gaussian(FWHM="12 K", dim_index=0, dv_index=0),
         sp.FFT(),
     ]
 

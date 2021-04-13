@@ -49,15 +49,14 @@ apodization is a point-wise multiplication operation of the input signal with th
 apodizing vector. See :ref:`operations_api` documentation for a complete list of
 operations.
 
-Import the module and sub-module as
+Import the module as
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> import mrsimulator.signal_processing as sp
-    >>> import mrsimulator.signal_processing.apodization as apo
+    >>> from mrsimulator import signal_processing as sp
 
 Convolution
 -----------
@@ -74,7 +73,7 @@ convoluting to a dataset.
 
     >>> processor = sp.SignalProcessor(
     ...     operations=[
-    ...         sp.IFFT(), apo.Gaussian(FWHM='0.1 km'), sp.FFT()
+    ...         sp.IFFT(), sp.apodization.Gaussian(FWHM='0.1 km'), sp.FFT()
     ...     ]
     ... )
 
@@ -167,8 +166,8 @@ argument to the operation class. Consider the following list of operations.
     >>> processor = sp.SignalProcessor(
     ...     operations=[
     ...         sp.IFFT(),
-    ...         apo.Gaussian(FWHM='0.1 km', dv_index=0),
-    ...         apo.Exponential(FWHM='50 m', dv_index=1),
+    ...         sp.apodization.Gaussian(FWHM='0.1 km', dv_index=0),
+    ...         sp.apodization.Exponential(FWHM='50 m', dv_index=1),
     ...         sp.FFT(),
     ...     ]
     ... )
@@ -255,8 +254,8 @@ operations
     >>> processor = sp.SignalProcessor(
     ...     operations=[
     ...         sp.IFFT(dim_index=(0, 1)),
-    ...         apo.Gaussian(FWHM='0.5 ms', dim_index=0),
-    ...         apo.Exponential(FWHM='10 cm/s', dim_index=1),
+    ...         sp.apodization.Gaussian(FWHM='0.5 ms', dim_index=0),
+    ...         sp.apodization.Exponential(FWHM='10 cm/s', dim_index=1),
     ...         sp.FFT(dim_index=(0, 1)),
     ...     ]
     ... )

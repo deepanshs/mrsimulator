@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import csdmpy as cp
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
 import mrsimulator.utils.spectral_fitting as sf
 import numpy as np
 import pytest
+from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
@@ -96,8 +95,8 @@ def test_03():
     # post_sim_LMFIT_params
     op_list = [
         sp.IFFT(dim_index=0),
-        apo.Exponential(FWHM=100),
-        apo.Gaussian(FWHM=200),
+        sp.apodization.Exponential(FWHM=100),
+        sp.apodization.Gaussian(FWHM=200),
         sp.FFT(dim_index=0),
         sp.Scale(factor=10),
     ]
@@ -117,8 +116,8 @@ def test_04():
     op_list1 = [sp.Scale(factor=20)]
     op_list2 = [
         sp.IFFT(dim_index=0),
-        apo.Gaussian(FWHM=130, dim_index=0, dv_index=0),
-        apo.Exponential(FWHM=100, dim_index=1, dv_index=0),
+        sp.apodization.Gaussian(FWHM=130, dim_index=0, dv_index=0),
+        sp.apodization.Exponential(FWHM=100, dim_index=1, dv_index=0),
         sp.FFT(dim_index=0),
         sp.Scale(factor=10),
     ]
@@ -171,7 +170,7 @@ CH = {
 }
 op_list = [
     sp.IFFT(dim_index=0),
-    apo.Exponential(FWHM=100, dim_index=0, dv_index=0),
+    sp.apodization.Exponential(FWHM=100, dim_index=0, dv_index=0),
     sp.FFT(dim_index=0),
     sp.Scale(factor=10),
 ]
@@ -268,7 +267,7 @@ def test_7():
     processor = sp.SignalProcessor(
         operations=[
             sp.IFFT(dim_index=0),
-            apo.Gaussian(FWHM="0.2 kHz", dim_index=0),
+            sp.apodization.Gaussian(FWHM="0.2 kHz", dim_index=0),
             sp.FFT(dim_index=0),
         ]
     )

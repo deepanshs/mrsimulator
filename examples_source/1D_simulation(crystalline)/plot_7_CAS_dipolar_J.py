@@ -12,13 +12,12 @@ Coupled spin-1/2 (CSA + heteronuclear dipolar + J-couplings)
 # from a 13C-1H coupled spin system computed at various spinning frequencies with
 # different relative tensor orientations between the nuclear shielding and dipolar
 # interaction tensors.
-
+import numpy as np
 import matplotlib.pyplot as plt
+
 from mrsimulator import Simulator, SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
-import numpy as np
+from mrsimulator import signal_processing as sp
 
 # sphinx_gallery_thumbnail_number = 1
 
@@ -97,7 +96,7 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        apo.Exponential(FWHM="50 Hz"),
+        sp.apodization.Exponential(FWHM="50 Hz"),
         sp.FFT(),
     ]
 )
@@ -112,7 +111,7 @@ processed_data = [
 # Let's first plot a single simulation, the one corresponding to a relative orientation
 # of :math:`\beta=30^\circ` between the shielding and dipolar tensors and a spinning
 # speed of 3 kHz.
-plt.figure(figsize=[4.5, 3.0])
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(
     processed_data[0].split()[0].real,
@@ -135,7 +134,7 @@ fig, ax = plt.subplots(
     subplot_kw={"projection": "csdm"},
     sharex=True,
     sharey=True,
-    figsize=[8, 10.0],
+    figsize=(8, 10.0),
 )
 for i, datum in enumerate(processed_data):
     datum_spin_sys = datum.split()  # get simulation from the three spin systems.

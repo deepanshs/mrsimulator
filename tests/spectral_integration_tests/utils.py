@@ -2,9 +2,9 @@
 import json
 from os import path
 
-import mrsimulator.signal_processing as sp
 import numpy as np
 from mrsimulator import Method
+from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 from numpy.fft import fft

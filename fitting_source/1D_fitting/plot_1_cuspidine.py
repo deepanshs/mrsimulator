@@ -21,18 +21,13 @@
 #
 # We will begin by importing relevant modules and establishing figure size.
 import csdmpy as cp
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
-from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecaySpectrum
 from lmfit import Minimizer, Parameters, fit_report
 
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
-mpl.rcParams["grid.linestyle"] = "--"
+from mrsimulator import Simulator, SpinSystem, Site
+from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator import signal_processing as sp
+
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
@@ -55,6 +50,7 @@ synthetic_experiment /= max_amp
 sigma /= max_amp
 
 # Plot of the synthetic dataset.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(synthetic_experiment, "k", alpha=0.5)
 ax.set_xlim(-200, 50)
@@ -127,7 +123,7 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),  # inverse FFT to convert frequency based spectrum to time domain.
-        apo.Exponential(FWHM="200 Hz"),  # apodization of time domain signal.
+        sp.apodization.Exponential(FWHM="200 Hz"),  # apodization of time domain signal.
         sp.FFT(),  # forward FFT to convert time domain signal to frequency spectrum.
         sp.Scale(factor=1.5),  # scale the frequency spectrum.
     ]
@@ -136,6 +132,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # %%
 # **Step 5:** The plot the spectrum. We also plot the synthetic dataset for comparison.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(synthetic_experiment, "k", linewidth=1, label="Experiment")
 ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="guess spectrum")
@@ -239,6 +236,7 @@ x, y_data = synthetic_experiment.to_list()
 residuals = minimization_function(result.params, sim, processor)
 fit = y_data - residuals
 
+plt.figure(figsize=(4.25, 3.0))
 plt.plot(x, y_data, "k", linewidth=1, label="Experiment")
 plt.plot(x, fit, "r", alpha=0.5, linewidth=2.5, label="Best Fit")
 plt.plot(x, residuals, alpha=0.5, label="Residual")

@@ -8,10 +8,10 @@ Coupled spins 5/2-9/2 (Quad + J-coupling)
 """
 # %%
 import matplotlib.pyplot as plt
+
 from mrsimulator import Simulator, SpinSystem
 from mrsimulator.methods import BlochDecayCTSpectrum
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+from mrsimulator import signal_processing as sp
 
 # sphinx_gallery_thumbnail_number = 1
 
@@ -67,7 +67,7 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        apo.Exponential(FWHM="30 Hz"),
+        sp.apodization.Exponential(FWHM="30 Hz"),
         sp.FFT(),
     ]
 )
@@ -77,7 +77,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation)
 # **Plot**
 #
 # The plot of the simulation before signal processing.
-plt.figure(figsize=[4.5, 3.0])
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(processed_data.real, color="black", linewidth=0.5)
 ax.invert_xaxis()

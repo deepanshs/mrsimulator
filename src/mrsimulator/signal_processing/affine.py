@@ -77,8 +77,7 @@ class Shear(AbstractAffineTransformation):
     Example
     -------
 
-    >>> import mrsimulator.signal_processing.affine as af
-    >>> operation = af.Shear(factor='143.4 Hz', dim_index=0, parallel=1)
+    >>> operation = sp.affine.Shear(factor='143.4 Hz', dim_index=0, parallel=1)
     """
 
     factor: Union[float, str] = 0
@@ -136,8 +135,7 @@ class Scale(AbstractAffineTransformation):
     Example
     -------
 
-    >>> import mrsimulator.signal_processing.affine as af
-    >>> operation = af.Scale(factor=2.14, dim_index=0)
+    >>> operation = sp.affine.Scale(factor=2.14, dim_index=0)
     """
 
     factor: Union[float, str] = 1
@@ -190,8 +188,7 @@ class Scale(AbstractAffineTransformation):
 #     Example
 #     -------
 
-#     >>> import mrsimulator.signal_processing.apodization as apo
-#     >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
+#     >>> operation4 = sp.apodization.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
 #     """
 
 #     factor: Union[float, str] = 1
