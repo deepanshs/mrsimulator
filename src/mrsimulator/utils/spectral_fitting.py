@@ -362,12 +362,15 @@ def LMFIT_min_function(
     diff = np.asarray([])
     for processed_datum, mth, sigma_ in zip(processed_data, sim.methods, sigma):
         datum = 0
-        if sim.config.decompose_spectrum == "spin_system":
-            for decomposed_datum in processed_datum.y:
-                datum += decomposed_datum.components[0].real
-        else:
-            datum = processed_datum.y[0].components[0].real
+        for decomposed_datum in processed_datum.y:
+            datum += decomposed_datum.components[0].real
 
-        diff = np.append(diff, (mth.experiment.y[0].components[0] - datum) / sigma_)
+        # If data has negative increment, reverse the data before taking the difference.
+        exp_data = mth.experiment.y[0].components[0]
+        index = [
+            -i - 1 for i, x in enumerate(mth.experiment.x) if x.increment.value < 0
+        ]
+        exp_data = exp_data if index == [] else np.flip(exp_data, axis=tuple(index))
+        diff = np.append(diff, (exp_data - datum) / sigma_)
 
     return diff
