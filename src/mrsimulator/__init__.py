@@ -85,7 +85,7 @@ def parse(py_dict, parse_units: bool = True):
             for item in py_dict["signal_processors"]
         ]
         if "signal_processors" in py_dict
-        else [None for _ in sim.methods]
+        else [SignalProcessor() for _ in sim.methods]
     )
 
     params = None
