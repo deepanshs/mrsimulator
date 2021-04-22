@@ -9,7 +9,7 @@ Scaled spatial orientation tensors (sSOT), :math:`\varsigma_{L,n}^{(k)}`
 .. raw:: html
 
     <a class="btn btn-default"
-       href=./source/spatial_orientation_tensor_source.html> Source
+       href=./source/spatial_orientation_tensor_components.html> Source
     </a>
 
 Single nucleus spatial orientation tensors

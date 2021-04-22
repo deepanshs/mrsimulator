@@ -12,7 +12,7 @@ Import the module as
 
 .. doctest::
 
-    >>> import mrsimulator.signal_processing as sp
+    >>> from mrsimulator import signal_processing as sp
 
 .. rubric:: Operation Summary
 
@@ -31,11 +31,7 @@ Apodization
 
 .. currentmodule:: mrsimulator.signal_processing.apodization
 
-Import the module as
-
-.. doctest::
-
-    >>> import mrsimulator.signal_processing.apodization as apo
+Access the sub-module as ``sp.apodization``
 
 .. rubric:: Operation Summary
 
@@ -58,11 +54,7 @@ Affine Transformation
 
 .. currentmodule:: mrsimulator.signal_processing.affine
 
-Import the module as
-
-.. doctest::
-
-    >>> import mrsimulator.signal_processing.affine as af
+Access the sub-module as ``sp.affine``
 
 .. rubric:: Operation Summary
 

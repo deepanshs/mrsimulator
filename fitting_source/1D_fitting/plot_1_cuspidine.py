@@ -21,18 +21,13 @@
 #
 # We will begin by importing relevant modules and establishing figure size.
 import csdmpy as cp
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
-from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecaySpectrum
 from lmfit import Minimizer, Parameters, fit_report
 
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
-mpl.rcParams["grid.linestyle"] = "--"
+from mrsimulator import Simulator, SpinSystem, Site
+from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator import signal_processing as sp
+
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
@@ -47,7 +42,7 @@ synthetic_experiment = cp.load(file_).real
 sigma = 0.3298179
 
 # convert the dimension coordinates from Hz to ppm
-synthetic_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
+synthetic_experiment.x[0].to("ppm", "nmr_frequency_ratio")
 
 # Normalize the spectrum
 max_amp = synthetic_experiment.max()
@@ -55,6 +50,7 @@ synthetic_experiment /= max_amp
 sigma /= max_amp
 
 # Plot of the synthetic dataset.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(synthetic_experiment, "k", alpha=0.5)
 ax.set_xlim(-200, 50)
@@ -127,7 +123,7 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),  # inverse FFT to convert frequency based spectrum to time domain.
-        apo.Exponential(FWHM="200 Hz"),  # apodization of time domain signal.
+        sp.apodization.Exponential(FWHM="200 Hz"),  # apodization of time domain signal.
         sp.FFT(),  # forward FFT to convert time domain signal to frequency spectrum.
         sp.Scale(factor=1.5),  # scale the frequency spectrum.
     ]
@@ -136,9 +132,10 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # %%
 # **Step 5:** The plot the spectrum. We also plot the synthetic dataset for comparison.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(synthetic_experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="guess spectrum")
+ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
 ax.set_xlim(-200, 50)
 ax.invert_xaxis()
 plt.legend()
@@ -189,7 +186,7 @@ def minimization_function(params, sim, processor, sigma=1):
     values = params.valuesdict()
 
     # the experiment data as a Numpy array
-    intensity = sim.methods[0].experiment.dependent_variables[0].components[0].real
+    intensity = sim.methods[0].experiment.y[0].components[0].real
 
     # Here, we update simulation parameters iso, eta, and zeta for the site object
     site = sim.spin_systems[0].sites[0]
@@ -210,7 +207,7 @@ def minimization_function(params, sim, processor, sigma=1):
     processed_data = processor.apply_operations(sim.methods[0].simulation)
 
     # return the difference vector.
-    diff = intensity - processed_data.dependent_variables[0].components[0].real
+    diff = intensity - processed_data.y[0].components[0].real
     return diff / sigma
 
 
@@ -239,9 +236,10 @@ x, y_data = synthetic_experiment.to_list()
 residuals = minimization_function(result.params, sim, processor)
 fit = y_data - residuals
 
+plt.figure(figsize=(4.25, 3.0))
 plt.plot(x, y_data, "k", linewidth=1, label="Experiment")
-plt.plot(x, fit, "r", alpha=0.5, linewidth=2.5, label="Best Fit")
-plt.plot(x, residuals, alpha=0.5, label="Residual")
+plt.plot(x, fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
+plt.plot(x, residuals, alpha=0.75, linewidth=1, label="Residual")
 
 plt.xlabel("Frequency / Hz")
 plt.xlim(-200, 50)

@@ -1,13 +1,10 @@
-
-
 .. _install:
 
-============
-Installation
-============
+For the users
+=============
 
-Requirements
-------------
+Strict Requirements
+-------------------
 
 ``mrsimulator`` has the following strict requirements:
 
@@ -16,8 +13,7 @@ Requirements
 
 See :ref:`requirements` for a full list of requirements.
 
-Make sure you have the required version of python by typing the following in the
-terminal,
+Make sure you have the required version of python by typing the following in the terminal,
 
 .. tip::
     You may also click the copy-button located at the top-right corner of the code cell
@@ -29,10 +25,10 @@ terminal,
 
       $ python --version
 
-For `Mac` users, python version 3 is installed under the name `python3`. You may replace
-`python` for `python3` in the above command and all subsequent python statements.
+For *Mac* users, python version 3 is installed under the name *python3*. You may replace
+*python* for *python3* in the above command and all subsequent python statements.
 
-For `Windows` users, we recommend the `Anaconda <https://www.anaconda.com/products/individual/>`_
+For *Windows* users, we recommend the `Anaconda <https://www.anaconda.com/products/individual/>`_
 or `miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ distribution of
 python>3.6. Anaconda distribution for python comes with popular python packages that
 are frequently used in scientific computing.
@@ -55,8 +51,8 @@ packages such as pip.
 .. ships with numerous packages and modules including Numpy, Scipy, and Matplotlib
 .. which are useful packages for scientific datasets.
 
-Installing ``mrsimulator``
---------------------------
+Installing ``mrsimulator`` using pip
+------------------------------------
 
 On Google Colab Notebook
 ''''''''''''''''''''''''
@@ -72,6 +68,8 @@ runs entirely in the cloud. Launch a new notebook on
 in the first cell, and execute. All done! You may now proceed to the next section and
 start using the library.
 
+
+
 .. _on_local_machine:
 
 On Local machine (Using pip)
@@ -83,8 +81,9 @@ and higher. PIP is the easiest way to install python packages.
 .. tabs::
 
   .. tab:: Linux
+    :tabid: linux
 
-    For Linux users, we provide the binary distributions of the mrsimulator package for
+    For *Linux* users, we provide the binary distributions of the mrsimulator package for
     python versions 3.6-3.8. Install the package using pip as follows,
 
     .. code-block:: bash
@@ -92,8 +91,9 @@ and higher. PIP is the easiest way to install python packages.
         $ pip install mrsimulator
 
   .. tab:: Mac OSX
+    :tabid: macosx
 
-    For `Mac` users, we provide the binary distributions of the mrsimulator package for
+    For *Mac* users, we provide the binary distributions of the mrsimulator package for
     python versions 3.6-3.8. Install the package using pip as follows,
 
     .. code-block:: bash
@@ -108,13 +108,14 @@ and higher. PIP is the easiest way to install python packages.
         $ python3 -m pip install mrsimulator --user
 
   .. tab:: Windows
+    :tabid: windows
 
     .. note:: We currently do not provide binary distributions for windows. You'll need
       to compile and build the mrsimulator library from source. The following instructions
       are one-time installation only. If you are upgrading the package, see the
       :ref:`upgrading_to_a_newer_version` sub-section.
 
-    .. include:: install-docs/windows.rst
+    .. include:: windows.rst
 
     **Install the package**.
 
@@ -142,6 +143,9 @@ installed on your system. In this case, type the following in the terminal/Promp
 .. code-block:: bash
 
     $ pip install mrsimulator -U
+
+
+All done! You may now proceed to the next section and start using the library.
 
 
 .. _building_from_source:
@@ -184,98 +188,19 @@ OS-dependent prerequisites
 .. tabs::
 
   .. tab:: Linux
+    :tabid: linus_source
 
-    **OpenBLAS and FFTW libraries**
-
-    On Linux, the package manager for your distribution is usually the easiest route to
-    ensure you have the prerequisites to building the mrsimulator library. To build from
-    source, you will need the OpenBLAS and FFTW development headers for your Linux
-    distribution. Type the following command in the terminal, based on your Linux
-    distribution.
-
-    *For (Debian/Ubuntu):*
-
-    .. code-block:: bash
-
-      $ sudo apt-get install libopenblas-dev libfftw3-dev
-
-    *For (Fedora/RHEL):*
-
-    .. code-block:: bash
-
-      $ sudo yum install openblas-devel fftw-devel
-
-    **Install a C/C++ compiler**
-
-    The C-compiler comes with your Linux distribution. No further action is
-    required.
+    .. include:: source_install/linux.rst
 
   .. tab:: Mac OSX
+    :tabid: macosx_source
 
-    **OpenBLAS/Accelerate and FFTW libraries**
-
-    You will require the ``brew`` package manager to install the development headers for the
-    OpenBLAS (if applicable) and FFTW libraries. Read more on installing brew from
-    `homebrew <https://brew.sh>`_.
-
-    *Step-1* Install the FFTW library using the `homebrew <https://brew.sh>`_ formulae.
-
-    .. code-block:: bash
-
-      $ brew install fftw
-
-    *Step-2* By default, the mrsimulator package links to the openblas library for BLAS
-    operations. Mac users may opt to choose the in-build Apple's Accelerate library. If you
-    opt for Apple's Accelerate library, skip to `Step-3`. If you wish to link the mrsimulator
-    package to the OpenBLAS library, type the following in the terminal,
-
-    .. code-block:: bash
-
-      $ brew install openblas
-
-    *Step-3* If you choose to link the mrsimulator package to the OpenBLAS library, skip
-    to the next section, :ref:`building_and_installing`.
-
-    *(a)* You will need to install the BLAS development header for Apple's Accelerate
-    library. The easiest way is to install the Xcode Command Line Tools. Note, this is a
-    one-time installation. If you have previously installed the Xcode Command Line Tools,
-    you may skip this sub-step. Type the following in the terminal,
-
-    .. code-block:: bash
-
-      $ xcode-select --install
-
-    *(b)* The next step is to let the mrsimulator setup know your preference.
-    Open the ``settings.py`` file, located at the root level of the mrsimulator source
-    code folder, in a text editor. You should see
-
-    .. code-block:: python
-
-      # -*- coding: utf-8 -*-
-      # BLAS library
-      use_openblas = True
-      # mac-os only
-      use_accelerate = False
-
-    To link the mrsimulator package to the Apple's Accelerate library, change the
-    fields to
-
-    .. code-block:: python
-
-      # -*- coding: utf-8 -*-
-      # BLAS library
-      use_openblas = False
-      # mac-os only
-      use_accelerate = True
-
-    **Install a C/C++ compiler**
-
-    The C-compiler installs with the Xcode Command Line Tools. No further action is
-    required.
+    .. include:: source_install/macosx.rst
 
   .. tab:: Windows
+    :tabid: windows_source
 
-    .. include:: install-docs/windows.rst
+    .. include:: source_install/windows.rst
 
 
 .. _building_and_installing:
@@ -321,88 +246,4 @@ The above statement should produce the following figure.
 
 .. plot:: ../pyplot/test_file.py
 
-.. figure:: _static/null.*
-
     A test example simulation of solid-state NMR spectrum.
-
-
-Setup for developers and contributors
--------------------------------------
-
-A GitHub account is required for developers and contributors. Make sure you have
-git installed on your system.
-
-**Step-A** (Optional) Create a virtual environment. It is a good practice to create
-separate virtual python environments for packages when in developer mode.
-The following is an example of a Conda environment.
-
-.. code-block:: bash
-
-    $ conda create -n mrsimulator-dev python=3.7
-    $ conda activate mrsimulator-dev
-
-**Step-B** Clone the mrsimulator repository using git and navigate into the package
-folder.
-
-.. code-block:: bash
-
-    $ git clone git://github.com/DeepanshS/mrsimulator.git
-    $ cd mrsimulator
-
-**Step-C** Follow the instruction under :ref:`os_dependent_prerequisite` from
-:ref:`building_from_source` section. For developers and contributors using mac OSX,
-please run the setup by binding to the openblas libraries.
-
-**Step-D** You will need cython for development build.
-
-.. code-block:: bash
-
-    $ pip install cython
-
-**Step-E** Build and install the package in the development (editable) mode using pip.
-
-.. code-block:: bash
-
-    $ pip install -e .
-
-**Step-F**: Install the required packages for developers using pip.
-
-.. code-block:: bash
-
-    $ pip install -r requirements-dev.txt
-
-As always, if you get an error that you don’t have the permission to install the
-package into the default site-packages directory, you may try installing by adding the
-``--user`` options at the end of the statements in steps D-F.
-
-Note for the developers and contributors
-''''''''''''''''''''''''''''''''''''''''
-
-**Running tests**: For unit tests, we use the pytest module. At the root directory
-of the mrsimulator package folder, type
-
-.. code-block:: bash
-
-    $ pytest
-
-which will run a series of tests.
-
-**Building docs**: We use the sphinx python documentation generator for building docs.
-Navigate to the ``docs`` folder within the mrsimulator package folder, and type,
-
-.. code-block:: bash
-
-    $ make html
-
-The above command will build the documentation and store the build at
-``mrsimulator/docs/_build/html``. Double click the `index.html` file within this
-folder to view the offline documentation.
-
-.. **Submitting pull requests** Make sure all the test pass and the documentation build
-.. is successful before creating a pull request.
-
-.. We recommend the
-.. following C-compiler for the OS types:
-.. - Mac OS - ``clang``
-.. - Linux - ``gcc``
-.. - Windows - ``msvc`` (https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019)

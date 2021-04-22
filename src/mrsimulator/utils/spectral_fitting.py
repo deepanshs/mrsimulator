@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import mrsimulator.signal_processing as sp
+import numpy as np
 from lmfit import Parameters
 from mrsimulator import Simulator
-
 
 __author__ = ["Maxwell C Venetos", "Deepansh Srivastava"]
 __email__ = ["maxvenetos@gmail.com", "srivastava.89@osu.edu"]
@@ -39,7 +39,7 @@ DECODING_PAIRS = [
     # coupling
     [".couplings.", "_coupling_"],
     [".isotropic_j", "_isotropic_j"],
-    [".shielding_j.", "_shielding_j_"],
+    [".j_symmetric.", "_j_symmetric_"],
     [".dipolar.", "_dipolar_"],
 ]
 
@@ -129,7 +129,7 @@ def _get_simulator_object_value(sim, string):
     return obj
 
 
-def _set_simulator_object_value(sim, string, value):
+def _update_sim_from_LMFIT_params(sim, string, value):
     """Parse the string representing the Simulator object dictionary tree format, and
     set its value to the input.
 
@@ -145,7 +145,7 @@ def _set_simulator_object_value(sim, string, value):
         >>> sim.spin_systems.append(sys)
 
         >>> string = 'sys_0_site_0_isotropic_chemical_shift'
-        >>> _set_simulator_object_value(sim, string, 120)
+        >>> _update_sim_from_LMFIT_params(sim, string, 120)
         >>> sim.spin_systems[0].sites[0].isotropic_chemical_shift
         120.0
     """
@@ -184,24 +184,29 @@ def _traverse_dictionaries(dictionary, parent="spin_systems"):
     Returns:
         List Object.
     """
-    name_list = []
+    if isinstance(dictionary, list):
+        return [
+            value
+            for i, obj in enumerate(dictionary)
+            for value in _traverse_dictionaries(obj, _str_encode(f"{parent}[{i}]"))
+        ]
+
     if isinstance(dictionary, dict):
-        for key, vals in dictionary.items():
-            if key not in EXCLUDE and vals is not None:
-                if isinstance(vals, (dict, list)):
-                    name_list += _traverse_dictionaries(
-                        vals, _str_encode(f"{parent}.{key}")
-                    )
-                else:
-                    name_list += [_str_encode(f"{parent}.{key}")]
-    elif isinstance(dictionary, list):
-        for i, items in enumerate(dictionary):
-            name_list += _traverse_dictionaries(items, _str_encode(f"{parent}[{i}]"))
+        return [
+            item
+            for key, value in dictionary.items()
+            if key not in EXCLUDE and value is not None
+            for item in (
+                _traverse_dictionaries(value, _str_encode(f"{parent}.{key}"))
+                if isinstance(value, (dict, list))
+                else [_str_encode(f"{parent}.{key}")]
+            )
+        ]
 
-    return name_list
+    return []
 
 
-def _post_sim_LMFIT_params(post_sim):
+def _post_sim_LMFIT_params(params, post_sim, index):
     """
     Creates an LMFIT Parameters object for SignalProcessor operations
     involved in spectrum fitting.
@@ -212,17 +217,13 @@ def _post_sim_LMFIT_params(post_sim):
     Returns:
         Parameters object
     """
-    params = Parameters()
-
     for i, operation in enumerate(post_sim.operations):
         name = operation.__class__.__name__
         if name in POST_SIM_DICT:
             attr = POST_SIM_DICT[name]
-            key = f"operation_{i}_{name}_{attr}"
+            key = f"SP_{index}_operation_{i}_{name}_{attr}"
             val = operation.__getattribute__(attr)
             params.add(name=key, value=val)
-
-    return params
 
 
 def _update_post_sim_from_LMFIT_params(params, post_sim):
@@ -232,26 +233,30 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
         params: LMFIT Parameters object
         post_sim: SignalProcessor object
     """
-
     for param in params:
         # iterating through the parameter list looking for only post_sim params
         if "operation_" in param:
             # splitting parameter name to obtain operations index, operation argument,
             # and its value
+            # SP_j_operation_i_function_arg
             split_name = param.split("_")
-            opIndex = int(split_name[1])  # The operation index
+            sp_idx = int(split_name[1])
+            op_idx = int(split_name[3])  # The operation index
+            function = split_name[4]
             val = params[param].value  # The value of operation argument parameter
 
             # update the post_sim object with the parameter updated value.
-            post_sim.operations[opIndex].__setattr__(POST_SIM_DICT[split_name[2]], val)
+            post_sim[sp_idx].operations[op_idx].__setattr__(
+                POST_SIM_DICT[function], val
+            )
 
 
-def make_LMFIT_parameters(sim, post_sim=None, exclude_key=None):
+def make_LMFIT_parameters(sim: Simulator, post_sim: list = None):
     """An alias of `make_LMFIT_params` function."""
-    return make_LMFIT_params(sim, post_sim, exclude_key)
+    return make_LMFIT_params(sim, post_sim)
 
 
-def make_LMFIT_params(sim, post_sim=None, exclude_key=None):
+def make_LMFIT_params(sim: Simulator, post_sim: list = None):
     """
     Parses the Simulator and PostSimulator objects for a list of LMFIT parameters.
     The parameter name is generated using the following syntax:
@@ -261,16 +266,38 @@ def make_LMFIT_params(sim, post_sim=None, exclude_key=None):
     for spin system attribute with signature sys[i].sites[j].attribute1.attribute2
 
     Args:
-        sim: a Simulator object.
-        post_sim: a SignalProcessor object
+        sim: A Simulator object.
+        post_sim: A list of SignalProcessor object of length equal to the length of
+            methods in the Simulator object.
 
     Returns:
         LMFIT Parameters object.
     """
+    params = Parameters()
+    make_simulator_params(params, sim)
+
+    if post_sim is not None:
+        params.update(make_signal_processor_params(post_sim))
+
+    return params
+
+
+def make_signal_processor_params(post_sim):
+    post_sim = post_sim if isinstance(post_sim, list) else [post_sim]
+
+    params = Parameters()
+    for i, processor in enumerate(post_sim):
+        if not isinstance(processor, sp.SignalProcessor):
+            name = type(processor).__name__
+            raise ValueError(f"Expecting a `SignalProcessor` object, found {name}.")
+        _post_sim_LMFIT_params(params, processor, i)
+    return params
+
+
+def make_simulator_params(params, sim):
     if not isinstance(sim, Simulator):
         raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
 
-    params = Parameters()
     temp_list = _traverse_dictionaries(_list_of_dictionaries(sim.spin_systems))
 
     # get total abundance scaling factor
@@ -295,74 +322,55 @@ def make_LMFIT_params(sim, post_sim=None, exclude_key=None):
         else:
             params.add(name=items, value=value)
 
-    if post_sim is None:
-        return params
 
-    if not isinstance(post_sim, sp.SignalProcessor):
-        raise ValueError(
-            f"Expecting a `SignalProcessor` object, found {type(post_sim).__name__}."
-        )
-    temp_params = _post_sim_LMFIT_params(post_sim)
-    for item in temp_params:
-        params.add(name=item, value=temp_params[item].value)
-    # params.add_many(temp_params)
-
-    return params
-
-
-def LMFIT_min_function(params, sim, post_sim=None, sigma=1):
+def LMFIT_min_function(
+    params: Parameters, sim: Simulator, post_sim: list = None, sigma: list = None
+):
     """
     The simulation routine to calculate the vector difference between simulation and
     experiment based on the parameters update.
 
     Args:
-        params: Parameters object containing parameters to vary during minimization.
-        sim: Simulator object used in the simulation. Initialized with guess fitting
-            parameters.
-        post_sim: PostSimulator object used in the simulation. Initialized with guess
-            fitting parameters.
-
+        params: Parameters object containing parameters for OLS minimization.
+        sim: Simulator object.
+        post_sim: A list of PostSimulator objects corresponding to the methods in the
+            Simulator object.
+        sigma: A list of standard deviations corresponding to the experiments in the
+            Simulator.methods attribute
     Returns:
         Array of the differences between the simulation and the experimental data.
     """
-    # if not isinstance(params, Parameters):
-    #     raise ValueError(
-    #         f"Expecting a `Parameters` object, found {type(params).__name__}."
-    #     )
-    # if not isinstance(post_sim, sp.SignalProcessor) or post_sim is None:
-    #     raise ValueError(
-    #         f"Expecting a `SignalProcessor` object, found {type(post_sim).__name__}."
-    #     )
-
-    # if not isinstance(sim, Simulator):
-    #  raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
+    post_sim = post_sim if isinstance(post_sim, list) else [post_sim]
+    if sigma is None:
+        sigma = [1.0 for _ in sim.methods]
+    sigma = sigma if isinstance(sigma, list) else [sigma]
 
     values = params.valuesdict()
     for items in values:
         if "operation_" not in items:
-            _set_simulator_object_value(sim, items, values[items])
+            _update_sim_from_LMFIT_params(sim, items, values[items])
         elif "operation_" in items and post_sim is not None:
             _update_post_sim_from_LMFIT_params(params, post_sim)
 
     sim.run()
-    processed_data = post_sim.apply_operations(data=sim.methods[0].simulation)
 
-    datum = 0
-    if sim.config.decompose_spectrum == "spin_system":
-        for decomposed_datum in processed_data.y:
+    processed_data = [
+        item.apply_operations(data=data.simulation)
+        for item, data in zip(post_sim, sim.methods)
+    ]
+
+    diff = np.asarray([])
+    for processed_datum, mth, sigma_ in zip(processed_data, sim.methods, sigma):
+        datum = 0
+        for decomposed_datum in processed_datum.y:
             datum += decomposed_datum.components[0].real
-    else:
-        datum = processed_data.y[0].components[0].real
 
-    diff = sim.methods[0].experiment.y[0].components[0] - datum
-    return diff / sigma
+        # If data has negative increment, reverse the data before taking the difference.
+        exp_data = mth.experiment.y[0].components[0]
+        index = [
+            -i - 1 for i, x in enumerate(mth.experiment.x) if x.increment.value < 0
+        ]
+        exp_data = exp_data if index == [] else np.flip(exp_data, axis=tuple(index))
+        diff = np.append(diff, (exp_data - datum) / sigma_)
 
-    # MULTIPLE EXPERIMENTS
-    # for i, method in enumerate(sim.methods):
-    #     y_factored = method.apodize().real
-    #     residual = np.append(
-    #         residual,
-    #         method.experiment.dependent_variables[0].components[0].real - y_factored,
-    #     )
-
-    # return residual
+    return diff

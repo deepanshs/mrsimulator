@@ -11,15 +11,12 @@ Wollastonite, 29Si (I=1/2), MAF
 # :math:`\beta−\text{Ca}_3\text{Si}_3\text{O}_9`, with three distinct
 # :math:`^{29}\text{Si}` sites. The :math:`^{29}\text{Si}` tensor parameters
 # were obtained from Hansen `et. al.` [#f1]_
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
+from mrsimulator import signal_processing as sp
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # sphinx_gallery_thumbnail_number = 1
 
 # %%
@@ -93,8 +90,8 @@ csdm_data = sim.methods[0].simulation
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(dim_index=(0, 1)),
-        apo.Gaussian(FWHM="50 Hz", dim_index=0),
-        apo.Gaussian(FWHM="50 Hz", dim_index=1),
+        sp.apodization.Gaussian(FWHM="50 Hz", dim_index=0),
+        sp.apodization.Gaussian(FWHM="50 Hz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
     ]
 )
@@ -103,6 +100,7 @@ processed_data /= processed_data.max()
 
 # %%
 # The plot of the simulation after signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(processed_data.T, aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)

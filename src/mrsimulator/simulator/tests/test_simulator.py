@@ -49,6 +49,7 @@ def test_equality():
     result = {
         "label": "test",
         "spin_systems": [{"abundance": "100.0 %", "sites": []}],
+        "methods": [],
         "config": {
             "decompose_spectrum": "none",
             "integration_density": 70,
@@ -225,6 +226,16 @@ def test_sim_coesite():
     assert sim_coesite == sim_load
 
     os.remove("sample.mrsim")
+
+
+def test_empty_spin_sys_simulator():
+    sim = Simulator()
+    sim.methods = [
+        BlochDecaySpectrum(channel=["1H"], spectral_dimensions=[{"count": 10}])
+    ]
+    sim.config.decompose_spectrum = "spin_system"
+    sim.run()
+    assert np.allclose(sim.methods[0].simulation.y[0].components[0], 0)
 
 
 def test_simulator_2():

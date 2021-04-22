@@ -21,12 +21,12 @@ class as follows.
     >>> from mrsimulator.models import CzjzekDistribution
     >>> cz_model = CzjzekDistribution(sigma=0.8)
 
-The `CzjzekDistribution` class accepts a single argument, `sigma`, which is the standard
+The *CzjzekDistribution* class accepts a single argument, *sigma*, which is the standard
 deviation of the second-rank traceless symmetric tensor parameters. In the above example,
 we create ``cz_model`` as an instance of the CzjzekDistribution class with
 :math:`\sigma=0.8`.
 
-Note, `cz_model` is only a class instance of the Czjzek distribution. You can either
+Note, *cz_model* is only a class instance of the Czjzek distribution. You can either
 draw random points from this distribution or generate a probability distribution
 function. Let's first draw points from this distribution, using the
 :meth:`~mrsimulator.models.CzjzekDistribution.rvs` method of the instance.
@@ -38,7 +38,7 @@ function. Let's first draw points from this distribution, using the
 
     >>> zeta_dist, eta_dist = cz_model.rvs(size=50000)
 
-In the above example, we draw `size=50000` random points of the distribution. The output
+In the above example, we draw *size=50000* random points of the distribution. The output
 ``zeta_dist`` and ``eta_dist`` hold the tensor parameter coordinates of the points, defined
 in the Haeberlen convention.
 The scatter plot of these coordinates is shown below.

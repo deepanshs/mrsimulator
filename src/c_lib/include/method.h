@@ -14,11 +14,11 @@
 
 typedef struct MRS_event {
   double fraction; /**< The weighted frequency contribution from the event. */
-  double magnetic_flux_density_in_T;      /**<  The magnetic flux density in T. */
-  double rotor_angle_in_rad;              /**<  The rotor angle in radians. */
-  double sample_rotation_frequency_in_Hz; /**<  The sample rotation frequency in Hz. */
-  MRS_plan *plan;                         /**< The plan for every event. */
-  double *freq_amplitude;                 // buffer for event amplitude
+  double magnetic_flux_density_in_T; /**<  The magnetic flux density in T. */
+  double rotor_angle_in_rad;         /**<  The rotor angle in radians. */
+  double rotor_frequency_in_Hz;      /**<  The sample rotation frequency in Hz. */
+  MRS_plan *plan;                    /**< The plan for every event. */
+  double *freq_amplitude;            // buffer for event amplitude
 } MRS_event;
 
 typedef struct MRS_dimension {
@@ -45,32 +45,24 @@ typedef struct MRS_dimension {
 void MRS_free_event(MRS_event *the_event);
 
 /**
- * @brief Allocate memory for `n` MRS dimensions.
- *
- * @param	n An interger. Number of MRS_dimension structs.
- */
-MRS_dimension *MRS_dimension_malloc(int n);
-
-/**
  * @brief Create plans for every event with the array of dimensions.
  *
  * @param scheme Pointer to the MRS_averaging_scheme.
  * @param count Pointer to number of points array along each dimension.
  * @param coordinates_offset Pointer to coordinates_offsets array along each dimension.
  * @param increment Pointer to increment array along each dimension.
- * @param magnetic_flux_density_in_T Pointer to magnetic flux density array along each
- *      dimension.
- * @param sample_rotation_frequency_in_Hz Pointer to rotation frequency array along each
- *      dimension.
- * @param rotor_angle_in_rad Pointer to rotor angle array along each dimension.
+ * @param magnetic_flux_density_in_T Pointer to magnetic flux density array per event.
+ * @param rotor_frequency_in_Hz Pointer to rotation frequency array per event.
+ * @param rotor_angle_in_rad Pointer to rotor angle array per event.
  * @param	n_events Pointer to number of events list within each dimension.
  * @param n_dim Unsigned int with the number of dimensions.
  * @param number_of_sidebands An int with the number of sidebands.
+ * @return MRS_dimension*
  */
 MRS_dimension *MRS_create_dimensions(
     MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
     double *increment, double *fractions, double *magnetic_flux_density_in_T,
-    double *sample_rotation_frequency_in_Hz, double *rotor_angle_in_rad, int *n_events,
+    double *rotor_frequency_in_Hz, double *rotor_angle_in_rad, int *n_events,
     unsigned int n_dim, unsigned int number_of_sidebands);
 
 /**

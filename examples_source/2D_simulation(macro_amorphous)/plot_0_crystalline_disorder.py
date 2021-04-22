@@ -10,18 +10,15 @@ Simulating site disorder (crystalline)
 # The following example illustrates an NMR simulation of a crystalline solid with site
 # disorders. We model such disorders with Extended Czjzek distribution. The following
 # case study shows an :math:`^{87}\text{Rb}` 3QMAS simulation of RbNO3.
-import matplotlib as mpl
 import numpy as np
-from mrsimulator import Simulator
-from mrsimulator.methods import ThreeQ_VAS
 import matplotlib.pyplot as plt
-
-from mrsimulator.models import ExtCzjzekDistribution
-from mrsimulator.utils.collection import single_site_system_generator
 from scipy.stats import multivariate_normal
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
+from mrsimulator import Simulator
+from mrsimulator.methods import ThreeQ_VAS
+from mrsimulator.models import ExtCzjzekDistribution
+from mrsimulator.utils.collection import single_site_system_generator
+
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
@@ -134,6 +131,7 @@ data = sim.methods[0].simulation
 
 # %%
 # The plot of the corresponding spectrum.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(data / data.max(), cmap="gist_ncar_r", aspect="auto")
 ax.set_ylim(-40, -70)

@@ -163,11 +163,11 @@ cdef class MRSPlan:
     cdef clib.MRS_plan *plan
 
     def __init__(self, AveragingScheme averaging_scheme, number_of_sidebands,
-                sample_rotation_frequency_in_Hz, rotor_angle_in_rad,
+                rotor_frequency_in_Hz, rotor_angle_in_rad,
                 increment, allow_fourth_rank):
 
         self.plan = clib.MRS_create_plan(averaging_scheme.scheme,
-                        number_of_sidebands, sample_rotation_frequency_in_Hz,
+                        number_of_sidebands, rotor_frequency_in_Hz,
                         rotor_angle_in_rad, increment, allow_fourth_rank)
 
     @property
@@ -175,8 +175,8 @@ cdef class MRSPlan:
         return self.plan.number_of_sidebands
 
     @property
-    def sample_rotation_frequency_in_Hz(self):
-        return self.plan.sample_rotation_frequency_in_Hz
+    def rotor_frequency_in_Hz(self):
+        return self.plan.rotor_frequency_in_Hz
 
     @property
     def rotor_angle_in_rad(self):

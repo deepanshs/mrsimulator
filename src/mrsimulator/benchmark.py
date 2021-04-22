@@ -123,8 +123,8 @@ def blocks(n_blocks, fn_string, n, level, n_jobs=1):
     print(f"\nLevel {level} results.")
     print("Average computation time for simulation one single-site spin system.")
     print(
-        f"Reported value is the average time took to simulate {n} spectra for random "
-        "tensor parameters."
+        f"Reported value is the simulation time per spectra averaged over {n} spectra "
+        "generated for random tensor parameters."
     )
     size = os.get_terminal_size().columns
     delmit = "-"

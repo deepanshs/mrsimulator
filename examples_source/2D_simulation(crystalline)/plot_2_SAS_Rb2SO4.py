@@ -10,17 +10,12 @@ Rb2SO4, 87Rb (I=3/2) SAS
 # The following is an example of switched-angle spinning (SAS) simulation of
 # :math:`\text{Rb}_2\text{SO}_4`, which has two distinct rubidium sites. The NMR tensor
 # parameters for these sites are taken from Shore `et. al.` [#f1]_.
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
+from mrsimulator import signal_processing as sp
 
-# global plot configuration
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
@@ -85,6 +80,8 @@ sim.run()
 # %%
 # The plot of the simulation.
 data = sim.methods[0].simulation
+
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
@@ -98,8 +95,8 @@ processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
         sp.IFFT(dim_index=(0, 1)),
-        apo.Gaussian(FWHM="0.4 kHz", dim_index=0),
-        apo.Gaussian(FWHM="0.4 kHz", dim_index=1),
+        sp.apodization.Gaussian(FWHM="0.4 kHz", dim_index=0),
+        sp.apodization.Gaussian(FWHM="0.4 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
     ]
 )
@@ -108,6 +105,7 @@ processed_data /= processed_data.max()
 
 # %%
 # The plot of the simulation after signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)

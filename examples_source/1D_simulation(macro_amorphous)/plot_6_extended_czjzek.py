@@ -11,16 +11,14 @@ respectively.
 """
 # %%
 # Import the required modules.
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
+
 from mrsimulator import Simulator
 from mrsimulator.methods import BlochDecaySpectrum, BlochDecayCTSpectrum
 from mrsimulator.models import ExtCzjzekDistribution
 from mrsimulator.utils.collection import single_site_system_generator
 
-# pre config the figures
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # sphinx_gallery_thumbnail_number = 5
 
 # %%
@@ -42,6 +40,7 @@ z_dist, e_dist, amp = ExtCzjzekDistribution(dominant, eps=0.14).pdf(pos=[z_lim, 
 
 # %%
 # The following is the plot of the extended Czjzek distribution.
+plt.figure(figsize=(4.25, 3.0))
 plt.contourf(z_dist, e_dist, amp, levels=10)
 plt.xlabel(r"$\zeta$ / ppm")
 plt.ylabel(r"$\eta$")
@@ -95,6 +94,7 @@ cq_dist, e_dist, amp = ExtCzjzekDistribution(dominant, eps=0.25).pdf(
 
 # %%
 # The following is the plot of the extended Czjzek distribution.
+plt.figure(figsize=(4.25, 3.0))
 plt.contourf(cq_dist, e_dist, amp, levels=10)
 plt.xlabel(r"$C_q$ / MHz")
 plt.ylabel(r"$\eta$")

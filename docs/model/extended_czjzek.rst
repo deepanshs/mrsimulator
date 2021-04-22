@@ -22,9 +22,9 @@ To generate an extended Czjzek distribution, use the
     >>> shielding_tensor = {'zeta': 80, 'eta': 0.4}
     >>> shielding_model = ExtCzjzekDistribution(shielding_tensor, eps=0.1)
 
-The `ExtCzjzekDistribution` class accepts two arguments. The first argument is the
-dominant tensor about which the perturbation applies, and the second parameter, `eps`,
-is the perturbation fraction. The minimum value of the `eps` parameter is 0, which means
+The *ExtCzjzekDistribution* class accepts two arguments. The first argument is the
+dominant tensor about which the perturbation applies, and the second parameter, *eps*,
+is the perturbation fraction. The minimum value of the *eps* parameter is 0, which means
 the distribution is the same as the dominant tensor. As the value of this parameter
 increases, the distribution gets broader. At values greater than 1, the extended Czjzek
 distribution approaches a Czjzek distribution. In the above example, we create an
@@ -43,7 +43,7 @@ the :meth:`~mrsimulator.models.ExtCzjzekDistribution.rvs` method of the instance
 
     >>> zeta_dist, eta_dist = shielding_model.rvs(size=50000)
 
-In the above example, we draw `size=50000` random points of the distribution. The output
+In the above example, we draw *size=50000* random points of the distribution. The output
 ``zeta_dist`` and ``eta_dist`` hold the tensor parameter coordinates of the points, defined
 in the Haeberlen convention.
 The scatter plot of these coordinates is shown below.

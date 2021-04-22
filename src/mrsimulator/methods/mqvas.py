@@ -141,15 +141,15 @@ class ThreeQ_VAS(MQ_VAS):
         ...     magnetic_flux_density=7,  # in T
         ...     spectral_dimensions=[
         ...         {
-        ...             "count": 256,
-        ...             "spectral_width": 4e3,  # in Hz
-        ...             "reference_offset": -5e3,  # in Hz
+        ...             "count": 128,
+        ...             "spectral_width": 3e3,  # in Hz
+        ...             "reference_offset": -2e3,  # in Hz
         ...             "label": "Isotropic dimension",
         ...         },
         ...         {
         ...             "count": 512,
         ...             "spectral_width": 1e4,  # in Hz
-        ...             "reference_offset": -4e3,  # in Hz
+        ...             "reference_offset": -5e3,  # in Hz
         ...             "label": "MAS dimension",
         ...         },
         ...     ],
@@ -199,18 +199,18 @@ class FiveQ_VAS(MQ_VAS):
     Example:
         >>> method = FiveQ_VAS(
         ...     channels=["17O"],
-        ...     magnetic_flux_density=9.4,  # in T
+        ...     magnetic_flux_density=11.7,  # in T
         ...     spectral_dimensions=[
         ...         {
-        ...             "count": 256,
-        ...             "spectral_width": 4e3,  # in Hz
-        ...             "reference_offset": -5e3,  # in Hz
+        ...             "count": 512,
+        ...             "spectral_width": 5e3,  # in Hz
+        ...             "reference_offset": -3e3,  # in Hz
         ...             "label": "Isotropic dimension",
         ...         },
         ...         {
         ...             "count": 512,
-        ...             "spectral_width": 1e4,  # in Hz
-        ...             "reference_offset": -4e3,  # in Hz
+        ...             "spectral_width": 2e4,  # in Hz
+        ...             "reference_offset": -2e3,  # in Hz
         ...             "label": "MAS dimension",
         ...         },
         ...     ],
@@ -260,18 +260,18 @@ class SevenQ_VAS(MQ_VAS):
     Example:
         >>> method = SevenQ_VAS(
         ...     channels=["51V"],
-        ...     magnetic_flux_density=9.4,  # in T
+        ...     magnetic_flux_density=4.7,  # in T
         ...     spectral_dimensions=[
         ...         {
         ...             "count": 256,
-        ...             "spectral_width": 4e3,  # in Hz
-        ...             "reference_offset": -5e3,  # in Hz
+        ...             "spectral_width": 1e3,  # in Hz
+        ...             "reference_offset": 1e3,  # in Hz
         ...             "label": "Isotropic dimension",
         ...         },
         ...         {
-        ...             "count": 512,
+        ...             "count": 1024,
         ...             "spectral_width": 1e4,  # in Hz
-        ...             "reference_offset": -4e3,  # in Hz
+        ...             "reference_offset": -2e3,  # in Hz
         ...             "label": "MAS dimension",
         ...         },
         ...     ],

@@ -4,7 +4,7 @@ import mrsimulator.tests.tests as clib
 import numpy as np
 
 from .python_test_for_c_code.orientation import cosine_of_polar_angles_and_amplitudes
-from .python_test_for_c_code.orientation import triangle_interpolation
+from .python_test_for_c_code.orientation import triangle_interpolation1D
 
 # import matplotlib.pyplot as plt
 
@@ -35,10 +35,10 @@ def test_triangle_interpolation():
     for list_ in f_list:
         list_ = np.asarray(list_)
         amp_py = np.zeros(100)
-        triangle_interpolation(list_, amp_py)
+        triangle_interpolation1D(list_, amp_py)
 
         amp_c = np.zeros(100)
-        clib.triangle_interpolation(list_, amp_c)
+        clib.triangle_interpolation1D(list_, amp_c)
 
         # plt.plot(amp_py, 'b', label='py')
         # plt.plot(amp_c, 'r--', label='c')
@@ -83,7 +83,7 @@ def test_delta_interpolation():
 
         # from delta interpolarion
         amp_c = np.zeros(10)
-        clib.triangle_interpolation(list_, amp_c)
+        clib.triangle_interpolation1D(list_, amp_c)
 
         # plt.bar(np.arange(10), amp_c, width=1)
         # plt.show()
@@ -113,8 +113,8 @@ def test_triangle_rasterization():
         amp3 = np.zeros(20, dtype=np.float64)
 
         clib.triangle_interpolation2D(lst1, lst2, amp1)
-        clib.triangle_interpolation(lst1, amp2)
-        clib.triangle_interpolation(lst2, amp3)
+        clib.triangle_interpolation1D(lst1, amp2)
+        clib.triangle_interpolation1D(lst2, amp3)
 
         # plt.imshow(amp1, origin='lower', cmap='gray', aspect='auto')
         # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
@@ -140,7 +140,7 @@ def test_triangle_rasterization():
         amp2 = np.zeros(20, dtype=np.float64)
 
         clib.triangle_interpolation2D(lst1, lst2, amp1)
-        clib.triangle_interpolation(lst1, amp2)
+        clib.triangle_interpolation1D(lst1, amp2)
 
         # plt.imshow(amp1, origin='lower', cmap='gray', aspect='auto')
         # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
@@ -163,7 +163,7 @@ def test_triangle_rasterization():
         amp2 = np.zeros(20, dtype=np.float64)
 
         clib.triangle_interpolation2D(lst1, lst2, amp1)
-        clib.triangle_interpolation(lst1, amp2)
+        clib.triangle_interpolation1D(lst1, amp2)
 
         # plt.imshow(amp1, origin='lower', cmap='gray', aspect='auto')
         # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5

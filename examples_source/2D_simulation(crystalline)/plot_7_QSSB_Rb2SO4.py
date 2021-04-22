@@ -11,15 +11,11 @@ simulation.
 # The following is a simulation of the QMAT spectrum of :math:`\text{Rb}_2\text{SiO}_4`.
 # The 2D QMAT spectrum is a correlation of finite speed MAS to an infinite speed MAS
 # spectrum. The parameters for the simulation are obtained from Walder `et. al.` [#f1]_.
-import matplotlib as mpl
 import matplotlib.pyplot as plt
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import SSB2D
 
-# global plot configuration
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # sphinx_gallery_thumbnail_number = 1
 
 # %%
@@ -77,6 +73,7 @@ sim.run()
 
 # %%
 # The plot of the simulation.
+plt.figure(figsize=(4.25, 3.0))
 data = sim.methods[0].simulation
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r", vmax=0.15)

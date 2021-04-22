@@ -406,7 +406,7 @@ setup(
         "pydantic>=1.0",
         "monty>=2.0.4",
         "typing-extensions>=3.7",
-        "psutil>=5.7.2",
+        "psutil>=5.4.8",
         "joblib>=1.0.0",
         "pandas>=1.1.3",
         "lmfit>=1.0.2",
