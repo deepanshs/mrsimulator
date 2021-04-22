@@ -585,6 +585,8 @@ class Simulator(BaseModel):
     def _update_name_description_application(self, obj, index):
         """Update the name and description of the dependent variable attributes
         using fields from the spin system."""
+        if self.spin_systems == []:
+            return
         label = self.spin_systems[index].label
         if label not in ["", None]:
             obj.update({"components_label": [label]})

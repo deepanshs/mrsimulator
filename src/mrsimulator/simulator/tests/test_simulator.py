@@ -228,6 +228,16 @@ def test_sim_coesite():
     os.remove("sample.mrsim")
 
 
+def test_empty_spin_sys_simulator():
+    sim = Simulator()
+    sim.methods = [
+        BlochDecaySpectrum(channel=["1H"], spectral_dimensions=[{"count": 10}])
+    ]
+    sim.config.decompose_spectrum = "spin_system"
+    sim.run()
+    assert np.allclose(sim.methods[0].simulation.y[0].components[0], 0)
+
+
 def test_simulator_2():
     sim = Simulator()
     sim.spin_systems = [
