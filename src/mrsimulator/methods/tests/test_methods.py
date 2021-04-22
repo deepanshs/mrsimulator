@@ -16,6 +16,18 @@ __email__ = "srivastava.89@osu.edu"
 MODULE_DIR = path.dirname(path.abspath(__file__))
 TESTDATA = loadfn(path.join(MODULE_DIR, "test_data.json"))
 
+MAS_DIM = {
+    "count": 128,
+    "spectral_width": 5e4,  # in Hz
+    "reference_offset": 0,  # in Hz
+    "events": [
+        {
+            "rotor_angle": 54.735 * np.pi / 180,
+            "transition_query": {"P": [-1], "D": [0]},
+        },
+    ],
+}
+
 
 def test_more_spectral_dimensions():
     error = "The method allows 1 spectral dimension"
@@ -41,16 +53,8 @@ def test_03():
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
         spectral_dimensions=[
-            {
-                "count": 1024,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
-            {
-                "count": 1024,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
+            {"count": 1024, "spectral_width": 5e4},
+            {"count": 1024, "spectral_width": 5e4},
         ],
     )
 
@@ -178,7 +182,6 @@ def test_04():
             {
                 "count": 512,
                 "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
                 "events": [
                     {
                         "rotor_angle": 70.12 * np.pi / 180,
@@ -186,17 +189,7 @@ def test_04():
                     },
                 ],
             },
-            {
-                "count": 128,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-                "events": [
-                    {
-                        "rotor_angle": 54.735 * np.pi / 180,
-                        "transition_query": {"P": [-1], "D": [0]},
-                    },
-                ],
-            },
+            MAS_DIM.copy(),
         ],
     )
 
@@ -263,33 +256,20 @@ def test_BlochDecaySpectrum():
 
 def test_05():
     """Satellite to central correlation method declaration"""
+    sp0 = dict(
+        count=512,
+        spectral_width=5e6,
+        events=[
+            {
+                "rotor_angle": 0 * np.pi / 180,
+                "transition_query": {"P": [-1], "D": [2, -2]},
+            }
+        ],
+    )
     mth = Method2D(
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
-        spectral_dimensions=[
-            {
-                "count": 512,
-                "spectral_width": 5e6,  # in Hz
-                "reference_offset": 0,  # in Hz
-                "events": [
-                    {
-                        "rotor_angle": 0 * np.pi / 180,
-                        "transition_query": {"P": [-1], "D": [2, -2]},
-                    },
-                ],
-            },
-            {
-                "count": 128,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-                "events": [
-                    {
-                        "rotor_angle": 54.735 * np.pi / 180,
-                        "transition_query": {"P": [-1], "D": [0]},
-                    },
-                ],
-            },
-        ],
+        spectral_dimensions=[sp0, MAS_DIM.copy()],
     )
 
     assert TESTDATA["STMAS"] == mth.json()
@@ -303,16 +283,8 @@ def test_3QMAS():
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
         spectral_dimensions=[
-            {
-                "count": 512,
-                "spectral_width": 5e6,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
-            {
-                "count": 128,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
+            {"count": 512, "spectral_width": 5e6},
+            {"count": 128, "spectral_width": 5e4},
         ],
     )
 

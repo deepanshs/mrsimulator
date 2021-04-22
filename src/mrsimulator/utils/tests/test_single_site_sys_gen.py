@@ -120,6 +120,19 @@ def test_shielding_05():
         assert sys[i].sites[0].quadrupolar is None
 
 
+def assertion_quad(sys, isotope, iso_dist, Cq_dist, eta_dist, abundance):
+    for i in range(Cq_dist.size):
+        assert sys[i].sites[0].isotope.symbol == isotope
+        assert sys[i].sites[0].isotropic_chemical_shift == iso_dist[i]
+        assert sys[i].sites[0].shielding_symmetric is None
+        assert sys[i].sites[0].quadrupolar.Cq == Cq_dist[i]
+        assert sys[i].sites[0].quadrupolar.eta == eta_dist[i]
+        assert sys[i].sites[0].quadrupolar.alpha is None
+        assert sys[i].sites[0].quadrupolar.beta is None
+        assert sys[i].sites[0].quadrupolar.gamma is None
+        assert sys[i].abundance == abundance
+
+
 def test_quad_01():
     Cq_dist = np.arange(10)
     eta_dist = np.ones(10) * 0.5
@@ -127,15 +140,8 @@ def test_quad_01():
         isotopes="27Al", quadrupolar={"Cq": Cq_dist, "eta": eta_dist}
     )
 
-    for i in range(10):
-        assert sys[i].sites[0].isotope.symbol == "27Al"
-        assert sys[i].sites[0].isotropic_chemical_shift == 0
-        assert sys[i].sites[0].shielding_symmetric is None
-        assert sys[i].sites[0].quadrupolar.Cq == Cq_dist[i]
-        assert sys[i].sites[0].quadrupolar.eta == eta_dist[i]
-        assert sys[i].sites[0].quadrupolar.alpha is None
-        assert sys[i].sites[0].quadrupolar.beta is None
-        assert sys[i].sites[0].quadrupolar.gamma is None
+    iso_dict = np.zeros(10)
+    assertion_quad(sys, "27Al", iso_dict, Cq_dist, eta_dist, 0.1)
 
 
 def test_quad_02():
@@ -201,16 +207,18 @@ def test_abundance_01():
         abundance=abundance,
     )
 
-    for i in range(10):
-        assert sys[i].sites[0].isotope.symbol == "27Al"
-        assert sys[i].sites[0].isotropic_chemical_shift == 0
-        assert sys[i].sites[0].shielding_symmetric is None
-        assert sys[i].sites[0].quadrupolar.Cq == Cq_dist[i]
-        assert sys[i].sites[0].quadrupolar.eta == eta_dist[i]
-        assert sys[i].sites[0].quadrupolar.alpha is None
-        assert sys[i].sites[0].quadrupolar.beta is None
-        assert sys[i].sites[0].quadrupolar.gamma is None
-        assert sys[i].abundance == 0.6
+    iso_dict = np.zeros(10)
+    assertion_quad(sys, "27Al", iso_dict, Cq_dist, eta_dist, 0.6)
+    # for i in range(10):
+    #     assert sys[i].sites[0].isotope.symbol == "27Al"
+    #     assert sys[i].sites[0].isotropic_chemical_shift == 0
+    #     assert sys[i].sites[0].shielding_symmetric is None
+    #     assert sys[i].sites[0].quadrupolar.Cq == Cq_dist[i]
+    #     assert sys[i].sites[0].quadrupolar.eta == eta_dist[i]
+    #     assert sys[i].sites[0].quadrupolar.alpha is None
+    #     assert sys[i].sites[0].quadrupolar.beta is None
+    #     assert sys[i].sites[0].quadrupolar.gamma is None
+    #     assert sys[i].abundance == 0.6
 
 
 def test_abundance_02():

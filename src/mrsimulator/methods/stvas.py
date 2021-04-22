@@ -128,15 +128,15 @@ class ST1_VAS(ST_VAS):
         ...     magnetic_flux_density=9.4,  # in T
         ...     spectral_dimensions=[
         ...         {
-        ...             "count": 256,
-        ...             "spectral_width": 4e3,  # in Hz
+        ...             "count": 128,
+        ...             "spectral_width": 1e3,  # in Hz
         ...             "reference_offset": -5e3,  # in Hz
         ...             "label": "Isotropic dimension",
         ...         },
         ...         {
-        ...             "count": 512,
+        ...             "count": 256,
         ...             "spectral_width": 1e4,  # in Hz
-        ...             "reference_offset": -4e3,  # in Hz
+        ...             "reference_offset": -3e3,  # in Hz
         ...             "label": "MAS dimension",
         ...         },
         ...     ],
