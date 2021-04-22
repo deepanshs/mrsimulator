@@ -22,12 +22,15 @@ def get_spectral_dimensions(csdm_object, units=False):
         increment = dim.increment.to("Hz").value
         ref = dim.coordinates_offset.to("Hz").value
         sw = count * increment
-        co = ref if dim.complex_fft else ref + sw / 2.0
+
+        even = count % 2 == 0
+        complex_co = ref + sw / 2.0
+        complex_co -= 0 if even else increment / 2.0
+        co = ref if dim.complex_fft else complex_co
 
         if sw < 0:
             sw = -sw
-            co = ref + increment * ((count + 1) // 2 - 1)
-
+            co += -increment if even else 0
         dim_i = {}
         dim_i["count"] = dim.count
         dim_i["spectral_width"] = sw if not units else f"{sw} Hz"

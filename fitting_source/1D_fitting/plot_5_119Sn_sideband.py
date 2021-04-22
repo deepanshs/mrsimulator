@@ -111,9 +111,8 @@ sim.run()
 # --------------------------
 processor = sp.SignalProcessor(
     operations=[
-        # Lorentzian convolution.
         sp.IFFT(),
-        sp.apodization.Exponential(FWHM="1500 Hz"),
+        sp.apodization.Gaussian(FWHM="1500 Hz"),
         sp.FFT(),
         sp.Scale(factor=20),
     ]
@@ -125,7 +124,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="guess spectrum")
+ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
 ax.set_xlim(-1200, 600)
 plt.grid()
 plt.legend()
@@ -176,7 +175,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="Best Fit")
+ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="Best Fit")
 ax.set_xlim(-1200, 600)
 plt.grid()
 plt.legend()

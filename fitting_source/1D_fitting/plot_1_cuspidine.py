@@ -135,7 +135,7 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(synthetic_experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="guess spectrum")
+ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
 ax.set_xlim(-200, 50)
 ax.invert_xaxis()
 plt.legend()
@@ -238,8 +238,8 @@ fit = y_data - residuals
 
 plt.figure(figsize=(4.25, 3.0))
 plt.plot(x, y_data, "k", linewidth=1, label="Experiment")
-plt.plot(x, fit, "r", alpha=0.5, linewidth=2.5, label="Best Fit")
-plt.plot(x, residuals, alpha=0.5, label="Residual")
+plt.plot(x, fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
+plt.plot(x, residuals, alpha=0.75, linewidth=1, label="Residual")
 
 plt.xlabel("Frequency / Hz")
 plt.xlim(-200, 50)
