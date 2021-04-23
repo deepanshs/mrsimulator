@@ -104,14 +104,36 @@ class as
     >>> os.remove('spin_systems.json')
 
 
-Simulation object from Method class as CSDM compliant file
-----------------------------------------------------------
+Serialize simulation object from Method class as CSDM compliant file
+--------------------------------------------------------------------
 
 **Export simulation to a JSON file**
 
 You may serialize the simulation object from the method object to a CSDM compliant JSON file using the
-save function as a follows,
+save function as follows,
 
 .. doctest::
 
     >>> sim_coesite.method[0].simulation.save('coesite_simulation.csdf') # doctest:+SKIP
+
+
+Serialize Simulator, SignalProcessor object to file
+---------------------------------------------------
+
+**Export Simulator, SignalProcessor objects to a JSON file**
+
+You may serialize the Simulator, a list of SignalProcessor objects to a *.mrsim* file
+as follows. The order of SignalProcessor objects is the order of the methods in the Simulator
+object.
+
+.. doctest::
+
+    >>> from mrsimulator import save
+    >>> save('coesite.mrsim', sim_coesite, processors) # doctest:+SKIP
+
+**Load Simulator, SignalProcessor objects from a JSON file**
+
+.. doctest::
+
+    >>> from mrsimulator import load
+    >>> sim_coesite, processors, _ = save('coesite.mrsim') # doctest:+SKIP
