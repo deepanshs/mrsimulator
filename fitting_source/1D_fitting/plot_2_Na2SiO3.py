@@ -18,20 +18,16 @@
 #
 # We will begin by importing relevant modules and presetting figure style and layout.
 import csdmpy as cp
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
 from lmfit import Minimizer, report_fit
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator import signal_processing as sp
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
 
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
-mpl.rcParams["grid.linestyle"] = "--"
+
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
@@ -51,7 +47,7 @@ sigma = 1212275
 oxygen_experiment = oxygen_experiment.real
 
 # Convert the dimension coordinates from Hz to ppm.
-oxygen_experiment.dimensions[0].to("ppm", "nmr_frequency_ratio")
+oxygen_experiment.x[0].to("ppm", "nmr_frequency_ratio")
 
 # Normalize the spectrum
 max_amp = oxygen_experiment.max()
@@ -59,6 +55,7 @@ oxygen_experiment /= max_amp
 sigma /= max_amp
 
 # plot of the dataset.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(oxygen_experiment, "k", alpha=0.5)
 ax.set_xlim(-50, 100)
@@ -134,18 +131,19 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        apo.Gaussian(FWHM="100 Hz"),
+        sp.apodization.Gaussian(FWHM="100 Hz"),
         sp.FFT(),
-        sp.Scale(factor=20000.0),
+        sp.Scale(factor=1.0),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # %%
 # **Step 5:** The plot of the data and the guess spectrum.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(oxygen_experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="guess spectrum")
+ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
 ax.set_xlim(-50, 100)
 ax.invert_xaxis()
 plt.legend()
@@ -198,9 +196,10 @@ report_fit(result)
 sim.run()
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 plt.plot(oxygen_experiment, "k", linewidth=1, label="Experiment")
-plt.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="Best Fit")
+plt.plot(processed_data, "r", alpha=0.75, linewidth=1, label="Best Fit")
 plt.xlabel("$^{17}$O frequency / ppm")
 plt.xlim(100, -50)
 plt.legend()

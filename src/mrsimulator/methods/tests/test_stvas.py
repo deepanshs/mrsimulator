@@ -66,18 +66,10 @@ def test_ST1_VAS_general():
     """Inner satellite-transition variable-angle spinning method"""
     mth = ST1_VAS(
         channels=["87Rb"],
-        magnetic_flux_density=9.4,  # in T
+        magnetic_flux_density=11.7,  # in T
         spectral_dimensions=[
-            {
-                "count": 1024,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
-            {
-                "count": 1024,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
+            {"count": 1024, "spectral_width": 3e4},
+            {"count": 1024, "spectral_width": 2e4},
         ],
     )
     assert mth.name == "ST1_VAS"
@@ -103,7 +95,7 @@ def test_ST1_VAS_general():
     assert serialize == {
         "channels": ["87Rb"],
         "description": des,
-        "magnetic_flux_density": "9.4 T",
+        "magnetic_flux_density": "11.7 T",
         "name": "ST1_VAS",
         "rotor_angle": "0.955316618 rad",
         "rotor_frequency": "1000000000000.0 Hz",
@@ -111,12 +103,12 @@ def test_ST1_VAS_general():
             {
                 "count": 1024,
                 "reference_offset": "0.0 Hz",
-                "spectral_width": "50000.0 Hz",
+                "spectral_width": "30000.0 Hz",
             },
             {
                 "count": 1024,
                 "reference_offset": "0.0 Hz",
-                "spectral_width": "50000.0 Hz",
+                "spectral_width": "20000.0 Hz",
             },
         ],
     }
@@ -128,16 +120,8 @@ def test_ST2_VAS_general():
         channels=["17O"],
         magnetic_flux_density=9.4,  # in T
         spectral_dimensions=[
-            {
-                "count": 1024,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
-            {
-                "count": 1024,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
+            {"count": 1024, "spectral_width": 5e4},
+            {"count": 1024, "spectral_width": 5e4},
         ],
     )
     assert mth.name == "ST2_VAS"

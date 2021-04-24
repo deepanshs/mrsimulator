@@ -16,23 +16,23 @@ code. For this reason, the ``mrsimulator`` package offers some frequently used N
 processing tools.
 
 .. note::
-    The simulation object in `mrsimulator` is a CSDM object. A CSDM object is the python
+    The simulation object in *mrsimulator* is a CSDM object. A CSDM object is the python
     support for the core scientific dataset model (CSDM) [#f1]_, which is a new open-source
     universal file format for multi-dimensional datasets. Since CSDM objects hold a generic
     multi-dimensional scientific dataset, the following signal processing operation can
-    be applied to any CSDM dataset, `i.e.`, NMR, EPR, FTIR, GC, etc.
+    be applied to any CSDM dataset, *i.e.*, NMR, EPR, FTIR, GC, etc.
 
 
 In the following section, we demonstrate the use of the
 :class:`~mrsimulator.signal_processing.SignalProcessor` class in applying various operations
 to a generic CSDM object. But before we start explaining signal processing with CSDM
 objects, it seems necessary to first describe the construct of CSDM objects. Each CSDM object
-has two main attributes, `dimensions` and `dependent_variables`. The `dimensions` attribute
+has two main attributes, *dimensions* and *dependent_variables*. The *dimensions* attribute
 holds a list of Dimension objects, which collectively form a multi-dimensional Cartesian
 coordinates grid system. A Dimension object can represent both physical and non-physical
-dimensions. The `dependent_variables` attribute holds the responses of the multi-dimensional
+dimensions. The *dependent_variables* attribute holds the responses of the multi-dimensional
 grid points. You may have as many dependent variables as you like, as long as all dependent
-variables share the same coordinates grid, `i.e.`, dimensions.
+variables share the same coordinates grid, *i.e.*, dimensions.
 
 
 
@@ -44,20 +44,19 @@ workflow, the result from the previous operation becomes the input for the next
 operation.
 
 In the ``mrsimulator`` library, all signal processing operations are accessed through the
-`signal_processing` module. Within the module is the `apodization` sub-module. An
+*signal_processing* module. Within the module is the *apodization* sub-module. An
 apodization is a point-wise multiplication operation of the input signal with the
 apodizing vector. See :ref:`operations_api` documentation for a complete list of
 operations.
 
-Import the module and sub-module as
+Import the module as
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> import mrsimulator.signal_processing as sp
-    >>> import mrsimulator.signal_processing.apodization as apo
+    >>> from mrsimulator import signal_processing as sp
 
 Convolution
 -----------
@@ -74,12 +73,12 @@ convoluting to a dataset.
 
     >>> processor = sp.SignalProcessor(
     ...     operations=[
-    ...         sp.IFFT(), apo.Gaussian(FWHM='0.1 km'), sp.FFT()
+    ...         sp.IFFT(), sp.apodization.Gaussian(FWHM='0.1 km'), sp.FFT()
     ...     ]
     ... )
 
-Here, the `processor` is an instance of the :class:`~mrsimulator.signal_processing.SignalProcessor`
-class. The required attribute of this class, `operations`, is a list of operations. In the
+Here, the *processor* is an instance of the :class:`~mrsimulator.signal_processing.SignalProcessor`
+class. The required attribute of this class, *operations*, is a list of operations. In the
 above example, we employ the convolution theorem by sandwiching the Gaussian apodization
 function between two Fourier transformations.
 
@@ -125,8 +124,8 @@ the :meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` meth
 
     >>> processed_data = processor.apply_operations(data=csdm_object)
 
-The `data` is the required argument of the `apply_operations` method, whose value is a
-CSDM object holding the dataset. The variable `processed_data` holds the output, that is,
+The *data* is the required argument of the *apply_operations* method, whose value is a
+CSDM object holding the dataset. The variable *processed_data* holds the output, that is,
 the processed data as a CSDM object. The plot of the original and the processed data is
 shown below.
 
@@ -146,6 +145,7 @@ shown below.
 
 .. _fig2_signal_process:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     The figure depicts an application of Gaussian convolution on a CSDM object.
 
@@ -166,8 +166,8 @@ argument to the operation class. Consider the following list of operations.
     >>> processor = sp.SignalProcessor(
     ...     operations=[
     ...         sp.IFFT(),
-    ...         apo.Gaussian(FWHM='0.1 km', dv_index=0),
-    ...         apo.Exponential(FWHM='50 m', dv_index=1),
+    ...         sp.apodization.Gaussian(FWHM='0.1 km', dv_index=0),
+    ...         sp.apodization.Exponential(FWHM='50 m', dv_index=1),
     ...         sp.FFT(),
     ...     ]
     ... )
@@ -217,6 +217,7 @@ The plot of the dataset before and after signal processing is shown below.
 
 .. _fig4_signal_process:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     Gaussian and Lorentzian convolution applied to two different dependent variables of the
     CSDM object.
@@ -253,8 +254,8 @@ operations
     >>> processor = sp.SignalProcessor(
     ...     operations=[
     ...         sp.IFFT(dim_index=(0, 1)),
-    ...         apo.Gaussian(FWHM='0.5 ms', dim_index=0),
-    ...         apo.Exponential(FWHM='10 cm/s', dim_index=1),
+    ...         sp.apodization.Gaussian(FWHM='0.5 ms', dim_index=0),
+    ...         sp.apodization.Exponential(FWHM='10 cm/s', dim_index=1),
     ...         sp.FFT(dim_index=(0, 1)),
     ...     ]
     ... )

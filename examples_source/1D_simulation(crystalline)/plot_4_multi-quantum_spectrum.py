@@ -8,13 +8,11 @@ Arbitrary spin transition (multi-quantum)
 """
 # %%
 # Simulate a triple quantum spectrum.
-import matplotlib as mpl
 import matplotlib.pyplot as plt
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method1D
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # sphinx_gallery_thumbnail_number = 1
 
 # %%
@@ -65,6 +63,7 @@ sim.methods += [method]  # add the method
 sim.run()
 
 # The plot of the simulation before signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()

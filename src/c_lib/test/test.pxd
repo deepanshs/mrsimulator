@@ -46,7 +46,7 @@ cdef extern from "octahedron.h":
         double *amp)
 
 cdef extern from "interpolation.h":
-    void triangle_interpolation(
+    void triangle_interpolation1D(
         double *freq1,
         double *freq2,
         double *freq3,
@@ -75,7 +75,7 @@ cdef extern from "interpolation.h":
         int m)
 
 cdef extern from "mrsimulator.h":
-    void __get_components(
+    void get_sideband_phase_components(
         unsigned int number_of_sidebands,
         double spin_frequency,
         double *pre_phase)
@@ -85,30 +85,30 @@ cdef extern from "mrsimulator.h":
 #     MRS_plan *MRS_create_plan(
 #         unsigned int integration_density,
 #         int number_of_sidebands,
-#         double sample_rotation_frequency_in_Hz,
+#         double rotor_frequency_in_Hz,
 #         double rotor_angle_in_rad, double increment,
 #         bool_t allow_fourth_rank)
 
 
 cdef extern from "object_struct.h":
     ctypedef struct site_struct:
-        int number_of_sites;                    # Number of sites
-        float *spin;                            # The spin quantum number
-        double *gyromagnetic_ratio;             # Larmor frequency (MHz)
+        int number_of_sites;                     # Number of sites
+        float *spin;                             # The spin quantum number
+        double *gyromagnetic_ratio;              # Larmor frequency (MHz)
         double *isotropic_chemical_shift_in_ppm; # Isotropic chemical shift (Hz)
-        double *shielding_symmetric_zeta_in_ppm;     # Nuclear shielding anisotropy (Hz)
-        double *shielding_symmetric_eta;            # Nuclear shielding asymmetry parameter
-        double *shielding_orientation;          # Nuclear shielding PAS to CRS euler angles (rad.)
-        double *quadrupolar_Cq_in_Hz;     # Quadrupolar coupling constant (Hz)
-        double *quadrupolar_eta;          # Quadrupolar asymmetry parameter
-        double *quadrupolar_orientation;        # Quadrupolar PAS to CRS euler angles (rad.)
+        double *shielding_symmetric_zeta_in_ppm; # Nuclear shielding anisotropy (Hz)
+        double *shielding_symmetric_eta;         # Nuclear shielding asymmetry parameter
+        double *shielding_orientation;           # Nuclear shielding PAS to CRS euler angles (rad.)
+        double *quadrupolar_Cq_in_Hz;            # Quadrupolar coupling constant (Hz)
+        double *quadrupolar_eta;                 # Quadrupolar asymmetry parameter
+        double *quadrupolar_orientation;         # Quadrupolar PAS to CRS euler angles (rad.)
 
 cdef extern from "method.h":
     ctypedef struct MRS_event:
         double fraction                    # The weighted frequency contribution from the event.
         double magnetic_flux_density_in_T  #  he magnetic flux density in T.
         double rotor_angle_in_rad          # The rotor angle in radians.
-        double sample_rotation_frequency_in_Hz # The sample rotation frequency in Hz.
+        double rotor_frequency_in_Hz       # The sample rotation frequency in Hz.
 
     ctypedef struct MRS_dimension:
         int count                       #  The number of coordinates along the dimension.
@@ -123,7 +123,7 @@ cdef extern from "method.h":
     #     double coordinates_offset,
     #     double increment,
     #     double *magnetic_flux_density_in_T,
-    #     double *sample_rotation_frequency_in_Hz,
+    #     double *rotor_frequency_in_Hz,
     #     double *rotor_angle_in_rad,
     #     unsigned int n_events,
     #     int number_of_sidebands)
@@ -137,7 +137,7 @@ cdef extern from "simulation.h":
         int number_of_points,
 
         site_struct *sites,
-        MRS_dimension *dimensions[],            # the dimensions in the method.
+        MRS_dimension *dimensions[],              # the dimensions in the method.
 
         int quad_second_order,                    # Quad theory for second order,
         bool_t remove_2nd_order_quad_isotropic,   # remove the isotropic contribution from the
@@ -145,7 +145,7 @@ cdef extern from "simulation.h":
 
         # spin rate, spin angle and number spinning sidebands
         unsigned int number_of_sidebands,
-        double sample_rotation_frequency_in_Hz,
+        double rotor_frequency_in_Hz,
         double rotor_angle_in_rad,
 
         # The transition as transition[0] = mi and transition[1] = mf

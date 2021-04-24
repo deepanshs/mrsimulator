@@ -16,7 +16,7 @@ quadrupolar tensor interactions at static and MAS conditions.
 .. A benchmark for the number of single-site spin systems computer per second.
 
 .. figure:: _static/benchmark.*
-    :figclass: figure
+    :alt: benchmark
 
     (Left) The number of single-site spin systems computer per seconds. (Right)
     The execution time (in ms) in computing spectrum from a single-site spin system.
@@ -34,8 +34,8 @@ quadrupolar tensor interactions at static and MAS conditions.
 
 The benchmarks were performed on a 2.3 GHz Quad-Core Intel Core i5 Laptop using 8
 GB 2133 MHz LPDDR3 memory. For consistent benchmarking, 1000 single-site
-spin systems were constructed, where the tensor parameters of the sites (`zeta`
-and `eta` for the shielding tensor, and `Cq` and `eta` for the quadrupolar
+spin systems were constructed, where the tensor parameters of the sites (*zeta*
+and *eta* for the shielding tensor, and *Cq* and *eta* for the quadrupolar
 tensor) were randomly populated. The execution time for this setup was recorded.
 and the process repeated 70 times. The reported value is the mean and the
 standard deviation.
@@ -47,7 +47,7 @@ Benchmark for the previous versions
 -----------------------------------
 
 .. figure:: _static/benchmark_previous.*
-    :figclass: figure
+    :alt: previous benchmark
 
     (Left) The number of single-site spin systems computer per seconds. (Right)
     The execution time (in ms) in computing spectrum from a single-site spin system.

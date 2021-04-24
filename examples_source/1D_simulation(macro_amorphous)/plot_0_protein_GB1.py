@@ -13,15 +13,12 @@ Protein GB1, 13C and 15N (I=1/2)
 # 44 :math:`^{13}\text{CO}`, and 44 :math:`^{15}\text{NH}` tensors. In the following
 # example, instead of creating 130 spin systems, we download the spin systems from
 # a remote file and load it directly to the Simulator object.
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+
 from mrsimulator import Simulator
 from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator import signal_processing as sp
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [9, 4]
 # sphinx_gallery_thumbnail_number = 1
 
 # %%
@@ -85,7 +82,7 @@ data_15N = sim.methods[1].simulation  # method at index 1 is 15N Bloch decay met
 # %%
 # Add post-simulation signal processing.
 processor = sp.SignalProcessor(
-    operations=[sp.IFFT(), apo.Exponential(FWHM="10 Hz"), sp.FFT()]
+    operations=[sp.IFFT(), sp.apodization.Exponential(FWHM="10 Hz"), sp.FFT()]
 )
 # apply post-simulation processing to data_13C
 processed_data_13C = processor.apply_operations(data=data_13C).real
@@ -95,7 +92,9 @@ processed_data_15N = processor.apply_operations(data=data_15N).real
 
 # %%
 # The plot of the simulation after signal processing.
-fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "csdm"}, sharey=True)
+fig, ax = plt.subplots(
+    1, 2, subplot_kw={"projection": "csdm"}, sharey=True, figsize=(9, 4)
+)
 
 ax[0].plot(processed_data_13C, color="black", linewidth=0.5)
 ax[0].invert_xaxis()

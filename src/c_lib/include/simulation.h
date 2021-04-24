@@ -24,9 +24,9 @@ extern void mrsimulator_core(
     int n_dimension,             // Number of dimensions.
     int quad_second_order,       // Quad theory for second order,
 
-    unsigned int number_of_sidebands,        // The number of sidebands.
-    double sample_rotation_frequency_in_Hz,  // The rotor spin frequency.
-    double rotor_angle_in_rad,  // The rotor angle relative to lab-frame z-axis.
+    unsigned int number_of_sidebands,  // The number of sidebands.
+    double rotor_frequency_in_Hz,      // The rotor spin frequency.
+    double rotor_angle_in_rad,         // The rotor angle relative to lab-frame z-axis.
 
     float *transition_pathway,  // Pointer to a list of transitions.
 

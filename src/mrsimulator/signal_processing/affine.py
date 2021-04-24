@@ -10,7 +10,7 @@ from pydantic import validator
 from ._base import AbstractOperation
 from .utils import _get_broadcast_shape
 from .utils import _str_to_quantity
-from .utils import const
+from .utils import CONST
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -37,30 +37,17 @@ class AbstractAffineTransformation(AbstractOperation):
 
 def get_coordinates(dim):
     """Return the coordinates of dimension, dim, without equivalence units"""
-    if hasattr(dim, "subtype"):
-        equivalent_fn = dim.subtype._equivalencies
-        equivalent_unit = dim.subtype._equivalent_unit
-        dim.subtype._equivalencies = None
-        dim.subtype._equivalent_unit = None
+
+    def get_coords(dim):
+        equivalent_fn, equivalent_unit = dim._equivalencies, dim._equivalent_unit
+        dim._equivalencies, dim._equivalent_unit = None, None
 
         coordinates = dim.coordinates
 
-        dim.subtype._equivalencies = equivalent_fn
-        dim.subtype._equivalent_unit = equivalent_unit
-
+        dim._equivalencies, dim._equivalent_unit = equivalent_fn, equivalent_unit
         return coordinates
 
-    equivalent_fn = dim._equivalencies
-    equivalent_unit = dim._equivalent_unit
-    dim._equivalencies = None
-    dim._equivalent_unit = None
-
-    coordinates = dim.coordinates
-
-    dim._equivalencies = equivalent_fn
-    dim._equivalent_unit = equivalent_unit
-
-    return coordinates
+    return get_coords(dim) if not hasattr(dim, "subtype") else get_coords(dim.subtype)
 
 
 class Shear(AbstractAffineTransformation):
@@ -90,13 +77,12 @@ class Shear(AbstractAffineTransformation):
     Example
     -------
 
-    >>> import mrsimulator.signal_processing.affine as af
-    >>> operation = af.Shear(factor='143.4 Hz', dim_index=0, parallel=1)
+    >>> operation = sp.affine.Shear(factor='143.4 Hz', dim_index=0, parallel=1)
     """
 
     factor: Union[float, str] = 0
     parallel: int = 1
-    property_units: Dict = {"factor": const}
+    property_units: Dict = {"factor": CONST}
 
     @validator("factor")
     def str_to_quantity(cls, v, values):
@@ -114,11 +100,8 @@ class Shear(AbstractAffineTransformation):
         dims = data.dimensions
         n_dim = len(dims)
 
-        x = dims[self.dim_index]
-        y = dims[self.parallel]
-
-        x_value = get_coordinates(x).value
-        y_value = get_coordinates(y).value
+        x, y = dims[self.dim_index], dims[self.parallel]
+        x_value, y_value = [get_coordinates(_).value for _ in [x, y]]
 
         vector_x = _get_broadcast_shape(x_value, self.dim_index, n_dim)
         vector_y = _get_broadcast_shape(y_value, self.parallel, n_dim)
@@ -132,11 +115,10 @@ class Shear(AbstractAffineTransformation):
         # a is the factor.
         apodization_vector = np.exp(-2j * np.pi * xy * self.factor * multiplier)
 
-        n_dv = len(data.dependent_variables)
-        dv_indexes = self._get_dv_indexes(self.dv_index, n=n_dv)
+        dv_indexes = self._get_dv_indexes(self.dv_index, n=len(data.y))
 
         for i in dv_indexes:
-            datum = data.dependent_variables[i].components
+            datum = data.y[i].components
             datum *= apodization_vector
 
         return data
@@ -153,12 +135,11 @@ class Scale(AbstractAffineTransformation):
     Example
     -------
 
-    >>> import mrsimulator.signal_processing.affine as af
-    >>> operation = af.Scale(factor=2.14, dim_index=0)
+    >>> operation = sp.affine.Scale(factor=2.14, dim_index=0)
     """
 
     factor: Union[float, str] = 1
-    property_units: Dict = {"factor": const}
+    property_units: Dict = {"factor": CONST}
 
     @validator("factor")
     def str_to_quantity(cls, v, values):
@@ -170,9 +151,10 @@ class Scale(AbstractAffineTransformation):
 
         data: CSDM object.
         """
-        data.dimensions[self.dim_index].increment *= self.factor
-        data.dimensions[self.dim_index].coordinates_offset *= self.factor
-        data.dimensions[self.dim_index].reciprocal.coordinates_offset /= self.factor
+        data_ref = data.x[self.dim_index]
+        data_ref.increment *= self.factor
+        data_ref.coordinates_offset *= self.factor
+        data_ref.reciprocal.coordinates_offset /= self.factor
         return data
 
 
@@ -206,12 +188,11 @@ class Scale(AbstractAffineTransformation):
 #     Example
 #     -------
 
-#     >>> import mrsimulator.signal_processing.apodization as apo
-#     >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
+#     >>> operation4 = sp.apodization.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
 #     """
 
 #     factor: Union[float, str] = 1
-#     property_units: Dict = {"factor": const}
+#     property_units: Dict = {"factor": CONST}
 
 #     @validator("factor")
 #     def str_to_quantity(cls, v, values):
@@ -227,8 +208,8 @@ class Scale(AbstractAffineTransformation):
 #         data: CSDM object
 #         dep_var: int. The index of the dependent variable to apply operation to.
 #         """
-#         # data.dimensions[self.dim_index].increment *= self.factor
-#         data.dimensions[self.dim_index].coordinates_offset += (
+#         # data.x[self.dim_index].increment *= self.factor
+#         data.x[self.dim_index].coordinates_offset += (
 #             self.factor * self.property_units["factor"]
 #         )
 #         return data

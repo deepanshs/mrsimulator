@@ -14,6 +14,20 @@ from pydantic import ValidationError
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
+event_dictionary = {
+    "fraction": 0.5,
+    "freq_contrib": freq_default,
+    "magnetic_flux_density": "9.6 T",
+    "rotor_frequency": "1 kHz",
+    "rotor_angle": "54.735 deg",
+}
+dimension_dictionary = {
+    "count": 1024,
+    "spectral_width": "100 Hz",
+    "reference_offset": "0 GHz",
+    "events": [event_dictionary],
+}
+
 
 def basic_method_tests(the_method):
     assert the_method != "r"
@@ -33,19 +47,6 @@ def basic_method_tests(the_method):
     with pytest.raises(ValidationError, match=".*value is not a valid list.*"):
         the_method.channels = "6Li"
 
-    event_dictionary = {
-        "fraction": 0.5,
-        "freq_contrib": freq_default,
-        "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1 kHz",
-        "rotor_angle": "54.735 deg",
-    }
-    dimension_dictionary = {
-        "count": 1024,
-        "spectral_width": "100 Hz",
-        "reference_offset": "0 GHz",
-        "events": [event_dictionary],
-    }
     dimension = SpectralDimension.parse_dict_with_units(dimension_dictionary)
     assert the_method.spectral_dimensions[0] == dimension
 
@@ -90,19 +91,6 @@ def test_method():
     # test-1 single dimension method
 
     # parse dict with units
-    event_dictionary = {
-        "fraction": 0.5,
-        "freq_contrib": freq_default,
-        "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1 kHz",
-        "rotor_angle": "54.735 deg",
-    }
-    dimension_dictionary = {
-        "count": 1024,
-        "spectral_width": "100 Hz",
-        "reference_offset": "0 GHz",
-        "events": [event_dictionary],
-    }
     method_dictionary = {
         "name": "test-1-d",
         "description": "Test-1",
@@ -115,19 +103,8 @@ def test_method():
     # test-2 two dimensional two events method
 
     # parse dict with units
-    event_dictionary = {
-        "fraction": 0.5,
-        "freq_contrib": freq_default,
-        "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1 kHz",
-        "rotor_angle": "54.735 deg",
-    }
-    dimension_dictionary = {
-        "count": 1024,
-        "spectral_width": "100 Hz",
-        "reference_offset": "0 GHz",
-        "events": [event_dictionary, event_dictionary],
-    }
+    dimension_dictionary["events"].append(event_dictionary)
+
     method_dictionary = {
         "name": "test-1-d",
         "description": "Test-1",
@@ -145,8 +122,8 @@ def test_method():
     data = np.random.rand(100).reshape(10, 10)
     csdm_data = cp.as_csdm(data)
 
-    csdm_data.dimensions[0] *= cp.ScalarQuantity("Hz")
-    csdm_data.dimensions[1] *= cp.ScalarQuantity("Hz")
+    csdm_data.x[0] *= cp.ScalarQuantity("Hz")
+    csdm_data.x[1] *= cp.ScalarQuantity("Hz")
 
     the_method.experiment = csdm_data
     the_method.simulation = csdm_data

@@ -19,8 +19,8 @@
  * @param spec A pointer to the starting index of a one-dimensional array.
  * @param m0 A pointer to the number of points on the 1D grid.
  */
-extern void triangle_interpolation(double *f1, double *f2, double *f3, double *amp,
-                                   double *spec, int *m0);
+extern void triangle_interpolation1D(double *f1, double *f2, double *f3, double *amp,
+                                     double *spec, int *m0);
 
 /**
  * @brief Rasterize a vector triangle with coordinates ((f11, f21), (f12, f22), (f13,

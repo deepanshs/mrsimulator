@@ -8,20 +8,15 @@
 # The following is a spinning sideband manifold fitting example for the 119Sn MAS NMR
 # of SnO. The dataset was acquired and shared by Altenhof `et. al.` [#f1]_.
 import csdmpy as cp
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+from lmfit import Minimizer, report_fit
 
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator import signal_processing as sp
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
-from lmfit import Minimizer, report_fit
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
-mpl.rcParams["grid.linestyle"] = "--"
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
@@ -45,6 +40,7 @@ experiment /= max_amp
 sigma /= max_amp
 
 # plot of the dataset.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 ax.set_xlim(-1200, 600)
@@ -115,9 +111,8 @@ sim.run()
 # --------------------------
 processor = sp.SignalProcessor(
     operations=[
-        # Lorentzian convolution.
         sp.IFFT(),
-        apo.Exponential(FWHM="1500 Hz"),
+        sp.apodization.Gaussian(FWHM="1500 Hz"),
         sp.FFT(),
         sp.Scale(factor=20),
     ]
@@ -126,9 +121,10 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="guess spectrum")
+ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
 ax.set_xlim(-1200, 600)
 plt.grid()
 plt.legend()
@@ -176,9 +172,10 @@ sim.run()
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot the spectrum
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="Best Fit")
+ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="Best Fit")
 ax.set_xlim(-1200, 600)
 plt.grid()
 plt.legend()

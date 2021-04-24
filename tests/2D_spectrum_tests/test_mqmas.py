@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Lineshape Test."""
 import csdmpy as cp
-import mrsimulator.signal_processing as sp
 import mrsimulator.signal_processing.affine as aft
 import numpy as np
+from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
@@ -13,16 +13,13 @@ from mrsimulator.methods import ThreeQ_VAS
 
 
 def test_MQMAS():
-    spin_system = SpinSystem(
-        sites=[
-            Site(
-                isotope="87Rb",
-                isotropic_chemical_shift=-9,
-                shielding_symmetric={"zeta": 100, "eta": 0},
-                quadrupolar={"Cq": 3.5e6, "eta": 0.36, "beta": 70 / 180 * np.pi},
-            )
-        ]
+    site = Site(
+        isotope="87Rb",
+        isotropic_chemical_shift=-9,
+        shielding_symmetric={"zeta": 100, "eta": 0},
+        quadrupolar={"Cq": 3.5e6, "eta": 0.36, "beta": 70 / 180 * np.pi},
     )
+    spin_system = SpinSystem(sites=[site])
 
     method = Method2D(
         channels=["87Rb"],
@@ -65,7 +62,7 @@ def test_MQMAS():
     # w_iso = (17.8)*iso_shift + 1e6/8 * (vq/v0)^2 * (eta^2 / 3 + 1)
     # ref: D. Massiot et al. / Solid State Nuclear Magnetic Resonance 6 (1996) 73-83
     iso_slice = processed_data[40, :]
-    assert np.argmax(iso_slice.dependent_variables[0].components[0]) == 70
+    assert np.argmax(iso_slice.y[0].components[0]) == 70
 
     # calculate the isotropic coordinate
     spin = method.channels[0].spin
@@ -74,12 +71,12 @@ def test_MQMAS():
     w_iso = -9 * 17 / 8 + 1e6 / 8 * (wq / w0) ** 2 * ((0.36 ** 2) / 3 + 1)
 
     # the coordinate from spectrum
-    w_iso_spectrum = processed_data.dimensions[1].coordinates[70].value
+    w_iso_spectrum = processed_data.x[1].coordinates[70].value
     np.testing.assert_almost_equal(w_iso, w_iso_spectrum, decimal=2)
 
     # The projection onto the  MAS dimension should be the 1D block decay central
     # transition spectrum
-    mas_slice = processed_data.sum(axis=1).dependent_variables[0].components[0]
+    mas_slice = processed_data.sum(axis=1).y[0].components[0]
 
     # MAS spectrum
     method = BlochDecayCTSpectrum(
@@ -95,23 +92,20 @@ def test_MQMAS():
     sim.config.integration_volume = "hemisphere"
     sim.run()
 
-    data = sim.methods[0].simulation.dependent_variables[0].components[0]
+    data = sim.methods[0].simulation.y[0].components[0]
     np.testing.assert_almost_equal(
         data / data.max(), mas_slice / mas_slice.max(), decimal=6, err_msg="not equal"
     )
 
 
 def test_ThreeQ_VAS_spin_3halves():
-    spin_system = SpinSystem(
-        sites=[
-            Site(
-                isotope="87Rb",
-                isotropic_chemical_shift=-9,
-                shielding_symmetric={"zeta": 100, "eta": 0},
-                quadrupolar={"Cq": 3.5e6, "eta": 0.36, "beta": 70 / 180 * np.pi},
-            )
-        ]
+    site = Site(
+        isotope="87Rb",
+        isotropic_chemical_shift=-9,
+        shielding_symmetric={"zeta": 100, "eta": 0},
+        quadrupolar={"Cq": 3.5e6, "eta": 0.36, "beta": 70 / 180 * np.pi},
     )
+    spin_system = SpinSystem(sites=[site])
 
     method = ThreeQ_VAS(
         channels=["87Rb"],
@@ -128,7 +122,7 @@ def test_ThreeQ_VAS_spin_3halves():
     sim.run()
 
     data = sim.methods[0].simulation
-    dat = data.dependent_variables[0].components[0]
+    dat = data.y[0].components[0]
     index = np.where(dat == dat.max())[0]
 
     # The isotropic coordinate of this peak is given by
@@ -140,12 +134,12 @@ def test_ThreeQ_VAS_spin_3halves():
     v_iso = -9 * 17 / 8 + 1e6 / 8 * ((vq / v0) ** 2) * ((0.36 ** 2) / 3 + 1)
 
     # the coordinate from spectrum along the iso dimension must be equal to v_iso
-    v_iso_spectrum = data.dimensions[1].coordinates[index[0]].value
+    v_iso_spectrum = data.x[1].coordinates[index[0]].value
     np.testing.assert_almost_equal(v_iso, v_iso_spectrum, decimal=2)
 
     # The projection onto the  MAS dimension should be the 1D block decay central
     # transition spectrum
-    mas_slice = data.sum(axis=1).dependent_variables[0].components[0]
+    mas_slice = data.sum(axis=1).y[0].components[0]
 
     # MAS spectrum
     method = BlochDecayCTSpectrum(
@@ -161,7 +155,7 @@ def test_ThreeQ_VAS_spin_3halves():
     sim.config.integration_volume = "hemisphere"
     sim.run()
 
-    data = sim.methods[0].simulation.dependent_variables[0].components[0]
+    data = sim.methods[0].simulation.y[0].components[0]
     assert np.allclose(data / data.max(), mas_slice / mas_slice.max())
 
 
@@ -191,7 +185,7 @@ def test_MQMAS_spin_5halves():
     sim.run()
 
     data = sim.methods[0].simulation
-    dat = data.dependent_variables[0].components[0]
+    dat = data.y[0].components[0]
     index = np.where(dat == dat.max())[0]
 
     # The isotropic coordinate of this peak is given by
@@ -203,12 +197,12 @@ def test_MQMAS_spin_5halves():
     v_iso = -(17 / 31) * 64.5 - (8e6 / 93) * (vq / v0) ** 2 * ((0.66 ** 2) / 3 + 1)
 
     # the coordinate from spectrum along the iso dimension must be equal to v_iso
-    v_iso_spectrum = data.dimensions[1].coordinates[index[0]].value
+    v_iso_spectrum = data.x[1].coordinates[index[0]].value
     np.testing.assert_almost_equal(v_iso, v_iso_spectrum, decimal=2)
 
     # The projection onto the  MAS dimension should be the 1D block decay central
     # transition spectrum
-    mas_slice = data.sum(axis=1).dependent_variables[0].components[0]
+    mas_slice = data.sum(axis=1).y[0].components[0]
 
     # MAS spectrum
     method = BlochDecayCTSpectrum(
@@ -226,7 +220,7 @@ def test_MQMAS_spin_5halves():
     sim.config.integration_volume = "hemisphere"
     sim.run()
 
-    data = sim.methods[0].simulation.dependent_variables[0].components[0]
+    data = sim.methods[0].simulation.y[0].components[0]
     assert np.allclose(data / data.max(), mas_slice / mas_slice.max())
 
 

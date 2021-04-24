@@ -42,16 +42,8 @@ def test_SSB_general():
         magnetic_flux_density=9.4,  # in T
         rotor_frequency=1200,
         spectral_dimensions=[
-            {
-                "count": 1024,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
-            {
-                "count": 1024,
-                "spectral_width": 5e4,  # in Hz
-                "reference_offset": 0,  # in Hz
-            },
+            {"count": 1024, "spectral_width": 5e4},
+            {"count": 1024, "spectral_width": 5e4},
         ],
     )
     assert mth.name == "SSB2D"

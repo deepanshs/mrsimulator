@@ -117,7 +117,8 @@ void __mrsimulator_core(
       MRS_rotate_components_from_PAS_to_common_frame(
           sites,               // Pointer to a list of sites within a spin system.
           couplings,           // Pointer to a list of couplings within a spin system.
-          transition_pathway,  // Pointer to a list of transition.
+          transition_pathway,  // Pointer to a list of transition. Here, only a
+                               // transition is processed.
           plan->allow_fourth_rank,  // If 1, prepare for 4th rank computation.
           &R0,                      // The R0 components.
           R2,                       // The R2 components.
@@ -145,7 +146,7 @@ void __mrsimulator_core(
         cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2, event->freq_amplitude,
                     1);
       }
-      transition_pathway += transition_increment;
+      transition_pathway += transition_increment;  // increment to next transition
       refresh = 0;
     }  // end events
   }    // end dimensions
@@ -183,9 +184,9 @@ void mrsimulator_core(
     int quad_second_order,       // Quad theory for second order,
 
     // spin rate, spin angle and number spinning sidebands
-    unsigned int number_of_sidebands,        // The number of sidebands
-    double sample_rotation_frequency_in_Hz,  // The rotor spin frequency
-    double rotor_angle_in_rad,  // The rotor angle relative to lab-frame z-axis
+    unsigned int number_of_sidebands,  // The number of sidebands
+    double rotor_frequency_in_Hz,      // The rotor spin frequency
+    double rotor_angle_in_rad,         // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the a list of transitions.
     float *transition_pathway,
@@ -208,8 +209,8 @@ void mrsimulator_core(
   }
 
   // check for spinning speed
-  if (sample_rotation_frequency_in_Hz < 1.0e-3) {
-    sample_rotation_frequency_in_Hz = 1.0e9;
+  if (rotor_frequency_in_Hz < 1.0e-3) {
+    rotor_frequency_in_Hz = 1.0e9;
     rotor_angle_in_rad = 0.0;
     number_of_sidebands = 1;
   }

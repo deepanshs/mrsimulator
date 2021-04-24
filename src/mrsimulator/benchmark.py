@@ -2,8 +2,8 @@
 import os
 import timeit
 
-import mrsimulator
 import numpy as np
+from mrsimulator import __version__
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
@@ -123,8 +123,8 @@ def blocks(n_blocks, fn_string, n, level, n_jobs=1):
     print(f"\nLevel {level} results.")
     print("Average computation time for simulation one single-site spin system.")
     print(
-        f"Reported value is the average time took to simulate {n} spectra for random "
-        "tensor parameters."
+        f"Reported value is the simulation time per spectra averaged over {n} spectra "
+        "generated for random tensor parameters."
     )
     size = os.get_terminal_size().columns
     delmit = "-"
@@ -176,7 +176,7 @@ def level_n_CSA_static(n):
 class Benchmark:
     @staticmethod
     def prep():
-        print(f"Benchmarking using mrsimulator version {mrsimulator.__version__}")
+        print(f"Benchmarking using mrsimulator version {__version__}")
 
     @staticmethod
     def l0(n_jobs):
