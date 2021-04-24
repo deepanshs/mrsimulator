@@ -2,8 +2,8 @@
 import os
 import timeit
 
-import mrsimulator
 import numpy as np
+from mrsimulator import __version__
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
@@ -176,7 +176,7 @@ def level_n_CSA_static(n):
 class Benchmark:
     @staticmethod
     def prep():
-        print(f"Benchmarking using mrsimulator version {mrsimulator.__version__}")
+        print(f"Benchmarking using mrsimulator version {__version__}")
 
     @staticmethod
     def l0(n_jobs):
