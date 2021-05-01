@@ -63,8 +63,8 @@ def save(
         signal_processors: A list of PostSimulator objects corresponding to the methods
             in the Simulator object. Default is None.
         params: lmfit Parameters object. Default is None.
-        bool with_units: If true, physical quantities are represented as string with units.
-            The default is True.
+        bool with_units: If true, physical quantities are represented as string with
+            units. The default is True.
     """
     py_dict = dict(simulator, signal_processors, params, with_units)
 
@@ -93,8 +93,8 @@ def dict(
         signal_processors: A list of PostSimulator objects corresponding to the methods
             in the Simulator object. Default is None.
         params: lmfit Parameters object. Default is None.
-        bool with_units: If true, physical quantities are represented as string with units.
-            The default is True.
+        bool with_units: If true, physical quantities are represented as string with
+            units. The default is True.
 
     Return:
         Python dictionary
