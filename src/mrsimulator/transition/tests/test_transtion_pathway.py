@@ -23,6 +23,7 @@ def test_transition_pathway():
 
     # to dict with unit
     assert trans_path.json() == [a, b, c]
+    assert trans_path.dict() == [a, b, c]
 
     assert trans_path.tolist() == [
         0.5,

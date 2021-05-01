@@ -106,7 +106,14 @@ class TransitionPathway(TransitionList):
         return " ⟶ ".join([repr(item) for item in self._list])
 
     def dict(self) -> dict:
-        return [item.json() for item in self._list]
+        """Parse the class object to a python dictionary object.
+
+        Example:
+            >>> pprint(path.json())
+            [{'final': [0.5, -0.5], 'initial': [0.5, 0.5]},
+             {'final': [-0.5, 0.5], 'initial': [0.5, 0.5]}]
+        """
+        return self.json()
 
     def json(self) -> dict:
         """Parse the class object to a JSON compliant python dictionary object.
