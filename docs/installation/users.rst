@@ -115,7 +115,7 @@ and higher. PIP is the easiest way to install python packages.
       are one-time installation only. If you are upgrading the package, see the
       :ref:`upgrading_to_a_newer_version` sub-section.
 
-    .. include:: windows.rst
+    .. include:: source_install/windows.rst
 
     **Install the package**.
 

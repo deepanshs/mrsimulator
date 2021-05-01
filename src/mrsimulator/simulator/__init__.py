@@ -25,8 +25,6 @@ from pydantic import BaseModel
 
 from .config import ConfigSimulator
 
-# from IPython.display import JSON
-
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
@@ -40,8 +38,7 @@ __sim_methods__ = {k: v for k, v in zip(__method_names__, __named_methods__)}
 
 
 class Simulator(BaseModel):
-    """
-    The simulator class.
+    """The simulator class.
 
     Attributes
     ----------
@@ -171,8 +168,7 @@ class Simulator(BaseModel):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantity from a dictionary representation of the Simulator
+        """Parse the physical quantity from a dictionary representation of the Simulator
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 
@@ -247,8 +243,7 @@ class Simulator(BaseModel):
         return Simulator(**py_copy_dict)
 
     def get_isotopes(self, spin_I: float = None, symbol: bool = False) -> list:
-        """
-        List of unique isotopes from the sites within the list of the spin systems
+        """List of unique isotopes from the sites within the list of the spin systems
         corresponding to spin quantum number `I`. If `I` is None, a list of all unique
         isotopes is returned instead.
 
@@ -354,8 +349,7 @@ class Simulator(BaseModel):
     #     return JSON(self.json(include_methods=True, include_version=True))
 
     def load_spin_systems(self, filename: str):
-        """
-        Load a list of spin systems from the given JSON serialized file.
+        """Load a list of spin systems from the given JSON serialized file.
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
@@ -375,8 +369,7 @@ class Simulator(BaseModel):
         self.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in contents]
 
     def export_spin_systems(self, filename: str):
-        """
-        Export a list of spin systems to a JSON serialized file.
+        """Export a list of spin systems to a JSON serialized file.
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
@@ -552,8 +545,7 @@ class Simulator(BaseModel):
         return Sites(unique_sites)
 
     def _as_csdm_object(self, data: np.ndarray, method: Method) -> cp.CSDM:
-        """
-        Converts the simulation data from the given method to a CSDM object. Read
+        """Converts the simulation data from the given method to a CSDM object. Read
         `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_ for details
 
         Return:

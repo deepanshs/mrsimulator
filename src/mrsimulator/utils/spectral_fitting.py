@@ -144,8 +144,7 @@ def _traverse_dictionaries(dictionary, parent="spin_systems"):
 
 
 def _post_sim_LMFIT_params(params, post_sim, index):
-    """
-    Creates an LMFIT Parameters object for SignalProcessor operations
+    """Creates an LMFIT Parameters object for SignalProcessor operations
     involved in spectrum fitting.
 
     Args:
@@ -340,8 +339,7 @@ def update_mrsim_obj_from_params(params, sim: Simulator, post_sim: list = None):
 def LMFIT_min_function(
     params: Parameters, sim: Simulator, post_sim: list = None, sigma: list = None
 ):
-    """
-    The simulation routine to calculate the vector difference between simulation and
+    """The simulation routine to calculate the vector difference between simulation and
     experiment based on the parameters update.
 
     Args:

@@ -7,7 +7,7 @@ Methods
 
 The following are the list of methods currently supported by ``mrsimulator`` as a part
 of the ``mrsimulator.methods`` module. To import a method, for example the
-`BlochDecaySpectrum`, used
+*BlochDecaySpectrum*, used
 
 .. doctest::
 

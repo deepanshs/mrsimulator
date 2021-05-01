@@ -92,8 +92,7 @@ class Shear(AbstractAffineTransformation):
     #     validate_assignment = True
 
     def operate(self, data):
-        """
-        Applies the operation for which the class is named for.
+        """Applies the operation for which the class is named for.
 
         data: CSDM object.
         """

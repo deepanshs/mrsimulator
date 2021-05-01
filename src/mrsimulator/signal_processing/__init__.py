@@ -16,9 +16,8 @@ __email__ = "maxvenetos@gmail.com"
 
 
 class SignalProcessor(BaseModel):
-    """
-    Signal processing class to apply a series of operations to the dependent variables
-    of the simulation dataset.
+    """Signal processing class to apply a series of operations to the dependent
+    variables of the simulation dataset.
 
     Attributes
     ----------
@@ -68,8 +67,7 @@ class SignalProcessor(BaseModel):
         return op
 
     def apply_operations(self, data, **kwargs):
-        """
-        Function to apply all the operation functions in the operations member of a
+        """Function to apply all the operation functions in the operations member of a
         SignalProcessor object. Operations applied sequentially over the data member.
 
         Returns:
@@ -85,8 +83,7 @@ class SignalProcessor(BaseModel):
 
 
 class Scale(AbstractOperation):
-    """
-    Scale the amplitudes of all dependent variables from a CSDM object.
+    """Scale the amplitudes of all dependent variables from a CSDM object.
 
     Args:
         float factor: The scaling factor. The default value is 1.
@@ -114,8 +111,7 @@ class Scale(AbstractOperation):
 
 
 class IFFT(AbstractOperation):
-    """
-    Apply an inverse Fourier transform on all dependent variables of the CSDM object.
+    """Apply an inverse Fourier transform on all dependent variables of the CSDM object.
 
     Args:
         int dim_index: Dimension index along which the function is applied.
@@ -141,8 +137,7 @@ class IFFT(AbstractOperation):
 
 
 class FFT(IFFT):
-    """
-    Apply a forward Fourier transform on all dependent variables of the CSDM object.
+    """Apply a forward Fourier transform on all dependent variables of the CSDM object.
 
     Args:
         int dim_index: Dimension index along which the function is applied.

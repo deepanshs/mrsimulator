@@ -17,8 +17,7 @@ __email__ = "shyamd@lbl.gov"
 
 
 class Parseable(BaseModel):
-    """
-    Base class for all objects that can be parsed easily from JSON with units
+    """Base class for all objects that can be parsed easily from JSON with units
     Don't directly use this. Rather inherit from it and implement a data model
     and property units and defaults
     """
@@ -118,7 +117,7 @@ class Parseable(BaseModel):
 
 
 def enforce_units(value: str, required_type: str, default_unit: str, throw_error=True):
-    """ Enforces a required type and default unit on the value. """
+    """Enforces a required type and default unit on the value."""
     try:
         value = string_to_quantity(value)
         data_type = value.unit.physical_type

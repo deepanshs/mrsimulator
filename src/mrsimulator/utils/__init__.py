@@ -5,9 +5,8 @@ __email__ = "srivastava.89@osu.edu"
 
 
 def get_spectral_dimensions(csdm_object, units=False):
-    """
-    Extract the count, spectral_width, and reference_offset parameters, associated with
-    the spectral dimensions of the method, from the CSDM dimension objects.
+    """Extract the count, spectral_width, and reference_offset parameters, associated
+    with the spectral dimensions of the method, from the CSDM dimension objects.
 
     Args:
         csdm_object: A CSDM object holding the measurement dataset.
