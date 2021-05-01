@@ -61,14 +61,14 @@ def mpcontribs_export(sim, project, identifier, exp_dict={}, **kwargs):
     Arguments
     ---------
         sim: Simulator object from where the site contributions are extracted.
-        str project: mpcontribs project name (reqiuired).
+        str project: mpcontribs project name (required).
         str identifier: mpcontribs identifier (required).
         exp_dict: Additional metadata to use in contribution.
         **kwargs: Optional keyword arguments from mpcontribs ContributionsSchema
 
     Example
     -------
-        >>> contribution_data = mpcontribs_export(sim, 'myproject') # doctest:+SKIP
+        >>> contribution_data = mpcontribs_export(sim, 'my_project') # doctest:+SKIP
     """
     contribs = [
         ContribSchema(

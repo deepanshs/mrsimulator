@@ -143,7 +143,10 @@ def get_list(member, obj):
         elif isinstance(item, (dict, Enum)):
             lst.append(member[i].json())
         elif item not in [None, ""]:
-            lst.append(item)
+            try:
+                lst.append(item.json())
+            except Exception:
+                lst.append(item)
     return lst
 
 

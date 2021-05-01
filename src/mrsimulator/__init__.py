@@ -54,15 +54,9 @@ def save(
     fit_report=None,
     with_units: bool = True,
 ):
-    sim = simulator.json(True, True) if with_units else simulator.reduced_dict()
-    if signal_processors is not None:
-        sim["signal_processors"] = [item.json() for item in signal_processors]
-
-    sim["params"] = None if fit_report is None else fit_report.params.dumps()
-
     with open(filename, "w", encoding="utf8") as outfile:
         json.dump(
-            sim,
+            dict(simulator, signal_processors, fit_report, with_units),
             outfile,
             ensure_ascii=False,
             sort_keys=False,
@@ -74,6 +68,17 @@ def save(
 def load(filename: str, parse_units: bool = True):
     val = import_json(filename)
     return parse(val, parse_units)
+
+
+def dict(
+    simulator, signal_processors: list = None, fit_report=None, with_units: bool = True
+):
+    data = simulator.json(True, True) if with_units else simulator.reduced_dict()
+    if signal_processors is not None:
+        data["signal_processors"] = [item.json() for item in signal_processors]
+
+    data["params"] = None if fit_report is None else fit_report.params.dumps()
+    return data
 
 
 def parse(py_dict, parse_units: bool = True):

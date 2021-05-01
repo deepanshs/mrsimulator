@@ -88,8 +88,7 @@ class TransitionList(AbstractList):
 
 
 class TransitionPathway(TransitionList):
-    """
-    Base TransitionPathway class is a list of connected Transitions.
+    """Base TransitionPathway class is a list of connected Transitions.
 
     Example:
         >>> from mrsimulator.transition import TransitionPathway, Transition
@@ -105,6 +104,9 @@ class TransitionPathway(TransitionList):
 
     def __repr__(self):
         return " ⟶ ".join([repr(item) for item in self._list])
+
+    def dict(self) -> dict:
+        return [item.json() for item in self._list]
 
     def json(self) -> dict:
         """Parse the class object to a JSON compliant python dictionary object.

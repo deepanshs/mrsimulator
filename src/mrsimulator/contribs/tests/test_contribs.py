@@ -64,8 +64,6 @@ def test_contrib_card():
     omega_0 = abs(method.channels[0].gyromagnetic_ratio * 11.7)
     card = {
         "data": {
-            "experiment": "experiment goes here",
-            "simulation": "simulation goes here",
             "site": {
                 "isotope": "27Al",
                 "ChemicalShift": {"isotropic": "0.0 ppm"},

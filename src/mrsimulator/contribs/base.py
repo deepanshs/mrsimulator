@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 # import csdmpy as cp
+from typing import Any
+from typing import List
+
 from pydantic import BaseModel
 
 __author__ = "Deepansh Srivastava"
@@ -56,8 +59,6 @@ class MethodSchema(Base):
 
 
 class SimulatorSchema(Base):
-    experiment: str = None
-    simulation: str = None
     site: SiteSchema = None
     method: MethodSchema = None
 
@@ -75,3 +76,4 @@ class ContribSchema(Base):
     structures: list = None
     tables: list = None
     notebook: dict = None
+    attachments: List[Any] = None
