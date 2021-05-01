@@ -116,8 +116,7 @@ class Setup:
         mkl_info = np.__config__.blas_mkl_info
         if mkl_info == {}:
             print("Please enable mkl for numpy before proceeding.")
-            print(message("mkl mkl-include", "pip", "pip", ""))
-            sys.exit(1)
+            message("mkl mkl-include", "pip", "pip", "")
 
         self.include_dirs += mkl_info["include_dirs"]
         self.library_dirs += mkl_info["library_dirs"]
@@ -125,8 +124,7 @@ class Setup:
 
         if not self.check_if_header_exists("mkl.h"):
             print("mkl header file not found.")
-            print(message("mkl-include", "pip", "pip", ""))
-            sys.exit(1)
+            message("mkl-include", "pip", "pip", "")
 
         print("Linking mrsimulator with the mkl blas.")
         self.extra_compile_args += ["-DUSE_MKL", "/DUSE_MKL"]
@@ -239,8 +237,7 @@ class MacOSSetup(Setup):
         blas_library = "openblas"
 
         if not exists(blas_include_dir):
-            print(message("openblas", "homebrew", "brew", ""))
-            sys.exit(1)
+            message("openblas", "homebrew", "brew", "")
 
         print("Linking mrsimulator with openblas library.")
         self.include_dirs += [blas_include_dir]
@@ -252,13 +249,11 @@ class MacOSSetup(Setup):
     #     mkl_info = np.__config__.blas_mkl_info
     #     if mkl_info == {}:
     #         print("Please enable mkl for numpy before proceeding.")
-    #         print(message("mkl mkl-include", "pip", "pip", ""))
-    #         sys.exit(1)
+    #         message("mkl mkl-include", "pip", "pip", "")
 
     #     if not self.check_if_file_exists("mkl.h"):
     #         print("mkl header file not found.")
-    #         print(message("mkl-include", "pip", "pip", ""))
-    #         sys.exit(1)
+    #         message("mkl-include", "pip", "pip", "")
 
     #     self.include_dirs += mkl_info["include_dirs"]
     #     self.library_dirs += mkl_info["library_dirs"]
@@ -272,8 +267,7 @@ class MacOSSetup(Setup):
         fftw_library = "fftw3"
 
         if not exists(fftw_include_dir):
-            print(message("fftw", "homebrew", "brew", ""))
-            sys.exit(1)
+            message("fftw", "homebrew", "brew", "")
 
         print("Linking mrsimulator with fftw library.")
         self.include_dirs += [fftw_include_dir]
@@ -399,9 +393,9 @@ setup(
     url="https://github.com/DeepanshS/MRsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    setup_requires=["numpy>=1.17,<1.20"],
+    setup_requires=["numpy>=1.17,<1.21"],
     install_requires=[
-        "numpy>=1.17,<1.20",
+        "numpy>=1.17,<1.21",
         "csdmpy>=0.3.4",
         "pydantic>=1.0",
         "monty>=2.0.4",
