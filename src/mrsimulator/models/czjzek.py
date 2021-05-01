@@ -69,9 +69,6 @@ def _czjzek_random_distribution_tensors(sigma, n):
 
 
 class AbstractDistribution:
-    def rvs(self):
-        pass
-
     def pdf(self, pos, size: int = 400000):
         """Generates a probability distribution function by binning the random
         variates of length size onto the given grid system.
