@@ -12,6 +12,7 @@ from mrsimulator.transition import Transition
 from mrsimulator.transition import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
+from pydantic import PrivateAttr
 from pydantic import validator
 
 from .spectral_dimension import SpectralDimension
@@ -123,8 +124,9 @@ class Method(Parseable):
     # global
     magnetic_flux_density: float = Field(default=9.4, ge=0.0)
     rotor_frequency: float = Field(default=0.0, ge=0.0)
-    rotor_angle: float = Field(default=0.955316618, ge=0.0, le=1.5707963268)
+    rotor_angle: float = Field(default=0.9553166181245, ge=0.0, le=1.5707963268)
 
+    _named_method: bool = PrivateAttr(False)
     property_unit_types: ClassVar = {
         "magnetic_flux_density": "magnetic flux density",
         "rotor_frequency": "frequency",
@@ -287,6 +289,9 @@ class Method(Parseable):
             for dim in mth["spectral_dimensions"]
             for ev in dim["events"]
         ]
+
+        # if self._named_method:
+        #     _ = [dim.pop("events") for dim in mth["spectral_dimensions"]]
 
         mth["affine_matrix"] = self.affine_matrix
 

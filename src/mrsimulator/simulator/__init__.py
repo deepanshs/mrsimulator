@@ -22,7 +22,6 @@ from mrsimulator.utils.parseable import Parseable
 
 from .config import ConfigSimulator
 
-# from mrsimulator import __version__
 # from IPython.display import JSON
 
 __author__ = "Deepansh Srivastava"
@@ -253,6 +252,9 @@ class Simulator(Parseable):
             return [Isotope(symbol=item) for item in st]
         return list(st)
 
+    # def pretty(self):
+    #     return JSON(self.json(include_methods=True, include_version=True))
+
     def load_spin_systems(self, filename: str):
         """
         Load a list of spin systems from the given JSON serialized file.
@@ -290,14 +292,10 @@ class Simulator(Parseable):
 
         >>> sim.export_spin_systems(filename) # doctest:+SKIP
         """
-        spin_systems = [SpinSystem.json(obj) for obj in self.spin_systems]
+        spin_sys = [SpinSystem.json(obj) for obj in self.spin_systems]
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
-                spin_systems,
-                outfile,
-                ensure_ascii=False,
-                sort_keys=False,
-                allow_nan=False,
+                spin_sys, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
     def run(
@@ -331,7 +329,7 @@ class Simulator(Parseable):
         verbose = 0
         if method_index is None:
             method_index = np.arange(len(self.methods))
-        if isinstance(method_index, int):
+        elif isinstance(method_index, int):
             method_index = [method_index]
         for index in method_index:
             method = self.methods[index]
@@ -391,24 +389,10 @@ class Simulator(Parseable):
 
         >>> sim.save('filename') # doctest: +SKIP
         """
-        if not with_units:
-            with open(filename, "w", encoding="utf8") as outfile:
-                json.dump(
-                    self.json(units=False),
-                    outfile,
-                    ensure_ascii=False,
-                    sort_keys=False,
-                    allow_nan=False,
-                )
-            return
-
+        sim = self.json(units=with_units)
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
-                self.json(),
-                outfile,
-                ensure_ascii=False,
-                sort_keys=False,
-                allow_nan=False,
+                sim, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
     @classmethod
@@ -432,12 +416,22 @@ class Simulator(Parseable):
         .. seealso::
             :ref:`load_spin_systems`
         """
-        contents = import_json(filename)
+        val = import_json(filename)
+        return Simulator.parse(val, parse_units)
 
-        if not parse_units:
-            return Simulator(**contents)
+    @classmethod
+    def parse(cls, py_dict: dict, parse_units: bool = True):
+        """Parse a dictionary for Simulator object.
 
-        return Simulator.parse_dict_with_units(contents)
+        Args:
+            dict py_dict: Dictionary object.
+            bool parse_units: It true, parse quantity from string.
+        """
+        return (
+            Simulator.parse_dict_with_units(py_dict)
+            if parse_units
+            else Simulator(**py_dict)
+        )
 
     def sites(self):
         """Unique sites within the Simulator object as a list of Site objects.
@@ -450,12 +444,13 @@ class Simulator(Parseable):
 
         >>> sites = sim.sites() # doctest: +SKIP
         """
-        sites_list = []
+        unique_sites = []
         for sys in self.spin_systems:
             for site in sys.sites:
-                if site not in sites_list:
-                    sites_list.append(site)
-        return Sites(sites_list)
+                if site not in unique_sites:
+                    unique_sites.append(site)
+
+        return Sites(unique_sites)
 
     def _as_csdm_object(self, data: np.ndarray, method: Method) -> cp.CSDM:
         """
@@ -468,8 +463,8 @@ class Simulator(Parseable):
         new = cp.new()
         for dimension in method.spectral_dimensions[::-1]:
             new.add_dimension(dimension.to_csdm_dimension())
-            if new.dimensions[-1].origin_offset != 0:
-                new.dimensions[-1].to("ppm", "nmr_frequency_ratio")
+            if new.x[-1].origin_offset != 0:
+                new.x[-1].to("ppm", "nmr_frequency_ratio")
 
         dependent_variable = {
             "type": "internal",
@@ -485,12 +480,14 @@ class Simulator(Parseable):
                 self._update_name_description_application(dependent_variable, index)
 
             new.add_dependent_variable(dependent_variable)
-            new.dependent_variables[-1].encoding = "base64"
+            new.y[-1].encoding = "base64"
         return new
 
     def _update_name_description_application(self, obj, index):
         """Update the name and description of the dependent variable attributes
         using fields from the spin system."""
+        if self.spin_systems == []:
+            return
         label = self.spin_systems[index].label
         if label not in ["", None]:
             obj.update({"components_label": [label]})

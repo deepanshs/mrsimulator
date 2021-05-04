@@ -102,7 +102,7 @@ def cosine_of_polar_angles_and_amplitudes(integration_density: int = 72):
     return cos_alpha, cos_beta, amp
 
 
-def triangle_interpolation(f, spec, amp=1.0):
+def triangle_interpolation1D(f, spec, amp=1.0):
     """Interpolate between three points to form a triangle."""
     points = spec.size
     f = np.asarray(f, dtype=np.float64)
@@ -230,13 +230,13 @@ def p_second_half(spec, clip_left2, clip_right2, top, f21, pmax, p, f):
 #         amp1 += amp[i]
 
 #         freq_3 = [freq[i], freq[i + 1], freq[nt + 1 + j]]
-#         triangle_interpolation(freq_3, spec, amp1)
+#         triangle_interpolation1D(freq_3, spec, amp1)
 
 #         if i < local_index:
 #             amp1 = temp
 #             amp1 += amp[nt + 1 + j + 1]
 #             freq_3 = [freq[i + 1], freq[nt + 1 + j], freq[nt + 1 + j + 1]]
-#             triangle_interpolation(freq_3, spec, amp1)
+#             triangle_interpolation1D(freq_3, spec, amp1)
 #         else:
 #             local_index = j + nt
 #             i += 1

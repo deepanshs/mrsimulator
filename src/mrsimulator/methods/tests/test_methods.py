@@ -16,6 +16,18 @@ __email__ = "srivastava.89@osu.edu"
 MODULE_DIR = path.dirname(path.abspath(__file__))
 TESTDATA = loadfn(path.join(MODULE_DIR, "test_data.json"))
 
+MAS_DIM = {
+    "count": 128,
+    "spectral_width": 5e4,  # in Hz
+    "reference_offset": 0,  # in Hz
+    "events": [
+        {
+            "rotor_angle": 54.735 * np.pi / 180,
+            "transition_query": {"P": [-1], "D": [0]},
+        },
+    ],
+}
+
 
 sample_method_dict = dict(
     magnetic_flux_density=9.4,
@@ -54,7 +66,15 @@ def test_02():
 
 def test_03():
     """generic method declaration"""
-    mth = Method2D(channels=["87Rb"], **sample_method_dict)
+    mth = Method2D(
+        channels=["87Rb"],
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
+            {"count": 1024, "spectral_width": 5e4},
+            {"count": 1024, "spectral_width": 5e4},
+        ],
+    )
+
     assert mth.json() == TESTDATA["generic"]
     assert Method.parse_dict_with_units(mth.json()) == mth
 
@@ -145,19 +165,10 @@ def test_04():
                 "count": 512,
                 "spectral_width": 5e4,  # in Hz
                 "events": [
-                    {"transition_query": [{"P": [-1], "D": [0]}]},
+                    {"transition_query": {"P": [-1], "D": [0]}},
                 ],
             },
-            {
-                "count": 128,
-                "spectral_width": 5e4,  # in Hz
-                "events": [
-                    {
-                        "rotor_angle": 54.735 * np.pi / 180,
-                        "transition_query": [{"P": [-1], "D": [0]}],
-                    },
-                ],
-            },
+            MAS_DIM.copy(),
         ],
     )
 
@@ -181,7 +192,7 @@ def test_BlochDecaySpectrum():
         "channels": ["1H"],
         "magnetic_flux_density": "9.4 T",
         "rotor_frequency": "0.0 Hz",
-        "rotor_angle": "0.955316618 rad",
+        "rotor_angle": "0.9553166181245 rad",
         "spectral_dimensions": [dimension_dictionary_],
     }
     dict_ = m1.json()
@@ -224,34 +235,20 @@ def test_BlochDecaySpectrum():
 
 def test_05():
     """Satellite to central correlation method declaration"""
+    sp0 = dict(
+        count=512,
+        spectral_width=5e6,
+        events=[
+            {
+                "rotor_angle": 0 * np.pi / 180,
+                "transition_query": {"P": [-1], "D": [2, -2]},
+            }
+        ],
+    )
     mth = Method2D(
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
-        rotor_angle=0,
-        spectral_dimensions=[
-            {
-                "count": 512,
-                "spectral_width": 5e6,  # in Hz
-                "events": [
-                    {
-                        "transition_query": [
-                            {"P": [-1], "D": [2]},
-                            {"P": [-1], "D": [-2]},
-                        ],
-                    },
-                ],
-            },
-            {
-                "count": 128,
-                "spectral_width": 5e4,  # in Hz
-                "events": [
-                    {
-                        "rotor_angle": 54.735 * np.pi / 180,
-                        "transition_query": [{"P": [-1], "D": [0]}],
-                    },
-                ],
-            },
-        ],
+        spectral_dimensions=[sp0, MAS_DIM.copy()],
     )
 
     assert mth.json() == TESTDATA["STMAS"]

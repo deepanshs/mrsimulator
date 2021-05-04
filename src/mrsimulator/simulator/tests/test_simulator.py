@@ -128,7 +128,7 @@ def test_simulator_1():
                 "channels": ["1H"],
                 "name": "BlochDecaySpectrum",
                 "magnetic_flux_density": 9.4,
-                "rotor_angle": 0.955316618,
+                "rotor_angle": 0.9553166181245,
                 "rotor_frequency": 0.0,
                 "spectral_dimensions": [
                     {
@@ -215,6 +215,16 @@ def test_sim_coesite():
     assert sim_coesite == sim_load
 
     os.remove("sample.mrsim")
+
+
+def test_empty_spin_sys_simulator():
+    sim = Simulator()
+    sim.methods = [
+        BlochDecaySpectrum(channels=["1H"], spectral_dimensions=[{"count": 10}])
+    ]
+    sim.config.decompose_spectrum = "spin_system"
+    sim.run()
+    assert np.allclose(sim.methods[0].simulation.y[0].components[0], 0)
 
 
 def test_simulator_2():

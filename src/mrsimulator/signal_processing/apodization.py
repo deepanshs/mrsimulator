@@ -8,6 +8,7 @@ from pydantic import validator
 from ._base import Operations
 from .utils import _get_broadcast_shape
 from .utils import _str_to_quantity
+from .utils import CONST
 
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
@@ -25,7 +26,7 @@ class Apodization(Operations):
     #     return getattr(modules[__name__], py_dict["type"])(**obj.dict())
 
     @staticmethod
-    def _get_correct_units(x, unit):
+    def _get_correct_coordinates(x, unit):
         return x.to(unit).value
 
     def operate(self, data):
@@ -45,11 +46,11 @@ class Apodization(Operations):
             x = dims[dim_index_].coordinates
             apodization_vactor = _get_broadcast_shape(self.fn(x), dim_index_, ndim)
 
-            n = len(data.dependent_variables)
+            n = len(data.y)
             dv_indexes = self._get_dv_indexes(self.dv_index, n=n)
 
             for i in dv_indexes:
-                data.dependent_variables[i].components *= apodization_vactor
+                data.y[i].components *= apodization_vactor
         return data
 
 
@@ -87,24 +88,20 @@ class Gaussian(Apodization):
     Example
     -------
 
-    >>> import mrsimulator.signal_processing.apodization as apo
-    >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
+    >>> operation4 = sp.apodization.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
     """
     type: str = "Gaussian"
     FWHM: Union[float, str] = 0
-    property_units: Dict = {"FWHM": ""}
+    property_units: Dict = {"FWHM": CONST}
 
     @validator("FWHM")
     def str_to_quantity(cls, v, values):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
-        x = self._get_correct_units(x, unit=1 / self.property_units["FWHM"])
+        x = self._get_correct_coordinates(x, unit=1.0 / self.property_units["FWHM"])
         sigma = self.FWHM / 2.354820045030949
-        xinv = np.fft.ifftshift(np.arange(x.size, dtype=np.float64) - int(x.size / 2))
-        xinv /= x[-1] - x[0]
-        amp = np.fft.ifftshift(np.fft.ifft(np.exp(-0.5 * (xinv / sigma) ** 2)))
-        return amp.real / (sigma * np.sqrt(2 * np.pi))
+        return 1.0 if self.FWHM == 0.0 else np.exp(-2.0 * (np.pi * sigma * x) ** 2)
 
 
 class Exponential(Apodization):
@@ -113,7 +110,7 @@ class Exponential(Apodization):
     The apodization function follows
 
     .. math::
-        f(x) = e^{-\Gamma |x| \pi},
+        f(x) = e^{-\Gamma \pi |x|},
 
     where :math:`x` are the coordinates of the dimension, and :math:`\Gamma` is the
     width parameter. The relationship between the width parameter, :math:`\Gamma`, and
@@ -141,59 +138,16 @@ class Exponential(Apodization):
     Example
     -------
 
-    >>> operation5 = apo.Exponential(FWHM='143.4 m', dim_index=0, dv_index=0)
+    >>> operation5 = sp.apodization.Exponential(FWHM='143.4 m', dim_index=0, dv_index=0)
     """
     type: str = "Exponential"
     FWHM: Union[float, str] = 0
-    property_units: Dict = {"FWHM": ""}
+    property_units: Dict = {"FWHM": CONST}
 
     @validator("FWHM")
     def str_to_quantity(cls, v, values):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
-        x = self._get_correct_units(x, unit=1 / self.property_units["FWHM"])
-        return np.exp(-self.FWHM * np.pi * np.abs(x))
-
-
-# class ExponentialAbs(Apodization):
-#     r"""Apodize a dependent variable of the simulation data object by an exponential
-#     function. The function follows
-
-#     .. math::
-#         f(x) = e^{-\Tau |x| \pi},
-
-#     where :math:`x` are the coordinates of the data dimension and :math:`\Tau` is
-#     the width parameter.
-
-#     Args:
-#         int dim_index: Data dimension index to apply the function along.
-#         float FWHM: The full width at half maximum parameter, :math:`\Tau`.
-#         int dv_index: Data dependent variable index to apply the function to. If
-#             the type None, the operation will be applied to every dependent variable.
-
-#     Example
-#     -------
-
-#     >>> operation5 = apo.Exponential(FWHM=143.4, dim_index=0, dv_index=0)
-#     """
-
-#     FWHM: float = 0
-
-#     property_unit_types: ClassVar = {"FWHM": ["time", "frequency"]}
-#     property_default_units: ClassVar = {"FWHM": ["s", "Hz"]}
-#     property_units: Dict = {"FWHM": "Hz"}
-
-#     @staticmethod
-#     def fn(x, arg):
-#         return np.exp(-arg * np.pi * np.abs(x))
-
-#     def operate(self, data):
-#         """
-#         Applies the operation for which the class is named for.
-
-#         data: CSDM object
-#         dep_var: int. The index of the dependent variable to apply operation to
-#         """
-
-#         return self._operate(data, fn=self.fn, prop_name="FWHM", prop_value=self.FWHM)
+        x = self._get_correct_coordinates(x, unit=1.0 / self.property_units["FWHM"])
+        return 1.0 if self.FWHM == 0.0 else np.exp(-self.FWHM * np.pi * np.abs(x))

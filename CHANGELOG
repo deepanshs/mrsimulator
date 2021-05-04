@@ -37,8 +37,11 @@ Changes
 Bug fixes
 '''''''''
 
-- Fix a bug related to `get_spectral_dimensions()` utility method in cases when CSDM
+- Fixed a bug related to `get_spectral_dimensions()` utility method in cases when CSDM
   dimension objects have negative increment.
+- Fixed a bug resulting in the non-conserved spectral area after a Gaussian apodization.
+- Fixed a bug in Gaussian apodization, which raised an error when the FWHM argument is a scalar.
+- Fixed bug causing multi-dataset fit to fail.
 
 v0.5.1
 ------

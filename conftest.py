@@ -3,11 +3,10 @@ from pprint import pprint
 
 import matplotlib
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
 import numpy as np
 import pytest
 from mrsimulator import Coupling
+from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
@@ -48,7 +47,6 @@ def add_site(doctest_namespace):
     doctest_namespace["pprint"] = pprint
     doctest_namespace["Isotope"] = Isotope
     doctest_namespace["sp"] = sp
-    doctest_namespace["apo"] = apo
     doctest_namespace["Method2D"] = Method2D
 
     site1 = Site(

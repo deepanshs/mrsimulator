@@ -4,7 +4,7 @@
 		"description": "A generic two-dimensional correlation spectrum method.",
 		"magnetic_flux_density": "9.4 T",
 		"rotor_frequency": "1000000000000.0 Hz",
-		"rotor_angle": "0.955316618 rad",
+		"rotor_angle": "0.9553166181245 rad",
 		"spectral_dimensions": [{
 				"count": 1024,
 				"spectral_width": "50000.0 Hz",
@@ -69,11 +69,12 @@
 		"description": "A generic two-dimensional correlation spectrum method.",
 		"magnetic_flux_density": "9.4 T",
 		"rotor_frequency": "1000000000000.0 Hz",
-		"rotor_angle": "0.0 rad",
+		"rotor_angle": "0.9553166181245 rad",
 		"spectral_dimensions": [{
 				"count": 512,
 				"spectral_width": "5000000.0 Hz",
 				"events": [{
+					"rotor_angle": "0.0 rad",
 					"transition_query": [{
 							"ch1": {
 								"P": [-1],

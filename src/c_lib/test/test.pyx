@@ -120,13 +120,10 @@ def get_exp_Im_alpha(int n, np.ndarray[double] cos_alpha, bool_t allow_fourth_ra
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def pre_phase_components(unsigned int number_of_sidebands, double sample_rotation_frequency_in_Hz):
-    r"""
-
-    """
+def pre_phase_components(unsigned int number_of_sidebands, double rotor_frequency_in_Hz):
     cdef int n1 = 4 * number_of_sidebands
     cdef np.ndarray[double] pre_phase = np.zeros(2*n1, dtype=np.float64)
-    clib.__get_components(number_of_sidebands, sample_rotation_frequency_in_Hz, &pre_phase[0])
+    clib.get_sideband_phase_components(number_of_sidebands, rotor_frequency_in_Hz, &pre_phase[0])
     return pre_phase.view(dtype=np.complex128).reshape(4, number_of_sidebands)
 
 
@@ -182,7 +179,7 @@ def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] 
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def triangle_interpolation(vector, np.ndarray[double, ndim=1] spectrum_amp,
+def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
                            double amp=1):
     r"""
     Given a vector of three points, this method interpolates the
@@ -208,7 +205,7 @@ def triangle_interpolation(vector, np.ndarray[double, ndim=1] spectrum_amp,
 
     cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
 
-    clib.triangle_interpolation(f1, f2, f3, &amp_[0], &spectrum_amp[0], &points[0])
+    clib.triangle_interpolation1D(f1, f2, f3, &amp_[0], &spectrum_amp[0], &points[0])
 
 
 @cython.boundscheck(False)
@@ -291,7 +288,7 @@ def __batch_wigner_rotation(unsigned int octant_orientations,
 
 #         # spin rate, spin angle and number spinning sidebands
 #         int number_of_sidebands = 128,
-#         double sample_rotation_frequency_in_Hz = 0.0,
+#         double rotor_frequency_in_Hz = 0.0,
 #         rotor_angle_in_rad = None,
 
 #         m_final = 0.5,
@@ -425,7 +422,7 @@ def __batch_wigner_rotation(unsigned int octant_orientations,
 
 #             # spin rate, spin angle and number spinning sidebands
 #             number_of_sidebands,
-#             sample_rotation_frequency_in_Hz,
+#             rotor_frequency_in_Hz,
 #             rotor_angle_in_rad_c,
 
 #             &transition_c[0],

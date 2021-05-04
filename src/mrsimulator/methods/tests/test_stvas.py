@@ -5,8 +5,6 @@ from mrsimulator.method.query import TransitionQuery
 from mrsimulator.methods import ST1_VAS
 from mrsimulator.methods import ST2_VAS
 
-from .test_methods import sample_method_dict
-
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
@@ -17,7 +15,7 @@ names = ["ST1_VAS", "ST2_VAS"]
 def sample_test_output(n):
     return {
         "magnetic_flux_density": "9.4 T",
-        "rotor_angle": "0.955316618 rad",
+        "rotor_angle": "0.9553166181245 rad",
         "rotor_frequency": "1000000000000.0 Hz",
         "spectral_dimensions": [
             {
@@ -70,7 +68,11 @@ def test_ST1_VAS_general():
     """Inner satellite-transition variable-angle spinning method"""
     mth = ST1_VAS(
         channels=["87Rb"],
-        **sample_method_dict,
+        magnetic_flux_density=11.7,  # in T
+        spectral_dimensions=[
+            {"count": 1024, "spectral_width": 3e4},
+            {"count": 1024, "spectral_width": 2e4},
+        ],
     )
     assert mth.name == "ST1_VAS"
 
@@ -96,8 +98,28 @@ def test_ST1_VAS_general():
     assert serialize == {
         "channels": ["87Rb"],
         "description": des,
+        "magnetic_flux_density": "11.7 T",
         "name": "ST1_VAS",
-        **sample_test_output(2),
+        "rotor_angle": "0.9553166181245 rad",
+        "rotor_frequency": "1000000000000.0 Hz",
+        "spectral_dimensions": [
+            {
+                "count": 1024,
+                "spectral_width": "30000.0 Hz",
+                "events": [
+                    {
+                        "transition_query": [
+                            {"ch1": {"P": [-1], "D": [i]}} for i in [2, -2]
+                        ]
+                    }
+                ],
+            },
+            {
+                "count": 1024,
+                "spectral_width": "20000.0 Hz",
+                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
+            },
+        ],
     }
 
 
@@ -105,7 +127,11 @@ def test_ST2_VAS_general():
     """Second to inner satellite-transition variable-angle spinning method"""
     mth = ST2_VAS(
         channels=["17O"],
-        **sample_method_dict,
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
+            {"count": 1024, "spectral_width": 5e4},
+            {"count": 1024, "spectral_width": 5e4},
+        ],
     )
     assert mth.name == "ST2_VAS"
 

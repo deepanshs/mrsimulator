@@ -8,7 +8,7 @@ Spin transition functions (STF), :math:`\xi_L^{(k)}(i,j)`
 .. raw:: html
 
     <a class="btn btn-default"
-       href=./source/spin_transition_function_source.html> Source
+       href=./source/spin_transition_functions.html> Source
     </a>
 
 

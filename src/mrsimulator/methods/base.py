@@ -7,6 +7,7 @@ from mrsimulator.method import SpectralDimension
 from mrsimulator.utils.error import ImmutableEventError
 from mrsimulator.utils.error import NamedMethodError
 from pydantic import Field
+from pydantic import PrivateAttr
 from pydantic import validator
 
 from .utils import check_for_atleast_one_events
@@ -121,6 +122,8 @@ class Method2D(BaseMethod):
 
 class BaseNamedMethod(BaseMethod):
     """BaseNameMethod class."""
+
+    _named_method: bool = PrivateAttr(True)
 
     def __init__(self, **kwargs):
         kwargs_copy = deepcopy(kwargs)

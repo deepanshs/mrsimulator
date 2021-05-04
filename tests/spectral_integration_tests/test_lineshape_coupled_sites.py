@@ -41,6 +41,6 @@ def test_two_site_no_coupling_test():
     ]
     sim2.run()
 
-    data1 = (sim1.methods[0].simulation / 2).dependent_variables[0].components
-    data2 = sim2.methods[0].simulation.dependent_variables[0].components
+    data1 = (sim1.methods[0].simulation / 2).y[0].components
+    data2 = sim2.methods[0].simulation.y[0].components
     assert np.allclose(data1, data2)

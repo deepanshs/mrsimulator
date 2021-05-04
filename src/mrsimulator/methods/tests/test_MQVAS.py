@@ -16,7 +16,7 @@ names = ["ThreeQ_VAS", "FiveQ_VAS", "SevenQ_VAS"]
 def sample_test_output(n):
     return {
         "magnetic_flux_density": "9.4 T",
-        "rotor_angle": "0.955316618 rad",
+        "rotor_angle": "0.9553166181245 rad",
         "rotor_frequency": "1000000000000.0 Hz",
         "spectral_dimensions": [
             {

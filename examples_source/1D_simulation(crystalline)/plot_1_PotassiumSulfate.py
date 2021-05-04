@@ -10,15 +10,12 @@ Potassium Sulfate, 33S (I=3/2)
 # The following example is the :math:`^{33}\text{S}` NMR spectrum simulation of
 # potassium sulfate (:math:`\text{K}_2\text{SO}_4`). The quadrupole tensor parameters
 # for :math:`^{33}\text{S}` is obtained from Moudrakovski `et. al.` [#f3]_
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator import signal_processing as sp
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
@@ -58,6 +55,7 @@ sim.methods += [method]  # add the method
 sim.run()
 
 # The plot of the simulation before signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
@@ -67,11 +65,12 @@ plt.show()
 # %%
 # **Step 5:** Add post-simulation signal processing.
 processor = sp.SignalProcessor(
-    operations=[sp.IFFT(), apo.Exponential(FWHM="10 Hz"), sp.FFT()]
+    operations=[sp.IFFT(), sp.apodization.Exponential(FWHM="10 Hz"), sp.FFT()]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation)
 
 # The plot of the simulation after signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(processed_data.real, color="black", linewidth=1)
 ax.invert_xaxis()

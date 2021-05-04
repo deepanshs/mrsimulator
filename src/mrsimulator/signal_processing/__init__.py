@@ -7,6 +7,8 @@ import csdmpy as cp
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Extra
 
+from . import affine as af  # noqa:F401
+from . import apodization as ap  # noqa:F401
 from ._base import Operations
 
 __author__ = "Maxwell C. Venetos"
@@ -39,7 +41,7 @@ class SignalProcessor(Parseable):
         extra = Extra.forbid
 
     @classmethod
-    def parse_dict_with_units(self, py_dict: dict):
+    def parse_dict_with_units(cls, py_dict: dict):
         """Parse a list of operations dictionary to a SignalProcessor class object.
 
         Args:
@@ -48,11 +50,23 @@ class SignalProcessor(Parseable):
         mod = modules[__name__]
         lst = [
             getattr(getattr(mod, op["function"]), op["type"]).parse_dict_with_units(op)
-            if "type" in op.keys()
+            if "type" in op
             else getattr(mod, op["function"]).parse_dict_with_units(op)
             for op in py_dict["operations"]
         ]
         return SignalProcessor(operations=lst)
+
+    def json(self) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object, where
+        the attribute value with physical quantity is expressed as a string with a
+        value and a unit.
+
+        Returns:
+            A Dict object.
+        """
+        op = {}
+        op["operations"] = [item.json() for item in self.operations]
+        return op
 
     def apply_operations(self, data, **kwargs):
         """
@@ -87,7 +101,7 @@ class Scale(Operations):
     Example
     -------
 
-    >>> import mrsimulator.signal_processing as sp
+    >>> from mrsimulator import signal_processing as sp
     >>> operation1 = sp.Scale(factor=20)
     """
 
@@ -127,11 +141,8 @@ class IFFT(Operations):
         Args:
             data: CSDM object
         """
-        dim_index = self.dim_index
-        if isinstance(dim_index, int):
-            dim_index = [dim_index]
-
-        for i in dim_index:
+        d_i = [self.dim_index] if isinstance(self.dim_index, int) else self.dim_index
+        for i in d_i:
             data = data.fft(axis=i)
         return data
 
