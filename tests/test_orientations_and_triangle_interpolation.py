@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 """Test for c functions."""
+# import matplotlib.pyplot as plt
 import mrsimulator.tests.tests as clib
 import numpy as np
 
 from .python_test_for_c_code.orientation import cosine_of_polar_angles_and_amplitudes
 from .python_test_for_c_code.orientation import triangle_interpolation1D
-
-# import matplotlib.pyplot as plt
 
 
 def test_octahedron_averaging_setup():
@@ -50,26 +49,7 @@ def test_triangle_interpolation():
 
 
 def test_delta_interpolation():
-    f_list = [
-        5.5,
-        6.0,
-        6.2,
-        6.4,
-        6.6,
-        6.8,
-        7.0,
-        7.1,
-        7.5,
-        7.9,
-        8.0,
-        -0.1,
-        -0.9,
-        -1.0,
-        -5.2,
-        9.23,
-        10.2,
-    ]
-
+    f_list = [*list(np.arange(40) / 20 + 5), -0.1, -0.9, -1.0, -5.2, 9.23, 10.2]
     for item in f_list:
         list_ = np.asarray([item + 0.5] * 3)
 
@@ -89,6 +69,31 @@ def test_delta_interpolation():
         # plt.show()
 
         assert np.allclose(amp_, amp_c, atol=1e-15)
+
+
+def test_gaussian_interpolation():
+    sigma = 0.25
+    div = 2 * (sigma ** 2)
+    scale = sigma * np.sqrt(2 * np.pi)
+    f_list = list(np.arange(40) / 20 + 5)
+    x = np.arange(10)
+    for item in f_list:
+        list_ = np.asarray([item + 0.5] * 3)
+
+        # should be
+        gauss = np.exp(-((x - item) ** 2) / div) / scale
+        gauss /= gauss.sum()
+
+        # from delta interpolarion
+        amp_c = np.zeros(10)
+        clib.triangle_interpolation1D(list_, amp_c, type=1)
+
+        # plt.plot(np.arange(10), gauss, label="gauss")
+        # plt.plot(np.arange(10), amp_c, label="calc")
+        # plt.legend()
+        # plt.show()
+
+        np.testing.assert_almost_equal(gauss, amp_c)
 
 
 def test_triangle_rasterization():

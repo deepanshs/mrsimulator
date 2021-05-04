@@ -7,7 +7,7 @@ import cython
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
-clib.generate_table()
+clib.generate_tables()
 
 @cython.profile(False)
 @cython.boundscheck(False)

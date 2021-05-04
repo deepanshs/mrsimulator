@@ -9,8 +9,8 @@
 
 from libcpp cimport bool as bool_t
 
-cdef extern from "tables/trig.h":
-    void generate_table()
+cdef extern from "tables.h":
+    void generate_tables()
 
 cdef extern from "angular_momentum.h":
     void wigner_d_matrices(const int l, const int n, const double *angle, double *wigner)
@@ -52,7 +52,8 @@ cdef extern from "interpolation.h":
         double *freq3,
         double *amp,
         double *spec,
-        int *points)
+        int *points,
+        int type)
 
     void triangle_interpolation2D(
         double *freq11,

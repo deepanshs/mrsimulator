@@ -18,9 +18,12 @@
  * @param amp A pointer to the area of the vector.
  * @param spec A pointer to the starting index of a one-dimensional array.
  * @param m0 A pointer to the number of points on the 1D grid.
+ * @param type The type of interpolation for the isotorpic components.
+ *          0. delta-interpolation,
+ *          1. gaussian-interpolation.
  */
 extern void triangle_interpolation1D(double *f1, double *f2, double *f3, double *amp,
-                                     double *spec, int *m0);
+                                     double *spec, int *m0, int type);
 
 /**
  * @brief Rasterize a vector triangle with coordinates ((f11, f21), (f12, f22), (f13,
