@@ -99,6 +99,8 @@ def test_03():
         sp.apodization.Gaussian(FWHM=200),
         sp.FFT(dim_index=0),
         sp.Scale(factor=10),
+        sp.ConstantOffset(offset=43.1),
+        sp.Linear(amplitude=32.9, offset=13.4),
     ]
     post_sim = sp.SignalProcessor(operations=op_list)
 
@@ -109,6 +111,9 @@ def test_03():
     assert val["SP_0_operation_1_Exponential_FWHM"] == 100
     assert val["SP_0_operation_2_Gaussian_FWHM"] == 200
     assert val["SP_0_operation_4_Scale_factor"] == 10
+    assert val["SP_0_operation_5_ConstantOffset_offset"] == 43.1
+    assert val["SP_0_operation_6_Linear_amplitude"] == 32.9
+    assert val["SP_0_operation_6_Linear_offset"] == 13.4
 
 
 def test_04():

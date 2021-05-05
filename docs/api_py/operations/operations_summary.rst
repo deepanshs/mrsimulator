@@ -23,6 +23,8 @@ CSDM object.
     :nosignatures:
 
       ~Scale
+      ~ConstantOffset
+      ~Linear
       ~IFFT
       ~FFT
 

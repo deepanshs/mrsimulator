@@ -21,11 +21,6 @@ ENCODING_PAIRS = [
     ["].isotropic_j", "_isotropic_j"],
     ["].j_symmetric.", "_j_symmetric_"],
     ["].dipolar.", "_dipolar_"],
-    # post simulation
-    ["].post_simulation", "_POST_SIM_"],
-    [".scale", "scale"],
-    [".apodization[", "APODIZATION_"],
-    ["].args", "_args"],
 ]
 
 DECODING_PAIRS = [
@@ -52,7 +47,13 @@ EXCLUDE = [
     "transition_pathways",
 ]
 
-POST_SIM_DICT = {"Gaussian": "FWHM", "Exponential": "FWHM", "Scale": "factor"}
+POST_SIM_DICT = {
+    "Gaussian": {"FWHM": "FWHM"},
+    "Exponential": {"FWHM": "FWHM"},
+    "Scale": {"factor": "factor"},
+    "ConstantOffset": {"offset": "offset"},
+    "Linear": {"amplitude": "amplitude", "offset": "offset"},
+}
 
 
 def _str_encode(my_string):
@@ -156,10 +157,10 @@ def _post_sim_LMFIT_params(params, post_sim, index):
     for i, operation in enumerate(post_sim.operations):
         name = operation.__class__.__name__
         if name in POST_SIM_DICT:
-            attr = POST_SIM_DICT[name]
-            key = f"SP_{index}_operation_{i}_{name}_{attr}"
-            val = operation.__getattribute__(attr)
-            params.add(name=key, value=val)
+            for attr in POST_SIM_DICT[name]:
+                key = f"SP_{index}_operation_{i}_{name}_{attr}"
+                val = operation.__getattribute__(attr)
+                params.add(name=key, value=val)
 
 
 def make_signal_processor_params(post_sim):
@@ -310,11 +311,12 @@ def _update_post_sim_from_LMFIT_params(params, post_sim):
             sp_idx = int(split_name[1])
             op_idx = int(split_name[3])  # The operation index
             function = split_name[4]
+            arg = split_name[5]
             val = params[param].value  # The value of operation argument parameter
 
             # update the post_sim object with the parameter updated value.
             post_sim[sp_idx].operations[op_idx].__setattr__(
-                POST_SIM_DICT[function], val
+                POST_SIM_DICT[function][arg], val
             )
 
 

@@ -92,9 +92,10 @@ class Shear(AbstractAffineTransformation):
     #     validate_assignment = True
 
     def operate(self, data):
-        """Applies the operation for which the class is named for.
+        """Applies the operation.
 
-        data: CSDM object.
+        Args:
+            data: CSDM object.
         """
         dims = data.dimensions
         n_dim = len(dims)
@@ -145,10 +146,10 @@ class Scale(AbstractAffineTransformation):
         return _str_to_quantity(v, values, "factor")
 
     def operate(self, data):
-        """
-        Applies the operation for which the class is named for.
+        """Applies the operation.
 
-        data: CSDM object.
+        Args:
+            data: CSDM object.
         """
         data_ref = data.x[self.dim_index]
         data_ref.increment *= self.factor

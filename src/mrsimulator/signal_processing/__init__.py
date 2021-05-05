@@ -83,7 +83,10 @@ class SignalProcessor(BaseModel):
 
 
 class Scale(AbstractOperation):
-    """Scale the amplitudes of all dependent variables from a CSDM object.
+    r"""Scale the amplitudes of all dependent variables (y) from a CSDM object.
+
+    .. math::
+        f(y) = \text{factor} \times y
 
     Args:
         float factor: The scaling factor. The default value is 1.
@@ -98,15 +101,71 @@ class Scale(AbstractOperation):
     factor: float = 1
 
     def operate(self, data):
-        r"""Applies the operation for which the class is named for.
-
-        .. math::
-            f(\vec(x)) = scale*\vec(x)
+        """Applies the operation.
 
         Args:
             data: CSDM object
         """
         data *= self.factor
+        return data
+
+
+class ConstantOffset(AbstractOperation):
+    r"""Offset the amplitudes of all dependent variables (y) from a CSDM object.
+
+    .. math::
+        f(y) = y + \text{offset}
+
+    Args:
+        float offset: The offset factor. The default value is 0.
+
+    Example
+    -------
+
+    >>> from mrsimulator import signal_processing as sp
+    >>> operation1 = sp.ConstantOffset(offset=20)
+    """
+
+    offset: float = 0
+
+    def operate(self, data):
+        """Applies the operation for which the class is named for.
+
+        Args:
+            data: CSDM object
+        """
+        data += self.offset
+        return data
+
+
+class Linear(AbstractOperation):
+    r"""Apply linear operation across all dependent variables (y) from a CSDM object.
+
+    .. math::
+            f(y) = \text{amplitude} \times y + \text{offset}
+
+    Args:
+        float amplitude: The scaling factor. The default value is 1.
+        float offsett: The offset factor. The default value is 0.
+
+    Example
+    -------
+
+    >>> from mrsimulator import signal_processing as sp
+    >>> operation1 = sp.Linear(amplitude=20, offset=-10)
+    """
+
+    amplitude: float = 1
+    offset: float = 0
+
+    def operate(self, data):
+        """Applies the operation.
+
+        Args:
+            data: CSDM object
+        """
+        data *= self.amplitude
+        data += self.offset
         return data
 
 
@@ -125,7 +184,7 @@ class IFFT(AbstractOperation):
     dim_index: Union[int, list, tuple] = 0
 
     def operate(self, data):
-        """Applies the operation for which the class is named for.
+        """Applies the operation.
 
         Args:
             data: CSDM object

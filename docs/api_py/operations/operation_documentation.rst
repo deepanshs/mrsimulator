@@ -6,6 +6,8 @@ Documentation
 .. currentmodule:: mrsimulator.signal_processing
 
 .. autoclass:: Scale
+.. autoclass:: ConstantOffset
+.. autoclass:: Linear
 .. autoclass:: IFFT
 .. autoclass:: FFT
 
