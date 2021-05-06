@@ -67,18 +67,6 @@ def test_scale():
         assert np.allclose(out_.max() / in_.max(), 10), "Scaling failed"
 
 
-def test_constant_offset():
-    data_in = generate_data()
-    PS_0 = [sp.ConstantOffset(offset=10)]
-    operator = sp.SignalProcessor(operations=PS_0)
-    data_out = operator.apply_operations(data=data_in.copy())
-    _, y0, y1, y2 = data_in.to_list()
-    _, y0_, y1_, y2_ = data_out.to_list()
-
-    for in_, out_ in zip([y0, y1, y2], [y0_, y1_, y2_]):
-        assert np.allclose(out_.max() - in_.max(), 10), "Offset failed"
-
-
 def test_linear():
     data_in = generate_data()
     PS_0 = [sp.Linear(amplitude=4.1, offset=10)]

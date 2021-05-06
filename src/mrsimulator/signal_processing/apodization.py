@@ -34,10 +34,6 @@ class AbstractApodization(AbstractOperation):
         """The type apodization function."""
         return self.__class__.__name__
 
-    @staticmethod
-    def _get_correct_coordinates(x, unit):
-        return x.to(unit).value
-
     def operate(self, data):
         """Apply the operation function.
 
@@ -48,18 +44,16 @@ class AbstractApodization(AbstractOperation):
         ndim = len(dims)
 
         dim_index = self.dim_index
-        if isinstance(dim_index, int):
-            dim_index = [dim_index]
+        dim_index = [dim_index] if isinstance(dim_index, int) else dim_index
 
-        for dim_index_ in dim_index:
-            x = dims[dim_index_].coordinates
-            apodization_vactor = _get_broadcast_shape(self.fn(x), dim_index_, ndim)
+        for i in dim_index:
+            x = self.get_coordinates(dims[i])  # dims[i].coordinates
+            apodization_vactor = _get_broadcast_shape(self.fn(x), i, ndim)
 
-            n = len(data.y)
-            dv_indexes = self._get_dv_indexes(self.dv_index, n=n)
+            dv_indexes = self._get_dv_indexes(self.dv_index, n=len(data.y))
 
-            for i in dv_indexes:
-                data.y[i].components *= apodization_vactor
+            for index in dv_indexes:
+                data.y[index].components *= apodization_vactor
         return data
 
 
@@ -103,7 +97,7 @@ class Gaussian(AbstractApodization):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
-        x = self._get_correct_coordinates(x, unit=1.0 / self.property_units["FWHM"])
+        x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
         sigma = self.FWHM / 2.354820045030949
         return 1.0 if self.FWHM == 0.0 else np.exp(-2.0 * (np.pi * sigma * x) ** 2)
 
@@ -148,5 +142,5 @@ class Exponential(AbstractApodization):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
-        x = self._get_correct_coordinates(x, unit=1.0 / self.property_units["FWHM"])
+        x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
         return 1.0 if self.FWHM == 0.0 else np.exp(-self.FWHM * np.pi * np.abs(x))

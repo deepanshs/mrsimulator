@@ -35,21 +35,6 @@ class AbstractAffineTransformation(AbstractOperation):
         return self.__class__.__name__
 
 
-def get_coordinates(dim):
-    """Return the coordinates of dimension, dim, without equivalence units"""
-
-    def get_coords(dim):
-        equivalent_fn, equivalent_unit = dim._equivalencies, dim._equivalent_unit
-        dim._equivalencies, dim._equivalent_unit = None, None
-
-        coordinates = dim.coordinates
-
-        dim._equivalencies, dim._equivalent_unit = equivalent_fn, equivalent_unit
-        return coordinates
-
-    return get_coords(dim) if not hasattr(dim, "subtype") else get_coords(dim.subtype)
-
-
 class Shear(AbstractAffineTransformation):
     r"""Apply a shear parallel to dimension at index parallel and normal to dimension
     at index dim_index.
@@ -101,7 +86,7 @@ class Shear(AbstractAffineTransformation):
         n_dim = len(dims)
 
         x, y = dims[self.dim_index], dims[self.parallel]
-        x_value, y_value = [get_coordinates(_).value for _ in [x, y]]
+        x_value, y_value = [self.get_coordinates(_).value for _ in [x, y]]
 
         vector_x = _get_broadcast_shape(x_value, self.dim_index, n_dim)
         vector_y = _get_broadcast_shape(y_value, self.parallel, n_dim)

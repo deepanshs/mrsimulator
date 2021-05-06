@@ -9,7 +9,9 @@ from pydantic import BaseModel
 
 from . import affine as af  # noqa:F401
 from . import apodization as ap  # noqa:F401
+from . import baseline as bl  # noqa:F401
 from ._base import AbstractOperation
+
 
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
@@ -107,34 +109,6 @@ class Scale(AbstractOperation):
             data: CSDM object
         """
         data *= self.factor
-        return data
-
-
-class ConstantOffset(AbstractOperation):
-    r"""Offset the amplitudes of all dependent variables (y) from a CSDM object.
-
-    .. math::
-        f(y) = y + \text{offset}
-
-    Args:
-        float offset: The offset factor. The default value is 0.
-
-    Example
-    -------
-
-    >>> from mrsimulator import signal_processing as sp
-    >>> operation1 = sp.ConstantOffset(offset=20)
-    """
-
-    offset: float = 0
-
-    def operate(self, data):
-        """Applies the operation for which the class is named for.
-
-        Args:
-            data: CSDM object
-        """
-        data += self.offset
         return data
 
 

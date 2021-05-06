@@ -50,3 +50,24 @@ class AbstractOperation(Parseable):
         if "function" in my_dict_copy.keys():
             my_dict_copy.pop("function")
         return super().parse_dict_with_units(my_dict_copy)
+
+    @staticmethod
+    def get_coordinates_in_units(x, unit):
+        return x.to(unit).value
+
+    @staticmethod
+    def get_coordinates(dim):
+        """Return the coordinates of dimension, dim, without equivalence units"""
+
+        def get_coords(dim):
+            equivalent_fn, equivalent_unit = dim._equivalencies, dim._equivalent_unit
+            dim._equivalencies, dim._equivalent_unit = None, None
+
+            coordinates = dim.coordinates
+
+            dim._equivalencies, dim._equivalent_unit = equivalent_fn, equivalent_unit
+            return coordinates
+
+        return (
+            get_coords(dim) if not hasattr(dim, "subtype") else get_coords(dim.subtype)
+        )

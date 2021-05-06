@@ -338,8 +338,15 @@ def update_mrsim_obj_from_params(params, sim: Simulator, post_sim: list = None):
             _update_post_sim_from_LMFIT_params(params, post_sim)
 
 
+def get_correct_data_order(data):
+    """If data has negative increment, reverse the data."""
+    y = data.y[0].components[0]
+    index = [-i - 1 for i, x in enumerate(data.x) if x.increment.value < 0]
+    return y if index == [] else np.flip(y, axis=tuple(index))
+
+
 def LMFIT_min_function(
-    params: Parameters, sim: Simulator, post_sim: list = None, sigma: list = None
+    params: Parameters, sim: Simulator, processors: list = None, sigma: list = None
 ):
     """The simulation routine to calculate the vector difference between simulation and
     experiment based on the parameters update.
@@ -347,25 +354,25 @@ def LMFIT_min_function(
     Args:
         params: Parameters object containing parameters for OLS minimization.
         sim: Simulator object.
-        post_sim: A list of PostSimulator objects corresponding to the methods in the
+        processors: A list of PostSimulator objects corresponding to the methods in the
             Simulator object.
         sigma: A list of standard deviations corresponding to the experiments in the
             Simulator.methods attribute
     Returns:
         Array of the differences between the simulation and the experimental data.
     """
-    post_sim = post_sim if isinstance(post_sim, list) else [post_sim]
+    processors = processors if isinstance(processors, list) else [processors]
     if sigma is None:
         sigma = [1.0 for _ in sim.methods]
     sigma = sigma if isinstance(sigma, list) else [sigma]
 
-    update_mrsim_obj_from_params(params, sim, post_sim)
+    update_mrsim_obj_from_params(params, sim, processors)
 
     sim.run()
 
     processed_data = [
         item.apply_operations(data=data.simulation)
-        for item, data in zip(post_sim, sim.methods)
+        for item, data in zip(processors, sim.methods)
     ]
 
     diff = np.asarray([])
@@ -374,12 +381,35 @@ def LMFIT_min_function(
         for decomposed_datum in processed_datum.y:
             datum += decomposed_datum.components[0].real
 
-        # If data has negative increment, reverse the data before taking the difference.
-        exp_data = mth.experiment.y[0].components[0]
-        index = [
-            -i - 1 for i, x in enumerate(mth.experiment.x) if x.increment.value < 0
-        ]
-        exp_data = exp_data if index == [] else np.flip(exp_data, axis=tuple(index))
+        exp_data = get_correct_data_order(mth.experiment)
         diff = np.append(diff, (exp_data - datum) / sigma_)
-
     return diff
+
+
+def bestfit(sim: Simulator, processors: list = None):
+    """Return a list of best fit spectrum."""
+    processors = processors if isinstance(processors, list) else [processors]
+
+    temp = sim.config.decompose_spectrum[:]
+    sim.config.decompose_spectrum = "none"
+    sim.run()
+    sim.config.decompose_spectrum = temp
+
+    fits = [
+        proc.apply_operations(data=mth.simulation).real
+        for mth, proc in zip(sim.methods, processors)
+    ]
+
+    return fits
+
+
+def residuals(sim: Simulator, processors: list = None):
+    """Return a list of best fit spectrum."""
+    residual_ = bestfit(sim, processors)
+
+    for res, mth in zip(residual_, sim.methods):
+        exp_data = get_correct_data_order(mth.experiment)
+        res.y[0].components[0] -= exp_data
+        res.y[0].components[0] *= -1
+
+    return residual_

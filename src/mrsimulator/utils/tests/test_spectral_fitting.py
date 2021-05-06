@@ -99,7 +99,7 @@ def test_03():
         sp.apodization.Gaussian(FWHM=200),
         sp.FFT(dim_index=0),
         sp.Scale(factor=10),
-        sp.ConstantOffset(offset=43.1),
+        sp.baseline.ConstantOffset(offset=43.1),
         sp.Linear(amplitude=32.9, offset=13.4),
     ]
     post_sim = sp.SignalProcessor(operations=op_list)

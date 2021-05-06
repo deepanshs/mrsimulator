@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-29Si 1D MAS spinning sideband
-=============================
+29Si 1D MAS spinning sideband (CSA)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # After acquiring an NMR spectrum, we often require a least-squares analysis to
@@ -27,6 +27,7 @@ from lmfit import Minimizer, Parameters, fit_report
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
+from mrsimulator.utils import spectral_fitting as sf
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -53,8 +54,7 @@ sigma /= max_amp
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(synthetic_experiment, "k", alpha=0.5)
-ax.set_xlim(-200, 50)
-ax.invert_xaxis()
+ax.set_xlim(50, -200)
 plt.tight_layout()
 plt.show()
 
@@ -113,9 +113,7 @@ method = BlochDecaySpectrum(
 # %%
 # **Step 3:** Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = [spin_system]
-sim.methods = [method]
+sim = Simulator(spin_systems=[spin_system], methods=[method])
 sim.run()
 
 # %%
@@ -136,8 +134,7 @@ plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(synthetic_experiment, "k", linewidth=1, label="Experiment")
 ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
-ax.set_xlim(-200, 50)
-ax.invert_xaxis()
+ax.set_xlim(50, -200)
 plt.legend()
 plt.grid()
 plt.tight_layout()
@@ -231,19 +228,16 @@ print(fit_report(result))
 
 # %%
 # The plot of the fit, measurement and the residuals is shown below.
-plt.figsize = (4, 3)
-x, y_data = synthetic_experiment.to_list()
-residuals = minimization_function(result.params, sim, processor)
-fit = y_data - residuals
+best_fit = sf.bestfit(sim, processor)[0]
+residuals = sf.residuals(sim, processor)[0]
 
 plt.figure(figsize=(4.25, 3.0))
-plt.plot(x, y_data, "k", linewidth=1, label="Experiment")
-plt.plot(x, fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
-plt.plot(x, residuals, alpha=0.75, linewidth=1, label="Residual")
-
-plt.xlabel("Frequency / Hz")
-plt.xlim(-200, 50)
-plt.gca().invert_xaxis()
+ax = plt.subplot(projection="csdm")
+ax.plot(synthetic_experiment, "k", linewidth=1, label="Experiment")
+ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
+ax.plot(residuals, alpha=0.75, linewidth=1, label="Residuals")
+ax.set_xlabel("Frequency / Hz")
+ax.set_xlim(50, -200)
 plt.legend()
 plt.grid()
 plt.tight_layout()
