@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """The Event class."""
-from sys import modules
+from typing import ClassVar
 from typing import Dict
 from typing import Union
 
 import numpy as np
 from pydantic import validator
 
-from ._base import AbstractOperation
+from ._base import ModuleOperation
 from .utils import _get_broadcast_shape
 from .utils import _str_to_quantity
 from .utils import CONST
@@ -16,23 +16,14 @@ __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 
-class AbstractApodization(AbstractOperation):
+class Apodization(ModuleOperation):
     dim_index: Union[int, list, tuple] = 0
     dv_index: Union[int, list, tuple] = None  # if none apply to all
-
-    @classmethod
-    def parse_dict_with_units(cls, py_dict: dict):
-        obj = super().parse_dict_with_units(py_dict)
-        return getattr(modules[__name__], py_dict["type"])(**obj.dict())
+    module_name: ClassVar = __name__
 
     @property
     def function(self):
         return "apodization"
-
-    @property
-    def type(self):
-        """The type apodization function."""
-        return self.__class__.__name__
 
     def operate(self, data):
         """Apply the operation function.
@@ -57,7 +48,7 @@ class AbstractApodization(AbstractOperation):
         return data
 
 
-class Gaussian(AbstractApodization):
+class Gaussian(Apodization):
     r"""Apodize a dependent variable of the CSDM object with a Gaussian function.
 
     The apodization function follows
@@ -102,7 +93,7 @@ class Gaussian(AbstractApodization):
         return 1.0 if self.FWHM == 0.0 else np.exp(-2.0 * (np.pi * sigma * x) ** 2)
 
 
-class Exponential(AbstractApodization):
+class Exponential(Apodization):
     r"""Apodize a dependent variable of the CSDM object by an exponential function.
 
     The apodization function follows

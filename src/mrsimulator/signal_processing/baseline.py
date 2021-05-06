@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+from typing import ClassVar
 from typing import Dict
 from typing import Union
 
 import numpy as np
 from pydantic import validator
 
-from ._base import AbstractOperation
+from ._base import ModuleOperation
 from .utils import _str_to_quantity
 from .utils import CONST
 
@@ -13,7 +14,15 @@ __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-class Polynomial(AbstractOperation):
+class Baseline(ModuleOperation):
+    module_name: ClassVar = __name__
+
+    @property
+    def function(self):
+        return "baseline"
+
+
+class Polynomial(Baseline):
     r"""Add a baseline polynomial to all dependent variables (y) in the CSDM object.
 
     The baseline function is
@@ -73,7 +82,7 @@ class Polynomial(AbstractOperation):
             return data
 
         if "x1" in self.property_units:
-            unit = self.property_units["x1"]
+            unit = 1 * self.property_units["x1"]
         elif "x2" in self.property_units:
             unit = np.sqrt(1 * self.property_units["x2"]).unit
         elif "x3" in self.property_units:
@@ -87,7 +96,7 @@ class Polynomial(AbstractOperation):
         return data
 
 
-class ConstantOffset(AbstractOperation):
+class ConstantOffset(Baseline):
     r"""Add an offset to the dependent variables (y) of the CSDM object.
 
     .. math::

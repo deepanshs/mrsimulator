@@ -8,6 +8,19 @@ __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 
+def setup_read_write(operation, py_dict, fn):
+    # class to dict with units
+    dict_ = operation.json()
+    assert dict_ == py_dict
+
+    # read from dictionary
+    b = fn.parse_dict_with_units(dict_)
+    assert operation == b
+
+    processor = sp.SignalProcessor.parse_dict_with_units({"operations": [dict_]})
+    assert operation == processor.operations[0]
+
+
 def test_01():
     post_sim = sp.SignalProcessor()
     operations = [
@@ -51,7 +64,7 @@ def generate_data():
     dv1 = cp.as_dependent_variable(np.random.rand(20))
     dv2 = cp.as_dependent_variable(np.random.rand(20))
     dv3 = cp.as_dependent_variable(np.random.rand(20))
-    dim = cp.as_dimension(np.arange(10))
+    dim = cp.as_dimension(np.arange(20))
     return cp.CSDM(dependent_variables=[dv1, dv2, dv3], dimensions=[dim])
 
 

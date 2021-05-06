@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """The Event class."""
-from sys import modules
+from typing import ClassVar
 from typing import Dict
 from typing import Union
 
 import numpy as np
 from pydantic import validator
 
-from ._base import AbstractOperation
+from ._base import ModuleOperation
 from .utils import _get_broadcast_shape
 from .utils import _str_to_quantity
 from .utils import CONST
@@ -16,26 +16,17 @@ __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-class AbstractAffineTransformation(AbstractOperation):
+class AffineTransformation(ModuleOperation):
     dim_index: int = 0
     dv_index: Union[int, list, tuple] = None  # if none apply to all
-
-    @classmethod
-    def parse_dict_with_units(cls, py_dict: dict):
-        obj = super().parse_dict_with_units(py_dict)
-        return getattr(modules[__name__], py_dict["type"])(**obj.dict())
+    module_name: ClassVar = __name__
 
     @property
     def function(self):
         return "affine"
 
-    @property
-    def type(self):
-        """The type apodization function."""
-        return self.__class__.__name__
 
-
-class Shear(AbstractAffineTransformation):
+class Shear(AffineTransformation):
     r"""Apply a shear parallel to dimension at index parallel and normal to dimension
     at index dim_index.
 
@@ -109,7 +100,7 @@ class Shear(AbstractAffineTransformation):
         return data
 
 
-class Scale(AbstractAffineTransformation):
+class Scale(AffineTransformation):
     r"""Scale the dimension along the specified dimension index.
 
     Args:
