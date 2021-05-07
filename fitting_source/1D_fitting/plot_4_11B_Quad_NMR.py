@@ -6,7 +6,7 @@
 """
 # %%
 # The following is a quadrupolar lineshape fitting example for the 11B MAS NMR of
-# lithium orthoborate crystal. The dataset was provided by Nathan Barrow.
+# lithium orthoborate crystal. The dataset was shared by Dr. Nathan Barrow.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
@@ -22,11 +22,11 @@ from mrsimulator.utils import get_spectral_dimensions
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/710705/files/11B_lithum_orthoborate.csdf"
+filename = "https://sandbox.zenodo.org/record/814455/files/11B_lithum_orthoborate.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
-sigma = 4.111404e9
+sigma = 0.08078374
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -34,16 +34,12 @@ experiment = experiment.real
 # Convert the coordinates along each dimension from Hz to ppm.
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
-# Normalize the spectrum
-max_amp = experiment.max()
-experiment /= max_amp
-sigma /= max_amp
-
 # plot of the dataset.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 ax.set_xlim(100, -100)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -93,7 +89,7 @@ processor = sp.SignalProcessor(
         sp.IFFT(),
         sp.apodization.Exponential(FWHM="100 Hz"),
         sp.FFT(),
-        sp.Scale(factor=1),
+        sp.Scale(factor=200),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real

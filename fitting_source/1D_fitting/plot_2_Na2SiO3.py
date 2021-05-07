@@ -14,6 +14,7 @@
 # We use the `LMFIT <https://lmfit.github.io/lmfit-py/>`_ library to fit the spectrum.
 # The following example shows the least-squares fitting procedure applied to the
 # :math:`^{17}\text{O}` MAS NMR spectrum of :math:`\text{Na}_{2}\text{SiO}_{3}` [#f5]_.
+# The dataset was shared by Dr. Philip Grandinetti.
 #
 # Start by importing the relevant modules.
 import csdmpy as cp
@@ -35,11 +36,11 @@ from mrsimulator.utils import get_spectral_dimensions
 # Import the experimental data. We use dataset file serialized with the CSDM
 # file-format, using the
 # `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_ module.
-filename = "https://sandbox.zenodo.org/record/687656/files/Na2SiO3_O17.csdf"
+filename = "https://sandbox.zenodo.org/record/814455/files/Na2SiO3_O17.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
-sigma = 1212275
+sigma = 1.931335
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -52,6 +53,7 @@ plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 ax.set_xlim(100, -50)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -94,7 +96,7 @@ spectral_dims = get_spectral_dimensions(experiment)
 
 method = BlochDecayCTSpectrum(
     channels=["17O"],
-    magnetic_flux_density=9.39,  # in T
+    magnetic_flux_density=9.395,  # in T
     rotor_frequency=14000,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # experimental dataset
@@ -121,7 +123,7 @@ processor = sp.SignalProcessor(
         sp.IFFT(),
         sp.apodization.Gaussian(FWHM="100 Hz"),
         sp.FFT(),
-        sp.Scale(factor=1.25e8),
+        sp.Scale(factor=200.0),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real

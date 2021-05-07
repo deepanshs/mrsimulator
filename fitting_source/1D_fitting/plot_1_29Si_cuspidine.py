@@ -36,7 +36,7 @@ from mrsimulator.utils import spectral_fitting as sf
 # ------------------
 # Use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_
 # module to load the synthetic dataset as a CSDM object.
-file_ = "https://sandbox.zenodo.org/record/687656/files/synthetic_cuspidine_test.csdf"
+file_ = "https://sandbox.zenodo.org/record/814455/files/synthetic_cuspidine_test.csdf"
 synthetic_experiment = cp.load(file_).real
 
 # standard deviation of noise from the dataset
@@ -55,6 +55,7 @@ plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(synthetic_experiment, "k", alpha=0.5)
 ax.set_xlim(50, -200)
+plt.grid()
 plt.tight_layout()
 plt.show()
 

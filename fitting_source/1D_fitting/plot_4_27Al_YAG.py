@@ -6,7 +6,9 @@
 """
 # %%
 # The following is a quadrupolar lineshape fitting example for the 27Al MAS NMR of
-# Yttrium aluminum garnet (YAG) crystal. The dataset was provided by Dominique Massiot.
+# Yttrium aluminum garnet (YAG) crystal.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
+# acknowledge Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
@@ -40,6 +42,7 @@ plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 ax.set_xlim(1200, -1200)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -57,8 +60,8 @@ Al_1 = Site(
 
 Al_2 = Site(
     isotope="27Al",
-    isotropic_chemical_shift=10,  # in ppm
-    quadrupolar={"Cq": 5e5, "eta": 0.3},  # Cq in Hz
+    isotropic_chemical_shift=0,  # in ppm
+    quadrupolar={"Cq": 1e6, "eta": 0.3},  # Cq in Hz
 )
 spin_systems = [
     SpinSystem(sites=[Al_1], name="AlO4"),
@@ -74,7 +77,7 @@ spectral_dims = get_spectral_dimensions(experiment)
 
 method = BlochDecaySpectrum(
     channels=["27Al"],
-    magnetic_flux_density=9.39,  # in T
+    magnetic_flux_density=9.395,  # in T
     rotor_frequency=15248.7,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # add the measurement to the method.
@@ -150,3 +153,10 @@ plt.grid()
 plt.legend()
 plt.tight_layout()
 plt.show()
+
+# %%
+#
+# .. [#f1] D.Massiot, F.Fayon, M.Capron, I.King, S.Le Calvé, B.Alonso, J.O.Durand,
+#       B.Bujoli, Z.Gan, G.Hoatson, 'Modelling one and two-dimensional solid-state NMR
+#       spectra.', Magn. Reson. Chem. **40** 70-76 (2002)
+#       `DOI: 10.1002/mrc.984 <https://doi.org/10.1002/mrc.984>`_

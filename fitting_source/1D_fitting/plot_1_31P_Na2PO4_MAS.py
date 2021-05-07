@@ -14,7 +14,8 @@
 # We use the `LMFIT <https://lmfit.github.io/lmfit-py/>`_ library to fit the spectrum.
 # The following example shows the least-squares fitting procedure applied to the
 # :math:`^{31}\text{P}` MAS NMR spectrum of :math:`\text{Na}_{2}\text{PO}_{4}`.
-# The dataset was provided by Dominique Massiot.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
+# acknowledge Dr. Dominique Massiot for sharing the dataset.
 #
 # Start by importing the relevant modules.
 import csdmpy as cp
@@ -54,6 +55,7 @@ plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 ax.set_xlim(150, -150)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -91,7 +93,7 @@ spectral_dims = get_spectral_dimensions(experiment)
 
 method = BlochDecaySpectrum(
     channels=["31P"],
-    magnetic_flux_density=9.39,  # in T
+    magnetic_flux_density=9.395,  # in T
     rotor_frequency=6000,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # experimental dataset
@@ -191,3 +193,10 @@ plt.legend()
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+#
+# .. [#f1] D.Massiot, F.Fayon, M.Capron, I.King, S.Le Calvé, B.Alonso, J.O.Durand,
+#       B.Bujoli, Z.Gan, G.Hoatson, 'Modelling one and two-dimensional solid-state NMR
+#       spectra.', Magn. Reson. Chem. **40** 70-76 (2002)
+#       `DOI: 10.1002/mrc.984 <https://doi.org/10.1002/mrc.984>`_

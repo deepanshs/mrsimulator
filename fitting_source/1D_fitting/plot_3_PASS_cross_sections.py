@@ -23,11 +23,11 @@ from mrsimulator.utils import get_spectral_dimensions
 # %%
 # Import the dataset
 # ------------------
-name = "https://sandbox.zenodo.org/record/745068/files/LHistidine_cross_section.csdf"
+name = "https://sandbox.zenodo.org/record/814455/files/LHistidine_cross_section.csdf"
 pass_cross_section = cp.load(name)
 
 # standard deviation of noise from the dataset
-sigma = 0.01285316
+sigma = 4.640351
 
 # For the spectral fitting, we only focus on the real part of the complex dataset.
 pass_cross_section = pass_cross_section.real
@@ -35,16 +35,13 @@ pass_cross_section = pass_cross_section.real
 # Convert the coordinates along each dimension from Hz to ppm.
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in pass_cross_section.dimensions]
 
-# Normalize the spectrum.
-max_amp = pass_cross_section.max()
-pass_cross_section /= max_amp
-sigma /= max_amp
 
 # The plot of the dataset.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(pass_cross_section, "k", alpha=0.5)
 ax.invert_xaxis()
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -73,7 +70,7 @@ spectral_dims = get_spectral_dimensions(pass_cross_section)
 
 method = BlochDecaySpectrum(
     channels=["13C"],
-    magnetic_flux_density=9.39,  # in T
+    magnetic_flux_density=9.395,  # in T
     rotor_frequency=1500,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=pass_cross_section,  # also add the measurement to the method.
@@ -94,7 +91,7 @@ sim.run()
 
 # Post Simulation Processing
 # --------------------------
-processor = sp.SignalProcessor(operations=[sp.Scale(factor=10)])
+processor = sp.SignalProcessor(operations=[sp.Scale(factor=2000)])
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum

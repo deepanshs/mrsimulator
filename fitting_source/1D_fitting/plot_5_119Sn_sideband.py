@@ -6,7 +6,7 @@
 """
 # %%
 # The following is a spinning sideband manifold fitting example for the 119Sn MAS NMR
-# of SnO. The dataset was acquired and shared by Altenhof `et. al.` [#f1]_.
+# of SnO. The dataset was acquired and shared by Altenhof `et al.` [#f1]_.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
@@ -22,11 +22,11 @@ from mrsimulator.utils import get_spectral_dimensions
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/743242/files/119Sn_SnO.csdf"
+filename = "https://sandbox.zenodo.org/record/814455/files/119Sn_SnO.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
-sigma = 0.002697238
+sigma = 0.6410905
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -34,16 +34,12 @@ experiment = experiment.real
 # Convert the coordinates along each dimension from Hz to ppm.
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
-# Normalize the spectrum
-max_amp = experiment.max()
-experiment /= max_amp
-sigma /= max_amp
-
 # plot of the dataset.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 ax.set_xlim(-1200, 600)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -86,7 +82,7 @@ spectral_dims = get_spectral_dimensions(experiment)
 
 method = BlochDecaySpectrum(
     channels=["119Sn"],
-    magnetic_flux_density=9.39,  # in T
+    magnetic_flux_density=9.395,  # in T
     rotor_frequency=10000,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # add the measurement to the method.
@@ -110,9 +106,9 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        sp.apodization.Gaussian(FWHM="1500 Hz"),
+        sp.apodization.Exponential(FWHM="1500 Hz"),
         sp.FFT(),
-        sp.Scale(factor=20),
+        sp.Scale(factor=5000),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real

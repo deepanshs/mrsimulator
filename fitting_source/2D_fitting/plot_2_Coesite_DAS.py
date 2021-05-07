@@ -8,7 +8,7 @@
 # Coesite is a high-pressure (2-3 GPa) and high-temperature (700°C) polymorph of silicon
 # dioxide :math:`\text{SiO}_2`. Coesite has five crystallographic :math:`^{17}\text{O}`
 # sites. The experimental dataset used in this example is published in
-# Grandinetti `et. al.` [#f1]_
+# Grandinetti `et al.` [#f1]_
 import numpy as np
 import csdmpy as cp
 import matplotlib.pyplot as plt
@@ -17,24 +17,23 @@ from lmfit import Minimizer, report_fit
 from mrsimulator import Simulator
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
+from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
-from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
 
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/687656/files/DASCoesite.csdf"
+filename = "https://sandbox.zenodo.org/record/814455/files/DASCoesite.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
-sigma = 0.1888026
+sigma = 921.6698
 
 # For spectral fitting, we only focus on the real part of the complex dataset
-experiment = experiment.real * 1e4
-sigma *= 1e4
+experiment = experiment.real
 
 # Convert the coordinates along each dimension from Hz to ppm.
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
@@ -49,6 +48,7 @@ ax = plt.subplot(projection="csdm")
 ax.contour(experiment, colors="k", **options)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -81,7 +81,7 @@ spectral_dims = get_spectral_dimensions(experiment)
 
 das = Method2D(
     channels=["17O"],
-    magnetic_flux_density=11.74,  # in T
+    magnetic_flux_density=11.744,  # in T
     spectral_dimensions=[
         {
             **spectral_dims[0],
@@ -136,7 +136,7 @@ processor = sp.SignalProcessor(
         sp.apodization.Gaussian(FWHM="0.15 kHz", dim_index=0),
         sp.apodization.Gaussian(FWHM="0.15 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
-        sp.Scale(factor=5),
+        sp.Scale(factor=2.5),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -159,12 +159,12 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = make_LMFIT_params(sim, processor)
+params = sf.make_LMFIT_params(sim, processor)
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
 report_fit(result)
 
@@ -172,14 +172,13 @@ report_fit(result)
 # %%
 # The best fit solution
 # ---------------------
-sim.run()
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+best_fit = sf.bestfit(sim, processor)[0]
 
 # Plot the spectrum
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.contour(experiment, colors="k", **options)
-ax.contour(processed_data, colors="r", linestyles="--", **options)
+ax.contour(best_fit, colors="r", linestyles="--", **options)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
 plt.grid()

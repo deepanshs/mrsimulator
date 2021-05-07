@@ -7,7 +7,8 @@
 # %%
 # The following example is a CSA static least-squares fitting example of a
 # :math:`^{31}\text{P}` MAS NMR spectrum of :math:`\text{Na}_{2}\text{PO}_{4}`.
-# The dataset was provided by Dominique Massiot.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
+# acknowledge Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
@@ -41,6 +42,7 @@ plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 ax.set_xlim(200, -200)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -64,7 +66,7 @@ spectral_dims = get_spectral_dimensions(experiment)
 
 method = BlochDecaySpectrum(
     channels=["31P"],
-    magnetic_flux_density=9.39,  # in T
+    magnetic_flux_density=9.395,  # in T
     rotor_frequency=0,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # experimental dataset
@@ -140,3 +142,10 @@ plt.grid()
 plt.legend()
 plt.tight_layout()
 plt.show()
+
+# %%
+#
+# .. [#f1] D.Massiot, F.Fayon, M.Capron, I.King, S.Le Calvé, B.Alonso, J.O.Durand,
+#       B.Bujoli, Z.Gan, G.Hoatson, 'Modelling one and two-dimensional solid-state NMR
+#       spectra.', Magn. Reson. Chem. **40** 70-76 (2002)
+#       `DOI: 10.1002/mrc.984 <https://doi.org/10.1002/mrc.984>`_
