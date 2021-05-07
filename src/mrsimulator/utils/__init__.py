@@ -30,6 +30,7 @@ def get_spectral_dimensions(csdm_object, units=False):
         if sw < 0:
             sw = -sw
             co += -increment if even else 0
+
         dim_i = {}
         dim_i["count"] = dim.count
         dim_i["spectral_width"] = sw if not units else f"{sw} Hz"
