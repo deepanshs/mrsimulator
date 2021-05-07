@@ -289,6 +289,13 @@ def test_7():
         a = sf.LMFIT_min_function(params, sim, processor)
         np.testing.assert_almost_equal(-a, data_sum, decimal=8)
 
+        dat = sf.add_csdm_dvs(data.real)
+        fits = sf.bestfit(sim, processor)
+        assert fits[0] == dat
+
+        res = sf.residuals(sim, processor)
+        assert res[0] == -dat
+
     test_array()
 
     sim.config.decompose_spectrum = "spin_system"

@@ -389,18 +389,22 @@ def LMFIT_min_function(
 def bestfit(sim: Simulator, processors: list = None):
     """Return a list of best fit spectrum."""
     processors = processors if isinstance(processors, list) else [processors]
-
-    temp = sim.config.decompose_spectrum[:]
-    sim.config.decompose_spectrum = "none"
     sim.run()
-    sim.config.decompose_spectrum = temp
 
     fits = [
-        proc.apply_operations(data=mth.simulation).real
+        add_csdm_dvs(proc.apply_operations(data=mth.simulation).real)
         for mth, proc in zip(sim.methods, processors)
     ]
 
     return fits
+
+
+def add_csdm_dvs(data):
+    new_data = data.split()
+    new_csdm = 0
+    for item in new_data:
+        new_csdm += item
+    return new_csdm if new_data != [] else None
 
 
 def residuals(sim: Simulator, processors: list = None):
