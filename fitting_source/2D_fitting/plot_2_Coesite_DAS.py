@@ -33,15 +33,14 @@ experiment = cp.load(filename)
 sigma = 0.1888026
 
 # For spectral fitting, we only focus on the real part of the complex dataset
-experiment = experiment.real
+experiment = experiment.real * 1e4
+sigma *= 1e4
 
 # Convert the coordinates along each dimension from Hz to ppm.
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
-# Normalize the spectrum
-max_amp = experiment.max()
-
 # plot of the dataset.
+max_amp = experiment.max()
 levels = (np.arange(14) + 1) * max_amp / 15  # contours are drawn at these levels.
 options = dict(levels=levels, alpha=0.75, linewidths=0.5)  # plot options
 
@@ -82,7 +81,7 @@ spectral_dims = get_spectral_dimensions(experiment)
 
 das = Method2D(
     channels=["17O"],
-    magnetic_flux_density=11.7,  # in T
+    magnetic_flux_density=11.74,  # in T
     spectral_dimensions=[
         {
             **spectral_dims[0],
@@ -137,7 +136,7 @@ processor = sp.SignalProcessor(
         sp.apodization.Gaussian(FWHM="0.15 kHz", dim_index=0),
         sp.apodization.Gaussian(FWHM="0.15 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
-        sp.Scale(factor=5e-4),
+        sp.Scale(factor=5),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
