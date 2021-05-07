@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-27Al MAS NMR of YAG (1st and 2nd order Quad)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+13C MAS NMR of Glycine (CSA)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
-# The following is a quadrupolar lineshape fitting example for the 27Al MAS NMR of
-# Yttrium aluminum garnet (YAG) crystal.
+# The following is a sideband least-squares fitting example of a
+# :math:`^{13}\text{C}` MAS NMR spectrum of Glycine.
 # The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
 # acknowledge Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
 
-from mrsimulator import Simulator, Site, SpinSystem
+from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
@@ -25,11 +25,11 @@ from mrsimulator.utils import get_spectral_dimensions
 # Import the dataset
 # ------------------
 host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
-filename = "27Al%20Quad%20MAS%20YAG%20400MHz.csdf"
+filename = r"13C MAS 960Hz%20-%20Glycine.csdf"
 experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
-sigma = 0.5262264
+sigma = 3.822249
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -41,7 +41,7 @@ _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
-ax.set_xlim(1200, -1200)
+ax.set_xlim(280, -10)
 plt.grid()
 plt.tight_layout()
 plt.show()
@@ -49,25 +49,19 @@ plt.show()
 # %%
 # Create a fitting model
 # ----------------------
-# **Guess model**
-#
-# Create a guess list of spin systems.
-Al_1 = Site(
-    isotope="27Al",
-    isotropic_chemical_shift=70,  # in ppm
-    quadrupolar={"Cq": 5e6, "eta": 0},  # Cq in Hz
+# **Spin System**
+C1 = Site(
+    isotope="13C",
+    isotropic_chemical_shift=176.0,  # in ppm,
+    shielding_symmetric={"zeta": 70, "eta": 0.6},  # zeta in Hz
+)
+C2 = Site(
+    isotope="13C",
+    isotropic_chemical_shift=43.0,  # in ppm,
+    shielding_symmetric={"zeta": 30, "eta": 0.5},  # zeta in Hz
 )
 
-Al_2 = Site(
-    isotope="27Al",
-    isotropic_chemical_shift=0,  # in ppm
-    quadrupolar={"Cq": 1e6, "eta": 0.3},  # Cq in Hz
-)
-spin_systems = [
-    SpinSystem(sites=[Al_1], name="AlO4"),
-    SpinSystem(sites=[Al_2], name="AlO6"),
-]
-
+spin_systems = [SpinSystem(sites=[s]) for s in [C1, C2]]
 
 # %%
 # **Method**
@@ -76,11 +70,11 @@ spin_systems = [
 spectral_dims = get_spectral_dimensions(experiment)
 
 method = BlochDecaySpectrum(
-    channels=["27Al"],
-    magnetic_flux_density=9.395,  # in T
-    rotor_frequency=15248.7,  # in Hz
+    channels=["13C"],
+    magnetic_flux_density=7.05,  # in T
+    rotor_frequency=962.1,  # in Hz
     spectral_dimensions=spectral_dims,
-    experiment=experiment,  # add the measurement to the method.
+    experiment=experiment,  # experimental dataset
 )
 
 # Optimize the script by pre-setting the transition pathways for each spin system from
@@ -89,11 +83,12 @@ for sys in spin_systems:
     sys.transition_pathways = method.get_transition_pathways(sys)
 
 # %%
-# **Guess Spectrum**
+# **Guess Model Spectrum**
 
 # Simulation
 # ----------
 sim = Simulator(spin_systems=spin_systems, methods=[method])
+sim.config.decompose_spectrum = "spin_system"
 sim.run()
 
 # Post Simulation Processing
@@ -101,10 +96,10 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        sp.apodization.Gaussian(FWHM="300 Hz"),
+        sp.apodization.Exponential(FWHM="20 Hz", dv_index=0),  # spin system 0
+        sp.apodization.Exponential(FWHM="200 Hz", dv_index=1),  # spin system 1
         sp.FFT(),
-        sp.Scale(factor=50),
-        sp.baseline.ConstantOffset(offset=-1),
+        sp.Scale(factor=100),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -115,7 +110,7 @@ plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", linewidth=1, label="Experiment")
 ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
-ax.set_xlim(1200, -1200)
+ax.set_xlim(280, -10)
 plt.grid()
 plt.legend()
 plt.tight_layout()
@@ -147,8 +142,8 @@ plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", linewidth=1, label="Experiment")
 ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
-ax.plot(residuals, alpha=0.75, linewidth=1, label="Residuals")
-ax.set_xlim(1200, -1200)
+ax.plot(residuals, alpha=0.75, linewidth=1, label="Residual")
+ax.set_xlim(280, -10)
 plt.grid()
 plt.legend()
 plt.tight_layout()
