@@ -9,15 +9,16 @@ from pydantic import Extra
 
 from . import affine as af  # noqa:F401
 from . import apodization as ap  # noqa:F401
-from ._base import Operations
+from . import baseline as bl  # noqa:F401
+from ._base import AbstractOperation
+
 
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 
 class SignalProcessor(Parseable):
-    """
-    Signal processing class to apply a series of operations to the dependent variables
+    """Signal processing class to apply a series of operations to the dependent variables
     of the simulation dataset.
 
     Arguments
@@ -33,7 +34,7 @@ class SignalProcessor(Parseable):
     """
 
     processed_data: cp.CSDM = None
-    operations: List[Operations] = []
+    operations: List[AbstractOperation] = []
 
     class Config:
         validate_assignment = True
@@ -69,8 +70,7 @@ class SignalProcessor(Parseable):
         return op
 
     def apply_operations(self, data, **kwargs):
-        """
-        Function to apply all the operation functions in the operations member of a
+        """Function to apply all the operation functions in the operations member of a
         SignalProcessor object. Operations applied sequentially over the data member.
 
         Returns:
@@ -85,12 +85,11 @@ class SignalProcessor(Parseable):
         return data
 
 
-class Scale(Operations):
-    r"""
-    Scale the amplitudes of all dependent variables from a CSDM object.
+class Scale(AbstractOperation):
+    r"""Scale the amplitudes of all dependent variables (y) from a CSDM object.
 
     .. math::
-        f(\vec(x)) = scale*\vec(x)
+        f(y) = \text{factor} \times y
 
     Arguments
     ---------
@@ -106,7 +105,6 @@ class Scale(Operations):
     """
 
     factor: float = 1
-    function: str = "Scale"
 
     def operate(self, data):
         r"""Applies the operation.
@@ -117,9 +115,39 @@ class Scale(Operations):
         return data
 
 
-class IFFT(Operations):
+class Linear(AbstractOperation):
+    r"""Apply linear operation across all dependent variables (y) from a CSDM object.
+
+    .. math::
+            f(y) = \text{amplitude} \times y + \text{offset}
+
+    Args:
+        float amplitude: The scaling factor. The default value is 1.
+        float offsett: The offset factor. The default value is 0.
+
+    Example
+    -------
+
+    >>> from mrsimulator import signal_processing as sp
+    >>> operation1 = sp.Linear(amplitude=20, offset=-10)
     """
-    Apply an inverse Fourier transform on all dependent variables of the CSDM object.
+
+    amplitude: float = 1
+    offset: float = 0
+
+    def operate(self, data):
+        """Applies the operation.
+
+        Args:
+            data: CSDM object
+        """
+        data *= self.amplitude
+        data += self.offset
+        return data
+
+
+class IFFT(AbstractOperation):
+    """Apply an inverse Fourier transform on all dependent variables of the CSDM object.
 
     Arguments
     ---------
@@ -134,7 +162,6 @@ class IFFT(Operations):
     """
 
     dim_index: Union[int, list, tuple] = 0
-    function: str = "IFFT"
 
     def operate(self, data):
         r"""Applies the operation.
@@ -148,8 +175,7 @@ class IFFT(Operations):
 
 
 class FFT(IFFT):
-    """
-    Apply a forward Fourier transform on all dependent variables of the CSDM object.
+    """Apply a forward Fourier transform on all dependent variables of the CSDM object.
 
     Arguments
     ---------
@@ -163,8 +189,6 @@ class FFT(IFFT):
     >>> operation3 = sp.FFT(dim_index=0)
     """
 
-    function: str = "FFT"
 
-
-class complex_conjugate(Operations):
+class complex_conjugate(AbstractOperation):
     pass

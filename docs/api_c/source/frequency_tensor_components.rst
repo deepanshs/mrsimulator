@@ -1,5 +1,3 @@
-.. _frequency_tensor_source:
-
 Frequency Tensors, :math:`\Lambda_{L, n}^{(k)}(i,j)`
 ----------------------------------------------------
 

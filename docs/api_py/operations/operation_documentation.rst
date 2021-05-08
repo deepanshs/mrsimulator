@@ -6,8 +6,14 @@ Documentation
 .. currentmodule:: mrsimulator.signal_processing
 
 .. autoclass:: Scale
+.. autoclass:: Linear
 .. autoclass:: IFFT
 .. autoclass:: FFT
+
+.. currentmodule:: mrsimulator.signal_processing.baseline
+
+.. autoclass:: ConstantOffset
+.. autoclass:: Polynomial
 
 .. currentmodule:: mrsimulator.signal_processing.apodization
 

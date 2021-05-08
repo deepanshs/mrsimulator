@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-119Sn MAS NMR of SnO
-^^^^^^^^^^^^^^^^^^^^
+27Al MAS NMR of YAG (1st and 2nd order Quad)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
-# The following is a spinning sideband manifold fitting example for the 119Sn MAS NMR
-# of SnO. The dataset was acquired and shared by Altenhof `et al.` [#f1]_.
+# The following is a quadrupolar lineshape fitting example for the 27Al MAS NMR of
+# Yttrium aluminum garnet (YAG) crystal.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
+# acknowledge Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
 
-from mrsimulator import Simulator, SpinSystem, Site, Coupling
+from mrsimulator import Simulator, Site, SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
@@ -22,11 +24,12 @@ from mrsimulator.utils import get_spectral_dimensions
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/814455/files/119Sn_SnO.csdf"
-experiment = cp.load(filename)
+host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
+filename = "27Al%20Quad%20MAS%20YAG%20400MHz.csdf"
+experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
-sigma = 0.6410905
+sigma = 0.5262264
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -38,7 +41,7 @@ _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
-ax.set_xlim(-1200, 600)
+ax.set_xlim(1200, -1200)
 plt.grid()
 plt.tight_layout()
 plt.show()
@@ -48,31 +51,23 @@ plt.show()
 # ----------------------
 # **Guess model**
 #
-# Create a guess list of spin systems. There are two spin systems present in this
-# example,
-# - 1) an uncoupled :math:`^{119}\text{Sn}` and
-# - 2) a coupled :math:`^{119}\text{Sn}`-:math:`^{117}\text{Sn}` spin systems.
-sn119 = Site(
-    isotope="119Sn",
-    isotropic_chemical_shift=-210,
-    shielding_symmetric={"zeta": 700, "eta": 0.1},
-)
-sn117 = Site(
-    isotope="117Sn",
-    isotropic_chemical_shift=0,
-)
-j_sn = Coupling(
-    site_index=[0, 1],
-    isotropic_j=8150.0,
+# Create a guess list of spin systems.
+Al_1 = Site(
+    isotope="27Al",
+    isotropic_chemical_shift=70,  # in ppm
+    quadrupolar={"Cq": 5e6, "eta": 0},  # Cq in Hz
 )
 
-sn117_abundance = 7.68  # in %
+Al_2 = Site(
+    isotope="27Al",
+    isotropic_chemical_shift=0,  # in ppm
+    quadrupolar={"Cq": 1e6, "eta": 0.3},  # Cq in Hz
+)
 spin_systems = [
-    # uncoupled spin system
-    SpinSystem(sites=[sn119], abundance=100 - sn117_abundance),
-    # coupled spin systems
-    SpinSystem(sites=[sn119, sn117], couplings=[j_sn], abundance=sn117_abundance),
+    SpinSystem(sites=[Al_1], name="AlO4"),
+    SpinSystem(sites=[Al_2], name="AlO6"),
 ]
+
 
 # %%
 # **Method**
@@ -81,9 +76,9 @@ spin_systems = [
 spectral_dims = get_spectral_dimensions(experiment)
 
 method = BlochDecaySpectrum(
-    channels=["119Sn"],
+    channels=["27Al"],
     magnetic_flux_density=9.395,  # in T
-    rotor_frequency=10000,  # in Hz
+    rotor_frequency=15248.7,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # add the measurement to the method.
 )
@@ -106,9 +101,10 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        sp.apodization.Exponential(FWHM="1500 Hz"),
+        sp.apodization.Gaussian(FWHM="300 Hz"),
         sp.FFT(),
-        sp.Scale(factor=5000),
+        sp.Scale(factor=50),
+        sp.baseline.ConstantOffset(offset=-1),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -119,7 +115,7 @@ plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", linewidth=1, label="Experiment")
 ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
-ax.set_xlim(-1200, 600)
+ax.set_xlim(1200, -1200)
 plt.grid()
 plt.legend()
 plt.tight_layout()
@@ -132,25 +128,6 @@ plt.show()
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
 params = sf.make_LMFIT_params(sim, processor)
-
-# Remove the abundance parameters from params. Since the measurement detects 119Sn, we
-# also remove the isotropic chemical shift parameter of 117Sn site from params. The
-# 117Sn is the site at index 1 of the spin system at index 1.
-params.pop("sys_0_abundance")
-params.pop("sys_1_abundance")
-params.pop("sys_1_site_1_isotropic_chemical_shift")
-
-# Since the 119Sn site is shared between the two spin systems, we add constraints to the
-# 119Sn site parameters from the spin system at index 1 to be the same as 119Sn site
-# parameters from the spin system at index 0.
-lst = [
-    "isotropic_chemical_shift",
-    "shielding_symmetric_zeta",
-    "shielding_symmetric_eta",
-]
-for item in lst:
-    params[f"sys_1_site_0_{item}"].expr = f"sys_0_site_0_{item}"
-
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
@@ -171,17 +148,15 @@ ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", linewidth=1, label="Experiment")
 ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
 ax.plot(residuals, alpha=0.75, linewidth=1, label="Residuals")
-ax.set_xlim(-1200, 600)
+ax.set_xlim(1200, -1200)
 plt.grid()
 plt.legend()
 plt.tight_layout()
 plt.show()
 
-
 # %%
 #
-# .. [#f1] Altenhof A. R., Jaroszewicz M. J., Lindquist A. W., Foster L. D. D.,
-#       Veinberg S. L., and Schurko R. W. Practical Aspects of Recording Ultra-Wideline
-#       NMR Patterns under Magic-Angle Spinning Conditions.
-#       J. Phys. Chem. C. 2020, **124**, 27, 14730–14744
-#       `DOI: 10.1021/acs.jpcc.0c04510  <https://doi.org/10.1021/acs.jpcc.0c04510>`_
+# .. [#f1] D.Massiot, F.Fayon, M.Capron, I.King, S.Le Calvé, B.Alonso, J.O.Durand,
+#       B.Bujoli, Z.Gan, G.Hoatson, 'Modelling one and two-dimensional solid-state NMR
+#       spectra.', Magn. Reson. Chem. **40** 70-76 (2002)
+#       `DOI: 10.1002/mrc.984 <https://doi.org/10.1002/mrc.984>`_

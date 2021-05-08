@@ -16,8 +16,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class Coupling(Parseable):
-    """
-    Base class representing a two-site coupled nuclear spin interaction tensor
+    """Base class representing a two-site coupled nuclear spin interaction tensor
     parameters, which include the J-coupling and dipolar tensor.
 
     .. rubric:: Attribute Documentation
@@ -194,8 +193,7 @@ class Coupling(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantity from a dictionary representation of the Coupling
+        """Parse the physical quantity from a dictionary representation of the Coupling
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 

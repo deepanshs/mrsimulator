@@ -32,7 +32,7 @@ sim.load_spin_systems(filename)
 # spinning speed spectrum.
 das = Method2D(
     channels=["17O"],
-    magnetic_flux_density=11.7,  # in T
+    magnetic_flux_density=11.74,  # in T
     spectral_dimensions=[
         {
             "count": 256,

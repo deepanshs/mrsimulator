@@ -1,4 +1,4 @@
-.. _requirements:
+..  _requirements:
 
 Package dependencies
 ====================
@@ -7,13 +7,13 @@ Package dependencies
 
 **Required packages**
 
-- `NumPy>=1.17,<1.20 <http://www.numpy.org>`_
+- `NumPy>=1.17 <http://www.numpy.org>`_
 - openblas
 - cython>=0.29.14
 - typing-extensions>=3.7
 - `matplotlib>=3.3.3 <https://matplotlib.org>`_ for figures and visualization,
 - monty>=2.0.4
-- `csdmpy>=0.3.4 <https://csdmpy.readthedocs.io/en/stable/>`_
+- `csdmpy>=0.4 <https://csdmpy.readthedocs.io/en/stable/>`_
 - `pydantic>=1.0 <https://pydantic-docs.helpmanual.io>`_
 - monty>=2.0.4
 

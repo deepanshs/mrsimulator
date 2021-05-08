@@ -49,19 +49,27 @@ from lmfit import Parameters
 def save(
     filename: str,
     simulator: Simulator,
-    signal_processors=None,
-    fit_report=None,
+    signal_processors: list = None,
+    params: Parameters = None,
     with_units: bool = True,
 ):
-    sim = simulator.json(units=with_units)
-    if signal_processors is not None:
-        sim["signal_processors"] = [item.json() for item in signal_processors]
+    """Serialize the Simulator, list of SignalProcessor, and lmfit Parameters objects
+    to a .mrsim file.
 
-    sim["params"] = None if fit_report is None else fit_report.params.dumps()
+    Args:
+        str filename: The data is serialized to this file.
+        sim: Simulator object.
+        signal_processors: A list of PostSimulator objects corresponding to the methods
+            in the Simulator object. Default is None.
+        params: lmfit Parameters object. Default is None.
+        bool with_units: If true, physical quantities are represented as string with
+            units. The default is True.
+    """
+    py_dict = dict(simulator, signal_processors, params, with_units)
 
     with open(filename, "w", encoding="utf8") as outfile:
         json.dump(
-            sim,
+            py_dict,
             outfile,
             ensure_ascii=False,
             sort_keys=False,
@@ -70,12 +78,61 @@ def save(
         )
 
 
+def dict(
+    simulator: Simulator,
+    signal_processors: list = None,
+    params: Parameters = None,
+    with_units: bool = True,
+):
+    """Export the Simulator, list of SignalProcessor, and lmfit Parameters objects
+    to a python dictionary.
+
+    Args:
+        sim: Simulator object.
+        signal_processors: A list of PostSimulator objects corresponding to the methods
+            in the Simulator object. Default is None.
+        params: lmfit Parameters object. Default is None.
+        bool with_units: If true, physical quantities are represented as string with
+            units. The default is True.
+
+    Return:
+        Python dictionary
+    """
+    py_dict = simulator.json(units=with_units)
+    if signal_processors is not None:
+        py_dict["signal_processors"] = [item.json() for item in signal_processors]
+
+    py_dict["params"] = None if params is None else params.dumps()
+
+    return py_dict
+
+
 def load(filename: str, parse_units: bool = True):
+    """Load Simulator, list of SignalProcessor and optionally lmfit Parameters objects
+    from the .mrsim file.
+
+    Args:
+        str filename: The location to the .mrsim file.
+        bool parse_units: If true, parse the dictionary for units. The default is True.
+
+    Return:
+        Ordered List: Simulator, List[SignalProcessor], Parameters.
+    """
     val = import_json(filename)
     return parse(val, parse_units)
 
 
 def parse(py_dict, parse_units: bool = True):
+    """Parse the dictionary object to respective Simulator, SignalProcessor and
+    optionally lmfit Parameters object.
+
+    Args:
+        dict py_dict: Python dictionary representation of mrsimulator.
+        bool parse_units: If true, parse the dictionary for units. Default is True.
+
+    Return:
+        Ordered List: Simulator, List[SignalProcessor], Parameters.
+    """
     sim = Simulator.parse(py_dict, parse_units)
 
     signal_processors = (

@@ -22,8 +22,6 @@ from mrsimulator.utils.parseable import Parseable
 
 from .config import ConfigSimulator
 
-# from IPython.display import JSON
-
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
@@ -31,8 +29,7 @@ __CPU_count__ = psutil.cpu_count()
 
 
 class Simulator(Parseable):
-    """
-    The simulator class.
+    """The simulator class.
 
     Attributes
     ----------
@@ -143,8 +140,7 @@ class Simulator(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantity from a dictionary representation of the Simulator
+        """Parse the physical quantity from a dictionary representation of the Simulator
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 
@@ -210,8 +206,7 @@ class Simulator(Parseable):
         return Simulator(**py_copy_dict)
 
     def get_isotopes(self, spin_I: float = None, symbol: bool = False) -> list:
-        """
-        List of unique isotopes from the sites within the list of the spin systems
+        """List of unique isotopes from the sites within the list of the spin systems
         corresponding to spin quantum number `I`. If `I` is None, a list of all unique
         isotopes is returned instead.
 
@@ -256,8 +251,7 @@ class Simulator(Parseable):
     #     return JSON(self.json(include_methods=True, include_version=True))
 
     def load_spin_systems(self, filename: str):
-        """
-        Load a list of spin systems from the given JSON serialized file.
+        """Load a list of spin systems from the given JSON serialized file.
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
@@ -276,8 +270,7 @@ class Simulator(Parseable):
         self.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in contents]
 
     def export_spin_systems(self, filename: str):
-        """
-        Export a list of spin systems to a JSON serialized file.
+        """Export a list of spin systems to a JSON serialized file.
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
@@ -453,58 +446,60 @@ class Simulator(Parseable):
         return Sites(unique_sites)
 
     def _as_csdm_object(self, data: np.ndarray, method: Method) -> cp.CSDM:
-        """
-        Converts the simulation data from the given method to a CSDM object. Read
+        """Converts the simulation data from the given method to a CSDM object. Read
         `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_ for details
 
         Return:
             A CSDM object.
         """
-        new = cp.new()
-        for dimension in method.spectral_dimensions[::-1]:
-            new.add_dimension(dimension.to_csdm_dimension())
-            if new.x[-1].origin_offset != 0:
-                new.x[-1].to("ppm", "nmr_frequency_ratio")
+        dim = [sd.to_csdm_dimension() for sd in method.spectral_dimensions[::-1]]
+        _ = [
+            item.to("ppm", "nmr_frequency_ratio")
+            for item in dim
+            if item.origin_offset != 0
+        ]
 
-        dependent_variable = {
-            "type": "internal",
-            "quantity_type": "scalar",
-            "numeric_type": "float64",
-        }
-        for index, datum in enumerate(data):
-            if len(datum) == 0:
-                continue
+        dv = [
+            {
+                "type": "internal",
+                "quantity_type": "scalar",
+                "numeric_type": "float64",
+                "components": [datum],
+                **self._get_dv_metadata(index),
+            }
+            for index, datum in enumerate(data)
+        ]
 
-            dependent_variable["components"] = [datum]
-            if self.config.decompose_spectrum == "spin_system":
-                self._update_name_description_application(dependent_variable, index)
+        return cp.CSDM(dimensions=dim, dependent_variables=dv)
 
-            new.add_dependent_variable(dependent_variable)
-            new.y[-1].encoding = "base64"
-        return new
-
-    def _update_name_description_application(self, obj, index):
+    def _get_dv_metadata(self, index):
         """Update the name and description of the dependent variable attributes
         using fields from the spin system."""
+        if self.config.decompose_spectrum != "spin_system":
+            return {}
+
         if self.spin_systems == []:
-            return
+            return {}
+
+        obj = {}
         label = self.spin_systems[index].label
         if label not in ["", None]:
-            obj.update({"components_label": [label]})
+            obj["components_label"] = [label]
 
         name = self.spin_systems[index].name
         name = name if name not in ["", None] else f"spin system {index}"
-        obj.update({"name": name})
+        obj["name"] = name
 
         description = self.spin_systems[index].description
         if description not in ["", None]:
-            obj.update({"description": description})
+            obj["description"] = description
 
         obj["application"] = {
             "com.github.DeepanshS.mrsimulator": {
                 "spin_systems": [self.spin_systems[index].json()]
             }
         }
+        return obj
 
 
 class Sites(AbstractList):

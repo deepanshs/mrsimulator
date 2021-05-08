@@ -18,8 +18,7 @@ __integration_volume_octants__ = [1, 4]
 
 
 class ConfigSimulator(Parseable):
-    r"""
-    The configurable attributes for the Simulator class used in simulation.
+    r"""The configurable attributes for the Simulator class used in simulation.
 
     Attributes
     ----------

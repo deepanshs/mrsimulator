@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
+"""The Event class."""
+from typing import ClassVar
 from typing import Dict
 from typing import Union
 
 import numpy as np
 from pydantic import validator
 
-from ._base import Operations
+from ._base import ModuleOperation
 from .utils import _get_broadcast_shape
 from .utils import _str_to_quantity
 from .utils import CONST
@@ -14,31 +16,14 @@ __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-class AffineTransformation(Operations):
+class AffineTransformation(ModuleOperation):
     dim_index: int = 0
     dv_index: Union[int, list, tuple] = None  # if none apply to all
-    function: str = "affine"
-    type: str
+    module_name: ClassVar = __name__
 
-    # @classmethod
-    # def parse_dict_with_units(cls, py_dict: dict):
-    #     obj = super().parse_dict_with_units(py_dict)
-    #     return getattr(modules[__name__], py_dict["type"])(**obj.dict())
-
-
-def get_coordinates(dim):
-    """Return the coordinates of dimension, dim, without equivalence units"""
-
-    def get_coords(dim):
-        equivalent_fn, equivalent_unit = dim._equivalencies, dim._equivalent_unit
-        dim._equivalencies, dim._equivalent_unit = None, None
-
-        coordinates = dim.coordinates
-
-        dim._equivalencies, dim._equivalent_unit = equivalent_fn, equivalent_unit
-        return coordinates
-
-    return get_coords(dim) if not hasattr(dim, "subtype") else get_coords(dim.subtype)
+    @property
+    def function(self):
+        return "affine"
 
 
 class Shear(AffineTransformation):
@@ -70,7 +55,7 @@ class Shear(AffineTransformation):
 
     >>> operation = sp.affine.Shear(factor='143.4 Hz', dim_index=0, parallel=1)
     """
-    type: str = "Shear"
+
     factor: Union[float, str] = 0
     parallel: int = 1
     property_units: Dict = {"factor": CONST}
@@ -80,16 +65,16 @@ class Shear(AffineTransformation):
         return _str_to_quantity(v, values, "factor")
 
     def operate(self, data):
-        """
-        Applies the operation for which the class is named for.
+        """Applies the operation.
 
-        data: CSDM object.
+        Args:
+            data: CSDM object.
         """
         dims = data.dimensions
         n_dim = len(dims)
 
         x, y = dims[self.dim_index], dims[self.parallel]
-        x_value, y_value = [get_coordinates(_).value for _ in [x, y]]
+        x_value, y_value = [self.get_coordinates(_).value for _ in [x, y]]
 
         vector_x = _get_broadcast_shape(x_value, self.dim_index, n_dim)
         vector_y = _get_broadcast_shape(y_value, self.parallel, n_dim)
@@ -125,7 +110,7 @@ class Scale(AffineTransformation):
 
     >>> operation = sp.affine.Scale(factor=2.14, dim_index=0)
     """
-    type: str = "Scale"
+
     factor: Union[float, str] = 1
     property_units: Dict = {"factor": CONST}
 
@@ -134,10 +119,10 @@ class Scale(AffineTransformation):
         return _str_to_quantity(v, values, "factor")
 
     def operate(self, data):
-        """
-        Applies the operation for which the class is named for.
+        """Applies the operation.
 
-        data: CSDM object.
+        Args:
+            data: CSDM object.
         """
         data_ref = data.x[self.dim_index]
         data_ref.increment *= self.factor

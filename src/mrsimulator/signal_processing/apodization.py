@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
+"""The Event class."""
+from typing import ClassVar
 from typing import Dict
 from typing import Union
 
 import numpy as np
 from pydantic import validator
 
-from ._base import Operations
+from ._base import ModuleOperation
 from .utils import _get_broadcast_shape
 from .utils import _str_to_quantity
 from .utils import CONST
@@ -14,20 +16,14 @@ __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 
-class Apodization(Operations):
+class Apodization(ModuleOperation):
     dim_index: Union[int, list, tuple] = 0
     dv_index: Union[int, list, tuple] = None  # if none apply to all
-    function: str = "apodization"
-    type: str
+    module_name: ClassVar = __name__
 
-    # @classmethod
-    # def parse_dict_with_units(cls, py_dict: dict):
-    #     obj = super().parse_dict_with_units(py_dict)
-    #     return getattr(modules[__name__], py_dict["type"])(**obj.dict())
-
-    @staticmethod
-    def _get_correct_coordinates(x, unit):
-        return x.to(unit).value
+    @property
+    def function(self):
+        return "apodization"
 
     def operate(self, data):
         """Apply the operation function.
@@ -39,18 +35,16 @@ class Apodization(Operations):
         ndim = len(dims)
 
         dim_index = self.dim_index
-        if isinstance(dim_index, int):
-            dim_index = [dim_index]
+        dim_index = [dim_index] if isinstance(dim_index, int) else dim_index
 
-        for dim_index_ in dim_index:
-            x = dims[dim_index_].coordinates
-            apodization_vactor = _get_broadcast_shape(self.fn(x), dim_index_, ndim)
+        for i in dim_index:
+            x = self.get_coordinates(dims[i])  # dims[i].coordinates
+            apodization_vactor = _get_broadcast_shape(self.fn(x), i, ndim)
 
-            n = len(data.y)
-            dv_indexes = self._get_dv_indexes(self.dv_index, n=n)
+            dv_indexes = self._get_dv_indexes(self.dv_index, n=len(data.y))
 
-            for i in dv_indexes:
-                data.y[i].components *= apodization_vactor
+            for index in dv_indexes:
+                data.y[index].components *= apodization_vactor
         return data
 
 
@@ -90,7 +84,7 @@ class Gaussian(Apodization):
 
     >>> operation4 = sp.apodization.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
     """
-    type: str = "Gaussian"
+
     FWHM: Union[float, str] = 0
     property_units: Dict = {"FWHM": CONST}
 
@@ -99,13 +93,13 @@ class Gaussian(Apodization):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
-        x = self._get_correct_coordinates(x, unit=1.0 / self.property_units["FWHM"])
+        x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
         sigma = self.FWHM / 2.354820045030949
         return 1.0 if self.FWHM == 0.0 else np.exp(-2.0 * (np.pi * sigma * x) ** 2)
 
 
 class Exponential(Apodization):
-    r"""Apodize dependent variable objects of CSDM data by an exponential function.
+    r"""Apodize a dependent variable of the CSDM object by an exponential function.
 
     The apodization function follows
 
@@ -140,7 +134,7 @@ class Exponential(Apodization):
 
     >>> operation5 = sp.apodization.Exponential(FWHM='143.4 m', dim_index=0, dv_index=0)
     """
-    type: str = "Exponential"
+
     FWHM: Union[float, str] = 0
     property_units: Dict = {"FWHM": CONST}
 
@@ -149,5 +143,5 @@ class Exponential(Apodization):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
-        x = self._get_correct_coordinates(x, unit=1.0 / self.property_units["FWHM"])
+        x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
         return 1.0 if self.FWHM == 0.0 else np.exp(-self.FWHM * np.pi * np.abs(x))

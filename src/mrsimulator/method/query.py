@@ -74,10 +74,12 @@ class SymmetryQuery(Parseable):
     def permutate_query(self, symmetry, n_site_at_channel_id):
         """Permutation of symmetry query based on the number of sites in given channel.
 
-        (str) symmetry: The symmetry element, 'P' or 'D'.
-        (int) n_site_at_channel: Number of sites for the given channel.
+        Args:
+            (str) symmetry: The symmetry element, 'P' or 'D'.
+            (int) n_site_at_channel: Number of sites for the given channel.
 
-        Example. Consider the following
+        Example:
+            Consider the following
                 query = {P: [-1], D: [1]}
                 n_isotopes = [3]
                 channels = ['A']
@@ -97,7 +99,7 @@ class SymmetryQuery(Parseable):
 
 
 class TransitionQuery(Parseable):
-    """TransitionQuery class for quering transition symmetry funciton.
+    """TransitionQuery class for quering transition symmetry function.
 
     Attributes
     ----------

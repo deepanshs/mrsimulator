@@ -1,8 +1,8 @@
 .. _benchmark:
 
-=========
-Benchmark
-=========
+=====================
+Performance benchmark
+=====================
 
 One of the objectives in the design of the ``mrsimulator`` library is to enable
 fast NMR spectrum simulation.

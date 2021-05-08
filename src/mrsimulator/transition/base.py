@@ -10,8 +10,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class Transition(Parseable):
-    r"""
-    Base Transition class describes a spin transition between two energy states, where
+    r"""Base Transition class describes a spin transition between two energy states, where
     the energy states are described using the weakly coupled basis.
 
     .. math::
