@@ -55,7 +55,7 @@ plt.show()
 Al_1 = Site(
     isotope="27Al",
     isotropic_chemical_shift=70,  # in ppm
-    quadrupolar={"Cq": 5e6, "eta": 0},  # Cq in Hz
+    quadrupolar={"Cq": 6e6, "eta": 0},  # Cq in Hz
 )
 
 Al_2 = Site(
@@ -127,7 +127,7 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = sf.make_LMFIT_params(sim, processor)
+params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%

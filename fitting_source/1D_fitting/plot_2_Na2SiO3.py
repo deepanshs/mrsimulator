@@ -158,7 +158,7 @@ params = sf.make_LMFIT_params(sim, processor)
 
 # %%
 # The `make_LMFIT_params` parses the instances of the ``Simulator`` and the
-# ``PostSimulator`` objects for parameters and returns an LMFIT `Parameters` object.
+# ``PostSimulator`` objects for parameters and returns a LMFIT `Parameters` object.
 #
 # **Customize the Parameters:**
 # You may customize the parameters list, ``params``, as desired. Here, we remove the

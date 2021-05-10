@@ -149,14 +149,18 @@ plt.show()
 # as described in the previous example.
 # Here, we make use of a utility function,
 # :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params`, to simplifies the
-# LMFIT parameters generation process.
+# LMFIT parameters generation process. By default, the function only creates parameters
+# from the SpinSystem and SignalProcessor objects. Often, in spectrum with sidebands,
+# spinning speed may not be accurately known; and is, therefore, included as a fitting
+# parameter. To include a keyword from the method object, use the *include* argument
+# of the function, as follows,
 #
 # **Step 6:** Create a list of parameters.
-params = sf.make_LMFIT_params(sim, processor)
+params = sf.make_LMFIT_params(sim, processor, include="rotor_frequency")
 
 # %%
 # The `make_LMFIT_params` parses the instances of the ``Simulator`` and the
-# ``PostSimulator`` objects for parameters and returns an LMFIT `Parameters` object.
+# ``PostSimulator`` objects for parameters and returns a LMFIT `Parameters` object.
 #
 # **Customize the Parameters:**
 # You may customize the parameters list, ``params``, as desired. Here, we remove the

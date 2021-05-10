@@ -104,15 +104,15 @@ def test_update_simulator_from_LMFIT_params():
     params = sf.make_simulator_params(sim, include={"rotor_frequency"})
     set_params(params)
     params["mth_0_rotor_frequency"].value = 1051.120
-    params["mth_1_rotor_frequency"].value = 11912.908
-    params["mth_3_rotor_frequency"].value = 10000
+    params["mth_1_rotor_frequency"].value = 12442.12
+    params["mth_3_rotor_frequency"].value = 35550
     sf._update_simulator_from_LMFIT_params(params, sim)
     check_object(sim)
     assert sim.methods[0].spectral_dimensions[0].events[0].rotor_frequency == 1051.120
-    assert sim.methods[1].spectral_dimensions[0].events[0].rotor_frequency == 11912.908
+    assert sim.methods[1].spectral_dimensions[0].events[0].rotor_frequency == 12442.12
     assert sim.methods[2].spectral_dimensions[0].events[0].rotor_frequency == 1e12
     assert sim.methods[2].spectral_dimensions[1].events[0].rotor_frequency == 1e12
-    assert sim.methods[3].spectral_dimensions[0].events[0].rotor_frequency == 10000
+    assert sim.methods[3].spectral_dimensions[0].events[0].rotor_frequency == 35550
     assert sim.methods[3].spectral_dimensions[1].events[0].rotor_frequency == 1e12
 
 

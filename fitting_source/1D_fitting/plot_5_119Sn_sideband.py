@@ -131,7 +131,7 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = sf.make_LMFIT_params(sim, processor)
+params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
 
 # Remove the abundance parameters from params. Since the measurement detects 119Sn, we
 # also remove the isotropic chemical shift parameter of 117Sn site from params. The

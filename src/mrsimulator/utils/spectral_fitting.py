@@ -264,7 +264,12 @@ def make_simulator_params(sim: Simulator, include={}):
         ]
 
         _ = [
-            params.add(name=f"mth_{i}_rotor_frequency", value=val[0], min=0)
+            params.add(
+                name=f"mth_{i}_rotor_frequency",
+                value=val[0],
+                min=val[0] - 100,
+                max=val[0] + 100,
+            )
             for i, val in enumerate(values)
             if val != []
         ]
@@ -284,6 +289,8 @@ def make_LMFIT_params(sim: Simulator, processors: list = None, include={}):
         Simulator sim: Simulator object.
         list processors: List of SignalProcessor objects. The order must match the order
             of methods within the simulator object.
+        set include: set of keywords from the method object to include as a fitting
+            parameter. Default is {}.
 
     The parameter name assocciated with the spin system within Simulator object is
     generated using the following nomenclature- *sys_i_site_j_attribute1_attribute2*
@@ -332,11 +339,10 @@ def _update_simulator_from_LMFIT_params(params, sim: Simulator):
         obj.__dict__[ids[-1]] = value
 
     def set_mth_value(obj, key, value):
-        ids = key.split("_")
-        print(ids)
+        index = int(key.split("_")[1])
         _ = [
             sp.events[0].__setattr__("rotor_frequency", value)
-            for sp in obj.__dict__["methods"][int(ids[1])].spectral_dimensions
+            for sp in obj.__dict__["methods"][index].spectral_dimensions
             if sp.events[0].rotor_frequency != 1e12
         ]
 
