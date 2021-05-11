@@ -15,11 +15,9 @@ import subprocess
 import sys
 import warnings
 
+import plotly.io as pio
 from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
-
-# import plotly.io as pio
-# pio.renderers.default = "sphinx_gallery"
 
 sys.path.insert(0, os.path.abspath("../.."))
 
@@ -43,6 +41,9 @@ with open("../src/mrsimulator/__init__.py", "r") as f:
 version = ".".join(__version__.split(".")[:2])
 # The full version, including alpha/beta/rc tags
 release = __version__
+
+# Plotly config
+pio.renderers.default = "sphinx_gallery"
 
 # -- General configuration ---------------------------------------------------
 show_authors = True
@@ -149,6 +150,7 @@ sphinx_gallery_conf = {
     },
     "backreferences_dir": "examples",
     "doc_module": ("mrsimulator"),
+    "image_scrapers": ("matplotlib"),
     # "compress_images": ("images", "thumbnails"),
     # "show_memory": True,
     "first_notebook_cell": (

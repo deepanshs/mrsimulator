@@ -1,23 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-13C MAS NMR of Glycine (CSA)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+13C MAS NMR of Glycine (CSA) [960 Hz]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # The following is a sideband least-squares fitting example of a
-# :math:`^{13}\text{C}` MAS NMR spectrum of Glycine.
+# :math:`^{13}\text{C}` MAS NMR spectrum of Glycine spinning at 960 Hz.
 # The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
 # acknowledge Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 from lmfit import Minimizer, report_fit
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
-from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.utils import get_spectral_dimensions, plotly_scatter_obj
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -25,7 +25,7 @@ from mrsimulator.utils import get_spectral_dimensions
 # Import the dataset
 # ------------------
 host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
-filename = r"13C MAS 960Hz%20-%20Glycine.csdf"
+filename = "13C MAS 960Hz - Glycine.csdf"
 experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
@@ -38,13 +38,9 @@ experiment = experiment.real
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
 # plot of the dataset.
-plt.figure(figsize=(4.25, 3.0))
-ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5)
-ax.set_xlim(280, -10)
-plt.grid()
-plt.tight_layout()
-plt.show()
+fig = go.Figure(plotly_scatter_obj(experiment))
+fig
+
 
 # %%
 # Create a fitting model
@@ -61,7 +57,7 @@ C2 = Site(
     shielding_symmetric={"zeta": 30, "eta": 0.5},  # zeta in Hz
 )
 
-spin_systems = [SpinSystem(sites=[s]) for s in [C1, C2]]
+spin_systems = [SpinSystem(sites=[C1], name="C1"), SpinSystem(sites=[C2], name="C2")]
 
 # %%
 # **Method**
@@ -72,7 +68,7 @@ spectral_dims = get_spectral_dimensions(experiment)
 method = BlochDecaySpectrum(
     channels=["13C"],
     magnetic_flux_density=7.05,  # in T
-    rotor_frequency=962.1,  # in Hz
+    rotor_frequency=960,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # experimental dataset
 )
@@ -106,16 +102,10 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
-plt.figure(figsize=(4.25, 3.0))
-ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
-ax.set_xlim(280, -10)
-plt.grid()
-plt.legend()
-plt.tight_layout()
-plt.show()
-
+fig_obj = plotly_scatter_obj(experiment, label="experiment")
+fig_obj["data"] += plotly_scatter_obj(processed_data)["data"]
+fig = go.Figure(fig_obj)
+fig
 
 # %%
 # Least-squares minimization with LMFIT
@@ -137,17 +127,11 @@ report_fit(result)
 best_fit = sf.bestfit(sim, processor)[0]
 residuals = sf.residuals(sim, processor)[0]
 
-# Plot the spectrum
-plt.figure(figsize=(4.25, 3.0))
-ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
-ax.plot(residuals, alpha=0.75, linewidth=1, label="Residual")
-ax.set_xlim(280, -10)
-plt.grid()
-plt.legend()
-plt.tight_layout()
-plt.show()
+fig_obj = plotly_scatter_obj(experiment, label="experiment")
+fig_obj["data"] += plotly_scatter_obj(best_fit)["data"]
+fig_obj["data"] += plotly_scatter_obj(residuals, label="residuals")["data"]
+fig = go.Figure(fig_obj)
+fig
 
 # %%
 #

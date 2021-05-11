@@ -439,12 +439,10 @@ def bestfit(sim: Simulator, processors: list = None):
     processors = processors if isinstance(processors, list) else [processors]
     sim.run()
 
-    fits = [
-        add_csdm_dvs(proc.apply_operations(data=mth.simulation).real)
+    return [
+        proc.apply_operations(data=mth.simulation).real
         for mth, proc in zip(sim.methods, processors)
     ]
-
-    return fits
 
 
 def add_csdm_dvs(data):
@@ -457,7 +455,8 @@ def add_csdm_dvs(data):
 
 def residuals(sim: Simulator, processors: list = None):
     """Return a list of best fit spectrum."""
-    residual_ = bestfit(sim, processors)
+    fits = bestfit(sim, processors)
+    residual_ = [add_csdm_dvs(item) for item in fits]
 
     for res, mth in zip(residual_, sim.methods):
         exp_data = get_correct_data_order(mth.experiment)

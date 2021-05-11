@@ -7,3 +7,4 @@ matplotlib>=3.3.3
 fftw>=3.3.0
 pandas>=1.1.3
 openblas
+plotly

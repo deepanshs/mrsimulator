@@ -331,7 +331,7 @@ def test_7():
 
         dat = sf.add_csdm_dvs(data.real)
         fits = sf.bestfit(sim, processor)
-        assert fits[0] == dat
+        assert sf.add_csdm_dvs(fits[0]) == dat
 
         res = sf.residuals(sim, processor)
         assert res[0] == -dat
