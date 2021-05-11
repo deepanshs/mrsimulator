@@ -51,7 +51,7 @@ experiment.x[0].to("ppm", "nmr_frequency_ratio")
 # plot of the dataset.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5)
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
 ax.set_xlim(100, -50)
 plt.grid()
 plt.tight_layout()
@@ -64,19 +64,22 @@ plt.show()
 # A fitting model is a composite of ``Simulator`` and ``SignalProcessor`` objects.
 #
 # **Step 1:** Create initial guess sites and spin systems
-O17_1 = Site(
+O1 = Site(
     isotope="17O",
     isotropic_chemical_shift=60.0,  # in ppm,
     quadrupolar={"Cq": 4.2e6, "eta": 0.5},  # Cq in Hz
 )
 
-O17_2 = Site(
+O2 = Site(
     isotope="17O",
     isotropic_chemical_shift=40.0,  # in ppm,
     quadrupolar={"Cq": 2.4e6, "eta": 0},  # Cq in Hz
 )
 
-spin_systems = [SpinSystem(sites=[s], abundance=50) for s in [O17_1, O17_2]]
+spin_systems = [
+    SpinSystem(sites=[O1], abundance=50, name="O1"),
+    SpinSystem(sites=[O2], abundance=50, name="O2"),
+]
 
 # %%
 # **Step 2:** Create the method object. Create an appropriate method object that closely
@@ -113,6 +116,7 @@ for sys in spin_systems:
 # %%
 # **Step 3:** Create the Simulator object and add the method and spin system objects.
 sim = Simulator(spin_systems=spin_systems, methods=[method])
+sim.config.decompose_spectrum = "spin_system"
 sim.run()
 
 # %%
@@ -132,8 +136,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # **Step 5:** The plot of the data and the guess spectrum.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(processed_data, linewidth=2, alpha=0.6)
 ax.set_xlim(100, -50)
 plt.legend()
 plt.grid()
@@ -162,9 +166,11 @@ params = sf.make_LMFIT_params(sim, processor)
 #
 # **Customize the Parameters:**
 # You may customize the parameters list, ``params``, as desired. Here, we remove the
-# abundance of the two spin systems and constrain it to the initial value of 50% each.
+# abundance of the two spin systems and constrain it to the initial value of 50% each,
+# and constrain `eta=0` for spin system at index 1.
 params.pop("sys_0_abundance")
 params.pop("sys_1_abundance")
+params["sys_1_site_0_quadrupolar_eta"].vary = False
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
@@ -187,9 +193,9 @@ residuals = sf.residuals(sim, processor)[0]
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
-ax.plot(residuals, alpha=0.75, linewidth=1, label="Residuals")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(residuals, color="gray", linewidth=0.5, label="Residual")
+ax.plot(best_fit, linewidth=2, alpha=0.6)
 ax.set_xlabel("$^{17}$O frequency / ppm")
 ax.set_xlim(100, -50)
 plt.legend()

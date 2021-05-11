@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-2H MAS NMR of Methionine
-^^^^^^^^^^^^^^^^^^^^^^^^
+23Na MAS NMR of Nasicon
+^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
-# The following is a least-squares fitting example of a :math:`^{2}\text{H}` MAS NMR
-# spectrum of Methionine. The experimental dataset is a part of DMFIT [#f1]_ examples,
-# and we acknowledge Dr. Dominique Massiot for sharing the dataset.
+# The following is a least-squares fitting example of a :math:`^{23}\text{Na}` MAS NMR
+# spectrum of Nasicon, :math:`\text{NaZr}_2(\text{PO}_4)_3`.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
+# acknowledge Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
 
-from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator import Simulator, Site, SpinSystem
+from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
@@ -24,11 +25,11 @@ from mrsimulator.utils import get_spectral_dimensions
 # Import the dataset
 # ------------------
 host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
-filename = "2H methiodine MAS.csdf"
+filename = "23Na QUAD MAS Nasicon.csdf"
 experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
-sigma = 0.3026282
+sigma = 0.2368151
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -40,7 +41,7 @@ _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
-ax.set_xlim(600, -700)
+ax.set_xlim(100, -150)
 plt.grid()
 plt.tight_layout()
 plt.show()
@@ -49,13 +50,13 @@ plt.show()
 # Create a fitting model
 # ----------------------
 # **Spin System**
-H_2 = Site(
-    isotope="2H",
-    isotropic_chemical_shift=-57,  # in ppm,
-    quadrupolar={"Cq": 3e4, "eta": 0},  # Cq in Hz
+Na23 = Site(
+    isotope="23Na",
+    isotropic_chemical_shift=-20.0,  # in ppm
+    quadrupolar={"Cq": 2.3e6, "eta": 0.03},  # Cq in Hz
 )
+spin_systems = [SpinSystem(sites=[Na23])]
 
-spin_systems = [SpinSystem(sites=[H_2])]
 
 # %%
 # **Method**
@@ -63,12 +64,12 @@ spin_systems = [SpinSystem(sites=[H_2])]
 # Get the spectral dimension paramters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = BlochDecaySpectrum(
-    channels=["2H"],
-    magnetic_flux_density=9.4,  # in T
-    rotor_frequency=4517,  # in Hz
+method = BlochDecayCTSpectrum(
+    channels=["23Na"],
+    magnetic_flux_density=9.395,  # in T
+    rotor_frequency=15000,  # in Hz
     spectral_dimensions=spectral_dims,
-    experiment=experiment,  # experimental dataset
+    experiment=experiment,  # add the measurement to the method.
 )
 
 # Optimize the script by pre-setting the transition pathways for each spin system from
@@ -89,9 +90,9 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        sp.apodization.Exponential(FWHM="50 Hz"),
+        sp.apodization.Exponential(FWHM="100 Hz"),
         sp.FFT(),
-        sp.Scale(factor=140),
+        sp.Scale(factor=200),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -102,7 +103,7 @@ plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
 ax.plot(processed_data, linewidth=2, alpha=0.6, label="Guess Spectrum")
-ax.set_xlim(600, -700)
+ax.set_xlim(100, -150)
 plt.grid()
 plt.legend()
 plt.tight_layout()
@@ -114,13 +115,13 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
+params = sf.make_LMFIT_params(sim, processor)
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
-result = minner.minimize(method="powell")
+result = minner.minimize()
 report_fit(result)
 
 # %%
@@ -135,7 +136,7 @@ ax = plt.subplot(projection="csdm")
 ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
 ax.plot(residuals, color="gray", linewidth=0.5, label="Residual")
 ax.plot(best_fit, linewidth=2, alpha=0.6, label="Best Fit")
-ax.set_xlim(600, -700)
+ax.set_xlim(100, -150)
 plt.grid()
 plt.legend()
 plt.tight_layout()

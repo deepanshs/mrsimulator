@@ -38,7 +38,7 @@ from mrsimulator.utils import get_spectral_dimensions
 # file-format, using the
 # `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_ module.
 host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
-filename = "31P%20Phosphate%206kHz.csdf"
+filename = "31P Phosphate 6kHz.csdf"
 experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
@@ -53,7 +53,7 @@ experiment.x[0].to("ppm", "nmr_frequency_ratio")
 # plot of the dataset.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5)
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
 ax.set_xlim(150, -150)
 plt.grid()
 plt.tight_layout()
@@ -130,8 +130,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # **Step 5:** The plot of the data and the guess spectrum.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(processed_data, linewidth=2, alpha=0.6, label="Guess Spectrum")
 ax.set_xlim(150, -150)
 plt.legend()
 plt.grid()
@@ -188,9 +188,9 @@ residuals = sf.residuals(sim, processor)[0]
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
-ax.plot(residuals, alpha=0.75, linewidth=1, label="Residuals")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(residuals, color="gray", linewidth=0.5, label="Residual")
+ax.plot(best_fit, linewidth=2, alpha=0.6, label="Best Fit")
 ax.set_xlabel(r"$^{31}$P frequency / ppm")
 ax.set_xlim(150, -150)
 plt.legend()

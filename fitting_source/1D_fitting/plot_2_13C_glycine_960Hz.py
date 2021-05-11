@@ -10,14 +10,14 @@
 # The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
 # acknowledge Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
-import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
-from mrsimulator.utils import get_spectral_dimensions, plotly_scatter_obj
+from mrsimulator.utils import get_spectral_dimensions
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -38,8 +38,13 @@ experiment = experiment.real
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
 # plot of the dataset.
-fig = go.Figure(plotly_scatter_obj(experiment))
-fig
+plt.figure(figsize=(8, 4))
+ax = plt.subplot(projection="csdm")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.set_xlim(280, -10)
+plt.grid()
+plt.tight_layout()
+plt.show()
 
 
 # %%
@@ -48,12 +53,12 @@ fig
 # **Spin System**
 C1 = Site(
     isotope="13C",
-    isotropic_chemical_shift=176.0,  # in ppm,
+    isotropic_chemical_shift=176.0,  # in ppm
     shielding_symmetric={"zeta": 70, "eta": 0.6},  # zeta in Hz
 )
 C2 = Site(
     isotope="13C",
-    isotropic_chemical_shift=43.0,  # in ppm,
+    isotropic_chemical_shift=43.0,  # in ppm
     shielding_symmetric={"zeta": 30, "eta": 0.5},  # zeta in Hz
 )
 
@@ -102,10 +107,15 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
-fig_obj = plotly_scatter_obj(experiment, label="experiment")
-fig_obj["data"] += plotly_scatter_obj(processed_data)["data"]
-fig = go.Figure(fig_obj)
-fig
+plt.figure(figsize=(8, 4))
+ax = plt.subplot(projection="csdm")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(processed_data, linewidth=2, alpha=0.6)
+ax.set_xlim(280, -10)
+plt.grid()
+plt.legend()
+plt.tight_layout()
+plt.show()
 
 # %%
 # Least-squares minimization with LMFIT
@@ -127,11 +137,17 @@ report_fit(result)
 best_fit = sf.bestfit(sim, processor)[0]
 residuals = sf.residuals(sim, processor)[0]
 
-fig_obj = plotly_scatter_obj(experiment, label="experiment")
-fig_obj["data"] += plotly_scatter_obj(best_fit)["data"]
-fig_obj["data"] += plotly_scatter_obj(residuals, label="residuals")["data"]
-fig = go.Figure(fig_obj)
-fig
+plt.figure(figsize=(8, 4))
+ax = plt.subplot(projection="csdm")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(residuals, color="gray", linewidth=0.5, label="Residual")
+ax.plot(best_fit, linewidth=2, alpha=0.6)
+ax.set_xlim(280, -10)
+plt.grid()
+plt.legend()
+plt.tight_layout()
+plt.show()
+
 
 # %%
 #

@@ -63,11 +63,21 @@ def flatten_dict(obj, previous_key=None):
 
 
 def plotly_scatter_obj(data: cp.CSDM = None, label: str = None):
+    """Plotly figure dict.
+    Example:
+
+        # >>> fig_obj = plotly_scatter_obj(experiment, label="experiment")
+        # >>> fig_obj["data"] += plotly_scatter_obj(best_fit)["data"]
+        # >>> fig_obj["data"] += plotly_scatter_obj(residuals, label="res")["data"]
+        # >>> fig = go.Figure(fig_obj)
+        # >>> fig
+    """
     data_ = [
         go.Scatter(
             x=data.x[0].coordinates.value,
             y=item.components[0],
             mode="lines",
+            opacity=0.75,
             name=item.name if label is None else label,
         )
         for item in data.y

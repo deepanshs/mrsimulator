@@ -16,11 +16,13 @@ import sys
 import warnings
 
 import plotly.io as pio
+from plotly.io import _sg_scraper
 from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
 
 sys.path.insert(0, os.path.abspath("../.."))
 
+scraper = _sg_scraper.plotly_sg_scraper
 # -- Project information -----------------------------------------------------
 now = datetime.datetime.now()
 year = now.year
@@ -43,7 +45,7 @@ version = ".".join(__version__.split(".")[:2])
 release = __version__
 
 # Plotly config
-pio.renderers.default = "sphinx_gallery"
+pio.renderers.default = "sphinx_gallery_png"
 
 # -- General configuration ---------------------------------------------------
 show_authors = True
@@ -150,7 +152,7 @@ sphinx_gallery_conf = {
     },
     "backreferences_dir": "examples",
     "doc_module": ("mrsimulator"),
-    "image_scrapers": ("matplotlib"),
+    "image_scrapers": ["matplotlib", scraper],
     # "compress_images": ("images", "thumbnails"),
     # "show_memory": True,
     "first_notebook_cell": (

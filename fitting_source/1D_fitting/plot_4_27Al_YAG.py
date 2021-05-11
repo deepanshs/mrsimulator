@@ -40,7 +40,7 @@ _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 # plot of the dataset.
 plt.figure(figsize=(8, 4))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment)
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
 ax.set_xlim(1200, -1200)
 plt.grid()
 plt.tight_layout()
@@ -113,8 +113,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # --------------------------
 plt.figure(figsize=(8, 4))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, label="Experiment")
-ax.plot(processed_data)
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(processed_data, linewidth=2, alpha=0.6)
 ax.set_xlim(1200, -1200)
 plt.grid()
 plt.legend()
@@ -145,9 +145,9 @@ residuals = sf.residuals(sim, processor)[0]
 # Plot the spectrum
 plt.figure(figsize=(8, 4))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, label="Experiment")
-ax.plot(best_fit)
-ax.plot(residuals, label="Residuals")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(residuals, color="gray", linewidth=0.5, label="Residual")
+ax.plot(best_fit, linewidth=2, alpha=0.6)
 ax.set_xlim(1200, -1200)
 plt.grid()
 plt.legend()
