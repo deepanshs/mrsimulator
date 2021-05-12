@@ -173,6 +173,7 @@ Getting Started
     getting_started
     getting_started_coupled
     getting_started-objects
+    getting_started_ethanol
     configuring_simulator
     mrsim_IO
 .. designing_methods

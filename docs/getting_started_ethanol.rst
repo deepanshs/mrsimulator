@@ -16,8 +16,8 @@ ethanol. Let’s start by importing all the necessary packages.
     >>> import mrsimulator.signal_processing.apodization as apo
     >>> import numpy as np
 
-**Spin System**
-
+Setting up coupled SpinSystem objects
+-------------------------------------
 An NMR spin system is defined by an isolated set of sites (spins) and
 couplings. You can make a spin system as large and complex as needed,
 but for this example, we will build the most abundant isotopomer of the
@@ -75,8 +75,8 @@ We have successfully built our ethanol spin system! If you need to
 create more spin systems, repeat these instructions, but for this
 example, we will stick with a single spin system.
 
-**Methods**
-
+Setting up the Method objects
+-----------------------------
 Next, we create a method to simulate a simple 1D pulse-acquire
 :math:`^1H` spectrum.
 
@@ -106,8 +106,8 @@ reference offset of 950 Hz.
 You can create as many methods as you need, but in this case we will
 stick with the one method.
 
-**Simulator**
-
+Running simulation
+------------------
 Next, we need to create an instance of the simulator object, and then
 add our spin system and method to it. Then, we run the simulator with
 the run() method.
@@ -133,8 +133,8 @@ Let’s get the data from the method so we can plot it.
 
     >>> H_data = sim.methods[0].simulation
 
-**Post-Simulation Processing**
-
+Visualizing the dataset
+-----------------------
 Now that we have our data, let’s add some post-simulation processing. We
 define a SignalProcessor object that adds an exponential apodization of
 1 Hz and then apply this processor on our data from the simulation.
