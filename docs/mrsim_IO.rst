@@ -136,4 +136,4 @@ object.
 .. doctest::
 
     >>> from mrsimulator import load
-    >>> sim_coesite, processors, _ = save('coesite.mrsim') # doctest:+SKIP
+    >>> sim_coesite, processors, _ = load('coesite.mrsim') # doctest:+SKIP

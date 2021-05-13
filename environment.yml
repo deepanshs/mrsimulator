@@ -21,3 +21,4 @@ dependencies:
       - lmfit>=1.0.2
       - psutil>=5.4.8
       - git+https://github.com/DeepanshS/mrsimulator.git@master
+      - plotly

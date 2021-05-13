@@ -24,7 +24,7 @@ from mrsimulator.utils import get_spectral_dimensions
 # Import the dataset
 # ------------------
 host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
-filename = "2H%20methiodine%20MAS.csdf"
+filename = "2H methiodine MAS.csdf"
 experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
@@ -39,7 +39,7 @@ _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 # plot of the dataset.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5)
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
 ax.set_xlim(600, -700)
 plt.grid()
 plt.tight_layout()
@@ -51,7 +51,7 @@ plt.show()
 # **Spin System**
 H_2 = Site(
     isotope="2H",
-    isotropic_chemical_shift=-57.0,  # in ppm,
+    isotropic_chemical_shift=-57,  # in ppm,
     quadrupolar={"Cq": 3e4, "eta": 0},  # Cq in Hz
 )
 
@@ -89,9 +89,9 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        sp.apodization.Exponential(FWHM="130 Hz"),
+        sp.apodization.Exponential(FWHM="50 Hz"),
         sp.FFT(),
-        sp.Scale(factor=100),
+        sp.Scale(factor=140),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -100,8 +100,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # --------------------------
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(processed_data, linewidth=2, alpha=0.6, label="Guess Spectrum")
 ax.set_xlim(600, -700)
 plt.grid()
 plt.legend()
@@ -114,13 +114,13 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = sf.make_LMFIT_params(sim, processor)
+params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
-result = minner.minimize(method="powell")
+result = minner.minimize(method="nelder")
 report_fit(result)
 
 # %%
@@ -132,9 +132,9 @@ residuals = sf.residuals(sim, processor)[0]
 # Plot the spectrum
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
-ax.plot(residuals, alpha=0.75, linewidth=1, label="Residual")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(residuals, color="gray", linewidth=0.5, label="Residual")
+ax.plot(best_fit, linewidth=2, alpha=0.6, label="Best Fit")
 ax.set_xlim(600, -700)
 plt.grid()
 plt.legend()

@@ -58,8 +58,8 @@ plt.show()
 # Create a guess list of spin systems.
 
 shifts = [-26.4, -28.5, -31.3]  # in ppm
-Cq = [1.65e6, 2.0e6, 1.7e6]  # in  Hz
-eta = [0.3, 0.8, 0.4]
+Cq = [1.7e6, 2.0e6, 1.7e6]  # in  Hz
+eta = [0.2, 1.0, 0.6]
 abundance = [33.33, 33.33, 33.33]  # in %
 
 spin_systems = single_site_system_generator(
@@ -94,9 +94,7 @@ for sys in spin_systems:
 
 # Simulation
 # ----------
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method.
+sim = Simulator(spin_systems=spin_systems, methods=[method])
 sim.run()
 
 # Post Simulation Processing
@@ -108,7 +106,7 @@ processor = sp.SignalProcessor(
         sp.apodization.Gaussian(FWHM="0.08 kHz", dim_index=0),
         sp.apodization.Gaussian(FWHM="0.1 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
-        sp.Scale(factor=5000),
+        sp.Scale(factor=3000),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real

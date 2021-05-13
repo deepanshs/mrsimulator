@@ -24,8 +24,9 @@ sphinxjp.themes.basicstrap
 sphinx>=2.0
 sphinx-gallery>0.6.2
 pillow>=7.1.2
-breathe==4.30.0
+breathe==4.26
 sphinx_copybutton>=0.3.0
 sphinx-tabs>=1.1.13
 recommonmark
 sphinx-version-warning
+plotly

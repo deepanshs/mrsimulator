@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-31P static NMR of crystalline Na2PO4 (CSA)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+23Na MAS NMR of Nasicon
+^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
-# The following is a CSA static least-squares fitting example of a
-# :math:`^{31}\text{P}` MAS NMR spectrum of :math:`\text{Na}_{2}\text{PO}_{4}`.
+# The following is a least-squares fitting example of a :math:`^{23}\text{Na}` MAS NMR
+# spectrum of Nasicon, :math:`\text{NaZr}_2(\text{PO}_4)_3`.
 # The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
 # acknowledge Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
 
-from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator import Simulator, Site, SpinSystem
+from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
@@ -25,11 +25,11 @@ from mrsimulator.utils import get_spectral_dimensions
 # Import the dataset
 # ------------------
 host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
-filename = "31P Phophonate Static.csdf"
+filename = "23Na QUAD MAS Nasicon.csdf"
 experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
-sigma = 3.258224
+sigma = 0.2368151
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -41,7 +41,7 @@ _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
-ax.set_xlim(200, -200)
+ax.set_xlim(100, -150)
 plt.grid()
 plt.tight_layout()
 plt.show()
@@ -50,13 +50,13 @@ plt.show()
 # Create a fitting model
 # ----------------------
 # **Spin System**
-P_31 = Site(
-    isotope="31P",
-    isotropic_chemical_shift=5.0,  # in ppm,
-    shielding_symmetric={"zeta": -80, "eta": 0.5},  # zeta in Hz
+Na23 = Site(
+    isotope="23Na",
+    isotropic_chemical_shift=-20.0,  # in ppm
+    quadrupolar={"Cq": 2.3e6, "eta": 0.03},  # Cq in Hz
 )
+spin_systems = [SpinSystem(sites=[Na23])]
 
-spin_systems = [SpinSystem(sites=[P_31])]
 
 # %%
 # **Method**
@@ -64,12 +64,12 @@ spin_systems = [SpinSystem(sites=[P_31])]
 # Get the spectral dimension paramters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = BlochDecaySpectrum(
-    channels=["31P"],
+method = BlochDecayCTSpectrum(
+    channels=["23Na"],
     magnetic_flux_density=9.395,  # in T
-    rotor_frequency=0,  # in Hz
+    rotor_frequency=15000,  # in Hz
     spectral_dimensions=spectral_dims,
-    experiment=experiment,  # experimental dataset
+    experiment=experiment,  # add the measurement to the method.
 )
 
 # Optimize the script by pre-setting the transition pathways for each spin system from
@@ -90,9 +90,9 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        sp.apodization.Gaussian(FWHM="3000 Hz"),
+        sp.apodization.Exponential(FWHM="100 Hz"),
         sp.FFT(),
-        sp.Scale(factor=4000),
+        sp.Scale(factor=200),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -103,7 +103,7 @@ plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
 ax.plot(processed_data, linewidth=2, alpha=0.6, label="Guess Spectrum")
-ax.set_xlim(200, -200)
+ax.set_xlim(100, -150)
 plt.grid()
 plt.legend()
 plt.tight_layout()
@@ -116,7 +116,6 @@ plt.show()
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
 params = sf.make_LMFIT_params(sim, processor)
-params.pop("sys_0_abundance")
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
@@ -137,7 +136,7 @@ ax = plt.subplot(projection="csdm")
 ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
 ax.plot(residuals, color="gray", linewidth=0.5, label="Residual")
 ax.plot(best_fit, linewidth=2, alpha=0.6, label="Best Fit")
-ax.set_xlim(200, -200)
+ax.set_xlim(100, -150)
 plt.grid()
 plt.legend()
 plt.tight_layout()

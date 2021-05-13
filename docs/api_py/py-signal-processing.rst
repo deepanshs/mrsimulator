@@ -9,4 +9,3 @@ Signal-processing API
 
    signal_processing
    operations/operations_summary
-   fitting

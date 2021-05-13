@@ -25,11 +25,11 @@ from mrsimulator.utils import get_spectral_dimensions
 # Import the dataset
 # ------------------
 host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
-filename = "27Al%20Quad%20MAS%20YAG%20400MHz.csdf"
+filename = "27Al Quad MAS YAG 400MHz.csdf"
 experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
-sigma = 0.5262264
+sigma = 0.4895381
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -38,9 +38,9 @@ experiment = experiment.real
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
 # plot of the dataset.
-plt.figure(figsize=(4.25, 3.0))
+plt.figure(figsize=(8, 4))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5)
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
 ax.set_xlim(1200, -1200)
 plt.grid()
 plt.tight_layout()
@@ -54,14 +54,14 @@ plt.show()
 # Create a guess list of spin systems.
 Al_1 = Site(
     isotope="27Al",
-    isotropic_chemical_shift=70,  # in ppm
-    quadrupolar={"Cq": 5e6, "eta": 0},  # Cq in Hz
+    isotropic_chemical_shift=76,  # in ppm
+    quadrupolar={"Cq": 6e6, "eta": 0},  # Cq in Hz
 )
 
 Al_2 = Site(
     isotope="27Al",
-    isotropic_chemical_shift=0,  # in ppm
-    quadrupolar={"Cq": 1e6, "eta": 0.3},  # Cq in Hz
+    isotropic_chemical_shift=1,  # in ppm
+    quadrupolar={"Cq": 5e5, "eta": 0.3},  # Cq in Hz
 )
 spin_systems = [
     SpinSystem(sites=[Al_1], name="AlO4"),
@@ -78,7 +78,7 @@ spectral_dims = get_spectral_dimensions(experiment)
 method = BlochDecaySpectrum(
     channels=["27Al"],
     magnetic_flux_density=9.395,  # in T
-    rotor_frequency=15248.7,  # in Hz
+    rotor_frequency=15250,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # add the measurement to the method.
 )
@@ -94,6 +94,7 @@ for sys in spin_systems:
 # Simulation
 # ----------
 sim = Simulator(spin_systems=spin_systems, methods=[method])
+sim.config.decompose_spectrum = "spin_system"
 sim.run()
 
 # Post Simulation Processing
@@ -104,17 +105,16 @@ processor = sp.SignalProcessor(
         sp.apodization.Gaussian(FWHM="300 Hz"),
         sp.FFT(),
         sp.Scale(factor=50),
-        sp.baseline.ConstantOffset(offset=-1),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
-plt.figure(figsize=(4.25, 3.0))
+plt.figure(figsize=(8, 4))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(processed_data, linewidth=2, alpha=0.6)
 ax.set_xlim(1200, -1200)
 plt.grid()
 plt.legend()
@@ -127,7 +127,7 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = sf.make_LMFIT_params(sim, processor)
+params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
@@ -143,11 +143,11 @@ best_fit = sf.bestfit(sim, processor)[0]
 residuals = sf.residuals(sim, processor)[0]
 
 # Plot the spectrum
-plt.figure(figsize=(4.25, 3.0))
+plt.figure(figsize=(8, 4))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
-ax.plot(residuals, alpha=0.75, linewidth=1, label="Residuals")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(residuals, color="gray", linewidth=0.5, label="Residual")
+ax.plot(best_fit, linewidth=2, alpha=0.6)
 ax.set_xlim(1200, -1200)
 plt.grid()
 plt.legend()

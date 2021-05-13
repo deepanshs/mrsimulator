@@ -133,9 +133,9 @@ class SpectralDimension(Parseable):
                     "cannot be converted to dimensionless frequency ratio."
                 )
             )
-            return
-        denominator = (self.reference_offset + self.origin_offset) / 1e6
-        return self.coordinates_Hz() / abs(denominator)
+        else:
+            denominator = (self.origin_offset - self.reference_offset) / 1e6
+            return self.coordinates_Hz() / abs(denominator)
 
     def to_csdm_dimension(self) -> cp.Dimension:
         """Return the spectral dimension as a CSDM dimension object."""

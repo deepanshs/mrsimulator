@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-13C MAS NMR of Glycine (CSA)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+13C MAS NMR of Glycine (CSA) [5000 Hz]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # The following is a sideband least-squares fitting example of a
-# :math:`^{13}\text{C}` MAS NMR spectrum of Glycine.
+# :math:`^{13}\text{C}` MAS NMR spectrum of Glycine spinning at 5000 Hz.
 # The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
 # acknowledge Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
@@ -25,7 +25,7 @@ from mrsimulator.utils import get_spectral_dimensions
 # Import the dataset
 # ------------------
 host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
-filename = r"13C MAS 960Hz%20-%20Glycine.csdf"
+filename = "13C MAS 5000Hz - Glycine.csdf"
 experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
@@ -38,9 +38,9 @@ experiment = experiment.real
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
 # plot of the dataset.
-plt.figure(figsize=(4.25, 3.0))
+plt.figure(figsize=(8, 4))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5)
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
 ax.set_xlim(280, -10)
 plt.grid()
 plt.tight_layout()
@@ -52,16 +52,15 @@ plt.show()
 # **Spin System**
 C1 = Site(
     isotope="13C",
-    isotropic_chemical_shift=176.0,  # in ppm,
+    isotropic_chemical_shift=176.0,  # in ppm
     shielding_symmetric={"zeta": 70, "eta": 0.6},  # zeta in Hz
 )
 C2 = Site(
     isotope="13C",
-    isotropic_chemical_shift=43.0,  # in ppm,
-    shielding_symmetric={"zeta": 30, "eta": 0.5},  # zeta in Hz
+    isotropic_chemical_shift=43.0,  # in ppm
 )
 
-spin_systems = [SpinSystem(sites=[s]) for s in [C1, C2]]
+spin_systems = [SpinSystem(sites=[C1], name="C1"), SpinSystem(sites=[C2], name="C2")]
 
 # %%
 # **Method**
@@ -72,7 +71,7 @@ spectral_dims = get_spectral_dimensions(experiment)
 method = BlochDecaySpectrum(
     channels=["13C"],
     magnetic_flux_density=7.05,  # in T
-    rotor_frequency=962.1,  # in Hz
+    rotor_frequency=5000,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # experimental dataset
 )
@@ -99,17 +98,17 @@ processor = sp.SignalProcessor(
         sp.apodization.Exponential(FWHM="20 Hz", dv_index=0),  # spin system 0
         sp.apodization.Exponential(FWHM="200 Hz", dv_index=1),  # spin system 1
         sp.FFT(),
-        sp.Scale(factor=100),
+        sp.Scale(factor=10),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
-plt.figure(figsize=(4.25, 3.0))
+plt.figure(figsize=(8, 4))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(processed_data, linewidth=2, alpha=0.6)
 ax.set_xlim(280, -10)
 plt.grid()
 plt.legend()
@@ -122,7 +121,7 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = sf.make_LMFIT_params(sim, processor)
+params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
@@ -138,11 +137,11 @@ best_fit = sf.bestfit(sim, processor)[0]
 residuals = sf.residuals(sim, processor)[0]
 
 # Plot the spectrum
-plt.figure(figsize=(4.25, 3.0))
+plt.figure(figsize=(8, 4))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
-ax.plot(residuals, alpha=0.75, linewidth=1, label="Residual")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(residuals, color="gray", linewidth=0.5, label="Residual")
+ax.plot(best_fit, linewidth=2, alpha=0.6)
 ax.set_xlim(280, -10)
 plt.grid()
 plt.legend()

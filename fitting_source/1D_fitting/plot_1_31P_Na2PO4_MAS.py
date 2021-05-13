@@ -38,7 +38,7 @@ from mrsimulator.utils import get_spectral_dimensions
 # file-format, using the
 # `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_ module.
 host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
-filename = "31P%20Phosphate%206kHz.csdf"
+filename = "31P Phosphate 6kHz.csdf"
 experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
@@ -53,7 +53,7 @@ experiment.x[0].to("ppm", "nmr_frequency_ratio")
 # plot of the dataset.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5)
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
 ax.set_xlim(150, -150)
 plt.grid()
 plt.tight_layout()
@@ -130,8 +130,8 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # **Step 5:** The plot of the data and the guess spectrum.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(processed_data, linewidth=2, alpha=0.6, label="Guess Spectrum")
 ax.set_xlim(150, -150)
 plt.legend()
 plt.grid()
@@ -149,14 +149,18 @@ plt.show()
 # as described in the previous example.
 # Here, we make use of a utility function,
 # :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params`, to simplifies the
-# LMFIT parameters generation process.
+# LMFIT parameters generation process. By default, the function only creates parameters
+# from the SpinSystem and SignalProcessor objects. Often, in spectrum with sidebands,
+# spinning speed may not be accurately known; and is, therefore, included as a fitting
+# parameter. To include a keyword from the method object, use the *include* argument
+# of the function, as follows,
 #
 # **Step 6:** Create a list of parameters.
-params = sf.make_LMFIT_params(sim, processor)
+params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
 
 # %%
 # The `make_LMFIT_params` parses the instances of the ``Simulator`` and the
-# ``PostSimulator`` objects for parameters and returns an LMFIT `Parameters` object.
+# ``PostSimulator`` objects for parameters and returns a LMFIT `Parameters` object.
 #
 # **Customize the Parameters:**
 # You may customize the parameters list, ``params``, as desired. Here, we remove the
@@ -184,9 +188,9 @@ residuals = sf.residuals(sim, processor)[0]
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
-ax.plot(residuals, alpha=0.75, linewidth=1, label="Residuals")
+ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
+ax.plot(residuals, color="gray", linewidth=0.5, label="Residual")
+ax.plot(best_fit, linewidth=2, alpha=0.6, label="Best Fit")
 ax.set_xlabel(r"$^{31}$P frequency / ppm")
 ax.set_xlim(150, -150)
 plt.legend()

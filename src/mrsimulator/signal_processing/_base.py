@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The AbstractOperation class."""
+"""The Operation class."""
 from sys import modules
 from typing import ClassVar
 
@@ -10,7 +10,7 @@ __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 
-class AbstractOperation(Parseable):
+class Operation(Parseable):
     """A base class for signal processing operations."""
 
     module_name: ClassVar = None
@@ -82,7 +82,7 @@ class AbstractOperation(Parseable):
         )
 
 
-class ModuleOperation(AbstractOperation):
+class ModuleOperation(Operation):
     @property
     def type(self):
         """The type baseline function."""

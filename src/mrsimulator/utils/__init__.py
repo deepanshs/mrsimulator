@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# import csdmpy as cp
+# import plotly.graph_objects as go
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -58,3 +60,45 @@ def flatten_dict(obj, previous_key=None):
             result.update(**flatten_dict(v, previous_key=k))
 
     return result
+
+
+# def plotly_scatter_obj(data: cp.CSDM = None, label: str = None):
+#     """Plotly figure dict.
+#     Example:
+
+#         # >>> fig_obj = plotly_scatter_obj(experiment, label="experiment")
+#         # >>> fig_obj["data"] += plotly_scatter_obj(best_fit)["data"]
+#         # >>> fig_obj["data"] += plotly_scatter_obj(residuals, label="res")["data"]
+#         # >>> fig = go.Figure(fig_obj)
+#         # >>> fig
+#     """
+#     data_ = [
+#         go.Scatter(
+#             x=data.x[0].coordinates.value,
+#             y=item.components[0],
+#             mode="lines",
+#             opacity=0.75,
+#             name=item.name if label is None else label,
+#         )
+#         for item in data.y
+#     ]
+#     layout_ = go.Layout(
+#         xaxis=dict(
+#             title=data.x[0].axis_label,
+#             ticks="outside",
+#             showline=True,
+#             autorange="reversed",
+#             zeroline=False,
+#         ),
+#         yaxis=dict(
+#             ticks="outside",
+#             showline=True,
+#             zeroline=False,
+#             autorange=True,
+#         ),
+#         margin={"l": 60, "b": 45, "t": 50, "r": 50},
+#         width=800,
+#         height=400,
+#     )
+
+#     return {"data": data_, "layout": layout_}

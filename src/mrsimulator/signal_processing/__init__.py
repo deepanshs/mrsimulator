@@ -10,7 +10,7 @@ from pydantic import Extra
 from . import affine as af  # noqa:F401
 from . import apodization as ap  # noqa:F401
 from . import baseline as bl  # noqa:F401
-from ._base import AbstractOperation
+from ._base import Operation
 
 
 __author__ = "Maxwell C. Venetos"
@@ -34,7 +34,7 @@ class SignalProcessor(Parseable):
     """
 
     processed_data: cp.CSDM = None
-    operations: List[AbstractOperation] = []
+    operations: List[Operation] = []
 
     class Config:
         validate_assignment = True
@@ -85,7 +85,7 @@ class SignalProcessor(Parseable):
         return data
 
 
-class Scale(AbstractOperation):
+class Scale(Operation):
     r"""Scale the amplitudes of all dependent variables (y) from a CSDM object.
 
     .. math::
@@ -115,7 +115,7 @@ class Scale(AbstractOperation):
         return data
 
 
-class Linear(AbstractOperation):
+class Linear(Operation):
     r"""Apply linear operation across all dependent variables (y) from a CSDM object.
 
     .. math::
@@ -146,7 +146,7 @@ class Linear(AbstractOperation):
         return data
 
 
-class IFFT(AbstractOperation):
+class IFFT(Operation):
     """Apply an inverse Fourier transform on all dependent variables of the CSDM object.
 
     Arguments
@@ -190,5 +190,5 @@ class FFT(IFFT):
     """
 
 
-class complex_conjugate(AbstractOperation):
+class complex_conjugate(Operation):
     pass
