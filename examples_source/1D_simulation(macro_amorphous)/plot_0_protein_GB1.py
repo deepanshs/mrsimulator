@@ -37,7 +37,7 @@ all_sites.head()
 # Create a :math:`^{13}\text{C}` Bloch decay spectrum method.
 method_13C = BlochDecaySpectrum(
     channels=["13C"],
-    magnetic_flux_density=11.7,  # in T
+    magnetic_flux_density=11.74,  # in T
     rotor_frequency=3000,  # in Hz
     spectral_dimensions=[
         {
@@ -54,7 +54,7 @@ method_13C = BlochDecaySpectrum(
 # sites, let's also create a :math:`^{15}\text{N}` Bloch decay spectrum method.
 method_15N = BlochDecaySpectrum(
     channels=["15N"],
-    magnetic_flux_density=11.7,  # in T
+    magnetic_flux_density=11.74,  # in T
     rotor_frequency=3000,  # in Hz
     spectral_dimensions=[
         {

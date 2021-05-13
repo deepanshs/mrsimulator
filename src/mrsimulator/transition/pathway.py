@@ -30,8 +30,7 @@ class TransitionList(AbstractList):
         super().append(self._check_for_transition_object(item))
 
     def filter(self, P=None, PP=None, D=None):
-        """
-        Filter a list of transitions to satisfy the filtering criterion.
+        """Filter a list of transitions to satisfy the filtering criterion.
         Args:
             list P: A list of `N` (m_final - m_initial) values, where `N` is the
                 total number of sites within the spin system.
@@ -88,8 +87,7 @@ class TransitionList(AbstractList):
 
 
 class TransitionPathway(TransitionList):
-    """
-    Base TransitionPathway class is a list of connected Transitions.
+    """Base TransitionPathway class is a list of connected Transitions.
 
     Example:
         >>> from mrsimulator.transition import TransitionPathway, Transition

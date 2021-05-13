@@ -6,8 +6,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 def get_principal_components(zeta, eta):
-    """
-    Return the principal components of a traceless second-rank symmetric
+    """Return the principal components of a traceless second-rank symmetric
     Cartesian tensor.
 
     Args:

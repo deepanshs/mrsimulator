@@ -8,8 +8,9 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecayCTSpectrum
-
-# from lmfit import Parameters
+from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.methods import SSB2D
+from mrsimulator.methods import ThreeQ_VAS
 
 
 def test_str_encode():
@@ -34,7 +35,7 @@ def test_str_decode():
     assert sf._str_decode(str2_encoded) == str2
 
 
-def test_get_and_update_sim_from_LMFIT_params():
+def setup_simulator():
     site = Site(
         isotope="23Na",
         isotropic_chemical_shift=32,
@@ -44,98 +45,142 @@ def test_get_and_update_sim_from_LMFIT_params():
     sys = SpinSystem(sites=[site], abundance=0.123)
     sim = Simulator()
     sim.spin_systems.append(sys)
-
-    string = "sys_0_site_0_isotropic_chemical_shift"
-    assert sf._get_simulator_object_value(sim, string) == 32
-    sf._update_sim_from_LMFIT_params(sim, string, -32)
-    assert sf._get_simulator_object_value(sim, string) == -32
-
-    string = "sys_0_site_0_shielding_symmetric_eta"
-    assert sf._get_simulator_object_value(sim, string) == 0.1
-    sf._update_sim_from_LMFIT_params(sim, string, 0.4)
-    assert sf._get_simulator_object_value(sim, string) == 0.4
-
-    string = "sys_0_site_0_shielding_symmetric_zeta"
-    assert sf._get_simulator_object_value(sim, string) == -120.0
-    sf._update_sim_from_LMFIT_params(sim, string, 134.2)
-    assert sf._get_simulator_object_value(sim, string) == 134.2
-
-    string = "sys_0_site_0_quadrupolar_eta"
-    assert sf._get_simulator_object_value(sim, string) == 0.31
-    sf._update_sim_from_LMFIT_params(sim, string, 0.98)
-    assert sf._get_simulator_object_value(sim, string) == 0.98
-
-    string = "sys_0_site_0_quadrupolar_Cq"
-    assert sf._get_simulator_object_value(sim, string) == 1e5
-    sf._update_sim_from_LMFIT_params(sim, string, 2.3e6)
-    assert sf._get_simulator_object_value(sim, string) == 2.3e6
-
-    string = "sys_0_site_0_quadrupolar_alpha"
-    assert sf._get_simulator_object_value(sim, string) is None
-    sf._update_sim_from_LMFIT_params(sim, string, 1.32)
-    assert sf._get_simulator_object_value(sim, string) == 1.32
-
-    string = "sys_0_site_0_quadrupolar_beta"
-    assert sf._get_simulator_object_value(sim, string) == 5.12
-    sf._update_sim_from_LMFIT_params(sim, string, None)
-    assert sf._get_simulator_object_value(sim, string) is None
-
-    string = "sys_0_site_0_quadrupolar_gamma"
-    assert sf._get_simulator_object_value(sim, string) is None
-    sf._update_sim_from_LMFIT_params(sim, string, 1.2)
-    assert sf._get_simulator_object_value(sim, string) == 1.2
-
-    string = "sys_0_abundance"
-    assert sf._get_simulator_object_value(sim, string) == 0.123
-    sf._update_sim_from_LMFIT_params(sim, string, 45)
-    assert sf._get_simulator_object_value(sim, string) == 45
+    sim.methods.append(BlochDecayCTSpectrum(channels=["2H"], rotor_frequency=1e3))
+    sim.methods.append(BlochDecaySpectrum(channels=["2H"], rotor_frequency=12.5e3))
+    sim.methods.append(ThreeQ_VAS(channels=["27Al"]))
+    sim.methods.append(SSB2D(channels=["17O"], rotor_frequency=35500))
+    return sim
 
 
-def test_03():
-    # post_sim_LMFIT_params
-    op_list = [
+def test_make_simulator_params():
+    sim = setup_simulator()
+
+    def check(val):
+        assert val["sys_0_site_0_isotropic_chemical_shift"] == 32
+        assert val["sys_0_site_0_shielding_symmetric_zeta"] == -120
+        assert val["sys_0_site_0_shielding_symmetric_eta"] == 0.1
+        assert val["sys_0_site_0_quadrupolar_Cq"] == 1e5
+        assert val["sys_0_site_0_quadrupolar_eta"] == 0.31
+        assert val["sys_0_site_0_quadrupolar_beta"] == 5.12
+        assert val["sys_0_abundance"] == 100
+
+    params = sf.make_simulator_params(sim)
+    check(params.valuesdict())
+
+    params = sf.make_simulator_params(sim, include={"rotor_frequency"})
+    val = params.valuesdict()
+    check(params.valuesdict())
+    assert val["mth_0_rotor_frequency"] == 1e3
+    assert val["mth_1_rotor_frequency"] == 12.5e3
+    assert val["mth_3_rotor_frequency"] == 35500
+
+
+def test_update_simulator_from_LMFIT_params():
+    sim = setup_simulator()
+
+    def set_params(params):
+        params["sys_0_site_0_isotropic_chemical_shift"].value = -110
+        params["sys_0_site_0_shielding_symmetric_zeta"].value = 50
+        params["sys_0_site_0_shielding_symmetric_eta"].value = 0.9
+        params["sys_0_site_0_quadrupolar_Cq"].value = 5e6
+        params["sys_0_site_0_quadrupolar_eta"].value = 0.1
+        params["sys_0_site_0_quadrupolar_beta"].value = 2.12
+        params["sys_0_abundance"].value = 20
+
+    def check_object(sim):
+        assert sim.spin_systems[0].sites[0].isotropic_chemical_shift == -110
+        assert sim.spin_systems[0].sites[0].shielding_symmetric.zeta == 50
+        assert sim.spin_systems[0].sites[0].shielding_symmetric.eta == 0.9
+        assert sim.spin_systems[0].sites[0].quadrupolar.Cq == 5e6
+        assert sim.spin_systems[0].sites[0].quadrupolar.eta == 0.1
+        assert sim.spin_systems[0].sites[0].quadrupolar.beta == 2.12
+        assert sim.spin_systems[0].abundance == 100
+
+    params = sf.make_simulator_params(sim)
+    set_params(params)
+    sf._update_simulator_from_LMFIT_params(params, sim)
+    check_object(sim)
+
+    params = sf.make_simulator_params(sim, include={"rotor_frequency"})
+    set_params(params)
+    params["mth_0_rotor_frequency"].value = 1051.120
+    params["mth_1_rotor_frequency"].value = 12442.12
+    params["mth_3_rotor_frequency"].value = 35550
+    sf._update_simulator_from_LMFIT_params(params, sim)
+    check_object(sim)
+    assert sim.methods[0].spectral_dimensions[0].events[0].rotor_frequency == 1051.120
+    assert sim.methods[1].spectral_dimensions[0].events[0].rotor_frequency == 12442.12
+    assert sim.methods[2].spectral_dimensions[0].events[0].rotor_frequency == 1e12
+    assert sim.methods[2].spectral_dimensions[1].events[0].rotor_frequency == 1e12
+    assert sim.methods[3].spectral_dimensions[0].events[0].rotor_frequency == 35550
+    assert sim.methods[3].spectral_dimensions[1].events[0].rotor_frequency == 1e12
+
+
+def setup_signal_processor():
+    op_list1 = [
         sp.IFFT(dim_index=0),
         sp.apodization.Exponential(FWHM=100),
         sp.apodization.Gaussian(FWHM=200),
         sp.FFT(dim_index=0),
         sp.Scale(factor=10),
+        sp.baseline.ConstantOffset(offset=43.1),
+        sp.Linear(amplitude=32.9, offset=13.4),
     ]
-    post_sim = sp.SignalProcessor(operations=op_list)
+    op_list2 = [
+        sp.Scale(factor=20),
+        sp.baseline.ConstantOffset(offset=-43.1),
+        sp.Linear(amplitude=1.2, offset=0.4),
+    ]
+    return [sp.SignalProcessor(operations=op) for op in [op_list1, op_list2]]
 
+
+def test_make_signal_processor_params():
+    post_sim = setup_signal_processor()
     params = sf.make_signal_processor_params(post_sim)
 
     val = params.valuesdict()
-
     assert val["SP_0_operation_1_Exponential_FWHM"] == 100
     assert val["SP_0_operation_2_Gaussian_FWHM"] == 200
     assert val["SP_0_operation_4_Scale_factor"] == 10
+    assert val["SP_0_operation_5_ConstantOffset_offset"] == 43.1
+    assert val["SP_0_operation_6_Linear_amplitude"] == 32.9
+    assert val["SP_0_operation_6_Linear_offset"] == 13.4
+
+    assert val["SP_1_operation_0_Scale_factor"] == 20
+    assert val["SP_1_operation_1_ConstantOffset_offset"] == -43.1
+    assert val["SP_1_operation_2_Linear_amplitude"] == 1.2
+    assert val["SP_1_operation_2_Linear_offset"] == 0.4
 
 
-def test_04():
-    # update_post_sim_from_LMFIT_params
-    op_list1 = [sp.Scale(factor=20)]
-    op_list2 = [
-        sp.IFFT(dim_index=0),
-        sp.apodization.Gaussian(FWHM=130, dim_index=0, dv_index=0),
-        sp.apodization.Exponential(FWHM=100, dim_index=1, dv_index=0),
-        sp.FFT(dim_index=0),
-        sp.Scale(factor=10),
-    ]
-    post_sim = [sp.SignalProcessor(operations=lst) for lst in [op_list1, op_list2]]
-
+def test_update_processors_from_LMFIT_params():
+    post_sim = setup_signal_processor()
     params = sf.make_signal_processor_params(post_sim)
 
-    params["SP_0_operation_0_Scale_factor"].value = 300
-    params["SP_1_operation_1_Gaussian_FWHM"].value = 30
-    params["SP_1_operation_2_Exponential_FWHM"].value = 10
-    params["SP_1_operation_4_Scale_factor"].value = 1
+    params["SP_0_operation_1_Exponential_FWHM"].value = 30
+    params["SP_0_operation_2_Gaussian_FWHM"].value = 10
+    params["SP_0_operation_4_Scale_factor"].value = 1
+    params["SP_0_operation_5_ConstantOffset_offset"].value = 2
+    params["SP_0_operation_6_Linear_amplitude"].value = 1.2
+    params["SP_0_operation_6_Linear_offset"].value = -0.1
 
-    sf._update_post_sim_from_LMFIT_params(params, post_sim)
+    params["SP_1_operation_0_Scale_factor"].value = -20
+    params["SP_1_operation_1_ConstantOffset_offset"].value = 13.1
+    params["SP_1_operation_2_Linear_amplitude"].value = 5.1
+    params["SP_1_operation_2_Linear_offset"].value = -40.1
 
-    assert post_sim[0].operations[0].factor == 300
-    assert post_sim[1].operations[1].FWHM == 30
-    assert post_sim[1].operations[2].FWHM == 10
-    assert post_sim[1].operations[4].factor == 1
+    sf._update_processors_from_LMFIT_params(params, post_sim)
+
+    assert post_sim[0].operations[1].FWHM == 30
+    assert post_sim[0].operations[2].FWHM == 10
+    assert post_sim[0].operations[4].factor == 1
+    assert post_sim[0].operations[5].offset == 2
+    assert post_sim[0].operations[6].amplitude == 1.2
+    assert post_sim[0].operations[6].offset == -0.1
+
+    assert post_sim[1].operations[0].factor == -20
+    assert post_sim[1].operations[1].offset == 13.1
+    assert post_sim[1].operations[2].amplitude == 5.1
+    assert post_sim[1].operations[2].offset == -40.1
 
 
 def test_raise_messages():
@@ -143,7 +188,7 @@ def test_raise_messages():
     with pytest.raises(ValueError, match=f".*{e}.*"):
         sf.make_LMFIT_params(12, 21)
 
-    e = "Expecting a `SignalProcessor` object, found"
+    e = "Expecting a list of `SignalProcessor` objects."
     with pytest.raises(ValueError, match=f".*{e}.*"):
         sf.make_LMFIT_params(Simulator(spin_systems=[SpinSystem()]), 21)
 
@@ -283,6 +328,13 @@ def test_7():
         params = sf.make_LMFIT_params(sim, processor)
         a = sf.LMFIT_min_function(params, sim, processor)
         np.testing.assert_almost_equal(-a, data_sum, decimal=8)
+
+        dat = sf.add_csdm_dvs(data.real)
+        fits = sf.bestfit(sim, processor)
+        assert sf.add_csdm_dvs(fits[0]) == dat
+
+        res = sf.residuals(sim, processor)
+        assert res[0] == -dat
 
     test_array()
 

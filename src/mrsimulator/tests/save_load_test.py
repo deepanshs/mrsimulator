@@ -12,7 +12,7 @@ from mrsimulator.methods import BlochDecaySpectrum
 # mrsimulator save and load test
 
 
-def test_save_and_load():
+def setup():
     site = Site(isotope="1H", shielding_symmetric={"zeta": -100, "eta": 0.3})
     spin_sys = SpinSystem(sites=[site, site], abundance=45)
 
@@ -20,9 +20,6 @@ def test_save_and_load():
     sim = Simulator(spin_systems=[spin_sys, spin_sys], methods=[method, method])
 
     sim.run(method_index=0)
-
-    assert sim.methods[0].simulation is not None
-    assert sim.methods[1].simulation is None
 
     processor = sp.SignalProcessor(
         operations=[
@@ -34,10 +31,22 @@ def test_save_and_load():
     )
     processors = [processor] * 2
 
-    save("test.mrsim", simulator=sim, signal_processors=processors, fit_report=None)
+    return sim, processors
 
+
+def test_save():
+    sim, processors = setup()
+
+    assert sim.methods[0].simulation is not None
+    assert sim.methods[1].simulation is None
+
+    save("test.mrsim", simulator=sim, signal_processors=processors, params=None)
+
+
+def test_load():
     sim_r, processors_r, report_r = load("test.mrsim")
 
+    sim, processors = setup()
     sim_r.methods[0].simulation = None
     sim.methods[0].simulation = None
     assert sim_r == sim

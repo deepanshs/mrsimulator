@@ -75,7 +75,8 @@ class ST_VAS(BaseNamedMethod2D):
         # method affine matrix
         if method.affine_matrix is None:
             k = shear_factor_ST_MAS[int(2 * st)][spin]
-            method.affine_matrix = [1 / (1 + k), k / (1 + k), 0, 1]
+            sign = 1  # if st == spin else -1
+            method.affine_matrix = [1 / (1 + k), sign * k / (1 + k), 0, 1]
 
         # method description
         method.description = (

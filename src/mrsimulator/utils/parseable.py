@@ -10,15 +10,15 @@ from pydantic import BaseModel
 
 from .extra import _reduce_dict
 
-# from IPython.display import JSON
 
 __author__ = "Shyam Dwaraknath"
 __email__ = "shyamd@lbl.gov"
 
+CONST = string_to_quantity("1")
+
 
 class Parseable(BaseModel):
-    """
-    Base class for all objects that can be parsed easily from JSON with units
+    """Base class for all objects that can be parsed easily from JSON with units
     Don't directly use this. Rather inherit from it and implement a data model
     and property units and defaults
     """
@@ -113,12 +113,13 @@ class Parseable(BaseModel):
         for key, unit in getattr(self, "property_units").items():
             if key in temp_keys:
                 u = unit if unit != "pct" else "%"
-                temp_dict[key] = f"{temp_dict[key]} {u}"
+                var = f" {u}" if unit != CONST else ""
+                temp_dict[key] = f"{temp_dict[key]}{var}"
         return temp_dict
 
 
 def enforce_units(value: str, required_type: str, default_unit: str, throw_error=True):
-    """ Enforces a required type and default unit on the value. """
+    """Enforces a required type and default unit on the value."""
     try:
         value = string_to_quantity(value)
         data_type = value.unit.physical_type

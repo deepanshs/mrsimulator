@@ -10,9 +10,8 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class Transition(BaseModel):
-    r"""
-    Base Transition class describes a spin transition between two energy states, where
-    the energy states are described using the weakly coupled basis.
+    r"""Base Transition class describes a spin transition between two energy states,
+    where the energy states are described using the weakly coupled basis.
 
     .. math::
         |m_{i,0}, m_{i,1}, ... m_{i,N} \rangle \rightarrow
