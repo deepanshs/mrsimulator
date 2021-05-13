@@ -15,14 +15,15 @@ import subprocess
 import sys
 import warnings
 
-import plotly.io as pio
-from plotly.io import _sg_scraper
 from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
 
+# import plotly.io as pio
+# from plotly.io import _sg_scraper
+
 sys.path.insert(0, os.path.abspath("../.."))
 
-scraper = _sg_scraper.plotly_sg_scraper
+# scraper = _sg_scraper.plotly_sg_scraper
 # -- Project information -----------------------------------------------------
 now = datetime.datetime.now()
 year = now.year
@@ -45,7 +46,7 @@ version = ".".join(__version__.split(".")[:2])
 release = __version__
 
 # Plotly config
-pio.renderers.default = "sphinx_gallery_png"
+# pio.renderers.default = "sphinx_gallery_png"
 
 # -- General configuration ---------------------------------------------------
 show_authors = True
@@ -152,7 +153,7 @@ sphinx_gallery_conf = {
     },
     "backreferences_dir": "examples",
     "doc_module": ("mrsimulator"),
-    "image_scrapers": ["matplotlib", scraper],
+    "image_scrapers": ["matplotlib"],  # , scraper],
     # "compress_images": ("images", "thumbnails"),
     # "show_memory": True,
     "first_notebook_cell": (
@@ -300,10 +301,10 @@ html_theme_options = {
     # Works only "bootstrap_version = 3"
     "noflatdesign": False,
     # Enable Google Web Font. Defaults to false
-    # "googlewebfont": True,
+    "googlewebfont": True,
     # Set the URL of Google Web Font's CSS.
     # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
-    # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
+    "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
     # Set the Style of Google Web Font's CSS.
     # Defaults to "font-family: 'Text Me One', sans-serif;"
     "googlewebfont_style": "font-family: Helvetica",
