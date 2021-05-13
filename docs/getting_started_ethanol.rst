@@ -1,3 +1,6 @@
+.. _getting_started_coupled_spin_system_etoh:
+
+===============================
 The Basics: Coupled Spin System
 ===============================
 
@@ -9,38 +12,46 @@ ethanol. Let’s start by importing all the necessary packages.
     :context: close-figs
     :include-source:
 
+    >>> import numpy as np
     >>> import matplotlib.pyplot as plt
     >>> from mrsimulator import Simulator, SpinSystem, Site, Coupling
     >>> from mrsimulator.methods import BlochDecaySpectrum
-    >>> import mrsimulator.signal_processing as sp
-    >>> import mrsimulator.signal_processing.apodization as apo
-    >>> import numpy as np
+    >>> from mrsimulator import signal_processing as sp
 
 Setting up coupled SpinSystem objects
 -------------------------------------
-An NMR spin system is defined by an isolated set of sites (spins) and
-couplings. You can make a spin system as large and complex as needed,
-but for this example, we will build the most abundant isotopomer of the
-ethanol molecule (all carbons are :math:`^{12}C` and the oxygen is
-:math:`^{16}O`). We start by defining the three distinct sites and then
-build a list to hold all the sites (site indices correspond to atoms as
+
+Sites
+^^^^^
+
+An NMR spin system is defined by an isolated set of sites (spins) and couplings. You can
+make a spin system as large and complex as needed, but for this example, we will build
+the most abundant isotopomer of the ethanol molecule (all carbons are :math:`^{12}\text{C}`,
+and the oxygen is :math:`^{16}\text{O}`). We start by defining the three distinct proton
+sites and then build a list to hold all the sites (site indices correspond to atoms as
 shown in the structure below).
 
-.. image:: _static/iso1.*
+.. figure:: _static/iso1.*
     :width: 200
     :alt: image
+    :align: center
 
+    A representation of Ethanol molecule. The proton subscripts correspond to the site
+    indexes used in the spin system.
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> H_CH3 = Site(isotope='1H',  isotropic_chemical_shift=1.226) #methyl proton
-    >>> H_CH2 = Site(isotope='1H',  isotropic_chemical_shift=2.61) #methylene proton
-    >>> H_OH  = Site(isotope='1H',  isotropic_chemical_shift=3.687) #hydroxyl proton
-    >>>
+    >>> H_CH3 = Site(isotope='1H', isotropic_chemical_shift=1.226)  # methyl proton
+    >>> H_CH2 = Site(isotope='1H', isotropic_chemical_shift=2.61)  # methylene proton
+    >>> H_OH = Site(isotope='1H', isotropic_chemical_shift=3.687)  # hydroxyl proton
+    ...
     >>> etoh_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH]
+
+Couplings
+^^^^^^^^^
 
 Next, we define :math:`^3J_{HH}` couplings and make a list to hold them
 all. mrsimulator does not support strong couplings, so we will be
@@ -51,16 +62,26 @@ neglecting them.
     :context: close-figs
     :include-source:
 
-    >>>  # all methyl-methylene coupling pairs
-    >>> HH_coupling_1  = Coupling(site_index=[0, 3], isotropic_j=7)
-    >>> HH_coupling_2  = Coupling(site_index=[0, 4], isotropic_j=7)
-    >>> HH_coupling_3  = Coupling(site_index=[1, 3], isotropic_j=7)
-    >>> HH_coupling_4  = Coupling(site_index=[1, 4], isotropic_j=7)
-    >>> HH_coupling_5  = Coupling(site_index=[2, 3], isotropic_j=7)
-    >>> HH_coupling_6  = Coupling(site_index=[2, 4], isotropic_j=7)
+    >>> # all methyl-methylene coupling pairs
+    >>> HH_coupling_1 = Coupling(site_index=[0, 3], isotropic_j=7)
+    >>> HH_coupling_2 = Coupling(site_index=[0, 4], isotropic_j=7)
+    >>> HH_coupling_3 = Coupling(site_index=[1, 3], isotropic_j=7)
+    >>> HH_coupling_4 = Coupling(site_index=[1, 4], isotropic_j=7)
+    >>> HH_coupling_5 = Coupling(site_index=[2, 3], isotropic_j=7)
+    >>> HH_coupling_6 = Coupling(site_index=[2, 4], isotropic_j=7)
     >>>
-    >>> etoh_couplings = [HH_coupling_1, HH_coupling_2, HH_coupling_3, HH_coupling_4, HH_coupling_5, HH_coupling_6]
+    >>> etoh_couplings = [
+    ...     HH_coupling_1,
+    ...     HH_coupling_2,
+    ...     HH_coupling_3,
+    ...     HH_coupling_4,
+    ...     HH_coupling_5,
+    ...     HH_coupling_6,
+    ... ]
 
+
+Spin system
+^^^^^^^^^^^
 
 Now, we add the sites and couplings to the spin system object.
 
@@ -88,10 +109,13 @@ Next, we create a method to simulate a simple 1D pulse-acquire
     >>> method_H = BlochDecaySpectrum(
     ...     channels=['1H'],
     ...     magnetic_flux_density=9.4,  # T
-    ...     spectral_dimensions=[
-    ...         {"count": 16000,
-    ...         "spectral_width": 1.5e3, # in Hz
-    ...         "reference_offset": 950}]) # in Hz
+    ...     spectral_dimensions=[{
+    ...         "count": 16000,
+    ...         "spectral_width": 1.5e3,  # in Hz
+    ...         "reference_offset": 950,  # in Hz
+    ...         "label": "$^{1}$H frequency",
+    ...     }],
+    ... )
 
 
 In the above code, *channels* is a list of isotope symbols that a method
@@ -108,9 +132,9 @@ stick with the one method.
 
 Running simulation
 ------------------
-Next, we need to create an instance of the simulator object, and then
+Next, we need to create an instance of the simulator object and then
 add our spin system and method to it. Then, we run the simulator with
-the run() method.
+the :meth:`~mrsimulator.Simulator.run` method.
 
 .. plot::
     :format: doctest
@@ -147,11 +171,10 @@ define a SignalProcessor object that adds an exponential apodization of
     >>> processor = sp.SignalProcessor(
     ...     operations=[
     ...         sp.IFFT(),
-    ...         apo.Exponential(FWHM="1 Hz"),
+    ...         sp.apodization.Exponential(FWHM="1 Hz"),
     ...         sp.FFT(),
     ...     ]
     ... )
-    >>>
     >>> processed_H_data = processor.apply_operations(data=H_data)
 
 
@@ -164,15 +187,15 @@ Now, let’s plot the spectrum using matplotlib!
     :context: close-figs
     :include-source:
 
-    >>> plt.figure(figsize=(6, 4)) # set the figure size
-    >>> ax = plt.subplot(projection='csdm')
-    >>>
-    >>> ax.plot(
-    ...     processed_H_data.real,
-    ...     color="black",
-    ...     linewidth=0.5,
-    ... )
-    >>> ax.invert_xaxis()
-    >>>
-    >>> plt.tight_layout()
-    >>> plt.show()
+    >>> plt.figure(figsize=(6, 4)) # set the figure size  # doctest: +SKIP
+    >>> ax = plt.subplot(projection='csdm')  # doctest: +SKIP
+    >>> ax.plot(processed_H_data.real, color="black", linewidth=0.5)  # doctest: +SKIP
+    >>> ax.invert_xaxis()  # doctest: +SKIP
+    >>> plt.tight_layout()  # doctest: +SKIP
+    >>> plt.show()  # doctest: +SKIP
+
+.. _fig-etoh-getting-started-coupled:
+.. figure:: _static/null.*
+    :alt: _images/null.png
+
+    An example :math:`^{1}\text{H}` NMR spectrum simulation of Ethanol.
