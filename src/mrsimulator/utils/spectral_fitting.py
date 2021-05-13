@@ -447,7 +447,14 @@ def LMFIT_min_function(
 
 
 def bestfit(sim: Simulator, processors: list = None):
-    """Return a list of best fit spectrum."""
+    """Return a list of best fit spectrum ordered relative to the methods in the
+    simulator object.
+
+    Args:
+        Simulator sim: The simulator object.
+        list processors: List of SignalProcessor objects ordered according to the
+            methods in the simulator object.
+    """
     processors = processors if isinstance(processors, list) else [processors]
     sim.run()
 
@@ -466,7 +473,13 @@ def add_csdm_dvs(data):
 
 
 def residuals(sim: Simulator, processors: list = None):
-    """Return a list of best fit spectrum."""
+    """Return a list of residuals corresponsing to the best fit spectrum. The list is
+    based on the order of methods in the simulator object.
+
+    Args:
+        Simulator sim: The simulator object.
+        list processors: List of SignalProcessor objects ordered according to the
+            methods in the simulator object."""
     fits = bestfit(sim, processors)
     residual_ = [add_csdm_dvs(item) for item in fits]
 
