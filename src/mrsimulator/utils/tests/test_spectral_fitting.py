@@ -67,7 +67,7 @@ def test_make_simulator_params():
     params = sf.make_simulator_params(sim)
     check(params.valuesdict())
 
-    params = sf.make_simulator_params(sim, include="rotor_frequency")
+    params = sf.make_simulator_params(sim, include={"rotor_frequency"})
     val = params.valuesdict()
     check(params.valuesdict())
     assert val["mth_0_rotor_frequency"] == 1e3

@@ -156,7 +156,7 @@ plt.show()
 # of the function, as follows,
 #
 # **Step 6:** Create a list of parameters.
-params = sf.make_LMFIT_params(sim, processor, include="rotor_frequency")
+params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
 
 # %%
 # The `make_LMFIT_params` parses the instances of the ``Simulator`` and the

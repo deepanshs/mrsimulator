@@ -251,6 +251,18 @@ def make_simulator_params(sim: Simulator, include={}):
         else:
             params.add(name=items, value=value)
 
+    get_simulator_method_parameters(params, sim, include)
+    return params
+
+
+def get_simulator_method_parameters(params: Parameters, sim: Simulator, include={}):
+    """LMFIT parameters for the method attribute in `include`
+
+    Args:
+        Parameters params: LMFIT parameters object.
+        Simulator sim: Simulator object.
+        set include: Set of methtod attributes to include.
+    """
     if "rotor_frequency" in include:
         values = [
             [
