@@ -3,7 +3,7 @@
 import json
 from urllib.parse import urlparse
 
-from csdmpy.dependent_variables.download import download_file_from_url
+from csdmpy.dependent_variable.download import download_file_from_url
 
 
 __author__ = "Deepansh J. Srivastava"

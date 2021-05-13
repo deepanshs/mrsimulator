@@ -229,6 +229,7 @@ API and references
     api_py/py-simulator
     api_py/py-signal-processing
     api_py/py-model
+    api_py/py-fitting
     api_c/c_api
 
 

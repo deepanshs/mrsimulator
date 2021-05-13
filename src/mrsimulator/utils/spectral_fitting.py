@@ -3,6 +3,7 @@ import mrsimulator.signal_processing as sp
 import numpy as np
 from lmfit import Parameters
 from mrsimulator import Simulator
+from mrsimulator.method import NAMED_METHODS
 
 __author__ = ["Maxwell C Venetos", "Deepansh Srivastava"]
 __email__ = ["maxvenetos@gmail.com", "srivastava.89@osu.edu"]
@@ -21,11 +22,6 @@ ENCODING_PAIRS = [
     ["].isotropic_j", "_isotropic_j"],
     ["].j_symmetric.", "_j_symmetric_"],
     ["].dipolar.", "_dipolar_"],
-    # post simulation
-    ["].post_simulation", "_POST_SIM_"],
-    [".scale", "scale"],
-    [".apodization[", "APODIZATION_"],
-    ["].args", "_args"],
 ]
 
 DECODING_PAIRS = [
@@ -52,14 +48,18 @@ EXCLUDE = [
     "transition_pathways",
 ]
 
-POST_SIM_DICT = {"Gaussian": "FWHM", "Exponential": "FWHM", "Scale": "factor"}
+POST_SIM_DICT = {
+    "Gaussian": {"FWHM": "FWHM"},
+    "Exponential": {"FWHM": "FWHM"},
+    "Scale": {"factor": "factor"},
+    "ConstantOffset": {"offset": "offset"},
+    "Linear": {"amplitude": "amplitude", "offset": "offset"},
+}
 
 
 def _str_encode(my_string):
-    """
-    LMFIT Parameters class does not allow for names to include special characters.
-    This function converts '[', ']', and '.' to their HTML numbers to comply with
-    LMFIT.
+    """LMFIT Parameters class does not allow for names to include special characters.
+    This function replaces '[', ']', and '.' to '_' to comply with LMFIT rules.
 
     Args:
         my_string: A string object
@@ -73,8 +73,7 @@ def _str_encode(my_string):
 
 
 def _str_decode(my_string):
-    """
-    Parse the string for objects and indexes and return a list.
+    """Parse the string for objects and indexes and return a list.
 
     Args:
         my_string: A string object
@@ -95,6 +94,94 @@ def _str_decode(my_string):
         my_string = my_string.replace(*item[::-1])
     my_string = my_string.split(".")
     return my_string
+
+
+def _list_of_dictionaries(my_list):
+    """Helper function for traverse_dictionaries function which will return a list of
+    dictionaries.
+
+    Args:
+        my_list: A list object
+
+    Returns:
+        List Object.
+    """
+    return [item.dict() for item in my_list]
+
+
+def _traverse_dictionaries(instance, parent="spin_systems"):
+    """Parses through the instance object contained within the parent object and return
+    a list of attributes that are populated.
+
+    Args:
+        instance: An instance object from the parent object.
+        parent: a string object used to create the addresses of the SpinSystem
+            attributes.
+
+    Returns:
+        List Object.
+    """
+    if isinstance(instance, list):
+        return [
+            value
+            for i, obj in enumerate(instance)
+            for value in _traverse_dictionaries(obj, _str_encode(f"{parent}[{i}]"))
+        ]
+
+    if isinstance(instance, dict):
+        return [
+            item
+            for key, value in instance.items()
+            if key not in EXCLUDE and value is not None
+            for item in (
+                _traverse_dictionaries(value, _str_encode(f"{parent}.{key}"))
+                if isinstance(value, (dict, list))
+                else [_str_encode(f"{parent}.{key}")]
+            )
+        ]
+
+    return []
+
+
+def _post_sim_LMFIT_params(params, process, index):
+    """Creates a LMFIT Parameters object for SignalProcessor operations involved in
+    spectrum fitting.
+
+    Args:
+        params: LMFIT parameters object.
+        process: SignalProcessor object at index *index*.
+        int index: List index of the SingalProcessor object.
+
+    Returns:
+        Parameters object.
+    """
+    _ = [
+        params.add(
+            name=f"SP_{index}_operation_{i}_{operation.__class__.__name__}_{attr}",
+            value=operation.__getattribute__(attr),
+        )
+        for i, operation in enumerate(process.operations)
+        if operation.__class__.__name__ in POST_SIM_DICT
+        for attr in POST_SIM_DICT[operation.__class__.__name__]
+    ]
+
+
+def make_signal_processor_params(processors: list):
+    """Parse the list of SignalProcessor objects for a list of LMFIT parameters.
+
+    Args:
+        processors: List of SignalProcessor objects. The order of the list mush match
+            the order of the methods in the Simulator object.
+    """
+    processors = processors if isinstance(processors, list) else [processors]
+
+    correct_type = all([isinstance(obj, sp.SignalProcessor) for obj in processors])
+    if not correct_type:
+        raise ValueError("Expecting a list of `SignalProcessor` objects.")
+
+    params = Parameters()
+    _ = [_post_sim_LMFIT_params(params, obj, i) for i, obj in enumerate(processors)]
+    return params
 
 
 def _get_simulator_object_value(sim, string):
@@ -129,172 +216,13 @@ def _get_simulator_object_value(sim, string):
     return obj
 
 
-def _update_sim_from_LMFIT_params(sim, string, value):
-    """Parse the string representing the Simulator object dictionary tree format, and
-    set its value to the input.
+def make_simulator_params(sim: Simulator, include={}):
+    """Parse the Simulator object for a list of LMFIT parameters.
 
     Args:
-        sim: The simulator object.
-        string: A string representing the Simulator object dictionary tree format.
-        value: The value to assign.
-
-    Example:
-        >>> site = Site(isotropic_chemical_shift=-431)
-        >>> sys = SpinSystem(sites=[site], abundance=23)
-        >>> sim = Simulator()
-        >>> sim.spin_systems.append(sys)
-
-        >>> string = 'sys_0_site_0_isotropic_chemical_shift'
-        >>> _update_sim_from_LMFIT_params(sim, string, 120)
-        >>> sim.spin_systems[0].sites[0].isotropic_chemical_shift
-        120.0
-    """
-    string = _str_decode(string)
-    obj = sim
-    for attr in string[:-1]:
-        obj = obj[int(attr)] if attr.isnumeric() else obj.__getattribute__(attr)
-    obj.__setattr__(string[-1], value)
-
-
-def _list_of_dictionaries(my_list):
-    """
-    Helper function for traverse_dictionaries function which will return a list of
-    dictionaries.
-
-    Args:
-        my_list: A list object
-
-    Returns:
-        List Object.
-    """
-    return [item.dict() for item in my_list]
-
-
-def _traverse_dictionaries(dictionary, parent="spin_systems"):
-    """
-    Parses through the dictionary objects contained within the simulator object in
-    order to return a list of all attributes that are populated.
-
-    Args:
-        dictionary: A dictionary or list object of the SpinSystem attributes from a
-            simulation object
-        parent: a string object used to create the addresses of the SpinSystem
-            attributes.
-
-    Returns:
-        List Object.
-    """
-    if isinstance(dictionary, list):
-        return [
-            value
-            for i, obj in enumerate(dictionary)
-            for value in _traverse_dictionaries(obj, _str_encode(f"{parent}[{i}]"))
-        ]
-
-    if isinstance(dictionary, dict):
-        return [
-            item
-            for key, value in dictionary.items()
-            if key not in EXCLUDE and value is not None
-            for item in (
-                _traverse_dictionaries(value, _str_encode(f"{parent}.{key}"))
-                if isinstance(value, (dict, list))
-                else [_str_encode(f"{parent}.{key}")]
-            )
-        ]
-
-    return []
-
-
-def _post_sim_LMFIT_params(params, post_sim, index):
-    """
-    Creates an LMFIT Parameters object for SignalProcessor operations
-    involved in spectrum fitting.
-
-    Args:
-        post_sim: SignalProcessor object
-
-    Returns:
-        Parameters object
-    """
-    for i, operation in enumerate(post_sim.operations):
-        name = operation.__class__.__name__
-        if name in POST_SIM_DICT:
-            attr = POST_SIM_DICT[name]
-            key = f"SP_{index}_operation_{i}_{name}_{attr}"
-            val = operation.__getattribute__(attr)
-            params.add(name=key, value=val)
-
-
-def _update_post_sim_from_LMFIT_params(params, post_sim):
-    """Updates SignalProcessor operation arguments from an LMFIT Parameters object
-
-    Args:
-        params: LMFIT Parameters object
-        post_sim: SignalProcessor object
-    """
-    for param in params:
-        # iterating through the parameter list looking for only post_sim params
-        if "operation_" in param:
-            # splitting parameter name to obtain operations index, operation argument,
-            # and its value
-            # SP_j_operation_i_function_arg
-            split_name = param.split("_")
-            sp_idx = int(split_name[1])
-            op_idx = int(split_name[3])  # The operation index
-            function = split_name[4]
-            val = params[param].value  # The value of operation argument parameter
-
-            # update the post_sim object with the parameter updated value.
-            post_sim[sp_idx].operations[op_idx].__setattr__(
-                POST_SIM_DICT[function], val
-            )
-
-
-def make_LMFIT_parameters(sim: Simulator, post_sim: list = None):
-    """An alias of `make_LMFIT_params` function."""
-    return make_LMFIT_params(sim, post_sim)
-
-
-def make_LMFIT_params(sim: Simulator, post_sim: list = None):
-    """
-    Parses the Simulator and PostSimulator objects for a list of LMFIT parameters.
-    The parameter name is generated using the following syntax:
-
-    ``sys_i_site_j_attribute1_attribute2``
-
-    for spin system attribute with signature sys[i].sites[j].attribute1.attribute2
-
-    Args:
-        sim: A Simulator object.
-        post_sim: A list of SignalProcessor object of length equal to the length of
-            methods in the Simulator object.
-
-    Returns:
-        LMFIT Parameters object.
+        Simulator sim: Simulator object.
     """
     params = Parameters()
-    make_simulator_params(params, sim)
-
-    if post_sim is not None:
-        params.update(make_signal_processor_params(post_sim))
-
-    return params
-
-
-def make_signal_processor_params(post_sim):
-    post_sim = post_sim if isinstance(post_sim, list) else [post_sim]
-
-    params = Parameters()
-    for i, processor in enumerate(post_sim):
-        if not isinstance(processor, sp.SignalProcessor):
-            name = type(processor).__name__
-            raise ValueError(f"Expecting a `SignalProcessor` object, found {name}.")
-        _post_sim_LMFIT_params(params, processor, i)
-    return params
-
-
-def make_simulator_params(params, sim):
     if not isinstance(sim, Simulator):
         raise ValueError(f"Expecting a `Simulator` object, found {type(sim).__name__}.")
 
@@ -302,12 +230,13 @@ def make_simulator_params(params, sim):
 
     # get total abundance scaling factor
     length = len(sim.spin_systems)
-    abundance_scale = 100 / sum([sim.spin_systems[i].abundance for i in range(length)])
+    abundance_scale = 100 / sum([sys.abundance for sys in sim.spin_systems])
 
     # expression for the last abundance.
     last_abundance = f"{length - 1}_abundance"
     expression = "-".join([f"{START}{i}_abundance" for i in range(length - 1)])
     expression = "100" if expression == "" else f"100-{expression}"
+
     for items in temp_list:
         value = _get_simulator_object_value(sim, items)
         if "_eta" in items:
@@ -322,41 +251,188 @@ def make_simulator_params(params, sim):
         else:
             params.add(name=items, value=value)
 
+    get_simulator_method_parameters(params, sim, include)
+    return params
+
+
+def get_simulator_method_parameters(params: Parameters, sim: Simulator, include={}):
+    """LMFIT parameters for the method attribute in `include`
+
+    Args:
+        Parameters params: LMFIT parameters object.
+        Simulator sim: Simulator object.
+        set include: Set of methtod attributes to include.
+    """
+    if "rotor_frequency" in include:
+        values = [
+            [
+                ev.rotor_frequency
+                for sp in mth.spectral_dimensions
+                for ev in sp.events
+                if ev.rotor_frequency != 1e12
+            ]
+            for i, mth in enumerate(sim.methods)
+            if mth.name in NAMED_METHODS
+        ]
+
+        _ = [
+            params.add(
+                name=f"mth_{i}_rotor_frequency",
+                value=val[0],
+                min=val[0] - 100,
+                max=val[0] + 100,
+            )
+            for i, val in enumerate(values)
+            if val != []
+        ]
+
+    return params
+
+
+def make_LMFIT_parameters(sim: Simulator, processors: list = None, include={}):
+    """An alias of `make_LMFIT_params` function."""
+    return make_LMFIT_params(sim, processors)
+
+
+def make_LMFIT_params(sim: Simulator, processors: list = None, include={}):
+    r"""Parse the Simulator and PostSimulator objects for a list of LMFIT parameters.
+
+    Args:
+        Simulator sim: Simulator object.
+        list processors: List of SignalProcessor objects. The order must match the order
+            of methods within the simulator object.
+        set include: set of keywords from the method object to include as a fitting
+            parameter. Default is {}.
+
+    The parameter name assocciated with the spin system within Simulator object is
+    generated using the following nomenclature- *sys_i_site_j_attribute1_attribute2*
+    for attribute with signature ``sim.spin_systems[i].sites[j].attribute1.attribute2``
+
+    Here, *sys_i* refers to the spin system at index *i*, *site_j* refers to the site at
+    index *j* with in the :math:i^\text{th} spin system, and *attribute1* and
+    *attribute2* are the site attrbiutes.
+
+    **For examples:**
+
+    ``sim.spin_systems[1].sites[0].isotropic_chemical_shift`` parametrizes to
+    *sys_1_site_0_isotropic_chemical_shift* while
+    ``sim.spin_systems[0].sites[1].quadrupolar.Cq`` to *sys_0_site_1_quadrupolar_Cq*.
+
+    Returns:
+        LMFIT Parameters object.
+    """
+    params = Parameters()
+    params.update(make_simulator_params(sim, include))
+
+    proc = make_signal_processor_params(processors) if processors is not None else None
+    params.update(proc) if proc is not None else None
+
+    return params
+
+
+def _update_simulator_from_LMFIT_params(params, sim: Simulator):
+    """Parse the string representing the Simulator object dictionary tree format, and
+    set its value to the input.
+
+    Args:
+        sim: The simulator object.
+        string: A string representing the Simulator object dictionary tree format.
+        value: The value to assign.
+
+    Example:
+        if params['sys_i_site_j_isotropic_chemical_shift'].value = 120
+        the function sets, sim.spin_systems[i].sites[j].isotropic_chemical_shift = 120.0
+    """
+
+    def set_sys_value(obj, key, value):
+        ids = _str_decode(key)
+        for attr in ids[:-1]:
+            obj = obj[int(attr)] if attr.isnumeric() else obj.__dict__[attr]
+        obj.__dict__[ids[-1]] = value
+
+    def set_mth_value(obj, key, value):
+        index = int(key.split("_")[1])
+        _ = [
+            sp.events[0].__setattr__("rotor_frequency", value)
+            for sp in obj.__dict__["methods"][index].spectral_dimensions
+            if sp.events[0].rotor_frequency != 1e12
+        ]
+
+    values = params.valuesdict()
+    _ = [set_sys_value(sim, k, v) for k, v in values.items() if "sys_" in k]
+    _ = [set_mth_value(sim, k, v) for k, v in values.items() if "mth_" in k]
+
+
+def _update_processors_from_LMFIT_params(params, processors: list):
+    """Updates SignalProcessor operation arguments from a LMFIT Parameters object.
+
+    Args:
+        params: LMFIT Parameters object.
+        processors: list of SignalProcessor objects.
+
+    Example:
+        if params['SP_i_operations_j_Scale_factor'].value = 10
+        the function sets, processors[i].operations[j].Scale.factor = 10.0
+    """
+
+    def set_value(obj, key, value):
+        ids = key.split("_")
+        # The signal processor index, operation indexes, and function argument
+        sp, op, arg = int(ids[1]), int(ids[3]), POST_SIM_DICT[ids[4]][ids[5]]
+        obj[sp].__dict__["operations"][op].__dict__[arg] = value
+
+    values = params.valuesdict()
+    _ = [set_value(processors, k, v) for k, v in values.items() if "operation_" in k]
+
+
+def update_mrsim_obj_from_params(params, sim: Simulator, processors: list = None):
+    """Update the mrsimulator Simulator and SignalProcessor objects from the lmfit
+    Parameters obj
+
+    Args:
+        params: Parameters object containing parameters for OLS minimization.
+        sim: Simulator object.
+        processors: A list of SignalProcessor objects corresponding to the methods in
+            the Simulator object.
+    """
+    _update_simulator_from_LMFIT_params(params, sim)
+    _update_processors_from_LMFIT_params(params, processors)
+
+
+def get_correct_data_order(data):
+    """If data has negative increment, reverse the data."""
+    y = data.y[0].components[0]
+    index = [-i - 1 for i, x in enumerate(data.x) if x.increment.value < 0]
+    return y if index == [] else np.flip(y, axis=tuple(index))
+
 
 def LMFIT_min_function(
-    params: Parameters, sim: Simulator, post_sim: list = None, sigma: list = None
+    params: Parameters, sim: Simulator, processors: list = None, sigma: list = None
 ):
-    """
-    The simulation routine to calculate the vector difference between simulation and
+    """The simulation routine to calculate the vector difference between simulation and
     experiment based on the parameters update.
 
     Args:
         params: Parameters object containing parameters for OLS minimization.
         sim: Simulator object.
-        post_sim: A list of PostSimulator objects corresponding to the methods in the
+        processors: A list of PostSimulator objects corresponding to the methods in the
             Simulator object.
         sigma: A list of standard deviations corresponding to the experiments in the
             Simulator.methods attribute
     Returns:
         Array of the differences between the simulation and the experimental data.
     """
-    post_sim = post_sim if isinstance(post_sim, list) else [post_sim]
-    if sigma is None:
-        sigma = [1.0 for _ in sim.methods]
+    processors = processors if isinstance(processors, list) else [processors]
+    sigma = [1.0 for _ in sim.methods] if sigma is None else sigma
     sigma = sigma if isinstance(sigma, list) else [sigma]
 
-    values = params.valuesdict()
-    for items in values:
-        if "operation_" not in items:
-            _update_sim_from_LMFIT_params(sim, items, values[items])
-        elif "operation_" in items and post_sim is not None:
-            _update_post_sim_from_LMFIT_params(params, post_sim)
+    update_mrsim_obj_from_params(params, sim, processors)
 
     sim.run()
 
     processed_data = [
         item.apply_operations(data=data.simulation)
-        for item, data in zip(post_sim, sim.methods)
+        for item, data in zip(processors, sim.methods)
     ]
 
     diff = np.asarray([])
@@ -365,12 +441,51 @@ def LMFIT_min_function(
         for decomposed_datum in processed_datum.y:
             datum += decomposed_datum.components[0].real
 
-        # If data has negative increment, reverse the data before taking the difference.
-        exp_data = mth.experiment.y[0].components[0]
-        index = [
-            -i - 1 for i, x in enumerate(mth.experiment.x) if x.increment.value < 0
-        ]
-        exp_data = exp_data if index == [] else np.flip(exp_data, axis=tuple(index))
+        exp_data = get_correct_data_order(mth.experiment)
         diff = np.append(diff, (exp_data - datum) / sigma_)
-
     return diff
+
+
+def bestfit(sim: Simulator, processors: list = None):
+    """Return a list of best fit spectrum ordered relative to the methods in the
+    simulator object.
+
+    Args:
+        Simulator sim: The simulator object.
+        list processors: List of SignalProcessor objects ordered according to the
+            methods in the simulator object.
+    """
+    processors = processors if isinstance(processors, list) else [processors]
+    sim.run()
+
+    return [
+        proc.apply_operations(data=mth.simulation).real
+        for mth, proc in zip(sim.methods, processors)
+    ]
+
+
+def add_csdm_dvs(data):
+    new_data = data.split()
+    new_csdm = 0
+    for item in new_data:
+        new_csdm += item
+    return new_csdm if new_data != [] else None
+
+
+def residuals(sim: Simulator, processors: list = None):
+    """Return a list of residuals corresponsing to the best fit spectrum. The list is
+    based on the order of methods in the simulator object.
+
+    Args:
+        Simulator sim: The simulator object.
+        list processors: List of SignalProcessor objects ordered according to the
+            methods in the simulator object."""
+    fits = bestfit(sim, processors)
+    residual_ = [add_csdm_dvs(item) for item in fits]
+
+    for res, mth in zip(residual_, sim.methods):
+        exp_data = get_correct_data_order(mth.experiment)
+        res.y[0].components[0] -= exp_data
+        res.y[0].components[0] *= -1
+
+    return residual_

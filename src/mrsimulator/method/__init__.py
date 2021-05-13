@@ -204,8 +204,7 @@ class Method(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
-        """
-        Parse the physical quantity from a dictionary representation of the Method
+        """Parse the physical quantity from a dictionary representation of the Method
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 
@@ -372,8 +371,7 @@ class Method(Parseable):
         ]
 
     def get_transition_pathways(self, spin_system) -> List[TransitionPathway]:
-        """
-        Return a list of transition pathways from the given spin system that satisfy
+        """Return a list of transition pathways from the given spin system that satisfy
         the query selection criterion of the method.
 
         Args:

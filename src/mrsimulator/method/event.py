@@ -82,8 +82,7 @@ class Event(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantities of an Event object from a python dictionary
+        """Parse the physical quantities of an Event object from a python dictionary
         object.
 
         Args:
