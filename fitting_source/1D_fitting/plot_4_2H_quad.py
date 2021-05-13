@@ -120,7 +120,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # %%
 # **Solve the minimizer using LMFIT**
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
-result = minner.minimize(method="powell")
+result = minner.minimize(method="nelder")
 report_fit(result)
 
 # %%
