@@ -84,6 +84,7 @@ jobs:
           python -m cibuildwheel . --print-build-identifiers
 
       - name: build wheels
+        shell: pwsh
         run: |
           python -m cibuildwheel .
 
