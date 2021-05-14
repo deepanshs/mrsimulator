@@ -81,7 +81,7 @@ jobs:
       - name: list target wheels
         shell: pwsh
         run: |
-          python -m python -m cibuildwheel . --print-build-identifiers
+          python -m cibuildwheel . --print-build-identifiers
 
       - name: build wheels
         run: |
