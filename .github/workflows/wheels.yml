@@ -46,9 +46,10 @@ jobs:
       #     twine upload --skip-existing dist/*.tar.gz
 
   wheel:
+    runs-on: ${{ matrix.os }}
+
     strategy:
       fail-fast: false
-      runs-on: ${{ matrix.os }}
       matrix:
         include:
           - os: macos-latest
