@@ -58,7 +58,7 @@ jobs:
       CIBW_BUILD_VERBOSITY: "1"
 
       CIBW_BEFORE_ALL_MACOS: "brew install fftw openblas"
-      CIBW_BEFORE_ALL_LINUX: "sudo apt-get install --yes libopenblas-dev libfftw3-dev"
+      CIBW_BEFORE_ALL_LINUX: "yum -y install openblas-devel fftw-devel"
 
       # CIBW_BUILD: "${{ matrix.cibw.build || '*' }}"
       # CIBW_MANYLINUX_X86_64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
