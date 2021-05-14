@@ -54,24 +54,26 @@ jobs:
         include:
           - os: macos-latest
             name: mac
+            cibw:
+              build: "cp37* cp38* cp39*"
 
-          # - os: macos-latest
-          #   name: mac-arm
+          - os: macos-latest
+            name: mac-arm
+            cibw:
+              arch: universal2
+              build: "cp39*"
+
+          # - os: ubuntu-latest
+          #   name: manylinux1
           #   cibw:
-          #     arch: universal2
-          #     build: "cp39*"
+          #     build: "cp36* cp37*"
+          #     manylinux_image: manylinux1
 
-          - os: ubuntu-latest
-            name: manylinux1
-            cibw:
-              build: "cp36* cp37*"
-              manylinux_image: manylinux1
-
-          - os: ubuntu-latest
-            name: manylinux2010
-            cibw:
-              build: "cp38* cp39* pp3*"
-              manylinux_image: manylinux2010
+          # - os: ubuntu-latest
+          #   name: manylinux2010
+          #   cibw:
+          #     build: "cp38* cp39* pp3*"
+          #     manylinux_image: manylinux2010
 
           # - os: ubuntu-latest
           #   name: cp36-manylinux_aarch64
