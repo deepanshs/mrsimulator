@@ -51,7 +51,7 @@ plt.show()
 # **Spin System**
 H_2 = Site(
     isotope="2H",
-    isotropic_chemical_shift=-57.13,  # in ppm,
+    isotropic_chemical_shift=-57.12,  # in ppm,
     quadrupolar={"Cq": 3e4, "eta": 0},  # Cq in Hz
 )
 
@@ -65,8 +65,8 @@ spectral_dims = get_spectral_dimensions(experiment)
 
 method = BlochDecaySpectrum(
     channels=["2H"],
-    magnetic_flux_density=9.4,  # in T
-    rotor_frequency=4517,  # in Hz
+    magnetic_flux_density=9.395,  # in T
+    rotor_frequency=4517.1,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # experimental dataset
 )
@@ -89,7 +89,7 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        sp.apodization.Exponential(FWHM="50 Hz"),
+        sp.apodization.Exponential(FWHM="60 Hz"),
         sp.FFT(),
         sp.Scale(factor=140),
     ]
@@ -114,7 +114,8 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
+params = sf.make_LMFIT_params(sim, processor)
+params["sys_0_site_0_isotropic_chemical_shift"].vary = False
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
