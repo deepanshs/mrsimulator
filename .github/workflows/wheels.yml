@@ -1,4 +1,4 @@
-name: CI (conda)
+name: CI (wheels and sdist)
 
 on:
   push:
@@ -45,89 +45,146 @@ jobs:
       #     pip install twine
       #     twine upload --skip-existing dist/*.tar.gz
 
-  # build:
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-  #       python-version: [3.6, 3.7, 3.8, 3.9]
-  #   runs-on: ${{ matrix.os }}
+  wheel:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest"]
+        python-version: [3.6, 3.7, 3.8, 3.9]
+    runs-on: ${{ matrix.os }}
 
-  #   env:
-  #     MACOSX_DEPLOYMENT_TARGET: "10.9"
-  #     CIBW_BUILD_VERBOSITY: "1"
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "10.9"
+      CIBW_BUILD_VERBOSITY: "1"
 
-  #     # CIBW_BUILD: "${{ matrix.cibw.build || '*' }}"
-  #     # CIBW_MANYLINUX_X86_64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
-  #     # CIBW_MANYLINUX_I686_IMAGE: "${{ matrix.cibw.manylinux_image }}"
-  #     # CIBW_MANYLINUX_AARCH64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
-  #     # CIBW_ARCHS_LINUX: "${{ matrix.cibw.arch || 'auto' }}"
-  #     # CIBW_ARCHS_MACOS: "${{ matrix.cibw.arch || 'auto' }}"
-  #     CIBW_TEST_REQUIRES: "pytest"
-  #     CIBW_TEST_COMMAND: pytest {package}
+      CIBW_BEFORE_ALL_MACOS: "brew install fftw openblas"
+      CIBW_BEFORE_ALL_LINUX: "sudo apt-get install --yes libopenblas-dev libfftw3-dev"
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2.3.4
-  #     - name: Setup Miniconda
-  #       uses: conda-incubator/setup-miniconda@v2
-  #       env:
-  #         ACTIONS_ALLOW_UNSECURE_COMMANDS: "true"
-  #       with:
-  #         auto-update-conda: true
-  #         auto-activate-base: false
-  #         miniconda-version: "latest"
-  #         python-version: ${{ matrix.python-version }}
-  #         environment-file: environment-dev.yml
-  #         activate-environment: mrsimulator-dev
-  #     - run: |
-  #         conda --version
-  #         which python
-  #     - name: Build and install package from source
-  #       shell: pwsh
-  #       run: |
-  #         conda --version
-  #         which python
-  #         python setup_conda.py develop
-  #     - name: Test with pytest
-  #       shell: pwsh
-  #       run: pytest --cov=./ --cov-report=xml
-  #     - name: Upload coverage
-  #       uses: codecov/codecov-action@v1
+      # CIBW_BUILD: "${{ matrix.cibw.build || '*' }}"
+      # CIBW_MANYLINUX_X86_64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
+      # CIBW_MANYLINUX_I686_IMAGE: "${{ matrix.cibw.manylinux_image }}"
+      # CIBW_MANYLINUX_AARCH64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
+      # CIBW_ARCHS_LINUX: "${{ matrix.cibw.arch || 'auto' }}"
+      # CIBW_ARCHS_MACOS: "${{ matrix.cibw.arch || 'auto' }}"
+      CIBW_TEST_REQUIRES: "pytest"
+      CIBW_TEST_COMMAND: pytest {package}
 
-  #     - name: install cibuildwheel
-  #       shell: pwsh
-  #       run: |
-  #         python -m pip install --upgrade setuptools pip wheel
-  #         python -m pip install cibuildwheel
-  #     - name: install mac dependencies
-  #       shell: pwsh
-  #       if: startsWith(matrix.os, 'mac')
-  #       run: |
-  #         python -m pip install delocate
-  #     - name: install linux dependencies
-  #       shell: pwsh
-  #       if: startsWith(matrix.os, 'ubuntu')
-  #       run: |
-  #         python -m pip install auditwheel
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
 
-  #     - name: show environment
-  #       shell: pwsh
-  #       run: |
-  #         python -m pip freeze
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+          architecture: ${{ matrix.architecture }}
 
-  #     - name: list target wheels
-  #       shell: pwsh
-  #       run: |
-  #         python -m cibuildwheel . --print-build-identifiers
+      - name: install dependencies
+        run: |
+          pip install --upgrade setuptools pip wheel
+          pip install -r requirements-dev.txt
+          pip install cibuildwheel
 
-  #     - name: build wheels
-  #       shell: pwsh
-  #       run: |
-  #         python -m cibuildwheel .
+      - name: install mac dependencies
+        if: startsWith(matrix.os, 'mac')
+        run: |
+          pip install delocate
 
-  #     - uses: actions/upload-artifact@v2
-  #       with:
-  #         name: wheels-${{ matrix.name }}
-  #         path: "wheelhouse/*"
-  #         if-no-files-found: error
+      - name: install linux dependencies
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          pip install auditwheel
+
+      - name: show environment
+        run: |
+          pip freeze
+
+      - name: list target wheels
+        run: |
+          python -m cibuildwheel . --print-build-identifiers
+
+      # - name: compile Cython sources
+      #   run: |
+      #     python setup.py cython
+
+      - name: build wheels
+        run: |
+          python -m cibuildwheel .
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: wheels-${{ matrix.name }}
+          path: "wheelhouse/*"
+          if-no-files-found: error
+
+      # - name: customize aarch64
+      #   if: contains(matrix.cibw.arch, 'aarch64')
+      #   # install zeromq-devel because building libzmq for arm takes too long
+      #   # it's not in default packages, but it is in epel-7
+      #   # this will be an older release than than other wheels
+      #   run: |
+      #     echo '${{ matrix.cibw.arch }}'
+      #     echo 'CIBW_BEFORE_ALL_LINUX=yum -y install openblas-devel fftw-devel' >> "$GITHUB_ENV"
+
+      # - name: Setup Miniconda
+      #   uses: conda-incubator/setup-miniconda@v2
+      #   env:
+      #     ACTIONS_ALLOW_UNSECURE_COMMANDS: "true"
+      #   with:
+      #     auto-update-conda: true
+      #     auto-activate-base: false
+      #     miniconda-version: "latest"
+      #     python-version: ${{ matrix.python-version }}
+      #     environment-file: environment-dev.yml
+      #     activate-environment: mrsimulator-dev
+      - run: |
+          conda --version
+          which python
+      - name: Build and install package from source
+        shell: pwsh
+        run: |
+          conda --version
+          which python
+          python setup_conda.py develop
+      - name: Test with pytest
+        shell: pwsh
+        run: pytest --cov=./ --cov-report=xml
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
+
+      - name: install cibuildwheel
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade setuptools pip wheel
+          python -m pip install cibuildwheel
+      - name: install mac dependencies
+        shell: pwsh
+        if: startsWith(matrix.os, 'mac')
+        run: |
+          python -m pip install delocate
+      - name: install linux dependencies
+        shell: pwsh
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          python -m pip install auditwheel
+
+      - name: show environment
+        shell: pwsh
+        run: |
+          python -m pip freeze
+
+      - name: list target wheels
+        shell: pwsh
+        run: |
+          python -m cibuildwheel . --print-build-identifiers
+
+      - name: build wheels
+        shell: pwsh
+        run: |
+          python -m cibuildwheel .
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: wheels-${{ matrix.name }}
+          path: "wheelhouse/*"
+          if-no-files-found: error
