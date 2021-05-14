@@ -51,7 +51,7 @@ plt.show()
 # **Spin System**
 H_2 = Site(
     isotope="2H",
-    isotropic_chemical_shift=-57,  # in ppm,
+    isotropic_chemical_shift=-57.13,  # in ppm,
     quadrupolar={"Cq": 3e4, "eta": 0},  # Cq in Hz
 )
 
@@ -120,7 +120,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # %%
 # **Solve the minimizer using LMFIT**
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
-result = minner.minimize(method="nelder")
+result = minner.minimize()
 report_fit(result)
 
 # %%
