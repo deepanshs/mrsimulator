@@ -53,17 +53,27 @@ shown in the structure below).
 Couplings
 ^^^^^^^^^
 
-Next, we define :math:`^3J_{HH}` couplings and make a list to hold them
-all. mrsimulator does not support strong couplings, so we will be
-neglecting them.
+Now, we need to define the :math:`^3J_{HH}` couplings that cause the splittings
+we're used to seeing in the spectrum of ethanol.  Let's start by defining one
+coupling object between a methyl and a methylene proton.
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> # all methyl-methylene coupling pairs
     >>> HH_coupling_1 = Coupling(site_index=[0, 3], isotropic_j=7)
+
+In this object, we define a coupling between site 0 (methyl) and site 3
+(methylene) with an isotropic J-coupling of 7 Hz.  Now, we define the rest of
+the methyl-methylene couplings and make a list to hold them all. mrsimulator
+does not support strong couplings, so we will be neglecting them.
+
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
+
     >>> HH_coupling_2 = Coupling(site_index=[0, 4], isotropic_j=7)
     >>> HH_coupling_3 = Coupling(site_index=[1, 3], isotropic_j=7)
     >>> HH_coupling_4 = Coupling(site_index=[1, 4], isotropic_j=7)
@@ -159,28 +169,7 @@ Let’s get the data from the method so we can plot it.
 
 Visualizing the dataset
 -----------------------
-Now that we have our data, let’s add some post-simulation processing. We
-define a SignalProcessor object that adds an exponential apodization of
-1 Hz and then apply this processor on our data from the simulation.
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> processor = sp.SignalProcessor(
-    ...     operations=[
-    ...         sp.IFFT(),
-    ...         sp.apodization.Exponential(FWHM="1 Hz"),
-    ...         sp.FFT(),
-    ...     ]
-    ... )
-    >>> processed_H_data = processor.apply_operations(data=H_data)
-
-
-**Plot**
-
-Now, let’s plot the spectrum using matplotlib!
+Now that we have our data, let’s plot the spectrum using matplotlib!
 
 .. plot::
     :format: doctest
@@ -189,7 +178,7 @@ Now, let’s plot the spectrum using matplotlib!
 
     >>> plt.figure(figsize=(6, 4)) # set the figure size  # doctest: +SKIP
     >>> ax = plt.subplot(projection='csdm')  # doctest: +SKIP
-    >>> ax.plot(processed_H_data.real, color="black", linewidth=0.5)  # doctest: +SKIP
+    >>> ax.plot(H_data.real, color="black", linewidth=0.5)  # doctest: +SKIP
     >>> ax.invert_xaxis()  # doctest: +SKIP
     >>> plt.tight_layout()  # doctest: +SKIP
     >>> plt.show()  # doctest: +SKIP
