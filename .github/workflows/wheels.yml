@@ -136,22 +136,23 @@ jobs:
           echo 'SDKROOT=/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk' >> "$GITHUB_ENV"
           echo 'MACOSX_DEPLOYMENT_TARGET=10.15' >> "$GITHUB_ENV"
 
-      - name: Install Python Dependencies
-        run: |
-          pip install --upgrade setuptools pip wheel cython
-          pip install -r requirements-dev.txt
-          pip install cibuildwheel
-          pip install -e .
-
       - name: Install mac-os Dependencies
         if: startsWith(matrix.os, 'mac')
         run: |
           pip install delocate
+          brew install openblas fftw
 
       - name: Install linux Dependencies
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           pip install auditwheel
+          yum -y install openblas-devel fftw-devel
+
+      - name: Install Python Dependencies
+        run: |
+          pip install --upgrade setuptools pip wheel cython
+          pip install -r requirements-dev.txt
+          pip install -e . cibuildwheel
 
       - name: show environment
         run: |
@@ -165,7 +166,7 @@ jobs:
       #   run: |
       #     python setup.py cython
 
-      - name: build wheels
+      - name: Build wheels
         run: |
           python -m cibuildwheel .
 
