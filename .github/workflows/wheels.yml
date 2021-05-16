@@ -136,18 +136,19 @@ jobs:
           echo 'SDKROOT=/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk' >> "$GITHUB_ENV"
           echo 'MACOSX_DEPLOYMENT_TARGET=10.15' >> "$GITHUB_ENV"
 
-      - name: install dependencies
+      - name: Install Python Dependencies
         run: |
           pip install --upgrade setuptools pip wheel cython
           pip install -r requirements-dev.txt
           pip install cibuildwheel
+          pip install -e .
 
-      - name: install mac dependencies
+      - name: Install mac-os Dependencies
         if: startsWith(matrix.os, 'mac')
         run: |
           pip install delocate
 
-      - name: install linux dependencies
+      - name: Install linux Dependencies
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           pip install auditwheel
@@ -167,6 +168,10 @@ jobs:
       - name: build wheels
         run: |
           python -m cibuildwheel .
+
+      - name: List builds
+        run: |
+          ls dist
 
       - uses: actions/upload-artifact@v2
         with:
