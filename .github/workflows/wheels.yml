@@ -146,7 +146,7 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           pip install auditwheel
-          yum -y install openblas-devel fftw-devel
+          sudo apt-get install --yes libopenblas-dev libfftw3-dev
 
       - name: Install Python Dependencies
         run: |
