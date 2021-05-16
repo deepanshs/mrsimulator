@@ -64,6 +64,7 @@ a coupling between a methyl and a methylene proton.
 
     >>> HH_coupling_1 = Coupling(site_index=[0, 3], isotropic_j=7)
     >>> HH_coupling_1.property_units
+    {'isotropic_j': 'Hz'}
 
 The attribute *site_index* holds a pair of integers, where each integer is the index
 of the coupled site object. The attribute *isotropic_j* is the isotropic *J*-coupling
