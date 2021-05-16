@@ -4,7 +4,7 @@
 The Basics: Coupled Spin System
 ===============================
 
-In this example, we will simulate the :math:`^1H` NMR spectrum of
+In this example, we will simulate the :math:`^1\text{H}` NMR spectrum of
 ethanol. Let’s start by importing all the necessary packages.
 
 .. plot::
@@ -12,11 +12,9 @@ ethanol. Let’s start by importing all the necessary packages.
     :context: close-figs
     :include-source:
 
-    >>> import numpy as np
     >>> import matplotlib.pyplot as plt
     >>> from mrsimulator import Simulator, SpinSystem, Site, Coupling
     >>> from mrsimulator.methods import BlochDecaySpectrum
-    >>> from mrsimulator import signal_processing as sp
 
 Setting up coupled SpinSystem objects
 -------------------------------------
@@ -54,8 +52,9 @@ Couplings
 ^^^^^^^^^
 
 Now, we need to define the :math:`^3J_{HH}` couplings that cause the splittings
-we're used to seeing in the spectrum of ethanol.  Let's start by defining one
-coupling object between a methyl and a methylene proton.
+we're used to seeing in the spectrum of ethanol. In ``mrsimulator``, all Couplings
+are defined using the :class:`~mrsimulator.Coupling` class. Let's start by defining
+a coupling between a methyl and a methylene proton.
 
 .. plot::
     :format: doctest
@@ -64,10 +63,16 @@ coupling object between a methyl and a methylene proton.
 
     >>> HH_coupling_1 = Coupling(site_index=[0, 3], isotropic_j=7)
 
-In this object, we define a coupling between site 0 (methyl) and site 3
-(methylene) with an isotropic J-coupling of 7 Hz.  Now, we define the rest of
-the methyl-methylene couplings and make a list to hold them all. mrsimulator
-does not support strong couplings, so we will be neglecting them.
+The attribute *site_index* holds a pair of integers, where each integer is the index
+of the coupled site object. The attribute *isotropic_j* is the isotropic *J*-coupling
+between the coupled sites in units of *Hz*. In the above example, we define a coupling
+between site 0 (methyl) and site 3 (methylene). The indexes 0 and 3 are relative to the
+list of site objects in ``etho_sites``. The isotropic *J*-coupling is 7 Hz.
+Now, we define the rest of the methyl-methylene couplings and make a list to hold
+them all.
+
+.. note::
+    ``mrsimulator`` library does not support strong couplings, so we will be neglecting them.
 
 .. plot::
     :format: doctest
@@ -120,9 +125,9 @@ Next, we create a method to simulate a simple 1D pulse-acquire
     ...     channels=['1H'],
     ...     magnetic_flux_density=9.4,  # T
     ...     spectral_dimensions=[{
-    ...         "count": 16000,
+    ...         "count": 3000,
     ...         "spectral_width": 1.5e3,  # in Hz
-    ...         "reference_offset": 950,  # in Hz
+    ...         "reference_offset": 940,  # in Hz
     ...         "label": "$^{1}$H frequency",
     ...     }],
     ... )
@@ -130,12 +135,11 @@ Next, we create a method to simulate a simple 1D pulse-acquire
 
 In the above code, *channels* is a list of isotope symbols that a method
 will use. The Bloch Decay method only uses one channel, and in this case
-we are simulating a :math:`^1H` spectrum. *magnetic_flux_density*
+we are simulating a :math:`^1\text{H}` spectrum. *magnetic_flux_density*
 describes the environment under which the resonance frequency is
 evaluated. *spectral_dimensions* contains a list of spectral dimensions
-(only one for the Bloch Decay method). In this case, we define a
-frequency dimension with 16,000 points, spanning 1.5 kHz with a
-reference offset of 950 Hz.
+(only one for the Bloch Decay method). In this case, we define a frequency
+dimension with 3000 points, spanning 1.5 kHz with a reference offset of 940 Hz.
 
 You can create as many methods as you need, but in this case we will
 stick with the one method.
@@ -176,10 +180,10 @@ Now that we have our data, let’s plot the spectrum using matplotlib!
     :context: close-figs
     :include-source:
 
-    >>> plt.figure(figsize=(6, 4)) # set the figure size  # doctest: +SKIP
+    >>> plt.figure(figsize=(10, 4)) # set the figure size  # doctest: +SKIP
     >>> ax = plt.subplot(projection='csdm')  # doctest: +SKIP
     >>> ax.plot(H_data.real, color="black", linewidth=0.5)  # doctest: +SKIP
-    >>> ax.invert_xaxis()  # doctest: +SKIP
+    >>> ax.set_xlim(4, 0.75)  # doctest: +SKIP
     >>> plt.tight_layout()  # doctest: +SKIP
     >>> plt.show()  # doctest: +SKIP
 
