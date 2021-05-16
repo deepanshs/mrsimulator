@@ -170,10 +170,6 @@ jobs:
         run: |
           python -m cibuildwheel .
 
-      - name: List builds
-        run: |
-          ls dist
-
       - uses: actions/upload-artifact@v2
         with:
           name: wheels-${{ matrix.name }}
