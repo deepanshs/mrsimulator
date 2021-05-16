@@ -171,7 +171,6 @@ Getting Started
     installation/installation
     introduction
     getting_started
-    getting_started_coupled
     getting_started-objects
     getting_started_ethanol
     configuring_simulator

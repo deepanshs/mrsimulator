@@ -1,9 +1,9 @@
 
 .. _getting_started:
 
-=================================
-The Basics: Uncoupled Spin System
-=================================
+==========
+The Basics
+==========
 
 We have put together a set of guidelines for using the ``mrsimulator`` package. We
 encourage our users to follow these guidelines for consistency. In

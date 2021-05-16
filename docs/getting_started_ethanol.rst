@@ -1,11 +1,12 @@
 .. _getting_started_coupled_spin_system_etoh:
 
-===============================
-The Basics: Coupled Spin System
-===============================
+==================================
+Coupled Spin System: Using objects
+==================================
 
 In this example, we will simulate the :math:`^1\text{H}` NMR spectrum of
-ethanol. Let’s start by importing all the necessary packages.
+ethanol using the core ``mrsimulator`` objects. Let’s start by importing
+all the necessary packages.
 
 .. plot::
     :format: doctest
@@ -62,14 +63,16 @@ a coupling between a methyl and a methylene proton.
     :include-source:
 
     >>> HH_coupling_1 = Coupling(site_index=[0, 3], isotropic_j=7)
+    >>> HH_coupling_1.property_units
 
 The attribute *site_index* holds a pair of integers, where each integer is the index
 of the coupled site object. The attribute *isotropic_j* is the isotropic *J*-coupling
-between the coupled sites in units of *Hz*. In the above example, we define a coupling
-between site 0 (methyl) and site 3 (methylene). The indexes 0 and 3 are relative to the
-list of site objects in ``etho_sites``. The isotropic *J*-coupling is 7 Hz.
-Now, we define the rest of the methyl-methylene couplings and make a list to hold
-them all.
+between the coupled sites in units of *Hz*. Like every other object, the information on
+the default unit is held with the ``property_units``  attribute.
+In the above example, we define a coupling between site 0 (methyl) and site 3 (methylene).
+The indexes 0 and 3 are relative to the list of site objects in ``etho_sites``. The
+isotropic *J*-coupling is 7 Hz.
+Now, we define the rest of the methyl-methylene couplings and make a list to hold them all.
 
 .. note::
     ``mrsimulator`` library does not support strong couplings, so we will be neglecting them.
