@@ -39,7 +39,6 @@ jobs:
     needs: [py_lint]
     strategy:
       matrix:
-        name: linux
         python-version: [3.6, 3.7, 3.8, 3.9]
 
     steps:
@@ -72,7 +71,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: wheels-${{ matrix.name }}
+          name: wheels-linux
           path: "dist/*"
           if-no-files-found: error
 
@@ -81,7 +80,6 @@ jobs:
     needs: [py_lint]
     strategy:
       matrix:
-        name: macos
         python-version: [3.6, 3.7, 3.8, 3.9]
 
     steps:
@@ -116,6 +114,6 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: wheels-${{ matrix.name }}
+          name: wheels-macos
           path: "dist/*"
           if-no-files-found: error
