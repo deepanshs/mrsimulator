@@ -114,7 +114,8 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
+params = sf.make_LMFIT_params(sim, processor)
+params["sys_0_site_0_isotropic_chemical_shift"].vary = False
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
