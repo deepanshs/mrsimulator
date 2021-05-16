@@ -70,8 +70,8 @@ jobs:
         include:
           - os: macos-latest
             name: mac
-            cibw:
-              build: "cp37* cp38* cp39*"
+            # cibw:
+            # build: "cp37* cp38* cp39*"
 
           # - os: macos-latest
           #   name: mac-arm
