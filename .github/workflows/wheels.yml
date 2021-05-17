@@ -77,21 +77,28 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            name: mac
+            name: 64 bit arch x86_64
             cibw:
               build: "cp3*"
 
-          # - os: macos-latest
-          #   name: mac-arm
-          #   cibw:
-          #     arch: universal2
-          #     build: "cp39*"
+          - os: macos-11.0
+            name: 64 bit arm arch
+            cibw:
+              arch: universal2
+              build: "cp39*"
 
           - os: ubuntu-latest
-            name: manylinux2010
+            name: 64-bit arch x86_64
             cibw:
-              build: "cp3*"
+              build: "cp3*_x86_64"
               manylinux_image: manylinux2010
+
+          # - os: ubuntu-latest
+          #   name: 32-bit arch
+          #   architecture: i686
+          #   cibw:
+          #     build: "cp3*_i686"
+          #     manylinux_image: manylinux2010
 
           # - os: ubuntu-latest
           #   name: manylinux_aarch64
@@ -100,11 +107,11 @@ jobs:
           #     manylinux_image: manylinux2014
           #     arch: aarch64
 
-          - os: windows-latest
-            name: win32
-            architecture: x86
-            cibw:
-              build: "cp*win32"
+          # - os: windows-latest
+          #   name: win32
+          #   architecture: x86
+          #   cibw:
+          #     build: "cp*win32"
 
           # - os: windows-2016
           #   name: win32-pypy
@@ -113,8 +120,7 @@ jobs:
           #     build: "pp*win32"
 
           - os: windows-latest
-            name: win_amd64
-            architecture: x64
+            name: 64-bit arch AMD64
             cibw:
               build: "*win_amd64"
 
