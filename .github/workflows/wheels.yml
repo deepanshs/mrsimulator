@@ -71,7 +71,7 @@ jobs:
           - os: macos-latest
             name: mac
             cibw:
-            build: "cp3*"
+              build: "cp3*"
 
           # - os: macos-latest
           #   name: mac-arm
