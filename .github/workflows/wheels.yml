@@ -58,7 +58,7 @@ jobs:
       CIBW_BUILD: "${{ matrix.cibw.build || '*' }}"
       CIBW_MANYLINUX_X86_64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
       CIBW_MANYLINUX_I686_IMAGE: "${{ matrix.cibw.manylinux_image }}"
-      # CIBW_MANYLINUX_AARCH64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
+      CIBW_MANYLINUX_AARCH64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
       CIBW_ARCHS_LINUX: "${{ matrix.cibw.arch || 'auto' }}"
       CIBW_ARCHS_MACOS: "${{ matrix.cibw.arch || 'auto' }}"
       # CIBW_BEFORE_TEST: pip install {package} -r requirements-dev.txt
@@ -81,23 +81,17 @@ jobs:
           #     build: "cp39*"
 
           - os: ubuntu-latest
-            name: manylinux1
-            cibw:
-              build: "cp36* cp37*"
-              manylinux_image: manylinux1
-
-          - os: ubuntu-latest
             name: manylinux2010
             cibw:
-              build: "cp38* cp39* pp3*"
+              build: "cp3*"
               manylinux_image: manylinux2010
 
-          # - os: ubuntu-latest
-          #   name: cp36-manylinux_aarch64
-          #   cibw:
-          #     build: "cp3*"
-          #     manylinux_image: manylinux2014
-          #     arch: aarch64
+          - os: ubuntu-latest
+            name: manylinux_aarch64
+            cibw:
+              build: "cp3*"
+              manylinux_image: manylinux2014
+              arch: aarch64
 
           # - os: windows-latest
           #   name: win32

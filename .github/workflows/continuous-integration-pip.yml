@@ -62,18 +62,6 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
       - name: Upload coverage
         uses: codecov/codecov-action@v1
-      - name: Build wheel
-        run: |
-          pip install auditwheel
-          for whl in linuxwheels/*.whl; do
-            auditwheel repair "$whl" -w dist/
-          done
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: wheels-linux
-          path: "dist/*"
-          if-no-files-found: error
 
   build_mac:
     runs-on: macos-latest
@@ -106,15 +94,3 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
       - name: Upload coverage
         uses: codecov/codecov-action@v1
-      - name: Build wheel
-        run: |
-          pip install delocate
-          for whl in macwheels/*.whl; do
-            delocate-wheel "$whl" -w dist/ -v
-          done
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: wheels-macos
-          path: "dist/*"
-          if-no-files-found: error
