@@ -106,10 +106,12 @@ jobs:
           pip install -r requirements.txt
 
       - name: Build and install package from source
-        run: python setup.py develop
+        run: |
+          python setup.py develop
+          pytest --cov=./ --cov-report=xml
 
-      - name: Test with pytest
-        run: pytest --cov=./ --cov-report=xml
+      # - name: Test with pytest
+      #   run: pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
         uses: codecov/codecov-action@v1
