@@ -61,10 +61,17 @@ jobs:
       CIBW_MANYLINUX_AARCH64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
       CIBW_ARCHS_LINUX: "${{ matrix.cibw.arch || 'auto' }}"
       CIBW_ARCHS_MACOS: "${{ matrix.cibw.arch || 'auto' }}"
+      CIBW_ENVIRONMENT_WINDOWS: "LIB=C:/Miniconda/Library/lib INCLUDE=C:/Miniconda/Library/include,C:/Miniconda/Library/include/openblas"
+      CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: >-
+        delvewheel repair
+        -v
+        --add-path=C:/Miniconda/Library/bin
+        --wheel-dir={dest_dir}
+        {wheel}
+
       # CIBW_BEFORE_TEST: pip install {package} -r requirements-dev.txt
       # CIBW_TEST_REQUIRES: "pytest"
       # CIBW_TEST_COMMAND: pytest {package}
-
     strategy:
       fail-fast: false
       matrix:
@@ -145,9 +152,6 @@ jobs:
         run: |
           python -m pip install delvewheel
           C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
-          set LIB=C:\Miniconda\Library\lib
-          set INCLUDE=C:\Miniconda\Library\include,C:\Miniconda\Library\include\openblas
-          set PATH=%PATH%,C:\Miniconda\Library\bin
 
       - name: Install Python Dependencies
         run: |
