@@ -144,10 +144,10 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           python -m pip install delvewheel
-          conda install -c conda-forge openblas fftw
-          set LIB=C:\miniconda\Library\lib
-          set INCLUDE=C:\miniconda\Library\include;C:\miniconda\Library\include\openblas
-          set PATH=%PATH%;C:\miniconda\Library\bin
+          %CONDA%\Scripts\conda install -c conda-forge openblas fftw
+          set LIB=%CONDA%\Library\lib
+          set INCLUDE=%CONDA%\Library\include;%CONDA%\Library\include\openblas
+          set PATH=%PATH%;%CONDA%\Library\bin
 
       - name: Install Python Dependencies
         run: |
