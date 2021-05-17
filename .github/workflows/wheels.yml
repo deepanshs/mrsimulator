@@ -50,9 +50,14 @@ jobs:
         with:
           python-version: 3.8
 
+      - name: Install system dependencies
+        run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
+
       - name: build sdist
         run: |
-          python -m pip install --upgrade setuptools pip numpy cython
+          python -m pip install --upgrade pip
+          python -m pip install pytest cython setuptools
+          python -m pip install -r requirements-dev.txt
           python setup.py sdist
 
       - name: upload artifact
@@ -96,8 +101,11 @@ jobs:
         {wheel}
 
       CIBW_BEFORE_TEST: pip install {package} -r requirements.txt
-      CIBW_TEST_REQUIRES: "pytest pytest-cov sympy"
-      CIBW_TEST_COMMAND: pytest {package}
+      # CIBW_TEST_REQUIRES: "pytest pytest-cov sympy"
+      CIBW_TEST_COMMAND: |
+        python -c "import mrsimulator"
+        python -c "from mrsimulator import Site, Coupling, SpinSystem, Simulator"
+        python -c "from mrsimulator.methods import Method1D, Method2D"
 
     strategy:
       fail-fast: false
