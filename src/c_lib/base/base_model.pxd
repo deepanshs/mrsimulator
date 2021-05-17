@@ -9,9 +9,6 @@
 from libcpp cimport bool as bool_t
 
 cdef extern from "tables/trig.h":
-    extern double cos_table;
-    extern double sin_table;
-    extern double table_precision_inverse;
     void generate_table()
 
 cdef extern from "angular_momentum.h":

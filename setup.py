@@ -205,6 +205,7 @@ class MacOSSetup(Setup):
             # "-Rpass-missed=loop-vectorize",
             # "-Rpass-analysis=loop-vectorize",
             "-fvectorize",
+            "-fcommon",
         ]
         self.extra_link_args += ["-lm"]
 
@@ -329,7 +330,6 @@ source = [
     "src/c_lib/lib/frequency_averaging.c",
     "src/c_lib/lib/schemes.c",
     "src/c_lib/lib/simulation.c",
-    "src/c_lib/lib/trig.c",
 ]
 
 ext = ".pyx" if USE_CYTHON else ".c"
