@@ -57,9 +57,15 @@ class Setup:
         return np.any([exists(join(pth, header)) for pth in self.include_dirs])
 
     def conda_setup_for_windows(self):
-        loc = dirname(sys.executable)
-        print("Found Conda installation:", loc)
+        self.libraries += ["fftw3", "openblas"]
+        self.extra_compile_args = ["/DUSE_OPENBLAS"]
 
+        print(sys.version)
+        loc = dirname(sys.executable)
+        if "conda" not in loc:
+            return
+
+        print("Found Python installation:", loc)
         self.include_dirs += self.check_valid_path(
             [
                 join(loc, "Library", "include", "fftw"),
@@ -69,13 +75,11 @@ class Setup:
             ]
         )
         self.library_dirs += self.check_valid_path([join(loc, "Library", "lib")])
-        self.libraries += ["fftw3", "openblas"]
-        self.extra_compile_args = ["/O3", "-ffast-math", "/DUSE_OPENBLAS"]
         self.on_exit_message("openblas.lib", "fftw3.lib")
 
     def conda_setup_for_unix(self):
         loc = dirname(sys.executable)
-        print("Found Conda installation:", loc)
+        print("Found Python installation:", loc)
 
         self.include_dirs += self.check_valid_path([join(loc, "include")])
         self.library_dirs += self.check_valid_path([join(loc, "lib")])
@@ -180,7 +184,6 @@ class LinuxSetup(Setup):
 
         self.get_location(openblas_info)
         self.get_location(fftw3_info)
-        self.extra_compile_args += ["-DUSE_OPENBLAS"]
 
     def get_location(self, dict_info):
         for item in self.__slots__:

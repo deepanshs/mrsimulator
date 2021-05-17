@@ -74,11 +74,11 @@ jobs:
             cibw:
               build: "cp3*"
 
-          - os: macos-latest
-            name: mac-arm
-            cibw:
-              arch: universal2
-              build: "cp39*"
+          # - os: macos-latest
+          #   name: mac-arm
+          #   cibw:
+          #     arch: universal2
+          #     build: "cp39*"
 
           - os: ubuntu-latest
             name: manylinux2010
@@ -86,12 +86,12 @@ jobs:
               build: "cp3*"
               manylinux_image: manylinux2010
 
-          - os: ubuntu-latest
-            name: manylinux_aarch64
-            cibw:
-              build: "cp3*"
-              manylinux_image: manylinux2014
-              arch: aarch64
+          # - os: ubuntu-latest
+          #   name: manylinux_aarch64
+          #   cibw:
+          #     build: "cp3*"
+          #     manylinux_image: manylinux2014
+          #     arch: aarch64
 
           # - os: windows-latest
           #   name: win32
@@ -105,11 +105,11 @@ jobs:
           #   cibw:
           #     build: "pp*win32"
 
-          # - os: windows-latest
-          #   name: win_amd64
-          #   architecture: x64
-          #   cibw:
-          #     build: "*win_amd64"
+          - os: windows-latest
+            name: win_amd64
+            architecture: x64
+            cibw:
+              build: "*win_amd64"
 
     steps:
       - name: Checkout
@@ -140,6 +140,15 @@ jobs:
           python -m pip install auditwheel
           sudo apt-get install --yes libopenblas-dev libfftw3-dev
 
+      - name: Install windows Dependencies
+        if: startsWith(matrix.os, 'windows')
+        run: |
+          python -m pip install delvewheel
+          conda install -c conda-forge openblas fftw
+          set LIB=C:\miniconda\Library\lib
+          set INCLUDE=C:\miniconda\Library\include;C:\miniconda\Library\include\openblas
+          set PATH=%PATH%;C:\miniconda\Library\bin
+
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade setuptools pip wheel cython
@@ -154,9 +163,8 @@ jobs:
           python -m cibuildwheel . --print-build-identifiers
 
       - name: Build wheels
-        uses: joerick/cibuildwheel@v1.11.0
-        # run: |
-        #   python -m cibuildwheel .
+        run: |
+          python -m cibuildwheel .
 
       - uses: actions/upload-artifact@v2
         with:
