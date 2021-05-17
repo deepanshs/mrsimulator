@@ -74,11 +74,11 @@ jobs:
             cibw:
               build: "cp3*"
 
-          - os: macos-latest
-            name: mac-arm
-            cibw:
-              arch: universal2
-              build: "cp39*"
+          # - os: macos-latest
+          #   name: mac-arm
+          #   cibw:
+          #     arch: universal2
+          #     build: "cp39*"
 
           # - os: ubuntu-latest
           #   name: manylinux1
@@ -160,8 +160,9 @@ jobs:
           python -m cibuildwheel . --print-build-identifiers
 
       - name: Build wheels
-        run: |
-          python -m cibuildwheel .
+        uses: joerick/cibuildwheel@v1.11.0
+        # run: |
+        #   python -m cibuildwheel .
 
       - uses: actions/upload-artifact@v2
         with:
