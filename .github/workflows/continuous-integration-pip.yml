@@ -35,7 +35,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=9 --max-line-length=88 --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
 
   build_test:
-    needs: [run_lint]
+    needs: [code_lint]
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
