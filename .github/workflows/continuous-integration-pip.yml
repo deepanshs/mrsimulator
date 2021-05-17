@@ -62,9 +62,9 @@ jobs:
       - name: Install windows dependencies
         if: startsWith(matrix.os, 'windows')
         run: |
-          C:Miniconda\Scripts\conda install -c conda-forge openblas fftw
-          set LIB=C:Miniconda\Library\lib
-          set INCLUDE=C:Miniconda\Library\include;C:Miniconda\Library\include\openblas
+          C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
+          set LIB=C:\Miniconda\Library\lib
+          set INCLUDE=C:\Miniconda\Library\include;C:\Miniconda\Library\include\openblas
 
       - name: Install dependencies
         run: |
