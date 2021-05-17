@@ -201,9 +201,9 @@ class MacOSSetup(Setup):
         self.extra_compile_args = [
             "-O3",
             "-ffast-math",
-            "-Rpass=loop-vectorize",
-            "-Rpass-missed=loop-vectorize",
-            "-Rpass-analysis=loop-vectorize",
+            # "-Rpass=loop-vectorize",
+            # "-Rpass-missed=loop-vectorize",
+            # "-Rpass-analysis=loop-vectorize",
             "-fvectorize",
         ]
         self.extra_link_args += ["-lm"]
