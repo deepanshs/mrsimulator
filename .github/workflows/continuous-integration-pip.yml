@@ -94,10 +94,11 @@ jobs:
 
       - name: Install windows dependencies
         shell: pwsh
+        env:
+          LIB: "C:\\Miniconda\\Library\\lib"
+          INCLUDE: "C:\\Miniconda\\Library\\include;C:\\Miniconda\\Library\\include\\openblas"
         run: |
           C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
-          set LIB="C:\Miniconda\Library\lib"
-          set INCLUDE="C:\Miniconda\Library\include;C:\Miniconda\Library\include\openblas"
           python -m pip install --upgrade pip
           pip install pytest cython setuptools
           pip install -r requirements.txt
