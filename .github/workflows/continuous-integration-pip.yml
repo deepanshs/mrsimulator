@@ -98,7 +98,10 @@ jobs:
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
       - name: Build and install package from source
-        run: python setup.py develop bdist_wheel -d macwheels
+        run: |
+          export MACOSX_DEPLOYMENT_TARGET=10.9
+          export DYLD_FALLBACK_LIBRARY_PATH="/usr/local/opt/fftw/lib:/usr/local/opt/openblas/lib"
+          python setup.py develop bdist_wheel -d macwheels
       - name: Test with pytest
         run: pytest --cov=./ --cov-report=xml
       - name: Upload coverage
@@ -106,8 +109,6 @@ jobs:
       - name: Build wheel
         run: |
           pip install delocate
-          export MACOSX_DEPLOYMENT_TARGET=10.9
-          export DYLD_FALLBACK_LIBRARY_PATH="/usr/local/opt/fftw/lib:/usr/local/opt/openblas/lib"
           for whl in macwheels/*.whl; do
             delocate-wheel "$whl" -w dist/ -v
           done
