@@ -52,12 +52,19 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install linux system dependencies
-        if: matrix.os == 'ubuntu-latest'
+        if: startsWith(matrix.os, 'ubuntu')
         run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
 
       - name: Install macos system dependencies
-        if: matrix.os == 'macos-latest'
+        if: startsWith(matrix.os, 'mac')
         run: brew install openblas fftw
+
+      - name: Install windows dependencies
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          $CONDA\Scripts\conda install -c conda-forge openblas fftw
+          set LIB=$CONDA\Library\lib
+          set INCLUDE=$CONDA\Library\include;$CONDA\Library\include\openblas
 
       - name: Install dependencies
         run: |

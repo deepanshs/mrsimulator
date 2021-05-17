@@ -100,7 +100,7 @@ jobs:
         --wheel-dir={dest_dir}
         {wheel}
 
-      CIBW_BEFORE_TEST: pip install {package} -r requirements.txt
+      # CIBW_BEFORE_TEST: pip install {package} -r requirements.txt
       # CIBW_TEST_REQUIRES: "pytest pytest-cov sympy"
       CIBW_TEST_COMMAND: |
         python -c "import mrsimulator"
