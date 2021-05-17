@@ -68,8 +68,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - os: macos-latest
-          #   name: mac
+          - os: macos-latest
+            name: mac
           # cibw:
           # build: "cp37* cp38* cp39*"
 

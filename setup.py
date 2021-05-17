@@ -329,6 +329,7 @@ source = [
     "src/c_lib/lib/frequency_averaging.c",
     "src/c_lib/lib/schemes.c",
     "src/c_lib/lib/simulation.c",
+    "src/c_lib/lib/trig.c",
 ]
 
 ext = ".pyx" if USE_CYTHON else ".c"
