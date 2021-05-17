@@ -81,10 +81,10 @@ jobs:
             cibw:
               build: "cp3*"
 
-          - os: macos-11.0
-            name: 64 bit arm arch
+          - os: macos-latest
+            name: 64 bit arm64 arch
             cibw:
-              arch: universal2
+              arch: arm64
               build: "cp39*"
 
           - os: ubuntu-latest
