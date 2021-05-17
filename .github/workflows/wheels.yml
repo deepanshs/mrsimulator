@@ -51,7 +51,9 @@ jobs:
           python-version: 3.8
 
       - name: build sdist
-        run: python setup.py sdist
+        run: |
+          python -m pip install --upgrade setuptools pip numpy cython
+          python setup.py sdist
 
       - name: upload artifact
         uses: actions/upload-artifact@v2
