@@ -52,11 +52,11 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install linux system dependencies
-        if: matrix.name == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
 
       - name: Install macos system dependencies
-        if: matrix.name == 'macos-latest'
+        if: matrix.os == 'macos-latest'
         run: brew install openblas fftw
 
       - name: Install dependencies
