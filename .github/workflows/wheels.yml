@@ -147,7 +147,7 @@ jobs:
           C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
           set LIB=C:\Miniconda\Library\lib
           set INCLUDE=C:\Miniconda\Library\include,C:\Miniconda\Library\include\openblas
-          set PATH=%PATH%;C:\Miniconda\Library\bin
+          set PATH=%PATH%,C:\Miniconda\Library\bin
 
       - name: Install Python Dependencies
         run: |
