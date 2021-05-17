@@ -26,6 +26,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
+
       - name: build sdist
         run: python setup.py sdist
 
@@ -73,11 +74,11 @@ jobs:
             cibw:
               build: "cp3*"
 
-          # - os: macos-latest
-          #   name: mac-arm
-          #   cibw:
-          #     arch: universal2
-          #     build: "cp39*"
+          - os: macos-latest
+            name: mac-arm
+            cibw:
+              arch: universal2
+              build: "cp39*"
 
           # - os: ubuntu-latest
           #   name: manylinux1
@@ -115,9 +116,6 @@ jobs:
           #   architecture: x64
           #   cibw:
           #     build: "*win_amd64"
-
-        # os: ["ubuntu-latest"]
-        # python-version: [3.6, 3.7, 3.8, 3.9]
 
     steps:
       - name: Checkout
@@ -161,10 +159,6 @@ jobs:
         run: |
           python -m cibuildwheel . --print-build-identifiers
 
-      # - name: compile Cython sources
-      #   run: |
-      #     python setup.py cython
-
       - name: Build wheels
         run: |
           python -m cibuildwheel .
@@ -183,67 +177,3 @@ jobs:
       #   run: |
       #     echo '${{ matrix.cibw.arch }}'
       #     echo 'CIBW_BEFORE_ALL_LINUX=yum -y install openblas-devel fftw-devel' >> "$GITHUB_ENV"
-
-  # build_macos_wheels:
-  #   name: Build wheels on ${{ matrix.os }}
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: [macos-latest]
-
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-
-  #     - uses: actions/setup-python@v2
-  #       name: Install Python
-  #       with:
-  #         python-version: 3.7
-
-  #     - name: Install cibuildwheel
-  #       run: |
-  #         python -m pip install cibuildwheel
-  #     - name: Build wheels for CPython 3.9 and Mac OS
-  #       run: |
-  #         brew install openblas fftw
-  #         python -m cibuildwheel --output-dir dist
-  #       env:
-  #         CIBW_BUILD: "cp39-*"
-  #         CIBW_MANYLINUX_X86_64_IMAGE: manylinux1
-  #         CIBW_MANYLINUX_I686_IMAGE: manylinux1
-  #         # CIBW_BEFORE_BUILD: pip install certifi numpy==1.19.3
-  #         CC: /usr/bin/clang
-  #         CXX: /usr/bin/clang++
-
-  #     - name: Build wheels for CPython (MacOS)
-  #       if: matrix.os == 'macos-latest'
-  #       run: |
-  #         brew install openblas fftw
-  #         python -m cibuildwheel --output-dir dist
-  #       env:
-  #         CIBW_BUILD: "cp3?-*"
-  #         CIBW_SKIP: "cp35-* cp36-* cp39-*"
-  #         CIBW_MANYLINUX_X86_64_IMAGE: manylinux1
-  #         CIBW_MANYLINUX_I686_IMAGE: manylinux1
-  #         # CIBW_BEFORE_BUILD: pip install certifi numpy==1.16
-  #         CC: /usr/bin/clang
-  #         CXX: /usr/bin/clang++
-
-  #     # - name: Build wheels for CPython 3.6
-  #     #   run: |
-  #     #     python -m cibuildwheel --output-dir dist
-  #     #   env:
-  #     #     CIBW_BUILD: "cp36-*"
-  #     #     CIBW_MANYLINUX_X86_64_IMAGE: manylinux1
-  #     #     CIBW_MANYLINUX_I686_IMAGE: manylinux1
-  #     #     CIBW_BUILD_VERBOSITY: 2
-  #     #     # CIBW_BEFORE_BUILD: pip install certifi numpy==1.16
-  #     #   if: >
-  #     #     startsWith(github.ref, 'refs/heads/v0.17') ||
-  #     #     startsWith(github.ref, 'refs/tags/v0.17')
-  #     - uses: actions/upload-artifact@v2
-  #       with:
-  #         name: wheels
-  #         path: ./dist/*.whl
