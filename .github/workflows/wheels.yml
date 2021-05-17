@@ -61,7 +61,7 @@ jobs:
       CIBW_MANYLINUX_AARCH64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
       CIBW_ARCHS_LINUX: "${{ matrix.cibw.arch || 'auto' }}"
       CIBW_ARCHS_MACOS: "${{ matrix.cibw.arch || 'auto' }}"
-      CIBW_ENVIRONMENT_WINDOWS: "LIB=C:/Miniconda/Library/lib INCLUDE=C:/Miniconda/Library/include,C:/Miniconda/Library/include/openblas"
+      CIBW_ENVIRONMENT_WINDOWS: "LIB=C:\\Miniconda\\Library\\lib INCLUDE=C:\\Miniconda\\Library\\include;C:\\Miniconda\\Library\\include\\openblas"
       CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: >-
         delvewheel repair
         -v
