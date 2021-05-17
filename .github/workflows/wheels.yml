@@ -100,11 +100,11 @@ jobs:
           #     manylinux_image: manylinux2014
           #     arch: aarch64
 
-          # - os: windows-latest
-          #   name: win32
-          #   architecture: x86
-          #   cibw:
-          #     build: "cp*win32"
+          - os: windows-latest
+            name: win32
+            architecture: x86
+            cibw:
+              build: "cp*win32"
 
           # - os: windows-2016
           #   name: win32-pypy
