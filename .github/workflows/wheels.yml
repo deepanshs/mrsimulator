@@ -145,13 +145,11 @@ jobs:
         if: startsWith(matrix.os, 'mac')
         run: |
           python -m pip install delocate
-          brew install openblas fftw
 
       - name: Install linux Dependencies
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           python -m pip install auditwheel
-          sudo apt-get install --yes libopenblas-dev libfftw3-dev
 
       - name: Install windows Dependencies
         if: startsWith(matrix.os, 'windows')
