@@ -128,12 +128,11 @@ jobs:
               build: "cp3*_x86_64"
               manylinux_image: manylinux2010
 
-          # - os: ubuntu-latest
-          #   name: 32-bit arch
-          #   architecture: i686
-          #   cibw:
-          #     build: "cp3*_i686"
-          #     manylinux_image: manylinux2010
+          - os: ubuntu-latest
+            name: linux 32-bit i686
+            cibw:
+              build: "cp3*_i686"
+              manylinux_image: manylinux2010
 
           # - os: ubuntu-latest
           #   name: manylinux_aarch64

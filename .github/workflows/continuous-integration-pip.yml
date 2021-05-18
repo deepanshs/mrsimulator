@@ -34,7 +34,7 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=9 --max-line-length=88 --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
 
-  build_test:
+  build_unix_test:
     needs: [code_lint]
     strategy:
       matrix:
@@ -74,49 +74,47 @@ jobs:
       - name: Upload coverage
         uses: codecov/codecov-action@v1
 
-  # build_windows_test:
-  #   needs: [code_lint]
-  #   strategy:
-  #     matrix:
-  #       os: ["windows-latest"]
-  #       python-version: [3.6, 3.7, 3.8, 3.9]
-  #   runs-on: ${{ matrix.os }}
+  build_windows_test:
+    needs: [code_lint]
+    strategy:
+      matrix:
+        os: ["windows-latest"]
+        python-version: [3.6, 3.7, 3.8, 3.9]
+    runs-on: ${{ matrix.os }}
 
-  #   env:
-  #     LIB: "C:\\Miniconda\\Library\\lib"
-  #     INCLUDE: "C:\\Miniconda\\Library\\include;C:\\Miniconda\\Library\\include\\openblas"
+    env:
+      LIB: "C:\\Miniconda\\Library\\lib"
+      INCLUDE: "C:\\Miniconda\\Library\\include;C:\\Miniconda\\Library\\include\\openblas"
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2.3.4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
 
-  #     - name: Set up Python ${{ matrix.python-version }}
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
-  #     - name: Install windows dependencies
-  #       run: |
-  #         C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
+      - name: Install windows dependencies
+        run: |
+          C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
 
-  #     - name: Install package dependencies
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install pytest cython setuptools pytest-cov sympy
-  #         pip install -r requirements.txt
+      - name: Install package dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest cython setuptools pytest-cov sympy
+          pip install -r requirements.txt
 
-  #     - name: Build and install package from source
-  #       run: |
-  #         python setup.py develop
-  #         pytest --cov=./ --cov-report=xml
+      - name: Build and install package from source
+        run: python setup.py develop
 
-  #     # - name: Test with pytest
-  #     #   run: pytest --cov=./ --cov-report=xml
+      - name: Test with pytest
+        run: pytest --cov=./ --cov-report=xml
 
-  #     - name: Upload coverage
-  #       uses: codecov/codecov-action@v1
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
 
-  build_windows:
+  build_windows_test2:
     needs: [code_lint]
     strategy:
       matrix:
