@@ -175,11 +175,11 @@ jobs:
           echo 'SDKROOT=/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk' >> "$GITHUB_ENV"
           echo 'MACOSX_DEPLOYMENT_TARGET=10.15' >> "$GITHUB_ENV"
 
-      - name: Set up QEMU
-        if: startsWith(matrix.os, 'ubuntu') && matrix.cibw.arch
-        uses: docker/setup-qemu-action@v1
-        with:
-          platforms: arm64
+      # - name: Set up QEMU
+      #   if: startsWith(matrix.os, 'ubuntu') && matrix.cibw.arch
+      #   uses: docker/setup-qemu-action@v1
+      #   with:
+      #     platforms: arm64
 
       - name: Install mac-os Dependencies
         if: startsWith(matrix.os, 'mac')
