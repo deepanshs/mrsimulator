@@ -79,7 +79,7 @@ jobs:
     strategy:
       matrix:
         os: ["windows-latest"]
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.7]
     runs-on: ${{ matrix.os }}
 
     env:
@@ -118,7 +118,7 @@ jobs:
     needs: [code_lint]
     strategy:
       matrix:
-        python-version: [3.6, 3.7]
+        python-version: [3.6, 3.7, 3.8, 3.9]
     runs-on: "windows-latest"
 
     steps:
