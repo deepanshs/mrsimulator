@@ -71,7 +71,7 @@ of the coupled site object. The attribute *isotropic_j* is the isotropic *J*-cou
 between the coupled sites in units of *Hz*. Like every other object, the information on
 the default unit is held with the ``property_units``  attribute.
 In the above example, we define a coupling between site 0 (methyl) and site 3 (methylene).
-The indexes 0 and 3 are relative to the list of site objects in ``etho_sites``. The
+The indexes 0 and 3 are relative to the list of site objects in ``etoh_sites``. The
 isotropic *J*-coupling is 7 Hz.
 Now, we define the rest of the methyl-methylene couplings and make a list to hold them all.
 
