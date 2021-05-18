@@ -173,7 +173,7 @@ jobs:
         run: |
           sudo xcode-select -switch /Applications/Xcode_12.2.app
           echo 'SDKROOT=/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk' >> "$GITHUB_ENV"
-          echo 'MACOSX_DEPLOYMENT_TARGET=10.15' >> "$GITHUB_ENV"
+          echo 'MACOSX_DEPLOYMENT_TARGET=11.0' >> "$GITHUB_ENV"
 
       # - name: Set up QEMU
       #   if: startsWith(matrix.os, 'ubuntu') && matrix.cibw.arch
@@ -220,11 +220,9 @@ jobs:
           path: "wheelhouse/*"
           if-no-files-found: error
 
-      # - name: customize aarch64
-      #   if: contains(matrix.cibw.arch, 'aarch64')
-      #   # install zeromq-devel because building libzmq for arm takes too long
-      #   # it's not in default packages, but it is in epel-7
-      #   # this will be an older release than than other wheels
-      #   run: |
-      #     echo '${{ matrix.cibw.arch }}'
-      #     echo 'CIBW_BEFORE_ALL_LINUX=yum -y install openblas-devel fftw-devel' >> "$GITHUB_ENV"
+      - name: customize aarch64
+        if: contains(matrix.cibw.arch, 'aarch64')
+        # install fftw-devel and openblas-devel from epel-7
+        run: |
+          echo '${{ matrix.cibw.arch }}'
+          echo 'CIBW_BEFORE_ALL_LINUX=yum -y install epel-release && yum -y install openblas-devel fftw-devel' >> "$GITHUB_ENV"
