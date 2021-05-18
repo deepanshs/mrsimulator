@@ -85,7 +85,7 @@ jobs:
     env:
       LIB: "C:\\Miniconda\\Library\\lib"
       INCLUDE: "C:\\Miniconda\\Library\\include;C:\\Miniconda\\Library\\include\\openblas"
-
+      MRSIM_LIB: "C:\\Miniconda\\Library\\lib"
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.4
