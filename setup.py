@@ -5,6 +5,7 @@ from os.path import abspath
 from os.path import dirname
 from os.path import exists
 from os.path import join
+from os import environ
 
 from setuptools import Extension
 from setuptools import find_packages
@@ -75,6 +76,7 @@ class Setup:
             ]
         )
         self.library_dirs += self.check_valid_path([join(loc, "Library", "lib")])
+        environ["MRSIM_LIB"] = str(join(loc, "Library", "lib"))
         self.on_exit_message("openblas.lib", "fftw3.lib")
 
     def conda_setup_for_unix(self):
