@@ -2,9 +2,9 @@
 
 .. _using_objects:
 
-=========================
-The Basics: Using objects
-=========================
+====================================
+Uncoupled Spin System: Using objects
+====================================
 
 In the previous section on getting started, we show an examples where we parse the
 python dictionaries to create instances of the :ref:`spin_sys_api` and
