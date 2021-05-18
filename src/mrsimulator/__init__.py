@@ -30,7 +30,8 @@ import sys
 if sys.platform == "win32":
     var = "MRSIM_LIB"
     if var in os.environ and os.environ[var] != "":
-        os.add_dll_directory(os.environ[var])
+        if sys.version_info[:2] >= (3, 8):
+            os.add_dll_directory(os.environ[var])
 
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
