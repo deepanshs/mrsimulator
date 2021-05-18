@@ -181,6 +181,13 @@ jobs:
         with:
           platforms: arm64
 
+      - name: customize aarch64
+        if: contains(matrix.cibw.arch, 'aarch64')
+        # install fftw-devel and openblas-devel from epel-7
+        run: |
+          echo '${{ matrix.cibw.arch }}'
+          echo 'CIBW_BEFORE_ALL_LINUX=yum -y install epel-release && yum -y install openblas-devel fftw-devel' >> "$GITHUB_ENV"
+
       - name: Install mac-os Dependencies
         if: startsWith(matrix.os, 'mac')
         run: |
@@ -219,10 +226,3 @@ jobs:
           name: wheels-${{ matrix.name }}
           path: "wheelhouse/*"
           if-no-files-found: error
-
-      - name: customize aarch64
-        if: contains(matrix.cibw.arch, 'aarch64')
-        # install fftw-devel and openblas-devel from epel-7
-        run: |
-          echo '${{ matrix.cibw.arch }}'
-          echo 'CIBW_BEFORE_ALL_LINUX=yum -y install epel-release && yum -y install openblas-devel fftw-devel' >> "$GITHUB_ENV"
