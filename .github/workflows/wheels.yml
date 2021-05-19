@@ -1,10 +1,8 @@
 name: CI (wheels and sdist)
 
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+  release:
+    types: [published]
 
 jobs:
   build-test:
@@ -134,12 +132,12 @@ jobs:
               build: "cp3*_i686"
               manylinux_image: manylinux2010
 
-          - os: ubuntu-latest
-            name: manylinux_aarch64
-            cibw:
-              build: "cp3*"
-              manylinux_image: manylinux2014
-              arch: aarch64
+          # - os: ubuntu-latest
+          #   name: manylinux_aarch64
+          #   cibw:
+          #     build: "cp3*"
+          #     manylinux_image: manylinux2014
+          #     arch: aarch64
 
           # - os: windows-latest
           #   name: win32
