@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Itraconazole, 13C (I=1/2) PASS
+Itraconazole, ¹³C (I=1/2) PASS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-13C (I=1/2) 2D Phase-adjusted spinning sideband (PASS)
-simulation.
+¹³C (I=1/2) 2D Phase-adjusted spinning sideband (PASS) simulation.
 """
 # %%
 # The following is a simulation of a 2D PASS spectrum of itraconazole, a triazole
 # containing drug prescribed for the prevention and treatment of fungal infection.
 # The 2D PASS spectrum is a correlation of finite speed MAS to an infinite speed MAS
-# spectrum. The parameters for the simulation are obtained from Dey `et. al.` [#f1]_.
+# spectrum. The parameters for the simulation are obtained from Dey `et al.` [#f1]_.
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
