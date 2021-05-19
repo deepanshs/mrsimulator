@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Coesite, 17O (I=5/2) 3QMAS
+Coesite, ¹⁷O (I=5/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-17O (I=5/2) 3QMAS simulation.
+¹⁷O (I=5/2) 3QMAS simulation.
 """
 # %%
 # The following is a triple quantum magic angle spinning (3QMAS) simulation of Coesite.
 # The NMR EFG tensor parameters for :math:`^{17}\text{O}` sites in coesite is obtained
-# from Grandinetti `et. al.` [#f1]_
+# from Grandinetti `et al.` [#f1]_
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator

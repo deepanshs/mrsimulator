@@ -70,7 +70,7 @@ void __mrsimulator_core(
 ) {
   /*
   The sideband computation is based on the method described by Eden and Levitt
-  et. al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
+  et al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
   bool refresh;

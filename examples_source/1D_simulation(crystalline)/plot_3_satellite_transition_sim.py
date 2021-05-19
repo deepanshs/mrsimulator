@@ -4,7 +4,7 @@
 Arbitrary spin transition (single-quantum)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-27Al (I=5/2) quadrupolar spectrum simulation.
+²⁷Al (I=5/2) quadrupolar spectrum simulation.
 """
 # %%
 # The mrsimulator built-in one-dimensional methods, BlochDecaySpectrum and
