@@ -4,7 +4,7 @@
 Coupled spin-1/2 (Static dipolar spectrum)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-13C-1H static dipolar coupling simulation.
+¹³C-¹H static dipolar coupling simulation.
 """
 # %%
 import matplotlib.pyplot as plt

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Amorphous material, 29Si (I=1/2)
+Amorphous material, ²⁹Si (I=1/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-29Si (I=1/2) simulation of amorphous material.
+²⁹Si (I=1/2) simulation of amorphous material.
 """
 # %%
 # One of the advantages of the ``mrsimulator`` package is that it is a fast NMR

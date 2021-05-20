@@ -1,0 +1,213 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+MCl₂.2D₂O, ²H (I=1) Shifting-d echo
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+²H (I=1) 2D NMR CSA-Quad 1st order correlation spectrum simulation.
+"""
+# %%
+# The following is a static shifting-*d* echo NMR correlation simulation of
+# :math:`\text{MCl}_2\cdot 2\text{D}_2\text{O}` crystalline solid, where
+# :math:`M \in [\text{Cu}, \text{Ni}, \text{Co}, \text{Fe}, \text{Mn}]`. The tensor
+# parameters for the simulation and the corresponding spectrum are reported by
+# Walder `et al.` [#f1]_.
+import matplotlib.pyplot as plt
+
+from mrsimulator import Simulator, SpinSystem, Site
+from mrsimulator.methods import Method2D
+from mrsimulator import signal_processing as sp
+
+# sphinx_gallery_thumbnail_number = 2
+
+# %%
+# Generate the site and spin system objects.
+site_Ni = Site(
+    isotope="2H",
+    isotropic_chemical_shift=-97,  # in ppm
+    shielding_symmetric={
+        "zeta": -551,  # in ppm
+        "eta": 0.12,
+        "alpha": 62 * 3.14159 / 180,  # in rads
+        "beta": 114 * 3.14159 / 180,  # in rads
+        "gamma": 171 * 3.14159 / 180,  # in rads
+    },
+    quadrupolar={"Cq": 77.2e3, "eta": 0.9},  # Cq in Hz
+)
+
+site_Cu = Site(
+    isotope="2H",
+    isotropic_chemical_shift=51,  # in ppm
+    shielding_symmetric={
+        "zeta": 146,  # in ppm
+        "eta": 0.84,
+        "alpha": 95 * 3.14159 / 180,  # in rads
+        "beta": 90 * 3.14159 / 180,  # in rads
+        "gamma": 0 * 3.14159 / 180,  # in rads
+    },
+    quadrupolar={"Cq": 118.2e3, "eta": 0.86},  # Cq in Hz
+)
+
+site_Co = Site(
+    isotope="2H",
+    isotropic_chemical_shift=215,  # in ppm
+    shielding_symmetric={
+        "zeta": -1310,  # in ppm
+        "eta": 0.23,
+        "alpha": 180 * 3.14159 / 180,  # in rads
+        "beta": 90 * 3.14159 / 180,  # in rads
+        "gamma": 90 * 3.14159 / 180,  # in rads
+    },
+    quadrupolar={"Cq": 114.6e3, "eta": 0.95},  # Cq in Hz
+)
+
+site_Fe = Site(
+    isotope="2H",
+    isotropic_chemical_shift=101,  # in ppm
+    shielding_symmetric={
+        "zeta": -1187,  # in ppm
+        "eta": 0.4,
+        "alpha": 122 * 3.14159 / 180,  # in rads
+        "beta": 90 * 3.14159 / 180,  # in rads
+        "gamma": 90 * 3.14159 / 180,  # in rads
+    },
+    quadrupolar={"Cq": 114.2e3, "eta": 0.98},  # Cq in Hz
+)
+
+site_Mn = Site(
+    isotope="2H",
+    isotropic_chemical_shift=145,  # in ppm
+    shielding_symmetric={
+        "zeta": -1236,  # in ppm
+        "eta": 0.23,
+        "alpha": 136 * 3.14159 / 180,  # in rads
+        "beta": 90 * 3.14159 / 180,  # in rads
+        "gamma": 90 * 3.14159 / 180,  # in rads
+    },
+    quadrupolar={"Cq": 1.114e5, "eta": 1.0},  # Cq in Hz
+)
+
+spin_systems = [
+    SpinSystem(sites=[s], name=f"{n}Cl$_2$.2D$_2$O")
+    for s, n in zip(
+        [site_Ni, site_Cu, site_Co, site_Fe, site_Mn], ["Ni", "Cu", "Co", "Fe", "Mn"]
+    )
+]
+
+# %%
+# Use the generic 2D method, `Method2D`, to generate a shifting-d echo method. The
+# reported shifting-d 2D sequence is a correlation of the shielding frequencies to the
+# first-order quadrupolar frequencies. Here, we create a correlation method using the
+# :attr:`~mrsimulator.method.event.freq_contrib` attribute, which acts as a switch
+# for including the frequency contributions from interaction during the event.
+#
+# In the following method, we assign the ``["Quad1_2"]`` and
+# ``["Shielding1_0", "Shielding1_2"]`` as the value to the ``freq_contrib`` key. The
+# *Quad1_2* is an enumeration for selecting the first-order second-rank quadrupolar
+# frequency contributions. *Shielding1_0* and *Shielding1_2* are enumerations for
+# the first-order shielding with zeroth and second-rank tensor contributions,
+# respectively. See :ref:`freq_contrib_api` for details.
+shifting_d = Method2D(
+    channels=["2H"],
+    magnetic_flux_density=9.395,  # in T
+    spectral_dimensions=[
+        {
+            "count": 512,
+            "spectral_width": 2.5e5,  # in Hz
+            "label": "Quadrupolar frequency",
+            "events": [
+                {
+                    "rotor_frequency": 0,
+                    "transition_query": {"P": [-1]},
+                    "freq_contrib": ["Quad1_2"],
+                }
+            ],
+        },
+        {
+            "count": 256,
+            "spectral_width": 2e5,  # in Hz
+            "reference_offset": 2e4,  # in Hz
+            "label": "Paramagnetic shift",
+            "events": [
+                {
+                    "rotor_frequency": 0,
+                    "transition_query": {"P": [-1]},
+                    "freq_contrib": ["Shielding1_0", "Shielding1_2"],
+                }
+            ],
+        },
+    ],
+)
+
+# %%
+# Create the Simulator object, add the method and spin system objects, and
+# run the simulation.
+sim = Simulator(spin_systems=spin_systems, methods=[shifting_d])
+# Configure the simulator object. For non-coincidental tensors, set the value of the
+# `integration_volume` attribute to `hemisphere`.
+sim.config.integration_volume = "hemisphere"
+sim.config.decompose_spectrum = "spin_system"  # simulated spectra per spin system
+sim.run()
+
+# %%
+# Add post-simulation signal processing.
+data = sim.methods[0].simulation
+processor = sp.SignalProcessor(
+    operations=[
+        # Gaussian convolution along both dimensions.
+        sp.IFFT(dim_index=(0, 1)),
+        sp.apodization.Gaussian(FWHM="9 kHz", dim_index=0),  # along dimension 0
+        sp.apodization.Gaussian(FWHM="9 kHz", dim_index=1),  # along dimension 1
+        sp.FFT(dim_index=(0, 1)),
+    ]
+)
+processed_data = processor.apply_operations(data=data).real
+
+
+# %%
+# The plot of the simulation. Because we configured the simulator object to simulate
+# spectrum per spin system, the following data is a CSDM object containing five
+# simulations (dependent variables). Let's visualize the first data corresponding to
+# :math:`\text{NiCl}_2\cdot 2 \text{D}_2\text{O}`.
+data_Ni = data.split()[0]
+
+plt.figure(figsize=(4.25, 3.0))
+ax = plt.subplot(projection="csdm")
+cb = ax.imshow(data_Ni / data_Ni.max(), aspect="auto", cmap="gist_ncar_r")
+plt.title(None)
+plt.colorbar(cb)
+plt.tight_layout()
+plt.show()
+
+
+# %%
+# The plot of the simulation after signal processing.
+proc_data_Ni = processed_data.split()[0]
+
+plt.figure(figsize=(4.25, 3.0))
+ax = plt.subplot(projection="csdm")
+cb = ax.imshow(proc_data_Ni / proc_data_Ni.max(), cmap="gist_ncar_r", aspect="auto")
+plt.title(None)
+plt.colorbar(cb)
+plt.tight_layout()
+plt.show()
+
+# %%
+# Let's plot all the simulated datasets.
+fig, ax = plt.subplots(
+    2, 5, sharex=True, sharey=True, figsize=(12, 5.5), subplot_kw={"projection": "csdm"}
+)
+for i, data_obj in enumerate([data, processed_data]):
+    for j, datum in enumerate(data_obj.split()):
+        ax[i, j].imshow(datum / datum.max(), aspect="auto", cmap="gist_ncar_r")
+        ax[i, j].invert_xaxis()
+        ax[i, j].invert_yaxis()
+
+plt.tight_layout()
+plt.show()
+
+# %%
+# .. [#f1] Walder B.J, Patterson A.M., Baltisberger J.H, and Grandinetti P.J
+#       Hydrogen motional disorder in crystalline iron group chloride dihydrates
+#       spectroscopy, J. Chem. Phys. (2018)  **149**, 084503.
+#       `DOI: 10.1063/1.5037151 <https://doi.org/10.1063/1.5037151>`_
