@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from mrsimulator import SpinSystem
 
 
 def split_spin_system(spin_system):  # 9 lines
@@ -15,7 +14,7 @@ def split_spin_system(spin_system):  # 9 lines
         new_spinsystem_list = []
         for site in spin_system.sites:
             new_spinsystem_list.append(
-                SpinSystem(sites=[site], abundance=spin_system.abundance)
+                spin_system.__class__(sites=[site], abundance=spin_system.abundance)
             )
     return new_spinsystem_list
 
@@ -106,7 +105,7 @@ def build_new_system(one_set, spin_system, mapping_dict, sys_idx):  # 10-12 line
         for coupling in spin_system.couplings:
             if site_idx in coupling.site_index and coupling not in new_couplings:
                 new_couplings.append(coupling)
-    new_sys = SpinSystem(
+    new_sys = spin_system.__class__(
         sites=new_sites, couplings=new_couplings, abundance=spin_system.abundance
     )
     return new_sys, mapping_dict

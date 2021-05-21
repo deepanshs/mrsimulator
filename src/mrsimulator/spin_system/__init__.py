@@ -18,6 +18,7 @@ from pydantic import validator
 from .coupling import Coupling
 from .isotope import ISOTOPE_DATA
 from .site import Site
+from .split_spinsystems import split_spin_system
 from .zeemanstate import ZeemanState
 
 __author__ = "Deepansh Srivastava"
@@ -183,6 +184,9 @@ class SpinSystem(Parseable):
             if not np.all([isinstance(item, Coupling) for item in v]):
                 raise ValueError("All entries must be of type `Coupling`.")
         return list(v)
+
+    def simplify(self):
+        return split_spin_system(self)
 
     def get_isotopes(self, spin_I: float = None, symbol: bool = False) -> list:
         """An ordered list of :ref:`isotope_api` objects from the sites within the spin
