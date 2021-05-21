@@ -1,18 +1,26 @@
 # -*- coding: utf-8 -*-
+import numpy as np
 from mrsimulator import Coupling
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.spin_system.split_spinsystems import new_systems_needed_matrix
+from mrsimulator.spin_system.split_spinsystems import new_systems_needed_nosets
 
 
-def setup_system_simplifiedSystem():
+def setup_sites():
     A = Site(isotope="1H", isotropic_chemical_shift=0, name="a")
     B = Site(isotope="1H", isotropic_chemical_shift=2, name="b")
     C = Site(isotope="1H", isotropic_chemical_shift=4, name="c")
     D = Site(isotope="1H", isotropic_chemical_shift=6, name="d")
     E = Site(isotope="1H", isotropic_chemical_shift=8, name="e")
     F = Site(isotope="1H", isotropic_chemical_shift=10, name="f")
-    sites = [A, B, C, D, E, F]
+    return [A, B, C, D, E, F]
 
+
+def setup_system_simplifiedSystem():
+
+    A, B, C, D, E, F = setup_sites()
+    sites = [A, B, C, D, E, F]
     AB_couple = Coupling(site_index=[0, 1], isotropic_j=10, name="AB")
     BC_couple = Coupling(site_index=[1, 2], isotropic_j=10, name="BC")
     AC_couple = Coupling(site_index=[0, 2], isotropic_j=10, name="AC")
@@ -22,15 +30,51 @@ def setup_system_simplifiedSystem():
     sys = SpinSystem(sites=sites, couplings=couplings, abundance=10)
 
     simplified_sys = [
-        SpinSystem(
-            sites=[A, B, C], couplings=[AB_couple, BC_couple, AC_couple], abundance=10
-        ),
+        SpinSystem(sites=[E], abundance=10),
         SpinSystem(
             sites=[D, F],
-            couplings=[Coupling(site_index=[0, 1], isotropic_j=10, name="DF")],
+            couplings=[Coupling(site_index=[0, 1], isotropic_j=30, name="DF")],
             abundance=10,
         ),
-        SpinSystem(sites=[E], abundance=10),
+        SpinSystem(
+            sites=[A, B, C], couplings=[AB_couple, AC_couple, BC_couple], abundance=10
+        ),
+    ]
+    return sys, simplified_sys
+
+
+def setup_uncoupled_system():
+    A, B, C, D, E, F = setup_sites()
+    sites = [A, B, C, D, E, F]
+    sys = SpinSystem(sites=sites, abundance=25)
+
+    simplified_sys = [SpinSystem(sites=[i], abundance=25) for i in sites]
+
+    return sys, simplified_sys
+
+
+def setup_somecoupled_system():
+    A, B, C, D, E, F = setup_sites()
+    sites = [A, B, C, D, E, F]
+
+    AC_couple = Coupling(site_index=[0, 2], isotropic_j=20)
+    DE_couple = Coupling(site_index=[3, 4], isotropic_j=40)
+
+    sys = SpinSystem(sites=sites, couplings=[AC_couple, DE_couple], abundance=50)
+
+    simplified_sys = [
+        SpinSystem(sites=[B], abundance=50),
+        SpinSystem(sites=[F], abundance=50),
+        SpinSystem(
+            sites=[A, C],
+            couplings=[Coupling(site_index=[0, 1], isotropic_j=20)],
+            abundance=50,
+        ),
+        SpinSystem(
+            sites=[D, E],
+            couplings=[Coupling(site_index=[0, 1], isotropic_j=40)],
+            abundance=50,
+        ),
     ]
     return sys, simplified_sys
 
@@ -38,55 +82,65 @@ def setup_system_simplifiedSystem():
 def test_simplify_1():
     sys, simplified_sys = setup_system_simplifiedSystem()
     sys_simplify = sys.simplify()
-
     assert len(sys_simplify) == len(simplified_sys)
-    assert sys_simplify == simplified_sys
+    for system in sys_simplify:
+        assert system in simplified_sys
+        loc = simplified_sys.index(system)
+        for site in system.sites:
+            assert site in simplified_sys[loc].sites
+        if system.couplings:
+            for coupling in system.couplings:
+                assert coupling in simplified_sys[loc].couplings
+    # assert sys_simplify == simplified_sys
 
 
-# test_sys2 = SpinSystem(sites=sites, abundance=10)
+def test_simplify_2():
+    sys, simplified_sys = setup_uncoupled_system()
+    sys_simplify = sys.simplify()
+    assert len(sys_simplify) == len(simplified_sys)
+    for system in sys_simplify:
+        assert system in simplified_sys
+        loc = simplified_sys.index(system)
+        for site in system.sites:
+            assert site in simplified_sys[loc].sites
+        if system.couplings:
+            for coupling in system.couplings:
+                assert coupling in simplified_sys[loc].couplings
+    # assert sys_simplify == simplified_sys
 
 
-# irr_sys1 = SpinSystem(
-#     sites=[A, B, C], couplings=[AB_couple, BC_couple, AC_couple], abundance=10
-# )
-# irr_sys2 = SpinSystem(
-#     sites=[D, F],
-#     couplings=[Coupling(site_index=[0, 1], isotropic_j=10, name="DF")],
-#     abundance=10,
-# )
-# irr_sys3 = SpinSystem(sites=[E], abundance=10)
-
-# irr_sys = [irr_sys3, irr_sys2, irr_sys1]
-
-# new_sys = split_spin_system(test_sys1)
-
-# assert len(new_sys) == 3
-
-# method_H = BlochDecaySpectrum(
-#     channels=["1H"],
-#     magnetic_flux_density=9.4,  # T
-#     spectral_dimensions=[
-#         {"count": 16000, "spectral_width": 5e3, "reference_offset": 2e3}  # in Hz
-#     ],
-# )
+def test_simplify_3():
+    sys, simplified_sys = setup_somecoupled_system()
+    sys_simplify = sys.simplify()
+    assert len(sys_simplify) == len(simplified_sys)
+    for system in sys_simplify:
+        assert system in simplified_sys
+        loc = simplified_sys.index(system)
+        for site in system.sites:
+            assert site in simplified_sys[loc].sites
+        if system.couplings:
+            for coupling in system.couplings:
+                assert coupling in simplified_sys[loc].couplings
+    # assert sys_simplify == simplified_sys
 
 
-# sim = Simulator()
-# sim.spin_systems = new_sys  # [test_sys1]  # irr_sys  #
-# sim.methods = [method_H]
-# sim.run()
-# H_data = sim.methods[0].simulation
-
-# normalized_H_data = H_data / (H_data.sum())
-# plt.figure(figsize=(6, 4))  # set the figure size
-# ax = plt.subplot(projection="csdm")
-# ax.plot(
-#     normalized_H_data.real,
-#     color="black",
-#     linewidth=0.5,
-# )
+def test_new_systems_needed_matrix():
+    test_matrix1 = np.array([[1, 1, 0], [1, 1, 0], [0, 0, 1]])
+    test_matrix2 = np.array(
+        [[1, 1, 0, 0], [1, 1, 5e-20, 0], [0, 0, 1, 1], [0, 0, 1, 1]]
+    )
+    sets1 = new_systems_needed_matrix(test_matrix1)
+    sets2 = new_systems_needed_matrix(test_matrix2)
+    assert sets1 == set({frozenset({0, 1}), frozenset({2})})
+    assert sets2 == set({frozenset({0, 1}), frozenset({2, 3})})
 
 
-# ax.invert_xaxis()
-# plt.tight_layout()
-# plt.show()
+def test_new_systems_needed_nosets():
+    test_matrix1 = np.array([[1, 1, 0], [1, 1, 0], [0, 0, 1]])
+    test_matrix2 = np.array(
+        [[1, 1, 0, 0], [1, 1, 5e-20, 0], [0, 0, 1, 1], [0, 0, 1, 1]]
+    )
+    systems1 = new_systems_needed_nosets(test_matrix1)
+    systems2 = new_systems_needed_nosets(test_matrix2)
+    assert systems1 == [(0, 1), (2,)]
+    assert systems2 == [(0, 1), (2, 3)]

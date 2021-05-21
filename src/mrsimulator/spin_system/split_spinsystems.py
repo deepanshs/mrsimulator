@@ -5,10 +5,9 @@ import numpy as np
 def split_spin_system(spin_system):  # 9 lines
     """Simplifies user-defined spin systems into irreducible spin system objects"""
     if spin_system.couplings:
-        coupling_matrix = build_coupling_matrix(
-            len(spin_system.sites), spin_system.couplings
-        )
-        systems_needed = new_systems_needed_matrix(coupling_matrix)
+        eigenvectors = build_eigenvectors(len(spin_system.sites), spin_system.couplings)
+        systems_needed = new_systems_needed_nosets(eigenvectors)
+        # new_systems_needed_matrix(eigenvectors)
         new_spinsystem_list = build_new_systems(spin_system, systems_needed)
     else:
         new_spinsystem_list = []
@@ -19,63 +18,45 @@ def split_spin_system(spin_system):  # 9 lines
     return new_spinsystem_list
 
 
-# old, now using new_systems_needed_matrix ###
-# def new_systems_needed(spin_system):  # probably just delete at this point
-#    """Takes a coupled spin system and returns a set of frozen sets, each
-#    containing the site indexes needed to make an immutable spin system"""
-#    coupling_index_list = []
-#    for item in coupling_list:
-#        coupling_index_list.append(item.site_index)
-#
-#    set_of_sets = set()
-#    for coupling in coupling_index_list:
-#        running_set = set()
-#        running_set.add(coupling[0])
-#        running_set.add(coupling[1])
-#        for coupling2 in coupling_index_list:
-#            if coupling[0] in coupling2 or coupling[1] in coupling2:
-#                running_set.add(coupling2[0])
-#                running_set.add(coupling2[1])
-#        set_of_sets.add(frozenset(running_set))
-#    pre_len = len(set_of_sets)
-#    keep_going = True
-#    while keep_going:
-#        good_set = set()
-#        for group1 in set_of_sets:
-#            group1 = set(group1)
-#            for group2 in set_of_sets:
-#                if not group1.isdisjoint(group2):
-#                    group1 = group1.union(group2)
-#                    good_set.add(frozenset(group1))
-#        post_len = len(good_set)
-#        if pre_len == post_len:
-#            keep_going = False
-#        set_of_sets = copy.deepcopy(good_set)
-#        pre_len = copy.deepcopy(post_len)
-#    return set_of_sets
-
-
-def build_coupling_matrix(num_sites, couplings):  # 8 lines
+def build_eigenvectors(num_sites, couplings):  # 8 lines
     """builds a matrix that describes which sites are coupled"""
     spin_matrix = np.identity(num_sites)
     for coupling in couplings:
         idx = tuple(coupling.site_index)
-        spin_matrix[idx] = 1
+        spin_matrix[idx] = 0.5
         idx2 = tuple((list(idx))[::-1])
-        spin_matrix[idx2] = 1
-    _, coupling_matrix = np.linalg.eig(spin_matrix)
-    return coupling_matrix
+        spin_matrix[idx2] = 0.5
+    _, eigenvectors = np.linalg.eig(spin_matrix)
+    return eigenvectors
 
 
-def new_systems_needed_matrix(coupling_matrix):  # 8 lines
+def new_systems_needed_matrix(eigenvectors):  # 8 lines
+    """Uses eigenvector matrix to build a set of sets describing spin systems
+    that need to be made"""
+    # x = np.where(eigenvectors != 0)
     set_of_sets = set()
-    for i in range(len(coupling_matrix)):
+    for i in range(len(eigenvectors)):
         running_set = set()
-        for j in range(len(coupling_matrix)):
-            if coupling_matrix[j, i]:
+        for j in range(len(eigenvectors)):
+            if not np.allclose(eigenvectors[j, i], 0):
                 running_set.add(j)
         set_of_sets.add(frozenset(running_set))
     return set_of_sets
+
+
+def new_systems_needed_nosets(eigenvectors):  # 10 lines
+    """Uses eigenvector matrix to build a list of tuples describing
+    spin systems that need to be made"""
+    systems_needed = list()
+    for i in range(len(eigenvectors)):
+        system = list()
+        for j in range(len(eigenvectors)):
+            if not np.allclose(eigenvectors[j, i], 0):
+                if j not in system:
+                    system.append(j)
+        if tuple(system) not in systems_needed:
+            systems_needed.append(tuple(system))
+    return systems_needed
 
 
 def build_new_systems(spin_system, set_of_sets):  # 10 lines
@@ -105,13 +86,20 @@ def build_new_system(one_set, spin_system, mapping_dict, sys_idx):  # 10-12 line
         for coupling in spin_system.couplings:
             if site_idx in coupling.site_index and coupling not in new_couplings:
                 new_couplings.append(coupling)
-    new_sys = spin_system.__class__(
-        sites=new_sites, couplings=new_couplings, abundance=spin_system.abundance
-    )
+    if len(new_couplings) == 0:
+        new_sys = spin_system.__class__(
+            sites=new_sites, abundance=spin_system.abundance
+        )
+    else:
+        new_sys = spin_system.__class__(
+            sites=new_sites, couplings=new_couplings, abundance=spin_system.abundance
+        )
     return new_sys, mapping_dict
 
 
 def fix_coupling_index(new_spin_sys, mapping_dict):  # 8 lines
+    """Uses mapping_dict to correct site indexes of coupling
+    objects"""
     couplings = new_spin_sys.couplings
     for i, coupling in enumerate(couplings):
         old_idx1, old_idx2 = coupling.site_index
