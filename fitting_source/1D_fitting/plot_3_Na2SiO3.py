@@ -97,7 +97,7 @@ spin_systems = [
 # get the count, spectral_width, and reference_offset information from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = BlochDecayCTSpectrum(
+MAS_CT = BlochDecayCTSpectrum(
     channels=["17O"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=14000,  # in Hz
@@ -111,11 +111,11 @@ method = BlochDecayCTSpectrum(
 # querying for the transition pathways at every iteration in a least-squares fitting,
 # evaluate the transition pathways once and store it as follows
 for sys in spin_systems:
-    sys.transition_pathways = method.get_transition_pathways(sys)
+    sys.transition_pathways = MAS_CT.get_transition_pathways(sys)
 
 # %%
 # **Step 3:** Create the Simulator object and add the method and spin system objects.
-sim = Simulator(spin_systems=spin_systems, methods=[method])
+sim = Simulator(spin_systems=spin_systems, methods=[MAS_CT])
 sim.config.decompose_spectrum = "spin_system"
 sim.run()
 

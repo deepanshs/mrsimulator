@@ -63,7 +63,7 @@ spin_systems = [SpinSystem(sites=[H_2])]
 # Get the spectral dimension paramters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = BlochDecaySpectrum(
+MAS = BlochDecaySpectrum(
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=4517.1,  # in Hz
@@ -74,14 +74,14 @@ method = BlochDecaySpectrum(
 # Optimize the script by pre-setting the transition pathways for each spin system from
 # the method.
 for sys in spin_systems:
-    sys.transition_pathways = method.get_transition_pathways(sys)
+    sys.transition_pathways = MAS.get_transition_pathways(sys)
 
 # %%
 # **Guess Model Spectrum**
 
 # Simulation
 # ----------
-sim = Simulator(spin_systems=spin_systems, methods=[method])
+sim = Simulator(spin_systems=spin_systems, methods=[MAS])
 sim.run()
 
 # Post Simulation Processing
