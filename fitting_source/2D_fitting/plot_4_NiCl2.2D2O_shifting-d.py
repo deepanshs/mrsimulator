@@ -89,7 +89,7 @@ spin_systems = [SpinSystem(sites=[site])]
 # the first-order shielding with zeroth and second-rank tensor contributions,
 # respectively. See :ref:`freq_contrib_api` for details.
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 shifting_d = Method2D(

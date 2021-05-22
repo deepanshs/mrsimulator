@@ -61,7 +61,7 @@ spin_systems = [SpinSystem(sites=[Na23])]
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 MAS_CT = BlochDecayCTSpectrum(

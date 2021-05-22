@@ -75,7 +75,7 @@ spin_systems = single_site_system_generator(
 #
 # Create the 3QMAS method.
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 MQMAS = ThreeQ_VAS(

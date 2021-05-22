@@ -78,7 +78,7 @@ spin_systems = [SpinSystem(sites=[site])]
 #
 # Use the generic 2D method, `Method2D`, to generate a shifting-d echo method.
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 shifting_d = Method2D(

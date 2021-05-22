@@ -77,7 +77,7 @@ spin_systems = single_site_system_generator(
 #
 # Create the DAS method.
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 DAS = Method2D(
