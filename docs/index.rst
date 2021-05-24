@@ -75,9 +75,8 @@ Welcome to the Mrsimulator documentation
 **About**
 
 ``mrsimulator`` is an open-source python package for fast simulation and analysis of
-multi-dimensional solid-state magnetic resonance (NMR) spectra of crystalline materials,
-bio macro-molecules, and amorphous materials. Simulate the NMR spectrum of macro-molecules
-or amorphous in just a few seconds.
+multi-dimensional solid-state magnetic resonance (NMR) spectra of crystalline and
+amorphous materials.
 
 ----
 
