@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-29Si 1D MAS spinning sideband (CSA)
+²⁹Si 1D MAS spinning sideband (CSA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%

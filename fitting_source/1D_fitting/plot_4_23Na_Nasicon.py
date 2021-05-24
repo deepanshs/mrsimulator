@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-23Na MAS NMR of Nasicon
+²³Na MAS NMR of Nasicon
 ^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%

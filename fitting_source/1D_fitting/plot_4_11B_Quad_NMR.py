@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-11B MAS NMR of Lithium orthoborate crystal
+¹¹B MAS NMR of Lithium orthoborate crystal
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%

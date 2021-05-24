@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-2H MAS NMR of Methionine
+²H MAS NMR of Methionine
 ^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%

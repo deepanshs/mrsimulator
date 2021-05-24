@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-13C MAS NMR of Glycine (CSA) [5000 Hz]
+¹³C MAS NMR of Glycine (CSA) [5000 Hz]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-27Al MAS NMR of YAG (1st and 2nd order Quad)
+²⁷Al MAS NMR of YAG (1st and 2nd order Quad)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
