@@ -108,7 +108,7 @@ amorphous materials.
 - It is a fast and versatile multi-dimensional solid-state NMR spectra simulator including, MAS
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
-- Includes simulation of weakly coupled nuclei experiencing J and dipolar couplings.
+- It includes simulation of weakly coupled nuclei experiencing J and dipolar couplings.
 - It is fully documented with a stable and simple API and is easily incorporated into your
   python scripts and web apps.
 - It is compatible with modern python packages, such as scikit-learn, Keras, etc.
