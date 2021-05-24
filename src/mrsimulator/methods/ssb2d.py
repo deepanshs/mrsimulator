@@ -42,7 +42,7 @@ class SSB2D(BaseNamedMethod2D):
             units of rad. The default value is 0.9553166, i.e. the magic angle.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> method = SSB2D(

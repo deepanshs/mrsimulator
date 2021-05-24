@@ -20,6 +20,7 @@ Welcome to the Mrsimulator documentation
             :alt: PyPI version
 
           .. image:: https://img.shields.io/pypi/pyversions/mrsimulator
+            :target: #
             :alt: PyPI - Python Version
 
       * - Build Status
