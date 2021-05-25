@@ -3,8 +3,8 @@
 Extended Czjzek distribution
 ----------------------------
 
-An Extended Czjzek distribution model is a random perturbation of the second-rank
-traceless symmetric tensors about a non-zero tensor. See :ref:`ext_czjzek_model` and
+The Extended Czjzek distribution models random variations of a second-rank traceless
+symmetric tensors about a non-zero tensor.  See :ref:`ext_czjzek_model` and
 references within for a brief description of the model.
 
 Extended Czjzek distribution of symmetric shielding tensors
@@ -25,9 +25,9 @@ To generate an extended Czjzek distribution, use the
 The *ExtCzjzekDistribution* class accepts two arguments. The first argument is the
 dominant tensor about which the perturbation applies, and the second parameter, *eps*,
 is the perturbation fraction. The minimum value of the *eps* parameter is 0, which means
-the distribution is the same as the dominant tensor. As the value of this parameter
-increases, the distribution gets broader. At values greater than 1, the extended Czjzek
-distribution approaches a Czjzek distribution. In the above example, we create an
+the distribution is a delta function at the dominant tensor parameters. As the value of 
+*eps* increases, the distribution gets broader. At *eps* values greater than 1, the extended 
+Czjzek distribution approaches a Czjzek distribution. In the above example, we create an
 extended Czjzek distribution about a second-rank traceless symmetric shielding tensor
 described by anisotropy of 80 ppm and an asymmetry parameter of 0.4. The perturbation
 fraction is 0.1.

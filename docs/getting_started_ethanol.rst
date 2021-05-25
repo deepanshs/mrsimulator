@@ -179,7 +179,7 @@ Let’s get the data from the method so we can plot it.
 
 Visualizing the dataset
 -----------------------
-Now that we have our data, let’s plot the spectrum using matplotlib!
+Now that we have our data, let’s plot the spectrum using matplotlib.
 
 .. plot::
     :format: doctest
