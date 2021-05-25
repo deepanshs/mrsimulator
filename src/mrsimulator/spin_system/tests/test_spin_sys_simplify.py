@@ -79,8 +79,32 @@ def setup_somecoupled_system():
     return sys, simplified_sys
 
 
-def test_simplify_1():
-    sys, simplified_sys = setup_system_simplifiedSystem()
+def setup_partially_coupled_system():
+    A, B, C, D, E, F = setup_sites()
+    sites = [A, B, C, D, E, F]
+
+    AC_couple = Coupling(site_index=[0, 2], isotropic_j=20)
+    CE_couple = Coupling(site_index=[2, 4], isotropic_j=40)
+
+    sys = SpinSystem(sites=sites, couplings=[AC_couple, CE_couple], abundance=50)
+
+    simplified_sys = [
+        SpinSystem(sites=[B], abundance=50),
+        SpinSystem(sites=[D], abundance=50),
+        SpinSystem(sites=[F], abundance=50),
+        SpinSystem(
+            sites=[A, C, E],
+            couplings=[
+                Coupling(site_index=[0, 1], isotropic_j=20),
+                Coupling(site_index=[1, 2], isotropic_j=40),
+            ],
+            abundance=50,
+        ),
+    ]
+    return sys, simplified_sys
+
+
+def generic_test(sys, simplified_sys):
     sys_simplify = sys.simplify()
     assert len(sys_simplify) == len(simplified_sys)
     for system in sys_simplify:
@@ -92,36 +116,26 @@ def test_simplify_1():
             for coupling in system.couplings:
                 assert coupling in simplified_sys[loc].couplings
     # assert sys_simplify == simplified_sys
+
+
+def test_simplify_1():
+    sys, simplified_sys = setup_system_simplifiedSystem()
+    generic_test(sys, simplified_sys)
 
 
 def test_simplify_2():
     sys, simplified_sys = setup_uncoupled_system()
-    sys_simplify = sys.simplify()
-    assert len(sys_simplify) == len(simplified_sys)
-    for system in sys_simplify:
-        assert system in simplified_sys
-        loc = simplified_sys.index(system)
-        for site in system.sites:
-            assert site in simplified_sys[loc].sites
-        if system.couplings:
-            for coupling in system.couplings:
-                assert coupling in simplified_sys[loc].couplings
-    # assert sys_simplify == simplified_sys
+    generic_test(sys, simplified_sys)
 
 
 def test_simplify_3():
     sys, simplified_sys = setup_somecoupled_system()
-    sys_simplify = sys.simplify()
-    assert len(sys_simplify) == len(simplified_sys)
-    for system in sys_simplify:
-        assert system in simplified_sys
-        loc = simplified_sys.index(system)
-        for site in system.sites:
-            assert site in simplified_sys[loc].sites
-        if system.couplings:
-            for coupling in system.couplings:
-                assert coupling in simplified_sys[loc].couplings
-    # assert sys_simplify == simplified_sys
+    generic_test(sys, simplified_sys)
+
+
+def test_simplify_4():
+    sys, simplified_sys = setup_partially_coupled_system()
+    generic_test(sys, simplified_sys)
 
 
 def test_new_systems_needed_matrix():
