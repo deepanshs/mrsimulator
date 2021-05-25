@@ -29,8 +29,8 @@ now = datetime.datetime.now()
 year = now.year
 
 project = "mrsimulator"
-copyright = f"2019-{year}, The mrsimulator developers"
-author = "Mrsimulator Developers"
+copyright = f"2019-{year}, The Mrsimulator Developers"
+author = "The Mrsimulator Developers"
 
 
 # get version number from the file
@@ -355,10 +355,10 @@ latex_elements = {
     "papersize": "letterpaper",
     # The font size ('10pt', '11pt' or '12pt').
     #
-    "pointsize": "9pt",
+    "pointsize": "10pt",
     "fontenc": "\\usepackage[utf8]{inputenc}",
     "fontpkg": "\\usepackage{amsmath,amsfonts,amssymb,amsthm}",
-    "geometry": "\\usepackage[vmargin=2.5cm, hmargin=1.5cm]{geometry}",
+    # "geometry": "\\usepackage[vmargin=2.5cm, hmargin=1.5cm]{geometry}",
     # "fncychap": "\usepackage[Rejne]{fncychap}",
     # Additional stuff for the LaTeX preamble.
     # \usepackage[T1]{fontenc}
@@ -372,6 +372,7 @@ latex_elements = {
 
         \usepackage[utf8]{inputenc}
         \usepackage[T1]{fontenc}
+        \usepackage{helvet}
         \usepackage{amsfonts, amsmath, amssymb, mathbbol}
         \usepackage{graphicx}
         \usepackage{caption}
@@ -482,6 +483,7 @@ latex_elements = {
     #     \pagenumbering{Roman} %%% to avoid page 1 conflict with actual page 1
     #     \begin{titlepage}
     #         \begin{figure}[!h]
+    #             \centering
     #             \includegraphics[scale=0.3]{mrsimulator.png}
     #         \end{figure}
     #         %% \vfill adds at the bottom
@@ -501,19 +503,20 @@ latex_elements = {
     "sphinxsetup": "\
         hmargin={0.7in,0.7in}, vmargin={1in,1in}, \
         verbatimwithframe=true, \
-        TitleColor={rgb}{0.25,0.1,0.1}, \
         HeaderFamily=\\rmfamily\\bfseries, \
         InnerLinkColor={rgb}{0,0.3,0.7}, \
         OuterLinkColor={rgb}{0.4,0,0.6}, \
         VerbatimBorderColor={rgb}{0.75,0.75,0.75}, \
         VerbatimColor={rgb}{0.98,0.98,0.985}, \
     ",
-}
+}  # TitleColor={rgb}{0.25,0.1,0.1}, \
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [(master_doc, "mrsimulator.tex", "Documentation", author, "manual")]
+latex_documents = [
+    (master_doc, "mrsimulator.tex", "Mrsimulator Documentation", author, "manual")
+]
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -524,7 +527,7 @@ texinfo_documents = [
     (
         master_doc,
         "mrsimulator",
-        "Documentation",
+        "Mrsimulator Documentation",
         author,
         "mrsimulator",
         "Toolbox for simulating NMR spectrum.",
@@ -541,7 +544,7 @@ man_pages = [
     (
         master_doc,
         "mrsimulator",
-        "mrsimulator Documentation",
+        "Mrsimulator Documentation",
         ["Deepansh J. Srivastava"],
         1,
     )
