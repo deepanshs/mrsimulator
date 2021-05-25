@@ -1,4 +1,4 @@
-For contributors and developers
+For developers and contributors
 ===============================
 
 Make your own copy of mrsimulator on GitHub

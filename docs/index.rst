@@ -131,13 +131,13 @@ The ``mrsimulator`` package offers the following
     - at arbitrary rotor angles, and
     - at arbitrary spinning frequency.
 
-- The library of included **NMR methods** follow,
-    - 1D Bloch decay spectrum, and
-    - 1D Bloch decay central transition spectrum.
+- A library of **NMR methods**,
+    - 1D Bloch decay spectrum,
+    - 1D Bloch decay central transition spectrum,
     - 2D Multi-quantum Variable Angle Spinning (MQ-VAS),
-    - 2D Satellite-transition Variable Angle Spinning (ST-VAS), and
+    - 2D Satellite-transition Variable Angle Spinning (ST-VAS),
     - 2D Dynamic Angle Spinning (DAS),
-    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT), and
+    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT),
     - 2D Magic Angle Flipping (MAF).
 
 - **Models** for tensor parameter distribution in amorphous materials.
