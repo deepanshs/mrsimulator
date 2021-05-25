@@ -9,7 +9,7 @@ body {
 h1 {
   font-size: 2.2em;
   font-weight: 700;
-  padding: 0 0 0.3em 0;
+  padding: 0 0 0.3em;
   border-bottom: 1px solid silver;
   margin-bottom: 0.8em;
 }
