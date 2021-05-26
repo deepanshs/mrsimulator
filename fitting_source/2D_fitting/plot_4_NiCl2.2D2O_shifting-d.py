@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-NaCl₂.2D₂O, ²H (I=1) Shifting-d echo
+NiCl₂.2D₂O, ²H (I=1) Shifting-d echo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ²H (I=1) 2D NMR CSA-Quad 1st order correlation spectrum.
@@ -192,6 +192,21 @@ plt.grid()
 plt.tight_layout()
 plt.show()
 
+# %%
+# Image plots with residuals
+# --------------------------
+residuals = sf.residuals(sim, processor)[0]
+
+fig, ax = plt.subplots(
+    1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}
+)
+vmax, vmin = experiment.max(), experiment.min()
+for i, dat in enumerate([experiment, best_fit, residuals]):
+    ax[i].imshow(dat, aspect="auto", cmap="gist_ncar_r", vmax=vmax, vmin=vmin)
+    ax[i].set_xlim(1000, -1000)
+ax[0].set_ylim(1500, -1500)
+plt.tight_layout()
+plt.show()
 # %%
 # .. [#f1] Walder B.J, Patterson A.M., Baltisberger J.H, and Grandinetti P.J
 #       Hydrogen motional disorder in crystalline iron group chloride dihydrates

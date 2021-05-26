@@ -184,6 +184,39 @@ plt.tight_layout()
 plt.show()
 
 # %%
+# The best fit solution
+# ---------------------
+residuals = sf.residuals(sim, processor)[0]
+
+# Plot the spectrum
+fig, ax = plt.subplots(
+    1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}
+)
+
+vmax, vmin = experiment.max(), experiment.min()
+for i, dat in enumerate([experiment, best_fit, residuals]):
+    ax[i].imshow(dat, aspect="auto", cmap="gist_ncar_r", vmax=vmax, vmin=vmin)
+    ax[i].set_xlim(2500, -1500)
+ax[0].set_ylim(2000, -2200)
+plt.tight_layout()
+plt.show()
+
+# %%
+# Image plots with residuals
+# --------------------------
+residuals = sf.residuals(sim, processor)[0]
+
+fig, ax = plt.subplots(
+    1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}
+)
+vmax, vmin = experiment.max(), experiment.min()
+for i, dat in enumerate([experiment, best_fit, residuals]):
+    ax[i].imshow(dat, aspect="auto", cmap="gist_ncar_r", vmax=vmax, vmin=vmin)
+    ax[i].set_xlim(2500, -1500)
+ax[0].set_ylim(2000, -2200)
+plt.tight_layout()
+plt.show()
+# %%
 # .. [#f1] Walder B.J, Patterson A.M., Baltisberger J.H, and Grandinetti P.J
 #       Hydrogen motional disorder in crystalline iron group chloride dihydrates
 #       spectroscopy, J. Chem. Phys. (2018)  **149**, 084503.

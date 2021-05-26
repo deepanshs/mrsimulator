@@ -96,6 +96,7 @@ for sys in spin_systems:
 # Simulation
 # ----------
 sim = Simulator(spin_systems=spin_systems, methods=[MQMAS])
+sim.config.number_of_sidebands = 1
 sim.run()
 
 # Post Simulation Processing
@@ -107,7 +108,7 @@ processor = sp.SignalProcessor(
         sp.apodization.Gaussian(FWHM="0.08 kHz", dim_index=0),
         sp.apodization.Gaussian(FWHM="0.1 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
-        sp.Scale(factor=3000),
+        sp.Scale(factor=1e7),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -152,5 +153,21 @@ ax.contour(best_fit, colors="r", linestyles="--", **options)
 ax.set_xlim(-20, -50)
 ax.set_ylim(-45, -65)
 plt.grid()
+plt.tight_layout()
+plt.show()
+
+# %%
+# Image plots with residuals
+# --------------------------
+residuals = sf.residuals(sim, processor)[0]
+
+fig, ax = plt.subplots(
+    1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}
+)
+vmax, vmin = experiment.max(), experiment.min()
+for i, dat in enumerate([experiment, best_fit, residuals]):
+    ax[i].imshow(dat, aspect="auto", cmap="gist_ncar_r", vmax=vmax, vmin=vmin)
+    ax[i].set_xlim(-20, -50)
+ax[0].set_ylim(-45, -65)
 plt.tight_layout()
 plt.show()
