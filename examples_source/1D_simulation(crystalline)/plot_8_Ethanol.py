@@ -14,7 +14,7 @@ Simulating ¹H and ¹³C isotopomers.
 # In this example, we will add these to the :math:`^1\text{H}` spectrum and plot
 # the :math:`^{13}\text{C}` spectrum while we're at it!
 #
-# We'll start importing the necessary packages, just like before.
+# As before, we start by importing the necessary packages.
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
@@ -27,9 +27,9 @@ from mrsimulator import signal_processing as sp
 # Spin Systems
 # ------------
 #
-# The satellite peaks come from low-abundance isotopomers that have one
-# :math:`^{13}\text{C}` in them, causing more splittings. First, let's define
-# all the possible :math:`^1\text{H}` and :math:`^{13}\text{C}` sites.
+# The satellite peaks come from couplings between `^{1}\text{H}` and :math:`^{13}\text{C}` 
+# in low-abundance isotopomers. First, let's define all the possible :math:`^1\text{H}` 
+# and :math:`^{13}\text{C}` sites.
 
 H_CH3 = Site(isotope="1H", isotropic_chemical_shift=1.226)
 H_CH2 = Site(isotope="1H", isotropic_chemical_shift=2.61)
@@ -74,10 +74,9 @@ isotopomer1 = SpinSystem(sites=iso1_sites, couplings=iso1_couplings, abundance=9
 
 # %%
 # .. note::
-#     The abundance values were calculated using basic rules of probability and an
-#     assumption that only :math:`^1\text{H}` and :math:`^{16}\text{O}` are present.
-#     The abundance of :math:`^{12}\text{C}` is 98.9%, and the abundance of
-#     :math:`^{13}\text{C}` is 1.1%. So, the probability of the most abundant
+#     The abundance values were calculated with an assumption that only :math:`^1\text{H}` 
+#     and :math:`^{16}\text{O}` are present.  The abundance of :math:`^{12}\text{C}` is 98.9%, 
+#     and the abundance of :math:`^{13}\text{C}` is 1.1%. So, the probability of the most abundant
 #     isotopomer is :math:`0.989*0.989=0.97812`
 #
 # **Isotopomer 2**
@@ -199,7 +198,7 @@ processed_H_data = processor_1H.apply_operations(data=H_data)
 processed_C_data = processor_13C.apply_operations(data=C_data)
 
 # %%
-# Lastly, we plot the two spectra!
+# Lastly, we plot the two spectra.
 fig, ax = plt.subplots(
     nrows=1, ncols=2, subplot_kw={"projection": "csdm"}, figsize=[8, 3.5]
 )
