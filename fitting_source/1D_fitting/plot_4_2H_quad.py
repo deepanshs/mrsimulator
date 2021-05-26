@@ -51,7 +51,7 @@ plt.show()
 # **Spin System**
 H_2 = Site(
     isotope="2H",
-    isotropic_chemical_shift=-57.13,  # in ppm,
+    isotropic_chemical_shift=-57.12,  # in ppm,
     quadrupolar={"Cq": 3e4, "eta": 0},  # Cq in Hz
 )
 
@@ -63,10 +63,10 @@ spin_systems = [SpinSystem(sites=[H_2])]
 # Get the spectral dimension paramters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = BlochDecaySpectrum(
+MAS = BlochDecaySpectrum(
     channels=["2H"],
-    magnetic_flux_density=9.4,  # in T
-    rotor_frequency=4517,  # in Hz
+    magnetic_flux_density=9.395,  # in T
+    rotor_frequency=4517.1,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # experimental dataset
 )
@@ -74,14 +74,14 @@ method = BlochDecaySpectrum(
 # Optimize the script by pre-setting the transition pathways for each spin system from
 # the method.
 for sys in spin_systems:
-    sys.transition_pathways = method.get_transition_pathways(sys)
+    sys.transition_pathways = MAS.get_transition_pathways(sys)
 
 # %%
 # **Guess Model Spectrum**
 
 # Simulation
 # ----------
-sim = Simulator(spin_systems=spin_systems, methods=[method])
+sim = Simulator(spin_systems=spin_systems, methods=[MAS])
 sim.run()
 
 # Post Simulation Processing
@@ -89,7 +89,7 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        sp.apodization.Exponential(FWHM="50 Hz"),
+        sp.apodization.Exponential(FWHM="60 Hz"),
         sp.FFT(),
         sp.Scale(factor=140),
     ]

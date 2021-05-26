@@ -115,7 +115,7 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
   int size = scheme->total_orientations * number_of_sidebands;
   double *freq_ampA = malloc_double(size);
   double *freq_ampB = malloc_double(size);
-  double *freq_amp = malloc_double(scheme->total_orientations);
+  double *freq_amp = malloc_double(scheme->octant_orientations);
   double offset0, offset1, offsetA, offsetB;
   double *dim0, *dim1;
   double norm0, norm1;
@@ -209,7 +209,7 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
             vm_double_add_offset(scheme->octant_orientations, &dim1[address], norm1,
                                  dimensions[1].freq_offset);
 
-            vm_double_multiply(scheme->total_orientations,
+            vm_double_multiply(scheme->octant_orientations,
                                &freq_ampA[step_vector_i + address],
                                &freq_ampB[step_vector_k + address], freq_amp);
             // Perform tenting on every sideband order over all orientations

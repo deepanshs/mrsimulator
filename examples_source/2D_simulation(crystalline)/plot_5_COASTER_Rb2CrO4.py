@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Rb2CrO4, 87Rb (I=3/2) COASTER
+Rb₂CrO₄, ⁸⁷Rb (I=3/2) COASTER
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-87Rb (I=3/2) Correlation of anisotropies separated through echo refocusing (COASTER)
+⁸⁷Rb (I=3/2) Correlation of anisotropies separated through echo refocusing (COASTER)
 simulation.
 """
 # %%
 # The following is a correlation of anisotropies separated through echo refocusing
 # (COASTER) simulation of :math:`\text{Rb}_2\text{CrO}_4`. The Rb site with the smaller
-# quadrupolar interaction is selectively observed and reported by Ash `et. al.` [#f1]_.
+# quadrupolar interaction is selectively observed and reported by Ash `et al.` [#f1]_.
 # The following is the simulation based on the published tensor parameters.
 import matplotlib.pyplot as plt
 

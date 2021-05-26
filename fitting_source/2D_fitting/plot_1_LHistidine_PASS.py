@@ -76,12 +76,13 @@ spin_systems = single_site_system_generator(
 
 # %%
 # **Method**
+#
+# Create the SSB2D method.
 
-# Create the DAS method.
 # Get the spectral dimension paramters from the experiment.
 spectral_dims = get_spectral_dimensions(mat_data)
 
-ssb = SSB2D(
+PASS = SSB2D(
     channels=["13C"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=1500,  # in Hz
@@ -92,16 +93,14 @@ ssb = SSB2D(
 # Optimize the script by pre-setting the transition pathways for each spin system from
 # the method.
 for sys in spin_systems:
-    sys.transition_pathways = ssb.get_transition_pathways(sys)
+    sys.transition_pathways = PASS.get_transition_pathways(sys)
 
 # %%
 # **Guess Spectrum**
 
 # Simulation
 # ----------
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [ssb]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[PASS])
 sim.run()
 
 # Post Simulation Processing

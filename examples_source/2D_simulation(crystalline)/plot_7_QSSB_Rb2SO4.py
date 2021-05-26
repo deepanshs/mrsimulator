@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Rb2SO4, 87Rb (I=3/2) QMAT
+Rb₂SO₄, ⁸⁷Rb (I=3/2) QMAT
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-87Rb (I=3/2) Quadrupolar Magic-angle turning (QMAT)
+⁸⁷Rb (I=3/2) Quadrupolar Magic-angle turning (QMAT)
 simulation.
 """
 # %%
 # The following is a simulation of the QMAT spectrum of :math:`\text{Rb}_2\text{SiO}_4`.
 # The 2D QMAT spectrum is a correlation of finite speed MAS to an infinite speed MAS
-# spectrum. The parameters for the simulation are obtained from Walder `et. al.` [#f1]_.
+# spectrum. The parameters for the simulation are obtained from Walder `et al.` [#f1]_.
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site

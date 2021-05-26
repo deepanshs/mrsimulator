@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Protein GB1, 13C and 15N (I=1/2)
+Protein GB1, ¹³C and ¹⁵N (I=1/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-13C/15N (I=1/2) spinning sideband simulation.
+¹³C/¹⁵N (I=1/2) spinning sideband simulation.
 """
 # %%
 # The following is the spinning sideband simulation of a macromolecule, protein GB1. The
 # :math:`^{13}\text{C}` and :math:`^{15}\text{N}` CSA tensor parameters were obtained
-# from Hung `et. al.` [#f1]_, which consists of 42 :math:`^{13}\text{C}\alpha`,
+# from Hung `et al.` [#f1]_, which consists of 42 :math:`^{13}\text{C}\alpha`,
 # 44 :math:`^{13}\text{CO}`, and 44 :math:`^{15}\text{NH}` tensors. In the following
 # example, instead of creating 130 spin systems, we download the spin systems from
 # a remote file and load it directly to the Simulator object.

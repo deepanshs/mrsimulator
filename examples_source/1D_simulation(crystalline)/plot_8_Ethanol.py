@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Ethanol Revisited (1H and 13C NMR)
+Ethanol Revisited (¹H and ¹³C NMR)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Simulating 1H and 13C isotopomers.
+Simulating ¹H and ¹³C isotopomers.
 """
 # %%
 # An astute observer may have noticed that the :math:`^{1}\text{H}` ethanol spectrum

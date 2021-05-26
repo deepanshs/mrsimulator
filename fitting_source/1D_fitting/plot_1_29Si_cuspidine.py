@@ -16,7 +16,7 @@
 # `LMFIT <https://lmfit.github.io/lmfit-py/>`_ library for performing the least-squares
 # fitting optimization.
 # In this example, we use a synthetic :math:`^{29}\text{Si}` NMR spectrum of cuspidine,
-# generated from the tensor parameters reported by Hansen `et. al.` [#f1]_, to
+# generated from the tensor parameters reported by Hansen `et al.` [#f1]_, to
 # demonstrate a simple fitting procedure.
 #
 # We will begin by importing relevant modules and establishing figure size.
@@ -97,7 +97,7 @@ spin_system = SpinSystem(
 # in the measurement. In this example, we use the `BlochDecaySpectrum` method. Note,
 # when creating the method object, the value of the method parameters must match the
 # respective values used in the experiment.
-method = BlochDecaySpectrum(
+MAS = BlochDecaySpectrum(
     channels=["29Si"],
     magnetic_flux_density=7.1,  # in T
     rotor_frequency=780,  # in Hz
@@ -114,7 +114,7 @@ method = BlochDecaySpectrum(
 # %%
 # **Step 3:** Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator(spin_systems=[spin_system], methods=[method])
+sim = Simulator(spin_systems=[spin_system], methods=[MAS])
 sim.run()
 
 # %%

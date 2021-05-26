@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-RbNO3, 87Rb (I=3/2) STMAS
+RbNO₃, ⁸⁷Rb (I=3/2) STMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-87Rb (I=3/2) staellite-transition off magic-angle spinning simulation.
+⁸⁷Rb (I=3/2) staellite-transition off magic-angle spinning simulation.
 """
 # %%
 # The following is an example of the STMAS simulation of :math:`\text{RbNO}_3`. The
-# :math:`^{87}\text{Rb}` tensor parameters were obtained from Massiot `et. al.` [#f1]_.
+# :math:`^{87}\text{Rb}` tensor parameters were obtained from Massiot `et al.` [#f1]_.
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
