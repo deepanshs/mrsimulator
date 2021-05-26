@@ -19,7 +19,7 @@ Make sure you have the required version of python by typing the following in the
     You may also click the copy-button located at the top-right corner of the code cell
     area in the HTML docs, to copy the code lines without the prompts and then paste it
     as usual.
-    Thanks to `Sphinx-copybutton <https://sphinx-copybutton.readthedocs.io/en/latest/>`_)
+    Thanks to `Sphinx-copybutton <https://sphinx-copybutton.readthedocs.io/en/latest/>`_
 
 .. code-block:: shell
 
@@ -65,9 +65,9 @@ runs entirely in the cloud. Launch a new notebook on
 
       !pip install mrsimulator
 
-in the first cell, and execute. All done! You may now proceed to the next section and
-start using the library. See :ref:`example_gallery` and :ref:`fitting_examples`.
-
+in the first cell, and execute. All done! You may now start using the library, or
+proceed to section :ref:`Introduction to Spin Systems <spin_systems_intro>` to continue
+the tutorial.
 
 
 .. _on_local_machine:
@@ -145,8 +145,8 @@ installed on your system. In this case, type the following in the terminal/Promp
     $ pip install mrsimulator -U
 
 
-All done! You may now proceed to the next section and start using the library.
-See :ref:`example_gallery` and :ref:`fitting_examples`.
+All done! You may now start using the library, or proceed to section
+:ref:`Introduction to Spin Systems <spin_systems_intro>` to continue the tutorial.
 
 
 .. _building_from_source:

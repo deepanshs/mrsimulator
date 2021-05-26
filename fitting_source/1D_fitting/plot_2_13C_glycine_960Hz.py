@@ -7,8 +7,8 @@
 # %%
 # The following is a sideband least-squares fitting example of a
 # :math:`^{13}\text{C}` MAS NMR spectrum of Glycine spinning at 960 Hz.
-# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
-# acknowledge Dr. Dominique Massiot for sharing the dataset.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples.
+# We thank Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit

@@ -14,7 +14,6 @@
 # We use the `LMFIT <https://lmfit.github.io/lmfit-py/>`_ library to fit the spectrum.
 # The following example shows the least-squares fitting procedure applied to the
 # :math:`^{17}\text{O}` MAS NMR spectrum of :math:`\text{Na}_{2}\text{SiO}_{3}` [#f5]_.
-# The dataset was shared by Dr. Philip Grandinetti.
 #
 # Start by importing the relevant modules.
 import csdmpy as cp

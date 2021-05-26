@@ -112,7 +112,7 @@ method = BlochDecaySpectrum(
 #
 # **Simulator:**
 #
-# Now, that we have the spin systems and the method, create the simulator object and
+# Now that we have the spin systems and the method, create the simulator object and
 # add the respective objects.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems

@@ -7,8 +7,8 @@
 # %%
 # The following is a CSA static least-squares fitting example of a
 # :math:`^{31}\text{P}` MAS NMR spectrum of :math:`\text{Na}_{2}\text{PO}_{4}`.
-# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
-# acknowledge Dr. Dominique Massiot for sharing the dataset.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples.
+# We thank Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit

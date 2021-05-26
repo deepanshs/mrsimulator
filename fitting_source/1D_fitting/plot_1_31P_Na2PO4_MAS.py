@@ -14,8 +14,8 @@
 # We use the `LMFIT <https://lmfit.github.io/lmfit-py/>`_ library to fit the spectrum.
 # The following example shows the least-squares fitting procedure applied to the
 # :math:`^{31}\text{P}` MAS NMR spectrum of :math:`\text{Na}_{2}\text{PO}_{4}`.
-# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
-# acknowledge Dr. Dominique Massiot for sharing the dataset.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples. We
+# thank Dr. Dominique Massiot for sharing the dataset.
 #
 # Start by importing the relevant modules.
 import csdmpy as cp

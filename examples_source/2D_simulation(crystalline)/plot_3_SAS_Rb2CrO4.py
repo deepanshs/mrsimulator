@@ -7,7 +7,7 @@ Rb₂CrO₄, ⁸⁷Rb (I=3/2) SAS
 ⁸⁷Rb (I=3/2) Switched-angle spinning (SAS) simulation.
 """
 # %%
-# The following is a switched-angle spinning (SAS) simulation of
+# The following is a Switched-Angle Spinning (SAS) simulation of
 # :math:`\text{Rb}_2\text{CrO}_4`. While :math:`\text{Rb}_2\text{CrO}_4` has two
 # rubidium sites, the site with the smaller quadrupolar interaction was selectively
 # observed and reported by Shore `et al.` [#f1]_. The following is the simulation
