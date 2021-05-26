@@ -154,8 +154,8 @@ class SpinSystem(Parseable):
     abundance: float = Field(default=100.0, ge=0.0, le=100.0)
     transition_pathways: List = None
 
-    property_unit_types: ClassVar = {"abundance": "dimensionless"}
-    property_default_units: ClassVar = {"abundance": "pct"}
+    property_unit_types: ClassVar[Dict] = {"abundance": "dimensionless"}
+    property_default_units: ClassVar[Dict] = {"abundance": "pct"}
     property_units: Dict = {"abundance": "pct"}
 
     class Config:

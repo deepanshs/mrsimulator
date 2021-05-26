@@ -13,7 +13,7 @@ __email__ = "maxvenetos@gmail.com"
 class Operation(Parseable):
     """A base class for signal processing operations."""
 
-    module_name: ClassVar = None
+    module_name: ClassVar[str] = None
 
     @property
     def function(self):

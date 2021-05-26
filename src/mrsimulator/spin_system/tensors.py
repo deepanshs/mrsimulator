@@ -90,7 +90,7 @@ class SymmetricTensor(Parseable):
     beta: float = None
     gamma: float = None
 
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "zeta": ["dimensionless", "frequency"],
         "Cq": "frequency",
         "D": "frequency",
@@ -98,7 +98,7 @@ class SymmetricTensor(Parseable):
         "beta": "angle",
         "gamma": "angle",
     }
-    property_default_units: ClassVar = {
+    property_default_units: ClassVar[Dict] = {
         "zeta": ["ppm", "Hz"],
         "Cq": "Hz",
         "D": "Hz",
@@ -152,12 +152,16 @@ class AntisymmetricTensor(Parseable):
     alpha: Optional[float]
     beta: Optional[float]
 
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "zeta": "dimensionless",
         "alpha": "angle",
         "beta": "angle",
     }
-    property_default_units: ClassVar = {"zeta": "ppm", "alpha": "rad", "beta": "rad"}
+    property_default_units: ClassVar[Dict] = {
+        "zeta": "ppm",
+        "alpha": "rad",
+        "beta": "rad",
+    }
     property_units: Dict = {"zeta": "ppm", "alpha": "rad", "beta": "rad"}
 
     # Deprecated

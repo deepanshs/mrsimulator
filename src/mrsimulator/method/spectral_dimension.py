@@ -60,13 +60,13 @@ class SpectralDimension(Parseable):
     origin_offset: float = None
     events: List[Union[MixingEvent, ConstantDurationEvent, SpectralEvent]] = []
 
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "spectral_width": ["frequency", "dimensionless"],
         "reference_offset": ["frequency", "dimensionless"],
         "origin_offset": ["frequency", "dimensionless"],
     }
 
-    property_default_units: ClassVar = {
+    property_default_units: ClassVar[Dict] = {
         "spectral_width": ["Hz", "ppm"],
         "reference_offset": ["Hz", "ppm"],
         "origin_offset": ["Hz", "ppm"],

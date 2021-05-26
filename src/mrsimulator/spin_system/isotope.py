@@ -3,6 +3,7 @@
 from os import path
 from re import match
 from typing import ClassVar
+from typing import Dict
 
 from monty.serialization import loadfn
 from pydantic import BaseModel
@@ -43,7 +44,7 @@ class Isotope(BaseModel):
     """
 
     symbol: str
-    test_vars: ClassVar = {"symbol": "1H"}
+    test_vars: ClassVar[Dict] = {"symbol": "1H"}
 
     class Config:
         validate_assignment = True

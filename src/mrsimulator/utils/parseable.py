@@ -70,8 +70,8 @@ class Parseable(BaseModel):
     name: str = None
     description: str = None
     label: str = None
-    property_unit_types: ClassVar = {}
-    property_default_units: ClassVar = {}
+    property_unit_types: ClassVar[Dict] = {}
+    property_default_units: ClassVar[Dict] = {}
     property_units: Dict = {}
 
     @classmethod

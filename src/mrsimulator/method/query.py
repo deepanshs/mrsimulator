@@ -267,12 +267,12 @@ class RFRotation(Parseable):
     tip_angle: float = Field(default=None, ge=0.0, le=6.283185307179586)
     phase: float = Field(default=None, ge=-3.141592653589793, le=3.141592653589793)
 
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "tip_angle": "angle",
         "phase": "angle",
     }
 
-    property_default_units: ClassVar = {
+    property_default_units: ClassVar[Dict] = {
         "tip_angle": "rad",
         "phase": "rad",
     }

@@ -55,13 +55,13 @@ class BaseEvent(Parseable):
     freq_contrib: List[FrequencyEnum] = default_freq_contrib
     transition_query: List[TransitionQuery] = [TransitionQuery()]
 
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "magnetic_flux_density": "magnetic flux density",
         "rotor_frequency": "frequency",
         "rotor_angle": "angle",
     }
 
-    property_default_units: ClassVar = {
+    property_default_units: ClassVar[Dict] = {
         "magnetic_flux_density": "T",
         "rotor_frequency": "Hz",
         "rotor_angle": "rad",
@@ -192,11 +192,11 @@ class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
     """
     duration: float
 
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "duration": "time",
         **BaseEvent.property_unit_types,
     }
-    property_default_units: ClassVar = {
+    property_default_units: ClassVar[Dict] = {
         "duration": "µs",
         **BaseEvent.property_default_units,
     }
@@ -205,7 +205,7 @@ class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
         **BaseEvent().property_default_units,
     }
 
-    test_vars: ClassVar = {"duration": 0.0}
+    test_vars: ClassVar[Dict] = {"duration": 0.0}
 
     class Config:
         validate_assignment = True
@@ -223,7 +223,7 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
 
     mixing_query: MixingQuery
 
-    test_vars: ClassVar = {"mixing_query": {}}
+    test_vars: ClassVar[Dict] = {"mixing_query": {}}
 
     class Config:
         validate_assignment = True

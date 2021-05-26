@@ -19,7 +19,7 @@ __email__ = "maxvenetos@gmail.com"
 class Apodization(ModuleOperation):
     dim_index: Union[int, list, tuple] = 0
     dv_index: Union[int, list, tuple] = None  # if none apply to all
-    module_name: ClassVar = __name__
+    module_name: ClassVar[str] = __name__
 
     @property
     def function(self):

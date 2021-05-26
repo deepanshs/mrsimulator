@@ -127,13 +127,13 @@ class Method(Parseable):
     rotor_angle: float = Field(default=0.9553166181245, ge=0.0, le=1.5707963268)
 
     _named_method: bool = PrivateAttr(False)
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "magnetic_flux_density": "magnetic flux density",
         "rotor_frequency": "frequency",
         "rotor_angle": "angle",
     }
 
-    property_default_units: ClassVar = {
+    property_default_units: ClassVar[Dict] = {
         "magnetic_flux_density": "T",
         "rotor_angle": "rad",
         "rotor_frequency": "Hz",
@@ -144,7 +144,7 @@ class Method(Parseable):
         "rotor_angle": "rad",
         "rotor_frequency": "Hz",
     }
-    test_vars: ClassVar = {"channels": ["1H"]}
+    test_vars: ClassVar[Dict] = {"channels": ["1H"]}
 
     class Config:
         validate_assignment = True
