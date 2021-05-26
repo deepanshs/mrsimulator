@@ -25,8 +25,8 @@ To generate an extended Czjzek distribution, use the
 The *ExtCzjzekDistribution* class accepts two arguments. The first argument is the
 dominant tensor about which the perturbation applies, and the second parameter, *eps*,
 is the perturbation fraction. The minimum value of the *eps* parameter is 0, which means
-the distribution is a delta function at the dominant tensor parameters. As the value of 
-*eps* increases, the distribution gets broader. At *eps* values greater than 1, the extended 
+the distribution is a delta function at the dominant tensor parameters. As the value of
+*eps* increases, the distribution gets broader. At *eps* values greater than 1, the extended
 Czjzek distribution approaches a Czjzek distribution. In the above example, we create an
 extended Czjzek distribution about a second-rank traceless symmetric shielding tensor
 described by anisotropy of 80 ppm and an asymmetry parameter of 0.4. The perturbation

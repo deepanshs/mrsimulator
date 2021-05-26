@@ -52,9 +52,9 @@ shown in the structure below).
 Couplings
 ^^^^^^^^^
 
-Now, we need to define the :math:`^3J_{HH}` couplings that cause the splittings 
-in the spectrum of ethanol. In ``mrsimulator``, all couplings are defined using 
-the :class:`~mrsimulator.Coupling` class. Let's start by defining a coupling 
+Now, we need to define the :math:`^3J_{HH}` couplings that cause the splittings
+in the spectrum of ethanol. In ``mrsimulator``, all couplings are defined using
+the :class:`~mrsimulator.Coupling` class. Let's start by defining a coupling
 between a methyl and a methylene proton.
 
 .. plot::
@@ -77,7 +77,7 @@ Now, we define the rest of the methyl-methylene couplings and make a list to hol
 
 .. note::
     Strong J couplings do not lead to splittings in an NMR spectrum, so they are not included
-    in the list of couplings in this example.  Additionally, note that ``mrsimulator`` library 
+    in the list of couplings in this example.  Additionally, note that ``mrsimulator`` library
     only supports weak couplings between sites.
 
 .. plot::

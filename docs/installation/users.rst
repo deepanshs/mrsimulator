@@ -66,9 +66,8 @@ runs entirely in the cloud. Launch a new notebook on
       !pip install mrsimulator
 
 in the first cell, and execute. All done! You may now start using the library, or
-proceed to section :ref:`_spin_systems_intro` to continue the tutorial with an introduction 
-to defining spin systems in mrsimulator.
-
+proceed to section :ref:`Introduction to Spin Systems <spin_systems_intro>` to continue
+the tutorial.
 
 
 .. _on_local_machine:
@@ -146,8 +145,8 @@ installed on your system. In this case, type the following in the terminal/Promp
     $ pip install mrsimulator -U
 
 
-All done! You may now start using the library, or proceed to section 1.2 to continue the 
-tutorial with an introduction to defining spin systems in mrsimulator.
+All done! You may now start using the library, or proceed to section
+:ref:`Introduction to Spin Systems <spin_systems_intro>` to continue the tutorial.
 
 
 .. _building_from_source:
