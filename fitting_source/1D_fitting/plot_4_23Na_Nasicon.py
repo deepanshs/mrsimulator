@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-23Na MAS NMR of Nasicon
+²³Na MAS NMR of Nasicon
 ^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # The following is a least-squares fitting example of a :math:`^{23}\text{Na}` MAS NMR
 # spectrum of Nasicon, :math:`\text{NaZr}_2(\text{PO}_4)_3`.
-# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
-# acknowledge Dr. Dominique Massiot for sharing the dataset.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples.
+# We thank Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
@@ -61,7 +61,7 @@ spin_systems = [SpinSystem(sites=[Na23])]
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 MAS_CT = BlochDecayCTSpectrum(

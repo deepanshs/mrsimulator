@@ -8,7 +8,7 @@ Rb₂CrO₄, ⁸⁷Rb (I=3/2) COASTER
 simulation.
 """
 # %%
-# The following is a correlation of anisotropies separated through echo refocusing
+# The following is a Correlation of Anisotropies Separated Through Echo Refocusing
 # (COASTER) simulation of :math:`\text{Rb}_2\text{CrO}_4`. The Rb site with the smaller
 # quadrupolar interaction is selectively observed and reported by Ash `et al.` [#f1]_.
 # The following is the simulation based on the published tensor parameters.

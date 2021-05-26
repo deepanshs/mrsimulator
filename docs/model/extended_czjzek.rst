@@ -3,15 +3,15 @@
 Extended Czjzek distribution
 ----------------------------
 
-An Extended Czjzek distribution model is a random perturbation of the second-rank
-traceless symmetric tensors about a non-zero tensor. See :ref:`ext_czjzek_model` and
+The Extended Czjzek distribution models random variations of a second-rank traceless
+symmetric tensors about a non-zero tensor.  See :ref:`ext_czjzek_model` and
 references within for a brief description of the model.
 
 Extended Czjzek distribution of symmetric shielding tensors
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 To generate an extended Czjzek distribution, use the
-:class:`~mrsimulator.models.ExtCzjzekDistribution` class as follows.
+:py:class:`~mrsimulator.models.ExtCzjzekDistribution` class as follows.
 
 .. plot::
     :format: doctest
@@ -25,16 +25,16 @@ To generate an extended Czjzek distribution, use the
 The *ExtCzjzekDistribution* class accepts two arguments. The first argument is the
 dominant tensor about which the perturbation applies, and the second parameter, *eps*,
 is the perturbation fraction. The minimum value of the *eps* parameter is 0, which means
-the distribution is the same as the dominant tensor. As the value of this parameter
-increases, the distribution gets broader. At values greater than 1, the extended Czjzek
-distribution approaches a Czjzek distribution. In the above example, we create an
+the distribution is a delta function at the dominant tensor parameters. As the value of
+*eps* increases, the distribution gets broader. At *eps* values greater than 1, the extended
+Czjzek distribution approaches a Czjzek distribution. In the above example, we create an
 extended Czjzek distribution about a second-rank traceless symmetric shielding tensor
 described by anisotropy of 80 ppm and an asymmetry parameter of 0.4. The perturbation
 fraction is 0.1.
 
 As before, you may either draw random samples from this distribution or generate a
 probability distribution function. Let's first draw points from this distribution, using
-the :meth:`~mrsimulator.models.ExtCzjzekDistribution.rvs` method of the instance.
+the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.rvs` method of the instance.
 
 .. plot::
     :format: doctest
@@ -70,7 +70,7 @@ Extended Czjzek distribution of symmetric quadrupolar tensors
 The extended Czjzek distribution of symmetric quadrupolar tensors follows a similar
 setup as the extended Czjzek distribution of symmetric shielding tensors, shown above.
 In the following example, we generate the probability distribution
-function using the :meth:`~mrsimulator.models.ExtCzjzekDistribution.pdf` method.
+function using the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.pdf` method.
 
 .. plot::
     :format: doctest
@@ -90,7 +90,7 @@ extended Czjzek distribution, we need to define a grid system over which the dis
 probabilities will be evaluated. We do so by defining the range of coordinates along the
 two dimensions. In the above example, ``Cq_range`` and ``eta_range`` are the
 range of :math:`\text{Cq}` and :math:`\eta_q` coordinates, which is then given as the
-argument to the :meth:`~mrsimulator.models.ExtCzjzekDistribution.pdf` method. The output
+argument to the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.pdf` method. The output
 ``Cq``, ``eta``, and ``amp`` hold the two coordinates and amplitude, respectively.
 
 The plot of the extended Czjzek probability distribution is shown below.

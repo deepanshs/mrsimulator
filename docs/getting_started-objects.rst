@@ -165,7 +165,7 @@ Let's use the sites we have already created to set up four spin systems.
 
 Method object
 -------------
-Likewise, we can create a :class:`~mrsimulator.methods.BlochDecaySpectrum`
+Likewise, we can create a :py:class:`~mrsimulator.methods.BlochDecaySpectrum`
 object following,
 
 .. plot::
@@ -458,7 +458,7 @@ Note, the BlochDecaySpectrum method computes resonances from all transitions wit
 :math:`p = \Delta m = -1`.
 
 Let's see what transition pathways are used in our simulation. Use the
-:meth:`~mrsimulator.Method.get_transition_pathways` function of the Method instance to
+:py:meth:`~mrsimulator.Method.get_transition_pathways` function of the Method instance to
 see the list of transition pathways, for example,
 
 .. plot::
@@ -473,7 +473,7 @@ see the list of transition pathways, for example,
 Notice, there are five transition pathways for the :math:`^{17}\text{O}` site, one
 associated with the central-transition, two with the inner-satellites, and two with
 the outer-satellites. For central transition selective simulation, use the
-:class:`~mrsimulator.methods.BlochDecayCTSpectrum` method.
+:py:class:`~mrsimulator.methods.BlochDecayCTSpectrum` method.
 
 .. plot::
     :format: doctest

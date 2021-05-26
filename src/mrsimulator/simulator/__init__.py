@@ -390,7 +390,7 @@ class Simulator(Parseable):
 
     @classmethod
     def load(cls, filename: str, parse_units: bool = True):
-        """Load the :class:`~mrsimulator.Simulator` object from a JSON file by parsing.
+        """Load the :py:class:`~mrsimulator.Simulator` object from a JSON file by parsing.
 
         Args:
             bool parse_units: If true, parse the attribute values from the serialized
@@ -399,7 +399,7 @@ class Simulator(Parseable):
             str filename: The filename of a JSON serialized mrsimulator file.
 
         Returns:
-            A :class:`~mrsimulator.Simulator` object.
+            A :py:class:`~mrsimulator.Simulator` object.
 
         Example
         -------

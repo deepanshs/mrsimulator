@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-13C MAS NMR of Glycine (CSA) [5000 Hz]
+¹³C MAS NMR of Glycine (CSA) [5000 Hz]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # The following is a sideband least-squares fitting example of a
 # :math:`^{13}\text{C}` MAS NMR spectrum of Glycine spinning at 5000 Hz.
-# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
-# acknowledge Dr. Dominique Massiot for sharing the dataset.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples.
+# We thank Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
@@ -65,7 +65,7 @@ spin_systems = [SpinSystem(sites=[C1], name="C1"), SpinSystem(sites=[C2], name="
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 MAS = BlochDecaySpectrum(

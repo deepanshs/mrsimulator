@@ -60,7 +60,7 @@ class Method(Parseable):
     simulation:
         An object holding the result of the simulation. The initial value of this
         attribute is None. A value is assigned to this attribute when you run the
-        simulation using the :meth:`~mrsimulator.Simulator.run` method.
+        simulation using the :py:meth:`~mrsimulator.Simulator.run` method.
 
     experiment:
         An object holding the experimental measurement for the given method, if

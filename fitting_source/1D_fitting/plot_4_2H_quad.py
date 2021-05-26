@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-2H MAS NMR of Methionine
+²H MAS NMR of Methionine
 ^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # The following is a least-squares fitting example of a :math:`^{2}\text{H}` MAS NMR
-# spectrum of Methionine. The experimental dataset is a part of DMFIT [#f1]_ examples,
-# and we acknowledge Dr. Dominique Massiot for sharing the dataset.
+# spectrum of Methionine. The experimental dataset is a part of DMFIT [#f1]_ examples.
+# We thank Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
@@ -60,7 +60,7 @@ spin_systems = [SpinSystem(sites=[H_2])]
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 MAS = BlochDecaySpectrum(

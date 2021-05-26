@@ -11,7 +11,7 @@ class SSB2D(BaseNamedMethod2D):
     r"""Simulating a sheared 2D finite to infinite speed MAS correlation spectum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> method = SSB2D(

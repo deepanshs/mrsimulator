@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-31P static NMR of crystalline Na2PO4 (CSA)
+³¹P static NMR of crystalline Na2PO4 (CSA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # The following is a CSA static least-squares fitting example of a
 # :math:`^{31}\text{P}` MAS NMR spectrum of :math:`\text{Na}_{2}\text{PO}_{4}`.
-# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
-# acknowledge Dr. Dominique Massiot for sharing the dataset.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples.
+# We thank Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
@@ -61,7 +61,7 @@ spin_systems = [SpinSystem(sites=[P_31])]
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 static1D = BlochDecaySpectrum(

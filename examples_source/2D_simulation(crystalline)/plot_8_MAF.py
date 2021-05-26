@@ -42,9 +42,9 @@ sites = [
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# Use the generic 2D method, `Method2D`, to simulate a MAF spectrum by customizing the
-# method parameters, as shown below. Note, the Method2D method simulates an infinite
-# spinning speed spectrum.
+# Use the generic 2D method, `Method2D`, to simulate a Magic-Angle Flipping (MAF)
+# spectrum by customizing the method parameters, as shown below. Note, the Method2D
+# method simulates an infinite spinning speed spectrum.
 maf = Method2D(
     channels=["29Si"],
     magnetic_flux_density=14.1,  # in T

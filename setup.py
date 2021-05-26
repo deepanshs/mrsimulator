@@ -6,7 +6,7 @@ from os.path import dirname
 from os.path import exists
 from os.path import join
 from os import environ
-
+import warnings
 from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
@@ -27,9 +27,16 @@ except ImportError:
 
 def message(lib, env, command, key):
     arg = f"{key} {lib}" if key != "" else f"{lib}"
-    print(f"Error: Libraries not found - {lib}")
-    print(f"Please install '{lib}' from {env} with:\n\t{command} install {arg}")
-    sys.exit(1)
+    warning = (
+        f"\nLibraries not found - {lib}.\n",
+        "Use environ variable to add the path to the include and lib folders. ",
+        "For example,\n",
+        '\texport LDFLAGS="-L/usr/local/opt/openblas/lib"\n',
+        '\texport CPPFLAGS="-I/usr/local/opt/openblas/include"\n',
+        f"\nYou can also try installing '{lib}' from {env} with:",
+        f"\n\t{command} install {arg}\n",
+    )
+    warnings.warn("".join(warning))
 
 
 class Setup:
@@ -132,7 +139,7 @@ class Setup:
             print("mkl header file not found.")
             message("mkl-include", "pip", "pip", "")
 
-        print("Linking mrsimulator with the mkl blas.")
+        print("Attempting to link mrsimulator with the mkl blas.")
         self.extra_compile_args += ["-DUSE_MKL", "/DUSE_MKL"]
 
 
@@ -233,21 +240,28 @@ class MacOSSetup(Setup):
         for item in ["extra_compile_args", "extra_link_args"]:
             if item in acc_info:
                 self.extra_compile_args += acc_info[item]
-        print("Linking mrsimulator with Apple accelerate library.")
+        print("Attempting to link mrsimulator with the Apple accelerate library.")
         self.extra_compile_args += ["-DUSE_ACCELERATE"]
 
     def openblas_info(self):
         """openblas includes and lib are for brew installation"""
-        blas_include_dir = "/usr/local/opt/openblas/include"
-        blas_library_dir = "/usr/local/opt/openblas/lib"
+        blas_include_dir = [
+            "/usr/local/opt/openblas/include",
+            "/opt/homebrew/opt/openblas/include",
+        ]
+        blas_library_dir = [
+            "/usr/local/opt/openblas/lib",
+            "/opt/homebrew/opt/openblas/lib",
+        ]
         blas_library = "openblas"
 
-        if not exists(blas_include_dir):
+        exists_all = [exists(item) for item in blas_include_dir]
+        if not any(exists_all):
             message("openblas", "homebrew", "brew", "")
 
-        print("Linking mrsimulator with openblas library.")
-        self.include_dirs += [blas_include_dir]
-        self.library_dirs += [blas_library_dir]
+        print("Attempting to link mrsimulator with the openblas library.")
+        self.include_dirs += blas_include_dir
+        self.library_dirs += blas_library_dir
         self.libraries += [blas_library]
         self.extra_compile_args += ["-DUSE_OPENBLAS"]
 
@@ -268,16 +282,20 @@ class MacOSSetup(Setup):
 
     def fftw_info(self):
         """fftw includes and lib are for brew installation"""
-        fftw_include_dir = "/usr/local/opt/fftw/include"
-        fftw_library_dir = "/usr/local/opt/fftw/lib"
+        fftw_include_dir = [
+            "/usr/local/opt/fftw/include",
+            "/opt/homebrew/opt/fftw/include",
+        ]
+        fftw_library_dir = ["/usr/local/opt/fftw/lib", "/opt/homebrew/opt/fftw/lib"]
         fftw_library = "fftw3"
 
-        if not exists(fftw_include_dir):
+        exists_all = [exists(item) for item in fftw_include_dir]
+        if not any(exists_all):
             message("fftw", "homebrew", "brew", "")
 
-        print("Linking mrsimulator with fftw library.")
-        self.include_dirs += [fftw_include_dir]
-        self.library_dirs += [fftw_library_dir]
+        print("Attempting to link mrsimulator with the fftw library.")
+        self.include_dirs += fftw_include_dir
+        self.library_dirs += fftw_library_dir
         self.libraries += [fftw_library]
 
 

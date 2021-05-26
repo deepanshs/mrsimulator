@@ -1,59 +1,54 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-¹³C 2D MAT NMR of L-Histidine
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+⁸⁷Rb 2D QMAT NMR of Rb₂SO₄
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
-# The following is an illustration for fitting 2D MAT/PASS datasets. The example dataset
-# is a :math:`^{13}\text{C}` 2D MAT spectrum of L-Histidine from Walder `et al.` [#f1]_
+# The following is an illustration for fitting 2D QMAT/QPASS datasets. The example
+# dataset is a :math:`^{87}\text{Rb}` 2D QMAT spectrum of :math:`\text{Rb}_2\text{SO}_4`
+# from Walder `et al.` [#f1]_
 import numpy as np
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
 
-from mrsimulator import Simulator
+from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import SSB2D
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
-from mrsimulator.utils.collection import single_site_system_generator
 
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/814455/files/1H13C_CPPASS_LHistidine.csdf"
-mat_data = cp.load(filename)
+filename = "https://sandbox.zenodo.org/record/834704/files/Rb2SO4_QMAT.csdf"
+qmat_data = cp.load(filename)
 
 # standard deviation of noise from the dataset
-sigma = 0.4192854
+sigma = 6.530634
 
 # For the spectral fitting, we only focus on the real part of the complex dataset.
-mat_data = mat_data.real
+qmat_data = qmat_data.real
 
 # Convert the coordinates along each dimension from Hz to ppm.
-_ = [item.to("ppm", "nmr_frequency_ratio") for item in mat_data.dimensions]
-
-# %%
-# When using the SSB2D method, ensure the horizontal dimension of the dataset is the
-# isotropic dimension. Here, we apply an appropriate transpose operation to the dataset.
-mat_data = mat_data.T  # transpose
+_ = [item.to("ppm", "nmr_frequency_ratio") for item in qmat_data.dimensions]
 
 # plot of the dataset.
-max_amp = mat_data.max()
-levels = (np.arange(24) + 1) * max_amp / 25  # contours are drawn at these levels.
-options = dict(levels=levels, alpha=0.75, linewidths=0.5)  # plot options
+max_amp = qmat_data.max()
+levels = (np.arange(31) + 0.15) * max_amp / 32  # contours are drawn at these levels.
+options = dict(levels=levels, alpha=1, linewidths=0.5)  # plot options
 
 plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
-ax.contour(mat_data, colors="k", **options)
-ax.set_xlim(180, 15)
+ax.contour(qmat_data.T, colors="k", **options)
+ax.set_xlim(200, -200)
+ax.set_ylim(75, -120)
 plt.grid()
 plt.tight_layout()
 plt.show()
-
 
 # %%
 # Create a fitting model
@@ -61,17 +56,18 @@ plt.show()
 # **Guess model**
 #
 # Create a guess list of spin systems.
-
-shifts = [120, 128, 135, 175, 55, 25]  # in ppm
-zeta = [-70, -65, -60, -60, -10, -10]  # in ppm
-eta = [0.8, 0.4, 0.9, 0.3, 0.0, 0.0]
-
-spin_systems = single_site_system_generator(
-    isotopes="13C",
-    isotropic_chemical_shifts=shifts,
-    shielding_symmetric={"zeta": zeta, "eta": eta},
-    abundance=100 / 6,
+Rb_1 = Site(
+    isotope="87Rb",
+    isotropic_chemical_shift=16,  # in ppm
+    quadrupolar={"Cq": 5.5e6, "eta": 0.1},  # Cq in Hz
 )
+Rb_2 = Site(
+    isotope="87Rb",
+    isotropic_chemical_shift=40,  # in ppm
+    quadrupolar={"Cq": 2.1e6, "eta": 0.95},  # Cq in Hz
+)
+
+spin_systems = [SpinSystem(sites=[s]) for s in [Rb_1, Rb_2]]
 
 # %%
 # **Method**
@@ -79,14 +75,14 @@ spin_systems = single_site_system_generator(
 # Create the SSB2D method.
 
 # Get the spectral dimension parameters from the experiment.
-spectral_dims = get_spectral_dimensions(mat_data)
+spectral_dims = get_spectral_dimensions(qmat_data)
 
 PASS = SSB2D(
-    channels=["13C"],
+    channels=["87Rb"],
     magnetic_flux_density=9.395,  # in T
-    rotor_frequency=1500,  # in Hz
+    rotor_frequency=2604,  # in Hz
     spectral_dimensions=spectral_dims,
-    experiment=mat_data,  # add the measurement to the method.
+    experiment=qmat_data,  # add the measurement to the method.
 )
 
 # Optimize the script by pre-setting the transition pathways for each spin system from
@@ -108,9 +104,9 @@ processor = sp.SignalProcessor(
     operations=[
         # Lorentzian convolution along the isotropic dimensions.
         sp.FFT(axis=0),
-        sp.apodization.Exponential(FWHM="50 Hz"),
+        sp.apodization.Gaussian(FWHM="50 Hz"),
         sp.IFFT(axis=0),
-        sp.Scale(factor=60),
+        sp.Scale(factor=1e4),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -119,9 +115,10 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 # --------------------------
 plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
-ax.contour(mat_data, colors="k", **options)
-ax.contour(processed_data, colors="r", linestyles="--", **options)
-ax.set_xlim(180, 15)
+ax.contour(qmat_data.T, colors="k", **options)
+ax.contour(processed_data.T, colors="r", linestyles="--", **options)
+ax.set_xlim(200, -200)
+ax.set_ylim(75, -120)
 plt.grid()
 plt.tight_layout()
 plt.show()
@@ -150,9 +147,10 @@ best_fit = sf.bestfit(sim, processor)[0]
 # Plot of the best fit solution
 plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
-ax.contour(mat_data, colors="k", **options)
-ax.contour(best_fit, colors="r", linestyles="--", **options)
-ax.set_xlim(180, 15)
+ax.contour(qmat_data.T, colors="k", **options)
+ax.contour(best_fit.T, colors="r", linestyles="--", **options)
+ax.set_xlim(200, -200)
+ax.set_ylim(75, -120)
 plt.grid()
 plt.tight_layout()
 plt.show()
