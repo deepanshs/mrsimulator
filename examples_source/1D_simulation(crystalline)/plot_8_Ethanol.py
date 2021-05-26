@@ -27,7 +27,7 @@ from mrsimulator import signal_processing as sp
 # Spin Systems
 # ------------
 #
-# The satellite peaks come from couplings between `^{1}\text{H}` and 
+# The satellite peaks come from couplings between `^{1}\text{H}` and
 # :math:`^{13}\text{C}` in low-abundance isotopomers. First, let's define
 # all the possible :math:`^1\text{H}` and :math:`^{13}\text{C}` sites.
 
@@ -74,17 +74,17 @@ isotopomer1 = SpinSystem(sites=iso1_sites, couplings=iso1_couplings, abundance=9
 
 # %%
 # .. note::
-#     The abundance values were calculated with an assumption that only 
+#     The abundance values were calculated with an assumption that only
 #     :math:`^1\text{H}` and :math:`^{16}\text{O}` are present.  The abundance
 #     of :math:`^{12}\text{C}` is 98.9%, and the abundance of :math:`^{13}\text{C}`
-#     is 1.1%. So, the probability of the most abundant isotopomer is 
+#     is 1.1%. So, the probability of the most abundant isotopomer is
 #      :math:`0.989*0.989=0.97812`
 #
 # **Isotopomer 2**
 #
-# Now, we build the sites, couplings (:math:`^1J_\text{CH}` and 
-# :math:`^3J_\text{HH}`), and spin system for the isotopomer with the 
-# methyl carbon replaced with a :math:`^{13}\text{C}` (pictured below, 
+# Now, we build the sites, couplings (:math:`^1J_\text{CH}` and
+# :math:`^3J_\text{HH}`), and spin system for the isotopomer with the
+# methyl carbon replaced with a :math:`^{13}\text{C}` (pictured below,
 # :math:`^{13}\text{C}` marked in blue)
 #
 # .. figure::  ../../_static/iso2.*
@@ -217,5 +217,5 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# Now, we see the :math:`^{13}\text{C}` satellites on either side of the peaks near 
+# Now, we see the :math:`^{13}\text{C}` satellites on either side of the peaks near
 # 1.2 ppm and 2.6 ppm in the :math:`^1\text{H}` spectrum.
