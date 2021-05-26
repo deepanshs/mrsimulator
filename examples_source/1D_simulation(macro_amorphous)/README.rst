@@ -9,5 +9,5 @@ materials for the following methods:
 - Central transition selective Bloch decay method (:class:`~mrsimulator.methods.BlochDecayCTSpectrum`).
 
 For NMR simulation of amorphous solids, we also show examples of simulating spectrum
-using user-deined model or using commonly accepted models such as Czjzek or extended
+using user-defined model or using commonly accepted models such as Czjzek or extended
 Czjzek distribution.
