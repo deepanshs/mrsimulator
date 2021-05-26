@@ -54,7 +54,7 @@ Couplings
 
 Now, we need to define the :math:`^3J_{HH}` couplings that cause the splittings
 in the spectrum of ethanol. In ``mrsimulator``, all couplings are defined using
-the :class:`~mrsimulator.Coupling` class. Let's start by defining a coupling
+the :py:class:`~mrsimulator.Coupling` class. Let's start by defining a coupling
 between a methyl and a methylene proton.
 
 .. plot::
@@ -154,7 +154,7 @@ Running simulation
 ------------------
 Next, we need to create an instance of the simulator object and then
 add our spin system and method to it. Then, we run the simulator with
-the :meth:`~mrsimulator.Simulator.run` method.
+the :py:meth:`~mrsimulator.Simulator.run` method.
 
 .. plot::
     :format: doctest

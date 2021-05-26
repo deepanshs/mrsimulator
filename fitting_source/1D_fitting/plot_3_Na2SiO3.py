@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-17O MAS NMR of crystalline Na2SiO3 (2nd order quad)
+¹⁷O MAS NMR of crystalline Na₂SiO₃ (2nd order quad)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%

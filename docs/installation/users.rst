@@ -84,7 +84,7 @@ and higher. PIP is the easiest way to install python packages.
     :tabid: linux
 
     For *Linux* users, we provide the binary distributions of the mrsimulator package for
-    python versions 3.6-3.8. Install the package using pip as follows,
+    python versions 3.6-3.9. Install the package using pip as follows,
 
     .. code-block:: bash
 
@@ -94,7 +94,7 @@ and higher. PIP is the easiest way to install python packages.
     :tabid: macosx
 
     For *Mac* users, we provide the binary distributions of the mrsimulator package for
-    python versions 3.6-3.8. Install the package using pip as follows,
+    python versions 3.6-3.9. Install the package using pip as follows,
 
     .. code-block:: bash
 
@@ -128,7 +128,7 @@ and higher. PIP is the easiest way to install python packages.
 
 If you get a ``PermissionError``, it usually means that you do not have the required
 administrative access to install new packages to your Python installation. In this
-case, you may consider adding the ``--user`` option, at the end of the statement, to
+case, you may consider adding the ``--user`` option at the end of the statement to
 install the package into your home directory. You can read more about how to do this in
 the `pip documentation <https://pip.pypa.io/en/stable/user_guide/#user-installs>`_.
 
@@ -151,8 +151,8 @@ All done! You may now start using the library, or proceed to section
 
 .. _building_from_source:
 
-Building from the source
-------------------------
+Building ``mrsimulator`` from the source
+----------------------------------------
 
 Prerequisites
 '''''''''''''
@@ -173,7 +173,9 @@ Stable packages
 ***************
 
 The latest stable source package for ``mrsimulator`` is available on
-`PyPI <https://pypi.org/project/mrsimulator/#files>`_.
+`PyPI <https://pypi.org/project/mrsimulator/#files>`_ and
+`Github  release <https://github.com/DeepanshS/mrsimulator/releases>`_. Download and
+extract the *.tar.gz* file.
 
 
 .. _os_dependent_prerequisite:

@@ -49,7 +49,7 @@ class ST_VAS(BaseNamedMethod2D):
         The method produces an infinite spinning speed spectrum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
     """
 
     def __new__(cls, **kwargs):
@@ -121,7 +121,7 @@ class ST1_VAS(ST_VAS):
         simulate an infinite speed spectrum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> method = ST1_VAS(
@@ -183,7 +183,7 @@ class ST2_VAS(ST_VAS):
         simulate an infinite speed spectrum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> method = ST2_VAS(

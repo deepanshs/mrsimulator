@@ -28,15 +28,12 @@ The elements of the above Cartesian tensor, :math:`S_{ij}`, can be decomposed in
 second-rank irreducible spherical tensor components [#f3]_, :math:`R_{2,k}`, following
 
 .. math::
-    \begin{align}
     S_{xx} &= \frac{1}{2} (R_{2,2} + R_{2,-2}) - \frac{1}{\sqrt{6}} R_{2,0}, \\
     S_{xy} &= S_{yx} = -\frac{i}{2} (R_{2,2} - R_{2,-2}), \\
     S_{yy} &= -\frac{1}{2} (R_{2,2} + R_{2,-2}) - \frac{1}{\sqrt{6}} R_{2,0}, \\
     S_{xz} &= S_{zx} = -\frac{1}{2} (R_{2,1} - R_{2,-1}), \\
     S_{zz} &= \sqrt{\frac{2}{3}} R_{20}, \\
     S_{yz} &= S_{zy} = \frac{i}{2} (R_{2,1} + R_{2,-1}).
-    \end{align}
-
 
 In the Czjzek model, the distribution of the second-rank traceless symmetric tensor is
 based on the assumption of a random distribution of the five irreducible spherical
@@ -47,13 +44,11 @@ equivalent real tensor components, which are a linear combination of :math:`R_{2
 and are given as
 
 .. math::
-    \begin{align}
     U_1 &= \frac{1}{\sqrt{6}} R_{2,0}, \\
     U_2 &= -\frac{1}{\sqrt{12}} (R_{2,1} - R_{2,-1}), \\
     U_3 &= \frac{i}{\sqrt{12}} (R_{2,1} + R_{2,-1}), \\
     U_4 &= -\frac{i}{\sqrt{12}} (R_{2,2} - R_{2,-2}), \\
     U_5 &= \frac{1}{\sqrt{12}} (R_{2,2} + R_{2,-2}),
-    \end{align}
 
 where :math:`U_i` forms an ortho-normal basis. The components, :math:`U_i`, are drawn
 from a five-dimensional uncorrelated multivariate normal distribution with zero mean
@@ -64,14 +59,12 @@ In terms of :math:`U_i`, the traceless second-rank symmetric Cartesian tensor el
 :math:`S_{ij}`, follows
 
 .. math::
-    \begin{align}
     S_{xx} &= \sqrt{3} U_5 - U_1, \\
     S_{xy} &= S_{yx} = \sqrt{3} U_4, \\
     S_{yy} &= -\sqrt{3} U_5 - U_1, \\
     S_{xz} &= S_{zx} = \sqrt{3} U_2, \\
     S_{zz} &= 2 U_1, \\
     S_{yz} &= S_{zy} = \sqrt{3} U_3,
-    \end{align}
 
 and the explicit matrix form of :math:`{\bf S}` is
 

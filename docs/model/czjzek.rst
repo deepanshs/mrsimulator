@@ -10,7 +10,7 @@ and references within for a brief description of the model.
 Czjzek distribution of symmetric shielding tensors
 ''''''''''''''''''''''''''''''''''''''''''''''''''
 
-To generate a Czjzek distribution, use the :class:`~mrsimulator.models.CzjzekDistribution`
+To generate a Czjzek distribution, use the :py:class:`~mrsimulator.models.CzjzekDistribution`
 class as follows.
 
 .. plot::
@@ -29,7 +29,7 @@ we create ``cz_model`` as an instance of the CzjzekDistribution class with
 Note, *cz_model* is only a class instance of the Czjzek distribution. You can either
 draw random points from this distribution or generate a probability distribution
 function. Let's first draw points from this distribution, using the
-:meth:`~mrsimulator.models.CzjzekDistribution.rvs` method of the instance.
+:py:meth:`~mrsimulator.models.CzjzekDistribution.rvs` method of the instance.
 
 .. plot::
     :format: doctest
@@ -65,7 +65,7 @@ Czjzek distribution of symmetric quadrupolar tensors
 The Czjzek distribution of symmetric quadrupolar tensors follows a similar setup as the
 Czjzek distribution of symmetric shielding tensors, except we assign the outputs to Cq
 and :math:`\eta_q`. In the following example, we generate the probability distribution
-function using the :meth:`~mrsimulator.models.CzjzekDistribution.pdf` method.
+function using the :py:meth:`~mrsimulator.models.CzjzekDistribution.pdf` method.
 
 .. plot::
     :format: doctest
@@ -81,7 +81,7 @@ To generate a probability distribution, we need to define a grid system over whi
 distribution probabilities will be evaluated. We do so by defining the range of coordinates
 along the two dimensions. In the above example, ``Cq_range`` and ``eta_range`` are the
 range of :math:`\text{Cq}` and :math:`\eta_q` coordinates, which is then given as the
-argument to the :meth:`~mrsimulator.models.CzjzekDistribution.pdf` method. The output
+argument to the :py:meth:`~mrsimulator.models.CzjzekDistribution.pdf` method. The output
 ``Cq``, ``eta``, and ``amp`` hold the two coordinates and amplitude, respectively.
 
 The plot of the Czjzek probability distribution is shown below.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-2H MAS NMR of Methionine
+²H MAS NMR of Methionine
 ^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -60,7 +60,7 @@ spin_systems = [SpinSystem(sites=[H_2])]
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 MAS = BlochDecaySpectrum(

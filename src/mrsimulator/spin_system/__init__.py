@@ -244,7 +244,7 @@ class SpinSystem(Parseable):
         energy states are represented by a list of quantum numbers,
 
         .. math::
-            |\Psi⟩ = [m_1, m_2,.. m_n],
+            |\Psi\rangle = [m_1, m_2,.. m_n],
 
         where :math:`m_i` is the quantum number associated with the :math:`i^\text{th}`
         site within the spin system, and :math:`\Psi` is the energy state.

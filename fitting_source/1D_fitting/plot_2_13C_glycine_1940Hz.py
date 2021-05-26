@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-13C MAS NMR of Glycine (CSA) [1940 Hz]
+¹³C MAS NMR of Glycine (CSA) [1940 Hz]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -66,7 +66,7 @@ spin_systems = [SpinSystem(sites=[C1], name="C1"), SpinSystem(sites=[C2], name="
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 MAS = BlochDecaySpectrum(

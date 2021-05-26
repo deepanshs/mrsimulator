@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-27Al MAS NMR of YAG (1st and 2nd order Quad)
+²⁷Al MAS NMR of YAG (1st and 2nd order Quad)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -72,7 +72,7 @@ spin_systems = [
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 MAS = BlochDecaySpectrum(
