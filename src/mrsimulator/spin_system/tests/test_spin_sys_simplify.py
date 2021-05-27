@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-import numpy as np
 from mrsimulator import Coupling
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.spin_system.split_spinsystems import new_systems_needed_matrix
-from mrsimulator.spin_system.split_spinsystems import new_systems_needed_nosets
+from mrsimulator.spin_system.split_spinsystems import new_systems_needed_np
+
+# from mrsimulator.spin_system.split_spinsystems import new_systems_needed_matrix
+# from mrsimulator.spin_system.split_spinsystems import new_systems_needed_nosets
 
 
 def setup_sites():
@@ -138,23 +139,35 @@ def test_simplify_4():
     generic_test(sys, simplified_sys)
 
 
-def test_new_systems_needed_matrix():
-    test_matrix1 = np.array([[1, 1, 0], [1, 1, 0], [0, 0, 1]])
-    test_matrix2 = np.array(
-        [[1, 1, 0, 0], [1, 1, 5e-20, 0], [0, 0, 1, 1], [0, 0, 1, 1]]
-    )
-    sets1 = new_systems_needed_matrix(test_matrix1)
-    sets2 = new_systems_needed_matrix(test_matrix2)
-    assert sets1 == set({frozenset({0, 1}), frozenset({2})})
-    assert sets2 == set({frozenset({0, 1}), frozenset({2, 3})})
+# def test_new_systems_needed_matrix():
+#     test_matrix1 = np.array([[1, 1, 0], [1, 1, 0], [0, 0, 1]])
+#     test_matrix2 = np.array(
+#         [[1, 1, 0, 0], [1, 1, 5e-20, 0], [0, 0, 1, 1], [0, 0, 1, 1]]
+#     )
+#     sets1 = new_systems_needed_matrix(test_matrix1)
+#     sets2 = new_systems_needed_matrix(test_matrix2)
+#     assert sets1 == set({frozenset({0, 1}), frozenset({2})})
+#     assert sets2 == set({frozenset({0, 1}), frozenset({2, 3})})
 
 
-def test_new_systems_needed_nosets():
-    test_matrix1 = np.array([[1, 1, 0], [1, 1, 0], [0, 0, 1]])
-    test_matrix2 = np.array(
-        [[1, 1, 0, 0], [1, 1, 5e-20, 0], [0, 0, 1, 1], [0, 0, 1, 1]]
-    )
-    systems1 = new_systems_needed_nosets(test_matrix1)
-    systems2 = new_systems_needed_nosets(test_matrix2)
-    assert systems1 == [(0, 1), (2,)]
-    assert systems2 == [(0, 1), (2, 3)]
+# def test_new_systems_needed_nosets():
+#     test_matrix1 = np.array([[1, 1, 0], [1, 1, 0], [0, 0, 1]])
+#     test_matrix2 = np.array(
+#         [[1, 1, 0, 0], [1, 1, 5e-20, 0], [0, 0, 1, 1], [0, 0, 1, 1]]
+#     )
+#     systems1 = new_systems_needed_nosets(test_matrix1)
+#     systems2 = new_systems_needed_nosets(test_matrix2)
+#     assert systems1 == [(0, 1), (2,)]
+#     assert systems2 == [(0, 1), (2, 3)]
+#
+
+
+def test_new_systems_needed_np():
+    couplings1 = [[0, 1]]
+    num_sites1 = 3
+    couplings2 = [[0, 1], [2, 3]]
+    num_sites2 = 4
+    systems1 = new_systems_needed_np(couplings1, num_sites1)
+    systems2 = new_systems_needed_np(couplings2, num_sites2)
+    assert systems1 == [[0, 1], [2]]
+    assert systems2 == [[0, 1], [2, 3]]
