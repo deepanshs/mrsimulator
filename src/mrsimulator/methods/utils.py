@@ -97,7 +97,7 @@ def parse_spectral_dimensions(py_dict):
     ]
 
 
-def check_for_atleast_one_events(py_dict):
+def check_for_at_least_one_events(py_dict):
     """Update events to [{}] if not present."""
     _ = [
         item.update({"events": [{}]})

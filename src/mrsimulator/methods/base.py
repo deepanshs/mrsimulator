@@ -10,7 +10,7 @@ from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
 
-from .utils import check_for_atleast_one_events
+from .utils import check_for_at_least_one_events
 from .utils import check_for_number_of_spectral_dimensions
 from .utils import parse_spectral_dimensions
 
@@ -32,7 +32,7 @@ class BaseMethod(Method):
         check_for_number_of_spectral_dimensions(kwargs, ndim)
         if isinstance(kwargs["spectral_dimensions"][0], dict):
             parse_spectral_dimensions(kwargs)
-            check_for_atleast_one_events(kwargs)
+            check_for_at_least_one_events(kwargs)
 
     @validator("rotor_frequency", pre=True, always=True)
     def check_rotor_frequency(cls, v, *, values, **kwargs):
@@ -173,10 +173,10 @@ class BaseNamedMethod(BaseMethod):
             if len(py["events"]) != len(obj.events):
                 raise ImmutableEventError(cls.__name__)
 
-            cls.check_event_objects_for_comptibility(py, obj, obj_dict)
+            cls.check_event_objects_for_compatibility(py, obj, obj_dict)
 
     @classmethod
-    def check_event_objects_for_comptibility(cls, py, obj, obj_dict):
+    def check_event_objects_for_compatibility(cls, py, obj, obj_dict):
         required = ["magnetic_flux_density", "rotor_frequency", "rotor_angle"]
         py_obj = SpectralDimension(**py)
         for i, (ev_py, ev_obj) in enumerate(zip(py_obj.events, obj.events)):
