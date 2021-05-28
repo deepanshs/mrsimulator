@@ -65,11 +65,14 @@ def test_config():
         a.config.decompose_spectrum = "haha"
 
     # overall
-    assert a.config.dict() == {
+    assert a.config.dict(exclude={"property_units"}) == {
         "decompose_spectrum": "spin_system",
         "number_of_sidebands": 10,
         "integration_volume": "hemisphere",
         "integration_density": 20,
+        "name": None,
+        "description": None,
+        "label": None,
     }
 
     assert a.config.get_int_dict() == {

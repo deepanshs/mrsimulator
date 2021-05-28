@@ -1,25 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Coesite, 17O (I=5/2)
+Coesite, ¹⁷O (I=5/2)
 ^^^^^^^^^^^^^^^^^^^^
 
-17O (I=5/2) quadrupolar spectrum simulation.
+¹⁷O (I=5/2) quadrupolar spectrum simulation.
 """
 # %%
 # Coesite is a high-pressure (2-3 GPa) and high-temperature (700°C) polymorph of silicon
 # dioxide :math:`\text{SiO}_2`. Coesite has five crystallographic :math:`^{17}\text{O}`
 # sites. In the following, we use the :math:`^{17}\text{O}` EFG tensor information from
-# Grandinetti `et. al.` [#f1]_
-import matplotlib as mpl
+# Grandinetti `et al.` [#f1]_
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator import signal_processing as sp
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
@@ -83,6 +80,7 @@ sim.methods = [method]  # add the method
 sim.run()
 
 # The plot of the simulation before signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
@@ -94,14 +92,15 @@ plt.show()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        apo.Exponential(FWHM="30 Hz"),
-        apo.Gaussian(FWHM="145 Hz"),
+        sp.apodization.Exponential(FWHM="30 Hz"),
+        sp.apodization.Gaussian(FWHM="145 Hz"),
         sp.FFT(),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation)
 
 # The plot of the simulation after signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(processed_data.real, color="black", linewidth=1)
 ax.invert_xaxis()

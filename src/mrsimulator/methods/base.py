@@ -1,141 +1,244 @@
 # -*- coding: utf-8 -*-
-import numpy as np
+from copy import deepcopy
+from typing import ClassVar
 
-from .utils import generate_method_from_template
-from .utils import METHODS_DATA
+from mrsimulator.method import Method
+from mrsimulator.method import SpectralDimension
+from mrsimulator.utils.error import ImmutableEventError
+from mrsimulator.utils.error import NamedMethodError
+from pydantic import Field
+from pydantic import PrivateAttr
+from pydantic import validator
+
+from .utils import check_for_at_least_one_events
+from .utils import check_for_number_of_spectral_dimensions
+from .utils import parse_spectral_dimensions
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
-generic_args = r"""
 
-Parameters
-----------
+class BaseMethod(Method):
+    """BaseMethod class."""
 
-name: str (optional).
-    The value is the name or id of the method. The default value is None.
+    ndim: ClassVar[int] = 1
 
-label: str (optional).
-    The value is a label for the method. The default value is None.
+    def __init__(self, **kwargs):
+        BaseMethod.check(kwargs, self.__class__.ndim)
+        super().__init__(**kwargs)
 
-description: str (optional).
-    The value is a description of the method. The default value is None.
+    @classmethod
+    def check(cls, kwargs, ndim):
+        check_for_number_of_spectral_dimensions(kwargs, ndim)
+        if isinstance(kwargs["spectral_dimensions"][0], dict):
+            parse_spectral_dimensions(kwargs)
+            check_for_at_least_one_events(kwargs)
 
-experiment: CSDM or ndarray (optional).
-    An object holding the experimental measurement for the given method, if
-    available. The default value is None.
-
-channels: list (optional).
-    The value is a list of isotope symbols over which the given method applies.
-    An isotope symbol is given as a string with the atomic number followed by its
-    atomic symbol, for example, '1H', '13C', and '33S'. The default is an empty
-    list.
-    The number of isotopes in a `channel` depends on the method. For example, a
-    `BlochDecaySpectrum` method is a single channel method, in which case, the
-    value of this attribute is a list with a single isotope symbol, ['13C'].
-
-spectral_dimensions: List of :ref:`spectral_dim_api` or dict objects (optional).
-    The number of spectral dimensions depends on the given method. For example, a
-    `BlochDecaySpectrum` method is a one-dimensional method and thus requires a
-    single spectral dimension. The default is a single default
-    :ref:`spectral_dim_api` object.
-
-magetic_flux_density: float (optional)
-    A global value for the macroscopic magnetic flux density, :math:`H_0`,
-    of the applied external magnetic field in units of T. The default is ``9.4``.
-
-rotor_angle: float (optional)
-    A global value for the angle between the sample rotation axis and the
-    applied external magnetic field, :math:`\theta`, in units of rad. The default
-    value is ``0.9553166``, i.e. the magic angle.
-"""
-
-args_freq = r"""
-rotor_frequency: float (optional)
-    A global value for the sample spinning frequency, :math:`\nu_r`, in units of Hz.
-    The default value is ``0``.
-"""
-
-args_affine = r"""
-affine_matrix: np.ndarray or list (optional)
-    An affine transformation square matrix,
-    :math:`\mathbf{A} \in \mathbb{R}^{n \times n}`, where `n` is the number of
-    spectral dimensions. The affine operation follows
-    :math:`\mathbf{V}^\prime = \mathbf{A} \cdot \mathbf{V}`,
-    where :math:`\mathbf{V}\in\mathbb{R}^n` and :math:`\mathbf{V}^\prime\in\mathbb{R}^n`
-    are the initial and transformed frequency coordinates.
-"""
-
-# additional_args = args_freq + args_affine
-
-returns = r"""
-Return
-------
-    A :class:`~mrsimulator.Method` instance.
-"""
-
-notes = r"""
-Note
-----
-
-If any parameter is defined outside of the `spectral_dimensions` list, the value
-of those parameters is considered global. In a multi-event method, you may also
-assign parameter values to individual events.
-"""
-
-docstring_generic = "".join([generic_args, args_freq, returns, notes])
-docstring_1D = "".join([generic_args, args_freq, returns])
-
-# BlochDecaySpectrum
-BlochDecaySpectrum = generate_method_from_template(
-    METHODS_DATA["Bloch_decay"], docstring_1D
-)
-
-BlochDecayCentralTransitionSpectrum = generate_method_from_template(
-    METHODS_DATA["Bloch_decay_central_transition"], docstring_1D
-)
-BlochDecayCTSpectrum = BlochDecayCentralTransitionSpectrum
-
-# generic 1D method
-Method1D = generate_method_from_template(METHODS_DATA["Method1D"], docstring_generic)
-
-# generic 2D method
-docstring_2D = "".join([generic_args, args_affine, returns, notes])
-Method2D = generate_method_from_template(METHODS_DATA["Method2D"], docstring_2D)
+    @validator("rotor_frequency", pre=True, always=True)
+    def check_rotor_frequency(cls, v, *, values, **kwargs):
+        a = (
+            True if "name" not in values else values["name"] == "SSB2D",
+            v in ["1000000000000.0 Hz", 1.0e12],
+            cls.ndim == 1,
+        )
+        if any(a):
+            return v
+        e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
+        raise ValueError(e)
 
 
-def message(attr, name):
-    return f"`{attr}` value cannot be modified for {name} method."
+class Method1D(BaseMethod):
+    """Generic one-dimensional spectrum simulation method.
+
+    Example
+    -------
+    >>> from mrsimulator.methods import Method1D
+    >>> method1 = Method1D(
+    ...     channels=["87Rb"],
+    ...     magnetic_flux_density=7,  # in T
+    ...     rotor_angle=54.735 * np.pi / 180,
+    ...     rotor_frequency=1e9,
+    ...     spectral_dimensions=[
+    ...         {
+    ...             "count": 1024,
+    ...             "spectral_width": 1e4,  # in Hz
+    ...             "reference_offset": -4e3,  # in Hz
+    ...             "label": "quad only",
+    ...             "events": [{"transition_query": [{"P": [-3], "D": [0]}]}],
+    ...         }
+    ...     ],
+    ... )
+    """
+
+    ndim: ClassVar[int] = 1
+    name: str = "Method1D"
+    description: str = "A generic one-dimensional spectrum method."
 
 
-def check_for_transition_query(name, spectral_dimensions=[{}, {}]):
-    check = [
-        "transition_query" in event.keys()
-        for item in spectral_dimensions
-        if "events" in item.keys()
-        for event in item["events"]
-    ]
+class Method2D(BaseMethod):
+    """Generic two-dimensional spectrum simulation method.
 
-    if np.any(check):
-        raise ValueError(message("transition_query", name))
+    Example
+    -------
+    >>> from mrsimulator.methods import Method2D
+    >>> method = Method2D(
+    ...     channels=["87Rb"],
+    ...     magnetic_flux_density=7,  # in T. Global value for `magnetic_flux_density`.
+    ...     rotor_angle=0.95531,  # in rads. Global value for the `rotor_angle`.
+    ...     spectral_dimensions=[
+    ...         {
+    ...             "count": 256,
+    ...             "spectral_width": 4e3,  # in Hz
+    ...             "reference_offset": -5e3,  # in Hz
+    ...             "event": [
+    ...                 {   # Global value for the `magnetic_flux_density` and
+    ...                     # `rotor_angle` is used during this event.
+    ...                     "transition_query": {"P": [-3], "D": [0]}
+    ...                 }
+    ...             ],
+    ...         },
+    ...         {
+    ...             "count": 512,
+    ...             "spectral_width": 1e4,  # in Hz
+    ...             "reference_offset": -4e3,  # in Hz
+    ...             "event": [
+    ...                 {   # Global value for `magnetic_flux_density` and user defined
+    ...                     # value for `rotor_angle` is used during this event.
+    ...                     "rotor_angle": 1.2238,  # in rads
+    ...                     "transition_query": {"P": [-1], "D": [0]},
+    ...                 }
+    ...             ],
+    ...         },
+    ...     ],
+    ...     affine_matrix=[[1, -1], [0, 1]],
+    ... )
+    """
+
+    ndim: ClassVar[int] = 2
+    name: str = "Method2D"
+    description: str = "A generic two-dimensional correlation spectrum method."
+    rotor_frequency: float = Field(default=1.0e12, ge=0.0)
 
 
-def check_for_spectral_dimensions(py_dict, n=1):
-    """If spectral_dimensions is in py_dict, extract it and then remove from py_dict."""
+class BaseNamedMethod(BaseMethod):
+    """BaseNameMethod class."""
 
-    if "spectral_dimensions" not in py_dict:
-        return [{}] * n
+    _named_method: bool = PrivateAttr(True)
 
-    spectral_dimensions = py_dict["spectral_dimensions"]
-    m = len(spectral_dimensions)
-    if m != n:
-        raise ValueError(f"Method requires exactly {n} spectral dimensions, given {m}.")
-    py_dict.pop("spectral_dimensions")
-    return spectral_dimensions
+    def __init__(self, **kwargs):
+        kwargs_copy = deepcopy(kwargs)
+        super().check(kwargs_copy, self.__class__.ndim)
+        self.__class__.check_method_compatibility(kwargs_copy)
+        super().__init__(**kwargs_copy)
+
+    @validator("name", pre=True, always=True)
+    def check_for_method_name(cls, v, *, values, **kwargs):
+        if v == cls.__name__:
+            return v
+        raise NamedMethodError(v, cls.__name__)
+
+    @classmethod
+    def update(cls, **kwargs):
+        return {"spectral_dimensions": [{"events": [{}]} for _ in range(cls.ndim)]}
+
+    @classmethod
+    def check_method_compatibility(cls, py_dict):
+        """Check for events attribute inside the spectral_dimensions. Events are not
+        allowed for NamedMethods."""
+        if not isinstance(py_dict["spectral_dimensions"][0], dict):
+            return cls.check_when_arg_is_object(py_dict)
+
+        default_method = cls.update(**py_dict)
+        default_spectral_dimensions = default_method["spectral_dimensions"]
+        for i, item in enumerate(py_dict["spectral_dimensions"]):
+            if item["events"] == [{}]:
+                item["events"] = default_spectral_dimensions[i]["events"]
+
+            elif item["events"] != default_spectral_dimensions[i]["events"]:
+                raise ImmutableEventError(cls.__name__)
+
+        for k, v in default_method.items():
+            if k not in py_dict:
+                py_dict[k] = v
+
+    @classmethod
+    def check_when_arg_is_object(cls, obj_dict):
+        default_method = cls.update(**obj_dict)
+
+        py_sp = default_method["spectral_dimensions"]
+        obj_sp = obj_dict["spectral_dimensions"]
+
+        for py, obj in zip(py_sp, obj_sp):
+
+            if len(py["events"]) != len(obj.events):
+                raise ImmutableEventError(cls.__name__)
+
+            cls.check_event_objects_for_compatibility(py, obj, obj_dict)
+
+    @classmethod
+    def check_event_objects_for_compatibility(cls, py, obj, obj_dict):
+        required = ["magnetic_flux_density", "rotor_frequency", "rotor_angle"]
+        py_obj = SpectralDimension(**py)
+        for i, (ev_py, ev_obj) in enumerate(zip(py_obj.events, obj.events)):
+
+            default_obj = SpectralDimension(events=[{}]).events[0]
+            obj_keys = ev_obj.dict(exclude={"property_units"}).keys()
+            py_keys = py["events"][i].keys()
+            for k in obj_keys:
+                a = False
+                if k in py_keys:
+                    a1, a2, a3 = [getattr(_, k) for _ in [ev_obj, default_obj, ev_py]]
+                    a = a1 != a2 and a1 != a3 and a2 is not None
+                    setattr(ev_obj, k, a3)
+                elif k in required and k in obj_dict:
+                    a = getattr(ev_obj, k) != obj_dict[k]
+                    setattr(ev_obj, k, obj_dict[k])
+                if a:
+                    raise ImmutableEventError(cls.__name__)
 
 
-def check_for_events(name, spectral_dimensions=[{}, {}]):
-    check = ["events" in item.keys() for item in spectral_dimensions]
+class BaseNamedMethod1D(BaseNamedMethod):
+    """Base class for named one-dimensional simulation simulation method."""
 
-    if np.any(check):
-        raise ValueError(message("events", name))
+    ndim: ClassVar[int] = 1
+
+
+class BaseNamedMethod2D(BaseNamedMethod):
+    """Base class for named one-dimensional simulation simulation method."""
+
+    ndim: ClassVar[int] = 2
+    rotor_frequency: float = Field(default=1.0e12, ge=0.0)
+
+
+class BlochDecaySpectrum(BaseNamedMethod1D):
+    """Simulate a Bloch decay spectrum."""
+
+    name: str = "BlochDecaySpectrum"
+    description: str = "A one-dimensional Bloch decay spectrum method."
+
+    @classmethod
+    def update(cls, **kwargs):
+        events = [{"transition_query": [{"ch1": {"P": [-1]}}]}]
+        return {
+            "spectral_dimensions": [{"events": events}],
+        }
+
+
+class BlochDecayCTSpectrum(BaseNamedMethod1D):
+    """Simulate a Bloch decay central transition selective spectrum."""
+
+    name: str = "BlochDecayCTSpectrum"
+    description: str = (
+        "A one-dimensional central transition selective Bloch decay spectrum method."
+    )
+
+    @classmethod
+    def update(cls, **kwargs):
+        events = [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}]
+        return {
+            "spectral_dimensions": [{"events": events}],
+        }
+
+
+class BlochDecayCentralTransitionSpectrum(BlochDecayCTSpectrum):
+    name: str = "BlochDecayCentralTransitionSpectrum"

@@ -20,7 +20,7 @@ of the `mrsimulator` library is written in C, wrapped, and made available in pyt
 - It is a fast and versatile solid-state NMR simulator of one-dimensional static, MAS,
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
-- Include simulations of weakly coupled nuclei experiencing J and dipolar couplings.
+- It include simulations of weakly coupled nuclei experiencing J and dipolar couplings.
 - It is fully documented with a stable and simple API and is easily incorporated into your
   python scripts and web apps.
 - It is compatible with modern python packages, such as scikit-learn, Keras, etc.
@@ -47,12 +47,12 @@ The `mrsimulator` package currently offers the following
   - at arbitrary rotor angles, and
   - at arbitrary spinning frequency.
 
-- The library includes the following **NMR methods**,
+- A library of **NMR methods**,
 
   - 1D Bloch decay spectrum,
   - 1D Bloch decay central transition spectrum,
   - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS),
-  - 2D Satellite-transition Variable Angle Spinning (MQ-VAS), and
+  - 2D Satellite-transition Variable Angle Spinning (MQ-VAS),
   - 2D Dynamic Angle Spinning (DAS),
   - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT), and
   - 2D Magic Angle Flipping (MAF).
@@ -69,7 +69,7 @@ For more information, refer to the
 
     $ pip install mrsimulator
 
-Please read our [installation document](https://mrsimulator.readthedocs.io/en/stable/installation.html) for details.
+Please read our [installation document](https://mrsimulator.readthedocs.io/en/latest/installation/users.html) for details.
 
 ## Check your build
 
@@ -85,4 +85,6 @@ This should produce the following figure.
 
 ## Reporting Bugs
 
-The preferred location for submitting feature requests and bug reports is the [Github issue tracker](https://github.com/DeepanshS/mrsimulator/issues). Reports are also welcomed on the [mrsimulator mailing list](https://groups.google.com/group/mrsimulator-users) or by directly contacting [Deepansh Srivastava](mailto:srivastava.89@osu.edu).
+The preferred location for submitting feature requests and bug reports is the [Github issue tracker](https://github.com/DeepanshS/mrsimulator/issues). Reports are also welcomed by directly contacting [Deepansh Srivastava](mailto:srivastava.89@osu.edu).
+
+Discussions are welcome on [Github discussion](https://github.com/DeepanshS/mrsimulator/discussions)

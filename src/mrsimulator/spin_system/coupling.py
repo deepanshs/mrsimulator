@@ -5,6 +5,7 @@ from typing import Dict
 from typing import List
 
 from mrsimulator.utils.parseable import Parseable
+from pydantic import Extra
 from pydantic import validator
 
 from .tensors import AntisymmetricTensor
@@ -15,8 +16,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class Coupling(Parseable):
-    """
-    Base class representing a two-site coupled nuclear spin interaction tensor
+    """Base class representing a two-site coupled nuclear spin interaction tensor
     parameters, which include the J-coupling and dipolar tensor.
 
     .. rubric:: Attribute Documentation
@@ -147,18 +147,16 @@ class Coupling(Parseable):
     ... )
     """
 
-    name: str = None
-    label: str = None
-    description: str = None
     site_index: List[int]
     isotropic_j: float = 0.0
     j_symmetric: SymmetricTensor = None
     j_antisymmetric: AntisymmetricTensor = None
     dipolar: SymmetricTensor = None
 
-    property_unit_types: ClassVar = {"isotropic_j": "frequency"}
-    property_default_units: ClassVar = {"isotropic_j": "Hz"}
+    property_unit_types: ClassVar[Dict] = {"isotropic_j": "frequency"}
+    property_default_units: ClassVar[Dict] = {"isotropic_j": "Hz"}
     property_units: Dict = {"isotropic_j": "Hz"}
+    test_vars: ClassVar[Dict] = {"site_index": [0, 1]}
 
     @validator("dipolar")
     def dipolar_must_not_contain_Cq_and_zeta(cls, v, values):
@@ -191,11 +189,11 @@ class Coupling(Parseable):
 
     class Config:
         validate_assignment = True
+        extra = Extra.forbid
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantity from a dictionary representation of the Coupling
+        """Parse the physical quantity from a dictionary representation of the Coupling
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 

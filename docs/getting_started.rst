@@ -1,9 +1,9 @@
 
 .. _getting_started:
 
-=================================
-The Basics: Uncoupled Spin System
-=================================
+==========
+The Basics
+==========
 
 We have put together a set of guidelines for using the ``mrsimulator`` package. We
 encourage our users to follow these guidelines for consistency. In
@@ -84,7 +84,7 @@ Let's start with a spin-1/2 isotope, :math:`^{29}\text{Si}`, and create a site.
 In the above code, ``the_site`` is a simplified python dictionary representation of a
 :ref:`site_api` object. This site describes a :math:`^{29}\text{Si}` isotope with a
 -101.1 ppm isotropic chemical shift along with the symmetric part of the nuclear
-shielding anisotropy tensor, described here with the parameters `zeta` and `eta` using
+shielding anisotropy tensor, described here with the parameters *zeta* and *eta* using
 the Haeberlen convention.
 
 That's it! Now that we have a site, we can create a single-site spin system following,
@@ -103,15 +103,15 @@ That's it! Now that we have a site, we can create a single-site spin system foll
 
 As mentioned before, a spin system is a collection of sites and couplings. In the above
 example, we have created a spin system with a single site and no coupling. Here, the
-attribute `sites` hold a list of sites. The attributes `name`, `description`, and
-`abundance` are optional.
+attribute *sites* hold a list of sites. The attributes *name*, *description*, and
+*abundance* are optional.
 
 ..  .. seealso:: :ref:`dictionary_objects`, :ref:`spin_system` and :ref:`site`.
 
 Until now, we have only created a python dictionary representation of a spin system. To
 run the simulation, you need to create an instance of the
-:class:`~mrsimulator.SpinSystem` class. Import the SpinSystem class and use it's
-:meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method to parse the python
+:py:class:`~mrsimulator.SpinSystem` class. Import the SpinSystem class and use it's
+:py:meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method to parse the python
 dictionary and create an instance of the spin system class, as follows,
 
 .. plot::
@@ -122,7 +122,7 @@ dictionary and create an instance of the spin system class, as follows,
     >>> from mrsimulator import SpinSystem
     >>> system_object_1 = SpinSystem.parse_dict_with_units(the_spin_system)
 
-.. note:: We provide the :meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method
+.. note:: We provide the :py:meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method
     because it allows the user to create spin systems, where the attribute value is a
     physical quantity, represented as a string with a value and a unit.
     Physical quantities remove the ambiguity in the units, which is otherwise
@@ -168,8 +168,8 @@ In ``mrsimulator``, all methods are described through five keywords -
     - The sample rotation frequency.
   * - spectral_dimensions
     - A list of spectral dimensions. The coordinates along each spectral dimension is
-      described with the keywords, `count` (:math:`N`), `spectral_width`
-      (:math:`\nu_\text{sw}`), and `reference_offset` (:math:`\nu_0`). The
+      described with the keywords, *count* (:math:`N`), *spectral_width*
+      (:math:`\nu_\text{sw}`), and *reference_offset* (:math:`\nu_0`). The
       coordinates are evaluated as,
 
       .. math::
@@ -198,19 +198,19 @@ The following is a python dictionary representation of the BlochDecaySpectrum me
     ...     }]
     ... }
 
-Here, the key `channels` is a list of isotope symbols over which the method is applied.
+Here, the key *channels* is a list of isotope symbols over which the method is applied.
 A Bloch Decay method only has a single channel. In this example, it is given a value
 of ``29Si``, which implies that the simulated spectrum from this method will comprise
 frequency components arising from the :math:`^{29}\text{Si}` resonances.
-The keys `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency` collectively
+The keys *magnetic_flux_density*, *rotor_angle*, and *rotor_frequency* collectively
 describe the spin environment under which the resonance frequency is evaluated.
-The key `spectral_dimensions` is a list of spectral dimensions. A Bloch Decay method
+The key *spectral_dimensions* is a list of spectral dimensions. A Bloch Decay method
 only has one spectral dimension. In this example, the spectral dimension defines a
 frequency dimension with 2048 points, spanning 25 kHz with a reference offset of
 -8 kHz.
 
 Like before, you may parse the above ``method_dict`` using the
-:meth:`~mrsimulator.methods.BlochDecaySpectrum.parse_dict_with_units` function of the
+:py:meth:`~mrsimulator.methods.BlochDecaySpectrum.parse_dict_with_units` function of the
 method. Import the BlochDecaySpectrum class and create an instance of the method,
 following,
 
@@ -222,7 +222,7 @@ following,
     >>> from mrsimulator.methods import BlochDecaySpectrum
     >>> method_object = BlochDecaySpectrum.parse_dict_with_units(method_dict)
 
-Here, ``method_object`` is an instance of the :class:`~mrsimulator.Method` class.
+Here, ``method_object`` is an instance of the :py:class:`~mrsimulator.Method` class.
 
 Likewise, you may create multiple method objects. In this example, we
 stick with a single method. Finally, add all the method objects, in this case,
@@ -238,7 +238,7 @@ stick with a single method. Finally, add all the method objects, in this case,
 Running simulation
 ------------------
 
-To simulate the spectrum, run the simulator with the :meth:`~mrsimulator.Simulator.run`
+To simulate the spectrum, run the simulator with the :py:meth:`~mrsimulator.Simulator.run`
 method, as follows,
 
 .. plot::
@@ -282,7 +282,7 @@ We end this example with a plot of the data from the simulation.
 :numref:`fig1-getting-started` depicts the plot of the simulated spectrum.
 
 For a quick plot of the csdm data, you may use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_
-library. The `csdmpy` package uses the matplotlib library to produce basic plots.
+library. The *csdmpy* package uses the matplotlib library to produce basic plots.
 You may optionally customize the plot using matplotlib methods.
 
 .. plot::
@@ -291,15 +291,16 @@ You may optionally customize the plot using matplotlib methods.
     :include-source:
 
     >>> import matplotlib.pyplot as plt
-    >>> plt.figure(figsize=(6, 3.5)) # set the figure size # doctest: +SKIP
-    >>> ax = plt.subplot(projection='csdm') # doctest: +SKIP
-    >>> ax.plot(data_0, linewidth=1.5) # doctest: +SKIP
-    >>> ax.invert_xaxis() # reverse x-axis # doctest: +SKIP
-    >>> plt.tight_layout(pad=0.1) # doctest: +SKIP
-    >>> plt.show() # doctest: +SKIP
+    >>> plt.figure(figsize=(6, 3.5)) # set the figure size  # doctest: +SKIP
+    >>> ax = plt.subplot(projection='csdm')  # doctest: +SKIP
+    >>> ax.plot(data_0, linewidth=1.5)  # doctest: +SKIP
+    >>> ax.invert_xaxis() # reverse x-axis  # doctest: +SKIP
+    >>> plt.tight_layout(pad=0.1)  # doctest: +SKIP
+    >>> plt.show()  # doctest: +SKIP
 
 .. _fig1-getting-started:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of solid-state static NMR spectrum simulation.
 

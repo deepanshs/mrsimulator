@@ -4,90 +4,82 @@ Function list:
     - ST1_VAS
     - ST2_VAS
 """
-from mrsimulator.method.named_method_updates import ST_VAS_update
+from mrsimulator.spin_system.isotope import Isotope
 
-from . import base as bs
+from .base import BaseNamedMethod2D
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-class ST_VAS:
-    r"""Simulate a satellite-transition magic-angle spinning spectrum.
-    Args:
-        channels: A list of isotope symbols over which the method will be applied.
-        spectral_dimensions: A list of python dict. Each dict is contains keywords that
-            describe the coordinates along a spectral dimension. The keywords along with
-            its definition are:
+shear_factor_ST_MAS = {
+    3: {1.5: 24 / 27, 2.5: 21 / 72, 3.5: 84 / 135, 4.5: 165 / 216},
+    5: {2.5: 132 / 72, 3.5: 69 / 135, 4.5: 12 / 216},
+    7: {3.5: 324 / 135, 4.5: 243 / 216},
+    9: {4.5: 600 / 216},
+}
 
-            - count:
-                An optional integer with the number of points, :math:`N`, along the
-                dimension. The default value is 1024.
-            - spectral_width:
-                An `optional` float with the spectral width, :math:`\Delta x`, along the
-                dimension in units of Hz. The default is 25 kHz.
-            - reference_offset:
-                An `optional` float with the reference offset, :math:`x_0` along the
-                dimension in units of Hz. The default value is 0 Hz.
-            - origin_offset:
-                An `optional` float with the origin offset (Larmor frequency) along the
-                dimension in units of Hz. The default value is None.
-        magetic_flux_density: An `optional` float containing the macroscopic magnetic
-            flux density, :math:`H_0`, of the applied external magnetic field in units
-            of T. The default value is ``9.4``.
+ST_p_symmetry = {"ST1_VAS": {"st": 1.5}, "ST2_VAS": {"st": 2.5}}
+
+
+class ST_VAS(BaseNamedMethod2D):
+    """Simulate a satellite-transition magic-angle spinning spectrum.
 
     note:
         The `rotor_frequency` and `rotor_angle` parameters are fixed for this method.
         The method produces an infinite spinning speed spectrum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
     """
 
-    def __new__(cls, name="ST_VAS", **kwargs):
+    @classmethod
+    def update(cls, **kwargs):
+        name = cls.__name__
+        st = ST_p_symmetry[name]["st"]
+        description = (
+            f"Simulate a {st} -> {st-1} and {-st+1} -> {-st} satellite-transition "
+            "variable-angle spinning spectrum."
+        )
+        spin = Isotope(symbol=kwargs["channels"][0]).spin
 
-        spectral_dimensions = bs.check_for_spectral_dimensions(kwargs, 2)
-        bs.check_for_transition_query(name, spectral_dimensions)
+        # select the coherence for the first event
+        d = st ** 2 - (st - 1) ** 2
 
-        return ST_VAS_update(bs.Method2D(spectral_dimensions, name=name, **kwargs))
+        # setting transition symmetry elements for spectral dimension 0
+        events_0 = [
+            {
+                "transition_query": [
+                    {"ch1": {"P": [-1], "D": [d]}},
+                    {"ch1": {"P": [-1], "D": [-d]}},
+                ]
+            }
+        ]
+        # setting transition symmetry elements for spectral dimension 1
+        events_1 = [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}]
+
+        # method affine matrix shear factor
+        k = shear_factor_ST_MAS[int(2 * st)][spin]
+        sign = 1  # if st == spin else -1
+
+        return {
+            "name": name,
+            "description": description,
+            "spectral_dimensions": [{"events": events_0}, {"events": events_1}],
+            "affine_matrix": [1 / (1 + k), sign * k / (1 + k), 0, 1],
+        }
 
 
 class ST1_VAS(ST_VAS):
-    r"""Simulate a sheared and scaled inner satellite and central transition correlation
+    """Simulate a sheared and scaled inner satellite and central transition correlation
     spectrum.
-
-    Args:
-        channels: A list of isotope symbols over which the method will be applied.
-        spectral_dimensions: A list of python dict. Each dict is contains keywords that
-            describe the coordinates along a spectral dimension. The keywords along with
-            its definition are:
-
-            - count:
-                An optional integer with the number of points, :math:`N`, along the
-                dimension. The default value is 1024.
-            - spectral_width:
-                An `optional` float with the spectral width, :math:`\Delta x`, along the
-                dimension in units of Hz. The default is 25 kHz.
-            - reference_offset:
-                An `optional` float with the reference offset, :math:`x_0` along the
-                dimension in units of Hz. The default value is 0 Hz.
-            - origin_offset:
-                An `optional` float with the origin offset (Larmor frequency) along the
-                dimension in units of Hz. The default value is None.
-
-        magetic_flux_density: An `optional` float containing the macroscopic magnetic
-            flux density, :math:`H_0`, of the applied external magnetic field in units
-            of T. The default value is 9.4.
-        rotor_angle: An `optional` float containing the angle between the sample
-            rotation axis and the applied external magnetic field, :math:`\theta`, in
-            units of rad. The default value is 0.9553166, i.e. the magic angle.
 
     Note:
         The attribute `rotor_frequency` cannot be modified for this method and is set to
         simulate an infinite speed spectrum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> method = ST1_VAS(
@@ -95,15 +87,15 @@ class ST1_VAS(ST_VAS):
         ...     magnetic_flux_density=9.4,  # in T
         ...     spectral_dimensions=[
         ...         {
-        ...             "count": 256,
-        ...             "spectral_width": 4e3,  # in Hz
+        ...             "count": 128,
+        ...             "spectral_width": 1e3,  # in Hz
         ...             "reference_offset": -5e3,  # in Hz
         ...             "label": "Isotropic dimension",
         ...         },
         ...         {
-        ...             "count": 512,
+        ...             "count": 256,
         ...             "spectral_width": 1e4,  # in Hz
-        ...             "reference_offset": -4e3,  # in Hz
+        ...             "reference_offset": -3e3,  # in Hz
         ...             "label": "MAS dimension",
         ...         },
         ...     ],
@@ -113,46 +105,17 @@ class ST1_VAS(ST_VAS):
         [|-1.5⟩⟨-0.5| ⟶ |-0.5⟩⟨0.5|, |0.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|]
     """
 
-    def __new__(cls, **kwargs):
-        return super().__new__(cls, name=__class__.__name__, **kwargs)
-
 
 class ST2_VAS(ST_VAS):
-    r"""Simulate a sheared and scaled second to inner satellite and central transition
+    """Simulate a sheared and scaled second to inner satellite and central transition
     correlation spectrum.
-
-    Args:
-        channels: A list of isotope symbols over which the method will be applied.
-        spectral_dimensions: A list of python dict. Each dict is contains keywords that
-            describe the coordinates along a spectral dimension. The keywords along with
-            its definition are:
-
-            - count:
-                An optional integer with the number of points, :math:`N`, along the
-                dimension. The default value is 1024.
-            - spectral_width:
-                An `optional` float with the spectral width, :math:`\Delta x`, along the
-                dimension in units of Hz. The default is 25 kHz.
-            - reference_offset:
-                An `optional` float with the reference offset, :math:`x_0` along the
-                dimension in units of Hz. The default value is 0 Hz.
-            - origin_offset:
-                An `optional` float with the origin offset (Larmor frequency) along the
-                dimension in units of Hz. The default value is None.
-
-        magetic_flux_density: An `optional` float containing the macroscopic magnetic
-            flux density, :math:`H_0`, of the applied external magnetic field in units
-            of T. The default value is 9.4.
-        rotor_angle: An `optional` float containing the angle between the sample
-            rotation axis and the applied external magnetic field, :math:`\theta`, in
-            units of rad. The default value is 0.9553166, i.e. the magic angle.
 
     Note:
         The attribute `rotor_frequency` cannot be modified for this method and is set to
         simulate an infinite speed spectrum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> method = ST2_VAS(
@@ -177,6 +140,3 @@ class ST2_VAS(ST_VAS):
         >>> pprint(method.get_transition_pathways(sys))
         [|-2.5⟩⟨-1.5| ⟶ |-0.5⟩⟨0.5|, |1.5⟩⟨2.5| ⟶ |-0.5⟩⟨0.5|]
     """
-
-    def __new__(cls, **kwargs):
-        return super().__new__(cls, name=__class__.__name__, **kwargs)

@@ -1,28 +1,26 @@
 default_language_version:
-  python: python3.7
+  python: python
 default_stages: [commit, push, manual]
 repos:
   - repo: https://github.com/ambv/black
-    rev: stable
+    rev: 20.8b1
     hooks:
       - id: black
         name: black
         entry: black
-        language_version: python3.7
         require_serial: true
         types: [python]
         files: \.pyi?$
 
   - repo: https://github.com/asottile/blacken-docs
-    rev: v1.0.0
+    rev: v1.9.2
     hooks:
       - id: blacken-docs
-        additional_dependencies: [black==19.3b0]
+        additional_dependencies: [black]
         language: python
-        language_version: python3.7
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v1.2.3
+    rev: v3.4.0
     hooks:
       - id: check-yaml
         language: python
@@ -31,8 +29,6 @@ repos:
       - id: fix-encoding-pragma
         language: python
       - id: check-docstring-first
-        language: python
-      - id: flake8
         language: python
       - id: end-of-file-fixer
         language: python
@@ -46,8 +42,15 @@ repos:
         entry: debug-statement-hook
         language: python
         types: [python]
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: "3.8.4"
+    hooks:
+      - id: flake8
+        language: python
+
   - repo: https://github.com/asottile/reorder_python_imports
-    rev: v1.4.0
+    rev: v2.4.0
     hooks:
       - id: reorder-python-imports
         name: Reorder python imports
@@ -56,15 +59,20 @@ repos:
         language: python
         types: [python]
         minimum_pre_commit_version: "0.15.0"
-        exclude: (examples_source|fitting_source)
-  # - repo: https://github.com/pocc/pre-commit-hooks
-  #   rev: master
-  #   hooks:
-  #     - id: clang-format
-  #       name: clang-format
-  #       entry: hooks/clang-format
-  #       description: Formats C/CPP code
-  #       files: "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$"
-  #       language: script
-  #       additional_dependencies: [clang-format]
-  #       args: [--style=Google, -i]
+        exclude: (examples_source|fitting_source|setup.py|setup_conda.py)
+
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.1.1
+    hooks:
+      - id: clang-format
+        name: clang-format
+        # entry: hooks/clang-format
+        description: Formats C/CPP code
+        files: "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$"
+        # language: script
+        # additional_dependencies: [clang-format]
+        args: [--style=file, -i]
+      # - id: clang-tidy
+      #   args: [-checks=clang-diagnostic-return-type]
+      # - id: oclint
+      #   args: [-enable-clang-static-analyzer, -enable-global-analysis]

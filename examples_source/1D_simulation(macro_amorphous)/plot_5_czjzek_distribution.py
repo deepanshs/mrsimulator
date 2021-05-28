@@ -10,16 +10,14 @@ of the shielding and quadrupolar tensor parameters, respectively.
 """
 # %%
 # Import the required modules.
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
+
 from mrsimulator import Simulator
 from mrsimulator.methods import BlochDecaySpectrum, BlochDecayCTSpectrum
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.utils.collection import single_site_system_generator
 
-# pre config the figures
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # sphinx_gallery_thumbnail_number = 4
 
 # %%
@@ -45,6 +43,7 @@ z_dist, e_dist, amp = CzjzekDistribution(sigma=3.1415).pdf(pos=[z_range, e_range
 # one-dimensional arrays of :math:`\zeta` and :math:`\eta` coordinates, respectively.
 #
 # The following is the contour plot of the Czjzek distribution.
+plt.figure(figsize=(4.25, 3.0))
 plt.contourf(z_dist, e_dist, amp, levels=10)
 plt.xlabel(r"$\zeta$ / ppm")
 plt.ylabel(r"$\eta$")
@@ -73,8 +72,8 @@ sim.run()
 # %%
 # The following is the static spectrum arising from a Czjzek distribution of the
 # second-rank traceless shielding tensors.
-plt.figure(figsize=(4.5, 3.0))
-ax = plt.gca(projection="csdm")
+plt.figure(figsize=(4.25, 3.0))
+ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
 plt.tight_layout()
 plt.show()
@@ -95,6 +94,7 @@ e_range = np.arange(21) / 20
 cq_dist, e_dist, amp = CzjzekDistribution(sigma=2.3).pdf(pos=[cq_range, e_range])
 
 # The following is the contour plot of the Czjzek distribution.
+plt.figure(figsize=(4.25, 3.0))
 plt.contourf(cq_dist, e_dist, amp, levels=10)
 plt.xlabel(r"Cq / MHz")
 plt.ylabel(r"$\eta$")
@@ -127,7 +127,7 @@ sim.run()
 # The following is the static spectrum arising from a Czjzek distribution of the
 # second-rank traceless EFG tensors.
 plt.figure(figsize=(4.25, 3.0))
-ax = plt.gca(projection="csdm")
+ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()

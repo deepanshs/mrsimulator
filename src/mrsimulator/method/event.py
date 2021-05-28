@@ -3,59 +3,65 @@ from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
+from typing import Union
 
+import numpy as np
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
 from .frequency_contrib import default_freq_contrib
-from .frequency_contrib import freq_default
 from .frequency_contrib import freq_list_all
 from .frequency_contrib import FrequencyEnum
-from .transition_query import TransitionQuery
+from .query import MixingQuery
+from .query import TransitionQuery
+from .utils import D_symmetry_indexes
+from .utils import P_symmetry_indexes
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-class Event(Parseable):
-    r"""Base Event class defines the spin environment and the transition query for a
-    segment of the transition pathway.
+class BaseEvent(Parseable):
+    """Base BaseEvent class.
 
-    Attributes:
-        fraction: A `required` float containing the weight of the frequency
-            contribution from the event.
-        magnetic_flux_density: An `optional` float containing the macroscopic magnetic
-            flux density, :math:`H_0`, of the applied external magnetic field
-            during the event in units of T. The default value is ``9.4``.
-        rotor_frequency: An `optional` float containing the sample spinning frequency
-            :math:`\nu_r`, during the event in units of Hz.
-            The default value is ``0``.
-        rotor_angle: An `optional` float containing the angle between the
-            sample rotation axis and the applied external magnetic field,
-            :math:`\theta`, during the event in units of rad.
-            The default value is ``0.9553166``, i.e. the magic angle.
-        transition_query: An `optional` TransitionQuery object or an equivalent dict
-            object listing the queries used in selecting the active transitions
-            during the event. Only the active transitions from this query
-            contribute to the frequency.
+    Attributes
+    ----------
+
+    magnetic_flux_density:
+        The macroscopic magnetic flux density, :math:`H_0`, of the applied external
+        magnetic field during the event in units of T. The default value is ``9.4``.
+
+    rotor_frequency:
+        The sample spinning frequency :math:`\nu_r`, during the event in units of Hz.
+        The default value is ``0``.
+
+    rotor_angle:
+        The angle between the sample rotation axis and the applied external magnetic
+        field vector, :math:`\theta`, during the event in units of rad.
+        The default value is ``0.9553166``, i.e. the magic angle.
+
+    freq_contrib:
+        A list of FrequencyEnum enumeration. The default is all frequency enumerations.
+
+    transition_query:
+        A TransitionQuery or an equivalent dict object listing the queries used in
+        selecting the active transitions during the event. Only the active transitions
+        from this query will contribute to the net frequency.
     """
 
-    fraction: float = 1.0
-    magnetic_flux_density: float = Field(default=9.4, ge=0)
-    rotor_frequency: float = Field(default=0.0, ge=0)
-    # 54.735 degrees = 0.9553166 radians
-    rotor_angle: float = Field(default=0.955316618, ge=0, le=1.5707963268)
+    magnetic_flux_density: float = Field(default=None, ge=0.0)
+    rotor_frequency: float = Field(default=None, ge=0.0)
+    rotor_angle: float = Field(default=None, ge=0.0, le=1.5707963268)
     freq_contrib: List[FrequencyEnum] = default_freq_contrib
-    transition_query: TransitionQuery = TransitionQuery()
-    # user_variables: List = None
+    transition_query: List[TransitionQuery] = [TransitionQuery()]
 
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "magnetic_flux_density": "magnetic flux density",
         "rotor_frequency": "frequency",
         "rotor_angle": "angle",
     }
 
-    property_default_units: ClassVar = {
+    property_default_units: ClassVar[Dict] = {
         "magnetic_flux_density": "T",
         "rotor_frequency": "Hz",
         "rotor_angle": "rad",
@@ -72,8 +78,7 @@ class Event(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantities of an Event object from a python dictionary
+        """Parse the physical quantities of an Event object from a python dictionary
         object.
 
         Args:
@@ -82,20 +87,167 @@ class Event(Parseable):
         py_dict_copy = deepcopy(py_dict)
         return super().parse_dict_with_units(py_dict_copy)
 
-    def json(self) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object, where
-        the attribute value with physical quantity is expressed as a string with a
-        value and a unit."""
-        dict_ = super().json()
-        # if "user_variables" in dict_.keys():
-        #     dict_.pop("user_variables")
-        if dict_["fraction"] == 1.0:
-            dict_.pop("fraction")
-        if dict_["freq_contrib"] == freq_default:
-            dict_.pop("freq_contrib")
-        return dict_
+    def _freq_contrib_flags(self) -> np.ndarray:
+        array = np.zeros(len(freq_list_all), dtype=int)
+        array[[item.index() for item in self.freq_contrib]] = 1
+        return array
 
-    def get_value_int(self):
-        lst_ = set([item.value for item in self.freq_contrib])
-        intersect = lst_.intersection(set(freq_list_all))
-        return [1 if item in intersect else 0 for item in freq_list_all]
+    def permutation(self, isotopes, channels):
+        """Permutate the event queries over the given channels and list of isotopes.
+
+        Args:
+            (list) isotopes: List of isotopes in the spin system.
+            (list) channels: List of method channels.
+        """
+        return [item.permutation(isotopes, channels) for item in self.transition_query]
+
+    def filter_transitions(self, all_transitions, isotopes, channels):
+        """Filter transitions based on the transition query.
+
+        Args:
+            (list)  all_transitions: List of all transitions from the spin system.
+            (list) isotopes: List of isotopes in the spin system.
+            (list) channels: List of method channels.
+        """
+
+        symmetry_permutations = self.permutation(isotopes, channels)
+
+        segment = []
+        for item in symmetry_permutations:
+            st = all_transitions[:]
+            st = st[P_symmetry_indexes(st, item["P"])] if item["P"].size > 0 else st
+            st = st[D_symmetry_indexes(st, item["D"])] if item["D"].size > 0 else st
+            segment += [st]
+        return np.vstack(segment)
+
+
+class SpectralEvent(BaseEvent):
+    r"""Base SpectralEvent class defines the spin environment and the transition query
+    for a segment of the transition pathway.
+
+    Attributes
+    ----------
+
+    fraction:
+        The weight of the frequency contribution from the event. The default is 1.
+
+    magnetic_flux_density:
+        The macroscopic magnetic flux density, :math:`H_0`, of the applied external
+        magnetic field during the event in units of T. The default value is ``9.4``.
+
+    rotor_frequency:
+        The sample spinning frequency :math:`\nu_r`, during the event in units of Hz.
+        The default value is ``0``.
+
+    rotor_angle:
+        The angle between the sample rotation axis and the applied external magnetic
+        field vector, :math:`\theta`, during the event in units of rad.
+        The default value is ``0.9553166``, i.e. the magic angle.
+
+    freq_contrib:
+        A list of FrequencyEnum enumeration. The default is all frequency enumerations.
+
+    transition_query:
+        A TransitionQuery or an equivalent dict object listing the queries used in
+        selecting the active transitions during the event. Only the active transitions
+        from this query will contribute to the net frequency.
+    """
+    fraction: float = 1.0
+
+    class Config:
+        validate_assignment = True
+
+
+class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
+    r"""Base ConstantDurationEvent class defines the spin environment and the
+    transition query for a segment of the transition pathway. The frequency from this
+    event contribute to the spectrum as amplitudes.
+
+    Attributes
+    ----------
+
+    duration:
+        The duration of the event in units of µs. The default is 0.
+
+    magnetic_flux_density:
+        The macroscopic magnetic flux density, :math:`H_0`, of the applied external
+        magnetic field during the event in units of T. The default value is ``9.4``.
+
+    rotor_frequency:
+        The sample spinning frequency :math:`\nu_r`, during the event in units of Hz.
+        The default value is ``0``.
+
+    rotor_angle:
+        The angle between the sample rotation axis and the applied external magnetic
+        field vector, :math:`\theta`, during the event in units of rad.
+        The default value is ``0.9553166``, i.e. the magic angle.
+
+    freq_contrib:
+        A list of FrequencyEnum enumeration. The default is all frequency enumerations.
+
+    transition_query:
+        A TransitionQuery or an equivalent dict object listing the queries used in
+        selecting the active transitions during the event. Only the active transitions
+        from this query will contribute to the net frequency.
+    """
+    duration: float
+
+    property_unit_types: ClassVar[Dict] = {
+        "duration": "time",
+        **BaseEvent.property_unit_types,
+    }
+    property_default_units: ClassVar[Dict] = {
+        "duration": "µs",
+        **BaseEvent.property_default_units,
+    }
+    property_units: Dict = {
+        "duration": "µs",
+        **BaseEvent().property_default_units,
+    }
+
+    test_vars: ClassVar[Dict] = {"duration": 0.0}
+
+    class Config:
+        validate_assignment = True
+
+
+class MixingEvent(Parseable):  # TransitionMixingEvent
+    """Transition mixing class
+
+    Attributes
+    ----------
+
+    mixing_query:
+        The transition mixing query.
+    """
+
+    mixing_query: MixingQuery
+
+    test_vars: ClassVar[Dict] = {"mixing_query": {}}
+
+    class Config:
+        validate_assignment = True
+
+    @classmethod
+    def parse_dict_with_units(cls, py_dict):
+        """
+        Parse the physical quantity from a dictionary representation of the Method
+        object, where the physical quantity is expressed as a string with a number and
+        a unit.
+
+        Args:
+            dict py_dict: A python dict representation of the Method object.
+
+        Returns:
+            A :ref:`method_api` object.
+        """
+        py_dict_copy = deepcopy(py_dict)
+        obj = MixingQuery.parse_dict_with_units(py_dict_copy["mixing_query"])
+        py_dict_copy["mixing_query"] = obj
+        return super().parse_dict_with_units(py_dict_copy)
+
+
+class Event(Parseable):
+    """Event class Object"""
+
+    event: Union[MixingEvent, ConstantDurationEvent, SpectralEvent]

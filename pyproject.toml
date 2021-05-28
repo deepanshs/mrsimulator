@@ -1,2 +1,14 @@
+[project]
+requires-python = ">=3.6"
+
 [build-system]
-requires = ["setuptools", "wheel", "numpy>=1.17", "cython>=0.29"]
+requires = [
+    "setuptools",
+    "wheel",
+    "numpy>=1.17",
+    "cython>=0.29"
+]
+
+[tool.pylint.messages_control]
+extension-pkg-whitelist = ["pydantic", "mrsimulator"]
+disable = "R0201"

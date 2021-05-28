@@ -15,8 +15,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class Site(Parseable):
-    """
-    Base class representing a single-site nuclear spin interaction tensor parameters.
+    """Base class representing a single-site nuclear spin interaction tensor parameters.
     The single-site nuclear spin interaction tensors include the nuclear shielding
     and the electric quadrupolar tensor.
 
@@ -151,18 +150,18 @@ class Site(Parseable):
     ... )
     """
 
-    name: str = None
-    label: str = None
-    description: str = None
     isotope: str = "1H"
     isotropic_chemical_shift: float = 0.0
     shielding_symmetric: SymmetricTensor = None
     shielding_antisymmetric: AntisymmetricTensor = None
     quadrupolar: SymmetricTensor = None
 
-    property_unit_types: ClassVar = {"isotropic_chemical_shift": "dimensionless"}
-    property_default_units: ClassVar = {"isotropic_chemical_shift": "ppm"}
+    property_unit_types: ClassVar[Dict] = {"isotropic_chemical_shift": "dimensionless"}
+    property_default_units: ClassVar[Dict] = {"isotropic_chemical_shift": "ppm"}
     property_units: Dict = {"isotropic_chemical_shift": "ppm"}
+
+    class Config:
+        validate_assignment = True
 
     @validator("quadrupolar")
     def spin_must_be_at_least_one(cls, v, values):
@@ -194,13 +193,9 @@ class Site(Parseable):
     def validate_isotope(cls, v, *, values, **kwargs):
         return Isotope(symbol=v)
 
-    class Config:
-        validate_assignment = True
-
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantity from a dictionary representation of the Site
+        """Parse the physical quantity from a dictionary representation of the Site
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 

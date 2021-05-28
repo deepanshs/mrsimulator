@@ -1,28 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Itraconazole, 13C (I=1/2) PASS
+Itraconazole, ¹³C (I=1/2) PASS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-13C (I=1/2) 2D Phase-adjusted spinning sideband (PASS)
-simulation.
+¹³C (I=1/2) 2D Phase-adjusted spinning sideband (PASS) simulation.
 """
 # %%
 # The following is a simulation of a 2D PASS spectrum of itraconazole, a triazole
 # containing drug prescribed for the prevention and treatment of fungal infection.
 # The 2D PASS spectrum is a correlation of finite speed MAS to an infinite speed MAS
-# spectrum. The parameters for the simulation are obtained from Dey `et. al.` [#f1]_.
-import matplotlib as mpl
+# spectrum. The parameters for the simulation are obtained from Dey `et al.` [#f1]_.
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+
 from mrsimulator import Simulator
 from mrsimulator.methods import SSB2D
+from mrsimulator import signal_processing as sp
 
-# global plot configuration
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # sphinx_gallery_thumbnail_number = 1
 
 # %%
@@ -74,7 +68,7 @@ data = sim.methods[0].simulation
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(dim_index=0),
-        apo.Exponential(FWHM="100 Hz", dim_index=0),
+        sp.apodization.Exponential(FWHM="100 Hz", dim_index=0),
         sp.FFT(dim_index=0),
     ]
 )
@@ -83,6 +77,7 @@ processed_data /= processed_data.max()
 
 # %%
 # The plot of the simulation.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(processed_data, aspect="auto", cmap="gist_ncar_r", vmax=0.5)
 plt.colorbar(cb)

@@ -3,10 +3,11 @@ from libcpp cimport bool as bool_t
 from numpy cimport ndarray
 import numpy as np
 import cython
-from mrsimulator import sandbox as sb
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+clib.generate_table()
 
 @cython.profile(False)
 @cython.boundscheck(False)
@@ -41,7 +42,7 @@ def one_d_spectrum(method,
         better powder averaging. The default value is 72.
         Read more on the `Geodesic polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
     :ivar decompose_spectrum:
-        An unsigned integer. When value is 0, the spectum is a sum of spectrum from all
+        An unsigned integer. When value is 0, the spectrum is a sum of spectrum from all
         spin systems. If value is 1, spectrum from individual spin systems is stored
         separately.
     """
@@ -117,14 +118,14 @@ def one_d_spectrum(method,
     prev_n_sidebands = 0
     for i, dim in enumerate(method.spectral_dimensions):
         for event in dim.events:
-            freq_contrib = np.append(freq_contrib, event.get_value_int())
+            freq_contrib = np.append(freq_contrib, event._freq_contrib_flags())
             if event.rotor_frequency < 1.0e-3:
-                sample_rotation_frequency_in_Hz = 1.0e9
+                rotor_frequency_in_Hz = 1.0e9
                 rotor_angle_in_rad = 0.0
                 number_of_sidebands = 1
                 if prev_n_sidebands == 0: prev_n_sidebands = 1
             else:
-                sample_rotation_frequency_in_Hz = event.rotor_frequency
+                rotor_frequency_in_Hz = event.rotor_frequency
                 rotor_angle_in_rad = event.rotor_angle
                 if prev_n_sidebands == 0: prev_n_sidebands = number_of_sidebands
 
@@ -139,7 +140,7 @@ def one_d_spectrum(method,
 
             fr.append(event.fraction) # fraction
             Bo.append(event.magnetic_flux_density)  # in T
-            vr.append(sample_rotation_frequency_in_Hz) # in Hz
+            vr.append(rotor_frequency_in_Hz) # in Hz
             th.append(rotor_angle_in_rad) # in rad
 
         total_n_points *= dim.count
@@ -150,7 +151,8 @@ def one_d_spectrum(method,
         increment.append(dim.spectral_width / dim.count)
         event_i.append(len(dim.events))
 
-        dim.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
+        if dim.origin_offset is None:
+            dim.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
 
     frac = np.asarray(fr, dtype=np.float64)
     magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
@@ -176,7 +178,7 @@ def one_d_spectrum(method,
 # _____________________________________________________________________________
 
 # frequency contrib
-    cdef ndarray[bool_t] freq_contrib_c = np.asarray(freq_contrib, dtype=np.bool)
+    cdef ndarray[bool_t] freq_contrib_c = np.asarray(freq_contrib, dtype=bool)
 
 # affine transformation
     cdef ndarray[double] affine_matrix_c
@@ -184,7 +186,7 @@ def one_d_spectrum(method,
         affine_matrix_c = np.asarray([1, 0, 0, 1], dtype=np.float64)
     else:
         increment_fraction = [incre/item for item in incre]
-        matrix = method.affine_matrix.ravel() * np.asarray(increment_fraction).ravel()
+        matrix = np.asarray(method.affine_matrix).ravel() * np.asarray(increment_fraction).ravel()
         affine_matrix_c = np.asarray(matrix, dtype=np.float64)
         if affine_matrix_c[2] != 0:
             affine_matrix_c[2] /= affine_matrix_c[0]
@@ -199,7 +201,7 @@ def one_d_spectrum(method,
     #     print(f"{'-'*(len_-1)}")
     #     print (f'Macroscopic magnetic flux density (B0) = {B0} T')
     #     print (f'Sample rotation angle is (θ) = {rotor_angle_in_rad} rad')
-    #     print (f'Sample rotation frequency (𝜈r) = {sample_rotation_frequency_in_Hz} Hz')
+    #     print (f'Sample rotation frequency (𝜈r) = {rotor_frequency_in_Hz} Hz')
 
 # sites _______________________________________________________________________________
     p_isotopes = None
@@ -250,7 +252,7 @@ def one_d_spectrum(method,
         isotopes = [site.isotope.symbol for site in spin_sys.sites]
         if channel not in isotopes:
             if decompose_spectrum == 1:
-                amp_individual.append([])
+                amp_individual.append(np.zeros(method.shape()))
             continue
 
         # sub_sites = [site for site in spin_sys.sites if site.isotope.symbol == isotope]
@@ -401,17 +403,17 @@ def one_d_spectrum(method,
                     if dipolar.gamma is not None:
                         ori_d[i3+2] = dipolar.gamma
 
-            if verbose in [1, 11]:
-                print(f'N couplings = {number_of_couplings}')
-                print(f'site index J = {spin_index_ij}')
-                print(f'Isotropic J = {iso_j} Hz')
-                print(f'J anisotropy = {zeta_j} Hz')
-                print(f'J asymmetry = {eta_j}')
-                print(f'J orientation = {ori_j}')
+            # if verbose in [1, 11]:
+            #     print(f'N couplings = {number_of_couplings}')
+            #     print(f'site index J = {spin_index_ij}')
+            #     print(f'Isotropic J = {iso_j} Hz')
+            #     print(f'J anisotropy = {zeta_j} Hz')
+            #     print(f'J asymmetry = {eta_j}')
+            #     print(f'J orientation = {ori_j}')
 
-                print(f'Dipolar coupling constant = {D_d} Hz')
-                print(f'Dipolar asymmetry = {eta_d}')
-                print(f'Dipolar orientation = {ori_d}')
+            #     print(f'Dipolar coupling constant = {D_d} Hz')
+            #     print(f'Dipolar asymmetry = {eta_d}')
+            #     print(f'Dipolar orientation = {ori_d}')
 
             # couplings packed as c struct
             couplings_c.number_of_couplings = number_of_couplings
@@ -528,3 +530,24 @@ def get_zeeman_states(sys):
                 k = np.kron(k, np.ones(two_Ip1[i]))
         lst.append(k)
     return np.asarray(lst).T
+
+
+@cython.profile(False)
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def transition_connect_factor(float l, float m1_f, float m1_i, float m2_f,
+                        float m2_i, double theta, double phi):
+    cdef ndarray[double] factor = np.zeros(2, dtype=np.float64)
+    clib.transition_connect_factor(l, m1_f, m1_i, m2_f, m2_i, theta, phi, &factor[0])
+    factor = np.around(factor, decimals=12)
+    return complex(factor[0], factor[1])
+
+
+# @cython.profile(False)
+# @cython.boundscheck(False)
+# @cython.wraparound(False)
+# def pathway_rotation_factor(float l, float *pathway, float m2_a, float m1_b,
+#                         float m2_b, double theta, double phi):
+#     cdef ndarray[double] factor = np.zeros(2, dtype=np.float64)
+#     clib.transition_connect_factor(l, m1_a, m2_a, m1_b, m2_b, theta, phi, &factor[0])
+#     return complex(factor[0], factor[1])

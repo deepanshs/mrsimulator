@@ -6,6 +6,8 @@ import pytest
 from mrsimulator.utils.parseable import enforce_units
 from mrsimulator.utils.parseable import Parseable
 
+default = {"name": None, "description": None, "label": None}
+
 
 class ParseableTestClass(Parseable):
     """
@@ -47,6 +49,7 @@ def test_parse_json():
     assert pr.dict() == {
         "foo": 300.0,
         "bar": 0.03,
+        **default,
         "property_units": {"foo": "rad", "bar": "pct"},
     }
 
@@ -55,6 +58,7 @@ def test_parse_json():
     assert pr.dict() == {
         "foo": 300.0,
         "bar": 300000.0,
+        **default,
         "property_units": {"foo": "rad", "bar": "Hz"},
     }
 
@@ -66,3 +70,15 @@ def test_parse_json():
         str(err.value) == "Error enforcing units for foo: 300 Hz\n"
         "A angle value is required but got a frequency instead"
     )
+
+    bad_json = {"foo": "300 rad", "bar": "300 Pa"}
+
+    with pytest.raises(Exception) as err:
+        ParseableTestClass.parse_dict_with_units(bad_json)
+    assert str(err.value) == "Could not enforce any units on bar"
+
+
+def test_reduced_dict():
+    obj = {"foo": "300 rad", "bar": "300 ppm"}
+    pr = ParseableTestClass.parse_dict_with_units(obj)
+    assert pr.reduced_dict() == {"foo": 300, "bar": 0.03}

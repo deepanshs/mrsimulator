@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Simulate arbitrary transitions (single-quantum)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Arbitrary spin transition (single-quantum)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-27Al (I=5/2) quadrupolar spectrum simulation.
+²⁷Al (I=5/2) quadrupolar spectrum simulation.
 """
 # %%
 # The mrsimulator built-in one-dimensional methods, BlochDecaySpectrum and
@@ -12,13 +12,11 @@ Simulate arbitrary transitions (single-quantum)
 # quantum transitions or central transition selective transition, respectively. In this
 # example, we show how you can simulate any arbitrary transition using the generic
 # Method1D method.
-import matplotlib as mpl
 import matplotlib.pyplot as plt
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method1D
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
@@ -45,8 +43,8 @@ spin_system = SpinSystem(sites=[site])
 # are `P` and `D`, which are given as,
 #
 # .. math::
-#       P = m_f - m_i \\
-#       D = m_f^2 - m_i^2,
+#     P &= m_f - m_i \\
+#     D &= m_f^2 - m_i^2,
 #
 # where :math:`m_f` and :math:`m_i` are the spin quantum numbers for the final and
 # initial energy states. Based on the query, the method selects all transitions from
@@ -55,8 +53,8 @@ spin_system = SpinSystem(sites=[site])
 # set the value of
 #
 # .. math::
-#       P &= (-3/2) - (-1/2) = -1 \\
-#       D &= (9/4) - (1/4) = 2.
+#     P &= \left(-\frac{3}{2}\right) - \left(-\frac{1}{2}\right) = -1 \\
+#     D &= \frac{9}{4} - \frac{1}{4} = 2.
 #
 # For illustrative purposes, let's look at the infinite speed spectrum from this
 # satellite transition.
@@ -70,7 +68,11 @@ method = Method1D(
             "spectral_width": 1e4,  # in Hz
             "reference_offset": 1e4,  # in Hz
             "events": [
-                {"transition_query": {"P": [-1], "D": [2]}}  # <-- select transitions
+                {
+                    "transition_query": [
+                        {"P": [-1], "D": [2]}  # <-- select inner satellite transitions
+                    ]
+                }
             ],
         }
     ],
@@ -87,6 +89,7 @@ sim.methods += [method]  # add the method
 sim.run()
 
 # The plot of the simulation before signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
@@ -111,7 +114,12 @@ method2 = Method1D(
             "spectral_width": 1e4,  # in Hz
             "reference_offset": 1e4,  # in Hz
             "events": [
-                {"transition_query": {"P": [-1], "D": [2, 4]}}  # <-- select transitions
+                {
+                    "transition_query": [
+                        {"P": [-1], "D": [2]},  # <-- select inter satellite transitions
+                        {"P": [-1], "D": [4]},  # <-- select outer satellite transitions
+                    ]
+                }
             ],
         }
     ],
@@ -126,6 +134,7 @@ sim.methods[0] = method2  # add the method
 sim.run()
 
 # The plot of the simulation before signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()

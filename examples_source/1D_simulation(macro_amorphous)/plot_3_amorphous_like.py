@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Amorphous material, 29Si (I=1/2)
+Amorphous material, ²⁹Si (I=1/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-29Si (I=1/2) simulation of amorphous material.
+²⁹Si (I=1/2) simulation of amorphous material.
 """
 # %%
 # One of the advantages of the ``mrsimulator`` package is that it is a fast NMR
@@ -12,16 +12,14 @@ Amorphous material, 29Si (I=1/2)
 # eventually model amorphous materials. In this section, we illustrate how the
 # ``mrsimulator`` library may be used in simulating the NMR spectrum of amorphous
 # materials.
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import multivariate_normal
+
 from mrsimulator import Simulator
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.utils.collection import single_site_system_generator
-from scipy.stats import multivariate_normal
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
@@ -114,7 +112,7 @@ method = BlochDecaySpectrum(
 #
 # **Simulator:**
 #
-# Now, that we have the spin systems and the method, create the simulator object and
+# Now that we have the spin systems and the method, create the simulator object and
 # add the respective objects.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
@@ -128,6 +126,7 @@ sim.run()
 
 # %%
 # The plot of the simulation.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
 ax.invert_xaxis()
@@ -157,6 +156,7 @@ sim.run()
 
 # %%
 # The plot of the simulation.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
 ax.invert_xaxis()
@@ -180,6 +180,7 @@ sim.run()
 
 # %%
 # The plot of the simulation.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
 ax.invert_xaxis()

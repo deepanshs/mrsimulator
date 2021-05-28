@@ -8,9 +8,17 @@
 #
 from libcpp cimport bool as bool_t
 
-cdef extern from "angular_momentum.h":
-    void wigner_d_matrices_from_exp_I_beta(int l, int n, void *exp_I_beta,
-                                  double *wigner)
+cdef extern from "angular_momentum/wigner_element.h":
+    void transition_connect_factor(const float l, const float m1_f,
+                            const float m1_i, const float m2_f, const float m2_i,
+                            const double theta, const double phi, double *factor)
+
+cdef extern from "tables/trig.h":
+    void generate_table()
+
+cdef extern from "angular_momentum/wigner_matrix.h":
+    void wigner_d_matrices_from_exp_I_beta(int l, int n, bool_t half,
+                                void *exp_I_beta, double *wigner)
 
 
 cdef extern from "schemes.h":
@@ -34,12 +42,12 @@ cdef extern from "mrsimulator.h":
     ctypedef struct MRS_plan:
         MRS_averaging_scheme *averaging_scheme
         unsigned int number_of_sidebands
-        double sample_rotation_frequency_in_Hz
+        double rotor_frequency_in_Hz
         double rotor_angle_in_rad
         # double complex *vector
 
     MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, unsigned int number_of_sidebands,
-                          double sample_rotation_frequency_in_Hz,
+                          double rotor_frequency_in_Hz,
                           double rotor_angle_in_rad, double increment,
                           bool_t allow_fourth_rank)
     void MRS_free_plan(MRS_plan *plan)
@@ -67,7 +75,7 @@ cdef extern from "object_struct.h":
         double *j_symmetric_zeta_in_Hz     # J-coupling anisotropy (Hz).
         double *j_symmetric_eta            # J-coupling asymmetry.
         double *j_orientation              # J tensor PAS to CRS euler angles (rad.)
-        double *dipolar_coupling_in_Hz         # Dipolar coupling constant (Hz)
+        double *dipolar_coupling_in_Hz     # Dipolar coupling constant (Hz)
         double *dipolar_eta                # Dipolar asymmetry parameter
         double *dipolar_orientation        # Dipolar tensor PAS to CRS euler angles (rad.)
 
@@ -77,7 +85,7 @@ cdef extern from "method.h":
         double fraction                    # The weighted frequency contribution from the event.
         double magnetic_flux_density_in_T  #  he magnetic flux density in T.
         double rotor_angle_in_rad          # The rotor angle in radians.
-        double sample_rotation_frequency_in_Hz # The sample rotation frequency in Hz.
+        double rotor_frequency_in_Hz       # The sample rotation frequency in Hz.
 
     ctypedef struct MRS_dimension:
         int count                       #  The number of coordinates along the dimension.
@@ -93,7 +101,7 @@ cdef extern from "method.h":
         double *increment,
         double *fraction,
         double *magnetic_flux_density_in_T,
-        double *sample_rotation_frequency_in_Hz,
+        double *rotor_frequency_in_Hz,
         double *rotor_angle_in_rad,
         int *n_events,
         unsigned int n_dim,
@@ -120,7 +128,7 @@ cdef extern from "simulation.h":
 
         # spin rate, spin angle and number spinning sidebands
         unsigned int number_of_sidebands,
-        double sample_rotation_frequency_in_Hz,
+        double rotor_frequency_in_Hz,
         double rotor_angle_in_rad,
 
         float *transition_pathway, # Pointer to a list of transitions.

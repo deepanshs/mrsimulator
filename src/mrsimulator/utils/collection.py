@@ -7,6 +7,10 @@ __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
+SHIELDING_SYM_PARAMS = ["zeta", "eta", "alpha", "beta", "gamma"]
+QUADRUPOLAR_PARAMS = ["Cq", "eta", "alpha", "beta", "gamma"]
+
+
 def single_site_system_generator(
     isotopes,
     isotropic_chemical_shifts=0,
@@ -46,7 +50,7 @@ def single_site_system_generator(
         rtol:
             The relative tolerance. This value is used in determining the cutoff
             abundance given as
-            :math:`\tt{abundance}_\tt{cutoff} = \tt{rtol} * \tt{max(abundance)}.`
+            :math:`\tt{abundance}_{\tt{cutoff}} = \tt{rtol} * \tt{max(abundance)}.`
             The spin systems with abundance below this threshold are ignored.
 
     .. note::
@@ -75,49 +79,23 @@ def single_site_system_generator(
     site_descriptions = _fix_item(site_descriptions)
     n_site_descriptions = _get_length(site_descriptions)
 
-    n_ss = []
-    if shielding_symmetric is not None:
-        shield_keys = shielding_symmetric.keys()
-        shielding_symmetric_keys = ["zeta", "eta", "alpha", "beta", "gamma"]
-        shielding_symmetric = {
-            item: _fix_item(shielding_symmetric[item])
-            for item in shielding_symmetric_keys
-            if item in shield_keys
-        }
-        n_ss = [
-            _get_length(shielding_symmetric[item])
-            for item in shielding_symmetric_keys
-            if item in shield_keys
-        ]
+    n_ss, shield_keys, shielding_symmetric = _get_shielding_info(shielding_symmetric)
+    n_q, quad_keys, quadrupolar = _get_quad_info(quadrupolar)
 
-    n_q = []
-    if quadrupolar is not None:
-        quad_keys = quadrupolar.keys()
-        quadrupolar_keys = ["Cq", "eta", "alpha", "beta", "gamma"]
-        quadrupolar = {
-            item: _fix_item(quadrupolar[item])
-            for item in quadrupolar_keys
-            if item in quad_keys
-        }
-        n_q = [
-            _get_length(quadrupolar[item])
-            for item in quadrupolar_keys
-            if item in quad_keys
-        ]
-
-    n = np.asarray(
-        [
-            n_isotopes,
-            n_iso,
-            *n_ss,
-            *n_q,
-            n_abd,
-            n_site_labels,
-            n_site_names,
-            n_site_descriptions,
-        ]
+    n_len = _check_size(
+        np.asarray(
+            [
+                n_isotopes,
+                n_iso,
+                *n_ss,
+                *n_q,
+                n_abd,
+                n_site_labels,
+                n_site_names,
+                n_site_descriptions,
+            ]
+        )
     )
-    n_len = _check_size(n)
 
     if abundance is None:
         abundance = 1 / n_len
@@ -157,26 +135,59 @@ def single_site_system_generator(
 
     # system with additional shielding symmetric parameters
     if shielding_symmetric is not None:
-        lst = []
-        for item in shielding_symmetric_keys:
-            if item in shield_keys:
-                lst.append(_get_default_lists(shielding_symmetric[item], n_len)[index])
-            else:
-                lst.append([None for _ in range(index.size)])
+        lst = [
+            _get_default_lists(shielding_symmetric[item], n_len)[index]
+            if item in shield_keys
+            else [None for _ in range(index.size)]
+            for item in SHIELDING_SYM_PARAMS
+        ]
         _populate_shielding(sys, lst)
 
     # system with additional quadrupolar parameters
     if quadrupolar is not None:
-        lst = []
-        for item in quadrupolar_keys:
-            if item in quad_keys:
-                lst.append(_get_default_lists(quadrupolar[item], n_len)[index])
-            else:
-                lst.append([None for _ in range(index.size)])
-
+        lst = [
+            _get_default_lists(quadrupolar[item], n_len)[index]
+            if item in quad_keys
+            else [None for _ in range(index.size)]
+            for item in QUADRUPOLAR_PARAMS
+        ]
         _populate_quadrupolar(sys, lst)
 
     return sys
+
+
+def _get_shielding_info(shielding_symmetric):
+    n_ss, shield_keys = [], []
+    if shielding_symmetric is not None:
+        shield_keys = shielding_symmetric.keys()
+        shielding_symmetric = {
+            item: _fix_item(shielding_symmetric[item])
+            for item in SHIELDING_SYM_PARAMS
+            if item in shield_keys
+        }
+        n_ss = [
+            _get_length(shielding_symmetric[item])
+            for item in SHIELDING_SYM_PARAMS
+            if item in shield_keys
+        ]
+    return n_ss, shield_keys, shielding_symmetric
+
+
+def _get_quad_info(quadrupolar):
+    n_q, quad_keys = [], []
+    if quadrupolar is not None:
+        quad_keys = quadrupolar.keys()
+        quadrupolar = {
+            item: _fix_item(quadrupolar[item])
+            for item in QUADRUPOLAR_PARAMS
+            if item in quad_keys
+        }
+        n_q = [
+            _get_length(quadrupolar[item])
+            for item in QUADRUPOLAR_PARAMS
+            if item in quad_keys
+        ]
+    return n_q, quad_keys, quadrupolar
 
 
 def _populate_quadrupolar(sys, items):

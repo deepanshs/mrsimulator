@@ -9,21 +9,21 @@ body {
 h1 {
   font-size: 2.2em;
   font-weight: 700;
-  padding: 0 0 0.3em 12px;
+  padding: 0 0 0.3em;
   border-bottom: 1px solid silver;
   margin-bottom: 0.8em;
 }
 
 h2 {
   font-size: 1.6em;
-  font-weight: 400;
+  font-weight: 500;
   color: #70360f;
   border-bottom: 1px solid silver;
   margin: 1.25em 0 0.6em;
-  padding: 8px 24px;
-  border-radius: 8px;
-  box-shadow: 0 0 1px 0 #4e4e4e57;
-  background-color: #e7e7f3;
+  padding: 8px 0;
+  /* border-radius: 8px; */
+  /* box-shadow: 0 0 1px 0 #4e4e4e57; */
+  /* background-color: #e7e7f3; */
 }
 
 h3 {

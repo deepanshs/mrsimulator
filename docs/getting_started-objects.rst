@@ -2,9 +2,9 @@
 
 .. _using_objects:
 
-=========================
-The Basics: Using objects
-=========================
+====================================
+Uncoupled Spin System: Using objects
+====================================
 
 In the previous section on getting started, we show an examples where we parse the
 python dictionaries to create instances of the :ref:`spin_sys_api` and
@@ -111,11 +111,11 @@ chemical shift of -10 ppm.
 
 In creating the site, ``H1``, we use the dictionary object to
 describe a traceless symmetric second-rank irreducible nuclear shielding
-tensor, using the attributes `zeta` and `eta`, respectively.
-The parameter `zeta` and `eta` are defined as per the
+tensor, using the attributes *zeta* and *eta*, respectively.
+The parameter *zeta* and *eta* are defined as per the
 Haeberlen convention and describes the anisotropy and asymmetry parameter of
 the tensor, respectively.
-The default unit of the attributes from the `shielding_symmetric`
+The default unit of the attributes from the *shielding_symmetric*
 is found with the ``property_units`` attribute, such as
 
 .. plot::
@@ -128,8 +128,8 @@ is found with the ``property_units`` attribute, such as
 
 For site, ``O17``, we once again make use of the dictionary object, only this time
 to describe a traceless symmetric second-rank irreducible electric quadrupole
-tensor, using the attributes `Cq` and `eta`, respectively. The parameter `Cq`
-is the quadrupole coupling constant, and `eta` is the asymmetry parameters of
+tensor, using the attributes *Cq* and *eta*, respectively. The parameter *Cq*
+is the quadrupole coupling constant, and *eta* is the asymmetry parameters of
 the quadrupole tensor, respectively.
 The default unit of these attributes is once again found with the ``property_units``
 attribute,
@@ -165,7 +165,7 @@ Let's use the sites we have already created to set up four spin systems.
 
 Method object
 -------------
-Likewise, we can create a :class:`~mrsimulator.methods.BlochDecaySpectrum`
+Likewise, we can create a :py:class:`~mrsimulator.methods.BlochDecaySpectrum`
 object following,
 
 .. plot::
@@ -185,7 +185,7 @@ object following,
 
 The above method, ``method_1``, is defined to record :math:`^{13}\text{C}` resonances
 over 25 kHz spectral width using 2048 points. The unspecified attributes, such as
-`rotor_frequency`, `rotor_angle`, `magnetic_flux_density`, assume their default value.
+*rotor_frequency*, *rotor_angle*, *magnetic_flux_density*, assume their default value.
 The default units of these attributes is once again  found with the
 :attr:`~mrsimulator.Method.property_units` attribute,
 
@@ -229,6 +229,7 @@ Let's run the simulator and observe the spectrum.
 
 .. _fig1_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example solid-state NMR simulation of :math:`^{13}\text{C}` isotropic spectrum.
 
@@ -268,6 +269,7 @@ CSA patterns, see :numref:`fig2_using_obj`.
 
 .. _fig2_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example state-solid NMR simulation of static :math:`^{13}\text{C}` CSA spectrum.
 
@@ -304,6 +306,7 @@ with a new method. :numref:`fig3_using_obj` depicts the simulation from this met
 
 .. _fig3_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of the solid-state :math:`^{13}\text{C}` MAS sideband simulation.
 
@@ -336,14 +339,15 @@ this method.
 
 .. _fig4_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of the solid-state :math:`^{13}\text{C}` VAS sideband simulation.
 
 Switching the detection channels of the method
 **********************************************
 
-To switch to another channels, update the value of the `channels` attribute of the
-method. Here, we update the method to `1H` channel.
+To switch to another channels, update the value of the *channels* attribute of the
+method. Here, we update the method to *1H* channel.
 
 .. plot::
     :format: doctest
@@ -367,6 +371,7 @@ method. Here, we update the method to `1H` channel.
 
 .. _fig5_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of solid-state :math:`^{1}\text{H}` VAS sideband simulation.
 
@@ -410,6 +415,7 @@ Simulating the spectrum from this method will result in a zero amplitude spectru
 
 .. _fig6_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of a simulation where the isotope from the method's channel attribute
     does not exist within the spin systems.
@@ -417,7 +423,7 @@ Simulating the spectrum from this method will result in a zero amplitude spectru
 Switching the channel to 17O
 ''''''''''''''''''''''''''''
 
-Likewise, update the value of the `channels` attribute to `17O`.
+Likewise, update the value of the *channels* attribute to *17O*.
 
 .. plot::
     :format: doctest
@@ -439,6 +445,7 @@ Likewise, update the value of the `channels` attribute to `17O`.
 
 .. _fig7_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
     An example of the solid-state :math:`^{17}\text{O}` BlochDecaySpectrum simulation.
 
@@ -451,7 +458,7 @@ Note, the BlochDecaySpectrum method computes resonances from all transitions wit
 :math:`p = \Delta m = -1`.
 
 Let's see what transition pathways are used in our simulation. Use the
-:meth:`~mrsimulator.Method.get_transition_pathways` function of the Method instance to
+:py:meth:`~mrsimulator.Method.get_transition_pathways` function of the Method instance to
 see the list of transition pathways, for example,
 
 .. plot::
@@ -466,7 +473,7 @@ see the list of transition pathways, for example,
 Notice, there are five transition pathways for the :math:`^{17}\text{O}` site, one
 associated with the central-transition, two with the inner-satellites, and two with
 the outer-satellites. For central transition selective simulation, use the
-:class:`~mrsimulator.methods.BlochDecayCTSpectrum` method.
+:py:class:`~mrsimulator.methods.BlochDecayCTSpectrum` method.
 
 .. plot::
     :format: doctest
@@ -501,6 +508,6 @@ Now, you may simulate the central transition selective spectrum.
 
 .. _fig8_using_obj:
 .. figure:: _static/null.*
+    :alt: _images/null.png
 
-    An example of the solid-state :math:`^{17}\text{O}`
-    BlochDecayCTSpectrum simulation.
+    An example of the solid-state :math:`^{17}\text{O}` BlochDecayCTSpectrum simulation.

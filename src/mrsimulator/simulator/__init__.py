@@ -10,7 +10,6 @@ import pandas as pd
 import psutil
 from joblib import delayed
 from joblib import Parallel
-from mrsimulator import __version__
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
@@ -18,13 +17,10 @@ from mrsimulator.method import Method
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.utils import flatten_dict
 from mrsimulator.utils.abstract_list import AbstractList
-from mrsimulator.utils.extra import _reduce_dict
 from mrsimulator.utils.importer import import_json
-from pydantic import BaseModel
+from mrsimulator.utils.parseable import Parseable
 
 from .config import ConfigSimulator
-
-# from IPython.display import JSON
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -32,9 +28,8 @@ __email__ = "srivastava.89@osu.edu"
 __CPU_count__ = psutil.cpu_count()
 
 
-class Simulator(BaseModel):
-    """
-    The simulator class.
+class Simulator(Parseable):
+    """The simulator class.
 
     Attributes
     ----------
@@ -135,9 +130,6 @@ class Simulator(BaseModel):
 
     """
 
-    name: str = None
-    label: str = None
-    description: str = None
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
@@ -146,26 +138,9 @@ class Simulator(BaseModel):
     class Config:
         validate_assignment = True
 
-    def __eq__(self, other):
-        if not isinstance(other, Simulator):
-            return False
-        check = [
-            self.name == other.name,
-            self.label == other.label,
-            self.description == other.description,
-            self.spin_systems == other.spin_systems,
-            self.methods == other.methods,
-            self.config == other.config,
-            np.all(self.indexes == other.indexes),
-        ]
-        if np.all(check):
-            return True
-        return False
-
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantity from a dictionary representation of the Simulator
+        """Parse the physical quantity from a dictionary representation of the Simulator
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 
@@ -231,8 +206,7 @@ class Simulator(BaseModel):
         return Simulator(**py_copy_dict)
 
     def get_isotopes(self, spin_I: float = None, symbol: bool = False) -> list:
-        """
-        List of unique isotopes from the sites within the list of the spin systems
+        """List of unique isotopes from the sites within the list of the spin systems
         corresponding to spin quantum number `I`. If `I` is None, a list of all unique
         isotopes is returned instead.
 
@@ -273,96 +247,11 @@ class Simulator(BaseModel):
             return [Isotope(symbol=item) for item in st]
         return list(st)
 
-    # def mpcontribs(self, mp_id, composition=None, temperature=None, pressure=None):
-    #     data = self.json(include_methods=True)
-    #     if temperature is not None:
-    #         data["temperature"] = temperature
-    #     if pressure is not None:
-    #         data["pressure"] = pressure
-    #     if composition is not None:
-    #         data["composition"] = composition
-
-    #     return {"identifier": mp_id, "data": data}
-
-    def json(self, include_methods: bool = False, include_version: bool = False):
-        """Parse the class object to a JSON compliant python dictionary object, where
-        the attribute value with physical quantity is expressed as a string with a
-        value and a unit.
-
-        Args:
-            bool include_methods: If True, the output dictionary will include the
-                serialized method objects. The default value is False.
-            bool include_version: If True, add a version key-value pair to the
-                serialized output dictionary. The default is False.
-
-        Returns:
-            A Dict object.
-
-        Example
-        -------
-
-        >>> pprint(sim.json())
-        {'config': {'decompose_spectrum': 'none',
-                    'integration_density': 70,
-                    'integration_volume': 'octant',
-                    'number_of_sidebands': 64},
-         'spin_systems': [{'abundance': '100.0 %',
-                           'sites': [{'isotope': '13C',
-                                      'isotropic_chemical_shift': '20.0 ppm',
-                                      'shielding_symmetric': {'eta': 0.5,
-                                                              'zeta': '10.0 ppm'}}]},
-                          {'abundance': '100.0 %',
-                           'sites': [{'isotope': '1H',
-                                      'isotropic_chemical_shift': '-4.0 ppm',
-                                      'shielding_symmetric': {'eta': 0.1,
-                                                              'zeta': '2.1 ppm'}}]},
-                          {'abundance': '100.0 %',
-                           'sites': [{'isotope': '27Al',
-                                      'isotropic_chemical_shift': '120.0 ppm',
-                                      'shielding_symmetric': {'eta': 0.1,
-                                                              'zeta': '2.1 ppm'}}]}]}
-        """
-        sim = {}
-
-        if self.name is not None:
-            sim["name"] = self.name
-
-        if self.description is not None:
-            sim["description"] = self.description
-
-        if self.label is not None:
-            sim["label"] = self.label
-
-        sim["spin_systems"] = [_.json() for _ in self.spin_systems]
-
-        if include_methods:
-            method = [_.json() for _ in self.methods]
-            if len(method) != 0:
-                sim["methods"] = method
-
-        sim["config"] = self.config.dict()
-        # sim["indexes"] = self.indexes
-        if include_version:
-            sim["version"] = __version__
-        return sim
-
-    def reduced_dict(self, exclude=["property_units", "indexes"]) -> dict:
-        """Returns a reduced dictionary representation of the class object by removing
-        all key-value pair corresponding to keys listed in the `exclude` argument, and
-        keys with value as None.
-
-        Args:
-            list exclude: A list of keys to exclude from the dictionary.
-        Return: A dict.
-        """
-        return _reduce_dict(self.dict(), exclude)
-
     # def pretty(self):
     #     return JSON(self.json(include_methods=True, include_version=True))
 
     def load_spin_systems(self, filename: str):
-        """
-        Load a list of spin systems from the given JSON serialized file.
+        """Load a list of spin systems from the given JSON serialized file.
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
@@ -378,12 +267,10 @@ class Simulator(BaseModel):
         >>> sim.load_spin_systems(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
-        # json_data = contents["spin_systems"]
         self.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in contents]
 
     def export_spin_systems(self, filename: str):
-        """
-        Export a list of spin systems to a JSON serialized file.
+        """Export a list of spin systems to a JSON serialized file.
 
         See an
         `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
@@ -398,21 +285,16 @@ class Simulator(BaseModel):
 
         >>> sim.export_spin_systems(filename) # doctest:+SKIP
         """
-        spin_systems = [SpinSystem.json(obj) for obj in self.spin_systems]
+        spin_sys = [SpinSystem.json(obj) for obj in self.spin_systems]
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
-                spin_systems,
-                outfile,
-                ensure_ascii=False,
-                sort_keys=False,
-                allow_nan=False,
+                spin_sys, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
     def run(
         self,
         method_index: list = None,
         n_jobs: int = 1,
-        verbose: int = 0,
         pack_as_csdm: bool = True,
         **kwargs,
     ):
@@ -437,10 +319,10 @@ class Simulator(BaseModel):
 
         >>> sim.run() # doctest:+SKIP
         """
-
+        verbose = 0
         if method_index is None:
             method_index = np.arange(len(self.methods))
-        if isinstance(method_index, int):
+        elif isinstance(method_index, int):
             method_index = [method_index]
         for index in method_index:
             method = self.methods[index]
@@ -455,10 +337,11 @@ class Simulator(BaseModel):
             amp = Parallel(
                 n_jobs=n_jobs,
                 verbose=verbose,
+                backend="loky",
                 # **{
                 #     "backend": {
                 #         "threads": "threading",
-                #         "processes": "multiprocessing",
+                #         "processes": "multithreading",
                 #         None: None,
                 #     }["threads"]
                 # },
@@ -479,10 +362,11 @@ class Simulator(BaseModel):
             if isinstance(amp[0], np.ndarray):
                 simulated_data = [np.asarray(amp).sum(axis=0)]
 
-            if pack_as_csdm:
-                method.simulation = self._as_csdm_object(simulated_data, method)
-            else:
-                method.simulation = np.asarray(simulated_data)
+            method.simulation = (
+                self._as_csdm_object(simulated_data, method)
+                if pack_as_csdm
+                else np.asarray(simulated_data)
+            )
 
     def save(self, filename: str, with_units: bool = True):
         """Serialize the simulator object to a JSON file.
@@ -498,29 +382,15 @@ class Simulator(BaseModel):
 
         >>> sim.save('filename') # doctest: +SKIP
         """
-        if not with_units:
-            with open(filename, "w", encoding="utf8") as outfile:
-                json.dump(
-                    self.reduced_dict(),
-                    outfile,
-                    ensure_ascii=False,
-                    sort_keys=False,
-                    allow_nan=False,
-                )
-            return
-
+        sim = self.json(units=with_units)
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
-                self.json(include_methods=True, include_version=True),
-                outfile,
-                ensure_ascii=False,
-                sort_keys=False,
-                allow_nan=False,
+                sim, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
     @classmethod
     def load(cls, filename: str, parse_units: bool = True):
-        """Load the :class:`~mrsimulator.Simulator` object from a JSON file by parsing.
+        """Load the :py:class:`~mrsimulator.Simulator` object from a JSON file by parsing.
 
         Args:
             bool parse_units: If true, parse the attribute values from the serialized
@@ -529,7 +399,7 @@ class Simulator(BaseModel):
             str filename: The filename of a JSON serialized mrsimulator file.
 
         Returns:
-            A :class:`~mrsimulator.Simulator` object.
+            A :py:class:`~mrsimulator.Simulator` object.
 
         Example
         -------
@@ -539,85 +409,102 @@ class Simulator(BaseModel):
         .. seealso::
             :ref:`load_spin_systems`
         """
-        contents = import_json(filename)
+        val = import_json(filename)
+        return Simulator.parse(val, parse_units)
 
-        if not parse_units:
-            return Simulator(**contents)
+    @classmethod
+    def parse(cls, py_dict: dict, parse_units: bool = True):
+        """Parse a dictionary for Simulator object.
 
-        return Simulator.parse_dict_with_units(contents)
+        Args:
+            dict py_dict: Dictionary object.
+            bool parse_units: It true, parse quantity from string.
+        """
+        return (
+            Simulator.parse_dict_with_units(py_dict)
+            if parse_units
+            else Simulator(**py_dict)
+        )
 
     def sites(self):
         """Unique sites within the Simulator object as a list of Site objects.
 
         Returns:
-            A list of Site object.
+            A :ref:`sites_api` object.
 
         Example
         -------
 
         >>> sites = sim.sites() # doctest: +SKIP
         """
-        sites_list = []
+        unique_sites = []
         for sys in self.spin_systems:
             for site in sys.sites:
-                if site not in sites_list:
-                    sites_list.append(site)
-        return Sites(sites_list)
+                if site not in unique_sites:
+                    unique_sites.append(site)
+
+        return Sites(unique_sites)
 
     def _as_csdm_object(self, data: np.ndarray, method: Method) -> cp.CSDM:
-        """
-        Converts the simulation data from the given method to a CSDM object. Read
+        """Converts the simulation data from the given method to a CSDM object. Read
         `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_ for details
 
         Return:
             A CSDM object.
         """
-        new = cp.new()
-        for dimension in method.spectral_dimensions[::-1]:
-            new.add_dimension(dimension.to_csdm_dimension())
-            if new.dimensions[-1].origin_offset != 0:
-                new.dimensions[-1].to("ppm", "nmr_frequency_ratio")
+        dim = [sd.to_csdm_dimension() for sd in method.spectral_dimensions[::-1]]
+        _ = [
+            item.to("ppm", "nmr_frequency_ratio")
+            for item in dim
+            if item.origin_offset != 0
+        ]
 
-        dependent_variable = {
-            "type": "internal",
-            "quantity_type": "scalar",
-            "numeric_type": "float64",
-        }
-        for index, datum in enumerate(data):
-            if len(datum) == 0:
-                continue
+        dv = [
+            {
+                "type": "internal",
+                "quantity_type": "scalar",
+                "numeric_type": "float64",
+                "components": [datum],
+                **self._get_dv_metadata(index),
+            }
+            for index, datum in enumerate(data)
+        ]
 
-            dependent_variable["components"] = [datum]
-            if self.config.decompose_spectrum == "spin_system":
-                self._update_name_description_application(dependent_variable, index)
+        return cp.CSDM(dimensions=dim, dependent_variables=dv)
 
-            new.add_dependent_variable(dependent_variable)
-            new.dependent_variables[-1].encoding = "base64"
-        return new
-
-    def _update_name_description_application(self, obj, index):
+    def _get_dv_metadata(self, index):
         """Update the name and description of the dependent variable attributes
         using fields from the spin system."""
+        if self.config.decompose_spectrum != "spin_system":
+            return {}
+
+        if self.spin_systems == []:
+            return {}
+
+        obj = {}
         label = self.spin_systems[index].label
         if label not in ["", None]:
-            obj.update({"components_label": [label]})
+            obj["components_label"] = [label]
 
         name = self.spin_systems[index].name
         name = name if name not in ["", None] else f"spin system {index}"
-        obj.update({"name": name})
+        obj["name"] = name
 
         description = self.spin_systems[index].description
         if description not in ["", None]:
-            obj.update({"description": description})
+            obj["description"] = description
 
         obj["application"] = {
             "com.github.DeepanshS.mrsimulator": {
                 "spin_systems": [self.spin_systems[index].json()]
             }
         }
+        return obj
 
 
 class Sites(AbstractList):
+    """A list of unique :ref:`site_api` objects within a simulator object."""
+
     def __init__(self, data=[]):
         super().__init__(data)
         euler = ["alpha", "beta", "gamma"]
@@ -641,6 +528,7 @@ class Sites(AbstractList):
             raise ValueError("Only object of type Site is allowed.")
 
     def to_pd(self):
+        """Return sites as a pandas dataframe."""
         row = {item: [] for item in self.site_labels}
         sites = [item.json() for item in self._list]
         for site in sites:
@@ -677,5 +565,5 @@ def get_chunks(items_list, n_jobs):
 
     for i in range(1, n_jobs + 1):
         chunks[i] += chunks[i - 1]
-
-    return [items_list[chunks[i] : chunks[i + 1]] for i in range(n_jobs)]
+    slices = [slice(chunks[i], chunks[i + 1], None) for i in range(n_jobs)]
+    return [items_list[item] for item in slices]
