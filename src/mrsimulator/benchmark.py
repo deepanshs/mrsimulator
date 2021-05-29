@@ -2,6 +2,7 @@
 import os
 import timeit
 
+import mrsimulator.tests.tests as clib
 import numpy as np
 from mrsimulator import __version__
 from mrsimulator import Simulator
@@ -9,6 +10,7 @@ from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.methods import Method2D
 
 # import platform
 # os_system = platform.system()
@@ -42,10 +44,30 @@ def generate_spin_half_int_quad_spin_system(n=1000):
     return spin_systems
 
 
-def generate_simulator(spin_systems, method):
+def generate_spin_half_int_csa_quad_spin_system(n=1000):
+    iso = np.random.normal(loc=0.0, scale=10.0, size=n)
+    zeta = np.random.normal(loc=150, scale=20, size=n)
+    eta_z = np.random.normal(loc=0.3, scale=0.012, size=n)
+    Cq = np.random.normal(loc=5.0e6, scale=5e5, size=n)
+    eta_q = np.random.normal(loc=0.6, scale=0.02, size=n)
+    beta = np.random.normal(loc=2.12, scale=0.1, size=n)
+    spin_systems = []
+    for i, z, e_z, c, e_q, b in zip(iso, zeta, eta_z, Cq, eta_q, beta):
+        site = Site(
+            isotope="17O",
+            isotropic_chemical_shift=i,
+            shielding_symmetric={"zeta": z, "eta": e_z},
+            quadrupolar={"Cq": c, "eta": e_z, "beta": b},
+        )
+        spin_systems.append(SpinSystem(sites=[site]))
+    return spin_systems
+
+
+def generate_simulator(spin_systems, method, integration_volume="octant"):
     sim = Simulator()
     sim.spin_systems = spin_systems
     sim.methods = [method]
+    sim.config.integration_volume = integration_volume
     return sim
 
 
@@ -90,6 +112,39 @@ def quad_MAS_method():
     )
 
 
+def quad_static_2d_method():
+    return Method2D(
+        channels=["17O"],
+        magnetic_flux_density=4.2,  # in T
+        spectral_dimensions=[
+            {
+                "count": 256,
+                "spectral_width": 4e4,  # in Hz
+                "reference_offset": -1e4,  # in Hz
+                "label": "70.12 dimension",
+                "events": [
+                    {
+                        "rotor_angle": 70.12 * 3.14159 / 180,
+                        "transition_query": {"P": [-1], "D": [0]},
+                    }
+                ],  # in radians
+            },
+            {
+                "count": 512,
+                "spectral_width": 5e4,  # in Hz
+                "reference_offset": -5e3,  # in Hz
+                "label": "MAS dimension",
+                "events": [
+                    {
+                        "rotor_angle": 54.74 * 3.14159 / 180,
+                        "transition_query": {"P": [-1], "D": [0]},
+                    }
+                ],  # in radians
+            },
+        ],
+    )
+
+
 def time_string(time):
     count = 0
     if time < 0.003:  # i.e 4 ms
@@ -112,20 +167,7 @@ def time_string(time):
         return f"{time:.3f} µs", color
 
 
-def blocks(n_blocks, fn_string, n, level, n_jobs=1):
-    description = [
-        "Static CSA only spectrum",
-        "Static quadrupolar (1st + 2nd order) only spectrum",
-        "MAS CSA only sidebands spectrum",
-        "VAS CSA only spectrum",
-        "MAS quadrupolar (1st + 2nd order) only spectrum",
-    ]
-    print(f"\nLevel {level} results.")
-    print("Average computation time for simulation one single-site spin system.")
-    print(
-        f"Reported value is the simulation time per spectra averaged over {n} spectra "
-        "generated for random tensor parameters."
-    )
+def terminal_start_setup():
     size = os.get_terminal_size().columns
     delmit = "-"
     print(f"{delmit:-<{size}}")
@@ -133,22 +175,44 @@ def blocks(n_blocks, fn_string, n, level, n_jobs=1):
     right_align = "Average time"
     print(f"{left_align:<{size-15}}{right_align:>15}")
     print(f"{delmit:-<{size}}")
-    for i in range(n_blocks):
+
+
+def terminal_end_setup(t, n, description):
+    t /= n  # s
+    t, color = time_string(t)
+    end = "\033[0m"
+    # end = '' if os_system == 'Windows' else "\033[0m"
+    size = os.get_terminal_size().columns - 15
+    print(f"{end}{description:.<{size}}{color}{t:>15}{end}")
+
+
+def spectrum_blocks(n, level, n_jobs=1):
+    description = [
+        "Static CSA only spectrum",
+        "Static quadrupolar (1st + 2nd order) only spectrum",
+        "MAS CSA only sidebands spectrum",
+        "VAS CSA only spectrum",
+        "MAS quadrupolar (1st + 2nd order) only spectrum",
+        "CSA-Quad 2S SAS spectrum",
+    ]
+    print(f"\nLevel {level} results.")
+    print("Average computation time for simulation one single-site spin system.")
+    print(
+        f"Reported value is the simulation time per spectra averaged over {n} spectra "
+        "generated for random tensor parameters."
+    )
+    terminal_start_setup()
+    for i, des in enumerate(description):
         t = timeit.timeit(
             f"execute(sim[{i}], {n_jobs})",
-            setup=f"sim={fn_string}({n})",
+            setup=f"sim=spectrum_simulation_benchmark({n})",
             globals=globals(),
             number=1,
         )
-        t /= n  # s
-        t, color = time_string(t)
-        end = "\033[0m"
-        # end = '' if os_system == 'Windows' else "\033[0m"
-        size = os.get_terminal_size().columns - 15
-        print(f"{end}{description[i]:.<{size}}{color}{t:>15}{end}")
+        terminal_end_setup(t, n, des)
 
 
-def level_n_CSA_static(n):
+def spectrum_simulation_benchmark(n):
     # spin 1/2
     spin_sys = generate_spin_half_spin_system(n)
 
@@ -170,7 +234,63 @@ def level_n_CSA_static(n):
     method = quad_MAS_method()  # static
     sim_quad_mas = generate_simulator(spin_sys, method)
 
-    return sim_csa_static, sim_quad_static, sim_csa_mas, sim_csa_vas, sim_quad_mas
+    # quad csd 2d
+    spin_sys = generate_spin_half_int_csa_quad_spin_system(n)
+
+    method = quad_static_2d_method()
+    sim_csd_quad_mas_2d = generate_simulator(
+        spin_sys, method, integration_volume="hemisphere"
+    )
+    return (
+        sim_csa_static,
+        sim_quad_static,
+        sim_csa_mas,
+        sim_csa_vas,
+        sim_quad_mas,
+        sim_csd_quad_mas_2d,
+    )
+
+
+def interpolation_blocks(n, level):
+    description = [
+        "One-dimension interpolation (512 grid)",
+        "Two-dimensional interpolation (512 x 512 grid)",
+    ]
+    print(f"\nLevel {level} results.")
+    print("Average computation time for rendering triangles on an nD-grid.")
+    print(f"Reported value is the time per render averaged over {10*n} triangles.")
+    terminal_start_setup()
+    for i, des in enumerate(description):
+        t = timeit.timeit(
+            f"interpolation_execute(tasks[{i}])",
+            setup=f"tasks=interpolation_benchmark({10*n})",
+            globals=globals(),
+            number=1,
+        )
+        terminal_end_setup(t, 10 * n, des)
+
+
+def interpolation_execute(args):
+    fn, vertexes, amp = args
+    if vertexes.ndim == 2:
+        [fn(list_, amp) for list_ in vertexes]
+    if vertexes.ndim == 3:
+        [fn(list_[0], list_[1], amp) for list_ in vertexes]
+
+
+def interpolation_benchmark(n):
+    # 1D interpolation
+    vertexes1 = (np.random.rand(n, 3) * 768) - 128
+    amp1 = np.zeros(512)
+
+    # 2D interpolation
+    vertexes2 = np.random.rand(n, 2, 3) * 512
+    amp2 = np.zeros((512, 512))
+
+    return [
+        [clib.triangle_interpolation1D, vertexes1, amp1],
+        [clib.triangle_interpolation2D, vertexes2, amp2],
+    ]
 
 
 class Benchmark:
@@ -179,13 +299,20 @@ class Benchmark:
         print(f"Benchmarking using mrsimulator version {__version__}")
 
     @staticmethod
-    def l0(n_jobs):
-        blocks(5, "level_n_CSA_static", 10, 0, n_jobs)
+    def l0(n_jobs, interpolation, simulation):
+        setup(10, 0, n_jobs, interpolation, simulation)
 
     @staticmethod
-    def l1(n_jobs):
-        blocks(5, "level_n_CSA_static", 2000, 1, n_jobs)
+    def l1(n_jobs, interpolation, simulation):
+        setup(2000, 1, n_jobs, interpolation, simulation)
 
     @staticmethod
-    def l2(n_jobs):
-        blocks(5, "level_n_CSA_static", 10000, 2, n_jobs)
+    def l2(n_jobs, interpolation, simulation):
+        setup(10000, 2, n_jobs, interpolation, simulation)
+
+
+def setup(n, level, n_jobs, interpolation, simulation):
+    if simulation:
+        spectrum_blocks(n, level, n_jobs)
+    if interpolation:
+        interpolation_blocks(n, level)
