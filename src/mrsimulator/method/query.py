@@ -143,7 +143,7 @@ class TransitionQuery(Parseable):
         default=None,
         description=(
             "An optional SymmetryQuery object for quering symmetry functions at "
-            "channel index 1 of the method's channels array."
+            "channel index 2 of the method's channels array."
         ),
     )
 
