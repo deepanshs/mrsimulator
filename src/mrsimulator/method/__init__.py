@@ -402,3 +402,175 @@ class Method(Parseable):
             (40, 10)
         """
         return tuple([item.count for item in self.spectral_dimensions])
+
+    def events_to_dataframe(self, properties) -> pd.DataFrame:
+        """Returns dataframe of requested Event properties
+
+        Args:
+            List properties: list of properties to keep
+
+        Returns:
+            pd.DataFrame df: properties as columns and event number as row
+        """
+        data = [e.json(units=False) for d in self.spectral_dimensions for e in d.events]
+        df = pd.DataFrame(data)
+        # print(df)
+        # NOTE: Should p and d be capatalized
+        P_list = np.array(
+            [
+                [
+                    sum([sum(q[ch]["P"]) if ch in q else 0 for q in tq])
+                    for ch in ["ch1", "ch2", "ch3"]
+                ]
+                for tq in df["transition_query"]
+            ]
+        )
+        D_list = np.array(
+            [
+                [
+                    sum([sum(q[ch]["D"]) if ch in q else 0 for q in tq])
+                    for ch in ["ch1", "ch2", "ch3"]
+                ]
+                for tq in df["transition_query"]
+            ]
+        )
+        # Remove channels which are all zero
+        if not np.any(P_list[:, 2]) and not np.any(D_list[:, 2]):
+            P_list = np.delete(P_list, 2, 1)
+            D_list = np.delete(D_list, 2, 1)
+        if not np.any(P_list[:, 1]) and not np.any(D_list[:, 1]):
+            P_list = np.delete(P_list, 1, 1)
+            D_List = np.delete(D_list, 1, 1)
+        df["p"] = P_list.tolist()
+        df["d"] = D_list.tolist()
+
+        # (not properties) intersect (columns) + 'fraction' and 'duration
+        keep = set(properties + ["fraction", "duration"])
+        drop = set(df.columns).symmetric_difference(keep).intersection(set(df.columns))
+        # df = df.where(pd.notnull(df), None)
+        return df.drop(drop, axis=1)
+
+    def _make_x_points(self, df):
+        """Returns list of x points to use in plotting"""
+        # TODO: Find value for constant duration event (tau/2)?
+        # Question: Will method always have a SpectralEvent
+        points = [0]
+        dur_present = "duration" in df.columns
+
+
+        DURATION_WIDTH = 0.4
+
+        for i, row in df.iterrows():
+            if row["fraction"] is not None:
+                # SpectralEvent
+                # Question: Do SpectralEvents have a total time to add up to
+                next_x = points[-1] + row["fraction"]
+                points.extend((next_x, next_x))
+
+            elif dur_present and row["duration"] is not None:
+                # ConstantDurationEvent
+                next_x = points[-1] + DURATION_WIDTH
+                points.extend((next_x, next_x))
+
+            elif row["fraction"] is None and dur_present and row["duration"] is None:
+                # MixingEvent
+                # TODO: implement mixing event widths
+                # - cut out time from neiboriung event
+                # - account for multiple adjacent mixing events
+                points.extend((points[-1], points[-1]))
+
+        points.pop()
+        return points
+
+    def _plot_on_axis(self, ax, x_data, y_data, name):
+        """Helper method to plot data and do formatting on axes"""
+        if name == "p" or name == "d":
+            # y_data is a list of lists by chanel number
+            colors = ["red", "green", "blue"]
+            for ch in range(len(y_data[0])):
+                ax.plot(
+                    x_data,
+                    [_ for num in y_data[ch] for _ in (num, num)],
+                    color=colors.pop(),
+                    alpha=0.6,
+                )
+            # TODO: Clean up formatting of y-ticks
+            _min = min([num for tup in y_data for num in tup])
+            _max = max([num for tup in y_data for num in tup])
+            _range = max(abs(_min), abs(_max))
+            step = 1 if _range < 5 else 2
+            ax.set_ylim(-(_range+step), _range+step)
+            ax.set_yticks(np.arange(-_range, _range+1, step=step))
+
+            ax.grid(axis="y", color="black", alpha=0.2)
+        else:
+            # y_data is a list of numbers
+            ax.plot(x_data, [_ for num in y_data for _ in (num, num)], color="b", alpha=0.6)
+        # y-axis formatting
+        ax.set_ylabel(name.replace("_", " "))
+        # Can y-axis numbers format better
+        ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter("%.2f"))
+        for side in ["top", "bottom", "left", "right"]:
+            ax.spines[side].set_linewidth(1.5)
+
+    def plot(self, properties=["p", "d"]) -> plt.Figure:
+        """Create Plotly figure of symmetry pathways for method
+
+        Args:
+            List properties: list properties to plot. Default p and d transitions
+
+        Returns:
+            Figure fig: Matplotlib figure
+
+        Example:
+            TODO add example code
+        """
+        # Should p and d be capatalized?
+
+        if properties is None:
+            return plt.figure()
+
+        df = self.events_to_dataframe(properties)
+        fig, axs = plt.subplots(
+            nrows=len(properties) + 1,
+            ncols=1,
+            figsize=(df.shape[0]*2, len(properties)*1.5 + 2), 
+            sharex=True,
+            gridspec_kw={"hspace": 0.0},
+        )
+        # axs should always be longer than 1 element, otherwise cast as list
+
+        x_points = self._make_x_points(df)
+        print(x_points)
+        axs[0].set_xlim(0, x_points[-1])
+        # need x ticks?
+
+        # Setup pulse sequence diagram
+        def exp_sin(x):
+            # NOTE: Should array be zero anchored?
+            if x[0] != 0:
+                x = x - x[0]
+            return np.exp(-10*x) * np.sin(28*np.pi*x)
+        for i, row in df.iterrows():
+            dur_present = "duration" in df.columns
+            if row["fraction"] is not None:
+                # SpectralEvent
+                arr = np.linspace(x_points[i*2], x_points[(i*2)+1], 100)
+                axs[0].plot(arr, exp_sin(arr), color="black")
+            elif dur_present and row["duration"] is not None:
+                # ConstantDurationEvent
+                axs[0].text(x=x_points[i*2], y=0.5, s="tau/2")
+            elif row["fraction"] is None and dur_present and row["duration"] is None:
+                # MixingEvent
+                axs[0].plot([x_points[i*2], x_points[(i*2)+1]], [0, 1], color="black")
+        axs[0].set_axis_off()
+
+        # Iterate through axes and plot data
+        for i, ax in enumerate(axs[1:], 0):
+            self._plot_on_axis(ax, x_points, df[properties[i]], properties[i])
+
+        # TODO: Add color key per channel
+
+        fig.suptitle(self.name if self.name is not None else "Name")
+        fig.tight_layout()
+        return fig
