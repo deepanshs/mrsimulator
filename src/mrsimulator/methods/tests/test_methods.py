@@ -241,7 +241,7 @@ def test_05():
         events=[
             {
                 "rotor_angle": 0 * np.pi / 180,
-                "transition_query": {"P": [-1], "D": [2, -2]},
+                "transition_query": [{"P": [-1], "D": [2]}, {"P": [-1], "D": [-2]}],
             }
         ],
     )
