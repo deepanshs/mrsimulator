@@ -123,17 +123,6 @@ def load(filename: str, parse_units: bool = True):
     return parse(val, parse_units)
 
 
-def dict(
-    simulator, signal_processors: list = None, fit_report=None, with_units: bool = True
-):
-    data = simulator.json(True, True) if with_units else simulator.reduced_dict()
-    if signal_processors is not None:
-        data["signal_processors"] = [item.json() for item in signal_processors]
-
-    data["params"] = None if fit_report is None else fit_report.params.dumps()
-    return data
-
-
 def parse(py_dict, parse_units: bool = True):
     """Parse the dictionary object to respective Simulator, SignalProcessor and
     optionally lmfit Parameters object.
