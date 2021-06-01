@@ -100,6 +100,10 @@ class TransitionPathway(TransitionList):
         |0.5, -0.5⟩⟨0.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|
     """
 
+    @property
+    def weight(self):
+        pass
+
     def __str__(self):
         return self.__repr__()
 

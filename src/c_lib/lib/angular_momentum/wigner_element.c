@@ -307,3 +307,19 @@ void transition_connect_factor(const float l, const float m1_f, const float m1_i
     break;
   }
 }
+
+// void transition_connect_factor(const float *l, const float *transition_inital,
+//                                const float *transition_final, const double theta,
+//                                const double phi, double *restrict factor, int
+//                                n_sites) {
+//   double m1_f, m1_i, m2_f, m2_i;
+//   complex128 *weight = malloc_complex128(n_sites);
+//   for (int i = 1; i < n_sites; i++) {
+//     m1_i = transition_inital[i];
+//     m1_f = (transition_inital + n_sites)[i];
+//     m2_i = transition_final[i];
+//     m2_f = (transition_final + n_sites)[i];
+//     __transition_connect_factor(l[i], m1_f, m1_i, m2_f, m2_i, theta, phi,
+//     &weight[i]);
+//   }
+// }
