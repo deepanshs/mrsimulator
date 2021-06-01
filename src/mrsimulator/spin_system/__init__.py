@@ -186,6 +186,7 @@ class SpinSystem(Parseable):
         return list(v)
 
     def simplify(self):
+        """Simplifies user-defined spin systems into irreducible spin system objects."""
         return split_spin_system(self)
 
     def get_isotopes(self, spin_I: float = None, symbol: bool = False) -> list:
