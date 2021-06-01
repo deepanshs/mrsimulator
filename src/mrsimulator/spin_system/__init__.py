@@ -150,7 +150,7 @@ class SpinSystem(Parseable):
     """
 
     sites: Union[List[Site], np.ndarray] = []
-    couplings: Union[List[Coupling], np.ndarray] = None
+    couplings: Union[List[Coupling], np.ndarray] = []
     abundance: float = Field(default=100.0, ge=0.0, le=100.0)
     transition_pathways: List = None
 
