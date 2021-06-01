@@ -16,6 +16,7 @@ Simulation API
    methods-summary
    other_objects
    utils
+   mrsim
 
 ..    parameterized_tensor
 ..    interaction

@@ -23,8 +23,32 @@ CSDM object.
     :nosignatures:
 
       ~Scale
+      ~Linear
       ~IFFT
       ~FFT
+
+Baseline
+--------
+
+.. currentmodule:: mrsimulator.signal_processing.baseline
+
+Access the sub-module as ``sp.baseline``
+
+.. rubric:: Operation Summary
+
+The following list of operations applies to **selected dependent variables** within
+the CSDM object.
+
+.. autosummary::
+    :nosignatures:
+
+      ~Polynomial
+      ~ConstantOffset
+
+.. seealso::
+
+    :ref:`signal_processing` for a details.
+
 
 Apodization
 -----------

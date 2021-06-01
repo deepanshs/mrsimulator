@@ -68,7 +68,7 @@ class Method(Parseable):
     simulation: CSDM or ndarray (N/A).
         An object holding the result of the simulation. The initial value of this
         attribute is None. A value is assigned to this attribute when you run the
-        simulation using the :meth:`~mrsimulator.Simulator.run` method.
+        simulation using the :py:meth:`~mrsimulator.Simulator.run` method.
 
     experiment: CSDM or ndarray (optional).
         An object holding the experimental measurement for the given method, if
@@ -204,8 +204,7 @@ class Method(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
-        """
-        Parse the physical quantity from a dictionary representation of the Method
+        """Parse the physical quantity from a dictionary representation of the Method
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 
@@ -372,8 +371,7 @@ class Method(Parseable):
         ]
 
     def get_transition_pathways(self, spin_system) -> List[TransitionPathway]:
-        """
-        Return a list of transition pathways from the given spin system that satisfy
+        """Return a list of transition pathways from the given spin system that satisfy
         the query selection criterion of the method.
 
         Args:

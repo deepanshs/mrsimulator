@@ -15,8 +15,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class Site(Parseable):
-    """
-    Base class representing a single-site nuclear spin interaction tensor parameters.
+    """Base class representing a single-site nuclear spin interaction tensor parameters.
     The single-site nuclear spin interaction tensors include the nuclear shielding
     and the electric quadrupolar tensor.
 
@@ -199,8 +198,7 @@ class Site(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantity from a dictionary representation of the Site
+        """Parse the physical quantity from a dictionary representation of the Site
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 

@@ -7,6 +7,8 @@ from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
 
+from .test_signal_processing import setup_read_write
+
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
 
@@ -132,21 +134,14 @@ def test_Exponential_class():
     assert a.dim_index == 0
     assert a.dv_index == 0
 
-    # class to dict with units
-    dict_ = a.json()
-
-    assert dict_ == {
+    py_dict = {
         "function": "apodization",
         "type": "Exponential",
         "FWHM": "200.0 s",
         "dim_index": 0,
         "dv_index": 0,
     }
-
-    # read from dictionary
-    b = sp.apodization.Exponential.parse_dict_with_units(dict_)
-
-    assert a == b
+    setup_read_write(a, py_dict, sp.apodization.Exponential)
 
 
 def test_Gaussian_class():
@@ -158,21 +153,14 @@ def test_Gaussian_class():
     assert a.dim_index == 0
     assert a.dv_index == 0
 
-    # class to dict with units
-    dict_ = a.json()
-
-    assert dict_ == {
+    py_dict = {
         "function": "apodization",
         "type": "Gaussian",
         "FWHM": "200.0 km / s",
         "dim_index": 0,
         "dv_index": 0,
     }
-
-    # read from dictionary
-    b = sp.apodization.Gaussian.parse_dict_with_units(dict_)
-
-    assert a == b
+    setup_read_write(a, py_dict, sp.apodization.Gaussian)
 
 
 def test_2D_area():

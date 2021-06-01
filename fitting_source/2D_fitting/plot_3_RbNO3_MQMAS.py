@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-87Rb 2D 3QMAS NMR of RbNO3
+⁸⁷Rb 2D 3QMAS NMR of RbNO₃
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -15,20 +15,20 @@ from lmfit import Minimizer, report_fit
 from mrsimulator import Simulator
 from mrsimulator.methods import ThreeQ_VAS
 from mrsimulator import signal_processing as sp
+from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
-from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
 
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/784924/files/RbNO3_MQMAS.csdf"
+filename = "https://sandbox.zenodo.org/record/814455/files/RbNO3_MQMAS.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
-sigma = 2.119073
+sigma = 175.5476
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -36,11 +36,9 @@ experiment = experiment.real
 # Convert the coordinates along each dimension from Hz to ppm.
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
-# Normalize the spectrum
-max_amp = experiment.max()
-
 # plot of the dataset.
-levels = (np.arange(14) + 1) * max_amp / 15  # contours are drawn at these levels.
+max_amp = experiment.max()
+levels = (np.arange(24) + 1) * max_amp / 25  # contours are drawn at these levels.
 options = dict(levels=levels, alpha=0.75, linewidths=0.5)  # plot options
 
 plt.figure(figsize=(4.25, 3.0))
@@ -48,6 +46,7 @@ ax = plt.subplot(projection="csdm")
 ax.contour(experiment, colors="k", **options)
 ax.set_xlim(-20, -50)
 ax.set_ylim(-45, -65)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -58,9 +57,9 @@ plt.show()
 #
 # Create a guess list of spin systems.
 
-shifts = [-26.4, -28.5, -32]  # in ppm
-Cq = [1.65e6, 1.9e6, 1.7e6]  # in  Hz
-eta = [0.3, 0.8, 0.4]
+shifts = [-26.4, -28.5, -31.3]  # in ppm
+Cq = [1.7e6, 2.0e6, 1.7e6]  # in  Hz
+eta = [0.2, 1.0, 0.6]
 abundance = [33.33, 33.33, 33.33]  # in %
 
 spin_systems = single_site_system_generator(
@@ -73,14 +72,15 @@ spin_systems = single_site_system_generator(
 
 # %%
 # **Method**
-
+#
 # Create the 3QMAS method.
-# Get the spectral dimension paramters from the experiment.
+
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = ThreeQ_VAS(
+MQMAS = ThreeQ_VAS(
     channels=["87Rb"],
-    magnetic_flux_density=9.4,  # in T
+    magnetic_flux_density=9.395,  # in T
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # add the measurement to the method.
 )
@@ -88,16 +88,15 @@ method = ThreeQ_VAS(
 # Optimize the script by pre-setting the transition pathways for each spin system from
 # the das method.
 for sys in spin_systems:
-    sys.transition_pathways = method.get_transition_pathways(sys)
+    sys.transition_pathways = MQMAS.get_transition_pathways(sys)
 
 # %%
 # **Guess Spectrum**
 
 # Simulation
 # ----------
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method.
+sim = Simulator(spin_systems=spin_systems, methods=[MQMAS])
+sim.config.number_of_sidebands = 1
 sim.run()
 
 # Post Simulation Processing
@@ -109,7 +108,7 @@ processor = sp.SignalProcessor(
         sp.apodization.Gaussian(FWHM="0.08 kHz", dim_index=0),
         sp.apodization.Gaussian(FWHM="0.1 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
-        sp.Scale(factor=50),
+        sp.Scale(factor=1e7),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -122,6 +121,7 @@ ax.contour(experiment, colors="k", **options)
 ax.contour(processed_data, colors="r", linestyles="--", **options)
 ax.set_xlim(-20, -50)
 ax.set_ylim(-45, -65)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -131,28 +131,43 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = make_LMFIT_params(sim, processor)
+params = sf.make_LMFIT_params(sim, processor)
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
 report_fit(result)
 
 # %%
 # The best fit solution
 # ---------------------
-sim.run()
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+best_fit = sf.bestfit(sim, processor)[0]
 
 # Plot the spectrum
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.contour(experiment, colors="k", **options)
-ax.contour(processed_data, colors="r", linestyles="--", **options)
+ax.contour(best_fit, colors="r", linestyles="--", **options)
 ax.set_xlim(-20, -50)
 ax.set_ylim(-45, -65)
 plt.grid()
+plt.tight_layout()
+plt.show()
+
+# %%
+# Image plots with residuals
+# --------------------------
+residuals = sf.residuals(sim, processor)[0]
+
+fig, ax = plt.subplots(
+    1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}
+)
+vmax, vmin = experiment.max(), experiment.min()
+for i, dat in enumerate([experiment, best_fit, residuals]):
+    ax[i].imshow(dat, aspect="auto", cmap="gist_ncar_r", vmax=vmax, vmin=vmin)
+    ax[i].set_xlim(-20, -50)
+ax[0].set_ylim(-45, -65)
 plt.tight_layout()
 plt.show()

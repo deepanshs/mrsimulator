@@ -12,8 +12,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class SymmetricTensor(Parseable):
-    r"""
-    Base SymmetricTensor class representing the traceless symmetric part of an
+    r"""Base SymmetricTensor class representing the traceless symmetric part of an
     irreducible second-rank tensor.
 
     Attributes
@@ -139,8 +138,7 @@ class SymmetricTensor(Parseable):
 
 
 class AntisymmetricTensor(Parseable):
-    """
-    Base SymmetricTensor class representing the traceless symmetric part of an
+    """Base SymmetricTensor class representing the traceless symmetric part of an
     irreducible second-rank tensor.
 
     Attributes:

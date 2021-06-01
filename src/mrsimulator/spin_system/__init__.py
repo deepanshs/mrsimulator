@@ -25,8 +25,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class SpinSystem(Parseable):
-    """
-    Base class representing an isolated spin system containing multiple sites and
+    """Base class representing an isolated spin system containing multiple sites and
     couplings amongst them.
 
     .. rubric:: Attribute Documentation
@@ -186,8 +185,7 @@ class SpinSystem(Parseable):
         return list(v)
 
     def get_isotopes(self, spin_I: float = None, symbol: bool = False) -> list:
-        """
-        An ordered list of :ref:`isotope_api` objects from the sites within the spin
+        """An ordered list of :ref:`isotope_api` objects from the sites within the spin
         system corresponding to the given value of spin quantum number `I`. If `I` is
         None, a list of all Isotope objects is returned instead.
 
@@ -235,20 +233,18 @@ class SpinSystem(Parseable):
         ]
 
     def _zeeman_energy_states(self) -> np.ndarray:
-        """
-        Return the energy states as a Numpy array where the axis 0 is the number of
+        """Return the energy states as a Numpy array where the axis 0 is the number of
         energy states, and axis 1 is the spin quantum numbers. The spin quantum numbers
         are ordered based on the order of the sites within the spin system.
         """
         return get_zeeman_states(self)
 
     def zeeman_energy_states(self) -> list:
-        r"""
-        Return a list of all :ref:`zeeman_api` objects of the spin system, where the
+        r"""Return a list of all :ref:`zeeman_api` objects of the spin system, where the
         energy states are represented by a list of quantum numbers,
 
         .. math::
-            |\Psi⟩ = [m_1, m_2,.. m_n],
+            |\Psi\rangle = [m_1, m_2,.. m_n],
 
         where :math:`m_i` is the quantum number associated with the :math:`i^\text{th}`
         site within the spin system, and :math:`\Psi` is the energy state.
@@ -266,8 +262,7 @@ class SpinSystem(Parseable):
         return [ZeemanState(len(self.sites), *item) for item in states]
 
     def _all_transitions(self) -> np.ndarray:
-        """
-        Return all transitions from a spin system as a Numpy array of shape (M, 2, N),
+        """All transitions from a spin system as a Numpy array of shape (M, 2, N),
         where M is the number of transitions, and N is the number of sites in the
         spin system. The second axis is of length 2, where the entries at T[:, 0, :]
         are the initial energy states, and the entries at T[:, 1, :], the corresponding
@@ -317,8 +312,7 @@ class SpinSystem(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantity from a dictionary representation of the SpinSystem
+        """Parse physical quantities from a dictionary representation of the SpinSystem
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 
@@ -402,8 +396,7 @@ class SpinSystem(Parseable):
 
 
 def allowed_isotopes(spin_I: float = None) -> list:
-    """
-    List of NMR active isotopes currently supported in ``mrsimulator``.
+    """List of NMR active isotopes currently supported in ``mrsimulator``.
 
     Args:
         float spin_I: Optional spin quantum number. The valid values are multiples

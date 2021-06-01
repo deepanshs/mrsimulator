@@ -4,7 +4,7 @@
 Coupled spin-1/2 (CSA + heteronuclear dipolar + J-couplings)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-13C-1H sideband simulation
+¹³C-¹H sideband simulation
 """
 # %%
 # The following simulation is an example by Edén [#f1]_ from `Computer Simulations in

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-119Sn MAS NMR of SnO
+¹¹⁹Sn MAS NMR of SnO
 ^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # The following is a spinning sideband manifold fitting example for the 119Sn MAS NMR
-# of SnO. The dataset was acquired and shared by Altenhof `et. al.` [#f1]_.
+# of SnO. The dataset was acquired and shared by Altenhof `et al.` [#f1]_.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer, report_fit
@@ -14,19 +14,19 @@ from lmfit import Minimizer, report_fit
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
+from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
-from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
 
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/743242/files/119Sn_SnO.csdf"
+filename = "https://sandbox.zenodo.org/record/814455/files/119Sn_SnO.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
-sigma = 0.002697238
+sigma = 0.6410905
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -34,16 +34,12 @@ experiment = experiment.real
 # Convert the coordinates along each dimension from Hz to ppm.
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
-# Normalize the spectrum
-max_amp = experiment.max()
-experiment /= max_amp
-sigma /= max_amp
-
 # plot of the dataset.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 ax.set_xlim(-1200, 600)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -81,12 +77,12 @@ spin_systems = [
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = BlochDecaySpectrum(
+MAS = BlochDecaySpectrum(
     channels=["119Sn"],
-    magnetic_flux_density=9.4,  # in T
+    magnetic_flux_density=9.395,  # in T
     rotor_frequency=10000,  # in Hz
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # add the measurement to the method.
@@ -95,16 +91,14 @@ method = BlochDecaySpectrum(
 # Optimize the script by pre-setting the transition pathways for each spin system from
 # the method.
 for sys in spin_systems:
-    sys.transition_pathways = method.get_transition_pathways(sys)
+    sys.transition_pathways = MAS.get_transition_pathways(sys)
 
 # %%
 # **Guess Spectrum**
 
 # Simulation
 # ----------
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[MAS])
 sim.run()
 
 # Post Simulation Processing
@@ -112,9 +106,9 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        sp.apodization.Gaussian(FWHM="1500 Hz"),
+        sp.apodization.Exponential(FWHM="1500 Hz"),
         sp.FFT(),
-        sp.Scale(factor=20),
+        sp.Scale(factor=5000),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -137,7 +131,7 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = make_LMFIT_params(sim, processor)
+params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
 
 # Remove the abundance parameters from params. Since the measurement detects 119Sn, we
 # also remove the isotropic chemical shift parameter of 117Sn site from params. The
@@ -161,21 +155,22 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
 report_fit(result)
 
 # %%
 # The best fit solution
 # ---------------------
-sim.run()
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+best_fit = sf.bestfit(sim, processor)[0]
+residuals = sf.residuals(sim, processor)[0]
 
 # Plot the spectrum
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="Best Fit")
+ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
+ax.plot(residuals, alpha=0.75, linewidth=1, label="Residuals")
 ax.set_xlim(-1200, 600)
 plt.grid()
 plt.legend()

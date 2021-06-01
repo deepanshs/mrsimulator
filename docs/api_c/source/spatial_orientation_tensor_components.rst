@@ -1,5 +1,3 @@
-.. _spatial_orientation_tensor_source:
-
 Spatial orientation functions in PAS, :math:`\mathbf{\mathcal{R}}_{L,n}^{(k)}`
 ------------------------------------------------------------------------------
 

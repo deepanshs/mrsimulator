@@ -34,7 +34,7 @@ In ``mrsimulator``, we choose the default settings such that it applies to a wid
 range of simulations including, static, magic angle spinning (MAS), and
 variable angle spinning (VAS) spectra. In certain situations, however, the
 default settings are not sufficient to accurately represent the spectrum. In
-such cases, the user is advised to modify these settings as required. In the
+such cases, the user can modify these settings as required. In the
 following section, we briefly describe the configuration settings.
 
 The :ref:`simulator_api` class is configured using the

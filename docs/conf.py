@@ -19,17 +19,18 @@ from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
 
 # import plotly.io as pio
-# pio.renderers.default = "sphinx_gallery"
+# from plotly.io import _sg_scraper
 
 sys.path.insert(0, os.path.abspath("../.."))
 
+# scraper = _sg_scraper.plotly_sg_scraper
 # -- Project information -----------------------------------------------------
 now = datetime.datetime.now()
 year = now.year
 
 project = "mrsimulator"
-copyright = f"2019-{year}, The mrsimulator developers"
-author = "Mrsimulator Developers"
+copyright = f"2019-{year}, The Mrsimulator Developers"
+author = "The Mrsimulator Developers"
 
 
 # get version number from the file
@@ -74,12 +75,14 @@ extensions = [
 # generate autosummary even if no references
 autosummary_generate = True
 
-
 # Show warning at top of page
 versionwarning_body_selector = "div.document"
 # versionwarning_banner_title = ""
 # For debugging locally
 # versionwarning_project_version = "latest"
+
+# Plotly config
+# pio.renderers.default = "sphinx_gallery_png"
 
 # ---------------------------------------------------------------------------- #
 #                               Plot directive config                          #
@@ -149,6 +152,7 @@ sphinx_gallery_conf = {
     },
     "backreferences_dir": "examples",
     "doc_module": ("mrsimulator"),
+    "image_scrapers": ["matplotlib"],  # , scraper],
     # "compress_images": ("images", "thumbnails"),
     # "show_memory": True,
     "first_notebook_cell": (
@@ -208,7 +212,7 @@ except Exception:
 
 # numfig config
 numfig = True
-numfig_secnum_depth = 1
+numfig_secnum_depth = 2
 numfig_format = {"figure": "Figure %s", "table": "Table %s", "code-block": "Listing %s"}
 
 # math
@@ -296,10 +300,10 @@ html_theme_options = {
     # Works only "bootstrap_version = 3"
     "noflatdesign": False,
     # Enable Google Web Font. Defaults to false
-    # "googlewebfont": True,
+    "googlewebfont": True,
     # Set the URL of Google Web Font's CSS.
     # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
-    # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
+    "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
     # Set the Style of Google Web Font's CSS.
     # Defaults to "font-family: 'Text Me One', sans-serif;"
     "googlewebfont_style": "font-family: Helvetica",
@@ -318,8 +322,8 @@ html_theme_options = {
 }
 
 html_style = "style.css"
-html_title = f"mrsimulator:doc v{__version__}"
-html_logo = "_static/mrsimulator.png"
+html_title = f"mrsimulator:docs v{__version__}"
+html_logo = "_static/mrsimulator_logo.png"
 html_favicon = "_static/favicon.ico"
 html_last_updated_fmt = ""
 
@@ -341,49 +345,177 @@ htmlhelp_basename = "MRSimulatordoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
-latex_engine = "xelatex"
-latex_logo = "_static/mrsimulator.png"
+latex_engine = "pdflatex"
+latex_logo = "_static/mrsimulator_logo.pdf"
 latex_show_pagerefs = True
-
+latex_toplevel_sectioning = "part"
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     "papersize": "letterpaper",
     # The font size ('10pt', '11pt' or '12pt').
     #
-    "pointsize": "9pt",
-    "fontenc": r"\usepackage[utf8]{inputenc}",
-    "geometry": r"\usepackage[vmargin=2.5cm, hmargin=1.5cm]{geometry}",
+    "pointsize": "10pt",
+    "fontenc": "\\usepackage[utf8]{inputenc}",
+    "fontpkg": "\\usepackage{amsmath,amsfonts,amssymb,amsthm}",
+    # "geometry": "\\usepackage[vmargin=2.5cm, hmargin=1.5cm]{geometry}",
     # "fncychap": "\usepackage[Rejne]{fncychap}",
     # Additional stuff for the LaTeX preamble.
+    # \usepackage[T1]{fontenc}
     "preamble": r"""
+        %%%add number to subsubsection 2=subsection, 3=subsubsection
+        %%% below subsubsection is not good idea.
+        \setcounter{secnumdepth}{2}
+
+        %%%% Table of content upto 2=subsection, 3=subsubsection
+        \setcounter{tocdepth}{2}
+
+        \usepackage[utf8]{inputenc}
         \usepackage[T1]{fontenc}
+        \usepackage{helvet}
         \usepackage{amsfonts, amsmath, amssymb, mathbbol}
         \usepackage{graphicx}
+        \usepackage{caption}
+        \usepackage{xcolor}
+
+        \definecolor{ocre}{RGB}{64,64,64}
+        \usepackage[font={color=ocre}]{caption}
+
+        %% unicode characters
+        \usepackage{newunicodechar}
+        \newunicodechar{⁹}{$^9$}
+        \newunicodechar{⁸}{$^8$}
+        \newunicodechar{⁷}{$^7$}
+        \newunicodechar{⁶}{$^6$}
+        \newunicodechar{⁵}{$^5$}
+        \newunicodechar{⁴}{$^4$}
+        \newunicodechar{³}{$^3$}
+        \newunicodechar{²}{$^2$}
+        \newunicodechar{¹}{$^1$}
+        \newunicodechar{⁰}{$^0$}
+
+        \newunicodechar{₉}{$_9$}
+        \newunicodechar{₈}{$_8$}
+        \newunicodechar{₇}{$_7$}
+        \newunicodechar{₆}{$_6$}
+        \newunicodechar{₅}{$_5$}
+        \newunicodechar{₄}{$_4$}
+        \newunicodechar{₃}{$_3$}
+        \newunicodechar{₂}{$_2$}
+        \newunicodechar{₁}{$_1$}
+        \newunicodechar{₀}{$_0$}
+
+        \newunicodechar{⟨}{$\langle$}
+        \newunicodechar{⟩}{$\rangle$}
+        \newunicodechar{−}{$-$}
+        \newunicodechar{⟶}{$\longrightarrow$}
+        \newunicodechar{Δ}{$\Delta$}
+        \newunicodechar{⭐}{$\star$}
+
+
+        %%% reduce spaces for Table of contents, figures and tables
+        %%% it is used "\addtocontents{toc}{\vskip -1.2cm}" etc. in the document
+        \usepackage[notlot,nottoc,notlof]{}
+
         \usepackage{setspace}
         \singlespacing
 
+        %% table setting
+        \renewcommand{\arraystretch}{1.75}
+
+        %%%%%%%%%%% datetime
+        \usepackage{datetime}
+
+        \newdateformat{MonthYearFormat}{%
+            \monthname[\THEMONTH], \THEYEAR}
+
+        %% RO, LE will not work for 'oneside' layout.
+        %% Change oneside to twoside in document class
         \usepackage{fancyhdr}
         \pagestyle{fancy}
         \fancyhf{}
+
+        %%% Alternating Header for oneside
         \fancyhead[L]{
             \ifthenelse{\isodd{\value{page}}}{ \small \nouppercase{\leftmark} }{}
         }
         \fancyhead[R]{
             \ifthenelse{\isodd{\value{page}}}{}{ \small \nouppercase{\rightmark} }
         }
+
+        %%% page number
         \fancyfoot[CO, CE]{\thepage}
+
+        %%reduce spacing for itemize
+        \usepackage{enumitem} \setlist{nosep}
+
+        \makeatletter
+            \renewcommand{\sphinxtableofcontents}{%
+            %
+            % before resetting page counter, let's do the right thing.
+            \if@openright\cleardoublepage\else\clearpage\fi
+            \addcontentsline{toc}{chapter}{Table of Contents}%
+            \pagenumbering{roman}%
+            \begingroup
+                \parskip \z@skip
+                \tableofcontents
+            \endgroup
+            %
+            %% additional lists
+            \if@openright\cleardoublepage\else\clearpage\fi
+            \addcontentsline{toc}{chapter}{List of Figures}%
+            \listoffigures
+            %
+            \if@openright\cleardoublepage\else\clearpage\fi
+            \addcontentsline{toc}{chapter}{List of Tables}%
+            \listoftables
+            %
+            \if@openright\cleardoublepage\else\clearpage\fi
+            \addcontentsline{toc}{chapter}{List of Code Blocks}%
+            \listof{literalblock}{List of Code Blocks}%
+            %
+            \if@openright\cleardoublepage\else\clearpage\fi
+            \pagenumbering{arabic}%
+            }
+        \makeatother
     """,
+    # "maketitle": r"""
+    #     \pagenumbering{Roman} %%% to avoid page 1 conflict with actual page 1
+    #     \begin{titlepage}
+    #         \begin{figure}[!h]
+    #             \centering
+    #             \includegraphics[scale=0.3]{mrsimulator.png}
+    #         \end{figure}
+    #         %% \vfill adds at the bottom
+    #         \vfill
+    #     \end{titlepage}
+    #     \clearpage
+    #     \pagenumbering{roman}
+    #     \tableofcontents
+    #     \listoffigures
+    #     \listoftables
+    #     \clearpage
+    #     \pagenumbering{arabic}
+    # """,
     # Latex figure (float) alignment
     #
-    "figure_align": "htbp",
-}
+    # "figure_align": "htbp",
+    "sphinxsetup": "\
+        hmargin={0.7in,0.7in}, vmargin={1in,1in}, \
+        verbatimwithframe=true, \
+        HeaderFamily=\\rmfamily\\bfseries, \
+        InnerLinkColor={rgb}{0,0.3,0.7}, \
+        OuterLinkColor={rgb}{0.4,0,0.6}, \
+        VerbatimBorderColor={rgb}{0.75,0.75,0.75}, \
+        VerbatimColor={rgb}{0.98,0.98,0.985}, \
+    ",
+}  # TitleColor={rgb}{0.25,0.1,0.1}, \
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "mrsimulator.tex", "mrsimulator Documentation", author, "manual")
+    (master_doc, "mrsimulator.tex", "Mrsimulator Documentation", author, "manual")
 ]
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -395,7 +527,7 @@ texinfo_documents = [
     (
         master_doc,
         "mrsimulator",
-        "mrsimulator Documentation",
+        "Mrsimulator Documentation",
         author,
         "mrsimulator",
         "Toolbox for simulating NMR spectrum.",
@@ -412,7 +544,7 @@ man_pages = [
     (
         master_doc,
         "mrsimulator",
-        "mrsimulator Documentation",
+        "Mrsimulator Documentation",
         ["Deepansh J. Srivastava"],
         1,
     )
