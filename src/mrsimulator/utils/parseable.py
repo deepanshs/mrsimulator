@@ -179,8 +179,8 @@ class Parseable(BaseModel):
         return temp_dict if not units else self.clear_property_units(temp_dict)
 
     def clear_property_units(self, temp_dict):
-        if not hasattr(self, "property_units"):
-            return temp_dict
+        # if not hasattr(self, "property_units"):
+        #     return temp_dict
         temp_keys = temp_dict.keys()
         for key, unit in getattr(self, "property_units").items():
             if key in temp_keys:
