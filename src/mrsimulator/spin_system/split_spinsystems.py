@@ -3,7 +3,8 @@ import numpy as np
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import connected_components
 
-# import copy
+__author__ = "Alexis McCarthy"
+__email__ = "mccarthy.677@osu.edu"
 
 
 def split_spin_system(spin_system):  # 9 lines
