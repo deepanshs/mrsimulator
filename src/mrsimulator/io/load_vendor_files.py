@@ -2,8 +2,8 @@
 import csdmpy as cp
 import nmrglue as ng
 
-_author_ = "Alexis McCarthy"
-_email_ = "mccarthy.677@osu.edu"
+__author__ = "Alexis McCarthy"
+__email__ = "mccarthy.677@osu.edu"
 
 
 def load_bruker_1d(filename):
@@ -17,8 +17,10 @@ def load_bruker_1d(filename):
                 type="linear",
                 count=value["size"],
                 increment=(str(1 / value["sw"]) + " s"),
-                coordinates_offset=(str(1 / value["car"]) + " s"),
-                origin_offset=(str(1e-6 / value["obs"]) + " s"),
+                reciprocal={
+                    "coordinates_offset": f'{value["car"]} Hz',
+                    "origin_offset": f'{value["obs"]} MHz',
+                },
                 label=value["label"],
             )
             dims.append(obj)
