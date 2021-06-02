@@ -2,6 +2,9 @@
 import csdmpy as cp
 import nmrglue as ng
 
+_author_ = "Alexis McCarthy"
+_email_ = "mccarthy.677@osu.edu"
+
 
 def load_bruker_1d(filename):
     dic, data = ng.bruker.read(filename)
