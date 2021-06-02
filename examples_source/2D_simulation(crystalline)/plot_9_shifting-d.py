@@ -146,7 +146,7 @@ sim = Simulator(spin_systems=spin_systems, methods=[shifting_d])
 # Configure the simulator object. For non-coincidental tensors, set the value of the
 # `integration_volume` attribute to `hemisphere`.
 sim.config.integration_volume = "hemisphere"
-sim.config.decompose_spectrum = "spin_system"  # simulated spectra per spin system
+sim.config.decompose_spectrum = "spin_system"  # simulate spectra per spin system
 sim.run()
 
 # %%

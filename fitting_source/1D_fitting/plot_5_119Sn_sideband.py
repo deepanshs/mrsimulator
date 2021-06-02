@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-119Sn MAS NMR of SnO
+¹¹⁹Sn MAS NMR of SnO
 ^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -77,7 +77,7 @@ spin_systems = [
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
 MAS = BlochDecaySpectrum(

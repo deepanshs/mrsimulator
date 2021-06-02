@@ -50,7 +50,7 @@ def single_site_system_generator(
         rtol:
             The relative tolerance. This value is used in determining the cutoff
             abundance given as
-            :math:`\tt{abundance}_\tt{cutoff} = \tt{rtol} * \tt{max(abundance)}.`
+            :math:`\tt{abundance}_{\tt{cutoff}} = \tt{rtol} * \tt{max(abundance)}.`
             The spin systems with abundance below this threshold are ignored.
 
     .. note::

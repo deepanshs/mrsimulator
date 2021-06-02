@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-29Si 1D MAS spinning sideband (CSA)
+²⁹Si 1D MAS spinning sideband (CSA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -36,19 +36,14 @@ from mrsimulator.utils import spectral_fitting as sf
 # ------------------
 # Use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_
 # module to load the synthetic dataset as a CSDM object.
-file_ = "https://sandbox.zenodo.org/record/814455/files/synthetic_cuspidine_test.csdf"
+file_ = "https://sandbox.zenodo.org/record/835664/files/synthetic_cuspidine_test.csdf?"
 synthetic_experiment = cp.load(file_).real
 
 # standard deviation of noise from the dataset
-sigma = 0.3298179
+sigma = 0.03383338
 
 # convert the dimension coordinates from Hz to ppm
 synthetic_experiment.x[0].to("ppm", "nmr_frequency_ratio")
-
-# Normalize the spectrum
-max_amp = synthetic_experiment.max()
-synthetic_experiment /= max_amp
-sigma /= max_amp
 
 # Plot of the synthetic dataset.
 plt.figure(figsize=(4.25, 3.0))
@@ -124,7 +119,7 @@ processor = sp.SignalProcessor(
         sp.IFFT(),  # inverse FFT to convert frequency based spectrum to time domain.
         sp.apodization.Exponential(FWHM="200 Hz"),  # apodization of time domain signal.
         sp.FFT(),  # forward FFT to convert time domain signal to frequency spectrum.
-        sp.Scale(factor=1.5),  # scale the frequency spectrum.
+        sp.Scale(factor=3),  # scale the frequency spectrum.
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real

@@ -19,7 +19,7 @@ Make sure you have the required version of python by typing the following in the
     You may also click the copy-button located at the top-right corner of the code cell
     area in the HTML docs, to copy the code lines without the prompts and then paste it
     as usual.
-    Thanks to `Sphinx-copybutton <https://sphinx-copybutton.readthedocs.io/en/latest/>`_)
+    Thanks to `Sphinx-copybutton <https://sphinx-copybutton.readthedocs.io/en/latest/>`_
 
 .. code-block:: shell
 
@@ -65,9 +65,9 @@ runs entirely in the cloud. Launch a new notebook on
 
       !pip install mrsimulator
 
-in the first cell, and execute. All done! You may now proceed to the next section and
-start using the library.
-
+in the first cell, and execute. All done! You may now start using the library, or
+proceed to section :ref:`Introduction to Spin Systems <spin_systems_intro>` to continue
+the tutorial.
 
 
 .. _on_local_machine:
@@ -84,7 +84,7 @@ and higher. PIP is the easiest way to install python packages.
     :tabid: linux
 
     For *Linux* users, we provide the binary distributions of the mrsimulator package for
-    python versions 3.6-3.8. Install the package using pip as follows,
+    python versions 3.6-3.9. Install the package using pip as follows,
 
     .. code-block:: bash
 
@@ -94,7 +94,7 @@ and higher. PIP is the easiest way to install python packages.
     :tabid: macosx
 
     For *Mac* users, we provide the binary distributions of the mrsimulator package for
-    python versions 3.6-3.8. Install the package using pip as follows,
+    python versions 3.6-3.9. Install the package using pip as follows,
 
     .. code-block:: bash
 
@@ -128,7 +128,7 @@ and higher. PIP is the easiest way to install python packages.
 
 If you get a ``PermissionError``, it usually means that you do not have the required
 administrative access to install new packages to your Python installation. In this
-case, you may consider adding the ``--user`` option, at the end of the statement, to
+case, you may consider adding the ``--user`` option at the end of the statement to
 install the package into your home directory. You can read more about how to do this in
 the `pip documentation <https://pip.pypa.io/en/stable/user_guide/#user-installs>`_.
 
@@ -145,13 +145,14 @@ installed on your system. In this case, type the following in the terminal/Promp
     $ pip install mrsimulator -U
 
 
-All done! You may now proceed to the next section and start using the library.
+All done! You may now start using the library, or proceed to section
+:ref:`Introduction to Spin Systems <spin_systems_intro>` to continue the tutorial.
 
 
 .. _building_from_source:
 
-Building from the source
-------------------------
+Building ``mrsimulator`` from the source
+----------------------------------------
 
 Prerequisites
 '''''''''''''
@@ -172,7 +173,9 @@ Stable packages
 ***************
 
 The latest stable source package for ``mrsimulator`` is available on
-`PyPI <https://pypi.org/project/mrsimulator/#files>`_.
+`PyPI <https://pypi.org/project/mrsimulator/#files>`_ and
+`Github  release <https://github.com/DeepanshS/mrsimulator/releases>`_. Download and
+extract the *.tar.gz* file.
 
 
 .. _os_dependent_prerequisite:

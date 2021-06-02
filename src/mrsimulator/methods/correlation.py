@@ -41,7 +41,7 @@ class Cosy(BaseNamedMethod2D):
         The `rotor_frequency` parameter is fixed for this method.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> cosy = Cosy(
@@ -138,7 +138,7 @@ class Inadequate(BaseNamedMethod2D):
         The `rotor_frequency` parameter is fixed for this method.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> inadequate = Inadequate(

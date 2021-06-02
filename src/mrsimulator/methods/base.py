@@ -74,7 +74,7 @@ affine_matrix: np.ndarray or list (optional)
 returns = r"""
 Return
 ------
-    A :class:`~mrsimulator.Method` instance.
+    A :py:class:`~mrsimulator.Method` instance.
 """
 
 notes = r"""

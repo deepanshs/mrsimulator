@@ -4,7 +4,7 @@
 Scaled spatial orientation tensors (sSOT), :math:`\varsigma_{L,n}^{(k)}`
 ------------------------------------------------------------------------
 
-.. seealso:: :ref:`Scaled spatial orientation functions in PAS <spatial_orientation_table>`
+.. seealso:: :ref:`Scaled spatial orientation tensor components in PAS <spatial_orientation_table>`
 
 .. raw:: html
 
