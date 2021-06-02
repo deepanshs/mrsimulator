@@ -489,7 +489,7 @@ class Simulator(BaseModel):
 
     @classmethod
     def load(cls, filename: str, parse_units: bool = True):
-        """Load the :class:`~mrsimulator.Simulator` object from a JSON file by parsing.
+        """Load the :py:class:`~mrsimulator.Simulator` object from a JSON file by parsing.
 
         Args:
             bool parse_units: If true, parse the attribute values from the serialized
@@ -498,7 +498,7 @@ class Simulator(BaseModel):
             str filename: The filename of a JSON serialized mrsimulator file.
 
         Returns:
-            A :class:`~mrsimulator.Simulator` object.
+            A :py:class:`~mrsimulator.Simulator` object.
 
         Example
         -------
@@ -551,51 +551,54 @@ class Simulator(BaseModel):
         Return:
             A CSDM object.
         """
-        new = cp.new()
-        for dimension in method.spectral_dimensions[::-1]:
-            new.add_dimension(dimension.to_csdm_dimension())
-            if new.x[-1].origin_offset != 0:
-                new.x[-1].to("ppm", "nmr_frequency_ratio")
+        dim = [sd.to_csdm_dimension() for sd in method.spectral_dimensions[::-1]]
+        _ = [
+            item.to("ppm", "nmr_frequency_ratio")
+            for item in dim
+            if item.origin_offset != 0
+        ]
 
-        dependent_variable = {
-            "type": "internal",
-            "quantity_type": "scalar",
-            "numeric_type": "float64",
-        }
-        for index, datum in enumerate(data):
-            if len(datum) == 0:
-                continue
+        dv = [
+            {
+                "type": "internal",
+                "quantity_type": "scalar",
+                "numeric_type": "float64",
+                "components": [datum],
+                **self._get_dv_metadata(index),
+            }
+            for index, datum in enumerate(data)
+        ]
 
-            dependent_variable["components"] = [datum]
-            if self.config.decompose_spectrum == "spin_system":
-                self._update_name_description_application(dependent_variable, index)
+        return cp.CSDM(dimensions=dim, dependent_variables=dv)
 
-            new.add_dependent_variable(dependent_variable)
-            new.y[-1].encoding = "base64"
-        return new
-
-    def _update_name_description_application(self, obj, index):
+    def _get_dv_metadata(self, index):
         """Update the name and description of the dependent variable attributes
         using fields from the spin system."""
+        if self.config.decompose_spectrum != "spin_system":
+            return {}
+
         if self.spin_systems == []:
-            return
+            return {}
+
+        obj = {}
         label = self.spin_systems[index].label
         if label not in ["", None]:
-            obj.update({"components_label": [label]})
+            obj["components_label"] = [label]
 
         name = self.spin_systems[index].name
         name = name if name not in ["", None] else f"spin system {index}"
-        obj.update({"name": name})
+        obj["name"] = name
 
         description = self.spin_systems[index].description
         if description not in ["", None]:
-            obj.update({"description": description})
+            obj["description"] = description
 
         obj["application"] = {
             "com.github.DeepanshS.mrsimulator": {
                 "spin_systems": [self.spin_systems[index].json()]
             }
         }
+        return obj
 
 
 class Sites(AbstractList):

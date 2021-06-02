@@ -10,10 +10,11 @@ from pydantic import BaseModel
 
 from .extra import _reduce_dict
 
-# from IPython.display import JSON
 
 __author__ = "Shyam Dwaraknath"
 __email__ = "shyamd@lbl.gov"
+
+CONST = string_to_quantity("1")
 
 
 class Parseable(BaseModel):
@@ -112,7 +113,8 @@ class Parseable(BaseModel):
         for key, unit in getattr(self, "property_units").items():
             if key in temp_keys:
                 u = unit if unit != "pct" else "%"
-                temp_dict[key] = f"{temp_dict[key]} {u}"
+                var = f" {u}" if unit != CONST else ""
+                temp_dict[key] = f"{temp_dict[key]}{var}"
         return temp_dict
 
 

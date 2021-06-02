@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Wollastonite, 29Si (I=1/2)
+Wollastonite, ²⁹Si (I=1/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-29Si (I=1/2) spinning sideband simulation.
+²⁹Si (I=1/2) spinning sideband simulation.
 """
 # %%
 # Wollastonite is a high-temperature calcium-silicate,
 # :math:`\beta−\text{Ca}_3\text{Si}_3\text{O}_9`, with three distinct
 # :math:`^{29}\text{Si}` sites. The :math:`^{29}\text{Si}` tensor parameters
-# were obtained from Hansen `et. al.` [#f1]_
+# were obtained from Hansen `et al.` [#f1]_
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site

@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Non-coincidental Quad and CSA, 17O (I=5/2)
+Non-coincidental Quad and CSA, ¹⁷O (I=5/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-17O (I=5/2) quadrupolar static spectrum simulation.
+¹⁷O (I=5/2) quadrupolar static spectrum simulation.
 """
 # %%
 # The following example illustrates the simulation of NMR spectra arising from
 # non-coincidental quadrupolar and shielding tensors. The tensor parameter values for
-# the simulation are obtained from Yamada `et. al.` [#f1]_, for the
+# the simulation are obtained from Yamada `et al.` [#f1]_, for the
 # :math:`^{17}\text{O}` site in benzanilide.
 #
 # .. warning::
-#     The Euler angles representation using by Yamada `et. al` is different from the
+#     The Euler angles representation using by Yamada `et al` is different from the
 #     representation used in mrsimulator. The resulting simulation might not resemble
 #     the published spectrum.
 import numpy as np

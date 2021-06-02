@@ -5,7 +5,7 @@ Frequency Tensors (FT), :math:`\Lambda_{L, n}^{(k)}(i,j)`
 ---------------------------------------------------------
 
 .. seealso:: :ref:`Frequency component functions in PAS <frequency_tensor_theory>`,
-             :ref:`Spatial orientation functions (SOF) <spatial_orientation_function>`,
+             :ref:`Scaled spatial orientation functions (SOF) <spatial_orientation_function>`,
              :ref:`Spin transition functions (STF) <spin_transition_function>`
 
 .. raw:: html

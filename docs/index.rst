@@ -20,6 +20,7 @@ Welcome to the Mrsimulator documentation
             :alt: PyPI version
 
           .. image:: https://img.shields.io/pypi/pyversions/mrsimulator
+            :target: #
             :alt: PyPI - Python Version
 
       * - Build Status
@@ -75,9 +76,8 @@ Welcome to the Mrsimulator documentation
 **About**
 
 ``mrsimulator`` is an open-source python package for fast simulation and analysis of
-multi-dimensional solid-state magnetic resonance (NMR) spectra of crystalline materials,
-bio macro-molecules, and amorphous materials. Simulate the NMR spectrum of macro-molecules
-or amorphous in just a few seconds.
+multi-dimensional solid-state magnetic resonance (NMR) spectra of crystalline and
+amorphous materials.
 
 ----
 
@@ -109,7 +109,7 @@ or amorphous in just a few seconds.
 - It is a fast and versatile multi-dimensional solid-state NMR spectra simulator including, MAS
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
-- Includes simulation of weakly coupled nuclei experiencing J and dipolar couplings.
+- It includes simulation of weakly coupled nuclei experiencing J and dipolar couplings.
 - It is fully documented with a stable and simple API and is easily incorporated into your
   python scripts and web apps.
 - It is compatible with modern python packages, such as scikit-learn, Keras, etc.
@@ -132,13 +132,13 @@ The ``mrsimulator`` package offers the following
     - at arbitrary rotor angles, and
     - at arbitrary spinning frequency.
 
-- The library of included **NMR methods** follow,
-    - 1D Bloch decay spectrum, and
-    - 1D Bloch decay central transition spectrum.
+- A library of **NMR methods**,
+    - 1D Bloch decay spectrum,
+    - 1D Bloch decay central transition spectrum,
     - 2D Multi-quantum Variable Angle Spinning (MQ-VAS),
-    - 2D Satellite-transition Variable Angle Spinning (ST-VAS), and
+    - 2D Satellite-transition Variable Angle Spinning (ST-VAS),
     - 2D Dynamic Angle Spinning (DAS),
-    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT), and
+    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT),
     - 2D Magic Angle Flipping (MAF).
 
 - **Models** for tensor parameter distribution in amorphous materials.
@@ -171,8 +171,8 @@ Getting Started
     installation/installation
     introduction
     getting_started
-    getting_started_coupled
     getting_started-objects
+    getting_started_ethanol
     configuring_simulator
     mrsim_IO
 .. designing_methods
@@ -228,6 +228,7 @@ API and references
     api_py/py-simulator
     api_py/py-signal-processing
     api_py/py-model
+    api_py/py-fitting
     api_c/c_api
 
 

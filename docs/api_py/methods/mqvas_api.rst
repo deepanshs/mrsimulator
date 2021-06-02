@@ -11,10 +11,8 @@ the central transition frequencies. The :math:`p` and :math:`d` pathways for the
 methods are
 
 .. math::
-      \begin{align}
-          p: &0 \rightarrow M \rightarrow -1 \\
-          d: &0 \rightarrow 0 \rightarrow 0
-      \end{align},
+    p: &0 \rightarrow M \rightarrow -1 \\
+    d: &0 \rightarrow 0 \rightarrow 0
 
 where :math:`M` is the multiple-quantum number. The value of :math:`M` depends on the
 spin quantum number, :math:`I`, and is listed in :numref:`tb_mqvas`.

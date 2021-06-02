@@ -1,4 +1,4 @@
-For contributors and developers
+For developers and contributors
 ===============================
 
 Make your own copy of mrsimulator on GitHub
@@ -152,6 +152,17 @@ package into the default site-packages directory, you may try installing by addi
 
 Note for the developers and contributors
 ''''''''''''''''''''''''''''''''''''''''
+
+**Before commits**: Mrsimulator follows python community standards for writing code and
+documentation. To help guide the developers and contributors towards these standards,
+we have created a *.pre-commit-config.yaml* file, that when used with ``pre-commit``, will
+inspect the code and document for issues.
+Type ``pre-commit run`` before git commits to inspect the changes.
+
+You can also set up the git hook script to automatically run *pre-commit* on git
+commits with the ``pre-commit install``. Read more about
+`pre-commit <https://pre-commit.com/#3-install-the-git-hook-scripts>`_.
+
 
 **Running tests**: For unit tests, we use the pytest module. At the root directory
 of the mrsimulator package folder, type

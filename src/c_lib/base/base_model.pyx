@@ -151,7 +151,8 @@ def one_d_spectrum(method,
         increment.append(dim.spectral_width / dim.count)
         event_i.append(len(dim.events))
 
-        dim.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
+        if dim.origin_offset is None:
+            dim.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
 
     frac = np.asarray(fr, dtype=np.float64)
     magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)

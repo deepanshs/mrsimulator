@@ -6,7 +6,7 @@ How does ``mrsimulator`` work?
 ******************************
 
 The NMR spectral simulation in ``mrsimulator`` is based on
-Symmetry Pathways in Solid-State NMR by Grandinetti et. al. [#f1]_
+Symmetry Pathways in Solid-State NMR by Grandinetti *et al.* [#f1]_
 
 Introduction to NMR frequency components
 ========================================
@@ -150,12 +150,11 @@ axis system of the interaction tensor and corresponds to the
 ..           - 0
 ..           - :math:`\mathcal{R}_{0,0}^{(\sigma)} = \varrho_\text{iso}`
 
-.. _spatial_orientation_table:
-
 .. |SOF| replace:: :math:`\mathbf{\varsigma}_{L,n}^{(k)}`
 .. |L| replace:: :math:`L`
 .. |Mth| replace:: :math:`M^\mathrm{th}`
 
+.. _spatial_orientation_table:
 
 Scaled spatial orientation tensor (sSOT) components in PAS, |SOF|
 =================================================================

@@ -57,8 +57,8 @@ Table of contents
     methods/BlochDecaySpectrum
     methods/BlochDecayCTSpectrum
     methods/method2D
-    methods/mqvas
-    methods/stvas
-    methods/ssb2d
+    methods/mqvas_api
+    methods/stvas_api
+    methods/ssb2d_api
 
 .. methods/cosy

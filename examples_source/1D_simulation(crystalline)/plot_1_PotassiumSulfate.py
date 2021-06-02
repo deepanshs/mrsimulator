@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Potassium Sulfate, 33S (I=3/2)
+Potassium Sulfate, ³³S (I=3/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-33S (I=3/2) quadrupolar spectrum simulation.
+³³S (I=3/2) quadrupolar spectrum simulation.
 """
 # %%
 # The following example is the :math:`^{33}\text{S}` NMR spectrum simulation of
 # potassium sulfate (:math:`\text{K}_2\text{SO}_4`). The quadrupole tensor parameters
-# for :math:`^{33}\text{S}` is obtained from Moudrakovski `et. al.` [#f3]_
+# for :math:`^{33}\text{S}` is obtained from Moudrakovski `et al.` [#f3]_
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site

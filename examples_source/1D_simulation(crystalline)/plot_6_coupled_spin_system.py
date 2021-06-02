@@ -4,7 +4,7 @@
 Coupled spins 5/2-9/2 (Quad + J-coupling)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-27Al-93Nb spin system spectrum.
+²⁷Al-⁹³Nb spin system spectrum.
 """
 # %%
 import matplotlib.pyplot as plt

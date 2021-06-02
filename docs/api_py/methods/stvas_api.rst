@@ -10,10 +10,8 @@ spectrum correlating the frequencies from the satellite transitions to the centr
 frequencies. The :math:`p` and :math:`d` pathways for the ST-VAS methods are
 
 .. math::
-      \begin{align}
-          p: &0 \rightarrow -1 \rightarrow -1 \\
-          d: &0 \rightarrow \pm d_0 \rightarrow 0
-      \end{align},
+    p: &0 \rightarrow -1 \rightarrow -1 \\
+    d: &0 \rightarrow \pm d_0 \rightarrow 0
 
 where :math:`d_0 = m_f^2 -  m_i^2` for transition :math:`|m_i\rangle \rightarrow |m_f\rangle`.
 The value of :math:`n` depends on the spin quantum number, :math:`I`, and is listed in

@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Albite, 27Al (I=5/2) 3QMAS
+Albite, ²⁷Al (I=5/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-27Al (I=5/2) triple-quantum magic-angle spinning (3Q-MAS) simulation.
+²⁷Al (I=5/2) triple-quantum magic-angle spinning (3Q-MAS) simulation.
 """
 # %%
 # The following is an example of :math:`^{27}\text{Al}` 3QMAS simulation of albite
 # :math:`\text{NaSi}_3\text{AlO}_8`. The :math:`^{27}\text{Al}` tensor parameters were
-# obtained from Massiot `et. al.` [#f1]_.
+# obtained from Massiot `et al.` [#f1]_.
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site

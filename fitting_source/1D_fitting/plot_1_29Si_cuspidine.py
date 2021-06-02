@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-29Si 1D MAS spinning sideband
-=============================
+²⁹Si 1D MAS spinning sideband (CSA)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # After acquiring an NMR spectrum, we often require a least-squares analysis to
@@ -16,7 +16,7 @@
 # `LMFIT <https://lmfit.github.io/lmfit-py/>`_ library for performing the least-squares
 # fitting optimization.
 # In this example, we use a synthetic :math:`^{29}\text{Si}` NMR spectrum of cuspidine,
-# generated from the tensor parameters reported by Hansen `et. al.` [#f1]_, to
+# generated from the tensor parameters reported by Hansen `et al.` [#f1]_, to
 # demonstrate a simple fitting procedure.
 #
 # We will begin by importing relevant modules and establishing figure size.
@@ -27,6 +27,7 @@ from lmfit import Minimizer, Parameters, fit_report
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
+from mrsimulator.utils import spectral_fitting as sf
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -35,26 +36,21 @@ from mrsimulator import signal_processing as sp
 # ------------------
 # Use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_
 # module to load the synthetic dataset as a CSDM object.
-file_ = "https://sandbox.zenodo.org/record/687656/files/synthetic_cuspidine_test.csdf"
+file_ = "https://sandbox.zenodo.org/record/835664/files/synthetic_cuspidine_test.csdf?"
 synthetic_experiment = cp.load(file_).real
 
 # standard deviation of noise from the dataset
-sigma = 0.3298179
+sigma = 0.03383338
 
 # convert the dimension coordinates from Hz to ppm
 synthetic_experiment.x[0].to("ppm", "nmr_frequency_ratio")
-
-# Normalize the spectrum
-max_amp = synthetic_experiment.max()
-synthetic_experiment /= max_amp
-sigma /= max_amp
 
 # Plot of the synthetic dataset.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(synthetic_experiment, "k", alpha=0.5)
-ax.set_xlim(-200, 50)
-ax.invert_xaxis()
+ax.set_xlim(50, -200)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
@@ -96,7 +92,7 @@ spin_system = SpinSystem(
 # in the measurement. In this example, we use the `BlochDecaySpectrum` method. Note,
 # when creating the method object, the value of the method parameters must match the
 # respective values used in the experiment.
-method = BlochDecaySpectrum(
+MAS = BlochDecaySpectrum(
     channels=["29Si"],
     magnetic_flux_density=7.1,  # in T
     rotor_frequency=780,  # in Hz
@@ -113,9 +109,7 @@ method = BlochDecaySpectrum(
 # %%
 # **Step 3:** Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = [spin_system]
-sim.methods = [method]
+sim = Simulator(spin_systems=[spin_system], methods=[MAS])
 sim.run()
 
 # %%
@@ -125,7 +119,7 @@ processor = sp.SignalProcessor(
         sp.IFFT(),  # inverse FFT to convert frequency based spectrum to time domain.
         sp.apodization.Exponential(FWHM="200 Hz"),  # apodization of time domain signal.
         sp.FFT(),  # forward FFT to convert time domain signal to frequency spectrum.
-        sp.Scale(factor=1.5),  # scale the frequency spectrum.
+        sp.Scale(factor=3),  # scale the frequency spectrum.
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -136,8 +130,7 @@ plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(synthetic_experiment, "k", linewidth=1, label="Experiment")
 ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
-ax.set_xlim(-200, 50)
-ax.invert_xaxis()
+ax.set_xlim(50, -200)
 plt.legend()
 plt.grid()
 plt.tight_layout()
@@ -231,19 +224,16 @@ print(fit_report(result))
 
 # %%
 # The plot of the fit, measurement and the residuals is shown below.
-plt.figsize = (4, 3)
-x, y_data = synthetic_experiment.to_list()
-residuals = minimization_function(result.params, sim, processor)
-fit = y_data - residuals
+best_fit = sf.bestfit(sim, processor)[0]
+residuals = sf.residuals(sim, processor)[0]
 
 plt.figure(figsize=(4.25, 3.0))
-plt.plot(x, y_data, "k", linewidth=1, label="Experiment")
-plt.plot(x, fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
-plt.plot(x, residuals, alpha=0.75, linewidth=1, label="Residual")
-
-plt.xlabel("Frequency / Hz")
-plt.xlim(-200, 50)
-plt.gca().invert_xaxis()
+ax = plt.subplot(projection="csdm")
+ax.plot(synthetic_experiment, "k", linewidth=1, label="Experiment")
+ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
+ax.plot(residuals, alpha=0.75, linewidth=1, label="Residuals")
+ax.set_xlabel("Frequency / Hz")
+ax.set_xlim(50, -200)
 plt.legend()
 plt.grid()
 plt.tight_layout()

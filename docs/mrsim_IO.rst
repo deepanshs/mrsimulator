@@ -11,7 +11,7 @@ Simulator object
 **Export simulator object to a JSON file**
 
 To serialize a :ref:`simulator_api` object to a JSON-compliant file, use the
-:meth:`~mrsimulator.Simulator.save` method of the object.
+:py:meth:`~mrsimulator.Simulator.save` method of the object.
 
 .. doctest::
 
@@ -32,7 +32,7 @@ as a string with a value and a unit.
 **Load simulator object from a JSON file**
 
 To load a JSON-compliant :ref:`simulator_api` serialized file, use the
-:meth:`~mrsimulator.Simulator.load` method of the class. By default, the load method
+:py:meth:`~mrsimulator.Simulator.load` method of the class. By default, the load method
 parses the file for units.
 
 .. doctest::
@@ -64,7 +64,7 @@ Spin systems objects from Simulator class
 **Export spin systems to a JSON file**
 
 You may also serialize the spin system objects from the :ref:`simulator_api` object to
-a JSON-compliant file using the :meth:`~mrsimulator.Simulator.export_spin_systems`
+a JSON-compliant file using the :py:meth:`~mrsimulator.Simulator.export_spin_systems`
 method as
 
 .. doctest::
@@ -76,7 +76,7 @@ method as
 
 Similarly, a list of spin systems can be directly imported from a JSON serialized
 file. To import the spin systems, use the
-:meth:`~mrsimulator.Simulator.load_spin_systems` method of the :ref:`simulator_api`
+:py:meth:`~mrsimulator.Simulator.load_spin_systems` method of the :ref:`simulator_api`
 class as
 
 .. doctest::
@@ -136,4 +136,4 @@ object.
 .. doctest::
 
     >>> from mrsimulator import load
-    >>> sim_coesite, processors, _ = save('coesite.mrsim') # doctest:+SKIP
+    >>> sim_coesite, processors, _ = load('coesite.mrsim') # doctest:+SKIP

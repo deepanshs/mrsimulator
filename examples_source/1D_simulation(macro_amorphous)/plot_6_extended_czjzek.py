@@ -68,7 +68,7 @@ sim.run()
 # The following is the static spectrum arising from a Czjzek distribution of the
 # second-rank traceless shielding tensors.
 plt.figure(figsize=(4.25, 3.0))
-ax = plt.gca(projection="csdm")
+ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
 plt.tight_layout()
 plt.show()
@@ -127,7 +127,7 @@ sim.run()
 # The following is a static spectrum arising from an extended Czjzek distribution of
 # the second-rank traceless EFG tensors.
 plt.figure(figsize=(4.25, 3.0))
-ax = plt.gca(projection="csdm")
+ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
@@ -152,7 +152,7 @@ sim.run()
 # The following is the MAS spectrum arising from an extended Czjzek distribution of the
 # second-rank traceless EFG tensors.
 plt.figure(figsize=(4.25, 3.0))
-ax = plt.gca(projection="csdm")
+ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
