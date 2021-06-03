@@ -495,6 +495,7 @@ class Method(Parseable):
                 "magnetic_flux_density",
                 "rotor_frequency",
                 "rotor_angle",
+                "freq_contrib",
                 "p",
                 "d",
             ]
@@ -525,6 +526,9 @@ class Method(Parseable):
                 for dim in spec_dims
                 for ev in dim.events
             ]
+
+        if "rotor_angle" in properties:
+            df["rotor_angle"] = df["rotor_angle"] * 180 / np.pi
 
         return df
 

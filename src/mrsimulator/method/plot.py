@@ -178,7 +178,9 @@ def plot(df) -> plt.figure:
     Example:
         TODO add example code
     """
-    params = list(df.columns.drop(["type", "label", "duration", "fraction"]))
+    params = list(
+        df.columns.drop(["type", "label", "duration", "fraction", "freq_contrib"])
+    )
     # Move p and d to front of params
     if "d" in params:
         params.insert(0, params.pop(params.index("d")))
