@@ -8,10 +8,15 @@ __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
-DURATION_WIDTH = 0.4
+DURATION_WIDTH = 0.6
 MIXING_WIDTH = 0.04
 # TODO: Ensure cannot run out of colors
 COLORS = list(mcolors.TABLEAU_COLORS)
+EVENT_COLORS = {  # TODO: add colors
+    "ConstantDurationEvent": 'k',
+    "SpectralEvent": 'g',
+    "MixingEvent": 'b'
+}
 
 
 def _make_x_data(df):
@@ -44,7 +49,6 @@ def _offset_x_data(df, x_data):
     mix_count = 0
     idx = 0
     for ev_type in df["type"][first_non_mix_ev_idx:]:
-        print(idx, ev_type)
         if ev_type == "MixingEvent":
             mix_count += 1
             continue
@@ -59,58 +63,25 @@ def _offset_x_data(df, x_data):
 
 def _plot_sequence_diagram(ax, x_data, df):
     """Helper method to plot sequence diagram of method on ax"""
-    plot_pulse = False
-    x_idx = 0
+    def add_rect_with_label(ax, x0, x1, label, ev_type):
+        rect = Rectangle((x0, -1), x1-x0, 2, color=EVENT_COLORS[ev_type], alpha=0.4)
+        ax.add_patch(rect)
+        if label is not None:
+            ax.annotate(label, ((x1-x0)/2, 0), color="black", ha="center", va="center")
 
-    def decay(x):
-        """Expoenntial sinusodial decay"""
-        # NOTE: Should array be zero anchored?
-        # TODO: Better graphic for spectral event?
-        x = x - x[0]
-        return np.exp(-10 * x) * np.sin(28 * np.pi * x)
-
-    def add_rect(ax, anchor, width, height, label):
-        """Rectangle defining method diagram reigon"""
-
-    # TODO: Incorperate muliple adjacent mixing events
+    plot_mix = False
+    idx = 0
     for i, row in df.iterrows():
-        # TODO: Improve diagram with first event as mixing
-        if i == 0 and row["type"] == "MixingEvent":
-            ax.add_patch(
-                Rectangle(
-                    (x_data[x_idx], -0.7), x_data[x_idx + 1] - x_data[x_idx], 1.65
-                )
-            )
-            x_idx += 1
+        if row["type"] == "MixingEvent":
+            plot_mix = True
             continue
-        if row["type"] == "SpectralEvent":
-            if plot_pulse:
-                # print("spec pulse", x_data[x_idx], x_data[x_idx + 1])
-                ax.add_patch(
-                    Rectangle(
-                        (x_data[x_idx], -0.7), x_data[x_idx + 1] - x_data[x_idx], 1.65
-                    )
-                )
-                x_idx += 1
-
-            # print("spec", x_data[x_idx], x_data[x_idx + 1])
-            arr = np.linspace(x_data[x_idx], x_data[x_idx + 1], 150)
-            ax.plot(arr, decay(arr), color="black")
-            x_idx += 1
-        elif row["type"] == "ConstantDurationEvent":
-            if plot_pulse:
-                # print("dur pulse", x_data[x_idx], x_data[x_idx + 1])
-                ax.add_patch(
-                    Rectangle(
-                        (x_data[x_idx], -0.7), x_data[x_idx + 1] - x_data[x_idx], 1.65
-                    )
-                )
-                x_idx += 1
-
-            # print("dur", x_data[x_idx], x_data[x_idx + 1])
-            ax.text(x=x_data[x_idx], y=0, s="tau/2")  # Use label
-            x_idx += 1
-        plot_pulse = row["type"] == "mixing"
+        if plot_mix:
+            # NOTE: What should labels be for mxixing events?
+            add_rect_with_label(ax, x_data[idx], x_data[idx+1], "", "MixingEvent")
+            idx += 1
+        add_rect_with_label(ax, x_data[idx], x_data[idx+1], row["label"], row["type"])
+        idx += 1
+        plot_mix = False
 
 
 def _plot_p_or_d(ax, x_data, y_data, name):
@@ -159,35 +130,13 @@ def _plot_data(ax, x_data, y_data, name):
         # Warn misshapen data?
         return
 
-    # if name == "p" or name == "d":
-    #     # y_data is a np.2darray by chanel number
-    #     for i in range(len(y_data[0])):
-    #         ax.plot(
-    #             x_data,
-    #             [0] + [_ for num in y_data[:, i] for _ in (num, num)],
-    #             color=COLORS.pop(),
-    #             alpha=0.6,
-    #             linewidth=2,
-    #         )
-    #     # TODO: Clean up formatting of y-ticks
-    #     _range = max(  # Furthest point from origin
-    #         abs(min([num for tup in y_data for num in tup])),
-    #         abs(max([num for tup in y_data for num in tup])),
-    #     )
-    #     _range = _range if _range % 2 == 0 else _range + 1  # Round up to next even
-    #     ax.set_ylim(-(_range + 2), _range + 2)
-    #     ax.set_yticks(np.arange(-_range - 1, _range + 2, step=1 if _range < 5 else 2))
-    #     ax.grid(axis="y", color="black", alpha=0.2)
     ax.plot(
         x_data,
         [_ for num in y_data for _ in (num, num)],
         color="b",
         alpha=0.6,
     )
-    # y-axis formatting
     ax.set_ylabel(name.replace("_", " "))
-    # Can y-axis numbers format better
-    # ax.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter("%.2f"))
 
 
 def plot(df) -> plt.figure:
@@ -227,7 +176,7 @@ def plot(df) -> plt.figure:
     axs[-1].get_xaxis().set_visible(False)
 
     # Plot sequence diagram
-    # _plot_sequence_diagram(axs[0], offset_x_data, df)
+    _plot_sequence_diagram(axs[0], offset_x_data, df)
 
     # Iterate through axes and plot data
     for i, ax in enumerate(axs[1:], 0):
