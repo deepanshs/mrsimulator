@@ -202,16 +202,19 @@ def plot(df) -> plt.figure:
     Example:
         TODO add example code
     """
-    params = df.columns.drop(["type", "label", "duration", "fraction"])
-    print(params)
-    if params.empty:
+    params = list(df.columns.drop(["type", "label", "duration", "fraction"]))
+    # Move p and d to front of params
+    if "d" in params:
+        params.insert(0, params.pop(params.index("d")))
+    if "p" in params:
+        params.insert(0, params.pop(params.index("p")))
+
+    if len(params) == 0:
         # Warn passed empty dataframe?
         return plt.figure()
 
     x_data = _make_x_data(df)
     offset_x_data = _offset_x_data(df, x_data)
-    print(len(x_data), x_data)
-    print(len(offset_x_data), offset_x_data)
     fig, axs = plt.subplots(
         nrows=len(params) + 1,
         ncols=1,
@@ -221,17 +224,13 @@ def plot(df) -> plt.figure:
     )
 
     axs[0].set_xlim(0, x_data[-1])
-    axs[0].tick_params(axis="x", which="both", labelbottom=False)
+    axs[-1].get_xaxis().set_visible(False)
 
     # Plot sequence diagram
     # _plot_sequence_diagram(axs[0], offset_x_data, df)
 
     # Iterate through axes and plot data
     for i, ax in enumerate(axs[1:], 0):
-        # Increase axis border thickness
-        # for side in ["top", "bottom", "left", "right"]:
-        #     ax.spines[side].set_linewidth(1.5)
-
         if params[i] == "p" or params[i] == "d":
             _plot_p_or_d(ax, offset_x_data, df[params[i]], params[i])
         else:
