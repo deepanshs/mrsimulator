@@ -9,7 +9,7 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
 DURATION_WIDTH = 0.4
-MIXING_WIDTH = 0.03
+MIXING_WIDTH = 0.04
 # TODO: Ensure cannot run out of colors
 COLORS = list(mcolors.TABLEAU_COLORS)
 
@@ -22,9 +22,10 @@ def _make_x_data(df):
     for i, row in df.iterrows():
         if row["type"] == "SpectralEvent":
             next_x = points[-1] + row["fraction"]
+            points.extend((next_x, next_x))
         elif row["type"] == "ConstantDurationEvent":
             next_x = points[-1] + DURATION_WIDTH
-        points.extend((next_x, next_x))
+            points.extend((next_x, next_x))
 
     points.pop()
     return points
@@ -32,26 +33,25 @@ def _make_x_data(df):
 
 def _offset_x_data(df, x_data):
     """Offsets x_data based on MixingEvents"""
+    # NOTE: Mixing event at end of sequence will not be concidered
     offset_x = [0] + x_data
-    if "MixingEvent" in df["type"]:
-        idx = np.where(df["type"] != "MixingEvent")[0]
-    else:
-        idx = 0
-    print(idx)
-    mix_count = 0
+    first_non_mix_ev_idx = np.where(df["type"] != "MixingEvent")[0][0]
 
     # Mixing event at begining
-    if idx != 0:
-        offset_x[1] += MIXING_WIDTH * 2 * idx
+    if df["type"][0] == "MixingEvent":
+        offset_x[1] += MIXING_WIDTH * 2 * first_non_mix_ev_idx
 
-    for ev_type in df["type"][idx:]:
+    mix_count = 0
+    idx = 0
+    for ev_type in df["type"][first_non_mix_ev_idx:]:
+        print(idx, ev_type)
         if ev_type == "MixingEvent":
             mix_count += 1
             continue
         if mix_count != 0:
-            # Offset last 2 points
-            offset_x[-2] -= MIXING_WIDTH * mix_count
-            offset_x[-1] += MIXING_WIDTH * mix_count
+            offset_x[idx * 2] -= MIXING_WIDTH * mix_count
+            offset_x[idx * 2 + 1] += MIXING_WIDTH * mix_count
+        idx += 1
         mix_count = 0
 
     return offset_x
@@ -93,7 +93,7 @@ def _plot_sequence_diagram(ax, x_data, df):
                 )
                 x_idx += 1
 
-            print("spec", x_data[x_idx], x_data[x_idx + 1])
+            # print("spec", x_data[x_idx], x_data[x_idx + 1])
             arr = np.linspace(x_data[x_idx], x_data[x_idx + 1], 150)
             ax.plot(arr, decay(arr), color="black")
             x_idx += 1
@@ -117,7 +117,7 @@ def _plot_p_or_d(ax, x_data, y_data, name):
     """Helper method to plot p or d data on axis"""
     # Clean nan from y_data
     y_data = np.array(y_data[[np.any(~np.isnan(d)) for d in y_data]].tolist())
-    print(len(y_data), y_data)
+    # print(len(y_data), y_data)
 
     # Ensure no errors thrown when plotting data
     if len(x_data) - 1 != len(y_data) * 2:
@@ -152,7 +152,7 @@ def _plot_data(ax, x_data, y_data, name):
     """Helper method to plot data and do formatting on ax"""
     # Clean nan from y_data
     y_data = np.array(y_data[[np.any(~np.isnan(d)) for d in y_data]].tolist())
-    print(len(y_data), y_data)
+    # print(len(y_data), y_data)
 
     # Ensure no errors thrown when plotting data
     if len(x_data) != len(y_data) * 2:
@@ -229,14 +229,12 @@ def plot(df) -> plt.figure:
     # Iterate through axes and plot data
     for i, ax in enumerate(axs[1:], 0):
         # Increase axis border thickness
-        for side in ["top", "bottom", "left", "right"]:
-            ax.spines[side].set_linewidth(1.5)
+        # for side in ["top", "bottom", "left", "right"]:
+        #     ax.spines[side].set_linewidth(1.5)
 
         if params[i] == "p" or params[i] == "d":
-            print("p or d")
             _plot_p_or_d(ax, offset_x_data, df[params[i]], params[i])
         else:
-            print("other")
             _plot_data(ax, x_data, df[params[i]], params[i])
 
     fig.tight_layout()
