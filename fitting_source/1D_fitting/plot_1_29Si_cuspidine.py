@@ -22,7 +22,7 @@
 # We will begin by importing relevant modules and establishing figure size.
 import csdmpy as cp
 import matplotlib.pyplot as plt
-from lmfit import Minimizer, Parameters, fit_report
+from lmfit import Minimizer, Parameters
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
@@ -220,7 +220,7 @@ def minimization_function(params, sim, processor, sigma=1):
 # `Minimizer <https://lmfit.github.io/lmfit-py/fitting.html>`_ class.
 minner = Minimizer(minimization_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
-print(fit_report(result))
+result
 
 # %%
 # The plot of the fit, measurement and the residuals is shown below.
