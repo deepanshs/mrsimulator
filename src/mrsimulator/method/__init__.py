@@ -478,7 +478,7 @@ class Method(Parseable):
             for item in segments
         ]
 
-    def events_to_dataframe(self, properties=None) -> pd.DataFrame:
+    def summary(self, properties=None) -> pd.DataFrame:
         """Returns dataframe of requested Event properties
 
         Args:
@@ -540,6 +540,9 @@ class Method(Parseable):
 
         Returns:
             matplotlib.pyplot.figure
+
+        Example:
+            TODO add example code
         """
         return pt(df)
 
