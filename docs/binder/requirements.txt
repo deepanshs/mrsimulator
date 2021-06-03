@@ -1,0 +1,14 @@
+# Requirements for the documentation.
+# These are extra dependencies that aren't required to use sphinx-gallery.
+numpy>=1.17
+matplotlib>=3.3.3
+csdmpy>=0.4
+pydantic>=1.0
+monty>=2.0.4
+typing-extensions>=3.7
+lmfit>=1.0.2
+pandas>=1.1.3
+numexpr>=2.7.1
+psutil>=5.4.8
+joblib>=1.0.0
+mrsimulator>=0.6

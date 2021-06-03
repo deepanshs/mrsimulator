@@ -26,6 +26,11 @@ h2 {
   /* background-color: #e7e7f3; */
 }
 
+.output_html.output_result h2 {
+  font-size: 1.2em;
+  color: #663d3d;
+}
+
 h3 {
   font-size: 1.3em;
   text-decoration: underline;
@@ -392,9 +397,10 @@ footer a:active {
 }
 
 table:not([class]):not([id]) {
-  display: contents;
+  display: block;
   font-size: small;
   overflow-x: auto;
+  margin: 0;
 }
 
 tr th {

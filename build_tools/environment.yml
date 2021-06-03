@@ -1,3 +1,4 @@
+# Used in building binder.
 name: mrsimulator-dev
 channels:
   - anaconda
@@ -20,5 +21,5 @@ dependencies:
       - typing-extensions>=3.7
       - lmfit>=1.0.2
       - psutil>=5.4.8
-      - git+https://github.com/DeepanshS/mrsimulator.git@master
+      - mrsimulator>=0.6
       - plotly

@@ -166,12 +166,12 @@ sphinx_gallery_conf = {
         # Required keys
         "org": "DeepanshS",
         "repo": "mrsimulator",
-        "branch": "master",
+        "branch": "binder_fix",
         "binderhub_url": "https://mybinder.org",
-        "dependencies": "../requirements.txt",
+        "dependencies": "./binder/requirements.txt",
         # Optional keys
         "filepath_prefix": "docs/_build/html",
-        "notebooks_dir": "notebooks",
+        "notebooks_dir": "../../notebooks",
         "use_jupyter_lab": True,
     },
 }
