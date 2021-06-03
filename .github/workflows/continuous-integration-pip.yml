@@ -3,11 +3,7 @@
 
 name: CI (pip)
 
-on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+on: [push, pull_request]
 
 jobs:
   code_lint:
@@ -34,7 +30,7 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=9 --max-line-length=88 --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
 
-  build_unix_test:
+  testing_unix:
     needs: [code_lint]
     strategy:
       matrix:
@@ -114,7 +110,7 @@ jobs:
   #     - name: Upload coverage
   #       uses: codecov/codecov-action@v1
 
-  build_windows_test:
+  testing_windows:
     needs: [code_lint]
     strategy:
       matrix:
