@@ -392,14 +392,8 @@ footer a:active {
 }
 
 table:not([class]):not([id]) {
-  display: flex;
-  justify-content: space-between;
+  display: contents;
   font-size: small;
-  padding-right: 1em;
-  padding-bottom: 0.5em;
-  outline: 1px solid silver;
-  border-radius: 1em;
-  width: 100%;
   overflow-x: auto;
 }
 
@@ -459,11 +453,6 @@ tr td {
     width: 100%;
   }
 
-  table:not([class]):not([id]) {
-    width: 100%;
-    max-width: 992px;
-  }
-
   #sidebar-wrapper {
     display: none;
   }
@@ -476,9 +465,6 @@ tr td {
   footer {
     margin-left: -15px;
     width: calc(100% + 30px);
-  }
-  table:not([class]):not([id]) {
-    width: 100%;
   }
   .bodywrapper > .body {
     margin-top: 0;

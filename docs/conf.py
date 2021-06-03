@@ -153,7 +153,7 @@ sphinx_gallery_conf = {
     "backreferences_dir": "examples",
     "doc_module": ("mrsimulator"),
     "image_scrapers": ["matplotlib"],  # , scraper],
-    # "compress_images": ("images", "thumbnails"),
+    "compress_images": ("images", "thumbnails"),
     # "show_memory": True,
     "first_notebook_cell": (
         "# This cell is added by sphinx-gallery\n\n"
@@ -161,6 +161,7 @@ sphinx_gallery_conf = {
         "import mrsimulator\n"
         "print(f'You are using mrsimulator v{mrsimulator.__version__}')"
     ),
+    "capture_repr": ("_repr_html_", "__repr__"),
     "binder": {
         # Required keys
         "org": "DeepanshS",
@@ -170,7 +171,7 @@ sphinx_gallery_conf = {
         "dependencies": "../requirements.txt",
         # Optional keys
         "filepath_prefix": "docs/_build/html",
-        "notebooks_dir": "../../notebooks",
+        "notebooks_dir": "notebooks",
         "use_jupyter_lab": True,
     },
 }
