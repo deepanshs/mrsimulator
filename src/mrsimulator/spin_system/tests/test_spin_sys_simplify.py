@@ -4,8 +4,8 @@ from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.spin_system.split_spinsystems import new_systems_needed_np
 
-# from mrsimulator.spin_system.split_spinsystems import new_systems_needed_matrix
-# from mrsimulator.spin_system.split_spinsystems import new_systems_needed_nosets
+__author__ = "Alexis McCarthy"
+__email__ = "mccarthy.677@osu.edu"
 
 
 def setup_sites():
@@ -19,17 +19,17 @@ def setup_sites():
 
 
 def setup_system_simplifiedSystem():
+    """systems A-B-C, D-F, E"""
+    sites = setup_sites()
 
-    A, B, C, D, E, F = setup_sites()
-    sites = [A, B, C, D, E, F]
     AB_couple = Coupling(site_index=[0, 1], isotropic_j=10, name="AB")
     BC_couple = Coupling(site_index=[1, 2], isotropic_j=10, name="BC")
     AC_couple = Coupling(site_index=[0, 2], isotropic_j=10, name="AC")
     DF_couple = Coupling(site_index=[3, 5], isotropic_j=30, name="DF")
     couplings = [AB_couple, BC_couple, AC_couple, DF_couple]
-
     sys = SpinSystem(sites=sites, couplings=couplings, abundance=10)
 
+    A, B, C, D, E, F = sites
     simplified_sys = [
         SpinSystem(sites=[E], abundance=10),
         SpinSystem(
@@ -45,8 +45,8 @@ def setup_system_simplifiedSystem():
 
 
 def setup_uncoupled_system():
-    A, B, C, D, E, F = setup_sites()
-    sites = [A, B, C, D, E, F]
+    """Systems A, B, Cc, D, E, F"""
+    sites = setup_sites()
     sys = SpinSystem(sites=sites, abundance=25)
 
     simplified_sys = [SpinSystem(sites=[i], abundance=25) for i in sites]
@@ -55,14 +55,14 @@ def setup_uncoupled_system():
 
 
 def setup_somecoupled_system():
-    A, B, C, D, E, F = setup_sites()
-    sites = [A, B, C, D, E, F]
+    """Systems A-C, B, D-E, F"""
+    sites = setup_sites()
 
     AC_couple = Coupling(site_index=[0, 2], isotropic_j=20)
     DE_couple = Coupling(site_index=[3, 4], isotropic_j=40)
-
     sys = SpinSystem(sites=sites, couplings=[AC_couple, DE_couple], abundance=50)
 
+    A, B, C, D, E, F = sites
     simplified_sys = [
         SpinSystem(sites=[B], abundance=50),
         SpinSystem(sites=[F], abundance=50),
@@ -81,14 +81,14 @@ def setup_somecoupled_system():
 
 
 def setup_partially_coupled_system():
-    A, B, C, D, E, F = setup_sites()
-    sites = [A, B, C, D, E, F]
+    """Systems A-C-E, B, D, F"""
+    sites = setup_sites()
 
     AC_couple = Coupling(site_index=[0, 2], isotropic_j=20)
     CE_couple = Coupling(site_index=[2, 4], isotropic_j=40)
-
     sys = SpinSystem(sites=sites, couplings=[AC_couple, CE_couple], abundance=50)
 
+    A, B, C, D, E, F = sites
     simplified_sys = [
         SpinSystem(sites=[B], abundance=50),
         SpinSystem(sites=[D], abundance=50),
@@ -103,6 +103,47 @@ def setup_partially_coupled_system():
         ),
     ]
     return sys, simplified_sys
+
+
+def setup_partially_coupled_system2():
+    """Systems A-C-E-F, B-D"""
+    sites = setup_sites()
+
+    AC_couple = Coupling(site_index=[0, 2], isotropic_j=20)
+    BD_couple = Coupling(site_index=[1, 3], isotropic_j=120)
+    EF_couple = Coupling(site_index=[4, 5], isotropic_j=10)
+    CE_couple = Coupling(site_index=[2, 4], isotropic_j=40)
+    sys = SpinSystem(
+        sites=sites,
+        couplings=[AC_couple, BD_couple, EF_couple, CE_couple],
+        abundance=50,
+    )
+
+    A, B, C, D, E, F = sites
+    simplified_sys = [
+        SpinSystem(
+            sites=[B, D],
+            couplings=[Coupling(site_index=[0, 1], isotropic_j=10)],
+            abundance=50,
+        ),
+        SpinSystem(
+            sites=[A, C, E, F],
+            couplings=[
+                Coupling(site_index=[0, 1], isotropic_j=20),
+                Coupling(site_index=[2, 3], isotropic_j=120),
+                Coupling(site_index=[1, 2], isotropic_j=40),
+            ],
+            abundance=50,
+        ),
+    ]
+    return sys, simplified_sys
+
+
+def setup_partially_coupled_system3():
+    """Systems A-B-C-D-E-F"""
+    sys, _ = setup_partially_coupled_system2()
+    sys.couplings.append(Coupling(site_index=[0, 1], isotropic_j=120))
+    return sys, sys
 
 
 def generic_test(sys, simplified_sys):
@@ -137,29 +178,6 @@ def test_simplify_3():
 def test_simplify_4():
     sys, simplified_sys = setup_partially_coupled_system()
     generic_test(sys, simplified_sys)
-
-
-# def test_new_systems_needed_matrix():
-#     test_matrix1 = np.array([[1, 1, 0], [1, 1, 0], [0, 0, 1]])
-#     test_matrix2 = np.array(
-#         [[1, 1, 0, 0], [1, 1, 5e-20, 0], [0, 0, 1, 1], [0, 0, 1, 1]]
-#     )
-#     sets1 = new_systems_needed_matrix(test_matrix1)
-#     sets2 = new_systems_needed_matrix(test_matrix2)
-#     assert sets1 == set({frozenset({0, 1}), frozenset({2})})
-#     assert sets2 == set({frozenset({0, 1}), frozenset({2, 3})})
-
-
-# def test_new_systems_needed_nosets():
-#     test_matrix1 = np.array([[1, 1, 0], [1, 1, 0], [0, 0, 1]])
-#     test_matrix2 = np.array(
-#         [[1, 1, 0, 0], [1, 1, 5e-20, 0], [0, 0, 1, 1], [0, 0, 1, 1]]
-#     )
-#     systems1 = new_systems_needed_nosets(test_matrix1)
-#     systems2 = new_systems_needed_nosets(test_matrix2)
-#     assert systems1 == [(0, 1), (2,)]
-#     assert systems2 == [(0, 1), (2, 3)]
-#
 
 
 def test_new_systems_needed_np():

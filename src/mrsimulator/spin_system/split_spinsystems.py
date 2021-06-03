@@ -7,7 +7,7 @@ __author__ = "Alexis McCarthy"
 __email__ = "mccarthy.677@osu.edu"
 
 
-def split_spin_system(spin_system):  # 9 lines
+def split_spin_system(spin_system):
     """Simplifies user-defined spin systems into irreducible spin system objects.
 
     Args:
@@ -40,7 +40,7 @@ def new_systems_needed_np(coupling_indexes, n_sites):
     return systems_needed
 
 
-def build_new_systems(spin_system):  # 10 lines
+def build_new_systems(spin_system):
     """Builds a list of irreducible spin systems from a given reducible spin system.
 
     Args:
@@ -79,7 +79,12 @@ def build_new_system(one_set, spin_system):  # 10-12 lines
     return new_sys
 
 
-def fix_coupling_index(new_spin_sys, map):  # 8 lines
-    """Uses mapping list to correct site indexes of coupling objects."""
+def fix_coupling_index(new_spin_sys, map):
+    """Uses mapping list to correct the site indexes of coupling objects.
+
+    Args:
+        new_spin_sys: The new spin system
+        map: A list of indexes mapping the old spin system sites to the new.
+    """
     for coupling in new_spin_sys.couplings:
         coupling.site_index = [map.index(item) for item in coupling.site_index]
