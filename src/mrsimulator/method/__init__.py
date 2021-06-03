@@ -494,46 +494,41 @@ class Method(Parseable):
         spec_dims = self.spectral_dimensions
         gsp = self.get_symmetry_pathways
 
+        if properties is None:
+            properties = [
+                "magnetic_flux_density",
+                "rotor_frequency",
+                "rotor_angle",
+                "p",
+                "d",
+            ]
+
         df = pd.DataFrame()
         df["type"] = [ev.__class__.__name__ for dim in spec_dims for ev in dim.events]
         df["label"] = [ev.label for dim in spec_dims for ev in dim.events]
-        df["duration"] = [
-            ev.duration if ev.__class__.__name__ == "ConstantDurationEvent" else np.nan
-            for dim in spec_dims
-            for ev in dim.events
-        ]
-        df["fraction"] = [
-            ev.fraction if ev.__class__.__name__ == "SpectralEvent" else np.nan
-            for dim in spec_dims
-            for ev in dim.events
-        ]
-        if properties is None or "magnetic_flux_density" in properties:
-            df["magnetic_flux_density"] = [
-                ev.magnetic_flux_density
-                if ev.__class__.__name__ != "MixingEvent"
-                else np.nan
+
+        attributes = ["duration", "fraction"]
+        cls_valid = ["ConstantDurationEvent", "SpectralEvent"]
+        for attr, cls_name in zip(attributes, cls_valid):
+            df[attr] = [
+                getattr(ev, attr) if ev.__class__.__name__ == cls_name else np.nan
                 for dim in spec_dims
                 for ev in dim.events
             ]
-        if properties is None or "rotor_frequency" in properties:
-            df["rotor_frequency"] = [
-                ev.rotor_frequency if ev.__class__.__name__ != "MixingEvent" else np.nan
-                for dim in spec_dims
-                for ev in dim.events
-            ]
-        if properties is None or "rotor_angle" in properties:
-            df["rotor_angle"] = [
-                ev.rotor_angle * 180 / (2 * np.pi)
-                if ev.__class__.__name__ != "MixingEvent"
-                else np.nan
-                for dim in spec_dims
-                for ev in dim.events
-            ]
-        # NOTE: Should 'P' and 'D' be capatalized
-        if properties is None or "P" in properties or "p" in properties:
+
+        if "p" in properties:
             df["p"] = np.transpose([sym.total for sym in gsp("P")]).tolist()
-        if properties is None or "D" in properties or "d" in properties:
+            properties.remove("p")
+        if "d" in properties:
             df["d"] = np.transpose([sym.total for sym in gsp("D")]).tolist()
+            properties.remove("d")
+
+        for attr in properties:
+            df[attr] = [
+                getattr(ev, attr) if ev.__class__.__name__ != "MixingEvent" else np.nan
+                for dim in spec_dims
+                for ev in dim.events
+            ]
 
         return df
 
