@@ -156,7 +156,8 @@ sphinx_gallery_conf = {
     "compress_images": ("images", "thumbnails"),
     # "show_memory": True,
     "first_notebook_cell": (
-        "# This cell is added by sphinx-gallery\n\n"
+        "# This cell is added by sphinx-gallery\n"
+        "!pip install mrsimulator --quiet\n\n\n"
         "%matplotlib inline\n\n"
         "import mrsimulator\n"
         "print(f'You are using mrsimulator v{mrsimulator.__version__}')"
@@ -166,7 +167,7 @@ sphinx_gallery_conf = {
         # Required keys
         "org": "DeepanshS",
         "repo": "mrsimulator",
-        "branch": "binder_fix",
+        "branch": "master",
         "binderhub_url": "https://mybinder.org",
         "dependencies": "../requirements.txt",
         # Optional keys
