@@ -249,7 +249,7 @@ static inline void rectangle_bin(double x0, double x1, double amp, double *spec,
 static inline void quadrilateral_bin_2(double *f00, double *f11, double *f10,
                                        double *f01, double top, double bottom,
                                        double total, double amp, double *spec, int m1) {
-  double amp_left, amp_mid, amp_right, a, a1, a2, a3, norm = amp / total;
+  double amp_left, amp_mid, amp_right, a, a1, a2, a3;
 
   // if (*f00 == *f01) {
   //   triangle_interpolation1D(f00, f11, f10, &amp, spec, &m1);

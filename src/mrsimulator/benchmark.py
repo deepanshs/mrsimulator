@@ -52,22 +52,25 @@ def generate_spin_half_int_csa_quad_spin_system(n=1000):
     eta_q = np.random.normal(loc=0.6, scale=0.02, size=n)
     beta = np.random.normal(loc=2.12, scale=0.1, size=n)
     spin_systems = []
-    for i, z, e_z, c, e_q, b in zip(iso, zeta, eta_z, Cq, eta_q, beta):
+    for i, z, e_z, c_q, e_q, b in zip(iso, zeta, eta_z, Cq, eta_q, beta):
         site = Site(
             isotope="17O",
             isotropic_chemical_shift=i,
             shielding_symmetric={"zeta": z, "eta": e_z},
-            quadrupolar={"Cq": c, "eta": e_z, "beta": b},
+            quadrupolar={"Cq": c_q, "eta": e_q, "beta": b},
         )
         spin_systems.append(SpinSystem(sites=[site]))
     return spin_systems
 
 
-def generate_simulator(spin_systems, method, integration_volume="octant"):
+def generate_simulator(
+    spin_systems, method, integration_volume="octant", number_of_sidebands=64
+):
     sim = Simulator()
     sim.spin_systems = spin_systems
     sim.methods = [method]
     sim.config.integration_volume = integration_volume
+    sim.config.number_of_sidebands = number_of_sidebands
     return sim
 
 
@@ -113,6 +116,8 @@ def quad_MAS_method():
 
 
 def quad_static_2d_method():
+    tq = [{"P": [-1], "D": [0]}]
+    to_rad = 3.14159 / 180
     return Method2D(
         channels=["17O"],
         magnetic_flux_density=4.2,  # in T
@@ -121,25 +126,13 @@ def quad_static_2d_method():
                 "count": 256,
                 "spectral_width": 4e4,  # in Hz
                 "reference_offset": -1e4,  # in Hz
-                "label": "70.12 dimension",
-                "events": [
-                    {
-                        "rotor_angle": 70.12 * 3.14159 / 180,
-                        "transition_query": {"P": [-1], "D": [0]},
-                    }
-                ],  # in radians
+                "events": [{"rotor_angle": 70.12 * to_rad, "transition_query": tq}],
             },
             {
                 "count": 512,
                 "spectral_width": 5e4,  # in Hz
                 "reference_offset": -5e3,  # in Hz
-                "label": "MAS dimension",
-                "events": [
-                    {
-                        "rotor_angle": 54.74 * 3.14159 / 180,
-                        "transition_query": {"P": [-1], "D": [0]},
-                    }
-                ],  # in radians
+                "events": [{"rotor_angle": 54.74 * to_rad, "transition_query": tq}],
             },
         ],
     )
@@ -193,12 +186,12 @@ def spectrum_blocks(n, level, n_jobs=1):
         "MAS CSA only sidebands spectrum",
         "VAS CSA only spectrum",
         "MAS quadrupolar (1st + 2nd order) only spectrum",
-        "CSA-Quad 2S SAS spectrum",
+        "CSA-Quad 2D SAS spectrum (infinite speed spectrum)",
     ]
     print(f"\nLevel {level} results.")
     print("Average computation time for simulation one single-site spin system.")
     print(
-        f"Reported value is the simulation time per spectra averaged over {n} spectra "
+        f"Reported value is the time per simulation averaged over {n} simulations "
         "generated for random tensor parameters."
     )
     terminal_start_setup()
@@ -239,7 +232,7 @@ def spectrum_simulation_benchmark(n):
 
     method = quad_static_2d_method()
     sim_csd_quad_mas_2d = generate_simulator(
-        spin_sys, method, integration_volume="hemisphere"
+        spin_sys, method, integration_volume="hemisphere", number_of_sidebands=1
     )
     return (
         sim_csa_static,
