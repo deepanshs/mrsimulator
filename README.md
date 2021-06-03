@@ -12,7 +12,15 @@
 magnetic resonance (NMR) spectra of both crystalline and amorphous materials. The core
 of the `mrsimulator` library is written in C, wrapped, and made available in python.
 
-> :warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
+---
+**Check out our extensive [documentation](https://mrsimulator.readthedocs.io/en/stable/index.html).**
+
+[![Simulation](https://img.shields.io/badge/View-Simulation%20Examples-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/examples/index.html)
+[![Fitting](https://img.shields.io/badge/View-Fitting%20Examples-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/fitting/index.html)
+
+---
+
+:warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
 
 ## Why use mrsimulator?
 
@@ -27,11 +35,7 @@ of the `mrsimulator` library is written in C, wrapped, and made available in pyt
 - Packages using mrsimulator -
   - [mrinversion](https://mrinversion.readthedocs.io/en/stable/)
 
-> **View our example gallery**
->
-> [![Simulation](https://img.shields.io/badge/View-Simulation%20Examples-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/examples/index.html)
->
-> [![Fitting](https://img.shields.io/badge/View-Fitting%20Examples-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/fitting/index.html)
+
 
 ### Features
 
