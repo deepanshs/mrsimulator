@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from itertools import groupby
+
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,13 +11,13 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
 DURATION_WIDTH = 0.6
-MIXING_WIDTH = 0.04
+MIXING_WIDTH = 0.05
 # TODO: Ensure cannot run out of colors
 COLORS = list(mcolors.TABLEAU_COLORS)
 EVENT_COLORS = {  # TODO: add colors
-    "ConstantDurationEvent": 'k',
-    "SpectralEvent": 'g',
-    "MixingEvent": 'b'
+    "ConstantDurationEvent": "orange",
+    "SpectralEvent": "g",
+    "MixingEvent": "b",
 }
 
 
@@ -38,50 +40,75 @@ def _make_x_data(df):
 
 def _offset_x_data(df, x_data):
     """Offsets x_data based on MixingEvents"""
-    # NOTE: Mixing event at end of sequence will not be concidered
-    offset_x = [0] + x_data
-    first_non_mix_ev_idx = np.where(df["type"] != "MixingEvent")[0][0]
+    # NOTE: Mixing event at end of sequence are ignored
+    offset_x = np.array([0] + x_data)
+    ev_groups = [(_type, sum(1 for _ in group)) for _type, group in groupby(df["type"])]
+    # Remove MixingEvents from end of sequence
+    if ev_groups[-1][0] == "MixingEvent":
+        ev_groups.pop()
 
-    # Mixing event at begining
-    if df["type"][0] == "MixingEvent":
-        offset_x[1] += MIXING_WIDTH * 2 * first_non_mix_ev_idx
-
-    mix_count = 0
-    idx = 0
-    for ev_type in df["type"][first_non_mix_ev_idx:]:
-        if ev_type == "MixingEvent":
-            mix_count += 1
+    for i, (_type, num) in enumerate(ev_groups):
+        if i == 0 and _type == "MixingEvent":
+            offset_x[1] += MIXING_WIDTH * num * 2
             continue
-        if mix_count != 0:
-            offset_x[idx * 2] -= MIXING_WIDTH * mix_count
-            offset_x[idx * 2 + 1] += MIXING_WIDTH * mix_count
-        idx += 1
-        mix_count = 0
+        if _type == "MixingEvent":
+            offset_x[i] -= MIXING_WIDTH * num
+            offset_x[i + 1] += MIXING_WIDTH * num
 
     return offset_x
 
 
+def _add_rect_with_label(ax, x0, x1, label, ev_type):
+    """Add a rectangle between x0 and x1 representing event"""
+    rect_kwargs = {"color": EVENT_COLORS[ev_type], "alpha": 0.2}
+    anno_kwargs = {
+        "color": "black",
+        "ha": "center",
+        "va": "center",
+        "rotation": 90 if ev_type == "MixingEvent" else 0,
+    }
+    rect = Rectangle((x0, -1), x1 - x0, 2, **rect_kwargs)
+    ax.add_patch(rect)
+    if label is not None:
+        ax.annotate(label, ((x1 + x0) / 2, 0.5), **anno_kwargs)
+
+
 def _plot_sequence_diagram(ax, x_data, df):
     """Helper method to plot sequence diagram of method on ax"""
-    def add_rect_with_label(ax, x0, x1, label, ev_type):
-        rect = Rectangle((x0, -1), x1-x0, 2, color=EVENT_COLORS[ev_type], alpha=0.4)
-        ax.add_patch(rect)
-        if label is not None:
-            ax.annotate(label, ((x1-x0)/2, 0), color="black", ha="center", va="center")
+    ev_groups = [(_type, sum(1 for _ in group)) for _type, group in groupby(df["type"])]
+    if ev_groups[-1][0] == "MixingEvent":
+        x_data = np.append(x_data, x_data[-1])
+        x_data[-2] -= MIXING_WIDTH * ev_groups[-1][1] * 2
 
-    plot_mix = False
-    idx = 0
-    for i, row in df.iterrows():
-        if row["type"] == "MixingEvent":
-            plot_mix = True
-            continue
-        if plot_mix:
-            # NOTE: What should labels be for mxixing events?
-            add_rect_with_label(ax, x_data[idx], x_data[idx+1], "", "MixingEvent")
-            idx += 1
-        add_rect_with_label(ax, x_data[idx], x_data[idx+1], row["label"], row["type"])
-        idx += 1
-        plot_mix = False
+    df_idx = 0
+    x_idx = 0
+    for _type, num in ev_groups:
+        if _type == "MixingEvent":
+            # Create even spacing between MixingEvent rectangles within offset width
+            tmp = np.linspace(x_data[x_idx], x_data[x_idx + 1], num=num + 1)
+            for j in range(num):
+                # Plot each MixingEvent
+                _add_rect_with_label(
+                    ax, tmp[j], tmp[j + 1], df["label"][df_idx + j], "MixingEvent"
+                )
+            x_idx += 1
+        else:
+            for j in range(num):
+                # Increment x_idx if no mixing event between events
+                if x_data[x_idx] == x_data[x_idx + 1]:
+                    x_idx += 1
+                _add_rect_with_label(
+                    ax,
+                    x_data[x_idx],
+                    x_data[x_idx + 1],
+                    df["label"][df_idx + j],
+                    df["type"][df_idx + j],
+                )
+                x_idx += 1
+
+        df_idx += num
+
+    ax.axis("off")
 
 
 def _plot_p_or_d(ax, x_data, y_data, name):
@@ -185,5 +212,4 @@ def plot(df) -> plt.figure:
         else:
             _plot_data(ax, x_data, df[params[i]], params[i])
 
-    fig.tight_layout()
     return fig

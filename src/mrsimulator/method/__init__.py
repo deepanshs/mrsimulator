@@ -23,10 +23,6 @@ from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
 
-# import matplotlib.pyplot as plt
-# import matplotlib.colors as mcolors
-# from matplotlib.patches import Rectangle
-
 __author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]
 __email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
 
@@ -544,7 +540,10 @@ class Method(Parseable):
         Example:
             TODO add example code
         """
-        return pt(df)
+        fig = pt(df)
+        fig.suptitle(self.name if self.name is not None else "")
+        fig.tight_layout()
+        return fig
 
     def shape(self) -> tuple:
         """The shape of the method's spectral dimension array.
