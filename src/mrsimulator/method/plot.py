@@ -10,7 +10,8 @@ __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
-DURATION_WIDTH = 0.6
+DURATION_WIDTH = 0.6  # Width of one ConstantDurationEvent
+SPECTRAL_MULTIPLIER = 1.5  # Width multiplier for all SpectralEvents
 MIXING_WIDTH = 0.05
 # TODO: Ensure cannot run out of colors
 COLORS = list(mcolors.TABLEAU_COLORS)
@@ -23,12 +24,11 @@ EVENT_COLORS = {  # TODO: add colors
 
 def _make_x_data(df):
     """Returns list of x points to use in plotting"""
-    # TODO: Find value for constant duration event (tau/2)?
     points = [0]
 
     for i, row in df.iterrows():
         if row["type"] == "SpectralEvent":
-            next_x = points[-1] + row["fraction"]
+            next_x = points[-1] + (row["fraction"] * SPECTRAL_MULTIPLIER)
             points.extend((next_x, next_x))
         elif row["type"] == "ConstantDurationEvent":
             next_x = points[-1] + DURATION_WIDTH
@@ -40,26 +40,31 @@ def _make_x_data(df):
 
 def _offset_x_data(df, x_data):
     """Offsets x_data based on MixingEvents"""
-    # NOTE: Mixing event at end of sequence are ignored
     offset_x = np.array([0] + x_data)
     ev_groups = [(_type, sum(1 for _ in group)) for _type, group in groupby(df["type"])]
     # Remove MixingEvents from end of sequence
     if ev_groups[-1][0] == "MixingEvent":
         ev_groups.pop()
 
-    for i, (_type, num) in enumerate(ev_groups):
-        if i == 0 and _type == "MixingEvent":
-            offset_x[1] += MIXING_WIDTH * num * 2
-            continue
+    # Extend first jump if first event(s) are MixingEvent
+    if ev_groups[0][0] == "MixingEvent":
+        offset_x[1] += MIXING_WIDTH * ev_groups[0][1] * 2
+        ev_groups.pop(0)
+
+    idx = 1
+    for _type, num in ev_groups:
         if _type == "MixingEvent":
-            offset_x[i] -= MIXING_WIDTH * num
-            offset_x[i + 1] += MIXING_WIDTH * num
+            offset_x[idx] -= MIXING_WIDTH * num
+            offset_x[idx + 1] += MIXING_WIDTH * num
+            idx += 1
+        else:
+            idx += (num * 2) - 1
 
     return offset_x
 
 
 def _add_rect_with_label(ax, x0, x1, label, ev_type):
-    """Add a rectangle between x0 and x1 representing event"""
+    """Add a rectangle between x0 and x1 on ax representing event"""
     rect_kwargs = {"color": EVENT_COLORS[ev_type], "alpha": 0.2}
     anno_kwargs = {
         "color": "black",
@@ -115,7 +120,6 @@ def _plot_p_or_d(ax, x_data, y_data, name):
     """Helper method to plot p or d data on axis"""
     # Clean nan from y_data
     y_data = np.array(y_data[[np.any(~np.isnan(d)) for d in y_data]].tolist())
-    # print(len(y_data), y_data)
 
     # Ensure no errors thrown when plotting data
     if len(x_data) - 1 != len(y_data) * 2:
@@ -150,7 +154,6 @@ def _plot_data(ax, x_data, y_data, name):
     """Helper method to plot data and do formatting on ax"""
     # Clean nan from y_data
     y_data = np.array(y_data[[np.any(~np.isnan(d)) for d in y_data]].tolist())
-    # print(len(y_data), y_data)
 
     # Ensure no errors thrown when plotting data
     if len(x_data) != len(y_data) * 2:
@@ -178,9 +181,10 @@ def plot(df) -> plt.figure:
     Example:
         TODO add example code
     """
-    params = list(
-        df.columns.drop(["type", "label", "duration", "fraction", "freq_contrib"])
-    )
+    drop_cols = ["type", "label", "duration", "fraction"]
+    if "freq_contrib" in df.columns:
+        drop_cols += ["freq_contrib"]
+    params = list(df.columns.drop(drop_cols))
     # Move p and d to front of params
     if "d" in params:
         params.insert(0, params.pop(params.index("d")))
@@ -196,7 +200,7 @@ def plot(df) -> plt.figure:
     fig, axs = plt.subplots(
         nrows=len(params) + 1,
         ncols=1,
-        figsize=(max(x_data) * 2.5, len(params) * 1.5 + 2),
+        figsize=(max(x_data) * 3, len(params) * 2 + 2),
         sharex=True,
         gridspec_kw={"hspace": 0.0},
     )
