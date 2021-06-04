@@ -196,6 +196,11 @@ def plot(df) -> plt.figure:
         return plt.figure()
 
     x_data = _make_x_data(df)
+
+    if len(x_data) == 0:
+        # Warn only mixing events
+        return plt.figure()
+
     offset_x_data = _offset_x_data(df, x_data)
     fig, axs = plt.subplots(
         nrows=len(params) + 1,
