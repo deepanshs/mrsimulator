@@ -474,11 +474,12 @@ class Method(Parseable):
             for item in segments
         ]
 
-    def summary(self, properties=None) -> pd.DataFrame:
+    def summary(self, properties=None, drop_constant_cols=False) -> pd.DataFrame:
         """Returns dataframe of requested Event properties
 
         Args:
             List properties: properties to include in df columns. Include all if empty
+            bool drop_constant_cols: Drops constant columns except p and d
 
         Returns:
             pd.DataFrame df: properties as columns and event number as row
@@ -487,10 +488,11 @@ class Method(Parseable):
             TODO add example code
         """
         # TODO: Add catch for empty 'spectral_dimensions' and 'events'
+        # TODO: Clean up code with droping constant columns
         spec_dims = self.spectral_dimensions
         gsp = self.get_symmetry_pathways
 
-        if properties is None:
+        if properties is None or len(properties) == 0:
             properties = [
                 "magnetic_flux_density",
                 "rotor_frequency",
@@ -521,22 +523,28 @@ class Method(Parseable):
             properties.remove("d")
 
         for attr in properties:
-            df[attr] = [
+            lst = [
                 getattr(ev, attr) if ev.__class__.__name__ != "MixingEvent" else np.nan
                 for dim in spec_dims
                 for ev in dim.events
             ]
+            if drop_constant_cols and attr != "freq_contrib":
+                copy_lst = np.array(lst)[~np.isnan(lst)]
+                if np.all(copy_lst == copy_lst[0]):
+                    continue
+            df[attr] = lst
 
         if "rotor_angle" in properties:
             df["rotor_angle"] = df["rotor_angle"] * 180 / np.pi
 
         return df
 
-    def plot(self, df) -> mpl.pyplot.figure:
+    def plot(self, df=None, params=None) -> mpl.pyplot.figure:
         """Plots a diagram representation of the method
 
         Args:
             DataFrame df: dataframe to plot data from
+            List params: overwrite passed df with summary if not None
 
         Returns:
             matplotlib.pyplot.figure
@@ -544,6 +552,12 @@ class Method(Parseable):
         Example:
             TODO add example code
         """
+        if df is None:
+            if params is None:
+                df = self.summary(properties=None, drop_constant_cols=True)
+            else:
+                df = self.summary(properties=params)
+
         fig = pt(df)
         fig.suptitle(self.name if self.name is not None else "")
         fig.tight_layout()
