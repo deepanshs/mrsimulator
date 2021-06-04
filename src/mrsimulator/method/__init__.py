@@ -475,7 +475,9 @@ class Method(Parseable):
         ]
 
     def summary(self, properties=None, drop_constant_cols=False) -> pd.DataFrame:
-        """Returns dataframe of requested Event properties
+        """Returns dataframe of requested Event properties as columns and event number
+        as row. If the requested property is not a valid attribute of a spesific event
+        np.nan will be placed instead
 
         Args:
             List properties: properties to include in df columns. Include all if empty
@@ -492,7 +494,8 @@ class Method(Parseable):
         spec_dims = self.spectral_dimensions
         gsp = self.get_symmetry_pathways
 
-        if properties is None or len(properties) == 0:
+        # When no properties passed, automatically include all properties
+        if properties is None:
             properties = [
                 "magnetic_flux_density",
                 "rotor_frequency",
@@ -503,9 +506,9 @@ class Method(Parseable):
             ]
 
         df = pd.DataFrame()
+        # Make columns alwyas present in dataframe regardless of properties
         df["type"] = [ev.__class__.__name__ for dim in spec_dims for ev in dim.events]
         df["label"] = [ev.label for dim in spec_dims for ev in dim.events]
-
         attributes = ["duration", "fraction"]
         cls_valid = ["ConstantDurationEvent", "SpectralEvent"]
         for attr, cls_name in zip(attributes, cls_valid):
@@ -515,6 +518,8 @@ class Method(Parseable):
                 for ev in dim.events
             ]
 
+        # Calculate 'p' and 'd' and add as columns
+        # NOTE: 'p' & 'd' removed from properties so propertiesiteration throws no error 
         if "p" in properties:
             df["p"] = np.transpose([sym.total for sym in gsp("P")]).tolist()
             properties.remove("p")
@@ -524,16 +529,19 @@ class Method(Parseable):
 
         for attr in properties:
             lst = [
+                # Exclude getting data from MixingEvents
                 getattr(ev, attr) if ev.__class__.__name__ != "MixingEvent" else np.nan
                 for dim in spec_dims
                 for ev in dim.events
             ]
             if drop_constant_cols and attr != "freq_contrib":
-                copy_lst = np.array(lst)[~np.isnan(lst)]
+                # Remove NAN from list then check if constant
+                copy_lst = np.array(lst)[pd.notnull(lst)]
                 if np.all(copy_lst == copy_lst[0]):
                     continue
             df[attr] = lst
 
+        # Convert rotor_angle to degrees
         if "rotor_angle" in properties:
             df["rotor_angle"] = df["rotor_angle"] * 180 / np.pi
 
