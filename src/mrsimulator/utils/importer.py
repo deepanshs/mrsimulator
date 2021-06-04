@@ -4,6 +4,7 @@ import json
 from urllib.parse import urlparse
 
 from csdmpy.dependent_variable.download import download_file_from_url
+from monty.io import zopen
 
 
 __author__ = "Deepansh J. Srivastava"
@@ -14,6 +15,8 @@ def import_json(filename):
     res = urlparse(filename)
     if res[0] not in ["file", ""]:
         filename = download_file_from_url(filename)
-    with open(filename, "rb") as f:
+
+    operator = zopen if filename.endswith("gz") else open
+    with operator(filename, "rb") as f:
         content = f.read()
         return json.loads(str(content, encoding="UTF-8"))

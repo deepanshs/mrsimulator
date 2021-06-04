@@ -5,45 +5,37 @@
 =========================================
 """
 # %%
-# The following is a spinning sideband fitting example for :math:`^{29}\text{Si}` 1D
-# MAS NMR spectrum of Xonotlite crystal, acquired by by Hansen et al. [#f1]_
+# The following is an example for submitting the NMR tensor parameters to mpcontribs.
+# We use the :math:`^{29}\text{Si}` 1D MAS NMR spectrum of Xonotlite crystal by Hansen
+# et al. [#f1]_ for demonstration.
 import csdmpy as cp
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+from lmfit import Minimizer
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
-from lmfit import Minimizer, fit_report
+from mrsimulator import signal_processing as sp
+from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
-from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
 
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
-mpl.rcParams["grid.linestyle"] = "--"
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Import the dataset
 # ------------------
 filename = "https://sandbox.zenodo.org/record/744498/files/xonotlite.csdf"
-exp_data = cp.load(filename).real
+experiment = cp.load(filename).real
 
 # standard deviation of noise from the dataset
 sigma = 2.819601
 
-# convert the dimension coordinates from Hz to ppm
-exp_data.dimensions[0].to("ppm", "nmr_frequency_ratio")
-
-# Normalize the spectrum
-max_amp = exp_data.max()
-exp_data /= max_amp
-sigma /= max_amp
+# Convert the coordinates along each dimension from Hz to ppm.
+_ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
 # Plot of the synthetic dataset.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(exp_data, "k", alpha=0.5)
+ax.plot(experiment, "k", alpha=0.5)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -80,14 +72,14 @@ spin_systems = [
 # **Method**
 
 # Get the spectral dimension paramters from the experiment.
-spectral_dims = get_spectral_dimensions(exp_data)
+spectral_dims = get_spectral_dimensions(experiment)
 
 method = BlochDecaySpectrum(
     channels=["29Si"],
     magnetic_flux_density=14.1,  # in T
     rotor_frequency=1800.0,  # in Hz
     spectral_dimensions=spectral_dims,
-    experiment=exp_data,  # add the measurement to the method.
+    experiment=experiment,  # add the measurement to the method.
 )
 
 # Optimize the script by pre-setting the transition pathways for each spin system from
@@ -100,9 +92,7 @@ for sys in spin_systems:
 
 # Simulation
 # ----------
-sim = Simulator()
-sim.spin_systems = spin_systems
-sim.methods = [method]
+sim = Simulator(spin_systems=spin_systems, methods=[method])
 sim.run()
 
 # Post Simulation Processing
@@ -110,21 +100,22 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),  # inverse FFT to convert frequency based spectrum to time domain.
-        apo.Exponential(FWHM="50 Hz"),  # apodization of time domain signal.
+        sp.apodization.Exponential(FWHM="50 Hz"),  # apodization of time domain signal.
         sp.FFT(),  # forward FFT to convert time domain signal to frequency spectrum.
-        sp.Scale(factor=0.6),  # scale the frequency spectrum.
+        sp.Scale(factor=500),  # scale the frequency spectrum.
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(exp_data, "k", linewidth=1, label="Experiment")
-ax.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="guess spectrum")
+ax.plot(experiment, "k", linewidth=1, label="Experiment")
+ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
 ax.invert_xaxis()
-plt.legend()
 plt.grid()
+plt.legend()
 plt.tight_layout()
 plt.show()
 
@@ -133,7 +124,7 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = make_LMFIT_params(sim, processor)
+params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
 
 params.pop("sys_0_abundance")
 params.pop("sys_1_abundance")
@@ -143,38 +134,47 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
-print(fit_report(result))
+result
 
 # %%
 # The best fit solution
 # ---------------------
-sim.run()
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+best_fit = sf.bestfit(sim, processor)[0]
+residuals = sf.residuals(sim, processor)[0]
 
 # Plot the spectrum
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-plt.plot(exp_data, "k", linewidth=1, label="Experiment")
-plt.plot(processed_data, "r", alpha=0.5, linewidth=2.5, label="Best Fit")
-plt.xlabel("$^{17}$O frequency / ppm")
-plt.legend()
+ax.plot(experiment, "k", linewidth=1, label="Experiment")
+ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
+ax.plot(residuals, alpha=0.75, linewidth=1, label="Residuals")
+ax.invert_xaxis()
+plt.xlabel("$^{29}$Si frequency / ppm")
 plt.grid()
+plt.legend()
 plt.tight_layout()
 plt.show()
 
 
 # %%
-# Mpcontribs export
-# -----------------
+# Submitting data to MPContribs
+# -----------------------------
 #
-# Export the site data as Mpcontribs card.
+# To contribute to MPContribs, we need to export the mrsimulator objects to a list of
+# mp-compatible data dictionaries. At present, MPContribs only support data contribution
+# on a per NMR site basis and, therefore, we only generate mp contributions for
+# uncoupled spin systems. Use the ``mrsimulator.contribs`` module to create data
+# dictionaries as follows.
 from mrsimulator.contribs import mpcontribs_export
 from pprint import pprint
 
+mp_project = "lsdi_nmr_exp_test"  # The mpcontribs project name
 cards = mpcontribs_export(
     sim,
-    project="lsdi_nmr_exp_test",
+    [processor],
+    project=mp_project,
     identifier="Ca6Si6O17(OH)2",
     exp_dict={
         "90degreePulseLength": "6 µs",
@@ -183,7 +183,18 @@ cards = mpcontribs_export(
         "referenceCompound": "TMS",
     },
 )
+print("Number of contributions", len(cards))
 pprint(cards[0])
+
+# %%
+# Here, ``cards`` hold a list of mp-data dictionaries. In this example, it corresponds
+# to three---the number of uncoupled spin systems.
+# To submit contributions, use the mpcontribs client as shown below.
+
+# from mpcontribs.client import Client
+#
+# client = Client(<YOUR-API-KEY>)  # insert your user API key.
+# client.submit_contributions(cards)
 
 # %%
 # .. [#f1] Hansen, M. R., Jakobsen, H. J., Skibsted, J., :math:`^{29}\text{Si}`

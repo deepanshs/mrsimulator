@@ -40,17 +40,20 @@ def test_save():
     assert sim.methods[0].simulation is not None
     assert sim.methods[1].simulation is None
 
-    save("test.mrsim", simulator=sim, signal_processors=processors, params=None)
+    kwargs = dict(simulator=sim, signal_processors=processors, params=None)
+    save("test.mrsim", **kwargs), "test file"
+    save("test.mrsim.gz", **kwargs), "test gz"
 
 
 def test_load():
-    sim_r, processors_r, report_r = load("test.mrsim")
+    for file_, tag in zip(["test.mrsim", "test.mrsim.gz"], ["file", "gz"]):
+        sim_r, processors_r, report_r = load(file_)
 
-    sim, processors = setup()
-    sim_r.methods[0].simulation = None
-    sim.methods[0].simulation = None
-    assert sim_r == sim
-    assert processors_r == processors
-    assert report_r is None
+        sim, processors = setup()
+        sim_r.methods[0].simulation = None
+        sim.methods[0].simulation = None
+        assert sim_r == sim, f"test {tag}"
+        assert processors_r == processors, f"test {tag}"
+        assert report_r is None, f"test {tag}"
 
-    os.remove("test.mrsim")
+        os.remove(file_)

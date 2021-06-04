@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import json
+# import json
 from os import path
 
 import numpy as np
@@ -7,14 +7,9 @@ from mrsimulator import Method
 from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
+from mrsimulator.utils.importer import import_json
 from numpy.fft import fft
 from numpy.fft import fftshift
-
-
-def _import_json(filename):
-    with open(filename, "rb") as f:
-        content = f.read()
-        return json.loads(str(content, encoding="UTF-8"))
 
 
 def _get_header_and_footer(source_file):
@@ -44,7 +39,7 @@ def get_data(filename):
     """Load a simpson or DMfit output file"""
 
     # source data
-    data_object = _import_json(filename)
+    data_object = import_json(filename)
     test_data_object = data_object["test_data"]
 
     source_file = test_data_object["filename"]

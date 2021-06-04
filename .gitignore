@@ -115,6 +115,7 @@ class-diagram*
 *.csdf
 *.csdfe
 *.mrsys
+*.json.gz
 test_os.py
 note.txt
 simulate_lineshape.py
