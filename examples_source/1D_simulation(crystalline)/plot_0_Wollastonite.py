@@ -60,6 +60,8 @@ method = BlochDecaySpectrum(
     ],
 )
 
+method.plot(method.summary())
+
 # %%
 # **Step 4:** Create the Simulator object and add the method and spin system objects.
 sim = Simulator()

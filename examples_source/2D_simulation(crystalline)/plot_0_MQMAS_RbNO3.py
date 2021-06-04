@@ -62,6 +62,8 @@ method = ThreeQ_VAS(
     ],
 )
 
+method.plot(method.summary())
+
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
