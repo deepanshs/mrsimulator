@@ -519,14 +519,16 @@ class Method(Parseable):
             ]
 
         # Calculate 'p' and 'd' and add as columns
-        # NOTE: 'p' & 'd' removed from properties so propertiesiteration throws no error 
+        # NOTE: 'p' & 'd' removed from properties so propertiesiteration throws no error
         if "p" in properties:
             df["p"] = np.transpose([sym.total for sym in gsp("P")]).tolist()
             properties.remove("p")
+        # BUG: df["d"] is always list of nan
         if "d" in properties:
             df["d"] = np.transpose([sym.total for sym in gsp("D")]).tolist()
             properties.remove("d")
 
+        drop = []
         for attr in properties:
             lst = [
                 # Exclude getting data from MixingEvents
@@ -537,15 +539,17 @@ class Method(Parseable):
             if drop_constant_cols and attr != "freq_contrib":
                 # Remove NAN from list then check if constant
                 copy_lst = np.array(lst)[pd.notnull(lst)]
-                if np.all(copy_lst == copy_lst[0]):
-                    continue
+                # print(copy_lst)
+                if len(copy_lst) == 0 or np.all(copy_lst == copy_lst[0]):
+                    drop.append(attr)
             df[attr] = lst
 
+        print(df.columns)
         # Convert rotor_angle to degrees
         if "rotor_angle" in properties:
             df["rotor_angle"] = df["rotor_angle"] * 180 / np.pi
 
-        return df
+        return df.drop(columns=drop)
 
     def plot(self, df=None, params=None) -> mpl.pyplot.figure:
         """Plots a diagram representation of the method
