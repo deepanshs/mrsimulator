@@ -12,7 +12,7 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 
 DURATION_WIDTH = 0.6  # Width of one ConstantDurationEvent
 SPECTRAL_MULTIPLIER = 1.5  # Width multiplier for all SpectralEvents
-MIXING_WIDTH = 0.05
+MIXING_WIDTH = 0.05  # tip_angle of 360 degrees
 # TODO: Ensure cannot run out of colors
 COLORS = list(mcolors.TABLEAU_COLORS)
 EVENT_COLORS = {  # TODO: add colors
@@ -46,21 +46,33 @@ def _offset_x_data(df, x_data):
     if ev_groups[-1][0] == "MixingEvent":
         ev_groups.pop()
 
+    # df_idx = 0
     # Extend first jump if first event(s) are MixingEvent
     if ev_groups[0][0] == "MixingEvent":
-        offset_x[1] += MIXING_WIDTH * ev_groups[0][1] * 2
+        # Total angle / 360 * MIXING_WIDTH
+        # offset = sum(df["tip_angle"][0:ev_groups[0][1]]) / 360.0 * MIXING_WIDTH
+        # offset_x[1] += offset
+        # # Increment event indexer by number of MixingEvents in first group
+        # df_idx = ev_groups[0][1]
+        offset_x[1] += MIXING_WIDTH * ev_groups[0][1] * 2  # TODO: Delete line
         ev_groups.pop(0)
 
-    idx = 1
+    x_idx = 1
     for _type, num in ev_groups:
         if _type == "MixingEvent":
-            offset_x[idx] -= MIXING_WIDTH * num
-            offset_x[idx + 1] += MIXING_WIDTH * num
-            idx += 1
+            # # Total angle / 360 * MIXING_WIDTH
+            # offset = sum(df["tip_angle"][df_idx:df_idx + num]) / 360.0 * MIXING_WIDTH
+            # offset_x[x_idx] -= offset
+            # offset_x[x_idx + 1] += offset
+            offset_x[x_idx] -= MIXING_WIDTH * num  # TODO: Delete line
+            offset_x[x_idx + 1] += MIXING_WIDTH * num  # TODO: Delete line
+            x_idx += 1
         else:
-            if offset_x[idx] == offset_x[idx + 1]:
-                idx += 1
-            idx += (num * 2) - 1
+            if offset_x[x_idx] == offset_x[x_idx + 1]:
+                x_idx += 1
+            x_idx += (num * 2) - 1
+        # # Increment event indexer by number of Events in group
+        # df_idx += num
 
     return offset_x
 
@@ -85,16 +97,26 @@ def _plot_sequence_diagram(ax, x_data, df):
     ev_groups = [(_type, sum(1 for _ in group)) for _type, group in groupby(df["type"])]
     if ev_groups[-1][0] == "MixingEvent":
         x_data = np.append(x_data, x_data[-1])
-        x_data[-2] -= MIXING_WIDTH * ev_groups[-1][1] * 2
+        x_data[-2] -= MIXING_WIDTH * ev_groups[-1][1] * 2  # TODO: Delete line
+        # Total angle / 360 * MIXING_WIDTH
+        # offset = sum(df["tip_angle"][-ev_groups[0][1]:]) / 360.0 * MIXING_WIDTH
+        # x_data[-2] -= offset
 
     df_idx = 0
     x_idx = 0
     for _type, num in ev_groups:
         if _type == "MixingEvent":
             # Create even spacing between MixingEvent rectangles within offset width
-            tmp = np.linspace(x_data[x_idx], x_data[x_idx + 1], num=num + 1)
+            tmp = np.linspace(x_data[x_idx], x_data[x_idx + 1], num=num + 1)  # TODO Del
+            # Leftmost x point of next MixingEvent rectangle
+            # left_x = x_data[x_idx]
             for j in range(num):
                 # Plot each MixingEvent
+                # tip_angle = df['tip_angle'][df_idx + j]
+                # phase = df['phase'][df_idx + j]
+                # width = tip_angle / 360 * MIXING_WIDTH
+                # text = "({0:1f}, {0:1f})".format(tip_angle, phase)
+                # _add_rect_with_label(ax, left_x, left_x + width, text, "MixingEvent")
                 _add_rect_with_label(
                     ax, tmp[j], tmp[j + 1], df["label"][df_idx + j], "MixingEvent"
                 )
@@ -207,7 +229,7 @@ def plot(df) -> plt.figure:
     fig, axs = plt.subplots(
         nrows=len(params) + 1,
         ncols=1,
-        # figsize=(max(x_data) * 3, len(params) * 2 + 2),
+        figsize=(max(x_data) * 2, (len(params) + 1) * 1.5),
         sharex=True,
         gridspec_kw={"hspace": 0.0},
     )
