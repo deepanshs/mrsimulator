@@ -58,6 +58,8 @@ def _offset_x_data(df, x_data):
             offset_x[idx + 1] += MIXING_WIDTH * num
             idx += 1
         else:
+            if offset_x[idx] == offset_x[idx + 1]:
+                idx += 1
             idx += (num * 2) - 1
 
     return offset_x
@@ -205,7 +207,7 @@ def plot(df) -> plt.figure:
     fig, axs = plt.subplots(
         nrows=len(params) + 1,
         ncols=1,
-        figsize=(max(x_data) * 3, len(params) * 2 + 2),
+        # figsize=(max(x_data) * 3, len(params) * 2 + 2),
         sharex=True,
         gridspec_kw={"hspace": 0.0},
     )
