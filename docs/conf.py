@@ -165,7 +165,7 @@ sphinx_gallery_conf = {
     "capture_repr": ("_repr_html_", "__repr__"),
     "binder": {
         # Required keys
-        "org": "DeepanshS",
+        "org": "deepanshs",
         "repo": "mrsimulator",
         "branch": "master",
         "binderhub_url": "https://mybinder.org",

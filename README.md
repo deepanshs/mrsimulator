@@ -3,10 +3,9 @@
 |              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Deployment   | [![PyPI version](https://img.shields.io/pypi/v/mrsimulator.svg?style=flat&logo=pypi&logoColor=white)](https://pypi.python.org/pypi/mrsimulator) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mrsimulator)                                                                                                                                                                                                                                                                                                                                                                                                          |
-| Build Status | [![GitHub Workflow Status](<https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI%20(pip)?logo=GitHub>)](https://github.com/DeepanshS/mrsimulator/actions) [![Read the Docs](https://img.shields.io/readthedocs/mrsimulator)](https://mrsimulator.readthedocs.io/en/stable/)                                                                                                                                                                                                                                                                                                                                         |
+| Build Status | [![GitHub Workflow Status](<https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI%20(pip)?logo=GitHub>)](https://github.com/deepanshs/mrsimulator/actions) [![Read the Docs](https://img.shields.io/readthedocs/mrsimulator)](https://mrsimulator.readthedocs.io/en/stable/)                                                                                                                                                                                                                                                                                                                                         |
 | License      | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| Metrics      | [![Total alerts](https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python) [![codecov](https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/DeepanshS/mrsimulator) [![CodeFactor](https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge)](https://www.codefactor.io/repository/github/deepanshs/mrsimulator) |
-| Citation     | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3978780.svg)](https://doi.org/10.5281/zenodo.3978779)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Metrics      | [![Total alerts](https://img.shields.io/lgtm/alerts/g/deepanshs/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/deepanshs/mrsimulator/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/deepanshs/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/deepanshs/mrsimulator/context:python) [![codecov](https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/deepanshs/mrsimulator) [![CodeFactor](https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge)](https://www.codefactor.io/repository/github/deepanshs/mrsimulator) |
 
 `mrsimulator` is an open-source python package for fast computation/analysis of solid-state
 magnetic resonance (NMR) spectra of both crystalline and amorphous materials. The core
@@ -77,7 +76,7 @@ Please read our [installation document](https://mrsimulator.readthedocs.io/en/la
 ## Check your build
 
 If the installation is successful, you should be able to run the following
-[test file](https://raw.github.com/DeepanshS/mrsimulator-examples/master/test_file_v0.3.py?raw=true)
+[test file](https://raw.github.com/deepanshs/mrsimulator-examples/master/test_file_v0.3.py?raw=true)
 in your terminal.
 
     $ python test_file.py
@@ -88,11 +87,11 @@ This should produce the following figure.
 
 ## Reporting Bugs
 
-The preferred location for submitting feature requests and bug reports is the [Github issue tracker](https://github.com/DeepanshS/mrsimulator/issues). Reports are also welcomed by directly contacting [Deepansh Srivastava](mailto:srivastava.89@osu.edu).
+The preferred location for submitting feature requests and bug reports is the [Github issue tracker](https://github.com/deepanshs/mrsimulator/issues). Reports are also welcomed by directly contacting [Deepansh Srivastava](mailto:srivastava.89@osu.edu).
 
-Discussions are welcome on [Github discussion](https://github.com/DeepanshS/mrsimulator/discussions)
+Discussions are welcome on [Github discussion](https://github.com/deepanshs/mrsimulator/discussions)
 
-## Citing mrsimulator
+## How to cite
 
 If you use mrsimulator in your publication, please consider citing the following.
 
