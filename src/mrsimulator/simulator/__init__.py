@@ -254,7 +254,7 @@ class Simulator(Parseable):
         """Load a list of spin systems from the given JSON serialized file.
 
         See an
-        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
+        `example <https://raw.githubusercontent.com/deepanshs/mrsimulator-examples/
         master/spin_systems_v0.3.json>`_ of a JSON serialized file. For details, refer
         to the :ref:`load_spin_systems` section of this documentation.
 
@@ -273,7 +273,7 @@ class Simulator(Parseable):
         """Export a list of spin systems to a JSON serialized file.
 
         See an
-        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
+        `example <https://raw.githubusercontent.com/deepanshs/mrsimulator-examples/
         master/spin_systems_v0.3.json>`_ of a JSON serialized file. For details, refer
         to the :ref:`load_spin_systems` section.
 
