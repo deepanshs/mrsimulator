@@ -1,35 +1,160 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
-from mrsimulator.utils.collection import _get_default_lists
-from mrsimulator.utils.collection import _get_length
+from mrsimulator.utils.collection import _check_lengths
+from mrsimulator.utils.collection import _extend_dict_values
+from mrsimulator.utils.collection import _extend_to_nparray
+from mrsimulator.utils.collection import _zip_dict
 from mrsimulator.utils.collection import single_site_system_generator
 
+# from mrsimulator.utils.collection import generate_site_list
 
-def test_get_default_lists():
-    a = 2.0
-    assert np.all(_get_default_lists(a, 5) == np.asarray([2.0] * 5))
+# from mrsimulator.utils.collection import _get_default_lists
+# from mrsimulator.utils.collection import _get_length
+# from mrsimulator.utils.collection import _clean_item
+# from mrsimulator.utils.collection import _clean_dict
+# from mrsimulator.utils.collection import _check_input_list_lengths
 
-    a = "32G"
-    assert np.all(_get_default_lists(a, 5) == np.asarray(["32G"] * 5))
+
+__author__ = ["Deepansh Srivastava", "Matthew D. Giammar"]
+__email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
 
 
-def test_get_length():
-    a = 2.0
-    assert _get_length(a) == 0
+# def test_get_default_lists():
+#     a = 2.0
+#     assert np.all(_get_default_lists(a, 5) == np.asarray([2.0] * 5))
 
-    a = [1, 2, 3, 4, 5]
-    assert _get_length(a) == 5
+#     a = "32G"
+#     assert np.all(_get_default_lists(a, 5) == np.asarray(["32G"] * 5))
 
-    a = np.arange(43)
-    assert _get_length(a) == 43
+
+# def test_get_length():
+#     a = 2.0
+#     assert _get_length(a) == 0
+
+#     a = [1, 2, 3, 4, 5]
+#     assert _get_length(a) == 5
+
+#     a = np.arange(43)
+#     assert _get_length(a) == 43
+
+
+def test_zip_dict():
+    dictonary = {
+        "key1": [0, 1, 2, 3, 4],
+        "key2": [5, 6, 7, 8, 9],
+        "key3": [10, 11, 12, 13, 14],
+        "key4": [15, 16, 17, 18, 19],
+    }
+    zipped = _zip_dict(dictonary)
+    for i, row in enumerate(zipped):
+        assert row == {"key1": i, "key2": 5 + i, "key3": 10 + i, "key4": 15 + i}
+
+
+def test_extend_to_nparray():
+    item = ["foo", "bar", "baz", "spam", "ham", "eggs"]
+    extended = _extend_to_nparray(item, 10)
+
+    assert isinstance(extended, np.ndarray)
+    assert extended.ndim == 1
+    assert extended.size == 6
+
+    item = np.array(item)
+    extended = _extend_to_nparray(item, 10)
+
+    assert isinstance(extended, np.ndarray)
+    assert extended.size == 6
+
+    extended = _extend_to_nparray("foo", 10)
+
+    assert isinstance(extended, np.ndarray)
+    assert extended.size == 10
+
+    extended_none = _extend_to_nparray(None, 15)
+
+    assert isinstance(extended_none, np.ndarray)
+    assert extended_none.size == 15
+
+
+def test_extend_dict_values():
+    def numpy_dict_equality(d1, d2):
+        for key1, val1 in d1.items():
+            if key1 not in d2:
+                return False
+            val2 = d2[key1]
+            if not np.all(val1 == val2):
+                return False
+        return True
+
+    _dict = {"key1": 1, "key2": 2, "key3": 3}
+    check_dict = {
+        "key1": np.array([1]),
+        "key2": np.array([2]),
+        "key3": np.array([3]),
+    }
+
+    assert numpy_dict_equality(_extend_dict_values(_dict, 1), check_dict)
+
+    _dict = {"key1": [1], "key2": [2], "key3": [3]}
+
+    assert numpy_dict_equality(_extend_dict_values(_dict, 1), check_dict)
+
+    _dict = {"key1": 1, "key2": 2, "key3": 3}
+    check_dict = {
+        "key1": np.array([1, 1, 1]),
+        "key2": np.array([2, 2, 2]),
+        "key3": np.array([3, 3, 3]),
+    }
+
+    assert numpy_dict_equality(_extend_dict_values(_dict, 3), check_dict)
+
+    _dict = {"key1": [1, 1, 1], "key2": [2, 2, 2], "key3": [3, 3, 3]}
+
+    assert numpy_dict_equality(_extend_dict_values(_dict, 3), check_dict)
+
+    error = ".*A list in a dictonary was misshapen.*"
+    with pytest.raises(ValueError, match=error):
+        _extend_dict_values({"key1": [1, 2, 3], "key2": [4, 5], "key3": [7, 8, 9]}, 3)
+    with pytest.raises(ValueError, match=error):
+
+        _extend_dict_values({"key1": [1, 2], "key2": [4, 5], "key3": [7, 8]}, 3)
+
+
+def test_check_lengths():
+    lists = [[0]] * 5
+
+    assert _check_lengths(lists) == 1
+
+    lists.append([2] * 7)
+
+    assert _check_lengths(lists) == 7
+
+    lists = [[i for i in range(10)] for _ in range(5)]
+
+    assert _check_lengths(lists) == 10
+
+    lists = [np.zeros(10) for _ in range(5)]
+
+    assert _check_lengths(lists) == 10
+
+    lists = [[0], [0], [0], [3, 3, 3], [4, 4, 4, 4]]
+
+    error = ".*An array or list was either too short or too long.*"
+    with pytest.raises(ValueError, match=error):
+        _check_lengths(lists)
+
+    lists = [np.zeros(10) for _ in range(5)] + [np.ones(9)]
+
+    with pytest.raises(ValueError, match=error):
+        _check_lengths(lists)
 
 
 def test_unbalanced_lists():
     isotopes = ["13C", "71Ga", "15N"]
     shifts = np.arange(10)
 
-    error = ".*Each entry can either be a single item or a list of items.*"
+    # error = ".*Each entry can either be a single item or a list of items.*"
+    error = ".*An array or list was either too short or too long.*"
     with pytest.raises(ValueError, match=error):
         single_site_system_generator(
             isotopes=isotopes, isotropic_chemical_shifts=shifts
@@ -120,7 +245,7 @@ def test_shielding_05():
         assert sys[i].sites[0].quadrupolar is None
 
 
-def assertion_quad(sys, isotope, iso_dist, Cq_dist, eta_dist, abundance):
+def assertion_quad(sys, isotope, iso_dist, Cq_dist, eta_dist, abundances):
     for i in range(Cq_dist.size):
         assert sys[i].sites[0].isotope.symbol == isotope
         assert sys[i].sites[0].isotropic_chemical_shift == iso_dist[i]
@@ -130,14 +255,14 @@ def assertion_quad(sys, isotope, iso_dist, Cq_dist, eta_dist, abundance):
         assert sys[i].sites[0].quadrupolar.alpha is None
         assert sys[i].sites[0].quadrupolar.beta is None
         assert sys[i].sites[0].quadrupolar.gamma is None
-        assert sys[i].abundance == abundance
+        assert sys[i].abundance == abundances
 
 
 def test_quad_01():
     Cq_dist = np.arange(10)
     eta_dist = np.ones(10) * 0.5
     sys = single_site_system_generator(
-        isotopes="27Al", quadrupolar={"Cq": Cq_dist, "eta": eta_dist}
+        isotopes="27Al", quadrupolars={"Cq": Cq_dist, "eta": eta_dist}
     )
 
     iso_dict = np.zeros(10)
@@ -152,7 +277,7 @@ def test_quad_02():
     sys = single_site_system_generator(
         isotopes="17O",
         isotropic_chemical_shifts=iso_dist,
-        quadrupolar={"Cq": Cq_dist, "eta": eta_dist, "gamma": gamma_dist},
+        quadrupolars={"Cq": Cq_dist, "eta": eta_dist, "gamma": gamma_dist},
     )
 
     for i in range(10):
@@ -177,7 +302,7 @@ def test_quad_shield():
         isotopes="17O",
         isotropic_chemical_shifts=iso_dist,
         shielding_symmetric={"zeta": zeta_dist, "eta": eta_dist_s},
-        quadrupolar={"Cq": Cq_dist, "eta": eta_dist_q, "gamma": gamma_dist},
+        quadrupolars={"Cq": Cq_dist, "eta": eta_dist_q, "gamma": gamma_dist},
     )
 
     for i in range(10):
@@ -200,11 +325,11 @@ def test_quad_shield():
 def test_abundance_01():
     Cq_dist = np.arange(10)
     eta_dist = np.ones(10) * 0.5
-    abundance = 0.6
+    abundances = 0.6
     sys = single_site_system_generator(
         isotopes="27Al",
-        quadrupolar={"Cq": Cq_dist, "eta": eta_dist},
-        abundance=abundance,
+        quadrupolars={"Cq": Cq_dist, "eta": eta_dist},
+        abundances=abundances,
     )
 
     iso_dict = np.zeros(10)
@@ -224,11 +349,11 @@ def test_abundance_01():
 def test_abundance_02():
     Cq_dist = np.arange(10)
     eta_dist = np.ones(10) * 0.5
-    abundance = np.zeros(10)
+    abundances = np.zeros(10)
     sys = single_site_system_generator(
         isotopes="27Al",
-        quadrupolar={"Cq": Cq_dist, "eta": eta_dist},
-        abundance=abundance,
+        quadrupolars={"Cq": Cq_dist, "eta": eta_dist},
+        abundances=abundances,
     )
     assert sys == []
 
@@ -237,17 +362,17 @@ def test_abundance_03():
     Cq_dist = np.arange(10)
     eta_dist = np.ones(10) * 0.5
     gamma = np.random.rand(10)
-    abundance = np.zeros(10)
+    abundances = np.zeros(10)
 
     indexes = [2, 5, 8]
     for i in indexes:
-        abundance[i] = 1
+        abundances[i] = 1
 
     sys = single_site_system_generator(
         isotopes="27Al",
         shielding_symmetric={"gamma": gamma},
-        quadrupolar={"Cq": Cq_dist, "eta": eta_dist},
-        abundance=abundance,
+        quadrupolars={"Cq": Cq_dist, "eta": eta_dist},
+        abundances=abundances,
     )
     assert len(sys) == 3
 
@@ -264,4 +389,4 @@ def test_abundance_03():
         assert sys[i].sites[0].quadrupolar.alpha is None
         assert sys[i].sites[0].quadrupolar.beta is None
         assert sys[i].sites[0].quadrupolar.gamma is None
-        assert sys[i].abundance == abundance[j]
+        assert sys[i].abundance == abundances[j]
