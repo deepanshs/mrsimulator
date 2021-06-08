@@ -8,7 +8,7 @@ Making a copy of someone's code on GitHub is the same as making a *fork*. A fork
 complete copy of the code and all of its revision history.
 
 1. Log into a `GitHub account <https://github.com>`_.
-2. Go to the `mrsimulator Github <https://github.com/DeepanshS/mrsimulator>`_ home page.
+2. Go to the `mrsimulator Github <https://github.com/deepanshs/mrsimulator>`_ home page.
 3. Click on the *fork* button.
 
 You will see a short animation of Octocat scanning a book on a flatbed scanner. After
@@ -93,7 +93,7 @@ the previous step, and add a remote:
 .. code-block:: bash
 
     cd mrsimulator
-    git remote add mrsimulator git://github.com/DeepanshS/mrsimulator.git
+    git remote add mrsimulator git://github.com/deepanshs/mrsimulator.git
 
 You can check that everything is set up properly so far by asking git to show you all of the
 remotes it knows about for your local repository of mrsimulator with ``git remote -v``, which
@@ -101,8 +101,8 @@ should display something like
 
 .. code-block:: bash
 
-    mrsimulator   git://github.com/DeepanshS/mrsimulator.git (fetch)
-    mrsimulator   git://github.com/DeepanshS/mrsimulator.git (push)
+    mrsimulator   git://github.com/deepanshs/mrsimulator.git (fetch)
+    mrsimulator   git://github.com/deepanshs/mrsimulator.git (push)
     origin     git@github.com:your-user-name/mrsimulator.git (fetch)
     origin     git@github.com:your-user-name/mrsimulator.git (push)
 
