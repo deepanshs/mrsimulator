@@ -9,6 +9,7 @@ __email__ = "mccarthy.677@osu.edu"
 
 def load_bruker(filename):
     dic, data = ng.bruker.read(filename)
+    data = ng.bruker.remove_digital_filter(dic, data)
     udic = ng.bruker.guess_udic(dic, data)
     dims = [
         convert_to_dimension(value)
