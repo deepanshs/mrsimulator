@@ -40,6 +40,19 @@ def load_tecmag(filename):
     )
 
 
+def load_agilent(filename):
+    dic, data = ng.agilent.read(filename)
+    udic = ng.agilent.guess_udic(dic, data)
+    dims = [
+        convert_to_dimension(value)
+        for key, value in list(udic.items())
+        if type(key) == int
+    ]
+    return cp.CSDM(
+        dimensions=dims, dependent_variables=[cp.as_dependent_variable(data)]
+    )
+
+
 def convert_to_dimension(udic):
     return cp.LinearDimension(
         count=udic["size"],
