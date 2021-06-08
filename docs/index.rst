@@ -24,7 +24,7 @@ Welcome to the Mrsimulator documentation
             :alt: PyPI - Python Version
 
       * - Build Status
-        - .. image:: https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI%20(pip)?logo=GitHub
+        - .. image:: https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI?logo=GitHub
             :target: https://github.com/deepanshs/mrsimulator/actions
             :alt: GitHub Workflow Status
 
