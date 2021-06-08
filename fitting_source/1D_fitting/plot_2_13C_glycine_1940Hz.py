@@ -11,7 +11,7 @@
 # We thank Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
-from lmfit import Minimizer, report_fit
+from lmfit import Minimizer
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
@@ -130,7 +130,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # **Solve the minimizer using LMFIT**
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
-report_fit(result)
+result
 
 # %%
 # The best fit solution
