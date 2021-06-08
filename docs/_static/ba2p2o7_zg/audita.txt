@@ -1,0 +1,18 @@
+##TITLE= Audit trail, TopSpin 3.5 pl 2
+##JCAMPDX= 5.01
+##ORIGIN= Bruker BioSpin GmbH
+##OWNER= nmrsu
+$$ /opt/topspin3.2/data/nmrsu/nmr/Crystalline_Phosphorus_Compounds/19/audita.txt
+##AUDIT TRAIL=  $$ (NUMBER, WHEN, WHO, WHERE, PROCESS, VERSION, WHAT)
+(   1,<2021-05-26 13:33:45.514 -0400>,<nmrsu>,<avhd400>,<go4>,<TopSpin 3.5.2>,
+      <created by zg
+	started at 2021-05-26 13:33:38.784 -0400,
+	POWCHK disabled, PULCHK disabled,
+       configuration hash MD5:
+       34 5C 7D 4B E4 1E AA 6E CA CC FB EB AC 6E 3D CC
+       data hash MD5: 7K
+       78 E7 65 FF 92 85 F5 89 A4 38 FB 67 DE 9D C3 EE>)
+##END=
+
+$$ hash MD5
+$$ 41 10 1F E4 F1 3D 4D 92 7A DA 82 EE ED C6 BF 2B

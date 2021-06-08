@@ -1,0 +1,16 @@
+##TITLE= Parameter file, TopSpin 3.5 pl 2
+##JCAMPDX= 5.0
+##DATATYPE= Parameter Values
+##NPOINTS= 1	$$ modification sequence number
+##ORIGIN= Bruker BioSpin GmbH
+##OWNER= nmrsu
+$$ 2021-05-26 10:10:15.036 -0400  nmrsu@avhd400
+$$ /opt/topspin3.2/data/nmrsu/nmr/Crystalline_Phosphorus_Compounds/19/pdata/1/outd
+$$ process /opt/topspin3.5pl2/prog/mod/dirdata
+##$CURPLOT= <printer>
+##$CURPRIN= <$printer>
+##$DFORMAT= <normdp>
+##$LAYOUT= <+/1D_H.xwp>
+##$LFORMAT= <normlp>
+##$PFORMAT= <normpl>
+##END=

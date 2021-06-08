@@ -1,0 +1,107 @@
+CONFIGURATION INFORMATION
+=========================
+
+Path         : /opt/topspin3.5pl2/conf/instr/spect/uxnmr.info
+Date         : Wed May 26 13:22:14 2021
+Release      : TopSpin 3.5 pl 2
+Installed in : /opt/topspin3.5pl2
+Host         : avhd400
+OS           : CentOS release 5.11 (Final)
+CPU          : Intel(R) Xeon(R) CPU X5460 @ 3.16GHz (8 cores at 3159 MHz)
+User         : nmrsu (NMR Administrator)
+System       : Avance III HD 400 NMR spectrometer
+1H-frequency : 400.60 MHz
+Description  : Avance III
+Configured in: avhd400:/opt/topspin3.5pl2/conf/instr/spect
+
+IPSO: connected to spectrometer subnet
+- TCP/IP address = 149.236.99.254
+ - IPSO type: 19"
+- Tctrl : 1
+- Fctrls: 2
+- Gctrl : none
+- Rctrl : none
+- FREDs : none
+- DPP : none
+
+DRU1: AQS DRU-E Z102520/03642 ECL 07.00
+- TCP/IP address = 149.236.99.89
+- Firmware Version = 150604
+- DRU1 controls AQS-Rack and HPPR/2
+
+AQS: connected to 149.236.99.89:/dev/tty10
+  _Slot_ SBSB _____________________Board_____________________
+  Number Addr Type HW-VS FW-VS ID  ECL Name   Description
+  -----------------------------------------------------------
+     2   0x10 0x43   0x5    CD  R  0.2 REC-1  AQS RXAD/2 600 Z130588/706 ECL 00.02
+     3   0x34 0xd6   0x1        X  3.1 REF-1  REF/3-600 Reference Board for AQS/3 Receiver
+     4   0x24 0x32     0        S  2.2 SGU-1  AQS SGU/3 600 (2CH) Z117129/01109 ECL 02.02 FPGA-Vs=20131031
+    13   0xa0 0x93     0        V  0.1 PS-1
+    14   0xa1 0x91     0        V  1.2 PS-2   AQS PSM-D Power Supply Module
+    --   0x20 0xd8     0        B  1.1 MASTER AQS/3+ Chassis
+     1   0x20  0x7     0        B      MASTER AQS Rack Master
+  Logical Receiver/SGU configuration:
+
+
+Router: none installed
+
+
+Transmitters at the spectrometer subnet:
+----------------------------------------
+BLA_W1345502_0075 W1345502/0075 ECL 0:
+- TCP/IP address = 149.236.99.253
+- Firmware VS    = 20120627
+- Amplifier      = BLA UPGRADE CONTROLLER: W1345502/0075 ECL 0
+- Controller     = BLA CONTROL BOARD 6 2CH: W1522050/7420 ECL 50
+BLA_W1345093_0483 W1345093/0483 ECL 12:
+- TCP/IP address = 149.236.99.247
+- Firmware VS    = 20120627
+- Amplifier      = BLAX500 E 6-365MHZ INR: W1345093/0483 ECL 12
+- Router         = BLMMR31 RF AMPLIFIER MODULE: W1345212/001784 ECL 20
+- Controller     = BLA CONTROL BOARD 6 2CH: W1522050/006162 ECL 60
+
+BSMS: BSMS/2 connected to ethernet
+- TCP/IP address = 149.236.99.20
+- ELCB firmware version = 20150423
+- SCB channels = 20
+- Shim System = unknown
+- 2HTX Amplifier: not available
+- Lock: not available
+- VTU_SPB = BSMS/2 SPB-E SENSOR & PNEUMATIC BD: Z115192/00295 ECL 04.00
+- VTU_VPSB1 = BSMS/2 VARIABLE POWER SUPPLY BD: Z115193/01932 ECL 01.05
+
+VTU: in BSMS/2 connected to ethernet
+- TCP/IP address = 149.236.99.20
+
+MAS Control Unit: MAS_H139288_0087
+- TCP/IP address   = 149.236.99.201
+
+Preamplifiers :
+HPPR2: - HPPR/2 preamplifier connected to 149.236.99.89:/dev/tty10
+    Type      : HPPR/2
+    Controller: Cover/2, with DRU Application firmware = c.
+                no LED display for tuning and matching
+    Module  1 : HPLNA 19F1H (virtual 50 Ohm reference: 100.1%/-0.1deg, reflection meter)
+                PN=Z103203, SN=00258 from 20130916
+    Module  2 : HPLNA BB31P (reflection meter)
+                PN=Z111091, SN=00086 from 20130916
+
+
+
+RF cable connections (detected)
+--------------------------------------------------------------------
+SGU1 NORM output -> input 1 of transmitter 1 (BLA UPGRADE CONTROLLER W1345502/0075 at TCP/IP 149.236.99.253)
+SGU1 AUX  output -> open
+SGU2 NORM output -> input 2 of transmitter 1 (BLA UPGRADE CONTROLLER W1345502/0075 at TCP/IP 149.236.99.253)
+SGU2 AUX  output -> TUNE signal input of HPPR
+
+Blanking cable connections (detected)
+--------------------------------------------------------------------
+transmitter 1 = BLA UPGRADE CONTROLLER W1345502/0075 at TCP/IP 149.236.99.253:
+- amplifier X-1000W uses blanking 1
+- amplifier X-300W uses blanking 1
+- amplifier 1H-1000W uses blanking 2
+- amplifier 1H-100W uses blanking 2
+
+transmitter 2 = BLAX500 E 6-365MHZ INR W1345093/0483 at TCP/IP 149.236.99.247:
+- amplifier X-500W needs no blanking
