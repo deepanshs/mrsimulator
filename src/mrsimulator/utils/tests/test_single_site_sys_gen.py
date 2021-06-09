@@ -156,15 +156,13 @@ def test_unbalanced_lists():
     # error = ".*Each entry can either be a single item or a list of items.*"
     error = ".*An array or list was either too short or too long.*"
     with pytest.raises(ValueError, match=error):
-        single_site_system_generator(
-            isotopes=isotopes, isotropic_chemical_shifts=shifts
-        )
+        single_site_system_generator(isotope=isotopes, isotropic_chemical_shift=shifts)
 
 
 def test_shielding_01():
     isotopes = ["13C", "71Ga", "15N", "14N", "27Al", "29Si", "1H", "17O", "33S", "31P"]
 
-    sys = single_site_system_generator(isotopes=isotopes)
+    sys = single_site_system_generator(isotope=isotopes)
     for i in range(10):
         assert sys[i].sites[0].isotope.symbol == isotopes[i]
         assert sys[i].sites[0].isotropic_chemical_shift == 0
@@ -175,7 +173,7 @@ def test_shielding_01():
 def test_shielding_02():
     isotropics = np.arange(20)
     sys = single_site_system_generator(
-        isotopes="71Ga", isotropic_chemical_shifts=isotropics
+        isotope="71Ga", isotropic_chemical_shift=isotropics
     )
 
     for i in range(20):
@@ -189,7 +187,7 @@ def test_shielding_03():
     zeta_dist = np.arange(10)
     eta_dist = np.ones(10) * 0.5
     sys = single_site_system_generator(
-        isotopes="13C", shielding_symmetric={"zeta": zeta_dist, "eta": eta_dist}
+        isotope="13C", shielding_symmetric={"zeta": zeta_dist, "eta": eta_dist}
     )
 
     for i in range(10):
@@ -208,7 +206,7 @@ def test_shielding_04():
     eta_dist = np.random.rand(10)
     beta_dist = np.random.rand(10) * 3.1415
     sys = single_site_system_generator(
-        isotopes="13C",
+        isotope="13C",
         shielding_symmetric={"zeta": zeta_dist, "eta": eta_dist, "beta": beta_dist},
     )
 
@@ -229,8 +227,8 @@ def test_shielding_05():
     eta_dist = np.random.rand(10)
     gamma_dist = np.random.rand(10) * 3.1415
     sys = single_site_system_generator(
-        isotopes="13C",
-        isotropic_chemical_shifts=iso_dist,
+        isotope="13C",
+        isotropic_chemical_shift=iso_dist,
         shielding_symmetric={"zeta": zeta_dist, "eta": eta_dist, "gamma": gamma_dist},
     )
 
@@ -262,7 +260,7 @@ def test_quad_01():
     Cq_dist = np.arange(10)
     eta_dist = np.ones(10) * 0.5
     sys = single_site_system_generator(
-        isotopes="27Al", quadrupolars={"Cq": Cq_dist, "eta": eta_dist}
+        isotope="27Al", quadrupolar={"Cq": Cq_dist, "eta": eta_dist}
     )
 
     iso_dict = np.zeros(10)
@@ -275,9 +273,9 @@ def test_quad_02():
     eta_dist = np.random.rand(10)
     gamma_dist = np.random.rand(10) * 3.1415
     sys = single_site_system_generator(
-        isotopes="17O",
-        isotropic_chemical_shifts=iso_dist,
-        quadrupolars={"Cq": Cq_dist, "eta": eta_dist, "gamma": gamma_dist},
+        isotope="17O",
+        isotropic_chemical_shift=iso_dist,
+        quadrupolar={"Cq": Cq_dist, "eta": eta_dist, "gamma": gamma_dist},
     )
 
     for i in range(10):
@@ -299,10 +297,10 @@ def test_quad_shield():
     eta_dist_q = np.random.rand(10)
     gamma_dist = np.random.rand(10) * 3.1415
     sys = single_site_system_generator(
-        isotopes="17O",
-        isotropic_chemical_shifts=iso_dist,
+        isotope="17O",
+        isotropic_chemical_shift=iso_dist,
         shielding_symmetric={"zeta": zeta_dist, "eta": eta_dist_s},
-        quadrupolars={"Cq": Cq_dist, "eta": eta_dist_q, "gamma": gamma_dist},
+        quadrupolar={"Cq": Cq_dist, "eta": eta_dist_q, "gamma": gamma_dist},
     )
 
     for i in range(10):
@@ -327,9 +325,9 @@ def test_abundance_01():
     eta_dist = np.ones(10) * 0.5
     abundances = 0.6
     sys = single_site_system_generator(
-        isotopes="27Al",
-        quadrupolars={"Cq": Cq_dist, "eta": eta_dist},
-        abundances=abundances,
+        isotope="27Al",
+        quadrupolar={"Cq": Cq_dist, "eta": eta_dist},
+        abundance=abundances,
     )
 
     iso_dict = np.zeros(10)
@@ -351,9 +349,9 @@ def test_abundance_02():
     eta_dist = np.ones(10) * 0.5
     abundances = np.zeros(10)
     sys = single_site_system_generator(
-        isotopes="27Al",
-        quadrupolars={"Cq": Cq_dist, "eta": eta_dist},
-        abundances=abundances,
+        isotope="27Al",
+        quadrupolar={"Cq": Cq_dist, "eta": eta_dist},
+        abundance=abundances,
     )
     assert sys == []
 
@@ -369,10 +367,10 @@ def test_abundance_03():
         abundances[i] = 1
 
     sys = single_site_system_generator(
-        isotopes="27Al",
+        isotope="27Al",
         shielding_symmetric={"gamma": gamma},
-        quadrupolars={"Cq": Cq_dist, "eta": eta_dist},
-        abundances=abundances,
+        quadrupolar={"Cq": Cq_dist, "eta": eta_dist},
+        abundance=abundances,
     )
     assert len(sys) == 3
 

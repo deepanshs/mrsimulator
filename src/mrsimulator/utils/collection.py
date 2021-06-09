@@ -12,34 +12,34 @@ SHIELDING_SYM_PARAMS = ["zeta", "eta", "alpha", "beta", "gamma"]
 QUADRUPOLAR_PARAMS = ["Cq", "eta", "alpha", "beta", "gamma"]
 LIST_LEN_ERROR_MSG = (
     "All arguments passed must be the same size. If one attribute is type list of "
-    "length n, then all passed attributes must be type list of length n or scalar. "
-    "Scalar (singular float, int or str) attributes will be extended to the length of "
-    "isotopes"
+    "length n, then all passed lists must be type list of length n and all other "
+    "attributes must be scalar Scalar (singular float, int or str)."
 )
 
 
 # NOTE: Should args all be plural or all be singular
+# Remove all plural
 
 
 def single_site_system_generator(
-    isotopes,
-    isotropic_chemical_shifts=0,
+    isotope,
+    isotropic_chemical_shift=0,
     shielding_symmetric=None,
     shielding_antisymmetric=None,
-    quadrupolars=None,
-    abundances=None,
-    site_names=None,
-    site_labels=None,
-    site_descriptions=None,
+    quadrupolar=None,
+    abundance=None,
+    site_name=None,
+    site_label=None,
+    site_description=None,
     rtol=1e-3,
 ):
     r"""Generate and return a list of single-site spin systems from the input parameters.
 
     Args:
 
-        (list) isotopes:
-            A required string or a list of site isotopes.
-        (list) isotropic_chemical_shifts:
+        (list) isotope:
+            A required string or a list of site isotope.
+        (list) isotropic_chemical_shift:
             A float or a list/ndarray of values. The default value is 0.
         (list) shielding_symmetric:
             A shielding symmetric dict-like object, where the keyword value can either
@@ -49,24 +49,24 @@ def single_site_system_generator(
             A shielding symmetric dict-like object, where the keyword value can either
             be a float or a list/ndarray of floats. The default value is None. The
             allowed keywords are ``zeta``, ``alpha``, and ``beta``.
-        (dict) quadrupolars:
+        (dict) quadrupolar:
             A quadrupolar dict-like object, where the keyword value can either be a
             float or a list/ndarray of floats. The default value is None. The allowed
             keywords are ``Cq``, ``eta``, ``alpha``, ``beta``, and ``gamma``.
-        (list) abundances:
-            A float or a list/ndarray of floats describing the abundances of each spin
+        (list) abundance:
+            A float or a list/ndarray of floats describing the abundance of each spin
             system.
-        (list) site_names:
+        (list) site_name:
             A string or a list of strings each with a site name. The default is None.
-        (list) site_labels:
+        (list) site_label:
             A string or a list of strings each with a site label. The default is None.
-        (list) site_descriptions:
+        (list) site_description:
             A string or a list of strings each with a site description. Default is None.
         (float) rtol:
             The relative tolerance. This value is used in determining the cutoff
-            abundances given as
-            :math:`\tt{abundances}_{\tt{cutoff}} = \tt{rtol} * \tt{max(abundances)}.`
-            The spin systems with abundances below this threshold are ignored.
+            abundance given as
+            :math:`\tt{abundance}_{\tt{cutoff}} = \tt{rtol} * \tt{max(abundance)}.`
+            The spin systems with abundance below this threshold are ignored.
 
     Returns:
         TODO add return type
@@ -83,21 +83,21 @@ def single_site_system_generator(
         be the same.
     """
     sites = generate_site_list(
-        isotopes=isotopes,
-        isotropic_chemical_shifts=isotropic_chemical_shifts,
+        isotope=isotope,
+        isotropic_chemical_shift=isotropic_chemical_shift,
         shielding_symmetric=shielding_symmetric,
         shielding_antisymmetric=shielding_antisymmetric,
-        quadrupolars=quadrupolars,
-        site_names=site_names,
-        site_labels=site_labels,
-        site_descriptions=site_descriptions,
+        quadrupolar=quadrupolar,
+        site_name=site_name,
+        site_label=site_label,
+        site_description=site_description,
     )
     n_sites = len(sites)
 
-    if abundances is None:
-        abundances = 1 / n_sites
-    abundances = _extend_to_nparray(abundances, n_sites)
-    n_abd = abundances.size
+    if abundance is None:
+        abundance = 1 / n_sites
+    abundance = _extend_to_nparray(abundance, n_sites)
+    n_abd = abundance.size
 
     if n_sites == 1:
         sites = sites * n_abd
@@ -105,34 +105,34 @@ def single_site_system_generator(
 
     if n_sites != n_abd:
         raise ValueError(
-            "Number of sites does not mach number of abundancess. " + LIST_LEN_ERROR_MSG
+            "Number of sites does not mach number of abundances. " + LIST_LEN_ERROR_MSG
         )
 
-    keep_idxs = np.where(abundances > rtol * abundances.max())[0]
+    keep_idxs = np.where(abundance > rtol * abundance.max())[0]
 
     return [
-        SpinSystem(sites=[site], abundances=abd)
-        for site, abd in zip(sites[keep_idxs], abundances[keep_idxs])
+        SpinSystem(sites=[site], abundance=abd)
+        for site, abd in zip(sites[keep_idxs], abundance[keep_idxs])
     ]
 
 
 def generate_site_list(
-    isotopes,
-    isotropic_chemical_shifts=0,
+    isotope,
+    isotropic_chemical_shift=0,
     shielding_symmetric=None,
     shielding_antisymmetric=None,
-    quadrupolars=None,
-    site_names=None,
-    site_labels=None,
-    site_descriptions=None,
+    quadrupolar=None,
+    site_name=None,
+    site_label=None,
+    site_description=None,
 ) -> List[Site]:
     r"""Takes in lists or list-like objects describing attributes of each site and
     returns a list of Site objects (TODO add doc ref)
 
     Params:
-        (list) isotopes:
-            A string or a list of site isotopes.
-        (list) isotropic_chemical_shifts:
+        (list) isotope:
+            A string or a list of site isotope.
+        (list) isotropic_chemical_shift:
             A float or a list/ndarray of values. The default value is 0.
         (dict) shielding_symmetric:
             A shielding symmetric dict-like object, where the keyword value can either
@@ -142,15 +142,15 @@ def generate_site_list(
             A shielding symmetric dict-like object, where the keyword value can either
             be a float or a list/ndarray of floats. The default value is None. The
             allowed keywords are ``zeta``, ``alpha``, and ``beta``.
-        (dict) quadrupolars:
+        (dict) quadrupolar:
             A quadrupolar dict-like object, where the keyword value can either be a
             float or a list/ndarray of floats. The default value is None. The allowed
             keywords are ``Cq``, ``eta``, ``alpha``, ``beta``, and ``gamma``.
-        (list) site_names:
+        (list) site_name:
             A string or a list of strings each with a site name. The default is None.
-        (list) site_labels:
+        (list) site_label:
             A string or a list of strings each with a site label. The default is None.
-        (list) site_descriptions:
+        (list) site_description:
             A string or a list of strings each with a site description. Default is None.
 
     Returns:
@@ -160,11 +160,11 @@ def generate_site_list(
         TODO add example code
     """
     attributes = [
-        isotopes,
-        isotropic_chemical_shifts,
-        site_names,
-        site_labels,
-        site_descriptions,
+        isotope,
+        isotropic_chemical_shift,
+        site_name,
+        site_label,
+        site_description,
     ]
 
     # NOTE: Cannot guess number of sites from dictonary parameters
@@ -183,8 +183,8 @@ def generate_site_list(
     else:
         attributes.append(_extend_to_nparray(None, n_sites))
 
-    if quadrupolars is not None:
-        attributes.append(_zip_dict(_extend_dict_values(quadrupolars, n_sites)))
+    if quadrupolar is not None:
+        attributes.append(_zip_dict(_extend_dict_values(quadrupolar, n_sites)))
     else:
         attributes.append(_extend_to_nparray(None, n_sites))
 
