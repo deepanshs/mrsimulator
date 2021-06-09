@@ -193,27 +193,49 @@ def _plot_data(ax, x_data, y_data, name):
     ax.set_ylabel(name.replace("_", " "))
 
 
-def plot(df) -> plt.figure:
-    """Create Plotly figure of symmetry pathways for method
+def _check_columns(df):
+    """Helper method to ensure required columns are present"""
+    required = [
+        "type",
+        "label",
+        "spec_dim_index",
+        "duration",
+        "fraction",
+        "mixing_query",
+    ]
 
-    Args:
-        DataFrame df: dataframe representation of method events to be plot
+    # Required columns are not present in df
+    if not (set(required)).issubset(set(df.columns)):
+        raise ValueError("Some required columns were not present in the DataFrame.")
 
-    Returns:
-        figure fig: Matplotlib figure
-
-    Example:
-        TODO add example code
-    """
-    drop_cols = ["type", "label", "duration", "fraction"]
     if "freq_contrib" in df.columns:
-        drop_cols += ["freq_contrib"]
-    params = list(df.columns.drop(drop_cols))
+        required += ["freq_contrib"]
+
+    params = list(df.columns.drop(required))
+
     # Move p and d to front of params
     if "d" in params:
         params.insert(0, params.pop(params.index("d")))
     if "p" in params:
         params.insert(0, params.pop(params.index("p")))
+
+    return params
+
+
+def plot(df) -> plt.figure:
+    """Create Plotly figure of symmetry pathways for method
+
+    Args:
+        (DataFrame) df:
+            DataFrame summary of Method object
+
+    Returns:
+        figure fig: Matplotlib figure with plotted sata
+
+    Example:
+        TODO add example code
+    """
+    params = _check_columns(df)
 
     if len(params) == 0:
         # Warn passed empty dataframe?

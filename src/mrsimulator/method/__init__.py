@@ -18,7 +18,7 @@ from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
 
-from .plot import plot as pt
+from .plot import plot as _plot
 from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
@@ -474,89 +474,152 @@ class Method(Parseable):
             for item in segments
         ]
 
+    def _remove_properties(self, properties):
+        """Helper method for summary to reduce complexity"""
+        CD = "ConstantDurationEvent"
+        SP = "SpectralEvent"
+        MX = "MixingEvent"
+
+        # Columns required to be present
+        required = [
+            "type",
+            "label",
+            "duration",
+            "fraction",
+            "mixing_query",
+            "spec_dim_index",
+        ]
+
+        # Properties which can accessed by getattr()
+        prop_dict = {
+            "label": (CD, SP, MX),
+            "duration": CD,
+            "fraction": SP,
+            "mixing_query": MX,
+            "magnetic_flux_density": (CD, SP),
+            "rotor_frequency": (CD, SP),
+            "rotor_angle": (CD, SP),
+            "freq_contrib": (CD, SP),
+        }
+
+        # Properties which cannot be accessed by getattr() and have unique calculations
+        special_props = ["p", "d"]
+
+        # If list of properties passed remove unrequested properties
+        if properties is not None:
+            prop_dict = {
+                key: val
+                for key, val in prop_dict.items()
+                if key in required or key in properties
+            }
+            special_props = [prop for prop in special_props if prop in properties]
+
+        return required, prop_dict, special_props
+
+    def _add_simple_props_to_df(self, df, prop_dict, required, drop_constant_cols):
+        """Helper method for summary to reduce complexity"""
+        # Iterate through property and valid Event subclass for property
+        for prop, valid in prop_dict.items():
+            lst = [
+                getattr(ev, prop) if ev.__class__.__name__ in valid else np.nan
+                for dim in self.spectral_dimensions
+                for ev in dim.events
+            ]
+            if prop not in required and prop != "freq_contrib" and drop_constant_cols:
+                # NOTE: np.isnan() cannot be passed an object (freq_contrib)
+                lst_copy = np.asarray(lst)[~np.isnan(np.asarray(lst))]
+                if np.unique(lst_copy).size < 2:
+                    continue
+            df[prop] = lst
+
     def summary(self, properties=None, drop_constant_cols=False) -> pd.DataFrame:
-        """Returns dataframe of requested Event properties as columns and event number
-        as row. If the requested property is not a valid attribute of a spesific event
-        np.nan will be placed instead
+        """Returns a DataFrame giving a summary of the Method. A user can specify
+        optional attributes to include which appear as columns in the DataFrame. A user
+        can also ask to leave out attributes which remain constant throughout the
+        method. Invalid attributes for an Event will be replaced with NAN.
 
         Args:
-            List properties: properties to include in df columns. Include all if empty
-            bool drop_constant_cols: Drops constant columns except p and d
+            (list) properties:
+                Optional list of properties to include in DataFrame. All properties are
+                included by default. The DataFrame will allways include some required
+                columns which can be dropped manually using df.drop().
+            (bool) drop_constant_cols:
+                Removes constant properties if True. Default False.
 
         Returns:
-            pd.DataFrame df: properties as columns and event number as row
+            pd.DataFrame df:
+                Event number as row and property as column. Invalid properties for an
+                event type are filled with np.nan
+
+            Columns
+            -------
+
+            (str) type: Event type
+            (int) spec_dim_index: Index of spectral dimension which event belongs to
+            (str) label: Event label
+            (float) duration: Duration of the ConstantDurationEvent
+            (float) fraction: Fraction of the SpectralEvent
+            (MixingQuery) mixing_query: MixingQuery object of the MixingEvent
+            (float) magnetic_flux_density: Magnetic flux density during event in Tesla
+            (float) rotor_frequency: Rotor frequency during event in Hz
+            (float) rotor_angle: Rotor angle during event converted to Degrees
+            (FrequencyEnum) freq_contrib:
 
         Example:
             TODO add example code
+            - All properties
+            - Specified properties
+            - drop constant and remove post method call
         """
         # TODO: Add catch for empty 'spectral_dimensions' and 'events'
-        # TODO: Clean up code with droping constant columns
-        spec_dims = self.spectral_dimensions
-        gsp = self.get_symmetry_pathways
+        required, prop_dict, special_props = self._remove_properties(properties)
 
-        # When no properties passed, automatically include all properties
-        if properties is None:
-            properties = [
-                "magnetic_flux_density",
-                "rotor_frequency",
-                "rotor_angle",
-                "freq_contrib",
-                "p",
-                "d",
-            ]
-
+        # Create the DataFrame
         df = pd.DataFrame()
-        # Make columns alwyas present in dataframe regardless of properties
-        df["type"] = [ev.__class__.__name__ for dim in spec_dims for ev in dim.events]
-        df["label"] = [ev.label for dim in spec_dims for ev in dim.events]
-        attributes = ["duration", "fraction"]
-        cls_valid = ["ConstantDurationEvent", "SpectralEvent"]
-        for attr, cls_name in zip(attributes, cls_valid):
-            df[attr] = [
-                getattr(ev, attr) if ev.__class__.__name__ == cls_name else np.nan
-                for dim in spec_dims
-                for ev in dim.events
-            ]
 
-        # Calculate 'p' and 'd' and add as columns
-        # NOTE: 'p' & 'd' removed from properties so propertiesiteration throws no error
-        if "p" in properties:
-            df["p"] = np.transpose([sym.total for sym in gsp("P")]).tolist()
-            properties.remove("p")
-        # BUG: df["d"] is always list of nan
-        if "d" in properties:
-            df["d"] = np.transpose([sym.total for sym in gsp("D")]).tolist()
-            properties.remove("d")
+        # Populate columns which cannot be calculated from iteration
+        df["type"] = [
+            ev.__class__.__name__
+            for dim in self.spectral_dimensions
+            for ev in dim.events
+        ]
+        df["spec_dim_index"] = [
+            i for i, dim in enumerate(self.spectral_dimensions) for ev in dim.events
+        ]
 
-        drop = []
-        for attr in properties:
-            lst = [
-                # Exclude getting data from MixingEvents
-                getattr(ev, attr) if ev.__class__.__name__ != "MixingEvent" else np.nan
-                for dim in spec_dims
-                for ev in dim.events
-            ]
-            if drop_constant_cols and attr != "freq_contrib":
-                # Remove NAN from list then check if constant
-                copy_lst = np.array(lst)[pd.notnull(lst)]
-                # print(copy_lst)
-                if len(copy_lst) == 0 or np.all(copy_lst == copy_lst[0]):
-                    drop.append(attr)
-            df[attr] = lst
+        self._add_simple_props_to_df(df, prop_dict, required, drop_constant_cols)
 
-        print(df.columns)
+        # Add total transition symmetries to dataframe
+        if "p" in special_props:
+            lst = np.transpose([sym.total for sym in self.get_symmetry_pathways("P")])
+            if not drop_constant_cols or np.unique(lst[~np.isnan(lst)]).size > 1:
+                df["p"] = lst.tolist()
+        if "d" in special_props:
+            lst = np.transpose([sym.total for sym in self.get_symmetry_pathways("D")])
+            if not drop_constant_cols or np.unique(lst[~np.isnan(lst)]).size > 1:
+                df["d"] = lst.tolist()
+
         # Convert rotor_angle to degrees
-        if "rotor_angle" in properties:
+        if "rotor_angle" in df.columns:
             df["rotor_angle"] = df["rotor_angle"] * 180 / np.pi
 
-        return df.drop(columns=drop)
+        # NOTE: Should columns be reordered?
+
+        return df
 
     def plot(self, df=None, params=None) -> mpl.pyplot.figure:
-        """Plots a diagram representation of the method
+        """Creates a diagram representing the method. By default, only parameters which
+        vary throughout the method are plotted. Spesific parameters can be requested
+        using the params argument. If a DataFrame is passed then any params argument is
+        ignored and all plotting data is parsed from the DataFrame
 
         Args:
-            DataFrame df: dataframe to plot data from
-            List params: overwrite passed df with summary if not None
+            DataFrame df:
+                DataFrame to plot data from. By default DataFrame is calculated from
+                summary()
+            List params:
+                Parameters to plot. DataFrame is calculated from
+                summary(parameters=params)
 
         Returns:
             matplotlib.pyplot.figure
@@ -570,7 +633,7 @@ class Method(Parseable):
             else:
                 df = self.summary(properties=params)
 
-        fig = pt(df)
+        fig = _plot(df)
         fig.suptitle(self.name if self.name is not None else "")
         fig.tight_layout()
         return fig

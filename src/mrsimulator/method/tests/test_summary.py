@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
-# import pytest
 from mrsimulator.method import Method
+
+# import pytest
 
 __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
@@ -11,6 +12,21 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 ME = "MixingEvent"
 CDE = "ConstantDurationEvent"
 SE = "SpectralEvent"
+REQUIRED = ["type", "label", "duration", "fraction", "mixing_query", "spec_dim_index"]
+ALL_PARAMS = [
+    "type",
+    "spec_dim_index",
+    "label",
+    "duration",
+    "fraction",
+    "mixing_query",
+    "magnetic_flux_density",
+    "rotor_frequency",
+    "rotor_angle",
+    "freq_contrib",
+    "p",
+    "d",
+]
 
 
 def basic_summary_tests(the_method):
@@ -36,28 +52,16 @@ def basic_summary_tests(the_method):
         return np.all(check)
 
     df = the_method.summary()
-    all_params = [
-        "type",
-        "label",
-        "duration",
-        "fraction",
-        "p",
-        "d",
-        "magnetic_flux_density",
-        "rotor_frequency",
-        "rotor_angle",
-        "freq_contrib",
-    ]
 
     # Check correct return type
     assert isinstance(df, pd.DataFrame)
 
     # Check for correct number of event and properties (df.shape)
     assert df.shape[0] == 6
-    assert df.shape[1] == len(all_params)
+    assert df.shape[1] == len(ALL_PARAMS)
 
     # Check for correct columns
-    assert set(df.columns) == set(all_params)
+    assert set(df.columns) == set(ALL_PARAMS)
 
     # Check type
     assert np.all(df["type"] == [ME, CDE, SE, ME, CDE, SE])
@@ -80,8 +84,8 @@ def basic_summary_tests(the_method):
 
     # BUG: column d is 2d array of correct size but all nan
     # Check d
-    # temp = [[np.nan], [0.0], [1.0], [np.nan], [3.0], [4.0]]
-    # assert check_col_equal_2d(df["d"], temp)
+    temp = [[np.nan], [0.0], [-2.0], [np.nan], [-4.0], [-6.0]]
+    assert check_col_equal_2d(df["d"], temp)
 
     # Check magnetic_flux_density
     temp = [np.nan, 1.0, 2.0, np.nan, 3.0, 4.0]
@@ -102,97 +106,65 @@ def basic_summary_tests(the_method):
     ]
     assert check_col_equal(df["rotor_angle"], temp)
 
+    # TODO: Check mixing_query
     # TODO: Check freq_contrib
-    # TODO: Check tip_angle
-    # TODO: Check phase
     pass
 
 
 def args_summary_tests(the_method):
-    all_params = [
-        "type",
-        "label",
-        "duration",
-        "fraction",
-        "p",
-        "d",
-        "magnetic_flux_density",
-        "rotor_frequency",
-        "rotor_angle",
-        "freq_contrib",
-    ]
-
     # Pass properties=None and drop_constant_cols=False (default)
     df = the_method.summary(properties=None, drop_constant_cols=False)
 
     assert df.shape[0] == 6
-    assert df.shape[1] == len(all_params)
-    assert set(df.columns) == set(all_params)
+    assert df.shape[1] == len(ALL_PARAMS)
+    assert set(df.columns) == set(ALL_PARAMS)
 
     # Pass properties=[some-list] and drop_constant_cols=False
     props = []
     df = the_method.summary(properties=props)
 
     assert df.shape[0] == 6
-    assert df.shape[1] == 4  # number of columns always present
-    assert set(df.columns) == set(["type", "label", "duration", "fraction"])
+    assert df.shape[1] == len(REQUIRED)  # number of columns always present
+    assert set(df.columns) == set(REQUIRED)
 
     props = ["rotor_angle", "p", "freq_contrib"]
     df = the_method.summary(properties=props)
-    props_should_be = [
-        "type",
-        "label",
-        "duration",
-        "fraction",
-        "rotor_angle",
-        "p",
-        "freq_contrib",
-    ]
+    props_should_be = ["rotor_angle", "p", "freq_contrib"]
 
     assert df.shape[0] == 6
-    assert df.shape[1] == len(props_should_be)
-    assert set(df.columns) == set(props_should_be)
+    assert df.shape[1] == len(REQUIRED + props_should_be)
+    assert set(df.columns) == set(REQUIRED + props_should_be)
 
     # Pass Pass properties=None and drop_constant_cols=True
     df = the_method.summary(properties=None, drop_constant_cols=True)
-    props_should_be = [
-        "type",
-        "label",
-        "duration",
-        "fraction",
-        "p",
-        "d",
-        "rotor_frequency",
-        "freq_contrib",
-    ]
+    props_should_be = ["p", "rotor_frequency", "freq_contrib"]
 
     assert df.shape[0] == 6
-    assert df.shape[1] == len(props_should_be)
-    assert set(df.columns) == set(props_should_be)
+    assert df.shape[1] == len(REQUIRED + props_should_be)
+    assert set(df.columns) == set(REQUIRED + props_should_be)
 
     # Pass properties=[some-list] and drop_constant_cols=True
     props = []
     df = the_method.summary(properties=props, drop_constant_cols=True)
-    props_should_be = ["type", "label", "duration", "fraction"]
 
     assert df.shape[0] == 6
-    assert df.shape[1] == len(props_should_be)
-    assert set(df.columns) == set(props_should_be)
+    assert df.shape[1] == len(REQUIRED)
+    assert set(df.columns) == set(REQUIRED)
 
     props = ["magnetic_flux_density", "rotor_angle"]  # are constant
     df = the_method.summary(properties=props, drop_constant_cols=True)
 
     assert df.shape[0] == 6
-    assert df.shape[1] == len(props_should_be)
-    assert set(df.columns) == set(props_should_be)
+    assert df.shape[1] == len(REQUIRED)
+    assert set(df.columns) == set(REQUIRED)
 
     props = ["magnetic_flux_density", "rotor_frequency", "p", "rotor_angle"]
     df = the_method.summary(properties=props, drop_constant_cols=True)
-    props_should_be = ["type", "label", "duration", "fraction", "p", "rotor_frequency"]
+    props_should_be = ["p", "rotor_frequency"]
 
     assert df.shape[0] == 6
-    assert df.shape[1] == len(props_should_be)
-    assert set(df.columns) == set(props_should_be)
+    assert df.shape[1] == len(props_should_be + REQUIRED)
+    assert set(df.columns) == set(props_should_be + REQUIRED)
 
     # Make sure columns always present are not dropped even if constant
     all_SpectralEvents_spec_dims = [
@@ -214,11 +186,10 @@ def args_summary_tests(the_method):
 
     props = []
     df = the_method.summary(properties=props, drop_constant_cols=True)
-    props_should_be = ["type", "label", "duration", "fraction"]
 
     assert df.shape[0] == 5
-    assert df.shape[1] == len(props_should_be)
-    assert set(df.columns) == set(props_should_be)
+    assert df.shape[1] == len(REQUIRED)
+    assert set(df.columns) == set(REQUIRED)
 
 
 def test_summary():
@@ -238,7 +209,7 @@ def test_summary():
                     "rotor_angle": 0.1,
                     # TODO: add freq_contrib
                     # "freq_contrib": {},
-                    "transition_query": [{"ch1": {"P": [0]}, "D": [0]}],
+                    "transition_query": [{"ch1": {"P": [0], "D": [0]}}],
                 },
                 {
                     "label": "Spec0",
@@ -248,7 +219,7 @@ def test_summary():
                     "rotor_angle": 0.2,
                     # TODO: add freq_contrib
                     # "freq_contrib": {},
-                    "transition_query": [{"ch1": {"P": [1]}, "D": [-2]}],
+                    "transition_query": [{"ch1": {"P": [1], "D": [-2]}}],
                 },
             ]
         },
@@ -267,7 +238,7 @@ def test_summary():
                     "rotor_angle": 0.3,
                     # TODO: add freq_contrib
                     # "freq_contrib": {},
-                    "transition_query": [{"ch1": {"P": [3]}, "D": [-4]}],
+                    "transition_query": [{"ch1": {"P": [3], "D": [-4]}}],
                 },
                 {
                     "label": "Spec1",
@@ -277,7 +248,7 @@ def test_summary():
                     "rotor_angle": 0.4,
                     # TODO: add freq_contrib
                     # "freq_contrib": {},
-                    "transition_query": [{"ch1": {"P": [4]}, "D": [-6]}],
+                    "transition_query": [{"ch1": {"P": [4], "D": [-6]}}],
                 },
             ]
         },
@@ -298,7 +269,7 @@ def test_summary():
                     "rotor_angle": 0.5,
                     # TODO: add freq_contrib
                     # "freq_contrib": {},
-                    "transition_query": [{"ch1": {"P": [0]}, "D": [0]}],
+                    "transition_query": [{"ch1": {"P": [0], "D": [0]}}],
                 },
                 {
                     "label": "Spec0",
@@ -307,7 +278,7 @@ def test_summary():
                     "rotor_angle": 0.5,
                     # TODO: add freq_contrib
                     # "freq_contrib": {},
-                    "transition_query": [{"ch1": {"P": [1]}, "D": [0]}],
+                    "transition_query": [{"ch1": {"P": [1], "D": [0]}}],
                 },
             ]
         },
@@ -325,7 +296,7 @@ def test_summary():
                     "rotor_angle": 0.5,
                     # TODO: add freq_contrib
                     # "freq_contrib": {},
-                    "transition_query": [{"ch1": {"P": [3]}, "D": [0]}],
+                    "transition_query": [{"ch1": {"P": [3], "D": [0]}}],
                 },
                 {
                     "label": "Spec1",
@@ -334,7 +305,7 @@ def test_summary():
                     "rotor_angle": 0.5,
                     # TODO: add freq_contrib
                     # "freq_contrib": {},
-                    "transition_query": [{"ch1": {"P": [4]}, "D": [0]}],
+                    "transition_query": [{"ch1": {"P": [4], "D": [0]}}],
                 },
             ]
         },
