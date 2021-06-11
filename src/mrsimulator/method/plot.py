@@ -105,7 +105,8 @@ def _format_mix_label(df, df_idx, j):
     return "({0:.1f}, {1:.1f})".format(tip_angle, phase), tip_angle / 360 * MIXING_WIDTH
 
 
-def _plot_spec_dim(ax, x0, x1, idx):
+# def _plot_spec_dim(ax, x0, x1, idx):
+def _plot_spec_dim(ax, ev_groups, x_data, df):
     """Adds a line denoting a new spectral dimension with label"""
     anno_kwargs = {
         "annotation_clip": False,
@@ -114,15 +115,43 @@ def _plot_spec_dim(ax, x0, x1, idx):
         "va": "center",
         "fontsize": 10,
     }
-    ax.plot([x1, x1], [0, 1], color="black")
-    ax.annotate(f"Spectral Dimension {idx}", ((x0 + x1) / 2, 1.2), **anno_kwargs)
+    ax.plot([0, 0], [0, 1], color="black")
+
+    last_spec_dim_x = 0
+    spec_dim_idx = 0
+    df_idx = 0
+    x_idx = 0
+    for _type, num in ev_groups:
+
+        for j in range(num):
+            if x_data[x_idx] == x_data[x_idx + 1]:
+                x_idx += 1
+            if df["spec_dim_index"][df_idx + j] != spec_dim_idx:
+                x_point = x_data[x_idx]
+                if df["type"][df_idx + j] == "MixingEvent":
+                    x_point += sum(df["tip_angle"][df_idx:j]) / 360.0 * MIXING_WIDTH
+                ax.plot([x_point, x_point], [0, 1], color="black")
+                ax.annotate(
+                    f"Spectral Dimension {spec_dim_idx}",
+                    ((last_spec_dim_x + x_point) / 2, 1.2),
+                    **anno_kwargs,
+                )
+                last_spec_dim_x = x_point
+                spec_dim_idx += 1
+            x_idx += 1
+
+    ax.plot([max(x_data), max(x_data)], [0, 1], color="black")
+    ax.annotate(
+        f"Spectral Dimension {spec_dim_idx}",
+        ((last_spec_dim_x + max(x_data)) / 2, 1.2),
+        **anno_kwargs,
+    )
 
 
 def _plot_sequence_diagram(ax, x_data, df):
     """Helper method to plot sequence diagram of method on ax"""
-    # TODO: Simplify logic or break into smaller methods
-    ax.plot([0, 0], [0, 1], color="black")
     ev_groups = [(_type, sum(1 for _ in group)) for _type, group in groupby(df["type"])]
+
     if ev_groups[-1][0] == "MixingEvent":
         x_data = np.append(x_data, x_data[-1])
         # Total angle / 360 * MIXING_WIDTH
@@ -130,8 +159,8 @@ def _plot_sequence_diagram(ax, x_data, df):
         offset = sum(df["tip_angle"][gp__:]) / 180 * MIXING_WIDTH
         x_data[-2] -= offset
 
-    last_spec_dim_x = 0
-    spec_dim_idx = 0
+    _plot_spec_dim(ax, ev_groups, x_data, df)
+
     df_idx = 0
     x_idx = 0
     for _type, num in ev_groups:
@@ -142,10 +171,6 @@ def _plot_sequence_diagram(ax, x_data, df):
             for j in range(num):
                 text, width = _format_mix_label(df, df_idx, j)
                 _add_rect_with_label(ax, left_x, left_x + width, text, "MixingEvent")
-                if df["spec_dim_index"][df_idx + j] != spec_dim_idx:
-                    _plot_spec_dim(ax, last_spec_dim_x, left_x, spec_dim_idx)
-                    last_spec_dim_x = left_x
-                    spec_dim_idx += 1
                 left_x += width
             x_idx += 1
         else:
@@ -160,15 +185,9 @@ def _plot_sequence_diagram(ax, x_data, df):
                     df["label"][df_idx + j],
                     df["type"][df_idx + j],
                 )
-                if df["spec_dim_index"][df_idx + j] != spec_dim_idx:
-                    _plot_spec_dim(ax, last_spec_dim_x, x_data[x_idx], spec_dim_idx)
-                    last_spec_dim_x = x_data[x_idx]
-                    spec_dim_idx += 1
                 x_idx += 1
 
         df_idx += num
-
-    _plot_spec_dim(ax, last_spec_dim_x, x_data[-1], spec_dim_idx)
 
     ax.axis("off")
 
