@@ -20,6 +20,13 @@ EVENT_COLORS = {  # TODO: add colors
     "SpectralEvent": "g",
     "MixingEvent": "b",
 }
+GRAPH_PROPERTIES = {
+    "rotor_angle": {
+        "ylim": (0, 90),
+        "yticks": [15, 30, 45, 60, 75],
+        "grid": {"axis": "y", "color": "black", "alpha": 0.2},
+    }
+}
 
 
 def _make_x_data(df):
@@ -216,6 +223,17 @@ def _plot_data(ax, x_data, y_data, name):
     ax.set_ylabel(name.replace("_", " "))
 
 
+def _format_subplot(ax, **kwargs):
+    """Attitional subplot formatting based on parameter type"""
+    kwargs = kwargs["kwargs"]
+    if "ylim" in kwargs:
+        ax.set_ylim(kwargs["ylim"])
+    if "yticks" in kwargs:
+        ax.set_yticks(kwargs["yticks"])
+    if "grid" in kwargs:
+        ax.grid(**kwargs["grid"])
+
+
 def _check_columns(df):
     """Helper method to ensure required columns are present"""
     required = [
@@ -298,5 +316,7 @@ def plot(df) -> plt.figure:
             _plot_p_or_d(ax, offset_x_data, df[params[i]], params[i])
         else:
             _plot_data(ax, x_data, df[params[i]], params[i])
+        if params[i] in GRAPH_PROPERTIES:
+            _format_subplot(ax, kwargs=GRAPH_PROPERTIES[params[i]])
 
     return fig
