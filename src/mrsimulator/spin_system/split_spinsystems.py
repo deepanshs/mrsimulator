@@ -7,20 +7,6 @@ __author__ = "Alexis McCarthy"
 __email__ = "mccarthy.677@osu.edu"
 
 
-def split_spin_system(spin_system):
-    """Simplifies user-defined spin systems into irreducible spin system objects.
-
-    Args:
-        spin_system: SpinSystem object to simplify.
-    """
-    ss = spin_system
-    return (
-        [ss.__class__(sites=[site], abundance=ss.abundance) for site in ss.sites]
-        if not ss.couplings
-        else build_new_systems(ss)
-    )
-
-
 def new_systems_needed_np(coupling_indexes, n_sites):
     """Calculates the connect spin system components.
 

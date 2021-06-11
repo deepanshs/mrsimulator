@@ -177,7 +177,6 @@ Getting Started
     getting_started
     getting_started-objects
     getting_started_ethanol
-    simplify_spin_sys
     configuring_simulator
     mrsim_IO
 .. designing_methods
