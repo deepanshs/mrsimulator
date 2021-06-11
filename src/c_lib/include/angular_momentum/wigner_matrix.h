@@ -41,22 +41,6 @@ extern void wigner_d_matrices(const int l, const int n, const double *beta,
 // Specialized methods .............................................................. //
 
 /**
- * @brief Evaluates @f$d^{l}_{m_1, m_2}(\beta)@f$ wigner-d element from
- * @f$\exp(i\beta)@f$ of the angle @f$\beta@f$.
- *
- * @sa wigner_d_element(const int, const int, const int, const double)
- *
- * @param l The rank of the wigner-d matrix element.
- * @param m1 The quantum number @f$m_1@f$.
- * @param m2 The quantum number @f$m_2@f$.
- * @param exp_I_beta A pointer to an array of size two, where cosine and sine of the
- *      angle @f$\beta@f$ is stored.
- * @return The wigner-d element, @f$d^{l}_{m_1, m_2}(\beta)@f$.
- */
-double wigner_d_element_from_exp_I_beta(const int l, const int m1, const int m2,
-                                        const void *exp_I_beta);
-
-/**
  * @brief Evaluates @f$n@f$ wigner-d matrices of rank @f$l@f$ from an array of angles
  * expressed as @f$\exp(i\beta)@f$.
  *

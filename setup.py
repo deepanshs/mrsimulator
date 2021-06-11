@@ -415,7 +415,7 @@ setup(
     author="Deepansh J. Srivastava",
     author_email="srivastava.89@osu.edu",
     python_requires=">=3.6",
-    url="https://github.com/DeepanshS/MRsimulator/",
+    url="https://github.com/deepanshs/mrsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
     setup_requires=["numpy>=1.17"],

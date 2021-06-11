@@ -264,8 +264,8 @@ class RFRotation(Parseable):
         The rf rotation phase in units of radians.
     """
 
-    tip_angle: float = Field(default=None, ge=0.0, le=6.283185307179586)
-    phase: float = Field(default=None, ge=-3.141592653589793, le=3.141592653589793)
+    tip_angle: float = Field(default=0.0, ge=0.0)  # in rads
+    phase: float = Field(default=0.0)  # in rads
 
     property_unit_types: ClassVar[Dict] = {
         "tip_angle": "angle",

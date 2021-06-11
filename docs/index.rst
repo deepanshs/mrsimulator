@@ -24,8 +24,8 @@ Welcome to the Mrsimulator documentation
             :alt: PyPI - Python Version
 
       * - Build Status
-        - .. image:: https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI%20(pip)?logo=GitHub
-            :target: https://github.com/DeepanshS/mrsimulator/actions
+        - .. image:: https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI?logo=GitHub
+            :target: https://github.com/deepanshs/mrsimulator/actions
             :alt: GitHub Workflow Status
 
           .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
@@ -38,33 +38,37 @@ Welcome to the Mrsimulator documentation
             :alt: License
 
       * - Metrics
-        - .. image:: https://img.shields.io/lgtm/grade/python/g/DeepanshS/mrsimulator.svg?logo=lgtm
-            :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/context:python
+        - .. image:: https://img.shields.io/lgtm/grade/python/g/deepanshs/mrsimulator.svg?logo=lgtm
+            :target: https://lgtm.com/projects/g/deepanshs/mrsimulator/context:python
             :alt: Language grade: Python
 
-          .. image:: https://codecov.io/gh/DeepanshS/mrsimulator/branch/master/graph/badge.svg
-            :target: https://codecov.io/gh/DeepanshS/mrsimulator
+          .. image:: https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg
+            :target: https://codecov.io/gh/deepanshs/mrsimulator
 
-          .. image:: https://img.shields.io/lgtm/alerts/g/DeepanshS/mrsimulator.svg?logo=lgtm
-            :target: https://lgtm.com/projects/g/DeepanshS/mrsimulator/alerts/
+          .. image:: https://img.shields.io/lgtm/alerts/g/deepanshs/mrsimulator.svg?logo=lgtm
+            :target: https://lgtm.com/projects/g/deepanshs/mrsimulator/alerts/
             :alt: Total alerts
 
           .. image:: https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge
             :target: https://www.codefactor.io/repository/github/deepanshs/mrsimulator
             :alt: CodeFactor
 
-      * - GitHub
-        - .. image:: https://img.shields.io/github/contributors/DeepanshS/mrsimulator.svg?logo=github
-            :target: https://github.com/DeepanshS/mrsimulator/graphs/contributors
+      * - Social
+        - .. image:: https://img.shields.io/github/contributors/deepanshs/mrsimulator?style=social&logo=github
+            :target: https://github.com/deepanshs/mrsimulator/graphs/contributors
             :alt: GitHub contributors
 
-          .. image:: https://img.shields.io/github/issues/deepanshs/mrsimulator?logo=github
-            :target: https://github.com/DeepanshS/mrsimulator/issues
+          .. image:: https://img.shields.io/github/issues/deepanshs/mrsimulator?style=social&logo=github
+            :target: https://github.com/deepanshs/mrsimulator/issues
             :alt: GitHub issues
 
-      * - Citation
-        - .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3978779.svg
-            :target: https://doi.org/10.5281/zenodo.3978779
+          .. image:: https://img.shields.io/github/stars/deepanshs/mrsimulator?style=social
+            :target: https://github.com/deepanshs/mrsimulator/stargazers
+            :alt: GitHub stars
+
+          .. image:: https://img.shields.io/github/forks/deepanshs/mrsimulator?style=social
+            :target: https://github.com/deepanshs/mrsimulator/network/members
+            :alt: GitHub forks
 
 .. .. image:: https://img.shields.io/github/commits-since/deepanshs/mrsimulator/v0.2.1?logo=github
 ..   :alt: GitHub commits since tagged version
@@ -275,11 +279,24 @@ Reporting Bugs
 --------------
 
 The preferred location for submitting feature requests and bug reports is the
-`Github issue tracker <https://github.com/DeepanshS/mrsimulator/issues>`_. Reports
+`Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_. Reports
 are also welcomed  by directly contacting `Deepansh Srivastava <mailto:srivastava.89@osu.edu>`_.
 
-Discussions are welcome on `Github discussion <https://github.com/DeepanshS/mrsimulator/discussions>`_
+Discussions are welcome on `Github discussion <https://github.com/deepanshs/mrsimulator/discussions>`_
 
+
+How to cite
+-----------
+
+If you use mrsimulator in your publication, please consider citing the following.
+
+- Deepansh J. Srivastava, Maxwell Venetos, Philip J. Grandinetti, Shyam Dwaraknath, & Alexis McCarthy. (2021, May 26). mrsimulator: v0.6.0 (Version v0.6.0). Zenodo. http://doi.org/10.5281/zenodo.4814638
+
+- Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific data. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
+
+*Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package.*
+
+- Matt Newville; Renee Otten; Andrew Nelson; Antonino Ingargiola; Till Stensitzki; Dan Allan; Austin Fox; Faustin Carter; Michał; Dima Pustakhod; lneuhaus; Sebastian Weigand; Ray Osborn; Glenn; Christoph Deil; Mark; Allan L. R. Hansen; Gustavo Pasquevich; Leon Foks; Nicholas Zobrist; Oliver Frost; Alexandre Beelen; Stuermer; kwertyops; Anthony Polloreno; Shane Caldwell; Anthony Almarza; Arun Persaud; Ben Gamari; Benjamin F. Maier. (2021, February 7). lmfit/lmfit-py 1.0.2 (Version 1.0.2). Zenodo. http://doi.org/10.5281/zenodo.4516651
 
 .. only:: html
 

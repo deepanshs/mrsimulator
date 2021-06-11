@@ -131,7 +131,10 @@ class Method(Parseable):
     rotor_frequency: float = Field(default=0.0, ge=0.0)
     rotor_angle: float = Field(default=0.9553166181245, ge=0.0, le=1.5707963268)
 
+    # private attributes
     _named_method: bool = PrivateAttr(False)
+    _metadata: dict = PrivateAttr({})
+
     property_unit_types: ClassVar[Dict] = {
         "magnetic_flux_density": "magnetic flux density",
         "rotor_frequency": "frequency",
