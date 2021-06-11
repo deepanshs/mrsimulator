@@ -10,8 +10,6 @@ import pandas as pd
 import psutil
 from joblib import delayed
 from joblib import Parallel
-from mrsimulator import __version__
-from mrsimulator import methods as NamedMethods
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import one_d_spectrum
@@ -19,9 +17,8 @@ from mrsimulator.method import Method
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.utils import flatten_dict
 from mrsimulator.utils.abstract_list import AbstractList
-from mrsimulator.utils.extra import _reduce_dict
 from mrsimulator.utils.importer import import_json
-from pydantic import BaseModel
+from mrsimulator.utils.parseable import Parseable
 
 from .config import ConfigSimulator
 
@@ -30,14 +27,8 @@ __email__ = "srivastava.89@osu.edu"
 
 __CPU_count__ = psutil.cpu_count()
 
-__named_methods__ = [
-    val for k, val in NamedMethods.__dict__.items() if isinstance(val, type)
-]
-__method_names__ = [item.__name__ for item in __named_methods__]
-__sim_methods__ = {k: v for k, v in zip(__method_names__, __named_methods__)}
 
-
-class Simulator(BaseModel):
+class Simulator(Parseable):
     """The simulator class.
 
     Attributes
@@ -139,9 +130,6 @@ class Simulator(BaseModel):
 
     """
 
-    name: str = None
-    label: str = None
-    description: str = None
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
@@ -149,22 +137,6 @@ class Simulator(BaseModel):
 
     class Config:
         validate_assignment = True
-
-    def __eq__(self, other):
-        if not isinstance(other, Simulator):
-            return False
-        check = [
-            self.name == other.name,
-            self.label == other.label,
-            self.description == other.description,
-            self.spin_systems == other.spin_systems,
-            self.methods == other.methods,
-            self.config == other.config,
-            np.all(self.indexes == other.indexes),
-        ]
-        if np.all(check):
-            return True
-        return False
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
@@ -228,16 +200,7 @@ class Simulator(BaseModel):
 
         if "methods" in py_copy_dict:
             methods = py_copy_dict["methods"]
-            method_cls = [
-                Method
-                if obj["name"] not in __method_names__
-                else __sim_methods__[obj["name"]]
-                for obj in methods
-            ]
-
-            methods = [
-                fn.parse_dict_with_units(obj) for obj, fn in zip(methods, method_cls)
-            ]
+            methods = [Method.parse_dict_with_units(obj) for obj in methods]
             py_copy_dict["methods"] = methods
 
         return Simulator(**py_copy_dict)
@@ -284,67 +247,6 @@ class Simulator(BaseModel):
             return [Isotope(symbol=item) for item in st]
         return list(st)
 
-    def json(self, include_methods: bool = False, include_version: bool = False):
-        """Parse the class object to a JSON compliant python dictionary object, where
-        the attribute value with physical quantity is expressed as a string with a
-        value and a unit.
-
-        Args:
-            bool include_methods: If True, the output dictionary will include the
-                serialized method objects. The default value is False.
-            bool include_version: If True, add a version key-value pair to the
-                serialized output dictionary. The default is False.
-
-        Returns:
-            A Dict object.
-
-        Example
-        -------
-
-        >>> pprint(sim.json())
-        {'config': {'decompose_spectrum': 'none',
-                    'integration_density': 70,
-                    'integration_volume': 'octant',
-                    'number_of_sidebands': 64},
-         'spin_systems': [{'abundance': '100.0 %',
-                           'sites': [{'isotope': '13C',
-                                      'isotropic_chemical_shift': '20.0 ppm',
-                                      'shielding_symmetric': {'eta': 0.5,
-                                                              'zeta': '10.0 ppm'}}]},
-                          {'abundance': '100.0 %',
-                           'sites': [{'isotope': '1H',
-                                      'isotropic_chemical_shift': '-4.0 ppm',
-                                      'shielding_symmetric': {'eta': 0.1,
-                                                              'zeta': '2.1 ppm'}}]},
-                          {'abundance': '100.0 %',
-                           'sites': [{'isotope': '27Al',
-                                      'isotropic_chemical_shift': '120.0 ppm',
-                                      'shielding_symmetric': {'eta': 0.1,
-                                                              'zeta': '2.1 ppm'}}]}]}
-        """
-        sim = {}
-        sim["name"] = self.name
-        sim["description"] = self.description
-        sim["label"] = self.label
-        sim["spin_systems"] = [_.json() for _ in self.spin_systems]
-        sim["methods"] = [_.json() for _ in self.methods] if include_methods else None
-        sim["config"] = self.config.dict()
-        sim["version"] = __version__ if include_version else None
-
-        _ = [sim.pop(k) for k in [k for k in sim.keys() if sim[k] is None]]
-        return sim
-
-    def reduced_dict(self, exclude=["property_units", "indexes"]) -> dict:
-        """Returns a reduced dictionary representation of the class object by removing
-        all key-value pair corresponding to keys listed in the `exclude` argument, and
-        keys with value as None.
-
-        Args:
-            list exclude: A list of keys to exclude from the dictionary.
-        Return: A dict.
-        """
-        return _reduce_dict(self.dict(), exclude)
-
     # def pretty(self):
     #     return JSON(self.json(include_methods=True, include_version=True))
 
@@ -365,7 +267,6 @@ class Simulator(BaseModel):
         >>> sim.load_spin_systems(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
-        # json_data = contents["spin_systems"]
         self.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in contents]
 
     def export_spin_systems(self, filename: str):
@@ -481,7 +382,7 @@ class Simulator(BaseModel):
 
         >>> sim.save('filename') # doctest: +SKIP
         """
-        sim = self.json(True, True) if with_units else self.reduced_dict()
+        sim = self.json(units=with_units)
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
                 sim, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False

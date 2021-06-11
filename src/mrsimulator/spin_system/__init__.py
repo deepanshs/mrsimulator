@@ -12,6 +12,7 @@ from mrsimulator.transition import Transition
 from mrsimulator.transition.pathway import TransitionList
 from mrsimulator.transition.pathway import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
+from pydantic import Extra
 from pydantic import Field
 from pydantic import validator
 
@@ -148,21 +149,19 @@ class SpinSystem(Parseable):
                 <./../examples/Fitting/plot_2_mrsimFitExample_O17.html>`_
     """
 
-    name: str = None
-    label: str = None
-    description: str = None
     sites: Union[List[Site], np.ndarray] = []
-    couplings: Union[List[Coupling], np.ndarray] = None
+    couplings: Union[List[Coupling], np.ndarray] = []
     abundance: float = Field(default=100.0, ge=0.0, le=100.0)
     transition_pathways: List = None
 
-    property_unit_types: ClassVar = {"abundance": "dimensionless"}
-    property_default_units: ClassVar = {"abundance": "pct"}
+    property_unit_types: ClassVar[Dict] = {"abundance": "dimensionless"}
+    property_default_units: ClassVar[Dict] = {"abundance": "pct"}
     property_units: Dict = {"abundance": "pct"}
 
     class Config:
         validate_assignment = True
         arbitrary_types_allowed = True
+        extra = Extra.forbid
 
     @validator("transition_pathways")
     def transition_pathways_must_include_transition(cls, v, values):

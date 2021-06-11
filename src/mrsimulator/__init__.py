@@ -35,8 +35,7 @@ os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
 from .spin_system import Site  # lgtm [py/import-own-module] # noqa:F401
 from .spin_system import Coupling  # lgtm [py/import-own-module]  # noqa:F401
 from .spin_system import SpinSystem  # lgtm [py/import-own-module] # noqa:F401
-from .simulator import Simulator
-from .method.event import Event  # lgtm [py/import-own-module] # noqa:F401
+from .simulator import Simulator  # lgtm [py/import-own-module] # noqa:F401
 from .method.spectral_dimension import (  # lgtm [py/import-own-module] # noqa:F401
     SpectralDimension,
 )
@@ -99,7 +98,7 @@ def dict(
     Return:
         Python dictionary
     """
-    py_dict = simulator.json(True, True) if with_units else simulator.reduced_dict()
+    py_dict = simulator.json(units=with_units)
     if signal_processors is not None:
         py_dict["signal_processors"] = [item.json() for item in signal_processors]
 

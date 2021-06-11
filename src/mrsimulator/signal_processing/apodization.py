@@ -19,7 +19,7 @@ __email__ = "maxvenetos@gmail.com"
 class Apodization(ModuleOperation):
     dim_index: Union[int, list, tuple] = 0
     dv_index: Union[int, list, tuple] = None  # if none apply to all
-    module_name: ClassVar = __name__
+    module_name: ClassVar[str] = __name__
 
     @property
     def function(self):
@@ -49,7 +49,7 @@ class Apodization(ModuleOperation):
 
 
 class Gaussian(Apodization):
-    r"""Apodize a dependent variable of the CSDM object with a Gaussian function.
+    r"""Apodize dependent variable objects of the CSDM data with a Gaussian function.
 
     The apodization function follows
 
@@ -64,15 +64,20 @@ class Gaussian(Apodization):
     .. math::
         \sigma = \frac{\text{FWHM}}{2\sqrt{2\ln 2}}.
 
-    Args:
-        str FWHM: The full width at half maximum, FWHM, of the reciprocal domain
-            Gaussian function, given as a string with a value and a unit. The default
-            value is 0.
-        int dim_index: The index of the CSDM dimension along which the operation is
-            applied. The default is the dimension at index 0.
-        int dv_index: The index of the CSDM dependent variable where the operation is
-            applied. If the value is None, the operation will be applied to every
-            dependent variable.
+    Arguments
+    ---------
+
+    FWHM:
+        The full width at half maximum, FWHM, of the reciprocal domain Gaussian
+        function given as a string with a value and a unit. The default value is 0.
+
+    dim_index:
+        The index of the CSDM dimension along which the operation is applied. The
+        default is the dimension at index 0.
+
+    dv_index:
+        The index of the CSDM dependent variable, where the operation is applied. If
+        not provided, the operation will be applied to every dependent variable.
 
     Example
     -------
@@ -109,15 +114,20 @@ class Exponential(Apodization):
     .. math::
         \text{FWHM} = \Gamma.
 
-    Args:
-        str FWHM: The full width at half maximum, FWHM, of the reciprocal domain
-            Lorentzian function given as a string with a value and a unit. The default
-            value is 0.
-        int dim_index: The index of the CSDM dimension along which the operation is
-            applied. The default is the dimension at index 0.
-        int dv_index: The index of the CSDM dependent variable where the operation is
-            applied. If the value is None, the operation will be applied to every
-            dependent variable.
+    Arguments
+    ---------
+
+    FWHM:
+        The full width at half maximum, FWHM, of the reciprocal domain Lorentzian
+        function given as a string with a value and a unit. The default value is 0.
+
+    dim_index:
+        The index of the CSDM dimension along which the operation is applied. The
+        default is the dimension at index 0.
+
+    dv_index:
+        The index of the CSDM dependent variable, where the operation is applied. If
+        not provided, the operation will be applied to every dependent variable.
 
     Example
     -------

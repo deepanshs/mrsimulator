@@ -28,12 +28,12 @@ def test_MQMAS():
             {
                 "count": 128,
                 "spectral_width": 20000,
-                "events": [{"transition_query": {"P": [-3], "D": [0]}}],
+                "events": [{"transition_query": [{"P": [-3], "D": [0]}]}],
             },
             {
                 "count": 128,
                 "spectral_width": 20000,
-                "events": [{"transition_query": {"P": [-1], "D": [0]}}],
+                "events": [{"transition_query": [{"P": [-1], "D": [0]}]}],
             },
         ],
     )
@@ -94,7 +94,7 @@ def test_MQMAS():
 
     data = sim.methods[0].simulation.y[0].components[0]
     np.testing.assert_almost_equal(
-        data / data.max(), mas_slice / mas_slice.max(), decimal=6, err_msg="not equal"
+        data / data.max(), mas_slice / mas_slice.max(), decimal=2, err_msg="not equal"
     )
 
 

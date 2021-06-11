@@ -4,16 +4,22 @@ from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
+from typing import Union
 
 import csdmpy as cp
 import numpy as np
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
-from .event import Event
+from .event import ConstantDurationEvent
+from .event import MixingEvent
+from .event import SpectralEvent
+from .utils import cartesian_product
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+CHANNELS = ["ch1", "ch2", "ch3"]
 
 
 class SpectralDimension(Parseable):
@@ -55,17 +61,15 @@ class SpectralDimension(Parseable):
     spectral_width: float = Field(default=25000.0, gt=0)
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
-    label: str = None
-    description: str = None
-    events: List[Event] = []
+    events: List[Union[MixingEvent, ConstantDurationEvent, SpectralEvent]] = []
 
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "spectral_width": ["frequency", "dimensionless"],
         "reference_offset": ["frequency", "dimensionless"],
         "origin_offset": ["frequency", "dimensionless"],
     }
 
-    property_default_units: ClassVar = {
+    property_default_units: ClassVar[Dict] = {
         "spectral_width": ["Hz", "ppm"],
         "reference_offset": ["Hz", "ppm"],
         "origin_offset": ["Hz", "ppm"],
@@ -92,7 +96,10 @@ class SpectralDimension(Parseable):
         py_dict_copy = deepcopy(py_dict)
         if "events" in py_dict_copy:
             py_dict_copy["events"] = [
-                Event.parse_dict_with_units(e) for e in py_dict_copy["events"]
+                ConstantDurationEvent.parse_dict_with_units(e)
+                if "duration" in e
+                else SpectralEvent.parse_dict_with_units(e)
+                for e in py_dict_copy["events"]
             ]
 
         return super().parse_dict_with_units(py_dict_copy)
@@ -151,3 +158,60 @@ class SpectralDimension(Parseable):
         if self.origin_offset is not None:
             dim.origin_offset = f"{self.origin_offset} Hz"
         return dim
+
+    def _get_symmetry_pathways(self, symmetry_element: str) -> list:
+        """Generate a list of symmetry pathways for the event.
+
+        The output is as follows
+        [
+            {"ch1": [ symmetry pathway for ch1], "ch2": ..} 1st symmetry pathway
+            {"ch1": [ symmetry pathway for ch1], "ch2": ..} 2nd symmetry pathway
+        ]
+
+        Args:
+            symmetry_element: Symmetry symbol, "P" or "D"
+
+        Example:
+            >>> from mrsimulator.method import SpectralDimension
+            >>> sp = SpectralDimension(
+            ...     events = [{
+            ...         "fraction": 0.5,
+            ...         "transition_query": [
+            ...             {"ch1": {"P": [1, 1]}, "ch2": {"P": [1], "D": [2]}},
+            ...             {"ch1": {"P": [-1, -1]}},
+            ...         ]
+            ...     },
+            ...     {
+            ...         "fraction": 0.5,
+            ...         "transition_query": [
+            ...             {"ch1": {"P": [-1]}},
+            ...         ]
+            ...     }]
+            ... )
+            >>> pprint(sp._get_symmetry_pathways("P"))
+            [{'ch1': [[1, 1], [-1]], 'ch2': [[1], None], 'ch3': [None, None]},
+             {'ch1': [[-1, -1], [-1]], 'ch2': [None, None], 'ch3': [None, None]}]
+        """
+        ha = hasattr
+        ga = getattr
+        tq = "transition_query"
+        indexes = [
+            np.arange(len(evt.transition_query))
+            if ha(evt, "transition_query")
+            else np.asarray([0])
+            for evt in self.events
+        ]
+        products = cartesian_product(*indexes)
+
+        return [
+            {
+                ch: [
+                    ga(ga(e.transition_query[i], ch), symmetry_element)
+                    if ha(e, tq) and ga(e.transition_query[i], ch) is not None
+                    else None
+                    for e, i in zip(self.events, item)
+                ]
+                for ch in CHANNELS
+            }
+            for item in products
+        ]

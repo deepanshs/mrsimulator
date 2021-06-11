@@ -4,7 +4,10 @@ Bloch Decay Spectrum method
 
 .. currentmodule:: mrsimulator.methods
 
-.. autofunction:: BlochDecaySpectrum
+.. autoclass:: BlochDecaySpectrum
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel
 
 **Example**
 
@@ -37,7 +40,7 @@ Bloch decay method is a special case of :py:class:`~mrsimulator.methods.Method1D
     ...             "count": 1024,
     ...             "spectral_width": 50000,  # in Hz
     ...             "reference_offset": -8000,  # in Hz
-    ...             "events": [{"transition_query": {"P": [-1]}}],
+    ...             "events": [{"transition_query": [{"P": [-1]}]}],
     ...         }
     ...     ],
     ... )

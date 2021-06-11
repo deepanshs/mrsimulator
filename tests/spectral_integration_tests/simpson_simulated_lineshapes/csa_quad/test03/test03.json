@@ -8,18 +8,12 @@
         "magnetic_flux_density": "9.4 T",
         "rotor_frequency": "0 kHz",
         "rotor_angle": "54.735 deg",
-        "transition_query": {
-          "P": {
-            "channel-1": [
-              [-1]
-            ]
-          },
-          "D": {
-            "channel-1": [
-              [0]
-            ]
+        "transition_query": [{
+          "ch1": {
+            "P": [-1],
+            "D": [0]
           }
-        }
+        }]
       }]
     }]
   }],

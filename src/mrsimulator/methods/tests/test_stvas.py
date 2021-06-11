@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
-from mrsimulator.method.transition_query import TransitionQuery
+from mrsimulator.method.query import TransitionQuery
 from mrsimulator.methods import ST1_VAS
 from mrsimulator.methods import ST2_VAS
 
@@ -12,36 +12,38 @@ methods = [ST1_VAS, ST2_VAS]
 names = ["ST1_VAS", "ST2_VAS"]
 
 
-def test_ST_VAS_rotor_freq():
-    def error(name):
-        return f"`rotor_frequency` value cannot be modified for {name} method."
-
-    for name, method in zip(names, methods):
-        e = error(name)
-        with pytest.raises(ValueError, match=f".*{e}.*"):
-            method(rotor_frequency=10, spectral_dimensions=[{}, {}])
-
-
-def test_ST_VAS_spectral_dimension_count():
-    e = "Method requires exactly 2 spectral dimensions, given 1."
-    for _, method in zip(names, methods):
-        with pytest.raises(ValueError, match=f".*{e}.*"):
-            method(spectral_dimensions=[{}])
-
-
-def test_ST_VAS_setting_transition_query():
-    def error(name):
-        return f"`transition_query` value cannot be modified for {name} method."
-
-    for name, method in zip(names, methods):
-        e = error(name)
-        with pytest.raises(ValueError, match=f".*{e}.*"):
-            method(
-                spectral_dimensions=[
-                    {"events": [{"transition_query": {"P": [-1]}}]},
-                    {},
+def sample_test_output(n):
+    return {
+        "magnetic_flux_density": "9.4 T",
+        "rotor_angle": "0.9553166181245 rad",
+        "rotor_frequency": "1000000000000.0 Hz",
+        "spectral_dimensions": [
+            {
+                "count": 1024,
+                "spectral_width": "50000.0 Hz",
+                "events": [
+                    {
+                        "transition_query": [
+                            {"ch1": {"P": [-1], "D": [i]}} for i in [n, -n]
+                        ]
+                    }
                 ],
-            )
+            },
+            {
+                "count": 1024,
+                "spectral_width": "50000.0 Hz",
+                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
+            },
+        ],
+    }
+
+
+def test_ST_VAS_rotor_freq():
+    e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
+    isotope = ["87Rb", "27Al"]
+    for iso, method in zip(isotope, methods):
+        with pytest.raises(ValueError, match=f".*{e}.*"):
+            method(channels=[iso], rotor_frequency=10, spectral_dimensions=[{}, {}])
 
 
 def test_ST_VAS_affine():
@@ -79,12 +81,13 @@ def test_ST1_VAS_general():
         "spinning spectrum."
     )
     assert mth.description == des
-    assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[2], [-2]]}
-    )
-    assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
-    )
+    assert mth.spectral_dimensions[0].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-1], "D": [2]}),
+        TransitionQuery(ch1={"P": [-1], "D": [-2]}),
+    ]
+    assert mth.spectral_dimensions[1].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-1], "D": [0]})
+    ]
     assert ST1_VAS.parse_dict_with_units(mth.json()) == mth
 
     assert np.allclose(mth.affine_matrix, [0.52941176, 0.47058824, 0.0, 1.0])
@@ -97,18 +100,24 @@ def test_ST1_VAS_general():
         "description": des,
         "magnetic_flux_density": "11.7 T",
         "name": "ST1_VAS",
-        "rotor_angle": "0.955316618 rad",
+        "rotor_angle": "0.9553166181245 rad",
         "rotor_frequency": "1000000000000.0 Hz",
         "spectral_dimensions": [
             {
                 "count": 1024,
-                "reference_offset": "0.0 Hz",
                 "spectral_width": "30000.0 Hz",
+                "events": [
+                    {
+                        "transition_query": [
+                            {"ch1": {"P": [-1], "D": [i]}} for i in [2, -2]
+                        ]
+                    }
+                ],
             },
             {
                 "count": 1024,
-                "reference_offset": "0.0 Hz",
                 "spectral_width": "20000.0 Hz",
+                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
             },
         ],
     }
@@ -131,12 +140,13 @@ def test_ST2_VAS_general():
         "spinning spectrum."
     )
     assert mth.description == des
-    assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[4], [-4]]}
-    )
-    assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
-        P={"channel-1": [[-1]]}, D={"channel-1": [[0]]}
-    )
+    assert mth.spectral_dimensions[0].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-1], "D": [4]}),
+        TransitionQuery(ch1={"P": [-1], "D": [-4]}),
+    ]
+    assert mth.spectral_dimensions[1].events[0].transition_query == [
+        TransitionQuery(ch1={"P": [-1], "D": [0]})
+    ]
     assert ST2_VAS.parse_dict_with_units(mth.json()) == mth
 
     assert np.allclose(mth.affine_matrix, [0.35294118, 0.64705882, 0.0, 1.0])
@@ -147,20 +157,6 @@ def test_ST2_VAS_general():
     assert serialize == {
         "channels": ["17O"],
         "description": des,
-        "magnetic_flux_density": "9.4 T",
         "name": "ST2_VAS",
-        "rotor_angle": "0.955316618 rad",
-        "rotor_frequency": "1000000000000.0 Hz",
-        "spectral_dimensions": [
-            {
-                "count": 1024,
-                "reference_offset": "0.0 Hz",
-                "spectral_width": "50000.0 Hz",
-            },
-            {
-                "count": 1024,
-                "reference_offset": "0.0 Hz",
-                "spectral_width": "50000.0 Hz",
-            },
-        ],
+        **sample_test_output(4),
     }

@@ -345,7 +345,8 @@ print(extra_compile_args)
 print(extra_link_args)
 
 source = [
-    "src/c_lib/lib/angular_momentum.c",
+    "src/c_lib/lib/angular_momentum/wigner_element.c",
+    "src/c_lib/lib/angular_momentum/wigner_matrix.c",
     "src/c_lib/lib/interpolation.c",
     "src/c_lib/lib/method.c",
     "src/c_lib/lib/mrsimulator.c",
@@ -386,18 +387,18 @@ ext_modules += [
 ]
 
 # sandbox
-ext_modules += [
-    Extension(
-        name="mrsimulator.sandbox",
-        sources=[*source, "src/c_lib/sandbox/sandbox" + ext],
-        include_dirs=include_dirs,
-        language="c",
-        libraries=libraries,
-        library_dirs=library_dirs,
-        extra_compile_args=extra_compile_args,
-        extra_link_args=extra_link_args,
-    )
-]
+# ext_modules += [
+#     Extension(
+#         name="mrsimulator.sandbox",
+#         sources=[*source, "src/c_lib/sandbox/sandbox" + ext],
+#         include_dirs=include_dirs,
+#         language="c",
+#         libraries=libraries,
+#         library_dirs=library_dirs,
+#         extra_compile_args=extra_compile_args,
+#         extra_link_args=extra_link_args,
+#     )
+# ]
 
 if USE_CYTHON:
     ext_modules = cythonize(ext_modules, language_level=3)

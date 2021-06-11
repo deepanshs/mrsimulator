@@ -5,9 +5,9 @@ Extended Czjzek distribution Model
 .. currentmodule:: mrsimulator.models
 
 .. autoclass:: ExtCzjzekDistribution
-
-    .. automethod:: rvs
-    .. automethod:: pdf
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel
 
 .. minigallery:: mrsimulator.models.ExtCzjzekDistribution
     :add-heading: Mini-gallery using extended czjzek distributions

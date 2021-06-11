@@ -7,8 +7,18 @@ TransitionPathway
 
 .. autoclass:: TransitionPathway
     :show-inheritance:
+    :members:
+    :inherited-members: BaseModel
 
-    .. rubric:: Method Documentation
 
-    .. automethod:: tolist
-    .. automethod:: json
+.. _symmetry_pathway_api:
+
+SymmetryPathway
+---------------
+
+.. currentmodule:: mrsimulator.transition
+
+.. autoclass:: SymmetryPathway
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel

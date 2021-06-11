@@ -9,10 +9,18 @@
 
 from libcpp cimport bool as bool_t
 
+cdef extern from "angular_momentum/wigner_element.h":
+    double wigner_d_element(const float l, const float m1, const float m2,
+                            const double beta)
+
+    void transition_connect_factor(const float l, const float m1_f, const float m1_i,
+                            const float m2_f, const float m2_i, const double theta,
+                            const double phi, double *factor)
+
 cdef extern from "tables/trig.h":
     void generate_table()
 
-cdef extern from "angular_momentum.h":
+cdef extern from "angular_momentum/wigner_matrix.h":
     void wigner_d_matrices(const int l, const int n, const double *angle, double *wigner)
 
     void wigner_d_matrices_from_exp_I_beta(const int l, const int n, const bool_t half,

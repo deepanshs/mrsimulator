@@ -5,6 +5,8 @@ Function list:
     - FiveQ_VAS
     - SevenQ_VAS
 """
+from mrsimulator.spin_system.isotope import Isotope
+
 from .base import BaseNamedMethod2D
 
 __author__ = "Deepansh J. Srivastava"
@@ -34,32 +36,6 @@ class MQ_VAS(BaseNamedMethod2D):
     .. math::
         \nu_\text{MQ-iso} = 1/(1+k) \nu_\text{MQ}(-m, m) + k/(1+k) \nu_\text{MAS}
 
-    Args:
-        channels: A list of isotope symbols over which the method will be applied.
-        spectral_dimensions: A list of python dict. Each dict is contains keywords that
-            describe the coordinates along a spectral dimension. The keywords along with
-            its definition are:
-
-            - count:
-                An optional integer with the number of points, :math:`N`, along the
-                dimension. The default value is 1024.
-            - spectral_width:
-                An `optional` float with the spectral width, :math:`\Delta x`, along the
-                dimension in units of Hz. The default is 25 kHz.
-            - reference_offset:
-                An `optional` float with the reference offset, :math:`x_0` along the
-                dimension in units of Hz. The default value is 0 Hz.
-            - origin_offset:
-                An `optional` float with the origin offset (Larmor frequency) along the
-                dimension in units of Hz. The default value is None.
-
-        magetic_flux_density: An `optional` float containing the macroscopic magnetic
-            flux density, :math:`H_0`, of the applied external magnetic field in units
-            of T. The default value is 9.4.
-        rotor_angle: An `optional` float containing the angle between the sample
-            rotation axis and the applied external magnetic field, :math:`\theta`, in
-            units of rad. The default value is 0.9553166, i.e. the magic angle.
-
     note:
         The `rotor_frequency` parameter is fixed for this method. The method produces
         an infinite spinning speed spectrum.
@@ -68,65 +44,37 @@ class MQ_VAS(BaseNamedMethod2D):
         A :py:class:`~mrsimulator.Method` instance.
     """
 
-    def __new__(cls, **kwargs):
-        return cls.update(super().__new__(cls, **kwargs))
+    @classmethod
+    def update(cls, **kwargs):
+        name = cls.__name__
 
-    @staticmethod
-    def update(method):
-        mq = MQ_p_symmetry[method.name]["mq"]
-        spin = method.channels[0].spin
+        mq = MQ_p_symmetry[name]["mq"]
+        spin = Isotope(symbol=kwargs["channels"][0]).spin
 
         # select the coherence for the first event
         P = int(2 * mq)
         nQ = P
         P = -P if mq == spin else P
 
-        # setting transition symmetry elements
-        sd = method.spectral_dimensions
-        sd[0].events[0].transition_query.P = {"channel-1": [[P]]}
-        sd[0].events[0].transition_query.D = {"channel-1": [[0]]}
+        # set transition symmetry elements for spectral dimension 0
+        events_0 = [{"transition_query": [{"ch1": {"P": [P], "D": [0]}}]}]
+        # set transition symmetry elements for spectral dimension 1
+        events_1 = [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}]
 
-        sd[1].events[0].transition_query.P = {"channel-1": [[-1]]}
-        sd[1].events[0].transition_query.D = {"channel-1": [[0]]}
+        # method affine matrix shear factor
+        k = k = shear_factor_MQ_MAS[nQ][spin]
 
-        # method affine matrix
-        if method.affine_matrix is None:
-            k = shear_factor_MQ_MAS[nQ][spin]
-            method.affine_matrix = [1 / (1 + k), k / (1 + k), 0, 1]
-
-        # method description
-        method.description = f"Simulate a {nQ}Q variable-angle spinning spectrum."
-        return method
+        description = f"Simulate a {nQ}Q variable-angle spinning spectrum."
+        return {
+            "name": name,
+            "description": description,
+            "spectral_dimensions": [{"events": events_0}, {"events": events_1}],
+            "affine_matrix": [1 / (1 + k), k / (1 + k), 0, 1],
+        }
 
 
 class ThreeQ_VAS(MQ_VAS):
-    r"""Simulate a sheared and scaled 3Q 2D variable-angle spinning spectrum.
-
-    Args:
-        channels: A list of isotope symbols over which the method will be applied.
-        spectral_dimensions: A list of python dict. Each dict is contains keywords that
-            describe the coordinates along a spectral dimension. The keywords along with
-            its definition are:
-
-            - count:
-                An optional integer with the number of points, :math:`N`, along the
-                dimension. The default value is 1024.
-            - spectral_width:
-                An `optional` float with the spectral width, :math:`\Delta x`, along the
-                dimension in units of Hz. The default is 25 kHz.
-            - reference_offset:
-                An `optional` float with the reference offset, :math:`x_0` along the
-                dimension in units of Hz. The default value is 0 Hz.
-            - origin_offset:
-                An `optional` float with the origin offset (Larmor frequency) along the
-                dimension in units of Hz. The default value is None.
-
-        magetic_flux_density: An `optional` float containing the macroscopic magnetic
-            flux density, :math:`H_0`, of the applied external magnetic field in units
-            of T. The default value is 9.4.
-        rotor_angle: An `optional` float containing the angle between the sample
-            rotation axis and the applied external magnetic field, :math:`\theta`, in
-            units of rad. The default value is 0.9553166, i.e. the magic angle.
+    """Simulate a sheared and scaled 3Q 2D variable-angle spinning spectrum.
 
     Note:
         The attribute `rotor_frequency` cannot be modified for this method and is set to
@@ -161,33 +109,7 @@ class ThreeQ_VAS(MQ_VAS):
 
 
 class FiveQ_VAS(MQ_VAS):
-    r"""Simulate a sheared and scaled 5Q variable-angle spinning spectrum.
-
-    Args:
-        channels: A list of isotope symbols over which the method will be applied.
-        spectral_dimensions: A list of python dict. Each dict is contains keywords that
-            describe the coordinates along a spectral dimension. The keywords along with
-            its definition are:
-
-            - count:
-                An optional integer with the number of points, :math:`N`, along the
-                dimension. The default value is 1024.
-            - spectral_width:
-                An `optional` float with the spectral width, :math:`\Delta x`, along the
-                dimension in units of Hz. The default is 25 kHz.
-            - reference_offset:
-                An `optional` float with the reference offset, :math:`x_0` along the
-                dimension in units of Hz. The default value is 0 Hz.
-            - origin_offset:
-                An `optional` float with the origin offset (Larmor frequency) along the
-                dimension in units of Hz. The default value is None.
-
-        magetic_flux_density: An `optional` float containing the macroscopic magnetic
-            flux density, :math:`H_0`, of the applied external magnetic field in units
-            of T. The default value is 9.4.
-        rotor_angle: An `optional` float containing the angle between the sample
-            rotation axis and the applied external magnetic field, :math:`\theta`, in
-            units of rad. The default value is 0.9553166, i.e. the magic angle.
+    """Simulate a sheared and scaled 5Q variable-angle spinning spectrum.
 
     Note:
         The attribute `rotor_frequency` cannot be modified for this method and is set to
@@ -222,33 +144,7 @@ class FiveQ_VAS(MQ_VAS):
 
 
 class SevenQ_VAS(MQ_VAS):
-    r"""Simulate a sheared and scaled 7Q variable-angle spinning spectrum.
-
-    Args:
-        channels: A list of isotope symbols over which the method will be applied.
-        spectral_dimensions: A list of python dict. Each dict is contains keywords that
-            describe the coordinates along a spectral dimension. The keywords along with
-            its definition are:
-
-            - count:
-                An optional integer with the number of points, :math:`N`, along the
-                dimension. The default value is 1024.
-            - spectral_width:
-                An `optional` float with the spectral width, :math:`\Delta x`, along the
-                dimension in units of Hz. The default is 25 kHz.
-            - reference_offset:
-                An `optional` float with the reference offset, :math:`x_0` along the
-                dimension in units of Hz. The default value is 0 Hz.
-            - origin_offset:
-                An `optional` float with the origin offset (Larmor frequency) along the
-                dimension in units of Hz. The default value is None.
-
-        magetic_flux_density: An `optional` float containing the macroscopic magnetic
-            flux density, :math:`H_0`, of the applied external magnetic field in units
-            of T. The default value is 9.4.
-        rotor_angle: An `optional` float containing the angle between the sample
-            rotation axis and the applied external magnetic field, :math:`\theta`, in
-            units of rad. The default value is 0.9553166, i.e. the magic angle.
+    """Simulate a sheared and scaled 7Q variable-angle spinning spectrum.
 
     Note:
         The attribute `rotor_frequency` cannot be modified for this method and is set to

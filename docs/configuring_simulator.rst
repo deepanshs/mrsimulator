@@ -50,8 +50,8 @@ of the config attributes is as follows,
     >>> from mrsimulator.methods import BlochDecaySpectrum
     ...
     >>> sim = Simulator()
-    >>> sim.config
-    ConfigSimulator(number_of_sidebands=64, integration_volume='octant', integration_density=70, decompose_spectrum='none')
+    >>> sim.config.json()
+    {'number_of_sidebands': 64, 'integration_volume': 'octant', 'integration_density': 70, 'decompose_spectrum': 'none'}
 
 Here, the configurable attributes are ``number_of_sidebands``,
 ``integration_volume``, ``integration_density``, and ``decompose_spectrum``.
