@@ -11,8 +11,8 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
 DURATION_WIDTH = 0.6  # Width of one ConstantDurationEvent
-SPECTRAL_MULTIPLIER = 1.5  # Width multiplier for all SpectralEvents
-MIXING_WIDTH = 0.05  # tip_angle of 360 degrees
+SPECTRAL_MULTIPLIER = 1  # Width multiplier for all SpectralEvents
+MIXING_WIDTH = 0.3  # tip_angle of 360 degrees
 # TODO: Ensure cannot run out of colors
 COLORS = list(mcolors.TABLEAU_COLORS)
 EVENT_COLORS = {  # TODO: add colors
@@ -42,37 +42,33 @@ def _offset_x_data(df, x_data):
     """Offsets x_data based on MixingEvents"""
     offset_x = np.array([0] + x_data)
     ev_groups = [(_type, sum(1 for _ in group)) for _type, group in groupby(df["type"])]
+
     # Remove MixingEvents from end of sequence
     if ev_groups[-1][0] == "MixingEvent":
         ev_groups.pop()
 
-    # df_idx = 0
+    df_idx = 0
     # Extend first jump if first event(s) are MixingEvent
     if ev_groups[0][0] == "MixingEvent":
-        # Total angle / 360 * MIXING_WIDTH
-        # offset = sum(df["tip_angle"][0:ev_groups[0][1]]) / 360.0 * MIXING_WIDTH
-        # offset_x[1] += offset
-        # # Increment event indexer by number of MixingEvents in first group
-        # df_idx = ev_groups[0][1]
-        offset_x[1] += MIXING_WIDTH * ev_groups[0][1] * 2  # TODO: Delete line
+        offset = sum(df["tip_angle"][0 : ev_groups[0][1]]) / 360.0 * MIXING_WIDTH
+        offset_x[1] += offset
+        # Increment event indexer by number of MixingEvents in first group
+        df_idx += ev_groups[0][1]
         ev_groups.pop(0)
 
     x_idx = 1
     for _type, num in ev_groups:
         if _type == "MixingEvent":
-            # # Total angle / 360 * MIXING_WIDTH
-            # offset = sum(df["tip_angle"][df_idx:df_idx + num]) / 360.0 * MIXING_WIDTH
-            # offset_x[x_idx] -= offset
-            # offset_x[x_idx + 1] += offset
-            offset_x[x_idx] -= MIXING_WIDTH * num  # TODO: Delete line
-            offset_x[x_idx + 1] += MIXING_WIDTH * num  # TODO: Delete line
+            offset = sum(df["tip_angle"][df_idx : df_idx + num]) / 360.0 * MIXING_WIDTH
+            offset_x[x_idx] -= offset / 2
+            offset_x[x_idx + 1] += offset / 2
             x_idx += 1
         else:
             if offset_x[x_idx] == offset_x[x_idx + 1]:
                 x_idx += 1
             x_idx += (num * 2) - 1
-        # # Increment event indexer by number of Events in group
-        # df_idx += num
+        # Increment event indexer by number of Events in group
+        df_idx += num
 
     return offset_x
 
@@ -84,42 +80,63 @@ def _add_rect_with_label(ax, x0, x1, label, ev_type):
         "color": "black",
         "ha": "center",
         "va": "center",
+        "fontsize": 8,
         "rotation": 90 if ev_type == "MixingEvent" else 0,
     }
-    rect = Rectangle((x0, -1), x1 - x0, 2, **rect_kwargs)
+    rect = Rectangle((x0, 0), x1 - x0, 1, **rect_kwargs)
     ax.add_patch(rect)
     if label is not None:
-        ax.annotate(label, ((x1 + x0) / 2, 0.5), **anno_kwargs)
+        ax.annotate(label, ((x1 + x0 + 0.015) / 2, 0.5), **anno_kwargs)
+
+
+def _format_mix_label(df, df_idx, j):
+    """Helper method to format label for """
+    tip_angle = df["tip_angle"][df_idx + j]
+    phase = df["phase"][df_idx + j]
+    return "({0:.1f}, {1:.1f})".format(tip_angle, phase), tip_angle / 360 * MIXING_WIDTH
+
+
+def _plot_spec_dim(ax, x0, x1, idx):
+    """Adds a line denoting a new spectral dimension with label"""
+    anno_kwargs = {
+        "annotation_clip": False,
+        "color": "black",
+        "ha": "center",
+        "va": "center",
+        "fontsize": 10,
+    }
+    ax.plot([x1, x1], [0, 1], color="black")
+    ax.annotate(f"Spectral Dimension {idx}", ((x0 + x1) / 2, 1.2), **anno_kwargs)
 
 
 def _plot_sequence_diagram(ax, x_data, df):
     """Helper method to plot sequence diagram of method on ax"""
+    # TODO: Simplify logic or break into smaller methods
+    ax.plot([0, 0], [0, 1], color="black")
     ev_groups = [(_type, sum(1 for _ in group)) for _type, group in groupby(df["type"])]
     if ev_groups[-1][0] == "MixingEvent":
         x_data = np.append(x_data, x_data[-1])
-        x_data[-2] -= MIXING_WIDTH * ev_groups[-1][1] * 2  # TODO: Delete line
         # Total angle / 360 * MIXING_WIDTH
-        # offset = sum(df["tip_angle"][-ev_groups[0][1]:]) / 360.0 * MIXING_WIDTH
-        # x_data[-2] -= offset
+        offset = sum(df["tip_angle"][-ev_groups[0][1] :]) / 180 * MIXING_WIDTH
+        x_data[-2] -= offset
 
+    last_spec_dim_x = 0
+    spec_dim_idx = 0
     df_idx = 0
     x_idx = 0
     for _type, num in ev_groups:
         if _type == "MixingEvent":
-            # Create even spacing between MixingEvent rectangles within offset width
-            tmp = np.linspace(x_data[x_idx], x_data[x_idx + 1], num=num + 1)  # TODO Del
             # Leftmost x point of next MixingEvent rectangle
-            # left_x = x_data[x_idx]
+            left_x = x_data[x_idx]
+            # Iterate over each MixingEvent in group and plot rectangle
             for j in range(num):
-                # Plot each MixingEvent
-                # tip_angle = df['tip_angle'][df_idx + j]
-                # phase = df['phase'][df_idx + j]
-                # width = tip_angle / 360 * MIXING_WIDTH
-                # text = "({0:1f}, {0:1f})".format(tip_angle, phase)
-                # _add_rect_with_label(ax, left_x, left_x + width, text, "MixingEvent")
-                _add_rect_with_label(
-                    ax, tmp[j], tmp[j + 1], df["label"][df_idx + j], "MixingEvent"
-                )
+                text, width = _format_mix_label(df, df_idx, j)
+                _add_rect_with_label(ax, left_x, left_x + width, text, "MixingEvent")
+                if df["spec_dim_index"][df_idx + j] != spec_dim_idx:
+                    _plot_spec_dim(ax, last_spec_dim_x, left_x, spec_dim_idx)
+                    last_spec_dim_x = left_x
+                    spec_dim_idx += 1
+                left_x += width
             x_idx += 1
         else:
             for j in range(num):
@@ -133,9 +150,15 @@ def _plot_sequence_diagram(ax, x_data, df):
                     df["label"][df_idx + j],
                     df["type"][df_idx + j],
                 )
+                if df["spec_dim_index"][df_idx + j] != spec_dim_idx:
+                    _plot_spec_dim(ax, last_spec_dim_x, x_data[x_idx], spec_dim_idx)
+                    last_spec_dim_x = x_data[x_idx]
+                    spec_dim_idx += 1
                 x_idx += 1
 
         df_idx += num
+
+    _plot_spec_dim(ax, last_spec_dim_x, x_data[-1], spec_dim_idx)
 
     ax.axis("off")
 
@@ -222,20 +245,27 @@ def _check_columns(df):
     return params
 
 
+def _add_tip_angle_and_phase(df):
+    """Add tip_angle and phase columns to dataframe from mixing_query"""
+    # NOTE Only columns for ch1 are created
+    df["tip_angle"] = [
+        query.ch1.tip_angle * 180 / np.pi
+        if query.__class__.__name__ == "MixingQuery"
+        else np.nan
+        for query in df["mixing_query"]
+    ]
+    df["phase"] = [
+        query.ch1.phase * 180 / np.pi
+        if query.__class__.__name__ == "MixingQuery"
+        else np.nan
+        for query in df["mixing_query"]
+    ]
+
+
 def plot(df) -> plt.figure:
-    """Create Plotly figure of symmetry pathways for method
-
-    Args:
-        (DataFrame) df:
-            DataFrame summary of Method object
-
-    Returns:
-        figure fig: Matplotlib figure with plotted sata
-
-    Example:
-        TODO add example code
-    """
+    """Create figure of symmetry pathways for DataFrame representation of method"""
     params = _check_columns(df)
+    _add_tip_angle_and_phase(df)
 
     if len(params) == 0:
         # Warn passed empty dataframe?
