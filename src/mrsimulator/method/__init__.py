@@ -477,48 +477,6 @@ class Method(Parseable):
             for item in segments
         ]
 
-    def _remove_properties(self, properties):
-        """Helper method for summary to reduce complexity"""
-        CD = "ConstantDurationEvent"
-        SP = "SpectralEvent"
-        MX = "MixingEvent"
-
-        # Columns required to be present
-        required = [
-            "type",
-            "label",
-            "duration",
-            "fraction",
-            "mixing_query",
-            "spec_dim_index",
-        ]
-
-        # Properties which can accessed by getattr()
-        prop_dict = {
-            "label": (CD, SP, MX),
-            "duration": CD,
-            "fraction": SP,
-            "mixing_query": MX,
-            "magnetic_flux_density": (CD, SP),
-            "rotor_frequency": (CD, SP),
-            "rotor_angle": (CD, SP),
-            "freq_contrib": (CD, SP),
-        }
-
-        # Properties which cannot be accessed by getattr() and have unique calculations
-        special_props = ["p", "d"]
-
-        # If list of properties passed remove unrequested properties
-        if properties is not None:
-            prop_dict = {
-                key: val
-                for key, val in prop_dict.items()
-                if key in required or key in properties
-            }
-            special_props = [prop for prop in special_props if prop in properties]
-
-        return required, prop_dict, special_props
-
     def _add_simple_props_to_df(self, df, prop_dict, required, drop_constant_cols):
         """Helper method for summary to reduce complexity"""
         # Iterate through property and valid Event subclass for property
@@ -535,19 +493,15 @@ class Method(Parseable):
                     continue
             df[prop] = lst
 
-    def summary(self, properties=None, drop_constant_cols=False) -> pd.DataFrame:
+    def summary(self, drop_constant_cols=True) -> pd.DataFrame:
         """Returns a DataFrame giving a summary of the Method. A user can specify
         optional attributes to include which appear as columns in the DataFrame. A user
         can also ask to leave out attributes which remain constant throughout the
         method. Invalid attributes for an Event will be replaced with NAN.
 
         Args:
-            (list) properties:
-                Optional list of properties to include in DataFrame. All properties are
-                included by default. The DataFrame will allways include some required
-                columns which can be dropped manually using df.drop().
             (bool) drop_constant_cols:
-                Removes constant properties if True. Default False.
+                Removes constant properties if True. Default is True.
 
         Returns:
             pd.DataFrame df:
@@ -575,7 +529,33 @@ class Method(Parseable):
             - drop constant and remove post method call
         """
         # TODO: Add catch for empty 'spectral_dimensions' and 'events'
-        required, prop_dict, special_props = self._remove_properties(properties)
+        CD = "ConstantDurationEvent"
+        SP = "SpectralEvent"
+        MX = "MixingEvent"
+
+        # Columns required to be present
+        required = [
+            "type",
+            "label",
+            "duration",
+            "fraction",
+            "mixing_query",
+            "spec_dim_index",
+            "p",
+        ]
+
+        # Properties which can accessed by getattr()
+        prop_dict = {
+            "label": (CD, SP, MX),
+            "duration": CD,
+            "fraction": SP,
+            "mixing_query": MX,
+            "magnetic_flux_density": (CD, SP),
+            "rotor_frequency": (CD, SP),
+            "rotor_angle": (CD, SP),
+            "freq_contrib": (CD, SP),
+            "d": "",  # Not valid eventwise. Special function to calculate
+        }
 
         # Create the DataFrame
         df = pd.DataFrame()
@@ -589,15 +569,13 @@ class Method(Parseable):
         df["spec_dim_index"] = [
             i for i, dim in enumerate(self.spectral_dimensions) for ev in dim.events
         ]
-
         self._add_simple_props_to_df(df, prop_dict, required, drop_constant_cols)
 
-        # Add total transition symmetries to dataframe
-        if "p" in special_props:
-            lst = np.transpose([sym.total for sym in self.get_symmetry_pathways("P")])
-            if not drop_constant_cols or np.unique(lst[~np.isnan(lst)]).size > 1:
-                df["p"] = lst.tolist()
-        if "d" in special_props:
+        df["p"] = np.transpose(
+            [sym.total for sym in self.get_symmetry_pathways("P")]
+        ).tolist()
+
+        if "d" in prop_dict:
             lst = np.transpose([sym.total for sym in self.get_symmetry_pathways("D")])
             if not drop_constant_cols or np.unique(lst[~np.isnan(lst)]).size > 1:
                 df["d"] = lst.tolist()
@@ -610,19 +588,15 @@ class Method(Parseable):
 
         return df
 
-    def plot(self, df=None, params=None) -> mpl.pyplot.figure:
+    def plot(self, df=None) -> mpl.pyplot.figure:
         """Creates a diagram representing the method. By default, only parameters which
-        vary throughout the method are plotted. Spesific parameters can be requested
-        using the params argument. If a DataFrame is passed then any params argument is
-        ignored and all plotting data is parsed from the DataFrame
+        vary throughout the method are plotted.
 
         Args:
             DataFrame df:
                 DataFrame to plot data from. By default DataFrame is calculated from
-                summary()
-            List params:
-                Parameters to plot. DataFrame is calculated from
-                summary(parameters=params)
+                summary() and will show only parameters which vary throughout the
+                method plus 'p'
 
         Returns:
             matplotlib.pyplot.figure
@@ -631,10 +605,7 @@ class Method(Parseable):
             TODO add example code
         """
         if df is None:
-            if params is None:
-                df = self.summary(properties=None, drop_constant_cols=True)
-            else:
-                df = self.summary(properties=params)
+            df = self.summary()
 
         fig = _plot(df)
         fig.suptitle(self.name if self.name is not None else "")
