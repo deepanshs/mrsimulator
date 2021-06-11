@@ -150,18 +150,18 @@ class Site(Parseable):
     ... )
     """
 
-    name: str = None
-    label: str = None
-    description: str = None
     isotope: str = "1H"
     isotropic_chemical_shift: float = 0.0
     shielding_symmetric: SymmetricTensor = None
     shielding_antisymmetric: AntisymmetricTensor = None
     quadrupolar: SymmetricTensor = None
 
-    property_unit_types: ClassVar = {"isotropic_chemical_shift": "dimensionless"}
-    property_default_units: ClassVar = {"isotropic_chemical_shift": "ppm"}
+    property_unit_types: ClassVar[Dict] = {"isotropic_chemical_shift": "dimensionless"}
+    property_default_units: ClassVar[Dict] = {"isotropic_chemical_shift": "ppm"}
     property_units: Dict = {"isotropic_chemical_shift": "ppm"}
+
+    class Config:
+        validate_assignment = True
 
     @validator("quadrupolar")
     def spin_must_be_at_least_one(cls, v, values):
@@ -192,9 +192,6 @@ class Site(Parseable):
     @validator("isotope", always=True)
     def validate_isotope(cls, v, *, values, **kwargs):
         return Isotope(symbol=v)
-
-    class Config:
-        validate_assignment = True
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):

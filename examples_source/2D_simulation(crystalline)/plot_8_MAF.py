@@ -56,7 +56,7 @@ maf = Method2D(
             "events": [
                 {
                     "rotor_angle": 90 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
+                    "transition_query": [{"P": [-1], "D": [0]}],
                 }
             ],
         },
@@ -68,7 +68,7 @@ maf = Method2D(
             "events": [
                 {
                     "rotor_angle": 54.735 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
+                    "transition_query": [{"P": [-1], "D": [0]}],
                 }
             ],
         },

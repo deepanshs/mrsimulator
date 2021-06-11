@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # import pytest
-# from mrsimulator.method.transition_query import TransitionQuery
+# from mrsimulator.method.query import TransitionQuery
 # from mrsimulator.methods import Cosy
 # from mrsimulator.methods import Inadequate
 #
