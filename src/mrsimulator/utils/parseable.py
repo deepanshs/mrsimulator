@@ -40,24 +40,6 @@ INCLUDE_LIST = [
     "channels",
 ]
 
-
-# class Base(BaseModel):
-#     def json(self):
-#         return Base.fullsimplify(super().dict())
-
-#     @staticmethod
-#     def simplify(val):
-#         """Remove value if it is None."""
-#         return {k: v for k, v in val.items() if v is not None}
-
-#     @staticmethod
-#     def fullsimplify(val):
-#         """Iteratively remove None values from a nested dict."""
-#         initial = {
-#             k: Base.simplify(Base.fullsimplify(v)) if isinstance(v, dict) else v
-#             for k, v in val.items()
-#         }
-#         return Base.simplify(initial)
 CONST = string_to_quantity("1")
 
 
@@ -70,8 +52,8 @@ class Parseable(BaseModel):
     name: str = None
     description: str = None
     label: str = None
-    property_unit_types: ClassVar = {}
-    property_default_units: ClassVar = {}
+    property_unit_types: ClassVar[Dict] = {}
+    property_default_units: ClassVar[Dict] = {}
     property_units: Dict = {}
 
     @classmethod
@@ -134,7 +116,7 @@ class Parseable(BaseModel):
             "reduced_dict() is deprecated in v0.7, use json(units=True) instead.",
             category=DeprecationWarning,
         )
-        return self.__json(exclude, units=False)
+        return self.json(exclude, units=False)
 
     def json(self, exclude={}, units=True) -> dict:
         """Parse the class object to a JSON compliant python dictionary object.
@@ -146,13 +128,6 @@ class Parseable(BaseModel):
 
         Returns: dict
         """
-        return self.__json(exclude, units)
-
-    def __json(self, exclude={}, units=True) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object, where
-        the attribute value with physical quantity is expressed as a string with a
-        number and a unit."""
-
         temp_dict = {}
         for k, v in self.dict(exclude={"property_units", *exclude}).items():
             attr_val = getattr(self, k)
@@ -179,8 +154,8 @@ class Parseable(BaseModel):
         return temp_dict if not units else self.clear_property_units(temp_dict)
 
     def clear_property_units(self, temp_dict):
-        if not hasattr(self, "property_units"):
-            return temp_dict
+        # if not hasattr(self, "property_units"):
+        #     return temp_dict
         temp_keys = temp_dict.keys()
         for key, unit in getattr(self, "property_units").items():
             if key in temp_keys:

@@ -254,7 +254,7 @@ class Simulator(Parseable):
         """Load a list of spin systems from the given JSON serialized file.
 
         See an
-        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
+        `example <https://raw.githubusercontent.com/deepanshs/mrsimulator-examples/
         master/spin_systems_v0.3.json>`_ of a JSON serialized file. For details, refer
         to the :ref:`load_spin_systems` section of this documentation.
 
@@ -273,7 +273,7 @@ class Simulator(Parseable):
         """Export a list of spin systems to a JSON serialized file.
 
         See an
-        `example <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/
+        `example <https://raw.githubusercontent.com/deepanshs/mrsimulator-examples/
         master/spin_systems_v0.3.json>`_ of a JSON serialized file. For details, refer
         to the :ref:`load_spin_systems` section.
 
@@ -390,7 +390,7 @@ class Simulator(Parseable):
 
     @classmethod
     def load(cls, filename: str, parse_units: bool = True):
-        """Load the :class:`~mrsimulator.Simulator` object from a JSON file by parsing.
+        """Load the :py:class:`~mrsimulator.Simulator` object from a JSON file by parsing.
 
         Args:
             bool parse_units: If true, parse the attribute values from the serialized
@@ -399,7 +399,7 @@ class Simulator(Parseable):
             str filename: The filename of a JSON serialized mrsimulator file.
 
         Returns:
-            A :class:`~mrsimulator.Simulator` object.
+            A :py:class:`~mrsimulator.Simulator` object.
 
         Example
         -------

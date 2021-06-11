@@ -1,0 +1,226 @@
+name: CI (wheels and sdist)
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install system dependencies
+        run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest cython setuptools
+          python -m pip install -r requirements-dev.txt
+
+      - name: build sdist
+        run: python setup.py develop
+
+      - name: Test with pytest
+        run: pytest --cov=./ --cov-report=xml
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
+
+  source-distribution:
+    needs: [build-test]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install system dependencies
+        run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
+
+      - name: build sdist
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest cython setuptools
+          python -m pip install -r requirements-dev.txt
+          python setup.py sdist
+
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: sdist
+          path: "dist/*.tar.gz"
+          if-no-files-found: error
+
+      # - name: Publish to PyPI
+      #   if: startsWith(github.ref, 'refs/tags/')
+      #   env:
+      #     TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+      #     TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      #   run: |
+      #     pip install twine
+      #     twine upload --skip-existing dist/*.tar.gz
+
+  wheel-package:
+    needs: [build-test]
+    runs-on: ${{ matrix.os }}
+
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "10.9"
+      CIBW_BUILD_VERBOSITY: "1"
+      CIBW_BEFORE_ALL_MACOS: "brew install fftw openblas"
+      CIBW_BEFORE_ALL_LINUX: "yum -y install openblas-devel fftw-devel"
+
+      CIBW_BUILD: "${{ matrix.cibw.build || '*' }}"
+      CIBW_MANYLINUX_X86_64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
+      CIBW_MANYLINUX_I686_IMAGE: "${{ matrix.cibw.manylinux_image }}"
+      CIBW_MANYLINUX_AARCH64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
+      CIBW_ARCHS_LINUX: "${{ matrix.cibw.arch || 'auto' }}"
+      CIBW_ARCHS_MACOS: "${{ matrix.cibw.arch || 'auto' }}"
+      CIBW_ENVIRONMENT_WINDOWS: "LIB='C:\\Miniconda\\Library\\lib' INCLUDE='C:\\Miniconda\\Library\\include;C:\\Miniconda\\Library\\include\\openblas'"
+      CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: >-
+        delvewheel repair
+        -v
+        --add-path=C:/Miniconda/Library/bin
+        --wheel-dir={dest_dir}
+        {wheel}
+
+      CIBW_BEFORE_TEST: pip install -r requirements.txt
+      # CIBW_TEST_REQUIRES: "pytest pytest-cov sympy"
+      CIBW_TEST_COMMAND: |
+        python -c "import mrsimulator"
+        python -c "from mrsimulator import Site, Coupling, SpinSystem, Simulator"
+        python -c "from mrsimulator.methods import Method1D, Method2D"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            name: mac 64-bit x86_64
+            cibw:
+              build: "cp3*"
+
+          - os: macos-latest
+            name: mac 64-bit arm64
+            cibw:
+              arch: arm64
+              build: "cp39*"
+
+          - os: ubuntu-latest
+            name: linux 64-bit x86_64
+            cibw:
+              build: "cp3*_x86_64"
+              manylinux_image: manylinux2010
+
+          - os: ubuntu-latest
+            name: linux 32-bit i686
+            cibw:
+              build: "cp3*_i686"
+              manylinux_image: manylinux2010
+
+          # - os: ubuntu-latest
+          #   name: manylinux_aarch64
+          #   cibw:
+          #     build: "cp3*"
+          #     manylinux_image: manylinux2014
+          #     arch: aarch64
+
+          # - os: windows-latest
+          #   name: win32
+          #   architecture: x86
+          #   cibw:
+          #     build: "cp*win32"
+
+          # - os: windows-2016
+          #   name: win32-pypy
+          #   architecture: x86
+          #   cibw:
+          #     build: "pp*win32"
+
+          - os: windows-latest
+            name: windows 64-bit AMD64
+            cibw:
+              build: "*win_amd64"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+          architecture: ${{ matrix.architecture }}
+
+      - name: customize mac-arm-64
+        if: contains(matrix.os, 'macos') && matrix.cibw.arch
+        run: |
+          sudo xcode-select -switch /Applications/Xcode_12.2.app
+          echo 'SDKROOT=/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk' >> "$GITHUB_ENV"
+          echo 'MACOSX_DEPLOYMENT_TARGET=11.0' >> "$GITHUB_ENV"
+
+      - name: Set up QEMU
+        if: startsWith(matrix.os, 'ubuntu') && matrix.cibw.arch
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: arm64
+
+      - name: customize aarch64
+        if: contains(matrix.cibw.arch, 'aarch64')
+        # install fftw-devel and openblas-devel from epel-7
+        run: |
+          echo '${{ matrix.cibw.arch }}'
+          echo 'CIBW_BEFORE_ALL_LINUX=yum -y install epel-release && yum -y install openblas-devel fftw-devel' >> "$GITHUB_ENV"
+
+      - name: Install mac-os Dependencies
+        if: startsWith(matrix.os, 'mac')
+        run: |
+          python -m pip install delocate
+
+      - name: Install linux Dependencies
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          python -m pip install auditwheel
+
+      - name: Install windows Dependencies
+        if: startsWith(matrix.os, 'windows')
+        run: |
+          python -m pip install delvewheel
+          C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade setuptools pip wheel cython
+          python -m pip install cibuildwheel
+
+      - name: show environment
+        run: |
+          pip freeze
+
+      - name: list target wheels
+        run: |
+          python -m cibuildwheel . --print-build-identifiers
+
+      - name: Build wheels
+        run: |
+          python -m cibuildwheel .
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: wheels-${{ matrix.name }}
+          path: "wheelhouse/*"
+          if-no-files-found: error

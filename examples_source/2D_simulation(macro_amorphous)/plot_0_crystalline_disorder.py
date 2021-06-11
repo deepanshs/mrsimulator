@@ -4,7 +4,7 @@
 Simulating site disorder (crystalline)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-87Rb (I=3/2) 3QMAS simulation with site disorder.
+⁸⁷Rb (I=3/2) 3QMAS simulation with site disorder.
 """
 # %%
 # The following example illustrates an NMR simulation of a crystalline solid with site

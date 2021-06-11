@@ -1,4 +1,4 @@
-For contributors and developers
+For developers and contributors
 ===============================
 
 Make your own copy of mrsimulator on GitHub
@@ -8,7 +8,7 @@ Making a copy of someone's code on GitHub is the same as making a *fork*. A fork
 complete copy of the code and all of its revision history.
 
 1. Log into a `GitHub account <https://github.com>`_.
-2. Go to the `mrsimulator Github <https://github.com/DeepanshS/mrsimulator>`_ home page.
+2. Go to the `mrsimulator Github <https://github.com/deepanshs/mrsimulator>`_ home page.
 3. Click on the *fork* button.
 
 You will see a short animation of Octocat scanning a book on a flatbed scanner. After
@@ -93,7 +93,7 @@ the previous step, and add a remote:
 .. code-block:: bash
 
     cd mrsimulator
-    git remote add mrsimulator git://github.com/DeepanshS/mrsimulator.git
+    git remote add mrsimulator git://github.com/deepanshs/mrsimulator.git
 
 You can check that everything is set up properly so far by asking git to show you all of the
 remotes it knows about for your local repository of mrsimulator with ``git remote -v``, which
@@ -101,8 +101,8 @@ should display something like
 
 .. code-block:: bash
 
-    mrsimulator   git://github.com/DeepanshS/mrsimulator.git (fetch)
-    mrsimulator   git://github.com/DeepanshS/mrsimulator.git (push)
+    mrsimulator   git://github.com/deepanshs/mrsimulator.git (fetch)
+    mrsimulator   git://github.com/deepanshs/mrsimulator.git (push)
     origin     git@github.com:your-user-name/mrsimulator.git (fetch)
     origin     git@github.com:your-user-name/mrsimulator.git (push)
 
@@ -152,6 +152,17 @@ package into the default site-packages directory, you may try installing by addi
 
 Note for the developers and contributors
 ''''''''''''''''''''''''''''''''''''''''
+
+**Before commits**: Mrsimulator follows python community standards for writing code and
+documentation. To help guide the developers and contributors towards these standards,
+we have created a *.pre-commit-config.yaml* file, that when used with ``pre-commit``, will
+inspect the code and document for issues.
+Type ``pre-commit run`` before git commits to inspect the changes.
+
+You can also set up the git hook script to automatically run *pre-commit* on git
+commits with the ``pre-commit install``. Read more about
+`pre-commit <https://pre-commit.com/#3-install-the-git-hook-scripts>`_.
+
 
 **Running tests**: For unit tests, we use the pytest module. At the root directory
 of the mrsimulator package folder, type

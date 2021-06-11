@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-17O 2D DAS NMR of Coesite
+¹⁷O 2D DAS NMR of Coesite
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -12,7 +12,7 @@
 import numpy as np
 import csdmpy as cp
 import matplotlib.pyplot as plt
-from lmfit import Minimizer, report_fit
+from lmfit import Minimizer
 
 from mrsimulator import Simulator
 from mrsimulator.methods import Method2D
@@ -59,9 +59,9 @@ plt.show()
 #
 # Create a guess list of spin systems.
 
-shifts = [29, 41, 57, 53, 58]  # in ppm
+shifts = [29, 39, 54.8, 51, 56]  # in ppm
 Cq = [6.1e6, 5.4e6, 5.5e6, 5.5e6, 5.1e6]  # in  Hz
-eta = [0.1, 0.2, 0.1, 0.1, 0.3]
+eta = [0.1, 0.2, 0.15, 0.15, 0.3]
 abundance_ratio = [1, 1, 2, 2, 2]
 abundance = np.asarray(abundance_ratio) / 8 * 100  # in %
 
@@ -74,12 +74,13 @@ spin_systems = single_site_system_generator(
 
 # %%
 # **Method**
-
+#
 # Create the DAS method.
-# Get the spectral dimension paramters from the experiment.
+
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-das = Method2D(
+DAS = Method2D(
     channels=["17O"],
     magnetic_flux_density=11.744,  # in T
     spectral_dimensions=[
@@ -115,16 +116,15 @@ das = Method2D(
 # Optimize the script by pre-setting the transition pathways for each spin system from
 # the das method.
 for sys in spin_systems:
-    sys.transition_pathways = das.get_transition_pathways(sys)
+    sys.transition_pathways = DAS.get_transition_pathways(sys)
 
 # %%
 # **Guess Spectrum**
 
 # Simulation
 # ----------
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [das]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[DAS])
+sim.config.number_of_sidebands = 1  # no sidebands are required for this dataset.
 sim.run()
 
 # Post Simulation Processing
@@ -134,9 +134,9 @@ processor = sp.SignalProcessor(
         # Gaussian convolution along both dimensions.
         sp.IFFT(dim_index=(0, 1)),
         sp.apodization.Gaussian(FWHM="0.15 kHz", dim_index=0),
-        sp.apodization.Gaussian(FWHM="0.15 kHz", dim_index=1),
+        sp.apodization.Gaussian(FWHM="0.1 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
-        sp.Scale(factor=2.5),
+        sp.Scale(factor=4e7),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -165,8 +165,8 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # %%
 # **Solve the minimizer using LMFIT**
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
-result = minner.minimize()
-report_fit(result)
+result = minner.minimize(method="powell")
+result
 
 
 # %%
@@ -185,6 +185,21 @@ plt.grid()
 plt.tight_layout()
 plt.show()
 
+# %%
+# The best fit solution
+# ---------------------
+residuals = sf.residuals(sim, processor)[0]
+
+fig, ax = plt.subplots(
+    1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}
+)
+vmax, vmin = experiment.max(), experiment.min()
+for i, dat in enumerate([experiment, best_fit, residuals]):
+    ax[i].imshow(dat, aspect="auto", vmax=vmax, vmin=vmin)
+    ax[i].invert_xaxis()
+ax[0].set_ylim(30, -30)
+plt.tight_layout()
+plt.show()
 # %%
 # .. [#f1] Grandinetti, P. J., Baltisberger, J. H., Farnan, I., Stebbins, J. F.,
 #       Werner, U. and Pines, A.

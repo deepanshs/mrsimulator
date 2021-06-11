@@ -41,7 +41,7 @@ class MQ_VAS(BaseNamedMethod2D):
         an infinite spinning speed spectrum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
     """
 
     @classmethod
@@ -81,7 +81,7 @@ class ThreeQ_VAS(MQ_VAS):
         simulate an infinite speed spectrum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> method = ThreeQ_VAS(
@@ -116,7 +116,7 @@ class FiveQ_VAS(MQ_VAS):
         simulate an infinite speed spectrum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> method = FiveQ_VAS(
@@ -151,7 +151,7 @@ class SevenQ_VAS(MQ_VAS):
         simulate an infinite speed spectrum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> method = SevenQ_VAS(

@@ -143,7 +143,7 @@ class TransitionQuery(Parseable):
         default=None,
         description=(
             "An optional SymmetryQuery object for quering symmetry functions at "
-            "channel index 1 of the method's channels array."
+            "channel index 2 of the method's channels array."
         ),
     )
 
@@ -264,15 +264,15 @@ class RFRotation(Parseable):
         The rf rotation phase in units of radians.
     """
 
-    tip_angle: float = Field(default=None, ge=0.0, le=6.283185307179586)
-    phase: float = Field(default=None, ge=-3.141592653589793, le=3.141592653589793)
+    tip_angle: float = Field(default=0.0, ge=0.0)  # in rads
+    phase: float = Field(default=0.0)  # in rads
 
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "tip_angle": "angle",
         "phase": "angle",
     }
 
-    property_default_units: ClassVar = {
+    property_default_units: ClassVar[Dict] = {
         "tip_angle": "rad",
         "phase": "rad",
     }

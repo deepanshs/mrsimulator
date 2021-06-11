@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-RbNO3, 87Rb (I=3/2) 3QMAS
+RbNO₃, ⁸⁷Rb (I=3/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-87Rb (I=3/2) triple-quantum magic-angle spinning (3Q-MAS) simulation.
+⁸⁷Rb (I=3/2) triple-quantum magic-angle spinning (3Q-MAS) simulation.
 """
 # %%
 # The following is an example of the 3QMAS simulation of :math:`\text{RbNO}_3`, which
 # has three distinct :math:`^{87}\text{Rb}` sites. The :math:`^{87}\text{Rb}` tensor
-# parameters were obtained from Massiot `et. al.` [#f1]_. In this simulation, a Gaussian
+# parameters were obtained from Massiot `et al.` [#f1]_. In this simulation, a Gaussian
 # broadening is applied to the spectrum as a post-simulation step.
 import matplotlib.pyplot as plt
 
@@ -75,7 +75,7 @@ sim.run()
 data = sim.methods[0].simulation
 
 plt.figure(figsize=(4.25, 3.0))
-ax = plt.gca(projection="csdm")
+ax = plt.subplot(projection="csdm")
 cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()

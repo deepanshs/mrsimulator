@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Amorphous material, 27Al (I=5/2)
+Amorphous material, ²⁷Al (I=5/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-27Al (I=5/2) simulation of amorphous material.
+²⁷Al (I=5/2) simulation of amorphous material.
 """
 # sphinx_gallery_thumbnail_number = 3
 import numpy as np

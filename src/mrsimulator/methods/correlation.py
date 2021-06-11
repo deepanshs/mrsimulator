@@ -18,7 +18,7 @@ class Cosy(BaseNamedMethod2D):
         simulate an infinite speed spectrum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> cosy = Cosy(
@@ -90,7 +90,7 @@ class Inadequate(BaseNamedMethod2D):
         simulate an infinite speed spectrum.
 
     Return:
-        A :class:`~mrsimulator.Method` instance.
+        A :py:class:`~mrsimulator.Method` instance.
 
     Example:
         >>> inadequate = Inadequate(

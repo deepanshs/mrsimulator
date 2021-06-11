@@ -110,8 +110,8 @@ attribute *sites* hold a list of sites. The attributes *name*, *description*, an
 
 Until now, we have only created a python dictionary representation of a spin system. To
 run the simulation, you need to create an instance of the
-:class:`~mrsimulator.SpinSystem` class. Import the SpinSystem class and use it's
-:meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method to parse the python
+:py:class:`~mrsimulator.SpinSystem` class. Import the SpinSystem class and use it's
+:py:meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method to parse the python
 dictionary and create an instance of the spin system class, as follows,
 
 .. plot::
@@ -122,7 +122,7 @@ dictionary and create an instance of the spin system class, as follows,
     >>> from mrsimulator import SpinSystem
     >>> system_object_1 = SpinSystem.parse_dict_with_units(the_spin_system)
 
-.. note:: We provide the :meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method
+.. note:: We provide the :py:meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method
     because it allows the user to create spin systems, where the attribute value is a
     physical quantity, represented as a string with a value and a unit.
     Physical quantities remove the ambiguity in the units, which is otherwise
@@ -210,7 +210,7 @@ frequency dimension with 2048 points, spanning 25 kHz with a reference offset of
 -8 kHz.
 
 Like before, you may parse the above ``method_dict`` using the
-:meth:`~mrsimulator.methods.BlochDecaySpectrum.parse_dict_with_units` function of the
+:py:meth:`~mrsimulator.methods.BlochDecaySpectrum.parse_dict_with_units` function of the
 method. Import the BlochDecaySpectrum class and create an instance of the method,
 following,
 
@@ -222,7 +222,7 @@ following,
     >>> from mrsimulator.methods import BlochDecaySpectrum
     >>> method_object = BlochDecaySpectrum.parse_dict_with_units(method_dict)
 
-Here, ``method_object`` is an instance of the :class:`~mrsimulator.Method` class.
+Here, ``method_object`` is an instance of the :py:class:`~mrsimulator.Method` class.
 
 Likewise, you may create multiple method objects. In this example, we
 stick with a single method. Finally, add all the method objects, in this case,
@@ -238,7 +238,7 @@ stick with a single method. Finally, add all the method objects, in this case,
 Running simulation
 ------------------
 
-To simulate the spectrum, run the simulator with the :meth:`~mrsimulator.Simulator.run`
+To simulate the spectrum, run the simulator with the :py:meth:`~mrsimulator.Simulator.run`
 method, as follows,
 
 .. plot::

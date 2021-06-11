@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-13C 2D MAT NMR of L-Histidine
+¹³C 2D MAT NMR of L-Histidine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -10,7 +10,7 @@
 import numpy as np
 import csdmpy as cp
 import matplotlib.pyplot as plt
-from lmfit import Minimizer, report_fit
+from lmfit import Minimizer
 
 from mrsimulator import Simulator
 from mrsimulator.methods import SSB2D
@@ -46,11 +46,10 @@ max_amp = mat_data.max()
 levels = (np.arange(24) + 1) * max_amp / 25  # contours are drawn at these levels.
 options = dict(levels=levels, alpha=0.75, linewidths=0.5)  # plot options
 
-plt.figure(figsize=(4.25, 3.0))
+plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
 ax.contour(mat_data, colors="k", **options)
-ax.set_xlim(200, 10)
-ax.invert_yaxis()
+ax.set_xlim(180, 15)
 plt.grid()
 plt.tight_layout()
 plt.show()
@@ -76,12 +75,13 @@ spin_systems = single_site_system_generator(
 
 # %%
 # **Method**
+#
+# Create the SSB2D method.
 
-# Create the DAS method.
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(mat_data)
 
-ssb = SSB2D(
+PASS = SSB2D(
     channels=["13C"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=1500,  # in Hz
@@ -92,16 +92,14 @@ ssb = SSB2D(
 # Optimize the script by pre-setting the transition pathways for each spin system from
 # the method.
 for sys in spin_systems:
-    sys.transition_pathways = ssb.get_transition_pathways(sys)
+    sys.transition_pathways = PASS.get_transition_pathways(sys)
 
 # %%
 # **Guess Spectrum**
 
 # Simulation
 # ----------
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [ssb]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[PASS])
 sim.run()
 
 # Post Simulation Processing
@@ -119,11 +117,11 @@ processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
-plt.figure(figsize=(4.25, 3.0))
+plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
 ax.contour(mat_data, colors="k", **options)
 ax.contour(processed_data, colors="r", linestyles="--", **options)
-ax.set_xlim(200, 10)
+ax.set_xlim(180, 15)
 plt.grid()
 plt.tight_layout()
 plt.show()
@@ -141,7 +139,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # **Solve the minimizer using LMFIT**
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
-report_fit(result)
+result
 
 
 # %%
@@ -150,11 +148,11 @@ report_fit(result)
 best_fit = sf.bestfit(sim, processor)[0]
 
 # Plot of the best fit solution
-plt.figure(figsize=(4.25, 3.0))
+plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
 ax.contour(mat_data, colors="k", **options)
 ax.contour(best_fit, colors="r", linestyles="--", **options)
-ax.set_xlim(200, 10)
+ax.set_xlim(180, 15)
 plt.grid()
 plt.tight_layout()
 plt.show()

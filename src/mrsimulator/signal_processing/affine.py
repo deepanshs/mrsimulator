@@ -19,7 +19,7 @@ __email__ = "srivastava.89@osu.edu"
 class AffineTransformation(ModuleOperation):
     dim_index: int = 0
     dv_index: Union[int, list, tuple] = None  # if none apply to all
-    module_name: ClassVar = __name__
+    module_name: ClassVar[str] = __name__
 
     @property
     def function(self):

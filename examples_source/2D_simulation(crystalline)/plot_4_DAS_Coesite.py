@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Coesite, 17O (I=5/2) DAS
+Coesite, ¹⁷O (I=5/2) DAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-17O (I=5/2) Dynamic-angle spinning (DAS) simulation.
+¹⁷O (I=5/2) Dynamic-angle spinning (DAS) simulation.
 """
 # %%
-# The following is a dynamic angle spinning (DAS) simulation of Coesite. Coesite has
+# The following is a Dynamic Angle Spinning (DAS) simulation of Coesite. Coesite has
 # five crystallographic :math:`^{17}\text{O}` sites. In the following, we use the
-# :math:`^{17}\text{O}` EFG tensor information from Grandinetti `et. al.` [#f1]_
+# :math:`^{17}\text{O}` EFG tensor information from Grandinetti `et al.` [#f1]_
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator

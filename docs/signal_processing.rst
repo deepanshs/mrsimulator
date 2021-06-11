@@ -24,7 +24,7 @@ processing tools.
 
 
 In the following section, we demonstrate the use of the
-:class:`~mrsimulator.signal_processing.SignalProcessor` class in applying various operations
+:py:class:`~mrsimulator.signal_processing.SignalProcessor` class in applying various operations
 to a generic CSDM object. But before we start explaining signal processing with CSDM
 objects, it seems necessary to first describe the construct of CSDM objects. Each CSDM object
 has two main attributes, *dimensions* and *dependent_variables*. The *dimensions* attribute
@@ -77,7 +77,7 @@ convoluting to a dataset.
     ...     ]
     ... )
 
-Here, the *processor* is an instance of the :class:`~mrsimulator.signal_processing.SignalProcessor`
+Here, the *processor* is an instance of the :py:class:`~mrsimulator.signal_processing.SignalProcessor`
 class. The required attribute of this class, *operations*, is a list of operations. In the
 above example, we employ the convolution theorem by sandwiching the Gaussian apodization
 function between two Fourier transformations.
@@ -114,7 +114,7 @@ Let's create a CSDM object and then apply the above signal processing operations
     CSDM object.
 
 To apply the previously defined signal processing operations to the above CSDM object, use
-the :meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method of the
+the :py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method of the
 ``SignalProcessor`` instance as follows,
 
 .. plot::
@@ -191,7 +191,7 @@ Let's add another dependent variable to the previously created CSDM object.
     >>> csdm_object.add_dependent_variable(cp.as_dependent_variable(test_data))
 
 As before, apply the operations with the
-:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method.
+:py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method.
 
 .. plot::
     :format: doctest
@@ -283,7 +283,7 @@ Serializing the operations list
 -------------------------------
 
 You may also serialize the operations list using the
-:meth:`~mrsimulator.signal_processing.SignalProcessor.json`
+:py:meth:`~mrsimulator.signal_processing.SignalProcessor.json`
 method, as follows
 
 .. doctest::
