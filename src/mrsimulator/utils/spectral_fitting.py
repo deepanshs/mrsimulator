@@ -398,11 +398,15 @@ def update_mrsim_obj_from_params(params, sim: Simulator, processors: list = None
     _update_processors_from_LMFIT_params(params, processors)
 
 
-def get_correct_data_order(data):
+def get_correct_data_order(method):
     """If data has negative increment, reverse the data."""
+    if "experiment" in method._metadata:
+        return method._metadata["experiment"]
+    data = method.experiment
     y = data.y[0].components[0]
     index = [-i - 1 for i, x in enumerate(data.x) if x.increment.value < 0]
-    return y if index == [] else np.flip(y, axis=tuple(index))
+    method._metadata["experiment"] = y if index == [] else np.flip(y, axis=tuple(index))
+    return method._metadata["experiment"]
 
 
 def LMFIT_min_function(
@@ -440,7 +444,7 @@ def LMFIT_min_function(
         for decomposed_datum in processed_datum.y:
             datum += decomposed_datum.components[0].real
 
-        exp_data = get_correct_data_order(mth.experiment)
+        exp_data = get_correct_data_order(mth)
         diff = np.append(diff, (exp_data - datum) / sigma_)
     return diff
 
@@ -483,7 +487,7 @@ def residuals(sim: Simulator, processors: list = None):
     residual_ = [add_csdm_dvs(item) for item in fits]
 
     for res, mth in zip(residual_, sim.methods):
-        exp_data = get_correct_data_order(mth.experiment)
+        exp_data = get_correct_data_order(mth)
         res.y[0].components[0] -= exp_data
         res.y[0].components[0] *= -1
 

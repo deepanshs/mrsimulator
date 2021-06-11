@@ -8,6 +8,7 @@ from typing import Union
 import csdmpy as cp
 import numpy as np
 from mrsimulator.spin_system.isotope import Isotope
+from mrsimulator.transition import SymmetryPathway
 from mrsimulator.transition import Transition
 from mrsimulator.transition import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
@@ -15,6 +16,7 @@ from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
 
+from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
 
@@ -126,7 +128,10 @@ class Method(Parseable):
     rotor_frequency: float = Field(default=0.0, ge=0.0)
     rotor_angle: float = Field(default=0.9553166181245, ge=0.0, le=1.5707963268)
 
+    # private attributes
     _named_method: bool = PrivateAttr(False)
+    _metadata: dict = PrivateAttr({})
+
     property_unit_types: ClassVar[Dict] = {
         "magnetic_flux_density": "magnetic flux density",
         "rotor_frequency": "frequency",
@@ -303,29 +308,115 @@ class Method(Parseable):
         _ = [mth.pop(item) for item in [k for k, v in mth.items() if v is None]]
         return mth
 
-    # def _get_symmetry_pathways(self, spin_system):
-    #     list_of_P = []
-    #     list_of_D = []
-    #     for dim in self.spectral_dimensions:
-    #         for ent in dim.events:
-    #             list_of_P.append(
-    #                 query_permutations(
-    #                     ent.transition_query.dict(),
-    #                     isotope=spin_system.get_isotopes(symbol=True),
-    #                     channel=[item.symbol for item in self.channels],
-    #                 )
-    #             )
-    #             if ent.transition_query.D is not None:
-    #                 list_of_D.append(
-    #                     query_permutations(
-    #                         ent.transition_query.dict(),
-    #                         isotope=spin_system.get_isotopes(symbol=True),
-    #                         channel=[item.symbol for item in self.channels],
-    #                         transition_symmetry="D",
-    #                     )
-    #                 )
+    def get_symmetry_pathways(self, symmetry_element: str) -> List[SymmetryPathway]:
+        """Return a list of symmetry pathways of the method.
 
-    #     return {"P": list_of_P, "D": list_of_D}
+        Args:
+            str symmetry_element: The  symmetry element, 'P' or 'D'.
+
+        Returns:
+            A list of :ref:`symmetry_pathway_api` objects.
+
+        **Single channel example**
+
+        Example:
+            >>> from mrsimulator.methods import Method2D
+            >>> method = Method2D(
+            ...     channels=['1H'],
+            ...     spectral_dimensions=[
+            ...         {
+            ...             "events": [
+            ...                 {"transition_query": [{"ch1": {"P": [1]}}]},
+            ...                 {"transition_query": [{"ch1": {"P": [0]}}]}
+            ...             ],
+            ...         },
+            ...         {
+            ...             "events": [
+            ...                 {"transition_query": [{"ch1": {"P": [-1]}}]},
+            ...             ],
+            ...         }
+            ...     ]
+            ... )
+            >>> pprint(method.get_symmetry_pathways("P"))
+            [SymmetryPathway(
+                ch1(1H): [1] ⟶ [0] ⟶ [-1]
+                total: 1.0 ⟶ 0.0 ⟶ -1.0
+            )]
+
+        **Dual channels example**
+
+        Example:
+            >>> from mrsimulator.methods import Method2D
+            >>> method = Method2D(
+            ...     channels=['1H', '13C'],
+            ...     spectral_dimensions=[
+            ...         {
+            ...             "events": [{
+            ...                 "transition_query": [
+            ...                     {"ch1": {"P": [1]}},
+            ...                     {"ch1": {"P": [-1]}},
+            ...                 ]
+            ...             },
+            ...             {
+            ...                 "transition_query": [  # selecting double quantum
+            ...                     {"ch1": {"P": [-1]}, "ch2": {"P": [-1]}},
+            ...                     {"ch1": {"P": [1]}, "ch2": {"P": [1]}},
+            ...                 ]
+            ...             }],
+            ...         },
+            ...         {
+            ...             "events": [{
+            ...                 "transition_query": [ # selecting single quantum
+            ...                     {"ch1": {"P": [-1]}},
+            ...                 ]
+            ...             }],
+            ...         }
+            ...     ]
+            ... )
+            >>> pprint(method.get_symmetry_pathways("P"))
+            [SymmetryPathway(
+                ch1(1H): [1] ⟶ [-1] ⟶ [-1]
+                ch2(13C): None ⟶ [-1] ⟶ None
+                total: 1.0 ⟶ -2.0 ⟶ -1.0
+            ),
+             SymmetryPathway(
+                ch1(1H): [1] ⟶ [1] ⟶ [-1]
+                ch2(13C): None ⟶ [1] ⟶ None
+                total: 1.0 ⟶ 2.0 ⟶ -1.0
+            ),
+             SymmetryPathway(
+                ch1(1H): [-1] ⟶ [-1] ⟶ [-1]
+                ch2(13C): None ⟶ [-1] ⟶ None
+                total: -1.0 ⟶ -2.0 ⟶ -1.0
+            ),
+             SymmetryPathway(
+                ch1(1H): [-1] ⟶ [1] ⟶ [-1]
+                ch2(13C): None ⟶ [1] ⟶ None
+                total: -1.0 ⟶ 2.0 ⟶ -1.0
+            )]
+        """
+        sym_path = [
+            dim._get_symmetry_pathways(symmetry_element)
+            for dim in self.spectral_dimensions
+        ]
+        sp_indexes = np.arange(len(sym_path))
+        indexes = [np.arange(len(item)) for item in sym_path]
+        products = cartesian_product(*indexes)
+
+        return [
+            SymmetryPathway(
+                channels=self.channels,
+                **{
+                    ch: [
+                        _
+                        for sp, i in zip(sp_indexes, item)
+                        for _ in sym_path[sp][i][ch]
+                    ]
+                    for ch in CHANNELS
+                },
+            )
+            for item in products
+        ]
 
     def _get_transition_pathways_np(self, spin_system):
         all_transitions = spin_system._all_transitions()
@@ -358,7 +449,7 @@ class Method(Parseable):
             SpinSystem spin_system: A SpinSystem object.
 
         Returns:
-            An array of :ref:`transition_pathway_api` objects. Each TransitionPathway
+            A list of :ref:`transition_pathway_api` objects. Each TransitionPathway
             object is an ordered collection of Transition objects.
 
         Example:
