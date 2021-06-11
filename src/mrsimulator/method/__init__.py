@@ -612,7 +612,7 @@ class Method(Parseable):
 
     def plot(self, df=None, params=None) -> mpl.pyplot.figure:
         """Creates a diagram representing the method. By default, only parameters which
-        vary throughout the method are plotted. Spesific parameters can be requested
+        vary throughout the method are plotted. Specific parameters can be requested
         using the params argument. If a DataFrame is passed then any params argument is
         ignored and all plotting data is parsed from the DataFrame
 

@@ -8,7 +8,6 @@ from typing import Union
 
 import csdmpy as cp
 import numpy as np
-import pandas as pd
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 

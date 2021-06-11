@@ -57,16 +57,18 @@ def _offset_x_data(df, x_data):
     df_idx = 0
     # Extend first jump if first event(s) are MixingEvent
     if ev_groups[0][0] == "MixingEvent":
-        offset = sum(df["tip_angle"][0 : ev_groups[0][1]]) / 360.0 * MIXING_WIDTH
+        gp__ = ev_groups[0][1]
+        offset = sum(df["tip_angle"][0:gp__]) / 360.0 * MIXING_WIDTH
         offset_x[1] += offset
         # Increment event indexer by number of MixingEvents in first group
-        df_idx += ev_groups[0][1]
+        df_idx += gp__
         ev_groups.pop(0)
 
     x_idx = 1
     for _type, num in ev_groups:
         if _type == "MixingEvent":
-            offset = sum(df["tip_angle"][df_idx : df_idx + num]) / 360.0 * MIXING_WIDTH
+            up_lim__ = df_idx + num
+            offset = sum(df["tip_angle"][df_idx:up_lim__]) / 360.0 * MIXING_WIDTH
             offset_x[x_idx] -= offset / 2
             offset_x[x_idx + 1] += offset / 2
             x_idx += 1
@@ -97,7 +99,7 @@ def _add_rect_with_label(ax, x0, x1, label, ev_type):
 
 
 def _format_mix_label(df, df_idx, j):
-    """Helper method to format label for """
+    """Helper method to format label for mixing events."""
     tip_angle = df["tip_angle"][df_idx + j]
     phase = df["phase"][df_idx + j]
     return "({0:.1f}, {1:.1f})".format(tip_angle, phase), tip_angle / 360 * MIXING_WIDTH
@@ -124,7 +126,8 @@ def _plot_sequence_diagram(ax, x_data, df):
     if ev_groups[-1][0] == "MixingEvent":
         x_data = np.append(x_data, x_data[-1])
         # Total angle / 360 * MIXING_WIDTH
-        offset = sum(df["tip_angle"][-ev_groups[0][1] :]) / 180 * MIXING_WIDTH
+        gp__ = -ev_groups[0][1]
+        offset = sum(df["tip_angle"][gp__:]) / 180 * MIXING_WIDTH
         x_data[-2] -= offset
 
     last_spec_dim_x = 0

@@ -167,16 +167,8 @@ def args_summary_tests(the_method):
     assert set(df.columns) == set(props_should_be + REQUIRED)
 
     # Make sure columns always present are not dropped even if constant
-    all_SpectralEvents_spec_dims = [
-        {
-            "events": [
-                {
-                    "label": "all labels the same",
-                    "fraction": 0.2,
-                },
-            ] * 5
-        }
-    ]
+    event_ = [{"label": "all labels the same", "fraction": 0.2}]
+    all_SpectralEvents_spec_dims = [{"events": event_ * 5}]
 
     the_method = Method(
         name="all-spectral-method-1",
