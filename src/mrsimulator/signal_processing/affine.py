@@ -19,7 +19,7 @@ __email__ = "srivastava.89@osu.edu"
 class AffineTransformation(ModuleOperation):
     dim_index: int = 0
     dv_index: Union[int, list, tuple] = None  # if none apply to all
-    module_name: ClassVar = __name__
+    module_name: ClassVar[str] = __name__
 
     @property
     def function(self):
@@ -63,9 +63,6 @@ class Shear(AffineTransformation):
     @validator("factor")
     def str_to_quantity(cls, v, values):
         return _str_to_quantity(v, values, "factor")
-
-    # class Config:
-    #     validate_assignment = True
 
     def operate(self, data):
         """Applies the operation.
@@ -134,7 +131,7 @@ class Scale(AffineTransformation):
         return data
 
 
-# class Translate(AbstractAffineTransformation):
+# class Translate(AffineTransformation):
 #     r"""Apodize a dependent variable of the CSDM object with a Gaussian function.
 
 #     The apodization function follows

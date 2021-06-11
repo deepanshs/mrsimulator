@@ -15,7 +15,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class Baseline(ModuleOperation):
-    module_name: ClassVar = __name__
+    module_name: ClassVar[str] = __name__
 
     @property
     def function(self):

@@ -186,7 +186,7 @@ def one_d_spectrum(method,
         affine_matrix_c = np.asarray([1, 0, 0, 1], dtype=np.float64)
     else:
         increment_fraction = [incre/item for item in incre]
-        matrix = method.affine_matrix.ravel() * np.asarray(increment_fraction).ravel()
+        matrix = np.asarray(method.affine_matrix).ravel() * np.asarray(increment_fraction).ravel()
         affine_matrix_c = np.asarray(matrix, dtype=np.float64)
         if affine_matrix_c[2] != 0:
             affine_matrix_c[2] /= affine_matrix_c[0]
@@ -530,3 +530,24 @@ def get_zeeman_states(sys):
                 k = np.kron(k, np.ones(two_Ip1[i]))
         lst.append(k)
     return np.asarray(lst).T
+
+
+@cython.profile(False)
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def transition_connect_factor(float l, float m1_f, float m1_i, float m2_f,
+                        float m2_i, double theta, double phi):
+    cdef ndarray[double] factor = np.zeros(2, dtype=np.float64)
+    clib.transition_connect_factor(l, m1_f, m1_i, m2_f, m2_i, theta, phi, &factor[0])
+    factor = np.around(factor, decimals=12)
+    return complex(factor[0], factor[1])
+
+
+# @cython.profile(False)
+# @cython.boundscheck(False)
+# @cython.wraparound(False)
+# def pathway_rotation_factor(float l, float *pathway, float m2_a, float m1_b,
+#                         float m2_b, double theta, double phi):
+#     cdef ndarray[double] factor = np.zeros(2, dtype=np.float64)
+#     clib.transition_connect_factor(l, m1_a, m2_a, m1_b, m2_b, theta, phi, &factor[0])
+#     return complex(factor[0], factor[1])

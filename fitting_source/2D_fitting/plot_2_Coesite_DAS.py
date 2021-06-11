@@ -90,12 +90,12 @@ DAS = Method2D(
                 {
                     "fraction": 0.5,
                     "rotor_angle": 37.38 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
+                    "transition_query": [{"P": [-1], "D": [0]}],
                 },
                 {
                     "fraction": 0.5,
                     "rotor_angle": 79.19 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
+                    "transition_query": [{"P": [-1], "D": [0]}],
                 },
             ],
         },
@@ -105,7 +105,7 @@ DAS = Method2D(
             "events": [
                 {
                     "rotor_angle": 54.735 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
+                    "transition_query": [{"P": [-1], "D": [0]}],
                 }
             ],
         },

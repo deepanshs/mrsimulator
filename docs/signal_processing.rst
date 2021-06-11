@@ -289,7 +289,8 @@ method, as follows
 .. doctest::
 
     >>> from pprint import pprint
-    >>> pprint(processor.json())
+    >>> dictionary = processor.json()
+    >>> pprint(dictionary)
     {'operations': [{'dim_index': [0, 1], 'function': 'IFFT'},
                     {'FWHM': '0.5 ms',
                      'dim_index': 0,

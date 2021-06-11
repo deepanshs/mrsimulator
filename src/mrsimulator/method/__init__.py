@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from copy import deepcopy
-from os import path
 from typing import ClassVar
 from typing import Dict
 from typing import List
@@ -8,26 +7,21 @@ from typing import Union
 
 import csdmpy as cp
 import numpy as np
-from monty.serialization import loadfn
 from mrsimulator.spin_system.isotope import Isotope
+from mrsimulator.transition import SymmetryPathway
 from mrsimulator.transition import Transition
 from mrsimulator.transition import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
+from pydantic import Field
+from pydantic import PrivateAttr
 from pydantic import validator
 
-from .event import Event
+from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
-from .utils import D_symmetry_indexes
-from .utils import expand_spectral_dimension_object
-from .utils import P_symmetry_indexes
-from .utils import query_permutations
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
-
-MODULE_DIR = path.dirname(path.abspath(__file__))
-NAMED_METHODS = loadfn(path.join(MODULE_DIR, "named_methods.json"))["named_methods"]
 
 
 class Method(Parseable):
@@ -36,7 +30,7 @@ class Method(Parseable):
     Attributes
     ----------
 
-    channels: List[str] (optional).
+    channels:
         The value is a list of isotope symbols over which the given method applies.
         An isotope symbol is given as a string with the atomic number followed by its
         atomic symbol, for example, '1H', '13C', and '33S'. The default is an empty
@@ -48,10 +42,10 @@ class Method(Parseable):
         Example
         -------
 
-        >>> bloch = Method()
+        >>> bloch = Method(channels=['1H'])
         >>> bloch.channels = ['1H']
 
-    spectral_dimensions: List[:ref:`spectral_dim_api`] or List[dict] (optional).
+    spectral_dimensions:
         The number of spectral dimensions depends on the given method. For example, a
         `BlochDecaySpectrum` method is a one-dimensional method and thus requires a
         single spectral dimension. The default is a single default
@@ -60,17 +54,17 @@ class Method(Parseable):
         Example
         -------
 
-        >>> bloch = Method()
+        >>> bloch = Method(channels=['1H'])
         >>> bloch.spectral_dimensions = [SpectralDimension(count=8, spectral_width=50)]
         >>> # or equivalently
         >>> bloch.spectral_dimensions = [{'count': 8, 'spectral_width': 50}]
 
-    simulation: CSDM or ndarray (N/A).
+    simulation:
         An object holding the result of the simulation. The initial value of this
         attribute is None. A value is assigned to this attribute when you run the
         simulation using the :py:meth:`~mrsimulator.Simulator.run` method.
 
-    experiment: CSDM or ndarray (optional).
+    experiment:
         An object holding the experimental measurement for the given method, if
         available. The default value is None.
 
@@ -79,7 +73,7 @@ class Method(Parseable):
 
         >>> bloch.experiment = my_data # doctest: +SKIP
 
-    name: str (optional).
+    name:
         Name or id of the method. The default value is None.
 
         Example
@@ -89,7 +83,7 @@ class Method(Parseable):
         >>> bloch.name
         'BlochDecaySpectrum'
 
-    label: str (optional).
+    label:
         Label for the method. The default value is None.
 
         Example
@@ -99,7 +93,7 @@ class Method(Parseable):
         >>> bloch.label
         'One pulse acquired spectrum'
 
-    description: str (optional).
+    description:
         A description of the method. The default value is None.
 
         Example
@@ -109,7 +103,7 @@ class Method(Parseable):
         >>> bloch.description
         'Huh!'
 
-    affine_matrix: np.ndarray or 2D list (optional)
+    affine_matrix:
         A (`n` x `n`) affine transformation matrix, where `n` is the number of
         spectral_dimensions. If provided, the corresponding affine transformation is
         applied to the computed frequencies. The default is None, i.e., no
@@ -118,22 +112,33 @@ class Method(Parseable):
         Example
         -------
 
-        >>> method = Method2D()
+        >>> method = Method2D(channels=['1H'])
         >>> method.affine_matrix = [[1, -1], [0, 1]]
         >>> print(method.affine_matrix)
-        [[ 1 -1]
-         [ 0  1]]
+        [[1, -1], [0, 1]]
     """
-    name: str = None
-    label: str = None
-    description: str = None
-    channels: List[str] = []
+    channels: List[str]
     spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
-    affine_matrix: Union[np.ndarray, List] = None
+    affine_matrix: List = None
     simulation: Union[cp.CSDM, np.ndarray] = None
     experiment: Union[cp.CSDM, np.ndarray] = None
 
-    property_default_units: ClassVar = {
+    # global
+    magnetic_flux_density: float = Field(default=9.4, ge=0.0)
+    rotor_frequency: float = Field(default=0.0, ge=0.0)
+    rotor_angle: float = Field(default=0.9553166181245, ge=0.0, le=1.5707963268)
+
+    # private attributes
+    _named_method: bool = PrivateAttr(False)
+    _metadata: dict = PrivateAttr({})
+
+    property_unit_types: ClassVar[Dict] = {
+        "magnetic_flux_density": "magnetic flux density",
+        "rotor_frequency": "frequency",
+        "rotor_angle": "angle",
+    }
+
+    property_default_units: ClassVar[Dict] = {
         "magnetic_flux_density": "T",
         "rotor_angle": "rad",
         "rotor_frequency": "Hz",
@@ -144,31 +149,25 @@ class Method(Parseable):
         "rotor_angle": "rad",
         "rotor_frequency": "Hz",
     }
+    test_vars: ClassVar[Dict] = {"channels": ["1H"]}
 
     class Config:
         validate_assignment = True
         arbitrary_types_allowed = True
 
-    def __eq__(self, other):
-        if not isinstance(other, Method):
-            return False
-        check = [
-            self.name == other.name,
-            self.label == other.label,
-            self.description == other.description,
-            self.channels == other.channels,
-            self.spectral_dimensions == other.spectral_dimensions,
-            np.all(self.affine_matrix == other.affine_matrix),
-            self.simulation == other.simulation,
-            self.experiment == other.experiment,
-        ]
-        if np.all(check):
-            return True
-        return False
-
     @validator("channels", always=True)
     def validate_channels(cls, v, *, values, **kwargs):
         return [Isotope(symbol=_) for _ in v]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        _ = [
+            setattr(ev, item, getattr(self, item))
+            for sd in self.spectral_dimensions
+            for ev in sd.events
+            for item in self.property_units.keys()
+            if hasattr(ev, item) and getattr(ev, item) is None
+        ]
 
     @staticmethod
     def __check_csdm__(data):
@@ -193,12 +192,12 @@ class Method(Parseable):
     @validator("affine_matrix", pre=True, always=True)
     def validate_affine_matrix(cls, v, *, values, **kwargs):
         if v is None:
-            return None
-        v = np.asarray(v)
+            return
+        v1 = np.asarray(v)
         dim_len = len(values["spectral_dimensions"])
-        if v.size != dim_len ** 2:
+        if v1.size != dim_len ** 2:
             raise ValueError(f"Expecting a {dim_len}x{dim_len} affine matrix.")
-        if v.ravel()[0] == 0:
+        if v1.ravel()[0] == 0:
             raise ValueError("The first element of the affine matrix cannot be zero.")
         return v
 
@@ -217,7 +216,7 @@ class Method(Parseable):
         py_dict_copy = deepcopy(py_dict)
 
         if "spectral_dimensions" in py_dict_copy:
-            py_dict_copy = expand_spectral_dimension_object(py_dict_copy)
+            Method.expand_spectral_dimension_object(py_dict_copy)
             py_dict_copy["spectral_dimensions"] = [
                 SpectralDimension.parse_dict_with_units(s)
                 for s in py_dict_copy["spectral_dimensions"]
@@ -232,58 +231,73 @@ class Method(Parseable):
 
         return super().parse_dict_with_units(py_dict_copy)
 
-    def update_spectral_dimension_attributes_from_experiment(self):
-        """Update the spectral dimension attributes of the method to match the
-        attributes of the experiment from the :attr:`~mrsimulator.Method.experiment`
-        attribute."""
-        spectral_dims = self.spectral_dimensions
-        for i, dim in enumerate(self.experiment.dimensions):
-            spectral_dims[i].count = dim.count
-            spectral_dims[i].spectral_width = dim.count * dim.increment.to("Hz").value
-            spectral_dims[i].reference_offset = dim.coordinates_offset.to("Hz").value
-            spectral_dims[i].origin_offset = dim.origin_offset.to("Hz").value
+    @staticmethod
+    def expand_spectral_dimension_object(py_dict):
+        glb = {}
+        _ = [
+            glb.update({item: py_dict[item]})
+            for item in Method.property_unit_types.keys()
+            if item in py_dict.keys()
+        ]
+        glb_keys = set(glb.keys())
+
+        _ = [
+            (
+                None if "events" in dim else dim.update({"events": [{}]}),
+                [
+                    ev.update({k: glb[k]})
+                    for ev in dim["events"]
+                    for k in glb
+                    if k not in set(ev.keys()).intersection(glb_keys)
+                ],
+            )
+            for dim in py_dict["spectral_dimensions"]
+        ]
 
     def dict(self, **kwargs):
         mth = super().dict(**kwargs)
-        if self.simulation is not None:
+        if isinstance(self.simulation, cp.CSDM):
             mth["simulation"] = self.simulation.to_dict(update_timestamp=True)
-        if self.experiment is not None and isinstance(self.experiment, cp.CSDM):
+        if isinstance(self.experiment, cp.CSDM):
             mth["experiment"] = self.experiment.to_dict()
         return mth
 
-    def json(self) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object, where
-        the attribute value with physical quantity is expressed as a string with a
-        value and a unit.
+    def json(self, units=True) -> dict:
+        """Parse the class object to a JSON compliant python dictionary object.
 
-        Returns:
-            A python dict object.
+        Args:
+            units: If true, the attribute value is a physical quantity expressed as a
+                string with a number and a unit, else a float.
+
+        Returns: dict
         """
-
+        # mth = super().json(units=unit)
         mth = {_: self.__getattribute__(_) for _ in ["name", "label", "description"]}
         mth["channels"] = [item.json() for item in self.channels]
-        mth["spectral_dimensions"] = [item.json() for item in self.spectral_dimensions]
+        mth["spectral_dimensions"] = [
+            item.json(units=units) for item in self.spectral_dimensions
+        ]
 
         # add global parameters
-        ev0 = self.spectral_dimensions[0].events[0]
-        evt_d = Event.property_default_units
-        global_ = {k: f"{ev0.__getattribute__(k)} {u}" for k, u in evt_d.items()}
+        evt_d = self.property_units.items()
+        global_ = (
+            {k: f"{self.__getattribute__(k)} {u}" for k, u in evt_d}
+            if units
+            else {k: self.__getattribute__(k) for k, u in evt_d}
+        )
         mth.update(global_)
 
-        named = True if mth["name"] in NAMED_METHODS else False
-        for dim in mth["spectral_dimensions"]:
-            for ev in dim["events"]:
-                # remove event objects with global values.
-                _ = [ev.pop(k) if ev[k] == v else 0 for k, v in global_.items()]
+        # remove event objects with global values.
+        _ = [
+            [ev.pop(k) if k in ev and ev[k] == v else 0 for k, v in global_.items()]
+            for dim in mth["spectral_dimensions"]
+            for ev in dim["events"]
+        ]
 
-                # remove transition query objects for named methods
-                _ = ev.pop("transition_query") if named else 0
+        # if self._named_method:
+        #     _ = [dim.pop("events") for dim in mth["spectral_dimensions"]]
 
-            if dim["events"] == [{} for _ in dim["events"]]:
-                dim.pop("events")
-
-        afm = self.affine_matrix
-        mth["affine_matrix"] = None if afm is None else afm.tolist()
+        mth["affine_matrix"] = self.affine_matrix
 
         sim = self.simulation
         mth["simulation"] = None if sim is None else sim.to_dict(update_timestamp=True)
@@ -294,76 +308,133 @@ class Method(Parseable):
         _ = [mth.pop(item) for item in [k for k, v in mth.items() if v is None]]
         return mth
 
-    # def _simplify_events_json(self, py_dict):
-    #     named = True if py_dict["name"] in NAMED_METHODS else False
-    #     for dim in py_dict["spectral_dimensions"]:
-    #         for ev in dim["events"]:
-    #             # remove event objects with global values.
-    #             for key, val in zip(list_g, global_):
-    #                 _ = ev.pop(key) if ev[key] == val else 0
+    def get_symmetry_pathways(self, symmetry_element: str) -> List[SymmetryPathway]:
+        """Return a list of symmetry pathways of the method.
 
-    #             # remove transition query objects for named methods
-    #             _ = ev.pop("transition_query") if named else 0
+        Args:
+            str symmetry_element: The  symmetry element, 'P' or 'D'.
 
-    #         if dim["events"] == [{} for _ in range(len(dim["events"]))]:
-    #             dim.pop("events")
+        Returns:
+            A list of :ref:`symmetry_pathway_api` objects.
 
-    # def _get_symmetry_pathways(self, spin_system):
-    #     list_of_P = []
-    #     list_of_D = []
-    #     for dim in self.spectral_dimensions:
-    #         for ent in dim.events:
-    #             list_of_P.append(
-    #                 query_permutations(
-    #                     ent.transition_query.dict(),
-    #                     isotope=spin_system.get_isotopes(symbol=True),
-    #                     channel=[item.symbol for item in self.channels],
-    #                 )
-    #             )
-    #             if ent.transition_query.D is not None:
-    #                 list_of_D.append(
-    #                     query_permutations(
-    #                         ent.transition_query.dict(),
-    #                         isotope=spin_system.get_isotopes(symbol=True),
-    #                         channel=[item.symbol for item in self.channels],
-    #                         transition_symmetry="D",
-    #                     )
-    #                 )
+        **Single channel example**
 
-    #     return {"P": list_of_P, "D": list_of_D}
+        Example:
+            >>> from mrsimulator.methods import Method2D
+            >>> method = Method2D(
+            ...     channels=['1H'],
+            ...     spectral_dimensions=[
+            ...         {
+            ...             "events": [
+            ...                 {"transition_query": [{"ch1": {"P": [1]}}]},
+            ...                 {"transition_query": [{"ch1": {"P": [0]}}]}
+            ...             ],
+            ...         },
+            ...         {
+            ...             "events": [
+            ...                 {"transition_query": [{"ch1": {"P": [-1]}}]},
+            ...             ],
+            ...         }
+            ...     ]
+            ... )
+            >>> pprint(method.get_symmetry_pathways("P"))
+            [SymmetryPathway(
+                ch1(1H): [1] ⟶ [0] ⟶ [-1]
+                total: 1.0 ⟶ 0.0 ⟶ -1.0
+            )]
 
-    def _get_transition_pathways(self, spin_system):
-        all_transitions = spin_system._all_transitions()
+        **Dual channels example**
 
-        segments = []
-        for dim in self.spectral_dimensions:
-            for ent in dim.events:
-                # query the transitions for P symmetry
-                selected_transitions = all_transitions[:]
-                list_of_P = query_permutations(
-                    ent.transition_query.dict(),
-                    isotope=spin_system.get_isotopes(symbol=True),
-                    channel=[item.symbol for item in self.channels],
-                )
-                indexes = P_symmetry_indexes(selected_transitions, list_of_P)
-                selected_transitions = selected_transitions[indexes]
+        Example:
+            >>> from mrsimulator.methods import Method2D
+            >>> method = Method2D(
+            ...     channels=['1H', '13C'],
+            ...     spectral_dimensions=[
+            ...         {
+            ...             "events": [{
+            ...                 "transition_query": [
+            ...                     {"ch1": {"P": [1]}},
+            ...                     {"ch1": {"P": [-1]}},
+            ...                 ]
+            ...             },
+            ...             {
+            ...                 "transition_query": [  # selecting double quantum
+            ...                     {"ch1": {"P": [-1]}, "ch2": {"P": [-1]}},
+            ...                     {"ch1": {"P": [1]}, "ch2": {"P": [1]}},
+            ...                 ]
+            ...             }],
+            ...         },
+            ...         {
+            ...             "events": [{
+            ...                 "transition_query": [ # selecting single quantum
+            ...                     {"ch1": {"P": [-1]}},
+            ...                 ]
+            ...             }],
+            ...         }
+            ...     ]
+            ... )
+            >>> pprint(method.get_symmetry_pathways("P"))
+            [SymmetryPathway(
+                ch1(1H): [1] ⟶ [-1] ⟶ [-1]
+                ch2(13C): None ⟶ [-1] ⟶ None
+                total: 1.0 ⟶ -2.0 ⟶ -1.0
+            ),
+             SymmetryPathway(
+                ch1(1H): [1] ⟶ [1] ⟶ [-1]
+                ch2(13C): None ⟶ [1] ⟶ None
+                total: 1.0 ⟶ 2.0 ⟶ -1.0
+            ),
+             SymmetryPathway(
+                ch1(1H): [-1] ⟶ [-1] ⟶ [-1]
+                ch2(13C): None ⟶ [-1] ⟶ None
+                total: -1.0 ⟶ -2.0 ⟶ -1.0
+            ),
+             SymmetryPathway(
+                ch1(1H): [-1] ⟶ [1] ⟶ [-1]
+                ch2(13C): None ⟶ [1] ⟶ None
+                total: -1.0 ⟶ 2.0 ⟶ -1.0
+            )]
+        """
+        sym_path = [
+            dim._get_symmetry_pathways(symmetry_element)
+            for dim in self.spectral_dimensions
+        ]
+        sp_indexes = np.arange(len(sym_path))
+        indexes = [np.arange(len(item)) for item in sym_path]
+        products = cartesian_product(*indexes)
 
-                # query the transitions for D symmetry
-                if ent.transition_query.D is not None:
-                    list_of_D = query_permutations(
-                        ent.transition_query.dict(),
-                        isotope=spin_system.get_isotopes(symbol=True),
-                        channel=[item.symbol for item in self.channels],
-                        transition_symmetry="D",
-                    )
-                    indexes = D_symmetry_indexes(selected_transitions, list_of_D)
-                    selected_transitions = selected_transitions[indexes]
-
-                segments += [selected_transitions]
-        return segments
+        return [
+            SymmetryPathway(
+                channels=self.channels,
+                **{
+                    ch: [
+                        _
+                        for sp, i in zip(sp_indexes, item)
+                        for _ in sym_path[sp][i][ch]
+                    ]
+                    for ch in CHANNELS
+                },
+            )
+            for item in products
+        ]
 
     def _get_transition_pathways_np(self, spin_system):
-        segments = self._get_transition_pathways(spin_system)
+        all_transitions = spin_system._all_transitions()
+
+        isotopes = spin_system.get_isotopes(symbol=True)
+        channels = [item.symbol for item in self.channels]
+        if np.any([item not in isotopes for item in channels]):
+            return []
+
+        segments = [
+            evt.filter_transitions(all_transitions, isotopes, channels)
+            for dim in self.spectral_dimensions
+            for evt in dim.events
+        ]
+
+        # if segments == []:
+        #     return []
+
         segments_index = [np.arange(item.shape[0]) for item in segments]
         cartesian_index = cartesian_product(*segments_index)
         return [
@@ -378,7 +449,7 @@ class Method(Parseable):
             SpinSystem spin_system: A SpinSystem object.
 
         Returns:
-            An array of :ref:`transition_pathway_api` objects. Each TransitionPathway
+            A list of :ref:`transition_pathway_api` objects. Each TransitionPathway
             object is an ordered collection of Transition objects.
 
         Example:
@@ -411,7 +482,10 @@ class Method(Parseable):
 
         Example:
             >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(spectral_dimensions=[{'count': 40}, {'count': 10}])
+            >>> method = Method2D(
+            ...     channels=['1H'],
+            ...     spectral_dimensions=[{'count': 40}, {'count': 10}]
+            ... )
             >>> method.shape()
             (40, 10)
         """

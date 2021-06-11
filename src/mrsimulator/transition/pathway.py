@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from mrsimulator.utils.abstract_list import AbstractList
+from pydantic import BaseModel
 
 from . import Transition
 
@@ -31,6 +32,7 @@ class TransitionList(AbstractList):
 
     def filter(self, P=None, PP=None, D=None):
         """Filter a list of transitions to satisfy the filtering criterion.
+
         Args:
             list P: A list of `N` (m_final - m_initial) values, where `N` is the
                 total number of sites within the spin system.
@@ -98,6 +100,10 @@ class TransitionPathway(TransitionList):
         |0.5, -0.5⟩⟨0.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|
     """
 
+    # @property
+    # def weight(self):
+    #     pass
+
     def __str__(self):
         return self.__repr__()
 
@@ -114,7 +120,7 @@ class TransitionPathway(TransitionList):
         """
         return self.json()
 
-    def json(self) -> dict:
+    def json(self, **kwargs) -> dict:
         """Parse the class object to a JSON compliant python dictionary object.
 
         Example:
@@ -132,3 +138,50 @@ class TransitionPathway(TransitionList):
             [0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5]
         """
         return list(np.asarray([item.tolist() for item in self._list]).ravel())
+
+
+class SymmetryPathway(BaseModel):
+    """Base SymmetryPathway class.
+
+    Attributes:
+        channels:
+            The list of channels
+        ch1:
+            The symmetry pathway for channel at index 0.
+        ch2:
+            The symmetry pathway for channel at index 1.
+        ch3:
+            The symmetry pathway for channel at index 2.
+        total:
+            The total symmetry pathway.
+    """
+
+    channels: list = []
+    ch1: list = None
+    ch2: list = None
+    ch3: list = None
+
+    @property
+    def total(self):
+        tot = np.zeros(len(self.ch1))
+        check_mixing = np.zeros(len(self.ch1))
+        chan = ["ch1", "ch2", "ch3"][: len(self.channels)]
+        for i in range(len(self.ch1)):
+            for ch in chan:
+                if getattr(self, ch)[i] is not None:
+                    check_mixing[i] = 1
+                    tot[i] += sum(getattr(self, ch)[i])
+
+        index = np.where(check_mixing == 0)[0]
+        tot[index] = None
+        return tot
+
+    def __repr__(self):
+        channel_ids = ["ch1", "ch2", "ch3"][: len(self.channels)]
+        sp = "    "
+        paths = [
+            f"{sp}{i}({c.symbol}): " + " ⟶ ".join([str(_) for _ in getattr(self, i)])
+            for c, i in zip(self.channels, channel_ids)
+        ]
+        paths.append(f"{sp}total: " + " ⟶ ".join([str(_) for _ in self.total]))
+        return str("SymmetryPathway(\n" + "\n".join(paths) + "\n)")

@@ -3,15 +3,15 @@
 from typing import List
 
 import numpy as np
-from pydantic import BaseModel
+from mrsimulator.utils.parseable import Parseable
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-class Transition(BaseModel):
-    r"""Base Transition class describes a spin transition between two energy states,
-    where the energy states are described using the weakly coupled basis.
+class Transition(Parseable):
+    r"""Base Transition class describes a spin transition between two energy states, where
+    the energy states are described using the weakly coupled basis.
 
     .. math::
         |m_{i,0}, m_{i,1}, ... m_{i,N} \rangle \rightarrow
@@ -105,12 +105,3 @@ class Transition(BaseModel):
         """
         lst = self.initial + self.final
         return lst
-
-    def json(self) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object.
-
-        Example:
-            >>> t1.json()
-            {'initial': [0.5, 0.5], 'final': [0.5, -0.5]}
-        """
-        return self.dict()

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""The Event class."""
 from sys import modules
 from typing import List
 from typing import Union
 
 import csdmpy as cp
-from pydantic import BaseModel
+from mrsimulator.utils.parseable import Parseable
+from pydantic import Extra
 
 from . import affine as af  # noqa:F401
 from . import apodization as ap  # noqa:F401
@@ -17,14 +17,14 @@ __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 
-class SignalProcessor(BaseModel):
-    """Signal processing class to apply a series of operations to the dependent
-    variables of the simulation dataset.
+class SignalProcessor(Parseable):
+    """Signal processing class to apply a series of operations to the dependent variables
+    of the simulation dataset.
 
-    Attributes
-    ----------
+    Arguments
+    ---------
 
-    operations: List
+    operations:
         A list of operations.
 
     Examples
@@ -39,6 +39,7 @@ class SignalProcessor(BaseModel):
     class Config:
         validate_assignment = True
         arbitrary_types_allowed = True
+        extra = Extra.forbid
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
@@ -90,8 +91,11 @@ class Scale(Operation):
     .. math::
         f(y) = \text{factor} \times y
 
-    Args:
-        float factor: The scaling factor. The default value is 1.
+    Arguments
+    ---------
+
+    factor:
+        The scaling factor. The default value is 1.
 
     Example
     -------
@@ -103,8 +107,7 @@ class Scale(Operation):
     factor: float = 1
 
     def operate(self, data):
-        """Applies the operation.
-
+        r"""Applies the operation.
         Args:
             data: CSDM object
         """
@@ -146,8 +149,11 @@ class Linear(Operation):
 class IFFT(Operation):
     """Apply an inverse Fourier transform on all dependent variables of the CSDM object.
 
-    Args:
-        int dim_index: Dimension index along which the function is applied.
+    Arguments
+    ---------
+
+    dim_index:
+        Dimension index along which the function is applied.
 
     Example
     -------
@@ -158,8 +164,7 @@ class IFFT(Operation):
     dim_index: Union[int, list, tuple] = 0
 
     def operate(self, data):
-        """Applies the operation.
-
+        r"""Applies the operation.
         Args:
             data: CSDM object
         """
@@ -172,8 +177,11 @@ class IFFT(Operation):
 class FFT(IFFT):
     """Apply a forward Fourier transform on all dependent variables of the CSDM object.
 
-    Args:
-        int dim_index: Dimension index along which the function is applied.
+    Arguments
+    ---------
+
+    dim_index:
+        Dimension index along which the function is applied.
 
     Example
     -------

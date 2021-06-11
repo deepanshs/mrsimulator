@@ -174,7 +174,7 @@ Stable packages
 
 The latest stable source package for ``mrsimulator`` is available on
 `PyPI <https://pypi.org/project/mrsimulator/#files>`_ and
-`Github  release <https://github.com/DeepanshS/mrsimulator/releases>`_. Download and
+`Github  release <https://github.com/deepanshs/mrsimulator/releases>`_. Download and
 extract the *.tar.gz* file.
 
 
@@ -239,7 +239,7 @@ Test your build
 
 If the installation is successful, you should be able to run the following test
 file in your terminal. Download the test file
-`here <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/master/test_file_v0.3.py?raw=true>`_.
+`here <https://raw.githubusercontent.com/deepanshs/mrsimulator-examples/master/test_file_v0.3.py?raw=true>`_.
 
 .. code-block:: text
 

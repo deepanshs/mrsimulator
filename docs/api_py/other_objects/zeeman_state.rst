@@ -7,7 +7,5 @@ ZeemanState
 
 .. autoclass:: ZeemanState
     :show-inheritance:
-
-    .. rubric:: Method Documentation
-
-    .. automethod:: tolist
+    :members:
+    :inherited-members: BaseModel

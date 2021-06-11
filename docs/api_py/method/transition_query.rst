@@ -1,13 +1,21 @@
 .. _transition_query_api:
 
-TransitionQuery
----------------
+.. currentmodule:: mrsimulator.method.query
 
-.. currentmodule:: mrsimulator.method.transition_query
+Query objects
+-------------
 
 .. autoclass:: TransitionQuery
     :show-inheritance:
+    :members:
+    :inherited-members: BaseModel
 
-    .. rubric:: Method Documentation
+.. autoclass:: SymmetryQuery
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel
 
-    .. automethod:: json
+.. autoclass:: MixingQuery
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel

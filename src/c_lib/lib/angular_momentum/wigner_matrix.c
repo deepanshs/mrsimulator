@@ -1,47 +1,20 @@
 // -*- coding: utf-8 -*-
 //
-//  angular_momentum.c
+//  wigner_matrix.c
 //
-//  Created by Philip Grandinetti on 4/12/17.
-//  Contribution: Deepansh J. Srivatava. contact: srivastava.89@osu.edu
+//  @copyright Deepansh J. Srivastava, 2019-2021.
+//  Created by Deepansh J. Srivastava, Mar 9, 2021.
+//  Contact email = srivastava.89@osu.edu
 //
 
-#include "angular_momentum.h"
+#include "angular_momentum/wigner_matrix.h"
 
 complex128 IOTA = {0.0, 1.0};
 complex128 NEGATIVE_IOTA = {0.0, -1.0};
 
 /* calculate Wigner rotation matrices */
 
-/* This routine calculates the factorial of x */
-double fac(double x) {
-  double sum = 1;
-  int ix;
-
-  if (x < 0) {
-    exit(1);
-  }
-  ix = (int)x;
-  for (; ix > 1; ix--) {
-    sum *= ix;
-  }
-  return sum;
-}
-
-/* power function */
-double my_power(double x, int n) {
-  double temp;
-  if (n == 0) {
-    return (1.);
-  }
-  temp = 1.;
-  for (; n >= 1; n--) {
-    temp *= x;
-  }
-  return (temp);
-}
-
-// ✅ .. note: (wigner_d_matrices) monitored with pytest
+// ✅ .. note: (wigner_d_matrices) tested with pytest
 // .........................
 void wigner_d_matrices(const int l, const int n, const double *beta, double *wigner) {
   complex128 *exp_I_beta = malloc_complex128(n);
@@ -618,126 +591,6 @@ void wigner_dm0_vector(const int l, const double beta, double *R_out) {
     R_out[7] = -R_out[1];                                  // d^4(3,0)(beta)
     R_out[8] = R_out[0];                                   // d^4(4,0)(beta)
     break;
-  }
-}
-
-// Generic wigner d element for a given angulae momentum l, m1, m2.
-static inline double generic_wigner_d_element(const int l, const int m1, const int m2,
-                                              const double beta) {
-  double sx = sin(beta / 2.);
-  double cx = cos(beta / 2.);
-  double sum = 0.0, k1, k2, k3, x, y;
-  int sign = 1;
-  int k;
-
-  for (k = 0; k <= l - m1; k++) {
-    k1 = (int)(l - m1 - k);
-    k2 = (int)(l + m2 - k);
-    k3 = (int)(k + m1 - m2);
-
-    if (k1 >= 0 && k2 >= 0 && k3 >= 0) {
-      int n1 = (int)(2 * l + m2 - m1 - 2 * k);
-      int n2 = (int)(m1 - m2 + 2 * k);
-      x = my_power(cx, n1);
-      y = my_power(sx, n2);
-      sum += sign * x * y /
-             (fac((double)k1) * fac((double)k2) * fac((double)k3) * fac((double)k));
-    }
-    sign = -sign;
-  }
-  double f = fac(l + m2) * fac(l - m2) * fac(l + m1) * fac(l - m1);
-  f = sqrt(f);
-  return (sum * f);
-}
-
-// ❌.. note: (wigner_d_element) not tested ....................................
-double wigner_d_element(const int l, const int m1, const int m2, const double beta) {
-  if (l != 2) return generic_wigner_d_element(l, m1, m2, beta);
-
-  double exp_I_beta[] = {cos(beta), sin(beta)};
-  return wigner_d_element_from_exp_I_beta(1, m1, m2, exp_I_beta);
-}
-
-// ❌.. note: (wigner_d_element_from_cosine) not tested
-// ...............................
-double wigner_d_element_from_exp_I_beta(const int l, const int m1, const int m2,
-                                        const void *exp_I_beta) {
-  if (l != 2) return 0;
-
-  double cx = *((double *)exp_I_beta);
-  double sx = *((double *)exp_I_beta + 1);
-  switch (m1) {
-  case 2:
-    switch (m2) {
-    case 2:
-      return ((1 + cx) * (1. + cx) / 4.);
-    case 1:
-      return (-sx * (1. + cx) / 2.);
-    case 0:
-      return (0.6123724355 * sx * sx);
-    case -1:
-      return (-sx * (1. - cx) / 2.);
-    case -2:
-      return ((1 - cx) * (1. - cx) / 4.);
-    }
-
-  case -2:
-    switch (m2) {
-    case 2:
-      return ((1 - cx) * (1. - cx) / 4.);
-    case 1:
-      return (sx * (1. - cx) / 2.);
-    case 0:
-      return (0.6123724355 * sx * sx);
-    case -1:
-      return (sx * (1. + cx) / 2.);
-    case -2:
-      return ((1 + cx) * (1. + cx) / 4.);
-    }
-
-  case 1:
-    switch (m2) {
-    case 2:
-      return (sx * (1 + cx) / 2.);
-    case 1:
-      return ((2 * cx * cx + cx - 1.) / 2.);
-    case 0:
-      return (-1.224744871 * sx * cx);
-    case -1:
-      return (-(2 * cx * cx - cx - 1.) / 2.);
-    case -2:
-      return (-sx * (1 - cx) / 2.);
-    }
-
-  case 0:
-    switch (m2) {
-    case 2:
-      return (0.6123724355 * sx * sx);
-    case 1:
-      return (1.224744871 * sx * cx);
-    case 0:
-      return (1.5 * cx * cx - .5);
-    case -1:
-      return (-1.224744871 * sx * cx);
-    case -2:
-      return (0.6123724355 * sx * sx);
-    }
-
-  case -1:
-    switch (m2) {
-    case 2:
-      return (sx * (1 - cx) / 2.);
-    case 1:
-      return (-(2 * cx * cx - cx - 1.) / 2.);
-    case 0:
-      return (1.224744871 * sx * cx);
-    case -1:
-      return ((2 * cx * cx + cx - 1.) / 2.);
-    case -2:
-      return (-sx * (1 + cx) / 2.);
-    }
-  default:
-    return 0;
   }
 }
 
