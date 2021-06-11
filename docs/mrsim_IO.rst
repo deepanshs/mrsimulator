@@ -93,7 +93,7 @@ class as
 
     >>> from mrsimulator import Simulator
     >>> sim = Simulator()
-    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/master/spin_systems.json'
+    >>> filename = 'https://raw.githubusercontent.com/deepanshs/mrsimulator-examples/master/spin_systems.json'
     >>> sim.load_spin_systems(filename)
     >>> # The seven spin systems from the file are added to the sim object.
     >>> len(sim.spin_systems)
