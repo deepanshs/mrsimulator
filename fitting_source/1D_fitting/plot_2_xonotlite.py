@@ -170,7 +170,7 @@ plt.show()
 from mrsimulator.contribs import mpcontribs_export
 from pprint import pprint
 
-mp_project = "lsdi_nmr_exp_test"  # The mpcontribs project name
+mp_project = "lsdi_nmr_exp_test"  # this should be your mpcontribs project name
 cards = mpcontribs_export(
     sim,
     [processor],
@@ -184,7 +184,7 @@ cards = mpcontribs_export(
     },
 )
 print("Number of contributions", len(cards))
-pprint(cards[0])
+pprint(cards[0]["data"])
 
 # %%
 # Here, ``cards`` hold a list of mp-data dictionaries. In this example, it corresponds
@@ -193,7 +193,7 @@ pprint(cards[0])
 
 # from mpcontribs.client import Client
 #
-# client = Client(<YOUR-API-KEY>)  # insert your user API key.
+# client = Client(<YOUR-API-KEY>)  # uses MPCONTRIBS_API_KEY envvar.
 # client.submit_contributions(cards)
 
 # %%

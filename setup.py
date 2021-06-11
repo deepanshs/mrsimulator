@@ -403,7 +403,7 @@ ext_modules += [
 if USE_CYTHON:
     ext_modules = cythonize(ext_modules, language_level=3)
 
-extras = {"all": ["matplotlib>=3.3.3"]}
+extras = {"all": ["matplotlib>=3.3.3", "mpcontribs-client>=3.10.1"]}
 
 description = "A python toolbox for simulating fast real-time solid-state NMR spectra."
 setup(

@@ -227,9 +227,9 @@ class Site(Parseable):
 
         return super().parse_dict_with_units(py_dict)
 
-    def json(self):
-        py_dict = super().json()
-        if "quadrupolar" in py_dict:
+    def json(self, units=True, **kwargs):
+        py_dict = super().json(units=units, **kwargs)
+        if "quadrupolar" in py_dict and units:
             value = float(py_dict["quadrupolar"]["Cq"][:-2]) / 1e6
             py_dict["quadrupolar"]["Cq"] = f"{value} MHz"
         return py_dict

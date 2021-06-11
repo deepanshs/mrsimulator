@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 # import csdmpy as cp
-from typing import Any
+from pathlib import Path
 from typing import List
+from typing import Union
 
+from mpcontribs.client import Attachment
 from pydantic import BaseModel
 
 __author__ = "Deepansh Srivastava"
@@ -29,6 +31,17 @@ class Base(BaseModel):
 
 
 class ChemicalShiftSchema(Base):
+    """Schema for Chemical shift parameters.
+
+    Args:
+        str isotropic: Isotropic chemical shift.
+        str zeta: Chemical shift anisotropy.
+        float eta: Shift asymmetry.
+        str alpha: Euler angle alpha.
+        str beta: Euler angle beta.
+        str gamma: Euler angle gamma.
+    """
+
     isotropic: str
     zeta: str = None
     eta: float = None
@@ -38,6 +51,16 @@ class ChemicalShiftSchema(Base):
 
 
 class QuadrupolarSchema(Base):
+    """Schema for Quadrupolar parameters.
+
+    Args:
+        str Cq: Quadrupolar coupling constant.
+        float eta: Quadrupolar asymmetry.
+        str alpha: Euler angle alpha.
+        str beta: Euler angle beta.
+        str gamma: Euler angle gamma.
+    """
+
     Cq: str
     eta: float
     alpha: str = None
@@ -46,12 +69,29 @@ class QuadrupolarSchema(Base):
 
 
 class SiteSchema(Base):
+    """Schema for Site parameters.
+
+    Args:
+        str isotope: The isotope given as atomic number followed by atomic symbol.
+        ChemicalShiftSchema ChemicalShift: The chemical shift scheme.
+        QuadrupolarSchema Quadrupolar: The quadrupolar scheme.
+    """
+
     isotope: str
     ChemicalShift: ChemicalShiftSchema = None
     Quadrupolar: QuadrupolarSchema = None
 
 
 class MethodSchema(Base):
+    """Schema for Method parameters.
+
+    Args:
+        str larmorFrequency: The larmor frequency of observed isotope.
+        str spinningFrequency: The rotor spinning frequency.
+        str spectralWidth: The spectral width of the spectrum.
+        str rotorAngle: Angle of sample rotation axis wrt the z-axis.
+    """
+
     larmorFrequency: str
     spinningFrequency: str
     spectralWidth: str
@@ -59,6 +99,13 @@ class MethodSchema(Base):
 
 
 class SimulatorSchema(Base):
+    """Schema for Simulator parameters.
+
+    Args:
+        SiteSchema site: The site object.
+        MethodSchema method: The method object.
+    """
+
     site: SiteSchema = None
     method: MethodSchema = None
 
@@ -76,4 +123,4 @@ class ContribSchema(Base):
     structures: list = None
     tables: list = None
     notebook: dict = None
-    attachments: List[Any] = None
+    attachments: List[Union[Attachment, Path]] = None

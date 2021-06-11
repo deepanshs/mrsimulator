@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pathlib import Path
+import os
 
 import csdmpy as cp
 import numpy as np
@@ -10,6 +10,7 @@ from mrsimulator.contribs import load_obj
 from mrsimulator.contribs import mpcontribs_export
 from mrsimulator.contribs import parse_method
 from mrsimulator.contribs import parse_sites
+from mrsimulator.contribs import save_obj
 from mrsimulator.methods import BlochDecaySpectrum
 
 
@@ -67,7 +68,7 @@ def test02():
     }
 
 
-def test_contrib_card():
+def system_setup():
     site = Site(isotope="27Al", quadrupolar={"Cq": 10e6, "eta": 0.4})
     csdm_data = csdm_obj()
     method = BlochDecaySpectrum(
@@ -77,8 +78,12 @@ def test_contrib_card():
     sim = Simulator()
     sim.spin_systems = [SpinSystem(sites=[site])]
     sim.methods = [method]
+    return sim
 
-    omega_0 = abs(method.channels[0].gyromagnetic_ratio * 11.7)
+
+def test_contrib_card():
+    sim = system_setup()
+    omega_0 = abs(sim.methods[0].channels[0].gyromagnetic_ratio * 11.7)
 
     def get_card(project, identifier):
         return {
@@ -97,12 +102,7 @@ def test_contrib_card():
                 },
             },
             "project": project,
-            "formula": "ABX",
             "identifier": identifier,
-            "attachments": [
-                Path(f"{project}-{identifier}.mrsim.json.gz"),
-                Path(f"{project}-{identifier}-exp-0.csdf.json.gz"),
-            ],
         }
 
     output = mpcontribs_export(
@@ -111,11 +111,14 @@ def test_contrib_card():
         project="test",
         identifier="blah-blah",
         exp_dict={"blah": "blah"},
-        formula="ABX",
     )
+    attachments = output[0].pop("attachments")
     assert output == [get_card("test", "blah-blah")]
-    assert csdm_data.dict() == load_obj("test-blah-blah-exp-0.csdf.json.gz")
 
+    assert attachments[0].name == "blah-blah.mrsim.json.gz"
+    assert attachments[1].name == "blah-blah-exp0.csdf.json.gz"
+
+    site = sim.spin_systems[0].sites[0]
     sim.spin_systems = [SpinSystem(sites=[site, site, site])]
     output = mpcontribs_export(
         sim,
@@ -123,7 +126,18 @@ def test_contrib_card():
         project="test",
         identifier="mp-5733",
         exp_dict={"blah": "blah"},
-        formula="ABX",
     )
+    attachments = [item.pop("attachments") for item in output]
     card = get_card("test", "mp-5733")
     assert output == [card, card, card]
+
+    for att in attachments:
+        assert att[0].name == "mp-5733.mrsim.json.gz"
+        assert att[1].name == "mp-5733-exp0.csdf.json.gz"
+
+
+def test_save_load():
+    data = csdm_obj()
+    save_obj("test-data.csdf.json.gz", data.dict())
+    assert data.dict() == load_obj("test-data.csdf.json.gz")
+    os.remove("test-data.csdf.json.gz")
