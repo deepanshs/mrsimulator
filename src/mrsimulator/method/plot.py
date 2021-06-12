@@ -105,7 +105,6 @@ def _format_mix_label(df, df_idx, j):
     return "({0:.1f}, {1:.1f})".format(tip_angle, phase), tip_angle / 360 * MIXING_WIDTH
 
 
-# def _plot_spec_dim(ax, x0, x1, idx):
 def _plot_spec_dim(ax, ev_groups, x_data, df):
     """Adds a line denoting a new spectral dimension with label"""
     anno_kwargs = {
@@ -113,7 +112,7 @@ def _plot_spec_dim(ax, ev_groups, x_data, df):
         "color": "black",
         "ha": "center",
         "va": "center",
-        "fontsize": 10,
+        "fontsize": 8,
     }
     ax.plot([0, 0], [0, 1], color="black")
 
@@ -122,7 +121,6 @@ def _plot_spec_dim(ax, ev_groups, x_data, df):
     df_idx = 0
     x_idx = 0
     for _type, num in ev_groups:
-
         for j in range(num):
             if x_data[x_idx] == x_data[x_idx + 1]:
                 x_idx += 1
@@ -132,18 +130,19 @@ def _plot_spec_dim(ax, ev_groups, x_data, df):
                     x_point += sum(df["tip_angle"][df_idx:j]) / 360.0 * MIXING_WIDTH
                 ax.plot([x_point, x_point], [0, 1], color="black")
                 ax.annotate(
-                    f"Spectral Dimension {spec_dim_idx}",
-                    ((last_spec_dim_x + x_point) / 2, 1.2),
+                    f"Spectral Dim. {spec_dim_idx}",
+                    ((last_spec_dim_x + x_point) / 2, 1.1),
                     **anno_kwargs,
                 )
                 last_spec_dim_x = x_point
                 spec_dim_idx += 1
             x_idx += 1
+        df_idx += num
 
     ax.plot([max(x_data), max(x_data)], [0, 1], color="black")
     ax.annotate(
-        f"Spectral Dimension {spec_dim_idx}",
-        ((last_spec_dim_x + max(x_data)) / 2, 1.2),
+        f"Spectral Dim. {spec_dim_idx}",
+        ((last_spec_dim_x + max(x_data)) / 2, 1.1),
         **anno_kwargs,
     )
 
