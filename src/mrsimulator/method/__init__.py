@@ -486,7 +486,7 @@ class Method(Parseable):
                 for dim in self.spectral_dimensions
                 for ev in dim.events
             ]
-            if prop not in required and prop != "freq_contrib" and drop_constant_cols:
+            if prop not in required and drop_constant_cols:
                 # NOTE: np.isnan() cannot be passed an object (freq_contrib)
                 lst_copy = np.asarray(lst)[~np.isnan(np.asarray(lst))]
                 if np.unique(lst_copy).size < 2:
@@ -541,6 +541,7 @@ class Method(Parseable):
             "fraction",
             "mixing_query",
             "spec_dim_index",
+            "freq_contrib",
             "p",
         ]
 

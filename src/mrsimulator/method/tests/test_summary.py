@@ -12,7 +12,15 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 ME = "MixingEvent"
 CDE = "ConstantDurationEvent"
 SE = "SpectralEvent"
-REQUIRED = ["type", "label", "duration", "fraction", "mixing_query", "spec_dim_index"]
+REQUIRED = [
+    "type",
+    "label",
+    "duration",
+    "fraction",
+    "mixing_query",
+    "spec_dim_index",
+    "p",
+]
 ALL_PARAMS = [
     "type",
     "spec_dim_index",
@@ -51,7 +59,7 @@ def basic_summary_tests(the_method):
         # Returns True if all items are equal, False otherwise
         return np.all(check)
 
-    df = the_method.summary()
+    df = the_method.summary(drop_constant_cols=False)
 
     # Check correct return type
     assert isinstance(df, pd.DataFrame)
@@ -112,59 +120,59 @@ def basic_summary_tests(the_method):
 
 
 def args_summary_tests(the_method):
-    # Pass properties=None and drop_constant_cols=False (default)
-    df = the_method.summary(properties=None, drop_constant_cols=False)
+    # Pass drop_constant_cols=False
+    df = the_method.summary(drop_constant_cols=False)
 
     assert df.shape[0] == 6
     assert df.shape[1] == len(ALL_PARAMS)
     assert set(df.columns) == set(ALL_PARAMS)
 
-    # Pass properties=[some-list] and drop_constant_cols=False
-    props = []
-    df = the_method.summary(properties=props)
+    # # Pass properties=[some-list] and drop_constant_cols=False
+    # props = []
+    # df = the_method.summary(properties=props)
 
-    assert df.shape[0] == 6
-    assert df.shape[1] == len(REQUIRED)  # number of columns always present
-    assert set(df.columns) == set(REQUIRED)
+    # assert df.shape[0] == 6
+    # assert df.shape[1] == len(REQUIRED)  # number of columns always present
+    # assert set(df.columns) == set(REQUIRED)
 
-    props = ["rotor_angle", "p", "freq_contrib"]
-    df = the_method.summary(properties=props)
-    props_should_be = ["rotor_angle", "p", "freq_contrib"]
+    # props = ["rotor_angle", "p", "freq_contrib"]
+    # df = the_method.summary(properties=props)
+    # props_should_be = ["rotor_angle", "p", "freq_contrib"]
+
+    # assert df.shape[0] == 6
+    # assert df.shape[1] == len(REQUIRED + props_should_be)
+    # assert set(df.columns) == set(REQUIRED + props_should_be)
+
+    # Pass drop_constant_cols=True (default)
+    df = the_method.summary(drop_constant_cols=True)
+    props_should_be = ["rotor_frequency", "freq_contrib"]
 
     assert df.shape[0] == 6
     assert df.shape[1] == len(REQUIRED + props_should_be)
     assert set(df.columns) == set(REQUIRED + props_should_be)
 
-    # Pass Pass properties=None and drop_constant_cols=True
-    df = the_method.summary(properties=None, drop_constant_cols=True)
-    props_should_be = ["p", "rotor_frequency", "freq_contrib"]
+    # # Pass properties=[some-list] and drop_constant_cols=True
+    # props = []
+    # df = the_method.summary(properties=props, drop_constant_cols=True)
 
-    assert df.shape[0] == 6
-    assert df.shape[1] == len(REQUIRED + props_should_be)
-    assert set(df.columns) == set(REQUIRED + props_should_be)
+    # assert df.shape[0] == 6
+    # assert df.shape[1] == len(REQUIRED)
+    # assert set(df.columns) == set(REQUIRED)
 
-    # Pass properties=[some-list] and drop_constant_cols=True
-    props = []
-    df = the_method.summary(properties=props, drop_constant_cols=True)
+    # props = ["magnetic_flux_density", "rotor_angle"]  # are constant
+    # df = the_method.summary(properties=props, drop_constant_cols=True)
 
-    assert df.shape[0] == 6
-    assert df.shape[1] == len(REQUIRED)
-    assert set(df.columns) == set(REQUIRED)
+    # assert df.shape[0] == 6
+    # assert df.shape[1] == len(REQUIRED)
+    # assert set(df.columns) == set(REQUIRED)
 
-    props = ["magnetic_flux_density", "rotor_angle"]  # are constant
-    df = the_method.summary(properties=props, drop_constant_cols=True)
+    # props = ["magnetic_flux_density", "rotor_frequency", "p", "rotor_angle"]
+    # df = the_method.summary(properties=props, drop_constant_cols=True)
+    # props_should_be = ["p", "rotor_frequency"]
 
-    assert df.shape[0] == 6
-    assert df.shape[1] == len(REQUIRED)
-    assert set(df.columns) == set(REQUIRED)
-
-    props = ["magnetic_flux_density", "rotor_frequency", "p", "rotor_angle"]
-    df = the_method.summary(properties=props, drop_constant_cols=True)
-    props_should_be = ["p", "rotor_frequency"]
-
-    assert df.shape[0] == 6
-    assert df.shape[1] == len(props_should_be + REQUIRED)
-    assert set(df.columns) == set(props_should_be + REQUIRED)
+    # assert df.shape[0] == 6
+    # assert df.shape[1] == len(props_should_be + REQUIRED)
+    # assert set(df.columns) == set(props_should_be + REQUIRED)
 
     # Make sure columns always present are not dropped even if constant
     event_ = [{"label": "all labels the same", "fraction": 0.2}]
@@ -176,12 +184,11 @@ def args_summary_tests(the_method):
         spectral_dimensions=all_SpectralEvents_spec_dims,
     )
 
-    props = []
-    df = the_method.summary(properties=props, drop_constant_cols=True)
+    df = the_method.summary(drop_constant_cols=True)
 
     assert df.shape[0] == 5
-    assert df.shape[1] == len(REQUIRED)
-    assert set(df.columns) == set(REQUIRED)
+    assert df.shape[1] == len(REQUIRED + ["freq_contrib"])
+    assert set(df.columns) == set(REQUIRED + ["freq_contrib"])
 
 
 def test_summary():
