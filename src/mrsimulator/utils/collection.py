@@ -168,25 +168,31 @@ def generate_site_list(
     ]
 
     # NOTE: Cannot guess number of sites from dictonary parameters
+    # Unpack dict values into array?
     n_sites = _check_lengths(attributes)
-    attributes = [_extend_to_nparray(attr, n_sites) for attr in attributes]
 
     if shielding_symmetric is not None:
-        attributes.append(_zip_dict(_extend_dict_values(shielding_symmetric, n_sites)))
+        shld_sym, n_dict = _extend_dict_values(shielding_symmetric, n_sites)
+        n_sites = max(n_sites, n_dict)
+        attributes.append(shld_sym)
     else:
-        attributes.append(_extend_to_nparray(None, n_sites))
+        attributes.append(None)
 
     if shielding_antisymmetric is not None:
-        attributes.append(
-            _zip_dict(_extend_dict_values(shielding_antisymmetric, n_sites))
-        )
+        shld_antisym, n_dict = _extend_dict_values(shielding_antisymmetric, n_sites)
+        n_sites = max(n_sites, n_dict)
+        attributes.append(shld_antisym)
     else:
-        attributes.append(_extend_to_nparray(None, n_sites))
+        attributes.append(None)
 
     if quadrupolar is not None:
-        attributes.append(_zip_dict(_extend_dict_values(quadrupolar, n_sites)))
+        quad, n_dict = _extend_dict_values(quadrupolar, n_sites)
+        n_sites = max(n_sites, n_dict)
+        attributes.append(quad)
     else:
-        attributes.append(_extend_to_nparray(None, n_sites))
+        attributes.append(None)
+
+    attributes = [_extend_to_nparray(attr, n_sites) for attr in attributes]
 
     return np.asarray(
         [
@@ -205,22 +211,6 @@ def generate_site_list(
     )
 
 
-def _zip_dict(_dict):
-    """Makes list of dicts with the same keys and scalar values from dict of lists
-
-    Example:
-    >>> foo = {'key1': [1, 2, 3, 4], 'key2': [5, 6, 7, 8], 'key3': [9, 10, 11, 12]}
-    >>> _zip_dict(foo)
-    [
-        {'key1': 1, 'key2': 5, 'key3': 9},
-        {'key1': 2, 'key2': 6, 'key3': 10},
-        {'key1': 3, 'key2': 7, 'key3': 11},
-        {'key1': 4, 'key2': 8, 'key3': 12},
-    ]
-    """
-    return [dict(zip(_dict.keys(), v)) for v in zip(*(_dict[k] for k in _dict.keys()))]
-
-
 def _extend_to_nparray(item, n):
     """If item is already list/array return np.array, otherwise extend to length n"""
     if isinstance(item, (list, np.ndarray)):
@@ -228,15 +218,21 @@ def _extend_to_nparray(item, n):
     return np.asarray([item for _ in range(n)])
 
 
-def _extend_dict_values(_dict, n):
-    """Extends scalar dict values to np.array of length n and checks lengths"""
-    _dict = {key: _extend_to_nparray(val, n) for key, val in _dict.items()}
-
-    lengths = np.array([val.size for val in _dict.values()])
-    if np.any(lengths != n):
+def _extend_dict_values(_dict, n_sites):
+    """Checks and extends dict values. Returns dict or list of dicts and max length"""
+    n_sites_dict = _check_lengths(list(_dict.values()))
+    if n_sites != 1 and n_sites_dict != 1 and n_sites != n_sites_dict:
         raise ValueError("A list in a dictonary was misshapen. " + LIST_LEN_ERROR_MSG)
 
-    return _dict
+    if n_sites_dict == 1:
+        _dict = {
+            key: val[0] if isinstance(val, (list, np.ndarray)) else val
+            for key, val in _dict.items()
+        }
+        return _dict, 1
+
+    _dict = {key: _extend_to_nparray(val, n_sites_dict) for key, val in _dict.items()}
+    return _zip_dict(_dict), n_sites_dict
 
 
 def _check_lengths(attributes):
@@ -253,6 +249,23 @@ def _check_lengths(attributes):
     raise ValueError(
         "An array or list was either too short or too long. " + LIST_LEN_ERROR_MSG
     )
+
+
+# BUG: doctest fails on example code
+def _zip_dict(_dict):
+    """Makes list of dicts with the same keys and scalar values from dict of lists
+
+    Example:
+    >>> foo = {'key1': [1, 2, 3, 4], 'key2': [5, 6, 7, 8], 'key3': [9, 10, 11, 12]}
+    >>> _zip_dict(foo)
+    [
+        {'key1': 1, 'key2': 5, 'key3': 9},
+        {'key1': 2, 'key2': 6, 'key3': 10},
+        {'key1': 3, 'key2': 7, 'key3': 11},
+        {'key1': 4, 'key2': 8, 'key3': 12}
+    ]
+    """
+    return [dict(zip(_dict.keys(), v)) for v in zip(*(_dict[k] for k in _dict.keys()))]
 
 
 # def _check_input_list_lengths(attributes):

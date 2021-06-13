@@ -87,37 +87,33 @@ def test_extend_dict_values():
         return True
 
     _dict = {"key1": 1, "key2": 2, "key3": 3}
-    check_dict = {
-        "key1": np.array([1]),
-        "key2": np.array([2]),
-        "key3": np.array([3]),
-    }
 
-    assert numpy_dict_equality(_extend_dict_values(_dict, 1), check_dict)
+    # Single length dict remains unchanged with n_sites of 1
+    assert numpy_dict_equality(_extend_dict_values(_dict, 1)[0], _dict)
+    assert numpy_dict_equality(_extend_dict_values(_dict, 5)[0], _dict)
 
     _dict = {"key1": [1], "key2": [2], "key3": [3]}
+    check_dict = {"key1": 1, "key2": 2, "key3": 3}
 
-    assert numpy_dict_equality(_extend_dict_values(_dict, 1), check_dict)
+    # Single length dict remains unchanged with n_sites of 1
+    assert numpy_dict_equality(_extend_dict_values(_dict, 1)[0], check_dict)
+    assert numpy_dict_equality(_extend_dict_values(_dict, 5)[0], check_dict)
 
-    _dict = {"key1": 1, "key2": 2, "key3": 3}
-    check_dict = {
-        "key1": np.array([1, 1, 1]),
-        "key2": np.array([2, 2, 2]),
-        "key3": np.array([3, 3, 3]),
-    }
+    _dict = {"key1": [1] * 5, "key2": 2, "key3": 3}
+    check_list = [{"key1": 1, "key2": 2, "key3": 3}] * 5
 
-    assert numpy_dict_equality(_extend_dict_values(_dict, 3), check_dict)
-
-    _dict = {"key1": [1, 1, 1], "key2": [2, 2, 2], "key3": [3, 3, 3]}
-
-    assert numpy_dict_equality(_extend_dict_values(_dict, 3), check_dict)
+    assert _extend_dict_values(_dict, 1) == (check_list, 5)
+    assert _extend_dict_values(_dict, 5) == (check_list, 5)
 
     error = ".*A list in a dictonary was misshapen.*"
     with pytest.raises(ValueError, match=error):
-        _extend_dict_values({"key1": [1, 2, 3], "key2": [4, 5], "key3": [7, 8, 9]}, 3)
-    with pytest.raises(ValueError, match=error):
+        _extend_dict_values(_dict, 4)
 
-        _extend_dict_values({"key1": [1, 2], "key2": [4, 5], "key3": [7, 8]}, 3)
+    _dict = {"key1": [1] * 5, "key2": [2] * 4, "key3": 3}
+
+    error = ".*An array or list was either too short or too long.*"
+    with pytest.raises(ValueError, match=error):
+        _extend_dict_values(_dict, 1)
 
 
 def test_check_lengths():
