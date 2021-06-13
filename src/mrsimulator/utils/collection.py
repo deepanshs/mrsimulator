@@ -96,7 +96,7 @@ def single_site_system_generator(
 
     if abundance is None:
         abundance = 1 / n_sites
-    abundance = _extend_to_nparray(abundance, n_sites)
+    abundance = _extend_to_nparray(_fix_item(abundance), n_sites)
     n_abd = abundance.size
 
     if n_sites == 1:
