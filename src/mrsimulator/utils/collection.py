@@ -167,8 +167,6 @@ def generate_site_list(
         site_description,
     ]
 
-    # NOTE: Cannot guess number of sites from dictonary parameters
-    # Unpack dict values into array?
     n_sites = _check_lengths(attributes)
 
     if shielding_symmetric is not None:
@@ -192,6 +190,7 @@ def generate_site_list(
     else:
         attributes.append(None)
 
+    # Attributes order is same as below in list comprehension
     attributes = [_extend_to_nparray(attr, n_sites) for attr in attributes]
 
     return np.asarray(
@@ -199,14 +198,14 @@ def generate_site_list(
             Site(
                 isotope=iso,
                 isotropic_chemical_shift=shift,
-                shielding_symmetric=symm,
-                shielding_antisymmetric=antisymm,
-                quadrupolar=quad,
                 name=name,
                 label=label,
                 description=desc,
+                shielding_symmetric=symm,
+                shielding_antisymmetric=antisymm,
+                quadrupolar=quad,
             )
-            for iso, shift, symm, antisymm, quad, name, label, desc in zip(*attributes)
+            for iso, shift, name, label, desc, symm, antisymm, quad in zip(*attributes)
         ]
     )
 
