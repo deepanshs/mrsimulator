@@ -160,11 +160,11 @@ def generate_site_list(
         TODO add example code
     """
     attributes = [
-        isotope,
-        isotropic_chemical_shift,
-        site_name,
-        site_label,
-        site_description,
+        _fix_item(isotope),
+        _fix_item(isotropic_chemical_shift),
+        _fix_item(site_name),
+        _fix_item(site_label),
+        _fix_item(site_description),
     ]
 
     n_sites = _check_lengths(attributes)
@@ -192,6 +192,7 @@ def generate_site_list(
 
     # Attributes order is same as below in list comprehension
     attributes = [_extend_to_nparray(attr, n_sites) for attr in attributes]
+    print(attributes)
 
     return np.asarray(
         [
@@ -210,6 +211,13 @@ def generate_site_list(
     )
 
 
+def _fix_item(item):
+    """Flattens multidimensional arrays into 1d array"""
+    if isinstance(item, (list, np.ndarray)):
+        return np.asarray(item).ravel()
+    return item
+
+
 def _extend_to_nparray(item, n):
     """If item is already list/array return np.array, otherwise extend to length n"""
     if isinstance(item, (list, np.ndarray)):
@@ -219,6 +227,7 @@ def _extend_to_nparray(item, n):
 
 def _extend_dict_values(_dict, n_sites):
     """Checks and extends dict values. Returns dict or list of dicts and max length"""
+    _dict = {key: _fix_item(val) for key, val in _dict.items()}
     n_sites_dict = _check_lengths(list(_dict.values()))
     if n_sites != 1 and n_sites_dict != 1 and n_sites != n_sites_dict:
         raise ValueError("A list in a dictonary was misshapen. " + LIST_LEN_ERROR_MSG)
@@ -359,13 +368,6 @@ def _zip_dict(_dict):
 #     if isinstance(item, (list, np.ndarray)):
 #         return np.asarray(item)
 #     return np.asarray([item for _ in range(n)])
-
-
-# def _flatten_item(item):
-#     """Flatten item if item is array-like, otherwise item"""
-#     if isinstance(item, (list, np.ndarray)):
-#         return np.asarray(item).ravel()
-#     return item
 
 
 # def _get_length(item):
