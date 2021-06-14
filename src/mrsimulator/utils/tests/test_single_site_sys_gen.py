@@ -4,16 +4,11 @@ import pytest
 from mrsimulator.utils.collection import _check_lengths
 from mrsimulator.utils.collection import _extend_dict_values
 from mrsimulator.utils.collection import _extend_to_nparray
+from mrsimulator.utils.collection import _fix_item
 from mrsimulator.utils.collection import _zip_dict
 from mrsimulator.utils.collection import single_site_system_generator
 
 # from mrsimulator.utils.collection import generate_site_list
-
-# from mrsimulator.utils.collection import _get_default_lists
-# from mrsimulator.utils.collection import _get_length
-# from mrsimulator.utils.collection import _clean_item
-# from mrsimulator.utils.collection import _clean_dict
-# from mrsimulator.utils.collection import _check_input_list_lengths
 
 
 __author__ = ["Deepansh Srivastava", "Matthew D. Giammar"]
@@ -37,6 +32,35 @@ __email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
 
 #     a = np.arange(43)
 #     assert _get_length(a) == 43
+
+
+def test_fix_item():
+    assert _fix_item("str") == "str"
+
+    item = [1, 2, 3]
+
+    assert np.array_equal(_fix_item(item), np.array([1, 2, 3]))
+
+    item = np.array(item)
+
+    # 3d array
+    item = np.array(
+        [
+            [
+                [-12, -11, -10, -9],
+                [-8, -7, -6, -5],
+                [-4, -3, -2, -1],
+            ],
+            [
+                [0, 1, 2, 3],
+                [4, 5, 6, 7],
+                [8, 9, 10, 11],
+            ],
+        ]
+    )
+    check = np.arange(-12, 12, 1)
+
+    assert np.array_equal(_fix_item(item), check)
 
 
 def test_zip_dict():

@@ -12,8 +12,8 @@ SHIELDING_SYM_PARAMS = ["zeta", "eta", "alpha", "beta", "gamma"]
 QUADRUPOLAR_PARAMS = ["Cq", "eta", "alpha", "beta", "gamma"]
 LIST_LEN_ERROR_MSG = (
     "All arguments passed must be the same size. If one attribute is type list of "
-    "length n, then all passed lists must be type list of length n and all other "
-    "attributes must be scalar Scalar (singular float, int or str)."
+    "length n, then all passed lists must be of length n and all other "
+    "attributes must be scalar (singular float, int or str)."
 )
 
 
@@ -33,7 +33,7 @@ def single_site_system_generator(
     site_description=None,
     rtol=1e-3,
 ):
-    r"""Generate and return a list of single-site spin systems from the input parameters.
+    r"""Generate and return a list of single-site spin systems from the input parameters
 
     Args:
 
@@ -69,10 +69,36 @@ def single_site_system_generator(
             The spin systems with abundance below this threshold are ignored.
 
     Returns:
-        TODO add return type
+        list of :ref:`spin_sys_api` objects with a single :ref:`site_api`
 
     Example:
-        TODO add example code
+        >>> # single SpinSystem
+        >>> sys1 = single_site_system_generator(
+        ... isotope=["1H"],
+        ... isotropic_chemical_shift=10,
+        ... site_name="Single Proton",
+        ... )
+        >>> print(len(sys1))
+        1
+
+        >>> # multiple SpinSystems
+        >>> sys2 = single_site_system_generator(
+        ... isotope="1H",
+        ... isotropic_chemical_shift=[10] * 5,
+        ... site_name="5 Protons",
+        ... )
+        >>> print(len(sys2))
+        5
+
+        >>> # multiple SpinSystems with dict arguments
+        >>> Cq = [4.2e6] * 12
+        >>> sys3 = single_site_system_generator(
+        ... isotope="17O",
+        ... isotropic_chemical_shift=60.0,  # in ppm,
+        ... quadrupolar={"Cq": Cq, "eta": 0.5},  # Cq in Hz
+        ... )
+        >>> print(len(sys3))
+        12
 
     .. note::
         The parameter value can either be a float or a list/ndarray. If the parameter
@@ -100,8 +126,8 @@ def single_site_system_generator(
     n_abd = abundance.size
 
     if n_sites == 1:
-        sites = sites * n_abd
-        n_sites = len(sites)
+        sites = np.asarray([sites[0] for _ in range(n_abd)])
+        n_sites = sites.size
 
     if n_sites != n_abd:
         raise ValueError(
@@ -127,7 +153,7 @@ def generate_site_list(
     site_description=None,
 ) -> List[Site]:
     r"""Takes in lists or list-like objects describing attributes of each site and
-    returns a list of Site objects (TODO add doc ref)
+    returns a list of Site objects
 
     Params:
         (list) isotope:
@@ -154,10 +180,37 @@ def generate_site_list(
             A string or a list of strings each with a site description. Default is None.
 
     Returns:
-        (list) sites: List of Site objects (TODO add doc ref)
+        (list) sites: List of :ref:`site_api` objects
 
     Example:
-        TODO add example code
+        >>> # 10 hydrogen sites
+        >>> sites1 = generate_site_list(
+        ... isotope=["1H"] * 10,
+        ... isotropic_chemical_shift=-15,
+        ... site_name="10 Protons",
+        ... )
+        >>> print(len(sites1))
+        10
+
+        >>> # 10 hydrogen sites with different shifts
+        >>> shifts = np.arange(-10, 10, 2)
+        >>> sites2 = generate_site_list(
+        ... isotope=["1H"] * 10,
+        ... isotropic_chemical_shift=shifts,
+        ... site_name="10 Proton",
+        ... )
+        >>> print(len(sites2))
+        10
+
+        >>> # multiple Sites with dict arguments
+        >>> Cq = [4.2e6] * 12
+        >>> sys3 = generate_site_list(
+        ... isotope="17O",
+        ... isotropic_chemical_shift=60.0,  # in ppm,
+        ... quadrupolar={"Cq": Cq, "eta": 0.5},  # Cq in Hz
+        ... )
+        >>> print(len(sys3))
+        12
     """
     attributes = [
         _fix_item(isotope),
@@ -192,7 +245,6 @@ def generate_site_list(
 
     # Attributes order is same as below in list comprehension
     attributes = [_extend_to_nparray(attr, n_sites) for attr in attributes]
-    print(attributes)
 
     return np.asarray(
         [
@@ -265,13 +317,11 @@ def _zip_dict(_dict):
 
     Example:
     >>> foo = {'key1': [1, 2, 3, 4], 'key2': [5, 6, 7, 8], 'key3': [9, 10, 11, 12]}
-    >>> _zip_dict(foo)
-    [
-        {'key1': 1, 'key2': 5, 'key3': 9},
-        {'key1': 2, 'key2': 6, 'key3': 10},
-        {'key1': 3, 'key2': 7, 'key3': 11},
-        {'key1': 4, 'key2': 8, 'key3': 12}
-    ]
+    >>> pprint(_zip_dict(foo))
+    [{'key1': 1, 'key2': 5, 'key3': 9},
+     {'key1': 2, 'key2': 6, 'key3': 10},
+     {'key1': 3, 'key2': 7, 'key3': 11},
+     {'key1': 4, 'key2': 8, 'key3': 12}]
     """
     return [dict(zip(_dict.keys(), v)) for v in zip(*(_dict[k] for k in _dict.keys()))]
 
