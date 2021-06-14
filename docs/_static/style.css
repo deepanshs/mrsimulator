@@ -9,7 +9,7 @@ body {
 h1 {
   font-size: 2.2em;
   font-weight: 700;
-  padding: 0 0 0.3em 12px;
+  padding: 0 0 0.3em;
   border-bottom: 1px solid silver;
   margin-bottom: 0.8em;
 }
@@ -24,6 +24,11 @@ h2 {
   /* border-radius: 8px; */
   /* box-shadow: 0 0 1px 0 #4e4e4e57; */
   /* background-color: #e7e7f3; */
+}
+
+.output_html.output_result h2 {
+  font-size: 1.2em;
+  color: #663d3d;
 }
 
 h3 {
@@ -392,15 +397,10 @@ footer a:active {
 }
 
 table:not([class]):not([id]) {
-  display: flex;
-  justify-content: space-between;
+  display: block;
   font-size: small;
-  padding-right: 1em;
-  padding-bottom: 0.5em;
-  outline: 1px solid silver;
-  border-radius: 1em;
-  width: 100%;
   overflow-x: auto;
+  margin: 0;
 }
 
 tr th {
@@ -459,11 +459,6 @@ tr td {
     width: 100%;
   }
 
-  table:not([class]):not([id]) {
-    width: 100%;
-    max-width: 992px;
-  }
-
   #sidebar-wrapper {
     display: none;
   }
@@ -476,9 +471,6 @@ tr td {
   footer {
     margin-left: -15px;
     width: calc(100% + 30px);
-  }
-  table:not([class]):not([id]) {
-    width: 100%;
   }
   .bodywrapper > .body {
     margin-top: 0;

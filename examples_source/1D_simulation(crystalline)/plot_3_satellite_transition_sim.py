@@ -4,7 +4,7 @@
 Arbitrary spin transition (single-quantum)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-27Al (I=5/2) quadrupolar spectrum simulation.
+²⁷Al (I=5/2) quadrupolar spectrum simulation.
 """
 # %%
 # The mrsimulator built-in one-dimensional methods, BlochDecaySpectrum and
@@ -43,8 +43,8 @@ spin_system = SpinSystem(sites=[site])
 # are `P` and `D`, which are given as,
 #
 # .. math::
-#       P = m_f - m_i \\
-#       D = m_f^2 - m_i^2,
+#     P &= m_f - m_i \\
+#     D &= m_f^2 - m_i^2,
 #
 # where :math:`m_f` and :math:`m_i` are the spin quantum numbers for the final and
 # initial energy states. Based on the query, the method selects all transitions from
@@ -53,8 +53,8 @@ spin_system = SpinSystem(sites=[site])
 # set the value of
 #
 # .. math::
-#       P &= (-3/2) - (-1/2) = -1 \\
-#       D &= (9/4) - (1/4) = 2.
+#     P &= \left(-\frac{3}{2}\right) - \left(-\frac{1}{2}\right) = -1 \\
+#     D &= \frac{9}{4} - \frac{1}{4} = 2.
 #
 # For illustrative purposes, let's look at the infinite speed spectrum from this
 # satellite transition.

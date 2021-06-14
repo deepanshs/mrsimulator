@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
+# import warnings
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+VO7_QUERY_WARNING = (
+    "Definition of the transition query object has changed since v0.7. Follow the "
+    "documentation at http://mrsimulator.readthedocs.io/en/latest/ to find more."
+)
 
 
 def check_for_number_of_spectral_dimensions(py_dict, n=1):
@@ -59,6 +65,12 @@ def map_p_and_d_symmetry_to_v_7(py_dict):
             else item["D"]
         )
 
+        if len(itemP) > 1 or len(itemD) > 1:
+            raise Exception(
+                "Ambiguous definition for transition queries. See documentation for "
+                "details."
+            )
+
         if itemP != [] and itemD != []:
             return [
                 {
@@ -86,6 +98,7 @@ def parse_spectral_dimensions(py_dict):
     """Convert transition_query->P->... to transition_query->ch1->P->... if no channel
     is defined."""
     map_transition_query_object_to_v_7(py_dict)
+    # warnings.warn(VO7_QUERY_WARNING, UserWarning)
     _ = [
         item.update({"ch1": item})
         for dim in py_dict["spectral_dimensions"]
@@ -97,7 +110,7 @@ def parse_spectral_dimensions(py_dict):
     ]
 
 
-def check_for_atleast_one_events(py_dict):
+def check_for_at_least_one_events(py_dict):
     """Update events to [{}] if not present."""
     _ = [
         item.update({"events": [{}]})

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-87Rb 2D 3QMAS NMR of RbNO3
+⁸⁷Rb 2D 3QMAS NMR of RbNO₃
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -10,7 +10,7 @@
 import numpy as np
 import csdmpy as cp
 import matplotlib.pyplot as plt
-from lmfit import Minimizer, report_fit
+from lmfit import Minimizer
 
 from mrsimulator import Simulator
 from mrsimulator.methods import ThreeQ_VAS
@@ -72,12 +72,13 @@ spin_systems = single_site_system_generator(
 
 # %%
 # **Method**
-
+#
 # Create the 3QMAS method.
-# Get the spectral dimension paramters from the experiment.
+
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = ThreeQ_VAS(
+MQMAS = ThreeQ_VAS(
     channels=["87Rb"],
     magnetic_flux_density=9.395,  # in T
     spectral_dimensions=spectral_dims,
@@ -87,14 +88,15 @@ method = ThreeQ_VAS(
 # Optimize the script by pre-setting the transition pathways for each spin system from
 # the das method.
 for sys in spin_systems:
-    sys.transition_pathways = method.get_transition_pathways(sys)
+    sys.transition_pathways = MQMAS.get_transition_pathways(sys)
 
 # %%
 # **Guess Spectrum**
 
 # Simulation
 # ----------
-sim = Simulator(spin_systems=spin_systems, methods=[method])
+sim = Simulator(spin_systems=spin_systems, methods=[MQMAS])
+sim.config.number_of_sidebands = 1
 sim.run()
 
 # Post Simulation Processing
@@ -106,7 +108,7 @@ processor = sp.SignalProcessor(
         sp.apodization.Gaussian(FWHM="0.08 kHz", dim_index=0),
         sp.apodization.Gaussian(FWHM="0.1 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
-        sp.Scale(factor=3000),
+        sp.Scale(factor=1e7),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -136,7 +138,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # **Solve the minimizer using LMFIT**
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
-report_fit(result)
+result
 
 # %%
 # The best fit solution
@@ -151,5 +153,21 @@ ax.contour(best_fit, colors="r", linestyles="--", **options)
 ax.set_xlim(-20, -50)
 ax.set_ylim(-45, -65)
 plt.grid()
+plt.tight_layout()
+plt.show()
+
+# %%
+# Image plots with residuals
+# --------------------------
+residuals = sf.residuals(sim, processor)[0]
+
+fig, ax = plt.subplots(
+    1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}
+)
+vmax, vmin = experiment.max(), experiment.min()
+for i, dat in enumerate([experiment, best_fit, residuals]):
+    ax[i].imshow(dat, aspect="auto", cmap="gist_ncar_r", vmax=vmax, vmin=vmin)
+    ax[i].set_xlim(-20, -50)
+ax[0].set_ylim(-45, -65)
 plt.tight_layout()
 plt.show()

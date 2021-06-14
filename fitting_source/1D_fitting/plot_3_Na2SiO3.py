@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-17O MAS NMR of crystalline Na2SiO3 (2nd order quad)
+¹⁷O MAS NMR of crystalline Na₂SiO₃ (2nd order quad)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -14,12 +14,11 @@
 # We use the `LMFIT <https://lmfit.github.io/lmfit-py/>`_ library to fit the spectrum.
 # The following example shows the least-squares fitting procedure applied to the
 # :math:`^{17}\text{O}` MAS NMR spectrum of :math:`\text{Na}_{2}\text{SiO}_{3}` [#f5]_.
-# The dataset was shared by Dr. Philip Grandinetti.
 #
 # Start by importing the relevant modules.
 import csdmpy as cp
 import matplotlib.pyplot as plt
-from lmfit import Minimizer, report_fit
+from lmfit import Minimizer
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecayCTSpectrum
@@ -97,7 +96,7 @@ spin_systems = [
 # get the count, spectral_width, and reference_offset information from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = BlochDecayCTSpectrum(
+MAS_CT = BlochDecayCTSpectrum(
     channels=["17O"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=14000,  # in Hz
@@ -111,11 +110,11 @@ method = BlochDecayCTSpectrum(
 # querying for the transition pathways at every iteration in a least-squares fitting,
 # evaluate the transition pathways once and store it as follows
 for sys in spin_systems:
-    sys.transition_pathways = method.get_transition_pathways(sys)
+    sys.transition_pathways = MAS_CT.get_transition_pathways(sys)
 
 # %%
 # **Step 3:** Create the Simulator object and add the method and spin system objects.
-sim = Simulator(spin_systems=spin_systems, methods=[method])
+sim = Simulator(spin_systems=spin_systems, methods=[MAS_CT])
 sim.config.decompose_spectrum = "spin_system"
 sim.run()
 
@@ -182,7 +181,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # LMFIT Minimizer class, as follows,
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
-report_fit(result)
+result
 
 # %%
 # **Step 8:** The plot of the fit and the measurement data.

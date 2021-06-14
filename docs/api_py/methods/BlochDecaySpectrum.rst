@@ -25,7 +25,7 @@ Bloch Decay Spectrum method
     ... )
 
 
-Bloch decay method is a special case of :class:`~mrsimulator.methods.Method1D`, given as
+Bloch decay method is a special case of :py:class:`~mrsimulator.methods.Method1D`, given as
 
 .. doctest::
 

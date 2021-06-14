@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-11B MAS NMR of Lithium orthoborate crystal
+¹¹B MAS NMR of Lithium orthoborate crystal
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -9,7 +9,7 @@
 # lithium orthoborate crystal. The dataset was shared by Dr. Nathan Barrow.
 import csdmpy as cp
 import matplotlib.pyplot as plt
-from lmfit import Minimizer, report_fit
+from lmfit import Minimizer
 
 from mrsimulator import Simulator, Site, SpinSystem
 from mrsimulator.methods import BlochDecayCTSpectrum
@@ -58,10 +58,10 @@ spin_systems = [SpinSystem(sites=[B11])]
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = BlochDecayCTSpectrum(
+MAS_CT = BlochDecayCTSpectrum(
     channels=["11B"],
     magnetic_flux_density=14.1,  # in T
     rotor_frequency=12500,  # in Hz
@@ -72,14 +72,14 @@ method = BlochDecayCTSpectrum(
 # Optimize the script by pre-setting the transition pathways for each spin system from
 # the method.
 for sys in spin_systems:
-    sys.transition_pathways = method.get_transition_pathways(sys)
+    sys.transition_pathways = MAS_CT.get_transition_pathways(sys)
 
 # %%
 # **Guess Model Spectrum**
 
 # Simulation
 # ----------
-sim = Simulator(spin_systems=spin_systems, methods=[method])
+sim = Simulator(spin_systems=spin_systems, methods=[MAS_CT])
 sim.run()
 
 # Post Simulation Processing
@@ -120,7 +120,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # **Solve the minimizer using LMFIT**
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
-report_fit(result)
+result
 
 # %%
 # The best fit solution

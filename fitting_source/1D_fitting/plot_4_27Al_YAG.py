@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-27Al MAS NMR of YAG (1st and 2nd order Quad)
+²⁷Al MAS NMR of YAG (1st and 2nd order Quad)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # The following is a quadrupolar lineshape fitting example for the 27Al MAS NMR of
 # Yttrium aluminum garnet (YAG) crystal.
-# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
-# acknowledge Dr. Dominique Massiot for sharing the dataset.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples.
+# We thank Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
 import matplotlib.pyplot as plt
-from lmfit import Minimizer, report_fit
+from lmfit import Minimizer
 
 from mrsimulator import Simulator, Site, SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
@@ -72,10 +72,10 @@ spin_systems = [
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = BlochDecaySpectrum(
+MAS = BlochDecaySpectrum(
     channels=["27Al"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=15250,  # in Hz
@@ -86,14 +86,14 @@ method = BlochDecaySpectrum(
 # Optimize the script by pre-setting the transition pathways for each spin system from
 # the method.
 for sys in spin_systems:
-    sys.transition_pathways = method.get_transition_pathways(sys)
+    sys.transition_pathways = MAS.get_transition_pathways(sys)
 
 # %%
 # **Guess Spectrum**
 
 # Simulation
 # ----------
-sim = Simulator(spin_systems=spin_systems, methods=[method])
+sim = Simulator(spin_systems=spin_systems, methods=[MAS])
 sim.config.decompose_spectrum = "spin_system"
 sim.run()
 
@@ -134,7 +134,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # **Solve the minimizer using LMFIT**
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
-report_fit(result)
+result
 
 # %%
 # The best fit solution

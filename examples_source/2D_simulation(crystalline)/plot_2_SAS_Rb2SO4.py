@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Rb2SO4, 87Rb (I=3/2) SAS
+Rb₂SO₄, ⁸⁷Rb (I=3/2) SAS
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-87Rb (I=3/2) Switched-angle spinning (SAS) simulation.
+⁸⁷Rb (I=3/2) Switched-angle spinning (SAS) simulation.
 """
 # %%
-# The following is an example of switched-angle spinning (SAS) simulation of
-# :math:`\text{Rb}_2\text{SO}_4`, which has two distinct rubidium sites. The NMR tensor
-# parameters for these sites are taken from Shore `et. al.` [#f1]_.
+# The following is an example of Switched-Angle Spinning (SAS) simulation of
+# :math:`\text{Rb}_2\text{SO}_4`, which has two distinct rubidium sites. The NMR
+# tensor parameters for these sites are taken from Shore `et al.` [#f1]_.
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site

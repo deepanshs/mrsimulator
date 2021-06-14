@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Ethanol Revisited (1H and 13C NMR)
+Ethanol Revisited (¹H and ¹³C NMR)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Simulating 1H and 13C isotopomers.
+Simulating ¹H and ¹³C isotopomers.
 """
 # %%
 # An astute observer may have noticed that the :math:`^{1}\text{H}` ethanol spectrum
@@ -14,7 +14,7 @@ Simulating 1H and 13C isotopomers.
 # In this example, we will add these to the :math:`^1\text{H}` spectrum and plot
 # the :math:`^{13}\text{C}` spectrum while we're at it!
 #
-# We'll start importing the necessary packages, just like before.
+# As before, we start by importing the necessary packages.
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
@@ -27,8 +27,8 @@ from mrsimulator import signal_processing as sp
 # Spin Systems
 # ------------
 #
-# The satellite peaks come from low-abundance isotopomers that have one
-# :math:`^{13}\text{C}` in them, causing more splittings. First, let's define
+# The satellite peaks come from couplings between :math:`^{1}\text{H}` and
+# :math:`^{13}\text{C}` in low-abundance isotopomers. First, let's define
 # all the possible :math:`^1\text{H}` and :math:`^{13}\text{C}` sites.
 
 H_CH3 = Site(isotope="1H", isotropic_chemical_shift=1.226)
@@ -74,17 +74,18 @@ isotopomer1 = SpinSystem(sites=iso1_sites, couplings=iso1_couplings, abundance=9
 
 # %%
 # .. note::
-#     The abundance values were calculated using basic rules of probability and an
-#     assumption that only :math:`^1\text{H}` and :math:`^{16}\text{O}` are present.
-#     The abundance of :math:`^{12}\text{C}` is 98.9%, and the abundance of
-#     :math:`^{13}\text{C}` is 1.1%. So, the probability of the most abundant
-#     isotopomer is :math:`0.989*0.989=0.97812`
+#     The abundance values were calculated with an assumption that only
+#     :math:`^1\text{H}` and :math:`^{16}\text{O}` are present.  The abundance
+#     of :math:`^{12}\text{C}` is 98.9%, and the abundance of :math:`^{13}\text{C}`
+#     is 1.1%. So, the probability of the most abundant isotopomer is
+#     :math:`0.989 \times 0.989=0.97812`
 #
 # **Isotopomer 2**
 #
-# Now, we build the sites, couplings (:math:`^1J_\text{CH}` and :math:`^3J_\text{HH}`),
-# and spin system for the isotopomer with the methyl carbon replaced with a
-# :math:`^{13}\text{C}` (pictured below, :math:`^{13}\text{C}` marked in blue)
+# Now, we build the sites, couplings (:math:`^1J_\text{CH}` and
+# :math:`^3J_\text{HH}`), and spin system for the isotopomer with the
+# methyl carbon replaced with a :math:`^{13}\text{C}` (pictured below,
+# :math:`^{13}\text{C}` marked in blue)
 #
 # .. figure::  ../../_static/iso2.*
 #     :width: 200
@@ -199,7 +200,7 @@ processed_H_data = processor_1H.apply_operations(data=H_data)
 processed_C_data = processor_13C.apply_operations(data=C_data)
 
 # %%
-# Lastly, we plot the two spectra!
+# Lastly, we plot the two spectra.
 fig, ax = plt.subplots(
     nrows=1, ncols=2, subplot_kw={"projection": "csdm"}, figsize=[8, 3.5]
 )
@@ -216,5 +217,5 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# Now, we see the :math:`^{13}\text{C}` satellites on either side of the peaks near 1.2
-# ppm and 2.6 ppm in the :math:`^1\text{H}` spectrum.
+# Now, we see the :math:`^{13}\text{C}` satellites on either side of the peaks near
+# 1.2 ppm and 2.6 ppm in the :math:`^1\text{H}` spectrum.

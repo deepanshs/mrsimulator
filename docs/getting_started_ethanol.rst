@@ -53,9 +53,9 @@ Couplings
 ^^^^^^^^^
 
 Now, we need to define the :math:`^3J_{HH}` couplings that cause the splittings
-we're used to seeing in the spectrum of ethanol. In ``mrsimulator``, all Couplings
-are defined using the :class:`~mrsimulator.Coupling` class. Let's start by defining
-a coupling between a methyl and a methylene proton.
+in the spectrum of ethanol. In ``mrsimulator``, all couplings are defined using
+the :py:class:`~mrsimulator.Coupling` class. Let's start by defining a coupling
+between a methyl and a methylene proton.
 
 .. plot::
     :format: doctest
@@ -76,7 +76,9 @@ isotropic *J*-coupling is 7 Hz.
 Now, we define the rest of the methyl-methylene couplings and make a list to hold them all.
 
 .. note::
-    ``mrsimulator`` library does not support strong couplings, so we will be neglecting them.
+    Strong J couplings do not lead to splittings in an NMR spectrum, so they are not included
+    in the list of couplings in this example.  Additionally, note that ``mrsimulator`` library
+    only supports weak couplings between sites.
 
 .. plot::
     :format: doctest
@@ -111,7 +113,7 @@ Now, we add the sites and couplings to the spin system object.
 
     >>> etoh = SpinSystem(sites=etoh_sites, couplings=etoh_couplings)
 
-We have successfully built our ethanol spin system! If you need to
+We have successfully built our ethanol spin system. If you need to
 create more spin systems, repeat these instructions, but for this
 example, we will stick with a single spin system.
 
@@ -152,7 +154,7 @@ Running simulation
 ------------------
 Next, we need to create an instance of the simulator object and then
 add our spin system and method to it. Then, we run the simulator with
-the :meth:`~mrsimulator.Simulator.run` method.
+the :py:meth:`~mrsimulator.Simulator.run` method.
 
 .. plot::
     :format: doctest
@@ -177,7 +179,7 @@ Let’s get the data from the method so we can plot it.
 
 Visualizing the dataset
 -----------------------
-Now that we have our data, let’s plot the spectrum using matplotlib!
+Now that we have our data, let’s plot the spectrum using matplotlib.
 
 .. plot::
     :format: doctest

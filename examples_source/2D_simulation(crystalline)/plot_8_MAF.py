@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Wollastonite, 29Si (I=1/2), MAF
+Wollastonite, ²⁹Si (I=1/2), MAF
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-29Si (I=1/2) magic angle flipping.
+²⁹Si (I=1/2) magic angle flipping.
 """
 # %%
 # Wollastonite is a high-temperature calcium-silicate,
 # :math:`\beta−\text{Ca}_3\text{Si}_3\text{O}_9`, with three distinct
 # :math:`^{29}\text{Si}` sites. The :math:`^{29}\text{Si}` tensor parameters
-# were obtained from Hansen `et. al.` [#f1]_
+# were obtained from Hansen `et al.` [#f1]_
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
@@ -42,9 +42,9 @@ sites = [
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# Use the generic 2D method, `Method2D`, to simulate a MAF spectrum by customizing the
-# method parameters, as shown below. Note, the Method2D method simulates an infinite
-# spinning speed spectrum.
+# Use the generic 2D method, `Method2D`, to simulate a Magic-Angle Flipping (MAF)
+# spectrum by customizing the method parameters, as shown below. Note, the Method2D
+# method simulates an infinite spinning speed spectrum.
 maf = Method2D(
     channels=["29Si"],
     magnetic_flux_density=14.1,  # in T

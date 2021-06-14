@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-31P MAS NMR of crystalline Na2PO4 (CSA)
+³¹P MAS NMR of crystalline Na2PO4 (CSA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -14,13 +14,13 @@
 # We use the `LMFIT <https://lmfit.github.io/lmfit-py/>`_ library to fit the spectrum.
 # The following example shows the least-squares fitting procedure applied to the
 # :math:`^{31}\text{P}` MAS NMR spectrum of :math:`\text{Na}_{2}\text{PO}_{4}`.
-# The following experimental dataset is a part of DMFIT [#f1]_ examples, and we
-# acknowledge Dr. Dominique Massiot for sharing the dataset.
+# The following experimental dataset is a part of DMFIT [#f1]_ examples. We
+# thank Dr. Dominique Massiot for sharing the dataset.
 #
 # Start by importing the relevant modules.
 import csdmpy as cp
 import matplotlib.pyplot as plt
-from lmfit import Minimizer, report_fit
+from lmfit import Minimizer
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
@@ -91,7 +91,7 @@ spin_systems = [SpinSystem(sites=[P_31])]
 # get the count, spectral_width, and reference_offset information from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = BlochDecaySpectrum(
+MAS = BlochDecaySpectrum(
     channels=["31P"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=6000,  # in Hz
@@ -105,11 +105,11 @@ method = BlochDecaySpectrum(
 # querying for the transition pathways at every iteration in a least-squares fitting,
 # evaluate the transition pathways once and store it as follows
 for sys in spin_systems:
-    sys.transition_pathways = method.get_transition_pathways(sys)
+    sys.transition_pathways = MAS.get_transition_pathways(sys)
 
 # %%
 # **Step 3:** Create the Simulator object and add the method and spin system objects.
-sim = Simulator(spin_systems=spin_systems, methods=[method])
+sim = Simulator(spin_systems=spin_systems, methods=[MAS])
 sim.run()
 
 # %%
@@ -177,7 +177,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # LMFIT Minimizer class, as follows,
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
-report_fit(result)
+result
 
 # %%
 # **Step 8:** The plot of the fit, measurement, and residuals.

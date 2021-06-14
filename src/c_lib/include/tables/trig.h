@@ -5,7 +5,7 @@ double cos_table[62833];
 double sin_table[62833];
 double table_precision_inverse;
 
-static inline void generate_table() {
+static inline void generate_table(void) {
   extern double cos_table[62833];
   extern double sin_table[62833];
   extern double table_precision_inverse;

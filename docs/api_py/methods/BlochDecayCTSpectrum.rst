@@ -25,7 +25,7 @@ Bloch Decay Central Transition Spectrum method
     ... )
 
 Bloch decay central transition selective method is a special case of
-:class:`~mrsimulator.methods.Method1D`, given as
+:py:class:`~mrsimulator.methods.Method1D`, given as
 
 .. doctest::
 

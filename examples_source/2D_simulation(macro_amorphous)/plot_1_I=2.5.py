@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Czjzek distribution, 27Al (I=5/2) 3QMAS
+Czjzek distribution, ²⁷Al (I=5/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-27Al (I=5/2) 3QMAS simulation of amorphous material.
+²⁷Al (I=5/2) 3QMAS simulation of amorphous material.
 """
 # %%
 # In this section, we illustrate the simulation of a quadrupolar MQMAS spectrum arising

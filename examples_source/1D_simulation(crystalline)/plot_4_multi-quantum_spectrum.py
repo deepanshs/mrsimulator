@@ -4,7 +4,7 @@
 Arbitrary spin transition (multi-quantum)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-33S (I=5/2) quadrupolar spectrum simulation.
+³³S (I=5/2) quadrupolar spectrum simulation.
 """
 # %%
 # Simulate a triple quantum spectrum.

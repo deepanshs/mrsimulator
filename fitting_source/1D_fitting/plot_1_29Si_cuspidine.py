@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-29Si 1D MAS spinning sideband (CSA)
+²⁹Si 1D MAS spinning sideband (CSA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
@@ -16,13 +16,13 @@
 # `LMFIT <https://lmfit.github.io/lmfit-py/>`_ library for performing the least-squares
 # fitting optimization.
 # In this example, we use a synthetic :math:`^{29}\text{Si}` NMR spectrum of cuspidine,
-# generated from the tensor parameters reported by Hansen `et. al.` [#f1]_, to
+# generated from the tensor parameters reported by Hansen `et al.` [#f1]_, to
 # demonstrate a simple fitting procedure.
 #
 # We will begin by importing relevant modules and establishing figure size.
 import csdmpy as cp
 import matplotlib.pyplot as plt
-from lmfit import Minimizer, Parameters, fit_report
+from lmfit import Minimizer, Parameters
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
@@ -36,19 +36,14 @@ from mrsimulator.utils import spectral_fitting as sf
 # ------------------
 # Use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_
 # module to load the synthetic dataset as a CSDM object.
-file_ = "https://sandbox.zenodo.org/record/814455/files/synthetic_cuspidine_test.csdf"
+file_ = "https://sandbox.zenodo.org/record/835664/files/synthetic_cuspidine_test.csdf?"
 synthetic_experiment = cp.load(file_).real
 
 # standard deviation of noise from the dataset
-sigma = 0.3298179
+sigma = 0.03383338
 
 # convert the dimension coordinates from Hz to ppm
 synthetic_experiment.x[0].to("ppm", "nmr_frequency_ratio")
-
-# Normalize the spectrum
-max_amp = synthetic_experiment.max()
-synthetic_experiment /= max_amp
-sigma /= max_amp
 
 # Plot of the synthetic dataset.
 plt.figure(figsize=(4.25, 3.0))
@@ -97,7 +92,7 @@ spin_system = SpinSystem(
 # in the measurement. In this example, we use the `BlochDecaySpectrum` method. Note,
 # when creating the method object, the value of the method parameters must match the
 # respective values used in the experiment.
-method = BlochDecaySpectrum(
+MAS = BlochDecaySpectrum(
     channels=["29Si"],
     magnetic_flux_density=7.1,  # in T
     rotor_frequency=780,  # in Hz
@@ -114,7 +109,7 @@ method = BlochDecaySpectrum(
 # %%
 # **Step 3:** Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator(spin_systems=[spin_system], methods=[method])
+sim = Simulator(spin_systems=[spin_system], methods=[MAS])
 sim.run()
 
 # %%
@@ -124,7 +119,7 @@ processor = sp.SignalProcessor(
         sp.IFFT(),  # inverse FFT to convert frequency based spectrum to time domain.
         sp.apodization.Exponential(FWHM="200 Hz"),  # apodization of time domain signal.
         sp.FFT(),  # forward FFT to convert time domain signal to frequency spectrum.
-        sp.Scale(factor=1.5),  # scale the frequency spectrum.
+        sp.Scale(factor=3),  # scale the frequency spectrum.
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
@@ -225,7 +220,7 @@ def minimization_function(params, sim, processor, sigma=1):
 # `Minimizer <https://lmfit.github.io/lmfit-py/fitting.html>`_ class.
 minner = Minimizer(minimization_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
-print(fit_report(result))
+result
 
 # %%
 # The plot of the fit, measurement and the residuals is shown below.

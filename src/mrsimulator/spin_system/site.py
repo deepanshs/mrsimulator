@@ -156,8 +156,8 @@ class Site(Parseable):
     shielding_antisymmetric: AntisymmetricTensor = None
     quadrupolar: SymmetricTensor = None
 
-    property_unit_types: ClassVar = {"isotropic_chemical_shift": "dimensionless"}
-    property_default_units: ClassVar = {"isotropic_chemical_shift": "ppm"}
+    property_unit_types: ClassVar[Dict] = {"isotropic_chemical_shift": "dimensionless"}
+    property_default_units: ClassVar[Dict] = {"isotropic_chemical_shift": "ppm"}
     property_units: Dict = {"isotropic_chemical_shift": "ppm"}
 
     class Config:

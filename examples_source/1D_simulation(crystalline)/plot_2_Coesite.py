@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Coesite, 17O (I=5/2)
+Coesite, ¹⁷O (I=5/2)
 ^^^^^^^^^^^^^^^^^^^^
 
-17O (I=5/2) quadrupolar spectrum simulation.
+¹⁷O (I=5/2) quadrupolar spectrum simulation.
 """
 # %%
 # Coesite is a high-pressure (2-3 GPa) and high-temperature (700°C) polymorph of silicon
 # dioxide :math:`\text{SiO}_2`. Coesite has five crystallographic :math:`^{17}\text{O}`
 # sites. In the following, we use the :math:`^{17}\text{O}` EFG tensor information from
-# Grandinetti `et. al.` [#f1]_
+# Grandinetti `et al.` [#f1]_
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site

@@ -19,6 +19,7 @@ from pydantic import validator
 from .coupling import Coupling
 from .isotope import ISOTOPE_DATA
 from .site import Site
+from .split_spinsystems import build_new_systems
 from .zeemanstate import ZeemanState
 
 __author__ = "Deepansh Srivastava"
@@ -150,12 +151,12 @@ class SpinSystem(Parseable):
     """
 
     sites: Union[List[Site], np.ndarray] = []
-    couplings: Union[List[Coupling], np.ndarray] = None
+    couplings: Union[List[Coupling], np.ndarray] = []
     abundance: float = Field(default=100.0, ge=0.0, le=100.0)
     transition_pathways: List = None
 
-    property_unit_types: ClassVar = {"abundance": "dimensionless"}
-    property_default_units: ClassVar = {"abundance": "pct"}
+    property_unit_types: ClassVar[Dict] = {"abundance": "dimensionless"}
+    property_default_units: ClassVar[Dict] = {"abundance": "pct"}
     property_units: Dict = {"abundance": "pct"}
 
     class Config:
@@ -182,6 +183,60 @@ class SpinSystem(Parseable):
             if not np.all([isinstance(item, Coupling) for item in v]):
                 raise ValueError("All entries must be of type `Coupling`.")
         return list(v)
+
+    def simplify(self):
+        """Simplifies user-defined spin systems into irreducible spin system objects.
+
+        Example
+        -------
+
+        >>> sites = [
+        ...     Site(isotope="1H", isotropic_chemical_shift=0, name="A"),
+        ...     Site(isotope="1H", isotropic_chemical_shift=2, name="B"),
+        ...     Site(isotope="1H", isotropic_chemical_shift=4, name="C"),
+        ...     Site(isotope="1H", isotropic_chemical_shift=6, name="D"),
+        ...     Site(isotope="1H", isotropic_chemical_shift=8, name="E"),
+        ...     Site(isotope="1H", isotropic_chemical_shift=10, name="F")
+        ... ]
+        >>> couplings = [
+        ...     Coupling(site_index=[0, 1], isotropic_j=10, name="AB"),
+        ...     Coupling(site_index=[1, 2], isotropic_j=10, name="BC"),
+        ...     Coupling(site_index=[3, 5], isotropic_j=30, name="DF")
+        ... ]
+        >>> sys = SpinSystem(sites=sites, couplings=couplings, abundance=30)
+        >>> simplified_sys = sys.simplify()
+        >>> simple_sys = [sub_sys.json() for sub_sys in simplified_sys]
+        >>> pprint(simple_sys)
+        [{'abundance': '30.0 %',
+          'couplings': [{'isotropic_j': '10.0 Hz', 'name': 'AB', 'site_index': [0, 1]},
+                        {'isotropic_j': '10.0 Hz', 'name': 'BC', 'site_index': [1, 2]}],
+          'sites': [{'isotope': '1H',
+                     'isotropic_chemical_shift': '0.0 ppm',
+                     'name': 'A'},
+                    {'isotope': '1H',
+                     'isotropic_chemical_shift': '2.0 ppm',
+                     'name': 'B'},
+                    {'isotope': '1H',
+                     'isotropic_chemical_shift': '4.0 ppm',
+                     'name': 'C'}]},
+         {'abundance': '30.0 %',
+          'couplings': [{'isotropic_j': '30.0 Hz', 'name': 'DF', 'site_index': [0, 1]}],
+          'sites': [{'isotope': '1H',
+                     'isotropic_chemical_shift': '6.0 ppm',
+                     'name': 'D'},
+                    {'isotope': '1H',
+                     'isotropic_chemical_shift': '10.0 ppm',
+                     'name': 'F'}]},
+         {'abundance': '30.0 %',
+          'sites': [{'isotope': '1H',
+                     'isotropic_chemical_shift': '8.0 ppm',
+                     'name': 'E'}]}]
+        """
+        return (
+            [SpinSystem(sites=[site], abundance=self.abundance) for site in self.sites]
+            if not self.couplings
+            else build_new_systems(self)
+        )
 
     def get_isotopes(self, spin_I: float = None, symbol: bool = False) -> list:
         """An ordered list of :ref:`isotope_api` objects from the sites within the spin
@@ -243,7 +298,7 @@ class SpinSystem(Parseable):
         energy states are represented by a list of quantum numbers,
 
         .. math::
-            |\Psi⟩ = [m_1, m_2,.. m_n],
+            |\Psi\rangle = [m_1, m_2,.. m_n],
 
         where :math:`m_i` is the quantum number associated with the :math:`i^\text{th}`
         site within the spin system, and :math:`\Psi` is the energy state.

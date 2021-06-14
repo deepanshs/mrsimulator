@@ -59,7 +59,7 @@ repos:
         language: python
         types: [python]
         minimum_pre_commit_version: "0.15.0"
-        exclude: (examples_source|fitting_source|setup.py|setup_conda.py)
+        exclude: (examples_source|fitting_source|setup.py)
 
   - repo: https://github.com/pocc/pre-commit-hooks
     rev: v1.1.1

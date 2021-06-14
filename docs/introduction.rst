@@ -1,3 +1,4 @@
+.. _spin_systems_intro:
 
 ****************************
 Introduction to Spin Systems
@@ -266,7 +267,6 @@ Table of Class Attributes
   * - ``couplings``
     - List
     - An *optional* list of coupling objects. The default value is an empty list.
-      Not yet implemented.
 
   * - ``abundance``
     - String
@@ -384,7 +384,7 @@ Table of Class Attributes
   * - ``eta``
     - Float
     - A *required* asymmetry parameter calculated using the Haeberlen convention, for
-      example, ``0.75``. The parameter is irrelevant when describing the dipolar tensor.
+      example, ``0.75``. The parameter is set to zero for the dipolar tensor.
 
   * - ``alpha``
     - ScalarQuantity
