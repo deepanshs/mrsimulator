@@ -107,7 +107,7 @@ plt.show()
 #
 # Create the spin systems.
 systems = single_site_system_generator(
-    isotopes="71Ga", quadrupolar={"Cq": cq_dist * 1e6, "eta": e_dist}, abundance=amp
+    isotope="71Ga", quadrupolar={"Cq": cq_dist * 1e6, "eta": e_dist}, abundance=amp
 )
 
 # %%
