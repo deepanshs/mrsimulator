@@ -191,7 +191,7 @@ class SkewedGaussian(Apodization):
     Example
     -------
 
-    >>> operation6 = sp.apodization.SkewedGaussian(skew='10 Hz', dim_index=0, dv_index=0)
+    >>> operation6 = sp.apodization.SkewedGaussian(skew='5 Hz', dim_index=0, dv_index=0)
     """
     skew: Union[float, str] = 0
     property_units: Dict = {"skew": CONST}
@@ -314,8 +314,8 @@ class Mask(Apodization):
     mask: np.array
 
     def fn(self, x):
-        if len(x.values) != len(mask):
+        if len(x.values) != len(self.mask):
             raise Exception(
-                f"size of dimension ({len(x.values)}) not equal to size of mask ({len(mask)})"
+                f"size dim ({len(x.values)}) not equal to size mask ({len(self.mask)})"
             )
-        return mask
+        return self.mask
