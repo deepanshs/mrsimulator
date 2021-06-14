@@ -191,7 +191,7 @@ class SkewedGaussian(Apodization):
     Example
     -------
 
-    >>> operation4 = sp.apodization.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
+    >>> operation6 = sp.apodization.SkewedGaussian(skew='10 Hz', dim_index=0, dv_index=0)
     """
     skew: Union[float, str] = 0
     property_units: Dict = {"skew": CONST}
@@ -216,7 +216,7 @@ class Step(Apodization):
     The apodization function follows
 
     .. math::
-        f(x) = 1 if rising_edge <= x <= falling_edge , ####(upper/lower_bound???)
+        f(x) = 1 if rising_edge <= x <= falling_edge ,
         else f(x) = 0
 
     where :math:`x` are the coordinates of the dimension, :math`rising_edge` is the
@@ -247,7 +247,7 @@ class Step(Apodization):
     Example
     -------
 
-    >>> operation6= sp.apodization.Step(rising_edge = '-1 s', falling_edge = '1 s')
+    >>> operation7= sp.apodization.Step(rising_edge = '-1 s', falling_edge = '1 s')
     """
 
     rising_edge: Union[float, str] = 0
@@ -278,3 +278,44 @@ class Step(Apodization):
         screen = np.where(x > self.rising_edge, 1, 0)
         screen = screen + np.where(x < self.falling_edge, 0, -1)
         return screen
+
+
+class Mask(Apodization):
+    r"""Apodize a dependent variable of the CSDM object by a user defined mask.
+
+    The apodization function follows
+
+    .. math::
+        f(x) = mask
+
+    where mask is a user-supplied numpy array containing an apodization mask to apply
+    to the data.
+
+    Arguments
+    ---------
+
+    mask:
+        mask.
+
+    dim_index:
+        The index of the CSDM dimension along which the operation is applied. The
+        default is the dimension at index 0.
+
+    dv_index:
+        The index of the CSDM dependent variable, where the operation is applied. If
+        not provided, the operation will be applied to every dependent variable.
+
+    Example
+    -------
+
+    >>> operation6= sp.apodization.Mask(mask = np.zeros(len(x)))
+    """
+
+    mask: np.array
+
+    def fn(self, x):
+        if len(x.values) != len(mask):
+            raise Exception(
+                f"size of dimension ({len(x.values)}) not equal to size of mask ({len(mask)})"
+            )
+        return mask
