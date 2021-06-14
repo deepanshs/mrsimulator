@@ -6,7 +6,7 @@ from typing import Union
 
 import numpy as np
 from pydantic import validator
-from scipy.special import erf
+from scipy.special import erfi
 
 from ._base import ModuleOperation
 from .utils import _get_broadcast_shape
@@ -151,18 +151,24 @@ class Exponential(Apodization):
 class SkewedGaussian(Apodization):
     r"""Apodize dependent variable objects of the CSDM data with a skewed Gaussian function.
 
-    The apodization function follows
+    The apodization function is derived from the skewed Gaussian distribution
 
     .. math::
-        f(x) = 2*e^{-2 \pi^2 \sigma^2  x^2}*{0.5*(1+erf(\gamma*x / \sqrt(2)))},
+        f(x) = 2*\phi(x)*\Phi(\alpha x),
 
-    where :math:`x` are the coordinates of the dimension, and :math:`\sigma` is the
-    standard deviation and \gamma is the skewness. The relationship between the
-    standard deviation, :math:`\sigma`, and the full width at half maximum of the
-    reciprocal domain Gaussian function follows
+    where :math:`x` are the coordinates of the dimension, and :math:`\phi` is the
+    standard normal probability density function, :math:`\Phi` is the cumulative
+    distribution function, and :math:`\alpha` is a skewing parameter. The apodization
+    function is the fourier transform of the above function which gives another
+    skewed Gaussian function and is given by
 
     .. math::
-        \sigma = \frac{\text{FWHM}}{2\sqrt{2\ln 2}}.
+        f(x) = e^{-2 * (\pi * x)**2}*{1 + i*Erfi(skew*x/\sqrt(2))},
+
+    where skew is given by
+
+    .. math::
+        skew = \alpha/\sqrt(1+\alpha**2)
 
     Arguments
     ---------
@@ -187,23 +193,20 @@ class SkewedGaussian(Apodization):
 
     >>> operation4 = sp.apodization.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
     """
+    skew: Union[float, str] = 0
+    property_units: Dict = {"skew": CONST}
 
-    FWHM: Union[float, str] = 0
-    gamma: float = 0
-    property_units: Dict = {"FWHM": CONST}
-
-    @validator("FWHM")
+    @validator("skew")
     def str_to_quantity(cls, v, values):
-        return _str_to_quantity(v, values, "FWHM")
+        return _str_to_quantity(v, values, "skew")
 
     def fn(self, x):
         x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
-        sigma = self.FWHM / 2.354820045030949
         return (
             1.0
-            if self.FWHM == 0.0
-            else np.exp(-2.0 * (np.pi * sigma * x) ** 2)
-            * {0.5 * (1 + erf(self.gamma * x / np.sqrt(2)))}
+            if self.skew == 0.0
+            else np.exp(-2.0 * (np.pi * x) ** 2)
+            * (1 + erfi(self.skew * x / np.sqrt(2)))
         )
 
 
