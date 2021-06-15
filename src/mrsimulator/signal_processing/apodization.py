@@ -201,13 +201,10 @@ class SkewedGaussian(Apodization):
         return _str_to_quantity(v, values, "skew")
 
     def fn(self, x):
-        x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
-        return (
-            1.0
-            if self.skew == 0.0
-            else np.exp(-2.0 * (np.pi * x) ** 2)
-            * (1 + erfi(self.skew * x / np.sqrt(2)))
-        )
+        x = self.get_coordinates_in_units(x, unit=1.0 * "s")
+        prob_density_funct = np.exp(-2.0 * (np.pi * x) ** 2)
+        cumulative_prob_funct = 1 + erfi(self.skew * x / np.sqrt(2))
+        return 1.0 if self.skew == 0.0 else prob_density_funct * cumulative_prob_funct
 
 
 class Step(Apodization):
