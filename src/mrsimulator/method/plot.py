@@ -98,10 +98,8 @@ def _add_rect_with_label(ax, x0, x1, label, ev_type):
         ax.annotate(label, ((x1 + x0 + 0.015) / 2, 0.5), **anno_kwargs)
 
 
-def _format_mix_label(df, df_idx, j):
+def _format_mix_label(tip_angle, phase):
     """Helper method to format label for mixing events."""
-    tip_angle = df["tip_angle"][df_idx + j]
-    phase = df["phase"][df_idx + j]
     return "({0:.1f}, {1:.1f})".format(tip_angle, phase), tip_angle / 360 * MIXING_WIDTH
 
 
@@ -168,7 +166,9 @@ def _plot_sequence_diagram(ax, x_data, df):
             left_x = x_data[x_idx]
             # Iterate over each MixingEvent in group and plot rectangle
             for j in range(num):
-                text, width = _format_mix_label(df, df_idx, j)
+                text, width = _format_mix_label(
+                    df["tip_angle"][df_idx + j], df["phase"][df_idx + j]
+                )
                 _add_rect_with_label(ax, left_x, left_x + width, text, "MixingEvent")
                 left_x += width
             x_idx += 1
@@ -287,6 +287,7 @@ def _check_columns(df):
 def _add_tip_angle_and_phase(df):
     """Add tip_angle and phase columns to dataframe from mixing_query"""
     # NOTE Only columns for ch1 are created
+    # NOTE What should empty MixingQuerys add? (MixingQuery default?)
     df["tip_angle"] = [
         query.ch1.tip_angle * 180 / np.pi
         if query.__class__.__name__ == "MixingQuery"
