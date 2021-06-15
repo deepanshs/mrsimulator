@@ -86,8 +86,7 @@ class SpectralDimension(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantities of a SpectralDimension object from a
+        """Parse the physical quantities of a SpectralDimension object from a
         python dictionary object.
 
         Args:
@@ -105,8 +104,7 @@ class SpectralDimension(Parseable):
         return super().parse_dict_with_units(py_dict_copy)
 
     def coordinates_Hz(self) -> np.ndarray:
-        r"""
-        The grid coordinates along the dimension in units of Hz, evaluated as
+        r"""The grid coordinates along the dimension in units of Hz, evaluated as
 
         .. math::
             x_\text{Hz} = \left([0, 1, ... N-1] - T\right) \frac{\Delta x}{N} + x_0
@@ -120,8 +118,7 @@ class SpectralDimension(Parseable):
         return (np.arange(n) - Tk) * increment + self.reference_offset
 
     def coordinates_ppm(self) -> np.ndarray:
-        r"""
-        The grid coordinates along the dimension as dimension frequency ratio
+        r"""The grid coordinates along the dimension as dimension frequency ratio
         in units of ppm. The coordinates are evaluated as
 
         .. math::
@@ -136,9 +133,10 @@ class SpectralDimension(Parseable):
                     "cannot be converted to dimensionless frequency ratio."
                 )
             )
-        else:
-            denominator = (self.origin_offset - self.reference_offset) / 1e6
-            return self.coordinates_Hz() / abs(denominator)
+            return
+
+        denominator = (self.origin_offset - self.reference_offset) / 1e6
+        return self.coordinates_Hz() / abs(denominator)
 
     def to_csdm_dimension(self) -> cp.Dimension:
         """Return the spectral dimension as a CSDM dimension object."""
@@ -206,15 +204,10 @@ class SpectralDimension(Parseable):
             [{'ch1': [[1, 1], [-1]], 'ch2': [[1], None], 'ch3': [None, None]},
              {'ch1': [[-1, -1], [-1]], 'ch2': [None, None], 'ch3': [None, None]}]
         """
-        ha = hasattr
-        ga = getattr
-        tq = "transition_query"
-        indexes = [
-            np.arange(len(evt.transition_query))
-            if ha(evt, "transition_query")
-            else np.asarray([0])
-            for evt in self.events
-        ]
+        ha, ga = hasattr, getattr
+        tq, de = "transition_query", np.asarray([0])
+
+        indexes = [np.arange(len(ga(e, tq))) if ha(e, tq) else de for e in self.events]
         products = cartesian_product(*indexes)
 
         return [

@@ -75,13 +75,25 @@ extensions = [
 # generate autosummary even if no references
 autosummary_generate = True
 
+# ---------------------------------------------------------------------------- #
+#                              Sphinx Version warning                          #
+# ---------------------------------------------------------------------------- #
+# sphinx-version-warning config
+versionwarning_messages = {
+    "latest": (
+        "This document is for the development version. "
+        'For the stable version documentation, see <a href="/en/stable/">here</a>.'
+    )
+}
 # Show warning at top of page
 versionwarning_body_selector = "div.document"
 # versionwarning_banner_title = ""
 # For debugging locally
 # versionwarning_project_version = "latest"
 
-# Plotly config
+# ---------------------------------------------------------------------------- #
+#                                  Plotly config                               #
+# ---------------------------------------------------------------------------- #
 # pio.renderers.default = "sphinx_gallery_png"
 
 # ---------------------------------------------------------------------------- #
@@ -95,7 +107,6 @@ plot_rcparams = {
 # ---------------------------------------------------------------------------- #
 #                               Sphinx Gallery config                          #
 # ---------------------------------------------------------------------------- #
-
 # filter sphinx matplotlib warning
 warnings.filterwarnings(
     "ignore",
@@ -185,13 +196,15 @@ intersphinx_mapping = {
     "astropy": ("https://docs.astropy.org/en/stable/", None),
     "lmfit": ("https://lmfit-py.readthedocs.io/en/stable/", None),
 }
-# ---------------------------------------------------------------------------- #
 
+# ---------------------------------------------------------------------------- #
+#                              Sphinx copybutton                               #
+# ---------------------------------------------------------------------------- #
 copybutton_prompt_text = ">>> |\\$ |\\[\\d*\\]: |\\.\\.\\.: |[.][.][.] "
 copybutton_prompt_is_regexp = True
 
 # ---------------------------------------------------------------------------- #
-#                               Doxygen C docs config                          #
+#                            Doxygen C docs config                             #
 # ---------------------------------------------------------------------------- #
 try:
     subprocess.run("doxygen", shell=False)
@@ -258,7 +271,9 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
 pygments_style = None
 
 
-# -- Options for HTML output -------------------------------------------------
+# ---------------------------------------------------------------------------- #
+#                                  HTML theme                                  #
+# ---------------------------------------------------------------------------- #
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
@@ -333,6 +348,7 @@ html_sidebars = {
     "**": ["searchbox.html", "globaltoc.html"],
     "using/windows": ["searchbox.html", "windowssidebar.html"],
 }
+# ---------------------------------------------------------------------------- #
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -346,7 +362,9 @@ html_static_path = ["_static"]
 htmlhelp_basename = "MRSimulatordoc"
 
 
-# -- Options for LaTeX output ------------------------------------------------
+# ---------------------------------------------------------------------------- #
+#                              LaTeX setup                                     #
+# ---------------------------------------------------------------------------- #
 latex_engine = "pdflatex"
 latex_logo = "_static/mrsimulator_logo.pdf"
 latex_show_pagerefs = True
@@ -536,6 +554,7 @@ texinfo_documents = [
         "Miscellaneous",
     )
 ]
+# ---------------------------------------------------------------------------- #
 
 
 # -- Options for manual page output ------------------------------------------
