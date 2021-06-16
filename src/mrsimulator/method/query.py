@@ -151,27 +151,15 @@ class TransitionQuery(Parseable):
         validate_assignment = True
 
     @staticmethod
-    def cartesian_product_indexing(P_permutated):
-        permutation_length = [
-            np.arange(len(item)) for item in P_permutated if len(item) != 0
-        ]
+    def cartesian_product_indexing(permutation):
+        """Return Cartesian product of indexes"""
+        permutation_length = [np.arange(len(p)) for p in permutation if len(p) != 0]
         if permutation_length == []:
             return np.asarray([])
-        # print("perm length", permutation_length)
-        cartesian_index = cartesian_product(*permutation_length)
-        # print("cartesian_index", cartesian_index)
-        # print(
-        #     "parse",
-        #     [
-        #         [P_permutated[i][j] for i, j in enumerate(item)]
-        #         for item in cartesian_index
-        #     ],
-        # )
+
+        indexes = cartesian_product(*permutation_length)  # cartesian indexes
         return np.asarray(
-            [
-                np.hstack([P_permutated[i][j] for i, j in enumerate(item)])
-                for item in cartesian_index
-            ]
+            [np.hstack([permutation[i][j] for i, j in enumerate(ix)]) for ix in indexes]
         )
 
     def permutation(self, isotopes, channels):
@@ -183,71 +171,56 @@ class TransitionQuery(Parseable):
         """
 
         iso_dict = get_iso_dict(channels=channels, isotopes=isotopes)
-        n_sites_per_channel = [
+        sites_per_channel = [
             iso_dict[item].size if item in iso_dict else 0 for item in channels
         ]
 
-        expanded_symmetry = {}
-        for symmetry in ["P", "D"]:
-            expanded_symmetry[symmetry] = self.expand_elements_for_symmetry(
-                symmetry, isotopes, iso_dict, channels, n_sites_per_channel
+        # expanded_symmetry = {}
+        # for symmetry in ["P", "D"]:
+        expanded_symmetry = {
+            sym: self.expand_elements_for_symmetry(
+                sym, isotopes, iso_dict, channels, sites_per_channel
             )
+            for sym in ["P", "D"]
+        }
         return expanded_symmetry
 
     def expand_elements_for_symmetry(
-        self, symmetry, isotopes, iso_dict, channels, n_sites_per_channel
+        self, symmetry, isotopes, iso_dict, channels, sites_per_channel
     ):
         P_permutated = []
-        live_channel = []
-        live_channel_index = []
+        live_ch, live_ch_index = [], []
         live_n_sites = []
         for i, channel_id in enumerate(channels):
-            # if channel_id not in iso_dict:
-            #     # warnings.warn(warn_message(channel_id))
-            #     return np.asarray([])
-
-            channel_obj = getattr(self, f"ch{i+1}")
-            if channel_obj is not None:
-                P_permutated += [
-                    channel_obj.permutate_query(symmetry, n_sites_per_channel[i])
-                ]
-                live_channel += [channel_id]
-                live_channel_index += [i]
-                live_n_sites += [n_sites_per_channel[i]]
+            ch_obj = getattr(self, f"ch{i+1}")
+            if ch_obj is not None:
+                P_permutated += [ch_obj.permutate_query(symmetry, sites_per_channel[i])]
+                live_ch += [channel_id]
+                live_ch_index += [i]
+                live_n_sites += [sites_per_channel[i]]
 
         # P_permutated = [item for item in P_permutated if item != []]
 
-        # print("symmetry", symmetry)
-        # print("perm", P_permutated)
         if P_permutated == [[]]:
             return np.asarray(P_permutated)
 
-        linear_isotopes = np.hstack(
-            [[item] * n_item for item, n_item in zip(live_channel, live_n_sites)]
-        )
-        linear_iso_dict = get_iso_dict(channels=channels, isotopes=linear_isotopes)
+        linear_isotopes = [[ch] * ns for ch, ns in zip(live_ch, live_n_sites)]
+        linear_iso_dict = get_iso_dict(channels, isotopes=np.hstack(linear_isotopes))
 
         symmetry_expanded = TransitionQuery.cartesian_product_indexing(P_permutated)
 
         if symmetry_expanded.size == 0:
             return symmetry_expanded
 
-        # print("symm", symmetry_expanded)
-        # print("l")
         P_expanded = np.zeros((symmetry_expanded.shape[0], len(isotopes)))
-        for i in range(len(P_permutated)):
-            # print("linear_iso_dict", linear_iso_dict[live_channel[i]])
-            # print(
-            #     "symmetry_expanded at iso",
-            #     symmetry_expanded[:, linear_iso_dict[live_channel[i]]],
-            # )
-            # print("live_channel_index", live_channel_index, live_channel)
+        _ = [
             P_expanded.__setitem__(
-                (slice(None, None, None), iso_dict[channels[live_channel_index[i]]]),
-                symmetry_expanded[:, linear_iso_dict[live_channel[i]]],
+                (slice(None, None, None), iso_dict[channels[live_ch_index[i]]]),
+                symmetry_expanded[:, linear_iso_dict[live_ch[i]]],
             )
+            for i in range(len(P_permutated))
+        ]
 
-        # print("P_expanded", P_expanded)
         return P_expanded
 
 
@@ -264,8 +237,8 @@ class RFRotation(Parseable):
         The rf rotation phase in units of radians.
     """
 
-    tip_angle: float = Field(default=None, ge=0.0, le=6.283185307179586)
-    phase: float = Field(default=None, ge=-3.141592653589793, le=3.141592653589793)
+    tip_angle: float = Field(default=0.0, ge=0.0)  # in rads
+    phase: float = Field(default=0.0)  # in rads
 
     property_unit_types: ClassVar[Dict] = {
         "tip_angle": "angle",

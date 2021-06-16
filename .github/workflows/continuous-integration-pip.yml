@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: CI (pip)
+name: CI
 
 on:
   push:
@@ -32,9 +32,9 @@ jobs:
           # stop the build if there are Python syntax errors or undefined names
           flake8 . --count --select=C,E,F,W,N8 --show-source --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=9 --max-line-length=88 --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
+          flake8 . --count --exit-zero --max-complexity=8 --max-line-length=88 --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
 
-  build_unix_test:
+  testing_unix:
     needs: [code_lint]
     strategy:
       matrix:
@@ -114,7 +114,7 @@ jobs:
   #     - name: Upload coverage
   #       uses: codecov/codecov-action@v1
 
-  build_windows_test:
+  testing_windows:
     needs: [code_lint]
     strategy:
       matrix:

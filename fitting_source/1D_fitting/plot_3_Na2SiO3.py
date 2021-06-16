@@ -18,7 +18,7 @@
 # Start by importing the relevant modules.
 import csdmpy as cp
 import matplotlib.pyplot as plt
-from lmfit import Minimizer, report_fit
+from lmfit import Minimizer
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecayCTSpectrum
@@ -181,7 +181,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # LMFIT Minimizer class, as follows,
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
-report_fit(result)
+result
 
 # %%
 # **Step 8:** The plot of the fit and the measurement data.
