@@ -2,6 +2,7 @@
 """The Event class."""
 from typing import ClassVar
 from typing import Dict
+from typing import List
 from typing import Union
 
 import numpy as np
@@ -277,6 +278,28 @@ class Step(Apodization):
         return screen
 
 
+class TypedArray(np.ndarray):
+    """an array metaclass to allow me to use np.ndarrays in Mask class"""
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate_type
+
+    @classmethod
+    def validate_type(cls, val):
+        return np.array(val, dtype=cls.inner_type)
+
+
+class ArrayMeta(type):
+    def __getitem__(self, t):
+        return type("Array", (TypedArray,), {"inner_type": t})
+
+
+class Array(np.ndarray, metaclass=ArrayMeta):
+
+    pass
+
+
 class Mask(Apodization):
     r"""Apodize a dependent variable of the CSDM object by a user defined mask.
 
@@ -308,10 +331,22 @@ class Mask(Apodization):
     >>> operation6= sp.apodization.Mask(mask = np.zeros(len(x)))
     """
 
-    mask: np.array
+    mask: Union[List[float], Array[float]] = []
+
+    # @validator('mask')
+    # def list_to_array(cls, v):
+    #     if isinstance(v, list):
+    #         return np.asarray(v)
+    #     return v
+    # @validator('values', pre=True)
+    # def parse_values(v):
+    #     return np.array(v, dtype=float)
+
+    class Config:
+        arbitrary_types_allowed = True
 
     def fn(self, x):
-        if len(x.values) != len(self.mask):
+        if x.value.shape != self.mask.shape:
             raise Exception(
                 f"size dim ({len(x.values)}) not equal to size mask ({len(self.mask)})"
             )
