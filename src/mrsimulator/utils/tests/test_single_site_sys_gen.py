@@ -15,6 +15,29 @@ __author__ = ["Deepansh Srivastava", "Matthew D. Giammar"]
 __email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
 
 
+def numpy_dict_equality(d1, d2):
+    if set(d1.keys()) != set(d2.keys()):
+        return False
+    for key1, val1 in d1.items():
+        val2 = d2[key1]
+        if not np.all(val1 == val2):
+            return False
+    return True
+
+
+def test_numpy_dict_equality():
+    d1 = {"a": np.arange(10), "b": np.ones(10)}
+    d2 = {"a": np.arange(10), "b": np.ones(10)}
+
+    assert numpy_dict_equality(d1, d2)
+
+    d1 = {"a": np.arange(10), "b": np.zeros(10)}
+    assert numpy_dict_equality(d1, d2) is False
+
+    d1 = {"a": "fail"}
+    assert numpy_dict_equality(d1, d2) is False
+
+
 # def test_get_default_lists():
 #     a = 2.0
 #     assert np.all(_get_default_lists(a, 5) == np.asarray([2.0] * 5))
@@ -119,15 +142,6 @@ def test_extend_to_nparray():
 
 
 def test_extend_dict_values():
-    def numpy_dict_equality(d1, d2):
-        for key1, val1 in d1.items():
-            if key1 not in d2:
-                return False
-            val2 = d2[key1]
-            if not np.all(val1 == val2):
-                return False
-        return True
-
     _dict = {"key1": 1, "key2": 2, "key3": 3}
 
     # Single length dict remains unchanged with n_sites of 1
@@ -195,6 +209,12 @@ def test_unbalanced_lists():
     error = ".*An array or list was either too short or too long.*"
     with pytest.raises(ValueError, match=error):
         single_site_system_generator(isotope=isotopes, isotropic_chemical_shift=shifts)
+
+    abundances = np.arange(10)
+
+    error = ".*Number of sites does not mach number of abundances.*"
+    with pytest.raises(ValueError, match=error):
+        single_site_system_generator(isotope=isotopes, abundance=abundances)
 
 
 def test_shielding_01():
@@ -278,6 +298,30 @@ def test_shielding_05():
         assert sys[i].sites[0].shielding_symmetric.alpha is None
         assert sys[i].sites[0].shielding_symmetric.beta is None
         assert sys[i].sites[0].shielding_symmetric.gamma == gamma_dist[i]
+        assert sys[i].sites[0].quadrupolar is None
+
+
+def test_shielding_06():
+    iso_dist = np.random.normal(0, 10, 10)
+    zeta_dist = np.arange(10)
+    alpha_dist = np.random.rand(10)
+    beta_dist = np.random.rand(10) * 3.1415
+    sys = single_site_system_generator(
+        isotope="13C",
+        isotropic_chemical_shift=iso_dist,
+        shielding_antisymmetric={
+            "zeta": zeta_dist,
+            "alpha": alpha_dist,
+            "beta": beta_dist,
+        },
+    )
+
+    for i in range(10):
+        assert sys[i].sites[0].isotope.symbol == "13C"
+        assert sys[i].sites[0].isotropic_chemical_shift == iso_dist[i]
+        assert sys[i].sites[0].shielding_antisymmetric.zeta == zeta_dist[i]
+        assert sys[i].sites[0].shielding_antisymmetric.alpha == alpha_dist[i]
+        assert sys[i].sites[0].shielding_antisymmetric.beta == beta_dist[i]
         assert sys[i].sites[0].quadrupolar is None
 
 
