@@ -41,7 +41,7 @@ def single_site_system_generator(
             A shielding symmetric dict-like object, where the keyword value can either
             be a float or a list/ndarray of floats. The default value is None. The
             allowed keywords are ``zeta``, ``eta``, ``alpha``, ``beta``, and ``gamma``.
-        (dict) sheilding_antisymmetric:
+        (dict) shielding_antisymmetric:
             A shielding symmetric dict-like object, where the keyword value can either
             be a float or a list/ndarray of floats. The default value is None. The
             allowed keywords are ``zeta``, ``alpha``, and ``beta``.
@@ -70,18 +70,18 @@ def single_site_system_generator(
     Example:
         >>> # single SpinSystem
         >>> sys1 = single_site_system_generator(
-        ... isotope=["1H"],
-        ... isotropic_chemical_shift=10,
-        ... site_name="Single Proton",
+        ...     isotope=["1H"],
+        ...     isotropic_chemical_shift=10,
+        ...     site_name="Single Proton",
         ... )
         >>> print(len(sys1))
         1
 
         >>> # multiple SpinSystems
         >>> sys2 = single_site_system_generator(
-        ... isotope="1H",
-        ... isotropic_chemical_shift=[10] * 5,
-        ... site_name="5 Protons",
+        ...     isotope="1H",
+        ...     isotropic_chemical_shift=[10] * 5,
+        ...     site_name="5 Protons",
         ... )
         >>> print(len(sys2))
         5
@@ -89,9 +89,9 @@ def single_site_system_generator(
         >>> # multiple SpinSystems with dict arguments
         >>> Cq = [4.2e6] * 12
         >>> sys3 = single_site_system_generator(
-        ... isotope="17O",
-        ... isotropic_chemical_shift=60.0,  # in ppm,
-        ... quadrupolar={"Cq": Cq, "eta": 0.5},  # Cq in Hz
+        ...     isotope="17O",
+        ...     isotropic_chemical_shift=60.0,  # in ppm,
+        ...     quadrupolar={"Cq": Cq, "eta": 0.5},  # Cq in Hz
         ... )
         >>> print(len(sys3))
         12
@@ -160,7 +160,7 @@ def generate_site_list(
             A shielding symmetric dict-like object, where the keyword value can either
             be a float or a list/ndarray of floats. The default value is None. The
             allowed keywords are ``zeta``, ``eta``, ``alpha``, ``beta``, and ``gamma``.
-        (dict) sheilding_antisymmetric:
+        (dict) shielding_antisymmetric:
             A shielding symmetric dict-like object, where the keyword value can either
             be a float or a list/ndarray of floats. The default value is None. The
             allowed keywords are ``zeta``, ``alpha``, and ``beta``.
@@ -278,7 +278,7 @@ def _extend_dict_values(_dict, n_sites):
     _dict = {key: _fix_item(val) for key, val in _dict.items()}
     n_sites_dict = _check_lengths(list(_dict.values()))
     if n_sites != 1 and n_sites_dict != 1 and n_sites != n_sites_dict:
-        raise ValueError("A list in a dictonary was misshapen. " + LIST_LEN_ERROR_MSG)
+        raise ValueError("A list in a dictionary was misshapen. " + LIST_LEN_ERROR_MSG)
 
     if n_sites_dict == 1:
         _dict = {
@@ -310,7 +310,7 @@ def _check_lengths(attributes):
 # BUG: doctest fails on example code
 def _zip_dict(_dict):
     """Makes list of dicts with the same keys and scalar values from dict of lists.
-    Single dictonaries of only None will return None.
+    Single dictionaries of only None will return None.
 
     Example:
     >>> foo = {'k1': [1, None, 3, 4], 'k2': [5, None, 7, 8], 'k3': [9, None, 11, 12]}
@@ -321,7 +321,7 @@ def _zip_dict(_dict):
      {'k1': 4, 'k2': 8, 'k3': 12}]
     """
     lst = [dict(zip(_dict.keys(), v)) for v in zip(*(_dict[k] for k in _dict.keys()))]
-    lst = [None if np.all(np.asarray(list(d.values())) == None) else d for d in lst]
+    lst = [None if np.all([item is None for item in d.values()]) else d for d in lst]
     return lst
 
 
@@ -345,7 +345,7 @@ def _zip_dict(_dict):
 
 
 # def _clean_item(item, n):
-#     """Cleanes passed item to np.array"""
+#     """Cleans passed item to np.array"""
 #     # Return flattened np.array if item is already list or array
 #     if isinstance(item, (list, np.ndarray)):
 #         return np.hstack(np.asarray(item, dtype=object))

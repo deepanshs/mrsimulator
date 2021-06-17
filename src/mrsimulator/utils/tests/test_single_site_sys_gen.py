@@ -64,31 +64,31 @@ def test_fix_item():
 
 
 def test_zip_dict():
-    dictonary = {
+    dictionary = {
         "key1": [0, 1, 2, 3, 4],
         "key2": [5, 6, 7, 8, 9],
         "key3": [10, 11, 12, 13, 14],
         "key4": [15, 16, 17, 18, 19],
     }
-    zipped = _zip_dict(dictonary)
+    zipped = _zip_dict(dictionary)
     for i, row in enumerate(zipped):
         assert row == {"key1": i, "key2": 5 + i, "key3": 10 + i, "key4": 15 + i}
 
-    dictonary["key2"] = [None] * 5
-    zipped = _zip_dict(dictonary)
+    dictionary["key2"] = [None] * 5
+    zipped = _zip_dict(dictionary)
     for i, row in enumerate(zipped):
         assert row == {"key1": i, "key2": None, "key3": 10 + i, "key4": 15 + i}
 
-    dictonary = {
+    dictionary = {
         "key1": [0, None, 2, 3, 4],
         "key2": [5, None, 7, 8, 9],
         "key3": [10, None, 12, 13, 14],
         "key4": [15, None, 17, 18, 19],
     }
-    zipped = _zip_dict(dictonary)
+    zipped = _zip_dict(dictionary)
     for i, row in enumerate(zipped):
         if i == 1:
-            assert row == None
+            assert row is None
         else:
             assert row == {"key1": i, "key2": 5 + i, "key3": 10 + i, "key4": 15 + i}
 
@@ -147,7 +147,7 @@ def test_extend_dict_values():
     assert _extend_dict_values(_dict, 1) == (check_list, 5)
     assert _extend_dict_values(_dict, 5) == (check_list, 5)
 
-    error = ".*A list in a dictonary was misshapen.*"
+    error = ".*A list in a dictionary was misshapen.*"
     with pytest.raises(ValueError, match=error):
         _extend_dict_values(_dict, 4)
 
