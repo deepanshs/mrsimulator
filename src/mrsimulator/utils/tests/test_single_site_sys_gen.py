@@ -74,6 +74,24 @@ def test_zip_dict():
     for i, row in enumerate(zipped):
         assert row == {"key1": i, "key2": 5 + i, "key3": 10 + i, "key4": 15 + i}
 
+    dictonary["key2"] = [None] * 5
+    zipped = _zip_dict(dictonary)
+    for i, row in enumerate(zipped):
+        assert row == {"key1": i, "key2": None, "key3": 10 + i, "key4": 15 + i}
+
+    dictonary = {
+        "key1": [0, None, 2, 3, 4],
+        "key2": [5, None, 7, 8, 9],
+        "key3": [10, None, 12, 13, 14],
+        "key4": [15, None, 17, 18, 19],
+    }
+    zipped = _zip_dict(dictonary)
+    for i, row in enumerate(zipped):
+        if i == 1:
+            assert row == None
+        else:
+            assert row == {"key1": i, "key2": 5 + i, "key3": 10 + i, "key4": 15 + i}
+
 
 def test_extend_to_nparray():
     item = ["foo", "bar", "baz", "spam", "ham", "eggs"]

@@ -17,10 +17,6 @@ LIST_LEN_ERROR_MSG = (
 )
 
 
-# NOTE: Should args all be plural or all be singular
-# Remove all plural
-
-
 def single_site_system_generator(
     isotope,
     isotropic_chemical_shift=0,
@@ -313,17 +309,20 @@ def _check_lengths(attributes):
 
 # BUG: doctest fails on example code
 def _zip_dict(_dict):
-    """Makes list of dicts with the same keys and scalar values from dict of lists
+    """Makes list of dicts with the same keys and scalar values from dict of lists.
+    Single dictonaries of only None will return None.
 
     Example:
-    >>> foo = {'key1': [1, 2, 3, 4], 'key2': [5, 6, 7, 8], 'key3': [9, 10, 11, 12]}
+    >>> foo = {'k1': [1, None, 3, 4], 'k2': [5, None, 7, 8], 'k3': [9, None, 11, 12]}
     >>> pprint(_zip_dict(foo))
-    [{'key1': 1, 'key2': 5, 'key3': 9},
-     {'key1': 2, 'key2': 6, 'key3': 10},
-     {'key1': 3, 'key2': 7, 'key3': 11},
-     {'key1': 4, 'key2': 8, 'key3': 12}]
+    [{'k1': 1, 'k2': 5, 'k3': 9},
+     None,
+     {'k1': 3, 'k2': 7, 'k3': 11},
+     {'k1': 4, 'k2': 8, 'k3': 12}]
     """
-    return [dict(zip(_dict.keys(), v)) for v in zip(*(_dict[k] for k in _dict.keys()))]
+    lst = [dict(zip(_dict.keys(), v)) for v in zip(*(_dict[k] for k in _dict.keys()))]
+    lst = [None if np.all(np.asarray(list(d.values())) == None) else d for d in lst]
+    return lst
 
 
 # def _check_input_list_lengths(attributes):
