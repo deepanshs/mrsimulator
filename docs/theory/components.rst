@@ -28,8 +28,7 @@ the Euler angles :math:`\Theta = \left(\alpha, \beta, \gamma\right)`, and
 interaction of the stationary-state semi-classical Hamiltonian.
 
 
-Each frequency component, :math:`\Omega_k (\Theta, i, j)`, is separated into
-three parts,
+Each frequency component, :math:`\Omega_k (\Theta, i, j)`, is written as the product,
 
 .. math::
     :label: eq_2
