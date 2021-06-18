@@ -5,11 +5,12 @@ import timeit
 import numpy as np
 from mrsimulator import __version__
 from mrsimulator import Simulator
-from mrsimulator import Site
-from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.utils.collection import single_site_system_generator
+
+# from mrsimulator import SpinSystem
+# from mrsimulator import Site
 
 # import platform
 # os_system = platform.system()
@@ -24,19 +25,10 @@ def generate_spin_half_spin_system(n=1000):
     zeta = np.random.normal(loc=50.0, scale=15.12, size=n)
     eta = np.random.normal(loc=0.25, scale=0.012, size=n)
     return single_site_system_generator(
-        isotope="17O",
+        isotope="29Si",
         isotropic_chemical_shift=iso,
         shielding_symmetric={"zeta": zeta, "eta": eta},
     )
-    # spin_systems = []
-    # for i, z, e in zip(iso, zeta, eta):
-    #     site = Site(
-    #         isotope="29Si",
-    #         isotropic_chemical_shift=i,
-    #         shielding_symmetric={"zeta": z, "eta": e},
-    #     )
-    #     spin_systems.append(SpinSystem(sites=[site]))
-    # return spin_systems
 
 
 def generate_spin_half_int_quad_spin_system(n=1000):
@@ -48,38 +40,6 @@ def generate_spin_half_int_quad_spin_system(n=1000):
         isotropic_chemical_shift=iso,
         quadrupolar={"Cq": Cq, "eta": eta},
     )
-    # spin_systems = []
-    # for i, c, e in zip(iso, Cq, eta):
-    #     site = Site(
-    #         isotope="17O", isotropic_chemical_shift=i, quadrupolar={"Cq": c, "eta": e}
-    #     )
-    #     spin_systems.append(SpinSystem(sites=[site]))
-    # return spin_systems
-
-
-# def generate_single_site_spin_system(n=1000):
-#     iso = "17O"
-#     shift = np.random.normal(loc=0.0, scale=25.0, size=n)
-#     Cq = np.random.normal(loc=5.0e6, scale=1e5, size=n)
-#     eta = np.random.normal(loc=0.1, scale=0.012, size=n)
-#     shield_sym = {"Cq": Cq, "eta": eta, "zeta": 30.0}
-#     shield_antisym = {"zeta": 0.3, "alpha": 0.2, "beta": 2.5}
-#     quad = {"Cq": Cq, "eta": eta}
-#     abd = None
-#     name = "test name"
-#     label = "test label"
-#     descr = "test description"
-
-#     single_site_system_generator(
-#         isotope=iso,
-#         isotropic_chemical_shift=shift,
-#         shielding_symmetric=shield_sym,
-#         shielding_antisymmetric=shield_antisym,
-#         abundance=abd,
-#         site_name=name,
-#         site_label=label,
-#         site_description=descr
-#     )
 
 
 def generate_simulator(spin_systems, method):
@@ -150,8 +110,6 @@ def time_string(time):
         return f"{time:.3f} ms", color
     if count == 2:
         return f"{time:.3f} µs", color
-    if count == 3:
-        return f"{time:.3f} ns", color
 
 
 def blocks(n_blocks, fn_string, n, level, n_jobs=1):
