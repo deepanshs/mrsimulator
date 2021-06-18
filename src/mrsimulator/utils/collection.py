@@ -13,9 +13,9 @@ __email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
 SHIELDING_SYM_PARAMS = ["zeta", "eta", "alpha", "beta", "gamma"]
 QUADRUPOLAR_PARAMS = ["Cq", "eta", "alpha", "beta", "gamma"]
 LIST_LEN_ERROR_MSG = (
-    "All arguments passed must be the same size. If one attribute is type list of "
-    "length n, then all passed lists must be of length n and all other "
-    "attributes must be scalar (singular float, int or str)."
+    "All arguments must be the same size. If one attribute is a type list of length n, "
+    "then all attributes with list types must also be of length n, and all remaining "
+    "attributes must be scalar (singular float, int, or str)."
 )
 
 
@@ -35,33 +35,36 @@ def single_site_system_generator(
 
     Args:
         isotope:
-            A required string or a list of site isotope.
+            A required string or a list of site isotopes.
         isotropic_chemical_shift:
-            A float or a list/ndarray of values. The default value is 0.
+            A float or a list/ndarray of isotropic chemical shifts per site per spin
+            system. The default is 0.
         shielding_symmetric:
-            A shielding symmetric dict-like object, where the keyword value can either
+            A shielding symmetric dict object, where the keyword value can either
             be a float or a list/ndarray of floats. The default value is None. The
             allowed keywords are ``zeta``, ``eta``, ``alpha``, ``beta``, and ``gamma``.
         shielding_antisymmetric:
-            A shielding symmetric dict-like object, where the keyword value can either
+            A shielding antisymmetric dict object, where the keyword value can either
             be a float or a list/ndarray of floats. The default value is None. The
             allowed keywords are ``zeta``, ``alpha``, and ``beta``.
         quadrupolar:
-            A quadrupolar dict-like object, where the keyword value can either be a
-            float or a list/ndarray of floats. The default value is None. The allowed
-            keywords are ``Cq``, ``eta``, ``alpha``, ``beta``, and ``gamma``.
+            A quadrupolar dict object, where the keyword value can either be a float or
+            a list/ndarray of floats. The default value is None. The allowed keywords
+            are ``Cq``, ``eta``, ``alpha``, ``beta``, and ``gamma``.
         abundance:
             A float or a list/ndarray of floats describing the abundance of each spin
             system.
         site_name:
-            A string or a list of strings each with a site name. The default is None.
+            A string or a list of strings with site names per site per spin system. The
+            default is None.
         site_label:
-            A string or a list of strings each with a site label. The default is None.
+            A string or a list of strings with site labels per site per spin system. The
+            default is None.
         site_description:
-            A string or a list of strings each with a site description. Default is None.
+            A string or a list of strings with site descriptions per site per spin
+            system. The default is None.
         rtol:
-            The relative tolerance. This value is used in determining the cutoff
-            abundance given as
+            The relative tolerance used in determining the cutoff abundance, given as,
             :math:`\tt{abundance}_{\tt{cutoff}} = \tt{rtol} * \tt{max(abundance)}.`
             The spin systems with abundance below this threshold are ignored.
 
@@ -69,7 +72,7 @@ def single_site_system_generator(
         List of :ref:`spin_sys_api` objects with a single :ref:`site_api`
 
     Example:
-        **Single spin system**
+        **Single spin system:**
 
         >>> sys1 = single_site_system_generator(
         ...     isotope=["1H"],
@@ -79,7 +82,7 @@ def single_site_system_generator(
         >>> print(len(sys1))
         1
 
-        **Multiple spin system**
+        **Multiple spin system:**
 
         >>> sys2 = single_site_system_generator(
         ...     isotope="1H",
@@ -89,7 +92,7 @@ def single_site_system_generator(
         >>> print(len(sys2))
         5
 
-        **Multiple spin system with dictionary arguments**
+        **Multiple spin system with dictionary arguments:**
 
         >>> Cq = [4.2e6] * 12
         >>> sys3 = single_site_system_generator(
@@ -103,8 +106,8 @@ def single_site_system_generator(
     .. note::
         The parameter value can either be a float or a list/ndarray. If the parameter
         value is a float, the given value is assigned to the respective parameter in all
-        the spin systems. If the parameter value is a list or ndarray, its ith value is
-        assigned to the respective parameter of the ith spin system. When multiple
+        the spin systems. If the parameter value is a list or ndarray, its `ith` value
+        is assigned to the respective parameter of the `ith` spin system. When multiple
         parameter values are given as lists/ndarrays, the length of all the lists must
         be the same.
     """
@@ -114,9 +117,9 @@ def single_site_system_generator(
         shielding_symmetric=shielding_symmetric,
         shielding_antisymmetric=shielding_antisymmetric,
         quadrupolar=quadrupolar,
-        site_name=site_name,
-        site_label=site_label,
-        site_description=site_description,
+        name=site_name,
+        label=site_label,
+        description=site_description,
     )
     n_sites = len(sites)
 
@@ -130,7 +133,8 @@ def single_site_system_generator(
 
     if n_sites != n_abd:
         raise ValueError(
-            f"Number of sites does not mach number of abundances. {LIST_LEN_ERROR_MSG}"
+            "Number of sites does not match the number of abundances. "
+            f"{LIST_LEN_ERROR_MSG}"
         )
 
     keep_idxs = np.where(abundance > rtol * abundance.max())[0]
@@ -147,63 +151,65 @@ def generate_site_list(
     shielding_symmetric: Dict = None,
     shielding_antisymmetric: Dict = None,
     quadrupolar: Dict = None,
-    site_name: Union[str, List[str]] = None,
-    site_label: Union[str, List[str]] = None,
-    site_description: Union[str, List[str]] = None,
+    name: Union[str, List[str]] = None,
+    label: Union[str, List[str]] = None,
+    description: Union[str, List[str]] = None,
 ) -> List[Site]:
-    r"""Takes in lists or list-like objects describing attributes of each site and
-    returns a list of Site objects.
+    r"""Generate a list of Site objects from lists of site attributes.
 
     Args:
         isotope:
-            A string or a list of site isotope.
+            A required string or a list of site isotopes.
         isotropic_chemical_shift:
-            A float or a list/ndarray of values. The default value is 0.
+            A float or a list/ndarray of isotropic chemical shifts per site. The default
+            is 0.
         shielding_symmetric:
-            A shielding symmetric dict-like object, where the keyword value can either
+            A shielding symmetric dict object, where the keyword value can either
             be a float or a list/ndarray of floats. The default value is None. The
             allowed keywords are ``zeta``, ``eta``, ``alpha``, ``beta``, and ``gamma``.
         shielding_antisymmetric:
-            A shielding symmetric dict-like object, where the keyword value can either
+            A shielding antisymmetric dict object, where the keyword value can either
             be a float or a list/ndarray of floats. The default value is None. The
             allowed keywords are ``zeta``, ``alpha``, and ``beta``.
         quadrupolar:
-            A quadrupolar dict-like object, where the keyword value can either be a
-            float or a list/ndarray of floats. The default value is None. The allowed
-            keywords are ``Cq``, ``eta``, ``alpha``, ``beta``, and ``gamma``.
-        site_name:
-            A string or a list of strings each with a site name. The default is None.
-        site_label:
-            A string or a list of strings each with a site label. The default is None.
-        site_description:
-            A string or a list of strings each with a site description. Default is None.
+            A quadrupolar dict object, where the keyword value can either be a float or
+            a list/ndarray of floats. The default value is None. The allowed keywords
+            are ``Cq``, ``eta``, ``alpha``, ``beta``, and ``gamma``.
+        name:
+            A string or a list of strings with site names per site. The default is None.
+        label:
+            A string or a list of strings with site labels per site. The default is
+            None.
+        description:
+            A string or a list of strings with site descriptions per site. The default
+            is None.
 
     Returns:
         sites: List of :ref:`site_api` objects
 
     Example:
-        **Generating 10 hydrogen sites.**
+        **Generating 10 hydrogen sites:**
 
         >>> sites1 = generate_site_list(
         ...     isotope=["1H"] * 10,
         ...     isotropic_chemical_shift=-15,
-        ...     site_name="10 Protons",
+        ...     name="10 Protons",
         ... )
         >>> print(len(sites1))
         10
 
-        **Generating 10 hydrogen sites with different shifts.**
+        **Generating 10 hydrogen sites with different shifts:**
 
         >>> shifts = np.arange(-10, 10, 2)
         >>> sites2 = generate_site_list(
         ...     isotope=["1H"] * 10,
         ...     isotropic_chemical_shift=shifts,
-        ...     site_name="10 Proton",
+        ...     name="10 Proton",
         ... )
         >>> print(len(sites2))
         10
 
-        **Generating multiple sites with dictionary arguments.**
+        **Generating multiple sites with dictionary arguments:**
 
         >>> Cq = [4.2e6] * 12
         >>> sys3 = generate_site_list(
@@ -214,7 +220,7 @@ def generate_site_list(
         >>> print(len(sys3))
         12
     """
-    lst = [isotope, isotropic_chemical_shift, site_name, site_label, site_description]
+    lst = [isotope, isotropic_chemical_shift, name, label, description]
     attributes = [_fix_item(item) for item in lst]
 
     n_sites = _check_lengths(attributes)
@@ -249,20 +255,20 @@ def generate_site_list(
 
 
 def _fix_item(item):
-    """Flattens multidimensional arrays into 1d array"""
+    """Flattens multidimensional arrays into 1d array."""
     if isinstance(item, (list, np.ndarray)):
         return np.asarray(item).ravel()
     return item
 
 
 def _extend_to_nparray(item, n):
-    """If item is already list/array return np.array, otherwise extend to length n"""
+    """If item is already list/array return np.array, otherwise extend to length n."""
     data = item if isinstance(item, (list, np.ndarray)) else [item for _ in range(n)]
     return np.asarray(data)
 
 
 def _extend_dict_values(_dict, n_sites):
-    """Checks and extends dict values. Returns dict or list of dicts and max length"""
+    """Checks and extends dict values. Returns dict or list of dicts and max length."""
     _dict = {key: _fix_item(val) for key, val in _dict.items()}
     n_sites_dict = _check_lengths(list(_dict.values()))
     if n_sites != 1 and n_sites_dict != 1 and n_sites != n_sites_dict:
@@ -280,7 +286,7 @@ def _extend_dict_values(_dict, n_sites):
 
 
 def _check_lengths(attributes):
-    """Ensures all attribute lengths are 1 or maximum attribute length"""
+    """Ensures all attribute lengths are 1 or maximum attribute length."""
     lengths = np.array([np.asarray(attr).size for attr in attributes])
 
     if np.all(lengths == 1):

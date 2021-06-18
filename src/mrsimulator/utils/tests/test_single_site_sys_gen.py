@@ -8,8 +8,6 @@ from mrsimulator.utils.collection import _fix_item
 from mrsimulator.utils.collection import _zip_dict
 from mrsimulator.utils.collection import single_site_system_generator
 
-# from mrsimulator.utils.collection import generate_site_list
-
 
 __author__ = ["Deepansh Srivastava", "Matthew D. Giammar"]
 __email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
@@ -212,7 +210,7 @@ def test_unbalanced_lists():
 
     abundances = np.arange(10)
 
-    error = ".*Number of sites does not mach number of abundances.*"
+    error = ".*Number of sites does not match the number of abundances.*"
     with pytest.raises(ValueError, match=error):
         single_site_system_generator(isotope=isotopes, abundance=abundances)
 
