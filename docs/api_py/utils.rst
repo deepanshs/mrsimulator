@@ -7,7 +7,7 @@ Utility functions
 .. currentmodule:: mrsimulator.utils.collection
 
 .. autofunction:: single_site_system_generator
-.. autofunction:: generate_site_list
+.. autofunction:: site_generator
 
 
 .. currentmodule:: mrsimulator.utils

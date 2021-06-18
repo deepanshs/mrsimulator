@@ -111,7 +111,7 @@ def single_site_system_generator(
         parameter values are given as lists/ndarrays, the length of all the lists must
         be the same.
     """
-    sites = generate_site_list(
+    sites = site_generator(
         isotope=isotope,
         isotropic_chemical_shift=isotropic_chemical_shift,
         shielding_symmetric=shielding_symmetric,
@@ -145,7 +145,7 @@ def single_site_system_generator(
     ]
 
 
-def generate_site_list(
+def site_generator(
     isotope: Union[str, List[str]],
     isotropic_chemical_shift: Union[float, List[float], np.ndarray] = 0,
     shielding_symmetric: Dict = None,
@@ -190,7 +190,7 @@ def generate_site_list(
     Example:
         **Generating 10 hydrogen sites:**
 
-        >>> sites1 = generate_site_list(
+        >>> sites1 = site_generator(
         ...     isotope=["1H"] * 10,
         ...     isotropic_chemical_shift=-15,
         ...     name="10 Protons",
@@ -201,7 +201,7 @@ def generate_site_list(
         **Generating 10 hydrogen sites with different shifts:**
 
         >>> shifts = np.arange(-10, 10, 2)
-        >>> sites2 = generate_site_list(
+        >>> sites2 = site_generator(
         ...     isotope=["1H"] * 10,
         ...     isotropic_chemical_shift=shifts,
         ...     name="10 Proton",
@@ -212,7 +212,7 @@ def generate_site_list(
         **Generating multiple sites with dictionary arguments:**
 
         >>> Cq = [4.2e6] * 12
-        >>> sys3 = generate_site_list(
+        >>> sys3 = site_generator(
         ...     isotope="17O",
         ...     isotropic_chemical_shift=60.0,  # in ppm,
         ...     quadrupolar={"Cq": Cq, "eta": 0.5},  # Cq in Hz
