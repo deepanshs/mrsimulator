@@ -125,10 +125,7 @@ def triangle_interpolation1D(f, spec, amp=1.0):
     f10 = f[1] - f[0]
     f21 = f[2] - f[1]
 
-    if pmax < 0:
-        return
-
-    if p > points:
+    if pmax < 0 or p > points:
         return
 
     clips, p, pmid, pmax = get_clip_conditions(p, pmid, pmax, points)

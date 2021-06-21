@@ -11,34 +11,11 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class Cosy(BaseNamedMethod2D):
-    r"""Simulate an infinite spinning COrrelation SpectroscopY spectrum.
+    """Simulate an infinite spinning COrrelation SpectroscopY spectrum.
 
-    Args:
-        channels: A list of isotope symbols over which the method will be applied.
-        spectral_dimensions: A list of python dict. Each dict is contains keywords that
-            describe the coordinates along a spectral dimension. The keywords along with
-            its definition are:
-
-            - count:
-                An optional integer with the number of points, :math:`N`, along the
-                dimension. The default value is 1024.
-            - spectral_width:
-                An `optional` float with the spectral width, :math:`\Delta x`, along the
-                dimension in units of Hz. The default is 25 kHz.
-            - reference_offset:
-                An `optional` float with the reference offset, :math:`x_0` along the
-                dimension in units of Hz. The default value is 0 Hz.
-            - origin_offset:
-                An `optional` float with the origin offset (Larmor frequency) along the
-                dimension in units of Hz. The default value is None.
-        magetic_flux_density: An `optional` float containing the macroscopic magnetic
-            flux density, :math:`H_0`, of the applied external magnetic field in units
-            of T. The default value is ``9.4``.
-        rotor_angle: An `optional` float containing the angle between the sample
-            rotation axis and the applied external magnetic field, :math:`\theta`, in
-            units of rad. The default value is 0.9553166, i.e. the magic angle.
-    note:
-        The `rotor_frequency` parameter is fixed for this method.
+    Note:
+        The attribute `rotor_frequency` cannot be modified for this method and is set to
+        simulate an infinite speed spectrum.
 
     Return:
         A :py:class:`~mrsimulator.Method` instance.
@@ -89,53 +66,28 @@ class Cosy(BaseNamedMethod2D):
          |0.5, -0.5⟩⟨0.5, 0.5| ⟶ |0.5, -0.5⟩⟨0.5, 0.5|]
     """
 
-    def __new__(cls, **kwargs):
-        return cls.update(super().__new__(cls, **kwargs))
+    name: str = "Cosy"
+    description: str = (
+        "Simulate an infinite spinning COrrelation SpectroscopY spectrum."
+    )
 
-    @staticmethod
-    def update(method):
-        # setting transition symmetry elements
-        sd = method.spectral_dimensions
-        sd[0].events[0].transition_query.P = {"channel-1": [[-1]]}
-        sd[1].events[0].transition_query.P = {"channel-1": [[-1]]}
+    @classmethod
+    def update(self, **kwargs):
+        event_0 = [{"transition_query": [{"ch1": {"P": [-1]}}]}]
+        event_1 = [{"transition_query": [{"ch1": {"P": [-1]}}]}]
 
-        # method description
-        method.description = (
-            "Simulate an infinite spinning COrrelation SpectroscopY spectrum."
-        )
-        return method
+        return {
+            "spectral_dimensions": [{"events": event_0}, {"events": event_1}],
+        }
 
 
 class Inadequate(BaseNamedMethod2D):
-    r"""Simulate an infinite spinning Incredible Natural Abundance DoublE QUAntum
+    """Simulate an infinite spinning Incredible Natural Abundance DoublE QUAntum
     Transfer Experiment spectrum.
 
-    Args:
-        channels: A list of isotope symbols over which the method will be applied.
-        spectral_dimensions: A list of python dict. Each dict is contains keywords that
-            describe the coordinates along a spectral dimension. The keywords along with
-            its definition are:
-
-            - count:
-                An optional integer with the number of points, :math:`N`, along the
-                dimension. The default value is 1024.
-            - spectral_width:
-                An `optional` float with the spectral width, :math:`\Delta x`, along the
-                dimension in units of Hz. The default is 25 kHz.
-            - reference_offset:
-                An `optional` float with the reference offset, :math:`x_0` along the
-                dimension in units of Hz. The default value is 0 Hz.
-            - origin_offset:
-                An `optional` float with the origin offset (Larmor frequency) along the
-                dimension in units of Hz. The default value is None.
-        magetic_flux_density: An `optional` float containing the macroscopic magnetic
-            flux density, :math:`H_0`, of the applied external magnetic field in units
-            of T. The default value is ``9.4``.
-        rotor_angle: An `optional` float containing the angle between the sample
-            rotation axis and the applied external magnetic field, :math:`\theta`, in
-            units of rad. The default value is 0.9553166, i.e. the magic angle.
-    note:
-        The `rotor_frequency` parameter is fixed for this method.
+    Note:
+        The attribute `rotor_frequency` cannot be modified for this method and is set to
+        simulate an infinite speed spectrum.
 
     Return:
         A :py:class:`~mrsimulator.Method` instance.
@@ -174,19 +126,17 @@ class Inadequate(BaseNamedMethod2D):
          |-0.5, -0.5⟩⟨0.5, 0.5| ⟶ |0.5, -0.5⟩⟨0.5, 0.5|]
     """
 
-    def __new__(cls, **kwargs):
-        return cls.update(super().__new__(cls, **kwargs))
+    name: str = "Inadequate"
+    description: str = (
+        "Simulate an infinite spinning Incredible Natural Abundance DoublE QUAntum "
+        "Transfer Experiment spectrum."
+    )
 
-    @staticmethod
-    def update(method):
-        # setting transition symmetry elements
-        sd = method.spectral_dimensions
-        sd[0].events[0].transition_query.P = {"channel-1": [[-1, -1]]}
-        sd[1].events[0].transition_query.P = {"channel-1": [[-1]]}
+    @classmethod
+    def update(cls, **kwargs):
+        event_0 = [{"transition_query": [{"ch1": {"P": [-1, -1]}}]}]
+        event_1 = [{"transition_query": [{"ch1": {"P": [-1]}}]}]
 
-        # method description
-        method.description = (
-            "Simulate an infinite spinning Incredible Natural Abundance DoublE QUAntum "
-            "Transfer Experiment spectrum."
-        )
-        return method
+        return {
+            "spectral_dimensions": [{"events": event_0}, {"events": event_1}],
+        }

@@ -4,16 +4,22 @@ from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
+from typing import Union
 
 import csdmpy as cp
 import numpy as np
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
-from .event import Event
+from .event import ConstantDurationEvent
+from .event import MixingEvent
+from .event import SpectralEvent
+from .utils import cartesian_product
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+CHANNELS = ["ch1", "ch2", "ch3"]
 
 
 class SpectralDimension(Parseable):
@@ -55,17 +61,15 @@ class SpectralDimension(Parseable):
     spectral_width: float = Field(default=25000.0, gt=0)
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
-    label: str = None
-    description: str = None
-    events: List[Event] = []
+    events: List[Union[MixingEvent, ConstantDurationEvent, SpectralEvent]] = []
 
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "spectral_width": ["frequency", "dimensionless"],
         "reference_offset": ["frequency", "dimensionless"],
         "origin_offset": ["frequency", "dimensionless"],
     }
 
-    property_default_units: ClassVar = {
+    property_default_units: ClassVar[Dict] = {
         "spectral_width": ["Hz", "ppm"],
         "reference_offset": ["Hz", "ppm"],
         "origin_offset": ["Hz", "ppm"],
@@ -82,8 +86,7 @@ class SpectralDimension(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantities of a SpectralDimension object from a
+        """Parse the physical quantities of a SpectralDimension object from a
         python dictionary object.
 
         Args:
@@ -92,14 +95,16 @@ class SpectralDimension(Parseable):
         py_dict_copy = deepcopy(py_dict)
         if "events" in py_dict_copy:
             py_dict_copy["events"] = [
-                Event.parse_dict_with_units(e) for e in py_dict_copy["events"]
+                ConstantDurationEvent.parse_dict_with_units(e)
+                if "duration" in e
+                else SpectralEvent.parse_dict_with_units(e)
+                for e in py_dict_copy["events"]
             ]
 
         return super().parse_dict_with_units(py_dict_copy)
 
     def coordinates_Hz(self) -> np.ndarray:
-        r"""
-        The grid coordinates along the dimension in units of Hz, evaluated as
+        r"""The grid coordinates along the dimension in units of Hz, evaluated as
 
         .. math::
             x_\text{Hz} = \left([0, 1, ... N-1] - T\right) \frac{\Delta x}{N} + x_0
@@ -113,8 +118,7 @@ class SpectralDimension(Parseable):
         return (np.arange(n) - Tk) * increment + self.reference_offset
 
     def coordinates_ppm(self) -> np.ndarray:
-        r"""
-        The grid coordinates along the dimension as dimension frequency ratio
+        r"""The grid coordinates along the dimension as dimension frequency ratio
         in units of ppm. The coordinates are evaluated as
 
         .. math::
@@ -129,9 +133,10 @@ class SpectralDimension(Parseable):
                     "cannot be converted to dimensionless frequency ratio."
                 )
             )
-        else:
-            denominator = (self.origin_offset - self.reference_offset) / 1e6
-            return self.coordinates_Hz() / abs(denominator)
+            return
+
+        denominator = (self.origin_offset - self.reference_offset) / 1e6
+        return self.coordinates_Hz() / abs(denominator)
 
     def to_csdm_dimension(self) -> cp.Dimension:
         """Return the spectral dimension as a CSDM dimension object."""
@@ -151,3 +156,55 @@ class SpectralDimension(Parseable):
         if self.origin_offset is not None:
             dim.origin_offset = f"{self.origin_offset} Hz"
         return dim
+
+    def _get_symmetry_pathways(self, symmetry_element: str) -> list:
+        """Generate a list of symmetry pathways for the event.
+
+        The output is as follows
+        [
+            {"ch1": [ symmetry pathway for ch1], "ch2": ..} 1st symmetry pathway
+            {"ch1": [ symmetry pathway for ch1], "ch2": ..} 2nd symmetry pathway
+        ]
+
+        Args:
+            symmetry_element: Symmetry symbol, "P" or "D"
+
+        Example:
+            >>> from mrsimulator.method import SpectralDimension
+            >>> sp = SpectralDimension(
+            ...     events = [{
+            ...         "fraction": 0.5,
+            ...         "transition_query": [
+            ...             {"ch1": {"P": [1, 1]}, "ch2": {"P": [1], "D": [2]}},
+            ...             {"ch1": {"P": [-1, -1]}},
+            ...         ]
+            ...     },
+            ...     {
+            ...         "fraction": 0.5,
+            ...         "transition_query": [
+            ...             {"ch1": {"P": [-1]}},
+            ...         ]
+            ...     }]
+            ... )
+            >>> pprint(sp._get_symmetry_pathways("P"))
+            [{'ch1': [[1, 1], [-1]], 'ch2': [[1], None], 'ch3': [None, None]},
+             {'ch1': [[-1, -1], [-1]], 'ch2': [None, None], 'ch3': [None, None]}]
+        """
+        ha, ga = hasattr, getattr
+        tq, de = "transition_query", np.asarray([0])
+
+        indexes = [np.arange(len(ga(e, tq))) if ha(e, tq) else de for e in self.events]
+        products = cartesian_product(*indexes)
+
+        return [
+            {
+                ch: [
+                    ga(ga(e.transition_query[i], ch), symmetry_element)
+                    if ha(e, tq) and ga(e.transition_query[i], ch) is not None
+                    else None
+                    for e, i in zip(self.events, item)
+                ]
+                for ch in CHANNELS
+            }
+            for item in products
+        ]

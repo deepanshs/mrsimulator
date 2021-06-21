@@ -45,9 +45,6 @@ def test_baseline_polynomial():
         "function": "baseline",
         "type": "Polynomial",
         "x0": "10.0",
-        "x1": "0",
-        "x2": "0",
-        "x3": "0",
         "dim_index": 0,
     }
     setup_read_write(PS_0[0], py_dict, sp.baseline.Polynomial)
@@ -67,8 +64,6 @@ def test_baseline_polynomial():
         "type": "Polynomial",
         "x0": 30.0,
         "x1": "1.0 Hz",
-        "x2": 0,
-        "x3": 0,
         "dim_index": 0,
     }
     setup_read_write(PS_0[0], py_dict, sp.baseline.Polynomial)
@@ -87,9 +82,7 @@ def test_baseline_polynomial():
         "function": "baseline",
         "type": "Polynomial",
         "x0": 1.0,
-        "x1": 0,
         "x2": "1.0 Hz2",
-        "x3": 0,
         "dim_index": 0,
     }
     setup_read_write(PS_0[0], py_dict, sp.baseline.Polynomial)
@@ -111,7 +104,6 @@ def test_baseline_polynomial():
     #     "type": "Polynomial",
     #     "x0": 10.0,
     #     "x1": "1.0 Hz",
-    #     "x2": 0,
     #     "x3": "2.0 Hz3",
     #     "dim_index": 0,
     # }

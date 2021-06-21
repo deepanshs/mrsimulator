@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Base ConfigSimulator class."""
 # from mrsimulator.sandbox import AveragingScheme
-from pydantic import BaseModel
+from mrsimulator.utils.parseable import Parseable
+from pydantic import Extra
 from pydantic import Field
 from typing_extensions import Literal
 
@@ -16,7 +17,7 @@ __integration_volume_enum__ = {"octant": 0, "hemisphere": 1}
 __integration_volume_octants__ = [1, 4]
 
 
-class ConfigSimulator(BaseModel):
+class ConfigSimulator(Parseable):
     r"""The configurable attributes for the Simulator class used in simulation.
 
     Attributes
@@ -73,9 +74,10 @@ class ConfigSimulator(BaseModel):
 
     class Config:
         validate_assignment = True
+        extra = Extra.forbid
 
     def get_int_dict(self):
-        py_dict = self.dict()
+        py_dict = self.dict(exclude={"property_units", "name", "description", "label"})
         py_dict["integration_volume"] = __integration_volume_enum__[
             self.integration_volume
         ]

@@ -13,7 +13,7 @@ nmrglue>=0.8
 
 # Formatting requirements
 black
-pre-commit
+pre-commit>=2.11.1
 
 # Test requirements
 sympy

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
-from mrsimulator.method.event import Event
+from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.method.spectral_dimension import SpectralDimension
 from pydantic import ValidationError
@@ -78,11 +78,10 @@ def basic_spectral_dimension_tests(the_dimension):
         csdm_dimension.coordinates.value, the_dimension.coordinates_ppm()
     )
 
-    # to dict with units
+    # json()
     should_be = dict(
         count=31,
         spectral_width="31.0 Hz",
-        reference_offset="0.0 Hz",
         origin_offset="5000000.0 Hz",
         label="45.0",
         events=[
@@ -91,27 +90,25 @@ def basic_spectral_dimension_tests(the_dimension):
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
-                "transition_query": {"P": {"channel-1": [[-1.0]]}},
+                "transition_query": [{"ch1": {"P": [-1]}}],
             }
         ],
     )
-    assert should_be == the_dimension.json()
+    assert the_dimension.json() == should_be
 
-    # reduced_dict()
-    assert the_dimension.reduced_dict() == dict(
+    # json(units=False)
+    assert the_dimension.json(units=False) == dict(
         count=31,
-        spectral_width=31,
-        reference_offset=0.0,
+        spectral_width=31.0,
         origin_offset=5000000.0,
         label="45.0",
         events=[
             {
                 "fraction": 0.5,
-                "freq_contrib": freq_default,
                 "magnetic_flux_density": 9.6,
                 "rotor_angle": 0.9553059660790962,
-                "rotor_frequency": 1000,
-                "transition_query": {"P": {"channel-1": [[-1.0]]}},
+                "rotor_frequency": 1000.0,
+                "transition_query": [{"ch1": {"P": [-1]}}],
             }
         ],
     )
@@ -141,7 +138,7 @@ def test_spectral_dimension():
     the_dimension = SpectralDimension(
         count=1024,
         spectral_width=100,
-        events=[Event.parse_dict_with_units(event_dictionary)],
+        events=[SpectralEvent.parse_dict_with_units(event_dictionary)],
     )
     basic_spectral_dimension_tests(the_dimension)
 
@@ -166,57 +163,57 @@ def test_spectral_dimension():
     the_dimension2 = SpectralDimension(
         count=1024,
         spectral_width=100,
-        events=[Event.parse_dict_with_units(event_dictionary) for _ in range(2)],
+        events=[
+            SpectralEvent.parse_dict_with_units(event_dictionary) for _ in range(2)
+        ],
     )
 
-    # to dict with units
+    # json()
     should_be = dict(
         count=1024,
         spectral_width="100.0 Hz",
-        reference_offset="0.0 Hz",
         events=[
             {
                 "fraction": 0.5,
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
-                "transition_query": {"P": {"channel-1": [[-1.0]]}},
+                "transition_query": [{"ch1": {"P": [-1]}}],
             },
             {
                 "fraction": 0.5,
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
-                "transition_query": {"P": {"channel-1": [[-1.0]]}},
+                "transition_query": [{"ch1": {"P": [-1]}}],
             },
         ],
     )
-    assert should_be == the_dimension.json()
-    assert should_be == the_dimension2.json()
+    assert the_dimension.json() == should_be
+    assert the_dimension2.json() == should_be
 
-    # reduced_dict()
-    reduced_dict = dict(
+    # json(units=False)
+    json_no_unit = dict(
         count=1024,
-        spectral_width=100,
-        reference_offset=0.0,
+        spectral_width=100.0,
         events=[
             {
                 "fraction": 0.5,
-                "freq_contrib": freq_default,
+                # "freq_contrib": freq_default,
                 "magnetic_flux_density": 9.6,
                 "rotor_angle": 0.9553059660790962,
-                "rotor_frequency": 1000,
-                "transition_query": {"P": {"channel-1": [[-1.0]]}},
+                "rotor_frequency": 1000.0,
+                "transition_query": [{"ch1": {"P": [-1]}}],
             },
             {
                 "fraction": 0.5,
-                "freq_contrib": freq_default,
+                # "freq_contrib": freq_default,
                 "magnetic_flux_density": 9.6,
                 "rotor_angle": 0.9553059660790962,
-                "rotor_frequency": 1000,
-                "transition_query": {"P": {"channel-1": [[-1.0]]}},
+                "rotor_frequency": 1000.0,
+                "transition_query": [{"ch1": {"P": [-1]}}],
             },
         ],
     )
-    assert the_dimension.reduced_dict() == reduced_dict
-    assert the_dimension2.reduced_dict() == reduced_dict
+    assert the_dimension.json(units=False) == json_no_unit
+    assert the_dimension2.json(units=False) == json_no_unit
