@@ -327,20 +327,9 @@ class Mask(Apodization):
 
     Example
     -------
-
-    >>> operation6= sp.apodization.Mask(mask = np.zeros(len(x)))
     """
 
     mask: Union[List[float], Array[float]] = []
-
-    # @validator('mask')
-    # def list_to_array(cls, v):
-    #     if isinstance(v, list):
-    #         return np.asarray(v)
-    #     return v
-    # @validator('values', pre=True)
-    # def parse_values(v):
-    #     return np.array(v, dtype=float)
 
     class Config:
         arbitrary_types_allowed = True
