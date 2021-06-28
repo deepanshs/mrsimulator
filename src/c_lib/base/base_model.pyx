@@ -446,12 +446,13 @@ def one_d_spectrum(method,
                 transition_pathway_c = np.asarray(transition_pathway, dtype=np.float32).ravel()
                 transition_pathway_weight_c = np.asarray(weights, dtype=np.float64).ravel()
             else:
-                transition_pathway = np.asarray(transition_pathway)
                 # convert transition objects to list
+                weight = [item.weight.real for item in transition_pathway]
+                transition_pathway_weight_c = np.asarray(weight, dtype=np.float64).ravel()
+
+                transition_pathway = np.asarray(transition_pathway)
                 lst = [item.tolist() for item in transition_pathway.ravel()]
                 transition_pathway_c = np.asarray(lst, dtype=np.float32).ravel()
-                weight = [item.weight for item in transition_pathway.ravel()]
-                transition_pathway_weight_c = np.asarray(weight, dtype=np.float64).ravel()
 
             pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
             pathway_increment = 2*number_of_sites*transition_count_per_pathway
