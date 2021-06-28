@@ -77,6 +77,8 @@ method = Method1D(
         }
     ],
 )
+fig = method.plot()
+plt.show()
 
 # %%
 # Create the Simulator object and add the method and the spin system object.
@@ -124,6 +126,8 @@ method2 = Method1D(
         }
     ],
 )
+fig = method2.plot()
+plt.show()
 
 # %%
 # Update the method object in the Simulator object.

@@ -16,7 +16,7 @@ from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator import signal_processing as sp
 
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # **Step 1:** Create the spin system
@@ -43,6 +43,9 @@ method = BlochDecayCTSpectrum(
         }
     ],
 )
+
+fig = method.plot(method.summary(False))
+plt.show()
 
 # %%
 # **Step 3:** Create the Simulator object and add method and spin system objects.

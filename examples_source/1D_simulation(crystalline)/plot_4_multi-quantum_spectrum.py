@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method1D
 
-# sphinx_gallery_thumbnail_number = 1
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # Create a single-site arbitrary spin system.
@@ -54,6 +54,8 @@ method = Method1D(
         }
     ],
 )
+fig = method.plot()
+plt.show()
 
 # %%
 # Create the Simulator object and add the method and the spin system object.

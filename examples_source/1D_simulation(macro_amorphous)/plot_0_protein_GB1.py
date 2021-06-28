@@ -49,8 +49,6 @@ method_13C = BlochDecaySpectrum(
     ],
 )
 
-method_13C.plot(method_13C.summary())
-
 # %%
 # Since the spin systems contain both :math:`^{13}\text{C}` and :math:`^{15}\text{N}`
 # sites, let's also create a :math:`^{15}\text{N}` Bloch decay spectrum method.
@@ -67,8 +65,6 @@ method_15N = BlochDecaySpectrum(
         }
     ],
 )
-
-method_15N.plot(method_15N.summary())
 
 # %%
 # Add the methods to the Simulator object and run the simulation
