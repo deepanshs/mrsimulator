@@ -56,7 +56,6 @@ class SpectralDimension(Parseable):
     events: A list of :ref:`event_api` or equivalent dict objects (optional).
         The value describes a series of events along the spectroscopic dimension.
     """
-
     count: int = Field(1024, gt=0)
     spectral_width: float = Field(default=25000.0, gt=0)
     reference_offset: float = Field(default=0.0)
@@ -86,8 +85,8 @@ class SpectralDimension(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """Parse the physical quantities of a SpectralDimension object from a
-        python dictionary object.
+        """Parse the physical quantities of a SpectralDimension object from a python
+        dictionary object.
 
         Args:
             dict py_dict: Dict object
@@ -110,8 +109,7 @@ class SpectralDimension(Parseable):
             x_\text{Hz} = \left([0, 1, ... N-1] - T\right) \frac{\Delta x}{N} + x_0
 
         where :math:`T=N/2` and :math:`T=(N-1)/2` for even and odd values of
-        :math:`N`, respectively.
-        """
+        :math:`N`, respectively."""
         n = self.count
         Tk = int(n / 2)
         increment = self.spectral_width / self.count
@@ -124,8 +122,7 @@ class SpectralDimension(Parseable):
         .. math::
             x_\text{ppm} = \frac{x_\text{Hz}} {x_0 + \omega_0}
 
-        where :math:`\omega_0` is the Larmor frequency.
-        """
+        where :math:`\omega_0` is the Larmor frequency."""
         if self.origin_offset is None:
             warnings.warn(
                 UserWarning(

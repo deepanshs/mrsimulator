@@ -7,6 +7,7 @@ from typing import Union
 
 import csdmpy as cp
 import numpy as np
+from mrsimulator.base_model import transition_connect_factor
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import SymmetryPathway
 from mrsimulator.transition import Transition
@@ -19,6 +20,9 @@ from pydantic import validator
 from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
+from .utils import mixing_query_connect_map
+from .utils import tip_angle_and_phase_list
+
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -271,19 +275,17 @@ class Method(Parseable):
 
         Returns: dict
         """
-        # mth = super().json(units=unit)
-        mth = {_: self.__getattribute__(_) for _ in ["name", "label", "description"]}
+        mth = {k: getattr(self, k) for k in ["name", "label", "description"]}
         mth["channels"] = [item.json() for item in self.channels]
         mth["spectral_dimensions"] = [
             item.json(units=units) for item in self.spectral_dimensions
         ]
 
         # add global parameters
-        evt_d = self.property_units.items()
         global_ = (
-            {k: f"{self.__getattribute__(k)} {u}" for k, u in evt_d}
+            {k: f"{getattr(self, k)} {u}" for k, u in self.property_units.items()}
             if units
-            else {k: self.__getattribute__(k) for k, u in evt_d}
+            else {k: getattr(self, k) for k in self.property_units}
         )
         mth.update(global_)
 
@@ -399,7 +401,7 @@ class Method(Parseable):
             dim._get_symmetry_pathways(symmetry_element)
             for dim in self.spectral_dimensions
         ]
-        sp_indexes = np.arange(len(sym_path))
+        sp_idx = np.arange(len(sym_path))
         indexes = [np.arange(len(item)) for item in sym_path]
         products = cartesian_product(*indexes)
 
@@ -407,11 +409,7 @@ class Method(Parseable):
             SymmetryPathway(
                 channels=self.channels,
                 **{
-                    ch: [
-                        _
-                        for sp, i in zip(sp_indexes, item)
-                        for _ in sym_path[sp][i][ch]
-                    ]
+                    ch: [_ for sp, i in zip(sp_idx, item) for _ in sym_path[sp][i][ch]]
                     for ch in CHANNELS
                 },
             )
@@ -430,16 +428,73 @@ class Method(Parseable):
             evt.filter_transitions(all_transitions, isotopes, channels)
             for dim in self.spectral_dimensions
             for evt in dim.events
+            if evt.__class__.__name__ != "MixingEvent"
         ]
-
-        # if segments == []:
-        #     return []
 
         segments_index = [np.arange(item.shape[0]) for item in segments]
         cartesian_index = cartesian_product(*segments_index)
         return [
             [segments[i][j] for i, j in enumerate(item)] for item in cartesian_index
         ]
+
+    def _get_transition_pathway_weights(self, pathways, spin_system):
+        if pathways == []:
+            return []
+
+        symbol = [item.isotope.symbol for item in spin_system.sites]
+        spins = np.asarray([item.isotope.spin for item in spin_system.sites])
+        channels = [item.symbol for item in self.channels]
+        weights = np.ones(len(pathways), dtype=complex)
+
+        mapping = mixing_query_connect_map(self.spectral_dimensions)
+        for obj in mapping:
+            theta_, phi_ = tip_angle_and_phase_list(
+                symbol, channels, obj["mixing_query"]
+            )
+            map_ = obj["near_index"]
+            for j, path in enumerate(pathways):
+                if weights[j] == 0:
+                    continue
+                weights[j] *= self._calculate_transition_connect_weight(
+                    path[map_[0]], path[map_[1]], spins, theta_, phi_
+                )
+        return np.round(weights, decimals=6)
+
+    @staticmethod
+    def _calculate_transition_connect_weight(trans1, trans2, spins, theta, phi):
+        """Return the transition connection weight of transitions `trans1` and `trans2`.
+
+        Args:
+            trans1: ndarray of shape (2, n_sites) representing the starting transition,
+                where `n_sites` is the number of sites within the spin system. The two
+                entries at axis 0 corresponds to initial (index 0) and final (index 1)
+                Zeeman energy states.
+            trans2: ndarray of shape (2, n_sites) representing the target transition,
+                where `n_sites` is the number of sites within the spin system. The two
+                entries at axis 0 corresponds to initial (index 0) and final (index 1)
+                Zeeman energy states.
+            spins: ndarray of spin quantum numbers of the sites.
+            theta: ndarray of rotation tip_angle per site from the mixing event.
+            phi: ndarray of rotation phase per site from the mixing event.
+        """
+        amp = 1
+        for i, spin in enumerate(spins):
+            m1_f = trans1[1][i]  # starting transition final state
+            m1_i = trans1[0][i]  # starting transition initial state
+            m2_f = trans2[1][i]  # landing transition final state
+            m2_i = trans2[0][i]  # landing transition initial state
+
+            amp *= transition_connect_factor(
+                spin, m1_f, m1_i, m2_f, m2_i, theta[i], phi[i]
+            )
+        return amp
+
+    def _get_transition_pathway_and_weights_np(self, spin_system):
+        segments = self._get_transition_pathways_np(spin_system)
+        weights = self._get_transition_pathway_weights(segments, spin_system)
+        return segments, weights
+        # indexes = np.where(weights != 0)[0]
+        # return np.asarray(segments)[indexes], weights[indexes]
 
     def get_transition_pathways(self, spin_system) -> List[TransitionPathway]:
         """Return a list of transition pathways from the given spin system that satisfy
@@ -458,20 +513,22 @@ class Method(Parseable):
             >>> sys = SpinSystem(sites=[{'isotope': '27Al'}, {'isotope': '29Si'}])
             >>> method = ThreeQ_VAS(channels=['27Al'])
             >>> pprint(method.get_transition_pathways(sys))
-            [|1.5, -0.5⟩⟨-1.5, -0.5| ⟶ |-0.5, -0.5⟩⟨0.5, -0.5|,
-             |1.5, -0.5⟩⟨-1.5, -0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|,
-             |1.5, 0.5⟩⟨-1.5, 0.5| ⟶ |-0.5, -0.5⟩⟨0.5, -0.5|,
-             |1.5, 0.5⟩⟨-1.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|]
+            [|1.5, -0.5⟩⟨-1.5, -0.5| ⟶ |-0.5, -0.5⟩⟨0.5, -0.5|, weight=(1+0j),
+             |1.5, -0.5⟩⟨-1.5, -0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|, weight=(1+0j),
+             |1.5, 0.5⟩⟨-1.5, 0.5| ⟶ |-0.5, -0.5⟩⟨0.5, -0.5|, weight=(1+0j),
+             |1.5, 0.5⟩⟨-1.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|, weight=(1+0j)]
         """
-        segments = self._get_transition_pathways_np(spin_system)
+        segments, weights = self._get_transition_pathway_and_weights_np(spin_system)
         return [
             TransitionPathway(
                 [
                     Transition(initial=tr[0].tolist(), final=tr[1].tolist())
                     for tr in item
-                ]
+                ],
+                weight=w,
             )
-            for item in segments
+            for item, w in zip(segments, weights)
+            if w != 0
         ]
 
     def shape(self) -> tuple:

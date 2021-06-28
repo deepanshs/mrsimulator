@@ -111,10 +111,11 @@ class BaseEvent(Parseable):
         """
 
         symmetry_permutations = self.permutation(isotopes, channels)
-
+        # print("symmetry_permutations", symmetry_permutations)
         segment = []
         for item in symmetry_permutations:
             st = all_transitions[:]
+            # print(item["P"].size, item["D"].size)
             st = st[P_symmetry_indexes(st, item["P"])] if item["P"].size > 0 else st
             st = st[D_symmetry_indexes(st, item["D"])] if item["D"].size > 0 else st
             segment += [st]

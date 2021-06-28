@@ -102,7 +102,8 @@ class ST1_VAS(ST_VAS):
         ... )
         >>> sys = SpinSystem(sites=[Site(isotope='87Rb')])
         >>> pprint(method.get_transition_pathways(sys))
-        [|-1.5⟩⟨-0.5| ⟶ |-0.5⟩⟨0.5|, |0.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|]
+        [|-1.5⟩⟨-0.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j),
+         |0.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
     """
 
 
@@ -138,5 +139,6 @@ class ST2_VAS(ST_VAS):
         ... )
         >>> sys = SpinSystem(sites=[Site(isotope='17O')])
         >>> pprint(method.get_transition_pathways(sys))
-        [|-2.5⟩⟨-1.5| ⟶ |-0.5⟩⟨0.5|, |1.5⟩⟨2.5| ⟶ |-0.5⟩⟨0.5|]
+        [|-2.5⟩⟨-1.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j),
+         |1.5⟩⟨2.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
     """
