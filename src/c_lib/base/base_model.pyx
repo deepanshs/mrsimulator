@@ -68,6 +68,7 @@ def one_d_spectrum(method,
     # transitions of the observed spin
     cdef int transition_increment
     cdef ndarray[float, ndim=1] transition_pathway_c
+    cdef ndarray[double, ndim=1] transition_pathway_weight_c
     cdef int number_of_transitions
     # transition_pathway_c = np.asarray([-0.5, 0.5]).ravel()
     # number_of_transitions = int(transition_pathway_c.size/2)
@@ -440,13 +441,17 @@ def one_d_spectrum(method,
         if number_of_sites != p_number_of_sites and isotopes != p_isotopes:
             transition_pathway = spin_sys.transition_pathways
             if transition_pathway is None:
-                transition_pathway = np.asarray(method._get_transition_pathways_np(spin_sys))
+                segments, weights = method._get_transition_pathway_and_weights_np(spin_sys)
+                transition_pathway = np.asarray(segments)
                 transition_pathway_c = np.asarray(transition_pathway, dtype=np.float32).ravel()
+                transition_pathway_weight_c = np.asarray(weights, dtype=np.float64).ravel()
             else:
                 transition_pathway = np.asarray(transition_pathway)
                 # convert transition objects to list
                 lst = [item.tolist() for item in transition_pathway.ravel()]
                 transition_pathway_c = np.asarray(lst, dtype=np.float32).ravel()
+                weight = [item.weight for item in transition_pathway.ravel()]
+                transition_pathway_weight_c = np.asarray(weight, dtype=np.float64).ravel()
 
             pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
             pathway_increment = 2*number_of_sites*transition_count_per_pathway
@@ -473,6 +478,7 @@ def one_d_spectrum(method,
                 &sites_c,
                 &couplings_c,
                 &transition_pathway_c[pathway_increment*trans__],
+                transition_pathway_weight_c[trans__],
                 n_dimension,          # The total number of spectroscopic dimensions.
                 dimensions,           # Pointer to MRS_dimension structure
                 the_fftw_scheme,      # Pointer to the fftw scheme.
@@ -537,9 +543,64 @@ def get_zeeman_states(sys):
 @cython.wraparound(False)
 def transition_connect_factor(float l, float m1_f, float m1_i, float m2_f,
                         float m2_i, double theta, double phi):
-    cdef ndarray[double] factor = np.zeros(2, dtype=np.float64)
+    """Evaluate the probability of connecting two transitions driven by an external rf
+    pulse of phase phi and tip_angle theta. The connected transitions are
+    | m1_f >< m1_i | --> | m2_f > < m2_i |.
+
+    Args:
+        float l: The angular momentum quantum number of the spin involved in the transition.
+        float m1_f Final quantum number of the starting transition.
+        float m1_i Initial quantum number of the starting transition.
+        float m2_f Final quantum number of the connecting transition.
+        float m2_i Initial quantum number of the connecting transition.
+        float theta The tip-angle of the rf pulse.
+        float phi The phase of the rf pulse.
+
+    Return: A complex amplitude.
+    """
+    cdef ndarray[double] factor = np.asarray([1, 0], dtype=np.float64)
     clib.transition_connect_factor(l, m1_f, m1_i, m2_f, m2_i, theta, phi, &factor[0])
     factor = np.around(factor, decimals=12)
+    return complex(factor[0], factor[1])
+
+
+@cython.profile(False)
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def calculate_transition_connect_weight(
+        ndarray[float, ndim=2] trans1,
+        ndarray[float, ndim=2] trans2,
+        ndarray[float, ndim=1] spin,
+        ndarray[double, ndim=1] theta,
+        ndarray[double, ndim=1] phi
+    ):
+    """Evaluate the probability of connecting two transitions driven by an external rf
+    pulse of phase phi and tip_angle theta. The connected transitions are
+    | m1_f >< m1_i | --> | m2_f > < m2_i |.
+
+    Args:
+        float l: The angular momentum quantum number of the spin involved in the transition.
+        float m1_f Final quantum number of the starting transition.
+        float m1_i Initial quantum number of the starting transition.
+        float m2_f Final quantum number of the connecting transition.
+        float m2_i Initial quantum number of the connecting transition.
+        float theta The tip-angle of the rf pulse.
+        float phi The phase of the rf pulse.
+
+    Return: A complex amplitude.
+    """
+    cdef ndarray[double] factor = np.asarray([1, 0], dtype=np.float64)
+    cdef int i, n_sites = spin.size
+    cdef float m1_f, m1_i, m2_f, m2_i
+    for i in range(n_sites):
+        m1_f = trans1[1][i]  # starting transition final state
+        m1_i = trans1[0][i]  # starting transition initial state
+        m2_f = trans2[1][i]  # landing transition final state
+        m2_i = trans2[0][i]  # landing transition initial state
+
+        clib.transition_connect_factor(
+            spin[i], m1_f, m1_i, m2_f, m2_i, theta[i], phi[i], &factor[0]
+        )
     return complex(factor[0], factor[1])
 
 
