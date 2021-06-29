@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
-from matplotlib.pyplot import figure
+from matplotlib.pyplot import Figure
 from mrsimulator.method import Method
 
 # import pytest
@@ -193,13 +193,16 @@ def args_summary_tests(the_method):
 
 
 def test_summary():
+    # TODO: Make one mixing_query be empty
     all_defined_no_constant_spec_dims = [
         {
             "events": [
                 {
                     "label": "Mix0",
                     # TODO: add mixing query with real value
-                    "mixing_query": {},
+                    "mixing_query": {
+                        "ch1": {"tip_angle": np.pi / 4, "phase": np.pi / 2}
+                    },
                 },
                 {
                     "label": "Dur0",
@@ -227,8 +230,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix1",
-                    # TODO: add mixing query with real value
-                    "mixing_query": {},
+                    "mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": np.pi}},
                 },
                 {
                     "label": "Dur1",
@@ -259,8 +261,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix0",
-                    # TODO: add mixing query with real value
-                    "mixing_query": {},
+                    "mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": np.pi}},
                 },
                 {
                     "label": "Dur0",
@@ -286,8 +287,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix1",
-                    # TODO: add mixing query with real value
-                    "mixing_query": {},
+                    "mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": np.pi}},
                 },
                 {
                     "label": "Dur1",
@@ -334,4 +334,4 @@ def test_summary():
 
     args_summary_tests(method2)
 
-    assert isinstance(method2.plot(), figure)
+    assert isinstance(method2.plot(), Figure)

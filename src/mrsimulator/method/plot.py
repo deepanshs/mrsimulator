@@ -288,6 +288,8 @@ def _add_tip_angle_and_phase(df):
     """Add tip_angle and phase columns to dataframe from mixing_query"""
     # NOTE Only columns for ch1 are created
     # NOTE What should empty MixingQuerys add? (MixingQuery default?)
+    # BUG: Empty mixing queries (i.e. "mixing_query": {}) gives query of `None` causing
+    #       error to be thrown
     df["tip_angle"] = [
         query.ch1.tip_angle * 180 / np.pi
         if query.__class__.__name__ == "MixingQuery"
