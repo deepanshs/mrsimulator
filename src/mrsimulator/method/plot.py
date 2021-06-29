@@ -25,7 +25,10 @@ GRAPH_PROPERTIES = {
         "ylim": (0, 90),
         "yticks": [15, 30, 45, 60, 75],
         "grid": {"axis": "y", "color": "black", "alpha": 0.2},
-    }
+        "label": r"$\theta$r / deg",
+    },
+    "rotor_frequency": {"label": r"$\nu$r / kHz"},
+    "magnetic_flux_density": {"label": "BO / T"},
 }
 
 
@@ -256,6 +259,8 @@ def _format_subplot(ax, **kwargs):
         ax.set_yticks(kwargs["yticks"])
     if "grid" in kwargs:
         ax.grid(**kwargs["grid"])
+    if "label" in kwargs:
+        ax.set_ylabel(kwargs["label"])
 
 
 def _check_columns(df):
