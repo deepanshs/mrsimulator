@@ -540,6 +540,7 @@ class Method(Parseable):
             "fraction",
             "mixing_query",
             "spec_dim_index",
+            "spec_dim_label",
             "freq_contrib",
             "p",
             "d",
@@ -568,6 +569,9 @@ class Method(Parseable):
         ]
         df["spec_dim_index"] = [
             i for i, dim in enumerate(self.spectral_dimensions) for ev in dim.events
+        ]
+        df["spec_dim_label"] = [
+            dim.label for dim in self.spectral_dimensions for ev in dim.events
         ]
         self._add_simple_props_to_df(df, prop_dict, required, drop_constant_cols)
 

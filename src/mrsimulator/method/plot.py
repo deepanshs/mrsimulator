@@ -122,13 +122,14 @@ def _plot_spec_dim(ax, ev_groups, x_data, df):
         for j in range(num):
             if x_data[x_idx] == x_data[x_idx + 1]:
                 x_idx += 1
-            if df["spec_dim_index"][df_idx + j] != spec_dim_idx:
+            if df["spec_dim_index"][df_idx + j] != spec_dim_idx:  # Next spec dim
                 x_point = x_data[x_idx]
                 if df["type"][df_idx + j] == "MixingEvent":
                     x_point += sum(df["tip_angle"][df_idx:j]) / 360.0 * MIXING_WIDTH
                 ax.plot([x_point, x_point], [0, 1], color="black")
                 ax.annotate(
-                    f"Spectral Dim. {spec_dim_idx}",
+                    # f"Spectral Dim. {spec_dim_idx}",
+                    df["spec_dim_label"][df_idx + j - 1],
                     ((last_spec_dim_x + x_point) / 2, 1.1),
                     **anno_kwargs,
                 )
@@ -137,9 +138,11 @@ def _plot_spec_dim(ax, ev_groups, x_data, df):
             x_idx += 1
         df_idx += num
 
+    # Plot last spectral dimension
     ax.plot([max(x_data), max(x_data)], [0, 1], color="black")
     ax.annotate(
-        f"Spectral Dim. {spec_dim_idx}",
+        # f"Spectral Dim. {spec_dim_idx}",
+        df["spec_dim_label"][df_idx - 1],
         ((last_spec_dim_x + max(x_data)) / 2, 1.1),
         **anno_kwargs,
     )
@@ -261,6 +264,7 @@ def _check_columns(df):
         "type",
         "label",
         "spec_dim_index",
+        "spec_dim_label",
         "duration",
         "fraction",
         "mixing_query",
@@ -336,6 +340,7 @@ def plot(df) -> plt.figure:
 
     # Iterate through axes and plot data
     for i, ax in enumerate(axs[1:], 0):
+        print(params[i])
         if params[i] == "p" or params[i] == "d":
             _plot_p_or_d(ax, offset_x_data, df[params[i]], params[i])
         else:
