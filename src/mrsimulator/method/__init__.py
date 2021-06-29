@@ -592,6 +592,9 @@ class Method(Parseable):
         if "rotor_angle" in df.columns:
             df["rotor_angle"] = df["rotor_angle"] * 180 / np.pi
 
+        # Convert rotor_frequency to kHz
+        if "rotor_frequency" in df.columns:
+            df["rotor_frequency"] = df["rotor_frequency"] / 1000
         # NOTE: Should columns be reordered?
 
         return df

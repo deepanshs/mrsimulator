@@ -345,7 +345,6 @@ def plot(df) -> plt.figure:
 
     # Iterate through axes and plot data
     for i, ax in enumerate(axs[1:], 0):
-        print(params[i])
         if params[i] == "p" or params[i] == "d":
             _plot_p_or_d(ax, offset_x_data, df[params[i]], params[i])
         else:
