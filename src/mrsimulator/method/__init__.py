@@ -542,6 +542,7 @@ class Method(Parseable):
             "spec_dim_index",
             "freq_contrib",
             "p",
+            "d",
         ]
 
         # Properties which can accessed by getattr()
@@ -554,7 +555,6 @@ class Method(Parseable):
             "rotor_frequency": (CD, SP),
             "rotor_angle": (CD, SP),
             "freq_contrib": (CD, SP),
-            "d": "",  # Not valid eventwise. Special function to calculate
         }
 
         # Create the DataFrame
@@ -575,10 +575,14 @@ class Method(Parseable):
             [sym.total for sym in self.get_symmetry_pathways("P")]
         ).tolist()
 
-        if "d" in prop_dict:
-            lst = np.transpose([sym.total for sym in self.get_symmetry_pathways("D")])
-            if not drop_constant_cols or np.unique(lst[~np.isnan(lst)]).size > 1:
-                df["d"] = lst.tolist()
+        df["d"] = np.transpose(
+            [sym.total for sym in self.get_symmetry_pathways("D")]
+        ).tolist()
+
+        # if "d" in prop_dict:
+        #     lst = np.transpose([sym.total for sym in self.get_symmetry_pathways("D")])
+        #     if not drop_constant_cols or np.unique(lst[~np.isnan(lst)]).size > 1:
+        #         df["d"] = lst.tolist()
 
         # Convert rotor_angle to degrees
         if "rotor_angle" in df.columns:
