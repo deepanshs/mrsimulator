@@ -508,19 +508,18 @@ class Method(Parseable):
                 Event number as row and property as column. Invalid properties for an
                 event type are filled with np.nan
 
-            Columns
-            -------
+            **Columns**
 
-            (str) type: Event type
-            (int) spec_dim_index: Index of spectral dimension which event belongs to
-            (str) label: Event label
-            (float) duration: Duration of the ConstantDurationEvent
-            (float) fraction: Fraction of the SpectralEvent
-            (MixingQuery) mixing_query: MixingQuery object of the MixingEvent
-            (float) magnetic_flux_density: Magnetic flux density during event in Tesla
-            (float) rotor_frequency: Rotor frequency during event in Hz
-            (float) rotor_angle: Rotor angle during event converted to Degrees
-            (FrequencyEnum) freq_contrib:
+            - (str) type: Event type
+            - (int) spec_dim_index: Index of spectral dimension which event belongs to
+            - (str) label: Event label
+            - (float) duration: Duration of the ConstantDurationEvent
+            - (float) fraction: Fraction of the SpectralEvent
+            - (MixingQuery) mixing_query: MixingQuery object of the MixingEvent
+            - (float) magnetic_flux_density: Magnetic flux density during event in Tesla
+            - (float) rotor_frequency: Rotor frequency during event in Hz
+            - (float) rotor_angle: Rotor angle during event converted to Degrees
+            - (FrequencyEnum) freq_contrib:
 
         Example:
             TODO add example code

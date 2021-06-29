@@ -17,7 +17,7 @@ from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 
-# sphinx_gallery_thumbnail_number = 1
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # Create the sites and spin systems
@@ -75,6 +75,8 @@ maf = Method2D(
     ],
     affine_matrix=[[1, -1], [0, 1]],
 )
+fig = maf.plot()
+plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and run the

@@ -16,7 +16,7 @@ from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Generate the site and spin system objects.
@@ -68,6 +68,8 @@ sas = Method2D(
         },
     ],
 )
+fig = sas.plot()
+plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and

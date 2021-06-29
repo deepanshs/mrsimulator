@@ -16,7 +16,7 @@ from mrsimulator import Simulator
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Create the Simulator object and load the spin systems database or url address.
@@ -68,6 +68,8 @@ das = Method2D(
     ],
 )
 sim.methods = [das]  # add the method.
+fig = das.plot()
+plt.show()
 
 # %%
 # Run the simulation

@@ -90,8 +90,8 @@ plt.show()
 # ----------------
 # Generate spin systems from the above probability distribution.
 spin_systems = single_site_system_generator(
-    isotopes="87Rb",
-    isotropic_chemical_shifts=iso,
+    isotope="87Rb",
+    isotropic_chemical_shift=iso,
     quadrupolar={"Cq": Cq * 1e6, "eta": eta},  # Cq in Hz
     abundance=pdf,
 )
@@ -118,8 +118,6 @@ method = ThreeQ_VAS(
         },
     ],
 )
-
-method.plot(method.summary())
 
 # %%
 # Create the simulator object, add the spin systems and method, and run the simulation.

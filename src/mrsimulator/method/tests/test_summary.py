@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
+from matplotlib.pyplot import figure
 from mrsimulator.method import Method
 
 # import pytest
@@ -332,3 +333,5 @@ def test_summary():
     assert len(method2.spectral_dimensions) == 2
 
     args_summary_tests(method2)
+
+    assert isinstance(method2.plot(), figure)

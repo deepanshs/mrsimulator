@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import SSB2D
 
-# sphinx_gallery_thumbnail_number = 1
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # Generate the site and spin system objects.
@@ -57,6 +57,8 @@ qmat = SSB2D(
         },
     ],
 )
+fig = qmat.plot()
+plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and
