@@ -619,8 +619,8 @@ class Method(Parseable):
             df = self.summary()
 
         fig = _plot(df)
-        fig.suptitle(self.name if self.name is not None else "")
-        fig.tight_layout()
+        fig.suptitle(t=self.name if self.name is not None else "", y=0.93)
+        # fig.tight_layout()
         return fig
 
     def shape(self) -> tuple:

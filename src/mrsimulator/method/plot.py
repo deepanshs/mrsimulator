@@ -5,6 +5,7 @@ import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Rectangle
+from matplotlib.ticker import MaxNLocator
 
 __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
@@ -14,21 +15,39 @@ DURATION_WIDTH = 0.6  # Width of one ConstantDurationEvent
 SPECTRAL_MULTIPLIER = 1  # Width multiplier for all SpectralEvents
 MIXING_WIDTH = 0.3  # tip_angle of 360 degrees
 # TODO: Ensure cannot run out of colors
+# NOTE: Matplotlib should automatically generate new colors when none specified
 COLORS = list(mcolors.TABLEAU_COLORS)
 EVENT_COLORS = {  # TODO: add colors
     "ConstantDurationEvent": "orange",
     "SpectralEvent": "g",
     "MixingEvent": "b",
 }
+# NOTE: Cannot force only even ticks with MaxNLocator
 GRAPH_PROPERTIES = {
-    "rotor_angle": {
-        "ylim": (0, 90),
-        "yticks": [15, 30, 45, 60, 75],
-        "grid": {"axis": "y", "color": "black", "alpha": 0.2},
-        "label": r"$\theta$r / deg",
-    },
-    "rotor_frequency": {"label": r"$\nu$r / kHz"},
-    "magnetic_flux_density": {"label": "BO / T"},
+    "p": dict(
+        locator=MaxNLocator(nbins=5, steps=[2, 3], integer=True, min_n_ticks=3),
+        grid={"axis": "y", "color": "black", "alpha": 0.2},
+    ),
+    "d": dict(
+        locator=MaxNLocator(nbins=5, steps=[2, 3], integer=True, min_n_ticks=3),
+        grid={"axis": "y", "color": "black", "alpha": 0.2},
+    ),
+    "rotor_angle": dict(
+        # "ylim": (0, 90),
+        # "yticks": [15, 30, 45, 60, 75],
+        # "yticks": [18, 36, 54, 72],
+        locator=MaxNLocator(nbins="auto", steps=[3, 5, 6, 9]),
+        grid={"axis": "y", "color": "black", "alpha": 0.2},
+        label=r"$\theta_r$ / deg",
+    ),
+    "rotor_frequency": dict(
+        label=r"$\nu_r$ / kHz",
+        grid={"axis": "y", "color": "black", "alpha": 0.2},
+    ),
+    "magnetic_flux_density": dict(
+        label=r"$B_0$ / T",
+        grid={"axis": "y", "color": "black", "alpha": 0.2},
+    ),
 }
 
 
@@ -92,13 +111,13 @@ def _add_rect_with_label(ax, x0, x1, label, ev_type):
         "color": "black",
         "ha": "center",
         "va": "center",
-        "fontsize": 8,
+        "fontsize": 7,
         "rotation": 90 if ev_type == "MixingEvent" else 0,
     }
     rect = Rectangle((x0, 0), x1 - x0, 1, **rect_kwargs)
     ax.add_patch(rect)
     if label is not None:
-        ax.annotate(label, ((x1 + x0 + 0.015) / 2, 0.5), **anno_kwargs)
+        ax.annotate(label, ((x1 + x0 + 0.025) / 2, 0.5), **anno_kwargs)
 
 
 def _format_mix_label(tip_angle, phase):
@@ -215,19 +234,19 @@ def _plot_p_or_d(ax, x_data, y_data, name):
             alpha=0.8,
             linewidth=2,
         )
-    _range = max(  # Furthest point from origin
-        abs(min([num for tup in y_data for num in tup])),
-        abs(max([num for tup in y_data for num in tup])),
-    )
-    if name == "d" or _range > 5:
-        # Even integers on y-axis
-        _range = _range if _range % 2 == 0 else _range + 1  # Round up to next even int
-        ax.set_ylim(-(_range + 2), _range + 2)
-        ax.set_yticks(np.arange(-_range, _range + 1, step=2))
-    else:
-        ax.set_ylim(-(_range + 1), _range + 1)
-        ax.set_yticks(np.arange(-_range, _range + 1, step=1))
-    ax.grid(axis="y", color="black", alpha=0.2)
+    # _range = max(  # Furthest point from origin
+    #     abs(min([num for tup in y_data for num in tup])),
+    #     abs(max([num for tup in y_data for num in tup])),
+    # )
+    # if name == "d" or _range > 5:
+    #     # Even integers on y-axis
+    #     _range = _range if _range % 2 == 0 else _range + 1  #Round up to next even int
+    #     ax.set_ylim(-(_range + 2), _range + 2)
+    #     ax.set_yticks(np.arange(-_range, _range + 1, step=2))
+    # else:
+    #     ax.set_ylim(-(_range + 1), _range + 1)
+    #     ax.set_yticks(np.arange(-_range, _range + 1, step=1))
+    # ax.grid(axis="y", color="black", alpha=0.2)
     ax.set_ylabel(name)
 
 
@@ -247,16 +266,18 @@ def _plot_data(ax, x_data, y_data, name):
         color="b",
         alpha=0.6,
     )
-    ax.set_ylabel(name.replace("_", " "))
+    # ax.set_ylabel(name.replace("_", " "))
 
 
 def _format_subplot(ax, **kwargs):
     """Attitional subplot formatting based on parameter type"""
     kwargs = kwargs["kwargs"]
-    if "ylim" in kwargs:
-        ax.set_ylim(kwargs["ylim"])
-    if "yticks" in kwargs:
-        ax.set_yticks(kwargs["yticks"])
+    # if "ylim" in kwargs:
+    #     ax.set_ylim(kwargs["ylim"])
+    # if "yticks" in kwargs:
+    #     ax.set_yticks(kwargs["yticks"])
+    if "locator" in kwargs:
+        ax.yaxis.set_major_locator(kwargs["locator"])
     if "grid" in kwargs:
         ax.grid(**kwargs["grid"])
     if "label" in kwargs:
@@ -295,7 +316,7 @@ def _check_columns(df):
 
 def _add_tip_angle_and_phase(df):
     """Add tip_angle and phase columns to dataframe from mixing_query"""
-    # NOTE Only columns for ch1 are created
+    # NOTE Only columns for ch1 are created (1 ch only for now)
     # NOTE What should empty MixingQuerys add? (MixingQuery default?)
     # BUG: Empty mixing queries (i.e. "mixing_query": {}) gives query of `None` causing
     #       error to be thrown
@@ -332,19 +353,19 @@ def plot(df) -> plt.figure:
     fig, axs = plt.subplots(
         nrows=len(params) + 1,
         ncols=1,
-        figsize=(max(x_data) * 2, (len(params) + 1) * 1.5),
+        figsize=(max(x_data) * 2, (len(params) + 1)),
         sharex=True,
-        gridspec_kw={"hspace": 0.0},
+        gridspec_kw={"hspace": 0.2},
     )
 
     axs[0].set_xlim(0, x_data[-1])
-    axs[-1].get_xaxis().set_visible(False)
 
     # Plot sequence diagram
     _plot_sequence_diagram(axs[0], offset_x_data, df)
 
     # Iterate through axes and plot data
     for i, ax in enumerate(axs[1:], 0):
+        ax.get_xaxis().set_visible(False)
         if params[i] == "p" or params[i] == "d":
             _plot_p_or_d(ax, offset_x_data, df[params[i]], params[i])
         else:
