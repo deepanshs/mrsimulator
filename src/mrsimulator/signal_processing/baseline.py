@@ -22,7 +22,7 @@ class Baseline(ModuleOperation):
         return "baseline"
 
 
-class Polynomial(Baseline):
+class Trinomial(Baseline):
     r"""Add a baseline Trinomial to all dependent variables (y) in the CSDM object.
 
     The baseline function is
@@ -126,48 +126,48 @@ class ConstantOffset(Baseline):
         return data
 
 
-# class Polynomial(Baseline):
-#     r"""Add a baseline polynomial to all dependent variables (y) in the CSDM object.
+class Polynomial(Baseline):
+    r"""Add a baseline polynomial to all dependent variables (y) in the CSDM object.
 
-#     The baseline function is
+    The baseline function is
 
-#     .. math::
-#             f(x) = \sum_{i=0}^n x_i \times x^i,
+    .. math::
+            f(x) = \sum_{i=0}^n x_i \times x^i,
 
-#     where :math:`x` is the CSDM dimension at index ``dim_index``.
+    where :math:`x` is the CSDM dimension at index ``dim_index``.
 
-#     Args:
-#         Dict polynomial_dictionary: A dictionary of the form {'xi': 'coeff'}, where i
-#             represents the i-th order polynomial term and 'coeff' is the leading
-#             coefficient for the i-th term. For example :math:`4x^2 + 5` would be
-#             supplied as {'x2': '4', 'x0': '5'}
+    Args:
+        Dict polynomial_dictionary: A dictionary of the form {'xi': coeff}, where i
+            represents the i-th order polynomial term and 'coeff' is the leading
+            coefficient for the i-th term. For example :math:`4x^2 + 5` would be
+            supplied as {'x2': 4, 'x0': 5}
 
-#         int dim_index: The index of the CSDM dimension along which the operation is
-#             applied. The default is the dimension at index 0.
+        int dim_index: The index of the CSDM dimension along which the operation is
+            applied. The default is the dimension at index 0.
 
-#     Example
-#     -------
+    Example
+    -------
 
-#     >>> from mrsimulator import signal_processing as sp
-#     >>> operation1 = sp.baseline.Polynomial(x0=20, x1=-10)
-#     """
+    >>> from mrsimulator import signal_processing as sp
+    >>> operation1 = sp.baseline.Polynomial(polynomial_dictionary = {'x0':10, 'x2':2})
+    """
 
-#     polynomial_dictionary: Dict = {}
-#     dim_index: int = 0
-#     property_units: Dict = {"default": "Hz"}
+    polynomial_dictionary: Dict = {}
+    dim_index: int = 0
+    # property_units: Dict = {"default": "Hz"}
 
-#     def operate(self, data):
-#         """Applies the operation.
+    def operate(self, data):
+        """Applies the operation.
 
-#         Args:
-#             data: CSDM object
-#         """
-#         x = data.dimensions[self.dim_index].coordinates
-#         d1 = x  # self.get_coordinates_in_units(x, unit=1.0 * 's')
-#         fn = np.zeros(len(d1))
-#         for key, val in self.polynomial_dictionary.items():
-#             exponent = key.split("x")[-1]
-#             fn += float(val) * d1 ** int(exponent)
-#         for item in data.y:
-#             item.components += fn
-#         return data
+        Args:
+            data: CSDM object
+        """
+        x = data.dimensions[self.dim_index].coordinates
+        d1 = x.value  # self.get_coordinates_in_units(x, unit=1.0 * 's')
+        fn = np.zeros(len(x))
+        for key, val in self.polynomial_dictionary.items():
+            exponent = key.split("x")[-1]
+            fn += float(val) * d1 ** int(exponent)
+        for item in data.y:
+            item.components += fn
+        return data
