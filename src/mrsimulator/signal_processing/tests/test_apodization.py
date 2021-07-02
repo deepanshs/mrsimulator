@@ -6,8 +6,7 @@ from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
-
-from .test_signal_processing import setup_read_write
+from test_signal_processing import setup_read_write
 
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
