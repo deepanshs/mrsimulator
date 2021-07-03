@@ -615,6 +615,8 @@ class Method(Parseable):
         Example:
             TODO add example code
         """
+        # TODO: add kwargs [include_key, figsize, hspace] for user control
+
         if df is None:
             df = self.summary()
 

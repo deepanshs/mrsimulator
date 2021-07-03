@@ -20,12 +20,21 @@ EVENT_COLORS = {
     "ConstantDurationEvent": "orange",
     "SpectralEvent": "g",
     "MixingEvent": "b",
+    "inf_speed": "y",
+    "nan": "k",
 }
 LABLES = {
     "rotor_angle": r"$\theta_r$ / deg",
     "rotor_frequency": r"$\nu_r$ / kHz",
     "magnetic_flux_density": r"$B_0$ / T",
 }
+DEFAULT_ANNO_KWARGS = dict(
+    annotation_clip=False,
+    color="black",
+    ha="center",
+    va="center",
+    fontsize=8,
+)
 
 
 class CustomAxes(plt.Axes):
@@ -37,56 +46,112 @@ class CustomAxes(plt.Axes):
     name:
         String of the matplotlib projection name of this Axes subclass. This value
         is not intended to be changed
+
+    x_data:
+        Unformatted x-axis data to be plotted
+
+    y_data:
+        Unformatted y-axis data to be plotted
+
+    col_name:
+        Column which the y_data came from
+
+    xmax:
+        Maximum x value in x_data. Used to set xlim to (0, xmax)
+
     """
 
     name = "custom_axes"
+    x_data = None
+    y_data = None
+    col_name = None
+    xmax = None
 
     def make_plot(self, x_data, y_data, col_name, format_kwargs, plot_kwargs):
         """Main workflow function to format and plot data on Axes"""
+        self.x_data = x_data
+        self.y_data = y_data
+        self.col_name = col_name
+
         xmax = max(x_data)
-        self._format(col_name=col_name, xmax=xmax, **format_kwargs)
+
+        self._format(xmax=xmax, **format_kwargs)
         self.plot(x=x_data, y=y_data, **plot_kwargs)
 
-    def plot(self, x, y, _format=True, labels=True, first_ev_mix=None, **kwargs):
+    def plot(self, x, y, _format=True, labels=True, mix_ev=[], **kwargs):
         """Plot formatted data"""
         if _format:
-            x, y, nans = self._format_x_and_y_data(x=x, y=y, first_ev_mix=first_ev_mix)
+            # matplotlib automatically blanks out nan values. y may contain nans
+            # mask only differs from y when plotting "rotor_frequnecy"
+            x, y, y_mask = self._format_x_and_y_data(x=x, y=y, mix_ev=mix_ev)
         else:
-            nans = None
-
-        # TODO: Make blank spaces in line
-
-        if labels:
-            # Add labels for blank spaces
-            # NOTE: Check for nans is none
-            # TODO: create labels with self._add_rect_with_label
-            # TODO: Loop over labels
-            self._add_blank_space_labels(x_data=x, nans=nans)
-            pass
+            y_mask = y
 
         # 'x' and 'y' cannot be passed as keyword args to plt.Axes.plot()
-        super().plot(x, y, **kwargs)
+        super().plot(x, y_mask, **kwargs)
 
-    def _add_blank_space_labels(self, x_data, nans, col_name=None):
+        # labels must come after plot to setup y-axis limits
+        if labels:
+            self._add_blank_space_labels(x=x, y=y)
+
+    def _add_blank_space_labels(self, x, y):
         """Adds labels for blank spaces in plot"""
-        # Computation
-        # Call self._add_rect_with_label
-        pass
+        if self.col_name == "rotor_frequency":
+            # Locate places with infinite spinning speed (1e9 Hz)
+            reigons = self._locate_reigons_with_val(x=x, y=y, val=1e9)
+            for reigon in reigons:
+                self._add_rect_with_label(
+                    x0=reigon[0],
+                    x1=reigon[1],
+                    label="inf speed",
+                    rect_kwargs=dict(color=EVENT_COLORS["inf_speed"]),
+                )
+        # Locate places with undefined parameters
+        reigons = self._locate_reigons_with_val(x=x, y=y)
+        for reigon in reigons:
+            self._add_rect_with_label(
+                x0=reigon[0],
+                x1=reigon[1],
+                label="undef",
+                rect_kwargs=dict(color=EVENT_COLORS["undef"]),
+            )
 
-    def _format_x_and_y_data(self, x, y, first_ev_mix=None):
-        """Formats x & y data for plotting and locates NANs"""
+    def _locate_reigons_with_val(self, x, y, val=np.nan):
+        """Locates reigons and returns a list of tuples denoting range with value"""
+        # Locate value in y
+        y = np.asarray(y)
+        if val is np.nan:
+            loc = np.isnan(y)
+        else:
+            loc = y >= val
+
+        # Find indexes where loc_k and loc_k+1 are both true
+        left_x = np.argwhere(np.logical_and(loc[1:], loc[:-1])).flatten()
+
+        # Create tuples of left and right x points
+        return [(x[i], x[i + 1]) for i in left_x]
+
+    def _format_x_and_y_data(self, x, y, mix_ev):
+        """Removes invalid event data (nans from MixingEvents) while keeping valid but
+        undefined event data in y. Extends y double to accheive stair-step pattern
+        """
+        y_data = y[~mix_ev]  # Keep data from events that are not MixingEvents
         x_data = x
-        nans = np.isnan(y)
-        y_data = y[~nans]  # Clean nans from data
-        y_data = [n for num in y_data for n in (num, num)]  # Extend y_data double
+        y_data = np.asarray([n for num in y_data for n in (num, num)])  # Extend double
 
-        # Insert zero or remove first x point
-        if first_ev_mix:
-            y_data = [0] + y_data
-        elif first_ev_mix is False:
-            x_data = x[1:]
+        # Mask pseudo-infinite spinning speed with nans for plotting "rotor_frequency"
+        if self.col_name == "rotor_frequency":
+            mask = np.where(y_data >= 1e9, np.nan, y_data)
+            return x_data, y_data, mask
 
-        return x_data, y_data, nans
+        # Insert zero or remove first x point for p and d
+        if self.col_name in ["p", "d"]:
+            if mix_ev[0]:
+                y_data = np.insert(y_data, 0, 0)
+            else:
+                x_data = x[1:]
+
+        return x_data, y_data, y_data
 
     def _calculate_range(self, data):
         """Helper function to calculate range of given data"""
@@ -94,7 +159,6 @@ class CustomAxes(plt.Axes):
 
     def _format(
         self,
-        col_name,
         xmax=None,
         locator=MaxNLocator(nbins=4, integer=True, min_n_ticks=3),
         grid={"axis": "y", "color": "black", "alpha": 0.2},
@@ -106,9 +170,6 @@ class CustomAxes(plt.Axes):
         """Format Axes helper function
 
         Args:
-            (str) col_name:
-                Name of data column being plotted
-
             (float) xmax:
                 x-axis limit to set
 
@@ -127,8 +188,8 @@ class CustomAxes(plt.Axes):
             (bool) show_yaxis:
                 Shows y-axis and ticks if True, otherwise hidden
         """
-        label = LABLES[col_name] if col_name in LABLES else col_name
-        if col_name == "rotor_frequency":
+        label = LABLES[self.col_name] if self.col_name in LABLES else self.col_name
+        if self.col_name == "rotor_frequency":
             locator.set_params(integer=False, steps=[1.5, 5, 7], nbins=5)
             pass
 
@@ -142,18 +203,27 @@ class CustomAxes(plt.Axes):
         self.grid(**grid)
         self.margins(y=ymargin)
 
-    def _add_rect_with_label(self, x0, x1, label, rect_kwargs, anno_kwargs):
+    def _add_rect_with_label(self, x0, x1, label, rect_kwargs, anno_kwargs={}):
         """Add a rectangle between x0 and x1 on ax representing event"""
         # [height, color, alpha] required in rect_kwargs
-        # [color, ha, va, fontsize, rotation] required in anno_kwargs
+        bottom, top = self.get_ylim()
         if "height" not in rect_kwargs:
-            bottom, top = self.get_ylim()
             rect_kwargs["height"] = top - bottom
 
-        rect = Rectangle(xy=(x0, 0), width=x1 - x0, **rect_kwargs)
+        if "alpha" not in rect_kwargs:
+            rect_kwargs["alpha"] = 0.2
+
+        if "color" not in rect_kwargs:
+            raise ValueError("No color in `rect_kwargs`. A color must be spesified")
+
+        if anno_kwargs == {}:
+            anno_kwargs = DEFAULT_ANNO_KWARGS
+
+        rect = Rectangle(xy=(x0, bottom), width=x1 - x0, **rect_kwargs)
         self.add_patch(rect)
         if label is not None:
-            self.annotate(text=label, xy=((x1 + x0 + 0.025) / 2, 0.5), **anno_kwargs)
+            y_mid = (top - bottom) / 2
+            self.annotate(text=label, xy=((x1 + x0 + 0.025) / 2, y_mid), **anno_kwargs)
 
 
 class MultiLineAxes(CustomAxes):
@@ -163,14 +233,17 @@ class MultiLineAxes(CustomAxes):
 
     def make_plot(self, x_data, y_data, col_name, format_kwargs, plot_kwargs):
         """Main workflow function to format and plot data on Axes"""
-        # Cast y_data to numpy array (should be 2d)
+        self.x_data = x_data
+        self.y_data = y_data
+        self.col_name = col_name
+
         xmax = max(x_data)
+        # Cast y_data to numpy array (should be 2d)
         y_data = np.stack(y_data.values)
         if np.asarray(y_data).ndim != 2:
             raise ValueError("Symmetry pathway data is misshapen. Data must be 2d")
 
         self._format(
-            col_name=col_name,
             xmax=xmax,
             locator=MaxNLocator(nbins=5, steps=[1, 2, 3], integer=True, min_n_ticks=3),
             **format_kwargs,
@@ -196,12 +269,16 @@ class SequenceDiagram(CustomAxes):
         xmax = max(x_data)
         ylim = [0, 1]  # Adjust y limits of plot here
 
-        self._format(col_name="", xmax=xmax, grid={}, axis="off")
+        self._format(xmax=xmax, grid={}, ylim=ylim, margin=None, axis="off")
         self._plot_sequence_diagram(df=df, x_data=x_data, ylim=ylim)
 
-    def _format(self, **kwargs):
+    def _format(self, ylim=None, **kwargs):
         # Turn of x and y axis and call super(),_format
         self.axis("off")
+
+        if ylim is not None:
+            self.set_ylim(*ylim)
+
         super()._format(**kwargs)
 
     def _format_mix_label(self, tip_angle, phase):
@@ -214,13 +291,6 @@ class SequenceDiagram(CustomAxes):
     def _plot_spec_dims(self, df, x_data, ylim, ev_groups):
         """Adds lines and labels denoting spectral dimensions"""
         plot_kwargs = dict(_format=False, labels=False)
-        anno_kwargs = dict(
-            annotation_clip=False,
-            color="black",
-            ha="center",
-            va="center",
-            fontsize=8,
-        )
 
         self.plot(x=[0, 0], y=ylim, color="black", **plot_kwargs)
 
@@ -240,7 +310,7 @@ class SequenceDiagram(CustomAxes):
                     self.annotate(
                         text=df["spec_dim_label"][df_idx + j - 1],
                         xy=((last_spec_dim_x + x0) / 2, ylim[1] + 0.1),
-                        **anno_kwargs,
+                        **DEFAULT_ANNO_KWARGS,
                     )
                     last_spec_dim_x = x0
                     spec_dim_idx += 1
@@ -252,7 +322,7 @@ class SequenceDiagram(CustomAxes):
         self.annotate(
             text=df["spec_dim_label"][df_idx - 1],
             xy=((last_spec_dim_x + max(x_data)) / 2, ylim[1] + 0.1),
-            **anno_kwargs,
+            **DEFAULT_ANNO_KWARGS,
         )
 
     def _plot_sequence_diagram(self, df, x_data, ylim):
@@ -287,7 +357,7 @@ class SequenceDiagram(CustomAxes):
                         rect_kwargs=dict(
                             color=EVENT_COLORS["MixingEvent"],
                             alpha=0.2,
-                            height=ylim[1] - ylim[0],
+                            # height=ylim[1] - ylim[0],
                         ),
                         anno_kwargs=dict(
                             color="black",
@@ -311,13 +381,7 @@ class SequenceDiagram(CustomAxes):
                         rect_kwargs=dict(
                             color=EVENT_COLORS[df["type"][df_idx]],
                             alpha=0.2,
-                            height=ylim[1] - ylim[0],
-                        ),
-                        anno_kwargs=dict(
-                            color="black",
-                            ha="center",
-                            va="center",
-                            fontsize=7,
+                            # height=ylim[1] - ylim[0],
                         ),
                     )
                     x_idx += 1
@@ -446,8 +510,10 @@ def _make_normal_and_offset_x_data(df):
 
 def plot(df) -> plt.figure:
     """Create figure of symmetry pathways for DataFrame representation of method"""
+    # TODO: add kwargs [include_key, figsize, hspace] for user control
+    # TODO: add scale size for plot scalability
     # TODO: (future) add functionality for multiple channels
-    first_ev_mix = df["type"][0] == "MixingEvent"
+    mix_ev = np.array(df["type"] == "MixingEvent")
     params = _format_df(df)
     x_data, x_offset = _make_normal_and_offset_x_data(df)
 
@@ -456,7 +522,7 @@ def plot(df) -> plt.figure:
     proj.register_projection(MultiLineAxes)
     proj.register_projection(SequenceDiagram)
 
-    fig = plt.figure(figsize=[6.4, 4.8])  # Adjust figure size here
+    fig = plt.figure(figsize=[10, 7.5])  # Adjust figure size here
     gs = fig.add_gridspec(nrows=len(params) + 3, ncols=1, hspace=0.25)
 
     # Sequence diagram Axes
@@ -470,7 +536,7 @@ def plot(df) -> plt.figure:
         y_data=df["p"],
         col_name="p",
         format_kwargs={},
-        plot_kwargs=dict(first_ev_mix=first_ev_mix),
+        plot_kwargs=dict(mix_ev=mix_ev),
     )
     d_ax = fig.add_subplot(gs[2, 0], projection="multi_line_axes")
     d_ax.make_plot(
@@ -478,7 +544,7 @@ def plot(df) -> plt.figure:
         y_data=df["d"],
         col_name="d",
         format_kwargs={},
-        plot_kwargs=dict(first_ev_mix=first_ev_mix),
+        plot_kwargs=dict(mix_ev=mix_ev),
     )
 
     # params Axes
@@ -489,7 +555,7 @@ def plot(df) -> plt.figure:
             y_data=df[param],
             col_name=param,
             format_kwargs={},
-            plot_kwargs={},
+            plot_kwargs=dict(mix_ev=mix_ev),
         )
 
     return fig
