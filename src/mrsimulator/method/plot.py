@@ -13,10 +13,10 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 
 # NOTE: Matplotlib should automatically generate new colors when none specified
 # NOTE: Cannot force only even ticks with MaxNLocator
-DURATION_WIDTH = 0.6  # Width of one ConstantDurationEvent
-SPECTRAL_MULTIPLIER = 1  # Width multiplier for all SpectralEvents
-MIXING_WIDTH = 0.3  # tip_angle of 360 degrees
-EVENT_COLORS = {  # TODO: add colors
+DURATION_WIDTH = 0.5  # Width of one ConstantDurationEvent
+SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
+MIXING_WIDTH = 0.25  # tip_angle of 360 degrees
+EVENT_COLORS = {
     "ConstantDurationEvent": "orange",
     "SpectralEvent": "g",
     "MixingEvent": "b",
@@ -29,15 +29,22 @@ LABLES = {
 
 
 class CustomAxes(plt.Axes):
-    """Subclass of matplotlib Axes holding spesific funtions and data"""
+    """Subclass of matplotlib Axes holding spesific funtions and data
+
+    Attributes
+    ----------
+
+    name:
+        String of the matplotlib projection name of this Axes subclass. This value
+        is not intended to be changed
+    """
 
     name = "custom_axes"
-    locator = MaxNLocator(nbins=5, integer=True, min_n_ticks=3)
-    _grid = {"axis": "y", "color": "black", "alpha": 0.2}
 
     def make_plot(self, x_data, y_data, col_name, format_kwargs, plot_kwargs):
         """Main workflow function to format and plot data on Axes"""
-        self._format(col_name=col_name, **format_kwargs)
+        xmax = max(x_data)
+        self._format(col_name=col_name, xmax=xmax, **format_kwargs)
         self.plot(x=x_data, y=y_data, **plot_kwargs)
 
     def plot(self, x, y, _format=True, labels=True, first_ev_mix=None, **kwargs):
@@ -81,31 +88,59 @@ class CustomAxes(plt.Axes):
 
         return x_data, y_data, nans
 
-    def _format(self, col_name, **kwargs):
-        """Format Axes helper function"""
+    def _calculate_range(self, data):
+        """Helper function to calculate range of given data"""
+        return (np.nanmin(data), np.nanmax(data))  # min, max ignoring nans
+
+    def _format(
+        self,
+        col_name,
+        xmax=None,
+        locator=MaxNLocator(nbins=4, integer=True, min_n_ticks=3),
+        grid={"axis": "y", "color": "black", "alpha": 0.2},
+        ymargin=0.35,
+        show_xaxis=False,
+        show_yaxis=True,
+        **kwargs
+    ):
+        """Format Axes helper function
+
+        Args:
+            (str) col_name:
+                Name of data column being plotted
+
+            (float) xmax:
+                x-axis limit to set
+
+            (matplotlib.ticker) locator:
+                Object which determines the ticks on the y-axis
+
+            (dict) grid:
+                Grid kwargs which determine the appearance of the grid
+
+            (float) ymargin:
+                Value to be passed to matplotlib.axes.Axes.margin for padding
+
+            (bool) show_xaxis:
+                Shows x-axis and ticks if True, otherwise hidden
+
+            (bool) show_yaxis:
+                Shows y-axis and ticks if True, otherwise hidden
+        """
         label = LABLES[col_name] if col_name in LABLES else col_name
-        if col_name == "rotor_angle":
-            # TODO: Create new locator to clean up y_ticks
+        if col_name == "rotor_frequency":
+            locator.set_params(integer=False, steps=[1.5, 5, 7], nbins=5)
             pass
 
-        if "locator" in kwargs:
-            self.locator = kwargs["locator"]
+        self.get_xaxis().set_visible(show_xaxis)
+        self.set_xlim(0, xmax)
 
-        if "_grid" in kwargs:
-            self._grid = kwargs["_grid"]
-
-        if "y_lim" in kwargs:
-            self.set_ylim(*(kwargs["ylim"]))
-
-        if "axis" in kwargs:
-            self.axis(kwargs["axis"])
-
-        self.get_xaxis().set_visible(False)
-        # set x_lims
+        self.get_yaxis().set_visible(show_yaxis)
+        self.get_yaxis().set_major_locator(locator)
         self.set_ylabel(label)
-        self.get_yaxis().set_major_locator(self.locator)
-        # setup y_limits with space buffer
-        self.grid(**self._grid)
+
+        self.grid(**grid)
+        self.margins(y=ymargin)
 
     def _add_rect_with_label(self, x0, x1, label, rect_kwargs, anno_kwargs):
         """Add a rectangle between x0 and x1 on ax representing event"""
@@ -125,25 +160,27 @@ class MultiLineAxes(CustomAxes):
     """Axes subclass for multiline plots such as 'p' or 'd'"""
 
     name = "multi_line_axes"
-    locator = MaxNLocator(nbins=5, steps=[1, 2, 3], integer=True, min_n_ticks=3)
 
     def make_plot(self, x_data, y_data, col_name, format_kwargs, plot_kwargs):
         """Main workflow function to format and plot data on Axes"""
         # Cast y_data to numpy array (should be 2d)
+        xmax = max(x_data)
         y_data = np.stack(y_data.values)
         if np.asarray(y_data).ndim != 2:
             raise ValueError("Symmetry pathway data is misshapen. Data must be 2d")
 
-        super()._format(col_name=col_name, locator=self.locator, **format_kwargs)
+        self._format(
+            col_name=col_name,
+            xmax=xmax,
+            locator=MaxNLocator(nbins=5, steps=[1, 2, 3], integer=True, min_n_ticks=3),
+            **format_kwargs,
+        )
         self.plot(x=x_data, y=y_data, **plot_kwargs)
 
     def plot(self, x, y, **kwargs):
-        # Loop through symmetry pathways and plot
         for i in range(len(y[0])):
             # ith column (ith symmetry pathway)
-            y_data = [0] + y
-
-            super().plot(x=x, y=y_data, labels=False, **kwargs)
+            super().plot(x=x, y=y[:, i], labels=False, **kwargs)
 
 
 class SequenceDiagram(CustomAxes):
@@ -151,10 +188,21 @@ class SequenceDiagram(CustomAxes):
 
     name = "sequence_axes"
 
+    # TODO: Fix formatting of spectral dimension labels
+    # TODO: Implement dynamic height based on mixing event labels
+
     def make_plot(self, df, x_data):
         """Main workflow function to plot sequence diagram"""
-        super()._format(col_name="", **dict(_grid={}, axis="off"))
-        self._plot_sequence_diagram(df=df, x_data=x_data)
+        xmax = max(x_data)
+        ylim = [0, 1]  # Adjust y limits of plot here
+
+        self._format(col_name="", xmax=xmax, grid={}, axis="off")
+        self._plot_sequence_diagram(df=df, x_data=x_data, ylim=ylim)
+
+    def _format(self, **kwargs):
+        # Turn of x and y axis and call super(),_format
+        self.axis("off")
+        super()._format(**kwargs)
 
     def _format_mix_label(self, tip_angle, phase):
         """Helper method to format label for mixing events. Returns (str, float)"""
@@ -163,7 +211,7 @@ class SequenceDiagram(CustomAxes):
             tip_angle / 360 * MIXING_WIDTH,
         )
 
-    def _plot_spec_dims(self, df, x_data, ev_groups):
+    def _plot_spec_dims(self, df, x_data, ylim, ev_groups):
         """Adds lines and labels denoting spectral dimensions"""
         plot_kwargs = dict(_format=False, labels=False)
         anno_kwargs = dict(
@@ -173,7 +221,6 @@ class SequenceDiagram(CustomAxes):
             va="center",
             fontsize=8,
         )
-        ylim = self.get_ylim()
 
         self.plot(x=[0, 0], y=ylim, color="black", **plot_kwargs)
 
@@ -183,7 +230,7 @@ class SequenceDiagram(CustomAxes):
         x_idx = 0
         for _type, num in ev_groups:
             for j in range(num):
-                if x_data[x_idx] == x_data[x_idx + 1]:
+                if x_idx < len(x_data) - 1 and x_data[x_idx] == x_data[x_idx + 1]:
                     x_idx += 1
                 if df["spec_dim_index"][df_idx + j] != spec_dim_idx:  # Next spec dim
                     x0 = x_data[x_idx]
@@ -208,7 +255,7 @@ class SequenceDiagram(CustomAxes):
             **anno_kwargs,
         )
 
-    def _plot_sequence_diagram(self, df, x_data):
+    def _plot_sequence_diagram(self, df, x_data, ylim):
         """Plots sequence diagram (order of events)"""
         ev_groups = [(_type, sum(1 for _ in gp)) for _type, gp in groupby(df["type"])]
 
@@ -219,7 +266,7 @@ class SequenceDiagram(CustomAxes):
             offset = sum(df["tip_angle"][gp__:]) / 180 * MIXING_WIDTH
             x_data[-2] -= offset
 
-        self._plot_spec_dims(df=df, x_data=x_data, ev_groups=ev_groups)
+        self._plot_spec_dims(df=df, x_data=x_data, ylim=ylim, ev_groups=ev_groups)
 
         df_idx = 0
         x_idx = 0
@@ -237,7 +284,11 @@ class SequenceDiagram(CustomAxes):
                         x0=x0,
                         x1=x0 + width,
                         label=label,
-                        rect_kwargs=dict(color=EVENT_COLORS["MixingEvent"], alpha=0.2),
+                        rect_kwargs=dict(
+                            color=EVENT_COLORS["MixingEvent"],
+                            alpha=0.2,
+                            height=ylim[1] - ylim[0],
+                        ),
                         anno_kwargs=dict(
                             color="black",
                             ha="center",
@@ -258,7 +309,9 @@ class SequenceDiagram(CustomAxes):
                         x1=x_data[x_idx + 1],
                         label=df["label"][df_idx + j],
                         rect_kwargs=dict(
-                            color=EVENT_COLORS[df["type"][df_idx]], alpha=0.2
+                            color=EVENT_COLORS[df["type"][df_idx]],
+                            alpha=0.2,
+                            height=ylim[1] - ylim[0],
                         ),
                         anno_kwargs=dict(
                             color="black",
@@ -404,15 +457,13 @@ def plot(df) -> plt.figure:
     proj.register_projection(SequenceDiagram)
 
     fig = plt.figure(figsize=[6.4, 4.8])  # Adjust figure size here
-    gs = fig.add_gridspec(nrows=len(params) + 3, ncols=1, hspace=0.15)
+    gs = fig.add_gridspec(nrows=len(params) + 3, ncols=1, hspace=0.25)
 
     # Sequence diagram Axes
-    print("sequence")
     seq_ax = fig.add_subplot(gs[0, 0], projection="sequence_axes")
     seq_ax.make_plot(df=df, x_data=x_offset)
 
     # p and d Axes
-    print("p")
     p_ax = fig.add_subplot(gs[1, 0], projection="multi_line_axes")
     p_ax.make_plot(
         x_data=x_offset,
@@ -421,7 +472,6 @@ def plot(df) -> plt.figure:
         format_kwargs={},
         plot_kwargs=dict(first_ev_mix=first_ev_mix),
     )
-    print("d")
     d_ax = fig.add_subplot(gs[2, 0], projection="multi_line_axes")
     d_ax.make_plot(
         x_data=x_offset,
