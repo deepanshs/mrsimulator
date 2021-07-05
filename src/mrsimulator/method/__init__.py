@@ -575,18 +575,13 @@ class Method(Parseable):
         ]
         self._add_simple_props_to_df(df, prop_dict, required, drop_constant_cols)
 
+        # Add p and d symmetry pathways to dataframe
         df["p"] = np.transpose(
             [sym.total for sym in self.get_symmetry_pathways("P")]
         ).tolist()
-
         df["d"] = np.transpose(
             [sym.total for sym in self.get_symmetry_pathways("D")]
         ).tolist()
-
-        # if "d" in prop_dict:
-        #     lst = np.transpose([sym.total for sym in self.get_symmetry_pathways("D")])
-        #     if not drop_constant_cols or np.unique(lst[~np.isnan(lst)]).size > 1:
-        #         df["d"] = lst.tolist()
 
         # Convert rotor_angle to degrees
         if "rotor_angle" in df.columns:
@@ -595,11 +590,10 @@ class Method(Parseable):
         # Convert rotor_frequency to kHz
         if "rotor_frequency" in df.columns:
             df["rotor_frequency"] = df["rotor_frequency"] / 1000
-        # NOTE: Should columns be reordered?
 
         return df
 
-    def plot(self, df=None) -> mpl.pyplot.figure:
+    def plot(self, df=None, size=2, include_key=False, hspace=0.2) -> mpl.pyplot.figure:
         """Creates a diagram representing the method. By default, only parameters which
         vary throughout the method are plotted.
 
@@ -607,7 +601,19 @@ class Method(Parseable):
             DataFrame df:
                 DataFrame to plot data from. By default DataFrame is calculated from
                 summary() and will show only parameters which vary throughout the
-                method plus 'p'
+                method plus 'p' & 'd' symmetry pathways
+
+            float size:
+                Optional number used in determining how large to scale the plot. Default
+                value is 2
+
+            bool include_key:
+                Optional argument to include a key for event colors. Default is False
+                and no key will be included
+
+            bool hspace:
+                Optional number to pass to (TODO add ref) matplotlib.figure.add_gridspec
+                which adjusts spacing between individual graphs
 
         Returns:
             matplotlib.pyplot.figure
@@ -620,7 +626,7 @@ class Method(Parseable):
         if df is None:
             df = self.summary()
 
-        fig = _plot(df)
+        fig = _plot(df, size, include_key, hspace)
         fig.suptitle(t=self.name if self.name is not None else "", y=0.93)
         # fig.tight_layout()
         return fig

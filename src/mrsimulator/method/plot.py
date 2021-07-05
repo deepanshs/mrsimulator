@@ -4,6 +4,7 @@ from itertools import groupby
 import matplotlib.projections as proj
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.patches import Patch
 from matplotlib.patches import Rectangle
 from matplotlib.ticker import MaxNLocator
 
@@ -16,7 +17,7 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 DURATION_WIDTH = 0.5  # Width of one ConstantDurationEvent
 SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
 MIXING_WIDTH = 0.25  # tip_angle of 360 degrees
-EVENT_COLORS = {
+COLORS = {
     "ConstantDurationEvent": "orange",
     "SpectralEvent": "g",
     "MixingEvent": "b",
@@ -104,7 +105,7 @@ class CustomAxes(plt.Axes):
                     x0=reigon[0],
                     x1=reigon[1],
                     label="inf speed",
-                    rect_kwargs=dict(color=EVENT_COLORS["inf_speed"]),
+                    rect_kwargs=dict(color=COLORS["inf_speed"]),
                 )
         # Locate places with undefined parameters
         reigons = self._locate_reigons_with_val(x=x, y=y)
@@ -113,7 +114,7 @@ class CustomAxes(plt.Axes):
                 x0=reigon[0],
                 x1=reigon[1],
                 label="undef",
-                rect_kwargs=dict(color=EVENT_COLORS["undef"]),
+                rect_kwargs=dict(color=COLORS["undef"]),
             )
 
     def _locate_reigons_with_val(self, x, y, val=np.nan):
@@ -355,7 +356,7 @@ class SequenceDiagram(CustomAxes):
                         x1=x0 + width,
                         label=label,
                         rect_kwargs=dict(
-                            color=EVENT_COLORS["MixingEvent"],
+                            color=COLORS["MixingEvent"],
                             alpha=0.2,
                             # height=ylim[1] - ylim[0],
                         ),
@@ -379,7 +380,7 @@ class SequenceDiagram(CustomAxes):
                         x1=x_data[x_idx + 1],
                         label=df["label"][df_idx + j],
                         rect_kwargs=dict(
-                            color=EVENT_COLORS[df["type"][df_idx]],
+                            color=COLORS[df["type"][df_idx]],
                             alpha=0.2,
                             # height=ylim[1] - ylim[0],
                         ),
@@ -508,7 +509,7 @@ def _make_normal_and_offset_x_data(df):
     return x_data, _offset_x_data(df, x_data)
 
 
-def plot(df) -> plt.figure:
+def plot(df, size, include_key, hspace) -> plt.figure:
     """Create figure of symmetry pathways for DataFrame representation of method"""
     # TODO: add kwargs [include_key, figsize, hspace] for user control
     # TODO: add scale size for plot scalability
@@ -522,8 +523,10 @@ def plot(df) -> plt.figure:
     proj.register_projection(MultiLineAxes)
     proj.register_projection(SequenceDiagram)
 
-    fig = plt.figure(figsize=[10, 7.5])  # Adjust figure size here
-    gs = fig.add_gridspec(nrows=len(params) + 3, ncols=1, hspace=0.25)
+    # Figure has an aspect ratio of 4:3
+    figsize = [4 * size, 3 * size]
+    fig = plt.figure(figsize=figsize)
+    gs = fig.add_gridspec(nrows=len(params) + 3, ncols=1, hspace=hspace)
 
     # Sequence diagram Axes
     seq_ax = fig.add_subplot(gs[0, 0], projection="sequence_axes")
@@ -556,6 +559,24 @@ def plot(df) -> plt.figure:
             col_name=param,
             format_kwargs={},
             plot_kwargs=dict(mix_ev=mix_ev),
+        )
+
+    # Add legend for event colors
+    if include_key:
+        fig.legend(
+            handles=[
+                Patch(facecolor=COLORS["MixingEvent"], alpha=0.2, label="MixingEvent"),
+                Patch(
+                    facecolor=COLORS["SpectralEvent"], alpha=0.2, label="SpectralEvent"
+                ),
+                Patch(
+                    facecolor=COLORS["ConstantDurationEvent"],
+                    alpha=0.2,
+                    label="ConstantDurationEvent",
+                ),
+            ],
+            loc="upper left",
+            fontsize="small",
         )
 
     return fig
