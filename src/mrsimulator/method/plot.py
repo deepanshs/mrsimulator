@@ -70,14 +70,13 @@ class CustomAxes(plt.Axes):
 
     def make_plot(self, x_data, y_data, col_name, format_kwargs, plot_kwargs):
         """Main workflow function to format and plot data on Axes"""
-        self.x_data = x_data
-        self.y_data = y_data
+        self.x_data = np.array(x_data, dtype=float)
+        self.y_data = np.array(y_data, dtype=float)
         self.col_name = col_name
+        self.xmax = max(x_data)
 
-        xmax = max(x_data)
-
-        self._format(xmax=xmax, **format_kwargs)
-        self.plot(x=x_data, y=y_data, **plot_kwargs)
+        self._format(xmax=self.xmax, **format_kwargs)
+        self.plot(x=self.x_data, y=self.y_data, **plot_kwargs)
 
     def plot(self, x, y, _format=True, labels=True, mix_ev=[], **kwargs):
         """Plot formatted data"""
@@ -120,7 +119,6 @@ class CustomAxes(plt.Axes):
     def _locate_reigons_with_val(self, x, y, val=np.nan):
         """Locates reigons and returns a list of tuples denoting range with value"""
         # Locate value in y
-        y = np.asarray(y)
         if val is np.nan:
             loc = np.isnan(y)
         else:
@@ -235,21 +233,20 @@ class MultiLineAxes(CustomAxes):
     def make_plot(self, x_data, y_data, col_name, format_kwargs, plot_kwargs):
         """Main workflow function to format and plot data on Axes"""
         self.x_data = x_data
-        self.y_data = y_data
-        self.col_name = col_name
+        self.y_data = np.stack(y_data.values)
 
-        xmax = max(x_data)
-        # Cast y_data to numpy array (should be 2d)
-        y_data = np.stack(y_data.values)
-        if np.asarray(y_data).ndim != 2:
+        if np.asarray(self.y_data).ndim != 2:
             raise ValueError("Symmetry pathway data is misshapen. Data must be 2d")
 
+        self.col_name = col_name
+        self.xmax = max(x_data)
+
         self._format(
-            xmax=xmax,
+            xmax=self.xmax,
             locator=MaxNLocator(nbins=5, steps=[1, 2, 3], integer=True, min_n_ticks=3),
             **format_kwargs,
         )
-        self.plot(x=x_data, y=y_data, **plot_kwargs)
+        self.plot(x=self.x_data, y=self.y_data, **plot_kwargs)
 
     def plot(self, x, y, **kwargs):
         for i in range(len(y[0])):
