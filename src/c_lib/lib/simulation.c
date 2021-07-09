@@ -163,11 +163,13 @@ void __mrsimulator_core(
 
   switch (n_dimension) {
   case 1:
-    one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec);
+    one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
+                              transition_pathway_weight);
     break;
   case 2:
     two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
-                              plan->number_of_sidebands, affine_matrix);
+                              transition_pathway_weight, plan->number_of_sidebands,
+                              affine_matrix);
     break;
   }
 }

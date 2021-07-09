@@ -98,6 +98,7 @@ def one_d_spectrum(method,
     max_n_sidebands = number_of_sidebands
 
     total_n_points = 1
+    cdef int n_ev
     cdef ndarray[int] n_event
     cdef ndarray[double] magnetic_flux_density_in_T, frac
     cdef ndarray[double] srfiH
@@ -118,31 +119,34 @@ def one_d_spectrum(method,
 
     prev_n_sidebands = 0
     for i, dim in enumerate(method.spectral_dimensions):
+        n_ev = 0
         for event in dim.events:
-            freq_contrib = np.append(freq_contrib, event._freq_contrib_flags())
-            if event.rotor_frequency < 1.0e-3:
-                rotor_frequency_in_Hz = 1.0e9
-                rotor_angle_in_rad = 0.0
-                number_of_sidebands = 1
-                if prev_n_sidebands == 0: prev_n_sidebands = 1
-            else:
-                rotor_frequency_in_Hz = event.rotor_frequency
-                rotor_angle_in_rad = event.rotor_angle
-                if prev_n_sidebands == 0: prev_n_sidebands = number_of_sidebands
+            if event.__class__.__name__ != "MixingEvent":
+                freq_contrib = np.append(freq_contrib, event._freq_contrib_flags())
+                if event.rotor_frequency < 1.0e-3:
+                    rotor_frequency_in_Hz = 1.0e9
+                    rotor_angle_in_rad = 0.0
+                    number_of_sidebands = 1
+                    if prev_n_sidebands == 0: prev_n_sidebands = 1
+                else:
+                    rotor_frequency_in_Hz = event.rotor_frequency
+                    rotor_angle_in_rad = event.rotor_angle
+                    if prev_n_sidebands == 0: prev_n_sidebands = number_of_sidebands
 
-            if prev_n_sidebands != number_of_sidebands:
-                raise ValueError(
-                    (
-                        'The library does not support spectral dimensions containing '
-                        'both zero and non-zero rotor frequencies. Consider using a '
-                        'smaller value instead of zero.'
+                if prev_n_sidebands != number_of_sidebands:
+                    raise ValueError(
+                        (
+                            'The library does not support spectral dimensions containing '
+                            'both zero and non-zero rotor frequencies. Consider using a '
+                            'smaller value instead of zero.'
+                        )
                     )
-                )
 
-            fr.append(event.fraction) # fraction
-            Bo.append(event.magnetic_flux_density)  # in T
-            vr.append(rotor_frequency_in_Hz) # in Hz
-            th.append(rotor_angle_in_rad) # in rad
+                fr.append(event.fraction) # fraction
+                Bo.append(event.magnetic_flux_density)  # in T
+                vr.append(rotor_frequency_in_Hz) # in Hz
+                th.append(rotor_angle_in_rad) # in rad
+                n_ev +=1
 
         total_n_points *= dim.count
 
@@ -150,7 +154,7 @@ def one_d_spectrum(method,
         offset = dim.spectral_width / 2.0
         coordinates_offset.append(-dim.reference_offset * factor - offset)
         increment.append(dim.spectral_width / dim.count)
-        event_i.append(len(dim.events))
+        event_i.append(n_ev)
 
         if dim.origin_offset is None:
             dim.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
@@ -163,6 +167,15 @@ def one_d_spectrum(method,
     incre = np.asarray(increment, dtype=np.float64)
     coord_off = np.asarray(coordinates_offset, dtype=np.float64)
     n_event = np.asarray(event_i, dtype=np.int32)
+
+    # print('n_events', n_event)
+    # print('frac', frac)
+    # print('magnetic_flux_density_in_T', magnetic_flux_density_in_T)
+    # print('srfiH', srfiH)
+    # print('rair', rair)
+    # print('cnt', cnt)
+    # print('incre', incre)
+    # print('coord_off', coord_off)
 
     # create spectral_dimensions
     dimensions = clib.MRS_create_dimensions(the_averaging_scheme, &cnt[0],
@@ -444,7 +457,7 @@ def one_d_spectrum(method,
                 segments, weights = method._get_transition_pathway_and_weights_np(spin_sys)
                 transition_pathway = np.asarray(segments)
                 transition_pathway_c = np.asarray(transition_pathway, dtype=np.float32).ravel()
-                transition_pathway_weight_c = np.asarray(weights, dtype=np.float64).ravel()
+                transition_pathway_weight_c = np.asarray(weights.real, dtype=np.float64).ravel()
             else:
                 # convert transition objects to list
                 weight = [item.weight.real for item in transition_pathway]
@@ -472,6 +485,9 @@ def one_d_spectrum(method,
         # transition_increment = 2*number_of_sites
         # number_of_transitions = int((transition_pathway_c.size)/transition_increment)
 
+        # print('pathway', transition_pathway_c)
+        # print('weight', transition_pathway_weight_c)
+        # print('pathway_count, inc', pathway_count, pathway_increment)
         for trans__ in range(pathway_count):
             clib.__mrsimulator_core(
                 # spectrum information and related amplitude
