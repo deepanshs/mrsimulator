@@ -22,6 +22,16 @@ __email__ = "srivastava.89@osu.edu"
 CHANNELS = ["ch1", "ch2", "ch3"]
 
 
+class Reciprocal(Parseable):
+    """Reciprocal dimension from CSDM object."""
+
+    coordinates_offset: float = 0.0
+
+    property_unit_types: ClassVar[Dict] = {"coordinates_offset": "time"}
+    property_default_units: ClassVar[Dict] = {"coordinates_offset": "s"}
+    property_units: Dict = {"coordinates_offset": "s"}
+
+
 class SpectralDimension(Parseable):
     r"""Base SpectralDimension class defines a spectroscopic dimension of the method.
 
@@ -60,6 +70,7 @@ class SpectralDimension(Parseable):
     spectral_width: float = Field(default=25000.0, gt=0)
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
+    reciprocal: Reciprocal = None
     events: List[Union[MixingEvent, ConstantDurationEvent, SpectralEvent]] = []
 
     property_unit_types: ClassVar[Dict] = {
@@ -140,6 +151,12 @@ class SpectralDimension(Parseable):
         increment = self.spectral_width / self.count
         label = "" if self.label is None else self.label
         description = "" if self.description is None else self.description
+
+        default_reciprocal = {"coordinates_offset": f"{-1/(2*increment)} s"}
+        reciprocal = (
+            default_reciprocal if self.reciprocal is None else self.reciprocal.json()
+        )
+
         dim = cp.Dimension(
             type="linear",
             count=self.count,
@@ -148,7 +165,7 @@ class SpectralDimension(Parseable):
             label=label,
             description=description,
             complex_fft=True,
-            reciprocal={"coordinates_offset": f"{-1/(2*increment)} s"},
+            reciprocal=reciprocal,
         )
         if self.origin_offset is not None:
             dim.origin_offset = f"{self.origin_offset} Hz"
