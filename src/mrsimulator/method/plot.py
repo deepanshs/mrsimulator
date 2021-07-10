@@ -12,8 +12,8 @@ __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
+# TODO: add globally defined alpha for rectangles
 # NOTE: Matplotlib should automatically generate new colors when none specified
-# NOTE: Cannot force only even ticks with MaxNLocator
 DURATION_WIDTH = 0.5  # Width of one ConstantDurationEvent
 SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
 MIXING_WIDTH = 0.25  # tip_angle of 360 degrees
@@ -34,7 +34,6 @@ DEFAULT_ANNO_KWARGS = dict(
     color="black",
     ha="center",
     va="center",
-    fontsize=8,
 )
 
 
@@ -152,9 +151,9 @@ class CustomAxes(plt.Axes):
 
         return x_data, y_data, y_data
 
-    def _calculate_range(self, data):
-        """Helper function to calculate range of given data"""
-        return (np.nanmin(data), np.nanmax(data))  # min, max ignoring nans
+    # def _calculate_range(self, data):
+    #     """Helper function to calculate range of given data"""
+    #     return (np.nanmin(data), np.nanmax(data))  # min, max ignoring nans
 
     def _format(
         self,
@@ -164,7 +163,7 @@ class CustomAxes(plt.Axes):
         ymargin=0.35,
         show_xaxis=False,
         show_yaxis=True,
-        **kwargs
+        **kwargs,
     ):
         """Format Axes helper function
 
@@ -222,7 +221,7 @@ class CustomAxes(plt.Axes):
         self.add_patch(rect)
         if label is not None:
             y_mid = (top - bottom) / 2
-            self.annotate(text=label, xy=((x1 + x0 + 0.025) / 2, y_mid), **anno_kwargs)
+            self.annotate(text=label, xy=((x1 + x0 + 0.02) / 2, y_mid), **anno_kwargs)
 
 
 class MultiLineAxes(CustomAxes):
@@ -279,12 +278,12 @@ class SequenceDiagram(CustomAxes):
 
         super()._format(**kwargs)
 
-    def _format_mix_label(self, tip_angle, phase):
+    def _format_mix_label(self, ta, p):
         """Helper method to format label for mixing events. Returns (str, float)"""
-        return (
-            "({0:.1f}, {1:.1f})".format(tip_angle, phase),
-            tip_angle / 360 * MIXING_WIDTH,
-        )
+        # Format to one decimal place if float, otherwise no decimal places
+        tip_angle = "{1:0.{0}f}".format(int(not float(ta).is_integer()), ta)
+        phase = "{1:0.{0}f}".format(int(not float(p).is_integer()), p)
+        return (f"({tip_angle}, {phase})", ta / 360 * MIXING_WIDTH)
 
     def _plot_spec_dims(self, df, x_data, ylim, ev_groups):
         """Adds lines and labels denoting spectral dimensions"""
@@ -345,8 +344,8 @@ class SequenceDiagram(CustomAxes):
                 # Iterate over each MixingEvent in group and plot rectangle
                 for j in range(num):
                     label, width = self._format_mix_label(
-                        tip_angle=df["tip_angle"][df_idx + j],
-                        phase=df["phase"][df_idx + j],
+                        ta=df["tip_angle"][df_idx + j],
+                        p=df["phase"][df_idx + j],
                     )
                     super()._add_rect_with_label(
                         x0=x0,
@@ -361,7 +360,6 @@ class SequenceDiagram(CustomAxes):
                             color="black",
                             ha="center",
                             va="center",
-                            fontsize=7,
                             rotation=90,
                         ),
                     )
@@ -506,10 +504,25 @@ def _make_normal_and_offset_x_data(df):
     return x_data, _offset_x_data(df, x_data)
 
 
-def plot(df, size, include_key, hspace) -> plt.figure:
-    """Create figure of symmetry pathways for DataFrame representation of method"""
-    # TODO: add kwargs [include_key, figsize, hspace] for user control
-    # TODO: add scale size for plot scalability
+def _add_legend(fig):
+    """Adds legend for event color and type"""
+    fig.legend(
+        handles=[
+            Patch(facecolor=COLORS["MixingEvent"], alpha=0.2, label="MixingEvent"),
+            Patch(facecolor=COLORS["SpectralEvent"], alpha=0.2, label="SpectralEvent"),
+            Patch(
+                facecolor=COLORS["ConstantDurationEvent"],
+                alpha=0.2,
+                label="ConstantDurationEvent",
+            ),
+        ],
+        loc="upper left",
+        fontsize="small",
+    )
+
+
+def plot(fig, df, include_legend) -> plt.figure:
+    """Plot symmetry pathways and other requested parameters on figure"""
     # TODO: (future) add functionality for multiple channels
     mix_ev = np.array(df["type"] == "MixingEvent")
     params = _format_df(df)
@@ -520,10 +533,7 @@ def plot(df, size, include_key, hspace) -> plt.figure:
     proj.register_projection(MultiLineAxes)
     proj.register_projection(SequenceDiagram)
 
-    # Figure has an aspect ratio of 4:3
-    figsize = [4 * size, 3 * size]
-    fig = plt.figure(figsize=figsize)
-    gs = fig.add_gridspec(nrows=len(params) + 3, ncols=1, hspace=hspace)
+    gs = fig.add_gridspec(nrows=len(params) + 3, ncols=1)  # nrows for multiple channels
 
     # Sequence diagram Axes
     seq_ax = fig.add_subplot(gs[0, 0], projection="sequence_axes")
@@ -559,21 +569,7 @@ def plot(df, size, include_key, hspace) -> plt.figure:
         )
 
     # Add legend for event colors
-    if include_key:
-        fig.legend(
-            handles=[
-                Patch(facecolor=COLORS["MixingEvent"], alpha=0.2, label="MixingEvent"),
-                Patch(
-                    facecolor=COLORS["SpectralEvent"], alpha=0.2, label="SpectralEvent"
-                ),
-                Patch(
-                    facecolor=COLORS["ConstantDurationEvent"],
-                    alpha=0.2,
-                    label="ConstantDurationEvent",
-                ),
-            ],
-            loc="upper left",
-            fontsize="small",
-        )
+    if include_legend:
+        _add_legend(fig)
 
     return fig

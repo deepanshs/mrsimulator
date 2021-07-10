@@ -593,9 +593,10 @@ class Method(Parseable):
 
         return df
 
-    def plot(self, df=None, size=2, include_key=False, hspace=0.2) -> mpl.pyplot.figure:
+    def plot(self, df=None, include_legend=False) -> mpl.pyplot.figure:
         """Creates a diagram representing the method. By default, only parameters which
-        vary throughout the method are plotted.
+        vary throughout the method are plotted. Figure can be finley adjusted using
+        matplotlib rcParams.
 
         Args:
             DataFrame df:
@@ -603,17 +604,9 @@ class Method(Parseable):
                 summary() and will show only parameters which vary throughout the
                 method plus 'p' & 'd' symmetry pathways
 
-            float size:
-                Optional number used in determining how large to scale the plot. Default
-                value is 2
-
-            bool include_key:
+            bool include_legend:
                 Optional argument to include a key for event colors. Default is False
-                and no key will be included
-
-            bool hspace:
-                Optional number to pass to (TODO add ref) matplotlib.figure.add_gridspec
-                which adjusts spacing between individual graphs
+                and no key will be included in figure
 
         Returns:
             matplotlib.pyplot.figure
@@ -621,13 +614,13 @@ class Method(Parseable):
         Example:
             TODO add example code
         """
-        # TODO: add kwargs [include_key, figsize, hspace] for user control
+        fig = mpl.pyplot.gcf()
 
         if df is None:
             df = self.summary()
 
-        fig = _plot(df, size, include_key, hspace)
-        fig.suptitle(t=self.name if self.name is not None else "", y=0.93)
+        _plot(fig=fig, df=df, include_legend=include_legend)
+        fig.suptitle(t=self.name if self.name is not None else "", y=0.97)
         # fig.tight_layout()
         return fig
 
