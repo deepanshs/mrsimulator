@@ -494,7 +494,7 @@ class Method(Parseable):
             df[prop] = lst
 
     def summary(self, drop_constant_cols=True) -> pd.DataFrame:
-        """Returns a DataFrame giving a summary of the Method. A user can specify
+        r"""Returns a DataFrame giving a summary of the Method. A user can specify
         optional attributes to include which appear as columns in the DataFrame. A user
         can also ask to leave out attributes which remain constant throughout the
         method. Invalid attributes for an Event will be replaced with NAN.
@@ -522,10 +522,63 @@ class Method(Parseable):
             - (FrequencyEnum) freq_contrib:
 
         Example:
-            TODO add example code
-            - All properties
-            - Specified properties
-            - drop constant and remove post method call
+            **User Defined Method2D Example**
+
+            >>> from mrsimulator.methods import Method2D
+            >>> method = Method2D(
+            ...     channels=['1H'],
+            ...     spectral_dimensions=[
+            ...         {
+            ...             "events": [
+            ...                 {
+            ...                     "fraction": 0.7,
+            ...                     "transition_query": [{"ch1": {"P": [1]}}]
+            ...                 },
+            ...                 {
+            ...                     "duration": 1.8,
+            ...                     "transition_query": [{"ch1": {"P": [0], "D": [0]}}]
+            ...                 }
+            ...             ],
+            ...         },
+            ...         {
+            ...             "events": [
+            ...                 {
+            ...                     "fraction": 0.3,
+            ...                     "transition_query": [{"ch1": {"P": [-1]}}]
+            ...                 },
+            ...             ],
+            ...         }
+            ...     ]
+            ... )
+            >>> df = method.summary()
+            >>> # Columns are reduced to fit within 80 lines
+            >>> drop = ["freq_contrib", "spec_dim_label", "label", "mixing_query"]
+            >>> df.drop(drop, axis=1, inplace=True)
+            >>> pprint(df)
+                                type  spec_dim_index  duration  fraction       p      d
+            0          SpectralEvent               0       NaN       0.7   [1.0]  [nan]
+            1  ConstantDurationEvent               0       1.8       NaN   [0.0]  [0.0]
+            2          SpectralEvent               1       NaN       0.3  [-1.0]  [nan]
+
+            **All Possible Columns**
+
+            >>> from mrsimulator.methods import ThreeQ_VAS
+            >>> method = ThreeQ_VAS(channels=["17O"])
+            >>> df = method.summary(drop_constant_cols=False)
+            >>> pprint(list(df.columns))
+            ['type',
+             'spec_dim_index',
+             'spec_dim_label',
+             'label',
+             'duration',
+             'fraction',
+             'mixing_query',
+             'magnetic_flux_density',
+             'rotor_frequency',
+             'rotor_angle',
+             'freq_contrib',
+             'p',
+             'd']
         """
         # TODO: Add catch for empty 'spectral_dimensions' and 'events'
         CD = "ConstantDurationEvent"
