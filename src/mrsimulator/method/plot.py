@@ -59,6 +59,9 @@ class CustomAxes(plt.Axes):
     xmax:
         Maximum x value in x_data. Used to set xlim to (0, xmax)
 
+    mix_ev:
+        True where event is MixingEvent, false otherwise
+
     """
 
     name = "custom_axes"
@@ -66,25 +69,29 @@ class CustomAxes(plt.Axes):
     y_data = None
     col_name = None
     xmax = None
+    mix_ev = None
 
-    def make_plot(self, x_data, y_data, col_name, format_kwargs, plot_kwargs):
+    def make_plot(self, x_data, y_data, col_name, mix_ev, format_kwargs, plot_kwargs):
         """Main workflow function to format and plot data on Axes"""
         self.x_data = np.array(x_data, dtype=float)
         self.y_data = np.array(y_data, dtype=float)
         self.col_name = col_name
         self.xmax = max(x_data)
+        self.mix_ev = mix_ev
 
         self._format(xmax=self.xmax, **format_kwargs)
         self.plot(x=self.x_data, y=self.y_data, **plot_kwargs)
 
-    def plot(self, x, y, _format=True, labels=True, mix_ev=[], **kwargs):
+    def plot(self, x, y, _format=True, labels=True, **kwargs):
         """Plot formatted data"""
         if _format:
             # matplotlib automatically blanks out nan values. y may contain nans
             # mask only differs from y when plotting "rotor_frequnecy"
-            x, y, y_mask = self._format_x_and_y_data(x=x, y=y, mix_ev=mix_ev)
+            x, y, y_mask = self._format_x_and_y_data(x=x, y=y)
         else:
             y_mask = y
+
+        print("y_mask", y_mask)
 
         # 'x' and 'y' cannot be passed as keyword args to plt.Axes.plot()
         super().plot(x, y_mask, **kwargs)
@@ -129,11 +136,11 @@ class CustomAxes(plt.Axes):
         # Create tuples of left and right x points
         return [(x[i], x[i + 1]) for i in left_x]
 
-    def _format_x_and_y_data(self, x, y, mix_ev):
+    def _format_x_and_y_data(self, x, y):
         """Removes invalid event data (nans from MixingEvents) while keeping valid but
         undefined event data in y. Extends y double to accheive stair-step pattern
         """
-        y_data = y[~mix_ev]  # Keep data from events that are not MixingEvents
+        y_data = y[~self.mix_ev]  # Keep data from events that are not MixingEvents
         x_data = x
         y_data = np.asarray([n for num in y_data for n in (num, num)])  # Extend double
 
@@ -144,16 +151,12 @@ class CustomAxes(plt.Axes):
 
         # Insert zero or remove first x point for p and d
         if self.col_name in ["p", "d"]:
-            if mix_ev[0]:
+            if self.mix_ev[0]:
                 y_data = np.insert(y_data, 0, 0)
             else:
                 x_data = x[1:]
 
         return x_data, y_data, y_data
-
-    # def _calculate_range(self, data):
-    #     """Helper function to calculate range of given data"""
-    #     return (np.nanmin(data), np.nanmax(data))  # min, max ignoring nans
 
     def _format(
         self,
@@ -221,7 +224,7 @@ class CustomAxes(plt.Axes):
         self.add_patch(rect)
         if label is not None:
             y_mid = (top - bottom) / 2
-            self.annotate(text=label, xy=((x1 + x0 + 0.02) / 2, y_mid), **anno_kwargs)
+            self.annotate(text=label, xy=((x1 + x0) / 2, y_mid), **anno_kwargs)
 
 
 class MultiLineAxes(CustomAxes):
@@ -229,16 +232,18 @@ class MultiLineAxes(CustomAxes):
 
     name = "multi_line_axes"
 
-    def make_plot(self, x_data, y_data, col_name, format_kwargs, plot_kwargs):
+    def make_plot(self, x_data, y_data, col_name, mix_ev, format_kwargs, plot_kwargs):
         """Main workflow function to format and plot data on Axes"""
         self.x_data = x_data
-        self.y_data = np.stack(y_data.values)
+        self.y_data = np.stack(y_data.values).transpose()
+        print("y_data", self.y_data)
 
         if np.asarray(self.y_data).ndim != 2:
             raise ValueError("Symmetry pathway data is misshapen. Data must be 2d")
 
         self.col_name = col_name
         self.xmax = max(x_data)
+        self.mix_ev = mix_ev
 
         self._format(
             xmax=self.xmax,
@@ -247,19 +252,49 @@ class MultiLineAxes(CustomAxes):
         )
         self.plot(x=self.x_data, y=self.y_data, **plot_kwargs)
 
-    def plot(self, x, y, **kwargs):
-        for i in range(len(y[0])):
-            # ith column (ith symmetry pathway)
-            super().plot(x=x, y=y[:, i], labels=False, **kwargs)
+    def plot(self, x, y, do_offset=True, **kwargs):
+        if do_offset:
+            y = self._offset_overlaps(y)
+
+        for row in y:
+            super().plot(x=x, y=row, labels=False, **kwargs)
+
+    def _offset_overlaps(self, y, offset=0.05):
+        """Offsets y at overlapping values"""
+        # Check for only one symmetry pathway present
+        if y.shape[0] == 1:
+            return y
+
+        data = y.transpose()  # Each row represents all symmetry pathways for an event
+
+        # Loop over rows and find where pathways overlap
+        for row in data:
+            unique = np.unique(row)
+
+            # No symmetry pathway overlap
+            if unique.size == row.size:
+                continue
+
+            # Find indicies of overlap for each number and add offsets
+            for num in unique:
+                where = np.where(row == num)[0]
+                np.add.at(
+                    row,
+                    where,
+                    np.linspace(
+                        -where.size * offset / 2,
+                        where.size * offset / 2,
+                        num=where.size,
+                    ),
+                )
+
+        return data.transpose()
 
 
 class SequenceDiagram(CustomAxes):
     """Axes subclass holding the sequence diagram of events"""
 
     name = "sequence_axes"
-
-    # TODO: Fix formatting of spectral dimension labels
-    # TODO: Implement dynamic height based on mixing event labels
 
     def make_plot(self, df, x_data):
         """Main workflow function to plot sequence diagram"""
@@ -545,16 +580,18 @@ def plot(fig, df, include_legend) -> plt.figure:
         x_data=x_offset,
         y_data=df["p"],
         col_name="p",
+        mix_ev=mix_ev,
         format_kwargs={},
-        plot_kwargs=dict(mix_ev=mix_ev),
+        plot_kwargs={"alpha": 0.7},
     )
     d_ax = fig.add_subplot(gs[2, 0], projection="multi_line_axes")
     d_ax.make_plot(
         x_data=x_offset,
         y_data=df["d"],
         col_name="d",
+        mix_ev=mix_ev,
         format_kwargs={},
-        plot_kwargs=dict(mix_ev=mix_ev),
+        plot_kwargs={"alpha": 0.7},
     )
 
     # params Axes
@@ -564,8 +601,9 @@ def plot(fig, df, include_legend) -> plt.figure:
             x_data=x_data,
             y_data=df[param],
             col_name=param,
+            mix_ev=mix_ev,
             format_kwargs={},
-            plot_kwargs=dict(mix_ev=mix_ev),
+            plot_kwargs={},
         )
 
     # Add legend for event colors
