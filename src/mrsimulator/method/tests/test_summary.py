@@ -20,11 +20,14 @@ REQUIRED = [
     "fraction",
     "mixing_query",
     "spec_dim_index",
+    "spec_dim_label",
     "p",
+    "d",
 ]
 ALL_PARAMS = [
     "type",
     "spec_dim_index",
+    "spec_dim_label",
     "label",
     "duration",
     "fraction",
@@ -128,22 +131,6 @@ def args_summary_tests(the_method):
     assert df.shape[1] == len(ALL_PARAMS)
     assert set(df.columns) == set(ALL_PARAMS)
 
-    # # Pass properties=[some-list] and drop_constant_cols=False
-    # props = []
-    # df = the_method.summary(properties=props)
-
-    # assert df.shape[0] == 6
-    # assert df.shape[1] == len(REQUIRED)  # number of columns always present
-    # assert set(df.columns) == set(REQUIRED)
-
-    # props = ["rotor_angle", "p", "freq_contrib"]
-    # df = the_method.summary(properties=props)
-    # props_should_be = ["rotor_angle", "p", "freq_contrib"]
-
-    # assert df.shape[0] == 6
-    # assert df.shape[1] == len(REQUIRED + props_should_be)
-    # assert set(df.columns) == set(REQUIRED + props_should_be)
-
     # Pass drop_constant_cols=True (default)
     df = the_method.summary(drop_constant_cols=True)
     props_should_be = ["rotor_frequency", "freq_contrib"]
@@ -151,29 +138,6 @@ def args_summary_tests(the_method):
     assert df.shape[0] == 6
     assert df.shape[1] == len(REQUIRED + props_should_be)
     assert set(df.columns) == set(REQUIRED + props_should_be)
-
-    # # Pass properties=[some-list] and drop_constant_cols=True
-    # props = []
-    # df = the_method.summary(properties=props, drop_constant_cols=True)
-
-    # assert df.shape[0] == 6
-    # assert df.shape[1] == len(REQUIRED)
-    # assert set(df.columns) == set(REQUIRED)
-
-    # props = ["magnetic_flux_density", "rotor_angle"]  # are constant
-    # df = the_method.summary(properties=props, drop_constant_cols=True)
-
-    # assert df.shape[0] == 6
-    # assert df.shape[1] == len(REQUIRED)
-    # assert set(df.columns) == set(REQUIRED)
-
-    # props = ["magnetic_flux_density", "rotor_frequency", "p", "rotor_angle"]
-    # df = the_method.summary(properties=props, drop_constant_cols=True)
-    # props_should_be = ["p", "rotor_frequency"]
-
-    # assert df.shape[0] == 6
-    # assert df.shape[1] == len(props_should_be + REQUIRED)
-    # assert set(df.columns) == set(props_should_be + REQUIRED)
 
     # Make sure columns always present are not dropped even if constant
     event_ = [{"label": "all labels the same", "fraction": 0.2}]
@@ -199,7 +163,6 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix0",
-                    # TODO: add mixing query with real value
                     "mixing_query": {
                         "ch1": {"tip_angle": np.pi / 4, "phase": np.pi / 2}
                     },
@@ -208,20 +171,16 @@ def test_summary():
                     "label": "Dur0",
                     "duration": 1,
                     "magnetic_flux_density": 1,
-                    "rotor_frequency": 10,
+                    "rotor_frequency": 10000,  # in kHz
                     "rotor_angle": 0.1,
-                    # TODO: add freq_contrib
-                    # "freq_contrib": {},
                     "transition_query": [{"ch1": {"P": [0], "D": [0]}}],
                 },
                 {
                     "label": "Spec0",
                     "fraction": 0.3,
                     "magnetic_flux_density": 2,
-                    "rotor_frequency": 20,
+                    "rotor_frequency": 20000,
                     "rotor_angle": 0.2,
-                    # TODO: add freq_contrib
-                    # "freq_contrib": {},
                     "transition_query": [{"ch1": {"P": [1], "D": [-2]}}],
                 },
             ]
@@ -236,20 +195,16 @@ def test_summary():
                     "label": "Dur1",
                     "duration": 2,
                     "magnetic_flux_density": 3,
-                    "rotor_frequency": 30,
+                    "rotor_frequency": 30000,
                     "rotor_angle": 0.3,
-                    # TODO: add freq_contrib
-                    # "freq_contrib": {},
                     "transition_query": [{"ch1": {"P": [3], "D": [-4]}}],
                 },
                 {
                     "label": "Spec1",
                     "fraction": 0.7,
                     "magnetic_flux_density": 4,
-                    "rotor_frequency": 40,
+                    "rotor_frequency": 40000,
                     "rotor_angle": 0.4,
-                    # TODO: add freq_contrib
-                    # "freq_contrib": {},
                     "transition_query": [{"ch1": {"P": [4], "D": [-6]}}],
                 },
             ]
@@ -266,19 +221,15 @@ def test_summary():
                 {
                     "label": "Dur0",
                     "duration": 1,
-                    "rotor_frequency": 10,
+                    "rotor_frequency": 10000,
                     "rotor_angle": 0.5,
-                    # TODO: add freq_contrib
-                    # "freq_contrib": {},
                     "transition_query": [{"ch1": {"P": [0], "D": [0]}}],
                 },
                 {
                     "label": "Spec0",
                     "fraction": 0.3,
-                    "rotor_frequency": 20,
+                    "rotor_frequency": 20000,
                     "rotor_angle": 0.5,
-                    # TODO: add freq_contrib
-                    # "freq_contrib": {},
                     "transition_query": [{"ch1": {"P": [1], "D": [0]}}],
                 },
             ]
@@ -292,19 +243,15 @@ def test_summary():
                 {
                     "label": "Dur1",
                     "duration": 2,
-                    "rotor_frequency": 30,
+                    "rotor_frequency": 30000,
                     "rotor_angle": 0.5,
-                    # TODO: add freq_contrib
-                    # "freq_contrib": {},
                     "transition_query": [{"ch1": {"P": [3], "D": [0]}}],
                 },
                 {
                     "label": "Spec1",
                     "fraction": 0.7,
-                    "rotor_frequency": 40,
+                    "rotor_frequency": 40000,
                     "rotor_angle": 0.5,
-                    # TODO: add freq_contrib
-                    # "freq_contrib": {},
                     "transition_query": [{"ch1": {"P": [4], "D": [0]}}],
                 },
             ]
