@@ -91,8 +91,6 @@ class CustomAxes(plt.Axes):
         else:
             y_mask = y
 
-        print("y_mask", y_mask)
-
         # 'x' and 'y' cannot be passed as keyword args to plt.Axes.plot()
         super().plot(x, y_mask, **kwargs)
 
@@ -236,7 +234,6 @@ class MultiLineAxes(CustomAxes):
         """Main workflow function to format and plot data on Axes"""
         self.x_data = x_data
         self.y_data = np.stack(y_data.values).transpose()
-        print("y_data", self.y_data)
 
         if np.asarray(self.y_data).ndim != 2:
             raise ValueError("Symmetry pathway data is misshapen. Data must be 2d")

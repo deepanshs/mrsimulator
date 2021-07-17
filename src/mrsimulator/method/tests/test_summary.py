@@ -63,7 +63,7 @@ def basic_summary_tests(the_method):
         # Returns True if all items are equal, False otherwise
         return np.all(check)
 
-    df = the_method.summary(drop_constant_cols=False)
+    df = the_method.summary(drop_constant_columns=False)
 
     # Check correct return type
     assert isinstance(df, pd.DataFrame)
@@ -124,15 +124,15 @@ def basic_summary_tests(the_method):
 
 
 def args_summary_tests(the_method):
-    # Pass drop_constant_cols=False
-    df = the_method.summary(drop_constant_cols=False)
+    # Pass drop_constant_columns=False
+    df = the_method.summary(drop_constant_columns=False)
 
     assert df.shape[0] == 6
     assert df.shape[1] == len(ALL_PARAMS)
     assert set(df.columns) == set(ALL_PARAMS)
 
-    # Pass drop_constant_cols=True (default)
-    df = the_method.summary(drop_constant_cols=True)
+    # Pass drop_constant_columns=True (default)
+    df = the_method.summary(drop_constant_columns=True)
     props_should_be = ["rotor_frequency", "freq_contrib"]
 
     assert df.shape[0] == 6
@@ -149,7 +149,7 @@ def args_summary_tests(the_method):
         spectral_dimensions=all_SpectralEvents_spec_dims,
     )
 
-    df = the_method.summary(drop_constant_cols=True)
+    df = the_method.summary(drop_constant_columns=True)
 
     assert df.shape[0] == 5
     assert df.shape[1] == len(REQUIRED + ["freq_contrib"])

@@ -477,7 +477,7 @@ class Method(Parseable):
             for item in segments
         ]
 
-    def _add_simple_props_to_df(self, df, prop_dict, required, drop_constant_cols):
+    def _add_simple_props_to_df(self, df, prop_dict, required, drop_constant_columns):
         """Helper method for summary to reduce complexity"""
         # Iterate through property and valid Event subclass for property
         for prop, valid in prop_dict.items():
@@ -486,21 +486,21 @@ class Method(Parseable):
                 for dim in self.spectral_dimensions
                 for ev in dim.events
             ]
-            if prop not in required and drop_constant_cols:
+            if prop not in required and drop_constant_columns:
                 # NOTE: np.isnan() cannot be passed an object (freq_contrib)
                 lst_copy = np.asarray(lst)[~np.isnan(np.asarray(lst))]
                 if np.unique(lst_copy).size < 2:
                     continue
             df[prop] = lst
 
-    def summary(self, drop_constant_cols=True) -> pd.DataFrame:
+    def summary(self, drop_constant_columns=True) -> pd.DataFrame:
         r"""Returns a DataFrame giving a summary of the Method. A user can specify
         optional attributes to include which appear as columns in the DataFrame. A user
         can also ask to leave out attributes which remain constant throughout the
         method. Invalid attributes for an Event will be replaced with NAN.
 
         Args:
-            (bool) drop_constant_cols:
+            (bool) drop_constant_columns:
                 Removes constant properties if True. Default is True.
 
         Returns:
@@ -564,7 +564,7 @@ class Method(Parseable):
 
             >>> from mrsimulator.methods import ThreeQ_VAS
             >>> method = ThreeQ_VAS(channels=["17O"])
-            >>> df = method.summary(drop_constant_cols=False)
+            >>> df = method.summary(drop_constant_columns=False)
             >>> pprint(list(df.columns))
             ['type',
              'spec_dim_index',
@@ -626,7 +626,7 @@ class Method(Parseable):
         df["spec_dim_label"] = [
             dim.label for dim in self.spectral_dimensions for ev in dim.events
         ]
-        self._add_simple_props_to_df(df, prop_dict, required, drop_constant_cols)
+        self._add_simple_props_to_df(df, prop_dict, required, drop_constant_columns)
 
         # Add p and d symmetry pathways to dataframe
         df["p"] = np.transpose(
@@ -665,7 +665,25 @@ class Method(Parseable):
             matplotlib.pyplot.figure
 
         Example:
-            TODO add example code
+            >>> from mrsimulator.methods import BlochDecaySpectrum
+            >>> method = BlochDecaySpectrum(channels=["13C"])
+            >>> fig = method.plot()
+
+            **Adjusting Figure Size rcParams**
+
+            >>> import matplotlib as mpl
+            >>> from mrsimulator.methods import FiveQ_VAS
+            >>> mpl.rcParams["figure.figsize"] = [14, 10]
+            >>> mpl.rcParams["font.size"] = 14
+            >>> method = FiveQ_VAS(channels=["27Al"])
+            >>> fig = method.plot(include_legend=True)
+
+            **Plotting all Parameters, including Constant**
+
+            >>> from mrsimulator.methods import FiveQ_VAS
+            >>> method = FiveQ_VAS(channels=["27Al"])
+            >>> df = method.summary(drop_constant_columns=False)
+            >>> fig = method.plot(df=df)
         """
         fig = mpl.pyplot.gcf()
 
