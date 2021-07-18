@@ -580,7 +580,20 @@ class Method(Parseable):
              'p',
              'd']
         """
-        # TODO: Add catch for empty 'spectral_dimensions' and 'events'
+        # Make sure spectral_dimensions has at least one SpectralDimension
+        if len(self.spectral_dimensions) == 0:
+            raise AttributeError(
+                "Method has empty spectral_dimensions. At least one SpectralDimension "
+                "is needed with at least one Event."
+            )
+
+        # Make sure there is at least one event within spectral_dimensions
+        if sum([len(spec_dim.events) for spec_dim in self.spectral_dimensions]) == 0:
+            raise AttributeError(
+                "Method has no Events. At least one SpectralDimension "
+                "is needed with at least one Event."
+            )
+
         CD = "ConstantDurationEvent"
         SP = "SpectralEvent"
         MX = "MixingEvent"

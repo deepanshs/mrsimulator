@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
+import pytest
 from matplotlib.pyplot import Figure
 from mrsimulator.method import Method
-
-# import pytest
+from mrsimulator.method import SpectralDimension
 
 __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
@@ -39,6 +39,26 @@ ALL_PARAMS = [
     "p",
     "d",
 ]
+
+
+def test_empty_spec_dims():
+    # Empty list
+    empty_method = Method(channels=["1H"], spectral_dimensions=[])
+    error = (
+        r".*Method has empty spectral_dimensions. At least one SpectralDimension "
+        r"is needed with at least one Event..*"
+    )
+    with pytest.raises(AttributeError, match=error):
+        empty_method.summary()
+
+    # No events
+    empty_method.spectral_dimensions = [SpectralDimension(events=[])]
+    error = (
+        r".*Method has no Events. At least one SpectralDimension "
+        r"is needed with at least one Event..*"
+    )
+    with pytest.raises(AttributeError, match=error):
+        empty_method.summary()
 
 
 def basic_summary_tests(the_method):
