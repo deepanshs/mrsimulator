@@ -437,6 +437,7 @@ def _check_columns(df):
     if not (set(required)).issubset(set(df.columns)):
         raise ValueError("Some required columns were not present in the DataFrame.")
 
+    # Remove 'freq_contrib' since it cannot be plotted
     if "freq_contrib" in df.columns:
         required += ["freq_contrib"]
 
