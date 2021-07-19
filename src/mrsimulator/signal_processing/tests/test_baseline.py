@@ -2,8 +2,9 @@
 import csdmpy as cp
 import numpy as np
 from mrsimulator import signal_processing as sp
-from test_signal_processing import generate_data
-from test_signal_processing import setup_read_write
+
+from .test_signal_processing import generate_data
+from .test_signal_processing import setup_read_write
 
 
 def test_baseline_constant_offset():

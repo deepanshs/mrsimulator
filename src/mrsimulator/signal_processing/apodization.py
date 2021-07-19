@@ -7,7 +7,7 @@ from typing import Union
 
 import numpy as np
 from pydantic import validator
-from scipy.special import erfi
+from scipy.special import erf
 
 from ._base import ModuleOperation
 from .utils import _get_broadcast_shape
@@ -171,6 +171,8 @@ class SkewedGaussian(Apodization):
     .. math::
         skew = \alpha/\sqrt(1+\alpha**2)
 
+    See https://en.wikipedia.org/wiki/Skew_normal_distribution
+
     Arguments
     ---------
 
@@ -203,9 +205,11 @@ class SkewedGaussian(Apodization):
 
     def fn(self, x):
         x = self.get_coordinates_in_units(x, unit=1.0 * "s")
-        prob_density_funct = np.exp(-2.0 * (np.pi * x) ** 2)
-        cumulative_prob_funct = 1 + erfi(self.skew * x / np.sqrt(2))
-        return 1.0 if self.skew == 0.0 else prob_density_funct * cumulative_prob_funct
+        prob_density_funct = np.exp(-(0.5) * (1 * x) ** 2)
+        cumulative_prob_funct = 0.5 * (1 + erf(self.skew * x / np.sqrt(2)))
+        return (
+            1.0 if self.skew == 0.0 else 2 * prob_density_funct * cumulative_prob_funct
+        )
 
 
 class Step(Apodization):
