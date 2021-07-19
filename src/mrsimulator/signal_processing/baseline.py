@@ -163,7 +163,7 @@ class Polynomial(Baseline):
             data: CSDM object
         """
         x = data.dimensions[self.dim_index].coordinates
-        d1 = x.value  # self.get_coordinates_in_units(x, unit=1.0 * 's')
+        d1 = x.value
         fn = np.zeros(len(x))
         for key, val in self.polynomial_dictionary.items():
             exponent = key.split("x")[-1]

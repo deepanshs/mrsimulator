@@ -6,7 +6,8 @@ from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
-from test_signal_processing import setup_read_write
+
+from .test_signal_processing import setup_read_write
 
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
@@ -136,11 +137,11 @@ def test_Step():
 
 
 def test_Mask():
-    one_mask = np.ones(shape=len(freqHz.values))
+    one_mask = np.ones(shape=len(freqHz))
 
     PS_5 = [
         sp.IFFT(dim_index=0),
-        sp.apodization.Gaussian(mask=one_mask, dim_index=0, dv_index=[0, 1]),
+        sp.apodization.Mask(mask=one_mask, dim_index=0, dv_index=[0, 1]),
         sp.FFT(dim_index=0),
     ]
 
@@ -148,7 +149,7 @@ def test_Mask():
     data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
     _, y0, y1, _ = data.to_list()
 
-    _, test_y0, test_y1, _ = sim.to_list()
+    _, test_y0, test_y1, _ = sim.methods[0].simulation.to_list()
 
     assert np.allclose(y0, y1), "Mask on two dv are not equal."
 
