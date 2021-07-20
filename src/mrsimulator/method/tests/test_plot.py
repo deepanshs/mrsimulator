@@ -19,7 +19,7 @@ def test_check_columns():
 
     # Test required columns present in DataFrame
     bad_df1 = df1.drop("fraction", axis=1)
-    bad_df2 = df2.drop(["p", "d"], axis=1)
+    bad_df2 = df2.drop(["p"], axis=1)
     error = r".*Some required columns were not present in the DataFrame.*"
     with pytest.raises(ValueError, match=error):
         _check_columns(bad_df1)
@@ -27,11 +27,12 @@ def test_check_columns():
         _check_columns(bad_df2)
 
     # Test correct columns dropped from DataFrame
-    assert _check_columns(df1) == []
+    assert _check_columns(df1) == ["d"]
     assert _check_columns(df2) == [
         "magnetic_flux_density",
         "rotor_frequency",
         "rotor_angle",
+        "d",
     ]
 
 
@@ -104,6 +105,9 @@ def test_format_df():
     df2 = method2_df()
     params1 = _format_df(df1)
     params2 = _format_df(df2)
+
+    # 'd' should not be in params1 since 'd' is never defined
+    assert "d" not in params1
 
     # Check 'tip_angle' and 'phase' are columns now in DataFrame
     assert "tip_angle" in df1.columns
@@ -262,10 +266,10 @@ def method2_df():
                 "label": "Mixing, Spectral, Mixing, Mixing, ConstantDuration ",
                 "events": [
                     {"mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": 0.3}}},
-                    {"fraction": 1},
+                    {"fraction": 1, "transition_query": [{"P": [1], "D": [0]}]},
                     {"mixing_query": {"ch1": {"tip_angle": np.pi, "phase": 0.15}}},
                     {"mixing_query": {"ch1": {"tip_angle": 3 * np.pi / 2, "phase": 0}}},
-                    {"duration": 1.5},
+                    {"duration": 1.5, "transition_query": [{"P": [-1], "D": [2]}]},
                 ],
             },
             {

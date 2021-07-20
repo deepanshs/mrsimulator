@@ -227,6 +227,9 @@ class CustomAxes(plt.Axes):
 
 class MultiLineAxes(CustomAxes):
     """Axes subclass for multiline plots such as 'p' or 'd'"""
+    # TODO: Force integer
+    # TODO: check label on reigons
+    # TODO: Add checks for gaps in coverage
 
     name = "multi_line_axes"
 
@@ -430,7 +433,6 @@ def _check_columns(df):
         "fraction",
         "mixing_query",
         "p",
-        "d",
     ]
 
     # Required columns are not present in df
@@ -467,6 +469,11 @@ def _add_tip_angle_and_phase(df):
 def _format_df(df):
     """Formats dataframe and returns params to plot"""
     params = _check_columns(df)
+
+    # Check if d symmetry pathway is all nan, removing if true
+    if np.all(np.isnan(df["d"].tolist())):
+        params.remove("d")
+
     _add_tip_angle_and_phase(df)
     return params
 
@@ -582,15 +589,17 @@ def plot(fig, df, include_legend) -> plt.figure:
         format_kwargs={},
         plot_kwargs={"alpha": 0.7},
     )
-    d_ax = fig.add_subplot(gs[2, 0], projection="multi_line_axes")
-    d_ax.make_plot(
-        x_data=x_offset,
-        y_data=df["d"],
-        col_name="d",
-        mix_ev=mix_ev,
-        format_kwargs={},
-        plot_kwargs={"alpha": 0.7},
-    )
+    if "d" in params:
+        params.remove("d")
+        d_ax = fig.add_subplot(gs[2, 0], projection="multi_line_axes")
+        d_ax.make_plot(
+            x_data=x_offset,
+            y_data=df["d"],
+            col_name="d",
+            mix_ev=mix_ev,
+            format_kwargs={},
+            plot_kwargs={"alpha": 0.7},
+        )
 
     # params Axes
     for i, param in enumerate(params, 3):

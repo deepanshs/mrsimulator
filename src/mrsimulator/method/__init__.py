@@ -668,7 +668,8 @@ class Method(Parseable):
             DataFrame df:
                 DataFrame to plot data from. By default DataFrame is calculated from
                 summary() and will show only parameters which vary throughout the
-                method plus 'p' & 'd' symmetry pathways
+                method plus 'p' symmetry pathway and 'd' symmetry pathway if it is not
+                none or defined
 
             bool include_legend:
                 Optional argument to include a key for event colors. Default is False
