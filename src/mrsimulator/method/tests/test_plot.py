@@ -312,6 +312,9 @@ def test_CustomAxes():
     with pytest.raises(ValueError, match=error):
         axes_obj._add_rect_with_label(0, 1, "", {"height": 1})
 
+    # _add_blank_space_labels
+    axes_obj._add_blank_space_labels([0, 1, 2, 3], [1, 1, np.nan, 1])
+
 
 def method1_df():
     method1 = Method(
