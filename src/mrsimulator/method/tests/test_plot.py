@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+import matplotlib.projections as proj
 import numpy as np
+import pandas as pd
 import pytest
+from matplotlib import pyplot as plt
 from mrsimulator.method import Method
 from mrsimulator.method.plot import _add_tip_angle_and_phase
 from mrsimulator.method.plot import _check_columns
@@ -8,6 +11,10 @@ from mrsimulator.method.plot import _format_df
 from mrsimulator.method.plot import _make_normal_and_offset_x_data
 from mrsimulator.method.plot import _make_x_data
 from mrsimulator.method.plot import _offset_x_data
+from mrsimulator.method.plot import CustomAxes
+from mrsimulator.method.plot import MultiLineAxes
+from mrsimulator.method.plot import SequenceDiagram
+
 
 __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
@@ -162,18 +169,22 @@ def test_offset_x_data():
     # Setup DataFrames
     df1 = method1_df()
     df2 = method2_df()
+    df3 = method3_df()
     _add_tip_angle_and_phase(df1)
     _add_tip_angle_and_phase(df2)
 
     # Calculate needed x_data
     x1 = _make_x_data(df1)
     x2 = _make_x_data(df2)
+    x3 = _make_x_data(df3)
     off_x1 = _offset_x_data(df1, x1)
     off_x2 = _offset_x_data(df2, x2)
+    off_x3 = _offset_x_data(df3, x3)
 
     # Check return type
     assert isinstance(off_x1, np.ndarray)
     assert isinstance(off_x2, np.ndarray)
+    assert isinstance(off_x3, np.ndarray)
 
     # Check expected offset_x returned
     # NOTE: Should arrays be hardcoded? Or should be calculated in simmilar way
@@ -199,9 +210,11 @@ def test_offset_x_data():
         4.0,
         4.4,
     ]
+    off_x3_should_be = [0, 0, 0.08, 0.08, 0.8]
 
     assert np.allclose(off_x1, off_x1_should_be)
     assert np.allclose(off_x2, off_x2_should_be)
+    assert np.allclose(off_x3, off_x3_should_be)
 
 
 def test_make_normal_and_offset_x_data():
@@ -232,6 +245,72 @@ def test_make_normal_and_offset_x_data():
     assert isinstance(x2, list)
     assert isinstance(off_x1, np.ndarray)
     assert isinstance(off_x2, np.ndarray)
+
+
+def test_SequenceDiagram():
+    df3 = method3_df()
+    _add_tip_angle_and_phase(df3)
+    x3 = [0.0, 0.0, 0.08, 0.08, 0.8]
+    x_data_should_be = [0, 0, 0.08, 0.08, 0.675, 0.8]
+
+    # Setup matplotlib objects
+    fig = plt.figure()
+    proj.register_projection(SequenceDiagram)
+    axes_obj = fig.add_subplot(projection="sequence_axes")
+    axes_obj.make_plot(df3, x3)
+
+    assert np.allclose(axes_obj.x_data, x_data_should_be)
+
+
+def test_MultilineAxes():
+    x_data = [0, 0, 1, 1, 2, 2, 3, 3]
+    y_data = pd.Series([[1, 1, 1], [1, 0, 0], [1, 0, -1], [1, 1, 0]])
+
+    # Setup matplotlib objects
+    fig = plt.figure()
+    proj.register_projection(MultiLineAxes)
+    axes_obj = fig.add_subplot(projection="multi_line_axes")
+
+    # make_plot
+    # Test y_data dimensions check
+    bad_y_data = pd.Series([0, 1, 2, 3])  # not 2 dimensional
+    error = r".*Symmetry pathway data is misshapen. Data must be 2d.*"
+    with pytest.raises(ValueError, match=error):
+        axes_obj.make_plot(x_data, bad_y_data, "", [], {}, {})
+
+    # _offset_overlaps
+    # Test only one symmetry pathway
+    y_data = np.zeros((1, 10))
+    assert np.array_equal(axes_obj._offset_overlaps(y_data), y_data)
+
+    # Test overlapping symmetry pathways
+    # Each column represents a symmetry pathway
+    y_data = np.array(
+        [
+            np.array([1, 1, 1, 1], dtype=float),
+            np.array([1, 0, 0, 1], dtype=float),
+            np.array([1, 0, -1, 0], dtype=float),
+        ]
+    )
+    offset_should_be = [
+        [0.925, 0.975, 1.0, 0.95],
+        [1.0, -0.05, 0.0, 1.05],
+        [1.075, 0.05, -1.0, -0.025],
+    ]
+    assert np.allclose(axes_obj._offset_overlaps(y_data), offset_should_be)
+
+
+def test_CustomAxes():
+    # Setup matplotlib objects
+    fig = plt.figure()
+    proj.register_projection(CustomAxes)
+    axes_obj = fig.add_subplot(projection="custom_axes")
+
+    # _add_rect_with_labels
+    # Test error thrown when no color supplied
+    error = r".*No color in `rect_kwargs`. A color must be spesified.*"
+    with pytest.raises(ValueError, match=error):
+        axes_obj._add_rect_with_label(0, 1, "", {"height": 1})
 
 
 def method1_df():
@@ -296,3 +375,33 @@ def method2_df():
     )
 
     return method2.summary(drop_constant_columns=False)
+
+
+def method3_df():
+    method3 = Method(
+        channels=["1H"],
+        spectral_dimensions=[
+            {
+                "label": "Spectral Spectral Mixing",
+                "events": [
+                    {
+                        "fraction": 0.1,
+                        "transition_query": [
+                            {"ch1": {"P": [1, 1]}},
+                            {"ch1": {"P": [2]}},
+                        ],
+                    },
+                    {
+                        "fraction": 0.9,
+                        "transition_query": [
+                            {"ch1": {"P": [-1, -1]}},
+                            {"ch1": {"P": [-2]}},
+                        ],
+                    },
+                    {"mixing_query": {"ch1": {"tip_angle": np.pi, "phase": 0}}},
+                ],
+            }
+        ],
+    )
+
+    return method3.summary()

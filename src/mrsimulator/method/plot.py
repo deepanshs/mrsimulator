@@ -227,9 +227,9 @@ class CustomAxes(plt.Axes):
 
 class MultiLineAxes(CustomAxes):
     """Axes subclass for multiline plots such as 'p' or 'd'"""
+
     # TODO: Force integer
     # TODO: check label on reigons
-    # TODO: Add checks for gaps in coverage
 
     name = "multi_line_axes"
 
@@ -264,7 +264,6 @@ class MultiLineAxes(CustomAxes):
         # Check for only one symmetry pathway present
         if y.shape[0] == 1:
             return y
-
         data = y.transpose()  # Each row represents all symmetry pathways for an event
 
         # Loop over rows and find where pathways overlap
@@ -295,21 +294,22 @@ class SequenceDiagram(CustomAxes):
     """Axes subclass holding the sequence diagram of events"""
 
     name = "sequence_axes"
+    ylim = None
 
-    def make_plot(self, df, x_data):
+    def make_plot(self, df, x_data, ylim=[0, 1]):
         """Main workflow function to plot sequence diagram"""
+        self.x_data = x_data
+        self.ylim = ylim
+
         xmax = max(x_data)
-        ylim = [0, 1]  # Adjust y limits of plot here
 
-        self._format(xmax=xmax, grid={}, ylim=ylim, margin=None, axis="off")
-        self._plot_sequence_diagram(df=df, x_data=x_data, ylim=ylim)
+        self._format(xmax=xmax, grid={}, ylim=self.ylim, margin=None, axis="off")
+        self._plot_sequence_diagram(df=df)
 
-    def _format(self, ylim=None, **kwargs):
+    def _format(self, **kwargs):
         # Turn of x and y axis and call super(),_format
         self.axis("off")
-
-        if ylim is not None:
-            self.set_ylim(*ylim)
+        self.set_ylim(*self.ylim)
 
         super()._format(**kwargs)
 
@@ -320,8 +320,10 @@ class SequenceDiagram(CustomAxes):
         phase = "{1:0.{0}f}".format(int(not float(p).is_integer()), p)
         return (f"({tip_angle}, {phase})", ta / 360 * MIXING_WIDTH)
 
-    def _plot_spec_dims(self, df, x_data, ylim, ev_groups):
+    def _plot_spec_dims(self, df, ev_groups):
         """Adds lines and labels denoting spectral dimensions"""
+        x_data = self.x_data
+        ylim = self.ylim
         plot_kwargs = dict(_format=False, labels=False)
 
         self.plot(x=[0, 0], y=ylim, color="black", **plot_kwargs)
@@ -357,25 +359,27 @@ class SequenceDiagram(CustomAxes):
             **DEFAULT_ANNO_KWARGS,
         )
 
-    def _plot_sequence_diagram(self, df, x_data, ylim):
+    def _plot_sequence_diagram(self, df):
         """Plots sequence diagram (order of events)"""
         ev_groups = [(_type, sum(1 for _ in gp)) for _type, gp in groupby(df["type"])]
 
+        # Last event is MixingEvent
         if ev_groups[-1][0] == "MixingEvent":
-            x_data = np.append(x_data, x_data[-1])
+            self.x_data = np.append(self.x_data, self.x_data[-1])
+            n_end_mix = ev_groups[-1][1]
             # Total angle / 360 * MIXING_WIDTH
-            gp__ = -ev_groups[0][1]
-            offset = sum(df["tip_angle"][gp__:]) / 180 * MIXING_WIDTH
-            x_data[-2] -= offset
+            # Get last 'n_end_mix' events
+            offset = sum(df["tip_angle"][-n_end_mix:]) / 360 * MIXING_WIDTH
+            self.x_data[-2] -= offset
 
-        self._plot_spec_dims(df=df, x_data=x_data, ylim=ylim, ev_groups=ev_groups)
+        self._plot_spec_dims(df=df, ev_groups=ev_groups)
 
         df_idx = 0
         x_idx = 0
         for _type, num in ev_groups:
             if _type == "MixingEvent":
                 # Leftmost x point of next MixingEvent rectangle
-                x0 = x_data[x_idx]
+                x0 = self.x_data[x_idx]
                 # Iterate over each MixingEvent in group and plot rectangle
                 for j in range(num):
                     label, width = self._format_mix_label(
@@ -389,7 +393,6 @@ class SequenceDiagram(CustomAxes):
                         rect_kwargs=dict(
                             color=COLORS["MixingEvent"],
                             alpha=0.2,
-                            # height=ylim[1] - ylim[0],
                         ),
                         anno_kwargs=dict(
                             color="black",
@@ -403,16 +406,15 @@ class SequenceDiagram(CustomAxes):
             else:
                 for j in range(num):
                     # Increment x_idx if no mixing event between events
-                    if x_data[x_idx] == x_data[x_idx + 1]:
+                    if self.x_data[x_idx] == self.x_data[x_idx + 1]:
                         x_idx += 1
                     super()._add_rect_with_label(
-                        x0=x_data[x_idx],
-                        x1=x_data[x_idx + 1],
+                        x0=self.x_data[x_idx],
+                        x1=self.x_data[x_idx + 1],
                         label=df["label"][df_idx + j],
                         rect_kwargs=dict(
                             color=COLORS[df["type"][df_idx]],
                             alpha=0.2,
-                            # height=ylim[1] - ylim[0],
                         ),
                     )
                     x_idx += 1
