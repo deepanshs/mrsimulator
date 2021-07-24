@@ -158,8 +158,7 @@ class CustomAxes(plt.Axes):
 
     def _format(
         self,
-        xmax=None,
-        locator=MaxNLocator(nbins=4, integer=True, min_n_ticks=3),
+        locator=None,
         grid={"axis": "y", "color": "black", "alpha": 0.2},
         ymargin=0.35,
         show_xaxis=False,
@@ -169,9 +168,6 @@ class CustomAxes(plt.Axes):
         """Format Axes helper function
 
         Args:
-            (float) xmax:
-                x-axis limit to set
-
             (matplotlib.ticker) locator:
                 Object which determines the ticks on the y-axis
 
@@ -188,12 +184,15 @@ class CustomAxes(plt.Axes):
                 Shows y-axis and ticks if True, otherwise hidden
         """
         label = LABLES[self.col_name] if self.col_name in LABLES else self.col_name
+
+        if locator is None:
+            locator = MaxNLocator(nbins=4, integer=True, min_n_ticks=3)
+
         if self.col_name == "rotor_frequency":
-            locator.set_params(integer=False, steps=[1.5, 5, 7], nbins=5)
-            pass
+            locator.set_params(integer=False, steps=[1.5, 5, 7])
 
         self.get_xaxis().set_visible(show_xaxis)
-        self.set_xlim(0, xmax)
+        self.set_xlim(0, self.xmax)
 
         self.get_yaxis().set_visible(show_yaxis)
         self.get_yaxis().set_major_locator(locator)
@@ -246,8 +245,7 @@ class MultiLineAxes(CustomAxes):
         self.mix_ev = mix_ev
 
         self._format(
-            xmax=self.xmax,
-            locator=MaxNLocator(nbins=5, steps=[1, 2, 3], integer=True, min_n_ticks=3),
+            locator=MaxNLocator(nbins=4, integer=True, min_n_ticks=1),
             **format_kwargs,
         )
         self.plot(x=self.x_data, y=self.y_data, **plot_kwargs)
@@ -300,10 +298,9 @@ class SequenceDiagram(CustomAxes):
         """Main workflow function to plot sequence diagram"""
         self.x_data = x_data
         self.ylim = ylim
+        self.xmax = max(x_data)
 
-        xmax = max(x_data)
-
-        self._format(xmax=xmax, grid={}, ylim=self.ylim, margin=None, axis="off")
+        self._format(grid={}, ylim=self.ylim, margin=None, axis="off")
         self._plot_sequence_diagram(df=df)
 
     def _format(self, **kwargs):
@@ -563,6 +560,14 @@ def _add_legend(fig):
     )
 
 
+def _calculate_n_channels(df):
+    """Calculates the number of channels present in the method DataFrame"""
+    # TODO: (future) implement functionality for calcuation
+    # Currently hardcoded to 1
+    # Maybe move this into _format_df?
+    return 1
+
+
 def plot(fig, df, include_legend) -> plt.figure:
     """Plot symmetry pathways and other requested parameters on figure"""
     # TODO: (future) add functionality for multiple channels
@@ -570,19 +575,24 @@ def plot(fig, df, include_legend) -> plt.figure:
     params = _format_df(df)
     x_data, x_offset = _make_normal_and_offset_x_data(df)
 
+    # Calculations and setup gridspec object for number of subplots
+    n_channels = _calculate_n_channels(df)
+    nrows = n_channels + 1 + len(params)  # channels + p symmetry pathway + params
+    gs = fig.add_gridspec(nrows=nrows, ncols=1)  # nrows for multiple channels
+    gs_row_idx = 0
+
     # Register custom matplotlib projections
     proj.register_projection(CustomAxes)
     proj.register_projection(MultiLineAxes)
     proj.register_projection(SequenceDiagram)
 
-    gs = fig.add_gridspec(nrows=len(params) + 3, ncols=1)  # nrows for multiple channels
-
     # Sequence diagram Axes
-    seq_ax = fig.add_subplot(gs[0, 0], projection="sequence_axes")
+    seq_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="sequence_axes")
     seq_ax.make_plot(df=df, x_data=x_offset)
+    gs_row_idx += 1
 
     # p and d Axes
-    p_ax = fig.add_subplot(gs[1, 0], projection="multi_line_axes")
+    p_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="multi_line_axes")
     p_ax.make_plot(
         x_data=x_offset,
         y_data=df["p"],
@@ -591,9 +601,11 @@ def plot(fig, df, include_legend) -> plt.figure:
         format_kwargs={},
         plot_kwargs={"alpha": 0.7},
     )
+    gs_row_idx += 1
+
     if "d" in params:
         params.remove("d")
-        d_ax = fig.add_subplot(gs[2, 0], projection="multi_line_axes")
+        d_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="multi_line_axes")
         d_ax.make_plot(
             x_data=x_offset,
             y_data=df["d"],
@@ -602,9 +614,10 @@ def plot(fig, df, include_legend) -> plt.figure:
             format_kwargs={},
             plot_kwargs={"alpha": 0.7},
         )
+        gs_row_idx += 1
 
     # params Axes
-    for i, param in enumerate(params, 3):
+    for i, param in enumerate(params, gs_row_idx):
         ax = fig.add_subplot(gs[i, 0], projection="custom_axes")
         ax.make_plot(
             x_data=x_data,
