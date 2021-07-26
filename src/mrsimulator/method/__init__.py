@@ -453,8 +453,8 @@ class Method(Parseable):
             )
             map_ = obj["near_index"]
             for j, path in enumerate(pathways):
-                if weights[j] == 0:
-                    continue
+                # if weights[j] == 0:
+                #     continue
                 weights[j] *= self._calculate_transition_connect_weight(
                     path[map_[0]], path[map_[1]], spins, theta_, phi_
                 )
