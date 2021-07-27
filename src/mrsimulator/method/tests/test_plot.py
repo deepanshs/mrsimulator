@@ -293,9 +293,9 @@ def test_MultilineAxes():
         ]
     )
     offset_should_be = [
-        [0.925, 0.975, 1.0, 0.95],
-        [1.0, -0.05, 0.0, 1.05],
-        [1.075, 0.05, -1.0, -0.025],
+        [0.91, 0.97, 1.0, 0.94],
+        [1.0, -0.06, 0.0, 1.06],
+        [1.09, 0.06, -1.0, -0.03],
     ]
     assert np.allclose(axes_obj._offset_overlaps(y_data), offset_should_be)
 

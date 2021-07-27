@@ -267,7 +267,7 @@ class MultiLineAxes(CustomAxes):
     def _offset_overlaps(self, y, offset_pct=0.03):
         """Offsets y at overlapping values"""
         # calculate raw offset based on percent of data range [max(y) - min(y)]
-        offset = np.nanmax(self.y_data.flatten()) - np.nanmin(self.y_data.flatten())
+        offset = np.nanmax(y.flatten()) - np.nanmin(y.flatten())
         if offset == 0:
             offset = 2
         offset *= offset_pct
