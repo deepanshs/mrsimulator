@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
 from matplotlib.patches import Rectangle
+from matplotlib.ticker import FixedLocator
 from matplotlib.ticker import MaxNLocator
 
 __author__ = "Matthew D. Giammar"
@@ -235,7 +236,7 @@ class MultiLineAxes(CustomAxes):
     def make_plot(self, x_data, y_data, col_name, mix_ev, format_kwargs, plot_kwargs):
         """Main workflow function to format and plot data on Axes"""
         self.x_data = x_data
-        self.y_data = np.stack(y_data.values).transpose()
+        self.y_data = np.stack(y_data.values).transpose()  # each row is symm pathway
 
         if np.asarray(self.y_data).ndim != 2:
             raise ValueError("Symmetry pathway data is misshapen. Data must be 2d")
@@ -244,10 +245,7 @@ class MultiLineAxes(CustomAxes):
         self.xmax = max(x_data)
         self.mix_ev = mix_ev
 
-        self._format(
-            locator=MaxNLocator(nbins=4, integer=True, min_n_ticks=1),
-            **format_kwargs,
-        )
+        self._format(**format_kwargs)
         self.plot(x=self.x_data, y=self.y_data, **plot_kwargs)
 
     def plot(self, x, y, do_offset=True, **kwargs):
@@ -257,8 +255,21 @@ class MultiLineAxes(CustomAxes):
         for row in y:
             super().plot(x=x, y=row, labels=False, **kwargs)
 
+    def _format(self, **kwargs):
+        """Determines locator for axes and calls super()._format()"""
+        locator = None
+
+        # Check if y data is constant throughout events, ignoring nan
+        _min = np.nanmin(self.y_data.flatten())
+        if _min == np.nanmax(self.y_data.flatten()):
+            self.set_ylim(_min - 1, _min + 1)
+            locator = FixedLocator([_min - 1, _min, _min + 1])
+
+        super()._format(locator=locator, **kwargs)
+
     def _offset_overlaps(self, y, offset=0.05):
         """Offsets y at overlapping values"""
+        # TODO: convert offset to percentage of ylims of axes
         # Check for only one symmetry pathway present
         if y.shape[0] == 1:
             return y
