@@ -30,12 +30,12 @@ LABLES = {
     "rotor_frequency": r"$\nu_r$ / kHz",
     "magnetic_flux_density": r"$B_0$ / T",
 }
-DEFAULT_ANNO_KWARGS = dict(
-    annotation_clip=False,
-    color="black",
-    ha="center",
-    va="center",
-)
+DEFAULT_ANNO_KWARGS = {
+    "annotation_clip": False,
+    "color": "black",
+    "ha": "center",
+    "va": "center",
+}
 
 
 class CustomAxes(plt.Axes):
@@ -206,6 +206,8 @@ class CustomAxes(plt.Axes):
         """Add a rectangle between x0 and x1 on ax representing event"""
         # [height, color, alpha] required in rect_kwargs
         bottom, top = self.get_ylim()
+        print("bottom", bottom)
+        print("top", top)
         if "height" not in rect_kwargs:
             rect_kwargs["height"] = top - bottom
 
@@ -221,7 +223,8 @@ class CustomAxes(plt.Axes):
         rect = Rectangle(xy=(x0, bottom), width=x1 - x0, **rect_kwargs)
         self.add_patch(rect)
         if label is not None:
-            y_mid = (top - bottom) / 2
+            y_mid = (top + bottom) / 2
+            print(y_mid)
             self.annotate(text=label, xy=((x1 + x0) / 2, y_mid), **anno_kwargs)
 
 
