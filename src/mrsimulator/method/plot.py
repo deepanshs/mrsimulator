@@ -206,8 +206,6 @@ class CustomAxes(plt.Axes):
         """Add a rectangle between x0 and x1 on ax representing event"""
         # [height, color, alpha] required in rect_kwargs
         bottom, top = self.get_ylim()
-        print("bottom", bottom)
-        print("top", top)
         if "height" not in rect_kwargs:
             rect_kwargs["height"] = top - bottom
 
@@ -224,15 +222,11 @@ class CustomAxes(plt.Axes):
         self.add_patch(rect)
         if label is not None:
             y_mid = (top + bottom) / 2
-            print(y_mid)
             self.annotate(text=label, xy=((x1 + x0) / 2, y_mid), **anno_kwargs)
 
 
 class MultiLineAxes(CustomAxes):
     """Axes subclass for multiline plots such as 'p' or 'd'"""
-
-    # TODO: Force integer
-    # TODO: check label on reigons
 
     name = "multi_line_axes"
 
@@ -265,14 +259,19 @@ class MultiLineAxes(CustomAxes):
         # Check if y data is constant throughout events, ignoring nan
         _min = np.nanmin(self.y_data.flatten())
         if _min == np.nanmax(self.y_data.flatten()):
-            self.set_ylim(_min - 1, _min + 1)
+            self.set_ylim(_min - 1.5, _min + 1.5)
             locator = FixedLocator([_min - 1, _min, _min + 1])
 
         super()._format(locator=locator, **kwargs)
 
-    def _offset_overlaps(self, y, offset=0.05):
+    def _offset_overlaps(self, y, offset_pct=0.03):
         """Offsets y at overlapping values"""
-        # TODO: convert offset to percentage of ylims of axes
+        # calculate raw offset based on percent of data range [max(y) - min(y)]
+        offset = np.nanmax(self.y_data.flatten()) - np.nanmin(self.y_data.flatten())
+        if offset == 0:
+            offset = 2
+        offset *= offset_pct
+
         # Check for only one symmetry pathway present
         if y.shape[0] == 1:
             return y
