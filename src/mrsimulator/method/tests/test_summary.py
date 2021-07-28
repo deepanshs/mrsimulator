@@ -140,7 +140,6 @@ def basic_summary_tests(the_method):
 
     # TODO: Check mixing_query
     # TODO: Check freq_contrib
-    pass
 
 
 def args_summary_tests(the_method):

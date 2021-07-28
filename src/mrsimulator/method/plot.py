@@ -13,7 +13,6 @@ __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
-# TODO: add globally defined alpha for rectangles
 # NOTE: Matplotlib should automatically generate new colors when none specified
 DURATION_WIDTH = 0.5  # Width of one ConstantDurationEvent
 SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
@@ -23,7 +22,7 @@ COLORS = {
     "SpectralEvent": "g",
     "MixingEvent": "b",
     "inf_speed": "y",
-    "nan": "k",
+    "undef": "k",
 }
 LABLES = {
     "rotor_angle": r"$\theta_r$ / deg",
@@ -78,7 +77,7 @@ class CustomAxes(plt.Axes):
         self.y_data = np.array(y_data, dtype=float)
         self.col_name = col_name
         self.xmax = max(x_data)
-        self.mix_ev = mix_ev
+        self.mix_ev = np.array(mix_ev)
 
         self._format(xmax=self.xmax, **format_kwargs)
         self.plot(x=self.x_data, y=self.y_data, **plot_kwargs)
@@ -108,7 +107,7 @@ class CustomAxes(plt.Axes):
                 self._add_rect_with_label(
                     x0=reigon[0],
                     x1=reigon[1],
-                    label="inf speed",
+                    label="∞ speed",
                     rect_kwargs=dict(color=COLORS["inf_speed"]),
                 )
         # Locate places with undefined parameters
@@ -117,7 +116,7 @@ class CustomAxes(plt.Axes):
             self._add_rect_with_label(
                 x0=reigon[0],
                 x1=reigon[1],
-                label="undef",
+                label="undefined",
                 rect_kwargs=dict(color=COLORS["undef"]),
             )
 
