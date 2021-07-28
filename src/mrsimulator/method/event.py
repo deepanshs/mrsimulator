@@ -22,23 +22,24 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class BaseEvent(Parseable):
-    """Base BaseEvent class.
+    """Base BaseEvent class. If the value of the attribute is None, the value of the
+    corresponding global attribute will be used instead.
 
     Attributes
     ----------
 
     magnetic_flux_density:
         The macroscopic magnetic flux density, :math:`H_0`, of the applied external
-        magnetic field during the event in units of T. The default value is ``9.4``.
+        magnetic field during the event in units of T. The default value is ``None``.
 
     rotor_frequency:
         The sample spinning frequency :math:`\nu_r`, during the event in units of Hz.
-        The default value is ``0``.
+        The default value is ``None``.
 
     rotor_angle:
         The angle between the sample rotation axis and the applied external magnetic
         field vector, :math:`\theta`, during the event in units of rad.
-        The default value is ``0.9553166``, i.e. the magic angle.
+        The default value is ``None``, i.e. the magic angle.
 
     freq_contrib:
         A list of FrequencyEnum enumeration. The default is all frequency enumerations.
