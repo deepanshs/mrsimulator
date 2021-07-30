@@ -62,6 +62,8 @@ method = ThreeQ_VAS(
     ],
 )
 
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
 method.plot()
 plt.show()
 

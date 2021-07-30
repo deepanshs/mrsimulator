@@ -57,7 +57,10 @@ qmat = SSB2D(
         },
     ],
 )
-fig = qmat.plot()
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+qmat.plot()
 plt.show()
 
 # %%

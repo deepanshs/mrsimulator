@@ -46,6 +46,7 @@ spin_systems = [SpinSystem(sites=[s]) for s in sites]
 # spectrum by customizing the method parameters, as shown below. Note, the Method2D
 # method simulates an infinite spinning speed spectrum.
 maf = Method2D(
+    name="Magic Angle Spinning",
     channels=["29Si"],
     magnetic_flux_density=14.1,  # in T
     spectral_dimensions=[
@@ -75,7 +76,10 @@ maf = Method2D(
     ],
     affine_matrix=[[1, -1], [0, 1]],
 )
-fig = maf.plot()
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+maf.plot()
 plt.show()
 
 # %%

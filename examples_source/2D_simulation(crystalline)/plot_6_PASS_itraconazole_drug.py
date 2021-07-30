@@ -52,9 +52,13 @@ PASS = SSB2D(
     ],
 )
 sim.methods = [PASS]  # add the method.
-fig = PASS.plot()
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+PASS.plot()
 plt.show()
 
+# %%
 # For 2D spinning sideband simulation, set the number of spinning sidebands in the
 # Simulator.config object to `spectral_width/rotor_frequency` along the sideband
 # dimension.

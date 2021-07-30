@@ -108,6 +108,7 @@ spin_systems = [
 # the first-order shielding with zeroth and second-rank tensor contributions,
 # respectively. See :ref:`freq_contrib_api` for details.
 shifting_d = Method2D(
+    name="Shifting-d",
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
     spectral_dimensions=[
@@ -138,7 +139,10 @@ shifting_d = Method2D(
         },
     ],
 )
-fig = shifting_d.plot()
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 2.5))
+shifting_d.plot()
 plt.show()
 
 # %%

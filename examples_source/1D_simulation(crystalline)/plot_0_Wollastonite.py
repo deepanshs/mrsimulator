@@ -60,7 +60,9 @@ method = BlochDecaySpectrum(
     ],
 )
 
-fig = method.plot()
+# A graphical representation of the method object.
+plt.figure(figsize=(4, 2))
+method.plot()
 plt.show()
 
 # %%

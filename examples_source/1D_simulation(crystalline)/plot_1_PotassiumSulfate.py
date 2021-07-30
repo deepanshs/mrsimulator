@@ -44,7 +44,9 @@ method = BlochDecayCTSpectrum(
     ],
 )
 
-fig = method.plot(method.summary(False))
+# A graphical representation of the method object.
+plt.figure(figsize=(4, 3))
+method.plot()
 plt.show()
 
 # %%

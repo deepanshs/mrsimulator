@@ -31,6 +31,7 @@ sim.load_spin_systems(filename)
 # method parameters, as shown below. Note, the Method2D method simulates an infinite
 # spinning speed spectrum.
 das = Method2D(
+    name="Dynamic Angle Spinning",
     channels=["17O"],
     magnetic_flux_density=11.74,  # in T
     spectral_dimensions=[
@@ -67,8 +68,11 @@ das = Method2D(
         },
     ],
 )
-sim.methods = [das]  # add the method.
-fig = das.plot()
+sim.methods = [das]  # add the method
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+das.plot()
 plt.show()
 
 # %%

@@ -137,8 +137,8 @@ def test_make_x_data():
     assert isinstance(x1, list)
     assert isinstance(x2, list)
 
-    # Check expected x_data retunred
-    # NOTE: Should arrays be hardcoded? Or should be calculated in simmilar way
+    # Check expected x_data returned
+    # NOTE: Should arrays be hardcoded? Or should be calculated in similar way
     x1_should_be = [0, 0.8, 0.8, 1.3, 1.3, 1.7]
     x2_should_be = [
         0,
@@ -187,7 +187,7 @@ def test_offset_x_data():
     assert isinstance(off_x3, np.ndarray)
 
     # Check expected offset_x returned
-    # NOTE: Should arrays be hardcoded? Or should be calculated in simmilar way
+    # NOTE: Should arrays be hardcoded? Or should be calculated in similar way
     off_x1_should_be = [0.0, 0.0, 0.8, 0.8, 1.26875, 1.33125, 1.7]
     off_x2_should_be = [
         0.0,
@@ -224,7 +224,7 @@ def test_make_normal_and_offset_x_data():
     _add_tip_angle_and_phase(df1)
     _add_tip_angle_and_phase(df2)
 
-    # Test when x_data is lenght zero
+    # Test when x_data is length zero
     no_events_df1 = df1.drop(df1.index, axis=0)
     no_events_df2 = df2.drop(df2.index[1:], axis=0)
 
@@ -308,7 +308,7 @@ def test_CustomAxes():
 
     # _add_rect_with_labels
     # Test error thrown when no color supplied
-    error = r".*No color in `rect_kwargs`. A color must be spesified.*"
+    error = r".*No color in `rect_kwargs`. A color must be specified.*"
     with pytest.raises(ValueError, match=error):
         axes_obj._add_rect_with_label(0, 1, "", {"height": 1})
 
@@ -357,7 +357,7 @@ def method2_df():
                 ],
             },
             {
-                "label": "Spectral, Spectral, CondatntDuration, ConstantDuration",
+                "label": "Spectral, Spectral, ConstantDuration, ConstantDuration",
                 "events": [
                     {"fraction": 0.2},
                     {"fraction": 0.8},
@@ -366,7 +366,7 @@ def method2_df():
                 ],
             },
             {
-                "label": "Mixing, Mixing, Mixing, Spectral, ConstantDuration, Spectal",
+                "label": "Mixing, Mixing, Mixing, Spectral, ConstantDuration, Spectral",
                 "events": [
                     {"mixing_query": {"ch1": {"tip_angle": 1.2, "phase": np.pi}}},
                     {"mixing_query": {"ch1": {"tip_angle": 0.75, "phase": np.pi / 4}}},

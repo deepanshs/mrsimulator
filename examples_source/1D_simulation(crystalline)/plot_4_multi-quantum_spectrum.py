@@ -38,6 +38,7 @@ spin_system = SpinSystem(sites=[site])
 # To select one or more triple-quantum transitions, assign the respective value of P and
 # D to the `transition_query`.
 method = Method1D(
+    name="Arbitrary Transition Method",
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=1e9,  # in Hz
@@ -54,7 +55,10 @@ method = Method1D(
         }
     ],
 )
-fig = method.plot()
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3))
+method.plot()
 plt.show()
 
 # %%

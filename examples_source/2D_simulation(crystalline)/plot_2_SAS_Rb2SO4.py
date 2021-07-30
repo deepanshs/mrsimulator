@@ -39,6 +39,7 @@ spin_systems = [SpinSystem(sites=[s]) for s in sites]
 # method parameters, as shown below. Note, the Method2D method simulates an infinite
 # spinning speed spectrum.
 sas = Method2D(
+    name="Switched Angle Spinning",
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
     spectral_dimensions=[
@@ -68,7 +69,10 @@ sas = Method2D(
         },
     ],
 )
-fig = sas.plot()
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+sas.plot()
 plt.show()
 
 # %%

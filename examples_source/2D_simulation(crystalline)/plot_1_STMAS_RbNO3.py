@@ -69,7 +69,10 @@ for angle in angles:
             ],
         )
     )
-fig = method[0].plot()
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+method[0].plot()
 plt.show()
 
 # %%

@@ -41,6 +41,7 @@ spin_system = SpinSystem(sites=[site])
 # the method parameters, as shown below. Note, the Method2D method simulates an infinite
 # spinning speed spectrum.
 coaster = Method2D(
+    name="COASTER",
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
     rotor_angle=70.12 * 3.14159 / 180,  # in rads
@@ -62,7 +63,10 @@ coaster = Method2D(
         },
     ],
 )
-fig = coaster.plot()
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+coaster.plot()
 plt.show()
 
 # %%

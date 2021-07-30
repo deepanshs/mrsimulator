@@ -17,6 +17,7 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 DURATION_WIDTH = 0.5  # Width of one ConstantDurationEvent
 SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
 MIXING_WIDTH = 0.25  # tip_angle of 360 degrees
+DEFAULTFONTSIZE = 9
 COLORS = {
     "ConstantDurationEvent": "orange",
     "SpectralEvent": "g",
@@ -25,20 +26,21 @@ COLORS = {
     "undef": "k",
 }
 LABLES = {
-    "rotor_angle": r"$\theta_r$ / deg",
+    "rotor_angle": r"$\theta_r$ / °",
     "rotor_frequency": r"$\nu_r$ / kHz",
     "magnetic_flux_density": r"$B_0$ / T",
 }
 DEFAULT_ANNO_KWARGS = {
     "annotation_clip": False,
-    "color": "black",
+    "color": "#202020",
     "ha": "center",
     "va": "center",
+    "fontsize": 10,
 }
 
 
 class CustomAxes(plt.Axes):
-    """Subclass of matplotlib Axes holding spesific funtions and data
+    """Subclass of matplotlib Axes holding specific functions and data
 
     Attributes
     ----------
@@ -86,7 +88,7 @@ class CustomAxes(plt.Axes):
         """Plot formatted data"""
         if _format:
             # matplotlib automatically blanks out nan values. y may contain nans
-            # mask only differs from y when plotting "rotor_frequnecy"
+            # mask only differs from y when plotting "rotor_frequency"
             x, y, y_mask = self._format_x_and_y_data(x=x, y=y)
         else:
             y_mask = y
@@ -102,26 +104,26 @@ class CustomAxes(plt.Axes):
         """Adds labels for blank spaces in plot"""
         if self.col_name == "rotor_frequency":
             # Locate places with infinite spinning speed (1e9 Hz)
-            reigons = self._locate_reigons_with_val(x=x, y=y, val=1e9)
-            for reigon in reigons:
+            regions = self._locate_regions_with_val(x=x, y=y, val=1e9)
+            for region in regions:
                 self._add_rect_with_label(
-                    x0=reigon[0],
-                    x1=reigon[1],
+                    x0=region[0],
+                    x1=region[1],
                     label="∞ speed",
                     rect_kwargs=dict(color=COLORS["inf_speed"]),
                 )
         # Locate places with undefined parameters
-        reigons = self._locate_reigons_with_val(x=x, y=y)
-        for reigon in reigons:
+        regions = self._locate_regions_with_val(x=x, y=y)
+        for region in regions:
             self._add_rect_with_label(
-                x0=reigon[0],
-                x1=reigon[1],
+                x0=region[0],
+                x1=region[1],
                 label="undefined",
                 rect_kwargs=dict(color=COLORS["undef"]),
             )
 
-    def _locate_reigons_with_val(self, x, y, val=np.nan):
-        """Locates reigons and returns a list of tuples denoting range with value"""
+    def _locate_regions_with_val(self, x, y, val=np.nan):
+        """Locates regions and returns a list of tuples denoting range with value"""
         # Locate value in y
         if val is np.nan:
             loc = np.isnan(y)
@@ -136,7 +138,7 @@ class CustomAxes(plt.Axes):
 
     def _format_x_and_y_data(self, x, y):
         """Removes invalid event data (nans from MixingEvents) while keeping valid but
-        undefined event data in y. Extends y double to accheive stair-step pattern
+        undefined event data in y. Extends y double to achieve stair-step pattern
         """
         y_data = y[~self.mix_ev]  # Keep data from events that are not MixingEvents
         x_data = x
@@ -159,8 +161,14 @@ class CustomAxes(plt.Axes):
     def _format(
         self,
         locator=None,
-        grid={"axis": "y", "color": "black", "alpha": 0.2},
-        ymargin=0.35,
+        grid={
+            "axis": "y",
+            "color": "black",
+            "linestyle": "--",
+            "linewidth": 0.5,
+            "alpha": 0.5,
+        },
+        ymargin=0.1,
         show_xaxis=False,
         show_yaxis=True,
         **kwargs,
@@ -196,10 +204,15 @@ class CustomAxes(plt.Axes):
 
         self.get_yaxis().set_visible(show_yaxis)
         self.get_yaxis().set_major_locator(locator)
-        self.set_ylabel(label)
+        self.set_ylabel(label, fontsize=DEFAULTFONTSIZE)
+
+        self.spines["top"].set_visible(show_xaxis)
+        self.spines["right"].set_visible(show_xaxis)
+        self.spines["bottom"].set_visible(show_xaxis)
 
         self.grid(**grid)
         self.margins(y=ymargin)
+        self.tick_params(axis="both", labelsize=DEFAULTFONTSIZE)
 
     def _add_rect_with_label(self, x0, x1, label, rect_kwargs, anno_kwargs={}):
         """Add a rectangle between x0 and x1 on ax representing event"""
@@ -212,7 +225,7 @@ class CustomAxes(plt.Axes):
             rect_kwargs["alpha"] = 0.2
 
         if "color" not in rect_kwargs:
-            raise ValueError("No color in `rect_kwargs`. A color must be spesified")
+            raise ValueError("No color in `rect_kwargs`. A color must be specified")
 
         if anno_kwargs == {}:
             anno_kwargs = DEFAULT_ANNO_KWARGS
@@ -284,7 +297,7 @@ class MultiLineAxes(CustomAxes):
             if unique.size == row.size:
                 continue
 
-            # Find indicies of overlap for each number and add offsets
+            # Find indices of overlap for each number and add offsets
             for num in unique:
                 where = np.where(row == num)[0]
                 np.add.at(
@@ -341,7 +354,7 @@ class SequenceDiagram(CustomAxes):
         spec_dim_idx = 0
         df_idx = 0
         x_idx = 0
-        for _type, num in ev_groups:
+        for _, num in ev_groups:
             for j in range(num):
                 if x_idx < len(x_data) - 1 and x_data[x_idx] == x_data[x_idx + 1]:
                     x_idx += 1
@@ -352,7 +365,7 @@ class SequenceDiagram(CustomAxes):
                     self.plot(x=[x0, x0], y=ylim, color="black", **plot_kwargs)
                     self.annotate(
                         text=df["spec_dim_label"][df_idx + j - 1],
-                        xy=((last_spec_dim_x + x0) / 2, ylim[1] + 0.1),
+                        xy=((last_spec_dim_x + x0) / 2, ylim[1] + 0.15),
                         **DEFAULT_ANNO_KWARGS,
                     )
                     last_spec_dim_x = x0
@@ -364,7 +377,7 @@ class SequenceDiagram(CustomAxes):
         self.plot(x=[max(x_data)] * 2, y=ylim, color="black", **plot_kwargs)
         self.annotate(
             text=df["spec_dim_label"][df_idx - 1],
-            xy=((last_spec_dim_x + max(x_data)) / 2, ylim[1] + 0.1),
+            xy=((last_spec_dim_x + max(x_data)) / 2, ylim[1] + 0.15),
             **DEFAULT_ANNO_KWARGS,
         )
 
@@ -460,7 +473,7 @@ def _check_columns(df):
 def _add_tip_angle_and_phase(df):
     """Add tip_angle and phase columns to dataframe from mixing_query"""
     # NOTE Only columns for ch1 are created (1 ch only for now)
-    # NOTE What should empty MixingQuerys add? (MixingQuery default?)
+    # NOTE What should empty MixingQueries add? (MixingQuery default?)
     # BUG: Empty mixing queries (i.e. "mixing_query": {}) gives query of `None` causing
     #       error to be thrown
     df["tip_angle"] = [
@@ -574,7 +587,7 @@ def _add_legend(fig):
 
 def _calculate_n_channels(df):
     """Calculates the number of channels present in the method DataFrame"""
-    # TODO: (future) implement functionality for calcuation
+    # TODO: (future) implement functionality for calculation
     # Currently hardcoded to 1
     # Maybe move this into _format_df?
     return 1
@@ -590,7 +603,12 @@ def plot(fig, df, include_legend) -> plt.figure:
     # Calculations and setup gridspec object for number of subplots
     n_channels = _calculate_n_channels(df)
     nrows = n_channels + 1 + len(params)  # channels + p symmetry pathway + params
-    gs = fig.add_gridspec(nrows=nrows, ncols=1)  # nrows for multiple channels
+    height_ratios = np.ones(nrows)
+    height_ratios[0] = 0.75
+    gs = fig.add_gridspec(
+        nrows=nrows, ncols=1, height_ratios=height_ratios, right=0.95, bottom=0.05
+    )  # nrows for multiple channels
+    gs.update(hspace=0.17)
     gs_row_idx = 0
 
     # Register custom matplotlib projections
@@ -611,7 +629,7 @@ def plot(fig, df, include_legend) -> plt.figure:
         col_name="p",
         mix_ev=mix_ev,
         format_kwargs={},
-        plot_kwargs={"alpha": 0.7},
+        plot_kwargs={"alpha": 0.6, "linewidth": 2.5},
     )
     gs_row_idx += 1
 
@@ -624,7 +642,7 @@ def plot(fig, df, include_legend) -> plt.figure:
             col_name="d",
             mix_ev=mix_ev,
             format_kwargs={},
-            plot_kwargs={"alpha": 0.7},
+            plot_kwargs={"alpha": 0.6, "linewidth": 2.5},
         )
         gs_row_idx += 1
 
@@ -637,7 +655,7 @@ def plot(fig, df, include_legend) -> plt.figure:
             col_name=param,
             mix_ev=mix_ev,
             format_kwargs={},
-            plot_kwargs={},
+            plot_kwargs={"alpha": 0.6, "linewidth": 2.5},
         )
 
     # Add legend for event colors
