@@ -29,14 +29,14 @@ spin_system = SpinSystem(sites=[site])
 # Selecting the triple-quantum transition
 # ---------------------------------------
 #
-# For spin-site spin-5/2 spin system, there are three triple-quantum transition
+# For single-site spin-5/2 spin system, there are three triple-quantum transition
 #
 # - :math:`|1/2\rangle\rightarrow|-5/2\rangle` (:math:`P=-3, D=6`)
 # - :math:`|3/2\rangle\rightarrow|-3/2\rangle` (:math:`P=-3, D=0`)
 # - :math:`|5/2\rangle\rightarrow|-1/2\rangle` (:math:`P=-3, D=-6`)
 #
 # To select one or more triple-quantum transitions, assign the respective value of P and
-# D to the `transition_query`.
+# D to the `transition_query`. Here, we select the symmetric triple-quantum transition.
 method = Method1D(
     name="Arbitrary Transition Method",
     channels=["27Al"],

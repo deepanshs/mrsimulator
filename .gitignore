@@ -106,6 +106,7 @@ tests/simpson/quad/**
 version/
 docs/examples/
 docs/fitting/
+_temp/
 
 # files
 class-diagram*
