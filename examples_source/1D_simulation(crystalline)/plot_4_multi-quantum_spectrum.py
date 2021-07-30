@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method1D
 
-# sphinx_gallery_thumbnail_number = 1
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # Create a single-site arbitrary spin system.
@@ -38,6 +38,7 @@ spin_system = SpinSystem(sites=[site])
 # To select one or more triple-quantum transitions, assign the respective value of P and
 # D to the `transition_query`. Here, we select the symmetric triple-quantum transition.
 method = Method1D(
+    name="Arbitrary Transition Method",
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=1e9,  # in Hz
@@ -54,6 +55,11 @@ method = Method1D(
         }
     ],
 )
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3))
+method.plot()
+plt.show()
 
 # %%
 # Create the Simulator object and add the method and the spin system object.
