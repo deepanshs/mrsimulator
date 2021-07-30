@@ -22,7 +22,7 @@ __credits__ = ["Deepansh J. Srivastava"]
 __license__ = "BSD License"
 __maintainer__ = "Deepansh J. Srivastava"
 __status__ = "Beta"
-__version__ = "0.7.0dev0"
+__version__ = "0.7.0dev1"
 
 import os
 

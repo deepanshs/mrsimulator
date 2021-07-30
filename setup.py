@@ -200,11 +200,11 @@ class LinuxSetup(Setup):
                 getattr(self, item).extend(dict_info[item])
 
     def message(self, lib_centos, lib_ubuntu):
+        print(f"Warning: {lib_ubuntu} might not be installed. See below.\n")
         stat = f"yum install {lib_centos}"
         print(f"For CentOS users\n\t{stat}")
         stat = f"sudo apt-get update\n\tsudo apt-get install {lib_ubuntu}"
         print(f"For Ubuntu users\n\t{stat}")
-        sys.exit(1)
 
 
 class MacOSSetup(Setup):
@@ -421,7 +421,7 @@ setup(
     setup_requires=["numpy>=1.17"],
     install_requires=[
         "numpy>=1.17",
-        "csdmpy>=0.4",
+        "csdmpy>=0.4.1",
         "pydantic>=1.0",
         "monty>=2.0.4",
         "typing-extensions>=3.7",

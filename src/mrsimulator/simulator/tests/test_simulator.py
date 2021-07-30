@@ -328,8 +328,8 @@ def test_sites_to_pandas_df():
     eta_q = [None, None, None, 0.34]
 
     spin_systems = single_site_system_generator(
-        isotopes=isotopes,
-        isotropic_chemical_shifts=shifts,
+        isotope=isotopes,
+        isotropic_chemical_shift=shifts,
         shielding_symmetric={"zeta": zeta, "eta": eta_n},
         quadrupolar={"Cq": Cq, "eta": eta_q},
         abundance=1,

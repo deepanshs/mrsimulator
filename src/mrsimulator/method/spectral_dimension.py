@@ -22,6 +22,16 @@ __email__ = "srivastava.89@osu.edu"
 CHANNELS = ["ch1", "ch2", "ch3"]
 
 
+class Reciprocal(Parseable):
+    """Reciprocal dimension from CSDM object."""
+
+    coordinates_offset: float = 0.0
+
+    property_unit_types: ClassVar[Dict] = {"coordinates_offset": "time"}
+    property_default_units: ClassVar[Dict] = {"coordinates_offset": "s"}
+    property_units: Dict = {"coordinates_offset": "s"}
+
+
 class SpectralDimension(Parseable):
     r"""Base SpectralDimension class defines a spectroscopic dimension of the method.
 
@@ -56,11 +66,11 @@ class SpectralDimension(Parseable):
     events: A list of :ref:`event_api` or equivalent dict objects (optional).
         The value describes a series of events along the spectroscopic dimension.
     """
-
     count: int = Field(1024, gt=0)
     spectral_width: float = Field(default=25000.0, gt=0)
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
+    reciprocal: Reciprocal = None
     events: List[Union[MixingEvent, ConstantDurationEvent, SpectralEvent]] = []
 
     property_unit_types: ClassVar[Dict] = {
@@ -86,9 +96,8 @@ class SpectralDimension(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantities of a SpectralDimension object from a
-        python dictionary object.
+        """Parse the physical quantities of a SpectralDimension object from a python
+        dictionary object.
 
         Args:
             dict py_dict: Dict object
@@ -105,30 +114,26 @@ class SpectralDimension(Parseable):
         return super().parse_dict_with_units(py_dict_copy)
 
     def coordinates_Hz(self) -> np.ndarray:
-        r"""
-        The grid coordinates along the dimension in units of Hz, evaluated as
+        r"""The grid coordinates along the dimension in units of Hz, evaluated as
 
         .. math::
             x_\text{Hz} = \left([0, 1, ... N-1] - T\right) \frac{\Delta x}{N} + x_0
 
         where :math:`T=N/2` and :math:`T=(N-1)/2` for even and odd values of
-        :math:`N`, respectively.
-        """
+        :math:`N`, respectively."""
         n = self.count
         Tk = int(n / 2)
         increment = self.spectral_width / self.count
         return (np.arange(n) - Tk) * increment + self.reference_offset
 
     def coordinates_ppm(self) -> np.ndarray:
-        r"""
-        The grid coordinates along the dimension as dimension frequency ratio
+        r"""The grid coordinates along the dimension as dimension frequency ratio
         in units of ppm. The coordinates are evaluated as
 
         .. math::
             x_\text{ppm} = \frac{x_\text{Hz}} {x_0 + \omega_0}
 
-        where :math:`\omega_0` is the Larmor frequency.
-        """
+        where :math:`\omega_0` is the Larmor frequency."""
         if self.origin_offset is None:
             warnings.warn(
                 UserWarning(
@@ -136,15 +141,22 @@ class SpectralDimension(Parseable):
                     "cannot be converted to dimensionless frequency ratio."
                 )
             )
-        else:
-            denominator = (self.origin_offset - self.reference_offset) / 1e6
-            return self.coordinates_Hz() / abs(denominator)
+            return
+
+        denominator = (self.origin_offset - self.reference_offset) / 1e6
+        return self.coordinates_Hz() / abs(denominator)
 
     def to_csdm_dimension(self) -> cp.Dimension:
         """Return the spectral dimension as a CSDM dimension object."""
         increment = self.spectral_width / self.count
         label = "" if self.label is None else self.label
         description = "" if self.description is None else self.description
+
+        default_reciprocal = {"coordinates_offset": f"{-1/(2*increment)} s"}
+        reciprocal = (
+            default_reciprocal if self.reciprocal is None else self.reciprocal.json()
+        )
+
         dim = cp.Dimension(
             type="linear",
             count=self.count,
@@ -153,11 +165,25 @@ class SpectralDimension(Parseable):
             label=label,
             description=description,
             complex_fft=True,
-            reciprocal={"coordinates_offset": f"{-1/(2*increment)} s"},
+            reciprocal=reciprocal,
         )
         if self.origin_offset is not None:
             dim.origin_offset = f"{self.origin_offset} Hz"
         return dim
+
+    # def events_to_dataframe(self) -> pd.DataFrame:
+    #     """Returns events list as DataFrame with event number as columns"""
+    #     attributes = list(Event().property_units.keys())
+    #     attributes.append("fraction")
+    #     rows = attributes.copy()
+    #     rows.extend(["p", "d"])
+    #     df = pd.DataFrame(index=rows)
+    #     for i in range(len(self.events)):
+    #         _lst = [getattr(self.events[i], att) for att in attributes]
+    #         _lst.append(self.events[i].transition_query.get_p())
+    #         _lst.append(self.events[i].transition_query.get_d())
+    #         df[i] = _lst
+    #     return df
 
     def _get_symmetry_pathways(self, symmetry_element: str) -> list:
         """Generate a list of symmetry pathways for the event.
@@ -192,15 +218,10 @@ class SpectralDimension(Parseable):
             [{'ch1': [[1, 1], [-1]], 'ch2': [[1], None], 'ch3': [None, None]},
              {'ch1': [[-1, -1], [-1]], 'ch2': [None, None], 'ch3': [None, None]}]
         """
-        ha = hasattr
-        ga = getattr
-        tq = "transition_query"
-        indexes = [
-            np.arange(len(evt.transition_query))
-            if ha(evt, "transition_query")
-            else np.asarray([0])
-            for evt in self.events
-        ]
+        ha, ga = hasattr, getattr
+        tq, de = "transition_query", np.asarray([0])
+
+        indexes = [np.arange(len(ga(e, tq))) if ha(e, tq) else de for e in self.events]
         products = cartesian_product(*indexes)
 
         return [

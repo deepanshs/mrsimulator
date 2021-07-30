@@ -97,18 +97,22 @@ class TransitionPathway(TransitionList):
         >>> t2 = Transition(initial=[0.5, 0.5], final=[-0.5, 0.5])
         >>> path = TransitionPathway([t1, t2])
         >>> path
-        |0.5, -0.5⟩⟨0.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|
+        |0.5, -0.5⟩⟨0.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|, weight=(1+0j)
     """
 
-    # @property
-    # def weight(self):
-    #     pass
+    def __init__(self, pathway: list = [], weight=(1.0 + 0j)):
+        super().__init__(pathway)
+        self.weight = weight
 
     def __str__(self):
         return self.__repr__()
 
+    def __eq__(self, other):
+        return self._list == other._list and self.weight == other.weight
+
     def __repr__(self):
-        return " ⟶ ".join([repr(item) for item in self._list])
+        path = " ⟶ ".join([repr(item) for item in self._list])
+        return path + f", weight={self.weight}"
 
     def dict(self) -> dict:
         """Parse the class object to a python dictionary object.
@@ -125,10 +129,14 @@ class TransitionPathway(TransitionList):
 
         Example:
             >>> pprint(path.json())
-            [{'final': [0.5, -0.5], 'initial': [0.5, 0.5]},
-             {'final': [-0.5, 0.5], 'initial': [0.5, 0.5]}]
+            {'pathway': [{'final': [0.5, -0.5], 'initial': [0.5, 0.5]},
+                         {'final': [-0.5, 0.5], 'initial': [0.5, 0.5]}],
+             'weight': (1+0j)}
         """
-        return [item.json() for item in self._list]
+        return {
+            "pathway": [item.json() for item in self._list],
+            "weight": self.weight,
+        }
 
     def tolist(self):
         """Expand TransitionPathway to a Python list.

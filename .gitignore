@@ -11,6 +11,7 @@ __pycache__/*
 .Python
 build/
 .vscode/*
+.idea/*
 develop-eggs/
 dist/
 downloads/
@@ -105,6 +106,7 @@ tests/simpson/quad/**
 version/
 docs/examples/
 docs/fitting/
+_temp/
 
 # files
 class-diagram*
