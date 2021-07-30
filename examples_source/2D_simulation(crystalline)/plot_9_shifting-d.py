@@ -18,7 +18,7 @@ from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Generate the site and spin system objects.
@@ -108,6 +108,7 @@ spin_systems = [
 # the first-order shielding with zeroth and second-rank tensor contributions,
 # respectively. See :ref:`freq_contrib_api` for details.
 shifting_d = Method2D(
+    name="Shifting-d",
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
     spectral_dimensions=[
@@ -138,6 +139,11 @@ shifting_d = Method2D(
         },
     ],
 )
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 2.5))
+shifting_d.plot()
+plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and
