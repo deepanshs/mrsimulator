@@ -705,8 +705,9 @@ class Method(Parseable):
             df = self.summary()
 
         _plot(fig=fig, df=df, include_legend=include_legend)
-        fig.suptitle(t=self.name if self.name is not None else "", y=0.97)
-        # fig.tight_layout()
+
+        y_pos = 1.11 - fig.get_figheight() * 0.04
+        fig.suptitle(t=self.name if self.name is not None else "", va="center", y=y_pos)
         return fig
 
     def shape(self) -> tuple:
