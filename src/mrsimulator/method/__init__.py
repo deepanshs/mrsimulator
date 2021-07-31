@@ -8,8 +8,8 @@ from typing import Union
 import csdmpy as cp
 import matplotlib as mpl
 import numpy as np
-from mrsimulator.base_model import transition_connect_factor
 import pandas as pd
+from mrsimulator.base_model import transition_connect_factor
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import SymmetryPathway
 from mrsimulator.transition import Transition

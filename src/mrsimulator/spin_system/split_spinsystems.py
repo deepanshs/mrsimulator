@@ -61,16 +61,16 @@ def build_new_system(one_set, spin_system):  # 10-12 lines
 
     options = {} if len(new_couplings) == 0 else {"couplings": new_couplings}
     new_sys = spin_system.__class__(sites=new_sites, abundance=abundance, **options)
-    fix_coupling_index(new_sys, list(one_set)) if new_sys.couplings else None
+    _ = fix_coupling_index(new_sys, list(one_set)) if new_sys.couplings else None
     return new_sys
 
 
-def fix_coupling_index(new_spin_sys, map):
+def fix_coupling_index(new_spin_sys, map_):
     """Uses mapping list to correct the site indexes of coupling objects.
 
     Args:
         new_spin_sys: The new spin system
-        map: A list of indexes mapping the old spin system sites to the new.
+        map_: A list of indexes mapping the old spin system sites to the new.
     """
     for coupling in new_spin_sys.couplings:
-        coupling.site_index = [map.index(item) for item in coupling.site_index]
+        coupling.site_index = [map_.index(item) for item in coupling.site_index]
