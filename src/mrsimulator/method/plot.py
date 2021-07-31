@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from itertools import groupby
+from math import ceil
 
 import matplotlib.projections as proj
 import matplotlib.pyplot as plt
@@ -18,6 +19,7 @@ DURATION_WIDTH = 0.5  # Width of one ConstantDurationEvent
 SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
 MIXING_WIDTH = 0.25  # tip_angle of 360 degrees
 DEFAULTFONTSIZE = 9
+MAX_SYMMETRY_TICKS = 5  # Maximum number of ticks allowed on symmetry plot, always odd
 COLORS = {
     "ConstantDurationEvent": "orange",
     "SpectralEvent": "g",
@@ -81,7 +83,7 @@ class CustomAxes(plt.Axes):
         self.xmax = max(x_data)
         self.mix_ev = np.array(mix_ev)
 
-        self._format(xmax=self.xmax, **format_kwargs)
+        self._format(**format_kwargs)
         self.plot(x=self.x_data, y=self.y_data, **plot_kwargs)
 
     def plot(self, x, y, _format=True, labels=True, **kwargs):
@@ -264,17 +266,34 @@ class MultiLineAxes(CustomAxes):
         for row in y:
             super().plot(x=x, y=row, labels=False, **kwargs)
 
-    def _format(self, **kwargs):
+    def _format(self, ymargin=0.15, **kwargs):
         """Determines locator for axes and calls super()._format()"""
-        locator = None
+        ticks = self._make_ticks()
+        margin = ymargin + 1
 
-        # Check if y data is constant throughout events, ignoring nan
-        _min = np.nanmin(self.y_data.flatten())
-        if _min == np.nanmax(self.y_data.flatten()):
-            self.set_ylim(_min - 1.5, _min + 1.5)
-            locator = FixedLocator([_min - 1, _min, _min + 1])
+        # After set_ylim() is called, Axes.margins() had no effect
+        self.set_ylim(ticks[0] * margin, ticks[-1] * margin)
 
-        super()._format(locator=locator, **kwargs)
+        super()._format(locator=FixedLocator(ticks), **kwargs)
+
+    def _make_ticks(self):
+        """Logic for deciding where to place the ticks for a symmetry query"""
+        # Find maximum distance from origin in dataset
+        dist = max(
+            1, np.nanmax(self.y_data.flatten()), -np.nanmin(self.y_data.flatten())
+        )
+
+        # Calculate tick step so at most MAX_SYMMETRY_TICKS ticks
+        step = ceil(2.3 * dist / MAX_SYMMETRY_TICKS)
+
+        # Round up d pathway to next even int if odd
+        if self.col_name == "d" and step % 2 == 1:
+            step += 1
+
+        # Round dist up to next greatest multiple of step to force symmetry
+        dist = (dist + step - 1) - ((dist + step - 1) % step)
+
+        return np.arange(-dist, dist + 1, step, dtype=int)
 
     def _offset_overlaps(self, y, offset_pct=0.03):
         """Offsets y at overlapping values"""
