@@ -338,7 +338,7 @@ class SequenceDiagram(CustomAxes):
     name = "sequence_axes"
     ylim = None
 
-    def make_plot(self, df, x_data, ylim=[0, 1]):
+    def plot_diagram(self, df, x_data, ylim=[0, 1]):
         """Main workflow function to plot sequence diagram"""
         self.x_data = x_data
         self.ylim = ylim
@@ -561,7 +561,7 @@ def _make_x_data(df):
     """Returns list of x points to use in plotting"""
     points = [0]
 
-    for i, row in df.iterrows():
+    for _, row in df.iterrows():
         if row["type"] == "SpectralEvent":
             next_x = points[-1] + (row["fraction"] * SPECTRAL_MULTIPLIER)
             points.extend((next_x, next_x))
@@ -642,7 +642,7 @@ def _add_legend(fig):
 
 def _calculate_n_channels(df):
     """Calculates the number of channels present in the method DataFrame"""
-    # TODO: (future) implement functionality for calculation
+    # (future) implement functionality for calculation
     # Currently hardcoded to 1
     # Maybe move this into _format_df?
     return 1
@@ -650,7 +650,7 @@ def _calculate_n_channels(df):
 
 def plot(fig, df, include_legend) -> plt.figure:
     """Plot symmetry pathways and other requested parameters on figure"""
-    # TODO: (future) add functionality for multiple channels
+    # (future) add functionality for multiple channels
     mix_ev = np.array(df["type"] == "MixingEvent")
     params = _format_df(df)
     x_data, x_offset = _make_normal_and_offset_x_data(df)
@@ -681,7 +681,7 @@ def plot(fig, df, include_legend) -> plt.figure:
 
     # Sequence diagram Axes
     seq_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="sequence_axes")
-    seq_ax.make_plot(df=df, x_data=x_offset)
+    seq_ax.plot_diagram(df=df, x_data=x_offset)
     gs_row_idx += 1
 
     # p and d Axes
