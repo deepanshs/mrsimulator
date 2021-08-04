@@ -63,8 +63,8 @@ eta = [0.2, 1.0, 0.6]
 abundance = [33.33, 33.33, 33.33]  # in %
 
 spin_systems = single_site_system_generator(
-    isotope="87Rb",
-    isotropic_chemical_shift=shifts,
+    isotopes="87Rb",
+    isotropic_chemical_shifts=shifts,
     quadrupolar={"Cq": Cq, "eta": eta},
     abundance=abundance,
 )

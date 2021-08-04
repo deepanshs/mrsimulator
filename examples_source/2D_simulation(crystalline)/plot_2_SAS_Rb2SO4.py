@@ -16,7 +16,7 @@ from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # Generate the site and spin system objects.
@@ -39,7 +39,6 @@ spin_systems = [SpinSystem(sites=[s]) for s in sites]
 # method parameters, as shown below. Note, the Method2D method simulates an infinite
 # spinning speed spectrum.
 sas = Method2D(
-    name="Switched Angle Spinning",
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
     spectral_dimensions=[
@@ -69,11 +68,6 @@ sas = Method2D(
         },
     ],
 )
-
-# A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
-sas.plot()
-plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and

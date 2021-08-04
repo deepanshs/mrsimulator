@@ -48,11 +48,6 @@ Summary
 
 .. ~Cosy
 
-UML Diagram
------------
-
-.. figure:: ../_static/classes_methods.*
-
 
 Table of contents
 -----------------

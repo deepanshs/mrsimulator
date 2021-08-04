@@ -90,8 +90,8 @@ plt.show()
 # ----------------
 # Generate spin systems from the above probability distribution.
 spin_systems = single_site_system_generator(
-    isotope="87Rb",
-    isotropic_chemical_shift=iso,
+    isotopes="87Rb",
+    isotropic_chemical_shifts=iso,
     quadrupolar={"Cq": Cq * 1e6, "eta": eta},  # Cq in Hz
     abundance=pdf,
 )

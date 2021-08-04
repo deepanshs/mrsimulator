@@ -35,7 +35,7 @@ class SSB2D(BaseNamedMethod2D):
         ... )
         >>> sys = SpinSystem(sites=[Site(isotope='13C')])
         >>> method.get_transition_pathways(sys)
-        [|-0.5⟩⟨0.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
+        [|-0.5⟩⟨0.5| ⟶ |-0.5⟩⟨0.5|]
     """
 
     name: str = "SSB2D"

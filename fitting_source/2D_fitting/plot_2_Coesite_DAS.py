@@ -66,8 +66,8 @@ abundance_ratio = [1, 1, 2, 2, 2]
 abundance = np.asarray(abundance_ratio) / 8 * 100  # in %
 
 spin_systems = single_site_system_generator(
-    isotope="17O",
-    isotropic_chemical_shift=shifts,
+    isotopes="17O",
+    isotropic_chemical_shifts=shifts,
     quadrupolar={"Cq": Cq, "eta": eta},
     abundance=abundance,
 )

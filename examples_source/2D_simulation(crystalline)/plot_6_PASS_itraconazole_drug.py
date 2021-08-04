@@ -17,7 +17,7 @@ from mrsimulator import Simulator
 from mrsimulator.methods import SSB2D
 from mrsimulator import signal_processing as sp
 
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 1
 
 # %%
 # There are 41 :math:`^{13}\text{C}` single-site spin systems partially describing the
@@ -53,12 +53,6 @@ PASS = SSB2D(
 )
 sim.methods = [PASS]  # add the method.
 
-# A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
-PASS.plot()
-plt.show()
-
-# %%
 # For 2D spinning sideband simulation, set the number of spinning sidebands in the
 # Simulator.config object to `spectral_width/rotor_frequency` along the sideband
 # dimension.

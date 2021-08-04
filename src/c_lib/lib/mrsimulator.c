@@ -330,7 +330,6 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
    * operation again updates the values of the array, `vector`. */
   fftw_execute(fftw_scheme->the_fftw_plan);
 
-  /** ONLY VALID FOR SINGLE EVENT **/
   /**
    * Evaluate the absolute value square of the `vector` array. The absolute value square
    * is stores as the real part of the `vector` array. The imaginary part is now
@@ -338,6 +337,15 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
   vm_double_square_inplace(2 * plan->size, (double *)fftw_scheme->vector);
   cblas_daxpy(plan->size, 1.0, (double *)fftw_scheme->vector + 1, 2,
               (double *)fftw_scheme->vector, 2);
+
+  /* Scaling the absolute value square with the powder scheme weights. Only the real
+   * part is scaled and the imaginary part is left as is.
+   */
+  // for (i = 0; i < scheme->octant_orientations; i++) {
+  //   cblas_dscal(plan->n_octants * plan->number_of_sidebands,
+  //               plan->norm_amplitudes[i], (double *)&fftw_scheme->vector[i],
+  //               2 * scheme->octant_orientations);
+  // }
 }
 
 /**
@@ -604,7 +612,7 @@ void MRS_rotate_components_from_PAS_to_common_frame(
  *                   = (2π / m ωr) (exp(I m ωr t) - 1)
  *                     |--scale--|
  *                   = scale (exp(I m ωr t) - 1)
- *                   = scale [[cos(m ωr t) -1] + I sin(m ωr t)],
+ *                   = scale [[cos(m ωr t) -1] +Isin(m ωr t)],
  *
  * where ωr is the sample spinning frequency in Hz, m goes from -4 to 4, t is a vector
  * of length `number_of_sidebands` given as

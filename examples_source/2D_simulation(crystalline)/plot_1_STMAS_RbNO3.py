@@ -15,7 +15,7 @@ from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import ST1_VAS
 from mrsimulator import signal_processing as sp
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # Generate the site and spin system objects.
@@ -69,11 +69,6 @@ for angle in angles:
             ],
         )
     )
-
-# A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
-method[0].plot()
-plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and

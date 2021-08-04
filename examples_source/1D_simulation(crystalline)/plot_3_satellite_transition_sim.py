@@ -59,7 +59,6 @@ spin_system = SpinSystem(sites=[site])
 # For illustrative purposes, let's look at the infinite speed spectrum from this
 # satellite transition.
 method = Method1D(
-    name="Inner Satellite Spectrum",
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=1e9,  # in Hz
@@ -78,11 +77,6 @@ method = Method1D(
         }
     ],
 )
-
-# A graphical representation of the method object.
-plt.figure(figsize=(5, 3))
-method.plot()
-plt.show()
 
 # %%
 # Create the Simulator object and add the method and the spin system object.
@@ -111,7 +105,6 @@ plt.show()
 # - :math:`|-1/2\rangle\rightarrow|-3/2\rangle` (:math:`P=-1, D=2`)
 # - :math:`|-3/2\rangle\rightarrow|-5/2\rangle` (:math:`P=-1, D=4`)
 method2 = Method1D(
-    name="Satellite Spectrum",
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=1e9,  # in Hz
@@ -131,11 +124,6 @@ method2 = Method1D(
         }
     ],
 )
-
-# A graphical representation of the method object.
-plt.figure(figsize=(5, 3))
-method2.plot()
-plt.show()
 
 # %%
 # Update the method object in the Simulator object.

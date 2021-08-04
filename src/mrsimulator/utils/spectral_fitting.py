@@ -157,7 +157,7 @@ def _post_sim_LMFIT_params(params, process, index):
     _ = [
         params.add(
             name=f"SP_{index}_operation_{i}_{operation.__class__.__name__}_{attr}",
-            value=getattr(operation, attr),
+            value=operation.__getattribute__(attr),
         )
         for i, operation in enumerate(process.operations)
         if operation.__class__.__name__ in POST_SIM_DICT
@@ -211,7 +211,7 @@ def _get_simulator_object_value(sim, string):
     string = _str_decode(string)
     obj = sim
     for attr in string:
-        obj = obj[int(attr)] if attr.isnumeric() else getattr(obj, attr)
+        obj = obj[int(attr)] if attr.isnumeric() else obj.__getattribute__(attr)
     return obj
 
 
@@ -352,7 +352,7 @@ def _update_simulator_from_LMFIT_params(params, sim: Simulator):
     def set_mth_value(obj, key, value):
         index = int(key.split("_")[1])
         _ = [
-            setattr(sp.events[0], "rotor_frequency", value)
+            sp.events[0].__setattr__("rotor_frequency", value)
             for sp in obj.__dict__["methods"][index].spectral_dimensions
             if sp.events[0].rotor_frequency != 1e12
         ]

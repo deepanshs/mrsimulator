@@ -15,7 +15,3 @@ Events
     :show-inheritance:
     :members:
     :inherited-members: BaseModel
-
-.. autoclass:: MixingEvent
-    :show-inheritance:
-    :members:

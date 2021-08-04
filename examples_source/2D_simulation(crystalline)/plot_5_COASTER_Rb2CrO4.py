@@ -18,7 +18,7 @@ from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # Generate the site and spin system objects.
@@ -41,7 +41,6 @@ spin_system = SpinSystem(sites=[site])
 # the method parameters, as shown below. Note, the Method2D method simulates an infinite
 # spinning speed spectrum.
 coaster = Method2D(
-    name="COASTER",
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
     rotor_angle=70.12 * 3.14159 / 180,  # in rads
@@ -63,11 +62,6 @@ coaster = Method2D(
         },
     ],
 )
-
-# A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
-coaster.plot()
-plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and

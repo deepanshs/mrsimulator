@@ -73,7 +73,7 @@ class FrequencyEnum(str, Enum):
     #         values[item] = item
     #     return None
 
-    def json(self, **kwargs) -> str:
+    def json(self, **kwargs) -> dict:
         """Parse the class object to a JSON compliant python dictionary object."""
         return self.value
 

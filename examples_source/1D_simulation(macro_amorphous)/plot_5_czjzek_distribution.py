@@ -58,7 +58,7 @@ plt.show()
 # :math:`\eta` parameters, use the
 # :func:`~mrsimulator.utils.collection.single_site_system_generator` utility function.
 systems = single_site_system_generator(
-    isotope="13C", shielding_symmetric={"zeta": z_dist, "eta": e_dist}, abundance=amp
+    isotopes="13C", shielding_symmetric={"zeta": z_dist, "eta": e_dist}, abundance=amp
 )
 
 # %%
@@ -107,7 +107,7 @@ plt.show()
 #
 # Create the spin systems.
 systems = single_site_system_generator(
-    isotope="71Ga", quadrupolar={"Cq": cq_dist * 1e6, "eta": e_dist}, abundance=amp
+    isotopes="71Ga", quadrupolar={"Cq": cq_dist * 1e6, "eta": e_dist}, abundance=amp
 )
 
 # %%

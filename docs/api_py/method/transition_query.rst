@@ -1,3 +1,4 @@
+.. _transition_query_api:
 
 .. currentmodule:: mrsimulator.method.query
 

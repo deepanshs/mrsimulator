@@ -177,7 +177,7 @@ def enforce_units(value: str, required_type: str, default_unit: str, throw_error
     """Enforces a required type and default unit on the value."""
     try:
         value = string_to_quantity(value)
-        data_type = str(value.unit.physical_type).split("/")[0]
+        data_type = value.unit.physical_type
 
         if required_type != data_type:
             raise Exception(

@@ -44,13 +44,12 @@ void __mrsimulator_core(
     // transition is a list of quantum numbers packed as quantum numbers from the
     // initial energy state followed by the quantum numbers from the final energy state.
     // The energy states are given in Zeeman basis.
-    float *transition_pathway,         // Pointer to the transition pathway,
-    double transition_pathway_weight,  // The weight of transition pathway.
-    int n_dimension,                   // The total number of spectroscopic dimensions.
-    MRS_dimension *dimensions,         // Pointer to MRS_dimension structure.
-    MRS_fftw_scheme *fftw_scheme,      // Pointer to the fftw scheme.
-    MRS_averaging_scheme *scheme,      // Pointer to the powder averaging scheme.
-    bool interpolation,                // If true, perform a 1D interpolation.
+    float *transition_pathway,
+    int n_dimension,               // The total number of spectroscopic dimensions.
+    MRS_dimension *dimensions,     // Pointer to MRS_dimension structure.
+    MRS_fftw_scheme *fftw_scheme,  // Pointer to the fftw scheme.
+    MRS_averaging_scheme *scheme,  // Pointer to the powder averaging scheme.
+    bool interpolation,            // If true, perform a 1D interpolation.
 
     /**
      * Each event consists of the following freq contrib ordered as
@@ -163,13 +162,11 @@ void __mrsimulator_core(
 
   switch (n_dimension) {
   case 1:
-    one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
-                              transition_pathway_weight);
+    one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec);
     break;
   case 2:
     two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
-                              transition_pathway_weight, plan->number_of_sidebands,
-                              affine_matrix);
+                              plan->number_of_sidebands, affine_matrix);
     break;
   }
 }
@@ -192,7 +189,8 @@ void mrsimulator_core(
     double rotor_angle_in_rad,         // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the a list of transitions.
-    float *transition_pathway, double transition_pathway_weight,
+    float *transition_pathway,
+
     // powder orientation average
     int integration_density,  // The number of triangle along the edge of octahedron
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
@@ -231,8 +229,9 @@ void mrsimulator_core(
       sites,               // Pointer to a list of sites within the spin system.
       couplings,           // Pointer to a list of couplings within a spin system.
       transition_pathway,  // Pointer to a list of transition.
-      transition_pathway_weight, n_dimension, dimensions, fftw_scheme, scheme,
-      interpolation, freq_contrib, affine_matrix);
+
+      n_dimension, dimensions, fftw_scheme, scheme, interpolation, freq_contrib,
+      affine_matrix);
 
   // gettimeofday(&end, NULL);
   // clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +

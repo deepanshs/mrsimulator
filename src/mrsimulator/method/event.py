@@ -22,24 +22,23 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class BaseEvent(Parseable):
-    """Base BaseEvent class. If the value of the attribute is None, the value of the
-    corresponding global attribute will be used instead.
+    """Base BaseEvent class.
 
     Attributes
     ----------
 
     magnetic_flux_density:
         The macroscopic magnetic flux density, :math:`H_0`, of the applied external
-        magnetic field during the event in units of T. The default value is ``None``.
+        magnetic field during the event in units of T. The default value is ``9.4``.
 
     rotor_frequency:
         The sample spinning frequency :math:`\nu_r`, during the event in units of Hz.
-        The default value is ``None``.
+        The default value is ``0``.
 
     rotor_angle:
         The angle between the sample rotation axis and the applied external magnetic
         field vector, :math:`\theta`, during the event in units of rad.
-        The default value is ``None``, i.e. the magic angle.
+        The default value is ``0.9553166``, i.e. the magic angle.
 
     freq_contrib:
         A list of FrequencyEnum enumeration. The default is all frequency enumerations.
@@ -112,11 +111,10 @@ class BaseEvent(Parseable):
         """
 
         symmetry_permutations = self.permutation(isotopes, channels)
-        # print("symmetry_permutations", symmetry_permutations)
+
         segment = []
         for item in symmetry_permutations:
             st = all_transitions[:]
-            # print(item["P"].size, item["D"].size)
             st = st[P_symmetry_indexes(st, item["P"])] if item["P"].size > 0 else st
             st = st[D_symmetry_indexes(st, item["D"])] if item["D"].size > 0 else st
             segment += [st]

@@ -27,11 +27,11 @@ extern double wigner_d_element(const float l, const float m1, const float m2,
  *      rf pulse. The connected transitions are |m1_f >< m1_i | --> | m2_f > < m2_i |.
  *
  * @param l The angular momentum quantum number of the spin involved in the transition.
- * @param m1_f Final quantum number of the starting transition.
- * @param m1_i Initial quantum number of the starting transition.
- * @param m2_f Final quantum number of the connecting transition.
- * @param m2_i Initial quantum number of the connecting transition.
- * @param theta The tip-angle of the rf pulse.
+ * @param m1_f Final quantum number of the starting tranition.
+ * @param m1_i Initial quantum number of the starting tranition.
+ * @param m2_f Final quantum number of the connecting tranition.
+ * @param m2_i Initial quantum number of the connecting tranition.
+ * @param theta The tip-anlge of the rf pulse.
  * @param phi The phase of the rf pulse.
  * @param factor The probability of connection.
  */

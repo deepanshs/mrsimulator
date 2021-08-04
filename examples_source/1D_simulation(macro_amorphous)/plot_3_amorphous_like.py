@@ -89,8 +89,8 @@ plt.show()
 # are the array of tensor parameter coordinates, and ``pdf`` is the array of the
 # corresponding amplitudes.
 spin_systems = single_site_system_generator(
-    isotope="29Si",
-    isotropic_chemical_shift=iso,
+    isotopes="29Si",
+    isotropic_chemical_shifts=iso,
     shielding_symmetric={"zeta": zeta, "eta": eta},
     abundance=pdf,
 )

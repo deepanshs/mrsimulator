@@ -68,7 +68,6 @@ def one_d_spectrum(method,
     # transitions of the observed spin
     cdef int transition_increment
     cdef ndarray[float, ndim=1] transition_pathway_c
-    cdef ndarray[double, ndim=1] transition_pathway_weight_c
     cdef int number_of_transitions
     # transition_pathway_c = np.asarray([-0.5, 0.5]).ravel()
     # number_of_transitions = int(transition_pathway_c.size/2)
@@ -98,7 +97,6 @@ def one_d_spectrum(method,
     max_n_sidebands = number_of_sidebands
 
     total_n_points = 1
-    cdef int n_ev
     cdef ndarray[int] n_event
     cdef ndarray[double] magnetic_flux_density_in_T, frac
     cdef ndarray[double] srfiH
@@ -119,34 +117,31 @@ def one_d_spectrum(method,
 
     prev_n_sidebands = 0
     for i, dim in enumerate(method.spectral_dimensions):
-        n_ev = 0
         for event in dim.events:
-            if event.__class__.__name__ != "MixingEvent":
-                freq_contrib = np.append(freq_contrib, event._freq_contrib_flags())
-                if event.rotor_frequency < 1.0e-3:
-                    rotor_frequency_in_Hz = 1.0e9
-                    rotor_angle_in_rad = 0.0
-                    number_of_sidebands = 1
-                    if prev_n_sidebands == 0: prev_n_sidebands = 1
-                else:
-                    rotor_frequency_in_Hz = event.rotor_frequency
-                    rotor_angle_in_rad = event.rotor_angle
-                    if prev_n_sidebands == 0: prev_n_sidebands = number_of_sidebands
+            freq_contrib = np.append(freq_contrib, event._freq_contrib_flags())
+            if event.rotor_frequency < 1.0e-3:
+                rotor_frequency_in_Hz = 1.0e9
+                rotor_angle_in_rad = 0.0
+                number_of_sidebands = 1
+                if prev_n_sidebands == 0: prev_n_sidebands = 1
+            else:
+                rotor_frequency_in_Hz = event.rotor_frequency
+                rotor_angle_in_rad = event.rotor_angle
+                if prev_n_sidebands == 0: prev_n_sidebands = number_of_sidebands
 
-                if prev_n_sidebands != number_of_sidebands:
-                    raise ValueError(
-                        (
-                            'The library does not support spectral dimensions containing '
-                            'both zero and non-zero rotor frequencies. Consider using a '
-                            'smaller value instead of zero.'
-                        )
+            if prev_n_sidebands != number_of_sidebands:
+                raise ValueError(
+                    (
+                        'The library does not support spectral dimensions containing '
+                        'both zero and non-zero rotor frequencies. Consider using a '
+                        'smaller value instead of zero.'
                     )
+                )
 
-                fr.append(event.fraction) # fraction
-                Bo.append(event.magnetic_flux_density)  # in T
-                vr.append(rotor_frequency_in_Hz) # in Hz
-                th.append(rotor_angle_in_rad) # in rad
-                n_ev +=1
+            fr.append(event.fraction) # fraction
+            Bo.append(event.magnetic_flux_density)  # in T
+            vr.append(rotor_frequency_in_Hz) # in Hz
+            th.append(rotor_angle_in_rad) # in rad
 
         total_n_points *= dim.count
 
@@ -154,7 +149,7 @@ def one_d_spectrum(method,
         offset = dim.spectral_width / 2.0
         coordinates_offset.append(-dim.reference_offset * factor - offset)
         increment.append(dim.spectral_width / dim.count)
-        event_i.append(n_ev)
+        event_i.append(len(dim.events))
 
         if dim.origin_offset is None:
             dim.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
@@ -167,15 +162,6 @@ def one_d_spectrum(method,
     incre = np.asarray(increment, dtype=np.float64)
     coord_off = np.asarray(coordinates_offset, dtype=np.float64)
     n_event = np.asarray(event_i, dtype=np.int32)
-
-    # print('n_events', n_event)
-    # print('frac', frac)
-    # print('magnetic_flux_density_in_T', magnetic_flux_density_in_T)
-    # print('srfiH', srfiH)
-    # print('rair', rair)
-    # print('cnt', cnt)
-    # print('incre', incre)
-    # print('coord_off', coord_off)
 
     # create spectral_dimensions
     dimensions = clib.MRS_create_dimensions(the_averaging_scheme, &cnt[0],
@@ -454,16 +440,11 @@ def one_d_spectrum(method,
         if number_of_sites != p_number_of_sites and isotopes != p_isotopes:
             transition_pathway = spin_sys.transition_pathways
             if transition_pathway is None:
-                segments, weights = method._get_transition_pathway_and_weights_np(spin_sys)
-                transition_pathway = np.asarray(segments)
+                transition_pathway = np.asarray(method._get_transition_pathways_np(spin_sys))
                 transition_pathway_c = np.asarray(transition_pathway, dtype=np.float32).ravel()
-                transition_pathway_weight_c = np.asarray(weights.real, dtype=np.float64).ravel()
             else:
-                # convert transition objects to list
-                weight = [item.weight.real for item in transition_pathway]
-                transition_pathway_weight_c = np.asarray(weight, dtype=np.float64).ravel()
-
                 transition_pathway = np.asarray(transition_pathway)
+                # convert transition objects to list
                 lst = [item.tolist() for item in transition_pathway.ravel()]
                 transition_pathway_c = np.asarray(lst, dtype=np.float32).ravel()
 
@@ -485,9 +466,6 @@ def one_d_spectrum(method,
         # transition_increment = 2*number_of_sites
         # number_of_transitions = int((transition_pathway_c.size)/transition_increment)
 
-        # print('pathway', transition_pathway_c)
-        # print('weight', transition_pathway_weight_c)
-        # print('pathway_count, inc', pathway_count, pathway_increment)
         for trans__ in range(pathway_count):
             clib.__mrsimulator_core(
                 # spectrum information and related amplitude
@@ -495,7 +473,6 @@ def one_d_spectrum(method,
                 &sites_c,
                 &couplings_c,
                 &transition_pathway_c[pathway_increment*trans__],
-                transition_pathway_weight_c[trans__],
                 n_dimension,          # The total number of spectroscopic dimensions.
                 dimensions,           # Pointer to MRS_dimension structure
                 the_fftw_scheme,      # Pointer to the fftw scheme.
@@ -560,64 +537,9 @@ def get_zeeman_states(sys):
 @cython.wraparound(False)
 def transition_connect_factor(float l, float m1_f, float m1_i, float m2_f,
                         float m2_i, double theta, double phi):
-    """Evaluate the probability of connecting two transitions driven by an external rf
-    pulse of phase phi and tip_angle theta. The connected transitions are
-    | m1_f >< m1_i | --> | m2_f > < m2_i |.
-
-    Args:
-        float l: The angular momentum quantum number of the spin involved in the transition.
-        float m1_f Final quantum number of the starting transition.
-        float m1_i Initial quantum number of the starting transition.
-        float m2_f Final quantum number of the connecting transition.
-        float m2_i Initial quantum number of the connecting transition.
-        float theta The tip-angle of the rf pulse.
-        float phi The phase of the rf pulse.
-
-    Return: A complex amplitude.
-    """
-    cdef ndarray[double] factor = np.asarray([1, 0], dtype=np.float64)
+    cdef ndarray[double] factor = np.zeros(2, dtype=np.float64)
     clib.transition_connect_factor(l, m1_f, m1_i, m2_f, m2_i, theta, phi, &factor[0])
     factor = np.around(factor, decimals=12)
-    return complex(factor[0], factor[1])
-
-
-@cython.profile(False)
-@cython.boundscheck(False)
-@cython.wraparound(False)
-def calculate_transition_connect_weight(
-        ndarray[float, ndim=2] trans1,
-        ndarray[float, ndim=2] trans2,
-        ndarray[float, ndim=1] spin,
-        ndarray[double, ndim=1] theta,
-        ndarray[double, ndim=1] phi
-    ):
-    """Evaluate the probability of connecting two transitions driven by an external rf
-    pulse of phase phi and tip_angle theta. The connected transitions are
-    | m1_f >< m1_i | --> | m2_f > < m2_i |.
-
-    Args:
-        float l: The angular momentum quantum number of the spin involved in the transition.
-        float m1_f Final quantum number of the starting transition.
-        float m1_i Initial quantum number of the starting transition.
-        float m2_f Final quantum number of the connecting transition.
-        float m2_i Initial quantum number of the connecting transition.
-        float theta The tip-angle of the rf pulse.
-        float phi The phase of the rf pulse.
-
-    Return: A complex amplitude.
-    """
-    cdef ndarray[double] factor = np.asarray([1, 0], dtype=np.float64)
-    cdef int i, n_sites = spin.size
-    cdef float m1_f, m1_i, m2_f, m2_i
-    for i in range(n_sites):
-        m1_f = trans1[1][i]  # starting transition final state
-        m1_i = trans1[0][i]  # starting transition initial state
-        m2_f = trans2[1][i]  # landing transition final state
-        m2_i = trans2[0][i]  # landing transition initial state
-
-        clib.transition_connect_factor(
-            spin[i], m1_f, m1_i, m2_f, m2_i, theta[i], phi[i], &factor[0]
-        )
     return complex(factor[0], factor[1])
 
 

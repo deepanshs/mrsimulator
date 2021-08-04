@@ -21,7 +21,8 @@ def test_transition_pathway():
     assert trans_path[2].initial == [0.5, 0.5]
     assert trans_path[2].final == [-0.5, -0.5]
 
-    assert trans_path.json() == {"pathway": [a, b, c], "weight": 1}
+    # to dict with unit
+    assert trans_path.json() == [a, b, c]
 
     assert trans_path.tolist() == [
         0.5,
@@ -41,4 +42,4 @@ def test_transition_pathway():
     string = " ⟶ ".join(
         ["|-0.5, 1.5⟩⟨0.5, 1.5|", "|0.5, 1.5⟩⟨0.5, -1.5|", "|-0.5, -0.5⟩⟨0.5, 0.5|"]
     )
-    assert str(trans_path) == string + ", weight=(1+0j)"
+    assert str(trans_path) == string

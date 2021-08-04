@@ -21,8 +21,7 @@ static inline void get_multi_event_amplitudes(int n_events, MRS_event *restrict 
 }
 
 static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
-                                MRS_fftw_scheme *fftw_scheme, double *spec,
-                                double transition_pathway_weight) {
+                                MRS_fftw_scheme *fftw_scheme, double *spec) {
   unsigned int i, j, k1, address;
   unsigned int nt = scheme->integration_density, npts = scheme->octant_orientations;
 
@@ -55,9 +54,6 @@ static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme 
                   &dimensions->events->freq_amplitude[j], npts);
     }
   }
-
-  cblas_dscal(dimensions->events->plan->size, transition_pathway_weight,
-              dimensions->events->freq_amplitude, 1);
 
   offset_0 = dimensions->normalize_offset + dimensions->R0_offset;
   if (fabs(*freq - freq[nt]) < TOL && fabs(*freq - freq[npts - 1]) < TOL)
@@ -99,19 +95,17 @@ static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme 
 }
 
 void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
-                               MRS_fftw_scheme *fftw_scheme, double *spec,
-                               double transition_pathway_weight) {
+                               MRS_fftw_scheme *fftw_scheme, double *spec) {
   // multiply amplitudes from all events to the amplitude array from the first event.
   if (dimensions->n_events != 1) {
     get_multi_event_amplitudes(dimensions->n_events, dimensions->events,
                                dimensions->events->plan->size);
   }
-  averaging_1D(dimensions, scheme, fftw_scheme, spec, transition_pathway_weight);
+  averaging_1D(dimensions, scheme, fftw_scheme, spec);
 }
 
 void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
                                MRS_fftw_scheme *fftw_scheme, double *spec,
-                               double transition_pathway_weight,
                                unsigned int number_of_sidebands,
                                double *affine_matrix) {
   unsigned int i, k, j, evt;
@@ -177,7 +171,6 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
     cblas_dscal(planA->n_octants * number_of_sidebands, planA->norm_amplitudes[j],
                 &freq_ampB[j], scheme->octant_orientations);
   }
-  cblas_dscal(size, transition_pathway_weight, freq_ampA, 1);
 
   for (i = 0; i < number_of_sidebands; i++) {
     offsetA = offset0 + planA->vr_freq[i] * dimensions[0].inverse_increment;

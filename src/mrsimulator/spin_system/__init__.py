@@ -121,7 +121,7 @@ class SpinSystem(Parseable):
         ...     ]
         ... ]
         >>> print(sys1.transition_pathways)
-        [|2.5, 0.5⟩⟨-2.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|, weight=(1+0j)]
+        [|2.5, 0.5⟩⟨-2.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|]
 
         .. note::
             From any given spin system, the list of relevant transition pathways is

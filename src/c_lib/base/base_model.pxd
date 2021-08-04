@@ -145,7 +145,6 @@ cdef extern from "simulation.h":
         site_struct *sites,
         coupling_struct *couplings,
         float *transition_pathway,    # Pointer to a list of transitions.
-        double transition_pathway_weight,  # The weight of transition pathway.
         int n_dimension,              # the number of dimensions.
         MRS_dimension *dimensions,    # the dimensions within method.
         MRS_fftw_scheme *fftw_scheme, # the fftw scheme

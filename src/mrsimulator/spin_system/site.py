@@ -183,8 +183,6 @@ class Site(Parseable):
 
     @validator("shielding_symmetric", "shielding_antisymmetric")
     def shielding_symmetric_must_not_contain_Cq_and_D(cls, v, values):
-        if v is None:
-            return v
         _ = [
             v.property_units.pop(item) if item in v.property_units else None
             for item in ["Cq", "D"]
