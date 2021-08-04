@@ -152,12 +152,9 @@ class CustomAxes(plt.Axes):
             mask = np.where(y_data >= 1e9, np.nan, y_data)
             return x_data, y_data, mask
 
-        # Insert zero or remove first x point for p and d
+        # Insert zero at first point for p and d
         if self.col_name in ["p", "d"]:
-            if self.mix_ev[0]:
-                y_data = np.insert(y_data, 0, 0)
-            else:
-                x_data = x[1:]
+            y_data = np.insert(y_data, 0, 0)
 
         return x_data, y_data, y_data
 
