@@ -14,6 +14,7 @@ __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
+# TODO: remove plot from shifting-d (56) since no new info
 # NOTE: Matplotlib should automatically generate new colors when none specified
 DURATION_WIDTH = 0.5  # Width of one ConstantDurationEvent
 SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
@@ -163,12 +164,22 @@ class CustomAxes(plt.Axes):
     def _format(
         self,
         locator=None,
+        minor_locator=None,
         grid={
+            "which": "major",
             "axis": "y",
             "color": "black",
             "linestyle": "--",
             "linewidth": 0.5,
             "alpha": 0.5,
+        },
+        minor_grid={
+            "which": "minor",
+            "axis": "y",
+            "color": "black",
+            "linestyle": "--",
+            "linewidth": 0.5,
+            "alpha": 0.25,
         },
         ymargin=0.1,
         show_xaxis=False,
@@ -179,10 +190,16 @@ class CustomAxes(plt.Axes):
 
         Args:
             (matplotlib.ticker) locator:
-                Object which determines the ticks on the y-axis
+                Object which determines the major ticks on the y-axis
+
+            (matplotlib.ticker) minor_locator:
+                Object which determines the minor ticks on the y-axis
 
             (dict) grid:
-                Grid kwargs which determine the appearance of the grid
+                Grid kwargs which determine the appearance of the major grid
+
+            (dict) minor_grid:
+                Grid kwargs which determine the appearance of the minor grid
 
             (float) ymargin:
                 Value to be passed to matplotlib.axes.Axes.margin for padding
@@ -205,8 +222,11 @@ class CustomAxes(plt.Axes):
         self.set_xlim(0, self.xmax)
 
         self.get_yaxis().set_visible(show_yaxis)
-        self.get_yaxis().set_major_locator(locator)
         self.set_ylabel(label, fontsize=DEFAULTFONTSIZE)
+        self.get_yaxis().set_major_locator(locator)
+        if minor_locator is not None:
+            self.get_yaxis().set_minor_locator(minor_locator)
+            self.grid(**minor_grid)
 
         self.spines["top"].set_visible(show_xaxis)
         self.spines["right"].set_visible(show_xaxis)
@@ -268,19 +288,31 @@ class MultiLineAxes(CustomAxes):
 
     def _format(self, ymargin=0.15, **kwargs):
         """Determines locator for axes and calls super()._format()"""
-        ticks = self._make_ticks()
+        major_ticks, minor_ticks = self._make_ticks()
         margin = ymargin + 1
 
         # After set_ylim() is called, Axes.margins() had no effect
-        self.set_ylim(ticks[0] * margin, ticks[-1] * margin)
+        self.set_ylim(major_ticks[0] * margin, major_ticks[-1] * margin)
+        super().plot(
+            [0, self.xmax],
+            [0, 0],
+            _format=False,
+            labels=False,
+            linewidth=0.75,
+            color="black",
+        )
 
-        super()._format(locator=FixedLocator(ticks), **kwargs)
+        super()._format(
+            locator=FixedLocator(major_ticks),
+            minor_locator=FixedLocator(minor_ticks),
+            **kwargs,
+        )
 
     def _make_ticks(self):
         """Logic for deciding where to place the ticks for a symmetry query"""
         # Find maximum distance from origin in dataset
-        dist = max(
-            1, np.nanmax(self.y_data.flatten()), -np.nanmin(self.y_data.flatten())
+        dist = int(
+            max(1, np.nanmax(self.y_data.flatten()), -np.nanmin(self.y_data.flatten()))
         )
 
         # Calculate tick step so at most MAX_SYMMETRY_TICKS ticks
@@ -293,7 +325,14 @@ class MultiLineAxes(CustomAxes):
         # Round dist up to next greatest multiple of step to force symmetry
         dist = (dist + step - 1) - ((dist + step - 1) % step)
 
-        return np.arange(-dist, dist + 1, step, dtype=int)
+        major_ticks = np.arange(-dist, dist + 1, step, dtype=int)
+        minor_ticks = [num for num in range(-dist + 1, dist) if num not in major_ticks]
+
+        # Remove odd minor ticks from d symmetry pathway
+        if self.col_name == "d":
+            minor_ticks = [num for num in minor_ticks if num % 2 == 0]
+
+        return major_ticks, minor_ticks
 
     def _offset_overlaps(self, y, offset_pct=0.03):
         """Offsets y at overlapping values"""
@@ -410,6 +449,7 @@ class SequenceDiagram(CustomAxes):
                 # Leftmost x point of next MixingEvent rectangle
                 x0 = self.x_data[x_idx]
                 # Iterate over each MixingEvent in group and plot rectangle
+                # TODO: use user-defined label when defined, generated label otherwise
                 for j in range(num):
                     label, width = self._format_mix_label(
                         ta=df["tip_angle"][df_idx + j],
@@ -665,7 +705,7 @@ def plot(fig, df, include_legend) -> plt.figure:
     gs = fig.add_gridspec(
         nrows=nrows, ncols=1, height_ratios=height_ratios, right=0.95, bottom=0.05
     )  # nrows for multiple channels
-    gs.update(hspace=0.17)
+    gs.update(hspace=0.21)
     gs_row_idx = 0
 
     # Register custom matplotlib projections
