@@ -6,7 +6,10 @@ from typing import List
 from typing import Union
 
 import csdmpy as cp
+import matplotlib as mpl
 import numpy as np
+from mrsimulator.base_model import transition_connect_factor
+import pandas as pd
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import SymmetryPathway
 from mrsimulator.transition import Transition
@@ -16,12 +19,16 @@ from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
 
+from .plot import plot as _plot
 from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
+from .utils import mixing_query_connect_map
+from .utils import tip_angle_and_phase_list
 
-__author__ = "Deepansh J. Srivastava"
-__email__ = "srivastava.89@osu.edu"
+
+__author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]
+__email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
 
 
 class Method(Parseable):
@@ -271,19 +278,17 @@ class Method(Parseable):
 
         Returns: dict
         """
-        # mth = super().json(units=unit)
-        mth = {_: self.__getattribute__(_) for _ in ["name", "label", "description"]}
+        mth = {k: getattr(self, k) for k in ["name", "label", "description"]}
         mth["channels"] = [item.json() for item in self.channels]
         mth["spectral_dimensions"] = [
             item.json(units=units) for item in self.spectral_dimensions
         ]
 
         # add global parameters
-        evt_d = self.property_units.items()
         global_ = (
-            {k: f"{self.__getattribute__(k)} {u}" for k, u in evt_d}
+            {k: f"{getattr(self, k)} {u}" for k, u in self.property_units.items()}
             if units
-            else {k: self.__getattribute__(k) for k, u in evt_d}
+            else {k: getattr(self, k) for k in self.property_units}
         )
         mth.update(global_)
 
@@ -399,7 +404,7 @@ class Method(Parseable):
             dim._get_symmetry_pathways(symmetry_element)
             for dim in self.spectral_dimensions
         ]
-        sp_indexes = np.arange(len(sym_path))
+        sp_idx = np.arange(len(sym_path))
         indexes = [np.arange(len(item)) for item in sym_path]
         products = cartesian_product(*indexes)
 
@@ -407,11 +412,7 @@ class Method(Parseable):
             SymmetryPathway(
                 channels=self.channels,
                 **{
-                    ch: [
-                        _
-                        for sp, i in zip(sp_indexes, item)
-                        for _ in sym_path[sp][i][ch]
-                    ]
+                    ch: [_ for sp, i in zip(sp_idx, item) for _ in sym_path[sp][i][ch]]
                     for ch in CHANNELS
                 },
             )
@@ -430,16 +431,73 @@ class Method(Parseable):
             evt.filter_transitions(all_transitions, isotopes, channels)
             for dim in self.spectral_dimensions
             for evt in dim.events
+            if evt.__class__.__name__ != "MixingEvent"
         ]
-
-        # if segments == []:
-        #     return []
 
         segments_index = [np.arange(item.shape[0]) for item in segments]
         cartesian_index = cartesian_product(*segments_index)
         return [
             [segments[i][j] for i, j in enumerate(item)] for item in cartesian_index
         ]
+
+    def _get_transition_pathway_weights(self, pathways, spin_system):
+        if pathways == []:
+            return []
+
+        symbol = [item.isotope.symbol for item in spin_system.sites]
+        spins = np.asarray([item.isotope.spin for item in spin_system.sites])
+        channels = [item.symbol for item in self.channels]
+        weights = np.ones(len(pathways), dtype=complex)
+
+        mapping = mixing_query_connect_map(self.spectral_dimensions)
+        for obj in mapping:
+            theta_, phi_ = tip_angle_and_phase_list(
+                symbol, channels, obj["mixing_query"]
+            )
+            map_ = obj["near_index"]
+            for j, path in enumerate(pathways):
+                # if weights[j] == 0:
+                #     continue
+                weights[j] *= self._calculate_transition_connect_weight(
+                    path[map_[0]], path[map_[1]], spins, theta_, phi_
+                )
+        return np.round(weights, decimals=6)
+
+    @staticmethod
+    def _calculate_transition_connect_weight(trans1, trans2, spins, theta, phi):
+        """Return the transition connection weight of transitions `trans1` and `trans2`.
+
+        Args:
+            trans1: ndarray of shape (2, n_sites) representing the starting transition,
+                where `n_sites` is the number of sites within the spin system. The two
+                entries at axis 0 corresponds to initial (index 0) and final (index 1)
+                Zeeman energy states.
+            trans2: ndarray of shape (2, n_sites) representing the target transition,
+                where `n_sites` is the number of sites within the spin system. The two
+                entries at axis 0 corresponds to initial (index 0) and final (index 1)
+                Zeeman energy states.
+            spins: ndarray of spin quantum numbers of the sites.
+            theta: ndarray of rotation tip_angle per site from the mixing event.
+            phi: ndarray of rotation phase per site from the mixing event.
+        """
+        amp = 1
+        for i, spin in enumerate(spins):
+            m1_f = trans1[1][i]  # starting transition final state
+            m1_i = trans1[0][i]  # starting transition initial state
+            m2_f = trans2[1][i]  # landing transition final state
+            m2_i = trans2[0][i]  # landing transition initial state
+
+            amp *= transition_connect_factor(
+                spin, m1_f, m1_i, m2_f, m2_i, theta[i], phi[i]
+            )
+        return amp
+
+    def _get_transition_pathway_and_weights_np(self, spin_system):
+        segments = self._get_transition_pathways_np(spin_system)
+        weights = self._get_transition_pathway_weights(segments, spin_system)
+        return segments, weights
+        # indexes = np.where(weights != 0)[0]
+        # return np.asarray(segments)[indexes], weights[indexes]
 
     def get_transition_pathways(self, spin_system) -> List[TransitionPathway]:
         """Return a list of transition pathways from the given spin system that satisfy
@@ -458,21 +516,255 @@ class Method(Parseable):
             >>> sys = SpinSystem(sites=[{'isotope': '27Al'}, {'isotope': '29Si'}])
             >>> method = ThreeQ_VAS(channels=['27Al'])
             >>> pprint(method.get_transition_pathways(sys))
-            [|1.5, -0.5⟩⟨-1.5, -0.5| ⟶ |-0.5, -0.5⟩⟨0.5, -0.5|,
-             |1.5, -0.5⟩⟨-1.5, -0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|,
-             |1.5, 0.5⟩⟨-1.5, 0.5| ⟶ |-0.5, -0.5⟩⟨0.5, -0.5|,
-             |1.5, 0.5⟩⟨-1.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|]
+            [|1.5, -0.5⟩⟨-1.5, -0.5| ⟶ |-0.5, -0.5⟩⟨0.5, -0.5|, weight=(1+0j),
+             |1.5, -0.5⟩⟨-1.5, -0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|, weight=(1+0j),
+             |1.5, 0.5⟩⟨-1.5, 0.5| ⟶ |-0.5, -0.5⟩⟨0.5, -0.5|, weight=(1+0j),
+             |1.5, 0.5⟩⟨-1.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|, weight=(1+0j)]
         """
-        segments = self._get_transition_pathways_np(spin_system)
+        segments, weights = self._get_transition_pathway_and_weights_np(spin_system)
         return [
             TransitionPathway(
                 [
                     Transition(initial=tr[0].tolist(), final=tr[1].tolist())
                     for tr in item
-                ]
+                ],
+                weight=w,
             )
-            for item in segments
+            for item, w in zip(segments, weights)
+            if w != 0
         ]
+
+    def _add_simple_props_to_df(self, df, prop_dict, required, drop_constant_columns):
+        """Helper method for summary to reduce complexity"""
+        # Iterate through property and valid Event subclass for property
+        for prop, valid in prop_dict.items():
+            lst = [
+                getattr(ev, prop) if ev.__class__.__name__ in valid else np.nan
+                for dim in self.spectral_dimensions
+                for ev in dim.events
+            ]
+            if prop not in required and drop_constant_columns:
+                # NOTE: np.isnan() cannot be passed an object (freq_contrib)
+                lst_copy = np.asarray(lst)[~np.isnan(np.asarray(lst))]
+                if np.unique(lst_copy).size < 2:
+                    continue
+            df[prop] = lst
+
+    def summary(self, drop_constant_columns=True) -> pd.DataFrame:
+        r"""Returns a DataFrame giving a summary of the Method. A user can specify
+        optional attributes to include which appear as columns in the DataFrame. A user
+        can also ask to leave out attributes which remain constant throughout the
+        method. Invalid attributes for an Event will be replaced with NAN.
+
+        Args:
+            (bool) drop_constant_columns:
+                Removes constant properties if True. Default is True.
+
+        Returns:
+            pd.DataFrame df:
+                Event number as row and property as column. Invalid properties for an
+                event type are filled with np.nan
+
+            **Columns**
+
+            - (str) type: Event type
+            - (int) spec_dim_index: Index of spectral dimension which event belongs to
+            - (str) label: Event label
+            - (float) duration: Duration of the ConstantDurationEvent
+            - (float) fraction: Fraction of the SpectralEvent
+            - (MixingQuery) mixing_query: MixingQuery object of the MixingEvent
+            - (float) magnetic_flux_density: Magnetic flux density during event in Tesla
+            - (float) rotor_frequency: Rotor frequency during event in Hz
+            - (float) rotor_angle: Rotor angle during event converted to Degrees
+            - (FrequencyEnum) freq_contrib:
+
+        Example:
+            **User Defined Method2D Example**
+
+            >>> from mrsimulator.methods import Method2D
+            >>> method = Method2D(
+            ...     channels=['1H'],
+            ...     spectral_dimensions=[
+            ...         {
+            ...             "events": [
+            ...                 {
+            ...                     "fraction": 0.7,
+            ...                     "transition_query": [{"ch1": {"P": [1]}}]
+            ...                 },
+            ...                 {
+            ...                     "duration": 1.8,
+            ...                     "transition_query": [{"ch1": {"P": [0], "D": [0]}}]
+            ...                 }
+            ...             ],
+            ...         },
+            ...         {
+            ...             "events": [
+            ...                 {
+            ...                     "fraction": 0.3,
+            ...                     "transition_query": [{"ch1": {"P": [-1]}}]
+            ...                 },
+            ...             ],
+            ...         }
+            ...     ]
+            ... )
+            >>> df = method.summary()
+            >>> # Columns are reduced to fit within 80 lines
+            >>> drop = ["freq_contrib", "spec_dim_label", "label", "mixing_query"]
+            >>> df.drop(drop, axis=1, inplace=True)
+            >>> pprint(df)
+                                type  spec_dim_index  duration  fraction       p      d
+            0          SpectralEvent               0       NaN       0.7   [1.0]  [nan]
+            1  ConstantDurationEvent               0       1.8       NaN   [0.0]  [0.0]
+            2          SpectralEvent               1       NaN       0.3  [-1.0]  [nan]
+
+            **All Possible Columns**
+
+            >>> from mrsimulator.methods import ThreeQ_VAS
+            >>> method = ThreeQ_VAS(channels=["17O"])
+            >>> df = method.summary(drop_constant_columns=False)
+            >>> pprint(list(df.columns))
+            ['type',
+             'spec_dim_index',
+             'spec_dim_label',
+             'label',
+             'duration',
+             'fraction',
+             'mixing_query',
+             'magnetic_flux_density',
+             'rotor_frequency',
+             'rotor_angle',
+             'freq_contrib',
+             'p',
+             'd']
+        """
+        # Make sure spectral_dimensions has at least one SpectralDimension
+        if len(self.spectral_dimensions) == 0:
+            raise AttributeError(
+                "Method has empty spectral_dimensions. At least one SpectralDimension "
+                "is needed with at least one Event."
+            )
+
+        # Make sure there is at least one event within spectral_dimensions
+        if sum([len(spec_dim.events) for spec_dim in self.spectral_dimensions]) == 0:
+            raise AttributeError(
+                "Method has no Events. At least one SpectralDimension "
+                "is needed with at least one Event."
+            )
+
+        CD = "ConstantDurationEvent"
+        SP = "SpectralEvent"
+        MX = "MixingEvent"
+
+        # Columns required to be present
+        required = [
+            "type",
+            "label",
+            "duration",
+            "fraction",
+            "mixing_query",
+            "spec_dim_index",
+            "spec_dim_label",
+            "freq_contrib",
+            "p",
+            "d",
+        ]
+
+        # Properties which can accessed by getattr()
+        prop_dict = {
+            "label": (CD, SP, MX),
+            "duration": CD,
+            "fraction": SP,
+            "mixing_query": MX,
+            "magnetic_flux_density": (CD, SP),
+            "rotor_frequency": (CD, SP),
+            "rotor_angle": (CD, SP),
+            "freq_contrib": (CD, SP),
+        }
+
+        # Create the DataFrame
+        df = pd.DataFrame()
+
+        # Populate columns which cannot be calculated from iteration
+        df["type"] = [
+            ev.__class__.__name__
+            for dim in self.spectral_dimensions
+            for ev in dim.events
+        ]
+        df["spec_dim_index"] = [
+            i for i, dim in enumerate(self.spectral_dimensions) for ev in dim.events
+        ]
+        df["spec_dim_label"] = [
+            dim.label for dim in self.spectral_dimensions for ev in dim.events
+        ]
+        self._add_simple_props_to_df(df, prop_dict, required, drop_constant_columns)
+
+        # Add p and d symmetry pathways to dataframe
+        df["p"] = np.transpose(
+            [sym.total for sym in self.get_symmetry_pathways("P")]
+        ).tolist()
+        df["d"] = np.transpose(
+            [sym.total for sym in self.get_symmetry_pathways("D")]
+        ).tolist()
+
+        # Convert rotor_angle to degrees
+        if "rotor_angle" in df.columns:
+            df["rotor_angle"] = df["rotor_angle"] * 180 / np.pi
+
+        # Convert rotor_frequency to kHz
+        if "rotor_frequency" in df.columns:
+            df["rotor_frequency"] = df["rotor_frequency"] / 1000
+
+        return df
+
+    def plot(self, df=None, include_legend=False) -> mpl.pyplot.figure:
+        """Creates a diagram representing the method. By default, only parameters which
+        vary throughout the method are plotted. Figure can be finley adjusted using
+        matplotlib rcParams.
+
+        Args:
+            DataFrame df:
+                DataFrame to plot data from. By default DataFrame is calculated from
+                summary() and will show only parameters which vary throughout the
+                method plus 'p' symmetry pathway and 'd' symmetry pathway if it is not
+                none or defined
+
+            bool include_legend:
+                Optional argument to include a key for event colors. Default is False
+                and no key will be included in figure
+
+        Returns:
+            matplotlib.pyplot.figure
+
+        Example:
+            >>> from mrsimulator.methods import BlochDecaySpectrum
+            >>> method = BlochDecaySpectrum(channels=["13C"])
+            >>> fig = method.plot()
+
+            **Adjusting Figure Size rcParams**
+
+            >>> import matplotlib as mpl
+            >>> from mrsimulator.methods import FiveQ_VAS
+            >>> mpl.rcParams["figure.figsize"] = [14, 10]
+            >>> mpl.rcParams["font.size"] = 14
+            >>> method = FiveQ_VAS(channels=["27Al"])
+            >>> fig = method.plot(include_legend=True)
+
+            **Plotting all Parameters, including Constant**
+
+            >>> from mrsimulator.methods import FiveQ_VAS
+            >>> method = FiveQ_VAS(channels=["27Al"])
+            >>> df = method.summary(drop_constant_columns=False)
+            >>> fig = method.plot(df=df)
+        """
+        fig = mpl.pyplot.gcf()
+
+        if df is None:
+            df = self.summary()
+
+        _plot(fig=fig, df=df, include_legend=include_legend)
+
+        fig.suptitle(t=self.name if self.name is not None else "")
+        return fig
 
     def shape(self) -> tuple:
         """The shape of the method's spectral dimension array.

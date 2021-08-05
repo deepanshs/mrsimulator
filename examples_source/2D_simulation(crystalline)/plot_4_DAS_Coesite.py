@@ -16,7 +16,7 @@ from mrsimulator import Simulator
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Create the Simulator object and load the spin systems database or url address.
@@ -31,6 +31,7 @@ sim.load_spin_systems(filename)
 # method parameters, as shown below. Note, the Method2D method simulates an infinite
 # spinning speed spectrum.
 das = Method2D(
+    name="Dynamic Angle Spinning",
     channels=["17O"],
     magnetic_flux_density=11.74,  # in T
     spectral_dimensions=[
@@ -67,7 +68,12 @@ das = Method2D(
         },
     ],
 )
-sim.methods = [das]  # add the method.
+sim.methods = [das]  # add the method
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+das.plot()
+plt.show()
 
 # %%
 # Run the simulation
