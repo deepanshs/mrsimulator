@@ -296,6 +296,7 @@ class MultiLineAxes(CustomAxes):
             _format=False,
             labels=False,
             linewidth=0.75,
+            alpha=0.5,
             color="black",
         )
 
