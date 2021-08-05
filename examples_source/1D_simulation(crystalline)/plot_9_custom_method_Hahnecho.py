@@ -14,6 +14,7 @@ import numpy as np
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.methods import Method1D
 from mrsimulator.method.event import MixingEvent, SpectralEvent
+from pprint import pprint
 
 # sphinx_gallery_thumbnail_number = 1
 
@@ -78,6 +79,7 @@ spin_system_2 = SpinSystem(sites=[S1, S2], couplings=[S12], label="Coupled syste
 # on channel-1 by setting the attributes ``tip_angle`` and ``phase`` to :math:`\pi` and
 # 0, respectively. There two parameters are analogous to the pulse angle and phase.
 hahn_echo = Method1D(
+    name="Hahn Echo 1D",
     channels=["1H"],
     magnetic_flux_density=9.4,  # in T
     spectral_dimensions=[
@@ -85,13 +87,26 @@ hahn_echo = Method1D(
             "count": 512,
             "spectral_width": 2e4,  # in Hz
             "events": [
-                SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [1]}}]),
+                SpectralEvent(
+                    fraction=0.5,
+                    label=r"$\nu_1$/2",
+                    transition_query=[{"ch1": {"P": [1]}}],
+                ),
                 MixingEvent(mixing_query={"ch1": {"tip_angle": np.pi, "phase": 0}}),
-                SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
+                SpectralEvent(
+                    fraction=0.5,
+                    label=r"$\nu_1$/2",
+                    transition_query=[{"ch1": {"P": [-1]}}],
+                ),
             ],
         }
     ],
 )
+
+# A graphical representation of the method object.
+plt.figure(figsize=(4, 2.5))
+hahn_echo.plot()
+plt.show()
 
 # %%
 # You may also visualize the method using the `plot` function.
@@ -101,12 +116,12 @@ hahn_echo = Method1D(
 # As mentioned before, a method object is decoupled from the spin system object. Notice,
 # when we get the transition pathways from this method for a single-site spin system, we
 # get a single transition pathway.
-print(hahn_echo.get_transition_pathways(spin_system_1))
+pprint(hahn_echo.get_transition_pathways(spin_system_1))
 
 # %%
 # In the case of a homonuclear two-site spin 1/2 spin system, the same method returns
 # four transition pathways.
-print(hahn_echo.get_transition_pathways(spin_system_2))
+pprint(hahn_echo.get_transition_pathways(spin_system_2))
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and run the
