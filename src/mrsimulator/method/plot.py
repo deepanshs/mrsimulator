@@ -488,52 +488,52 @@ class SequenceDiagram(CustomAxes):
             df_idx += num
 
 
-class SpectralDimensionLabels(CustomAxes):
-    """Axes subclass with"""
+# class SpectralDimensionLabels(CustomAxes):
+#     """Axes subclass with"""
 
-    name = "label_axes"
+#     name = "label_axes"
 
-    def plot_labels(self, df, x_data, ylim=[0, 1], style="italic", format_kwargs={}):
-        """Plot labels of spectral dimensions"""
-        self.xmax = max(x_data)
-        self._format(ylim, **format_kwargs)
+#     def plot_labels(self, df, x_data, ylim=[0, 1], style="italic", format_kwargs={}):
+#         """Plot labels of spectral dimensions"""
+#         self.xmax = max(x_data)
+#         self._format(ylim, **format_kwargs)
 
-        ev_groups = [(_type, sum(1 for _ in gp)) for _type, gp in groupby(df["type"])]
+#         ev_groups = [(_type, sum(1 for _ in gp)) for _type, gp in groupby(df["type"])]
 
-        last_spec_dim_x = 0
-        spec_dim_idx = 0
-        df_idx = 0
-        x_idx = 0
-        for _type, num in ev_groups:
-            for j in range(num):
-                if x_idx < len(x_data) - 1 and x_data[x_idx] == x_data[x_idx + 1]:
-                    x_idx += 1
-                if df["spec_dim_index"][df_idx + j] != spec_dim_idx:  # Next spec dim
-                    x0 = x_data[x_idx]
-                    if df["type"][df_idx + j] == "MixingEvent":
-                        x0 += sum(df["tip_angle"][df_idx:j]) / 360.0 * MIXING_WIDTH
-                    self.annotate(
-                        text=df["spec_dim_label"][df_idx + j - 1],
-                        xy=((last_spec_dim_x + x0) / 2, ylim[0] + 0.17),
-                        **DEFAULT_ANNO_KWARGS,
-                        style=style,
-                    )
-                    last_spec_dim_x = x0
-                    spec_dim_idx += 1
-                x_idx += 1
-            df_idx += num
+#         last_spec_dim_x = 0
+#         spec_dim_idx = 0
+#         df_idx = 0
+#         x_idx = 0
+#         for _type, num in ev_groups:
+#             for j in range(num):
+#                 if x_idx < len(x_data) - 1 and x_data[x_idx] == x_data[x_idx + 1]:
+#                     x_idx += 1
+#                 if df["spec_dim_index"][df_idx + j] != spec_dim_idx:  # Next spec dim
+#                     x0 = x_data[x_idx]
+#                     if df["type"][df_idx + j] == "MixingEvent":
+#                         x0 += sum(df["tip_angle"][df_idx:j]) / 360.0 * MIXING_WIDTH
+#                     self.annotate(
+#                         text=df["spec_dim_label"][df_idx + j - 1],
+#                         xy=((last_spec_dim_x + x0) / 2, ylim[0] + 0.17),
+#                         **DEFAULT_ANNO_KWARGS,
+#                         style=style,
+#                     )
+#                     last_spec_dim_x = x0
+#                     spec_dim_idx += 1
+#                 x_idx += 1
+#             df_idx += num
 
-        self.annotate(
-            text=df["spec_dim_label"][df_idx - 1],
-            xy=((last_spec_dim_x + max(x_data)) / 2, ylim[0] + 0.17),
-            **DEFAULT_ANNO_KWARGS,
-            style=style,
-        )
+#         self.annotate(
+#             text=df["spec_dim_label"][df_idx - 1],
+#             xy=((last_spec_dim_x + max(x_data)) / 2, ylim[0] + 0.17),
+#             **DEFAULT_ANNO_KWARGS,
+#             style=style,
+#         )
 
-    def _format(self, ylim, **kwargs):
-        self.axis("off")
-        self.set_ylim(*ylim)
-        super()._format(**kwargs)
+#     def _format(self, ylim, **kwargs):
+#         self.axis("off")
+#         self.set_ylim(*ylim)
+#         super()._format(**kwargs)
 
 
 def _check_columns(df):
@@ -682,7 +682,7 @@ def _calculate_n_channels(df):
     # (future) implement functionality for calculation
     # Currently hardcoded to 1
     # Maybe move this into _format_df?
-    return 1
+    return 2
 
 
 def plot(fig, df, include_legend) -> plt.figure:
@@ -694,11 +694,10 @@ def plot(fig, df, include_legend) -> plt.figure:
 
     # Calculations and setup gridspec object for number of subplots
     n_channels = _calculate_n_channels(df)
-    # spec_dim label + channels + p pathway + params
-    nrows = n_channels + 2 + len(params)
+    # channels & p pathway + params
+    nrows = n_channels + len(params)
     height_ratios = np.ones(nrows)
-    height_ratios[0] = 0.11
-    height_ratios[1] = 0.75
+    height_ratios[0] = 0.70
     gs = fig.add_gridspec(
         nrows=nrows, ncols=1, height_ratios=height_ratios, right=0.95, bottom=0.05
     )  # nrows for multiple channels
@@ -709,12 +708,12 @@ def plot(fig, df, include_legend) -> plt.figure:
     proj.register_projection(CustomAxes)
     proj.register_projection(MultiLineAxes)
     proj.register_projection(SequenceDiagram)
-    proj.register_projection(SpectralDimensionLabels)
+    # proj.register_projection(SpectralDimensionLabels)
 
-    # Spectral Dimension labels Axes
-    spec_dim_label_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="label_axes")
-    spec_dim_label_ax.plot_labels(df=df, x_data=x_offset)
-    gs_row_idx += 1
+    # # Spectral Dimension labels Axes
+    # spec_dim_label_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="label_axes")
+    # spec_dim_label_ax.plot_labels(df=df, x_data=x_offset)
+    # gs_row_idx += 1
 
     # Sequence diagram Axes
     seq_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="sequence_axes")

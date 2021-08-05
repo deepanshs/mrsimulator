@@ -14,7 +14,8 @@ from mrsimulator.method.plot import _offset_x_data
 from mrsimulator.method.plot import CustomAxes
 from mrsimulator.method.plot import MultiLineAxes
 from mrsimulator.method.plot import SequenceDiagram
-from mrsimulator.method.plot import SpectralDimensionLabels
+
+# from mrsimulator.method.plot import SpectralDimensionLabels
 
 
 __author__ = "Matthew D. Giammar"
@@ -263,17 +264,17 @@ def test_SequenceDiagram():
     assert np.allclose(axes_obj.x_data, x_data_should_be)
 
 
-def test_SpectralDimensionLabels():
-    df2 = method2_df()
-    _add_tip_angle_and_phase(df2)
-    x2 = _make_x_data(df2)
-    off_x2 = _offset_x_data(df2, x2)
+# def test_SpectralDimensionLabels():
+#     df2 = method2_df()
+#     _add_tip_angle_and_phase(df2)
+#     x2 = _make_x_data(df2)
+#     off_x2 = _offset_x_data(df2, x2)
 
-    # Setup matplotlib objects
-    fig = plt.figure()
-    proj.register_projection(SpectralDimensionLabels)
-    axes_obj = fig.add_subplot(projection="label_axes")
-    axes_obj.plot_labels(df2, off_x2)
+#     # Setup matplotlib objects
+#     fig = plt.figure()
+#     proj.register_projection(SpectralDimensionLabels)
+#     axes_obj = fig.add_subplot(projection="label_axes")
+#     axes_obj.plot_labels(df2, off_x2)
 
 
 def test_MultilineAxes():
