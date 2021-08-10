@@ -184,6 +184,9 @@ class SpinSystem(Parseable):
                 raise ValueError("All entries must be of type `Coupling`.")
         return list(v)
 
+    def json(self, units=True) -> dict:
+        return super().json(exclude={"transition_pathways"}, units=units)
+
     def simplify(self):
         """Simplifies user-defined spin systems into irreducible spin system objects.
 

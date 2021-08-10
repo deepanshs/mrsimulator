@@ -32,10 +32,15 @@ def test_direct_init_spin_system():
     assert the_spin_system.abundance == 10.0
     assert the_spin_system.transition_pathways is None
 
+    the_spin_system.transition_pathways = [[{"initial": [0.5], "final": [-0.5]}]]
+    assert the_spin_system.transition_pathways[0][0].initial == [0.5]
+    assert the_spin_system.transition_pathways[0][0].final == [-0.5]
+
     assert the_spin_system.json() == {"abundance": "10.0 %"}
     assert the_spin_system.json(units=False) == {
         "abundance": 10.0,
     }
+    assert "transition_pathways" not in the_spin_system.json()
 
     # test-2 # site
     test_site = Site(isotope="29Si", isotropic_chemical_shift=10)
