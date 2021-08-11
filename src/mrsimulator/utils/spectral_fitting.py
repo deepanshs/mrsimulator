@@ -351,7 +351,7 @@ def _update_simulator_from_LMFIT_params(params, sim: Simulator):
 
     def set_mth_value(obj, key, value):
         index = int(key.split("_")[1])
-        [
+        _ = [
             sp.events[0].__setattr__("rotor_frequency", value)
             for sp in obj.__dict__["methods"][index].spectral_dimensions
             if sp.events[0].rotor_frequency != 1e12
