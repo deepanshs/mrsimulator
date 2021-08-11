@@ -75,6 +75,15 @@ def test_make_simulator_params():
     assert val["mth_3_rotor_frequency"] == 35500
 
 
+def test_make_LMFIT_params_alias():
+    sim = setup_simulator()
+
+    params1 = sf.make_LMFIT_parameters(sim, include={"rotor_frequency"})
+    params2 = sf.make_LMFIT_params(sim, include={"rotor_frequency"})
+
+    assert params1 == params2
+
+
 def test_update_simulator_from_LMFIT_params():
     sim = setup_simulator()
 

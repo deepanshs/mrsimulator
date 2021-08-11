@@ -271,7 +271,7 @@ def get_simulator_method_parameters(params: Parameters, sim: Simulator, include=
                 if ev.rotor_frequency != 1e12
             ]
             for i, mth in enumerate(sim.methods)
-            if mth._named_method
+            # if mth._named_method
         ]
 
         [
@@ -290,7 +290,7 @@ def get_simulator_method_parameters(params: Parameters, sim: Simulator, include=
 
 def make_LMFIT_parameters(sim: Simulator, processors: list = None, include={}):
     """An alias of `make_LMFIT_params` function."""
-    return make_LMFIT_params(sim, processors)
+    return make_LMFIT_params(sim, processors, include)
 
 
 def make_LMFIT_params(sim: Simulator, processors: list = None, include={}):
