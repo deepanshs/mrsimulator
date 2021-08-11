@@ -154,7 +154,7 @@ def _post_sim_LMFIT_params(params, process, index):
     Returns:
         Parameters object.
     """
-    _ = [
+    [
         params.add(
             name=f"SP_{index}_operation_{i}_{operation.__class__.__name__}_{attr}",
             value=operation.__getattribute__(attr),
@@ -274,7 +274,7 @@ def get_simulator_method_parameters(params: Parameters, sim: Simulator, include=
             if mth._named_method
         ]
 
-        _ = [
+        [
             params.add(
                 name=f"mth_{i}_rotor_frequency",
                 value=val[0],
@@ -351,15 +351,15 @@ def _update_simulator_from_LMFIT_params(params, sim: Simulator):
 
     def set_mth_value(obj, key, value):
         index = int(key.split("_")[1])
-        _ = [
+        [
             sp.events[0].__setattr__("rotor_frequency", value)
             for sp in obj.__dict__["methods"][index].spectral_dimensions
             if sp.events[0].rotor_frequency != 1e12
         ]
 
     values = params.valuesdict()
-    _ = [set_sys_value(sim, k, v) for k, v in values.items() if "sys_" in k]
-    _ = [set_mth_value(sim, k, v) for k, v in values.items() if "mth_" in k]
+    [set_sys_value(sim, k, v) for k, v in values.items() if "sys_" in k]
+    [set_mth_value(sim, k, v) for k, v in values.items() if "mth_" in k]
 
 
 def _update_processors_from_LMFIT_params(params, processors: list):
@@ -381,7 +381,7 @@ def _update_processors_from_LMFIT_params(params, processors: list):
         obj[sp].__dict__["operations"][op].__dict__[arg] = value
 
     values = params.valuesdict()
-    _ = [set_value(processors, k, v) for k, v in values.items() if "operation_" in k]
+    [set_value(processors, k, v) for k, v in values.items() if "operation_" in k]
 
 
 def update_mrsim_obj_from_params(params, sim: Simulator, processors: list = None):
