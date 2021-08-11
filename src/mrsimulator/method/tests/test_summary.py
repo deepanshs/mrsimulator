@@ -114,7 +114,6 @@ def basic_summary_tests(the_method):
     temp = [[np.nan], [0.0], [1.0], [np.nan], [3.0], [4.0]]
     assert check_col_equal_2d(df["p"], temp)
 
-    # BUG: column d is 2d array of correct size but all nan
     # Check d
     temp = [[np.nan], [0.0], [-2.0], [np.nan], [-4.0], [-6.0]]
     assert check_col_equal_2d(df["d"], temp)
@@ -138,8 +137,8 @@ def basic_summary_tests(the_method):
     ]
     assert check_col_equal(df["rotor_angle"], temp)
 
-    # TODO: Check mixing_query
-    # TODO: Check freq_contrib
+    assert "mixing_query" in df.columns
+    assert "freq_contrib" in df.columns
 
 
 def args_summary_tests(the_method):
@@ -176,7 +175,6 @@ def args_summary_tests(the_method):
 
 
 def test_summary():
-    # TODO: Make one mixing_query be empty
     all_defined_no_constant_spec_dims = [
         {
             "events": [

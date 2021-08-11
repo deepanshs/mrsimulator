@@ -260,7 +260,6 @@ class RFRotation(Parseable):
 
 
 class MixingQuery(Parseable):
-    # TODO: Fix example code
     """MixingQuery class for quering transition mixing between events.
 
     Attributes
