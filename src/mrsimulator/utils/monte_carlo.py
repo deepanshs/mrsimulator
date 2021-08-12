@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import copy
+import re
 
 import emcee
 import numpy as np
@@ -7,6 +8,56 @@ from mrsimulator.utils.spectral_fitting import get_correct_data_order
 
 __author__ = ["He Sun", "Deepansh Srivastava"]
 __email__ = ["wushanyun64@gmail.com", "srivastava.89@osu.edu"]
+
+
+def name_abbrev(params):
+    """
+    The limfit parameters obj created by function make_LMFIT_params contains detailed
+    but lengthy names which could be hard for ploting.
+    This small function simplifys the long default param name for substream ploting.
+
+    Example (default name --> abbreviated name)
+    -----------------------------
+    sys_0_site_0_isotropic_chemical_shift --> delta_0_0
+    sys_1_site_0_shielding_symmetric_eta-->etaCS_1_0
+    mth_0_rotor_frequency-->spin_freq_0
+    SP_0_operation_2_Exponential_FWHM -->expo_fwhm_0_2
+
+    Paramsters
+    -----------------------------
+    params: LMFIT Parameters.
+        The lmfit parameters obj with default mrsimulator param name.
+
+    Return
+    -----------------------------
+    name_abbrev_list: list
+        A list of abbreviated parameters names.
+    """
+    abbreviation_pairs = {
+        r"sys_[0-9]+_site_[0-9]+_isotropic_chemical_shift": "delta",
+        r"sys_[0-9]+_site_[0-9]+_shielding_symmetric_zeta": "zeta",
+        r"sys_[0-9]+_site_[0-9]+_shielding_symmetric_eta": "etaCS",
+        r"sys_[0-9]+_site_[0-9]+_quadrupolar_Cq": "Cq",
+        r"sys_[0-9]+_site_[0-9]+_quadrupolar_eta": "etaQ",
+        r"mth_[0-9]+_rotor_frequency": "spin_freq",
+        r"SP_[0-9]+_operation_[0-9]+_Exponential_FWHM": "expo_fwhm",
+        r"SP_[0-9]+_operation_[0-9]+_Gaussian_FWHM": "gauss_fwhm",
+        r"SP_[0-9]+_operation_[0-9]+_Scale_factor": "scale",
+        r"SP_[0-9]+_operation_[0-9]+_ConstantOffset_offset": "offset",
+        r"SP_[0-9]+_operation_[0-9]+_Linear_amplitude": "linear",
+    }
+
+    name_abbrev_list = []
+    for name in params.keys():
+        for pattern, abbrev in abbreviation_pairs.items():
+            pattern = re.compile(pattern)
+            if pattern.fullmatch(name):
+                numbers = re.findall(r"(_[0-9]+)_", name)
+                name_abbrev = abbrev
+                for num in numbers:
+                    name_abbrev += num
+                name_abbrev_list.append(name_abbrev)
+    return name_abbrev_list
 
 
 class mrsim_emcee:
