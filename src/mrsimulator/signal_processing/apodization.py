@@ -41,12 +41,42 @@ class Apodization(ModuleOperation):
 
         for i in dim_index:
             x = self.get_coordinates(dims[i])  # dims[i].coordinates
-            apodization_vactor = _get_broadcast_shape(self.fn(x), i, ndim)
+            apodization_vector = _get_broadcast_shape(self.fn(x), i, ndim)
 
             dv_indexes = self._get_dv_indexes(self.dv_index, n=len(data.y))
 
             for index in dv_indexes:
-                data.y[index].components *= apodization_vactor
+                data.y[index].components *= apodization_vector
+        return data
+
+
+class MultiDimensionApodization(ModuleOperation):
+    dim_index: Union[int, list, tuple] = 0
+    dv_index: Union[int, list, tuple] = None  # if none apply to all
+    module_name: ClassVar[str] = __name__
+
+    @property
+    def function(self):
+        return "apodization"
+
+    def operate(self, data):
+        """Apply the operation function.
+
+        Args:
+            data: A CSDM object.
+        """
+        dims = data.dimensions
+        ndim = len(dims)
+
+        dim_index = self.dim_index
+        dim_index = [dim_index] if isinstance(dim_index, int) else dim_index
+
+        apodization_matrix = _get_broadcast_shape(self.fn(), dim_index, ndim)
+
+        dv_indexes = self._get_dv_indexes(self.dv_index, n=len(data.y))
+
+        for index in dv_indexes:
+            data.y[index].components = data.y[index].components * apodization_matrix
         return data
 
 
@@ -194,22 +224,23 @@ class SkewedGaussian(Apodization):
     Example
     -------
 
-    >>> operation6 = sp.apodization.SkewedGaussian(skew='5 Hz', dim_index=0, dv_index=0)
+    >>> operation6 = sp.apodization.SkewedGaussian(skew=2, dim_index=0, dv_index=0)
     """
     skew: Union[float, str] = 0
-    property_units: Dict = {"skew": CONST}
+    FWHM: Union[float, str] = "2.354820045030949 Hz"
+    property_units: Dict = {"FWHM": CONST}
 
-    @validator("skew")
+    @validator("FWHM")
     def str_to_quantity(cls, v, values):
-        return _str_to_quantity(v, values, "skew")
+        return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
-        x = self.get_coordinates_in_units(x, unit=1.0 * "s")
-        prob_density_funct = np.exp(-(0.5) * (1 * x) ** 2)
-        cumulative_prob_funct = 0.5 * (1 + erf(self.skew * x / np.sqrt(2)))
-        return (
-            1.0 if self.skew == 0.0 else 2 * prob_density_funct * cumulative_prob_funct
-        )
+        sigma = self.FWHM / 2.354820045030949
+        x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
+        prob_funct = [np.exp(-(0.5) * (sigma * j) ** 2) for j in x]
+        cumprob_funct = [0.5 + 0.5 * erf(self.skew * j / np.sqrt(2)) for j in x]
+        sg = np.asarray([a * b for a, b in zip(prob_funct, cumprob_funct)])
+        return 1.0 if self.skew == 0.0 else sg
 
 
 class Step(Apodization):
@@ -304,7 +335,7 @@ class Array(np.ndarray, metaclass=ArrayMeta):
     pass
 
 
-class Mask(Apodization):
+class Mask(MultiDimensionApodization):
     r"""Apodize a dependent variable of the CSDM object by a user defined mask.
 
     The apodization function follows
@@ -333,14 +364,10 @@ class Mask(Apodization):
     -------
     """
 
-    mask: Union[List[float], Array[float]] = []
+    mask: Union[List[float], Array[float], float, int] = None
 
     class Config:
         arbitrary_types_allowed = True
 
-    def fn(self, x):
-        if x.value.shape != self.mask.shape:
-            raise Exception(
-                f"size dim ({len(x.values)}) not equal to size mask ({len(self.mask)})"
-            )
+    def fn(self):
         return self.mask
