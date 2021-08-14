@@ -104,6 +104,24 @@ def test_Gaussian():
     ), "Gaussian apodization amplitude failed"
 
 
+def test_SkewedGaussian():
+    skew = 2
+    FWHM = 200 * 2.354820045030949
+    PS_2 = [
+        sp.IFFT(dim_index=0),
+        sp.apodization.SkewedGaussian(
+            skew=skew, FWHM=f"{FWHM} Hz", dim_index=0, dv_index=[0, 1]
+        ),
+        sp.FFT(dim_index=0),
+    ]
+
+    post_sim = sp.SignalProcessor(operations=PS_2)
+    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
+    _, y0, y1, _ = data.to_list()
+
+    assert np.allclose(y0, y1), "Gaussian apodization on two dv are not equal."
+
+
 def test_Step():
     rising_edge = -1
     falling_edge = 1
@@ -137,7 +155,7 @@ def test_Step():
 
 
 def test_Mask():
-    one_mask = np.ones(shape=len(freqHz))
+    one_mask = np.zeros(shape=len(freqHz))
 
     PS_5 = [
         sp.IFFT(dim_index=0),
@@ -151,9 +169,14 @@ def test_Mask():
 
     _, test_y0, test_y1, _ = sim.methods[0].simulation.to_list()
 
+    nonzero_y0 = np.count_nonzero(y0)
+    nonzero_y1 = np.count_nonzero(y1)
+
     assert np.allclose(y0, y1), "Mask on two dv are not equal."
 
-    assert np.allclose(test_y0, y0, atol=1e-04), "Mask apodization amplitude failed"
+    assert np.allclose(
+        nonzero_y0, nonzero_y1, atol=1e-04
+    ), "Mask apodization amplitude failed"
 
 
 def test_scale_class():
