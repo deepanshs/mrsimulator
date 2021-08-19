@@ -34,12 +34,13 @@ def name_abbrev(params):
         A list of abbreviated parameters names.
     """
     abbreviation_pairs = {
-        r"sys_[0-9]+_site_[0-9]+_isotropic_chemical_shift": "delta",
+        r"sys_[0-9]+_site_[0-9]+_isotropic_chemical_shift": "delta_iso",
         r"sys_[0-9]+_site_[0-9]+_shielding_symmetric_zeta": "zeta",
         r"sys_[0-9]+_site_[0-9]+_shielding_symmetric_eta": "etaCS",
         r"sys_[0-9]+_site_[0-9]+_quadrupolar_Cq": "Cq",
         r"sys_[0-9]+_site_[0-9]+_quadrupolar_eta": "etaQ",
         r"mth_[0-9]+_rotor_frequency": "spin_freq",
+        r"sys_[0-9]+_abundance": "abundance",
         r"SP_[0-9]+_operation_[0-9]+_Exponential_FWHM": "expo_fwhm",
         r"SP_[0-9]+_operation_[0-9]+_Gaussian_FWHM": "gauss_fwhm",
         r"SP_[0-9]+_operation_[0-9]+_Scale_factor": "scale",
@@ -101,13 +102,16 @@ class mrsim_emcee:
         """
         Filter the parameter list, leave only variables.
 
+        Note: abundance should not a a variable, it will be removed from the params
+        even if included by user with Vary = True.
+
         Parameters
         ------------------------------
         params: Parameters
             LMFIT parameters obj that store the variables.
         """
         for k, v in list(params.items()):
-            if not v.vary:
+            if not v.vary or "abundance" in k:
                 params.pop(k)
         return params
 
@@ -222,13 +226,14 @@ class mrsim_emcee:
     @staticmethod
     def _update_sim_params(simulator, params):
         """
-        update the simulation object with the parameters provided.
+        update the simulation object with the NMR parameters provided.
         """
+        simulator = copy.deepcopy(simulator)
         values = params.valuesdict()
 
         NMR_params = {
             "shielding_symmetric": ["zeta", "eta"],
-            "quadrupolar": ["Cq", "eta"],
+            "quadrupolar": ["Cq", "eta", "beta"],
         }
 
         # Update simulation parameters iso, eta, and zeta for the site object
@@ -237,17 +242,32 @@ class mrsim_emcee:
             num_site = len(simulator.spin_systems[i].sites)
             for j in range(num_site):
                 site = simulator.spin_systems[i].sites[j]
-                # Update isotropic chemical shift
-                name = f"sys_{i}_site_{j}_isotropic_chemical_shift"
-                if site.isotropic_chemical_shift and name in values.keys():
-                    site.isotropic_chemical_shift = values[name]
-                # Update the other params
+                # Update NMR params
                 for k, v in NMR_params.items():
                     if getattr(site, k):
                         for p in v:
                             name = f"sys_{i}_site_{j}_{k}_{p}"
                             if getattr(getattr(site, k), p) and name in values.keys():
                                 setattr(getattr(site, k), p, values[name])
+                # Update isotropic chemical shift
+                name = f"sys_{i}_site_{j}_isotropic_chemical_shift"
+                if site.isotropic_chemical_shift and name in values.keys():
+                    site.isotropic_chemical_shift = values[name]
+        return simulator
+
+    @staticmethod
+    def _update_methods(simulator, params):
+        """
+        update the simulation object with the method parameters provided.
+        """
+        simulator = copy.deepcopy(simulator)
+        values = params.valuesdict()
+        # Update the spinning freq here.
+        for i, method in enumerate(simulator.methods):
+            for sd in method.spectral_dimensions:
+                for e in sd.events:
+                    if f"mth_{i}_rotor_frequency" in values:
+                        e.rotor_frequency = values[f"mth_{i}_rotor_frequency"]
         return simulator
 
     @staticmethod
@@ -263,7 +283,7 @@ class mrsim_emcee:
             "Exponential": "FWHM",
             "Scale": "factor",
             "ConstantOffset": "offset",
-            "Linear": "amplitude",
+            "Linear": ["amplitude", "offset"],
         }
 
         # update the SignalProcessor parameter and apply line broadening.
@@ -274,32 +294,32 @@ class mrsim_emcee:
 
         for i, proc in enumerate(processors):
             for j, oper in enumerate(proc.operations):
-                if oper.__class__.__name__ in processors_dict:
-                    attr = processors_dict[oper.__class__.__name__]
-                    setattr(
-                        oper,
-                        attr,
-                        values[
-                            f"SP_{i}_operation_{j}_{oper.__class__.__name__}_{attr}"
-                        ],
-                    )
+                oper_name = oper.__class__.__name__
+                if oper_name in processors_dict:
+                    if oper_name == "Linear":
+                        for attr in processors_dict[oper_name]:
+                            setattr(
+                                oper,
+                                attr,
+                                values[f"SP_{i}_operation_{j}_{oper_name}_{attr}"],
+                            )
+                    else:
+                        attr = processors_dict[oper_name]
+                        setattr(
+                            oper,
+                            attr,
+                            values[f"SP_{i}_operation_{j}_{oper_name}_{attr}"],
+                        )
         return processors
 
-    def minimization_function(self, params, simulator, processors, sigma=None):
+    def minimization_function(self, params, simulator, processors, sigma):
         """
         Definition of the minimization function used to fit the experimental spectrum
         """
-        values = params.valuesdict()
 
         # Update simulation parameters
         simulator = self._update_sim_params(simulator, params)
-
-        # Update the spinning freq here.
-        for i, method in enumerate(simulator.methods):
-            for sd in method.spectral_dimensions:
-                for e in sd.events:
-                    if f"mth_{i}_rotor_frequency" in values:
-                        e.rotor_frequency = values[f"mth_{i}_rotor_frequency"]
+        simulator = self._update_methods(simulator, params)
 
         # run the simulation
         simulator.run()
@@ -315,6 +335,7 @@ class mrsim_emcee:
         # set sigma as 1 if not defined
         sigma = [1.0 for _ in simulator.methods] if sigma is None else sigma
         sigma = sigma if isinstance(sigma, list) else [sigma]
+
         # calculate the residual.
         diff = np.asarray([])
         for processed_datum, mth, sigma_ in zip(
