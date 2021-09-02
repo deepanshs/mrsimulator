@@ -113,6 +113,14 @@ def test_update_signal_processors():
     for p in enumerate(processor_1):
         assert processor_1[p[0]].operations == processor_2[p[0]].operations
 
+    processor_3 = setup_signal_processor()[0]
+    processor_4 = setup_second_signal_processor()[0]
+    sim = setup_simulator()
+    params_3 = sf.make_LMFIT_params(sim, processor_3, include="rotor_frequency")
+    processor_4 = mc.mrsim_emcee._update_signal_processors(processor_4, params_3)[0]
+
+    assert processor_3.operations == processor_4.operations
+
 
 def test_mcmc():
     sim = setup_simulator()
