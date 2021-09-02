@@ -55,9 +55,9 @@ def test_vary_only():
 
 
 def test_log_prior():
-    max = [1, np.inf]
-    min = [0, -np.inf]
-    bounds = np.array([max, min])
+    maximum = [1, np.inf]
+    minimum = [0, -np.inf]
+    bounds = np.array([maximum, minimum])
     theta_1 = [0.5, 10]
     theta_2 = [10, 10]
 
@@ -70,11 +70,13 @@ def test_log_probability():
     processor = setup_signal_processor()
     params = sf.make_LMFIT_params(sim, processor, include="rotor_frequency")
     theta_in = np.zeros(len(params)) + 0.5
+    theta_in[7] = 1000
+    theta_in[8] = 12500
     theta_out = np.zeros(len(params)) + 5
     emcee_obj = mc.mrsim_emcee(params, sim, processor)
 
     log_prob = emcee_obj._log_probability(theta_in, params, sim, processor, None)
-    assert isinstance(log_prob, float)
+    assert log_prob == -2304.0
 
     log_prob = emcee_obj._log_probability(theta_out, params, sim, processor, None)
     assert log_prob == -np.inf
@@ -108,8 +110,18 @@ def test_update_signal_processors():
     params_1 = setup_params()
     processor_2 = mc.mrsim_emcee._update_signal_processors(processor_2, params_1)
 
-    for i in range(len(processor_1)):
-        assert processor_1[i].operations == processor_2[i].operations
+    for p in enumerate(processor_1):
+        assert processor_1[p[0]].operations == processor_2[p[0]].operations
+
+
+def test_mcmc():
+    sim = setup_simulator()
+    processor = setup_signal_processor()
+    params = sf.make_LMFIT_params(sim, processor, include="rotor_frequency")
+    emcee_obj = mc.mrsim_emcee(params, sim, processor)
+
+    result = emcee_obj.mcmc(steps=50, nwalkers=50, burn=10, thin=5)
+    assert ((result["accept_frac"] < 1) & (result["accept_frac"] > 0)).sum() == 50
 
 
 def setup_simulator():

@@ -177,6 +177,7 @@ class mrsim_emcee:
         result["chain"] = sampler.get_chain(thin=thin, discard=burn, flat=False)
         result["flat_chain"] = sampler.get_chain(thin=thin, discard=burn, flat=True)
         result["log_prob"] = sampler.get_log_prob(thin=thin, discard=burn)
+        result["accept_frac"] = sampler.acceptance_fraction
         quantiles = np.percentile(result["flat_chain"], [15.87, 50, 84.13], axis=0)
         result["variables"] = self.params
 
