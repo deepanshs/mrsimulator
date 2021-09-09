@@ -283,8 +283,8 @@ class Step(Apodization):
     >>> operation7= sp.apodization.Step(rising_edge = '-1 s', falling_edge = '1 s')
     """
 
-    rising_edge: Union[float, str] = 0
-    falling_edge: Union[float, str] = 0
+    rising_edge: Union[float, str, None] = 0
+    falling_edge: Union[float, str, None] = 0
     property_units: Dict = {"rising_edge": CONST, "falling_edge": CONST}
 
     @validator("rising_edge")
@@ -301,12 +301,6 @@ class Step(Apodization):
         if "rising_edge" in self.property_units:
             unit = 1 * self.property_units["rising_edge"]
         x = self.get_coordinates_in_units(x, unit=1.0 * unit)
-
-        if self.rising_edge is None:
-            self.rising_edge = x.min()
-
-        if self.falling_edge is None:
-            self.falling_edge = x.max()
 
         screen = np.where(x > self.rising_edge, 1, 0)
         screen = screen + np.where(x < self.falling_edge, 0, -1)
