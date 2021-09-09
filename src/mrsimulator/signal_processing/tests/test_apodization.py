@@ -153,6 +153,34 @@ def test_Step():
 
     assert np.allclose(y0, ty0), "Step apodization failed."
 
+    rising_edge = -1
+    PS_4 = [
+        sp.IFFT(dim_index=0),
+        sp.apodization.Step(
+            rising_edge=f"{rising_edge} s",
+            dim_index=0,
+            dv_index=[0, 1],
+        ),
+        sp.FFT(dim_index=0),
+    ]
+
+    post_sim = sp.SignalProcessor(operations=PS_4)
+    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
+    _, y0, y1, _ = data.to_list()
+
+    temp_post_sim = sp.SignalProcessor(operations=[sp.IFFT(dim_index=0)])
+    temp_data = temp_post_sim.apply_operations(data=sim.methods[0].simulation.copy())
+    temp_x = temp_data.dimensions[0].coordinates.value
+    screen = np.where(temp_x > rising_edge, 1, 0)
+    screen = screen + np.where(temp_x < 0, 0, -1)
+    temp_data.dependent_variables[0].components[0] = np.multiply(
+        temp_data.dependent_variables[0].components[0], screen
+    )
+    temp_data = temp_post_sim.apply_operations(data=temp_data)
+    _, ty0, ty1, _ = temp_data.to_list()
+
+    assert np.allclose(y0, ty0), "Step apodization failed."
+
 
 def test_Mask():
     one_mask = np.zeros(shape=len(freqHz))
