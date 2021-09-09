@@ -200,6 +200,14 @@ def test_scale_class():
     assert a == b
 
 
+def test_Step_class():
+    a = sp.apodization.Step(rising_edge="1 s")
+    assert a.property_units == {"rising_edge": "s"}
+
+    a = sp.apodization.Step(falling_edge="1 s")
+    assert a.property_units == {"falling_edge": "s"}
+
+
 def test_Exponential_class():
     # direct initialization
     a = sp.apodization.Exponential(FWHM="200 s", dim_index=0, dv_index=0)
@@ -270,3 +278,8 @@ def test_2D_area():
     _, __, y1 = data_new.to_list()
 
     assert np.allclose(y1.sum(), data.sum())
+
+
+def test_MultiDimensionApodization_class():
+    a = sp.apodization.MultiDimensionApodization()
+    assert a.function == "apodization"
