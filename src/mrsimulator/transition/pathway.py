@@ -119,8 +119,9 @@ class TransitionPathway(TransitionList):
 
         Example:
             >>> pprint(path.json())
-            [{'final': [0.5, -0.5], 'initial': [0.5, 0.5]},
-             {'final': [-0.5, 0.5], 'initial': [0.5, 0.5]}]
+            {'pathway': [{'final': [0.5, -0.5], 'initial': [0.5, 0.5]},
+                         {'final': [-0.5, 0.5], 'initial': [0.5, 0.5]}],
+             'weight': (1+0j)}
         """
         return self.json()
 
