@@ -8,8 +8,8 @@ from typing import Union
 import csdmpy as cp
 import matplotlib as mpl
 import numpy as np
-from mrsimulator.base_model import transition_connect_factor
 import pandas as pd
+from mrsimulator.base_model import transition_connect_factor
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.transition import SymmetryPathway
 from mrsimulator.transition import Transition
@@ -691,10 +691,10 @@ class Method(Parseable):
             for ev in dim.events
         ]
         df["spec_dim_index"] = [
-            i for i, dim in enumerate(self.spectral_dimensions) for ev in dim.events
+            i for i, dim in enumerate(self.spectral_dimensions) for _ in dim.events
         ]
         df["spec_dim_label"] = [
-            dim.label for dim in self.spectral_dimensions for ev in dim.events
+            dim.label for dim in self.spectral_dimensions for _ in dim.events
         ]
         self._add_simple_props_to_df(df, prop_dict, required, drop_constant_columns)
 
@@ -762,8 +762,8 @@ class Method(Parseable):
             df = self.summary()
 
         _plot(fig=fig, df=df, include_legend=include_legend)
-        fig.suptitle(t=self.name if self.name is not None else "", y=0.97)
-        # fig.tight_layout()
+
+        fig.suptitle(t=self.name if self.name is not None else "")
         return fig
 
     def shape(self) -> tuple:

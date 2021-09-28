@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from itertools import groupby
+from math import ceil
 
 import matplotlib.projections as proj
 import matplotlib.pyplot as plt
@@ -13,11 +14,13 @@ __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
+# TODO: remove plot from shifting-d (56) since no new info
 # NOTE: Matplotlib should automatically generate new colors when none specified
 DURATION_WIDTH = 0.5  # Width of one ConstantDurationEvent
 SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
 MIXING_WIDTH = 0.25  # tip_angle of 360 degrees
 DEFAULTFONTSIZE = 9
+MAX_SYMMETRY_TICKS = 5  # Maximum number of ticks allowed on symmetry plot, always odd
 COLORS = {
     "ConstantDurationEvent": "orange",
     "SpectralEvent": "g",
@@ -81,7 +84,7 @@ class CustomAxes(plt.Axes):
         self.xmax = max(x_data)
         self.mix_ev = np.array(mix_ev)
 
-        self._format(xmax=self.xmax, **format_kwargs)
+        self._format(**format_kwargs)
         self.plot(x=self.x_data, y=self.y_data, **plot_kwargs)
 
     def plot(self, x, y, _format=True, labels=True, **kwargs):
@@ -149,24 +152,31 @@ class CustomAxes(plt.Axes):
             mask = np.where(y_data >= 1e9, np.nan, y_data)
             return x_data, y_data, mask
 
-        # Insert zero or remove first x point for p and d
+        # Insert zero at first point for p and d
         if self.col_name in ["p", "d"]:
-            if self.mix_ev[0]:
-                y_data = np.insert(y_data, 0, 0)
-            else:
-                x_data = x[1:]
+            y_data = np.insert(y_data, 0, 0)
 
         return x_data, y_data, y_data
 
     def _format(
         self,
         locator=None,
+        minor_locator=None,
         grid={
+            "which": "major",
             "axis": "y",
             "color": "black",
             "linestyle": "--",
             "linewidth": 0.5,
             "alpha": 0.5,
+        },
+        minor_grid={
+            "which": "minor",
+            "axis": "y",
+            "color": "black",
+            "linestyle": "--",
+            "linewidth": 0.5,
+            "alpha": 0.25,
         },
         ymargin=0.1,
         show_xaxis=False,
@@ -177,10 +187,16 @@ class CustomAxes(plt.Axes):
 
         Args:
             (matplotlib.ticker) locator:
-                Object which determines the ticks on the y-axis
+                Object which determines the major ticks on the y-axis
+
+            (matplotlib.ticker) minor_locator:
+                Object which determines the minor ticks on the y-axis
 
             (dict) grid:
-                Grid kwargs which determine the appearance of the grid
+                Grid kwargs which determine the appearance of the major grid
+
+            (dict) minor_grid:
+                Grid kwargs which determine the appearance of the minor grid
 
             (float) ymargin:
                 Value to be passed to matplotlib.axes.Axes.margin for padding
@@ -203,8 +219,11 @@ class CustomAxes(plt.Axes):
         self.set_xlim(0, self.xmax)
 
         self.get_yaxis().set_visible(show_yaxis)
-        self.get_yaxis().set_major_locator(locator)
         self.set_ylabel(label, fontsize=DEFAULTFONTSIZE)
+        self.get_yaxis().set_major_locator(locator)
+        if minor_locator is not None:
+            self.get_yaxis().set_minor_locator(minor_locator)
+            self.grid(**minor_grid)
 
         self.spines["top"].set_visible(show_xaxis)
         self.spines["right"].set_visible(show_xaxis)
@@ -264,17 +283,54 @@ class MultiLineAxes(CustomAxes):
         for row in y:
             super().plot(x=x, y=row, labels=False, **kwargs)
 
-    def _format(self, **kwargs):
+    def _format(self, ymargin=0.15, **kwargs):
         """Determines locator for axes and calls super()._format()"""
-        locator = None
+        major_ticks, minor_ticks = self._make_ticks()
+        margin = ymargin + 1
 
-        # Check if y data is constant throughout events, ignoring nan
-        _min = np.nanmin(self.y_data.flatten())
-        if _min == np.nanmax(self.y_data.flatten()):
-            self.set_ylim(_min - 1.5, _min + 1.5)
-            locator = FixedLocator([_min - 1, _min, _min + 1])
+        # After set_ylim() is called, Axes.margins() had no effect
+        self.set_ylim(major_ticks[0] * margin, major_ticks[-1] * margin)
+        super().plot(
+            [0, self.xmax],
+            [0, 0],
+            _format=False,
+            labels=False,
+            linewidth=0.75,
+            alpha=0.5,
+            color="black",
+        )
 
-        super()._format(locator=locator, **kwargs)
+        super()._format(
+            locator=FixedLocator(major_ticks),
+            minor_locator=FixedLocator(minor_ticks),
+            **kwargs,
+        )
+
+    def _make_ticks(self):
+        """Logic for deciding where to place the ticks for a symmetry query"""
+        # Find maximum distance from origin in dataset
+        dist = int(
+            max(1, np.nanmax(self.y_data.flatten()), -np.nanmin(self.y_data.flatten()))
+        )
+
+        # Calculate tick step so at most MAX_SYMMETRY_TICKS ticks
+        step = ceil(2.3 * dist / MAX_SYMMETRY_TICKS)
+
+        # Round up d pathway to next even int if odd
+        if self.col_name == "d" and step % 2 == 1:
+            step += 1
+
+        # Round dist up to next greatest multiple of step to force symmetry
+        dist = (dist + step - 1) - ((dist + step - 1) % step)
+
+        major_ticks = np.arange(-dist, dist + 1, step, dtype=int)
+        minor_ticks = [num for num in range(-dist + 1, dist) if num not in major_ticks]
+
+        # Remove odd minor ticks from d symmetry pathway
+        if self.col_name == "d":
+            minor_ticks = [num for num in minor_ticks if num % 2 == 0]
+
+        return major_ticks, minor_ticks
 
     def _offset_overlaps(self, y, offset_pct=0.03):
         """Offsets y at overlapping values"""
@@ -319,7 +375,7 @@ class SequenceDiagram(CustomAxes):
     name = "sequence_axes"
     ylim = None
 
-    def make_plot(self, df, x_data, ylim=[0, 1]):
+    def plot_diagram(self, df, x_data, ylim=[0, 1]):
         """Main workflow function to plot sequence diagram"""
         self.x_data = x_data
         self.ylim = ylim
@@ -342,7 +398,7 @@ class SequenceDiagram(CustomAxes):
         phase = "{1:0.{0}f}".format(int(not float(p).is_integer()), p)
         return (f"({tip_angle}, {phase})", ta / 360 * MIXING_WIDTH)
 
-    def _plot_spec_dims(self, df, ev_groups):
+    def _plot_spec_dim_lines(self, df, ev_groups):
         """Adds lines and labels denoting spectral dimensions"""
         x_data = self.x_data
         ylim = self.ylim
@@ -350,11 +406,10 @@ class SequenceDiagram(CustomAxes):
 
         self.plot(x=[0, 0], y=ylim, color="black", **plot_kwargs)
 
-        last_spec_dim_x = 0
         spec_dim_idx = 0
         df_idx = 0
         x_idx = 0
-        for _, num in ev_groups:
+        for _type, num in ev_groups:
             for j in range(num):
                 if x_idx < len(x_data) - 1 and x_data[x_idx] == x_data[x_idx + 1]:
                     x_idx += 1
@@ -363,23 +418,12 @@ class SequenceDiagram(CustomAxes):
                     if df["type"][df_idx + j] == "MixingEvent":
                         x0 += sum(df["tip_angle"][df_idx:j]) / 360.0 * MIXING_WIDTH
                     self.plot(x=[x0, x0], y=ylim, color="black", **plot_kwargs)
-                    self.annotate(
-                        text=df["spec_dim_label"][df_idx + j - 1],
-                        xy=((last_spec_dim_x + x0) / 2, ylim[1] + 0.15),
-                        **DEFAULT_ANNO_KWARGS,
-                    )
-                    last_spec_dim_x = x0
                     spec_dim_idx += 1
                 x_idx += 1
             df_idx += num
 
         # Plot last spectral dimension
         self.plot(x=[max(x_data)] * 2, y=ylim, color="black", **plot_kwargs)
-        self.annotate(
-            text=df["spec_dim_label"][df_idx - 1],
-            xy=((last_spec_dim_x + max(x_data)) / 2, ylim[1] + 0.15),
-            **DEFAULT_ANNO_KWARGS,
-        )
 
     def _plot_sequence_diagram(self, df):
         """Plots sequence diagram (order of events)"""
@@ -394,7 +438,7 @@ class SequenceDiagram(CustomAxes):
             offset = sum(df["tip_angle"][-n_end_mix:]) / 360 * MIXING_WIDTH
             self.x_data[-2] -= offset
 
-        self._plot_spec_dims(df=df, ev_groups=ev_groups)
+        self._plot_spec_dim_lines(df=df, ev_groups=ev_groups)
 
         df_idx = 0
         x_idx = 0
@@ -403,6 +447,7 @@ class SequenceDiagram(CustomAxes):
                 # Leftmost x point of next MixingEvent rectangle
                 x0 = self.x_data[x_idx]
                 # Iterate over each MixingEvent in group and plot rectangle
+                # TODO: use user-defined label when defined, generated label otherwise
                 for j in range(num):
                     label, width = self._format_mix_label(
                         ta=df["tip_angle"][df_idx + j],
@@ -442,6 +487,54 @@ class SequenceDiagram(CustomAxes):
                     x_idx += 1
 
             df_idx += num
+
+
+# class SpectralDimensionLabels(CustomAxes):
+#     """Axes subclass with"""
+
+#     name = "label_axes"
+
+#     def plot_labels(self, df, x_data, ylim=[0, 1], style="italic", format_kwargs={}):
+#         """Plot labels of spectral dimensions"""
+#         self.xmax = max(x_data)
+#         self._format(ylim, **format_kwargs)
+
+#         ev_groups = [(_type, sum(1 for _ in gp)) for _type, gp in groupby(df["type"])]
+
+#         last_spec_dim_x = 0
+#         spec_dim_idx = 0
+#         df_idx = 0
+#         x_idx = 0
+#         for _type, num in ev_groups:
+#             for j in range(num):
+#                 if x_idx < len(x_data) - 1 and x_data[x_idx] == x_data[x_idx + 1]:
+#                     x_idx += 1
+#                 if df["spec_dim_index"][df_idx + j] != spec_dim_idx:  # Next spec dim
+#                     x0 = x_data[x_idx]
+#                     if df["type"][df_idx + j] == "MixingEvent":
+#                         x0 += sum(df["tip_angle"][df_idx:j]) / 360.0 * MIXING_WIDTH
+#                     self.annotate(
+#                         text=df["spec_dim_label"][df_idx + j - 1],
+#                         xy=((last_spec_dim_x + x0) / 2, ylim[0] + 0.17),
+#                         **DEFAULT_ANNO_KWARGS,
+#                         style=style,
+#                     )
+#                     last_spec_dim_x = x0
+#                     spec_dim_idx += 1
+#                 x_idx += 1
+#             df_idx += num
+
+#         self.annotate(
+#             text=df["spec_dim_label"][df_idx - 1],
+#             xy=((last_spec_dim_x + max(x_data)) / 2, ylim[0] + 0.17),
+#             **DEFAULT_ANNO_KWARGS,
+#             style=style,
+#         )
+
+#     def _format(self, ylim, **kwargs):
+#         self.axis("off")
+#         self.set_ylim(*ylim)
+#         super()._format(**kwargs)
 
 
 def _check_columns(df):
@@ -506,7 +599,7 @@ def _make_x_data(df):
     """Returns list of x points to use in plotting"""
     points = [0]
 
-    for i, row in df.iterrows():
+    for _, row in df.iterrows():
         if row["type"] == "SpectralEvent":
             next_x = points[-1] + (row["fraction"] * SPECTRAL_MULTIPLIER)
             points.extend((next_x, next_x))
@@ -587,38 +680,45 @@ def _add_legend(fig):
 
 def _calculate_n_channels(df):
     """Calculates the number of channels present in the method DataFrame"""
-    # TODO: (future) implement functionality for calculation
+    # (future) implement functionality for calculation
     # Currently hardcoded to 1
     # Maybe move this into _format_df?
-    return 1
+    return 2
 
 
 def plot(fig, df, include_legend) -> plt.figure:
     """Plot symmetry pathways and other requested parameters on figure"""
-    # TODO: (future) add functionality for multiple channels
+    # (future) add functionality for multiple channels
     mix_ev = np.array(df["type"] == "MixingEvent")
     params = _format_df(df)
     x_data, x_offset = _make_normal_and_offset_x_data(df)
 
     # Calculations and setup gridspec object for number of subplots
     n_channels = _calculate_n_channels(df)
-    nrows = n_channels + 1 + len(params)  # channels + p symmetry pathway + params
+    # channels & p pathway + params
+    nrows = n_channels + len(params)
     height_ratios = np.ones(nrows)
-    height_ratios[0] = 0.75
+    height_ratios[0] = 0.70
     gs = fig.add_gridspec(
         nrows=nrows, ncols=1, height_ratios=height_ratios, right=0.95, bottom=0.05
     )  # nrows for multiple channels
-    gs.update(hspace=0.17)
+    gs.update(hspace=0.21)
     gs_row_idx = 0
 
     # Register custom matplotlib projections
     proj.register_projection(CustomAxes)
     proj.register_projection(MultiLineAxes)
     proj.register_projection(SequenceDiagram)
+    # proj.register_projection(SpectralDimensionLabels)
+
+    # # Spectral Dimension labels Axes
+    # spec_dim_label_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="label_axes")
+    # spec_dim_label_ax.plot_labels(df=df, x_data=x_offset)
+    # gs_row_idx += 1
 
     # Sequence diagram Axes
     seq_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="sequence_axes")
-    seq_ax.make_plot(df=df, x_data=x_offset)
+    seq_ax.plot_diagram(df=df, x_data=x_offset)
     gs_row_idx += 1
 
     # p and d Axes

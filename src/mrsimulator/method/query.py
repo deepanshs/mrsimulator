@@ -260,7 +260,6 @@ class RFRotation(Parseable):
 
 
 class MixingQuery(Parseable):
-    # TODO: Fix example code
     """MixingQuery class for quering transition mixing between events.
 
     Attributes
@@ -278,7 +277,7 @@ class MixingQuery(Parseable):
     Example
     -------
 
-        >>> query = TransitionQuery(ch1={'P': [1], 'D': [0]}, ch2={'P': [-1]})
+        >>> query = MixingQuery(ch1={"tip_angle": 1.570796, "phase": 3.141593})
     """
 
     ch1: RFRotation = None
