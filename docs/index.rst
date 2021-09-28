@@ -179,6 +179,7 @@ Getting Started
     getting_started_ethanol
     configuring_simulator
     mrsim_IO
+.. writing_custom_methods
 .. designing_methods
 
 Signal Processing (``mrsimulator.SignalProcessor``)
