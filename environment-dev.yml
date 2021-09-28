@@ -36,3 +36,4 @@ dependencies:
       - recommonmark
       - sphinx-version-warning
       - plotly
+      - mpcontribs-client
