@@ -1,4 +1,4 @@
-numpy>=1.17
+numpy>=1.20
 matplotlib>=3.3.3
 csdmpy>=0.4.1
 pydantic>=1.0
@@ -31,4 +31,3 @@ sphinx-tabs>=1.1.13
 recommonmark
 sphinx-version-warning
 plotly
-mpcontribs-client

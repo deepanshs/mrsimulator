@@ -5,7 +5,7 @@ requires-python = ">=3.6"
 requires = [
     "setuptools",
     "wheel",
-    "numpy>=1.17",
+    "numpy>=1.20",
     "cython>=0.29"
 ]
 

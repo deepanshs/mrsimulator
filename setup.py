@@ -420,7 +420,7 @@ setup(
     package_dir={"": "src"},
     setup_requires=["numpy>=1.17"],
     install_requires=[
-        "numpy>=1.17",
+        "numpy>=1.20",
         "csdmpy>=0.4.1",
         "pydantic>=1.0",
         "monty>=2.0.4",
