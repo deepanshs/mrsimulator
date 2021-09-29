@@ -167,24 +167,26 @@ plt.show()
 # on a per NMR site basis and, therefore, we only generate mp contributions for
 # uncoupled spin systems. Use the ``mrsimulator.contribs`` module to create data
 # dictionaries as follows.
-from mrsimulator.contribs import mpcontribs_export
-from pprint import pprint
 
-mp_project = "lsdi_nmr_exp_test"  # this should be your mpcontribs project name
-cards = mpcontribs_export(
-    sim,
-    [processor],
-    project=mp_project,
-    identifier="Ca6Si6O17(OH)2",
-    exp_dict={
-        "90degreePulseLength": "6 µs",
-        "relaxationDelay": "8 s",
-        "numberOfScans": 7224,
-        "referenceCompound": "TMS",
-    },
-)
-print("Number of contributions", len(cards))
-pprint(cards[0]["data"])
+# %%
+# from mrsimulator.contribs import mpcontribs_export
+# from pprint import pprint
+
+# mp_project = "lsdi_nmr_exp_test"  # this should be your mpcontribs project name
+# cards = mpcontribs_export(
+#     sim,
+#     [processor],
+#     project=mp_project,
+#     identifier="Ca6Si6O17(OH)2",
+#     exp_dict={
+#         "90degreePulseLength": "6 µs",
+#         "relaxationDelay": "8 s",
+#         "numberOfScans": 7224,
+#         "referenceCompound": "TMS",
+#     },
+# )
+# print("Number of contributions", len(cards))
+# pprint(cards[0]["data"])
 
 # %%
 # Here, ``cards`` hold a list of mp-data dictionaries. In this example, it corresponds
