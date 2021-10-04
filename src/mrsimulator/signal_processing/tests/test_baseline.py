@@ -26,97 +26,13 @@ def test_baseline_constant_offset():
     setup_read_write(PS_0[0], py_dict, sp.baseline.ConstantOffset)
 
 
-def test_baseline_trinomial():
-    data_in = generate_data()
-    data_in.dimensions[0] *= cp.ScalarQuantity("1 ms")
-    x_c = data_in.dimensions[0].coordinates.to("s").value
-
-    # zeroth order
-    PS_0 = [sp.baseline.Trinomial(x0="10")]
-    data_out = sp.SignalProcessor(operations=PS_0).apply_operations(data=data_in.copy())
-
-    _, y0, y1, y2 = data_in.to_list()
-    _, y0_, y1_, y2_ = data_out.to_list()
-
-    for in_, out_ in zip([y0, y1, y2], [y0_, y1_, y2_]):
-        assert np.allclose(out_.max() - in_.max(), 10), "Offset failed"
-
-    py_dict = {
-        "function": "baseline",
-        "type": "Trinomial",
-        "x0": "10.0",
-        "dim_index": 0,
-    }
-    setup_read_write(PS_0[0], py_dict, sp.baseline.Trinomial)
-
-    # first order
-    PS_0 = [sp.baseline.Trinomial(x0="30", x1="1 Hz")]
-    data_out = sp.SignalProcessor(operations=PS_0).apply_operations(data=data_in.copy())
-
-    _, y0, y1, y2 = data_in.to_list()
-    _, y0_, y1_, y2_ = data_out.to_list()
-
-    for in_, out_ in zip([y0, y1, y2], [y0_, y1_, y2_]):
-        assert np.allclose(out_, in_ + 30 + x_c), "Trinomial 1st order failed"
-
-    py_dict = {
-        "function": "baseline",
-        "type": "Trinomial",
-        "x0": 30.0,
-        "x1": "1.0 Hz",
-        "dim_index": 0,
-    }
-    setup_read_write(PS_0[0], py_dict, sp.baseline.Trinomial)
-
-    # second order
-    PS_0 = [sp.baseline.Trinomial(x0="1", x2="1 Hz^2")]
-    data_out = sp.SignalProcessor(operations=PS_0).apply_operations(data=data_in.copy())
-
-    _, y0, y1, y2 = data_in.to_list()
-    _, y0_, y1_, y2_ = data_out.to_list()
-
-    for in_, out_ in zip([y0, y1, y2], [y0_, y1_, y2_]):
-        assert np.allclose(out_, in_ + 1 + x_c ** 2), "Trinomial 2nd order failed"
-
-    py_dict = {
-        "function": "baseline",
-        "type": "Trinomial",
-        "x0": 1.0,
-        "x2": "1.0 Hz2",
-        "dim_index": 0,
-    }
-    setup_read_write(PS_0[0], py_dict, sp.baseline.Trinomial)
-
-    # third order
-    PS_0 = [sp.baseline.Trinomial(x0="10", x3="2 Hz^3", x1="13.1 Hz")]
-    data_out = sp.SignalProcessor(operations=PS_0).apply_operations(data=data_in.copy())
-
-    _, y0, y1, y2 = data_in.to_list()
-    _, y0_, y1_, y2_ = data_out.to_list()
-
-    for in_, out_ in zip([y0, y1, y2], [y0_, y1_, y2_]):
-        assert np.allclose(
-            out_, in_ + 10 + 13.1 * x_c + 2 * x_c ** 3
-        ), "Trinomial 3rd order failed"
-
-    # py_dict = {
-    #     "function": "baseline",
-    #     "type": "Trinomial",
-    #     "x0": 10.0,
-    #     "x1": "1.0 Hz",
-    #     "x3": "2.0 Hz3",
-    #     "dim_index": 0,
-    # }
-    # setup_read_write(PS_0[0], py_dict, sp.baseline.Trinomial)
-
-
 def test_baseline_polynomial():
     data_in = generate_data()
     data_in.dimensions[0] *= cp.ScalarQuantity("1 ms")
     x_c = data_in.dimensions[0].coordinates.value
 
     # zeroth order
-    PS_0 = [sp.baseline.Polynomial(polynomial_dictionary={"x0": 10})]
+    PS_0 = [sp.baseline.Polynomial(polynomial_dictionary={"c0": 10})]
     data_out = sp.SignalProcessor(operations=PS_0).apply_operations(data=data_in.copy())
 
     _, y0, y1, y2 = data_in.to_list()
@@ -126,7 +42,7 @@ def test_baseline_polynomial():
         assert np.allclose(out_.max() - in_.max(), 10), "Offset failed"
 
     # first order
-    PS_0 = [sp.baseline.Polynomial(polynomial_dictionary={"x0": 30, "x1": 1})]
+    PS_0 = [sp.baseline.Polynomial(polynomial_dictionary={"c0": 30, "c1": 1})]
     data_out = sp.SignalProcessor(operations=PS_0).apply_operations(data=data_in.copy())
 
     _, y0, y1, y2 = data_in.to_list()
@@ -136,7 +52,7 @@ def test_baseline_polynomial():
         assert np.allclose(out_, in_ + 30 + x_c), "Polynomial 1st order failed"
 
     # second order
-    PS_0 = [sp.baseline.Polynomial(polynomial_dictionary={"x0": 1, "x2": 1})]
+    PS_0 = [sp.baseline.Polynomial(polynomial_dictionary={"c0": 1, "c2": 1})]
     data_out = sp.SignalProcessor(operations=PS_0).apply_operations(data=data_in.copy())
 
     _, y0, y1, y2 = data_in.to_list()
@@ -147,7 +63,7 @@ def test_baseline_polynomial():
 
     # third order
     PS_0 = [
-        sp.baseline.Polynomial(polynomial_dictionary={"x0": 10, "x3": 2, "x1": 13.1})
+        sp.baseline.Polynomial(polynomial_dictionary={"c0": 10, "c3": 2, "c1": 13.1})
     ]
     data_out = sp.SignalProcessor(operations=PS_0).apply_operations(data=data_in.copy())
 

@@ -14,8 +14,6 @@ Documentation
 
 .. autoclass:: ConstantOffset
 .. autoclass:: Polynomial
-.. autoclass:: Trinomial
-.. autoclass:: Polynomial
 
 .. currentmodule:: mrsimulator.signal_processing.apodization
 
