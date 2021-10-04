@@ -185,7 +185,7 @@ class SkewedGaussian(Apodization):
     The apodization function is derived from the skewed Gaussian distribution
 
     .. math::
-        f(x) = 2*\phi(x)*\Phi(\alpha x),
+        f(x) = 2\phi(x)\Phi(\alpha x),
 
     where :math:`x` are the coordinates of the dimension, and :math:`\phi` is the
     standard normal probability density function, :math:`\Phi` is the cumulative
@@ -194,12 +194,13 @@ class SkewedGaussian(Apodization):
     skewed Gaussian function and is given by
 
     .. math::
-        f(x) = e^{-2 * (\pi * x)**2}*{1 + i*Erfi(skew*x/\sqrt(2))},
+        f(x) = e^{-2  (\pi x)^2}
+        \left(1 + i\text{Erfi}\left(\frac{\text{skew}\cdot x}{\sqrt{2}}\right)\right),
 
     where skew is given by
 
     .. math::
-        skew = \alpha/\sqrt(1+\alpha**2)
+        \text{skew} = \frac{\alpha}{\sqrt{1+\alpha^2}}
 
     See https://en.wikipedia.org/wiki/Skew_normal_distribution
 
@@ -249,11 +250,11 @@ class Step(Apodization):
     The apodization function follows
 
     .. math::
-        f(x) = 1 if rising_edge <= x <= falling_edge ,
-        else f(x) = 0
+        f(x) = 1 \text{if rising_edge} <= x <= \text{falling_edge} ,
+        \text{else} f(x) = 0
 
-    where :math:`x` are the coordinates of the dimension, :math`rising_edge` is the
-    start of the step function window, and :math'falling_edge' is the end of the
+    where :math:`x` are the coordinates of the dimension, rising_edge is the
+    start of the step function window, and falling_edge is the end of the
     step function window.
 
     Arguments
@@ -335,7 +336,7 @@ class Mask(MultiDimensionApodization):
     The apodization function follows
 
     .. math::
-        f(x) = mask
+        f(x) = \text{mask}
 
     where mask is a user-supplied numpy array containing an apodization mask to apply
     to the data.
