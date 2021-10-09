@@ -1,6 +1,6 @@
 numpy>=1.17
 matplotlib>=3.3.3
-csdmpy>=0.4
+csdmpy>=0.4.1
 pydantic>=1.0
 monty>=2.0.4
 typing-extensions>=3.7
@@ -24,7 +24,7 @@ sphinxjp.themes.basicstrap
 sphinx>=2.0
 sphinx-gallery>0.6.2
 pillow>=7.1.2
-breathe==4.30.0
+breathe==4.31.0
 sphinx_copybutton>=0.3.0
 sphinx-tabs>=1.1.13
 recommonmark

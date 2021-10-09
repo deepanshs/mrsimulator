@@ -240,10 +240,6 @@ Consider the following example.
 Decompose spectrum
 ------------------
 
-.. todo::
-
-    Add literal ``transition_pathway``.
-
 The attribute *decompose_spectrum* is an enumeration with two literals, ``none``,
 and ``spin_system``. The value of this attribute lets us know
 how the user intends the simulation to be stored.

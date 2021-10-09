@@ -29,7 +29,7 @@ filename = "13C MAS 5000Hz - Glycine.csdf"
 experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
-sigma = 3.822249
+sigma = 1.97637
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
