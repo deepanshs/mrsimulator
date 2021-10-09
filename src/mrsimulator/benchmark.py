@@ -6,13 +6,11 @@ import mrsimulator.tests.tests as clib
 import numpy as np
 from mrsimulator import __version__
 from mrsimulator import Simulator
+from mrsimulator import SpinSystem
+from mrsimulator import Site
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.methods import Method2D
-from mrsimulator.utils.collection import single_site_system_generator
-
-# from mrsimulator import SpinSystem
-# from mrsimulator import Site
 
 # import platform
 # os_system = platform.system()
