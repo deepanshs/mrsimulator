@@ -56,10 +56,9 @@ def test_read_write_obj_mrsim():
 
         # remove timestamps from csdm obj for testing
         for mth in sim2.methods:
-            if mth.simulation is not None:
-                mth.simulation._timestamp = ""
-            if mth.experiment is not None:
-                mth.experiment._timestamp = ""
+            for item in [mth.simulation, mth.experiment]:
+                if item is not None:
+                    item._timestamp = ""
             _ = [item.to("ppm", "nmr_frequency_ratio") for item in mth.simulation.x]
 
         assert sim.methods == sim2.methods, f"Error with {item} sim.load_methods()."
