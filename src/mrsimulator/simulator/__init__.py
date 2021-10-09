@@ -365,7 +365,6 @@ class Simulator(BaseModel):
         >>> sim.load_spin_systems(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
-        # json_data = contents["spin_systems"]
         self.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in contents]
 
     def export_spin_systems(self, filename: str):
@@ -384,10 +383,50 @@ class Simulator(BaseModel):
 
         >>> sim.export_spin_systems(filename) # doctest:+SKIP
         """
-        spin_sys = [SpinSystem.json(obj) for obj in self.spin_systems]
+        spin_sys = [obj.json() for obj in self.spin_systems]
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
                 spin_sys, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
+            )
+
+    def load_methods(self, filename: str):
+        """Load a list of methods from the given JSON serialized file.
+
+        Args:
+            str filename: A local or remote address to a JSON serialized file.
+
+        Example
+        -------
+
+        >>> sim.load_methods(filename) # doctest:+SKIP
+        """
+        contents = import_json(filename)
+        method_cls = [
+            Method
+            if obj["name"] not in __method_names__
+            else __sim_methods__[obj["name"]]
+            for obj in contents
+        ]
+
+        self.methods = [
+            fn.parse_dict_with_units(obj) for obj, fn in zip(contents, method_cls)
+        ]
+
+    def export_methods(self, filename: str):
+        """Export a list of methods to a JSON serialized file.
+
+        Args:
+            str filename: A filename of the serialized file.
+
+        Example
+        -------
+
+        >>> sim.export_methods(filename) # doctest:+SKIP
+        """
+        mth = [obj.json() for obj in self.methods]
+        with open(filename, "w", encoding="utf8") as outfile:
+            json.dump(
+                mth, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
     def run(
