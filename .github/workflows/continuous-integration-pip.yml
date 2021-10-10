@@ -5,9 +5,13 @@ name: CI (pip)
 
 on:
   push:
-    branches: [master]
+    branches:
+      - master
+      - v?.?*
   pull_request:
-    branches: [master]
+    branches:
+      - master
+      - v?.?*
 
 jobs:
   code_lint:
