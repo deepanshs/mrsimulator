@@ -42,8 +42,7 @@ static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme 
   case 1:
     /* Copy the plan->norm_amplitudes to fftw_scheme->vector. */
     for (j = 0; j < plan->n_octants; j++) {
-      cblas_dcopy(npts, plan->norm_amplitudes, 1,
-                  &dimensions->events->freq_amplitude[j * npts], 1);
+      cblas_dcopy(npts, plan->norm_amplitudes, 1, &amps[j * npts], 1);
     }
     break;
   default:
@@ -52,7 +51,7 @@ static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme 
      * the real part is scaled and the imaginary part is left as is. */
     for (j = 0; j < npts; j++) {
       cblas_dscal(plan->n_octants * plan->number_of_sidebands, plan->norm_amplitudes[j],
-                  &dimensions->events->freq_amplitude[j], npts);
+                  &amps[j], npts);
     }
   }
 

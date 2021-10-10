@@ -35,6 +35,7 @@ of the `mrsimulator` library is written in C, wrapped, and made available in pyt
 - Packages using mrsimulator -
   - [mrinversion](https://mrinversion.readthedocs.io/en/stable/)
 
+
 ### Features
 
 The `mrsimulator` package currently offers the following
