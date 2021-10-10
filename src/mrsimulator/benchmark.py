@@ -6,42 +6,39 @@ import mrsimulator.tests.tests as clib
 import numpy as np
 from mrsimulator import __version__
 from mrsimulator import Simulator
-from mrsimulator import Site
-from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.methods import Method2D
+from mrsimulator.utils.collection import single_site_system_generator
 
 # import platform
 # os_system = platform.system()
+
+
+__author__ = ["Deepansh Srivastava", "Matthew D. Giammar"]
+__email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
 
 
 def generate_spin_half_spin_system(n=1000):
     iso = np.random.normal(loc=0.0, scale=10.0, size=n)
     zeta = np.random.normal(loc=50.0, scale=15.12, size=n)
     eta = np.random.normal(loc=0.25, scale=0.012, size=n)
-    spin_systems = []
-    for i, z, e in zip(iso, zeta, eta):
-        site = Site(
-            isotope="29Si",
-            isotropic_chemical_shift=i,
-            shielding_symmetric={"zeta": z, "eta": e},
-        )
-        spin_systems.append(SpinSystem(sites=[site]))
-    return spin_systems
+    return single_site_system_generator(
+        isotope="29Si",
+        isotropic_chemical_shift=iso,
+        shielding_symmetric={"zeta": zeta, "eta": eta},
+    )
 
 
 def generate_spin_half_int_quad_spin_system(n=1000):
     iso = np.random.normal(loc=0.0, scale=10.0, size=n)
     Cq = np.random.normal(loc=5.0e6, scale=1e5, size=n)
     eta = np.random.normal(loc=0.1, scale=0.012, size=n)
-    spin_systems = []
-    for i, c, e in zip(iso, Cq, eta):
-        site = Site(
-            isotope="17O", isotropic_chemical_shift=i, quadrupolar={"Cq": c, "eta": e}
-        )
-        spin_systems.append(SpinSystem(sites=[site]))
-    return spin_systems
+    return single_site_system_generator(
+        isotope="17O",
+        isotropic_chemical_shift=iso,
+        quadrupolar={"Cq": Cq, "eta": eta},
+    )
 
 
 def generate_spin_half_int_csa_quad_spin_system(n=1000):
@@ -51,16 +48,12 @@ def generate_spin_half_int_csa_quad_spin_system(n=1000):
     Cq = np.random.normal(loc=5.0e6, scale=5e5, size=n)
     eta_q = np.random.normal(loc=0.6, scale=0.02, size=n)
     beta = np.random.normal(loc=2.12, scale=0.1, size=n)
-    spin_systems = []
-    for i, z, e_z, c_q, e_q, b in zip(iso, zeta, eta_z, Cq, eta_q, beta):
-        site = Site(
-            isotope="17O",
-            isotropic_chemical_shift=i,
-            shielding_symmetric={"zeta": z, "eta": e_z},
-            quadrupolar={"Cq": c_q, "eta": e_q, "beta": b},
-        )
-        spin_systems.append(SpinSystem(sites=[site]))
-    return spin_systems
+    return single_site_system_generator(
+        isotope="17O",
+        isotropic_chemical_shift=iso,
+        shielding_symmetric={"zeta": zeta, "eta": eta_z},
+        quadrupolar={"Cq": Cq, "eta": eta_q, "beta": beta},
+    )
 
 
 def generate_simulator(

@@ -3,7 +3,11 @@
 
 name: CI
 
-on: [push]
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
 
 jobs:
   code_lint:
@@ -68,7 +72,7 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2.0.3
 
   # build_windows_test:
   #   needs: [code_lint]
@@ -108,7 +112,7 @@ jobs:
   #       run: pytest --cov=./ --cov-report=xml
 
   #     - name: Upload coverage
-  #       uses: codecov/codecov-action@v1
+  #       uses: codecov/codecov-action@v2.0.3
 
   testing_windows:
     needs: [code_lint]
@@ -144,4 +148,4 @@ jobs:
         shell: pwsh
         run: pytest --cov=./ --cov-report=xml
       - name: Upload coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2.0.3
