@@ -259,9 +259,9 @@ def interpolation_blocks(n, level):
 def interpolation_execute(args):
     fn, vertexes, amp = args
     if vertexes.ndim == 2:
-        [fn(list_, amp) for list_ in vertexes]
+        _ = [fn(list_, amp) for list_ in vertexes]
     if vertexes.ndim == 3:
-        [fn(list_[0], list_[1], amp) for list_ in vertexes]
+        _ = [fn(list_[0], list_[1], amp) for list_ in vertexes]
 
 
 def interpolation_benchmark(n):
