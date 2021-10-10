@@ -99,7 +99,7 @@ jobs:
         {wheel}
 
       CIBW_BEFORE_TEST: pip install -r requirements.txt
-      # CIBW_TEST_REQUIRES: "pytest pytest-cov sympy"
+      CIBW_TEST_REQUIRES: "pytest"
       CIBW_TEST_COMMAND: |
         python -c "import mrsimulator"
         python -c "from mrsimulator import Site, Coupling, SpinSystem, Simulator"
