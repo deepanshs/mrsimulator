@@ -67,6 +67,9 @@ the CSDM object.
 
       ~Gaussian
       ~Exponential
+      ~SkewedGaussian
+      ~Step
+      ~Mask
 
 .. seealso::
 
