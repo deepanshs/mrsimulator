@@ -204,7 +204,7 @@ class LinuxSetup(Setup):
         print(f"For CentOS users\n\t{stat}")
         stat = f"sudo apt-get update\n\tsudo apt-get install {lib_ubuntu}"
         print(f"For Ubuntu users\n\t{stat}")
-        sys.exit(1)
+        # sys.exit(1)
 
 
 class MacOSSetup(Setup):
