@@ -6,3 +6,4 @@ Authors and Credits
 - `Philip J. Grandinetti (Ohio State University) <https://github.com/pjgrandinetti>`_
 - `Shyam Dwaraknath (LBNL) <https://github.com/shyamd>`_
 - `Alexis McCarthy (Ohio State University) <https://github.com/mccarthy677>`_
+- `Matthew D. Giammar (Ohio State University) <https://github.com/mgiammar>`_

@@ -156,7 +156,7 @@ The ``mrsimulator`` package offers the following
 
 
 .. warning::
-    The package is currently under development. We advice using with
+    The package is currently under development. We advise using with
     caution. Bug report are greatly appreciated.
 
 ----
@@ -176,6 +176,15 @@ Getting Started
     configuring_simulator
     mrsim_IO
 .. designing_methods
+
+Troubleshooting
+---------------
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Troubleshooting
+
+    troubleshooting
 
 Signal Processing (``mrsimulator.SignalProcessor``)
 ---------------------------------------------------
@@ -276,7 +285,7 @@ Reporting Bugs
 
 The preferred location for submitting feature requests and bug reports is the
 `Github issue tracker <https://github.com/DeepanshS/mrsimulator/issues>`_. Reports
-are also welcomed  by directly contacting `Deepansh Srivastava <mailto:srivastava.89@osu.edu>`_.
+are also welcomed by directly contacting `Deepansh Srivastava <mailto:srivastava.89@osu.edu>`_.
 
 Discussions are welcome on `Github discussion <https://github.com/DeepanshS/mrsimulator/discussions>`_
 

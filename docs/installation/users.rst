@@ -46,6 +46,14 @@ packages such as pip.
   `Anaconda <https://www.anaconda.com/products/individual/>`_ websites and follow their
   instructions on how to install python.
 
+..warning::
+  ``mrsimulator`` is incompatible with Python 3.10.0 (released October 4th, 2021) due to issues 
+  when installing dependencies. We anticipate the issues with Python 3.10.0 to be fixed out in 
+  the coming months.
+  
+  If your python version is 3.10.0, please follow instructions in
+  :ref:`virtual_envs` to install an older version of python.
+
 .. We recommend installing `anaconda <https://www.anaconda.com/distribution/>`_
 .. distribution for python version 3.6 or higher. The anaconda distribution
 .. ships with numerous packages and modules including Numpy, Scipy, and Matplotlib
@@ -54,18 +62,28 @@ packages such as pip.
 Installing ``mrsimulator`` using pip
 ------------------------------------
 
+.. _on_google_colab:
+
 On Google Colab Notebook
 ''''''''''''''''''''''''
 
-Colaboratory is a Google research project. It is a Jupyter notebook environment that
+Colaboratory is a Google research project which provides Jupyter notebook environment that
 runs entirely in the cloud. Launch a new notebook on
-`Colab <http://colab.research.google.com>`_. To install the mrsimulator package, type
+`Colab <http://colab.research.google.com>`_. To install the mrsimulator package, a few 
+precursor items need to be installed. Type
+
+.. code-block:: shell
+
+      !pip install -U numpy
+
+which will update numpy to a newer, compatible version. Next, 
+restart the Google Colab runtime to apply the changes. Finally, type
 
 .. code-block:: shell
 
       !pip install mrsimulator
 
-in the first cell, and execute. All done! You may now start using the library, or
+in the next cell and execute. All done! You may now start using the library, or
 proceed to section :ref:`Introduction to Spin Systems <spin_systems_intro>` to continue
 the tutorial.
 
