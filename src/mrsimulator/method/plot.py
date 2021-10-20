@@ -9,12 +9,12 @@ from matplotlib.patches import Patch
 from matplotlib.patches import Rectangle
 from matplotlib.ticker import FixedLocator
 from matplotlib.ticker import MaxNLocator
+from matplotlib.ticker import NullLocator
 
 __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
-# TODO: remove plot from shifting-d (56) since no new info
 # NOTE: Matplotlib should automatically generate new colors when none specified
 DURATION_WIDTH = 0.5  # Width of one ConstantDurationEvent
 SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
@@ -375,20 +375,19 @@ class SequenceDiagram(CustomAxes):
     name = "sequence_axes"
     ylim = None
 
-    def plot_diagram(self, df, x_data, ylim=[0, 1]):
+    def plot_diagram(self, df, x_data, channel, ylim=[0, 1]):
         """Main workflow function to plot sequence diagram"""
         self.x_data = x_data
         self.ylim = ylim
         self.xmax = max(x_data)
+        self.col_name = channel  # col_name is channel number (ex. "ch1")
 
-        self._format(grid={}, ylim=self.ylim, margin=None, axis="off")
+        # self._format(grid={}, ylim=self.ylim, margin=None, axis="off")
+        self._format(grid={}, minor_grid=None, ymargin=0, locator=NullLocator())
         self._plot_sequence_diagram(df=df)
 
     def _format(self, **kwargs):
-        # Turn of x and y axis and call super(),_format
-        self.axis("off")
         self.set_ylim(*self.ylim)
-
         super()._format(**kwargs)
 
     def _format_mix_label(self, ta, p):
@@ -447,12 +446,13 @@ class SequenceDiagram(CustomAxes):
                 # Leftmost x point of next MixingEvent rectangle
                 x0 = self.x_data[x_idx]
                 # Iterate over each MixingEvent in group and plot rectangle
-                # TODO: use user-defined label when defined, generated label otherwise
                 for j in range(num):
                     label, width = self._format_mix_label(
-                        ta=df["tip_angle"][df_idx + j],
-                        p=df["phase"][df_idx + j],
+                        ta=df["tip_angle"][df_idx + j][self.col_name],
+                        p=df["phase"][df_idx + j][self.col_name],
                     )
+                    if df["label"][df_idx + j] is not None:
+                        label = df["label"][df_idx + j]
                     super()._add_rect_with_label(
                         x0=x0,
                         x1=x0 + width,
@@ -489,54 +489,6 @@ class SequenceDiagram(CustomAxes):
             df_idx += num
 
 
-# class SpectralDimensionLabels(CustomAxes):
-#     """Axes subclass with"""
-
-#     name = "label_axes"
-
-#     def plot_labels(self, df, x_data, ylim=[0, 1], style="italic", format_kwargs={}):
-#         """Plot labels of spectral dimensions"""
-#         self.xmax = max(x_data)
-#         self._format(ylim, **format_kwargs)
-
-#         ev_groups = [(_type, sum(1 for _ in gp)) for _type, gp in groupby(df["type"])]
-
-#         last_spec_dim_x = 0
-#         spec_dim_idx = 0
-#         df_idx = 0
-#         x_idx = 0
-#         for _type, num in ev_groups:
-#             for j in range(num):
-#                 if x_idx < len(x_data) - 1 and x_data[x_idx] == x_data[x_idx + 1]:
-#                     x_idx += 1
-#                 if df["spec_dim_index"][df_idx + j] != spec_dim_idx:  # Next spec dim
-#                     x0 = x_data[x_idx]
-#                     if df["type"][df_idx + j] == "MixingEvent":
-#                         x0 += sum(df["tip_angle"][df_idx:j]) / 360.0 * MIXING_WIDTH
-#                     self.annotate(
-#                         text=df["spec_dim_label"][df_idx + j - 1],
-#                         xy=((last_spec_dim_x + x0) / 2, ylim[0] + 0.17),
-#                         **DEFAULT_ANNO_KWARGS,
-#                         style=style,
-#                     )
-#                     last_spec_dim_x = x0
-#                     spec_dim_idx += 1
-#                 x_idx += 1
-#             df_idx += num
-
-#         self.annotate(
-#             text=df["spec_dim_label"][df_idx - 1],
-#             xy=((last_spec_dim_x + max(x_data)) / 2, ylim[0] + 0.17),
-#             **DEFAULT_ANNO_KWARGS,
-#             style=style,
-#         )
-
-#     def _format(self, ylim, **kwargs):
-#         self.axis("off")
-#         self.set_ylim(*ylim)
-#         super()._format(**kwargs)
-
-
 def _check_columns(df):
     """Helper method to ensure required columns are present. Returns list of included
     optional parameters in dataframe columns.
@@ -565,21 +517,33 @@ def _check_columns(df):
 
 def _add_tip_angle_and_phase(df):
     """Add tip_angle and phase columns to dataframe from mixing_query"""
-    # NOTE Only columns for ch1 are created (1 ch only for now)
-    # NOTE What should empty MixingQueries add? (MixingQuery default?)
-    # BUG: Empty mixing queries (i.e. "mixing_query": {}) gives query of `None` causing
-    #       error to be thrown
+    queries = np.array(
+        [
+            query.channels
+            for query in df["mixing_query"]
+            if query.__class__.__name__ == "MixingQuery"
+        ]
+    )
+
+    # Keep queries where at least one RFRotation is not None
+    # cannot use `is not None` in numpy arguments below
+    queries = queries[:, np.any(queries != None, axis=0)]  # noqa:E711
+    ch_keys = [f"ch{i+1}" for i in range(len(queries[0]))]
+
+    tip_angles = [
+        {k: ch.tip_angle * 180 / np.pi for k, ch in zip(ch_keys, query)}
+        for query in queries
+    ]
+    phases = [
+        {k: ch.phase * 180 / np.pi for k, ch in zip(ch_keys, query)}
+        for query in queries
+    ]
+
     df["tip_angle"] = [
-        query.ch1.tip_angle * 180 / np.pi
-        if query.__class__.__name__ == "MixingQuery"
-        else np.nan
-        for query in df["mixing_query"]
+        tip_angles.pop(0) if _type == "MixingEvent" else None for _type in df["type"]
     ]
     df["phase"] = [
-        query.ch1.phase * 180 / np.pi
-        if query.__class__.__name__ == "MixingQuery"
-        else np.nan
-        for query in df["mixing_query"]
+        phases.pop(0) if _type == "MixingEvent" else None for _type in df["type"]
     ]
 
 
@@ -612,40 +576,48 @@ def _make_x_data(df):
 
 
 def _offset_x_data(df, x_data):
-    """Offsets x_data based on MixingEvents"""
-    offset_x = np.array([0] + x_data)
+    """Offsets x_data based on channelwise MixingEvents"""
+    base_x = np.array([0] + x_data)
     ev_groups = [(_type, sum(1 for _ in group)) for _type, group in groupby(df["type"])]
 
     # Remove MixingEvents from end of sequence
     if ev_groups[-1][0] == "MixingEvent":
         ev_groups.pop()
 
-    df_idx = 0
-    # Extend first jump if first event(s) are MixingEvent
-    if ev_groups[0][0] == "MixingEvent":
-        gp__ = ev_groups[0][1]
-        offset = sum(df["tip_angle"][0:gp__]) / 360.0 * MIXING_WIDTH
-        offset_x[1] += offset
-        # Increment event indexer by number of MixingEvents in first group
-        df_idx += gp__
-        ev_groups.pop(0)
+    # Loop through each channel to create offset x data for each
+    offset_x_per_channel = {}
+    for ch in df["phase"][list(df["type"]).index("MixingEvent")].keys():
+        offset_x = np.copy(base_x)
+        df_idx = 0
+        # Extend first jump if first event(s) are MixingEvent
+        if ev_groups[0][0] == "MixingEvent":
+            gp__ = ev_groups[0][1]
+            offset = sum(item[ch] for item in df["tip_angle"][0:gp__][ch])
+            offset = offset / 360.0 * MIXING_WIDTH
+            offset_x[1] += offset
+            # Increment event indexer by number of MixingEvents in first group
+            df_idx += gp__
+            ev_groups.pop(0)
 
-    x_idx = 1
-    for _type, num in ev_groups:
-        if _type == "MixingEvent":
-            up_lim__ = df_idx + num
-            offset = sum(df["tip_angle"][df_idx:up_lim__]) / 360.0 * MIXING_WIDTH
-            offset_x[x_idx] -= offset / 2
-            offset_x[x_idx + 1] += offset / 2
-            x_idx += 1
-        else:
-            if offset_x[x_idx] == offset_x[x_idx + 1]:
+        x_idx = 1
+        for _type, num in ev_groups:
+            if _type == "MixingEvent":
+                up_lim_ = df_idx + num
+                offset = sum(item[ch] for item in df["tip_angle"][df_idx:up_lim_])
+                offset = offset / 360.0 * MIXING_WIDTH
+                offset_x[x_idx] -= offset / 2
+                offset_x[x_idx + 1] += offset / 2
                 x_idx += 1
-            x_idx += (num * 2) - 1
-        # Increment event indexer by number of Events in group
-        df_idx += num
+            else:
+                if offset_x[x_idx] == offset_x[x_idx + 1]:
+                    x_idx += 1
+                x_idx += (num * 2) - 1
+            # Increment event indexer by number of Events in group
+            df_idx += num
 
-    return offset_x
+        offset_x_per_channel[ch] = offset_x
+
+    return offset_x_per_channel
 
 
 def _make_normal_and_offset_x_data(df):
@@ -680,10 +652,10 @@ def _add_legend(fig):
 
 def _calculate_n_channels(df):
     """Calculates the number of channels present in the method DataFrame"""
-    # (future) implement functionality for calculation
-    # Currently hardcoded to 1
-    # Maybe move this into _format_df?
-    return 2
+    if "MixingEvent" not in list(df["type"]):
+        return 1
+
+    return len(df["phase"][list(df["type"]).index("MixingEvent")])
 
 
 def plot(fig, df, include_legend) -> plt.figure:
@@ -693,12 +665,11 @@ def plot(fig, df, include_legend) -> plt.figure:
     params = _format_df(df)
     x_data, x_offset = _make_normal_and_offset_x_data(df)
 
-    # Calculations and setup gridspec object for number of subplots
+    # channels + p pathway + params
     n_channels = _calculate_n_channels(df)
-    # channels & p pathway + params
-    nrows = n_channels + len(params)
+    nrows = n_channels + 1 + len(params)
     height_ratios = np.ones(nrows)
-    height_ratios[0] = 0.70
+    height_ratios[:n_channels] = 0.70
     gs = fig.add_gridspec(
         nrows=nrows, ncols=1, height_ratios=height_ratios, right=0.95, bottom=0.05
     )  # nrows for multiple channels
@@ -709,22 +680,17 @@ def plot(fig, df, include_legend) -> plt.figure:
     proj.register_projection(CustomAxes)
     proj.register_projection(MultiLineAxes)
     proj.register_projection(SequenceDiagram)
-    # proj.register_projection(SpectralDimensionLabels)
-
-    # # Spectral Dimension labels Axes
-    # spec_dim_label_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="label_axes")
-    # spec_dim_label_ax.plot_labels(df=df, x_data=x_offset)
-    # gs_row_idx += 1
 
     # Sequence diagram Axes
-    seq_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="sequence_axes")
-    seq_ax.plot_diagram(df=df, x_data=x_offset)
-    gs_row_idx += 1
+    for ch, ch_x_data in x_offset.items():
+        seq_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="sequence_axes")
+        seq_ax.plot_diagram(df=df, x_data=ch_x_data, channel=ch)
+        gs_row_idx += 1
 
     # p and d Axes
     p_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="multi_line_axes")
     p_ax.make_plot(
-        x_data=x_offset,
+        x_data=x_offset["ch1"],  # xaxis values conform to channel 1 x values
         y_data=df["p"],
         col_name="p",
         mix_ev=mix_ev,
@@ -737,7 +703,7 @@ def plot(fig, df, include_legend) -> plt.figure:
         params.remove("d")
         d_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="multi_line_axes")
         d_ax.make_plot(
-            x_data=x_offset,
+            x_data=x_offset["ch1"],  # xaxis values conform to channel 1 x values
             y_data=df["d"],
             col_name="d",
             mix_ev=mix_ev,
