@@ -291,6 +291,35 @@ class Simulator(Parseable):
                 spin_sys, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
+    def load_methods(self, filename: str):
+        """Load a list of methods from the given JSON serialized file.
+
+        Args:
+            str filename: A local or remote address to a JSON serialized file.
+
+        Example
+        -------
+        >>> sim.load_methods(filename) # doctest:+SKIP
+        """
+        contents = import_json(filename)
+        self.methods = [Method.parse_dict_with_units(obj) for obj in contents]
+
+    def export_methods(self, filename: str):
+        """Export a list of methods to a JSON serialized file.
+
+        Args:
+            str filename: A filename of the serialized file.
+
+        Example
+        -------
+        >>> sim.export_methods(filename) # doctest:+SKIP
+        """
+        mth = [obj.json() for obj in self.methods]
+        with open(filename, "w", encoding="utf8") as outfile:
+            json.dump(
+                mth, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
+            )
+
     def run(
         self,
         method_index: list = None,

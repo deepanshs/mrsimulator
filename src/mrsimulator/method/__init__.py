@@ -551,7 +551,7 @@ class Method(Parseable):
             df[prop] = lst
 
     def summary(self, drop_constant_columns=True) -> pd.DataFrame:
-        r"""Returns a DataFrame giving a summary of the Method. A user can specify
+        """Returns a DataFrame giving a summary of the Method. A user can specify
         optional attributes to include which appear as columns in the DataFrame. A user
         can also ask to leave out attributes which remain constant throughout the
         method. Invalid attributes for an Event will be replaced with NAN.
