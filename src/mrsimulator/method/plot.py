@@ -434,7 +434,8 @@ class SequenceDiagram(CustomAxes):
             n_end_mix = ev_groups[-1][1]
             # Total angle / 360 * MIXING_WIDTH
             # Get last 'n_end_mix' events
-            offset = sum(df["tip_angle"][-n_end_mix:]) / 360 * MIXING_WIDTH
+            offset = sum(item[self.col_name] for item in df["tip_angle"][-n_end_mix:])
+            offset = offset / 360 * MIXING_WIDTH
             self.x_data[-2] -= offset
 
         self._plot_spec_dim_lines(df=df, ev_groups=ev_groups)
@@ -525,9 +526,16 @@ def _add_tip_angle_and_phase(df):
         ]
     )
 
+    # No mixing events in method
+    if queries.size == 0:
+        df["tip_angle"] = [None] * len(df["type"])
+        df["phase"] = [None] * len(df["type"])
+        return
+
     # Keep queries where at least one RFRotation is not None
     # cannot use `is not None` in numpy arguments below
     queries = queries[:, np.any(queries != None, axis=0)]  # noqa:E711
+    # TODO: Need to ensure at least one channel, maybe check if queries is empty
     ch_keys = [f"ch{i+1}" for i in range(len(queries[0]))]
 
     tip_angles = [
@@ -578,6 +586,11 @@ def _make_x_data(df):
 def _offset_x_data(df, x_data):
     """Offsets x_data based on channelwise MixingEvents"""
     base_x = np.array([0] + x_data)
+
+    # Return {"ch1": base_x} if no mixing events found
+    if "MixingEvent" not in list(df["type"]):
+        return {"ch1": base_x}
+
     ev_groups = [(_type, sum(1 for _ in group)) for _type, group in groupby(df["type"])]
 
     # Remove MixingEvents from end of sequence
@@ -587,20 +600,22 @@ def _offset_x_data(df, x_data):
     # Loop through each channel to create offset x data for each
     offset_x_per_channel = {}
     for ch in df["phase"][list(df["type"]).index("MixingEvent")].keys():
+        ev_gp_copy = ev_groups[:]
         offset_x = np.copy(base_x)
         df_idx = 0
         # Extend first jump if first event(s) are MixingEvent
-        if ev_groups[0][0] == "MixingEvent":
-            gp__ = ev_groups[0][1]
-            offset = sum(item[ch] for item in df["tip_angle"][0:gp__][ch])
+        if ev_gp_copy[0][0] == "MixingEvent":
+            gp__ = ev_gp_copy[0][1]
+            offset = sum(item[ch] for item in df["tip_angle"][0:gp__])
             offset = offset / 360.0 * MIXING_WIDTH
             offset_x[1] += offset
             # Increment event indexer by number of MixingEvents in first group
             df_idx += gp__
-            ev_groups.pop(0)
+            ev_gp_copy.pop(0)  # popping shits on everything
 
         x_idx = 1
-        for _type, num in ev_groups:
+        # print(df["tip_angle"])
+        for _type, num in ev_gp_copy:
             if _type == "MixingEvent":
                 up_lim_ = df_idx + num
                 offset = sum(item[ch] for item in df["tip_angle"][df_idx:up_lim_])
