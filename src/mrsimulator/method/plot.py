@@ -375,12 +375,13 @@ class SequenceDiagram(CustomAxes):
     name = "sequence_axes"
     ylim = None
 
-    def plot_diagram(self, df, x_data, channel, ylim=[0, 1]):
+    def plot_diagram(self, df, x_data, ch_iso, ch_num, ylim=[0, 1]):
         """Main workflow function to plot sequence diagram"""
         self.x_data = x_data
         self.ylim = ylim
         self.xmax = max(x_data)
-        self.col_name = channel  # col_name is channel number (ex. "ch1")
+        self.col_name = ch_iso  # ex. "29Si"
+        self.channel = ch_num  # ex. "ch1"
 
         # self._format(grid={}, ylim=self.ylim, margin=None, axis="off")
         self._format(grid={}, minor_grid=None, ymargin=0, locator=NullLocator())
@@ -434,7 +435,7 @@ class SequenceDiagram(CustomAxes):
             n_end_mix = ev_groups[-1][1]
             # Total angle / 360 * MIXING_WIDTH
             # Get last 'n_end_mix' events
-            offset = sum(item[self.col_name] for item in df["tip_angle"][-n_end_mix:])
+            offset = sum(item[self.channel] for item in df["tip_angle"][-n_end_mix:])
             offset = offset / 360 * MIXING_WIDTH
             self.x_data[-2] -= offset
 
@@ -449,8 +450,8 @@ class SequenceDiagram(CustomAxes):
                 # Iterate over each MixingEvent in group and plot rectangle
                 for j in range(num):
                     label, width = self._format_mix_label(
-                        ta=df["tip_angle"][df_idx + j][self.col_name],
-                        p=df["phase"][df_idx + j][self.col_name],
+                        ta=df["tip_angle"][df_idx + j][self.channel],
+                        p=df["phase"][df_idx + j][self.channel],
                     )
                     if df["label"][df_idx + j] is not None:
                         label = df["label"][df_idx + j]
@@ -673,7 +674,7 @@ def _calculate_n_channels(df):
     return len(df["phase"][list(df["type"]).index("MixingEvent")])
 
 
-def plot(fig, df, include_legend) -> plt.figure:
+def plot(fig, df, channels, include_legend) -> plt.figure:
     """Plot symmetry pathways and other requested parameters on figure"""
     # (future) add functionality for multiple channels
     mix_ev = np.array(df["type"] == "MixingEvent")
@@ -697,9 +698,9 @@ def plot(fig, df, include_legend) -> plt.figure:
     proj.register_projection(SequenceDiagram)
 
     # Sequence diagram Axes
-    for ch, ch_x_data in x_offset.items():
+    for ch_iso, (ch_num, ch_x_data) in zip(channels, x_offset.items()):
         seq_ax = fig.add_subplot(gs[gs_row_idx, 0], projection="sequence_axes")
-        seq_ax.plot_diagram(df=df, x_data=ch_x_data, channel=ch)
+        seq_ax.plot_diagram(df=df, x_data=ch_x_data, ch_iso=ch_iso, ch_num=ch_num)
         gs_row_idx += 1
 
     # p and d Axes
