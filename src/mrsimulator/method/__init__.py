@@ -725,7 +725,7 @@ class Method(Parseable):
         if df is None:
             df = self.summary()
 
-        _plot(fig=fig, df=df, include_legend=include_legend)
+        _plot(fig, df, [x.symbol for x in self.channels], include_legend)
 
         fig.suptitle(t=self.name if self.name is not None else "")
         return fig

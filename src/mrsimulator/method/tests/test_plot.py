@@ -319,7 +319,7 @@ def test_SequenceDiagram():
     fig = plt.figure()
     proj.register_projection(SequenceDiagram)
     axes_obj = fig.add_subplot(projection="sequence_axes")
-    axes_obj.plot_diagram(df3, x3, "ch1")
+    axes_obj.plot_diagram(df3, x3, "1H", "ch1")
 
     assert np.allclose(axes_obj.x_data, x_data_should_be)
 
