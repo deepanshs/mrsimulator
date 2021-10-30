@@ -18,43 +18,59 @@ methods = [val for k, val in NamedMethods.__dict__.items() if isinstance(val, ty
 sys = SpinSystem(sites=[{"isotope": "1H"}])
 
 
+def check_sim_save(sim1, sim2, message):
+    for mth in sim2.methods:
+        mth.simulation._timestamp = ""
+        _ = [item.to("ppm", "nmr_frequency_ratio") for item in mth.simulation.x]
+
+    data1 = sim1.methods[0].simulation.copy()
+    sim1.methods[0].simulation = None
+    data2 = sim2.methods[0].simulation.copy()
+    sim2.methods[0].simulation = None
+
+    assert data1 == data2, f"data saved and loaded is not equal: type {message}."
+    assert sim1 == sim2, f".mrsim saved and loaded is not equal: type {message}."
+
+
+def check_methods_save_load(sim1, sim2):
+    for mth in sim2.methods:
+        mth.simulation._timestamp = ""
+        _ = [item.to("ppm", "nmr_frequency_ratio") for item in mth.simulation.x]
+
+    data1 = sim1.methods[0].simulation.copy()
+    sim1.methods[0].simulation = None
+    data2 = sim2.methods[0].simulation.copy()
+    sim2.methods[0].simulation = None
+
+    assert data1 == data2, "method saved and loaded is not equal."
+    assert sim1 == sim2, ".mrmtd saved and loaded is not equal."
+
+
+def assert_parsing(method, fn1):
+    fn2 = method.parse_dict_with_units(fn1.json())
+    assert fn1 == fn2, f"Error with {method} parse with units."
+
+    fn3 = method(**fn1.json(units=False))
+    assert fn1 == fn3, f"Error with {method} parse with units."
+
+    event_error = "Event objects are immutable for"
+    serialize = fn1.json()
+    ent = serialize["spectral_dimensions"][0]["events"]
+    ent[0]["transition_query"][0]["ch1"]["P"] = [-100]
+
+    if method not in [Method, Method1D, Method2D]:
+        with pytest.raises(ImmutableEventError, match=f".*{event_error}.*"):
+            method.parse_dict_with_units(serialize)
+
+        with pytest.raises(ImmutableEventError, match=f".*{event_error}.*"):
+            method(**serialize)
+
+        with pytest.raises(ImmutableEventError, match=f".*{event_error}.*"):
+            ent.append({"transition_query": [{"ch1": {"P": [-100]}}]})
+            method.parse_dict_with_units(serialize)
+
+
 def test_read_write_methods():
-    def assert_parsing(method, fn1):
-        fn2 = method.parse_dict_with_units(fn1.json())
-        assert fn1 == fn2, f"Error with {method} parse with units."
-
-        fn3 = method(**fn1.json(units=False))
-        assert fn1 == fn3, f"Error with {method} parse with units."
-
-        event_error = "Event objects are immutable for"
-        serialize = fn1.json()
-        ent = serialize["spectral_dimensions"][0]["events"]
-        ent[0]["transition_query"][0]["ch1"]["P"] = [-100]
-
-        if method not in [Method, Method1D, Method2D]:
-            with pytest.raises(ImmutableEventError, match=f".*{event_error}.*"):
-                method.parse_dict_with_units(serialize)
-
-            with pytest.raises(ImmutableEventError, match=f".*{event_error}.*"):
-                method(**serialize)
-
-            with pytest.raises(ImmutableEventError, match=f".*{event_error}.*"):
-                ent.append({"transition_query": [{"ch1": {"P": [-100]}}]})
-                method.parse_dict_with_units(serialize)
-
-    def check_sim_save(sim1, sim2, message):
-        for mth in sim2.methods:
-            mth.simulation._timestamp = ""
-            _ = [item.to("ppm", "nmr_frequency_ratio") for item in mth.simulation.x]
-
-        data1 = sim.methods[0].simulation.copy()
-        sim.methods[0].simulation = None
-        data2 = sim2.methods[0].simulation.copy()
-        sim2.methods[0].simulation = None
-
-        assert data1 == data2, f"data saved and loaded is not equal: type {message}."
-        assert sim == sim2, f".mrsim saved and loaded is not equal: type {message}."
-
     for item in methods:
         kwargs = {
             "channels": ["93Nb"],
@@ -93,4 +109,20 @@ def test_read_write_methods():
         sim2 = Simulator.load("test.mrsim", parse_units=False)
         check_sim_save(sim, sim2, "without units")
 
+        # save/load methods
+        sim.run()
+        sim.export_methods("test.mrmtd")
+        sim2 = sim.copy()
+        sim2.load_methods("test.mrmtd")
+        check_methods_save_load(sim, sim2)
+
+        # save/load spin systems
+        sim.run()
+        sim.export_spin_systems("test.mrsys")
+        sim2 = sim.copy()
+        sim2.load_spin_systems("test.mrsys")
+        assert sim.spin_systems == sim2.spin_systems
+
     os.remove("test.mrsim")
+    os.remove("test.mrsys")
+    os.remove("test.mrmtd")
