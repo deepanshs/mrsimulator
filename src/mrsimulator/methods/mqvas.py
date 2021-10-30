@@ -107,6 +107,9 @@ class ThreeQ_VAS(MQ_VAS):
         [|-1.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
     """
 
+    class Config:
+        extra = "forbid"
+
 
 class FiveQ_VAS(MQ_VAS):
     """Simulate a sheared and scaled 5Q variable-angle spinning spectrum.
@@ -142,6 +145,9 @@ class FiveQ_VAS(MQ_VAS):
         [|-2.5⟩⟨2.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
     """
 
+    class Config:
+        extra = "forbid"
+
 
 class SevenQ_VAS(MQ_VAS):
     """Simulate a sheared and scaled 7Q variable-angle spinning spectrum.
@@ -176,3 +182,6 @@ class SevenQ_VAS(MQ_VAS):
         >>> method.get_transition_pathways(sys)
         [|-3.5⟩⟨3.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
     """
+
+    class Config:
+        extra = "forbid"

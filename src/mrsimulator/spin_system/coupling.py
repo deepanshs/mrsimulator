@@ -188,6 +188,7 @@ class Coupling(Parseable):
         return v
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
         extra = Extra.forbid
 

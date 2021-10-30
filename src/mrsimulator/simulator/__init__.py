@@ -136,6 +136,7 @@ class Simulator(Parseable):
     indexes = []
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
 
     @classmethod
@@ -533,6 +534,9 @@ class Simulator(Parseable):
 
 class Sites(AbstractList):
     """A list of unique :ref:`site_api` objects within a simulator object."""
+
+    class Config:
+        extra = "forbid"
 
     def __init__(self, data=[]):
         super().__init__(data)

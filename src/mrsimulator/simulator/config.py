@@ -73,6 +73,7 @@ class ConfigSimulator(Parseable):
     decompose_spectrum: Literal["none", "spin_system"] = "none"
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
         extra = Extra.forbid
 
