@@ -160,6 +160,7 @@ class SpinSystem(Parseable):
     property_units: Dict = {"abundance": "pct"}
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
         arbitrary_types_allowed = True
         extra = Extra.forbid

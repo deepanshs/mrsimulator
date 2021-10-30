@@ -159,6 +159,7 @@ class Method(Parseable):
     test_vars: ClassVar[Dict] = {"channels": ["1H"]}
 
     class Config:
+        # extra = "forbid"
         validate_assignment = True
         arbitrary_types_allowed = True
 

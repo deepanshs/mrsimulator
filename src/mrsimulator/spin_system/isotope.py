@@ -47,6 +47,7 @@ class Isotope(BaseModel):
     test_vars: ClassVar[Dict] = {"symbol": "1H"}
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
         extra = Extra.forbid
 
