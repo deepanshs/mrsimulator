@@ -350,8 +350,8 @@ def one_d_spectrum(method,
                 transition_pathway_weight = np.asarray(weights, dtype=np.float64)
             else:
                 # convert transition objects to list
-                weights = [item.weight for item in transition_pathway]
-                weights = np.column_stack((weights.real, weights.imag)).ravel()
+                weights = [(item.weight.real, item.weight.imag) for item in transition_pathway]
+                weights = np.asarray(weights).ravel()
                 transition_pathway_weight = np.asarray(weights, dtype=np.float64)
 
                 transition_pathway = np.asarray(transition_pathway)

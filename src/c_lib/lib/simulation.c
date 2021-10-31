@@ -52,30 +52,15 @@ void __mrsimulator_core(
     MRS_fftw_scheme *fftw_scheme,       // Pointer to the fftw scheme.
     MRS_averaging_scheme *scheme,       // Pointer to the powder averaging scheme.
     bool interpolation,                 // If true, perform a 1D interpolation.
-
-    /**
-     * Each event consists of the following freq contrib ordered as
-     * 1. Shielding 1st order 0th rank
-     * 2. Shielding 1st order 2th rank
-     * 3. Quad 1st order 2th rank
-     * 4. Quad 2st order 0th rank
-     * 5. Quad 2st order 2th rank
-     * 6. Quad 2st order 4th rank
-     *
-     * The freq contrib from each event is a list of boolean, where 1 mean allow
-     * frequency contribution and 0 means remove. The `freq_contrib` variable is
-     * a stack of boolean list, where the stack is ordered according to the
-     * events.
-     */
-    bool *freq_contrib,
-    double *affine_matrix  // Affine transformation matrix.
+    bool *freq_contrib,                 // A list of freq_contrib booleans.
+    double *affine_matrix               // Affine transformation matrix.
 ) {
   /*
   The sideband computation is based on the method described by Eden and Levitt
   et al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
-  bool refresh;
+  bool reset;
   unsigned int evt;
   int dim;
   double B0_in_T, fraction;
@@ -92,6 +77,7 @@ void __mrsimulator_core(
 
   // `transition_increment` is the step size to the next transition within the pathway.
   int transition_increment = 2 * sites->number_of_sites;
+  float *transition = transition_pathway;
 
   MRS_plan *plan;
   MRS_event *event;
@@ -100,7 +86,7 @@ void __mrsimulator_core(
 
   // Loop over the dimensionn.
   for (dim = 0; dim < n_dimension; dim++) {
-    refresh = 1;
+    reset = 1;  // If 1, reset the freqs to zero, else keep adding the freqs.
     // Loop over the events per dimension.
     for (evt = 0; evt < dimensions[dim].n_events; evt++) {
       event = &dimensions[dim].events[evt];
@@ -113,10 +99,9 @@ void __mrsimulator_core(
 
       /* Rotate all frequency components from PAS to a common frame */
       MRS_rotate_components_from_PAS_to_common_frame(
-          sites,               // Pointer to a list of sites within a spin system.
-          couplings,           // Pointer to a list of couplings within a spin system.
-          transition_pathway,  // Pointer to a list of transition. Here, only a
-                               // transition is processed.
+          sites,       // Pointer to a list of sites within a spin system.
+          couplings,   // Pointer to a list of couplings within a spin system.
+          transition,  // Pointer to a single transition.
           plan->allow_fourth_rank,  // If 1, prepare for 4th rank computation.
           &R0,                      // The R0 components.
           R2,                       // The R2 components.
@@ -133,7 +118,7 @@ void __mrsimulator_core(
 
       /* Get frequencies and amplitudes per octant .................................. */
       /* IMPORTANT: Always evalute the frequencies before the amplitudes. */
-      MRS_get_normalized_frequencies_from_plan(scheme, plan, R0, R2, R4, refresh,
+      MRS_get_normalized_frequencies_from_plan(scheme, plan, R0, R2, R4, reset,
                                                &dimensions[dim], fraction);
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
 
@@ -144,10 +129,10 @@ void __mrsimulator_core(
         cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2, event->freq_amplitude,
                     1);
       }
-      transition_pathway += transition_increment;  // increment to next transition
-      refresh = 0;
-    }  // end events
-  }    // end dimensions
+      transition += transition_increment;  // increment to next transition
+      reset = 0;  // reset the freqs to zero for next dimension.
+    }             // end events
+  }               // end dimensions
 
   free(R2);
   free(R4);

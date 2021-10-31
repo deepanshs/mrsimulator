@@ -55,8 +55,7 @@ static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme 
     }
   }
 
-  cblas_dscal(dimensions->events->plan->size, transition_pathway_weight,
-              dimensions->events->freq_amplitude, 1);
+  cblas_dscal(dimensions->events->plan->size, transition_pathway_weight, amps, 1);
 
   offset_0 = dimensions->normalize_offset + dimensions->R0_offset;
   if (fabs(*freq - freq[nt]) < TOL && fabs(*freq - freq[npts - 1]) < TOL)

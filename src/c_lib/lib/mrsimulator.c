@@ -236,7 +236,7 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
  *    https://doi.org/10.1006/jmre.1998.1427.
  */
 void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
-                                  MRS_fftw_scheme *fftw_scheme, bool refresh) {
+                                  MRS_fftw_scheme *fftw_scheme, bool reset) {
   /* If the number of sidebands is 1, the sideband amplitude at every sideband order is
    * one. In this case, return null,
    */
@@ -244,7 +244,7 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
 
   /* ================ Calculate the spinning sideband amplitude. ==================== */
 
-  // if (refresh) {
+  // if (reset) {
   //   cblas_dscal(2 * plan->size, 0.0, (double *)(fftw_scheme->vector), 1);
   // }
 
@@ -341,54 +341,6 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
 }
 
 /**
- * Get the lab-frame frequency contributions from the zeroth, second, fourth-rank
- * tensors.
- */
-// void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
-//                                    double R0, complex128 *R2, complex128 *R4,
-//                                    bool refresh, MRS_dimension *dim) {
-//   /**
-//    * Rotate the R2 and R4 components from the common frame to the rotor frame over
-//    all
-//    * the orientations. The componets are stored in w2 and w4 of the averaging scheme,
-//    * respectively.
-//    */
-//   __batch_wigner_rotation(scheme->octant_orientations, plan->n_octants,
-//                           scheme->wigner_2j_matrices, R2, scheme->wigner_4j_matrices,
-//                           R4, scheme->exp_Im_alpha, scheme->w2, scheme->w4);
-
-//   /* If refresh is true, zero the local_frequencies before update. */
-//   if (refresh) {
-//     cblas_dscal(scheme->total_orientations, 0.0, dim->local_frequency, 1);
-//     dim->R0_offset = 0.0;
-//   }
-
-//   /* Add the isotropic frequency contribution from the zeroth-rank tensor. */
-//   dim->R0_offset += R0;
-//   // vm_double_add_offset_inplace(scheme->total_orientations, plan->R0_offset,
-//   //                              dim->local_frequency);
-
-//   /**
-//    * Calculate the local anisotropic frequency contributions from the 2nd-rank
-//    tensor.
-//    * The w2 and w4 frequencies from the plan are in the rotor-frame. Use the
-//    wigner-2j
-//    * and 4j rotations to transform the frequencies in the lab-frame.
-//    */
-//   /* Wigner 2j rotation for the second-rank tensor frequency contributions. */
-//   plan->buffer = plan->wigner_d2m0_vector[2];
-//   cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&scheme->w2[2], 6,
-//               dim->local_frequency, 1);
-//   if (plan->allow_fourth_rank) {
-//     /* Wigner 4j rotation for the fourth-rank tensor frequency contributions. */
-//     plan->buffer = plan->wigner_d4m0_vector[4];
-//     cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&scheme->w4[4],
-//     10,
-//                 dim->local_frequency, 1);
-//   }
-// }
-
-/**
  * Get the lab-frame normalized frequency contributions from the zeroth, second,
  * fourth-rank tensors. Here, normalization refers to dividing the calculated
  * frequencies by the increment of the respective spectral dimension. Normalization
@@ -397,7 +349,7 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
  */
 void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0, complex128 *R2,
-                                              complex128 *R4, bool refresh,
+                                              complex128 *R4, bool reset,
                                               MRS_dimension *dim, double fraction) {
   /**
    * Rotate the R2 and R4 components from the common frame to the rotor frame over all
@@ -408,8 +360,8 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                           scheme->wigner_2j_matrices, R2, scheme->wigner_4j_matrices,
                           R4, scheme->exp_Im_alpha, scheme->w2, scheme->w4);
 
-  /* If refresh is true, zero the local_frequencies before update. */
-  if (refresh) {
+  /* If reset is true, zero the local_frequencies before update. */
+  if (reset) {
     cblas_dscal(scheme->total_orientations, 0.0, dim->local_frequency, 1);
     dim->R0_offset = 0.0;
   }

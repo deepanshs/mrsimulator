@@ -242,33 +242,34 @@ static inline void rectangle_bin(double x0, double x1, double amp, double *spec,
   spec[p] += (x1 - (double)p) * da;
 }
 
-//    f10 ----------- f11  top-line
-//    /|             | \.
-//   / |             |    \.
-// f00 ------------------ f01  bottom line
-static inline void quadrilateral_bin_2(double *f00, double *f11, double *f10,
-                                       double *f01, double top, double bottom,
-                                       double total, double amp, double *spec, int m1) {
-  double amp_left, amp_mid, amp_right, a, a1, a2, a3;
+// //    f10 ----------- f11  top-line
+// //    /|             | \.
+// //   / |             |    \.
+// // f00 ------------------ f01  bottom line
+// static inline void quadrilateral_bin_2(double *f00, double *f11, double *f10,
+//                                        double *f01, double top, double bottom,
+//                                        double total, double amp, double *spec, int
+//                                        m1) {
+//   double amp_left, amp_mid, amp_right, a, a1, a2, a3;
 
-  // if (*f00 == *f01) {
-  //   triangle_interpolation1D(f00, f11, f10, &amp, spec, &m1);
-  // } else if (*f10 == *f11) {
-  //   triangle_interpolation1D(f00, f11, f01, &amp, spec, &m1);
-  // } else {
+//   // if (*f00 == *f01) {
+//   //   triangle_interpolation1D(f00, f11, f10, &amp, spec, &m1);
+//   // } else if (*f10 == *f11) {
+//   //   triangle_interpolation1D(f00, f11, f01, &amp, spec, &m1);
+//   // } else {
 
-  a1 = 0.5 * fabs(*f10 - *f00);
-  a2 = fabs(*f11 - *f10);
-  a3 = 0.5 * fabs(*f01 - *f11);
-  a = a1 + a2 + a3;
-  amp_left = amp * a1 / a;
-  amp_mid = amp * a2 / a;
-  amp_right = amp * a3 / a;
-  triangle_interpolation1D(f00, f10, f10, &amp_left, spec, &m1);
-  rectangle_bin(*f10, *f11, amp_mid, spec, m1);
-  triangle_interpolation1D(f11, f11, f01, &amp_right, spec, &m1);
-  // }
-}
+//   a1 = 0.5 * fabs(*f10 - *f00);
+//   a2 = fabs(*f11 - *f10);
+//   a3 = 0.5 * fabs(*f01 - *f11);
+//   a = a1 + a2 + a3;
+//   amp_left = amp * a1 / a;
+//   amp_mid = amp * a2 / a;
+//   amp_right = amp * a3 / a;
+//   triangle_interpolation1D(f00, f10, f10, &amp_left, spec, &m1);
+//   rectangle_bin(*f10, *f11, amp_mid, spec, m1);
+//   triangle_interpolation1D(f11, f11, f01, &amp_right, spec, &m1);
+//   // }
+// }
 
 //    f00 ----------- f01  top-line
 //    /|             | \.
