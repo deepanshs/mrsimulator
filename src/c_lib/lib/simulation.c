@@ -36,7 +36,8 @@ static inline void __zero_components(double *R0, complex128 *R2, complex128 *R4)
 // Calculate spectrum from the spin systems for a single transition.
 void __mrsimulator_core(
     // spectrum information and related amplitude
-    double *spec,                // Pointer to the spectrum array.
+    double *spec_real,           // Pointer to the spectrum array (real).
+    double *spec_imag,           // Pointer to the spectrum array (imag).
     site_struct *sites,          // Pointer to a list of sites within a spin system.
     coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
 
@@ -44,13 +45,13 @@ void __mrsimulator_core(
     // transition is a list of quantum numbers packed as quantum numbers from the
     // initial energy state followed by the quantum numbers from the final energy state.
     // The energy states are given in Zeeman basis.
-    float *transition_pathway,         // Pointer to the transition pathway,
-    double transition_pathway_weight,  // The weight of transition pathway.
-    int n_dimension,                   // The total number of spectroscopic dimensions.
-    MRS_dimension *dimensions,         // Pointer to MRS_dimension structure.
-    MRS_fftw_scheme *fftw_scheme,      // Pointer to the fftw scheme.
-    MRS_averaging_scheme *scheme,      // Pointer to the powder averaging scheme.
-    bool interpolation,                // If true, perform a 1D interpolation.
+    float *transition_pathway,          // Pointer to the transition pathway,
+    double *transition_pathway_weight,  // The comlpex weight of transition pathway.
+    int n_dimension,                    // The total number of spectroscopic dimensions.
+    MRS_dimension *dimensions,          // Pointer to MRS_dimension structure.
+    MRS_fftw_scheme *fftw_scheme,       // Pointer to the fftw scheme.
+    MRS_averaging_scheme *scheme,       // Pointer to the powder averaging scheme.
+    bool interpolation,                 // If true, perform a 1D interpolation.
 
     /**
      * Each event consists of the following freq contrib ordered as
@@ -89,7 +90,6 @@ void __mrsimulator_core(
   complex128 *R2_temp = malloc_complex128(5);
   complex128 *R4_temp = malloc_complex128(9);
 
-  double *spec_site_ptr;
   // `transition_increment` is the step size to the next transition within the pathway.
   int transition_increment = 2 * sites->number_of_sites;
 
@@ -97,9 +97,6 @@ void __mrsimulator_core(
   MRS_event *event;
 
   // openblas_set_num_threads(1);
-
-  // spec_site = site * dimensions[0].count;
-  spec_site_ptr = &spec[0];
 
   // Loop over the dimensionn.
   for (dim = 0; dim < n_dimension; dim++) {
@@ -163,20 +160,34 @@ void __mrsimulator_core(
 
   switch (n_dimension) {
   case 1:
-    one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
-                              transition_pathway_weight);
+    if (transition_pathway_weight[0] != 0.0) {
+      one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec_real,
+                                transition_pathway_weight[0]);
+    }
+    if (transition_pathway_weight[1] != 0.0) {
+      one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec_imag,
+                                transition_pathway_weight[1]);
+    }
     break;
   case 2:
-    two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
-                              transition_pathway_weight, plan->number_of_sidebands,
-                              affine_matrix);
+    if (transition_pathway_weight[0] != 0.0) {
+      two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec_real,
+                                transition_pathway_weight[0], plan->number_of_sidebands,
+                                affine_matrix);
+    }
+    if (transition_pathway_weight[1] != 0.0) {
+      two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec_imag,
+                                transition_pathway_weight[1], plan->number_of_sidebands,
+                                affine_matrix);
+    }
     break;
   }
 }
 
 void mrsimulator_core(
     // spectrum information and related amplitude
-    double *spec,                // The amplitude of the spectrum.
+    double *spec_real,           // Pointer to the spectrum array (real).
+    double *spec_imag,           // Pointer to the spectrum array (imag).
     double coordinates_offset,   // The start of the frequency spectrum.
     double increment,            // The increment of the frequency spectrum.
     int count,                   // Number of points on the frequency spectrum.
@@ -192,7 +203,7 @@ void mrsimulator_core(
     double rotor_angle_in_rad,         // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the a list of transitions.
-    float *transition_pathway, double transition_pathway_weight,
+    float *transition_pathway, double *transition_pathway_weight,
     // powder orientation average
     int integration_density,  // The number of triangle along the edge of octahedron
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
@@ -226,8 +237,8 @@ void mrsimulator_core(
   // gettimeofday(&all_site_time, NULL);
   __mrsimulator_core(
       // spectrum information and related amplitude
-      spec,  // The amplitude of the spectrum.
-
+      spec_real,           // Pointer to the spectrum array (real).
+      spec_imag,           // Pointer to the spectrum array (imag).
       sites,               // Pointer to a list of sites within the spin system.
       couplings,           // Pointer to a list of couplings within a spin system.
       transition_pathway,  // Pointer to a list of transition.

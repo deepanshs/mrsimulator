@@ -14,7 +14,8 @@
 
 extern void mrsimulator_core(
     // spectrum information and related amplitude
-    double *spec,                // The amplitude of the spectrum.
+    double *spec_real,           // Pointer to the spectrum array (real).
+    double *spec_imag,           // Pointer to the spectrum array (imag).
     double spectral_start,       // The start of the frequency spectrum.
     double spectral_increment,   // The increment of the frequency spectrum.
     int number_of_points,        // Number of points on the frequency spectrum.
@@ -28,8 +29,8 @@ extern void mrsimulator_core(
     double rotor_frequency_in_Hz,      // The rotor spin frequency.
     double rotor_angle_in_rad,         // The rotor angle relative to lab-frame z-axis.
 
-    float *transition_pathway,         // Pointer to a list of transitions.
-    double transition_pathway_weight,  // The weight of transition pathway.
+    float *transition_pathway,          // Pointer to a list of transitions.
+    double *transition_pathway_weight,  // The complex weight of transition pathway.
     // powder orientation average
     int integration_density,  // The number of triangle along the edge of octahedron.
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
@@ -37,7 +38,8 @@ extern void mrsimulator_core(
 
 extern void __mrsimulator_core(
     // spectrum information and related amplitude
-    double *spec,                // Pointer to the spectrum array.
+    double *spec_real,           // Pointer to the spectrum array (real).
+    double *spec_imag,           // Pointer to the spectrum array (imag).
     site_struct *sites,          // Pointer to a list of sites within a spin system.
     coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
 
@@ -45,13 +47,13 @@ extern void __mrsimulator_core(
     // transition is a list of quantum numbers packed as quantum numbers from the
     // initial energy state followed by the quantum numbers from the final energy state.
     // The energy states are given in Zeeman basis.
-    float *transition_pathway,         // Pointer to a list of transitions.
-    double transition_pathway_weight,  // The weight of transition pathway.
-    int n_dimension,                   // The total number of spectroscopic dimensions.
-    MRS_dimension *dimensions,         // Pointer to MRS_dimension structure.
-    MRS_fftw_scheme *fftw_scheme,      // Pointer to the fftw scheme.
-    MRS_averaging_scheme *scheme,      // Pointer to the powder averaging scheme.
-    bool interpolation,                // If true, perform a 1D interpolation.
+    float *transition_pathway,          // Pointer to a list of transitions.
+    double *transition_pathway_weight,  // The complex weight of transition pathway.
+    int n_dimension,                    // The total number of spectroscopic dimensions.
+    MRS_dimension *dimensions,          // Pointer to MRS_dimension structure.
+    MRS_fftw_scheme *fftw_scheme,       // Pointer to the fftw scheme.
+    MRS_averaging_scheme *scheme,       // Pointer to the powder averaging scheme.
+    bool interpolation,                 // If true, perform a 1D interpolation.
 
     /**
      * Each event consists of the following freq contrib ordered as
