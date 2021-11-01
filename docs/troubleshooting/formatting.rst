@@ -1,0 +1,108 @@
+.. _formatting_troubleshooting
+
+Python Syntax and Highlighting
+------------------------------
+
+Python syntax relies on whitespace and this can cause some confusion when first writing code.
+The following are some common syntax errors encountered and how to solve them.
+
+However, the easiest way to find and prevent syntax errors is to use a dedicated code editor.
+We recommend using VS Code (`setup instructions <>`__) on your local machine
+or Google Colab which runs everything online.
+
+IndentationError
+""""""""""""""""
+
+If you are encountering an ``IndentationError``, this means you have an extra/missing
+whitespace somewhere in your code. Code editors make finding troublesome whitespace easier,
+but the error should also give the code snipped showing where a missing/extra indent is.
+
+``IndentationError: expected an indented block`` means some code after a class/method/loop
+deceleration is missing an indent.
+
+``IndentationError: unindent does not match any outer indentation level`` means the code didn't
+return to a previous indentation level.
+
+``IndentationError`` means Python encountered unexpected whitespace.
+
+Code blocks in Python rely on indentation levels (1 level = 4 spaces) so whitespace can't
+be placed randomly. code blocks are preceded by a ``:`` and all code in one
+block has the same indentation. To get out of a code block, simply remove an indentation level.
+
+As an example of indentation, here is some code which adds the numbers 1 to 9:
+
+.. code-block:: python
+
+    # Add numbers 1 through 9
+    total = 0
+    for i in range(10):
+        # New code block (4 spaces)
+        total += i
+
+    # Exit loop code block (0 spaces)
+    print(total)  # 45
+
+Mismatched Brackets and Square Brackets
+"""""""""""""""""""""""""""""""""""""""
+
+Nesting many lists and dictionaries inside each other quickly becomes hard to read. If you have
+mismatched or missing brackets, Python will throw ``SyntaxError: invalid syntax``.
+Code editors can automatically format large nestings and highlight which openings and closings go
+together making the code easer to read.
+
+Make sure all brackets are balanced and that opening and closing brackets match. Python uses three
+types of brackets:
+
+TODO add links to types
+
+* ``()`` is used when creating a `tuple <https://docs.python.org/3/library/stdtypes.html#tuple>`__ or when creating/calling method signatures.
+* ``[]`` is used when creating a `list <https://docs.python.org/3/library/stdtypes.html#list>`__ or when indexing an item in a list or tuple.
+* ``{}`` is used when creating a `dict <https://docs.python.org/3/library/stdtypes.html#mapping-types-dict>`__ or `set <https://docs.python.org/3/library/stdtypes.html#set>`__.
+
+TypeError: object is not callable
+"""""""""""""""""""""""""""""""""
+
+The most common reason ``TypeError: object is not callable`` is when ``()`` is used instead of
+``[]``. Parentheses are used to call functions. For example
+
+.. code-block:: python
+
+    def foo(n):
+        print("I received", n)
+
+
+    foo(1)  # I received 1
+
+But parentheses aren't valid for indexing an subscriptable object (ex. list, tuple, etc). For
+example, the following code will throw an TypeError
+
+.. code-block:: python
+
+    bar = [1, 2, 3, 4]
+    bar(1)  # TypeError: 'list' object is nto callable
+
+but the following code is valid
+
+.. code-block:: python
+
+    bar = [1, 2, 3, 4]
+    bar[1]  # 2
+
+The same applies for dictionaries, but instead of indexing with an integer you would index with
+a keyword
+
+TypeError: object is not subscriptable
+""""""""""""""""""""""""""""""""""""""
+
+``TypeError: object is not subscriptable`` is thrown when indexing a non-subscriptable object.
+For example
+
+.. code-block:: python
+
+    # Numbers are not subscriptable
+    some_num = 42
+    sum_num[3]  # TypeError: object is not subscriptable
+
+Also subscriptable objects can only be indexed so many times. A 1D list can only be indexed once,
+2D twice, and so on. If you are using nested lists/dicts, make sure you aren't exceeding the number
+of indexes possible.

@@ -235,6 +235,20 @@ API and references
     api_py/py-fitting
     api_c/c_api
 
+Troubleshooting
+---------------
+.. toctree::
+    :maxdepth: 1
+    :caption: Troubleshooting
+
+    troubleshooting/installing_python.rst
+    troubleshooting/google_colab.rst
+    troubleshooting/installing_mrsimulator.rst
+    troubleshooting/installing_pip.rst
+    troubleshooting/package_manager.rst
+    troubleshooting/formatting.rst
+    troubleshooting/vscode.rst
+
 
 Project details
 ---------------
