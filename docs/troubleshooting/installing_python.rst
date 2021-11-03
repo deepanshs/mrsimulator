@@ -1,4 +1,4 @@
-.. _installing_python
+.. _installing_python:
 
 Installing Python
 -----------------
@@ -8,14 +8,14 @@ Installing Python
   We anticipate the issues with Python 3.10.0 to be fixed in the coming months.
 
   Until then, we recommend installing ``mrsimulator`` in a Python 3.9 environment. See the
-  section on setting up virtual environments.
+  section on `setting up a virtual environment <_virtual_environment_troubleshooting>`__.
 
 Installing Python
 """""""""""""""""
 
 ``mrsimulator`` requires Python or a hosted Notebook service to run. If you are
 using Google Colab, see the `colab instillation steps <on_google_colab>`__ or the
-`colab issues <Google Colab Notebook Issues_>`__.
+`colab issues <_google_colab_troubleshooting>`__ page.
 
 To check if python is installed on your system, open a new terminal/command line and run
 **Checking the version of Python**
@@ -39,14 +39,14 @@ To check if python is installed on your system, open a new terminal/command line
             'python' is not recognized as an internal or external command, operable program or batch file.
 
         To install Python, visit `python.org <https://www.python.org/downloads/>`__ to download a
-        version of Python 3. During the instillation process, please check **add Python 3.x to PATH** box.
+        version of Python 3. During the instillation process, please check **add Python 3.x to PATH**.
 
-        If you are certain Python is installed on your system but continue to receive errors,
-        `check if Python is in your PATH variable <https://datatofish.com/add-python-to-windows-path/>`__.
+        If you are certain Python is installed on your system but continue to receive errors, see
+        `adding Python to your PATH variable <https://datatofish.com/add-python-to-windows-path/>`__.
 
     .. tab:: MacOS
 
-        Note that most recent versions of MacOS come with Python pre-installed. If you're unsure
+        Most recent versions of MacOS come with Python pre-installed. If you're unsure
         if Python is installed, follow these steps.
 
         To check if Python is installed on MacOS, open the Terminal application. Next, type
@@ -66,9 +66,6 @@ To check if python is installed on your system, open a new terminal/command line
         version of Python 3 for your system.
 
     .. tab:: Linux
-
-        Note that most recent versions of MacOS come with Python pre-installed. If you're unsure
-        if Python is installed, follow these steps.
 
         To check if Python is installed on Linux, open a terminal. Next, type
 

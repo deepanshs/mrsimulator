@@ -1,12 +1,12 @@
-.. _google_colab_troubleshooting
+.. _google_colab_troubleshooting:
 
-Introduction to Google Colab and Jupyter Notebooks
---------------------------------------------------
+Google Colab and Jupyter Notebooks
+----------------------------------
 
 If you are new to Google Colab or just need a refresher, we suggest going through
 `Google's introduction to Colaboratory <https://colab.research.google.com/?utm_source=scs-index>`__.
 
-Google Colab borrows functionality from Jupyter Notebooks. The main difference is that
+Google Colab has the same functionality as a Jupyter Notebooks. The main difference is that
 Jupyter Notebooks are run on your local machine. The `Jupyter Notebook documentation
 <https://jupyter-notebook.readthedocs.io/en/stable/index.html>`__ details instillation and use.
 
@@ -31,8 +31,6 @@ Google Colab, execute the following command in a new cell.
       !pip install -U numpy
 
 This step may take a few seconds. After updating, a warning should pop up saying
-
-TODO change code-block type
 
 .. code-block:: shell
 

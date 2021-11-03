@@ -1,13 +1,13 @@
-.. _formatting_troubleshooting
+.. _formatting_troubleshooting:
 
 Python Syntax and Highlighting
 ------------------------------
 
-Python syntax relies on whitespace and this can cause some confusion when first writing code.
+Python syntax is slightly different than other langues which cause some confusion.
 The following are some common syntax errors encountered and how to solve them.
 
 However, the easiest way to find and prevent syntax errors is to use a dedicated code editor.
-We recommend using VS Code (`setup instructions <>`__) on your local machine
+We recommend using VS Code (`setup instructions <_installing_vscode>`__) on your local machine
 or Google Colab which runs everything online.
 
 IndentationError
@@ -15,7 +15,7 @@ IndentationError
 
 If you are encountering an ``IndentationError``, this means you have an extra/missing
 whitespace somewhere in your code. Code editors make finding troublesome whitespace easier,
-but the error should also give the code snipped showing where a missing/extra indent is.
+but the error should also show the code snippet which threw the error.
 
 ``IndentationError: expected an indented block`` means some code after a class/method/loop
 deceleration is missing an indent.
@@ -23,7 +23,7 @@ deceleration is missing an indent.
 ``IndentationError: unindent does not match any outer indentation level`` means the code didn't
 return to a previous indentation level.
 
-``IndentationError`` means Python encountered unexpected whitespace.
+``IndentationError: unexpected indent`` means Python encountered unexpected whitespace.
 
 Code blocks in Python rely on indentation levels (1 level = 4 spaces) so whitespace can't
 be placed randomly. code blocks are preceded by a ``:`` and all code in one
@@ -53,8 +53,6 @@ together making the code easer to read.
 Make sure all brackets are balanced and that opening and closing brackets match. Python uses three
 types of brackets:
 
-TODO add links to types
-
 * ``()`` is used when creating a `tuple <https://docs.python.org/3/library/stdtypes.html#tuple>`__ or when creating/calling method signatures.
 * ``[]`` is used when creating a `list <https://docs.python.org/3/library/stdtypes.html#list>`__ or when indexing an item in a list or tuple.
 * ``{}`` is used when creating a `dict <https://docs.python.org/3/library/stdtypes.html#mapping-types-dict>`__ or `set <https://docs.python.org/3/library/stdtypes.html#set>`__.
@@ -73,13 +71,13 @@ The most common reason ``TypeError: object is not callable`` is when ``()`` is u
 
     foo(1)  # I received 1
 
-But parentheses aren't valid for indexing an subscriptable object (ex. list, tuple, etc). For
+But parentheses aren't valid for indexing a subscriptable object (list, tuple, etc). For
 example, the following code will throw an TypeError
 
 .. code-block:: python
 
     bar = [1, 2, 3, 4]
-    bar(1)  # TypeError: 'list' object is nto callable
+    bar(1)  # TypeError: 'list' object is not callable
 
 but the following code is valid
 
@@ -89,7 +87,13 @@ but the following code is valid
     bar[1]  # 2
 
 The same applies for dictionaries, but instead of indexing with an integer you would index with
-a keyword
+a keyword. For example
+
+.. code-block:: python
+
+    spam = {"ham": "Hello World!", "eggs": 54.73}
+    print(spam["ham"])  # Hello World!
+    print(spam("ham"))  # TypeError: 'dict' object is not callable
 
 TypeError: object is not subscriptable
 """"""""""""""""""""""""""""""""""""""

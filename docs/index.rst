@@ -238,17 +238,10 @@ API and references
 Troubleshooting
 ---------------
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
     :caption: Troubleshooting
 
-    troubleshooting/installing_python.rst
-    troubleshooting/google_colab.rst
-    troubleshooting/installing_mrsimulator.rst
-    troubleshooting/installing_pip.rst
-    troubleshooting/package_manager.rst
-    troubleshooting/formatting.rst
-    troubleshooting/vscode.rst
-
+    troubleshooting/troubleshooting.rst
 
 Project details
 ---------------

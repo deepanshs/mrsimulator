@@ -1,13 +1,12 @@
-.. _installing_vscode
+.. _installing_vscode:
 
 Setting up VS Code
 ------------------
 
 VS Code is a free code editor popular among the programming community. We recommend using VS Code
 because of its flexibility and community extensions. The following is a guide to get the basics
-set up and start running ``mrsimulator`` in VS Code.
-
-We also provide some suggested extension which can make your programming much easier.
+set up and start running ``mrsimulator`` in VS Code. We also provide some suggested extension which
+can make your programming much easier.
 
 Instillation
 """"""""""""
@@ -44,14 +43,12 @@ to bring up the command pallette. Type ``Create New Jupyter Notebook`` and selec
     VS Code may need to install other extensions for Notebooks to run. Install any additional
     extensions VS Code says are required.
 
-TODO add ref for examples page
-
 VS Code may ask which Python environment to use. Make sure you select an environment where
 ``mrsimulator`` is installed. For more info on Python environments, see our `setting up
-Anaconda <>`__ page.
+Anaconda <_virtual_environment_troubleshooting>`__ page.
 
-Now you're ready to run Jupyter Notebooks in VS Code! Check out our `examples <>`__ to download
-an example's notebook and open it with VS Code.
+Now you're ready to run Jupyter Notebooks in VS Code! Check out our
+`examples <_example_gallery>`__ to download an example's notebook and open it with VS Code.
 
 **Code Formatter**
 

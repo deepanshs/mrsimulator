@@ -3,6 +3,13 @@
 Package dependencies
 ====================
 
+.. warning::
+  Some of the dependency libraries for ``mrsimulator`` are incompatible with Python 3.10.0.
+  We anticipate the issues with Python 3.10.0 to be fixed in the coming months.
+
+  Until then, we recommend installing ``mrsimulator`` in a Python 3.9 environment. See the
+  section on setting up a `virtual environment <_virtual_environment_troubleshooting>`__.
+
 ``mrsimulator`` depends on the following packages:
 
 **Required packages**

@@ -42,14 +42,17 @@ packages such as pip.
 .. seealso::
 
   If you do not have python or have an older version of python, you may visit the
-  `Python downloads <https://www.python.org/downloads/>`_ or
-  `Anaconda <https://www.anaconda.com/products/individual/>`_ websites and follow their
-  instructions on how to install python.
+  `Python downloads <https://www.python.org/downloads/>`_ on Python's official site
+  and follow their instructions to install.
 
-.. We recommend installing `anaconda <https://www.anaconda.com/distribution/>`_
-.. distribution for python version 3.6 or higher. The anaconda distribution
+  If you are having issues with Python, see our
+  `Python troubleshooting section <_installing_python>`__.
+
+.. We recommend installing `Anaconda <https://www.anaconda.com/distribution/>`_
+.. distribution for python version 3.6 or higher. The Anaconda distribution
 .. ships with numerous packages and modules including Numpy, Scipy, and Matplotlib
-.. which are useful packages for scientific datasets.
+.. which are useful packages for scientific datasets. Anaconda also acts as an environment
+.. manager for Python which helps keep dependencies for different projects separate.
 
 Installing ``mrsimulator`` using pip
 ------------------------------------
@@ -59,7 +62,16 @@ On Google Colab Notebook
 
 Colaboratory is a Google research project. It is a Jupyter notebook environment that
 runs entirely in the cloud. Launch a new notebook on
-`Colab <http://colab.research.google.com>`_. To install the mrsimulator package, type
+`Colab <http://colab.research.google.com>`_.
+
+Colab has an older version of numpy installed by default and it must be updated before
+using mrsimulator. In a new cell, run
+
+.. code-block:: shell
+
+      !pip install -U numpy
+
+and restart the runtime. Now, to install the mrsimulator package, type
 
 .. code-block:: shell
 
@@ -109,6 +121,8 @@ and higher. PIP is the easiest way to install python packages.
 
   .. tab:: Windows
     :tabid: windows
+
+    TODO find if we provide binary distros for windows
 
     .. note:: We currently do not provide binary distributions for windows. You'll need
       to compile and build the mrsimulator library from source. The following instructions
@@ -250,3 +264,19 @@ The above statement should produce the following figure.
 .. plot:: ../pyplot/test_file.py
 
     A test example simulation of solid-state NMR spectrum.
+
+.. note::
+
+    If you encounter the following error
+
+    .. code-block:: shell
+
+        ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
+
+    run
+
+    .. code-block:: shell
+
+        $ pip install -U numpy
+
+    to update numpy. Running ``python test_file.py`` should now succeed.

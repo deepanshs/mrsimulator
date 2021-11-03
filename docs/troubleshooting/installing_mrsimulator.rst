@@ -1,4 +1,4 @@
-.. _installing_mrsimulator_troubleshooting
+.. _installing_mrsimulator_troubleshooting:
 
 Errors and Issues when installing ``mrsimulator``
 -------------------------------------------------
@@ -34,6 +34,32 @@ After stopping the installation process, check the version of python by running
 in the command line. If ``Python 3.10.x`` is printed, please see details for `setting up a
 environment manager <_package_manager_troubleshooting>`__ to create an environment with a lower
 Python version.
+
+ValueError when running test_file.py
+""""""""""""""""""""""""""""""""""""
+
+``mrsimulator`` depends on ``numpy>=1.17``, but sometimes during the install Numpy isn't
+installed and/or updated to the needed version. This can happen for many different reasons.
+
+When testing your build with
+
+.. code-block:: bash
+
+    $ python test_file.py
+
+if you get the following error
+
+.. code-block:: bash
+
+    ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
+
+this means Numpy is an older version. To update Numpy to a compatible version, run
+
+.. code-block:: bash
+
+    $ pip install -U numpy
+
+Now Numpy has been updated and ``test_file.py`` should run without error
 
 Have a different installation issue?
 """"""""""""""""""""""""""""""""""""
