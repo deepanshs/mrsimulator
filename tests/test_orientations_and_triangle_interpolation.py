@@ -8,6 +8,20 @@ from .python_test_for_c_code.orientation import cosine_of_polar_angles_and_ampli
 from .python_test_for_c_code.orientation import triangle_interpolation1D
 
 
+# def two_d_plot_helper(amp, lst1, lst2, title=""):
+#     _, ax = plt.subplots(1, 2)
+#     ax[0].imshow(amp.real, origin="lower", cmap="gray", aspect="auto")
+#     ax[1].imshow(amp.imag, origin="lower", cmap="gray", aspect="auto")
+#     ax[0].set_title(f"{title} (real)")
+#     ax[1].set_title(f"{title} (imag)")
+#     x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
+#     for i in range(2):
+#         ax[i].plot(x_t, y_t, "r", label="vertex")
+#         ax[i].scatter(lst2 - 0.5, lst1 - 0.5, s=20, color="yellow", label="vertex")
+#     plt.legend()
+#     plt.show()
+
+
 def test_octahedron_averaging_setup():
     nt = 64
     cos_alpha_py, cos_beta_py, amp_py = cosine_of_polar_angles_and_amplitudes(nt)
@@ -40,16 +54,17 @@ def test_triangle_interpolation():
         amp_py = np.zeros(100)
         triangle_interpolation1D(list_, amp_py)
 
-        amp_c = np.zeros(100)
+        amp_c = np.zeros(2 * 100)
         clib.triangle_interpolation1D(list_, amp_c)
+        amp_c = amp_c[::2] + 1j * amp_c[1::2]
 
         # plt.plot(amp_py, "b", label="py")
-        # plt.plot(amp_c, "r--", label="c")
-        # plt.plot(list_ - 0.5, [0, 2 / (list_[2] - list_[0]), 0], "k*--", label="c")
+        # plt.plot(amp_c.real, "r--", label="c")
+        # plt.plot(list_ - 0.5, [0, 2 / (list_[2] - list_[0]), 0], "k*--", label="x")
         # plt.legend()
         # plt.show()
 
-        assert np.allclose(amp_py, amp_c, atol=1e-15)
+        assert np.allclose(amp_py, amp_c.real, atol=1e-15)
 
 
 def test_delta_interpolation():
@@ -85,17 +100,18 @@ def test_delta_interpolation():
             amp_[x1] = 1 - (item - x1)
 
         # from delta interpolarion
-        amp_c = np.zeros(10)
+        amp_c = np.zeros(2 * 10)
         clib.triangle_interpolation1D(list_, amp_c)
+        amp_c = amp_c[::2] + 1j * amp_c[1::2]
 
-        # plt.bar(np.arange(10), amp_c, width=1)
+        # plt.bar(np.arange(10), amp_c.real, width=1)
+        # plt.scatter(item, 1.0)
         # plt.show()
 
-        assert np.allclose(amp_, amp_c, atol=1e-15)
+        assert np.allclose(amp_, amp_c.real, atol=1e-15)
 
 
 def test_triangle_rasterization():
-
     # triangles within the 2D grids
     f_list = [
         [[6.0, 2.3, 19.0], [15.0, 2.0, 17.9]],
@@ -113,23 +129,22 @@ def test_triangle_rasterization():
     ]
     for list_ in f_list:
         lst1, lst2 = np.asarray(list_)
-        amp1 = np.zeros((20, 20), dtype=np.float64)
-        amp2 = np.zeros(20, dtype=np.float64)
-        amp3 = np.zeros(20, dtype=np.float64)
+        amp1 = np.zeros((20, 2 * 20), dtype=np.float64)
+        amp2 = np.zeros(2 * 20, dtype=np.float64)
+        amp3 = np.zeros(2 * 20, dtype=np.float64)
 
         clib.triangle_interpolation2D(lst1, lst2, amp1)
         clib.triangle_interpolation1D(lst1, amp2)
         clib.triangle_interpolation1D(lst2, amp3)
 
-        # plt.imshow(amp1, origin="lower", cmap="gray", aspect="auto")
-        # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
-        # plt.plot(x_t, y_t, "r", label="vertex")
-        # plt.scatter(lst2 - 0.5, lst1 - 0.5, s=20, color="yellow", label="vertex")
-        # plt.legend()
-        # plt.show()
+        amp1 = amp1[:, ::2] + 1j * amp1[:, 1::2]
+        amp2 = amp2[::2] + 1j * amp2[1::2]
+        amp3 = amp3[::2] + 1j * amp3[1::2]
 
-        assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
-        assert np.allclose(amp3, amp1.sum(axis=0), atol=1e-15)
+        # two_d_plot_helper(amp1, lst1, lst2, title="Complete triangles")
+
+        assert np.allclose(amp2.real, amp1.real.sum(axis=1), atol=1e-15)
+        assert np.allclose(amp3.real, amp1.real.sum(axis=0), atol=1e-15)
 
     # triangles with one or more vertices outside the 2D grids (top - down)
     f_list2 = [
@@ -144,20 +159,18 @@ def test_triangle_rasterization():
     ]
     for list_ in f_list2:
         lst1, lst2 = np.asarray(list_)
-        amp1 = np.zeros((20, 20), dtype=np.float64)
-        amp2 = np.zeros(20, dtype=np.float64)
+        amp1 = np.zeros((20, 2 * 20), dtype=np.float64)
+        amp2 = np.zeros(2 * 20, dtype=np.float64)
 
         clib.triangle_interpolation2D(lst1, lst2, amp1)
         clib.triangle_interpolation1D(lst1, amp2)
 
-        # plt.imshow(amp1, origin="lower", cmap="gray", aspect="auto")
-        # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
-        # plt.plot(x_t, y_t, "r", label="vertex")
-        # plt.scatter(lst2 - 0.5, lst1 - 0.5, s=20, color="yellow", label="vertex")
-        # plt.legend()
-        # plt.show()
+        amp1 = amp1[:, ::2] + 1j * amp1[:, 1::2]
+        amp2 = amp2[::2] + 1j * amp2[1::2]
 
-        assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
+        # two_d_plot_helper(amp1, lst1, lst2, title="One point clipped triangles")
+
+        assert np.allclose(amp2.real, amp1.real.sum(axis=1), atol=1e-15)
 
     # triangles with one or more vertices outside the 2D grids (left - right)
     f_list2 = [
@@ -173,23 +186,18 @@ def test_triangle_rasterization():
     ]
     for list_ in f_list2:
         lst1, lst2 = np.asarray(list_)
-        amp1 = np.zeros((20, 20), dtype=np.float64)
-        amp2 = np.zeros(20, dtype=np.float64)
+        amp1 = np.zeros((20, 2 * 20), dtype=np.float64)
+        amp2 = np.zeros(2 * 20, dtype=np.float64)
 
         clib.triangle_interpolation2D(lst1, lst2, amp1)
         clib.triangle_interpolation1D(lst2, amp2)
 
-        # plt.imshow(amp1, origin="lower", cmap="gray", aspect="auto")
-        # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
-        # plt.plot(x_t, y_t, "r", label="vertex")
-        # plt.scatter(lst2 - 0.5, lst1 - 0.5, s=20, color="yellow", label="vertex")
-        # plt.legend()
-        # plt.show()
+        amp1 = amp1[:, ::2] + 1j * amp1[:, 1::2]
+        amp2 = amp2[::2] + 1j * amp2[1::2]
 
-        # plt.plot(amp2, "k--")
-        # plt.plot(amp1.sum(axis=0), "r")
-        # plt.show()
-        assert np.allclose(amp2, amp1.sum(axis=0), atol=1e-15)
+        # two_d_plot_helper(amp1, lst1, lst2, title="Two points clipped triangles")
+
+        assert np.allclose(amp2.real, amp1.real.sum(axis=0), atol=1e-15)
 
     # triangles with one or more vertices outside a grid voxel
     f_list2 = [
@@ -200,17 +208,15 @@ def test_triangle_rasterization():
     ]
     for list_ in f_list2:
         lst1, lst2 = np.asarray(list_)
-        amp1 = np.zeros((20, 20), dtype=np.float64)
-        amp2 = np.zeros(20, dtype=np.float64)
+        amp1 = np.zeros((20, 2 * 20), dtype=np.float64)
+        amp2 = np.zeros(2 * 20, dtype=np.float64)
 
         clib.triangle_interpolation2D(lst1, lst2, amp1)
         clib.triangle_interpolation1D(lst1, amp2)
 
-        # plt.imshow(amp1, origin="lower", cmap="gray", aspect="auto")
-        # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
-        # plt.plot(x_t, y_t, "r", label="vertex")
-        # plt.scatter(lst2 - 0.5, lst1 - 0.5, s=20, color="yellow", label="vertex")
-        # plt.legend()
-        # plt.show()
+        amp1 = amp1[:, ::2] + 1j * amp1[:, 1::2]
+        amp2 = amp2[::2] + 1j * amp2[1::2]
 
-        assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
+        # two_d_plot_helper(amp1, lst1, lst2, title="Nearest pixel triangles")
+
+        assert np.allclose(amp2.real, amp1.real.sum(axis=1), atol=1e-15)

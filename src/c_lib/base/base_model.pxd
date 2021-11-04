@@ -143,8 +143,7 @@ cdef extern from "simulation.h":
 
     void __mrsimulator_core(
         # spectrum information and related amplitude
-        double *spec_real,
-        double *spec_imag,
+        double *spec,
         site_struct *sites,
         coupling_struct *couplings,
         float *transition_pathway,    # Pointer to a list of transitions.

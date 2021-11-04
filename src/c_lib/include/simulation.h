@@ -14,8 +14,7 @@
 
 extern void mrsimulator_core(
     // spectrum information and related amplitude
-    double *spec_real,           // Pointer to the spectrum array (real).
-    double *spec_imag,           // Pointer to the spectrum array (imag).
+    double *spec,                // Pointer to the spectrum array (complex).
     double spectral_start,       // The start of the frequency spectrum.
     double spectral_increment,   // The increment of the frequency spectrum.
     int number_of_points,        // Number of points on the frequency spectrum.
@@ -38,8 +37,7 @@ extern void mrsimulator_core(
 
 extern void __mrsimulator_core(
     // spectrum information and related amplitude
-    double *spec_real,           // Pointer to the spectrum array (real).
-    double *spec_imag,           // Pointer to the spectrum array (imag).
+    double *spec,                // Pointer to the spectrum array (complex).
     site_struct *sites,          // Pointer to a list of sites within a spin system.
     coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
 

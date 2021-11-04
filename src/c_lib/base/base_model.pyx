@@ -140,7 +140,7 @@ def one_d_spectrum(method,
 
     cdef int trans__, pathway_increment, pathway_count, transition_count_per_pathway
     cdef ndarray[double, ndim=1] amp
-    amp1 = np.zeros(n_points, dtype=np.complex)
+    amp1 = np.zeros(n_points, dtype=np.complex128)
     amp_individual = []
 
     cdef clib.site_struct sites_c
@@ -333,7 +333,7 @@ def one_d_spectrum(method,
 
 
         # Spectrum amplitude vector -------------------------------------------
-        amp = np.zeros(2*n_points)
+        amp = np.zeros(2 * n_points, dtype=float)
 
         # if number_of_sites == 0:
         #     if decompose_spectrum == 1:
@@ -382,14 +382,13 @@ def one_d_spectrum(method,
 
         for trans__ in range(pathway_count):
             clib.__mrsimulator_core(
-                &amp[0],         # for real part
-                &amp[n_points],  # for imaginary part
+                &amp[0],  # as complex array
                 &sites_c,
                 &couplings_c,
                 &transition_pathway_c[pathway_increment*trans__],
                 &transition_pathway_weight[2*trans__],
-                n_dimension,          # The total number of spectroscopic dimensions.
-                dimensions,           # Pointer to MRS_dimension structure
+                n_dimension,      # The total number of spectroscopic dimensions.
+                dimensions,       # Pointer to MRS_dimension structure
                 fftw_scheme,      # Pointer to the fftw scheme.
                 averaging_scheme, # Pointer to the powder averaging scheme.
                 interpolation,
@@ -397,8 +396,8 @@ def one_d_spectrum(method,
                 &affine_matrix_c[0],
             )
 
-        temp = amp*abundance/norm
-        temp = np.vectorize(complex)(temp[:n_points], temp[n_points:])
+        amp *= abundance/norm
+        temp = amp.view(dtype=np.complex128)
 
         if decompose_spectrum == 1:
             amp_individual.append(temp.reshape(method.shape()))

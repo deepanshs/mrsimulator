@@ -36,18 +36,18 @@ static void inline delta_fn_interpolation(const double *freq, const int *points,
   // Do not interpolate the intensity if the difference < 1.0e-6.
   // Ensures that the sideband dimension frequencies do not get interpolated.
   if (fabs(delta) < TOL) {
-    spec[p] += *amp;
+    spec[2 * p] += *amp;
     return;
   }
 
   // Linear interpolation
   left = delta < 0;
   if (left) {
-    if (p != 0) spec[p - 1] -= *amp * delta;
-    spec[p] += *amp * (1.0 + delta);
+    if (p != 0) spec[2 * (p - 1)] -= *amp * delta;
+    spec[2 * p] += *amp * (1.0 + delta);
   } else {
-    if (p + 1 != *points) spec[p + 1] += *amp * delta;
-    spec[p] += *amp * (1.0 - delta);
+    if (p + 1 != *points) spec[2 * (p + 1)] += *amp * delta;
+    spec[2 * p] += *amp * (1.0 - delta);
   }
 }
 
@@ -76,20 +76,20 @@ static inline void left_triangle_interpolate(int p, int pmid, bool l_clip, bool 
   double f10 = f[1] - f[0], df1 = top / f10, diff;
 
   if (p == pmid) {
-    spec[p] += (!r_clip && !l_clip) ? f10 * top * 0.5 : 0.0;
-    // spec[p] += (f[1] > 0 && l_clip && p == 0) ? f[1] * df1 : 0.0;
+    spec[2 * p] += (!r_clip && !l_clip) ? f10 * top * 0.5 : 0.0;
+    // spec[2*p] += (f[1] > 0 && l_clip && p == 0) ? f[1] * df1 : 0.0;
     return;
   }
 
   diff = (double)p + 1. - f[0];
-  spec[p++] += (!l_clip) ? 0.5 * diff * diff * df1 : (diff - 0.5) * df1;
+  spec[2 * p++] += (!l_clip) ? 0.5 * diff * diff * df1 : (diff - 0.5) * df1;
 
   diff -= 0.5;
   diff *= df1;
-  while (p < pmid) spec[p++] += diff += df1;
+  while (p < pmid) spec[2 * p++] += diff += df1;
 
   diff = (double)p;
-  spec[p] += (!r_clip) ? (f[1] - diff) * (f10 + (diff - f[0])) * 0.5 * df1 : 0.0;
+  spec[2 * p] += (!r_clip) ? (f[1] - diff) * (f10 + (diff - f[0])) * 0.5 * df1 : 0.0;
 }
 
 /**
@@ -117,20 +117,21 @@ static inline void right_triangle_interpolate(int p, int pmax, bool l_clip, bool
                                               double top, double *f, double *spec) {
   double f21 = f[2] - f[1], df1 = top / f21;
   if (p == pmax) {
-    spec[p] += (!r_clip) ? f21 * top * 0.5 : 0.0;
-    // spec[p] += (f[2] > 0 && l_clip && p == 0) ? f[2] * df1 : 0.0;
+    spec[2 * p] += (!r_clip) ? f21 * top * 0.5 : 0.0;
+    // spec[2*p] += (f[2] > 0 && l_clip && p == 0) ? f[2] * df1 : 0.0;
     return;
   }
 
   double diff = f[2] - (double)p - 1.0;
-  spec[p++] += (!l_clip) ? (f21 - diff) * (diff + f21) * 0.5 * df1 : (diff + 0.5) * df1;
+  spec[2 * p++] +=
+      (!l_clip) ? (f21 - diff) * (diff + f21) * 0.5 * df1 : (diff + 0.5) * df1;
 
   diff += 0.5;
   diff *= df1;
-  while (p < pmax) spec[p++] += diff -= df1;
+  while (p < pmax) spec[2 * p++] += diff -= df1;
 
   diff = f[2] - (double)p;
-  spec[p] += (!r_clip) ? diff * diff * 0.5 * df1 : 0.0;
+  spec[2 * p] += (!r_clip) ? diff * diff * 0.5 * df1 : 0.0;
 }
 
 /**
@@ -168,7 +169,7 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
   // check if the three points lie within a bin interval.
   if ((int)freq1[0] == (int)freq2[0] && (int)freq1[0] == (int)freq3[0]) {
     if (p >= *points || p < 0) return;
-    spec[p] += *amp;
+    spec[2 * p] += *amp;
     return;
   }
 
@@ -236,10 +237,10 @@ static inline void rectangle_bin(double x0, double x1, double amp, double *spec,
     x1 = (double)m1;
   }
   diff = (double)p + 1. - x0;
-  spec[p++] += diff * da;
+  spec[2 * p++] += diff * da;
 
-  while (p < pmax) spec[p++] += da;
-  spec[p] += (x1 - (double)p) * da;
+  while (p < pmax) spec[2 * p++] += da;
+  spec[2 * p] += (x1 - (double)p) * da;
 }
 
 // //    f10 ----------- f11  top-line
@@ -272,8 +273,8 @@ static inline void rectangle_bin(double x0, double x1, double amp, double *spec,
 // }
 
 //    f00 ----------- f01  top-line
-//    /|             | \.
-//   / |             |    \.
+//    /   \ _____        \.
+//   /            \_____  \.
 // f10 ------------------ f11  bottom line
 static inline void quadrilateral_bin(double *f00, double *f11, double *f10, double *f01,
                                      double top, double bottom, double total,
@@ -306,7 +307,7 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
   abs_sdiff = fabs(slope_diff);
   abs_sdiff_2 = 2 * abs_sdiff;
 
-  spec += p * m1;
+  spec += 2 * p * m1;
   if (p == pmid) {
     if (!r_clip && !l_clip) {
       amp = f10 * top * 0.5;
@@ -339,7 +340,7 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
     quadrilateral_bin(&x00, x11, x10, &x01, line_up, line_down, denom, amp, spec, m1);
   }
   p++;
-  spec += m1;
+  spec += 2 * m1;
 
   // Part 2: After start to before mid bin.
   temp = diff * slope_diff;
@@ -360,7 +361,7 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
     line_down += abs_sdiff;
     denom += abs_sdiff_2;
     p++;
-    spec += m1;
+    spec += 2 * m1;
   }
 
   // Part 3: population to the left of the mid bin.
@@ -391,7 +392,7 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
   abs_sdiff = fabs(slope_diff);
   abs_sdiff_2 = 2 * abs_sdiff;
 
-  spec += p * m1;
+  spec += 2 * p * m1;
   if (p == pmax) {
     if (!r_clip) {
       amp = f21 * top * 0.5;
@@ -431,7 +432,7 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
                       spec, m1);
   }
   p++;
-  spec += m1;
+  spec += 2 * m1;
 
   // Part 6: After mid to before end bin.
   diff += 0.5;
@@ -451,7 +452,7 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
     line_down -= abs_sdiff;
     denom -= abs_sdiff_2;
     p++;
-    spec += m1;
+    spec += 2 * m1;
   }
 
   // Part 7: The end bin.
@@ -480,27 +481,27 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
     diff = freq11[0] - (double)p;
     n_i = 0.5;
     if (fabs(diff - n_i) < TOL) {
-      triangle_interpolation1D(freq21, freq22, freq23, amp, &spec[p * m1], &m1);
+      triangle_interpolation1D(freq21, freq22, freq23, amp, &spec[2 * p * m1], &m1);
       return;
     }
     if (diff < n_i) {
       if (p != 0) {
         temp = amp[0] * (n_i - diff);
-        triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[(p - 1) * m1],
+        triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * (p - 1) * m1],
                                  &m1);
       }
       temp = amp[0] * (n_i + diff);
-      triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[p * m1], &m1);
+      triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * p * m1], &m1);
       return;
     }
     if (diff > n_i) {
       if (p + 1 != m0) {
         temp = amp[0] * (diff - n_i);
-        triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[(p + 1) * m1],
+        triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * (p + 1) * m1],
                                  &m1);
       }
       temp = amp[0] * (1 + n_i - diff);
-      triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[p * m1], &m1);
+      triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * p * m1], &m1);
       return;
     }
     return;
@@ -510,7 +511,7 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
     if (p >= m0 || p < 0) {
       return;
     }
-    triangle_interpolation1D(freq21, freq22, freq23, amp, &spec[p * m1], &m1);
+    triangle_interpolation1D(freq21, freq22, freq23, amp, &spec[2 * p * m1], &m1);
     return;
   }
 

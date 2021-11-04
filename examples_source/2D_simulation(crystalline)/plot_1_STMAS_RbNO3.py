@@ -90,7 +90,7 @@ fig, ax = plt.subplots(1, 2, figsize=(8.5, 3), subplot_kw={"projection": "csdm"}
 
 titles = ["STVAS @ magic-angle", "STVAS @ 0.0059 deg off magic-angle"]
 for i, item in enumerate(data):
-    cb1 = ax[i].imshow(item / item.max(), aspect="auto", cmap="gist_ncar_r")
+    cb1 = ax[i].imshow(item.real / item.real.max(), aspect="auto", cmap="gist_ncar_r")
     ax[i].set_title(titles[i])
     plt.colorbar(cb1, ax=ax[i])
     ax[i].invert_xaxis()

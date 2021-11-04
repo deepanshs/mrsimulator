@@ -492,7 +492,7 @@ class Simulator(Parseable):
             {
                 "type": "internal",
                 "quantity_type": "scalar",
-                "numeric_type": "float64",
+                "numeric_type": "complex128",
                 "components": [datum],
                 **self._get_dv_metadata(index),
             }

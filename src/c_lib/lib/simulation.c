@@ -36,8 +36,7 @@ static inline void __zero_components(double *R0, complex128 *R2, complex128 *R4)
 // Calculate spectrum from the spin systems for a single transition.
 void __mrsimulator_core(
     // spectrum information and related amplitude
-    double *spec_real,           // Pointer to the spectrum array (real).
-    double *spec_imag,           // Pointer to the spectrum array (imag).
+    double *spec,                // Pointer to the spectrum array (complex).
     site_struct *sites,          // Pointer to a list of sites within a spin system.
     coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
 
@@ -146,22 +145,22 @@ void __mrsimulator_core(
   switch (n_dimension) {
   case 1:
     if (transition_pathway_weight[0] != 0.0) {
-      one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec_real,
+      one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
                                 transition_pathway_weight[0]);
     }
     if (transition_pathway_weight[1] != 0.0) {
-      one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec_imag,
+      one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec + 1,
                                 transition_pathway_weight[1]);
     }
     break;
   case 2:
     if (transition_pathway_weight[0] != 0.0) {
-      two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec_real,
+      two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
                                 transition_pathway_weight[0], plan->number_of_sidebands,
                                 affine_matrix);
     }
     if (transition_pathway_weight[1] != 0.0) {
-      two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec_imag,
+      two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec + 1,
                                 transition_pathway_weight[1], plan->number_of_sidebands,
                                 affine_matrix);
     }
@@ -171,8 +170,7 @@ void __mrsimulator_core(
 
 void mrsimulator_core(
     // spectrum information and related amplitude
-    double *spec_real,           // Pointer to the spectrum array (real).
-    double *spec_imag,           // Pointer to the spectrum array (imag).
+    double *spec,                // Pointer to the spectrum array (complex).
     double coordinates_offset,   // The start of the frequency spectrum.
     double increment,            // The increment of the frequency spectrum.
     int count,                   // Number of points on the frequency spectrum.
@@ -222,8 +220,7 @@ void mrsimulator_core(
   // gettimeofday(&all_site_time, NULL);
   __mrsimulator_core(
       // spectrum information and related amplitude
-      spec_real,           // Pointer to the spectrum array (real).
-      spec_imag,           // Pointer to the spectrum array (imag).
+      spec,                // Pointer to the spectrum array (complex).
       sites,               // Pointer to a list of sites within the spin system.
       couplings,           // Pointer to a list of couplings within a spin system.
       transition_pathway,  // Pointer to a list of transition.
