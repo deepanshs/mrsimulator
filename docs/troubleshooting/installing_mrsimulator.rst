@@ -65,7 +65,4 @@ Have a different installation issue?
 """"""""""""""""""""""""""""""""""""
 
 If you encountered a different encountered a different issue when installing ``mrsimulator``,
-please submit an issue our `Github issue tracker <https://github.com/DeepanshS/mrsimulator/issues>`_.
-
-Github is the preferred way for reporting, but issues can also be reported by
-directly contacting `Matthew Giammar <mailto:giammar.7@osu.edu>`__.
+please submit an bug report on the`Github issue tracker <https://github.com/DeepanshS/mrsimulator/issues>`_.

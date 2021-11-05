@@ -88,7 +88,7 @@ This should produce the following figure.
 
 ## Reporting Bugs
 
-The preferred location for submitting feature requests and bug reports is the [Github issue tracker](https://github.com/deepanshs/mrsimulator/issues). Reports are also welcomed by directly contacting [Deepansh Srivastava](mailto:srivastava.89@osu.edu).
+Submit bug reports or feature requests on the [Github issue tracker](https://github.com/deepanshs/mrsimulator/issues).
 
 Discussions are welcome on [Github discussion](https://github.com/deepanshs/mrsimulator/discussions)
 
