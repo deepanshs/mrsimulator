@@ -36,10 +36,10 @@ def test_scale():
     data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
     _, y0, y1, y2 = sim.methods[0].simulation.to_list()
     _, y0_, y1_, y2_ = data.to_list()
-
-    assert y0_.max() / y0.max() == 10, "Scaling failed"
-    assert y1_.max() / y1.max() == 10, "Scaling failed"
-    assert y2_.max() / y2.max() == 10, "Scaling failed"
+    # cast complex data
+    assert np.real(y0_.max() / y0.max()) == 10, "Scaling failed"
+    assert np.real(y1_.max() / y1.max()) == 10, "Scaling failed"
+    assert np.real(y2_.max() / y2.max()) == 10, "Scaling failed"
 
 
 def test_Lorentzian():
