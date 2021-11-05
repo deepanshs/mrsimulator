@@ -6,8 +6,8 @@ Virtual Environments
 Creating a Python environment using Anaconda
 """"""""""""""""""""""""""""""""""""""""""""
 
-Since different Python libraries have different dependencies, installing multiple libraries in the
-same place can cause issues. For example, ``mrsimulator`` requires at least ``numpy v1.17`` but
+Since different Python packages have different dependencies, installing multiple packages on the
+same machine issues. For example, ``mrsimulator`` requires at least ``numpy v1.17`` but
 ``some-other-library`` might require exactly ``numpy v1.15``. These two libraries would likely
 throw errors when run in the same environment.
 

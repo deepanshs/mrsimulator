@@ -3,6 +3,12 @@
 For the users
 =============
 
+.. note::
+
+  If you encounter an issue during instillation, see our `troubleshooting section <_troubleshooting>`__.
+  If that doesn't resolve your issue, please create a bug report on our
+  `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
+
 Strict Requirements
 -------------------
 
@@ -25,16 +31,12 @@ Make sure you have the required version of python by typing the following in the
 
       $ python --version
 
-For *Mac* users, python version 3 is installed under the name *python3*. You may replace
-*python* for *python3* in the above command and all subsequent python statements.
+For *Mac* users, Python version 3 is installed under the name ``python3``. You may replace
+``python`` for ``python3`` in the above command and all subsequent python statements.
 
-For *Windows* users, we recommend the `Anaconda <https://www.anaconda.com/products/individual/>`_
-or `miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ distribution of
-python>3.6. Anaconda distribution for python comes with popular python packages that
-are frequently used in scientific computing.
-Miniconda is a minimal installer for conda. It is a smaller version of Anaconda that
-includes conda, Python, and the packages they depend on, along with other useful
-packages such as pip.
+For *Windows* users, Python is not usually installed by default. See
+`Python.org <https://www.python.org/downloads/windows/>`_ for a list of official Python downloads
+for Windows and instillation instructions.
 
 .. You can find more information under the Windows tab in the
 .. :ref:`building_from_source` section.
@@ -43,7 +45,7 @@ packages such as pip.
 
   If you do not have python or have an older version of python, you may visit the
   `Python downloads <https://www.python.org/downloads/>`_ on Python's official site
-  and follow their instructions to install.
+  and follow their installation instructions.
 
   If you are having issues with Python, see our
   `Python troubleshooting section <_installing_python>`__.
@@ -60,8 +62,8 @@ Installing ``mrsimulator`` using pip
 On Google Colab Notebook
 ''''''''''''''''''''''''
 
-Colaboratory is a Google research project. It is a Jupyter notebook environment that
-runs entirely in the cloud. Launch a new notebook on
+Colaboratory is a Google research project providing a cloud-based Jupyter notebook environment.
+Launch a new notebook on
 `Colab <http://colab.research.google.com>`_.
 
 Colab has an older version of numpy installed by default and it must be updated before

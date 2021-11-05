@@ -15,9 +15,8 @@ Installing Python
 
 ``mrsimulator`` requires Python or a hosted Notebook service to run. If you are
 using Google Colab, see the `colab instillation steps <on_google_colab>`__ or the
-`colab issues <_google_colab_troubleshooting>`__ page.
+`colab troubleshooting <_google_colab_troubleshooting>`__ page.
 
-To check if python is installed on your system, open a new terminal/command line and run
 **Checking the version of Python**
 
 .. tabs::
@@ -39,7 +38,9 @@ To check if python is installed on your system, open a new terminal/command line
             'python' is not recognized as an internal or external command, operable program or batch file.
 
         To install Python, visit `python.org <https://www.python.org/downloads/>`__ to download a
-        version of Python 3. During the instillation process, please check **add Python 3.x to PATH**.
+        version of Python 3. During the instillation process, check **add Python 3.x to PATH**.
+        If this isn't selected, Python may not be accessible across your computer and will cause
+        errors.
 
         If you are certain Python is installed on your system but continue to receive errors, see
         `adding Python to your PATH variable <https://datatofish.com/add-python-to-windows-path/>`__.

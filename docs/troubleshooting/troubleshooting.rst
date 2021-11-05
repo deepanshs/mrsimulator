@@ -16,7 +16,7 @@ Troubleshooting
 
 
 Still Having Issues?
-""""""""""""""""""""
+''''''''''''''''''''
 
 If this page didn't resolve your issue or if you are having problems with ``mrsimulator``
 please submit an bug report on the `Github issue tracker <https://github.com/DeepanshS/mrsimulator/issues>`_.

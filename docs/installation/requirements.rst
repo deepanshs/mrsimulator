@@ -10,6 +10,12 @@ Package dependencies
   Until then, we recommend installing ``mrsimulator`` in a Python 3.9 environment. See the
   section on setting up a `virtual environment <_virtual_environment_troubleshooting>`__.
 
+``mrsimulator`` is compatible with the following operating systems:
+
+- MacOS 10.15 or later
+- Windows 7 or later
+- Most releases of Linux
+
 ``mrsimulator`` depends on the following packages:
 
 **Required packages**

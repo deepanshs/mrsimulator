@@ -1,14 +1,15 @@
 .. _formatting_troubleshooting:
 
-Python Syntax and Highlighting
-------------------------------
+Common Python Syntax Errors
+---------------------------
 
 Python syntax is slightly different than other langues which cause some confusion.
 The following are some common syntax errors encountered and how to solve them.
 
 However, the easiest way to find and prevent syntax errors is to use a dedicated code editor.
 We recommend using VS Code (`setup instructions <_installing_vscode>`__) on your local machine
-or Google Colab which runs everything online.
+or Google Colab which runs everything online. These programs check for syntax errors as you
+write code
 
 IndentationError
 """"""""""""""""
@@ -29,11 +30,11 @@ Code blocks in Python rely on indentation levels (1 level = 4 spaces) so whitesp
 be placed randomly. code blocks are preceded by a ``:`` and all code in one
 block has the same indentation. To get out of a code block, simply remove an indentation level.
 
-As an example of indentation, here is some code which adds the numbers 1 to 9:
+As an example of indentation, here is some code which adds the numbers 0 to 9:
 
 .. code-block:: python
 
-    # Add numbers 1 through 9
+    # Add numbers 0 through 9
     total = 0
     for i in range(10):
         # New code block (4 spaces)
@@ -48,7 +49,7 @@ Mismatched Brackets and Square Brackets
 Nesting many lists and dictionaries inside each other quickly becomes hard to read. If you have
 mismatched or missing brackets, Python will throw ``SyntaxError: invalid syntax``.
 Code editors can automatically format large nestings and highlight which openings and closings go
-together making the code easer to read.
+together making the code easer to understand.
 
 Make sure all brackets are balanced and that opening and closing brackets match. Python uses three
 types of brackets:

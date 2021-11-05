@@ -25,7 +25,7 @@ on ``Python 3.10`` will get stuck in a loop and the following error will appear:
     See site.cfg.example in the Scipy source directory and
     https://docs.scipy.org/doc/scipy/reference/building/index.html for details.
 
-After stopping the installation process, check the version of python by running
+After stopping the installation process (``ctrl + c``), check the version of python by running
 
 .. code-block:: shell
 
@@ -38,7 +38,7 @@ Python version.
 ValueError when running test_file.py
 """"""""""""""""""""""""""""""""""""
 
-``mrsimulator`` depends on ``numpy>=1.17``, but sometimes during the install Numpy isn't
+``mrsimulator`` depends on ``numpy>=1.17``, but Numpy isn't
 installed and/or updated to the needed version. This can happen for many different reasons.
 
 When testing your build with
@@ -65,4 +65,4 @@ Have a different installation issue?
 """"""""""""""""""""""""""""""""""""
 
 If you encountered a different encountered a different issue when installing ``mrsimulator``,
-please submit an bug report on the`Github issue tracker <https://github.com/DeepanshS/mrsimulator/issues>`_.
+please submit an bug report on the `Github issue tracker <https://github.com/DeepanshS/mrsimulator/issues>`_.
