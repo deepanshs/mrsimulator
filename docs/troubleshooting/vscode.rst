@@ -8,7 +8,7 @@ because of its flexibility and community extensions. The following is a guide to
 set up and start running ``mrsimulator`` in VS Code. We also provide some suggested extension for
 Jupyter Notebooks and code formatting.
 
-Instillation
+Installation
 """"""""""""
 
 Microsoft offers detailed installation guides for all major platforms.
@@ -25,7 +25,7 @@ Suggested Extensions for running Python
 
 **Bare Minimums**
 
-At bare minimum to run Python in VS Code, the `python extension
+At a bare minimum to run Python in VS Code, the `python extension
 <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`__ needs to be downloaded.
 You can either follow the above hyperlink or search for *"Python"* in the VS Code app by clicking
 the 5th icon from the top on the left-hand menu bar. The extension should have

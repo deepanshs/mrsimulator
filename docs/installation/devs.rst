@@ -30,7 +30,7 @@ Create a development environment
 
 It is good practice to create separate virtual python environments for packages when
 in developer mode. For instructions on how to set up a Conda environment, see
-`our Anaconda instillation guide <_virtual_environment_troubleshooting>`__.
+`our Anaconda installation guide <_virtual_environment_troubleshooting>`__.
 
 The following is an example of a Conda environment.
 

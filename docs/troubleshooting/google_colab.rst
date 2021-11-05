@@ -8,7 +8,7 @@ If you are new to Google Colab or just need a refresher, we suggest going throug
 
 Google Colab has the same functionality as a Jupyter Notebooks. The main difference is that
 Jupyter Notebooks are run on your local machine. The `Jupyter Notebook documentation
-<https://jupyter-notebook.readthedocs.io/en/stable/index.html>`__ details instillation and use.
+<https://jupyter-notebook.readthedocs.io/en/stable/index.html>`__ details installation and use.
 
 However, if you're new to python, we recommend using `Google Colab <https://colab.research.google.com>`__.
 

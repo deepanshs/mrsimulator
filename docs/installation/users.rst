@@ -5,7 +5,7 @@ For the users
 
 .. note::
 
-  If you encounter an issue during instillation, see our `troubleshooting section <_troubleshooting>`__.
+  If you encounter an issue during installation, see our `troubleshooting section <_troubleshooting>`__.
   If that doesn't resolve your issue, please create a bug report on our
   `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
 
@@ -36,7 +36,7 @@ For *Mac* users, Python version 3 is installed under the name ``python3``. You m
 
 For *Windows* users, Python is not usually installed by default. See
 `Python.org <https://www.python.org/downloads/windows/>`_ for a list of official Python downloads
-for Windows and instillation instructions.
+for Windows and installation instructions.
 
 .. You can find more information under the Windows tab in the
 .. :ref:`building_from_source` section.

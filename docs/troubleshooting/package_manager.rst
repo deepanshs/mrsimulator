@@ -12,7 +12,7 @@ same machine issues. For example, ``mrsimulator`` requires at least ``numpy v1.1
 throw errors when run in the same environment.
 
 For this reason, we recommend using an environment manager, like ``venv`` or ``anaconda``.
-We will look at anaconda for its simple commands. Instillation instructions can be found on the
+We will look at anaconda for its simple commands. installation instructions can be found on the
 `anaconda documentation page <https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html>`__.
 
 .. note::
@@ -45,7 +45,7 @@ If you are using a code editor or IDE, the current environment should be display
 the window. For VS Code, the environment name and Python version are shown in the bottom-left
 corner.
 
-To install ``mrsimulator`` in this new environment, follow the :ref:`instillation <install>`
+To install ``mrsimulator`` in this new environment, follow the :ref:`installation <install>`
 instructions. ``mrsimulator`` and any other libraries will only be installed in the active
 environment. This way different projects can run in separate environments.
 
