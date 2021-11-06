@@ -136,7 +136,6 @@ class Simulator(Parseable):
     indexes = []
 
     class Config:
-        extra = "forbid"
         validate_assignment = True
 
     @classmethod
