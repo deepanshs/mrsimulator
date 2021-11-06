@@ -20,7 +20,7 @@ of the `mrsimulator` library is written in C, wrapped, and made available in pyt
 
 ---
 
-:warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
+:warning: The package is currently under development. We advise using with caution. Bug report are greatly appreciated.
 
 ## Why use mrsimulator?
 
