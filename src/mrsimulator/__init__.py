@@ -133,10 +133,12 @@ def parse(py_dict, parse_units: bool = True):
     Return:
         Ordered List: Simulator, List[SignalProcessor], Parameters.
     """
+    sim = Simulator.parse(py_dict, parse_units)
+
     signal_processors = (
         [
             SignalProcessor.parse_dict_with_units(item)
-            for item in py_dict.pop("signal_processors")
+            for item in py_dict["signal_processors"]
         ]
         if "signal_processors" in py_dict
         else [SignalProcessor() for _ in sim.methods]
@@ -144,9 +146,7 @@ def parse(py_dict, parse_units: bool = True):
 
     params = None
     if "params" in py_dict:
-        val = py_dict.pop("params")
+        val = py_dict["params"]
         params = None if val is None else Parameters().loads(s=val)
-
-    sim = Simulator.parse(py_dict, parse_units)
 
     return sim, signal_processors, params
