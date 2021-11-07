@@ -7,9 +7,6 @@ __email__ = "srivastava.89@osu.edu"
 class ZeemanState:
     """Zeeman energy state class."""
 
-    class Config:
-        extra = "forbid"
-
     def __init__(self, n_sites, *args):
         self.n_sites = n_sites
         _ = [setattr(self, f"m{i}", args[i]) for i in range(n_sites)]
