@@ -12,7 +12,6 @@ from mrsimulator.transition import Transition
 from mrsimulator.transition.pathway import TransitionList
 from mrsimulator.transition.pathway import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
-from pydantic import Extra
 from pydantic import Field
 from pydantic import validator
 
@@ -163,7 +162,6 @@ class SpinSystem(Parseable):
         extra = "forbid"
         validate_assignment = True
         arbitrary_types_allowed = True
-        extra = Extra.forbid
 
     @validator("transition_pathways")
     def transition_pathways_must_include_transition(cls, v, values):

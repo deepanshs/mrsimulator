@@ -2,7 +2,6 @@
 """Base ConfigSimulator class."""
 # from mrsimulator.sandbox import AveragingScheme
 from mrsimulator.utils.parseable import Parseable
-from pydantic import Extra
 from pydantic import Field
 from typing_extensions import Literal
 
@@ -75,7 +74,6 @@ class ConfigSimulator(Parseable):
     class Config:
         extra = "forbid"
         validate_assignment = True
-        extra = Extra.forbid
 
     def get_int_dict(self):
         py_dict = self.dict(exclude={"property_units", "name", "description", "label"})
