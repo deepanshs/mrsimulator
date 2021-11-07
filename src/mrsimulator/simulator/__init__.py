@@ -64,7 +64,7 @@ class Simulator(Parseable):
         >>> from mrsimulator.methods import BlochDecaySpectrum
         >>> from mrsimulator.methods import BlochDecayCTSpectrum
         >>> sim.methods = [
-        ...     BlochDecaySpectrum(channels=['17O'], spectral_width=50000),
+        ...     BlochDecaySpectrum(channels=['17O'], rotor_frequency=15000),
         ...     BlochDecayCTSpectrum(channels=['17O'])
         ... ]
 
