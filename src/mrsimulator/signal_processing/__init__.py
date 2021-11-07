@@ -39,7 +39,6 @@ class SignalProcessor(Parseable):
         extra = "forbid"
         validate_assignment = True
         arbitrary_types_allowed = True
-        #
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
