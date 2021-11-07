@@ -11,7 +11,7 @@ Simulator object
 **Export simulator object to a JSON file**
 
 To serialize a :ref:`simulator_api` object to a JSON-compliant file, use the
-:meth:`~mrsimulator.Simulator.save` method of the object.
+:py:meth:`~mrsimulator.Simulator.save` method of the object.
 
 .. doctest::
 
@@ -32,7 +32,7 @@ as a string with a value and a unit.
 **Load simulator object from a JSON file**
 
 To load a JSON-compliant :ref:`simulator_api` serialized file, use the
-:meth:`~mrsimulator.Simulator.load` method of the class. By default, the load method
+:py:meth:`~mrsimulator.Simulator.load` method of the class. By default, the load method
 parses the file for units.
 
 .. doctest::
@@ -54,9 +54,7 @@ parses the file for units.
     >>> import os
     >>> os.remove('sample.mrsim')
 
-
 ----
-
 
 Spin systems objects from Simulator class
 -----------------------------------------
@@ -64,7 +62,7 @@ Spin systems objects from Simulator class
 **Export spin systems to a JSON file**
 
 You may also serialize the spin system objects from the :ref:`simulator_api` object to
-a JSON-compliant file using the :meth:`~mrsimulator.Simulator.export_spin_systems`
+a JSON-compliant file using the :py:meth:`~mrsimulator.Simulator.export_spin_systems`
 method as
 
 .. doctest::
@@ -76,7 +74,7 @@ method as
 
 Similarly, a list of spin systems can be directly imported from a JSON serialized
 file. To import the spin systems, use the
-:meth:`~mrsimulator.Simulator.load_spin_systems` method of the :ref:`simulator_api`
+:py:meth:`~mrsimulator.Simulator.load_spin_systems` method of the :ref:`simulator_api`
 class as
 
 .. doctest::
@@ -93,7 +91,7 @@ class as
 
     >>> from mrsimulator import Simulator
     >>> sim = Simulator()
-    >>> filename = 'https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/master/spin_systems.json'
+    >>> filename = 'https://raw.githubusercontent.com/deepanshs/mrsimulator-examples/master/spin_systems.json'
     >>> sim.load_spin_systems(filename)
     >>> # The seven spin systems from the file are added to the sim object.
     >>> len(sim.spin_systems)
@@ -103,15 +101,67 @@ class as
     >>> import os
     >>> os.remove('spin_systems.json')
 
+----
 
-Simulation object from Method class as CSDM compliant file
-----------------------------------------------------------
+Method objects from Simulator class
+-----------------------------------
+
+**Export methods to a JSON file**
+
+Similarly, you may also serialize the method objects from the :ref:`simulator_api` object to
+a JSON-compliant file using :py:meth:`~mrsimulator.Simulator.export_methods` as
+
+.. doctest::
+
+    >>> sim_coesite.export_methods('coesite_method.mrmtd')
+
+**Import methods from a JSON file**
+
+Likewise, to import methods, use :py:meth:`~mrsimulator.Simulator.load_methods` as
+
+.. doctest::
+
+    >>> sim.load_methods('coesite_method.mrmtd')
+
+.. testsetup::
+
+    >>> import os
+    >>> os.remove('coesite_method.mrmtd')
+
+----
+
+Serialize simulation object from Method class as CSDM compliant file
+--------------------------------------------------------------------
 
 **Export simulation to a JSON file**
 
 You may serialize the simulation object from the method object to a CSDM compliant JSON file using the
-save function as a follows,
+save function as follows,
 
 .. doctest::
 
     >>> sim_coesite.method[0].simulation.save('coesite_simulation.csdf') # doctest:+SKIP
+
+
+----
+
+Serialize Simulator, SignalProcessor object to file
+---------------------------------------------------
+
+**Export Simulator, SignalProcessor objects to a JSON file**
+
+You may serialize the Simulator, a list of SignalProcessor objects to a *.mrsim* file
+as follows. The order of SignalProcessor objects is the order of the methods in the Simulator
+object.
+
+.. doctest::
+
+    >>> from mrsimulator import save
+    >>> save('coesite.mrsim', sim_coesite, processors) # doctest:+SKIP
+
+**Load Simulator, SignalProcessor objects from a JSON file**
+
+.. doctest::
+
+    >>> from mrsimulator import load
+    >>> sim_coesite, processors, _ = load('coesite.mrsim') # doctest:+SKIP

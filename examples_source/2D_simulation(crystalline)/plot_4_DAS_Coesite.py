@@ -1,27 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Coesite, 17O (I=5/2) DAS
+Coesite, ¹⁷O (I=5/2) DAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-17O (I=5/2) Dynamic-angle spinning (DAS) simulation.
+¹⁷O (I=5/2) Dynamic-angle spinning (DAS) simulation.
 """
 # %%
-# The following is a dynamic angle spinning (DAS) simulation of Coesite. Coesite has
+# The following is a Dynamic Angle Spinning (DAS) simulation of Coesite. Coesite has
 # five crystallographic :math:`^{17}\text{O}` sites. In the following, we use the
-# :math:`^{17}\text{O}` EFG tensor information from Grandinetti `et. al.` [#f1]_
-import matplotlib as mpl
+# :math:`^{17}\text{O}` EFG tensor information from Grandinetti `et al.` [#f1]_
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+
 from mrsimulator import Simulator
 from mrsimulator.methods import Method2D
+from mrsimulator import signal_processing as sp
 
-# global plot configuration
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Create the Simulator object and load the spin systems database or url address.
@@ -36,8 +31,9 @@ sim.load_spin_systems(filename)
 # method parameters, as shown below. Note, the Method2D method simulates an infinite
 # spinning speed spectrum.
 das = Method2D(
+    name="Dynamic Angle Spinning",
     channels=["17O"],
-    magnetic_flux_density=11.7,  # in T
+    magnetic_flux_density=11.74,  # in T
     spectral_dimensions=[
         {
             "count": 256,
@@ -48,12 +44,12 @@ das = Method2D(
                 {
                     "fraction": 0.5,
                     "rotor_angle": 37.38 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
+                    "transition_query": [{"P": [-1], "D": [0]}],
                 },
                 {
                     "fraction": 0.5,
                     "rotor_angle": 79.19 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
+                    "transition_query": [{"P": [-1], "D": [0]}],
                 },
             ],
         },
@@ -66,13 +62,18 @@ das = Method2D(
             "events": [
                 {
                     "rotor_angle": 54.735 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
+                    "transition_query": [{"P": [-1], "D": [0]}],
                 }
             ],
         },
     ],
 )
-sim.methods = [das]  # add the method.
+sim.methods = [das]  # add the method
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+das.plot()
+plt.show()
 
 # %%
 # Run the simulation
@@ -81,6 +82,8 @@ sim.run()
 # %%
 # The plot of the simulation.
 data = sim.methods[0].simulation
+
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
@@ -95,8 +98,8 @@ processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
         sp.IFFT(dim_index=(0, 1)),
-        apo.Gaussian(FWHM="0.3 kHz", dim_index=0),
-        apo.Gaussian(FWHM="0.15 kHz", dim_index=1),
+        sp.apodization.Gaussian(FWHM="0.3 kHz", dim_index=0),
+        sp.apodization.Gaussian(FWHM="0.15 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
     ]
 )
@@ -105,6 +108,7 @@ processed_data /= processed_data.max()
 
 # %%
 # The plot of the simulation after signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)

@@ -9,7 +9,7 @@
 
 #ifndef averaging_scheme_h
 #define averaging_scheme_h
-#include "angular_momentum.h"
+#include "angular_momentum/wigner_matrix.h"
 #include "config.h"
 #include "octahedron.h"
 

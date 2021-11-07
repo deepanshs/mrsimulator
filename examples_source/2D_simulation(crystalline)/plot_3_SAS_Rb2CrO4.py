@@ -1,28 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Rb2CrO4, 87Rb (I=3/2) SAS
+Rb₂CrO₄, ⁸⁷Rb (I=3/2) SAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-87Rb (I=3/2) Switched-angle spinning (SAS) simulation.
+⁸⁷Rb (I=3/2) Switched-angle spinning (SAS) simulation.
 """
 # %%
-# The following is a switched-angle spinning (SAS) simulation of
+# The following is a Switched-Angle Spinning (SAS) simulation of
 # :math:`\text{Rb}_2\text{CrO}_4`. While :math:`\text{Rb}_2\text{CrO}_4` has two
 # rubidium sites, the site with the smaller quadrupolar interaction was selectively
-# observed and reported by Shore `et. al.` [#f1]_. The following is the simulation
+# observed and reported by Shore `et al.` [#f1]_. The following is the simulation
 # based on the published tensor parameters.
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
+from mrsimulator import signal_processing as sp
 
-# global plot configuration
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
@@ -57,7 +52,7 @@ sas = Method2D(
             "events": [
                 {
                     "rotor_angle": 70.12 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
+                    "transition_query": [{"P": [-1], "D": [0]}],
                 }
             ],  # in radians
         },
@@ -69,7 +64,7 @@ sas = Method2D(
             "events": [
                 {
                     "rotor_angle": 54.74 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
+                    "transition_query": [{"P": [-1], "D": [0]}],
                 }
             ],  # in radians
         },
@@ -91,6 +86,8 @@ sim.run()
 # %%
 # The plot of the simulation.
 data = sim.methods[0].simulation
+
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
@@ -104,8 +101,8 @@ processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
         sp.IFFT(dim_index=(0, 1)),
-        apo.Gaussian(FWHM="0.2 kHz", dim_index=0),
-        apo.Gaussian(FWHM="0.2 kHz", dim_index=1),
+        sp.apodization.Gaussian(FWHM="0.2 kHz", dim_index=0),
+        sp.apodization.Gaussian(FWHM="0.2 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
     ]
 )
@@ -114,6 +111,7 @@ processed_data /= processed_data.max()
 
 # %%
 # The plot of the simulation after signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)

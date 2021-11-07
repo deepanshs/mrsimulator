@@ -12,21 +12,22 @@ from mrsimulator.transition import Transition
 from mrsimulator.transition.pathway import TransitionList
 from mrsimulator.transition.pathway import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
+from pydantic import Extra
 from pydantic import Field
 from pydantic import validator
 
 from .coupling import Coupling
 from .isotope import ISOTOPE_DATA
 from .site import Site
-from .zeeman_state import ZeemanState
+from .split_spinsystems import build_new_systems
+from .zeemanstate import ZeemanState
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
 class SpinSystem(Parseable):
-    """
-    Base class representing an isolated spin system containing multiple sites and
+    """Base class representing an isolated spin system containing multiple sites and
     couplings amongst them.
 
     .. rubric:: Attribute Documentation
@@ -120,7 +121,7 @@ class SpinSystem(Parseable):
         ...     ]
         ... ]
         >>> print(sys1.transition_pathways)
-        [|2.5, 0.5⟩⟨-2.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|]
+        [|2.5, 0.5⟩⟨-2.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|, weight=(1+0j)]
 
         .. note::
             From any given spin system, the list of relevant transition pathways is
@@ -149,21 +150,19 @@ class SpinSystem(Parseable):
                 <./../examples/Fitting/plot_2_mrsimFitExample_O17.html>`_
     """
 
-    name: str = None
-    label: str = None
-    description: str = None
     sites: Union[List[Site], np.ndarray] = []
-    couplings: Union[List[Coupling], np.ndarray] = None
+    couplings: Union[List[Coupling], np.ndarray] = []
     abundance: float = Field(default=100.0, ge=0.0, le=100.0)
     transition_pathways: List = None
 
-    property_unit_types: ClassVar = {"abundance": "dimensionless"}
-    property_default_units: ClassVar = {"abundance": "pct"}
+    property_unit_types: ClassVar[Dict] = {"abundance": "dimensionless"}
+    property_default_units: ClassVar[Dict] = {"abundance": "pct"}
     property_units: Dict = {"abundance": "pct"}
 
     class Config:
         validate_assignment = True
         arbitrary_types_allowed = True
+        extra = Extra.forbid
 
     @validator("transition_pathways")
     def transition_pathways_must_include_transition(cls, v, values):
@@ -185,9 +184,62 @@ class SpinSystem(Parseable):
                 raise ValueError("All entries must be of type `Coupling`.")
         return list(v)
 
-    def get_isotopes(self, spin_I: float = None, symbol: bool = False) -> list:
+    def simplify(self):
+        """Simplifies user-defined spin systems into irreducible spin system objects.
+
+        Example
+        -------
+
+        >>> sites = [
+        ...     Site(isotope="1H", isotropic_chemical_shift=0, name="A"),
+        ...     Site(isotope="1H", isotropic_chemical_shift=2, name="B"),
+        ...     Site(isotope="1H", isotropic_chemical_shift=4, name="C"),
+        ...     Site(isotope="1H", isotropic_chemical_shift=6, name="D"),
+        ...     Site(isotope="1H", isotropic_chemical_shift=8, name="E"),
+        ...     Site(isotope="1H", isotropic_chemical_shift=10, name="F")
+        ... ]
+        >>> couplings = [
+        ...     Coupling(site_index=[0, 1], isotropic_j=10, name="AB"),
+        ...     Coupling(site_index=[1, 2], isotropic_j=10, name="BC"),
+        ...     Coupling(site_index=[3, 5], isotropic_j=30, name="DF")
+        ... ]
+        >>> sys = SpinSystem(sites=sites, couplings=couplings, abundance=30)
+        >>> simplified_sys = sys.simplify()
+        >>> simple_sys = [sub_sys.json() for sub_sys in simplified_sys]
+        >>> pprint(simple_sys)
+        [{'abundance': '30.0 %',
+          'couplings': [{'isotropic_j': '10.0 Hz', 'name': 'AB', 'site_index': [0, 1]},
+                        {'isotropic_j': '10.0 Hz', 'name': 'BC', 'site_index': [1, 2]}],
+          'sites': [{'isotope': '1H',
+                     'isotropic_chemical_shift': '0.0 ppm',
+                     'name': 'A'},
+                    {'isotope': '1H',
+                     'isotropic_chemical_shift': '2.0 ppm',
+                     'name': 'B'},
+                    {'isotope': '1H',
+                     'isotropic_chemical_shift': '4.0 ppm',
+                     'name': 'C'}]},
+         {'abundance': '30.0 %',
+          'couplings': [{'isotropic_j': '30.0 Hz', 'name': 'DF', 'site_index': [0, 1]}],
+          'sites': [{'isotope': '1H',
+                     'isotropic_chemical_shift': '6.0 ppm',
+                     'name': 'D'},
+                    {'isotope': '1H',
+                     'isotropic_chemical_shift': '10.0 ppm',
+                     'name': 'F'}]},
+         {'abundance': '30.0 %',
+          'sites': [{'isotope': '1H',
+                     'isotropic_chemical_shift': '8.0 ppm',
+                     'name': 'E'}]}]
         """
-        An ordered list of :ref:`isotope_api` objects from the sites within the spin
+        return (
+            [SpinSystem(sites=[site], abundance=self.abundance) for site in self.sites]
+            if not self.couplings
+            else build_new_systems(self)
+        )
+
+    def get_isotopes(self, spin_I: float = None, symbol: bool = False) -> list:
+        """An ordered list of :ref:`isotope_api` objects from the sites within the spin
         system corresponding to the given value of spin quantum number `I`. If `I` is
         None, a list of all Isotope objects is returned instead.
 
@@ -235,20 +287,18 @@ class SpinSystem(Parseable):
         ]
 
     def _zeeman_energy_states(self) -> np.ndarray:
-        """
-        Return the energy states as a Numpy array where the axis 0 is the number of
+        """Return the energy states as a Numpy array where the axis 0 is the number of
         energy states, and axis 1 is the spin quantum numbers. The spin quantum numbers
         are ordered based on the order of the sites within the spin system.
         """
         return get_zeeman_states(self)
 
     def zeeman_energy_states(self) -> list:
-        r"""
-        Return a list of all :ref:`zeeman_api` objects of the spin system, where the
+        r"""Return a list of all :ref:`zeeman_api` objects of the spin system, where the
         energy states are represented by a list of quantum numbers,
 
         .. math::
-            |\Psi⟩ = [m_1, m_2,.. m_n],
+            |\Psi\rangle = [m_1, m_2,.. m_n],
 
         where :math:`m_i` is the quantum number associated with the :math:`i^\text{th}`
         site within the spin system, and :math:`\Psi` is the energy state.
@@ -266,8 +316,7 @@ class SpinSystem(Parseable):
         return [ZeemanState(len(self.sites), *item) for item in states]
 
     def _all_transitions(self) -> np.ndarray:
-        """
-        Return all transitions from a spin system as a Numpy array of shape (M, 2, N),
+        """All transitions from a spin system as a Numpy array of shape (M, 2, N),
         where M is the number of transitions, and N is the number of sites in the
         spin system. The second axis is of length 2, where the entries at T[:, 0, :]
         are the initial energy states, and the entries at T[:, 1, :], the corresponding
@@ -317,8 +366,7 @@ class SpinSystem(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """
-        Parse the physical quantity from a dictionary representation of the SpinSystem
+        """Parse physical quantities from a dictionary representation of the SpinSystem
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 
@@ -402,8 +450,7 @@ class SpinSystem(Parseable):
 
 
 def allowed_isotopes(spin_I: float = None) -> list:
-    """
-    List of NMR active isotopes currently supported in ``mrsimulator``.
+    """List of NMR active isotopes currently supported in ``mrsimulator``.
 
     Args:
         float spin_I: Optional spin quantum number. The valid values are multiples

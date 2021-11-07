@@ -1,26 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Coesite, 17O (I=5/2) 3QMAS
+Coesite, ¹⁷O (I=5/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-17O (I=5/2) 3QMAS simulation.
+¹⁷O (I=5/2) 3QMAS simulation.
 """
 # %%
 # The following is a triple quantum magic angle spinning (3QMAS) simulation of Coesite.
 # The NMR EFG tensor parameters for :math:`^{17}\text{O}` sites in coesite is obtained
-# from Grandinetti `et. al.` [#f1]_
-import matplotlib as mpl
+# from Grandinetti `et al.` [#f1]_
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+
 from mrsimulator import Simulator
 from mrsimulator.methods import ThreeQ_VAS
+from mrsimulator import signal_processing as sp
 
-# global plot configuration
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
@@ -33,7 +28,7 @@ sim.load_spin_systems(filename)
 
 method = ThreeQ_VAS(
     channels=["17O"],
-    magnetic_flux_density=11.7,  # in T
+    magnetic_flux_density=11.74,  # in T
     spectral_dimensions=[
         {
             "count": 256,
@@ -56,6 +51,8 @@ sim.run()  # Run the simulation
 # %%
 # The plot of the simulation.
 data = sim.methods[0].simulation
+
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
@@ -70,8 +67,8 @@ processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
         sp.IFFT(dim_index=(0, 1)),
-        apo.Gaussian(FWHM="0.3 kHz", dim_index=0),
-        apo.Gaussian(FWHM="0.15 kHz", dim_index=1),
+        sp.apodization.Gaussian(FWHM="0.3 kHz", dim_index=0),
+        sp.apodization.Gaussian(FWHM="0.15 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
     ]
 )
@@ -80,6 +77,7 @@ processed_data /= processed_data.max()
 
 # %%
 # The plot of the simulation after signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)

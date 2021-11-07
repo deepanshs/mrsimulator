@@ -7,6 +7,5 @@ SymmetricTensor
 
 .. autoclass:: SymmetricTensor
     :show-inheritance:
-
-    .. rubric:: Method Documentation
-    .. automethod:: json
+    :members:
+    :inherited-members: BaseModel

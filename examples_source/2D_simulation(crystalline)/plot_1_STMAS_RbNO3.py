@@ -1,26 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-RbNO3, 87Rb (I=3/2) STMAS
+RbNO₃, ⁸⁷Rb (I=3/2) STMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-87Rb (I=3/2) staellite-transition off magic-angle spinning simulation.
+⁸⁷Rb (I=3/2) staellite-transition off magic-angle spinning simulation.
 """
 # %%
 # The following is an example of the STMAS simulation of :math:`\text{RbNO}_3`. The
-# :math:`^{87}\text{Rb}` tensor parameters were obtained from Massiot `et. al.` [#f1]_.
-import matplotlib as mpl
+# :math:`^{87}\text{Rb}` tensor parameters were obtained from Massiot `et al.` [#f1]_.
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import ST1_VAS
+from mrsimulator import signal_processing as sp
 
-# global plot configuration
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Generate the site and spin system objects.
@@ -75,6 +70,11 @@ for angle in angles:
         )
     )
 
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+method[0].plot()
+plt.show()
+
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
@@ -104,8 +104,8 @@ processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
         sp.IFFT(dim_index=(0, 1)),
-        apo.Gaussian(FWHM="50 Hz", dim_index=0),
-        apo.Gaussian(FWHM="50 Hz", dim_index=1),
+        sp.apodization.Gaussian(FWHM="50 Hz", dim_index=0),
+        sp.apodization.Gaussian(FWHM="50 Hz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
     ]
 )
@@ -116,6 +116,7 @@ for item in data:
 
 # %%
 # The plot of the simulation after signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(processed_data[1].real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)

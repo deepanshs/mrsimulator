@@ -5,7 +5,8 @@ from os.path import abspath
 from os.path import dirname
 from os.path import exists
 from os.path import join
-
+from os import environ
+import warnings
 from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
@@ -23,8 +24,282 @@ try:
 except ImportError:
     USE_CYTHON = False
 
-# get the version from file
 
+def message(lib, env, command, key):
+    arg = f"{key} {lib}" if key != "" else f"{lib}"
+    warning = (
+        f"\nLibraries not found - {lib}.\n",
+        "Use environ variable to add the path to the include and lib folders. ",
+        "For example,\n",
+        '\texport LDFLAGS="-L/usr/local/opt/openblas/lib"\n',
+        '\texport CPPFLAGS="-I/usr/local/opt/openblas/include"\n',
+        f"\nYou can also try installing '{lib}' from {env} with:",
+        f"\n\t{command} install {arg}\n",
+    )
+    warnings.warn("".join(warning))
+
+
+class Setup:
+    __slots__ = [
+        "include_dirs",
+        "library_dirs",
+        "libraries",
+        "extra_compile_args",
+        "extra_link_args",
+    ]
+
+    def __init__(self):
+        self.libraries = []
+        self.include_dirs = []
+        self.library_dirs = []
+        self.extra_compile_args = []
+        self.extra_link_args = []
+
+    def check_valid_path(self, pathlist):
+        return [pth for pth in pathlist if exists(pth)]
+
+    def check_if_lib_exists(self, lib):
+        return np.any([exists(join(pth, lib)) for pth in self.library_dirs])
+
+    def check_if_header_exists(self, header):
+        return np.any([exists(join(pth, header)) for pth in self.include_dirs])
+
+    def conda_setup_for_windows(self):
+        self.libraries += ["fftw3", "openblas"]
+        self.extra_compile_args = ["/DUSE_OPENBLAS"]
+
+        print(sys.version)
+        loc = dirname(sys.executable)
+        if "conda" not in loc:
+            return
+
+        print("Found Python installation:", loc)
+        self.include_dirs += self.check_valid_path(
+            [
+                join(loc, "Library", "include", "fftw"),
+                join(loc, "Library", "include", "openblas"),
+                join(loc, "Library", "include"),
+                join(loc, "include"),
+            ]
+        )
+        self.library_dirs += self.check_valid_path([join(loc, "Library", "lib")])
+        environ["MRSIM_LIB"] = str(join(loc, "Library", "lib"))
+        self.on_exit_message("openblas.lib", "fftw3.lib")
+
+    def conda_setup_for_unix(self):
+        loc = dirname(sys.executable)
+        print("Found Python installation:", loc)
+
+        self.include_dirs += self.check_valid_path([join(loc, "include")])
+        self.library_dirs += self.check_valid_path([join(loc, "lib")])
+        self.extra_compile_args = ["-O3", "-ffast-math", "-DUSE_OPENBLAS"]
+        self.libraries += ["fftw3", "openblas"]
+
+    def on_exit_message(self, blas_lib, fftw_lib):
+        found_blas = self.check_if_lib_exists(blas_lib)
+        found_fftw = self.check_if_lib_exists(fftw_lib)
+
+        cmd_list = ["conda", "conda", "-c conda-forge"]
+        if not found_blas and not found_fftw:
+            message("openblas fftw", *cmd_list)
+
+        if not found_blas:
+            message("openblas", *cmd_list)
+
+        if not found_fftw:
+            message("fftw", *cmd_list)
+
+    # def numpy_default_blas(self):
+    #     opt_info = np.__config__.blas_opt_info
+    #     if opt_info == {}:
+    #         return
+
+    #     if "pthread" in opt_info["libraries"]:
+    #         opt_info["libraries"].remove("pthread")
+
+    #     libs = opt_info["libraries"]
+    #     print(f"Linking mrsimulator with the default numpy blas: {libs}")
+
+    #     self.include_dirs += opt_info["include_dirs"]
+    #     self.library_dirs += opt_info["library_dirs"]
+    #     self.libraries += libs
+    #     self.BLAS_FOUND = True
+
+    def mkl_blas_info(self):
+        mkl_info = np.__config__.blas_mkl_info
+        if mkl_info == {}:
+            print("Please enable mkl for numpy before proceeding.")
+            message("mkl mkl-include", "pip", "pip", "")
+
+        self.include_dirs += mkl_info["include_dirs"]
+        self.library_dirs += mkl_info["library_dirs"]
+        self.libraries += mkl_info["libraries"]
+
+        if not self.check_if_header_exists("mkl.h"):
+            print("mkl header file not found.")
+            message("mkl-include", "pip", "pip", "")
+
+        print("Attempting to link mrsimulator with the mkl blas.")
+        self.extra_compile_args += ["-DUSE_MKL", "/DUSE_MKL"]
+
+
+class WindowsSetup(Setup):
+    def __init__(self):
+        super().__init__()
+
+        self.extra_link_args += ["-Wl"]
+        self.extra_compile_args = ["-DFFTW_DLL"]
+
+        # if use_mkl:
+        #     self.mkl_blas_info()
+
+        self.conda_setup_for_windows()
+
+
+class LinuxSetup(Setup):
+    def __init__(self):
+        super().__init__()
+        self.extra_compile_args = [
+            "-O3",
+            "-ffast-math",
+            # "-msse4.2",
+            # "-ftree-vectorize",
+            # "-fopt-info-vec-all",
+            # "-fopt-info-vec-optimized",
+            # "-mavx",
+            "-g",
+            "-DUSE_OPENBLAS",
+        ]
+        self.extra_link_args += ["-lm"]
+        self.include_dirs += [
+            "/usr/include/",
+            "/usr/include/openblas",
+            "/usr/include/x86_64-linux-gnu/",
+        ]
+
+        self.library_dirs += ["/usr/lib64/", "/usr/lib/", "/usr/lib/x86_64-linux-gnu/"]
+        self.libraries += ["openblas", "fftw3"]
+        openblas_info = sysinfo.get_info("openblas")
+        fftw3_info = sysinfo.get_info("fftw3")
+
+        if openblas_info == {} and fftw3_info == {}:
+            self.message("openblas-devel fftw-devel", "libopenblas-dev libfftw3-dev")
+
+        if openblas_info == {}:
+            self.message("openblas-devel", "libopenblas-dev")
+
+        if fftw3_info == {}:
+            self.message("fftw-devel", "libfftw3-dev")
+
+        self.get_location(openblas_info)
+        self.get_location(fftw3_info)
+
+    def get_location(self, dict_info):
+        for item in self.__slots__:
+            if item in dict_info.keys():
+                getattr(self, item).extend(dict_info[item])
+
+    def message(self, lib_centos, lib_ubuntu):
+        print(f"Warning: {lib_ubuntu} might not be installed. See below.\n")
+        stat = f"yum install {lib_centos}"
+        print(f"For CentOS users\n\t{stat}")
+        stat = f"sudo apt-get update\n\tsudo apt-get install {lib_ubuntu}"
+        print(f"For Ubuntu users\n\t{stat}")
+
+
+class MacOSSetup(Setup):
+    def __init__(self):
+        super().__init__()
+        self.extra_compile_args = [
+            "-O3",
+            "-ffast-math",
+            # "-Rpass=loop-vectorize",
+            # "-Rpass-missed=loop-vectorize",
+            # "-Rpass-analysis=loop-vectorize",
+            "-fvectorize",
+            "-fcommon",
+        ]
+        self.extra_link_args += ["-lm"]
+
+        # Blas
+        if use_accelerate:
+            self.accelerate_info()
+
+        if use_openblas:
+            self.openblas_info()
+
+        # if use_mkl:
+        #     self.mkl_blas_info()
+
+        # FFTW
+        self.fftw_info()
+
+    def accelerate_info(self):
+        """Apple's Accelerate framework for BLAS"""
+        acc_info = sysinfo.get_info("accelerate")
+        for item in ["extra_compile_args", "extra_link_args"]:
+            if item in acc_info:
+                self.extra_compile_args += acc_info[item]
+        print("Attempting to link mrsimulator with the Apple accelerate library.")
+        self.extra_compile_args += ["-DUSE_ACCELERATE"]
+
+    def openblas_info(self):
+        """openblas includes and lib are for brew installation"""
+        blas_include_dir = [
+            "/usr/local/opt/openblas/include",
+            "/opt/homebrew/opt/openblas/include",
+        ]
+        blas_library_dir = [
+            "/usr/local/opt/openblas/lib",
+            "/opt/homebrew/opt/openblas/lib",
+        ]
+        blas_library = "openblas"
+
+        exists_all = [exists(item) for item in blas_include_dir]
+        if not any(exists_all):
+            message("openblas", "homebrew", "brew", "")
+
+        print("Attempting to link mrsimulator with the openblas library.")
+        self.include_dirs += blas_include_dir
+        self.library_dirs += blas_library_dir
+        self.libraries += [blas_library]
+        self.extra_compile_args += ["-DUSE_OPENBLAS"]
+
+    # def mkl_blas_info(self):
+    #     mkl_info = np.__config__.blas_mkl_info
+    #     if mkl_info == {}:
+    #         print("Please enable mkl for numpy before proceeding.")
+    #         message("mkl mkl-include", "pip", "pip", "")
+
+    #     if not self.check_if_file_exists("mkl.h"):
+    #         print("mkl header file not found.")
+    #         message("mkl-include", "pip", "pip", "")
+
+    #     self.include_dirs += mkl_info["include_dirs"]
+    #     self.library_dirs += mkl_info["library_dirs"]
+    #     self.libraries += mkl_info["libraries"]
+    #     self.extra_compile_args += ["-DUSE_MKL"]
+
+    def fftw_info(self):
+        """fftw includes and lib are for brew installation"""
+        fftw_include_dir = [
+            "/usr/local/opt/fftw/include",
+            "/opt/homebrew/opt/fftw/include",
+        ]
+        fftw_library_dir = ["/usr/local/opt/fftw/lib", "/opt/homebrew/opt/fftw/lib"]
+        fftw_library = "fftw3"
+
+        exists_all = [exists(item) for item in fftw_include_dir]
+        if not any(exists_all):
+            message("fftw", "homebrew", "brew", "")
+
+        print("Attempting to link mrsimulator with the fftw library.")
+        self.include_dirs += fftw_include_dir
+        self.library_dirs += fftw_library_dir
+        self.libraries += [fftw_library]
+
+
+# get the version from file
 python_version = sys.version_info
 py_version = ".".join([str(i) for i in python_version[:3]])
 print("Using python version", py_version)
@@ -38,136 +313,26 @@ with open("src/mrsimulator/__init__.py", "r") as f:
             before_keyword, keyword, after_keyword = line.partition("=")
             version = after_keyword.strip()[1:-1]
             print("mrsimulator version ", version)
+            break
 
 module_dir = dirname(abspath(__file__))
-
-
-libraries = []
-include_dirs = []
-library_dirs = []
-extra_compile_args = [
-    "-O3",
-    "-ffast-math",
-    # "-msse4.2",
-    # "-ftree-vectorize",
-    # "-fopt-info-vec-optimized",
-    # "-mavx",
-]
-extra_link_args = []
 data_files = []
-
 numpy_include = np.get_include()
 
 if sys.platform.startswith("win"):
+    win = WindowsSetup()
 
-    extra_link_args += ["-Wl,--allow-multiple-definition"]
-    extra_compile_args = ["-DFFTW_DLL"]
-
-    # FFTW3 info
-    fftw3_info = sysinfo.get_info("fftw3")
-    fftw_keys = fftw3_info.keys()
-    if "include_dirs" in fftw_keys:
-        include_dirs += fftw3_info["include_dirs"]
-    if "library_dirs" in fftw_keys:
-        library_dirs += fftw3_info["library_dirs"]
-    if "libraries" in fftw_keys:
-        libraries += fftw3_info["libraries"]
-
-    # OpenBLAS info
-    openblas_info = sysinfo.get_info("openblas")
-    if openblas_info != {}:
-        include_dirs += [join(fftw3_info["include_dirs"][0], "openblas")]
-        library_dirs += openblas_info["library_dirs"]
-        libraries += openblas_info["libraries"]
-
-
-def message(lib):
-    return f"Please install {lib} from homebrew with:\n\t$ brew install {lib}"
-
-
-if platform.system() == "Darwin":  # OSX-specific tweaks:
-    # BLAS framework
-
-    # Apple's Accelerate framework for BLAS:
-    if use_accelerate:
-        acc_info = sysinfo.get_info("accelerate")
-        if "extra_compile_args" in acc_info:
-            extra_compile_args += acc_info["extra_compile_args"]
-        if "extra_link_args" in acc_info:
-            extra_link_args += acc_info["extra_link_args"]
-
-    # OpenBLAS framework
-    if use_openblas:
-        BLAS_INCLUDE = "/usr/local/opt/openblas/include"
-        BLAS_LIB = "/usr/local/opt/openblas/lib"
-        libraries += ["openblas"]
-
-        if not exists(BLAS_INCLUDE):
-            print(message("openblas"))
-            sys.exit(1)
-
-        include_dirs += [BLAS_INCLUDE]
-        library_dirs += [BLAS_LIB]
-
-    # # MKL framework
-    # if use_mkl:
-    #     mkl_info = np.__config__.blas_mkl_info
-    #     if mkl_info == {}:
-    #         print("Please enable mkl for numpy before proceeding.")
-    #         sys.exit(1)
-
-    #     BLAS_INCLUDE = mkl_info["include_dirs"]
-    #     BLAS_LIB = mkl_info["library_dirs"]
-    #     libraries += mkl_info["libraries"]
-
-    #     include_dirs += BLAS_INCLUDE
-    #     library_dirs += BLAS_LIB
-
-    # FFTW framework
-    FFTW_INCLUDE = "/usr/local/opt/fftw/include"
-    FFTW_LIB = "/usr/local/opt/fftw/lib"
-    libraries += ["fftw3"]
-
-    if not exists(FFTW_INCLUDE):
-        print(message("fftw"))
-        sys.exit(1)
-
-    include_dirs += [FFTW_INCLUDE]
-    library_dirs += [FFTW_LIB]
-
-    # if USE_SSE_AVX:
-    #     extra_compile_args += ["-Wa,-q"]
+if platform.system() == "Darwin":
+    win = MacOSSetup()
 
 if platform.system() == "Linux":
-    include_dirs += [
-        "/usr/include/",
-        "/usr/include/openblas",
-        "/usr/include/x86_64-linux-gnu/",
-    ]
+    win = LinuxSetup()
 
-    library_dirs += ["/usr/lib64/", "/usr/lib/", "/usr/lib/x86_64-linux-gnu/"]
-    libraries += ["openblas", "fftw3"]
-    openblas_info = sysinfo.get_info("openblas")
-    fftw3_info = sysinfo.get_info("fftw3")
-
-    if openblas_info != {}:
-        name = "openblas"
-        library_dirs += openblas_info["library_dirs"]
-        libraries += openblas_info["libraries"]
-    fftw_keys = fftw3_info.keys()
-    if "include_dirs" in fftw_keys:
-        include_dirs += fftw3_info["include_dirs"]
-    if "library_dirs" in fftw_keys:
-        library_dirs += fftw3_info["library_dirs"]
-    if "libraries" in fftw_keys:
-        libraries += fftw3_info["libraries"]
-
-    extra_link_args += ["-lm"]
-    extra_compile_args += ["-g"]
-
-include_dirs = list(set(include_dirs))
-library_dirs = list(set(library_dirs))
-libraries = list(set(libraries))
+extra_link_args = list(set(win.extra_link_args))
+extra_compile_args = list(set(win.extra_compile_args))
+library_dirs = list(set(win.library_dirs))
+include_dirs = list(set(win.include_dirs))
+libraries = list(set(win.libraries))
 
 # other include paths
 include_dirs += ["src/c_lib/include/", numpy_include]
@@ -180,7 +345,8 @@ print(extra_compile_args)
 print(extra_link_args)
 
 source = [
-    "src/c_lib/lib/angular_momentum.c",
+    "src/c_lib/lib/angular_momentum/wigner_element.c",
+    "src/c_lib/lib/angular_momentum/wigner_matrix.c",
     "src/c_lib/lib/interpolation.c",
     "src/c_lib/lib/method.c",
     "src/c_lib/lib/mrsimulator.c",
@@ -221,23 +387,23 @@ ext_modules += [
 ]
 
 # sandbox
-ext_modules += [
-    Extension(
-        name="mrsimulator.sandbox",
-        sources=[*source, "src/c_lib/sandbox/sandbox" + ext],
-        include_dirs=include_dirs,
-        language="c",
-        libraries=libraries,
-        library_dirs=library_dirs,
-        extra_compile_args=extra_compile_args,
-        extra_link_args=extra_link_args,
-    )
-]
+# ext_modules += [
+#     Extension(
+#         name="mrsimulator.sandbox",
+#         sources=[*source, "src/c_lib/sandbox/sandbox" + ext],
+#         include_dirs=include_dirs,
+#         language="c",
+#         libraries=libraries,
+#         library_dirs=library_dirs,
+#         extra_compile_args=extra_compile_args,
+#         extra_link_args=extra_link_args,
+#     )
+# ]
 
 if USE_CYTHON:
     ext_modules = cythonize(ext_modules, language_level=3)
 
-extras = {"lmfit": ["lmfit>=1.0.2"], "matplotlib": ["matplotlib>=3.3.3"]}
+extras = {"all": ["matplotlib>=3.3.3"]}
 
 description = "A python toolbox for simulating fast real-time solid-state NMR spectra."
 setup(
@@ -249,16 +415,20 @@ setup(
     author="Deepansh J. Srivastava",
     author_email="srivastava.89@osu.edu",
     python_requires=">=3.6",
-    url="https://github.com/DeepanshS/MRsimulator/",
+    url="https://github.com/deepanshs/mrsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
     setup_requires=["numpy>=1.17"],
     install_requires=[
         "numpy>=1.17",
-        "csdmpy>=0.3.4",
+        "csdmpy>=0.4.1",
         "pydantic>=1.0",
         "monty>=2.0.4",
         "typing-extensions>=3.7",
+        "psutil>=5.4.8",
+        "joblib>=1.0.0",
+        "pandas>=1.1.3",
+        "lmfit>=1.0.2",
     ],
     extras_require=extras,
     ext_modules=ext_modules,

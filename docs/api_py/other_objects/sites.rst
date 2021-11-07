@@ -7,7 +7,5 @@ Sites
 
 .. autoclass:: Sites
     :show-inheritance:
-
-    .. rubric:: Method Documentation
-
-    .. automethod:: to_pd
+    :members:
+    :inherited-members: BaseModel

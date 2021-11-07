@@ -1,29 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Rb2CrO4, 87Rb (I=3/2) COASTER
+Rb₂CrO₄, ⁸⁷Rb (I=3/2) COASTER
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-87Rb (I=3/2) Correlation of anisotropies separated through echo refocusing (COASTER)
+⁸⁷Rb (I=3/2) Correlation of anisotropies separated through echo refocusing (COASTER)
 simulation.
 """
 # %%
-# The following is a correlation of anisotropies separated through echo refocusing
+# The following is a Correlation of Anisotropies Separated Through Echo Refocusing
 # (COASTER) simulation of :math:`\text{Rb}_2\text{CrO}_4`. The Rb site with the smaller
-# quadrupolar interaction is selectively observed and reported by Ash `et. al.` [#f1]_.
+# quadrupolar interaction is selectively observed and reported by Ash `et al.` [#f1]_.
 # The following is the simulation based on the published tensor parameters.
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
+from mrsimulator import signal_processing as sp
 
-# global plot configuration
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Generate the site and spin system objects.
@@ -46,6 +41,7 @@ spin_system = SpinSystem(sites=[site])
 # the method parameters, as shown below. Note, the Method2D method simulates an infinite
 # spinning speed spectrum.
 coaster = Method2D(
+    name="COASTER",
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
     rotor_angle=70.12 * 3.14159 / 180,  # in rads
@@ -55,7 +51,7 @@ coaster = Method2D(
             "spectral_width": 4e4,  # in Hz
             "reference_offset": -8e3,  # in Hz
             "label": "3Q dimension",
-            "events": [{"transition_query": {"P": [3], "D": [0]}}],
+            "events": [{"transition_query": [{"P": [3], "D": [0]}]}],
         },
         # The last spectral dimension block is the direct-dimension
         {
@@ -63,10 +59,15 @@ coaster = Method2D(
             "spectral_width": 2e4,  # in Hz
             "reference_offset": -3e3,  # in Hz
             "label": "70.12 dimension",
-            "events": [{"transition_query": {"P": [-1], "D": [0]}}],
+            "events": [{"transition_query": [{"P": [-1], "D": [0]}]}],
         },
     ],
 )
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+coaster.plot()
+plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and
@@ -83,6 +84,8 @@ sim.run()
 # %%
 # The plot of the simulation.
 data = sim.methods[0].simulation
+
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
@@ -97,8 +100,8 @@ processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
         sp.IFFT(dim_index=(0, 1)),
-        apo.Gaussian(FWHM="0.3 kHz", dim_index=0),
-        apo.Gaussian(FWHM="0.3 kHz", dim_index=1),
+        sp.apodization.Gaussian(FWHM="0.3 kHz", dim_index=0),
+        sp.apodization.Gaussian(FWHM="0.3 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
     ]
 )
@@ -107,6 +110,7 @@ processed_data /= processed_data.max()
 
 # %%
 # The plot of the simulation after signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)

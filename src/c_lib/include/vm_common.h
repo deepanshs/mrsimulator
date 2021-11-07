@@ -7,7 +7,6 @@
 //  Contact email = srivastava.89@osu.edu
 //
 
-#include <math.h>
 #include <string.h>
 
 /**

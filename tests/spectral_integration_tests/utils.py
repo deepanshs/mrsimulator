@@ -2,9 +2,9 @@
 import json
 from os import path
 
-import mrsimulator.signal_processing as sp
 import numpy as np
 from mrsimulator import Method
+from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 from numpy.fft import fft
@@ -138,7 +138,7 @@ def simulator_process(sim, data_object):
     data_mrsimulator = data_mrsimulator.sum(axis=0)
     data_mrsimulator /= data_mrsimulator.sum()
 
-    dv = sim_data.dependent_variables[0]
+    dv = sim_data.y[0]
     assert dv.name == "test name"
     assert dv.description == "test description"
 

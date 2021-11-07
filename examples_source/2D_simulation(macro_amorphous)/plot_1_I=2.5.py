@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Czjzek distribution, 27Al (I=5/2) 3QMAS
+Czjzek distribution, ²⁷Al (I=5/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-27Al (I=5/2) 3QMAS simulation of amorphous material.
+²⁷Al (I=5/2) 3QMAS simulation of amorphous material.
 """
 # %%
 # In this section, we illustrate the simulation of a quadrupolar MQMAS spectrum arising
@@ -12,17 +12,15 @@ Czjzek distribution, 27Al (I=5/2) 3QMAS
 # material. We proceed by employing the Czjzek distribution model.
 
 # sphinx_gallery_thumbnail_number = 2
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import multivariate_normal
+
 from mrsimulator import Simulator
 from mrsimulator.methods import ThreeQ_VAS
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.utils.collection import single_site_system_generator
-from scipy.stats import multivariate_normal
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
 
 # %%
 # Generate probability distribution
@@ -79,8 +77,8 @@ plt.show()
 # :func:`~mrsimulator.utils.collection.single_site_system_generator` utility function to
 # generate single-site spin systems.
 spin_systems = single_site_system_generator(
-    isotopes="27Al",
-    isotropic_chemical_shifts=iso,
+    isotope="27Al",
+    isotropic_chemical_shift=iso,
     quadrupolar={"Cq": Cq * 1e6, "eta": eta},  # Cq in Hz
     abundance=pdf,
 )
@@ -118,6 +116,7 @@ data = sim.methods[0].simulation
 
 # %%
 # The plot of the corresponding spectrum.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(data / data.max(), cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)

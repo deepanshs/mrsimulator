@@ -1,37 +1,32 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-11B MAS NMR of Lithium orthoborate crystal
+¹¹B MAS NMR of Lithium orthoborate crystal
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # The following is a quadrupolar lineshape fitting example for the 11B MAS NMR of
-# lithium orthoborate crystal. The dataset was provided by Nathan Barrow.
-import numpy as np
+# lithium orthoborate crystal. The dataset was shared by Dr. Nathan Barrow.
 import csdmpy as cp
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+from lmfit import Minimizer
+
 from mrsimulator import Simulator, Site, SpinSystem
 from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator import signal_processing as sp
+from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
-from mrsimulator.utils.spectral_fitting import LMFIT_min_function, make_LMFIT_params
-from lmfit import Minimizer, report_fit
 
-# global plot configuration
-mpl.rcParams["figure.figsize"] = [4.5, 3.0]
-mpl.rcParams["grid.linestyle"] = "--"
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/710705/files/11B_lithum_orthoborate.csdf"
+filename = "https://sandbox.zenodo.org/record/814455/files/11B_lithum_orthoborate.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
-sigma = 4.111404e9
+sigma = 0.08078374
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -39,25 +34,19 @@ experiment = experiment.real
 # Convert the coordinates along each dimension from Hz to ppm.
 _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
-# Normalize the spectrum
-max_amp = experiment.max()
-experiment /= max_amp
-sigma /= max_amp
-
 # plot of the dataset.
-levels = (np.arange(10) + 0.3) / 15  # contours are drawn at these levels.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 ax.set_xlim(100, -100)
+plt.grid()
 plt.tight_layout()
 plt.show()
 
 # %%
 # Create a fitting model
 # ----------------------
-# **Guess model**
-#
-# Create a guess list of spin systems.
+# **Spin System**
 B11 = Site(
     isotope="11B",
     isotropic_chemical_shift=20.0,  # in ppm
@@ -69,10 +58,10 @@ spin_systems = [SpinSystem(sites=[B11])]
 # %%
 # **Method**
 
-# Get the spectral dimension paramters from the experiment.
+# Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-method = BlochDecayCTSpectrum(
+MAS_CT = BlochDecayCTSpectrum(
     channels=["11B"],
     magnetic_flux_density=14.1,  # in T
     rotor_frequency=12500,  # in Hz
@@ -81,38 +70,36 @@ method = BlochDecayCTSpectrum(
 )
 
 # Optimize the script by pre-setting the transition pathways for each spin system from
-# the das method.
+# the method.
 for sys in spin_systems:
-    sys.transition_pathways = method.get_transition_pathways(sys)
+    sys.transition_pathways = MAS_CT.get_transition_pathways(sys)
 
 # %%
-# **Guess Spectrum**
+# **Guess Model Spectrum**
 
 # Simulation
 # ----------
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[MAS_CT])
 sim.run()
 
 # Post Simulation Processing
 # --------------------------
 processor = sp.SignalProcessor(
     operations=[
-        # Lorentzian convolution along both dimensions.
         sp.IFFT(),
-        apo.Exponential(FWHM="100 Hz"),
+        sp.apodization.Exponential(FWHM="100 Hz"),
         sp.FFT(),
-        sp.Scale(factor=1),
+        sp.Scale(factor=200),
     ]
 )
 processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5, linewidth=2, label="Experiment")
-ax.plot(processed_data, "r", label="guess spectrum")
+ax.plot(experiment, "k", linewidth=1, label="Experiment")
+ax.plot(processed_data, "r", alpha=0.75, linewidth=1, label="guess spectrum")
 ax.set_xlim(100, -100)
 plt.grid()
 plt.legend()
@@ -125,25 +112,28 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
-params = make_LMFIT_params(sim, processor)
+params = sf.make_LMFIT_params(sim, processor)
+params.pop("sys_0_abundance")
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
-report_fit(result)
+result
 
 # %%
 # The best fit solution
 # ---------------------
-sim.run()
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+best_fit = sf.bestfit(sim, processor)[0]
+residuals = sf.residuals(sim, processor)[0]
 
 # Plot the spectrum
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5, linewidth=2, label="Experiment")
-ax.plot(processed_data, "r--", label="Best Fit")
+ax.plot(experiment, "k", linewidth=1, label="Experiment")
+ax.plot(best_fit, "r", alpha=0.75, linewidth=1, label="Best Fit")
+ax.plot(residuals, alpha=0.75, linewidth=1, label="Residuals")
 ax.set_xlim(100, -100)
 plt.grid()
 plt.legend()

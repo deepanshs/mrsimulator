@@ -12,7 +12,7 @@ Import the module as
 
 .. doctest::
 
-    >>> import mrsimulator.signal_processing as sp
+    >>> from mrsimulator import signal_processing as sp
 
 .. rubric:: Operation Summary
 
@@ -23,19 +23,39 @@ CSDM object.
     :nosignatures:
 
       ~Scale
+      ~Linear
       ~IFFT
       ~FFT
+
+Baseline
+--------
+
+.. currentmodule:: mrsimulator.signal_processing.baseline
+
+Access the sub-module as ``sp.baseline``
+
+.. rubric:: Operation Summary
+
+The following list of operations applies to **selected dependent variables** within
+the CSDM object.
+
+.. autosummary::
+    :nosignatures:
+
+      ~Polynomial
+      ~ConstantOffset
+
+.. seealso::
+
+    :ref:`signal_processing` for a details.
+
 
 Apodization
 -----------
 
 .. currentmodule:: mrsimulator.signal_processing.apodization
 
-Import the module as
-
-.. doctest::
-
-    >>> import mrsimulator.signal_processing.apodization as apo
+Access the sub-module as ``sp.apodization``
 
 .. rubric:: Operation Summary
 
@@ -47,6 +67,9 @@ the CSDM object.
 
       ~Gaussian
       ~Exponential
+      ~SkewedGaussian
+      ~Step
+      ~Mask
 
 .. seealso::
 
@@ -58,11 +81,7 @@ Affine Transformation
 
 .. currentmodule:: mrsimulator.signal_processing.affine
 
-Import the module as
-
-.. doctest::
-
-    >>> import mrsimulator.signal_processing.affine as af
+Access the sub-module as ``sp.affine``
 
 .. rubric:: Operation Summary
 

@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-"""The AbstractOperation class."""
+"""The Operation class."""
+from sys import modules
+from typing import ClassVar
+
 import numpy as np
 from mrsimulator.utils.parseable import Parseable
 
@@ -7,8 +10,10 @@ __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
 
 
-class AbstractOperation(Parseable):
+class Operation(Parseable):
     """A base class for signal processing operations."""
+
+    module_name: ClassVar[str] = None
 
     @property
     def function(self):
@@ -49,4 +54,36 @@ class AbstractOperation(Parseable):
         my_dict_copy = py_dict.copy()
         if "function" in my_dict_copy.keys():
             my_dict_copy.pop("function")
-        return super().parse_dict_with_units(my_dict_copy)
+        return (
+            super().parse_dict_with_units(my_dict_copy)
+            if "type" not in my_dict_copy
+            else getattr(modules[cls.module_name], my_dict_copy["type"])(**my_dict_copy)
+        )
+
+    @staticmethod
+    def get_coordinates_in_units(x, unit):
+        return x.to(unit).value
+
+    @staticmethod
+    def get_coordinates(dim):
+        """Return the coordinates of dimension, dim, without equivalence units"""
+
+        def get_coords(dim):
+            equivalent_fn, equivalent_unit = dim._equivalencies, dim._equivalent_unit
+            dim._equivalencies, dim._equivalent_unit = None, None
+
+            coordinates = dim.coordinates
+
+            dim._equivalencies, dim._equivalent_unit = equivalent_fn, equivalent_unit
+            return coordinates
+
+        return (
+            get_coords(dim) if not hasattr(dim, "subtype") else get_coords(dim.subtype)
+        )
+
+
+class ModuleOperation(Operation):
+    @property
+    def type(self):
+        """The type baseline function."""
+        return self.__class__.__name__

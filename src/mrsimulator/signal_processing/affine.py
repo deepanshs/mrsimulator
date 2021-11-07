@@ -1,69 +1,32 @@
 # -*- coding: utf-8 -*-
 """The Event class."""
-from sys import modules
+from typing import ClassVar
 from typing import Dict
 from typing import Union
 
 import numpy as np
 from pydantic import validator
 
-from ._base import AbstractOperation
+from ._base import ModuleOperation
 from .utils import _get_broadcast_shape
 from .utils import _str_to_quantity
-from .utils import const
+from .utils import CONST
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-class AbstractAffineTransformation(AbstractOperation):
+class AffineTransformation(ModuleOperation):
     dim_index: int = 0
     dv_index: Union[int, list, tuple] = None  # if none apply to all
-
-    @classmethod
-    def parse_dict_with_units(cls, py_dict: dict):
-        obj = super().parse_dict_with_units(py_dict)
-        return getattr(modules[__name__], py_dict["type"])(**obj.dict())
+    module_name: ClassVar[str] = __name__
 
     @property
     def function(self):
         return "affine"
 
-    @property
-    def type(self):
-        """The type apodization function."""
-        return self.__class__.__name__
 
-
-def get_coordinates(dim):
-    """Return the coordinates of dimension, dim, without equivalence units"""
-    if hasattr(dim, "subtype"):
-        equivalent_fn = dim.subtype._equivalencies
-        equivalent_unit = dim.subtype._equivalent_unit
-        dim.subtype._equivalencies = None
-        dim.subtype._equivalent_unit = None
-
-        coordinates = dim.coordinates
-
-        dim.subtype._equivalencies = equivalent_fn
-        dim.subtype._equivalent_unit = equivalent_unit
-
-        return coordinates
-
-    equivalent_fn = dim._equivalencies
-    equivalent_unit = dim._equivalent_unit
-    dim._equivalencies = None
-    dim._equivalent_unit = None
-
-    coordinates = dim.coordinates
-
-    dim._equivalencies = equivalent_fn
-    dim._equivalent_unit = equivalent_unit
-
-    return coordinates
-
-
-class Shear(AbstractAffineTransformation):
+class Shear(AffineTransformation):
     r"""Apply a shear parallel to dimension at index parallel and normal to dimension
     at index dim_index.
 
@@ -90,35 +53,28 @@ class Shear(AbstractAffineTransformation):
     Example
     -------
 
-    >>> import mrsimulator.signal_processing.affine as af
-    >>> operation = af.Shear(factor='143.4 Hz', dim_index=0, parallel=1)
+    >>> operation = sp.affine.Shear(factor='143.4 Hz', dim_index=0, parallel=1)
     """
 
     factor: Union[float, str] = 0
     parallel: int = 1
-    property_units: Dict = {"factor": const}
+    property_units: Dict = {"factor": CONST}
 
     @validator("factor")
     def str_to_quantity(cls, v, values):
         return _str_to_quantity(v, values, "factor")
 
-    # class Config:
-    #     validate_assignment = True
-
     def operate(self, data):
-        """
-        Applies the operation for which the class is named for.
+        """Applies the operation.
 
-        data: CSDM object.
+        Args:
+            data: CSDM object.
         """
         dims = data.dimensions
         n_dim = len(dims)
 
-        x = dims[self.dim_index]
-        y = dims[self.parallel]
-
-        x_value = get_coordinates(x).value
-        y_value = get_coordinates(y).value
+        x, y = dims[self.dim_index], dims[self.parallel]
+        x_value, y_value = [self.get_coordinates(_).value for _ in [x, y]]
 
         vector_x = _get_broadcast_shape(x_value, self.dim_index, n_dim)
         vector_y = _get_broadcast_shape(y_value, self.parallel, n_dim)
@@ -132,17 +88,16 @@ class Shear(AbstractAffineTransformation):
         # a is the factor.
         apodization_vector = np.exp(-2j * np.pi * xy * self.factor * multiplier)
 
-        n_dv = len(data.dependent_variables)
-        dv_indexes = self._get_dv_indexes(self.dv_index, n=n_dv)
+        dv_indexes = self._get_dv_indexes(self.dv_index, n=len(data.y))
 
         for i in dv_indexes:
-            datum = data.dependent_variables[i].components
+            datum = data.y[i].components
             datum *= apodization_vector
 
         return data
 
 
-class Scale(AbstractAffineTransformation):
+class Scale(AffineTransformation):
     r"""Scale the dimension along the specified dimension index.
 
     Args:
@@ -153,30 +108,30 @@ class Scale(AbstractAffineTransformation):
     Example
     -------
 
-    >>> import mrsimulator.signal_processing.affine as af
-    >>> operation = af.Scale(factor=2.14, dim_index=0)
+    >>> operation = sp.affine.Scale(factor=2.14, dim_index=0)
     """
 
     factor: Union[float, str] = 1
-    property_units: Dict = {"factor": const}
+    property_units: Dict = {"factor": CONST}
 
     @validator("factor")
     def str_to_quantity(cls, v, values):
         return _str_to_quantity(v, values, "factor")
 
     def operate(self, data):
-        """
-        Applies the operation for which the class is named for.
+        """Applies the operation.
 
-        data: CSDM object.
+        Args:
+            data: CSDM object.
         """
-        data.dimensions[self.dim_index].increment *= self.factor
-        data.dimensions[self.dim_index].coordinates_offset *= self.factor
-        data.dimensions[self.dim_index].reciprocal.coordinates_offset /= self.factor
+        data_ref = data.x[self.dim_index]
+        data_ref.increment *= self.factor
+        data_ref.coordinates_offset *= self.factor
+        data_ref.reciprocal.coordinates_offset /= self.factor
         return data
 
 
-# class Translate(AbstractAffineTransformation):
+# class Translate(AffineTransformation):
 #     r"""Apodize a dependent variable of the CSDM object with a Gaussian function.
 
 #     The apodization function follows
@@ -206,12 +161,11 @@ class Scale(AbstractAffineTransformation):
 #     Example
 #     -------
 
-#     >>> import mrsimulator.signal_processing.apodization as apo
-#     >>> operation4 = apo.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
+#     >>> operation4 = sp.apodization.Gaussian(FWHM='143.4 Hz', dim_index=0, dv_index=0)
 #     """
 
 #     factor: Union[float, str] = 1
-#     property_units: Dict = {"factor": const}
+#     property_units: Dict = {"factor": CONST}
 
 #     @validator("factor")
 #     def str_to_quantity(cls, v, values):
@@ -227,8 +181,8 @@ class Scale(AbstractAffineTransformation):
 #         data: CSDM object
 #         dep_var: int. The index of the dependent variable to apply operation to.
 #         """
-#         # data.dimensions[self.dim_index].increment *= self.factor
-#         data.dimensions[self.dim_index].coordinates_offset += (
+#         # data.x[self.dim_index].increment *= self.factor
+#         data.x[self.dim_index].coordinates_offset += (
 #             self.factor * self.property_units["factor"]
 #         )
 #         return data

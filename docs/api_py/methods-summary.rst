@@ -7,7 +7,7 @@ Methods
 
 The following are the list of methods currently supported by ``mrsimulator`` as a part
 of the ``mrsimulator.methods`` module. To import a method, for example the
-`BlochDecaySpectrum`, used
+*BlochDecaySpectrum*, used
 
 .. doctest::
 
@@ -48,6 +48,11 @@ Summary
 
 .. ~Cosy
 
+UML Diagram
+-----------
+
+.. figure:: ../_static/classes_methods.*
+
 
 Table of contents
 -----------------
@@ -57,8 +62,8 @@ Table of contents
     methods/BlochDecaySpectrum
     methods/BlochDecayCTSpectrum
     methods/method2D
-    methods/mqvas
-    methods/stvas
-    methods/ssb2d
+    methods/mqvas_api
+    methods/stvas_api
+    methods/ssb2d_api
 
 .. methods/cosy

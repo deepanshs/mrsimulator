@@ -1,28 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-RbNO3, 87Rb (I=3/2) 3QMAS
+RbNO₃, ⁸⁷Rb (I=3/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-87Rb (I=3/2) triple-quantum magic-angle spinning (3Q-MAS) simulation.
+⁸⁷Rb (I=3/2) triple-quantum magic-angle spinning (3Q-MAS) simulation.
 """
 # %%
 # The following is an example of the 3QMAS simulation of :math:`\text{RbNO}_3`, which
 # has three distinct :math:`^{87}\text{Rb}` sites. The :math:`^{87}\text{Rb}` tensor
-# parameters were obtained from Massiot `et. al.` [#f1]_. In this simulation, a Gaussian
+# parameters were obtained from Massiot `et al.` [#f1]_. In this simulation, a Gaussian
 # broadening is applied to the spectrum as a post-simulation step.
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import mrsimulator.signal_processing as sp
-import mrsimulator.signal_processing.apodization as apo
+
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import ThreeQ_VAS
+from mrsimulator import signal_processing as sp
 
-# global plot configuration
-font = {"size": 9}
-mpl.rc("font", **font)
-mpl.rcParams["figure.figsize"] = [4.25, 3.0]
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Generate the site and spin system objects.
@@ -67,6 +62,11 @@ method = ThreeQ_VAS(
     ],
 )
 
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+method.plot()
+plt.show()
+
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
@@ -78,7 +78,9 @@ sim.run()
 # %%
 # The plot of the simulation.
 data = sim.methods[0].simulation
-ax = plt.gca(projection="csdm")
+
+plt.figure(figsize=(4.25, 3.0))
+ax = plt.subplot(projection="csdm")
 cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()
@@ -92,8 +94,8 @@ processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
         sp.IFFT(dim_index=(0, 1)),
-        apo.Gaussian(FWHM="0.08 kHz", dim_index=0),
-        apo.Gaussian(FWHM="0.22 kHz", dim_index=1),
+        sp.apodization.Gaussian(FWHM="0.08 kHz", dim_index=0),
+        sp.apodization.Gaussian(FWHM="0.22 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
     ]
 )
@@ -102,6 +104,7 @@ processed_data /= processed_data.max()
 
 # %%
 # The plot of the simulation after signal processing.
+plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)

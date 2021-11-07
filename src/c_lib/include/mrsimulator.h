@@ -10,7 +10,7 @@
 #ifndef mrsimulator_h
 #define mrsimulator_h
 
-#include "angular_momentum.h"
+#include "angular_momentum/wigner_matrix.h"
 #include "config.h"
 #include "fftw3.h"
 #include "frequency/frequency_tensor_components.h"
@@ -40,8 +40,8 @@ struct MRS_plan {
    */
   MRS_averaging_scheme *averaging_scheme;
 
-  unsigned int number_of_sidebands;       /**< The number of sidebands to compute. */
-  double sample_rotation_frequency_in_Hz; /**< The sample rotation frequency in  Hz. */
+  unsigned int number_of_sidebands; /**< The number of sidebands to compute. */
+  double rotor_frequency_in_Hz;     /**< The sample rotation frequency in  Hz. */
 
   /**
    * The angle, in radians, describing the sample axis-rotation with respect to
@@ -82,7 +82,7 @@ typedef struct MRS_plan MRS_plan;
  *
  * @param scheme The MRS_averaging_scheme.
  * @param number_of_sidebands The number of sidebands.
- * @param sample_rotation_frequency_in_Hz The sample rotation frequency in Hz.
+ * @param rotor_frequency_in_Hz The sample rotation frequency in Hz.
  * @param rotor_angle_in_rad The polar angle in radians with respect to the
  *          z-axis describing the axis of rotation.
  * @param increment The increment along the spectroscopic dimension in Hz.
@@ -92,9 +92,8 @@ typedef struct MRS_plan MRS_plan;
  */
 MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
                           unsigned int number_of_sidebands,
-                          double sample_rotation_frequency_in_Hz,
-                          double rotor_angle_in_rad, double increment,
-                          bool allow_fourth_rank);
+                          double rotor_frequency_in_Hz, double rotor_angle_in_rad,
+                          double increment, bool allow_fourth_rank);
 
 /**
  * @brief Release the memory allocated for the given mrsimulator plan.
@@ -104,8 +103,8 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
 void MRS_free_plan(MRS_plan *plan);
 
 /* Update the MRS plan when sample rotation frequency is changed. */
-void MRS_plan_update_from_sample_rotation_frequency_in_Hz(
-    MRS_plan *plan, double increment, double sample_rotation_frequency_in_Hz);
+void MRS_plan_update_from_rotor_frequency_in_Hz(MRS_plan *plan, double increment,
+                                                double rotor_frequency_in_Hz);
 
 /* Update the MRS plan when the rotor angle is changed. */
 void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_in_rad,
@@ -180,12 +179,11 @@ void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                                    bool refresh, MRS_dimension *dim);
 
 /**
- * @func MRS_rotate_components_from_PAS_to_common_frame
- *
- * The function rotates the tensor components from the principal axis system (PAS) to
- * the common frame of the spin system.
+ * @brief The function rotates the tensor components from the principal axis system
+ * (PAS) to the common frame of the spin system.
  *
  * @param sites A pointer to the site_struct structure.
+ * @param couplings A pointer to the coupling_struct structure.
  * @param transition A pointer to the spin quantum numbers from the inital and final
  *      states of the spin transition packed as initial quantum numbers followed by the
  *      final quantum numbers.
@@ -229,7 +227,8 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     bool *freq_contrib           // The pointer to freq contribs boolean.
 );
 
-extern void __get_components(unsigned int number_of_sidebands, double spin_frequency,
-                             double *restrict pre_phase);
+extern void get_sideband_phase_components(unsigned int number_of_sidebands,
+                                          double spin_frequency,
+                                          double *restrict pre_phase);
 
 #endif /* mrsimulator_h */

@@ -6,7 +6,7 @@ How does ``mrsimulator`` work?
 ******************************
 
 The NMR spectral simulation in ``mrsimulator`` is based on
-`Symmetry Pathways in Solid-State NMR` by Grandinetti `et. al.` [#f1]_
+Symmetry Pathways in Solid-State NMR by Grandinetti *et al.* [#f1]_
 
 Introduction to NMR frequency components
 ========================================
@@ -28,8 +28,7 @@ the Euler angles :math:`\Theta = \left(\alpha, \beta, \gamma\right)`, and
 interaction of the stationary-state semi-classical Hamiltonian.
 
 
-Each frequency component, :math:`\Omega_k (\Theta, i, j)`, is separated into
-three parts,
+Each frequency component, :math:`\Omega_k (\Theta, i, j)`, is written as the product,
 
 .. math::
     :label: eq_2
@@ -150,12 +149,11 @@ axis system of the interaction tensor and corresponds to the
 ..           - 0
 ..           - :math:`\mathcal{R}_{0,0}^{(\sigma)} = \varrho_\text{iso}`
 
-.. _spatial_orientation_table:
-
 .. |SOF| replace:: :math:`\mathbf{\varsigma}_{L,n}^{(k)}`
 .. |L| replace:: :math:`L`
 .. |Mth| replace:: :math:`M^\mathrm{th}`
 
+.. _spatial_orientation_table:
 
 Scaled spatial orientation tensor (sSOT) components in PAS, |SOF|
 =================================================================
@@ -571,7 +569,7 @@ Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}`
 
 .. list-table:: The table presents a list of frequency tensors defined in the principal
   axis system of the respective interaction tensor from Eq. :eq:`eq_7`,
-  :math:`\varpi_{L,n}^{(k)}`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonians supported in ``mrsimulator``.
+  :math:`\varpi_{L,n}^{(k)}`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonian supported in ``mrsimulator``.
   :widths: 20 15 15 50
   :header-rows: 1
 

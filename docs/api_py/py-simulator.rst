@@ -15,8 +15,10 @@ Simulation API
    method
    methods-summary
    other_objects
+   utils
+   mrsim
 
 ..    parameterized_tensor
 ..    interaction
 
-..    powder_triangle_interpolation
+..    powder_triangle_interpolation1D

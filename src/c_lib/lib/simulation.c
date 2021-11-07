@@ -44,12 +44,13 @@ void __mrsimulator_core(
     // transition is a list of quantum numbers packed as quantum numbers from the
     // initial energy state followed by the quantum numbers from the final energy state.
     // The energy states are given in Zeeman basis.
-    float *transition_pathway,
-    int n_dimension,               // The total number of spectroscopic dimensions.
-    MRS_dimension *dimensions,     // Pointer to MRS_dimension structure.
-    MRS_fftw_scheme *fftw_scheme,  // Pointer to the fftw scheme.
-    MRS_averaging_scheme *scheme,  // Pointer to the powder averaging scheme.
-    bool interpolation,            // If true, perform a 1D interpolation.
+    float *transition_pathway,         // Pointer to the transition pathway,
+    double transition_pathway_weight,  // The weight of transition pathway.
+    int n_dimension,                   // The total number of spectroscopic dimensions.
+    MRS_dimension *dimensions,         // Pointer to MRS_dimension structure.
+    MRS_fftw_scheme *fftw_scheme,      // Pointer to the fftw scheme.
+    MRS_averaging_scheme *scheme,      // Pointer to the powder averaging scheme.
+    bool interpolation,                // If true, perform a 1D interpolation.
 
     /**
      * Each event consists of the following freq contrib ordered as
@@ -70,7 +71,7 @@ void __mrsimulator_core(
 ) {
   /*
   The sideband computation is based on the method described by Eden and Levitt
-  et. al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
+  et al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
   bool refresh;
@@ -95,7 +96,7 @@ void __mrsimulator_core(
   MRS_plan *plan;
   MRS_event *event;
 
-  openblas_set_num_threads(1);
+  // openblas_set_num_threads(1);
 
   // spec_site = site * dimensions[0].count;
   spec_site_ptr = &spec[0];
@@ -117,7 +118,8 @@ void __mrsimulator_core(
       MRS_rotate_components_from_PAS_to_common_frame(
           sites,               // Pointer to a list of sites within a spin system.
           couplings,           // Pointer to a list of couplings within a spin system.
-          transition_pathway,  // Pointer to a list of transition.
+          transition_pathway,  // Pointer to a list of transition. Here, only a
+                               // transition is processed.
           plan->allow_fourth_rank,  // If 1, prepare for 4th rank computation.
           &R0,                      // The R0 components.
           R2,                       // The R2 components.
@@ -145,7 +147,7 @@ void __mrsimulator_core(
         cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2, event->freq_amplitude,
                     1);
       }
-      transition_pathway += transition_increment;
+      transition_pathway += transition_increment;  // increment to next transition
       refresh = 0;
     }  // end events
   }    // end dimensions
@@ -161,11 +163,13 @@ void __mrsimulator_core(
 
   switch (n_dimension) {
   case 1:
-    one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec);
+    one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
+                              transition_pathway_weight);
     break;
   case 2:
     two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
-                              plan->number_of_sidebands, affine_matrix);
+                              transition_pathway_weight, plan->number_of_sidebands,
+                              affine_matrix);
     break;
   }
 }
@@ -183,20 +187,19 @@ void mrsimulator_core(
     int quad_second_order,       // Quad theory for second order,
 
     // spin rate, spin angle and number spinning sidebands
-    unsigned int number_of_sidebands,        // The number of sidebands
-    double sample_rotation_frequency_in_Hz,  // The rotor spin frequency
-    double rotor_angle_in_rad,  // The rotor angle relative to lab-frame z-axis
+    unsigned int number_of_sidebands,  // The number of sidebands
+    double rotor_frequency_in_Hz,      // The rotor spin frequency
+    double rotor_angle_in_rad,         // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the a list of transitions.
-    float *transition_pathway,
-
+    float *transition_pathway, double transition_pathway_weight,
     // powder orientation average
     int integration_density,  // The number of triangle along the edge of octahedron
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
     bool interpolation, bool *freq_contrib, double *affine_matrix) {
   // int num_process = openblas_get_num_procs();
   // int num_threads = openblas_get_num_threads();
-  openblas_set_num_threads(1);
+  // openblas_set_num_threads(1);
   // printf("%d processors", num_process);
   // printf("%d threads", num_threads);
   // int parallel = openblas_get_parallel();
@@ -208,8 +211,8 @@ void mrsimulator_core(
   }
 
   // check for spinning speed
-  if (sample_rotation_frequency_in_Hz < 1.0e-3) {
-    sample_rotation_frequency_in_Hz = 1.0e9;
+  if (rotor_frequency_in_Hz < 1.0e-3) {
+    rotor_frequency_in_Hz = 1.0e9;
     rotor_angle_in_rad = 0.0;
     number_of_sidebands = 1;
   }
@@ -228,9 +231,8 @@ void mrsimulator_core(
       sites,               // Pointer to a list of sites within the spin system.
       couplings,           // Pointer to a list of couplings within a spin system.
       transition_pathway,  // Pointer to a list of transition.
-
-      n_dimension, dimensions, fftw_scheme, scheme, interpolation, freq_contrib,
-      affine_matrix);
+      transition_pathway_weight, n_dimension, dimensions, fftw_scheme, scheme,
+      interpolation, freq_contrib, affine_matrix);
 
   // gettimeofday(&end, NULL);
   // clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +
