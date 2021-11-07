@@ -552,7 +552,7 @@ class Method(Parseable):
             df[prop] = lst
 
     def summary(self, drop_constant_columns=True) -> pd.DataFrame:
-        r"""Returns a DataFrame giving a summary of the Method. A user can specify
+        """Returns a DataFrame giving a summary of the Method. A user can specify
         optional attributes to include which appear as columns in the DataFrame. A user
         can also ask to leave out attributes which remain constant throughout the
         method. Invalid attributes for an Event will be replaced with NAN.
@@ -577,47 +577,9 @@ class Method(Parseable):
             - (float) magnetic_flux_density: Magnetic flux density during event in Tesla
             - (float) rotor_frequency: Rotor frequency during event in Hz
             - (float) rotor_angle: Rotor angle during event converted to Degrees
-            - (FrequencyEnum) freq_contrib:
+            - (FrequencyEnum) freq_contrib: Frequency
 
         Example:
-            **User Defined Method2D Example**
-
-            >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(
-            ...     channels=['1H'],
-            ...     spectral_dimensions=[
-            ...         {
-            ...             "events": [
-            ...                 {
-            ...                     "fraction": 0.7,
-            ...                     "transition_query": [{"ch1": {"P": [1]}}]
-            ...                 },
-            ...                 {
-            ...                     "duration": 1.8,
-            ...                     "transition_query": [{"ch1": {"P": [0], "D": [0]}}]
-            ...                 }
-            ...             ],
-            ...         },
-            ...         {
-            ...             "events": [
-            ...                 {
-            ...                     "fraction": 0.3,
-            ...                     "transition_query": [{"ch1": {"P": [-1]}}]
-            ...                 },
-            ...             ],
-            ...         }
-            ...     ]
-            ... )
-            >>> df = method.summary()
-            >>> # Columns are reduced to fit within 80 lines
-            >>> drop = ["freq_contrib", "spec_dim_label", "label", "mixing_query"]
-            >>> df.drop(drop, axis=1, inplace=True)
-            >>> pprint(df)
-                                type  spec_dim_index  duration  fraction       p      d
-            0          SpectralEvent               0       NaN       0.7   [1.0]  [nan]
-            1  ConstantDurationEvent               0       1.8       NaN   [0.0]  [0.0]
-            2          SpectralEvent               1       NaN       0.3  [-1.0]  [nan]
-
             **All Possible Columns**
 
             >>> from mrsimulator.methods import ThreeQ_VAS
@@ -700,6 +662,8 @@ class Method(Parseable):
         self._add_simple_props_to_df(df, prop_dict, required, drop_constant_columns)
 
         # Add p and d symmetry pathways to dataframe
+        # (future) add multi-channel support
+        # IDEA: dict with "total" and "ch1"..."ch3" as keys
         df["p"] = np.transpose(
             [sym.total for sym in self.get_symmetry_pathways("P")]
         ).tolist()
@@ -762,7 +726,7 @@ class Method(Parseable):
         if df is None:
             df = self.summary()
 
-        _plot(fig=fig, df=df, include_legend=include_legend)
+        _plot(fig, df, [x.symbol for x in self.channels], include_legend)
 
         fig.suptitle(t=self.name if self.name is not None else "")
         return fig

@@ -54,9 +54,7 @@ parses the file for units.
     >>> import os
     >>> os.remove('sample.mrsim')
 
-
 ----
-
 
 Spin systems objects from Simulator class
 -----------------------------------------
@@ -103,6 +101,34 @@ class as
     >>> import os
     >>> os.remove('spin_systems.json')
 
+----
+
+Method objects from Simulator class
+-----------------------------------
+
+**Export methods to a JSON file**
+
+Similarly, you may also serialize the method objects from the :ref:`simulator_api` object to
+a JSON-compliant file using :py:meth:`~mrsimulator.Simulator.export_methods` as
+
+.. doctest::
+
+    >>> sim_coesite.export_methods('coesite_method.mrmtd')
+
+**Import methods from a JSON file**
+
+Likewise, to import methods, use :py:meth:`~mrsimulator.Simulator.load_methods` as
+
+.. doctest::
+
+    >>> sim.load_methods('coesite_method.mrmtd')
+
+.. testsetup::
+
+    >>> import os
+    >>> os.remove('coesite_method.mrmtd')
+
+----
 
 Serialize simulation object from Method class as CSDM compliant file
 --------------------------------------------------------------------
@@ -116,6 +142,8 @@ save function as follows,
 
     >>> sim_coesite.method[0].simulation.save('coesite_simulation.csdf') # doctest:+SKIP
 
+
+----
 
 Serialize Simulator, SignalProcessor object to file
 ---------------------------------------------------

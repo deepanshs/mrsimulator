@@ -304,3 +304,8 @@ class MixingQuery(Parseable):
         obj = {k: RFRotation.parse_dict_with_units(v) for k, v in py_dict_copy.items()}
         py_dict_copy.update(obj)
         return super().parse_dict_with_units(py_dict_copy)
+
+    @property
+    def channels(self) -> List[RFRotation]:
+        """Returns an ordered list of all channels"""
+        return [self.ch1, self.ch2, self.ch3]
