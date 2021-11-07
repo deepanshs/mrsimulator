@@ -12,11 +12,66 @@ the definition of a **Site** object.
 Site
 ''''
 
-A site object holds single site NMR interaction parameters, which includes the nuclear
+A site object holds single site NMR interaction parameters, which include the nuclear
 shielding and quadrupolar interaction parameters.
-Consider the example below of a JSON serialization of a **Site** object for a deuterium nucleus.
+Consider the example below of a **Site** object for a deuterium nucleus created in Python.
 
 .. _listing_site:
+.. code-block:: python
+    :linenos:
+    :caption: A 2H site constructed using Python
+
+    # Import objects
+    from mrsimulator import Site
+    from mrsimulator.spin_system.tensors import SymmetricTensor
+
+    # Create the site object
+    example_site = Site(
+        isotope="2H",
+        isotropic_chemical_shift=4.1,  # in ppm
+        shielding_symmetric=SymmetricTensor(
+            zeta=12.12,  # in ppm
+            eta=0.82,
+            alpha=5.45,  # in radians
+            beta=4.82,   # in radians
+            gamma=0.5,   # in radians
+        ),
+        quadrupolar=SymmetricTensor(
+            Cq=1.47e6,     # in Hz
+            eta=0.27,
+            alpha=0.212,   # in radians
+            beta=1.231,    # in radians
+            gamma=3.1415,  # in radians
+        )
+    )
+
+The *isotope* key holds the spin isotope, here given a value of *2H*.
+The *isotropic_chemical_shift* is the isotropic chemical shift of the site isotope, :math:`^2\text{H}`,
+here given as *4.1 ppm*. We have additionally defined an optional *shielding_symmetric* key, whose
+value is a second-rank traceless symmetric nuclear shielding
+tensor.
+
+.. note::
+  We parameterize a SymmetricTensor using the Haeberlen convention with parameters *zeta* and *eta*,
+  defined as the shielding anisotropy and asymmetry, respectively. The Euler angle orientations, *alpha*,
+  *beta*, and *gamma* are the relative orientation of the nuclear shielding tensor from a common reference
+  frame.
+
+Since deuterium is a quadrupolar nucleus, :math:`I>1/2`, there also can be a quadrupolar coupling
+interaction between the nuclear quadrupole moment and the surrounding electric field gradient (EFG) tensor,
+defined in the optional *quadrupolar* key. An EFG tensor is a second-rank traceless
+symmetric tensor, and we describe its components with *Cq* and *eta*, i.e., the quadrupolar coupling constant
+and asymmetry parameter, respectively.  Additionally, we use the Euler angle orientations, *alpha*, *beta*,
+and *gamma*, which are the relative orientation of the EFG tensor from a common reference frame.
+
+See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
+the **Site** and **SymmetricTensor** objects and their attributes, respectively.
+
+All objects in ``mrsimulator`` are JSON serializable and objects can similarly be constructed from JSON.
+We will show how to construct objects from JSON in the next section. However, we recommend using Python objects
+in most cases since it increases code readability and reduces overhead when running code.
+As an example, the JSON representation of the above site object is obtainable by calling ``example_site.json()``:
+
 .. code-block:: json
   :linenos:
   :caption: An example 2H site in JSON representation.
@@ -40,33 +95,56 @@ Consider the example below of a JSON serialization of a **Site** object for a de
       }
   }
 
-The *isotope* key holds the spin isotope, here given a value of *2H*.
-The *isotropic_chemical_shift* is the isotropic chemical shift of the site isotope, :math:`^2\text{H}`,
-here given as *4.1 ppm*. We have additionally defined an optional *shielding_symmetric* key, whose
-value holds a dictionary with the components of the second-rank traceless symmetric nuclear shielding
-tensor. We parameterize this tensor using the Haeberlen convention with parameters *zeta* and *eta*,
-defined as the shielding anisotropy and asymmetry, respectively. The Euler angle orientations, *alpha*,
-*beta*, and *gamma* are the relative orientation of the nuclear shielding tensor from a common reference
-frame.
-
-Since deuterium is a quadrupolar nucleus, :math:`I>1/2`, there also can be a quadrupolar coupling
-interaction between the nuclear quadrupole moment and the surrounding electric field gradient (EFG) tensor,
-defined in a dictionary held in the optional key *quadrupolar*. An EFG tensor is a second-rank traceless
-symmetric tensor, and we describe its components with *Cq* and *eta*, i.e., the quadrupolar coupling constant
-and asymmetry parameter, respectively.  Additionally, we see the Euler angle orientations, *alpha*, *beta*,
-and *gamma*, which are the relative orientation of the EFG tensor from a common reference frame.
-
-See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
-the **Site** and **SymmetricTensor** objects and their attributes, respectively.
-
 Coupling
 ''''''''
 
 A coupling object holds two site NMR interaction parameters, which includes the *J*-coupling
-and  the dipolar coupling interaction parameters.
-Consider the example below of a JSON serialization of a **Coupling** object.
+and the dipolar coupling interaction parameters.
+Consider the example below of a **Coupling** object.
 
 .. _listing_coupling:
+.. code-block:: python
+    :linenos:
+    :caption: A coupling object constructed using Python
+
+    # Import objects
+    from mrsimulator import Coupling
+    from mrsimulator.spin_system.tensors import SymmetricTensor
+
+    example_coupling = Coupling(
+        site_index=[0, 1],
+        isotropic_j=15,  # in Hz
+        j_symmetric=SymmetricTensor(
+            zeta=12.12,  # in Hz
+            eta=0.82,
+            alpha=2.45,  # in radians
+            beta=1.75,   # in radians
+            gamma=0.15,  # in radians
+        ),
+        dipolar=SymmetricTensor(
+            D=1.7e3,       # in Hz
+            alpha=0.12,    # in radians
+            beta=0.231,    # in radians
+            gamma=1.1415,  # in radians
+        )
+    )
+
+The *site_index* key holds a list of two integers corresponding to the index of the two coupled sites
+within the spin system. The value of the *isotropic_j* is the isotropic *J*-coupling, here given as
+*15 Hz*. We have additionally defined an optional *j_symmetric* key, whose value holds a dictionary
+with the components of the second-rank traceless symmetric *J*-coupling tensor.
+
+Additionally, the dipolar coupling interaction between the coupled nuclei is defined with an optional
+*dipolar* key. A dipolar tensor is a second-rank traceless symmetric tensor, and we describe the dipolar
+coupling constant with the parameter *D*.  The Euler angle orientations, *alpha*, *beta*, and *gamma*
+are the relative orientation of the dipolar tensor from a common reference frame.
+
+See :numref:`table_coupling` and :numref:`table_symmetric_tensor` for further information on
+the **Site** and **SymmetricTensor** objects and their attributes, respectively.
+
+The Coupling object created above in Python is represented by the following JSON, again obtained by calling
+``example_coupling.json()``:
+
 .. code-block:: json
   :linenos:
   :caption: A **Coupling** object in JSON representation.
@@ -89,23 +167,6 @@ Consider the example below of a JSON serialization of a **Coupling** object.
     }
   }
 
-The *site_index* key holds a list of two integers corresponding to the index of the two coupled sites
-within the spin system. The value of the *isotropic_j* is the isotropic *J*-coupling, here given as
-*15 Hz*. We have additionally defined an optional *j_symmetric* key, whose value holds a dictionary
-with the components of the second-rank traceless symmetric *J*-coupling tensor. We parameterize this
-tensor using the Haeberlen convention with parameters *zeta* and *eta*, defined as the *J*-coupling
-anisotropy and asymmetry parameters, respectively. The Euler angle orientations, *alpha*, *beta*, and
-*gamma* are the relative orientation of the *J*-coupling tensor from a common reference frame.
-
-Additionally, the dipolar coupling interaction between the coupled nuclei is defined with an optional
-*dipolar* key. A dipolar tensor is a second-rank traceless symmetric tensor, and we describe the dipolar
-coupling constant with the parameter *D*.  The Euler angle orientations, *alpha*, *beta*, and *gamma*
-are the relative orientation of the dipolar tensor from a common reference frame.
-
-See :numref:`table_coupling` and :numref:`table_symmetric_tensor` for further information on
-the **Site** and **SymmetricTensor** objects and their attributes, respectively.
-
-
 SpinSystem
 ''''''''''
 
@@ -119,42 +180,79 @@ Using the previous 2H **Site** object example, we construct a simple single-site
 **SpinSystem** object, as shown below.
 
 .. _listing_uncoupled_spin_system:
-.. code-block:: json
-  :linenos:
-  :caption: An example of uncoupled 2H spin system in JSON representation.
+.. code-block:: python
+    :linenos:
+    :caption: An example of an uncoupled 2H SpinSystem in Python
 
-  {
-      "name": "2H uncoupled spin system",
-      "description": "An optional description of the spin system",
-      "sites": [
-        {
-          "isotope": "2H",
-          "isotropic_chemical_shift": "4.1 ppm",
-          "shielding_symmetric": {
-              "zeta": "12.12 ppm",
-              "eta": 0.82,
-              "alpha": "5.45 rad",
-              "beta": "4.82 rad",
-              "gamma": "0.5 rad"
-          },
-          "quadrupolar": {
-              "Cq": "1.47 MHz",
-              "eta": 0.27,
-              "alpha": "0.212 rad",
-              "beta": "1.231 rad",
-              "gamma": "3.1415 rad"
-          }
-        }
-      ],
-      "abundance": "0.148%"
-  }
+    # Import objects
+    from mrsimulator import Coupling
+    from mrsimulator import Site
+    from mrsimulator import SpinSystem
+    from mrsimulator.spin_system.tensors import SymmetricTensor
+
+    example_sys = SpinSystem(
+        name="2H uncoupled spin system",
+        description="An optional description of the spin system",
+        sites=[
+            Site(
+                isotope="2H",
+                isotropic_chemical_shift=4.1,  # in ppm
+                shielding_symmetric=SymmetricTensor(
+                    zeta=12.12,  # in ppm
+                    eta=0.82,
+                    alpha=5.45,  # in radians
+                    beta=4.82,   # in radians
+                    gamma=0.5,   # in radians
+                ),
+                quadrupolar=SymmetricTensor(
+                    Cq=1.47e6,     # in Hz
+                    eta=0.27,
+                    alpha=0.212,   # in radians
+                    beta=1.231,    # in radians
+                    gamma=3.1415,  # in radians
+                ),
+                abundance=0.148,   # percentage
+            )
+        ]
+    )
+
+
+..  .. code-block:: json
+..    :linenos:
+..    :caption: An example of uncoupled 2H spin system in JSON representation.
+..
+..    {
+..        "name": "2H uncoupled spin system",
+..        "description": "An optional description of the spin system",
+..        "sites": [
+..          {
+..            "isotope": "2H",
+..            "isotropic_chemical_shift": "4.1 ppm",
+..            "shielding_symmetric": {
+..                "zeta": "12.12 ppm",
+..                "eta": 0.82,
+..                "alpha": "5.45 rad",
+..                "beta": "4.82 rad",
+..                "gamma": "0.5 rad"
+..            },
+..            "quadrupolar": {
+..                "Cq": "1.47 MHz",
+..                "eta": 0.27,
+..                "alpha": "0.212 rad",
+..                "beta": "1.231 rad",
+..                "gamma": "3.1415 rad"
+..            }
+..          }
+..        ],
+..        "abundance": "0.148%",
+..    }
 
 At the root level of the **SpinSystem** object, we find four keywords, **name**,
 **description**, **sites**, and **abundance**. The value of the *name* key is the
-optional name of the spin system, here given a value of *2H uncoupled spin system*. The
+optional name of the spin system. The
 value of the description key is an optional string describing the spin system. The
 value of the *sites* key is a list of **Site** objects. Here, this list comprises of
-single **Site** object (lines 5-22) from :numref:`listing_site`. The value of the
+a single **Site** object (lines 10-30) from :numref:`listing_site`. The value of the
 *abundance* key is the abundance of the spin system, here given a value of *0.148%*.
 
 See :numref:`table_spin_system` for further description of the **SpinSystem** class and
@@ -169,62 +267,125 @@ Appending to the previous single-site spin system example from
 as follows.
 
 .. _listing_coupled_spin_system:
-.. code-block:: json
-  :linenos:
-  :caption: An example of coupled 2H-13C spin system in JSON representation.
+.. code-block:: python
+    :linenos:
+    :caption: An example of a coupled 2H-13C spin system in Python
 
-  {
-      "name": "2H-13C coupled spin system",
-      "description": "An optional description of the spin system",
-      "sites": [
-        {
-          "isotope": "2H",
-          "isotropic_chemical_shift": "4.1 ppm",
-          "shielding_symmetric": {
-              "zeta": "12.12 ppm",
-              "eta": 0.82,
-              "alpha": "5.45 rad",
-              "beta": "4.82 rad",
-              "gamma": "0.5 rad"
-          },
-          "quadrupolar": {
-              "Cq": "1.47 MHz",
-              "eta": 0.27,
-              "alpha": "0.212 rad",
-              "beta": "1.231 rad",
-              "gamma": "3.1415 rad"
-          }
-        },
-        {
-          "isotope": "13C",
-          "isotropic_chemical_shift": "-53.2 ppm",
-          "shielding_symmetric": {
-              "zeta": "90.5 ppm",
-              "eta": 0.64
-          }
-        }
-      ],
-      "couplings": [
-        {
-          "site_index": [0, 1],
-          "isotropic_j": "15 Hz",
-          "j_symmetric": {
-              "zeta": "12.12 Hz",
-              "eta": 0.82,
-              "alpha": "2.45 rad",
-              "beta": "1.75 rad",
-              "gamma": "0.15 rad"
-          },
-          "dipolar": {
-              "D": "1.7 kHz",
-              "alpha": "0.12 rad",
-              "beta": "0.231 rad",
-              "gamma": "1.1415 rad"
-          }
-        }
-      ],
-      "abundance": "0.48%"
-  }
+    # Import objects
+    from mrsimulator import Coupling
+    from mrsimulator import Site
+    from mrsimulator import SpinSystem
+    from mrsimulator.spin_system.tensors import SymmetricTensor
+
+    coupled_sys = SpinSystem(
+        name="2H-13C coupled spin system",
+        description="An optional description of the spin system",
+        sites=[
+            Site(
+                isotope="2H",
+                isotropic_chemical_shift=4.1,  # in ppm
+                shielding_symmetric=SymmetricTensor(
+                    zeta=12.12,  # in ppm
+                    eta=0.82,
+                    alpha=5.45,  # in radians
+                    beta=4.82,   # in radians
+                    gamma=0.5,   # in radians
+                ),
+                quadrupolar=SymmetricTensor(
+                    Cq=1.47e6,     # in Hz
+                    eta=0.27,
+                    alpha=0.212,   # in radians
+                    beta=1.231,    # in radians
+                    gamma=3.1415,  # in radians
+                )
+            ),
+            Site(
+              isotope="13C",
+              isotropic_chemical_shift=-53.2,  # in ppm
+              shielding_symmetric=SymmetricTensor(
+                  zeta="90.5 ppm",
+                  eta=0.64,
+            )
+        ],
+        couplings=[
+            Coupling(
+                site_index=[0, 1],
+                isotropic_j="15 Hz",
+                j_symmetric=SymmetricTensor(
+                    zeta="12.12 Hz",
+                    eta=0.82,
+                    alpha="2.45 rad",
+                    beta="1.75 rad",
+                    gamma="0.15 rad",
+                ),
+                dipolar=SymmetricTensor(
+                    D="1.7 kHz",
+                    alpha="0.12 rad",
+                    beta="0.231 rad",
+                    gamma="1.1415 rad",
+                )
+            )
+        ],
+        abundance="0.48%",
+    )
+
+
+..  .. code-block:: json
+..    :linenos:
+..    :caption: An example of coupled 2H-13C spin system in JSON representation.
+..
+..    {
+..        "name": "2H-13C coupled spin system",
+..        "description": "An optional description of the spin system",
+..        "sites": [
+..          {
+..            "isotope": "2H",
+..            "isotropic_chemical_shift": "4.1 ppm",
+..            "shielding_symmetric": {
+..                "zeta": "12.12 ppm",
+..                "eta": 0.82,
+..                "alpha": "5.45 rad",
+..                "beta": "4.82 rad",
+..                "gamma": "0.5 rad"
+..            },
+..            "quadrupolar": {
+..                "Cq": "1.47 MHz",
+..                "eta": 0.27,
+..                "alpha": "0.212 rad",
+..                "beta": "1.231 rad",
+..                "gamma": "3.1415 rad"
+..            }
+..          },
+..          {
+..            "isotope": "13C",
+..            "isotropic_chemical_shift": "-53.2 ppm",
+..            "shielding_symmetric": {
+..                "zeta": "90.5 ppm",
+..                "eta": 0.64
+..            }
+..          }
+..        ],
+..        "couplings": [
+..          {
+..            "site_index": [0, 1],
+..            "isotropic_j": "15 Hz",
+..            "j_symmetric": {
+..                "zeta": "12.12 Hz",
+..                "eta": 0.82,
+..                "alpha": "2.45 rad",
+..                "beta": "1.75 rad",
+..                "gamma": "0.15 rad"
+..            },
+..            "dipolar": {
+..                "D": "1.7 kHz",
+..                "alpha": "0.12 rad",
+..                "beta": "0.231 rad",
+..                "gamma": "1.1415 rad"
+..            }
+..          }
+..        ],
+..        "abundance": "0.48%"
+..    }
 
 In comparison to the previous example, there are five keywords at the root level of the
 **SpinSystem** object, **name**, **description**, **sites**, **couplings**, and **abundance**.
