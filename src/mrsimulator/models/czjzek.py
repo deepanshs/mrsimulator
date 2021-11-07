@@ -138,9 +138,6 @@ class CzjzekDistribution(AbstractDistribution):
         >>> cz_model = CzjzekDistribution(0.5)
     """
 
-    class Config:
-        extra = "forbid"
-
     def __init__(self, sigma: float, polar=False):
         self.sigma = sigma
         self.polar = polar
@@ -205,9 +202,6 @@ class ExtCzjzekDistribution(AbstractDistribution):
     >>> S0 = {"Cq": 1e6, "eta": 0.3}
     >>> ext_cz_model = ExtCzjzekDistribution(S0, eps=0.35)
     """
-
-    class Config:
-        extra = "forbid"
 
     def __init__(self, symmetric_tensor: SymmetricTensor, eps: float, polar=False):
         self.symmetric_tensor = symmetric_tensor
