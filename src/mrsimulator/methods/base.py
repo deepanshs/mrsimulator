@@ -222,6 +222,9 @@ class BlochDecaySpectrum(BaseNamedMethod1D):
     name: str = "BlochDecaySpectrum"
     description: str = "A one-dimensional Bloch decay spectrum method."
 
+    class Config:
+        extra = "forbid"
+
     @classmethod
     def update(cls, **kwargs):
         events = [{"transition_query": [{"ch1": {"P": [-1]}}]}]
@@ -238,6 +241,9 @@ class BlochDecayCTSpectrum(BaseNamedMethod1D):
         "A one-dimensional central transition selective Bloch decay spectrum method."
     )
 
+    class Config:
+        extra = "forbid"
+
     @classmethod
     def update(cls, **kwargs):
         events = [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}]
@@ -248,3 +254,6 @@ class BlochDecayCTSpectrum(BaseNamedMethod1D):
 
 class BlochDecayCentralTransitionSpectrum(BlochDecayCTSpectrum):
     name: str = "BlochDecayCentralTransitionSpectrum"
+
+    class Config:
+        extra = "forbid"
