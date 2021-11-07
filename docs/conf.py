@@ -296,7 +296,7 @@ html_theme_options = {
 
 # html_style = "style.css"
 html_title = ""  # f"mrsimulator:docs v{__version__}"
-html_logo = "_static/mrsimulator.png"
+html_logo = "_static/mrsimulator_logo.png"
 html_favicon = "_static/favicon.ico"
 html_last_updated_fmt = ""
 

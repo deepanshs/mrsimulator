@@ -1,8 +1,8 @@
 .. _fitting_examples:
 
-================================
-Fitting Examples (Least Squares)
-================================
+=========================================
+Fitting Examples (Ordinary Least Squares)
+=========================================
 
 The ``mrsimulator`` library is easily integrable with other python-based libraries.
 In the following examples, we illustrate the use of LMFIT non-linear least-squares
