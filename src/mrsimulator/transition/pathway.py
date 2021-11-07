@@ -10,7 +10,6 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class TransitionList(AbstractList):
-
     def __init__(self, data: list = []):
         super().__init__([self._check_for_transition_object(item) for item in data])
 
