@@ -21,7 +21,6 @@ def one_d_spectrum(method,
        unsigned int integration_volume=1,
        bool_t interpolation=True):
     """
-
     :ivar verbose:
         The allowed values are 0, 1, and 11. When the value is 1, the output is
         printed on the screen. When the value is 11, in addition to the output
@@ -333,7 +332,7 @@ def one_d_spectrum(method,
 
 
         # Spectrum amplitude vector -------------------------------------------
-        amp = np.zeros(2 * n_points, dtype=float)
+        amp = np.zeros(2 * n_points, dtype=np.float64)
 
         # if number_of_sites == 0:
         #     if decompose_spectrum == 1:
@@ -396,8 +395,8 @@ def one_d_spectrum(method,
                 &affine_matrix_c[0],
             )
 
-        amp *= abundance/norm
-        temp = amp.view(dtype=np.complex128)
+        temp = amp*abundance/norm
+        temp = temp.view(dtype=np.complex128)
 
         if decompose_spectrum == 1:
             amp_individual.append(temp.reshape(method.shape()))

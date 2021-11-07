@@ -113,9 +113,7 @@ cdef extern from "method.h":
 cdef extern from "simulation.h":
     void mrsimulator_core(
         # spectrum information and related amplitude
-        double *spec_real,
-        double *spec_imag,
-
+        double *spec,
         double spectral_start,
         double spectral_increment,
         int number_of_points,

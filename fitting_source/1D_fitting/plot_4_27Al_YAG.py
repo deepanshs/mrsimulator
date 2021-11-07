@@ -135,7 +135,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
 result
-print(result)
+
 # %%
 # The best fit solution
 # ---------------------
