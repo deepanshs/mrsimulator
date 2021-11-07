@@ -10,8 +10,6 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class TransitionList(AbstractList):
-    class Config:
-        extra = "forbid"
 
     def __init__(self, data: list = []):
         super().__init__([self._check_for_transition_object(item) for item in data])
@@ -102,9 +100,6 @@ class TransitionPathway(TransitionList):
         >>> path
         |0.5, -0.5⟩⟨0.5, 0.5| ⟶ |-0.5, 0.5⟩⟨0.5, 0.5|, weight=(1+0j)
     """
-
-    class Config:
-        extra = "forbid"
 
     def __init__(self, pathway: list = [], weight=(1.0 + 0j)):
         super().__init__(pathway)
