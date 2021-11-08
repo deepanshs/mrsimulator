@@ -114,6 +114,17 @@ class TransitionPathway(TransitionList):
         path = " ⟶ ".join([repr(item) for item in self._list])
         return path + f", weight={self.weight}"
 
+    def dict(self) -> dict:
+        """Parse the class object to a python dictionary object.
+
+        Example:
+            >>> pprint(path.json())
+            {'pathway': [{'final': [0.5, -0.5], 'initial': [0.5, 0.5]},
+                         {'final': [-0.5, 0.5], 'initial': [0.5, 0.5]}],
+             'weight': (1+0j)}
+        """
+        return self.json()
+
     def json(self, **kwargs) -> dict:
         """Parse the class object to a JSON compliant python dictionary object.
 

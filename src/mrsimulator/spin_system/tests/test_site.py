@@ -165,7 +165,7 @@ def test_site_object_methods():
             "alpha": "0.1 rad",
             "beta": "2.5 rad",
         },
-        "quadrupolar": {"Cq": "10000000.0 Hz", "eta": 0.6},
+        "quadrupolar": {"Cq": "10.0 MHz", "eta": 0.6},
     }
     the_site = Site(
         isotope="27Al",

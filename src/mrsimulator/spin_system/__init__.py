@@ -152,7 +152,7 @@ class SpinSystem(Parseable):
     sites: Union[List[Site], np.ndarray] = []
     couplings: Union[List[Coupling], np.ndarray] = []
     abundance: float = Field(default=100.0, ge=0.0, le=100.0)
-    transition_pathways: List = None
+    transition_pathways: List[Union[TransitionPathway, List]] = None
 
     property_unit_types: ClassVar[Dict] = {"abundance": "dimensionless"}
     property_default_units: ClassVar[Dict] = {"abundance": "pct"}

@@ -44,6 +44,7 @@ from mrsimulator.utils.importer import import_json
 from mrsimulator.signal_processing import SignalProcessor
 import json
 from lmfit import Parameters
+from monty.io import zopen
 
 
 def save(
@@ -67,15 +68,19 @@ def save(
     """
     py_dict = dict(simulator, signal_processors, params, with_units)
 
-    with open(filename, "w", encoding="utf8") as outfile:
-        json.dump(
+    check = filename.endswith("gz")
+    operator = zopen if check else open
+    with operator(filename, "w") as outfile:
+        target = json.dumps(
             py_dict,
-            outfile,
             ensure_ascii=False,
             sort_keys=False,
             allow_nan=False,
             separators=(",", ":"),
         )
+        target += "\n"
+        target = target.encode("utf-8") if check else target
+        outfile.write(target)
 
 
 def dict(

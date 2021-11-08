@@ -7,7 +7,7 @@ Package dependencies
 
 **Required packages**
 
-- `NumPy>=1.17 <http://www.numpy.org>`_
+- `numpy>=1.17 <http://www.numpy.org>`_
 - openblas
 - cython>=0.29.14
 - typing-extensions>=3.7
