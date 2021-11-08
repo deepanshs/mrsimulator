@@ -44,6 +44,137 @@ from mrsimulator.utils.importer import import_json
 from mrsimulator.signal_processing import SignalProcessor
 import json
 from lmfit import Parameters
+from typing import Dict
+from typing import List
+from copy import deepcopy
+
+
+class Mrsimulator:
+    """The Mrsimulator class.
+
+    Attributes
+    ----------
+
+    simulator: A :ref:`simulator_api` object.
+
+    signal_processor: A :ref:`signal_processing_api` object.
+
+    params: An optional parameters object
+
+    application: An optional dict holding metadata.
+    """
+
+    # TODO: Improve doc strings (examples, more description)
+    # TODO: Decide where params key should live
+    # TODO: Create api reference
+    # TODO: Make pytests for new class
+    # TODO: Create error messages when loading file in wrong place?
+
+    simulator: Simulator = None
+    signal_processors: SignalProcessor = None
+    params: List[Parameters] = None
+    application: Dict = None
+
+    class Config:
+        validate_assignment = True
+        extra = "forbid"
+
+    @classmethod
+    def parse_dict_with_units(cls, py_dict: dict):
+        """Parse the physical quantity from a dictionary reperesentation of the
+        Mrsimulator object, where the physical quantity is expressed as a string with a
+        number and a unit
+
+        Args:
+            dict py_dict: A required python dict object.
+
+        Returns:
+            A :ref:`mrsimulator_api` object.
+
+        Example
+        -------
+
+
+        """
+        py_copy_dict = deepcopy(py_dict)
+
+        if "simulator" in py_copy_dict:
+            sim = Simulator.parse_dict_with_units(py_copy_dict["simulator"])
+            py_copy_dict["simulator"] = sim
+
+        if "signal_processors" in py_copy_dict:
+            sps = [
+                SignalProcessor.parse_dict_with_units(sp)
+                for sp in py_copy_dict["signal_processors"]
+            ]
+            py_copy_dict["signal_processors"] = sps
+
+        if "params" in py_copy_dict:
+            params = Parameters().loads(py_copy_dict["params"])
+            py_copy_dict["params"] = params
+
+        return Mrsimulator(**py_copy_dict)
+
+    def save(self, filename: str, with_units: bool = True):
+        """Serialize the Mrsimulator object to a JSON compliant file
+
+        Args:
+            bool with_units: If true, the attribute values are serialized as physical
+                quantities expressed as a string with a value and a unit. If false, the
+                attribute values are serialized as floats. The parameters object is
+                serialized to a LMFIT compliant string (add reference).
+            str filename: The filename for the serialized file.
+
+        Example
+        -------
+
+
+        """
+        py_dict = self.dict(with_units=with_units)
+
+        with open(filename, "w", encoding="utf8") as outfile:
+            json.dump(
+                py_dict,
+                outfile,
+                ensure_ascii=False,
+                sort_keys=False,
+                allow_nan=False,
+                separators=(",", ":"),
+            )
+
+    def dict(self, with_units: bool = True):
+        """Export the Mrsimulator object to a python dictionary.
+
+        Args:
+            bool with_units: If true, physical quantities are represented as string with
+                units. The default is True.
+
+        Returns:
+            Python dictionary
+
+        Example
+        -------
+
+
+
+        """
+        py_dict = {
+            "simulator": None,
+            "signal_processors": None,
+            "params": None,
+            "application": self.application,
+        }
+
+        if self.simulator is not None:
+            py_dict["simulator"] = self.simulator.json(with_units=with_units)
+
+        if self.signal_processors is not None:
+            py_dict["signal_processors"] = [sp.json() for sp in self.signal_processors]
+
+        if self.params is not None:
+            py_dict["params"] = self.params.dumps()
+
+        return py_dict
 
 
 def save(
@@ -54,7 +185,7 @@ def save(
     with_units: bool = True,
 ):
     """Serialize the Simulator, list of SignalProcessor, and lmfit Parameters objects
-    to a .mrsim file.
+    to a .mrsim file. Creates a Mrsimulator object and calls save.
 
     Args:
         str filename: The data is serialized to this file.
@@ -65,17 +196,9 @@ def save(
         bool with_units: If true, physical quantities are represented as string with
             units. The default is True.
     """
-    py_dict = dict(simulator, signal_processors, params, with_units)
-
-    with open(filename, "w", encoding="utf8") as outfile:
-        json.dump(
-            py_dict,
-            outfile,
-            ensure_ascii=False,
-            sort_keys=False,
-            allow_nan=False,
-            separators=(",", ":"),
-        )
+    Mrsimulator(
+        simulator=simulator, signal_processors=signal_processors, params=params
+    ).save(filename=filename, with_units=with_units)
 
 
 def dict(
@@ -85,7 +208,7 @@ def dict(
     with_units: bool = True,
 ):
     """Export the Simulator, list of SignalProcessor, and lmfit Parameters objects
-    to a python dictionary.
+    to a python dictionary. Creates a Mrsimulator object and calls dict.
 
     Args:
         sim: Simulator object.
@@ -95,16 +218,12 @@ def dict(
         bool with_units: If true, physical quantities are represented as string with
             units. The default is True.
 
-    Return:
+    Returns:
         Python dictionary
     """
-    py_dict = simulator.json(units=with_units)
-    if signal_processors is not None:
-        py_dict["signal_processors"] = [item.json() for item in signal_processors]
-
-    py_dict["params"] = None if params is None else params.dumps()
-
-    return py_dict
+    return Mrsimulator(
+        simulator=simulator, signal_processors=signal_processors, params=params
+    ).dict(with_units=with_units)
 
 
 def load(filename: str, parse_units: bool = True):
