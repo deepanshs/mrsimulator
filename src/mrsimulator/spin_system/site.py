@@ -161,6 +161,7 @@ class Site(Parseable):
     property_units: Dict = {"isotropic_chemical_shift": "ppm"}
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
 
     @validator("quadrupolar")
