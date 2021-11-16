@@ -72,13 +72,14 @@ def test_dict():
 
 
 def test_load():
-    sim_r, processors_r = load("test.mrsim")
+    sim_r, processors_r, application_r = load("test.mrsim")
 
     sim, processors, application = setup()
     sim_r.methods[0].simulation = None
     sim.methods[0].simulation = None
     assert sim_r == sim
     assert processors_r == processors
+    assert application_r == application
 
     os.remove("test.mrsim")
 

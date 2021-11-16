@@ -113,10 +113,6 @@ class Mrsimulator(Parseable):
             ]
             py_copy_dict["signal_processors"] = processors
 
-        # if "params" in py_copy_dict:
-        #     params = Parameters().loads(py_copy_dict["params"])
-        #     py_copy_dict["params"] = params
-
         return Mrsimulator(**py_copy_dict)
 
     @classmethod
@@ -211,8 +207,6 @@ class Mrsimulator(Parseable):
         if self.signal_processors is not None:
             py_dict["signal_processors"] = [sp.json() for sp in self.signal_processors]
 
-        # NOTE: Should the version automatically be included in the metadata?
-
         return py_dict
 
     def _update_version(self):
@@ -225,7 +219,6 @@ def save(
     filename: str,
     simulator: Simulator,
     signal_processors: list = None,
-    # params: Parameters = None,
     application: dict = {},
     with_units: bool = True,
 ):
@@ -294,9 +287,10 @@ def load(filename: str, parse_units: bool = True):
 
 
 def parse(py_dict, parse_units: bool = True):
-    """Parse a dictionary object to the respective Simulator object and list of
-    SignalProcessor objects. If no signal processors are provided a list of default
-    SignalProcessor objects with length equal to number of methods will be returned.
+    """Parse a dictionary object to the respective Simulator object, list of
+    SignalProcessor objects, and the metadata dictionary. If no signal processors are 
+    provided a list of default SignalProcessor objects with length equal to number of 
+    methods will be returned.
 
     Args:
         dict py_dict: Python dictionary representation of a
@@ -304,7 +298,7 @@ def parse(py_dict, parse_units: bool = True):
         bool parse_units: If true, parse the dictionary for units. Default is True.
 
     Return:
-        Ordered List: Simulator, List[SignalProcessor].
+        Ordered List: Simulator, List[SignalProcessor], Dict.
     """
     # Check for difference in keys
     root_keys = Mrsimulator().root_keys
@@ -325,7 +319,9 @@ def parse(py_dict, parse_units: bool = True):
         else [SignalProcessor() for _ in sim.methods]
     )
 
-    return sim, signal_processors
+    application = py_dict["application"] if "application" in py_dict else {}
+
+    return sim, signal_processors, application
 
 
 def to_new_mrsim(filename: str, overwrite: bool = False):
