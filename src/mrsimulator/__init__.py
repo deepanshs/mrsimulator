@@ -82,6 +82,11 @@ class Mrsimulator(Parseable):
         validate_assignment = True
         extra = "forbid"
 
+    @property
+    def root_keys(self):
+        """Return a list of root level keys"""
+        return ["simulator", "signal_processors", "version", "application"]
+
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
         """Parse the physical quantity from a dictionary reperesentation of the
@@ -303,6 +308,14 @@ def parse(py_dict, parse_units: bool = True):
     Return:
         Ordered List: Simulator, List[SignalProcessor].
     """
+    # Check for difference in keys
+    root_keys = Mrsimulator().root_keys()
+    if len(set(py_dict.keys()) - set(root_keys)) != 0:
+        raise ValueError(
+            "An incompatible JSON root-level structure was detected. Use the method"
+            "to_new_mrsim to convert to a compliant structure."
+        )
+
     sim = Simulator.parse(py_dict["simulator"], parse_units)
 
     signal_processors = (
@@ -314,9 +327,47 @@ def parse(py_dict, parse_units: bool = True):
         else [SignalProcessor() for _ in sim.methods]
     )
 
-    # params = None
-    # if "params" in py_dict:
-    #     val = py_dict["params"]
-    #     params = None if val is None else Parameters().loads(s=val)
-
     return sim, signal_processors
+
+
+def to_new_mrsim(filename: str, overwrite: bool = False):
+    """Convert an old mrsim file where Simulator object keywords existed at the root
+    level along with other seralized attributes to a structure where each object exists
+    under its own keyword. New file will be saved as <given_name>_new.mrsim
+
+    Args:
+        str filename: path to searalized file
+        overwrite: Will overwrite file if true, otherwise just returns dict
+
+    Returns:
+        dict: Dictionary of newly seralized Mrsimulator object
+    """
+    py_dict = import_json(filename)
+
+    py_dict["simulator"] = {}
+    sim_keywords = {
+        "spin_systems",
+        "methods",
+        "config",
+        "name",
+        "label",
+        "description",
+        "indexes",
+    }
+
+    print(set(py_dict.keys()).intersection(sim_keywords))
+
+    # Create Simulator dictionary
+    for key in set(py_dict.keys()).intersection(sim_keywords):
+        py_dict["simulator"][key] = py_dict.pop(key)
+
+    # Remove all other unknown keywords
+    bad_keys = set(py_dict.keys()) - set(Mrsimulator().root_keys)
+    for key in bad_keys:
+        py_dict.pop(key)
+
+    obj = Mrsimulator.parse_dict_with_units(py_dict)
+    if overwrite:
+        obj.save(filename=filename)
+
+    return py_dict
