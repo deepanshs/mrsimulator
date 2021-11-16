@@ -67,14 +67,10 @@ class Mrsimulator(Parseable):
     """
 
     # TODO: Improve doc strings (examples, more description)
-    # TODO: Decide where params key should live
     # TODO: Create api reference
-    # TODO: Make pytests for new class
-    # TODO: Create error messages when loading file in wrong place?
 
     simulator: Simulator = None
     signal_processors: List[SignalProcessor] = None
-    # params: List[Parameters] = None
     version: str = __version__
     application: Dict = None
 
@@ -130,6 +126,9 @@ class Mrsimulator(Parseable):
         Args:
             dict py_dict: Dictionary representation of the Mrsimulator object
             bool parse_units: If true, parse quantity and unitsfrom string.
+
+        Returns:
+            A :ref:`mrsimulator_api` object.
         """
         return (
             Mrsimulator.parse_dict_with_units(py_dict)
@@ -253,7 +252,6 @@ def save(
 def dict(
     simulator: Simulator,
     signal_processors: list = None,
-    # params: Parameters = None,
     application: dict = {},
     with_units: bool = True,
 ):
@@ -309,7 +307,7 @@ def parse(py_dict, parse_units: bool = True):
         Ordered List: Simulator, List[SignalProcessor].
     """
     # Check for difference in keys
-    root_keys = Mrsimulator().root_keys()
+    root_keys = Mrsimulator().root_keys
     if len(set(py_dict.keys()) - set(root_keys)) != 0:
         raise ValueError(
             "An incompatible JSON root-level structure was detected. Use the method"
