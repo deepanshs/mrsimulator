@@ -17,33 +17,34 @@ shielding and quadrupolar interaction parameters.
 Consider the example below of a **Site** object for a deuterium nucleus created in Python.
 
 .. _listing_site:
-.. code-block:: python
-    :linenos:
-    :caption: A 2H site constructed using Python
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
-    # Import objects
-    from mrsimulator import Site
-    from mrsimulator.spin_system.tensors import SymmetricTensor
+    >>> # Import objects
+    >>> from mrsimulator import Site
+    >>> from mrsimulator.spin_system.tensors import SymmetricTensor
 
-    # Create the site object
-    example_site = Site(
-        isotope="2H",
-        isotropic_chemical_shift=4.1,  # in ppm
-        shielding_symmetric=SymmetricTensor(
-            zeta=12.12,  # in ppm
-            eta=0.82,
-            alpha=5.45,  # in radians
-            beta=4.82,   # in radians
-            gamma=0.5,   # in radians
-        ),
-        quadrupolar=SymmetricTensor(
-            Cq=1.47e6,     # in Hz
-            eta=0.27,
-            alpha=0.212,   # in radians
-            beta=1.231,    # in radians
-            gamma=3.1415,  # in radians
-        )
-    )
+    >>> # Create the site object
+    >>> example_site = Site(
+    ...     isotope="2H",
+    ...     isotropic_chemical_shift=4.1,  # in ppm
+    ...     shielding_symmetric=SymmetricTensor(
+    ...         zeta=12.12,  # in ppm
+    ...         eta=0.82,
+    ...         alpha=5.45,  # in radians
+    ...         beta=4.82,   # in radians
+    ...         gamma=0.5,   # in radians
+    ...     ),
+    ...     quadrupolar=SymmetricTensor(
+    ...         Cq=1.47e6,     # in Hz
+    ...         eta=0.27,
+    ...         alpha=0.212,   # in radians
+    ...         beta=1.231,    # in radians
+    ...         gamma=3.1415,  # in radians
+    ...     )
+    ... )
 
 The *isotope* key holds the spin isotope, here given a value of *2H*.
 The *isotropic_chemical_shift* is the isotropic chemical shift of the site isotope, :math:`^2\text{H}`,
@@ -67,33 +68,33 @@ and *gamma*, which are the relative orientation of the EFG tensor from a common 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
 the **Site** and **SymmetricTensor** objects and their attributes, respectively.
 
-All objects in ``mrsimulator`` are JSON serializable and objects can similarly be constructed from JSON.
-We will show how to construct objects from JSON in the next section. However, we recommend using Python objects
-in most cases since it increases code readability and reduces overhead when running code.
-As an example, the JSON representation of the above site object is obtainable by calling ``example_site.json()``:
-
-.. code-block:: json
-  :linenos:
-  :caption: An example 2H site in JSON representation.
-
-  {
-      "isotope": "2H",
-      "isotropic_chemical_shift": "4.1 ppm",
-      "shielding_symmetric": {
-          "zeta": "12.12 ppm",
-          "eta": 0.82,
-          "alpha": "5.45 rad",
-          "beta": "4.82 rad",
-          "gamma": "0.5 rad"
-      },
-      "quadrupolar": {
-          "Cq": "1.47 MHz",
-          "eta": 0.27,
-          "alpha": "0.212 rad",
-          "beta": "1.231 rad",
-          "gamma": "3.1415 rad"
-      }
-  }
+..  All objects in ``mrsimulator`` are JSON serializable and objects can similarly be constructed from JSON.
+..  We will show how to construct objects from JSON in the next section. However, we recommend using Python objects
+..  in most cases since it increases code readability and reduces overhead when running code.
+..  As an example, the JSON representation of the above site object is obtainable by calling ``example_site.json()``:
+..
+..  .. code-block:: json
+..    :linenos:
+..    :caption: An example 2H site in JSON representation.
+..
+..    {
+..        "isotope": "2H",
+..       "isotropic_chemical_shift": "4.1 ppm",
+..        "shielding_symmetric": {
+..            "zeta": "12.12 ppm",
+..            "eta": 0.82,
+..            "alpha": "5.45 rad",
+..            "beta": "4.82 rad",
+..            "gamma": "0.5 rad"
+..        },
+..        "quadrupolar": {
+..            "Cq": "1.47 MHz",
+..            "eta": 0.27,
+..            "alpha": "0.212 rad",
+..            "beta": "1.231 rad",
+..            "gamma": "3.1415 rad"
+..        }
+..    }
 
 Coupling
 ''''''''
@@ -103,31 +104,32 @@ and the dipolar coupling interaction parameters.
 Consider the example below of a **Coupling** object.
 
 .. _listing_coupling:
-.. code-block:: python
-    :linenos:
-    :caption: A coupling object constructed using Python
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
-    # Import objects
-    from mrsimulator import Coupling
-    from mrsimulator.spin_system.tensors import SymmetricTensor
+    >>> # Import objects
+    >>> from mrsimulator import Coupling
+    >>> from mrsimulator.spin_system.tensors import SymmetricTensor
 
-    example_coupling = Coupling(
-        site_index=[0, 1],
-        isotropic_j=15,  # in Hz
-        j_symmetric=SymmetricTensor(
-            zeta=12.12,  # in Hz
-            eta=0.82,
-            alpha=2.45,  # in radians
-            beta=1.75,   # in radians
-            gamma=0.15,  # in radians
-        ),
-        dipolar=SymmetricTensor(
-            D=1.7e3,       # in Hz
-            alpha=0.12,    # in radians
-            beta=0.231,    # in radians
-            gamma=1.1415,  # in radians
-        )
-    )
+    >>> example_coupling = Coupling(
+    ...     site_index=[0, 1],
+    ...     isotropic_j=15,  # in Hz
+    ...     j_symmetric=SymmetricTensor(
+    ...         zeta=12.12,  # in Hz
+    ...         eta=0.82,
+    ...         alpha=2.45,  # in radians
+    ...         beta=1.75,   # in radians
+    ...         gamma=0.15,  # in radians
+    ...     ),
+    ...     dipolar=SymmetricTensor(
+    ...         D=1.7e3,       # in Hz
+    ...         alpha=0.12,    # in radians
+    ...         beta=0.231,    # in radians
+    ...         gamma=1.1415,  # in radians
+    ...     )
+    ... )
 
 The *site_index* key holds a list of two integers corresponding to the index of the two coupled sites
 within the spin system. The value of the *isotropic_j* is the isotropic *J*-coupling, here given as
@@ -142,30 +144,30 @@ are the relative orientation of the dipolar tensor from a common reference frame
 See :numref:`table_coupling` and :numref:`table_symmetric_tensor` for further information on
 the **Site** and **SymmetricTensor** objects and their attributes, respectively.
 
-The Coupling object created above in Python is represented by the following JSON, again obtained by calling
-``example_coupling.json()``:
-
-.. code-block:: json
-  :linenos:
-  :caption: A **Coupling** object in JSON representation.
-
-  {
-    "site_index": [0, 1],
-    "isotropic_j": "15 Hz",
-    "j_symmetric": {
-        "zeta": "12.12 Hz",
-        "eta": 0.82,
-        "alpha": "2.45 rad",
-        "beta": "1.75 rad",
-        "gamma": "0.15 rad"
-    },
-    "dipolar": {
-        "D": "1.7 kHz",
-        "alpha": "0.12 rad",
-        "beta": "0.231 rad",
-        "gamma": "1.1415 rad"
-    }
-  }
+..  The Coupling object created above in Python is represented by the following JSON, again obtained by calling
+..  ``example_coupling.json()``:
+..
+..  .. code-block:: json
+..    :linenos:
+..    :caption: A **Coupling** object in JSON representation.
+..
+..    {
+..      "site_index": [0, 1],
+..      "isotropic_j": "15 Hz",
+..      "j_symmetric": {
+..          "zeta": "12.12 Hz",
+..          "eta": 0.82,
+..          "alpha": "2.45 rad",
+..          "beta": "1.75 rad",
+..          "gamma": "0.15 rad"
+..      },
+..      "dipolar": {
+..          "D": "1.7 kHz",
+..          "alpha": "0.12 rad",
+..          "beta": "0.231 rad",
+..          "gamma": "1.1415 rad"
+..      }
+..    }
 
 SpinSystem
 ''''''''''
@@ -180,41 +182,42 @@ Using the previous 2H **Site** object example, we construct a simple single-site
 **SpinSystem** object, as shown below.
 
 .. _listing_uncoupled_spin_system:
-.. code-block:: python
-    :linenos:
-    :caption: An example of an uncoupled 2H SpinSystem in Python
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
-    # Import objects
-    from mrsimulator import Coupling
-    from mrsimulator import Site
-    from mrsimulator import SpinSystem
-    from mrsimulator.spin_system.tensors import SymmetricTensor
+    >>> # Import objects
+    >>> from mrsimulator import Coupling
+    >>> from mrsimulator import Site
+    >>> from mrsimulator import SpinSystem
+    >>> from mrsimulator.spin_system.tensors import SymmetricTensor
 
-    example_sys = SpinSystem(
-        name="2H uncoupled spin system",
-        description="An optional description of the spin system",
-        sites=[
-            Site(
-                isotope="2H",
-                isotropic_chemical_shift=4.1,  # in ppm
-                shielding_symmetric=SymmetricTensor(
-                    zeta=12.12,  # in ppm
-                    eta=0.82,
-                    alpha=5.45,  # in radians
-                    beta=4.82,   # in radians
-                    gamma=0.5,   # in radians
-                ),
-                quadrupolar=SymmetricTensor(
-                    Cq=1.47e6,     # in Hz
-                    eta=0.27,
-                    alpha=0.212,   # in radians
-                    beta=1.231,    # in radians
-                    gamma=3.1415,  # in radians
-                ),
-                abundance=0.148,   # percentage
-            )
-        ]
-    )
+    >>> example_sys = SpinSystem(
+    ...     name="2H uncoupled spin system",
+    ...     description="An optional description of the spin system",
+    ...     sites=[
+    ...         Site(
+    ...             isotope="2H",
+    ...             isotropic_chemical_shift=4.1,  # in ppm
+    ...             shielding_symmetric=SymmetricTensor(
+    ...                 zeta=12.12,  # in ppm
+    ...                 eta=0.82,
+    ...                 alpha=5.45,  # in radians
+    ...                 beta=4.82,   # in radians
+    ...                 gamma=0.5,   # in radians
+    ...             ),
+    ...             quadrupolar=SymmetricTensor(
+    ...                 Cq=1.47e6,     # in Hz
+    ...                 eta=0.27,
+    ...                 alpha=0.212,   # in radians
+    ...                 beta=1.231,    # in radians
+    ...                 gamma=3.1415,  # in radians
+    ...             ),
+    ...             abundance=0.148,   # percentage
+    ...         )
+    ...     ]
+    ... )
 
 
 ..  .. code-block:: json
@@ -267,68 +270,68 @@ Appending to the previous single-site spin system example from
 as follows.
 
 .. _listing_coupled_spin_system:
-.. code-block:: python
-    :linenos:
-    :caption: An example of a coupled 2H-13C spin system in Python
+.. plot::
+    :format: doctest
+    :context: close-figs
+    :include-source:
 
-    # Import objects
-    from mrsimulator import Coupling
-    from mrsimulator import Site
-    from mrsimulator import SpinSystem
-    from mrsimulator.spin_system.tensors import SymmetricTensor
+    >>> # Import objects
+    >>> from mrsimulator import Coupling
+    >>> from mrsimulator import Site
+    >>> from mrsimulator import SpinSystem
+    >>> from mrsimulator.spin_system.tensors import SymmetricTensor
 
-    coupled_sys = SpinSystem(
-        name="2H-13C coupled spin system",
-        description="An optional description of the spin system",
-        sites=[
-            Site(
-                isotope="2H",
-                isotropic_chemical_shift=4.1,  # in ppm
-                shielding_symmetric=SymmetricTensor(
-                    zeta=12.12,  # in ppm
-                    eta=0.82,
-                    alpha=5.45,  # in radians
-                    beta=4.82,   # in radians
-                    gamma=0.5,   # in radians
-                ),
-                quadrupolar=SymmetricTensor(
-                    Cq=1.47e6,     # in Hz
-                    eta=0.27,
-                    alpha=0.212,   # in radians
-                    beta=1.231,    # in radians
-                    gamma=3.1415,  # in radians
-                )
-            ),
-            Site(
-              isotope="13C",
-              isotropic_chemical_shift=-53.2,  # in ppm
-              shielding_symmetric=SymmetricTensor(
-                  zeta="90.5 ppm",
-                  eta=0.64,
-            )
-        ],
-        couplings=[
-            Coupling(
-                site_index=[0, 1],
-                isotropic_j="15 Hz",
-                j_symmetric=SymmetricTensor(
-                    zeta="12.12 Hz",
-                    eta=0.82,
-                    alpha="2.45 rad",
-                    beta="1.75 rad",
-                    gamma="0.15 rad",
-                ),
-                dipolar=SymmetricTensor(
-                    D="1.7 kHz",
-                    alpha="0.12 rad",
-                    beta="0.231 rad",
-                    gamma="1.1415 rad",
-                )
-            )
-        ],
-        abundance="0.48%",
-    )
-
+    >>> coupled_sys = SpinSystem(
+    ...     name="2H-13C coupled spin system",
+    ...     description="An optional description of the spin system",
+    ...     sites=[
+    ...         Site(
+    ...             isotope="2H",
+    ...             isotropic_chemical_shift=4.1,  # in ppm
+    ...             shielding_symmetric=SymmetricTensor(
+    ...                 zeta=12.12,  # in ppm
+    ...                 eta=0.82,
+    ...                 alpha=5.45,  # in radians
+    ...                 beta=4.82,   # in radians
+    ...                 gamma=0.5,   # in radians
+    ...             ),
+    ...             quadrupolar=SymmetricTensor(
+    ...                 Cq=1.47e6,     # in Hz
+    ...                 eta=0.27,
+    ...                 alpha=0.212,   # in radians
+    ...                 beta=1.231,    # in radians
+    ...                 gamma=3.1415,  # in radians
+    ...             )
+    ...         ),
+    ...         Site(
+    ...           isotope="13C",
+    ...           isotropic_chemical_shift=-53.2,  # in ppm
+    ...           shielding_symmetric=SymmetricTensor(
+    ...               zeta="90.5 ppm",
+    ...               eta=0.64,
+    ...         )
+    ...     ],
+    ...     couplings=[
+    ...         Coupling(
+    ...             site_index=[0, 1],
+    ...             isotropic_j="15 Hz",
+    ...             j_symmetric=SymmetricTensor(
+    ...                 zeta="12.12 Hz",
+    ...                 eta=0.82,
+    ...                 alpha="2.45 rad",
+    ...                 beta="1.75 rad",
+    ...                 gamma="0.15 rad",
+    ...             ),
+    ...             dipolar=SymmetricTensor(
+    ...                 D="1.7 kHz",
+    ...                 alpha="0.12 rad",
+    ...                 beta="0.231 rad",
+    ...                 gamma="1.1415 rad",
+    ...             )
+    ...         )
+    ...     ],
+    ...     abundance="0.48%",
+    ... )
 
 ..  .. code-block:: json
 ..    :linenos:
