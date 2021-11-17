@@ -97,8 +97,72 @@ class Mrsimulator(Parseable):
 
         Example
         -------
-
-
+        >>> mrsim_dict = {
+        ...   "simulator": {
+        ...     "spin_systems": [
+        ...       {
+        ...         "sites": [
+        ...           {
+        ...             "isotope": "1H",
+        ...             "isotropic_chemical_shift": "0.0 ppm",
+        ...             "shielding_symmetric": { "zeta": "-100.0 ppm", "eta": 0.3 }
+        ...           },
+        ...           {
+        ...             "isotope": "1H",
+        ...             "isotropic_chemical_shift": "0.0 ppm",
+        ...             "shielding_symmetric": { "zeta": "-100.0 ppm", "eta": 0.3 }
+        ...           }
+        ...         ],
+        ...         "abundance": "45.0 %"
+        ...       }
+        ...     ],
+        ...     "methods": [
+        ...       {
+        ...         "name": "BlochDecaySpectrum",
+        ...         "description": "A one-dimensional Bloch decay spectrum method.",
+        ...         "channels": ["1H"],
+        ...         "spectral_dimensions": [
+        ...           {
+        ...             "count": 1024,
+        ...             "spectral_width": "25000.0 Hz",
+        ...             "events": [{ "transition_query": [{ "ch1": { "P": [-1] } }] }]
+        ...           }
+        ...         ],
+        ...         "magnetic_flux_density": "9.4 T",
+        ...         "rotor_angle": "0.9553166181245 rad",
+        ...         "rotor_frequency": "0.0 Hz"
+        ...       }
+        ...     ],
+        ...     "config": {
+        ...       "number_of_sidebands": 64,
+        ...       "integration_volume": "octant",
+        ...       "integration_density": 70,
+        ...       "decompose_spectrum": "none"
+        ...     }
+        ...   },
+        ...   "signal_processors": [
+        ...     {
+        ...       "operations": [
+        ...         { "dim_index": 0, "function": "IFFT" },
+        ...         {
+        ...           "dim_index": 0,
+        ...           "FWHM": "2500.0 Hz",
+        ...           "function": "apodization",
+        ...           "type": "Exponential"
+        ...         },
+        ...         { "dim_index": 0, "function": "FFT" },
+        ...         { "factor": 20.0, "function": "Scale" }
+        ...       ]
+        ...     }
+        ...   ],
+        ...   "version": "0.7.0dev1",
+        ...   "application": {
+        ...     "com.github.DeepanshS.mrsimulator": { "foo": "This is some metadata" }
+        ...   }
+        ... }
+        >>> mrsim = Mrsimulator.parse_dict_with_units(mrsim_dict)
+        >>> print(mrsim.version)
+        0.7.0dev1
         """
         py_copy_dict = deepcopy(py_dict)
 
@@ -146,7 +210,7 @@ class Mrsimulator(Parseable):
         Example
         -------
 
-
+        >>> mrsim = Mrsimulator.load("filename") # doctest: +SKIP
         """
         contents = import_json(filename)
         return Mrsimulator.parse(contents, with_units)
@@ -164,7 +228,7 @@ class Mrsimulator(Parseable):
         Example
         -------
 
-
+        >>> mrsim.save("filename") # doctest: +SKIP
         """
         py_dict = self.json(with_units=with_units)
 
@@ -191,8 +255,17 @@ class Mrsimulator(Parseable):
         Example
         -------
 
-
-
+        >>> import pprint
+        >>> application = {'foo': {'bar': 'baz'}}
+        >>> mrsim = Mrsimulator(simulator=Simulator(), application=application)
+        >>> pprint.pprint(mrsim.json())
+        {'application': {'foo': {'bar': 'baz'}},
+         'signal_processors': None,
+         'simulator': {'config': {'decompose_spectrum': 'none',
+                                  'integration_density': 70,
+                                  'integration_volume': 'octant',
+                                  'number_of_sidebands': 64}},
+         'version': '0.7.0dev1'}
         """
         py_dict = {
             "simulator": None,
@@ -288,8 +361,8 @@ def load(filename: str, parse_units: bool = True):
 
 def parse(py_dict, parse_units: bool = True):
     """Parse a dictionary object to the respective Simulator object, list of
-    SignalProcessor objects, and the metadata dictionary. If no signal processors are 
-    provided a list of default SignalProcessor objects with length equal to number of 
+    SignalProcessor objects, and the metadata dictionary. If no signal processors are
+    provided a list of default SignalProcessor objects with length equal to number of
     methods will be returned.
 
     Args:
