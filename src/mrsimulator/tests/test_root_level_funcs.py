@@ -4,13 +4,13 @@ import os
 
 import pytest
 from mrsimulator import __version__
-from mrsimulator import dict
 from mrsimulator import load
 from mrsimulator import save
 from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator import to_dict
 from mrsimulator import to_new_mrsim
 from mrsimulator.methods import BlochDecaySpectrum
 
@@ -58,7 +58,7 @@ def test_save():
     )
 
 
-def test_dict():
+def test_to_dict():
     sim, processors, application = setup()
 
     py_dict = {
@@ -68,7 +68,7 @@ def test_dict():
         "version": __version__,
     }
 
-    assert py_dict == dict(sim, processors, application)
+    assert py_dict == to_dict(sim, processors, application)
 
 
 def test_load():

@@ -44,7 +44,6 @@ from mrsimulator.utils.importer import import_json
 from mrsimulator.signal_processing import SignalProcessor
 from mrsimulator.utils.parseable import Parseable
 import json
-from lmfit import Parameters
 from typing import Dict
 from typing import List
 from copy import deepcopy
@@ -65,9 +64,6 @@ class Mrsimulator(Parseable):
 
     application: An optional dict holding metadata.
     """
-
-    # TODO: Improve doc strings (examples, more description)
-    # TODO: Create api reference
 
     simulator: Simulator = None
     signal_processors: List[SignalProcessor] = None
@@ -303,8 +299,8 @@ def save(
         sim: Simulator object.
         signal_processors: A list of PostSimulator objects corresponding to the methods
             in the Simulator object. Default is None.
-        application: Dictionary holding metadata to serialize in the file. The dictionary
-            will be held in the application key.
+        application: Dictionary holding metadata to serialize in the file. The
+            dictionary will be held in the application key.
         bool with_units: If true, physical quantities are represented as string with
             units. The default is True.
     """
@@ -315,7 +311,7 @@ def save(
     ).save(filename=filename, with_units=with_units)
 
 
-def dict(
+def to_dict(
     simulator: Simulator,
     signal_processors: list = None,
     application: dict = {},
