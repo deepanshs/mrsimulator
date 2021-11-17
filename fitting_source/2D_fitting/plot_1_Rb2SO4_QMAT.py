@@ -103,9 +103,9 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         # Lorentzian convolution along the isotropic dimensions.
-        sp.FFT(axis=0),
+        sp.FFT(dim_index=0),
         sp.apodization.Gaussian(FWHM="50 Hz"),
-        sp.IFFT(axis=0),
+        sp.IFFT(dim_index=0),
         sp.Scale(factor=1e4),
     ]
 )

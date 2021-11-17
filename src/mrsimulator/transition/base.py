@@ -33,6 +33,9 @@ class Transition(Parseable):
     initial: List[float] = []
     final: List[float] = []
 
+    class Config:
+        extra = "forbid"
+
     def __repr__(self):
         """Representation in bar-ket notation, |final⟩⟨initial|."""
         final = ", ".join([str(i) for i in self.final])
