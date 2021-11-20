@@ -9,8 +9,6 @@ from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
 
-# mrsimulator save and load test
-
 
 __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@osu.edu"
@@ -50,7 +48,6 @@ def setup_mrsimulator_obj():
         simulator=sim,
         signal_processors=processors,
         application=application,
-        version="an old version",
     )
 
 
@@ -61,7 +58,7 @@ def test_json():
         "simulator": mrsim.simulator.json(),
         "signal_processors": [sp.json() for sp in mrsim.signal_processors],
         "application": mrsim.application,
-        "version": "an old version",
+        "version": __version__,
     }
 
     assert mrsim.json() == py_dict
@@ -70,13 +67,27 @@ def test_json():
 def test_parse():
     mrsim = setup_mrsimulator_obj()
     py_dict = mrsim.json()
-
     mrsim.simulator.name = "a test Simulator object"
     py_dict["simulator"]["name"] = "a test Simulator object"
-
     parsed_mrsim = Mrsimulator.parse(py_dict=py_dict)
 
     assert mrsim == parsed_mrsim
+
+
+def test_version_with_serialization():
+    mrsim = setup_mrsimulator_obj()
+
+    # Set to older version
+    mrsim.version = "an older version"
+    py_dict = mrsim.json()
+
+    # Version should update during serialization
+    assert py_dict["version"] == __version__
+
+    # Ensure version is set to current version when parsed
+    parsed_mrsim = Mrsimulator.parse_dict_with_units(py_dict)
+
+    assert parsed_mrsim.version == __version__
 
 
 def test_save():
@@ -95,13 +106,3 @@ def test_load():
     assert mrsim == loaded_mrsim
 
     os.remove("temp.mrsim")
-
-
-def test_update_version():
-    mrsim = setup_mrsimulator_obj()
-
-    assert mrsim.version == "an old version"
-
-    mrsim._update_version()
-
-    assert mrsim.version == __version__

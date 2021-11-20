@@ -4,14 +4,14 @@ import os
 
 import pytest
 from mrsimulator import __version__
+from mrsimulator import dict
 from mrsimulator import load
+from mrsimulator import mrsim_to_v0_7
 from mrsimulator import save
 from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator import to_dict
-from mrsimulator import to_new_mrsim
 from mrsimulator.methods import BlochDecaySpectrum
 
 # mrsimulator save and load test
@@ -58,7 +58,7 @@ def test_save():
     )
 
 
-def test_to_dict():
+def test_dict():
     sim, processors, application = setup()
 
     py_dict = {
@@ -68,7 +68,7 @@ def test_to_dict():
         "version": __version__,
     }
 
-    assert py_dict == to_dict(sim, processors, application)
+    assert py_dict == dict(sim, processors, application)
 
 
 def test_load():
@@ -84,7 +84,7 @@ def test_load():
     os.remove("test.mrsim")
 
 
-def test_to_new_mrsim():
+def test_mrsim_to_v0_7():
     sim, processors, application = setup()
     old_struct = sim.json()
     old_struct["signal_processors"] = [sp.json() for sp in processors]
@@ -105,7 +105,7 @@ def test_to_new_mrsim():
     # Test error handling of loading old structure
     e = (
         "An incompatible JSON root-level structure was detected. Use the method"
-        "to_new_mrsim to convert to a compliant structure."
+        "mrsim_to_v0_7 to convert to a compliant structure."
     )
     with pytest.raises(ValueError, match=e):
         load("temp_2.mrsim")
@@ -117,7 +117,7 @@ def test_to_new_mrsim():
         "version": __version__,
     }
 
-    py_dict = to_new_mrsim("temp_2.mrsim", overwrite=True)
+    py_dict = mrsim_to_v0_7("temp_2.mrsim", overwrite=True)
 
     assert py_dict == new_struct
 
