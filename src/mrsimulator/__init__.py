@@ -59,10 +59,11 @@ class Mrsimulator(Parseable):
 
     signal_processor: A list of :ref:`signal_processing_api` objects.
 
-    version: A string of the version number of the mrsimulator library. Defaults to the
-        version defined as above.
+    version: The current version of the library represented by a string. This attribute
+        is not meant to be modified and serialization will only reflect the current
+        version.
 
-    application: An optional dict holding metadata.
+    application: An optional dictionary holding metadata.
     """
 
     simulator: Simulator = None
@@ -74,11 +75,6 @@ class Mrsimulator(Parseable):
         validate_assignment = True
         extra = "forbid"
 
-    @property
-    def root_keys(self):
-        """Return a list of root level keys"""
-        return ["simulator", "signal_processors", "version", "application"]
-
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
         """Parse the physical quantity from a dictionary reperesentation of the
@@ -86,7 +82,7 @@ class Mrsimulator(Parseable):
         number and a unit
 
         Args:
-            dict py_dict: A required python dict object.
+            Dict py_dict: A required python dictionary object.
 
         Returns:
             A :ref:`mrsimulator_api` object.
@@ -157,10 +153,11 @@ class Mrsimulator(Parseable):
         ...   }
         ... }
         >>> mrsim = Mrsimulator.parse_dict_with_units(mrsim_dict)
-        >>> print(mrsim.version)
-        0.7.0dev1
         """
         py_copy_dict = deepcopy(py_dict)
+
+        # Ignore given version by removing key
+        _ = py_copy_dict.pop("version", None)
 
         if "simulator" in py_copy_dict:
             sim = Simulator.parse_dict_with_units(py_copy_dict["simulator"])
@@ -180,12 +177,17 @@ class Mrsimulator(Parseable):
         """Parse a dictionary to a Mrsimulator object.
 
         Args:
-            dict py_dict: Dictionary representation of the Mrsimulator object
+            Dict py_dict: Dictionary representation of the Mrsimulator object
             bool parse_units: If true, parse quantity and unitsfrom string.
 
         Returns:
             A :ref:`mrsimulator_api` object.
         """
+        py_copy_dict = deepcopy(py_dict)
+
+        # Ignore given version by removing key
+        _ = py_copy_dict.pop("version", None)
+
         return (
             Mrsimulator.parse_dict_with_units(py_dict)
             if parse_units
@@ -254,7 +256,7 @@ class Mrsimulator(Parseable):
         >>> import pprint
         >>> application = {'foo': {'bar': 'baz'}}
         >>> mrsim = Mrsimulator(simulator=Simulator(), application=application)
-        >>> pprint.pprint(mrsim.json())
+        >>> pprint.pprint(mrsim.json()) # doctest: +SKIP
         {'application': {'foo': {'bar': 'baz'}},
          'signal_processors': None,
          'simulator': {'config': {'decompose_spectrum': 'none',
@@ -266,7 +268,7 @@ class Mrsimulator(Parseable):
         py_dict = {
             "simulator": None,
             "signal_processors": None,
-            "version": self.version,
+            "version": __version__,
             "application": self.application,
         }
 
@@ -278,17 +280,13 @@ class Mrsimulator(Parseable):
 
         return py_dict
 
-    def _update_version(self):
-        """Updates the version attribute to the current version being used."""
-        self.version = __version__
-
 
 # ================================= Root Level Methods =================================
 def save(
     filename: str,
     simulator: Simulator,
-    signal_processors: list = None,
-    application: dict = {},
+    signal_processors: List = None,
+    application: Dict = {},
     with_units: bool = True,
 ):
     """Serialize the Simulator, list of SignalProcessor, and an application dict
@@ -311,10 +309,10 @@ def save(
     ).save(filename=filename, with_units=with_units)
 
 
-def to_dict(
+def dict(
     simulator: Simulator,
-    signal_processors: list = None,
-    application: dict = {},
+    signal_processors: List = None,
+    application: Dict = {},
     with_units: bool = True,
 ):
     """Export the Simulator, list of SignalProcessor, and an application dict
@@ -362,7 +360,7 @@ def parse(py_dict, parse_units: bool = True):
     methods will be returned.
 
     Args:
-        dict py_dict: Python dictionary representation of a
+        Dict py_dict: Python dictionary representation of a
             :py:class:`~mrsimulator.Mrsimulator` object.
         bool parse_units: If true, parse the dictionary for units. Default is True.
 
@@ -370,11 +368,11 @@ def parse(py_dict, parse_units: bool = True):
         Ordered List: Simulator, List[SignalProcessor], Dict.
     """
     # Check for difference in keys
-    root_keys = Mrsimulator().root_keys
-    if len(set(py_dict.keys()) - set(root_keys)) != 0:
+    root_keys = set(Mrsimulator().dict().keys())
+    if len(set(py_dict.keys()) - root_keys) != 0:
         raise ValueError(
             "An incompatible JSON root-level structure was detected. Use the method"
-            "to_new_mrsim to convert to a compliant structure."
+            "mrsim_to_v0_7 to convert to a compliant structure."
         )
 
     sim = Simulator.parse(py_dict["simulator"], parse_units)
@@ -393,7 +391,7 @@ def parse(py_dict, parse_units: bool = True):
     return sim, signal_processors, application
 
 
-def to_new_mrsim(filename: str, overwrite: bool = False):
+def mrsim_to_v0_7(filename: str, overwrite: bool = False):
     """Convert an old mrsim file where Simulator object keywords existed at the root
     level along with other seralized attributes to a structure where each object exists
     under its own keyword. New file will be saved as <given_name>_new.mrsim
@@ -418,14 +416,12 @@ def to_new_mrsim(filename: str, overwrite: bool = False):
         "indexes",
     }
 
-    print(set(py_dict.keys()).intersection(sim_keywords))
-
     # Create Simulator dictionary
     for key in set(py_dict.keys()).intersection(sim_keywords):
         py_dict["simulator"][key] = py_dict.pop(key)
 
     # Remove all other unknown keywords
-    bad_keys = set(py_dict.keys()) - set(Mrsimulator().root_keys)
+    bad_keys = set(py_dict.keys()) - set(Mrsimulator().dict().keys())
     for key in bad_keys:
         py_dict.pop(key)
 
