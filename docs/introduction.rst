@@ -161,9 +161,9 @@ Using the previous 2H **Site** object example, we construct a simple single-site
     ...                 beta=1.231,    # in radians
     ...                 gamma=3.1415,  # in radians
     ...             ),
-    ...             abundance=0.148,   # percentage
     ...         )
-    ...     ]
+    ...     ],
+    ...     abundance=0.148,   # percentage
     ... )
 
 At the root level of the **SpinSystem** object, we find four keywords, **name**,
