@@ -145,7 +145,7 @@ That's it! Now that we have a site, we can create a single-site spin system foll
     ...     description="A test 29Si site",
     ...     sites=[the_site],  # from the above code
     ...     abundance=80,  # percentage
-    ... }
+    ... )
 
 As mentioned before, a spin system is a collection of sites and couplings. In the above
 example, we have created a spin system with a single site and no coupling. Here, the
@@ -223,19 +223,20 @@ Let's start with the simplest method, the :func:`~mrsimulator.methods.BlochDecay
     :include-source:
 
     >>> from mrsimulator.methods import BlochDecaySpectrum
-    >>> from mrsimulator.method.spectral_dimensions import SpectralDimension
 
     >>> the_method = BlochDecaySpectrum(
     ...     channels=["29Si"],
     ...     magnetic_flux_density=9.4,  # in T
     ...     rotor_angle=0.9553166,  # in rad (magic angle)
     ...     rotor_frequency=0,
-    ...     spectral_dimensions=[SpectralDimension(
-    ...         count=2048,
-    ...         spectral_width=25e3,    # in Hz
-    ...         reference_offset=-8e3,  # in Hz
-    ...         label=r"$^{29}$Si resonances",
-    ...     )]
+    ...     spectral_dimensions=[
+    ...         dict(
+    ...             count=2048,
+    ...             spectral_width=25e3,    # in Hz
+    ...             reference_offset=-8e3,  # in Hz
+    ...             label=r"$^{29}$Si resonances",
+    ...         )
+    ...     ]
     ... )
 
 Here, the key *channels* is a list of isotope symbols over which the method is applied.
@@ -302,7 +303,7 @@ the simulation data for this method as,
     :include-source:
 
     >>> data_0 = sim.methods[0].simulation
-    >>> # data_n = sim.method[n].simulation # when there are multiple methods.
+    >>> # data_n = sim.method[n].simulation  # when there are multiple methods.
 
 Here, ``data_0`` is a CSDM object holding the simulation data from the method
 at index 0 of the :attr:`~mrsimulator.Simulator.methods` attribute from the ``sim``

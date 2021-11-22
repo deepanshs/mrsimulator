@@ -93,7 +93,7 @@ shifting_d = Method2D(
             events=[
                 SpectralEvent(
                     rotor_frequency=0,
-                    transition_query={"P": [-1]},
+                    transition_query=[{"P": [-1]}],
                     freq_contrib=["Quad1_2"],
                 )
             ],
@@ -104,7 +104,7 @@ shifting_d = Method2D(
             events=[
                 SpectralEvent(
                     rotor_frequency=0,
-                    transition_query={"P": [-1]},
+                    transition_query=[{"P": [-1]}],
                     freq_contrib=["Shielding1_0", "Shielding1_2"],
                 )
             ],

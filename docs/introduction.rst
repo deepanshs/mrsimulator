@@ -223,8 +223,9 @@ as follows.
     ...           isotope="13C",
     ...           isotropic_chemical_shift=-53.2,  # in ppm
     ...           shielding_symmetric=SymmetricTensor(
-    ...               zeta=90.5 ppm,  # in ppm
+    ...               zeta=90.5,  # in ppm
     ...               eta=0.64,
+    ...           )
     ...         )
     ...     ],
     ...     couplings=[
@@ -246,7 +247,7 @@ as follows.
     ...             )
     ...         )
     ...     ],
-    ...     abundance="0.48%",
+    ...     abundance=0.48,  # 0.48%
     ... )
 
 In comparison to the previous example, there are five keywords at the root level of the
