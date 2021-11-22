@@ -118,7 +118,7 @@ sim.methods = [
     BlochDecayCTSpectrum(
         channels=["71Ga"],
         magnetic_flux_density=9.4,  # in T
-        spectral_dimensions=[{"count": 2048, "spectral_width": 2e5}],
+        spectral_dimensions=[dict(count=2048, spectral_width=2e5)],
     )
 ]  # add the method
 sim.run()
@@ -141,7 +141,7 @@ sim.methods = [
         magnetic_flux_density=9.4,  # in T
         rotor_frequency=25000,  # in Hz
         spectral_dimensions=[
-            {"count": 2048, "spectral_width": 2e5, "reference_offset": -1e4}
+            dict(count=2048, spectral_width=2e5, reference_offset=-1e4)
         ],
     )
 ]  # add the method

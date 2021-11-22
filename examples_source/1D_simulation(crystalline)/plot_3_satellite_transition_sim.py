@@ -16,6 +16,8 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method1D
+from mrsimulator.method.event import SpectralEvent
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -25,7 +27,7 @@ site = Site(
     name="27Al",
     isotope="27Al",
     isotropic_chemical_shift=35.7,  # in ppm
-    quadrupolar={"Cq": 5.959e6, "eta": 0.32},  # Cq is in Hz
+    quadrupolar=SymmetricTensor(Cq=5.959e6, eta=0.32),  # Cq is in Hz
 )
 spin_system = SpinSystem(sites=[site])
 
@@ -64,18 +66,17 @@ method = Method1D(
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=1e9,  # in Hz
     spectral_dimensions=[
-        {
-            "count": 1024,
-            "spectral_width": 1e4,  # in Hz
-            "reference_offset": 1e4,  # in Hz
-            "events": [
-                {
-                    "transition_query": [
-                        {"P": [-1], "D": [2]}  # <-- select inner satellite transitions
-                    ]
-                }
+        dict(
+            count=1024,
+            spectral_width=1e4,  # in Hz
+            reference_offset=1e4,  # in Hz
+            events=[
+                SpectralEvent(
+                    # Selecting the inner satellite transitions
+                    transition_query=[dict(P=[-1], D=[2])],
+                )
             ],
-        }
+        )
     ],
 )
 

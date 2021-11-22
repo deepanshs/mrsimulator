@@ -9,9 +9,10 @@ Coupled spin-1/2 (Static dipolar spectrum)
 # %%
 import matplotlib.pyplot as plt
 
-from mrsimulator import Simulator, SpinSystem
+from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 1
 
@@ -21,10 +22,10 @@ from mrsimulator import signal_processing as sp
 # Create a 13C-1H coupled spin system.
 spin_system = SpinSystem(
     sites=[
-        {"isotope": "13C", "isotropic_chemical_shift": 0.0},
-        {"isotope": "1H", "isotropic_chemical_shift": 0.0},
+        Site(isotope="13C", isotropic_chemical_shift=0.0),
+        Site(isotope="1H", isotropic_chemical_shift=0.0),
     ],
-    couplings=[{"site_index": [0, 1], "dipolar": {"D": -2e4}}],
+    couplings=[Coupling(site_index=[0, 1], dipolar=SymmetricTensor(D=-2e4))],
 )
 # %%
 # **Methods**
@@ -33,7 +34,7 @@ spin_system = SpinSystem(
 method = BlochDecaySpectrum(
     channels=["13C"],
     magnetic_flux_density=9.4,  # in T
-    spectral_dimensions=[{"count": 2048, "spectral_width": 8.0e4}],
+    spectral_dimensions=[dict(count=2048, spectral_width=8.0e4)],
 )
 
 # %%
@@ -41,8 +42,8 @@ method = BlochDecaySpectrum(
 #
 # Create the Simulator object and add the method and the spin system object.
 sim = Simulator()
-sim.spin_systems += [spin_system]  # add the spin system.
-sim.methods += [method]  # add the method.
+sim.spin_systems = [spin_system]  # add the spin system.
+sim.methods = [method]  # add the method.
 sim.run()
 
 # %%

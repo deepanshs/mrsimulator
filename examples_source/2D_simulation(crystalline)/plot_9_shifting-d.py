@@ -17,6 +17,9 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
+from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method.event import SpectralEvent
+from mrsimulator.method.spectral_dimension import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -25,66 +28,66 @@ from mrsimulator import signal_processing as sp
 site_Ni = Site(
     isotope="2H",
     isotropic_chemical_shift=-97,  # in ppm
-    shielding_symmetric={
-        "zeta": -551,  # in ppm
-        "eta": 0.12,
-        "alpha": 62 * 3.14159 / 180,  # in rads
-        "beta": 114 * 3.14159 / 180,  # in rads
-        "gamma": 171 * 3.14159 / 180,  # in rads
-    },
-    quadrupolar={"Cq": 77.2e3, "eta": 0.9},  # Cq in Hz
+    shielding_symmetric=SymmetricTensor(
+        zeta=-551,  # in ppm
+        eta=0.12,
+        alpha=62 * 3.14159 / 180,  # in rads
+        beta=114 * 3.14159 / 180,  # in rads
+        gamma=171 * 3.14159 / 180,  # in rads
+    ),
+    quadrupolar=SymmetricTensor(Cq=77.2e3, eta=0.9),  # Cq in Hz
 )
 
 site_Cu = Site(
     isotope="2H",
     isotropic_chemical_shift=51,  # in ppm
-    shielding_symmetric={
-        "zeta": 146,  # in ppm
-        "eta": 0.84,
-        "alpha": 95 * 3.14159 / 180,  # in rads
-        "beta": 90 * 3.14159 / 180,  # in rads
-        "gamma": 0 * 3.14159 / 180,  # in rads
-    },
-    quadrupolar={"Cq": 118.2e3, "eta": 0.86},  # Cq in Hz
+    shielding_symmetric=SymmetricTensor(
+        zeta=146,  # in ppm
+        eta=0.84,
+        alpha=95 * 3.14159 / 180,  # in rads
+        beta=90 * 3.14159 / 180,  # in rads
+        gamma=0 * 3.14159 / 180,  # in rads
+    ),
+    quadrupolar=SymmetricTensor(Cq=118.2e3, eta=0.8),  # Cq in Hz
 )
 
 site_Co = Site(
     isotope="2H",
     isotropic_chemical_shift=215,  # in ppm
-    shielding_symmetric={
-        "zeta": -1310,  # in ppm
-        "eta": 0.23,
-        "alpha": 180 * 3.14159 / 180,  # in rads
-        "beta": 90 * 3.14159 / 180,  # in rads
-        "gamma": 90 * 3.14159 / 180,  # in rads
-    },
-    quadrupolar={"Cq": 114.6e3, "eta": 0.95},  # Cq in Hz
+    shielding_symmetric=SymmetricTensor(
+        zeta=-1310,  # in ppm
+        eta=0.23,
+        alpha=180 * 3.14159 / 180,  # in rads
+        beta=90 * 3.14159 / 180,  # in rads
+        gamma=90 * 3.14159 / 180,  # in rads
+    ),
+    quadrupolar=SymmetricTensor(Cq=114.6e3, eta=0.95),  # Cq in Hz
 )
 
 site_Fe = Site(
     isotope="2H",
     isotropic_chemical_shift=101,  # in ppm
-    shielding_symmetric={
-        "zeta": -1187,  # in ppm
-        "eta": 0.4,
-        "alpha": 122 * 3.14159 / 180,  # in rads
-        "beta": 90 * 3.14159 / 180,  # in rads
-        "gamma": 90 * 3.14159 / 180,  # in rads
-    },
-    quadrupolar={"Cq": 114.2e3, "eta": 0.98},  # Cq in Hz
+    shielding_symmetric=SymmetricTensor(
+        zeta=-1187,  # in ppm
+        eta=0.4,
+        alpha=122 * 3.14159 / 180,  # in rads
+        beta=90 * 3.14159 / 180,  # in rads
+        gamma=90 * 3.14159 / 180,  # in rads
+    ),
+    quadrupolar=SymmetricTensor(Cq=114.2e3, eta=0.98),  # Cq in Hz
 )
 
 site_Mn = Site(
     isotope="2H",
     isotropic_chemical_shift=145,  # in ppm
-    shielding_symmetric={
-        "zeta": -1236,  # in ppm
-        "eta": 0.23,
-        "alpha": 136 * 3.14159 / 180,  # in rads
-        "beta": 90 * 3.14159 / 180,  # in rads
-        "gamma": 90 * 3.14159 / 180,  # in rads
-    },
-    quadrupolar={"Cq": 1.114e5, "eta": 1.0},  # Cq in Hz
+    shielding_symmetric=SymmetricTensor(
+        zeta=-1236,  # in ppm
+        eta=0.23,
+        alpha=136 * 3.14159 / 180,  # in rads
+        beta=90 * 3.14159 / 180,  # in rads
+        gamma=90 * 3.14159 / 180,  # in rads
+    ),
+    quadrupolar=SymmetricTensor(Cq=1.114e5, eta=1.0),  # Cq in Hz
 )
 
 spin_systems = [
@@ -112,31 +115,31 @@ shifting_d = Method2D(
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
     spectral_dimensions=[
-        {
-            "count": 512,
-            "spectral_width": 2.5e5,  # in Hz
-            "label": "Quadrupolar frequency",
-            "events": [
-                {
-                    "rotor_frequency": 0,
-                    "transition_query": {"P": [-1]},
-                    "freq_contrib": ["Quad1_2"],
-                }
+        SpectralDimension(
+            count=512,
+            spectral_width=2.5e5,  # in Hz
+            label="Quadrupolar frequency",
+            events=[
+                SpectralEvent(
+                    rotor_frequency=0,
+                    transition_query={"P": [-1]},
+                    freq_contrib=["Quad1_2"],
+                )
             ],
-        },
-        {
-            "count": 256,
-            "spectral_width": 2e5,  # in Hz
-            "reference_offset": 2e4,  # in Hz
-            "label": "Paramagnetic shift",
-            "events": [
-                {
-                    "rotor_frequency": 0,
-                    "transition_query": {"P": [-1]},
-                    "freq_contrib": ["Shielding1_0", "Shielding1_2"],
-                }
+        ),
+        SpectralDimension(
+            count=256,
+            spectral_width=2e5,  # in Hz
+            reference_offset=2e4,  # in Hz
+            label="Paramagnetic shift",
+            events=[
+                SpectralEvent(
+                    rotor_frequency=0,
+                    transition_query={"P": [-1]},
+                    freq_contrib=["Shielding1_0", "Shielding1_2"],
+                )
             ],
-        },
+        ),
     ],
 )
 

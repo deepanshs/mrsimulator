@@ -20,6 +20,8 @@ from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method.event import SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -61,14 +63,14 @@ plt.show()
 site = Site(
     isotope="2H",
     isotropic_chemical_shift=200,  # in ppm
-    shielding_symmetric={
-        "zeta": -1300,  # in ppm
-        "eta": 0.2,
-        "alpha": np.pi,  # in rads
-        "beta": np.pi / 2,  # in rads
-        "gamma": np.pi / 2,  # in rads
-    },
-    quadrupolar={"Cq": 110e3, "eta": 0.83},  # Cq in Hz
+    shielding_symmetric=SymmetricTensor(
+        zeta=-1300,  # in ppm
+        eta=0.2,
+        alpha=np.pi,  # in rads
+        beta=np.pi / 2,  # in rads
+        gamma=np.pi / 2,  # in rads
+    ),
+    quadrupolar=SymmetricTensor(Cq=110e3, eta=0.83),  # Cq in Hz
 )
 
 spin_systems = [SpinSystem(sites=[site])]
@@ -85,28 +87,28 @@ shifting_d = Method2D(
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
     spectral_dimensions=[
-        {
+        dict(
             **spectral_dims[0],
-            "label": "Quadrupolar frequency",
-            "events": [
-                {
-                    "rotor_frequency": 0,
-                    "transition_query": {"P": [-1]},
-                    "freq_contrib": ["Quad1_2"],
-                }
+            label="Quadrupolar frequency",
+            events=[
+                SpectralEvent(
+                    rotor_frequency=0,
+                    transition_query={"P": [-1]},
+                    freq_contrib=["Quad1_2"],
+                )
             ],
-        },
-        {
+        ),
+        dict(
             **spectral_dims[1],
-            "label": "Paramagnetic shift",
-            "events": [
-                {
-                    "rotor_frequency": 0,
-                    "transition_query": {"P": [-1]},
-                    "freq_contrib": ["Shielding1_0", "Shielding1_2"],
-                }
+            label="Paramagnetic shift",
+            events=[
+                SpectralEvent(
+                    rotor_frequency=0,
+                    transition_query={"P": [-1]},
+                    freq_contrib=["Shielding1_0", "Shielding1_2"],
+                )
             ],
-        },
+        ),
     ],
     experiment=experiment,  # also add the measurement to the method.
 )

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-¹³C MAS NMR of Glycine (CSA) [960 Hz]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+¹³C MAS NMR of Glycine (CSA) [960 Hz] (TO REMOVE)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # The following is a sideband least-squares fitting example of a

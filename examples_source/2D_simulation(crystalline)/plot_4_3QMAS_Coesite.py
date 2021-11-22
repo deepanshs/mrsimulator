@@ -30,19 +30,19 @@ method = ThreeQ_VAS(
     channels=["17O"],
     magnetic_flux_density=11.74,  # in T
     spectral_dimensions=[
-        {
-            "count": 256,
-            "spectral_width": 5e3,  # in Hz
-            "reference_offset": -2.5e3,  # in Hz
-            "label": "Isotropic dimension",
-        },
+        dict(
+            count=256,
+            spectral_width=5e3,  # in Hz
+            reference_offset=-2.5e3,  # in Hz
+            label="Isotropic dimension",
+        ),
         # The last spectral dimension block is the direct-dimension
-        {
-            "count": 256,
-            "spectral_width": 2e4,  # in Hz
-            "reference_offset": 0,  # in Hz
-            "label": "MAS dimension",
-        },
+        dict(
+            count=256,
+            spectral_width=2e4,  # in Hz
+            reference_offset=0,  # in Hz
+            label="MAS dimension",
+        ),
     ],
 )
 sim.methods = [method]  # add the method.

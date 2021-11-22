@@ -16,6 +16,7 @@ from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -50,7 +51,7 @@ plt.show()
 B11 = Site(
     isotope="11B",
     isotropic_chemical_shift=20.0,  # in ppm
-    quadrupolar={"Cq": 2.3e6, "eta": 0.03},  # Cq in Hz
+    quadrupolar=SymmetricTensor(Cq=2.3e6, eta=0.03),  # Cq in Hz
 )
 spin_systems = [SpinSystem(sites=[B11])]
 

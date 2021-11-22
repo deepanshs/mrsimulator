@@ -68,34 +68,6 @@ and *gamma*, which are the relative orientation of the EFG tensor from a common 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
 the **Site** and **SymmetricTensor** objects and their attributes, respectively.
 
-..  All objects in ``mrsimulator`` are JSON serializable and objects can similarly be constructed from JSON.
-..  We will show how to construct objects from JSON in the next section. However, we recommend using Python objects
-..  in most cases since it increases code readability and reduces overhead when running code.
-..  As an example, the JSON representation of the above site object is obtainable by calling ``example_site.json()``:
-..
-..  .. code-block:: json
-..    :linenos:
-..    :caption: An example 2H site in JSON representation.
-..
-..    {
-..        "isotope": "2H",
-..       "isotropic_chemical_shift": "4.1 ppm",
-..        "shielding_symmetric": {
-..            "zeta": "12.12 ppm",
-..            "eta": 0.82,
-..            "alpha": "5.45 rad",
-..            "beta": "4.82 rad",
-..            "gamma": "0.5 rad"
-..        },
-..        "quadrupolar": {
-..            "Cq": "1.47 MHz",
-..            "eta": 0.27,
-..            "alpha": "0.212 rad",
-..            "beta": "1.231 rad",
-..            "gamma": "3.1415 rad"
-..        }
-..    }
-
 Coupling
 ''''''''
 
@@ -143,31 +115,6 @@ are the relative orientation of the dipolar tensor from a common reference frame
 
 See :numref:`table_coupling` and :numref:`table_symmetric_tensor` for further information on
 the **Site** and **SymmetricTensor** objects and their attributes, respectively.
-
-..  The Coupling object created above in Python is represented by the following JSON, again obtained by calling
-..  ``example_coupling.json()``:
-..
-..  .. code-block:: json
-..    :linenos:
-..    :caption: A **Coupling** object in JSON representation.
-..
-..    {
-..      "site_index": [0, 1],
-..      "isotropic_j": "15 Hz",
-..      "j_symmetric": {
-..          "zeta": "12.12 Hz",
-..          "eta": 0.82,
-..          "alpha": "2.45 rad",
-..          "beta": "1.75 rad",
-..          "gamma": "0.15 rad"
-..      },
-..      "dipolar": {
-..          "D": "1.7 kHz",
-..          "alpha": "0.12 rad",
-..          "beta": "0.231 rad",
-..          "gamma": "1.1415 rad"
-..      }
-..    }
 
 SpinSystem
 ''''''''''
@@ -218,37 +165,6 @@ Using the previous 2H **Site** object example, we construct a simple single-site
     ...         )
     ...     ]
     ... )
-
-
-..  .. code-block:: json
-..    :linenos:
-..    :caption: An example of uncoupled 2H spin system in JSON representation.
-..
-..    {
-..        "name": "2H uncoupled spin system",
-..        "description": "An optional description of the spin system",
-..        "sites": [
-..          {
-..            "isotope": "2H",
-..            "isotropic_chemical_shift": "4.1 ppm",
-..            "shielding_symmetric": {
-..                "zeta": "12.12 ppm",
-..                "eta": 0.82,
-..                "alpha": "5.45 rad",
-..                "beta": "4.82 rad",
-..                "gamma": "0.5 rad"
-..            },
-..            "quadrupolar": {
-..                "Cq": "1.47 MHz",
-..                "eta": 0.27,
-..                "alpha": "0.212 rad",
-..                "beta": "1.231 rad",
-..                "gamma": "3.1415 rad"
-..            }
-..          }
-..        ],
-..        "abundance": "0.148%",
-..    }
 
 At the root level of the **SpinSystem** object, we find four keywords, **name**,
 **description**, **sites**, and **abundance**. The value of the *name* key is the
@@ -307,88 +223,31 @@ as follows.
     ...           isotope="13C",
     ...           isotropic_chemical_shift=-53.2,  # in ppm
     ...           shielding_symmetric=SymmetricTensor(
-    ...               zeta="90.5 ppm",
+    ...               zeta=90.5 ppm,  # in ppm
     ...               eta=0.64,
     ...         )
     ...     ],
     ...     couplings=[
     ...         Coupling(
     ...             site_index=[0, 1],
-    ...             isotropic_j="15 Hz",
+    ...             isotropic_j=15,  # in Hz
     ...             j_symmetric=SymmetricTensor(
-    ...                 zeta="12.12 Hz",
+    ...                 zeta=1.289,  # in ppm
     ...                 eta=0.82,
-    ...                 alpha="2.45 rad",
-    ...                 beta="1.75 rad",
-    ...                 gamma="0.15 rad",
+    ...                 alpha=2.45,  # in rad
+    ...                 beta=1.75,   # in rad
+    ...                 gamma=0.15,  # in rad
     ...             ),
     ...             dipolar=SymmetricTensor(
-    ...                 D="1.7 kHz",
-    ...                 alpha="0.12 rad",
-    ...                 beta="0.231 rad",
-    ...                 gamma="1.1415 rad",
+    ...                 D=1.7e3,       # in Hz
+    ...                 alpha=0.12,    # in rad
+    ...                 beta=0.231,    # in rad
+    ...                 gamma=1.1415,  # in rad
     ...             )
     ...         )
     ...     ],
     ...     abundance="0.48%",
     ... )
-
-..  .. code-block:: json
-..    :linenos:
-..    :caption: An example of coupled 2H-13C spin system in JSON representation.
-..
-..    {
-..        "name": "2H-13C coupled spin system",
-..        "description": "An optional description of the spin system",
-..        "sites": [
-..          {
-..            "isotope": "2H",
-..            "isotropic_chemical_shift": "4.1 ppm",
-..            "shielding_symmetric": {
-..                "zeta": "12.12 ppm",
-..                "eta": 0.82,
-..                "alpha": "5.45 rad",
-..                "beta": "4.82 rad",
-..                "gamma": "0.5 rad"
-..            },
-..            "quadrupolar": {
-..                "Cq": "1.47 MHz",
-..                "eta": 0.27,
-..                "alpha": "0.212 rad",
-..                "beta": "1.231 rad",
-..                "gamma": "3.1415 rad"
-..            }
-..          },
-..          {
-..            "isotope": "13C",
-..            "isotropic_chemical_shift": "-53.2 ppm",
-..            "shielding_symmetric": {
-..                "zeta": "90.5 ppm",
-..                "eta": 0.64
-..            }
-..          }
-..        ],
-..        "couplings": [
-..          {
-..            "site_index": [0, 1],
-..            "isotropic_j": "15 Hz",
-..            "j_symmetric": {
-..                "zeta": "12.12 Hz",
-..                "eta": 0.82,
-..                "alpha": "2.45 rad",
-..                "beta": "1.75 rad",
-..                "gamma": "0.15 rad"
-..            },
-..            "dipolar": {
-..                "D": "1.7 kHz",
-..                "alpha": "0.12 rad",
-..                "beta": "0.231 rad",
-..                "gamma": "1.1415 rad"
-..            }
-..          }
-..        ],
-..        "abundance": "0.48%"
-..    }
 
 In comparison to the previous example, there are five keywords at the root level of the
 **SpinSystem** object, **name**, **description**, **sites**, **couplings**, and **abundance**.
