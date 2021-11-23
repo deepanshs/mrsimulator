@@ -2,9 +2,9 @@
 
 .. _config_simulator:
 
-============================
-Configuring Simulator object
-============================
+================================
+Configuring the Simulator object
+================================
 
 The following code is used to produce the figures in this section.
 

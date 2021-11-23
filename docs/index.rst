@@ -174,13 +174,23 @@ Getting Started
     :caption: Getting Started
 
     installation/installation
-    introduction
-    getting_started
-    getting_started-objects
-    getting_started_ethanol
-    configuring_simulator
-    mrsim_IO
-.. designing_methods
+    troubleshooting/instillation_troubleshooting ###
+    getting_started/the_basics
+    getting_started/uncoupled_example
+    getting_started/coupled_example
+
+Using the Simulator Object
+--------------------------
+
+.. toctree::
+    :maxdepth: 3
+    :caption: The Simulator Object
+
+    simulator/simulator
+..    simulator/spin_systems/spin_system
+..    simulator/method/method
+..    simulator/configuring_simulator
+..    simulator/mrsim_IO
 
 Signal Processing (``mrsimulator.SignalProcessor``)
 ---------------------------------------------------
@@ -189,7 +199,7 @@ Signal Processing (``mrsimulator.SignalProcessor``)
     :maxdepth: 2
     :caption: Signal Processing
 
-    signal_processing
+    signal_processing/signal_processing
 
 Models
 ------

@@ -1,8 +1,8 @@
-.. _getting_started_coupled_spin_system_etoh:
+.. _coupled_example:
 
-==================================
-Coupled Spin System: Using objects
-==================================
+===========================
+Coupled Spin System Example
+===========================
 
 In this example, we will simulate the :math:`^1\text{H}` NMR spectrum of
 ethanol using the core ``mrsimulator`` objects. Let’s start by importing

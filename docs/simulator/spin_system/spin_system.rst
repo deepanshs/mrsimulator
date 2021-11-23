@@ -1,4 +1,4 @@
-.. _spin_systems_intro:
+.. _spin_system_documentation:
 
 ****************************
 Introduction to Spin Systems
@@ -6,8 +6,9 @@ Introduction to Spin Systems
 
 
 At the heart of any ``mrsimulator`` calculation is the definition of a **SpinSystem**
-object describing the sites and couplings within a spin system.  We begin by examining
-the definition of a **Site** object.
+object describing the sites and couplings within a spin system. Each **Simulator** holds
+a list of **SpinSystem** objects which will be used to calculate the spectrum. We begin
+by examining the definition of a **Site** object.
 
 Site
 ''''
@@ -171,8 +172,9 @@ At the root level of the **SpinSystem** object, we find four keywords, **name**,
 optional name of the spin system. The
 value of the description key is an optional string describing the spin system. The
 value of the *sites* key is a list of **Site** objects. Here, this list comprises of
-a single **Site** object (lines 10-30) from :numref:`listing_site`. The value of the
-*abundance* key is the abundance of the spin system, here given a value of *0.148%*.
+a single **Site** object (lines 10-30) from :ref:`the Site object <listing_site>`.
+The value of the *abundance* key is the abundance of the spin system, here given
+a value of *0.148%*.
 
 See :numref:`table_spin_system` for further description of the **SpinSystem** class and
 its attributes.
@@ -181,9 +183,9 @@ its attributes.
 Coupled Spin System
 -------------------
 
-Appending to the previous single-site spin system example from
-:numref:`listing_uncoupled_spin_system`, we construct a two-spin coupled spin system,
-as follows.
+Appending to the previous single-site spin system example from the
+:ref:`uncoupled spin system <listing_uncoupled_spin_system>`, we construct a two-spin
+coupled spin system as follows.
 
 .. _listing_coupled_spin_system:
 .. plot::
@@ -253,11 +255,11 @@ as follows.
 In comparison to the previous example, there are five keywords at the root level of the
 **SpinSystem** object, **name**, **description**, **sites**, **couplings**, and **abundance**.
 In this example, the value of the *sites* key holds a list of two **Site** objects. At index 0
-(lines 5-22) is the *2H* site from :numref:`listing_site`, and at index 1 (lines 23-30) is
-a *13C* site. The value of the *couplings* key is a list of **Coupling** objects. In this
-example, we define a single coupling object (lines 33-49) from :numref:`listing_coupling`.
-The value of the *site_index* key within the coupling object, line 34, corresponds to the site
-index from the *sites* list.
+(lines 9-26) is the *2H* site from :ref:`the Site object <listing_site>`, and at index 1
+(lines 27-34) is a *13C* site. The value of the *couplings* key is a list of **Coupling** objects.
+In this example, we define a single coupling object (lines 37-60) from the
+:ref:`coupling object <listing_coupling>`. The value of the *site_index* key within the
+coupling object, line 34, corresponds to the site index from the *sites* list.
 
 
 Table of Class Attributes
