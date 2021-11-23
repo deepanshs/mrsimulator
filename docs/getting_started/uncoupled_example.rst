@@ -1,23 +1,13 @@
+.. _uncoupled_example:
 
+=============================
+Uncoupled Spin System Example
+=============================
 
-.. _using_objects:
-
-====================================
-Uncoupled Spin System: Using objects
-====================================
-
-In the previous section on getting started, we show an examples where we parse the
-python dictionaries to create instances of the :ref:`spin_sys_api` and
-:ref:`method_api` objects. In this section, we'll illustrate how we can
-achieve the same result using the core ``mrsimulator`` objects.
-
-.. note::
-    Unlike python dictionary objects from previous examples, when using ``mrsimulator``
-    objects, the attribute value is given as a number rather than a string with a
-    number and a unit. We assume default units for the class attributes. To learn more
-    about the default units, please refer to the documentation of the respective class.
-    For the convenience of our users, we have added an attribute, ``property_units``,
-    to every class that holds the default unit of the respective class attributes.
+In this first example, we show how to adjust some of the properties of the :ref:`spin_sys_api`
+and :ref:`method_api` objects representing. Attribute values are passed to a class as a
+single number and default units are assumed. For the convenience, we have added an attribute,
+``property_units``, to every class that holds the default unit of the respective class attributes.
 
 Let's start by importing the classes.
 
@@ -209,8 +199,8 @@ section.
     :include-source:
 
     >>> sim = Simulator()
-    >>> sim.spin_systems += [system_1, system_2, system_3, system_4] # add the spin systems
-    >>> sim.methods += [method_1] # add the method
+    >>> sim.spin_systems = [system_1, system_2, system_3, system_4] # add the spin systems
+    >>> sim.methods = [method_1] # add the method
 
 
 
