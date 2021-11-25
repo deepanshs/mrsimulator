@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
 from mrsimulator.methods import ThreeQ_VAS
-from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator import signal_processing as sp
 
 # sphinx_gallery_thumbnail_number = 2
@@ -31,14 +30,14 @@ method = ThreeQ_VAS(
     channels=["17O"],
     magnetic_flux_density=11.74,  # in T
     spectral_dimensions=[
-        SpectralDimension(
+        dict(
             count=256,
             spectral_width=5e3,  # in Hz
             reference_offset=-2.5e3,  # in Hz
             label="Isotropic dimension",
         ),
         # The last spectral dimension block is the direct-dimension
-        SpectralDimension(
+        dict(
             count=256,
             spectral_width=2e4,  # in Hz
             reference_offset=0,  # in Hz

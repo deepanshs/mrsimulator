@@ -18,7 +18,6 @@ from scipy.stats import multivariate_normal
 
 from mrsimulator import Simulator
 from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.utils.collection import single_site_system_generator
 
 # sphinx_gallery_thumbnail_number = 2
@@ -103,7 +102,7 @@ spin_systems = single_site_system_generator(
 method = BlochDecaySpectrum(
     channels=["29Si"],
     spectral_dimensions=[
-        SpectralDimension(spectral_width=25000, reference_offset=-7000)  # values in Hz
+        dict(spectral_width=25000, reference_offset=-7000)  # values in Hz
     ],
 )
 
@@ -117,7 +116,7 @@ method = BlochDecaySpectrum(
 # add the respective objects.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
-sim.methods += [method]  # add the method
+sim.methods = [method]  # add the method
 
 # %%
 # Static spectrum
@@ -149,7 +148,7 @@ sim.methods[0] = BlochDecaySpectrum(
     rotor_frequency=5000,  # in Hz
     rotor_angle=1.57079,  # in rads, equivalent to 90 deg.
     spectral_dimensions=[
-        SpectralDimension(spectral_width=25000, reference_offset=-7000)  # values in Hz
+        dict(spectral_width=25000, reference_offset=-7000)  # values in Hz
     ],
 )
 sim.config.number_of_sidebands = 8  # eight sidebands are sufficient for this example
@@ -173,7 +172,7 @@ sim.methods[0] = BlochDecaySpectrum(
     rotor_frequency=1000,  # in Hz
     rotor_angle=54.735 * np.pi / 180.0,  # in rads
     spectral_dimensions=[
-        SpectralDimension(spectral_width=25000, reference_offset=-7000)  # values in Hz
+        dict(spectral_width=25000, reference_offset=-7000)  # values in Hz
     ],
 )
 sim.config.number_of_sidebands = 16  # sixteen sidebands are sufficient for this example

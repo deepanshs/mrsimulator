@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
-from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 1
@@ -72,7 +71,7 @@ methods = [
         channels=["13C"],
         magnetic_flux_density=9.4,  # in T
         rotor_frequency=vr,  # in Hz
-        spectral_dimensions=[SpectralDimension(count=2048, spectral_width=8.0e4)],
+        spectral_dimensions=[dict(count=2048, spectral_width=8.0e4)],
     )
     for vr in spin_rates
 ]

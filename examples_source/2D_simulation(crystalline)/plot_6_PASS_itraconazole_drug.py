@@ -15,7 +15,6 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
 from mrsimulator.methods import SSB2D
-from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator import signal_processing as sp
 
 # sphinx_gallery_thumbnail_number = 2
@@ -39,12 +38,12 @@ PASS = SSB2D(
     magnetic_flux_density=11.74,
     rotor_frequency=2000,
     spectral_dimensions=[
-        SpectralDimension(
+        dict(
             count=20 * 4,
             spectral_width=2000 * 20,  # value in Hz
             label="Anisotropic dimension",
         ),
-        SpectralDimension(
+        dict(
             count=1024,
             spectral_width=3e4,  # value in Hz
             reference_offset=1.1e4,  # value in Hz

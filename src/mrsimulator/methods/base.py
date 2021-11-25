@@ -145,6 +145,9 @@ class BaseNamedMethod(BaseMethod):
     def check_method_compatibility(cls, py_dict):
         """Check for events attribute inside the spectral_dimensions. Events are not
         allowed for NamedMethods."""
+        if not isinstance(py_dict["spectral_dimensions"][0], dict):
+            return cls.check_when_arg_is_object(py_dict)
+
         default_method = cls.update(**py_dict)
         default_spectral_dimensions = default_method["spectral_dimensions"]
         for i, item in enumerate(py_dict["spectral_dimensions"]):
@@ -163,6 +166,41 @@ class BaseNamedMethod(BaseMethod):
         for k, v in default_method.items():
             if k not in py_dict:
                 py_dict[k] = v
+
+    @classmethod
+    def check_when_arg_is_object(cls, obj_dict):
+        default_method = cls.update(**obj_dict)
+
+        py_sp = default_method["spectral_dimensions"]
+        obj_sp = obj_dict["spectral_dimensions"]
+
+        for py, obj in zip(py_sp, obj_sp):
+
+            if len(py["events"]) != len(obj.events):
+                raise ImmutableEventError(cls.__name__)
+
+            cls.check_event_objects_for_compatibility(py, obj, obj_dict)
+
+    @classmethod
+    def check_event_objects_for_compatibility(cls, py, obj, obj_dict):
+        required = ["magnetic_flux_density", "rotor_frequency", "rotor_angle"]
+        py_obj = SpectralDimension(**py)
+        for i, (ev_py, ev_obj) in enumerate(zip(py_obj.events, obj.events)):
+
+            default_obj = SpectralDimension(events=[{}]).events[0]
+            obj_keys = ev_obj.dict(exclude={"property_units"}).keys()
+            py_keys = py["events"][i].keys()
+            for k in obj_keys:
+                a = False
+                if k in py_keys:
+                    a1, a2, a3 = [getattr(_, k) for _ in [ev_obj, default_obj, ev_py]]
+                    a = a1 != a2 and a1 != a3 and a2 is not None
+                    setattr(ev_obj, k, a3)
+                elif k in required and k in obj_dict:
+                    a = getattr(ev_obj, k) != obj_dict[k]
+                    setattr(ev_obj, k, obj_dict[k])
+                if a:
+                    raise ImmutableEventError(cls.__name__)
 
 
 class BaseNamedMethod1D(BaseNamedMethod):

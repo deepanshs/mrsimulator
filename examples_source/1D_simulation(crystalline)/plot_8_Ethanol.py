@@ -19,7 +19,6 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator import signal_processing as sp
 
 # sphinx_gallery_thumbnail_number = 1
@@ -140,7 +139,7 @@ method_H = BlochDecaySpectrum(
     channels=["1H"],
     magnetic_flux_density=9.4,  # T
     spectral_dimensions=[
-        SpectralDimension(
+        dict(
             count=16000,
             spectral_width=1.5e3,
             reference_offset=950,
@@ -153,7 +152,7 @@ method_C = BlochDecaySpectrum(
     channels=["13C"],
     magnetic_flux_density=9.4,  # T
     spectral_dimensions=[
-        SpectralDimension(
+        dict(
             count=32000,
             spectral_width=8e3,
             reference_offset=4e3,

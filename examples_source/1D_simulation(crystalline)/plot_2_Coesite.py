@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator import signal_processing as sp
 from mrsimulator.methods import BlochDecayCTSpectrum
-from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 2
@@ -69,7 +68,7 @@ method = BlochDecayCTSpectrum(
     channels=["17O"],
     rotor_frequency=14000,  # in Hz
     spectral_dimensions=[
-        SpectralDimension(
+        dict(
             count=2048,
             spectral_width=50000,  # in Hz
             label=r"$^{17}$O resonances",

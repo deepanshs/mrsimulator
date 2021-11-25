@@ -89,8 +89,8 @@ plt.show()
 # %%
 # Create the Simulator object and add the method and the spin system object.
 sim = Simulator()
-sim.spin_systems += [spin_system]  # add the spin system
-sim.methods += [method]  # add the method
+sim.spin_systems = [spin_system]  # add the spin system
+sim.methods = [method]  # add the method
 
 # %%
 # Simulate the spectrum.
@@ -118,19 +118,19 @@ method2 = Method1D(
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=1e9,  # in Hz
     spectral_dimensions=[
-        {
-            "count": 1024,
-            "spectral_width": 1e4,  # in Hz
-            "reference_offset": 1e4,  # in Hz
-            "events": [
-                {
-                    "transition_query": [
+        SpectralDimension(
+            count=1024,
+            spectral_width=1e4,  # in Hz
+            reference_offset=1e4,  # in Hz
+            events=[
+                SpectralEvent(
+                    transition_query=[
                         {"P": [-1], "D": [2]},  # <-- select inter satellite transitions
                         {"P": [-1], "D": [4]},  # <-- select outer satellite transitions
                     ]
-                }
+                )
             ],
-        }
+        )
     ],
 )
 

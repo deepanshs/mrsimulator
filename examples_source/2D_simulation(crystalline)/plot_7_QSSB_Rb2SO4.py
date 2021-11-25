@@ -15,7 +15,6 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import SSB2D
-from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 2
@@ -47,12 +46,12 @@ qmat = SSB2D(
     magnetic_flux_density=9.4,
     rotor_frequency=2604,
     spectral_dimensions=[
-        SpectralDimension(
+        dict(
             count=32 * 4,
             spectral_width=2604 * 32,  # in Hz
             label="Anisotropic dimension",
         ),
-        SpectralDimension(
+        dict(
             count=512,
             spectral_width=50000,  # in Hz
             label="Fast MAS dimension",

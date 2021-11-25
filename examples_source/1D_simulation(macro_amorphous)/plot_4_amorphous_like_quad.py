@@ -13,7 +13,6 @@ from scipy.stats import multivariate_normal
 
 from mrsimulator import Simulator
 from mrsimulator.methods import BlochDecayCTSpectrum
-from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.utils.collection import single_site_system_generator
 
 # %%
@@ -84,7 +83,7 @@ spin_systems = single_site_system_generator(
 # Observe the static :math:`^{27}\text{Al}` NMR spectrum simulation. First,
 # create a central transition selective Bloch decay spectrum method.
 static_method = BlochDecayCTSpectrum(
-    channels=["27Al"], spectral_dimensions=[SpectralDimension(spectral_width=80000)]
+    channels=["27Al"], spectral_dimensions=[dict(spectral_width=80000)]
 )
 
 # %%
@@ -112,7 +111,7 @@ MAS_method = BlochDecayCTSpectrum(
     rotor_frequency=25000,  # in Hz
     rotor_angle=54.735 * np.pi / 180.0,  # in rads
     spectral_dimensions=[
-        SpectralDimension(spectral_width=30000, reference_offset=-4000)  # values in Hz
+        dict(spectral_width=30000, reference_offset=-4000)  # values in Hz
     ],
 )
 sim.methods[0] = MAS_method
