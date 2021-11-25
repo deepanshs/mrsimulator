@@ -157,7 +157,9 @@ class BaseNamedMethod(BaseMethod):
         default_method = cls.update(**py_dict)
         default_spectral_dimensions = default_method["spectral_dimensions"]
         for i, item in enumerate(py_dict["spectral_dimensions"]):
-            if item["events"] == [{}]:
+
+            # If no methods in SpectralDimension, set to default events
+            if item["events"] == [{}] or item["events"] == []:
                 item["events"] = default_spectral_dimensions[i]["events"]
 
             elif item["events"] != default_spectral_dimensions[i]["events"]:

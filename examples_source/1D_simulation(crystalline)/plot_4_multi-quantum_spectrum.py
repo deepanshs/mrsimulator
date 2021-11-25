@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method1D
+from mrsimulator.method.event import SpectralEvent
+from mrsimulator.method.spectral_dimension import SpectralDimension
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -21,7 +24,7 @@ site = Site(
     name="27Al",
     isotope="27Al",
     isotropic_chemical_shift=35.7,  # in ppm
-    quadrupolar={"Cq": 2.959e6, "eta": 0.98},  # Cq is in Hz
+    quadrupolar=SymmetricTensor(Cq=2.959e6, eta=0.98),  # Cq is in Hz
 )
 spin_system = SpinSystem(sites=[site])
 
@@ -43,16 +46,17 @@ method = Method1D(
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=1e9,  # in Hz
     spectral_dimensions=[
-        {
-            "count": 1024,
-            "spectral_width": 5e3,  # in Hz
-            "reference_offset": 2.5e4,  # in Hz
-            "events": [
-                {  # symmetric triple quantum transitions
-                    "transition_query": [{"P": [-3], "D": [0]}]
-                }
+        SpectralDimension(
+            count=1024,
+            spectral_width=5e3,  # in Hz
+            reference_offset=2.5e4,  # in Hz
+            events=[
+                SpectralEvent(
+                    # symmetric triple quantum transitions
+                    transition_query=[{"ch1": {"P": [-3], "D": [0]}}]
+                ),
             ],
-        }
+        )
     ],
 )
 
@@ -64,8 +68,8 @@ plt.show()
 # %%
 # Create the Simulator object and add the method and the spin system object.
 sim = Simulator()
-sim.spin_systems += [spin_system]  # add the spin system
-sim.methods += [method]  # add the method
+sim.spin_systems = [spin_system]  # add the spin system
+sim.methods = [method]  # add the method
 sim.run()
 
 # The plot of the simulation before signal processing.
