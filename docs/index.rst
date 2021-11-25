@@ -94,13 +94,14 @@ amorphous materials.
           <div>
             <a href="examples/index.html">Gallery
               <p></p>
-              Simulation Examples
+              Simulation
             </a>
           </div>
           <div>
             <a href="fitting/index.html">Gallery
               <p></p>
-              <a href="fitting/index.html">Fitting Examples
+              <a href="fitting/index.html">
+              Fitting
             </a>
           </div>
         </div>
