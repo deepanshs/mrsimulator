@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method1D
 from mrsimulator.method.event import SpectralEvent
+from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 2
@@ -66,14 +67,14 @@ method = Method1D(
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=1e9,  # in Hz
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=1024,
             spectral_width=1e4,  # in Hz
             reference_offset=1e4,  # in Hz
             events=[
                 SpectralEvent(
                     # Selecting the inner satellite transitions
-                    transition_query=[dict(P=[-1], D=[2])],
+                    transition_query=[{"ch1": {"P": [-1], "D": [2]}}],
                 )
             ],
         )

@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator
 from mrsimulator.methods import BlochDecaySpectrum, BlochDecayCTSpectrum
 from mrsimulator.models import CzjzekDistribution
+from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.utils.collection import single_site_system_generator
 
 # sphinx_gallery_thumbnail_number = 4
@@ -118,7 +119,7 @@ sim.methods = [
     BlochDecayCTSpectrum(
         channels=["71Ga"],
         magnetic_flux_density=4.8,  # in T
-        spectral_dimensions=[dict(count=2048, spectral_width=1.2e6)],
+        spectral_dimensions=[SpectralDimension(count=2048, spectral_width=1.2e6)],
     )
 ]  # add the method
 sim.run()

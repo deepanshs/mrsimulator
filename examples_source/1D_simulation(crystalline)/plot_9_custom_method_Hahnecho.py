@@ -88,7 +88,7 @@ hahn_echo = Method1D(
             spectral_width=2e4,  # in Hz
             events=[
                 SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [1]}}]),
-                MixingEvent(mixing_query=dict(ch1={"tip_angle": np.pi, "phase": 0})),
+                MixingEvent(mixing_query={"ch1": {"tip_angle": np.pi, "phase": 0}}),
                 SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
             ],
         )

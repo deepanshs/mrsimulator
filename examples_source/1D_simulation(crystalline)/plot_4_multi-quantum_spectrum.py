@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method1D
 from mrsimulator.method.event import SpectralEvent
+from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 2
@@ -45,14 +46,14 @@ method = Method1D(
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=1e9,  # in Hz
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=1024,
             spectral_width=5e3,  # in Hz
             reference_offset=2.5e4,  # in Hz
             events=[
                 SpectralEvent(
                     # symmetric triple quantum transitions
-                    transition_query=[dict(P=[-3], D=[0])]
+                    transition_query=[{"ch1": {"P": [-3], "D": [0]}}]
                 ),
             ],
         )

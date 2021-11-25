@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import ST1_VAS
 from mrsimulator import signal_processing as sp
+from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
@@ -55,13 +56,13 @@ for angle in angles:
             magnetic_flux_density=7,  # in T
             rotor_angle=angle * 3.14159 / 180,  # in rad (magic angle)
             spectral_dimensions=[
-                dict(
+                SpectralDimension(
                     count=256,
                     spectral_width=3e3,  # in Hz
                     reference_offset=-2.4e3,  # in Hz
                     label="Isotropic dimension",
                 ),
-                dict(
+                SpectralDimension(
                     count=512,
                     spectral_width=5e3,  # in Hz
                     reference_offset=-4e3,  # in Hz

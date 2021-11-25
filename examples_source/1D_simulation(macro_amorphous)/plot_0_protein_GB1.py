@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
 from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator import signal_processing as sp
 
 # sphinx_gallery_thumbnail_number = 1
@@ -40,7 +41,7 @@ method_13C = BlochDecaySpectrum(
     magnetic_flux_density=11.74,  # in T
     rotor_frequency=3000,  # in Hz
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=8192,
             spectral_width=5e4,  # in Hz
             reference_offset=2e4,  # in Hz
@@ -57,7 +58,7 @@ method_15N = BlochDecaySpectrum(
     magnetic_flux_density=11.74,  # in T
     rotor_frequency=3000,  # in Hz
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=8192,
             spectral_width=4e4,  # in Hz
             reference_offset=7e3,  # in Hz

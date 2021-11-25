@@ -46,12 +46,12 @@ das = Method2D(
                 SpectralEvent(
                     fraction=0.5,
                     rotor_angle=37.38 * 3.14159 / 180,
-                    transition_query=[{"P": [-1], "D": [0]}],
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
                 SpectralEvent(
                     fraction=0.5,
                     rotor_angle=79.19 * 3.14159 / 180,
-                    transition_query=[{"P": [-1], "D": [0]}],
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
             ],
         ),
@@ -64,7 +64,7 @@ das = Method2D(
             events=[
                 SpectralEvent(
                     rotor_angle=54.735 * 3.14159 / 180,
-                    transition_query=[{"P": [-1], "D": [0]}],
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
         ),

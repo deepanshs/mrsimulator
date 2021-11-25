@@ -21,6 +21,7 @@ from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.method.event import SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
@@ -87,24 +88,24 @@ shifting_d = Method2D(
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             **spectral_dims[0],
             label="Quadrupolar frequency",
             events=[
                 SpectralEvent(
                     rotor_frequency=0,
-                    transition_query=[{"P": [-1]}],
+                    transition_query=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Quad1_2"],
                 )
             ],
         ),
-        dict(
+        SpectralDimension(
             **spectral_dims[1],
             label="Paramagnetic shift",
             events=[
                 SpectralEvent(
                     rotor_frequency=0,
-                    transition_query=[{"P": [-1]}],
+                    transition_query=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Shielding1_0", "Shielding1_2"],
                 )
             ],
