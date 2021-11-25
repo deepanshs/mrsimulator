@@ -92,6 +92,7 @@ class SpectralDimension(Parseable):
     }
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
 
     @classmethod

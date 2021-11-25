@@ -157,6 +157,7 @@ class SpectralEvent(BaseEvent):
     fraction: float = 1.0
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
 
 
@@ -210,6 +211,7 @@ class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
     test_vars: ClassVar[Dict] = {"duration": 0.0}
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
 
 
@@ -228,6 +230,7 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
     test_vars: ClassVar[Dict] = {"mixing_query": {}}
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
 
     @classmethod

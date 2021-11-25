@@ -42,6 +42,9 @@ class SSB2D(BaseNamedMethod2D):
     description: str = "Simulate a 2D sideband separation method."
     affine_matrix: List = [1, -1, 0, 1]
 
+    class Config:
+        extra = "forbid"
+
     def __init__(self, **kwargs):
         error = f"`rotor_frequency` cannot be zero for {__class__.__name__} method."
         if "rotor_frequency" not in kwargs:

@@ -74,7 +74,7 @@ def add_site(doctest_namespace):
         isotope="27Al",
         isotropic_chemical_shift=120,
         shielding_symmetric=SymmetricTensor(zeta=2.1, eta=0.1),
-        quadrupole=SymmetricTensor(Cq=5.1e6, eta=0.5),
+        quadrupolar=SymmetricTensor(Cq=5.1e6, eta=0.5),
     )
     doctest_namespace["site3"] = site3
 
