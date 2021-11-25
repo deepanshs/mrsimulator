@@ -5,7 +5,6 @@ from typing import Union
 
 import csdmpy as cp
 from mrsimulator.utils.parseable import Parseable
-from pydantic import Extra
 
 from . import affine as af  # noqa:F401
 from . import apodization as ap  # noqa:F401
@@ -37,9 +36,9 @@ class SignalProcessor(Parseable):
     operations: List[Operation] = []
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
         arbitrary_types_allowed = True
-        extra = Extra.forbid
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
@@ -106,6 +105,9 @@ class Scale(Operation):
 
     factor: float = 1
 
+    class Config:
+        extra = "forbid"
+
     def operate(self, data):
         r"""Applies the operation.
         Args:
@@ -135,6 +137,9 @@ class Linear(Operation):
     amplitude: float = 1
     offset: float = 0
 
+    class Config:
+        extra = "forbid"
+
     def operate(self, data):
         """Applies the operation.
 
@@ -163,6 +168,9 @@ class IFFT(Operation):
 
     dim_index: Union[int, list, tuple] = 0
 
+    class Config:
+        extra = "forbid"
+
     def operate(self, data):
         r"""Applies the operation.
         Args:
@@ -188,6 +196,9 @@ class FFT(IFFT):
 
     >>> operation3 = sp.FFT(dim_index=0)
     """
+
+    class Config:
+        extra = "forbid"
 
 
 class complex_conjugate(Operation):
