@@ -62,7 +62,7 @@ class MQ_VAS(BaseNamedMethod2D):
         events_1 = [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}]
 
         # method affine matrix shear factor
-        k = k = shear_factor_MQ_MAS[nQ][spin]
+        k = shear_factor_MQ_MAS[nQ][spin]
 
         description = f"Simulate a {nQ}Q variable-angle spinning spectrum."
         return {
@@ -107,6 +107,9 @@ class ThreeQ_VAS(MQ_VAS):
         [|-1.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
     """
 
+    class Config:
+        extra = "forbid"
+
 
 class FiveQ_VAS(MQ_VAS):
     """Simulate a sheared and scaled 5Q variable-angle spinning spectrum.
@@ -142,6 +145,9 @@ class FiveQ_VAS(MQ_VAS):
         [|-2.5⟩⟨2.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
     """
 
+    class Config:
+        extra = "forbid"
+
 
 class SevenQ_VAS(MQ_VAS):
     """Simulate a sheared and scaled 7Q variable-angle spinning spectrum.
@@ -176,3 +182,6 @@ class SevenQ_VAS(MQ_VAS):
         >>> method.get_transition_pathways(sys)
         [|-3.5⟩⟨3.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
     """
+
+    class Config:
+        extra = "forbid"

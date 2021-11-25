@@ -26,7 +26,7 @@ def pre_setup(isotope, shift, reference_offset):
     )
     sim = Simulator()
     sim.spin_systems.append(spin_system)
-    sim.methods += [method]
+    sim.methods = [method]
     sim.run()
     x, y = sim.methods[0].simulation.to_list()
     return x[np.argmax(y)], abs(x[1] - x[0])

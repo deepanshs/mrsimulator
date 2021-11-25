@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import ST1_VAS
 from mrsimulator import signal_processing as sp
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -22,17 +23,17 @@ from mrsimulator import signal_processing as sp
 Rb87_1 = Site(
     isotope="87Rb",
     isotropic_chemical_shift=-27.4,  # in ppm
-    quadrupolar={"Cq": 1.68e6, "eta": 0.2},  # Cq is in Hz
+    quadrupolar=SymmetricTensor(Cq=1.68e6, eta=0.2),  # Cq is in Hz
 )
 Rb87_2 = Site(
     isotope="87Rb",
     isotropic_chemical_shift=-28.5,  # in ppm
-    quadrupolar={"Cq": 1.94e6, "eta": 1.0},  # Cq is in Hz
+    quadrupolar=SymmetricTensor(Cq=1.94e6, eta=1.0),  # Cq is in Hz
 )
 Rb87_3 = Site(
     isotope="87Rb",
     isotropic_chemical_shift=-31.3,  # in ppm
-    quadrupolar={"Cq": 1.72e6, "eta": 0.5},  # Cq is in Hz
+    quadrupolar=SymmetricTensor(Cq=1.72e6, eta=0.5),  # Cq is in Hz
 )
 
 sites = [Rb87_1, Rb87_2, Rb87_3]  # all sites
@@ -54,18 +55,18 @@ for angle in angles:
             magnetic_flux_density=7,  # in T
             rotor_angle=angle * 3.14159 / 180,  # in rad (magic angle)
             spectral_dimensions=[
-                {
-                    "count": 256,
-                    "spectral_width": 3e3,  # in Hz
-                    "reference_offset": -2.4e3,  # in Hz
-                    "label": "Isotropic dimension",
-                },
-                {
-                    "count": 512,
-                    "spectral_width": 5e3,  # in Hz
-                    "reference_offset": -4e3,  # in Hz
-                    "label": "MAS dimension",
-                },
+                dict(
+                    count=256,
+                    spectral_width=3e3,  # in Hz
+                    reference_offset=-2.4e3,  # in Hz
+                    label="Isotropic dimension",
+                ),
+                dict(
+                    count=512,
+                    spectral_width=5e3,  # in Hz
+                    reference_offset=-4e3,  # in Hz
+                    label="MAS dimension",
+                ),
             ],
         )
     )

@@ -21,6 +21,7 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 1
 
@@ -29,14 +30,14 @@ from mrsimulator.methods import BlochDecayCTSpectrum
 site = Site(
     isotope="17O",
     isotropic_chemical_shift=320,  # in ppm
-    shielding_symmetric={"zeta": 376.667, "eta": 0.345},
-    quadrupolar={
-        "Cq": 8.97e6,  # in Hz
-        "eta": 0.15,
-        "alpha": 5 * np.pi / 180,
-        "beta": np.pi / 2,
-        "gamma": 70 * np.pi / 180,
-    },
+    shielding_symmetric=SymmetricTensor(zeta=376.667, eta=0.345),
+    quadrupolar=SymmetricTensor(
+        Cq=8.97e6,  # in Hz
+        eta=0.15,
+        alpha=5 * np.pi / 180,
+        beta=np.pi / 2,
+        gamma=70 * np.pi / 180,
+    ),
 )
 spin_system = SpinSystem(sites=[site])
 
@@ -47,12 +48,12 @@ method = BlochDecayCTSpectrum(
     magnetic_flux_density=11.74,  # in T
     rotor_frequency=0,  # in Hz
     spectral_dimensions=[
-        {
-            "count": 1024,
-            "spectral_width": 1e5,  # in Hz
-            "reference_offset": 22500,  # in Hz
-            "label": r"$^{17}$O resonances",
-        }
+        dict(
+            count=1024,
+            spectral_width=1e5,  # in Hz
+            reference_offset=22500,  # in Hz
+            label=r"$^{17}$O resonances",
+        )
     ],
 )
 
