@@ -165,8 +165,6 @@ class BaseNamedMethod(BaseMethod):
             elif item["events"] != default_spectral_dimensions[i]["events"]:
                 raise ImmutableEventError(cls.__name__)
 
-            py_dict["spectral_dimensions"][i] = item
-
         for k, v in default_method.items():
             if k not in py_dict:
                 py_dict[k] = v
