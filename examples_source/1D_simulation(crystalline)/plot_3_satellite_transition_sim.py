@@ -125,8 +125,8 @@ method2 = Method1D(
             events=[
                 SpectralEvent(
                     transition_query=[
-                        {"P": [-1], "D": [2]},  # <-- select inter satellite transitions
-                        {"P": [-1], "D": [4]},  # <-- select outer satellite transitions
+                        {"ch1": {"P": [-1], "D": [2]}},  # <-- select inter satellite transitions
+                        {"ch1": {"P": [-1], "D": [4]}},  # <-- select outer satellite transitions
                     ]
                 )
             ],
