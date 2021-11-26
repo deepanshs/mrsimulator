@@ -18,6 +18,7 @@ from mrsimulator.methods import SSB2D
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -59,12 +60,12 @@ plt.show()
 Rb_1 = Site(
     isotope="87Rb",
     isotropic_chemical_shift=16,  # in ppm
-    quadrupolar={"Cq": 5.5e6, "eta": 0.1},  # Cq in Hz
+    quadrupolar=SymmetricTensor(Cq=5.5e6, eta=0.1),  # Cq in Hz
 )
 Rb_2 = Site(
     isotope="87Rb",
     isotropic_chemical_shift=40,  # in ppm
-    quadrupolar={"Cq": 2.1e6, "eta": 0.95},  # Cq in Hz
+    quadrupolar=SymmetricTensor(Cq=2.1e6, eta=0.95),  # Cq in Hz
 )
 
 spin_systems = [SpinSystem(sites=[s]) for s in [Rb_1, Rb_2]]
@@ -103,9 +104,9 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         # Lorentzian convolution along the isotropic dimensions.
-        sp.FFT(axis=0),
+        sp.FFT(dim_index=0),
         sp.apodization.Gaussian(FWHM="50 Hz"),
-        sp.IFFT(axis=0),
+        sp.IFFT(dim_index=0),
         sp.Scale(factor=1e4),
     ]
 )

@@ -104,18 +104,18 @@ method = ThreeQ_VAS(
     magnetic_flux_density=9.4,  # in T
     rotor_angle=54.735 * np.pi / 180,
     spectral_dimensions=[
-        {
-            "count": 96,
-            "spectral_width": 7e3,  # in Hz
-            "reference_offset": -7e3,  # in Hz
-            "label": "Isotropic dimension",
-        },
-        {
-            "count": 256,
-            "spectral_width": 1e4,  # in Hz
-            "reference_offset": -4e3,  # in Hz
-            "label": "MAS dimension",
-        },
+        dict(
+            count=96,
+            spectral_width=7e3,  # in Hz
+            reference_offset=-7e3,  # in Hz
+            label="Isotropic dimension",
+        ),
+        dict(
+            count=256,
+            spectral_width=1e4,  # in Hz
+            reference_offset=-4e3,  # in Hz
+            label="MAS dimension",
+        ),
     ],
 )
 

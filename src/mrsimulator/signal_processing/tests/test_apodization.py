@@ -19,7 +19,7 @@ spin_system_object = SpinSystem.parse_dict_with_units(the_spin_system)
 sim.spin_systems += [spin_system_object, spin_system_object, spin_system_object]
 sim.config.decompose_spectrum = "spin_system"
 
-sim.methods += [
+sim.methods = [
     BlochDecaySpectrum(
         channels=["1H"],
         magnetic_flux_density=9.4,

@@ -75,17 +75,62 @@ Let's start with a spin-1/2 isotope, :math:`^{29}\text{Si}`, and create a site.
     :context: close-figs
     :include-source:
 
-    >>> the_site = {
-    ...     "isotope": "29Si",
-    ...     "isotropic_chemical_shift": "-101.1 ppm",
-    ...     "shielding_symmetric": {"zeta": "70.5 ppm", "eta": 0.5},
-    ... }
+    >>> from mrsimulator import Site
+    >>> from mrsimulator.spin_system.tensors import SymmetricTensor
+    >>> the_site = Site(
+    ...     isotope="29Si",
+    ...     isotropic_chemical_shift=-101.1,  # in ppm
+    ...     shielding_symmetric=SymmetricTensor(
+    ...         zeta=70.5,  # in ppm
+    ...         eta=0.5,
+    ...     )
+    ... )
 
-In the above code, ``the_site`` is a simplified python dictionary representation of a
-:ref:`site_api` object. This site describes a :math:`^{29}\text{Si}` isotope with a
+This :ref:`site_api` describes a :math:`^{29}\text{Si}` isotope with a
 -101.1 ppm isotropic chemical shift along with the symmetric part of the nuclear
 shielding anisotropy tensor, described here with the parameters *zeta* and *eta* using
 the Haeberlen convention.
+
+.. note::
+
+    We strongly recommend directly instantiating objects in your code since it improves
+    readability. However, all objects in ``mrsimulator`` can be represented by and
+    constructed from a dictionary.
+
+    Looking at the :ref:`site_api` object we can call the :py:meth:`~mrsimulator.Site.json`
+    method to get the JSON-style dictionary. Note that values are serialized with units.
+
+    .. plot::
+        :format: doctest
+        :context: close-figs
+        :include-source:
+
+        >>> import pprint
+        >>> py_dict = the_site.json()
+        >>> pprint.pprint(py_dict)
+        {'isotope': '29Si',
+         'isotropic_chemical_shift': '-101.1 ppm',
+         'shielding_symmetric': {'eta': 0.5, 'zeta': '70.5 ppm'}}
+
+    Likewise a site object can be constructed from a dictionary by calling the
+    :py:meth:`mrsimulator.Site.parse_dict_with_units` method.
+
+    .. plot::
+        :format: doctest
+        :context: close-figs
+        :include-source:
+
+        >>> same_site = Site.parse_dict_with_units(py_dict)
+        >>> the_site == same_site
+        True
+
+    We provide the ``parse_dict_with_units`` method
+    because it allows the user to create an object where each attribute value is a
+    physical quantity represented by a string with a value and a unit.
+    Physical quantities remove the ambiguity in the units, which is otherwise
+    a source of general confusion within many scientific applications. With this said,
+    parsing physical quantities will add significant overhead when used in an iterative
+    algorithm, such as the least-squares minimization.
 
 That's it! Now that we have a site, we can create a single-site spin system following,
 
@@ -94,42 +139,35 @@ That's it! Now that we have a site, we can create a single-site spin system foll
     :context: close-figs
     :include-source:
 
-    >>> the_spin_system = {
-    ...     "name": "site A",
-    ...     "description": "A test 29Si site",
-    ...     "sites": [the_site],  # from the above code
-    ...     "abundance": "80%",
-    ... }
+    >>> from mrsimulator import SpinSystem
+    >>> system_object_1 = SpinSystem(
+    ...     name="site A",
+    ...     description="A test 29Si site",
+    ...     sites=[the_site],  # from the above code
+    ...     abundance=80,  # percentage
+    ... )
 
 As mentioned before, a spin system is a collection of sites and couplings. In the above
 example, we have created a spin system with a single site and no coupling. Here, the
-attribute *sites* hold a list of sites. The attributes *name*, *description*, and
-*abundance* are optional.
+attribute *sites* hold a list of sites. The *abundance* attribute is an optional percentage
+describing the abundance of the spin system and defaults to 100%. The attributes *name* and
+*description* are optional and have no effect on the resulting spectrum.
 
 ..  .. seealso:: :ref:`dictionary_objects`, :ref:`spin_system` and :ref:`site`.
 
-Until now, we have only created a python dictionary representation of a spin system. To
-run the simulation, you need to create an instance of the
-:py:class:`~mrsimulator.SpinSystem` class. Import the SpinSystem class and use it's
-:py:meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method to parse the python
-dictionary and create an instance of the spin system class, as follows,
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> from mrsimulator import SpinSystem
-    >>> system_object_1 = SpinSystem.parse_dict_with_units(the_spin_system)
-
-.. note:: We provide the :py:meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method
-    because it allows the user to create spin systems, where the attribute value is a
-    physical quantity, represented as a string with a value and a unit.
-    Physical quantities remove the ambiguity in the units, which is otherwise
-    a source of general confusion within many scientific applications. With this said,
-    parsing physical quantities can add significant overhead when used in an iterative
-    algorithm, such as the least-squares minimization. In such cases, we recommend
-    defining objects directly. See the :ref:`using_objects` for details.
+..  Until now, we have only created a python dictionary representation of a spin system. To
+..  run the simulation, you need to create an instance of the
+..  :py:class:`~mrsimulator.SpinSystem` class. Import the SpinSystem class and use it's
+..  :py:meth:`~mrsimulator.SpinSystem.parse_dict_with_units` method to parse the python
+..  dictionary and create an instance of the spin system class, as follows,
+..
+..  .. plot::
+..      :format: doctest
+..      :context: close-figs
+..      :include-source:
+..
+..      >>> from mrsimulator import SpinSystem
+..      >>> system_object_1 = SpinSystem.parse_dict_with_units(the_spin_system)
 
 We have successfully created a spin system object. To create more spin system objects,
 repeat the above set of instructions. In this example, we stick with a single
@@ -141,7 +179,7 @@ instance of the Simulator class, as follows
     :context: close-figs
     :include-source:
 
-    >>> sim.spin_systems += [system_object_1] # add all spin system objects.
+    >>> sim.spin_systems = [system_object_1]
 
 
 Setting up the Method objects
@@ -178,25 +216,28 @@ In ``mrsimulator``, all methods are described through five keywords -
       where :math:`T=N` when :math:`N` is even else :math:`T=N-1`.
 
 Let's start with the simplest method, the :func:`~mrsimulator.methods.BlochDecaySpectrum`.
-The following is a python dictionary representation of the BlochDecaySpectrum method.
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> method_dict = {
-    ...     "channels": ["29Si"],
-    ...     "magnetic_flux_density": "9.4 T",
-    ...     "rotor_angle": "54.735 deg",
-    ...     "rotor_frequency": "0 Hz",
-    ...     "spectral_dimensions": [{
-    ...         "count": 2048,
-    ...         "spectral_width": "25 kHz",
-    ...         "reference_offset": "-8 kHz",
-    ...         "label": r"$^{29}$Si resonances",
-    ...     }]
-    ... }
+    >>> from mrsimulator.methods import BlochDecaySpectrum
+
+    >>> the_method = BlochDecaySpectrum(
+    ...     channels=["29Si"],
+    ...     magnetic_flux_density=9.4,  # in T
+    ...     rotor_angle=0.9553166,  # in rad (magic angle)
+    ...     rotor_frequency=0,
+    ...     spectral_dimensions=[
+    ...         dict(
+    ...             count=2048,
+    ...             spectral_width=25e3,    # in Hz
+    ...             reference_offset=-8e3,  # in Hz
+    ...             label=r"$^{29}$Si resonances",
+    ...         )
+    ...     ]
+    ... )
 
 Here, the key *channels* is a list of isotope symbols over which the method is applied.
 A Bloch Decay method only has a single channel. In this example, it is given a value
@@ -209,31 +250,31 @@ only has one spectral dimension. In this example, the spectral dimension defines
 frequency dimension with 2048 points, spanning 25 kHz with a reference offset of
 -8 kHz.
 
-Like before, you may parse the above ``method_dict`` using the
-:py:meth:`~mrsimulator.methods.BlochDecaySpectrum.parse_dict_with_units` function of the
-method. Import the BlochDecaySpectrum class and create an instance of the method,
-following,
+..  Like before, you may parse the above ``method_dict`` using the
+..  :py:meth:`~mrsimulator.methods.BlochDecaySpectrum.parse_dict_with_units` function of the
+..  method. Import the BlochDecaySpectrum class and create an instance of the method,
+..  following,
+..
+..  .. plot::
+..      :format: doctest
+..      :context: close-figs
+..      :include-source:
+..
+..      >>> from mrsimulator.methods import BlochDecaySpectrum
+..      >>> method_object = BlochDecaySpectrum.parse_dict_with_units(method_dict)
+..
+..  Here, ``the_method`` is an instance of the :py:class:`~mrsimulator.Method` class.
+
+A simulator can hold multiple method objects like in our link(¹³C MAS NMR of Glycine (CSA) multi-spectra fit).
+In this example, we stick with a single method. Finally, add all the method objects,
+in this case, ``the_method``, to the instance of the Simulator class, ``sim``, as follows,
 
 .. plot::
     :format: doctest
     :context: close-figs
     :include-source:
 
-    >>> from mrsimulator.methods import BlochDecaySpectrum
-    >>> method_object = BlochDecaySpectrum.parse_dict_with_units(method_dict)
-
-Here, ``method_object`` is an instance of the :py:class:`~mrsimulator.Method` class.
-
-Likewise, you may create multiple method objects. In this example, we
-stick with a single method. Finally, add all the method objects, in this case,
-``method_object``, to the instance of the Simulator class, ``sim``, as follows,
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> sim.methods += [method_object] # add all methods.
+    >>> sim.methods = [the_method]
 
 Running simulation
 ------------------
@@ -262,7 +303,7 @@ the simulation data for this method as,
     :include-source:
 
     >>> data_0 = sim.methods[0].simulation
-    >>> # data_n = sim.method[n].simulation # when there are multiple methods.
+    >>> # data_n = sim.method[n].simulation  # when there are multiple methods.
 
 Here, ``data_0`` is a CSDM object holding the simulation data from the method
 at index 0 of the :attr:`~mrsimulator.Simulator.methods` attribute from the ``sim``

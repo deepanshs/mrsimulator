@@ -9,9 +9,10 @@ Coupled spins 5/2-9/2 (Quad + J-coupling)
 # %%
 import matplotlib.pyplot as plt
 
-from mrsimulator import Simulator, SpinSystem
+from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator import signal_processing as sp
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 1
 
@@ -21,17 +22,17 @@ from mrsimulator import signal_processing as sp
 # Create a 27Al-93Nb coupled spin system.
 spin_system = SpinSystem(
     sites=[
-        {
-            "isotope": "27Al",
-            "isotropic_chemical_shift": 0.0,  # in ppm
-            "quadrupolar": {"Cq": 5.0e6, "eta": 0.0},  # Cq is in Hz
-        },
-        {
-            "isotope": "93Nb",
-            "isotropic_chemical_shift": 0.0,  # in ppm
-        },
+        Site(
+            isotope="27Al",
+            isotropic_chemical_shift=0.0,  # in ppm
+            quadrupolar=SymmetricTensor(Cq=5.0e6, eta=0.0),  # Cq is in Hz
+        ),
+        Site(
+            isotope="93Nb",
+            isotropic_chemical_shift=0.0,  # in ppm
+        ),
     ],
-    couplings=[{"site_index": [0, 1], "isotropic_j": 200.0}],  # j-coupling in Hz
+    couplings=[Coupling(site_index=[0, 1], isotropic_j=200.0)],  # j-coupling in Hz
 )
 
 # %%
@@ -43,11 +44,11 @@ method = BlochDecayCTSpectrum(
     magnetic_flux_density=9.4,  # in T
     rotor_frequency=5e3,  # in Hz
     spectral_dimensions=[
-        {
-            "count": 2048,
-            "spectral_width": 4.0e4,  # in Hz
-            "reference_offset": -2e3,  # in Hz
-        }
+        dict(
+            count=2048,
+            spectral_width=4.0e4,  # in Hz
+            reference_offset=-2e3,  # in Hz
+        )
     ],
 )
 
@@ -56,8 +57,8 @@ method = BlochDecayCTSpectrum(
 #
 # Create the Simulator object and add the method and the spin system object.
 sim = Simulator()
-sim.spin_systems += [spin_system]  # add the spin system
-sim.methods += [method]  # add the method
+sim.spin_systems = [spin_system]  # add the spin system
+sim.methods = [method]  # add the method
 sim.run()
 
 # %%

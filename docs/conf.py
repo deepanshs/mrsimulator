@@ -317,13 +317,15 @@ html_theme_options = {
     # Works only "bootstrap_version = 3"
     "noflatdesign": False,
     # Enable Google Web Font. Defaults to false
-    "googlewebfont": True,
+    # "googlewebfont": True,
     # Set the URL of Google Web Font's CSS.
     # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
-    "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
+    # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
+    # "googlewebfont_url": "http://fonts.googleapis.com/css2?family=Inter",
     # Set the Style of Google Web Font's CSS.
     # Defaults to "font-family: 'Text Me One', sans-serif;"
-    "googlewebfont_style": "font-family: Helvetica",
+    # "googlewebfont_style": "font-family: Helvetica",
+    # "googlewebfont_style": "font-family: 'Inter', sans-serif;",
     # Set 'navbar-inverse' attribute to header navbar. Defaults to false.
     "header_inverse": True,
     # Set 'navbar-inverse' attribute to relbar navbar. Defaults to false.
