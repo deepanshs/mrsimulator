@@ -54,7 +54,7 @@ coaster = Method2D(
             spectral_width=4e4,  # in Hz
             reference_offset=-8e3,  # in Hz
             label="3Q dimension",
-            events=[SpectralEvent(transition_query=[{"P": [3], "D": [0]}])],
+            events=[SpectralEvent(transition_query=[{"ch1": {"P": [3], "D": [0]}}])],
         ),
         # The last spectral dimension block is the direct-dimension
         SpectralDimension(
@@ -62,7 +62,7 @@ coaster = Method2D(
             spectral_width=2e4,  # in Hz
             reference_offset=-3e3,  # in Hz
             label="70.12 dimension",
-            events=[SpectralEvent(transition_query=[{"P": [-1], "D": [0]}])],
+            events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [0]}}])],
         ),
     ],
 )

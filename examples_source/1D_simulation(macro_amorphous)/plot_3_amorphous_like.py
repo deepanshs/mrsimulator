@@ -116,7 +116,7 @@ method = BlochDecaySpectrum(
 # add the respective objects.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
-sim.methods += [method]  # add the method
+sim.methods = [method]  # add the method
 
 # %%
 # Static spectrum
