@@ -44,6 +44,7 @@ from mrsimulator.utils.importer import import_json
 from mrsimulator.signal_processing import SignalProcessor
 from mrsimulator.utils.parseable import Parseable
 import json
+from pydantic import Field
 from typing import Dict
 from typing import List
 from copy import deepcopy
@@ -68,7 +69,7 @@ class Mrsimulator(Parseable):
 
     simulator: Simulator = None
     signal_processors: List[SignalProcessor] = None
-    version: str = __version__
+    version: str = Field(__version__, const=True)
     application: Dict = None
 
     class Config:
@@ -147,7 +148,6 @@ class Mrsimulator(Parseable):
         ...       ]
         ...     }
         ...   ],
-        ...   "version": "0.7.0dev1",
         ...   "application": {
         ...     "com.github.DeepanshS.mrsimulator": { "foo": "This is some metadata" }
         ...   }
@@ -249,21 +249,6 @@ class Mrsimulator(Parseable):
 
         Returns:
             Python dictionary
-
-        Example
-        -------
-
-        >>> import pprint
-        >>> application = {'foo': {'bar': 'baz'}}
-        >>> mrsim = Mrsimulator(simulator=Simulator(), application=application)
-        >>> pprint.pprint(mrsim.json()) # doctest: +SKIP
-        {'application': {'foo': {'bar': 'baz'}},
-         'signal_processors': None,
-         'simulator': {'config': {'decompose_spectrum': 'none',
-                                  'integration_density': 70,
-                                  'integration_volume': 'octant',
-                                  'number_of_sidebands': 64}},
-         'version': '0.7.0dev1'}
         """
         py_dict = {
             "simulator": None,

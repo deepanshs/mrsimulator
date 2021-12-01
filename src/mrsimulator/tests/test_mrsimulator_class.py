@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+import pytest
 from mrsimulator import __version__
 from mrsimulator import Mrsimulator
 from mrsimulator import signal_processing as sp
@@ -8,6 +9,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.methods import BlochDecaySpectrum
+from pydantic import ValidationError
 
 
 __author__ = "Matthew D. Giammar"
@@ -77,17 +79,9 @@ def test_parse():
 def test_version_with_serialization():
     mrsim = setup_mrsimulator_obj()
 
-    # Set to older version
-    mrsim.version = "an older version"
-    py_dict = mrsim.json()
-
-    # Version should update during serialization
-    assert py_dict["version"] == __version__
-
-    # Ensure version is set to current version when parsed
-    parsed_mrsim = Mrsimulator.parse_dict_with_units(py_dict)
-
-    assert parsed_mrsim.version == __version__
+    # Set to older version will throw error
+    with pytest.raises(ValidationError):
+        mrsim.version = "an older version"
 
 
 def test_save():
