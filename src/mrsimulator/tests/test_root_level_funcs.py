@@ -60,6 +60,8 @@ def test_save():
 
 def test_dict():
     sim, processors, application = setup()
+    sim.methods[0].simulation = None
+    sim.methods[1].simulation = None
 
     py_dict = {
         "simulator": sim.json(),
