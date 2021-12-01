@@ -55,6 +55,8 @@ def setup_mrsimulator_obj():
 
 def test_json():
     mrsim = setup_mrsimulator_obj()
+    mrsim.simulator.methods[0].simulation = None
+    mrsim.simulator.methods[1].simulation = None
 
     py_dict = {
         "simulator": mrsim.simulator.json(),
