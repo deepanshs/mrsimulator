@@ -166,62 +166,42 @@ The ``mrsimulator`` package offers the following
 
 ----
 
-Getting Started
----------------
+Introduction
+------------
 
 .. toctree::
     :maxdepth: 2
-    :caption: Getting Started
+    :caption: Introduction
 
     installation/installation
-    troubleshooting/instillation_troubleshooting ###
-    getting_started/the_basics
-    getting_started/uncoupled_example
-    getting_started/coupled_example
+    .. troubleshooting/instillation_troubleshooting ### goes with instillation
+    introduction/getting_started
+    introduction/ethanol_isotopomers
+    .. introduction/basic_methods
 
-Using the Simulator Object
---------------------------
-
-.. toctree::
-    :maxdepth: 3
-    :caption: The Simulator Object
-
-    simulator/simulator
-..    simulator/spin_systems/spin_system
-..    simulator/method/method
-..    simulator/configuring_simulator
-..    simulator/mrsim_IO
-
-Signal Processing (``mrsimulator.SignalProcessor``)
----------------------------------------------------
+User Documentation
+------------------
 
 .. toctree::
     :maxdepth: 2
-    :caption: Signal Processing
+    :caption: User Documentation
 
-    signal_processing/signal_processing
+    user_documentation/simulator/simulator
+    .. user_documentation/simulator/spin_system
+    .. user_documentation/simulator/method
+    user_documentation/signal_processing
+    user_documentation/sys_models/sys_models
+    user_documentation/mrsim_IO
 
-Models
-------
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Models
-
-    model/czjzek
-    model/extended_czjzek
-
-
-Examples and Benchmarks
------------------------
+Examples
+--------
 
 .. toctree::
     :maxdepth: 2
-    :caption: Examples and Benchmarks
+    :caption: Examples and Fitting
 
     examples/index
     fitting/index
-    benchmark
 
 Theory
 ------
