@@ -17,8 +17,8 @@ __email__ = "maxvenetos@gmail.com"
 
 
 class SignalProcessor(Parseable):
-    """Signal processing class to apply a series of operations to the dependent variables
-    of the simulation dataset.
+    """Signal processing class to apply a series of operations to the dependent
+    variables of the simulation dataset.
 
     Arguments
     ---------
