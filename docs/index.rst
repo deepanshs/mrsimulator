@@ -159,11 +159,6 @@ The ``mrsimulator`` package offers the following
 .. working on developing the package for the NMR community. Any contribution and
 .. suggestion is greatly appreciated.
 
-
-.. warning::
-    The package is currently under development. We advice using with
-    caution. Bug report are greatly appreciated.
-
 ----
 
 Introduction
@@ -174,24 +169,23 @@ Introduction
     :caption: Introduction
 
     installation/installation
-    .. troubleshooting/instillation_troubleshooting ### goes with instillation
     introduction/getting_started
-    introduction/ethanol_isotopomers
-    .. introduction/basic_methods
+    introduction/ethanol_example
 
-User Documentation
-------------------
+User Guide
+----------
 
 .. toctree::
     :maxdepth: 2
     :caption: User Documentation
 
-    user_documentation/simulator/simulator
-    .. user_documentation/simulator/spin_system
-    .. user_documentation/simulator/method
-    user_documentation/signal_processing
-    user_documentation/sys_models/sys_models
-    user_documentation/mrsim_IO
+    user_guide/spin_system/spin_system
+    user_guide/spin_system_utilities/spin_system_utilities
+    user_guide/method/method
+    user_guide/methods_library/methods_library
+    user_guide/simulator/simulator
+    user_guide/signal_processing/signal_processing
+    user_guide/io/mrsim_IO
 
 Examples
 --------

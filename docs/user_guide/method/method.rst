@@ -9,6 +9,8 @@ eventually go. For now this page is just a placeholder.
 
 Need to document Named Methods, simulation & experiment, SpectralDimensions, SpectralEvent, MixingEvent, TransitionQuery, MixingQuery,
 
+Include note about global attributes and broadcasting to events
+
 A :ref:`method_api` object is a collection of attributes that describe an NMR method.
 In ``mrsimulator``, all methods are described through five keywords -
 

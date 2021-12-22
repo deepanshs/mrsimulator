@@ -1,23 +1,20 @@
 .. _spin_system_documentation:
 
-**********************
-Spin Systems and Sites
-**********************
-
+=============================
+Site, Coupling and SpinSystem
+=============================
 
 At the heart of any ``mrsimulator`` calculation is the definition of a **SpinSystem**
-object describing the sites and couplings within a spin system. Each **Simulator** holds
-a list of **SpinSystem** objects which will be used to calculate the spectrum. We begin
-by examining the definition of a **Site** object.
+object describing the sites and couplings within a spin system. Each **Simulator** object holds
+a list of **SpinSystem** objects which will be used to calculate frequency contributions.
 
 Site
-''''
+----
 
 A site object holds single site NMR interaction parameters, which include the nuclear
 shielding and quadrupolar interaction parameters.
 Consider the example below of a **Site** object for a deuterium nucleus created in Python.
 
-.. _listing_site:
 .. code-block:: python
 
     # Import objects for the Site
@@ -32,16 +29,16 @@ Consider the example below of a **Site** object for a deuterium nucleus created 
             zeta=12.12,  # in ppm
             eta=0.82,
             alpha=5.45,  # in radians
-            beta=4.82,   # in radians
-            gamma=0.5,   # in radians
+            beta=4.82,  # in radians
+            gamma=0.5,  # in radians
         ),
         quadrupolar=SymmetricTensor(
-            Cq=1.47e6,     # in Hz
+            Cq=1.47e6,  # in Hz
             eta=0.27,
-            alpha=0.212,   # in radians
-            beta=1.231,    # in radians
+            alpha=0.212,  # in radians
+            beta=1.231,  # in radians
             gamma=3.1415,  # in radians
-        )
+        ),
     )
 
 The *isotope* key holds the spin isotope, here given a value of *2H*.
@@ -65,9 +62,9 @@ and *gamma*, which are the relative orientation of the EFG tensor from a common 
 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
 the **Site** and **SymmetricTensor** objects and their attributes, respectively. Also, all ``mrsimulator``
-objects have the attribute *property_units* which provides the units for all class properties
+objects have the attribute *property_units* which provides the units for all class properties.
 
-.. code_block:: python
+.. code-block:: python
 
     print(Site().property_units)
     # {'isotropic_chemical_shift': 'ppm'}
@@ -75,114 +72,40 @@ objects have the attribute *property_units* which provides the units for all cla
     print(SymmetricTensor().property_units)
     # {'zeta': 'ppm', 'Cq': 'Hz', 'D': 'Hz', 'alpha': 'rad', 'beta': 'rad', 'gamma': 'rad'}
 
-
-SpinSystem
-''''''''''
-
-The **SpinSystem** object is a collection of sites and couplings within a spin system.
-
-Single Site Spin System
------------------------
-
-Using the previous 2H **Site** object example, we construct a simple single-site
-**SpinSystem** object, as shown below.
-
-.. _listing_single_site_spin_system:
-.. code-block:: python
-
-    # Import the Spin System object
-    from mrsimulator import SpinSystem
-
-    single_site_sys = SpinSystem(
-        name="2H uncoupled spin system",
-        description="An optional description of the spin system",
-        sites=[H2_site],
-        abundance=80,   # percentage
-    )
-
-At the root level of the **SpinSystem** object, we find four keywords, **name**,
-**description**, **sites**, and **abundance**. The value of the *name* key is the
-optional name of the spin system. The
-value of the description key is an optional string describing the spin system. The
-value of the *sites* key is a list of **Site** objects. Here, this list is simply
-the single single **Site** object, `2H_site`, from :ref:`the Site object <listing_site>`.
-The value of the *abundance* key is the abundance of the spin system, here given
-a value of *80%*.
-
-See :numref:`table_spin_system` for further description of the **SpinSystem** class and
-its attributes.
-
-Multi Site Spin System
-----------------------
-
-To create a **SpinSystem** with more than one **Site**, the *sites* attribute simply needs
-to be set to a list of **Site** objects. Here we create a :math:`^{13}\text{C}` site and add
-it to the *sites* attribute of our already defined **SpinSystem**.
-
-.. _listing_multi_site_spin_system:
-.. code-block:: python
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    # Create the new Site object
-    C13_site = Site(
-        isotope="13C",
-        isotropic_chemical_shift=-53.2,  # in ppm
-        shielding_symmetric=SymmetricTensor(
-                zeta=90.5,  # in ppm
-                eta=0.64,
-            )
-        )
-    )
-
-    # Create a new SpinSystem object with both Sites
-    multi_site_sys = SpinSystem(
-        name="Multi site spin system",
-        description="A spin system with multiple sites",
-        sites=[H2_site, C13_site],
-        abundance=0.148,  # percentage
-    )
-
-Again we see the optional *name* and *description* attributes. The *sites* attribute is now
-a list of two **Site** objects, the previous :math:`^2\text{H}` site and the new
-:math:`^{13}\text{C}` site.
-
 Coupling
-''''''''
+--------
 
-A coupling object holds two site NMR interaction parameters, which includes the *J*-coupling
+A coupling object holds two site NMR interaction parameters, which can include the *J*-coupling
 and the dipolar coupling interaction parameters.
-Consider the example below of a **Coupling** object between the two sites in for the
-previous **SpinSystem**.
+Consider the example below of a **Coupling** object between two sites
 
-.. _listing_coupling:
 .. code-block:: python
 
     # Import the Coupling object
     from mrsimulator import Coupling
 
-    H2_C13_coupling = Coupling(
+    coupling = Coupling(
         site_index=[0, 1],
         isotropic_j=15,  # in Hz
         j_symmetric=SymmetricTensor(
             zeta=12.12,  # in Hz
             eta=0.82,
             alpha=2.45,  # in radians
-            beta=1.75,   # in radians
+            beta=1.75,  # in radians
             gamma=0.15,  # in radians
         ),
         dipolar=SymmetricTensor(
-            D=1.7e3,       # in Hz
-            alpha=0.12,    # in radians
-            beta=0.231,    # in radians
+            D=1.7e3,  # in Hz
+            alpha=0.12,  # in radians
+            beta=0.231,  # in radians
             gamma=1.1415,  # in radians
-        )
+        ),
     )
 
 The *site_index* key holds a list of two integers corresponding to the index of the two coupled sites
-within the spin system. We will add this coupling object to ``multi_site_sys`` so 0 and 1 correspond to
-the :math:`^2\text{H}` and :math:`^{13}\text{C}`  The value of the *isotropic_j* is the isotropic
+within the spin system. The ordering of the integers is irrelevant.
+
+The value of the *isotropic_j* is the isotropic
 *J*-coupling, here given as *15 Hz*. We have additionally defined an optional *j_symmetric* key,
 whose value holds a SymmetricTensor object representing the traceless 2nd-rank symmetric *J*-coupling
 tensor.
@@ -195,30 +118,152 @@ are the relative orientation of the dipolar tensor from a common reference frame
 See :numref:`table_coupling` and :numref:`table_symmetric_tensor` for further information on
 the **Site** and **SymmetricTensor** objects and their attributes, respectively.
 
-Coupled Spin System
--------------------
 
-By adding the coupling object to ``multi_site_sys``, we create a coupled spin system.
+SpinSystem
+----------
 
-.. _listing_coupled_spin_system:
+The **SpinSystem** object is a collection of sites and couplings. Below are examples of different
+spin systems along with discussion on each attribute.
+
+Single Site Spin System
+'''''''''''''''''''''''
+
+Here we create a relatively unexciting single site proton spin system
+
 .. code-block:: python
 
-    # We have no couplings present in the SpinSystem
-    print(multi_site_sys.couplings)
-    # []
+    # Import the SpinSystem object
+    from mrsimulator import SpinSystem
 
-    # Set the coupling attribute to the previously defined Coupling object
-    multi_site_sys.couplings = [H2_13C_coupling]
+    proton_site = Site(isotope="1H")
 
-In comparison to the previous example, there are five keywords at the root level of the
-**SpinSystem** object, **name**, **description**, **sites**, **couplings**, and **abundance**.
-In this example, the value of the *sites* key holds a list of two **Site** objects. At index 0
-(lines 9-26) is the *2H* site from :ref:`the Site object <listing_site>`, and at index 1
-(lines 27-34) is a *13C* site. The value of the *couplings* key is a list of **Coupling** objects.
-In this example, we define a single coupling object (lines 37-60) from the
-:ref:`coupling object <listing_coupling>`. The value of the *site_index* key within the
-coupling object, line 34, corresponds to the site index from the *sites* list.
+    single_site_sys = SpinSystem(
+        name="1H spin system",
+        description="A single site proton spin system",
+        sites=[H1_site],
+        abundance=80,  # percentage
+    )
 
+We find four keywords at the root level of our SpinSystem object definition: **name**,
+**description**, **sites**, and **abundance**. The value of the *name* key is the
+optional name of the spin system. Likewise, the value of the description key is an optional
+string describing the spin system.
+
+The value of the *sites* key is a list of **Site** objects. Here, this list is simply
+the single single **Site** object, `H1_site`.
+The value of the *abundance* key is the abundance of the spin system, here given
+a value of *80%*. If the abundance key is omitted, the abundance defaults to *100%*.
+
+See :numref:`table_spin_system` for further description of the **SpinSystem** class and
+its attributes.
+
+Multi Site Spin System
+''''''''''''''''''''''
+
+To create a **SpinSystem** with more than one **Site**, we simply add more **Site** objects to
+the sites list. Here we create a :math:`^{13}\text{C}` site and add it along with the previous
+proton site to a new spin system.
+
+.. code-block:: python
+
+    # Create the new Site object
+    C13_site = Site(
+        isotope="13C",
+        isotropic_chemical_shift=-53.2,  # in ppm
+        shielding_symmetric=SymmetricTensor(
+            zeta=90.5,  # in ppm
+            eta=0.64,
+        ),
+    )
+
+    # Create a new SpinSystem object with both Sites
+    multi_site_sys = SpinSystem(
+        name="Multi site spin system",
+        description="A spin system with multiple sites",
+        sites=[H1_site, C13_site],
+        abundance=0.148,  # percentage
+    )
+
+Again we see the optional *name* and *description* attributes. The *sites* attribute is now
+a list of two **Site** objects, the previous :math:`^1\text{H}` site and the new
+:math:`^{13}\text{C}` site. We have also set the *abundance* of this spin system to *0.148%*.
+By leveraging the abundance attribute, multiple spin systems with varying abundances can be
+simulated together. See our :ref:`introduction_ethanol_example` where isotopomers of varying
+abundance are simulated.
+
+Coupled Spin System
+'''''''''''''''''''
+
+To create couplings between sites, we simply need to add a list of coupling objects to a
+spin system. Below we create a :math:`^{2}\text{H}` and :math:`^{13}\text{C}` site as well as a
+coupling between them.
+
+.. code-block:: python
+
+    # Create site objects
+    H2_site = Site(
+        isotope="2H",
+        isotropic_chemical_shift=4.1,  # in ppm
+        shielding_symmetric=SymmetricTensor(
+            zeta=12.12,  # in ppm
+            eta=0.82,
+            alpha=5.45,  # in radians
+            beta=4.82,  # in radians
+            gamma=0.5,  # in radians
+        ),
+        quadrupolar=SymmetricTensor(
+            Cq=1.47e6,  # in Hz
+            eta=0.27,
+            alpha=0.212,  # in radians
+            beta=1.231,  # in radians
+            gamma=3.1415,  # in radians
+        ),
+    )
+    C13_site = Site(
+        isotope="13C",
+        isotropic_chemical_shift=-53.2,  # in ppm
+        shielding_symmetric=SymmetricTensor(
+            zeta=90.5,  # in ppm
+            eta=0.64,
+        ),
+    )
+
+    # Create coupling object
+    H2_C13_coupling = Coupling(
+        site_index=[0, 1],
+        isotropic_j=15,  # in Hz
+        j_symmetric=SymmetricTensor(
+            zeta=12.12,  # in Hz
+            eta=0.82,
+            alpha=2.45,  # in radians
+            beta=1.75,  # in radians
+            gamma=0.15,  # in radians
+        ),
+        dipolar=SymmetricTensor(
+            D=1.7e3,  # in Hz
+            alpha=0.12,  # in radians
+            beta=0.231,  # in radians
+            gamma=1.1415,  # in radians
+        ),
+    )
+
+We now have the site objects and the coupling object to make a coupled spin system. We now
+construct such a spin system.
+
+.. code-block:: python
+
+    coupled_spin_system = SpinSystem(sites=[H2_site, C13_site], couplings=[H2_13C_coupling])
+
+In contrast to the previous examples, we have omitted the optional *name*, *description*, and
+*abundance* keywords. The name and description for ``coupled_spin_system`` will both be ``None``
+and the abundance will be *100%*.
+
+We see a list of **Coupling** objects passed to the *couplings* keywords. The
+*site_index* attribute of ``H2_C13_coupling`` correspond to the index of ``H2_site`` and
+``C13_site`` in the sites list. If we were to add more sites, *site_index* might need to be
+updated to reflect the index `H2_site`` and ``C13_site`` in the sites list. Again, our
+:ref:`introduction_ethanol_example` has good usage cases for multiple couplings in a
+spin system.
 
 Table of Class Attributes
 -------------------------

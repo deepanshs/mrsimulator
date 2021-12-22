@@ -1,12 +1,13 @@
-Isotopomers of Ethanol
-^^^^^^^^^^^^^^^^^^^^^^
+.. _introduction_ethanol_example:
 
-In this introductory we will simulate ¹H and ¹³C isotopomers of ethanol. The resulting spectrum
+Ethanol Example
+^^^^^^^^^^^^^^^
+
+In this introductory we will simulate the isotopomers of ethanol. The resulting spectrum
 will include the characteristic
-:math:`^{13}\text{C}` `satellite peaks <https://en.wikipedia.org/wiki/Carbon-13_NMR_satellite>`_.
-The code was taken from the
-`ethanol example <sphx_glr_examples_1D_simulation(crystalline)_plot_8_Ethanol.py>`_
-in our simulation gallery. For more in-depth discussion ((something...)).
+:math:`^{13}\text{C}` `satellite peaks <https://en.wikipedia.org/wiki/Carbon-13_NMR_satellite>`_
+which come from couplings between :math:`^{1}\text{H}` and :math:`^{13}\text{C}` in low-abundance
+isotopomers.
 
 Importing Packages and Classes
 ------------------------------
@@ -29,7 +30,7 @@ First create the :math:`^1\text{H}` and :math:`^{13}\text{C}` sites for ethanol.
 
 .. code-block:: python
 
-    # Shifts in ppm
+    # All shifts in ppm
     H_CH3 = Site(isotope="1H", isotropic_chemical_shift=1.226)
     H_CH2 = Site(isotope="1H", isotropic_chemical_shift=2.61)
     H_OH = Site(isotope="1H", isotropic_chemical_shift=3.687)
@@ -37,13 +38,10 @@ First create the :math:`^1\text{H}` and :math:`^{13}\text{C}` sites for ethanol.
     C_CH3 = Site(isotope="13C", isotropic_chemical_shift=18)
     C_CH2 = Site(isotope="13C", isotropic_chemical_shift=58)
 
-Now we will use these sites along with coupling objects to create our isotopomers.
+We will use these sites along with coupling objects to create our isotopomers.
 
 Isotopomer 1
 ''''''''''''
-
-The satellite peaks come from couplings between :math:`^{1}\text{H}` and
-:math:`^{13}\text{C}` in low-abundance isotopomers.
 
 Now, let's define the couplings and build the spin system for the most abundant
 isotopomer pictured below. Each number next to an atom corresponds to that atom's
@@ -148,8 +146,8 @@ below (:math:`^{13}\text{C}` marked in blue)
 Methods
 -------
 
-Now, we define simple 1 pulse-acquire methods for both :math:`^1\text{H}` and
-:math:`^{13}\text{C}`.
+Now, we define two Bloch spectrum methods for both :math:`^1\text{H}` and :math:`^{13}\text{C}`.
+These methods emulate simple 1-pulse acquire experiments.
 
 .. code-block:: python
 
@@ -182,8 +180,8 @@ Now, we define simple 1 pulse-acquire methods for both :math:`^1\text{H}` and
 Simulation
 ----------
 
-Now, we create an instance of the simulator object, add our three spin
-systems, add our two methods, and run the simulation.
+Now we create an instance of the simulator object which holds a list of our three spin
+systems and a list of our two methods. Finally we run the simulation.
 
 .. code-block:: python
 
@@ -196,11 +194,10 @@ Signal Processing
 -----------------
 
 Let's set up our post-simulation processing. We apply 1 Hz and 20 Hz of exponential line
-broadening to the proton and carbon methods respectively
-
-.. GENERATED FROM PYTHON SOURCE LINES 177-193
+broadening to the proton and carbon spectra, respectively.
 
 .. code-block:: python
+
     # Get the simulation data
     H_data = sim.methods[0].simulation
     C_data = sim.methods[1].simulation
@@ -250,9 +247,9 @@ Now that we have our processed data, we can plot the two spectra.
     plt.show()
 
 
-.. image:: ../_static/ethanol_isotopomers.svg
+.. figure:: ../_static/ethanol_isotopomers.svg
    :alt: 1H and 13C spectra
-   :width: 90 %
+   :figwidth: 90 %
 
 Note the :math:`^{13}\text{C}` satellites seen on either side of the peaks near
 1.2 ppm and 2.6 ppm in the :math:`^1\text{H}` spectrum.
