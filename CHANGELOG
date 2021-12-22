@@ -1,4 +1,4 @@
-Upcoming Changes
+v0.7.0
 ----------------
 
 What's new
@@ -10,6 +10,8 @@ What's new
   controls the mixing of transitions in a multi-event method.
 - A ``TransitionPathway`` object now includes a weight attribute, which holds the probability of
   the transition pathway based on the mixing events defined within the method.
+- New class method, ``plot()``, which will create a visual representation of the events, transition
+  pathways, rotor angle, etc. a method object defines.
 
 **SpinSystem**
 
@@ -17,6 +19,14 @@ What's new
   a list of irreducible spin systems.
 - Add a new function ``site_generator()`` to the utility collection sub-module, which simplify
   the process of creating Site objects in bulk.
+
+**Documentation**
+
+- Added instillation troubleshooting section
+- Added section *User Guide* detailing use and attributes of most objects.
+- Condensed simulation/fitting gallery by removing redundant examples & combining like experiments
+  (see ssnmr.org for old examples)
+- New gallery demonstrating signal processing functions.
 
 Changes
 '''''''

@@ -1,4 +1,3 @@
-
 .. _getting_started:
 
 ===============
@@ -35,7 +34,7 @@ First we will construct two :ref:`site_api` objects for the :math:`^1\text{H}` a
         shielding_symmetric=SymmetricTensor(
             zeta=70.0,  # in ppm
             eta=0.5,
-        )
+        ),
     )
 
 We now have two variables, ``H_site`` and ``C_site``, which are **Site** objects. ``H_site``
@@ -88,21 +87,21 @@ provides. Some attributes of the method still need to be defined as seen below.
     method = BlochDecaySpectrum(
         channels=["13C"],
         magnetic_flux_density=9.4,  # in T
-        rotor_angle=0.9553166,      # in rad (magic angle)
-        rotor_frequency=3000,       # in Hz
+        rotor_angle=0.9553166,  # in rad (magic angle)
+        rotor_frequency=3000,  # in Hz
         spectral_dimensions=[
             dict(
                 count=2048,
-                spectral_width=80e3,    # in Hz
-                reference_offset=6e3    # in Hz
-                label=r"$^{29}$Si resonances",
+                spectral_width=80e3,  # in Hz
+                reference_offset=6e3,  # in Hz
+                label=r"$^{13}$C resonances",
             )
-        ]
+        ],
     )
 
 The variable ``method`` defines a Bloch decay MAS method for the :math:`^{13}\text{C}` channel.
-A Bloch decay method only has one spectral dimension. Here ``method`` has 2048 points spanning
-80 kHz with a reference offset of 6 kHz.
+A Bloch decay method only has one spectral dimension and this specific spectral dimension has
+2048 points spanning 80 kHz with a reference offset of 6 kHz.
 
 .. ((The method is looking at)) a the :math:`^{13}\text{C}` channel in a 9.4 tesla environment while the
 .. sample spins at 3 kHz at the magic angle. We also have a single spectral dimension  which
@@ -142,25 +141,11 @@ on our **Simulator** object.
 
     sim.run()
 
-.. note:: In ``mrsimulator``, all resonance frequencies are calculated assuming the
-    weakly-coupled (Zeeman) basis for the spin system.
-
 The simulated spectrum is calculated and stored in the method object. Next we process and
 plot the data
 
-.. .. code-block:: python
-..
-..     data_0 = sim.methods[0].simulation
-..     # data_n = sim.method[n].simulation  # when there are multiple methods.
-..
-.. Here ``data_0`` is a CSDM object holding the simulation data from the method at index 0
-.. of ``sim.methods``.
-..
-.. .. seealso::
-..     **CSDM:** The core scientific dataset model (CSDM) [#f1]_ is a lightweight and portable
-..     file format model for multi-dimensional scientific datasets and is supported by numerous
-..     NMR software---DMFIT, SIMPSON, jsNMR, and RMN. We also provide a python package
-..     `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_.
+.. note:: In ``mrsimulator``, all resonance frequencies are calculated assuming the
+    weakly-coupled (Zeeman) basis for the spin system.
 
 Accessing and Processing the Dataset
 ------------------------------------
@@ -188,8 +173,8 @@ Here we apply 200 Hz of exponential line broadening.
     processed_data = processor.apply_operations(data=sim.methods[0].simulation)
 
 Each **SignalProcessor** object has a list of operations which are applied sequentially to
-a dataset. For a comprehensive list of operations, see
-((add reference to signal processing gallery)).
+a dataset. For a comprehensive list of operations and how to use the signal processing object,
+see :ref:`sp_documentation`.
 
 Visualizing the Dataset
 -----------------------
@@ -203,20 +188,16 @@ Below is the code used to generate the image:
 .. code-block:: python
 
     import matplotlib.pyplot as plt
-    plt.figure(figsize=(6.6, 4)) # set the figure size
+
+    plt.figure(figsize=(6.6, 4))  # set the figure size
     ax = plt.subplot(projection="csdm")
     ax.plot(processed_data.real)
-    ax.invert_xaxis() # reverse x-axis
+    ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout(pad=0.1)
     plt.show()
 
 .. _fig1-getting-started:
 .. figure:: ../_static/getting_started.png
+    :figwidth: 75%
 
     A simulated MAS spectrum of :math:`^{13}\text{C}`.
-
-
-.. .. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.
-..         Core Scientific Dataset Model: A lightweight and portable model and file format
-..         for multi-dimensional scientific data. PLOS ONE, 2020, **15**, 1.
-..         `DOI 10.1371/e0225953 <https://doi.org/10.1371/journal.pone.0225953>`_

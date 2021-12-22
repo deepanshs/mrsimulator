@@ -119,7 +119,7 @@ we load the spin system file, ``example.mrsys``, into a new simulator using the 
 
     new_sim = Simulator()
     new_sim.load_spin_systems("example.mrsys")
-    print(len(new_sim.spin_systems)
+    print(len(new_sim.spin_systems))
     # 3
 
 Saving and Loading Methods from a File
@@ -146,8 +146,8 @@ custom DAS method and serialize it to a file using the method
                 count=512,
                 spectral_width=10000,
                 reference_offset=-1220.9,
-                origin_offset=67793215
-                label= "Isotropic dimension"
+                origin_offset=67793215,
+                label="Isotropic dimension",
                 events=[
                     SpectralEvent(
                         fraction=0.5,
@@ -168,7 +168,7 @@ custom DAS method and serialize it to a file using the method
                 spectral_width=11001,
                 reference_offset=-1228,
                 origin_offset=67793215,
-                label="MAS dimension"
+                label="MAS dimension",
                 events=[
                     SpectralEvent(
                         rotor_angle=54.735 * 3.14159 / 180,
@@ -255,7 +255,7 @@ method.
     processor2 = sp.Processor()
 
     save(
-        filename="example.mrsim"
+        filename="example.mrsim",
         simulator=sim,
         signal_processors=[processor1, processor2],
     )
