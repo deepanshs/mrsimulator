@@ -59,6 +59,8 @@ number and a unit in a string. However, passing values with units increases over
 will throw errors if the units cannot be converted into the default units. For this
 reason, we recommend sticking with objects.
 
+.. _load_spin_systems:
+
 Saving and Loading Spin Systems from a File
 -------------------------------------------
 

@@ -20,7 +20,7 @@ from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Create a single-site arbitrary spin system.

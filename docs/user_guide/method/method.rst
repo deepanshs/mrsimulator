@@ -1,8 +1,8 @@
 .. _method_documentation:
 
-=================
-The Method Object
-=================
+======
+Method
+======
 
 Here is where the documentation and example for how to use the :ref:`method_api` object will
 eventually go. For now this page is just a placeholder.
@@ -13,19 +13,6 @@ Include note about global attributes and broadcasting to events
 
 A :ref:`method_api` object is a collection of attributes that describe an NMR method.
 In ``mrsimulator``, all methods are described through five keywords -
-
-In ``mrsimulator`` we have two classes of methods. The first are **named methods** and the second
-are **custom methods**
-
-Named Methods
-'''''''''''''
-
-Named methods are methods with some pre-defined attributes
-
-Custom Methods
-''''''''''''''
-
-Custom methods can contain whatever you like
 
 Reference Tables
 ----------------

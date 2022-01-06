@@ -1,313 +1,199 @@
-.. _signal_processing:
+.. _signal_processing_documentation:
 
+=================
 Signal Processing
 =================
 
-Introduction
-------------
+.. note::
+
+    The signal processing module can operate on experimental datasets, but it is intended for
+    processing simulated spectra. We recommend pre-processing experimental datasets with other
+    applications before importing them into ``mrsimulator``.
 
 After running a simulation, you may need to apply some post-simulation signal processing.
-For example, you may want to scale the intensities to match the experiment or convolve the
-spectrum with a Lorentzian, Gaussian, or sinc line-broadening functions. There are many
-signal-processing libraries, such as Numpy and Scipy, that you may use to accomplish this.
-Although, in NMR, certain operations like convolutions, Fourier transform, and apodizations
-are so regularly used that it soon becomes inconvenient to have to write your own set of
-code. For this reason, the ``mrsimulator`` package offers some frequently used NMR signal
-processing tools.
+For example, you may need to scale the simulated spectrum to match experimental intensities,
+or you may want to convolve the spectrum with a Lorentzian, Gaussian, or other line-broadening
+function. For this reason, ``mrsimulator`` offers some frequently used NMR signal
+processing tools within the ``mrsimulator.signal_processing`` module.
 
-.. note::
-    The simulation object in *mrsimulator* is a CSDM object. A CSDM object is the python
-    support for the core scientific dataset model (CSDM) [#f1]_, which is a new open-source
-    universal file format for multi-dimensional datasets. Since CSDM objects hold a generic
-    multi-dimensional scientific dataset, the following signal processing operation can
-    be applied to any CSDM dataset, *i.e.*, NMR, EPR, FTIR, GC, etc.
+.. seealso::
 
+    :ref:`signal_processing_examples` for notebooks using common processing functions.
 
-In the following section, we demonstrate the use of the
-:py:class:`~mrsimulator.signal_processing.SignalProcessor` class in applying various operations
-to a generic CSDM object. But before we start explaining signal processing with CSDM
-objects, it seems necessary to first describe the construct of CSDM objects. Each CSDM object
-has two main attributes, *dimensions* and *dependent_variables*. The *dimensions* attribute
-holds a list of Dimension objects, which collectively form a multi-dimensional Cartesian
-coordinates grid system. A Dimension object can represent both physical and non-physical
-dimensions. The *dependent_variables* attribute holds the responses of the multi-dimensional
-grid points. You may have as many dependent variables as you like, as long as all dependent
-variables share the same coordinates grid, *i.e.*, dimensions.
+CSDM object
+-----------
 
-
+The simulated spectrum is held in a CSDM [#f1]_ object which supports any multi-dimensional
+scientific datasets (NMR, EPR, FTIR, GC, etc.). For more information, see the
+`csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
 
 ``SignalProcessor`` class
 -------------------------
 
-Signal processing is a series of operations that are applied to the dataset. In this
-workflow, the result from the previous operation becomes the input for the next
-operation.
+Signal processing is a series of operations which are sequentially applied to the dataset.
+In ``mrsimulator``, the :py:class:`~mrsimulator.signal_processing.SignalProcessor` object is
+used to apply operations. Here we create a new signal processing object
 
-In the ``mrsimulator`` library, all signal processing operations are accessed through the
-*signal_processing* module. Within the module is the *apodization* sub-module. An
-apodization is a point-wise multiplication operation of the input signal with the
-apodizing vector. See :ref:`operations_api` documentation for a complete list of
-operations.
+.. code-block:: python
+    # Import the signal_processing module
+    from mrsimulator import signal_processing as sp
 
-Import the module as
+    # Create a new SignalProcessor object
+    processor = sp.SignalProcessor()
 
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
+Each signal processor object holds a list of operations under the *operations* attribute. Below
+we add operations to apply Gaussian line broadening as well as a scale factor.
 
-    >>> from mrsimulator import signal_processing as sp
+.. code-block:: python
 
-Convolution
------------
+    processor.operations = [
+        sp.IFFT(),
+        sp.apodization.Gaussian(FWHM="50 Hz"),
+        sp.FFT(),
+        sp.Scale(factor=120),
+    ]
 
-The convolution theorem states that under suitable conditions, the Fourier transform of a
-convolution of two signals is the pointwise product (apodization) of their Fourier transforms.
-In the following example, we employ this theorem to demonstrate how to apply a Gaussian
-convoluting to a dataset.
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> processor = sp.SignalProcessor(
-    ...     operations=[
-    ...         sp.IFFT(), sp.apodization.Gaussian(FWHM='0.1 km'), sp.FFT()
-    ...     ]
-    ... )
-
-Here, the *processor* is an instance of the :py:class:`~mrsimulator.signal_processing.SignalProcessor`
-class. The required attribute of this class, *operations*, is a list of operations. In the
-above example, we employ the convolution theorem by sandwiching the Gaussian apodization
-function between two Fourier transformations.
-
-In this scheme, first, an inverse Fourier transform is applied to the datasets. On the
-resulting dataset, a Gaussian apodization, equivalent to a full width at half maximum of
-0.1 km in the reciprocal dimension, is applied. The unit that you use for the FWHM attribute
-depends on the dimensionality of the dataset dimension. By choosing the unit as km, we imply
-that the corresponding dimension of the CSDM object undergoing the above series of operations
-has a dimensionality of length.
-Finally, a forward Fourier transform is applied to the apodized dataset.
-
-Let's create a CSDM object and then apply the above signal processing operations.
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> import csdmpy as cp
-    >>> import numpy as np
-    ...
-    >>> # Creating a test CSDM object.
-    >>> test_data = np.zeros(500)
-    >>> test_data[250] = 1
-    >>> csdm_object = cp.CSDM(
-    ...     dependent_variables=[cp.as_dependent_variable(test_data)],
-    ...     dimensions=[cp.LinearDimension(count=500, increment='1 m')]
-    ... )
+First, an inverse Fourier transform is applied to the dataset. Then, a gaussian apodization with
+a full width at half maximum of 30 Hz in the frequency domain is applied. The unit used for the
+*FWHM* attribute corresponds to the dimensionality of the dataset. By choosing Hz, we imply the
+dataset is in units of frequency.
+Finally, a forward Fourier transform is applied to the apodized dataset and all points are scaled
+up by 120 times.
 
 .. note::
-    See `csdmpy <https://csdmpy.readthedocs.io/en/stable/>`_ for a detailed description of
-    generating CSDM objects. In ``mrsimulator``, the simulation data is already stored as a
-    CSDM object.
+
+    Convolutions in ``mrsimulator`` are preformed using the
+    `Convolution Theorem <https://en.wikipedia.org/wiki/Convolution_theorem>`_. A spectrum is
+    Fourier transformed and apodizations are preformed in the time domain before being transformed
+    back into the frequency domain.
+
+Let's create a CSDM object and then apply the operations to visualize the results.
+
+.. code-block:: python
+
+    import csdmpy as cp
+    import numpy as np
+
+    # Create a CSDM object with delta function at 200 Hz
+    test_data = np.zeros(500)
+    test_data[200] = 1
+    csdm_object = cp.CSDM(
+        dependent_variables=[cp.as_dependent_variable(test_data)],
+        dimensions=[cp.LinearDimension(count=500, increment="1 Hz")],
+    )
 
 To apply the previously defined signal processing operations to the above CSDM object, use
 the :py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method of the
-``SignalProcessor`` instance as follows,
+``SignalProcessor`` instance as follows
 
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
+.. code-block:: python
 
-    >>> processed_data = processor.apply_operations(data=csdm_object)
+    processed_data = processor.apply_operations(data=csdm_object)
 
-The *data* is the required argument of the *apply_operations* method, whose value is a
-CSDM object holding the dataset. The variable *processed_data* holds the output, that is,
-the processed data as a CSDM object. The plot of the original and the processed data is
-shown below.
+The variable ``processed_data`` is another CSDM object holding the dataset after the list of
+operations has been applied to ``csdm_object``. Below is a plot comparing the unprocessed and
+processed data
 
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
+..
+.. .. code-block:: python
+..
+..     import matplotlib.pyplot as plt
+..     _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"})
+..     ax[0].plot(csdm_object, color="black", linewidth=1)
+..     ax[0].set_title("Unprocessed")
+..     ax[1].plot(processed_data.real, color="black", linewidth=1)
+..     ax[1].set_title("Processed")
+..     plt.tight_layout()
+..     plt.show()
+..
 
-    >>> import matplotlib.pyplot as plt
-    >>> _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"}) # doctest: +SKIP
-    >>> ax[0].plot(csdm_object, color="black", linewidth=1) # doctest: +SKIP
-    >>> ax[0].set_title('Before') # doctest: +SKIP
-    >>> ax[1].plot(processed_data.real, color="black", linewidth=1) # doctest: +SKIP
-    >>> ax[1].set_title('After') # doctest: +SKIP
-    >>> plt.tight_layout() # doctest: +SKIP
-    >>> plt.show() # doctest: +SKIP
+.. figure:: ../../_static/signal_processor_csdm.png
+    :figwidth: 75%
+    :alt: Plot of unprocessed data and processed data
 
-.. _fig2_signal_process:
-.. figure:: _static/null.*
-    :alt: _images/null.png
+    The unprocessed data (left) and processed data with a Gaussian convolution and scale factor
+    (right).
 
-    The figure depicts an application of Gaussian convolution on a CSDM object.
+Applying Operations along a Dimension
+-------------------------------------
 
+Multi-dimensional NMR simulations may need different operations applied along different
+dimensions. Each operation has the attribute *dim_index* which is used to apply operations
+along a certain dimension.
 
-Multiple convolutions
-'''''''''''''''''''''
+By default, *dim_index* is ``None`` and is applied along the 1st dimension. An integer or list
+of integers can be passed to *dim_index* specifying the dimensions. Below are examples of
+specifying the dimensions
 
-As mentioned before, a CSDM object may hold multiple dependent variables. When using the
-list of the operations, you may selectively apply a given operation to a specific
-dependent-variable by specifying the index of the corresponding dependent-variable as an
-argument to the operation class. Consider the following list of operations.
+.. code-block:: python
 
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
+    # Gaussian apodization along the first dimension (default)
+    sp.apodization.Gaussian(FWHM="10 Hz")
 
-    >>> processor = sp.SignalProcessor(
-    ...     operations=[
-    ...         sp.IFFT(),
-    ...         sp.apodization.Gaussian(FWHM='0.1 km', dv_index=0),
-    ...         sp.apodization.Exponential(FWHM='50 m', dv_index=1),
-    ...         sp.FFT(),
-    ...     ]
-    ... )
+    # Constant offset along the second dimension
+    sp.baseline.ConstantOffset(offset=10, dim_index=1)
 
-The above signal processing operations first applies an inverse Fourier transform,
-followed by a Gaussian apodization on the dependent variable at index 0, followed
-by an Exponential apodization on the dependent variable at index 1, and finally a
-forward Fourier transform. Note, the FFT and IFFT operations apply on all
-dependent-variables.
+    # Lorentzian (exponential) along the first and third dimensions
+    sp.apodization.Exponential(FWHM="10 Hz", dim_index=[0, 2])
 
-Let's add another dependent variable to the previously created CSDM object.
+Applying Apodizations to specific Dependent Variables
+-----------------------------------------------------
 
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
+Each dimension in a simulated spectrum can hold multiple dependent variables (a.k.a.
+contributions from multiple spin systems). Each spin system may need different convolutions
+applied to match an experimental spectrum. The
+:py:class:`~mrsimulator.signal_processing.Apodization` sub-classes have the *dv_index*
+attribute which specifies which dependent variable (spin system) to apply the operation on.
+By default, *dv_index* is ``None`` and will apply the convolution to all dependent variables
+in a dimension.
 
-    >>> # Add a dependent variable to the test CSDM object.
-    >>> test_data = np.zeros(500)
-    >>> test_data[150] = 1
-    >>> csdm_object.add_dependent_variable(cp.as_dependent_variable(test_data))
+.. note::
+    The index of a
+    dependent variable (spin system) corresponds to the order of spin systems in the
+    :py:attr:`~mrsimulator.Simulator.spin_systems` list.
 
-As before, apply the operations with the
+.. code-block:: python
+
+    processor = sp.SignalProcessor(
+        operations=[
+            sp.IFFT(),
+            sp.apodization.Gaussian(FWHM="25 Hz", dv_index=0),
+            sp.apodization.Gaussian(FWHM="70 Hz", dv_index=1),
+            sp.IFFT(),
+        ]
+    )
+
+The above list of operations will apply a step apodization as well as 25 and 70 Hz of Gaussian
+line broadening to dependent variables at index 0 and 1, respectively
+
+Let's add another depended variable to the previously created CSDM object to see targeting
+specific dependent variables.
+
+.. code-block:: python
+
+    test_data = np.zeros(500)
+    test_data[300] = 1
+    csdm_object.add_dependent_variable(cp.as_dependent_variable(test_data))
+
+Now, we again apply the operations with the
 :py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method.
+The comparison of the unprocessed and processed data is also show below.
 
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
+.. code-block::
 
-    >>> processed_data = processor.apply_operations(data=csdm_object)
+    processed_data = processor.apply_operations(data=csdm_object)
 
-The plot of the dataset before and after signal processing is shown below.
+Below is a plot of the dataset before and after applying the operations
 
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
+.. figure:: ../../_static/signal_processor_dv.png
+    :figwidth: 75%
+    :alt: Plot comparing unprocessed and processed data where apodizations are applied to different dependent variables.
 
-    >>> _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"}) # doctest: +SKIP
-    >>> ax[0].plot(csdm_object, linewidth=1) # doctest: +SKIP
-    >>> ax[0].set_title('Before') # doctest: +SKIP
-    >>> ax[1].plot(processed_data.real, linewidth=1) # doctest: +SKIP
-    >>> ax[1].set_title('After') # doctest: +SKIP
-    >>> plt.tight_layout() # doctest: +SKIP
-    >>> plt.show() # doctest: +SKIP
-
-.. _fig4_signal_process:
-.. figure:: _static/null.*
-    :alt: _images/null.png
-
-    Gaussian and Lorentzian convolution applied to two different dependent variables of the
-    CSDM object.
-
-
-Convolution along multiple dimensions
-'''''''''''''''''''''''''''''''''''''
-
-In the case of multi-dimensional datasets, besides the dependent-variable index, you may
-also specify a dimension index along which a particular operation will apply. For example,
-consider the following 2D datasets as a CSDM object,
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> # Create a two-dimensional CSDM object.
-    >>> test_data = np.zeros(600).reshape(30, 20)
-    >>> test_data[15, 10] = 1
-    >>> dv = cp.as_dependent_variable(test_data)
-    >>> dim1 = cp.LinearDimension(count=20, increment='0.1 ms', coordinates_offset='-1 ms', label='t1')
-    >>> dim2 = cp.LinearDimension(count=30, increment='1 cm/s', label='s1')
-    >>> csdm_data = cp.CSDM(dependent_variables=[dv], dimensions=[dim1, dim2])
-
-where ``csdm_data`` is a two-dimensional dataset. Now consider the following signal processing
-operations
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> processor = sp.SignalProcessor(
-    ...     operations=[
-    ...         sp.IFFT(dim_index=(0, 1)),
-    ...         sp.apodization.Gaussian(FWHM='0.5 ms', dim_index=0),
-    ...         sp.apodization.Exponential(FWHM='10 cm/s', dim_index=1),
-    ...         sp.FFT(dim_index=(0, 1)),
-    ...     ]
-    ... )
-    >>> processed_data = processor.apply_operations(data=csdm_data)
-
-The above set of operations first performs an inverse FFT on the dataset along the dimension
-index 0 and 1. The second and third operations apply a Gaussian and Lorentzian apodization
-along dimensions 0 and 1, respectively. The last operation is a forward Fourier transform.
-The before and after plots of the datasets are shown below.
-
-.. plot::
-    :format: doctest
-    :context: close-figs
-    :include-source:
-
-    >>> _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"}) # doctest: +SKIP
-    >>> ax[0].imshow(csdm_data, aspect='auto') # doctest: +SKIP
-    >>> ax[0].set_title('Before') # doctest: +SKIP
-    >>> ax[1].imshow(processed_data.real, aspect='auto') # doctest: +SKIP
-    >>> ax[1].set_title('After') # doctest: +SKIP
-    >>> plt.tight_layout() # doctest: +SKIP
-    >>> plt.show() # doctest: +SKIP
-
-Serializing the operations list
--------------------------------
-
-You may also serialize the operations list using the
-:py:meth:`~mrsimulator.signal_processing.SignalProcessor.json`
-method, as follows
-
-.. doctest::
-
-    >>> from pprint import pprint
-    >>> dictionary = processor.json()
-    >>> pprint(dictionary)
-    {'operations': [{'dim_index': [0, 1], 'function': 'IFFT'},
-                    {'FWHM': '0.5 ms',
-                     'dim_index': 0,
-                     'function': 'apodization',
-                     'type': 'Gaussian'},
-                    {'FWHM': '10.0 cm / s',
-                     'dim_index': 1,
-                     'function': 'apodization',
-                     'type': 'Exponential'},
-                    {'dim_index': [0, 1], 'function': 'FFT'}]}
+    The unprocessed data (left) and the processed data with convolutions applied to different
+    dependent variables.
 
 .. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.,
             Core Scientific Dataset Model: A lightweight and portable model and
             file format for multi-dimensional scientific data, PLOS ONE,
             **15**, 1-38, (2020).
             `DOI:10.1371/journal.pone.0225953 <https://doi.org/10.1371/journal.pone.0225953>`_
-
-.. seealso::
-
-    :ref:`example_gallery` for application of signal processing on NMR simulations.

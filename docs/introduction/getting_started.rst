@@ -16,7 +16,6 @@ An NMR spin system is an isolated system of sites (spins) and couplings. Spin sy
 can include as many sites and couplings necessary to model a sample. For this
 introductory example, we will create a coupled :math:`^1\text{H}` - :math:`^{13}\text{C}`
 spin system.
-
 First we will construct two :ref:`site_api` objects for the :math:`^1\text{H}` and
 :math:`^{13}\text{C}` sites.
 
@@ -174,7 +173,7 @@ Here we apply 200 Hz of exponential line broadening.
 
 Each **SignalProcessor** object has a list of operations which are applied sequentially to
 a dataset. For a comprehensive list of operations and how to use the signal processing object,
-see :ref:`sp_documentation`.
+see the :ref:`signal_processing_documentation` documentation page.
 
 Visualizing the Dataset
 -----------------------

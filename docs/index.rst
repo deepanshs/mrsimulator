@@ -192,10 +192,11 @@ Examples
 
 .. toctree::
     :maxdepth: 2
-    :caption: Examples and Fitting
+    :caption: Galleries
 
     examples/index
     fitting/index
+    signal_processing/index
 
 Theory
 ------

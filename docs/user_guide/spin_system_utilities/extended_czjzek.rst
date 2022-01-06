@@ -69,13 +69,14 @@ setup as the extended Czjzek distribution of symmetric shielding tensors, shown 
 In the following example, we generate the probability distribution
 function using the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.pdf` method.
 
-.. code-block::
+.. code-block:: python
 
     import numpy as np
-    Cq_range = np.arange(100)*0.04 + 2 # pre-defined Cq range in MHz.
-    eta_range = np.arange(21)/20  # pre-defined eta range.
 
-    quad_tensor = {'Cq': 3.5, 'eta': 0.23} # Cq assumed in MHz
+    Cq_range = np.arange(100) * 0.04 + 2  # pre-defined Cq range in MHz.
+    eta_range = np.arange(21) / 20  # pre-defined eta range.
+
+    quad_tensor = {"Cq": 3.5, "eta": 0.23}  # Cq assumed in MHz
     model_quad = ExtCzjzekDistribution(quad_tensor, eps=0.2)
     Cq, eta, amp = model_quad.pdf(pos=[Cq_range, eta_range])
 
