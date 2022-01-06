@@ -18,7 +18,7 @@ from mrsimulator import signal_processing as sp
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # **Step 1:** Create the sites.

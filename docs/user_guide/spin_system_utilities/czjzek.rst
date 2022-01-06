@@ -5,7 +5,8 @@ Czjzek distribution
 
 The Czjzek distribution models random variations of a second-rank traceless
 symmetric tensors about zero, i.e., a tensor with zeta of zero. See :ref:`czjzek_model`
-and references within for a brief description of the model.
+for a mathematical description of the model as well as references to examples using the Czjzek
+distribution at the bottom of this page.
 
 Czjzek distribution of symmetric shielding tensors
 ''''''''''''''''''''''''''''''''''''''''''''''''''

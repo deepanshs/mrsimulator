@@ -13,7 +13,7 @@ Non-coincidental Quad and CSA, ¹⁷O (I=5/2)
 # :math:`^{17}\text{O}` site in benzanilide.
 #
 # .. warning::
-#     The Euler angles representation using by Yamada `et al` is different from the
+#     The Euler angles representation used by Yamada `et al` is different from the
 #     representation used in mrsimulator. The resulting simulation might not resemble
 #     the published spectrum.
 import numpy as np

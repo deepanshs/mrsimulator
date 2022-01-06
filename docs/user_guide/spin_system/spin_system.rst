@@ -1,8 +1,8 @@
 .. _spin_system_documentation:
 
-=============================
-Site, Coupling and SpinSystem
-=============================
+===========
+Spin System
+===========
 
 At the heart of any ``mrsimulator`` calculation is the definition of a **SpinSystem**
 object describing the sites and couplings within a spin system. Each **Simulator** object holds

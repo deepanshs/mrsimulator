@@ -66,7 +66,7 @@ runs entirely in the cloud. Launch a new notebook on
       !pip install mrsimulator
 
 in the first cell, and execute. All done! You may now start using the library, or
-proceed to the :ref:`Uncoupled Spin Systems Example <uncoupled_example>` to continue
+proceed to :ref:`getting_started` to continue
 the tutorial.
 
 
@@ -145,8 +145,8 @@ installed on your system. In this case, type the following in the terminal/Promp
     $ pip install mrsimulator -U
 
 
-All done! You may now start using the library, or proceed to section
-:ref:`Uncoupled Spin Systems Example <uncoupled_example>` to continue the tutorial.
+All done! You may now start using the library, or proceed to
+:ref:`getting_started` to continue the tutorial.
 
 
 .. _building_from_source:
