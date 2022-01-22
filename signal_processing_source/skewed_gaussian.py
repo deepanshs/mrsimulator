@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# NOTE: Example removed until skewed gaussian apodization resolved
 """
 Skewed Gaussian Apodization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -7,7 +8,7 @@ Skewed Gaussian Apodization
 # %%
 # In this example, we will use the
 # :py:class:`~mrsimulator.signal_processing.apodization.SkewedGaussian` class to
-# apply a apodization on the Foruier transform of an example dataset. The
+# apply a Skewed Gaussian convolution on an example dataset. The
 # skewed Gaussian function is defined as follows
 #
 # .. math::
@@ -37,8 +38,8 @@ from mrsimulator import signal_processing as sp
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        sp.apodization.SkewedGaussian(skew=2, FWHM="100 s", dv_index=0),
-        sp.apodization.SkewedGaussian(skew=-3.5, FWHM="100 s", dv_index=1),
+        sp.apodization.SkewedGaussian(skew=2, FWHM="100 Hz", dv_index=0),
+        sp.apodization.SkewedGaussian(skew=-3.5, FWHM="100 Hz", dv_index=1),
         sp.FFT(),
     ]
 )
@@ -46,20 +47,19 @@ processor = sp.SignalProcessor(
 # %%
 # Next we create a CSDM object with a test dataset which our signal processor will
 # operate on. Here, the dataset consists of two dependent variables each
-# spaning 500 seconds with a delta function centered at
-# 250 seconds.
-test_data = np.zeros(500)
-test_data[250] = 1
+# spaning 500 seconds with delta functions centered at -100 and
+# 100 Hz, respectively.
+test_data_0 = np.zeros(500)
+test_data_0[150] = 1
+test_data_1 = np.zeros(500)
+test_data_1[350] = 0.5
 csdm_object = cp.CSDM(
     dependent_variables=[
-        cp.as_dependent_variable(test_data),
-        cp.as_dependent_variable(test_data),
+        cp.as_dependent_variable(test_data_0),
+        cp.as_dependent_variable(test_data_1),
     ],
-    dimensions=[cp.LinearDimension(count=500, increment="1 s")],
+    dimensions=[cp.LinearDimension(count=500, increment="1 Hz", complex_fft=True)],
 )
-# set the labels for dependent variables
-csdm_object.y[0].name = "skew=2"
-csdm_object.y[1].name = "skew=-3.5"
 
 # %%
 # To apply the previously defined signal processor, we use the
@@ -73,9 +73,10 @@ processed_data = processor.apply_operations(data=csdm_object)
 import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(1, 2, figsize=(8, 3.5), subplot_kw={"projection": "csdm"})
-ax[0].plot(csdm_object, color="black", linewidth=1)
+ax[0].plot(csdm_object, linewidth=1)
 ax[0].set_title("Before")
 ax[1].plot(processed_data.real, linewidth=1)
 ax[1].set_title("After")
+ax[1].legend(["skew=2", "skew=-3.5"])
 plt.tight_layout()
 plt.show()

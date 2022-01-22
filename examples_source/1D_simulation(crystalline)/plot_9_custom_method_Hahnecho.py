@@ -17,7 +17,7 @@ from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.method.event import MixingEvent, SpectralEvent
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 1
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # For demonstration, we will create two spin systems, one with a single site and other

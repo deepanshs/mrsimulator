@@ -35,7 +35,7 @@ Reference Tables
   * - magnetic_flux_density
     - ``float``
     - An *optional* float describing the macroscopic magnetic flux density of the applied
-      external magnetic filed in Tesla. For example, ``18.8`` Tesla. The default is ``9.4`` tesla.
+      external magnetic filed in tesla. For example, ``18.8`` tesla. The default is ``9.4`` tesla.
 
   * - spectral_dimensions
     - ``List`` of :ref:`spectral_dim_api` objects

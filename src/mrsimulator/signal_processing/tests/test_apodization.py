@@ -19,7 +19,7 @@ spin_system_object = SpinSystem.parse_dict_with_units(the_spin_system)
 sim.spin_systems += [spin_system_object, spin_system_object, spin_system_object]
 sim.config.decompose_spectrum = "spin_system"
 
-sim.methods = [
+sim.methods += [
     BlochDecaySpectrum(
         channels=["1H"],
         magnetic_flux_density=9.4,
@@ -105,6 +105,7 @@ def test_Gaussian():
 
 
 def test_SkewedGaussian():
+    # TODO: update this test for multiple skewes and using npp.convolve
     skew = 2
     FWHM = 200 * 2.354820045030949
     PS_2 = [
@@ -122,12 +123,12 @@ def test_SkewedGaussian():
     assert np.allclose(y0, y1), "Gaussian apodization on two dv are not equal."
 
 
-def test_Step():
+def test_TopHat():
     rising_edge = -1
     falling_edge = 1
     PS_4 = [
         sp.IFFT(dim_index=0),
-        sp.apodization.Step(
+        sp.apodization.TopHat(
             rising_edge=f"{rising_edge} s",
             falling_edge=f"{falling_edge} s",
             dim_index=0,
@@ -156,7 +157,7 @@ def test_Step():
     rising_edge = -1
     PS_4 = [
         sp.IFFT(dim_index=0),
-        sp.apodization.Step(
+        sp.apodization.TopHat(
             rising_edge=f"{rising_edge} s",
             dim_index=0,
             dv_index=[0, 1],
@@ -229,10 +230,10 @@ def test_scale_class():
 
 
 def test_Step_class():
-    a = sp.apodization.Step(rising_edge="1 s")
+    a = sp.apodization.TopHat(rising_edge="1 s")
     assert a.property_units == {"rising_edge": "s"}
 
-    a = sp.apodization.Step(falling_edge="1 s")
+    a = sp.apodization.TopHat(falling_edge="1 s")
     assert a.property_units == {"falling_edge": "s"}
 
 

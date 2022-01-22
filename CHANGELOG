@@ -6,7 +6,7 @@ What's new
 
 **Method**
 
-- New Event class---``SpectralEvent``, ``ConstantTimeEvent``, and ``MixingEvent``. The MixingEvent
+- New Event classes---``SpectralEvent`` and ``MixingEvent``. The MixingEvent
   controls the mixing of transitions in a multi-event method.
 - A ``TransitionPathway`` object now includes a weight attribute, which holds the probability of
   the transition pathway based on the mixing events defined within the method.
@@ -22,10 +22,10 @@ What's new
 
 **Documentation**
 
+- Restructured documentation layout
 - Added instillation troubleshooting section
 - Added section *User Guide* detailing use and attributes of most objects.
-- Condensed simulation/fitting gallery by removing redundant examples & combining like experiments
-  (see ssnmr.org for old examples)
+- Condensed simulation/fitting gallery by removing redundant examples
 - New gallery demonstrating signal processing functions.
 
 Changes
