@@ -144,7 +144,7 @@ def test_TopHat():
     temp_post_sim = sp.SignalProcessor(operations=[sp.IFFT(dim_index=0)])
     temp_data = temp_post_sim.apply_operations(data=sim.methods[0].simulation.copy())
     temp_x = temp_data.dimensions[0].coordinates.value
-    screen = np.where(temp_x > rising_edge, 1, 0)
+    screen = np.where(temp_x >= rising_edge, 1, 0)
     screen = screen + np.where(temp_x < falling_edge, 0, -1)
     temp_data.dependent_variables[0].components[0] = np.multiply(
         temp_data.dependent_variables[0].components[0], screen
@@ -172,7 +172,7 @@ def test_TopHat():
     temp_post_sim = sp.SignalProcessor(operations=[sp.IFFT(dim_index=0)])
     temp_data = temp_post_sim.apply_operations(data=sim.methods[0].simulation.copy())
     temp_x = temp_data.dimensions[0].coordinates.value
-    screen = np.where(temp_x > rising_edge, 1, 0)
+    screen = np.where(temp_x >= rising_edge, 1, 0)
     screen = screen + np.where(temp_x < 0, 0, -1)
     temp_data.dependent_variables[0].components[0] = np.multiply(
         temp_data.dependent_variables[0].components[0], screen
