@@ -3,6 +3,14 @@
 For the users
 =============
 
+.. note::
+
+   If you encounter an issue during installation, see our
+   `troubleshooting section <instillation_troubleshooting>`__.
+
+   If that doesn't resolve your issue, please create a bug report on our
+   `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
+
 Strict Requirements
 -------------------
 
@@ -28,13 +36,9 @@ Make sure you have the required version of python by typing the following in the
 For *Mac* users, python version 3 is installed under the name *python3*. You may replace
 *python* for *python3* in the above command and all subsequent python statements.
 
-For *Windows* users, we recommend the `Anaconda <https://www.anaconda.com/products/individual/>`_
-or `miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ distribution of
-python>3.6. Anaconda distribution for python comes with popular python packages that
-are frequently used in scientific computing.
-Miniconda is a minimal installer for conda. It is a smaller version of Anaconda that
-includes conda, Python, and the packages they depend on, along with other useful
-packages such as pip.
+For *Windows* users, Python is not usually installed by default. See
+ `Python.org <https://www.python.org/downloads/windows/>`_ for a list of official Python downloads
+ and Windows installation instructions.
 
 .. You can find more information under the Windows tab in the
 .. :ref:`building_from_source` section.
@@ -59,15 +63,26 @@ On Google Colab Notebook
 
 Colaboratory is a Google research project. It is a Jupyter notebook environment that
 runs entirely in the cloud. Launch a new notebook on
-`Colab <http://colab.research.google.com>`_. To install the mrsimulator package, type
+`Colab <http://colab.research.google.com>`_. We recommend going through the *Welcome to Colab!*
+tutorial if you are new to Notebooks.
+
+By default, Colaboratory has an older version of ``numpy`` installed which first needs to be
+updated. In a new cell, run
+
+.. code-block:: shell
+
+       !pip install -U numpy
+
+and press the *Restart Runtime* button
+
+To install the ``mrsimulator`` package, type
 
 .. code-block:: shell
 
       !pip install mrsimulator
 
-in the first cell, and execute. All done! You may now start using the library, or
-proceed to :ref:`getting_started` to continue
-the tutorial.
+in a first cell, and execute. All done! You may now start using the library, or
+proceed to :ref:`getting_started` to continue the tutorial.
 
 
 .. _on_local_machine:
@@ -250,3 +265,19 @@ The above statement should produce the following figure.
 .. plot:: ../pyplot/test_file.py
 
     A test example simulation of solid-state NMR spectrum.
+
+.. note::
+
+    If you encounter the following error
+
+    .. code-block:: shell
+
+        ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
+
+    update numpy by run
+
+    .. code-block:: shell
+
+        $ pip install -U numpy
+
+    Re-running ``python test_file.py`` should now succeed.

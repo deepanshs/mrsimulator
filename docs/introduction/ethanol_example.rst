@@ -9,9 +9,6 @@ will include the characteristic
 which come from couplings between :math:`^{1}\text{H}` and :math:`^{13}\text{C}` in low-abundance
 isotopomers.
 
-Importing Packages and Classes
-------------------------------
-
 It is good practice to import packages and classes and classes at the beginning of your code.
 Here we import everything we will use in this example
 
@@ -23,8 +20,8 @@ Here we import everything we will use in this example
     from mrsimulator.methods import BlochDecaySpectrum
     from mrsimulator import signal_processing as sp
 
-Creating the Spin Systems
--------------------------
+Spin Systems
+------------
 
 First create the :math:`^1\text{H}` and :math:`^{13}\text{C}` sites for ethanol.
 
@@ -247,7 +244,7 @@ Now that we have our processed data, we can plot the two spectra.
     plt.show()
 
 
-.. figure:: ../_static/ethanol_isotopomers.svg
+.. figure:: ../_static/ethanol_isotopomers.png
    :alt: 1H and 13C spectra
    :figwidth: 90 %
 

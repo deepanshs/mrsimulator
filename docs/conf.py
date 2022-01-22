@@ -39,6 +39,8 @@ with open("../src/mrsimulator/__init__.py", "r") as f:
         if "__version__" in line:
             before_keyword, keyword, after_keyword = line.partition("=")
             __version__ = after_keyword.strip()[1:-1]
+            # Must break since want only first use of __version__ within file
+            break
 
 # The short X.Y version
 version = ".".join(__version__.split(".")[:2])

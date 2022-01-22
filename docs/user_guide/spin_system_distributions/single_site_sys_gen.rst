@@ -14,7 +14,7 @@ systems. Import the method as below
 
     from mrsimulator.utils.collections import single_site_system_generator
 
-The arguments passed to the function, defined in :ref:`single_site_sys_gen_table`,
+The arguments passed to the function, defined in :numref:`single_site_sys_gen_table`,
 can either be a scalar quantity (``float`` or ``str``, where applicable) or a
 ``list``/``np.array`` of those quantities. All lists passed must
 have the same length, otherwise an error will be thrown. For example,
@@ -101,9 +101,11 @@ of the site without the tensor parameter.
   :add-heading: Examples using ``single_site_system_generator()``
   :heading-level: -
 
+--------------------------------------------------------------------------------
+
 .. cssclass:: table-bordered table-striped centered
 .. _single_site_sys_gen_table:
-.. list-table:: arguments for ``single_site_system_generator``
+.. list-table:: Arguments for ``single_site_system_generator``
     :widths: 15 25 60
     :header-rows: 1
 

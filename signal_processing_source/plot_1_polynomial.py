@@ -26,7 +26,9 @@ from mrsimulator import signal_processing as sp
 # Python dict defining the polynomial coefficients. An arbitrary number of coefficients
 # may be passed.
 processor = sp.SignalProcessor(
-    operations=[sp.baseline.Polynomial(polynomial_dictionary={"c0": 10, "c2": 0.00002})]
+    operations=[
+        sp.baseline.Polynomial(polynomial_dictionary={"c0": 0.2, "c2": 0.00001})
+    ]
 )
 
 # %%
@@ -34,16 +36,16 @@ processor = sp.SignalProcessor(
 #
 # .. math::
 #
-#   f(x) = 0.00002 /cdot x^2 + 10
+#   f(x) = 0.00001 \cdot x^2 + 0.2
 #
 # Next we create a CSDM object with a test dataset which our signal processor will
-# operate on. Here, the dataset spans 500 seconds with a delta function centered at
-# 250 seconds.
+# operate on. Here, the dataset spans 500 Hz with a delta function centered at
+# 100 Hz.
 test_data = np.zeros(500)
-test_data[250] = 1
+test_data[350] = 1
 csdm_object = cp.CSDM(
     dependent_variables=[cp.as_dependent_variable(test_data)],
-    dimensions=[cp.LinearDimension(count=500, increment="1 s")],
+    dimensions=[cp.LinearDimension(count=500, increment="1 Hz", complex_fft=True)],
 )
 
 # %%
@@ -57,10 +59,12 @@ processed_data = processor.apply_operations(data=csdm_object.copy())
 # ``matplotlib`` library.
 import matplotlib.pyplot as plt
 
-fig, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection": "csdm"})
+fig, ax = plt.subplots(1, 2, figsize=(8, 3.5), subplot_kw={"projection": "csdm"})
 ax[0].plot(csdm_object, color="black", linewidth=1)
+ax[0].set(ylim=(-0.1, 1.5))
 ax[0].set_title("Before")
 ax[1].plot(processed_data.real, color="black", linewidth=1)
+ax[1].set(ylim=(-0.1, 1.5))
 ax[1].set_title("After")
 plt.tight_layout()
 plt.show()

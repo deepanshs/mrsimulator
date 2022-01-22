@@ -8,6 +8,8 @@ At the heart of any ``mrsimulator`` calculation is the definition of a **SpinSys
 object describing the sites and couplings within a spin system. Each **Simulator** object holds
 a list of **SpinSystem** objects which will be used to calculate frequency contributions.
 
+.. _site_documentation:
+
 Site
 ----
 
@@ -71,6 +73,8 @@ objects have the attribute *property_units* which provides the units for all cla
 
     print(SymmetricTensor().property_units)
     # {'zeta': 'ppm', 'Cq': 'Hz', 'D': 'Hz', 'alpha': 'rad', 'beta': 'rad', 'gamma': 'rad'}
+
+.. _coupling_documentation:
 
 Coupling
 --------
@@ -265,7 +269,6 @@ updated to reflect the index `H2_site`` and ``C13_site`` in the sites list. Agai
 :ref:`introduction_ethanol_example` has good usage cases for multiple couplings in a
 spin system.
 
-Table of Class Attributes
 -------------------------
 
 .. cssclass:: table-bordered table-striped centered

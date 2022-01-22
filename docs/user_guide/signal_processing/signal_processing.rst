@@ -4,12 +4,6 @@
 Signal Processing
 =================
 
-.. note::
-
-    The signal processing module can operate on experimental datasets, but it is intended for
-    processing simulated spectra. We recommend pre-processing experimental datasets with other
-    applications before importing them into ``mrsimulator``.
-
 After running a simulation, you may need to apply some post-simulation signal processing.
 For example, you may need to scale the simulated spectrum to match experimental intensities,
 or you may want to convolve the spectrum with a Lorentzian, Gaussian, or other line-broadening
@@ -35,6 +29,7 @@ In ``mrsimulator``, the :py:class:`~mrsimulator.signal_processing.SignalProcesso
 used to apply operations. Here we create a new signal processing object
 
 .. code-block:: python
+
     # Import the signal_processing module
     from mrsimulator import signal_processing as sp
 
@@ -196,4 +191,4 @@ Below is a plot of the dataset before and after applying the operations
             Core Scientific Dataset Model: A lightweight and portable model and
             file format for multi-dimensional scientific data, PLOS ONE,
             **15**, 1-38, (2020).
-            `DOI:10.1371/journal.pone.0225953 <https://doi.org/10.1371/journal.pone.0225953>`_
+            `DOI:10.1371/journal.pone.0225953 <https://doi.org/10.1371/journal.pone.0225953>`__

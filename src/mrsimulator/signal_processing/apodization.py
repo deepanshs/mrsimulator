@@ -244,8 +244,8 @@ class SkewedGaussian(Apodization):
         return 1.0 if self.skew == 0.0 else sg
 
 
-class Step(Apodization):
-    r"""Apodize a dependent variable of the CSDM object by a step function.
+class TopHat(Apodization):
+    r"""Apodize a dependent variable of the CSDM object by a top hat function.
 
     The apodization function follows
 
@@ -254,19 +254,19 @@ class Step(Apodization):
         \text{else} f(x) = 0
 
     where :math:`x` are the coordinates of the dimension, rising_edge is the
-    start of the step function window, and falling_edge is the end of the
-    step function window.
+    start of the function window, and falling_edge is the end of the
+    function window.
 
     Arguments
     ---------
 
     rising_edge:
-        The lowest value in the time domain from which to start the step function
+        The lowest value in the time domain from which to start the function
         window. The default value is None which will take the lowest possible
         value for the supplied data.
 
     falling_edge:
-        The highest value in the time domain from which to end the step function
+        The highest value in the time domain from which to end the function
         window. The default value is None which will take the largest possible
         value for the supplied data.
 
@@ -281,7 +281,7 @@ class Step(Apodization):
     Example
     -------
 
-    >>> operation7= sp.apodization.Step(rising_edge = '-1 s', falling_edge = '1 s')
+    >>> operation7= sp.apodization.TopHat(rising_edge = "-1 s", falling_edge = "1 s")
     """
 
     rising_edge: Union[float, str, None] = 0
@@ -303,13 +303,13 @@ class Step(Apodization):
             unit = 1 * self.property_units["rising_edge"]
         x = self.get_coordinates_in_units(x, unit=1.0 * unit)
 
-        screen = np.where(x > self.rising_edge, 1, 0)
+        screen = np.where(x >= self.rising_edge, 1, 0)
         screen = screen + np.where(x < self.falling_edge, 0, -1)
         return screen
 
 
 class TypedArray(np.ndarray):
-    """an array metaclass to allow me to use np.ndarrays in Mask class"""
+    """an array metaclass to allow the use of np.ndarrays in Mask class"""
 
     @classmethod
     def __get_validators__(cls):

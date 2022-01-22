@@ -4,17 +4,35 @@
 Methods Library
 ===============
 
-``mrsimulator`` includes a range of pre-defined 1D and 2D methods for common NMR experiments.
+``mrsimulator`` includes a range of pre-defined 1D and 2D methods for most NMR experiments.
 
-((more documentation goes here))
+* :ref:`bloch_decay`
+* :ref:`bloch_decay_CT`
+* :ref:`mq_vas`
+* :ref:`st_vas`
+* :ref:`ssb2d`
 
-undecided on using an include or toctree block
 
-.. toctree::
-    :maxdepth: 1
+.. _bloch_decay:
 
-    bloch_decay
-    bloch_decay_CT
-    mq_vas
-    s_vas
-    ssb2d
+.. include:: bloch_decay.rst
+
+
+.. _bloch_decay_CT:
+
+.. include:: bloch_decay_CT.rst
+
+
+.. _mq_vas:
+
+.. include:: mq_vas.rst
+
+
+.. _st_vas:
+
+.. include:: st_vas.rst
+
+
+.. _ssb2d:
+
+.. include:: ssb2d.rst

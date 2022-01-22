@@ -180,7 +180,7 @@ User Guide
     :caption: User Documentation
 
     user_guide/spin_system/spin_system
-    user_guide/spin_system_utilities/spin_system_utilities
+    user_guide/spin_system_distributions/spin_system_distributions
     user_guide/method/method
     user_guide/methods_library/methods_library
     user_guide/simulator/simulator
@@ -264,11 +264,10 @@ Project details
 Reporting Bugs
 --------------
 
-The preferred location for submitting feature requests and bug reports is the
-`Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_. Reports
-are also welcomed  by directly contacting `Deepansh Srivastava <mailto:srivastava.89@osu.edu>`_.
+Submit bug reports or feature requests on the
+`Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
 
-Discussions are welcome on `Github discussion <https://github.com/deepanshs/mrsimulator/discussions>`_
+Discussions are welcome on the `Github discussion <https://github.com/deepanshs/mrsimulator/discussions>`_ page.
 
 
 How to cite

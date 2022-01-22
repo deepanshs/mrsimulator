@@ -9,14 +9,14 @@ For more detailed documentation on the usage of ``mrsimulator`` classes, see the
 **user documentation** section. Also, check out our :ref:`example_gallery` and
 :ref:`fitting_examples`.
 
-Setting up a SpinSystem object
-------------------------------
+Spin System
+-----------
 
 An NMR spin system is an isolated system of sites (spins) and couplings. Spin systems
 can include as many sites and couplings necessary to model a sample. For this
 introductory example, we will create a coupled :math:`^1\text{H}` - :math:`^{13}\text{C}`
 spin system.
-First we will construct two :ref:`site_api` objects for the :math:`^1\text{H}` and
+First we will construct two :ref:`site_documentation` objects for the :math:`^1\text{H}` and
 :math:`^{13}\text{C}` sites.
 
 .. code-block:: python
@@ -41,7 +41,7 @@ represents a proton site with no chemical shift. ``C_site`` represents a carbon-
 a chemical shift of 100 ppm as well as a shielding component represented by :ref:`sy_api`
 object. We parametrize tensors using the Haeberlen convention.
 
-Next we will define a dipolar coupling by creating a :ref:`coupling_api` object.
+Next we will define a dipolar coupling by creating a :ref:`coupling_documentation` object.
 
 .. code-block:: python
 
@@ -70,10 +70,10 @@ If you need to create an uncoupled spin system, simply omit the ``couplings`` at
 
 Thats it! We have created a spin system whose spectrum is ready to be simulated.
 
-Setting up a Method object
---------------------------
+Methods
+-------
 
-A :ref:`method_api` object describes an NMR method. For this introduction, we will use the
+A :ref:`method_documentation` object describes an NMR method. For this introduction, we will use the
 :func:`~mrsimulator.methods.BlochDecaySpectrum`, one of the pre-defined methods ``mrsimulator``
 provides. Some attributes of the method still need to be defined as seen below.
 
@@ -105,15 +105,15 @@ A Bloch decay method only has one spectral dimension and this specific spectral 
 .. ((The method is looking at)) a the :math:`^{13}\text{C}` channel in a 9.4 tesla environment while the
 .. sample spins at 3 kHz at the magic angle. We also have a single spectral dimension  which
 .. defines a frequency dimension with 2048 points, spanning 80 kHz with a reference offset of
-.. 6 kHz. ((reference spectral_dimension user documentation))
+.. 6 kHz. :ref:`spec_dim_documentation`
 
 Now all we need is to put our **SpinSystem** and **Method** objects together and simulate
 the spectrum.
 
-Setting up a Simulator object
------------------------------
+Simulator
+---------
 
-At the heart of ``mrsimulator`` is the :ref:`simulator_api` object which preforms
+At the heart of ``mrsimulator`` is the :ref:`simulator_documentation` object which preforms
 the calculation of the NMR spectrum. Lets create the **Simulator** object:
 
 .. code-block:: python
@@ -146,11 +146,11 @@ plot the data
 .. note:: In ``mrsimulator``, all resonance frequencies are calculated assuming the
     weakly-coupled (Zeeman) basis for the spin system.
 
-Accessing and Processing the Dataset
-------------------------------------
+Signal Processing
+-----------------
 
 ``mrsimulator`` preforms all calculations in the frequency domain so plotting the dataset now
-would show only delta functions. For this reason, we have the :ref:`signal_processing_api`
+would show only delta functions. For this reason, we have the :ref:`signal_processing_documentation`
 object which applies post-processing to the data after simulation.
 
 Here we apply 200 Hz of exponential line broadening.
@@ -175,8 +175,8 @@ Each **SignalProcessor** object has a list of operations which are applied seque
 a dataset. For a comprehensive list of operations and how to use the signal processing object,
 see the :ref:`signal_processing_documentation` documentation page.
 
-Visualizing the Dataset
------------------------
+Plotting the Data
+-----------------
 
 We end this example by using the `matplotlib <https://matplotlib.org/stable/>`_ Python library.
 to plot the simulated dataset.
