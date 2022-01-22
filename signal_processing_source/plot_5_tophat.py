@@ -13,7 +13,7 @@ Top-Hat Apodization
 # .. math::
 #
 #   f(x) = \begin{cases}
-#     1, \texttt{rising_edge} \leq x \leq \texttt{falling_edge} \\
+#     1, \tt{rising\_edge} \leq x \leq \tt{falling\_edge} \\
 #     0, \text{otherwise}
 #     \end{cases}
 #
