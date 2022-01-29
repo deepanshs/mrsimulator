@@ -118,20 +118,20 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
 
   // if min frequency is higher than the last bin, return
   p = (int)f[0];
-  if (p > *points) return;
+  if (p >= *points) return;
 
   // if max frequency is lower than the first bin, return
   pmax = (int)f[2];
   if (pmax < 0) return;
 
   pmid = (int)f[1];
-  if (pmid >= *points) {
-    pmid = *points;
+  if (pmid >= *points - 1) {
+    pmid = *points - 1;
     clip_right1 = true;
   }
 
-  if (pmax >= *points) {
-    pmax = *points;
+  if (pmax >= *points - 1) {
+    pmax = *points - 1;
     clip_right2 = true;
   }
 
