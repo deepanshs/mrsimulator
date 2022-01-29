@@ -31,6 +31,9 @@ def test_triangle_interpolation():
         [50.1, 50.4, 50.9],
         [82.3, 100.5, 200],
         [102, 103, 104],
+        [99, 100.1, 100.2],
+        [98.9, 99.1, 99.5],
+        [-0.23, -0.02, 0.1],
     ]
     for list_ in f_list:
         list_ = np.asarray(list_)
@@ -86,6 +89,9 @@ def test_delta_interpolation():
         clib.triangle_interpolation1D(list_, amp_c)
 
         # plt.bar(np.arange(10), amp_c, width=1)
+        # plt.scatter([item], [1.0], marker='x', color='k', s=50)
+        # plt.xticks(np.arange(15) - 2)
+        # plt.grid(axis="x", which='both')
         # plt.show()
 
         assert np.allclose(amp_, amp_c, atol=1e-15)
@@ -116,7 +122,7 @@ def test_triangle_rasterization():
         clib.triangle_interpolation1D(lst1, amp2)
         clib.triangle_interpolation1D(lst2, amp3)
 
-        # plt.imshow(amp1, origin='lower', cmap='gray', aspect='auto')
+        # plt.imshow(amp1, origin='lower', cmap='gray_r', aspect='auto')
         # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
         # plt.plot(x_t, y_t, 'r', label='vertex')
         # plt.scatter(lst2-0.5, lst1-0.5, s=20, color='yellow', label='vertex')
@@ -142,7 +148,7 @@ def test_triangle_rasterization():
         clib.triangle_interpolation2D(lst1, lst2, amp1)
         clib.triangle_interpolation1D(lst1, amp2)
 
-        # plt.imshow(amp1, origin='lower', cmap='gray', aspect='auto')
+        # plt.imshow(amp1, origin='lower', cmap='gray_r', aspect='auto')
         # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
         # plt.plot(x_t, y_t, 'r', label='vertex')
         # plt.scatter(lst2-0.5, lst1-0.5, s=20, color='yellow', label='vertex')
@@ -165,7 +171,7 @@ def test_triangle_rasterization():
         clib.triangle_interpolation2D(lst1, lst2, amp1)
         clib.triangle_interpolation1D(lst1, amp2)
 
-        # plt.imshow(amp1, origin='lower', cmap='gray', aspect='auto')
+        # plt.imshow(amp1, origin='lower', cmap='gray_r', aspect='auto')
         # x_t, y_t = np.append(lst2, lst2[0]) - 0.5, np.append(lst1, lst1[0]) - 0.5
         # plt.plot(x_t, y_t, 'r', label='vertex')
         # plt.scatter(lst2-0.5, lst1-0.5, s=20, color='yellow', label='vertex')

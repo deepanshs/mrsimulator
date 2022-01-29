@@ -125,12 +125,12 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
   if (pmax < 0) return;
 
   pmid = (int)f[1];
-  if (pmid >= *points - 1) {
+  if (pmid >= *points) {
     pmid = *points - 1;
     clip_right1 = true;
   }
 
-  if (pmax >= *points - 1) {
+  if (pmax >= *points) {
     pmax = *points - 1;
     clip_right2 = true;
   }
@@ -187,7 +187,7 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
       return 0;
     }
     if (diff > n_i) {
-      if (p + 1 != m0) {
+      if (p + 1 != m0 - 1) {
         temp = amp[0] * (diff - n_i);
         triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[(p + 1) * m1],
                                  &m1);
@@ -225,7 +225,7 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
   }
 
   p = (int)f1[0];
-  if (p > m0) {
+  if (p >= m0) {
     return 0;
   }
 
@@ -236,12 +236,12 @@ int triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
 
   pmid = (int)f1[1];
   if (pmid >= m0) {
-    pmid = m0;
+    pmid = m0 - 1;
     clip_right1 = 1;
   }
 
   if (pmax >= m0) {
-    pmax = m0;
+    pmax = m0 - 1;
     clip_right2 = 1;
   }
 
