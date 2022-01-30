@@ -8,7 +8,7 @@ The following are some common syntax errors encountered and how to solve them.
 However, the easiest way to find and prevent syntax errors is to use a dedicated code editor.
 We recommend using VS Code on your local machine
 or Google Colab which runs everything online. These programs check for syntax errors as you
-write code
+write code.
 
 IndentationError
 """"""""""""""""
@@ -26,7 +26,7 @@ return to a previous indentation level.
 ``IndentationError: unexpected indent`` means Python encountered unexpected whitespace.
 
 Code blocks in Python rely on indentation levels (1 level = 4 spaces) so whitespace can't
-be placed randomly. code blocks are preceded by a ``:`` and all code in one
+be placed randomly. Code blocks are preceded by a ``:`` and all code in one
 block has the same indentation. To get out of a code block, simply remove an indentation level.
 
 As an example of indentation, here is some code which adds the numbers 0 to 9:

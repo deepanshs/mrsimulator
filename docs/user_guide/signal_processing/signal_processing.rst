@@ -128,7 +128,7 @@ specifying the dimensions
     # Constant offset along the second dimension
     sp.baseline.ConstantOffset(offset=10, dim_index=1)
 
-    # Lorentzian (exponential) along the first and third dimensions
+    # Exponential apodization along the first and third dimensions
     sp.apodization.Exponential(FWHM="10 Hz", dim_index=[0, 2])
 
 Applying Apodizations to specific Dependent Variables
@@ -159,7 +159,7 @@ in a dimension.
     )
 
 The above list of operations will apply a step apodization as well as 25 and 70 Hz of Gaussian
-line broadening to dependent variables at index 0 and 1, respectively
+line broadening to dependent variables at index 0 and 1, respectively.
 
 Let's add another depended variable to the previously created CSDM object to see targeting
 specific dependent variables.

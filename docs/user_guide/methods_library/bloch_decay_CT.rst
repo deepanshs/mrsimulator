@@ -11,7 +11,7 @@ Bloch decay central transition selective spectrum.
     method = BlochDecayCTSpectrum(
         channels=["1H"],
         rotor_frequency=12500,  # in Hz
-        rotor_angle=0.95531,  # in rad
+        rotor_angle=54.735 * 3.14159 / 180,  # in rad
         magnetic_flux_density=9.4,  # in tesla
         spectral_dimensions=[
             dict(
@@ -23,7 +23,6 @@ Bloch decay central transition selective spectrum.
     )
 
 The method may be imported using the following alias classes:
-hi
 
 .. code-block:: python
 

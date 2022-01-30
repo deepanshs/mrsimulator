@@ -229,7 +229,7 @@ def test_scale_class():
     assert a == b
 
 
-def test_Step_class():
+def test_TopHat_class():
     a = sp.apodization.TopHat(rising_edge="1 s")
     assert a.property_units == {"rising_edge": "s"}
 

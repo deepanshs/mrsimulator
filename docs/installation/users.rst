@@ -81,7 +81,7 @@ To install the ``mrsimulator`` package, type
 
       !pip install mrsimulator
 
-in a first cell, and execute. All done! You may now start using the library, or
+in a new cell, and execute. All done! You may now start using the library, or
 proceed to :ref:`getting_started` to continue the tutorial.
 
 
