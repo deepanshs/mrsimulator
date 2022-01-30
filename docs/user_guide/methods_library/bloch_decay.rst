@@ -28,6 +28,6 @@ The method may be imported using the following alias classes:
 
   from mrsimulator.methods import BlochSpectrum
 
-.. .. minigallery:: mrsimulator.methods.BlochDecaySpectrum mrsimulator.methods.BlochSpectrum
+.. minigallery:: mrsimulator.utils.spectral_fitting.make_LMFIT_params
 ..     :add-heading: Examples using ``BlochDecaySpectrum``
 ..     :heading-level: "

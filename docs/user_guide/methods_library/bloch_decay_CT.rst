@@ -23,6 +23,7 @@ Bloch decay central transition selective spectrum.
     )
 
 The method may be imported using the following alias classes:
+hi
 
 .. code-block:: python
 
@@ -30,5 +31,5 @@ The method may be imported using the following alias classes:
     from mrsimulator.methods import BlochCTSpectrum
 
 .. minigallery:: mrsimulator.methods.BlochDecayCTSpectrum mrsimulator.methods.BlochDecayCentralTransitionSpectrum mrsimulator.methods.BlochCTSpectrum
-    :add-heading: Examples using ``BlochDecayCTSpectrum``
+    :add-heading:
     :heading-level: "

@@ -6,7 +6,7 @@ Gaussian Apodization
 """
 # %%
 # In this example, we will use the
-# :py:class:`~mrsimulator.signal_processing.apodization.Gaussian` class to preform a
+# :py:class:`~mrsimulator.signal_processing.apodization.Gaussian` class to perform a
 # Gaussain convolution on an example dataset. The function
 # used for this apodization is defined as follows
 #

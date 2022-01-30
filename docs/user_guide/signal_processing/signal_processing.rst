@@ -57,9 +57,9 @@ up by 120 times.
 
 .. note::
 
-    Convolutions in ``mrsimulator`` are preformed using the
+    Convolutions in ``mrsimulator`` are performed using the
     `Convolution Theorem <https://en.wikipedia.org/wiki/Convolution_theorem>`_. A spectrum is
-    Fourier transformed and apodizations are preformed in the time domain before being transformed
+    Fourier transformed and apodizations are performed in the time domain before being transformed
     back into the frequency domain.
 
 Let's create a CSDM object and then apply the operations to visualize the results.

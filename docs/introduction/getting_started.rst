@@ -74,8 +74,8 @@ Methods
 -------
 
 A :ref:`method_documentation` object describes an NMR method. For this introduction, we will use the
-:func:`~mrsimulator.methods.BlochDecaySpectrum`, one of the pre-defined methods ``mrsimulator``
-provides. Some attributes of the method still need to be defined as seen below.
+:func:`~mrsimulator.methods.BlochDecaySpectrum` which is one of the pre-defined methods.
+Some attributes of the method still need to be provided as seen below.
 
 .. code-block:: python
 
@@ -113,7 +113,7 @@ the spectrum.
 Simulator
 ---------
 
-At the heart of ``mrsimulator`` is the :ref:`simulator_documentation` object which preforms
+At the heart of ``mrsimulator`` is the :ref:`simulator_documentation` object which performs
 the calculation of the NMR spectrum. Lets create the **Simulator** object:
 
 .. code-block:: python
@@ -149,7 +149,7 @@ plot the data
 Signal Processing
 -----------------
 
-``mrsimulator`` preforms all calculations in the frequency domain so plotting the dataset now
+``mrsimulator`` performs all calculations in the frequency domain, so plotting the dataset now
 would show only delta functions. For this reason, we have the :ref:`signal_processing_documentation`
 object which applies post-processing to the data after simulation.
 

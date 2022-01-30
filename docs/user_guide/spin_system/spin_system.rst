@@ -4,18 +4,19 @@
 Spin System
 ===========
 
-At the heart of any ``mrsimulator`` calculation is the definition of a **SpinSystem**
-object describing the sites and couplings within a spin system. Each **Simulator** object holds
-a list of **SpinSystem** objects which will be used to calculate frequency contributions.
+At the heart of any ``mrsimulator`` calculation is the definition of a :ref:`spin_sys_api`
+object describing the sites and couplings within a spin system. Each :ref:`simulator_api` object
+holds a list of :ref:`spin_sys_api` objects which will be used to calculate frequency
+contributions.
 
 .. _site_documentation:
 
 Site
 ----
 
-A site object holds single site NMR interaction parameters, which include the nuclear
+A site object holds single-site NMR interaction parameters, which include the nuclear
 shielding and quadrupolar interaction parameters.
-Consider the example below of a **Site** object for a deuterium nucleus created in Python.
+Consider the example below of a :ref:`site_api` object for a deuterium nucleus created in Python.
 
 .. code-block:: python
 
@@ -44,10 +45,10 @@ Consider the example below of a **Site** object for a deuterium nucleus created 
     )
 
 The *isotope* key holds the spin isotope, here given a value of *2H*.
-The *isotropic_chemical_shift* is the isotropic chemical shift of the site isotope, :math:`^2\text{H}`,
-here given as *4.1 ppm*. We have additionally defined an optional *shielding_symmetric* key, whose
-value is a second-rank traceless symmetric nuclear shielding
-tensor.
+The *isotropic_chemical_shift* is the isotropic chemical shift of the site isotope,
+:math:`^2\text{H}`, here given as *4.1 ppm*. We have additionally defined an optional
+*shielding_symmetric* key, whose value is a second-rank traceless symmetric nuclear shielding
+tensor represented by a :ref:`sy_api` object.
 
 .. note::
   We parameterize a SymmetricTensor using the Haeberlen convention with parameters *zeta* and *eta*,
@@ -63,8 +64,10 @@ and asymmetry parameter, respectively.  Additionally, we use the Euler angle ori
 and *gamma*, which are the relative orientation of the EFG tensor from a common reference frame.
 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
-the **Site** and **SymmetricTensor** objects and their attributes, respectively. Also, all ``mrsimulator``
-objects have the attribute *property_units* which provides the units for all class properties.
+the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
+
+Also, all objects in  ``mrsimulator``
+have the attribute *property_units* which provides the units for all class properties.
 
 .. code-block:: python
 
@@ -81,7 +84,7 @@ Coupling
 
 A coupling object holds two site NMR interaction parameters, which can include the *J*-coupling
 and the dipolar coupling interaction parameters.
-Consider the example below of a **Coupling** object between two sites
+Consider the example below of a :ref:`coupling_api` object between two sites
 
 .. code-block:: python
 
@@ -120,13 +123,13 @@ coupling constant with the parameter *D*.  The Euler angle orientations, *alpha*
 are the relative orientation of the dipolar tensor from a common reference frame.
 
 See :numref:`table_coupling` and :numref:`table_symmetric_tensor` for further information on
-the **Site** and **SymmetricTensor** objects and their attributes, respectively.
+the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
 
 
 SpinSystem
 ----------
 
-The **SpinSystem** object is a collection of sites and couplings. Below are examples of different
+The :ref:`spin_sys_api` object is a collection of sites and couplings. Below are examples of different
 spin systems along with discussion on each attribute.
 
 Single Site Spin System
@@ -148,23 +151,23 @@ Here we create a relatively unexciting single site proton spin system
         abundance=80,  # percentage
     )
 
-We find four keywords at the root level of our SpinSystem object definition: **name**,
-**description**, **sites**, and **abundance**. The value of the *name* key is the
+We find four keywords at the root level of our SpinSystem object definition: *name*,
+*description*, *sites*, and *abundance*. The value of the *name* key is the
 optional name of the spin system. Likewise, the value of the description key is an optional
 string describing the spin system.
 
-The value of the *sites* key is a list of **Site** objects. Here, this list is simply
-the single single **Site** object, `H1_site`.
+The value of the *sites* key is a list of :ref:`site_api` objects. Here, this list is simply
+the single single object, `H1_site`.
 The value of the *abundance* key is the abundance of the spin system, here given
 a value of *80%*. If the abundance key is omitted, the abundance defaults to *100%*.
 
-See :numref:`table_spin_system` for further description of the **SpinSystem** class and
+See :numref:`table_spin_system` for further description of the :ref:`spin_sys_api` class and
 its attributes.
 
 Multi Site Spin System
 ''''''''''''''''''''''
 
-To create a **SpinSystem** with more than one **Site**, we simply add more **Site** objects to
+To create a spin system with more than one site, we simply add more site objects to
 the sites list. Here we create a :math:`^{13}\text{C}` site and add it along with the previous
 proton site to a new spin system.
 
@@ -189,16 +192,16 @@ proton site to a new spin system.
     )
 
 Again we see the optional *name* and *description* attributes. The *sites* attribute is now
-a list of two **Site** objects, the previous :math:`^1\text{H}` site and the new
+a list of two :ref:`site_api` objects, the previous :math:`^1\text{H}` site and the new
 :math:`^{13}\text{C}` site. We have also set the *abundance* of this spin system to *0.148%*.
 By leveraging the abundance attribute, multiple spin systems with varying abundances can be
 simulated together. See our :ref:`introduction_ethanol_example` where isotopomers of varying
-abundance are simulated.
+abundance are simulated in tandem.
 
 Coupled Spin System
 '''''''''''''''''''
 
-To create couplings between sites, we simply need to add a list of coupling objects to a
+To create couplings between sites, we simply need to add a list of :ref:`coupling_api` objects to a
 spin system. Below we create a :math:`^{2}\text{H}` and :math:`^{13}\text{C}` site as well as a
 coupling between them.
 
@@ -262,7 +265,7 @@ In contrast to the previous examples, we have omitted the optional *name*, *desc
 *abundance* keywords. The name and description for ``coupled_spin_system`` will both be ``None``
 and the abundance will be *100%*.
 
-We see a list of **Coupling** objects passed to the *couplings* keywords. The
+A list of :ref:`coupling_api` objects passed to the *couplings* keywords. The
 *site_index* attribute of ``H2_C13_coupling`` correspond to the index of ``H2_site`` and
 ``C13_site`` in the sites list. If we were to add more sites, *site_index* might need to be
 updated to reflect the index `H2_site`` and ``C13_site`` in the sites list. Again, our

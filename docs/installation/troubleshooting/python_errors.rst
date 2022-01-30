@@ -6,7 +6,7 @@ Python syntax is slightly different than other langues which cause some confusio
 The following are some common syntax errors encountered and how to solve them.
 
 However, the easiest way to find and prevent syntax errors is to use a dedicated code editor.
-We recommend using VS Code (`setup instructions <_installing_vscode>`__) on your local machine
+We recommend using VS Code on your local machine
 or Google Colab which runs everything online. These programs check for syntax errors as you
 write code
 

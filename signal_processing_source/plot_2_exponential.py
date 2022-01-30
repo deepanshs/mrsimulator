@@ -5,7 +5,7 @@ Exponential Apodization
 ^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
-# In this example, we will use an exponential function to preform a Lorenzian
+# In this example, we will use an exponential function to perform a Lorenzian
 # convolution to an example dataset. The exponential function
 # used for this apodization is defined as follows
 #

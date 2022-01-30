@@ -3,7 +3,7 @@
 Ethanol Example
 ^^^^^^^^^^^^^^^
 
-In this introductory we will simulate the isotopomers of ethanol. The resulting spectrum
+In this introductory example we will simulate the isotopomers of ethanol. The resulting spectrum
 will include the characteristic
 :math:`^{13}\text{C}` `satellite peaks <https://en.wikipedia.org/wiki/Carbon-13_NMR_satellite>`_
 which come from couplings between :math:`^{1}\text{H}` and :math:`^{13}\text{C}` in low-abundance
