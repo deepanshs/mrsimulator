@@ -88,8 +88,8 @@ static inline void left_triangle_interpolate(int p, int pmid, bool l_clip, bool 
   diff *= df1;
   while (p < pmid) spec[2 * p++] += diff += df1;
 
-  diff = (double)p;
-  spec[2 * p] += (!r_clip) ? (f[1] - diff) * (f10 + (diff - f[0])) * 0.5 * df1 : 0.0;
+  double df = (double)p;
+  spec[2 * p] += (!r_clip) ? (f[1] - df) * (f10 + (df - f[0])) * 0.5 * df1 : diff + df1;
 }
 
 /**
@@ -130,8 +130,8 @@ static inline void right_triangle_interpolate(int p, int pmax, bool l_clip, bool
   diff *= df1;
   while (p < pmax) spec[2 * p++] += diff -= df1;
 
-  diff = f[2] - (double)p;
-  spec[2 * p] += (!r_clip) ? diff * diff * 0.5 * df1 : 0.0;
+  double df = f[2] - (double)p;
+  spec[2 * p] += (!r_clip) ? df * df * 0.5 * df1 : diff - df1;
 }
 
 /**
@@ -149,13 +149,13 @@ static inline void get_clipping_conditions(int *p, int *pmid, int *pmax, int *po
   *p = *clips++ ? 0 : *p;
 
   *clips = *pmid >= *points;  // left triangle right clip
-  *pmid = *clips++ ? *points : *pmid;
+  *pmid = *clips++ ? *points - 1 : *pmid;
 
   *clips = *pmid < 0;  // right triangle left clip
   *pmid = *clips++ ? 0 : *pmid;
 
   *clips = *pmax >= *points;  // right triangle right clip
-  *pmax = *clips ? *points : *pmax;
+  *pmax = *clips ? *points - 1 : *pmax;
 }
 
 static inline void __triangle_interpolation(double *freq1, double *freq2, double *freq3,
@@ -187,7 +187,7 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
 
   // if min frequency is higher than the last bin, return
   p = (int)f[0];
-  if (p > *points) return;
+  if (p >= *points) return;
 
   // if max frequency is lower than the first bin, return
   pmax = (int)f[2];
@@ -374,6 +374,13 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
     line_down = fabs(*x11 - *x10);
     denom = line_up + line_down;
     quadrilateral_bin(&x00, x11, x10, &x01, line_up, line_down, denom, amp, spec, m1);
+  } else {
+    diff += df1;
+    x00 = *x10;
+    x01 = *x11;
+    *x10 += f01_slope;
+    *x11 += f02_slope;
+    quadrilateral_bin(&x00, x11, x10, &x01, line_up, line_down, denom, diff, spec, m1);
   }
 }
 
@@ -462,6 +469,13 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
     x01 = *x11;
     *x11 = f2[2];
     triangle_interpolation1D(x10, x11, &x01, &amp, spec, &m1);
+  } else {
+    diff -= df2;
+    x00 = *x10;
+    x01 = *x11;
+    *x10 += f12_slope;
+    *x11 += f02_slope;
+    quadrilateral_bin(&x00, x11, x10, &x01, line_up, line_down, denom, diff, spec, m1);
   }
 }
 
@@ -534,7 +548,7 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
 
   // if min frequency is higher than the last bin, return
   p = (int)f1[0];
-  if (p > m0) return;
+  if (p >= m0) return;
 
   // if max frequency is lower than the first bin, return
   pmax = (int)f1[2];

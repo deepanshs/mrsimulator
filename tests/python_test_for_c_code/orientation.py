@@ -125,7 +125,7 @@ def triangle_interpolation1D(f, spec, amp=1.0):
     f10 = f[1] - f[0]
     f21 = f[2] - f[1]
 
-    if pmax < 0 or p > points:
+    if pmax < 0 or p >= points:
         return
 
     clips, p, pmid, pmax = get_clip_conditions(p, pmid, pmax, points)
@@ -148,11 +148,11 @@ def get_clip_conditions(p, pmid, pmax, points):
     clip_left1 = clip_left2 = False
 
     if pmid >= points:
-        pmid = points
+        pmid = points - 1
         clip_right1 = True
 
     if pmax >= points:
-        pmax = points
+        pmax = points - 1
         clip_right2 = True
 
     if p < 0:
@@ -187,6 +187,8 @@ def p_first_half(spec, clip_left1, clip_right1, top, f10, pmid, p, f):
     p = pmid
     if not clip_right1:
         spec[p] += (f[1] - p) * (f10 + p - f[0]) * 0.5 * df1
+    else:
+        spec[p] += diff + df1
     return p
 
 
@@ -212,6 +214,8 @@ def p_second_half(spec, clip_left2, clip_right2, top, f21, pmax, p, f):
     p = pmax
     if not clip_right2:
         spec[p] += (f[2] - p) ** 2 * 0.5 * df2
+    else:
+        spec[p] += diff - df2
     return p
 
 
