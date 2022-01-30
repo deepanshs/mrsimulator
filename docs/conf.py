@@ -170,7 +170,7 @@ sphinx_gallery_conf = {
         "mrsimulator": None
     },
     "backreferences_dir": "examples",
-    "doc_module": ("mrsimulator"),
+    "doc_module": ("mrsimulator", "mrsimulator.methods"),
     "image_scrapers": ["matplotlib"],  # , scraper],
     "compress_images": ("images", "thumbnails"),
     "capture_repr": ("_repr_html_", "__repr__"),
