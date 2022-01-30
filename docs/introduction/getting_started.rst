@@ -6,7 +6,7 @@ Getting Started
 
 We have put together some introductory examples which outline the basic use of ``mrsimulator``.
 For more detailed documentation on the usage of ``mrsimulator`` classes, see the
-**user documentation** section. Also, check out our :ref:`example_gallery` and
+User Documentation section. Also, check out our :ref:`example_gallery` and
 :ref:`fitting_examples`.
 
 Spin System
@@ -36,7 +36,7 @@ First we will construct two :ref:`site_documentation` objects for the :math:`^1\
         ),
     )
 
-We now have two variables, ``H_site`` and ``C_site``, which are **Site** objects. ``H_site``
+We now have two variables, ``H_site`` and ``C_site``, which are :ref:`site_api` objects. ``H_site``
 represents a proton site with no chemical shift. ``C_site`` represents a carbon-13 site with
 a chemical shift of 100 ppm as well as a shielding component represented by :ref:`sy_api`
 object. We parametrize tensors using the Haeberlen convention.
@@ -86,7 +86,7 @@ Some attributes of the method still need to be provided as seen below.
     method = BlochDecaySpectrum(
         channels=["13C"],
         magnetic_flux_density=9.4,  # in T
-        rotor_angle=0.9553166,  # in rad (magic angle)
+        rotor_angle=54.735 * 3.14159 / 180,  # in rad (magic angle)
         rotor_frequency=3000,  # in Hz
         spectral_dimensions=[
             dict(
@@ -107,14 +107,14 @@ A Bloch decay method only has one spectral dimension and this specific spectral 
 .. defines a frequency dimension with 2048 points, spanning 80 kHz with a reference offset of
 .. 6 kHz. :ref:`spec_dim_documentation`
 
-Now all we need is to put our **SpinSystem** and **Method** objects together and simulate
+Now all we need is to put our :ref:`spin_sys` and :ref:`method_api` objects together and simulate
 the spectrum.
 
 Simulator
 ---------
 
 At the heart of ``mrsimulator`` is the :ref:`simulator_documentation` object which performs
-the calculation of the NMR spectrum. Lets create the **Simulator** object:
+the calculation of the NMR spectrum. Lets create the :ref:`simulator_api` object:
 
 .. code-block:: python
 
@@ -124,7 +124,7 @@ the calculation of the NMR spectrum. Lets create the **Simulator** object:
     # Create a Simulator object
     sim = Simulator()
 
-Each **Simulator** object holds a list of **SpinSystem** objects and a list of **Method**
+Each :ref:`simulator_api` object holds a list of :ref:`spin_sys` objects and a list of :ref:`method_api`
 objects. Below we add the spin system and method objects we previously defined:
 
 .. code-block:: python
@@ -134,7 +134,7 @@ objects. Below we add the spin system and method objects we previously defined:
     sim.methods = [method]
 
 Now to simulate the spectrum we need to call :py:meth:`~mrsimulator.Simulator.run`
-on our **Simulator** object.
+on our :ref:`simulator_api` object.
 
 .. code-block:: python
 
@@ -171,7 +171,7 @@ Here we apply 200 Hz of exponential line broadening.
     # Apply the processor to the simulation data
     processed_data = processor.apply_operations(data=sim.methods[0].simulation)
 
-Each **SignalProcessor** object has a list of operations which are applied sequentially to
+Each :ref:`signal_processing_api` object has a list of operations which are applied sequentially to
 a dataset. For a comprehensive list of operations and how to use the signal processing object,
 see the :ref:`signal_processing_documentation` documentation page.
 

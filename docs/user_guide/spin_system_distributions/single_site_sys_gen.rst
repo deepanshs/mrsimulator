@@ -116,30 +116,30 @@ of the site without the tensor parameter.
     * - ``isotope``
       - ``str`` or list of ``str``
       - A **required** string or list of strings representing the label of the *isotope* attribute
-        of the **Site** (e.g. ``"1H"`` or ``["29Si", "17O"]``).
+        of the :ref:`site_api` (e.g. ``"1H"`` or ``["29Si", "17O"]``).
 
     * - ``isotropic_chemical_shift``
       - ``float``, list of ``float`` or numpy array
       - An **optional** number or list of numbers representing the *isotropic_chemical_shift*
-        attribute of the **Site** (e.g. ``17.3`` or ``[2.4, 19.5]``) in ppm.
+        attribute of the :ref:`site_api` (e.g. ``17.3`` or ``[2.4, 19.5]``) in ppm.
         The default value is ``0``.
 
     * - ``shielding_symmetric``
       - ``dict``
-      - An *optional* dictionary representing the *shielding_symmetric* attribute of the **Site**
+      - An *optional* dictionary representing the *shielding_symmetric* attribute of the :ref:`site_api`
         where the keys are valid :ref:`sy_api` attributes and the values are floats or lists/numpy
         arrays of floats. The default is ``None``.
 
     * - ``shielding_antisymmetric``
       - ``dict``
       - An *optional* dictionary representing the *shielding_antisymmetric* attribute of the
-        **Site** where the keys are valid :ref:`asy_api` attributes and the values are floats
+        :ref:`site_api` where the keys are valid :ref:`asy_api` attributes and the values are floats
         or lists/numpy arrays of floats. The default is ``None``.
 
     * - ``quadrupolar``
       - ``dict``
       - An *optional* dictionary representing the *quadrupolar* attribute of the
-        **Site** where the keys are valid :ref:`sy_api` attributes and the values are floats
+        :ref:`site_api` where the keys are valid :ref:`sy_api` attributes and the values are floats
         or lists/numpy arrays of floats. The default is ``None``.
 
     * - ``abundance``
@@ -152,14 +152,14 @@ of the site without the tensor parameter.
     * - ``site_name``
       - ``str`` or list of ``str``
       - An *optional* string or list of strings representing the *name* attribute of each
-        **Site**. By default, each **Site** will take the default name of ``None``
+        :ref:`site_api`. By default, each :ref:`site_api` will take the default name of ``None``
 
     * - ``site_label``
       - ``str`` or list of ``str``
       - An *optional* string or list of strings representing the *label* attribute of each
-        **Site**. By default, each **Site** will take the default label of ``None``
+        :ref:`site_api`. By default, each :ref:`site_api` will take the default label of ``None``
 
     * - ``site_description``
       - ``str`` or list of ``str``
       - An *optional* string or list of strings representing the *description* attribute of each
-        **Site**. By default, each **Site** will take the default description of ``None``
+        :ref:`site_api`. By default, each :ref:`site_api` will take the default description of ``None``

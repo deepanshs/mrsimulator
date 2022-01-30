@@ -64,7 +64,7 @@ reason, we recommend sticking with objects.
 Saving and Loading Spin Systems from a File
 -------------------------------------------
 
-A list of spin systems in a **Simulator** object can be serialized to a file. Here we create
+A list of spin systems in a :ref:`simulator_api` object can be serialized to a file. Here we create
 a simulator with three distinct :math:`^{29}\text{Si}` spin systems and serialize these spin
 systems to a file by calling :meth:`~mrsimulator.Simulator.export_spin_systems`.
 
@@ -127,7 +127,7 @@ we load the spin system file, ``example.mrsys``, into a new simulator using the 
 Saving and Loading Methods from a File
 --------------------------------------
 
-A list of methods in a **Simulator** object can be serialized to a file. Here we create a
+A list of methods in a :ref:`simulator_api` object can be serialized to a file. Here we create a
 custom DAS method and serialize it to a file using the method
 :meth:`~mrsimulator.Simulator.export_methods`.
 
@@ -219,7 +219,7 @@ string with a value and a unit.
 
     sim.save("sample.mrsim")
 
-Now the file ``sample.mrsim`` holds the JSON representation of ``sim``, a **Simulator** object.
+Now the file ``sample.mrsim`` holds the JSON representation of ``sim``, a :ref:`simulator_api` object.
 To load a simulator from a file, call the class method :meth:`~mrsimulator.Simulator.load`.
 By default, the load method parses the file for units.
 
@@ -267,8 +267,8 @@ units by passing ``with_units=False`` to the method.
 Additionally, a dictionary of metadata can be passed using the ``application`` keyword.
 
 To load a simulator and signal processors from a file, call the :meth:`~mrsimulator.load`
-method. This method will return an ordered list of a **Simulator** object, a list of
-**SignalProcessor** objects, and a metadata dictionary
+method. This method will return an ordered list of a :ref:`simulator_api` object, a list of
+:ref:`signal_processing_api` objects, and a metadata dictionary
 
 .. code-block:: python
 

@@ -10,7 +10,7 @@ same machine issues. For example, ``mrsimulator`` requires at least ``numpy v1.1
 throw errors when run in the same environment.
 
 For this reason, we recommend using an environment manager, like ``venv`` or ``anaconda``.
-We will look at anaconda for its simple commands. installation instructions can be found on the
+We will look at anaconda for its simple commands. Installation instructions can be found on the
 `anaconda documentation page <https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html>`__.
 
 .. note::

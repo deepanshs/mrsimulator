@@ -11,7 +11,7 @@ Bloch decay spectrum.
     method = BlochDecaySpectrum(
         channels=["1H"],
         rotor_frequency=12500,  # in Hz
-        rotor_angle=0.95531,  # in rad
+        rotor_angle=54.735 * 3.14159 / 180,  # in rad
         magnetic_flux_density=9.4,  # in tesla
         spectral_dimensions=[
             dict(
@@ -28,6 +28,6 @@ The method may be imported using the following alias classes:
 
   from mrsimulator.methods import BlochSpectrum
 
-.. minigallery:: mrsimulator.utils.spectral_fitting.make_LMFIT_params
+.. minigallery:: mrsimulator.methods.BlochDecaySpectrum mrsimulator.methods.BlochSpectrum
 ..     :add-heading: Examples using ``BlochDecaySpectrum``
 ..     :heading-level: "
