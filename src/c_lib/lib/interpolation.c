@@ -52,6 +52,30 @@ static void inline delta_fn_interpolation(const double *freq, const int *points,
 }
 
 /**
+ * @brief Get the clipping conditions object
+ *
+ * @param p Start index of the triangle.
+ * @param pmid Apex index of the triangle.
+ * @param pmax End index of the triangle.
+ * @param points Max attainable index.
+ * @param clips Pointer to bool array to store the clip conditions.
+ */
+static inline void get_clipping_conditions(int *p, int *pmid, int *pmax, int *points,
+                                           bool *clips) {
+  *clips = *p <= 0;  // left triangle left clip
+  *p = *clips++ ? 0 : *p;
+
+  *clips = *pmid > *points - 1;  // left triangle right clip
+  *pmid = *clips++ ? *points - 1 : *pmid;
+
+  *clips = *pmid <= 0;  // right triangle left clip
+  *pmid = *clips++ ? 0 : *pmid;
+
+  *clips = *pmax > *points - 1;  // right triangle right clip
+  *pmax = *clips ? *points - 1 : *pmax;
+}
+
+/**
  * @brief Interpolation scheme of a right-angled triangle with clipping. (left face)
  *
  * @param p Start bin index for triangle interpolation.
@@ -72,24 +96,26 @@ static void inline delta_fn_interpolation(const double *freq, const int *points,
 //   p    pmid           p    pmid       p     pmid                 p  pmid          *
 //  no clipping        left clip           right clip         left and right clip    *
 static inline void left_triangle_interpolate(int p, int pmid, bool l_clip, bool r_clip,
-                                             double top, double *f, double *spec) {
+                                             bool r_clip_r, double top, double *f,
+                                             double *spec) {
   double f10 = f[1] - f[0], df1 = top / f10, diff;
 
   if (p == pmid) {
     spec[2 * p] += (!r_clip && !l_clip) ? f10 * top * 0.5 : 0.0;
-    // spec[2*p] += (f[1] > 0 && l_clip && p == 0) ? f[1] * df1 : 0.0;
+    spec[2 * p] += (!r_clip_r && l_clip) ? f[1] * (f10 - f[0]) * 0.5 * df1 : 0.0;
     return;
   }
 
   diff = (double)p + 1. - f[0];
-  spec[2 * p++] += (!l_clip) ? 0.5 * diff * diff * df1 : (diff - 0.5) * df1;
+  spec[2 * p++] +=
+      (l_clip && f[0] <= 0.0) ? (diff - 0.5) * df1 : 0.5 * diff * diff * df1;
 
   diff -= 0.5;
   diff *= df1;
   while (p < pmid) spec[2 * p++] += diff += df1;
 
   double df = (double)p;
-  spec[2 * p] += (!r_clip) ? (f[1] - df) * (f10 + (df - f[0])) * 0.5 * df1 : diff + df1;
+  spec[2 * p] += (!r_clip) ? (f[1] - df) * (f10 + df - f[0]) * 0.5 * df1 : diff + df1;
 }
 
 /**
@@ -114,15 +140,17 @@ static inline void left_triangle_interpolate(int p, int pmid, bool l_clip, bool 
 //  no clipping        right clip           left clip         left and right clip     *
 //
 static inline void right_triangle_interpolate(int p, int pmax, bool l_clip, bool r_clip,
-                                              double top, double *f, double *spec) {
+                                              bool r_clip_l, double top, double *f,
+                                              double *spec) {
   double f21 = f[2] - f[1], df1 = top / f21;
+  double diff = f[2] - (double)p - 1.0;
   if (p == pmax) {
     spec[2 * p] += (!r_clip) ? f21 * top * 0.5 : 0.0;
-    // spec[2*p] += (f[2] > 0 && l_clip && p == 0) ? f[2] * df1 : 0.0;
+    spec[2 * p] +=
+        (r_clip && !r_clip_l) ? (f21 - diff) * (diff + f21) * 0.5 * df1 : 0.0;
     return;
   }
 
-  double diff = f[2] - (double)p - 1.0;
   spec[2 * p++] +=
       (!l_clip) ? (f21 - diff) * (diff + f21) * 0.5 * df1 : (diff + 0.5) * df1;
 
@@ -132,30 +160,6 @@ static inline void right_triangle_interpolate(int p, int pmax, bool l_clip, bool
 
   double df = f[2] - (double)p;
   spec[2 * p] += (!r_clip) ? df * df * 0.5 * df1 : diff - df1;
-}
-
-/**
- * @brief Get the clipping conditions object
- *
- * @param p Start index of the triangle.
- * @param pmid Apex index of the triangle.
- * @param pmax End index of the triangle.
- * @param points Max attainable index.
- * @param clips Pointer to bool array to store the clip conditions.
- */
-static inline void get_clipping_conditions(int *p, int *pmid, int *pmax, int *points,
-                                           bool *clips) {
-  *clips = *p < 0;  // left triangle left clip
-  *p = *clips++ ? 0 : *p;
-
-  *clips = *pmid >= *points;  // left triangle right clip
-  *pmid = *clips++ ? *points - 1 : *pmid;
-
-  *clips = *pmid < 0;  // right triangle left clip
-  *pmid = *clips++ ? 0 : *pmid;
-
-  *clips = *pmax >= *points;  // right triangle right clip
-  *pmax = *clips ? *points - 1 : *pmax;
 }
 
 static inline void __triangle_interpolation(double *freq1, double *freq2, double *freq3,
@@ -197,8 +201,12 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
   top = *amp * 2.0 / (f[2] - f[0]);
 
   get_clipping_conditions(&p, &pmid, &pmax, points, clips);
-  left_triangle_interpolate(p, pmid, clips[0], clips[1], top, f, spec);
-  right_triangle_interpolate(pmid, pmax, clips[2], clips[3], top, f, spec);
+  if (f[1] >= 0.0) {
+    left_triangle_interpolate(p, pmid, clips[0], clips[1], clips[2], top, f, spec);
+  }
+  if (f[2] >= 0.0) {
+    right_triangle_interpolate(pmid, pmax, clips[2], clips[3], clips[1], top, f, spec);
+  }
 }
 
 void triangle_interpolation1D(double *freq1, double *freq2, double *freq3, double *amp,
@@ -293,14 +301,17 @@ static inline void quadrilateral_bin(double *f00, double *f11, double *f10, doub
 }
 
 static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
-                                                   bool r_clip, double top, double *f1,
-                                                   double *f2, double *x10, double *x11,
-                                                   int m1, double *spec) {
+                                                   bool r_clip, bool r_clip_r,
+                                                   double top, double *f1, double *f2,
+                                                   double *x10, double *x11, int m1,
+                                                   double *spec) {
   double f10, slope_diff, abs_sdiff, abs_sdiff_2, temp, df1, diff;
   double amp, denom, line_up, line_down;
   double x00, x01, f01_slope, f02_slope;
 
   f10 = f1[1] - f1[0];
+  df1 = top / f10;
+
   f01_slope = (f2[1] - f2[0]) / f10;
   f02_slope = (f2[2] - f2[0]) / (f1[2] - f1[0]);
   slope_diff = f02_slope - f01_slope;
@@ -309,10 +320,14 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
 
   spec += 2 * p * m1;
   if (p == pmid) {
+    *x10 = f2[1];
+    *x11 = f02_slope * f10 + f2[0];
     if (!r_clip && !l_clip) {
       amp = f10 * top * 0.5;
-      *x10 = f2[1];
-      *x11 = f02_slope * f10 + f2[0];
+      triangle_interpolation1D(&f2[0], x11, x10, &amp, spec, &m1);
+    }
+    if (!r_clip_r && l_clip) {
+      amp = f1[1] * (f10 - f1[0]) * 0.5 * df1;
       triangle_interpolation1D(&f2[0], x11, x10, &amp, spec, &m1);
     }
     return;
@@ -322,7 +337,6 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
   // Calculate the f2 coordinates from lines connecting f0-f1 and f0-f2
 
   // Part 1: At start bin.
-  df1 = top / f10;
   diff = (double)p + 1. - f1[0];
 
   *x10 = f01_slope * diff + f2[0];
@@ -385,14 +399,18 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
 }
 
 static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
-                                                   bool r_clip, double top, double *f1,
-                                                   double *f2, double *x10, double *x11,
-                                                   int m1, double *spec) {
+                                                   bool r_clip, bool r_clip_l,
+                                                   double top, double *f1, double *f2,
+                                                   double *x10, double *x11, int m1,
+                                                   double *spec) {
   double f21, slope_diff, abs_sdiff, abs_sdiff_2, temp, df2, diff;
   double amp, denom, line_up, line_down;
   double x00, x01, f12_slope, f02_slope;
 
+  diff = f1[2] - (double)p - 1.;
   f21 = f1[2] - f1[1];
+  df2 = top / f21;
+
   f02_slope = (f2[2] - f2[0]) / (f1[2] - f1[0]);
   f12_slope = (f2[2] - f2[1]) / f21;
   slope_diff = f02_slope - f12_slope;
@@ -405,6 +423,10 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
       amp = f21 * top * 0.5;
       triangle_interpolation1D(x11, &f2[1], &f2[2], &amp, spec, &m1);
     }
+    if (r_clip && !r_clip_l) {
+      amp = (f21 - diff) * (diff + f21) * 0.5 * df2;
+      triangle_interpolation1D(x11, &f2[1], &f2[2], &amp, spec, &m1);
+    }
     return;
   }
 
@@ -412,9 +434,6 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
   // Calculate the f2 coordinates from lines connecting f1-f2 and f0-f2
 
   // Part 4: population to the right of the mid bin.
-  df2 = top / f21;
-  diff = f1[2] - (double)p - 1.;
-
   if (!l_clip) {
     amp = (f21 - diff) * (diff + f21) * 0.5 * df2;
     x00 = *x10;
@@ -558,10 +577,14 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
   top = *amp * 2.0 / (f1[2] - f1[0]);
 
   get_clipping_conditions(&p, &pmid, &pmax, &m0, clips);
-  lower_triangle_interpolation_2d(p, pmid, clips[0], clips[1], top, f1, f2, &freq10_01,
-                                  &freq11_02, m1, spec);
-  upper_triangle_interpolation_2d(pmid, pmax, clips[2], clips[3], top, f1, f2,
-                                  &freq10_01, &freq11_02, m1, spec);
+  if (f1[1] >= 0.0) {
+    lower_triangle_interpolation_2d(p, pmid, clips[0], clips[1], clips[2], top, f1, f2,
+                                    &freq10_01, &freq11_02, m1, spec);
+  }
+  if (f1[2] >= 0.0) {
+    upper_triangle_interpolation_2d(pmid, pmax, clips[2], clips[3], clips[1], top, f1,
+                                    f2, &freq10_01, &freq11_02, m1, spec);
+  }
 }
 
 void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,
