@@ -3,6 +3,12 @@
 Package dependencies
 ====================
 
+``mrsimulator`` is compatible with the following operating systems:
+
+- MacOS 10.15 or later
+- Windows 7 or later
+- Most releases of Linux
+
 ``mrsimulator`` depends on the following packages:
 
 **Required packages**
@@ -15,7 +21,6 @@ Package dependencies
 - monty>=2.0.4
 - `csdmpy>=0.4.1 <https://csdmpy.readthedocs.io/en/stable/>`_
 - `pydantic>=1.0 <https://pydantic-docs.helpmanual.io>`_
-- monty>=2.0.4
 
 **Other packages**
 

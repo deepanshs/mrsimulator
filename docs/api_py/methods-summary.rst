@@ -48,10 +48,10 @@ Summary
 
 .. ~Cosy
 
-UML Diagram
------------
+.. UML Diagram
+.. -----------
 
-.. figure:: ../_static/classes_methods.*
+.. .. figure:: ../_static/classes_methods.*
 
 
 Table of contents
