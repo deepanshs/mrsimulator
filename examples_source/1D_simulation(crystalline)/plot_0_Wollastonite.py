@@ -18,21 +18,21 @@ from mrsimulator import signal_processing as sp
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # **Step 1:** Create the sites.
-S29_1 = Site(
+Si29_1 = Site(
     isotope="29Si",
     isotropic_chemical_shift=-89.0,  # in ppm
     shielding_symmetric=SymmetricTensor(zeta=59.8, eta=0.62),  # zeta in ppm
 )
-S29_2 = Site(
+Si29_2 = Site(
     isotope="29Si",
     isotropic_chemical_shift=-89.5,  # in ppm
     shielding_symmetric=SymmetricTensor(zeta=52.1, eta=0.68),  # zeta in ppm
 )
-S29_3 = Site(
+Si29_3 = Site(
     isotope="29Si",
     isotropic_chemical_shift=-87.8,  # in ppm
     shielding_symmetric=SymmetricTensor(zeta=69.4, eta=0.60),  # zeta in ppm
@@ -42,9 +42,9 @@ S29_3 = Site(
 # **Step 2:** Create the spin systems from these sites. Again, we create three
 # single-site spin systems for better performance.
 spin_systems = [
-    SpinSystem(sites=[S29_1]),
-    SpinSystem(sites=[S29_2]),
-    SpinSystem(sites=[S29_3]),
+    SpinSystem(sites=[Si29_1]),
+    SpinSystem(sites=[Si29_2]),
+    SpinSystem(sites=[Si29_3]),
 ]
 
 # %%

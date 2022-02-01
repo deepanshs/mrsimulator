@@ -24,3 +24,4 @@ clean:
 	rm -rf $(BUILDDIR)/*
 	rm -rf examples/
 	rm -rf fitting/
+	rm -rf signal_processing/
