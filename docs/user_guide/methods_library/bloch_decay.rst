@@ -22,12 +22,6 @@ Bloch decay spectrum.
         ],
     )
 
-The method may be imported using the following alias classes:
-
-.. code-block:: python
-
-  from mrsimulator.methods import BlochSpectrum
-
-.. minigallery:: mrsimulator.methods.BlochDecaySpectrum mrsimulator.methods.BlochSpectrum
-..     :add-heading: Examples using ``BlochDecaySpectrum``
-..     :heading-level: "
+.. minigallery:: mrsimulator.methods.BlochDecaySpectrum
+    :add-heading: Examples using ``BlochDecaySpectrum``
+    :heading-level: "
