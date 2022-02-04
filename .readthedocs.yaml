@@ -16,7 +16,6 @@ build:
   apt_packages:
     - libopenblas-dev
     - libfftw3-dev
-    - optipng
 
 # Optionally build your docs in additional formats such as PDF and ePub
 formats: [pdf]
