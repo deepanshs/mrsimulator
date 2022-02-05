@@ -138,7 +138,7 @@ def one_d_spectrum(method,
     cdef ndarray[double] ori_d
 
     cdef int trans__, pathway_increment, pathway_count, transition_count_per_pathway
-    cdef ndarray[double, ndim=1] amp
+    cdef ndarray[double, ndim=1] amp = np.zeros(2 * n_points, dtype=np.float64)
     amp1 = np.zeros(n_points, dtype=np.complex128)
     amp_individual = []
 
@@ -332,7 +332,7 @@ def one_d_spectrum(method,
 
 
         # Spectrum amplitude vector -------------------------------------------
-        amp = np.zeros(2 * n_points, dtype=np.float64)
+        amp[:] = 0.0
 
         # if number_of_sites == 0:
         #     if decompose_spectrum == 1:
@@ -347,15 +347,19 @@ def one_d_spectrum(method,
                 transition_pathway_c = np.asarray(transition_pathway, dtype=np.float32).ravel()
                 weights = np.column_stack((weights.real, weights.imag)).ravel()
                 transition_pathway_weight = np.asarray(weights, dtype=np.float64)
+                weights = None
+                segments = None
             else:
                 # convert transition objects to list
                 weights = [(item.weight.real, item.weight.imag) for item in transition_pathway]
                 weights = np.asarray(weights).ravel()
                 transition_pathway_weight = np.asarray(weights, dtype=np.float64)
+                weights = None
 
                 transition_pathway = np.asarray(transition_pathway)
                 lst = [item.tolist() for item in transition_pathway.ravel()]
                 transition_pathway_c = np.asarray(lst, dtype=np.float32).ravel()
+                lst = None
 
             pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
             pathway_increment = 2*number_of_sites*transition_count_per_pathway
@@ -402,9 +406,34 @@ def one_d_spectrum(method,
             amp_individual.append(temp.reshape(method.shape()))
         else:
             amp1 += temp
+
+        temp = None
         # else:
         #     if decompose_spectrum == 1:
         #         amp_individual.append([])
+
+        # release spin system memory
+        spin_index_ij = None
+        spin_i = None
+        gyromagnetic_ratio_i = None
+
+        iso_n = None
+        zeta_n = None
+        eta_n = None
+        ori_n = None
+
+        Cq_e = None
+        eta_e = None
+        ori_e = None
+
+        iso_j = None
+        zeta_j = None
+        eta_j = None
+        ori_j = None
+
+        D_d = None
+        eta_d = None
+        ori_d = None
 
     # reverse the spectrum if gyromagnetic ratio is positive.
     if decompose_spectrum == 1 and len(amp_individual) != 0:
@@ -420,6 +449,22 @@ def one_d_spectrum(method,
     clib.MRS_free_dimension(dimensions, n_dimension)
     clib.MRS_free_averaging_scheme(averaging_scheme)
     clib.MRS_free_fftw_scheme(fftw_scheme)
+
+    transition_pathway_c = None
+    transition_pathway_weight = None
+    B0 = None
+    vr = None
+    th = None
+    cnt = None
+    inc = None
+    c_off = None
+    n_event = None
+    f_contrib = None
+    affine_matrix_c = None
+
+    amp = None
+    amp_individual = None
+
     return amp1
 
 
@@ -443,6 +488,10 @@ def get_zeeman_states(sys):
             else:
                 k = np.kron(k, np.ones(two_Ip1[i]))
         lst.append(k)
+
+    two_Ip1 = None
+    spin_quantum_numbers = None
+    k = None
     return np.asarray(lst).T
 
 

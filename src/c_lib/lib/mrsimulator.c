@@ -23,6 +23,7 @@ void MRS_free_plan(MRS_plan *the_plan) {
   if (!the_plan->pre_phase) free(the_plan->pre_phase);
   if (!the_plan->pre_phase_2) free(the_plan->pre_phase_2);
   if (!the_plan->pre_phase_4) free(the_plan->pre_phase_4);
+  if (!the_plan) free(the_plan);
 }
 
 /**

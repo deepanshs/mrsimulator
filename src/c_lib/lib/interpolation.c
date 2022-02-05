@@ -178,7 +178,11 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
   }
 
   // arrange the numbers in ascending order (sort)
-  double f[3] = {freq1[0], freq2[0], freq3[0]};
+  double *f = malloc_double(3);
+  f[0] = freq1[0];
+  f[1] = freq2[0];
+  f[2] = freq3[0];
+
   for (j = 1; j <= 2; j++) {
     t = f[j];
     i = j - 1;
@@ -207,6 +211,8 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
   if (f[2] >= 0.0) {
     right_triangle_interpolate(pmid, pmax, clips[2], clips[3], clips[1], top, f, spec);
   }
+  free(f);
+  free(clips);
 }
 
 void triangle_interpolation1D(double *freq1, double *freq2, double *freq3, double *amp,
@@ -548,8 +554,18 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
     return;
   }
 
-  double f1[3] = {freq11[0], freq12[0], freq13[0]};
-  double f2[3] = {freq21[0], freq22[0], freq23[0]};
+  double *f1 = malloc_double(3);
+  f1[0] = freq11[0];
+  f1[1] = freq12[0];
+  f1[2] = freq13[0];
+
+  double *f2 = malloc_double(3);
+  f2[0] = freq21[0];
+  f2[1] = freq22[0];
+  f2[2] = freq23[0];
+
+  // double f1[3] = {freq11[0], freq12[0], freq13[0]};
+  // double f2[3] = {freq21[0], freq22[0], freq23[0]};
 
   // arrange the numbers in ascending order
   for (j = 1; j <= 2; j++) {
@@ -585,6 +601,9 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
     upper_triangle_interpolation_2d(pmid, pmax, clips[2], clips[3], clips[1], top, f1,
                                     f2, &freq10_01, &freq11_02, m1, spec);
   }
+  free(f1);
+  free(f2);
+  free(clips);
 }
 
 void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,

@@ -98,7 +98,6 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
                                         &scheme->wigner_4j_matrices[allocate_size_4]);
     }
   }
-  free(exp_I_beta);
   /* -------------------------------------------------------------------------------- */
 
   /* Setting up buffers and tables for processing the second rank tensors. . */
@@ -151,6 +150,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
                   scheme->amplitudes);
 
   averaging_scheme_setup(scheme, exp_I_beta, allow_fourth_rank);
+  free(exp_I_beta);
   return scheme;
 }
 
@@ -176,6 +176,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
   vm_cosine_I_sine(n_angles, beta, exp_I_beta);
 
   averaging_scheme_setup(scheme, exp_I_beta, allow_fourth_rank);
+  free(exp_I_beta);
   return scheme;
 }
 
@@ -213,4 +214,5 @@ MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
 void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme) {
   fftw_destroy_plan(fftw_scheme->the_fftw_plan);
   fftw_free(fftw_scheme->vector);
+  fftw_free(fftw_scheme);
 }
