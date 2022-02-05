@@ -35,4 +35,3 @@ dependencies:
       - sphinx-tabs>=1.1.13
       - recommonmark
       - sphinx-version-warning
-      - plotly

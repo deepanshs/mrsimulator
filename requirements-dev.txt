@@ -29,4 +29,3 @@ sphinx_copybutton>=0.3.0
 sphinx-tabs>=1.1.13
 recommonmark
 sphinx-version-warning
-plotly
