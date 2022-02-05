@@ -13,7 +13,7 @@ Extended Czjzek distribution of symmetric shielding tensors
 To generate an extended Czjzek distribution, use the
 :py:class:`~mrsimulator.models.ExtCzjzekDistribution` class as follows.
 
-.. code-block:: python
+.. testcode::
 
     from mrsimulator.models import ExtCzjzekDistribution
 
@@ -34,7 +34,7 @@ As before, you may either draw random samples from this distribution or generate
 probability distribution function. Let's first draw points from this distribution, using
 the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.rvs` method of the instance.
 
-.. code-block:: python
+.. testcode::
 
     zeta_dist, eta_dist = shielding_model.rvs(size=50000)
 
@@ -43,7 +43,7 @@ In the above example, we draw *size=50000* random points of the distribution. Th
 in the Haeberlen convention.
 The scatter plot of these coordinates is shown below.
 
-.. code-block:: python
+.. testcode::
 
     import matplotlib.pyplot as plt
 
@@ -69,7 +69,7 @@ setup as the extended Czjzek distribution of symmetric shielding tensors, shown 
 In the following example, we generate the probability distribution
 function using the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.pdf` method.
 
-.. code-block:: python
+.. testcode::
 
     import numpy as np
 
@@ -90,7 +90,7 @@ argument to the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.pdf` method.
 
 The plot of the extended Czjzek probability distribution is shown below.
 
-.. code-block:: python
+.. testcode::
 
     import matplotlib.pyplot as plt
 

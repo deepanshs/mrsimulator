@@ -4,7 +4,7 @@ Bloch Decay Spectrum
 The :py:class:`~mrsimulator.methods.BlochDecaySpectrum` class simulates the
 Bloch decay spectrum.
 
-.. code-block:: python
+.. testcode::
 
     from mrsimulator.methods import BlochDecaySpectrum
 
@@ -24,7 +24,7 @@ Bloch decay spectrum.
 
 The method may be imported using the following alias classes:
 
-.. code-block:: python
+.. testcode::
 
   from mrsimulator.methods import BlochSpectrum
 

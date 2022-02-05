@@ -15,9 +15,9 @@ Set Up
 Setting up a simulator object and running a simulation is simple. Below we add some arbitrary
 spin systems and methods to a simulator object.
 
-.. code-block:: python
+.. testcode::
 
-    from mrsimulator import Site, Simulator, spin_system
+    from mrsimulator import Site, Simulator, SpinSystem
     from mrsimulator.methods import BlochDecaySpectrum
 
     # Setup the spin system and method objects
@@ -42,7 +42,7 @@ Running a Simulation
 To simulate the NMR spectrum of the given spin systems using each method, call the simulator
 class method :meth:`~mrsimulator.Simulator.run`.
 
-.. code-block:: python
+.. testcode::
 
     sim.run()
 
@@ -52,7 +52,7 @@ the Core Scientific Data Model (CSDM),
 see the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`_.
 Below we put the simulated spectra of the method at index 0 into the variable ``data_0``
 
-.. code-block:: python
+.. testcode::
 
     data_0 = sim.methods[0].simulation
     # data_n = sim.methods[n].simulation (for multiple methods)
@@ -67,7 +67,7 @@ Below we put the simulated spectra of the method at index 0 into the variable ``
 .. ``method_index`` accepts a list of integers specifying the index of methods to simulate. The code
 .. below simulates the first and third methods in ``sim``
 ..
-.. .. code-block:: python
+.. .. testcode::
 ..
 ..     sim.run(method_index=[0, 2])
 ..
@@ -77,7 +77,7 @@ Below we put the simulated spectra of the method at index 0 into the variable ``
 .. By default the simulated spectrum is packed into a CSDM object. The spectrum can also be packed
 .. as a numpy array by using the ``pack_as_csdm`` argument.
 ..
-.. .. code-block:: python
+.. .. testcode::
 ..
 ..     sim.run(pack_as_csdm=False)
 ..
@@ -97,7 +97,7 @@ default settings are not sufficient to accurately represent the spectrum.
 
 The following code is used to create the plots in this section
 
-.. code-block:: python
+.. testcode::
 
     import matplotlib.pyplot as plt
     import matplotlib as mpl
@@ -126,7 +126,7 @@ In certain circumstances,
 especially when the anisotropy is large or the rotor spin frequency is low, 64 sidebands might
 not be sufficient.
 
-.. code-block:: python
+.. testcode::
 
     from mrsimulator import Simulator, SpinSystem, Site
     from mrsimulator.methods import BlochDecaySpectrum
@@ -160,7 +160,7 @@ amplitudes at the edges. This inaccurate simulation arises from evaluating a sma
 sidebands relative to the given anisotropy. Increasing the number of sidebands to 90 should
 resolve the issue.
 
-.. code-block:: python
+.. testcode::
 
     # sim already holds our spin systems and methods; no need to reconstruct
     # set number of sidebands to 90
@@ -200,7 +200,7 @@ integration over the sphere. By adding the Euler angles to this tensor, we break
 symmetry, and the integration over the octant is no longer accurate.
 Consider the following examples.
 
-.. code-block:: python
+.. testcode::
 
     # add Euler angles to the previous site Si29 site
     Si29_site.shielding_symmetric.alpha = 1.563  # in rad
@@ -226,7 +226,7 @@ Consider the following examples.
 
 To fix this inaccurate spectrum, set the integration volume to *hemisphere* and re-simulate.
 
-.. code-block:: python
+.. testcode::
 
     sim.config.integration_volume = "hemisphere"
     sim.run()
@@ -257,17 +257,31 @@ number of octants is deciphered form the value of the *integration_volume* attri
 The default value of this attribute, 70, produces 2556 orientations at which the NMR
 frequency contribution is evaluated.
 
-.. code-block:: python
+.. testcode::
 
     sim = Simulator()
-    print(sim.config.integration_density)
-    # 70
+    print(sim.config.integration_density)  # default
+
+.. testoutput::
+
+    70
+
+.. testcode::
+
     print(sim.config.get_orientations_count())  # 1 * 71 * 72 / 2
-    # 2556
+
+.. testoutput::
+
+    2556
+
+.. testcode::
 
     sim.config.integration_density = 100
     print(sim.config.get_orientations_count())  # 1 * 101 * 102 / 2
-    # 5151
+
+.. testoutput::
+
+    5151
 
 Decreasing the integration density may decrease simulation time for computationally intensive
 experiments, but will also decrease the quality of the spectrum. Similarly, increasing integration
@@ -284,7 +298,7 @@ If the value is ``None`` (default), the resulting simulation is a single spectru
 where the frequency contributions from all the spin systems are co-added. Consider the
 following example.
 
-.. code-block:: python
+.. testcode::
 
     # Create two distinct sites
     site_A = Site(
@@ -323,7 +337,7 @@ is a series of spectra each arising from a single spin system. The number of spe
 same as the number of spin systems within the simulator object. Consider the same
 system as above, but change the decomposition to ``spin_system``.
 
-.. code-block:: python
+.. testcode::
 
     # sim already has the two spin systems and method; no need to reconstruct
     sim.config.decompose_spectrum = "spin_system"

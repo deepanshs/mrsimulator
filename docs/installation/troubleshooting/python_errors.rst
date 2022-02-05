@@ -31,7 +31,7 @@ block has the same indentation. To get out of a code block, simply remove an ind
 
 As an example of indentation, here is some code which adds the numbers 0 to 9:
 
-.. code-block:: python
+.. testcode::
 
     # Add numbers 0 through 9
     total = 0
@@ -39,7 +39,12 @@ As an example of indentation, here is some code which adds the numbers 0 to 9:
         # New code block (4 spaces)
         total += i
     # Exit loop code block (0 spaces)
-    print(total)  # 45
+    print(total)
+
+.. testoutput::
+
+    45
+
 Mismatched Brackets and Square Brackets
 """""""""""""""""""""""""""""""""""""""
 
@@ -61,37 +66,56 @@ TypeError: object is not callable
 The most common reason ``TypeError: object is not callable`` is when ``()`` is used instead of
 ``[]``. Parentheses are used to call functions. For example
 
-.. code-block:: python
+.. testcode::
 
     def foo(n):
         print("I received", n)
 
+    foo(1)
 
-    foo(1)  # I received 1
+.. testoutput::
+
+    I received 1
 
 But parentheses aren't valid for indexing a subscriptable object (list, tuple, etc). For
 example, the following code will throw an TypeError
 
-.. code-block:: python
+.. testcode::
 
     bar = [1, 2, 3, 4]
-    bar(1)  # TypeError: 'list' object is not callable
+    bar(1)
+
+.. testoutput::
+
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    TypeError: 'list' object is not callable
 
 but the following code is valid
 
-.. code-block:: python
+.. testcode::
 
     bar = [1, 2, 3, 4]
-    bar[1]  # 2
+    print(bar[1])
+
+.. testoutput::
+
+    2
 
 The same applies for dictionaries, but instead of indexing with an integer you would index with
 a keyword. For example
 
-.. code-block:: python
+.. testcode::
 
     spam = {"ham": "Hello World!", "eggs": 54.73}
-    print(spam["ham"])  # Hello World!
-    print(spam("ham"))  # TypeError: 'dict' object is not callable
+    print(spam["ham"])  # prints Hello World!
+    print(spam("ham"))
+
+.. testoutput::
+
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    TypeError: 'dict' object is not callable
 
 TypeError: object is not subscriptable
 """"""""""""""""""""""""""""""""""""""
@@ -99,11 +123,17 @@ TypeError: object is not subscriptable
 ``TypeError: object is not subscriptable`` is thrown when indexing a non-subscriptable object.
 For example
 
-.. code-block:: python
+.. testcode::
 
-    # Numbers are not subscriptable
     some_num = 42
-    sum_num[3]  # TypeError: object is not subscriptable
+    some_num[3]
+
+.. testoutput::
+
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    TypeError: 'int' object is not subscriptable
+
 Also subscriptable objects can only be indexed so many times. A 1D list can only be indexed once,
 2D twice, and so on. If you are using nested lists/dicts, make sure you aren't exceeding the number
 of indexes possible.

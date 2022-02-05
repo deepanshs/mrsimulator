@@ -10,7 +10,7 @@ Generic operations
 
 Import the module as
 
-.. code-block:: python
+.. testcode::
 
     from mrsimulator import signal_processing as sp
 

@@ -18,7 +18,7 @@ A site object holds single-site NMR interaction parameters, which include the nu
 shielding and quadrupolar interaction parameters.
 Consider the example below of a :ref:`site_api` object for a deuterium nucleus created in Python.
 
-.. code-block:: python
+.. testcode::
 
     # Import objects for the Site
     from mrsimulator import Site
@@ -69,13 +69,16 @@ the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively
 Also, all objects in  ``mrsimulator``
 have the attribute *property_units* which provides the units for all class properties.
 
-.. code-block:: python
+.. testcode::
 
     print(Site().property_units)
-    # {'isotropic_chemical_shift': 'ppm'}
 
     print(SymmetricTensor().property_units)
-    # {'zeta': 'ppm', 'Cq': 'Hz', 'D': 'Hz', 'alpha': 'rad', 'beta': 'rad', 'gamma': 'rad'}
+
+.. testoutput::
+
+    {'isotropic_chemical_shift': 'ppm'}
+    {'zeta': 'ppm', 'Cq': 'Hz', 'D': 'Hz', 'alpha': 'rad', 'beta': 'rad', 'gamma': 'rad'}
 
 .. _coupling_documentation:
 
@@ -86,7 +89,7 @@ A coupling object holds two site NMR interaction parameters, which can include t
 and the dipolar coupling interaction parameters.
 Consider the example below of a :ref:`coupling_api` object between two sites
 
-.. code-block:: python
+.. testcode::
 
     # Import the Coupling object
     from mrsimulator import Coupling
@@ -137,12 +140,12 @@ Single Site Spin System
 
 Here we create a relatively unexciting single site proton spin system
 
-.. code-block:: python
+.. testcode::
 
     # Import the SpinSystem object
     from mrsimulator import SpinSystem
 
-    proton_site = Site(isotope="1H")
+    H1_site = Site(isotope="1H")
 
     single_site_sys = SpinSystem(
         name="1H spin system",
@@ -171,7 +174,7 @@ To create a spin system with more than one site, we simply add more site objects
 the sites list. Here we create a :math:`^{13}\text{C}` site and add it along with the previous
 proton site to a new spin system.
 
-.. code-block:: python
+.. testcode::
 
     # Create the new Site object
     C13_site = Site(
@@ -205,7 +208,7 @@ To create couplings between sites, we simply need to add a list of :ref:`couplin
 spin system. Below we create a :math:`^{2}\text{H}` and :math:`^{13}\text{C}` site as well as a
 coupling between them.
 
-.. code-block:: python
+.. testcode::
 
     # Create site objects
     H2_site = Site(
@@ -257,9 +260,9 @@ coupling between them.
 We now have the site objects and the coupling object to make a coupled spin system. We now
 construct such a spin system.
 
-.. code-block:: python
+.. testcode::
 
-    coupled_spin_system = SpinSystem(sites=[H2_site, C13_site], couplings=[H2_13C_coupling])
+    coupled_spin_system = SpinSystem(sites=[H2_site, C13_site], couplings=[H2_C13_coupling])
 
 In contrast to the previous examples, we have omitted the optional *name*, *description*, and
 *abundance* keywords. The name and description for ``coupled_spin_system`` will both be ``None``

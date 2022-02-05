@@ -5,9 +5,9 @@ The :py:class:`~mrsimulator.methods.SSB2D` class simulates a sheared 2D finite
 to infinite speed MAS correlation spectrum. The spinning speed for the second spectral
 dimension is fixed at infinite spinning speed
 
-.. code-block:: python
+.. testcode::
 
-    from mrsimulator.methods import ssb2d
+    from mrsimulator.methods import SSB2D
 
     method = SSB2D(
         channels=["13C"],

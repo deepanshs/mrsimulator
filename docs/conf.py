@@ -77,6 +77,12 @@ extensions = [
 # generate autosummary even if no references
 autosummary_generate = True
 
+# Setup code to run before any doctests
+doctest_global_setup = """
+from pprint import pprint
+import numpy as np
+"""
+
 # ---------------------------------------------------------------------------- #
 #                              Sphinx Version warning                          #
 # ---------------------------------------------------------------------------- #
