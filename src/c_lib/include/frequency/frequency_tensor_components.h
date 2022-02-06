@@ -178,7 +178,7 @@ static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
 
   // frequency component function from the fourth-rank irreducible tensor.
   cblas_dscal(18, *cl_value, (double *)Lambda_4, 1);
-  free(cl_value - 3);
+  // free(cl_value - 3);
 }
 
 // =====================================================================================
