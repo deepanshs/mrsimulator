@@ -214,5 +214,5 @@ MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
 void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme) {
   fftw_destroy_plan(fftw_scheme->the_fftw_plan);
   fftw_free(fftw_scheme->vector);
-  // fftw_free(fftw_scheme);
+  if (!fftw_scheme) fftw_free(fftw_scheme);
 }
