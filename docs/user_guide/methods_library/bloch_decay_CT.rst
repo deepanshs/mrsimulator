@@ -27,8 +27,7 @@ The method may be imported using the following alias classes:
 .. testcode::
 
     from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-    from mrsimulator.methods import BlochCTSpectrum
 
-.. minigallery:: mrsimulator.methods.BlochDecayCTSpectrum mrsimulator.methods.BlochDecayCentralTransitionSpectrum mrsimulator.methods.BlochCTSpectrum
-    :add-heading:
+.. minigallery:: mrsimulator.methods.BlochDecayCTSpectrum mrsimulator.methods.BlochDecayCentralTransitionSpectrum
+    :add-heading: Examples using ``BlochDecayCTSpectrum``
     :heading-level: "
