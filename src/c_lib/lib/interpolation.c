@@ -211,8 +211,8 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
   if (f[2] >= 0.0) {
     right_triangle_interpolate(pmid, pmax, clips[2], clips[3], clips[1], top, f, spec);
   }
-  free(f);
-  free(clips);
+  // free(f);
+  // free(clips);
 }
 
 void triangle_interpolation1D(double *freq1, double *freq2, double *freq3, double *amp,
@@ -601,9 +601,9 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
     upper_triangle_interpolation_2d(pmid, pmax, clips[2], clips[3], clips[1], top, f1,
                                     f2, &freq10_01, &freq11_02, m1, spec);
   }
-  free(f1);
-  free(f2);
-  free(clips);
+  // free(f1);
+  // free(f2);
+  // free(clips);
 }
 
 void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,

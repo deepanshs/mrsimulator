@@ -427,43 +427,43 @@ def one_d_spectrum(method,
     clib.MRS_free_averaging_scheme(averaging_scheme)
     clib.MRS_free_fftw_scheme(fftw_scheme)
 
-    transition_pathway_c = None
-    transition_pathway_weight = None
-    B0 = None
-    vr = None
-    th = None
-    cnt = None
-    inc = None
-    c_off = None
-    n_event = None
-    f_contrib = None
-    affine_matrix_c = None
+    # transition_pathway_c = None
+    # transition_pathway_weight = None
+    # B0 = None
+    # vr = None
+    # th = None
+    # cnt = None
+    # inc = None
+    # c_off = None
+    # n_event = None
+    # f_contrib = None
+    # affine_matrix_c = None
 
-    # release spin system memory
-    spin_index_ij = None
-    spin_i = None
-    gyromagnetic_ratio_i = None
+    # # release spin system memory
+    # spin_index_ij = None
+    # spin_i = None
+    # gyromagnetic_ratio_i = None
 
-    iso_n = None
-    zeta_n = None
-    eta_n = None
-    ori_n = None
+    # iso_n = None
+    # zeta_n = None
+    # eta_n = None
+    # ori_n = None
 
-    Cq_e = None
-    eta_e = None
-    ori_e = None
+    # Cq_e = None
+    # eta_e = None
+    # ori_e = None
 
-    iso_j = None
-    zeta_j = None
-    eta_j = None
-    ori_j = None
+    # iso_j = None
+    # zeta_j = None
+    # eta_j = None
+    # ori_j = None
 
-    D_d = None
-    eta_d = None
-    ori_d = None
+    # D_d = None
+    # eta_d = None
+    # ori_d = None
 
-    amp = None
-    amp_individual = None
+    # amp = None
+    # amp_individual = None
 
     return amp1
 

@@ -27,7 +27,7 @@ void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n) {
     if (!dimensions->events) free(dimension->events);
     if (!dimensions->local_frequency) free(dimension->local_frequency);
     if (!dimensions->freq_offset) free(dimension->freq_offset);
-    if (!dimensions) free(dimensions);
+    // if (!dimensions) free(dimensions);
   }
 }
 
