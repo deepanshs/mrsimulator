@@ -412,29 +412,6 @@ def one_d_spectrum(method,
         #     if decompose_spectrum == 1:
         #         amp_individual.append([])
 
-        # release spin system memory
-        spin_index_ij = None
-        spin_i = None
-        gyromagnetic_ratio_i = None
-
-        iso_n = None
-        zeta_n = None
-        eta_n = None
-        ori_n = None
-
-        Cq_e = None
-        eta_e = None
-        ori_e = None
-
-        iso_j = None
-        zeta_j = None
-        eta_j = None
-        ori_j = None
-
-        D_d = None
-        eta_d = None
-        ori_d = None
-
     # reverse the spectrum if gyromagnetic ratio is positive.
     if decompose_spectrum == 1 and len(amp_individual) != 0:
         if gyromagnetic_ratio < 0:
@@ -461,6 +438,29 @@ def one_d_spectrum(method,
     n_event = None
     f_contrib = None
     affine_matrix_c = None
+
+    # release spin system memory
+    spin_index_ij = None
+    spin_i = None
+    gyromagnetic_ratio_i = None
+
+    iso_n = None
+    zeta_n = None
+    eta_n = None
+    ori_n = None
+
+    Cq_e = None
+    eta_e = None
+    ori_e = None
+
+    iso_j = None
+    zeta_j = None
+    eta_j = None
+    ori_j = None
+
+    D_d = None
+    eta_d = None
+    ori_d = None
 
     amp = None
     amp_individual = None
