@@ -28,8 +28,8 @@ from mrsimulator.utils.collection import single_site_system_generator
 
 # The range of isotropic chemical shifts, the quadrupolar coupling constant, and
 # asymmetry parameters used in generating a 3D grid.
-iso_r = np.arange(101) / 1.5 + 30  # in ppm
-Cq_r = np.arange(100) / 4  # in MHz
+iso_r = np.arange(76) / 1.125 + 30  # in ppm
+Cq_r = np.arange(75) / 3  # in MHz
 eta_r = np.arange(10) / 9
 
 # The 3D mesh grid over which the distribution amplitudes are evaluated.
@@ -90,14 +90,14 @@ mqvas = ThreeQ_VAS(
     channels=["27Al"],
     spectral_dimensions=[
         dict(
-            count=512,
-            spectral_width=26718.475776,  # in Hz
+            count=160,
+            spectral_width=8718.475776,  # in Hz
             reference_offset=-4174.76184,  # in Hz
             label="Isotropic dimension",
         ),
         dict(
-            count=512,
-            spectral_width=2e4,  # in Hz
+            count=160,
+            spectral_width=1.5e4,  # in Hz
             reference_offset=2e3,  # in Hz
             label="MAS dimension",
         ),
