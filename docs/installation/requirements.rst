@@ -17,7 +17,7 @@ Package dependencies
 - openblas
 - cython>=0.29.14
 - typing-extensions>=3.7
-- `matplotlib>=3.4 <https://matplotlib.org>`_ for figures and visualization,
+- `matplotlib>=3.3.4 <https://matplotlib.org>`_ for figures and visualization,
 - monty>=2.0.4
 - `csdmpy>=0.4.1 <https://csdmpy.readthedocs.io/en/stable/>`_
 - `pydantic>=1.9 <https://pydantic-docs.helpmanual.io>`_

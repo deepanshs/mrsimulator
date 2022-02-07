@@ -1,6 +1,6 @@
 
 numpy>=1.17
-matplotlib>=3.4
+matplotlib>=3.3.4
 csdmpy>=0.4.1
 pydantic>=1.9
 monty>=2.0.4
