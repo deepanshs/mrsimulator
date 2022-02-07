@@ -17,14 +17,9 @@ dependencies:
       - csdmpy>=0.4.1
       - pydantic>=1.9
       - typing-extensions>=3.7
-      - flake8
       - lmfit>=1.0.2
       - psutil>=5.4.8
       - joblib>=1.0.0
-      # for testing
-      - pytest
-      - pytest-cov
-      - sympy
       # building docs
       - sphinx>=2.0
       - sphinxjp.themes.basicstrap
