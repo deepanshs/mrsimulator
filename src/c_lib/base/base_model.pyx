@@ -66,6 +66,7 @@ def one_d_spectrum(method,
     cdef int transition_increment, number_of_transitions
     cdef ndarray[float, ndim=1] transition_pathway_c
     cdef ndarray[double, ndim=1] transition_pathway_weight
+    cdef ndarray[double, ndim=1] transition_pathway_weight_c
 
 # create averaging scheme _____________________________________________________
     cdef clib.MRS_averaging_scheme *averaging_scheme
@@ -139,7 +140,6 @@ def one_d_spectrum(method,
 
     cdef int trans__, pathway_increment, pathway_count, transition_count_per_pathway
     cdef ndarray[double, ndim=1] amp = np.zeros(2 * n_points, dtype=np.float64)
-    amp1 = np.zeros(n_points, dtype=np.complex128)
     amp_individual = []
 
     cdef clib.site_struct sites_c
@@ -331,9 +331,6 @@ def one_d_spectrum(method,
             couplings_c.dipolar_orientation = &ori_d[0]
 
 
-        # Spectrum amplitude vector -------------------------------------------
-        amp[:] = 0.0
-
         # if number_of_sites == 0:
         #     if decompose_spectrum == 1:
         #         amp_individual.append([])
@@ -383,13 +380,15 @@ def one_d_spectrum(method,
         # print('weight', transition_pathway_weight)
         # print('pathway_count, inc', pathway_count, pathway_increment)
 
+        transition_pathway_weight_c = transition_pathway_weight * (abundance/norm)
+
         for trans__ in range(pathway_count):
             clib.__mrsimulator_core(
                 &amp[0],  # as complex array
                 &sites_c,
                 &couplings_c,
                 &transition_pathway_c[pathway_increment*trans__],
-                &transition_pathway_weight[2*trans__],
+                &transition_pathway_weight_c[2*trans__],
                 n_dimension,      # The total number of spectroscopic dimensions.
                 dimensions,       # Pointer to MRS_dimension structure
                 fftw_scheme,      # Pointer to the fftw scheme.
@@ -399,29 +398,26 @@ def one_d_spectrum(method,
                 &affine_matrix_c[0],
             )
 
-        temp = amp*abundance/norm
-        temp = temp.view(dtype=np.complex128)
-
         if decompose_spectrum == 1:
-            amp_individual.append(temp.reshape(method.shape()))
-        else:
-            amp1 += temp
-
-        temp = None
-        # else:
-        #     if decompose_spectrum == 1:
-        #         amp_individual.append([])
+            temp = amp.view(dtype=np.complex128).copy()
+            temp.shape = method.shape()
+            amp_individual.append(temp)
+            amp[:] = 0.0
 
     # reverse the spectrum if gyromagnetic ratio is positive.
     if decompose_spectrum == 1 and len(amp_individual) != 0:
+        amp = None
         if gyromagnetic_ratio < 0:
             amp1 = [np.fft.fftn(np.fft.ifftn(item).conj()) for item in amp_individual]
+            amp_individual = None
         else:
             amp1 = amp_individual
     else:
+        amp1 = amp.view(dtype=np.complex128)
         amp1.shape = method.shape()
         if gyromagnetic_ratio < 0:
             amp1 = np.fft.fftn(np.fft.ifftn(amp1).conj())
+            amp = None
 
     clib.MRS_free_dimension(dimensions, n_dimension)
     clib.MRS_free_averaging_scheme(averaging_scheme)
@@ -429,6 +425,7 @@ def one_d_spectrum(method,
 
     transition_pathway_c = None
     transition_pathway_weight = None
+    transition_pathway_weight_c = None
     B0 = None
     vr = None
     th = None
@@ -461,9 +458,6 @@ def one_d_spectrum(method,
     D_d = None
     eta_d = None
     ori_d = None
-
-    amp = None
-    amp_individual = None
 
     return amp1
 
