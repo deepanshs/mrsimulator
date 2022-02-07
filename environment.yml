@@ -5,7 +5,7 @@ channels:
   - conda-forge
 dependencies:
   - fftw>=3.3.9
-  - openblas>=0.3.19
+  - openblas
   - nomkl
   - setuptools>=27.3
   - pip
