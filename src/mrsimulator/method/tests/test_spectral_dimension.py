@@ -86,7 +86,7 @@ def basic_spectral_dimension_tests(the_dimension):
         label="45.0",
         events=[
             {
-                "fraction": 0.5,
+                # "fraction": 1,
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
@@ -104,7 +104,7 @@ def basic_spectral_dimension_tests(the_dimension):
         label="45.0",
         events=[
             {
-                "fraction": 0.5,
+                # "fraction": 0.5,
                 "magnetic_flux_density": 9.6,
                 "rotor_angle": 0.9553059660790962,
                 "rotor_frequency": 1000.0,
@@ -119,7 +119,7 @@ def test_spectral_dimension():
 
     # parse dict with units
     event_dictionary = {
-        "fraction": 0.5,
+        "fraction": 1,
         "freq_contrib": freq_default,
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "1 kHz",
@@ -217,3 +217,18 @@ def test_spectral_dimension():
     )
     assert the_dimension.json(units=False) == json_no_unit
     assert the_dimension2.json(units=False) == json_no_unit
+
+
+def test_fraction():
+    error = (
+        "The fractions attribute of each SpectralEvent in a "
+        "SpectralDimension must sum to 1. Sum was 1.5"
+    )
+    with pytest.raises(ValueError, match=f".*{error}.*"):
+        SpectralDimension(
+            events=[
+                SpectralEvent(fraction=0.5),
+                SpectralEvent(fraction=0.5),
+                SpectralEvent(fraction=0.5),
+            ]
+        )
