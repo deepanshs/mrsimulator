@@ -332,8 +332,14 @@ class Method(Parseable):
             ...     spectral_dimensions=[
             ...         {
             ...             "events": [
-            ...                 {"transition_query": [{"ch1": {"P": [1]}}]},
-            ...                 {"transition_query": [{"ch1": {"P": [0]}}]}
+            ...                 {
+            ...                     "fraction": 1,
+            ...                     "transition_query": [{"ch1": {"P": [1]}}]
+            ...                 },
+            ...                 {
+            ...                     "fraction": 1,
+            ...                     "transition_query": [{"ch1": {"P": [0]}}]
+            ...                 }
             ...             ],
             ...         },
             ...         {
@@ -358,12 +364,14 @@ class Method(Parseable):
             ...     spectral_dimensions=[
             ...         {
             ...             "events": [{
+            ...                 "fraction": 0.5,
             ...                 "transition_query": [
             ...                     {"ch1": {"P": [1]}},
             ...                     {"ch1": {"P": [-1]}},
             ...                 ]
             ...             },
             ...             {
+            ...                 "fraction": 0.5,
             ...                 "transition_query": [  # selecting double quantum
             ...                     {"ch1": {"P": [-1]}, "ch2": {"P": [-1]}},
             ...                     {"ch1": {"P": [1]}, "ch2": {"P": [1]}},

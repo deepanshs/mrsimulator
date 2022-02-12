@@ -291,10 +291,12 @@ def test_methods():
                 "label": "70.12 dimension",
                 "events": [
                     {
+                        "fraction": 0.5,
                         "rotor_angle": 70.12 * 3.14159 / 180,  # in rads
                         "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                     {
+                        "fraction": 0.5,
                         "rotor_angle": 30.12 * 3.14159 / 180,  # in rads
                         "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
                     },

@@ -10,6 +10,7 @@ import csdmpy as cp
 import numpy as np
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
+from pydantic import validator
 
 from .event import ConstantDurationEvent
 from .event import MixingEvent
@@ -94,6 +95,19 @@ class SpectralDimension(Parseable):
     class Config:
         extra = "forbid"
         validate_assignment = True
+
+    @validator("events", always=True)
+    def validate_events(v, **kwargs):
+        """Ensure sum of fraction in SpectralEvents is 1"""
+        if v != []:
+            total = sum([e.fraction for e in v if isinstance(e, SpectralEvent)])
+            if total != 1:
+                e = (
+                    "The fractions attribute of each SpectralEvent in a "
+                    f"SpectralDimension must sum to 1. Sum was {total}."
+                )
+                raise ValueError(e)
+        return v
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
