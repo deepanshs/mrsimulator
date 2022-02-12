@@ -220,11 +220,11 @@ def test_spectral_dimension():
 
 
 def test_fraction():
-    error = (
-        "The fractions attribute of each SpectralEvent in a "
-        "SpectralDimension must sum to 1. Sum was 1.5"
+    warning = (
+        "The fraction attribute of each SpectralEvent in a "
+        "SpectralDimension must sum to 1. Sum is 1.5"
     )
-    with pytest.raises(ValueError, match=f".*{error}.*"):
+    with pytest.warns(UserWarning, match=f".*{warning}.*"):
         SpectralDimension(
             events=[
                 SpectralEvent(fraction=0.5),

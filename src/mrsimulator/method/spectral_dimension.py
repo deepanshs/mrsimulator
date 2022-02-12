@@ -5,9 +5,11 @@ from typing import ClassVar
 from typing import Dict
 from typing import List
 from typing import Union
+from warnings import warn
 
 import csdmpy as cp
 import numpy as np
+from mrsimulator.utils.error import MissingSpectralEventError
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 from pydantic import validator
@@ -16,6 +18,7 @@ from .event import ConstantDurationEvent
 from .event import MixingEvent
 from .event import SpectralEvent
 from .utils import cartesian_product
+
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -98,15 +101,18 @@ class SpectralDimension(Parseable):
 
     @validator("events", always=True)
     def validate_events(v, **kwargs):
-        """Ensure sum of fraction in SpectralEvents is 1"""
+        """Ensure at least one spectralEvent and warn is the sum of fraction in
+        SpectralEvents is not 1."""
         if v != []:
             total = sum([e.fraction for e in v if isinstance(e, SpectralEvent)])
             if total != 1:
                 e = (
-                    "The fractions attribute of each SpectralEvent in a "
-                    f"SpectralDimension must sum to 1. Sum was {total}."
+                    "The fraction attribute of each SpectralEvent in a "
+                    f"SpectralDimension must sum to 1. Sum is {total}."
                 )
-                raise ValueError(e)
+                warn(e)
+            if total == 0:
+                raise MissingSpectralEventError()
         return v
 
     @classmethod
