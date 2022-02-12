@@ -333,11 +333,11 @@ class Method(Parseable):
             ...         {
             ...             "events": [
             ...                 {
-            ...                     "fraction": 1,
+            ...                     "fraction": 0.5,
             ...                     "transition_query": [{"ch1": {"P": [1]}}]
             ...                 },
             ...                 {
-            ...                     "fraction": 1,
+            ...                     "fraction": 0.5,
             ...                     "transition_query": [{"ch1": {"P": [0]}}]
             ...                 }
             ...             ],
