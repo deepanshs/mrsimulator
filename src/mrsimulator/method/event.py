@@ -8,6 +8,7 @@ from typing import Union
 import numpy as np
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
+from pydantic import validator
 
 from .frequency_contrib import default_freq_contrib
 from .frequency_contrib import freq_list_all
@@ -76,6 +77,12 @@ class BaseEvent(Parseable):
 
     class Config:
         validate_assignment = True
+
+    @validator("rotor_frequency", always=True)
+    def validate_rotor_frequency(cls, v, **kwargs):
+        if v is not None:
+            return 1e12 if np.isinf(v) else v
+        return v
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
