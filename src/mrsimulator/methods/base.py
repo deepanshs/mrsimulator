@@ -8,7 +8,7 @@ from mrsimulator.utils.error import ImmutableEventError
 from mrsimulator.utils.error import NamedMethodError
 from pydantic import Field
 from pydantic import PrivateAttr
-from pydantic import validator
+from pydantic import root_validator
 
 from .utils import check_for_at_least_one_events
 from .utils import check_for_number_of_spectral_dimensions
@@ -33,18 +33,6 @@ class BaseMethod(Method):
         if isinstance(kwargs["spectral_dimensions"][0], dict):
             parse_spectral_dimensions(kwargs)
             check_for_at_least_one_events(kwargs)
-
-    @validator("rotor_frequency", pre=True, always=True)
-    def check_rotor_frequency(cls, v, *, values, **kwargs):
-        a = (
-            True if "name" not in values else values["name"] == "SSB2D",
-            v in ["1000000000000.0 Hz", 1.0e12],
-            cls.ndim == 1,
-        )
-        if any(a):
-            return v
-        e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
-        raise ValueError(e)
 
 
 class Method1D(BaseMethod):
@@ -134,14 +122,41 @@ class BaseNamedMethod(BaseMethod):
     def __init__(self, **kwargs):
         kwargs_copy = deepcopy(kwargs)
         super().check(kwargs_copy, self.__class__.ndim)
-        self.__class__.check_method_compatibility(kwargs_copy)
+        # self.__class__.check_method_compatibility(kwargs_copy)
         super().__init__(**kwargs_copy)
 
-    @validator("name", pre=True, always=True)
-    def check_for_method_name(cls, v, *, values, **kwargs):
-        if v == cls.__name__:
-            return v
-        raise NamedMethodError(v, cls.__name__)
+    @root_validator(pre=True)
+    def root_validate(cls, values):
+        cls.validate_name(values)
+        cls.check_method_compatibility(values)
+        if len(values["spectral_dimensions"]) == 2:  # Set only for 2D methods
+            cls.set_rotor_frequency(values)
+
+        return values
+
+    @classmethod
+    def validate_name(cls, values):
+        name = values.get("name", cls.__name__)
+        if name != cls.__name__:
+            raise NamedMethodError(name, cls.__name__)
+        values["name"] = name
+
+    @classmethod
+    def set_rotor_frequency(cls, values):
+        if not isinstance(values["spectral_dimensions"][0], dict):
+            values["spectral_dimensions"] = [
+                sd.json() for sd in values["spectral_dimensions"]
+            ]
+        print({k: type(v) for k, v in values.items()})
+        print([type(sd) for sd in values["spectral_dimensions"]])
+        if cls.__name__ != "SSB2D":
+            _ = [
+                ev.update({"rotor_frequency": 1e12})
+                for sd in values["spectral_dimensions"]
+                for ev in sd["events"]
+            ]
+        else:
+            values["spectral_dimensions"][1]["events"][0]["rotor_frequency"] = 1e12
 
     @classmethod
     def update(cls, **kwargs):
@@ -172,11 +187,15 @@ class BaseNamedMethod(BaseMethod):
     @classmethod
     def check_when_arg_is_object(cls, obj_dict):
         default_method = cls.update(**obj_dict)
+        # print("there")
 
         py_sp = default_method["spectral_dimensions"]
         obj_sp = obj_dict["spectral_dimensions"]
 
         for py, obj in zip(py_sp, obj_sp):
+
+            # print(len(py["events"]))
+            # print(len(obj.events))
 
             if len(py["events"]) != len(obj.events):
                 raise ImmutableEventError(cls.__name__)

@@ -124,16 +124,18 @@ class Method(Parseable):
         >>> print(method.affine_matrix)
         [[1, -1], [0, 1]]
     """
+    # global attributes
+    # rotor_frequency must be defined before spectral_dimensions so rotor_frequency is
+    # accessable to validate spectral_dimensions
+    rotor_frequency: float = Field(default=0.0, ge=0.0)
+    magnetic_flux_density: float = Field(default=9.4, ge=0.0)
+    rotor_angle: float = Field(default=0.9553166181245, ge=0.0, le=1.5707963268)
+
     channels: List[str]
     spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
     affine_matrix: List = None
     simulation: Union[cp.CSDM, np.ndarray] = None
     experiment: Union[cp.CSDM, np.ndarray] = None
-
-    # global
-    magnetic_flux_density: float = Field(default=9.4, ge=0.0)
-    rotor_frequency: float = Field(default=0.0, ge=0.0)
-    rotor_angle: float = Field(default=0.9553166181245, ge=0.0, le=1.5707963268)
 
     # private attributes
     _named_method: bool = PrivateAttr(False)
@@ -159,7 +161,7 @@ class Method(Parseable):
     test_vars: ClassVar[Dict] = {"channels": ["1H"]}
 
     class Config:
-        # extra = "forbid"
+        extra = "forbid"
         validate_assignment = True
         arbitrary_types_allowed = True
 
@@ -168,6 +170,7 @@ class Method(Parseable):
         return [Isotope(symbol=_) for _ in v]
 
     def __init__(self, **kwargs):
+        # print("method __init__")
         super().__init__(**kwargs)
         _ = [
             setattr(ev, item, getattr(self, item))
@@ -176,6 +179,7 @@ class Method(Parseable):
             for item in self.property_units.keys()
             if hasattr(ev, item) and getattr(ev, item) is None
         ]
+        # print("attrs set")
 
     @staticmethod
     def __check_csdm__(data):
@@ -197,7 +201,7 @@ class Method(Parseable):
             return v
         return cls.__check_csdm__(v)
 
-    @validator("affine_matrix", pre=True, always=True)
+    @validator("affine_matrix", always=True)
     def validate_affine_matrix(cls, v, *, values, **kwargs):
         if v is None:
             return
@@ -207,6 +211,36 @@ class Method(Parseable):
             raise ValueError(f"Expecting a {dim_len}x{dim_len} affine matrix.")
         if v1.ravel()[0] == 0:
             raise ValueError("The first element of the affine matrix cannot be zero.")
+        return v
+
+    @validator("rotor_frequency", pre=True, always=True)
+    def validate_rotor_frequency(cls, v, **kwargs):
+        return 1e12 if np.isinf(v) else v
+
+    @validator("spectral_dimensions", pre=True, always=True)
+    def validate_spectral_dimensions(cls, v, *, values, **kwargs):
+        # Ensure only 1 non-zero and non-infinite rotor_speed present when a zero or
+        # infinite spinning speed is present
+        if not isinstance(v[0], SpectralDimension):
+            v = [SpectralDimension(**sd) for sd in v]
+
+        global_rf = values["rotor_frequency"]
+        speeds = [
+            ev.rotor_frequency if ev.rotor_frequency is not None else global_rf
+            for sd in v
+            for ev in sd.events
+            if ev.__class__.__name__ != "MixingEvent"
+        ]
+        # remove all zero and infinite (>1e12 Hz) speeds from list
+        speeds = {sp for sp in speeds if 0 < sp < 1e12}
+        if len(speeds) > 1:
+            raise NotImplementedError(
+                (
+                    "Correlation simulations for multiple speeds do not produce the correct "
+                    "spectrum. Please provide only 1 non-zero finite rotor_frequency "
+                    "throughout the method"
+                )
+            )
         return v
 
     @classmethod

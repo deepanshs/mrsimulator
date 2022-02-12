@@ -6,6 +6,7 @@ import csdmpy as cp
 import numpy as np
 import pytest
 from mrsimulator.method import Method
+from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.spin_system.isotope import Isotope
@@ -191,3 +192,46 @@ def test_method():
     serialize = the_method.json(units=False)
     serialize["simulation"]["csdm"].pop("timestamp")
     assert serialize == method_dictionary_
+
+
+def test_rotor_frequency():
+    """Ensures only 1 non-zero finite spinning speed in method"""
+    # Good method, should not throw error
+    Method(
+        channels=["1H"],
+        spectral_dimensions=[
+            SpectralDimension(
+                events=[
+                    SpectralEvent(
+                        fraction=0.5,
+                        rotor_frequency=123,
+                    ),
+                    SpectralEvent(
+                        fraction=0.5,
+                        rotor_frequency=0,
+                    ),
+                ]
+            ),
+            SpectralDimension(events=[SpectralEvent(rotor_frequency=np.inf)]),
+        ],
+    )
+
+    # Bad method, should throw error for multiple finite speeds
+    with pytest.raises(NotImplementedError):
+        Method(
+            channels=["1H"],
+            spectral_dimensions=[
+                SpectralDimension(
+                    events=[
+                        SpectralEvent(
+                            fraction=0.5,
+                            rotor_frequency=123,
+                        ),
+                        SpectralEvent(
+                            fraction=0.5,
+                            rotor_frequency=456,
+                        ),
+                    ]
+                )
+            ],
+        )
