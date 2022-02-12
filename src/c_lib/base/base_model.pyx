@@ -145,11 +145,11 @@ def one_d_spectrum(method,
     cdef clib.site_struct sites_c
     cdef clib.coupling_struct couplings_c
 
-    index_ = []
+    # index_ = []
 
     # -------------------------------------------------------------------------
     # sample __________________________________________________________________
-    for index, spin_sys in enumerate(spin_systems):
+    for spin_sys in spin_systems:
         abundance = spin_sys.abundance
         isotopes = [site.isotope.symbol for site in spin_sys.sites]
         if channel not in isotopes:
@@ -158,7 +158,7 @@ def one_d_spectrum(method,
             continue
 
         # sub_sites = [site for site in spin_sys.sites if site.isotope.symbol == isotope]
-        index_.append(index)
+        # index_.append(index)
         number_of_sites = len(spin_sys.sites)
 
         # ------------------------------------------------------------------------
@@ -337,6 +337,8 @@ def one_d_spectrum(method,
         #     continue
 
         if number_of_sites != p_number_of_sites and isotopes != p_isotopes:
+            transition_pathway_weight = None
+            transition_pathway_c = None
             transition_pathway = spin_sys.transition_pathways
             if transition_pathway is None:
                 segments, weights = method._get_transition_pathway_and_weights_np(spin_sys)
@@ -404,6 +406,31 @@ def one_d_spectrum(method,
             amp_individual.append(temp)
             amp[:] = 0.0
 
+        # release spin system memory
+        spin_index_ij = None
+        spin_i = None
+        gyromagnetic_ratio_i = None
+
+        iso_n = None
+        zeta_n = None
+        eta_n = None
+        ori_n = None
+
+        Cq_e = None
+        eta_e = None
+        ori_e = None
+
+        iso_j = None
+        zeta_j = None
+        eta_j = None
+        ori_j = None
+
+        D_d = None
+        eta_d = None
+        ori_d = None
+
+        transition_pathway_weight_c = None
+
     # reverse the spectrum if gyromagnetic ratio is positive.
     if decompose_spectrum == 1 and len(amp_individual) != 0:
         amp = None
@@ -423,9 +450,6 @@ def one_d_spectrum(method,
     clib.MRS_free_averaging_scheme(averaging_scheme)
     clib.MRS_free_fftw_scheme(fftw_scheme)
 
-    transition_pathway_c = None
-    transition_pathway_weight = None
-    transition_pathway_weight_c = None
     B0 = None
     vr = None
     th = None
@@ -435,29 +459,6 @@ def one_d_spectrum(method,
     n_event = None
     f_contrib = None
     affine_matrix_c = None
-
-    # release spin system memory
-    spin_index_ij = None
-    spin_i = None
-    gyromagnetic_ratio_i = None
-
-    iso_n = None
-    zeta_n = None
-    eta_n = None
-    ori_n = None
-
-    Cq_e = None
-    eta_e = None
-    ori_e = None
-
-    iso_j = None
-    zeta_j = None
-    eta_j = None
-    ori_j = None
-
-    D_d = None
-    eta_d = None
-    ori_d = None
 
     return amp1
 

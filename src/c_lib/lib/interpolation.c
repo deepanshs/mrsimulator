@@ -24,7 +24,7 @@
  * @param spec A pointer to the intensity vector.
  */
 static void inline delta_fn_interpolation(const double *freq, const int *points,
-                                          double *amp, double *spec) {
+                                          double *amp, double *spec1) {
   int p = (int)*freq;
   if (p >= *points || p < 0) return;
 
@@ -32,22 +32,23 @@ static void inline delta_fn_interpolation(const double *freq, const int *points,
   bool left;
   diff = *freq - (double)p;
   delta = diff - 0.5;
+  double *spec = &spec1[2 * p];
 
   // Do not interpolate the intensity if the difference < 1.0e-6.
   // Ensures that the sideband dimension frequencies do not get interpolated.
   if (fabs(delta) < TOL) {
-    spec[2 * p] += *amp;
+    *spec += *amp;
     return;
   }
 
   // Linear interpolation
   left = delta < 0;
   if (left) {
-    if (p != 0) spec[2 * (p - 1)] -= *amp * delta;
-    spec[2 * p] += *amp * (1.0 + delta);
+    if (p != 0) *(spec - 2) -= *amp * delta;
+    *spec += *amp * (1.0 + delta);
   } else {
-    if (p + 1 != *points) spec[2 * (p + 1)] += *amp * delta;
-    spec[2 * p] += *amp * (1.0 - delta);
+    if (p + 1 != *points) *(spec + 2) += *amp * delta;
+    *spec += *amp * (1.0 - delta);
   }
 }
 
@@ -97,25 +98,25 @@ static inline void get_clipping_conditions(int *p, int *pmid, int *pmax, int *po
 //  no clipping        left clip           right clip         left and right clip    *
 static inline void left_triangle_interpolate(int p, int pmid, bool l_clip, bool r_clip,
                                              bool r_clip_r, double top, double *f,
-                                             double *spec) {
+                                             double *spec1) {
   double f10 = f[1] - f[0], df1 = top / f10, diff;
+  double *spec = &spec1[2 * p];
 
   if (p == pmid) {
-    spec[2 * p] += (!r_clip && !l_clip) ? f10 * top * 0.5 : 0.0;
-    spec[2 * p] += (!r_clip_r && l_clip) ? f[1] * (f10 - f[0]) * 0.5 * df1 : 0.0;
+    *spec += (!r_clip && !l_clip) ? f10 * top * 0.5 : 0.0;
+    *spec += (!r_clip_r && l_clip) ? f[1] * (f10 - f[0]) * 0.5 * df1 : 0.0;
     return;
   }
 
-  diff = (double)p + 1. - f[0];
-  spec[2 * p++] +=
-      (l_clip && f[0] <= 0.0) ? (diff - 0.5) * df1 : 0.5 * diff * diff * df1;
+  diff = (double)p + 1.0 - f[0];
+  *spec += (l_clip && f[0] <= 0.0) ? (diff - 0.5) * df1 : 0.5 * diff * diff * df1;
 
   diff -= 0.5;
   diff *= df1;
-  while (p < pmid) spec[2 * p++] += diff += df1;
+  while (++p < pmid) *(spec += 2) += diff += df1;
 
   double df = (double)p;
-  spec[2 * p] += (!r_clip) ? (f[1] - df) * (f10 + df - f[0]) * 0.5 * df1 : diff + df1;
+  *(spec += 2) += (!r_clip) ? (f[1] - df) * (f10 + df - f[0]) * 0.5 * df1 : diff + df1;
 }
 
 /**
@@ -141,25 +142,25 @@ static inline void left_triangle_interpolate(int p, int pmid, bool l_clip, bool 
 //
 static inline void right_triangle_interpolate(int p, int pmax, bool l_clip, bool r_clip,
                                               bool r_clip_l, double top, double *f,
-                                              double *spec) {
+                                              double *spec1) {
   double f21 = f[2] - f[1], df1 = top / f21;
+  double *spec = &spec1[2 * p];
   double diff = f[2] - (double)p - 1.0;
+
   if (p == pmax) {
-    spec[2 * p] += (!r_clip) ? f21 * top * 0.5 : 0.0;
-    spec[2 * p] +=
-        (r_clip && !r_clip_l) ? (f21 - diff) * (diff + f21) * 0.5 * df1 : 0.0;
+    *spec += (!r_clip) ? f21 * top * 0.5 : 0.0;
+    *spec += (r_clip && !r_clip_l) ? (f21 - diff) * (diff + f21) * 0.5 * df1 : 0.0;
     return;
   }
 
-  spec[2 * p++] +=
-      (!l_clip) ? (f21 - diff) * (diff + f21) * 0.5 * df1 : (diff + 0.5) * df1;
+  *spec += (!l_clip) ? (f21 - diff) * (diff + f21) * 0.5 * df1 : (diff + 0.5) * df1;
 
   diff += 0.5;
   diff *= df1;
-  while (p < pmax) spec[2 * p++] += diff -= df1;
+  while (++p < pmax) *(spec += 2) += diff -= df1;
 
   double df = f[2] - (double)p;
-  spec[2 * p] += (!r_clip) ? df * df * 0.5 * df1 : diff - df1;
+  *(spec += 2) += (!r_clip) ? df * df * 0.5 * df1 : diff - df1;
 }
 
 static inline void __triangle_interpolation(double *freq1, double *freq2, double *freq3,
@@ -171,7 +172,7 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
   p = (int)(*freq1);
 
   // check if the three points lie within a bin interval.
-  if ((int)freq1[0] == (int)freq2[0] && (int)freq1[0] == (int)freq3[0]) {
+  if (p == (int)(*freq2) && p == (int)(*freq3)) {
     if (p >= *points || p < 0) return;
     spec[2 * p] += *amp;
     return;
@@ -179,9 +180,9 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
 
   // arrange the numbers in ascending order (sort)
   double *f = malloc_double(3);
-  f[0] = freq1[0];
-  f[1] = freq2[0];
-  f[2] = freq3[0];
+  f[0] = *freq1;
+  f[1] = *freq2;
+  f[2] = *freq3;
 
   for (j = 1; j <= 2; j++) {
     t = f[j];
@@ -205,6 +206,8 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
   top = *amp * 2.0 / (f[2] - f[0]);
 
   get_clipping_conditions(&p, &pmid, &pmax, points, clips);
+
+  // printf("\n%d %d %d %d", clips[0], clips[1], clips[2], clips[3]);
   if (f[1] >= 0.0) {
     left_triangle_interpolate(p, pmid, clips[0], clips[1], clips[2], top, f, spec);
   }
