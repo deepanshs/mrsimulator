@@ -256,24 +256,9 @@ class BlochDecayCTSpectrum(BaseNamedMethod1D):
         }
 
 
-# TODO: add pytest coverage
 # Class Aliases
 class BlochDecayCentralTransitionSpectrum(BlochDecayCTSpectrum):
     name: str = "BlochDecayCentralTransitionSpectrum"
-
-    class Config:
-        extra = "forbid"
-
-
-class BlochSpectrum(BlochDecaySpectrum):
-    name: str = "BlochSpectrum"
-
-    class Config:
-        extra = "forbid"
-
-
-class BlochCTSpectrum(BlochDecayCTSpectrum):
-    name: str = "BlochCTSpectrum"
 
     class Config:
         extra = "forbid"
