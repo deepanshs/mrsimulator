@@ -124,18 +124,18 @@ class Method(Parseable):
         >>> print(method.affine_matrix)
         [[1, -1], [0, 1]]
     """
+    channels: List[str]
+    spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
+    affine_matrix: List = None
+    simulation: Union[cp.CSDM, np.ndarray] = None
+    experiment: Union[cp.CSDM, np.ndarray] = None
+
     # global attributes
     # rotor_frequency must be defined before spectral_dimensions so rotor_frequency is
     # accessable to validate spectral_dimensions
     rotor_frequency: float = Field(default=0.0, ge=0.0)
     magnetic_flux_density: float = Field(default=9.4, ge=0.0)
     rotor_angle: float = Field(default=0.9553166181245, ge=0.0, le=1.5707963268)
-
-    channels: List[str]
-    spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
-    affine_matrix: List = None
-    simulation: Union[cp.CSDM, np.ndarray] = None
-    experiment: Union[cp.CSDM, np.ndarray] = None
 
     # private attributes
     _named_method: bool = PrivateAttr(False)
@@ -213,32 +213,27 @@ class Method(Parseable):
             raise ValueError("The first element of the affine matrix cannot be zero.")
         return v
 
-    @validator("rotor_frequency", pre=True, always=True)
-    def validate_rotor_frequency(cls, v, **kwargs):
-        return 1e12 if np.isinf(v) else v
-
-    @validator("spectral_dimensions", pre=True, always=True)
+    @validator("spectral_dimensions", always=True)
     def validate_spectral_dimensions(cls, v, *, values, **kwargs):
-        # Ensure only 1 non-zero and non-infinite rotor_speed present when a zero or
-        # infinite spinning speed is present
-        if not isinstance(v[0], SpectralDimension):
-            v = [SpectralDimension(**sd) for sd in v]
+        """Check for exactly one non-zero and finite rotor_frequency in the method."""
 
-        global_rf = values["rotor_frequency"]
+        global_rf = (
+            0.0 if "rotor_frequency" not in values else values["rotor_frequency"]
+        )
         speeds = [
             ev.rotor_frequency if ev.rotor_frequency is not None else global_rf
             for sd in v
             for ev in sd.events
-            if ev.__class__.__name__ != "MixingEvent"
+            if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
         ]
         # remove all zero and infinite (>1e12 Hz) speeds from list
         speeds = {sp for sp in speeds if 0 < sp < 1e12}
         if len(speeds) > 1:
             raise NotImplementedError(
                 (
-                    "Correlation simulations for multiple speeds do not produce the correct "
-                    "spectrum. Please provide only 1 non-zero finite rotor_frequency "
-                    "throughout the method"
+                    "Sideband-sideband correlation is not supported in mrsimulator. "
+                    "Only one event with non-zero finite `rotor_frequency` is allowed "
+                    "in a method."
                 )
             )
         return v

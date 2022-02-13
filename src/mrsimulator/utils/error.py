@@ -33,7 +33,7 @@ class ImmutableEventError(Exception):
 
 
 class MissingSpectralEventError(Exception):
-    """Exception raised for Events are changed in a Named Method object.
+    """Exception raised for missing SpectralEvent from SpectralDimension.
 
     Attributes:
         message: explanation of the error.

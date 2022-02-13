@@ -9,6 +9,8 @@ from mrsimulator.method import Method
 from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.method.spectral_dimension import SpectralDimension
+from mrsimulator.methods import Method1D
+from mrsimulator.methods import Method2D
 from mrsimulator.spin_system.isotope import Isotope
 from pydantic import ValidationError
 
@@ -202,14 +204,8 @@ def test_rotor_frequency():
         spectral_dimensions=[
             SpectralDimension(
                 events=[
-                    SpectralEvent(
-                        fraction=0.5,
-                        rotor_frequency=123,
-                    ),
-                    SpectralEvent(
-                        fraction=0.5,
-                        rotor_frequency=0,
-                    ),
+                    SpectralEvent(fraction=0.5, rotor_frequency=123),
+                    SpectralEvent(fraction=0.5, rotor_frequency=0),
                 ]
             ),
             SpectralDimension(events=[SpectralEvent(rotor_frequency=np.inf)]),
@@ -217,20 +213,48 @@ def test_rotor_frequency():
     )
 
     # Bad method, should throw error for multiple finite speeds
+    for cls in [Method, Method1D]:
+        with pytest.raises(NotImplementedError):
+            cls(
+                channels=["1H"],
+                spectral_dimensions=[
+                    SpectralDimension(
+                        events=[
+                            SpectralEvent(fraction=0.5, rotor_frequency=123),
+                            SpectralEvent(fraction=0.5, rotor_frequency=456),
+                        ]
+                    )
+                ],
+            )
+
     with pytest.raises(NotImplementedError):
-        Method(
+        Method2D(
             channels=["1H"],
             spectral_dimensions=[
                 SpectralDimension(
                     events=[
-                        SpectralEvent(
-                            fraction=0.5,
-                            rotor_frequency=123,
-                        ),
-                        SpectralEvent(
-                            fraction=0.5,
-                            rotor_frequency=456,
-                        ),
+                        SpectralEvent(fraction=0.5, rotor_frequency=123),
+                        SpectralEvent(fraction=0.5, rotor_frequency=np.inf),
+                    ]
+                ),
+                SpectralDimension(
+                    events=[
+                        SpectralEvent(fraction=0.5, rotor_frequency=0),
+                        SpectralEvent(fraction=0.5, rotor_frequency=456),
+                    ]
+                ),
+            ],
+        )
+
+    with pytest.raises(NotImplementedError):
+        Method(
+            channels=["27Al"],
+            rotor_frequency=np.inf,
+            spectral_dimensions=[
+                SpectralDimension(
+                    events=[
+                        SpectralEvent(fraction=0.5, rotor_frequency=0.1),
+                        SpectralEvent(fraction=0.5, rotor_frequency=456),
                     ]
                 )
             ],

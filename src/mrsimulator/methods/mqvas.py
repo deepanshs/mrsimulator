@@ -49,7 +49,6 @@ class MQ_VAS(BaseNamedMethod2D):
         name = cls.__name__
 
         mq = MQ_p_symmetry[name]["mq"]
-        print(kwargs["channels"])
         iso = kwargs["channels"][0]
         spin = Isotope(symbol=iso).spin if isinstance(iso, str) else iso.spin
 
