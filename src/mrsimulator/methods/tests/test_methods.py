@@ -52,18 +52,6 @@ def test_more_spectral_dimensions():
         BlochDecaySpectrum(spectral_dimensions=[{}, {}])
 
 
-# def test_01():
-#     error = "method requires exactly 1 channel"
-#     with pytest.raises(ValueError, match=f".*{error}.*"):
-#         BlochDecaySpectrum(channels=["1H", "29Si"])
-
-
-def test_02():
-    e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
-    with pytest.raises(ValueError, match=f".*{e}.*"):
-        Method2D(channels=["87Rb"], rotor_frequency=10, spectral_dimensions=[{}, {}])
-
-
 def test_03():
     """generic method declaration"""
     mth = Method2D(
