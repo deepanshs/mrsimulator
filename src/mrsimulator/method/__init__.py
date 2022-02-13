@@ -131,10 +131,8 @@ class Method(Parseable):
     experiment: Union[cp.CSDM, np.ndarray] = None
 
     # global attributes
-    # rotor_frequency must be defined before spectral_dimensions so rotor_frequency is
-    # accessable to validate spectral_dimensions
-    rotor_frequency: float = Field(default=0.0, ge=0.0)
     magnetic_flux_density: float = Field(default=9.4, ge=0.0)
+    rotor_frequency: float = Field(default=0.0, ge=0.0)
     rotor_angle: float = Field(default=0.9553166181245, ge=0.0, le=1.5707963268)
 
     # private attributes
@@ -170,7 +168,6 @@ class Method(Parseable):
         return [Isotope(symbol=_) for _ in v]
 
     def __init__(self, **kwargs):
-        # print("method __init__")
         super().__init__(**kwargs)
         _ = [
             setattr(ev, item, getattr(self, item))
@@ -179,7 +176,6 @@ class Method(Parseable):
             for item in self.property_units.keys()
             if hasattr(ev, item) and getattr(ev, item) is None
         ]
-        # print("attrs set")
 
     @staticmethod
     def __check_csdm__(data):

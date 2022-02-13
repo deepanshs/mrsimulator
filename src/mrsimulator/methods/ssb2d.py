@@ -65,7 +65,4 @@ class SSB2D(BaseNamedMethod2D):
                 "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
             },
         ]
-        return {
-            "name": cls.__name__,
-            "spectral_dimensions": [{"events": events_0}, {"events": events_1}],
-        }
+        return {"spectral_dimensions": [{"events": events_0}, {"events": events_1}]}

@@ -174,15 +174,11 @@ class BaseNamedMethod(BaseMethod):
     @classmethod
     def check_when_arg_is_object(cls, obj_dict):
         default_method = cls.update(**obj_dict)
-        # print("there")
 
         py_sp = default_method["spectral_dimensions"]
         obj_sp = obj_dict["spectral_dimensions"]
 
         for py, obj in zip(py_sp, obj_sp):
-
-            # print(len(py["events"]))
-            # print(len(obj.events))
 
             if len(py["events"]) != len(obj.events):
                 raise ImmutableEventError(cls.__name__)
