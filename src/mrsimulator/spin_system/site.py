@@ -168,6 +168,13 @@ class Site(Parseable):
     def spin_must_be_at_least_one(cls, v, values):
         if v is None:
             return v
+        property_values = (
+            set(v.values())
+            if isinstance(v, dict)
+            else {getattr(v, prop) for prop in v.property_units}
+        )
+        if property_values == {None}:  # All values of symmetric tensor are None
+            return None
         isotope = values["isotope"]
         isotope = Isotope(**isotope) if isinstance(isotope, dict) else isotope
         spin_I = isotope.spin
