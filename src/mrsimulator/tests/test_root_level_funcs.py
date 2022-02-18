@@ -126,6 +126,9 @@ def test_mrsim_to_v0_7():
 
     py_dict = mrsim_to_v0_7("temp_2.mrsim", overwrite=True)
 
+    py_dict["simulator"]["methods"][0]["simulation"] = None
+    new_struct["simulator"]["methods"][0]["simulation"] = None
+
     assert py_dict == new_struct
 
     os.remove("temp_2.mrsim")

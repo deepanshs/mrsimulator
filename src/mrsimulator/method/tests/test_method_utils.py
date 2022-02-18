@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pytest
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import SpectralDimension
@@ -8,6 +9,8 @@ from mrsimulator.method.utils import mixing_query_connect_map
 from mrsimulator.method.utils import nearest_nonmixing_event
 from mrsimulator.method.utils import tip_angle_and_phase_list
 from mrsimulator.methods import Method1D
+from mrsimulator.utils.error import MissingSpectralEventError
+
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -67,6 +70,7 @@ def test_mixing_query_connect_map():
                 {"duration": 0.5},  # 4
                 MX2,
                 {"duration": 0.5},  # 5
+                {"fraction": 1},  # 2
             ]
         ),
     ]
@@ -78,3 +82,7 @@ def test_mixing_query_connect_map():
         {"mixing_query": MX2.mixing_query, "near_index": [3, 4]},
         {"mixing_query": MX2.mixing_query, "near_index": [4, 5]},
     ]
+
+    error = "SpectralDimension requires at least one SpectralEvent"
+    with pytest.raises(MissingSpectralEventError, match=f".*{error}.*"):
+        SpectralDimension(events=[MX1, MX2, {"duration": 0.5}, MX2, {"duration": 0.5}])
