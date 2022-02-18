@@ -34,7 +34,7 @@ def sample_test_output(n):
 
 
 def test_MQ_VAS_rotor_freq():
-    e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
+    e = "`rotor_frequency=1e12 Hz` is fixed for all NamedMethod"
     isotopes = ["87Rb", "27Al", "51V"]
     for iso, method in zip(isotopes, methods):
         with pytest.raises(ValueError, match=f".*{e}.*"):

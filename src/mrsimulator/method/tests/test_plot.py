@@ -60,8 +60,8 @@ def test_add_tip_angle_and_phase():
     assert "phase" in df2.columns
 
     # Check correct calculations for tip angle and phase
-    ta_should_be = np.array([np.nan, np.nan, 90.0, np.nan])
-    p_should_be = np.array([np.nan, np.nan, 0.0, np.nan])
+    ta_should_be = np.array([np.nan, np.nan, np.nan, 90.0, np.nan])
+    p_should_be = np.array([np.nan, np.nan, np.nan, 0.0, np.nan])
 
     df1_ch1_tip = [x["ch1"] if x is not None else np.nan for x in df1["tip_angle"]]
     df1_ch1_phase = [x["ch1"] if x is not None else np.nan for x in df1["phase"]]
@@ -190,7 +190,7 @@ def test_make_x_data():
 
     # Check expected x_data returned
     # NOTE: Should arrays be hardcoded? Or should be calculated in similar way
-    x1_should_be = [0, 0.8, 0.8, 1.3, 1.3, 1.7]
+    x1_should_be = [0, 0.8, 0.8, 1.3, 1.3, 1.7, 1.7, 2.1]
     x2_should_be = [
         0,
         0.8,
@@ -250,7 +250,7 @@ def test_offset_x_data():
 
     # Check expected offset_x returned
     # NOTE: Should arrays be hardcoded? Or should be calculated in similar way
-    off_x1_should_be = [0.0, 0.0, 0.8, 0.8, 1.26875, 1.33125, 1.7]
+    off_x1_should_be = [0.0, 0.0, 0.8, 0.8, 1.3, 1.3, 1.66875, 1.73125, 2.1]
     off_x2_should_be = [
         0.0,
         0.0625,
@@ -407,6 +407,7 @@ def method1_df():
             {
                 "label": "Mixing and Spectral Event",
                 "events": [
+                    {"fraction": 0.5},
                     {"mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": 0}}},
                     {"fraction": 0.5},
                 ],

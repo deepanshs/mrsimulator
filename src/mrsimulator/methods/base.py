@@ -34,18 +34,6 @@ class BaseMethod(Method):
             parse_spectral_dimensions(kwargs)
             check_for_at_least_one_events(kwargs)
 
-    @validator("rotor_frequency", pre=True, always=True)
-    def check_rotor_frequency(cls, v, *, values, **kwargs):
-        a = (
-            True if "name" not in values else values["name"] == "SSB2D",
-            v in ["1000000000000.0 Hz", 1.0e12],
-            cls.ndim == 1,
-        )
-        if any(a):
-            return v
-        e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
-        raise ValueError(e)
-
 
 class Method1D(BaseMethod):
     """Generic one-dimensional spectrum simulation method.
@@ -142,6 +130,20 @@ class BaseNamedMethod(BaseMethod):
         if v == cls.__name__:
             return v
         raise NamedMethodError(v, cls.__name__)
+
+    @validator("rotor_frequency", pre=True, always=True)
+    def check_rotor_frequency(cls, v, *, values, **kwargs):
+        a = (
+            True if "name" not in values else values["name"] == "SSB2D",
+            v in ["1000000000000.0 Hz", 1.0e12],
+            cls.ndim == 1,
+        )
+        if any(a):
+            return v
+        raise ValueError(
+            "`rotor_frequency=1e12 Hz` is fixed for all NamedMethod except SSB2D, and"
+            " cannot be modified."
+        )
 
     @classmethod
     def update(cls, **kwargs):
@@ -254,24 +256,9 @@ class BlochDecayCTSpectrum(BaseNamedMethod1D):
         }
 
 
-# TODO: add pytest coverage
 # Class Aliases
 class BlochDecayCentralTransitionSpectrum(BlochDecayCTSpectrum):
     name: str = "BlochDecayCentralTransitionSpectrum"
-
-    class Config:
-        extra = "forbid"
-
-
-class BlochSpectrum(BlochDecaySpectrum):
-    name: str = "BlochSpectrum"
-
-    class Config:
-        extra = "forbid"
-
-
-class BlochCTSpectrum(BlochDecayCTSpectrum):
-    name: str = "BlochCTSpectrum"
 
     class Config:
         extra = "forbid"
