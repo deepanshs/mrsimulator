@@ -12,7 +12,7 @@
 /* Free the buffer and pre-calculated tables from the mrsimulator plan. */
 void MRS_free_event(MRS_event *the_event) {
   if (!the_event->plan) MRS_free_plan(the_event->plan);
-  free(the_event->freq_amplitude);
+  if (!the_event->freq_amplitude) free(the_event->freq_amplitude);
 }
 
 /** Free the memory/buffer allocation for the MRS dimensions and events within. **/
@@ -27,6 +27,7 @@ void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n) {
     if (!dimensions->events) free(dimension->events);
     if (!dimensions->local_frequency) free(dimension->local_frequency);
     if (!dimensions->freq_offset) free(dimension->freq_offset);
+    if (!dimensions->freq_amplitude) free(dimension->freq_amplitude);
     if (!dimensions) free(dimensions);
   }
 }
@@ -121,8 +122,11 @@ static inline void create_plans_for_events_in_dimension(
                       *rotor_angle_in_rad, increment, scheme->allow_fourth_rank);
 
   for (i = 0; i < n_events; i++) {
-    dim->events[i].freq_amplitude = malloc_double(the_plan->size);
-    vm_double_ones(the_plan->size, dim->events[i].freq_amplitude);
+    dim->events[i].freq_amplitude = NULL;
+    // if (*rotor_frequency_in_Hz != 0.0 && *rotor_frequency_in_Hz != 1.0e12) {
+    //   dim->events[i].freq_amplitude = malloc_double(the_plan->size);
+    //   vm_double_ones(the_plan->size, dim->events[i].freq_amplitude);
+    // }
     MRS_set_event(&(dim->events[i]), *fraction++, *magnetic_flux_density_in_T++,
                   *rotor_frequency_in_Hz++, *rotor_angle_in_rad++, increment, the_plan);
   }
@@ -135,6 +139,7 @@ static inline void create_plans_for_events_in_dimension(
    * when the rotor angle is off magic angle (54.735 deg). */
   dim->local_frequency = malloc_double(scheme->total_orientations);
   dim->freq_offset = malloc_double(scheme->octant_orientations);
+  dim->freq_amplitude = malloc_double(the_plan->size);
 }
 
 /**

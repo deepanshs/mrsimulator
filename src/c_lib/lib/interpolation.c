@@ -232,33 +232,33 @@ void triangle_interpolation1D(double *freq1, double *freq2, double *freq3, doubl
  * ================================================================================== *
  */
 
-static inline void rectangle_bin(double x0, double x1, double amp, double *spec,
-                                 int m1) {
-  double da, diff;
-  bool test = (x0 < x1);
+// static inline void rectangle_bin(double x0, double x1, double amp, double *spec,
+//                                  int m1) {
+//   double da, diff;
+//   bool test = (x0 < x1);
 
-  diff = x0;
-  x0 = test ? x0 : x1;
-  x1 = test ? x1 : diff;
+//   diff = x0;
+//   x0 = test ? x0 : x1;
+//   x1 = test ? x1 : diff;
 
-  int p = (int)x0, pmax = (int)x1;
+//   int p = (int)x0, pmax = (int)x1;
 
-  da = amp / (x1 - x0);
+//   da = amp / (x1 - x0);
 
-  if (p < 0) {
-    p = 0;
-    x0 = 0.0;
-  }
-  if (pmax >= m1) {
-    pmax = m1;
-    x1 = (double)m1;
-  }
-  diff = (double)p + 1. - x0;
-  spec[2 * p++] += diff * da;
+//   if (p < 0) {
+//     p = 0;
+//     x0 = 0.0;
+//   }
+//   if (pmax >= m1) {
+//     pmax = m1;
+//     x1 = (double)m1;
+//   }
+//   diff = (double)p + 1. - x0;
+//   spec[2 * p++] += diff * da;
 
-  while (p < pmax) spec[2 * p++] += da;
-  spec[2 * p] += (x1 - (double)p) * da;
-}
+//   while (p < pmax) spec[2 * p++] += da;
+//   spec[2 * p] += (x1 - (double)p) * da;
+// }
 
 // //    f10 ----------- f11  top-line
 // //    /|             | \.

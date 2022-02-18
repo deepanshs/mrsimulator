@@ -86,6 +86,8 @@ void __mrsimulator_core(
   // Loop over the dimensionn.
   for (dim = 0; dim < n_dimension; dim++) {
     reset = 1;  // If 1, reset the freqs to zero, else keep adding the freqs.
+    plan = dimensions->events->plan;
+    vm_double_ones(plan->size, dimensions[dim].freq_amplitude);
     // Loop over the events per dimension.
     for (evt = 0; evt < dimensions[dim].n_events; evt++) {
       event = &dimensions[dim].events[evt];
@@ -124,9 +126,14 @@ void __mrsimulator_core(
       /* Copy the amplitudes from the `fftw_scheme->vector` to the
        * `event->freq_amplitude` for each event within the dimension. If the number of
        * sidebands is 1, skip, because `fftw_scheme->vector` is not evaluated.*/
+      // if (plan->number_of_sidebands != 1) {
+      //   cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2,
+      //   event->freq_amplitude,
+      //               1);
+      // }
       if (plan->number_of_sidebands != 1) {
-        cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2, event->freq_amplitude,
-                    1);
+        vm_double_multiply_inplace(plan->size, (double *)fftw_scheme->vector, 2,
+                                   dimensions[dim].freq_amplitude, 1);
       }
       transition += transition_increment;  // increment to next transition
       reset = 0;  // reset the freqs to zero for next dimension.
