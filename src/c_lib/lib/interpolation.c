@@ -21,7 +21,7 @@
  * @param freq The frequency coordinate.
  * @param points Total number of points in spec.
  * @param amp The area corresponding to the frequency coordinate.
- * @param spec A pointer to the intensity vector.
+ * @param spec1 A pointer to the intensity vector.
  */
 static void inline delta_fn_interpolation(const double *freq, const int *points,
                                           double *amp, double *spec1) {
@@ -85,7 +85,7 @@ static inline void get_clipping_conditions(int *p, int *pmid, int *pmax, int *po
  * @param r_clip Right clip booleaan.
  * @param top The height of the triangle.
  * @param f Pointer to the 1D coordinates of the triangle.
- * @param spec Pointer to a vector where the interpolated intensities are added.
+ * @param spec1 Pointer to a vector where the interpolated intensities are added.
  */
 // A pictorial representation of the interpolation scheme.
 //
@@ -123,12 +123,12 @@ static inline void left_triangle_interpolate(int p, int pmid, bool l_clip, bool 
  * @brief Interpolation scheme of a right-angled triangle with clipping. (right face)
  *
  * @param p Start bin index for triangle interpolation.
- * @param pmid End bin index for triangle interpolation.
+ * @param pmax End bin index for triangle interpolation.
  * @param l_clip Left clip boolean.
  * @param r_clip Right clip booleaan.
  * @param top The height of the triangle.
  * @param f Pointer to the 1D coordinates of the triangle.
- * @param spec Pointer to a vector where the interpolated intensities are added.
+ * @param spec1 Pointer to a vector where the interpolated intensities are added.
  */
 // A pictorial representation of the interpolation scheme.
 //
@@ -167,8 +167,6 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
                                             double *amp, double *spec, int *points) {
   int p, pmid, pmax, i, j;
   double top, t;
-  bool *clips = (bool *)malloc(4 * sizeof(bool));
-
   p = (int)(*freq1);
 
   // check if the three points lie within a bin interval.
@@ -178,8 +176,10 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
     return;
   }
 
-  // arrange the numbers in ascending order (sort)
+  bool *clips = (bool *)malloc(4 * sizeof(bool));
   double *f = malloc_double(3);
+
+  // arrange the numbers in ascending order (sort)
   f[0] = *freq1;
   f[1] = *freq2;
   f[2] = *freq3;
@@ -196,11 +196,19 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
 
   // if min frequency is higher than the last bin, return
   p = (int)f[0];
-  if (p >= *points) return;
+  if (p >= *points) {
+    free(f);
+    free(clips);
+    return;
+  }
 
   // if max frequency is lower than the first bin, return
   pmax = (int)f[2];
-  if (pmax < 0) return;
+  if (pmax < 0) {
+    free(f);
+    free(clips);
+    return;
+  }
 
   pmid = (int)f[1];
   top = *amp * 2.0 / (f[2] - f[0]);
@@ -513,7 +521,6 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
   double top, t1, t2, diff, temp, n_i;
   int p, pmid, pmax, i, j;
   double freq10_01, freq11_02;
-  bool *clips = (bool *)malloc(4 * sizeof(bool));
 
   p = (int)(freq11[0]);
 
@@ -557,6 +564,7 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
     return;
   }
 
+  bool *clips = (bool *)malloc(4 * sizeof(bool));
   double *f1 = malloc_double(3);
   f1[0] = freq11[0];
   f1[1] = freq12[0];
@@ -586,11 +594,21 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
 
   // if min frequency is higher than the last bin, return
   p = (int)f1[0];
-  if (p >= m0) return;
+  if (p >= m0) {
+    free(f1);
+    free(f2);
+    free(clips);
+    return;
+  }
 
   // if max frequency is lower than the first bin, return
   pmax = (int)f1[2];
-  if (pmax < 0) return;
+  if (pmax < 0) {
+    free(f1);
+    free(f2);
+    free(clips);
+    return;
+  }
 
   pmid = (int)f1[1];
   top = *amp * 2.0 / (f1[2] - f1[0]);
