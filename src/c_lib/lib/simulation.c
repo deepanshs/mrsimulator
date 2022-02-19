@@ -78,7 +78,7 @@ void __mrsimulator_core(
   int transition_increment = 2 * sites->number_of_sites;
   float *transition = transition_pathway;
 
-  MRS_plan *plan;
+  MRS_plan *plan = NULL;
   MRS_event *event;
 
   // openblas_set_num_threads(1);
