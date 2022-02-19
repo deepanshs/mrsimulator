@@ -66,8 +66,7 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
   /* When only rotor freq is different, update the plan accordingly and return. */
   if (!rotor_frequency_equal && rotor_angle_equal) {
     MRS_plan *new_plan = MRS_copy_plan(plan);
-    MRS_plan_update_from_rotor_frequency_in_Hz(new_plan, increment,
-                                               rotor_frequency_in_Hz);
+    MRS_plan_update_from_rotor_frequency_in_Hz(new_plan, rotor_frequency_in_Hz);
     event->plan = new_plan;
     return;
   }
@@ -83,8 +82,7 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
 
   /* Otherwise, update plan for both rotor angle and freq and return. */
   MRS_plan *new_plan = MRS_copy_plan(plan);
-  MRS_plan_update_from_rotor_frequency_in_Hz(new_plan, increment,
-                                             rotor_frequency_in_Hz);
+  MRS_plan_update_from_rotor_frequency_in_Hz(new_plan, rotor_frequency_in_Hz);
   MRS_plan_update_from_rotor_angle_in_rad(new_plan, rotor_angle_in_rad,
                                           plan->allow_fourth_rank);
   event->plan = new_plan;
@@ -93,7 +91,7 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
 /**
  * @brief Create a plan for every events within a dimension struct.
  *
- * @param dimension A pointer to the MRS_dimension.
+ * @param dim A pointer to the MRS_dimension.
  * @param scheme A pointer to the powder averaging scheme MRS_averaging_scheme.
  * @param count (int) The number of points along the dimension.
  * @param increment (double) The increment in Hz along the dimension.
@@ -130,6 +128,8 @@ static inline void create_plans_for_events_in_dimension(
     MRS_set_event(&(dim->events[i]), *fraction++, *magnetic_flux_density_in_T++,
                   *rotor_frequency_in_Hz++, *rotor_angle_in_rad++, increment, the_plan);
   }
+
+  MRS_plan_release_temp_storage(the_plan);
 
   dim->inverse_increment = 1.0 / increment;
   dim->normalize_offset = 0.5 - (coordinates_offset * dim->inverse_increment);

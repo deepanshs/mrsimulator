@@ -102,8 +102,15 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
  */
 void MRS_free_plan(MRS_plan *plan);
 
+/**
+ * @brief Release temporary memory allocated for the given mrsimulator plan.
+ *
+ * @param plan The pointer to the MRS_plan.
+ */
+void MRS_plan_release_temp_storage(MRS_plan *plan);
+
 /* Update the MRS plan when sample rotation frequency is changed. */
-void MRS_plan_update_from_rotor_frequency_in_Hz(MRS_plan *plan, double increment,
+void MRS_plan_update_from_rotor_frequency_in_Hz(MRS_plan *plan,
                                                 double rotor_frequency_in_Hz);
 
 /* Update the MRS plan when the rotor angle is changed. */
