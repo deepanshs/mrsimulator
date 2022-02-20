@@ -12,23 +12,28 @@
 /* Free the buffer and pre-calculated tables from the mrsimulator plan. */
 void MRS_free_event(MRS_event *the_event) {
   if (the_event->plan != NULL) {
+    if (DEBUG) printf("inside event->plan\n");
     MRS_free_plan(the_event->plan);
     the_event->plan = NULL;
   }
   free(the_event->freq_amplitude);
+  if (DEBUG) printf("freed event->freq_amplitude\n");
 }
 
 /** Free the memory/buffer allocation for the MRS dimensions and events within. **/
 void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n) {
   unsigned int dim, evt;
   for (dim = 0; dim < n; dim++) {
+    if (DEBUG) printf("post execultion dimension %d cleanup\n", dim);
     for (evt = 0; evt < dimensions[dim].n_events; evt++) {
+      if (DEBUG) printf("%d event\n", evt);
       MRS_free_event(&dimensions[dim].events[evt]);
     }
     free(dimensions[dim].events);
     free(dimensions[dim].local_frequency);
     free(dimensions[dim].freq_offset);
     free(dimensions[dim].freq_amplitude);
+    if (DEBUG) printf("freed events, local_frequency, freq_offset, freq_amplitude\n");
   }
   free(dimensions);
 }
@@ -139,8 +144,10 @@ static inline void create_plans_for_events_in_dimension(
     // }
     MRS_set_event(&(dim->events[i]), *fraction++, *magnetic_flux_density_in_T++,
                   *rotor_frequency_in_Hz++, *rotor_angle_in_rad++, increment, the_plan);
+    if (i == 0) dim->events->plan->copy = false;
   }
 
+  if (DEBUG) printf("Early memory release\n");
   MRS_plan_release_temp_storage(the_plan);
 
   dim->inverse_increment = 1.0 / increment;

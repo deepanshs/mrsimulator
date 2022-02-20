@@ -16,10 +16,15 @@ double ZERO[] = {0.0, 0.0};
  * Free the buffers and pre-calculated tables from the mrsimulator plan.
  */
 void MRS_free_plan(MRS_plan *the_plan) {
+  if (DEBUG)
+    printf("plan_copy %d, plan copy_for_rotor_angle %d plan copy_for_rotor_freq %d\n",
+           the_plan->copy, the_plan->copy_for_rotor_angle,
+           the_plan->copy_for_rotor_freq);
   if (!the_plan->copy) {
     MRS_free_plan_for_rotor_angle_copy(the_plan);
     MRS_free_plan_for_rotor_freq_copy(the_plan);
     free(the_plan->norm_amplitudes);
+    if (DEBUG) printf("freed norm_amplitudes\n");
     free(the_plan);
     return;
   }
@@ -42,17 +47,25 @@ void MRS_free_plan_for_rotor_angle_copy(MRS_plan *the_plan) {
   free(the_plan->wigner_d4m0_vector);
   free(the_plan->pre_phase_2);
   free(the_plan->pre_phase_4);
+  if (DEBUG)
+    printf("freed wigner_d2m0_vector, wigner_d4m0_vector, pre_phase_2, pre_phase_4\n");
 }
 
 /**
  * Free the memory from the mrsimulator plan associated with the sideband freq.
  */
-void MRS_free_plan_for_rotor_freq_copy(MRS_plan *the_plan) { free(the_plan->vr_freq); }
+void MRS_free_plan_for_rotor_freq_copy(MRS_plan *the_plan) {
+  free(the_plan->vr_freq);
+  if (DEBUG) printf("freed vr_freq\n");
+}
 
 /**
  * Release temporary MRS plan storage
  */
-void MRS_plan_release_temp_storage(MRS_plan *the_plan) { free(the_plan->pre_phase); }
+void MRS_plan_release_temp_storage(MRS_plan *the_plan) {
+  free(the_plan->pre_phase);
+  if (DEBUG) printf("freed pre_phase\n");
+}
 
 /**
  * Create a new mrsimulator plan.
