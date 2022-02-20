@@ -141,8 +141,8 @@ class BaseNamedMethod(BaseMethod):
         if any(a):
             return v
         raise ValueError(
-            "`rotor_frequency=1e12 Hz` is fixed for all NamedMethod except SSB2D, and"
-            " cannot be modified."
+            "`rotor_frequency=1e12 Hz` is fixed for all 2D named Methods, except SSB2D,"
+            "and cannot be modified."
         )
 
     @classmethod
