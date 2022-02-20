@@ -20,6 +20,7 @@ void MRS_free_plan(MRS_plan *the_plan) {
     MRS_free_plan_for_rotor_angle_copy(the_plan);
     MRS_free_plan_for_rotor_freq_copy(the_plan);
     free(the_plan->norm_amplitudes);
+    free(the_plan);
     return;
   }
   if (the_plan->copy_for_rotor_angle) {
@@ -28,6 +29,7 @@ void MRS_free_plan(MRS_plan *the_plan) {
   if (the_plan->copy_for_rotor_freq) {
     MRS_free_plan_for_rotor_freq_copy(the_plan);
   }
+  free(the_plan);
 }
 
 /**

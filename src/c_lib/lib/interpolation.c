@@ -333,7 +333,7 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
   f02_slope = (f2[2] - f2[0]) / (f1[2] - f1[0]);
   slope_diff = f02_slope - f01_slope;
   abs_sdiff = fabs(slope_diff);
-  abs_sdiff_2 = 2 * abs_sdiff;
+  abs_sdiff_2 = 2.0 * abs_sdiff;
 
   spec += 2 * p * m1;
   if (p == pmid) {
@@ -457,22 +457,20 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
     x01 = *x11;
     *x10 = f12_slope * ((double)(p + 1) - f1[1]) + f2[1];
     *x11 = f02_slope * ((double)(p + 1) - f1[0]) + f2[0];
-    line_up = x01 - x00;
-    line_down = *x11 - *x10;
-    denom = fabs(line_down) + fabs(line_up);
-    quadrilateral_bin(&x00, x11, x10, &x01, fabs(line_up), fabs(line_down), denom, amp,
-                      spec, m1);
+    line_up = fabs(x01 - x00);
+    line_down = fabs(*x11 - *x10);
+    denom = line_down + line_up;
+    quadrilateral_bin(&x00, x11, x10, &x01, line_up, line_down, denom, amp, spec, m1);
   } else {
     amp = (diff + 0.5) * df2;
     x00 = f12_slope * ((double)p - f1[1]) + f2[1];
     x01 = f02_slope * ((double)p - f1[0]) + f2[0];
     *x10 = x00 + f12_slope;
     *x11 = x01 + f02_slope;
-    line_down = *x11 - *x10;
     line_up = fabs(x01 - x00);
-    denom = fabs(line_down) + fabs(line_up);
-    quadrilateral_bin(&x00, x11, x10, &x01, fabs(line_up), fabs(line_down), denom, amp,
-                      spec, m1);
+    line_down = fabs(*x11 - *x10);
+    denom = line_down + line_up;
+    quadrilateral_bin(&x00, x11, x10, &x01, line_up, line_down, denom, amp, spec, m1);
   }
   p++;
   spec += 2 * m1;
@@ -480,9 +478,8 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
   // Part 6: After mid to before end bin.
   diff += 0.5;
   diff *= df2;
-  line_up = fabs(line_down);
-  line_down += slope_diff;
-  line_down = fabs(line_down);
+  line_up = line_down;
+  line_down -= abs_sdiff;
   denom = line_up + line_down;
   while (p < pmax) {
     diff -= df2;
@@ -522,7 +519,7 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
   int p, pmid, pmax, i, j;
   double freq10_01, freq11_02;
 
-  p = (int)(freq11[0]);
+  p = (int)(*freq11);
 
   if (fabs(freq11[0] - freq12[0]) < TOL && fabs(freq11[0] - freq13[0]) < TOL) {
     if (p >= m0 || p < 0) return;
@@ -535,45 +532,45 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
     }
     if (diff < n_i) {
       if (p != 0) {
-        temp = amp[0] * (n_i - diff);
+        temp = *amp * (n_i - diff);
         triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * (p - 1) * m1],
                                  &m1);
       }
-      temp = amp[0] * (n_i + diff);
+      temp = *amp * (n_i + diff);
       triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * p * m1], &m1);
       return;
     }
     if (diff > n_i) {
       if (p + 1 != m0) {
-        temp = amp[0] * (diff - n_i);
+        temp = *amp * (diff - n_i);
         triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * (p + 1) * m1],
                                  &m1);
       }
-      temp = amp[0] * (1 + n_i - diff);
+      temp = *amp * (1 + n_i - diff);
       triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * p * m1], &m1);
       return;
     }
     return;
   }
 
-  if ((int)freq11[0] == (int)freq12[0] && (int)freq11[0] == (int)freq13[0]) {
-    if (p >= m0 || p < 0) {
-      return;
-    }
-    triangle_interpolation1D(freq21, freq22, freq23, amp, &spec[2 * p * m1], &m1);
-    return;
-  }
+  // if (p == (int)freq12[0] && p == (int)freq13[0]) {
+  //   if (p >= m0 || p < 0) {
+  //     return;
+  //   }
+  //   triangle_interpolation1D(freq21, freq22, freq23, amp, &spec[2 * p * m1], &m1);
+  //   return;
+  // }
 
   bool *clips = (bool *)malloc(4 * sizeof(bool));
   double *f1 = malloc_double(3);
-  f1[0] = freq11[0];
-  f1[1] = freq12[0];
-  f1[2] = freq13[0];
+  f1[0] = *freq11;
+  f1[1] = *freq12;
+  f1[2] = *freq13;
 
   double *f2 = malloc_double(3);
-  f2[0] = freq21[0];
-  f2[1] = freq22[0];
-  f2[2] = freq23[0];
+  f2[0] = *freq21;
+  f2[1] = *freq22;
+  f2[2] = *freq23;
 
   // double f1[3] = {freq11[0], freq12[0], freq13[0]};
   // double f2[3] = {freq21[0], freq22[0], freq23[0]};
