@@ -20,8 +20,6 @@ of the `mrsimulator` library is written in C, wrapped, and made available in pyt
 
 ---
 
-:warning: The package is currently under development. We advise using with caution. Bug reports are greatly appreciated.
-
 ## Why use mrsimulator?
 
 - It is open-source and free.
@@ -88,7 +86,7 @@ This should produce the following figure.
 
 ## Reporting Bugs
 
-Submit bug report or feature requests on the [Github issue tracker](https://github.com/deepanshs/mrsimulator/issues).
+Submit bug reports or feature requests on the [Github issue tracker](https://github.com/deepanshs/mrsimulator/issues).
 
 Discussions are welcome on the [Github discussion](https://github.com/deepanshs/mrsimulator/discussions) page.
 
