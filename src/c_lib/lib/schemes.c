@@ -123,6 +123,7 @@ void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
   free(scheme->w4);
   free(scheme->wigner_2j_matrices);
   free(scheme->wigner_4j_matrices);
+  free(scheme);
 }
 
 /* Create a new orientation averaging scheme. */
@@ -214,5 +215,6 @@ MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
 void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme) {
   fftw_destroy_plan(fftw_scheme->the_fftw_plan);
   fftw_free(fftw_scheme->vector);
-  if (!fftw_scheme) fftw_free(fftw_scheme);
+  // fftw_cleanup();
+  free(fftw_scheme);
 }

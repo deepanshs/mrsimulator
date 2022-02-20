@@ -63,7 +63,7 @@ def one_d_spectrum(method,
         allow_fourth_rank = 1
 
     # transitions of the observed spin
-    cdef int transition_increment, number_of_transitions
+    cdef int transition_increment, number_of_transitions, i
     cdef ndarray[float, ndim=1] transition_pathway_c
     cdef ndarray[double, ndim=1] transition_pathway_weight
     cdef ndarray[double, ndim=1] transition_pathway_weight_c
@@ -165,6 +165,7 @@ def one_d_spectrum(method,
         #                          Site specification
         # ------------------------------------------------------------------------
         # CSA
+        # spin_i = <float *> malloc(number_of_sites)
         spin_i = np.empty(number_of_sites, dtype=np.float32)
         gyromagnetic_ratio_i = np.empty(number_of_sites, dtype=np.float64)
 
@@ -407,6 +408,7 @@ def one_d_spectrum(method,
             amp[:] = 0.0
 
         # release spin system memory
+        # free(spin_i)
         spin_index_ij = None
         spin_i = None
         gyromagnetic_ratio_i = None

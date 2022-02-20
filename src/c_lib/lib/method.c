@@ -11,25 +11,26 @@
 
 /* Free the buffer and pre-calculated tables from the mrsimulator plan. */
 void MRS_free_event(MRS_event *the_event) {
-  if (!the_event->plan) MRS_free_plan(the_event->plan);
-  if (!the_event->freq_amplitude) free(the_event->freq_amplitude);
+  if (the_event->plan != NULL) {
+    MRS_free_plan(the_event->plan);
+    the_event->plan = NULL;
+  }
+  free(the_event->freq_amplitude);
 }
 
 /** Free the memory/buffer allocation for the MRS dimensions and events within. **/
 void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n) {
   unsigned int dim, evt;
-  MRS_dimension *dimension;
   for (dim = 0; dim < n; dim++) {
-    dimension = &dimensions[dim];
-    for (evt = 0; evt < dimension->n_events; evt++) {
-      MRS_free_event(&dimension->events[evt]);
+    for (evt = 0; evt < dimensions[dim].n_events; evt++) {
+      MRS_free_event(&dimensions[dim].events[evt]);
     }
-    if (!dimensions->events) free(dimension->events);
-    if (!dimensions->local_frequency) free(dimension->local_frequency);
-    if (!dimensions->freq_offset) free(dimension->freq_offset);
-    if (!dimensions->freq_amplitude) free(dimension->freq_amplitude);
-    if (!dimensions) free(dimensions);
+    free(dimensions[dim].events);
+    free(dimensions[dim].local_frequency);
+    free(dimensions[dim].freq_offset);
+    free(dimensions[dim].freq_amplitude);
   }
+  free(dimensions);
 }
 
 /**
@@ -59,21 +60,28 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
 
   /* When both rotor angle and rotor freq is the same as the plan, return plan. */
   if (rotor_frequency_equal && rotor_angle_equal) {
-    event->plan = plan;
+    MRS_plan *new_plan = MRS_copy_plan(plan);
+    new_plan->copy = true;
+    event->plan = new_plan;
     return;
   }
 
   /* When only rotor freq is different, update the plan accordingly and return. */
   if (!rotor_frequency_equal && rotor_angle_equal) {
     MRS_plan *new_plan = MRS_copy_plan(plan);
+    new_plan->copy = true;
+    new_plan->copy_for_rotor_freq = true;
     MRS_plan_update_from_rotor_frequency_in_Hz(new_plan, rotor_frequency_in_Hz);
     event->plan = new_plan;
+    MRS_plan_release_temp_storage(new_plan);
     return;
   }
 
   /* When only rotor angle is different, update the plan accordingly and return. */
   if (rotor_frequency_equal && !rotor_angle_equal) {
     MRS_plan *new_plan = MRS_copy_plan(plan);
+    new_plan->copy = true;
+    new_plan->copy_for_rotor_angle = true;
     MRS_plan_update_from_rotor_angle_in_rad(new_plan, rotor_angle_in_rad,
                                             plan->allow_fourth_rank);
     event->plan = new_plan;
@@ -82,10 +90,14 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
 
   /* Otherwise, update plan for both rotor angle and freq and return. */
   MRS_plan *new_plan = MRS_copy_plan(plan);
+  new_plan->copy = true;
+  new_plan->copy_for_rotor_freq = true;
+  new_plan->copy_for_rotor_angle = true;
   MRS_plan_update_from_rotor_frequency_in_Hz(new_plan, rotor_frequency_in_Hz);
   MRS_plan_update_from_rotor_angle_in_rad(new_plan, rotor_angle_in_rad,
                                           plan->allow_fourth_rank);
   event->plan = new_plan;
+  MRS_plan_release_temp_storage(new_plan);
 }
 
 /**
