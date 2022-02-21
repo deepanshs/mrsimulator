@@ -94,13 +94,14 @@ amorphous materials.
           <div>
             <a href="examples/index.html">Gallery
               <p></p>
-              Simulation Examples
+              Simulation
             </a>
           </div>
           <div>
             <a href="fitting/index.html">Gallery
               <p></p>
-              <a href="fitting/index.html">Fitting Examples
+              <a href="fitting/index.html">
+              Fitting
             </a>
           </div>
         </div>
@@ -131,19 +132,19 @@ The ``mrsimulator`` package offers the following
 - **Fast simulation** of one/two-dimensional solid-state NMR spectra. See our :ref:`benchmark` results.
 
 - Simulation of **coupled and uncoupled spin system**
-    - for spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei,
-    - at arbitrary macroscopic magnetic flux density,
-    - at arbitrary rotor angles, and
-    - at arbitrary spinning frequency.
+    - for spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei
+    - at arbitrary macroscopic magnetic flux density
+    - at arbitrary rotor angles
+    - at arbitrary spinning frequency
 
 - A library of **NMR methods**,
-    - 1D Bloch decay spectrum,
-    - 1D Bloch decay central transition spectrum,
-    - 2D Multi-quantum Variable Angle Spinning (MQ-VAS),
-    - 2D Satellite-transition Variable Angle Spinning (ST-VAS),
-    - 2D Dynamic Angle Spinning (DAS),
-    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT),
-    - 2D Magic Angle Flipping (MAF).
+    - 1D Bloch decay spectrum
+    - 1D Bloch decay central transition spectrum
+    - 2D Multi-quantum Variable Angle Spinning (MQ-VAS)
+    - 2D Satellite-transition Variable Angle Spinning (ST-VAS)
+    - 2D Dynamic Angle Spinning (DAS)
+    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
+    - 2D Magic Angle Flipping (MAF)
 
 - **Models** for tensor parameter distribution in amorphous materials.
     - Czjzek
@@ -158,59 +159,44 @@ The ``mrsimulator`` package offers the following
 .. working on developing the package for the NMR community. Any contribution and
 .. suggestion is greatly appreciated.
 
-
-.. warning::
-    The package is currently under development. We advice using with
-    caution. Bug report are greatly appreciated.
-
 ----
 
-Getting Started
----------------
+Introduction
+------------
 
 .. toctree::
     :maxdepth: 2
-    :caption: Getting Started
+    :caption: Introduction
 
     installation/installation
-    introduction
-    getting_started
-    getting_started-objects
-    getting_started_ethanol
-    configuring_simulator
-    mrsim_IO
-.. designing_methods
+    introduction/getting_started
+    introduction/ethanol_example
 
-Signal Processing (``mrsimulator.SignalProcessor``)
----------------------------------------------------
+User Guide
+----------
 
 .. toctree::
     :maxdepth: 2
-    :caption: Signal Processing
+    :caption: User Documentation
 
-    signal_processing
+    user_guide/spin_system/spin_system
+    user_guide/spin_system_distributions/spin_system_distributions
+    user_guide/method/method
+    user_guide/methods_library/methods_library
+    user_guide/simulator/simulator
+    user_guide/signal_processing/signal_processing
+    user_guide/io/mrsim_IO
 
-Models
-------
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Models
-
-    model/czjzek
-    model/extended_czjzek
-
-
-Examples and Benchmarks
------------------------
+Examples
+--------
 
 .. toctree::
     :maxdepth: 2
-    :caption: Examples and Benchmarks
+    :caption: Galleries
 
     examples/index
     fitting/index
-    benchmark
+    signal_processing/index
 
 Theory
 ------
@@ -278,11 +264,10 @@ Project details
 Reporting Bugs
 --------------
 
-The preferred location for submitting feature requests and bug reports is the
-`Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_. Reports
-are also welcomed  by directly contacting `Deepansh Srivastava <mailto:srivastava.89@osu.edu>`_.
+Submit bug reports or feature requests on the
+`Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
 
-Discussions are welcome on `Github discussion <https://github.com/deepanshs/mrsimulator/discussions>`_
+Discussions are welcome on the `Github discussion <https://github.com/deepanshs/mrsimulator/discussions>`_ page.
 
 
 How to cite

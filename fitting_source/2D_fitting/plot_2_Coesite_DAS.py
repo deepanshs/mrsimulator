@@ -20,6 +20,8 @@ from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
+from mrsimulator.method.spectral_dimension import SpectralDimension
+from mrsimulator.method.event import SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -84,31 +86,31 @@ DAS = Method2D(
     channels=["17O"],
     magnetic_flux_density=11.744,  # in T
     spectral_dimensions=[
-        {
+        SpectralDimension(
             **spectral_dims[0],
-            "events": [
-                {
-                    "fraction": 0.5,
-                    "rotor_angle": 37.38 * 3.14159 / 180,
-                    "transition_query": [{"P": [-1], "D": [0]}],
-                },
-                {
-                    "fraction": 0.5,
-                    "rotor_angle": 79.19 * 3.14159 / 180,
-                    "transition_query": [{"P": [-1], "D": [0]}],
-                },
+            events=[
+                SpectralEvent(
+                    fraction=0.5,
+                    rotor_angle=37.38 * 3.14159 / 180,
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                ),
+                SpectralEvent(
+                    fraction=0.5,
+                    rotor_angle=79.19 * 3.14159 / 180,
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                ),
             ],
-        },
+        ),
         # The last spectral dimension block is the direct-dimension
-        {
+        SpectralDimension(
             **spectral_dims[1],
-            "events": [
-                {
-                    "rotor_angle": 54.735 * 3.14159 / 180,
-                    "transition_query": [{"P": [-1], "D": [0]}],
-                }
+            events=[
+                SpectralEvent(
+                    rotor_angle=54.735 * 3.14159 / 180,
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                )
             ],
-        },
+        ),
     ],
     experiment=experiment,  # also add the measurement to the method.
 )

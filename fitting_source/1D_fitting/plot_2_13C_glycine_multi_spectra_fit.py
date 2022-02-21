@@ -18,6 +18,7 @@ from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -64,12 +65,12 @@ plt.show()
 C1 = Site(
     isotope="13C",
     isotropic_chemical_shift=176.0,  # in ppm
-    shielding_symmetric={"zeta": 60, "eta": 0.6},  # zeta in Hz
+    shielding_symmetric=SymmetricTensor(zeta=60, eta=0.6),  # zeta in Hz
 )
 C2 = Site(
     isotope="13C",
     isotropic_chemical_shift=43.0,  # in ppm
-    shielding_symmetric={"zeta": 30, "eta": 0.5},  # zeta in Hz
+    shielding_symmetric=SymmetricTensor(zeta=30, eta=0.5),  # zeta in Hz
 )
 
 spin_systems = [SpinSystem(sites=[C1], name="C1"), SpinSystem(sites=[C2], name="C2")]

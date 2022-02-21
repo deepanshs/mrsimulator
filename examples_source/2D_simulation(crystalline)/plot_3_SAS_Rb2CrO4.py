@@ -17,6 +17,9 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
+from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method.event import SpectralEvent
+from mrsimulator.method.spectral_dimension import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -25,14 +28,14 @@ from mrsimulator import signal_processing as sp
 site = Site(
     isotope="87Rb",
     isotropic_chemical_shift=-7,  # in ppm
-    shielding_symmetric={"zeta": 110, "eta": 0},
-    quadrupolar={
-        "Cq": 3.5e6,  # in Hz
-        "eta": 0.3,
-        "alpha": 0,  # in rads
-        "beta": 70 * 3.14159 / 180,  # in rads
-        "gamma": 0,  # in rads
-    },
+    shielding_symmetric=SymmetricTensor(zeta=110, eta=0),
+    quadrupolar=SymmetricTensor(
+        Cq=3.5e6,  # in Hz
+        eta=0.3,
+        alpha=0,  # in rads
+        beta=70 * 3.14159 / 180,  # in rads
+        gamma=0,  # in rads
+    ),
 )
 spin_system = SpinSystem(sites=[site])
 
@@ -44,30 +47,30 @@ sas = Method2D(
     channels=["87Rb"],
     magnetic_flux_density=4.2,  # in T
     spectral_dimensions=[
-        {
-            "count": 256,
-            "spectral_width": 1.5e4,  # in Hz
-            "reference_offset": -5e3,  # in Hz
-            "label": "70.12 dimension",
-            "events": [
-                {
-                    "rotor_angle": 70.12 * 3.14159 / 180,
-                    "transition_query": [{"P": [-1], "D": [0]}],
-                }
+        SpectralDimension(
+            count=256,
+            spectral_width=1.5e4,  # in Hz
+            reference_offset=-5e3,  # in Hz
+            label="70.12 dimension",
+            events=[
+                SpectralEvent(
+                    rotor_angle=70.12 * 3.14159 / 180,
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                )
             ],  # in radians
-        },
-        {
-            "count": 512,
-            "spectral_width": 15e3,  # in Hz
-            "reference_offset": -7e3,  # in Hz
-            "label": "MAS dimension",
-            "events": [
-                {
-                    "rotor_angle": 54.74 * 3.14159 / 180,
-                    "transition_query": [{"P": [-1], "D": [0]}],
-                }
+        ),
+        SpectralDimension(
+            count=512,
+            spectral_width=15e3,  # in Hz
+            reference_offset=-7e3,  # in Hz
+            label="MAS dimension",
+            events=[
+                SpectralEvent(
+                    rotor_angle=54.74 * 3.14159 / 180,
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                )
             ],  # in radians
-        },
+        ),
     ],
 )
 

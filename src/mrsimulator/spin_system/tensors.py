@@ -141,7 +141,7 @@ class SymmetricTensor(Parseable):
 
 
 class AntisymmetricTensor(Parseable):
-    """Base SymmetricTensor class representing the traceless symmetric part of an
+    """Base AntiSymmetricTensor class representing the traceless symmetric part of an
     irreducible second-rank tensor.
 
     Attributes:

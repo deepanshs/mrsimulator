@@ -20,8 +20,6 @@ of the `mrsimulator` library is written in C, wrapped, and made available in pyt
 
 ---
 
-:warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
-
 ## Why use mrsimulator?
 
 - It is open-source and free.
@@ -45,20 +43,20 @@ The `mrsimulator` package currently offers the following
 
 - Simulation of **coupled and uncoupled spin system**
 
-  - for spin I=1/2, and quadrupole I>1/2 nuclei,
-  - at arbitrary macroscopic magnetic flux density,
-  - at arbitrary rotor angles, and
-  - at arbitrary spinning frequency.
+  - for spin I=1/2, and quadrupole I>1/2 nuclei
+  - at arbitrary macroscopic magnetic flux density
+  - at arbitrary rotor angles
+  - at arbitrary spinning frequency
 
 - A library of **NMR methods**,
 
-  - 1D Bloch decay spectrum,
-  - 1D Bloch decay central transition spectrum,
-  - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS),
-  - 2D Satellite-transition Variable Angle Spinning (MQ-VAS),
-  - 2D Dynamic Angle Spinning (DAS),
-  - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT), and
-  - 2D Magic Angle Flipping (MAF).
+  - 1D Bloch decay spectrum
+  - 1D Bloch decay central transition spectrum
+  - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS)
+  - 2D Satellite-transition Variable Angle Spinning (MQ-VAS)
+  - 2D Dynamic Angle Spinning (DAS)
+  - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
+  - 2D Magic Angle Flipping (MAF)
 
 - **Models** for tensor parameter distribution in amorphous materials.
 
@@ -88,9 +86,9 @@ This should produce the following figure.
 
 ## Reporting Bugs
 
-The preferred location for submitting feature requests and bug reports is the [Github issue tracker](https://github.com/deepanshs/mrsimulator/issues). Reports are also welcomed by directly contacting [Deepansh Srivastava](mailto:srivastava.89@osu.edu).
+Submit bug reports or feature requests on the [Github issue tracker](https://github.com/deepanshs/mrsimulator/issues).
 
-Discussions are welcome on [Github discussion](https://github.com/deepanshs/mrsimulator/discussions)
+Discussions are welcome on the [Github discussion](https://github.com/deepanshs/mrsimulator/discussions) page.
 
 ## How to cite
 
@@ -100,6 +98,4 @@ If you use mrsimulator in your publication, please consider citing the following
 
 - Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific data. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
 
-_Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package._
-
-- Matt Newville; Renee Otten; Andrew Nelson; Antonino Ingargiola; Till Stensitzki; Dan Allan; Austin Fox; Faustin Carter; Michał; Dima Pustakhod; lneuhaus; Sebastian Weigand; Ray Osborn; Glenn; Christoph Deil; Mark; Allan L. R. Hansen; Gustavo Pasquevich; Leon Foks; Nicholas Zobrist; Oliver Frost; Alexandre Beelen; Stuermer; kwertyops; Anthony Polloreno; Shane Caldwell; Anthony Almarza; Arun Persaud; Ben Gamari; Benjamin F. Maier. (2021, February 7). lmfit/lmfit-py 1.0.2 (Version 1.0.2). Zenodo. http://doi.org/10.5281/zenodo.4516651
+_Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package._ Zenodo. http://doi.org/10.5281/zenodo.4516651

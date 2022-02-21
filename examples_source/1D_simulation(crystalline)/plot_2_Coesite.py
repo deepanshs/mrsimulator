@@ -14,8 +14,9 @@ Coesite, ¹⁷O (I=5/2)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator import signal_processing as sp
+from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -24,19 +25,29 @@ from mrsimulator import signal_processing as sp
 
 # default unit of isotropic_chemical_shift is ppm and Cq is Hz.
 O17_1 = Site(
-    isotope="17O", isotropic_chemical_shift=29, quadrupolar={"Cq": 6.05e6, "eta": 0.000}
+    isotope="17O",
+    isotropic_chemical_shift=29,
+    quadrupolar=SymmetricTensor(Cq=6.05e6, eta=0.000),
 )
 O17_2 = Site(
-    isotope="17O", isotropic_chemical_shift=41, quadrupolar={"Cq": 5.43e6, "eta": 0.166}
+    isotope="17O",
+    isotropic_chemical_shift=41,
+    quadrupolar=SymmetricTensor(Cq=5.43e6, eta=0.166),
 )
 O17_3 = Site(
-    isotope="17O", isotropic_chemical_shift=57, quadrupolar={"Cq": 5.45e6, "eta": 0.168}
+    isotope="17O",
+    isotropic_chemical_shift=57,
+    quadrupolar=SymmetricTensor(Cq=5.45e6, eta=0.168),
 )
 O17_4 = Site(
-    isotope="17O", isotropic_chemical_shift=53, quadrupolar={"Cq": 5.52e6, "eta": 0.169}
+    isotope="17O",
+    isotropic_chemical_shift=53,
+    quadrupolar=SymmetricTensor(Cq=5.52e6, eta=0.169),
 )
 O17_5 = Site(
-    isotope="17O", isotropic_chemical_shift=58, quadrupolar={"Cq": 5.16e6, "eta": 0.292}
+    isotope="17O",
+    isotropic_chemical_shift=58,
+    quadrupolar=SymmetricTensor(Cq=5.16e6, eta=0.292),
 )
 
 # all five sites.
@@ -45,7 +56,9 @@ sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
 # %%
 # **Step 2:** Create the spin systems from these sites. For optimum performance, we
 # create five single-site spin systems instead of a single five-site spin system. The
-# abundance of each spin system is taken from above reference.
+# abundance of each spin system is taken from above reference. Here we are iterating
+# over both the *sites* and *abundance* list concurrently using a list comprehension
+# to construct a list of SpinSystens
 abundance = [0.83, 1.05, 2.16, 2.05, 1.90]
 spin_systems = [SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
 
@@ -55,11 +68,11 @@ method = BlochDecayCTSpectrum(
     channels=["17O"],
     rotor_frequency=14000,  # in Hz
     spectral_dimensions=[
-        {
-            "count": 2048,
-            "spectral_width": 50000,  # in Hz
-            "label": r"$^{17}$O resonances",
-        }
+        dict(
+            count=2048,
+            spectral_width=50000,  # in Hz
+            label=r"$^{17}$O resonances",
+        )
     ],
 )
 
