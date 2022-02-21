@@ -1,38 +1,92 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
+from mrsimulator.utils.collection import _check_lengths_of_args
+from mrsimulator.utils.collection import _flatten_item
 from mrsimulator.utils.collection import single_site_system_generator
-
-# from mrsimulator.utils.collection import _check_lengths
-# from mrsimulator.utils.collection import _extend_dict_values
-# from mrsimulator.utils.collection import _extend_to_nparray
-# from mrsimulator.utils.collection import _fix_item
-# from mrsimulator.utils.collection import _zip_dict
+from mrsimulator.utils.collection import site_generator
 
 
 __author__ = ["Deepansh Srivastava", "Matthew D. Giammar"]
 __email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
 
 
-# TODO: Add multidimensional lists for shift and tensor params
-# TODO: Add test functions to cover new methods (_site_generator, _test_lengths,
-# _flatten_items)
+def test_flatten_item():
+    # Check scalar value
+    item = 1
+
+    assert _flatten_item(item) == 1
+
+    # Check 1d list
+    lst = [0, 1, 2, 3, 4]
+    flat_lst = _flatten_item(lst)
+
+    assert isinstance(flat_lst, np.ndarray)
+    assert np.array_equal(flat_lst, np.array([0, 1, 2, 3, 4]))
+
+    # Check list flattenning
+    lst = [
+        [0, 1, 2, 3],
+        [4, 5, 6, 7],
+        [8, 9, 10, 11],
+    ]
+    flat_lst = _flatten_item(lst)
+
+    assert isinstance(flat_lst, np.ndarray)
+    assert np.array_equal(flat_lst, np.arange(12))
+
+    # Check passing dicts
+    d = {"scalar": 0, "flat": np.arange(50), "3d": np.arange(50).reshape((5, 5, 2))}
+    flat_d = _flatten_item(d)
+
+    assert flat_d["scalar"] == 0
+    assert np.array_equal(flat_d["flat"], np.arange(50))
+    assert np.array_equal(flat_d["3d"], np.arange(50))
 
 
 def test_unbalanced_lists():
     isotopes = ["13C", "71Ga", "15N"]
     shifts = np.arange(10)
 
-    # error = ".*Each entry can either be a single item or a list of items.*"
     error = ".*Not all arrays/lists passed were of the same length.*"
     with pytest.raises(ValueError, match=error):
         single_site_system_generator(isotope=isotopes, isotropic_chemical_shift=shifts)
 
-    abundances = np.arange(10)
+    shielding = {"zeta": np.arange(10)}
 
     error = ".*Not all arrays/lists passed were of the same length.*"
     with pytest.raises(ValueError, match=error):
-        single_site_system_generator(isotope=isotopes, abundance=abundances)
+        single_site_system_generator(isotope=isotopes, shielding_symmetric=shielding)
+
+    # Calling function directly
+    assert _check_lengths_of_args(isotopes, [1, 2, 3], "foo") == 3
+    error = ".*Not all arrays/lists passed were of the same length.*"
+    with pytest.raises(ValueError, match=error):
+        _check_lengths_of_args(isotopes, shielding)
+
+
+def test_site_generator():
+    iso_dist = np.random.normal(0, 10, 10)
+    zeta_dist = np.arange(10)
+    eta_dist = np.random.rand(10)
+    gamma_dist = np.random.rand(10) * 3.1415
+    sites = site_generator(
+        isotope="13C",
+        isotropic_chemical_shift=iso_dist,
+        shielding_symmetric={"zeta": zeta_dist, "eta": eta_dist, "gamma": gamma_dist},
+    )
+
+    assert isinstance(sites, list)
+
+    for i in range(10):
+        assert sites[i].isotope.symbol == "13C"
+        assert sites[i].isotropic_chemical_shift == iso_dist[i]
+        assert sites[i].shielding_symmetric.zeta == zeta_dist[i]
+        assert sites[i].shielding_symmetric.eta == eta_dist[i]
+        assert sites[i].shielding_symmetric.alpha is None
+        assert sites[i].shielding_symmetric.beta is None
+        assert sites[i].shielding_symmetric.gamma == gamma_dist[i]
+        assert sites[i].quadrupolar is None
 
 
 def test_shielding_01():

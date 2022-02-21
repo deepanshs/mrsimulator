@@ -320,9 +320,7 @@ def _check_lengths_of_args(*args):
         if isinstance(arg, dict)
     ]
     dicts = dicts[0] if dicts != [] else []
-    # print(dicts)
     length = {len(lst) for lst in args + dicts if isinstance(lst, (list, np.ndarray))}
-    # print(length)
     if len(length) != 1:
         raise ValueError(
             f"Not all arrays/lists passed were of the same length. {LIST_LEN_ERROR_MSG}"
