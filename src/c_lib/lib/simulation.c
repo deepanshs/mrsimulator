@@ -65,14 +65,9 @@ void __mrsimulator_core(
   double B0_in_T, fraction;
 
   // Allocate memory for zeroth, second, and fourth-rank tensor components.
-  double R0 = 0.0;
-  complex128 *R2 = malloc_complex128(5);
-  complex128 *R4 = malloc_complex128(9);
-
-  // Allocate memory for zeroth, second, and fourth-rank temporary tensor components.
-  double R0_temp = 0.0;
-  complex128 *R2_temp = malloc_complex128(5);
-  complex128 *R4_temp = malloc_complex128(9);
+  // variable with _temp allocate temporary memory for tensor components
+  double R0 = 0.0, R0_temp = 0.0;
+  complex128 R2[5], R4[9], R2_temp[5], R4_temp[9];
 
   // `transition_increment` is the step size to the next transition within the pathway.
   int transition_increment = 2 * sites->number_of_sites;
@@ -139,11 +134,6 @@ void __mrsimulator_core(
       reset = 0;  // reset the freqs to zero for next dimension.
     }             // end events
   }               // end dimensions
-
-  free(R2);
-  free(R4);
-  free(R2_temp);
-  free(R4_temp);
 
   /* ---------------------------------------------------------------------
    *              Delta and triangle tenting interpolation
