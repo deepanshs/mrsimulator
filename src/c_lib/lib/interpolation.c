@@ -561,7 +561,6 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
   //   return;
   // }
 
-  bool *clips = (bool *)malloc(4 * sizeof(bool));
   double *f1 = malloc_double(3);
   f1[0] = *freq11;
   f1[1] = *freq12;
@@ -594,7 +593,6 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
   if (p >= m0) {
     free(f1);
     free(f2);
-    free(clips);
     return;
   }
 
@@ -603,13 +601,13 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
   if (pmax < 0) {
     free(f1);
     free(f2);
-    free(clips);
     return;
   }
 
   pmid = (int)f1[1];
   top = *amp * 2.0 / (f1[2] - f1[0]);
 
+  bool *clips = (bool *)malloc(4 * sizeof(bool));
   get_clipping_conditions(&p, &pmid, &pmax, &m0, clips);
   if (f1[1] >= 0.0) {
     lower_triangle_interpolation_2d(p, pmid, clips[0], clips[1], clips[2], top, f1, f2,
