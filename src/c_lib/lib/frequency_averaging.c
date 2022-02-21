@@ -107,10 +107,9 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                                double transition_pathway_weight,
                                unsigned int number_of_sidebands,
                                double *affine_matrix) {
-  unsigned int i, k, j;  // , evt;
+  unsigned int i, k, j;
   unsigned int step_vector_i = 0, step_vector_k = 0, address;
   MRS_plan *planA, *planB;
-  // MRS_event *event;
   int size = scheme->total_orientations * number_of_sidebands;
   double *freq_ampA, *freq_ampB;
   double *freq_amp = malloc_double(scheme->octant_orientations);
