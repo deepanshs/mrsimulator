@@ -104,7 +104,7 @@ static inline void left_triangle_interpolate(int p, int pmid, bool l_clip, bool 
 
   if (p == pmid) {
     *spec += (!r_clip && !l_clip) ? f10 * top * 0.5 : 0.0;
-    *spec += (!r_clip_r && l_clip) ? f[1] * (f10 - f[0]) * 0.5 * df1 : 0.0;
+    // *spec += (!r_clip_r && l_clip) ? f[1] * (f10 - f[0]) * 0.5 * df1 : 0.0;
     return;
   }
 
