@@ -14,18 +14,13 @@ clib.generate_table()
 @cython.wraparound(False)
 def one_d_spectrum(method,
        list spin_systems,
-       int verbose=0,
+       int verbose=0,  # for degub purpose only.
        unsigned int number_of_sidebands=90,
        unsigned int integration_density=72,
        unsigned int decompose_spectrum=0,
        unsigned int integration_volume=1,
        bool_t interpolation=True):
     """
-    :ivar verbose:
-        The allowed values are 0, 1, and 11. When the value is 1, the output is
-        printed on the screen. When the value is 11, in addition to the output
-        from 1, execution time is also printed on the screen.
-        The default value is 0.
     :ivar number_of_sidebands:
         The value is an integer which corresponds to the number of sidebands
         simulated in the spectrum. The default value is 90. Note, when the
