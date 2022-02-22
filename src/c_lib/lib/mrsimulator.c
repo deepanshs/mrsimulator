@@ -16,25 +16,55 @@ double ZERO[] = {0.0, 0.0};
  * Free the buffers and pre-calculated tables from the mrsimulator plan.
  */
 void MRS_free_plan(MRS_plan *the_plan) {
-  if (!the_plan->vr_freq) free(the_plan->vr_freq);
-  if (!the_plan->wigner_d2m0_vector) free(the_plan->wigner_d2m0_vector);
-  if (!the_plan->wigner_d4m0_vector) free(the_plan->wigner_d4m0_vector);
-  if (!the_plan->norm_amplitudes) free(the_plan->norm_amplitudes);
-  if (!the_plan->pre_phase) free(the_plan->pre_phase);
-  if (!the_plan->pre_phase_2) free(the_plan->pre_phase_2);
-  if (!the_plan->pre_phase_4) free(the_plan->pre_phase_4);
-  if (!the_plan) free(the_plan);
+  if (DEBUG)
+    printf("plan_copy %d, plan copy_for_rotor_angle %d plan copy_for_rotor_freq %d\n",
+           the_plan->copy, the_plan->copy_for_rotor_angle,
+           the_plan->copy_for_rotor_freq);
+  if (!the_plan->copy) {
+    MRS_free_plan_for_rotor_angle_copy(the_plan);
+    MRS_free_plan_for_rotor_freq_copy(the_plan);
+    free(the_plan->norm_amplitudes);
+    if (DEBUG) printf("freed norm_amplitudes\n");
+    free(the_plan);
+    return;
+  }
+  if (the_plan->copy_for_rotor_angle) {
+    MRS_free_plan_for_rotor_angle_copy(the_plan);
+  }
+  if (the_plan->copy_for_rotor_freq) {
+    MRS_free_plan_for_rotor_freq_copy(the_plan);
+  }
+  free(the_plan);
 }
 
 /**
  * Free the memory from the mrsimulator plan associated with the wigner
- * d^l_{m,0}(rotor_angle_in_rad) vectors. Here, l=2 or 4.
+ * d^l_{m,0}(rotor_angle_in_rad) vectors at rotor_angle and all powder
+ * orientations. Here, l=2 or 4.
  */
-void MRS_plan_free_rotor_angle_in_rad(MRS_plan *plan) {
-  free(plan->wigner_d2m0_vector);
-  free(plan->wigner_d4m0_vector);
-  plan->wigner_d2m0_vector = NULL;
-  plan->wigner_d4m0_vector = NULL;
+void MRS_free_plan_for_rotor_angle_copy(MRS_plan *the_plan) {
+  free(the_plan->wigner_d2m0_vector);
+  free(the_plan->wigner_d4m0_vector);
+  free(the_plan->pre_phase_2);
+  free(the_plan->pre_phase_4);
+  if (DEBUG)
+    printf("freed wigner_d2m0_vector, wigner_d4m0_vector, pre_phase_2, pre_phase_4\n");
+}
+
+/**
+ * Free the memory from the mrsimulator plan associated with the sideband freq.
+ */
+void MRS_free_plan_for_rotor_freq_copy(MRS_plan *the_plan) {
+  free(the_plan->vr_freq);
+  if (DEBUG) printf("freed vr_freq\n");
+}
+
+/**
+ * Release temporary MRS plan storage
+ */
+void MRS_plan_release_temp_storage(MRS_plan *the_plan) {
+  free(the_plan->pre_phase);
+  if (DEBUG) printf("freed pre_phase\n");
 }
 
 /**
@@ -62,6 +92,9 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
 
   plan->allow_fourth_rank = allow_fourth_rank;
 
+  plan->copy = false;
+  plan->copy_for_rotor_angle = false;
+  plan->copy_for_rotor_freq = false;
   /**
    * Update the mrsimulator plan with the given spherical averaging scheme. We create
    * the coordinates on the surface of the unit sphere by projecting the points on the
@@ -89,7 +122,7 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
   plan->size = scheme->total_orientations * plan->number_of_sidebands;
 
   /** Update the mrsimulator plan with the given rotor frequenccy in Hz. */
-  MRS_plan_update_from_rotor_frequency_in_Hz(plan, increment, rotor_frequency_in_Hz);
+  MRS_plan_update_from_rotor_frequency_in_Hz(plan, rotor_frequency_in_Hz);
 
   /** Update the mrsimulator plan with the given rotor angle in radian. */
   MRS_plan_update_from_rotor_angle_in_rad(plan, rotor_angle_in_rad, allow_fourth_rank);
@@ -99,14 +132,13 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
 /**
  * Update the MRS plan for the given sample rotation frequency in Hz.
  */
-void MRS_plan_update_from_rotor_frequency_in_Hz(MRS_plan *plan, double increment,
+void MRS_plan_update_from_rotor_frequency_in_Hz(MRS_plan *plan,
                                                 double rotor_frequency_in_Hz) {
   unsigned int size_4;
   // double increment_inverse = 1.0 / increment;
   plan->rotor_frequency_in_Hz = rotor_frequency_in_Hz;
 
-  plan->vr_freq =
-      __get_frequency_in_FFT_order(plan->number_of_sidebands, rotor_frequency_in_Hz);
+  plan->vr_freq = get_FFT_order_freq(plan->number_of_sidebands, rotor_frequency_in_Hz);
   // cblas_dscal(plan->number_of_sidebands, increment_inverse, plan->vr_freq,
   // 1);
 
@@ -210,7 +242,6 @@ void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_
  */
 MRS_plan *MRS_copy_plan(MRS_plan *plan) {
   MRS_plan *new_plan = malloc(sizeof(MRS_plan));
-  new_plan->averaging_scheme = plan->averaging_scheme;
   new_plan->number_of_sidebands = plan->number_of_sidebands;
   new_plan->rotor_frequency_in_Hz = plan->rotor_frequency_in_Hz;
   new_plan->rotor_angle_in_rad = plan->rotor_angle_in_rad;
@@ -225,6 +256,9 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
   new_plan->pre_phase_2 = plan->pre_phase_2;
   new_plan->pre_phase_4 = plan->pre_phase_4;
   new_plan->buffer = plan->buffer;
+  new_plan->copy = plan->copy;
+  new_plan->copy_for_rotor_angle = plan->copy_for_rotor_angle;
+  new_plan->copy_for_rotor_freq = plan->copy_for_rotor_freq;
   return new_plan;
 }
 

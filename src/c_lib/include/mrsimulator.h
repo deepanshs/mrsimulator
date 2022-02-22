@@ -35,11 +35,6 @@
  */
 
 struct MRS_plan {
-  /**
-   * A pointer to the MRS_averaging_scheme orientation averaging scheme.
-   */
-  MRS_averaging_scheme *averaging_scheme;
-
   unsigned int number_of_sidebands; /**< The number of sidebands to compute. */
   double rotor_frequency_in_Hz;     /**< The sample rotation frequency in  Hz. */
 
@@ -63,6 +58,9 @@ struct MRS_plan {
    * processing.
    */
 
+  bool copy;                   // Set True if plan is copied.
+  bool copy_for_rotor_angle;   // Set True if plan is copied from rotor angle update.
+  bool copy_for_rotor_freq;    // Set True if plan is copied from rotor freq update.
   bool allow_fourth_rank;      // If true, creates buffer/tables for 4th-rank tensors.
   unsigned int size;           // # of angular orientations * number of sizebands.
   unsigned int n_octants;      // # of octants used in the orientational averaging.
@@ -101,20 +99,17 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
  * @param plan The pointer to the MRS_plan.
  */
 void MRS_free_plan(MRS_plan *plan);
+void MRS_free_plan_for_rotor_angle_copy(MRS_plan *the_plan);
+void MRS_free_plan_for_rotor_freq_copy(MRS_plan *the_plan);
+void MRS_plan_release_temp_storage(MRS_plan *plan);
 
 /* Update the MRS plan when sample rotation frequency is changed. */
-void MRS_plan_update_from_rotor_frequency_in_Hz(MRS_plan *plan, double increment,
+void MRS_plan_update_from_rotor_frequency_in_Hz(MRS_plan *plan,
                                                 double rotor_frequency_in_Hz);
 
 /* Update the MRS plan when the rotor angle is changed. */
 void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_in_rad,
                                              bool allow_fourth_rank);
-
-/**
- * Free the memory from the mrsimulator plan associated with the wigner
- * d^l_{m,0}(rotor_angle_in_rad) vectors. Here, l=2 or 4.
- */
-void MRS_plan_free_rotor_angle_in_rad(MRS_plan *plan);
 
 /**
  * @brief Return a copy of the mrsimulator plan.

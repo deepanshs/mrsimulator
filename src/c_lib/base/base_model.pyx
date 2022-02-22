@@ -14,18 +14,13 @@ clib.generate_table()
 @cython.wraparound(False)
 def one_d_spectrum(method,
        list spin_systems,
-       int verbose=0,
+       int verbose=0,  # for degub purpose only.
        unsigned int number_of_sidebands=90,
        unsigned int integration_density=72,
        unsigned int decompose_spectrum=0,
        unsigned int integration_volume=1,
        bool_t interpolation=True):
     """
-    :ivar verbose:
-        The allowed values are 0, 1, and 11. When the value is 1, the output is
-        printed on the screen. When the value is 11, in addition to the output
-        from 1, execution time is also printed on the screen.
-        The default value is 0.
     :ivar number_of_sidebands:
         The value is an integer which corresponds to the number of sidebands
         simulated in the spectrum. The default value is 90. Note, when the
@@ -63,9 +58,8 @@ def one_d_spectrum(method,
         allow_fourth_rank = 1
 
     # transitions of the observed spin
-    cdef int transition_increment, number_of_transitions
+    cdef int transition_increment, number_of_transitions, i
     cdef ndarray[float, ndim=1] transition_pathway_c
-    cdef ndarray[double, ndim=1] transition_pathway_weight
     cdef ndarray[double, ndim=1] transition_pathway_weight_c
 
 # create averaging scheme _____________________________________________________
@@ -77,36 +71,109 @@ def one_d_spectrum(method,
 
 # create C spectral dimensions ________________________________________________
     cdef int n_dimension = len(method.spectral_dimensions)
-    (
-        fr_, B0_, vr_, th_, cnt_, inc_, c_off_, ei, f_contrib_, n_pts
-    ) = c_dim_setup(method.spectral_dimensions, gyromagnetic_ratio, factor)
+    # if n_sequence > 1:
+    #     number_of_sidebands = 1
 
-    cdef int n_points = n_pts
-    cdef ndarray[double] fr = np.asarray(fr_, dtype=np.float64)
-    cdef ndarray[double] B0 = np.asarray(B0_, dtype=np.float64)
-    cdef ndarray[double] vr = np.asarray(vr_, dtype=np.float64)
-    cdef ndarray[double] th = np.asarray(th_, dtype=np.float64)
-    cdef ndarray[int] cnt = np.asarray(cnt_, dtype=np.int32)
-    cdef ndarray[double] inc = np.asarray(inc_, dtype=np.float64)
-    cdef ndarray[double] c_off = np.asarray(c_off_, dtype=np.float64)
-    cdef ndarray[int] n_event = np.asarray(ei, dtype=np.int32)
-    cdef ndarray[bool_t] f_contrib = np.asarray(f_contrib_, dtype=bool)
+    max_n_sidebands = number_of_sidebands
+
+    n_points = 1
+    cdef int n_ev
+    cdef ndarray[int] n_event
+    cdef ndarray[double] magnetic_flux_density_in_T, frac
+    cdef ndarray[double] srfiH
+    cdef ndarray[double] rair
+    cdef ndarray[int] cnt
+    cdef ndarray[double] coord_off
+    cdef ndarray[double] incre
+    freq_contrib = np.asarray([])
+
+    fr = []
+    Bo = []
+    vr = []
+    th = []
+    event_i = []
+    count = []
+    increment = []
+    coordinates_offset = []
+
+    prev_n_sidebands = 0
+    for i, dim in enumerate(method.spectral_dimensions):
+        n_ev = 0
+        for event in dim.events:
+            if event.__class__.__name__ != "MixingEvent":
+                freq_contrib = np.append(freq_contrib, event._freq_contrib_flags())
+                if event.rotor_frequency < 1.0e-3:
+                    rotor_frequency_in_Hz = 1.0e9
+                    rotor_angle_in_rad = 0.0
+                    number_of_sidebands = 1
+                    if prev_n_sidebands == 0: prev_n_sidebands = 1
+                else:
+                    rotor_frequency_in_Hz = event.rotor_frequency
+                    rotor_angle_in_rad = event.rotor_angle
+                    if prev_n_sidebands == 0: prev_n_sidebands = number_of_sidebands
+
+                if prev_n_sidebands != number_of_sidebands:
+                    raise ValueError(
+                        (
+                            'The library does not support spectral dimensions containing '
+                            'both zero and non-zero rotor frequencies. Consider using a '
+                            'smaller value instead of zero.'
+                        )
+                    )
+
+                fr.append(event.fraction) # fraction
+                Bo.append(event.magnetic_flux_density)  # in T
+                vr.append(rotor_frequency_in_Hz) # in Hz
+                th.append(rotor_angle_in_rad) # in rad
+                n_ev +=1
+
+        n_points *= dim.count
+
+        count.append(dim.count)
+        offset = dim.spectral_width / 2.0
+        coordinates_offset.append(-dim.reference_offset * factor - offset)
+        increment.append(dim.spectral_width / dim.count)
+        event_i.append(n_ev)
+
+        if dim.origin_offset is None:
+            dim.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
+
+    frac = np.asarray(fr, dtype=np.float64)
+    magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
+    srfiH = np.asarray(vr, dtype=np.float64)
+    rair = np.asarray(th, dtype=np.float64)
+    cnt = np.asarray(count, dtype=np.int32)
+    incre = np.asarray(increment, dtype=np.float64)
+    coord_off = np.asarray(coordinates_offset, dtype=np.float64)
+    n_event = np.asarray(event_i, dtype=np.int32)
 
     # create spectral_dimensions
-    dimensions = clib.MRS_create_dimensions(
-        averaging_scheme, &cnt[0], &c_off[0], &inc[0], &fr[0], &B0[0], &vr[0],
-        &th[0], &n_event[0], n_dimension, number_of_sidebands
-    )
+    dimensions = clib.MRS_create_dimensions(averaging_scheme, &cnt[0],
+        &coord_off[0], &incre[0], &frac[0], &magnetic_flux_density_in_T[0],
+        &srfiH[0], &rair[0], &n_event[0], n_dimension, number_of_sidebands)
 
 # normalization factor for the spectrum
-    norm = np.prod(inc)
+    norm = np.prod(incre)
 
 # create fftw scheme __________________________________________________________
     cdef clib.MRS_fftw_scheme *fftw_scheme
     fftw_scheme = clib.create_fftw_scheme(averaging_scheme.total_orientations, number_of_sidebands)
+# _____________________________________________________________________________
+
+# frequency contrib
+    cdef ndarray[bool_t] f_contrib = np.asarray(freq_contrib, dtype=bool)
 
 # affine transformation
-    cdef ndarray[double] affine_matrix_c = get_affine_matrix(method.affine_matrix, inc)
+    cdef ndarray[double] affine_matrix_c
+    if method.affine_matrix is None:
+        affine_matrix_c = np.asarray([1, 0, 0, 1], dtype=np.float64)
+    else:
+        increment_fraction = [incre/item for item in incre]
+        matrix = np.asarray(method.affine_matrix).ravel() * np.asarray(increment_fraction).ravel()
+        affine_matrix_c = np.asarray(matrix, dtype=np.float64)
+        if affine_matrix_c[2] != 0:
+            affine_matrix_c[2] /= affine_matrix_c[0]
+            affine_matrix_c[3] -=  affine_matrix_c[1]*affine_matrix_c[2]
 
 # sites _______________________________________________________________________________
     p_isotopes = None
@@ -140,6 +207,7 @@ def one_d_spectrum(method,
 
     cdef int trans__, pathway_increment, pathway_count, transition_count_per_pathway
     cdef ndarray[double, ndim=1] amp = np.zeros(2 * n_points, dtype=np.float64)
+    amp1 = np.zeros(n_points, dtype=np.complex128)
     amp_individual = []
 
     cdef clib.site_struct sites_c
@@ -337,28 +405,21 @@ def one_d_spectrum(method,
         #     continue
 
         if number_of_sites != p_number_of_sites and isotopes != p_isotopes:
-            transition_pathway_weight = None
-            transition_pathway_c = None
             transition_pathway = spin_sys.transition_pathways
             if transition_pathway is None:
                 segments, weights = method._get_transition_pathway_and_weights_np(spin_sys)
-                transition_pathway = np.asarray(segments)
-                transition_pathway_c = np.asarray(transition_pathway, dtype=np.float32).ravel()
-                weights = np.column_stack((weights.real, weights.imag)).ravel()
-                transition_pathway_weight = np.asarray(weights, dtype=np.float64)
-                weights = None
-                segments = None
+                transition_pathway = np.asarray(segments, dtype=np.float32)
+                transition_pathway_c = transition_pathway.ravel()
+                transition_pathway_weight_c = weights.view(dtype=np.float64)
             else:
                 # convert transition objects to list
                 weights = [(item.weight.real, item.weight.imag) for item in transition_pathway]
-                weights = np.asarray(weights).ravel()
-                transition_pathway_weight = np.asarray(weights, dtype=np.float64)
-                weights = None
+                transition_pathway_weight_c = np.asarray(weights, dtype=np.float64).ravel()
+                # transition_pathway_weight_c = weights
 
                 transition_pathway = np.asarray(transition_pathway)
                 lst = [item.tolist() for item in transition_pathway.ravel()]
                 transition_pathway_c = np.asarray(lst, dtype=np.float32).ravel()
-                lst = None
 
             pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
             pathway_increment = 2*number_of_sites*transition_count_per_pathway
@@ -381,9 +442,6 @@ def one_d_spectrum(method,
         # print('pathway', transition_pathway_c)
         # print('weight', transition_pathway_weight)
         # print('pathway_count, inc', pathway_count, pathway_increment)
-
-        transition_pathway_weight_c = transition_pathway_weight * (abundance/norm)
-
         for trans__ in range(pathway_count):
             clib.__mrsimulator_core(
                 &amp[0],  # as complex array
@@ -400,66 +458,29 @@ def one_d_spectrum(method,
                 &affine_matrix_c[0],
             )
 
+        temp = amp.view(dtype=np.complex128)
+        temp *= abundance/norm
+
         if decompose_spectrum == 1:
-            temp = amp.view(dtype=np.complex128).copy()
-            temp.shape = method.shape()
-            amp_individual.append(temp)
-            amp[:] = 0.0
-
-        # release spin system memory
-        spin_index_ij = None
-        spin_i = None
-        gyromagnetic_ratio_i = None
-
-        iso_n = None
-        zeta_n = None
-        eta_n = None
-        ori_n = None
-
-        Cq_e = None
-        eta_e = None
-        ori_e = None
-
-        iso_j = None
-        zeta_j = None
-        eta_j = None
-        ori_j = None
-
-        D_d = None
-        eta_d = None
-        ori_d = None
-
-        transition_pathway_weight_c = None
+            amp_individual.append(temp.copy().reshape(method.shape()))
+        else:
+            amp1 += temp
+        amp[:] = 0
 
     # reverse the spectrum if gyromagnetic ratio is positive.
     if decompose_spectrum == 1 and len(amp_individual) != 0:
-        amp = None
         if gyromagnetic_ratio < 0:
             amp1 = [np.fft.fftn(np.fft.ifftn(item).conj()) for item in amp_individual]
-            amp_individual = None
         else:
             amp1 = amp_individual
     else:
-        amp1 = amp.view(dtype=np.complex128)
         amp1.shape = method.shape()
         if gyromagnetic_ratio < 0:
             amp1 = np.fft.fftn(np.fft.ifftn(amp1).conj())
-            amp = None
 
     clib.MRS_free_dimension(dimensions, n_dimension)
     clib.MRS_free_averaging_scheme(averaging_scheme)
     clib.MRS_free_fftw_scheme(fftw_scheme)
-
-    B0 = None
-    vr = None
-    th = None
-    cnt = None
-    inc = None
-    c_off = None
-    n_event = None
-    f_contrib = None
-    affine_matrix_c = None
-
     return amp1
 
 
@@ -483,10 +504,6 @@ def get_zeeman_states(sys):
             else:
                 k = np.kron(k, np.ones(two_Ip1[i]))
         lst.append(k)
-
-    two_Ip1 = None
-    spin_quantum_numbers = None
-    k = None
     return np.asarray(lst).T
 
 
@@ -564,85 +581,3 @@ def calculate_transition_connect_weight(
 #     cdef ndarray[double] factor = np.zeros(2, dtype=np.float64)
 #     clib.transition_connect_factor(l, m1_a, m2_a, m1_b, m2_b, theta, phi, &factor[0])
 #     return complex(factor[0], factor[1])
-
-
-@cython.profile(False)
-@cython.boundscheck(False)
-@cython.wraparound(False)
-def get_affine_matrix(affine_matrix, increment):
-    """Reorder affine matrix for fast c computation.
-
-    Args:
-        affine_matrix: Numpy array or None.
-        increment: Array of increments along each dimension.
-    """
-    if affine_matrix is None:
-        affine_matrix_c = np.asarray([1, 0, 0, 1], dtype=np.float64)
-    else:
-        increment_fraction = [increment/item for item in increment]
-        matrix = np.asarray(affine_matrix).ravel() * np.asarray(increment_fraction).ravel()
-        affine_matrix_c = np.asarray(matrix, dtype=np.float64)
-        if affine_matrix_c[2] != 0:
-            affine_matrix_c[2] /= affine_matrix_c[0]
-            affine_matrix_c[3] -=  affine_matrix_c[1]*affine_matrix_c[2]
-    return affine_matrix_c
-
-
-@cython.profile(False)
-@cython.boundscheck(False)
-@cython.wraparound(False)
-def c_dim_setup(spectral_dimensions, gyromagnetic_ratio, factor):
-    cdef int n_ev, n_points = 1, prev_n_sidebands = 0
-
-    fr = []
-    B0 = []
-    vr = []
-    th = []
-    ei = []
-    cnt = []
-    inc = []
-    c_off = []
-    f_contrib = np.asarray([])
-
-    for dim in spectral_dimensions:
-        n_ev = 0
-        for event in dim.events:
-            if event.__class__.__name__ != "MixingEvent":
-                f_contrib = np.append(f_contrib, event._freq_contrib_flags())
-                if event.rotor_frequency < 1.0e-3:
-                    rotor_frequency_in_Hz = 1.0e9
-                    rotor_angle_in_rad = 0.0
-                    number_of_sidebands = 1
-                    if prev_n_sidebands == 0: prev_n_sidebands = 1
-                else:
-                    rotor_frequency_in_Hz = event.rotor_frequency
-                    rotor_angle_in_rad = event.rotor_angle
-                    if prev_n_sidebands == 0: prev_n_sidebands = number_of_sidebands
-
-                if prev_n_sidebands != number_of_sidebands:
-                    raise ValueError(
-                        (
-                            'The library does not support spectral dimensions containing '
-                            'both zero and non-zero rotor frequencies. Consider using a '
-                            'smaller value instead of zero.'
-                        )
-                    )
-
-                fr.append(event.fraction) # fraction
-                B0.append(event.magnetic_flux_density)  # in T
-                vr.append(rotor_frequency_in_Hz) # in Hz
-                th.append(rotor_angle_in_rad) # in rad
-                n_ev +=1
-
-        n_points *= dim.count
-
-        cnt.append(dim.count)  # dimension count
-        offset = dim.spectral_width / 2.0
-        c_off.append(-dim.reference_offset * factor - offset)
-        inc.append(dim.spectral_width / dim.count)
-        ei.append(n_ev)  # events per dimension
-
-        if dim.origin_offset is None:
-            dim.origin_offset = np.abs(B0[0] * gyromagnetic_ratio * 1e6)
-
-    return fr, B0, vr, th, cnt, inc, c_off, ei, f_contrib, n_points

@@ -165,7 +165,6 @@ custom DAS method and serialize it to a file using the method
             ),
             # The last spectral dimension block is the direct-dimension
             SpectralDimension(
-                **spectral_dims[1],
                 count=256,
                 spectral_width=11001,
                 reference_offset=-1228,

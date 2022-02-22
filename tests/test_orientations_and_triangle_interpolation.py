@@ -9,7 +9,7 @@ from .python_test_for_c_code.orientation import triangle_interpolation1D
 
 # from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-SCALE = 1
+SCALE = [1, 10]
 
 
 def test_octahedron_averaging_setup():
@@ -54,27 +54,32 @@ def test_triangle_interpolation():
         [0.6, 1.6, 45.5],
         [18.35, 18.71, 13.77],
         [11.28, 10.97, 6.36],
+        [60, 99.2, 100.2],
+        [-0.9, -0.1, 10],
     ]
-    for i, list_ in enumerate(f_list):
-        list_ = np.sort(list_) * SCALE
-        amp_py = np.zeros(100 * SCALE)
-        triangle_interpolation1D(list_, amp_py)
+    for scl in SCALE:
+        for i, list_ in enumerate(f_list):
+            list_ = np.sort(list_) * scl
+            amp_py = np.zeros(100 * scl)
+            triangle_interpolation1D(list_, amp_py)
 
-        amp_c = np.zeros(2 * 100 * SCALE)
-        clib.triangle_interpolation1D(list_, amp_c)
-        amp_c = amp_c[::2] + 1j * amp_c[1::2]
+            amp_c = np.zeros(2 * 100 * scl)
+            clib.triangle_interpolation1D(list_, amp_c)
+            amp_c = amp_c[::2] + 1j * amp_c[1::2]
 
-        # x = np.arange(100 * SCALE) / SCALE
-        # plt.plot(x, amp_py, "b", label="py")
-        # plt.plot(x, amp_c.real, "r--", label="c")
-        # plt.plot((list_ - 0.5) / SCALE, [0, get_height(list_), 0], "k*--", label="x")
-        # plt.title("1D interpolation, span(0, 100)")
-        # plt.legend()
-        # plt.tight_layout()
-        # plt.savefig(f"figs/fig_1D_{i}_{SCALE}.pdf")
-        # plt.figure().clear()
+            # x = np.arange(100 * scl) / scl
+            # y = get_height(list_)
+            # plt.plot(x, amp_py, "b", label="py")
+            # plt.plot(x, amp_c.real, "r--", label="c")
+            # plt.plot((list_ - 0.5) / scl, [0, y, 0], "k*--", label="x")
+            # plt.title("1D interpolation, span(0, 100)")
+            # plt.legend()
+            # plt.tight_layout()
+            # plt.show()
+            # plt.savefig(f"figs/fig_1D_{i}_{scl}.pdf")
+            # plt.figure().clear()
 
-        assert np.allclose(amp_py, amp_c.real, atol=1e-15)
+            assert np.allclose(amp_py, amp_c.real, atol=1e-15)
 
 
 def test_delta_interpolation():
@@ -141,25 +146,24 @@ def test_triangle_rasterization1():
         [[1.5, 6.9, 12.1], [1.5, 4.8, 9.0]],
         [[1.5, 1.5, 1.5], [1.5, 6.0, 9.4]],
     ]
-    for i, list_ in enumerate(f_list):
-        lst1, lst2 = np.asarray(list_) * SCALE
-        amp1 = np.zeros((20 * SCALE, 2 * 20 * SCALE), dtype=np.float64)
-        amp2 = np.zeros(2 * 20 * SCALE, dtype=np.float64)
-        amp3 = np.zeros(2 * 20 * SCALE, dtype=np.float64)
+    for scl in SCALE:
+        for i, list_ in enumerate(f_list):
+            lst1, lst2 = np.asarray(list_) * scl
+            amp1 = np.zeros((20 * scl, 2 * 20 * scl), dtype=np.float64)
+            amp2 = np.zeros(2 * 20 * scl, dtype=np.float64)
+            amp3 = np.zeros(2 * 20 * scl, dtype=np.float64)
 
-        clib.triangle_interpolation2D(lst1, lst2, amp1)
-        clib.triangle_interpolation1D(lst1, amp2)
-        clib.triangle_interpolation1D(lst2, amp3)
+            clib.triangle_interpolation2D(lst1, lst2, amp1)
+            clib.triangle_interpolation1D(lst1, amp2)
+            clib.triangle_interpolation1D(lst2, amp3)
 
-        amp1 = amp1[:, ::2] + 1j * amp1[:, 1::2]
-        amp2 = amp2[::2] + 1j * amp2[1::2]
-        amp3 = amp3[::2] + 1j * amp3[1::2]
+            amp1 = amp1[:, ::2]  # + 1j * amp1[:, 1::2]
+            amp2 = amp2[::2]  # + 1j * amp2[1::2]
+            amp3 = amp3[::2]  # + 1j * amp3[1::2]
 
-        # plot_2d_raster(
-        #     amp1.real, lst1, lst2, projx=amp3.real, projy=amp2.real, save=f"ras1_{i}"
-        # )
-        assert np.allclose(amp2.real, amp1.real.sum(axis=1), atol=1e-15)
-        assert np.allclose(amp3.real, amp1.real.sum(axis=0), atol=1e-15)
+            # plot_2d_raster(amp1, lst1, lst2, amp3, amp2, save=f"ras1_{i}", scale=scl)
+            assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
+            assert np.allclose(amp3, amp1.sum(axis=0), atol=1e-15)
 
 
 def test_triangle_rasterization2():
@@ -175,21 +179,20 @@ def test_triangle_rasterization2():
         [[-12.5, -8.0, -12.4], [4.5, 12.0, 17.3]],  # all out down
         [[42.5, 28.0, 32.4], [4.5, 12.0, 17.3]],  # all out up
     ]
-    for i, list_ in enumerate(f_list):
-        lst1, lst2 = np.asarray(list_) * SCALE
-        amp1 = np.zeros((20 * SCALE, 2 * 20 * SCALE), dtype=np.float64)
-        amp2 = np.zeros(2 * 20 * SCALE, dtype=np.float64)
+    for scl in SCALE:
+        for i, list_ in enumerate(f_list):
+            lst1, lst2 = np.asarray(list_) * scl
+            amp1 = np.zeros((20 * scl, 2 * 20 * scl), dtype=np.float64)
+            amp2 = np.zeros(2 * 20 * scl, dtype=np.float64)
 
-        clib.triangle_interpolation2D(lst1, lst2, amp1)
-        clib.triangle_interpolation1D(lst1, amp2)
+            clib.triangle_interpolation2D(lst1, lst2, amp1)
+            clib.triangle_interpolation1D(lst1, amp2)
 
-        amp1 = amp1[:, ::2] + 1j * amp1[:, 1::2]
-        amp2 = amp2[::2] + 1j * amp2[1::2]
+            amp1 = amp1[:, ::2]  # + 1j * amp1[:, 1::2]
+            amp2 = amp2[::2]  # + 1j * amp2[1::2]
 
-        # plot_2d_raster(
-        #     amp1.real, lst1, lst2, projx=None, projy=amp2.real, save=f"ras2_{i}"
-        # )
-        assert np.allclose(amp2.real, amp1.real.sum(axis=1), atol=1e-15)
+            # plot_2d_raster(amp1, lst1, lst2, None, amp2, save=f"ras2_{i}", scale=scl)
+            assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
 
 
 def test_triangle_rasterization3():
@@ -202,24 +205,23 @@ def test_triangle_rasterization3():
         [[5.5, 8.0, 17.4], [-4.5, 12.0, 27.3]],  # 1 left and 1 right
         [[15.5, 8.0, 17.4], [-4.5, 12.0, 27.3]],  # 1 left and 1 right
     ]
-    for i, list_ in enumerate(f_list):
-        lst1, lst2 = np.asarray(list_) * SCALE
-        amp1 = np.zeros((20 * SCALE, 2 * 20 * SCALE), dtype=np.float64)
-        amp_x = np.zeros(2 * 20 * SCALE, dtype=np.float64)
-        amp_y = np.zeros(2 * 20 * SCALE, dtype=np.float64)
+    for scl in SCALE:
+        for i, list_ in enumerate(f_list):
+            lst1, lst2 = np.asarray(list_) * scl
+            amp1 = np.zeros((20 * scl, 2 * 20 * scl), dtype=np.float64)
+            amp_x = np.zeros(2 * 20 * scl, dtype=np.float64)
+            amp_y = np.zeros(2 * 20 * scl, dtype=np.float64)
 
-        clib.triangle_interpolation2D(lst1, lst2, amp1)
-        clib.triangle_interpolation1D(lst2, amp_x)
-        clib.triangle_interpolation1D(lst1, amp_y)
+            clib.triangle_interpolation2D(lst1, lst2, amp1)
+            clib.triangle_interpolation1D(lst2, amp_x)
+            clib.triangle_interpolation1D(lst1, amp_y)
 
-        amp1 = amp1[:, ::2] + 1j * amp1[:, 1::2]
-        amp_x = amp_x[::2] + 1j * amp_x[1::2]
-        amp_y = amp_y[::2] + 1j * amp_y[1::2]
+            amp1 = amp1[:, ::2]  # + 1j * amp1[:, 1::2]
+            amp_x = amp_x[::2]  # + 1j * amp_x[1::2]
+            amp_y = amp_y[::2]  # + 1j * amp_y[1::2]
 
-        # plot_2d_raster(
-        #     amp1.real, lst1, lst2, projx=amp_x.real, projy=None, save=f"ras3_{i}"
-        # )
-        # assert np.allclose(amp_x.real, amp1.real.sum(axis=0), atol=1e-15)
+            # plot_2d_raster(amp1, lst1, lst2, amp_x, None, save=f"ras3_{i}", scale=scl)
+            assert np.allclose(amp_x, amp1.sum(axis=0), atol=1e-2)
 
 
 def test_triangle_rasterization4():
@@ -229,24 +231,23 @@ def test_triangle_rasterization4():
         [[-12.5, 18.0, -22.4], [-4.5, 22.0, 27.3]],  # all out
         [[-12.5, 18.0, 22.4], [-4.5, 22.0, -27.3]],  # all out
     ]
-    for i, list_ in enumerate(f_list):
-        lst1, lst2 = np.asarray(list_) * SCALE
-        amp1 = np.zeros((20 * SCALE, 2 * 20 * SCALE), dtype=np.float64)
-        amp_x = np.zeros(2 * 20 * SCALE, dtype=np.float64)
-        amp_y = np.zeros(2 * 20 * SCALE, dtype=np.float64)
+    for scl in SCALE:
+        for i, list_ in enumerate(f_list):
+            lst1, lst2 = np.asarray(list_) * scl
+            amp1 = np.zeros((20 * scl, 2 * 20 * scl), dtype=np.float64)
+            amp_x = np.zeros(2 * 20 * scl, dtype=np.float64)
+            amp_y = np.zeros(2 * 20 * scl, dtype=np.float64)
 
-        clib.triangle_interpolation2D(lst1, lst2, amp1)
-        clib.triangle_interpolation1D(lst2, amp_x)
-        clib.triangle_interpolation1D(lst1, amp_y)
+            clib.triangle_interpolation2D(lst1, lst2, amp1)
+            clib.triangle_interpolation1D(lst2, amp_x)
+            clib.triangle_interpolation1D(lst1, amp_y)
 
-        amp1 = amp1[:, ::2] + 1j * amp1[:, 1::2]
-        amp_x = amp_x[::2] + 1j * amp_x[1::2]
-        amp_y = amp_y[::2] + 1j * amp_y[1::2]
+            amp1 = amp1[:, ::2]  # + 1j * amp1[:, 1::2]
+            amp_x = amp_x[::2]  # + 1j * amp_x[1::2]
+            amp_y = amp_y[::2]  # + 1j * amp_y[1::2]
 
-        # plot_2d_raster(
-        #     amp1.real, lst1, lst2, projx=amp_x.real, projy=None, save=f"ras4_{i}"
-        # )
-        # assert np.allclose(amp_x.real, amp1.real.sum(axis=0), atol=1e-15)
+            # plot_2d_raster(amp1, lst1, lst2, amp_x, None, save=f"ras4_{i}", scale=scl)
+            # assert np.allclose(amp_x.real, amp1.real.sum(axis=0), atol=1e-15)
 
 
 def test_triangle_rasterization5():
@@ -258,27 +259,26 @@ def test_triangle_rasterization5():
         [[15.0, 15.5, 17.2], [12.0, 12.5, 11.9]],  # one out on each dimension
         [[14.5, 15.5, 18.2], [11.5, 12.0, 11.2]],  # one out on each dimension
     ]
-    for i, list_ in enumerate(f_list):
-        lst1, lst2 = np.asarray(list_) * SCALE
-        amp1 = np.zeros((20 * SCALE, 2 * 20 * SCALE), dtype=np.float64)
-        amp2 = np.zeros(2 * 20 * SCALE, dtype=np.float64)
-        amp3 = np.zeros(2 * 20 * SCALE, dtype=np.float64)
+    for scl in SCALE:
+        for i, list_ in enumerate(f_list):
+            lst1, lst2 = np.asarray(list_) * scl
+            amp1 = np.zeros((20 * scl, 2 * 20 * scl), dtype=np.float64)
+            amp2 = np.zeros(2 * 20 * scl, dtype=np.float64)
+            amp3 = np.zeros(2 * 20 * scl, dtype=np.float64)
 
-        clib.triangle_interpolation2D(lst1, lst2, amp1)
-        clib.triangle_interpolation1D(lst1, amp2)
-        clib.triangle_interpolation1D(lst2, amp3)
+            clib.triangle_interpolation2D(lst1, lst2, amp1)
+            clib.triangle_interpolation1D(lst1, amp2)
+            clib.triangle_interpolation1D(lst2, amp3)
 
-        amp1 = amp1[:, ::2] + 1j * amp1[:, 1::2]
-        amp2 = amp2[::2] + 1j * amp2[1::2]
-        amp3 = amp3[::2] + 1j * amp3[1::2]
+            amp1 = amp1[:, ::2]  # + 1j * amp1[:, 1::2]
+            amp2 = amp2[::2]  # + 1j * amp2[1::2]
+            amp3 = amp3[::2]  # + 1j * amp3[1::2]
 
-        # plot_2d_raster(
-        #     amp1.real, lst1, lst2, projx=amp3.real, projy=amp2.real, save=f"ras5_{i}"
-        # )
-        assert np.allclose(amp2.real, amp1.real.sum(axis=1), atol=1e-15)
+            # plot_2d_raster(amp1, lst1, lst2, amp3, amp2, save=f"ras5_{i}", scale=scl)
+            assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
 
 
-# def plot_2d_raster(data2d, pts1, pts2, projx=None, projy=None, save=None):
+# def plot_2d_raster(data2d, pts1, pts2, projx=None, projy=None, save=None, scale=1):
 #     _, ax = plt.subplots()
 
 #     ax.imshow(data2d, origin="lower", cmap="gray", aspect="auto")
@@ -304,8 +304,8 @@ def test_triangle_rasterization5():
 #         axv.plot(data2d.sum(axis=1), np.arange(size), "r", label="sum", **kwargs)
 #     plt.legend()
 #     plt.tight_layout()
-
+#     plt.show()
 #     if save is not None:
-#         plt.savefig(f"figs/fig_{save}_scale={SCALE}.pdf", dpi=150)
+#         plt.savefig(f"figs/fig_{save}_scale={scale}.pdf", dpi=150)
 
 #     plt.figure().clear()

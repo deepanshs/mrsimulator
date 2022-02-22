@@ -163,9 +163,7 @@ static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
     const double spin, const double v0_in_Hz, const double Cq_in_Hz, const double eta,
     const double *Theta, const float mf, const float mi) {
   // Composite spin transition functions
-  double *cl_value = malloc_double(3);
-  double *cl_value_ref = cl_value;
-
+  double cl_value[3];
   STF_cL(cl_value, mf, mi, spin);
 
   // Spatial orientation function
@@ -173,14 +171,13 @@ static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
       Lambda_0, Lambda_2, Lambda_4, spin, v0_in_Hz, Cq_in_Hz, eta, Theta);
 
   // frequency component function from the zeroth-rank irreducible tensor.
-  *Lambda_0 *= *cl_value++;
+  *Lambda_0 *= cl_value[0];
 
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, *cl_value++, (double *)Lambda_2, 1);
+  cblas_dscal(10, cl_value[1], (double *)Lambda_2, 1);
 
   // frequency component function from the fourth-rank irreducible tensor.
-  cblas_dscal(18, *cl_value, (double *)Lambda_4, 1);
-  free(cl_value_ref);
+  cblas_dscal(18, cl_value[2], (double *)Lambda_4, 1);
 }
 
 // =====================================================================================

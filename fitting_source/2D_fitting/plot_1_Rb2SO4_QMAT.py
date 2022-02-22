@@ -60,12 +60,12 @@ plt.show()
 Rb_1 = Site(
     isotope="87Rb",
     isotropic_chemical_shift=16,  # in ppm
-    quadrupolar=SymmetricTensor(Cq=5.5e6, eta=0.1),  # Cq in Hz
+    quadrupolar=SymmetricTensor(Cq=5.3e6, eta=0.1),  # Cq in Hz
 )
 Rb_2 = Site(
     isotope="87Rb",
     isotropic_chemical_shift=40,  # in ppm
-    quadrupolar=SymmetricTensor(Cq=2.1e6, eta=0.95),  # Cq in Hz
+    quadrupolar=SymmetricTensor(Cq=2.2e6, eta=0.95),  # Cq in Hz
 )
 
 spin_systems = [SpinSystem(sites=[s]) for s in [Rb_1, Rb_2]]
@@ -105,7 +105,7 @@ processor = sp.SignalProcessor(
     operations=[
         # Lorentzian convolution along the isotropic dimensions.
         sp.FFT(dim_index=0),
-        sp.apodization.Gaussian(FWHM="50 Hz"),
+        sp.apodization.Gaussian(FWHM="100 Hz"),
         sp.IFFT(dim_index=0),
         sp.Scale(factor=1e4),
     ]
@@ -131,6 +131,7 @@ plt.show()
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters.
 params = sf.make_LMFIT_params(sim, processor)
+params["SP_0_operation_1_Gaussian_FWHM"].min = 0
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%

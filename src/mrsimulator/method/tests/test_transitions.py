@@ -135,12 +135,12 @@ def test_cosy():
         spectral_dimensions=[
             {
                 "events": [
-                    {"fraction": 0.5, "transition_query": {"P": [-1]}},
+                    {"fraction": 1, "transition_query": {"P": [-1]}},
                     {"mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": 0}}},
                 ],
             },
             {
-                "events": [{"fraction": 0.5, "transition_query": {"P": [-1]}}],
+                "events": [{"fraction": 1, "transition_query": {"P": [-1]}}],
             },
         ],
     )

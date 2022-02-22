@@ -105,22 +105,24 @@ def cosine_of_polar_angles_and_amplitudes(integration_density: int = 72):
 def right_triangle_process(spec, l_clip_rt, r_clip_rt, r_clip_lt, top, f21, pmax, p, f):
     if p != pmax:
         p = bin_right_half(spec, l_clip_rt, r_clip_rt, top, f21, pmax, p, f)
-    elif not r_clip_rt:
-        spec[p] += f21 * top * 0.5
-    elif r_clip_rt and not r_clip_lt:
-        df2 = top / f21
-        diff = f[2] - p - 1.0
-        spec[p] += (f21 - diff) * (diff + f21) * 0.5 * df2
+    else:
+        if not r_clip_rt:
+            spec[p] += f21 * top * 0.5
+        if r_clip_rt and not r_clip_lt:
+            df2 = top / f21
+            diff = f[2] - p - 1.0
+            spec[p] += (f21 - diff) * (diff + f21) * 0.5 * df2
     return p
 
 
 def left_triangle_process(spec, l_clip_lt, r_clip_lt, l_clip_rt, top, f10, pmid, p, f):
     if p != pmid:
         p = bin_left_half(spec, l_clip_lt, r_clip_lt, top, f10, pmid, p, f)
-    elif not r_clip_lt and not l_clip_lt:
-        spec[p] += f10 * top * 0.5
-    elif l_clip_lt and not l_clip_rt:
-        spec[p] += f[1] * (f10 - f[0]) * 0.5 * top / f10
+    else:
+        if not r_clip_lt and not l_clip_lt:
+            spec[p] += f10 * top * 0.5
+        # if l_clip_lt: # and not l_clip_rt:
+        #     spec[p] += f[1] * (f10 - f[0]) * 0.5 * top / f10
     return p
 
 
@@ -153,6 +155,7 @@ def triangle_interpolation1D(f, spec, amp=1.0):
 
     clips, p, pmid, pmax = get_clip_conditions(f, p, pmid, pmax, points)
     l_clip_lt, l_clip_rt, r_clip_lt, r_clip_rt = clips
+    print(clips)
 
     if f[1] >= 0:
         p = left_triangle_process(

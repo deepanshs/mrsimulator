@@ -57,33 +57,6 @@ Below we put the simulated spectra of the method at index 0 into the variable ``
     data_0 = sim.methods[0].simulation
     # data_n = sim.methods[n].simulation (for multiple methods)
 
-
-.. THESE WILL GO UNDER SIMULATOR API
-.. Specifying which methods to simulate
-.. ''''''''''''''''''''''''''''''''''''
-..
-.. By default, :meth:`~mrsimulator.Simulator.run` simulates the spectrum of the given spin systems
-.. over all methods. You may specify which methods to simulate using the ``method_index`` argument.
-.. ``method_index`` accepts a list of integers specifying the index of methods to simulate. The code
-.. below simulates the first and third methods in ``sim``
-..
-.. .. code-block:: python
-..
-..     sim.run(method_index=[0, 2])
-..
-.. Packing the data as Numpy array
-.. '''''''''''''''''''''''''''''''
-..
-.. By default the simulated spectrum is packed into a CSDM object. The spectrum can also be packed
-.. as a numpy array by using the ``pack_as_csdm`` argument.
-..
-.. .. code-block:: python
-..
-..     sim.run(pack_as_csdm=False)
-..
-.. Although this packing the simulated spectrum as a numpy array is possible,
-.. **we strongly recommend against it since this breaks serialization**.
-
 .. _config_simulator:
 
 Configuring the Simulator Object
@@ -222,7 +195,8 @@ Consider the following examples.
     :alt: Spectrum from incomplete integration scheme
     :figwidth: 75%
 
-    Inaccurate simulation resulting from computing low number of sidebands.
+    Inaccurate simulation resulting from integrating over an octant when the spin system has Euler
+    angles.
 
 To fix this inaccurate spectrum, set the integration volume to *hemisphere* and re-simulate.
 

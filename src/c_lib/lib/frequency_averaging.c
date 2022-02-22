@@ -10,15 +10,16 @@
 #include "frequency_averaging.h"
 
 // Multiply the amplitudes from each event to the amplitudes from the first event.
-static inline void get_multi_event_amplitudes(int n_events, MRS_event *restrict event,
-                                              int size) {
-  double *amp = event->freq_amplitude;
-  n_events--;
-  while (n_events-- > 0) {
-    event++;
-    vm_double_multiply_inplace(size, event->freq_amplitude, 1, amp, 1);
-  }
-}
+// static inline void get_multi_event_amplitudes(int n_events, MRS_event *restrict
+// event,
+//                                               int size) {
+//   double *amp = event->freq_amplitude;
+//   n_events--;
+//   while (n_events-- > 0) {
+//     event++;
+//     vm_double_multiply_inplace(size, event->freq_amplitude, 1, amp, 1);
+//   }
+// }
 
 static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
                                 MRS_fftw_scheme *fftw_scheme, double *spec,
@@ -27,8 +28,7 @@ static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme 
   unsigned int nt = scheme->integration_density, npts = scheme->octant_orientations;
 
   double offset_0, offset;
-  double *freq = dimensions->local_frequency,
-         *amps = dimensions->events->freq_amplitude;
+  double *freq = dimensions->local_frequency, *amps = dimensions->freq_amplitude;
 
   bool delta_interpolation = false;
   MRS_plan *plan = dimensions->events->plan;
@@ -99,11 +99,6 @@ static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme 
 void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
                                MRS_fftw_scheme *fftw_scheme, double *spec,
                                double transition_pathway_weight) {
-  // multiply amplitudes from all events to the amplitude array from the first event.
-  if (dimensions->n_events != 1) {
-    get_multi_event_amplitudes(dimensions->n_events, dimensions->events,
-                               dimensions->events->plan->size);
-  }
   averaging_1D(dimensions, scheme, fftw_scheme, spec, transition_pathway_weight);
 }
 
@@ -112,20 +107,15 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                                double transition_pathway_weight,
                                unsigned int number_of_sidebands,
                                double *affine_matrix) {
-  unsigned int i, k, j, evt;
+  unsigned int i, k, j;
   unsigned int step_vector_i = 0, step_vector_k = 0, address;
   MRS_plan *planA, *planB;
-  MRS_event *event;
   int size = scheme->total_orientations * number_of_sidebands;
-  double *freq_ampA = malloc_double(size);
-  double *freq_ampB = malloc_double(size);
+  double *freq_ampA, *freq_ampB;
   double *freq_amp = malloc_double(scheme->octant_orientations);
   double offset0, offset1, offsetA, offsetB;
   double *dim0, *dim1;
   double norm0, norm1;
-
-  vm_double_ones(size, freq_ampA);
-  vm_double_ones(size, freq_ampB);
 
   dim0 = dimensions[0].local_frequency;
   dim1 = dimensions[1].local_frequency;
@@ -156,20 +146,12 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
   //          dimensions[dim].normalize_offset;
 
   offset0 = dimensions[0].R0_offset;
-  for (evt = 0; evt < dimensions[0].n_events; evt++) {
-    event = &dimensions[0].events[evt];
-    planA = event->plan;
-    // offset0 += plan->R0_offset;
-    vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_ampA, 1);
-  }
+  freq_ampA = dimensions[0].freq_amplitude;
+  planA = dimensions[0].events[0].plan;
 
   offset1 = dimensions[1].R0_offset;
-  for (evt = 0; evt < dimensions[1].n_events; evt++) {
-    event = &dimensions[1].events[evt];
-    planB = event->plan;
-    // offset1 += plan->R0_offset;
-    vm_double_multiply_inplace(size, event->freq_amplitude, 1, freq_ampB, 1);
-  }
+  freq_ampB = dimensions[1].freq_amplitude;
+  planB = dimensions[1].events[0].plan;
 
   for (j = 0; j < scheme->octant_orientations; j++) {
     cblas_dscal(planA->n_octants * number_of_sidebands, planA->norm_amplitudes[j],
@@ -229,6 +211,4 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
     }
   }
   free(freq_amp);
-  free(freq_ampA);
-  free(freq_ampB);
 }
