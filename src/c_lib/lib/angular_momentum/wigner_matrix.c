@@ -578,8 +578,11 @@ void wigner_dm0_vector(const int l, const double beta, double *R_out) {
     R_out[4] = R_out[0];                // d^2(2,0)(beta)
     break;
   case 4:
-    sx2 = sx * sx, sx3 = sx2 * sx, cx2 = 1.0 - sx2;
-    cxm1 = 1.0 - cx, cxm12 = cxm1 * cxm1;
+    sx2 = sx * sx;
+    sx3 = sx2 * sx;
+    cx2 = 1.0 - sx2;
+    cxm1 = 1.0 - cx;
+    cxm12 = cxm1 * cxm1;
     temp = 4. - 18. * cxm1 + 21. * cxm12 - 7. * cxm12 * cxm1;
     R_out[0] = 0.5229125166 * sx3 * sx;                    // d^4(-4,0)(beta)
     R_out[1] = 1.4790199458 * sx3 * cx;                    // d^4(-3,0)(beta)

@@ -102,8 +102,33 @@ def cosine_of_polar_angles_and_amplitudes(integration_density: int = 72):
     return cos_alpha, cos_beta, amp
 
 
+def right_triangle_process(spec, l_clip_rt, r_clip_rt, r_clip_lt, top, f21, pmax, p, f):
+    if p != pmax:
+        p = bin_right_half(spec, l_clip_rt, r_clip_rt, top, f21, pmax, p, f)
+    else:
+        if not r_clip_rt:
+            spec[p] += f21 * top * 0.5
+        if r_clip_rt and not r_clip_lt:
+            df2 = top / f21
+            diff = f[2] - p - 1.0
+            spec[p] += (f21 - diff) * (diff + f21) * 0.5 * df2
+    return p
+
+
+def left_triangle_process(spec, l_clip_lt, r_clip_lt, l_clip_rt, top, f10, pmid, p, f):
+    if p != pmid:
+        p = bin_left_half(spec, l_clip_lt, r_clip_lt, top, f10, pmid, p, f)
+    else:
+        if not r_clip_lt and not l_clip_lt:
+            spec[p] += f10 * top * 0.5
+        # if l_clip_lt: # and not l_clip_rt:
+        #     spec[p] += f[1] * (f10 - f[0]) * 0.5 * top / f10
+    return p
+
+
 def triangle_interpolation1D(f, spec, amp=1.0):
     """Interpolate between three points to form a triangle."""
+
     points = spec.size
     f = np.asarray(f, dtype=np.float64)
 
@@ -125,55 +150,55 @@ def triangle_interpolation1D(f, spec, amp=1.0):
     f10 = f[1] - f[0]
     f21 = f[2] - f[1]
 
-    if pmax < 0 or p > points:
+    if pmax < 0 or p >= points:
         return
 
-    clips, p, pmid, pmax = get_clip_conditions(p, pmid, pmax, points)
-    clip_left1, clip_left2, clip_right1, clip_right2 = clips
+    clips, p, pmid, pmax = get_clip_conditions(f, p, pmid, pmax, points)
+    l_clip_lt, l_clip_rt, r_clip_lt, r_clip_rt = clips
+    print(clips)
 
-    if p != pmid:
-        p = p_first_half(spec, clip_left1, clip_right1, top, f10, pmid, p, f)
-    elif not clip_right1 and not clip_left1:
-        spec[p] += f10 * top * 0.5
+    if f[1] >= 0:
+        p = left_triangle_process(
+            spec, l_clip_lt, r_clip_lt, l_clip_rt, top, f10, pmid, p, f
+        )
+    if f[2] >= 0:
+        p = right_triangle_process(
+            spec, l_clip_rt, r_clip_rt, r_clip_lt, top, f21, pmax, p, f
+        )
 
-    if p != pmax:
-        p_second_half(spec, clip_left2, clip_right2, top, f21, pmax, p, f)
-    elif not clip_right2:
-        spec[p] += f21 * top * 0.5
 
-
-def get_clip_conditions(p, pmid, pmax, points):
+def get_clip_conditions(f, p, pmid, pmax, points):
     """Return True for every clip boundary"""
-    clip_right1 = clip_right2 = False
-    clip_left1 = clip_left2 = False
+    r_clip_lt = r_clip_rt = False
+    l_clip_lt = l_clip_rt = False
 
-    if pmid >= points:
-        pmid = points
-        clip_right1 = True
-
-    if pmax >= points:
-        pmax = points
-        clip_right2 = True
-
-    if p < 0:
+    if p <= 0:
         p = 0
-        clip_left1 = True
+        l_clip_lt = True
 
-    if pmid < 0:
+    if pmid > points - 1:
+        pmid = points - 1
+        r_clip_lt = True
+
+    if pmid <= 0:
         pmid = 0
-        clip_left2 = True
+        l_clip_rt = True
 
-    return [clip_left1, clip_left2, clip_right1, clip_right2], p, pmid, pmax
+    if pmax > points - 1:
+        pmax = points - 1
+        r_clip_rt = True
+
+    return [l_clip_lt, l_clip_rt, r_clip_lt, r_clip_rt], p, pmid, pmax
 
 
-def p_first_half(spec, clip_left1, clip_right1, top, f10, pmid, p, f):
-    """Interpolate the first half of the triangle"""
+def bin_left_half(spec, l_clip_lt, r_clip_lt, top, f10, pmid, p, f):
+    """Interpolate the left half of the triangle"""
     df1 = top / f10
     diff = p + 1.0 - f[0]
-    if not clip_left1:
-        spec[p] += 0.5 * diff * diff * df1
-    else:
-        spec[p] += (diff - 0.5) * df1
+
+    spec[p] += (
+        (diff - 0.5) * df1 if l_clip_lt and f[0] <= 0.0 else 0.5 * diff * diff * df1
+    )
 
     p += 1
 
@@ -183,35 +208,38 @@ def p_first_half(spec, clip_left1, clip_right1, top, f10, pmid, p, f):
         diff += df1
         spec[p] += diff
         p += 1
-    # spec[p:pmid] += diff + (np.arange(pmid - p, dtype=np.float64) + 1) * df1
+
     p = pmid
-    if not clip_right1:
+    if not r_clip_lt:
         spec[p] += (f[1] - p) * (f10 + p - f[0]) * 0.5 * df1
+    else:
+        spec[p] += diff + df1
     return p
 
 
-def p_second_half(spec, clip_left2, clip_right2, top, f21, pmax, p, f):
-    """Interpolate the second half of the triangle"""
-    df2 = top / f21
+def bin_right_half(spec, l_clip_rt, r_clip_rt, top, f21, pmax, p, f):
+    """Interpolate the right half of the triangle"""
+    df1 = top / f21
     diff = f[2] - p - 1.0
 
-    if not clip_left2:
-        spec[p] += (f21 - diff) * (diff + f21) * 0.5 * df2
-    else:
-        spec[p] += (diff + 0.5) * df2
+    spec[p] += (
+        (f21 - diff) * (diff + f21) * 0.5 * df1 if not l_clip_rt else (diff + 0.5) * df1
+    )
 
     p += 1
 
     diff += 0.5
-    diff *= df2
+    diff *= df1
     while p != pmax:
-        diff -= df2
+        diff -= df1
         spec[p] += diff
         p += 1
-    # spec[p:pmax] += diff - (np.arange(pmax - p, dtype=np.float64) + 1) * df2
+
     p = pmax
-    if not clip_right2:
-        spec[p] += (f[2] - p) ** 2 * 0.5 * df2
+    if not r_clip_rt:
+        spec[p] += (f[2] - p) ** 2 * 0.5 * df1
+    else:
+        spec[p] += diff - df1
     return p
 
 

@@ -155,7 +155,7 @@ sphinx_gallery_conf = {
         "fitting",
     ],  # path to where to save gallery generated output
     "within_subsection_order": FileNameSortKey,
-    "show_memory": True,
+    # "show_memory": True,
     # "line_numbers": True,
     "subsection_order": ExplicitOrder(
         [

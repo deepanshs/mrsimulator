@@ -30,11 +30,9 @@ cdef extern from "schemes.h":
 cdef extern from "mrsimulator.h":
 
     ctypedef struct MRS_plan:
-        MRS_averaging_scheme *averaging_scheme
         unsigned int number_of_sidebands
         double rotor_frequency_in_Hz
         double rotor_angle_in_rad
-        # double complex *vector
 
     MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, unsigned int number_of_sidebands,
                           double rotor_frequency_in_Hz,

@@ -196,7 +196,7 @@ def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
                are incremented or decremented based in this values. The
                default value is 0.
     """
-    cdef np.ndarray[int, ndim=1] points = np.asarray([spectrum_amp.size], dtype=np.int32)
+    cdef np.ndarray[int, ndim=1] points = np.asarray([spectrum_amp.size/2], dtype=np.int32)
     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector, dtype=np.float64)
 
     cdef double *f1 = &f_vector[0]
@@ -222,7 +222,7 @@ def triangle_interpolation2D(vector1, vector2, np.ndarray[double, ndim=2] spectr
     :ivar vector2: 1-D array of three points.
     :ivar spectrum_amp: A numpy array of amplitudes. This array is the output.
     """
-    shape = np.asarray([spectrum_amp.shape[0], spectrum_amp.shape[1]], dtype=np.int32)
+    shape = np.asarray([spectrum_amp.shape[0], spectrum_amp.shape[1]/2], dtype=np.int32)
     # cdef np.ndarray[int, ndim=1] points = shape
     cdef np.ndarray[double, ndim=1] f1_vector = np.asarray(vector1, dtype=np.float64)
     cdef np.ndarray[double, ndim=1] f2_vector = np.asarray(vector2, dtype=np.float64)
