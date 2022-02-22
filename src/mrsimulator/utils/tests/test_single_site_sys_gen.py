@@ -314,7 +314,7 @@ def test_abundance_03():
     Cq_dist = np.arange(10)
     eta_dist = np.ones(10) * 0.5
     gamma = np.random.rand(10)
-    abundances = np.zeros(10)
+    abundances = [0] * 10
 
     indexes = [2, 5, 8]
     for i in indexes:
