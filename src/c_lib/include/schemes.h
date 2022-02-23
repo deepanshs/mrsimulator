@@ -62,8 +62,8 @@ typedef struct MRS_averaging_scheme {
  * Currently, we only support octahedral as the frequency 1 polyhedra. Higher the
  * geodesic polyhedron frequency, the closer the polyhedra resemblance a spherical
  * geometry. For spectrum simulation, a higher geodesic polyhedron frequency will result
- * in an improved orientation averaging. Read more on the <a
- * href="https://en.wikipedia.org/wiki/Geodesic_polyhedron">Geodesic polyhedron</a>.
+ * in an improved orientation averaging. Read more on the
+ * <a href="https://en.wikipedia.org/wiki/Geodesic_polyhedron">Geodesic polyhedron</a>.
  *
  * @param allow_fourth_rank If true, the scheme also calculates matrices for fourth-rank
  * tensors.

@@ -1,15 +1,21 @@
-Upcoming Changes
-----------------
+v0.7.0
+------
 
 What's new
 ''''''''''
 
+**General**
+
+- Support for complex amplitude simulation.
+
 **Method**
 
-- New Event class---``SpectralEvent``, ``ConstantTimeEvent``, and ``MixingEvent``. The MixingEvent
+- New Event classes---``SpectralEvent`` and ``MixingEvent``. The MixingEvent
   controls the mixing of transitions in a multi-event method.
 - A ``TransitionPathway`` object now includes a weight attribute, which holds the probability of
   the transition pathway based on the mixing events defined within the method.
+- New class method, ``plot()``, which will create a visual representation of the events, transition
+  pathways, rotor angle, etc. a method object defines.
 
 **SpinSystem**
 
@@ -18,11 +24,25 @@ What's new
 - Add a new function ``site_generator()`` to the utility collection sub-module, which simplify
   the process of creating Site objects in bulk.
 
+**Documentation**
+
+- Restructured documentation layout
+- Added instillation troubleshooting section
+- Added section *User Guide* detailing use and attributes of most objects.
+- Condensed simulation/fitting gallery by removing redundant examples
+- New gallery demonstrating signal processing functions.
+
 Changes
 '''''''
 
 - `reduced_dict` function is deprecated, use `json(units=False)` instead.
 
+
+Bug fixes
+'''''''''
+
+- Fixed bug where spectral interpolation resulted in segmentation fault.
+- Fixed memory leak issue in the C code.
 
 v0.6.0
 ------

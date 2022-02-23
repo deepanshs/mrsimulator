@@ -15,6 +15,8 @@ build/
 develop-eggs/
 dist/
 downloads/
+fftw-master/
+DerivedData/
 eggs/
 .eggs/
 sdist/
@@ -66,6 +68,11 @@ instance/
 # Sphinx documentation
 docs/_build/
 
+# Spinx Gallery build dirs
+docs/examples/
+docs/fitting/
+docs/signal_processing
+
 # Doxygen output
 docs/xml/
 
@@ -91,6 +98,10 @@ venv.bak/
 .spyderproject
 .spyproject
 
+# Xcode projects
+*.xcodeproj
+*.xcworkspace
+
 # mypy
 .mypy_cache/
 
@@ -104,8 +115,6 @@ venv.bak/
 src/c_lib/test_c/**
 tests/simpson/quad/**
 version/
-docs/examples/
-docs/fitting/
 _temp/
 
 # files

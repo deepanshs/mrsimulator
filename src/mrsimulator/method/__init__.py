@@ -130,7 +130,7 @@ class Method(Parseable):
     simulation: Union[cp.CSDM, np.ndarray] = None
     experiment: Union[cp.CSDM, np.ndarray] = None
 
-    # global
+    # global attributes
     magnetic_flux_density: float = Field(default=9.4, ge=0.0)
     rotor_frequency: float = Field(default=0.0, ge=0.0)
     rotor_angle: float = Field(default=0.9553166181245, ge=0.0, le=1.5707963268)
@@ -159,6 +159,7 @@ class Method(Parseable):
     test_vars: ClassVar[Dict] = {"channels": ["1H"]}
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
         arbitrary_types_allowed = True
 
@@ -196,7 +197,7 @@ class Method(Parseable):
             return v
         return cls.__check_csdm__(v)
 
-    @validator("affine_matrix", pre=True, always=True)
+    @validator("affine_matrix", always=True)
     def validate_affine_matrix(cls, v, *, values, **kwargs):
         if v is None:
             return
@@ -206,6 +207,31 @@ class Method(Parseable):
             raise ValueError(f"Expecting a {dim_len}x{dim_len} affine matrix.")
         if v1.ravel()[0] == 0:
             raise ValueError("The first element of the affine matrix cannot be zero.")
+        return v
+
+    @validator("spectral_dimensions", always=True)
+    def validate_spectral_dimensions(cls, v, *, values, **kwargs):
+        """Check for exactly one non-zero and finite rotor_frequency in the method."""
+
+        global_rf = (
+            0.0 if "rotor_frequency" not in values else values["rotor_frequency"]
+        )
+        speeds = [
+            ev.rotor_frequency if ev.rotor_frequency is not None else global_rf
+            for sd in v
+            for ev in sd.events
+            if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
+        ]
+        # remove all zero and infinite (>1e12 Hz) speeds from list
+        speeds = {sp for sp in speeds if 0 < sp < 1e12}
+        if len(speeds) > 1:
+            raise NotImplementedError(
+                (
+                    "Sideband-sideband correlation is not supported in mrsimulator. "
+                    "Only one event with non-zero finite `rotor_frequency` is allowed "
+                    "in a method."
+                )
+            )
         return v
 
     @classmethod
@@ -331,8 +357,14 @@ class Method(Parseable):
             ...     spectral_dimensions=[
             ...         {
             ...             "events": [
-            ...                 {"transition_query": [{"ch1": {"P": [1]}}]},
-            ...                 {"transition_query": [{"ch1": {"P": [0]}}]}
+            ...                 {
+            ...                     "fraction": 0.5,
+            ...                     "transition_query": [{"ch1": {"P": [1]}}]
+            ...                 },
+            ...                 {
+            ...                     "fraction": 0.5,
+            ...                     "transition_query": [{"ch1": {"P": [0]}}]
+            ...                 }
             ...             ],
             ...         },
             ...         {
@@ -357,12 +389,14 @@ class Method(Parseable):
             ...     spectral_dimensions=[
             ...         {
             ...             "events": [{
+            ...                 "fraction": 0.5,
             ...                 "transition_query": [
             ...                     {"ch1": {"P": [1]}},
             ...                     {"ch1": {"P": [-1]}},
             ...                 ]
             ...             },
             ...             {
+            ...                 "fraction": 0.5,
             ...                 "transition_query": [  # selecting double quantum
             ...                     {"ch1": {"P": [-1]}, "ch2": {"P": [-1]}},
             ...                     {"ch1": {"P": [1]}, "ch2": {"P": [1]}},
@@ -551,7 +585,7 @@ class Method(Parseable):
             df[prop] = lst
 
     def summary(self, drop_constant_columns=True) -> pd.DataFrame:
-        r"""Returns a DataFrame giving a summary of the Method. A user can specify
+        """Returns a DataFrame giving a summary of the Method. A user can specify
         optional attributes to include which appear as columns in the DataFrame. A user
         can also ask to leave out attributes which remain constant throughout the
         method. Invalid attributes for an Event will be replaced with NAN.
@@ -576,47 +610,9 @@ class Method(Parseable):
             - (float) magnetic_flux_density: Magnetic flux density during event in Tesla
             - (float) rotor_frequency: Rotor frequency during event in Hz
             - (float) rotor_angle: Rotor angle during event converted to Degrees
-            - (FrequencyEnum) freq_contrib:
+            - (FrequencyEnum) freq_contrib: Frequency
 
         Example:
-            **User Defined Method2D Example**
-
-            >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(
-            ...     channels=['1H'],
-            ...     spectral_dimensions=[
-            ...         {
-            ...             "events": [
-            ...                 {
-            ...                     "fraction": 0.7,
-            ...                     "transition_query": [{"ch1": {"P": [1]}}]
-            ...                 },
-            ...                 {
-            ...                     "duration": 1.8,
-            ...                     "transition_query": [{"ch1": {"P": [0], "D": [0]}}]
-            ...                 }
-            ...             ],
-            ...         },
-            ...         {
-            ...             "events": [
-            ...                 {
-            ...                     "fraction": 0.3,
-            ...                     "transition_query": [{"ch1": {"P": [-1]}}]
-            ...                 },
-            ...             ],
-            ...         }
-            ...     ]
-            ... )
-            >>> df = method.summary()
-            >>> # Columns are reduced to fit within 80 lines
-            >>> drop = ["freq_contrib", "spec_dim_label", "label", "mixing_query"]
-            >>> df.drop(drop, axis=1, inplace=True)
-            >>> pprint(df)
-                                type  spec_dim_index  duration  fraction       p      d
-            0          SpectralEvent               0       NaN       0.7   [1.0]  [nan]
-            1  ConstantDurationEvent               0       1.8       NaN   [0.0]  [0.0]
-            2          SpectralEvent               1       NaN       0.3  [-1.0]  [nan]
-
             **All Possible Columns**
 
             >>> from mrsimulator.methods import ThreeQ_VAS
@@ -699,6 +695,8 @@ class Method(Parseable):
         self._add_simple_props_to_df(df, prop_dict, required, drop_constant_columns)
 
         # Add p and d symmetry pathways to dataframe
+        # (future) add multi-channel support
+        # IDEA: dict with "total" and "ch1"..."ch3" as keys
         df["p"] = np.transpose(
             [sym.total for sym in self.get_symmetry_pathways("P")]
         ).tolist()
@@ -761,7 +759,7 @@ class Method(Parseable):
         if df is None:
             df = self.summary()
 
-        _plot(fig=fig, df=df, include_legend=include_legend)
+        _plot(fig, df, [x.symbol for x in self.channels], include_legend)
 
         fig.suptitle(t=self.name if self.name is not None else "")
         return fig

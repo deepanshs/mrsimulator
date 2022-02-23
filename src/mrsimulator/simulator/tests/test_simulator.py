@@ -231,6 +231,7 @@ def test_simulator_2():
     sim = Simulator()
     sim.spin_systems = [
         SpinSystem(
+            label="Test",
             sites=[Site(isotope="1H"), Site(isotope="23Na")],
             couplings=[Coupling(site_index=[0, 1], isotropic_j=15)],
         )
@@ -246,6 +247,7 @@ def test_simulator_2():
     sim.label = "test0"
     sim.description = "testing-testing 1.2.3"
 
+    sim.config.decompose_spectrum = "spin_system"
     sim.run()
 
     # save

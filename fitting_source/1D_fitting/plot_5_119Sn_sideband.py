@@ -16,6 +16,7 @@ from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -55,7 +56,7 @@ plt.show()
 sn119 = Site(
     isotope="119Sn",
     isotropic_chemical_shift=-210,
-    shielding_symmetric={"zeta": 700, "eta": 0.1},
+    shielding_symmetric=SymmetricTensor(zeta=700, eta=0.1),
 )
 sn117 = Site(
     isotope="117Sn",

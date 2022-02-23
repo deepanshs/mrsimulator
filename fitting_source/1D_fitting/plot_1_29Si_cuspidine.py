@@ -28,6 +28,7 @@ from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -75,7 +76,7 @@ plt.show()
 site = Site(
     isotope="29Si",
     isotropic_chemical_shift=-82.0,  # in ppm,
-    shielding_symmetric={"zeta": -63, "eta": 0.4},  # zeta in ppm
+    shielding_symmetric=SymmetricTensor(zeta=-63, eta=0.4),  # zeta in ppm
 )
 
 spin_system = SpinSystem(
@@ -97,11 +98,11 @@ MAS = BlochDecaySpectrum(
     magnetic_flux_density=7.1,  # in T
     rotor_frequency=780,  # in Hz
     spectral_dimensions=[
-        {
-            "count": 2048,
-            "spectral_width": 25000,  # in Hz
-            "reference_offset": -5000,  # in Hz
-        }
+        dict(
+            count=2048,
+            spectral_width=25000,  # in Hz
+            reference_offset=-5000,  # in Hz
+        )
     ],
     experiment=synthetic_experiment,  # add the measurement to the method.
 )

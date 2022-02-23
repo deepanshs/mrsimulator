@@ -7,7 +7,7 @@ on:
   push:
     branches: [master]
   pull_request:
-    branches: [master]
+    branches: [master, 'v?.?*']
 
 jobs:
   code_lint:
@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v2.4.0
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -33,18 +33,17 @@ jobs:
           flake8 . --count --select=C,E,F,W,N8 --show-source --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=8 --max-line-length=88 --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
-
   testing_unix:
     needs: [code_lint]
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.7, 3.8, 3.9, "3.10"]
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v2.4.0
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -64,7 +63,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest cython setuptools  pytest-cov sympy
           pip install -r requirements.txt
-
       - name: Build and install package from source
         run: python setup.py develop
 
@@ -72,7 +70,7 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v2.0.3
+        uses: codecov/codecov-action@v2.1.0
 
   # build_windows_test:
   #   needs: [code_lint]
@@ -88,7 +86,7 @@ jobs:
   #     MRSIM_LIB: "C:\\Miniconda\\Library\\lib"
   #   steps:
   #     - name: Checkout
-  #       uses: actions/checkout@v2.3.4
+  #       uses: actions/checkout@v2.4.0
 
   #     - name: Set up Python ${{ matrix.python-version }}
   #       uses: actions/setup-python@v2
@@ -112,18 +110,18 @@ jobs:
   #       run: pytest --cov=./ --cov-report=xml
 
   #     - name: Upload coverage
-  #       uses: codecov/codecov-action@v2.0.3
+  #       uses: codecov/codecov-action@v2.1.0
 
   testing_windows:
     needs: [code_lint]
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.7, 3.8, 3.9, "3.10"]
     runs-on: "windows-latest"
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v2.4.0
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
         env:
@@ -148,4 +146,4 @@ jobs:
         shell: pwsh
         run: pytest --cov=./ --cov-report=xml
       - name: Upload coverage
-        uses: codecov/codecov-action@v2.0.3
+        uses: codecov/codecov-action@v2.1.0

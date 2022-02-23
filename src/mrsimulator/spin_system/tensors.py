@@ -115,6 +115,9 @@ class SymmetricTensor(Parseable):
         "gamma": "rad",
     }
 
+    class Config:
+        extra = "forbid"
+
     # Deprecated
     # def to_freq_dict(self, larmor_frequency: float) -> dict:
     #     """
@@ -138,7 +141,7 @@ class SymmetricTensor(Parseable):
 
 
 class AntisymmetricTensor(Parseable):
-    """Base SymmetricTensor class representing the traceless symmetric part of an
+    """Base AntiSymmetricTensor class representing the traceless symmetric part of an
     irreducible second-rank tensor.
 
     Attributes:
@@ -163,6 +166,9 @@ class AntisymmetricTensor(Parseable):
         "beta": "rad",
     }
     property_units: Dict = {"zeta": "ppm", "alpha": "rad", "beta": "rad"}
+
+    class Config:
+        extra = "forbid"
 
     # Deprecated
     # def to_freq_dict(self, larmor_frequency: float) -> dict:

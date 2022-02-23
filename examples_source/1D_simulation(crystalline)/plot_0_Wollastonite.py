@@ -14,35 +14,38 @@ Wollastonite, ²⁹Si (I=1/2)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
+from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # **Step 1:** Create the sites.
-S29_1 = Site(
+Si29_1 = Site(
     isotope="29Si",
     isotropic_chemical_shift=-89.0,  # in ppm
-    shielding_symmetric={"zeta": 59.8, "eta": 0.62},  # zeta in ppm
+    shielding_symmetric=SymmetricTensor(zeta=59.8, eta=0.62),  # zeta in ppm
 )
-S29_2 = Site(
+Si29_2 = Site(
     isotope="29Si",
     isotropic_chemical_shift=-89.5,  # in ppm
-    shielding_symmetric={"zeta": 52.1, "eta": 0.68},  # zeta in ppm
+    shielding_symmetric=SymmetricTensor(zeta=52.1, eta=0.68),  # zeta in ppm
 )
-S29_3 = Site(
+Si29_3 = Site(
     isotope="29Si",
     isotropic_chemical_shift=-87.8,  # in ppm
-    shielding_symmetric={"zeta": 69.4, "eta": 0.60},  # zeta in ppm
+    shielding_symmetric=SymmetricTensor(zeta=69.4, eta=0.60),  # zeta in ppm
 )
-
-sites = [S29_1, S29_2, S29_3]  # all sites
 
 # %%
 # **Step 2:** Create the spin systems from these sites. Again, we create three
 # single-site spin systems for better performance.
-spin_systems = [SpinSystem(sites=[s]) for s in sites]
+spin_systems = [
+    SpinSystem(sites=[Si29_1]),
+    SpinSystem(sites=[Si29_2]),
+    SpinSystem(sites=[Si29_3]),
+]
 
 # %%
 # **Step 3:** Create a Bloch decay spectrum method.
@@ -51,12 +54,12 @@ method = BlochDecaySpectrum(
     magnetic_flux_density=14.1,  # in T
     rotor_frequency=1500,  # in Hz
     spectral_dimensions=[
-        {
-            "count": 2048,
-            "spectral_width": 25000,  # in Hz
-            "reference_offset": -10000,  # in Hz
-            "label": r"$^{29}$Si resonances",
-        }
+        dict(
+            count=2048,
+            spectral_width=25000,  # in Hz
+            reference_offset=-10000,  # in Hz
+            label=r"$^{29}$Si resonances",
+        )
     ],
 )
 
@@ -68,8 +71,8 @@ plt.show()
 # %%
 # **Step 4:** Create the Simulator object and add the method and spin system objects.
 sim = Simulator()
-sim.spin_systems += spin_systems  # add the spin systems
-sim.methods += [method]  # add the method
+sim.spin_systems = spin_systems  # add the spin systems
+sim.methods = [method]  # add the method
 
 # %%
 # **Step 5:** Simulate the spectrum.

@@ -13,9 +13,11 @@ import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.methods import Method1D
+from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.method.event import MixingEvent, SpectralEvent
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 1
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # For demonstration, we will create two spin systems, one with a single site and other
@@ -24,11 +26,11 @@ from mrsimulator.method.event import MixingEvent, SpectralEvent
 S1 = Site(
     isotope="1H",
     isotropic_chemical_shift=10,  # in ppm
-    shielding_symmetric={"zeta": -80, "eta": 0.25},  # zeta in ppm
+    shielding_symmetric=SymmetricTensor(zeta=-80, eta=0.25),  # zeta in ppm
 )
 S2 = Site(isotope="1H", isotropic_chemical_shift=-10)
 S12 = Coupling(
-    site_index=[0, 1], isotropic_j=100, dipolar={"D": 2000, "eta": 0, "alpha": 0}
+    site_index=[0, 1], isotropic_j=100, dipolar=SymmetricTensor(D=2000, eta=0, alpha=0)
 )
 
 spin_system_1 = SpinSystem(sites=[S1], label="Uncoupled system")
@@ -81,21 +83,21 @@ hahn_echo = Method1D(
     channels=["1H"],
     magnetic_flux_density=9.4,  # in T
     spectral_dimensions=[
-        {
-            "count": 512,
-            "spectral_width": 2e4,  # in Hz
-            "events": [
+        SpectralDimension(
+            count=512,
+            spectral_width=2e4,  # in Hz
+            events=[
                 SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [1]}}]),
                 MixingEvent(mixing_query={"ch1": {"tip_angle": np.pi, "phase": 0}}),
                 SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
             ],
-        }
+        )
     ],
 )
 
 # %%
 # You may also visualize the method using the `plot` function.
-# hahn_echo.plot()
+hahn_echo.plot()
 
 # %%
 # As mentioned before, a method object is decoupled from the spin system object. Notice,
