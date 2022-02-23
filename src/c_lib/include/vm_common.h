@@ -93,7 +93,7 @@ static inline void vm_double_ones(int count, double *restrict res) {
  * @param increment The increment along the dimension axis (sampling interval).
  * @returns values A pointer to the fft output order vector of size @p n.
  */
-static inline double *__get_frequency_in_FFT_order(int n, double increment) {
+static inline double *get_FFT_order_freq(int n, double increment) {
   double *vr_freq = malloc_double(n);
   int i = 0, m, positive_limit, negative_limit;
 

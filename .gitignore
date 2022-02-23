@@ -15,6 +15,8 @@ build/
 develop-eggs/
 dist/
 downloads/
+fftw-master/
+DerivedData/
 eggs/
 .eggs/
 sdist/
@@ -95,6 +97,10 @@ venv.bak/
 # Spyder project settings
 .spyderproject
 .spyproject
+
+# Xcode projects
+*.xcodeproj
+*.xcworkspace
 
 # mypy
 .mypy_cache/

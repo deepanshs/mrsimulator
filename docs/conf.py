@@ -74,6 +74,9 @@ extensions = [
 # generate autosummary even if no references
 autosummary_generate = True
 
+# Date format used for |today| in copyright
+today_fmt = "%Y"
+
 # ---------------------------------------------------------------------------- #
 #                              Sphinx Version warning                          #
 # ---------------------------------------------------------------------------- #
@@ -149,7 +152,7 @@ sphinx_gallery_conf = {
         "fitting",
     ],  # path to where to save gallery generated output
     "within_subsection_order": FileNameSortKey,
-    "show_memory": True,
+    # "show_memory": True,
     # "line_numbers": True,
     "subsection_order": ExplicitOrder(
         [

@@ -87,7 +87,7 @@ data = sim.methods[0].simulation
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()

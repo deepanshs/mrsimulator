@@ -396,6 +396,7 @@ class Simulator(Parseable):
                 if pack_as_csdm
                 else np.asarray(simulated_data)
             )
+            amp = None
 
     def save(self, filename: str, with_units: bool = True):
         """Serialize the simulator object to a JSON file.
@@ -493,7 +494,7 @@ class Simulator(Parseable):
             {
                 "type": "internal",
                 "quantity_type": "scalar",
-                "numeric_type": "float64",
+                "numeric_type": "complex128",
                 "components": [datum],
                 **self._get_dv_metadata(index),
             }

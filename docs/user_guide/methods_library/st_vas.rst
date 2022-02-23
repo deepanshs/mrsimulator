@@ -1,4 +1,4 @@
-Satellite-Transition MAS
+Satellite-Transition VAS
 ------------------------
 
 The :py:class:`~mrsimulator.methods.ST1_VAS` and :py:class:`~mrsimulator.methods.ST2_VAS` classes

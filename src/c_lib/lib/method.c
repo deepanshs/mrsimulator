@@ -11,22 +11,31 @@
 
 /* Free the buffer and pre-calculated tables from the mrsimulator plan. */
 void MRS_free_event(MRS_event *the_event) {
-  if (!the_event->plan) MRS_free_plan(the_event->plan);
+  if (the_event->plan != NULL) {
+    if (DEBUG) printf("inside event->plan\n");
+    MRS_free_plan(the_event->plan);
+    the_event->plan = NULL;
+  }
   free(the_event->freq_amplitude);
+  if (DEBUG) printf("freed event->freq_amplitude\n");
 }
 
 /** Free the memory/buffer allocation for the MRS dimensions and events within. **/
 void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n) {
   unsigned int dim, evt;
-  MRS_dimension *dimension;
   for (dim = 0; dim < n; dim++) {
-    dimension = &dimensions[dim];
-    for (evt = 0; evt < dimension->n_events; evt++) {
-      MRS_free_event(&dimension->events[evt]);
+    if (DEBUG) printf("post execultion dimension %d cleanup\n", dim);
+    for (evt = 0; evt < dimensions[dim].n_events; evt++) {
+      if (DEBUG) printf("%d event\n", evt);
+      MRS_free_event(&dimensions[dim].events[evt]);
     }
-    free(dimension->local_frequency);
-    free(dimension->freq_offset);
+    free(dimensions[dim].events);
+    free(dimensions[dim].local_frequency);
+    free(dimensions[dim].freq_offset);
+    free(dimensions[dim].freq_amplitude);
+    if (DEBUG) printf("freed events, local_frequency, freq_offset, freq_amplitude\n");
   }
+  free(dimensions);
 }
 
 /**
@@ -56,22 +65,28 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
 
   /* When both rotor angle and rotor freq is the same as the plan, return plan. */
   if (rotor_frequency_equal && rotor_angle_equal) {
-    event->plan = plan;
+    MRS_plan *new_plan = MRS_copy_plan(plan);
+    new_plan->copy = true;
+    event->plan = new_plan;
     return;
   }
 
   /* When only rotor freq is different, update the plan accordingly and return. */
   if (!rotor_frequency_equal && rotor_angle_equal) {
     MRS_plan *new_plan = MRS_copy_plan(plan);
-    MRS_plan_update_from_rotor_frequency_in_Hz(new_plan, increment,
-                                               rotor_frequency_in_Hz);
+    new_plan->copy = true;
+    new_plan->copy_for_rotor_freq = true;
+    MRS_plan_update_from_rotor_frequency_in_Hz(new_plan, rotor_frequency_in_Hz);
     event->plan = new_plan;
+    MRS_plan_release_temp_storage(new_plan);
     return;
   }
 
   /* When only rotor angle is different, update the plan accordingly and return. */
   if (rotor_frequency_equal && !rotor_angle_equal) {
     MRS_plan *new_plan = MRS_copy_plan(plan);
+    new_plan->copy = true;
+    new_plan->copy_for_rotor_angle = true;
     MRS_plan_update_from_rotor_angle_in_rad(new_plan, rotor_angle_in_rad,
                                             plan->allow_fourth_rank);
     event->plan = new_plan;
@@ -80,17 +95,20 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
 
   /* Otherwise, update plan for both rotor angle and freq and return. */
   MRS_plan *new_plan = MRS_copy_plan(plan);
-  MRS_plan_update_from_rotor_frequency_in_Hz(new_plan, increment,
-                                             rotor_frequency_in_Hz);
+  new_plan->copy = true;
+  new_plan->copy_for_rotor_freq = true;
+  new_plan->copy_for_rotor_angle = true;
+  MRS_plan_update_from_rotor_frequency_in_Hz(new_plan, rotor_frequency_in_Hz);
   MRS_plan_update_from_rotor_angle_in_rad(new_plan, rotor_angle_in_rad,
                                           plan->allow_fourth_rank);
   event->plan = new_plan;
+  MRS_plan_release_temp_storage(new_plan);
 }
 
 /**
  * @brief Create a plan for every events within a dimension struct.
  *
- * @param dimension A pointer to the MRS_dimension.
+ * @param dim A pointer to the MRS_dimension.
  * @param scheme A pointer to the powder averaging scheme MRS_averaging_scheme.
  * @param count (int) The number of points along the dimension.
  * @param increment (double) The increment in Hz along the dimension.
@@ -119,11 +137,18 @@ static inline void create_plans_for_events_in_dimension(
                       *rotor_angle_in_rad, increment, scheme->allow_fourth_rank);
 
   for (i = 0; i < n_events; i++) {
-    dim->events[i].freq_amplitude = malloc_double(the_plan->size);
-    vm_double_ones(the_plan->size, dim->events[i].freq_amplitude);
+    dim->events[i].freq_amplitude = NULL;
+    // if (*rotor_frequency_in_Hz != 0.0 && *rotor_frequency_in_Hz != 1.0e12) {
+    //   dim->events[i].freq_amplitude = malloc_double(the_plan->size);
+    //   vm_double_ones(the_plan->size, dim->events[i].freq_amplitude);
+    // }
     MRS_set_event(&(dim->events[i]), *fraction++, *magnetic_flux_density_in_T++,
                   *rotor_frequency_in_Hz++, *rotor_angle_in_rad++, increment, the_plan);
+    if (i == 0) dim->events->plan->copy = false;
   }
+
+  if (DEBUG) printf("Early memory release\n");
+  MRS_plan_release_temp_storage(the_plan);
 
   dim->inverse_increment = 1.0 / increment;
   dim->normalize_offset = 0.5 - (coordinates_offset * dim->inverse_increment);
@@ -133,6 +158,7 @@ static inline void create_plans_for_events_in_dimension(
    * when the rotor angle is off magic angle (54.735 deg). */
   dim->local_frequency = malloc_double(scheme->total_orientations);
   dim->freq_offset = malloc_double(scheme->octant_orientations);
+  dim->freq_amplitude = malloc_double(the_plan->size);
 }
 
 /**

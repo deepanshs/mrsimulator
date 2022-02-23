@@ -112,7 +112,7 @@ sim.methods = [mqvas]  # add the method
 sim.config.number_of_sidebands = 1
 sim.run()
 
-data = sim.methods[0].simulation
+data = sim.methods[0].simulation.real
 
 # %%
 # The plot of the corresponding spectrum.
