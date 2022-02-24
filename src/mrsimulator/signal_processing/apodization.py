@@ -302,12 +302,9 @@ class TopHat(Apodization):
         if "rising_edge" in self.property_units:
             unit = 1 * self.property_units["rising_edge"]
         x = self.get_coordinates_in_units(x, unit=1.0 * unit)
-
-        # screen = np.where((x >= self.rising_edge) and (x < self.falling_edge), 1, 0)
         screen = np.where(
             np.logical_and(x >= self.rising_edge, x < self.falling_edge), 1, 0
         )
-        # screen = screen + np.where(, 0, -1)
         return screen
 
 
