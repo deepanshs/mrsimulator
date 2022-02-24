@@ -140,8 +140,6 @@ def single_site_system_generator(
         abundance = np.asarray([1 / n_sites] * n_sites)
     if isinstance(abundance, (int, float, np.floating)):
         abundance = np.asarray([abundance] * n_sites)
-    if isinstance(abundance, list):
-        abundance = np.asarray(abundance)
 
     keep_idxs = np.asarray(abundance > rtol * abundance.max()).nonzero()[0]
 
@@ -251,47 +249,54 @@ def site_generator(
     return list(_site_generator(n_sites, *args))
 
 
-def _site_generator(
+def _site_generator(  # noqa: C901
     n_sites: int,
-    isotope: Union[str, List[str]],
-    isotropic_chemical_shift: Union[float, List[float], np.ndarray] = 0,
+    isotope: Union[str, np.ndarray],
+    isotropic_chemical_shift: Union[float, np.ndarray] = 0,
     shielding_symmetric: Dict = None,
     shielding_antisymmetric: Dict = None,
     quadrupolar: Dict = None,
-    name: Union[str, List[str]] = None,
-    label: Union[str, List[str]] = None,
-    description: Union[str, List[str]] = None,
+    name: Union[str, np.ndarray] = None,
+    label: Union[str, np.ndarray] = None,
+    description: Union[str, np.ndarray] = None,
 ):
     r"""A generator function which returns :ref:`site_api` objects in a memory efficient
-    manner
+    manner.
+
+    When the next site is requested from the generator, each site argument is
+    checked to see if the argument is an array or not a list (will be float or str). If
+    the argument is an array, the item at the next index in the array is passed,
+    otherwise the constant float/str is passed.
+
+    Although there are many conditional statements in the method, this approach ensures
+    multiple arrays of length n_sites aren't temporarily needed reducing peak memory
+    usage when building large numbers of sites.
     """
     for index in range(n_sites):
         yield Site(
-            isotope=isotope[index]
-            if isinstance(isotope, (list, np.ndarray))
-            else isotope,
+            isotope=isotope[index] if isinstance(isotope, np.ndarray) else isotope,
             isotropic_chemical_shift=isotropic_chemical_shift[index]
-            if isinstance(isotropic_chemical_shift, (list, np.ndarray))
+            if isinstance(isotropic_chemical_shift, np.ndarray)
             else isotropic_chemical_shift,
-            name=name[index] if isinstance(name, (list, np.ndarray)) else name,
-            label=label[index] if isinstance(label, (list, np.ndarray)) else label,
+            name=name[index] if isinstance(name, np.ndarray) else name,
+            label=label[index] if isinstance(label, np.ndarray) else label,
             description=description[index]
-            if isinstance(description, (list, np.ndarray))
+            if isinstance(description, np.ndarray)
             else description,
             shielding_symmetric={
-                key: val[index] if isinstance(val, (list, np.ndarray)) else val
+                key: val[index] if isinstance(val, np.ndarray) else val
                 for key, val in shielding_symmetric.items()
             }
             if shielding_symmetric is not None
             else None,
             shielding_antisymmetric={
-                key: val[index] if isinstance(val, (list, np.ndarray)) else val
+                key: val[index] if isinstance(val, np.ndarray) else val
                 for key, val in shielding_antisymmetric.items()
             }
             if shielding_antisymmetric is not None
             else None,
             quadrupolar={
-                key: val[index] if isinstance(val, (list, np.ndarray)) else val
+                key: val[index] if isinstance(val, np.ndarray) else val
                 for key, val in quadrupolar.items()
             }
             if quadrupolar is not None
