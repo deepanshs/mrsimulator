@@ -38,7 +38,7 @@ cdef extern from "angular_momentum/wigner_matrix.h":
     void wigner_dm0_vector(const int l, const double beta, double *R_out)
 
     void get_exp_Im_alpha(const unsigned int octant_orientations,
-                            const bool_t allow_fourth_rank, void *exp_Im_alpha)
+                            const bool_t allow_4th_rank, void *exp_Im_alpha)
 
     void __batch_wigner_rotation(const unsigned int octant_orientations,
                             const unsigned int n_octants, double *wigner_2j_matrices, void *R2,
@@ -95,7 +95,7 @@ cdef extern from "mrsimulator.h":
 #         int number_of_sidebands,
 #         double rotor_frequency_in_Hz,
 #         double rotor_angle_in_rad, double increment,
-#         bool_t allow_fourth_rank)
+#         bool_t allow_4th_rank)
 
 
 cdef extern from "object_struct.h":

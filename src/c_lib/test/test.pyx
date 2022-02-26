@@ -110,11 +110,11 @@ def __wigner_rotation_2(int l, np.ndarray[double] cos_alpha,
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def get_exp_Im_alpha(int n, np.ndarray[double] cos_alpha, bool_t allow_fourth_rank):
+def get_exp_Im_alpha(int n, np.ndarray[double] cos_alpha, bool_t allow_4th_rank):
     cdef unsigned int n_ = n
     cdef np.ndarray[double complex] exp_Im_alpha = np.empty(4*n, dtype=np.complex128)
     exp_Im_alpha[3*n:] = cos_alpha + 1j*np.sqrt(1.0 - cos_alpha**2)
-    clib.get_exp_Im_alpha(n_, allow_fourth_rank, &exp_Im_alpha[0])
+    clib.get_exp_Im_alpha(n_, allow_4th_rank, &exp_Im_alpha[0])
     return exp_Im_alpha
 
 

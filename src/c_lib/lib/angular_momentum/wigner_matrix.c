@@ -810,7 +810,7 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
  * The function accepts cos_alpha = cos(alpha)
  * The result is stored in exp_Im_alpha as m x n matrix, where m = [-4,-3,-2,-1]
  */
-void get_exp_Im_alpha(const unsigned int n, const bool allow_fourth_rank,
+void get_exp_Im_alpha(const unsigned int n, const bool allow_4th_rank,
                       void *exp_Im_alpha) {
   double *exp_Im_alpha_ = (double *)exp_Im_alpha;
 
@@ -822,7 +822,7 @@ void get_exp_Im_alpha(const unsigned int n, const bool allow_fourth_rank,
   vm_double_complex_multiply(n, &exp_Im_alpha_[s_3], &exp_Im_alpha_[s_3],
                              &exp_Im_alpha_[s_2]);
 
-  if (allow_fourth_rank) {
+  if (allow_4th_rank) {
     // exp(-3 I alpha)
     vm_double_complex_multiply(n, &exp_Im_alpha_[s_2], &exp_Im_alpha_[s_3],
                                &exp_Im_alpha_[s_1]);
