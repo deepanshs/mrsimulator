@@ -123,6 +123,7 @@ void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
   free(scheme->w4);
   free(scheme->wigner_2j_matrices);
   free(scheme->wigner_4j_matrices);
+  free(scheme->scrach);
   free(scheme);
 }
 
@@ -141,7 +142,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
 
   /* Calculate α, β, and weights over the positive octant. .......................... */
   /* ................................................................................ */
-  // The 4 * octant_orientations memory allocation is for m=4, 3, 2, and1
+  // The 4 * octant_orientations memory allocation is for m=4, 3, 2, and 1
   scheme->exp_Im_alpha = malloc_complex128(4 * scheme->octant_orientations);
   complex128 *exp_I_beta = malloc_complex128(scheme->octant_orientations);
   scheme->amplitudes = malloc_double(scheme->octant_orientations);
@@ -151,7 +152,9 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
                   scheme->amplitudes);
 
   averaging_scheme_setup(scheme, exp_I_beta, allow_fourth_rank);
-  free(exp_I_beta);
+
+  // reallocate exp_I_beta memory as scrach.
+  scheme->scrach = (double *)exp_I_beta;
   return scheme;
 }
 
@@ -177,7 +180,9 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
   vm_cosine_I_sine(n_angles, beta, exp_I_beta);
 
   averaging_scheme_setup(scheme, exp_I_beta, allow_fourth_rank);
-  free(exp_I_beta);
+
+  // reallocate exp_I_beta memory as scrach.
+  scheme->scrach = (double *)exp_I_beta;
   return scheme;
 }
 

@@ -111,8 +111,7 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
   unsigned int step_vector_i = 0, step_vector_k = 0, address;
   MRS_plan *planA, *planB;
   int size = scheme->total_orientations * number_of_sidebands;
-  double *freq_ampA, *freq_ampB;
-  double *freq_amp = malloc_double(scheme->octant_orientations);
+  double *freq_ampA, *freq_ampB, *freq_amp = scheme->scrach;
   double offset0, offset1, offsetA, offsetB;
   double *dim0, *dim1;
   double norm0, norm1;
@@ -210,5 +209,4 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
       }
     }
   }
-  free(freq_amp);
 }
