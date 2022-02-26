@@ -500,7 +500,7 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
   int orientation, two_l_pm, two_l_mm;
   int n1 = 2 * l + 1, m, mp, two_l = 2 * l, two_n1 = 2 * n1;
   double S1, S2, S3, *temp, scale;
-  double *temp_initial_vector = malloc_double(two_n1);
+  double temp_initial_vector[18];  // maximum allocation for l=4; (2l + 1) * 2
 
   // Spherical tensor symmetry relations.
   // Y_{l, m} = (-1)^m Y_{l,-m}(conj)           (1)
@@ -562,7 +562,6 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
       R_out_ += 2;
     }
   }
-  free(temp_initial_vector);
 }
 
 // ✅ .. note: (wigner_dm0_vector) monitored with pytest .....................
@@ -612,10 +611,10 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
   double *R_in_ = (double *)R_in;
   double *R_out_ = (double *)R_out;
 
-  int n1 = 2 * l + 1, n2 = n1 * n1, m, mp, k, two_l = 2 * l, two_n1 = 2 * n1;
+  int n1 = 2 * l + 1, m, mp, k, two_l = 2 * l, two_n1 = 2 * n1;
   double real, imag, copy_real = 0.0, copy_imag = 0.0, a, b, c, d;
-  double *wigner = malloc_double(n2);
-  double *temp_initial_vector = malloc_double(two_n1);
+  double wigner[81];               // maximum allocation for l=4; (2l + 1)^2
+  double temp_initial_vector[18];  // maximum allocation for l=4; (2l + 1) * 2
 
   // get wigner matrix corresponding to beta angle
   wigner_d_matrices(l, 1, &euler_angles[1], wigner);
@@ -675,8 +674,6 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
       R_out_[m + 1] += wigner[k++] * temp_initial_vector[mp + 1];
     }
   }
-  free(wigner);
-  free(temp_initial_vector);
 
   real = cos(euler_angles[2]);
   imag = sin(euler_angles[2]);
