@@ -116,7 +116,7 @@ method = BlochDecaySpectrum(
 # add the respective objects.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
-sim.methods += [method]  # add the method
+sim.methods = [method]  # add the method
 
 # %%
 # Static spectrum
@@ -128,7 +128,7 @@ sim.run()
 # The plot of the simulation.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -158,7 +158,7 @@ sim.run()
 # The plot of the simulation.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -182,7 +182,7 @@ sim.run()
 # The plot of the simulation.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

@@ -39,6 +39,8 @@ with open("../src/mrsimulator/__init__.py", "r") as f:
         if "__version__" in line:
             before_keyword, keyword, after_keyword = line.partition("=")
             __version__ = after_keyword.strip()[1:-1]
+            # Must break since want only first use of __version__ within file
+            break
 
 # The short X.Y version
 version = ".".join(__version__.split(".")[:2])
@@ -74,6 +76,9 @@ extensions = [
 
 # generate autosummary even if no references
 autosummary_generate = True
+
+# Date format used for |today| in copyright
+today_fmt = "%Y"
 
 # ---------------------------------------------------------------------------- #
 #                              Sphinx Version warning                          #
@@ -138,9 +143,14 @@ warnings.filterwarnings(
 
 # sphinx gallery config
 sphinx_gallery_conf = {
-    "examples_dirs": ["../examples_source", "../fitting_source"],
+    "examples_dirs": [
+        "../signal_processing_source",
+        "../examples_source",
+        "../fitting_source",
+    ],
     "remove_config_comments": True,
     "gallery_dirs": [
+        "signal_processing",
         "examples",
         "fitting",
     ],  # path to where to save gallery generated output
@@ -149,6 +159,7 @@ sphinx_gallery_conf = {
     # "line_numbers": True,
     "subsection_order": ExplicitOrder(
         [
+            "../signal_processing_source",
             "../examples_source/1D_simulation(crystalline)",
             "../examples_source/1D_simulation(macro_amorphous)",
             "../examples_source/2D_simulation(crystalline)",
@@ -165,27 +176,27 @@ sphinx_gallery_conf = {
     "doc_module": ("mrsimulator"),
     "image_scrapers": ["matplotlib"],  # , scraper],
     "compress_images": ("images", "thumbnails"),
-    # "show_memory": True,
-    "first_notebook_cell": (
-        "# This cell is added by sphinx-gallery\n"
-        "!pip install mrsimulator --quiet\n\n\n"
-        "%matplotlib inline\n\n"
-        "import mrsimulator\n"
-        "print(f'You are using mrsimulator v{mrsimulator.__version__}')"
-    ),
     "capture_repr": ("_repr_html_", "__repr__"),
-    "binder": {
-        # Required keys
-        "org": "deepanshs",
-        "repo": "mrsimulator",
-        "branch": "master",
-        "binderhub_url": "https://mybinder.org",
-        "dependencies": "../requirements.txt",
-        # Optional keys
-        "filepath_prefix": "docs/_build/html",
-        "notebooks_dir": "../../notebooks",
-        "use_jupyter_lab": True,
-    },
+    # --- uncomment to include binder links for notebooks ---
+    # "first_notebook_cell": (
+    #     "# This cell is added by sphinx-gallery\n"
+    #     "!pip install mrsimulator --quiet\n\n\n"
+    #     "%matplotlib inline\n\n"
+    #     "import mrsimulator\n"
+    #     "print(f'You are using mrsimulator v{mrsimulator.__version__}')"
+    # ),
+    # "binder": {
+    #     # Required keys
+    #     "org": "deepanshs",
+    #     "repo": "mrsimulator",
+    #     "branch": "master",
+    #     "binderhub_url": "https://mybinder.org",
+    #     "dependencies": "../requirements.txt",
+    #     # Optional keys
+    #     "filepath_prefix": "docs/_build/html",
+    #     "notebooks_dir": "../../notebooks",
+    #     "use_jupyter_lab": True,
+    # },
 }
 
 intersphinx_mapping = {

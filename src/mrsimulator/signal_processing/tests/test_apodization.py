@@ -36,10 +36,10 @@ def test_scale():
     data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
     _, y0, y1, y2 = sim.methods[0].simulation.to_list()
     _, y0_, y1_, y2_ = data.to_list()
-
-    assert y0_.max() / y0.max() == 10, "Scaling failed"
-    assert y1_.max() / y1.max() == 10, "Scaling failed"
-    assert y2_.max() / y2.max() == 10, "Scaling failed"
+    # cast complex data
+    assert np.allclose(y0_, y0 * 10), "Scaling failed"
+    assert np.allclose(y1_, y1 * 10), "Scaling failed"
+    assert np.allclose(y2_, y2 * 10), "Scaling failed"
 
 
 def test_Lorentzian():
@@ -105,6 +105,7 @@ def test_Gaussian():
 
 
 def test_SkewedGaussian():
+    # TODO: update this test for multiple skewes and using npp.convolve
     skew = 2
     FWHM = 200 * 2.354820045030949
     PS_2 = [
@@ -122,64 +123,38 @@ def test_SkewedGaussian():
     assert np.allclose(y0, y1), "Gaussian apodization on two dv are not equal."
 
 
-def test_Step():
-    rising_edge = -1
-    falling_edge = 1
-    PS_4 = [
-        sp.IFFT(dim_index=0),
-        sp.apodization.Step(
-            rising_edge=f"{rising_edge} s",
-            falling_edge=f"{falling_edge} s",
-            dim_index=0,
-            dv_index=[0, 1],
-        ),
-        sp.FFT(dim_index=0),
+def test_TopHat():
+    test_data = cp.CSDM(
+        dependent_variables=[cp.as_dependent_variable(np.ones(500))],
+        dimensions=[cp.LinearDimension(500, "1 s")],
+    )
+
+    processor = sp.SignalProcessor()
+    processor.operations = [
+        sp.apodization.TopHat(rising_edge="100 s", falling_edge="400 s")
     ]
 
-    post_sim = sp.SignalProcessor(operations=PS_4)
-    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
-    _, y0, y1, _ = data.to_list()
+    rise_and_fall_data = processor.apply_operations(test_data.copy())
+    rise_and_fall_should_be = np.zeros(500)
+    rise_and_fall_should_be[100:400] = 1
 
-    temp_post_sim = sp.SignalProcessor(operations=[sp.IFFT(dim_index=0)])
-    temp_data = temp_post_sim.apply_operations(data=sim.methods[0].simulation.copy())
-    temp_x = temp_data.dimensions[0].coordinates.value
-    screen = np.where(temp_x > rising_edge, 1, 0)
-    screen = screen + np.where(temp_x < falling_edge, 0, -1)
-    temp_data.dependent_variables[0].components[0] = np.multiply(
-        temp_data.dependent_variables[0].components[0], screen
-    )
-    temp_data = temp_post_sim.apply_operations(data=temp_data)
-    _, ty0, ty1, _ = temp_data.to_list()
+    assert np.allclose(rise_and_fall_data.y[0].components, rise_and_fall_should_be)
 
-    assert np.allclose(y0, ty0), "Step apodization failed."
+    processor.operations = [sp.apodization.TopHat(rising_edge="100 s")]
 
-    rising_edge = -1
-    PS_4 = [
-        sp.IFFT(dim_index=0),
-        sp.apodization.Step(
-            rising_edge=f"{rising_edge} s",
-            dim_index=0,
-            dv_index=[0, 1],
-        ),
-        sp.FFT(dim_index=0),
-    ]
+    rise_only_data = processor.apply_operations(test_data.copy())
+    rise_only_should_be = np.zeros(500)
+    rise_only_should_be[100:] = 1
 
-    post_sim = sp.SignalProcessor(operations=PS_4)
-    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
-    _, y0, y1, _ = data.to_list()
+    assert np.allclose(rise_only_data.y[0].components, rise_only_should_be)
 
-    temp_post_sim = sp.SignalProcessor(operations=[sp.IFFT(dim_index=0)])
-    temp_data = temp_post_sim.apply_operations(data=sim.methods[0].simulation.copy())
-    temp_x = temp_data.dimensions[0].coordinates.value
-    screen = np.where(temp_x > rising_edge, 1, 0)
-    screen = screen + np.where(temp_x < 0, 0, -1)
-    temp_data.dependent_variables[0].components[0] = np.multiply(
-        temp_data.dependent_variables[0].components[0], screen
-    )
-    temp_data = temp_post_sim.apply_operations(data=temp_data)
-    _, ty0, ty1, _ = temp_data.to_list()
+    processor.operations = [sp.apodization.TopHat(falling_edge="400 s")]
 
-    assert np.allclose(y0, ty0), "Step apodization failed."
+    fall_only_data = processor.apply_operations(test_data.copy())
+    fall_only_should_be = np.zeros(500)
+    fall_only_should_be[:400] = 1
+
+    assert np.allclose(fall_only_data.y[0].components, fall_only_should_be)
 
 
 def test_Mask():
@@ -228,11 +203,11 @@ def test_scale_class():
     assert a == b
 
 
-def test_Step_class():
-    a = sp.apodization.Step(rising_edge="1 s")
+def test_TopHat_class():
+    a = sp.apodization.TopHat(rising_edge="1 s")
     assert a.property_units == {"rising_edge": "s"}
 
-    a = sp.apodization.Step(falling_edge="1 s")
+    a = sp.apodization.TopHat(falling_edge="1 s")
     assert a.property_units == {"falling_edge": "s"}
 
 

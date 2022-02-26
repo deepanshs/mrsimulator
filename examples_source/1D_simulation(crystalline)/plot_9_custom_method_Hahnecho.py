@@ -17,7 +17,7 @@ from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.method.event import MixingEvent, SpectralEvent
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 1
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # For demonstration, we will create two spin systems, one with a single site and other
@@ -88,7 +88,7 @@ hahn_echo = Method1D(
             spectral_width=2e4,  # in Hz
             events=[
                 SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [1]}}]),
-                MixingEvent(mixing_query=dict(ch1={"tip_angle": np.pi, "phase": 0})),
+                MixingEvent(mixing_query={"ch1": {"tip_angle": np.pi, "phase": 0}}),
                 SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
             ],
         )

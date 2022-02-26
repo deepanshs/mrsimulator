@@ -122,7 +122,7 @@ shifting_d = Method2D(
             events=[
                 SpectralEvent(
                     rotor_frequency=0,
-                    transition_query=[{"P": [-1]}],
+                    transition_query=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Quad1_2"],
                 )
             ],
@@ -135,7 +135,7 @@ shifting_d = Method2D(
             events=[
                 SpectralEvent(
                     rotor_frequency=0,
-                    transition_query=[{"P": [-1]}],
+                    transition_query=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Shielding1_0", "Shielding1_2"],
                 )
             ],
@@ -170,7 +170,7 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_data = processor.apply_operations(data=data).real
+processed_data = processor.apply_operations(data=data)
 
 
 # %%
@@ -178,7 +178,7 @@ processed_data = processor.apply_operations(data=data).real
 # spectrum per spin system, the following data is a CSDM object containing five
 # simulations (dependent variables). Let's visualize the first data corresponding to
 # :math:`\text{NiCl}_2\cdot 2 \text{D}_2\text{O}`.
-data_Ni = data.split()[0]
+data_Ni = data.split()[0].real
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
@@ -191,7 +191,7 @@ plt.show()
 
 # %%
 # The plot of the simulation after signal processing.
-proc_data_Ni = processed_data.split()[0]
+proc_data_Ni = processed_data.split()[0].real
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
@@ -208,7 +208,7 @@ fig, ax = plt.subplots(
 )
 for i, data_obj in enumerate([data, processed_data]):
     for j, datum in enumerate(data_obj.split()):
-        ax[i, j].imshow(datum / datum.max(), aspect="auto", cmap="gist_ncar_r")
+        ax[i, j].imshow((datum / datum.max()).real, aspect="auto", cmap="gist_ncar_r")
         ax[i, j].invert_xaxis()
         ax[i, j].invert_yaxis()
 

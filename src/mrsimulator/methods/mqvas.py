@@ -49,7 +49,8 @@ class MQ_VAS(BaseNamedMethod2D):
         name = cls.__name__
 
         mq = MQ_p_symmetry[name]["mq"]
-        spin = Isotope(symbol=kwargs["channels"][0]).spin
+        iso = kwargs["channels"][0]
+        spin = Isotope(symbol=iso).spin if isinstance(iso, str) else iso.spin
 
         # select the coherence for the first event
         P = int(2 * mq)
@@ -62,7 +63,7 @@ class MQ_VAS(BaseNamedMethod2D):
         events_1 = [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}]
 
         # method affine matrix shear factor
-        k = k = shear_factor_MQ_MAS[nQ][spin]
+        k = shear_factor_MQ_MAS[nQ][spin]
 
         description = f"Simulate a {nQ}Q variable-angle spinning spectrum."
         return {

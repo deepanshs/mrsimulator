@@ -7,7 +7,7 @@ on:
   push:
     branches: [master]
   pull_request:
-    branches: [master]
+    branches: [master, 'v?.?*']
 
 jobs:
   code_lint:
@@ -33,13 +33,12 @@ jobs:
           flake8 . --count --select=C,E,F,W,N8 --show-source --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=8 --max-line-length=88 --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
-
   testing_unix:
     needs: [code_lint]
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.7, 3.8, 3.9, "3.10"]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -64,7 +63,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest cython setuptools  pytest-cov sympy
           pip install -r requirements.txt
-
       - name: Build and install package from source
         run: python setup.py develop
 
@@ -118,7 +116,7 @@ jobs:
     needs: [code_lint]
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.7, 3.8, 3.9, "3.10"]
     runs-on: "windows-latest"
 
     steps:

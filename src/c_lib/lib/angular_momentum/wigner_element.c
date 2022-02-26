@@ -282,7 +282,7 @@ void transition_connect_factor(const float l, const float m1_f, const float m1_i
                                const double phi, double *restrict factor) {
   unsigned int delta_p = (unsigned int)((m2_f - m2_i) - (m1_f - m1_i));
   double scale, phase = (double)delta_p * phi;
-  double cx = cos(phase), sx = sin(phase), re, im, temp;
+  double cx = cos(phase), sx = sin(phase), re = 0.0, im = 0.0, temp;
   delta_p %= 4;
 
   scale = __wigner_d_element(l, m2_f, m1_f, theta);
