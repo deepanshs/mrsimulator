@@ -49,7 +49,7 @@ typedef struct MRS_averaging_scheme {
   double *wigner_2j_matrices;        //  wigner-d 2j matrix per orientation.
   double *wigner_4j_matrices;        //  wigner-d 4j matrix per orientation.
   double *scrach;                    // scrach memory for calculations.
-  bool allow_fourth_rank;  //  If true, compute wigner matrices for wigner-d 4j.
+  bool allow_4th_rank;  //  If true, compute wigner matrices for wigner-d 4j.
 } MRS_averaging_scheme;
 
 // typedef struct MRS_averaging_scheme;
@@ -66,12 +66,12 @@ typedef struct MRS_averaging_scheme {
  * in an improved orientation averaging. Read more on the
  * <a href="https://en.wikipedia.org/wiki/Geodesic_polyhedron">Geodesic polyhedron</a>.
  *
- * @param allow_fourth_rank If true, the scheme also calculates matrices for fourth-rank
+ * @param allow_4th_rank If true, the scheme also calculates matrices for fourth-rank
  * tensors.
  * @param integration_volume An enumeration. 0=octant, 1=hemisphere
  */
 MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_density,
-                                                  bool allow_fourth_rank,
+                                                  bool allow_4th_rank,
                                                   unsigned int integration_volume);
 
 /**
@@ -85,12 +85,14 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
  * angle pair (alpha, beta) of type double.
  * @param n_angles An unsigned int equal to the total number of alpha, beta, and weight
  * values.
- * @param allow_fourth_rank If true, the scheme also calculates matrices for fourth-rank
+ * @param allow_4th_rank If true, the scheme also calculates matrices for fourth-rank
  * tensors.
  */
-MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
-    double *alpha, double *beta, double *weight, unsigned int n_angles,
-    bool allow_fourth_rank);
+MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(double *alpha,
+                                                                  double *beta,
+                                                                  double *weight,
+                                                                  unsigned int n_angles,
+                                                                  bool allow_4th_rank);
 
 /**
  * Free the memory allocated for the spatial orientation averaging scheme.

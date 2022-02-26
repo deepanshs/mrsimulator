@@ -10,8 +10,7 @@
 #include "schemes.h"
 
 static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
-                                          complex128 *exp_I_beta,
-                                          bool allow_fourth_rank) {
+                                          complex128 *exp_I_beta, bool allow_4th_rank) {
   unsigned int allocate_size_2, allocate_size_4;
 
   scheme->total_orientations = scheme->octant_orientations;
@@ -31,8 +30,7 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
    * Calculating exp(-Imα) at every orientation angle α form m=-4 to -1, where α is the
    * azimuthal angle over the positive octant. The input α is in the form of phase
    * exp(Iα). */
-  get_exp_Im_alpha(scheme->octant_orientations, allow_fourth_rank,
-                   scheme->exp_Im_alpha);
+  get_exp_Im_alpha(scheme->octant_orientations, allow_4th_rank, scheme->exp_Im_alpha);
   /* -------------------------------------------------------------------------------- */
 
   /**
@@ -59,7 +57,7 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
                                     scheme->wigner_2j_matrices);
 
   scheme->wigner_4j_matrices = NULL;
-  if (allow_fourth_rank) {
+  if (allow_4th_rank) {
     /* Fourt-rank reduced wigner matrices at every β orientation from the positive upper
      * octant. */
     scheme->wigner_4j_matrices = malloc_double(allocate_size_4);
@@ -91,7 +89,7 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
      * the lower hemisphere */
     wigner_d_matrices_from_exp_I_beta(2, scheme->octant_orientations, true, exp_I_beta,
                                       &scheme->wigner_2j_matrices[allocate_size_2]);
-    if (allow_fourth_rank) {
+    if (allow_4th_rank) {
       /* Fourth-rank reduced wigner matrices at every β orientation. */
       wigner_d_matrices_from_exp_I_beta(4, scheme->octant_orientations, true,
                                         exp_I_beta,
@@ -107,7 +105,7 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
   scheme->w2 = malloc_complex128(3 * scheme->total_orientations);
 
   scheme->w4 = NULL;
-  if (allow_fourth_rank) {
+  if (allow_4th_rank) {
     /* w4 is the buffer for storing the frequencies calculated from the fourth-rank
      * tensors. Only calcuate the -4, -3, -2, -1, and 0 tensor components.*/
     scheme->w4 = malloc_complex128(5 * scheme->total_orientations);
@@ -129,13 +127,13 @@ void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
 
 /* Create a new orientation averaging scheme. */
 MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_density,
-                                                  bool allow_fourth_rank,
+                                                  bool allow_4th_rank,
                                                   unsigned int integration_volume) {
   MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
 
   scheme->integration_density = integration_density;
   scheme->integration_volume = integration_volume;
-  scheme->allow_fourth_rank = allow_fourth_rank;
+  scheme->allow_4th_rank = allow_4th_rank;
 
   scheme->octant_orientations =
       ((integration_density + 1) * (integration_density + 2)) / 2;
@@ -151,7 +149,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
                   &scheme->exp_Im_alpha[3 * scheme->octant_orientations], exp_I_beta,
                   scheme->amplitudes);
 
-  averaging_scheme_setup(scheme, exp_I_beta, allow_fourth_rank);
+  averaging_scheme_setup(scheme, exp_I_beta, allow_4th_rank);
 
   // reallocate exp_I_beta memory as scrach.
   scheme->scrach = (double *)exp_I_beta;
@@ -159,9 +157,11 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
 }
 
 /* Create a new orientation averaging scheme. */
-MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
-    double *alpha, double *beta, double *weight, unsigned int n_angles,
-    bool allow_fourth_rank) {
+MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(double *alpha,
+                                                                  double *beta,
+                                                                  double *weight,
+                                                                  unsigned int n_angles,
+                                                                  bool allow_4th_rank) {
   MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
 
   scheme->octant_orientations = n_angles;
@@ -179,7 +179,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
   /* Calculate cos(β) + isin(β) from β. ............................................. */
   vm_cosine_I_sine(n_angles, beta, exp_I_beta);
 
-  averaging_scheme_setup(scheme, exp_I_beta, allow_fourth_rank);
+  averaging_scheme_setup(scheme, exp_I_beta, allow_4th_rank);
 
   // reallocate exp_I_beta memory as scrach.
   scheme->scrach = (double *)exp_I_beta;

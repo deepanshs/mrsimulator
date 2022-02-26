@@ -53,9 +53,9 @@ def one_d_spectrum(method,
         factor = -1.0
 
     # config for spin I=0.5
-    cdef bool_t allow_fourth_rank = 0
+    cdef bool_t allow_4th_rank = 0
     if spin_quantum_number > 0.5:
-        allow_fourth_rank = 1
+        allow_4th_rank = 1
 
     # transitions of the observed spin
     cdef int transition_increment, number_of_transitions, i
@@ -65,7 +65,7 @@ def one_d_spectrum(method,
 # create averaging scheme _____________________________________________________
     cdef clib.MRS_averaging_scheme *averaging_scheme
     averaging_scheme = clib.MRS_create_averaging_scheme(
-        integration_density=integration_density, allow_fourth_rank=allow_fourth_rank,
+        integration_density=integration_density, allow_4th_rank=allow_4th_rank,
         integration_volume=integration_volume
     )
 
