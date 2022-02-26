@@ -59,7 +59,7 @@ def test_baseline_polynomial():
     _, y0_, y1_, y2_ = data_out.to_list()
 
     for in_, out_ in zip([y0, y1, y2], [y0_, y1_, y2_]):
-        assert np.allclose(out_, in_ + 1 + x_c ** 2), "Polynomial 2nd order failed"
+        assert np.allclose(out_, in_ + 1 + x_c**2), "Polynomial 2nd order failed"
 
     # third order
     PS_0 = [
@@ -72,5 +72,5 @@ def test_baseline_polynomial():
 
     for in_, out_ in zip([y0, y1, y2], [y0_, y1_, y2_]):
         assert np.allclose(
-            out_, in_ + 10 + 13.1 * x_c + 2 * x_c ** 3
+            out_, in_ + 10 + 13.1 * x_c + 2 * x_c**3
         ), "Polynomial3rd order failed"

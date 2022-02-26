@@ -18,7 +18,7 @@ def wigner_dm0_vector_sympy(ang_momentum_l, angle):
 def wigner(ang_momentum_l, cos_beta):
     # python test
     cos_beta = np.asarray([cos_beta]).ravel()
-    sin_beta = np.sqrt(1.0 - cos_beta ** 2)
+    sin_beta = np.sqrt(1.0 - cos_beta**2)
     exp_I_beta = cos_beta + 1j * sin_beta
     wigner_py = wigner_d_matrix_cosines(ang_momentum_l, cos_beta)
 

@@ -53,7 +53,7 @@ def test_Lorentzian():
     _, y0, y1, y2 = data.to_list()
 
     FWHM = 200
-    test = (FWHM / 2) / (np.pi * (freqHz ** 2 + (FWHM / 2) ** 2))
+    test = (FWHM / 2) / (np.pi * (freqHz**2 + (FWHM / 2) ** 2))
 
     assert np.allclose(y1, y2)
     assert np.all(y0 != y1)
