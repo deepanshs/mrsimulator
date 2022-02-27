@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# import csdmpy as cp
-# import plotly.graph_objects as go
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
