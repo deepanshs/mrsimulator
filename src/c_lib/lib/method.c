@@ -47,7 +47,7 @@ void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n) {
  * @param magnetic_flux_density_in_T The external field flux density at the event.
  * @param rotor_frequency_in_Hz The rotor frequency at the event.
  * @param rotor_angle_in_rad The rotor angle at the event.
- * @param increment The increment of the dimension to which the event belongs.
+ * @param inverse_increment The inverse increment of the corresponding dimension.
  * @param plan The MRS plan of the first event along the dimension.
  */
 static inline void MRS_set_event(MRS_event *event, double fraction,

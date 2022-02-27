@@ -737,7 +737,7 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
                              const unsigned int n_octants, double *wigner_2j_matrices,
                              complex128 *R2, double *wigner_4j_matrices, complex128 *R4,
                              complex128 *exp_Im_alpha, complex128 *w2, complex128 *w4) {
-  unsigned int j, wigner_2j_inc, wigner_4j_inc, w2_increment, w4_increment;
+  unsigned int j, wigner_2j_inc, wigner_4j_inc = 0, w2_increment, w4_increment = 0;
 
   w2_increment = 3 * octant_orientations;
   wigner_2j_inc = 5 * w2_increment;  // equal to 5 x 3 x octant_orientations;
