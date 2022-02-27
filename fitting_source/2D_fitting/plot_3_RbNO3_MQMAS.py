@@ -24,7 +24,7 @@ from mrsimulator.utils.collection import single_site_system_generator
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/814455/files/RbNO3_MQMAS.csdf"
+filename = "https://sandbox.zenodo.org/record/835664/files/RbNO3_MQMAS.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
