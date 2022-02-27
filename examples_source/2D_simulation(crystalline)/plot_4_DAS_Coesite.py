@@ -25,7 +25,7 @@ from mrsimulator.method.spectral_dimension import SpectralDimension
 sim = Simulator()
 
 # load the spin systems from url.
-filename = "https://sandbox.zenodo.org/record/687656/files/coesite.mrsys"
+filename = "https://sandbox.zenodo.org/record/835664/files/coesite.mrsys"
 sim.load_spin_systems(filename)
 
 # %%
