@@ -1,6 +1,6 @@
 name: mrsimulator-dev
 channels:
-  - anaconda
+  - defaults
   - conda-forge
 dependencies:
   - fftw>=3.3.9
