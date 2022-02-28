@@ -130,11 +130,11 @@ amorphous materials.
     from mrsimulator.methods import BlochDecaySpectrum
     import matplotlib.pyplot as plt
 
-    # Make Site and SpinSystem obejcts
+    # Make Site and SpinSystem objects
     H_site = Site(isotope="1H", shielding_symmetric={"zeta": 13.89, "eta": 0.25})
     spin_system = SpinSystem(sites=[H_site])
 
-    # Make static and MAS 1-pulse aquire Method objects
+    # Make static and MAS one-pulse acquire Method objects
     static = BlochDecaySpectrum(channels=["1H"])
     mas = BlochDecaySpectrum(channels=["1H"], rotor_frequency=1000)  # in Hz
 
