@@ -25,7 +25,7 @@ from mrsimulator import signal_processing as sp
 # Create the Simulator object and load the spin systems from an external file.
 sim = Simulator()
 
-file_ = "https://sandbox.zenodo.org/record/687656/files/protein_GB1_15N_13CA_13CO.mrsys"
+file_ = "https://sandbox.zenodo.org/record/835664/files/protein_GB1_15N_13CA_13CO.mrsys"
 sim.load_spin_systems(file_)  # load the spin systems.
 print(f"number of spin systems = {len(sim.spin_systems)}")
 

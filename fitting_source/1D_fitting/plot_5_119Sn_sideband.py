@@ -23,7 +23,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/814455/files/119Sn_SnO.csdf"
+filename = "https://sandbox.zenodo.org/record/835664/files/119Sn_SnO.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset

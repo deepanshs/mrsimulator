@@ -28,7 +28,7 @@ from mrsimulator.method.event import SpectralEvent
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/814455/files/DASCoesite.csdf"
+filename = "https://sandbox.zenodo.org/record/835664/files/DASCoesite.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
