@@ -79,20 +79,24 @@ If the installation is successful, you should be able to run the following code.
     from mrsimulator import Simulator, SpinSystem, Site
     from mrsimulator.methods import BlochDecaySpectrum
     import matplotlib.pyplot as plt
+
     # Make Site and SpinSystem obejcts
-    H_site = Site(isotope="1H",     shielding_symmetric={"zeta": 13.89, "eta":    0.25})
+    H_site = Site(isotope="1H", shielding_symmetric={"zeta": 13.89, "eta": 0.25})
     spin_system = SpinSystem(sites=[H_site])
+
     # Make static and MAS 1-pulse aquire    Method objects
     static = BlochDecaySpectrum(channels=["1H"]   )
-    mas = BlochDecaySpectrum(channels=["1H"],     rotor_frequency=1000)  # in Hz
+    mas = BlochDecaySpectrum(channels=["1H"], rotor_frequency=1000)  # in Hz
+
     # Setup and run the Simulation object
-    sim = Simulator(spin_systems=[spin_system]    , methods=[static, mas])
+    sim = Simulator(spin_systems=[spin_system], methods=[static, mas])
     sim.run()
+    
     # Plot the spectra
-    fig, ax = plt.subplots(1, 2, figsize=(6, 3)   , subplot_kw={"projection": "csdm"})
-    ax[0].plot(sim.methods[0].simulation.real,    color="black", linewidth=1)
+    fig, ax = plt.subplots(1, 2, figsize=(6, 3), subplot_kw={"projection": "csdm"})
+    ax[0].plot(sim.methods[0].simulation.real, color="black", linewidth=1)
     ax[0].set_title("Static")
-    ax[1].plot(sim.methods[1].simulation.real,    color="black", linewidth=1)
+    ax[1].plot(sim.methods[1].simulation.real, color="black", linewidth=1)
     ax[1].set_title("MAS")
     plt.tight_layout()
     plt.show()
