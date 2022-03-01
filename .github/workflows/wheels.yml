@@ -86,7 +86,7 @@ jobs:
       MACOSX_DEPLOYMENT_TARGET: "10.9"
       CIBW_BUILD_VERBOSITY: "1"
       CIBW_BEFORE_ALL_MACOS: "brew install fftw openblas"
-      CIBW_BEFORE_ALL_LINUX: "yum -y install openblas-devel fftw-devel"
+      CIBW_BEFORE_ALL_LINUX: "sudo apt-get install --yes libopenblas-dev libfftw3-dev"
 
       CIBW_BUILD: "${{ matrix.cibw.build || '*' }}"
       CIBW_MANYLINUX_X86_64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
@@ -173,7 +173,7 @@ jobs:
       - name: customize mac-arm-64
         if: contains(matrix.os, 'macos') && matrix.cibw.arch
         run: |
-          sudo xcode-select -switch /Applications/Xcode_12.2.app
+          sudo xcode-select -switch /Applications/Xcode_13.0.app
           echo 'SDKROOT=/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk' >> "$GITHUB_ENV"
           echo 'MACOSX_DEPLOYMENT_TARGET=11.0' >> "$GITHUB_ENV"
 
