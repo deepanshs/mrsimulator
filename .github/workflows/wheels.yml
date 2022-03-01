@@ -26,9 +26,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip --user
-          python -m pip install pytest cython setuptools --user
-          python -m pip install -r requirements-dev.txt --user
+          python -m pip install --upgrade pip
+          python -m pip install pytest cython setuptools
+          python -m pip install -r requirements-dev.txt
 
       - name: build sdist
         run: python setup.py develop
@@ -57,9 +57,9 @@ jobs:
 
       - name: build sdist
         run: |
-          python -m pip install --upgrade pip --user
-          python -m pip install pytest cython setuptools --user
-          python -m pip install -r requirements-dev.txt --user
+          python -m pip install --upgrade pip
+          python -m pip install pytest cython setuptools
+          python -m pip install -r requirements-dev.txt
           python setup.py sdist
 
       - name: upload artifact
@@ -103,9 +103,9 @@ jobs:
         {wheel}
 
       CIBW_BEFORE_TEST: |
-        python -m pip install -U pip --user
-        python -m pip install "pillow==8.4" matplotlib --user
-        python -m pip install -r requirements.txt --user
+        python -m pip install -U pip
+        python -m pip install "pillow==8.4" matplotlib
+        python -m pip install -r requirements.txt
       CIBW_TEST_REQUIRES: "pytest"
       CIBW_TEST_COMMAND: |
         python -c "import mrsimulator"
@@ -196,23 +196,23 @@ jobs:
       - name: Install mac-os Dependencies
         if: startsWith(matrix.os, 'mac')
         run: |
-          python -m pip install delocate --user
+          python -m pip install delocate
 
       - name: Install linux Dependencies
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          python -m pip install auditwheel --user
+          python -m pip install auditwheel
 
       - name: Install windows Dependencies
         if: startsWith(matrix.os, 'windows')
         run: |
-          python -m pip install delvewheel --user
+          python -m pip install delvewheel
           C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
 
       - name: Install Python Dependencies
         run: |
-          python -m pip install --upgrade setuptools pip wheel cython --user
-          python -m pip install cibuildwheel --user
+          python -m pip install --upgrade setuptools pip wheel cython
+          python -m pip install cibuildwheel
 
       - name: show environment
         run: |
