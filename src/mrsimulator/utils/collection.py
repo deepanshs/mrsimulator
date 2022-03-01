@@ -7,6 +7,7 @@ import numpy as np
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 
+
 __author__ = ["Deepansh Srivastava", "Matthew D. Giammar"]
 __email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
 
@@ -31,7 +32,7 @@ def single_site_system_generator(
     site_description: Union[str, List[str]] = None,
     rtol: float = 1e-3,
 ) -> List[SpinSystem]:
-    r"""Generate and return a list of single-site spin systems from the input parameters.
+    r"""Generate and return a list of single-site spin systems from the input parameters
 
     Args:
         isotope:
@@ -111,37 +112,41 @@ def single_site_system_generator(
         parameter values are given as lists/ndarrays, the length of all the lists must
         be the same.
     """
-    sites = site_generator(
-        isotope=isotope,
-        isotropic_chemical_shift=isotropic_chemical_shift,
-        shielding_symmetric=shielding_symmetric,
-        shielding_antisymmetric=shielding_antisymmetric,
-        quadrupolar=quadrupolar,
-        name=site_name,
-        label=site_label,
-        description=site_description,
-    )
-    n_sites = len(sites)
+    isotope = _flatten_item(isotope)
+    isotropic_chemical_shift = _flatten_item(isotropic_chemical_shift)
+    shielding_symmetric = _flatten_item(shielding_symmetric)
+    shielding_antisymmetric = _flatten_item(shielding_antisymmetric)
+    quadrupolar = _flatten_item(quadrupolar)
+    site_name = _flatten_item(site_name)
+    site_label = _flatten_item(site_label)
+    site_description = _flatten_item(site_description)
+    abundance = _flatten_item(abundance)
+    args = [
+        isotope,
+        isotropic_chemical_shift,
+        shielding_symmetric,
+        shielding_antisymmetric,
+        quadrupolar,
+        site_name,
+        site_label,
+        site_description,
+        abundance,
+    ]
 
-    abundance = 1 / n_sites if abundance is None else abundance
-    abundance = _extend_to_nparray(_fix_item(abundance), n_sites)
-    n_abd = abundance.size
+    n_sites = _check_lengths_of_args(*args)
+    sites = _site_generator(n_sites, *args[:-1])  # Don't pass abundance
 
-    if n_sites == 1:
-        sites = np.asarray([sites[0] for _ in range(n_abd)])
-        n_sites = sites.size
+    if abundance is None:
+        abundance = np.asarray([1 / n_sites] * n_sites)
+    if isinstance(abundance, (int, float, np.floating)):
+        abundance = np.asarray([abundance] * n_sites)
 
-    if n_sites != n_abd:
-        raise ValueError(
-            "Number of sites does not match the number of abundances. "
-            f"{LIST_LEN_ERROR_MSG}"
-        )
-
-    keep_idxs = np.where(abundance > rtol * abundance.max())[0]
+    keep_idxs = np.asarray(abundance > rtol * abundance.max()).nonzero()[0]
 
     return [
         SpinSystem(sites=[site], abundance=abd)
-        for site, abd in zip(sites[keep_idxs], abundance[keep_idxs])
+        for i, (site, abd) in enumerate(zip(sites, abundance))
+        if i in keep_idxs
     ]
 
 
@@ -220,100 +225,109 @@ def site_generator(
         >>> print(len(sys3))
         12
     """
-    lst = [isotope, isotropic_chemical_shift, name, label, description]
-    attributes = [_fix_item(item) for item in lst]
+    isotope = _flatten_item(isotope)
+    isotropic_chemical_shift = _flatten_item(isotropic_chemical_shift)
+    shielding_symmetric = _flatten_item(shielding_symmetric)
+    shielding_antisymmetric = _flatten_item(shielding_antisymmetric)
+    quadrupolar = _flatten_item(quadrupolar)
+    name = _flatten_item(name)
+    label = _flatten_item(label)
+    description = _flatten_item(description)
+    args = [
+        isotope,
+        isotropic_chemical_shift,
+        shielding_symmetric,
+        shielding_antisymmetric,
+        quadrupolar,
+        name,
+        label,
+        description,
+    ]
 
-    n_sites = _check_lengths(attributes)
+    n_sites = _check_lengths_of_args(*args)
 
-    lst_extend = [shielding_symmetric, shielding_antisymmetric, quadrupolar]
-    for obj in lst_extend:
-        if obj is not None:
-            obj_ext, n_dict = _extend_dict_values(obj, n_sites)
-            n_sites = max(n_sites, n_dict)
-            attributes.append(obj_ext)
-        else:
-            attributes.append(None)
-
-    # Attributes order is same as below in list comprehension
-    attributes = [_extend_to_nparray(attr, n_sites) for attr in attributes]
-
-    return np.asarray(
-        [
-            Site(
-                isotope=iso,
-                isotropic_chemical_shift=shift,
-                name=name,
-                label=label,
-                description=desc,
-                shielding_symmetric=symm,
-                shielding_antisymmetric=antisymm,
-                quadrupolar=quad,
-            )
-            for iso, shift, name, label, desc, symm, antisymm, quad in zip(*attributes)
-        ]
-    )
+    return list(_site_generator(n_sites, *args))
 
 
-def _fix_item(item):
-    """Flattens multidimensional arrays into 1d array."""
+def _site_generator(  # noqa: C901
+    n_sites: int,
+    isotope: Union[str, np.ndarray],
+    isotropic_chemical_shift: Union[float, np.ndarray] = 0,
+    shielding_symmetric: Dict = None,
+    shielding_antisymmetric: Dict = None,
+    quadrupolar: Dict = None,
+    name: Union[str, np.ndarray] = None,
+    label: Union[str, np.ndarray] = None,
+    description: Union[str, np.ndarray] = None,
+):
+    r"""A generator function which returns :ref:`site_api` objects in a memory efficient
+    manner.
+
+    When the next site is requested from the generator, each site argument is
+    checked to see if the argument is an array or not a list (will be float or str). If
+    the argument is an array, the item at the next index in the array is passed,
+    otherwise the constant float/str is passed.
+
+    Although there are many conditional statements in the method, this approach ensures
+    multiple arrays of length n_sites aren't temporarily needed reducing peak memory
+    usage when building large numbers of sites.
+    """
+    for index in range(n_sites):
+        yield Site(
+            isotope=isotope[index] if isinstance(isotope, np.ndarray) else isotope,
+            isotropic_chemical_shift=isotropic_chemical_shift[index]
+            if isinstance(isotropic_chemical_shift, np.ndarray)
+            else isotropic_chemical_shift,
+            name=name[index] if isinstance(name, np.ndarray) else name,
+            label=label[index] if isinstance(label, np.ndarray) else label,
+            description=description[index]
+            if isinstance(description, np.ndarray)
+            else description,
+            shielding_symmetric={
+                key: val[index] if isinstance(val, np.ndarray) else val
+                for key, val in shielding_symmetric.items()
+            }
+            if shielding_symmetric is not None
+            else None,
+            shielding_antisymmetric={
+                key: val[index] if isinstance(val, np.ndarray) else val
+                for key, val in shielding_antisymmetric.items()
+            }
+            if shielding_antisymmetric is not None
+            else None,
+            quadrupolar={
+                key: val[index] if isinstance(val, np.ndarray) else val
+                for key, val in quadrupolar.items()
+            }
+            if quadrupolar is not None
+            else None,
+        )
+
+
+def _flatten_item(item):
+    """Flattens multi-dimensional arrays to long array"""
+    if isinstance(item, dict):
+        return {
+            k: np.ravel(np.asarray(v)) if isinstance(v, (list, np.ndarray)) else v
+            for k, v in item.items()
+        }
     if isinstance(item, (list, np.ndarray)):
-        return np.asarray(item).ravel()
+        return np.ravel(np.asarray(item))
     return item
 
 
-def _extend_to_nparray(item, n):
-    """If item is already list/array return np.array, otherwise extend to length n."""
-    data = item if isinstance(item, (list, np.ndarray)) else [item for _ in range(n)]
-    return np.asarray(data)
-
-
-def _extend_dict_values(_dict, n_sites):
-    """Checks and extends dict values. Returns dict or list of dicts and max length."""
-    _dict = {key: _fix_item(val) for key, val in _dict.items()}
-    n_sites_dict = _check_lengths(list(_dict.values()))
-    if n_sites != 1 and n_sites_dict != 1 and n_sites != n_sites_dict:
-        raise ValueError(f"A list in a dictionary was misshapen. {LIST_LEN_ERROR_MSG}")
-
-    if n_sites_dict == 1:
-        _dict = {
-            key: val[0] if isinstance(val, (list, np.ndarray)) else val
-            for key, val in _dict.items()
-        }
-        return _dict, 1
-
-    _dict = {key: _extend_to_nparray(val, n_sites_dict) for key, val in _dict.items()}
-    return _zip_dict(_dict), n_sites_dict
-
-
-def _check_lengths(attributes):
-    """Ensures all attribute lengths are 1 or maximum attribute length."""
-    lengths = np.array([np.asarray(attr).size for attr in attributes])
-
-    if np.all(lengths == 1):
-        return 1
-
-    lengths = lengths[np.where(lengths != 1)]
-    if np.unique(lengths).size == 1:
-        return lengths[0]
-
-    raise ValueError(
-        f"An array or list was either too short or too long. {LIST_LEN_ERROR_MSG}"
-    )
-
-
-# BUG: doctest fails on example code
-def _zip_dict(_dict):
-    """Makes list of dicts with the same keys and scalar values from dict of lists.
-    Single dictionaries of only None will return None.
-
-    Example:
-    >>> foo = {'k1': [1, None, 3, 4], 'k2': [5, None, 7, 8], 'k3': [9, None, 11, 12]}
-    >>> pprint(_zip_dict(foo))
-    [{'k1': 1, 'k2': 5, 'k3': 9},
-     None,
-     {'k1': 3, 'k2': 7, 'k3': 11},
-     {'k1': 4, 'k2': 8, 'k3': 12}]
-    """
-    lst = [dict(zip(_dict.keys(), v)) for v in zip(*(_dict[k] for k in _dict.keys()))]
-    lst = [None if np.all([item is None for item in d.values()]) else d for d in lst]
-    return lst
+def _check_lengths_of_args(*args):
+    """Raises error when not all lists are same length. Returns length on success"""
+    args = [arg for arg in args if arg is not None]
+    dicts = [
+        list(args.pop(i).values())
+        for i, arg in reversed(list(enumerate(args)))
+        if isinstance(arg, dict)
+    ]
+    dicts = dicts[0] if dicts != [] else []
+    length = {len(lst) for lst in args + dicts if isinstance(lst, (list, np.ndarray))}
+    if len(length) != 1:
+        raise ValueError(
+            f"Not all arrays/lists passed were of the same length. {LIST_LEN_ERROR_MSG}"
+        )
+    return length.pop()
