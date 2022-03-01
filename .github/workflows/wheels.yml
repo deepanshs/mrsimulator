@@ -1,6 +1,8 @@
 name: CI (wheels and sdist)
 
 on:
+  push:
+    branches: ['rc*']
   pull_request:
     branches: ['rc*']
   release:
