@@ -26,9 +26,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install pytest cython setuptools
-          python -m pip install -r requirements-dev.txt
+          python -m pip install --upgrade pip --user
+          python -m pip install pytest cython setuptools --user
+          python -m pip install -r requirements-dev.txt --user
 
       - name: build sdist
         run: python setup.py develop
@@ -57,9 +57,9 @@ jobs:
 
       - name: build sdist
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install pytest cython setuptools
-          python -m pip install -r requirements-dev.txt
+          python -m pip install --upgrade pip --user
+          python -m pip install pytest cython setuptools --user
+          python -m pip install -r requirements-dev.txt --user
           python setup.py sdist
 
       - name: upload artifact
@@ -103,8 +103,9 @@ jobs:
         {wheel}
 
       CIBW_BEFORE_TEST: |
-        pip install -U pip
-        pip install -r requirements.txt
+        python -m pip install -U pip --user
+        python -m pip install "pillow==8.4" matplotlib --user
+        python -m pip install -r requirements.txt --user
       CIBW_TEST_REQUIRES: "pytest"
       CIBW_TEST_COMMAND: |
         python -c "import mrsimulator"
@@ -176,8 +177,8 @@ jobs:
         if: contains(matrix.os, 'macos') && matrix.cibw.arch
         run: |
           sudo xcode-select -switch /Applications/Xcode_13.0.app
-          echo 'SDKROOT=/Applications/Xcode_13.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk' >> "$GITHUB_ENV"
-          echo 'MACOSX_DEPLOYMENT_TARGET=11.0' >> "$GITHUB_ENV"
+          echo 'SDKROOT=/Applications/Xcode_13.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk' >> "$GITHUB_ENV"
+          echo 'MACOSX_DEPLOYMENT_TARGET=12.0' >> "$GITHUB_ENV"
 
       - name: Set up QEMU
         if: startsWith(matrix.os, 'ubuntu') && matrix.cibw.arch
@@ -195,23 +196,23 @@ jobs:
       - name: Install mac-os Dependencies
         if: startsWith(matrix.os, 'mac')
         run: |
-          python -m pip install delocate
+          python -m pip install delocate --user
 
       - name: Install linux Dependencies
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          python -m pip install auditwheel
+          python -m pip install auditwheel --user
 
       - name: Install windows Dependencies
         if: startsWith(matrix.os, 'windows')
         run: |
-          python -m pip install delvewheel
+          python -m pip install delvewheel --user
           C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
 
       - name: Install Python Dependencies
         run: |
-          python -m pip install --upgrade setuptools pip wheel cython
-          python -m pip install cibuildwheel
+          python -m pip install --upgrade setuptools pip wheel cython --user
+          python -m pip install cibuildwheel --user
 
       - name: show environment
         run: |
