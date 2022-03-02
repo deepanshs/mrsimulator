@@ -131,13 +131,13 @@ jobs:
           - os: ubuntu-latest
             name: linux 64-bit x86_64
             cibw:
-              build: "cp3*_x86_64"
+              build: "cp3*manylinux_x86_64"
               manylinux_image: manylinux2010
 
           - os: ubuntu-latest
             name: linux 32-bit i686
             cibw:
-              build: "cp3*_i686"
+              build: "cp3*manylinux_i686"
               manylinux_image: manylinux2010
 
           # - os: ubuntu-latest
@@ -162,7 +162,7 @@ jobs:
           - os: windows-latest
             name: windows 64-bit AMD64
             cibw:
-              build: "*win_amd64"
+              build: "cp3*win_amd64"
 
     steps:
       - name: Checkout
