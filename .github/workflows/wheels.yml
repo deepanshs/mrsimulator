@@ -147,11 +147,11 @@ jobs:
           #     manylinux_image: manylinux2014
           #     arch: aarch64
 
-          # - os: windows-latest
-          #   name: win32
-          #   architecture: x86
-          #   cibw:
-          #     build: "cp*win32"
+          - os: windows-latest
+            name: win32
+            architecture: x86
+            cibw:
+              build: "cp3*win32"
 
           # - os: windows-2016
           #   name: win32-pypy
@@ -177,9 +177,9 @@ jobs:
       - name: customize mac-arm-64
         if: contains(matrix.os, 'macos') && matrix.cibw.arch
         run: |
-          sudo xcode-select -switch /Applications/Xcode_13.0.app
-          echo 'SDKROOT=/Applications/Xcode_13.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk' >> "$GITHUB_ENV"
-          echo 'MACOSX_DEPLOYMENT_TARGET=12.0' >> "$GITHUB_ENV"
+          sudo xcode-select -switch /Applications/Xcode_12.4.app
+          echo 'SDKROOT=/Applications/Xcode_12.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk' >> "$GITHUB_ENV"
+          echo 'MACOSX_DEPLOYMENT_TARGET=11.1' >> "$GITHUB_ENV"
 
       - name: Set up QEMU
         if: startsWith(matrix.os, 'ubuntu') && matrix.cibw.arch
