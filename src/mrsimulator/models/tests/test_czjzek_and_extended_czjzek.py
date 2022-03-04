@@ -81,9 +81,9 @@ def test_czjzek_distribution():
     # czjzek distribution from analytical formula
     sigma_ = 2 * sigma
     V, e = np.meshgrid(z_range, e_range)
-    denom = (2 * np.pi) ** 0.5 * sigma_ ** 5
-    res = (V ** 4 * e) * (1 - e ** 2 / 9) / denom
-    res *= np.exp(-(V ** 2 * (1 + (e ** 2 / 3))) / (2 * sigma_ ** 2))
+    denom = (2 * np.pi) ** 0.5 * sigma_**5
+    res = (V**4 * e) * (1 - e**2 / 9) / denom
+    res *= np.exp(-(V**2 * (1 + (e**2 / 3))) / (2 * sigma_**2))
     res /= res.sum()
 
     eta_pro = res.sum(axis=1)
@@ -106,9 +106,9 @@ def test_czjzek_pdf():
     # czjzek distribution from analytical formula
     sigma_ = 2 * sigma
     V, e = np.meshgrid(z_range, e_range)
-    denom = (2 * np.pi) ** 0.5 * sigma_ ** 5
-    res = (V ** 4 * e) * (1 - e ** 2 / 9) / denom
-    res *= np.exp(-(V ** 2 * (1 + (e ** 2 / 3))) / (2 * sigma_ ** 2))
+    denom = (2 * np.pi) ** 0.5 * sigma_**5
+    res = (V**4 * e) * (1 - e**2 / 9) / denom
+    res *= np.exp(-(V**2 * (1 + (e**2 / 3))) / (2 * sigma_**2))
     res /= res.sum()
 
     _, _, amp = CzjzekDistribution(sigma).pdf([z_range, e_range])

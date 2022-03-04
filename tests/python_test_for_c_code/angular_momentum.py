@@ -21,7 +21,7 @@ def wigner_rotation(
     #     wigner = wigner_matrix
     #     n_orientation = wigner.shape[0]
 
-    pha = cos_alpha + 1j * np.sqrt(1.0 - cos_alpha ** 2)
+    pha = cos_alpha + 1j * np.sqrt(1.0 - cos_alpha**2)
     ph2 = np.copy(pha)
 
     R_vec = np.tile(R_in, n_orientation).reshape(n_orientation, n)
