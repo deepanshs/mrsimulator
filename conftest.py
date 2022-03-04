@@ -20,7 +20,7 @@ from mrsimulator.transition import Transition
 from mrsimulator.transition import TransitionPathway
 from sybil import Sybil
 from sybil.parsers.codeblock import PythonCodeBlockParser
-from sybil.parsers.doctest import DocTestParser
+from sybil.parsers.skip import skip
 
 from plot_directive_parser import PythonPlotParser
 
@@ -157,8 +157,8 @@ pytest_collect_file = Sybil(
     parsers=[
         PythonCodeBlockParser(),
         PythonPlotParser(),
-        DocTestParser(),
+        skip,
     ],
-    pattern="*.rst",
+    patterns=["*.rst"],
     fixtures=["add_site", "test_models"],
 ).pytest()

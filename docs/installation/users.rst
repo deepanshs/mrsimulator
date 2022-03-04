@@ -262,6 +262,8 @@ file in your terminal. Download the test file
 
 The above statement should produce the following figure.
 
+.. skip: next
+
 .. plot:: ../pyplot/test_file.py
 
     A test example simulation of solid-state NMR spectrum.

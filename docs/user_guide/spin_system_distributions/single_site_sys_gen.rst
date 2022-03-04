@@ -36,7 +36,7 @@ have the same length, otherwise an error will be thrown. For example,
     ...
     ValueError: An array or list was either too short or too long. All arguments must be the same size. If one attribute is a type list of length n, then all attributes with list types must also be of length n, and all remaining attributes must be scalar (singular float, int, or str).
 
-  .. skip: end
+.. skip: end
 
 The attributes of each returned spin system at a certain index correspond to the attribute passed
 at that index. For example,

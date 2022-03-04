@@ -221,11 +221,12 @@ method into a new simulator object by calling the method
     :context: close-figs
 
     new_sim = Simulator()
-    new_sim.load("example.mrmtd")
+    new_sim.load_methods("example.mrmtd")
     print(new_sim.methods[0].name)
 
+.. skip: next
+
 .. plot::
-    :options: +SKIP
 
     DAS of 17O
 
@@ -261,6 +262,8 @@ Serialize simulation from a Method to a CSDM Compliant File
 -----------------------------------------------------------
 
 The simulated spectrum may be exported to a CSDM compliant JSON file using the following code:
+
+.. skip: next
 
 .. plot::
     :context: close-figs
