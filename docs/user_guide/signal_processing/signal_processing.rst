@@ -51,7 +51,7 @@ we add operations to apply Gaussian line broadening as well as a scale factor.
     ]
 
 First, an inverse Fourier transform is applied to the dataset. Then, a gaussian apodization with
-a full width at half maximum of 30 Hz in the frequency domain is applied. The unit used for the
+a full width at half maximum of 50 Hz in the frequency domain is applied. The unit used for the
 *FWHM* attribute corresponds to the dimensionality of the dataset. By choosing Hz, we imply the
 dataset is in units of frequency.
 Finally, a forward Fourier transform is applied to the apodized dataset and all points are scaled
@@ -165,7 +165,7 @@ in a dimension.
         ]
     )
 
-The above list of operations will apply a step apodization as well as 25 and 70 Hz of Gaussian
+The above list of operations will apply 25 and 70 Hz of Gaussian
 line broadening to dependent variables at index 0 and 1, respectively.
 
 Let's add another depended variable to the previously created CSDM object to see targeting

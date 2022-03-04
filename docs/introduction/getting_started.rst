@@ -76,8 +76,8 @@ Thats it! We have created a spin system whose spectrum is ready to be simulated.
 Methods
 -------
 
-A :ref:`method_documentation` object describes an NMR method. For this introduction, we will use the
-:func:`~mrsimulator.methods.BlochDecaySpectrum` which is one of the pre-defined methods.
+A :ref`method_documentation` object describes an NMR method. For this introduction, we will use
+the :py:class:`~mrsimulator.methods.BlochDecaySpectrum` which is one of the pre-defined methods.
 Some attributes of the method still need to be provided as seen below.
 
 .. plot::
@@ -186,7 +186,7 @@ see the :ref:`signal_processing_documentation` documentation page.
 Plotting the Data
 -----------------
 
-We end this example by using the `matplotlib <https://matplotlib.org/stable/>`_ Python library.
+We end this example by using the `matplotlib <https://matplotlib.org/stable/>`_ Python library
 to plot the simulated dataset.
 :numref:`fig1-getting-started` depicts the plot of the simulated spectrum.
 

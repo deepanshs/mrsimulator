@@ -164,7 +164,7 @@ optional name of the spin system. Likewise, the value of the description key is 
 string describing the spin system.
 
 The value of the *sites* key is a list of :ref:`site_api` objects. Here, this list is simply
-the single single object, `H1_site`.
+the single object, `H1_site`.
 The value of the *abundance* key is the abundance of the spin system, here given
 a value of *80%*. If the abundance key is omitted, the abundance defaults to *100%*.
 

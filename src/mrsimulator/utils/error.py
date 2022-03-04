@@ -30,3 +30,17 @@ class ImmutableEventError(Exception):
             "objects or use `Method1D`/`Method2D` class."
         )
         super().__init__(message)
+
+
+class MissingSpectralEventError(Exception):
+    """Exception raised for missing SpectralEvent from SpectralDimension.
+
+    Attributes:
+        message: explanation of the error.
+    """
+
+    def __init__(self, message=None):
+        message = message or (
+            "SpectralDimension requires at least one SpectralEvent, none found."
+        )
+        super().__init__(message)

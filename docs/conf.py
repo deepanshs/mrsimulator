@@ -77,11 +77,15 @@ extensions = [
 # generate autosummary even if no references
 autosummary_generate = True
 
+
 # Setup code to run before any doctests
 doctest_global_setup = """
 from pprint import pprint
 import numpy as np
 """
+
+# Date format used for |today| in copyright
+today_fmt = "%Y"
 
 # ---------------------------------------------------------------------------- #
 #                              Sphinx Version warning                          #
