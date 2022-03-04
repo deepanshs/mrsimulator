@@ -127,7 +127,7 @@ jobs:
             name: mac 64-bit arm64
             cibw:
               arch: arm64
-              build: "cp39*"
+              build: "cp3*"
 
           - os: ubuntu-latest
             name: linux 64-bit x86_64
@@ -148,11 +148,11 @@ jobs:
           #     manylinux_image: manylinux2014
           #     arch: aarch64
 
-          - os: windows-latest
-            name: win32
-            architecture: x86
-            cibw:
-              build: "cp3*win32"
+          # - os: windows-latest
+          #   name: win32
+          #   architecture: x86
+          #   cibw:
+          #     build: "cp3*win32"
 
           # - os: windows-2016
           #   name: win32-pypy
