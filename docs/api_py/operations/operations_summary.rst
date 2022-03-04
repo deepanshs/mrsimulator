@@ -10,7 +10,8 @@ Generic operations
 
 Import the module as
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     from mrsimulator import signal_processing as sp
 

@@ -18,6 +18,11 @@ from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.transition import Transition
 from mrsimulator.transition import TransitionPathway
+from sybil import Sybil
+from sybil.parsers.codeblock import PythonCodeBlockParser
+from sybil.parsers.doctest import DocTestParser
+
+from plot_directive_parser import PythonPlotParser
 
 font = {"weight": "light", "size": 9}
 matplotlib.rc("font", **font)
@@ -146,3 +151,14 @@ def add_site(doctest_namespace):
 
     path = TransitionPathway([t1, t2])
     doctest_namespace["path"] = path
+
+
+pytest_collect_file = Sybil(
+    parsers=[
+        PythonCodeBlockParser(),
+        PythonPlotParser(),
+        DocTestParser(),
+    ],
+    pattern="*.rst",
+    fixtures=["add_site", "test_models"],
+).pytest()

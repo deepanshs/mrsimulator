@@ -4,7 +4,8 @@ Bloch Decay Spectrum
 The :py:class:`~mrsimulator.methods.BlochDecaySpectrum` class simulates the
 Bloch decay spectrum.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     from mrsimulator.methods import BlochDecaySpectrum
 

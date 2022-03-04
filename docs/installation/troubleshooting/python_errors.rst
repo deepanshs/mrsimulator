@@ -31,7 +31,8 @@ block has the same indentation. To get out of a code block, simply remove an ind
 
 As an example of indentation, here is some code which adds the numbers 0 to 9:
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     # Add numbers 0 through 9
     total = 0
@@ -40,10 +41,6 @@ As an example of indentation, here is some code which adds the numbers 0 to 9:
         total += i
     # Exit loop code block (0 spaces)
     print(total)
-
-.. testoutput::
-
-    45
 
 Mismatched Brackets and Square Brackets
 """""""""""""""""""""""""""""""""""""""
@@ -66,52 +63,56 @@ TypeError: object is not callable
 The most common reason ``TypeError: object is not callable`` is when ``()`` is used instead of
 ``[]``. Parentheses are used to call functions. For example
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     def foo(n):
         print("I received", n)
 
     foo(1)
-
-.. testoutput::
-
-    I received 1
+    # I received 1
 
 But parentheses aren't valid for indexing a subscriptable object (list, tuple, etc). For
 example, the following code will throw an TypeError
 
-.. testcode::
+.. skip: start
+
+.. plot::
+    :context: close-figs
 
     bar = [1, 2, 3, 4]
     bar(1)
 
-.. testoutput::
+.. plot::
 
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
     TypeError: 'list' object is not callable
 
+.. skip:: end
+
 but the following code is valid
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     bar = [1, 2, 3, 4]
     print(bar[1])
-
-.. testoutput::
-
-    2
+    # 2
 
 The same applies for dictionaries, but instead of indexing with an integer you would index with
 a keyword. For example
 
-.. testcode::
+.. skip: start
+
+.. plot::
+    :context: close-figs
 
     spam = {"ham": "Hello World!", "eggs": 54.73}
     print(spam["ham"])  # prints Hello World!
     print(spam("ham"))
 
-.. testoutput::
+.. plot::
 
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
@@ -123,16 +124,19 @@ TypeError: object is not subscriptable
 ``TypeError: object is not subscriptable`` is thrown when indexing a non-subscriptable object.
 For example
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     some_num = 42
     some_num[3]
 
-.. testoutput::
+.. plot::
 
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
     TypeError: 'int' object is not subscriptable
+
+.. skip: end
 
 Also subscriptable objects can only be indexed so many times. A 1D list can only be indexed once,
 2D twice, and so on. If you are using nested lists/dicts, make sure you aren't exceeding the number

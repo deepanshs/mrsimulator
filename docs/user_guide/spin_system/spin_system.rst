@@ -18,7 +18,8 @@ A site object holds single-site NMR interaction parameters, which include the nu
 shielding and quadrupolar interaction parameters.
 Consider the example below of a :ref:`site_api` object for a deuterium nucleus created in Python.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     # Import objects for the Site
     from mrsimulator import Site
@@ -69,13 +70,14 @@ the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively
 Also, all objects in  ``mrsimulator``
 have the attribute *property_units* which provides the units for all class properties.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     print(Site().property_units)
 
     print(SymmetricTensor().property_units)
 
-.. testoutput::
+.. plot::
 
     {'isotropic_chemical_shift': 'ppm'}
     {'zeta': 'ppm', 'Cq': 'Hz', 'D': 'Hz', 'alpha': 'rad', 'beta': 'rad', 'gamma': 'rad'}
@@ -89,7 +91,8 @@ A coupling object holds two site NMR interaction parameters, which can include t
 and the dipolar coupling interaction parameters.
 Consider the example below of a :ref:`coupling_api` object between two sites
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     # Import the Coupling object
     from mrsimulator import Coupling
@@ -140,7 +143,8 @@ Single Site Spin System
 
 Here we create a relatively unexciting single site proton spin system
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     # Import the SpinSystem object
     from mrsimulator import SpinSystem
@@ -174,7 +178,8 @@ To create a spin system with more than one site, we simply add more site objects
 the sites list. Here we create a :math:`^{13}\text{C}` site and add it along with the previous
 proton site to a new spin system.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     # Create the new Site object
     C13_site = Site(
@@ -208,7 +213,8 @@ To create couplings between sites, we simply need to add a list of :ref:`couplin
 spin system. Below we create a :math:`^{2}\text{H}` and :math:`^{13}\text{C}` site as well as a
 coupling between them.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     # Create site objects
     H2_site = Site(
@@ -260,7 +266,8 @@ coupling between them.
 We now have the site objects and the coupling object to make a coupled spin system. We now
 construct such a spin system.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     coupled_spin_system = SpinSystem(sites=[H2_site, C13_site], couplings=[H2_C13_coupling])
 

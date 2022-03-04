@@ -108,6 +108,7 @@ versionwarning_body_selector = "div.document"
 #                               Plot directive config                          #
 # ---------------------------------------------------------------------------- #
 plot_html_show_source_link = False
+plot_include_source = True
 plot_rcparams = {
     "figure.figsize": [6, 3],
 }
@@ -158,7 +159,7 @@ sphinx_gallery_conf = {
         "fitting",
     ],  # path to where to save gallery generated output
     "within_subsection_order": FileNameSortKey,
-    "show_memory": True,
+    # "show_memory": True,
     # "line_numbers": True,
     "subsection_order": ExplicitOrder(
         [

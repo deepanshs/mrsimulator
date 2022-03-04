@@ -6,7 +6,8 @@
 
 We offer a range of serialization options based on a JSON structure demonstrated below.
 
-.. testsetup::
+.. plot::
+    :include-source: False
 
     from mrsimulator import Simulator
     sim = Simulator()
@@ -19,7 +20,8 @@ All ``mrsimulator`` objects can be serialized into a JSON format. Calling the
 ``json()`` method on an object will return a Python dictionary of the objects JSON format.
 Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` class.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     from mrsimulator import Site, SpinSystem
     from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -36,7 +38,7 @@ Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` c
     py_dict = Si29_site.json()
     print(py_dict)
 
-.. testoutput::
+.. plot::
 
     {'isotope': '29Si', 'isotropic_chemical_shift': '-89.0 ppm', 'shielding_symmetric': {'zeta': '59.8 ppm', 'eta': 0.62}}
 
@@ -47,7 +49,8 @@ Simmilarly, all ``mrsimulator`` objects can be loaded from a dictionary represen
 construct the same site as a dictionary and call :meth:`~mrsimulator.Site.parse_dict_with_units`
 to create a :ref:`site_api` object from a dictionary.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     site_dict = {
         "isotope": "29Si",
@@ -63,7 +66,7 @@ to create a :ref:`site_api` object from a dictionary.
     print(Si29_site_from_dict == Si29_site)
 
 
-.. testoutput::
+.. plot::
 
     True
 
@@ -81,7 +84,8 @@ A list of spin systems in a :ref:`simulator_api` object can be serialized to a f
 a simulator with three distinct :math:`^{29}\text{Si}` spin systems and serialize these spin
 systems to a file by calling :meth:`~mrsimulator.Simulator.export_spin_systems`.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     from mrsimulator import Site, SpinSystem, Simulator
     from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -130,14 +134,14 @@ be useful when working with a large number of spin systems in multiple Python sc
 we load the spin system file, ``example.mrsys``, into a new simulator using the method
 :meth:`~mrsimulator.Simulator.load_spin_systems`.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     new_sim = Simulator()
     new_sim.load_spin_systems("example.mrsys")
     print(len(new_sim.spin_systems))
 
-.. testoutput::
-    :options: +SKIP
+.. plot::
 
     3
 
@@ -148,7 +152,8 @@ A list of methods in a :ref:`simulator_api` object can be serialized to a file. 
 custom DAS method and serialize it to a file using the method
 :meth:`~mrsimulator.Simulator.export_methods`.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     from mrsimulator import Simulator
     from mrsimulator.methods import Method2D
@@ -212,13 +217,14 @@ Just like spin systems, methods can also be loaded from a file. Here we load the
 method into a new simulator object by calling the method
 :meth:`~mrsimulator.Simulator.load_methods`.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     new_sim = Simulator()
     new_sim.load("example.mrmtd")
     print(new_sim.methods[0].name)
 
-.. testoutput::
+.. plot::
     :options: +SKIP
 
     DAS of 17O
@@ -235,7 +241,8 @@ using the :meth:`~mrsimulator.Simulator.save` method.
 By default, the attribute values are serialized as physical quantities represented as a
 string with a value and a unit.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     sim = Simulator()
     # ... Setup Simulator object
@@ -245,7 +252,8 @@ Now the file ``sample.mrsim`` holds the JSON representation of ``sim``, a :ref:`
 To load a simulator from a file, call the class method :meth:`~mrsimulator.Simulator.load`.
 By default, the load method parses the file for units.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     new_sim = Simulator().load("sample.mrsim")
 
@@ -254,13 +262,11 @@ Serialize simulation from a Method to a CSDM Compliant File
 
 The simulated spectrum may be exported to a CSDM compliant JSON file using the following code:
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     sim_coesite.methods[0].simulation.save("coesite_simulation.csdf")
 
-.. testoutput::
-    :options: +SKIP
-    :hide:
 
 For more information on the CSDM format see the
 `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
@@ -272,7 +278,8 @@ The :ref:`simulator_api` object and a list of :ref:`signal_processing_api` objec
 can both be serialized within the same file by calling the :meth:`~mrsimulator.save`
 method.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     from mrsimulator import save
     from mrsimulator import Simulator
@@ -296,7 +303,8 @@ To load a simulator and signal processors from a file, call the :meth:`~mrsimula
 method. This method will return an ordered list of a :ref:`simulator_api` object, a list of
 :ref:`signal_processing_api` objects, and a metadata dictionary
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     from mrsimulator import load
 

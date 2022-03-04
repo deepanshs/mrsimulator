@@ -13,7 +13,8 @@ Extended Czjzek distribution of symmetric shielding tensors
 To generate an extended Czjzek distribution, use the
 :py:class:`~mrsimulator.models.ExtCzjzekDistribution` class as follows.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     from mrsimulator.models import ExtCzjzekDistribution
 
@@ -34,7 +35,8 @@ As before, you may either draw random samples from this distribution or generate
 probability distribution function. Let's first draw points from this distribution, using
 the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.rvs` method of the instance.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     zeta_dist, eta_dist = shielding_model.rvs(size=50000)
 
@@ -43,7 +45,10 @@ In the above example, we draw *size=50000* random points of the distribution. Th
 in the Haeberlen convention.
 The scatter plot of these coordinates is shown below.
 
-.. testcode::
+.. skip: next
+
+.. plot::
+    :context: close-figs
 
     import matplotlib.pyplot as plt
 
@@ -55,9 +60,9 @@ The scatter plot of these coordinates is shown below.
     plt.tight_layout()
     plt.show()
 
-.. image:: /_static/ext_czjzek1.png
-   :class: sphx-glr-single-img
-    :alt: Extended Czjzek Distribution
+.. .. image:: /_static/ext_czjzek1.png
+..    :class: sphx-glr-single-img
+..     :alt: Extended Czjzek Distribution
 
 ----
 
@@ -69,7 +74,8 @@ setup as the extended Czjzek distribution of symmetric shielding tensors, shown 
 In the following example, we generate the probability distribution
 function using the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.pdf` method.
 
-.. testcode::
+.. plot::
+    :context: close-figs
 
     import numpy as np
 
@@ -90,7 +96,10 @@ argument to the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.pdf` method.
 
 The plot of the extended Czjzek probability distribution is shown below.
 
-.. testcode::
+.. skip: next
+
+.. plot::
+    :context: close-figs
 
     import matplotlib.pyplot as plt
 
@@ -100,9 +109,9 @@ The plot of the extended Czjzek probability distribution is shown below.
     plt.tight_layout()
     plt.show()
 
-.. image:: /_static/ext_czjzek2.png
-   :class: sphx-glr-single-img
-    :alt: Extended Czjzek Distribution
+.. .. image:: /_static/ext_czjzek2.png
+..    :class: sphx-glr-single-img
+..     :alt: Extended Czjzek Distribution
 
 .. note::
     The ``pdf`` method of the instance generates the probability distribution function
