@@ -107,6 +107,7 @@ jobs:
         python -m pip install "pillow==8.4"
       CIBW_BEFORE_TEST: |
         python -m pip install -U pip
+        python -m pip install -r requirements.txt --no-use-pep517
       CIBW_TEST_REQUIRES: "pytest"
       CIBW_TEST_COMMAND: |
         python -c "import mrsimulator"
