@@ -105,10 +105,10 @@ jobs:
       CIBW_BEFORE_TEST_LINUX: |
         yum -y install libjpeg-devel zlib1g-devel
         python -m pip install "pillow==8.4"
-        python -m pip install -r requirements.txt --no-use-pep517
+        python -m pip install -r requirements.txt
       CIBW_BEFORE_TEST: |
         python -m pip install -U pip
-        python -m pip install -r requirements.txt --no-use-pep517
+        python -m pip install -r requirements.txt
       CIBW_TEST_REQUIRES: "pytest"
       CIBW_TEST_COMMAND: |
         python -c "import mrsimulator"
