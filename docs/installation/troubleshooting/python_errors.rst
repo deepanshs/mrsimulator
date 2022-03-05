@@ -75,21 +75,19 @@ The most common reason ``TypeError: object is not callable`` is when ``()`` is u
 But parentheses aren't valid for indexing a subscriptable object (list, tuple, etc). For
 example, the following code will throw an TypeError
 
-.. skip: start
+.. skip: next
 
-.. plot::
+.. code-block:: python
     :context: close-figs
 
     bar = [1, 2, 3, 4]
     bar(1)
 
-.. plot::
+.. code-block:: shell
 
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
     TypeError: 'list' object is not callable
-
-.. skip:: end
 
 but the following code is valid
 
@@ -103,16 +101,16 @@ but the following code is valid
 The same applies for dictionaries, but instead of indexing with an integer you would index with
 a keyword. For example
 
-.. skip: start
+.. skip: next
 
-.. plot::
+.. code-block:: python
     :context: close-figs
 
     spam = {"ham": "Hello World!", "eggs": 54.73}
     print(spam["ham"])  # prints Hello World!
     print(spam("ham"))
 
-.. plot::
+.. code-block:: shell
 
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
@@ -124,19 +122,21 @@ TypeError: object is not subscriptable
 ``TypeError: object is not subscriptable`` is thrown when indexing a non-subscriptable object.
 For example
 
-.. plot::
+.. skip: next
+
+.. code-block:: python
     :context: close-figs
 
     some_num = 42
     some_num[3]
 
-.. plot::
+.. skip: next
+
+.. code-block:: shell
 
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
     TypeError: 'int' object is not subscriptable
-
-.. skip: end
 
 Also subscriptable objects can only be indexed so many times. A 1D list can only be indexed once,
 2D twice, and so on. If you are using nested lists/dicts, make sure you aren't exceeding the number

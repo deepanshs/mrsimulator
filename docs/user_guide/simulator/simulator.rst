@@ -129,11 +129,14 @@ not be sufficient.
     # plot the dataset using the method defined above
     plot(sim.methods[0].simulation)
 
-.. .. figure:: ../../_static/low_sidebands.png
-..     :alt: Simulation using a configuration with too few sidebands
-..     :figwidth: 75%
+.. raw:: html
 
-    Inaccurate simulation resulting from computing low number of sidebands.
+    <div style="width: 65%; margin: 0 auto">
+        <span><i>
+            Inaccurate simulation resulting from computing low number of sidebands.
+        </i></span>
+        <br></br>
+    </div>
 
 Looking at the spinning sideband patterns, we see an abrupt termination of the sideband
 amplitudes at the edges. This inaccurate simulation arises from evaluating a small number of
@@ -151,11 +154,14 @@ resolve the issue.
     sim.run()
     plot(sim.methods[0].simulation)
 
-.. .. figure:: ../../_static/good_sidebands.png
-..     :alt: Simulation using a configuration sufficient number of sidebands
-..     :figwidth: 75%
+.. raw:: html
 
-    Accurate simulation after increasing number of sidebands computed.
+    <div style="width: 65%; margin: 0 auto">
+        <span><i>
+                Accurate simulation after increasing number of sidebands computed.
+        </i></span>
+        <br></br>
+    </div>
 
 Conversely, 64 sidebands might be redundant, in which case the number of sidebands can be reduced.
 Reducing the number of sidebands
@@ -204,12 +210,15 @@ Consider the following examples.
     sim.run()
     plot(sim.methods[0].simulation)
 
-.. .. figure:: ../../_static/octant_incomplete.png
-..     :alt: Spectrum from incomplete integration scheme
-..     :figwidth: 75%
+.. raw:: html
 
-    Inaccurate simulation resulting from integrating over an octant when the spin system has Euler
-    angles.
+    <div style="width: 65%; margin: 0 auto">
+        <span><i>
+            Inaccurate simulation resulting from integrating over an octant when the spin
+            system has Euler angles
+        </i></span>
+        <br></br>
+    </div>
 
 To fix this inaccurate spectrum, set the integration volume to *hemisphere* and re-simulate.
 
@@ -222,12 +231,15 @@ To fix this inaccurate spectrum, set the integration volume to *hemisphere* and 
     sim.run()
     plot(sim.methods[0].simulation)
 
-.. .. figure:: ../../_static/hemisphere_complete.png
-..     :alt: Correct CSA spectrum from hemisphere integration
-..     :figwidth: 75%
+.. raw:: html
 
-    Accurate CSA spectrum resulting from the frequency contributions evaluated over the top
-    hemisphere.
+    <div style="width: 65%; margin: 0 auto">
+        <span><i>
+            Accurate CSA spectrum resulting from the frequency contributions evaluated over the top
+            hemisphere.
+        </i></span>
+        <br></br>
+    </div>
 
 Integration Density
 '''''''''''''''''''
@@ -320,12 +332,15 @@ following example.
     sim.run()
     plot(sim.methods[0].simulation)
 
-.. .. figure:: ../../_static/decompose_none.png
-..     :alt: Spectrum with default decompose of none
-..     :figwidth: 75%
+.. raw:: html
 
-    The frequency contributions from each individual spin systems are combined
-    into one spectrum.
+    <div style="width: 65%; margin: 0 auto">
+        <span><i>
+            The frequency contributions from each individual spin systems are combined
+            into one spectrum.
+        </i></span>
+        <br></br>
+    </div>
 
 When :py:attr:`~mrsimulator.simulator.ConfigSimulator.decompose_spectrum` is set to
 ``spin_system``, the resulting simulation
@@ -343,11 +358,14 @@ system as above, but change the decomposition to ``spin_system``.
     sim.run()
     plot(sim.methods[0].simulation)
 
-.. .. figure:: ../../_static/decompose_spin_system.png
-..     :alt: Spectrum with decompose of spin system
-..     :figwidth: 75%
+.. raw:: html
 
-    Each spin system's frequency contributions are held in separate spectra.
+    <div style="width: 65%; margin: 0 auto">
+        <span><i>
+            Each spin system's frequency contributions are held in separate spectra.
+        </i></span>
+        <br></br>
+    </div>
 
 ----
 

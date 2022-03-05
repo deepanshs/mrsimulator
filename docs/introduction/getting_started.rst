@@ -205,8 +205,4 @@ Below is the code used to generate the image:
     plt.tight_layout(pad=0.1)
     plt.show()
 
-.. .. _fig1-getting-started:
-.. .. figure:: ../_static/getting_started.png
-..     :figwidth: 75%
-
-    A simulated MAS spectrum of :math:`^{13}\text{C}`.
+A simulated MAS spectrum of :math:`^{13}\text{C}`.

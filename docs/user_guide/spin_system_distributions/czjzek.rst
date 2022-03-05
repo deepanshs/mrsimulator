@@ -56,10 +56,6 @@ The scatter plot of these coordinates is shown below.
     plt.tight_layout()
     plt.show()
 
-.. .. image:: /_static/czjzek1.png
-..     :class: sphx-glr-single-img
-..     :alt: Czjzek Distribution
-
 ----
 
 Czjzek distribution of symmetric quadrupolar tensors

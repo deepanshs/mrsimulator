@@ -60,10 +60,6 @@ The scatter plot of these coordinates is shown below.
     plt.tight_layout()
     plt.show()
 
-.. .. image:: /_static/ext_czjzek1.png
-..    :class: sphx-glr-single-img
-..     :alt: Extended Czjzek Distribution
-
 ----
 
 Extended Czjzek distribution of symmetric quadrupolar tensors
@@ -108,10 +104,6 @@ The plot of the extended Czjzek probability distribution is shown below.
     plt.ylabel("$\eta$")
     plt.tight_layout()
     plt.show()
-
-.. .. image:: /_static/ext_czjzek2.png
-..    :class: sphx-glr-single-img
-..     :alt: Extended Czjzek Distribution
 
 .. note::
     The ``pdf`` method of the instance generates the probability distribution function

@@ -22,7 +22,7 @@ have the same length, otherwise an error will be thrown. For example,
 
 .. skip: start
 
-.. plot::
+.. code-block:: python
     :context: close-figs
 
     single_site_system_generator(
@@ -30,7 +30,7 @@ have the same length, otherwise an error will be thrown. For example,
         isotropic_chemical_shift=[1.3, 3.7, 65.0],
     )
 
-.. plot::
+.. code-block:: shell
 
     Traceback (most recent call last):
     ...

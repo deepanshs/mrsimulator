@@ -253,9 +253,5 @@ Now that we have our processed data, we can plot the two spectra.
     plt.tight_layout()
     plt.show()
 
-.. .. figure:: ../_static/ethanol_isotopomers.png
-..    :alt: 1H and 13C spectra
-..    :figwidth: 90 %
-
 Note the :math:`^{13}\text{C}` satellites seen on either side of the peaks near
 1.2 ppm and 2.6 ppm in the :math:`^1\text{H}` spectrum.

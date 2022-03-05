@@ -93,26 +93,29 @@ The variable ``processed_data`` is another CSDM object holding the dataset after
 operations has been applied to ``csdm_object``. Below is a plot comparing the unprocessed and
 processed data
 
-..
-.. .. plot::
-..     :context: close-figs
-..
-..     import matplotlib.pyplot as plt
-..     _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"})
-..     ax[0].plot(csdm_object, color="black", linewidth=1)
-..     ax[0].set_title("Unprocessed")
-..     ax[1].plot(processed_data.real, color="black", linewidth=1)
-..     ax[1].set_title("Processed")
-..     plt.tight_layout()
-..     plt.show()
-..
+.. skip: next
 
-.. figure:: ../../_static/signal_processor_csdm.png
-    :figwidth: 75%
-    :alt: Plot of unprocessed data and processed data
+.. plot::
+    :context: close-figs
 
-    The unprocessed data (left) and processed data with a Gaussian convolution and scale factor
-    (right).
+    import matplotlib.pyplot as plt
+    _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"})
+    ax[0].plot(csdm_object, color="black", linewidth=1)
+    ax[0].set_title("Unprocessed")
+    ax[1].plot(processed_data.real, color="black", linewidth=1)
+    ax[1].set_title("Processed")
+    plt.tight_layout()
+    plt.show()
+
+.. raw:: html
+
+    <div style="width: 65%; margin: 0 auto">
+        <span><i>
+            The unprocessed data (left) and processed data with a Gaussian convolution and scale factor
+            (right).
+        </i></span>
+        <br></br>
+    </div>
 
 Applying Operations along a Dimension
 -------------------------------------
@@ -182,18 +185,35 @@ Now, we again apply the operations with the
 :py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method.
 The comparison of the unprocessed and processed data is also show below.
 
-.. code-block::
+.. plot::
+    :context: close-figs
 
     processed_data = processor.apply_operations(data=csdm_object)
 
 Below is a plot of the dataset before and after applying the operations
 
-.. figure:: ../../_static/signal_processor_dv.png
-    :figwidth: 75%
-    :alt: Plot comparing unprocessed and processed data where apodizations are applied to different dependent variables.
+.. skip: next
 
-    The unprocessed data (left) and the processed data with convolutions applied to different
-    dependent variables.
+.. plot::
+    :context: close-figs
+
+    _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"})
+    ax[0].plot(csdm_object, linewidth=1)
+    ax[0].set_title("Unprocessed")
+    ax[1].plot(processed_data.real, linewidth=1)
+    ax[1].set_title("Processed")
+    plt.tight_layout()
+    plt.show()
+
+.. raw:: html
+
+    <div style="width: 65%; margin: 0 auto">
+        <span><i>
+            The unprocessed data (left) and the processed data with convolutions applied to different
+            dependent variables.
+        </i></span>
+        <br></br>
+    </div>
 
 .. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.,
             Core Scientific Dataset Model: A lightweight and portable model and
