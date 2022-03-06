@@ -6,8 +6,7 @@ The :py:class:`~mrsimulator.methods.ThreeQ_VAS`, :py:class:`~mrsimulator.methods
 spectrum. The spinning speed for all three methods is fixed at infinite speed. The spectrum
 is also sheared such that the correlating dimensions are the isotropic dimension and the VAS dimension.
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     from mrsimulator.methods import ThreeQ_VAS
 
@@ -32,8 +31,7 @@ is also sheared such that the correlating dimensions are the isotropic dimension
 
 The other methods, representing 5 and 7 quantum transitions, can be imported as follows:
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     from mrsimulator.methods import FiveQ_VAS
     from mrsimulator.methods import SevenQ_VAS

@@ -16,7 +16,7 @@ Setting up a simulator object and running a simulation is simple. Below we add s
 spin systems and methods to a simulator object.
 
 .. plot::
-    :context: close-figs
+    :context: reset
 
     from mrsimulator import Site, Simulator, SpinSystem
     from mrsimulator.methods import BlochDecaySpectrum
@@ -107,6 +107,7 @@ not be sufficient.
 
 .. plot::
     :context: close-figs
+    :caption: Inaccurate simulation resulting from computing low number of sidebands.
 
     from mrsimulator import Simulator, SpinSystem, Site
     from mrsimulator.methods import BlochDecaySpectrum
@@ -129,15 +130,6 @@ not be sufficient.
     # plot the dataset using the method defined above
     plot(sim.methods[0].simulation)
 
-.. raw:: html
-
-    <div style="width: 65%; margin: 0 auto">
-        <span><i>
-            Inaccurate simulation resulting from computing low number of sidebands.
-        </i></span>
-        <br></br>
-    </div>
-
 Looking at the spinning sideband patterns, we see an abrupt termination of the sideband
 amplitudes at the edges. This inaccurate simulation arises from evaluating a small number of
 sidebands relative to the given anisotropy. Increasing the number of sidebands to 90 should
@@ -147,21 +139,13 @@ resolve the issue.
 
 .. plot::
     :context: close-figs
+    :caption: Accurate simulation after increasing number of sidebands computed.
 
     # sim already holds our spin systems and methods; no need to reconstruct
     # set number of sidebands to 90
     sim.config.number_of_sidebands = 90
     sim.run()
     plot(sim.methods[0].simulation)
-
-.. raw:: html
-
-    <div style="width: 65%; margin: 0 auto">
-        <span><i>
-                Accurate simulation after increasing number of sidebands computed.
-        </i></span>
-        <br></br>
-    </div>
 
 Conversely, 64 sidebands might be redundant, in which case the number of sidebands can be reduced.
 Reducing the number of sidebands
@@ -193,6 +177,8 @@ Consider the following examples.
 
 .. plot::
     :context: close-figs
+    :caption: Inaccurate simulation resulting from integrating over an octant when the spin
+        system has Euler angles.
 
     # add Euler angles to the previous site Si29 site
     Si29_site.shielding_symmetric.alpha = 1.563  # in rad
@@ -210,36 +196,18 @@ Consider the following examples.
     sim.run()
     plot(sim.methods[0].simulation)
 
-.. raw:: html
-
-    <div style="width: 65%; margin: 0 auto">
-        <span><i>
-            Inaccurate simulation resulting from integrating over an octant when the spin
-            system has Euler angles
-        </i></span>
-        <br></br>
-    </div>
-
 To fix this inaccurate spectrum, set the integration volume to *hemisphere* and re-simulate.
 
 .. skip: next
 
 .. plot::
     :context: close-figs
+    :caption: Accurate CSA spectrum resulting from the frequency contributions evaluated over
+        the top hemisphere.
 
     sim.config.integration_volume = "hemisphere"
     sim.run()
     plot(sim.methods[0].simulation)
-
-.. raw:: html
-
-    <div style="width: 65%; margin: 0 auto">
-        <span><i>
-            Accurate CSA spectrum resulting from the frequency contributions evaluated over the top
-            hemisphere.
-        </i></span>
-        <br></br>
-    </div>
 
 Integration Density
 '''''''''''''''''''
@@ -307,6 +275,8 @@ following example.
 
 .. plot::
     :context: close-figs
+    :caption: The frequency contributions from each individual spin systems are
+        combined into one spectrum.
 
     # Create two distinct sites
     site_A = Site(
@@ -332,16 +302,6 @@ following example.
     sim.run()
     plot(sim.methods[0].simulation)
 
-.. raw:: html
-
-    <div style="width: 65%; margin: 0 auto">
-        <span><i>
-            The frequency contributions from each individual spin systems are combined
-            into one spectrum.
-        </i></span>
-        <br></br>
-    </div>
-
 When :py:attr:`~mrsimulator.simulator.ConfigSimulator.decompose_spectrum` is set to
 ``spin_system``, the resulting simulation
 is a series of spectra each arising from a single spin system. The number of spectra is the
@@ -352,20 +312,12 @@ system as above, but change the decomposition to ``spin_system``.
 
 .. plot::
     :context: close-figs
+    :caption: Each spin system's frequency contributions are held in separate spectra.
 
     # sim already has the two spin systems and method; no need to reconstruct
     sim.config.decompose_spectrum = "spin_system"
     sim.run()
     plot(sim.methods[0].simulation)
-
-.. raw:: html
-
-    <div style="width: 65%; margin: 0 auto">
-        <span><i>
-            Each spin system's frequency contributions are held in separate spectra.
-        </i></span>
-        <br></br>
-    </div>
 
 ----
 

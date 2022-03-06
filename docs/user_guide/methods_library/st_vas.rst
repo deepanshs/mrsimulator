@@ -5,8 +5,7 @@ The :py:class:`~mrsimulator.methods.ST1_VAS` and :py:class:`~mrsimulator.methods
 simulate a sheared and scaled satellite and central transition correlation spectrum. The spinning
 speed for these methods is fixed at infinite speed.
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     from mrsimulator.methods import ST1_VAS
 

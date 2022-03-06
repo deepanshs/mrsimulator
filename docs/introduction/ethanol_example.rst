@@ -13,7 +13,7 @@ It is good practice to import packages and classes and classes at the beginning 
 Here we import everything we will use in this example
 
 .. plot::
-    :context: close-figs
+    :context: reset
 
     import matplotlib.pyplot as plt
 
@@ -237,6 +237,9 @@ Now that we have our processed data, we can plot the two spectra.
 
 .. plot::
     :context: close-figs
+    :caption: :math:`^1\text{H}` and :math:`^{13}\text{C}` spectrum of ethanol. Note,
+        the :math:`^{13}\text{C}` satellites seen on either side of the peaks near 1.2 ppm
+        and 2.6 ppm in the :math:`^1\text{H}` spectrum.
 
     fig, ax = plt.subplots(
         nrows=1, ncols=2, subplot_kw={"projection": "csdm"}, figsize=[8, 3.5]
@@ -252,6 +255,3 @@ Now that we have our processed data, we can plot the two spectra.
 
     plt.tight_layout()
     plt.show()
-
-Note the :math:`^{13}\text{C}` satellites seen on either side of the peaks near
-1.2 ppm and 2.6 ppm in the :math:`^1\text{H}` spectrum.

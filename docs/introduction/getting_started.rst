@@ -20,7 +20,7 @@ First we will construct two :ref:`site_documentation` objects for the :math:`^1\
 :math:`^{13}\text{C}` sites.
 
 .. plot::
-    :context: close-figs
+    :context: reset
 
     # Import the Site and SymmetricTensor classes
     from mrsimulator import Site
@@ -192,17 +192,17 @@ to plot the simulated dataset.
 
 Below is the code used to generate the image:
 
+.. _fig1-getting-started:
 .. skip: next
 
 .. plot::
     :context: close-figs
+    :caption: A simulated :math:`^{13}\text{C}` MAS spectrum.
 
     import matplotlib.pyplot as plt
-    plt.figure(figsize=(6.6, 4))  # set the figure size
+    plt.figure(figsize=(5, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
     ax.plot(processed_data.real)
     ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout(pad=0.1)
     plt.show()
-
-A simulated MAS spectrum of :math:`^{13}\text{C}`.

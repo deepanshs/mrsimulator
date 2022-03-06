@@ -31,8 +31,7 @@ block has the same indentation. To get out of a code block, simply remove an ind
 
 As an example of indentation, here is some code which adds the numbers 0 to 9:
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     # Add numbers 0 through 9
     total = 0
@@ -63,11 +62,11 @@ TypeError: object is not callable
 The most common reason ``TypeError: object is not callable`` is when ``()`` is used instead of
 ``[]``. Parentheses are used to call functions. For example
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     def foo(n):
         print("I received", n)
+
 
     foo(1)
     # I received 1
@@ -78,7 +77,6 @@ example, the following code will throw an TypeError
 .. skip: next
 
 .. code-block:: python
-    :context: close-figs
 
     bar = [1, 2, 3, 4]
     bar(1)
@@ -91,8 +89,7 @@ example, the following code will throw an TypeError
 
 but the following code is valid
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     bar = [1, 2, 3, 4]
     print(bar[1])
@@ -104,7 +101,6 @@ a keyword. For example
 .. skip: next
 
 .. code-block:: python
-    :context: close-figs
 
     spam = {"ham": "Hello World!", "eggs": 54.73}
     print(spam["ham"])  # prints Hello World!
@@ -125,7 +121,6 @@ For example
 .. skip: next
 
 .. code-block:: python
-    :context: close-figs
 
     some_num = 42
     some_num[3]

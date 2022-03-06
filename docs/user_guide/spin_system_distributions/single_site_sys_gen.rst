@@ -10,8 +10,7 @@ of uncoupled spin systems. Each :ref:`spin_sys_api` in the returned list holds a
 :ref:`site_api` object since the backend simulation is more efficient for single site spin
 systems. Import the method as below
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     from mrsimulator.utils.collection import single_site_system_generator
 
@@ -23,7 +22,6 @@ have the same length, otherwise an error will be thrown. For example,
 .. skip: start
 
 .. code-block:: python
-    :context: close-figs
 
     single_site_system_generator(
         isotope=["1H", "1H", "13C", "17O"],
@@ -34,15 +32,17 @@ have the same length, otherwise an error will be thrown. For example,
 
     Traceback (most recent call last):
     ...
-    ValueError: An array or list was either too short or too long. All arguments must be the same size. If one attribute is a type list of length n, then all attributes with list types must also be of length n, and all remaining attributes must be scalar (singular float, int, or str).
+    ValueError: An array or list was either too short or too long. All arguments must be the
+    same size. If one attribute is a type list of length n, then all attributes with list types
+    must also be of length n, and all remaining attributes must be scalar (singular float, int,
+    or str).
 
 .. skip: end
 
 The attributes of each returned spin system at a certain index correspond to the attribute passed
 at that index. For example,
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     single_site_system_generator(
         isotope=["1H", "1H", "13C"],
@@ -59,8 +59,7 @@ Broadcasting Length of List
 Arguments passed as a single value will be broadcast to a list of that value with the same
 length as other lists passed. For example
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     single_site_system_generator(
         isotope=["1H", "1H", "1H"],
@@ -69,8 +68,7 @@ length as other lists passed. For example
 
 is equivalent to calling
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     single_site_system_generator(
         isotope=["1H", "1H", "1H"],
@@ -85,8 +83,7 @@ attribute and the values are single values or a ``list``/``np.array`` of values.
 lists must have the same length of all other lists passed. Single values will be broadcast to a
 list of that value with the same length as other lists passed. For example
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     single_site_system_generator(
         isotope="13C",
@@ -102,8 +99,7 @@ values but the same ``shielding_symmetric.eta`` value.
 If you need to intermix sites with and without tensor parameters, simply put ``None`` at the index
 of the site without the tensor parameter.
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     single_site_system_generator(
         isotope=["1H", "17O"],

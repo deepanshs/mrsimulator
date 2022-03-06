@@ -10,8 +10,7 @@ Generic operations
 
 Import the module as
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     from mrsimulator import signal_processing as sp
 
@@ -71,7 +70,7 @@ the CSDM object.
       ~Gaussian
       ~Exponential
       ~SkewedGaussian
-      ~Step
+      ~TopHat
       ~Mask
 
 .. seealso::

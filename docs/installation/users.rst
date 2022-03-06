@@ -256,7 +256,7 @@ If the installation is successful, you should be able to run the following test
 file in your terminal. Download the test file
 `here <https://raw.githubusercontent.com/deepanshs/mrsimulator-examples/master/test_file_v0.3.py?raw=true>`_.
 
-.. code-block:: text
+.. code-block:: shell
 
     $ python test_file.py
 
@@ -265,8 +265,7 @@ The above statement should produce the following figure.
 .. skip: next
 
 .. plot:: ../pyplot/test_file.py
-
-    A test example simulation of solid-state NMR spectrum.
+    :caption: A test example simulation of solid-state NMR spectrum.
 
 .. note::
 

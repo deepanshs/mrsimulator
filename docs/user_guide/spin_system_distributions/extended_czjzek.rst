@@ -14,7 +14,7 @@ To generate an extended Czjzek distribution, use the
 :py:class:`~mrsimulator.models.ExtCzjzekDistribution` class as follows.
 
 .. plot::
-    :context: close-figs
+    :context: reset
 
     from mrsimulator.models import ExtCzjzekDistribution
 
@@ -49,6 +49,7 @@ The scatter plot of these coordinates is shown below.
 
 .. plot::
     :context: close-figs
+    :caption: Extended Czjzek Distribution of shielding tensors.
 
     import matplotlib.pyplot as plt
 
@@ -96,6 +97,7 @@ The plot of the extended Czjzek probability distribution is shown below.
 
 .. plot::
     :context: close-figs
+    :caption: Extended Czjzek Distribution of EFG tensors.
 
     import matplotlib.pyplot as plt
 

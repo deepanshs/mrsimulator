@@ -29,7 +29,7 @@ In ``mrsimulator``, the :py:class:`~mrsimulator.signal_processing.SignalProcesso
 used to apply operations. Here we create a new signal processing object
 
 .. plot::
-    :context: close-figs
+    :context: reset
 
     # Import the signal_processing module
     from mrsimulator import signal_processing as sp
@@ -97,6 +97,8 @@ processed data
 
 .. plot::
     :context: close-figs
+    :caption: The unprocessed data (left) and processed data (right) with a Gaussian convolution
+        and scale factor.
 
     import matplotlib.pyplot as plt
     _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"})
@@ -106,16 +108,6 @@ processed data
     ax[1].set_title("Processed")
     plt.tight_layout()
     plt.show()
-
-.. raw:: html
-
-    <div style="width: 65%; margin: 0 auto">
-        <span><i>
-            The unprocessed data (left) and processed data with a Gaussian convolution and scale factor
-            (right).
-        </i></span>
-        <br></br>
-    </div>
 
 Applying Operations along a Dimension
 -------------------------------------
@@ -196,6 +188,8 @@ Below is a plot of the dataset before and after applying the operations
 
 .. plot::
     :context: close-figs
+    :caption: The unprocessed data (left) and the processed data (right) with
+        convolutions applied to different dependent variables.
 
     _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"})
     ax[0].plot(csdm_object, linewidth=1)
@@ -204,16 +198,6 @@ Below is a plot of the dataset before and after applying the operations
     ax[1].set_title("Processed")
     plt.tight_layout()
     plt.show()
-
-.. raw:: html
-
-    <div style="width: 65%; margin: 0 auto">
-        <span><i>
-            The unprocessed data (left) and the processed data with convolutions applied to different
-            dependent variables.
-        </i></span>
-        <br></br>
-    </div>
 
 .. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.,
             Core Scientific Dataset Model: A lightweight and portable model and

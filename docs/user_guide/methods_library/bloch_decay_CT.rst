@@ -4,8 +4,7 @@ Bloch Decay Central Transition
 The :py:class:`~mrsimulator.methods.BlochDecayCTSpectrum` class simulates the
 Bloch decay central transition selective spectrum.
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     from mrsimulator.methods import BlochDecayCTSpectrum
 
@@ -25,8 +24,7 @@ Bloch decay central transition selective spectrum.
 
 The method may be imported using the following alias classes:
 
-.. plot::
-    :context: close-figs
+.. code-block:: python
 
     from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 

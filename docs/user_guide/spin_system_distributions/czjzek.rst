@@ -15,7 +15,7 @@ To generate a Czjzek distribution, use the :py:class:`~mrsimulator.models.Czjzek
 class as follows.
 
 .. plot::
-    :context: close-figs
+    :context: reset
 
     from mrsimulator.models import CzjzekDistribution
 
@@ -45,6 +45,7 @@ The scatter plot of these coordinates is shown below.
 
 .. plot::
     :context: close-figs
+    :caption: Czjzek Distribution of shielding tensors.
 
     import matplotlib.pyplot as plt
 
@@ -88,6 +89,7 @@ The plot of the Czjzek probability distribution is shown below.
 
 .. plot::
     :context: close-figs
+    :caption: Czjzek Distribution of EFG tensors.
 
     import matplotlib.pyplot as plt
 
@@ -96,10 +98,6 @@ The plot of the Czjzek probability distribution is shown below.
     plt.ylabel("$\eta$")
     plt.tight_layout()
     plt.show()
-
-.. .. image:: /_static/czjzek2.png
-..     :class: sphx-glr-single-img
-..     :alt: Czjzek Distribution
 
 .. note::
     The ``pdf`` method of the instance generates the probability distribution function
