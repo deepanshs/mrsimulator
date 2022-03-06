@@ -188,9 +188,8 @@ Plotting the Data
 
 We end this example by using the `matplotlib <https://matplotlib.org/stable/>`_ Python library
 to plot the simulated dataset.
-:numref:`fig1-getting-started` depicts the plot of the simulated spectrum.
 
-Below is the code used to generate the image:
+Below is the code used to generate an image of the simulated spectrum:
 
 .. _fig1-getting-started:
 .. skip: next

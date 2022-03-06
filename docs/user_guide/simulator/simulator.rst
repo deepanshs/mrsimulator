@@ -232,29 +232,20 @@ frequency contribution is evaluated.
 
     sim = Simulator()
     print(sim.config.integration_density)  # default
-
-.. plot::
-
-    70
+    # 70
 
 .. plot::
     :context: close-figs
 
     print(sim.config.get_orientations_count())  # 1 * 71 * 72 / 2
-
-.. plot::
-
-    2556
+    # 2556
 
 .. plot::
     :context: close-figs
 
     sim.config.integration_density = 100
     print(sim.config.get_orientations_count())  # 1 * 101 * 102 / 2
-
-.. plot::
-
-    5151
+    # 5151
 
 Decreasing the integration density may decrease simulation time for computationally intensive
 experiments, but will also decrease the quality of the spectrum. Similarly, increasing integration
