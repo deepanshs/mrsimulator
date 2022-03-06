@@ -1,8 +1,12 @@
 v0.7.0
-----------------
+------
 
 What's new
 ''''''''''
+
+**General**
+
+- Support for complex amplitude simulation.
 
 **Method**
 
@@ -33,6 +37,12 @@ Changes
 
 - `reduced_dict` function is deprecated, use `json(units=False)` instead.
 
+
+Bug fixes
+'''''''''
+
+- Fixed bug where spectral interpolation resulted in segmentation fault.
+- Fixed memory leak issue in the C code.
 
 v0.6.0
 ------

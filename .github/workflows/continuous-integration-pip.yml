@@ -18,9 +18,9 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -30,7 +30,7 @@ jobs:
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=C,E,F,W,N8 --show-source --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
+          flake8 . --count --select=B,C,E,F,W,T,N8 --ignore=E402 --max-line-length=88 --show-source --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=8 --max-line-length=88 --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
   testing_unix:
@@ -43,10 +43,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -86,10 +86,10 @@ jobs:
   #     MRSIM_LIB: "C:\\Miniconda\\Library\\lib"
   #   steps:
   #     - name: Checkout
-  #       uses: actions/checkout@v2.4.0
+  #       uses: actions/checkout@v3
 
   #     - name: Set up Python ${{ matrix.python-version }}
-  #       uses: actions/setup-python@v2
+  #       uses: actions/setup-python@v3
   #       with:
   #         python-version: ${{ matrix.python-version }}
 
@@ -121,7 +121,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
         env:

@@ -99,7 +99,7 @@ and higher. PIP is the easiest way to install python packages.
     :tabid: linux
 
     For *Linux* users, we provide the binary distributions of the mrsimulator package for
-    python versions 3.6-3.9. Install the package using pip as follows,
+    python versions 3.6-3.10. Install the package using pip as follows,
 
     .. code-block:: bash
 
@@ -109,7 +109,7 @@ and higher. PIP is the easiest way to install python packages.
     :tabid: macosx
 
     For *Mac* users, we provide the binary distributions of the mrsimulator package for
-    python versions 3.6-3.9. Install the package using pip as follows,
+    python versions 3.6-3.10. Install the package using pip as follows,
 
     .. code-block:: bash
 

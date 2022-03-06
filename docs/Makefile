@@ -25,3 +25,9 @@ clean:
 	rm -rf examples/
 	rm -rf fitting/
 	rm -rf signal_processing/
+
+clean-all:
+	rm -rf $(BUILDDIR)/*
+	rm -rf examples/
+	rm -rf fitting/
+	find ../fitting_source -name "*.csdf" | xargs rm

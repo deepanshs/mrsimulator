@@ -92,6 +92,8 @@ def test_load():
 
 def test_mrsim_to_v0_7():
     sim, processors, application = setup()
+    sim.methods[0].simulation = None
+
     old_struct = sim.json()
     old_struct["signal_processors"] = [sp.json() for sp in processors]
     old_struct["application"] = application
