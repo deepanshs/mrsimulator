@@ -6,9 +6,9 @@ import csdmpy as cp
 import numpy as np
 import pytest
 from mrsimulator.method import Method
-from mrsimulator.method.event import SpectralEvent
+from mrsimulator.method import SpectralDimension
+from mrsimulator.method import SpectralEvent
 from mrsimulator.method.frequency_contrib import freq_default
-from mrsimulator.method.spectral_dimension import SpectralDimension
 from mrsimulator.methods import Method1D
 from mrsimulator.methods import Method2D
 from mrsimulator.spin_system.isotope import Isotope

@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method1D
-from mrsimulator.method.event import SpectralEvent
-from mrsimulator.method.spectral_dimension import SpectralDimension
+from mrsimulator.method import SpectralEvent
+from mrsimulator.method import SpectralDimension
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 4
