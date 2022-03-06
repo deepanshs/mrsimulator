@@ -19,6 +19,7 @@ pre-commit>=2.11.1
 sympy
 pytest>=5.3
 pytest-cov
+sybil>=3.0.0
 
 # Building Docs requirements
 sphinxjp.themes.basicstrap
@@ -30,4 +31,3 @@ sphinx_copybutton>=0.3.0
 sphinx-tabs>=1.1.13
 recommonmark
 sphinx-version-warning
-sybil>=3.0.0
