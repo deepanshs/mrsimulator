@@ -5,7 +5,6 @@ the same except for the constant CODEBLOCK_START which is now regex which target
 plot directives
 """
 import __future__
-
 import re
 import textwrap
 from typing import Iterable
@@ -90,6 +89,6 @@ class PythonPlotParser(PlotParser):
         code = compile(
             source, example.path, "exec", flags=self.flags, dont_inherit=True
         )
-        exec(code, example.namespace)
+        exec(code, example.namespace)  # noqa: W0122
         # exec adds __builtins__, we don't want it:
         del example.namespace["__builtins__"]
