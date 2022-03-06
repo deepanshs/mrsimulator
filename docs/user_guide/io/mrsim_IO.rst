@@ -293,3 +293,13 @@ method. This method will return an ordered list of a :ref:`simulator_api` object
     from mrsimulator import load
 
     sim, processors, application = load("example.mrsim")
+
+
+.. plot::
+    :include-source: False
+
+    import os
+    os.remove("example.mrmtd")
+    os.remove("example.mrsim")
+    os.remove("example.mrsys")
+    os.remove("sample.mrsim")
