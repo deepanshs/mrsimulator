@@ -135,8 +135,7 @@ custom DAS method and serialize it to a file using the method
 
     from mrsimulator import Simulator
     from mrsimulator.methods import Method2D
-    from mrsimulator.method import SpectralEvent
-    from mrsimulator.method.spectral_dimensions import SpectralDimension
+    from mrsimulator.method import SpectralDimension, SpectralEvent
 
     # Create DAS method
     das = Method2D(
