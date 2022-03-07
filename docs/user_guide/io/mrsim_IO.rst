@@ -55,10 +55,7 @@ to create a :ref:`site_api` object from a dictionary.
 
     Si29_site_from_dict = Site().parse_dict_with_units(site_dict)
     print(Si29_site_from_dict == Si29_site)
-
-.. code-block:: shell
-
-    True
+    # True
 
 We see that both these sites are equivalent. Values in dictionaries can be given as a
 number and a unit in a string. However, passing values with units increases overhead and
@@ -128,10 +125,7 @@ we load the spin system file, ``example.mrsys``, into a new simulator using the 
     new_sim = Simulator()
     new_sim.load_spin_systems("example.mrsys")
     print(len(new_sim.spin_systems))
-
-.. code-block:: shell
-
-    3
+    # 3
 
 Saving and Loading Methods from a File
 --------------------------------------
@@ -209,10 +203,7 @@ method into a new simulator object by calling the method
     new_sim = Simulator()
     new_sim.load_methods("example.mrmtd")
     print(new_sim.methods[0].name)
-
-.. code-block:: text
-
-    DAS of 17O
+    # DAS of 17O
 
 Loading in complex methods from a file, like the DAS example above, can reduce complex code.
 Methods representing real experiments can be saved to a file to later be loaded into a script
