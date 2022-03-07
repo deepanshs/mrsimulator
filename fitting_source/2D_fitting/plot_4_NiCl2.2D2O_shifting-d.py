@@ -21,8 +21,7 @@ from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import SpectralDimension
-from mrsimulator.method import SpectralEvent
+from mrsimulator.method import SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
