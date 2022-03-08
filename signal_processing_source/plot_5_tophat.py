@@ -62,7 +62,7 @@ csdm_object = cp.CSDM(
 # To apply the previously defined signal processor, we use the
 # :py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method as
 # as follows
-processed_data = processor.apply_operations(data=csdm_object)
+processed_data = processor.apply_operations(data=csdm_object).real
 
 # %%
 # To see the results of the top hat apodization, we create a simple plot using the
@@ -89,8 +89,8 @@ constant_csdm = cp.CSDM(
     dependent_variables=[cp.as_dependent_variable(np.ones(100))],
     dimensions=[cp.LinearDimension(100, increment="0.1 s")],
 )
-rising_data = rising_edge_processor.apply_operations(data=constant_csdm.copy())
-falling_data = falling_edge_processor.apply_operations(data=constant_csdm.copy())
+rising_data = rising_edge_processor.apply_operations(data=constant_csdm.copy()).real
+falling_data = falling_edge_processor.apply_operations(data=constant_csdm.copy()).real
 
 fig, ax = plt.subplots(1, 2, figsize=(8, 3.5), subplot_kw={"projection": "csdm"})
 ax[0].plot(rising_data, color="black", linewidth=1)

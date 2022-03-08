@@ -144,7 +144,7 @@ result
 # %%
 # The best fit solution
 # ---------------------
-best_fit = sf.bestfit(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
 
 # Plot of the best fit solution
 plt.figure(figsize=(8, 3.5))

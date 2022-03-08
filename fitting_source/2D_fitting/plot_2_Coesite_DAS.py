@@ -174,7 +174,7 @@ result
 # %%
 # The best fit solution
 # ---------------------
-best_fit = sf.bestfit(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
 
 # Plot the spectrum
 plt.figure(figsize=(4.25, 3.0))
@@ -190,7 +190,7 @@ plt.show()
 # %%
 # The best fit solution
 # ---------------------
-residuals = sf.residuals(sim, processor)[0]
+residuals = sf.residuals(sim, processor)[0].real
 
 fig, ax = plt.subplots(
     1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}

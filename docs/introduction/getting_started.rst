@@ -19,7 +19,8 @@ spin system.
 First we will construct two :ref:`site_documentation` objects for the :math:`^1\text{H}` and
 :math:`^{13}\text{C}` sites.
 
-.. code-block:: python
+.. plot::
+    :context: reset
 
     # Import the Site and SymmetricTensor classes
     from mrsimulator import Site
@@ -43,7 +44,8 @@ object. We parametrize tensors using the Haeberlen convention.
 
 Next we will define a dipolar coupling by creating a :ref:`coupling_documentation` object.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     # Import the Coupling class
     from mrsimulator import Coupling
@@ -57,7 +59,8 @@ Next we will define a dipolar coupling by creating a :ref:`coupling_documentatio
 Now we have all the pieces needed to create the spin system.
 If you need to create an uncoupled spin system, simply omit the ``couplings`` attribute.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     # Import the SpinSystem class
     from mrsimulator import SpinSystem
@@ -77,7 +80,8 @@ A :ref`method_documentation` object describes an NMR method. For this introducti
 the :py:class:`~mrsimulator.methods.BlochDecaySpectrum` which is one of the pre-defined methods.
 Some attributes of the method still need to be provided as seen below.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     # Import the BlochDecaySpectrum class
     from mrsimulator.methods import BlochDecaySpectrum
@@ -116,7 +120,8 @@ Simulator
 At the heart of ``mrsimulator`` is the :ref:`simulator_documentation` object which performs
 the calculation of the NMR spectrum. Lets create the :ref:`simulator_api` object:
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     # Import the Simulator class
     from mrsimulator import Simulator
@@ -127,7 +132,8 @@ the calculation of the NMR spectrum. Lets create the :ref:`simulator_api` object
 Each :ref:`simulator_api` object holds a list of :ref:`spin_sys` objects and a list of :ref:`method_api`
 objects. Below we add the spin system and method objects we previously defined:
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     # Add the SpinSystem and Method objects
     sim.spin_systems = [spin_system]
@@ -136,7 +142,8 @@ objects. Below we add the spin system and method objects we previously defined:
 Now to simulate the spectrum we need to call :py:meth:`~mrsimulator.Simulator.run`
 on our :ref:`simulator_api` object.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     sim.run()
 
@@ -155,7 +162,8 @@ object which applies post-processing to the data after simulation.
 
 Here we apply 200 Hz of exponential line broadening.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     from mrsimulator import signal_processing as sp
 
@@ -180,23 +188,20 @@ Plotting the Data
 
 We end this example by using the `matplotlib <https://matplotlib.org/stable/>`_ Python library
 to plot the simulated dataset.
-:numref:`fig1-getting-started` depicts the plot of the simulated spectrum.
 
-Below is the code used to generate the image:
+Below is the code used to generate an image of the simulated spectrum:
 
-.. code-block:: python
+.. _fig1-getting-started:
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: A simulated :math:`^{13}\text{C}` MAS spectrum.
 
     import matplotlib.pyplot as plt
-
-    plt.figure(figsize=(6.6, 4))  # set the figure size
+    plt.figure(figsize=(5, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
     ax.plot(processed_data.real)
     ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout(pad=0.1)
     plt.show()
-
-.. _fig1-getting-started:
-.. figure:: ../_static/getting_started.png
-    :figwidth: 75%
-
-    A simulated MAS spectrum of :math:`^{13}\text{C}`.

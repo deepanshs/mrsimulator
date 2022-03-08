@@ -7,7 +7,7 @@ dimension is fixed at infinite spinning speed
 
 .. code-block:: python
 
-    from mrsimulator.methods import ssb2d
+    from mrsimulator.methods import SSB2D
 
     method = SSB2D(
         channels=["13C"],
