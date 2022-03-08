@@ -29,12 +29,16 @@ Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` c
 
     py_dict = Si29_site.json()
     print(py_dict)
-    # {'isotope': '29Si', 'isotropic_chemical_shift': '-89.0 ppm', 'shielding_symmetric': {'zeta': '59.8 ppm', 'eta': 0.62}}
+    # {
+    #     'isotope': '29Si',
+    #     'isotropic_chemical_shift': '-89.0 ppm',
+    #     'shielding_symmetric': {'zeta': '59.8 ppm', 'eta': 0.62}
+    # }
 
 By default, all values are serialized with units when applicable, but you may call
 ``json(units=False)`` if you wish to serialize without units.
 
-Simmilarly, all ``mrsimulator`` objects can be loaded from a dictionary representation. Here we
+Similarly, all ``mrsimulator`` objects can be loaded from a dictionary representation. Here we
 construct the same site as a dictionary and call :meth:`~mrsimulator.Site.parse_dict_with_units`
 to create a :ref:`site_api` object from a dictionary.
 
@@ -50,8 +54,7 @@ to create a :ref:`site_api` object from a dictionary.
     }
 
     Si29_site_from_dict = Site().parse_dict_with_units(site_dict)
-
-    Si29_site_from_dict == Si29_site
+    print(Si29_site_from_dict == Si29_site)
     # True
 
 We see that both these sites are equivalent. Values in dictionaries can be given as a
@@ -71,7 +74,7 @@ systems to a file by calling :meth:`~mrsimulator.Simulator.export_spin_systems`.
 .. code-block:: python
 
     from mrsimulator import Site, SpinSystem, Simulator
-    from mrsimulator.spin_system.tensor import SymmetricTensor
+    from mrsimulator.spin_system.tensors import SymmetricTensor
 
     # Create the spin systems
     Si29_1 = SpinSystem(
@@ -197,7 +200,7 @@ method into a new simulator object by calling the method
 .. code-block:: python
 
     new_sim = Simulator()
-    new_sim.load("example.mrmtd")
+    new_sim.load_methods("example.mrmtd")
     print(new_sim.methods[0].name)
     # DAS of 17O
 
@@ -215,6 +218,8 @@ string with a value and a unit.
 
 .. code-block:: python
 
+    sim = Simulator()
+    # ... Setup Simulator object
     sim.save("sample.mrsim")
 
 Now the file ``sample.mrsim`` holds the JSON representation of ``sim``, a :ref:`simulator_api` object.
@@ -223,16 +228,18 @@ By default, the load method parses the file for units.
 
 .. code-block:: python
 
-    new_sim = Simulator().load("sample.mrsim")
+    new_sim = Simulator.load("sample.mrsim")
 
 Serialize simulation from a Method to a CSDM Compliant File
 -----------------------------------------------------------
 
 The simulated spectrum may be exported to a CSDM compliant JSON file using the following code:
 
+.. skip: next
 .. code-block:: python
 
     sim_coesite.methods[0].simulation.save("coesite_simulation.csdf")
+
 
 For more information on the CSDM format see the
 `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
@@ -251,8 +258,8 @@ method.
     from mrsimulator import signal_processing as sp
 
     sim = Simulator()
-    processor1 = sp.Processor()
-    processor2 = sp.Processor()
+    processor1 = sp.SignalProcessor()
+    processor2 = sp.SignalProcessor()
 
     save(
         filename="example.mrsim",
@@ -273,3 +280,13 @@ method. This method will return an ordered list of a :ref:`simulator_api` object
     from mrsimulator import load
 
     sim, processors, application = load("example.mrsim")
+
+
+.. plot::
+    :include-source: False
+
+    import os
+    os.remove("example.mrmtd")
+    os.remove("example.mrsim")
+    os.remove("example.mrsys")
+    os.remove("sample.mrsim")

@@ -209,8 +209,8 @@ all_residuals = sf.residuals(sim, processors)  # a list of residuals
 fig, ax = plt.subplots(1, 3, figsize=(12, 3), subplot_kw={"projection": "csdm"})
 for i, proc in enumerate(processors):
     ax[i].plot(experiments[i], color="black", linewidth=0.5, label="Experiment")
-    ax[i].plot(all_residuals[i], color="gray", linewidth=0.5, label="Residual")
-    ax[i].plot(all_best_fit[i], linewidth=2, alpha=0.6)
+    ax[i].plot(all_residuals[i].real, color="gray", linewidth=0.5, label="Residual")
+    ax[i].plot(all_best_fit[i].real, linewidth=2, alpha=0.6)
     ax[i].set_xlim(280, -10)
     ax[i].grid()
 

@@ -56,7 +56,7 @@ csdm_object = cp.CSDM(
 # Now to apply the processor to the CSDM object, use the
 # :py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method as
 # follows
-processed_data = processor.apply_operations(data=csdm_object)
+processed_data = processor.apply_operations(data=csdm_object).real
 
 # %%
 # To see the results of the Gaussian apodization, we create a simple plot using the
