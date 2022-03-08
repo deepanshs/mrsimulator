@@ -12,12 +12,14 @@ systems. Import the method as below
 
 .. code-block:: python
 
-    from mrsimulator.utils.collections import single_site_system_generator
+    from mrsimulator.utils.collection import single_site_system_generator
 
 The arguments passed to the function, defined in :numref:`single_site_sys_gen_table`,
 can either be a scalar quantity (``float`` or ``str``, where applicable) or a
 ``list``/``np.array`` of those quantities. All lists passed must
 have the same length, otherwise an error will be thrown. For example,
+
+.. skip: start
 
 .. code-block:: python
 
@@ -25,7 +27,17 @@ have the same length, otherwise an error will be thrown. For example,
         isotope=["1H", "1H", "13C", "17O"],
         isotropic_chemical_shift=[1.3, 3.7, 65.0],
     )
-    # Throws error since lists of length 4 and 3
+
+.. code-block:: shell
+
+    Traceback (most recent call last):
+    ...
+    ValueError: An array or list was either too short or too long. All arguments must be the
+    same size. If one attribute is a type list of length n, then all attributes with list types
+    must also be of length n, and all remaining attributes must be scalar (singular float, int,
+    or str).
+
+.. skip: end
 
 The attributes of each returned spin system at a certain index correspond to the attribute passed
 at that index. For example,
@@ -47,7 +59,7 @@ Broadcasting Length of List
 Arguments passed as a single value will be broadcast to a list of that value with the same
 length as other lists passed. For example
 
-.. code-block::
+.. code-block:: python
 
     single_site_system_generator(
         isotope=["1H", "1H", "1H"],
@@ -56,7 +68,7 @@ length as other lists passed. For example
 
 is equivalent to calling
 
-.. code-block::
+.. code-block:: python
 
     single_site_system_generator(
         isotope=["1H", "1H", "1H"],

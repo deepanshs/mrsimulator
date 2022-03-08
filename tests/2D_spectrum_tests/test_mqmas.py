@@ -68,7 +68,7 @@ def test_MQMAS():
     spin = method.channels[0].spin
     w0 = method.channels[0].gyromagnetic_ratio * 9.4 * 1e6
     wq = 3 * 3.5e6 / (2 * spin * (2 * spin - 1))
-    w_iso = -9 * 17 / 8 + 1e6 / 8 * (wq / w0) ** 2 * ((0.36 ** 2) / 3 + 1)
+    w_iso = -9 * 17 / 8 + 1e6 / 8 * (wq / w0) ** 2 * ((0.36**2) / 3 + 1)
 
     # the coordinate from spectrum
     w_iso_spectrum = processed_data.x[1].coordinates[70].value
@@ -131,7 +131,7 @@ def test_ThreeQ_VAS_spin_3halves():
     spin = method.channels[0].spin
     v0 = method.channels[0].gyromagnetic_ratio * 9.4 * 1e6
     vq = (3 * 3.5e6) / (2 * spin * (2 * spin - 1))
-    v_iso = -9 * 17 / 8 + 1e6 / 8 * ((vq / v0) ** 2) * ((0.36 ** 2) / 3 + 1)
+    v_iso = -9 * 17 / 8 + 1e6 / 8 * ((vq / v0) ** 2) * ((0.36**2) / 3 + 1)
 
     # the coordinate from spectrum along the iso dimension must be equal to v_iso
     v_iso_spectrum = data.x[1].coordinates[index[0]].value
@@ -194,7 +194,7 @@ def test_MQMAS_spin_5halves():
     spin = method.channels[0].spin
     v0 = method.channels[0].gyromagnetic_ratio * 7 * 1e6
     vq = 3 * 3.22e6 / (2 * spin * (2 * spin - 1))
-    v_iso = -(17 / 31) * 64.5 - (8e6 / 93) * (vq / v0) ** 2 * ((0.66 ** 2) / 3 + 1)
+    v_iso = -(17 / 31) * 64.5 - (8e6 / 93) * (vq / v0) ** 2 * ((0.66**2) / 3 + 1)
 
     # the coordinate from spectrum along the iso dimension must be equal to v_iso
     v_iso_spectrum = data.x[1].coordinates[index[0]].value

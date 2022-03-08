@@ -15,9 +15,10 @@ Set Up
 Setting up a simulator object and running a simulation is simple. Below we add some arbitrary
 spin systems and methods to a simulator object.
 
-.. code-block:: python
+.. plot::
+    :context: reset
 
-    from mrsimulator import Site, Simulator, spin_system
+    from mrsimulator import Site, Simulator, SpinSystem
     from mrsimulator.methods import BlochDecaySpectrum
 
     # Setup the spin system and method objects
@@ -42,7 +43,8 @@ Running a Simulation
 To simulate the NMR spectrum of the given spin systems using each method, call the simulator
 class method :meth:`~mrsimulator.Simulator.run`.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     sim.run()
 
@@ -52,7 +54,8 @@ the Core Scientific Data Model (CSDM),
 see the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`_.
 Below we put the simulated spectra of the method at index 0 into the variable ``data_0``
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     data_0 = sim.methods[0].simulation
     # data_n = sim.methods[n].simulation (for multiple methods)
@@ -70,7 +73,8 @@ default settings are not sufficient to accurately represent the spectrum.
 
 The following code is used to create the plots in this section
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     import matplotlib.pyplot as plt
     import matplotlib as mpl
@@ -99,7 +103,11 @@ In certain circumstances,
 especially when the anisotropy is large or the rotor spin frequency is low, 64 sidebands might
 not be sufficient.
 
-.. code-block:: python
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: Inaccurate simulation resulting from computing low number of sidebands.
 
     from mrsimulator import Simulator, SpinSystem, Site
     from mrsimulator.methods import BlochDecaySpectrum
@@ -122,30 +130,22 @@ not be sufficient.
     # plot the dataset using the method defined above
     plot(sim.methods[0].simulation)
 
-.. figure:: ../../_static/low_sidebands.png
-    :alt: Simulation using a configuration with too few sidebands
-    :figwidth: 75%
-
-    Inaccurate simulation resulting from computing low number of sidebands.
-
 Looking at the spinning sideband patterns, we see an abrupt termination of the sideband
 amplitudes at the edges. This inaccurate simulation arises from evaluating a small number of
 sidebands relative to the given anisotropy. Increasing the number of sidebands to 90 should
 resolve the issue.
 
-.. code-block:: python
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: Accurate simulation after increasing number of sidebands computed.
 
     # sim already holds our spin systems and methods; no need to reconstruct
     # set number of sidebands to 90
     sim.config.number_of_sidebands = 90
     sim.run()
     plot(sim.methods[0].simulation)
-
-.. figure:: ../../_static/good_sidebands.png
-    :alt: Simulation using a configuration sufficient number of sidebands
-    :figwidth: 75%
-
-    Accurate simulation after increasing number of sidebands computed.
 
 Conversely, 64 sidebands might be redundant, in which case the number of sidebands can be reduced.
 Reducing the number of sidebands
@@ -173,7 +173,12 @@ integration over the sphere. By adding the Euler angles to this tensor, we break
 symmetry, and the integration over the octant is no longer accurate.
 Consider the following examples.
 
-.. code-block:: python
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: Inaccurate simulation resulting from integrating over an octant when the spin
+        system has Euler angles.
 
     # add Euler angles to the previous site Si29 site
     Si29_site.shielding_symmetric.alpha = 1.563  # in rad
@@ -191,27 +196,18 @@ Consider the following examples.
     sim.run()
     plot(sim.methods[0].simulation)
 
-.. figure:: ../../_static/octant_incomplete.png
-    :alt: Spectrum from incomplete integration scheme
-    :figwidth: 75%
-
-    Inaccurate simulation resulting from integrating over an octant when the spin system has Euler
-    angles.
-
 To fix this inaccurate spectrum, set the integration volume to *hemisphere* and re-simulate.
 
-.. code-block:: python
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: Accurate CSA spectrum resulting from the frequency contributions evaluated over
+        the top hemisphere.
 
     sim.config.integration_volume = "hemisphere"
     sim.run()
     plot(sim.methods[0].simulation)
-
-.. figure:: ../../_static/hemisphere_complete.png
-    :alt: Correct CSA spectrum from hemisphere integration
-    :figwidth: 75%
-
-    Accurate CSA spectrum resulting from the frequency contributions evaluated over the top
-    hemisphere.
 
 Integration Density
 '''''''''''''''''''
@@ -231,13 +227,21 @@ number of octants is deciphered form the value of the *integration_volume* attri
 The default value of this attribute, 70, produces 2556 orientations at which the NMR
 frequency contribution is evaluated.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     sim = Simulator()
-    print(sim.config.integration_density)
+    print(sim.config.integration_density)  # default
     # 70
+
+.. plot::
+    :context: close-figs
+
     print(sim.config.get_orientations_count())  # 1 * 71 * 72 / 2
     # 2556
+
+.. plot::
+    :context: close-figs
 
     sim.config.integration_density = 100
     print(sim.config.get_orientations_count())  # 1 * 101 * 102 / 2
@@ -258,7 +262,12 @@ If the value is ``None`` (default), the resulting simulation is a single spectru
 where the frequency contributions from all the spin systems are co-added. Consider the
 following example.
 
-.. code-block:: python
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: The frequency contributions from each individual spin systems are
+        combined into one spectrum.
 
     # Create two distinct sites
     site_A = Site(
@@ -284,31 +293,22 @@ following example.
     sim.run()
     plot(sim.methods[0].simulation)
 
-.. figure:: ../../_static/decompose_none.png
-    :alt: Spectrum with default decompose of none
-    :figwidth: 75%
-
-    The frequency contributions from each individual spin systems are combined
-    into one spectrum.
-
 When :py:attr:`~mrsimulator.simulator.ConfigSimulator.decompose_spectrum` is set to
 ``spin_system``, the resulting simulation
 is a series of spectra each arising from a single spin system. The number of spectra is the
 same as the number of spin systems within the simulator object. Consider the same
 system as above, but change the decomposition to ``spin_system``.
 
-.. code-block:: python
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: Each spin system's frequency contributions are held in separate spectra.
 
     # sim already has the two spin systems and method; no need to reconstruct
     sim.config.decompose_spectrum = "spin_system"
     sim.run()
     plot(sim.methods[0].simulation)
-
-.. figure:: ../../_static/decompose_spin_system.png
-    :alt: Spectrum with decompose of spin system
-    :figwidth: 75%
-
-    Each spin system's frequency contributions are held in separate spectra.
 
 ----
 

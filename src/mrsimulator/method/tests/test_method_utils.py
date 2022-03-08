@@ -2,8 +2,8 @@
 import pytest
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.method import MixingEvent
 from mrsimulator.method import SpectralDimension
-from mrsimulator.method.event import MixingEvent
 from mrsimulator.method.query import MixingQuery
 from mrsimulator.method.utils import mixing_query_connect_map
 from mrsimulator.method.utils import nearest_nonmixing_event

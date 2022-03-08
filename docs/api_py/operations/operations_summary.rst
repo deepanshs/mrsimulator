@@ -70,7 +70,7 @@ the CSDM object.
       ~Gaussian
       ~Exponential
       ~SkewedGaussian
-      ~Step
+      ~TopHat
       ~Mask
 
 .. seealso::

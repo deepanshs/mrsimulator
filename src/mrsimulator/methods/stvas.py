@@ -47,7 +47,7 @@ class ST_VAS(BaseNamedMethod2D):
         spin = Isotope(symbol=kwargs["channels"][0]).spin
 
         # select the coherence for the first event
-        d = st ** 2 - (st - 1) ** 2
+        d = st**2 - (st - 1) ** 2
 
         # setting transition symmetry elements for spectral dimension 0
         events_0 = [

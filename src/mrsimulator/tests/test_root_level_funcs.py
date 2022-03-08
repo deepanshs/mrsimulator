@@ -25,6 +25,7 @@ def setup():
     sim = Simulator(spin_systems=[spin_sys, spin_sys], methods=[method, method])
 
     sim.run(method_index=0)
+    sim.methods[0].simulation._timestamp = None
 
     processor = sp.SignalProcessor(
         operations=[

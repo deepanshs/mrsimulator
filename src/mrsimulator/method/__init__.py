@@ -19,12 +19,16 @@ from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
 
+from .event import MixingEvent  # noqa: F401
+from .event import SpectralEvent  # noqa: F401
 from .plot import plot as _plot
 from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
 from .utils import mixing_query_connect_map
 from .utils import tip_angle_and_phase_list
+
+# from .event import ConstantDurationEvent  # noqa: F401
 
 
 __author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]
@@ -203,7 +207,7 @@ class Method(Parseable):
             return
         v1 = np.asarray(v)
         dim_len = len(values["spectral_dimensions"])
-        if v1.size != dim_len ** 2:
+        if v1.size != dim_len**2:
             raise ValueError(f"Expecting a {dim_len}x{dim_len} affine matrix.")
         if v1.ravel()[0] == 0:
             raise ValueError("The first element of the affine matrix cannot be zero.")
