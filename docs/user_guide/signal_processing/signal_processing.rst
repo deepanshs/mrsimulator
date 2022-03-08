@@ -28,7 +28,8 @@ Signal processing is a series of operations which are sequentially applied to th
 In ``mrsimulator``, the :py:class:`~mrsimulator.signal_processing.SignalProcessor` object is
 used to apply operations. Here we create a new signal processing object
 
-.. code-block:: python
+.. plot::
+    :context: reset
 
     # Import the signal_processing module
     from mrsimulator import signal_processing as sp
@@ -39,7 +40,8 @@ used to apply operations. Here we create a new signal processing object
 Each signal processor object holds a list of operations under the *operations* attribute. Below
 we add operations to apply Gaussian line broadening as well as a scale factor.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     processor.operations = [
         sp.IFFT(),
@@ -64,7 +66,8 @@ up by 120 times.
 
 Let's create a CSDM object and then apply the operations to visualize the results.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     import csdmpy as cp
     import numpy as np
@@ -81,7 +84,8 @@ To apply the previously defined signal processing operations to the above CSDM o
 the :py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method of the
 ``SignalProcessor`` instance as follows
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     processed_data = processor.apply_operations(data=csdm_object)
 
@@ -89,25 +93,21 @@ The variable ``processed_data`` is another CSDM object holding the dataset after
 operations has been applied to ``csdm_object``. Below is a plot comparing the unprocessed and
 processed data
 
-..
-.. .. code-block:: python
-..
-..     import matplotlib.pyplot as plt
-..     _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"})
-..     ax[0].plot(csdm_object, color="black", linewidth=1)
-..     ax[0].set_title("Unprocessed")
-..     ax[1].plot(processed_data.real, color="black", linewidth=1)
-..     ax[1].set_title("Processed")
-..     plt.tight_layout()
-..     plt.show()
-..
+.. skip: next
 
-.. figure:: ../../_static/signal_processor_csdm.png
-    :figwidth: 75%
-    :alt: Plot of unprocessed data and processed data
+.. plot::
+    :context: close-figs
+    :caption: The unprocessed data (left) and processed data (right) with a Gaussian convolution
+        and scale factor.
 
-    The unprocessed data (left) and processed data with a Gaussian convolution and scale factor
-    (right).
+    import matplotlib.pyplot as plt
+    _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"})
+    ax[0].plot(csdm_object, color="black", linewidth=1)
+    ax[0].set_title("Unprocessed")
+    ax[1].plot(processed_data.real, color="black", linewidth=1)
+    ax[1].set_title("Processed")
+    plt.tight_layout()
+    plt.show()
 
 Applying Operations along a Dimension
 -------------------------------------
@@ -120,7 +120,8 @@ By default, *dim_index* is ``None`` and is applied along the 1st dimension. An i
 of integers can be passed to *dim_index* specifying the dimensions. Below are examples of
 specifying the dimensions
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     # Gaussian apodization along the first dimension (default)
     sp.apodization.Gaussian(FWHM="10 Hz")
@@ -147,7 +148,8 @@ in a dimension.
     dependent variable (spin system) corresponds to the order of spin systems in the
     :py:attr:`~mrsimulator.Simulator.spin_systems` list.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     processor = sp.SignalProcessor(
         operations=[
@@ -164,7 +166,8 @@ line broadening to dependent variables at index 0 and 1, respectively.
 Let's add another depended variable to the previously created CSDM object to see targeting
 specific dependent variables.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     test_data = np.zeros(500)
     test_data[300] = 1
@@ -174,18 +177,27 @@ Now, we again apply the operations with the
 :py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method.
 The comparison of the unprocessed and processed data is also show below.
 
-.. code-block::
+.. plot::
+    :context: close-figs
 
     processed_data = processor.apply_operations(data=csdm_object)
 
 Below is a plot of the dataset before and after applying the operations
 
-.. figure:: ../../_static/signal_processor_dv.png
-    :figwidth: 75%
-    :alt: Plot comparing unprocessed and processed data where apodizations are applied to different dependent variables.
+.. skip: next
 
-    The unprocessed data (left) and the processed data with convolutions applied to different
-    dependent variables.
+.. plot::
+    :context: close-figs
+    :caption: The unprocessed data (left) and the processed data (right) with
+        convolutions applied to different dependent variables.
+
+    _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"})
+    ax[0].plot(csdm_object, linewidth=1)
+    ax[0].set_title("Unprocessed")
+    ax[1].plot(processed_data.real, linewidth=1)
+    ax[1].set_title("Processed")
+    plt.tight_layout()
+    plt.show()
 
 .. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.,
             Core Scientific Dataset Model: A lightweight and portable model and

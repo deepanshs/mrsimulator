@@ -12,7 +12,8 @@ isotopomers.
 It is good practice to import packages and classes and classes at the beginning of your code.
 Here we import everything we will use in this example
 
-.. code-block:: python
+.. plot::
+    :context: reset
 
     import matplotlib.pyplot as plt
 
@@ -25,7 +26,8 @@ Spin Systems
 
 First create the :math:`^1\text{H}` and :math:`^{13}\text{C}` sites for ethanol.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     # All shifts in ppm
     H_CH3 = Site(isotope="1H", isotropic_chemical_shift=1.226)
@@ -52,7 +54,8 @@ index in the sites list.
     An isotopomer of ethanol containing all :math:`^{1}\text{H}` and all
     :math:`^{12}\text{C}` isotopes.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     iso1_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH]
 
@@ -98,7 +101,8 @@ isotopomer pictured below (:math:`^{13}\text{C}` marked in blue)
 
 We now construct the spin system for this isotopomer.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     iso2_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH, C_CH3]
 
@@ -127,7 +131,8 @@ below (:math:`^{13}\text{C}` marked in blue)
     Third isotopomer of ethanol containing all :math:`^{1}\text{H}`,
     :math:`^{12}\text{C}` methyl, and :math:`^{13}\text{C}` methylene isotopes.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     iso3_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH, C_CH2]
 
@@ -146,7 +151,8 @@ Methods
 Now, we define two Bloch spectrum methods for both :math:`^1\text{H}` and :math:`^{13}\text{C}`.
 These methods emulate simple 1-pulse acquire experiments.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     method_H = BlochDecaySpectrum(
         channels=["1H"],
@@ -180,7 +186,8 @@ Simulation
 Now we create an instance of the simulator object which holds a list of our three spin
 systems and a list of our two methods. Finally we run the simulation.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     spin_systems = [isotopomer1, isotopomer2, isotopomer3]
     methods = [method_H, method_C]
@@ -193,7 +200,8 @@ Signal Processing
 Let's set up our post-simulation processing. We apply 1 Hz and 20 Hz of exponential line
 broadening to the proton and carbon spectra, respectively.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     # Get the simulation data
     H_data = sim.methods[0].simulation
@@ -220,13 +228,18 @@ broadening to the proton and carbon spectra, respectively.
     processed_H_data = processor_1H.apply_operations(data=H_data)
     processed_C_data = processor_13C.apply_operations(data=C_data)
 
-
 Plotting the Data
 -----------------
 
 Now that we have our processed data, we can plot the two spectra.
 
-.. code-block:: python
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: :math:`^1\text{H}` and :math:`^{13}\text{C}` spectrum of ethanol. Note,
+        the :math:`^{13}\text{C}` satellites seen on either side of the peaks near 1.2 ppm
+        and 2.6 ppm in the :math:`^1\text{H}` spectrum.
 
     fig, ax = plt.subplots(
         nrows=1, ncols=2, subplot_kw={"projection": "csdm"}, figsize=[8, 3.5]
@@ -242,11 +255,3 @@ Now that we have our processed data, we can plot the two spectra.
 
     plt.tight_layout()
     plt.show()
-
-
-.. figure:: ../_static/ethanol_isotopomers.png
-   :alt: 1H and 13C spectra
-   :figwidth: 90 %
-
-Note the :math:`^{13}\text{C}` satellites seen on either side of the peaks near
-1.2 ppm and 2.6 ppm in the :math:`^1\text{H}` spectrum.

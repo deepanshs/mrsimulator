@@ -74,6 +74,13 @@ extensions = [
 # generate autosummary even if no references
 autosummary_generate = True
 
+
+# Setup code to run before any doctests
+doctest_global_setup = """
+from pprint import pprint
+import numpy as np
+"""
+
 # Date format used for |today| in copyright
 today_fmt = "%Y"
 
@@ -102,6 +109,7 @@ versionwarning_body_selector = "div.document"
 #                               Plot directive config                          #
 # ---------------------------------------------------------------------------- #
 plot_html_show_source_link = False
+plot_include_source = True
 plot_rcparams = {
     "figure.figsize": [6, 3],
 }
@@ -152,7 +160,7 @@ sphinx_gallery_conf = {
         "fitting",
     ],  # path to where to save gallery generated output
     "within_subsection_order": FileNameSortKey,
-    "show_memory": True,
+    # "show_memory": True,
     # "line_numbers": True,
     "subsection_order": ExplicitOrder(
         [

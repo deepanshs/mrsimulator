@@ -140,8 +140,8 @@ result
 # %%
 # The best fit solution
 # ---------------------
-best_fit = sf.bestfit(sim, processor)[0]
-residuals = sf.residuals(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
+residuals = sf.residuals(sim, processor)[0].real
 
 # Plot the spectrum
 plt.figure(figsize=(8, 4))

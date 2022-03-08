@@ -25,6 +25,7 @@ dependencies:
       - pytest
       - pytest-cov
       - sympy
+      - sybil>=3.0.0
       # building docs
       - sphinx>=2.0
       - sphinxjp.themes.basicstrap

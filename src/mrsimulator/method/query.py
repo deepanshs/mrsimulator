@@ -48,6 +48,7 @@ class SymmetryQuery(Parseable):
         -------
 
         >>> method.spectral_dimensions[0].events[0].transition_query[0].ch1.D = [0]
+
     """
 
     P: List[int] = Field(
@@ -120,6 +121,7 @@ class TransitionQuery(Parseable):
     -------
 
         >>> query = TransitionQuery(ch1={'P': [1], 'D': [0]}, ch2={'P': [-1]})
+
     """
 
     ch1: Optional[SymmetryQuery] = Field(
@@ -278,6 +280,7 @@ class MixingQuery(Parseable):
     -------
 
         >>> query = MixingQuery(ch1={"tip_angle": 1.570796, "phase": 3.141593})
+
     """
 
     ch1: Optional[RFRotation] = None

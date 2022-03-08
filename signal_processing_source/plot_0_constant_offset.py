@@ -38,7 +38,7 @@ csdm_object = cp.CSDM(
 # Now to apply the processor to the CSDM object, use the
 # :py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method as
 # follows
-processed_data = processor.apply_operations(data=csdm_object.copy())
+processed_data = processor.apply_operations(data=csdm_object.copy()).real
 
 # %%
 # To see the results of the offset, we create a simple plot using the ``matplotlib``

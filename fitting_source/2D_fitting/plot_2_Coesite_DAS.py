@@ -20,8 +20,7 @@ from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
-from mrsimulator.method.spectral_dimension import SpectralDimension
-from mrsimulator.method.event import SpectralEvent
+from mrsimulator.method import SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -174,7 +173,7 @@ result
 # %%
 # The best fit solution
 # ---------------------
-best_fit = sf.bestfit(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
 
 # Plot the spectrum
 plt.figure(figsize=(4.25, 3.0))
@@ -190,7 +189,7 @@ plt.show()
 # %%
 # The best fit solution
 # ---------------------
-residuals = sf.residuals(sim, processor)[0]
+residuals = sf.residuals(sim, processor)[0].real
 
 fig, ax = plt.subplots(
     1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}

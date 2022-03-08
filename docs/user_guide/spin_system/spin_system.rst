@@ -142,7 +142,7 @@ Here we create a relatively unexciting single site proton spin system
     # Import the SpinSystem object
     from mrsimulator import SpinSystem
 
-    proton_site = Site(isotope="1H")
+    H1_site = Site(isotope="1H")
 
     single_site_sys = SpinSystem(
         name="1H spin system",
@@ -259,7 +259,7 @@ construct such a spin system.
 
 .. code-block:: python
 
-    coupled_spin_system = SpinSystem(sites=[H2_site, C13_site], couplings=[H2_13C_coupling])
+    coupled_spin_system = SpinSystem(sites=[H2_site, C13_site], couplings=[H2_C13_coupling])
 
 In contrast to the previous examples, we have omitted the optional *name*, *description*, and
 *abundance* keywords. The name and description for ``coupled_spin_system`` will both be ``None``

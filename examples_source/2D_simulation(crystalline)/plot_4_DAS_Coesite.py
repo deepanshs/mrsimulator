@@ -15,8 +15,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
-from mrsimulator.method.event import SpectralEvent
-from mrsimulator.method.spectral_dimension import SpectralDimension
+from mrsimulator.method import SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 

@@ -19,12 +19,16 @@ from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
 
+from .event import MixingEvent  # noqa: F401
+from .event import SpectralEvent  # noqa: F401
 from .plot import plot as _plot
 from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
 from .utils import mixing_query_connect_map
 from .utils import tip_angle_and_phase_list
+
+# from .event import ConstantDurationEvent  # noqa: F401
 
 
 __author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]

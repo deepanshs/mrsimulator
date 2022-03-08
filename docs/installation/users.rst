@@ -254,17 +254,38 @@ Test your build
 
 If the installation is successful, you should be able to run the following test
 file in your terminal. Download the test file
-`here <https://raw.githubusercontent.com/deepanshs/mrsimulator-examples/master/test_file_v0.3.py?raw=true>`_.
+`here <https://raw.githubusercontent.com/deepanshs/mrsimulator-examples/master/test_file_v0.3.py?raw=true>`_
+or copy and paste the following code into a python file and run the code.
 
-.. code-block:: text
+.. skip: next
 
-    $ python test_file.py
+.. plot::
+    :caption: An example simulating solid-state NMR spectrums of static and MAS experiments
 
-The above statement should produce the following figure.
+    from mrsimulator import Simulator, SpinSystem, Site
+    from mrsimulator.methods import BlochDecaySpectrum
+    import matplotlib.pyplot as plt
 
-.. plot:: ../pyplot/test_file.py
+    # Make Site and SpinSystem objects
+    H_site = Site(isotope="1H", shielding_symmetric={"zeta": 13.89, "eta": 0.25})
+    spin_system = SpinSystem(sites=[H_site])
 
-    A test example simulation of solid-state NMR spectrum.
+    # Make static and MAS one-pulse acquire Method objects
+    static = BlochDecaySpectrum(channels=["1H"])
+    mas = BlochDecaySpectrum(channels=["1H"], rotor_frequency=1000)  # in Hz
+
+    # Setup and run the Simulation object
+    sim = Simulator(spin_systems=[spin_system], methods=[static, mas])
+    sim.run()
+
+    # Plot the spectra
+    fig, ax = plt.subplots(1, 2, figsize=(6, 3), subplot_kw={"projection": "csdm"})
+    ax[0].plot(sim.methods[0].simulation.real, color="black", linewidth=1)
+    ax[0].set_title("Static")
+    ax[1].plot(sim.methods[1].simulation.real, color="black", linewidth=1)
+    ax[1].set_title("MAS")
+    plt.tight_layout()
+    plt.show()
 
 .. note::
 
@@ -274,10 +295,8 @@ The above statement should produce the following figure.
 
         ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
 
-    update numpy by run
+    update numpy by running
 
     .. code-block:: shell
 
         $ pip install -U numpy
-
-    Re-running ``python test_file.py`` should now succeed.
