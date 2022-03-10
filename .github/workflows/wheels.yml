@@ -182,6 +182,11 @@ jobs:
           sudo xcode-select -switch /Applications/Xcode_12.4.app
           echo 'SDKROOT=/Applications/Xcode_12.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk' >> "$GITHUB_ENV"
           echo 'MACOSX_DEPLOYMENT_TARGET=11.1' >> "$GITHUB_ENV"
+          echo $SHELL
+          brew uninstall openblas
+          response=$(brew fetch --force --bottle-tag=arm64_big_sur openblas fftw | grep "Downloaded to")
+          parsed=($response)
+          for ((i=2; i<$${#parsed[@]}; i+=3)); do; echo "${parsed[$i]}"; brew install "${parsed[$i]}"; done;
 
       - name: Set up QEMU
         if: startsWith(matrix.os, 'ubuntu') && matrix.cibw.arch
