@@ -38,8 +38,7 @@ of the `mrsimulator` library is written in C, wrapped, and made available in pyt
 
 The `mrsimulator` package currently offers the following
 
-- **Fast simulation** of one-dimensional solid-state NMR spectra. See our
-  [benchmark results](https://mrsimulator.readthedocs.io/en/stable/benchmark.html).
+- **Fast simulation** of one and two-dimensional solid-state NMR spectra.
 
 - Simulation of **coupled and uncoupled spin system**
 
@@ -66,40 +65,42 @@ The `mrsimulator` package currently offers the following
 For more information, refer to the
 [documentation](https://mrsimulator.readthedocs.io/en/stable/).
 
-## Installation
+## Install
 
-    $ pip install mrsimulator
+    pip install mrsimulator
 
 Please read our [installation document](https://mrsimulator.readthedocs.io/en/latest/installation/users.html) for details.
 
-## Check your build
+### Check your build
 
 If the installation is successful, you should be able to run the following code.
 
-    from mrsimulator import Simulator, SpinSystem, Site
-    from mrsimulator.methods import BlochDecaySpectrum
-    import matplotlib.pyplot as plt
+```py
+from mrsimulator import Simulator, SpinSystem, Site
+from mrsimulator.methods import BlochDecaySpectrum
+import matplotlib.pyplot as plt
 
-    # Make Site and SpinSystem objects
-    H_site = Site(isotope="1H", shielding_symmetric={"zeta": 13.89, "eta": 0.25})
-    spin_system = SpinSystem(sites=[H_site])
+# Make Site and SpinSystem objects
+H_site = Site(isotope="1H", shielding_symmetric={"zeta": 13.89, "eta": 0.25})
+spin_system = SpinSystem(sites=[H_site])
 
-    # Make static and MAS one-pulse acquire Method objects
-    static = BlochDecaySpectrum(channels=["1H"]   )
-    mas = BlochDecaySpectrum(channels=["1H"], rotor_frequency=1000)  # in Hz
+# Make static and MAS one-pulse acquire Method objects
+static = BlochDecaySpectrum(channels=["1H"]   )
+mas = BlochDecaySpectrum(channels=["1H"], rotor_frequency=1000)  # in Hz
 
-    # Setup and run the Simulation object
-    sim = Simulator(spin_systems=[spin_system], methods=[static, mas])
-    sim.run()
-    
-    # Plot the spectra
-    fig, ax = plt.subplots(1, 2, figsize=(6, 3), subplot_kw={"projection": "csdm"})
-    ax[0].plot(sim.methods[0].simulation.real, color="black", linewidth=1)
-    ax[0].set_title("Static")
-    ax[1].plot(sim.methods[1].simulation.real, color="black", linewidth=1)
-    ax[1].set_title("MAS")
-    plt.tight_layout()
-    plt.show()
+# Setup and run the Simulation object
+sim = Simulator(spin_systems=[spin_system], methods=[static, mas])
+sim.run()
+
+# Plot the spectra
+fig, ax = plt.subplots(1, 2, figsize=(6, 3), subplot_kw={"projection": "csdm"})
+ax[0].plot(sim.methods[0].simulation.real, color="black", linewidth=1)
+ax[0].set_title("Static")
+ax[1].plot(sim.methods[1].simulation.real, color="black", linewidth=1)
+ax[1].set_title("MAS")
+plt.tight_layout()
+plt.show()
+```
 
 This should produce the following figure.
 
