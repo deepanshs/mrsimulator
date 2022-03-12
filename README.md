@@ -8,22 +8,12 @@
 | Metrics      | [![Total alerts](https://img.shields.io/lgtm/alerts/g/deepanshs/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/deepanshs/mrsimulator/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/deepanshs/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/deepanshs/mrsimulator/context:python) [![codecov](https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/deepanshs/mrsimulator) [![CodeFactor](https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge)](https://www.codefactor.io/repository/github/deepanshs/mrsimulator) |
 
 `mrsimulator` is an open-source python package for fast computation/analysis of solid-state
-magnetic resonance (NMR) spectra of both crystalline and amorphous materials. The core
-of the `mrsimulator` library is written in C, wrapped, and made available in python.
+magnetic resonance (NMR) spectra of both crystalline and amorphous materials.
 
----
-
-**Check out our extensive [documentation](https://mrsimulator.readthedocs.io/en/stable/index.html).**
-
-[![Simulation](https://img.shields.io/badge/View-Simulation%20Examples-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/examples/index.html)
-[![Fitting](https://img.shields.io/badge/View-Fitting%20Examples-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/fitting/index.html)
-
----
-
-## Why use mrsimulator?
+**Why use mrsimulator?**
 
 - It is open-source and free.
-- It is a fast and versatile solid-state NMR simulator of one-dimensional static, MAS,
+- It is a fast and versatile solid-state NMR simulator of one and two-dimensional static, MAS,
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
 - It include simulations of weakly coupled nuclei experiencing J and dipolar couplings.
@@ -33,47 +23,13 @@ of the `mrsimulator` library is written in C, wrapped, and made available in pyt
 - Packages using mrsimulator -
   - [mrinversion](https://mrinversion.readthedocs.io/en/stable/)
 
-
-### Features
-
-The `mrsimulator` package currently offers the following
-
-- **Fast simulation** of one and two-dimensional solid-state NMR spectra.
-
-- Simulation of **coupled and uncoupled spin system**
-
-  - for spin I=1/2, and quadrupole I>1/2 nuclei
-  - at arbitrary macroscopic magnetic flux density
-  - at arbitrary rotor angles
-  - at arbitrary spinning frequency
-
-- A library of **NMR methods**,
-
-  - 1D Bloch decay spectrum
-  - 1D Bloch decay central transition spectrum
-  - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS)
-  - 2D Satellite-transition Variable Angle Spinning (MQ-VAS)
-  - 2D Dynamic Angle Spinning (DAS)
-  - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
-  - 2D Magic Angle Flipping (MAF)
-
-- **Models** for tensor parameter distribution in amorphous materials.
-
-  - Czjzek
-  - Extended Czjzek
-
-For more information, refer to the
-[documentation](https://mrsimulator.readthedocs.io/en/stable/).
-
 ## Install
 
     pip install mrsimulator
 
-Please read our [installation document](https://mrsimulator.readthedocs.io/en/latest/installation/users.html) for details.
+Please refer to our [installation document](https://mrsimulator.readthedocs.io/en/latest/installation/users.html) for details.
 
-### Check your build
-
-If the installation is successful, you should be able to run the following code.
+#### A 1D static and MAS example
 
 ```py
 from mrsimulator import Simulator, SpinSystem, Site
@@ -104,9 +60,51 @@ plt.show()
 
 This should produce the following figure.
 
-![alt text](docs/_static/test_file.png)
+<img src="docs/_static/test_file.png" width="800" />
 
-## Reporting Bugs
+<!-- ![alt text](docs/_static/test_file.png) -->
+
+---
+
+**Check out our extensive [documentation](https://mrsimulator.readthedocs.io/en/stable/index.html) and more example.**
+
+[![Simulation](https://img.shields.io/badge/View-Simulation%20Examples-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/examples/index.html)
+[![Fitting](https://img.shields.io/badge/View-Fitting%20Examples-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/fitting/index.html)
+
+---
+
+## Features
+
+The `mrsimulator` package currently offers the following
+
+- **Fast simulation** of one and two-dimensional solid-state NMR spectra.
+
+- Simulation of **coupled and uncoupled spin system**
+
+  - for spin I=1/2, and quadrupole I>1/2 nuclei
+  - at arbitrary macroscopic magnetic flux density
+  - at arbitrary rotor angles
+  - at arbitrary spinning frequency
+
+- A library of **NMR methods**,
+
+  - 1D Bloch decay spectrum
+  - 1D Bloch decay central transition spectrum
+  - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS)
+  - 2D Satellite-transition Variable Angle Spinning (MQ-VAS)
+  - 2D Dynamic Angle Spinning (DAS)
+  - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
+  - 2D Magic Angle Flipping (MAF)
+
+- **Models** for tensor parameter distribution in amorphous materials.
+
+  - Czjzek
+  - Extended Czjzek
+
+For more information, refer to the
+[documentation](https://mrsimulator.readthedocs.io/en/stable/).
+
+## Reporting Bugs 🐛
 
 Submit bug reports or feature requests on the [Github issue tracker](https://github.com/deepanshs/mrsimulator/issues).
 
