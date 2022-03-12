@@ -183,13 +183,13 @@ jobs:
           echo 'SDKROOT=/Applications/Xcode_12.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk' >> "$GITHUB_ENV"
           echo 'MACOSX_DEPLOYMENT_TARGET=11.1' >> "$GITHUB_ENV"
           echo $SHELL
-          brew uninstall openblas --ignore-dependencies
+          brew install fftw
           response=$(brew fetch --force --deps --bottle-tag=arm64_big_sur openblas fftw | grep "Downloaded to")
           parsed=($response)
           for ((i=2; i<${#parsed[@]}; i+=3))
           do
             echo "${parsed[$i]}"
-            brew install "${parsed[$i]}"
+            brew reinstall "${parsed[$i]}"
           done
 
       - name: Set up QEMU
