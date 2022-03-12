@@ -69,7 +69,7 @@ sim.run()
 # second-rank traceless shielding tensors.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 plt.tight_layout()
 plt.show()
 
@@ -118,7 +118,7 @@ sim.methods = [
     BlochDecayCTSpectrum(
         channels=["71Ga"],
         magnetic_flux_density=9.4,  # in T
-        spectral_dimensions=[{"count": 2048, "spectral_width": 2e5}],
+        spectral_dimensions=[dict(count=2048, spectral_width=2e5)],
     )
 ]  # add the method
 sim.run()
@@ -128,7 +128,7 @@ sim.run()
 # the second-rank traceless EFG tensors.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -141,7 +141,7 @@ sim.methods = [
         magnetic_flux_density=9.4,  # in T
         rotor_frequency=25000,  # in Hz
         spectral_dimensions=[
-            {"count": 2048, "spectral_width": 2e5, "reference_offset": -1e4}
+            dict(count=2048, spectral_width=2e5, reference_offset=-1e4)
         ],
     )
 ]  # add the method
@@ -153,7 +153,7 @@ sim.run()
 # second-rank traceless EFG tensors.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

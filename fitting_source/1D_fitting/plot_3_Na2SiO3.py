@@ -25,6 +25,7 @@ from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -35,7 +36,7 @@ from mrsimulator.utils import get_spectral_dimensions
 # Import the experimental data. We use dataset file serialized with the CSDM
 # file-format, using the
 # `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_ module.
-filename = "https://sandbox.zenodo.org/record/814455/files/Na2SiO3_O17.csdf"
+filename = "https://sandbox.zenodo.org/record/835664/files/Na2SiO3_O17.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
@@ -66,13 +67,13 @@ plt.show()
 O1 = Site(
     isotope="17O",
     isotropic_chemical_shift=60.0,  # in ppm,
-    quadrupolar={"Cq": 4.2e6, "eta": 0.5},  # Cq in Hz
+    quadrupolar=SymmetricTensor(Cq=4.2e6, eta=0.5),  # Cq in Hz
 )
 
 O2 = Site(
     isotope="17O",
     isotropic_chemical_shift=40.0,  # in ppm,
-    quadrupolar={"Cq": 2.4e6, "eta": 0},  # Cq in Hz
+    quadrupolar=SymmetricTensor(Cq=2.4e6, eta=0.0),  # Cq in Hz
 )
 
 spin_systems = [
@@ -187,8 +188,8 @@ result
 # **Step 8:** The plot of the fit and the measurement data.
 
 # Best fit spectrum
-best_fit = sf.bestfit(sim, processor)[0]
-residuals = sf.residuals(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
+residuals = sf.residuals(sim, processor)[0].real
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")

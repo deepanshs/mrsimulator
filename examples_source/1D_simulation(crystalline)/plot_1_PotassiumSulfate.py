@@ -13,8 +13,9 @@ Potassium Sulfate, ³³S (I=3/2)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator import signal_processing as sp
+from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -24,7 +25,7 @@ site = Site(
     name="33S",
     isotope="33S",
     isotropic_chemical_shift=335.7,  # in ppm
-    quadrupolar={"Cq": 0.959e6, "eta": 0.42},  # Cq is in Hz
+    quadrupolar=SymmetricTensor(Cq=0.959e6, eta=0.42),  # Cq is in Hz
 )
 spin_system = SpinSystem(sites=[site])
 
@@ -35,12 +36,12 @@ method = BlochDecayCTSpectrum(
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=14000,  # in Hz
     spectral_dimensions=[
-        {
-            "count": 2048,
-            "spectral_width": 5000,  # in Hz
-            "reference_offset": 22500,  # in Hz
-            "label": r"$^{33}$S resonances",
-        }
+        dict(
+            count=2048,
+            spectral_width=5000,  # in Hz
+            reference_offset=22500,  # in Hz
+            label=r"$^{33}$S resonances",
+        )
     ],
 )
 
@@ -52,8 +53,8 @@ plt.show()
 # %%
 # **Step 3:** Create the Simulator object and add method and spin system objects.
 sim = Simulator()
-sim.spin_systems += [spin_system]  # add the spin system
-sim.methods += [method]  # add the method
+sim.spin_systems = [spin_system]  # add the spin system
+sim.methods = [method]  # add the method
 
 # %%
 # **Step 4:** Simulate the spectrum.

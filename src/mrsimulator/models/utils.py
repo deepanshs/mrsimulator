@@ -68,7 +68,7 @@ def x_y_to_zeta_eta(x, y):
     """Same as def x_y_to_zeta_eta, but for ndarrays."""
     x = np.abs(x)
     y = np.abs(y)
-    zeta = np.sqrt(x ** 2 + y ** 2)  # + offset
+    zeta = np.sqrt(x**2 + y**2)  # + offset
     eta = np.ones(zeta.shape)
     index = np.where(x > y)
     zeta[index] = -zeta[index]

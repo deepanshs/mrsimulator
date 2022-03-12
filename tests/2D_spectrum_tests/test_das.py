@@ -122,8 +122,8 @@ def test_DAS():
             eta = site.quadrupolar.eta
             iso = site.isotropic_chemical_shift
             factor1 = -(3 / 40) * (Cq / larmor_freq) ** 2
-            factor2 = (spin * (spin + 1) - 3 / 4) / (spin ** 2 * (2 * spin - 1) ** 2)
-            factor3 = 1 + (eta ** 2) / 3
+            factor2 = (spin * (spin + 1) - 3 / 4) / (spin**2 * (2 * spin - 1) ** 2)
+            factor3 = 1 + (eta**2) / 3
             iso_obs = factor1 * factor2 * factor3 * 1e6 + iso
 
             # get the index where there is a signal

@@ -74,7 +74,7 @@ sim.run()
 # second-rank traceless shielding tensors.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 plt.tight_layout()
 plt.show()
 
@@ -118,7 +118,7 @@ sim.methods = [
     BlochDecayCTSpectrum(
         channels=["71Ga"],
         magnetic_flux_density=4.8,  # in T
-        spectral_dimensions=[{"count": 2048, "spectral_width": 1.2e6}],
+        spectral_dimensions=[dict(count=2048, spectral_width=1.2e6)],
     )
 ]  # add the method
 sim.run()
@@ -128,7 +128,7 @@ sim.run()
 # second-rank traceless EFG tensors.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

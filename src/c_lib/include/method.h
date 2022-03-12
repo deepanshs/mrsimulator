@@ -35,6 +35,7 @@ typedef struct MRS_dimension {
   double *freq_offset;      // buffer for local + sideband frequencies.
   double normalize_offset;  // fixed value = 0.5 - coordinate_offset/increment
   double inverse_increment;
+  double *freq_amplitude;  // local frequency amplitude.
 } MRS_dimension;
 
 /**

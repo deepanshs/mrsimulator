@@ -27,6 +27,7 @@ from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -69,7 +70,7 @@ plt.show()
 P_31 = Site(
     isotope="31P",
     isotropic_chemical_shift=5.0,  # in ppm,
-    shielding_symmetric={"zeta": -80, "eta": 0.5},  # zeta in Hz
+    shielding_symmetric=SymmetricTensor(zeta=-80, eta=0.5),  # zeta in Hz
 )
 
 spin_systems = [SpinSystem(sites=[P_31])]
@@ -183,8 +184,8 @@ result
 # **Step 8:** The plot of the fit, measurement, and residuals.
 
 # Best fit spectrum
-best_fit = sf.bestfit(sim, processor)[0]
-residuals = sf.residuals(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
+residuals = sf.residuals(sim, processor)[0].real
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")

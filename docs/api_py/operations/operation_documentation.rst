@@ -20,7 +20,7 @@ Documentation
 .. autoclass:: Gaussian
 .. autoclass:: Exponential
 .. autoclass:: SkewedGaussian
-.. autoclass:: Step
+.. autoclass:: TopHat
 .. autoclass:: Mask
 
 .. currentmodule:: mrsimulator.signal_processing.affine

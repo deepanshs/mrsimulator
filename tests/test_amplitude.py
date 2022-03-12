@@ -16,7 +16,7 @@ def pre_setup():
 
     sim = Simulator()
     sim.spin_systems.append(spin_system)
-    sim.methods += [method]
+    sim.methods = [method]
     return sim
 
 

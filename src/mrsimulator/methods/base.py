@@ -34,18 +34,6 @@ class BaseMethod(Method):
             parse_spectral_dimensions(kwargs)
             check_for_at_least_one_events(kwargs)
 
-    @validator("rotor_frequency", pre=True, always=True)
-    def check_rotor_frequency(cls, v, *, values, **kwargs):
-        a = (
-            True if "name" not in values else values["name"] == "SSB2D",
-            v in ["1000000000000.0 Hz", 1.0e12],
-            cls.ndim == 1,
-        )
-        if any(a):
-            return v
-        e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
-        raise ValueError(e)
-
 
 class Method1D(BaseMethod):
     """Generic one-dimensional spectrum simulation method.
@@ -143,6 +131,20 @@ class BaseNamedMethod(BaseMethod):
             return v
         raise NamedMethodError(v, cls.__name__)
 
+    @validator("rotor_frequency", pre=True, always=True)
+    def check_rotor_frequency(cls, v, *, values, **kwargs):
+        a = (
+            True if "name" not in values else values["name"] == "SSB2D",
+            v in ["1000000000000.0 Hz", 1.0e12],
+            cls.ndim == 1,
+        )
+        if any(a):
+            return v
+        raise ValueError(
+            "`rotor_frequency=1e12 Hz` is fixed for all 2D named Methods, except SSB2D,"
+            "and cannot be modified."
+        )
+
     @classmethod
     def update(cls, **kwargs):
         return {"spectral_dimensions": [{"events": [{}]} for _ in range(cls.ndim)]}
@@ -157,7 +159,9 @@ class BaseNamedMethod(BaseMethod):
         default_method = cls.update(**py_dict)
         default_spectral_dimensions = default_method["spectral_dimensions"]
         for i, item in enumerate(py_dict["spectral_dimensions"]):
-            if item["events"] == [{}]:
+
+            # If no methods in SpectralDimension, set to default events
+            if item["events"] == [{}] or item["events"] == []:
                 item["events"] = default_spectral_dimensions[i]["events"]
 
             elif item["events"] != default_spectral_dimensions[i]["events"]:
@@ -252,6 +256,7 @@ class BlochDecayCTSpectrum(BaseNamedMethod1D):
         }
 
 
+# Class Aliases
 class BlochDecayCentralTransitionSpectrum(BlochDecayCTSpectrum):
     name: str = "BlochDecayCentralTransitionSpectrum"
 

@@ -1,9 +1,16 @@
 :root {
   --max-sidebar-width: 35%;
 }
+
+@font-face {
+  font-family: "DejaVu Sans";
+  src: url("https://kendo.cdn.telerik.com/2021.2.616/styles/fonts/DejaVu/DejaVuSans.ttf") format("truetype");
+}
+
 body {
   padding-top: 3em;
   padding-bottom: 0;
+  font-family: 'DejaVu Sans', sans-serif;
 }
 
 .output_html.output_result h2 {
