@@ -184,7 +184,7 @@ jobs:
           echo 'MACOSX_DEPLOYMENT_TARGET=11.1' >> "$GITHUB_ENV"
           echo $SHELL
           brew uninstall openblas --ignore-dependencies
-          response=$(brew fetch --force --bottle-tag=arm64_big_sur openblas fftw | grep "Downloaded to")
+          response=$(brew fetch --force --deps --bottle-tag=arm64_big_sur openblas fftw | grep "Downloaded to")
           parsed=($response)
           for ((i=2; i<${#parsed[@]}; i+=3))
           do
