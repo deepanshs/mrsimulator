@@ -104,7 +104,7 @@ The `mrsimulator` package currently offers the following
 For more information, refer to the
 [documentation](https://mrsimulator.readthedocs.io/en/stable/).
 
-## Reporting Bugs 🐛
+## Reporting Bugs
 
 Submit bug reports or feature requests on the [Github issue tracker](https://github.com/deepanshs/mrsimulator/issues).
 
