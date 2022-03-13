@@ -152,12 +152,8 @@ Examples
 
     SpectralDimension(
         events=[
-            SpectralEvent(
-                fraction=9 / 16, transition_query=[{"ch1": {"P": [-3], "D": [0]}}]
-            ),
-            SpectralEvent(
-                fraction=7 / 16, transition_query=[{"ch1": {"P": [-1], "D": [0]}}]
-            ),
+            SpectralEvent(fraction=9 / 16, transition_query=[{"ch1": {"P": [-3], "D": [0]}}]),
+            SpectralEvent(fraction=7 / 16, transition_query=[{"ch1": {"P": [-1], "D": [0]}}]),
         ]
     )
 
