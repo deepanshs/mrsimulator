@@ -105,7 +105,7 @@ void octahedronGetComplexExpOfPolarAngleOverOctant(const unsigned int nt,
   // cos(beta) = sqrt(z^2) ... (1)
   // In terms of the variables, Eq (1) is given as sqrt(zr).
   // Evaluate zr = sqrt(zr)         ==>> sqrt(z^2).
-  vm_double_square_root(points, zr, zr);
+  vm_double_square_root_inplace(points, zr);
   // Copy cos(beta), aka zr, to the even addresses of exp_I_beta.
   cblas_dcopy(points, zr, 1, (double *)exp_I_beta, 2);
 
@@ -116,17 +116,17 @@ void octahedronGetComplexExpOfPolarAngleOverOctant(const unsigned int nt,
   vm_double_add(points, xr, yr, zr);
   // Take the square root of zr to get sin(beta).
   // Evaluate zr = sqrt(zr)         ==>> sqrt(x^2 + y^2).
-  vm_double_square_root(points, zr, zr);
+  vm_double_square_root_inplace(points, zr);
   // Copy sin(beta), aka zr, to the odd addresses of exp_I_beta.
   cblas_dcopy(points, zr, 1, (double *)exp_I_beta + 1, 2);
 
   // Evaluate squate root of xr
   // xr = sqrt(xr)        ==>> sqrt(x^2).
-  vm_double_square_root(points, xr, xr);
+  vm_double_square_root_inplace(points, xr);
 
   // Evaluate squate root of yr
   // yr = sqrt(yr)        ==>> sqrt(y^2).
-  vm_double_square_root(points, yr, yr);
+  vm_double_square_root_inplace(points, yr);
 
   // .. note
   // At this point the variables,
@@ -138,7 +138,7 @@ void octahedronGetComplexExpOfPolarAngleOverOctant(const unsigned int nt,
   // cos(alpha) = x/sqrt(x^2 + y^2) = x/sin(beta) ... (3)
   // In terms of the variables, Eq (3) is given as xr/zr.
   // Evaluate xr = xr/zr
-  vm_double_divide(points - 1, xr, zr, xr);
+  vm_double_divide_inplace(points - 1, zr, xr);
   xr[points - 1] = 0.0;
   // Copy cos(alpha), aka xr, to the even addresses of exp_I_alpha
   cblas_dcopy(points, xr, 1, (double *)exp_I_alpha, 2);
@@ -147,7 +147,7 @@ void octahedronGetComplexExpOfPolarAngleOverOctant(const unsigned int nt,
   // sin(alpha) = y/sqrt(x^2 + y^2) = y/sin(beta) ... (4)
   // In terms of the variables, Eq (4) is given as yr/zr.
   // Evaluate yr = yr/zr
-  vm_double_divide(points - 1, yr, zr, yr);
+  vm_double_divide_inplace(points - 1, zr, yr);
   yr[points - 1] = 0.0;
   // Copy sin(alpha), aka yr, to the odd addresses of exp_I_alpha.
   cblas_dcopy(points, yr, 1, (double *)exp_I_alpha + 1, 2);
