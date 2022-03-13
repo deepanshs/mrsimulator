@@ -47,13 +47,13 @@ void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n) {
  * @param magnetic_flux_density_in_T The external field flux density at the event.
  * @param rotor_frequency_in_Hz The rotor frequency at the event.
  * @param rotor_angle_in_rad The rotor angle at the event.
- * @param increment The increment of the dimension to which the event belongs.
+ * @param inverse_increment The inverse increment of the corresponding dimension.
  * @param plan The MRS plan of the first event along the dimension.
  */
 static inline void MRS_set_event(MRS_event *event, double fraction,
                                  double magnetic_flux_density_in_T,
                                  double rotor_frequency_in_Hz,
-                                 double rotor_angle_in_rad, double increment,
+                                 double rotor_angle_in_rad, double inverse_increment,
                                  MRS_plan *plan) {
   event->fraction = fraction;
   event->rotor_frequency_in_Hz = rotor_frequency_in_Hz;
@@ -77,6 +77,10 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
     new_plan->copy = true;
     new_plan->copy_for_rotor_freq = true;
     MRS_plan_update_from_rotor_frequency_in_Hz(new_plan, rotor_frequency_in_Hz);
+
+    // normalize the sideband frequencies.
+    cblas_dscal(new_plan->number_of_sidebands, inverse_increment, new_plan->vr_freq, 1);
+
     event->plan = new_plan;
     MRS_plan_release_temp_storage(new_plan);
     return;
@@ -88,7 +92,7 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
     new_plan->copy = true;
     new_plan->copy_for_rotor_angle = true;
     MRS_plan_update_from_rotor_angle_in_rad(new_plan, rotor_angle_in_rad,
-                                            plan->allow_fourth_rank);
+                                            plan->allow_4th_rank);
     event->plan = new_plan;
     return;
   }
@@ -100,7 +104,11 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
   new_plan->copy_for_rotor_angle = true;
   MRS_plan_update_from_rotor_frequency_in_Hz(new_plan, rotor_frequency_in_Hz);
   MRS_plan_update_from_rotor_angle_in_rad(new_plan, rotor_angle_in_rad,
-                                          plan->allow_fourth_rank);
+                                          plan->allow_4th_rank);
+
+  // normalize the sideband frequencies.
+  cblas_dscal(new_plan->number_of_sidebands, inverse_increment, new_plan->vr_freq, 1);
+
   event->plan = new_plan;
   MRS_plan_release_temp_storage(new_plan);
 }
@@ -132,33 +140,36 @@ static inline void create_plans_for_events_in_dimension(
   dim->n_events = n_events;
   dim->events = (MRS_event *)malloc(n_events * sizeof(MRS_event));
 
-  MRS_plan *the_plan =
+  dim->inverse_increment = 1.0 / increment;
+  dim->normalize_offset = 0.5 - (coordinates_offset * dim->inverse_increment);
+  dim->R0_offset = 0.0;
+
+  MRS_plan *plan =
       MRS_create_plan(scheme, number_of_sidebands, *rotor_frequency_in_Hz,
-                      *rotor_angle_in_rad, increment, scheme->allow_fourth_rank);
+                      *rotor_angle_in_rad, increment, scheme->allow_4th_rank);
+  // normalize the sideband frequencies.
+  cblas_dscal(number_of_sidebands, dim->inverse_increment, plan->vr_freq, 1);
 
   for (i = 0; i < n_events; i++) {
     dim->events[i].freq_amplitude = NULL;
     // if (*rotor_frequency_in_Hz != 0.0 && *rotor_frequency_in_Hz != 1.0e12) {
-    //   dim->events[i].freq_amplitude = malloc_double(the_plan->size);
-    //   vm_double_ones(the_plan->size, dim->events[i].freq_amplitude);
+    //   dim->events[i].freq_amplitude = malloc_double(plan->size);
+    //   vm_double_ones(plan->size, dim->events[i].freq_amplitude);
     // }
     MRS_set_event(&(dim->events[i]), *fraction++, *magnetic_flux_density_in_T++,
-                  *rotor_frequency_in_Hz++, *rotor_angle_in_rad++, increment, the_plan);
+                  *rotor_frequency_in_Hz++, *rotor_angle_in_rad++,
+                  dim->inverse_increment, plan);
     if (i == 0) dim->events->plan->copy = false;
   }
 
   if (DEBUG) printf("Early memory release\n");
-  MRS_plan_release_temp_storage(the_plan);
-
-  dim->inverse_increment = 1.0 / increment;
-  dim->normalize_offset = 0.5 - (coordinates_offset * dim->inverse_increment);
-  dim->R0_offset = 0.0;
+  MRS_plan_release_temp_storage(plan);
 
   /* buffer to hold the local frequencies and frequency offset. The buffer is useful
    * when the rotor angle is off magic angle (54.735 deg). */
   dim->local_frequency = malloc_double(scheme->total_orientations);
   dim->freq_offset = malloc_double(scheme->octant_orientations);
-  dim->freq_amplitude = malloc_double(the_plan->size);
+  dim->freq_amplitude = malloc_double(plan->size);
 }
 
 /**

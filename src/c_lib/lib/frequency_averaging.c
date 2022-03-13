@@ -64,7 +64,7 @@ static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme 
   if (delta_interpolation) {
     offset_0 += *freq;
     for (i = 0; i < plan->number_of_sidebands; i++) {
-      offset = offset_0 + plan->vr_freq[i] * dimensions->inverse_increment;
+      offset = offset_0 + plan->vr_freq[i];
       if ((int)offset >= 0 && (int)offset <= dimensions->count) {
         k1 = i * scheme->total_orientations;
         j = 0;
@@ -79,7 +79,7 @@ static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme 
   }
 
   for (i = 0; i < plan->number_of_sidebands; i++) {
-    offset = offset_0 + plan->vr_freq[i] * dimensions->inverse_increment;
+    offset = offset_0 + plan->vr_freq[i];
     if ((int)offset >= 0 && (int)offset <= dimensions->count) {
       k1 = i * scheme->total_orientations;
       address = 0;
@@ -111,39 +111,29 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
   unsigned int step_vector_i = 0, step_vector_k = 0, address;
   MRS_plan *planA, *planB;
   int size = scheme->total_orientations * number_of_sidebands;
-  double *freq_ampA, *freq_ampB;
-  double *freq_amp = malloc_double(scheme->octant_orientations);
+  double *freq_ampA, *freq_ampB, *freq_amp = scheme->scrach;
   double offset0, offset1, offsetA, offsetB;
-  double *dim0, *dim1;
+  double *freq0, *freq1;
   double norm0, norm1;
 
-  dim0 = dimensions[0].local_frequency;
-  dim1 = dimensions[1].local_frequency;
+  freq0 = dimensions[0].local_frequency;
+  freq1 = dimensions[1].local_frequency;
 
   // scale and shear the first dimension.
   if (affine_matrix[0] != 1) {
-    cblas_dscal(scheme->total_orientations, affine_matrix[0], dim0, 1);
-    // dimensions[0].R0_offset *= affine_matrix[0];
+    cblas_dscal(scheme->total_orientations, affine_matrix[0], freq0, 1);
   }
   if (affine_matrix[1] != 0) {
-    cblas_daxpy(scheme->total_orientations, affine_matrix[1], dim1, 1, dim0, 1);
-    // dimensions[0].R0_offset += affine_matrix[1] *
-    // dimensions[1].R0_offset;
+    cblas_daxpy(scheme->total_orientations, affine_matrix[1], freq1, 1, freq0, 1);
   }
 
   // scale and shear the second dimension.
   if (affine_matrix[3] != 1) {
-    cblas_dscal(scheme->total_orientations, affine_matrix[3], dim1, 1);
-    // dimensions[1].R0_offset *= affine_matrix[3];
+    cblas_dscal(scheme->total_orientations, affine_matrix[3], freq1, 1);
   }
   if (affine_matrix[2] != 0) {
-    cblas_daxpy(scheme->total_orientations, affine_matrix[2], dim0, 1, dim1, 1);
-    // dimensions[1].R0_offset += affine_matrix[2] *
-    // dimensions[0].R0_offset;
+    cblas_daxpy(scheme->total_orientations, affine_matrix[2], freq0, 1, freq1, 1);
   }
-
-  // offset = plan->vr_freq[i] + plan->isotropic_offset +
-  //          dimensions[dim].normalize_offset;
 
   offset0 = dimensions[0].R0_offset;
   freq_ampA = dimensions[0].freq_amplitude;
@@ -160,9 +150,9 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
   cblas_dscal(size, transition_pathway_weight, freq_ampA, 1);
 
   for (i = 0; i < number_of_sidebands; i++) {
-    offsetA = offset0 + planA->vr_freq[i] * dimensions[0].inverse_increment;
+    offsetA = offset0 + planA->vr_freq[i];
     for (k = 0; k < number_of_sidebands; k++) {
-      offsetB = offset1 + planB->vr_freq[k] * dimensions[1].inverse_increment;
+      offsetB = offset1 + planB->vr_freq[k];
 
       norm0 = offsetA;
       norm1 = offsetB;
@@ -181,7 +171,7 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
         step_vector_i = i * scheme->total_orientations;
         // for (k = 0; k < number_of_sidebands; k++) {
         //   offsetB =
-        //       offset1 + plan->vr_freq[k] * dimensions[1].inverse_increment;
+        //       offset1 + plan->vr_freq[k];
         //   norm1 = offsetB + dimensions[1].normalize_offset;
         if ((int)norm1 >= 0 && (int)norm1 <= dimensions[1].count) {
           step_vector_k = k * scheme->total_orientations;
@@ -191,9 +181,9 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
             address = j * scheme->octant_orientations;
             // Add offset(isotropic + sideband_order) to the local frequency
             // from [n to n+octant_orientation]
-            vm_double_add_offset(scheme->octant_orientations, &dim0[address], norm0,
+            vm_double_add_offset(scheme->octant_orientations, &freq0[address], norm0,
                                  dimensions[0].freq_offset);
-            vm_double_add_offset(scheme->octant_orientations, &dim1[address], norm1,
+            vm_double_add_offset(scheme->octant_orientations, &freq1[address], norm1,
                                  dimensions[1].freq_offset);
 
             vm_double_multiply(scheme->octant_orientations,
@@ -210,5 +200,4 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
       }
     }
   }
-  free(freq_amp);
 }

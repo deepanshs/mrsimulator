@@ -30,7 +30,7 @@ cdef extern from "schemes.h":
 
     MRS_averaging_scheme *MRS_create_averaging_scheme(
                             unsigned int integration_density,
-                            bool_t allow_fourth_rank,
+                            bool_t allow_4th_rank,
                             unsigned int integration_volume)
     void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme)
     MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
@@ -47,7 +47,7 @@ cdef extern from "mrsimulator.h":
     MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, unsigned int number_of_sidebands,
                           double rotor_frequency_in_Hz,
                           double rotor_angle_in_rad, double increment,
-                          bool_t allow_fourth_rank)
+                          bool_t allow_4th_rank)
     void MRS_free_plan(MRS_plan *plan)
     void MRS_get_amplitudes_from_plan(MRS_plan *plan, bool_t refresh)
     void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0, double complex *R2,
