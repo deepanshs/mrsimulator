@@ -23,6 +23,8 @@ What's new
   a list of irreducible spin systems.
 - Add a new function ``site_generator()`` to the utility collection sub-module, which simplify
   the process of creating Site objects in bulk.
+- Added gyromagnetic ratio and quadrupole moment data for all isotopes, including unstable
+  isotopes.
 
 **Documentation**
 

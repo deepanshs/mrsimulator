@@ -35,7 +35,7 @@ class Isotope(BaseModel):
     >>> carbon.natural_abundance # in %
     1.11
     >>> carbon.gyromagnetic_ratio # in MHz/T
-    10.7084
+    10.708398861439887
     >>> carbon.atomic_number
     6
     >>> carbon.quadrupole_moment # in eB
