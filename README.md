@@ -25,7 +25,9 @@ magnetic resonance (NMR) spectra of both crystalline and amorphous materials.
 
 ## Install
 
-    pip install mrsimulator
+```sh
+pip install mrsimulator
+```
 
 Please refer to our [installation document](https://mrsimulator.readthedocs.io/en/latest/installation/users.html) for details.
 
@@ -95,11 +97,13 @@ The `mrsimulator` package currently offers the following
   - 2D Dynamic Angle Spinning (DAS)
   - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
   - 2D Magic Angle Flipping (MAF)
+  - Custom user-defined 1D and 2D methods (Method)
 
 - **Models** for tensor parameter distribution in amorphous materials.
 
   - Czjzek
   - Extended Czjzek
+  - Custom user-defined models
 
 For more information, refer to the
 [documentation](https://mrsimulator.readthedocs.io/en/stable/).

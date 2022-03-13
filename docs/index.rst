@@ -164,7 +164,7 @@ amorphous materials.
 
 The ``mrsimulator`` package offers the following
 
-- **Fast simulation** of one/two-dimensional solid-state NMR spectra. See our :ref:`benchmark` results.
+- **Fast simulation** of one and two-dimensional solid-state NMR spectra.
 
 - Simulation of **coupled and uncoupled spin system**
     - for spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei
@@ -180,10 +180,12 @@ The ``mrsimulator`` package offers the following
     - 2D Dynamic Angle Spinning (DAS)
     - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
     - 2D Magic Angle Flipping (MAF)
+    - Custom user-defined 1D and 2D methods (Method)
 
 - **Models** for tensor parameter distribution in amorphous materials.
     - Czjzek
     - Extended Czjzek
+    - Custom user-defined models
 
 ----
 
