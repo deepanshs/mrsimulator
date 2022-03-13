@@ -85,7 +85,7 @@ The following code is used to create the plots in this section
     # function to render figures.
     def plot(csdm_object):
         ax = plt.subplot(projection="csdm")
-        ax.plot(csdm_object, linewidth=1.5)
+        ax.plot(csdm_object.real, linewidth=1.5)
         ax.invert_xaxis()
         plt.tight_layout()
         plt.show()

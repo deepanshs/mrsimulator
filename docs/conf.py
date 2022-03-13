@@ -227,9 +227,9 @@ try:
     doxy_output = os.path.abspath("./xml")
 
     # Setup the breathe extension
-    breathe_projects = {"My Project": doxy_output}
-    breathe_default_project = "My Project"
-    breathe_domain_by_extension = {"h": "c", "py": "py"}
+    breathe_projects = {"mrsim": doxy_output}
+    breathe_default_project = "mrsim"
+    breathe_domain_by_extension = {"h": "c"}
     breathe_use_project_refids = True
     breathe_doxygen_config_options = {
         "PREDEFINED": "DOXYGEN_SHOULD_SKIP_THIS",
@@ -284,7 +284,7 @@ language = None
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = None
+pygments_style = "default"
 
 
 # ---------------------------------------------------------------------------- #
