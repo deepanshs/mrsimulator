@@ -91,7 +91,7 @@ If the installation is successful, you should be able to run the following code.
     # Setup and run the Simulation object
     sim = Simulator(spin_systems=[spin_system], methods=[static, mas])
     sim.run()
-    
+
     # Plot the spectra
     fig, ax = plt.subplots(1, 2, figsize=(6, 3), subplot_kw={"projection": "csdm"})
     ax[0].plot(sim.methods[0].simulation.real, color="black", linewidth=1)
