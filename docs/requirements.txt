@@ -19,6 +19,6 @@ pillow>=7.1.2
 breathe==4.26
 sphinx_copybutton>=0.3.0
 docutils<0.17
-sphinx_tabs<3.3
+sphinx_tabs<3.4
 recommonmark
 sphinx-version-warning
