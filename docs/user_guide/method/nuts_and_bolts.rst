@@ -4,8 +4,8 @@ Method (For advanced users)
 ===========================
 
 Mrsimulator allows users to create custom methods and simulate the NMR spectrum.
-At the top level, a Method object is no different than the stock methods provided
-within the mrsimulator methods library.
+At the top level, a :ref:`method_api` object is no different than the pre-built
+methods provided within the ``mrsimulator.methods`` module.
 
 A generic setup for a custom method (similar to the stock method) follows,
 
@@ -26,10 +26,11 @@ A generic setup for a custom method (similar to the stock method) follows,
     )
 
 where `name` is an optional method name, `channels` are a list of isotopes used in the
-method, `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency` are the global
-parameters, and `spectral_dimension` is the list of SpectralDimension objects defining
-the spectral grid.
-Although similar to the stock method from the ``mrsimulator.methods`` library, the
+method, `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency` are global
+parameters for the method, and `spectral_dimension` is the list of SpectralDimension
+objects defining the spectral grid.
+
+Although similar to the stock methods from the ``mrsimulator.methods`` module, the
 above example lacks instructions on how to evaluate frequencies for each spectral dimension.
 We pre-defined these instructions for the stock methods for the user's convenience. Here,
 we describe how users can create custom methods.
@@ -39,7 +40,7 @@ SpectralDimension
 
 A SpectralDimension object is not just a placeholder for defining a spectral grid. It is
 also where we define various events, of which, SpectralEvent is responsible for the
-NMR frequencies. The average frequency for a given spectral dimension is
+defining NMR frequencies. The average frequency for a given spectral dimension is
 
 .. math::
     \mathbf{f}_j = \sum_{i=0}^{N-1} ~ w_i ~~ \mathbf{e}_i,
@@ -61,7 +62,7 @@ A syntax for a SpectralDimension object follows,
         reference_offset=10,
         events=[
             SpectralEvent(name="A", fraction=0.5),  # fractions are the weights
-            SpectralEvent(name="B", fraction=0.5),  # A list of events
+            SpectralEvent(name="B", fraction=0.5),
         ],
     )
 
@@ -86,18 +87,19 @@ The syntax for ``SpectralEvent`` follows,
         fraction=0.5,
         magnetic_flux_density=4.7,  # T
         rotor_angle=57.735 * 3.1415 / 180,  # rad
-        rotor_frequency=10000,
+        rotor_frequency=10000,  # Hz
         freq_contrib=["Quad2_0", "Quad2_4"],  # frequency contributions list.
         transition_query=[{"ch1": {"P": [-3], "D": [0]}}],  # transition queries list
     )
 
-Here, `fraction`, :math:`w_i` is the frequency scaling factor for the event.
+Here, `fraction` is the frequency scaling factor for the event; `fraction` is the same
+as :math:`w_i` used when averaging frequencies along a spectral dimension.
 The attributes `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency` define the
-condition under which frequencies are computed. These attributes are local to the event.
-If undefined, the global method parameter is used instead.
+condition under which frequencies are computed. These attributes are local to the event
+and take the global method attribute if no value is provided.
 
 The attribute `freq_contrib` is a list of frequency contributions allowed during the
-event and is used to toggle frequency contributions.
+event and is used to select specific frequency contributions.
 In the above example, the selection only allows the second-order zeroth and fourth-rank
 quadrupolar frequency contributions during the event. If undefined, all frequency
 contributions are allowed by default. Refer to the :ref:`freq_contrib_api` for the list
@@ -110,7 +112,7 @@ satisfy :math:`p= m_f - m_i = -3` and :math:`d=m_f^2 - m_i^2=0` for channel-1, w
 :math:`m_f` and :math:`m_i` are the spin quantum number for the final and initial energy
 states involved in a spin-transition. The index `1` in `ch1` is relative to the channels
 specified within the method objects. In this case, `ch1` refers to ``27Al``.
-Read more on the transition query.
+Read more on the :ref:`query_api` API page.
 
 
 MixingEvent
@@ -152,8 +154,12 @@ Examples
 
     SpectralDimension(
         events=[
-            SpectralEvent(fraction=9 / 16, transition_query=[{"ch1": {"P": [-3], "D": [0]}}]),
-            SpectralEvent(fraction=7 / 16, transition_query=[{"ch1": {"P": [-1], "D": [0]}}]),
+            SpectralEvent(
+                fraction=9 / 16, transition_query=[{"ch1": {"P": [-3], "D": [0]}}]
+            ),
+            SpectralEvent(
+                fraction=7 / 16, transition_query=[{"ch1": {"P": [-1], "D": [0]}}]
+            ),
         ]
     )
 
