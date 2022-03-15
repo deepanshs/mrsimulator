@@ -84,13 +84,13 @@ void MRS_plan_release_temp_storage(MRS_plan *the_plan) {
 MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
                           unsigned int number_of_sidebands,
                           double rotor_frequency_in_Hz, double rotor_angle_in_rad,
-                          double increment, bool allow_fourth_rank) {
+                          double increment, bool allow_4th_rank) {
   MRS_plan *plan = malloc(sizeof(MRS_plan));
   plan->number_of_sidebands = number_of_sidebands;
   plan->rotor_frequency_in_Hz = rotor_frequency_in_Hz;
   plan->rotor_angle_in_rad = rotor_angle_in_rad;
 
-  plan->allow_fourth_rank = allow_fourth_rank;
+  plan->allow_4th_rank = allow_4th_rank;
 
   plan->copy = false;
   plan->copy_for_rotor_angle = false;
@@ -125,7 +125,7 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
   MRS_plan_update_from_rotor_frequency_in_Hz(plan, rotor_frequency_in_Hz);
 
   /** Update the mrsimulator plan with the given rotor angle in radian. */
-  MRS_plan_update_from_rotor_angle_in_rad(plan, rotor_angle_in_rad, allow_fourth_rank);
+  MRS_plan_update_from_rotor_angle_in_rad(plan, rotor_angle_in_rad, allow_4th_rank);
   return plan;
 }
 
@@ -162,7 +162,7 @@ void MRS_plan_update_from_rotor_frequency_in_Hz(MRS_plan *plan,
  * or 4.
  */
 void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_in_rad,
-                                             bool allow_fourth_rank) {
+                                             bool allow_4th_rank) {
   unsigned int size_2, size_4, i, j;
   plan->rotor_angle_in_rad = rotor_angle_in_rad;
   /**
@@ -174,7 +174,7 @@ void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_
   wigner_dm0_vector(2, rotor_angle_in_rad, plan->wigner_d2m0_vector);
 
   plan->wigner_d4m0_vector = NULL;
-  if (allow_fourth_rank) {
+  if (allow_4th_rank) {
     /**
      * Calculate wigner-4j d^4_{m,0} vector where m ∈ [-4, 4]. This vector is used to
      * rotate the fourth-rank tensors from the rotor frame to the lab frame.
@@ -210,7 +210,7 @@ void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_
   plan->pre_phase_4 = NULL;
 
   /* Setup for processing the fourth rank tensors. */
-  if (allow_fourth_rank) {
+  if (allow_4th_rank) {
     /* pre_phase_4 is only calculated for m=-4, -3, -2, and -1 for l=4 rank tensor
      * calculation. */
     size_4 = 4 * plan->number_of_sidebands;
@@ -246,7 +246,7 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
   new_plan->rotor_frequency_in_Hz = plan->rotor_frequency_in_Hz;
   new_plan->rotor_angle_in_rad = plan->rotor_angle_in_rad;
   new_plan->vr_freq = plan->vr_freq;
-  new_plan->allow_fourth_rank = plan->allow_fourth_rank;
+  new_plan->allow_4th_rank = plan->allow_4th_rank;
   new_plan->size = plan->size;
   new_plan->n_octants = plan->n_octants;
   new_plan->norm_amplitudes = plan->norm_amplitudes;
@@ -415,7 +415,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
   plan->buffer = dim->inverse_increment * plan->wigner_d2m0_vector[2] * fraction;
   cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&(scheme->w2[2]), 6,
               dim->local_frequency, 1);
-  if (plan->allow_fourth_rank) {
+  if (plan->allow_4th_rank) {
     /**
      * Similarly, calculate the normalized local anisotropic frequency contributions
      * from the fourth-rank tensor. `wigner_d2m0_vector[4] = d^4(0,0)(rotor_angle)`.
@@ -427,17 +427,17 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
 }
 
 static inline void MRS_rotate_single_site_interaction_components(
-    site_struct *sites,      // Pointer to a list of sites within a spin system.
-    float *transition,       // The spin transition.
-    bool allow_fourth_rank,  // if true, prep for 4th rank computation.
-    double *R0,              // The R0 components.
-    complex128 *R2,          // The R2 components.
-    complex128 *R4,          // The R4 components.
-    double *R0_temp,         // The temporary R0 components.
-    complex128 *R2_temp,     // The temporary R2 components.
-    complex128 *R4_temp,     // The temporary R3 components.
-    double B0_in_T,          // Magnetic flux density in T.
-    bool *freq_contrib       // The pointer to freq contribs boolean.
+    site_struct *sites,   // Pointer to a list of sites within a spin system.
+    float *transition,    // The spin transition.
+    bool allow_4th_rank,  // if true, prep for 4th rank computation.
+    double *R0,           // The R0 components.
+    complex128 *R2,       // The R2 components.
+    complex128 *R4,       // The R4 components.
+    double *R0_temp,      // The temporary R0 components.
+    complex128 *R2_temp,  // The temporary R2 components.
+    complex128 *R4_temp,  // The temporary R3 components.
+    double B0_in_T,       // Magnetic flux density in T.
+    bool *freq_contrib    // The pointer to freq contribs boolean.
 ) {
   unsigned int i, n_sites = sites->number_of_sites;
   double larmor_freq_in_MHz;
@@ -483,7 +483,7 @@ static inline void MRS_rotate_single_site_interaction_components(
     }
 
     /*  Upto the second order */
-    if (allow_fourth_rank) {
+    if (allow_4th_rank) {
       FCF_2nd_order_electric_quadrupole_tensor_components(
           R0_temp, R2_temp, R4_temp, sites->spin[i], larmor_freq_in_MHz * 1e6,
           sites->quadrupolar_Cq_in_Hz[i], sites->quadrupolar_eta[i],
@@ -551,7 +551,7 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     site_struct *sites,          // Pointer to a list of sites within a spin system.
     coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
     float *transition,           // The spin transition.
-    bool allow_fourth_rank,      // If true, prep for 4th rank computation.
+    bool allow_4th_rank,         // If true, prep for 4th rank computation.
     double *R0,                  // The R0 components.
     complex128 *R2,              // The R2 components.
     complex128 *R4,              // The R4 components.
@@ -574,8 +574,8 @@ void MRS_rotate_components_from_PAS_to_common_frame(
    *   https://doi.org/10.1016/j.pnmrs.2010.11.003
    *
    */
-  MRS_rotate_single_site_interaction_components(sites, transition, allow_fourth_rank,
-                                                R0, R2, R4, R0_temp, R2_temp, R4_temp,
+  MRS_rotate_single_site_interaction_components(sites, transition, allow_4th_rank, R0,
+                                                R2, R4, R0_temp, R2_temp, R4_temp,
                                                 B0_in_T, freq_contrib);
 
   if (couplings->number_of_couplings == 0) return;
