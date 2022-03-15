@@ -125,12 +125,27 @@ and higher. PIP is the easiest way to install python packages.
   .. tab:: Windows
     :tabid: windows
 
-    .. note:: We currently do not provide binary distributions for windows. You'll need
+        .. 
+      note:: We currently do not provide binary distributions for windows. You'll need
       to compile and build the mrsimulator library from source. The following instructions
       are one-time installation only. If you are upgrading the package, see the
       :ref:`upgrading_to_a_newer_version` sub-section.
 
-    .. include:: source_install/windows.rst
+    .. 
+      include:: source_install/windows.rst
+    
+    **Check Python Version**
+
+    Follow the instructions above to determine what version of python you are using.  If 
+    you have python 3.6 or 3.7 installed, proceed to the next section.  If you have 
+    python 3.8, 3.9, or 3.10 installed, you will need to do one additional step.  In a terminal 
+    window, type
+
+    .. code-block:: bash
+
+        $ set CONDA_DLL_SEARCH_MODIFICATION_ENABLE='1'
+    
+    Then, in the same terminal window, proceed to installing the package. 
 
     **Install the package**.
 
