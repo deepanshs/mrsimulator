@@ -125,7 +125,7 @@ and higher. PIP is the easiest way to install python packages.
   .. tab:: Windows
     :tabid: windows
 
-        .. 
+    .. 
       note:: We currently do not provide binary distributions for windows. You'll need
       to compile and build the mrsimulator library from source. The following instructions
       are one-time installation only. If you are upgrading the package, see the
