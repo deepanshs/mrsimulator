@@ -153,18 +153,20 @@ class BaseNamedMethod(BaseMethod):
     def check_method_compatibility(cls, py_dict):
         """Check for events attribute inside the spectral_dimensions. Events are not
         allowed for NamedMethods."""
-        if not isinstance(py_dict["spectral_dimensions"][0], dict):
+        sp_list = py_dict["spectral_dimensions"]
+        check_SD = [isinstance(sp, SpectralDimension) for sp in sp_list]
+        if all(check_SD):
             return cls.check_when_arg_is_object(py_dict)
 
         default_method = cls.update(**py_dict)
-        default_spectral_dimensions = default_method["spectral_dimensions"]
-        for i, item in enumerate(py_dict["spectral_dimensions"]):
+        default_sp_list = default_method["spectral_dimensions"]
 
-            # If no methods in SpectralDimension, set to default events
+        for i, item in enumerate(sp_list):
+            # If no events in SpectralDimension, set to default events
             if item["events"] == [{}] or item["events"] == []:
-                item["events"] = default_spectral_dimensions[i]["events"]
+                item["events"] = default_sp_list[i]["events"]
 
-            elif item["events"] != default_spectral_dimensions[i]["events"]:
+            elif item["events"] != default_sp_list[i]["events"]:
                 raise ImmutableEventError(cls.__name__)
 
         for k, v in default_method.items():
@@ -174,16 +176,24 @@ class BaseNamedMethod(BaseMethod):
     @classmethod
     def check_when_arg_is_object(cls, obj_dict):
         default_method = cls.update(**obj_dict)
-
         py_sp = default_method["spectral_dimensions"]
         obj_sp = obj_dict["spectral_dimensions"]
 
-        for py, obj in zip(py_sp, obj_sp):
-
-            if len(py["events"]) != len(obj.events):
+        for i, (py, obj) in enumerate(zip(py_sp, obj_sp)):
+            if len(py["events"]) != len(obj.events) and obj.events != []:
                 raise ImmutableEventError(cls.__name__)
 
+            if obj.events == []:
+                obj_sp[i] = obj.json(units=False)
+                if "events" not in obj_sp[i]:
+                    obj_sp[i]["events"] = py["events"]
+                obj_sp[i] = SpectralDimension(**obj_sp[i])
+
             cls.check_event_objects_for_compatibility(py, obj, obj_dict)
+
+        for k, v in default_method.items():
+            if k not in obj_dict:
+                obj_dict[k] = v
 
     @classmethod
     def check_event_objects_for_compatibility(cls, py, obj, obj_dict):
