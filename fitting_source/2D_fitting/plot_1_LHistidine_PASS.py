@@ -24,7 +24,7 @@ from mrsimulator.utils.collection import single_site_system_generator
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/814455/files/1H13C_CPPASS_LHistidine.csdf"
+filename = "https://sandbox.zenodo.org/record/835664/files/1H13C_CPPASS_LHistidine.csdf"
 mat_data = cp.load(filename)
 
 # standard deviation of noise from the dataset
@@ -67,8 +67,8 @@ zeta = [-70, -65, -60, -60, -10, -10]  # in ppm
 eta = [0.8, 0.4, 0.9, 0.3, 0.0, 0.0]
 
 spin_systems = single_site_system_generator(
-    isotopes="13C",
-    isotropic_chemical_shifts=shifts,
+    isotope="13C",
+    isotropic_chemical_shift=shifts,
     shielding_symmetric={"zeta": zeta, "eta": eta},
     abundance=100 / 6,
 )
@@ -107,9 +107,9 @@ sim.run()
 processor = sp.SignalProcessor(
     operations=[
         # Lorentzian convolution along the isotropic dimensions.
-        sp.FFT(axis=0),
+        sp.FFT(dim_index=0),
         sp.apodization.Exponential(FWHM="50 Hz"),
-        sp.IFFT(axis=0),
+        sp.IFFT(dim_index=0),
         sp.Scale(factor=60),
     ]
 )
@@ -145,7 +145,7 @@ result
 # %%
 # The best fit solution
 # ---------------------
-best_fit = sf.bestfit(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
 
 # Plot of the best fit solution
 plt.figure(figsize=(8, 3.5))

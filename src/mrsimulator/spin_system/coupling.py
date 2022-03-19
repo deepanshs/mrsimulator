@@ -146,18 +146,16 @@ class Coupling(Parseable):
     ... )
     """
 
-    name: str = None
-    label: str = None
-    description: str = None
     site_index: List[int]
     isotropic_j: float = 0.0
     j_symmetric: SymmetricTensor = None
     j_antisymmetric: AntisymmetricTensor = None
     dipolar: SymmetricTensor = None
 
-    property_unit_types: ClassVar = {"isotropic_j": "frequency"}
-    property_default_units: ClassVar = {"isotropic_j": "Hz"}
+    property_unit_types: ClassVar[Dict] = {"isotropic_j": "frequency"}
+    property_default_units: ClassVar[Dict] = {"isotropic_j": "Hz"}
     property_units: Dict = {"isotropic_j": "Hz"}
+    test_vars: ClassVar[Dict] = {"site_index": [0, 1]}
 
     @validator("dipolar")
     def dipolar_must_not_contain_Cq_and_zeta(cls, v, values):
@@ -189,6 +187,7 @@ class Coupling(Parseable):
         return v
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
 
     @classmethod

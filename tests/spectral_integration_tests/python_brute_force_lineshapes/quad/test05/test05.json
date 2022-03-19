@@ -5,21 +5,15 @@
       "count": 1024,
       "spectral_width": "70 kHz",
       "events": [{
-        "magnetic_flux_density": "4.7 T",
+        "magnetic_flux_density": "4.697 T",
         "rotor_frequency": "12.5 kHz",
         "rotor_angle": "45 deg",
-        "transition_query": {
-          "P": {
-            "channel-1": [
-              [-1]
-            ]
-          },
-          "D": {
-            "channel-1": [
-              [0]
-            ]
+        "transition_query": [{
+          "ch1": {
+            "P": [-1],
+            "D": [0]
           }
-        }
+        }]
       }]
     }]
   }],

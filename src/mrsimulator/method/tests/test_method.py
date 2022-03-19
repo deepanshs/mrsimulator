@@ -6,8 +6,11 @@ import csdmpy as cp
 import numpy as np
 import pytest
 from mrsimulator.method import Method
+from mrsimulator.method import SpectralDimension
+from mrsimulator.method import SpectralEvent
 from mrsimulator.method.frequency_contrib import freq_default
-from mrsimulator.method.spectral_dimension import SpectralDimension
+from mrsimulator.methods import Method1D
+from mrsimulator.methods import Method2D
 from mrsimulator.spin_system.isotope import Isotope
 from pydantic import ValidationError
 
@@ -25,7 +28,7 @@ dimension_dictionary = {
     "count": 1024,
     "spectral_width": "100 Hz",
     "reference_offset": "0 GHz",
-    "events": [event_dictionary],
+    "events": [event_dictionary, event_dictionary],
 }
 
 
@@ -54,7 +57,9 @@ def basic_method_tests(the_method):
     the_method2.affine_matrix = [1]
     assert the_method2 != the_method
 
-    # to_dict_with_unit()
+    # json()
+
+    evt = [{"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}] * 2
     serialize = {
         "name": "test worked",
         "description": "test worked again",
@@ -66,24 +71,27 @@ def basic_method_tests(the_method):
             {
                 "count": 1024,
                 "spectral_width": "100.0 Hz",
-                "reference_offset": "0.0 Hz",
-                "events": [
-                    {
-                        "fraction": 0.5,
-                        "transition_query": {"P": {"channel-1": [[-1.0]]}},
-                    }
-                ],
+                "events": evt,
             }
         ],
     }
     assert the_method.json() == serialize
 
-    # reduced_dict()
-    assert the_method.reduced_dict() == {
+    # json(units=False)
+    assert the_method.json(units=False) == {
         "name": "test worked",
         "description": "test worked again",
         "channels": ["1H", "17O"],
-        "spectral_dimensions": [dimension.reduced_dict()],
+        "magnetic_flux_density": 9.6,
+        "rotor_frequency": 1000.0,
+        "rotor_angle": 0.9553059660790962,
+        "spectral_dimensions": [
+            {
+                "count": 1024,
+                "spectral_width": 100.0,
+                "events": evt,
+            }
+        ],
     }
 
 
@@ -95,6 +103,9 @@ def test_method():
         "name": "test-1-d",
         "description": "Test-1",
         "channels": ["29Si"],
+        "magnetic_flux_density": "9.6 T",
+        "rotor_frequency": "1 kHz",
+        "rotor_angle": "54.735 deg",
         "spectral_dimensions": [dimension_dictionary],
     }
     the_method = Method.parse_dict_with_units(method_dictionary)
@@ -103,12 +114,13 @@ def test_method():
     # test-2 two dimensional two events method
 
     # parse dict with units
-    dimension_dictionary["events"].append(event_dictionary)
-
     method_dictionary = {
         "name": "test-1-d",
         "description": "Test-1",
         "channels": ["29Si"],
+        "magnetic_flux_density": "9.6 T",
+        "rotor_frequency": "1 kHz",
+        "rotor_angle": "54.735 deg",
         "spectral_dimensions": [dimension_dictionary, dimension_dictionary],
     }
     the_method = Method.parse_dict_with_units(method_dictionary)
@@ -139,15 +151,11 @@ def test_method():
     assert isinstance(the_method.simulation, cp.CSDM)
     assert the_method.simulation == csdm_data
 
-    # to_dict_with_unit()
-    event_dictionary_ = {
-        "fraction": 0.5,
-        "transition_query": {"P": {"channel-1": [[-1.0]]}},
-    }
+    # json()
+    event_dictionary_ = {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "100.0 Hz",
-        "reference_offset": "0.0 Hz",
         "events": [event_dictionary_, event_dictionary_],
     }
     method_dictionary_ = {
@@ -165,37 +173,89 @@ def test_method():
     serialize["simulation"]["csdm"].pop("timestamp")
     assert serialize == method_dictionary_
 
-    # reduced_dict()
-    event_dictionary_ = {
-        "fraction": 0.5,
-        "freq_contrib": freq_default,
-        "magnetic_flux_density": 9.6,
-        "rotor_frequency": 1000.0,
-        "rotor_angle": 0.9553059660790962,
-        "transition_query": {"P": {"channel-1": [[-1.0]]}},
-    }
+    # json(units=False)
+    event_dictionary_ = {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": 100.0,
-        "reference_offset": 0.0,
         "events": [event_dictionary_, event_dictionary_],
     }
     method_dictionary_ = {
         "name": "test-1-d",
         "description": "Test-1",
         "channels": ["29Si"],
+        "magnetic_flux_density": 9.6,
+        "rotor_frequency": 1000.0,
+        "rotor_angle": 0.9553059660790962,
         "spectral_dimensions": [dimension_dictionary_, dimension_dictionary_],
         "simulation": csdm_data.to_dict(),
         "experiment": csdm_data.to_dict(),
     }
-    serialize = the_method.reduced_dict()
+    serialize = the_method.json(units=False)
     serialize["simulation"]["csdm"].pop("timestamp")
     assert serialize == method_dictionary_
 
-    # update_spectral_dimension_attributes_from_experiment
-    the_method.update_spectral_dimension_attributes_from_experiment()
-    for i in range(2):
-        assert the_method.spectral_dimensions[i].count == 10
-        assert the_method.spectral_dimensions[i].spectral_width == 10
-        assert the_method.spectral_dimensions[i].reference_offset == 0
-        assert the_method.spectral_dimensions[i].origin_offset == 0
+
+def test_rotor_frequency():
+    """Ensures only 1 non-zero finite spinning speed in method"""
+    # Good method, should not throw error
+    Method(
+        channels=["1H"],
+        spectral_dimensions=[
+            SpectralDimension(
+                events=[
+                    SpectralEvent(fraction=0.5, rotor_frequency=123),
+                    SpectralEvent(fraction=0.5, rotor_frequency=0),
+                ]
+            ),
+            SpectralDimension(events=[SpectralEvent(rotor_frequency=np.inf)]),
+        ],
+    )
+
+    # Bad method, should throw error for multiple finite speeds
+    for cls in [Method, Method1D]:
+        with pytest.raises(NotImplementedError):
+            cls(
+                channels=["1H"],
+                spectral_dimensions=[
+                    SpectralDimension(
+                        events=[
+                            SpectralEvent(fraction=0.5, rotor_frequency=123),
+                            SpectralEvent(fraction=0.5, rotor_frequency=456),
+                        ]
+                    )
+                ],
+            )
+
+    with pytest.raises(NotImplementedError):
+        Method2D(
+            channels=["1H"],
+            spectral_dimensions=[
+                SpectralDimension(
+                    events=[
+                        SpectralEvent(fraction=0.5, rotor_frequency=123),
+                        SpectralEvent(fraction=0.5, rotor_frequency=np.inf),
+                    ]
+                ),
+                SpectralDimension(
+                    events=[
+                        SpectralEvent(fraction=0.5, rotor_frequency=0),
+                        SpectralEvent(fraction=0.5, rotor_frequency=456),
+                    ]
+                ),
+            ],
+        )
+
+    with pytest.raises(NotImplementedError):
+        Method(
+            channels=["27Al"],
+            rotor_frequency=np.inf,
+            spectral_dimensions=[
+                SpectralDimension(
+                    events=[
+                        SpectralEvent(fraction=0.5, rotor_frequency=0.1),
+                        SpectralEvent(fraction=0.5, rotor_frequency=456),
+                    ]
+                )
+            ],
+        )

@@ -3,7 +3,6 @@ import mrsimulator.signal_processing as sp
 import numpy as np
 from lmfit import Parameters
 from mrsimulator import Simulator
-from mrsimulator.method import NAMED_METHODS
 
 __author__ = ["Maxwell C Venetos", "Deepansh Srivastava"]
 __email__ = ["maxvenetos@gmail.com", "srivastava.89@osu.edu"]
@@ -158,7 +157,7 @@ def _post_sim_LMFIT_params(params, process, index):
     _ = [
         params.add(
             name=f"SP_{index}_operation_{i}_{operation.__class__.__name__}_{attr}",
-            value=operation.__getattribute__(attr),
+            value=getattr(operation, attr),
         )
         for i, operation in enumerate(process.operations)
         if operation.__class__.__name__ in POST_SIM_DICT
@@ -212,7 +211,7 @@ def _get_simulator_object_value(sim, string):
     string = _str_decode(string)
     obj = sim
     for attr in string:
-        obj = obj[int(attr)] if attr.isnumeric() else obj.__getattribute__(attr)
+        obj = obj[int(attr)] if attr.isnumeric() else getattr(obj, attr)
     return obj
 
 
@@ -272,7 +271,7 @@ def get_simulator_method_parameters(params: Parameters, sim: Simulator, include=
                 if ev.rotor_frequency != 1e12
             ]
             for i, mth in enumerate(sim.methods)
-            if mth.name in NAMED_METHODS
+            if mth._named_method
         ]
 
         _ = [
@@ -353,7 +352,7 @@ def _update_simulator_from_LMFIT_params(params, sim: Simulator):
     def set_mth_value(obj, key, value):
         index = int(key.split("_")[1])
         _ = [
-            sp.events[0].__setattr__("rotor_frequency", value)
+            setattr(sp.events[0], "rotor_frequency", value)
             for sp in obj.__dict__["methods"][index].spectral_dimensions
             if sp.events[0].rotor_frequency != 1e12
         ]
@@ -399,11 +398,15 @@ def update_mrsim_obj_from_params(params, sim: Simulator, processors: list = None
     _update_processors_from_LMFIT_params(params, processors)
 
 
-def get_correct_data_order(data):
+def get_correct_data_order(method):
     """If data has negative increment, reverse the data."""
+    if "experiment" in method._metadata:
+        return method._metadata["experiment"]
+    data = method.experiment
     y = data.y[0].components[0]
     index = [-i - 1 for i, x in enumerate(data.x) if x.increment.value < 0]
-    return y if index == [] else np.flip(y, axis=tuple(index))
+    method._metadata["experiment"] = y if index == [] else np.flip(y, axis=tuple(index))
+    return method._metadata["experiment"]
 
 
 def LMFIT_min_function(
@@ -441,7 +444,7 @@ def LMFIT_min_function(
         for decomposed_datum in processed_datum.y:
             datum += decomposed_datum.components[0].real
 
-        exp_data = get_correct_data_order(mth.experiment)
+        exp_data = get_correct_data_order(mth)
         diff = np.append(diff, (exp_data - datum) / sigma_)
     return diff
 
@@ -484,7 +487,7 @@ def residuals(sim: Simulator, processors: list = None):
     residual_ = [add_csdm_dvs(item) for item in fits]
 
     for res, mth in zip(residual_, sim.methods):
-        exp_data = get_correct_data_order(mth.experiment)
+        exp_data = get_correct_data_order(mth)
         res.y[0].components[0] -= exp_data
         res.y[0].components[0] *= -1
 

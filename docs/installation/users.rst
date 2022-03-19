@@ -3,6 +3,14 @@
 For the users
 =============
 
+.. note::
+
+   If you encounter an issue during installation, see our
+   `troubleshooting section <instillation_troubleshooting>`__.
+
+   If that doesn't resolve your issue, please create a bug report on our
+   `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
+
 Strict Requirements
 -------------------
 
@@ -19,7 +27,7 @@ Make sure you have the required version of python by typing the following in the
     You may also click the copy-button located at the top-right corner of the code cell
     area in the HTML docs, to copy the code lines without the prompts and then paste it
     as usual.
-    Thanks to `Sphinx-copybutton <https://sphinx-copybutton.readthedocs.io/en/latest/>`_
+    See `Sphinx-copybutton <https://sphinx-copybutton.readthedocs.io/en/latest/>`_
 
 .. code-block:: shell
 
@@ -28,13 +36,9 @@ Make sure you have the required version of python by typing the following in the
 For *Mac* users, python version 3 is installed under the name *python3*. You may replace
 *python* for *python3* in the above command and all subsequent python statements.
 
-For *Windows* users, we recommend the `Anaconda <https://www.anaconda.com/products/individual/>`_
-or `miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ distribution of
-python>3.6. Anaconda distribution for python comes with popular python packages that
-are frequently used in scientific computing.
-Miniconda is a minimal installer for conda. It is a smaller version of Anaconda that
-includes conda, Python, and the packages they depend on, along with other useful
-packages such as pip.
+For *Windows* users, Python is not usually installed by default. See
+ `Python.org <https://www.python.org/downloads/windows/>`_ for a list of official Python downloads
+ and Windows installation instructions.
 
 .. You can find more information under the Windows tab in the
 .. :ref:`building_from_source` section.
@@ -59,15 +63,26 @@ On Google Colab Notebook
 
 Colaboratory is a Google research project. It is a Jupyter notebook environment that
 runs entirely in the cloud. Launch a new notebook on
-`Colab <http://colab.research.google.com>`_. To install the mrsimulator package, type
+`Colab <http://colab.research.google.com>`_. We recommend going through the *Welcome to Colab!*
+tutorial if you are new to Notebooks.
+
+By default, Colaboratory has an older version of ``numpy`` installed which first needs to be
+updated. In a new cell, run
+
+.. code-block:: shell
+
+       !pip install -U numpy
+
+and press the *Restart Runtime* button
+
+To install the ``mrsimulator`` package, type
 
 .. code-block:: shell
 
       !pip install mrsimulator
 
-in the first cell, and execute. All done! You may now start using the library, or
-proceed to section :ref:`Introduction to Spin Systems <spin_systems_intro>` to continue
-the tutorial.
+in a new cell, and execute. All done! You may now start using the library, or
+proceed to :ref:`getting_started` to continue the tutorial.
 
 
 .. _on_local_machine:
@@ -84,7 +99,7 @@ and higher. PIP is the easiest way to install python packages.
     :tabid: linux
 
     For *Linux* users, we provide the binary distributions of the mrsimulator package for
-    python versions 3.6-3.9. Install the package using pip as follows,
+    python versions 3.6-3.10. Install the package using pip as follows,
 
     .. code-block:: bash
 
@@ -94,7 +109,7 @@ and higher. PIP is the easiest way to install python packages.
     :tabid: macosx
 
     For *Mac* users, we provide the binary distributions of the mrsimulator package for
-    python versions 3.6-3.9. Install the package using pip as follows,
+    python versions 3.6-3.10. Install the package using pip as follows,
 
     .. code-block:: bash
 
@@ -145,8 +160,8 @@ installed on your system. In this case, type the following in the terminal/Promp
     $ pip install mrsimulator -U
 
 
-All done! You may now start using the library, or proceed to section
-:ref:`Introduction to Spin Systems <spin_systems_intro>` to continue the tutorial.
+All done! You may now start using the library, or proceed to
+:ref:`getting_started` to continue the tutorial.
 
 
 .. _building_from_source:
@@ -174,7 +189,7 @@ Stable packages
 
 The latest stable source package for ``mrsimulator`` is available on
 `PyPI <https://pypi.org/project/mrsimulator/#files>`_ and
-`Github  release <https://github.com/DeepanshS/mrsimulator/releases>`_. Download and
+`Github  release <https://github.com/deepanshs/mrsimulator/releases>`_. Download and
 extract the *.tar.gz* file.
 
 
@@ -239,14 +254,49 @@ Test your build
 
 If the installation is successful, you should be able to run the following test
 file in your terminal. Download the test file
-`here <https://raw.githubusercontent.com/DeepanshS/mrsimulator-examples/master/test_file_v0.3.py?raw=true>`_.
+`here <https://raw.githubusercontent.com/deepanshs/mrsimulator-examples/master/test_file_v0.3.py?raw=true>`_
+or copy and paste the following code into a python file and run the code.
 
-.. code-block:: text
+.. skip: next
 
-    $ python test_file.py
+.. plot::
+    :caption: An example simulating solid-state NMR spectrums of static and MAS experiments
 
-The above statement should produce the following figure.
+    from mrsimulator import Simulator, SpinSystem, Site
+    from mrsimulator.methods import BlochDecaySpectrum
+    import matplotlib.pyplot as plt
 
-.. plot:: ../pyplot/test_file.py
+    # Make Site and SpinSystem objects
+    H_site = Site(isotope="1H", shielding_symmetric={"zeta": 13.89, "eta": 0.25})
+    spin_system = SpinSystem(sites=[H_site])
 
-    A test example simulation of solid-state NMR spectrum.
+    # Make static and MAS one-pulse acquire Method objects
+    static = BlochDecaySpectrum(channels=["1H"])
+    mas = BlochDecaySpectrum(channels=["1H"], rotor_frequency=1000)  # in Hz
+
+    # Setup and run the Simulation object
+    sim = Simulator(spin_systems=[spin_system], methods=[static, mas])
+    sim.run()
+
+    # Plot the spectra
+    fig, ax = plt.subplots(1, 2, figsize=(6, 3), subplot_kw={"projection": "csdm"})
+    ax[0].plot(sim.methods[0].simulation.real, color="black", linewidth=1)
+    ax[0].set_title("Static")
+    ax[1].plot(sim.methods[1].simulation.real, color="black", linewidth=1)
+    ax[1].set_title("MAS")
+    plt.tight_layout()
+    plt.show()
+
+.. note::
+
+    If you encounter the following error
+
+    .. code-block:: shell
+
+        ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
+
+    update numpy by running
+
+    .. code-block:: shell
+
+        $ pip install -U numpy

@@ -58,10 +58,7 @@ def test_direct_init_site1():
         Site.parse_dict_with_units(dict(quadrupolar={"Cq": "5.1 MHz"}))
 
     ax = Site.parse_dict_with_units({"isotope": "29Si"})
-    assert ax.json() == {
-        "isotope": "29Si",
-        "isotropic_chemical_shift": "0.0 ppm",
-    }
+    assert ax.json() == {"isotope": "29Si", "isotropic_chemical_shift": "0.0 ppm"}
 
 
 def test_parse_json_site():
@@ -213,6 +210,10 @@ def test_site_object_methods():
 
 def test_site_quad_set_to_None():
     a = Site(isotope="27Al", quadrupolar=None)
+    assert a.isotope.symbol == "27Al"
+    assert a.quadrupolar is None
+
+    a = Site(isotope="27Al", quadrupolar={"Cq": None, "eta": None})
     assert a.isotope.symbol == "27Al"
     assert a.quadrupolar is None
 

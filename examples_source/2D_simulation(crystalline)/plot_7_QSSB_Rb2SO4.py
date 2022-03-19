@@ -15,8 +15,9 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import SSB2D
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 1
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # Generate the site and spin system objects.
@@ -24,12 +25,12 @@ sites = [
     Site(
         isotope="87Rb",
         isotropic_chemical_shift=16,  # in ppm
-        quadrupolar={"Cq": 5.3e6, "eta": 0.1},  # Cq in Hz
+        quadrupolar=SymmetricTensor(Cq=5.3e6, eta=0.1),  # Cq in Hz
     ),
     Site(
         isotope="87Rb",
         isotropic_chemical_shift=40,  # in ppm
-        quadrupolar={"Cq": 2.6e6, "eta": 1.0},  # Cq in Hz
+        quadrupolar=SymmetricTensor(Cq=2.6e6, eta=1.0),  # Cq in Hz
     ),
 ]
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
@@ -45,18 +46,23 @@ qmat = SSB2D(
     magnetic_flux_density=9.4,
     rotor_frequency=2604,
     spectral_dimensions=[
-        {
-            "count": 32 * 4,
-            "spectral_width": 2604 * 32,  # in Hz
-            "label": "Anisotropic dimension",
-        },
-        {
-            "count": 512,
-            "spectral_width": 50000,  # in Hz
-            "label": "Fast MAS dimension",
-        },
+        dict(
+            count=32 * 4,
+            spectral_width=2604 * 32,  # in Hz
+            label="Anisotropic dimension",
+        ),
+        dict(
+            count=512,
+            spectral_width=50000,  # in Hz
+            label="Fast MAS dimension",
+        ),
     ],
 )
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+qmat.plot()
+plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and
@@ -74,7 +80,7 @@ sim.run()
 # %%
 # The plot of the simulation.
 plt.figure(figsize=(4.25, 3.0))
-data = sim.methods[0].simulation
+data = sim.methods[0].simulation.real
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r", vmax=0.15)
 plt.colorbar(cb)

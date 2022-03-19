@@ -71,8 +71,8 @@ plt.show()
 # Use the :func:`~mrsimulator.utils.collection.single_site_system_generator` utility
 # function to generate single-site spin systems.
 spin_systems = single_site_system_generator(
-    isotopes="27Al",
-    isotropic_chemical_shifts=iso,
+    isotope="27Al",
+    isotropic_chemical_shift=iso,
     quadrupolar={"Cq": Cq * 1e6, "eta": eta},  # Cq in Hz
     abundance=pdf,
 )
@@ -83,7 +83,7 @@ spin_systems = single_site_system_generator(
 # Observe the static :math:`^{27}\text{Al}` NMR spectrum simulation. First,
 # create a central transition selective Bloch decay spectrum method.
 static_method = BlochDecayCTSpectrum(
-    channels=["27Al"], spectral_dimensions=[{"spectral_width": 80000}]
+    channels=["27Al"], spectral_dimensions=[dict(spectral_width=80000)]
 )
 
 # %%
@@ -97,7 +97,7 @@ sim.run()
 # The plot of the corresponding spectrum.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -111,7 +111,7 @@ MAS_method = BlochDecayCTSpectrum(
     rotor_frequency=25000,  # in Hz
     rotor_angle=54.735 * np.pi / 180.0,  # in rads
     spectral_dimensions=[
-        {"spectral_width": 30000, "reference_offset": -4000}  # values in Hz
+        dict(spectral_width=30000, reference_offset=-4000)  # values in Hz
     ],
 )
 sim.methods[0] = MAS_method
@@ -125,7 +125,7 @@ sim.run()
 # and the corresponding plot.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

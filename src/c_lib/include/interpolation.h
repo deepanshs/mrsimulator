@@ -40,9 +40,9 @@ extern void triangle_interpolation1D(double *f1, double *f2, double *f3, double 
  * @param m0 An interger with the rows in the 2D grid.
  * @param m1 An interger with the columns in the 2D grid.
  */
-extern int triangle_interpolation2D(double *f11, double *f12, double *f13, double *f21,
-                                    double *f22, double *f23, double *amp, double *spec,
-                                    int m0, int m1);
+extern void triangle_interpolation2D(double *f11, double *f12, double *f13, double *f21,
+                                     double *f22, double *f23, double *amp,
+                                     double *spec, int m0, int m1);
 
 /**
  * @brief Sum amplitudes from the triangles interpolations over the region of an octant.

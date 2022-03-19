@@ -1,6 +1,14 @@
 For developers and contributors
 ===============================
 
+Setting up a dedicated code editor
+''''''''''''''''''''''''''''''''''
+
+Using a code editor or IDE is useful when contributing to a codebase. There are many products
+available and you may use whatever you're comfortable with. For new developers, we recommend
+`VS Code <https://code.visualstudio.com>`_ since it is lightweight, free and has a breadth of
+community extensions.
+
 Make your own copy of mrsimulator on GitHub
 '''''''''''''''''''''''''''''''''''''''''''
 
@@ -8,7 +16,7 @@ Making a copy of someone's code on GitHub is the same as making a *fork*. A fork
 complete copy of the code and all of its revision history.
 
 1. Log into a `GitHub account <https://github.com>`_.
-2. Go to the `mrsimulator Github <https://github.com/DeepanshS/mrsimulator>`_ home page.
+2. Go to the `mrsimulator Github <https://github.com/deepanshs/mrsimulator>`_ home page.
 3. Click on the *fork* button.
 
 You will see a short animation of Octocat scanning a book on a flatbed scanner. After
@@ -19,13 +27,16 @@ Create a development environment
 ''''''''''''''''''''''''''''''''
 
 It is good practice to create separate virtual python environments for packages when
-in developer mode. The following is an example of a Conda environment.
+in developing packages. There are many environment managers available; however, we recommend using
+`Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_
+
+The following is an example of creating Conda environment
 
 .. code-block:: bash
 
-    $ conda create -n mrsimulator-dev python=3.7
+    $ conda create -n mrsimulator-dev python=3.9
 
-The above command will create a new python3.7 environment named *mrsimulator-dev*. To
+The above command will create a new environment named *mrsimulator-dev* using python 3.9. To
 activate the environment, use
 
 .. code-block:: bash
@@ -93,7 +104,7 @@ the previous step, and add a remote:
 .. code-block:: bash
 
     cd mrsimulator
-    git remote add mrsimulator git://github.com/DeepanshS/mrsimulator.git
+    git remote add mrsimulator git://github.com/deepanshs/mrsimulator.git
 
 You can check that everything is set up properly so far by asking git to show you all of the
 remotes it knows about for your local repository of mrsimulator with ``git remote -v``, which
@@ -101,8 +112,8 @@ should display something like
 
 .. code-block:: bash
 
-    mrsimulator   git://github.com/DeepanshS/mrsimulator.git (fetch)
-    mrsimulator   git://github.com/DeepanshS/mrsimulator.git (push)
+    mrsimulator   git://github.com/deepanshs/mrsimulator.git (fetch)
+    mrsimulator   git://github.com/deepanshs/mrsimulator.git (push)
     origin     git@github.com:your-user-name/mrsimulator.git (fetch)
     origin     git@github.com:your-user-name/mrsimulator.git (push)
 

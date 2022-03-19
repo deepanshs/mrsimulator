@@ -7,9 +7,5 @@ Signal Processing
 
 .. autoclass:: SignalProcessor
     :show-inheritance:
-
-    .. rubric:: Method Documentation
-
-    .. automethod:: parse_dict_with_units
-    .. automethod:: json
-    .. automethod:: apply_operations
+    :members:
+    :inherited-members: BaseModel

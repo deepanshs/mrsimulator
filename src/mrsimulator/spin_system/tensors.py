@@ -90,7 +90,7 @@ class SymmetricTensor(Parseable):
     beta: float = None
     gamma: float = None
 
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "zeta": ["dimensionless", "frequency"],
         "Cq": "frequency",
         "D": "frequency",
@@ -98,7 +98,7 @@ class SymmetricTensor(Parseable):
         "beta": "angle",
         "gamma": "angle",
     }
-    property_default_units: ClassVar = {
+    property_default_units: ClassVar[Dict] = {
         "zeta": ["ppm", "Hz"],
         "Cq": "Hz",
         "D": "Hz",
@@ -114,6 +114,9 @@ class SymmetricTensor(Parseable):
         "beta": "rad",
         "gamma": "rad",
     }
+
+    class Config:
+        extra = "forbid"
 
     # Deprecated
     # def to_freq_dict(self, larmor_frequency: float) -> dict:
@@ -138,7 +141,7 @@ class SymmetricTensor(Parseable):
 
 
 class AntisymmetricTensor(Parseable):
-    """Base SymmetricTensor class representing the traceless symmetric part of an
+    """Base AntiSymmetricTensor class representing the traceless symmetric part of an
     irreducible second-rank tensor.
 
     Attributes:
@@ -152,13 +155,20 @@ class AntisymmetricTensor(Parseable):
     alpha: Optional[float]
     beta: Optional[float]
 
-    property_unit_types: ClassVar = {
+    property_unit_types: ClassVar[Dict] = {
         "zeta": "dimensionless",
         "alpha": "angle",
         "beta": "angle",
     }
-    property_default_units: ClassVar = {"zeta": "ppm", "alpha": "rad", "beta": "rad"}
+    property_default_units: ClassVar[Dict] = {
+        "zeta": "ppm",
+        "alpha": "rad",
+        "beta": "rad",
+    }
     property_units: Dict = {"zeta": "ppm", "alpha": "rad", "beta": "rad"}
+
+    class Config:
+        extra = "forbid"
 
     # Deprecated
     # def to_freq_dict(self, larmor_frequency: float) -> dict:

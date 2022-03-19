@@ -20,13 +20,14 @@ from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
+from mrsimulator.method import SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/814455/files/DASCoesite.csdf"
+filename = "https://sandbox.zenodo.org/record/835664/files/DASCoesite.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
@@ -66,8 +67,8 @@ abundance_ratio = [1, 1, 2, 2, 2]
 abundance = np.asarray(abundance_ratio) / 8 * 100  # in %
 
 spin_systems = single_site_system_generator(
-    isotopes="17O",
-    isotropic_chemical_shifts=shifts,
+    isotope="17O",
+    isotropic_chemical_shift=shifts,
     quadrupolar={"Cq": Cq, "eta": eta},
     abundance=abundance,
 )
@@ -84,31 +85,31 @@ DAS = Method2D(
     channels=["17O"],
     magnetic_flux_density=11.744,  # in T
     spectral_dimensions=[
-        {
+        SpectralDimension(
             **spectral_dims[0],
-            "events": [
-                {
-                    "fraction": 0.5,
-                    "rotor_angle": 37.38 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
-                },
-                {
-                    "fraction": 0.5,
-                    "rotor_angle": 79.19 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
-                },
+            events=[
+                SpectralEvent(
+                    fraction=0.5,
+                    rotor_angle=37.38 * 3.14159 / 180,
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                ),
+                SpectralEvent(
+                    fraction=0.5,
+                    rotor_angle=79.19 * 3.14159 / 180,
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                ),
             ],
-        },
+        ),
         # The last spectral dimension block is the direct-dimension
-        {
+        SpectralDimension(
             **spectral_dims[1],
-            "events": [
-                {
-                    "rotor_angle": 54.735 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
-                }
+            events=[
+                SpectralEvent(
+                    rotor_angle=54.735 * 3.14159 / 180,
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                )
             ],
-        },
+        ),
     ],
     experiment=experiment,  # also add the measurement to the method.
 )
@@ -172,7 +173,7 @@ result
 # %%
 # The best fit solution
 # ---------------------
-best_fit = sf.bestfit(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
 
 # Plot the spectrum
 plt.figure(figsize=(4.25, 3.0))
@@ -188,7 +189,7 @@ plt.show()
 # %%
 # The best fit solution
 # ---------------------
-residuals = sf.residuals(sim, processor)[0]
+residuals = sf.residuals(sim, processor)[0].real
 
 fig, ax = plt.subplots(
     1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}

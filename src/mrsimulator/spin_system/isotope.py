@@ -2,6 +2,8 @@
 """Base Isotope class."""
 from os import path
 from re import match
+from typing import ClassVar
+from typing import Dict
 
 from monty.serialization import loadfn
 from pydantic import BaseModel
@@ -33,27 +35,25 @@ class Isotope(BaseModel):
     >>> carbon.natural_abundance # in %
     1.11
     >>> carbon.gyromagnetic_ratio # in MHz/T
-    10.7084
+    10.708398861439887
     >>> carbon.atomic_number
     6
     >>> carbon.quadrupole_moment # in eB
     0.0
-
     """
 
     symbol: str
+    test_vars: ClassVar[Dict] = {"symbol": "1H"}
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
 
     @validator("symbol", always=True)
     def get_isotope(cls, v, *, values, **kwargs):
         return format_isotope_string(v)
 
-    def json(self) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object, where
-        the attribute value with physical quantity is expressed as a string with a
-        value and a unit."""
+    def json(self, **kwargs) -> dict:
         return self.symbol
 
     @property

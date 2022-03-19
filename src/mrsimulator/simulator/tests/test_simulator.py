@@ -10,7 +10,6 @@ from mrsimulator import Coupling
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator.simulator import __CPU_count__
@@ -48,8 +47,7 @@ def test_equality():
 
     result = {
         "label": "test",
-        "spin_systems": [{"abundance": "100.0 %", "sites": []}],
-        "methods": [],
+        "spin_systems": [{}],
         "config": {
             "decompose_spectrum": "none",
             "integration_density": 70,
@@ -57,12 +55,11 @@ def test_equality():
             "number_of_sidebands": 64,
         },
     }
-    assert c.json(include_methods=True) == result
+    assert c.json() == result
 
-    assert c.reduced_dict() == {
+    assert c.json(units=False) == {
         "label": "test",
-        "spin_systems": [{"abundance": 100, "sites": []}],
-        "methods": [],
+        "spin_systems": [{}],
         "config": {
             "number_of_sidebands": 64,
             "integration_volume": "octant",
@@ -106,12 +103,12 @@ def test_get_isotopes():
 def test_simulator_1():
     sim = Simulator()
     sim.spin_systems = [SpinSystem(sites=[Site(isotope="1H"), Site(isotope="23Na")])]
-    sim.methods = [BlochDecaySpectrum()]
+    sim.methods = [BlochDecaySpectrum(channels=["1H"])]
     sim.name = "test"
     sim.label = "test0"
     sim.description = "testing-testing 1.2.3"
 
-    red_dict = sim.reduced_dict()
+    red_dict = sim.json(units=False)
     _ = [item.pop("description") for item in red_dict["methods"]]
 
     assert red_dict == {
@@ -121,30 +118,22 @@ def test_simulator_1():
         "spin_systems": [
             {
                 "sites": [
-                    {"isotope": "1H", "isotropic_chemical_shift": 0},
-                    {"isotope": "23Na", "isotropic_chemical_shift": 0},
+                    {"isotope": "1H", "isotropic_chemical_shift": 0.0},
+                    {"isotope": "23Na", "isotropic_chemical_shift": 0.0},
                 ],
-                "abundance": 100,
             }
         ],
         "methods": [
             {
                 "channels": ["1H"],
                 "name": "BlochDecaySpectrum",
+                "magnetic_flux_density": 9.4,
+                "rotor_angle": 0.9553166181245,
+                "rotor_frequency": 0.0,
                 "spectral_dimensions": [
                     {
                         "count": 1024,
-                        "events": [
-                            {
-                                "fraction": 1.0,
-                                "freq_contrib": freq_default,
-                                "magnetic_flux_density": 9.4,
-                                "rotor_angle": 0.955316618,
-                                "rotor_frequency": 0.0,
-                                "transition_query": {"P": {"channel-1": [[-1]]}},
-                            }
-                        ],
-                        "reference_offset": 0.0,
+                        "events": [{"transition_query": [{"ch1": {"P": [-1]}}]}],
                         "spectral_width": 25000.0,
                     }
                 ],
@@ -231,7 +220,7 @@ def test_sim_coesite():
 def test_empty_spin_sys_simulator():
     sim = Simulator()
     sim.methods = [
-        BlochDecaySpectrum(channel=["1H"], spectral_dimensions=[{"count": 10}])
+        BlochDecaySpectrum(channels=["1H"], spectral_dimensions=[{"count": 10}])
     ]
     sim.config.decompose_spectrum = "spin_system"
     sim.run()
@@ -242,13 +231,14 @@ def test_simulator_2():
     sim = Simulator()
     sim.spin_systems = [
         SpinSystem(
+            label="Test",
             sites=[Site(isotope="1H"), Site(isotope="23Na")],
             couplings=[Coupling(site_index=[0, 1], isotropic_j=15)],
         )
     ]
     sim.methods = [
         BlochDecaySpectrum(
-            channel=["1H"],
+            channels=["1H"],
             spectral_dimensions=[{"count": 10}],
             experiment=cp.as_csdm(np.arange(10)),
         )
@@ -257,6 +247,7 @@ def test_simulator_2():
     sim.label = "test0"
     sim.description = "testing-testing 1.2.3"
 
+    sim.config.decompose_spectrum = "spin_system"
     sim.run()
 
     # save
@@ -338,8 +329,8 @@ def test_sites_to_pandas_df():
     eta_q = [None, None, None, 0.34]
 
     spin_systems = single_site_system_generator(
-        isotopes=isotopes,
-        isotropic_chemical_shifts=shifts,
+        isotope=isotopes,
+        isotropic_chemical_shift=shifts,
         shielding_symmetric={"zeta": zeta, "eta": eta_n},
         quadrupolar={"Cq": Cq, "eta": eta_q},
         abundance=1,

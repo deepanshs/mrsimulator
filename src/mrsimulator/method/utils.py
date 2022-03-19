@@ -1,33 +1,10 @@
 # -*- coding: utf-8 -*-
 from functools import reduce
-from itertools import permutations
 
 import numpy as np
 
 __author__ = ["Deepansh J. Srivastava", "Maxwell C. Venetos"]
 __email__ = ["srivastava.89@osu.edu", "maxvenetos@gmail.com"]
-
-
-def expand_spectral_dimension_object(py_dict):
-    glb = {}
-    list_g = ["magnetic_flux_density", "rotor_frequency", "rotor_angle"]
-    for item in list_g:
-        if item in py_dict.keys():
-            glb[item] = py_dict[item]
-    glb_keys = glb.keys()
-
-    for dim in py_dict["spectral_dimensions"]:
-        if "events" not in dim:
-            dim["events"] = [{}]
-        for ev in dim["events"]:
-            intersect = set(ev.keys()).intersection(set(glb_keys))
-            for k in glb:
-                if k not in intersect:
-                    ev[k] = glb[k]
-
-    _ = [py_dict.pop(item) for item in glb_keys]
-
-    return py_dict
 
 
 def cartesian_product(*arrays):
@@ -61,70 +38,179 @@ def D_symmetry_indexes(transitions, list_of_D):
     return get_symmetry_indexes(D_fn, list_of_D)
 
 
-def get_iso_dict(channel, isotope):
+def get_iso_dict(channels, isotopes):
     """
     Parse the spin system sites to determine indices of each isotope that is part of
     the method channel.
 
     Args:
-        channel: List object
-        isotope: List object
+        channels: List of method channels
+        isotopes: List of spin system isotopes.
     """
-    intersection = set(isotope).intersection(set(channel))
-    isotope = np.asarray(isotope)
-    return {item: (np.where(isotope == item))[0] for item in intersection}
+    intersection = set(isotopes).intersection(set(channels))
+    isotopes = np.asarray(isotopes)
+    return {item: (np.where(isotopes == item))[0] for item in intersection}
 
 
-def query_permutations(query, isotope, channel, transition_symmetry="P"):
-    """
-    Determines the transition symmetries that are involved in a given transition query.
+def nearest_nonmixing_event(event_name, i):
+    """Return the indexes of the nearest non mixing events (SpectralEvent and
+    ConstantDurationEvent) about a mixing event at index `i`.
 
     Args:
-        query: Transition query dict object
-        channel: List of channels as atomic number followed by symbol. Eg. '29Si', '1H'
-        isotope: List of isotopes within the spin system. Eg. ['29Si', '29Si', '1H']
-        transition_symmetry: str object. Derived from a transition query
+        event_name: List of event class names.
+        i: Int index of the mixing event.
     """
-    P_permutated = []
+    options = ["SpectralEvent", "ConstantDurationEvent"]
+    low_range = event_name[:i]
+    high_range = event_name[i:]
+    upper = [high_range.index(item) for item in options if item in high_range]
+    lower = [low_range[::-1].index(item) for item in options if item in low_range]
+    return [
+        i - 1 - (min(lower) if lower != [] else 0),
+        i + (min(upper) if upper != [] else 0),
+    ]
 
-    iso_dict = get_iso_dict(channel=channel, isotope=isotope)
-    query_symmetry = query[transition_symmetry]  # get the query for symmetry element.
 
-    # def warn_message(id_):
-    #     return (
-    #         f"Channel asks for isotope `{id_}` but it is not present in the list of "
-    #         "spin systems."
-    #     )
+def tip_angle_and_phase_list(symbol, channels, mixing_query):
+    """Return a list of tip_angles and phase of size equal to the number of sites within
+    the spin system, corresponding to a mixing_query from a MixingEvent.
 
-    on_fail_message = (
-        "The length of the transition query symmetry elements cannot exceed than the "
-        "number of channels."
-    )
-    for i, channel_id in enumerate(channel):
-        # Check if method's channel isotope is present in the spin system
-        if channel_id not in iso_dict:
-            # warnings.warn(warn_message(channel_id))
-            return np.asarray([])
+    If the site matches the channel, append the tip_angle and phase of the corresponding
+    channel to the list, otherwise append 0.
 
-        n_sites_channel_i = iso_dict[channel_id].size
-        channel_query = query_symmetry[f"channel-{i+1}"]
+    Args:
+        symbols: List of site symbols.
+        channels: List of method channel symbols.
+        mixing_query: Mixing query object of the MixingEvent.
+    """
+    angle_mappable = map_mix_query_attr_to_ch(mixing_query)
+    tip_angle_ = [
+        angle_mappable["tip_angle"][channels.index(sym)] if sym in channels else 0
+        for sym in symbol
+    ]
+    phase_ = [
+        angle_mappable["phase"][channels.index(sym)] if sym in channels else 0
+        for sym in symbol
+    ]
+    return tip_angle_, phase_
 
-        temp_P = []
-        for item in channel_query:
-            query_item_len = len(item)
-            # Check transition query exceed the number of isotopes present
-            if query_item_len > n_sites_channel_i:
-                raise ValueError(on_fail_message)
 
-            item += (n_sites_channel_i - query_item_len) * [0]
-            temp_P += list(set(permutations(item)))
-        P_permutated += [temp_P]
+def get_mixing_query(spectral_dimensions, index):
+    """Return the mixing query object corresponding to the event at index `index`. The
+    indexing is over flattened list of events from all spectral dimensions.
 
-    # Expand the permutation to the number of sites in the spin system
-    permutation_length = max(len(item) for item in P_permutated)
-    P_expanded = np.zeros((permutation_length, len(isotope)))
-    for i, iso_trans_symmetry in enumerate(P_permutated):
-        # Update the channel-i indexes with the permuted symmetry.
-        P_expanded[:, iso_dict[channel[i]]] = iso_trans_symmetry
+    Args:
+        spectral_dimension: A list SpectralDimension objects.
+        index: The index of the event from a flatten event list.
+    """
+    n_events = len(spectral_dimensions[0].events)
+    sp = 0
+    while index >= n_events:
+        index -= n_events
+        sp += 1
+        n_events = len(spectral_dimensions[sp].events)
+    return spectral_dimensions[sp].events[index].mixing_query
 
-    return P_expanded
+
+def map_mix_query_attr_to_ch(mixing_query):
+    """Map the mixing query attributes (tip_angle and phase) to the channel index.
+    If the attribute is defined for the channel use the defined value else set it to 0.
+
+    Args:
+        spectral_dimension: A list SpectralDimension objects.
+        index: The index of the event from a flatten event list.
+    """
+    attributes = ["tip_angle", "phase"]
+    return {
+        item: {
+            i: getattr(getattr(mixing_query, f"ch{i+1}"), item) or 0
+            if getattr(mixing_query, f"ch{i+1}") is not None
+            else 0
+            for i in range(3)
+        }
+        for item in attributes
+    }
+
+
+def mixing_query_connect_map(spectral_dimensions):
+    """Return a list of mappables corresponding to each mixing event. The mappable
+    corresponds to mixing event and the index of next nearest transition indexes.
+
+    Args:
+        spectral_dimensions: A list of SpectralDimension objects."""
+    mapping = {}
+    event_names = [
+        evt.__class__.__name__ for dim in spectral_dimensions for evt in dim.events
+    ]
+    non_mix_index = [i for i, ev in enumerate(event_names) if ev != "MixingEvent"]
+    non_mix_index_map = {index: i for i, index in enumerate(non_mix_index)}
+
+    mapping = [
+        {
+            "mixing_query": get_mixing_query(spectral_dimensions, i),
+            "near_index": [
+                non_mix_index_map[k] for k in nearest_nonmixing_event(event_names, i)
+            ],
+        }
+        for i, name in enumerate(event_names)
+        if name == "MixingEvent"
+    ]
+
+    return mapping
+
+
+# Deprecated
+# def query_permutations(query, isotope, channel, transition_symmetry="P"):
+#     """
+#     Determines the transition symmetries that are involved in a given transition
+#     query.
+
+#     Args:
+#         query: Transition query dict object
+#         channel: List of channels as atomic number followed by symbol. Eg. '29Si',
+#         isotope: List of isotopes within the spin system. Eg. ['29Si', '29Si', '1H']
+#         transition_symmetry: str object. Derived from a transition query
+#     """
+#     P_permutated = []
+
+#     iso_dict = get_iso_dict(channels=channel, isotopes=isotope)
+#     query_symmetry = query[transition_symmetry]  # get the query for symmetry element.
+
+#     # def warn_message(id_):
+#     #     return (
+#     #         f"Channel asks for isotope `{id_}` but it is not present in the list "
+#     #         "of spin systems."
+#     #     )
+
+#     on_fail_message = (
+#         "The length of the transition query symmetry elements cannot exceed than "
+#         "the number of channels."
+#     )
+#     for i, channel_id in enumerate(channel):
+#         # Check if method's channel isotope is present in the spin system
+#         if channel_id not in iso_dict:
+#             # warnings.warn(warn_message(channel_id))
+#             return np.asarray([])
+
+#         n_sites_channel_i = iso_dict[channel_id].size
+#         channel_query = query_symmetry[f"channel-{i+1}"]
+
+#         temp_P = []
+#         for item in channel_query:
+#             query_item_len = len(item)
+#             # Check transition query exceed the number of isotopes present
+#             if query_item_len > n_sites_channel_i:
+#                 raise ValueError(on_fail_message)
+
+#             item += (n_sites_channel_i - query_item_len) * [0]
+#             temp_P += list(set(permutations(item)))
+#         P_permutated += [temp_P]
+
+#     # Expand the permutation to the number of sites in the spin system
+#     permutation_length = max(len(item) for item in P_permutated)
+#     P_expanded = np.zeros((permutation_length, len(isotope)))
+#     for i, iso_trans_symmetry in enumerate(P_permutated):
+#         # Update the channel-i indexes with the permuted symmetry.
+#         P_expanded[:, iso_dict[channel[i]]] = iso_trans_symmetry
+
+#     return P_expanded

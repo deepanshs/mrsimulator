@@ -7,8 +7,5 @@ FrequencyEnum
 
 .. autoclass:: FrequencyEnum
     :show-inheritance:
-
-    .. rubric:: Method Documentation
-
-    .. automethod:: json
-    .. automethod:: index
+    :members:
+    :inherited-members: BaseModel

@@ -16,25 +16,26 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import ThreeQ_VAS
 from mrsimulator import signal_processing as sp
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 2
+# sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Generate the site and spin system objects.
 Rb87_1 = Site(
     isotope="87Rb",
     isotropic_chemical_shift=-27.4,  # in ppm
-    quadrupolar={"Cq": 1.68e6, "eta": 0.2},  # Cq is in Hz
+    quadrupolar=SymmetricTensor(Cq=1.68e6, eta=0.2),  # Cq is in Hz
 )
 Rb87_2 = Site(
     isotope="87Rb",
     isotropic_chemical_shift=-28.5,  # in ppm
-    quadrupolar={"Cq": 1.94e6, "eta": 1.0},  # Cq is in Hz
+    quadrupolar=SymmetricTensor(Cq=1.94e6, eta=1.0),  # Cq is in Hz
 )
 Rb87_3 = Site(
     isotope="87Rb",
     isotropic_chemical_shift=-31.3,  # in ppm
-    quadrupolar={"Cq": 1.72e6, "eta": 0.5},  # Cq is in Hz
+    quadrupolar=SymmetricTensor(Cq=1.72e6, eta=0.5),  # Cq is in Hz
 )
 
 sites = [Rb87_1, Rb87_2, Rb87_3]  # all sites
@@ -47,20 +48,25 @@ method = ThreeQ_VAS(
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
     spectral_dimensions=[
-        {
-            "count": 128,
-            "spectral_width": 7e3,  # in Hz
-            "reference_offset": -7e3,  # in Hz
-            "label": "Isotropic dimension",
-        },
-        {
-            "count": 256,
-            "spectral_width": 1e4,  # in Hz
-            "reference_offset": -4e3,  # in Hz
-            "label": "MAS dimension",
-        },
+        dict(
+            count=128,
+            spectral_width=7e3,  # in Hz
+            reference_offset=-7e3,  # in Hz
+            label="Isotropic dimension",
+        ),
+        dict(
+            count=256,
+            spectral_width=1e4,  # in Hz
+            reference_offset=-4e3,  # in Hz
+            label="MAS dimension",
+        ),
     ],
 )
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+method.plot()
+plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and
@@ -76,7 +82,7 @@ data = sim.methods[0].simulation
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()

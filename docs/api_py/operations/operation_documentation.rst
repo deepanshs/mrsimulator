@@ -19,6 +19,9 @@ Documentation
 
 .. autoclass:: Gaussian
 .. autoclass:: Exponential
+.. autoclass:: SkewedGaussian
+.. autoclass:: TopHat
+.. autoclass:: Mask
 
 .. currentmodule:: mrsimulator.signal_processing.affine
 

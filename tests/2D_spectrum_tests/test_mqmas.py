@@ -21,19 +21,20 @@ def test_MQMAS():
     )
     spin_system = SpinSystem(sites=[site])
 
+    B0 = 9.394
     method = Method2D(
         channels=["87Rb"],
-        magnetic_flux_density=9.4,
+        magnetic_flux_density=B0,
         spectral_dimensions=[
             {
                 "count": 128,
                 "spectral_width": 20000,
-                "events": [{"transition_query": {"P": [-3], "D": [0]}}],
+                "events": [{"transition_query": [{"P": [-3], "D": [0]}]}],
             },
             {
                 "count": 128,
                 "spectral_width": 20000,
-                "events": [{"transition_query": {"P": [-1], "D": [0]}}],
+                "events": [{"transition_query": [{"P": [-1], "D": [0]}]}],
             },
         ],
     )
@@ -66,9 +67,9 @@ def test_MQMAS():
 
     # calculate the isotropic coordinate
     spin = method.channels[0].spin
-    w0 = method.channels[0].gyromagnetic_ratio * 9.4 * 1e6
+    w0 = method.channels[0].gyromagnetic_ratio * B0 * 1e6
     wq = 3 * 3.5e6 / (2 * spin * (2 * spin - 1))
-    w_iso = -9 * 17 / 8 + 1e6 / 8 * (wq / w0) ** 2 * ((0.36 ** 2) / 3 + 1)
+    w_iso = -9 * 17 / 8 + 1e6 / 8 * (wq / w0) ** 2 * ((0.36**2) / 3 + 1)
 
     # the coordinate from spectrum
     w_iso_spectrum = processed_data.x[1].coordinates[70].value
@@ -94,7 +95,7 @@ def test_MQMAS():
 
     data = sim.methods[0].simulation.y[0].components[0]
     np.testing.assert_almost_equal(
-        data / data.max(), mas_slice / mas_slice.max(), decimal=6, err_msg="not equal"
+        data / data.max(), mas_slice / mas_slice.max(), decimal=2, err_msg="not equal"
     )
 
 
@@ -107,9 +108,10 @@ def test_ThreeQ_VAS_spin_3halves():
     )
     spin_system = SpinSystem(sites=[site])
 
+    B0 = 9.394
     method = ThreeQ_VAS(
         channels=["87Rb"],
-        magnetic_flux_density=9.4,
+        magnetic_flux_density=B0,
         spectral_dimensions=[
             {"count": 1024, "spectral_width": 20000},
             {"count": 512, "spectral_width": 20000},
@@ -129,9 +131,9 @@ def test_ThreeQ_VAS_spin_3halves():
     # v_iso = (17/8)*iso_shift + 1e6/8 * (vq/v0)^2 * (eta^2 / 3 + 1)
     # ref: D. Massiot et al. / Solid State Nuclear Magnetic Resonance 6 (1996) 73-83
     spin = method.channels[0].spin
-    v0 = method.channels[0].gyromagnetic_ratio * 9.4 * 1e6
+    v0 = method.channels[0].gyromagnetic_ratio * B0 * 1e6
     vq = (3 * 3.5e6) / (2 * spin * (2 * spin - 1))
-    v_iso = -9 * 17 / 8 + 1e6 / 8 * ((vq / v0) ** 2) * ((0.36 ** 2) / 3 + 1)
+    v_iso = -9 * 17 / 8 + 1e6 / 8 * ((vq / v0) ** 2) * ((0.36**2) / 3 + 1)
 
     # the coordinate from spectrum along the iso dimension must be equal to v_iso
     v_iso_spectrum = data.x[1].coordinates[index[0]].value
@@ -144,7 +146,7 @@ def test_ThreeQ_VAS_spin_3halves():
     # MAS spectrum
     method = BlochDecayCTSpectrum(
         channels=["87Rb"],
-        magnetic_flux_density=9.4,
+        magnetic_flux_density=B0,
         rotor_frequency=1e9,
         spectral_dimensions=[{"count": 512, "spectral_width": 20000}],
     )
@@ -194,7 +196,7 @@ def test_MQMAS_spin_5halves():
     spin = method.channels[0].spin
     v0 = method.channels[0].gyromagnetic_ratio * 7 * 1e6
     vq = 3 * 3.22e6 / (2 * spin * (2 * spin - 1))
-    v_iso = -(17 / 31) * 64.5 - (8e6 / 93) * (vq / v0) ** 2 * ((0.66 ** 2) / 3 + 1)
+    v_iso = -(17 / 31) * 64.5 - (8e6 / 93) * (vq / v0) ** 2 * ((0.66**2) / 3 + 1)
 
     # the coordinate from spectrum along the iso dimension must be equal to v_iso
     v_iso_spectrum = data.x[1].coordinates[index[0]].value

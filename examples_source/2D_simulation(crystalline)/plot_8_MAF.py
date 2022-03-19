@@ -16,8 +16,10 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
+from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method import SpectralDimension, SpectralEvent
 
-# sphinx_gallery_thumbnail_number = 1
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # Create the sites and spin systems
@@ -25,17 +27,17 @@ sites = [
     Site(
         isotope="29Si",
         isotropic_chemical_shift=-89.0,  # in ppm
-        shielding_symmetric={"zeta": 59.8, "eta": 0.62},  # zeta in ppm
+        shielding_symmetric=SymmetricTensor(zeta=59.8, eta=0.62),  # zeta in ppm
     ),
     Site(
         isotope="29Si",
         isotropic_chemical_shift=-89.5,  # in ppm
-        shielding_symmetric={"zeta": 52.1, "eta": 0.68},  # zeta in ppm
+        shielding_symmetric=SymmetricTensor(zeta=52.1, eta=0.68),  # zeta in ppm
     ),
     Site(
         isotope="29Si",
         isotropic_chemical_shift=-87.8,  # in ppm
-        shielding_symmetric={"zeta": 69.4, "eta": 0.60},  # zeta in ppm
+        shielding_symmetric=SymmetricTensor(zeta=69.4, eta=0.60),  # zeta in ppm
     ),
 ]
 
@@ -46,35 +48,41 @@ spin_systems = [SpinSystem(sites=[s]) for s in sites]
 # spectrum by customizing the method parameters, as shown below. Note, the Method2D
 # method simulates an infinite spinning speed spectrum.
 maf = Method2D(
+    name="Magic Angle Flipping",
     channels=["29Si"],
     magnetic_flux_density=14.1,  # in T
     spectral_dimensions=[
-        {
-            "count": 128,
-            "spectral_width": 2e4,  # in Hz
-            "label": "Anisotropic dimension",
-            "events": [
-                {
-                    "rotor_angle": 90 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
-                }
+        SpectralDimension(
+            count=128,
+            spectral_width=2e4,  # in Hz
+            label="Anisotropic dimension",
+            events=[
+                SpectralEvent(
+                    rotor_angle=90 * 3.14159 / 180,
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                )
             ],
-        },
-        {
-            "count": 128,
-            "spectral_width": 3e3,  # in Hz
-            "reference_offset": -1.05e4,  # in Hz
-            "label": "Isotropic dimension",
-            "events": [
-                {
-                    "rotor_angle": 54.735 * 3.14159 / 180,
-                    "transition_query": {"P": [-1], "D": [0]},
-                }
+        ),
+        SpectralDimension(
+            count=128,
+            spectral_width=3e3,  # in Hz
+            reference_offset=-1.05e4,  # in Hz
+            label="Isotropic dimension",
+            events=[
+                SpectralEvent(
+                    rotor_angle=54.735 * 3.14159 / 180,
+                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                )
             ],
-        },
+        ),
     ],
     affine_matrix=[[1, -1], [0, 1]],
 )
+
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+maf.plot()
+plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and run the

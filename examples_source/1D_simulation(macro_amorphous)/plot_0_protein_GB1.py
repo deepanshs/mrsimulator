@@ -25,7 +25,7 @@ from mrsimulator import signal_processing as sp
 # Create the Simulator object and load the spin systems from an external file.
 sim = Simulator()
 
-file_ = "https://sandbox.zenodo.org/record/687656/files/protein_GB1_15N_13CA_13CO.mrsys"
+file_ = "https://sandbox.zenodo.org/record/835664/files/protein_GB1_15N_13CA_13CO.mrsys"
 sim.load_spin_systems(file_)  # load the spin systems.
 print(f"number of spin systems = {len(sim.spin_systems)}")
 
@@ -40,12 +40,12 @@ method_13C = BlochDecaySpectrum(
     magnetic_flux_density=11.74,  # in T
     rotor_frequency=3000,  # in Hz
     spectral_dimensions=[
-        {
-            "count": 8192,
-            "spectral_width": 5e4,  # in Hz
-            "reference_offset": 2e4,  # in Hz
-            "label": r"$^{13}$C resonances",
-        }
+        dict(
+            count=8192,
+            spectral_width=5e4,  # in Hz
+            reference_offset=2e4,  # in Hz
+            label=r"$^{13}$C resonances",
+        )
     ],
 )
 
@@ -57,12 +57,12 @@ method_15N = BlochDecaySpectrum(
     magnetic_flux_density=11.74,  # in T
     rotor_frequency=3000,  # in Hz
     spectral_dimensions=[
-        {
-            "count": 8192,
-            "spectral_width": 4e4,  # in Hz
-            "reference_offset": 7e3,  # in Hz
-            "label": r"$^{15}$N resonances",
-        }
+        dict(
+            count=8192,
+            spectral_width=4e4,  # in Hz
+            reference_offset=7e3,  # in Hz
+            label=r"$^{15}$N resonances",
+        )
     ],
 )
 

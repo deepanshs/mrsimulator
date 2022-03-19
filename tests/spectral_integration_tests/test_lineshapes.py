@@ -30,7 +30,7 @@ def test_pure_shielding_static_lineshape_python_brute():
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
 
         # euler angle all zero
-        data_mrsimulator, data_source = c_setup(filename)
+        data_mrsimulator, data_source = c_setup(filename=filename)
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=3, err_msg=message
         )
@@ -60,7 +60,7 @@ def test_pure_quadrupolar_lineshape_python_brute():
     for i in range(19):
         message = f"{error_message} test0{i:02d}.json"
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
-        data_mrsimulator, data_source = c_setup(filename)
+        data_mrsimulator, data_source = c_setup(filename=filename)
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=3, err_msg=message
         )
@@ -136,7 +136,7 @@ def test_pure_quadrupolar_sidebands_simpson():
         message = f"{error_message} test0{i:02d}.json"
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         data_mrsimulator, data_source = c_setup(
-            filename, integration_volume="hemisphere"
+            filename=filename, integration_volume="hemisphere"
         )
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=3.9, err_msg=message
@@ -168,7 +168,7 @@ def test_csa_plus_quadrupolar_lineshape_simpson():
         message = f"{error_message} test0{i:02d}.json"
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         data_mrsimulator, data_source = c_setup(
-            filename, integration_volume="hemisphere"
+            filename=filename, integration_volume="hemisphere"
         )
 
         # if SHOW_PLOTS:
@@ -190,7 +190,7 @@ def test_j_coupling_lineshape_simpson():
         message = f"{error_message} test0{i:02d}.json"
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         data_mrsimulator, data_source = c_setup(
-            filename,
+            filename=filename,
             integration_volume="hemisphere",
         )
 
@@ -215,7 +215,7 @@ def test_dipolar_coupling_lineshape_simpson():
         message = f"{error_message} test0{i:02d}.json"
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         data_mrsimulator, data_source = c_setup(
-            filename, integration_volume="hemisphere"
+            filename=filename, integration_volume="hemisphere"
         )
 
         # if SHOW_PLOTS:

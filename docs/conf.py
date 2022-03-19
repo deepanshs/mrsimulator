@@ -18,9 +18,6 @@ import warnings
 from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
 
-# import plotly.io as pio
-# from plotly.io import _sg_scraper
-
 sys.path.insert(0, os.path.abspath("../.."))
 
 # scraper = _sg_scraper.plotly_sg_scraper
@@ -39,6 +36,8 @@ with open("../src/mrsimulator/__init__.py", "r") as f:
         if "__version__" in line:
             before_keyword, keyword, after_keyword = line.partition("=")
             __version__ = after_keyword.strip()[1:-1]
+            # Must break since want only first use of __version__ within file
+            break
 
 # The short X.Y version
 version = ".".join(__version__.split(".")[:2])
@@ -75,19 +74,42 @@ extensions = [
 # generate autosummary even if no references
 autosummary_generate = True
 
+
+# Setup code to run before any doctests
+doctest_global_setup = """
+from pprint import pprint
+import numpy as np
+"""
+
+# Date format used for |today| in copyright
+today_fmt = "%Y"
+
+# ---------------------------------------------------------------------------- #
+#                              Sphinx Version warning                          #
+# ---------------------------------------------------------------------------- #
+# sphinx-version-warning config
+versionwarning_messages = {
+    "latest": (
+        "This document is for the development version. "
+        'For the stable version documentation, see <a href="/en/stable/">here</a>.'
+    )
+}
 # Show warning at top of page
 versionwarning_body_selector = "div.document"
 # versionwarning_banner_title = ""
 # For debugging locally
 # versionwarning_project_version = "latest"
 
-# Plotly config
+# ---------------------------------------------------------------------------- #
+#                                  Plotly config                               #
+# ---------------------------------------------------------------------------- #
 # pio.renderers.default = "sphinx_gallery_png"
 
 # ---------------------------------------------------------------------------- #
 #                               Plot directive config                          #
 # ---------------------------------------------------------------------------- #
 plot_html_show_source_link = False
+plot_include_source = True
 plot_rcparams = {
     "figure.figsize": [6, 3],
 }
@@ -95,7 +117,6 @@ plot_rcparams = {
 # ---------------------------------------------------------------------------- #
 #                               Sphinx Gallery config                          #
 # ---------------------------------------------------------------------------- #
-
 # filter sphinx matplotlib warning
 warnings.filterwarnings(
     "ignore",
@@ -127,9 +148,14 @@ warnings.filterwarnings(
 
 # sphinx gallery config
 sphinx_gallery_conf = {
-    "examples_dirs": ["../examples_source", "../fitting_source"],
+    "examples_dirs": [
+        "../signal_processing_source",
+        "../examples_source",
+        "../fitting_source",
+    ],
     "remove_config_comments": True,
     "gallery_dirs": [
+        "signal_processing",
         "examples",
         "fitting",
     ],  # path to where to save gallery generated output
@@ -138,6 +164,7 @@ sphinx_gallery_conf = {
     # "line_numbers": True,
     "subsection_order": ExplicitOrder(
         [
+            "../signal_processing_source",
             "../examples_source/1D_simulation(crystalline)",
             "../examples_source/1D_simulation(macro_amorphous)",
             "../examples_source/2D_simulation(crystalline)",
@@ -154,27 +181,27 @@ sphinx_gallery_conf = {
     "doc_module": ("mrsimulator"),
     "image_scrapers": ["matplotlib"],  # , scraper],
     "compress_images": ("images", "thumbnails"),
-    # "show_memory": True,
-    "first_notebook_cell": (
-        "# This cell is added by sphinx-gallery\n"
-        "!pip install mrsimulator --quiet\n\n\n"
-        "%matplotlib inline\n\n"
-        "import mrsimulator\n"
-        "print(f'You are using mrsimulator v{mrsimulator.__version__}')"
-    ),
     "capture_repr": ("_repr_html_", "__repr__"),
-    "binder": {
-        # Required keys
-        "org": "DeepanshS",
-        "repo": "mrsimulator",
-        "branch": "master",
-        "binderhub_url": "https://mybinder.org",
-        "dependencies": "../requirements.txt",
-        # Optional keys
-        "filepath_prefix": "docs/_build/html",
-        "notebooks_dir": "../../notebooks",
-        "use_jupyter_lab": True,
-    },
+    # --- uncomment to include binder links for notebooks ---
+    # "first_notebook_cell": (
+    #     "# This cell is added by sphinx-gallery\n"
+    #     "!pip install mrsimulator --quiet\n\n\n"
+    #     "%matplotlib inline\n\n"
+    #     "import mrsimulator\n"
+    #     "print(f'You are using mrsimulator v{mrsimulator.__version__}')"
+    # ),
+    # "binder": {
+    #     # Required keys
+    #     "org": "deepanshs",
+    #     "repo": "mrsimulator",
+    #     "branch": "master",
+    #     "binderhub_url": "https://mybinder.org",
+    #     "dependencies": "../requirements.txt",
+    #     # Optional keys
+    #     "filepath_prefix": "docs/_build/html",
+    #     "notebooks_dir": "../../notebooks",
+    #     "use_jupyter_lab": True,
+    # },
 }
 
 intersphinx_mapping = {
@@ -185,13 +212,15 @@ intersphinx_mapping = {
     "astropy": ("https://docs.astropy.org/en/stable/", None),
     "lmfit": ("https://lmfit-py.readthedocs.io/en/stable/", None),
 }
-# ---------------------------------------------------------------------------- #
 
+# ---------------------------------------------------------------------------- #
+#                              Sphinx copybutton                               #
+# ---------------------------------------------------------------------------- #
 copybutton_prompt_text = ">>> |\\$ |\\[\\d*\\]: |\\.\\.\\.: |[.][.][.] "
 copybutton_prompt_is_regexp = True
 
 # ---------------------------------------------------------------------------- #
-#                               Doxygen C docs config                          #
+#                            Doxygen C docs config                             #
 # ---------------------------------------------------------------------------- #
 try:
     subprocess.run("doxygen", shell=False)
@@ -258,7 +287,9 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
 pygments_style = None
 
 
-# -- Options for HTML output -------------------------------------------------
+# ---------------------------------------------------------------------------- #
+#                                  HTML theme                                  #
+# ---------------------------------------------------------------------------- #
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
@@ -302,13 +333,15 @@ html_theme_options = {
     # Works only "bootstrap_version = 3"
     "noflatdesign": False,
     # Enable Google Web Font. Defaults to false
-    "googlewebfont": True,
+    # "googlewebfont": True,
     # Set the URL of Google Web Font's CSS.
     # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
-    "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
+    # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
+    # "googlewebfont_url": "http://fonts.googleapis.com/css2?family=Inter",
     # Set the Style of Google Web Font's CSS.
     # Defaults to "font-family: 'Text Me One', sans-serif;"
-    "googlewebfont_style": "font-family: Helvetica",
+    # "googlewebfont_style": "font-family: Helvetica",
+    # "googlewebfont_style": "font-family: 'Inter', sans-serif;",
     # Set 'navbar-inverse' attribute to header navbar. Defaults to false.
     "header_inverse": True,
     # Set 'navbar-inverse' attribute to relbar navbar. Defaults to false.
@@ -333,6 +366,7 @@ html_sidebars = {
     "**": ["searchbox.html", "globaltoc.html"],
     "using/windows": ["searchbox.html", "windowssidebar.html"],
 }
+# ---------------------------------------------------------------------------- #
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -346,7 +380,9 @@ html_static_path = ["_static"]
 htmlhelp_basename = "MRSimulatordoc"
 
 
-# -- Options for LaTeX output ------------------------------------------------
+# ---------------------------------------------------------------------------- #
+#                              LaTeX setup                                     #
+# ---------------------------------------------------------------------------- #
 latex_engine = "pdflatex"
 latex_logo = "_static/mrsimulator_logo.pdf"
 latex_show_pagerefs = True
@@ -536,6 +572,7 @@ texinfo_documents = [
         "Miscellaneous",
     )
 ]
+# ---------------------------------------------------------------------------- #
 
 
 # -- Options for manual page output ------------------------------------------

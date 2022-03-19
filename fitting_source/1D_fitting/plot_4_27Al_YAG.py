@@ -18,6 +18,7 @@ from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -55,13 +56,13 @@ plt.show()
 Al_1 = Site(
     isotope="27Al",
     isotropic_chemical_shift=76,  # in ppm
-    quadrupolar={"Cq": 6e6, "eta": 0},  # Cq in Hz
+    quadrupolar=SymmetricTensor(Cq=6e6, eta=0.0),  # Cq in Hz
 )
 
 Al_2 = Site(
     isotope="27Al",
     isotropic_chemical_shift=1,  # in ppm
-    quadrupolar={"Cq": 5e5, "eta": 0.3},  # Cq in Hz
+    quadrupolar=SymmetricTensor(Cq=5e5, eta=0.3),  # Cq in Hz
 )
 spin_systems = [
     SpinSystem(sites=[Al_1], name="AlO4"),
@@ -139,8 +140,8 @@ result
 # %%
 # The best fit solution
 # ---------------------
-best_fit = sf.bestfit(sim, processor)[0]
-residuals = sf.residuals(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
+residuals = sf.residuals(sim, processor)[0].real
 
 # Plot the spectrum
 plt.figure(figsize=(8, 4))

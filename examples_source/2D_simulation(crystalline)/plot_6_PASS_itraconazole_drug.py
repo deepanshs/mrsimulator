@@ -17,7 +17,7 @@ from mrsimulator import Simulator
 from mrsimulator.methods import SSB2D
 from mrsimulator import signal_processing as sp
 
-# sphinx_gallery_thumbnail_number = 1
+# sphinx_gallery_thumbnail_number = 2
 
 # %%
 # There are 41 :math:`^{13}\text{C}` single-site spin systems partially describing the
@@ -26,7 +26,7 @@ from mrsimulator import signal_processing as sp
 
 sim = Simulator()
 
-filename = "https://sandbox.zenodo.org/record/687656/files/itraconazole_13C.mrsys"
+filename = "https://sandbox.zenodo.org/record/835664/files/itraconazole_13C.mrsys"
 sim.load_spin_systems(filename)
 
 
@@ -38,21 +38,27 @@ PASS = SSB2D(
     magnetic_flux_density=11.74,
     rotor_frequency=2000,
     spectral_dimensions=[
-        {
-            "count": 20 * 4,
-            "spectral_width": 2000 * 20,  # value in Hz
-            "label": "Anisotropic dimension",
-        },
-        {
-            "count": 1024,
-            "spectral_width": 3e4,  # value in Hz
-            "reference_offset": 1.1e4,  # value in Hz
-            "label": "Isotropic dimension",
-        },
+        dict(
+            count=20 * 4,
+            spectral_width=2000 * 20,  # value in Hz
+            label="Anisotropic dimension",
+        ),
+        dict(
+            count=1024,
+            spectral_width=3e4,  # value in Hz
+            reference_offset=1.1e4,  # value in Hz
+            label="Isotropic dimension",
+        ),
     ],
 )
 sim.methods = [PASS]  # add the method.
 
+# A graphical representation of the method object.
+plt.figure(figsize=(5, 3.5))
+PASS.plot()
+plt.show()
+
+# %%
 # For 2D spinning sideband simulation, set the number of spinning sidebands in the
 # Simulator.config object to `spectral_width/rotor_frequency` along the sideband
 # dimension.

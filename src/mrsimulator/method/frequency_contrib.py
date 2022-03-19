@@ -62,6 +62,9 @@ class FrequencyEnum(str, Enum):
     Quad2_2: str = freq_list_all[4]
     Quad2_4: str = freq_list_all[5]
 
+    class Config:
+        extra = "forbid"
+
     # @validator("Quad1", pre=True, always=True)
     # def validate_Quad1(cls, v, *, values, **kwargs):
     #     values["Quad1_2"] = "Quad1_2"
@@ -73,7 +76,7 @@ class FrequencyEnum(str, Enum):
     #         values[item] = item
     #     return None
 
-    def json(self) -> dict:
+    def json(self, **kwargs) -> str:
         """Parse the class object to a JSON compliant python dictionary object."""
         return self.value
 

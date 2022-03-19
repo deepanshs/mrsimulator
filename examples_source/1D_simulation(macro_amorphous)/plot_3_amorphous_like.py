@@ -89,8 +89,8 @@ plt.show()
 # are the array of tensor parameter coordinates, and ``pdf`` is the array of the
 # corresponding amplitudes.
 spin_systems = single_site_system_generator(
-    isotopes="29Si",
-    isotropic_chemical_shifts=iso,
+    isotope="29Si",
+    isotropic_chemical_shift=iso,
     shielding_symmetric={"zeta": zeta, "eta": eta},
     abundance=pdf,
 )
@@ -102,7 +102,7 @@ spin_systems = single_site_system_generator(
 method = BlochDecaySpectrum(
     channels=["29Si"],
     spectral_dimensions=[
-        {"spectral_width": 25000, "reference_offset": -7000}  # values in Hz
+        dict(spectral_width=25000, reference_offset=-7000)  # values in Hz
     ],
 )
 
@@ -116,7 +116,7 @@ method = BlochDecaySpectrum(
 # add the respective objects.
 sim = Simulator()
 sim.spin_systems = spin_systems  # add the spin systems
-sim.methods += [method]  # add the method
+sim.methods = [method]  # add the method
 
 # %%
 # Static spectrum
@@ -128,7 +128,7 @@ sim.run()
 # The plot of the simulation.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -148,7 +148,7 @@ sim.methods[0] = BlochDecaySpectrum(
     rotor_frequency=5000,  # in Hz
     rotor_angle=1.57079,  # in rads, equivalent to 90 deg.
     spectral_dimensions=[
-        {"spectral_width": 25000, "reference_offset": -7000}  # values in Hz
+        dict(spectral_width=25000, reference_offset=-7000)  # values in Hz
     ],
 )
 sim.config.number_of_sidebands = 8  # eight sidebands are sufficient for this example
@@ -158,7 +158,7 @@ sim.run()
 # The plot of the simulation.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
@@ -172,7 +172,7 @@ sim.methods[0] = BlochDecaySpectrum(
     rotor_frequency=1000,  # in Hz
     rotor_angle=54.735 * np.pi / 180.0,  # in rads
     spectral_dimensions=[
-        {"spectral_width": 25000, "reference_offset": -7000}  # values in Hz
+        dict(spectral_width=25000, reference_offset=-7000)  # values in Hz
     ],
 )
 sim.config.number_of_sidebands = 16  # sixteen sidebands are sufficient for this example
@@ -182,7 +182,7 @@ sim.run()
 # The plot of the simulation.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(sim.methods[0].simulation, color="black", linewidth=1)
+ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
