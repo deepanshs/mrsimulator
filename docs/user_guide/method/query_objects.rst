@@ -1,3 +1,5 @@
+.. _query_doc:
+
 Query Objects
 =============
 
