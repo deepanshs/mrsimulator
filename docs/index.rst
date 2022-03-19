@@ -164,7 +164,7 @@ amorphous materials.
 
 The ``mrsimulator`` package offers the following
 
-- **Fast simulation** of one/two-dimensional solid-state NMR spectra. See our :ref:`benchmark` results.
+- **Fast simulation** of one and two-dimensional solid-state NMR spectra.
 
 - Simulation of **coupled and uncoupled spin system**
     - for spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei
@@ -180,10 +180,12 @@ The ``mrsimulator`` package offers the following
     - 2D Dynamic Angle Spinning (DAS)
     - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
     - 2D Magic Angle Flipping (MAF)
+    - Custom user-defined 1D and 2D methods (Method)
 
 - **Models** for tensor parameter distribution in amorphous materials.
     - Czjzek
     - Extended Czjzek
+    - Custom user-defined models
 
 ----
 
@@ -312,7 +314,7 @@ How to cite
 
 If you use mrsimulator in your publication, please consider citing the following.
 
-- Deepansh J. Srivastava, Maxwell Venetos, Philip J. Grandinetti, Shyam Dwaraknath, & Alexis McCarthy. (2021, May 26). mrsimulator: v0.6.0 (Version v0.6.0). Zenodo. http://doi.org/10.5281/zenodo.4814638
+- Deepansh J. Srivastava, Matthew Giammar, Maxwell C. Venetos, Shyam Dwaraknath, Philip J. Grandinetti, & Alexis McCarthy. (2021). mrsimulator: v0.6.1. Zenodo. https://doi.org/10.5281/zenodo.5559730
 
 - Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific data. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
 
