@@ -16,11 +16,11 @@ magnetic resonance (NMR) spectra of both crystalline and amorphous materials.
 - It is a fast and versatile solid-state NMR simulator of one and two-dimensional static, MAS,
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
-- It include simulations of weakly coupled nuclei experiencing J and dipolar couplings.
+- It includes simulations of weakly coupled nuclei experiencing J and dipolar couplings.
 - It is fully documented with a stable and simple API and is easily incorporated into your
   python scripts and web apps.
 - It is compatible with modern python packages, such as scikit-learn, Keras, etc.
-- Packages using mrsimulator -
+- Packages using mrsimulator:
   - [mrinversion](https://mrinversion.readthedocs.io/en/stable/)
 
 ## Install
