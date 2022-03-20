@@ -20,13 +20,15 @@ from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method import SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/830903/files/NiCl2.2D2O.csdf"
+filename = "https://sandbox.zenodo.org/record/835664/files/NiCl2.2D2O.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
@@ -61,14 +63,14 @@ plt.show()
 site = Site(
     isotope="2H",
     isotropic_chemical_shift=-90,  # in ppm
-    shielding_symmetric={
-        "zeta": -610,  # in ppm
-        "eta": 0.15,
-        "alpha": 0.7,  # in rads
-        "beta": 2.0,  # in rads
-        "gamma": 3.0,  # in rads
-    },
-    quadrupolar={"Cq": 75.2e3, "eta": 0.9},  # Cq in Hz
+    shielding_symmetric=SymmetricTensor(
+        zeta=-610,  # in ppm
+        eta=0.15,
+        alpha=0.7,  # in rads
+        beta=2.0,  # in rads
+        gamma=3.0,  # in rads
+    ),
+    quadrupolar=SymmetricTensor(Cq=75.2e3, eta=0.9),  # Cq in Hz
 )
 
 spin_systems = [SpinSystem(sites=[site])]
@@ -96,28 +98,28 @@ shifting_d = Method2D(
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
     spectral_dimensions=[
-        {
+        SpectralDimension(
             **spectral_dims[0],
-            "label": "Quadrupolar frequency",
-            "events": [
-                {
-                    "rotor_frequency": 0,
-                    "transition_query": {"P": [-1]},
-                    "freq_contrib": ["Quad1_2"],
-                }
+            label="Quadrupolar frequency",
+            events=[
+                SpectralEvent(
+                    rotor_frequency=0,
+                    transition_query=[{"ch1": {"P": [-1]}}],
+                    freq_contrib=["Quad1_2"],
+                )
             ],
-        },
-        {
+        ),
+        SpectralDimension(
             **spectral_dims[1],
-            "label": "Paramagnetic shift",
-            "events": [
-                {
-                    "rotor_frequency": 0,
-                    "transition_query": {"P": [-1]},
-                    "freq_contrib": ["Shielding1_0", "Shielding1_2"],
-                }
+            label="Paramagnetic shift",
+            events=[
+                SpectralEvent(
+                    rotor_frequency=0,
+                    transition_query=[{"ch1": {"P": [-1]}}],
+                    freq_contrib=["Shielding1_0", "Shielding1_2"],
+                )
             ],
-        },
+        ),
     ],
     experiment=experiment,  # also add the measurement to the method.
 )
@@ -179,7 +181,7 @@ result
 # %%
 # The best fit solution
 # ---------------------
-best_fit = sf.bestfit(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
 
 # Plot the spectrum
 plt.figure(figsize=(4.25, 3.0))
@@ -195,7 +197,7 @@ plt.show()
 # %%
 # Image plots with residuals
 # --------------------------
-residuals = sf.residuals(sim, processor)[0]
+residuals = sf.residuals(sim, processor)[0].real
 
 fig, ax = plt.subplots(
     1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}

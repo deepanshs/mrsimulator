@@ -15,9 +15,10 @@ Coupled spin-1/2 (CSA + heteronuclear dipolar + J-couplings)
 import numpy as np
 import matplotlib.pyplot as plt
 
-from mrsimulator import Simulator, SpinSystem
+from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 1
 
@@ -34,22 +35,24 @@ beta_orientation = [np.pi / 6, 5 * np.pi / 18, np.pi / 2]
 spin_systems = [
     SpinSystem(
         sites=[
-            {
-                "isotope": "13C",
-                "isotropic_chemical_shift": 0.0,  # in ppm
-                "shielding_symmetric": {
-                    "zeta": 18.87562,  # in ppm
-                    "eta": 0.4,
-                    "beta": beta,
-                },
-            },
-            {
-                "isotope": "1H",
-                "isotropic_chemical_shift": 0.0,  # in ppm
-            },
+            Site(
+                isotope="13C",
+                isotropic_chemical_shift=0.0,  # in ppm
+                shielding_symmetric=SymmetricTensor(
+                    zeta=18.87562,  # in ppm
+                    eta=0.4,
+                    beta=beta,
+                ),
+            ),
+            Site(
+                isotope="1H",
+                isotropic_chemical_shift=0.0,  # in ppm
+            ),
         ],
         couplings=[
-            {"site_index": [0, 1], "isotropic_j": 200.0, "dipolar": {"D": -2.1e4}}
+            Coupling(
+                site_index=[0, 1], isotropic_j=200.0, dipolar=SymmetricTensor(D=-2.1e4)
+            )
         ],
     )
     for beta in beta_orientation
@@ -68,7 +71,7 @@ methods = [
         channels=["13C"],
         magnetic_flux_density=9.4,  # in T
         rotor_frequency=vr,  # in Hz
-        spectral_dimensions=[{"count": 2048, "spectral_width": 8.0e4}],
+        spectral_dimensions=[dict(count=2048, spectral_width=8.0e4)],
     )
     for vr in spin_rates
 ]
@@ -78,8 +81,8 @@ methods = [
 #
 # Create the Simulator object and add the method and the spin system objects.
 sim = Simulator()
-sim.spin_systems += spin_systems  # add the three spin systems
-sim.methods += methods  # add the four methods
+sim.spin_systems = spin_systems  # add the three spin systems
+sim.methods = methods  # add the four methods
 sim.config.integration_volume = "hemisphere"  # set averaging to hemisphere
 # decompose spectrum to individual spin systems.
 sim.config.decompose_spectrum = "spin_system"

@@ -23,26 +23,26 @@ from mrsimulator import signal_processing as sp
 sim = Simulator()
 
 # load the spin systems from url.
-filename = "https://sandbox.zenodo.org/record/687656/files/coesite.mrsys"
+filename = "https://sandbox.zenodo.org/record/835664/files/coesite.mrsys"
 sim.load_spin_systems(filename)
 
 method = ThreeQ_VAS(
     channels=["17O"],
     magnetic_flux_density=11.74,  # in T
     spectral_dimensions=[
-        {
-            "count": 256,
-            "spectral_width": 5e3,  # in Hz
-            "reference_offset": -2.5e3,  # in Hz
-            "label": "Isotropic dimension",
-        },
+        dict(
+            count=256,
+            spectral_width=5e3,  # in Hz
+            reference_offset=-2.5e3,  # in Hz
+            label="Isotropic dimension",
+        ),
         # The last spectral dimension block is the direct-dimension
-        {
-            "count": 256,
-            "spectral_width": 2e4,  # in Hz
-            "reference_offset": 0,  # in Hz
-            "label": "MAS dimension",
-        },
+        dict(
+            count=256,
+            spectral_width=2e4,  # in Hz
+            reference_offset=0,  # in Hz
+            label="MAS dimension",
+        ),
     ],
 )
 sim.methods = [method]  # add the method.
@@ -54,7 +54,7 @@ data = sim.methods[0].simulation
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()

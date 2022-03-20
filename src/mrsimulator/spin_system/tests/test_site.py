@@ -213,6 +213,10 @@ def test_site_quad_set_to_None():
     assert a.isotope.symbol == "27Al"
     assert a.quadrupolar is None
 
+    a = Site(isotope="27Al", quadrupolar={"Cq": None, "eta": None})
+    assert a.isotope.symbol == "27Al"
+    assert a.quadrupolar is None
+
 
 def test_equality():
     a = Site(isotope="1H")

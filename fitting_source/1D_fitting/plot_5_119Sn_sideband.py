@@ -16,13 +16,14 @@ from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/814455/files/119Sn_SnO.csdf"
+filename = "https://sandbox.zenodo.org/record/835664/files/119Sn_SnO.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
@@ -55,7 +56,7 @@ plt.show()
 sn119 = Site(
     isotope="119Sn",
     isotropic_chemical_shift=-210,
-    shielding_symmetric={"zeta": 700, "eta": 0.1},
+    shielding_symmetric=SymmetricTensor(zeta=700, eta=0.1),
 )
 sn117 = Site(
     isotope="117Sn",
@@ -162,8 +163,8 @@ result
 # %%
 # The best fit solution
 # ---------------------
-best_fit = sf.bestfit(sim, processor)[0]
-residuals = sf.residuals(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
+residuals = sf.residuals(sim, processor)[0].real
 
 # Plot the spectrum
 plt.figure(figsize=(4.25, 3.0))

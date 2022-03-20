@@ -33,6 +33,9 @@ class ST_VAS(BaseNamedMethod2D):
         A :py:class:`~mrsimulator.Method` instance.
     """
 
+    class Config:
+        extra = "forbid"
+
     @classmethod
     def update(cls, **kwargs):
         name = cls.__name__
@@ -44,7 +47,7 @@ class ST_VAS(BaseNamedMethod2D):
         spin = Isotope(symbol=kwargs["channels"][0]).spin
 
         # select the coherence for the first event
-        d = st ** 2 - (st - 1) ** 2
+        d = st**2 - (st - 1) ** 2
 
         # setting transition symmetry elements for spectral dimension 0
         events_0 = [
@@ -106,6 +109,9 @@ class ST1_VAS(ST_VAS):
          |0.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
     """
 
+    class Config:
+        extra = "forbid"
+
 
 class ST2_VAS(ST_VAS):
     """Simulate a sheared and scaled second to inner satellite and central transition
@@ -142,3 +148,6 @@ class ST2_VAS(ST_VAS):
         [|-2.5⟩⟨-1.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j),
          |1.5⟩⟨2.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
     """
+
+    class Config:
+        extra = "forbid"

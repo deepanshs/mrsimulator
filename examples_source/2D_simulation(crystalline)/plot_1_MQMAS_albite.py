@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import ThreeQ_VAS
 from mrsimulator import signal_processing as sp
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -23,7 +24,7 @@ from mrsimulator import signal_processing as sp
 site = Site(
     isotope="27Al",
     isotropic_chemical_shift=64.7,  # in ppm
-    quadrupolar={"Cq": 3.25e6, "eta": 0.68},  # Cq is in Hz
+    quadrupolar=SymmetricTensor(Cq=3.25e6, eta=0.68),  # Cq is in Hz
 )
 
 spin_systems = [SpinSystem(sites=[site])]
@@ -35,18 +36,18 @@ method = ThreeQ_VAS(
     channels=["27Al"],
     magnetic_flux_density=7,  # in T
     spectral_dimensions=[
-        {
-            "count": 256,
-            "spectral_width": 1e4,  # in Hz
-            "reference_offset": -3e3,  # in Hz
-            "label": "Isotropic dimension",
-        },
-        {
-            "count": 512,
-            "spectral_width": 1e4,  # in Hz
-            "reference_offset": 4e3,  # in Hz
-            "label": "MAS dimension",
-        },
+        dict(
+            count=256,
+            spectral_width=1e4,  # in Hz
+            reference_offset=-3e3,  # in Hz
+            label="Isotropic dimension",
+        ),
+        dict(
+            count=512,
+            spectral_width=1e4,  # in Hz
+            reference_offset=4e3,  # in Hz
+            label="MAS dimension",
+        ),
     ],
 )
 
@@ -64,7 +65,7 @@ data = sim.methods[0].simulation
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()

@@ -1,6 +1,14 @@
 For developers and contributors
 ===============================
 
+Setting up a dedicated code editor
+''''''''''''''''''''''''''''''''''
+
+Using a code editor or IDE is useful when contributing to a codebase. There are many products
+available and you may use whatever you're comfortable with. For new developers, we recommend
+`VS Code <https://code.visualstudio.com>`_ since it is lightweight, free and has a breadth of
+community extensions.
+
 Make your own copy of mrsimulator on GitHub
 '''''''''''''''''''''''''''''''''''''''''''
 
@@ -19,13 +27,16 @@ Create a development environment
 ''''''''''''''''''''''''''''''''
 
 It is good practice to create separate virtual python environments for packages when
-in developer mode. The following is an example of a Conda environment.
+in developing packages. There are many environment managers available; however, we recommend using
+`Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_
+
+The following is an example of creating Conda environment
 
 .. code-block:: bash
 
-    $ conda create -n mrsimulator-dev python=3.7
+    $ conda create -n mrsimulator-dev python=3.9
 
-The above command will create a new python3.7 environment named *mrsimulator-dev*. To
+The above command will create a new environment named *mrsimulator-dev* using python 3.9. To
 activate the environment, use
 
 .. code-block:: bash

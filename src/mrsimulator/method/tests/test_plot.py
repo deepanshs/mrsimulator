@@ -60,11 +60,14 @@ def test_add_tip_angle_and_phase():
     assert "phase" in df2.columns
 
     # Check correct calculations for tip angle and phase
-    ta_should_be = np.array([np.nan, np.nan, 90.0, np.nan])
-    p_should_be = np.array([np.nan, np.nan, 0.0, np.nan])
+    ta_should_be = np.array([np.nan, np.nan, np.nan, 90.0, np.nan])
+    p_should_be = np.array([np.nan, np.nan, np.nan, 0.0, np.nan])
 
-    assert np.allclose(np.asarray(df1["tip_angle"]), ta_should_be, equal_nan=True)
-    assert np.allclose(np.asarray(df1["phase"]), p_should_be, equal_nan=True)
+    df1_ch1_tip = [x["ch1"] if x is not None else np.nan for x in df1["tip_angle"]]
+    df1_ch1_phase = [x["ch1"] if x is not None else np.nan for x in df1["phase"]]
+
+    assert np.allclose(np.asarray(df1_ch1_tip), ta_should_be, equal_nan=True)
+    assert np.allclose(np.asarray(df1_ch1_phase), p_should_be, equal_nan=True)
 
     ta_should_be = np.array(
         [
@@ -104,9 +107,55 @@ def test_add_tip_angle_and_phase():
             np.nan,
         ]
     )
+    ta_should_be_ch2 = np.array(
+        [
+            10,
+            np.nan,
+            20,
+            30,
+            np.nan,
+            np.nan,
+            np.nan,
+            np.nan,
+            np.nan,
+            40,
+            50,
+            60,
+            np.nan,
+            np.nan,
+            np.nan,
+        ]
+    )
+    p_should_be_ch2 = np.array(
+        [
+            10,
+            np.nan,
+            20,
+            30,
+            np.nan,
+            np.nan,
+            np.nan,
+            np.nan,
+            np.nan,
+            40,
+            50,
+            60,
+            np.nan,
+            np.nan,
+            np.nan,
+        ]
+    )
 
-    assert np.allclose(np.asarray(df2["tip_angle"]), ta_should_be, equal_nan=True)
-    assert np.allclose(np.asarray(df2["phase"]), p_should_be, equal_nan=True)
+    df2_ch1_tip = [x["ch1"] if x is not None else np.nan for x in df2["tip_angle"]]
+    df2_ch2_tip = [x["ch2"] if x is not None else np.nan for x in df2["tip_angle"]]
+    df2_ch1_phase = [x["ch1"] if x is not None else np.nan for x in df2["phase"]]
+    df2_ch2_phase = [x["ch2"] if x is not None else np.nan for x in df2["phase"]]
+
+    assert np.allclose(np.asarray(df2_ch1_tip), ta_should_be, equal_nan=True)
+    assert np.allclose(np.asarray(df2_ch2_tip), ta_should_be_ch2, equal_nan=True)
+
+    assert np.allclose(np.asarray(df2_ch1_phase), p_should_be, equal_nan=True)
+    assert np.allclose(np.asarray(df2_ch2_phase), p_should_be_ch2, equal_nan=True)
 
 
 def test_format_df():
@@ -141,7 +190,7 @@ def test_make_x_data():
 
     # Check expected x_data returned
     # NOTE: Should arrays be hardcoded? Or should be calculated in similar way
-    x1_should_be = [0, 0.8, 0.8, 1.3, 1.3, 1.7]
+    x1_should_be = [0, 0.8, 0.8, 1.3, 1.3, 1.7, 1.7, 2.1]
     x2_should_be = [
         0,
         0.8,
@@ -174,6 +223,7 @@ def test_offset_x_data():
     df3 = method3_df()
     _add_tip_angle_and_phase(df1)
     _add_tip_angle_and_phase(df2)
+    _add_tip_angle_and_phase(df3)
 
     # Calculate needed x_data
     x1 = _make_x_data(df1)
@@ -184,13 +234,23 @@ def test_offset_x_data():
     off_x3 = _offset_x_data(df3, x3)
 
     # Check return type
-    assert isinstance(off_x1, np.ndarray)
-    assert isinstance(off_x2, np.ndarray)
-    assert isinstance(off_x3, np.ndarray)
+    # assert isinstance(off_x1, dict)
+    # assert isinstance(off_x2, dict)
+    # assert isinstance(off_x3, dict)
+    assert list(off_x1.keys()) == ["ch1"]
+    assert list(off_x2.keys()) == ["ch1", "ch2"]
+    assert list(off_x3.keys()) == ["ch1"]
+
+    for item in off_x1.values():
+        assert isinstance(item, np.ndarray)
+    for item in off_x2.values():
+        assert isinstance(item, np.ndarray)
+    for item in off_x3.values():
+        assert isinstance(item, np.ndarray)
 
     # Check expected offset_x returned
     # NOTE: Should arrays be hardcoded? Or should be calculated in similar way
-    off_x1_should_be = [0.0, 0.0, 0.8, 0.8, 1.26875, 1.33125, 1.7]
+    off_x1_should_be = [0.0, 0.0, 0.8, 0.8, 1.3, 1.3, 1.66875, 1.73125, 2.1]
     off_x2_should_be = [
         0.0,
         0.0625,
@@ -214,9 +274,9 @@ def test_offset_x_data():
     ]
     off_x3_should_be = [0, 0, 0.08, 0.08, 0.8]
 
-    assert np.allclose(off_x1, off_x1_should_be)
-    assert np.allclose(off_x2, off_x2_should_be)
-    assert np.allclose(off_x3, off_x3_should_be)
+    assert np.allclose(off_x1["ch1"], off_x1_should_be)
+    assert np.allclose(off_x2["ch1"], off_x2_should_be)
+    assert np.allclose(off_x3["ch1"], off_x3_should_be)
 
 
 def test_make_normal_and_offset_x_data():
@@ -245,8 +305,8 @@ def test_make_normal_and_offset_x_data():
 
     assert isinstance(x1, list)
     assert isinstance(x2, list)
-    assert isinstance(off_x1, np.ndarray)
-    assert isinstance(off_x2, np.ndarray)
+    assert isinstance(off_x1, dict)
+    assert isinstance(off_x2, dict)
 
 
 def test_SequenceDiagram():
@@ -259,7 +319,7 @@ def test_SequenceDiagram():
     fig = plt.figure()
     proj.register_projection(SequenceDiagram)
     axes_obj = fig.add_subplot(projection="sequence_axes")
-    axes_obj.plot_diagram(df3, x3)
+    axes_obj.plot_diagram(df3, x3, "1H", "ch1")
 
     assert np.allclose(axes_obj.x_data, x_data_should_be)
 
@@ -347,6 +407,7 @@ def method1_df():
             {
                 "label": "Mixing and Spectral Event",
                 "events": [
+                    {"fraction": 0.5},
                     {"mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": 0}}},
                     {"fraction": 0.5},
                 ],
@@ -364,10 +425,34 @@ def method2_df():
             {
                 "label": "Mixing, Spectral, Mixing, Mixing, ConstantDuration ",
                 "events": [
-                    {"mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": 0.3}}},
+                    {
+                        "mixing_query": {
+                            "ch1": {"tip_angle": np.pi / 2, "phase": 0.3},
+                            "ch2": {
+                                "tip_angle": 10 / 180 * np.pi,
+                                "phase": 10 / 180 * np.pi,
+                            },
+                        }
+                    },
                     {"fraction": 1, "transition_query": [{"P": [1], "D": [0]}]},
-                    {"mixing_query": {"ch1": {"tip_angle": np.pi, "phase": 0.15}}},
-                    {"mixing_query": {"ch1": {"tip_angle": 3 * np.pi / 2, "phase": 0}}},
+                    {
+                        "mixing_query": {
+                            "ch1": {"tip_angle": np.pi, "phase": 0.15},
+                            "ch2": {
+                                "tip_angle": 20 / 180 * np.pi,
+                                "phase": 20 / 180 * np.pi,
+                            },
+                        }
+                    },
+                    {
+                        "mixing_query": {
+                            "ch1": {"tip_angle": 3 * np.pi / 2, "phase": 0},
+                            "ch2": {
+                                "tip_angle": 30 / 180 * np.pi,
+                                "phase": 30 / 180 * np.pi,
+                            },
+                        }
+                    },
                     {"duration": 1.5, "transition_query": [{"P": [-1], "D": [2]}]},
                 ],
             },
@@ -383,9 +468,33 @@ def method2_df():
             {
                 "label": "Mixing, Mixing, Mixing, Spectral, ConstantDuration, Spectral",
                 "events": [
-                    {"mixing_query": {"ch1": {"tip_angle": 1.2, "phase": np.pi}}},
-                    {"mixing_query": {"ch1": {"tip_angle": 0.75, "phase": np.pi / 4}}},
-                    {"mixing_query": {"ch1": {"tip_angle": 0.33, "phase": np.pi / 3}}},
+                    {
+                        "mixing_query": {
+                            "ch1": {"tip_angle": 1.2, "phase": np.pi},
+                            "ch2": {
+                                "tip_angle": 40 / 180 * np.pi,
+                                "phase": 40 / 180 * np.pi,
+                            },
+                        }
+                    },
+                    {
+                        "mixing_query": {
+                            "ch1": {"tip_angle": 0.75, "phase": np.pi / 4},
+                            "ch2": {
+                                "tip_angle": 50 / 180 * np.pi,
+                                "phase": 50 / 180 * np.pi,
+                            },
+                        }
+                    },
+                    {
+                        "mixing_query": {
+                            "ch1": {"tip_angle": 0.33, "phase": np.pi / 3},
+                            "ch2": {
+                                "tip_angle": 60 / 180 * np.pi,
+                                "phase": 60 / 180 * np.pi,
+                            },
+                        }
+                    },
                     {"fraction": 0.5},
                     {"duration": 1.5},
                     {"fraction": 0.5},
@@ -397,6 +506,7 @@ def method2_df():
     return method2.summary(drop_constant_columns=False)
 
 
+# something with calculating total tip angle with method 3
 def method3_df():
     method3 = Method(
         channels=["1H"],

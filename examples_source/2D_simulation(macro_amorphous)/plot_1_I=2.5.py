@@ -89,18 +89,18 @@ len(spin_systems)
 mqvas = ThreeQ_VAS(
     channels=["27Al"],
     spectral_dimensions=[
-        {
-            "count": 512,
-            "spectral_width": 26718.475776,  # in Hz
-            "reference_offset": -4174.76184,  # in Hz
-            "label": "Isotropic dimension",
-        },
-        {
-            "count": 512,
-            "spectral_width": 2e4,  # in Hz
-            "reference_offset": 2e3,  # in Hz
-            "label": "MAS dimension",
-        },
+        dict(
+            count=512,
+            spectral_width=26718.475776,  # in Hz
+            reference_offset=-4174.76184,  # in Hz
+            label="Isotropic dimension",
+        ),
+        dict(
+            count=512,
+            spectral_width=2e4,  # in Hz
+            reference_offset=2e3,  # in Hz
+            label="MAS dimension",
+        ),
     ],
 )
 
@@ -112,7 +112,7 @@ sim.methods = [mqvas]  # add the method
 sim.config.number_of_sidebands = 1
 sim.run()
 
-data = sim.methods[0].simulation
+data = sim.methods[0].simulation.real
 
 # %%
 # The plot of the corresponding spectrum.

@@ -34,18 +34,6 @@ class BaseMethod(Method):
             parse_spectral_dimensions(kwargs)
             check_for_at_least_one_events(kwargs)
 
-    @validator("rotor_frequency", pre=True, always=True)
-    def check_rotor_frequency(cls, v, *, values, **kwargs):
-        a = (
-            True if "name" not in values else values["name"] == "SSB2D",
-            v in ["1000000000000.0 Hz", 1.0e12],
-            cls.ndim == 1,
-        )
-        if any(a):
-            return v
-        e = "`rotor_frequency=1e12 Hz` is fixed for 2D Methods and cannot be modified."
-        raise ValueError(e)
-
 
 class Method1D(BaseMethod):
     """Generic one-dimensional spectrum simulation method.
@@ -74,6 +62,9 @@ class Method1D(BaseMethod):
     name: str = "Method1D"
     description: str = "A generic one-dimensional spectrum method."
 
+    class Config:
+        extra = "forbid"
+
 
 class Method2D(BaseMethod):
     """Generic two-dimensional spectrum simulation method.
@@ -90,7 +81,7 @@ class Method2D(BaseMethod):
     ...             "count": 256,
     ...             "spectral_width": 4e3,  # in Hz
     ...             "reference_offset": -5e3,  # in Hz
-    ...             "event": [
+    ...             "events": [
     ...                 {   # Global value for the `magnetic_flux_density` and
     ...                     # `rotor_angle` is used during this event.
     ...                     "transition_query": {"P": [-3], "D": [0]}
@@ -101,7 +92,7 @@ class Method2D(BaseMethod):
     ...             "count": 512,
     ...             "spectral_width": 1e4,  # in Hz
     ...             "reference_offset": -4e3,  # in Hz
-    ...             "event": [
+    ...             "events": [
     ...                 {   # Global value for `magnetic_flux_density` and user defined
     ...                     # value for `rotor_angle` is used during this event.
     ...                     "rotor_angle": 1.2238,  # in rads
@@ -118,6 +109,9 @@ class Method2D(BaseMethod):
     name: str = "Method2D"
     description: str = "A generic two-dimensional correlation spectrum method."
     rotor_frequency: float = Field(default=1.0e12, ge=0.0)
+
+    class Config:
+        extra = "forbid"
 
 
 class BaseNamedMethod(BaseMethod):
@@ -137,6 +131,20 @@ class BaseNamedMethod(BaseMethod):
             return v
         raise NamedMethodError(v, cls.__name__)
 
+    @validator("rotor_frequency", pre=True, always=True)
+    def check_rotor_frequency(cls, v, *, values, **kwargs):
+        a = (
+            True if "name" not in values else values["name"] == "SSB2D",
+            v in ["1000000000000.0 Hz", 1.0e12],
+            cls.ndim == 1,
+        )
+        if any(a):
+            return v
+        raise ValueError(
+            "`rotor_frequency=1e12 Hz` is fixed for all 2D named Methods, except SSB2D,"
+            "and cannot be modified."
+        )
+
     @classmethod
     def update(cls, **kwargs):
         return {"spectral_dimensions": [{"events": [{}]} for _ in range(cls.ndim)]}
@@ -151,7 +159,9 @@ class BaseNamedMethod(BaseMethod):
         default_method = cls.update(**py_dict)
         default_spectral_dimensions = default_method["spectral_dimensions"]
         for i, item in enumerate(py_dict["spectral_dimensions"]):
-            if item["events"] == [{}]:
+
+            # If no methods in SpectralDimension, set to default events
+            if item["events"] == [{}] or item["events"] == []:
                 item["events"] = default_spectral_dimensions[i]["events"]
 
             elif item["events"] != default_spectral_dimensions[i]["events"]:
@@ -204,7 +214,7 @@ class BaseNamedMethod1D(BaseNamedMethod):
 
 
 class BaseNamedMethod2D(BaseNamedMethod):
-    """Base class for named one-dimensional simulation simulation method."""
+    """Base class for named two-dimensional simulation simulation method."""
 
     ndim: ClassVar[int] = 2
     rotor_frequency: float = Field(default=1.0e12, ge=0.0)
@@ -215,6 +225,9 @@ class BlochDecaySpectrum(BaseNamedMethod1D):
 
     name: str = "BlochDecaySpectrum"
     description: str = "A one-dimensional Bloch decay spectrum method."
+
+    class Config:
+        extra = "forbid"
 
     @classmethod
     def update(cls, **kwargs):
@@ -232,6 +245,9 @@ class BlochDecayCTSpectrum(BaseNamedMethod1D):
         "A one-dimensional central transition selective Bloch decay spectrum method."
     )
 
+    class Config:
+        extra = "forbid"
+
     @classmethod
     def update(cls, **kwargs):
         events = [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}]
@@ -240,5 +256,9 @@ class BlochDecayCTSpectrum(BaseNamedMethod1D):
         }
 
 
+# Class Aliases
 class BlochDecayCentralTransitionSpectrum(BlochDecayCTSpectrum):
     name: str = "BlochDecayCentralTransitionSpectrum"
+
+    class Config:
+        extra = "forbid"
