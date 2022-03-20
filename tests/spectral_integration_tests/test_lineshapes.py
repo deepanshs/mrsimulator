@@ -202,7 +202,7 @@ def test_j_coupling_lineshape_simpson():
         #     plt.show()
 
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source.real, decimal=1.5, err_msg=message
+            data_mrsimulator, data_source.real, decimal=2, err_msg=message
         )
 
 

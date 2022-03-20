@@ -132,7 +132,7 @@ def test_delta_interpolation_linear():
 
 
 def test_gaussian_interpolation():
-    sigma = 0.125
+    sigma = 1.0 / 4.0
     div = 2 * sigma**2
     scale = sigma * np.sqrt(2 * np.pi)
     f_list = [
@@ -360,7 +360,7 @@ def test_triangle_rasterization5():
 #         axv.plot(data2d.sum(axis=1), np.arange(size), "r", label="sum", **kwargs)
 #     plt.legend()
 #     plt.tight_layout()
-#     plt.show()
+#     # plt.show()
 #     if save is not None:
 #         plt.savefig(f"figs/fig_{save}_scale={scale}.pdf", dpi=150)
 
