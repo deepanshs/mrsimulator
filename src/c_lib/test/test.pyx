@@ -110,11 +110,11 @@ def __wigner_rotation_2(int l, np.ndarray[double] cos_alpha,
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def get_exp_Im_alpha(int n, np.ndarray[double] cos_alpha, bool_t allow_fourth_rank):
+def get_exp_Im_alpha(int n, np.ndarray[double] cos_alpha, bool_t allow_4th_rank):
     cdef unsigned int n_ = n
     cdef np.ndarray[double complex] exp_Im_alpha = np.empty(4*n, dtype=np.complex128)
     exp_Im_alpha[3*n:] = cos_alpha + 1j*np.sqrt(1.0 - cos_alpha**2)
-    clib.get_exp_Im_alpha(n_, allow_fourth_rank, &exp_Im_alpha[0])
+    clib.get_exp_Im_alpha(n_, allow_4th_rank, &exp_Im_alpha[0])
     return exp_Im_alpha
 
 
@@ -196,7 +196,7 @@ def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
                are incremented or decremented based in this values. The
                default value is 0.
     """
-    cdef np.ndarray[int, ndim=1] points = np.asarray([spectrum_amp.size], dtype=np.int32)
+    cdef np.ndarray[int, ndim=1] points = np.asarray([spectrum_amp.size/2], dtype=np.int32)
     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector, dtype=np.float64)
 
     cdef double *f1 = &f_vector[0]
@@ -222,7 +222,7 @@ def triangle_interpolation2D(vector1, vector2, np.ndarray[double, ndim=2] spectr
     :ivar vector2: 1-D array of three points.
     :ivar spectrum_amp: A numpy array of amplitudes. This array is the output.
     """
-    shape = np.asarray([spectrum_amp.shape[0], spectrum_amp.shape[1]], dtype=np.int32)
+    shape = np.asarray([spectrum_amp.shape[0], spectrum_amp.shape[1]/2], dtype=np.int32)
     # cdef np.ndarray[int, ndim=1] points = shape
     cdef np.ndarray[double, ndim=1] f1_vector = np.asarray(vector1, dtype=np.float64)
     cdef np.ndarray[double, ndim=1] f2_vector = np.asarray(vector2, dtype=np.float64)

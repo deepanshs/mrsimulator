@@ -1,6 +1,10 @@
 name: CI (wheels and sdist)
 
 on:
+  push:
+    branches: ['rc*']
+  pull_request:
+    branches: ['rc*']
   release:
     types: [published]
 
@@ -10,10 +14,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3
 
       - name: setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.8
 
@@ -33,7 +37,7 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v2.0.3
+        uses: codecov/codecov-action@v2.1.0
 
   source-distribution:
     needs: [build-test]
@@ -41,10 +45,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3
 
       - name: setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.8
 
@@ -98,12 +102,18 @@ jobs:
         --wheel-dir={dest_dir}
         {wheel}
 
-      CIBW_BEFORE_TEST: pip install -r requirements.txt
-      # CIBW_TEST_REQUIRES: "pytest pytest-cov sympy"
-      CIBW_TEST_COMMAND: |
-        python -c "import mrsimulator"
-        python -c "from mrsimulator import Site, Coupling, SpinSystem, Simulator"
-        python -c "from mrsimulator.methods import Method1D, Method2D"
+      # CIBW_BEFORE_TEST_LINUX: |
+      #   yum -y install libjpeg-devel zlib1g-devel
+      #   python -m pip install "pillow==8.4"
+      #   python -m pip install -r requirements.txt
+      # CIBW_BEFORE_TEST: |
+      #   python -m pip install -U pip
+      #   python -m pip install -r requirements.txt
+      # CIBW_TEST_REQUIRES: "pytest"
+      # CIBW_TEST_COMMAND: |
+      #   python -c "import mrsimulator"
+      #   python -c "from mrsimulator import Site, Coupling, SpinSystem, Simulator"
+      #   python -c "from mrsimulator.methods import Method1D, Method2D"
 
     strategy:
       fail-fast: false
@@ -118,18 +128,18 @@ jobs:
             name: mac 64-bit arm64
             cibw:
               arch: arm64
-              build: "cp39*"
+              build: "cp3*"
 
           - os: ubuntu-latest
             name: linux 64-bit x86_64
             cibw:
-              build: "cp3*_x86_64"
+              build: "cp3*manylinux_x86_64"
               manylinux_image: manylinux2010
 
           - os: ubuntu-latest
             name: linux 32-bit i686
             cibw:
-              build: "cp3*_i686"
+              build: "cp3*manylinux_i686"
               manylinux_image: manylinux2010
 
           # - os: ubuntu-latest
@@ -143,7 +153,7 @@ jobs:
           #   name: win32
           #   architecture: x86
           #   cibw:
-          #     build: "cp*win32"
+          #     build: "cp3*win32"
 
           # - os: windows-2016
           #   name: win32-pypy
@@ -154,14 +164,14 @@ jobs:
           - os: windows-latest
             name: windows 64-bit AMD64
             cibw:
-              build: "*win_amd64"
+              build: "cp3*win_amd64"
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.8
           architecture: ${{ matrix.architecture }}
@@ -169,9 +179,9 @@ jobs:
       - name: customize mac-arm-64
         if: contains(matrix.os, 'macos') && matrix.cibw.arch
         run: |
-          sudo xcode-select -switch /Applications/Xcode_12.2.app
-          echo 'SDKROOT=/Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk' >> "$GITHUB_ENV"
-          echo 'MACOSX_DEPLOYMENT_TARGET=11.0' >> "$GITHUB_ENV"
+          sudo xcode-select -switch /Applications/Xcode_12.4.app
+          echo 'SDKROOT=/Applications/Xcode_12.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk' >> "$GITHUB_ENV"
+          echo 'MACOSX_DEPLOYMENT_TARGET=11.1' >> "$GITHUB_ENV"
 
       - name: Set up QEMU
         if: startsWith(matrix.os, 'ubuntu') && matrix.cibw.arch

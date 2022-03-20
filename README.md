@@ -8,97 +8,118 @@
 | Metrics      | [![Total alerts](https://img.shields.io/lgtm/alerts/g/deepanshs/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/deepanshs/mrsimulator/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/deepanshs/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/deepanshs/mrsimulator/context:python) [![codecov](https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/deepanshs/mrsimulator) [![CodeFactor](https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge)](https://www.codefactor.io/repository/github/deepanshs/mrsimulator) |
 
 `mrsimulator` is an open-source python package for fast computation/analysis of solid-state
-magnetic resonance (NMR) spectra of both crystalline and amorphous materials. The core
-of the `mrsimulator` library is written in C, wrapped, and made available in python.
+magnetic resonance (NMR) spectra of both crystalline and amorphous materials.
+
+**Why use mrsimulator?**
+
+- It is open-source and free.
+- It is a fast and versatile solid-state NMR simulator of one and two-dimensional static, MAS,
+  and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
+  coupling interactions.
+- It includes simulations of weakly coupled nuclei experiencing J and dipolar couplings.
+- It is fully documented with a stable and simple API and is easily incorporated into your
+  python scripts and web apps.
+- It is compatible with modern python packages, such as scikit-learn, Keras, etc.
+- Packages using mrsimulator:
+  - [mrinversion](https://mrinversion.readthedocs.io/en/stable/)
+
+## Install
+
+```sh
+pip install mrsimulator
+```
+
+Please refer to our [installation document](https://mrsimulator.readthedocs.io/en/latest/installation/users.html) for details.
+
+#### A 1D static and MAS example
+
+```py
+from mrsimulator import Simulator, SpinSystem, Site
+from mrsimulator.methods import BlochDecaySpectrum
+import matplotlib.pyplot as plt
+
+# Make Site and SpinSystem objects
+H_site = Site(isotope="1H", shielding_symmetric={"zeta": 13.89, "eta": 0.25})
+spin_system = SpinSystem(sites=[H_site])
+
+# Make static and MAS one-pulse acquire Method objects
+static = BlochDecaySpectrum(channels=["1H"]   )
+mas = BlochDecaySpectrum(channels=["1H"], rotor_frequency=1000)  # in Hz
+
+# Setup and run the Simulation object
+sim = Simulator(spin_systems=[spin_system], methods=[static, mas])
+sim.run()
+
+# Plot the spectra
+fig, ax = plt.subplots(1, 2, figsize=(6, 3), subplot_kw={"projection": "csdm"})
+ax[0].plot(sim.methods[0].simulation.real, color="black", linewidth=1)
+ax[0].set_title("Static")
+ax[1].plot(sim.methods[1].simulation.real, color="black", linewidth=1)
+ax[1].set_title("MAS")
+plt.tight_layout()
+plt.show()
+```
+
+This should produce the following figure.
+
+<img src="docs/_static/test_file.png" width="800" />
+
+<!-- ![alt text](docs/_static/test_file.png) -->
 
 ---
 
-**Check out our extensive [documentation](https://mrsimulator.readthedocs.io/en/stable/index.html).**
+**Check out our extensive [documentation](https://mrsimulator.readthedocs.io/en/stable/index.html) and more example.**
 
 [![Simulation](https://img.shields.io/badge/View-Simulation%20Examples-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/examples/index.html)
 [![Fitting](https://img.shields.io/badge/View-Fitting%20Examples-Purple?s=small)](https://mrsimulator.readthedocs.io/en/stable/fitting/index.html)
 
 ---
 
-:warning: The package is currently under development. We advice using with caution. Bug report are greatly appreciated.
-
-## Why use mrsimulator?
-
-- It is open-source and free.
-- It is a fast and versatile solid-state NMR simulator of one-dimensional static, MAS,
-  and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
-  coupling interactions.
-- It include simulations of weakly coupled nuclei experiencing J and dipolar couplings.
-- It is fully documented with a stable and simple API and is easily incorporated into your
-  python scripts and web apps.
-- It is compatible with modern python packages, such as scikit-learn, Keras, etc.
-- Packages using mrsimulator -
-  - [mrinversion](https://mrinversion.readthedocs.io/en/stable/)
-
-### Features
+## Features
 
 The `mrsimulator` package currently offers the following
 
-- **Fast simulation** of one-dimensional solid-state NMR spectra. See our
-  [benchmark results](https://mrsimulator.readthedocs.io/en/stable/benchmark.html).
+- **Fast simulation** of one and two-dimensional solid-state NMR spectra.
 
 - Simulation of **coupled and uncoupled spin system**
 
-  - for spin I=1/2, and quadrupole I>1/2 nuclei,
-  - at arbitrary macroscopic magnetic flux density,
-  - at arbitrary rotor angles, and
-  - at arbitrary spinning frequency.
+  - for spin I=1/2, and quadrupole I>1/2 nuclei
+  - at arbitrary macroscopic magnetic flux density
+  - at arbitrary rotor angles
+  - at arbitrary spinning frequency
 
 - A library of **NMR methods**,
 
-  - 1D Bloch decay spectrum,
-  - 1D Bloch decay central transition spectrum,
-  - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS),
-  - 2D Satellite-transition Variable Angle Spinning (MQ-VAS),
-  - 2D Dynamic Angle Spinning (DAS),
-  - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT), and
-  - 2D Magic Angle Flipping (MAF).
+  - 1D Bloch decay spectrum
+  - 1D Bloch decay central transition spectrum
+  - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS)
+  - 2D Satellite-transition Variable Angle Spinning (MQ-VAS)
+  - 2D Dynamic Angle Spinning (DAS)
+  - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
+  - 2D Magic Angle Flipping (MAF)
+  - Custom user-defined 1D and 2D methods (Method)
 
 - **Models** for tensor parameter distribution in amorphous materials.
 
   - Czjzek
   - Extended Czjzek
+  - Custom user-defined models
 
 For more information, refer to the
 [documentation](https://mrsimulator.readthedocs.io/en/stable/).
 
-## Installation
-
-    $ pip install mrsimulator
-
-Please read our [installation document](https://mrsimulator.readthedocs.io/en/latest/installation/users.html) for details.
-
-## Check your build
-
-If the installation is successful, you should be able to run the following
-[test file](https://raw.github.com/deepanshs/mrsimulator-examples/master/test_file_v0.3.py?raw=true)
-in your terminal.
-
-    $ python test_file.py
-
-This should produce the following figure.
-
-![alt text](https://mrsimulator.readthedocs.io/en/master/_images/test_file.png)
-
 ## Reporting Bugs
 
-The preferred location for submitting feature requests and bug reports is the [Github issue tracker](https://github.com/deepanshs/mrsimulator/issues). Reports are also welcomed by directly contacting [Deepansh Srivastava](mailto:srivastava.89@osu.edu).
+Submit bug reports or feature requests on the [Github issue tracker](https://github.com/deepanshs/mrsimulator/issues).
 
-Discussions are welcome on [Github discussion](https://github.com/deepanshs/mrsimulator/discussions)
+Discussions are welcome on the [Github discussion](https://github.com/deepanshs/mrsimulator/discussions) page.
 
 ## How to cite
 
 If you use mrsimulator in your publication, please consider citing the following.
 
-- Deepansh J. Srivastava, Maxwell Venetos, Philip J. Grandinetti, Shyam Dwaraknath, & Alexis McCarthy. (2021, May 26). mrsimulator: v0.6.0 (Version v0.6.0). Zenodo. http://doi.org/10.5281/zenodo.4814638
+- Deepansh J. Srivastava, Matthew Giammar, Maxwell C. Venetos, Shyam Dwaraknath, Philip J. Grandinetti, & Alexis McCarthy. (2021). mrsimulator: v0.6.1. Zenodo. https://doi.org/10.5281/zenodo.5559730
 
 - Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific data. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
 
-_Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package._
-
-- Matt Newville; Renee Otten; Andrew Nelson; Antonino Ingargiola; Till Stensitzki; Dan Allan; Austin Fox; Faustin Carter; Michał; Dima Pustakhod; lneuhaus; Sebastian Weigand; Ray Osborn; Glenn; Christoph Deil; Mark; Allan L. R. Hansen; Gustavo Pasquevich; Leon Foks; Nicholas Zobrist; Oliver Frost; Alexandre Beelen; Stuermer; kwertyops; Anthony Polloreno; Shane Caldwell; Anthony Almarza; Arun Persaud; Ben Gamari; Benjamin F. Maier. (2021, February 7). lmfit/lmfit-py 1.0.2 (Version 1.0.2). Zenodo. http://doi.org/10.5281/zenodo.4516651
+_Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package._ Zenodo. http://doi.org/10.5281/zenodo.4516651

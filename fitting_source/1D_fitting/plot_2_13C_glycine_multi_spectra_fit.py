@@ -18,6 +18,7 @@ from mrsimulator.methods import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -64,12 +65,12 @@ plt.show()
 C1 = Site(
     isotope="13C",
     isotropic_chemical_shift=176.0,  # in ppm
-    shielding_symmetric={"zeta": 60, "eta": 0.6},  # zeta in Hz
+    shielding_symmetric=SymmetricTensor(zeta=60, eta=0.6),  # zeta in Hz
 )
 C2 = Site(
     isotope="13C",
     isotropic_chemical_shift=43.0,  # in ppm
-    shielding_symmetric={"zeta": 30, "eta": 0.5},  # zeta in Hz
+    shielding_symmetric=SymmetricTensor(zeta=30, eta=0.5),  # zeta in Hz
 )
 
 spin_systems = [SpinSystem(sites=[C1], name="C1"), SpinSystem(sites=[C2], name="C2")]
@@ -208,8 +209,8 @@ all_residuals = sf.residuals(sim, processors)  # a list of residuals
 fig, ax = plt.subplots(1, 3, figsize=(12, 3), subplot_kw={"projection": "csdm"})
 for i, proc in enumerate(processors):
     ax[i].plot(experiments[i], color="black", linewidth=0.5, label="Experiment")
-    ax[i].plot(all_residuals[i], color="gray", linewidth=0.5, label="Residual")
-    ax[i].plot(all_best_fit[i], linewidth=2, alpha=0.6)
+    ax[i].plot(all_residuals[i].real, color="gray", linewidth=0.5, label="Residual")
+    ax[i].plot(all_best_fit[i].real, linewidth=2, alpha=0.6)
     ax[i].set_xlim(280, -10)
     ax[i].grid()
 

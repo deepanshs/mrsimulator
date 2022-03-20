@@ -49,8 +49,8 @@ class AbstractList(MutableSequence):
             return False
 
         check = []
-        for i in range(len(self._list)):
-            check.append(self._list[i] == other._list[i])
+        for i, item in enumerate(self._list):
+            check.append(item == other._list[i])
 
         if np.all(check):
             return True

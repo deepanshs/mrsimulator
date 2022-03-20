@@ -48,6 +48,7 @@ class SymmetryQuery(Parseable):
         -------
 
         >>> method.spectral_dimensions[0].events[0].transition_query[0].ch1.D = [0]
+
     """
 
     P: List[int] = Field(
@@ -120,6 +121,7 @@ class TransitionQuery(Parseable):
     -------
 
         >>> query = TransitionQuery(ch1={'P': [1], 'D': [0]}, ch2={'P': [-1]})
+
     """
 
     ch1: Optional[SymmetryQuery] = Field(
@@ -278,11 +280,12 @@ class MixingQuery(Parseable):
     -------
 
         >>> query = MixingQuery(ch1={"tip_angle": 1.570796, "phase": 3.141593})
+
     """
 
-    ch1: RFRotation = None
-    ch2: RFRotation = None
-    ch3: RFRotation = None
+    ch1: Optional[RFRotation] = None
+    ch2: Optional[RFRotation] = None
+    ch3: Optional[RFRotation] = None
 
     class Config:
         validate_assignment = True
@@ -304,3 +307,8 @@ class MixingQuery(Parseable):
         obj = {k: RFRotation.parse_dict_with_units(v) for k, v in py_dict_copy.items()}
         py_dict_copy.update(obj)
         return super().parse_dict_with_units(py_dict_copy)
+
+    @property
+    def channels(self) -> List[RFRotation]:
+        """Returns an ordered list of all channels"""
+        return [self.ch1, self.ch2, self.ch3]

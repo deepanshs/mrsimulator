@@ -5,7 +5,6 @@ from typing import Dict
 from typing import List
 
 from mrsimulator.utils.parseable import Parseable
-from pydantic import Extra
 from pydantic import validator
 
 from .tensors import AntisymmetricTensor
@@ -188,8 +187,8 @@ class Coupling(Parseable):
         return v
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
-        extra = Extra.forbid
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):

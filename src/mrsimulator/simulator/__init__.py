@@ -64,7 +64,7 @@ class Simulator(Parseable):
         >>> from mrsimulator.methods import BlochDecaySpectrum
         >>> from mrsimulator.methods import BlochDecayCTSpectrum
         >>> sim.methods = [
-        ...     BlochDecaySpectrum(channels=['17O'], spectral_width=50000),
+        ...     BlochDecaySpectrum(channels=['17O'], rotor_frequency=15000),
         ...     BlochDecayCTSpectrum(channels=['17O'])
         ... ]
 
@@ -291,6 +291,35 @@ class Simulator(Parseable):
                 spin_sys, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
+    def load_methods(self, filename: str):
+        """Load a list of methods from the given JSON serialized file.
+
+        Args:
+            str filename: A local or remote address to a JSON serialized file.
+
+        Example
+        -------
+        >>> sim.load_methods(filename) # doctest:+SKIP
+        """
+        contents = import_json(filename)
+        self.methods = [Method.parse_dict_with_units(obj) for obj in contents]
+
+    def export_methods(self, filename: str):
+        """Export a list of methods to a JSON serialized file.
+
+        Args:
+            str filename: A filename of the serialized file.
+
+        Example
+        -------
+        >>> sim.export_methods(filename) # doctest:+SKIP
+        """
+        mth = [obj.json() for obj in self.methods]
+        with open(filename, "w", encoding="utf8") as outfile:
+            json.dump(
+                mth, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
+            )
+
     def run(
         self,
         method_index: list = None,
@@ -367,6 +396,7 @@ class Simulator(Parseable):
                 if pack_as_csdm
                 else np.asarray(simulated_data)
             )
+            amp = None
 
     def save(self, filename: str, with_units: bool = True):
         """Serialize the simulator object to a JSON file.
@@ -390,13 +420,14 @@ class Simulator(Parseable):
 
     @classmethod
     def load(cls, filename: str, parse_units: bool = True):
-        """Load the :py:class:`~mrsimulator.Simulator` object from a JSON file by parsing.
+        """Load the :py:class:`~mrsimulator.Simulator` object from a JSON file by
+        parsing.
 
         Args:
             bool parse_units: If true, parse the attribute values from the serialized
                 file for physical quantities, expressed as a string with a value and a
                 unit.
-            str filename: The filename of a JSON serialized mrsimulator file.
+            str filename: The filename of a JSON serialized Simulator object file.
 
         Returns:
             A :py:class:`~mrsimulator.Simulator` object.
@@ -418,7 +449,7 @@ class Simulator(Parseable):
 
         Args:
             dict py_dict: Dictionary object.
-            bool parse_units: It true, parse quantity from string.
+            bool parse_units: If true, parse quantity from string.
         """
         return (
             Simulator.parse_dict_with_units(py_dict)
@@ -463,7 +494,7 @@ class Simulator(Parseable):
             {
                 "type": "internal",
                 "quantity_type": "scalar",
-                "numeric_type": "float64",
+                "numeric_type": "complex128",
                 "components": [datum],
                 **self._get_dv_metadata(index),
             }

@@ -9,6 +9,8 @@ class Main:
     def __init__(self):
         self.benchmark_level = None
         self.n_jobs = 1
+        self.simulation = True
+        self.interpolation = True
 
     def get_args(self, opts):
         for opt, arg in opts:
@@ -23,17 +25,29 @@ class Main:
                 self.benchmark_level = arg
             if opt == "--n_jobs":  # n_jobs
                 self.n_jobs = arg
+            if opt == "--interpolation":  # n_jobs
+                self.interpolation = True
+                self.simulation = False
+            if opt == "--simulation":  # n_jobs
+                self.interpolation = False
+                self.simulation = True
 
     def benchmark(self):
         if self.benchmark_level is not None:
             getattr(Benchmark, "prep")()
-            getattr(Benchmark, self.benchmark_level)(n_jobs=int(self.n_jobs))
+            getattr(Benchmark, self.benchmark_level)(
+                n_jobs=int(self.n_jobs),
+                interpolation=self.interpolation,
+                simulation=self.simulation,
+            )
 
 
 if __name__ == "__main__":
     argv = sys.argv[1:]
     try:
-        opts, args = getopt.getopt(argv, "h", ["benchmark=", "n_jobs="])
+        opts, args = getopt.getopt(
+            argv, "h", ["benchmark=", "n_jobs=", "interpolation", "simulation"]
+        )
     except getopt.GetoptError:
         print("--benchmark=<option>")
         sys.exit(2)

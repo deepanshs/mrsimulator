@@ -36,10 +36,10 @@ def test_scale():
     data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
     _, y0, y1, y2 = sim.methods[0].simulation.to_list()
     _, y0_, y1_, y2_ = data.to_list()
-
-    assert y0_.max() / y0.max() == 10, "Scaling failed"
-    assert y1_.max() / y1.max() == 10, "Scaling failed"
-    assert y2_.max() / y2.max() == 10, "Scaling failed"
+    # cast complex data
+    assert np.allclose(y0_, y0 * 10), "Scaling failed"
+    assert np.allclose(y1_, y1 * 10), "Scaling failed"
+    assert np.allclose(y2_, y2 * 10), "Scaling failed"
 
 
 def test_Lorentzian():
@@ -53,7 +53,7 @@ def test_Lorentzian():
     _, y0, y1, y2 = data.to_list()
 
     FWHM = 200
-    test = (FWHM / 2) / (np.pi * (freqHz ** 2 + (FWHM / 2) ** 2))
+    test = (FWHM / 2) / (np.pi * (freqHz**2 + (FWHM / 2) ** 2))
 
     assert np.allclose(y1, y2)
     assert np.all(y0 != y1)
@@ -104,6 +104,84 @@ def test_Gaussian():
     ), "Gaussian apodization amplitude failed"
 
 
+def test_SkewedGaussian():
+    # TODO: update this test for multiple skewes and using npp.convolve
+    skew = 2
+    FWHM = 200 * 2.354820045030949
+    PS_2 = [
+        sp.IFFT(dim_index=0),
+        sp.apodization.SkewedGaussian(
+            skew=skew, FWHM=f"{FWHM} Hz", dim_index=0, dv_index=[0, 1]
+        ),
+        sp.FFT(dim_index=0),
+    ]
+
+    post_sim = sp.SignalProcessor(operations=PS_2)
+    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
+    _, y0, y1, _ = data.to_list()
+
+    assert np.allclose(y0, y1), "Gaussian apodization on two dv are not equal."
+
+
+def test_TopHat():
+    test_data = cp.CSDM(
+        dependent_variables=[cp.as_dependent_variable(np.ones(500))],
+        dimensions=[cp.LinearDimension(500, "1 s")],
+    )
+
+    processor = sp.SignalProcessor()
+    processor.operations = [
+        sp.apodization.TopHat(rising_edge="100 s", falling_edge="400 s")
+    ]
+
+    rise_and_fall_data = processor.apply_operations(test_data.copy())
+    rise_and_fall_should_be = np.zeros(500)
+    rise_and_fall_should_be[100:400] = 1
+
+    assert np.allclose(rise_and_fall_data.y[0].components, rise_and_fall_should_be)
+
+    processor.operations = [sp.apodization.TopHat(rising_edge="100 s")]
+
+    rise_only_data = processor.apply_operations(test_data.copy())
+    rise_only_should_be = np.zeros(500)
+    rise_only_should_be[100:] = 1
+
+    assert np.allclose(rise_only_data.y[0].components, rise_only_should_be)
+
+    processor.operations = [sp.apodization.TopHat(falling_edge="400 s")]
+
+    fall_only_data = processor.apply_operations(test_data.copy())
+    fall_only_should_be = np.zeros(500)
+    fall_only_should_be[:400] = 1
+
+    assert np.allclose(fall_only_data.y[0].components, fall_only_should_be)
+
+
+def test_Mask():
+    one_mask = np.zeros(shape=len(freqHz))
+
+    PS_5 = [
+        sp.IFFT(dim_index=0),
+        sp.apodization.Mask(mask=one_mask, dim_index=0, dv_index=[0, 1]),
+        sp.FFT(dim_index=0),
+    ]
+
+    post_sim = sp.SignalProcessor(operations=PS_5)
+    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
+    _, y0, y1, _ = data.to_list()
+
+    _, test_y0, test_y1, _ = sim.methods[0].simulation.to_list()
+
+    nonzero_y0 = np.count_nonzero(y0)
+    nonzero_y1 = np.count_nonzero(y1)
+
+    assert np.allclose(y0, y1), "Mask on two dv are not equal."
+
+    assert np.allclose(
+        nonzero_y0, nonzero_y1, atol=1e-04
+    ), "Mask apodization amplitude failed"
+
+
 def test_scale_class():
     # direct initialization
     a = sp.Scale(factor=200)
@@ -123,6 +201,14 @@ def test_scale_class():
     b = sp.Scale.parse_dict_with_units(dict_)
 
     assert a == b
+
+
+def test_TopHat_class():
+    a = sp.apodization.TopHat(rising_edge="1 s")
+    assert a.property_units == {"rising_edge": "s"}
+
+    a = sp.apodization.TopHat(falling_edge="1 s")
+    assert a.property_units == {"falling_edge": "s"}
 
 
 def test_Exponential_class():
@@ -195,3 +281,8 @@ def test_2D_area():
     _, __, y1 = data_new.to_list()
 
     assert np.allclose(y1.sum(), data.sum())
+
+
+def test_MultiDimensionApodization_class():
+    a = sp.apodization.MultiDimensionApodization()
+    assert a.function == "apodization"

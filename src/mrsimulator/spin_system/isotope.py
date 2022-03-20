@@ -7,7 +7,6 @@ from typing import Dict
 
 from monty.serialization import loadfn
 from pydantic import BaseModel
-from pydantic import Extra
 from pydantic import validator
 
 __author__ = "Deepansh Srivastava"
@@ -36,7 +35,7 @@ class Isotope(BaseModel):
     >>> carbon.natural_abundance # in %
     1.11
     >>> carbon.gyromagnetic_ratio # in MHz/T
-    10.7084
+    10.708398861439887
     >>> carbon.atomic_number
     6
     >>> carbon.quadrupole_moment # in eB
@@ -47,8 +46,8 @@ class Isotope(BaseModel):
     test_vars: ClassVar[Dict] = {"symbol": "1H"}
 
     class Config:
+        extra = "forbid"
         validate_assignment = True
-        extra = Extra.forbid
 
     @validator("symbol", always=True)
     def get_isotope(cls, v, *, values, **kwargs):

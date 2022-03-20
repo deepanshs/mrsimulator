@@ -76,12 +76,15 @@ def test_MixingQuery():
         "ch2": {"tip_angle": "0.12 rad", "phase": "176 deg"},
     }
     obj1 = MixingQuery.parse_dict_with_units(test1)
+    rf1 = RFRotation(tip_angle=2.12, phase=-176 * np.pi / 180)
+    rf2 = RFRotation(tip_angle=0.12, phase=176 * np.pi / 180)
     assert obj1.name is None
     assert obj1.description is None
     assert obj1.label is None
-    assert obj1.ch1 == RFRotation(tip_angle=2.12, phase=-176 * np.pi / 180)
-    assert obj1.ch2 == RFRotation(tip_angle=0.12, phase=176 * np.pi / 180)
+    assert obj1.ch1 == rf1
+    assert obj1.ch2 == rf2
     assert obj1.ch3 is None
+    assert obj1.channels == [rf1, rf2, None]
 
     # direct initialization
     test2 = {"ch2": {"tip_angle": 5.101, "phase": 1.61}}
