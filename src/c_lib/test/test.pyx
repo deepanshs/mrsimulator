@@ -180,7 +180,7 @@ def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
-                           double amp=1, int type=0):
+                           double amp=1, str type="linear"):
     r"""Given a vector of three points, this method interpolates the
     between the points to form a triangle. The height of the triangle is given
     as `2.0/(f[2]-f[1])` where `f` is the array `vector` sorted in an ascending
@@ -194,6 +194,7 @@ def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
     :ivar amp: A float specifying the offset. The points from array `vector`
                are incremented or decremented based in this values. The
                default value is 0.
+    :ivar type: Linear or Gaussian interpolation for delta functions.
     """
     cdef np.ndarray[int, ndim=1] points = np.asarray([spectrum_amp.size/2], dtype=np.int32)
     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector, dtype=np.float64)
@@ -204,7 +205,10 @@ def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
 
     cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
 
-    clib.triangle_interpolation1D(f1, f2, f3, &amp_[0], &spectrum_amp[0], &points[0], type)
+    if type == "linear":
+        clib.triangle_interpolation1D_linear(f1, f2, f3, &amp_[0], &spectrum_amp[0], &points[0])
+    if type == "gaussian":
+        clib.triangle_interpolation1D_gaussian(f1, f2, f3, &amp_[0], &spectrum_amp[0], &points[0])
 
 
 @cython.boundscheck(False)

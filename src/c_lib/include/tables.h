@@ -36,7 +36,7 @@ static inline void generate_gauss_table() {
   extern double gauss_table_precision_inverse;
 
   int i, n = 1500;
-  double precision = 0.002, sigma = 1 / 4.0, factor, temp;
+  double precision = 0.002, sigma = 1 / 8.0, factor, temp;
   gauss_table_precision_inverse = 1.0 / precision;
 
   factor = 1.0 / (2.0 * sigma * sigma);

@@ -19,7 +19,7 @@
 typedef double complex128[2];
 typedef float complex64[2];
 
-
+#define INTERPOLATION_TYPE 1  // 0 - linear, 1 - Gaussian
 #define DEBUG 0
 #define CONST_PI 3.141592653589793
 #define CONST_2PI 6.283185307179586

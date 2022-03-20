@@ -61,8 +61,23 @@ cdef extern from "interpolation.h":
         double *freq3,
         double *amp,
         double *spec,
-        int *points,
-        int type)
+        int *points)
+
+    void triangle_interpolation1D_linear(
+        double *freq1,
+        double *freq2,
+        double *freq3,
+        double *amp,
+        double *spec,
+        int *points)
+
+    void triangle_interpolation1D_gaussian(
+        double *freq1,
+        double *freq2,
+        double *freq3,
+        double *amp,
+        double *spec,
+        int *points)
 
     void triangle_interpolation2D(
         double *freq11,

@@ -23,8 +23,8 @@
  * @param amp The area corresponding to the frequency coordinate.
  * @param spec1 A pointer to the intensity vector.
  */
-static void inline delta_fn_interpolation(const double *freq, const int *points,
-                                          double *amp, double *spec1) {
+static void inline delta_fn_linear_interpolation(const double *freq, const int *points,
+                                                 double *amp, double *spec1) {
   int p = (int)*freq;
   if (p >= *points || p < 0) return;
 
@@ -52,19 +52,23 @@ static void inline delta_fn_interpolation(const double *freq, const int *points,
   }
 }
 
-static void inline gaussian_interpolation(const double *freq1, const int *points,
-                                          double *amp, double *spec) {
-  double res, w, a1, a2, a3, a4, sum, temp;
-  int p = (int)(*freq1 - 0.5), index, ip2, ip1, im1;
-  if (p >= *points || p < 0) return;
+static void inline delta_fn_gaussian_interpolation(const double *freq,
+                                                   const int *points, double *amp,
+                                                   double *spec) {
+  double res, w, a0, a1, a2, a3, a4, sum, temp;
+  int p = (int)(floor(*freq)), index, ip2, ip1, im1, im2, pad = 2, p2 = 2 * p;
+  if (p >= *points + pad || p < -pad + 1) return;
 
-  res = *freq1 - (double)p - 0.5;
-
-  if (fabs(res + 0.5) < TOL) {
-    spec[p] += *amp;
+  // for sideband delta freq. It avoids round-off errors.
+  res = *freq - (double)p;
+  if (fabs(res - 0.5) < TOL && p >= 0 && p < *points) {
+    spec[p2] += *amp;
     return;
   }
 
+  p = (int)(floor(*freq - 0.5));
+  p2 = 2 * p;
+  res = *freq - (double)p - 0.5;
   res *= gauss_table_precision_inverse;
   index = (int)res;
   w = res - (double)index;
@@ -72,26 +76,28 @@ static void inline gaussian_interpolation(const double *freq1, const int *points
   ip2 = 2 * gauss_table_precision_inverse - index;
   ip1 = gauss_table_precision_inverse - index;
   im1 = gauss_table_precision_inverse + index;
-  // im2 = 2 * gauss_table_precision_inverse + index;
+  im2 = 2 * gauss_table_precision_inverse + index;
 
-  // a0 = lerp_plus(w, im2);
+  a0 = lerp_plus(w, im2);
   a1 = lerp_plus(w, im1);
   a2 = lerp_plus(w, index);
   a3 = lerp_minus(w, ip1);
   a4 = lerp_minus(w, ip2);
-  // sum = a0;
-  sum = a1;
+
+  sum = a0;
+  sum += a1;
   sum += a2;
   sum += a3;
   sum += a4;
 
   temp = *amp / sum;
 
-  // if (p > 1) spec[p - 2] += temp * a0;
-  if (p > 0) spec[p - 1] += temp * a1;
-  spec[p] += temp * a2;
-  if (p + 1 != *points) spec[p + 1] += temp * a3;
-  if (p + 2 != *points) spec[p + 2] += temp * a4;
+  // double *spec = &spec1[2 * p];
+  if (p - 2 >= 0 && p - 2 < *points) spec[p2 - 4] += temp * a0;
+  if (p - 1 >= 0 && p - 1 < *points) spec[p2 - 2] += temp * a1;
+  if (p >= 0 && p < *points) spec[p2] += temp * a2;
+  if (p + 1 >= 0 && p + 1 < *points) spec[p2 + 2] += temp * a3;
+  if (p + 2 >= 0 && p + 2 < *points) spec[p2 + 4] += temp * a4;
 }
 
 /**
@@ -257,8 +263,27 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
 
 void triangle_interpolation1D(double *freq1, double *freq2, double *freq3, double *amp,
                               double *spec, int *points) {
+  if (fabs(*freq1 - *freq2) < TOL && fabs(*freq1 - *freq3) < TOL) {
+    if (INTERPOLATION_TYPE == 0)
+      return delta_fn_linear_interpolation(freq1, points, amp, spec);
+    if (INTERPOLATION_TYPE == 1)
+      return delta_fn_gaussian_interpolation(freq1, points, amp, spec);
+  }
+  __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
+}
+
+void triangle_interpolation1D_linear(double *freq1, double *freq2, double *freq3,
+                                     double *amp, double *spec, int *points) {
   if (fabs(*freq1 - *freq2) < TOL && fabs(*freq1 - *freq3) < TOL)
-    return delta_fn_interpolation(freq1, points, amp, spec);
+    return delta_fn_linear_interpolation(freq1, points, amp, spec);
+
+  __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
+}
+
+void triangle_interpolation1D_gaussian(double *freq1, double *freq2, double *freq3,
+                                       double *amp, double *spec, int *points) {
+  if (fabs(*freq1 - *freq2) < TOL && fabs(*freq1 - *freq3) < TOL)
+    return delta_fn_gaussian_interpolation(freq1, points, amp, spec);
 
   __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
 }
@@ -548,7 +573,6 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
   int p, pmid, pmax, i, j;
   double freq10_01, freq11_02;
 
-  int type = 0;
   p = (int)(*freq11);
 
   if (fabs(freq11[0] - freq12[0]) < TOL && fabs(freq11[0] - freq13[0]) < TOL) {
@@ -775,16 +799,6 @@ void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,
 //                         self.x0 + t1*xdelta, self.y0 + t1*ydelta)
 //         return [clipped_line]
 
-void triangle_interpolation1D(double *freq1, double *freq2, double *freq3, double *amp,
-                              double *spec, int *points, int type) {
-  if (fabs(*freq1 - *freq2) < TOL && fabs(*freq1 - *freq3) < TOL) {
-    if (type == 0) return delta_fn_interpolation(freq1, points, amp, spec);
-    if (type == 1) return gaussian_interpolation(freq1, points, amp, spec);
-  }
-
-  __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
-}
-
 void octahedronDeltaInterpolation(const unsigned int nt, double *freq, double *amp,
                                   int stride, int n_spec, double *spec) {
   int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
@@ -811,7 +825,10 @@ void octahedronDeltaInterpolation(const unsigned int nt, double *freq, double *a
     int_i_stride += stride;
     int_j_stride += stride;
   }
-  return delta_fn_interpolation(freq, &n_spec, &amp1, spec);
+  if (INTERPOLATION_TYPE == 0)
+    return delta_fn_linear_interpolation(freq, &n_spec, &amp1, spec);
+  if (INTERPOLATION_TYPE == 1)
+    return delta_fn_gaussian_interpolation(freq, &n_spec, &amp1, spec);
 }
 
 void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,

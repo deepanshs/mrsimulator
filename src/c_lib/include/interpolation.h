@@ -23,8 +23,13 @@
  *          1. gaussian-interpolation.
  */
 extern void triangle_interpolation1D(double *f1, double *f2, double *f3, double *amp,
-                                     double *spec, int *m0, int type);
+                                     double *spec, int *m0);
 
+extern void triangle_interpolation1D_linear(double *f1, double *f2, double *f3,
+                                            double *amp, double *spec, int *m0);
+
+extern void triangle_interpolation1D_gaussian(double *f1, double *f2, double *f3,
+                                              double *amp, double *spec, int *m0);
 /**
  * @brief Rasterize a vector triangle with coordinates ((f11, f21), (f12, f22), (f13,
  * f23)) onto a 2D grid.

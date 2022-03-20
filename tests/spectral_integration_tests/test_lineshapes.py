@@ -107,7 +107,7 @@ def test_pure_shielding_sideband_simpson():
         #     plt.show()
 
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=4, err_msg=message
+            data_mrsimulator, data_source, decimal=3, err_msg=message
         )
 
         # random euler angle all zero. Euler angles should not affect the spectrum.
@@ -123,7 +123,7 @@ def test_pure_shielding_sideband_simpson():
         #     plt.show()
 
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=4, err_msg=message
+            data_mrsimulator, data_source, decimal=3, err_msg=message
         )
 
 
@@ -202,7 +202,7 @@ def test_j_coupling_lineshape_simpson():
         #     plt.show()
 
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source.real, decimal=2.3, err_msg=message
+            data_mrsimulator, data_source.real, decimal=1.5, err_msg=message
         )
 
 

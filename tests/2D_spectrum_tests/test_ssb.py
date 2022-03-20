@@ -126,7 +126,7 @@ def SSB2D_setup(ist, vr, method_type):
         one_d_sim = sim2.methods[0].simulation.y[0].components[0]
         one_d_sim /= one_d_sim.max()
 
-        np.testing.assert_almost_equal(one_d_section, one_d_sim, decimal=6)
+        np.testing.assert_almost_equal(one_d_section, one_d_sim, decimal=4)
 
 
 def test_01():
