@@ -170,3 +170,22 @@ three queries. To select :math:`p=\pm1` transitions, we write
             {"ch1": {"P": [+1]}},  # query-2
         ]
     )
+
+MixingQuery
+-----------
+
+Mixing query utilizes rotational operations to select connected transitions in a multi
+SpectralEvent method. A generic syntax of the MixingQuery in python dictionary representation
+follows,
+
+.. code-block:: python
+
+    mix_query = {
+        "ch1": {"tip_angle": 3.14159, "phase": 0},  # both in radians
+        "ch2": {"tip_angle": 1.57079, "phase": -1.57079},  # both in radians
+        "ch3": {"tip_angle": 0, "phase": 0},  # both in radians
+    }
+
+where ``ch-`` s are the channels over which the query is performed. Its value is the
+python dictionary representation of the :class:`~mrsimulator.method.query.RFRotation` object.
+A MixingQuery is a channel-wise selective rotation with parameters `tip_angle` and `phase`.

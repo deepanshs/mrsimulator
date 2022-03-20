@@ -19,3 +19,8 @@ Query objects
     :show-inheritance:
     :members:
     :inherited-members: BaseModel
+
+.. autoclass:: RFRotation
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel
