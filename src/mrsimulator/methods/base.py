@@ -29,6 +29,7 @@ class BaseMethod(Method):
 
     @classmethod
     def check(cls, kwargs, ndim):
+        # Maybe here to check for number of spec dims as object
         check_for_number_of_spectral_dimensions(kwargs, ndim)
         if isinstance(kwargs["spectral_dimensions"][0], dict):
             parse_spectral_dimensions(kwargs)
@@ -174,45 +175,60 @@ class BaseNamedMethod(BaseMethod):
                 py_dict[k] = v
 
     @classmethod
-    def check_when_arg_is_object(cls, obj_dict):
-        default_method = cls.update(**obj_dict)
-        py_sp = default_method["spectral_dimensions"]
-        obj_sp = obj_dict["spectral_dimensions"]
+    def check_when_arg_is_object(cls, method_dict):
+        default_method = cls.update(**method_dict)
+        default_sp = default_method["spectral_dimensions"]
+        obj_sp = method_dict["spectral_dimensions"]
 
-        for i, (py, obj) in enumerate(zip(py_sp, obj_sp)):
-            if len(py["events"]) != len(obj.events) and obj.events != []:
+        for i, (dflt_dim, obj_dim) in enumerate(zip(default_sp, obj_sp)):
+            if len(dflt_dim["events"]) != len(obj_dim.events) and obj_dim.events != []:
                 raise ImmutableEventError(cls.__name__)
 
-            if obj.events == []:
-                obj_sp[i] = obj.json(units=False)
+            if obj_dim.events == []:
+                obj_sp[i] = obj_dim.json(units=False)
                 if "events" not in obj_sp[i]:
-                    obj_sp[i]["events"] = py["events"]
+                    obj_sp[i]["events"] = dflt_dim["events"]
                 obj_sp[i] = SpectralDimension(**obj_sp[i])
 
-            cls.check_event_objects_for_compatibility(py, obj, obj_dict)
+            cls.check_event_objects_for_compatibility(dflt_dim, obj_dim, method_dict)
 
         for k, v in default_method.items():
-            if k not in obj_dict:
-                obj_dict[k] = v
+            if k not in method_dict:
+                method_dict[k] = v
 
     @classmethod
-    def check_event_objects_for_compatibility(cls, py, obj, obj_dict):
+    def check_event_objects_for_compatibility(cls, default_dim, obj_dim, method_dict):
+        """Checks Events for compatability and sets global method attributes
+
+        Args:
+            default_dim (dict): Dict representation of SpectralDimension in base method
+            obj_dim (SpectralDimension): User-passed SpectralDimension object to check
+            method_dict (dict): Dict representation of passed method
+        """
         required = ["magnetic_flux_density", "rotor_frequency", "rotor_angle"]
-        py_obj = SpectralDimension(**py)
-        for i, (ev_py, ev_obj) in enumerate(zip(py_obj.events, obj.events)):
+        check_dim = SpectralDimension(**default_dim)
+        for i, (ev_check, ev_obj) in enumerate(zip(check_dim.events, obj_dim.events)):
 
             default_obj = SpectralDimension(events=[{}]).events[0]
             obj_keys = ev_obj.dict(exclude={"property_units"}).keys()
-            py_keys = py["events"][i].keys()
-            for k in obj_keys:
+            check_keys = default_dim["events"][i].keys()
+            for k in obj_keys:  # iterate over event attributes
                 a = False
-                if k in py_keys:
-                    a1, a2, a3 = [getattr(_, k) for _ in [ev_obj, default_obj, ev_py]]
-                    a = a1 != a2 and a1 != a3 and a2 is not None
-                    setattr(ev_obj, k, a3)
-                elif k in required and k in obj_dict:
-                    a = getattr(ev_obj, k) != obj_dict[k]
-                    setattr(ev_obj, k, obj_dict[k])
+                if k in check_keys:
+                    obj_attr, default_attr, check_attr = [
+                        getattr(_, k) for _ in [ev_obj, default_obj, ev_check]
+                    ]
+                    a = (
+                        obj_attr != default_attr and  # not default (user passed value)
+                        obj_attr != check_attr and  # passed attr does not match base
+                        default_attr is not None
+                    )
+                    setattr(ev_obj, k, check_attr)
+                elif k in required and k in method_dict:
+                    # True if passed attr does not match global attr defined by method
+                    a = getattr(ev_obj, k) != method_dict[k]
+                    # Set event attr to global method attr
+                    setattr(ev_obj, k, method_dict[k])
                 if a:
                     raise ImmutableEventError(cls.__name__)
 
