@@ -136,10 +136,11 @@ and higher. PIP is the easiest way to install python packages.
     
     **Check Python Version**
 
-    Follow the instructions above to determine what version of python you are using.  If 
-    you have python 3.6 or 3.7 installed, proceed to the next section.  If you have 
-    python 3.8, 3.9, or 3.10 installed, you will need to do one additional step.  In a terminal 
-    window, type
+    If you downloaded python from the Anaconda package, follow the instructions above to determine 
+    what version of python you are using.  If you have python 3.6 or 3.7 installed or you installed
+    python from `python.org <https://www.python.org/downloads/>`_, proceed to the next section.  
+    If you have Anaconda python 3.8, 3.9, or 3.10 installed, you will need to do one additional step.  
+    In a terminal window, type
 
     .. code-block:: bash
 
