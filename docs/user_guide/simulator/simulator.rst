@@ -20,7 +20,6 @@ spin systems and methods to a simulator object.
 
     from mrsimulator import Site, Simulator, SpinSystem
     from mrsimulator.methods import BlochDecaySpectrum
-    from mrsimulator.method import SpectralDimension
 
     # Setup the spin system and method objects
     system1 = SpinSystem(sites=[Site(isotope="1H")])  # Proton spin system
