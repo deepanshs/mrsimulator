@@ -500,7 +500,7 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
   int orientation, two_l_pm, two_l_mm;
   int n1 = 2 * l + 1, m, mp, two_l = 2 * l, two_n1 = 2 * n1;
   double S1, S2, S3, *temp, scale;
-  double *temp_initial_vector = malloc_double(two_n1);
+  double temp_initial_vector[18];  // maximum allocation for l=4; (2l + 1) * 2
 
   // Spherical tensor symmetry relations.
   // Y_{l, m} = (-1)^m Y_{l,-m}(conj)           (1)
@@ -562,7 +562,6 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
       R_out_ += 2;
     }
   }
-  free(temp_initial_vector);
 }
 
 // ✅ .. note: (wigner_dm0_vector) monitored with pytest .....................
@@ -612,10 +611,10 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
   double *R_in_ = (double *)R_in;
   double *R_out_ = (double *)R_out;
 
-  int n1 = 2 * l + 1, n2 = n1 * n1, m, mp, k, two_l = 2 * l, two_n1 = 2 * n1;
+  int n1 = 2 * l + 1, m, mp, k, two_l = 2 * l, two_n1 = 2 * n1;
   double real, imag, copy_real = 0.0, copy_imag = 0.0, a, b, c, d;
-  double *wigner = malloc_double(n2);
-  double *temp_initial_vector = malloc_double(two_n1);
+  double wigner[81];               // maximum allocation for l=4; (2l + 1)^2
+  double temp_initial_vector[18];  // maximum allocation for l=4; (2l + 1) * 2
 
   // get wigner matrix corresponding to beta angle
   wigner_d_matrices(l, 1, &euler_angles[1], wigner);
@@ -675,8 +674,6 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
       R_out_[m + 1] += wigner[k++] * temp_initial_vector[mp + 1];
     }
   }
-  free(wigner);
-  free(temp_initial_vector);
 
   real = cos(euler_angles[2]);
   imag = sin(euler_angles[2]);
@@ -740,7 +737,7 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
                              const unsigned int n_octants, double *wigner_2j_matrices,
                              complex128 *R2, double *wigner_4j_matrices, complex128 *R4,
                              complex128 *exp_Im_alpha, complex128 *w2, complex128 *w4) {
-  unsigned int j, wigner_2j_inc, wigner_4j_inc, w2_increment, w4_increment;
+  unsigned int j, wigner_2j_inc, wigner_4j_inc = 0, w2_increment, w4_increment = 0;
 
   w2_increment = 3 * octant_orientations;
   wigner_2j_inc = 5 * w2_increment;  // equal to 5 x 3 x octant_orientations;
@@ -813,7 +810,7 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
  * The function accepts cos_alpha = cos(alpha)
  * The result is stored in exp_Im_alpha as m x n matrix, where m = [-4,-3,-2,-1]
  */
-void get_exp_Im_alpha(const unsigned int n, const bool allow_fourth_rank,
+void get_exp_Im_alpha(const unsigned int n, const bool allow_4th_rank,
                       void *exp_Im_alpha) {
   double *exp_Im_alpha_ = (double *)exp_Im_alpha;
 
@@ -825,7 +822,7 @@ void get_exp_Im_alpha(const unsigned int n, const bool allow_fourth_rank,
   vm_double_complex_multiply(n, &exp_Im_alpha_[s_3], &exp_Im_alpha_[s_3],
                              &exp_Im_alpha_[s_2]);
 
-  if (allow_fourth_rank) {
+  if (allow_4th_rank) {
     // exp(-3 I alpha)
     vm_double_complex_multiply(n, &exp_Im_alpha_[s_2], &exp_Im_alpha_[s_3],
                                &exp_Im_alpha_[s_1]);

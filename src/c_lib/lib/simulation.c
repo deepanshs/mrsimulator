@@ -95,18 +95,18 @@ void __mrsimulator_core(
 
       /* Rotate all frequency components from PAS to a common frame */
       MRS_rotate_components_from_PAS_to_common_frame(
-          sites,       // Pointer to a list of sites within a spin system.
-          couplings,   // Pointer to a list of couplings within a spin system.
-          transition,  // Pointer to a single transition.
-          plan->allow_fourth_rank,  // If 1, prepare for 4th rank computation.
-          &R0,                      // The R0 components.
-          R2,                       // The R2 components.
-          R4,                       // The R4 components.
-          &R0_temp,                 // The temporary R0 components.
-          R2_temp,                  // The temporary R2 components.
-          R4_temp,                  // The temporary R4 components.
-          B0_in_T,                  // Magnetic flux density in T.
-          freq_contrib              // The pointer to freq contribs boolean.
+          sites,                 // Pointer to a list of sites within a spin system.
+          couplings,             // Pointer to a list of couplings within a spin system.
+          transition,            // Pointer to a single transition.
+          plan->allow_4th_rank,  // If 1, prepare for 4th rank computation.
+          &R0,                   // The R0 components.
+          R2,                    // The R2 components.
+          R4,                    // The R4 components.
+          &R0_temp,              // The temporary R0 components.
+          R2_temp,               // The temporary R2 components.
+          R4_temp,               // The temporary R4 components.
+          B0_in_T,               // Magnetic flux density in T.
+          freq_contrib           // The pointer to freq contribs boolean.
       );
 
       // The number 6 comes from the six types of pre-listed freq contributions.
@@ -196,9 +196,9 @@ void mrsimulator_core(
   // int parallel = openblas_get_parallel();
   // printf("%d parallel", parallel);
 
-  bool allow_fourth_rank = false;
+  bool allow_4th_rank = false;
   if (sites[0].spin[0] > 0.5 && quad_second_order == 1) {
-    allow_fourth_rank = true;
+    allow_4th_rank = true;
   }
 
   // check for spinning speed
@@ -209,7 +209,7 @@ void mrsimulator_core(
   }
 
   MRS_averaging_scheme *scheme = MRS_create_averaging_scheme(
-      integration_density, allow_fourth_rank, integration_volume);
+      integration_density, allow_4th_rank, integration_volume);
 
   MRS_fftw_scheme *fftw_scheme =
       create_fftw_scheme(scheme->total_orientations, number_of_sidebands);

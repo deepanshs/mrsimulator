@@ -23,8 +23,6 @@ def setup_sim_and_processor():
     method = BlochDecaySpectrum(channels=["1H"])
     sim = Simulator(spin_systems=[spin_sys, spin_sys], methods=[method, method])
 
-    sim.run(method_index=0)
-
     processor = sp.SignalProcessor(
         operations=[
             sp.IFFT(),
@@ -91,7 +89,7 @@ def test_version_with_serialization():
 def test_save():
     mrsim = setup_mrsimulator_obj()
 
-    assert mrsim.simulator.methods[0].simulation is not None
+    assert mrsim.simulator.methods[0].simulation is None
     assert mrsim.simulator.methods[1].simulation is None
 
     mrsim.save("temp.mrsim")
@@ -101,6 +99,8 @@ def test_load():
     mrsim = setup_mrsimulator_obj()
     loaded_mrsim = Mrsimulator.load("temp.mrsim")
 
+    assert mrsim.simulator.methods[0].simulation is None
+    assert mrsim.simulator.methods[1].simulation is None
     assert mrsim == loaded_mrsim
 
     os.remove("temp.mrsim")
