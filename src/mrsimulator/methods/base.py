@@ -213,23 +213,22 @@ class BaseNamedMethod(BaseMethod):
             obj_keys = ev_obj.dict(exclude={"property_units"}).keys()
             check_keys = default_dim["events"][i].keys()
             for k in obj_keys:  # iterate over event attributes
-                a = False
+                fail = False
                 if k in check_keys:
                     obj_attr, default_attr, check_attr = [
                         getattr(_, k) for _ in [ev_obj, default_obj, ev_check]
                     ]
-                    a = (
-                        obj_attr != default_attr and  # not default (user passed value)
-                        obj_attr != check_attr and  # passed attr does not match base
-                        default_attr is not None
-                    )
+                    fail_1 = obj_attr != default_attr  # not default (user passed value)
+                    fail_2 = obj_attr != check_attr  # passed attr does not match base
+                    fail_3 = default_attr is not None
+                    fail = fail_1 and fail_2 and fail_3
                     setattr(ev_obj, k, check_attr)
                 elif k in required and k in method_dict:
                     # True if passed attr does not match global attr defined by method
-                    a = getattr(ev_obj, k) != method_dict[k]
+                    fail = getattr(ev_obj, k) != method_dict[k]
                     # Set event attr to global method attr
                     setattr(ev_obj, k, method_dict[k])
-                if a:
+                if fail:
                     raise ImmutableEventError(cls.__name__)
 
 
