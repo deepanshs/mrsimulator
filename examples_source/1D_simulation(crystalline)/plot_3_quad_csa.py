@@ -22,6 +22,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import BlochDecayCTSpectrum
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 1
 
@@ -48,7 +49,7 @@ method = BlochDecayCTSpectrum(
     magnetic_flux_density=11.74,  # in T
     rotor_frequency=0,  # in Hz
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=1024,
             spectral_width=1e5,  # in Hz
             reference_offset=22500,  # in Hz

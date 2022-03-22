@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
+from mrsimulator.method import SpectralDimension
 from mrsimulator.method.query import TransitionQuery
 from mrsimulator.methods import FiveQ_VAS
 from mrsimulator.methods import SevenQ_VAS
@@ -86,7 +87,9 @@ def test_3Q_VAS_general():
 
 def test_5Q_VAS_general():
     """5Q-VAS method test"""
-    mth = FiveQ_VAS(channels=["17O"], spectral_dimensions=[{}, {}])
+    mth = FiveQ_VAS(
+        channels=["17O"], spectral_dimensions=[SpectralDimension(), SpectralDimension()]
+    )
 
     assert mth.name == "FiveQ_VAS"
     assert mth.description == "Simulate a 5Q variable-angle spinning spectrum."
@@ -138,3 +141,8 @@ def test_7Q_VAS_general():
         "name": "SevenQ_VAS",
         **sample_test_output(-7),
     }
+
+
+def test_mix_SpectralDimension_and_dict():
+    with pytest.raises(Exception, match="Use either SpectralDimension or dict objects"):
+        _ = SevenQ_VAS(channels=["51V"], spectral_dimensions=[{}, SpectralDimension()])

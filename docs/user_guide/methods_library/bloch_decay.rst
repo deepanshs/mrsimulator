@@ -7,6 +7,7 @@ Bloch decay spectrum.
 .. code-block:: python
 
     from mrsimulator.methods import BlochDecaySpectrum
+    from mrsimulator.method import SpectralDimension
 
     method = BlochDecaySpectrum(
         channels=["1H"],
@@ -14,7 +15,7 @@ Bloch decay spectrum.
         rotor_angle=54.735 * 3.14159 / 180,  # in rad
         magnetic_flux_density=9.4,  # in tesla
         spectral_dimensions=[
-            dict(
+            SpectralDimension(
                 count=1024,
                 spectral_width=25e3,  # in Hz
                 reference_offset=-4e3,  # in Hz

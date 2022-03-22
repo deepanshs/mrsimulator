@@ -85,6 +85,7 @@ Some attributes of the method still need to be provided as seen below.
 
     # Import the BlochDecaySpectrum class
     from mrsimulator.methods import BlochDecaySpectrum
+    from mrsimulator.method import SpectralDimension
 
     # Create a BlochDecaySpectrum object
     method = BlochDecaySpectrum(
@@ -93,7 +94,7 @@ Some attributes of the method still need to be provided as seen below.
         rotor_angle=54.735 * 3.14159 / 180,  # in rad (magic angle)
         rotor_frequency=3000,  # in Hz
         spectral_dimensions=[
-            dict(
+            SpectralDimension(
                 count=2048,
                 spectral_width=80e3,  # in Hz
                 reference_offset=6e3,  # in Hz
