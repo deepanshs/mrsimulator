@@ -15,6 +15,7 @@ from pydantic import Field
 from pydantic import validator
 
 from .event import ConstantDurationEvent
+from .event import Event
 from .event import MixingEvent
 from .event import SpectralEvent
 from .utils import cartesian_product
@@ -104,7 +105,11 @@ class SpectralDimension(Parseable):
         """Ensure at least one spectralEvent and warn is the sum of fraction in
         SpectralEvents is not 1."""
         if v != []:
-            total = sum([e.fraction for e in v if isinstance(e, SpectralEvent)])
+            new_v = [
+                Event(event=item).event if isinstance(item, dict) else item
+                for item in v
+            ]
+            total = sum([e.fraction for e in new_v if isinstance(e, SpectralEvent)])
             if total == 0:
                 raise MissingSpectralEventError()
             if total != 1:

@@ -10,10 +10,6 @@ from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
 
-from .utils import check_for_at_least_one_events
-from .utils import check_for_number_of_spectral_dimensions
-from .utils import parse_spectral_dimensions
-
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
@@ -24,15 +20,7 @@ class BaseMethod(Method):
     ndim: ClassVar[int] = 1
 
     def __init__(self, **kwargs):
-        BaseMethod.check(kwargs, self.__class__.ndim)
         super().__init__(**kwargs)
-
-    @classmethod
-    def check(cls, kwargs, ndim):
-        check_for_number_of_spectral_dimensions(kwargs, ndim)
-        if isinstance(kwargs["spectral_dimensions"][0], dict):
-            parse_spectral_dimensions(kwargs)
-            check_for_at_least_one_events(kwargs)
 
 
 # class Method1D(BaseMethod):
@@ -121,7 +109,7 @@ class BaseNamedMethod(BaseMethod):
 
     def __init__(self, **kwargs):
         kwargs_copy = deepcopy(kwargs)
-        super().check(kwargs_copy, self.__class__.ndim)
+        Method.check(kwargs_copy, self.__class__.ndim)
         self.__class__.check_method_compatibility(kwargs_copy)
         super().__init__(**kwargs_copy)
 

@@ -2,7 +2,7 @@
 from copy import deepcopy
 
 import pytest
-from mrsimulator.methods.utils import map_transition_query_object_to_v_7
+from mrsimulator.utils.utils import map_transition_query_object_to_v_7
 
 
 def template(tq):

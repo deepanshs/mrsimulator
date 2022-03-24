@@ -15,6 +15,9 @@ from mrsimulator.transition import SymmetryPathway
 from mrsimulator.transition import Transition
 from mrsimulator.transition import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
+from mrsimulator.utils.utils import check_for_at_least_one_events
+from mrsimulator.utils.utils import check_for_number_of_spectral_dimensions
+from mrsimulator.utils.utils import parse_spectral_dimensions
 from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
@@ -172,6 +175,7 @@ class Method(Parseable):
         return [Isotope(symbol=_) for _ in v]
 
     def __init__(self, **kwargs):
+        Method.check(kwargs)
         super().__init__(**kwargs)
         _ = [
             setattr(ev, item, getattr(self, item))
@@ -180,6 +184,14 @@ class Method(Parseable):
             for item in self.property_units.keys()
             if hasattr(ev, item) and getattr(ev, item) is None
         ]
+
+    @classmethod
+    def check(cls, kwargs, ndim=None):
+        if ndim is not None:
+            check_for_number_of_spectral_dimensions(kwargs, ndim)
+        if isinstance(kwargs["spectral_dimensions"][0], dict):
+            parse_spectral_dimensions(kwargs)
+            check_for_at_least_one_events(kwargs)
 
     @staticmethod
     def __check_csdm__(data):
