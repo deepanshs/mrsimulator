@@ -16,12 +16,11 @@ import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
 from mrsimulator import Simulator, Site, SpinSystem
-from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -78,7 +77,7 @@ spin_systems = [SpinSystem(sites=[site])]
 # %%
 # **Method**
 #
-# Use the generic 2D method, `Method2D`, to generate a shifting-d echo method. The
+# Use the generic method, `Method`, to generate a shifting-d echo method. The
 # reported shifting-d 2D sequence is a correlation of the shielding frequencies to the
 # first-order quadrupolar frequencies. Here, we create a correlation method using the
 # :attr:`~mrsimulator.method.event.freq_contrib` attribute, which acts as a switch
@@ -94,7 +93,7 @@ spin_systems = [SpinSystem(sites=[site])]
 # Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-shifting_d = Method2D(
+shifting_d = Method(
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
     spectral_dimensions=[

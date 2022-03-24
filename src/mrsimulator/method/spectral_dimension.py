@@ -99,12 +99,14 @@ class SpectralDimension(Parseable):
         extra = "forbid"
         validate_assignment = True
 
-    @validator("events", always=True)
+    @validator("events", pre=True, always=True)
     def validate_events(v, **kwargs):
         """Ensure at least one spectralEvent and warn is the sum of fraction in
         SpectralEvents is not 1."""
         if v != []:
             total = sum([e.fraction for e in v if isinstance(e, SpectralEvent)])
+            if total == 0:
+                raise MissingSpectralEventError()
             if total != 1:
                 e = (
                     "The fraction attribute of each SpectralEvent in a "
@@ -112,8 +114,6 @@ class SpectralDimension(Parseable):
                     "If this was not intentional, check the fraction attributes."
                 )
                 warn(e)
-            if total == 0:
-                raise MissingSpectralEventError()
         return v
 
     @classmethod

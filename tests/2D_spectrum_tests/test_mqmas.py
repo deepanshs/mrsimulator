@@ -7,8 +7,8 @@ from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.method import Method
 from mrsimulator.methods import BlochDecayCTSpectrum
-from mrsimulator.methods import Method2D
 from mrsimulator.methods import ThreeQ_VAS
 
 
@@ -22,19 +22,20 @@ def test_MQMAS():
     spin_system = SpinSystem(sites=[site])
 
     B0 = 9.394
-    method = Method2D(
+    method = Method(
         channels=["87Rb"],
         magnetic_flux_density=B0,
+        rotor_frequency=1e12,
         spectral_dimensions=[
             {
                 "count": 128,
                 "spectral_width": 20000,
-                "events": [{"transition_query": [{"P": [-3], "D": [0]}]}],
+                "events": [{"transition_query": [{"ch1": {"P": [-3], "D": [0]}}]}],
             },
             {
                 "count": 128,
                 "spectral_width": 20000,
-                "events": [{"transition_query": [{"P": [-1], "D": [0]}]}],
+                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
             },
         ],
     )

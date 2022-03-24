@@ -11,7 +11,7 @@ class NamedMethodError(Exception):
     def __init__(self, name, cls_name, message=None):
         message = message or (
             f"`name={name} != classname={cls_name}`. Use the class with the same name "
-            "as the attribute name or use `Method1D` or `Method2D` class."
+            "as the attribute name or use the generic `Method` class."
         )
         super().__init__(message)
 
@@ -27,7 +27,7 @@ class ImmutableEventError(Exception):
     def __init__(self, cls_name, message=None):
         message = message or (
             f"Event objects are immutable for {cls_name} class. Remove all event "
-            "objects or use `Method1D`/`Method2D` class."
+            "objects or use the generic `Method` class."
         )
         super().__init__(message)
 

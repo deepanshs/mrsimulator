@@ -9,8 +9,6 @@ from mrsimulator.method import Method
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
 from mrsimulator.method.frequency_contrib import freq_default
-from mrsimulator.methods import Method1D
-from mrsimulator.methods import Method2D
 from mrsimulator.spin_system.isotope import Isotope
 from pydantic import ValidationError
 
@@ -213,7 +211,7 @@ def test_rotor_frequency():
     )
 
     # Bad method, should throw error for multiple finite speeds
-    for cls in [Method, Method1D]:
+    for cls in [Method]:
         with pytest.raises(NotImplementedError):
             cls(
                 channels=["1H"],
@@ -228,7 +226,7 @@ def test_rotor_frequency():
             )
 
     with pytest.raises(NotImplementedError):
-        Method2D(
+        Method(
             channels=["1H"],
             spectral_dimensions=[
                 SpectralDimension(

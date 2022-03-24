@@ -2,8 +2,6 @@
 import numpy as np
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.methods import Method1D
-from mrsimulator.methods import Method2D
 from mrsimulator.transition import TransitionPathway
 
 __author__ = "Deepansh J. Srivastava"
@@ -90,14 +88,14 @@ def test_04():
 
 def test_hahn():
     system = SpinSystem(sites=[{"isotope": "13C"}, {"isotope": "13C"}])
-    hahn = Method1D(
+    hahn = Method(
         channels=["13C"],
         spectral_dimensions=[
             {
                 "events": [
-                    {"fraction": 0.5, "transition_query": {"P": [1]}},
+                    {"fraction": 0.5, "transition_query": [{"ch1": {"P": [1]}}]},
                     {"mixing_query": {"ch1": {"tip_angle": np.pi, "phase": 0}}},
-                    {"fraction": 0.5, "transition_query": {"P": [-1]}},
+                    {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]},
                 ]
             },
         ],
@@ -130,17 +128,17 @@ def test_hahn():
 
 def test_cosy():
     system = SpinSystem(sites=[{"isotope": "1H"}, {"isotope": "1H"}])
-    cosy = Method2D(
+    cosy = Method(
         channels=["1H"],
         spectral_dimensions=[
             {
                 "events": [
-                    {"fraction": 1, "transition_query": {"P": [-1]}},
+                    {"fraction": 1, "transition_query": [{"ch1": {"P": [-1]}}]},
                     {"mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": 0}}},
                 ],
             },
             {
-                "events": [{"fraction": 1, "transition_query": {"P": [-1]}}],
+                "events": [{"fraction": 1, "transition_query": [{"ch1": {"P": [-1]}}]}],
             },
         ],
     )

@@ -434,7 +434,10 @@ def method2_df():
                             },
                         }
                     },
-                    {"fraction": 1, "transition_query": [{"P": [1], "D": [0]}]},
+                    {
+                        "fraction": 1,
+                        "transition_query": [{"ch1": {"P": [1], "D": [0]}}],
+                    },
                     {
                         "mixing_query": {
                             "ch1": {"tip_angle": np.pi, "phase": 0.15},
@@ -453,7 +456,10 @@ def method2_df():
                             },
                         }
                     },
-                    {"duration": 1.5, "transition_query": [{"P": [-1], "D": [2]}]},
+                    {
+                        "duration": 1.5,
+                        "transition_query": [{"ch1": {"P": [-1], "D": [2]}}],
+                    },
                 ],
             },
             {

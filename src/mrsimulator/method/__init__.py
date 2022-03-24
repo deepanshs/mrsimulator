@@ -123,7 +123,7 @@ class Method(Parseable):
         Example
         -------
 
-        >>> method = Method2D(channels=['1H'])
+        >>> method = Method(channels=['1H'], spectral_dimensions=[{}, {}]) # 2D method
         >>> method.affine_matrix = [[1, -1], [0, 1]]
         >>> print(method.affine_matrix)
         [[1, -1], [0, 1]]
@@ -355,8 +355,8 @@ class Method(Parseable):
         **Single channel example**
 
         Example:
-            >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(
+            >>> from mrsimulator.method import Method
+            >>> method = Method(
             ...     channels=['1H'],
             ...     spectral_dimensions=[
             ...         {
@@ -387,8 +387,8 @@ class Method(Parseable):
         **Dual channels example**
 
         Example:
-            >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(
+            >>> from mrsimulator.method import Method
+            >>> method = Method(
             ...     channels=['1H', '13C'],
             ...     spectral_dimensions=[
             ...         {
@@ -596,7 +596,7 @@ class Method(Parseable):
 
         Args:
             (bool) drop_constant_columns:
-                Removes constant properties if True. Default is True.
+                Removes constant properties if True. Default is True.
 
         Returns:
             pd.DataFrame df:
@@ -775,8 +775,8 @@ class Method(Parseable):
             tuple
 
         Example:
-            >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(
+            >>> from mrsimulator.method import Method
+            >>> method = Method(
             ...     channels=['1H'],
             ...     spectral_dimensions=[{'count': 40}, {'count': 10}]
             ... )

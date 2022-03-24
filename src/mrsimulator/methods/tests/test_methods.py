@@ -6,8 +6,6 @@ import pytest
 from monty.serialization import loadfn
 from mrsimulator.method import Method
 from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.methods import Method1D
-from mrsimulator.methods import Method2D
 from mrsimulator.methods import ThreeQ_VAS
 
 __author__ = "Deepansh J. Srivastava"
@@ -23,7 +21,7 @@ MAS_DIM = {
     "events": [
         {
             "rotor_angle": 54.735 * np.pi / 180,
-            "transition_query": {"P": [-1], "D": [0]},
+            "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
         },
     ],
 }
@@ -54,12 +52,14 @@ def test_more_spectral_dimensions():
 
 def test_03():
     """generic method declaration"""
-    mth = Method2D(
+    mth = Method(
+        name="generic",
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
+        rotor_frequency=1000000000000.0,
         spectral_dimensions=[
-            {"count": 1024, "spectral_width": 5e4},
-            {"count": 1024, "spectral_width": 5e4},
+            {"count": 1024, "spectral_width": 5e4, "events": [{}]},
+            {"count": 1024, "spectral_width": 5e4, "events": [{}]},
         ],
     )
 
@@ -67,93 +67,34 @@ def test_03():
     assert Method.parse_dict_with_units(mth.json()) == mth
 
 
-def test_method_1D():
+def test_1D_method():
+    # Method1D replaced with generic Method object
     error = "Expecting a 1x1 affine matrix."
     with pytest.raises(ValueError, match=f".*{error}.*"):
-        Method1D(spectral_dimensions=[{}], affine_matrix=[1, 2, 3, 4])
-
-    error = "Method requires exactly 1 spectral dimensions, given 2."
-    with pytest.raises(ValueError, match=f".*{error}.*"):
-        Method1D(spectral_dimensions=[{}, {}])
-
-    # parse dict with units test
-    dict_1d = {
-        "channels": ["87Rb"],
-        "magnetic_flux_density": "7 T",  # in T
-        "rotor_angle": "54.735 deg",
-        "rotor_frequency": "1e9 Hz",
-        "spectral_dimensions": [
-            {
-                "spectral_width": "10 kHz",
-                "reference_offset": "-4 kHz",
-                **sample_test_output,
-            }
-        ],
-    }
-    method1a = Method1D.parse_dict_with_units(dict_1d)
-    assert Method.parse_dict_with_units(method1a.json()) == method1a
-
-    method1b = Method1D(
-        channels=["87Rb"],
-        magnetic_flux_density=7,  # in T
-        rotor_angle=54.735 * np.pi / 180,
-        rotor_frequency=1e9,
-        spectral_dimensions=[
-            {
-                "spectral_width": 1e4,
-                "reference_offset": -4e3,
-                **sample_test_output,
-            }
-        ],
-    )
-
-    assert method1a == method1b
+        Method(spectral_dimensions=[{}], affine_matrix=[1, 2, 3, 4])
 
 
-def test_method_2D():
-
+def test_2D_method():
+    # Method2D replaced with generic Method object
     error = "The first element of the affine matrix cannot be zero."
     with pytest.raises(ValueError, match=f".*{error}.*"):
-        Method2D(spectral_dimensions=[{}, {}], affine_matrix=[0, 1, 2, 3])
-
-    # parse dict with units test
-    dict_1d = {
-        "channels": ["87Rb"],
-        "magnetic_flux_density": "7 T",  # in T
-        "rotor_angle": "54.735 deg",
-        "spectral_dimensions": [
-            {"spectral_width": "10 kHz", **sample_test_output},
-            {"spectral_width": "10 kHz", **sample_test_output},
-        ],
-    }
-    method1a = Method2D.parse_dict_with_units(dict_1d)
-    assert Method.parse_dict_with_units(method1a.json()) == method1a
-
-    method1b = Method2D(
-        channels=["87Rb"],
-        magnetic_flux_density=7,  # in T
-        rotor_angle=54.735 * np.pi / 180,
-        spectral_dimensions=[
-            {"spectral_width": 1e4, **sample_test_output},
-            {"spectral_width": 1e4, **sample_test_output},
-        ],
-    )
-
-    assert method1a == method1b
+        Method(spectral_dimensions=[{}, {}], affine_matrix=[0, 1, 2, 3])
 
 
 def test_04():
     """SAS method declaration"""
-    mth = Method2D(
+    mth = Method(
+        name="SAS",
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
         rotor_angle=70.12 * np.pi / 180,
+        rotor_frequency=1000000000000,
         spectral_dimensions=[
             {
                 "count": 512,
                 "spectral_width": 5e4,  # in Hz
                 "events": [
-                    {"transition_query": {"P": [-1], "D": [0]}},
+                    {"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]},
                 ],
             },
             MAS_DIM.copy(),
@@ -162,7 +103,6 @@ def test_04():
 
     assert mth.json() == TESTDATA["SAS"]
     assert Method.parse_dict_with_units(mth.json()) == mth
-    assert Method2D.parse_dict_with_units(mth.json()) == mth
 
 
 def test_BlochDecaySpectrum():
@@ -229,19 +169,23 @@ def test_05():
         events=[
             {
                 "rotor_angle": 0 * np.pi / 180,
-                "transition_query": [{"P": [-1], "D": [2]}, {"P": [-1], "D": [-2]}],
+                "transition_query": [
+                    {"ch1": {"P": [-1], "D": [2]}},
+                    {"ch1": {"P": [-1], "D": [-2]}},
+                ],
             }
         ],
     )
-    mth = Method2D(
+    mth = Method(
+        name="STMAS",
         channels=["87Rb"],
         magnetic_flux_density=9.4,  # in T
+        rotor_frequency=1000000000000,
         spectral_dimensions=[sp0, MAS_DIM.copy()],
     )
 
     assert mth.json() == TESTDATA["STMAS"]
     assert Method.parse_dict_with_units(TESTDATA["STMAS"]) == mth
-    assert Method2D.parse_dict_with_units(TESTDATA["STMAS"]) == mth
 
 
 def test_3QMAS():
@@ -267,10 +211,12 @@ def test_06():
 
 
 def test_methods():
-    das = Method2D(
+    das = Method(
+        name="DAS",
         channels=["87Rb"],
         magnetic_flux_density=4.2,  # in T
         rotor_angle=54.735 * 3.14159 / 180,  # in rads
+        rotor_frequency=1000000000000,
         spectral_dimensions=[
             {
                 "count": 256,
@@ -304,4 +250,3 @@ def test_methods():
     assert das.affine_matrix is None
     assert das.json() == TESTDATA["DAS"]
     assert Method.parse_dict_with_units(das.json()) == das
-    assert Method2D.parse_dict_with_units(das.json()) == das

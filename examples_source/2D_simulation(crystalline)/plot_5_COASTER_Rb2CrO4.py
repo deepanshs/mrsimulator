@@ -15,10 +15,9 @@ simulation.
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -39,10 +38,10 @@ site = Site(
 spin_system = SpinSystem(sites=[site])
 
 # %%
-# Use the generic 2D method, `Method2D`, to simulate a COASTER spectrum by customizing
-# the method parameters, as shown below. Note, the Method2D method simulates an infinite
+# Use the generic method, `Method`, to simulate a 2D COASTER spectrum by customizing
+# the method parameters, as shown below. Note, the method simulates an infinite
 # spinning speed spectrum.
-coaster = Method2D(
+coaster = Method(
     name="COASTER",
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
