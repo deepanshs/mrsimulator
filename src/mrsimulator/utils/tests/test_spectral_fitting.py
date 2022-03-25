@@ -221,6 +221,24 @@ op_list = [
 ]
 
 
+def compare_result(params, valuesdict_system, sim):
+    valuedict_proc = {
+        "SP_0_operation_1_Exponential_FWHM": 100,
+        "SP_0_operation_3_Scale_factor": 10,
+    }
+    assert params.valuesdict() == {
+        **valuesdict_system,
+        **valuedict_proc,
+    }, "Parameter creation failed"
+
+    params = sf.make_LMFIT_params(sim)
+    assert params.valuesdict() == valuesdict_system, "Parameter creation failed"
+
+    # alias
+    params = sf.make_LMFIT_parameters(sim)
+    assert params.valuesdict() == valuesdict_system, "Parameter creation failed"
+
+
 def test_5_multi_spin_systems():
     sim = Simulator()
     spin_system1 = {"sites": [H], "abundance": "100%"}
@@ -244,21 +262,7 @@ def test_5_multi_spin_systems():
         "sys_1_site_0_shielding_symmetric_beta": 4.12,
         "sys_1_abundance": 37.5,
     }
-    valuedict_proc = {
-        "SP_0_operation_1_Exponential_FWHM": 100,
-        "SP_0_operation_3_Scale_factor": 10,
-    }
-    assert params.valuesdict() == {
-        **valuesdict_system,
-        **valuedict_proc,
-    }, "Parameter creation failed"
-
-    params = sf.make_LMFIT_params(sim)
-    assert params.valuesdict() == valuesdict_system, "Parameter creation failed"
-
-    # alias
-    params = sf.make_LMFIT_parameters(sim)
-    assert params.valuesdict() == valuesdict_system, "Parameter creation failed"
+    compare_result(params, valuesdict_system, sim)
 
 
 def test_6_coupled():
@@ -284,21 +288,7 @@ def test_6_coupled():
         "sys_0_coupling_0_j_symmetric_eta": 0.4,
         "sys_0_abundance": 100,
     }
-    valuedict_proc = {
-        "SP_0_operation_1_Exponential_FWHM": 100,
-        "SP_0_operation_3_Scale_factor": 10,
-    }
-    assert params.valuesdict() == {
-        **valuesdict_system,
-        **valuedict_proc,
-    }, "Parameter creation failed"
-
-    params = sf.make_LMFIT_params(sim)
-    assert params.valuesdict() == valuesdict_system, "Parameter creation failed"
-
-    # alias
-    params = sf.make_LMFIT_parameters(sim)
-    assert params.valuesdict() == valuesdict_system, "Parameter creation failed"
+    compare_result(params, valuesdict_system, sim)
 
 
 def test_7():

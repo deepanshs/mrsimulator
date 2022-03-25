@@ -324,7 +324,7 @@ def make_LMFIT_params(sim: Simulator, processors: list = None, include={}):
     params.update(make_simulator_params(sim, include))
 
     proc = make_signal_processor_params(processors) if processors is not None else None
-    params.update(proc) if proc is not None else None
+    _ = params.update(proc) if proc is not None else None
 
     return params
 
