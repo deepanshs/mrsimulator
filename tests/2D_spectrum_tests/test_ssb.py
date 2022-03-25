@@ -145,7 +145,3 @@ def test_03():
 
 def test_04():
     SSB2D_setup("31P", 1e9, "MAF")
-
-
-if __name__ == "__main__":
-    test_03()
