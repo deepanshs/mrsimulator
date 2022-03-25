@@ -109,7 +109,7 @@ class BaseNamedMethod(BaseMethod):
 
     def __init__(self, **kwargs):
         kwargs_copy = deepcopy(kwargs)
-        Method.check(kwargs_copy, self.__class__.ndim)
+        Method.check(kwargs_copy, is_named_method=True, ndim=self.__class__.ndim)
         self.__class__.check_method_compatibility(kwargs_copy)
         super().__init__(**kwargs_copy)
 
@@ -151,7 +151,7 @@ class BaseNamedMethod(BaseMethod):
 
         for i, item in enumerate(sp_list):
             # If no events in SpectralDimension, set to default events
-            if item["events"] == [{}] or item["events"] == []:
+            if "events" not in item or item["events"] == [{}] or item["events"] == []:
                 item["events"] = default_sp_list[i]["events"]
 
             elif item["events"] != default_sp_list[i]["events"]:

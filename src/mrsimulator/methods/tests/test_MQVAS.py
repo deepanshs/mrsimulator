@@ -144,5 +144,6 @@ def test_7Q_VAS_general():
 
 
 def test_mix_SpectralDimension_and_dict():
-    with pytest.raises(Exception, match="Use either SpectralDimension or dict objects"):
+    e = ".*Both dict and SpectralDimension objects found in spectral dimension list.*"
+    with pytest.raises(Exception, match=e):
         _ = SevenQ_VAS(channels=["51V"], spectral_dimensions=[{}, SpectralDimension()])

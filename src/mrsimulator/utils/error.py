@@ -32,6 +32,22 @@ class ImmutableEventError(Exception):
         super().__init__(message)
 
 
+class MixedSpectralDimensionTypeError(Exception):
+    """Exception raised when SpectralDimension objects and dictionaries are used in the
+    same spectral_dimension list
+
+    Attributes:
+        message: explanation of the error.
+    """
+
+    def __init__(self, message=None):
+        message = message or (
+            "Both dict and SpectralDimension objects found in spectral dimension list."
+            "Use either dict representation or SpectralDimension objects."
+        )
+        super().__init__(message)
+
+
 class MissingSpectralEventError(Exception):
     """Exception raised for missing SpectralEvent from SpectralDimension.
 

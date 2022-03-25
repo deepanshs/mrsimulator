@@ -153,6 +153,7 @@ class TransitionQuery(Parseable):
 
     class Config:
         validate_assignment = True
+        extra = "forbid"
 
     @staticmethod
     def cartesian_product_indexing(permutation):

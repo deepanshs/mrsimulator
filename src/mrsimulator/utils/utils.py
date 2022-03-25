@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# import warnings
+from mrsimulator.utils.error import MixedSpectralDimensionTypeError
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -10,117 +10,149 @@ VO7_QUERY_WARNING = (
 )
 
 
-def check_for_number_of_spectral_dimensions(py_dict, n=1):
-    """If spectral_dimensions in py_dict, extract and then remove from py_dict."""
+def check_for_number_of_spectral_dimensions(py_dict, is_named_method=False, n=None):
+    """Check number of spectral dimensions passed if method is named method or adds a
+    single default spectral dimension if no spectral dimension is present and not a
+    named method
 
-    if "spectral_dimensions" not in py_dict:
-        py_dict["spectral_dimensions"] = [{} for _ in range(n)]
-        return
+    Args:
+        (dict) py_dict: dict representation of method object under validation
+        (bool) is_named_method: True if from methods library, False otherwise
+        (int) n: Number of dimensions for named method
 
-    m = len(py_dict["spectral_dimensions"])
-    if m == n:
-        return
-    raise ValueError(f"Method requires exactly {n} spectral dimensions, given {m}.")
-
-
-def map_transition_query_object_to_v_7(py_dict):
-    """Update the transition query dict object from version 0.6 to version 0.7
-
-    1. update transition query dist to a list of dicts.
+    Raises:
+        ValueError if number of passed dimensions does not match required number
     """
-    # update transition query list
-    _ = [
-        evt.update({"transition_query": [evt["transition_query"]]})
-        for dim in py_dict["spectral_dimensions"]
-        if "events" in dim
-        for evt in dim["events"]
-        if "transition_query" in evt
-        if not isinstance(evt["transition_query"], list)
-    ]
+    # Named method object
+    if is_named_method:
+        if "spectral_dimensions" not in py_dict:
+            py_dict["spectral_dimensions"] = [{} for _ in range(n)]
+        else:
+            m = len(py_dict["spectral_dimensions"])
+            if m != n:
+                raise ValueError(
+                    f"Method requires exactly {n} spectral dimensions, given {m}."
+                )
+        return
 
-    _ = [
-        map_p_and_d_symmetry_to_v_7(evt)
-        for dim in py_dict["spectral_dimensions"]
-        if "events" in dim
-        for evt in dim["events"]
-        if "transition_query" in evt
-    ]
+    # Generic method object
+    if "spectral_dimensions" not in py_dict or py_dict["spectral_dimensions"] == []:
+        py_dict["spectral_dimensions"] = [{}]
 
 
-def map_p_and_d_symmetry_to_v_7(py_dict):
-    # update transition query "P" and "D" list
-    def expand_p_and_d(item):
-        itemP = (
-            []
-            if "P" not in item
-            else [item["P"]]
-            if not isinstance(item["P"], list)
-            else item["P"]
-        )
-        itemD = (
-            []
-            if "D" not in item
-            else [item["D"]]
-            if not isinstance(item["D"], list)
-            else item["D"]
-        )
+def check_spectral_dimensions_are_dict(py_dict):
+    """Check if type of passed spectral dimension is dict
 
-        if len(itemP) > 1 or len(itemD) > 1:
-            raise Exception(
-                "Ambiguous definition for transition queries. See documentation for "
-                "details."
-            )
+    Returns:
+        True if all dict
+        False if all SpectralDimension
 
-        if itemP != [] and itemD != []:
-            return [
-                {
-                    "P": p if isinstance(p, list) else [p],
-                    "D": d if isinstance(d, list) else [d],
-                }
-                for p in itemP
-                for d in itemD
-            ]
-
-        if itemP == [] and itemD != []:
-            return [{"D": d if isinstance(d, list) else [d]} for d in itemD]
-
-        if itemP != [] and itemD == []:
-            return [{"P": p if isinstance(p, list) else [p]} for p in itemP]
-
-    val = []
-    for item in py_dict["transition_query"]:
-        val += expand_p_and_d(item) if "P" in item or "D" in item else [item]
-
-    py_dict.update({"transition_query": val})
+    Raises:
+        MixedSpectralDimensionTypeError if mixed list provided
+    """
+    sd_is_dict = [isinstance(sd, dict) for sd in py_dict["spectral_dimensions"]]
+    if all(sd_is_dict):  # All items dict objects
+        return True
+    elif not any(sd_is_dict):  # All items in list are SpectralDimension objects
+        return False
+    else:  # Mixture of dict and obj provided, raise error
+        raise MixedSpectralDimensionTypeError()
 
 
-def parse_spectral_dimensions(py_dict):
-    """Convert transition_query->P->... to transition_query->ch1->P->... if no channel
-    is defined."""
-    map_transition_query_object_to_v_7(py_dict)
-    # warnings.warn(VO7_QUERY_WARNING, UserWarning)
-    _ = [
-        item.update({"ch1": item})
-        for dim in py_dict["spectral_dimensions"]
-        if "events" in dim
-        for evt in dim["events"]
-        if "transition_query" in evt
-        for item in evt["transition_query"]
-        if {"ch1", "ch2", "ch3"}.intersection(item.keys()) == set()
-    ]
-
-
-def check_for_at_least_one_events(py_dict):
+def check_for_at_least_one_event(py_dict):
     """Update events to [{}] if not present."""
-    check_dict = [isinstance(sp, dict) for sp in py_dict["spectral_dimensions"]]
-    if not all(check_dict):
-        raise Exception("Use either SpectralDimension or dict objects.")
-
     _ = [
         item.update({"events": [{}]})
         for item in py_dict["spectral_dimensions"]
         if "events" not in item
     ]
+
+
+# def map_transition_query_object_to_v_7(py_dict):
+#     """Update the transition query dict object from version 0.6 to version 0.7
+
+#     1. update transition query dist to a list of dicts.
+#     """
+#     # update transition query list
+#     _ = [
+#         evt.update({"transition_query": [evt["transition_query"]]})
+#         for dim in py_dict["spectral_dimensions"]
+#         if "events" in dim
+#         for evt in dim["events"]
+#         if "transition_query" in evt
+#         if not isinstance(evt["transition_query"], list)
+#     ]
+
+#     _ = [
+#         map_p_and_d_symmetry_to_v_7(evt)
+#         for dim in py_dict["spectral_dimensions"]
+#         if "events" in dim
+#         for evt in dim["events"]
+#         if "transition_query" in evt
+#     ]
+
+
+# def map_p_and_d_symmetry_to_v_7(py_dict):
+#     # update transition query "P" and "D" list
+#     def expand_p_and_d(item):
+#         itemP = (
+#             []
+#             if "P" not in item
+#             else [item["P"]]
+#             if not isinstance(item["P"], list)
+#             else item["P"]
+#         )
+#         itemD = (
+#             []
+#             if "D" not in item
+#             else [item["D"]]
+#             if not isinstance(item["D"], list)
+#             else item["D"]
+#         )
+
+#         if len(itemP) > 1 or len(itemD) > 1:
+#             raise Exception(
+#                 "Ambiguous definition for transition queries. See documentation for "
+#                 "details."
+#             )
+
+#         if itemP != [] and itemD != []:
+#             return [
+#                 {
+#                     "P": p if isinstance(p, list) else [p],
+#                     "D": d if isinstance(d, list) else [d],
+#                 }
+#                 for p in itemP
+#                 for d in itemD
+#             ]
+
+#         if itemP == [] and itemD != []:
+#             return [{"D": d if isinstance(d, list) else [d]} for d in itemD]
+
+#         if itemP != [] and itemD == []:
+#             return [{"P": p if isinstance(p, list) else [p]} for p in itemP]
+
+#     val = []
+#     for item in py_dict["transition_query"]:
+#         val += expand_p_and_d(item) if "P" in item or "D" in item else [item]
+
+#     py_dict.update({"transition_query": val})
+
+
+# def convert_transition_query(py_dict):
+#     """Convert transition_query->P->... to transition_query->ch1->P->... if no channel
+#     is defined."""
+#     map_transition_query_object_to_v_7(py_dict)
+#     # warnings.warn(VO7_QUERY_WARNING, UserWarning)
+#     _ = [
+#         item.update({"ch1": item})
+#         for dim in py_dict["spectral_dimensions"]
+#         if "events" in dim
+#         for evt in dim["events"]
+#         if "transition_query" in evt
+#         for item in evt["transition_query"]
+#         if {"ch1", "ch2", "ch3"}.intersection(item.keys()) == set()
+#     ]
 
 
 # def prepare_method_structure(template, **kwargs):
