@@ -20,11 +20,14 @@ The single spin transition functions for
 is the spin quantum number, and the subscripts :math:`i` and :math:`f` refer to the
 initial and final energy states.
 
-.. doxygenfunction:: STF_p()
+.. doxygenfunction:: STF_p
+   :project: mrsim
 
-.. doxygenfunction:: STF_d()
+.. doxygenfunction:: STF_d(const double, const double)
+   :project: mrsim
 
-.. doxygenfunction:: STF_f()
+.. doxygenfunction:: STF_f
+   :project: mrsim
 
 Composite single nucleus spin transition functions
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -32,8 +35,8 @@ Composite single nucleus spin transition functions
 The composite single spin transition functions are linear combinations of the
 single spin transition functions.
 
-.. doxygenfunction:: STF_cL()
-
+.. doxygenfunction:: STF_cL
+   :project: mrsim
 
 Two weakly coupled nuclei spin transition functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -43,4 +46,5 @@ The weakly coupled spin transition function for
 transition. Here, the subscript :math:`I` and :math:`S` denotes the two weakly
 coupled spins.
 
-.. doxygenfunction:: STF_dIS(double, double, double, double)
+.. doxygenfunction:: STF_dIS
+   :project: mrsim

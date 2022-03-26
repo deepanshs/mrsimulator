@@ -20,6 +20,7 @@ from mrsimulator import Simulator
 from mrsimulator.methods import ThreeQ_VAS
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.utils.collection import single_site_system_generator
+from mrsimulator.method import SpectralDimension
 
 
 # %%
@@ -89,13 +90,13 @@ len(spin_systems)
 mqvas = ThreeQ_VAS(
     channels=["27Al"],
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=512,
             spectral_width=26718.475776,  # in Hz
             reference_offset=-4174.76184,  # in Hz
             label="Isotropic dimension",
         ),
-        dict(
+        SpectralDimension(
             count=512,
             spectral_width=2e4,  # in Hz
             reference_offset=2e3,  # in Hz

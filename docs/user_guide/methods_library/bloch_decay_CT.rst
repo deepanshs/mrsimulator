@@ -7,6 +7,7 @@ Bloch decay central transition selective spectrum.
 .. code-block:: python
 
     from mrsimulator.methods import BlochDecayCTSpectrum
+    from mrsimulator.method import SpectralDimension
 
     method = BlochDecayCTSpectrum(
         channels=["1H"],
@@ -14,7 +15,7 @@ Bloch decay central transition selective spectrum.
         rotor_angle=54.735 * 3.14159 / 180,  # in rad
         magnetic_flux_density=9.4,  # in tesla
         spectral_dimensions=[
-            dict(
+            SpectralDimension(
                 count=1024,
                 spectral_width=25e3,  # in Hz
                 reference_offset=-4e3,  # in Hz
@@ -22,12 +23,12 @@ Bloch decay central transition selective spectrum.
         ],
     )
 
-The method may be imported using the following alias classes:
+.. The method may be imported using the following alias classes:
 
-.. code-block:: python
+.. .. code-block:: python
 
-    from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+..     from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 
-.. minigallery:: mrsimulator.methods.BlochDecayCTSpectrum mrsimulator.methods.BlochDecayCentralTransitionSpectrum
+.. minigallery:: mrsimulator.methods.BlochDecayCTSpectrum
     :add-heading: Examples using ``BlochDecayCTSpectrum``
     :heading-level: "

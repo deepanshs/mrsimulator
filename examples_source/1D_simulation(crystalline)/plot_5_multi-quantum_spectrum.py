@@ -11,8 +11,7 @@ Arbitrary spin transition (multi-quantum)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import Method1D
-from mrsimulator.method import SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 2
@@ -39,7 +38,7 @@ spin_system = SpinSystem(sites=[site])
 #
 # To select one or more triple-quantum transitions, assign the respective value of P and
 # D to the `transition_query`. Here, we select the symmetric triple-quantum transition.
-method = Method1D(
+method = Method(
     name="Arbitrary Transition Method",
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T

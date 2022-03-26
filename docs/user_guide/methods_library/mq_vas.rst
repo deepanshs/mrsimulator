@@ -9,18 +9,19 @@ is also sheared such that the correlating dimensions are the isotropic dimension
 .. code-block:: python
 
     from mrsimulator.methods import ThreeQ_VAS
+    from mrsimulator.method import SpectralDimension
 
     method = ThreeQ_VAS(
         channels=["87Rb"],
         magnetic_flux_density=7,  # in T
         spectral_dimensions=[
-            dict(
+            SpectralDimension(
                 count=128,
                 spectral_width=3e3,  # in Hz
                 reference_offset=-2e3,  # in Hz
                 label="Isotropic dimension",
             ),
-            dict(
+            SpectralDimension(
                 count=512,
                 spectral_width=1e4,  # in Hz
                 reference_offset=-5e3,  # in Hz

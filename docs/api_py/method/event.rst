@@ -3,7 +3,7 @@
 Events
 ------
 
-.. currentmodule:: mrsimulator.method.event
+.. currentmodule:: mrsimulator.method
 
 .. autoclass:: SpectralEvent
     :show-inheritance:
@@ -11,10 +11,10 @@ Events
     :inherited-members: BaseModel
 
 
-.. autoclass:: ConstantDurationEvent
-    :show-inheritance:
-    :members:
-    :inherited-members: BaseModel
+.. .. autoclass:: ConstantDurationEvent
+..     :show-inheritance:
+..     :members:
+..     :inherited-members: BaseModel
 
 .. autoclass:: MixingEvent
     :show-inheritance:

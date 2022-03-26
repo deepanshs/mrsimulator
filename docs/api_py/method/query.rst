@@ -1,3 +1,4 @@
+.. _query_api:
 
 .. currentmodule:: mrsimulator.method.query
 
@@ -15,6 +16,11 @@ Query objects
     :inherited-members: BaseModel
 
 .. autoclass:: MixingQuery
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel
+
+.. autoclass:: RFRotation
     :show-inheritance:
     :members:
     :inherited-members: BaseModel

@@ -4,8 +4,8 @@ import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.method import Method
 from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.methods import Method2D
 from mrsimulator.methods import SSB2D
 
 
@@ -51,9 +51,10 @@ def SSB2D_setup(ist, vr, method_type):
             ],
         )
     else:
-        method = Method2D(
+        method = Method(
             channels=[ist],
             magnetic_flux_density=B0,  # in T
+            rotor_frequency=1e12,
             spectral_dimensions=[
                 {
                     "count": 64,
@@ -67,6 +68,7 @@ def SSB2D_setup(ist, vr, method_type):
                     "spectral_width": 2e4,  # in Hz
                     "reference_offset": 5e3,  # in Hz
                     "label": "Fast MAS dimension",
+                    "events": [{}],
                 },
             ],
             affine_matrix=[[1, -1], [0, 1]],
