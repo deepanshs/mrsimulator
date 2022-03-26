@@ -8,19 +8,20 @@ dimension is fixed at infinite spinning speed
 .. code-block:: python
 
     from mrsimulator.methods import SSB2D
+    from mrsimulator.method import SpectralDimension
 
     method = SSB2D(
         channels=["13C"],
         magnetic_flux_density=7,  # in T
         rotor_frequency=1500,  # in Hz
         spectral_dimensions=[
-            dict(
+            SpectralDimension(
                 count=16,
                 spectral_width=16 * 1500,  # in Hz (= count * rotor_frequency)
                 reference_offset=-5e3,  # in Hz
                 label="Sideband dimension",
             ),
-            dict(
+            SpectralDimension(
                 count=512,
                 spectral_width=1e4,  # in Hz
                 reference_offset=-4e3,  # in Hz

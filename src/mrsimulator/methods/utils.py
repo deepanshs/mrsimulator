@@ -112,6 +112,10 @@ def parse_spectral_dimensions(py_dict):
 
 def check_for_at_least_one_events(py_dict):
     """Update events to [{}] if not present."""
+    check_dict = [isinstance(sp, dict) for sp in py_dict["spectral_dimensions"]]
+    if not all(check_dict):
+        raise Exception("Use either SpectralDimension or dict objects.")
+
     _ = [
         item.update({"events": [{}]})
         for item in py_dict["spectral_dimensions"]
