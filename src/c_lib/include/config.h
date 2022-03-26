@@ -19,8 +19,6 @@
 typedef double complex128[2];
 typedef float complex64[2];
 
-#include "tables/trig.h"
-
 #define DEBUG 0
 #define CONST_PI 3.141592653589793
 #define CONST_2PI 6.283185307179586
@@ -71,8 +69,8 @@ typedef float complex64[2];
 // ---------------------------------------------------------------------------- //
 
 #define __blas_activate
-
 #include "array.h"
+#include "tables.h"
 #include "vm.h"
 #include "vm_common.h"
 

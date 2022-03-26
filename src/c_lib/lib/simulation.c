@@ -51,8 +51,9 @@ void __mrsimulator_core(
     MRS_fftw_scheme *fftw_scheme,       // Pointer to the fftw scheme.
     MRS_averaging_scheme *scheme,       // Pointer to the powder averaging scheme.
     bool interpolation,                 // If true, perform a 1D interpolation.
-    bool *freq_contrib,                 // A list of freq_contrib booleans.
-    double *affine_matrix               // Affine transformation matrix.
+    unsigned int iso_intrp,  // Isotropic interpolation scheme (linear | Gaussian)
+    bool *freq_contrib,      // A list of freq_contrib booleans.
+    double *affine_matrix    // Affine transformation matrix.
 ) {
   /*
   The sideband computation is based on the method described by Eden and Levitt
@@ -143,23 +144,23 @@ void __mrsimulator_core(
   case 1:
     if (transition_pathway_weight[0] != 0.0) {
       one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
-                                transition_pathway_weight[0]);
+                                transition_pathway_weight[0], iso_intrp);
     }
     if (transition_pathway_weight[1] != 0.0) {
       one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec + 1,
-                                transition_pathway_weight[1]);
+                                transition_pathway_weight[1], iso_intrp);
     }
     break;
   case 2:
     if (transition_pathway_weight[0] != 0.0) {
       two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
                                 transition_pathway_weight[0], plan->number_of_sidebands,
-                                affine_matrix);
+                                affine_matrix, iso_intrp);
     }
     if (transition_pathway_weight[1] != 0.0) {
       two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec + 1,
                                 transition_pathway_weight[1], plan->number_of_sidebands,
-                                affine_matrix);
+                                affine_matrix, iso_intrp);
     }
     break;
   }
@@ -187,7 +188,8 @@ void mrsimulator_core(
     // powder orientation average
     int integration_density,  // The number of triangle along the edge of octahedron
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
-    bool interpolation, bool *freq_contrib, double *affine_matrix) {
+    bool interpolation, unsigned int interpolate_type, bool *freq_contrib,
+    double *affine_matrix) {
   // int num_process = openblas_get_num_procs();
   // int num_threads = openblas_get_num_threads();
   // openblas_set_num_threads(1);
@@ -222,7 +224,7 @@ void mrsimulator_core(
       couplings,           // Pointer to a list of couplings within a spin system.
       transition_pathway,  // Pointer to a list of transition.
       transition_pathway_weight, n_dimension, dimensions, fftw_scheme, scheme,
-      interpolation, freq_contrib, affine_matrix);
+      interpolation, interpolate_type, freq_contrib, affine_matrix);
 
   // gettimeofday(&end, NULL);
   // clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +

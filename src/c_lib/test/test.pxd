@@ -9,6 +9,7 @@
 
 from libcpp cimport bool as bool_t
 
+
 cdef extern from "angular_momentum/wigner_element.h":
     double wigner_d_element(const float l, const float m1, const float m2,
                             const double beta)
@@ -17,8 +18,8 @@ cdef extern from "angular_momentum/wigner_element.h":
                             const float m2_f, const float m2_i, const double theta,
                             const double phi, double *factor)
 
-cdef extern from "tables/trig.h":
-    void generate_table()
+cdef extern from "tables.h":
+    void generate_tables()
 
 cdef extern from "angular_momentum/wigner_matrix.h":
     void wigner_d_matrices(const int l, const int n, const double *angle, double *wigner)
@@ -60,6 +61,23 @@ cdef extern from "interpolation.h":
         double *freq3,
         double *amp,
         double *spec,
+        int *points,
+        unsigned int iso_intrp)
+
+    void triangle_interpolation1D_linear(
+        double *freq1,
+        double *freq2,
+        double *freq3,
+        double *amp,
+        double *spec,
+        int *points)
+
+    void triangle_interpolation1D_gaussian(
+        double *freq1,
+        double *freq2,
+        double *freq3,
+        double *amp,
+        double *spec,
         int *points)
 
     void triangle_interpolation2D(
@@ -72,7 +90,8 @@ cdef extern from "interpolation.h":
         double *amp,
         double *spec,
         int m0,
-        int m1)
+        int m1,
+        unsigned int iso_intrp)
 
     void octahedronInterpolation(
         double *spec,
