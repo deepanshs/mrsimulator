@@ -248,7 +248,7 @@ or copy and paste the following code into a python file and run the code.
 
     If you encounter the following error
 
-    .. code-block:: python
+    .. code-block:: shell
 
         ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
 
