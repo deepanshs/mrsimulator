@@ -515,7 +515,7 @@ def get_zeeman_states(sys):
 def transition_connect_factor(float l, float m1_f, float m1_i, float m2_f,
                         float m2_i, double theta, double phi):
     """Evaluate the probability of connecting two transitions driven by an external rf
-    pulse of phase phi and tip_angle theta. The connected transitions are
+    pulse of phase phi and angle theta. The connected transitions are
     | m1_f >< m1_i | --> | m2_f > < m2_i |.
 
     Args:
@@ -546,7 +546,7 @@ def calculate_transition_connect_weight(
         ndarray[double, ndim=1] phi
     ):
     """Evaluate the probability of connecting two transitions driven by an external rf
-    pulse of phase phi and tip_angle theta. The connected transitions are
+    pulse of phase phi and angle theta. The connected transitions are
     | m1_f >< m1_i | --> | m2_f > < m2_i |.
 
     Args:

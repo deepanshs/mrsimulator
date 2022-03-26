@@ -136,13 +136,13 @@ def basic_mixing_event_tests(the_event):
     mix = the_event.query.ch1
 
     # tip angle
-    assert mix.tip_angle == np.pi / 2
-    mix.tip_angle = 3.2123
-    assert mix.tip_angle == 3.2123
+    assert mix.angle == np.pi / 2
+    mix.angle = 3.2123
+    assert mix.angle == 3.2123
     with pytest.raises(ValidationError, match="value is not a valid float"):
-        mix.tip_angle = "test"
+        mix.angle = "test"
     # ensure the default value is rad
-    assert mix.property_units["tip_angle"] == "rad"
+    assert mix.property_units["angle"] == "rad"
 
     # phase
     assert mix.phase == 0.0
@@ -154,8 +154,8 @@ def basic_mixing_event_tests(the_event):
     assert mix.property_units["phase"] == "rad"
 
     # json()
-    should_be_units = dict(ch1=dict(tip_angle="3.2123 rad", phase="1.745 rad"))
-    should_be = dict(ch1=dict(tip_angle=3.2123, phase=1.745))
+    should_be_units = dict(ch1=dict(angle="3.2123 rad", phase="1.745 rad"))
+    should_be = dict(ch1=dict(angle=3.2123, phase=1.745))
 
     should_be_units = dict(query=should_be_units)
     assert the_event.json() == should_be_units
@@ -163,7 +163,7 @@ def basic_mixing_event_tests(the_event):
 
 
 def test_Mixing_event():
-    mix_event_dict = {"query": {"ch1": {"tip_angle": "90 degree", "phase": "0 rad"}}}
+    mix_event_dict = {"query": {"ch1": {"angle": "90 degree", "phase": "0 rad"}}}
     the_event = MixingEvent.parse_dict_with_units(mix_event_dict)
     basic_mixing_event_tests(the_event)
 

@@ -229,36 +229,25 @@ class TransitionQuery(Parseable):
         return P_expanded
 
 
-class RFRotation(Parseable):
-    """Base RFRotation class.
+class RotationalQuery(Parseable):
+    """Base RotationalQuery class.
 
     Attributes
     ----------
 
-    tip_angle:
+    angle:
         The rf rotation angle in units of radians.
 
     phase:
         The rf rotation phase in units of radians.
     """
 
-    tip_angle: float = Field(default=0.0, ge=0.0)  # in rads
+    angle: float = Field(default=0.0, ge=0.0)  # in rads
     phase: float = Field(default=0.0)  # in rads
 
-    property_unit_types: ClassVar[Dict] = {
-        "tip_angle": "angle",
-        "phase": "angle",
-    }
-
-    property_default_units: ClassVar[Dict] = {
-        "tip_angle": "rad",
-        "phase": "rad",
-    }
-
-    property_units: Dict = {
-        "tip_angle": "rad",
-        "phase": "rad",
-    }
+    property_unit_types: ClassVar[Dict] = {"angle": "angle", "phase": "angle"}
+    property_default_units: ClassVar[Dict] = {"angle": "rad", "phase": "rad"}
+    property_units: Dict = {"angle": "rad", "phase": "rad"}
 
     class Config:
         validate_assignment = True
@@ -271,24 +260,24 @@ class MixingQuery(Parseable):
     ----------
 
     ch1:
-        An optional RFRotation object for channel at index 0 of the method's channels."
+        An optional RotationalQuery object for channel at index 0 of method's channels."
 
     ch2:
-        An optional RFRotation object for channel at index 1 of the method's channels."
+        An optional RotationalQuery object for channel at index 1 of method's channels."
 
     ch3:
-        An optional RFRotation object for channel at index 2 of the method's channels."
+        An optional RotationalQuery object for channel at index 2 of method's channels."
 
     Example
     -------
 
-        >>> query = MixingQuery(ch1={"tip_angle": 1.570796, "phase": 3.141593})
+        >>> query = MixingQuery(ch1={"angle": 1.570796, "phase": 3.141593})
 
     """
 
-    ch1: Optional[RFRotation] = None
-    ch2: Optional[RFRotation] = None
-    ch3: Optional[RFRotation] = None
+    ch1: Optional[RotationalQuery] = None
+    ch2: Optional[RotationalQuery] = None
+    ch3: Optional[RotationalQuery] = None
 
     class Config:
         validate_assignment = True
@@ -307,11 +296,13 @@ class MixingQuery(Parseable):
             A :ref:`method_api` object.
         """
         py_dict_copy = deepcopy(py_dict)
-        obj = {k: RFRotation.parse_dict_with_units(v) for k, v in py_dict_copy.items()}
+        obj = {
+            k: RotationalQuery.parse_dict_with_units(v) for k, v in py_dict_copy.items()
+        }
         py_dict_copy.update(obj)
         return super().parse_dict_with_units(py_dict_copy)
 
     @property
-    def channels(self) -> List[RFRotation]:
+    def channels(self) -> List[RotationalQuery]:
         """Returns an ordered list of all channels"""
         return [self.ch1, self.ch2, self.ch3]

@@ -181,11 +181,11 @@ follows,
 .. code-block:: python
 
     mix_query = {
-        "ch1": {"tip_angle": 3.14159, "phase": 0},  # both in radians
-        "ch2": {"tip_angle": 1.57079, "phase": -1.57079},  # both in radians
-        "ch3": {"tip_angle": 0, "phase": 0},  # both in radians
+        "ch1": {"angle": 3.14159, "phase": 0},  # both in radians
+        "ch2": {"angle": 1.57079, "phase": -1.57079},  # both in radians
+        "ch3": {"angle": 0, "phase": 0},  # both in radians
     }
 
 where ``ch-`` s are the channels over which the query is performed. Its value is the
-python dictionary representation of the :class:`~mrsimulator.method.query.RFRotation` object.
-A MixingQuery is a channel-wise selective rotation with parameters `tip_angle` and `phase`.
+python dictionary representation of the :class:`~mrsimulator.method.query.RotationalQuery`
+object. A MixingQuery is a channel-wise selective rotation with parameters `angle` and `phase`.

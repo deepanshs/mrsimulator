@@ -158,7 +158,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix0",
-                    "query": {"ch1": {"tip_angle": np.pi / 4, "phase": np.pi / 2}},
+                    "query": {"ch1": {"angle": np.pi / 4, "phase": np.pi / 2}},
                 },
                 {
                     "label": "Dur0",
@@ -182,7 +182,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix1",
-                    "query": {"ch1": {"tip_angle": np.pi / 2, "phase": np.pi}},
+                    "query": {"ch1": {"angle": np.pi / 2, "phase": np.pi}},
                 },
                 {
                     "label": "Dur1",
@@ -209,7 +209,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix0",
-                    "query": {"ch1": {"tip_angle": np.pi / 2, "phase": np.pi}},
+                    "query": {"ch1": {"angle": np.pi / 2, "phase": np.pi}},
                 },
                 {
                     "label": "Dur0",
@@ -231,7 +231,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix1",
-                    "query": {"ch1": {"tip_angle": np.pi / 2, "phase": np.pi}},
+                    "query": {"ch1": {"angle": np.pi / 2, "phase": np.pi}},
                 },
                 {
                     "label": "Dur1",
