@@ -18,7 +18,7 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 # NOTE: Matplotlib should automatically generate new colors when none specified
 DURATION_WIDTH = 0.5  # Width of one ConstantDurationEvent
 SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
-MIXING_WIDTH = 0.25  # tip_angle of 360 degrees
+MIXING_WIDTH = 0.25  # angle of 360 degrees
 DEFAULTFONTSIZE = 9
 MAX_SYMMETRY_TICKS = 5  # Maximum number of ticks allowed on symmetry plot, always odd
 COLORS = {
@@ -394,9 +394,9 @@ class SequenceDiagram(CustomAxes):
     def _format_mix_label(self, ta, p):
         """Helper method to format label for mixing events. Returns (str, float)"""
         # Format to one decimal place if float, otherwise no decimal places
-        tip_angle = "{1:0.{0}f}".format(int(not float(ta).is_integer()), ta)
+        angle = "{1:0.{0}f}".format(int(not float(ta).is_integer()), ta)
         phase = "{1:0.{0}f}".format(int(not float(p).is_integer()), p)
-        return (f"({tip_angle}, {phase})", ta / 360 * MIXING_WIDTH)
+        return (f"({angle}, {phase})", ta / 360 * MIXING_WIDTH)
 
     def _plot_spec_dim_lines(self, df, ev_groups):
         """Adds lines and labels denoting spectral dimensions"""
@@ -416,7 +416,7 @@ class SequenceDiagram(CustomAxes):
                 if df["spec_dim_index"][df_idx + j] != spec_dim_idx:  # Next spec dim
                     x0 = x_data[x_idx]
                     if df["type"][df_idx + j] == "MixingEvent":
-                        x0 += sum(df["tip_angle"][df_idx:j]) / 360.0 * MIXING_WIDTH
+                        x0 += sum(df["angle"][df_idx:j]) / 360.0 * MIXING_WIDTH
                     self.plot(x=[x0, x0], y=ylim, color="black", **plot_kwargs)
                     spec_dim_idx += 1
                 x_idx += 1
@@ -435,7 +435,7 @@ class SequenceDiagram(CustomAxes):
             n_end_mix = ev_groups[-1][1]
             # Total angle / 360 * MIXING_WIDTH
             # Get last 'n_end_mix' events
-            offset = sum(item[self.channel] for item in df["tip_angle"][-n_end_mix:])
+            offset = sum(item[self.channel] for item in df["angle"][-n_end_mix:])
             offset = offset / 360 * MIXING_WIDTH
             self.x_data[-2] -= offset
 
@@ -450,7 +450,7 @@ class SequenceDiagram(CustomAxes):
                 # Iterate over each MixingEvent in group and plot rectangle
                 for j in range(num):
                     label, width = self._format_mix_label(
-                        ta=df["tip_angle"][df_idx + j][self.channel],
+                        ta=df["angle"][df_idx + j][self.channel],
                         p=df["phase"][df_idx + j][self.channel],
                     )
                     if df["label"][df_idx + j] is not None:
@@ -517,8 +517,8 @@ def _check_columns(df):
     return list(df.columns.drop(required))
 
 
-def _add_tip_angle_and_phase(df):
-    """Add tip_angle and phase columns to dataframe from mixing query"""
+def _add_angle_and_phase(df):
+    """Add angle and phase columns to dataframe from mixing query"""
     queries = np.array(
         [
             query.channels
@@ -529,18 +529,18 @@ def _add_tip_angle_and_phase(df):
 
     # No mixing events in method
     if queries.size == 0:
-        df["tip_angle"] = [None] * len(df["type"])
+        df["angle"] = [None] * len(df["type"])
         df["phase"] = [None] * len(df["type"])
         return
 
-    # Keep queries where at least one RFRotation is not None
+    # Keep queries where at least one RotationalQuery is not None
     # cannot use `is not None` in numpy arguments below
     queries = queries[:, np.any(queries != None, axis=0)]  # noqa:E711
     # TODO: Need to ensure at least one channel, maybe check if queries is empty
     ch_keys = [f"ch{i+1}" for i in range(len(queries[0]))]
 
-    tip_angles = [
-        {k: ch.tip_angle * 180 / np.pi for k, ch in zip(ch_keys, query)}
+    angles = [
+        {k: ch.angle * 180 / np.pi for k, ch in zip(ch_keys, query)}
         for query in queries
     ]
     phases = [
@@ -548,8 +548,8 @@ def _add_tip_angle_and_phase(df):
         for query in queries
     ]
 
-    df["tip_angle"] = [
-        tip_angles.pop(0) if _type == "MixingEvent" else None for _type in df["type"]
+    df["angle"] = [
+        angles.pop(0) if _type == "MixingEvent" else None for _type in df["type"]
     ]
     df["phase"] = [
         phases.pop(0) if _type == "MixingEvent" else None for _type in df["type"]
@@ -564,7 +564,7 @@ def _format_df(df):
     if np.all(np.isnan(df["d"].tolist())):
         params.remove("d")
 
-    _add_tip_angle_and_phase(df)
+    _add_angle_and_phase(df)
     return params
 
 
@@ -607,7 +607,7 @@ def _offset_x_data(df, x_data):
         # Extend first jump if first event(s) are MixingEvent
         if ev_gp_copy[0][0] == "MixingEvent":
             gp__ = ev_gp_copy[0][1]
-            offset = sum(item[ch] for item in df["tip_angle"][0:gp__])
+            offset = sum(item[ch] for item in df["angle"][0:gp__])
             offset = offset / 360.0 * MIXING_WIDTH
             offset_x[1] += offset
             # Increment event indexer by number of MixingEvents in first group
@@ -615,11 +615,11 @@ def _offset_x_data(df, x_data):
             ev_gp_copy.pop(0)  # popping shits on everything
 
         x_idx = 1
-        # print(df["tip_angle"])
+        # print(df["angle"])
         for _type, num in ev_gp_copy:
             if _type == "MixingEvent":
                 up_lim_ = df_idx + num
-                offset = sum(item[ch] for item in df["tip_angle"][df_idx:up_lim_])
+                offset = sum(item[ch] for item in df["angle"][df_idx:up_lim_])
                 offset = offset / 360.0 * MIXING_WIDTH
                 offset_x[x_idx] -= offset / 2
                 offset_x[x_idx + 1] += offset / 2

@@ -24,12 +24,12 @@ from .event import SpectralEvent  # noqa: F401
 from .plot import plot as _plot
 from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
+from .utils import angle_and_phase_list
 from .utils import cartesian_product
 from .utils import check_for_at_least_one_event
 from .utils import check_for_number_of_spectral_dimensions
 from .utils import check_spectral_dimensions_are_dict
 from .utils import mixing_query_connect_map
-from .utils import tip_angle_and_phase_list
 
 # from .utils import convert_transition_query
 
@@ -504,9 +504,7 @@ class Method(Parseable):
 
         mapping = mixing_query_connect_map(self.spectral_dimensions)
         for obj in mapping:
-            theta_, phi_ = tip_angle_and_phase_list(
-                symbol, channels, obj["mixing_query"]
-            )
+            theta_, phi_ = angle_and_phase_list(symbol, channels, obj["mixing_query"])
             map_ = obj["near_index"]
             for j, path in enumerate(pathways):
                 # if weights[j] == 0:
@@ -530,7 +528,7 @@ class Method(Parseable):
                 entries at axis 0 corresponds to initial (index 0) and final (index 1)
                 Zeeman energy states.
             spins: ndarray of spin quantum numbers of the sites.
-            theta: ndarray of rotation tip_angle per site from the mixing event.
+            theta: ndarray of rotation angle per site from the mixing event.
             phi: ndarray of rotation phase per site from the mixing event.
         """
         amp = 1

@@ -147,7 +147,7 @@ two spectral events, as follows,
     SpectralDimension(
         events=[
             SpectralEvent(name="e0", fraction=0.5),
-            MixingEvent(name="m01", query={"ch1": {"tip_angle": 3.14159, "phase": 0}}),
+            MixingEvent(name="m01", query={"ch1": {"angle": 3.14159, "phase": 0}}),
             SpectralEvent(name="e1", fraction=0.5),
         ],
     )
@@ -187,7 +187,7 @@ Examples
     SpectralDimension(
         events=[
             SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [1]}}]),
-            MixingEvent(query={"ch1": {"tip_angle": 3.14159, "phase": 0}}),
+            MixingEvent(query={"ch1": {"angle": 3.14159, "phase": 0}}),
             SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
         ]
     )
@@ -201,7 +201,7 @@ Examples
     SpectralDimension(
         events=[
             SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
-            MixingEvent(query={"ch1": {"tip_angle": 3.14159 / 2, "phase": 0}}),
+            MixingEvent(query={"ch1": {"angle": 3.14159 / 2, "phase": 0}}),
             SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
         ]
     )

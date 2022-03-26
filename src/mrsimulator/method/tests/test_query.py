@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from mrsimulator.method.query import MixingQuery
-from mrsimulator.method.query import RFRotation
+from mrsimulator.method.query import RotationalQuery
 from mrsimulator.method.query import SymmetryQuery
 from mrsimulator.method.query import TransitionQuery
 
@@ -51,33 +51,33 @@ def test_TransitionQuery():
 
 def test_RFRotation():
     # parse units
-    test = {"tip_angle": "90 deg", "phase": "5 deg"}
-    rf_obj = RFRotation.parse_dict_with_units(test)
+    test = {"angle": "90 deg", "phase": "5 deg"}
+    rf_obj = RotationalQuery.parse_dict_with_units(test)
     assert rf_obj.name is None
     assert rf_obj.description is None
     assert rf_obj.label is None
-    assert rf_obj.tip_angle == np.pi / 2.0, "RFRotation tip_angle not equal."
-    assert rf_obj.phase == 5 * np.pi / 180, "RFRotation phase not equal."
+    assert rf_obj.angle == np.pi / 2.0, "RotationalQuery angle not equal."
+    assert rf_obj.phase == 5 * np.pi / 180, "RotationalQuery phase not equal."
     # ensure the default value is rad
-    assert rf_obj.property_units["tip_angle"] == "rad"
+    assert rf_obj.property_units["angle"] == "rad"
     assert rf_obj.property_units["phase"] == "rad"
 
     # direct initialization
-    test = {"tip_angle": 3.1415, "phase": 1.212}
-    rf_obj = RFRotation(**test)
-    assert rf_obj.tip_angle == 3.1415, "RFRotation tip_angle not equal."
-    assert rf_obj.phase == 1.212, "RFRotation phase not equal."
+    test = {"angle": 3.1415, "phase": 1.212}
+    rf_obj = RotationalQuery(**test)
+    assert rf_obj.angle == 3.1415, "RotationalQuery angle not equal."
+    assert rf_obj.phase == 1.212, "RotationalQuery phase not equal."
 
 
 def test_MixingQuery():
     # parse units
     test1 = {
-        "ch1": {"tip_angle": "2.12 rad", "phase": "-176 deg"},
-        "ch2": {"tip_angle": "0.12 rad", "phase": "176 deg"},
+        "ch1": {"angle": "2.12 rad", "phase": "-176 deg"},
+        "ch2": {"angle": "0.12 rad", "phase": "176 deg"},
     }
     obj1 = MixingQuery.parse_dict_with_units(test1)
-    rf1 = RFRotation(tip_angle=2.12, phase=-176 * np.pi / 180)
-    rf2 = RFRotation(tip_angle=0.12, phase=176 * np.pi / 180)
+    rf1 = RotationalQuery(angle=2.12, phase=-176 * np.pi / 180)
+    rf2 = RotationalQuery(angle=0.12, phase=176 * np.pi / 180)
     assert obj1.name is None
     assert obj1.description is None
     assert obj1.label is None
@@ -87,11 +87,11 @@ def test_MixingQuery():
     assert obj1.channels == [rf1, rf2, None]
 
     # direct initialization
-    test2 = {"ch2": {"tip_angle": 5.101, "phase": 1.61}}
+    test2 = {"ch2": {"angle": 5.101, "phase": 1.61}}
     obj2 = MixingQuery(**test2)
     assert obj2.name is None
     assert obj2.description is None
     assert obj2.label is None
     assert obj2.ch1 is None
-    assert obj2.ch2 == RFRotation(tip_angle=5.101, phase=1.61)
+    assert obj2.ch2 == RotationalQuery(angle=5.101, phase=1.61)
     assert obj2.ch3 is None
