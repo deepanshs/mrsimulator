@@ -113,19 +113,7 @@ def test_hahn():
             [[[1, -1], [1, 1]], [[-1, 1], [-1, -1]]],
         ]
     )
-
-    expected = [
-        TransitionPathway(
-            pathway=[
-                {"initial": list(states[0]), "final": list(states[1])}
-                for states in transitions
-            ],
-            weight=w,
-        )
-        for transitions, w in zip(transition_pathways, weights)
-    ]
-
-    assert tr == expected
+    assert_transitions(transition_pathways, weights, tr)
 
 
 def test_cosy():
@@ -170,7 +158,10 @@ def test_cosy():
             [[[1, 1], [1, -1]], [[1, 1], [1, -1]]],
         ]
     )
+    assert_transitions(transition_pathways, weights, tr)
 
+
+def assert_transitions(transition_pathways, weights, tr):
     expected = [
         TransitionPathway(
             pathway=[
