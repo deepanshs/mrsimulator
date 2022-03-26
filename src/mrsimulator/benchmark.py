@@ -109,7 +109,7 @@ def quad_MAS_method():
 
 
 def quad_static_2d_method():
-    tq = [{"P": [-1], "D": [0]}]
+    tq = [{"ch1": {"P": [-1], "D": [0]}}]
     to_rad = 3.14159 / 180
     return Method(
         channels=["17O"],
