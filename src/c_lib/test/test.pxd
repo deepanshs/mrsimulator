@@ -61,7 +61,8 @@ cdef extern from "interpolation.h":
         double *freq3,
         double *amp,
         double *spec,
-        int *points)
+        int *points,
+        unsigned int iso_intrp)
 
     void triangle_interpolation1D_linear(
         double *freq1,
@@ -89,7 +90,8 @@ cdef extern from "interpolation.h":
         double *amp,
         double *spec,
         int m0,
-        int m1)
+        int m1,
+        unsigned int iso_intrp)
 
     void octahedronInterpolation(
         double *spec,

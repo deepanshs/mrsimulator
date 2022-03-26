@@ -205,16 +205,15 @@ def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
 
     cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
 
-    if type == "linear":
-        clib.triangle_interpolation1D_linear(f1, f2, f3, &amp_[0], &spectrum_amp[0], &points[0])
-    if type == "gaussian":
-        clib.triangle_interpolation1D_gaussian(f1, f2, f3, &amp_[0], &spectrum_amp[0], &points[0])
+    iso_intrp = 0 if type == "linear" else 1
+    clib.triangle_interpolation1D(f1, f2, f3, &amp_[0], &spectrum_amp[0],
+                &points[0], iso_intrp)
 
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def triangle_interpolation2D(vector1, vector2, np.ndarray[double, ndim=2] spectrum_amp,
-                            double amp=1):
+                            double amp=1, str type="linear"):
     r"""Given a vector of three points, this method interpolates the
     between the points to form a triangle. The height of the triangle is given
     as `2.0/(f[2]-f[1])` where `f` is the array `vector` sorted in an ascending
@@ -239,8 +238,9 @@ def triangle_interpolation2D(vector1, vector2, np.ndarray[double, ndim=2] spectr
 
     cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
 
+    iso_intrp = 0 if type == "linear" else 1
     clib.triangle_interpolation2D(f11, f12, f13, f21, f22, f23, &amp_[0],
-                &spectrum_amp[0, 0], shape[0], shape[1])
+                &spectrum_amp[0, 0], shape[0], shape[1], iso_intrp)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
