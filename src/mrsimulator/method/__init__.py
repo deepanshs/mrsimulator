@@ -58,22 +58,24 @@ class Method(Parseable):
         Example
         -------
 
-        >>> bloch = Method(channels=['1H'])
-        >>> bloch.channels = ['1H']
+        >>> bloch = Method(channels=['1H'], spectral_dimensions=[{}])
+        >>> bloch.channels = ['13C']  # Change channels
 
     spectral_dimensions:
         The number of spectral dimensions depends on the given method. For example, a
         `BlochDecaySpectrum` method is a one-dimensional method and thus requires a
-        single spectral dimension. The default is a single default
-        :ref:`spectral_dim_api` object.
+        single spectral dimension.
 
         Example
         -------
 
-        >>> bloch = Method(channels=['1H'])
-        >>> bloch.spectral_dimensions = [SpectralDimension(count=8, spectral_width=50)]
+        >>> bloch = Method(channels=['1H'], spectral_dimensions=[
+        ...     SpectralDimension(count=8, spectral_width=50)
+        ... ])
         >>> # or equivalently
-        >>> bloch.spectral_dimensions = [{'count': 8, 'spectral_width': 50}]
+        >>> bloch = Method(channels=['1H'], spectral_dimensions=[
+        ...     {"count": 8, "spectral_width": 50}
+        ... ])
 
     simulation:
         An object holding the result of the simulation. The initial value of this

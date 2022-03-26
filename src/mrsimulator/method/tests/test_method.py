@@ -10,6 +10,7 @@ from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
 from mrsimulator.method.frequency_contrib import freq_default
 from mrsimulator.spin_system.isotope import Isotope
+from mrsimulator.utils.error import MissingSpectralDimensionError
 from pydantic import ValidationError
 
 __author__ = "Deepansh J. Srivastava"
@@ -257,3 +258,9 @@ def test_rotor_frequency():
                 )
             ],
         )
+
+
+def test_empty_spectral_dimensions():
+    e = ".*Method requires at least one SpectralDimension, none found.*"
+    with pytest.raises(MissingSpectralDimensionError, match=e):
+        Method(channels=["1H"])

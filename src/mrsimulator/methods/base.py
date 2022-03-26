@@ -14,15 +14,6 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-class BaseMethod(Method):
-    """BaseMethod class."""
-
-    ndim: ClassVar[int] = 1
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-
 # class Method1D(BaseMethod):
 #     """Generic one-dimensional spectrum simulation method.
 
@@ -102,10 +93,11 @@ class BaseMethod(Method):
 #         extra = "forbid"
 
 
-class BaseNamedMethod(BaseMethod):
-    """BaseNameMethod class."""
+class BaseNamedMethod(Method):
+    """BaseNamedMethod class."""
 
     _named_method: bool = PrivateAttr(True)
+    ndim: ClassVar[int] = 1
 
     def __init__(self, **kwargs):
         kwargs_copy = deepcopy(kwargs)

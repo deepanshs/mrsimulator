@@ -48,6 +48,21 @@ class MixedSpectralDimensionTypeError(Exception):
         super().__init__(message)
 
 
+class MissingSpectralDimensionError(Exception):
+    """Exception raised when a generic Method object is missing the spectral_dimension
+    argument or is passed no spectral dimensions.
+
+    Attributes:
+        message: explanation of the error.
+    """
+
+    def __init__(self, message=None):
+        message = message or (
+            "Method requires at least one SpectralDimension, none found."
+        )
+        super().__init__(message)
+
+
 class MissingSpectralEventError(Exception):
     """Exception raised for missing SpectralEvent from SpectralDimension.
 

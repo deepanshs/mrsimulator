@@ -18,7 +18,7 @@ __email__ = "srivastava.89@osu.edu"
 
 def test_warnings():
     s = SpinSystem(sites=[Site(isotope="23Na")])
-    m = Method(channels=["1H"])
+    m = Method(channels=["1H"], spectral_dimensions=[{}])
     assert m.get_transition_pathways(s) == []
 
 

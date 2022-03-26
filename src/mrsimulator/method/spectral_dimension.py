@@ -109,9 +109,10 @@ class SpectralDimension(Parseable):
                 Event(event=item).event if isinstance(item, dict) else item
                 for item in v
             ]
-            total = sum([e.fraction for e in new_v if isinstance(e, SpectralEvent)])
-            if total == 0:
+            fractions = [e.fraction for e in new_v if isinstance(e, SpectralEvent)]
+            if len(fractions) == 0:  # No SpectralEvent in dimension
                 raise MissingSpectralEventError()
+            total = sum(fractions)
             if total != 1:
                 e = (
                     "The fraction attribute of each SpectralEvent in a "

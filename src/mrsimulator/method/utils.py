@@ -2,6 +2,7 @@
 from functools import reduce
 
 import numpy as np
+from mrsimulator.utils.error import MissingSpectralDimensionError
 from mrsimulator.utils.error import MixedSpectralDimensionTypeError
 
 __author__ = ["Deepansh J. Srivastava", "Maxwell C. Venetos", "Matthew D. Giammar"]
@@ -188,7 +189,7 @@ def check_for_number_of_spectral_dimensions(py_dict, is_named_method=False, n=No
 
     # Generic method object
     if "spectral_dimensions" not in py_dict or py_dict["spectral_dimensions"] == []:
-        py_dict["spectral_dimensions"] = [{}]
+        raise MissingSpectralDimensionError()
 
 
 def check_spectral_dimensions_are_dict(py_dict):
