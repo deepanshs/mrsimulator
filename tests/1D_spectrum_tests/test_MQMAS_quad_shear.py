@@ -4,8 +4,8 @@ import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.method import Method
 from mrsimulator.methods import FiveQ_VAS
-from mrsimulator.methods import Method1D
 from mrsimulator.methods import SevenQ_VAS
 from mrsimulator.methods import ThreeQ_VAS
 
@@ -38,7 +38,7 @@ def setup_simulation(site, affine_matrix, class_id=0):
         affine_matrix=affine_matrix,
     )
 
-    method_1 = Method1D(
+    method_1 = Method(
         channels=[isotope],
         magnetic_flux_density=7,  # in T
         rotor_angle=54.735 * np.pi / 180,
@@ -52,12 +52,12 @@ def setup_simulation(site, affine_matrix, class_id=0):
                     {
                         "fraction": 27 / 17,
                         "freq_contrib": ["Quad2_0"],
-                        "transition_query": [{"P": [-1], "D": [0]}],
+                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                     {
                         "fraction": 1,
                         "freq_contrib": ["Quad2_4"],
-                        "transition_query": [{"P": [-1], "D": [0]}],
+                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                 ],
             }

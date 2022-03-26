@@ -6,8 +6,6 @@ from mrsimulator import methods as NamedMethods
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.methods import Method1D
-from mrsimulator.methods import Method2D
 from mrsimulator.utils.error import ImmutableEventError
 
 __author__ = "Deepansh J. Srivastava"
@@ -58,7 +56,7 @@ def assert_parsing(method, fn1):
     ent = serialize["spectral_dimensions"][0]["events"]
     ent[0]["transition_query"][0]["ch1"]["P"] = [-100]
 
-    if method not in [Method, Method1D, Method2D]:
+    if method not in [Method]:
         with pytest.raises(ImmutableEventError, match=f".*{event_error}.*"):
             method.parse_dict_with_units(serialize)
 
@@ -90,10 +88,6 @@ def test_read_write_methods():
 
         # Parse against Method class
         assert_parsing(Method, fn1)
-
-        # Parse against Method1D/Method2D classes
-        mth_d = Method1D if item.ndim == 1 else Method2D
-        assert_parsing(mth_d, fn1)
 
         # save test
         sim = Simulator(spin_systems=[sys], methods=[fn1])

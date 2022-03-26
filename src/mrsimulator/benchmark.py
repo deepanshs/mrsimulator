@@ -6,9 +6,9 @@ import mrsimulator.tests.tests as clib
 import numpy as np
 from mrsimulator import __version__
 from mrsimulator import Simulator
+from mrsimulator.method import Method
 from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
 from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.methods import Method2D
 from mrsimulator.utils.collection import single_site_system_generator
 
 # import platform
@@ -111,7 +111,7 @@ def quad_MAS_method():
 def quad_static_2d_method():
     tq = [{"P": [-1], "D": [0]}]
     to_rad = 3.14159 / 180
-    return Method2D(
+    return Method(
         channels=["17O"],
         magnetic_flux_density=4.2,  # in T
         spectral_dimensions=[

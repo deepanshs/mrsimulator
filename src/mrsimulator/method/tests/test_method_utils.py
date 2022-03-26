@@ -2,13 +2,13 @@
 import pytest
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.method import Method
 from mrsimulator.method import MixingEvent
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method.query import MixingQuery
 from mrsimulator.method.utils import mixing_query_connect_map
 from mrsimulator.method.utils import nearest_nonmixing_event
 from mrsimulator.method.utils import tip_angle_and_phase_list
-from mrsimulator.methods import Method1D
 from mrsimulator.utils.error import MissingSpectralEventError
 
 
@@ -18,7 +18,7 @@ __email__ = "srivastava.89@osu.edu"
 
 def test_warnings():
     s = SpinSystem(sites=[Site(isotope="23Na")])
-    m = Method1D(channels=["1H"])
+    m = Method(channels=["1H"], spectral_dimensions=[{}])
     assert m.get_transition_pathways(s) == []
 
 

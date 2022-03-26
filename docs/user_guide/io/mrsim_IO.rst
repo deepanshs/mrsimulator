@@ -137,11 +137,11 @@ custom DAS method and serialize it to a file using the method
 .. code-block:: python
 
     from mrsimulator import Simulator
-    from mrsimulator.methods import Method2D
+    from mrsimulator.method import Method
     from mrsimulator.method import SpectralDimension, SpectralEvent
 
     # Create DAS method
-    das = Method2D(
+    das = Method(
         name="DAS of 17O",
         channels=["17O"],
         magnetic_flux_density=11.744,
