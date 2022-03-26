@@ -111,7 +111,7 @@ def get_mixing_query(spectral_dimensions, index):
         index -= n_events
         sp += 1
         n_events = len(spectral_dimensions[sp].events)
-    return spectral_dimensions[sp].events[index].mixing_query
+    return spectral_dimensions[sp].events[index].query
 
 
 def map_mix_query_attr_to_ch(mixing_query):

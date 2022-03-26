@@ -502,7 +502,7 @@ def _check_columns(df):
         "spec_dim_label",
         "duration",
         "fraction",
-        "mixing_query",
+        "query",
         "p",
     ]
 
@@ -518,11 +518,11 @@ def _check_columns(df):
 
 
 def _add_tip_angle_and_phase(df):
-    """Add tip_angle and phase columns to dataframe from mixing_query"""
+    """Add tip_angle and phase columns to dataframe from mixing query"""
     queries = np.array(
         [
             query.channels
-            for query in df["mixing_query"]
+            for query in df["query"]
             if query.__class__.__name__ == "MixingQuery"
         ]
     )

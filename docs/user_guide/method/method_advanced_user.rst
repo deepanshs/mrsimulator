@@ -147,14 +147,12 @@ two spectral events, as follows,
     SpectralDimension(
         events=[
             SpectralEvent(name="e0", fraction=0.5),
-            MixingEvent(
-                name="m01", mixing_query={"ch1": {"tip_angle": 3.14159, "phase": 0}}
-            ),
+            MixingEvent(name="m01", query={"ch1": {"tip_angle": 3.14159, "phase": 0}}),
             SpectralEvent(name="e1", fraction=0.5),
         ],
     )
 
-A MixingEvent object contains the attribute `mixing_query`, whose value is a MixingQuery
+A MixingEvent object contains the attribute `query`, whose value is a MixingQuery
 object. In the above example, the mixing query object queries channel-1, ``27Al``,
 for all allowed transitions from spectral events, **e0**, that when rotated by :math:`\pi`
 with a phase zero, results in a transition allowed by the spectral event, **e1**. The
@@ -189,7 +187,7 @@ Examples
     SpectralDimension(
         events=[
             SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [1]}}]),
-            MixingEvent(mixing_query={"ch1": {"tip_angle": 3.14159, "phase": 0}}),
+            MixingEvent(query={"ch1": {"tip_angle": 3.14159, "phase": 0}}),
             SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
         ]
     )
@@ -203,7 +201,7 @@ Examples
     SpectralDimension(
         events=[
             SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
-            MixingEvent(mixing_query={"ch1": {"tip_angle": 3.14159 / 2, "phase": 0}}),
+            MixingEvent(query={"ch1": {"tip_angle": 3.14159 / 2, "phase": 0}}),
             SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
         ]
     )
@@ -359,7 +357,7 @@ Reference Tables
     - Type
     - Description
 
-  * - mixing_query
+  * - query
     - ``dict``
     - A mixing_query object selecting a set of transition pathways between two SpectralEvents
 

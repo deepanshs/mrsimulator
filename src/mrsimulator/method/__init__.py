@@ -625,7 +625,7 @@ class Method(Parseable):
             - (str) label: Event label
             - (float) duration: Duration of the ConstantDurationEvent
             - (float) fraction: Fraction of the SpectralEvent
-            - (MixingQuery) mixing_query: MixingQuery object of the MixingEvent
+            - (MixingQuery) query: MixingQuery object of the MixingEvent
             - (float) magnetic_flux_density: Magnetic flux density during event in Tesla
             - (float) rotor_frequency: Rotor frequency during event in Hz
             - (float) rotor_angle: Rotor angle during event converted to Degrees
@@ -644,7 +644,7 @@ class Method(Parseable):
              'label',
              'duration',
              'fraction',
-             'mixing_query',
+             'query',
              'magnetic_flux_density',
              'rotor_frequency',
              'rotor_angle',
@@ -662,7 +662,7 @@ class Method(Parseable):
             "label",
             "duration",
             "fraction",
-            "mixing_query",
+            "query",
             "spec_dim_index",
             "spec_dim_label",
             "freq_contrib",
@@ -675,7 +675,7 @@ class Method(Parseable):
             "label": (CD, SP, MX),
             "duration": CD,
             "fraction": SP,
-            "mixing_query": MX,
+            "query": MX,
             "magnetic_flux_density": (CD, SP),
             "rotor_frequency": (CD, SP),
             "rotor_angle": (CD, SP),
