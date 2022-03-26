@@ -112,6 +112,7 @@ shifting_d = Method(
     name="Shifting-d",
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
+    rotor_frequency=0,  # in Hz
     spectral_dimensions=[
         SpectralDimension(
             count=512,
@@ -119,7 +120,6 @@ shifting_d = Method(
             label="Quadrupolar frequency",
             events=[
                 SpectralEvent(
-                    rotor_frequency=0,
                     transition_query=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Quad1_2"],
                 )
@@ -132,7 +132,6 @@ shifting_d = Method(
             label="Paramagnetic shift",
             events=[
                 SpectralEvent(
-                    rotor_frequency=0,
                     transition_query=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Shielding1_0", "Shielding1_2"],
                 )

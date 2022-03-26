@@ -95,7 +95,7 @@ def test_DAS():
     bloch = BlochDecayCTSpectrum(
         channels=["17O"],
         magnetic_flux_density=B0,  # in T
-        rotor_frequency=1e9,  # in Hz
+        rotor_frequency=np.inf,  # in Hz
         rotor_angle=54.735 * 3.14159 / 180,
         spectral_dimensions=[
             {

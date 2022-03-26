@@ -84,7 +84,7 @@ def test_MQMAS():
     method = BlochDecayCTSpectrum(
         channels=["87Rb"],
         magnetic_flux_density=9.4,
-        rotor_frequency=1e9,
+        rotor_frequency=np.inf,
         spectral_dimensions=[{"count": 128, "spectral_width": 20000}],
     )
 
@@ -148,7 +148,7 @@ def test_ThreeQ_VAS_spin_3halves():
     method = BlochDecayCTSpectrum(
         channels=["87Rb"],
         magnetic_flux_density=B0,
-        rotor_frequency=1e9,
+        rotor_frequency=np.inf,
         spectral_dimensions=[{"count": 512, "spectral_width": 20000}],
     )
 
