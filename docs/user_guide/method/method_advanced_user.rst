@@ -26,7 +26,7 @@ A generic setup for a custom method (similar to the stock method) follows,
         affine_matrix=[1, 1, 1, 1],
     )
 
-where `name` is an optional method name, `channels` are a list of isotopes used in the
+where `name` is an optional method name, `channels` is a list of isotopes used in the
 method, `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency` are global
 parameters for the method, `spectral_dimension` is the list of SpectralDimension
 objects defining the spectral grid, and `affine_matrix` is an optional affine square
