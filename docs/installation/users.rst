@@ -6,7 +6,7 @@ For the users
 .. note::
 
    If you encounter an issue during installation, see our
-   `troubleshooting section <instillation_troubleshooting>`__.
+   `troubleshooting section <instillation_troubleshooting>`_.
 
    If that doesn't resolve your issue, please create a bug report on our
    `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
@@ -23,12 +23,6 @@ See :ref:`requirements` for a full list of requirements.
 
 Make sure you have the required version of python by typing the following in the terminal,
 
-.. tip::
-    You may also click the copy-button located at the top-right corner of the code cell
-    area in the HTML docs, to copy the code lines without the prompts and then paste it
-    as usual.
-    See `Sphinx-copybutton <https://sphinx-copybutton.readthedocs.io/en/latest/>`_
-
 .. code-block:: shell
 
       $ python --version
@@ -37,11 +31,8 @@ For *Mac* users, python version 3 is installed under the name *python3*. You may
 *python* for *python3* in the above command and all subsequent python statements.
 
 For *Windows* users, Python is not usually installed by default. See
- `Python.org <https://www.python.org/downloads/windows/>`_ for a list of official Python downloads
- and Windows installation instructions.
-
-.. You can find more information under the Windows tab in the
-.. :ref:`building_from_source` section.
+`Python.org <https://www.python.org/downloads/windows/>`_ for a list of official Python downloads
+and Windows installation instructions.
 
 .. seealso::
 
@@ -50,13 +41,8 @@ For *Windows* users, Python is not usually installed by default. See
   `Anaconda <https://www.anaconda.com/products/individual/>`_ websites and follow their
   instructions on how to install python.
 
-.. We recommend installing `anaconda <https://www.anaconda.com/distribution/>`_
-.. distribution for python version 3.6 or higher. The anaconda distribution
-.. ships with numerous packages and modules including Numpy, Scipy, and Matplotlib
-.. which are useful packages for scientific datasets.
-
-Installing ``mrsimulator`` using pip
-------------------------------------
+Installing ``mrsimulator``
+--------------------------
 
 On Google Colab Notebook
 ''''''''''''''''''''''''
@@ -71,7 +57,7 @@ updated. In a new cell, run
 
 .. code-block:: shell
 
-       !pip install -U numpy
+    !pip install -U numpy
 
 and press the *Restart Runtime* button
 
@@ -79,7 +65,7 @@ To install the ``mrsimulator`` package, type
 
 .. code-block:: shell
 
-      !pip install mrsimulator
+    !pip install mrsimulator
 
 in a new cell, and execute. All done! You may now start using the library, or
 proceed to :ref:`getting_started` to continue the tutorial.
@@ -91,71 +77,26 @@ On Local machine (Using pip)
 ''''''''''''''''''''''''''''
 
 PIP is a package manager for Python packages and is included with python version 3.4
-and higher. PIP is the easiest way to install python packages.
+and higher. PIP is the easiest way to install python packages. Install the package
+using pip as follows,
 
-.. tabs::
+.. code-block:: bash
 
-  .. tab:: Linux
-    :tabid: linux
+    $ pip install mrsimulator
 
-    For *Linux* users, we provide the binary distributions of the mrsimulator package for
-    python versions 3.6-3.10. Install the package using pip as follows,
+For *Mac* users, if the above statement didn't work, you are probably using mac OS
+system python, in which case, use the following,
 
-    .. code-block:: bash
+.. code-block:: bash
 
-        $ pip install mrsimulator
+    $ python3 -m pip install mrsimulator --user
 
-  .. tab:: Mac OSX
-    :tabid: macosx
+For windows users using anaconda python 3.8 and higher, you need to set the following
+environment variable in the ``Anaconda Prompt`` before running mrsimulator scripts.
 
-    For *Mac* users, we provide the binary distributions of the mrsimulator package for
-    python versions 3.6-3.10. Install the package using pip as follows,
+.. code-block:: bash
 
-    .. code-block:: bash
-
-        $ pip install mrsimulator
-
-    If the above statement didn't work, you are probably using mac OS system python, in
-    which case, use the following,
-
-    .. code-block:: bash
-
-        $ python3 -m pip install mrsimulator --user
-
-  .. tab:: Windows
-    :tabid: windows
-
-    .. 
-      note:: We currently do not provide binary distributions for windows. You'll need
-      to compile and build the mrsimulator library from source. The following instructions
-      are one-time installation only. If you are upgrading the package, see the
-      :ref:`upgrading_to_a_newer_version` sub-section.
-
-    .. 
-      include:: source_install/windows.rst
-    
-    **Check Python Version**
-
-    If you downloaded python from the Anaconda package, follow the instructions above to determine 
-    what version of python you are using.  If you have python 3.6 or 3.7 installed or you installed
-    python from `python.org <https://www.python.org/downloads/>`_, proceed to the next section.  
-    If you have Anaconda python 3.8, 3.9, or 3.10 installed, you will need to do one additional step.  
-    In a terminal window, type
-
-    .. code-block:: bash
-
-        $ set CONDA_DLL_SEARCH_MODIFICATION_ENABLE='1'
-    
-    Then, in the same terminal window, proceed to installing the package. 
-
-    **Install the package**.
-
-    From within the ``Anaconda Prompt``, build and install the mrsimulator package
-    using pip.
-
-    .. code-block:: bash
-
-      $ pip install mrsimulator
+    $ set CONDA_DLL_SEARCH_MODIFICATION_ENABLE='1'
 
 If you get a ``PermissionError``, it usually means that you do not have the required
 administrative access to install new packages to your Python installation. In this
@@ -307,7 +248,7 @@ or copy and paste the following code into a python file and run the code.
 
     If you encounter the following error
 
-    .. code-block:: shell
+    .. code-block:: python
 
         ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
 
