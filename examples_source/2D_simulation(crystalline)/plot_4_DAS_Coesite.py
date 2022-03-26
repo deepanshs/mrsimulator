@@ -13,9 +13,8 @@ Coesite, ¹⁷O (I=5/2) DAS
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
-from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
-from mrsimulator.method import SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -28,10 +27,10 @@ filename = "https://sandbox.zenodo.org/record/835664/files/coesite.mrsys"
 sim.load_spin_systems(filename)
 
 # %%
-# Use the generic 2D method, `Method2D`, to simulate a DAS spectrum by customizing the
-# method parameters, as shown below. Note, the Method2D method simulates an infinite
+# Use the generic method, `Method`, to simulate a 2D DAS spectrum by customizing the
+# method parameters, as shown below. Note, the Method method simulates an infinite
 # spinning speed spectrum.
-das = Method2D(
+das = Method(
     name="Dynamic Angle Spinning",
     channels=["17O"],
     magnetic_flux_density=11.74,  # in T

@@ -12,8 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
-from mrsimulator.methods import Method1D
-from mrsimulator.method import SpectralDimension, SpectralEvent, MixingEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 2
@@ -41,7 +40,7 @@ spin_system_2 = SpinSystem(sites=[S1, S2], couplings=[S12], label="Coupled syste
 #
 # Writing a custom method is simply specifying an appropriate list of event objects per
 # spectral dimension. In this example, we are interested in a one-dimensional Hahnecho
-# method, and we use the generic `Method1D` class as a template. For a Hahnecho, we will
+# method, and we use the generic `Method` class as a template. For a Hahnecho, we will
 # use two types of Event objects---SpectralEvent and MixingEvent.
 #
 # A SpectralEvent object is where we sample the frequency contributions. The net
@@ -78,7 +77,7 @@ spin_system_2 = SpinSystem(sites=[S1, S2], couplings=[S12], label="Coupled syste
 # multi-event method such as HahnEcho. In the following code, we define a mixing query
 # on channel-1 by setting the attributes ``tip_angle`` and ``phase`` to :math:`\pi` and
 # 0, respectively. There two parameters are analogous to the pulse angle and phase.
-hahn_echo = Method1D(
+hahn_echo = Method(
     channels=["1H"],
     magnetic_flux_density=9.4,  # in T
     spectral_dimensions=[
