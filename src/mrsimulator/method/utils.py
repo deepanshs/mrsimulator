@@ -2,9 +2,10 @@
 from functools import reduce
 
 import numpy as np
+from mrsimulator.utils.error import MixedSpectralDimensionTypeError
 
-__author__ = ["Deepansh J. Srivastava", "Maxwell C. Venetos"]
-__email__ = ["srivastava.89@osu.edu", "maxvenetos@gmail.com"]
+__author__ = ["Deepansh J. Srivastava", "Maxwell C. Venetos", "Matthew D. Giammar"]
+__email__ = ["srivastava.89@osu.edu", "maxvenetos@gmail.com", "giammar.7@ous.edu"]
 
 
 def cartesian_product(*arrays):
@@ -157,6 +158,65 @@ def mixing_query_connect_map(spectral_dimensions):
     ]
 
     return mapping
+
+
+# Helper functions for validating a method object
+def check_for_number_of_spectral_dimensions(py_dict, is_named_method=False, n=None):
+    """Check number of spectral dimensions passed if method is named method or adds a
+    single default spectral dimension if no spectral dimension is present and not a
+    named method
+
+    Args:
+        (dict) py_dict: dict representation of method object under validation
+        (bool) is_named_method: True if from methods library, False otherwise
+        (int) n: Number of dimensions for named method
+
+    Raises:
+        ValueError if number of passed dimensions does not match required number
+    """
+    # Named method object
+    if is_named_method:
+        if "spectral_dimensions" not in py_dict:
+            py_dict["spectral_dimensions"] = [{} for _ in range(n)]
+        else:
+            m = len(py_dict["spectral_dimensions"])
+            if m != n:
+                raise ValueError(
+                    f"Method requires exactly {n} spectral dimensions, given {m}."
+                )
+        return
+
+    # Generic method object
+    if "spectral_dimensions" not in py_dict or py_dict["spectral_dimensions"] == []:
+        py_dict["spectral_dimensions"] = [{}]
+
+
+def check_spectral_dimensions_are_dict(py_dict):
+    """Check if type of passed spectral dimension is dict
+
+    Returns:
+        True if all dict
+        False if all SpectralDimension
+
+    Raises:
+        MixedSpectralDimensionTypeError if mixed list provided
+    """
+    sd_is_dict = [isinstance(sd, dict) for sd in py_dict["spectral_dimensions"]]
+    if all(sd_is_dict):  # All items dict objects
+        return True
+    elif not any(sd_is_dict):  # All items in list are SpectralDimension objects
+        return False
+    else:  # Mixture of dict and obj provided, raise error
+        raise MixedSpectralDimensionTypeError()
+
+
+def check_for_at_least_one_event(py_dict):
+    """Update events to [{}] if not present."""
+    _ = [
+        item.update({"events": [{}]})
+        for item in py_dict["spectral_dimensions"]
+        if "events" not in item
+    ]
 
 
 # Deprecated

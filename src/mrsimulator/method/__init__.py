@@ -15,9 +15,6 @@ from mrsimulator.transition import SymmetryPathway
 from mrsimulator.transition import Transition
 from mrsimulator.transition import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
-from mrsimulator.utils.utils import check_for_at_least_one_event
-from mrsimulator.utils.utils import check_for_number_of_spectral_dimensions
-from mrsimulator.utils.utils import check_spectral_dimensions_are_dict
 from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
@@ -28,10 +25,13 @@ from .plot import plot as _plot
 from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
+from .utils import check_for_at_least_one_event
+from .utils import check_for_number_of_spectral_dimensions
+from .utils import check_spectral_dimensions_are_dict
 from .utils import mixing_query_connect_map
 from .utils import tip_angle_and_phase_list
 
-# from mrsimulator.utils.utils import convert_transition_query
+# from .utils import convert_transition_query
 
 # from .event import ConstantDurationEvent  # noqa: F401
 
@@ -189,12 +189,10 @@ class Method(Parseable):
 
     @classmethod
     def check(cls, kwargs, is_named_method=False, ndim=None):
-        # need to not add event in if named method
         check_for_number_of_spectral_dimensions(kwargs, is_named_method, ndim)
         sd_is_dict = check_spectral_dimensions_are_dict(kwargs)
         if sd_is_dict and not is_named_method:
             check_for_at_least_one_event(kwargs)
-        # convert_transition_query(kwargs)
 
     @staticmethod
     def __check_csdm__(data):
