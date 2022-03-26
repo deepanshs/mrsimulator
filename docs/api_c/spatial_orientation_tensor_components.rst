@@ -18,28 +18,29 @@ Single nucleus spatial orientation tensors
 First-order Nuclear shielding
 """""""""""""""""""""""""""""
 
-.. doxygenfunction:: sSOT_1st_order_nuclear_shielding_tensor_components()
-
+.. doxygenfunction:: sSOT_1st_order_nuclear_shielding_tensor_components
+   :project: mrsim
 
 First-order Electric Quadrupole
 """""""""""""""""""""""""""""""
 
-.. doxygenfunction:: sSOT_1st_order_electric_quadrupole_tensor_components()
-
+.. doxygenfunction:: sSOT_1st_order_electric_quadrupole_tensor_components
+   :project: mrsim
 
 Second-order Electric Quadrupole
 """"""""""""""""""""""""""""""""
 
-.. doxygenfunction:: sSOT_2nd_order_electric_quadrupole_tensor_components()
-
+.. doxygenfunction:: sSOT_2nd_order_electric_quadrupole_tensor_components
+   :project: mrsim
 
 First-order J-coupling (weak coupling limit)
 """"""""""""""""""""""""""""""""""""""""""""
 
-.. doxygenfunction:: sSOT_1st_order_weakly_coupled_J_tensor_components()
-
+.. doxygenfunction:: sSOT_1st_order_weakly_coupled_J_tensor_components
+   :project: mrsim
 
 First-order dipolar-coupling (weak coupling limit)
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
-.. doxygenfunction:: sSOT_1st_order_weakly_coupled_dipolar_tensor_components()
+.. doxygenfunction:: sSOT_1st_order_weakly_coupled_dipolar_tensor_components
+   :project: mrsim

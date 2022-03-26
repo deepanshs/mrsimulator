@@ -85,7 +85,7 @@ The following code is used to create the plots in this section
     # function to render figures.
     def plot(csdm_object):
         ax = plt.subplot(projection="csdm")
-        ax.plot(csdm_object, linewidth=1.5)
+        ax.plot(csdm_object.real, linewidth=1.5)
         ax.invert_xaxis()
         plt.tight_layout()
         plt.show()
@@ -111,6 +111,7 @@ not be sufficient.
 
     from mrsimulator import Simulator, SpinSystem, Site
     from mrsimulator.methods import BlochDecaySpectrum
+    from mrsimulator.method import SpectralDimension
     from mrsimulator.spin_system.tensors import SymmetricTensor
 
     # create a site with a large anisotropy of 100 ppm
@@ -121,7 +122,7 @@ not be sufficient.
     method = BlochDecaySpectrum(
         channels=["29Si"],
         rotor_frequency=200,
-        spectral_dimensions=[dict(count=1024, spectral_width=25000)],
+        spectral_dimensions=[SpectralDimension(count=1024, spectral_width=25000)],
     )
 
     sim = Simulator(spin_systems=[Si29_sys], methods=[method])
@@ -189,7 +190,7 @@ Consider the following examples.
     sim.methods[0] = BlochDecaySpectrum(
         channels=["29Si"],
         rotor_frequency=0,  # in Hz
-        spectral_dimensions=[dict(count=1024, spectral_width=25000)],
+        spectral_dimensions=[SpectralDimension(count=1024, spectral_width=25000)],
     )
 
     # simulate and plot
@@ -285,7 +286,7 @@ following example.
 
     # Create a method representing a simple 1-pulse acquire experiment
     method = BlochDecaySpectrum(
-        channels=["1H"], spectral_dimensions=[dict(count=1024, spectral_width=10000)]
+        channels=["1H"], spectral_dimensions=[SpectralDimension(count=1024, spectral_width=10000)]
     )
 
     # Create simulator object, simulate, and plot

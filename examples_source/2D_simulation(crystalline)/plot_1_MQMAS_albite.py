@@ -16,6 +16,7 @@ from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import ThreeQ_VAS
 from mrsimulator import signal_processing as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -36,13 +37,13 @@ method = ThreeQ_VAS(
     channels=["27Al"],
     magnetic_flux_density=7,  # in T
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=256,
             spectral_width=1e4,  # in Hz
             reference_offset=-3e3,  # in Hz
             label="Isotropic dimension",
         ),
-        dict(
+        SpectralDimension(
             count=512,
             spectral_width=1e4,  # in Hz
             reference_offset=4e3,  # in Hz

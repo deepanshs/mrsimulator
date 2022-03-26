@@ -15,10 +15,9 @@ MCl₂.2D₂O, ²H (I=1) Shifting-d echo
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -97,7 +96,7 @@ spin_systems = [
 ]
 
 # %%
-# Use the generic 2D method, `Method2D`, to generate a shifting-d echo method. The
+# Use the generic method, `Method`, to generate a 2D shifting-d echo method. The
 # reported shifting-d 2D sequence is a correlation of the shielding frequencies to the
 # first-order quadrupolar frequencies. Here, we create a correlation method using the
 # :attr:`~mrsimulator.method.event.freq_contrib` attribute, which acts as a switch
@@ -109,7 +108,7 @@ spin_systems = [
 # frequency contributions. *Shielding1_0* and *Shielding1_2* are enumerations for
 # the first-order shielding with zeroth and second-rank tensor contributions,
 # respectively. See :ref:`freq_contrib_api` for details.
-shifting_d = Method2D(
+shifting_d = Method(
     name="Shifting-d",
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T

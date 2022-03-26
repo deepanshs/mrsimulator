@@ -19,6 +19,7 @@ Here we import everything we will use in this example
 
     from mrsimulator import Simulator, Site, SpinSystem, Coupling
     from mrsimulator.methods import BlochDecaySpectrum
+    from mrsimulator.method import SpectralDimension
     from mrsimulator import signal_processing as sp
 
 Spin Systems
@@ -158,7 +159,7 @@ These methods emulate simple 1-pulse acquire experiments.
         channels=["1H"],
         magnetic_flux_density=9.4,  # in T
         spectral_dimensions=[
-            dict(
+            SpectralDimension(
                 count=16000,
                 spectral_width=1.5e3,  # in Hz
                 reference_offset=950,  # in Hz
@@ -171,7 +172,7 @@ These methods emulate simple 1-pulse acquire experiments.
         channels=["13C"],
         magnetic_flux_density=9.4,  # in T
         spectral_dimensions=[
-            dict(
+            SpectralDimension(
                 count=32000,
                 spectral_width=8e3,  # in Hz
                 reference_offset=4e3,  # in Hz

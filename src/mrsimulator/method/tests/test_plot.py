@@ -126,25 +126,7 @@ def test_add_tip_angle_and_phase():
             np.nan,
         ]
     )
-    p_should_be_ch2 = np.array(
-        [
-            10,
-            np.nan,
-            20,
-            30,
-            np.nan,
-            np.nan,
-            np.nan,
-            np.nan,
-            np.nan,
-            40,
-            50,
-            60,
-            np.nan,
-            np.nan,
-            np.nan,
-        ]
-    )
+    p_should_be_ch2 = ta_should_be_ch2
 
     df2_ch1_tip = [x["ch1"] if x is not None else np.nan for x in df2["tip_angle"]]
     df2_ch2_tip = [x["ch2"] if x is not None else np.nan for x in df2["tip_angle"]]
@@ -434,7 +416,10 @@ def method2_df():
                             },
                         }
                     },
-                    {"fraction": 1, "transition_query": [{"P": [1], "D": [0]}]},
+                    {
+                        "fraction": 1,
+                        "transition_query": [{"ch1": {"P": [1], "D": [0]}}],
+                    },
                     {
                         "mixing_query": {
                             "ch1": {"tip_angle": np.pi, "phase": 0.15},
@@ -453,7 +438,10 @@ def method2_df():
                             },
                         }
                     },
-                    {"duration": 1.5, "transition_query": [{"P": [-1], "D": [2]}]},
+                    {
+                        "duration": 1.5,
+                        "transition_query": [{"ch1": {"P": [-1], "D": [2]}}],
+                    },
                 ],
             },
             {

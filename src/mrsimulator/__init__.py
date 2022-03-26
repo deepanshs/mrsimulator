@@ -356,7 +356,7 @@ def parse(py_dict, parse_units: bool = True):
     root_keys = set(Mrsimulator().dict().keys())
     if len(set(py_dict.keys()) - root_keys) != 0:
         raise ValueError(
-            "An incompatible JSON root-level structure was detected. Use the method"
+            "An incompatible JSON root-level structure was detected. Use the method "
             "mrsim_to_v0_7 to convert to a compliant structure."
         )
 

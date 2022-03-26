@@ -15,12 +15,11 @@ import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
 from mrsimulator import Simulator
-from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
-from mrsimulator.method import SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -81,7 +80,7 @@ spin_systems = single_site_system_generator(
 # Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-DAS = Method2D(
+DAS = Method(
     channels=["17O"],
     magnetic_flux_density=11.744,  # in T
     spectral_dimensions=[

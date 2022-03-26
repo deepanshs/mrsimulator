@@ -10,7 +10,7 @@ from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import Method2D
+from mrsimulator.method import Method
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.models import ExtCzjzekDistribution
 from mrsimulator.spin_system.isotope import Isotope
@@ -51,7 +51,7 @@ def add_site(doctest_namespace):
     doctest_namespace["pprint"] = pprint
     doctest_namespace["Isotope"] = Isotope
     doctest_namespace["sp"] = sp
-    doctest_namespace["Method2D"] = Method2D
+    doctest_namespace["Method"] = Method
 
     site1 = Site(
         isotope="13C",

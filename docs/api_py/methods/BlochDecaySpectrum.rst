@@ -14,23 +14,25 @@ Bloch Decay Spectrum method
 .. doctest::
 
     >>> from mrsimulator.methods import BlochDecaySpectrum
+    >>> from mrsimulator.method import SpectralDimension
     >>> Bloch_method = BlochDecaySpectrum(
     ...     channels=["1H"],
     ...     rotor_frequency=5000,  # in Hz
     ...     rotor_angle=54.735 * 3.14159 / 180,  # in rad
     ...     magnetic_flux_density=9.4,  # in T
     ...     spectral_dimensions=[
-    ...         dict(count=1024, spectral_width=50000, reference_offset=-8000)
+    ...         SpectralDimension(count=1024, spectral_width=50000, reference_offset=-8000)
     ...     ],
     ... )
 
 
-Bloch decay method is a special case of :py:class:`~mrsimulator.methods.Method1D`, given as
+Bloch decay method is is part of the methods library,
+but can be constructed with a generic method as follows
 
 .. doctest::
 
-    >>> from mrsimulator.methods import Method1D
-    >>> Blochdecay = Method1D(
+    >>> from mrsimulator.method import Method
+    >>> Blochdecay = Method(
     ...     channels=["1H"],
     ...     rotor_frequency=5000,  # in Hz
     ...     rotor_angle=54.735 * 3.14159 / 180,  # in rad
@@ -40,7 +42,7 @@ Bloch decay method is a special case of :py:class:`~mrsimulator.methods.Method1D
     ...             "count": 1024,
     ...             "spectral_width": 50000,  # in Hz
     ...             "reference_offset": -8000,  # in Hz
-    ...             "events": [{"transition_query": [{"P": [-1]}]}],
+    ...             "events": [{"transition_query": [{"ch1": {"P": [-1]}}]}],
     ...         }
     ...     ],
     ... )

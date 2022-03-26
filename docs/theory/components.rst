@@ -567,6 +567,7 @@ Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}`
 
 .. cssclass:: table-bordered table-striped centered
 
+.. _tb_freq_components:
 .. list-table:: The table presents a list of frequency tensors defined in the principal
   axis system of the respective interaction tensor from Eq. :eq:`eq_7`,
   :math:`\varpi_{L,n}^{(k)}`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonian supported in ``mrsimulator``.

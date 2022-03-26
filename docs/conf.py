@@ -205,9 +205,9 @@ sphinx_gallery_conf = {
 }
 
 intersphinx_mapping = {
-    "matplotlib": ("https://matplotlib.org", None),
+    "matplotlib": ("https://matplotlib.org/stable", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "csdmpy": ("https://csdmpy.readthedocs.io/en/stable/", None),
     "astropy": ("https://docs.astropy.org/en/stable/", None),
     "lmfit": ("https://lmfit-py.readthedocs.io/en/stable/", None),
@@ -227,9 +227,9 @@ try:
     doxy_output = os.path.abspath("./xml")
 
     # Setup the breathe extension
-    breathe_projects = {"My Project": doxy_output}
-    breathe_default_project = "My Project"
-    breathe_domain_by_extension = {"h": "c", "py": "py"}
+    breathe_projects = {"mrsim": doxy_output}
+    breathe_default_project = "mrsim"
+    breathe_domain_by_extension = {"h": "c"}
     breathe_use_project_refids = True
     breathe_doxygen_config_options = {
         "PREDEFINED": "DOXYGEN_SHOULD_SKIP_THIS",
@@ -284,7 +284,7 @@ language = None
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = None
+pygments_style = "default"
 
 
 # ---------------------------------------------------------------------------- #

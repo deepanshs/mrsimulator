@@ -137,11 +137,11 @@ custom DAS method and serialize it to a file using the method
 .. code-block:: python
 
     from mrsimulator import Simulator
-    from mrsimulator.methods import Method2D
+    from mrsimulator.method import Method
     from mrsimulator.method import SpectralDimension, SpectralEvent
 
     # Create DAS method
-    das = Method2D(
+    das = Method(
         name="DAS of 17O",
         channels=["17O"],
         magnetic_flux_density=11.744,
@@ -286,7 +286,9 @@ method. This method will return an ordered list of a :ref:`simulator_api` object
     :include-source: False
 
     import os
-    os.remove("example.mrmtd")
-    os.remove("example.mrsim")
-    os.remove("example.mrsys")
-    os.remove("sample.mrsim")
+    from os.path import isfile
+
+    if isfile("example.mrmtd"): os.remove("example.mrmtd")
+    if isfile("example.mrsim"): os.remove("example.mrsim")
+    if isfile("example.mrsys"): os.remove("example.mrsys")
+    if isfile("sample.mrsim"): os.remove("sample.mrsim")
