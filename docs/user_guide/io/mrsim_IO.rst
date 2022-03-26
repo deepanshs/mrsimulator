@@ -286,7 +286,9 @@ method. This method will return an ordered list of a :ref:`simulator_api` object
     :include-source: False
 
     import os
-    os.remove("example.mrmtd")
-    os.remove("example.mrsim")
-    os.remove("example.mrsys")
-    os.remove("sample.mrsim")
+    from os.path import isfile
+
+    if isfile("example.mrmtd"): os.remove("example.mrmtd")
+    if isfile("example.mrsim"): os.remove("example.mrsim")
+    if isfile("example.mrsys"): os.remove("example.mrsys")
+    if isfile("sample.mrsim"): os.remove("sample.mrsim")

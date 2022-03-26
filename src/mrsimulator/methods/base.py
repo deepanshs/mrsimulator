@@ -187,3 +187,10 @@ class BlochDecayCentralTransitionSpectrum(BlochDecayCTSpectrum):
 
     class Config:
         extra = "forbid"
+
+    def __init__(self, **kwargs):
+        DeprecationWarning(
+            "BlochDecayCentralTransitionSpectrum is deprecated, use ",
+            "BlochDecayCTSpectrum class instead",
+        )
+        super().__init__(**kwargs)

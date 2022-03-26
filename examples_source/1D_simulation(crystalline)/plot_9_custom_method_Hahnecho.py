@@ -14,6 +14,7 @@ import numpy as np
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from pprint import pprint
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -95,18 +96,20 @@ hahn_echo = Method(
 
 # %%
 # You may also visualize the method using the `plot` function.
+plt.figure(figsize=(5, 3))
 hahn_echo.plot()
+plt.show()
 
 # %%
 # As mentioned before, a method object is decoupled from the spin system object. Notice,
 # when we get the transition pathways from this method for a single-site spin system, we
 # get a single transition pathway.
-print(hahn_echo.get_transition_pathways(spin_system_1))
+pprint(hahn_echo.get_transition_pathways(spin_system_1))
 
 # %%
 # In the case of a homonuclear two-site spin 1/2 spin system, the same method returns
 # four transition pathways.
-print(hahn_echo.get_transition_pathways(spin_system_2))
+pprint(hahn_echo.get_transition_pathways(spin_system_2))
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and run the

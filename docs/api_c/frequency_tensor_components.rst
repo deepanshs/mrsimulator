@@ -20,18 +20,20 @@ Single nucleus frequency tensor components
 First-order Nuclear shielding
 """""""""""""""""""""""""""""
 
-.. doxygenfunction:: FCF_1st_order_nuclear_shielding_tensor_components()
+.. doxygenfunction:: FCF_1st_order_nuclear_shielding_tensor_components
+   :project: mrsim
 
 First-order Electric Quadrupole
 """""""""""""""""""""""""""""""
 
-.. doxygenfunction:: FCF_1st_order_electric_quadrupole_tensor_components()
+.. doxygenfunction:: FCF_1st_order_electric_quadrupole_tensor_components
+   :project: mrsim
 
 Second-order Electric Quadrupole
 """"""""""""""""""""""""""""""""
 
-.. doxygenfunction:: FCF_2nd_order_electric_quadrupole_tensor_components()
-
+.. doxygenfunction:: FCF_2nd_order_electric_quadrupole_tensor_components
+   :project: mrsim
 
 
 Two coupled nucleus frequency tensor components
@@ -40,10 +42,11 @@ Two coupled nucleus frequency tensor components
 First-order J-coupling (weak coupling limit)
 """"""""""""""""""""""""""""""""""""""""""""
 
-.. doxygenfunction:: FCF_1st_order_weak_J_coupling_tensor_components()
-
+.. doxygenfunction:: FCF_1st_order_weak_J_coupling_tensor_components
+   :project: mrsim
 
 First-order dipolar-coupling (weak coupling limit)
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
-.. doxygenfunction:: FCF_1st_order_weak_dipolar_coupling_tensor_components()
+.. doxygenfunction:: FCF_1st_order_weak_dipolar_coupling_tensor_components
+   :project: mrsim
