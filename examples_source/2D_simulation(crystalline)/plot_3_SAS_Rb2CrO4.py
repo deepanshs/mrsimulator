@@ -13,12 +13,12 @@ Rb₂CrO₄, ⁸⁷Rb (I=3/2) SAS
 # observed and reported by Shore `et al.` [#f1]_. The following is the simulation
 # based on the published tensor parameters.
 import matplotlib.pyplot as plt
+import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.method import Method
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent
 from mrsimulator import signal_processing as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -40,11 +40,11 @@ spin_system = SpinSystem(sites=[site])
 
 # %%
 # Use the generic method, `Method`, to simulate a 2D SAS spectrum by customizing the
-# method parameters, as shown below. Note, the Method method simulates an infinite
-# spinning speed spectrum.
+# method parameters, as shown below.
 sas = Method(
     channels=["87Rb"],
     magnetic_flux_density=4.2,  # in T
+    rotor_frequency=np.inf,
     spectral_dimensions=[
         SpectralDimension(
             count=256,
@@ -53,10 +53,10 @@ sas = Method(
             label="70.12 dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=70.12 * 3.14159 / 180,
+                    rotor_angle=70.12 * 3.14159 / 180,  # in radians
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
-            ],  # in radians
+            ],
         ),
         SpectralDimension(
             count=512,
@@ -65,10 +65,10 @@ sas = Method(
             label="MAS dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=54.74 * 3.14159 / 180,
+                    rotor_angle=54.74 * 3.14159 / 180,  # in radians
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
-            ],  # in radians
+            ],
         ),
     ],
 )

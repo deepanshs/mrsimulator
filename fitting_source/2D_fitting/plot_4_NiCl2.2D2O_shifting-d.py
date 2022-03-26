@@ -96,13 +96,13 @@ spectral_dims = get_spectral_dimensions(experiment)
 shifting_d = Method(
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
+    rotor_frequency=0,
     spectral_dimensions=[
         SpectralDimension(
             **spectral_dims[0],
             label="Quadrupolar frequency",
             events=[
                 SpectralEvent(
-                    rotor_frequency=0,
                     transition_query=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Quad1_2"],
                 )
@@ -113,7 +113,6 @@ shifting_d = Method(
             label="Paramagnetic shift",
             events=[
                 SpectralEvent(
-                    rotor_frequency=0,
                     transition_query=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Shielding1_0", "Shielding1_2"],
                 )

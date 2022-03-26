@@ -9,6 +9,7 @@ Arbitrary spin transition (multi-quantum)
 # %%
 # Simulate a triple quantum spectrum.
 import matplotlib.pyplot as plt
+import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent
@@ -42,7 +43,7 @@ method = Method(
     name="Arbitrary Transition Method",
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T
-    rotor_frequency=1e9,  # in Hz
+    rotor_frequency=np.inf,  # in Hz
     spectral_dimensions=[
         SpectralDimension(
             count=1024,

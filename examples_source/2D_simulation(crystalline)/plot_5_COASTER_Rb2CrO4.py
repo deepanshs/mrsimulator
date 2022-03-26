@@ -13,6 +13,7 @@ simulation.
 # quadrupolar interaction is selectively observed and reported by Ash `et al.` [#f1]_.
 # The following is the simulation based on the published tensor parameters.
 import matplotlib.pyplot as plt
+import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator import signal_processing as sp
@@ -39,13 +40,13 @@ spin_system = SpinSystem(sites=[site])
 
 # %%
 # Use the generic method, `Method`, to simulate a 2D COASTER spectrum by customizing
-# the method parameters, as shown below. Note, the method simulates an infinite
-# spinning speed spectrum.
+# the method parameters, as shown below.
 coaster = Method(
     name="COASTER",
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
     rotor_angle=70.12 * 3.14159 / 180,  # in rads
+    rotor_frequency=np.inf,
     spectral_dimensions=[
         SpectralDimension(
             count=256,
