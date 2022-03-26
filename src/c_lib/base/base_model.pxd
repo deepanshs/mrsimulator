@@ -8,13 +8,14 @@
 #
 from libcpp cimport bool as bool_t
 
+
 cdef extern from "angular_momentum/wigner_element.h":
     void transition_connect_factor(const float l, const float m1_f,
                             const float m1_i, const float m2_f, const float m2_i,
                             const double theta, const double phi, double *factor)
 
-cdef extern from "tables/trig.h":
-    void generate_table()
+cdef extern from "tables.h":
+    void generate_tables()
 
 cdef extern from "angular_momentum/wigner_matrix.h":
     void wigner_d_matrices_from_exp_I_beta(int l, int n, bool_t half,
@@ -133,6 +134,7 @@ cdef extern from "simulation.h":
         int integration_density,
         unsigned int integration_volume,  # 0-octant, 1-hemisphere, 2-sphere
         bool_t interpolation,
+        unsigned int interpolate_type,
         bool_t *freq_contrib,
         double *affine_matrix,
         )
@@ -149,6 +151,7 @@ cdef extern from "simulation.h":
         MRS_fftw_scheme *fftw_scheme, # the fftw scheme
         MRS_averaging_scheme *scheme, # the powder averaging scheme
         bool_t interpolation,
+        unsigned int interpolate_type,
         bool_t *freq_contrib,
         double *affine_matrix,
         )

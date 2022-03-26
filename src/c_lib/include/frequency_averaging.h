@@ -11,9 +11,11 @@
 
 void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
                                MRS_fftw_scheme *fftw_scheme, double *spec,
-                               double transition_pathway_weight);
+                               double transition_pathway_weight,
+                               unsigned int iso_intrp);
 
 void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
                                MRS_fftw_scheme *fftw_scheme, double *spec,
                                double transition_pathway_weight,
-                               unsigned int number_of_sidebands, double *affine_matrix);
+                               unsigned int number_of_sidebands, double *affine_matrix,
+                               unsigned int iso_intrp);

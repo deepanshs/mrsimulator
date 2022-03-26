@@ -18,10 +18,18 @@
  * @param amp A pointer to the area of the vector.
  * @param spec A pointer to the starting index of a one-dimensional array.
  * @param m0 A pointer to the number of points on the 1D grid.
+ * @param type The type of interpolation for the isotorpic components.
+ *          0. delta-interpolation,
+ *          1. gaussian-interpolation.
  */
 extern void triangle_interpolation1D(double *f1, double *f2, double *f3, double *amp,
-                                     double *spec, int *m0);
+                                     double *spec, int *m0, unsigned int iso_intrp);
 
+extern void triangle_interpolation1D_linear(double *f1, double *f2, double *f3,
+                                            double *amp, double *spec, int *m0);
+
+extern void triangle_interpolation1D_gaussian(double *f1, double *f2, double *f3,
+                                              double *amp, double *spec, int *m0);
 /**
  * @brief Rasterize a vector triangle with coordinates ((f11, f21), (f12, f22), (f13,
  * f23)) onto a 2D grid.
@@ -36,10 +44,12 @@ extern void triangle_interpolation1D(double *f1, double *f2, double *f3, double 
  * @param spec A pointer to the starting index of a two-dimensional array.
  * @param m0 An interger with the rows in the 2D grid.
  * @param m1 An interger with the columns in the 2D grid.
+ * @param iso_intrp Linear=0 | Gaussian=1 isotropic interpolation scheme.
  */
 extern void triangle_interpolation2D(double *f11, double *f12, double *f13, double *f21,
                                      double *f22, double *f23, double *amp,
-                                     double *spec, int m0, int m1);
+                                     double *spec, int m0, int m1,
+                                     unsigned int iso_intrp);
 
 /**
  * @brief Sum amplitudes from the triangles interpolations over the region of an octant.
@@ -51,12 +61,15 @@ extern void triangle_interpolation2D(double *f11, double *f12, double *f13, doub
  * @param stride Stride setp for the amplitudes (amp) array.
  * @param n_spec Number of points in the spectrum array (spec)
  * @param spec A pointer to the starting index of a one-dimensional array
+ * @param iso_intrp Linear=0 | Gaussian=1 isotropic interpolation scheme.
  */
 void octahedronDeltaInterpolation(const unsigned int nt, double *freq, double *amp,
-                                  int stride, int n_spec, double *spec);
+                                  int stride, int n_spec, double *spec,
+                                  unsigned int iso_intrp);
 
 extern void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,
                                     double *amp, int stride, int m);
 
 extern void octahedronInterpolation2D(double *spec, double *freq1, double *freq2,
-                                      int nt, double *amp, int stride, int m0, int m1);
+                                      int nt, double *amp, int stride, int m0, int m1,
+                                      unsigned int iso_intrp);

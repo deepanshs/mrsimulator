@@ -23,7 +23,8 @@
 
 static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
                                 MRS_fftw_scheme *fftw_scheme, double *spec,
-                                double transition_pathway_weight) {
+                                double transition_pathway_weight,
+                                unsigned int iso_intrp) {
   unsigned int i, j, k1, address;
   unsigned int nt = scheme->integration_density, npts = scheme->octant_orientations;
 
@@ -70,7 +71,7 @@ static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme 
         j = 0;
         while (j++ < plan->n_octants) {
           octahedronDeltaInterpolation(nt, &offset, &amps[k1], 1, dimensions->count,
-                                       spec);
+                                       spec, iso_intrp);
           k1 += npts;
         }
       }
@@ -98,15 +99,17 @@ static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme 
 
 void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
                                MRS_fftw_scheme *fftw_scheme, double *spec,
-                               double transition_pathway_weight) {
-  averaging_1D(dimensions, scheme, fftw_scheme, spec, transition_pathway_weight);
+                               double transition_pathway_weight,
+                               unsigned int iso_intrp) {
+  averaging_1D(dimensions, scheme, fftw_scheme, spec, transition_pathway_weight,
+               iso_intrp);
 }
 
 void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
                                MRS_fftw_scheme *fftw_scheme, double *spec,
                                double transition_pathway_weight,
-                               unsigned int number_of_sidebands,
-                               double *affine_matrix) {
+                               unsigned int number_of_sidebands, double *affine_matrix,
+                               unsigned int iso_intrp) {
   unsigned int i, k, j;
   unsigned int step_vector_i = 0, step_vector_k = 0, address;
   MRS_plan *planA, *planB;
@@ -190,10 +193,10 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                                &freq_ampA[step_vector_i + address],
                                &freq_ampB[step_vector_k + address], freq_amp);
             // Perform tenting on every sideband order over all orientations
-            octahedronInterpolation2D(spec, dimensions[0].freq_offset,
-                                      dimensions[1].freq_offset,
-                                      scheme->integration_density, freq_amp, 1,
-                                      dimensions[0].count, dimensions[1].count);
+            octahedronInterpolation2D(
+                spec, dimensions[0].freq_offset, dimensions[1].freq_offset,
+                scheme->integration_density, freq_amp, 1, dimensions[0].count,
+                dimensions[1].count, iso_intrp);
             // step_vector += scheme->octant_orientations;
           }
         }

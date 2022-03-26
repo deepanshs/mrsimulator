@@ -82,7 +82,7 @@ def test_triangle_interpolation():
             assert np.allclose(amp_py, amp_c.real, atol=1e-15)
 
 
-def test_delta_interpolation():
+def test_delta_interpolation_linear():
     f_list = [
         5.5,
         6.0,
@@ -102,6 +102,7 @@ def test_delta_interpolation():
         9.23,
         10.2,
     ]
+    f_list += list(np.arange(80) / 40 + 5)
 
     for i, item in enumerate(f_list):
         list_ = np.asarray([item + 0.5] * 3)
@@ -116,18 +117,73 @@ def test_delta_interpolation():
 
         # from delta interpolarion
         amp_c = np.zeros(2 * 10)
-        clib.triangle_interpolation1D(list_, amp_c)
+        clib.triangle_interpolation1D(list_, amp_c, type="linear")
         amp_c = amp_c[::2] + 1j * amp_c[1::2]
 
         # plt.bar(np.arange(10), amp_c.real, width=1)
         # plt.scatter([item], [1.0], marker="x", color="k", s=50)
         # plt.xticks(np.arange(17) - 3)
         # plt.grid(axis="x", which="both")
-        # plt.title("1D delta interpolation, span(0, 10)")
-        # plt.savefig(f"figs/fig_1D_delta_{i}.pdf")
+        # plt.title("1D delta interpolation (linear), span(0, 10)")
+        # plt.savefig(f"figs/fig_1D_delta_linear{i}.pdf")
         # plt.figure().clear()
 
         assert np.allclose(amp_, amp_c.real, atol=1e-15)
+
+
+def test_gaussian_interpolation():
+    sigma = 1.0 / 4.0
+    div = 2 * sigma**2
+    scale = sigma * np.sqrt(2 * np.pi)
+    f_list = [
+        5.5,
+        6.0,
+        6.2,
+        6.4,
+        6.6,
+        6.8,
+        7.0,
+        7.1,
+        7.5,
+        7.9,
+        8.0,
+        9.23,
+        10.2,
+        -0.1,
+        -0.9,
+        -1.0,
+        -1.8,
+    ]
+    f_list += list(np.arange(20) / 10 + 5)
+
+    x = np.arange(20) - 5
+    for i, item in enumerate(f_list):
+        list_ = np.asarray([item + 0.5] * 3)
+
+        # should be
+        gauss = np.exp(-((x - item) ** 2) / div) / scale
+        gauss /= gauss.sum()
+        gauss = gauss[5:-5]
+
+        # from delta interpolarion
+        amp_c = np.zeros(20)
+        clib.triangle_interpolation1D(list_, amp_c, type="gaussian")
+        amp_c = amp_c[::2] + 1j * amp_c[1::2]
+
+        # plt.plot(np.arange(10), gauss, label="gauss")
+        # plt.plot(np.arange(10), amp_c, label="calc")
+        # plt.legend()
+        # plt.show()
+
+        # plt.bar(np.arange(10), amp_c.real, width=1)
+        # plt.scatter([item], [1.0], marker="x", color="k", s=50)
+        # # plt.xticks(np.arange(17) - 3)
+        # plt.grid(axis="x", which="both")
+        # plt.title("1D delta interpolation (gaussian), span(0, 10)")
+        # plt.savefig(f"figs/fig_1D_delta_gaussian{i}.pdf")
+        # plt.figure().clear()
+
+        np.testing.assert_almost_equal(gauss, amp_c, decimal=3)
 
 
 def test_triangle_rasterization1():
@@ -276,7 +332,7 @@ def get_amps_from_interpolation(list_, scl):
 #         axv.plot(data2d.sum(axis=1), np.arange(size), "r", label="sum", **kwargs)
 #     plt.legend()
 #     plt.tight_layout()
-#     plt.show()
+#     # plt.show()
 #     if save is not None:
 #         plt.savefig(f"figs/fig_{save}_scale={scale}.pdf", dpi=150)
 

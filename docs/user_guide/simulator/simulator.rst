@@ -256,8 +256,7 @@ Decompose Spectrum
 ''''''''''''''''''
 
 The attribute :py:attr:`~mrsimulator.simulator.ConfigSimulator.decompose_spectrum`
-is an enumeration with two string literals,
-``None`` and ``spin_system``. The default value is ``None``.
+is an enumeration with two string literals, ``None`` and ``spin_system``. The default value is ``None``.
 
 If the value is ``None`` (default), the resulting simulation is a single spectrum
 where the frequency contributions from all the spin systems are co-added. Consider the
@@ -310,6 +309,14 @@ system as above, but change the decomposition to ``spin_system``.
     sim.config.decompose_spectrum = "spin_system"
     sim.run()
     plot(sim.methods[0].simulation)
+
+Isotropic interpolation
+'''''''''''''''''''''''
+
+The attribute :py:attr:`~mrsimulator.simulator.ConfigSimulator.isotropic_interpolation`
+is an enumeration with two string literals, ``linear`` and ``gaussian``. The default value is ``linear``.
+
+The value specifies the interpolation scheme using in binning isotropic contributions.
 
 ----
 

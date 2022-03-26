@@ -8,7 +8,6 @@ from .utils import c_setup
 from .utils import c_setup_random_euler_angles
 
 # import matplotlib.pyplot as plt
-
 # SHOW_PLOTS = True
 
 COMMON_PATH = path.join("tests", "spectral_integration_tests")
@@ -42,8 +41,8 @@ def test_pure_shielding_static_lineshape_python_brute():
         )
 
         # if SHOW_PLOTS:
-        #     plt.plot(data_mrsimulator, 'k', label="mrsims")
-        #     plt.plot(data_source, '--r', label="py brute force ($10^9$ orientations)")
+        #     plt.plot(data_mrsimulator, "k", label="mrsims")
+        #     plt.plot(data_source, "--r", label="py brute force ($10^9$ orientations)")
         #     plt.title("Shielding Static Lineshape")
         #     plt.legend()
         #     plt.show()
@@ -72,8 +71,8 @@ def test_pure_quadrupolar_lineshape_python_brute():
         )
 
         # if SHOW_PLOTS:
-        #     plt.plot(data_mrsimulator, 'k', label="mrsims")
-        #     plt.plot(data_source, '--r', label="py brute force ($10^9$ orientations)")
+        #     plt.plot(data_mrsimulator, "k", label="mrsims")
+        #     plt.plot(data_source, "--r", label="py brute force ($10^9$ orientations)")
         #     plt.title("Quad Static Lineshape")
         #     plt.legend()
         #     plt.show()
@@ -99,8 +98,16 @@ def test_pure_shielding_sideband_simpson():
 
         # euler angle all zero
         data_mrsimulator, data_source = c_setup(filename)
+
+        # if SHOW_PLOTS:
+        #     plt.plot(data_mrsimulator, "k", label="mrsims")
+        #     plt.plot(data_source, "--r", label="simpson")
+        #     plt.title("Shielding Sidebands")
+        #     plt.legend()
+        #     plt.show()
+
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=4, err_msg=message
+            data_mrsimulator, data_source, decimal=3, err_msg=message
         )
 
         # random euler angle all zero. Euler angles should not affect the spectrum.
@@ -109,14 +116,14 @@ def test_pure_shielding_sideband_simpson():
         )
 
         # if SHOW_PLOTS:
-        #     plt.plot(data_mrsimulator, 'k', label="mrsims")
-        #     plt.plot(data_source, '--r', label="simpson")
+        #     plt.plot(data_mrsimulator, "k", label="mrsims")
+        #     plt.plot(data_source, "--r", label="simpson")
         #     plt.title("Shielding Sidebands")
         #     plt.legend()
         #     plt.show()
 
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=4, err_msg=message
+            data_mrsimulator, data_source, decimal=3, err_msg=message
         )
 
 
@@ -141,8 +148,8 @@ def test_pure_quadrupolar_sidebands_simpson():
         )
 
         # if SHOW_PLOTS:
-        #     plt.plot(data_mrsimulator, 'k', label="mrsims")
-        #     plt.plot(data_source, '--r', label="simpson")
+        #     plt.plot(data_mrsimulator, "k", label="mrsims")
+        #     plt.plot(data_source, "--r", label="simpson")
         #     plt.title("Quad Sidebands")
         #     plt.legend()
         #     plt.show()
@@ -165,8 +172,8 @@ def test_csa_plus_quadrupolar_lineshape_simpson():
         )
 
         # if SHOW_PLOTS:
-        #     plt.plot(data_mrsimulator, 'k', label="mrsims")
-        #     plt.plot(data_source, '--r', label="simpson")
+        #     plt.plot(data_mrsimulator, "k", label="mrsims")
+        #     plt.plot(data_source, "--r", label="simpson")
         #     plt.title("Quad + Shielding Sidebands")
         #     plt.legend()
         #     plt.show()
@@ -188,14 +195,14 @@ def test_j_coupling_lineshape_simpson():
         )
 
         # if SHOW_PLOTS:
-        #     plt.plot(data_mrsimulator, 'k', label="mrsims")
-        #     plt.plot(data_source, '--r', label="simpson")
+        #     plt.plot(data_mrsimulator, "k", label="mrsims")
+        #     plt.plot(data_source, "--r", label="simpson")
         #     plt.title("J-coupling Spectra")
         #     plt.legend()
         #     plt.show()
 
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source.real, decimal=2.3, err_msg=message
+            data_mrsimulator, data_source.real, decimal=2, err_msg=message
         )
 
 
@@ -212,8 +219,8 @@ def test_dipolar_coupling_lineshape_simpson():
         )
 
         # if SHOW_PLOTS:
-        #     plt.plot(data_mrsimulator, 'k', label="mrsims")
-        #     plt.plot(data_source, '--r', label="simpson")
+        #     plt.plot(data_mrsimulator, "k", label="mrsims")
+        #     plt.plot(data_source, "--r", label="simpson")
         #     plt.title("Dipolar-coupling Spectra")
         #     plt.legend()
         #     plt.show()
