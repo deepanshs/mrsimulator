@@ -390,7 +390,7 @@ def method1_df():
                 "label": "Mixing and Spectral Event",
                 "events": [
                     {"fraction": 0.5},
-                    {"mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": 0}}},
+                    {"query": {"ch1": {"tip_angle": np.pi / 2, "phase": 0}}},
                     {"fraction": 0.5},
                 ],
             },
@@ -408,7 +408,7 @@ def method2_df():
                 "label": "Mixing, Spectral, Mixing, Mixing, ConstantDuration ",
                 "events": [
                     {
-                        "mixing_query": {
+                        "query": {
                             "ch1": {"tip_angle": np.pi / 2, "phase": 0.3},
                             "ch2": {
                                 "tip_angle": 10 / 180 * np.pi,
@@ -421,7 +421,7 @@ def method2_df():
                         "transition_query": [{"ch1": {"P": [1], "D": [0]}}],
                     },
                     {
-                        "mixing_query": {
+                        "query": {
                             "ch1": {"tip_angle": np.pi, "phase": 0.15},
                             "ch2": {
                                 "tip_angle": 20 / 180 * np.pi,
@@ -430,7 +430,7 @@ def method2_df():
                         }
                     },
                     {
-                        "mixing_query": {
+                        "query": {
                             "ch1": {"tip_angle": 3 * np.pi / 2, "phase": 0},
                             "ch2": {
                                 "tip_angle": 30 / 180 * np.pi,
@@ -457,7 +457,7 @@ def method2_df():
                 "label": "Mixing, Mixing, Mixing, Spectral, ConstantDuration, Spectral",
                 "events": [
                     {
-                        "mixing_query": {
+                        "query": {
                             "ch1": {"tip_angle": 1.2, "phase": np.pi},
                             "ch2": {
                                 "tip_angle": 40 / 180 * np.pi,
@@ -466,7 +466,7 @@ def method2_df():
                         }
                     },
                     {
-                        "mixing_query": {
+                        "query": {
                             "ch1": {"tip_angle": 0.75, "phase": np.pi / 4},
                             "ch2": {
                                 "tip_angle": 50 / 180 * np.pi,
@@ -475,7 +475,7 @@ def method2_df():
                         }
                     },
                     {
-                        "mixing_query": {
+                        "query": {
                             "ch1": {"tip_angle": 0.33, "phase": np.pi / 3},
                             "ch2": {
                                 "tip_angle": 60 / 180 * np.pi,
@@ -516,7 +516,7 @@ def method3_df():
                             {"ch1": {"P": [-2]}},
                         ],
                     },
-                    {"mixing_query": {"ch1": {"tip_angle": np.pi, "phase": 0}}},
+                    {"query": {"ch1": {"tip_angle": np.pi, "phase": 0}}},
                 ],
             }
         ],
