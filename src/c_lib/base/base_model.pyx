@@ -7,7 +7,7 @@ import cython
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
-clib.generate_table()
+clib.generate_tables()
 
 @cython.profile(False)
 @cython.boundscheck(False)
@@ -19,6 +19,7 @@ def one_d_spectrum(method,
        unsigned int integration_density=72,
        unsigned int decompose_spectrum=0,
        unsigned int integration_volume=1,
+       unsigned int isotropic_interpolation=0,
        bool_t interpolation=True):
     """
     :ivar number_of_sidebands:
@@ -454,6 +455,7 @@ def one_d_spectrum(method,
                 fftw_scheme,      # Pointer to the fftw scheme.
                 averaging_scheme, # Pointer to the powder averaging scheme.
                 interpolation,
+                isotropic_interpolation,
                 &f_contrib[0],
                 &affine_matrix_c[0],
             )

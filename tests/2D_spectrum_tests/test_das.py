@@ -4,8 +4,8 @@ import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.method import Method
 from mrsimulator.methods import BlochDecayCTSpectrum
-from mrsimulator.methods import Method2D
 
 
 # default unit of isotropic_chemical_shift is ppm and Cq is Hz.
@@ -43,9 +43,10 @@ spin_systems = [SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abunda
 
 def test_DAS():
     B0 = 11.7
-    das = Method2D(
+    das = Method(
         channels=["17O"],
         magnetic_flux_density=B0,  # in T
+        rotor_frequency=1e12,
         spectral_dimensions=[
             {
                 "count": 912,
@@ -56,12 +57,12 @@ def test_DAS():
                     {
                         "fraction": 0.5,
                         "rotor_angle": 37.38 * 3.14159 / 180,
-                        "transition_query": [{"P": [-1], "D": [0]}],
+                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                     {
                         "fraction": 0.5,
                         "rotor_angle": 79.19 * 3.14159 / 180,
-                        "transition_query": [{"P": [-1], "D": [0]}],
+                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                 ],
             },
@@ -74,7 +75,7 @@ def test_DAS():
                 "events": [
                     {
                         "rotor_angle": 54.735 * 3.14159 / 180,
-                        "transition_query": [{"P": [-1], "D": [0]}],
+                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
                     }
                 ],
             },

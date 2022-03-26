@@ -8,8 +8,8 @@
         "magnetic_flux_density": "1 T",
         "rotor_frequency": "0 kHz",
         "transition_query": [{
-          "P": {
-            "ch1": [-1]
+          "ch1": {
+            "P": [-1]
           }
         }]
       }]

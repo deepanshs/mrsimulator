@@ -25,8 +25,13 @@ from .plot import plot as _plot
 from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
+from .utils import check_for_at_least_one_event
+from .utils import check_for_number_of_spectral_dimensions
+from .utils import check_spectral_dimensions_are_dict
 from .utils import mixing_query_connect_map
 from .utils import tip_angle_and_phase_list
+
+# from .utils import convert_transition_query
 
 # from .event import ConstantDurationEvent  # noqa: F401
 
@@ -53,22 +58,24 @@ class Method(Parseable):
         Example
         -------
 
-        >>> bloch = Method(channels=['1H'])
-        >>> bloch.channels = ['1H']
+        >>> bloch = Method(channels=['1H'], spectral_dimensions=[{}])
+        >>> bloch.channels = ['13C']  # Change channels
 
     spectral_dimensions:
         The number of spectral dimensions depends on the given method. For example, a
         `BlochDecaySpectrum` method is a one-dimensional method and thus requires a
-        single spectral dimension. The default is a single default
-        :ref:`spectral_dim_api` object.
+        single spectral dimension.
 
         Example
         -------
 
-        >>> bloch = Method(channels=['1H'])
-        >>> bloch.spectral_dimensions = [SpectralDimension(count=8, spectral_width=50)]
+        >>> bloch = Method(channels=['1H'], spectral_dimensions=[
+        ...     SpectralDimension(count=8, spectral_width=50)
+        ... ])
         >>> # or equivalently
-        >>> bloch.spectral_dimensions = [{'count': 8, 'spectral_width': 50}]
+        >>> bloch = Method(channels=['1H'], spectral_dimensions=[
+        ...     {"count": 8, "spectral_width": 50}
+        ... ])
 
     simulation:
         An object holding the result of the simulation. The initial value of this
@@ -123,7 +130,7 @@ class Method(Parseable):
         Example
         -------
 
-        >>> method = Method2D(channels=['1H'])
+        >>> method = Method(channels=['1H'], spectral_dimensions=[{}, {}]) # 2D method
         >>> method.affine_matrix = [[1, -1], [0, 1]]
         >>> print(method.affine_matrix)
         [[1, -1], [0, 1]]
@@ -172,6 +179,7 @@ class Method(Parseable):
         return [Isotope(symbol=_) for _ in v]
 
     def __init__(self, **kwargs):
+        Method.check(kwargs)
         super().__init__(**kwargs)
         _ = [
             setattr(ev, item, getattr(self, item))
@@ -180,6 +188,13 @@ class Method(Parseable):
             for item in self.property_units.keys()
             if hasattr(ev, item) and getattr(ev, item) is None
         ]
+
+    @classmethod
+    def check(cls, kwargs, is_named_method=False, ndim=None):
+        check_for_number_of_spectral_dimensions(kwargs, is_named_method, ndim)
+        sd_is_dict = check_spectral_dimensions_are_dict(kwargs)
+        if sd_is_dict and not is_named_method:
+            check_for_at_least_one_event(kwargs)
 
     @staticmethod
     def __check_csdm__(data):
@@ -355,8 +370,8 @@ class Method(Parseable):
         **Single channel example**
 
         Example:
-            >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(
+            >>> from mrsimulator.method import Method
+            >>> method = Method(
             ...     channels=['1H'],
             ...     spectral_dimensions=[
             ...         {
@@ -387,8 +402,8 @@ class Method(Parseable):
         **Dual channels example**
 
         Example:
-            >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(
+            >>> from mrsimulator.method import Method
+            >>> method = Method(
             ...     channels=['1H', '13C'],
             ...     spectral_dimensions=[
             ...         {
@@ -596,7 +611,7 @@ class Method(Parseable):
 
         Args:
             (bool) drop_constant_columns:
-                Removes constant properties if True. Default is True.
+                Removes constant properties if True. Default is True.
 
         Returns:
             pd.DataFrame df:
@@ -637,20 +652,6 @@ class Method(Parseable):
              'p',
              'd']
         """
-        # Make sure spectral_dimensions has at least one SpectralDimension
-        if len(self.spectral_dimensions) == 0:
-            raise AttributeError(
-                "Method has empty spectral_dimensions. At least one SpectralDimension "
-                "is needed with at least one Event."
-            )
-
-        # Make sure there is at least one event within spectral_dimensions
-        if sum([len(spec_dim.events) for spec_dim in self.spectral_dimensions]) == 0:
-            raise AttributeError(
-                "Method has no Events. At least one SpectralDimension "
-                "is needed with at least one Event."
-            )
-
         CD = "ConstantDurationEvent"
         SP = "SpectralEvent"
         MX = "MixingEvent"
@@ -775,8 +776,8 @@ class Method(Parseable):
             tuple
 
         Example:
-            >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(
+            >>> from mrsimulator.method import Method
+            >>> method = Method(
             ...     channels=['1H'],
             ...     spectral_dimensions=[{'count': 40}, {'count': 10}]
             ... )

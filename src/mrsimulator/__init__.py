@@ -22,7 +22,7 @@ __credits__ = ["Deepansh J. Srivastava"]
 __license__ = "BSD License"
 __maintainer__ = "Deepansh J. Srivastava"
 __status__ = "Beta"
-__version__ = "0.7.0rc1"
+__version__ = "0.7.0rc2"
 
 import os
 
@@ -356,7 +356,7 @@ def parse(py_dict, parse_units: bool = True):
     root_keys = set(Mrsimulator().dict().keys())
     if len(set(py_dict.keys()) - root_keys) != 0:
         raise ValueError(
-            "An incompatible JSON root-level structure was detected. Use the method"
+            "An incompatible JSON root-level structure was detected. Use the method "
             "mrsim_to_v0_7 to convert to a compliant structure."
         )
 

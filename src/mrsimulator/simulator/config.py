@@ -10,6 +10,7 @@ __email__ = "srivastava.89@osu.edu"
 
 # decompose spectrum
 __decompose_spectrum_enum__ = {"none": 0, "spin_system": 1}
+__isotropic_interpolation_enum__ = {"linear": 0, "gaussian": 1}
 
 # integration volume
 __integration_volume_enum__ = {"octant": 0, "hemisphere": 1}
@@ -56,6 +57,12 @@ class ConfigSimulator(Parseable):
           is an array of spectra, where each spectrum arises from a spin system within
           the Simulator object.
 
+    isotropic_interpolation: enum (optional).
+        Interpolation scheme for isotropic binning. The valid literals are
+
+        - ``linear`` (default): linear interpolation.
+        - ``gaussian``:  Gaussian interpolation with `sigma=0.25*bin_width`.
+
     Example
     -------
 
@@ -70,6 +77,7 @@ class ConfigSimulator(Parseable):
     integration_volume: Literal["octant", "hemisphere"] = "octant"
     integration_density: int = Field(default=70, gt=0)
     decompose_spectrum: Literal["none", "spin_system"] = "none"
+    isotropic_interpolation: Literal["linear", "gaussian"] = "linear"
 
     class Config:
         extra = "forbid"
@@ -82,6 +90,9 @@ class ConfigSimulator(Parseable):
         ]
         py_dict["decompose_spectrum"] = __decompose_spectrum_enum__[
             self.decompose_spectrum
+        ]
+        py_dict["isotropic_interpolation"] = __isotropic_interpolation_enum__[
+            self.isotropic_interpolation
         ]
         return py_dict
 

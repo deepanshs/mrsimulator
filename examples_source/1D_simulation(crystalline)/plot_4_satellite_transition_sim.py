@@ -11,12 +11,11 @@ Arbitrary spin transition (single-quantum)
 # BlochDecayCTSpectrum, are designed to simulate spectrum from all single
 # quantum transitions or central transition selective transition, respectively. In this
 # example, we show how you can simulate any arbitrary transition using the generic
-# Method1D method.
+# Method method.
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import Method1D
-from mrsimulator.method import SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 4
@@ -35,9 +34,9 @@ spin_system = SpinSystem(sites=[site])
 # Selecting spin transitions for simulation
 # -----------------------------------------
 #
-# The arguments of the Method1D object are the same as the arguments of the
+# The arguments of the Method object are the same as the arguments of the
 # BlochDecaySpectrum method; however, unlike a BlochDecaySpectrum method, the
-# :ref:`spectral_dim_api` object in Method1D contains additional argument---`events`.
+# :ref:`spectral_dim_api` object in Method contains additional argument---`events`.
 #
 # The :ref:`event_api` object is a collection of attributes, which are local to the
 # event. It is here where we define a `transition_query` to select one or more
@@ -60,7 +59,7 @@ spin_system = SpinSystem(sites=[site])
 #
 # For illustrative purposes, let's look at the infinite speed spectrum from this
 # satellite transition.
-method = Method1D(
+method = Method(
     name="Inner Satellite Spectrum",
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T
@@ -111,7 +110,7 @@ plt.show()
 #
 # - :math:`|-1/2\rangle\rightarrow|-3/2\rangle` (:math:`P=-1, D=2`)
 # - :math:`|-3/2\rangle\rightarrow|-5/2\rangle` (:math:`P=-1, D=4`)
-method2 = Method1D(
+method2 = Method(
     name="Satellite Spectrum",
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T

@@ -1,7 +1,6 @@
 {
 	"generic": {
-		"name": "Method2D",
-		"description": "A generic two-dimensional correlation spectrum method.",
+		"name": "generic",
 		"magnetic_flux_density": "9.4 T",
 		"rotor_frequency": "1000000000000.0 Hz",
 		"rotor_angle": "0.9553166181245 rad",
@@ -31,8 +30,7 @@
 		"channels": ["87Rb"]
 	},
 	"SAS": {
-		"name": "Method2D",
-		"description": "A generic two-dimensional correlation spectrum method.",
+		"name": "SAS",
 		"magnetic_flux_density": "9.4 T",
 		"rotor_frequency": "1000000000000.0 Hz",
 		"rotor_angle": "1.223824871498424 rad",
@@ -65,8 +63,7 @@
 		"channels": ["87Rb"]
 	},
 	"STMAS": {
-		"name": "Method2D",
-		"description": "A generic two-dimensional correlation spectrum method.",
+		"name": "STMAS",
 		"magnetic_flux_density": "9.4 T",
 		"rotor_frequency": "1000000000000.0 Hz",
 		"rotor_angle": "0.9553166181245 rad",
@@ -107,8 +104,7 @@
 		"channels": ["87Rb"]
 	},
 	"DAS": {
-		"name": "Method2D",
-		"description": "A generic two-dimensional correlation spectrum method.",
+		"name": "DAS",
 		"magnetic_flux_density": "4.2 T",
 		"rotor_frequency": "1000000000000.0 Hz",
 		"rotor_angle": "0.9553051591666667 rad",

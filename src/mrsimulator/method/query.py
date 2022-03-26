@@ -36,7 +36,9 @@ class SymmetryQuery(Parseable):
         Example
         -------
 
-        >>> method = Method2D(channels=['1H'])
+        >>> method = Method(channels=['1H'], spectral_dimensions=[{"events": [
+        ...     {"fraction": 1}
+        ... ]}])
         >>> method.spectral_dimensions[0].events[0].transition_query[0].ch1.P = [-1]
 
     D:
@@ -151,6 +153,7 @@ class TransitionQuery(Parseable):
 
     class Config:
         validate_assignment = True
+        extra = "forbid"
 
     @staticmethod
     def cartesian_product_indexing(permutation):

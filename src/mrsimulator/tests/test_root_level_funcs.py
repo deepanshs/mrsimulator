@@ -112,7 +112,7 @@ def test_mrsim_to_v0_7():
 
     # Test error handling of loading old structure
     e = (
-        "An incompatible JSON root-level structure was detected. Use the method"
+        "An incompatible JSON root-level structure was detected. Use the method "
         "mrsim_to_v0_7 to convert to a compliant structure."
     )
     with pytest.raises(ValueError, match=e):

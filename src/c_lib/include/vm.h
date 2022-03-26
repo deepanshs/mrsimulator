@@ -244,7 +244,7 @@ static inline void vm_double_complex_multiply(int count, const void *restrict x,
 static inline double get_cos_from_table(double x) {
   x = absd(x);
   x = modd(x, CONST_2PI);
-  double res = x * table_precision_inverse;
+  double res = x * trig_table_precision_inverse;
   int index = (int)res;
   return lerp(res - index, cos_table[index], cos_table[index + 1]);
 }
@@ -266,7 +266,7 @@ static inline void vm_double_cosine(int count, const double *restrict x,
 static inline double get_sin_from_table(double x) {
   x = absd(x);
   x = modd(x, CONST_2PI);
-  double res = x * table_precision_inverse;
+  double res = x * trig_table_precision_inverse;
   int index = (int)res;
   res = lerp(res - index, sin_table[index], sin_table[index + 1]);
   res *= sign(x);
@@ -290,7 +290,7 @@ static inline void vm_double_sine(int count, const double *restrict x,
 static inline void get_cos_sin_from_table(double x, double *restrict res_) {
   x = absd(x);
   x = modd(x, CONST_2PI);
-  x *= table_precision_inverse;
+  x *= trig_table_precision_inverse;
   int i = (int)x;
   double wt = x - i;
   *res_++ = lerp(wt, cos_table[i], cos_table[i + 1]);
@@ -381,7 +381,7 @@ static inline void vm_double_complex_exp_imag_only(int count, const void *restri
     x_++;
     y = absd(*x_);
     y = modd(y, CONST_2PI);
-    y *= table_precision_inverse;
+    y *= trig_table_precision_inverse;
     i = (int)y;
     wt = y - i;
     *res_++ = lerp(wt, cos_table[i], cos_table[i + 1]);

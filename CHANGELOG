@@ -7,9 +7,13 @@ What's new
 **General**
 
 - Support for complex amplitude simulation.
+- Add `isotropic_interpolation` as a `sim.config` parameter. The interpolation schemes are linear
+  and Gaussian.
 
 **Method**
 
+- Removed ``Method1D`` and ``Method2D`` classes. Use the generic ``mrsimulator.method.Method``
+  object for custom1D and 2D methods.
 - New Event classes---``SpectralEvent`` and ``MixingEvent``. The MixingEvent
   controls the mixing of transitions in a multi-event method.
 - A ``TransitionPathway`` object now includes a weight attribute, which holds the probability of

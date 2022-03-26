@@ -60,6 +60,11 @@ def test_config():
     a.config.decompose_spectrum = "spin_system"
     assert a.config.decompose_spectrum == "spin_system"
 
+    # isotropic interpolation
+    assert a.config.isotropic_interpolation == "linear"
+    a.config.isotropic_interpolation = "gaussian"
+    assert a.config.isotropic_interpolation == "gaussian"
+
     error = "unexpected value; permitted: 'none', 'spin_system'"
     with pytest.raises(ValueError, match=f".*{error}.*"):
         a.config.decompose_spectrum = "haha"
@@ -70,6 +75,7 @@ def test_config():
         "number_of_sidebands": 10,
         "integration_volume": "hemisphere",
         "integration_density": 20,
+        "isotropic_interpolation": "gaussian",
         "name": None,
         "description": None,
         "label": None,
@@ -80,6 +86,7 @@ def test_config():
         "number_of_sidebands": 10,
         "integration_volume": 1,
         "integration_density": 20,
+        "isotropic_interpolation": 1,
     }
 
     assert b != a
