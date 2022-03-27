@@ -8,8 +8,8 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.methods import BlochDecayCTSpectrum
-from mrsimulator.methods import ThreeQ_VAS
+from mrsimulator.method.lib import BlochDecayCTSpectrum
+from mrsimulator.method.lib import ThreeQ_VAS
 
 
 def test_MQMAS():

@@ -16,7 +16,7 @@ Protein GB1, ¹³C and ¹⁵N (I=1/2)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.method import SpectralDimension
 from mrsimulator import signal_processing as sp
 

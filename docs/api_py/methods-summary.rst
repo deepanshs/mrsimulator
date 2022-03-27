@@ -3,15 +3,15 @@
 Methods
 =======
 
-.. currentmodule:: mrsimulator.methods
+.. currentmodule:: mrsimulator.method.lib
 
 The following are the list of methods currently supported by ``mrsimulator`` as a part
-of the ``mrsimulator.methods`` module. To import a method, for example the
+of the ``mrsimulator.method.lib`` module. To import a method, for example the
 *BlochDecaySpectrum*, used
 
 .. doctest::
 
-    >>> from mrsimulator.methods import BlochDecaySpectrum
+    >>> from mrsimulator.method.lib import BlochDecaySpectrum
 
 .. All methods categorize into two groups, generic and specialized methods. A generic
 .. method is general and is based on the number of spectral dimensions. At present,

@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 from lmfit import Minimizer, Parameters
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.spin_system.tensors import SymmetricTensor

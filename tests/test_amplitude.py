@@ -4,7 +4,7 @@ import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 
 
 def pre_setup():

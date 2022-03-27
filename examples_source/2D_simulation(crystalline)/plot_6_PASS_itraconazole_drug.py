@@ -14,7 +14,7 @@ Itraconazole, ¹³C (I=1/2) PASS
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
-from mrsimulator.methods import SSB2D
+from mrsimulator.method.lib import SSB2D
 from mrsimulator import signal_processing as sp
 from mrsimulator.method import SpectralDimension
 

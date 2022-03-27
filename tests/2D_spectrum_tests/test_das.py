@@ -5,7 +5,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator.method.lib import BlochDecayCTSpectrum
 
 
 # default unit of isotropic_chemical_shift is ppm and Cq is Hz.

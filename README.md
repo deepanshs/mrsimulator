@@ -35,7 +35,7 @@ Please refer to our [installation document](https://mrsimulator.readthedocs.io/e
 
 ```py
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 import matplotlib.pyplot as plt
 
 # Make Site and SpinSystem objects

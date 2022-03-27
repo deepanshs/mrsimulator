@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
+from mrsimulator.method.lib import SSB2D
 from mrsimulator.method.query import TransitionQuery
-from mrsimulator.methods import SSB2D
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"

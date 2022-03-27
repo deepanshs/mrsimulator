@@ -116,23 +116,23 @@ What's new
 
 The update introduces various two-dimensional methods for simulating NMR spectrum.
 
-- Introduces a generic one-dimensional method, :class:`~mrsimulator.methods.Method1D`.
-- Introduces a generic two-dimensional method, :class:`~mrsimulator.methods.Method2D`.
+- Introduces a generic one-dimensional method, :class:`~mrsimulator.method.lib.Method1D`.
+- Introduces a generic two-dimensional method, :class:`~mrsimulator.method.lib.Method2D`.
 - Specialized two-dimensional methods for multi-quantum variable-angle spinning
   with build-in affine transformations.
 
-  - :class:`~mrsimulator.methods.ThreeQ_VAS`,
-  - :class:`~mrsimulator.methods.FiveQ_VAS`,
-  - :class:`~mrsimulator.methods.SevenQ_VAS`
+  - :class:`~mrsimulator.method.lib.ThreeQ_VAS`,
+  - :class:`~mrsimulator.method.lib.FiveQ_VAS`,
+  - :class:`~mrsimulator.method.lib.SevenQ_VAS`
 
 - Specialized two-dimensional methods for satellite-transition variable-angle spinning
   with build-in affine transformations.
 
-  - :class:`~mrsimulator.methods.ST1_VAS`,
-  - :class:`~mrsimulator.methods.ST2_VAS`,
+  - :class:`~mrsimulator.method.lib.ST1_VAS`,
+  - :class:`~mrsimulator.method.lib.ST2_VAS`,
 
 - Specialized two-dimensional isotropic/anisotropic sideband correlation method,
-  :class:`~mrsimulator.methods.SSB2D`.
+  :class:`~mrsimulator.method.lib.SSB2D`.
 
 Other changes
 '''''''''''''

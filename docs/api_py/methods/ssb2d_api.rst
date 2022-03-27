@@ -1,4 +1,4 @@
-.. currentmodule:: mrsimulator.methods
+.. currentmodule:: mrsimulator.method.lib
 
 Spinning sideband correlation method
 ------------------------------------

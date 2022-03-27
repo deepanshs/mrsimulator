@@ -563,7 +563,7 @@ class Method(Parseable):
 
         Example:
             >>> from mrsimulator import SpinSystem
-            >>> from mrsimulator.methods import ThreeQ_VAS
+            >>> from mrsimulator.method.lib import ThreeQ_VAS
             >>> sys = SpinSystem(sites=[{'isotope': '27Al'}, {'isotope': '29Si'}])
             >>> method = ThreeQ_VAS(channels=['27Al'])
             >>> pprint(method.get_transition_pathways(sys))
@@ -632,7 +632,7 @@ class Method(Parseable):
         Example:
             **All Possible Columns**
 
-            >>> from mrsimulator.methods import ThreeQ_VAS
+            >>> from mrsimulator.method.lib import ThreeQ_VAS
             >>> method = ThreeQ_VAS(channels=["17O"])
             >>> df = method.summary(drop_constant_columns=False)
             >>> pprint(list(df.columns))
@@ -737,14 +737,14 @@ class Method(Parseable):
             matplotlib.pyplot.figure
 
         Example:
-            >>> from mrsimulator.methods import BlochDecaySpectrum
+            >>> from mrsimulator.method.lib import BlochDecaySpectrum
             >>> method = BlochDecaySpectrum(channels=["13C"])
             >>> fig = method.plot()
 
             **Adjusting Figure Size rcParams**
 
             >>> import matplotlib as mpl
-            >>> from mrsimulator.methods import FiveQ_VAS
+            >>> from mrsimulator.method.lib import FiveQ_VAS
             >>> mpl.rcParams["figure.figsize"] = [14, 10]
             >>> mpl.rcParams["font.size"] = 14
             >>> method = FiveQ_VAS(channels=["27Al"])
@@ -752,7 +752,7 @@ class Method(Parseable):
 
             **Plotting all Parameters, including Constant**
 
-            >>> from mrsimulator.methods import FiveQ_VAS
+            >>> from mrsimulator.method.lib import FiveQ_VAS
             >>> method = FiveQ_VAS(channels=["27Al"])
             >>> df = method.summary(drop_constant_columns=False)
             >>> fig = method.plot(df=df)

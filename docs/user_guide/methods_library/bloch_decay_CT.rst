@@ -1,12 +1,12 @@
 Bloch Decay Central Transition
 ------------------------------
 
-The :py:class:`~mrsimulator.methods.BlochDecayCTSpectrum` class simulates the
+The :py:class:`~mrsimulator.method.lib.BlochDecayCTSpectrum` class simulates the
 Bloch decay central transition selective spectrum.
 
 .. code-block:: python
 
-    from mrsimulator.methods import BlochDecayCTSpectrum
+    from mrsimulator.method.lib import BlochDecayCTSpectrum
     from mrsimulator.method import SpectralDimension
 
     method = BlochDecayCTSpectrum(
@@ -27,8 +27,8 @@ Bloch decay central transition selective spectrum.
 
 .. .. code-block:: python
 
-..     from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
+..     from mrsimulator.method.lib import BlochDecayCentralTransitionSpectrum
 
-.. minigallery:: mrsimulator.methods.BlochDecayCTSpectrum
+.. minigallery:: mrsimulator.method.lib.BlochDecayCTSpectrum
     :add-heading: Examples using ``BlochDecayCTSpectrum``
     :heading-level: "

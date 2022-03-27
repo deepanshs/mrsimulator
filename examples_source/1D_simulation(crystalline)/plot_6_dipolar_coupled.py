@@ -10,7 +10,7 @@ Coupled spin-1/2 (Static dipolar spectrum)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator import signal_processing as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import SpectralDimension

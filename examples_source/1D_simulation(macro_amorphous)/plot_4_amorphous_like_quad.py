@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import multivariate_normal
 
 from mrsimulator import Simulator
-from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator.method.lib import BlochDecayCTSpectrum
 from mrsimulator.utils.collection import single_site_system_generator
 from mrsimulator.method import SpectralDimension
 

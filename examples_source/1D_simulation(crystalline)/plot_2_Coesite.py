@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator import signal_processing as sp
-from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator.method.lib import BlochDecayCTSpectrum
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import SpectralDimension
 
