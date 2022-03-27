@@ -21,7 +21,7 @@ package to the OpenBLAS library, type the following in the terminal,
   $ brew install openblas
 
 *Step-3* If you choose to link the mrsimulator package to the OpenBLAS library, skip
-to the next section, :ref:`building_and_installing`.
+to the next section.
 
 *(a)* You will need to install the BLAS development header for Apple's Accelerate
 library. The easiest way is to install the Xcode Command Line Tools. Note, this is a
