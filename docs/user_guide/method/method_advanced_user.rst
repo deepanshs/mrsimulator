@@ -1,4 +1,6 @@
 
+.. _method_documentation:
+
 ===========================
 Method (For advanced users)
 ===========================
@@ -244,8 +246,6 @@ Reference Tables
   * - spectral_dimensions
     - ``List``
     - A list of :ref:`spectral_dim_api` objects describing the spectral dimensions for the method.
-      For more discussion on spectral dimension objects, see the :ref:`spectral_dim_documentation`
-      documentation ((NOT WRITTEN YET)).
 
   * - affine_matrix
     - ``np.ndarray``
@@ -299,8 +299,7 @@ Reference Tables
 
   * - events
     - ``List``
-    - An *optional* list of :ref:`event_api` objects used to emulate an experiment. For more
-      discussion on event objects, see the :ref:`event_documentation` ((NOT WRITTEN YET)).
+    - An *optional* list of :ref:`event_api` objects used to emulate an experiment.
       The default value is a list with a single **SpectralEvent** with a symmetry_query of
       P=[-1]
 
