@@ -139,6 +139,7 @@ Other changes
 
 - The :meth:`~mrsimulator.Method.get_transition_pathways` method no longer return a
   numpy array, instead a python list.
+- Renamed `mrsimulator.methods` module to `mrsimulator.method.lib`.
 
 v0.4.0
 ------
