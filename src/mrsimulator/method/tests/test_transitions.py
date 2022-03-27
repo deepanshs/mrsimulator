@@ -94,7 +94,7 @@ def test_hahn():
             {
                 "events": [
                     {"fraction": 0.5, "transition_query": [{"ch1": {"P": [1]}}]},
-                    {"mixing_query": {"ch1": {"tip_angle": np.pi, "phase": 0}}},
+                    {"query": {"ch1": {"angle": np.pi, "phase": 0}}},
                     {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]},
                 ]
             },
@@ -122,7 +122,7 @@ def test_cosy():
             {
                 "events": [
                     {"fraction": 1, "transition_query": [{"ch1": {"P": [-1]}}]},
-                    {"mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": 0}}},
+                    {"query": {"ch1": {"angle": np.pi / 2, "phase": 0}}},
                 ],
             },
             {

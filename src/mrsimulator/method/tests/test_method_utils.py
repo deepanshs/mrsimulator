@@ -6,9 +6,9 @@ from mrsimulator.method import Method
 from mrsimulator.method import MixingEvent
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method.query import MixingQuery
+from mrsimulator.method.utils import angle_and_phase_list
 from mrsimulator.method.utils import mixing_query_connect_map
 from mrsimulator.method.utils import nearest_nonmixing_event
-from mrsimulator.method.utils import tip_angle_and_phase_list
 from mrsimulator.utils.error import MissingSpectralEventError
 
 
@@ -34,24 +34,24 @@ def test_nearest_mixing_query():
     assert nearest_nonmixing_event(events, 7) == [6, 9]
 
 
-def test_tip_angle_and_phase_list():
+def test_angle_and_phase_list():
     symbol = ["29Si", "17O", "29Si", "29Si", "27Al"]
     channels = ["29Si", "27Al"]
-    mixing_query = MixingQuery(ch1={"tip_angle": 1.55, "phase": 0.5})
-    lst = tip_angle_and_phase_list(symbol, channels, mixing_query)
+    mixing_query = MixingQuery(ch1={"angle": 1.55, "phase": 0.5})
+    lst = angle_and_phase_list(symbol, channels, mixing_query)
     assert lst == ([1.55, 0, 1.55, 1.55, 0], [0.5, 0, 0.5, 0.5, 0])
 
     mixing_query = MixingQuery(
-        ch1={"tip_angle": 1.55, "phase": 0.5},
-        ch2={"tip_angle": 3.1415, "phase": 1.570},
+        ch1={"angle": 1.55, "phase": 0.5},
+        ch2={"angle": 3.1415, "phase": 1.570},
     )
-    lst = tip_angle_and_phase_list(symbol, channels, mixing_query)
+    lst = angle_and_phase_list(symbol, channels, mixing_query)
     assert lst == ([1.55, 0, 1.55, 1.55, 3.1415], [0.5, 0, 0.5, 0.5, 1.57])
 
 
 def test_mixing_query_connect_map():
-    MX1 = MixingEvent(mixing_query={"ch1": {"tip_angle": 0.12}})
-    MX2 = MixingEvent(mixing_query={"ch2": {"tip_angle": 1.12}})
+    MX1 = MixingEvent(query={"ch1": {"angle": 0.12}})
+    MX2 = MixingEvent(query={"ch2": {"angle": 1.12}})
     spectral_dimmensions = [
         SpectralDimension(
             events=[
@@ -76,11 +76,11 @@ def test_mixing_query_connect_map():
     ]
     res = mixing_query_connect_map(spectral_dimmensions)
     assert res == [
-        {"mixing_query": MX1.mixing_query, "near_index": [0, 1]},
-        {"mixing_query": MX2.mixing_query, "near_index": [2, 3]},
-        {"mixing_query": MX1.mixing_query, "near_index": [3, 4]},
-        {"mixing_query": MX2.mixing_query, "near_index": [3, 4]},
-        {"mixing_query": MX2.mixing_query, "near_index": [4, 5]},
+        {"mixing_query": MX1.query, "near_index": [0, 1]},
+        {"mixing_query": MX2.query, "near_index": [2, 3]},
+        {"mixing_query": MX1.query, "near_index": [3, 4]},
+        {"mixing_query": MX2.query, "near_index": [3, 4]},
+        {"mixing_query": MX2.query, "near_index": [4, 5]},
     ]
 
     error = "SpectralDimension requires at least one SpectralEvent"

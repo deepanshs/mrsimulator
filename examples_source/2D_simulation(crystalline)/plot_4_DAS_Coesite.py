@@ -11,6 +11,7 @@ Coesite, ¹⁷O (I=5/2) DAS
 # five crystallographic :math:`^{17}\text{O}` sites. In the following, we use the
 # :math:`^{17}\text{O}` EFG tensor information from Grandinetti `et al.` [#f1]_
 import matplotlib.pyplot as plt
+import numpy as np
 
 from mrsimulator import Simulator
 from mrsimulator import signal_processing as sp
@@ -28,12 +29,12 @@ sim.load_spin_systems(filename)
 
 # %%
 # Use the generic method, `Method`, to simulate a 2D DAS spectrum by customizing the
-# method parameters, as shown below. Note, the Method method simulates an infinite
-# spinning speed spectrum.
+# method parameters, as shown below.
 das = Method(
     name="Dynamic Angle Spinning",
     channels=["17O"],
     magnetic_flux_density=11.74,  # in T
+    rotor_frequency=np.inf,
     spectral_dimensions=[
         SpectralDimension(
             count=256,
@@ -43,12 +44,12 @@ das = Method(
             events=[
                 SpectralEvent(
                     fraction=0.5,
-                    rotor_angle=37.38 * 3.14159 / 180,
+                    rotor_angle=37.38 * 3.14159 / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
                 SpectralEvent(
                     fraction=0.5,
-                    rotor_angle=79.19 * 3.14159 / 180,
+                    rotor_angle=79.19 * 3.14159 / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
             ],
@@ -61,7 +62,7 @@ das = Method(
             label="MAS dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=54.735 * 3.14159 / 180,
+                    rotor_angle=54.735 * 3.14159 / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],

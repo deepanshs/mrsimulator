@@ -42,7 +42,7 @@ def setup_simulation(site, affine_matrix, class_id=0):
         channels=[isotope],
         magnetic_flux_density=7,  # in T
         rotor_angle=54.735 * np.pi / 180,
-        rotor_frequency=1e9,
+        rotor_frequency=np.inf,
         spectral_dimensions=[
             {
                 "count": 1024,

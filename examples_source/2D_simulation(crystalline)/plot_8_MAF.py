@@ -12,6 +12,7 @@ Wollastonite, ²⁹Si (I=1/2), MAF
 # :math:`^{29}\text{Si}` sites. The :math:`^{29}\text{Si}` tensor parameters
 # were obtained from Hansen `et al.` [#f1]_
 import matplotlib.pyplot as plt
+import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator import signal_processing as sp
@@ -44,12 +45,12 @@ spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
 # Use the generic method, `Method`, to simulate a 2D Magic-Angle Flipping (MAF)
-# spectrum by customizing the method parameters, as shown below. Note, the
-# method simulates an infinite spinning speed spectrum.
+# spectrum by customizing the method parameters, as shown below.
 maf = Method(
     name="Magic Angle Flipping",
     channels=["29Si"],
     magnetic_flux_density=14.1,  # in T
+    rotor_frequency=np.inf,
     spectral_dimensions=[
         SpectralDimension(
             count=128,
@@ -57,7 +58,7 @@ maf = Method(
             label="Anisotropic dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=90 * 3.14159 / 180,
+                    rotor_angle=90 * 3.14159 / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
@@ -69,7 +70,7 @@ maf = Method(
             label="Isotropic dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=54.735 * 3.14159 / 180,
+                    rotor_angle=54.735 * 3.14159 / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],

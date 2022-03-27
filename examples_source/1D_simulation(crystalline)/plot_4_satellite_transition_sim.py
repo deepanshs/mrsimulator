@@ -13,6 +13,7 @@ Arbitrary spin transition (single-quantum)
 # example, we show how you can simulate any arbitrary transition using the generic
 # Method method.
 import matplotlib.pyplot as plt
+import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent
@@ -63,7 +64,7 @@ method = Method(
     name="Inner Satellite Spectrum",
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T
-    rotor_frequency=1e9,  # in Hz
+    rotor_frequency=np.inf,  # in Hz
     spectral_dimensions=[
         SpectralDimension(
             count=1024,
@@ -114,7 +115,7 @@ method2 = Method(
     name="Satellite Spectrum",
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T
-    rotor_frequency=1e9,  # in Hz
+    rotor_frequency=np.inf,  # in Hz
     spectral_dimensions=[
         SpectralDimension(
             count=1024,

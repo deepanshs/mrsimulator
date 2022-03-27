@@ -30,7 +30,6 @@ sim = Simulator()
 filename = "https://sandbox.zenodo.org/record/835664/files/itraconazole_13C.mrsys"
 sim.load_spin_systems(filename)
 
-
 # %%
 # Use the ``SSB2D`` method to simulate a PASS, MAT, QPASS, QMAT, or any equivalent
 # sideband separation spectrum. Here, we use the method to generate a PASS spectrum.

@@ -228,13 +228,13 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
     Attributes
     ----------
 
-    mixing_query:
+    query:
         The transition mixing query.
     """
 
-    mixing_query: MixingQuery
+    query: MixingQuery
 
-    test_vars: ClassVar[Dict] = {"mixing_query": {}}
+    test_vars: ClassVar[Dict] = {"query": {}}
 
     class Config:
         extra = "forbid"
@@ -254,8 +254,8 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
             A :ref:`method_api` object.
         """
         py_dict_copy = deepcopy(py_dict)
-        obj = MixingQuery.parse_dict_with_units(py_dict_copy["mixing_query"])
-        py_dict_copy["mixing_query"] = obj
+        obj = MixingQuery.parse_dict_with_units(py_dict_copy["query"])
+        py_dict_copy["query"] = obj
         return super().parse_dict_with_units(py_dict_copy)
 
 

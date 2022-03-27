@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from matplotlib import pyplot as plt
 from mrsimulator.method import Method
-from mrsimulator.method.plot import _add_tip_angle_and_phase
+from mrsimulator.method.plot import _add_angle_and_phase
 from mrsimulator.method.plot import _check_columns
 from mrsimulator.method.plot import _format_df
 from mrsimulator.method.plot import _make_normal_and_offset_x_data
@@ -45,25 +45,25 @@ def test_check_columns():
     ]
 
 
-def test_add_tip_angle_and_phase():
+def test_add_angle_and_phase():
     df1 = method1_df()
     df2 = method2_df()
 
     # Modify the dataframes
-    _add_tip_angle_and_phase(df1)
-    _add_tip_angle_and_phase(df2)
+    _add_angle_and_phase(df1)
+    _add_angle_and_phase(df2)
 
-    # Check 'tip_angle' and 'phase' are columns now in DataFrame
-    assert "tip_angle" in df1.columns
+    # Check 'angle' and 'phase' are columns now in DataFrame
+    assert "angle" in df1.columns
     assert "phase" in df1.columns
-    assert "tip_angle" in df2.columns
+    assert "angle" in df2.columns
     assert "phase" in df2.columns
 
     # Check correct calculations for tip angle and phase
     ta_should_be = np.array([np.nan, np.nan, np.nan, 90.0, np.nan])
     p_should_be = np.array([np.nan, np.nan, np.nan, 0.0, np.nan])
 
-    df1_ch1_tip = [x["ch1"] if x is not None else np.nan for x in df1["tip_angle"]]
+    df1_ch1_tip = [x["ch1"] if x is not None else np.nan for x in df1["angle"]]
     df1_ch1_phase = [x["ch1"] if x is not None else np.nan for x in df1["phase"]]
 
     assert np.allclose(np.asarray(df1_ch1_tip), ta_should_be, equal_nan=True)
@@ -128,8 +128,8 @@ def test_add_tip_angle_and_phase():
     )
     p_should_be_ch2 = ta_should_be_ch2
 
-    df2_ch1_tip = [x["ch1"] if x is not None else np.nan for x in df2["tip_angle"]]
-    df2_ch2_tip = [x["ch2"] if x is not None else np.nan for x in df2["tip_angle"]]
+    df2_ch1_tip = [x["ch1"] if x is not None else np.nan for x in df2["angle"]]
+    df2_ch2_tip = [x["ch2"] if x is not None else np.nan for x in df2["angle"]]
     df2_ch1_phase = [x["ch1"] if x is not None else np.nan for x in df2["phase"]]
     df2_ch2_phase = [x["ch2"] if x is not None else np.nan for x in df2["phase"]]
 
@@ -149,10 +149,10 @@ def test_format_df():
     # 'd' should not be in params1 since 'd' is never defined
     assert "d" not in params1
 
-    # Check 'tip_angle' and 'phase' are columns now in DataFrame
-    assert "tip_angle" in df1.columns
+    # Check 'angle' and 'phase' are columns now in DataFrame
+    assert "angle" in df1.columns
     assert "phase" in df1.columns
-    assert "tip_angle" in df2.columns
+    assert "angle" in df2.columns
     assert "phase" in df2.columns
 
     # Check expected params returned
@@ -203,9 +203,9 @@ def test_offset_x_data():
     df1 = method1_df()
     df2 = method2_df()
     df3 = method3_df()
-    _add_tip_angle_and_phase(df1)
-    _add_tip_angle_and_phase(df2)
-    _add_tip_angle_and_phase(df3)
+    _add_angle_and_phase(df1)
+    _add_angle_and_phase(df2)
+    _add_angle_and_phase(df3)
 
     # Calculate needed x_data
     x1 = _make_x_data(df1)
@@ -265,8 +265,8 @@ def test_make_normal_and_offset_x_data():
     # Setup DataFrames
     df1 = method1_df()
     df2 = method2_df()
-    _add_tip_angle_and_phase(df1)
-    _add_tip_angle_and_phase(df2)
+    _add_angle_and_phase(df1)
+    _add_angle_and_phase(df2)
 
     # Test when x_data is length zero
     no_events_df1 = df1.drop(df1.index, axis=0)
@@ -293,7 +293,7 @@ def test_make_normal_and_offset_x_data():
 
 def test_SequenceDiagram():
     df3 = method3_df()
-    _add_tip_angle_and_phase(df3)
+    _add_angle_and_phase(df3)
     x3 = [0.0, 0.0, 0.08, 0.08, 0.8]
     x_data_should_be = [0, 0, 0.08, 0.08, 0.675, 0.8]
 
@@ -308,7 +308,7 @@ def test_SequenceDiagram():
 
 # def test_SpectralDimensionLabels():
 #     df2 = method2_df()
-#     _add_tip_angle_and_phase(df2)
+#     _add_angle_and_phase(df2)
 #     x2 = _make_x_data(df2)
 #     off_x2 = _offset_x_data(df2, x2)
 
@@ -390,7 +390,7 @@ def method1_df():
                 "label": "Mixing and Spectral Event",
                 "events": [
                     {"fraction": 0.5},
-                    {"mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": 0}}},
+                    {"query": {"ch1": {"angle": np.pi / 2, "phase": 0}}},
                     {"fraction": 0.5},
                 ],
             },
@@ -401,6 +401,7 @@ def method1_df():
 
 
 def method2_df():
+    factor = np.pi / 180.0
     method2 = Method(
         channels=["1H"],
         spectral_dimensions=[
@@ -408,12 +409,9 @@ def method2_df():
                 "label": "Mixing, Spectral, Mixing, Mixing, ConstantDuration ",
                 "events": [
                     {
-                        "mixing_query": {
-                            "ch1": {"tip_angle": np.pi / 2, "phase": 0.3},
-                            "ch2": {
-                                "tip_angle": 10 / 180 * np.pi,
-                                "phase": 10 / 180 * np.pi,
-                            },
+                        "query": {
+                            "ch1": {"angle": np.pi / 2, "phase": 0.3},
+                            "ch2": {"angle": 10 * factor, "phase": 10 * factor},
                         }
                     },
                     {
@@ -421,21 +419,15 @@ def method2_df():
                         "transition_query": [{"ch1": {"P": [1], "D": [0]}}],
                     },
                     {
-                        "mixing_query": {
-                            "ch1": {"tip_angle": np.pi, "phase": 0.15},
-                            "ch2": {
-                                "tip_angle": 20 / 180 * np.pi,
-                                "phase": 20 / 180 * np.pi,
-                            },
+                        "query": {
+                            "ch1": {"angle": np.pi, "phase": 0.15},
+                            "ch2": {"angle": 20 * factor, "phase": 20 * factor},
                         }
                     },
                     {
-                        "mixing_query": {
-                            "ch1": {"tip_angle": 3 * np.pi / 2, "phase": 0},
-                            "ch2": {
-                                "tip_angle": 30 / 180 * np.pi,
-                                "phase": 30 / 180 * np.pi,
-                            },
+                        "query": {
+                            "ch1": {"angle": 3 * np.pi / 2, "phase": 0},
+                            "ch2": {"angle": 30 * factor, "phase": 30 * factor},
                         }
                     },
                     {
@@ -457,30 +449,21 @@ def method2_df():
                 "label": "Mixing, Mixing, Mixing, Spectral, ConstantDuration, Spectral",
                 "events": [
                     {
-                        "mixing_query": {
-                            "ch1": {"tip_angle": 1.2, "phase": np.pi},
-                            "ch2": {
-                                "tip_angle": 40 / 180 * np.pi,
-                                "phase": 40 / 180 * np.pi,
-                            },
+                        "query": {
+                            "ch1": {"angle": 1.2, "phase": np.pi},
+                            "ch2": {"angle": 40 * factor, "phase": 40 * factor},
                         }
                     },
                     {
-                        "mixing_query": {
-                            "ch1": {"tip_angle": 0.75, "phase": np.pi / 4},
-                            "ch2": {
-                                "tip_angle": 50 / 180 * np.pi,
-                                "phase": 50 / 180 * np.pi,
-                            },
+                        "query": {
+                            "ch1": {"angle": 0.75, "phase": np.pi / 4},
+                            "ch2": {"angle": 50 * factor, "phase": 50 * factor},
                         }
                     },
                     {
-                        "mixing_query": {
-                            "ch1": {"tip_angle": 0.33, "phase": np.pi / 3},
-                            "ch2": {
-                                "tip_angle": 60 / 180 * np.pi,
-                                "phase": 60 / 180 * np.pi,
-                            },
+                        "query": {
+                            "ch1": {"angle": 0.33, "phase": np.pi / 3},
+                            "ch2": {"angle": 60 * factor, "phase": 60 * factor},
                         }
                     },
                     {"fraction": 0.5},
@@ -516,7 +499,7 @@ def method3_df():
                             {"ch1": {"P": [-2]}},
                         ],
                     },
-                    {"mixing_query": {"ch1": {"tip_angle": np.pi, "phase": 0}}},
+                    {"query": {"ch1": {"angle": np.pi, "phase": 0}}},
                 ],
             }
         ],

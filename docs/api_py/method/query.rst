@@ -20,7 +20,7 @@ Query objects
     :members:
     :inherited-members: BaseModel
 
-.. autoclass:: RFRotation
+.. autoclass:: RotationalQuery
     :show-inheritance:
     :members:
     :inherited-members: BaseModel

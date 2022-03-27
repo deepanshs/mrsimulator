@@ -76,7 +76,7 @@ spin_system_2 = SpinSystem(sites=[S1, S2], couplings=[S12], label="Coupled syste
 # the two SpectralEvent. A MixingEvent does not directly contribute to the frequencies.
 # As the name suggests, a mixing event is used for the mixing of transitions in a
 # multi-event method such as HahnEcho. In the following code, we define a mixing query
-# on channel-1 by setting the attributes ``tip_angle`` and ``phase`` to :math:`\pi` and
+# on channel-1 by setting the attributes ``angle`` and ``phase`` to :math:`\pi` and
 # 0, respectively. There two parameters are analogous to the pulse angle and phase.
 hahn_echo = Method(
     channels=["1H"],
@@ -87,7 +87,7 @@ hahn_echo = Method(
             spectral_width=2e4,  # in Hz
             events=[
                 SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [1]}}]),
-                MixingEvent(mixing_query={"ch1": {"tip_angle": np.pi, "phase": 0}}),
+                MixingEvent(query={"ch1": {"angle": np.pi, "phase": 0}}),
                 SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
             ],
         )

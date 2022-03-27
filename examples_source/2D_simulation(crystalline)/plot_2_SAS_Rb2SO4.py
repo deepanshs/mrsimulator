@@ -11,12 +11,12 @@ Rb₂SO₄, ⁸⁷Rb (I=3/2) SAS
 # :math:`\text{Rb}_2\text{SO}_4`, which has two distinct rubidium sites. The NMR
 # tensor parameters for these sites are taken from Shore `et al.` [#f1]_.
 import matplotlib.pyplot as plt
+import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.method import Method
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent
 from mrsimulator import signal_processing as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -38,12 +38,12 @@ spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
 # Use the generic method, `Method`, to simulate a 2D SAS spectrum by customizing the
-# method parameters, as shown below. Note, the method simulates an infinite
-# spinning speed spectrum.
+# method parameters, as shown below.
 sas = Method(
     name="Switched Angle Spinning",
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
+    rotor_frequency=np.inf,
     spectral_dimensions=[
         SpectralDimension(
             count=256,
@@ -52,10 +52,10 @@ sas = Method(
             label="90 dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=90 * 3.14159 / 180,
+                    rotor_angle=90 * 3.14159 / 180,  # in radians
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
-            ],  # in radians
+            ],
         ),
         SpectralDimension(
             count=256,
@@ -64,10 +64,10 @@ sas = Method(
             label="MAS dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=54.74 * 3.14159 / 180,
+                    rotor_angle=54.74 * 3.14159 / 180,  # in radians
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
-            ],  # in radians
+            ],
         ),
     ],
 )

@@ -83,18 +83,19 @@ spectral_dims = get_spectral_dimensions(experiment)
 DAS = Method(
     channels=["17O"],
     magnetic_flux_density=11.744,  # in T
+    rotor_frequency=np.inf,
     spectral_dimensions=[
         SpectralDimension(
             **spectral_dims[0],
             events=[
                 SpectralEvent(
                     fraction=0.5,
-                    rotor_angle=37.38 * 3.14159 / 180,
+                    rotor_angle=37.38 * 3.14159 / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
                 SpectralEvent(
                     fraction=0.5,
-                    rotor_angle=79.19 * 3.14159 / 180,
+                    rotor_angle=79.19 * 3.14159 / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
             ],
@@ -104,7 +105,7 @@ DAS = Method(
             **spectral_dims[1],
             events=[
                 SpectralEvent(
-                    rotor_angle=54.735 * 3.14159 / 180,
+                    rotor_angle=54.735 * 3.14159 / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],

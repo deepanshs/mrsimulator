@@ -73,11 +73,11 @@ def nearest_nonmixing_event(event_name, i):
     ]
 
 
-def tip_angle_and_phase_list(symbol, channels, mixing_query):
-    """Return a list of tip_angles and phase of size equal to the number of sites within
+def angle_and_phase_list(symbol, channels, mixing_query):
+    """Return a list of angles and phase of size equal to the number of sites within
     the spin system, corresponding to a mixing_query from a MixingEvent.
 
-    If the site matches the channel, append the tip_angle and phase of the corresponding
+    If the site matches the channel, append the angle and phase of the corresponding
     channel to the list, otherwise append 0.
 
     Args:
@@ -86,15 +86,15 @@ def tip_angle_and_phase_list(symbol, channels, mixing_query):
         mixing_query: Mixing query object of the MixingEvent.
     """
     angle_mappable = map_mix_query_attr_to_ch(mixing_query)
-    tip_angle_ = [
-        angle_mappable["tip_angle"][channels.index(sym)] if sym in channels else 0
+    angle_ = [
+        angle_mappable["angle"][channels.index(sym)] if sym in channels else 0
         for sym in symbol
     ]
     phase_ = [
         angle_mappable["phase"][channels.index(sym)] if sym in channels else 0
         for sym in symbol
     ]
-    return tip_angle_, phase_
+    return angle_, phase_
 
 
 def get_mixing_query(spectral_dimensions, index):
@@ -111,18 +111,18 @@ def get_mixing_query(spectral_dimensions, index):
         index -= n_events
         sp += 1
         n_events = len(spectral_dimensions[sp].events)
-    return spectral_dimensions[sp].events[index].mixing_query
+    return spectral_dimensions[sp].events[index].query
 
 
 def map_mix_query_attr_to_ch(mixing_query):
-    """Map the mixing query attributes (tip_angle and phase) to the channel index.
+    """Map the mixing query attributes (angle and phase) to the channel index.
     If the attribute is defined for the channel use the defined value else set it to 0.
 
     Args:
         spectral_dimension: A list SpectralDimension objects.
         index: The index of the event from a flatten event list.
     """
-    attributes = ["tip_angle", "phase"]
+    attributes = ["angle", "phase"]
     return {
         item: {
             i: getattr(getattr(mixing_query, f"ch{i+1}"), item) or 0

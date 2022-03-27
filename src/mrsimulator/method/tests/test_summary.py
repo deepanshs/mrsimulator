@@ -16,7 +16,7 @@ REQUIRED = [
     "label",
     "duration",
     "fraction",
-    "mixing_query",
+    "query",
     "spec_dim_index",
     "spec_dim_label",
     "p",
@@ -29,7 +29,7 @@ ALL_PARAMS = [
     "label",
     "duration",
     "fraction",
-    "mixing_query",
+    "query",
     "magnetic_flux_density",
     "rotor_frequency",
     "rotor_angle",
@@ -115,7 +115,7 @@ def basic_summary_tests(the_method):
     ]
     assert check_col_equal(df["rotor_angle"], temp)
 
-    assert "mixing_query" in df.columns
+    assert "query" in df.columns
     assert "freq_contrib" in df.columns
 
 
@@ -158,9 +158,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix0",
-                    "mixing_query": {
-                        "ch1": {"tip_angle": np.pi / 4, "phase": np.pi / 2}
-                    },
+                    "query": {"ch1": {"angle": np.pi / 4, "phase": np.pi / 2}},
                 },
                 {
                     "label": "Dur0",
@@ -184,7 +182,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix1",
-                    "mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": np.pi}},
+                    "query": {"ch1": {"angle": np.pi / 2, "phase": np.pi}},
                 },
                 {
                     "label": "Dur1",
@@ -211,7 +209,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix0",
-                    "mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": np.pi}},
+                    "query": {"ch1": {"angle": np.pi / 2, "phase": np.pi}},
                 },
                 {
                     "label": "Dur0",
@@ -233,7 +231,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix1",
-                    "mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": np.pi}},
+                    "query": {"ch1": {"angle": np.pi / 2, "phase": np.pi}},
                 },
                 {
                     "label": "Dur1",
