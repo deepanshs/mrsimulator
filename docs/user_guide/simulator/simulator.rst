@@ -19,7 +19,7 @@ spin systems and methods to a simulator object.
     :context: reset
 
     from mrsimulator import Site, Simulator, SpinSystem
-    from mrsimulator.methods import BlochDecaySpectrum
+    from mrsimulator.method.lib import BlochDecaySpectrum
 
     # Setup the spin system and method objects
     system1 = SpinSystem(sites=[Site(isotope="1H")])  # Proton spin system
@@ -110,7 +110,7 @@ not be sufficient.
     :caption: Inaccurate simulation resulting from computing low number of sidebands.
 
     from mrsimulator import Simulator, SpinSystem, Site
-    from mrsimulator.methods import BlochDecaySpectrum
+    from mrsimulator.method.lib import BlochDecaySpectrum
     from mrsimulator.method import SpectralDimension
     from mrsimulator.spin_system.tensors import SymmetricTensor
 

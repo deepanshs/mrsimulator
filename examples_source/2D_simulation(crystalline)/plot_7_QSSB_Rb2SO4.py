@@ -14,7 +14,7 @@ simulation.
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import SSB2D
+from mrsimulator.method.lib import SSB2D
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import SpectralDimension
 

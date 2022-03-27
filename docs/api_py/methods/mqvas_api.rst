@@ -1,4 +1,4 @@
-.. currentmodule:: mrsimulator.methods
+.. currentmodule:: mrsimulator.method.lib
 
 .. _mqvas_ref:
 

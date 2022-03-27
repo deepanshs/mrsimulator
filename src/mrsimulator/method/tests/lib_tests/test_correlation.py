@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # import pytest
 # from mrsimulator.method.query import TransitionQuery
-# from mrsimulator.methods import Cosy
-# from mrsimulator.methods import Inadequate
+# from mrsimulator.method.lib import Cosy
+# from mrsimulator.method.lib import Inadequate
 #
 # __author__ = "Deepansh J. Srivastava"
 # __email__ = "srivastava.89@osu.edu"

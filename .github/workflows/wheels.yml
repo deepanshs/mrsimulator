@@ -113,7 +113,7 @@ jobs:
       # CIBW_TEST_COMMAND: |
       #   python -c "import mrsimulator"
       #   python -c "from mrsimulator import Site, Coupling, SpinSystem, Simulator"
-      #   python -c "from mrsimulator.methods import Method1D, Method2D"
+      #   python -c "from mrsimulator.method.lib import Method1D, Method2D"
 
     strategy:
       fail-fast: false

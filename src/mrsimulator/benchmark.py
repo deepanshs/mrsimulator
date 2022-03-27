@@ -7,8 +7,8 @@ import numpy as np
 from mrsimulator import __version__
 from mrsimulator import Simulator
 from mrsimulator.method import Method
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecayCentralTransitionSpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.utils.collection import single_site_system_generator
 
 # import platform

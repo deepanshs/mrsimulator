@@ -2,10 +2,10 @@
 import numpy as np
 import pytest
 from mrsimulator.method import SpectralDimension
+from mrsimulator.method.lib import FiveQ_VAS
+from mrsimulator.method.lib import SevenQ_VAS
+from mrsimulator.method.lib import ThreeQ_VAS
 from mrsimulator.method.query import TransitionQuery
-from mrsimulator.methods import FiveQ_VAS
-from mrsimulator.methods import SevenQ_VAS
-from mrsimulator.methods import ThreeQ_VAS
 from mrsimulator.utils.error import MixedSpectralDimensionTypeError
 
 __author__ = "Deepansh J. Srivastava"

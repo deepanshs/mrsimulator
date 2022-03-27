@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import pytest
 from mrsimulator.method import SpectralDimension
-from mrsimulator.methods.base import BaseNamedMethod1D
-from mrsimulator.methods.base import BaseNamedMethod2D
+from mrsimulator.method.lib.base import BaseNamedMethod1D
+from mrsimulator.method.lib.base import BaseNamedMethod2D
 from mrsimulator.utils.error import ImmutableEventError
 from mrsimulator.utils.error import NamedMethodError
 

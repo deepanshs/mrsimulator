@@ -13,7 +13,7 @@ Coesite, ¹⁷O (I=5/2) 3QMAS
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
-from mrsimulator.methods import ThreeQ_VAS
+from mrsimulator.method.lib import ThreeQ_VAS
 from mrsimulator import signal_processing as sp
 from mrsimulator.method import SpectralDimension
 

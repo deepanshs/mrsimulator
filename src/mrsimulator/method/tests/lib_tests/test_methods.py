@@ -5,8 +5,8 @@ import numpy as np
 import pytest
 from monty.serialization import loadfn
 from mrsimulator.method import Method
-from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.methods import ThreeQ_VAS
+from mrsimulator.method.lib import BlochDecaySpectrum
+from mrsimulator.method.lib import ThreeQ_VAS
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"

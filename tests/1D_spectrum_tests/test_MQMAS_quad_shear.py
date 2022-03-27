@@ -5,9 +5,9 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.methods import FiveQ_VAS
-from mrsimulator.methods import SevenQ_VAS
-from mrsimulator.methods import ThreeQ_VAS
+from mrsimulator.method.lib import FiveQ_VAS
+from mrsimulator.method.lib import SevenQ_VAS
+from mrsimulator.method.lib import ThreeQ_VAS
 
 method_class = [ThreeQ_VAS, FiveQ_VAS, SevenQ_VAS]
 

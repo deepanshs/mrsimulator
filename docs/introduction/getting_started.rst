@@ -76,15 +76,15 @@ Thats it! We have created a spin system whose spectrum is ready to be simulated.
 Methods
 -------
 
-A method object describes an NMR method. For this introduction, we will use
-the :py:class:`~mrsimulator.methods.BlochDecaySpectrum` which is one of the pre-defined methods.
+A :ref`method_documentation` object describes an NMR method. For this introduction, we will use
+the :py:class:`~mrsimulator.method.lib.BlochDecaySpectrum` which is one of the pre-defined methods.
 Some attributes of the method still need to be provided as seen below.
 
 .. plot::
     :context: close-figs
 
     # Import the BlochDecaySpectrum class
-    from mrsimulator.methods import BlochDecaySpectrum
+    from mrsimulator.method.lib import BlochDecaySpectrum
     from mrsimulator.method import SpectralDimension
 
     # Create a BlochDecaySpectrum object

@@ -5,8 +5,8 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.methods import SSB2D
+from mrsimulator.method.lib import BlochDecaySpectrum
+from mrsimulator.method.lib import SSB2D
 
 
 def SSB2D_setup(ist, vr, method_type):

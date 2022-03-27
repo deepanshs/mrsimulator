@@ -18,7 +18,7 @@ Here we import everything we will use in this example
     import matplotlib.pyplot as plt
 
     from mrsimulator import Simulator, Site, SpinSystem, Coupling
-    from mrsimulator.methods import BlochDecaySpectrum
+    from mrsimulator.method.lib import BlochDecaySpectrum
     from mrsimulator.method import SpectralDimension
     from mrsimulator import signal_processing as sp
 

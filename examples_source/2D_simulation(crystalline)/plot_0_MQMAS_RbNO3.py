@@ -14,7 +14,7 @@ RbNO₃, ⁸⁷Rb (I=3/2) 3QMAS
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import ThreeQ_VAS
+from mrsimulator.method.lib import ThreeQ_VAS
 from mrsimulator import signal_processing as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import SpectralDimension

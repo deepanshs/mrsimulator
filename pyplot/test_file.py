@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 
 spin_systems = [
     {

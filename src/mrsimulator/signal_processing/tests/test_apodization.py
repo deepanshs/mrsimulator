@@ -5,7 +5,7 @@ import numpy as np
 from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 
 from .test_signal_processing import setup_read_write
 

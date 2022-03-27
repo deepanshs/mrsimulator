@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 
+import mrsimulator.method.lib as NamedMethods
 import pytest
-from mrsimulator import methods as NamedMethods
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method

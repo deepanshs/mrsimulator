@@ -10,8 +10,8 @@ from mrsimulator import Coupling
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecayCTSpectrum
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecayCTSpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.simulator import __CPU_count__
 from mrsimulator.simulator import get_chunks
 from mrsimulator.simulator import Sites

@@ -2,7 +2,7 @@
 Bloch Decay Spectrum method
 ---------------------------
 
-.. currentmodule:: mrsimulator.methods
+.. currentmodule:: mrsimulator.method.lib
 
 .. autoclass:: BlochDecaySpectrum
     :show-inheritance:
@@ -13,7 +13,7 @@ Bloch Decay Spectrum method
 
 .. doctest::
 
-    >>> from mrsimulator.methods import BlochDecaySpectrum
+    >>> from mrsimulator.method.lib import BlochDecaySpectrum
     >>> from mrsimulator.method import SpectralDimension
     >>> Bloch_method = BlochDecaySpectrum(
     ...     channels=["1H"],

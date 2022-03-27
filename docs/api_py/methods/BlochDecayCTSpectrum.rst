@@ -2,7 +2,7 @@
 Bloch Decay Central Transition Spectrum method
 ----------------------------------------------
 
-.. currentmodule:: mrsimulator.methods
+.. currentmodule:: mrsimulator.method.lib
 
 .. autoclass:: BlochDecayCTSpectrum
     :show-inheritance:
@@ -13,7 +13,7 @@ Bloch Decay Central Transition Spectrum method
 
 .. doctest::
 
-    >>> from mrsimulator.methods import BlochDecayCTSpectrum
+    >>> from mrsimulator.method.lib import BlochDecayCTSpectrum
     >>> from mrsimulator.method import SpectralDimension
     >>> Bloch_CT_method = BlochDecayCTSpectrum(
     ...     channels=["1H"],

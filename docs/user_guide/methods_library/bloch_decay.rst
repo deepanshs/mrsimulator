@@ -1,12 +1,12 @@
 Bloch Decay Spectrum
 --------------------
 
-The :py:class:`~mrsimulator.methods.BlochDecaySpectrum` class simulates the
+The :py:class:`~mrsimulator.method.lib.BlochDecaySpectrum` class simulates the
 Bloch decay spectrum.
 
 .. code-block:: python
 
-    from mrsimulator.methods import BlochDecaySpectrum
+    from mrsimulator.method.lib import BlochDecaySpectrum
     from mrsimulator.method import SpectralDimension
 
     method = BlochDecaySpectrum(
@@ -23,6 +23,6 @@ Bloch decay spectrum.
         ],
     )
 
-.. minigallery:: mrsimulator.methods.BlochDecaySpectrum
+.. minigallery:: mrsimulator.method.lib.BlochDecaySpectrum
     :add-heading: Examples using ``BlochDecaySpectrum``
     :heading-level: "

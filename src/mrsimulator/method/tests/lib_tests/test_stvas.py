@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
+from mrsimulator.method.lib import ST1_VAS
+from mrsimulator.method.lib import ST2_VAS
 from mrsimulator.method.query import TransitionQuery
-from mrsimulator.methods import ST1_VAS
-from mrsimulator.methods import ST2_VAS
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
