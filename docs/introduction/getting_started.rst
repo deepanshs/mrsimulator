@@ -112,7 +112,7 @@ A Bloch decay method only has one spectral dimension and this specific spectral 
 .. defines a frequency dimension with 2048 points, spanning 80 kHz with a reference offset of
 .. 6 kHz. :ref:`spec_dim_documentation`
 
-Now all we need is to put our :ref:`spin_sys` and :ref:`method_api` objects together and simulate
+Now all we need is to put the spin system and method objects together and simulate
 the spectrum.
 
 Simulator
@@ -130,8 +130,8 @@ the calculation of the NMR spectrum. Lets create the :ref:`simulator_api` object
     # Create a Simulator object
     sim = Simulator()
 
-Each :ref:`simulator_api` object holds a list of :ref:`spin_sys` objects and a list of :ref:`method_api`
-objects. Below we add the spin system and method objects we previously defined:
+Each :ref:`simulator_api` object holds a list of spin system and method objects.
+Below we add the spin system and method objects we previously defined:
 
 .. plot::
     :context: close-figs
