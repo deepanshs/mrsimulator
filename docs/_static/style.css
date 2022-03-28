@@ -265,7 +265,7 @@ table caption:hover {
 .toctree-wrapper.compound > p.caption {
   display: none;
 }
-.sidebar.hidden-xs > p.caption {
+.sidebar.hidden-xs > p:not(p.logo) {
   padding-left: 24px;
   padding-top: 2px;
   padding-bottom: 2px;
