@@ -66,7 +66,8 @@ def assert_parsing(method, fn1):
             method(**serialize)
 
         with pytest.raises(ImmutableEventError, match=f".*{event_error}.*"):
-            ent.append({"transition_query": [{"ch1": {"P": [-100]}}]})
+            ent[0]["fraction"] = 0.5
+            ent.append({"fraction": 0.5, "transition_query": [{"ch1": {"P": [-100]}}]})
             method.parse_dict_with_units(serialize)
 
 

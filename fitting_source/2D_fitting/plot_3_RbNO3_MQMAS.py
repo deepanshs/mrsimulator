@@ -24,7 +24,7 @@ from mrsimulator.utils.collection import single_site_system_generator
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/814455/files/RbNO3_MQMAS.csdf"
+filename = "https://sandbox.zenodo.org/record/835664/files/RbNO3_MQMAS.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
@@ -143,7 +143,7 @@ result
 # %%
 # The best fit solution
 # ---------------------
-best_fit = sf.bestfit(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
 
 # Plot the spectrum
 plt.figure(figsize=(4.25, 3.0))
@@ -159,7 +159,7 @@ plt.show()
 # %%
 # Image plots with residuals
 # --------------------------
-residuals = sf.residuals(sim, processor)[0]
+residuals = sf.residuals(sim, processor)[0].real
 
 fig, ax = plt.subplots(
     1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}

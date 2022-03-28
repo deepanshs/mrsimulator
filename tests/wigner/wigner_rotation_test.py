@@ -12,7 +12,7 @@ def test__batch_wigner_rotation():
     beta = np.random.rand(n) * np.pi / 2.0
 
     cos_beta = np.cos(beta)
-    sin_beta = np.sqrt(1.0 - cos_beta ** 2)
+    sin_beta = np.sqrt(1.0 - cos_beta**2)
     exp_I_beta = cos_beta + 1j * sin_beta
     wigner_2j_matrices = clib.wigner_d_matrices_from_exp_I_beta(
         2, True, exp_I_beta

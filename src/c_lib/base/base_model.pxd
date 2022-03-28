@@ -30,7 +30,7 @@ cdef extern from "schemes.h":
 
     MRS_averaging_scheme *MRS_create_averaging_scheme(
                             unsigned int integration_density,
-                            bool_t allow_fourth_rank,
+                            bool_t allow_4th_rank,
                             unsigned int integration_volume)
     void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme)
     MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
@@ -40,16 +40,14 @@ cdef extern from "schemes.h":
 
 cdef extern from "mrsimulator.h":
     ctypedef struct MRS_plan:
-        MRS_averaging_scheme *averaging_scheme
         unsigned int number_of_sidebands
         double rotor_frequency_in_Hz
         double rotor_angle_in_rad
-        # double complex *vector
 
     MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, unsigned int number_of_sidebands,
                           double rotor_frequency_in_Hz,
                           double rotor_angle_in_rad, double increment,
-                          bool_t allow_fourth_rank)
+                          bool_t allow_4th_rank)
     void MRS_free_plan(MRS_plan *plan)
     void MRS_get_amplitudes_from_plan(MRS_plan *plan, bool_t refresh)
     void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0, double complex *R2,
@@ -113,7 +111,7 @@ cdef extern from "method.h":
 cdef extern from "simulation.h":
     void mrsimulator_core(
         # spectrum information and related amplitude
-        double * spec,
+        double *spec,
         double spectral_start,
         double spectral_increment,
         int number_of_points,
@@ -141,11 +139,11 @@ cdef extern from "simulation.h":
 
     void __mrsimulator_core(
         # spectrum information and related amplitude
-        double * spec,
+        double *spec,
         site_struct *sites,
         coupling_struct *couplings,
         float *transition_pathway,    # Pointer to a list of transitions.
-        double transition_pathway_weight,  # The weight of transition pathway.
+        double *transition_pathway_weight,  # The complex weight of transition pathway.
         int n_dimension,              # the number of dimensions.
         MRS_dimension *dimensions,    # the dimensions within method.
         MRS_fftw_scheme *fftw_scheme, # the fftw scheme

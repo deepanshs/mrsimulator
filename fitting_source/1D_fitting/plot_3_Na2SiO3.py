@@ -36,7 +36,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # Import the experimental data. We use dataset file serialized with the CSDM
 # file-format, using the
 # `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_ module.
-filename = "https://sandbox.zenodo.org/record/814455/files/Na2SiO3_O17.csdf"
+filename = "https://sandbox.zenodo.org/record/835664/files/Na2SiO3_O17.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
@@ -188,8 +188,8 @@ result
 # **Step 8:** The plot of the fit and the measurement data.
 
 # Best fit spectrum
-best_fit = sf.bestfit(sim, processor)[0]
-residuals = sf.residuals(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
+residuals = sf.residuals(sim, processor)[0].real
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")

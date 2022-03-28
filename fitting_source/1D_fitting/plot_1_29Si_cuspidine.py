@@ -225,8 +225,8 @@ result
 
 # %%
 # The plot of the fit, measurement and the residuals is shown below.
-best_fit = sf.bestfit(sim, processor)[0]
-residuals = sf.residuals(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
+residuals = sf.residuals(sim, processor)[0].real
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")

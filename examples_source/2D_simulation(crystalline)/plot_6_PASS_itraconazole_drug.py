@@ -26,7 +26,7 @@ from mrsimulator import signal_processing as sp
 
 sim = Simulator()
 
-filename = "https://sandbox.zenodo.org/record/687656/files/itraconazole_13C.mrsys"
+filename = "https://sandbox.zenodo.org/record/835664/files/itraconazole_13C.mrsys"
 sim.load_spin_systems(filename)
 
 

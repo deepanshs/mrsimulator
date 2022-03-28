@@ -10,9 +10,9 @@ Generic operations
 
 Import the module as
 
-.. doctest::
+.. code-block:: python
 
-    >>> from mrsimulator import signal_processing as sp
+    from mrsimulator import signal_processing as sp
 
 .. rubric:: Operation Summary
 
@@ -47,7 +47,9 @@ the CSDM object.
 
 .. seealso::
 
-    :ref:`signal_processing` for a details.
+    :ref:`signal_processing_documentation` for more details.
+
+    :ref:`signal_processing_examples` for notebooks using these operations.
 
 
 Apodization
@@ -68,12 +70,14 @@ the CSDM object.
       ~Gaussian
       ~Exponential
       ~SkewedGaussian
-      ~Step
+      ~TopHat
       ~Mask
 
 .. seealso::
 
-    :ref:`signal_processing` for a details.
+    :ref:`signal_processing_documentation` for more details.
+
+    :ref:`signal_processing_examples` for notebooks using these operations.
 
 
 Affine Transformation
@@ -96,4 +100,4 @@ the CSDM object.
 
 .. seealso::
 
-    :ref:`signal_processing` for a details.
+    :ref:`signal_processing_documentation` for more details.

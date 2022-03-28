@@ -25,6 +25,7 @@ def setup():
     sim = Simulator(spin_systems=[spin_sys, spin_sys], methods=[method, method])
 
     sim.run(method_index=0)
+    sim.methods[0].simulation._timestamp = None
 
     processor = sp.SignalProcessor(
         operations=[
@@ -83,11 +84,16 @@ def test_load():
     assert processors_r == processors
     assert application_r == application
 
+    # Load from external URL. May break in the future
+    load("http://ssnmr.org/sites/default/files/mrsimulator/test.mrsim")
+
     os.remove("test.mrsim")
 
 
 def test_mrsim_to_v0_7():
     sim, processors, application = setup()
+    sim.methods[0].simulation = None
+
     old_struct = sim.json()
     old_struct["signal_processors"] = [sp.json() for sp in processors]
     old_struct["application"] = application
@@ -120,6 +126,9 @@ def test_mrsim_to_v0_7():
     }
 
     py_dict = mrsim_to_v0_7("temp_2.mrsim", overwrite=True)
+
+    py_dict["simulator"]["methods"][0]["simulation"] = None
+    new_struct["simulator"]["methods"][0]["simulation"] = None
 
     assert py_dict == new_struct
 

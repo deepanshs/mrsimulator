@@ -23,7 +23,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/814455/files/119Sn_SnO.csdf"
+filename = "https://sandbox.zenodo.org/record/835664/files/119Sn_SnO.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
@@ -163,8 +163,8 @@ result
 # %%
 # The best fit solution
 # ---------------------
-best_fit = sf.bestfit(sim, processor)[0]
-residuals = sf.residuals(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
+residuals = sf.residuals(sim, processor)[0].real
 
 # Plot the spectrum
 plt.figure(figsize=(4.25, 3.0))

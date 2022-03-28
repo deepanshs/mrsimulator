@@ -17,7 +17,7 @@ Bloch Decay Spectrum method
     >>> Bloch_method = BlochDecaySpectrum(
     ...     channels=["1H"],
     ...     rotor_frequency=5000,  # in Hz
-    ...     rotor_angle=0.95531,  # in rad
+    ...     rotor_angle=54.735 * 3.14159 / 180,  # in rad
     ...     magnetic_flux_density=9.4,  # in T
     ...     spectral_dimensions=[
     ...         dict(count=1024, spectral_width=50000, reference_offset=-8000)
@@ -33,7 +33,7 @@ Bloch decay method is a special case of :py:class:`~mrsimulator.methods.Method1D
     >>> Blochdecay = Method1D(
     ...     channels=["1H"],
     ...     rotor_frequency=5000,  # in Hz
-    ...     rotor_angle=0.95531,  # in rad
+    ...     rotor_angle=54.735 * 3.14159 / 180,  # in rad
     ...     magnetic_flux_density=9.4,  # in T
     ...     spectral_dimensions=[
     ...         {

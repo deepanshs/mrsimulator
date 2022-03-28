@@ -21,15 +21,14 @@ from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method.spectral_dimension import SpectralDimension
-from mrsimulator.method.event import SpectralEvent
+from mrsimulator.method import SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/830903/files/NiCl2.2D2O.csdf"
+filename = "https://sandbox.zenodo.org/record/835664/files/NiCl2.2D2O.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
@@ -182,7 +181,7 @@ result
 # %%
 # The best fit solution
 # ---------------------
-best_fit = sf.bestfit(sim, processor)[0]
+best_fit = sf.bestfit(sim, processor)[0].real
 
 # Plot the spectrum
 plt.figure(figsize=(4.25, 3.0))
@@ -198,7 +197,7 @@ plt.show()
 # %%
 # Image plots with residuals
 # --------------------------
-residuals = sf.residuals(sim, processor)[0]
+residuals = sf.residuals(sim, processor)[0].real
 
 fig, ax = plt.subplots(
     1, 3, sharey=True, figsize=(10, 3.0), subplot_kw={"projection": "csdm"}

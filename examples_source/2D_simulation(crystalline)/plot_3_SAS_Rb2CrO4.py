@@ -18,8 +18,7 @@ from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.methods import Method2D
 from mrsimulator import signal_processing as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method.event import SpectralEvent
-from mrsimulator.method.spectral_dimension import SpectralDimension
+from mrsimulator.method import SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -92,7 +91,7 @@ data = sim.methods[0].simulation
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()
 plt.tight_layout()
