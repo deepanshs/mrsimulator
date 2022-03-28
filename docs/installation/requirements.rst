@@ -27,6 +27,6 @@ Package dependencies
 - pytest>=4.5.0 for unit tests.
 - pre-commit for code formatting
 - sphinx>=2.0 for generating the documentation
-- sphinxjp.themes.basicstrap for documentation.
+- sphinx-book-theme for documentation.
 - breathe==4.26 for generating C documentation
 - sphinx-copybutton

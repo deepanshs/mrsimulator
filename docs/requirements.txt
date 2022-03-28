@@ -12,7 +12,7 @@ joblib>=1.0.0
 cython>=0.29.11
 
 # Building Docs requirements
-sphinxjp.themes.basicstrap
+sphinx_book_theme
 sphinx>=2.0
 sphinx-gallery>0.6.2
 pillow>=7.1.2

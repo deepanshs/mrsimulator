@@ -62,7 +62,7 @@ extensions = [
     "sphinx_copybutton",
     # "sphinxcontrib.bibtex",
     "breathe",
-    "sphinxjp.themes.basicstrap",
+    "sphinx_book_theme",
     "sphinx_gallery.gen_gallery",
     "sphinx.ext.intersphinx",
     "sphinx_tabs.tabs",
@@ -251,12 +251,7 @@ math_number_all = True
 
 # Tell sphinx what the primary language being documented is.
 primary_domain = "py"
-
-# Tell sphinx what the pygments highlight language should be.
 highlight_language = "c"
-
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -296,77 +291,30 @@ pygments_style = "default"
 #
 # Some html_theme options are 'alabaster', 'bootstrap', 'sphinx_rtd_theme',
 # 'classic', 'basicstrap'
-html_theme = "basicstrap"
+html_theme = "sphinx_book_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
 html_theme_options = {
-    # Set the lang attribute of the html tag. Defaults to 'en'
-    "lang": "en",
-    # Disable showing the sidebar. Defaults to 'false'
-    "nosidebar": False,
-    # Show header searchbox. Defaults to false. works only "nosidebar=True",
-    "header_searchbox": False,
-    # Put the sidebar on the right side. Defaults to false.
-    "rightsidebar": False,
-    # Set the width of the sidebar. Defaults to 3
-    "sidebar_span": 3,
-    # Fix navbar to top of screen. Defaults to true
-    "nav_fixed_top": True,
-    # Fix the width of the sidebar. Defaults to false
-    "nav_fixed": True,
-    # Set the width of the sidebar. Defaults to '900px'
-    "nav_width": "300px",
-    # Fix the width of the content area. Defaults to false
-    "content_fixed": False,
-    # Set the width of the content area. Defaults to '900px'
-    "content_width": "900px",
-    # Fix the width of the row. Defaults to false
-    "row_fixed": False,
-    # Disable the responsive design. Defaults to false
-    "noresponsive": False,
-    # Disable the responsive footer relbar. Defaults to false
-    "noresponsiverelbar": False,
-    # Disable flat design. Defaults to false.
-    # Works only "bootstrap_version = 3"
-    "noflatdesign": False,
-    # Enable Google Web Font. Defaults to false
-    # "googlewebfont": True,
-    # Set the URL of Google Web Font's CSS.
-    # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
-    # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
-    # "googlewebfont_url": "http://fonts.googleapis.com/css2?family=Inter",
-    # Set the Style of Google Web Font's CSS.
-    # Defaults to "font-family: 'Text Me One', sans-serif;"
-    # "googlewebfont_style": "font-family: Helvetica",
-    # "googlewebfont_style": "font-family: 'Inter', sans-serif;",
-    # Set 'navbar-inverse' attribute to header navbar. Defaults to false.
-    "header_inverse": True,
-    # Set 'navbar-inverse' attribute to relbar navbar. Defaults to false.
-    "relbar_inverse": False,
-    # Enable inner theme by Bootswatch. Defaults to false
-    "inner_theme": False,
-    # Set the name of inner theme. Defaults to 'bootswatch-simplex'
-    # "inner_theme_name": "bootswatch-Yeti",
-    # Select Twitter bootstrap version 2 or 3. Defaults to '3'
-    "bootstrap_version": "3",
-    # Show "theme preview" button in header navbar. Defaults to false.
-    "theme_preview": False,
+    "repository_url": "https://github.com/DeepanshS/mrsimulator",
+    "use_repository_button": True,
+    "use_issues_button": True,
+    "use_download_button": True,
+    "launch_buttons": {
+        "notebook_interface": "jupyterlab",
+        "binderhub_url": "https://mybinder.org",
+        "colab_url": "https://colab.research.google.com",
+    },
 }
 
-html_style = "style.css"
-html_title = f"mrsimulator:docs v{__version__}"
+
+# html_style = "style.css"
+html_title = ""  # f"mrsimulator:docs v{__version__}"
 html_logo = "_static/mrsimulator_logo.png"
 html_favicon = "_static/favicon.ico"
 html_last_updated_fmt = ""
-
-html_sidebars = {
-    "**": ["searchbox.html", "globaltoc.html"],
-    "using/windows": ["searchbox.html", "windowssidebar.html"],
-}
-# ---------------------------------------------------------------------------- #
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
