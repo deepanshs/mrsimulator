@@ -1,3 +1,9 @@
+.. _more_method_documentation:
+
+===================
+Methods For the User
+===================
+
 The Method object is where the versatility of mrsimulator becomes clear.
 Most NMR density matrix simulations do all the calculations in the
 time-domain, but mrsimulator performs its calculations in the frequency
@@ -125,7 +131,7 @@ apodization. Then we apply the apodization and plot the processed data.
 
 
 
-.. image:: output_9_0.png
+.. image:: ../../_static/method_blochdecay.png
 
 
 Now, let’s say we wanted to supress the satellites. To do this, we need
@@ -173,7 +179,7 @@ simulation, apply our proceessing, and plot the data.
 
 
 
-.. image:: output_13_0.png
+.. image:: ../../_static/method_ct.png
 
 
 Now, let’s simulate an 3Q-MAS spectrum, again using the generic Method
@@ -234,7 +240,7 @@ plot the data.
 
 
 
-.. image:: output_17_0.png
+.. image:: ../../_static/method_noaffine.png
 
 
 For 3Q-MAS experiments, however, the spectrum is often sheared and
@@ -292,7 +298,7 @@ simulation, and plot the data.
 
 
 
-.. image:: output_21_0.png
+.. image:: ../../_static/method_withaffine.png
 
 
 For the convenience methods mentioned here and more, please see our
@@ -371,5 +377,5 @@ see our advanced users methods page.
 
 
 
-.. image:: output_27_0.png
+.. image:: ../../_static/method_mixing.png
 
