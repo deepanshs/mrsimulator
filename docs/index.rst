@@ -221,6 +221,7 @@ User Guide
     user_guide/methods_library/methods_library
     user_guide/method/method_advanced_user
     user_guide/method/query_objects
+    user_guide/method/methods_fortheuser
     user_guide/simulator/simulator
     user_guide/signal_processing/signal_processing
     user_guide/io/mrsim_IO
