@@ -411,7 +411,7 @@ def update_old_file_struct(oldfile: str, newfile: str = None):
 
     Args:
         str oldfile: String of path to mrsim file with old structure
-        str newfile: Will write new mrsim file to path represented by newfile if give
+        str newfile: Will write new mrsim file to path represented by newfile if given
 
     Returns:
         Dict: Dictionary representation of Mrsimulator object with new structure
