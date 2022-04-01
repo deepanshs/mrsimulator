@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-import json
 import os
 
-import pytest
 from mrsimulator import __version__
 from mrsimulator import dict
 from mrsimulator import load
-from mrsimulator import mrsim_to_v0_7
 from mrsimulator import save
 from mrsimulator import signal_processing as sp
 from mrsimulator import Simulator
@@ -90,46 +87,46 @@ def test_load():
     os.remove("test.mrsim")
 
 
-def test_mrsim_to_v0_7():
-    sim, processors, application = setup()
-    sim.methods[0].simulation = None
+# def test_mrsim_to_v0_7():
+#     sim, processors, application = setup()
+#     sim.methods[0].simulation = None
 
-    old_struct = sim.json()
-    old_struct["signal_processors"] = [sp.json() for sp in processors]
-    old_struct["application"] = application
-    old_struct["version"] = __version__
-    old_struct["some_extra_key"] = "An erroneous key which will be removed"
+#     old_struct = sim.json()
+#     old_struct["signal_processors"] = [sp.json() for sp in processors]
+#     old_struct["application"] = application
+#     old_struct["version"] = __version__
+#     old_struct["some_extra_key"] = "An erroneous key which will be removed"
 
-    with open("temp_2.mrsim", "w", encoding="utf8") as outfile:
-        json.dump(
-            old_struct,
-            outfile,
-            ensure_ascii=False,
-            sort_keys=False,
-            allow_nan=False,
-            separators=(",", ":"),
-        )
+#     with open("temp_2.mrsim", "w", encoding="utf8") as outfile:
+#         json.dump(
+#             old_struct,
+#             outfile,
+#             ensure_ascii=False,
+#             sort_keys=False,
+#             allow_nan=False,
+#             separators=(",", ":"),
+#         )
 
-    # Test error handling of loading old structure
-    e = (
-        "An incompatible JSON root-level structure was detected. Use the method "
-        "mrsim_to_v0_7 to convert to a compliant structure."
-    )
-    with pytest.raises(ValueError, match=e):
-        load("temp_2.mrsim")
+#     # Test error handling of loading old structure
+#     e = (
+#         "An incompatible JSON root-level structure was detected. Use the method "
+#         "mrsim_to_v0_7 to convert to a compliant structure."
+#     )
+#     with pytest.raises(ValueError, match=e):
+#         load("temp_2.mrsim")
 
-    new_struct = {
-        "simulator": sim.json(),
-        "signal_processors": [sp.json() for sp in processors],
-        "application": application,
-        "version": __version__,
-    }
+#     new_struct = {
+#         "simulator": sim.json(),
+#         "signal_processors": [sp.json() for sp in processors],
+#         "application": application,
+#         "version": __version__,
+#     }
 
-    py_dict = mrsim_to_v0_7("temp_2.mrsim", overwrite=True)
+#     py_dict = mrsim_to_v0_7("temp_2.mrsim", overwrite=True)
 
-    py_dict["simulator"]["methods"][0]["simulation"] = None
-    new_struct["simulator"]["methods"][0]["simulation"] = None
+#     py_dict["simulator"]["methods"][0]["simulation"] = None
+#     new_struct["simulator"]["methods"][0]["simulation"] = None
 
-    assert py_dict == new_struct
+#     assert py_dict == new_struct
 
-    os.remove("temp_2.mrsim")
+#     os.remove("temp_2.mrsim")

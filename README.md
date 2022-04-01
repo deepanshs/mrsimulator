@@ -29,7 +29,7 @@ magnetic resonance (NMR) spectra of both crystalline and amorphous materials.
 pip install mrsimulator
 ```
 
-Please refer to our [installation document](https://mrsimulator.readthedocs.io/en/latest/installation/users.html) for details.
+Please refer to our [installation documentation](https://mrsimulator.readthedocs.io/en/stable/installation/users.html) for details.
 
 #### A 1D static and MAS example
 

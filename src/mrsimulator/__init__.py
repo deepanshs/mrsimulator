@@ -14,10 +14,12 @@ minimization, using a collection of pre-defined NMR methods.
 
 See https://mrsimulator.readthedocs.io/en/stable/ for complete documentation.
 """
+from datetime import datetime
+
 # version has to be specified at the start.
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
-__copyright__ = "Copyright 2019-2021, The mrsimulator Project."
+__copyright__ = f"Copyright 2019-{datetime.now().year}, The mrsimulator Project."
 __credits__ = ["Deepansh J. Srivastava"]
 __license__ = "BSD License"
 __maintainer__ = "Deepansh J. Srivastava"
@@ -40,10 +42,13 @@ from .method.spectral_dimension import (  # lgtm [py/import-own-module] # noqa:F
     SpectralDimension,
 )
 from .method import Method  # lgtm [py/import-own-module] # noqa:F401
-from mrsimulator.utils.importer import import_json
 from mrsimulator.signal_processing import SignalProcessor
+from mrsimulator.utils.error import UnableToConvertError
+from mrsimulator.utils.importer import import_json
 from mrsimulator.utils.parseable import Parseable
+from mrsimulator.utils.utils import _update_old_dict_struct
 import json
+import warnings
 from pydantic import Field
 from typing import Dict
 from typing import List
@@ -271,7 +276,7 @@ def save(
     filename: str,
     simulator: Simulator,
     signal_processors: List = None,
-    application: Dict = {},
+    application: Dict = None,
     with_units: bool = True,
 ):
     """Serialize the Simulator, list of SignalProcessor, and an application dict
@@ -297,7 +302,7 @@ def save(
 def dict(
     simulator: Simulator,
     signal_processors: List = None,
-    application: Dict = {},
+    application: Dict = None,
     with_units: bool = True,
 ):
     """Export the Simulator, list of SignalProcessor, and an application dict
@@ -324,15 +329,15 @@ def dict(
 
 
 def load(filename: str, parse_units: bool = True):
-    """Load Simulator object and list of SignalProcessor objects from a JSON searalized
-    file of a :py:class:`~mrsimulator.Mrsimulator` object.
+    """Load Simulator object,  list of SignalProcessor objects and metadata from a JSON
+    searalized file of a :py:class:`~mrsimulator.Mrsimulator` object.
 
     Args:
         str filename: The location to the .mrsim file.
         bool parse_units: If true, parse the dictionary for units. The default is True.
 
     Return:
-        Ordered List: Simulator, List[SignalProcessor].
+        Ordered List: Simulator, List[SignalProcessor], Dict.
     """
     val = import_json(filename)
     return parse(val, parse_units)
@@ -355,10 +360,16 @@ def parse(py_dict, parse_units: bool = True):
     # Check for difference in keys
     root_keys = set(Mrsimulator().dict().keys())
     if len(set(py_dict.keys()) - root_keys) != 0:
-        raise ValueError(
-            "An incompatible JSON root-level structure was detected. Use the method "
-            "mrsim_to_v0_7 to convert to a compliant structure."
+        warnings.warn(
+            "An older JSON structure was detected. Attempting to convert dict to "
+            "a compatable format..."
         )
+        py_copy_dict = deepcopy(py_dict)
+        try:
+            py_copy_dict = update_old_dict_struct(py_copy_dict)
+        except Exception as e:
+            raise UnableToConvertError() from e
+        py_dict = py_copy_dict
 
     sim = Simulator.parse(py_dict["simulator"], parse_units)
 
@@ -371,47 +382,44 @@ def parse(py_dict, parse_units: bool = True):
         else [SignalProcessor() for _ in sim.methods]
     )
 
-    application = py_dict["application"] if "application" in py_dict else {}
+    application = py_dict["application"] if "application" in py_dict else None
 
     return sim, signal_processors, application
 
 
-def mrsim_to_v0_7(filename: str, overwrite: bool = False):
-    """Convert an old mrsim file where Simulator object keywords existed at the root
-    level along with other seralized attributes to a structure where each object exists
-    under its own keyword. New file will be saved as <given_name>_new.mrsim
+def update_old_dict_struct(py_dict):
+    """Converst an old dict serialization to the new format
+    1. Updates root JSON structure
+    2. Attempts to parse old transition queries to new format
+    3. Returns updated dictionary
 
     Args:
-        str filename: path to searalized file
-        overwrite: Will overwrite file if true, otherwise just returns dict
+        dict py_dict: dict to update
 
     Returns:
-        dict: Dictionary of newly seralized Mrsimulator object
+        Dict: Updated JSON structure as dict
     """
-    py_dict = import_json(filename)
+    _update_old_dict_struct(py_dict)
+    return Mrsimulator.parse_dict_with_units(py_dict).json()
 
-    py_dict["simulator"] = {}
-    sim_keywords = {
-        "spin_systems",
-        "methods",
-        "config",
-        "name",
-        "label",
-        "description",
-        "indexes",
-    }
 
-    # Create Simulator dictionary
-    for key in set(py_dict.keys()).intersection(sim_keywords):
-        py_dict["simulator"][key] = py_dict.pop(key)
+def update_old_file_struct(oldfile: str, newfile: str = None):
+    """Convert an old mrsim file where Simulator object keywords existed at the root
+    level along with other seralized attributes to a structure where each object exists
+    under its own keyword. A dictionary representing the new Mrsimulator object is
+    returned. Will write a new mrsim file if newfile arg is provided.
 
-    # Remove all other unknown keywords
-    bad_keys = set(py_dict.keys()) - set(Mrsimulator().dict().keys())
-    for key in bad_keys:
-        py_dict.pop(key)
+    Args:
+        str oldfile: String of path to mrsim file with old structure
+        str newfile: Will write new mrsim file to path represented by newfile if give
 
-    obj = Mrsimulator.parse_dict_with_units(py_dict)
-    if overwrite:
-        obj.save(filename=filename)
+    Returns:
+        Dict: Dictionary representation of Mrsimulator object with new structure
+    """
+    py_dict = import_json(oldfile)
+    py_dict = update_old_dict_struct(py_dict)
+
+    if newfile is not None:
+        Mrsimulator.parse_dict_with_units(py_dict).save(filename=newfile)
 
     return py_dict
