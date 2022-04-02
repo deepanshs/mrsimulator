@@ -5,13 +5,13 @@ You will require the ``brew`` package manager to install the development headers
 OpenBLAS (if applicable) and FFTW libraries. Read more on installing brew from
 `homebrew <https://brew.sh>`_.
 
-*Step-1* Install the FFTW library using the homebrew formulae.
+**Step-1** Install the FFTW library using the homebrew formulae.
 
 .. code-block:: bash
 
   $ brew install fftw
 
-*Step-2* By default, the mrsimulator package links to the openblas library for BLAS
+**Step-2** By default, the mrsimulator package links to the openblas library for BLAS
 operations. Mac users may opt to choose the in-build Apple's Accelerate library. If you
 opt for Apple's Accelerate library, skip to *Step-3*. If you wish to link the mrsimulator
 package to the OpenBLAS library, type the following in the terminal,
@@ -20,7 +20,7 @@ package to the OpenBLAS library, type the following in the terminal,
 
   $ brew install openblas
 
-*Step-3* If you choose to link the mrsimulator package to the OpenBLAS library, skip
+**Step-3** If you choose to link the mrsimulator package to the OpenBLAS library, skip
 to the next section.
 
 *(a)* You will need to install the BLAS development header for Apple's Accelerate

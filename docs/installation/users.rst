@@ -5,21 +5,16 @@ For the users
 
 .. note::
 
-   If you encounter an issue during installation, see our
-   `troubleshooting section <instillation_troubleshooting>`_.
-
-   If that doesn't resolve your issue, please create a bug report on our
-   `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
+  - If you encounter an issue during installation, see our `troubleshooting section <instillation_troubleshooting>`_.
+  - If that doesn't resolve your issue, please create a bug report on our `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
 
 Strict Requirements
 -------------------
 
-``mrsimulator`` has the following strict requirements:
+``mrsimulator`` has the following strict requirements. See :ref:`requirements` for a full list of requirements.
 
 - `Python <https://www.python.org>`_ 3.6 or later
 - `Numpy <https://numpy.org>`_ 1.17 or later
-
-See :ref:`requirements` for a full list of requirements.
 
 Make sure you have the required version of python by typing the following in the terminal,
 

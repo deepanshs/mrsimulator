@@ -1,7 +1,7 @@
 
 PIP is a package manager for Python packages and is included with python version 3.4
-and higher. PIP is the easiest way to install python packages. Install the package
-using pip as follows,
+and higher. PIP is the easiest way to install python packages. To install the package
+type the following in the terminal,
 
 .. code-block:: bash
 

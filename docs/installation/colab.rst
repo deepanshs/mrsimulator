@@ -4,14 +4,10 @@ runs entirely in the cloud. Launch a new notebook on
 `Colab <http://colab.research.google.com>`_. We recommend going through the *Welcome to Colab!*
 tutorial if you are new to Notebooks.
 
-By default, Colaboratory has an older version of ``numpy`` installed which first needs to be
-updated. In a new cell, run
-
-.. code-block:: shell
-
-    !pip install -U numpy
-
-and press the *Restart Runtime* button
+.. note::
+    Check the version of ``numpy`` on colab by typing ``!pip show numpy`` in the first cell. If
+    the version less that 1.20, type ``!pip install numpy -U`` in the next cell to update numpy.
+    Once the update finishes, restart the kernel by pressing *Runtime -> Restart Runtime* button.
 
 To install the ``mrsimulator`` package, type
 

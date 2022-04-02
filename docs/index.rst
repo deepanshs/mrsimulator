@@ -77,36 +77,9 @@ Welcome to the Mrsimulator documentation
 ..     :target: https://img.shields.io/pypi/dm/mrsimulator
 ..     :alt: PyPI - Downloads
 
-**About**
-
 ``mrsimulator`` is an open-source python package for fast simulation and analysis of
 multi-dimensional solid-state magnetic resonance (NMR) spectra of crystalline and
 amorphous materials.
-
-----
-
-.. only:: html
-
-    .. raw:: html
-
-        <h3>See our example gallery</h3>
-        <div class='sim-gallery'>
-          <div>
-            <a href="examples/index.html">Gallery
-              <p></p>
-              Simulation
-            </a>
-          </div>
-          <div>
-            <a href="fitting/index.html">Gallery
-              <p></p>
-              <a href="fitting/index.html">
-              Fitting
-            </a>
-          </div>
-        </div>
-
-----
 
 **Why use mrsimulator?**
 
@@ -121,6 +94,16 @@ amorphous materials.
 - Packages using mrsimulator -
 
   - `mrinversion <https://mrinversion.readthedocs.io/en/stable/>`_
+
+----
+
+**Quick install**
+
+.. code:: shell
+
+    $ pip install mrsimulator
+
+Please refer to our :ref:`installation document <install_description>` for details.
 
 ----
 
@@ -156,9 +139,7 @@ amorphous materials.
     plt.tight_layout()
     plt.show()
 
-
 ----
-
 
 **Features**
 
@@ -189,6 +170,29 @@ The ``mrsimulator`` package offers the following
 
 ----
 
+.. only:: html
+
+    .. raw:: html
+
+        <h3>See our example gallery</h3>
+        <div class='sim-gallery'>
+          <div>
+            <a href="examples/index.html">Gallery
+              <p></p>
+              Simulation
+            </a>
+          </div>
+          <div>
+            <a href="fitting/index.html">Gallery
+              <p></p>
+              <a href="fitting/index.html">
+              Fitting
+            </a>
+          </div>
+        </div>
+
+----
+
 .. Contribution
 .. ------------
 
@@ -209,8 +213,8 @@ Introduction
     introduction/getting_started
     introduction/ethanol_example
 
-User Guide
-----------
+User Documentation
+------------------
 
 .. toctree::
     :maxdepth: 2
@@ -225,8 +229,8 @@ User Guide
     user_guide/signal_processing/signal_processing
     user_guide/io/mrsim_IO
 
-Examples
---------
+Galleries
+---------
 
 .. toctree::
     :maxdepth: 2

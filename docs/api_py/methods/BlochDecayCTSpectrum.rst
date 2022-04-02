@@ -25,7 +25,7 @@ Bloch Decay Central Transition Spectrum method
     ...     ],
     ... )
 
-Bloch decay central transition selective method is part of the methods library,
+Bloch decay central transition selective is a library method,
 but can be constructed with a generic method as follows
 
 .. doctest::

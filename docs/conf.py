@@ -250,10 +250,10 @@ numfig_format = {"figure": "Figure %s", "table": "Table %s", "code-block": "List
 math_number_all = True
 
 # Tell sphinx what the primary language being documented is.
-primary_domain = "py"
+# primary_domain = "py"
 
 # Tell sphinx what the pygments highlight language should be.
-highlight_language = "c"
+highlight_language = "python3"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -284,7 +284,7 @@ language = None
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "default"
+# pygments_style = ""
 
 
 # ---------------------------------------------------------------------------- #

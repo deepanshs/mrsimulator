@@ -6,7 +6,7 @@ Method (For advanced users)
 ===========================
 
 Mrsimulator allows users to create custom methods and simulate the NMR spectrum.
-At the top level, a :ref:`method_api` object is no different than the pre-built
+At the top level, a :ref:`method_api` object is no different than the library
 methods provided within the ``mrsimulator.method.lib`` module.
 
 A generic setup for a custom method (similar to the stock method) follows,
@@ -34,9 +34,9 @@ parameters for the method, `spectral_dimension` is the list of SpectralDimension
 objects defining the spectral grid, and `affine_matrix` is an optional affine square
 matrix.
 
-Although similar to the stock methods from the ``mrsimulator.method.lib`` module, the
+Although similar to the library methods from the ``mrsimulator.method.lib`` module, the
 above example lacks instructions on how to evaluate frequencies for each spectral dimension.
-We pre-defined these instructions for the stock methods for the user's convenience. Here,
+We pre-defined these instructions for the library methods for the user's convenience. Here,
 we describe how users can write custom instructions.
 
 SpectralDimension

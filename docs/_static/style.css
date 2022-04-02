@@ -1,5 +1,5 @@
 :root {
-  --max-sidebar-width: 30%;
+  --max-sidebar-width: 24em;
 }
 
 @font-face {
@@ -87,8 +87,7 @@ div.figure {
 .figure.align-left > img[alt="_images/null.png"] {
   display: none;
 }
-img.sphx-glr-single-img,
-.figure img {
+img.sphx-glr-single-img {
   box-shadow: 0 0 4px 0 lightgray;
   border: 1px solid lightgray;
   padding: 5px;
@@ -100,8 +99,7 @@ img.sphx-glr-single-img,
   padding-top: 8px;
 }
 
-img.sphx-glr-single-img:hover,
-.figure img:hover {
+img.sphx-glr-single-img:hover {
   box-shadow: 0 0 10px 0 lightgray;
 }
 
@@ -255,14 +253,14 @@ table caption:hover {
 
 .search.form-inline > .input-append.input-group {
   display: flex;
-  width: 30vw;
+  width: var(--max-sidebar-width);
   padding-left: 24px;
   padding-right: 24px;
 }
 .sidebar.hidden-xs > h3 {
   display: none;
 }
-.toctree-wrapper.compound > p.caption {
+.toctree-wrapper.compound > p > span.caption-text {
   display: none;
 }
 .sidebar.hidden-xs > p:not(p.logo) {
@@ -333,6 +331,11 @@ table caption:hover {
   color: gray;
 }
 
+.sidebar > ul > li.current > ul > li.current {
+  background-color: rgb(223, 223, 223);
+  color: rgb(48, 48, 48);
+}
+
 /* selected list item's sub-list's item on hover */
 .sidebar > ul > li.current > ul > li:hover {
   background-color: rgb(214, 214, 214);
@@ -370,11 +373,11 @@ ul.this-page-menu a {
 
 /* footer */
 footer {
-  margin-left: calc(var(--max-sidebar-width) + 0.6em);
+  margin-left: calc(var(--max-sidebar-width));
   box-sizing: border-box;
   min-height: 100%;
   /* width: calc(75% - 0.35em); */
-  width: calc(100% - var(--max-sidebar-width) - 0.55em);
+  width: calc(100% - var(--max-sidebar-width));
   max-width: 900px;
   padding-left: 2em;
   padding-right: 2em;

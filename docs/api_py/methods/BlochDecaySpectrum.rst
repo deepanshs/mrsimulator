@@ -26,8 +26,8 @@ Bloch Decay Spectrum method
     ... )
 
 
-Bloch decay method is is part of the methods library,
-but can be constructed with a generic method as follows
+Bloch decay is a library method, but can be constructed with a generic method
+as follows
 
 .. doctest::
 
