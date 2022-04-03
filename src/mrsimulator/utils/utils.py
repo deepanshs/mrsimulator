@@ -67,14 +67,11 @@ def convert_transition_query(py_dict):
     # warnings.warn(VO7_QUERY_WARNING, UserWarning)
     # Add channels to transition queries
     for dim in py_dict["spectral_dimensions"]:
-        print("1")
         if "events" in dim:
             for event in dim["events"]:
-                print("2")
                 if "transition_query" in event:
                     transitions = [{"ch1": tq} for tq in event["transition_query"]]
                     event["transition_query"] = transitions
-                    print("3")
 
 
 def map_transition_query_object_to_v_7(py_dict):

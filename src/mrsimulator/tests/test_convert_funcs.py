@@ -10,7 +10,7 @@ from mrsimulator import Mrsimulator
 from mrsimulator import parse
 from mrsimulator import update_old_dict_struct
 from mrsimulator import update_old_file_struct
-from mrsimulator.utils.error import UnableToConvertError
+from mrsimulator.utils.error import FileConversionError
 
 
 __author__ = "Matthew D. Giammar"
@@ -26,7 +26,6 @@ def test_parse_old_structure():
     sim, sp, app = parse(should_be)
     e = ".*An older JSON structure was detected.*"
 
-    print("old root")
     # Test old root level struct
     old_struct = test_data["old_root_level"]
     with pytest.warns(Warning, match=e):
@@ -48,7 +47,7 @@ def test_parse_old_structure():
     # Test for error raised when parsing bad structure
     bad_struct = test_data["old_root_level"]
     bad_struct["spin_systems"][0]["bad_key"] = "I will raise an exception"
-    with pytest.raises(UnableToConvertError):
+    with pytest.raises(FileConversionError):
         parse(bad_struct)
 
 

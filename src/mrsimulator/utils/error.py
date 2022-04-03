@@ -77,9 +77,9 @@ class MissingSpectralEventError(Exception):
         super().__init__(message)
 
 
-class UnableToConvertError(Exception):
+class FileConversionError(Exception):
     """Exception raised when after another error has been raised when attempting
-    to parse an older file/dict to a compatable structure.
+    to parse an older file/dict to a compatible structure.
 
     Attributes:
         message: explanation of the error.
@@ -87,7 +87,7 @@ class UnableToConvertError(Exception):
 
     def __init__(self, message=None):
         message = message or (
-            "Unable to convert the requested mrsim file/dict to a compatable "
+            "Unable to convert the requested mrsim file/dict to a compatible "
             "structure. See the documentation at "
             "http://mrsimulator.readthedocs.io/en/stable/ to find out more."
         )

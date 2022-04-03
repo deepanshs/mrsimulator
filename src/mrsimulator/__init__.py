@@ -43,7 +43,7 @@ from .method.spectral_dimension import (  # lgtm [py/import-own-module] # noqa:F
 )
 from .method import Method  # lgtm [py/import-own-module] # noqa:F401
 from mrsimulator.signal_processing import SignalProcessor
-from mrsimulator.utils.error import UnableToConvertError
+from mrsimulator.utils.error import FileConversionError
 from mrsimulator.utils.importer import import_json
 from mrsimulator.utils.parseable import Parseable
 from mrsimulator.utils.utils import _update_old_dict_struct
@@ -362,13 +362,13 @@ def parse(py_dict, parse_units: bool = True):
     if len(set(py_dict.keys()) - root_keys) != 0:
         warnings.warn(
             "An older JSON structure was detected. Attempting to convert dict to "
-            "a compatable format..."
+            "a compatible format..."
         )
         py_copy_dict = deepcopy(py_dict)
         try:
             py_copy_dict = update_old_dict_struct(py_copy_dict)
         except Exception as e:
-            raise UnableToConvertError() from e
+            raise FileConversionError() from e
         py_dict = py_copy_dict
 
     sim = Simulator.parse(py_dict["simulator"], parse_units)
