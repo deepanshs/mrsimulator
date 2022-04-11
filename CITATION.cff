@@ -10,9 +10,9 @@ authors:
     email: deepansh2012@gmail.com
     affiliation: Hyperfine
     orcid: https://orcid.org/0000-0003-1341-2197
-  - given-names: Phillip
+  - given-names: Philip
     family-names: Grandinetti
-    email: grandinetti@chemistry.ohio-state.ed
+    email: grandinetti@chemistry.ohio-state.edu
     affiliation: The Ohio State University
     orcid: https://orcid.org/0000-0003-0102-316X
   - given-names: Alexis
@@ -43,8 +43,8 @@ identifiers:
     type: doi
     value: "10.5281/zenodo.3978780"
 
-version: 0.7.0
+version: 0.6.1
 license: BSD-3-Clause
-# doi:
+doi: "10.5281/zenodo.5559730"
 # date-released: "Unreleased"
 repository-code: https://github.com/deepanshs/mrsimulator
