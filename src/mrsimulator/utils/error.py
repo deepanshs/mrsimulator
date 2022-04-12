@@ -75,3 +75,20 @@ class MissingSpectralEventError(Exception):
             "SpectralDimension requires at least one SpectralEvent, none found."
         )
         super().__init__(message)
+
+
+class FileConversionError(Exception):
+    """Exception raised when after another error has been raised when attempting
+    to parse an older file/dict to a compatible structure.
+
+    Attributes:
+        message: explanation of the error.
+    """
+
+    def __init__(self, message=None):
+        message = message or (
+            "Unable to convert the requested mrsim file/dict to a compatible "
+            "structure. See the documentation at "
+            "http://mrsimulator.readthedocs.io/en/stable/ to find out more."
+        )
+        super().__init__(message)
