@@ -62,7 +62,7 @@ static inline double __generic_wigner_d_element(const float l, const float m1,
 // Wigner d^{1/2} (m1, m2) elements.
 static inline double wigner_one_half_d_elements(const float m1, const float m2,
                                                 const double beta) {
-  unsigned int m1_ = (unsigned int)2 * m1, m2_ = (unsigned int)2 * m2;
+  short m1_ = (short)(2 * m1), m2_ = (short)(2 * m2);
   double b2 = 0.5 * beta;
   switch (m1_) {
   case -1:             // -1/2
@@ -280,9 +280,11 @@ double wigner_d_element(const float l, const float m1, const float m2,
 void transition_connect_factor(const float l, const float m1_f, const float m1_i,
                                const float m2_f, const float m2_i, const double theta,
                                const double phi, double *restrict factor) {
-  unsigned int delta_p = (unsigned int)((m2_f - m2_i) - (m1_f - m1_i));
+  short delta_p = (short)((m2_f - m2_i) - (m1_f - m1_i));
   double scale, phase = (double)delta_p * phi;
   double cx = cos(phase), sx = sin(phase), re = 0.0, im = 0.0, temp;
+  delta_p %= 4;
+  delta_p += 4;
   delta_p %= 4;
 
   scale = __wigner_d_element(l, m2_f, m1_f, theta);
