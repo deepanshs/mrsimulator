@@ -1,11 +1,12 @@
 
 .. _method_documentation:
 
-===========================
-Method (For advanced users)
-===========================
+=====================
+Advanced Method Usage
+=====================
 
-Mrsimulator allows users to create custom methods and simulate the NMR spectrum.
+The versatility of mrsimulator lies in the ability for users to create custom methods and
+simulate the NMR spectra from those methods.
 At the top level, a :ref:`method_api` object is no different than the pre-built
 methods provided within the ``mrsimulator.method.lib`` module.
 
@@ -15,7 +16,7 @@ A generic setup for a custom method (similar to the stock method) follows,
 
     from mrsimulator.method import Method, SpectralDimension
 
-    my_method = Method(
+    custom_method = Method(
         name="my_method",
         channels=["27Al", "13C"],  # list of isotopes
         magnetic_flux_density=4.7,  # T
@@ -25,19 +26,20 @@ A generic setup for a custom method (similar to the stock method) follows,
             SpectralDimension(count=512, spectral_width=50000),  # dimension-0
             SpectralDimension(count=256, spectral_width=10000),  # dimension-1
         ],
-        affine_matrix=[1, 1, 1, 1],
+        affine_matrix=[[1, 1], [1, 1]],
     )
 
-where `name` is an optional method name, `channels` is a list of isotopes used in the
+where `name` is an optional method name, `channels` is a list of isotopes probed by the
 method, `magnetic_flux_density`, `rotor_angle`, and `rotor_frequency` are global
 parameters for the method, `spectral_dimension` is the list of SpectralDimension
 objects defining the spectral grid, and `affine_matrix` is an optional affine square
-matrix.
+matrix in row-major form. For a complete list of method attribute types and default values,
+see the :ref:`table_method`.
 
 Although similar to the stock methods from the ``mrsimulator.method.lib`` module, the
 above example lacks instructions on how to evaluate frequencies for each spectral dimension.
 We pre-defined these instructions for the stock methods for the user's convenience. Here,
-we describe how users can write custom instructions.
+we describe how users can write custom frequency evaluation instructions.
 
 SpectralDimension
 -----------------
@@ -64,17 +66,21 @@ object follows,
         ],
     )
 
-where `count`,  `spectral_width`, `reference_offset`, and  `origin_offset` collectively
-define the spectral grid, and `events` is a list of spectral and mixing event objects.
+where `count` is the number of points in the dimension, `spectral_width` is the spectral
+width in Hz, `reference_offset` is the reference offset in Hz, and `origin_offset` is the
+origin offset also in Hz. These four attributes collectively define the spectral grid.
+The `events` attribute is a list of spectral and mixing event objects defining which coherences
+to simulate. For a complete list of spectral dimension attribute types and default values,
+see the :ref:`table_spectral_dim`.
 
 The net frequency, :math:`\mathbf{f}_j`, associated with the :math:`j^\text{th}` spectral
 dimension is the weighted average of the frequencies from each spectral event within the
 dimension,
 
 .. math::
-  :label: eq_spectral_average
+    :label: eq_spectral_average
 
-    \mathbf{f}_j = \sum_{i=0}^{N-1} ~ w_i ~~ \mathbf{e}_i,
+        \mathbf{f}_j = \sum_{i=0}^{N-1} ~ w_i ~~ \mathbf{e}_i,
 
 where the index :math:`i` spans through the list of spectral events, and :math:`w_i` and
 :math:`\mathbf{e}_i` are the weight and corresponding frequency vector from the
@@ -84,7 +90,7 @@ In the above example, the average frequency is
 :math:`\mathbf{f} = 0.5 \mathbf{e}_0 + 0.5 \mathbf{e}_1`.
 
 .. note::
-  Mixing events are not directly involved in spectral frequencies.
+    Mixing events are not directly involved in spectral frequencies.
 
 
 
@@ -132,7 +138,7 @@ that satisfy :math:`p= m_f - m_i = -3` and :math:`d=m_f^2 - m_i^2=0` on channel-
 :math:`m_f` and :math:`m_i` are the spin quantum number for the final and initial energy
 states involved in a spin-transition. The index `1` in `ch1` is relative to the channels
 specified within the method object. In this case, `ch1` refers to ``27Al``.
-For details, read the documentation on :ref:`query_doc`.
+For more details on query objects, read the documentation on :ref:`query_doc`.
 
 
 MixingEvent
@@ -213,7 +219,7 @@ Reference Tables
 
 .. cssclass:: table-bordered table-striped centered
 .. _table_method:
-.. list-table:: The attributes of a Method, Method1D, and Method2D object
+.. list-table:: The attributes of a Method object
   :widths: 20 15 65
   :header-rows: 1
 

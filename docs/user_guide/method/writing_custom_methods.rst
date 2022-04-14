@@ -1,25 +1,35 @@
-.. _more_method_documentation:
+.. _writing_custom_methods:
 
-====================
-Methods For the User
-====================
+======================
+Writing Custom Methods
+======================
 
-The Method object is where the versatility of mrsimulator becomes clear.
-Most NMR density matrix simulations do all the calculations in the
-time-domain, but mrsimulator performs its calculations in the frequency
-domain. In these time-domain programs, you may set up an experiment that
-walks through all aspects of a pulse sequence, but in mrsimulator, you
-only need to set up a method describing all the spectral dimensions you
-are simulating.
+The power of mrsimulator lies in the method object. Most time-domain NMR simulation
+software requires users to walk through all aspects of a pulse sequence, but mrsimulator
+preforms calculations in the frequency-domain and only needs descriptions of the spectral
+dimensions being simulated. For a more in-depth discussion on how a method defined
+spectral dimensions, see the :ref:`method_documentation`.
 
-Each Method object holds global parameters, like magnetic_flux_density,
-and a list of SpectralDimension objects, each one describing a dimension
-of a multi-dimensional spectrum. Each SpectralDimension object contains
-a list of events, in which you can adjust parameters, like rotor speed
-or angle, select transitions based on their :math:`p` or :math:`d`
-symmetries, etc. To illustrate this, let’s look at a few different
-common NMR experiments on :math:`RbNO_3`, starting with a simple 1D
-pulse-acquire experiment. We begin by making all necessary imports.
+On this page, we will illustrate how to write custom methods by simulating progressively
+more complicated NMR experiments on :math:`RbNO_3`. First lets import the necessary
+classes and modules.
+
+.. The Method object is where the versatility of mrsimulator becomes clear.
+.. Most NMR density matrix simulations do all the calculations in the
+.. time-domain, but mrsimulator performs its calculations in the frequency
+.. domain. In these time-domain programs, you may set up an experiment that
+.. walks through all aspects of a pulse sequence, but in mrsimulator, you
+.. only need to set up a method describing all the spectral dimensions you
+.. are simulating.
+..
+.. Each Method object holds global parameters, like magnetic_flux_density,
+.. and a list of SpectralDimension objects, each one describing a dimension
+.. of a multi-dimensional spectrum. Each SpectralDimension object contains
+.. a list of events, in which you can adjust parameters, like rotor speed
+.. or angle, select transitions based on their :math:`p` or :math:`d`
+.. symmetries, etc. To illustrate this, let’s look at a few different
+.. common NMR experiments on :math:`RbNO_3`, starting with a simple 1D
+.. pulse-acquire experiment. We begin by making all necessary imports.
 
 .. plot::
     :context: close-figs
@@ -30,7 +40,7 @@ pulse-acquire experiment. We begin by making all necessary imports.
     from mrsimulator import signal_processing as sp
     import matplotlib.pyplot as plt
 
-Next, we build the spin system for :math:`RbNO_3`.
+Now we build the :math:`RbNO_3` spin system.
 
 .. plot::
     :context: close-figs
@@ -54,9 +64,15 @@ Next, we build the spin system for :math:`RbNO_3`.
     sites = [site1, site2, site3]
     spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
-Now, we build the method. We will be building it from the generic Method
-object, but you could just as easily use the built-in BlochDecaySpectrum
-method.
+One-Pulse Acquire
+-----------------
+
+Here we build our first method to simulate a simple one-pulse acquire experiment using the
+generic Method object.
+
+.. Now, we build the method. We will be building it from the generic Method
+.. object, but you could just as easily use the built-in BlochDecaySpectrum
+.. method.
 
 .. plot::
     :context: close-figs
@@ -78,20 +94,18 @@ method.
         ]
     )
 
-The *channels* key holds the nucleus being probed. The
-*magnetic_flux_density* key holds the magnetic field stength in T, and
-*rotor_frequency* holds the rotor frequency in Hz. The
-*spectral_dimensions* key holds a list of SpectralDimension objects,
-each containing a *count* key, containing the number of points in that
-dimension, a *spectral_width* key, containing the spectral width in Hz,
-and *reference_offset* containing, the reference offset of this
-dimension in Hz. It also contains an *events* key, which contains a list
-of different events. In this example, we are using a spectral event to
-select the :math:`p=m_f-m_i=-1` coherences for this simulation (see the
-advanced users page for a more in-depth description of different types
-of events).
+The *channels* key holds the nucleus being probed, here rubidium-87. The
+*magnetic_flux_density* key holds the external magnetic field stength in T, and
+*rotor_frequency* holds the rotor frequency in Hz. The *spectral_dimensions* key
+holds a list of SpectralDimension objects defining the spectral grid of the method.
+each SpectralDimension object contains a *count* key, defining the number of points
+in that dimension, a *spectral_width* key, containing the spectral width in Hz,
+and a *reference_offset* key, containing the reference offset of the dimension in Hz.
+Each spectral dimension also contains an *events* key which is a list events defining
+the coherences to simulate. In this example, we are using a spectral event to
+select the :math:`p=m_f-m_i=-1` coherences for this simulation.
 
-We then set up the simulator object and run the simulation.
+Next we set up and run the simulator object with our spin system and method.
 
 .. plot::
     :context: close-figs
@@ -102,17 +116,19 @@ We then set up the simulator object and run the simulation.
     sim.config.number_of_sidebands = 256
     sim.run()
 
-Now, we create a signal processing object to add a bit of exponential
-apodization. Then we apply the apodization and plot the processed data.
+Now, we create a signal processing object to add some exponential line broadening
+to the simulated spectrum and plot the processed dataset.
 
 .. plot::
     :context: close-figs
 
-    processor= sp.SignalProcessor(operations=[
-        sp.IFFT(),
-        sp.apodization.Exponential(FWHM="10 Hz"),
-        sp.FFT(),
-    ])
+    processor = sp.SignalProcessor(
+        operations=[
+            sp.IFFT(),
+            sp.apodization.Exponential(FWHM="10 Hz"),
+            sp.FFT(),
+        ]
+    )
 
     processed_data = processor.apply_operations(data=sim.methods[0].simulation.real)
 
@@ -126,18 +142,18 @@ apodization. Then we apply the apodization and plot the processed data.
     ax[0].plot(processed_data.real, color="black", linewidth=1)
     ax[0].invert_xaxis()
     ax[1].plot(processed_data.real, color="black", linewidth=1)
-    ax[1].set_xlim(-50,0)
+    ax[1].set_xlim(-50, 0)
     ax[1].invert_xaxis()
     plt.tight_layout()
     plt.show()
 
+Selecting the Central Transition
+--------------------------------
 
 Now, let’s say we wanted to supress the satellites. To do this, we need
-to simulate a central-transition-selective 1D experiment. To do this, we
-also specify a :math:`D` transition query, given as
-:math:`D = m_f^2 -m_i^2`. For the central-transition, we specify
-:math:`D=0`. We will build this method using the generic method object
-(the same method is provided as BlochDecayCTSpectrum for convenience).
+to simulate a central-transition-selective 1D experiment. We now add a restriction to
+:math:`D`, defined as :math:`D = m_f^2 -m_i^2`, in our transition query. For the
+central-transition selective method, we specify :math:`D=0`.
 
 .. plot::
     :context: close-figs
@@ -158,16 +174,19 @@ also specify a :math:`D` transition query, given as
         ]
     )
 
-We simply add this new method to the simulator object, run the
-simulation, apply our proceessing, and plot the data.
+We now replace the old ``pulseacquire`` method in the simulator object with our new
+``ct_pulseacquire`` method and re-simulate the spectrum.
+
+.. We simply add this new method to the simulator object, run the
+.. simulation, apply our proceessing, and plot the data.
 
 .. plot::
     :context: close-figs
 
-    sim.methods = [pulseacquire, ct_pulseacquire]
+    sim.methods = [ct_pulseacquire]
     sim.run()
 
-    processed_data = processor.apply_operations(data=sim.methods[1].simulation.real)
+    processed_data = processor.apply_operations(data=sim.methods[0].simulation.real)
 
     plt.figure(figsize=(4.25, 3.0))
     ax = plt.subplot(projection="csdm")
@@ -177,9 +196,10 @@ simulation, apply our proceessing, and plot the data.
     plt.tight_layout()
     plt.show()
 
+Three-Quantum MAS
+-----------------
 
-Now, let’s simulate an 3Q-MAS spectrum, again using the generic Method
-object (a convenience method is provided in ThreeQ_VAS)
+Now, let’s construct a method to simulate a 3Q-MAS spectrum.
 
 .. plot::
     :context: close-figs
@@ -216,7 +236,7 @@ transition query of :math:`p=-3` and :math:`d=0`. In the MAS dimension,
 we are selecting the central transition with a transition query of
 :math:`p=-1` and :math:`d=0`.
 
-Again, we add this method to the simulation, run the simulation, and
+Again, we add this method to the simulator object, run the simulation, and
 plot the data.
 
 .. plot::
@@ -236,6 +256,8 @@ plot the data.
     plt.tight_layout()
     plt.show()
 
+Sheared Three-Quantum MAS
+-------------------------
 
 For 3Q-MAS experiments, however, the spectrum is often sheared and
 scaled to make the vertical dimension the purely isotropic dimension.
@@ -272,6 +294,10 @@ Let’s re-make our 3Q-MAS method with this affine matrix.
         affine_matrix=[[9/16, 7/16], [0, 1]]
     )
 
+.. note:
+    The *affine_matrix* in mrsimulator is given in row-major as a n by n array
+    where n is the number of spectral dimensions
+
 Again, we now add the method to the simulator object, run the
 simulation, and plot the data.
 
@@ -293,10 +319,15 @@ simulation, and plot the data.
     plt.show()
 
 
-For the convenience methods mentioned here and more, please see our
-methods library. For a more in-depth description of creating methods,
-see our advanced users methods page.
+For convenience sake, most of of the methods above are available in our
+:ref:`methods_library`.
 
+.. For the convenience methods mentioned here and more, please see our
+.. methods library. For a more in-depth description of creating methods,
+.. see our advanced users methods page.
+
+Hahn vs Solid Echo
+------------------
 
 .. plot::
     :context: close-figs
