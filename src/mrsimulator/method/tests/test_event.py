@@ -4,6 +4,7 @@ import pytest
 from mrsimulator.method.event import BaseEvent
 from mrsimulator.method.event import ConstantDurationEvent
 from mrsimulator.method.event import MixingEvent
+from mrsimulator.method.event import NoMixingEvent
 from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import freq_default
 from pydantic import ValidationError
@@ -166,6 +167,16 @@ def test_Mixing_event():
     mix_event_dict = {"query": {"ch1": {"angle": "90 degree", "phase": "0 rad"}}}
     the_event = MixingEvent.parse_dict_with_units(mix_event_dict)
     basic_mixing_event_tests(the_event)
+
+
+def test_NoMixingEvent():
+    event = NoMixingEvent()
+    assert event.query.ch1.angle == 0
+    assert event.query.ch1.phase == 0
+    assert event.query.ch2.angle == 0
+    assert event.query.ch2.phase == 0
+    assert event.query.ch3.angle == 0
+    assert event.query.ch3.phase == 0
 
 
 def check_equal(query, isotopes, channels, res):

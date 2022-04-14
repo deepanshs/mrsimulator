@@ -259,7 +259,28 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
         return super().parse_dict_with_units(py_dict_copy)
 
 
+class NoMixingEvent(MixingEvent):
+    """A helper event object to quickly define no mixing between spectral events, i.e.
+    all channels with angle and phase of zero.
+    """
+
+    query: MixingQuery = Field(
+        MixingQuery(
+            ch1={"angle": 0, "phase": 0},
+            ch2={"angle": 0, "phase": 0},
+            ch3={"angle": 0, "phase": 0},
+        ),
+        const=True,
+    )
+
+
+class TotalMixingEvent(MixingEvent):
+    """A helper event object which connects all pathways between spectral events"""
+
+    pass
+
+
 class Event(Parseable):
     """Event class Object"""
 
-    event: Union[MixingEvent, ConstantDurationEvent, SpectralEvent]
+    event: Union[MixingEvent, ConstantDurationEvent, SpectralEvent, NoMixingEvent]
