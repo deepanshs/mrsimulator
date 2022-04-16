@@ -111,7 +111,10 @@ def get_mixing_query(spectral_dimensions, index):
         index -= n_events
         sp += 1
         n_events = len(spectral_dimensions[sp].events)
-    return spectral_dimensions[sp].events[index].query
+    query = spectral_dimensions[sp].events[index].query
+
+    # Return the query, if is a MixingQuery, otherwise the value of the MixingEnum
+    return query if query.__class__.__name__ == "MixingQuery" else query.value
 
 
 def map_mix_query_attr_to_ch(mixing_query):
@@ -158,6 +161,9 @@ def mixing_query_connect_map(spectral_dimensions):
         if name == "MixingEvent"
     ]
 
+    # Remove mixing queries where query is str TotalMixing. Default behavior for no
+    # MixingEvent is total mixing
+    mapping = [item for item in mapping if item["mixing_query"] != "TotalMixing"]
     return mapping
 
 

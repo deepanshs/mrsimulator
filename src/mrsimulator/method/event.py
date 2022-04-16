@@ -13,6 +13,7 @@ from pydantic import validator
 from .frequency_contrib import default_freq_contrib
 from .frequency_contrib import freq_list_all
 from .frequency_contrib import FrequencyEnum
+from .query import MixingEnum
 from .query import MixingQuery
 from .query import TransitionQuery
 from .utils import D_symmetry_indexes
@@ -20,6 +21,15 @@ from .utils import P_symmetry_indexes
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+
+# # Constants for easy definition of total mixing and no mixing
+# TOTALMIXING = None
+# NOMIXING = MixingQuery(
+#     ch1={"angle": 0, "phase": 0},
+#     ch2={"angle": 0, "phase": 0},
+#     ch3={"angle": 0, "phase": 0},
+# )
 
 
 class BaseEvent(Parseable):
@@ -232,7 +242,7 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
         The transition mixing query.
     """
 
-    query: MixingQuery
+    query: Union[MixingQuery, MixingEnum]
 
     test_vars: ClassVar[Dict] = {"query": {}}
 
@@ -243,44 +253,26 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantity from a dictionary representation of the Method
+        Parse the physical quantity from a dictionary representation of the MixingEvent
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 
         Args:
-            dict py_dict: A python dict representation of the Method object.
+            dict py_dict: A python dict representation of the MixingEvent object.
 
         Returns:
-            A :ref:`method_api` object.
+            A MixingEvent.
         """
         py_dict_copy = deepcopy(py_dict)
-        obj = MixingQuery.parse_dict_with_units(py_dict_copy["query"])
+        if isinstance(py_dict_copy["query"], str):
+            obj = MixingEnum(py_dict_copy["query"])
+        else:
+            obj = MixingQuery.parse_dict_with_units(py_dict_copy["query"])
         py_dict_copy["query"] = obj
         return super().parse_dict_with_units(py_dict_copy)
-
-
-class NoMixingEvent(MixingEvent):
-    """A helper event object to quickly define no mixing between spectral events, i.e.
-    all channels with angle and phase of zero.
-    """
-
-    query: MixingQuery = Field(
-        MixingQuery(
-            ch1={"angle": 0, "phase": 0},
-            ch2={"angle": 0, "phase": 0},
-            ch3={"angle": 0, "phase": 0},
-        ),
-        const=True,
-    )
-
-
-class TotalMixingEvent(MixingEvent):
-    """A helper event object which connects all pathways between spectral events"""
-
-    pass
 
 
 class Event(Parseable):
     """Event class Object"""
 
-    event: Union[MixingEvent, ConstantDurationEvent, SpectralEvent, NoMixingEvent]
+    event: Union[MixingEvent, ConstantDurationEvent, SpectralEvent]

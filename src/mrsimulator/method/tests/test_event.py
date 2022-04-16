@@ -4,9 +4,9 @@ import pytest
 from mrsimulator.method.event import BaseEvent
 from mrsimulator.method.event import ConstantDurationEvent
 from mrsimulator.method.event import MixingEvent
-from mrsimulator.method.event import NoMixingEvent
 from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import freq_default
+from mrsimulator.method.query import MixingEnum
 from pydantic import ValidationError
 
 __author__ = "Deepansh J. Srivastava"
@@ -169,14 +169,17 @@ def test_Mixing_event():
     basic_mixing_event_tests(the_event)
 
 
-def test_NoMixingEvent():
-    event = NoMixingEvent()
-    assert event.query.ch1.angle == 0
-    assert event.query.ch1.phase == 0
-    assert event.query.ch2.angle == 0
-    assert event.query.ch2.phase == 0
-    assert event.query.ch3.angle == 0
-    assert event.query.ch3.phase == 0
+def test_total_and_no_mixing():
+    no_mix = MixingEvent(query=MixingEnum.NoMixing)
+    assert no_mix.query.value.ch1.angle == 0
+    assert no_mix.query.value.ch1.phase == 0
+    assert no_mix.query.value.ch2.angle == 0
+    assert no_mix.query.value.ch2.phase == 0
+    assert no_mix.query.value.ch3.angle == 0
+    assert no_mix.query.value.ch3.phase == 0
+
+    total_mix = MixingEvent(query=MixingEnum.TotalMixing)
+    assert total_mix.query.value == "TotalMixing"
 
 
 def check_equal(query, isotopes, channels, res):

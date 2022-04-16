@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from copy import deepcopy
+from enum import Enum
 from itertools import permutations
 from typing import ClassVar
 from typing import Dict
@@ -306,3 +307,26 @@ class MixingQuery(Parseable):
     def channels(self) -> List[RotationalQuery]:
         """Returns an ordered list of all channels"""
         return [self.ch1, self.ch2, self.ch3]
+
+
+class MixingEnum(Enum):
+    """Enumerations for defining common mixing queries. The enumerations are:
+
+    Attributes
+    ----------
+
+    TotalMixing:
+        Setting query attribute to TotalMixing causes all transitions in one spectral
+        event to all other transitions. This is the same behavior when no MixingEvent
+        is defined between SpectralEvents.
+
+    NoMixing:
+        Defines mixing query where no pathways connect
+    """
+
+    TotalMixing: str = "TotalMixing"
+    NoMixing: MixingQuery = MixingQuery(
+        ch1={"angle": 0, "phase": 0},
+        ch2={"angle": 0, "phase": 0},
+        ch3={"angle": 0, "phase": 0},
+    )
