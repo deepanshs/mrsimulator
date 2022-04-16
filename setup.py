@@ -431,6 +431,7 @@ setup(
         "lmfit>=1.0.2",
         "matplotlib>=3.3.4",
     ],
+    entry_points={"console_scripts": ["mrsimulator=mrsimulator.__main__:run"]},
     extras_require=extras,
     ext_modules=ext_modules,
     include_package_data=True,
