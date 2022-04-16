@@ -55,7 +55,7 @@ def run():
 
 parser = argparse.ArgumentParser(description="Mrsimulator CLI")
 parser.add_argument(
-    "input", metavar="i", type=str, nargs="?", help="Path to the .mrsim input file."
+    "input", metavar="i", type=str, nargs="?", help="path to the .mrsim input file."
 )
 parser.add_argument(
     "-o",
@@ -64,27 +64,27 @@ parser.add_argument(
     nargs="?",
     help="CSDM output file name. Extension is '.csdf'.",
 )
-parser.add_argument("--plot", action="store_true", help="Plot the csdf output.")
+parser.add_argument("--plot", action="store_true", help="plot the csdf output.")
 parser.add_argument(
     "--n_jobs",
     type=int,
     nargs="?",
     default=1,
-    help="Number of processors for parallel computation.",
+    help="number of processors for parallel computation.",
 )
-parser.add_argument("-v", "--version", action="store_true", help="Mrsimulator version.")
+parser.add_argument("-v", "--version", action="store_true", help="mrsimulator version.")
 parser.add_argument(
-    "--benchmark", choices=["l0", "l1", "l2"], help="Set benchmark levels."
+    "--benchmark", choices=["l0", "l1", "l2"], help="set benchmark level."
 )
 parser.add_argument(
     "--interpolation",
     action="store_true",
-    help="Run interpolation benchmark. Default is False.",
+    help="run interpolation benchmark. Default is False.",
 )
 parser.add_argument(
     "--simulation",
     action="store_true",
-    help="Run simulation benchmark. Default is False.",
+    help="run simulation benchmark. Default is False.",
 )
 args = parser.parse_args()
 
