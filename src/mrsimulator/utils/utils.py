@@ -1,98 +1,148 @@
 # -*- coding: utf-8 -*-
-__author__ = "Deepansh J. Srivastava"
-__email__ = "srivastava.89@osu.edu"
-
-VO7_QUERY_WARNING = (
-    "Definition of the transition query object has changed since v0.7. Follow the "
-    "documentation at http://mrsimulator.readthedocs.io/en/latest/ to find more."
-)
+__author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]
+__email__ = ["srivastava.89@osu.edu", "giammar.7@osu.edu"]
 
 
-# def map_transition_query_object_to_v_7(py_dict):
-#     """Update the transition query dict object from version 0.6 to version 0.7
-
-#     1. update transition query dist to a list of dicts.
-#     """
-#     # update transition query list
-#     _ = [
-#         evt.update({"transition_query": [evt["transition_query"]]})
-#         for dim in py_dict["spectral_dimensions"]
-#         if "events" in dim
-#         for evt in dim["events"]
-#         if "transition_query" in evt
-#         if not isinstance(evt["transition_query"], list)
-#     ]
-
-#     _ = [
-#         map_p_and_d_symmetry_to_v_7(evt)
-#         for dim in py_dict["spectral_dimensions"]
-#         if "events" in dim
-#         for evt in dim["events"]
-#         if "transition_query" in evt
-#     ]
+# VO7_QUERY_WARNING = (
+#     "Definition of the transition query object has changed since v0.7. Follow the "
+#     "documentation at http://mrsimulator.readthedocs.io/en/stable/ to find more."
+# )
+MRSIMULATOR_KEYS = {"simulator", "signal_processors", "version", "application"}
+SIM_KEYWORDS = {
+    "spin_systems",
+    "methods",
+    "config",
+    "name",
+    "label",
+    "description",
+    "indexes",
+}
 
 
-# def map_p_and_d_symmetry_to_v_7(py_dict):
-#     # update transition query "P" and "D" list
-#     def expand_p_and_d(item):
-#         itemP = (
-#             []
-#             if "P" not in item
-#             else [item["P"]]
-#             if not isinstance(item["P"], list)
-#             else item["P"]
-#         )
-#         itemD = (
-#             []
-#             if "D" not in item
-#             else [item["D"]]
-#             if not isinstance(item["D"], list)
-#             else item["D"]
-#         )
+def _update_old_dict_struct(py_dict):
+    """Helper function for mrsimulator.update_old_dict_struct
+    1. Updates root JSON structure
+    2. Attempts to parse old transition queries to new format
 
-#         if len(itemP) > 1 or len(itemD) > 1:
-#             raise Exception(
-#                 "Ambiguous definition for transition queries. See documentation for "
-#                 "details."
-#             )
+    Args:
+        dict py_dict: dict to update
 
-#         if itemP != [] and itemD != []:
-#             return [
-#                 {
-#                     "P": p if isinstance(p, list) else [p],
-#                     "D": d if isinstance(d, list) else [d],
-#                 }
-#                 for p in itemP
-#                 for d in itemD
-#             ]
+    Returns:
+        Dict: Updated JSON structure as dict
+    """
+    if "simulator" not in py_dict:
+        py_dict["simulator"] = {}
 
-#         if itemP == [] and itemD != []:
-#             return [{"D": d if isinstance(d, list) else [d]} for d in itemD]
+    # Add values to simulator dictionary
+    for key in set(py_dict.keys()).intersection(SIM_KEYWORDS):
+        py_dict["simulator"][key] = py_dict.pop(key)
 
-#         if itemP != [] and itemD == []:
-#             return [{"P": p if isinstance(p, list) else [p]} for p in itemP]
+    # Remove keys which are unknown
+    bad_keys = set(py_dict.keys()) - MRSIMULATOR_KEYS
+    _ = [py_dict.pop(key) for key in bad_keys]
 
-#     val = []
-#     for item in py_dict["transition_query"]:
-#         val += expand_p_and_d(item) if "P" in item or "D" in item else [item]
+    # Attempt to convert old transition queries
+    if "methods" in py_dict["simulator"]:
+        _ = [convert_transition_query(mtd) for mtd in py_dict["simulator"]["methods"]]
 
-#     py_dict.update({"transition_query": val})
+    return py_dict
 
 
-# def convert_transition_query(py_dict):
-#     """Convert transition_query->P->... to transition_query->ch1->P->... if no channel
-#     is defined."""
-#     map_transition_query_object_to_v_7(py_dict)
-#     # warnings.warn(VO7_QUERY_WARNING, UserWarning)
-#     _ = [
-#         item.update({"ch1": item})
-#         for dim in py_dict["spectral_dimensions"]
-#         if "events" in dim
-#         for evt in dim["events"]
-#         if "transition_query" in evt
-#         for item in evt["transition_query"]
-#         if {"ch1", "ch2", "ch3"}.intersection(item.keys()) == set()
-#     ]
+def convert_transition_query(py_dict):
+    """Convert transition_query->P->... to transition_query->ch1->P->... if no channel
+    is defined."""
+    # check if old structure without channels
+    missing_channels = (
+        "ch1" not in tq
+        for dim in py_dict["spectral_dimensions"]
+        if "spectral_dimensions" in py_dict and "events" in dim
+        for evt in dim["events"]
+        if "transition_query" in evt
+        for tq in evt["transition_query"]
+    )
+    if not all(missing_channels):
+        return
+
+    map_transition_query_object_to_v_7(py_dict)
+    # warnings.warn(VO7_QUERY_WARNING, UserWarning)
+    # Add channels to transition queries
+    for dim in py_dict["spectral_dimensions"]:
+        if "events" in dim:
+            for event in dim["events"]:
+                if "transition_query" in event:
+                    transitions = [{"ch1": tq} for tq in event["transition_query"]]
+                    event["transition_query"] = transitions
+
+
+def map_transition_query_object_to_v_7(py_dict):
+    """Update the transition query dict object from version 0.6 to version 0.7
+
+    1. update transition query dist to a list of dicts.
+    """
+    # update transition query list
+    _ = [
+        evt.update({"transition_query": [evt["transition_query"]]})
+        for dim in py_dict["spectral_dimensions"]
+        if "events" in dim
+        for evt in dim["events"]
+        if "transition_query" in evt
+        if not isinstance(evt["transition_query"], list)
+    ]
+
+    _ = [
+        map_p_and_d_symmetry_to_v_7(evt)
+        for dim in py_dict["spectral_dimensions"]
+        if "events" in dim
+        for evt in dim["events"]
+        if "transition_query" in evt
+    ]
+
+
+def map_p_and_d_symmetry_to_v_7(py_dict):
+    # update transition query "P" and "D" list
+    def expand_p_and_d(item):
+        itemP = (
+            []
+            if "P" not in item
+            else [item["P"]]
+            if not isinstance(item["P"], list)
+            else item["P"]
+        )
+        itemD = (
+            []
+            if "D" not in item
+            else [item["D"]]
+            if not isinstance(item["D"], list)
+            else item["D"]
+        )
+
+        if len(itemP) > 1 or len(itemD) > 1:
+            raise Exception(
+                "Ambiguous definition for transition queries. See documentation for "
+                "details."
+            )
+
+        if itemP != [] and itemD != []:
+            return [
+                {
+                    "P": p if isinstance(p, list) else [p],
+                    "D": d if isinstance(d, list) else [d],
+                }
+                for p in itemP
+                for d in itemD
+            ]
+
+        if itemP == [] and itemD != []:
+            return [{"D": d if isinstance(d, list) else [d]} for d in itemD]
+
+        if itemP != [] and itemD == []:
+            return [{"P": p if isinstance(p, list) else [p]} for p in itemP]
+
+    val = []
+    for item in py_dict["transition_query"]:
+        val += expand_p_and_d(item) if "P" in item or "D" in item else [item]
+
+    py_dict.update({"transition_query": val})
 
 
 # def prepare_method_structure(template, **kwargs):
