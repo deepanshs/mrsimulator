@@ -109,8 +109,7 @@ Next we set up and run the simulator object with our spin system and method.
 
 .. plot::
     :context: close-figs
-    :caption: A simulated one-pulse acquire spectrum of :math:`{87}^\text{Rb}` with all
-        sidebands shown (left) and zoomed in plot of the central transition (right).
+    :caption: A simulated one-pulse acquire spectrum of :math:`{87}^\text{Rb}` with all sidebands shown (left) and zoomed in plot of the central transition (right).
 
     sim = Simulator()
     sim.spin_systems = spin_systems
@@ -120,6 +119,8 @@ Next we set up and run the simulator object with our spin system and method.
 
 Now, we create a signal processing object to add some exponential line broadening
 to the simulated spectrum and plot the processed dataset.
+
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -182,10 +183,11 @@ We now replace the old ``pulseacquire`` method in the simulator object with our 
 .. We simply add this new method to the simulator object, run the
 .. simulation, apply our proceessing, and plot the data.
 
+.. skip: next
+
 .. plot::
     :context: close-figs
-    :caption: A simulated central-transition selective spectrum of :math:`{87}^\text{Rb}`. The
-        large number of sidebands from the previous simulation have been suppressed.
+    :caption: A simulated central-transition selective spectrum of :math:`{87}^\text{Rb}`. The large number of sidebands from the previous simulation have been suppressed.
 
     sim.methods = [ct_pulseacquire]
     sim.config.number_of_sidebands = 70  # Reset number of sidebands for efficiency
@@ -244,6 +246,8 @@ we are selecting the central transition with a transition query of
 
 Again, we add this method to the simulator object, run the simulation, and
 plot the data.
+
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -317,10 +321,11 @@ Let’s re-make our 3Q-MAS method with this affine matrix.
 Again, we now add the method to the simulator object, run the
 simulation, and plot the data.
 
+.. skip: next
+
 .. plot::
     :context: close-figs
-    :caption: A 3Q-MAS spectrum of :math:`{87}^\text{Rb}` sheared such that the dimensions
-        are purely MAS and isotropic.
+    :caption: A 3Q-MAS spectrum of :math:`{87}^\text{Rb}` sheared such that the dimensions are purely MAS and isotropic.
 
     sim.methods = [sheared_mqmas]
     sim.run()
@@ -407,7 +412,7 @@ Any discussion such as transition pathways goes here
                 spectral_width=2e4,  # in Hz
                 events=[
                     SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
-                    MixingEvent(query={"ch1": {"angle": np.pi / 2, "phase": 0}}),
+                    MixingEvent(query={"ch1": {"angle": 3.141592 / 2, "phase": 0}}),
                     SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}])
                 ]
             )
@@ -416,10 +421,11 @@ Any discussion such as transition pathways goes here
 
 Now we setup and run the simulation then process and plot the data
 
+.. skip: next
+
 .. plot::
     :context: close-figs
-    :caption: Simulated Hanh Echo spectrum (left) and Solid Echo spectrum (right)
-        for the same :math:`2^\text{H}` spin system.
+    :caption: Simulated Hanh Echo spectrum (left) and Solid Echo spectrum (right) for the same :math:`2^\text{H}` spin system.
 
     sim = Simulator()
     sim.spin_systems = spin_systems
