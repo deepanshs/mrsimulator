@@ -109,6 +109,8 @@ Next we set up and run the simulator object with our spin system and method.
 
 .. plot::
     :context: close-figs
+    :caption: A simulated one-pulse acquire spectrum of :math:`{87}^\text{Rb}` with all
+        sidebands shown (left) and zoomed in plot of the central transition (right).
 
     sim = Simulator()
     sim.spin_systems = spin_systems
@@ -182,13 +184,16 @@ We now replace the old ``pulseacquire`` method in the simulator object with our 
 
 .. plot::
     :context: close-figs
+    :caption: A simulated central-transition selective spectrum of :math:`{87}^\text{Rb}`. The
+        large number of sidebands from the previous simulation have been suppressed.
 
     sim.methods = [ct_pulseacquire]
+    sim.config.number_of_sidebands = 70  # Reset number of sidebands for efficiency
     sim.run()
 
     processed_data = processor.apply_operations(data=sim.methods[0].simulation.real)
 
-    plt.figure(figsize=(4.25, 3.0))
+    plt.figure(figsize=(6, 4))
     ax = plt.subplot(projection="csdm")
     # ax.plot(sim.methods[0].simulation, color="blue", linewidth=1)
     ax.plot(processed_data.real, color="black", linewidth=1)
@@ -206,22 +211,23 @@ Now, let’s construct a method to simulate a 3Q-MAS spectrum.
 
     mqmas = Method(
         channels=["87Rb"],
-        magnetic_flux_density=9.4,  # in T
-        rotor_frequency=10000,  # in Hz
+        magnetic_flux_density=9.4,
+        rotor_frequency=10000,
         spectral_dimensions=[
             SpectralDimension(
                 count=128,
-                spectral_width=10e3,
-                reference_offset=-7e3,
+                spectral_width=6e3,  # in Hz
+                reference_offset=-9e3,  # in Hz
+                # label="Isotropic dimension",
                 events=[
                     SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])
                 ]
             ),
             SpectralDimension(
                 count=256,
-                spectral_width=1e4, #in Hz
-                reference_offset=-4e3, #in Hz
-                label="MAS dimension",
+                spectral_width=6e3,  # in Hz
+                reference_offset=-5e3,  # in Hz
+                # label="MAS dimension",
                 events=[
                     SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])
                 ]
@@ -241,13 +247,23 @@ plot the data.
 
 .. plot::
     :context: close-figs
+    :caption: An unsheared 3Q-MAS spectrum of :math:`{87}^\text{Rb}`
 
     sim.methods = [mqmas]
     sim.run()
 
-    data = sim.methods[0].simulation
+    # Apply Gaussian line broadening along both dimensions
+    processor = sp.SignalProcessor(
+        operations=[
+            sp.IFFT(dim_index=(0, 1)),
+            sp.apodization.Gaussian(FWHM="0.08 kHz", dim_index=0),
+            sp.apodization.Gaussian(FWHM="0.22 kHz", dim_index=1),
+            sp.FFT(dim_index=(0, 1)),
+        ]
+    )
+    data = processor.apply_operations(data=sim.methods[0].simulation)
 
-    plt.figure(figsize=(4.25, 3.0))
+    plt.figure(figsize=(6, 4))
     ax = plt.subplot(projection="csdm")
     cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
     plt.colorbar(cb)
@@ -269,13 +285,13 @@ Let’s re-make our 3Q-MAS method with this affine matrix.
 
     sheared_mqmas = Method(
         channels=["87Rb"],
-        magnetic_flux_density=9.4,  # in T
-        rotor_frequency=10000,  # in Hz
+        magnetic_flux_density=9.4,
+        rotor_frequency=10000,
         spectral_dimensions=[
             SpectralDimension(
                 count=128,
-                spectral_width=7e3,
-                reference_offset=-7e3,
+                spectral_width=6e3,  # in Hz
+                reference_offset=-9e3,  # in Hz
                 label="Isotropic dimension",
                 events=[
                     SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])
@@ -283,11 +299,11 @@ Let’s re-make our 3Q-MAS method with this affine matrix.
             ),
             SpectralDimension(
                 count=256,
-                spectral_width=1e4,
-                reference_offset=-4e3,
+                spectral_width=6e3,  # in Hz
+                reference_offset=-5e3,  # in Hz
                 label="MAS dimension",
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [0]}}])
+                    SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])
                 ]
             )
         ],
@@ -303,24 +319,29 @@ simulation, and plot the data.
 
 .. plot::
     :context: close-figs
+    :caption: A 3Q-MAS spectrum of :math:`{87}^\text{Rb}` sheared such that the dimensions
+        are purely MAS and isotropic.
 
     sim.methods = [sheared_mqmas]
     sim.run()
 
-    data = sim.methods[0].simulation
+    data = processor.apply_operations(data=sim.methods[0].simulation)
 
     plt.figure(figsize=(4.25, 3.0))
     ax = plt.subplot(projection="csdm")
     cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
     plt.colorbar(cb)
+    ax.set_ylim((-70, -47))
     ax.invert_xaxis()
     ax.invert_yaxis()
     plt.tight_layout()
     plt.show()
 
 
-For convenience sake, most of of the methods above are available in our
-:ref:`methods_library`.
+For convenience sake, the one-pulse acquire (BlochDecaySpectrum), one-pulse acquire central
+transition selective (BlochDecayCTSpectrum), and Three-Quantum MAS (ThreeQ_VAS) methods
+along with other common methods can be imported from the ``mrsimulator.method.lib`` package.
+For more details, see the :ref:`methods_library_documentation`.
 
 .. For the convenience methods mentioned here and more, please see our
 .. methods library. For a more in-depth description of creating methods,
@@ -329,53 +350,91 @@ For convenience sake, most of of the methods above are available in our
 Hahn vs Solid Echo
 ------------------
 
+We have seen how a Method object can select between different coherences by using
+SpectralDimension and SpectralEvents. By adding a MixingEvent, we can selectively simulate
+frequencies from specific transition pathways. Below we construct two Method objects to
+simulate a Hahn and Solid Echo experiment.
+
 .. plot::
     :context: close-figs
 
-    hahn = Method(
-        channels=["87Rb"],
+    deuterium = Site(
+        isotope="2H",
+        isotropic_chemical_shift=10,  # in ppm
+        shielding_symmetric=SymmetricTensor(zeta=-80, eta=0.25),  # zeta in ppm
+        quadrupolar=SymmetricTensor(Cq=10e3, eta=0.0))
+
+    spin_systems = [SpinSystem(sites=[deuterium])]
+
+Hahn Echo
+"""""""""
+
+Any discussion such as transition pathways goes here
+
+.. plot::
+    :context: close-figs
+
+    hahn_echo = Method(
+        channels=["2H"],
         magnetic_flux_density=9.4,  # in T
-        rotor_frequency=10000,  # in Hz
         spectral_dimensions=[
             SpectralDimension(
-                count=2048,
-                spectral_width=8e3,
-    #             reference_offset=-3.5e3,
+                count=512,
+                spectral_width=2e4,  # in Hz
                 events=[
                     SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [1]}}]),
-                    MixingEvent(query={"ch1": {"angle": 3.14159, "phase": 0}}),
-                    SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
+                    MixingEvent(query={"ch1": {"angle": 3.141592, "phase": 0}}),
+                    SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}])
                 ]
             )
         ]
     )
 
-    solid = Method(
-        channels=["87Rb"],
+Solid Echo
+""""""""""
+
+Any discussion such as transition pathways goes here
+
+.. plot::
+    :context: close-figs
+
+    solid_echo = Method(
+        channels=["2H"],
         magnetic_flux_density=9.4,  # in T
-        rotor_frequency=10000,  # in Hz
         spectral_dimensions=[
             SpectralDimension(
-                count=2048,
-                spectral_width=8e3,
-                reference_offset=-3.5e3,
+                count=512,
+                spectral_width=2e4,  # in Hz
                 events=[
                     SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
-                    MixingEvent(query={"ch1": {"angle": 3.14159 / 2, "phase": 0}}),
-                    SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
+                    MixingEvent(query={"ch1": {"angle": np.pi / 2, "phase": 0}}),
+                    SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}])
                 ]
             )
         ]
     )
+
+Now we setup and run the simulation then process and plot the data
+
+.. plot::
+    :context: close-figs
+    :caption: Simulated Hanh Echo spectrum (left) and Solid Echo spectrum (right)
+        for the same :math:`2^\text{H}` spin system.
 
     sim = Simulator()
     sim.spin_systems = spin_systems
-    sim.methods = [hahn, solid]
-    sim.config.number_of_sidebands = 256
+    sim.methods = [hahn_echo, solid_echo]
     sim.run()
 
-.. plot::
-    :context: close-figs
+    processor = sp.SignalProcessor(
+        operations=[
+            sp.IFFT(),
+            sp.apodization.Gaussian(FWHM="50 Hz"),
+            sp.FFT(),
+        ]
+    )
+    hahn_data = processor.apply_operations(data=sim.methods[0].simulation)
+    solid_data = processor.apply_operations(data=sim.methods[1].simulation)
 
     fig, ax = plt.subplots(
         nrows=1,
@@ -384,16 +443,9 @@ Hahn vs Solid Echo
         figsize=[8, 4]
     )
 
-    hahndata = sim.methods[0].simulation
-    soliddata = sim.methods[1].simulation
-
-    processed_hahndata = processor.apply_operations(data=hahndata)
-    processed_soliddata = processor.apply_operations(data=soliddata)
-
-    ax[0].plot(processed_hahndata.real, color="black", linewidth=1)
+    ax[0].plot(hahn_data.real, color="black", linewidth=1)
     ax[0].invert_xaxis()
-    ax[1].plot(processed_soliddata.real, color="black", linewidth=1)
-    # ax[1].set_xlim(-50,0)
+    ax[1].plot(solid_data.real, color="black", linewidth=1)
     ax[1].invert_xaxis()
     plt.tight_layout()
     plt.show()
