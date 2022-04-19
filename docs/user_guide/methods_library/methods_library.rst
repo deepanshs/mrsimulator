@@ -16,20 +16,23 @@ The syntax for all library methods follows,
 
 .. code-block:: python
 
-    lib_method = ThreeQ_VAS(
+    from mrsimulator.method import SpectralDimension
+    from mrsimulator.method.lib import BlochDecaySpectrum
+
+    lib_method = BlochDecaySpectrum(
         channels=["29Si"],  # list of isotopes
         magnetic_flux_density=4.7,  # T
         rotor_angle=57.735 * 3.1415 / 180,  # rad
         rotor_frequency=10000,  # Hz
         spectral_dimensions=[
-            SpectralDimension(count=512, spectral_width=5e4, reference_offset=10),  # dim-0
-            SpectralDimension(count=256, spectral_width=2e4, reference_offset=20),  # dim-1
+            SpectralDimension(count=512, spectral_width=5e4, reference_offset=10),
         ],
     )
 
-where `ThreeQ_VAS` can be replaced with another method class. Each method has the *channels*
-attribute which is a list of isotopes probed by the method as well as the *magnetic_flux_density*,
-*rotor_angle*, and *rotor_frequency* attributes which define the global experiment parameters.
+where `BlochDecaySpectrum` can be replaced with another method class. Each method has the
+*channels* attribute which is a list of isotopes probed by the method as well as the
+*magnetic_flux_density*, *rotor_angle*, and *rotor_frequency* attributes which define the
+global experiment parameters.
 See :numref:`table_generic_method` for more details.
 
 The method object also has the *spectral_dimensions* attribute which contains a list of
