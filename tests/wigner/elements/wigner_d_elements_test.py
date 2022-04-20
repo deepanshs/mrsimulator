@@ -34,6 +34,26 @@ def test_wigner_l_two_elements():
     prep_assertion(2, "tests/wigner/elements/2l=4_beta=[0,30,45,60,90].npy")
 
 
+def test_wigner_l_five_half_elements():
+    prep_assertion(5 / 2, "tests/wigner/elements/2l=5_beta=[0,30,45,60,90].npy")
+
+
+def test_wigner_l_three_elements():
+    prep_assertion(3, "tests/wigner/elements/2l=6_beta=[0,30,45,60,90].npy")
+
+
+def test_wigner_l_seven_half_elements():
+    prep_assertion(7 / 2, "tests/wigner/elements/2l=7_beta=[0,30,45,60,90].npy")
+
+
+def test_wigner_l_four_elements():
+    prep_assertion(4, "tests/wigner/elements/2l=8_beta=[0,30,45,60,90].npy")
+
+
+def test_wigner_l_nine_half_elements():
+    prep_assertion(9 / 2, "tests/wigner/elements/2l=9_beta=[0,30,45,60,90].npy")
+
+
 #
 # This code was used to generate and store wigner d-elements from sympy rotation.
 # All tests are compared with these stored values to speed up the test runs.
@@ -57,3 +77,8 @@ def test_wigner_l_two_elements():
 #     prep_setup(1, "tests/wigner/elements/2l=2_beta=[0,30,45,60,90].npy")
 #     prep_setup(3 / Integer(2), "tests/wigner/elements/2l=3_beta=[0,30,45,60,90].npy")
 #     prep_setup(2, "tests/wigner/elements/2l=4_beta=[0,30,45,60,90].npy")
+#     prep_setup(5 / Integer(2), "tests/wigner/elements/2l=5_beta=[0,30,45,60,90].npy")
+#     prep_setup(3, "tests/wigner/elements/2l=6_beta=[0,30,45,60,90].npy")
+#     prep_setup(7 / Integer(2), "tests/wigner/elements/2l=7_beta=[0,30,45,60,90].npy")
+#     prep_setup(4, "tests/wigner/elements/2l=8_beta=[0,30,45,60,90].npy")
+#     prep_setup(9 / Integer(2), "tests/wigner/elements/2l=9_beta=[0,30,45,60,90].npy")
