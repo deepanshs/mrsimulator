@@ -16,8 +16,6 @@ double SQRT_3 = 1.732050807568877;
 static inline double fac(double x) {
   if (x < 0) exit(1);
 
-  if (x == 0.0) return 1;
-
   int ix = (int)x;
   double sum = 1.0;
   while (ix > 1) sum *= ix--;
