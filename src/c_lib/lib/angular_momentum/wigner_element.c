@@ -20,8 +20,7 @@ static inline double fac(double x) {
 
   int ix = (int)x;
   double sum = 1.0;
-  do sum *= ix;
-  while (--ix > 1);
+  while (ix > 1) sum *= ix--;
   return sum;
 }
 
