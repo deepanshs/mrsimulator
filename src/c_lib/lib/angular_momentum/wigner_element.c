@@ -18,7 +18,7 @@ static inline double fac(double x) {
 
   int ix = (int)x;
   double sum = 1.0;
-  while (ix-- > 1) sum *= ix;
+  while (ix > 1) sum *= ix--;
   return sum;
 }
 
@@ -30,7 +30,7 @@ static inline double my_power(double x, int n) {
   return temp;
 }
 
-// Generic wigner d element for a given angulae momentum l, m1, m2.
+// Generic wigner d element for a given angular momentum l, m1, m2.
 static inline double __generic_wigner_d_element(const float l, const float m1,
                                                 const float m2, const double beta) {
   double sx = sin(beta / 2.);
@@ -55,8 +55,9 @@ static inline double __generic_wigner_d_element(const float l, const float m1,
     sign = -sign;
   }
   double f = fac(l + m2) * fac(l - m2) * fac(l + m1) * fac(l - m1);
+  sign = ((int)(m1 - m2) % 2 == 0) ? 1 : -1;
   f = sqrt(f);
-  return (sum * f);
+  return (sign * sum * f);
 }
 
 // Wigner d^{1/2} (m1, m2) elements.
