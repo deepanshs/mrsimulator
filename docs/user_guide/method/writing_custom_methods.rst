@@ -39,6 +39,7 @@ classes and modules.
     from mrsimulator.spin_system.tensors import SymmetricTensor
     from mrsimulator import signal_processing as sp
     import matplotlib.pyplot as plt
+    from pprint import pprint
 
 Now we build the :math:`RbNO_3` spin system.
 
@@ -332,7 +333,7 @@ simulation, and plot the data.
 
     data = processor.apply_operations(data=sim.methods[0].simulation)
 
-    plt.figure(figsize=(4.25, 3.0))
+    plt.figure(figsize=(6, 4))
     ax = plt.subplot(projection="csdm")
     cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
     plt.colorbar(cb)
@@ -357,8 +358,8 @@ Hahn vs Solid Echo
 
 We have seen how a Method object can select between different coherences by using
 SpectralDimension and SpectralEvents. By adding a MixingEvent, we can selectively simulate
-frequencies from specific transition pathways. Below we construct two Method objects to
-simulate a Hahn and Solid Echo experiment.
+frequencies from specific transition pathways. Below we construct a deuterium spin system
+and two Method objects to simulate a Hahn and Solid Echo experiment.
 
 .. plot::
     :context: close-figs
@@ -369,12 +370,43 @@ simulate a Hahn and Solid Echo experiment.
         shielding_symmetric=SymmetricTensor(zeta=-80, eta=0.25),  # zeta in ppm
         quadrupolar=SymmetricTensor(Cq=10e3, eta=0.0))
 
-    spin_systems = [SpinSystem(sites=[deuterium])]
+    spin_system = SpinSystem(sites=[deuterium])
 
 Hahn Echo
 """""""""
 
-Any discussion such as transition pathways goes here
+The Hahn Echo experiment observes the transition frequencies from the following
+:math:`\mathbb{p}` transition symmetry pathways (a.k.a coherence transfer pathways).
+For more discussion on transition symmetry pathways, see the ((pathway documentation page??))
+
+.. math::
+
+    \mathbb{p}: 0 \xrightarrow[]{\frac{\pi}{2}} +1 \xrightarrow[]{\pi} -1
+
+(??) This pathway selectively refocuses the :math:`\mathbb{p}` frequency contributions into
+an echo while leaving the :math:`\mathbb{d}` contributions free to evolve unaffected by the
+:math:`\pi` pulse. (??)
+Below is a diagram representing the different energy level transitions and corresponding
+pathways observed by the Hahn Echo experiment.
+
+.. figure:: ../../_static/deuteriumHahnEcho.*
+    :alt: Transition symmetry pathways for the Hahn Echo experiment
+    :align: center
+    :width: 50%
+
+    Energy level transitions and symmetry pathways for the Hahn Echo experiment.
+
+Although a normal experiment would start with a :math:`\frac{\pi}{2}` rotation to transfer the
+equilibrium magnetization to a desired symmetry, we can eliminate the first rotation in
+mrsimulator by defining the first symmetry as :math:`\mathbb{p} = +1`. Our transition symmetry
+pathway now becomes
+
+.. math::
+
+    \mathbb{p}: +1 \xrightarrow[]{\pi} -1
+
+Below is a method object which simulated the Hahn Echo experiment. The MixingEvent defines the
+:math:`\pi` rotation between the two SpectralEvents. We also plot the transition pathways for
 
 .. plot::
     :context: close-figs
@@ -387,18 +419,54 @@ Any discussion such as transition pathways goes here
                 count=512,
                 spectral_width=2e4,  # in Hz
                 events=[
-                    SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [1]}}]),
+                    SpectralEvent(fraction=0.5, transition_query=[
+                        {"ch1": {"P": [1], "D": [1]}},
+                        {"ch1": {"P": [1], "D": [-1]}},
+                    ]),
                     MixingEvent(query={"ch1": {"angle": 3.141592, "phase": 0}}),
-                    SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}])
+                    SpectralEvent(fraction=0.5, transition_query=[
+                        {"ch1": {"P": [-1], "D": [1]}},
+                        {"ch1": {"P": [-1], "D": [-1]}},
+                    ])
                 ]
             )
         ]
     )
 
+    pprint(hahn_echo.get_transition_pathways(spin_system))
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    [|1.0⟩⟨0.0| ⟶ |-1.0⟩⟨0.0|, weight=(1+0j)
+     |0.0⟩⟨-1.0| ⟶ |0.0⟩⟨1.0|, weight=(1+0j)]
+
+
+
 Solid Echo
 """"""""""
 
 Any discussion such as transition pathways goes here
+
+.. figure:: ../../_static/deuteriumSolidEcho.*
+    :alt: Transition symmetry pathways for the Hahn Echo experiment
+    :align: center
+    :width: 50%
+
+    Energy level transitions and symmetry pathways for the Solid Echo experiment.
+
+.. math::
+
+    \mathbb{p}: 0 \xrightarrow[]{\frac{\pi}{2}} +1 \xrightarrow[]{\frac{\pi}{2}} -1
+
+simplifies to
+
+.. math::
+
+    \mathbb{p}: -1 \xrightarrow[]{\frac{\pi}{2}} -1
 
 .. plot::
     :context: close-figs
@@ -411,13 +479,32 @@ Any discussion such as transition pathways goes here
                 count=512,
                 spectral_width=2e4,  # in Hz
                 events=[
-                    SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
+                    SpectralEvent(fraction=0.5, transition_query=[
+                        {"ch1": {"P": [-1], "D": [1]}},
+                        {"ch1": {"P": [-1], "D": [-1]}},
+                    ]),
                     MixingEvent(query={"ch1": {"angle": 3.141592 / 2, "phase": 0}}),
-                    SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}])
+                    SpectralEvent(fraction=0.5, transition_query=[
+                        {"ch1": {"P": [-1], "D": [1]}},
+                        {"ch1": {"P": [-1], "D": [-1]}},
+                    ]),
                 ]
             )
         ]
     )
+
+    pprint(solid_echo.get_transition_pathways(spin_system))
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    [|-1.0⟩⟨0.0| ⟶ |0.0⟩⟨1.0|, weight=(0.5+0j)
+     |0.0⟩⟨1.0| ⟶ |-1.0⟩⟨0.0|, weight=(0.5+0j)]
+
+
 
 Now we setup and run the simulation then process and plot the data
 
@@ -428,14 +515,14 @@ Now we setup and run the simulation then process and plot the data
     :caption: Simulated Hanh Echo spectrum (left) and Solid Echo spectrum (right) for the same :math:`2^\text{H}` spin system.
 
     sim = Simulator()
-    sim.spin_systems = spin_systems
+    sim.spin_systems = [spin_system]
     sim.methods = [hahn_echo, solid_echo]
     sim.run()
 
     processor = sp.SignalProcessor(
         operations=[
             sp.IFFT(),
-            sp.apodization.Gaussian(FWHM="50 Hz"),
+            sp.apodization.Gaussian(FWHM="100 Hz"),
             sp.FFT(),
         ]
     )

@@ -116,7 +116,7 @@ class SpectralDimension(Parseable):
             if total != 1:
                 e = (
                     "The fraction attribute of each SpectralEvent in a "
-                    f"SpectralDimension should sum to 1. Sum is {total}."
+                    f"SpectralDimension should sum to 1. Sum is {total}. "
                     "If this was not intentional, check the fraction attributes."
                 )
                 warn(e)
