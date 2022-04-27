@@ -220,6 +220,51 @@ def check_for_at_least_one_event(py_dict):
     ]
 
 
+def add_euler_angles(angles: list = []):
+    """Adds an arbitrary number of sequential euler rotations into one rotation
+
+    Args:
+        angles (list): List of euler angles provided in the form of
+            [(a_1, b_1, g_1), (a_2, b_2, g_2), ...(a_n, b_n, g_n)]
+
+    Returns:
+        Ordered list of floats (alpha, beta, gamma) representing the summed
+        euler rotations
+    """
+    len_error = "Elements in the angles list must be in the form (alpha, beta, gamma)"
+    # Check if arguments less than two elements
+    if len(angles) < 2:
+        raise ValueError("Please provide at least two sets of angles")
+
+    if len(list[0]) != 3:
+        raise ValueError(len_error)
+
+    alpha, beta, gamma = list[0][0], list[0][1], list[0][2]
+    for euler_angles in iter(list[1:]):
+        if len(euler_angles[0]) != 3:
+            raise ValueError(len_error)
+
+        alpha, beta, gamma = _add_two_euler_angles(alpha, beta, gamma, *euler_angles)
+
+    return alpha, beta, gamma
+
+
+def _add_two_euler_angles(a1, b1, g1, a2, b2, g2):
+    """Adds two sets of euler angles -- (a1, b1, g1) and (a2, b2, g2) -- together"""
+    beta = np.cos(b1) * np.cos(b2)
+    beta -= np.sin(b1) * np.sin(b2) * np.cos(a1 + g1)
+    beta = np.arccos(beta)
+
+    temp = np.sin(a1 + g1) / np.sin(beta)
+
+    alpha = temp * np.sin(b1)
+    alpha = np.arcsin(alpha) + a2
+    gamma = temp * np.sin(b2)
+    gamma = np.arcsin(gamma) + g1
+
+    return alpha, beta, gamma
+
+
 # Deprecated
 # def query_permutations(query, isotope, channel, transition_symmetry="P"):
 #     """
