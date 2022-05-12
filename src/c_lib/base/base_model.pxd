@@ -14,6 +14,13 @@ cdef extern from "angular_momentum/wigner_element.h":
                             const float m1_i, const float m2_f, const float m2_i,
                             const double theta, const double phi, double *factor)
 
+
+cdef extern from "angular_momentum/wigner_element.h":
+    void general_transition_connect_factor(const float l, const float m1_f,
+                            const float m1_i, const float m2_f, const float m2_i,
+                            const double alpha, const double beta,
+                            const double gamma, double *factor)
+
 cdef extern from "tables.h":
     void generate_tables()
 

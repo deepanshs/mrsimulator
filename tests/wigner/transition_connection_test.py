@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from mrsimulator.base_model import general_transition_connect_factor
 from mrsimulator.base_model import transition_connect_factor
 
 
@@ -30,3 +31,17 @@ def test_connection_factor_01():
 
     for phi, res in zip(phase, result * 0.375):
         assert np.allclose(transition_connect_factor(1.5, *D, np.pi / 2, phi), res)
+
+
+def test_general_connect_factor():
+    """Tests the general connect factor function against the simplified connection
+    function"""
+    phase = np.asarray([0, 1 / 4, 1 / 2, 1]) * np.pi
+
+    for phi in phase:
+        alpha = phi - np.pi / 2
+        gamma = np.pi / 2 - phi
+        assert np.allclose(
+            transition_connect_factor(0.5, *A, np.pi, phi),
+            general_transition_connect_factor(0.5, *A, alpha, np.pi, gamma),
+        )

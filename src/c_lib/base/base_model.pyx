@@ -538,6 +538,33 @@ def transition_connect_factor(float l, float m1_f, float m1_i, float m2_f,
 @cython.profile(False)
 @cython.boundscheck(False)
 @cython.wraparound(False)
+def general_transition_connect_factor(float l, float m1_f, float m1_i, float m2_f,
+                        float m2_i, double alpha, double beta, double gamma):
+    """Evaluate the probability of connecting two transitions driven by a rotation
+    defined by the euler angles alpha, beta, and gamma in the ZYZ convention.
+    The connected transitions are | m1_f >< m1_i | --> | m2_f > < m2_i |.
+
+    Args:
+        float l: The angular momentum quantum number of the spin involved in the transition.
+        float m1_f Final quantum number of the starting transition.
+        float m1_i Initial quantum number of the starting transition.
+        float m2_f Final quantum number of the connecting transition.
+        float m2_i Initial quantum number of the connecting transition.
+        float alpha The first angle of rotation about the Z axis
+        float beta The second angle of rotation about the transformed Y axis
+        float gamma the third angle of rotation about the transformed Z axis
+
+    Return: A complex amplitude.
+    """
+    cdef ndarray[double] factor = np.asarray([1, 0], dtype=np.float64)
+    clib.general_transition_connect_factor(l, m1_f, m1_i, m2_f, m2_i, alpha, beta, gamma, &factor[0])
+    factor = np.around(factor, decimals=12)
+    return complex(factor[0], factor[1])
+
+
+@cython.profile(False)
+@cython.boundscheck(False)
+@cython.wraparound(False)
 def calculate_transition_connect_weight(
         ndarray[float, ndim=2] trans1,
         ndarray[float, ndim=2] trans2,

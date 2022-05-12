@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 from functools import reduce
+from math import remainder
 
 import numpy as np
 from mrsimulator.utils.error import MissingSpectralDimensionError
 from mrsimulator.utils.error import MixedSpectralDimensionTypeError
+from scipy.spatial.transform import Rotation
 
 __author__ = ["Deepansh J. Srivastava", "Maxwell C. Venetos", "Matthew D. Giammar"]
 __email__ = ["srivastava.89@osu.edu", "maxvenetos@gmail.com", "giammar.7@ous.edu"]
+
+
+tau = np.pi * 2
 
 
 def cartesian_product(*arrays):
@@ -220,50 +225,110 @@ def check_for_at_least_one_event(py_dict):
     ]
 
 
-def add_euler_angles(angles: list = []):
-    """Adds an arbitrary number of sequential euler rotations into one rotation
+def combind_mixing_queries(queries: list):
+    """Takes in a list of mixing queries combinding them into a single mixing query
 
     Args:
-        angles (list): List of euler angles provided in the form of
-            [(a_1, b_1, g_1), (a_2, b_2, g_2), ...(a_n, b_n, g_n)]
+        queries: List of dicts each representing a MixingQuery object
 
     Returns:
-        Ordered list of floats (alpha, beta, gamma) representing the summed
-        euler rotations
+        Dictionary with angle and phase of combind MixingQuery objects
     """
-    len_error = "Elements in the angles list must be in the form (alpha, beta, gamma)"
-    # Check if arguments less than two elements
-    if len(angles) < 2:
-        raise ValueError("Please provide at least two sets of angles")
+    if len(queries) < 2:
+        raise ValueError(f"List length must be at least 2. Got length {len(queries)}.")
 
-    if len(list[0]) != 3:
-        raise ValueError(len_error)
-
-    alpha, beta, gamma = list[0][0], list[0][1], list[0][2]
-    for euler_angles in iter(list[1:]):
-        if len(euler_angles[0]) != 3:
-            raise ValueError(len_error)
-
-        alpha, beta, gamma = _add_two_euler_angles(alpha, beta, gamma, *euler_angles)
+    # Need to incorporate edge cases when gimble lock would occur
+    alpha, beta, gamma = _angle_phase_to_euler_angles(**queries[0])
+    for query in queries[1:]:
+        alpha, beta, gamma = _add_two_euler_angles(
+            alpha, beta, gamma, *_angle_phase_to_euler_angles(**query)
+        )
 
     return alpha, beta, gamma
+
+
+def _angle_phase_to_euler_angles(angle: float, phase: float):
+    """Takes angle and phase of a mixing query and converts to a set of euler angles in
+    the ZYZ convention. The returned angles will be constrained between (-pi, pi]
+
+    Args:
+        angle (float): Angle of mixing query between [0, 2pi)
+        phase (float): Phase of mixing query between [0, 2pi)
+
+    Returns:
+        alpha, beta, gamma: Euler angles of the mixing query
+    """
+    # Wrap angle and phase between -pi and pi
+    angle, phase = remainder(angle, tau), remainder(phase, tau)
+    alpha = (np.pi / 2) - phase
+    return remainder(alpha, tau), remainder(angle, tau), remainder(-alpha, tau)
+
+
+def _euler_angles_to_angle_phase(alpha: float, beta: float, gamma: float):
+    """Takes a set of euler angles in the ZYZ convention and converts them to a
+    mixing angle and phase. Provided alpha and gamma should be opposite of eachother,
+    otherwise a ValueError is raised since the rotation vector does not lie in the XY
+    plane.
+
+    Args:
+        alpha, beta, gamma: Set of euler angles to convert
+
+    Returns:
+        angle, phase: Angle and phase of the equivalent mixing query
+
+    Raises:
+        ValueError: Raised if alpha and gamma are not opposite of eachother
+    """
+    if not np.isclose(alpha, -gamma):
+        raise ValueError(
+            "Unable to convert the provided Euler angles to an angle and phase"
+        )
+
+    # Check if resulting phase is  close to -pi to wrap phase between (-pi, pi]
+    phase = remainder(gamma + np.pi / 2, tau)
+    phase = np.pi if np.isclose(phase, -np.pi) else phase
+
+    return beta, phase
 
 
 def _add_two_euler_angles(a1, b1, g1, a2, b2, g2):
     """Adds two sets of euler angles -- (a1, b1, g1) and (a2, b2, g2) -- together"""
-    beta = np.cos(b1) * np.cos(b2)
-    beta -= np.sin(b1) * np.sin(b2) * np.cos(a1 + g1)
-    beta = np.arccos(beta)
+    mat_1 = Rotation.from_euler("zyz", [a1, b1, g1])
+    mat_2 = Rotation.from_euler("zyz", [a2, b2, g2])
 
-    temp = np.sin(a1 + g1) / np.sin(beta)
+    result = mat_1 * mat_2
 
-    alpha = temp * np.sin(b1)
-    alpha = np.arcsin(alpha) + a2
-    gamma = temp * np.sin(b2)
-    gamma = np.arcsin(gamma) + g1
+    # TODO: Check resulting rotation matrix for gimbal lock
+    return result.as_euler("zyz")
 
-    return alpha, beta, gamma
 
+# def add_euler_angles(angles: list):
+#     """Adds an arbitrary number of sequential euler rotations into one rotation
+
+#     Args:
+#         angles (list): List of euler angles provided in the form of
+#             [(a_1, b_1, g_1), (a_2, b_2, g_2), ...(a_n, b_n, g_n)]
+
+#     Returns:
+#         Ordered list of floats (alpha, beta, gamma) representing the summed
+#         euler rotations
+#     """
+#     len_error = "Elements in the angles list must be in the form (alpha, beta, gamma)"
+#     # Check if arguments less than two elements
+#     if len(angles) < 2:
+#         raise ValueError("Please provide at least two sets of angles")
+
+#     if len(list[0]) != 3:
+#         raise ValueError(len_error)
+
+#     alpha, beta, gamma = list[0][0], list[0][1], list[0][2]
+#     for euler_angles in iter(list[1:]):
+#         if len(euler_angles[0]) != 3:
+#             raise ValueError(len_error)
+
+#         alpha, beta, gamma = _add_two_euler_angles(alpha, beta, gamma, *euler_angles)
+
+#     return alpha, beta, gamma
 
 # Deprecated
 # def query_permutations(query, isotope, channel, transition_symmetry="P"):
