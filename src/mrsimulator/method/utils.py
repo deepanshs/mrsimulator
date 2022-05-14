@@ -72,34 +72,11 @@ def nearest_nonmixing_event(event_name, i):
     high_range = event_name[i:]
     upper = [high_range.index(item) for item in options if item in high_range]
     lower = [low_range[::-1].index(item) for item in options if item in low_range]
+    # NOTE: returning index of 0 when non-existant might cause issues when first ev mix?
     return [
         i - 1 - (min(lower) if lower != [] else 0),
         i + (min(upper) if upper != [] else 0),
     ]
-
-
-def angle_and_phase_list(symbol, channels, mixing_query):
-    """Return a list of angles and phase of size equal to the number of sites within
-    the spin system, corresponding to a mixing_query from a MixingEvent.
-
-    If the site matches the channel, append the angle and phase of the corresponding
-    channel to the list, otherwise append 0.
-
-    Args:
-        symbols: List of site symbols.
-        channels: List of method channel symbols.
-        mixing_query: Mixing query object of the MixingEvent.
-    """
-    angle_mappable = map_mix_query_attr_to_ch(mixing_query)
-    angle_ = [
-        angle_mappable["angle"][channels.index(sym)] if sym in channels else 0
-        for sym in symbol
-    ]
-    phase_ = [
-        angle_mappable["phase"][channels.index(sym)] if sym in channels else 0
-        for sym in symbol
-    ]
-    return angle_, phase_
 
 
 def get_mixing_query(spectral_dimensions, index):
@@ -124,46 +101,122 @@ def map_mix_query_attr_to_ch(mixing_query):
     If the attribute is defined for the channel use the defined value else set it to 0.
 
     Args:
-        spectral_dimension: A list SpectralDimension objects.
-        index: The index of the event from a flatten event list.
+        mixing_query: The mixing query to map
     """
     attributes = ["angle", "phase"]
     return {
-        item: {
-            i: getattr(getattr(mixing_query, f"ch{i+1}"), item) or 0
+        i: {
+            item: getattr(getattr(mixing_query, f"ch{i+1}"), item) or 0
             if getattr(mixing_query, f"ch{i+1}") is not None
             else 0
-            for i in range(3)
+            for item in attributes
         }
-        for item in attributes
+        for i in range(3)
     }
+
+
+# def angle_and_phase_list(symbol, channels, mixing_query):
+#     """Return a list of angles and phase of size equal to the number of sites within
+#     the spin system, corresponding to a mixing_query from a MixingEvent.
+
+#     If the site matches the channel, append the angle and phase of the corresponding
+#     channel to the list, otherwise append 0.
+
+#     Args:
+#         symbols: List of site symbols.
+#         channels: List of method channel symbols.
+#         mixing_query: Mixing query object of the MixingEvent.
+#     """
+#     angle_phase_mappable = map_mix_query_attr_to_ch(mixing_query)
+#     angle_ = [
+#         angle_mappable["angle"][channels.index(sym)] if sym in channels else 0
+#         for sym in symbol
+#     ]
+#     phase_ = [
+#         angle_mappable["phase"][channels.index(sym)] if sym in channels else 0
+#         for sym in symbol
+#     ]
+#     return angle_, phase_
+
+
+def to_euler_list(symbol, channels, mixing_queries):
+    """Takes a list of symbols, list of isotope symbols per channel, and list of mixing
+    queries and converts them into a list of sets of three Euler angles describing the
+    total rotation of the combind mixing_queries per channel.
+
+    Args:
+        symbols: List of site symbols.
+        channels: List of method channel symbols.
+        mixing_query: List of mixing query objects from sequential MixingEvents.
+    """
+    angle_phase_mappable = [map_mix_query_attr_to_ch(query) for query in mixing_queries]
+
+    # angles is a list of sets of Euler angles for each symbol (site)
+    # ex. [(3.14, 1.57, -3.14), (-1.57, 2, 1.57)]
+    angles = [
+        combind_mixing_queries([ap[channels.index(sym)] for ap in angle_phase_mappable])
+        if sym in channels
+        else [np.pi / 2, 0, -np.pi / 2]
+        for sym in symbol
+    ]
+
+    return angles
+
+
+def get_groupped_mixing_queries(spectral_dimensions, event_names):
+    """Returns a dictionary where each key is the index of the first MixingEvent in a
+    group of sequential MixinvEvents and the key is the set of angles and phases for
+    those mixing queries in the mixing events.
+
+    Args:
+        spectral_dimensions: A list of SpectralDimension objects.
+        event_names: A list of all class names
+    """
+    # dict with index of first mixing event in seq as key and list of queries as values
+    mixing_query_sets = {}
+    previous_event_mix = False
+    for i, name in enumerate(event_names):
+        if name == "MixingEvent":
+            # Skip this event if last event was a mixing event
+            if previous_event_mix:
+                continue
+
+            previous_event_mix = True
+            mixing_query_sets[i] = []
+            j = i
+            while j < len(event_names) and event_names[j] == "MixingEvent":
+                mixing_query_sets[i].append(get_mixing_query(spectral_dimensions, j))
+                j += 1
+        else:
+            previous_event_mix = False
+
+    return mixing_query_sets
 
 
 def mixing_query_connect_map(spectral_dimensions):
     """Return a list of mappables corresponding to each mixing event. The mappable
-    corresponds to mixing event and the index of next nearest transition indexes.
+    corresponds to queries described by adjacent mixing events and the index of next
+    and previous nearest transition indexes.
 
     Args:
-        spectral_dimensions: A list of SpectralDimension objects."""
-    mapping = {}
+        spectral_dimensions: A list of SpectralDimension objects.
+    """
     event_names = [
         evt.__class__.__name__ for dim in spectral_dimensions for evt in dim.events
     ]
+    grouped_mix_map = get_groupped_mixing_queries(spectral_dimensions, event_names)
     non_mix_index = [i for i, ev in enumerate(event_names) if ev != "MixingEvent"]
     non_mix_index_map = {index: i for i, index in enumerate(non_mix_index)}
 
-    mapping = [
+    return [
         {
-            "mixing_query": get_mixing_query(spectral_dimensions, i),
+            "mixing_query_list": query_list,
             "near_index": [
                 non_mix_index_map[k] for k in nearest_nonmixing_event(event_names, i)
             ],
         }
-        for i, name in enumerate(event_names)
-        if name == "MixingEvent"
+        for i, query_list in grouped_mix_map.items()
     ]
-
-    return mapping
 
 
 # Helper functions for validating a method object
@@ -234,10 +287,10 @@ def combind_mixing_queries(queries: list):
     Returns:
         Dictionary with angle and phase of combind MixingQuery objects
     """
-    if len(queries) < 2:
-        raise ValueError(f"List length must be at least 2. Got length {len(queries)}.")
+    if len(queries) == 0:
+        raise ValueError(f"List length must be at least 1. Got length {len(queries)}.")
 
-    # Need to incorporate edge cases when gimble lock would occur
+    # NOTE: Do not need to check for length 1 since queries[1:] == [] when length 1
     alpha, beta, gamma = _angle_phase_to_euler_angles(**queries[0])
     for query in queries[1:]:
         alpha, beta, gamma = _add_two_euler_angles(
@@ -292,13 +345,36 @@ def _euler_angles_to_angle_phase(alpha: float, beta: float, gamma: float):
 
 
 def _add_two_euler_angles(a1, b1, g1, a2, b2, g2):
-    """Adds two sets of euler angles -- (a1, b1, g1) and (a2, b2, g2) -- together"""
-    mat_1 = Rotation.from_euler("zyz", [a1, b1, g1])
-    mat_2 = Rotation.from_euler("zyz", [a2, b2, g2])
+    """Adds two sets of euler angles -- (a1, b1, g1) and (a2, b2, g2) -- together.
+    Also checks for edge cases where gimbal lock would occur.
 
-    result = mat_1 * mat_2
+    If the result is the identity matrix, then beta = 0 and alpha, gamma are unbounded.
+    As an arbitrary choice, alpha of pi/2 and gamma of -pi/2 are chosen.
 
-    # TODO: Check resulting rotation matrix for gimbal lock
+    If the two phases are the same (i.e. a1 == a2 and g1 == g2) and b1 + b2 = pi, then
+    scipy is unable to uniquely determine the last angle. In this case, the top left
+    element of the rotation matrix equals -cos(2*phase) and alpha and gamma are computed
+    from there.
+
+    Returns:
+        alpha, beta, gamma: The resulting Euler angles
+    """
+    rot_1 = Rotation.from_euler("zyz", [a1, b1, g1])
+    rot_2 = Rotation.from_euler("zyz", [a2, b2, g2])
+
+    result = rot_1 * rot_2
+    result_mat = result.as_matrix()
+
+    # Check for identity matrix by comparing the diagonal to an array of ones
+    if np.allclose(result_mat.diagonal(), [1.0, 1.0, 1.0]):
+        return np.asarray([np.pi / 2, 0, -np.pi / 2])
+
+    # Check if beta is 180 degrees and phase the same
+    if np.isclose(result_mat[2][2], -1.0) and np.allclose([a1, g1], [a2, g2]):
+        gamma = np.arccos(result_mat[0][0]) - np.pi
+        gamma /= 2
+        return np.asarray([-gamma, np.pi, gamma])
+
     return result.as_euler("zyz")
 
 

@@ -277,47 +277,48 @@ double wigner_d_element(const float l, const float m1, const float m2,
   return __wigner_d_element(l, m1, m2, beta);
 }
 
-/** Computes the connect factor of transitions |m1_f >< m1_i | --> | m2_f > < m2_i |
- * when the rotation vector lies in the XY-plane. Said equivalently, the Euler
- * angles defining the SO(3) rotation has the relation `alpha = -gamma`
- */
-void transition_connect_factor(const float l, const float m1_f, const float m1_i,
-                               const float m2_f, const float m2_i, const double theta,
-                               const double phi, double *restrict factor) {
-  short delta_p = (short)((m2_f - m2_i) - (m1_f - m1_i));
-  double scale, phase = (double)delta_p * phi;
-  double cx = cos(phase), sx = sin(phase), re = 0.0, im = 0.0, temp;
-  delta_p %= 4;
-  delta_p += 4;
-  delta_p %= 4;
+// Function has been rewritten using general euler angles instead of angle and phase
+// /** Computes the connect factor of transitions |m1_f >< m1_i | --> | m2_f > < m2_i |
+//  * when the rotation vector lies in the XY-plane. Said equivalently, the Euler
+//  * angles defining the SO(3) rotation has the relation `alpha = -gamma`
+//  */
+// void transition_connect_factor(const float l, const float m1_f, const float m1_i,
+//                                const float m2_f, const float m2_i, const double
+//                                theta, const double phi, double *restrict factor) {
+//   short delta_p = (short)((m2_f - m2_i) - (m1_f - m1_i));
+//   double scale, phase = (double)delta_p * phi;
+//   double cx = cos(phase), sx = sin(phase), re = 0.0, im = 0.0, temp;
+//   delta_p %= 4;
+//   delta_p += 4;
+//   delta_p %= 4;
 
-  scale = __wigner_d_element(l, m2_f, m1_f, theta);
-  scale *= __wigner_d_element(
-      l, m2_i, m1_i,
-      theta);  // Why is this not negative theta or m2_i and m1_i not reversed?
+//   scale = __wigner_d_element(l, m2_f, m1_f, theta);
+//   scale *= __wigner_d_element(
+//       l, m2_i, m1_i,
+//       theta);  // Why is this not negative theta or m2_i and m1_i not reversed?
 
-  switch (delta_p) {
-  case 0:  // * 1
-    re = scale * cx;
-    im = scale * sx;
-    break;
-  case 1:  // * -I
-    re = scale * sx;
-    im = -scale * cx;
-    break;
-  case 2:  // * -1
-    re = -scale * cx;
-    im = -scale * sx;
-    break;
-  case 3:  // * I
-    re = -scale * sx;
-    im = scale * cx;
-    break;
-  }
-  temp = factor[0] * re - factor[1] * im;
-  factor[1] = factor[0] * im + factor[1] * re;
-  factor[0] = temp;
-}
+//   switch (delta_p) {
+//   case 0:  // * 1
+//     re = scale * cx;
+//     im = scale * sx;
+//     break;
+//   case 1:  // * -I
+//     re = scale * sx;
+//     im = -scale * cx;
+//     break;
+//   case 2:  // * -1
+//     re = -scale * cx;
+//     im = -scale * sx;
+//     break;
+//   case 3:  // * I
+//     re = -scale * sx;
+//     im = scale * cx;
+//     break;
+//   }
+//   temp = factor[0] * re - factor[1] * im;
+//   factor[1] = factor[0] * im + factor[1] * re;
+//   factor[0] = temp;
+// }
 
 /** Computes the connect factor of transitions |m1_f >< m1_i | --> | m2_f > < m2_i |
  * when the rotation vector does not lie in the XY-plane (i.e. `alpha != -gamma).
@@ -333,21 +334,20 @@ void transition_connect_factor(const float l, const float m1_f, const float m1_i
  * @param gamma
  * @param factor
  */
-void general_transition_connect_factor(const float l, const float m1_f,
-                                       const float m1_i, const float m2_f,
-                                       const float m2_i, const double alpha,
-                                       const double beta, const double gamma,
-                                       double *restrict factor) {
+void transition_connect_factor(const float l, const float m1_f, const float m1_i,
+                               const float m2_f, const float m2_i, const double alpha,
+                               const double beta, const double gamma,
+                               double *restrict factor) {
   // Calculate the exponent factors
-  double alpha_fac = (double)(m2_f - m2_i) * alpha;
-  double gamma_fac = (double)(m1_f - m1_i) * gamma;
+  double alpha_fac = (double)(m2_i - m2_f) * alpha;
+  double gamma_fac = (double)(m1_i - m1_f) * gamma;
 
   // Calculate the real and imaginary parts
   double re = cos(alpha_fac + gamma_fac), im = sin(alpha_fac + gamma_fac);
 
   // Calculate the magnitude of the transition factor
   double scale = __wigner_d_element(l, m2_f, m1_f, beta);
-  scale *= __wigner_d_element(l, m2_i, m1_i, -beta);
+  scale *= __wigner_d_element(l, m2_i, m1_i, beta);
 
   factor[0] = scale * re;
   factor[1] = scale * im;

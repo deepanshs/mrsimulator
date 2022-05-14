@@ -22,23 +22,27 @@
 extern double wigner_d_element(const float l, const float m1, const float m2,
                                const double beta);
 
-/**
- * @brief Evaluate the probability of connecting two transitions driven by an external
- *      rf pulse. The connected transitions are |m1_f >< m1_i | --> | m2_f > < m2_i |.
- *
- * @param l The angular momentum quantum number of the spin involved in the transition.
- * @param m1_f Final quantum number of the starting transition.
- * @param m1_i Initial quantum number of the starting transition.
- * @param m2_f Final quantum number of the connecting transition.
- * @param m2_i Initial quantum number of the connecting transition.
- * @param theta The tip-angle of the rf pulse.
- * @param phi The phase of the rf pulse.
- * @param factor The complex probability of connection.
- */
-extern void transition_connect_factor(const float l, const float m1_f, const float m1_i,
-                                      const float m2_f, const float m2_i,
-                                      const double theta, const double phi,
-                                      double *restrict factor);
+// /**
+//  * @brief Evaluate the probability of connecting two transitions driven by an
+//  external
+//  *      rf pulse. The connected transitions are |m1_f >< m1_i | --> | m2_f > < m2_i
+//  |.
+//  *
+//  * @param l The angular momentum quantum number of the spin involved in the
+//  transition.
+//  * @param m1_f Final quantum number of the starting transition.
+//  * @param m1_i Initial quantum number of the starting transition.
+//  * @param m2_f Final quantum number of the connecting transition.
+//  * @param m2_i Initial quantum number of the connecting transition.
+//  * @param theta The tip-angle of the rf pulse.
+//  * @param phi The phase of the rf pulse.
+//  * @param factor The complex probability of connection.
+//  */
+// extern void transition_connect_factor(const float l, const float m1_f, const float
+// m1_i,
+//                                       const float m2_f, const float m2_i,
+//                                       const double theta, const double phi,
+//                                       double *restrict factor);
 
 /**
  * @brief Evaluate the probability of connecting two transitions by a rotation
@@ -50,12 +54,12 @@ extern void transition_connect_factor(const float l, const float m1_f, const flo
  * @param m1_i Initial quantum number of the starting transition.
  * @param m2_f Final quantum number of the connecting transition.
  * @param m2_i Initial quantum number of the connecting transition.
- * @param theta The tip-angle of the rf pulse.
- * @param phi The phase of the rf pulse.
+ * @param alpha First euler angle.
+ * @param beta Second euler angle.
+ * @param gamma Third euler angle.
  * @param factor The complex probability of connection.
  */
-extern void general_transition_connect_factor(const float l, const float m1_f,
-                                              const float m1_i, const float m2_f,
-                                              const float m2_i, const double alpha,
-                                              const double beta, const double phi,
-                                              double *restrict factor);
+extern void transition_connect_factor(const float l, const float m1_f, const float m1_i,
+                                      const float m2_f, const float m2_i,
+                                      const double alpha, const double beta,
+                                      const double gamma, double *restrict factor);
