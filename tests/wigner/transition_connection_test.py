@@ -32,6 +32,6 @@ def test_connection_factor_01():
         assert np.allclose(transition_connect_factor(1.5, *D, a_, np.pi / 2, g_), res)
 
 
-def test_connection_factor_02():
-    """Test transition when phases are out of the XY plane (i.e. alpha != -gamma)"""
-    pass
+# def test_connection_factor_02():
+#     """Test transition when phases are out of the XY plane (i.e. alpha != -gamma)"""
+#     pass

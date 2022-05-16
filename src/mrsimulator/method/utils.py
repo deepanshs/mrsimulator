@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from functools import reduce
-from math import remainder
 
 import numpy as np
 from mrsimulator.utils.error import MissingSpectralDimensionError
@@ -12,6 +11,14 @@ __email__ = ["srivastava.89@osu.edu", "maxvenetos@gmail.com", "giammar.7@ous.edu
 
 
 tau = np.pi * 2
+
+
+def remainder(a, b):
+    """Return the remainder after dividing a by b"""
+    # NOTE: This should be equivalent to the remainder function from the math module
+    # However, python 3.6 does not have the remainder function. Once 3.6 support is
+    # dropped, this function can be imported directly from the math module
+    return (a + b / 2) % b
 
 
 def cartesian_product(*arrays):
