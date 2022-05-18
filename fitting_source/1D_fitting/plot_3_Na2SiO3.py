@@ -36,7 +36,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # Import the experimental data. We use dataset file serialized with the CSDM
 # file-format, using the
 # `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_ module.
-filename = "https://sandbox.zenodo.org/record/835664/files/Na2SiO3_O17.csdf"
+filename = "http://ssnmr.org/sites/default/files/mrsimulator/Na2SiO3_O17.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset

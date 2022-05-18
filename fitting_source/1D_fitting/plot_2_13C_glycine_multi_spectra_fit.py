@@ -28,7 +28,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # Import the datasets and assign the standard deviation of noise for each dataset. Here,
 # ``sigma1``, ``sigma2``, and ``sigma3`` are the noise standard deviation for the
 # dataset acquired at  5 kHz, 1.94 kHz, and 960 Hz spinning speeds, respectively.
-host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
+host = "http://ssnmr.org/sites/default/files/mrsimulator/"
 filename1 = "13C MAS 5000Hz - Glycine.csdf"
 filename2 = "13C MAS 1940Hz - Glycine.csdf"
 filename3 = "13C MAS 960Hz - Glycine.csdf"

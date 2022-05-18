@@ -38,7 +38,7 @@ from mrsimulator.method import SpectralDimension
 # ------------------
 # Use the `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_
 # module to load the synthetic dataset as a CSDM object.
-file_ = "https://sandbox.zenodo.org/record/835664/files/synthetic_cuspidine_test.csdf?"
+file_ = "http://ssnmr.org/sites/default/files/mrsimulator/synthetic_cuspidine_test.csdf"
 synthetic_experiment = cp.load(file_).real
 
 # standard deviation of noise from the dataset

@@ -27,7 +27,7 @@ from mrsimulator.method import Method, SpectralDimension, SpectralEvent
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/835664/files/NiCl2.2D2O.csdf"
+filename = "http://ssnmr.org/sites/default/files/mrsimulator/NiCl2.2D2O.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset

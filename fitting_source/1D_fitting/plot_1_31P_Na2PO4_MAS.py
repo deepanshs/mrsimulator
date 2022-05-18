@@ -38,8 +38,8 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # Import the experimental data. We use dataset file serialized with the CSDM
 # file-format, using the
 # `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_ module.
-host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
-filename = "31P Phosphate 6kHz.csdf"
+host = "https://ssnmr.org/sites/default/files/mrsimulator/"
+filename = "31P%20Phosphate%206kHz.csdf"
 experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
