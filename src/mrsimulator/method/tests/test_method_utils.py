@@ -11,6 +11,7 @@ from mrsimulator.method.utils import _euler_angles_to_angle_phase
 from mrsimulator.method.utils import combind_mixing_queries
 from mrsimulator.method.utils import mixing_query_connect_map
 from mrsimulator.method.utils import nearest_nonmixing_event
+from mrsimulator.method.utils import wrap_between_pi
 from mrsimulator.utils.error import MissingSpectralEventError
 
 # from mrsimulator.method.utils import angle_and_phase_list
@@ -18,6 +19,19 @@ from mrsimulator.utils.error import MissingSpectralEventError
 
 __author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]
 __email__ = ["srivastava.89@osu.edu", "giammar.7@osu.edu"]
+
+
+def test_wrap_between_pi():
+    assert np.isclose(wrap_between_pi(0), 0.0)
+    assert np.isclose(wrap_between_pi(2 * np.pi), 0.0)
+    assert np.isclose(wrap_between_pi(-2 * np.pi), 0.0)
+    assert np.isclose(wrap_between_pi(np.pi), np.pi)
+    assert np.isclose(wrap_between_pi(-np.pi), np.pi)
+    assert np.isclose(wrap_between_pi(-np.pi / 2), -np.pi / 2)
+    assert np.isclose(wrap_between_pi(3 * np.pi / 2), -np.pi / 2)
+    assert np.isclose(wrap_between_pi(5 * np.pi / 2), np.pi / 2)
+    assert np.isclose(wrap_between_pi(-3 * np.pi / 2), np.pi / 2)
+    assert np.isclose(wrap_between_pi(-5 * np.pi / 2), -np.pi / 2)
 
 
 def test_add_euler_angles():
@@ -99,7 +113,7 @@ def test_euler_angles_to_angle_phase():
     a = np.pi
     b = 1
     g = -np.pi
-    assert np.allclose(_euler_angles_to_angle_phase(a, b, g), [1, np.pi / 2])
+    assert np.allclose(_euler_angles_to_angle_phase(a, b, g), [1, -np.pi / 2])
 
 
 def test_combind_mixing_queries():

@@ -13,12 +13,11 @@ __email__ = ["srivastava.89@osu.edu", "maxvenetos@gmail.com", "giammar.7@ous.edu
 tau = np.pi * 2
 
 
-def remainder(a, b):
-    """Return the remainder after dividing a by b"""
-    # NOTE: This should be equivalent to the remainder function from the math module
-    # However, python 3.6 does not have the remainder function. Once 3.6 support is
-    # dropped, this function can be imported directly from the math module
-    return (a + b / 2) % b
+def wrap_between_pi(a: float):
+    """Wraps the provided angle between (-pi and pi]"""
+    a %= tau
+    a -= np.sign(a) * tau if abs(a) > np.pi else 0
+    return a
 
 
 def cartesian_product(*arrays):
@@ -319,9 +318,9 @@ def _angle_phase_to_euler_angles(angle: float, phase: float):
         alpha, beta, gamma: Euler angles of the mixing query
     """
     # Wrap angle and phase between -pi and pi
-    angle, phase = remainder(angle, tau), remainder(phase, tau)
+    angle, phase = wrap_between_pi(angle), wrap_between_pi(phase)
     alpha = (np.pi / 2) - phase
-    return remainder(alpha, tau), remainder(angle, tau), remainder(-alpha, tau)
+    return wrap_between_pi(alpha), wrap_between_pi(angle), wrap_between_pi(-alpha)
 
 
 def _euler_angles_to_angle_phase(alpha: float, beta: float, gamma: float):
@@ -344,9 +343,7 @@ def _euler_angles_to_angle_phase(alpha: float, beta: float, gamma: float):
             "Unable to convert the provided Euler angles to an angle and phase"
         )
 
-    # Check if resulting phase is  close to -pi to wrap phase between (-pi, pi]
-    phase = remainder(gamma + np.pi / 2, tau)
-    phase = np.pi if np.isclose(phase, -np.pi) else phase
+    phase = wrap_between_pi(gamma + np.pi / 2)
 
     return beta, phase
 
