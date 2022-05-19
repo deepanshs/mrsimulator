@@ -23,7 +23,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # %%
 # Import the dataset
 # ------------------
-host = "http://ssnmr.org/sites/default/files/mrsimulator/"
+host = "https://ssnmr.org/sites/default/files/mrsimulator/"
 filename = "11B_lithum_orthoborate.csdf"
 experiment = cp.load(host + filename)
 

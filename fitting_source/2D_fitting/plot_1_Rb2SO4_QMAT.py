@@ -25,7 +25,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # %%
 # Import the dataset
 # ------------------
-filename = "http://ssnmr.org/sites/default/files/mrsimulator/Rb2SO4_QMAT.csdf"
+filename = "https://ssnmr.org/sites/default/files/mrsimulator/Rb2SO4_QMAT.csdf"
 qmat_data = cp.load(filename)
 
 # standard deviation of noise from the dataset

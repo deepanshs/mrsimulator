@@ -1,7 +1,7 @@
 
 Colaboratory is a Google research project. It is a Jupyter notebook environment that
 runs entirely in the cloud. Launch a new notebook on
-`Colab <http://colab.research.google.com>`_. We recommend going through the *Welcome to Colab!*
+`Colab <https://colab.research.google.com>`_. We recommend going through the *Welcome to Colab!*
 tutorial if you are new to Notebooks.
 
 By default, Colaboratory has an older version of ``numpy`` installed which first needs to be

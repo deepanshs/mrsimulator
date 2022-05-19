@@ -25,7 +25,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # %%
 # Import the dataset
 # ------------------
-host = "http://ssnmr.org/sites/default/files/mrsimulator/"
+host = "https://ssnmr.org/sites/default/files/mrsimulator/"
 filename = "27Al Quad MAS YAG 400MHz.csdf"
 experiment = cp.load(host + filename)
 
