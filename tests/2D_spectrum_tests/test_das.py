@@ -52,7 +52,7 @@ def test_DAS():
                 "count": 912,
                 "spectral_width": 5e3,  # in Hz
                 "reference_offset": 0,  # in Hz
-                "origin_offset": O17_1.isotope.gyromagnetic_ratio * B0 * 1e6,  # in Hz
+                # "origin_offset": O17_1.isotope.gyromagnetic_ratio * B0 * 1e6,  # in Hz
                 "label": "DAS isotropic dimension",
                 "events": [
                     {
@@ -72,7 +72,7 @@ def test_DAS():
                 "count": 2048,
                 "spectral_width": 2e4,  # in Hz
                 "reference_offset": 0,  # in Hz
-                "origin_offset": O17_1.isotope.gyromagnetic_ratio * B0 * 1e6,  # im Hz
+                # "origin_offset": O17_1.isotope.gyromagnetic_ratio * B0 * 1e6,  # im Hz
                 "label": "MAS dimension",
                 "events": [
                     {
@@ -92,6 +92,10 @@ def test_DAS():
 
     data_das = sim.methods[0].simulation
     data_das_coords_ppm = das.spectral_dimensions[0].coordinates_ppm()
+    print(das.spectral_dimensions[0].origin_offset)
+    print(type(data_das_coords_ppm))
+
+    assert False
 
     # Bloch decay central transition method
     bloch = BlochDecayCTSpectrum(

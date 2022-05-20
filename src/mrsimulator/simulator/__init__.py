@@ -382,7 +382,8 @@ class Simulator(Parseable):
             gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
             B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
             origin_offset = np.abs(B0 * gyromagnetic_ratio * 1e6)
-            for seq in method.spectral_dimensions:
+            for i, seq in enumerate(method.spectral_dimensions):
+                print("sd", i)
                 seq.origin_offset = origin_offset
 
             if isinstance(amp[0], list):
