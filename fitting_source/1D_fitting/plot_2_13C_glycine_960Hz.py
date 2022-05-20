@@ -24,7 +24,7 @@ from mrsimulator.utils import get_spectral_dimensions
 # %%
 # Import the dataset
 # ------------------
-host = "https://ssnmr.org/sites/default/files/mrsimulator/"
+host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
 filename = "13C MAS 960Hz - Glycine.csdf"
 experiment = cp.load(host + filename)
 

@@ -24,9 +24,8 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # %%
 # Import the dataset
 # ------------------
-filename = (
-    "https://ssnmr.org/sites/default/files/mrsimulator/2H%20methiodine%20MAS.csdf"
-)
+host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
+filename = "2H methiodine MAS.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
