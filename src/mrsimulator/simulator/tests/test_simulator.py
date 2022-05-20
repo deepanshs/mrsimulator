@@ -337,16 +337,40 @@ def test_origin_offset_after_sim():
     sim.methods = [
         Method(
             channels=["23Na"],
-            magnetic_flux_density=B0,
+            magnetic_flux_density=B0,  # in T
+            rotor_frequency=1e12,
             spectral_dimensions=[
                 {
-                    "count": 1024,
-                    "spectral_width": 5e3,
-                    "reference_offset": 0,
+                    "count": 912,
+                    "spectral_width": 5e3,  # in Hz
+                    "reference_offset": 0,  # in Hz
+                    "label": "DAS isotropic dimension",
                     "events": [
-                        {"fraction": 1, "rotor_angle": 37.38 * 3.14159 / 180},
+                        {
+                            "fraction": 0.5,
+                            "rotor_angle": 37.38 * 3.14159 / 180,
+                            "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                        },
+                        {
+                            "fraction": 0.5,
+                            "rotor_angle": 79.19 * 3.14159 / 180,
+                            "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                        },
                     ],
-                }
+                },
+                # The last spectral dimension block is the direct-dimension
+                {
+                    "count": 2048,
+                    "spectral_width": 2e4,  # in Hz
+                    "reference_offset": 0,  # in Hz
+                    "label": "MAS dimension",
+                    "events": [
+                        {
+                            "rotor_angle": 54.735 * 3.14159 / 180,
+                            "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                        }
+                    ],
+                },
             ],
         )
     ]
