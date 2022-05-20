@@ -10,6 +10,7 @@ from mrsimulator import Coupling
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.method import Method
 from mrsimulator.method.lib import BlochDecayCTSpectrum
 from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.simulator import __CPU_count__
@@ -318,6 +319,46 @@ def test_sites():
 
     with pytest.raises(ValueError, match="Only object of type Site is allowed."):
         a[0] = ""
+
+
+def test_origin_offset_after_sim():
+    """When origin offset is of a spectral dimension None (i.e. not defined), it should
+    be set to the lamour frequency of the isotope being probed
+    """
+    B0 = 9.4
+    sim = Simulator()
+    sim.spin_systems = [
+        SpinSystem(
+            label="Test",
+            sites=[Site(isotope="1H"), Site(isotope="23Na")],
+            couplings=[Coupling(site_index=[0, 1], isotropic_j=15)],
+        )
+    ]
+    sim.methods = [
+        Method(
+            channels=["23Na"],
+            magnetic_flux_density=B0,
+            spectral_dimensions=[
+                {
+                    "count": 1024,
+                    "spectral_width": 5e3,
+                    "reference_offset": 0,
+                    "events": [
+                        {"fraction": 1, "rotor_angle": 37.38 * 3.14159 / 180},
+                    ],
+                }
+            ],
+        )
+    ]
+    larmor_freq = sim.methods[0].channels[0].gyromagnetic_ratio * B0 * 1e6
+
+    sim_copy = sim.copy()
+    sim_copy.run()
+    assert sim_copy.methods[0].spectral_dimensions[0].origin_offset == larmor_freq
+
+    sim_copy = sim.copy()
+    sim_copy.run(pack_as_csdm=False)
+    assert sim_copy.methods[0].spectral_dimensions[0].origin_offset == larmor_freq
 
 
 def test_sites_to_pandas_df():
