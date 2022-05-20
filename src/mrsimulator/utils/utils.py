@@ -5,7 +5,7 @@ __email__ = ["srivastava.89@osu.edu", "giammar.7@osu.edu"]
 
 # VO7_QUERY_WARNING = (
 #     "Definition of the transition query object has changed since v0.7. Follow the "
-#     "documentation at http://mrsimulator.readthedocs.io/en/stable/ to find more."
+#     "documentation at https://mrsimulator.readthedocs.io/en/stable/ to find more."
 # )
 MRSIMULATOR_KEYS = {"simulator", "signal_processors", "version", "application"}
 SIM_KEYWORDS = {
