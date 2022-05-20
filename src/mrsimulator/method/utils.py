@@ -10,13 +10,13 @@ __author__ = ["Deepansh J. Srivastava", "Maxwell C. Venetos", "Matthew D. Giamma
 __email__ = ["srivastava.89@osu.edu", "maxvenetos@gmail.com", "giammar.7@ous.edu"]
 
 
-tau = np.pi * 2
+TWO_PI = np.pi * 2
 
 
 def wrap_between_pi(a: float):
     """Wraps the provided angle between (-pi and pi]"""
-    a %= tau
-    a -= np.sign(a) * tau if abs(a) > np.pi else 0
+    a %= TWO_PI
+    a -= np.sign(a) * TWO_PI if abs(a) > np.pi else 0
     return a
 
 
