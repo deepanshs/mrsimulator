@@ -89,10 +89,11 @@ def test_DAS():
     sim.methods = [das]  # add the method.
     sim.config.decompose_spectrum = "spin_system"
     sim.run(pack_as_csdm=False)
+    print("from sim", sim.methods[0].spectral_dimensions[0].origin_offset)
+    print("from das", das.spectral_dimensions[0].origin_offset)
 
     data_das = sim.methods[0].simulation
     data_das_coords_ppm = das.spectral_dimensions[0].coordinates_ppm()
-    print(das.spectral_dimensions[0].origin_offset)
     print(type(data_das_coords_ppm))
 
     assert False

@@ -321,7 +321,7 @@ class Simulator(Parseable):
                 mth, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
-    def run(
+    def run(  # noqa: C901
         self,
         method_index: list = None,
         n_jobs: int = 1,
@@ -382,12 +382,11 @@ class Simulator(Parseable):
             gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
             B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
             origin_offset = np.abs(B0 * gyromagnetic_ratio * 1e6)
-            print("B0", B0)
-            print("gyromagnetic_ratio", gyromagnetic_ratio)
-            print("origin_offset", origin_offset)
             for i, seq in enumerate(method.spectral_dimensions):
-                print("sd", i)
                 seq.origin_offset = origin_offset
+
+            for i, seq in enumerate(method.spectral_dimensions):
+                print(i, seq.origin_offset)
 
             if isinstance(amp[0], list):
                 simulated_data = []
