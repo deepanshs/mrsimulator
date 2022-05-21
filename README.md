@@ -122,4 +122,4 @@ If you use mrsimulator in your publication, please consider citing the following
 
 - Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific data. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
 
-_Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package._ Zenodo. http://doi.org/10.5281/zenodo.4516651
+_Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package._ Zenodo. https://doi.org/10.5281/zenodo.4516651
