@@ -82,7 +82,7 @@ def test_load():
     assert application_r == application
 
     # Load from external URL. May break in the future
-    load("http://ssnmr.org/sites/default/files/mrsimulator/test.mrsim")
+    load("https://ssnmr.org/sites/default/files/mrsimulator/test.mrsim")
 
     os.remove("test.mrsim")
 

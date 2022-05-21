@@ -89,6 +89,6 @@ class FileConversionError(Exception):
         message = message or (
             "Unable to convert the requested mrsim file/dict to a compatible "
             "structure. See the documentation at "
-            "http://mrsimulator.readthedocs.io/en/stable/ to find out more."
+            "https://mrsimulator.readthedocs.io/en/stable/ to find out more."
         )
         super().__init__(message)

@@ -52,6 +52,7 @@ def test_DAS():
                 "count": 912,
                 "spectral_width": 5e3,  # in Hz
                 "reference_offset": 0,  # in Hz
+                "origin_offset": O17_1.isotope.gyromagnetic_ratio * B0 * 1e6,  # in Hz
                 "label": "DAS isotropic dimension",
                 "events": [
                     {
@@ -71,6 +72,7 @@ def test_DAS():
                 "count": 2048,
                 "spectral_width": 2e4,  # in Hz
                 "reference_offset": 0,  # in Hz
+                "origin_offset": O17_1.isotope.gyromagnetic_ratio * B0 * 1e6,  # in Hz
                 "label": "MAS dimension",
                 "events": [
                     {
