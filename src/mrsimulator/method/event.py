@@ -23,15 +23,6 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-# # Constants for easy definition of total mixing and no mixing
-# TOTALMIXING = None
-# NOMIXING = MixingQuery(
-#     ch1={"angle": 0, "phase": 0},
-#     ch2={"angle": 0, "phase": 0},
-#     ch3={"angle": 0, "phase": 0},
-# )
-
-
 class BaseEvent(Parseable):
     """Base BaseEvent class. If the value of the attribute is None, the value of the
     corresponding global attribute will be used instead.
@@ -250,6 +241,19 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
         extra = "forbid"
         validate_assignment = True
 
+    @validator("query", pre=True, always=True)
+    def validate_query(cls, v, **kwargs):
+        """Validator which tries to convert query to a MixingEnum if query is string"""
+        if isinstance(v, str):
+            try:
+                v = MixingEnum[v]
+            except KeyError as e:
+                raise ValueError(
+                    f"Unrecognized MixingEnum name '{v}'. "
+                    f"The allowed types are {MixingEnum.allowed_enums()}"
+                ) from e
+        return v
+
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
@@ -264,11 +268,10 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
             A MixingEvent.
         """
         py_dict_copy = deepcopy(py_dict)
-        if isinstance(py_dict_copy["query"], str):
-            obj = MixingEnum(py_dict_copy["query"])
-        else:
-            obj = MixingQuery.parse_dict_with_units(py_dict_copy["query"])
-        py_dict_copy["query"] = obj
+        if isinstance(py_dict_copy["query"], dict):
+            py_dict_copy["query"] = MixingQuery.parse_dict_with_units(
+                py_dict_copy["query"]
+            )
         return super().parse_dict_with_units(py_dict_copy)
 
 

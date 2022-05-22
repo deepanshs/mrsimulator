@@ -168,17 +168,38 @@ def test_Mixing_event():
     the_event = MixingEvent.parse_dict_with_units(mix_event_dict)
     basic_mixing_event_tests(the_event)
 
+    # Queries of MixingEvents, like the transition_query of the SpectralEvent, need
+    # to be defined in a channel-wise dict. Check to make sure error is raised when
+    # P and D symmetries are supplied at the base level
+    with pytest.raises(ValidationError):
+        MixingEvent(query={"P": [1], "D": [0]})
+
 
 def test_total_and_no_mixing():
+    def assert_all_zero(mix_ev):
+        assert mix_ev.query.value.ch1.angle == 0
+        assert mix_ev.query.value.ch1.phase == 0
+        assert mix_ev.query.value.ch2.angle == 0
+        assert mix_ev.query.value.ch2.phase == 0
+        assert mix_ev.query.value.ch3.angle == 0
+        assert mix_ev.query.value.ch3.phase == 0
+
     no_mix = MixingEvent(query=MixingEnum.NoMixing)
-    assert no_mix.query.value.ch1.angle == 0
-    assert no_mix.query.value.ch1.phase == 0
-    assert no_mix.query.value.ch2.angle == 0
-    assert no_mix.query.value.ch2.phase == 0
-    assert no_mix.query.value.ch3.angle == 0
-    assert no_mix.query.value.ch3.phase == 0
+    assert_all_zero(no_mix)
+
+    no_mix = MixingEvent(query="NoMixing")
+    assert_all_zero(no_mix)
+
+    no_mix = MixingEvent.parse_dict_with_units({"query": "NoMixing"})
+    assert_all_zero(no_mix)
 
     total_mix = MixingEvent(query=MixingEnum.TotalMixing)
+    assert total_mix.query.value == "TotalMixing"
+
+    total_mix = MixingEvent(query="TotalMixing")
+    assert total_mix.query.value == "TotalMixing"
+
+    total_mix = MixingEvent.parse_dict_with_units({"query": "TotalMixing"})
     assert total_mix.query.value == "TotalMixing"
 
 

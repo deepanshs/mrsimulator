@@ -172,32 +172,37 @@ def to_euler_list(symbol, channels, mixing_queries):
     return angles
 
 
-def get_groupped_mixing_queries(spectral_dimensions, event_names):
+def get_groupped_mixing_queries(spec_dims, event_names):
     """Returns a dictionary where each key is the index of the first MixingEvent in a
     group of sequential MixinvEvents and the key is the set of angles and phases for
     those mixing queries in the mixing events.
 
     Args:
-        spectral_dimensions: A list of SpectralDimension objects.
+        spec_dims: A list of SpectralDimension objects.
         event_names: A list of all class names
     """
     # dict with index of first mixing event in seq as key and list of queries as values
     mixing_query_sets = {}
     previous_event_mix = False
     for i, name in enumerate(event_names):
-        if name == "MixingEvent":
-            # Skip this event if last event was a mixing event
-            if previous_event_mix:
-                continue
+        if name != "MixingEvent":
+            previous_event_mix = False
 
+        # Skip this event if previous event mixing or if this event TotalMixing
+        elif previous_event_mix or get_mixing_query(spec_dims, i) == "TotalMixing":
+            continue
+
+        # Add this MixingEvent query and the queries from the next contiguous
+        # MixingEvent to a list. Only run for the first MixingEvent in a sequence
+        else:
             previous_event_mix = True
             mixing_query_sets[i] = []
             j = i
             while j < len(event_names) and event_names[j] == "MixingEvent":
-                mixing_query_sets[i].append(get_mixing_query(spectral_dimensions, j))
+                # Only add query if the query is not the string TotalMixing
+                query = get_mixing_query(spec_dims, j)
+                mixing_query_sets[i] += [query] if query != "TotalMixing" else []
                 j += 1
-        else:
-            previous_event_mix = False
 
     return mixing_query_sets
 

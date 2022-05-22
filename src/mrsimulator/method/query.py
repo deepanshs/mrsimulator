@@ -282,6 +282,7 @@ class MixingQuery(Parseable):
 
     class Config:
         validate_assignment = True
+        extra = "forbid"
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
@@ -310,7 +311,7 @@ class MixingQuery(Parseable):
 
 
 class MixingEnum(Enum):
-    """Enumerations for defining common mixing queries. The enumerations are:
+    """Enumerations for defining common mixing queries. The enumerations are as follows
 
     Attributes
     ----------
@@ -323,6 +324,11 @@ class MixingEnum(Enum):
     NoMixing:
         Defines mixing query where no pathways connect
     """
+
+    @classmethod
+    def allowed_enums(cls):
+        """Returns list of str corresponding to all valid enumerations"""
+        return [e.name for e in cls]
 
     TotalMixing: str = "TotalMixing"
     NoMixing: MixingQuery = MixingQuery(
