@@ -245,13 +245,13 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
     def validate_query(cls, v, **kwargs):
         """Validator which tries to convert query to a MixingEnum if query is string"""
         if isinstance(v, str):
-            try:
+            if v in MixingEnum.allowed_enums():
                 v = MixingEnum[v]
-            except KeyError as e:
+            else:
                 raise ValueError(
                     f"Unrecognized MixingEnum name '{v}'. "
                     f"The allowed types are {MixingEnum.allowed_enums()}"
-                ) from e
+                )
         return v
 
     @classmethod

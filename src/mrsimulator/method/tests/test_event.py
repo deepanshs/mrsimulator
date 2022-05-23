@@ -202,6 +202,11 @@ def test_total_and_no_mixing():
     total_mix = MixingEvent.parse_dict_with_units({"query": "TotalMixing"})
     assert total_mix.query.value == "TotalMixing"
 
+    # Check for exception when unknown mixing enum passed
+    e = ".*Unrecognized MixingEnum name 'some-str'. The allowed types are.*"
+    with pytest.raises(ValidationError, match=e):
+        MixingEvent(query="some-str")
+
 
 def check_equal(query, isotopes, channels, res):
     test = SpectralEvent(transition_query=query).permutation(isotopes, channels)
