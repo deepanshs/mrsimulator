@@ -11,7 +11,7 @@
 # names = ["Cosy", "Inadequate"]
 #
 #
-# def test_coorelation_rotor_freq():
+# def test_correlation_rotor_freq():
 #     def error(name):
 #         return f"`rotor_frequency` value cannot be modified for {name} method."
 #
@@ -21,14 +21,14 @@
 #             method(rotor_frequency=10, spectral_dimensions=[{}, {}])
 #
 #
-# def test_coorelation_spectral_dimension_count():
+# def test_correlation_spectral_dimension_count():
 #     e = "Method requires exactly 2 spectral dimensions, given 1."
 #     for _, method in zip(names, methods):
 #         with pytest.raises(ValueError, match=f".*{e}.*"):
 #             method(spectral_dimensions=[{}])
 #
 #
-# def test_coorelation_setting_transition_query():
+# def test_correlation_setting_transition_query():
 #     def error(name):
 #         return f"`transition_query` value cannot be modified for {name} method."
 #

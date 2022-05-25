@@ -78,7 +78,7 @@ def nearest_nonmixing_event(event_name, i):
     high_range = event_name[i:]
     upper = [high_range.index(item) for item in options if item in high_range]
     lower = [low_range[::-1].index(item) for item in options if item in low_range]
-    # NOTE: returning index of 0 when non-existant might cause issues when first ev mix?
+    # NOTE: returning index of 0 when non-existent might cause issues when first ev mix?
     return [
         i - 1 - (min(lower) if lower != [] else 0),
         i + (min(upper) if upper != [] else 0),
@@ -151,7 +151,7 @@ def map_mix_query_attr_to_ch(mixing_query):
 def to_euler_list(symbol, channels, mixing_queries):
     """Takes a list of symbols, list of isotope symbols per channel, and list of mixing
     queries and converts them into a list of sets of three Euler angles describing the
-    total rotation of the combind mixing_queries per channel.
+    total rotation of the combined mixing_queries per channel.
 
     Args:
         symbols: List of site symbols.
@@ -163,7 +163,7 @@ def to_euler_list(symbol, channels, mixing_queries):
     # angles is a list of sets of Euler angles for each symbol (site)
     # ex. [(3.14, 1.57, -3.14), (-1.57, 2, 1.57)]
     angles = [
-        combind_mixing_queries([ap[channels.index(sym)] for ap in angle_phase_mappable])
+        combine_mixing_queries([ap[channels.index(sym)] for ap in angle_phase_mappable])
         if sym in channels
         else [np.pi / 2, 0, -np.pi / 2]
         for sym in symbol
@@ -172,9 +172,9 @@ def to_euler_list(symbol, channels, mixing_queries):
     return angles
 
 
-def get_groupped_mixing_queries(spec_dims, event_names):
+def get_grouped_mixing_queries(spec_dims, event_names):
     """Returns a dictionary where each key is the index of the first MixingEvent in a
-    group of sequential MixinvEvents and the key is the set of angles and phases for
+    group of sequential MixingEvents and the key is the set of angles and phases for
     those mixing queries in the mixing events.
 
     Args:
@@ -218,7 +218,7 @@ def mixing_query_connect_map(spectral_dimensions):
     event_names = [
         evt.__class__.__name__ for dim in spectral_dimensions for evt in dim.events
     ]
-    grouped_mix_map = get_groupped_mixing_queries(spectral_dimensions, event_names)
+    grouped_mix_map = get_grouped_mixing_queries(spectral_dimensions, event_names)
     non_mix_index = [i for i, ev in enumerate(event_names) if ev != "MixingEvent"]
     non_mix_index_map = {index: i for i, index in enumerate(non_mix_index)}
 
@@ -292,14 +292,14 @@ def check_for_at_least_one_event(py_dict):
     ]
 
 
-def combind_mixing_queries(queries: list):
-    """Takes in a list of mixing queries combinding them into a single mixing query
+def combine_mixing_queries(queries: list):
+    """Takes in a list of mixing queries combining them into a single mixing query
 
     Args:
         queries: List of dicts each representing a MixingQuery object
 
     Returns:
-        Dictionary with angle and phase of combind MixingQuery objects
+        Dictionary with angle and phase of combined MixingQuery objects
     """
     if len(queries) == 0:
         raise ValueError(f"List length must be at least 1. Got length {len(queries)}.")
@@ -333,7 +333,7 @@ def _angle_phase_to_euler_angles(angle: float, phase: float):
 
 def _euler_angles_to_angle_phase(alpha: float, beta: float, gamma: float):
     """Takes a set of euler angles in the ZYZ convention and converts them to a
-    mixing angle and phase. Provided alpha and gamma should be opposite of eachother,
+    mixing angle and phase. Provided alpha and gamma should be opposite of each other,
     otherwise a ValueError is raised since the rotation vector does not lie in the XY
     plane.
 
@@ -344,7 +344,7 @@ def _euler_angles_to_angle_phase(alpha: float, beta: float, gamma: float):
         angle, phase: Angle and phase of the equivalent mixing query
 
     Raises:
-        ValueError: Raised if alpha and gamma are not opposite of eachother
+        ValueError: Raised if alpha and gamma are not opposite of each other
     """
     if not np.isclose(alpha, -gamma):
         raise ValueError(

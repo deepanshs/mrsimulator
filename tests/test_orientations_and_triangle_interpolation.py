@@ -115,7 +115,7 @@ def test_delta_interpolation_linear():
         if x1 >= 0 and x1 <= 9:
             amp_[x1] = 1 - (item - x1)
 
-        # from delta interpolarion
+        # from delta interpolation
         amp_c = np.zeros(2 * 10)
         clib.triangle_interpolation1D(list_, amp_c, type="linear")
         amp_c = amp_c[::2] + 1j * amp_c[1::2]
@@ -165,7 +165,7 @@ def test_gaussian_interpolation():
         gauss /= gauss.sum()
         gauss = gauss[5:-5]
 
-        # from delta interpolarion
+        # from delta interpolation
         amp_c = np.zeros(20)
         clib.triangle_interpolation1D(list_, amp_c, type="gaussian")
         amp_c = amp_c[::2] + 1j * amp_c[1::2]
@@ -306,7 +306,7 @@ def get_amps_from_interpolation(list_, scl):
     return amp1, amp2, amp3, lst1, lst2
 
 
-# def plot_2d_raster(data2d, pts1, pts2, projx=None, projy=None, save=None, scale=1):
+# def plot_2d_raster(data2d, pts1, pts2, proj_x=None, proj_y=None, save=None, scale=1):
 #     _, ax = plt.subplots()
 
 #     ax.imshow(data2d, origin="lower", cmap="gray", aspect="auto")
@@ -321,14 +321,14 @@ def get_amps_from_interpolation(list_, scl):
 #     plt.setp(axh.get_xticklabels() + axv.get_yticklabels(), visible=False)
 
 #     kwargs = dict(linewidth=1)
-#     if projx is not None:
-#         size = projx.size
-#         axh.plot(np.arange(size), projx, "k--", label="1D")
+#     if proj_x is not None:
+#         size = proj_x.size
+#         axh.plot(np.arange(size), proj_x, "k--", label="1D")
 #         axh.plot(np.arange(size), data2d.sum(axis=0), "r", label="sum", **kwargs)
 
-#     if projy is not None:
-#         size = projy.size
-#         axv.plot(projy, np.arange(size), "k--", label="1D")
+#     if proj_y is not None:
+#         size = proj_y.size
+#         axv.plot(proj_y, np.arange(size), "k--", label="1D")
 #         axv.plot(data2d.sum(axis=1), np.arange(size), "r", label="sum", **kwargs)
 #     plt.legend()
 #     plt.tight_layout()

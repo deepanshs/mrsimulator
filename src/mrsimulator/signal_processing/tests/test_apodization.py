@@ -105,7 +105,7 @@ def test_Gaussian():
 
 
 def test_SkewedGaussian():
-    # TODO: update this test for multiple skewes and using npp.convolve
+    # TODO: update this test for multiple skews and using np.convolve
     skew = 2
     FWHM = 200 * 2.354820045030949
     PS_2 = [

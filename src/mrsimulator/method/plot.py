@@ -19,7 +19,7 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 DURATION_WIDTH = 0.5  # Width of one ConstantDurationEvent
 SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
 MIXING_WIDTH = 0.25  # angle of 360 degrees
-DEFAULTFONTSIZE = 9
+DEFAULT_FONT_SIZE = 9
 MAX_SYMMETRY_TICKS = 5  # Maximum number of ticks allowed on symmetry plot, always odd
 COLORS = {
     "ConstantDurationEvent": "orange",
@@ -28,7 +28,7 @@ COLORS = {
     "inf_speed": "y",
     "undef": "k",
 }
-LABLES = {
+LABELS = {
     "rotor_angle": r"$\theta_r$ / °",
     "rotor_frequency": r"$\nu_r$ / kHz",
     "magnetic_flux_density": r"$B_0$ / T",
@@ -207,7 +207,7 @@ class CustomAxes(plt.Axes):
             (bool) show_yaxis:
                 Shows y-axis and ticks if True, otherwise hidden
         """
-        label = LABLES[self.col_name] if self.col_name in LABLES else self.col_name
+        label = LABELS[self.col_name] if self.col_name in LABELS else self.col_name
 
         if locator is None:
             locator = MaxNLocator(nbins=4, integer=True, min_n_ticks=3)
@@ -219,7 +219,7 @@ class CustomAxes(plt.Axes):
         self.set_xlim(0, self.xmax)
 
         self.get_yaxis().set_visible(show_yaxis)
-        self.set_ylabel(label, fontsize=DEFAULTFONTSIZE)
+        self.set_ylabel(label, fontsize=DEFAULT_FONT_SIZE)
         self.get_yaxis().set_major_locator(locator)
         if minor_locator is not None:
             self.get_yaxis().set_minor_locator(minor_locator)
@@ -231,7 +231,7 @@ class CustomAxes(plt.Axes):
 
         self.grid(**grid)
         self.margins(y=ymargin)
-        self.tick_params(axis="both", labelsize=DEFAULTFONTSIZE)
+        self.tick_params(axis="both", labelsize=DEFAULT_FONT_SIZE)
 
     def _add_rect_with_label(self, x0, x1, label, rect_kwargs, anno_kwargs={}):
         """Add a rectangle between x0 and x1 on ax representing event"""
@@ -264,7 +264,7 @@ class MultiLineAxes(CustomAxes):
     def make_plot(self, x_data, y_data, col_name, mix_ev, format_kwargs, plot_kwargs):
         """Main workflow function to format and plot data on Axes"""
         self.x_data = x_data
-        self.y_data = np.stack(y_data.values).transpose()  # each row is symm pathway
+        self.y_data = np.stack(y_data.values).transpose()  # each row is sym pathway
 
         if np.asarray(self.y_data).ndim != 2:
             raise ValueError("Symmetry pathway data is misshapen. Data must be 2d")
@@ -585,7 +585,7 @@ def _make_x_data(df):
 
 
 def _offset_x_data(df, x_data):
-    """Offsets x_data based on channelwise MixingEvents"""
+    """Offsets x_data based on channel-wise MixingEvents"""
     base_x = np.array([0] + x_data)
 
     # Return {"ch1": base_x} if no mixing events found
@@ -643,7 +643,7 @@ def _make_normal_and_offset_x_data(df):
     if len(x_data) == 0:
         raise ValueError(
             "The DataFrame does not contain any SpectralEvents or "
-            "ConstandDurationEvents. At least one must be present to construct a plot"
+            "ConstantDurationEvents. At least one must be present to construct a plot"
         )
 
     return x_data, _offset_x_data(df, x_data)
