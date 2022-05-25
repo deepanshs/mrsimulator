@@ -8,7 +8,7 @@ from mrsimulator.method import MixingEvent
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method.utils import _add_two_euler_angles
 from mrsimulator.method.utils import _euler_angles_to_angle_phase
-from mrsimulator.method.utils import combind_mixing_queries
+from mrsimulator.method.utils import combine_mixing_queries
 from mrsimulator.method.utils import mixing_query_connect_map
 from mrsimulator.method.utils import nearest_nonmixing_event
 from mrsimulator.method.utils import wrap_between_pi
@@ -116,16 +116,16 @@ def test_euler_angles_to_angle_phase():
     assert np.allclose(_euler_angles_to_angle_phase(a, b, g), [1, -np.pi / 2])
 
 
-def test_combind_mixing_queries():
+def test_combine_mixing_queries():
     with pytest.raises(ValueError, match=".*List length must be at least 1.*"):
-        combind_mixing_queries([])
+        combine_mixing_queries([])
 
     queries = [
         {"angle": 1, "phase": 0},
         {"angle": 1, "phase": 0},
         {"angle": 1, "phase": 0},
     ]
-    assert np.allclose(combind_mixing_queries(queries), [np.pi / 2, 3, -np.pi / 2])
+    assert np.allclose(combine_mixing_queries(queries), [np.pi / 2, 3, -np.pi / 2])
 
 
 def test_warnings():
@@ -149,7 +149,7 @@ def test_nearest_mixing_query():
 def test_mixing_query_connect_map():
     MX1 = MixingEvent(query={"ch1": {"angle": 0.12}})
     MX2 = MixingEvent(query={"ch2": {"angle": 1.12}})
-    spectral_dimmensions = [
+    spectral_dimensions = [
         SpectralDimension(
             events=[
                 {"fraction": 0.5},  # 0
@@ -171,7 +171,7 @@ def test_mixing_query_connect_map():
             ]
         ),
     ]
-    res = mixing_query_connect_map(spectral_dimmensions)
+    res = mixing_query_connect_map(spectral_dimensions)
     assert res == [
         {"mixing_query_list": [MX1.query], "near_index": [0, 1]},
         {"mixing_query_list": [MX2.query], "near_index": [2, 3]},

@@ -78,7 +78,7 @@ def _str_decode(my_string):
         my_string: A string object
 
     Returns:
-        List of strings with strings resresenting mrsimulator objects and indexes.
+        List of strings with strings representing mrsimulator objects and indexes.
 
     Example:
         >>> string = 'sys_0_site_0_isotropic_chemical_shift'
@@ -149,7 +149,7 @@ def _post_sim_LMFIT_params(params, process, index):
     Args:
         params: LMFIT parameters object.
         process: SignalProcessor object at index *index*.
-        int index: List index of the SingalProcessor object.
+        int index: List index of the SignalProcessor object.
 
     Returns:
         Parameters object.
@@ -260,7 +260,7 @@ def get_simulator_method_parameters(params: Parameters, sim: Simulator, include=
     Args:
         Parameters params: LMFIT parameters object.
         Simulator sim: Simulator object.
-        set include: Set of methtod attributes to include.
+        set include: Set of method attributes to include.
     """
     if "rotor_frequency" in include:
         values = [
@@ -303,13 +303,13 @@ def make_LMFIT_params(sim: Simulator, processors: list = None, include={}):
         set include: set of keywords from the method object to include as a fitting
             parameter. Default is {}.
 
-    The parameter name assocciated with the spin system within Simulator object is
+    The parameter name associated with the spin system within Simulator object is
     generated using the following nomenclature- *sys_i_site_j_attribute1_attribute2*
     for attribute with signature ``sim.spin_systems[i].sites[j].attribute1.attribute2``
 
     Here, *sys_i* refers to the spin system at index *i*, *site_j* refers to the site at
     index *j* with in the :math:i^\text{th} spin system, and *attribute1* and
-    *attribute2* are the site attrbiutes.
+    *attribute2* are the site attributes.
 
     **For examples:**
 
@@ -476,7 +476,7 @@ def add_csdm_dvs(data):
 
 
 def residuals(sim: Simulator, processors: list = None):
-    """Return a list of residuals corresponsing to the best fit spectrum. The list is
+    """Return a list of residuals corresponding to the best fit spectrum. The list is
     based on the order of methods in the simulator object.
 
     Args:

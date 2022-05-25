@@ -59,8 +59,8 @@ class Polynomial(Baseline):
     where :math:`c_i` are the coefficients corresponding to :math:`x^i`.
 
     Args:
-        Dict polynomial_dictionary: A dictionary of the form {'ci': coeff}, where i
-            represents the i-th order polynomial term and 'coeff' is the leading
+        Dict polynomial_dictionary: A dictionary of the form {'ci': coef}, where i
+            represents the i-th order polynomial term and 'coef' is the leading
             coefficient for the i-th term. For example :math:`4x^2 + 5` would be
             supplied as {'c2': 4, 'c0': 5}
 

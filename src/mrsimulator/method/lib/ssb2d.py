@@ -8,7 +8,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 class SSB2D(BaseNamedMethod2D):
-    r"""Simulating a sheared 2D finite to infinite speed MAS correlation spectum.
+    r"""Simulating a sheared 2D finite to infinite speed MAS correlation spectrum.
 
     Return:
         A :py:class:`~mrsimulator.Method` instance.
