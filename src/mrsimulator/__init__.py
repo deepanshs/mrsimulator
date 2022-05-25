@@ -83,7 +83,7 @@ class Mrsimulator(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """Parse the physical quantity from a dictionary reperesentation of the
+        """Parse the physical quantity from a dictionary representation of the
         Mrsimulator object, where the physical quantity is expressed as a string with a
         number and a unit
 
@@ -183,7 +183,7 @@ class Mrsimulator(Parseable):
 
         Args:
             Dict py_dict: Dictionary representation of the Mrsimulator object
-            bool parse_units: If true, parse quantity and unitsfrom string.
+            bool parse_units: If true, parse quantity from units string.
 
         Returns:
             A :ref:`mrsimulator_api` object.
@@ -329,8 +329,8 @@ def dict(
 
 
 def load(filename: str, parse_units: bool = True):
-    """Load Simulator object,  list of SignalProcessor objects and metadata from a JSON
-    searalized file of a :py:class:`~mrsimulator.Mrsimulator` object.
+    """Load Simulator object, list of SignalProcessor objects and metadata from a JSON
+    serialized file of a :py:class:`~mrsimulator.Mrsimulator` object.
 
     Args:
         str filename: The location to the .mrsim file.
@@ -388,7 +388,7 @@ def parse(py_dict, parse_units: bool = True):
 
 
 def update_old_dict_struct(py_dict):
-    """Converst an old dict serialization to the new format
+    """Convert an old dict serialization to the new format
     1. Updates root JSON structure
     2. Attempts to parse old transition queries to new format
     3. Returns updated dictionary
@@ -405,7 +405,7 @@ def update_old_dict_struct(py_dict):
 
 def update_old_file_struct(oldfile: str, newfile: str = None):
     """Convert an old mrsim file where Simulator object keywords existed at the root
-    level along with other seralized attributes to a structure where each object exists
+    level along with other serialized attributes to a structure where each object exists
     under its own keyword. A dictionary representing the new Mrsimulator object is
     returned. Will write a new mrsim file if newfile arg is provided.
 

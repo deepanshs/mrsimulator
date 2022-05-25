@@ -274,7 +274,7 @@ def test_make_normal_and_offset_x_data():
 
     error = (
         r".*The DataFrame does not contain any SpectralEvents or "
-        r"ConstandDurationEvents. At least one must be present to construct a plot.*"
+        r"ConstantDurationEvents. At least one must be present to construct a plot.*"
     )
     with pytest.raises(ValueError, match=error):
         _make_normal_and_offset_x_data(no_events_df1)

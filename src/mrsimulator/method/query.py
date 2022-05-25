@@ -102,21 +102,21 @@ class SymmetryQuery(Parseable):
 
 
 class TransitionQuery(Parseable):
-    """TransitionQuery class for quering transition symmetry function.
+    """TransitionQuery class for querying transition symmetry function.
 
     Attributes
     ----------
 
     ch1:
-        An optional SymmetryQuery object for quering symmetry functions at channel
+        An optional SymmetryQuery object for querying symmetry functions at channel
         index 0 of the method's channels array."
 
     ch2:
-        An optional SymmetryQuery object for quering symmetry functions at channel
+        An optional SymmetryQuery object for querying symmetry functions at channel
         index 1 of the method's channels array."
 
     ch3:
-        An optional SymmetryQuery object for quering symmetry functions at channel
+        An optional SymmetryQuery object for querying symmetry functions at channel
         index 2 of the method's channels array."
 
     Example
@@ -130,7 +130,7 @@ class TransitionQuery(Parseable):
         title="ch1",
         default=SymmetryQuery(),
         description=(
-            "An optional SymmetryQuery object for quering symmetry functions at "
+            "An optional SymmetryQuery object for querying symmetry functions at "
             "channel index 0 of the method's channels array."
         ),
     )
@@ -138,7 +138,7 @@ class TransitionQuery(Parseable):
         title="ch2",
         default=None,
         description=(
-            "An optional SymmetryQuery object for quering symmetry functions at "
+            "An optional SymmetryQuery object for querying symmetry functions at "
             "channel index 1 of the method's channels array."
         ),
     )
@@ -146,7 +146,7 @@ class TransitionQuery(Parseable):
         title="ch3",
         default=None,
         description=(
-            "An optional SymmetryQuery object for quering symmetry functions at "
+            "An optional SymmetryQuery object for querying symmetry functions at "
             "channel index 2 of the method's channels array."
         ),
     )
@@ -254,7 +254,7 @@ class RotationalQuery(Parseable):
 
 
 class MixingQuery(Parseable):
-    """MixingQuery class for quering transition mixing between events.
+    """MixingQuery class for querying transition mixing between events.
 
     Attributes
     ----------
