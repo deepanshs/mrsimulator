@@ -182,8 +182,8 @@ def test_mixing_query_connect_map():
         {"mixing_query_list": [MX2.query], "near_index": [4, 5]},
     ]
 
-    # Combindation of MixingEvents with dict queries and enum queries (total mixing)
-    spectral_dimmensions = [
+    # Combination of MixingEvents with dict queries and enum queries (total mixing)
+    spectral_dimensions = [
         SpectralDimension(
             events=[
                 # Connect all, should return no list
@@ -216,7 +216,7 @@ def test_mixing_query_connect_map():
             ]
         ),
     ]
-    res = mixing_query_connect_map(spectral_dimmensions)
+    res = mixing_query_connect_map(spectral_dimensions)
     assert res == [
         {"mixing_query_list": [MX1.query], "near_index": [2, 3]},
         {"mixing_query_list": [MX1.query, MX2.query], "near_index": [4, 5]},
