@@ -13,9 +13,11 @@ What's new
 **Method**
 
 - Removed ``Method1D`` and ``Method2D`` classes. Use the generic ``mrsimulator.method.Method``
-  object for custom1D and 2D methods.
+  object for custom 1D and 2D methods.
 - New Event classes---``SpectralEvent`` and ``MixingEvent``. The MixingEvent
   controls the mixing of transitions in a multi-event method.
+- Added ``total_mixing`` and ``no_mixing`` queries to allow quick scripting of common mixing
+  events.
 - A ``TransitionPathway`` object now includes a weight attribute, which holds the probability of
   the transition pathway based on the mixing events defined within the method.
 - New class method, ``plot()``, which will create a visual representation of the events, transition

@@ -10,6 +10,7 @@ from matplotlib.patches import Rectangle
 from matplotlib.ticker import FixedLocator
 from matplotlib.ticker import MaxNLocator
 from matplotlib.ticker import NullLocator
+from mrsimulator.method.query import MixingEnum
 
 __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
@@ -677,6 +678,15 @@ def _calculate_n_channels(df):
 def plot(fig, df, channels, include_legend) -> plt.figure:
     """Plot symmetry pathways and other requested parameters on figure"""
     # (future) add functionality for multiple channels
+
+    # Remove all mixing enumeration mixing events from the dataframe
+    # NOTE: This should be updated in v0.7.1 or v0.8 to include enumerations in the
+    # plot
+    df = df.drop(
+        index=[i for i, q in enumerate(df["query"]) if isinstance(q, MixingEnum)]
+    )
+    df = df.reset_index(drop=True)
+
     mix_ev = np.array(df["type"] == "MixingEvent")
     params = _format_df(df)
     x_data, x_offset = _make_normal_and_offset_x_data(df)
