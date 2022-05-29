@@ -5,7 +5,7 @@ Exponential Apodization
 ^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
-# In this example, we will use an exponential function to perform a Lorenzian
+# In this example, we will use an exponential function to perform a Lorentzian
 # convolution to an example dataset. The exponential function
 # used for this apodization is defined as follows
 #
@@ -31,7 +31,7 @@ from mrsimulator import signal_processing as sp
 # :py:class:`~mrsimulator.signal_processing.SignalProcessor` class. The required
 # attribute of the SignalProcessor class, *operations*, is a list of operations to which
 # we add a :py:class:`~mrsimulator.signal_processing.apodization.Exponential` object
-# sandwitched between two Fourier transformations.
+# sandwiched between two Fourier transformations.
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),

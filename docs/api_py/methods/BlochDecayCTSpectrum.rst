@@ -15,7 +15,7 @@ Bloch Decay Central Transition Spectrum method
 
     >>> from mrsimulator.method.lib import BlochDecayCTSpectrum
     >>> from mrsimulator.method import SpectralDimension
-    >>> Bloch_CT_method = BlochDecayCTSpectrum(
+    >>> bloch_decay_ct = BlochDecayCTSpectrum(
     ...     channels=["1H"],
     ...     rotor_frequency=5000,  # in Hz
     ...     rotor_angle=54.735 * 3.14159 / 180,  # in rad
@@ -31,7 +31,7 @@ but can be constructed with a generic method as follows
 .. doctest::
 
     >>> from mrsimulator.method import Method
-    >>> BlochdecayCT = Method(
+    >>> bloch_decay_ct = Method(
     ...     channels=["1H"],
     ...     rotor_frequency=5000,  # in Hz
     ...     rotor_angle=54.735 * 3.14159 / 180,  # in rad
