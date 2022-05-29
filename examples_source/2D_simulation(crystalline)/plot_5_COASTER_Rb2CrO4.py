@@ -60,7 +60,7 @@ coaster = Method(
             label="3Q dimension",
             events=[
                 SpectralEvent(transition_query=[{"ch1": {"P": [3], "D": [0]}}]),
-                MixingEvent(query={"ch1": {"angle": np.pi * (109.5 / 180) , "phase": 0}}),
+                MixingEvent(query={"ch1": {"angle": np.pi * 109.5 / 180, "phase": 0}}),
             ],
         ),
         # The last spectral dimension block is the direct-dimension
