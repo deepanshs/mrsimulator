@@ -530,8 +530,8 @@ static inline void MRS_rotate_coupled_site_interaction_components(
         &couplings->j_orientation[3 * i], mIf, mIi, mSf, mSi);
 
     // in-place update the R0 and R2 components.
-    *R0 += *R0_temp;
-    vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+    if (freq_contrib[6]) *R0 += *R0_temp;
+    if (freq_contrib[7]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
 
     // Weakly coupled dipolar-couplings
     FCF_1st_order_weak_dipolar_coupling_tensor_components(
@@ -539,7 +539,7 @@ static inline void MRS_rotate_coupled_site_interaction_components(
         &couplings->dipolar_orientation[3 * i], mIf, mIi, mSf, mSi);
 
     // in-place update the R2 components.
-    vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+    if (freq_contrib[8]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
   }
 }
 
