@@ -54,7 +54,7 @@ PASS = SSB2D(
 sim.methods = [PASS]  # add the method.
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
+plt.figure(figsize=(5, 2.5))
 PASS.plot()
 plt.show()
 

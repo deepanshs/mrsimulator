@@ -4,7 +4,7 @@
 RbNO₃, ⁸⁷Rb (I=3/2) STMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-⁸⁷Rb (I=3/2) staellite-transition off magic-angle spinning simulation.
+⁸⁷Rb (I=3/2) satellite-transition off magic-angle spinning simulation.
 """
 # %%
 # The following is an example of the STMAS simulation of :math:`\text{RbNO}_3`. The
@@ -73,7 +73,7 @@ for angle in angles:
     )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
+plt.figure(figsize=(5, 2.5))
 method[0].plot()
 plt.show()
 

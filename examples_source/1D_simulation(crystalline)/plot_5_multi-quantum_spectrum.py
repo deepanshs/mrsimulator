@@ -60,7 +60,7 @@ method = Method(
 )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3))
+plt.figure(figsize=(4, 2.5))
 method.plot()
 plt.show()
 
