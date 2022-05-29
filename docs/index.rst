@@ -77,9 +77,36 @@ Welcome to the Mrsimulator documentation
 ..     :target: https://img.shields.io/pypi/dm/mrsimulator
 ..     :alt: PyPI - Downloads
 
+----
+
+**About**
+
 ``mrsimulator`` is an open-source python package for fast simulation and analysis of
 multi-dimensional solid-state magnetic resonance (NMR) spectra of crystalline and
 amorphous materials.
+
+.. only:: html
+
+    .. raw:: html
+
+        <h3>See our example gallery</h3>
+        <div class='sim-gallery'>
+          <div>
+            <a href="examples/index.html">Gallery
+              <p></p>
+              Simulation
+            </a>
+          </div>
+          <div>
+            <a href="fitting/index.html">Gallery
+              <p></p>
+              <a href="fitting/index.html">
+              Fitting
+            </a>
+          </div>
+        </div>
+
+----
 
 **Why use mrsimulator?**
 
@@ -168,39 +195,12 @@ The ``mrsimulator`` package offers the following
     - Extended Czjzek
     - Custom user-defined models
 
-----
-
-.. only:: html
-
-    .. raw:: html
-
-        <h3>See our example gallery</h3>
-        <div class='sim-gallery'>
-          <div>
-            <a href="examples/index.html">Gallery
-              <p></p>
-              Simulation
-            </a>
-          </div>
-          <div>
-            <a href="fitting/index.html">Gallery
-              <p></p>
-              <a href="fitting/index.html">
-              Fitting
-            </a>
-          </div>
-        </div>
-
-----
-
 .. Contribution
 .. ------------
 
 .. ``Mrsimulator`` is a open source NMR simulation package. We are a small team
 .. working on developing the package for the NMR community. Any contribution and
 .. suggestion is greatly appreciated.
-
-----
 
 Introduction
 ------------

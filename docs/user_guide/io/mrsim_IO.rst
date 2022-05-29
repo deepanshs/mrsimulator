@@ -4,14 +4,14 @@
 ``mrsimulator`` I/O
 ===================
 
-We offer a range of serialization options based on a JSON structure demonstrated below.
+Mrsimulator offer a range of serialization options based on a JSON structure demonstrated below.
 
-Dictionary Representation of Objects
-------------------------------------
+JSON representation of objects
+------------------------------
 
-All ``mrsimulator`` objects can be serialized into a JSON format. Calling the
-``json()`` method on an object will return a Python dictionary of the objects JSON format.
-Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` class.
+All mrsimulator objects are serializable into JSON compliant python dictionary through
+the object's ``json()`` method. Below we illustrate the :meth:`~mrsimulator.Site.json`
+method from the :ref:`site_api` class.
 
 .. code-block:: python
 
@@ -21,10 +21,7 @@ Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` c
     Si29_site = Site(
         isotope="29Si",
         isotropic_chemical_shift=-89.0,
-        shielding_symmetric=SymmetricTensor(
-            zeta=59.8,
-            eta=0.62,
-        ),
+        shielding_symmetric=SymmetricTensor(zeta=59.8, eta=0.62),
     )
 
     py_dict = Si29_site.json()
@@ -35,10 +32,11 @@ Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` c
     #     'shielding_symmetric': {'zeta': '59.8 ppm', 'eta': 0.62}
     # }
 
-By default, all values are serialized with units when applicable, but you may call
-``json(units=False)`` if you wish to serialize without units.
+.. Let's keep this as internal function.
+.. By default, all values are serialized with units when applicable, but you may call
+.. ``json(units=False)`` if you wish to serialize without units.
 
-Similarly, all ``mrsimulator`` objects can be loaded from a dictionary representation. Here we
+Similarly, all mrsimulator objects are python dictionary parsable. Here we
 construct the same site as a dictionary and call :meth:`~mrsimulator.Site.parse_dict_with_units`
 to create a :ref:`site_api` object from a dictionary.
 
@@ -47,20 +45,16 @@ to create a :ref:`site_api` object from a dictionary.
     site_dict = {
         "isotope": "29Si",
         "isotropic_chemical_shift": "-89.0 ppm",
-        "shielding_symmetric": {
-            "zeta": "59.8 ppm",
-            "eta": 0.62,
-        },
+        "shielding_symmetric": {"zeta": "59.8 ppm", "eta": 0.62},
     }
 
     Si29_site_from_dict = Site().parse_dict_with_units(site_dict)
-    print(Si29_site_from_dict == Si29_site)
-    # True
+    assert Si29_site_from_dict == Si29_site
 
 We see that both these sites are equivalent. Values in dictionaries can be given as a
 number and a unit in a string. However, passing values with units increases overhead and
 will throw errors if the units cannot be converted into the default units. For this
-reason, we recommend sticking with objects.
+reason, we recommend using objects.
 
 .. _load_spin_systems:
 
@@ -68,45 +62,26 @@ Saving and Loading Spin Systems from a File
 -------------------------------------------
 
 A list of spin systems in a :ref:`simulator_api` object can be serialized to a file. Here we create
-a simulator with three distinct :math:`^{29}\text{Si}` spin systems and serialize these spin
+a simulator with four distinct :math:`^{29}\text{Si}` spin systems and serialize these spin
 systems to a file by calling :meth:`~mrsimulator.Simulator.export_spin_systems`.
 
 .. code-block:: python
 
-    from mrsimulator import Site, SpinSystem, Simulator
-    from mrsimulator.spin_system.tensors import SymmetricTensor
+    from mrsimulator import Simulator
+    from mrsimulator.utils.collection import single_site_system_generator
 
-    # Create the spin systems
-    Si29_1 = SpinSystem(
-        sites=[
-            Site(
-                isotope="29Si",
-                isotropic_chemical_shift=-89.0,
-                shielding_symmetric=SymmetricTensor(zeta=59.8, eta=0.62),
-            )
-        ]
-    )
-    Si29_2 = SpinSystem(
-        sites=[
-            Site(
-                isotope="29Si",
-                isotropic_chemical_shift=-89.5,
-                shielding_symmetric=SymmetricTensor(zeta=52.1, eta=0.68),
-            )
-        ]
-    )
-    Si29_3 = SpinSystem(
-        sites=[
-            Site(
-                isotope="29Si",
-                isotropic_chemical_shift=-87.8,
-                shielding_symmetric=SymmetricTensor(zeta=69.4, eta=0.60),
-            )
-        ]
+    # Create a list of spin systems
+    spin_systems = single_site_system_generator(
+        isotope="29Si",
+        isotropic_chemical_shift=[-89.0, -89.5, -87.8, -90.8],
+        shielding_symmetric={
+            "zeta": [59.8, 52.1, 69.4, 80.1],
+            "eta": [0.62, 0.68, 0.60, 0.15],
+        },
     )
 
     # Create the Simulator object
-    sim = Simulator(spin_systems=[Si29_1, Si29_2, Si29_3])
+    sim = Simulator(spin_systems=spin_systems)
 
     # Save spin systems to file
     sim.export_spin_systems("example.mrsys")
@@ -117,15 +92,14 @@ adhere to convention.
 
 Just as spin systems can be saved to a file, spin systems can be loaded from a file. This can
 be useful when working with a large number of spin systems in multiple Python scripts. Here
-we load the spin system file, ``example.mrsys``, into a new simulator using the method
+we load the spin system file, ``example.mrsys``, into a new simulator object using the method
 :meth:`~mrsimulator.Simulator.load_spin_systems`.
 
 .. code-block:: python
 
     new_sim = Simulator()
     new_sim.load_spin_systems("example.mrsys")
-    print(len(new_sim.spin_systems))
-    # 3
+    assert len(new_sim.spin_systems) == 4
 
 Saving and Loading Methods from a File
 --------------------------------------
@@ -204,8 +178,8 @@ method into a new simulator object by calling the method
     print(new_sim.methods[0].name)
     # DAS of 17O
 
-Loading in complex methods from a file, like the DAS example above, can reduce complex code.
-Methods representing real experiments can be saved to a file to later be loaded into a script
+Loading advanced methods, like DAS method, from a file can reduce script complexity.
+Methods representing experiments can be saved to a file to later be loaded into a script
 as needed.
 
 Serializing a Simulator Object
