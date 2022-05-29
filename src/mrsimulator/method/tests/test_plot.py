@@ -171,7 +171,6 @@ def test_make_x_data():
     assert isinstance(x2, list)
 
     # Check expected x_data returned
-    # NOTE: Should arrays be hardcoded? Or should be calculated in similar way
     x1_should_be = [0, 0.8, 0.8, 1.3, 1.3, 1.7, 1.7, 2.1]
     x2_should_be = [
         0,
@@ -231,7 +230,6 @@ def test_offset_x_data():
         assert isinstance(item, np.ndarray)
 
     # Check expected offset_x returned
-    # NOTE: Should arrays be hardcoded? Or should be calculated in similar way
     off_x1_should_be = [0.0, 0.0, 0.8, 0.8, 1.3, 1.3, 1.66875, 1.73125, 2.1]
     off_x2_should_be = [
         0.0,
@@ -274,7 +272,7 @@ def test_make_normal_and_offset_x_data():
 
     error = (
         r".*The DataFrame does not contain any SpectralEvents or "
-        r"ConstandDurationEvents. At least one must be present to construct a plot.*"
+        r"ConstantDurationEvents. At least one must be present to construct a plot.*"
     )
     with pytest.raises(ValueError, match=error):
         _make_normal_and_offset_x_data(no_events_df1)

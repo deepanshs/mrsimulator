@@ -104,7 +104,7 @@ def format_isotope_string(isotope_string: str) -> str:
 
 
 def get_isotope_data(isotope_string: str) -> dict:
-    """Get the isotope's intrinsinc properties from a JSON data file."""
+    """Get the isotope's intrinsic properties from a JSON data file."""
     formatted_isotope_string = format_isotope_string(isotope_string)
     isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
     isotope_dict.update({"isotope": formatted_isotope_string})

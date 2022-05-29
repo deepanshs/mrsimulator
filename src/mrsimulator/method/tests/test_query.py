@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from mrsimulator.method.query import MixingEnum
 from mrsimulator.method.query import MixingQuery
 from mrsimulator.method.query import RotationalQuery
 from mrsimulator.method.query import SymmetryQuery
@@ -95,3 +96,18 @@ def test_MixingQuery():
     assert obj2.ch1 is None
     assert obj2.ch2 == RotationalQuery(angle=5.101, phase=1.61)
     assert obj2.ch3 is None
+
+
+def test_MixingEnum():
+    total_mix = MixingEnum["TotalMixing"]
+    assert total_mix.value == "TotalMixing"
+
+    no_mix = MixingEnum["NoMixing"]
+    assert no_mix.value == MixingQuery(
+        ch1={"angle": 0, "phase": 0},
+        ch2={"angle": 0, "phase": 0},
+        ch3={"angle": 0, "phase": 0},
+    )
+
+    # NOTE: This test will need to be updated as more enumerations are added
+    assert set(MixingEnum.allowed_enums()) == {"TotalMixing", "NoMixing"}

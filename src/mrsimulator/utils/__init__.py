@@ -12,7 +12,7 @@ def get_spectral_dimensions(csdm_object, units=False):
         csdm_object: A CSDM object holding the measurement dataset.
 
     Returns:
-        A list of dict objects, where each dict containts the count, spectral_width, and
+        A list of dict objects, where each dict contains the count, spectral_width, and
         reference_offset.
     """
     result = []

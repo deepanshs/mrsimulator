@@ -23,8 +23,9 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/835664/files/11B_lithum_orthoborate.csdf"
-experiment = cp.load(filename)
+host = "https://ssnmr.org/sites/default/files/mrsimulator/"
+filename = "11B_lithum_orthoborate.csdf"
+experiment = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
 sigma = 0.08078374

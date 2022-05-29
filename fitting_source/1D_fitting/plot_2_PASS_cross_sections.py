@@ -24,7 +24,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # %%
 # Import the dataset
 # ------------------
-name = "https://sandbox.zenodo.org/record/835664/files/LHistidine_cross_section.csdf"
+name = "https://ssnmr.org/sites/default/files/mrsimulator/LHistidine_cross_section.csdf"
 pass_cross_section = cp.load(name)
 
 # standard deviation of noise from the dataset

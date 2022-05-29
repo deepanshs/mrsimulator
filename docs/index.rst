@@ -323,7 +323,7 @@ If you use mrsimulator in your publication, please consider citing the following
 
 *Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package.*
 
-- Matt Newville; Renee Otten; Andrew Nelson; Antonino Ingargiola; Till Stensitzki; Dan Allan; Austin Fox; Faustin Carter; Michał; Dima Pustakhod; lneuhaus; Sebastian Weigand; Ray Osborn; Glenn; Christoph Deil; Mark; Allan L. R. Hansen; Gustavo Pasquevich; Leon Foks; Nicholas Zobrist; Oliver Frost; Alexandre Beelen; Stuermer; kwertyops; Anthony Polloreno; Shane Caldwell; Anthony Almarza; Arun Persaud; Ben Gamari; Benjamin F. Maier. (2021, February 7). lmfit/lmfit-py 1.0.2 (Version 1.0.2). Zenodo. http://doi.org/10.5281/zenodo.4516651
+- Matt Newville; Renee Otten; Andrew Nelson; Antonino Ingargiola; Till Stensitzki; Dan Allan; Austin Fox; Faustin Carter; Michał; Dima Pustakhod; lneuhaus; Sebastian Weigand; Ray Osborn; Glenn; Christoph Deil; Mark; Allan L. R. Hansen; Gustavo Pasquevich; Leon Foks; Nicholas Zobrist; Oliver Frost; Alexandre Beelen; Stuermer; kwertyops; Anthony Polloreno; Shane Caldwell; Anthony Almarza; Arun Persaud; Ben Gamari; Benjamin F. Maier. (2021, February 7). lmfit/lmfit-py 1.0.2 (Version 1.0.2). Zenodo. https://doi.org/10.5281/zenodo.4516651
 
 .. only:: html
 

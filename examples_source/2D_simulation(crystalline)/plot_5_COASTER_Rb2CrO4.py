@@ -18,7 +18,7 @@ import numpy as np
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator import signal_processing as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import Method, SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -41,6 +41,11 @@ spin_system = SpinSystem(sites=[site])
 # %%
 # Use the generic method, `Method`, to simulate a 2D COASTER spectrum by customizing
 # the method parameters, as shown below.
+#
+# By default, all transitions selected from one `SpectralEvent` will connect to all
+# transitions selected by another `SpectralEvent` if there is no `MixingEvent` between
+# defined them. A `MixingEvent` with the query of ``NoMixing`` will prevent any
+# transitions from mixing; such a `MixingEvenet` in the COASTER method below.
 coaster = Method(
     name="COASTER",
     channels=["87Rb"],
@@ -53,7 +58,10 @@ coaster = Method(
             spectral_width=4e4,  # in Hz
             reference_offset=-8e3,  # in Hz
             label="3Q dimension",
-            events=[SpectralEvent(transition_query=[{"ch1": {"P": [3], "D": [0]}}])],
+            events=[
+                SpectralEvent(transition_query=[{"ch1": {"P": [3], "D": [0]}}]),
+                MixingEvent(query="NoMixing"),
+            ],
         ),
         # The last spectral dimension block is the direct-dimension
         SpectralDimension(

@@ -20,14 +20,14 @@ from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import Method, SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/835664/files/NiCl2.2D2O.csdf"
+filename = "https://ssnmr.org/sites/default/files/mrsimulator/NiCl2.2D2O.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset
@@ -105,7 +105,8 @@ shifting_d = Method(
                 SpectralEvent(
                     transition_query=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Quad1_2"],
-                )
+                ),
+                MixingEvent(query="NoMixing"),
             ],
         ),
         SpectralDimension(

@@ -10,9 +10,7 @@ default = {"name": None, "description": None, "label": None}
 
 
 class ParseableTestClass(Parseable):
-    """
-    Dummy test class for Parseable pattern
-    """
+    """Dummy test class for Parseable pattern"""
 
     foo: float = 0
     bar: float = 0

@@ -34,7 +34,7 @@ class Operation(Parseable):
         """Return a list of dependent variable indexes.
 
         Args:
-            indexes: An interger, list of integers, or None indicating the dv indexes.
+            indexes: An integer, list of integers, or None indicating the dv indexes.
             n: Total number of dependent variables in the CSDM object.
         """
         if indexes is None:

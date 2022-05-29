@@ -3,7 +3,7 @@
 #
 # This file does only contain a selection of the most common options. For a
 # full list see the documentation:
-# http://www.sphinx-doc.org/en/master/config
+# https://www.sphinx-doc.org/en/master/config
 # -- Path setup --------------------------------------------------------------
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -335,9 +335,9 @@ html_theme_options = {
     # Enable Google Web Font. Defaults to false
     # "googlewebfont": True,
     # Set the URL of Google Web Font's CSS.
-    # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
-    # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
-    # "googlewebfont_url": "http://fonts.googleapis.com/css2?family=Inter",
+    # Defaults to 'https://fonts.googleapis.com/css?family=Text+Me+One'
+    # "googlewebfont_url": "https://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
+    # "googlewebfont_url": "https://fonts.googleapis.com/css2?family=Inter",
     # Set the Style of Google Web Font's CSS.
     # Defaults to "font-family: 'Text Me One', sans-serif;"
     # "googlewebfont_style": "font-family: Helvetica",

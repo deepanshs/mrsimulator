@@ -37,7 +37,7 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v2.1.0
+        uses: codecov/codecov-action@v3.1.0
 
   source-distribution:
     needs: [build-test]
@@ -63,7 +63,7 @@ jobs:
           python setup.py sdist
 
       - name: upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: sdist
           path: "dist/*.tar.gz"
@@ -185,7 +185,7 @@ jobs:
 
       - name: Set up QEMU
         if: startsWith(matrix.os, 'ubuntu') && matrix.cibw.arch
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
         with:
           platforms: arm64
 
@@ -229,7 +229,7 @@ jobs:
         run: |
           python -m cibuildwheel .
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: wheels-${{ matrix.name }}
           path: "wheelhouse/*"
