@@ -148,7 +148,7 @@ shifting_d = Method(
 )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 2.5))
+plt.figure(figsize=(4, 1.5))
 shifting_d.plot()
 plt.show()
 
@@ -221,6 +221,6 @@ plt.show()
 
 # %%
 # .. [#f1] Walder B.J, Patterson A.M., Baltisberger J.H, and Grandinetti P.J
-#       Hydrogen motional disorder in crystalline iron group chloride dihydrates
+#       Hydrogen motional disorder in crystalline iron group chloride di-hydrates
 #       spectroscopy, J. Chem. Phys. (2018)  **149**, 084503.
 #       `DOI: 10.1063/1.5037151 <https://doi.org/10.1063/1.5037151>`_

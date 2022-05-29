@@ -73,7 +73,7 @@ sas = Method(
 )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
+plt.figure(figsize=(5, 2.5))
 sas.plot()
 plt.show()
 
