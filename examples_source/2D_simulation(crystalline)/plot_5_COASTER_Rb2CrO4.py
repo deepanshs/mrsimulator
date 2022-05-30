@@ -44,7 +44,7 @@ spin_system = SpinSystem(sites=[site])
 #
 # By default, all transitions selected from one `SpectralEvent` will connect to all
 # transitions selected by another `SpectralEvent` if there is no `MixingEvent` between
-# defined them. Here we define a `MixingEvent` with an angle of 109.5 degrees to 
+# defined them. Here we define a `MixingEvent` with an angle of 109.5 degrees to
 # selectively connect the three quantum and 1 quantum coherences.
 coaster = Method(
     name="COASTER",
