@@ -13,6 +13,7 @@ from pydantic import validator
 from .frequency_contrib import default_freq_contrib
 from .frequency_contrib import freq_list_all
 from .frequency_contrib import FrequencyEnum
+from .query import MixingEnum
 from .query import MixingQuery
 from .query import TransitionQuery
 from .utils import D_symmetry_indexes
@@ -232,7 +233,7 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
         The transition mixing query.
     """
 
-    query: MixingQuery
+    query: Union[MixingQuery, MixingEnum]
 
     test_vars: ClassVar[Dict] = {"query": {}}
 
@@ -240,22 +241,37 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
         extra = "forbid"
         validate_assignment = True
 
+    @validator("query", pre=True, always=True)
+    def validate_query(cls, v, **kwargs):
+        """Validator which tries to convert query to a MixingEnum if query is string"""
+        if isinstance(v, str):
+            if v in MixingEnum.allowed_enums():
+                v = MixingEnum[v]
+            else:
+                raise ValueError(
+                    f"Unrecognized MixingEnum name '{v}'. "
+                    f"The allowed types are {MixingEnum.allowed_enums()}"
+                )
+        return v
+
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantity from a dictionary representation of the Method
+        Parse the physical quantity from a dictionary representation of the MixingEvent
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 
         Args:
-            dict py_dict: A python dict representation of the Method object.
+            dict py_dict: A python dict representation of the MixingEvent object.
 
         Returns:
-            A :ref:`method_api` object.
+            A MixingEvent.
         """
         py_dict_copy = deepcopy(py_dict)
-        obj = MixingQuery.parse_dict_with_units(py_dict_copy["query"])
-        py_dict_copy["query"] = obj
+        if isinstance(py_dict_copy["query"], dict):
+            py_dict_copy["query"] = MixingQuery.parse_dict_with_units(
+                py_dict_copy["query"]
+            )
         return super().parse_dict_with_units(py_dict_copy)
 
 

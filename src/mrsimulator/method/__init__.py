@@ -24,12 +24,12 @@ from .event import SpectralEvent  # noqa: F401
 from .plot import plot as _plot
 from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
-from .utils import angle_and_phase_list
 from .utils import cartesian_product
 from .utils import check_for_at_least_one_event
 from .utils import check_for_number_of_spectral_dimensions
 from .utils import check_spectral_dimensions_are_dict
 from .utils import mixing_query_connect_map
+from .utils import to_euler_list
 
 # from .utils import convert_transition_query
 
@@ -502,20 +502,21 @@ class Method(Parseable):
         channels = [item.symbol for item in self.channels]
         weights = np.ones(len(pathways), dtype=complex)
 
+        # Mapping is a list of dict where each dict
         mapping = mixing_query_connect_map(self.spectral_dimensions)
         for obj in mapping:
-            theta_, phi_ = angle_and_phase_list(symbol, channels, obj["mixing_query"])
-            map_ = obj["near_index"]
+            euler_angles = to_euler_list(symbol, channels, obj["mixing_query_list"])
+            # Each column is list of the same angles
+            alpha_, beta_, gamma_ = np.r_[euler_angles].T
+            near_ = obj["near_index"]
             for j, path in enumerate(pathways):
-                # if weights[j] == 0:
-                #     continue
                 weights[j] *= self._calculate_transition_connect_weight(
-                    path[map_[0]], path[map_[1]], spins, theta_, phi_
+                    path[near_[0]], path[near_[1]], spins, alpha_, beta_, gamma_
                 )
         return np.round(weights, decimals=6)
 
     @staticmethod
-    def _calculate_transition_connect_weight(trans1, trans2, spins, theta, phi):
+    def _calculate_transition_connect_weight(trans1, trans2, spins, alpha, beta, gamma):
         """Return the transition connection weight of transitions `trans1` and `trans2`.
 
         Args:
@@ -530,6 +531,9 @@ class Method(Parseable):
             spins: ndarray of spin quantum numbers of the sites.
             theta: ndarray of rotation angle per site from the mixing event.
             phi: ndarray of rotation phase per site from the mixing event.
+            alpha: ndarray of first Euler angle per site from the mixing query.
+            beta: ndarray of second Euler angle per site from the mixing query.
+            gamma: ndarray of third Euler angle per site from the mixing query.
         """
         amp = 1
         for i, spin in enumerate(spins):
@@ -539,7 +543,14 @@ class Method(Parseable):
             m2_i = trans2[0][i]  # landing transition initial state
 
             amp *= transition_connect_factor(
-                spin, m1_f, m1_i, m2_f, m2_i, theta[i], phi[i]
+                spin,
+                m1_f,
+                m1_i,
+                m2_f,
+                m2_i,
+                alpha[i],
+                beta[i],
+                gamma[i],
             )
         return amp
 

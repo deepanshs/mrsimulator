@@ -3,7 +3,7 @@ import warnings
 
 warnings.warn(
     (
-        "Importing library methods from `mrsimulator.methods` is deprectated and will "
+        "Importing library methods from `mrsimulator.methods` is deprecated and will "
         "be removed in the next version. Please import library methods from the "
         "`mrsimulator.method.lib` module."
     ),

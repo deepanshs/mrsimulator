@@ -19,7 +19,7 @@ from mrsimulator import signal_processing as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
-from mrsimulator.method import Method, SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -93,11 +93,13 @@ DAS = Method(
                     rotor_angle=37.38 * 3.14159 / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
+                MixingEvent(query="NoMixing"),
                 SpectralEvent(
                     fraction=0.5,
                     rotor_angle=79.19 * 3.14159 / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
+                MixingEvent(query="NoMixing"),
             ],
         ),
         # The last spectral dimension block is the direct-dimension

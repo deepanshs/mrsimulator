@@ -6,6 +6,7 @@ from mrsimulator.method.event import ConstantDurationEvent
 from mrsimulator.method.event import MixingEvent
 from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import freq_default
+from mrsimulator.method.query import MixingEnum
 from pydantic import ValidationError
 
 __author__ = "Deepansh J. Srivastava"
@@ -17,14 +18,26 @@ def test_freq_contrib():
     assert event.json()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
     assert event.dict()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
     assert event.json(units=False)["freq_contrib"] == ["Quad2_4", "Quad2_0"]
-    assert np.all(event._freq_contrib_flags() == [0, 0, 0, 1, 0, 1])
+    assert np.all(event._freq_contrib_flags() == [0, 0, 0, 1, 0, 1, 0, 0, 0])
 
     event = BaseEvent(freq_contrib=["Shielding1_2"])
-    assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 0])
+    assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 0, 0, 0, 0])
 
     event = BaseEvent()
     assert event.dict()["freq_contrib"] == freq_default
-    assert np.all(event._freq_contrib_flags() == [1, 1, 1, 1, 1, 1])
+    assert np.all(event._freq_contrib_flags() == [1, 1, 1, 1, 1, 1, 1, 1, 1])
+
+    event = BaseEvent(freq_contrib=["J1_0", "Shielding1_0"])
+    assert event.dict()["freq_contrib"] == ["J1_0", "Shielding1_0"]
+    assert np.all(event._freq_contrib_flags() == [1, 0, 0, 0, 0, 0, 1, 0, 0])
+
+    event = BaseEvent(freq_contrib=["J1_0", "J1_2", "D1_2"])
+    assert event.dict()["freq_contrib"] == ["J1_0", "J1_2", "D1_2"]
+    assert np.all(event._freq_contrib_flags() == [0, 0, 0, 0, 0, 0, 1, 1, 1])
+
+    event = BaseEvent(freq_contrib=["Quad2_4", "J1_2", "D1_2", "Shielding1_2"])
+    assert event.dict()["freq_contrib"] == ["Quad2_4", "J1_2", "D1_2", "Shielding1_2"]
+    assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 1, 0, 1, 1])
 
 
 def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
@@ -166,6 +179,45 @@ def test_Mixing_event():
     mix_event_dict = {"query": {"ch1": {"angle": "90 degree", "phase": "0 rad"}}}
     the_event = MixingEvent.parse_dict_with_units(mix_event_dict)
     basic_mixing_event_tests(the_event)
+
+    # Queries of MixingEvents, like the transition_query of the SpectralEvent, need
+    # to be defined in a channel-wise dict. Check to make sure error is raised when
+    # P and D symmetries are supplied at the base level
+    with pytest.raises(ValidationError):
+        MixingEvent(query={"P": [1], "D": [0]})
+
+
+def test_total_and_no_mixing():
+    def assert_all_zero(mix_ev):
+        assert mix_ev.query.value.ch1.angle == 0
+        assert mix_ev.query.value.ch1.phase == 0
+        assert mix_ev.query.value.ch2.angle == 0
+        assert mix_ev.query.value.ch2.phase == 0
+        assert mix_ev.query.value.ch3.angle == 0
+        assert mix_ev.query.value.ch3.phase == 0
+
+    no_mix = MixingEvent(query=MixingEnum.NoMixing)
+    assert_all_zero(no_mix)
+
+    no_mix = MixingEvent(query="NoMixing")
+    assert_all_zero(no_mix)
+
+    no_mix = MixingEvent.parse_dict_with_units({"query": "NoMixing"})
+    assert_all_zero(no_mix)
+
+    total_mix = MixingEvent(query=MixingEnum.TotalMixing)
+    assert total_mix.query.value == "TotalMixing"
+
+    total_mix = MixingEvent(query="TotalMixing")
+    assert total_mix.query.value == "TotalMixing"
+
+    total_mix = MixingEvent.parse_dict_with_units({"query": "TotalMixing"})
+    assert total_mix.query.value == "TotalMixing"
+
+    # Check for exception when unknown mixing enum passed
+    e = ".*Unrecognized MixingEnum name 'some-str'. The allowed types are.*"
+    with pytest.raises(ValidationError, match=e):
+        MixingEvent(query="some-str")
 
 
 def check_equal(query, isotopes, channels, res):

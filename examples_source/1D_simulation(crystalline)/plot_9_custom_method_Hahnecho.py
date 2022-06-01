@@ -40,8 +40,8 @@ spin_system_2 = SpinSystem(sites=[S1, S2], couplings=[S12], label="Coupled syste
 # **Create a custom method**
 #
 # Writing a custom method is simply specifying an appropriate list of event objects per
-# spectral dimension. In this example, we are interested in a one-dimensional Hahnecho
-# method, and we use the generic `Method` class as a template. For a Hahnecho, we will
+# spectral dimension. In this example, we are interested in a one-dimensional Hahn echo
+# method, and we use the generic `Method` class as a template. For a Hahn echo, we will
 # use two types of Event objects---SpectralEvent and MixingEvent.
 #
 # A SpectralEvent object is where we sample the frequency contributions. The net
@@ -56,7 +56,7 @@ spin_system_2 = SpinSystem(sites=[S1, S2], couplings=[S12], label="Coupled syste
 # the :math:`j^\text{th}` SpectralEvent. The index :math:`j` runs over all spectral
 # events within a spectral dimension.
 #
-# In the case of a one-dimensional Hahnecho method, the frequency is equally averaged
+# In the case of a one-dimensional Hahn echo method, the frequency is equally averaged
 # over two spectral events, corresponding to the symmetry pathway,
 #
 # .. math::
@@ -70,9 +70,9 @@ spin_system_2 = SpinSystem(sites=[S1, S2], couplings=[S12], label="Coupled syste
 # A similar argument holds for ``[-1]`` query. By implementing query objects, we
 # decouple the method from the spin system, i.e., once a method is defined, it can be
 # used to simulate spectra from any given spin system. We will demonstrate this
-# momentarily by simulating a Hahnecho spectrum from single and two-site spin systems.
+# momentarily by simulating a Hahn echo spectrum from single and two-site spin systems.
 #
-# Besides the SpectralEvent, you may also notice a MixingEvent sandwitched in-between
+# Besides the SpectralEvent, you may also notice a MixingEvent sandwiched in-between
 # the two SpectralEvent. A MixingEvent does not directly contribute to the frequencies.
 # As the name suggests, a mixing event is used for the mixing of transitions in a
 # multi-event method such as HahnEcho. In the following code, we define a mixing query
@@ -96,7 +96,7 @@ hahn_echo = Method(
 
 # %%
 # You may also visualize the method using the `plot` function.
-plt.figure(figsize=(5, 3))
+plt.figure(figsize=(4, 2))
 hahn_echo.plot()
 plt.show()
 
