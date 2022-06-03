@@ -26,7 +26,7 @@ from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingE
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/835664/files/DASCoesite.csdf"
+filename = "https://ssnmr.org/sites/default/files/mrsimulator/DASCoesite.csdf"
 experiment = cp.load(filename)
 
 # standard deviation of noise from the dataset

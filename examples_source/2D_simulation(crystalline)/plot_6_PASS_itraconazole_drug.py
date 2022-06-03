@@ -27,7 +27,7 @@ from mrsimulator.method import SpectralDimension
 
 sim = Simulator()
 
-filename = "https://sandbox.zenodo.org/record/835664/files/itraconazole_13C.mrsys"
+filename = "https://ssnmr.org/sites/default/files/mrsimulator/itraconazole_13C.mrsys"
 sim.load_spin_systems(filename)
 
 # %%
