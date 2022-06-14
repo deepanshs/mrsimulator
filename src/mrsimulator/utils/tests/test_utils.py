@@ -9,8 +9,6 @@ def assertion(csdm, res, test_ref=""):
     assert get_spectral_dimensions(csdm)[0] == res, f"failed ref {test_ref}"
 
     csdm_coordinates = csdm.x[0].coordinates.to("Hz").value
-    if csdm.x[0].increment < 0:
-        csdm_coordinates = csdm_coordinates[::-1]
     spectral_dimension = SpectralDimension(**res)
     mrsim_coordinates = spectral_dimension.coordinates_Hz()
     assert np.allclose(csdm_coordinates, mrsim_coordinates), f"failed ref {test_ref}"
@@ -115,24 +113,24 @@ def test_get_spectral_dimensions_even_count_negative_increment():
     # even
     csdm = cp.as_csdm(np.arange(10))
     csdm.x[0] = cp.LinearDimension(count=10, increment="-1 Hz", label="1H")
-    res = {"count": 10, "spectral_width": 10, "reference_offset": -4, "label": "1H"}
+    res = {"count": 10, "spectral_width": -10, "reference_offset": -5, "label": "1H"}
     assertion(csdm, res, "even")
 
     csdm.x[0] = cp.LinearDimension(count=10, increment="-3.4 Hz", label="1H")
-    res = {"count": 10, "spectral_width": 34, "reference_offset": -13.6, "label": "1H"}
+    res = {"count": 10, "spectral_width": -34, "reference_offset": -17, "label": "1H"}
     assertion(csdm, res, "even")
 
     # even # coordinates_offset
     csdm.x[0] = cp.LinearDimension(
         count=10, increment="-1 Hz", coordinates_offset="-10 Hz", label="1H"
     )
-    res = {"count": 10, "spectral_width": 10, "reference_offset": -14, "label": "1H"}
+    res = {"count": 10, "spectral_width": -10, "reference_offset": -15, "label": "1H"}
     assertion(csdm, res, "even coordinates_offset")
 
     csdm.x[0] = cp.LinearDimension(
         count=10, increment="-3.4 Hz", coordinates_offset="-10 Hz", label="1H"
     )
-    res = {"count": 10, "spectral_width": 34, "reference_offset": -23.6, "label": "1H"}
+    res = {"count": 10, "spectral_width": -34, "reference_offset": -27, "label": "1H"}
     assertion(csdm, res, "even coordinates_offset")
 
 
@@ -140,24 +138,24 @@ def test_get_spectral_dimensions_odd_count_negative_increment():
     # odd
     csdm = cp.as_csdm(np.arange(15))
     csdm.x[0] = cp.LinearDimension(count=15, increment="-1 Hz", label="1H")
-    res = {"count": 15, "spectral_width": 15, "reference_offset": -7, "label": "1H"}
+    res = {"count": 15, "spectral_width": -15, "reference_offset": -7, "label": "1H"}
     assertion(csdm, res, "odd")
 
     csdm.x[0] = cp.LinearDimension(count=15, increment="-3.4 Hz", label="1H")
-    res = {"count": 15, "spectral_width": 51, "reference_offset": -23.8, "label": "1H"}
+    res = {"count": 15, "spectral_width": -51, "reference_offset": -23.8, "label": "1H"}
     assertion(csdm, res, "odd")
 
     # even # coordinates_offset
     csdm.x[0] = cp.LinearDimension(
         count=15, increment="-1 Hz", coordinates_offset="-10 Hz", label="1H"
     )
-    res = {"count": 15, "spectral_width": 15, "reference_offset": -17, "label": "1H"}
+    res = {"count": 15, "spectral_width": -15, "reference_offset": -17, "label": "1H"}
     assertion(csdm, res, "odd coordinates_offset")
 
     csdm.x[0] = cp.LinearDimension(
         count=15, increment="-3.4 Hz", coordinates_offset="-10 Hz", label="1H"
     )
-    res = {"count": 15, "spectral_width": 51, "reference_offset": -33.8, "label": "1H"}
+    res = {"count": 15, "spectral_width": -51, "reference_offset": -33.8, "label": "1H"}
     assertion(csdm, res, "odd coordinates_offset")
 
 
@@ -174,8 +172,8 @@ def test_generic():
 
     res = {
         "count": 10,
-        "spectral_width": 10,
-        "reference_offset": -14,
+        "spectral_width": -10,
+        "reference_offset": -15,
         "origin_offset": 100e6,
         "label": "1H",
     }

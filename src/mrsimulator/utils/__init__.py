@@ -27,9 +27,9 @@ def get_spectral_dimensions(csdm_object, units=False):
         complex_co -= 0 if even else increment / 2.0
         co = ref if dim.complex_fft else complex_co
 
-        if sw < 0:
-            sw = -sw
-            co += -increment if even else 0
+        # if sw < 0:
+        #     sw = -sw
+        #     co += -increment if even else 0
 
         dim_i = {}
         dim_i["count"] = dim.count
