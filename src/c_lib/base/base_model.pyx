@@ -14,7 +14,7 @@ clib.generate_tables()
 @cython.wraparound(False)
 def one_d_spectrum(method,
        list spin_systems,
-       int verbose=0,  # for degub purpose only.
+       int verbose=0,  # for debug purpose only.
        unsigned int number_of_sidebands=90,
        unsigned int integration_density=72,
        unsigned int decompose_spectrum=0,
@@ -154,7 +154,7 @@ def one_d_spectrum(method,
         &srfiH[0], &rair[0], &n_event[0], n_dimension, number_of_sidebands)
 
 # normalization factor for the spectrum
-    norm = np.prod(incre)
+    norm = np.abs(np.prod(incre))
 
 # create fftw scheme __________________________________________________________
     cdef clib.MRS_fftw_scheme *fftw_scheme
