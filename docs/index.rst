@@ -129,7 +129,7 @@ amorphous materials.
 .. skip: next
 
 .. plot::
-    :caption: An example simulating solid-state NMR spectrums of static and MAS experiments
+    :caption: Simulation of static and MAS solid-state NMR spectra
 
     from mrsimulator import Simulator, SpinSystem, Site
     from mrsimulator.method.lib import BlochDecaySpectrum
