@@ -111,7 +111,7 @@ amorphous materials.
 **Why use mrsimulator?**
 
 - It is open-source and free.
-- It is a fast and versatile multi-dimensional solid-state NMR spectra simulator including, MAS
+- It is a fast and versatile multi-dimensional solid-state NMR spectra simulator, including MAS
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
 - It includes simulation of weakly coupled nuclei experiencing J and dipolar couplings.
