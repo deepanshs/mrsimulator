@@ -4,33 +4,33 @@ For developers and contributors
 Setting up a dedicated code editor
 ''''''''''''''''''''''''''''''''''
 
-Using a code editor or IDE is useful when contributing to a codebase. There are many products
-available and you may use whatever you're comfortable with. For new developers, we recommend
-`VS Code <https://code.visualstudio.com>`_ since it is lightweight, free and has a breadth of
+Using a code editor or IDE is useful when contributing to a codebase. Many products are available; 
+use what is most familiar. For new developers, we recommend
+`VS Code <https://code.visualstudio.com>`_ since it is lightweight, free, and has a breadth of
 community extensions.
 
 Make your own copy of mrsimulator on GitHub
 '''''''''''''''''''''''''''''''''''''''''''
 
-Making a copy of someone's code on GitHub is the same as making a *fork*. A fork is a
-complete copy of the code and all of its revision history.
+Making a copy of someone's code on GitHub is the same as making a *fork*. 
+A fork is a complete copy of the code and its revision history.
 
 1. Log into a `GitHub account <https://github.com>`_.
 2. Go to the `mrsimulator Github <https://github.com/deepanshs/mrsimulator>`_ home page.
 3. Click on the *fork* button.
 
-You will see a short animation of Octocat scanning a book on a flatbed scanner. After
-that, you should find yourself at the home page for your forked copy of mrsimulator.
+You will see a short animation of Octocat scanning a book on a flatbed scanner. 
+After that, you should find yourself on the home page for your forked copy of mrsimulator.
 
 
 Create a development environment
 ''''''''''''''''''''''''''''''''
 
-It is good practice to create separate virtual python environments for packages when
-in developing packages. There are many environment managers available; however, we recommend using
+It is good practice to create separate virtual python environments when developing packages. 
+There are many environment managers available; however, we recommend using
 `Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_
 
-The following is an example of creating Conda environment
+The following is an example of creating a Conda environment
 
 .. code-block:: bash
 
@@ -47,9 +47,9 @@ activate the environment, use
 Make sure git is installed on your computer
 '''''''''''''''''''''''''''''''''''''''''''
 
-`Git <https://git-scm.com>`_ is the name of a source code management system. It keeps
-track of the changes made to the code and manages contributions from several different
-individuals. You may read more about git at the `Git Basics <https://git-scm.com/book/>`_.
+`Git <https://git-scm.com>`_ is the name of a source code management system. 
+It keeps track of the changes made to the code and manages contributions from 
+several individuals. You may read about git at the `Git Basics <https://git-scm.com/book/>`_.
 
 If you are using anaconda/miniconda, you probably have git pre-installed. To check, type
 in terminal
