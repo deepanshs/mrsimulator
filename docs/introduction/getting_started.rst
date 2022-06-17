@@ -50,7 +50,7 @@ First we will construct two :ref:`site_documentation` objects for the :math:`^1\
     )
 
 We now have two variables, ``H_site`` and ``C_site``, which are :ref:`site_api` objects. ``H_site``
-represents a proton site with no chemical shift. ``C_site`` represents a carbon-13 site with
+represents a proton site with zero(default) chemical shift. ``C_site`` represents a carbon-13 site with
 a chemical shift of 100 ppm as well as a shielding component represented by :ref:`sy_api`
 object. We parametrize tensors using the Haeberlen convention. A Site object has default values 
 for unspecified attributes.  All spin interactions parameters, e.g., isotropic chemical shift 
