@@ -8,7 +8,7 @@ In ``mrsimulator``, the user initializes objects from three mrsimulator classes:
 Method, and Simulator.  SpinSystem defines the spin system tensor parameters used to generate
 a particular subspectrum, and Method defines the parameters for the particular NMR measurement
 that is to be simulated.  A list of Method and SpinSystem objects are used to initialize a
-Simulator object, whic is then used to generate the corresponding NMR spectra--returned as a
+Simulator object, which is then used to generate the corresponding NMR spectra--returned as a
 CSDM object in each Method object.   There is an additional class, SignalProcessor, for applying
 various post-simulation signal processing operations to CSDM dataset objects.  All objects can
 be serialized.  We adopt the Javascript Object Notation (JSON) as the file-serialization
