@@ -4,7 +4,19 @@
 Getting Started
 ===============
 
-We have put together some introductory examples which outline the basic use of ``mrsimulator``.
+In ``mrsimulator``, the user initializes objects from three mrsimulator classes: SpinSystem, 
+Method, and Simulator.  SpinSystem defines the spin system tensor parameters used to generate
+a particular subspectrum, and Method defines the parameters for the particular NMR measurement
+that is to be simulated.  A list of Method and SpinSystem objects are used to initialize a
+Simulator object, whic is then used to generate the corresponding NMR spectra--returned as a
+CSDM object in each Method object.   There is an additional class, SignalProcessor, for applying
+various post-simulation signal processing operations to CSDM dataset objects.  All objects can
+be serialized.  We adopt the Javascript Object Notation (JSON) as the file-serialization
+format for the model because it is human-readable, if properly organized,as well as easily
+integrable with any number of programming languages and related software packages.  It is
+also the preferred serialization for data exchange in web-based applications.
+
+Here, we have put together some introductory examples which outline the basic use of ``mrsimulator``.
 For more detailed documentation on the usage of ``mrsimulator`` classes, see the
 User Documentation section. Also, check out our :ref:`example_gallery` and
 :ref:`fitting_examples`.
@@ -40,7 +52,10 @@ First we will construct two :ref:`site_documentation` objects for the :math:`^1\
 We now have two variables, ``H_site`` and ``C_site``, which are :ref:`site_api` objects. ``H_site``
 represents a proton site with no chemical shift. ``C_site`` represents a carbon-13 site with
 a chemical shift of 100 ppm as well as a shielding component represented by :ref:`sy_api`
-object. We parametrize tensors using the Haeberlen convention.
+object. We parametrize tensors using the Haeberlen convention. A Site object has default values 
+for unspecified attributes.  All spin interactions parameters, e.g., isotropic chemical shift 
+and other coupling parameters are initialized to zero.  Additionally, the default isotope is 
+`1H`.   For example, the code above could have used H_site = Site().  
 
 Next we will define a dipolar coupling by creating a :ref:`coupling_documentation` object.
 
