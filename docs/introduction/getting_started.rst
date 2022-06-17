@@ -205,7 +205,7 @@ Plotting the Data
 We end this example by using the `matplotlib <https://matplotlib.org/stable/>`_ Python library
 to plot the simulated dataset.
 
-Below is the code used to generate an image of the simulated spectrum:
+Below is the code used to generate an image and a pdf file of the simulated spectrum:
 
 .. _fig1-getting-started:
 .. skip: next
@@ -220,4 +220,5 @@ Below is the code used to generate an image of the simulated spectrum:
     ax.plot(processed_data.real)
     ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout(pad=0.1)
+    plt.savefig("spectrum.pdf")
     plt.show()
