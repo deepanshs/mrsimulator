@@ -5,11 +5,9 @@ For the users
 
 .. note::
 
-   If you encounter an issue during installation, see our
-   `troubleshooting section <instillation_troubleshooting>`_.
+   If you encounter an issue during installation, see our `troubleshooting section <instillation_troubleshooting>`_.
 
-   If that doesn't resolve your issue, please create a bug report on our
-   `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
+If that doesn't resolve your issue, please create a bug report on our `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
 
 Strict Requirements
 -------------------
@@ -21,25 +19,22 @@ Strict Requirements
 
 See :ref:`requirements` for a full list of requirements.
 
-Make sure you have the required version of python by typing the following in the terminal,
+Make sure you have the required version of Python by typing the following in the terminal,
 
 .. code-block:: shell
 
       $ python --version
 
-For *Mac* users, python version 3 is installed under the name *python3*. You may replace
-*python* for *python3* in the above command and all subsequent python statements.
+For *MacOS* users, python version 3 is installed under the name *python3*. You may replace *python* for *python3* in the above command and all subsequent Python statements.
 
 For *Windows* users, Python is not usually installed by default. See
-`Python.org <https://www.python.org/downloads/windows/>`_ for a list of official Python downloads
-and Windows installation instructions.
+`Python.org <https://www.python.org/downloads/windows/>`_ for a list of official Python downloads and Windows installation instructions.
 
 .. seealso::
 
-  If you do not have python or have an older version of python, you may visit the
+  If you do not have Python or have an older version of Python, you may visit the
   `Python downloads <https://www.python.org/downloads/>`_ or
-  `Anaconda <https://www.anaconda.com/products/individual/>`_ websites and follow their
-  instructions on how to install python.
+  `Anaconda <https://www.anaconda.com/products/individual/>`_ websites and follow their instructions on installing Python.
 
 Installing ``mrsimulator``
 --------------------------
@@ -65,22 +60,21 @@ Installing ``mrsimulator``
 Upgrading to a newer version
 """"""""""""""""""""""""""""
 
-If you are upgrading to a newer version of ``mrsimulator``, you have all the prerequisites
-installed on your system. In this case, type the following in the terminal/Prompt
+If you upgrade to a newer version of ``mrsimulator``, you have all the prerequisites installed on your system. In this case, type the following in the terminal/Prompt
 
 .. code-block:: bash
 
     $ pip install mrsimulator -U
 
 
-All done! You may now start using the library, or proceed to
+All done! You may now start using the library or proceed to
 :ref:`getting_started` to continue the tutorial.
 
 Test your build
 ---------------
 
 .. note::
-  For windows users using anaconda python 3.8 and higher, you need to set the following
+  For Windows users using anaconda python 3.8 and higher, you need to set the following
   environment variable in the ``Anaconda Prompt`` before running mrsimulator scripts.
 
   .. code-block:: bash
