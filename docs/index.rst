@@ -180,7 +180,7 @@ The ``mrsimulator`` package offers the following
     - 2D Dynamic Angle Spinning (DAS)
     - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
     - 2D Magic Angle Flipping (MAF)
-    - Custom user-defined 1D and 2D methods (Method)
+    - Custom user-defined methods (Method)
 
 - **Models** for tensor parameter distribution in amorphous materials.
     - Czjzek
