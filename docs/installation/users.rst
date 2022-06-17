@@ -89,7 +89,7 @@ or copy and paste the following code into a python file and run the code.
 .. skip: next
 
 .. plot::
-    :caption: An example simulating solid-state NMR spectrums of static and MAS experiments
+    :caption: Simulation of static and MAS solid-state NMR spectra
 
     from mrsimulator import Simulator, SpinSystem, Site
     from mrsimulator.method.lib import BlochDecaySpectrum
