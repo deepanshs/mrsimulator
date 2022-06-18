@@ -9,11 +9,12 @@ In ``mrsimulator``, the user initializes objects from three mrsimulator classes:
 spin system tensor parameters used to generate a particular subspectrum, and Method defines the parameters for the 
 particular NMR measurement that is to be simulated.  A list of Method and :ref:`spin_system_documentation` objects 
 are used to initialize a Simulator object, which is then used to generate the corresponding NMR spectra--returned as 
-a CSDM object in each Method object.   There is an additional class, SignalProcessor, for applying various 
-post-simulation signal processing operations to CSDM dataset objects.  All objects can be serialized.  We adopt 
-the Javascript Object Notation (JSON) as the file-serialization format for the model because it is human-readable, 
-if properly organized,as well as easily integrable with any number of programming languages and related software 
-packages.  It is also the preferred serialization for data exchange in web-based applications.
+a CSDM object in each Method object.  For more information on the CSDM (Core Scientific Dataset Model) see the
+`csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__. There is an additional class, SignalProcessor, 
+for applying various post-simulation signal processing operations to CSDM dataset objects.  All objects can be 
+serialized.  We adopt the Javascript Object Notation (JSON) as the file-serialization format for the model because 
+it is human-readable, if properly organized,as well as easily integrable with any number of programming languages 
+and related software packages.  It is also the preferred serialization for data exchange in web-based applications.
 
 Here, we have put together some introductory examples which outline the basic use of ``mrsimulator``. For more 
 detailed documentation on the usage of ``mrsimulator`` classes, see the User Documentation section. Also, check 
@@ -221,11 +222,14 @@ Below is the code used to generate an image and a pdf file of the simulated spec
     plt.savefig("spectrum.pdf")
     plt.show()
 
-The plt.savefig("spectrum.pdf") line creates a pdf file that can be edited in a app like Adobe Illustrator.
+The plt.savefig("spectrum.pdf") line creates a pdf file that can be edited in a vector graphics editor such as 
+Adobe Illustrator.
 
 Saving the Simulation dataset
 -----------------------------
-To save the simulation dataset 
+``mrsimulator`` uses the Core Scientific Dataset Model (CSDM) as its object model for the output simulation datasets. 
+The CSDM object can be serialized as a JSON file using its save() method.   In the example below, the simulation before 
+and after is saves as a csdf file.
 
 .. code-block:: python
 

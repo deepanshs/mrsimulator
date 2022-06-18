@@ -146,6 +146,11 @@ below (:math:`^{13}\text{C}` marked in blue)
 
     isotopomer3 = SpinSystem(sites=iso3_sites, couplings=iso3_couplings, abundance=1.088)
 
+
+
+Saving the SpinSystems
+----------------------
+
 Methods
 -------
 
@@ -181,6 +186,10 @@ These methods emulate simple 1-pulse acquire experiments.
         ],
     )
 
+
+Saving the Methods
+------------------
+
 Simulation
 ----------
 
@@ -194,6 +203,7 @@ systems and a list of our two methods. Finally we run the simulation.
     methods = [method_H, method_C]
     sim = Simulator(spin_systems=spin_systems, methods=methods)
     sim.run()
+
 
 Signal Processing
 -----------------
@@ -256,3 +266,8 @@ Now that we have our processed data, we can plot the two spectra.
 
     plt.tight_layout()
     plt.show()
+
+
+Saving the Simulation
+---------------------
+

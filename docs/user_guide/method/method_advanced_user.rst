@@ -1,9 +1,9 @@
 
 .. _method_documentation:
 
-===========================
-Method (For advanced users)
-===========================
+======
+Method
+======
 
 Mrsimulator allows users to create custom methods and simulate the NMR spectrum.
 At the top level, a :ref:`method_api` object is no different than the pre-built
