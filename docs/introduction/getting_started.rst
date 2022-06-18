@@ -227,5 +227,11 @@ Saving the Simulation dataset
 -----------------------------
 To save the simulation dataset 
 
-    processor_data.save("simulation.csdf")
+.. code-block:: python
 
+    sim.methods[0].simulation.save("simulation.csdf")
+    processor_data.save("processed_simulation.csdf")
+
+
+For more information on the CSDM format see the
+`csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
