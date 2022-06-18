@@ -149,7 +149,7 @@ below (:math:`^{13}\text{C}` marked in blue)
 
 
 Saving the SpinSystems
-----------------------
+^^^^^^^^^^^^^^^^^^^^^^
 
 Methods
 -------
@@ -188,7 +188,7 @@ These methods emulate simple 1-pulse acquire experiments.
 
 
 Saving the Methods
-------------------
+^^^^^^^^^^^^^^^^^^
 
 Simulation
 ----------
@@ -269,5 +269,5 @@ Now that we have our processed data, we can plot the two spectra.
 
 
 Saving the Simulation
----------------------
+^^^^^^^^^^^^^^^^^^^^^
 
