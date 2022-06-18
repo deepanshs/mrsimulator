@@ -4,22 +4,20 @@
 Getting Started
 ===============
 
-In ``mrsimulator``, the user initializes objects from three mrsimulator classes: :ref:`_spin_system_documentation`, 
-:ref:`_method_documentation`, and :ref:`_simulator_documentation`.  :ref:`_spin_system_documentation` defines the 
+In ``mrsimulator``, the user initializes objects from three mrsimulator classes: :ref:`spin_system_documentation`, 
+:ref:`method_documentation`, and :ref:`simulator_documentation`.  :ref:`spin_system_documentation` defines the 
 spin system tensor parameters used to generate a particular subspectrum, and Method defines the parameters for the 
-particular NMR measurement that is to be simulated.  A list of Method and :ref:`_spin_system_documentation` objects 
+particular NMR measurement that is to be simulated.  A list of Method and :ref:`spin_system_documentation` objects 
 are used to initialize a Simulator object, which is then used to generate the corresponding NMR spectra--returned as 
-a CSDM object in each Method object.   There is an additional class, SignalProcessor, for applying
-various post-simulation signal processing operations to CSDM dataset objects.  All objects can
-be serialized.  We adopt the Javascript Object Notation (JSON) as the file-serialization
-format for the model because it is human-readable, if properly organized,as well as easily
-integrable with any number of programming languages and related software packages.  It is
-also the preferred serialization for data exchange in web-based applications.
+a CSDM object in each Method object.   There is an additional class, SignalProcessor, for applying various 
+post-simulation signal processing operations to CSDM dataset objects.  All objects can be serialized.  We adopt 
+the Javascript Object Notation (JSON) as the file-serialization format for the model because it is human-readable, 
+if properly organized,as well as easily integrable with any number of programming languages and related software 
+packages.  It is also the preferred serialization for data exchange in web-based applications.
 
-Here, we have put together some introductory examples which outline the basic use of ``mrsimulator``.
-For more detailed documentation on the usage of ``mrsimulator`` classes, see the
-User Documentation section. Also, check out our :ref:`example_gallery` and
-:ref:`fitting_examples`.
+Here, we have put together some introductory examples which outline the basic use of ``mrsimulator``. For more 
+detailed documentation on the usage of ``mrsimulator`` classes, see the User Documentation section. Also, check 
+out our :ref:`example_gallery` and :ref:`fitting_examples`.
 
 Spin System
 -----------
@@ -199,8 +197,8 @@ Each :ref:`signal_processing_api` object has a list of operations which are appl
 a dataset. For a comprehensive list of operations and how to use the signal processing object,
 see the :ref:`signal_processing_documentation` documentation page.
 
-Plotting the Data
------------------
+Plotting the Simulation
+-----------------------
 
 We end this example by using the `matplotlib <https://matplotlib.org/stable/>`_ Python library
 to plot the simulated dataset.
@@ -222,3 +220,12 @@ Below is the code used to generate an image and a pdf file of the simulated spec
     plt.tight_layout(pad=0.1)
     plt.savefig("spectrum.pdf")
     plt.show()
+
+The plt.savefig("spectrum.pdf") line creates a pdf file that can be edited in a app like Adobe Illustrator.
+
+Saving the Simulation dataset
+-----------------------------
+To save the simulation dataset 
+
+    processor_data.save("simulation.csdf")
+
