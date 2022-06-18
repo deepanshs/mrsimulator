@@ -4,7 +4,7 @@
 Getting Started
 ===============
 
-In ``mrsimulator``, the user initializes objects from three mrsimulator classes: :ref: `spin_system_documentation:`, 
+In ``mrsimulator``, the user initializes objects from three mrsimulator classes: :ref:`_spin_system_documentation:`, 
 Method, and Simulator.  :ref:`_spin_system_documentation:` defines the spin system tensor parameters used to generate
 a particular subspectrum, and Method defines the parameters for the particular NMR measurement
 that is to be simulated.  A list of Method and :ref:`_spin_system_documentation:` objects are used to initialize a
