@@ -142,7 +142,7 @@ packages with pip. In the directory where your copy of mrsimulator is, type:
  $ pip install -r requirements-dev.txt
  $ pip install -e .
 
-As always, if you get an error that you don’t have the permission to install the
+As before, if you get an error that you don’t have the permission to install the
 package into the default site-packages directory, you may try installing by adding the
 ``--user`` option.
 
