@@ -143,7 +143,7 @@ below (:math:`^{13}\text{C}` marked in blue)
 
 
 Saving the SpinSystems
-^^^^^^^^^^^^^^^^^^^^^^
+----------------------
 
 Methods
 -------
@@ -156,33 +156,33 @@ These methods emulate simple 1-pulse acquire experiments.
 
  method_H = BlochDecaySpectrum(
  channels=["1H"],
- magnetic_flux_density=9.4, # in T
- spectral_dimensions=[
- SpectralDimension(
- count=16000,
- spectral_width=1.5e3, # in Hz
- reference_offset=950, # in Hz
- label="$^{1}$H frequency",
- )
- ],
+     magnetic_flux_density=9.4, # in T
+    spectral_dimensions=[
+    SpectralDimension(
+        count=16000,
+        spectral_width=1.5e3, # in Hz
+        reference_offset=950, # in Hz
+        label="$^{1}$H frequency",
+        )
+    ],
  )
 
  method_C = BlochDecaySpectrum(
- channels=["13C"],
- magnetic_flux_density=9.4, # in T
- spectral_dimensions=[
- SpectralDimension(
- count=32000,
- spectral_width=8e3, # in Hz
- reference_offset=4e3, # in Hz
- label="$^{13}$C frequency",
- )
- ],
+     channels=["13C"],
+    magnetic_flux_density=9.4, # in T
+    spectral_dimensions=[
+        SpectralDimension(
+            count=32000,
+            spectral_width=8e3, # in Hz
+            reference_offset=4e3, # in Hz
+            label="$^{13}$C frequency",
+        )
+     ],
  )
 
 
 Saving the Methods
-^^^^^^^^^^^^^^^^^^
+------------------
 
 Simulation
 ----------
@@ -213,19 +213,19 @@ broadening to the proton and carbon spectra, respectively.
 
  # Create the signal processors
  processor_1H = sp.SignalProcessor(
- operations=[
- sp.IFFT(),
- sp.apodization.Exponential(FWHM="1 Hz"),
- sp.FFT(),
- ]
+    operations=[
+        sp.IFFT(),
+        sp.apodization.Exponential(FWHM="1 Hz"),
+        sp.FFT(),
+        ]
  )
 
  processor_13C = sp.SignalProcessor(
  operations=[
- sp.IFFT(),
- sp.apodization.Exponential(FWHM="20 Hz"),
- sp.FFT(),
- ]
+        sp.IFFT(),
+        sp.apodization.Exponential(FWHM="20 Hz"),
+        sp.FFT(),
+        ]
  )
 
  # apply the signal processors
@@ -258,9 +258,12 @@ Now that we have our processed data, we can plot the two spectra.
  ax[1].set_title("$^{13}$C")
 
  plt.tight_layout()
+ plt.savefig("spectrum.pdf")
  plt.show()
-
-
+ 
+ 
 Saving the Simulation
-^^^^^^^^^^^^^^^^^^^^^
+----------------------
 
+ processor_data.save("processed_H_data.csdf")
+ processor_data.save("processed_C_data.csdf")
