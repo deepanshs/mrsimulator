@@ -2,34 +2,34 @@
 Common Python Syntax Errors
 ===========================
 
-Python syntax is slightly different than other langues which cause some confusion.
-The following are some common syntax errors encountered and how to solve them.
+Python syntax is slightly different than other languages, which causes some confusion. 
+Using a dedicated code editor is the easiest way to find and prevent syntax errors. 
+We recommend using VS Code on your local machine or Google Colab, which runs everything online. 
+These programs check for syntax errors as you write code.  The following are some typical 
+syntax errors encountered and how to solve them.
 
-However, the easiest way to find and prevent syntax errors is to use a dedicated code editor.
-We recommend using VS Code on your local machine
-or Google Colab which runs everything online. These programs check for syntax errors as you
-write code.
 
 IndentationError
 """"""""""""""""
 
-If you are encountering an ``IndentationError``, this means you have an extra/missing
-whitespace somewhere in your code. Code editors make finding troublesome whitespace easier,
-but the error should also show the code snippet which threw the error.
+If you encounter an ``IndentationError``, you have an extra/missing whitespace in your code. 
+Code editors make finding troublesome whitespace easier, but the error should also show the 
+code snippet which threw the error.
 
-``IndentationError: expected an indented block`` means some code after a class/method/loop
-deceleration is missing an indent.
+``IndentationError: expected an indented block`` means some code is missing an indent after a 
+class/method/loop deceleration.
 
-``IndentationError: unindent does not match any outer indentation level`` means the code didn't
+``IndentationError: unindent does not match any outer indentation level`` means the code didn't 
 return to a previous indentation level.
 
 ``IndentationError: unexpected indent`` means Python encountered unexpected whitespace.
 
-Code blocks in Python rely on indentation levels (1 level = 4 spaces) so whitespace can't
-be placed randomly. Code blocks are preceded by a ``:`` and all code in one
-block has the same indentation. To get out of a code block, simply remove an indentation level.
+Code blocks in Python rely on indentation levels (1 level = 4 spaces), so whitespace can't be placed 
+randomly. Code blocks are preceded by a ``:``, and all code in one block has the same indentation. 
+To get out of a code block, remove an indentation level.
 
-As an example of indentation, here is some code which adds the numbers 0 to 9:
+As an example of indentation, here is some code that adds the numbers 0 to 9:
+
 
 .. code-block:: python
 
@@ -44,13 +44,13 @@ As an example of indentation, here is some code which adds the numbers 0 to 9:
 Mismatched Brackets and Square Brackets
 """""""""""""""""""""""""""""""""""""""
 
-Nesting many lists and dictionaries inside each other quickly becomes hard to read. If you have
-mismatched or missing brackets, Python will throw ``SyntaxError: invalid syntax``.
-Code editors can automatically format large nestings and highlight which openings and closings go
-together making the code easer to understand.
+Nesting many lists and dictionaries inside each other become hard to read. If you have mismatched or 
+missing brackets, Python will throw ``SyntaxError: invalid syntax``. Code editors can automatically 
+format large nestings and highlight which openings and closings go together, making the code easier to understand.
 
-Make sure all brackets are balanced and that opening and closing brackets match. Python uses three
-types of brackets:
+Make sure all brackets are balanced and that opening and closing brackets match. Python uses three types of brackets:
+
+
 
 * ``()`` is used when creating a `tuple <https://docs.python.org/3/library/stdtypes.html#tuple>`__ or when creating/calling method signatures.
 * ``[]`` is used when creating a `list <https://docs.python.org/3/library/stdtypes.html#list>`__ or when indexing an item in a list or tuple.
@@ -71,8 +71,7 @@ The most common reason ``TypeError: object is not callable`` is when ``()`` is u
     foo(1)
     # I received 1
 
-But parentheses aren't valid for indexing a subscriptable object (list, tuple, etc). For
-example, the following code will throw an TypeError
+But parentheses aren't valid for indexing a subscriptable object (list, tuple, etc.). For example, the following code will throw a TypeError
 
 .. skip: next
 
@@ -95,8 +94,7 @@ but the following code is valid
     print(bar[1])
     # 2
 
-The same applies for dictionaries, but instead of indexing with an integer you would index with
-a keyword. For example
+The same applies to dictionaries, but instead of indexing with an integer, you would index with a keyword. For example
 
 .. skip: next
 
@@ -133,6 +131,8 @@ For example
       File "<stdin>", line 1, in <module>
     TypeError: 'int' object is not subscriptable
 
-Also subscriptable objects can only be indexed so many times. A 1D list can only be indexed once,
+Also, subscriptable objects can only be indexed so many times. A 1D list can only be indexed once, 
 2D twice, and so on. If you are using nested lists/dicts, make sure you aren't exceeding the number
 of indexes possible.
+
+

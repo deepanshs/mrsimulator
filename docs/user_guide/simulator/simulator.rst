@@ -4,9 +4,7 @@
 Simulator
 =========
 
-The :ref:`simulator_api` object is the core of the ``mrsimulator`` library. Each :ref:`simulator_api`
-object holds a list of :ref:`spin_sys_api` objects and a list of :ref:`method_api` objects.
-A simulator object also holds a :ref:`config_api` object which can be modified to change aspects
+The :ref:`simulator_api` object is the core of the ``mrsimulator`` library. Each :ref:`simulator_api` object holds a list of :ref:`spin_sys_api` objects and a list of :ref:`method_api` objects. A simulator object also holds a :ref:`config_api` object, which can be modified to change aspects
 of the simulation as discussed below.
 
 Set Up
@@ -16,22 +14,22 @@ Setting up a simulator object and running a simulation is simple. Below we add s
 spin systems and methods to a simulator object.
 
 .. plot::
-    :context: reset
+ :context: reset
 
-    from mrsimulator import Site, Simulator, SpinSystem
-    from mrsimulator.method.lib import BlochDecaySpectrum
+ from mrsimulator import Site, Simulator, SpinSystem
+ from mrsimulator.method.lib import BlochDecaySpectrum
 
-    # Setup the spin system and method objects
-    system1 = SpinSystem(sites=[Site(isotope="1H")])  # Proton spin system
-    system2 = SpinSystem(sites=[Site(isotope="17O")])  # Oxygen spin system
-    system3 = SpinSystem(sites=[Site(isotope="29Si")])  # Silicon spin system
-    method1 = BlochDecaySpectrum(channels=["1H"])
-    method2 = BlochDecaySpectrum(channels=["29Si"])
+ # Setup the spin system and method objects
+ system1 = SpinSystem(sites=[Site(isotope="1H")]) # Proton spin system
+ system2 = SpinSystem(sites=[Site(isotope="17O")]) # Oxygen spin system
+ system3 = SpinSystem(sites=[Site(isotope="29Si")]) # Silicon spin system
+ method1 = BlochDecaySpectrum(channels=["1H"])
+ method2 = BlochDecaySpectrum(channels=["29Si"])
 
-    # Create the Simulator object
-    sim = Simulator()
-    sim.spin_systems = [system1, system2, system3]  # Add list of spin systems
-    sim.methods = [method1, method2]  # add list of methods
+ # Create the Simulator object
+ sim = Simulator()
+ sim.spin_systems = [system1, system2, system3] # Add list of spin systems
+ sim.methods = [method1, method2] # add list of methods
 
 ``sim`` is a :ref:`simulator_api` object which holds three spin systems and two methods. See
 :ref:`spin_system_documentation` and :ref:`method_documentation` documentation for more
@@ -44,51 +42,46 @@ To simulate the NMR spectrum of the given spin systems using each method, call t
 class method :meth:`~mrsimulator.Simulator.run`.
 
 .. plot::
-    :context: close-figs
+ :context: close-figs
 
-    sim.run()
+ sim.run()
 
-The simulated spectrum is stored as a CSDM object in each method object under the
-:py:attr:`~mrsimulator.Method.simulation` attribute. For more information on
-the Core Scientific Data Model (CSDM),
+The simulated spectrum is stored as a CSDM object in each method object under the :py:attr:`~mrsimulator.Method.simulation` attribute. For more information on the Core Scientific Data Model (CSDM),
 see the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`_.
 Below we put the simulated spectra of the method at index 0 into the variable ``data_0``
 
 .. plot::
-    :context: close-figs
+ :context: close-figs
 
-    data_0 = sim.methods[0].simulation
-    # data_n = sim.methods[n].simulation (for multiple methods)
+ data_0 = sim.methods[0].simulation
+ # data_n = sim.methods[n].simulation (for multiple methods)
 
 .. _config_simulator:
 
 Configuring the Simulator Object
 --------------------------------
 
-Up until now, we have been using the simulator object with the default settings.
-In ``mrsimulator``, we choose the default settings such that it applies to a wide
-range of simulations including, static, magic angle spinning (MAS), and
-variable angle spinning (VAS) spectra. In certain situations, however, the
-default settings are not sufficient to accurately represent the spectrum.
+Until now, we have used the simulator object with the default settings.
+In ``mrsimulator``, we choose the default settings such that it applies to a wide range of simulations, including static, magic angle spinning (MAS), and variable angle spinning (VAS) spectra. In certain situations, however, the default settings are insufficient to represent the spectrum accurately.
 
-The following code is used to create the plots in this section
+The following code is used to create the plots in this section.
 
 .. plot::
-    :context: close-figs
+ :context: close-figs
 
-    import matplotlib.pyplot as plt
-    import matplotlib as mpl
+ import matplotlib.pyplot as plt
+ import matplotlib as mpl
 
-    mpl.rcParams["figure.figsize"] = (6, 3.5)
-    mpl.rcParams["font.size"] = 11
+ mpl.rcParams["figure.figsize"] = (6, 3.5)
+ mpl.rcParams["font.size"] = 11
 
-    # function to render figures.
-    def plot(csdm_object):
-        ax = plt.subplot(projection="csdm")
-        ax.plot(csdm_object.real, linewidth=1.5)
-        ax.invert_xaxis()
-        plt.tight_layout()
-        plt.show()
+ # function to render figures.
+ def plot(csdm_object):
+ ax = plt.subplot(projection="csdm")
+ ax.plot(csdm_object.real, linewidth=1.5)
+ ax.invert_xaxis()
+ plt.tight_layout()
+ plt.show()
 
 ----
 
@@ -99,57 +92,51 @@ The number of sidebands simulated is determined by the attribute
 :py:attr:`~mrsimulator.simulator.ConfigSimulator.number_of_sidebands`
 where ``sim`` is a simulator object. The default value is 64 and is sufficient for most cases.
 
-In certain circumstances,
-especially when the anisotropy is large or the rotor spin frequency is low, 64 sidebands might
-not be sufficient.
+In certain circumstances, especially when the anisotropy is large or the rotor spin frequency is low, 64 sidebands might not be sufficient.
 
 .. skip: next
 
 .. plot::
-    :context: close-figs
-    :caption: Inaccurate simulation resulting from computing low number of sidebands.
+ :context: close-figs
+ :caption: Inaccurate simulation resulting from computing low number of sidebands.
 
-    from mrsimulator import Simulator, SpinSystem, Site
-    from mrsimulator.method.lib import BlochDecaySpectrum
-    from mrsimulator.method import SpectralDimension
-    from mrsimulator.spin_system.tensors import SymmetricTensor
+ from mrsimulator import Simulator, SpinSystem, Site
+ from mrsimulator.method.lib import BlochDecaySpectrum
+ from mrsimulator.method import SpectralDimension
+ from mrsimulator.spin_system.tensors import SymmetricTensor
 
-    # create a site with a large anisotropy of 100 ppm
-    Si29_site = Site(isotope="29Si", shielding_symmetric=SymmetricTensor(zeta=100, eta=0.2))
-    Si29_sys = SpinSystem(sites=[Si29_site])
+ # create a site with a large anisotropy of 100 ppm
+ Si29_site = Site(isotope="29Si", shielding_symmetric=SymmetricTensor(zeta=100, eta=0.2))
+ Si29_sys = SpinSystem(sites=[Si29_site])
 
-    # create a method with a low rotor frequency of 200 Hz
-    method = BlochDecaySpectrum(
-        channels=["29Si"],
-        rotor_frequency=200,
-        spectral_dimensions=[SpectralDimension(count=1024, spectral_width=25000)],
-    )
+ # create a method with a low rotor frequency of 200 Hz
+ method = BlochDecaySpectrum(
+ channels=["29Si"],
+ rotor_frequency=200,
+ spectral_dimensions=[SpectralDimension(count=1024, spectral_width=25000)],
+ )
 
-    sim = Simulator(spin_systems=[Si29_sys], methods=[method])
-    sim.run()
+ sim = Simulator(spin_systems=[Si29_sys], methods=[method])
+ sim.run()
 
-    # plot the dataset using the method defined above
-    plot(sim.methods[0].simulation)
+ # plot the dataset using the method defined above
+ plot(sim.methods[0].simulation)
 
-Looking at the spinning sideband patterns, we see an abrupt termination of the sideband
-amplitudes at the edges. This inaccurate simulation arises from evaluating a small number of
-sidebands relative to the given anisotropy. Increasing the number of sidebands to 90 should
-resolve the issue.
+Looking at the spinning sideband patterns, we see an abrupt termination of the sideband amplitudes at the edges. This inaccurate simulation arises from evaluating a small number of sidebands relative to the given anisotropy. Increasing the number of sidebands to 90 should resolve the issue.
 
 .. skip: next
 
 .. plot::
-    :context: close-figs
-    :caption: Accurate simulation after increasing number of sidebands computed.
+ :context: close-figs
+ :caption: Accurate simulation after increasing number of sidebands computed.
 
-    # sim already holds our spin systems and methods; no need to reconstruct
-    # set number of sidebands to 90
-    sim.config.number_of_sidebands = 90
-    sim.run()
-    plot(sim.methods[0].simulation)
+ # sim already holds our spin systems and methods; no need to reconstruct
+ # set number of sidebands to 90
+ sim.config.number_of_sidebands = 90
+ sim.run()
+ plot(sim.methods[0].simulation)
 
-Conversely, 64 sidebands might be redundant, in which case the number of sidebands can be reduced.
-Reducing the number of sidebands
+Conversely, 64 sidebands might be redundant, so the number of sidebands can be reduced. Reducing the number of sidebands
 will significantly improve performance, which might save computation time
 when used in iterative algorithms, such as least-squares minimization.
 
@@ -158,99 +145,85 @@ Integration Volume
 
 The attribute :py:attr:`~mrsimulator.simulator.ConfigSimulator.integration_volume` is an
 enumeration with two string literals,
-``octant`` and ``hemisphere``. The integration volume refers to the volume of the sphere over
-which the NMR frequencies are integrated. The default value is *octant*, i.e., the spectrum
-comprises of integrated frequencies arising from the positive octant of the sphere.
-``mrsimulator`` can exploit the orientational symmetry of
-the problem, and thus optimize the simulation by performing a partial integration.
+``octant`` and ``hemisphere``. The integration volume refers to the volume of the sphere over which the NMR frequencies are integrated. The default value is *octant*, i.e., the spectrum is comprised of integrated frequencies arising from the positive octant of the sphere.
+``mrsimulator`` can exploit the problem's orientational symmetry, thus optimizing the simulation by performing a partial integration.
 
-To learn more about the orientational symmetries, refer to Eden et. al. [#f4]_
+To learn more about the orientational symmetries, refer to Eden et al. [#f4]_
 
-Consider the :math:`^{29}\text{Si}` site, ``Si29_site``, from the previous example. This
-site has a symmetric shielding tensor with *zeta* and *eta* as 100 ppm and 0.2,
-respectively. With only *zeta* and *eta*, we can exploit the symmetry of the problem,
-and evaluate the frequency integral over the octant, which is equivalent to the
-integration over the sphere. By adding the Euler angles to this tensor, we break the
-symmetry, and the integration over the octant is no longer accurate.
+Consider the :math:`^{29}\text{Si}` site, ``Si29_site``, from the previous example. This site has a symmetric shielding tensor with *zeta* and *eta* as 100 ppm and 0.2, respectively. With only *zeta* and *eta*, we can exploit the symmetry of the problem and evaluate the frequency integral over the octant, which is equivalent to the integration over the sphere. By adding the Euler angles to this tensor, we break the symmetry, and the integration over the octant is no longer accurate.
 Consider the following examples.
 
 .. skip: next
 
 .. plot::
-    :context: close-figs
-    :caption: Inaccurate simulation resulting from integrating over an octant when the spin
-        system has Euler angles.
+ :context: close-figs
+ :caption: Inaccurate simulation resulting from integrating over an octant when the spin system has Euler angles.
 
-    # add Euler angles to the previous site Si29 site
-    Si29_site.shielding_symmetric.alpha = 1.563  # in rad
-    Si29_site.shielding_symmetric.beta = 1.2131  # in rad
-    Si29_site.shielding_symmetric.gamma = 2.132  # in rad
+ # add Euler angles to the previous site Si29 site
+ Si29_site.shielding_symmetric.alpha = 1.563 # in rad
+ Si29_site.shielding_symmetric.beta = 1.2131 # in rad
+ Si29_site.shielding_symmetric.gamma = 2.132 # in rad
 
-    # set the method to a static spectrum
-    sim.methods[0] = BlochDecaySpectrum(
-        channels=["29Si"],
-        rotor_frequency=0,  # in Hz
-        spectral_dimensions=[SpectralDimension(count=1024, spectral_width=25000)],
-    )
+ # set the method to a static spectrum
+ sim.methods[0] = BlochDecaySpectrum(
+ channels=["29Si"],
+ rotor_frequency=0, # in Hz
+ spectral_dimensions=[SpectralDimension(count=1024, spectral_width=25000)],
+ )
 
-    # simulate and plot
-    sim.run()
-    plot(sim.methods[0].simulation)
+ # simulate and plot
+ sim.run()
+ plot(sim.methods[0].simulation)
 
 To fix this inaccurate spectrum, set the integration volume to *hemisphere* and re-simulate.
 
 .. skip: next
 
 .. plot::
-    :context: close-figs
-    :caption: Accurate CSA spectrum resulting from the frequency contributions evaluated over
-        the top hemisphere.
+ :context: close-figs
+ :caption: Accurate CSA spectrum resulting from the frequency contributions evaluated over
+ the top hemisphere.
 
-    sim.config.integration_volume = "hemisphere"
-    sim.run()
-    plot(sim.methods[0].simulation)
+ sim.config.integration_volume = "hemisphere"
+ sim.run()
+ plot(sim.methods[0].simulation)
 
 Integration Density
 '''''''''''''''''''
 
 The attribute :py:attr:`~mrsimulator.simulator.ConfigSimulator.integration_density`
 controls the number of orientational points sampled over the given
-volume. The resulting spectrum is an integration of the NMR resonance frequency
-evaluated at these orientations. The total
+volume. The resulting spectrum is an integration of the NMR resonance frequency evaluated at these orientations. The total
 number of orientations, :math:`\Theta_\text{count}`, is given as
 
 .. math::
 
-    \Theta_\text{count} = M (n + 1)(n + 2)/2,
+ \Theta_\text{count} = M (n + 1)(n + 2)/2,
 
 where :math:`M` is the number of octants and :math:`n` is value of this attribute. The
-number of octants is deciphered form the value of the *integration_volume* attribute.
-The default value of this attribute, 70, produces 2556 orientations at which the NMR
-frequency contribution is evaluated.
+number of octants is deciphered from the value of the *integration_volume* attribute. The default value of this attribute, 70, produces 2556 orientations at which the NMR frequency contribution is evaluated.
 
 .. plot::
-    :context: close-figs
+ :context: close-figs
 
-    sim = Simulator()
-    print(sim.config.integration_density)  # default
-    # 70
-
-.. plot::
-    :context: close-figs
-
-    print(sim.config.get_orientations_count())  # 1 * 71 * 72 / 2
-    # 2556
+ sim = Simulator()
+ print(sim.config.integration_density) # default
+ # 70
 
 .. plot::
-    :context: close-figs
+ :context: close-figs
 
-    sim.config.integration_density = 100
-    print(sim.config.get_orientations_count())  # 1 * 101 * 102 / 2
-    # 5151
+ print(sim.config.get_orientations_count()) # 1 * 71 * 72 / 2
+ # 2556
 
-Decreasing the integration density may decrease simulation time for computationally intensive
-experiments, but will also decrease the quality of the spectrum. Similarly, increasing integration
-density will improve spectrum quality but also increase computation time.
+.. plot::
+ :context: close-figs
+
+ sim.config.integration_density = 100
+ print(sim.config.get_orientations_count()) # 1 * 101 * 102 / 2
+ # 5151
+
+Decreasing the integration density may decrease simulation time for computationally intensive experiments but will also reduce the quality of the spectrum. Similarly, increasing integration density will improve spectrum quality but also increase computation time.
 
 Decompose Spectrum
 ''''''''''''''''''
@@ -265,33 +238,33 @@ following example.
 .. skip: next
 
 .. plot::
-    :context: close-figs
-    :caption: The frequency contributions from each individual spin systems are
-        combined into one spectrum.
+ :context: close-figs
+ :caption: The frequency contributions from each individual spin systems are
+ combined into one spectrum.
 
-    # Create two distinct sites
-    site_A = Site(
-        isotope="1H",
-        shielding_symmetric=SymmetricTensor(zeta=5, eta=0.1),
-    )
-    site_B = Site(
-        isotope="1H",
-        shielding_symmetric=SymmetricTensor(zeta=-2, eta=0.83),
-    )
+ # Create two distinct sites
+ site_A = Site(
+ isotope="1H",
+ shielding_symmetric=SymmetricTensor(zeta=5, eta=0.1),
+ )
+ site_B = Site(
+ isotope="1H",
+ shielding_symmetric=SymmetricTensor(zeta=-2, eta=0.83),
+ )
 
-    # Create two single site spin systems
-    sys_A = SpinSystem(sites=[site_A], name="System A")
-    sys_B = SpinSystem(sites=[site_B], name="System B")
+ # Create two single site spin systems
+ sys_A = SpinSystem(sites=[site_A], name="System A")
+ sys_B = SpinSystem(sites=[site_B], name="System B")
 
-    # Create a method representing a simple 1-pulse acquire experiment
-    method = BlochDecaySpectrum(
-        channels=["1H"], spectral_dimensions=[SpectralDimension(count=1024, spectral_width=10000)]
-    )
+ # Create a method representing a simple 1-pulse acquire experiment
+ method = BlochDecaySpectrum(
+ channels=["1H"], spectral_dimensions=[SpectralDimension(count=1024, spectral_width=10000)]
+ )
 
-    # Create simulator object, simulate, and plot
-    sim = Simulator(spin_systems=[sys_A, sys_B], methods=[method])
-    sim.run()
-    plot(sim.methods[0].simulation)
+ # Create simulator object, simulate, and plot
+ sim = Simulator(spin_systems=[sys_A, sys_B], methods=[method])
+ sim.run()
+ plot(sim.methods[0].simulation)
 
 When :py:attr:`~mrsimulator.simulator.ConfigSimulator.decompose_spectrum` is set to
 ``spin_system``, the resulting simulation
@@ -302,13 +275,13 @@ system as above, but change the decomposition to ``spin_system``.
 .. skip: next
 
 .. plot::
-    :context: close-figs
-    :caption: Each spin system's frequency contributions are held in separate spectra.
+ :context: close-figs
+ :caption: Each spin system's frequency contributions are held in separate spectra.
 
-    # sim already has the two spin systems and method; no need to reconstruct
-    sim.config.decompose_spectrum = "spin_system"
-    sim.run()
-    plot(sim.methods[0].simulation)
+ # sim already has the two spin systems and method; no need to reconstruct
+ sim.config.decompose_spectrum = "spin_system"
+ sim.run()
+ plot(sim.methods[0].simulation)
 
 Isotropic interpolation
 '''''''''''''''''''''''
@@ -316,10 +289,12 @@ Isotropic interpolation
 The attribute :py:attr:`~mrsimulator.simulator.ConfigSimulator.isotropic_interpolation`
 is an enumeration with two string literals, ``linear`` and ``gaussian``. The default value is ``linear``.
 
-The value specifies the interpolation scheme using in binning isotropic contributions.
+The value specifies the interpolation scheme used in binning isotropic contributions.
 
 ----
 
 .. [#f4] Edén, M. and Levitt, M. H. Computation of orientational averages in
-        solid-state nmr by gaussian spherical quadrature. J. Mag. Res.,
-        **132**, *2*, 220-239, 1998. `doi:10.1006/jmre.1998.1427 <https://doi.org/10.1006/jmre.1998.1427>`_.
+ solid-state nmr by gaussian spherical quadrature. J. Mag. Res.,
+ **132**, *2*, 220-239, 1998. `doi:10.1006/jmre.1998.1427 <https://doi.org/10.1006/jmre.1998.1427>`_.
+
+
