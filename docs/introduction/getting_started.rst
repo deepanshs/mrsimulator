@@ -12,10 +12,10 @@ parameters for the particular NMR measurement to be simulated. A list of :ref:`m
 the corresponding NMR spectra--returned as a CSDM object in each Method object. For more information on the CSDM 
 (Core Scientific Dataset Model), see the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__. There 
 is an additional class, :ref:`_signal_processing_documentation`, for applying various post-simulation signal processing 
-operations to CSDM dataset objects. All objects can be serialized. We adopt the `Javascript Object Notation (JSON) <www.json.org>`__ as 
-the file-serialization format for the model because it is human-readable if properly organized and easily integrable with 
-numerous programming languages and related software packages. It is also the preferred serialization for data exchange in 
-web-based applications.
+operations to CSDM dataset objects. All objects can be serialized. We adopt the 
+`Javascript Object Notation (JSON) <https://www.json.org>`__ as the file-serialization format for the model because it 
+is human-readable if properly organized and easily integrable with numerous programming languages and related software 
+packages. It is also the preferred serialization for data exchange in web-based applications.
 
 Here, we have put together some introductory examples which outline the basic use of ``mrsimulator``. 
 See the User Documentation section for more detailed documentation on the usage of ``mrsimulator`` classes. 
@@ -40,7 +40,7 @@ spin system.  First we will construct two :ref:`site_documentation` objects for 
  H_site = Site(isotope="1H")
  C_site = Site(
     isotope="13C",
-     isotropic_chemical_shift=100.0, # in ppm
+    isotropic_chemical_shift=100.0, # in ppm
     shielding_symmetric=SymmetricTensor(
     zeta=70.0, # in ppm
     eta=0.5,
@@ -52,7 +52,7 @@ represents a proton site with zero(default) chemical shift. ``C_site`` represent
 a chemical shift of 100 ppm as well as a shielding component represented by :ref:`sy_api`
 object. We parametrize tensors using the Haeberlen convention. A Site object has default values for unspecified attributes. 
 All spin interaction parameters, e.g., isotropic chemical shift and other coupling parameters, are initialized to zero. 
-Additionally, the default isotope is `1H`. For example, the code above could have used H_site = Site(). 
+Additionally, the default isotope is `1H`. For example, the code above could have used ``H_site = Site()``. 
 
 Next, we will define a dipolar coupling by creating a :ref:`coupling_documentation` object.
 
@@ -65,7 +65,7 @@ Next, we will define a dipolar coupling by creating a :ref:`coupling_documentati
  # Create the Coupling object
  coupling = Coupling(
     site_index=[0, 1],
-     dipolar=SymmetricTensor(D=-2e4), # in Hz
+    dipolar=SymmetricTensor(D=-2e4), # in Hz
  )
 
 Now we have all the pieces needed to create the spin system.
@@ -88,9 +88,9 @@ That's it! We have created a spin system whose spectrum is ready to be simulated
 Methods
 -------
 
-A :ref`method_documentation` object describes an NMR method. For this introduction, we will use
+A :ref:`method_documentation` object describes an NMR method. For this introduction, we will use
 the :py:class:`~mrsimulator.method.lib.BlochDecaySpectrum`, which is one of the pre-defined methods. 
-Some attributes of the Method still need to be provided, as seen below.
+Some attributes of the Method need to be provided, as shown below.
 
 .. plot::
  :context: close-figs
@@ -169,8 +169,11 @@ Signal Processing
 -----------------
 
 ``mrsimulator`` performs all calculations in the frequency domain.  Plotting the spectrum in this example would 
-show delta functions. For this reason, we use the :ref:`signal_processing_documentation` object to add line 
-broadening to the simulated spectrum.  Here, we apply 200 Hz of exponential line broadening.
+show only delta functions. For this reason, we use the :ref:`signal_processing_documentation` object to add line 
+broadening to the simulated spectrum.  Below, we create a SignalProcessing object to do a convolution of the simulated
+spectrum with a Lorentizian distribution with a full-width-half-maximum of 200 Hz.  This is performed in the time
+domain by first applying an inverse fast Fourier transform, an apodization with an exponential decay, followed by
+a fast Fourier transform back into the frequency domain.
 
 .. plot::
  :context: close-figs
@@ -190,16 +193,15 @@ broadening to the simulated spectrum.  Here, we apply 200 Hz of exponential line
  processed_data = processor.apply_operations(data=sim.methods[0].simulation)
 
 A :ref:`signal_processing_api` object holds a list of operations applied sequentially to a dataset. 
-For a comprehensive list of operations and how to use the :ref:`signal_processing_api` object, see the 
-:ref:`signal_processing_documentation` documentation page.
+For a comprehensive list of operations and further details on using the :ref:`signal_processing_api` object, 
+see the :ref:`signal_processing_documentation` documentation page.
 
 Plotting the Simulation
 -----------------------
 
-We end this example by using the `matplotlib <https://matplotlib.org/stable/>`_ Python library
-to plot the simulated dataset.
-
-Below is code that can be used to generate an image and a pdf file of the simulated spectrum:
+We end this example by using the Python package `matplotlib <https://matplotlib.org/stable/>`_ 
+to plot the simulated dataset.  Below is code that can be used to generate an image and a pdf 
+file of the simulated spectrum:
 
 .. _fig1-getting-started:
 .. skip: next
@@ -223,8 +225,8 @@ Adobe Illustrator.
 Saving the Simulation dataset
 -----------------------------
 ``mrsimulator`` uses the Core Scientific Dataset Model (CSDM) as its object model for the output datasets. 
-The CSDM object can be serialized as a JSON file using its save() method. The example below saves the simulation 
-before and after signal processing as a csdf file.
+The CSDM object can be serialized as a JSON file using its ``save()`` method. The example below saves the 
+simulation  as a csdf file after signal processing.
 
 .. code-block:: python
 
