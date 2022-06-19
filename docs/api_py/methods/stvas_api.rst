@@ -5,7 +5,7 @@
 Satellite-transition variable-angle spinning (ST-VAS)
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 
-The following classes are used in simulating satellite-transition variable-angle spinning
+The following classes are used in simulating a satellite-transition variable-angle spinning
 spectrum correlating the frequencies from the satellite transitions to the central transition
 frequencies. The :math:`p` and :math:`d` pathways for the ST-VAS methods are
 

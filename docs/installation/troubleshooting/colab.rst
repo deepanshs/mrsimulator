@@ -9,7 +9,7 @@ Google Colab has the same functionality as a Jupyter Notebooks. The main differe
 Jupyter Notebooks are run on your local machine. The `Jupyter Notebook documentation
 <https://jupyter-notebook.readthedocs.io/en/stable/index.html>`__ details installation and use.
 
-.. However, if you're new to python, we recommend using `Google Colab <https://colab.research.google.com>`__.
+.. However, if you're new to Python, we recommend using `Google Colab <https://colab.research.google.com>`__.
 
 Updating Numpy
 """"""""""""""
