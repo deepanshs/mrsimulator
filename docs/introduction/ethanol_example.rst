@@ -265,5 +265,5 @@ Now that we have our processed data, we can plot the two spectra.
 Saving the Simulation
 ----------------------
 
- processor_data.save("processed_H_data.csdf")
- processor_data.save("processed_C_data.csdf")
+processed_H_data.save("processed_H_data.csdf")
+processed_C_data.save("processed_C_data.csdf")
