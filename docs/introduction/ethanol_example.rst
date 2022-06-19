@@ -154,7 +154,7 @@ These methods emulate simple 1-pulse acquire experiments.
     :context: close-figs
 
     method_H = BlochDecaySpectrum(
-    channels=["1H"],
+        channels=["1H"],
         magnetic_flux_density=9.4,  # in T
         spectral_dimensions=[
             SpectralDimension(
