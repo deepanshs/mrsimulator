@@ -114,10 +114,10 @@ axis system of the interaction tensor and corresponds to the
 
 
 .. |quad_description| replace:: The parameter :math:`\omega_q` is defined as
-    :math:`\omega_q = \frac{2\piC_q}{2I(2I-1)}`, where :math:`C_q` is the quadrupole
-    coupling constant, and :math:`I` is the spin quantum number
-    of the quadrupole nucleus. The parameters :math:`\eta_q` and :math:`\omega_0` are the
-    quadrupole asymmetry and Larmor frequency of the nucleus, respectively.
+  :math:`\omega_q = \frac{2\piC_q}{2I(2I-1)}`, where :math:`C_q` is the quadrupole
+  coupling constant, and :math:`I` is the spin quantum number
+  of the quadrupole nucleus. The parameters :math:`\eta_q` and :math:`\omega_0` are the
+  quadrupole asymmetry and Larmor frequency of the nucleus, respectively.
 
 .. .. cssclass:: table-bordered table-hover centered
 
@@ -188,27 +188,27 @@ The size of the frequency component, :math:`\omega_k`, from the first-order pert
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of scaled spatial orientation tensors in the principal
-    axis system of the nuclear shielding tensor, |SOF| from Eq. :eq:`eq_5`, of
-    rank L resulting from the Mth order perturbation expansion of the Nuclear
-    shielding Hamiltonian is presented.
-    :widths: 25 25 50
-    :header-rows: 1
+  axis system of the nuclear shielding tensor, |SOF| from Eq. :eq:`eq_5`, of
+  rank L resulting from the Mth order perturbation expansion of the Nuclear
+  shielding Hamiltonian is presented.
+  :widths: 25 25 50
+  :header-rows: 1
 
-    * - Order, :math:`M`
-      - Rank, :math:`L`
-      - :math:`\varsigma_{L,n}^{(k)} = \omega_k\varrho_{L,n}^{(k)}`
+  * - Order, :math:`M`
+    - Rank, :math:`L`
+    - :math:`\varsigma_{L,n}^{(k)} = \omega_k\varrho_{L,n}^{(k)}`
 
-    * - 1
-      - 0
-      - :math:`\varsigma_{0,0}^{(\sigma)} = -\omega_0\sigma_\text{iso}`
+  * - 1
+    - 0
+    - :math:`\varsigma_{0,0}^{(\sigma)} = -\omega_0\sigma_\text{iso}`
 
-    * - 1
-      - 2
-      - :math:`\varsigma_{2,0}^{(\sigma)} = -\omega_0 \zeta_\sigma`,
+  * - 1
+    - 2
+    - :math:`\varsigma_{2,0}^{(\sigma)} = -\omega_0 \zeta_\sigma`,
 
-        :math:`\varsigma_{2,\pm1}^{(\sigma)} = 0`,
+      :math:`\varsigma_{2,\pm1}^{(\sigma)} = 0`,
 
-        :math:`\varsigma_{2,\pm2}^{(\sigma)} = \frac{1}{\sqrt{6}} \omega_0\eta_\sigma \zeta_\sigma`
+      :math:`\varsigma_{2,\pm2}^{(\sigma)} = \frac{1}{\sqrt{6}} \omega_0\eta_\sigma \zeta_\sigma`
 
 
 Electric quadrupole interaction
@@ -244,7 +244,7 @@ expansion of Electric quadrupole Hamiltonian is
 
 .. math::
     \varrho_{L,n}^{(qq)} = \frac{1}{9\zeta_q^2} \sum_{m=-2}^2
-    \left<L~n~|~2~2~m~n-m\right> \rho_{2,m}^{(q)}~\rho_{2,n-m}^{(q)},
+              \left<L~n~|~2~2~m~n-m\right> \rho_{2,m}^{(q)}~\rho_{2,n-m}^{(q)},
 
 where :math:`\left<L~M~|~l_1~l_2~m_1~m_2\right>` is the Clebsch Gordan
 coefficient.
@@ -252,47 +252,47 @@ coefficient.
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of scaled spatial orientation tensors in the principal
-    axis system of the efg tensor, |SOF| from Eq. :eq:`eq_5`, of
-    rank L resulting from the Mth order perturbation expansion
-    of the Electric Quadrupole Hamiltonian is presented.
-    :widths: 25 25 50
-    :header-rows: 1
+  axis system of the efg tensor, |SOF| from Eq. :eq:`eq_5`, of
+  rank L resulting from the Mth order perturbation expansion
+  of the Electric Quadrupole Hamiltonian is presented.
+  :widths: 25 25 50
+  :header-rows: 1
 
-    * - Order, :math:`M`
-      - Rank, :math:`L`
-      - :math:`\varsigma_{L,n}^{(k)} = \omega_k\varrho_{L,n}^{(k)}`
+  * - Order, :math:`M`
+    - Rank, :math:`L`
+    - :math:`\varsigma_{L,n}^{(k)} = \omega_k\varrho_{L,n}^{(k)}`
 
-    * - 1
-      - 2
-      - :math:`\varsigma_{2,0}^{(q)} = \frac{1}{\sqrt{6}} \omega_q`,
+  * - 1
+    - 2
+    - :math:`\varsigma_{2,0}^{(q)} = \frac{1}{\sqrt{6}} \omega_q`,
 
-        :math:`\varsigma_{2,\pm1}^{(q)} = 0`,
+      :math:`\varsigma_{2,\pm1}^{(q)} = 0`,
 
-        :math:`\varsigma_{2,\pm2}^{(q)} = -\frac{1}{6} \eta_q \omega_q`
+      :math:`\varsigma_{2,\pm2}^{(q)} = -\frac{1}{6} \eta_q \omega_q`
 
-    * - 2
-      - 0
-      - :math:`\varsigma_{0,0}^{(qq)} = \frac{\omega_q^2}{\omega_0} \frac{1}{6\sqrt{5}} \left(\frac{\eta_q^2}{3} + 1 \right)`
+  * - 2
+    - 0
+    - :math:`\varsigma_{0,0}^{(qq)} = \frac{\omega_q^2}{\omega_0} \frac{1}{6\sqrt{5}} \left(\frac{\eta_q^2}{3} + 1 \right)`
 
-    * - 2
-      - 2
-      - :math:`\varsigma_{2,0}^{(qq)} = \frac{\omega_q^2}{\omega_0} \frac{\sqrt{2}}{6\sqrt{7}} \left(\frac{\eta_q^2}{3} - 1 \right)`,
+  * - 2
+    - 2
+    - :math:`\varsigma_{2,0}^{(qq)} = \frac{\omega_q^2}{\omega_0} \frac{\sqrt{2}}{6\sqrt{7}} \left(\frac{\eta_q^2}{3} - 1 \right)`,
 
-        :math:`\varsigma_{2,\pm1}^{(qq)} = 0`,
+      :math:`\varsigma_{2,\pm1}^{(qq)} = 0`,
 
-        :math:`\varsigma_{2,\pm2}^{(qq)} = -\frac{\omega_q^2}{\omega_0} \frac{1}{3\sqrt{21}} \eta_q`
+      :math:`\varsigma_{2,\pm2}^{(qq)} = -\frac{\omega_q^2}{\omega_0} \frac{1}{3\sqrt{21}} \eta_q`
 
-    * - 2
-      - 4
-      - :math:`\varsigma_{4,0}^{(qq)} = \frac{\omega_q^2}{\omega_0} \frac{1}{\sqrt{70}} \left(\frac{\eta_q^2}{18} + 1 \right)`,
+  * - 2
+    - 4
+    - :math:`\varsigma_{4,0}^{(qq)} = \frac{\omega_q^2}{\omega_0} \frac{1}{\sqrt{70}} \left(\frac{\eta_q^2}{18} + 1 \right)`,
 
-        :math:`\varsigma_{4,\pm1}^{(qq)} = 0`,
+      :math:`\varsigma_{4,\pm1}^{(qq)} = 0`,
 
-        :math:`\varsigma_{4,\pm2}^{(qq)} = -\frac{\omega_q^2}{\omega_0} \frac{1}{6\sqrt{7}} \eta_q`,
+      :math:`\varsigma_{4,\pm2}^{(qq)} = -\frac{\omega_q^2}{\omega_0} \frac{1}{6\sqrt{7}} \eta_q`,
 
-        :math:`\varsigma_{4,\pm3}^{(qq)} = 0`,
+      :math:`\varsigma_{4,\pm3}^{(qq)} = 0`,
 
-        :math:`\varsigma_{4,\pm4}^{(qq)} = \frac{\omega_q^2}{\omega_0} \frac{1}{36} \eta_q^2`
+      :math:`\varsigma_{4,\pm4}^{(qq)} = \frac{\omega_q^2}{\omega_0} \frac{1}{36} \eta_q^2`
 
 
 Coupled nucleus scaled spatial orientation tensor components.
@@ -326,27 +326,27 @@ The relation between :math:`\varrho_{L,n}^{(J)}` and :math:`\rho_{L,n}^{(J)}` fo
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of scaled spatial orientation tensors in the principal
-    axis system of the J-coupling tensor, |SOF| from Eq. :eq:`eq_5`, of rank L
-    resulting from the Mth order perturbation expansion of the J-coupling
-    Hamiltonian is presented.
-    :widths: 25 25 50
-    :header-rows: 1
+  axis system of the J-coupling tensor, |SOF| from Eq. :eq:`eq_5`, of rank L
+  resulting from the Mth order perturbation expansion of the J-coupling
+  Hamiltonian is presented.
+  :widths: 25 25 50
+  :header-rows: 1
 
-    * - Order, :math:`M`
-      - Rank, :math:`L`
-      - :math:`\varsigma_{L,n}^{(k)} = \omega_k\varrho_{L,n}^{(k)}`
+  * - Order, :math:`M`
+    - Rank, :math:`L`
+    - :math:`\varsigma_{L,n}^{(k)} = \omega_k\varrho_{L,n}^{(k)}`
 
-    * - 1
-      - 0
-      - :math:`\varsigma_{0,0}^{(J)} = 2\pi J_\text{iso}`
+  * - 1
+    - 0
+    - :math:`\varsigma_{0,0}^{(J)} = 2\pi J_\text{iso}`
 
-    * - 1
-      - 2
-      - :math:`\varsigma_{2,0}^{(J)} = 2\pi \zeta_J`,
+  * - 1
+    - 2
+    - :math:`\varsigma_{2,0}^{(J)} = 2\pi \zeta_J`,
 
-        :math:`\varsigma_{2,\pm1}^{(J)} = 0`,
+      :math:`\varsigma_{2,\pm1}^{(J)} = 0`,
 
-        :math:`\varsigma_{2,\pm2}^{(J)} = -\frac{1}{\sqrt{6}} 2\pi\eta_J \zeta_J`
+      :math:`\varsigma_{2,\pm2}^{(J)} = -\frac{1}{\sqrt{6}} 2\pi\eta_J \zeta_J`
 
 
 Weak dipolar-coupling interaction
@@ -389,23 +389,23 @@ The relation between :math:`\varrho_{L,n}^{(d)}` and :math:`\rho_{L,n}^{(d)}` fo
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of scaled spatial orientation tensors in the principal
-    axis system of the dipolar-coupling tensor, |SOF| from Eq. :eq:`eq_5`, of
-    rank L resulting from the Mth order perturbation expansion of the
-    dipolar-coupling Hamiltonian is presented.
-    :widths: 25 25 50
-    :header-rows: 1
+  axis system of the dipolar-coupling tensor, |SOF| from Eq. :eq:`eq_5`, of
+  rank L resulting from the Mth order perturbation expansion of the
+  dipolar-coupling Hamiltonian is presented.
+  :widths: 25 25 50
+  :header-rows: 1
 
-    * - Order, :math:`M`
-      - Rank, :math:`L`
-      - :math:`\varsigma_{L,n}^{(k)} = \omega_k\varrho_{L,n}^{(k)}`
+  * - Order, :math:`M`
+    - Rank, :math:`L`
+    - :math:`\varsigma_{L,n}^{(k)} = \omega_k\varrho_{L,n}^{(k)}`
 
-    * - 1
-      - 2
-      - :math:`\varsigma_{2,0}^{(d)} = 2\omega_d`,
+  * - 1
+    - 2
+    - :math:`\varsigma_{2,0}^{(d)} = 2\omega_d`,
 
-        :math:`\varsigma_{2,\pm1}^{(d)} = 0`,
+      :math:`\varsigma_{2,\pm1}^{(d)} = 0`,
 
-        :math:`\varsigma_{2,\pm2}^{(d)} = 0`
+      :math:`\varsigma_{2,\pm2}^{(d)} = 0`
 
 
 
@@ -422,35 +422,34 @@ Single nucleus spin transition functions
 
 .. cssclass:: table-bordered table-striped centered
 
-.. list-table:: A list of single nucleus spin transition functions,
-    :math:`\xi_L^{(k)}(i,j)`.
-    :widths: 10 12 43 35
-    :header-rows: 1
+.. list-table:: A list of single nucleus spin transition functions, :math:`\xi_L^{(k)}(i,j)`.
+  :widths: 10 12 43 35
+  :header-rows: 1
 
-    * - :math:`\xi_L^{(k)}(i,j)`
-      - Rank, :math:`L`
-      - Value
-      - Description
+  * - :math:`\xi_L^{(k)}(i,j)`
+    - Rank, :math:`L`
+    - Value
+    - Description
 
-    * - :math:`\mathbb{s}(i,j)`
-      - 0
-      - :math:`0`
-      - :math:`\left< j | \hat{T}_{00} | j \right> - \left< i | \hat{T}_{00} | i \right>`
+  * - :math:`\mathbb{s}(i,j)`
+    - 0
+    - :math:`0`
+    - :math:`\left< j | \hat{T}_{00} | j \right> - \left< i | \hat{T}_{00} | i \right>`
 
-    * - :math:`\mathbb{p}(i,j)`
-      - 1
-      - :math:`j-i`
-      - :math:`\left< j | \hat{T}_{10} | j \right> - \left< i | \hat{T}_{10} | i \right>`
+  * - :math:`\mathbb{p}(i,j)`
+    - 1
+    - :math:`j-i`
+    - :math:`\left< j | \hat{T}_{10} | j \right> - \left< i | \hat{T}_{10} | i \right>`
 
-    * - :math:`\mathbb{d}(i,j)`
-      - 2
-      - :math:`\sqrt{\frac{3}{2}} \left(j^2 - i^2 \right)`
-      - :math:`\left< j | \hat{T}_{20} | j \right> - \left< i | \hat{T}_{20} | i \right>`
+  * - :math:`\mathbb{d}(i,j)`
+    - 2
+    - :math:`\sqrt{\frac{3}{2}} \left(j^2 - i^2 \right)`
+    - :math:`\left< j | \hat{T}_{20} | j \right> - \left< i | \hat{T}_{20} | i \right>`
 
-    * - :math:`\mathbb{f}(i,j)`
-      - 3
-      - :math:`\frac{1}{\sqrt{10}} [5(j^3 - i^3) + (1 - 3I(I+1))(j-i)]`
-      - :math:`\left< j | \hat{T}_{30} | j \right> - \left< i | \hat{T}_{30} | i \right>`
+  * - :math:`\mathbb{f}(i,j)`
+    - 3
+    - :math:`\frac{1}{\sqrt{10}} [5(j^3 - i^3) + (1 - 3I(I+1))(j-i)]`
+    - :math:`\left< j | \hat{T}_{30} | j \right> - \left< i | \hat{T}_{30} | i \right>`
 
 .. _irreducible_tensors:
 
@@ -462,45 +461,44 @@ In terms of the tensor product of the Cartesian operators, the above spherical t
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table::
-    :widths: 50 50
-    :header-rows: 1
+  :widths: 50 50
+  :header-rows: 1
 
-    * - Spherical tensor operator
-      - Representation in Cartesian operators
+  * - Spherical tensor operator
+    - Representation in Cartesian operators
 
-    * - :math:`\hat{T}_{0,0}(\bf{I})`
-      - :math:`\hat{1}`
+  * - :math:`\hat{T}_{0,0}(\bf{I})`
+    - :math:`\hat{1}`
 
-    * - :math:`\hat{T}_{1,0}(\bf{I})`
-      - :math:`\hat{I}_z`
+  * - :math:`\hat{T}_{1,0}(\bf{I})`
+    - :math:`\hat{I}_z`
 
-    * - :math:`\hat{T}_{2,0}(\bf{I})`
-      - :math:`\frac{1}{\sqrt{6}} \left[3\hat{I}^2_z - I(I+1)\hat{1} \right]`
+  * - :math:`\hat{T}_{2,0}(\bf{I})`
+    - :math:`\frac{1}{\sqrt{6}} \left[3\hat{I}^2_z - I(I+1)\hat{1} \right]`
 
-    * - :math:`\hat{T}_{3,0}(\bf{I})`
-      - :math:`\frac{1}{\sqrt{10}} \left[5\hat{I}^3_z + \left(1 - 3I(I+1)\right)\hat{I}_z\right]`
+  * - :math:`\hat{T}_{3,0}(\bf{I})`
+    - :math:`\frac{1}{\sqrt{10}} \left[5\hat{I}^3_z + \left(1 - 3I(I+1)\right)\hat{I}_z\right]`
 
 where :math:`I` is the spin quantum number of the nucleus and
 :math:`\hat{\bf{1}}` is the identity operator.
 
 .. cssclass:: table-bordered table-striped centered
 .. list-table:: A list of composite single nucleus spin transition functions,
-    :math:`\xi_L^{(k)}(i,j)`. Here, `I` is the spin quantum
-    number of the nucleus.
-    :widths: 50 50
-    :header-rows: 1
+  :math:`\xi_L^{(k)}(i,j)`. Here, `I` is the spin quantum number of the nucleus.
+  :widths: 50 50
+  :header-rows: 1
 
-    * - :math:`\xi_L^{(k)}(i,j)`
-      - Value
+  * - :math:`\xi_L^{(k)}(i,j)`
+    - Value
 
-    * - :math:`\mathbb{c}_0(i,j)`
-      - :math:`\frac{4}{\sqrt{125}} \left[I(I+1) - \frac{3}{4}\right] \mathbb{p}(i, j) + \sqrt{\frac{18}{25}} \mathbb{f}(i, j)`
+  * - :math:`\mathbb{c}_0(i,j)`
+    - :math:`\frac{4}{\sqrt{125}} \left[I(I+1) - \frac{3}{4}\right] \mathbb{p}(i, j) + \sqrt{\frac{18}{25}} \mathbb{f}(i, j)`
 
-    * - :math:`\mathbb{c}_2(i,j)`
-      - :math:`\sqrt{\frac{2}{175}} \left[I(I+1) - \frac{3}{4}\right] \mathbb{p}(i, j) - \frac{6}{\sqrt{35}} \mathbb{f}(i, j)`
+  * - :math:`\mathbb{c}_2(i,j)`
+    - :math:`\sqrt{\frac{2}{175}} \left[I(I+1) - \frac{3}{4}\right] \mathbb{p}(i, j) - \frac{6}{\sqrt{35}} \mathbb{f}(i, j)`
 
-    * - :math:`\mathbb{c}_4(i,j)`
-      - :math:`-\sqrt{\frac{18}{875}} \left[I(I+1) - \frac{3}{4}\right] \mathbb{p}(i, j) - \frac{17}{\sqrt{175}} \mathbb{f}(i, j)`
+  * - :math:`\mathbb{c}_4(i,j)`
+    - :math:`-\sqrt{\frac{18}{875}} \left[I(I+1) - \frac{3}{4}\right] \mathbb{p}(i, j) - \frac{17}{\sqrt{175}} \mathbb{f}(i, j)`
 
 
 Weakly coupled nucleus spin transition functions.
@@ -509,17 +507,17 @@ Weakly coupled nucleus spin transition functions.
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of weakly coupled nucleus spin transition functions,
-    :math:`\xi_L^{(k)}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`.
-    :widths: 22 22 56
-    :header-rows: 1
+  :math:`\xi_L^{(k)}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`.
+  :widths: 22 22 56
+  :header-rows: 1
 
-    * - :math:`\xi_L^{(k)}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
-      - Value
-      - Description
+  * - :math:`\xi_L^{(k)}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
+    - Value
+    - Description
 
-    * - :math:`\mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
-      - :math:`m_{f_I} m_{f_S} - m_{i_I} m_{i_S}`
-      - :math:`\left< m_{f_I} m_{f_S} | \hat{T}_{10}(I) \hat{T}_{10}(S) | m_{f_I} m_{f_S} \right>` – :math:`\left< m_{i_I} m_{i_S} | \hat{T}_{10}(I) \hat{T}_{10}(S) | m_{i_I} m_{i_S} \right>`
+  * - :math:`\mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
+    - :math:`m_{f_I} m_{f_S} - m_{i_I} m_{i_S}`
+    - :math:`\left< m_{f_I} m_{f_S} | \hat{T}_{10}(I) \hat{T}_{10}(S) | m_{f_I} m_{f_S} \right>` – :math:`\left< m_{i_I} m_{i_S} | \hat{T}_{10}(I) \hat{T}_{10}(S) | m_{i_I} m_{i_S} \right>`
 
 Here, :math:`\hat{T}_{L,k}(\bf{I})` are the irreducible spherical tensor
 operators of rank :math:`L`, :math:`k \in [-L, L]`, for transition
@@ -535,59 +533,59 @@ Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}`
 
 .. _tb_freq_components:
 .. list-table:: The table presents a list of frequency tensors defined in the principal  axis system of the respective interaction tensor from Eq. :eq:`eq_7`,
-    :math:`\varpi_{L,n}^{(k)}`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonian supported in ``mrsimulator``.
-    :widths: 20 15 15 50
-    :header-rows: 1
+  :math:`\varpi_{L,n}^{(k)}`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonian supported in ``mrsimulator``.
+  :widths: 20 15 15 50
+  :header-rows: 1
 
-    * - Interaction
-      - Order, :math:`M`
-      - Rank, :math:`L`
-      - :math:`\varpi_{L,n}^{(k)}`
+  * - Interaction
+    - Order, :math:`M`
+    - Rank, :math:`L`
+    - :math:`\varpi_{L,n}^{(k)}`
 
-    * - Nuclear shielding
-      - 1
-      - 0
-      - :math:`\varpi_{0,0}^{(\sigma)} = \varsigma_{0,0}^{(\sigma)} ~~ \mathbb{p}(i, j)`
+  * - Nuclear shielding
+    - 1
+    - 0
+    - :math:`\varpi_{0,0}^{(\sigma)} = \varsigma_{0,0}^{(\sigma)} ~~ \mathbb{p}(i, j)`
 
-    * - Nuclear shielding
-      - 1
-      - 2
-      - :math:`\varpi_{2,n}^{(\sigma)} = \varsigma_{2,n}^{(\sigma)} ~~ \mathbb{p}(i, j)`
+  * - Nuclear shielding
+    - 1
+    - 2
+    - :math:`\varpi_{2,n}^{(\sigma)} = \varsigma_{2,n}^{(\sigma)} ~~ \mathbb{p}(i, j)`
 
-    * - Electric Quadrupole
-      - 1
-      - 2
-      - :math:`\varpi_{2,n}^{(q)} = \varsigma_{2,n}^{(q)} ~~ \mathbb{d}(i, j)`
+  * - Electric Quadrupole
+    - 1
+    - 2
+    - :math:`\varpi_{2,n}^{(q)} = \varsigma_{2,n}^{(q)} ~~ \mathbb{d}(i, j)`
 
-    * - Electric Quadrupole
-      - 2
-      - 0
-      - :math:`\varpi_{0,0}^{(qq)} = \varsigma_{0,0}^{(qq)} ~~ \mathbb{c}_0(i, j)`
+  * - Electric Quadrupole
+    - 2
+    - 0
+    - :math:`\varpi_{0,0}^{(qq)} = \varsigma_{0,0}^{(qq)} ~~ \mathbb{c}_0(i, j)`
 
-    * - Electric Quadrupole
-      - 2
-      - 2
-      - :math:`\varpi_{2,n}^{(qq)} = \varsigma_{2,n}^{(qq)} ~~ \mathbb{c}_2(i, j)`
+  * - Electric Quadrupole
+    - 2
+    - 2
+    - :math:`\varpi_{2,n}^{(qq)} = \varsigma_{2,n}^{(qq)} ~~ \mathbb{c}_2(i, j)`
 
-    * - Electric Quadrupole
-      - 2
-      - 4
-      - :math:`\varpi_{4,n}^{(qq)} = \varsigma_{4,n}^{(qq)} ~~ \mathbb{c}_4(i, j)`
+  * - Electric Quadrupole
+    - 2
+    - 4
+    - :math:`\varpi_{4,n}^{(qq)} = \varsigma_{4,n}^{(qq)} ~~ \mathbb{c}_4(i, j)`
 
-    * - Weak :math:`J`-coupling
-      - 1
-      - 0
-      - :math:`\varpi_{0,0}^{(J)} = \varsigma_{0,0}^{(J)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
+  * - Weak :math:`J`-coupling
+    - 1
+    - 0
+    - :math:`\varpi_{0,0}^{(J)} = \varsigma_{0,0}^{(J)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
 
-    * - Weak :math:`J`-coupling
-      - 1
-      - 2
-      - :math:`\varpi_{2,n}^{(J)} = \varsigma_{2,n}^{(J)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
+  * - Weak :math:`J`-coupling
+    - 1
+    - 2
+    - :math:`\varpi_{2,n}^{(J)} = \varsigma_{2,n}^{(J)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
 
-    * - Weak dipolar-coupling
-      - 1
-      - 2
-      - :math:`\varpi_{2,n}^{(d)} = \varsigma_{2,n}^{(d)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
+  * - Weak dipolar-coupling
+    - 1
+    - 2
+    - :math:`\varpi_{2,n}^{(d)} = \varsigma_{2,n}^{(d)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
 
 **References**
 

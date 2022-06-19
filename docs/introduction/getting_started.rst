@@ -40,9 +40,9 @@ spin system.  First we will construct two :ref:`site_documentation` objects for 
     H_site = Site(isotope="1H")
     C_site = Site(
         isotope="13C",
-        isotropic_chemical_shift=100.0, # in ppm
+        isotropic_chemical_shift=100.0,  # in ppm
         shielding_symmetric=SymmetricTensor(
-            zeta=70.0, # in ppm
+            zeta=70.0,  # in ppm
             eta=0.5,
         ),
     )
@@ -65,7 +65,7 @@ Next, we will define a dipolar coupling by creating a :ref:`coupling_documentati
     # Create the Coupling object
     coupling = Coupling(
         site_index=[0, 1],
-        dipolar=SymmetricTensor(D=-2e4), # in Hz
+        dipolar=SymmetricTensor(D=-2e4),  # in Hz
     )
 
 Now we have all the pieces needed to create the spin system.
@@ -102,14 +102,14 @@ Some attributes of the Method need to be provided, as shown below.
     # Create a BlochDecaySpectrum object
     method = BlochDecaySpectrum(
         channels=["13C"],
-        magnetic_flux_density=9.4, # in T
-        rotor_angle=54.735 * 3.14159 / 180, # in rad (magic angle)
-        rotor_frequency=3000, # in Hz
+        magnetic_flux_density=9.4,  # in T
+        rotor_angle=54.735 * 3.14159 / 180,  # in rad (magic angle)
+        rotor_frequency=3000,  # in Hz
         spectral_dimensions=[
             SpectralDimension(
                 count=2048,
-                spectral_width=80e3, # in Hz
-                reference_offset=6e3, # in Hz
+                spectral_width=80e3,  # in Hz
+                reference_offset=6e3,  # in Hz
                 label=r"$^{13}$C resonances",
             )
         ],
@@ -212,10 +212,10 @@ file of the simulated spectrum:
     :caption: A simulated :math:`^{13}\text{C}` MAS spectrum.
 
     import matplotlib.pyplot as plt
-    plt.figure(figsize=(5, 3)) # set the figure size
+    plt.figure(figsize=(5, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
     ax.plot(processed_data.real)
-    ax.invert_xaxis() # reverse x-axis
+    ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout(pad=0.1)
     plt.savefig("spectrum.pdf")
     plt.show()

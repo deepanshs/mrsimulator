@@ -34,7 +34,7 @@ used to apply operations. Here we create a new signal processing object
 Each signal processor object holds a list of operations under the *operations* attribute. Below we add operations to apply Gaussian line broadening and a scale factor.
 
 .. plot::
- :context: close-figs
+    :context: close-figs
 
     processor.operations = [
         sp.IFFT(),

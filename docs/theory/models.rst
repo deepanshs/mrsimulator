@@ -63,9 +63,9 @@ and the explicit matrix form of :math:`{\bf S}` is
 .. math::
     {\bf S} = \left[
     \begin{array}{l l l}
-    \sqrt{3} U_5 - U_1 & \sqrt{3} U_4 & \sqrt{3} U_2 \\
-    \sqrt{3} U_4 & -\sqrt{3} U_5 - U_1 & \sqrt{3} U_3 \\
-    \sqrt{3} U_2 & \sqrt{3} U_3 & 2 U_1
+    \sqrt{3} U_5 - U_1  & \sqrt{3} U_4          & \sqrt{3} U_2 \\
+    \sqrt{3} U_4        & -\sqrt{3} U_5 - U_1   & \sqrt{3} U_3 \\
+    \sqrt{3} U_2        & \sqrt{3} U_3          & 2 U_1
     \end{array}
     \right].
 

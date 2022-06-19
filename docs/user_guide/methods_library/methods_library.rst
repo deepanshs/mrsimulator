@@ -54,51 +54,51 @@ The method object also has the *spectral_dimensions* attribute, which contains a
 
 .. _table_generic_method:
 .. list-table:: Attribute description for generic library methods.
- :widths: 25 75
- :header-rows: 1
+  :widths: 25 75
+  :header-rows: 1
 
- * - Keywords
-   - Description
+  * - Keywords
+    - Description
 
- * - channels
-   - A list of isotope symbols over which the given method applies.
+  * - channels
+    - A list of isotope symbols over which the given method applies.
 
- * - magnetic_flux_density
-   - The macroscopic magnetic flux density, in T, of the applied external magnetic field.
+  * - magnetic_flux_density
+    - The macroscopic magnetic flux density, in T, of the applied external magnetic field.
 
- * - rotor_angle
-   - The angle between the sample rotation axis and the applied external magnetic field in radians.
+  * - rotor_angle
+    - The angle between the sample rotation axis and the applied external magnetic field in radians.
 
- * - rotor_frequency
-   - The sample rotation frequency in Hz.
+  * - rotor_frequency
+    - The sample rotation frequency in Hz.
 
- * - spectral_dimensions
-   - A list of spectral dimensions. The coordinates along each spectral dimension is
-     described with the keywords, *count* (:math:`N`), *spectral_width*
-     (:math:`\nu_\text{sw}`), and *reference_offset* (:math:`\nu_0`). The
-     coordinates are given as,
+  * - spectral_dimensions
+    - A list of spectral dimensions. The coordinates along each spectral dimension is
+      described with the keywords, *count* (:math:`N`), *spectral_width*
+      (:math:`\nu_\text{sw}`), and *reference_offset* (:math:`\nu_0`). The
+      coordinates are given as,
 
-     .. math::
-        \left([0, 1, 2, ... N-1] - \frac{T}{2}\right) \frac{\nu_\text{sw}}{N} + \nu_0
+      .. math::
+         \left([0, 1, 2, ... N-1] - \frac{T}{2}\right) \frac{\nu_\text{sw}}{N} + \nu_0
 
-     where :math:`T=N` when :math:`N` is even else :math:`T=N-1`.
+      where :math:`T=N` when :math:`N` is even else :math:`T=N-1`.
 
 
 .. cssclass:: table-bordered table-striped centered
 
 .. _table_generic_spectral_dimension:
 .. list-table:: Spectral dimension attributes for use with library methods.
-   :widths: 25 75
-   :header-rows: 1
+  :widths: 25 75
+  :header-rows: 1
 
-   * - Keywords
-     - Description
+  * - Keywords
+    - Description
 
-   * - count
-     - An integer representing the number of points in the spectral dimension
+  * - count
+    - An integer representing the number of points in the spectral dimension
 
-   * - spectral_width
-     - The spectral width of the spectral dimension in Hz.
+  * - spectral_width
+    - The spectral width of the spectral dimension in Hz.
 
-   * - reference_offset
-     - The reference offset of the spectral dimension in Hz.
+  * - reference_offset
+    - The reference offset of the spectral dimension in Hz.

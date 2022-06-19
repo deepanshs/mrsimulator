@@ -7,7 +7,7 @@ For the users
 
    If you encounter an issue during installation, see our `troubleshooting section <instillation_troubleshooting>`_.
 
-If that doesn't resolve your issue, please create a bug report on our `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
+   If that doesn't resolve your issue, please create a bug report on our `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.
 
 Strict Requirements
 -------------------

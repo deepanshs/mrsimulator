@@ -28,9 +28,9 @@ All ``mrsimulator`` objects can be serialized into a JSON format. Calling the ``
     py_dict = Si29_site.json()
     print(py_dict)
     # {
-    # 'isotope': '29Si',
-    # 'isotropic_chemical_shift': '-89.0 ppm',
-    # 'shielding_symmetric': {'zeta': '59.8 ppm', 'eta': 0.62}
+    #     'isotope': '29Si',
+    #     'isotropic_chemical_shift': '-89.0 ppm',
+    #     'shielding_symmetric': {'zeta': '59.8 ppm', 'eta': 0.62}
     # }
 
 All values are serialized with units when applicable, but you may call ``json(units=False)`` if you wish to serialize without units.

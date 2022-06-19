@@ -20,16 +20,16 @@ spin systems and methods to a simulator object.
     from mrsimulator.method.lib import BlochDecaySpectrum
 
     # Setup the spin system and method objects
-    system1 = SpinSystem(sites=[Site(isotope="1H")]) # Proton spin system
-    system2 = SpinSystem(sites=[Site(isotope="17O")]) # Oxygen spin system
-    system3 = SpinSystem(sites=[Site(isotope="29Si")]) # Silicon spin system
+    system1 = SpinSystem(sites=[Site(isotope="1H")])  # Proton spin system
+    system2 = SpinSystem(sites=[Site(isotope="17O")])  # Oxygen spin system
+    system3 = SpinSystem(sites=[Site(isotope="29Si")])  # Silicon spin system
     method1 = BlochDecaySpectrum(channels=["1H"])
     method2 = BlochDecaySpectrum(channels=["29Si"])
 
     # Create the Simulator object
     sim = Simulator()
-    sim.spin_systems = [system1, system2, system3] # Add list of spin systems
-    sim.methods = [method1, method2] # add list of methods
+    sim.spin_systems = [system1, system2, system3]  # Add list of spin systems
+    sim.methods = [method1, method2]  # add list of methods
 
 ``sim`` is a :ref:`simulator_api` object which holds three spin systems and two methods. See
 :ref:`spin_system_documentation` and :ref:`method_documentation` documentation for more
@@ -160,14 +160,14 @@ Consider the following examples.
     :caption: Inaccurate simulation resulting from integrating over an octant when the spin system has Euler angles.
 
     # add Euler angles to the previous site Si29 site
-    Si29_site.shielding_symmetric.alpha = 1.563 # in rad
-    Si29_site.shielding_symmetric.beta = 1.2131 # in rad
-    Si29_site.shielding_symmetric.gamma = 2.132 # in rad
+    Si29_site.shielding_symmetric.alpha = 1.563  # in rad
+    Si29_site.shielding_symmetric.beta = 1.2131  # in rad
+    Si29_site.shielding_symmetric.gamma = 2.132  # in rad
 
     # set the method to a static spectrum
     sim.methods[0] = BlochDecaySpectrum(
         channels=["29Si"],
-        rotor_frequency=0, # in Hz
+        rotor_frequency=0,  # in Hz
         spectral_dimensions=[SpectralDimension(count=1024, spectral_width=25000)],
     )
 
@@ -207,20 +207,20 @@ number of octants is deciphered from the value of the *integration_volume* attri
     :context: close-figs
 
     sim = Simulator()
-    print(sim.config.integration_density) # default
+    print(sim.config.integration_density)  # default
     # 70
 
 .. plot::
     :context: close-figs
 
-    print(sim.config.get_orientations_count()) # 1 * 71 * 72 / 2
+    print(sim.config.get_orientations_count())  # 1 * 71 * 72 / 2
     # 2556
 
 .. plot::
     :context: close-figs
 
     sim.config.integration_density = 100
-    print(sim.config.get_orientations_count()) # 1 * 101 * 102 / 2
+    print(sim.config.get_orientations_count())  # 1 * 101 * 102 / 2
     # 5151
 
 Decreasing the integration density may decrease simulation time for computationally intensive experiments but will also reduce the quality of the spectrum. Similarly, increasing integration density will improve spectrum quality but also increase computation time.
@@ -273,6 +273,7 @@ same as the number of spin systems within the simulator object. Consider the sam
 system as above, but change the decomposition to ``spin_system``.
 
 .. skip: next
+
 .. plot::
     :context: close-figs
     :caption: Each spin system's frequency contributions are held in separate spectra.
