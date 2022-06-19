@@ -4,7 +4,7 @@ For developers and contributors
 Setting up a dedicated code editor
 ''''''''''''''''''''''''''''''''''
 
-Using a code editor or IDE is useful when contributing to a codebase. Many products are available; 
+Using a code editor or IDE is useful when contributing to a codebase. Many products are available;
 use what is most familiar. For new developers, we recommend
 `VS Code <https://code.visualstudio.com>`_ since it is lightweight, free, and has a breadth of
 community extensions.
@@ -18,31 +18,31 @@ Making a copy of someone's code on GitHub is the same as making a *fork*.  A for
 2. Go to the `mrsimulator Github <https://github.com/deepanshs/mrsimulator>`_ home page.
 3. Click on the *fork* button.
 
-You will see a short animation of Octocat scanning a book on a flatbed scanner. 
+You will see a short animation of Octocat scanning a book on a flatbed scanner.
 After that, you should find yourself on the home page for your forked copy of mrsimulator.
 
 
 Create a development environment
 ''''''''''''''''''''''''''''''''
 
-It is good practice to create separate virtual python environments when developing packages. 
+It is good practice to create separate virtual python environments when developing packages.
 There are many environment managers available; however, we recommend using `Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_
 
 The following is an example of creating a Conda environment.
 
 .. code-block:: bash
 
- $ conda create -n mrsimulator-dev python=3.9
+    $ conda create -n mrsimulator-dev python=3.9
 
 The above command will create a new environment named *mrsimulator-dev* using python 3.9. To activate the environment, use
 
 .. code-block:: bash
 
- $ conda activate mrsimulator-dev
+    $ conda activate mrsimulator-dev
 
 
 Make sure git is installed on your computer.
-'''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''
 
 `Git <https://git-scm.com>`_ is the name of a source code management system.  It keeps track of the changes made to the code and manages contributions from several individuals. You may read about git at the `Git Basics <https://git-scm.com/book/>`_.
 
@@ -50,8 +50,8 @@ If you are using anaconda/miniconda, you probably have git pre-installed. To che
 
 .. code-block:: bash
 
- $ git --version
- # if git is installed, you will get something like git version 2.30.2
+    $ git --version
+    # if git is installed, you will get something like git version 2.30.2
 
 If git is not installed, `install <https://git-scm.com/downloads>`_ it.
 
@@ -73,7 +73,7 @@ copy the fork of mrsimulator from your GitHub account to your computer. Make a c
 
 .. code-block:: bash
 
- $ git clone --recursive https://github.com/your-user-name/mrsimulator.git
+    $ git clone --recursive https://github.com/your-user-name/mrsimulator.git
 
 Insert *your-user-name* with your GitHub account username. If there is an error at this stage, it is probably an error in setting up authentication.
 
@@ -91,17 +91,17 @@ the previous step, and add a remote:
 
 .. code-block:: bash
 
- cd mrsimulator
- git remote add mrsimulator git://github.com/deepanshs/mrsimulator.git
+    cd mrsimulator
+    git remote add mrsimulator git://github.com/deepanshs/mrsimulator.git
 
 You can check that everything is set up correctly so far by asking git to show you all of the remotes it knows about for your local repository of mrsimulator with ``git remote -v``, which should display something like
 
 .. code-block:: bash
 
- mrsimulator git://github.com/deepanshs/mrsimulator.git (fetch)
- mrsimulator git://github.com/deepanshs/mrsimulator.git (push)
- origin git@github.com:your-user-name/mrsimulator.git (fetch)
- origin git@github.com:your-user-name/mrsimulator.git (push)
+    mrsimulator git://github.com/deepanshs/mrsimulator.git (fetch)
+    mrsimulator git://github.com/deepanshs/mrsimulator.git (push)
+    origin git@github.com:your-user-name/mrsimulator.git (fetch)
+    origin git@github.com:your-user-name/mrsimulator.git (push)
 
 
 Build the development version of mrsimulator
@@ -116,20 +116,20 @@ OS-dependent prerequisites
 
 .. tabs::
 
- .. tab:: Linux
- :tabid: linus_source
+   .. tab:: Linux
+     :tabid: linus_source
 
- .. include:: source_install/linux.rst
+     .. include:: source_install/linux.rst
 
- .. tab:: Mac OSX
- :tabid: macosx_source
+   .. tab:: Mac OSX
+     :tabid: macosx_source
 
- .. include:: source_install/macosx.rst
+     .. include:: source_install/macosx.rst
 
- .. tab:: Windows
- :tabid: windows_source
+   .. tab:: Windows
+     :tabid: windows_source
 
- .. include:: source_install/windows.rst
+     .. include:: source_install/windows.rst
 
 Build and install
 """""""""""""""""
@@ -139,8 +139,8 @@ packages with pip. In the directory where your copy of mrsimulator is, type:
 
 .. code-block:: bash
 
- $ pip install -r requirements-dev.txt
- $ pip install -e .
+    $ pip install -r requirements-dev.txt
+    $ pip install -e .
 
 As before, if you get an error that you don’t have the permission to install the
 package into the default site-packages directory, you may try installing by adding the
@@ -148,7 +148,7 @@ package into the default site-packages directory, you may try installing by addi
 
 
 Note for the developers and contributors.
-''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''
 
 **Before commits**: Mrsimulator follows python community standards for writing code and documentation. To help guide the developers and contributors toward these standards, we have created a *.pre-commit-config.yaml* file that when used with ``pre-commit``, will
 inspect the code and document for issues.
@@ -162,7 +162,7 @@ of the mrsimulator package folder, type
 
 .. code-block:: bash
 
- $ pytest
+    $ pytest
 
 which will run a series of tests.
 
@@ -170,7 +170,7 @@ which will run a series of tests.
 
 .. code-block:: bash
 
- $ make html
+    $ make html
 
 The above command will build the documentation and store the build at
 *mrsimulator/docs/_build/html*. Double click the *index.html* file within this folder to view the offline documentation.
@@ -183,5 +183,3 @@ The above command will build the documentation and store the build at
 .. - Mac OS - ``clang``
 .. - Linux - ``gcc``
 .. - Windows - ``msvc`` (https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019)
-
-

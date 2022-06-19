@@ -5,8 +5,8 @@ Creating a Python environment using Anaconda
 """"""""""""""""""""""""""""""""""""""""""""
 
 Since different Python packages have different dependencies, installing multiple packages on the
-same machine can cause `issues <https://en.wikipedia.org/wiki/Dependency_hell>`__. For example, 
-``mrsimulator`` requires at least ``numpy v1.17`` but ``some-other-library`` might require exactly 
+same machine can cause `issues <https://en.wikipedia.org/wiki/Dependency_hell>`__. For example,
+``mrsimulator`` requires at least ``numpy v1.17`` but ``some-other-library`` might require exactly
 ``numpy v1.15``. These two libraries would likely throw errors when run in the same environment.
 
 For this reason, we recommend using an environment manager, like ``venv`` or ``anaconda``.

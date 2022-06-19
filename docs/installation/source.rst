@@ -19,20 +19,20 @@ extract the *.tar.gz* file.
 
 .. tabs::
 
- .. tab:: Linux
-    :tabid: linus_source
+   .. tab:: Linux
+      :tabid: linus_source
 
- .. include:: source_install/linux.rst
+   .. include:: source_install/linux.rst
 
- .. tab:: Mac OSX
-    :tabid: macosx_source
+   .. tab:: Mac OSX
+      :tabid: macosx_source
 
- .. include:: source_install/macosx.rst
+   .. include:: source_install/macosx.rst
 
- .. tab:: Windows
-     :tabid: windows_source
+   .. tab:: Windows
+      :tabid: windows_source
 
- .. include:: source_install/windows.rst
+   .. include:: source_install/windows.rst
 
 **Building and Installing**
 
@@ -41,14 +41,14 @@ package (usually, the folder is named mrsimulator),
 
 .. code-block:: bash
 
- $ cd mrsimulator
+    $ cd mrsimulator
 
 From within the source code folder, type the following in the terminal to install the
 library.
 
 .. code-block:: bash
 
- $ pip install .
+    $ pip install .
 
 If you get an error that you don't have the permission to install the package into
 the default ``site-packages`` directory, you may try installing with the ``--user``
@@ -56,5 +56,4 @@ options as,
 
 .. code-block:: bash
 
- $ pip install . --user
-
+    $ pip install . --user

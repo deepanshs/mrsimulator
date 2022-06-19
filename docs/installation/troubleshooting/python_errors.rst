@@ -2,30 +2,30 @@
 Common Python Syntax Errors
 ===========================
 
-Python syntax is slightly different than other languages, which causes some confusion. 
-Using a dedicated code editor is the easiest way to find and prevent syntax errors. 
-We recommend using VS Code on your local machine or Google Colab, which runs everything online. 
-These programs check for syntax errors as you write code.  The following are some typical 
+Python syntax is slightly different than other languages, which causes some confusion.
+Using a dedicated code editor is the easiest way to find and prevent syntax errors.
+We recommend using VS Code on your local machine or Google Colab, which runs everything online.
+These programs check for syntax errors as you write code.  The following are some typical
 syntax errors encountered and how to solve them.
 
 
 IndentationError
 """"""""""""""""
 
-If you encounter an ``IndentationError``, you have an extra/missing whitespace in your code. 
-Code editors make finding troublesome whitespace easier, but the error should also show the 
+If you encounter an ``IndentationError``, you have an extra/missing whitespace in your code.
+Code editors make finding troublesome whitespace easier, but the error should also show the
 code snippet which threw the error.
 
-``IndentationError: expected an indented block`` means some code is missing an indent after a 
+``IndentationError: expected an indented block`` means some code is missing an indent after a
 class/method/loop deceleration.
 
-``IndentationError: unindent does not match any outer indentation level`` means the code didn't 
+``IndentationError: unindent does not match any outer indentation level`` means the code didn't
 return to a previous indentation level.
 
 ``IndentationError: unexpected indent`` means Python encountered unexpected whitespace.
 
-Code blocks in Python rely on indentation levels (1 level = 4 spaces), so whitespace can't be placed 
-randomly. Code blocks are preceded by a ``:``, and all code in one block has the same indentation. 
+Code blocks in Python rely on indentation levels (1 level = 4 spaces), so whitespace can't be placed
+randomly. Code blocks are preceded by a ``:``, and all code in one block has the same indentation.
 To get out of a code block, remove an indentation level.
 
 As an example of indentation, here is some code that adds the numbers 0 to 9:
@@ -44,8 +44,8 @@ As an example of indentation, here is some code that adds the numbers 0 to 9:
 Mismatched Brackets and Square Brackets
 """""""""""""""""""""""""""""""""""""""
 
-Nesting many lists and dictionaries inside each other become hard to read. If you have mismatched or 
-missing brackets, Python will throw ``SyntaxError: invalid syntax``. Code editors can automatically 
+Nesting many lists and dictionaries inside each other become hard to read. If you have mismatched or
+missing brackets, Python will throw ``SyntaxError: invalid syntax``. Code editors can automatically
 format large nestings and highlight which openings and closings go together, making the code easier to understand.
 
 Make sure all brackets are balanced and that opening and closing brackets match. Python uses three types of brackets:
@@ -131,8 +131,6 @@ For example
       File "<stdin>", line 1, in <module>
     TypeError: 'int' object is not subscriptable
 
-Also, subscriptable objects can only be indexed so many times. A 1D list can only be indexed once, 
+Also, subscriptable objects can only be indexed so many times. A 1D list can only be indexed once,
 2D twice, and so on. If you are using nested lists/dicts, make sure you aren't exceeding the number
 of indexes possible.
-
-
