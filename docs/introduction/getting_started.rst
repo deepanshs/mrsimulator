@@ -228,7 +228,9 @@ Saving the Simulation dataset
 The CSDM object can be serialized as a JSON file using its ``save()`` method. The example below saves the 
 simulation  as a csdf file after signal processing.
 
-processed_data.save("processed_simulation.csdf")
+.. plot::
+   :context: close-figs
+   processed_data.save("processed_simulation.csdf")
 
 For more information on the CSDM format, see the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
 
