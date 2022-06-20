@@ -74,7 +74,7 @@ def test_2D():
     spin_system = SpinSystem(sites=[site_Ni])
 
     data = []
-    for angle, n_gamma in zip([0, np.pi / 2], [1, 500]):
+    for angle, n_gamma in zip([0, np.pi / 4], [1, 500]):
         shifting_d = Method(
             name="Shifting-d",
             channels=["2H"],
@@ -112,13 +112,14 @@ def test_2D():
         sim = Simulator(spin_systems=[spin_system], methods=[shifting_d])
         sim.config.integration_volume = "hemisphere"
         sim.config.number_of_gamma_angles = n_gamma
-        sim.run(auto_switch=(n_gamma == 1))
+        sim.run(auto_switch=False)
 
-        data.append(sim.methods[0].simulation.y[0].components[0])
+        res = sim.methods[0].simulation.y[0].components[0]
+        data.append(res / res.max())
 
     # _, ax = plt.subplots(1, 2)
     # ax[0].imshow(data[0].real)
     # ax[1].imshow(data[1].real)
     # plt.show()
 
-    np.testing.assert_almost_equal(data[0], data[1], decimal=2)
+    np.testing.assert_almost_equal(data[0], data[1], decimal=1.8)
