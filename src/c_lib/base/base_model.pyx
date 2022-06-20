@@ -21,7 +21,8 @@ def core_simulator(method,
        unsigned int integration_volume=1,
        unsigned int isotropic_interpolation=0,
        unsigned int number_of_gamma_angles=1,
-       bool_t interpolation=True):
+       bool_t interpolation=True,
+       bool_t auto_switch=True):
     """core simulator init"""
 
 # initialization and config
@@ -130,7 +131,7 @@ def core_simulator(method,
     # if np.all(srfiH == 1e12):
     #     n_dim_sidebands[0] = 1
 
-    if srfiH.size == 1 and srfiH[0] == 1e-6:
+    if srfiH.size == 1 and srfiH[0] == 1e-6 and auto_switch:
         rair[0] = 0.0
         n_dim_sidebands[0] = 1
 
