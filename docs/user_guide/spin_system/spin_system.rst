@@ -195,7 +195,7 @@ Again we see the optional *name* and *description* attributes. The *sites* attri
 a list of two :ref:`site_api` objects, the previous :math:`^1\text{H}` site and the new
 :math:`^{13}\text{C}` site. We have also set the *abundance* of this spin system to *0.148%*.
 By leveraging the abundance attribute, multiple spin systems with varying abundances can be
-simulated together. See our :ref:`introduction_ethanol_example` where isotopomers of varying
+simulated together. See our :ref:`introduction_isotopomers_example` where isotopomers of varying
 abundance are simulated in tandem.
 
 Coupled Spin System
