@@ -1,7 +1,7 @@
-.. _introduction_ethanol_example:
+.. _introduction_isotopomers_example:
 
-Ethanol Example
-^^^^^^^^^^^^^^^
+Isotopomers Example
+^^^^^^^^^^^^^^^^^^^
 
 Here we work through an example that should be familiar to nearly all practitioners of NMR spectroscopy, i.e., 
 the simulation of the :math:`^1\text{H}` and :math:`^{13}\text{C}` liquid-state NMR spectra 
@@ -9,7 +9,7 @@ of ethanol with its various isotopomers. The :math:`^1\text{H}` spectrum will in
 :math:`^{13}\text{C}` `satellite peaks <https://en.wikipedia.org/wiki/Carbon-13_NMR_satellite>`_
 which arise from couplings between :math:`^{1}\text{H}` and :math:`^{13}\text{C}` in low-abundance isotopomers.
 
-We begin with the common Python practice of importing all the required packages and classes at the beginning of 
+We begin with a common Python practice of importing all the required packages and classes at the beginning of 
 the code.
 
 .. plot::
@@ -31,11 +31,25 @@ naturally abundant isotopes of hydrogen, carbon, and oxygen present.  Of the mos
 only :math:`^1\text{H}` is NMR active.  The most abundant NMR active isotopes of carbon and oxygen are 
 :math:`^{13}\text{C}` (1.11%) and :math:`^{17}\text{O}` (0.038%).  Additionally, the 
 :math:`^2\text{H}` (0.015%) isotope will be present.   For our purposes, we will ignore the effects of 
-these lower abundant :math:`^{17}\text{O}` and :math:`^2\text{H}` isotopes, and focus solely on the spectra 
-of the isotopomers formed from :math:`^1\text{H}`, :math:`^{12}\text{C}` , and :math:`^{13}\text{C}`.
+the lower abundant :math:`^{17}\text{O}` and :math:`^2\text{H}` isotopes, and focus solely on the spectra 
+of the isotopomers formed from :math:`^1\text{H}`, :math:`^{12}\text{C}` , and :math:`^{13}\text{C}`.  This
+leaves us with the three most abundant isotopomers of ethanol shown below.
 
-There are three magnetically inequivalent :math:`^1\text{H}` and two magnetically inequivalent 
-:math:`^{13}\text{C}` sites in ethanol.  These sites are created in the code shown below.
+
+.. figure:: ../_static/Ethanol.*
+    :width: 700
+    :alt: figure
+    :align: center
+
+    The three most abundant isotopomers of ethanol.
+
+The most abundant isotopomer, on the left, has a probability of 
+:math:`(0.99985)^6 \times (0.9893)^2 \times (0.99762) =0.9625`, while the last two have identical 
+probabilities of :math:`(0.99985)^6 \times (0.0111)(0.9893) \times (0.99762) = 0.0108`
+
+Before we construct spin systems for each of these isotopomers, we create sites for each of the 
+three magnetically inequivalent :math:`^1\text{H}` and two magnetically inequivalent 
+:math:`^{13}\text{C}` sites, as shown in the code below.
 
 .. plot::
     :context: close-figs
@@ -52,21 +66,7 @@ These sites will be used, along with :ref:`coupling_documentation` objects descr
 
 Isotopomer 1
 ''''''''''''
-
-The most abundant isotopomer of ethanol consists of the :math:`^{1}\text{H}`, :math:`^{12}\text{C}`, 
-and :math:`^{16}\text{O}` isotopes, as shown below.
-
-.. figure:: ../_static/Ethanol.*
-    :width: 200
-    :alt: figure
-    :align: center
-
-    Most abundant isotopomer of ethanol.
-
-Since the abundance of :math:`^{12}\text{C}` is 98.9%, the probability of this isotopomer is 
-:math:`0.989 \times 0.989=0.97812`
-    
-Using the sites defined above, we create a list of sites present in this isotopomer.
+To create the most abundant isotopomer, we create a list of sites present in this isotopomer.
 
 .. plot::
     :context: close-figs
@@ -100,28 +100,22 @@ a list.
         HH_coupling_6,
     ]
 
-Next, we create the SpinSystem object for this isotopomer with its abundance.
+Finally, we can create the SpinSystem object for this isotopomer along with its abundance.
 
 .. plot::
     :context: close-figs
     
-        isotopomer1 = SpinSystem(sites=iso1_sites, couplings=iso1_couplings, abundance=97.812)
+        isotopomer1 = SpinSystem(sites=iso1_sites, couplings=iso1_couplings, abundance=96.25)
 
 
 Isotopomer 2
 ''''''''''''
 
-Replacing the methyl carbon with a :math:`^{13}\text{C}` isotope, we get the following isotopomer pictured below (:math:`^{13}\text{C}` marked in blue)
-
-.. figure:: ../_static/iso2.*
-    :width: 200
-    :alt: figure
-    :align: center
-
-    Second isotopomer of ethanol containing all :math:`^{1}\text{H}`,
-    :math:`^{13}\text{C}` methyl, and :math:`^{12}\text{C}` methylene isotopes.
-
-We now construct the spin system for this isotopomer.
+Replacing the methyl carbon with a :math:`^{13}\text{C}` isotope gives the second isotopomer.  To create its
+SpinSystem object we follow the code below, where (1) we create the list of sites to include the ``C_CH3`` site, (2) we create three 
+Coupling objects for its J coupling to the three attached protons, (3) we create the list of couplings, 
+and, finally, (4) we create the SpinSystem object for the isotopomer using the lists of sites and couplings 
+along with the isotopomer's abundance of 1.08%.
 
 .. plot::
     :context: close-figs
@@ -136,22 +130,13 @@ We now construct the spin system for this isotopomer.
     # Add new couplings to existing 1H - 1H couplings
     iso2_couplings = iso1_couplings + [CH3_coupling_1, CH3_coupling_2, CH3_coupling_3]
 
-    isotopomer2 = SpinSystem(sites=iso2_sites, couplings=iso2_couplings, abundance=1.088)
+    isotopomer2 = SpinSystem(sites=iso2_sites, couplings=iso2_couplings, abundance=1.08)
 
 Isotopomer 3
 ''''''''''''
 
-Lastly, we build the sites, couplings, and spin system for the other
-isotopomer with the methylene carbon replaced with :math:`^{13}\text{C}` pictured
-below (:math:`^{13}\text{C}` marked in blue)
-
-.. figure:: ../_static/iso3.*
-    :width: 200
-    :alt: figure
-    :align: center
-
-    Third isotopomer of ethanol containing all :math:`^{1}\text{H}`,
-    :math:`^{12}\text{C}` methyl, and :math:`^{13}\text{C}` methylene isotopes.
+Lastly, we build the sites, couplings, and spin system for the isotopomer with the methylene carbon 
+replaced with a :math:`^{13}\text{C}` isotope.
 
 .. plot::
     :context: close-figs
@@ -165,7 +150,7 @@ below (:math:`^{13}\text{C}` marked in blue)
     # Add new couplings to existing 1H - 1H couplings
     iso3_couplings = iso1_couplings + [CH2_coupling_1, CH2_coupling_2]
 
-    isotopomer3 = SpinSystem(sites=iso3_sites, couplings=iso3_couplings, abundance=1.088)
+    isotopomer3 = SpinSystem(sites=iso3_sites, couplings=iso3_couplings, abundance=1.08)
 
 
 
@@ -173,8 +158,9 @@ below (:math:`^{13}\text{C}` marked in blue)
 Methods
 -------
 
-Now, we define two Bloch spectrum methods for both :math:`^1\text{H}` and :math:`^{13}\text{C}`.
-These methods emulate simple 1-pulse acquire experiments.
+For this example, we create two BlochDecaySpectrum methods for :math:`^1\text{H}` and :math:`^{13}\text{C}`.
+This method is for simulating the spectrum obtained from a single pulse excitation on the first isotope 
+in the ``channels`` attribute list.
 
 .. plot::
     :context: close-figs
@@ -210,22 +196,26 @@ These methods emulate simple 1-pulse acquire experiments.
 Simulation
 ----------
 
-Now we create an instance of the simulator object, which holds a list of our three spin systems and a list of our two methods. Finally, we run the simulation.
+Next, we create an instance of the simulator object with the list of our three spin systems 
+and the list of our two methods, and run the simulation.
 
 .. plot::
     :context: close-figs
 
-    spin_systems = [isotopomer1, isotopomer2, isotopomer3]
-    methods = [method_H, method_C]
-    sim = Simulator(spin_systems=spin_systems, methods=methods)
+    sim = Simulator(
+        spin_systems=[isotopomer1, isotopomer2, isotopomer3], 
+        methods=[method_H, method_C])
     sim.run()
 
 
 Signal Processing
 -----------------
 
-Let's set up our post-simulation processing. We apply 1 Hz and 20 Hz of exponential line
-broadening to the proton and carbon spectra, respectively.
+Before plotting the spectra, let's add some line broadening to the resonances.  For this, we create a
+SignalProcessor object initialized with a list of operations that gives a convolution with a Lorentizan 
+line shape.  For the :math:`^{1}\text{H}` spectrum, we create a SignalProcessor object with an exponential 
+apodization that gives a full-width-half-maximum (FWHM) of 1 Hz, while for the :math:`^{13}\text{C}` 
+spectrum  we create an otherwise identical SignalProcessor object that gives a FWHM of 20 Hz.
 
 .. plot::
     :context: close-figs
@@ -258,7 +248,9 @@ broadening to the proton and carbon spectra, respectively.
 Plotting the Data
 -----------------
 
-Finally, we can plot the two spectra using the code below.  Additionally, we save the plot as a pdf file.
+Finally, after applying the convolution with a Lorentizan line shape, we can plot the 
+two spectra using the code below.  Additionally, we save the plot as a pdf file in
+this example.
 
 .. skip: next
 
@@ -288,7 +280,10 @@ Finally, we can plot the two spectra using the code below.  Additionally, we sav
 Saving your Work
 ----------------
 
-If you want to save your spectrum in csdf format
+Saving the Spectra
+''''''''''''''''''
+
+You can save the spectra in csdf format using the code below.
 
 .. plot::
     :context: close-figs
@@ -298,13 +293,60 @@ If you want to save your spectrum in csdf format
 
 
 Saving the SpinSystems
-""""""""""""""""""""""
+''''''''''''''''''''''
+
+If you want to save the spin systems for use in a different project, you can ask the Simulator 
+object to export the list of SpinSystem objects to a json file with the code below.
+
+.. plot::
+    :context: close-figs
+
+    sim.export_spin_systems("ethanol.mrsys")
+
+
+The file ethanol.mrsys holds a JSON representation of the SpinSystem objects. We encourage the
+convention of using .mrsys extension for this JSON file.
+
+The list of SpinSystem objects can be reloaded back into a Simulator object by calling
+``load_spin_systems()`` with the file name of the saved SpinSystem objects, as shown below.
+ 
+.. plot::
+    :context: close-figs
+
+    new_sim = Simulator()
+    new_sim.load_spin_systems("ethanol.mrsys")
+
 
 Saving the Methods
-""""""""""""""""""
+''''''''''''''''''
+
+Similarly, if you want to save the methods for use in a different project, you can ask the Simulator object 
+to export the list of Method objects to a json file.
+
+.. plot::
+    :context: close-figs
+
+    sim.export_methods("H1C13Methods.mrmtd")
+
+As before, the file H1C13Methods.mrmtd holds a JSON representation of the method objects. 
+We encourage the convention of using .mrmtd extension for this JSON file.
+
+The list of Method objects can also be reloaded back into a Simulator object by calling
+``load_methods()`` with the file name of the saved Method objects, as shown below.
+ 
+.. plot::
+    :context: close-figs
+
+    new_sim = Simulator()
+    new_sim.load_methods("H1C13Methods.mrmtd")
+
 
 Saving the full Simulation
-""""""""""""""""""""""""""
+''''''''''''''''''''''''''
+The Simulation and SignalProcessor objects can also be serialized into JSON files.   At some point,
+however, saving the Python script or Juypiter notebook with your code will be just as convenient.  
+Nonetheless, you can find additional details on JSON serialization of ``mrsimulator`` objects in the 
+:ref:`IO_documentation` section.
 
 .. plot::
     :include-source: False
@@ -315,3 +357,5 @@ Saving the full Simulation
     if isfile("spectra.pdf"): os.remove("spectra.pdf")
     if isfile("processed_H_data.csdf"): os.remove("processed_H_data.csdf")
     if isfile("processed_C_data.csdf"): os.remove("processed_C_data.csdf")
+    if isfile("ethanol.mrsys"): os.remove("ethanol.mrsys")
+    if isfile("H1C13Methods.mrmtd"): os.remove("H1C13Methods.mrmtd")

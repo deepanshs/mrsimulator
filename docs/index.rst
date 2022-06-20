@@ -159,6 +159,9 @@ amorphous materials.
 
 ----
 
+Thoughout the web version of this documentation, you can copy code blocks into your clipboard by hovering your
+mouse inside the gray code block to reveal the copy to clipboard icon in the top right corner.  This is 
+useful for copying code examples found here into your own Juypiter notebooks.
 
 **Features**
 
@@ -207,7 +210,7 @@ Introduction
 
     installation/installation
     introduction/getting_started
-    introduction/ethanol_example
+    introduction/isotopomers_example
 
 User Guide
 ----------
