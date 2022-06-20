@@ -60,19 +60,33 @@ def test_config():
     a.config.decompose_spectrum = "spin_system"
     assert a.config.decompose_spectrum == "spin_system"
 
+    error = "unexpected value; permitted: 'none', 'spin_system'"
+    with pytest.raises(ValueError, match=f".*{error}.*"):
+        a.config.decompose_spectrum = "haha"
+
     # isotropic interpolation
     assert a.config.isotropic_interpolation == "linear"
     a.config.isotropic_interpolation = "gaussian"
     assert a.config.isotropic_interpolation == "gaussian"
 
-    error = "unexpected value; permitted: 'none', 'spin_system'"
+    error = "unexpected value; permitted: 'linear', 'gaussian'"
     with pytest.raises(ValueError, match=f".*{error}.*"):
-        a.config.decompose_spectrum = "haha"
+        a.config.isotropic_interpolation = "haha"
+
+    # number of gamma angles
+    assert a.config.number_of_gamma_angles == 1
+    a.config.number_of_gamma_angles = 14
+    assert a.config.number_of_gamma_angles == 14
+
+    error = "ensure this value is greater than 0"
+    with pytest.raises(ValueError, match=f".*{error}.*"):
+        a.config.integration_density = -1
 
     # overall
     assert a.config.dict(exclude={"property_units"}) == {
         "decompose_spectrum": "spin_system",
         "number_of_sidebands": 10,
+        "number_of_gamma_angles": 14,
         "integration_volume": "hemisphere",
         "integration_density": 20,
         "isotropic_interpolation": "gaussian",
@@ -84,6 +98,7 @@ def test_config():
     assert a.config.get_int_dict() == {
         "decompose_spectrum": 1,
         "number_of_sidebands": 10,
+        "number_of_gamma_angles": 14,
         "integration_volume": 1,
         "integration_density": 20,
         "isotropic_interpolation": 1,
@@ -92,4 +107,4 @@ def test_config():
     assert b != a
 
     # get orientation count
-    assert a.config.get_orientations_count() == 4 * 21 * 22 / 2
+    assert a.config.get_orientations_count() == 4 * 21 * 22 * 14 / 2
