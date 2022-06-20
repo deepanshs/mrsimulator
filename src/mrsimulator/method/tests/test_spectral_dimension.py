@@ -20,7 +20,7 @@ def basic_spectral_dimension_tests(the_dimension):
 
     # spectral width test
     assert the_dimension.spectral_width == 100
-    with pytest.raises(ValidationError, match=f".*{error}.*"):
+    with pytest.raises(ValidationError, match=".*Spectral width cannot be zero.*"):
         the_dimension.spectral_width = 0
     # ensure the default value is Hz
     assert the_dimension.property_units["spectral_width"] == "Hz"

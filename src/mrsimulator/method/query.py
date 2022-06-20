@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from copy import deepcopy
+from enum import Enum
 from itertools import permutations
 from typing import ClassVar
 from typing import Dict
@@ -102,21 +103,21 @@ class SymmetryQuery(Parseable):
 
 
 class TransitionQuery(Parseable):
-    """TransitionQuery class for quering transition symmetry function.
+    """TransitionQuery class for querying transition symmetry function.
 
     Attributes
     ----------
 
     ch1:
-        An optional SymmetryQuery object for quering symmetry functions at channel
+        An optional SymmetryQuery object for querying symmetry functions at channel
         index 0 of the method's channels array."
 
     ch2:
-        An optional SymmetryQuery object for quering symmetry functions at channel
+        An optional SymmetryQuery object for querying symmetry functions at channel
         index 1 of the method's channels array."
 
     ch3:
-        An optional SymmetryQuery object for quering symmetry functions at channel
+        An optional SymmetryQuery object for querying symmetry functions at channel
         index 2 of the method's channels array."
 
     Example
@@ -130,7 +131,7 @@ class TransitionQuery(Parseable):
         title="ch1",
         default=SymmetryQuery(),
         description=(
-            "An optional SymmetryQuery object for quering symmetry functions at "
+            "An optional SymmetryQuery object for querying symmetry functions at "
             "channel index 0 of the method's channels array."
         ),
     )
@@ -138,7 +139,7 @@ class TransitionQuery(Parseable):
         title="ch2",
         default=None,
         description=(
-            "An optional SymmetryQuery object for quering symmetry functions at "
+            "An optional SymmetryQuery object for querying symmetry functions at "
             "channel index 1 of the method's channels array."
         ),
     )
@@ -146,7 +147,7 @@ class TransitionQuery(Parseable):
         title="ch3",
         default=None,
         description=(
-            "An optional SymmetryQuery object for quering symmetry functions at "
+            "An optional SymmetryQuery object for querying symmetry functions at "
             "channel index 2 of the method's channels array."
         ),
     )
@@ -254,7 +255,7 @@ class RotationalQuery(Parseable):
 
 
 class MixingQuery(Parseable):
-    """MixingQuery class for quering transition mixing between events.
+    """MixingQuery class for querying transition mixing between events.
 
     Attributes
     ----------
@@ -281,6 +282,7 @@ class MixingQuery(Parseable):
 
     class Config:
         validate_assignment = True
+        extra = "forbid"
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
@@ -306,3 +308,31 @@ class MixingQuery(Parseable):
     def channels(self) -> List[RotationalQuery]:
         """Returns an ordered list of all channels"""
         return [self.ch1, self.ch2, self.ch3]
+
+
+class MixingEnum(Enum):
+    """Enumerations for defining common mixing queries. The enumerations are as follows
+
+    Attributes
+    ----------
+
+    TotalMixing:
+        Setting query attribute to TotalMixing causes all transitions in one spectral
+        event to all other transitions. This is the same behavior when no MixingEvent
+        is defined between SpectralEvents.
+
+    NoMixing:
+        Defines mixing query where no pathways connect
+    """
+
+    @classmethod
+    def allowed_enums(cls):
+        """Returns list of str corresponding to all valid enumerations"""
+        return [e.name for e in cls]
+
+    TotalMixing: str = "TotalMixing"
+    NoMixing: MixingQuery = MixingQuery(
+        ch1={"angle": 0, "phase": 0},
+        ch2={"angle": 0, "phase": 0},
+        ch3={"angle": 0, "phase": 0},
+    )

@@ -14,7 +14,7 @@ clib.generate_tables()
 @cython.wraparound(False)
 def one_d_spectrum(method,
        list spin_systems,
-       int verbose=0,  # for degub purpose only.
+       int verbose=0,  # for debug purpose only.
        unsigned int number_of_sidebands=90,
        unsigned int integration_density=72,
        unsigned int decompose_spectrum=0,
@@ -154,7 +154,7 @@ def one_d_spectrum(method,
         &srfiH[0], &rair[0], &n_event[0], n_dimension, number_of_sidebands)
 
 # normalization factor for the spectrum
-    norm = np.prod(incre)
+    norm = np.abs(np.prod(incre))
 
 # create fftw scheme __________________________________________________________
     cdef clib.MRS_fftw_scheme *fftw_scheme
@@ -509,14 +509,40 @@ def get_zeeman_states(sys):
     return np.asarray(lst).T
 
 
+# @cython.profile(False)
+# @cython.boundscheck(False)
+# @cython.wraparound(False)
+# def transition_connect_factor(float l, float m1_f, float m1_i, float m2_f,
+#                         float m2_i, double theta, double phi):
+#     """Evaluate the probability of connecting two transitions driven by an external rf
+#     pulse of phase phi and angle theta. The connected transitions are
+#     | m1_f >< m1_i | --> | m2_f > < m2_i |.
+
+#     Args:
+#         float l: The angular momentum quantum number of the spin involved in the transition.
+#         float m1_f Final quantum number of the starting transition.
+#         float m1_i Initial quantum number of the starting transition.
+#         float m2_f Final quantum number of the connecting transition.
+#         float m2_i Initial quantum number of the connecting transition.
+#         float theta The tip-angle of the rf pulse.
+#         float phi The phase of the rf pulse.
+
+#     Return: A complex amplitude.
+#     """
+#     cdef ndarray[double] factor = np.asarray([1, 0], dtype=np.float64)
+#     clib.transition_connect_factor(l, m1_f, m1_i, m2_f, m2_i, theta, phi, &factor[0])
+#     factor = np.around(factor, decimals=12)
+#     return complex(factor[0], factor[1])
+
+
 @cython.profile(False)
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def transition_connect_factor(float l, float m1_f, float m1_i, float m2_f,
-                        float m2_i, double theta, double phi):
-    """Evaluate the probability of connecting two transitions driven by an external rf
-    pulse of phase phi and angle theta. The connected transitions are
-    | m1_f >< m1_i | --> | m2_f > < m2_i |.
+                        float m2_i, double alpha, double beta, double gamma):
+    """Evaluate the probability of connecting two transitions driven by a rotation
+    defined by the euler angles alpha, beta, and gamma in the ZYZ convention.
+    The connected transitions are | m1_f >< m1_i | --> | m2_f > < m2_i |.
 
     Args:
         float l: The angular momentum quantum number of the spin involved in the transition.
@@ -524,13 +550,14 @@ def transition_connect_factor(float l, float m1_f, float m1_i, float m2_f,
         float m1_i Initial quantum number of the starting transition.
         float m2_f Final quantum number of the connecting transition.
         float m2_i Initial quantum number of the connecting transition.
-        float theta The tip-angle of the rf pulse.
-        float phi The phase of the rf pulse.
+        float alpha The first angle of rotation about the Z axis
+        float beta The second angle of rotation about the transformed Y axis
+        float gamma the third angle of rotation about the transformed Z axis
 
     Return: A complex amplitude.
     """
     cdef ndarray[double] factor = np.asarray([1, 0], dtype=np.float64)
-    clib.transition_connect_factor(l, m1_f, m1_i, m2_f, m2_i, theta, phi, &factor[0])
+    clib.transition_connect_factor(l, m1_f, m1_i, m2_f, m2_i, alpha, beta, gamma, &factor[0])
     factor = np.around(factor, decimals=12)
     return complex(factor[0], factor[1])
 
@@ -542,11 +569,12 @@ def calculate_transition_connect_weight(
         ndarray[float, ndim=2] trans1,
         ndarray[float, ndim=2] trans2,
         ndarray[float, ndim=1] spin,
-        ndarray[double, ndim=1] theta,
-        ndarray[double, ndim=1] phi
+        ndarray[double, ndim=1] alpha,
+        ndarray[double, ndim=1] beta,
+        ndarray[double, ndim=1] gamma
     ):
-    """Evaluate the probability of connecting two transitions driven by an external rf
-    pulse of phase phi and angle theta. The connected transitions are
+    """Evaluate the probability of connecting two transitions driven by a rotation described
+    by the Euler angles alpha, beta, gamma in the ZYZ convention. The connected transitions are
     | m1_f >< m1_i | --> | m2_f > < m2_i |.
 
     Args:
@@ -555,8 +583,9 @@ def calculate_transition_connect_weight(
         float m1_i Initial quantum number of the starting transition.
         float m2_f Final quantum number of the connecting transition.
         float m2_i Initial quantum number of the connecting transition.
-        float theta The tip-angle of the rf pulse.
-        float phi The phase of the rf pulse.
+        float alpha First euler angle.
+        float beta Second euler angle.
+        float gamma Third euler angle.
 
     Return: A complex amplitude.
     """
@@ -570,7 +599,7 @@ def calculate_transition_connect_weight(
         m2_i = trans2[0][i]  # landing transition initial state
 
         clib.transition_connect_factor(
-            spin[i], m1_f, m1_i, m2_f, m2_i, theta[i], phi[i], &factor[0]
+            spin[i], m1_f, m1_i, m2_f, m2_i, alpha[i], beta[i], gamma[i], &factor[0]
         )
     return complex(factor[0], factor[1])
 

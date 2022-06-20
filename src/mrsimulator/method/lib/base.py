@@ -98,7 +98,7 @@ class BaseNamedMethod(Method):
 
     @classmethod
     def check_event_objects_for_compatibility(cls, default_dim, obj_dim, method_dict):
-        """Checks Events for compatability and sets global method attributes
+        """Checks Events for compatibility and sets global method attributes
 
         Args:
             default_dim (dict): Dict representation of SpectralDimension in base method

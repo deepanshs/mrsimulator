@@ -7,14 +7,14 @@ Gaussian Apodization
 # %%
 # In this example, we will use the
 # :py:class:`~mrsimulator.signal_processing.apodization.Gaussian` class to perform a
-# Gaussain convolution on an example dataset. The function
+# Gaussian convolution on an example dataset. The function
 # used for this apodization is defined as follows
 #
 # .. math::
 #
 #    f(x) = e^{-2 \pi^2 \sigma^2  x^2}
 #
-# where :math:`\sigma` is the sstandard deviation of the Gaussian function and is
+# where :math:`\sigma` is the standard deviation of the Gaussian function and is
 # parameterized by the full width as half maximum (FWHM) as
 #
 # .. math::
@@ -32,7 +32,7 @@ from mrsimulator import signal_processing as sp
 # :py:class:`~mrsimulator.signal_processing.SignalProcessor` class. The required
 # attribute of the SignalProcessor class, *operations*, is a list of operations to which
 # we add a :py:class:`~mrsimulator.signal_processing.apodization.Gaussian` object
-# sandwitched between two Fourier transformations.
+# sandwiched between two Fourier transformations.
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),

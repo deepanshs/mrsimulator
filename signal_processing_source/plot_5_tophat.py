@@ -7,7 +7,7 @@ Top-Hat Apodization
 # %%
 # In this example, we will use the
 # :py:class:`~mrsimulator.signal_processing.apodization.TopHat` class to apply a
-# pointwise top hat apodization on the Fourier transform of an example dataset. The
+# point-wise top hat apodization on the Fourier transform of an example dataset. The
 # function is defined as follows
 #
 # .. math::
@@ -37,7 +37,7 @@ from mrsimulator import signal_processing as sp
 # :py:class:`~mrsimulator.signal_processing.SignalProcessor` class. The required
 # attribute of the SignalProcessor class, *operations*, is a list of operations to which
 # we add a :py:class:`~mrsimulator.signal_processing.apodization.TopHat` object
-# sandwitched between two Fourier transformations. Here the window is between
+# sandwiched between two Fourier transformations. Here the window is between
 # 1 and 9 seconds.
 processor = sp.SignalProcessor(
     operations=[
@@ -66,7 +66,7 @@ processed_data = processor.apply_operations(data=csdm_object).real
 
 # %%
 # To see the results of the top hat apodization, we create a simple plot using the
-# ``matplotlob`` library.
+# ``matplotlib`` library.
 fig, ax = plt.subplots(1, 2, figsize=(8, 3.5), subplot_kw={"projection": "csdm"})
 ax[0].plot(csdm_object, color="black", linewidth=1)
 ax[0].set_title("Before")

@@ -27,7 +27,7 @@ from mrsimulator.method import SpectralDimension
 
 sim = Simulator()
 
-filename = "https://sandbox.zenodo.org/record/835664/files/itraconazole_13C.mrsys"
+filename = "https://ssnmr.org/sites/default/files/mrsimulator/itraconazole_13C.mrsys"
 sim.load_spin_systems(filename)
 
 # %%
@@ -54,7 +54,7 @@ PASS = SSB2D(
 sim.methods = [PASS]  # add the method.
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
+plt.figure(figsize=(5, 2.5))
 PASS.plot()
 plt.show()
 

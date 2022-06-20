@@ -59,7 +59,7 @@ sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
 # create five single-site spin systems instead of a single five-site spin system. The
 # abundance of each spin system is taken from above reference. Here we are iterating
 # over both the *sites* and *abundance* list concurrently using a list comprehension
-# to construct a list of SpinSystens
+# to construct a list of SpinSystems
 abundance = [0.83, 1.05, 2.16, 2.05, 1.90]
 spin_systems = [SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
 

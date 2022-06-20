@@ -24,8 +24,9 @@ from mrsimulator.utils.collection import single_site_system_generator
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/835664/files/1H13C_CPPASS_LHistidine.csdf"
-mat_data = cp.load(filename)
+host = "https://ssnmr.org/sites/default/files/mrsimulator/"
+filename = "1H13C_CPPASS_LHistidine.csdf"
+mat_data = cp.load(host + filename)
 
 # standard deviation of noise from the dataset
 sigma = 0.4192854

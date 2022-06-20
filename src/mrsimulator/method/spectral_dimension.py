@@ -72,7 +72,7 @@ class SpectralDimension(Parseable):
         The value describes a series of events along the spectroscopic dimension.
     """
     count: int = Field(1024, gt=0)
-    spectral_width: float = Field(default=25000.0, gt=0)
+    spectral_width: float = Field(default=25000.0)
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
     reciprocal: Reciprocal = None
@@ -99,6 +99,13 @@ class SpectralDimension(Parseable):
     class Config:
         extra = "forbid"
         validate_assignment = True
+
+    @validator("spectral_width", pre=True, always=True)
+    def validate_spectral_width(cls, value):
+        """Spectral width cannot be zero."""
+        if value != 0:
+            return value
+        raise ValueError("Spectral width cannot be zero.")
 
     @validator("events", pre=True, always=True)
     def validate_events(v, **kwargs):

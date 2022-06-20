@@ -155,12 +155,12 @@ def time_string(time):
 
 def terminal_start_setup():
     size = os.get_terminal_size().columns
-    delmit = "-"
-    print(f"{delmit:-<{size}}")
+    delimit = "-"
+    print(f"{delimit:-<{size}}")
     left_align = "Computation method"
     right_align = "Average time"
     print(f"{left_align:<{size-15}}{right_align:>15}")
-    print(f"{delmit:-<{size}}")
+    print(f"{delimit:-<{size}}")
 
 
 def terminal_end_setup(t, n, description):

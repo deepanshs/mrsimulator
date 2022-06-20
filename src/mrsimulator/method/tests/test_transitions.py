@@ -2,6 +2,10 @@
 import numpy as np
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
+from mrsimulator.method import MixingEvent
+from mrsimulator.method import SpectralDimension
+from mrsimulator.method import SpectralEvent
+from mrsimulator.method.query import MixingEnum
 from mrsimulator.transition import TransitionPathway
 
 __author__ = "Deepansh J. Srivastava"
@@ -157,6 +161,68 @@ def test_cosy():
         ]
     )
     assert_transitions(transition_pathways, weights, tr)
+
+
+def test_total_mixing():
+    system = SpinSystem(sites=[{"isotope": "1H"}, {"isotope": "14N"}])
+    total_mix = Method(
+        channels=["1H"],
+        spectral_dimensions=[
+            SpectralDimension(
+                events=[
+                    SpectralEvent(transition_query=[{"ch1": {"P": [-1]}}]),
+                    MixingEvent(query=MixingEnum.TotalMixing),
+                ]
+            ),
+            SpectralDimension(
+                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1]}}])]
+            ),
+        ],
+    )
+    transitions = total_mix.get_transition_pathways(system)
+    tr_should_be = 0.5 * np.asarray(
+        [
+            [[[1, -2], [-1, -2]], [[1, -2], [-1, -2]]],
+            [[[1, -2], [-1, -2]], [[1, 0], [-1, 0]]],
+            [[[1, -2], [-1, -2]], [[1, 2], [-1, 2]]],
+            [[[1, 0], [-1, 0]], [[1, -2], [-1, -2]]],
+            [[[1, 0], [-1, 0]], [[1, 0], [-1, 0]]],
+            [[[1, 0], [-1, 0]], [[1, 2], [-1, 2]]],
+            [[[1, 2], [-1, 2]], [[1, -2], [-1, -2]]],
+            [[[1, 2], [-1, 2]], [[1, 0], [-1, 0]]],
+            [[[1, 2], [-1, 2]], [[1, 2], [-1, 2]]],
+        ]
+    )
+    weights_should_be = np.ones(9)
+    assert_transitions(tr_should_be, weights_should_be, transitions)
+
+
+def test_no_mixing():
+    system = SpinSystem(sites=[{"isotope": "1H"}, {"isotope": "14N"}])
+    no_mix = Method(
+        channels=["1H"],
+        spectral_dimensions=[
+            SpectralDimension(
+                events=[
+                    SpectralEvent(transition_query=[{"ch1": {"P": [-1]}}]),
+                    MixingEvent(query=MixingEnum.NoMixing),
+                ]
+            ),
+            SpectralDimension(
+                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1]}}])]
+            ),
+        ],
+    )
+    transitions = no_mix.get_transition_pathways(system)
+    tr_should_be = 0.5 * np.asarray(
+        [
+            [[[1, -2], [-1, -2]], [[1, -2], [-1, -2]]],
+            [[[1, 0], [-1, 0]], [[1, 0], [-1, 0]]],
+            [[[1, 2], [-1, 2]], [[1, 2], [-1, 2]]],
+        ]
+    )
+    weights_should_be = np.ones(3)
+    assert_transitions(tr_should_be, weights_should_be, transitions)
 
 
 def assert_transitions(transition_pathways, weights, tr):

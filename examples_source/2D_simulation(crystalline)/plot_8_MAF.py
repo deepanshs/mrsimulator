@@ -17,7 +17,7 @@ import numpy as np
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator import signal_processing as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import Method, SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -46,6 +46,13 @@ spin_systems = [SpinSystem(sites=[s]) for s in sites]
 # %%
 # Use the generic method, `Method`, to simulate a 2D Magic-Angle Flipping (MAF)
 # spectrum by customizing the method parameters, as shown below.
+#
+# Here we include the special `MixingEvent` with query ``NoMixing`` to tell the MAF
+# method to not connect any of the transitions between the first and second
+# `SpectralEvent`. A query of ``NoMixing`` is equivalent to a rotational query where
+# each channel has a phase and angle of 0. Since all spin systems in this example have
+# a single site, defining no mixing between the two spectral events is superfluous, but
+# we include it so this method may be used with multi-site spin systems.
 maf = Method(
     name="Magic Angle Flipping",
     channels=["29Si"],
@@ -60,7 +67,8 @@ maf = Method(
                 SpectralEvent(
                     rotor_angle=90 * 3.14159 / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
-                )
+                ),
+                MixingEvent(query="NoMixing"),
             ],
         ),
         SpectralDimension(
@@ -80,7 +88,7 @@ maf = Method(
 )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
+plt.figure(figsize=(5, 2.5))
 maf.plot()
 plt.show()
 

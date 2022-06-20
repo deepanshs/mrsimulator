@@ -24,7 +24,7 @@ from mrsimulator.method import Method, SpectralDimension, SpectralEvent
 sim = Simulator()
 
 # load the spin systems from url.
-filename = "https://sandbox.zenodo.org/record/835664/files/coesite.mrsys"
+filename = "https://ssnmr.org/sites/default/files/mrsimulator/coesite_0.mrsys"
 sim.load_spin_systems(filename)
 
 # %%
@@ -72,7 +72,7 @@ das = Method(
 sim.methods = [das]  # add the method
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
+plt.figure(figsize=(5, 2.5))
 das.plot()
 plt.show()
 

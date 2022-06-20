@@ -222,13 +222,13 @@ op_list = [
 
 
 def compare_result(params, valuesdict_system, sim):
-    valuedict_proc = {
+    valuesdict_proc = {
         "SP_0_operation_1_Exponential_FWHM": 100,
         "SP_0_operation_3_Scale_factor": 10,
     }
     assert params.valuesdict() == {
         **valuesdict_system,
-        **valuedict_proc,
+        **valuesdict_proc,
     }, "Parameter creation failed"
 
     params = sf.make_LMFIT_params(sim)

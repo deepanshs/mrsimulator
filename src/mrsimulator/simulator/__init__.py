@@ -137,6 +137,7 @@ class Simulator(Parseable):
 
     class Config:
         validate_assignment = True
+        extra = "forbid"
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):

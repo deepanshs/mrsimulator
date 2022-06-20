@@ -125,7 +125,7 @@ class Linear(Operation):
 
     Args:
         float amplitude: The scaling factor. The default value is 1.
-        float offsett: The offset factor. The default value is 0.
+        float offset: The offset factor. The default value is 0.
 
     Example
     -------
