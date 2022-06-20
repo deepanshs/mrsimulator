@@ -69,7 +69,7 @@ local machine you can skip this step.
 
     # set time origin to echo top
     csdm_dataset.dimensions[0].coordinates_offset = "-0.008 s" 
-    phased_dataset = csdm_dataset * np.exp(-1j* np.angle(csdm_dataset.max()).value)*np.exp(-1j*np.pi)
+    phased_dataset = csdm_dataset * np.exp(-1j* (np.pi+np.angle(csdm_dataset.max()).value))
     plt.figure(figsize=(5, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
     ax.plot(phased_dataset.real)
