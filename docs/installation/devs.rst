@@ -27,8 +27,13 @@ Create a development environment
 ''''''''''''''''''''''''''''''''
 
 It is good practice to create separate virtual python environments for packages when
-in developing packages. There are many environment managers available; however, we recommend using
-`Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_
+in developing packages. There are many environment managers available, however, we recommend using
+`Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_ for Linux, Mac with Intel
+processors, and windows.
+
+.. note::
+    *Anaconda Python is **incompatible** with Apple silicon based Macs* Follow the instructions
+    under :ref:`OS-dependent prerequisites` for steps to install Arm64 compatible Python.
 
 The following is an example of creating Conda environment
 
@@ -128,6 +133,11 @@ OS-dependent prerequisites
     Installing OS-dependent prerequisites is a one-time process. If you are
     upgrading to a newer version of mrsimulator, skip to next section.
 
+.. note::
+    The source instillation process differs for Macs with Intel processors and Macs with Apple
+    silicon processors. Before continuing, check which processor type your computer has using
+    `Apple's instructions <https://support.apple.com/en-us/HT211814>`__.
+
 .. tabs::
 
   .. tab:: Linux
@@ -135,10 +145,15 @@ OS-dependent prerequisites
 
     .. include:: source_install/linux.rst
 
-  .. tab:: Mac OSX
-    :tabid: macosx_source
+  .. tab:: Mac OSX Intel
+    :tabid: macosx_intel_source
 
-    .. include:: source_install/macosx.rst
+    .. include:: source_install/macosx_intel.rst
+
+  .. tab:: Mac OSX M1
+    :tabid: macosx_m1_source
+
+    .. include:: source_install/macosx_m1.rst
 
   .. tab:: Windows
     :tabid: windows_source

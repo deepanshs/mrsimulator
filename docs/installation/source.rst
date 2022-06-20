@@ -25,20 +25,25 @@ extract the *.tar.gz* file.
 
 .. tabs::
 
-	.. tab:: Linux
-		:tabid: linus_source
+    .. tab:: Linux
+        :tabid: linus_source
 
-		.. include:: source_install/linux.rst
+        .. include:: source_install/linux.rst
 
-	.. tab:: Mac OSX
-		:tabid: macosx_source
+    .. tab:: Mac OSX Intel
+        :tabid: macosx_intel_source
 
-		.. include:: source_install/macosx.rst
+        .. include:: source_install/macosx_intel.rst
 
-	.. tab:: Windows
-		:tabid: windows_source
+    .. tab:: Mac OSX M1
+        :tabid: macosx_m1_source
 
-		.. include:: source_install/windows.rst
+        .. include:: source_install/macosx_m1.rst
+
+    .. tab:: Windows
+        :tabid: windows_source
+
+        .. include:: source_install/windows.rst
 
 **Building and Installing**
 
