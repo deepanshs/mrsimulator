@@ -68,9 +68,7 @@ plt.show()
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [qmat]  # add the method.
+sim = Simulator(spin_systems=spin_systems, methods=[qmat])
 
 # For 2D spinning sideband simulation, set the number of spinning sidebands in the
 # Simulator.config object to `spectral_width/rotor_frequency` along the sideband

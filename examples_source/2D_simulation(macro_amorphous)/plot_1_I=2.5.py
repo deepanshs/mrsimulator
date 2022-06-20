@@ -107,9 +107,7 @@ mqvas = ThreeQ_VAS(
 
 # %%
 # Create the simulator object, add the spin systems and method, and run the simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [mqvas]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[mqvas])
 sim.config.number_of_sidebands = 1
 sim.run()
 

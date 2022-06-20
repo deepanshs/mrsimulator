@@ -102,6 +102,8 @@ spin_systems = single_site_system_generator(
 # Let's also create a Bloch decay spectrum method.
 method = BlochDecaySpectrum(
     channels=["29Si"],
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
     spectral_dimensions=[
         SpectralDimension(spectral_width=25000, reference_offset=-7000)  # values in Hz
     ],
@@ -115,9 +117,7 @@ method = BlochDecaySpectrum(
 #
 # Now that we have the spin systems and the method, create the simulator object and
 # add the respective objects.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[method])
 
 # %%
 # Static spectrum
@@ -171,7 +171,7 @@ plt.show()
 sim.methods[0] = BlochDecaySpectrum(
     channels=["29Si"],
     rotor_frequency=1000,  # in Hz
-    rotor_angle=54.735 * np.pi / 180.0,  # in rads
+    rotor_angle=54.7356 * np.pi / 180.0,  # in rads
     spectral_dimensions=[
         SpectralDimension(spectral_width=25000, reference_offset=-7000)  # values in Hz
     ],

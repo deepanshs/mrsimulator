@@ -24,7 +24,7 @@ void MRS_free_event(MRS_event *the_event) {
 void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n) {
   unsigned int dim, evt;
   for (dim = 0; dim < n; dim++) {
-    if (DEBUG) printf("post execultion dimension %d cleanup\n", dim);
+    if (DEBUG) printf("post execution dimension %d cleanup\n", dim);
     for (evt = 0; evt < dimensions[dim].n_events; evt++) {
       if (DEBUG) printf("%d event\n", evt);
       MRS_free_event(&dimensions[dim].events[evt]);
@@ -167,7 +167,7 @@ static inline void create_plans_for_events_in_dimension(
 
   /* buffer to hold the local frequencies and frequency offset. The buffer is useful
    * when the rotor angle is off magic angle (54.735 deg). */
-  dim->local_frequency = malloc_double(scheme->total_orientations);
+  dim->local_frequency = malloc_double(scheme->n_gamma * scheme->total_orientations);
   dim->freq_offset = malloc_double(scheme->octant_orientations);
   dim->freq_amplitude = malloc_double(plan->size);
 }
@@ -180,7 +180,7 @@ MRS_dimension *MRS_create_dimensions(
     MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
     double *increment, double *fractions, double *magnetic_flux_density_in_T,
     double *rotor_frequency_in_Hz, double *rotor_angle_in_rad, int *n_events,
-    unsigned int n_dim, unsigned int number_of_sidebands) {
+    unsigned int n_dim, unsigned int *number_of_sidebands) {
   unsigned int i;
   MRS_dimension *dimension = (MRS_dimension *)malloc(n_dim * sizeof(MRS_dimension));
 
@@ -188,7 +188,7 @@ MRS_dimension *MRS_create_dimensions(
     create_plans_for_events_in_dimension(
         &(dimension[i]), scheme, count[i], increment[i], coordinates_offset[i],
         n_events[i], fractions, rotor_frequency_in_Hz, rotor_angle_in_rad,
-        magnetic_flux_density_in_T, number_of_sidebands);
+        magnetic_flux_density_in_T, number_of_sidebands[i]);
 
     fractions += n_events[i];
     rotor_frequency_in_Hz += n_events[i];

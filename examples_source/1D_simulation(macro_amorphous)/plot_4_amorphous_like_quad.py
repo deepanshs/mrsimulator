@@ -84,14 +84,15 @@ spin_systems = single_site_system_generator(
 # Observe the static :math:`^{27}\text{Al}` NMR spectrum simulation. First,
 # create a central transition selective Bloch decay spectrum method.
 static_method = BlochDecayCTSpectrum(
-    channels=["27Al"], spectral_dimensions=[SpectralDimension(spectral_width=80000)]
+    channels=["27Al"],
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
+    spectral_dimensions=[SpectralDimension(spectral_width=80000)],
 )
 
 # %%
 # Create the simulator object and add the spin systems and method.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [static_method]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[static_method])
 sim.run()
 
 # %%

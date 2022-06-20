@@ -69,6 +69,7 @@ static1D = BlochDecaySpectrum(
     channels=["31P"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
     spectral_dimensions=spectral_dims,
     experiment=experiment,  # experimental dataset
 )

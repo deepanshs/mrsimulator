@@ -12,8 +12,8 @@ simulation.
 # (COASTER) simulation of :math:`\text{Rb}_2\text{CrO}_4`. The Rb site with the smaller
 # quadrupolar interaction is selectively observed and reported by Ash `et al.` [#f1]_.
 # The following is the simulation based on the published tensor parameters.
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator import signal_processing as sp
@@ -83,9 +83,7 @@ plt.show()
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin systems
-sim.methods = [coaster]  # add the method.
+sim = Simulator(spin_systems=[spin_system], methods=[coaster])
 
 # configure the simulator object. For non-coincidental tensors, set the value of the
 # `integration_volume` attribute to `hemisphere`.

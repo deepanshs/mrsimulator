@@ -35,6 +35,8 @@ spin_system = SpinSystem(
 method = BlochDecaySpectrum(
     channels=["13C"],
     magnetic_flux_density=9.4,  # in T
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
     spectral_dimensions=[SpectralDimension(count=2048, spectral_width=8.0e4)],
 )
 
@@ -42,9 +44,7 @@ method = BlochDecaySpectrum(
 # **Simulator**
 #
 # Create the Simulator object and add the method and the spin system object.
-sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin system.
-sim.methods = [method]  # add the method.
+sim = Simulator(spin_systems=[spin_system], methods=[method])
 sim.run()
 
 # %%

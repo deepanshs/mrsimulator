@@ -54,7 +54,6 @@ for angle in angles:
         ST1_VAS(
             channels=["87Rb"],
             magnetic_flux_density=7,  # in T
-            rotor_angle=angle * 3.14159 / 180,  # in rad (magic angle)
             spectral_dimensions=[
                 SpectralDimension(
                     count=256,
@@ -80,9 +79,7 @@ plt.show()
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = method  # add the methods.
+sim = Simulator(spin_systems=spin_systems, methods=method)
 sim.run()
 
 # %%

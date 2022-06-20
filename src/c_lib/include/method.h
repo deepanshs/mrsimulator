@@ -64,7 +64,7 @@ MRS_dimension *MRS_create_dimensions(
     MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
     double *increment, double *fractions, double *magnetic_flux_density_in_T,
     double *rotor_frequency_in_Hz, double *rotor_angle_in_rad, int *n_events,
-    unsigned int n_dim, unsigned int number_of_sidebands);
+    unsigned int n_dim, unsigned int *number_of_sidebands);
 
 /**
  * @brief Free the memory allocation for the MRS dimensions.
