@@ -21,3 +21,4 @@ dependencies:
       - typing-extensions>=3.7
       - lmfit>=1.0.2
       - psutil>=5.4.8
+      - nmrglue>=0.9
