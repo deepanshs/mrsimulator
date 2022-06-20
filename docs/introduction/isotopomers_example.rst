@@ -55,11 +55,16 @@ three magnetically inequivalent :math:`^1\text{H}` and two magnetically inequiva
     :context: close-figs
 
     # All shifts in ppm
+    # methyl proton site
     H_CH3 = Site(isotope="1H", isotropic_chemical_shift=1.226)
+    # methylene proton site
     H_CH2 = Site(isotope="1H", isotropic_chemical_shift=2.61)
+    # hydroxyl proton site
     H_OH = Site(isotope="1H", isotropic_chemical_shift=3.687)
 
+    # methyl carbon site
     C_CH3 = Site(isotope="13C", isotropic_chemical_shift=18)
+    # methylene carbon site
     C_CH2 = Site(isotope="13C", isotropic_chemical_shift=58)
 
 These sites will be used, along with :ref:`coupling_documentation` objects described below, to create each of the isotopomers.
@@ -71,6 +76,7 @@ To create the most abundant isotopomer, we create a list of sites present in thi
 .. plot::
     :context: close-figs
     
+    #  Put sites into list
     iso1_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH]
 
 Each site in the isotopomer is identified by its index in the list, which are numbered from 0 to 5.
@@ -81,9 +87,7 @@ a list.
 .. plot::
     :context: close-figs
     
-    iso1_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH]
-
-    # All isotropic_j shifts in ppm
+    # All isotropic_j coupling in Hz
     HH_coupling_1 = Coupling(site_index=[0, 3], isotropic_j=7)
     HH_coupling_2 = Coupling(site_index=[0, 4], isotropic_j=7)
     HH_coupling_3 = Coupling(site_index=[1, 3], isotropic_j=7)
@@ -91,6 +95,7 @@ a list.
     HH_coupling_5 = Coupling(site_index=[2, 3], isotropic_j=7)
     HH_coupling_6 = Coupling(site_index=[2, 4], isotropic_j=7)
 
+    # Put couplings into list
     iso1_couplings = [
         HH_coupling_1,
         HH_coupling_2,
@@ -120,6 +125,7 @@ along with the isotopomer's abundance of 1.08%.
 .. plot::
     :context: close-figs
 
+    #  Put sites into list
     iso2_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH, C_CH3]
 
     # Define methyl 13C - 1H couplings
@@ -141,6 +147,7 @@ replaced with a :math:`^{13}\text{C}` isotope.
 .. plot::
     :context: close-figs
 
+    #  Put sites into list
     iso3_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH, C_CH2]
 
     # Define methylene 13C - 1H couplings
@@ -151,8 +158,6 @@ replaced with a :math:`^{13}\text{C}` isotope.
     iso3_couplings = iso1_couplings + [CH2_coupling_1, CH2_coupling_2]
 
     isotopomer3 = SpinSystem(sites=iso3_sites, couplings=iso3_couplings, abundance=1.08)
-
-
 
 
 Methods

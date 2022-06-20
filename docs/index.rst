@@ -211,6 +211,7 @@ Introduction
     installation/installation
     introduction/getting_started
     introduction/isotopomers_example
+    introduction/fitting_example
 
 User Guide
 ----------
