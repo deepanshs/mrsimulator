@@ -95,6 +95,7 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
   plan->copy = false;
   plan->copy_for_rotor_angle = false;
   plan->copy_for_rotor_freq = false;
+  plan->is_static = (rotor_frequency_in_Hz < 1.0e-3) ? true : false;
   /**
    * Update the mrsimulator plan with the given spherical averaging scheme. We create
    * the coordinates on the surface of the unit sphere by projecting the points on the
@@ -116,7 +117,7 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
   cblas_dcopy(scheme->octant_orientations, scheme->amplitudes, 1, plan->norm_amplitudes,
               1);
   double scale = (1.0 / (double)(plan->number_of_sidebands * plan->number_of_sidebands *
-                                 plan->n_octants));
+                                 plan->n_octants * scheme->n_gamma));
   cblas_dscal(scheme->octant_orientations, scale, plan->norm_amplitudes, 1);
 
   plan->size = scheme->total_orientations * plan->number_of_sidebands;
@@ -137,6 +138,7 @@ void MRS_plan_update_from_rotor_frequency_in_Hz(MRS_plan *plan,
   unsigned int size_4;
   // double increment_inverse = 1.0 / increment;
   plan->rotor_frequency_in_Hz = rotor_frequency_in_Hz;
+  plan->is_static = (rotor_frequency_in_Hz < 1.0e-3) ? true : false;
 
   plan->vr_freq = get_FFT_order_freq(plan->number_of_sidebands, rotor_frequency_in_Hz);
   // cblas_dscal(plan->number_of_sidebands, increment_inverse, plan->vr_freq,
@@ -259,6 +261,7 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
   new_plan->copy = plan->copy;
   new_plan->copy_for_rotor_angle = plan->copy_for_rotor_angle;
   new_plan->copy_for_rotor_freq = plan->copy_for_rotor_freq;
+  new_plan->is_static = plan->is_static;
   return new_plan;
 }
 
@@ -386,10 +389,13 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0, complex128 *R2,
                                               complex128 *R4, bool reset,
                                               MRS_dimension *dim, double fraction) {
+  unsigned int i, gamma_idx, ptr;
+  double temp;
+  double *f_complex;
   /**
    * Rotate the R2 and R4 components from the common frame to the rotor frame over all
-   * the orientations. The componets are stored in w2 and w4 of the averaging scheme,
-   * respectively.
+   * the orientations (alpha, beta). The componets are stored in w2 and w4 of the
+   * averaging scheme, respectively.
    */
   __batch_wigner_rotation(scheme->octant_orientations, plan->n_octants,
                           scheme->wigner_2j_matrices, R2, scheme->wigner_4j_matrices,
@@ -397,7 +403,8 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
 
   /* If reset is true, zero the local_frequencies before update. */
   if (reset) {
-    cblas_dscal(scheme->total_orientations, 0.0, dim->local_frequency, 1);
+    cblas_dscal(scheme->n_gamma * scheme->total_orientations, 0.0, dim->local_frequency,
+                1);
     dim->R0_offset = 0.0;
   }
 
@@ -412,17 +419,49 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
    */
 
   /* Normalized local anisotropic frequency contributions from the 2nd-rank tensor. */
-  plan->buffer = dim->inverse_increment * plan->wigner_d2m0_vector[2] * fraction;
-  cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&(scheme->w2[2]), 6,
-              dim->local_frequency, 1);
+  for (gamma_idx = 0; gamma_idx < scheme->n_gamma; gamma_idx++) {
+    ptr = scheme->total_orientations * gamma_idx;
+    temp = dim->inverse_increment * 2 * fraction;
+    if (plan->is_static) {
+      for (i = 0; i < 2; i++) {
+        f_complex =
+            (double *)&(scheme->exp_Im_gamma[(2 + i) * scheme->n_gamma + gamma_idx]);
+        plan->buffer = temp * plan->wigner_d2m0_vector[i] * f_complex[0];
+        cblas_daxpy(scheme->total_orientations, plan->buffer,
+                    (double *)&(scheme->w2[i]), 6, &dim->local_frequency[ptr], 1);
+        plan->buffer = -temp * plan->wigner_d2m0_vector[i] * f_complex[1];
+        cblas_daxpy(scheme->total_orientations, plan->buffer,
+                    (double *)&(scheme->w2[i]) + 1, 6, &dim->local_frequency[ptr], 1);
+      }
+    }
+    plan->buffer = dim->inverse_increment * plan->wigner_d2m0_vector[2] * fraction;
+    cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&(scheme->w2[2]), 6,
+                &dim->local_frequency[ptr], 1);
+  }
   if (plan->allow_4th_rank) {
     /**
      * Similarly, calculate the normalized local anisotropic frequency contributions
      * from the fourth-rank tensor. `wigner_d2m0_vector[4] = d^4(0,0)(rotor_angle)`.
      */
-    plan->buffer = dim->inverse_increment * plan->wigner_d4m0_vector[4] * fraction;
-    cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&scheme->w4[4], 10,
-                dim->local_frequency, 1);
+    for (gamma_idx = 0; gamma_idx < scheme->n_gamma; gamma_idx++) {
+      ptr = scheme->total_orientations * gamma_idx;
+      temp = dim->inverse_increment * 2 * fraction;
+      if (plan->is_static) {
+        for (i = 0; i < 4; i++) {
+          f_complex =
+              (double *)&(scheme->exp_Im_gamma[i * scheme->n_gamma + gamma_idx]);
+          plan->buffer = temp * plan->wigner_d4m0_vector[i] * f_complex[0];
+          cblas_daxpy(scheme->total_orientations, plan->buffer,
+                      (double *)&scheme->w4[i], 10, &dim->local_frequency[ptr], 1);
+          plan->buffer = -temp * plan->wigner_d4m0_vector[i] * f_complex[1];
+          cblas_daxpy(scheme->total_orientations, plan->buffer,
+                      (double *)&scheme->w4[i] + 1, 10, &dim->local_frequency[ptr], 1);
+        }
+      }
+      plan->buffer = dim->inverse_increment * plan->wigner_d4m0_vector[4] * fraction;
+      cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&scheme->w4[4],
+                  10, &dim->local_frequency[ptr], 1);
+    }
   }
 }
 
@@ -617,7 +656,7 @@ void get_sideband_phase_components_2(unsigned int number_of_sidebands,
   double *phase = malloc_double(number_of_sidebands);
 
   vm_double_ones(number_of_sidebands, ones);
-  vm_double_arrange(number_of_sidebands, input);
+  vm_double_arange(number_of_sidebands, input);
 
   // Calculate the spin angular frequency
   spin_angular_freq = rotor_frequency_in_Hz * CONST_2PI;

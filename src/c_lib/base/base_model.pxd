@@ -33,6 +33,7 @@ cdef extern from "schemes.h":
     MRS_averaging_scheme *MRS_create_averaging_scheme(
                             unsigned int integration_density,
                             bool_t allow_4th_rank,
+                            unsigned int n_gamma,
                             unsigned int integration_volume)
     void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme)
     MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
@@ -105,7 +106,7 @@ cdef extern from "method.h":
         double *rotor_angle_in_rad,
         int *n_events,
         unsigned int n_dim,
-        unsigned int number_of_sidebands)
+        unsigned int *number_of_sidebands)
 
     void MRS_free_dimension(MRS_dimension *dimensions, int n)
 

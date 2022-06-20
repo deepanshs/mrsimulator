@@ -122,9 +122,7 @@ method = ThreeQ_VAS(
 
 # %%
 # Create the simulator object, add the spin systems and method, and run the simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[method])
 sim.config.number_of_sidebands = 1
 sim.run()
 

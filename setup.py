@@ -401,7 +401,7 @@ ext_modules += [
 # ]
 
 if USE_CYTHON:
-    ext_modules = cythonize(ext_modules, language_level=3)
+    ext_modules = cythonize(ext_modules, language_level=3, gdb_debug=False)
 
 extras = {}  # {"all": ["matplotlib>=3.3.4"]}
 

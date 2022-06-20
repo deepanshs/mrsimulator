@@ -96,7 +96,8 @@ spectral_dims = get_spectral_dimensions(experiment)
 shifting_d = Method(
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
-    rotor_frequency=0,
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
     spectral_dimensions=[
         SpectralDimension(
             **spectral_dims[0],

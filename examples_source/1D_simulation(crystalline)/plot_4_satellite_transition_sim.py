@@ -12,8 +12,8 @@ Arbitrary spin transition (single-quantum)
 # quantum transitions or central transition selective transition, respectively. In this
 # example, we show how you can simulate any arbitrary transition using the generic
 # Method method.
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent
@@ -65,6 +65,7 @@ method = Method(
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=np.inf,  # in Hz
+    rotor_angle=54.7356 * np.pi / 180,  # in rads
     spectral_dimensions=[
         SpectralDimension(
             count=1024,
@@ -87,12 +88,7 @@ plt.show()
 
 # %%
 # Create the Simulator object and add the method and the spin system object.
-sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin system
-sim.methods = [method]  # add the method
-
-# %%
-# Simulate the spectrum.
+sim = Simulator(spin_systems=[spin_system], methods=[method])
 sim.run()
 
 # The plot of the simulation before signal processing.
@@ -116,6 +112,7 @@ method2 = Method(
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=np.inf,  # in Hz
+    rotor_angle=54.7356 * np.pi / 180,  # in rads
     spectral_dimensions=[
         SpectralDimension(
             count=1024,
@@ -141,11 +138,8 @@ method2.plot()
 plt.show()
 
 # %%
-# Update the method object in the Simulator object.
-sim.methods[0] = method2  # add the method
-
-# %%
-# Simulate the spectrum.
+# Update the method object in the Simulator object and re-simulate
+sim.methods[0] = method2
 sim.run()
 
 # The plot of the simulation before signal processing.

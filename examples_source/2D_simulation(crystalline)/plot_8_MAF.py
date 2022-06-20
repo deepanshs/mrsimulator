@@ -11,8 +11,8 @@ Wollastonite, ²⁹Si (I=1/2), MAF
 # :math:`\beta−\text{Ca}_3\text{Si}_3\text{O}_9`, with three distinct
 # :math:`^{29}\text{Si}` sites. The :math:`^{29}\text{Si}` tensor parameters
 # were obtained from Hansen `et al.` [#f1]_
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator import signal_processing as sp
@@ -65,7 +65,7 @@ maf = Method(
             label="Anisotropic dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=90 * 3.14159 / 180,  # in rads
+                    rotor_angle=90 * np.pi / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
                 MixingEvent(query="NoMixing"),
@@ -78,7 +78,7 @@ maf = Method(
             label="Isotropic dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=54.735 * 3.14159 / 180,  # in rads
+                    rotor_angle=54.735 * np.pi / 180,  # in rads
                     transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
@@ -95,9 +95,7 @@ plt.show()
 # %%
 # Create the Simulator object, add the method and spin system objects, and run the
 # simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [maf]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[maf])
 sim.run()
 
 # %%

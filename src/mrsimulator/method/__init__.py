@@ -181,6 +181,7 @@ class Method(Parseable):
     def __init__(self, **kwargs):
         Method.check(kwargs)
         super().__init__(**kwargs)
+        # assign global attribute to local if it is None.
         _ = [
             setattr(ev, item, getattr(self, item))
             for sd in self.spectral_dimensions

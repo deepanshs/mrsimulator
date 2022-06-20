@@ -82,7 +82,7 @@ cdef class AveragingScheme:
         if integration_volume == 'hemisphere':
             integration_volume_=1
         self.scheme = clib.MRS_create_averaging_scheme(integration_density,
-                                    allow_4th_rank, integration_volume_)
+                                    allow_4th_rank, 9, integration_volume_)
 
     @property
     def interpolation(self):
@@ -102,7 +102,7 @@ cdef class AveragingScheme:
         if isinstance(value, int):
             if value > 0:
                 self.scheme = clib.MRS_create_averaging_scheme(value,
-                                self.allow_4th_rank,
+                                self.allow_4th_rank, 9,
                                 self.scheme.integration_volume)
                 return
         raise ValueError(f"Expecting a positive integer, found {value}.")
@@ -117,7 +117,7 @@ cdef class AveragingScheme:
         if value in __integration_volume_enum__.keys():
             self.scheme.integration_volume = __integration_volume_enum__[value]
             self.scheme = clib.MRS_create_averaging_scheme(
-                    self.scheme.integration_density,
+                    self.scheme.integration_density, 9,
                     self.allow_4th_rank, value
                 )
             return

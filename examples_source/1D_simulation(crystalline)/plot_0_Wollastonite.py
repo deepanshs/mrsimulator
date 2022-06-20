@@ -22,7 +22,8 @@ from mrsimulator.method import SpectralDimension
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
-# **Step 1:** Create the sites.
+# Create sites and spin systems. We create three single-site spin systems for
+# better performance.
 Si29_1 = Site(
     isotope="29Si",
     isotropic_chemical_shift=-89.0,  # in ppm
@@ -39,9 +40,6 @@ Si29_3 = Site(
     shielding_symmetric=SymmetricTensor(zeta=69.4, eta=0.60),  # zeta in ppm
 )
 
-# %%
-# **Step 2:** Create the spin systems from these sites. Again, we create three
-# single-site spin systems for better performance.
 spin_systems = [
     SpinSystem(sites=[Si29_1]),
     SpinSystem(sites=[Si29_2]),
@@ -49,7 +47,7 @@ spin_systems = [
 ]
 
 # %%
-# **Step 3:** Create a Bloch decay spectrum method.
+# Create a Bloch decay spectrum method.
 method = BlochDecaySpectrum(
     channels=["29Si"],
     magnetic_flux_density=14.1,  # in T
@@ -70,13 +68,11 @@ method.plot()
 plt.show()
 
 # %%
-# **Step 4:** Create the Simulator object and add the method and spin system objects.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method
+# Create the Simulator object and add method and spin system objects, and run.
+sim = Simulator(spin_systems=spin_systems, methods=[method])
 
 # %%
-# **Step 5:** Simulate the spectrum.
+# Simulate the spectrum.
 sim.run()
 
 # The plot of the simulation before signal processing.
@@ -88,7 +84,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# **Step 6:** Add post-simulation signal processing.
+# Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[sp.IFFT(), sp.apodization.Exponential(FWHM="70 Hz"), sp.FFT()]
 )

@@ -12,7 +12,7 @@ from joblib import delayed
 from joblib import Parallel
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.base_model import one_d_spectrum
+from mrsimulator.base_model import core_simulator
 from mrsimulator.method import Method
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.utils import flatten_dict
@@ -359,7 +359,7 @@ class Simulator(Parseable):
             spin_sys = get_chunks(self.spin_systems, n_jobs)
             kwargs_dict = self.config.get_int_dict()
             jobs = (
-                delayed(one_d_spectrum)(
+                delayed(core_simulator)(
                     method=method, spin_systems=sys, **kwargs_dict, **kwargs
                 )
                 for sys in spin_sys
