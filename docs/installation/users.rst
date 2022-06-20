@@ -41,15 +41,15 @@ Installing ``mrsimulator``
 
 .. tabs::
 
-  .. tab:: Local machine (Using pip)
-    :tabid: local_pip
-
-    .. include:: pip.rst
-
   .. tab:: Google Colab Notebook
     :tabid: colab_notebook
 
     .. include:: colab.rst
+
+  .. tab:: Local machine (Using pip)
+    :tabid: local_pip
+
+    .. include:: pip.rst
 
   .. tab:: From source
     :tabid: building_from_source

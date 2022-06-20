@@ -11,7 +11,7 @@ parameters for the particular NMR measurement to be simulated. A list of :ref:`m
 :ref:`spin_system_documentation` objects are used to initialize a Simulator object, which is then used to generate
 the corresponding NMR spectra--returned as a CSDM object in each Method object. For more information on the CSDM
 (Core Scientific Dataset Model), see the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__. There
-is an additional class, :ref:`_signal_processing_documentation`, for applying various post-simulation signal processing
+is an additional class, :ref:`signal_processing_documentation`, for applying various post-simulation signal processing
 operations to CSDM dataset objects. All objects can be serialized. We adopt the
 `Javascript Object Notation (JSON) <https://www.json.org>`__ as the file-serialization format for the model because it
 is human-readable if properly organized and easily integrable with numerous programming languages and related software
@@ -46,13 +46,14 @@ spin system.  First we will construct two :ref:`site_documentation` objects for 
             eta=0.5,
         ),
     )
+    my_sites=[H_site, C_site]
 
 We now have two variables, ``H_site`` and ``C_site``, which are :ref:`site_api` objects. ``H_site``
-represents a proton site with zero(default) chemical shift. ``C_site`` represents a carbon-13 site with
+represents a proton site with zero (default) chemical shift. ``C_site`` represents a carbon-13 site with
 a chemical shift of 100 ppm as well as a shielding component represented by :ref:`sy_api`
 object. We parametrize tensors using the Haeberlen convention. A Site object has default values for unspecified attributes.
 All spin interaction parameters, e.g., isotropic chemical shift and other coupling parameters, are initialized to zero.
-Additionally, the default isotope is `1H`. For example, the code above could have used ``H_site = Site()``.
+Additionally, the default isotope is ``1H``. For example, the code above could have used ``H_site = Site()``.
 
 Next, we will define a dipolar coupling by creating a :ref:`coupling_documentation` object.
 
@@ -68,8 +69,8 @@ Next, we will define a dipolar coupling by creating a :ref:`coupling_documentati
         dipolar=SymmetricTensor(D=-2e4),  # in Hz
     )
 
-Now we have all the pieces needed to create the spin system.
-If you need to create an uncoupled spin system, omit the ``couplings`` attribute.
+Couplings between Sites are specified using the indexes of the Sites in the list variable ``my_sites``.  
+Now we have all the pieces needed to create the spin system.  If you need to create an uncoupled spin system, omit the ``couplings`` attribute.
 
 .. plot::
     :context: close-figs
@@ -79,7 +80,7 @@ If you need to create an uncoupled spin system, omit the ``couplings`` attribute
 
     # Create the SpinSystem object
     spin_system = SpinSystem(
-        sites=[H_site, C_site],
+        sites=my_sites,
         couplings=[coupling],
     )
 
@@ -130,7 +131,8 @@ Simulator
 ---------
 
 At the heart of ``mrsimulator`` is the :ref:`simulator_documentation` object, which calculates the NMR
-spectrum. Let us create the :ref:`simulator_api` object:
+spectrum. Let us first create a :ref:`simulator_api` object, initialized with our previously defined spin 
+system and method, and then call :py:meth:`~mrsimulator.Simulator.run` on our :ref:`simulator_api` object.
 
 .. plot::
     :context: close-figs
@@ -139,28 +141,10 @@ spectrum. Let us create the :ref:`simulator_api` object:
     from mrsimulator import Simulator
 
     # Create a Simulator object
-    sim = Simulator()
-
-Each :ref:`simulator_api` object holds a list of SpinSystem and Method objects. Below we add the
-SpinSystem and Method objects we previously defined to the Simulator object:
-
-.. plot::
-    :context: close-figs
-
-    # Add the SpinSystem and Method objects
-    sim.spin_systems = [spin_system]
-    sim.methods = [method]
-
-To simulate the spectrum, we call :py:meth:`~mrsimulator.Simulator.run`
-on our :ref:`simulator_api` object.
-
-.. plot::
-    :context: close-figs
-
+    sim = Simulator(spin_systems = [spin_system], methods = [method])
     sim.run()
 
-The simulated spectrum is calculated and stored in the method object. Before plotting the spectrum, let's
-do some post-simulation signal processing.
+The simulated spectrum is calculated and stored in the Method object.
 
 .. note::
     In ``mrsimulator``, all resonance frequencies are calculated assuming the

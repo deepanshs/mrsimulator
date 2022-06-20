@@ -3,11 +3,13 @@
 Ethanol Example
 ^^^^^^^^^^^^^^^
 
-In this introductory example, we will simulate the isotopomers of ethanol. The resulting spectrum will include the characteristic
+In this example, we simulate the :math:`^1\text{H}` and :math:`^{13}\text{C}` liquid-state NMR spectra 
+of ethanol with its various isotopomers. That is, the resulting spectrum will include the characteristic
 :math:`^{13}\text{C}` `satellite peaks <https://en.wikipedia.org/wiki/Carbon-13_NMR_satellite>`_
 which come from couplings between :math:`^{1}\text{H}` and :math:`^{13}\text{C}` in low-abundance isotopomers.
 
-It is good practice to import packages and classes at the beginning of your code. Here we import everything we will use in this example
+It is common to import packages and classes at the beginning of your code. Here we import 
+everything used in this example
 
 .. plot::
     :context: reset
@@ -22,7 +24,7 @@ It is good practice to import packages and classes at the beginning of your code
 Spin Systems
 ------------
 
-First create the :math:`^1\text{H}` and :math:`^{13}\text{C}` sites for ethanol.
+First, let's create the :math:`^1\text{H}` and :math:`^{13}\text{C}` sites for ethanol.
 
 .. plot::
     :context: close-figs
@@ -35,12 +37,14 @@ First create the :math:`^1\text{H}` and :math:`^{13}\text{C}` sites for ethanol.
     C_CH3 = Site(isotope="13C", isotropic_chemical_shift=18)
     C_CH2 = Site(isotope="13C", isotropic_chemical_shift=58)
 
-We will use these sites along with coupling objects to create our isotopomers.
+We will use these sites along with coupling objects to create each of the isotopomers.
 
 Isotopomer 1
 ''''''''''''
 
-Now, let's define the couplings and build the spin system for the most abundant isotopomer pictured below. Each number next to an atom corresponds to that atom's index in the sites list.
+Let's start with defining the couplings and building the spin system for the most abundant isotopomer 
+pictured below. The number next to each atom will correspond to that atom's index in the isotopomer's 
+sites list.
 
 .. figure:: ../_static/iso1.*
     :width: 200
@@ -51,7 +55,7 @@ Now, let's define the couplings and build the spin system for the most abundant 
 
 .. plot::
     :context: close-figs
-
+    
     iso1_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH]
 
     # All isotropic_j shifts in ppm
