@@ -9,8 +9,8 @@ Rb₂SO₄, ⁸⁷Rb (I=3/2) SAS
 # The following is an example of Switched-Angle Spinning (SAS) simulation of
 # :math:`\text{Rb}_2\text{SO}_4`, which has two distinct rubidium sites. The NMR
 # tensor parameters for these sites are taken from Shore `et al.` [#f1]_.
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent
@@ -51,7 +51,7 @@ sas = Method(
             label="90 dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=90 * 3.14159 / 180,  # in radians
+                    rotor_angle=90 * np.pi / 180,  # in radians
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
@@ -63,7 +63,7 @@ sas = Method(
             label="MAS dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=54.74 * 3.14159 / 180,  # in radians
+                    rotor_angle=54.74 * np.pi / 180,  # in radians
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
@@ -79,9 +79,7 @@ plt.show()
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [sas]  # add the method.
+sim = Simulator(spin_systems=spin_systems, methods=[sas])
 sim.run()
 
 # %%

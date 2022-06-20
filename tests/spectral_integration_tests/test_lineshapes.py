@@ -30,8 +30,17 @@ def test_pure_shielding_static_lineshape_python_brute():
 
         # euler angle all zero
         data_mrsimulator, data_source = c_setup(filename=filename)
+
+        # if SHOW_PLOTS:
+        #     plt.plot(data_mrsimulator, "k", label="mrsims")
+        #     plt.plot(data_source, "--r", label="py brute force ($10^9$ orientations)")
+        #     plt.title("Shielding Static Lineshape")
+        #     plt.legend()
+        #     plt.show()
+
+        limit = -np.log10(data_source.max()) + 2
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=3, err_msg=message
+            data_mrsimulator, data_source, decimal=limit, err_msg=message
         )
 
         # random euler angle all zero. Euler angles should not affect the spectrum.
@@ -47,7 +56,7 @@ def test_pure_shielding_static_lineshape_python_brute():
         #     plt.show()
 
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=3, err_msg=message
+            data_mrsimulator, data_source, decimal=limit, err_msg=message
         )
 
 
@@ -60,8 +69,17 @@ def test_pure_quadrupolar_lineshape_python_brute():
         message = f"{error_message} test0{i:02d}.json"
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         data_mrsimulator, data_source = c_setup(filename=filename)
+
+        # if SHOW_PLOTS:
+        #     plt.plot(data_mrsimulator, "k", label="mrsims")
+        #     plt.plot(data_source, "--r", label="py brute force ($10^9$ orientations)")
+        #     plt.title("Quad Static Lineshape")
+        #     plt.legend()
+        #     plt.show()
+
+        limit = -np.log10(data_source.max()) + 1.5
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=3, err_msg=message
+            data_mrsimulator, data_source, decimal=limit, err_msg=message
         )
 
         # random euler angle. Euler angles should not affect the spectrum.
@@ -77,7 +95,7 @@ def test_pure_quadrupolar_lineshape_python_brute():
         #     plt.show()
 
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=3, err_msg=message
+            data_mrsimulator, data_source, decimal=limit, err_msg=message
         )
 
 
@@ -105,8 +123,9 @@ def test_pure_shielding_sideband_simpson():
         #     plt.legend()
         #     plt.show()
 
+        limit = -np.log10(data_source.max()) + 2.5
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=3, err_msg=message
+            data_mrsimulator, data_source, decimal=limit, err_msg=message
         )
 
         # random euler angle all zero. Euler angles should not affect the spectrum.
@@ -122,7 +141,7 @@ def test_pure_shielding_sideband_simpson():
         #     plt.show()
 
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=3, err_msg=message
+            data_mrsimulator, data_source, decimal=limit, err_msg=message
         )
 
 
@@ -137,8 +156,17 @@ def test_pure_quadrupolar_sidebands_simpson():
         data_mrsimulator, data_source = c_setup(
             filename=filename, integration_volume="hemisphere"
         )
+
+        # if SHOW_PLOTS:
+        #     plt.plot(data_mrsimulator, "k", label="mrsims")
+        #     plt.plot(data_source, "--r", label="simpson")
+        #     plt.title("Quad Sidebands")
+        #     plt.legend()
+        #     plt.show()
+
+        limit = -np.log10(data_source.max()) + 2
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=3.9, err_msg=message
+            data_mrsimulator, data_source, decimal=limit, err_msg=message
         )
 
         # random euler angle all zero. Euler angles should not affect the spectrum.
@@ -154,7 +182,7 @@ def test_pure_quadrupolar_sidebands_simpson():
         #     plt.show()
 
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=3.9, err_msg=message
+            data_mrsimulator, data_source, decimal=limit, err_msg=message
         )
 
 
@@ -177,8 +205,9 @@ def test_csa_plus_quadrupolar_lineshape_simpson():
         #     plt.legend()
         #     plt.show()
 
+        limit = -np.log10(data_source.max()) + 1
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=2.1, err_msg=message
+            data_mrsimulator, data_source, decimal=limit, err_msg=message
         )
 
 
@@ -200,8 +229,9 @@ def test_j_coupling_lineshape_simpson():
         #     plt.legend()
         #     plt.show()
 
+        limit = -np.log10(data_source.max()) + 1.1
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source.real, decimal=2, err_msg=message
+            data_mrsimulator, data_source, decimal=limit, err_msg=message
         )
 
 
@@ -224,6 +254,7 @@ def test_dipolar_coupling_lineshape_simpson():
         #     plt.legend()
         #     plt.show()
 
+        limit = -np.log10(data_source.max()) + 1.5
         np.testing.assert_almost_equal(
-            data_mrsimulator, data_source, decimal=2.9, err_msg=message
+            data_mrsimulator, data_source, decimal=limit, err_msg=message
         )

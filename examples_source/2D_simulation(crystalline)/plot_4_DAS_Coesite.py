@@ -9,8 +9,8 @@ Coesite, ¹⁷O (I=5/2) DAS
 # The following is a Dynamic Angle Spinning (DAS) simulation of Coesite. Coesite has
 # five crystallographic :math:`^{17}\text{O}` sites. In the following, we use the
 # :math:`^{17}\text{O}` EFG tensor information from Grandinetti `et al.` [#f1]_
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
 from mrsimulator import signal_processor as sp
@@ -43,12 +43,12 @@ das = Method(
             events=[
                 SpectralEvent(
                     fraction=0.5,
-                    rotor_angle=37.38 * 3.14159 / 180,  # in rads
+                    rotor_angle=37.38 * np.pi / 180,  # in rads
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
                 SpectralEvent(
                     fraction=0.5,
-                    rotor_angle=79.19 * 3.14159 / 180,  # in rads
+                    rotor_angle=79.19 * np.pi / 180,  # in rads
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
             ],
@@ -61,7 +61,7 @@ das = Method(
             label="MAS dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=54.735 * 3.14159 / 180,  # in rads
+                    rotor_angle=54.735 * np.pi / 180,  # in rads
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],

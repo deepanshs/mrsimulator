@@ -284,8 +284,8 @@ static inline void vm_double_sine(int count, const double *restrict x,
 }
 
 /**
- * Cosine + I Sine of the elements of vector x in rad and stored in res of type
- * complex128. res = cos(x) + I sin(x)
+ * Elementwise (Cosine + I Sine) of vector x in rad. Stores result in 'res' with
+ * complex128 type. res = cos(x) + I sin(x)
  */
 static inline void get_cos_sin_from_table(double x, double *restrict res_) {
   x = absd(x);

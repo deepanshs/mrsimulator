@@ -82,7 +82,7 @@ void __mrsimulator_core(
   // Loop over the dimensionn.
   for (dim = 0; dim < n_dimension; dim++) {
     reset = 1;  // If 1, reset the freqs to zero, else keep adding the freqs.
-    plan = dimensions->events->plan;
+    plan = dimensions[dim].events->plan;
     vm_double_ones(plan->size, dimensions[dim].freq_amplitude);
     // Loop over the events per dimension.
     for (evt = 0; evt < dimensions[dim].n_events; evt++) {
@@ -143,24 +143,22 @@ void __mrsimulator_core(
   switch (n_dimension) {
   case 1:
     if (transition_pathway_weight[0] != 0.0) {
-      one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
-                                transition_pathway_weight[0], iso_intrp);
+      one_dimensional_averaging(dimensions, scheme, spec, transition_pathway_weight[0],
+                                iso_intrp);
     }
     if (transition_pathway_weight[1] != 0.0) {
-      one_dimensional_averaging(dimensions, scheme, fftw_scheme, spec + 1,
+      one_dimensional_averaging(dimensions, scheme, spec + 1,
                                 transition_pathway_weight[1], iso_intrp);
     }
     break;
   case 2:
     if (transition_pathway_weight[0] != 0.0) {
-      two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec,
-                                transition_pathway_weight[0], plan->number_of_sidebands,
+      two_dimensional_averaging(dimensions, scheme, spec, transition_pathway_weight[0],
                                 affine_matrix, iso_intrp);
     }
     if (transition_pathway_weight[1] != 0.0) {
-      two_dimensional_averaging(dimensions, scheme, fftw_scheme, spec + 1,
-                                transition_pathway_weight[1], plan->number_of_sidebands,
-                                affine_matrix, iso_intrp);
+      two_dimensional_averaging(dimensions, scheme, spec + 1,
+                                transition_pathway_weight[1], affine_matrix, iso_intrp);
     }
     break;
   }
@@ -211,7 +209,7 @@ void mrsimulator_core(
   }
 
   MRS_averaging_scheme *scheme = MRS_create_averaging_scheme(
-      integration_density, allow_4th_rank, integration_volume);
+      integration_density, allow_4th_rank, 9, integration_volume);
 
   MRS_fftw_scheme *fftw_scheme =
       create_fftw_scheme(scheme->total_orientations, number_of_sidebands);

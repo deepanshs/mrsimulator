@@ -60,13 +60,16 @@ plt.show()
 systems = single_site_system_generator(
     isotope="13C", shielding_symmetric={"zeta": z_dist, "eta": e_dist}, abundance=amp
 )
+method = BlochDecaySpectrum(
+    channels=["13C"],
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
+)
 
 # %%
 # Here, the variable ``systems`` hold an array of single-site spin systems.
 # Next, create a simulator object and add the above system and a method.
-sim = Simulator()
-sim.spin_systems = systems  # add the systems
-sim.methods = [BlochDecaySpectrum(channels=["13C"])]  # add the method
+sim = Simulator(spin_systems=systems, methods=[method])
 sim.run()
 
 # %%
@@ -105,22 +108,22 @@ plt.show()
 # Simulate the spectrum
 # '''''''''''''''''''''
 #
-# Create the spin systems.
+# Create the spin systems and method
 systems = single_site_system_generator(
     isotope="71Ga", quadrupolar={"Cq": cq_dist * 1e6, "eta": e_dist}, abundance=amp
 )
 
+method = BlochDecayCTSpectrum(
+    channels=["71Ga"],
+    magnetic_flux_density=4.8,  # in T
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
+    spectral_dimensions=[SpectralDimension(count=2048, spectral_width=1.2e6)],
+)
+
 # %%
 # Create a simulator object and add the above system.
-sim = Simulator()
-sim.spin_systems = systems  # add the systems
-sim.methods = [
-    BlochDecayCTSpectrum(
-        channels=["71Ga"],
-        magnetic_flux_density=4.8,  # in T
-        spectral_dimensions=[SpectralDimension(count=2048, spectral_width=1.2e6)],
-    )
-]  # add the method
+sim = Simulator(spin_systems=systems, methods=[method])
 sim.run()
 
 # %%

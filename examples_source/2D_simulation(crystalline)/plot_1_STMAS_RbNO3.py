@@ -79,9 +79,7 @@ plt.show()
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = method  # add the methods.
+sim = Simulator(spin_systems=spin_systems, methods=method)
 sim.run()
 
 # %%
