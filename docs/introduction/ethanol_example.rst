@@ -3,13 +3,14 @@
 Ethanol Example
 ^^^^^^^^^^^^^^^
 
-In this example, we simulate the :math:`^1\text{H}` and :math:`^{13}\text{C}` liquid-state NMR spectra 
-of ethanol with its various isotopomers. That is, the resulting spectrum will include the characteristic
+Here we work through an example that should be familiar to nearly all practitioners of NMR spectroscopy, i.e., 
+the simulation of the :math:`^1\text{H}` and :math:`^{13}\text{C}` liquid-state NMR spectra 
+of ethanol with its various isotopomers. The :math:`^1\text{H}` spectrum will include the characteristic
 :math:`^{13}\text{C}` `satellite peaks <https://en.wikipedia.org/wiki/Carbon-13_NMR_satellite>`_
-which come from couplings between :math:`^{1}\text{H}` and :math:`^{13}\text{C}` in low-abundance isotopomers.
+which arise from couplings between :math:`^{1}\text{H}` and :math:`^{13}\text{C}` in low-abundance isotopomers.
 
-It is common to import packages and classes at the beginning of your code. Here we import 
-everything used in this example
+We begin with the common Python practice of importing all the required packages and classes at the beginning of 
+the code.
 
 .. plot::
     :context: reset
@@ -24,7 +25,17 @@ everything used in this example
 Spin Systems
 ------------
 
-First, let's create the :math:`^1\text{H}` and :math:`^{13}\text{C}` sites for ethanol.
+The molecules in a sample of ethanol, :math:`\text{CH$_3$CH$_2$OH}`, can be formed with any of the
+naturally abundant isotopes of hydrogen, carbon, and oxygen present.  Of the most abundant isotopes, 
+:math:`^1\text{H}` (99.985%), :math:`^{12}\text{C}` (98.93%), and :math:`^{16}\text{O}` (99.762%), 
+only :math:`^1\text{H}` is NMR active.  The most abundant NMR active isotopes of carbon and oxygen are 
+:math:`^{13}\text{C}` (1.11%) and :math:`^{17}\text{O}` (0.038%).  Additionally, the 
+:math:`^2\text{H}` (0.015%) isotope will be present.   For our purposes, we will ignore the effects of 
+these lower abundant :math:`^{17}\text{O}` and :math:`^2\text{H}` isotopes, and focus solely on the spectra 
+of the isotopomers formed from :math:`^1\text{H}`, :math:`^{12}\text{C}` , and :math:`^{13}\text{C}`.
+
+There are three magnetically inequivalent :math:`^1\text{H}` and two magnetically inequivalent 
+:math:`^{13}\text{C}` sites in ethanol.  These sites are created in the code shown below.
 
 .. plot::
     :context: close-figs
@@ -37,21 +48,35 @@ First, let's create the :math:`^1\text{H}` and :math:`^{13}\text{C}` sites for e
     C_CH3 = Site(isotope="13C", isotropic_chemical_shift=18)
     C_CH2 = Site(isotope="13C", isotropic_chemical_shift=58)
 
-We will use these sites along with coupling objects to create each of the isotopomers.
+These sites will be used, along with :ref:`coupling_documentation` objects described below, to create each of the isotopomers.
 
 Isotopomer 1
 ''''''''''''
 
-Let's start with defining the couplings and building the spin system for the most abundant isotopomer 
-pictured below. The number next to each atom will correspond to that atom's index in the isotopomer's 
-sites list.
+The most abundant isotopomer of ethanol consists of the :math:`^{1}\text{H}`, :math:`^{12}\text{C}`, 
+and :math:`^{16}\text{O}` isotopes, as shown below.
 
-.. figure:: ../_static/iso1.*
+.. figure:: ../_static/Ethanol.*
     :width: 200
     :alt: figure
     :align: center
 
-    An isotopomer of ethanol containing all :math:`^{1}\text{H}` and all :math:`^{12}\text{C}` isotopes.
+    Most abundant isotopomer of ethanol.
+
+Since the abundance of :math:`^{12}\text{C}` is 98.9%, the probability of this isotopomer is 
+:math:`0.989 \times 0.989=0.97812`
+    
+Using the sites defined above, we create a list of sites present in this isotopomer.
+
+.. plot::
+    :context: close-figs
+    
+    iso1_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH]
+
+Each site in the isotopomer is identified by its index in the list, which are numbered from 0 to 5.
+
+Next we create the :ref:`coupling_documentation` objects between the sites and place the Coupling objects in
+a list.
 
 .. plot::
     :context: close-figs
@@ -75,14 +100,13 @@ sites list.
         HH_coupling_6,
     ]
 
-    isotopomer1 = SpinSystem(sites=iso1_sites, couplings=iso1_couplings, abundance=97.812)
+Next, we create the SpinSystem object for this isotopomer with its abundance.
 
-.. note::
-    The abundance values were calculated with an assumption that only
-    :math:`^1\text{H}` and :math:`^{16}\text{O}` are present. The abundance
-    of :math:`^{12}\text{C}` is 98.9%, and the abundance of :math:`^{13}\text{C}`
-    is 1.1%. So, the probability of the most abundant isotopomer is
-    :math:`0.989 \times 0.989=0.97812`
+.. plot::
+    :context: close-figs
+    
+        isotopomer1 = SpinSystem(sites=iso1_sites, couplings=iso1_couplings, abundance=97.812)
+
 
 Isotopomer 2
 ''''''''''''
@@ -145,8 +169,6 @@ below (:math:`^{13}\text{C}` marked in blue)
 
 
 
-Saving the SpinSystems
-----------------------
 
 Methods
 -------
@@ -184,8 +206,6 @@ These methods emulate simple 1-pulse acquire experiments.
     )
 
 
-Saving the Methods
-------------------
 
 Simulation
 ----------
@@ -238,7 +258,7 @@ broadening to the proton and carbon spectra, respectively.
 Plotting the Data
 -----------------
 
-Now that we have our processed data, we can plot the two spectra.
+Finally, we can plot the two spectra using the code below.  Additionally, we save the plot as a pdf file.
 
 .. skip: next
 
@@ -261,12 +281,14 @@ Now that we have our processed data, we can plot the two spectra.
     ax[1].set_title("$^{13}$C")
 
     plt.tight_layout()
-    plt.savefig("spectrum.pdf")
+    plt.savefig("spectra.pdf")
     plt.show()
 
 
-Saving the Simulation
-----------------------
+Saving your Work
+----------------
+
+If you want to save your spectrum in csdf format
 
 .. plot::
     :context: close-figs
@@ -274,10 +296,22 @@ Saving the Simulation
     processed_H_data.save("processed_H_data.csdf")
     processed_C_data.save("processed_C_data.csdf")
 
+
+Saving the SpinSystems
+""""""""""""""""""""""
+
+Saving the Methods
+""""""""""""""""""
+
+Saving the full Simulation
+""""""""""""""""""""""""""
+
 .. plot::
     :include-source: False
 
     import os
     from os.path import isfile
 
-    if isfile("spectrum.pdf"): os.remove("spectrum.pdf")
+    if isfile("spectra.pdf"): os.remove("spectra.pdf")
+    if isfile("processed_H_data.csdf"): os.remove("processed_H_data.csdf")
+    if isfile("processed_C_data.csdf"): os.remove("processed_C_data.csdf")

@@ -209,9 +209,19 @@ Adobe Illustrator.
 
 Saving the Simulation dataset
 -----------------------------
-``mrsimulator`` uses the Core Scientific Dataset Model (CSDM) as its object model for the output datasets.
-The CSDM object can be serialized as a JSON file using its ``save()`` method. The example below saves the
-simulation  as a csdf file after signal processing.
+``mrsimulator`` is designed to be part of a larger data workflow involving other software packages. 
+For this larger context, ``mrsimulator`` uses the Core Scientific Dataset Model (CSDM) for importing 
+and exporting your datasets. CSDM is a lightweight, portable, human-readable, and versatile standard 
+for intra- and interdisciplinary exchange of scientific datasets. The model supports multi-dimensional 
+datasets with a multi-component dependent variable discretely sampled at unique points in a 
+multi-dimensional independent variable space. It can also hold correlated datasets assuming the different 
+physical quantities (dependent variables) are sampled on the same orthogonal grid of independent variables. 
+The CSDM can also serve as a re-usable building block in the development of more sophisticated portable 
+scientific dataset file standards.
+
+``mrsimulator`` also uses CSDM as its object model for simulated and experimental datasets. Any CSDM object in 
+``mrsimulator`` can be serialized as a JavaScript Object Notation (JSON) file using its ``save()`` method. 
+For example, the simulation after the signal processing step above is saved as a csdf file as shown below.
 
 .. plot::
     :context: close-figs
@@ -227,3 +237,4 @@ For more information on the CSDM format, see the `csdmpy documentation <https://
     from os.path import isfile
 
     if isfile("spectrum.pdf"): os.remove("spectrum.pdf")
+    if isfile("processed_simulation.csdf"): os.remove("processed_simulation.csdf")
