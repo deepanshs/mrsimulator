@@ -171,8 +171,7 @@ We can now move to the next step and create the fitting model.
 Create Fitting Model
 --------------------
 
-NMR spectra are like dog breeds; each can appear and behave quite differently. To
-create a proper fitting model, we need more information about the nuclei being observed,
+To create a proper fitting model, we need more information about the nuclei being observed,
 the material's phase, and some idea about the local structure around the atoms
 holding the observed nuclei. In this example, we know that we are working with :math:`^{27}\text{Al}`, 
 a quadrupolar nucleus with a half-integer spin of 5/2. The material, :math:`\text{Al(acac)$_2$}`, 
@@ -188,14 +187,14 @@ This transition is much narrower and more easily detected than the other single-
 Armed with this understanding of the sample and method, we can proceed to create the fitting model.
 We begin by setting up the spin system. Here again, we are faced with needing more information about
 the nuclei being observed, i.e., we need to know how many magnetically inequivalent nuclei are 
-in the sample. Inspection of the spectrum reveals an anisotropic lineshape that appears to
-be characteristic of the second-order MAS lineshape of a single site. Knowing this requires that you
-are already familiar with such lineshapes (something that ``mrsimulator`` can help!). One might
-also hypothesize that there may be other sites with lower intensity present in the spectrum, or perhaps 
-the spectrum is from a distribution of sites with very similar NMR tensor parameters. These 
-are all valid hypotheses and could be used to create more elaborate spin system models. For now, we
-invoke Occam's razor and choose the simplest spin system model with a single :math:`^{27}\text{Al}` site, 
-as shown in the code below.
+in the sample, and if there are any couplings between nuclei. Inspection of the spectrum reveals an 
+anisotropic lineshape that appears to be characteristic of the second-order MAS lineshape of a single 
+site. Knowing this requires that you are already familiar with such lineshapes (something that 
+``mrsimulator`` can help!). One might also hypothesize that there may be other sites with lower 
+intensity present in the spectrum, or perhaps the spectrum is from a distribution of sites with 
+very similar NMR tensor parameters. These are all valid hypotheses and could be used to create more 
+elaborate spin system models. For now, we invoke Occam's razor and choose the simplest spin system 
+model with a single :math:`^{27}\text{Al}` site,  as shown in the code below.
 
 .. plot::
     :context: close-figs
