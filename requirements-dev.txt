@@ -10,6 +10,7 @@ numexpr>=2.7.1
 psutil>=5.4.8
 joblib>=1.0.0
 cython>=0.29.11
+nmrglue>=0.9
 
 # Formatting requirements
 black
