@@ -150,7 +150,7 @@ frequency dimension to a frequency ratio in units of ppm, we can plot the spectr
     ax[1].plot(exp_spectrum.real)
     ax[1].plot(exp_spectrum.imag)
     ax[1].set_title("Zoomed Spectrum")
-    ax[1].set_xlim(-20,20)
+    ax[1].set_xlim(-15,15)
     ax[1].grid()
     plt.tight_layout()
     plt.show()
@@ -268,7 +268,7 @@ experimental spectrum, is plotted after the SignalProcessor object has operated 
     ax = plt.subplot(projection="csdm")
     ax.plot(exp_spectrum.real, "k", linewidth=1, label="Experiment")
     ax.plot(processed_data.real, "b",  linewidth=1, label="guess spectrum") #alpha=0.75,
-    ax.set_xlim(-20, 20)
+    ax.set_xlim(-15, 15)
     plt.legend()
     plt.grid()
     plt.tight_layout()
@@ -354,15 +354,14 @@ Plot Experimental and Simulated Spectrum with Residuals
     #Plot the spectrum
     plt.figure(figsize=(6, 3.0))
     ax = plt.subplot(projection="csdm")
-    ax.plot(exp_spectrum, "k", label="Experiment")
-    ax.plot(best_fit, "b", alpha=0.75, label="Best Fit")
-    ax.plot(residuals, color='orange', alpha=0.75, label="Residuals")
-    ax.set_xlim(-20, 20)
+    ax.plot(exp_spectrum, label="Experiment")
+    ax.plot(best_fit, alpha=0.75, label="Best Fit")
+    ax.plot(residuals, alpha=0.75, label="Residuals")
+    ax.set_xlim(-15, 15)
     plt.legend()
     plt.grid()
     plt.tight_layout()
     plt.show()
-
 
 We close this section by noting that a compelling feature of mrsimulator+LMFit is that you can perform a simultaneous fit of spectra 
 from different methods for a single set of spin system parameters. Check out all the examples in the :ref:`fitting_examples`.
