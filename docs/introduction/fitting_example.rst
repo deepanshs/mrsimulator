@@ -105,6 +105,8 @@ local machine you can skip this step.
     sigma = 0.03 #guess
     exp_spectrum = exp_spectrum.real
 
+Second Step: Setup the Spin System, Method, and Simulation.
+
 .. plot::
     :context: close-figs
 
@@ -142,15 +144,14 @@ local machine you can skip this step.
 
     # Post Simulation Processing
     # --------------------------
-    processor = sp.SignalProcessor(
-        operations=[
-            sp.IFFT(),  # inverse FFT to convert frequency based spectrum to time domain.
-            sp.apodization.Exponential(FWHM="50 Hz"),  # apodization of time domain signal.
-            sp.FFT(),  # forward FFT to convert time domain signal to frequency spectrum.
-            sp.Scale(factor=2.5e6       ),  # scale the frequency spectrum.
+    processor = sp.SignalProcessor(operations=[
+            sp.IFFT(),
+            sp.apodization.Exponential(FWHM="50 Hz"),
+            sp.FFT(),
+            sp.Scale(factor=2.5e6)
         ]
     )
-    processed_data = processor.apply_operations(data=sim.methods[0].simulation)
+    processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
 
     # Plot of the guess spectrum
     # --------------------------
@@ -164,13 +165,12 @@ local machine you can skip this step.
     plt.tight_layout()
     plt.show()
 
+Last Steps: Create LMFit parameters from Simulator and SignalProcessor, and minimize!
 
 .. plot::
     :context: close-figs
 
-    from lmfit import Minimizer
     from mrsimulator.utils import spectral_fitting as sf
-
     params = sf.make_LMFIT_params(sim, processor)
     params.pop("sys_0_abundance")
     print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
@@ -178,9 +178,14 @@ local machine you can skip this step.
 .. plot::
     :context: close-figs
 
+    from lmfit import Minimizer
     minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
     result = minner.minimize()
     result
+
+
+With mrsimulator+LMFit you can perform a simultaneous fit of spectra from different 
+methods for a single set of spin system parameters.
 
 .. plot::
     :include-source: False
