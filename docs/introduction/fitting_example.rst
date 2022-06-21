@@ -42,8 +42,8 @@ local machine you can skip this step.
     # initialize nmrglue converter object
     converter = ng.convert.converter()
 
-    # load data into the converter
-    dic, data = ng.bruker.read("Al_acac") # read in the bruker data file
+    # read in the bruker data file
+    dic, data = ng.bruker.read("Al_acac") 
 
     converter.from_bruker(dic,data, remove_digital_filter=False)
 
@@ -116,18 +116,13 @@ local machine you can skip this step.
         isotropic_chemical_shift=5, 
         quadrupolar = {"Cq":2.9e6, "eta":0.2},
     )
-
-.. plot::
-    :context: close-figs
-
-    from mrsimulator.utils import get_spectral_dimensions
-
     sys = SpinSystem(sites = [site]) 
 
 .. plot::
     :context: close-figs
 
     from mrsimulator.method.lib import BlochDecayCTSpectrum
+    from mrsimulator.utils import get_spectral_dimensions
 
     spectral_dims = get_spectral_dimensions(exp_spectrum)
     MAS = BlochDecayCTSpectrum(
