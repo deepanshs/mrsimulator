@@ -2,7 +2,7 @@
 
 Least-Squares Fitting Example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``mrsimulator`` can interact with a variety of other Python data science 
+``mrsimulator`` can interact with various Python data science 
 packages.  One such package, 
 `LMFIT <https://lmfit.github.io/lmfit-py/>`_, can be used to perform non-linear 
 least-squares analysis of experimental NMR spectra. 
@@ -15,21 +15,21 @@ Here, we illustrate the use of the mrsimulator objects to
 - extract the model parameters with uncertainties, and
 - plot the experimental spectrum along with the best-fit simulation and residuals.
 
-Importing and processing the experimental dataset
--------------------------------------------------
+Import Experimental Dataset
+---------------------------
 
 In this example, we apply the least-squares fitting procedure to the 
 :math:`^{27}\text{Al}` magic-angle spinning spectrum of :math:`\text{Al(acac)$_2$}`
 measured with whole echo acquisition.
 
-We begin by importing the experimental datatset, measured on a 9.4 T
-Bruker AVANCE IIIHD NMR spectrometer, into the script.  Bruker datasets are 
-saved in folders with a number as the folder name.  In this case, that folder 
-has been transferred from the spectrometer and renamed to "Al_acac".  
+We begin by importing the experimental dataset, measured on a 9.4 T
+Bruker AVANCE III HD NMR spectrometer into the script. Bruker datasets are 
+saved in folders with a number as the folder name. In this case, that folder 
+has been transferred from the spectrometer and renamed "Al_acac". 
 
-For our purposes, the folder was also compressed into zip archive and uploaded to an
-internet accessible server.  If you already have the folder available on your
-local machine you can skip this step.
+For our purposes, the folder was also compressed into a zip archive and uploaded to an
+internet-accessible server. If you already have the folder available on your
+local machine, you can skip this step.
 
 .. plot::
     :context: close-figs
@@ -42,9 +42,11 @@ local machine you can skip this step.
     z = zipfile.ZipFile(BytesIO(request.content))
     z.extractall("Al_acac")
 
-Once we have Bruker dataset folder is accessible to our Python code, we use the
+
+Once we have the Bruker dataset folder is accessible to our Python code, we use the
 Python package `nmrglue <https://github.com/jjhelmus/nmrglue>`_ to convert the 
 dataset into `CSDM <https://csdmpy.readthedocs.io/en/stable/>`__ format.
+
 
 .. plot::
     :context: close-figs
@@ -62,8 +64,9 @@ dataset into `CSDM <https://csdmpy.readthedocs.io/en/stable/>`__ format.
     # convert to CSDM format
     csdm_ds = converter.to_csdm()
 
-Now that the dataset is converted into a CSDM object, let's plot the
+Now that the dataset is converted into a CSDM object let's plot the
 dataset to make sure that it was imported correctly.
+
 
 .. plot::
     :context: close-figs
@@ -78,29 +81,33 @@ dataset to make sure that it was imported correctly.
     plt.show()
 
 This is the raw time-domain dataset, acquired using whole-echo acquisition.
-The blue and orange lines are the real and imaginary parts, respectively,
-of the complex time domain signal.  If you've already processed your dataset
-into frequency domain, then you can skip the next few steps and proceed to 
+The blue and orange lines are the real and imaginary parts
+of the complex time-domain signal. If you've already processed your dataset
+into the frequency domain, then you can skip the next few steps and proceed to 
 Creating the Fitting Model.
 
+Process Experimental Dataset
+----------------------------
+
 Proceeding from here, we'll need to transform this dataset into 
-the frequency domain for the least-squares analysis.  Before applying the Fourier 
-transform, however, we'll need to adjust the  ``coordinates_offset`` to place the 
+the frequency domain for the least-squares analysis. Before applying the Fourier 
+transform, we'll need to adjust the ``coordinates_offset`` to place the 
 time origin at the top of the echo. This time offset can be found among the pulse 
-sequence parameters.  If the signal was acquired with a simple Hahn-echo sequence, 
+sequence parameters. If the signal was acquired with a simple Hahn-echo sequence, 
 i.e., :math:`\pi/2-\tau-\pi-t`, then the ``coordinates_offset`` should be 
-the time between the centers of the two pulses.  However, there is often some 
-additional receiver delays before the signal acquisition begins and those 
-times need to be subtracted from the interpulse spacing.   In this measurement,
-we determine the echo top position to be 0.00816 s.  The ``coordinates_offset``, 
-which will be the time associated with the first point in the signal, will be –0.00816 s.  
-When properly set, the time origin should coincide with the maximum magnitude of the complex
+the time between the centers of the two pulses. However, there are often some 
+additional receiver delays before the signal acquisition begins, and those 
+times need to be subtracted from the interpulse spacing. In this measurement,
+we determine the echo top position to be 0.00816 s. The ``coordinates_offset``, 
+which will be the time associated with the first point in the signal, will be –0.00816 s. 
+When correctly set, the time origin should coincide with the maximum magnitude of the complex
 signal.
 
 Additionally, we need to phase correct the time domain so that the maximum echo amplitude 
-is in the real part of the signal.  For this operation, we'll use numpy ``max()`` to find 
-the time where the magnitude of the signal is at a maximum, and then use that signal phase 
+is in the real part of the signal. For this operation, we'll use numpy ``max()`` to find 
+the time where the magnitude of the signal is at a maximum and then use that signal phase 
 to place the maximum amplitude into the real part of the time domain signal.
+
 
 .. plot::
     :context: close-figs
@@ -118,10 +125,13 @@ to place the maximum amplitude into the real part of the time domain signal.
     plt.grid()
     plt.show()
 
-Here, you see that the echo top has been phased so that the maximum amplitude is in the real part,
-and that the echo top occurs at the time origin.   With a properly set time origin, the Fourier 
-transform operation can apply the appropriate first-order phase correction to the spectrum after
-performing the fast Fourier transform, as shown in the code below.
+Here, you see that the echo top has been phased so that the maximum amplitude is in the real part
+and that the echo top occurs at the time origin. 
+
+
+With a correctly set time origin, the Fourier transform operation can apply the appropriate first-order 
+phase correction to the spectrum after performing the fast Fourier transform.  After converting the 
+frequency dimension to a frequency ratio in units of ppm, we can plot the spectrum. as shown in the code below.
 
 .. plot::
     :context: close-figs
@@ -145,10 +155,10 @@ performing the fast Fourier transform, as shown in the code below.
     plt.tight_layout()
     plt.show()
 
-Now that we have a properly phased frequency domain dataset, we use only the real part of the spectrum
-in the analysis, i.e., remove the imaginary part.  Additionally, the least-squares analysis also 
-needs the standard deviation of the noise in the spectrum.  We can obtain that from the regions
-of the spectrum from -40 to -10 ppm and from 10 to 40 ppm, where there is no signal amplitude.
+Now that we have an adequately phased frequency domain dataset, we use only the real part of the spectrum
+in the analysis, i.e., remove the imaginary part. The least-squares analysis also 
+needs the standard deviation of the noise in the spectrum. We can obtain that from the spectrum regions from -40 to -10 ppm and from 10 to 40 ppm, where there is no signal amplitude.
+
 
 .. plot::
     :context: close-figs
@@ -158,8 +168,8 @@ of the spectrum from -40 to -10 ppm and from 10 to 40 ppm, where there is no sig
 
 We can now move to the next step and create the fitting model.
 
-Creating the Fitting Model
---------------------------
+Create Fitting Model
+--------------------
 
 NMR spectra are like dog breeds; each can appear and behave quite differently. To
 create a proper fitting model, we need more information about the nuclei being observed,
@@ -178,12 +188,12 @@ This transition is much narrower and more easily detected than the other single-
 Armed with this understanding of the sample and method, we can proceed to create the fitting model.
 We begin by setting up the spin system. Here again, we are faced with needing more information about
 the nuclei being observed, i.e., we need to know how many magnetically inequivalent nuclei are 
-in the sample.  Inspection of the spectrum reveals an anisotropic lineshape that appears to
-be characteristic of the second-order MAS lineshape of a single site.  Knowing this requires that you
-are already familiar with such lineshapes (something that ``mrsimulator`` can help with!).  One might
+in the sample. Inspection of the spectrum reveals an anisotropic lineshape that appears to
+be characteristic of the second-order MAS lineshape of a single site. Knowing this requires that you
+are already familiar with such lineshapes (something that ``mrsimulator`` can help!). One might
 also hypothesize that there may be other sites with lower intensity present in the spectrum, or perhaps 
-that the spectrum is from a distribution of sites with very similar NMR tensor parameters. These 
-are all valid hypotheses and could be used to create more elaborate spin system models.  For now, we
+the spectrum is from a distribution of sites with very similar NMR tensor parameters. These 
+are all valid hypotheses and could be used to create more elaborate spin system models. For now, we
 invoke Occam's razor and choose the simplest spin system model with a single :math:`^{27}\text{Al}` site, 
 as shown in the code below.
 
@@ -211,7 +221,8 @@ The experimental measurement parameters associated with the method attributes ``
 and ``rotor_frequency`` are also used in creating this ``BlochDecayCTSpectrum`` method. Finally, every Method object
 has ``experiment`` attribute used to hold the experimental spectrum that is to be modeled with the Method object.
 
-Next, the simulator object is created and initialized with the SpinSystem and Method objects, and run.
+Next, the simulator object is created and initialized with the SpinSystem and Method objects and run.
+
 
 .. plot::
     :context: close-figs
@@ -231,10 +242,11 @@ Next, the simulator object is created and initialized with the SpinSystem and Me
     sim.run()
 
 Before comparing the simulation to the experimental spectrum, we need to add some line broadening to the 
-simulation in the form of a Gaussian lineshape convolution.  Additionally, the simulation needs to be
-scaled in intensity to match that of the experimental spectrum.  These two operations are performed using
-the SignalProcessor object created in the code below.   The final spectrum, intended to model the 
+simulation in the form of a Gaussian lineshape convolution. Additionally, the simulation needs to be
+scaled in intensity to match the experimental spectrum. These two operations are performed using
+the SignalProcessor object created in the code below. The final spectrum, intended to model the 
 experimental spectrum, is plotted after the SignalProcessor object has operated on the simulated spectrum.
+
 
 .. plot::
     :context: close-figs
@@ -262,16 +274,21 @@ experimental spectrum, is plotted after the SignalProcessor object has operated 
     plt.tight_layout()
     plt.show()
 
-Above is the experimental spectrum along with the simulation using our initial guesses for the fit parameters, 
-i.e., the spin system tensor and signal processor parameters.  If our initial guess was not so good, then we 
-would iteratively change the fit parameters until our simulation is reasonably close to the experimental 
-spectrum.  This is done to ensure faster convergence to the best-fit parameters and could prevent the
+Above is the experimental spectrum and the simulation using our initial guesses for the fit parameters, 
+i.e., the spin system tensor and signal processor parameters. If our initial guess were not so good, we 
+would iteratively change the fit parameters until our simulation is close to the experimental 
+spectrum. This is done to ensure faster convergence to the best-fit parameters and could prevent the
 least-squares analysis from falling into false minima on the chi-squared surface.
 
+
+Perform Least-Squares Analysis
+------------------------------
+
 Up to this point in the discussion, we've done little more than what we've learned earlier in setting up a 
-simulation with ``mrsimulator``.  Except now, we're ready to leverage the power of LMFIT to obtain the 
-best-fit parameters.  We begin by using an ``mrsimulator`` utility function ``make_LMFIT_params()`` for 
-extracting a list of LMFIT parameters from extracting the Simulator and SignalProcessor objects.
+simulation with ``mrsimulator``. Except now, we're ready to leverage the power of LMFIT to obtain the 
+best-fit parameters. We begin by using an ``mrsimulator`` utility function ``make_LMFIT_params()``to extract 
+a list of LMFIT parameters from the Simulator and SignalProcessor objects.
+
 
 .. plot::
     :context: close-figs
@@ -279,6 +296,33 @@ extracting a list of LMFIT parameters from extracting the Simulator and SignalPr
     from mrsimulator.utils import spectral_fitting as sf
     params = sf.make_LMFIT_params(sim, processor)
     print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
+
+.. parsed-literal::
+
+    Name                                      Value      Min      Max     Vary     Expr
+    SP_0_operation_1_Gaussian_FWHM               50     -inf      inf     True     None
+    SP_0_operation_3_Scale_factor           2.5e+06     -inf      inf     True     None
+    sys_0_abundance                             100        0      100    False      100
+    sys_0_site_0_isotropic_chemical_shift         5     -inf      inf     True     None
+    sys_0_site_0_quadrupolar_Cq             2.9e+06     -inf      inf     True     None
+    sys_0_site_0_quadrupolar_eta                0.2        0        1     True     None
+    None
+
+The output of the ``print()`` statement, shown above, gives the table of the LMFIT parameters.  Here,
+you can determine which parameters are fit and which are fixed.  Note that first-principles DFT calculations 
+based on structural hypotheses can sometimes help determine the initial guess for some parameters, 
+however, they are rarely accurate enough, even when using the correct structure, to be used as 
+"ground-truth" fixed parameters in a least-squares analysis of an experimental spectrum.  
+This will likely remain true for the next few generations of NMR spectroscopists.
+
+
+The least-squares analysis is performed by creating a `LMFIT <https://lmfit.github.io/lmfit-py/>`_ 
+`Minimizer <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.Minimizer>`_ object 
+that is initialized with chi-squared function, here set to ``sf.LMFIT_min_function``, the parameters,
+``params``, and ``fcn_args``, which holds the objects needed to evaluate the chi-squared function. In case of 
+``mrsimulator`` the ``fcn_args`` holds the Simulator, SignalProcessor, and the noise standard deviation 
+of the experimental spectrum.
+
 
 .. plot::
     :context: close-figs
@@ -288,8 +332,40 @@ extracting a list of LMFIT parameters from extracting the Simulator and SignalPr
     result = minner.minimize()
     result
 
-We close this section by noting that a particularly powerful feature of mrsimulator+LMFit is that you can perform a simultaneous fit of spectra 
-from different  methods for a single set of spin system parameters. Check out all the examples in the :ref:`fitting_examples`.
+Extract Model Parameters with Uncertainties
+-------------------------------------------
+
+.. figure:: ../_static/FitStatistics.*
+    :width: 800
+    :alt: figure
+    :align: center
+
+
+
+Plot Experimental and Simulated Spectrum with Residuals
+-------------------------------------------------------
+
+.. plot::
+    :context: close-figs
+
+    best_fit = sf.bestfit(sim, processor)[0]
+    residuals = sf.residuals(sim, processor)[0]
+
+    #Plot the spectrum
+    plt.figure(figsize=(6, 3.0))
+    ax = plt.subplot(projection="csdm")
+    ax.plot(exp_spectrum, "k", label="Experiment")
+    ax.plot(best_fit, "b", alpha=0.75, label="Best Fit")
+    ax.plot(residuals, color='orange', alpha=0.75, label="Residuals")
+    ax.set_xlim(-20, 20)
+    plt.legend()
+    plt.grid()
+    plt.tight_layout()
+    plt.show()
+
+
+We close this section by noting that a compelling feature of mrsimulator+LMFit is that you can perform a simultaneous fit of spectra 
+from different methods for a single set of spin system parameters. Check out all the examples in the :ref:`fitting_examples`.
 
 .. plot::
     :include-source: False
@@ -297,5 +373,4 @@ from different  methods for a single set of spin system parameters. Check out al
     import shutil
 
     shutil.rmtree("Al_acac")
-
 
