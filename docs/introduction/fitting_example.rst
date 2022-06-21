@@ -148,7 +148,7 @@ performing the fast Fourier transform, as shown in the code below.
 Now that we have a properly phased frequency domain dataset, we use only the real part of the spectrum
 in the analysis, i.e., remove the imaginary part.  Additionally, the least-squares analysis also 
 needs the standard deviation of the noise in the spectrum.  We can obtain that from the regions
-of the spectrum from -50 to -10 ppm and from 10 to 50 ppm, where there is no signal amplitude.
+of the spectrum from -40 to -10 ppm and from 10 to 40 ppm, where there is no signal amplitude.
 
 .. plot::
     :context: close-figs
@@ -199,7 +199,8 @@ as shown in the code below.
     )
     sys = SpinSystem(sites = [site]) 
 
-We use an initial guess for the tensor parameters, which can be iteratively refined with the following code.
+We used an educated guess for the tensor parameters, which can be iteratively refined using the code that
+follows.
 
 Next, we create the Method object to model the experimental method used to acquire the spectrum. It is a
 straightforward procedure in this case. We choose the ``BlochDecayCTSpectrum`` method since the measurement was
@@ -208,9 +209,9 @@ the experimental spectrum, i.e., ``exp_spectrum``, we can extract the relevant p
 attribute of the ``BlochDecayCTSpectrum`` method using the fitting utility function ``get_spectral_dimensions()``.
 The experimental measurement parameters associated with the method attributes ``magnetic_flux_density`` 
 and ``rotor_frequency`` are also used in creating this ``BlochDecayCTSpectrum`` method. Finally, every Method object
-has ``experiment`` attribute used to hold the experimental spectrum is to be modeled with the Method object.
+has ``experiment`` attribute used to hold the experimental spectrum that is to be modeled with the Method object.
 
-Next, the simulator object is created and initialized with the spin systems and method, and run.
+Next, the simulator object is created and initialized with the SpinSystem and Method objects, and run.
 
 .. plot::
     :context: close-figs
@@ -232,7 +233,7 @@ Next, the simulator object is created and initialized with the spin systems and 
 Before comparing the simulation to the experimental spectrum, we need to add some line broadening to the 
 simulation in the form of a Gaussian lineshape convolution.  Additionally, the simulation needs to be
 scaled in intensity to match that of the experimental spectrum.  These two operations are performed using
-the SignalProcessor object as created in the code below.   The final spectrum, intended to model the 
+the SignalProcessor object created in the code below.   The final spectrum, intended to model the 
 experimental spectrum, is plotted after the SignalProcessor object has operated on the simulated spectrum.
 
 .. plot::
@@ -287,10 +288,8 @@ extracting a list of LMFIT parameters from extracting the Simulator and SignalPr
     result = minner.minimize()
     result
 
-With mrsimulator+LMFit you can perform a simultaneous fit of spectra from different 
-methods for a single set of spin system parameters.
-
-Also, check out our :ref:`fitting_examples`.
+We close this section by noting that a particularly powerful feature of mrsimulator+LMFit is that you can perform a simultaneous fit of spectra 
+from different  methods for a single set of spin system parameters. Check out all the examples in the :ref:`fitting_examples`.
 
 .. plot::
     :include-source: False
