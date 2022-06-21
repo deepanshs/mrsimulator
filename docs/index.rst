@@ -78,6 +78,7 @@ Welcome to the Mrsimulator documentation
 ..     :alt: PyPI - Downloads
 
 **About**
+
 Shortly after the birth of NMR spectroscopy, it was realized that spatial and spin degrees of 
 freedom could be manipulated on a time scale faster than the coherence lifetimes of the 
 transitions. This led to an explosion of multi-pulse NMR methodologies for probing the structure 
