@@ -78,10 +78,21 @@ Welcome to the Mrsimulator documentation
 ..     :alt: PyPI - Downloads
 
 **About**
-
-``mrsimulator`` is an open-source python package for fast simulation and analysis of
-multi-dimensional solid-state magnetic resonance (NMR) spectra of crystalline and
-amorphous materials.
+Shortly after the birth of NMR spectroscopy, it was realized that spatial and spin degrees of 
+freedom could be manipulated on a time scale faster than the coherence lifetimes of the 
+transitions. This led to an explosion of multi-pulse NMR methodologies for probing the structure 
+and dynamics of matter over a wide range of length and time scales. Numerical simulations of the 
+NMR spectra from these multi-pulse methods have long been a critical part of their analyses. The 
+most robust and rigorous numerical approaches employ the full density operator, ideal for dealing 
+with finite pulse effects, weak to intermediate to strong couplings, non-commuting Hamiltonians, 
+and relaxation and exchange processes. However, such an approach can be highly inefficient, 
+particularly when Hamiltonians commute, pulses are ideal, and transverse relaxation can be treated 
+as an ad-hoc line broadening. ``mrsimulator``, an open-source python package, achieves high benchmarks 
+in spectral simulations and analyses by limiting itself to such situations, assisted with analytical 
+expressions for transition frequencies and coherence transfers between transitions. Fortunately, 
+working in this limit prevents ``mrsimulator`` from modeling spectra of a small fraction of popular 
+NMR methods. The efficiency gains with this approach over conventional density operator simulations 
+are tremendous.
 
 ----
 
