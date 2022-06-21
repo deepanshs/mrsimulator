@@ -46,6 +46,16 @@ class BaseNamedMethod(Method):
             "and cannot be modified."
         )
 
+    @validator("channels", pre=True, always=True)
+    def check_for_only_one_channel(cls, v, *, values, **kwargs):
+        # NOTE: This check will need to change if multi-isotope named methods added
+        if len(v) != 1:
+            raise ValueError(
+                f"Named Methods cannot have more than 1 channel. "
+                f"Got {len(values)} channels."
+            )
+        return v
+
     @classmethod
     def update(cls, **kwargs):
         return {"spectral_dimensions": [{"events": [{}]} for _ in range(cls.ndim)]}

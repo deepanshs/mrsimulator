@@ -57,3 +57,12 @@ def test_BaseNamedMethod2D_setting_name():
     e = "`name=test != classname=BaseNamedMethod2D`."
     with pytest.raises(NamedMethodError, match=f".*{e}.*"):
         BaseNamedMethod2D(channels=["1H"], name="test", spectral_dimensions=[{}, {}])
+
+
+def test_BaseNamedMethod_more_than_one_channel():
+    e = "Named Methods cannot have more than 1 channel."
+    with pytest.raises(ValueError, match=f".*{e}.*"):
+        BaseNamedMethod1D(channels=["1H", "13C"], name="BaseNamedMethod1D")
+
+    with pytest.raises(ValueError, match=f".*{e}.*"):
+        BaseNamedMethod2D(channels=["1H", "13C"], name="BaseNamedMethod2D")
