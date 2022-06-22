@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
 from mrsimulator.method.lib import SSB2D
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 2

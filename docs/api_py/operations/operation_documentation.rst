@@ -3,19 +3,19 @@
 Documentation
 -------------
 
-.. currentmodule:: mrsimulator.signal_processing
+.. currentmodule:: mrsimulator.signal_processor
 
 .. autoclass:: Scale
 .. autoclass:: Linear
 .. autoclass:: IFFT
 .. autoclass:: FFT
 
-.. currentmodule:: mrsimulator.signal_processing.baseline
+.. currentmodule:: mrsimulator.signal_processor.baseline
 
 .. autoclass:: ConstantOffset
 .. autoclass:: Polynomial
 
-.. currentmodule:: mrsimulator.signal_processing.apodization
+.. currentmodule:: mrsimulator.signal_processor.apodization
 
 .. autoclass:: Gaussian
 .. autoclass:: Exponential
@@ -23,7 +23,7 @@ Documentation
 .. autoclass:: TopHat
 .. autoclass:: Mask
 
-.. currentmodule:: mrsimulator.signal_processing.affine
+.. currentmodule:: mrsimulator.signal_processor.affine
 
 .. autoclass:: Shear
 .. autoclass:: Scale

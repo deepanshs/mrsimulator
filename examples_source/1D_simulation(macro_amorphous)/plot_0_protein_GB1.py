@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator
 from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.method import SpectralDimension
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 
 # sphinx_gallery_thumbnail_number = 1
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import mrsimulator.signal_processing as sp
+import mrsimulator.signal_processor as sp
 import numpy as np
 from lmfit import Parameters
 from mrsimulator import Simulator

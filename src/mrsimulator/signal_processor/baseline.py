@@ -32,7 +32,7 @@ class ConstantOffset(Baseline):
     Example
     -------
 
-    >>> from mrsimulator import signal_processing as sp
+    >>> from mrsimulator import signal_processor as sp
     >>> operation1 = sp.baseline.ConstantOffset(offset=20)
     """
 
@@ -70,7 +70,7 @@ class Polynomial(Baseline):
     Example
     -------
 
-    >>> from mrsimulator import signal_processing as sp
+    >>> from mrsimulator import signal_processor as sp
     >>> operation1 = sp.baseline.Polynomial(polynomial_dictionary = {'c0':10, 'c2':2})
     """
 

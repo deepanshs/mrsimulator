@@ -15,7 +15,7 @@ MCl₂.2D₂O, ²H (I=1) Shifting-d echo
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 

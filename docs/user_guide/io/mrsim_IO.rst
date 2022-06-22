@@ -226,7 +226,7 @@ For more information on the CSDM format, see the
 Serialize Simulator and SignalProcessor object
 ----------------------------------------------
 
-The :ref:`simulator_api` object and a list of :ref:`signal_processing_api` objects
+The :ref:`simulator_api` object and a list of :ref:`signal_processor_api` objects
 can both be serialized within the same file by calling the :meth:`~mrsimulator.save`
 method.
 
@@ -234,7 +234,7 @@ method.
 
     from mrsimulator import save
     from mrsimulator import Simulator
-    from mrsimulator import signal_processing as sp
+    from mrsimulator import signal_processor as sp
 
     sim = Simulator()
     processor1 = sp.SignalProcessor()
@@ -252,7 +252,7 @@ Additionally, a metadata dictionary can be passed using the ``application`` keyw
 
 To load a simulator and signal processors from a file, call the :meth:`~mrsimulator.load`
 method. This method will return an ordered list of a :ref:`simulator_api` object, a list of
-:ref:`signal_processing_api` objects, and a metadata dictionary
+:ref:`signal_processor_api` objects, and a metadata dictionary
 
 .. code-block:: python
 

@@ -13,7 +13,7 @@ from lmfit import Minimizer
 
 from mrsimulator import Simulator, Site, SpinSystem
 from mrsimulator.method.lib import BlochDecayCTSpectrum
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor

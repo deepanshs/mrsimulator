@@ -14,7 +14,7 @@ Coesite, ¹⁷O (I=5/2)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.method.lib import BlochDecayCTSpectrum
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import SpectralDimension

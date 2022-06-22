@@ -24,7 +24,7 @@ code, a common practice in Python code.
     from mrsimulator import Simulator, Site, SpinSystem, Coupling
     from mrsimulator.method.lib import BlochDecaySpectrum
     from mrsimulator.method import SpectralDimension
-    from mrsimulator import signal_processing as sp
+    from mrsimulator import signal_processor as sp
 
 Spin Systems
 ------------
@@ -226,8 +226,8 @@ spin systems and the list of your two methods, and run the simulation.
     sim.run()
 
 
-Signal Processing
------------------
+Signal Processor
+----------------
 
 Before plotting the spectra, add some line broadening to the resonances. For
 this, create a SignalProcessor object initialized with a list of operations
@@ -265,8 +265,9 @@ that gives an FWHM of 20 Hz.
     processed_H_data = processor_1H.apply_operations(data=H_data)
     processed_C_data = processor_13C.apply_operations(data=C_data)
 
+
 Plotting the Data
------------------
+'''''''''''''''''
 
 Finally, after applying the convolution with a Lorentizan line shape, you can
 plot the two spectra using the code below.  Additionally, you can save the plot
@@ -298,10 +299,10 @@ as a pdf file in this example.
 
 
 Saving your Work
-----------------
+''''''''''''''''
 
 Saving the Spectra
-''''''''''''''''''
+++++++++++++++++++
 
 You can save the spectra in csdf format using the code below.
 
@@ -313,7 +314,7 @@ You can save the spectra in csdf format using the code below.
 
 
 Saving the SpinSystems
-''''''''''''''''''''''
+++++++++++++++++++++++
 
 If you want to save the spin systems for use in a different project, you can ask
 the Simulator object to export the list of SpinSystem objects to a json file
@@ -340,7 +341,7 @@ objects, as shown below.
 
 
 Saving the Methods
-''''''''''''''''''
+++++++++++++++++++
 
 Similarly, if you want to save the methods for use in a different project, you
 can ask the Simulator object to export the list of Method objects to a json
@@ -367,7 +368,8 @@ shown below.
 
 
 Saving the full Simulation
-''''''''''''''''''''''''''
+++++++++++++++++++++++++++
+
 The Simulation and SignalProcessor objects can also be serialized into JSON
 files. At some point, however, saving the Python script or Juypiter notebook
 with your code will be just as convenient.  Nonetheless, you can find

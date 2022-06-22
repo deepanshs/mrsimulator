@@ -1,15 +1,15 @@
-.. _signal_processing_documentation:
+.. _signal_processor_documentation:
 
-=================
-Signal Processing
-=================
+================
+Signal Processor
+================
 
 After running a simulation, you may need to apply some post-simulation signal processing. For example, you may need to scale the simulated spectrum to match experimental intensities, or you may want to convolve the spectrum with a Lorentzian, Gaussian, or other line-broadening
-function. For this reason, ``mrsimulator`` offers some frequently used NMR signal processing tools within the ``mrsimulator.signal_processing`` module.
+function. For this reason, ``mrsimulator`` offers some frequently used NMR signal processing tools within the ``mrsimulator.signal_processor`` module.
 
 .. seealso::
 
-    :ref:`signal_processing_examples` for notebooks using common processing functions.
+    :ref:`signal_processor_examples` for notebooks using common processing functions.
 
 CSDM object
 -----------
@@ -19,14 +19,14 @@ The simulated spectrum is held in a CSDM [#f1]_ object, which supports multi-dim
 ``SignalProcessor`` class
 -------------------------
 
-Signal processing is a series of operations sequentially applied to the dataset. In ``mrsimulator``, the :py:class:`~mrsimulator.signal_processing.SignalProcessor` object is
-used to apply operations. Here we create a new signal processing object
+Signal processing is a series of operations sequentially applied to the dataset. In ``mrsimulator``, the :py:class:`~mrsimulator.signal_processor.SignalProcessor` object is
+used to apply operations. Here we create a new SignalProcessor object
 
 .. plot::
     :context: reset
 
-    # Import the signal_processing module
-    from mrsimulator import signal_processing as sp
+    # Import the signal_processor module
+    from mrsimulator import signal_processor as sp
 
     # Create a new SignalProcessor object
     processor = sp.SignalProcessor()
@@ -69,7 +69,7 @@ Let's create a CSDM object and then apply the operations to visualize the result
     )
 
 To apply the previously defined signal processing operations to the above CSDM object, use
-the :py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method of the
+the :py:meth:`~mrsimulator.signal_processor.SignalProcessor.apply_operations` method of the
 ``SignalProcessor`` instance as follows
 
 .. plot::
@@ -119,7 +119,7 @@ Applying Apodizations to specific Dependent Variables
 -----------------------------------------------------
 
 Each dimension in a simulated spectrum can hold multiple dependent variables (a.k.a. contributions from multiple spin systems). Each spin system may need different convolutions applied to match an experimental spectrum. The
-:py:class:`~mrsimulator.signal_processing.Apodization` sub-classes have the *dv_index* attribute, specifying which dependent variable (spin system) to apply the operation on. By default, *dv_index* is ``None`` and will apply the convolution to all dependent variables
+:py:class:`~mrsimulator.signal_processor.Apodization` sub-classes have the *dv_index* attribute, specifying which dependent variable (spin system) to apply the operation on. By default, *dv_index* is ``None`` and will apply the convolution to all dependent variables
 in a dimension.
 
 .. note::
@@ -151,7 +151,7 @@ Let's add another dependent variable to the previously created CSDM object to ta
     csdm_object.add_dependent_variable(cp.as_dependent_variable(test_data))
 
 Now, we again apply the operations with the
-:py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method. The comparison of the unprocessed and processed data is also shown below.
+:py:meth:`~mrsimulator.signal_processor.SignalProcessor.apply_operations` method. The comparison of the unprocessed and processed data is also shown below.
 
 .. plot::
     :context: close-figs

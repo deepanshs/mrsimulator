@@ -2,7 +2,7 @@
 import csdmpy as cp
 import numpy as np
 import pytest
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"

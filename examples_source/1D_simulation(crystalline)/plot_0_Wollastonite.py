@@ -14,7 +14,7 @@ Wollastonite, ²⁹Si (I=1/2)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import SpectralDimension

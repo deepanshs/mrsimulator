@@ -149,13 +149,13 @@ warnings.filterwarnings(
 # sphinx gallery config
 sphinx_gallery_conf = {
     "examples_dirs": [
-        "../signal_processing_source",
+        "../signal_processor_source",
         "../examples_source",
         "../fitting_source",
     ],
     "remove_config_comments": True,
     "gallery_dirs": [
-        "signal_processing",
+        "signal_processor",
         "examples",
         "fitting",
     ],  # path to where to save gallery generated output
@@ -164,7 +164,7 @@ sphinx_gallery_conf = {
     # "line_numbers": True,
     "subsection_order": ExplicitOrder(
         [
-            "../signal_processing_source",
+            "../signal_processor_source",
             "../examples_source/1D_simulation(crystalline)",
             "../examples_source/1D_simulation(macro_amorphous)",
             "../examples_source/2D_simulation(crystalline)",

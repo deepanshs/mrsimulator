@@ -17,7 +17,7 @@ __email__ = "maxvenetos@gmail.com"
 
 
 class SignalProcessor(Parseable):
-    """Signal processing class to apply a series of operations to the dependent
+    """SignalProcessor class to apply a series of operations to the dependent
     variables of the simulation dataset.
 
     Arguments
@@ -99,7 +99,7 @@ class Scale(Operation):
     Example
     -------
 
-    >>> from mrsimulator import signal_processing as sp
+    >>> from mrsimulator import signal_processor as sp
     >>> operation1 = sp.Scale(factor=20)
     """
 
@@ -130,7 +130,7 @@ class Linear(Operation):
     Example
     -------
 
-    >>> from mrsimulator import signal_processing as sp
+    >>> from mrsimulator import signal_processor as sp
     >>> operation1 = sp.Linear(amplitude=20, offset=-10)
     """
 

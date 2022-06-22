@@ -14,7 +14,7 @@ from lmfit import Minimizer
 
 from mrsimulator import Simulator
 from mrsimulator.method.lib import ThreeQ_VAS
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator

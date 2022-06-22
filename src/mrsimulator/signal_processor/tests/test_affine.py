@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import csdmpy as cp
 import numpy as np
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"

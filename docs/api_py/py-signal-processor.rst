@@ -1,11 +1,11 @@
 
-=====================
-Signal-processing API
-=====================
+====================
+Signal-Processor API
+====================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   signal_processing
+   signal_processor
    operations/operations_summary

@@ -17,7 +17,7 @@ object, which is then used to generate the corresponding NMR spectra--returned
 as a CSDM object in each Method object. For more information on the CSDM
 (Core Scientific Dataset Model), see the `csdmpy documentation
 <https://csdmpy.readthedocs.io/en/stable/>`__. There is an additional class,
-:ref:`signal_processing_documentation`, for applying various post-simulation
+:ref:`signal_processor_documentation`, for applying various post-simulation
 signal processing operations to CSDM dataset objects. All objects can be
 serialized. We adopt the `Javascript Object Notation
 (JSON) <https://www.json.org>`__ as the file-serialization format for the
@@ -169,39 +169,33 @@ initialized with your previously defined spin system and method, and then call
     sim = Simulator(spin_systems = [spin_system], methods = [method])
     sim.run()
 
-The simulated spectrum, stored in the Method object (at ``sim.methods[0].simulation``), can be plotted using the Python package
-`matplotlib <https://matplotlib.org/stable/>`_.
-
-.. plot::
-    :context: close-figs
-    :caption: A simulated :math:`^{13}\text{C}` MAS spectrum.
-
-    import matplotlib.pyplot as plt
-    plt.figure(figsize=(5, 3))  # set the figure size
-    ax = plt.subplot(projection="csdm")
-    ax.plot(sim.methods[0].simulation)
-    ax.invert_xaxis()  # reverse x-axis
-    plt.tight_layout(pad=0.1)
-    plt.savefig("spectrum.pdf")
-    plt.show()
+The simulated spectrum is stored as a CSDM object in the Method object at
+``sim.methods[0].simulation``. To match an experimental MAS spectrum, however,
+you still need to add some line broadening to the simulated spectrum. For this,
+you can use the :ref:`signal_processor_documentation` object described next.
 
 
 Signal Processor
 ----------------
 
-To match an experimental MAS spectrum, you will need to add some line broadening
-to the simulated spectrum. For this, you can use
-the :ref:`signal_processing_documentation` object.  Using the code below,
-create a SignalProcessing object to do a convolution of the simulated spectrum
-with a Lorentzian distribution with a full-width-half-maximum of 200 Hz.  This
-is performed in the time domain by first applying an inverse fast Fourier
-transform, an apodization with an exponential decay, followed by a fast Fourier
-transform back into the frequency domain.
+A :ref:`signal_processor_api` object holds a list of operations applied
+sequentially to a dataset. For a comprehensive list of operations and further
+details on using the :ref:`signal_processor_api` object, see
+the :ref:`signal_processor_documentation` documentation page.
+
+Use the code below to create a SignalProcessor object that performs a
+convolution of the simulated spectrum with a Lorentzian distribution having a
+full-width-half-maximum of 200 Hz. This is done with three operations: the
+first operation applies an inverse fast Fourier transform of the spectrum into
+the time domain, the second operation applies a time-domain apodization with an
+exponential decay, and the third operation applies a fast Fourier transform
+back into the frequency domain.
+
 
 .. plot::
     :context: close-figs
 
-    from mrsimulator import signal_processing as sp
+    from mrsimulator import signal_processor as sp
 
     # Create the SignalProcessor object
     processor = sp.SignalProcessor(
@@ -215,16 +209,18 @@ transform back into the frequency domain.
     # Apply the processor to the simulation data
     processed_data = processor.apply_operations(data=sim.methods[0].simulation)
 
-A :ref:`signal_processing_api` object holds a list of operations applied sequentially
-to a dataset. For a comprehensive list of operations and further details on using the
-:ref:`signal_processing_api` object, see the :ref:`signal_processing_documentation`
-documentation page.
 
-Below is code that generates your final image and a pdf file of the simulated
-spectrum:
+PyPlot
+------
 
-.. _fig1-getting-started:
-.. skip: next
+You can use `PyPlot
+<https://matplotlib.org/stable/tutorials/introductory/pyplot.html>`__ to plot your
+simulations. To aid in plotting CSDM objects with PyPlot, csdmpy provides a
+custom CSDM data plot axes.  To use it, simply add ``projection="csdm"`` to the
+PyPlot's Axes instance. Below is code using PyPlot that will generate a
+plot and a  pdf file of the simulated spectrum:
+
+.. _fig1-getting-started: skip: next
 
 .. plot::
     :context: close-figs
@@ -239,8 +235,12 @@ spectrum:
     plt.savefig("spectrum.pdf")
     plt.show()
 
-The ``plt.savefig("spectrum.pdf")`` line creates a pdf file that can be edited in a
-vector graphics editor such as Adobe Illustrator.
+The ``plt.savefig("spectrum.pdf")`` line creates a pdf file that can be edited
+in a vector graphics editor such as Adobe Illustrator.  We encourage you to
+work through the `PyPlot basic usage tutorial
+<https://matplotlib.org/stable/tutorials/introductory/usage.html#sphx-glr-tutorials-introductory-usage-py>`__
+to understand its methods and learn how to further customize your plots.
+
 
 Saving the Simulation dataset
 '''''''''''''''''''''''''''''

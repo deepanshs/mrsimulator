@@ -141,7 +141,7 @@ frequency dimension to a frequency ratio in units of ppm, we can plot the spectr
 .. plot::
     :context: close-figs
 
-    from mrsimulator import signal_processing as sp
+    from mrsimulator import signal_processor as sp
 
     ft = sp.SignalProcessor(operations=[sp.FFT()])
     exp_spectrum = ft.apply_operations(data=phased_ds)

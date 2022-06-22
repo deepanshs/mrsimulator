@@ -2,12 +2,12 @@
 """Apodization test"""
 import csdmpy as cp
 import numpy as np
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 from mrsimulator.method.lib import BlochDecaySpectrum
 
-from .test_signal_processing import setup_read_write
+from .test_signal_processor import setup_read_write
 
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"

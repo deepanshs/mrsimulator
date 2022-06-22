@@ -15,7 +15,7 @@ from lmfit import Minimizer
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method.lib import BlochDecaySpectrum
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -184,7 +184,7 @@ plt.show()
 # -------------------------------------
 # Use the :func:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` for a quick
 # setup of the fitting parameters. Note, the first two arguments of this function is
-# the simulator object and a list of signal processing objects, ``processors``. The
+# the simulator object and a list of SignalProcessor objects, ``processors``. The
 # fitting parameters corresponding to the signal processor objects are generated using
 # ``SP_i_operation_j_FunctionName_FunctionArg``, where *i* is the *ith* signal
 # processor within the list, *j* is the operation index of the *ith* processor, and

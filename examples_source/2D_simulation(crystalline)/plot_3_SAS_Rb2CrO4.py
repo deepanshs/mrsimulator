@@ -17,7 +17,7 @@ import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 2

@@ -6,7 +6,7 @@ Top-Hat Apodization
 """
 # %%
 # In this example, we will use the
-# :py:class:`~mrsimulator.signal_processing.apodization.TopHat` class to apply a
+# :py:class:`~mrsimulator.signal_processor.apodization.TopHat` class to apply a
 # point-wise top hat apodization on the Fourier transform of an example dataset. The
 # function is defined as follows
 #
@@ -28,15 +28,15 @@ Top-Hat Apodization
 import csdmpy as cp
 import matplotlib.pyplot as plt
 import numpy as np
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 
 # sphinx_gallery_thumbnail_number = 1
 
 # %%
 # First we create ``processor``, and instance of the
-# :py:class:`~mrsimulator.signal_processing.SignalProcessor` class. The required
+# :py:class:`~mrsimulator.signal_processor.SignalProcessor` class. The required
 # attribute of the SignalProcessor class, *operations*, is a list of operations to which
-# we add a :py:class:`~mrsimulator.signal_processing.apodization.TopHat` object
+# we add a :py:class:`~mrsimulator.signal_processor.apodization.TopHat` object
 # sandwiched between two Fourier transformations. Here the window is between
 # 1 and 9 seconds.
 processor = sp.SignalProcessor(
@@ -60,7 +60,7 @@ csdm_object = cp.CSDM(
 
 # %%
 # To apply the previously defined signal processor, we use the
-# :py:meth:`~mrsimulator.signal_processing.SignalProcessor.apply_operations` method as
+# :py:meth:`~mrsimulator.signal_processor.SignalProcessor.apply_operations` method as
 # as follows
 processed_data = processor.apply_operations(data=csdm_object).real
 

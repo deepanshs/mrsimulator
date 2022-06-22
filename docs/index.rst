@@ -241,7 +241,7 @@ User Guide
     user_guide/method/method_advanced_user
     user_guide/method/query_objects
     user_guide/simulator/simulator
-    user_guide/signal_processing/signal_processing
+    user_guide/signal_processor/signal_processor
     user_guide/io/mrsim_IO
 
 Examples
@@ -253,7 +253,7 @@ Examples
 
     examples/index
     fitting/index
-    signal_processing/index
+    signal_processor/index
 
 Theory
 ------
