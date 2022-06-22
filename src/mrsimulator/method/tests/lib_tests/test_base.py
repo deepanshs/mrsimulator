@@ -60,9 +60,10 @@ def test_BaseNamedMethod2D_setting_name():
 
 
 def test_BaseNamedMethod_more_than_one_channel():
-    e = "Named Methods cannot have more than 1 channel."
-    with pytest.raises(ValueError, match=f".*{e}.*"):
+    e = r"BaseNamedMethod1D only supports 1 channel\(s\). Got 2 channels"
+    with pytest.raises(ValueError, match=e):
         BaseNamedMethod1D(channels=["1H", "13C"], name="BaseNamedMethod1D")
 
-    with pytest.raises(ValueError, match=f".*{e}.*"):
+    e = r"BaseNamedMethod2D only supports 1 channel\(s\). Got 2 channels"
+    with pytest.raises(ValueError, match=e):
         BaseNamedMethod2D(channels=["1H", "13C"], name="BaseNamedMethod2D")

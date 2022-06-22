@@ -18,6 +18,7 @@ class BaseNamedMethod(Method):
     """BaseNamedMethod class."""
 
     _named_method: bool = PrivateAttr(True)
+    _num_channels: ClassVar[int] = 1
     ndim: ClassVar[int] = 1
 
     def __init__(self, **kwargs):
@@ -49,10 +50,10 @@ class BaseNamedMethod(Method):
     @validator("channels", pre=True, always=True)
     def check_for_only_one_channel(cls, v, *, values, **kwargs):
         # NOTE: This check will need to change if multi-isotope named methods added
-        if len(v) != 1:
+        if len(v) != cls._num_channels:
             raise ValueError(
-                f"Named Methods cannot have more than 1 channel. "
-                f"Got {len(values)} channels."
+                f"{cls.__name__} only supports {cls._num_channels} channel(s). "
+                f"Got {len(v)} channels."
             )
         return v
 
