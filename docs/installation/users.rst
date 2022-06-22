@@ -3,11 +3,12 @@
 For the users
 =============
 
-
 .. note::
-        If you encounter an issue during installation, see our `troubleshooting section <instillation_troubleshooting>`_.
 
-        If that doesn't resolve your issue, please create a bug report on our `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.\
+  If you encounter an issue during installation, see our 
+  `troubleshooting section <instillation_troubleshooting>`_.
+  If that doesn't resolve your issue, please create a bug report on our 
+  `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.\
 
 
 Strict Requirements
@@ -26,16 +27,19 @@ Make sure you have the required version of Python by typing the following in the
 
       $ python --version
 
-For *MacOS* users, python version 3 is installed under the name *python3*. You may replace *python* for *python3* in the above command and all subsequent Python statements.
+For *MacOS* users, Python version 3 is installed under the name *python3*. You may 
+replace *python* for *python3* in the above command and all subsequent Python statements.
 
 For *Windows* users, Python is not usually installed by default. See
-`Python.org <https://www.python.org/downloads/windows/>`_ for a list of official Python downloads and Windows installation instructions.
+`Python.org <https://www.python.org/downloads/windows/>`_ for a list of official Python 
+downloads and Windows installation instructions.
 
 .. seealso::
 
   If you do not have Python or have an older version of Python, you may visit the
   `Python downloads <https://www.python.org/downloads/>`_ or
-  `Anaconda <https://www.anaconda.com/products/individual/>`_ websites and follow their instructions on installing Python.
+  `Anaconda <https://www.anaconda.com/products/individual/>`_ websites and follow their 
+  instructions on installing Python.
 
 Installing ``mrsimulator``
 --------------------------
@@ -58,10 +62,12 @@ Installing ``mrsimulator``
     .. include:: source.rst
 
 
-Upgrading to a newer version
-""""""""""""""""""""""""""""
+Updating ``mrsimulator``
+------------------------
 
-If you upgrade to a newer version of ``mrsimulator``, you have all the prerequisites installed on your system. In this case, type the following in the terminal/Prompt
+
+If you are upgrading to a newer version of ``mrsimulator``, you should have all the prerequisites
+already installed on your system. In this case, type the following in the terminal/Prompt
 
 .. code-block:: bash
 

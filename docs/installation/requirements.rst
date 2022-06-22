@@ -21,6 +21,7 @@ Package dependencies
 - monty>=2.0.4
 - `csdmpy>=0.4.1 <https://csdmpy.readthedocs.io/en/stable/>`_
 - `pydantic>=1.9 <https://pydantic-docs.helpmanual.io>`_
+- `nmrglue>=0.9 <https://nmrglue.readthedocs.io/>`_
 
 **Other packages**
 

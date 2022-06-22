@@ -2,11 +2,12 @@
 Common Python Syntax Errors
 ===========================
 
-Python syntax is slightly different than other languages, which causes some confusion.
-Using a dedicated code editor is the easiest way to find and prevent syntax errors.
-We recommend using VS Code on your local machine or Google Colab, which runs everything online.
-These programs check for syntax errors as you write code.  The following are some typical
+Python syntax is slightly different than other languages, which causes some confusion. 
+A dedicated code editor is the easiest way to find and prevent syntax errors. We recommend 
+using VS Code on your local machine or Google Colab, which runs everything online. 
+These programs check for syntax errors as you write code. The following are some typical
 syntax errors encountered and how to solve them.
+
 
 
 IndentationError
@@ -46,9 +47,11 @@ Mismatched Brackets and Square Brackets
 
 Nesting many lists and dictionaries inside each other become hard to read. If you have mismatched or
 missing brackets, Python will throw ``SyntaxError: invalid syntax``. Code editors can automatically
-format large nestings and highlight which openings and closings go together, making the code easier to understand.
+format large nestings and highlight which openings and closings go together, making the code easier 
+to understand.
 
-Make sure all brackets are balanced and that opening and closing brackets match. Python uses three types of brackets:
+Make sure all brackets are balanced and that opening and closing brackets match. Python uses 
+three types of brackets:
 
 
 
@@ -71,7 +74,8 @@ The most common reason ``TypeError: object is not callable`` is when ``()`` is u
     foo(1)
     # I received 1
 
-But parentheses aren't valid for indexing a subscriptable object (list, tuple, etc.). For example, the following code will throw a TypeError
+But parentheses aren't valid for indexing a subscriptable object (list, tuple, etc.). 
+For example, the following code will throw a TypeError
 
 .. skip: next
 
@@ -94,7 +98,8 @@ but the following code is valid
     print(bar[1])
     # 2
 
-The same applies to dictionaries, but instead of indexing with an integer, you would index with a keyword. For example
+The same applies to dictionaries, but instead of indexing with an integer, you would index
+with a keyword. For example
 
 .. skip: next
 
@@ -131,6 +136,6 @@ For example
       File "<stdin>", line 1, in <module>
     TypeError: 'int' object is not subscriptable
 
-Also, subscriptable objects can only be indexed so many times. A 1D list can only be indexed once,
+Also, there is a limit to how times you can index a subscriptable object. A 1D list can only be indexed once,
 2D twice, and so on. If you are using nested lists/dicts, make sure you aren't exceeding the number
 of indexes possible.

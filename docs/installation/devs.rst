@@ -12,7 +12,8 @@ community extensions.
 Make your copy of mrsimulator on GitHub
 '''''''''''''''''''''''''''''''''''''''''''
 
-Making a copy of someone's code on GitHub is the same as making a *fork*.  A fork is a complete copy of the code and its revision history.
+Making a copy of someone's code on GitHub is the same as making a *fork*.  A fork is a complete
+copy of the code and its revision history.
 
 1. Log in to a `GitHub account <https://github.com>`_.
 2. Go to the `mrsimulator Github <https://github.com/deepanshs/mrsimulator>`_ home page.
@@ -26,7 +27,8 @@ Create a development environment
 ''''''''''''''''''''''''''''''''
 
 It is good practice to create separate virtual python environments when developing packages.
-There are many environment managers available; however, we recommend using `Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_
+There are many environment managers available; however, we recommend using
+`Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_
 
 The following is an example of creating a Conda environment.
 
@@ -34,7 +36,8 @@ The following is an example of creating a Conda environment.
 
     $ conda create -n mrsimulator-dev python=3.9
 
-The above command will create a new environment named *mrsimulator-dev* using python 3.9. To activate the environment, use
+The above command will create a new environment named *mrsimulator-dev* using python 3.9.
+To activate the environment, use
 
 .. code-block:: bash
 
@@ -62,31 +65,37 @@ Follow the instructions at `Set Up Git <https://docs.github.com/en/github/gettin
 at GitHub to configure:
 
 - Your user name and email in your copy of git.
-- Authentication, so you don’t have to type your GitHub password every time you need to access GitHub from the command line.
+- Authentication, so you don’t have to type your GitHub password every time you
+- need to access GitHub from the command line.
 
 
 Copy your fork of mrsimulator from GitHub to your computer
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Unless you plan on always editing the code using the online Github editor, you may need to
-copy the fork of mrsimulator from your GitHub account to your computer. Make a complete copy of the fork with
+copy the fork of mrsimulator from your GitHub account to your computer. Make a complete
+copy of the fork with
 
 .. code-block:: bash
 
     $ git clone --recursive https://github.com/your-user-name/mrsimulator.git
 
-Insert *your-user-name* with your GitHub account username. If there is an error at this stage, it is probably an error in setting up authentication.
+Insert *your-user-name* with your GitHub account username. If there is an error at this
+stage, it is probably an error in setting up authentication.
 
-You now have a copy of the mrsimulator fork from your GitHub account to your local computer into a mrsimulator folder.
+You now have a copy of the mrsimulator fork from your GitHub account to your local
+computer into a mrsimulator folder.
 
 Understanding *Remotes*
 '''''''''''''''''''''''
 
 In git, the name for another location of the same repository is *remote*.
-The repository that contains the latest "official" development version is traditionally called the *upstream* remote. You can read more about
+The repository that contains the latest "official" development version is traditionally
+called the *upstream* remote. You can read more about
 `remotes on Git Basics <https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes>`_.
 
-At this point, your local copy of mrsimulator doesn't know where the *upstream* development version of mrsimulator is. To let git know, change into the mrsimulator folder you created in
+At this point, your local copy of mrsimulator doesn't know where the *upstream* development
+version of mrsimulator is. To let git know, change into the mrsimulator folder you created in
 the previous step, and add a remote:
 
 .. code-block:: bash
@@ -94,12 +103,14 @@ the previous step, and add a remote:
     cd mrsimulator
     git remote add mrsimulator git://github.com/deepanshs/mrsimulator.git
 
-You can check that everything is set up correctly so far by asking git to show you all of the remotes it knows about for your local repository of mrsimulator with ``git remote -v``, which should display something like
+You can check that everything is set up correctly so far by asking git to show you all of the
+remotes it knows about for your local repository of mrsimulator with ``git remote -v``, which
+should display
 
 .. code-block:: bash
 
-    mrsimulator git://github.com/deepanshs/mrsimulator.git (fetch)
-    mrsimulator git://github.com/deepanshs/mrsimulator.git (push)
+    upstream git://github.com/deepanshs/mrsimulator.git (fetch)
+    upstream git://github.com/deepanshs/mrsimulator.git (push)
     origin git@github.com:your-user-name/mrsimulator.git (fetch)
     origin git@github.com:your-user-name/mrsimulator.git (push)
 
@@ -150,11 +161,13 @@ package into the default site-packages directory, you may try installing by addi
 Note for the developers and contributors.
 '''''''''''''''''''''''''''''''''''''''''
 
-**Before commits**: Mrsimulator follows python community standards for writing code and documentation. To help guide the developers and contributors toward these standards, we have created a *.pre-commit-config.yaml* file that when used with ``pre-commit``, will
-inspect the code and document for issues.
-Type ``pre-commit run`` before git commits to inspect the changes.
+**Before commits**: Mrsimulator follows Python community standards for writing code and documentation.
+To help guide the developers and contributors toward these standards, we have created
+a *.pre-commit-config.yaml* file that, when used with ``pre-commit``, will inspect
+the code and document for issues. Type ``pre-commit run`` before git commits to review the changes.
 
-You can also set up the git hook script to automatically run *pre-commit* on git commits with the ``pre-commit install``. Read more about
+You can also set up the git hook script to automatically run *pre-commit* on git commits
+with the ``pre-commit install``. Read more about
 `pre-commit <https://pre-commit.com/#3-install-the-git-hook-scripts>`_.
 
 **Running tests**: We use the pytest module for unit tests. At the root directory
@@ -166,14 +179,16 @@ of the mrsimulator package folder, type
 
 which will run a series of tests.
 
-**Building docs**: We use the sphinx python documentation generator for building docs. Navigate to the *docs* folder within the mrsimulator package folder, and type,
+**Building docs**: We use the sphinx python documentation generator for building docs. Navigate
+to the *docs* folder within the mrsimulator package folder, and type,
 
 .. code-block:: bash
 
     $ make html
 
 The above command will build the documentation and store the build at
-*mrsimulator/docs/_build/html*. Double click the *index.html* file within this folder to view the offline documentation.
+*mrsimulator/docs/_build/html*. Double click the *index.html* file within this folder to view
+the offline documentation.
 
 .. **Submitting pull requests** Make sure all the tests pass and the documentation build
 .. is successful before creating a pull request.
