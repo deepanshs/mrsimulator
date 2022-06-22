@@ -19,7 +19,7 @@ Import Experimental Dataset
 ---------------------------
 
 In this example, we apply the least-squares fitting procedure to the 
-:math:`^{27}\text{Al}` magic-angle spinning spectrum of :math:`\text{Al(acac)$_2$}`
+:math:`^{27}\text{Al}` magic-angle spinning spectrum of :math:`\text{Al(acac)$_3$}`
 measured with whole echo acquisition.
 
 We begin by importing the experimental dataset, measured on a 9.4 T
@@ -59,7 +59,7 @@ dataset into `CSDM <https://csdmpy.readthedocs.io/en/stable/>`__ format.
     # read in the bruker data file
     dic, data = ng.bruker.read("Al_acac") 
 
-    converter.from_bruker(dic,data, remove_digital_filter=False)
+    converter.from_bruker(dic,data)
 
     # convert to CSDM format
     csdm_ds = converter.to_csdm()
@@ -84,7 +84,7 @@ This is the raw time-domain dataset, acquired using whole-echo acquisition.
 The blue and orange lines are the real and imaginary parts
 of the complex time-domain signal. If you've already processed your dataset
 into the frequency domain, then you can skip the next few steps and proceed to 
-Creating the Fitting Model.
+the Measure Noise section :ref:`fitting_example.rst/measure-noise:explicit targets`.
 
 Process Experimental Dataset
 ----------------------------
@@ -104,9 +104,9 @@ When correctly set, the time origin should coincide with the maximum magnitude o
 signal.
 
 Additionally, we need to phase correct the time domain so that the maximum echo amplitude 
-is in the real part of the signal. For this operation, we'll use numpy ``max()`` to find 
-the time where the magnitude of the signal is at a maximum and then use that signal phase 
-to place the maximum amplitude into the real part of the time domain signal.
+is in the real part of the signal. For this operation, we'll use numpy :py:meth:`numpy.argmax` 
+to find the time index where the magnitude of the signal is at a maximum and then use that signal 
+phase  at that time index to place the maximum amplitude into the real part of the time domain signal.
 
 
 .. plot::
@@ -115,8 +115,13 @@ to place the maximum amplitude into the real part of the time domain signal.
     import numpy as np
 
     # set time origin to echo top
-    csdm_ds.dimensions[0].coordinates_offset = "-0.00816 s" 
-    phased_ds = csdm_ds*np.exp(-1j*(np.pi+np.angle(csdm_ds.max()).value))
+    csdm_ds.dimensions[0].coordinates_offset = "-0.00816 s"
+
+    # Phase echo top, putting maximum amplitude into real part
+    index = np.argmax(np.abs(csdm_ds.dependent_variables[0].components[0]))
+    angle = np.angle(csdm_ds.dependent_variables[0].components[0][index])
+    phased_ds = csdm_ds*np.exp(-1j*angle)
+
     plt.figure(figsize=(5, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
     ax.plot(phased_ds.real)
@@ -155,6 +160,10 @@ frequency dimension to a frequency ratio in units of ppm, we can plot the spectr
     plt.tight_layout()
     plt.show()
 
+
+Measure Noise
+-------------
+
 Now that we have an adequately phased frequency domain dataset, we use only the real part of the spectrum
 in the analysis, i.e., remove the imaginary part. The least-squares analysis also 
 needs the standard deviation of the noise in the spectrum. We can obtain that from the spectrum regions from -40 to -10 ppm and from 10 to 40 ppm, where there is no signal amplitude.
@@ -163,8 +172,12 @@ needs the standard deviation of the noise in the spectrum. We can obtain that fr
 .. plot::
     :context: close-figs
 
+    # Use only the real part of the spectrum
     exp_spectrum = exp_spectrum.real
-    sigma = 0.03 #need code here to determine sigma
+
+    # Use region below -20 ppm to calculate the noise standard deviation
+    loc = np.where(exp_spectrum.dimensions[0].coordinates < -20e-6)
+    sigma = exp_spectrum[loc].std()
 
 We can now move to the next step and create the fitting model.
 
@@ -174,7 +187,7 @@ Create Fitting Model
 To create a proper fitting model, we need more information about the nuclei being observed,
 the material's phase, and some idea about the local structure around the atoms
 holding the observed nuclei. In this example, we know that we are working with :math:`^{27}\text{Al}`, 
-a quadrupolar nucleus with a half-integer spin of 5/2. The material, :math:`\text{Al(acac)$_2$}`, 
+a quadrupolar nucleus with a half-integer spin of 5/2. The material, :math:`\text{Al(acac)$_3$}`, 
 is a solid polycrystalline sample. The symmetry of the first-coordination sphere around aluminum
 is likely low enough to generate a large electric field gradient, and hence sizeable quadrupolar
 coupling constant for :math:`^{27}\text{Al}`. These details are usually sorted out before the
@@ -285,8 +298,9 @@ Perform Least-Squares Analysis
 
 Up to this point in the discussion, we've done little more than what we've learned earlier in setting up a 
 simulation with ``mrsimulator``. Except now, we're ready to leverage the power of LMFIT to obtain the 
-best-fit parameters. We begin by using an ``mrsimulator`` utility function ``make_LMFIT_params()``to extract 
-a list of LMFIT parameters from the Simulator and SignalProcessor objects.
+best-fit parameters. We begin by using an ``mrsimulator`` utility function 
+:py:meth:`~make_LMFIT_params` to extract a list of LMFIT parameters from the Simulator and 
+SignalProcessor objects.
 
 
 .. plot::

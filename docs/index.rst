@@ -79,21 +79,23 @@ Welcome to the Mrsimulator documentation
 
 **About**
 
-Shortly after the birth of NMR spectroscopy, it was realized that spatial and spin degrees of 
-freedom could be manipulated on a time scale faster than the coherence lifetimes of the 
-transitions. This led to an explosion of multi-pulse NMR methodologies for probing the structure 
-and dynamics of matter over a wide range of length and time scales. Numerical simulations of the 
-NMR spectra from these multi-pulse methods have long been a critical part of their analyses. The 
-most robust and rigorous numerical approaches employ the full density operator, ideal for dealing 
-with finite pulse effects, weak to intermediate to strong couplings, non-commuting Hamiltonians, 
-and relaxation and exchange processes. However, such an approach can be highly inefficient, 
-particularly when Hamiltonians commute, pulses are ideal, and transverse relaxation can be treated 
-as an ad-hoc line broadening. ``mrsimulator``, an open-source python package, achieves high benchmarks 
-in spectral simulations and analyses by limiting itself to such situations, assisted with analytical 
-expressions for transition frequencies and coherence transfers between transitions. Fortunately, 
-working in this limit prevents ``mrsimulator`` from modeling spectra of a small fraction of popular 
-NMR methods. The efficiency gains with this approach over conventional density operator simulations 
-are tremendous.
+Shortly after the birth of Nuclear Magnetic Resonance (NMR) spectroscopy, it was realized that spin
+and spatial degrees of freedom could be manipulated on a time scale faster than the coherence 
+lifetimes of the nuclear spin transitions. This led to an explosion of multi-pulse and sample
+reorientation methodologies in magnetic resonance for probing the structure and dynamics of matter 
+over a wide range of length and time scales. 
+
+Numerical simulations of the NMR spectra from these methods have long been a critical 
+part of their analyses. The most robust and rigorous numerical approaches employ the full density 
+operator, ideal for dealing with finite pulse effects, weak to intermediate to strong couplings, 
+non-commuting Hamiltonians, and relaxation and exchange processes. However, such approaches can be 
+highly inefficient, particularly when Hamiltonians commute, pulses are ideal, and transverse relaxation 
+can be treated as an ad-hoc line broadening. ``mrsimulator``, an open-source python package, achieves 
+high benchmarks in spectral simulations and analyses by limiting itself to these simpler situations. 
+Fortunately, working within this limit only prevents ``mrsimulator`` from modeling spectra of a small 
+fraction of popular NMR methods. The efficiency gains with this approach over conventional density 
+operator simulations are tremendous.
+
 
 ----
 
@@ -128,8 +130,8 @@ are tremendous.
   coupling interactions.
 - It includes simulation of weakly coupled nuclei experiencing J and dipolar couplings.
 - It is fully documented with a stable and simple API and is easily incorporated into your
-  python scripts and web apps.
-- It is compatible with modern python packages, such as scikit-learn, Keras, etc.
+  Python scripts and web apps.
+- It is compatible with modern Python packages, such as Scikit-learn, Keras, etc.
 - Packages using mrsimulator -
 
   - `mrinversion <https://mrinversion.readthedocs.io/en/stable/>`_
@@ -187,14 +189,14 @@ The ``mrsimulator`` package offers the following
     - at arbitrary rotor angles
     - at arbitrary spinning frequency
 
-- A library of **NMR methods**,
+- A library of pre-built **NMR methods**,
     - 1D Bloch decay spectrum
     - 1D Bloch decay central transition spectrum
-    - 2D Multi-quantum Variable Angle Spinning (MQ-VAS)
-    - 2D Satellite-transition Variable Angle Spinning (ST-VAS)
-    - 2D Dynamic Angle Spinning (DAS)
+    - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS)
+    - 2D Satellite-Transition Variable Angle Spinning (ST-VAS)
     - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
-    - 2D Magic Angle Flipping (MAF)
+    - 2D Magic-Angle Flipping (MAF)
+    - 2D Dynamic-Angle Spinning (DAS)
     - Custom user-defined methods (Method)
 
 - **Models** for tensor parameter distribution in amorphous materials.
