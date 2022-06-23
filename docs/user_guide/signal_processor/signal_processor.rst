@@ -88,7 +88,7 @@ processed data
         and scale factor.
 
     import matplotlib.pyplot as plt
-    _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"})
+    _, ax = plt.subplots(1, 2, figsize = (8, 3), subplot_kw = {"projection":"csdm"})
     ax[0].plot(csdm_object, color="black", linewidth=1)
     ax[0].set_title("Unprocessed")
     ax[1].plot(processed_data.real, color="black", linewidth=1)

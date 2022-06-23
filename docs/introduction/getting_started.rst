@@ -25,19 +25,19 @@ model because it is human-readable if properly organized and easily integrable
 with numerous programming languages and related software packages. It is also
 the preferred serialization for data exchange in web-based applications.
 
-Here, we have put together an introductory tutorial which outline the basic
-use of ``mrsimulator``. See the User Documentation section for more detailed
-documentation on the usage of ``mrsimulator`` classes. Also, check out our
-:ref:`example_gallery` and :ref:`fitting_examples`.
+Here, we have put together a tutorial which introduces the key objects in 
+a typical ``mrsimulator`` workflow. See the User Documentation section 
+for more detailed documentation on the usage of ``mrsimulator`` classes. Also, 
+check out our :ref:`example_gallery` and :ref:`fitting_examples`.
 
-Spin System
------------
+SpinSystem
+----------
 
 An NMR spin system is an isolated system of sites (spins) and couplings. Spin
 systems can include as many sites and couplings as necessary to model a sample.
 For this introductory example, you will create a coupled
-:math:`^1\text{H}` - :math:`^{13}\text{C}` spin system. In the code below, you
-first construct two :ref:`site_documentation` objects for the :math:`^1\text{H}` 
+:math:`^1\text{H}` - :math:`^{13}\text{C}` spin system.  Use the code below to 
+construct two :ref:`site_documentation` objects for the :math:`^1\text{H}` 
 and :math:`^{13}\text{C}` sites.
 
 .. plot::
@@ -48,32 +48,37 @@ and :math:`^{13}\text{C}` sites.
     from mrsimulator.spin_system.tensors import SymmetricTensor
 
     # Create the Site objects
-    H_site = Site(isotope="1H")
+    H_site = Site(isotope = "1H")
     C_site = Site(
-        isotope="13C",
-        isotropic_chemical_shift=100.0,  # in ppm
-        shielding_symmetric=SymmetricTensor(
-            zeta=70.0,  # in ppm
-            eta=0.5,
+        isotope = "13C",
+        isotropic_chemical_shift = 100.0,  # in ppm
+        shielding_symmetric = SymmetricTensor(
+            zeta = 70.0,  # in ppm
+            eta = 0.5,
         ),
     )
-    my_sites=[H_site, C_site]
+    my_sites = [H_site, C_site]
 
 Note that isotopes in ``mrsimulator`` are specified with a string that starts
-with the isotope's mass number and is followed by its element symbol. In the
-code above, you have created two :ref:`site_api` objects in the variables
-``H_site`` and ``C_site`` and placed them into a Python list named
-``my_sites``.   The ``H_site`` variable represents a proton site with a
+with the isotope's mass number followed by its element symbol.
+
+In the code above, you created two :ref:`site_api` objects in the variables
+``H_site`` and ``C_site``. The ``H_site`` variable represents a proton site with a
 (default) chemical shift of  zero.  The ``C_site`` variable represents a
-carbon-13 site with a chemical shift of 100 ppm as well as a shielding
+carbon-13 site with a chemical shift of 100 ppm and a shielding
 component represented by a :ref:`sy_api` object. We parametrize tensors using
 the Haeberlen convention. All spin interaction parameters, e.g., isotropic
 chemical shift and other coupling parameters, are initialized to zero by
-default. Additionally, the default isotope is ``1H``. In the code above, for
+default. Additionally, the default Site isotope is ``1H``. In the code above, for
 example, you could have used ``H_site = Site()``.
 
-Next, you define a dipolar coupling by creating a :ref:`coupling_documentation`
-object.
+At the end of the code above, you placed ``H_site`` and ``C_site`` into a 
+Python ordered list named ``my_sites``.  The order of Sites in this list is important, 
+as the indexes of Sites in this list are used when specifying couplings between sites. 
+Note that indexes in Python start at zero. 
+
+Using the code below, define a dipolar coupling between ``H_site`` and ``C_site`` 
+by creating a :ref:`coupling_documentation` object.
 
 .. plot::
     :context: close-figs
@@ -83,13 +88,15 @@ object.
 
     # Create the Coupling object
     coupling = Coupling(
-        site_index=[0, 1],
-        dipolar=SymmetricTensor(D=-2e4),  # in Hz
+        site_index = [0, 1],
+        dipolar = SymmetricTensor(D = -2e4),  # in Hz
     )
 
-Couplings between Sites are specified by their indexes in the list variable
-``my_sites``.  Note that indexes in Python start at zero.  Now you have all the pieces
-needed to create the spin system using the code below. If you need to create an uncoupled spin system, simply omit the ``couplings`` attribute.
+
+The two sites involved in the Coupling are identified by their indexes in the list 
+variable ``site_index``.  
+
+Now you have all the pieces needed to create the spin system using the code below.
 
 .. plot::
     :context: close-figs
@@ -99,11 +106,14 @@ needed to create the spin system using the code below. If you need to create an 
 
     # Create the SpinSystem object
     spin_system = SpinSystem(
-        sites=my_sites,
-        couplings=[coupling],
+        sites = my_sites,
+        couplings = [coupling],
     )
 
-That's it! You have created a spin system whose spectrum is ready to be simulated.
+That's it! You have created a spin system whose spectrum is ready to be simulated. 
+If you had wanted to create an uncoupled spin system, simply omit the 
+``couplings`` attribute.
+
 
 Method
 ------
@@ -125,16 +135,16 @@ familar to a NMR spectroscopist.
 
     # Create a BlochDecaySpectrum object
     method = BlochDecaySpectrum(
-        channels=["13C"],
-        magnetic_flux_density=9.4,  # in T
-        rotor_angle=54.735 * 3.14159 / 180,  # in rad (magic angle)
-        rotor_frequency=3000,  # in Hz
-        spectral_dimensions=[
+        channels = ["13C"],
+        magnetic_flux_density = 9.4,  # in T
+        rotor_angle = 54.735 * 3.14159 / 180,  # in rad (magic angle)
+        rotor_frequency = 3000,  # in Hz
+        spectral_dimensions = [
             SpectralDimension(
-                count=2048,
-                spectral_width=80e3,  # in Hz
-                reference_offset=6e3,  # in Hz
-                label=r"$^{13}$C resonances",
+                count = 2048,
+                spectral_width = 80e3,  # in Hz
+                reference_offset = 6e3,  # in Hz
+                label = r"$^{13}$C resonances",
             )
         ],
     )
@@ -175,8 +185,8 @@ you still need to add some line broadening to the simulated spectrum. For this,
 you can use the :ref:`signal_processor_documentation` object described next.
 
 
-Signal Processor
-----------------
+SignalProcessor
+---------------
 
 A :ref:`signal_processor_api` object holds a list of operations applied
 sequentially to a dataset. For a comprehensive list of operations and further
@@ -199,15 +209,15 @@ back into the frequency domain.
 
     # Create the SignalProcessor object
     processor = sp.SignalProcessor(
-        operations=[
+        operations = [
             sp.IFFT(),
-            sp.apodization.Exponential(FWHM="200 Hz"),
+            sp.apodization.Exponential(FWHM = "200 Hz"),
             sp.FFT(),
         ]
     )
 
     # Apply the processor to the simulation data
-    processed_data = processor.apply_operations(data=sim.methods[0].simulation)
+    processed_data = processor.apply_operations(data = sim.methods[0].simulation)
 
 
 PyPlot
@@ -227,11 +237,11 @@ plot and a  pdf file of the simulated spectrum:
     :caption: A simulated :math:`^{13}\text{C}` MAS spectrum.
 
     import matplotlib.pyplot as plt
-    plt.figure(figsize=(5, 3))  # set the figure size
-    ax = plt.subplot(projection="csdm")
+    plt.figure(figsize = (5, 3))  # set the figure size
+    ax = plt.subplot(projection = "csdm")
     ax.plot(processed_data.real)
     ax.invert_xaxis()  # reverse x-axis
-    plt.tight_layout(pad=0.1)
+    plt.tight_layout()
     plt.savefig("spectrum.pdf")
     plt.show()
 
@@ -242,21 +252,20 @@ work through the `PyPlot basic usage tutorial
 to understand its methods and learn how to further customize your plots.
 
 
-Saving the Simulation dataset
-'''''''''''''''''''''''''''''
+CSDM
+----
 
-``mrsimulator`` is designed so it can be part of a larger data workflow
-involving other software packages. For this larger context, ``mrsimulator``
-uses the Core Scientific Dataset Model (CSDM) for importing and exporting your
-datasets. CSDM is a lightweight, portable, human-readable, and versatile
-standard for intra- and interdisciplinary exchange of scientific datasets. The
-model supports multi-dimensional datasets with a multi-component dependent
-variable discretely sampled at unique points in a multi-dimensional independent
-variable space. It can also hold correlated datasets assuming the different
-physical quantities (dependent variables) are sampled on the same orthogonal
-grid of independent variables. The CSDM can also serve as a re-usable building
-block in the development of more sophisticated portable scientific dataset file
-standards.
+``mrsimulator`` is designed to be part of a larger data workflow involving other
+software packages. For this larger context, ``mrsimulator`` uses the Core
+Scientific Dataset Model (CSDM) for importing and exporting your datasets. CSDM
+is a lightweight, portable, human-readable, and versatile standard for intra-
+and interdisciplinary exchange of scientific datasets. The model supports
+multi-dimensional datasets with a multi-component dependent variable discretely
+sampled at unique points in a multi-dimensional independent variable space. It
+can also hold correlated datasets assuming the different physical quantities
+(dependent variables) are sampled on the same orthogonal grid of independent
+variables. The CSDM can also serve as a re-usable building block in developing
+more sophisticated portable scientific dataset file standards.
 
 ``mrsimulator`` also uses CSDM internally as its object model for simulated and
 experimental datasets. Any CSDM object in ``mrsimulator`` can be serialized as
@@ -264,12 +273,14 @@ a JavaScript Object Notation (JSON) file using its ``save()`` method. For
 example, the simulation after the signal processing step above is saved as a
 csdf file as shown below.
 
+
+
 .. plot::
     :context: close-figs
 
     processed_data.save("processed_simulation.csdf")
 
-For more information on the CSDM format, see the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
+For more information on the CSDM file formats, see the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
 
 .. plot::
     :include-source: False

@@ -14,7 +14,7 @@ couplings between :math:`^{1}\text{H}` and :math:`^{13}\text{C}` in
 low-abundance isotopomers.
 
 Begin by importing all the required packages and classes at the beginning of the
-code, a common practice in Python code.
+code, a common Python coding practice.
 
 .. plot::
     :context: reset
@@ -66,16 +66,16 @@ and two magnetically inequivalent :math:`^{13}\text{C}` sites, as shown in the c
 
     # All shifts in ppm
     # methyl proton site
-    H_CH3 = Site(isotope="1H", isotropic_chemical_shift=1.226)
+    H_CH3 = Site(isotope = "1H", isotropic_chemical_shift = 1.226)
     # methylene proton site
-    H_CH2 = Site(isotope="1H", isotropic_chemical_shift=2.61)
+    H_CH2 = Site(isotope = "1H", isotropic_chemical_shift = 2.61)
     # hydroxyl proton site
-    H_OH = Site(isotope="1H", isotropic_chemical_shift=3.687)
+    H_OH = Site(isotope = "1H", isotropic_chemical_shift = 3.687)
 
     # methyl carbon site
-    C_CH3 = Site(isotope="13C", isotropic_chemical_shift=18)
+    C_CH3 = Site(isotope = "13C", isotropic_chemical_shift = 18)
     # methylene carbon site
-    C_CH2 = Site(isotope="13C", isotropic_chemical_shift=58)
+    C_CH2 = Site(isotope = "13C", isotropic_chemical_shift = 58)
 
 These sites will be used, along with :ref:`coupling_documentation` objects described below, to create each of the isotopomers.
 
@@ -89,21 +89,23 @@ To create the SpinSystem object for the most abundant isotopomer, start by creat
     #  Put sites into list
     iso1_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH]
 
-Each site in the isotopomer is identified by its index in the list, which are numbered from 0 to 5.
+Each site in the isotopomer is identified by its index in the ``iso1_sites`` 
+ordered list, which are numbered from 0 to 5.   Remember that the two Sites 
+involved in a Coupling are identified by their indexes in this list.
 
 Next, create the :ref:`coupling_documentation` objects between the sites and
-place the Coupling objects in a list.
+place the Coupling objects in a list. 
 
 .. plot::
     :context: close-figs
     
     # All isotropic_j coupling in Hz
-    HH_coupling_1 = Coupling(site_index=[0, 3], isotropic_j=7)
-    HH_coupling_2 = Coupling(site_index=[0, 4], isotropic_j=7)
-    HH_coupling_3 = Coupling(site_index=[1, 3], isotropic_j=7)
-    HH_coupling_4 = Coupling(site_index=[1, 4], isotropic_j=7)
-    HH_coupling_5 = Coupling(site_index=[2, 3], isotropic_j=7)
-    HH_coupling_6 = Coupling(site_index=[2, 4], isotropic_j=7)
+    HH_coupling_1 = Coupling(site_index = [0, 3], isotropic_j = 7)
+    HH_coupling_2 = Coupling(site_index = [0, 4], isotropic_j = 7)
+    HH_coupling_3 = Coupling(site_index = [1, 3], isotropic_j = 7)
+    HH_coupling_4 = Coupling(site_index = [1, 4], isotropic_j = 7)
+    HH_coupling_5 = Coupling(site_index = [2, 3], isotropic_j = 7)
+    HH_coupling_6 = Coupling(site_index = [2, 4], isotropic_j = 7)
 
     # Put couplings into list
     iso1_couplings = [
@@ -141,14 +143,14 @@ along with the isotopomer's abundance of 1.08%.
     iso2_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH, C_CH3]
 
     # Define methyl 13C - 1H couplings
-    CH3_coupling_1 = Coupling(site_index=[0, 6], isotropic_j=125)
-    CH3_coupling_2 = Coupling(site_index=[1, 6], isotropic_j=125)
-    CH3_coupling_3 = Coupling(site_index=[2, 6], isotropic_j=125)
+    CH3_coupling_1 = Coupling(site_index = [0, 6], isotropic_j = 125)
+    CH3_coupling_2 = Coupling(site_index = [1, 6], isotropic_j = 125)
+    CH3_coupling_3 = Coupling(site_index = [2, 6], isotropic_j = 125)
 
     # Add new couplings to existing 1H - 1H couplings
     iso2_couplings = iso1_couplings + [CH3_coupling_1, CH3_coupling_2, CH3_coupling_3]
 
-    isotopomer2 = SpinSystem(sites=iso2_sites, couplings=iso2_couplings, abundance=1.08)
+    isotopomer2 = SpinSystem(sites = iso2_sites, couplings = iso2_couplings, abundance = 1.08)
 
 Isotopomer 3
 ''''''''''''
@@ -163,74 +165,78 @@ methylene carbon replaced with a :math:`^{13}\text{C}` isotope.
     iso3_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH, C_CH2]
 
     # Define methylene 13C - 1H couplings
-    CH2_coupling_1 = Coupling(site_index=[3, 6], isotropic_j=141)
-    CH2_coupling_2 = Coupling(site_index=[4, 6], isotropic_j=141)
+    CH2_coupling_1 = Coupling(site_index = [3, 6], isotropic_j = 141)
+    CH2_coupling_2 = Coupling(site_index = [4, 6], isotropic_j = 141)
 
     # Add new couplings to existing 1H - 1H couplings
     iso3_couplings = iso1_couplings + [CH2_coupling_1, CH2_coupling_2]
 
-    isotopomer3 = SpinSystem(sites=iso3_sites, couplings=iso3_couplings, abundance=1.08)
+    isotopomer3 = SpinSystem(sites = iso3_sites, couplings = iso3_couplings, abundance = 1.08)
 
 
 Methods
 -------
 
-For this example, create two BlochDecaySpectrum methods for :math:`^1\text
-{H}` and :math:`^{13}\text{C}`. This method is for simulating the spectrum
-obtained from a single pulse excitation on the first isotope in the
-``channels`` attribute list.
+For this example, create two ``BlochDecaySpectrum`` methods for :math:`^1\text
+{H}` and :math:`^{13}\text{C}`. Recall that this method simulates the spectrum 
+for the first isotope in the ``channels`` attribute list.
 
 .. plot::
     :context: close-figs
 
     method_H = BlochDecaySpectrum(
-        channels=["1H"],
-        magnetic_flux_density=9.4,  # in T
-        spectral_dimensions=[
+        channels = ["1H"],
+        magnetic_flux_density = 9.4,  # in T
+        spectral_dimensions = [
             SpectralDimension(
-                count=16000,
-                spectral_width=1.5e3,  # in Hz
-                reference_offset=950,  # in Hz
-                label="$^{1}$H frequency",
+                count = 16000,
+                spectral_width = 1.5e3,  # in Hz
+                reference_offset = 950,  # in Hz
+                label = "$^{1}$H frequency",
             )
         ],
     )
 
     method_C = BlochDecaySpectrum(
-        channels=["13C"],
-        magnetic_flux_density=9.4,  # in T
-        spectral_dimensions=[
+        channels = ["13C"],
+        magnetic_flux_density = 9.4,  # in T
+        spectral_dimensions = [
             SpectralDimension(
-                count=32000,
-                spectral_width=8e3,  # in Hz
-                reference_offset=4e3,  # in Hz
-                label="$^{13}$C frequency",
+                count = 32000,
+                spectral_width = 8e3,  # in Hz
+                reference_offset = 4e3,  # in Hz
+                label = "$^{13}$C frequency",
             )
         ],
     )
 
 
 
-Simulation
-----------
+Simulations
+-----------
 
 Next, create an instance of the simulator object with the list of your three
-spin systems and the list of your two methods, and run the simulation.
+spin systems and the list of your two methods, and run the simulations.
 
 .. plot::
     :context: close-figs
 
     sim = Simulator(
-        spin_systems=[isotopomer1, isotopomer2, isotopomer3], 
-        methods=[method_H, method_C])
+        spin_systems = [isotopomer1, isotopomer2, isotopomer3], 
+        methods = [method_H, method_C])
     sim.run()
 
 
-Signal Processor
-----------------
+Note that the Simulator object runs six simulations in this example, i.e., three ``method_H``
+simulations are run for each of the three isotopomers before being added together to create
+the final ``method_H`` simulation. Similarly three simulations are run to create
+the final ``method_C`` simulation.
+
+Signal Processors
+-----------------
 
 Before plotting the spectra, add some line broadening to the resonances. For
-this, create a SignalProcessor object initialized with a list of operations
+this, create SignalProcessor objects initialized with a list of operations
 that give a convolution with a Lorentzian line shape.  For the :math:`^{1}\text
 {H}` spectrum, create a SignalProcessor object with an exponential apodization
 that gives a full-width-half-maximum (FWHM) of 1 Hz, while for the :math:`^
@@ -246,24 +252,24 @@ that gives an FWHM of 20 Hz.
 
     # Create the signal processors
     processor_1H = sp.SignalProcessor(
-        operations=[
+        operations = [
             sp.IFFT(),
-            sp.apodization.Exponential(FWHM="1 Hz"),
+            sp.apodization.Exponential(FWHM = "1 Hz"),
             sp.FFT(),
         ]
     )
 
     processor_13C = sp.SignalProcessor(
-        operations=[
+        operations = [
             sp.IFFT(),
-            sp.apodization.Exponential(FWHM="20 Hz"),
+            sp.apodization.Exponential(FWHM = "20 Hz"),
             sp.FFT(),
         ]
     )
 
     # apply the signal processors
-    processed_H_data = processor_1H.apply_operations(data=H_data)
-    processed_C_data = processor_13C.apply_operations(data=C_data)
+    processed_H_data = processor_1H.apply_operations(data = H_data)
+    processed_C_data = processor_13C.apply_operations(data = C_data)
 
 
 Plotting the Data
@@ -282,14 +288,14 @@ as a pdf file in this example.
         and 2.6 ppm in the :math:`^1\text{H}` spectrum.
 
     fig, ax = plt.subplots(
-        nrows=1, ncols=2, subplot_kw={"projection": "csdm"}, figsize=[8, 3.5]
+        nrows = 1, ncols = 2, subplot_kw = {"projection": "csdm"}, figsize = [9, 4]
     )
 
-    ax[0].plot(processed_H_data.real, color="black", linewidth=0.5)
+    ax[0].plot(processed_H_data.real)
     ax[0].invert_xaxis()
     ax[0].set_title("$^1$H")
 
-    ax[1].plot(processed_C_data.real, color="black", linewidth=0.5)
+    ax[1].plot(processed_C_data.real)
     ax[1].invert_xaxis()
     ax[1].set_title("$^{13}$C")
 
@@ -317,7 +323,7 @@ Saving the SpinSystems
 ++++++++++++++++++++++
 
 If you want to save the spin systems for use in a different project, you can ask
-the Simulator object to export the list of SpinSystem objects to a json file
+the Simulator object to export the list of SpinSystem objects to a JSON file
 with the code below.
 
 .. plot::
@@ -326,8 +332,8 @@ with the code below.
     sim.export_spin_systems("ethanol.mrsys")
 
 
-The file ethanol.mrsys holds a JSON representation of the SpinSystem objects. We
-encourage the convention of using .mrsys extension for this JSON file.
+The file ``ethanol.mrsys`` holds a JSON representation of the SpinSystem objects. We
+encourage the convention of using ``.mrsys`` extension for this JSON file.
 
 The list of SpinSystem objects can be reloaded back into a Simulator object by
 calling ``load_spin_systems()`` with the file name of the saved SpinSystem
@@ -343,8 +349,8 @@ objects, as shown below.
 Saving the Methods
 ++++++++++++++++++
 
-Similarly, if you want to save the methods for use in a different project, you
-can ask the Simulator object to export the list of Method objects to a json
+Similarly, if you want to save the methods for use in a another project, you
+can ask the Simulator object to export the list of Method objects to a JSON
 file.
 
 .. plot::
@@ -352,8 +358,8 @@ file.
 
     sim.export_methods("H1C13Methods.mrmtd")
 
-As before, the file H1C13Methods.mrmtd holds a JSON representation of the method
-objects. We encourage the convention of using .mrmtd extension for this JSON
+As before, the file ``H1C13Methods.mrmtd`` holds a JSON representation of the method
+objects. We encourage the convention of using ``.mrmtd`` extension for this JSON
 file.
 
 The list of Method objects can also be reloaded back into a Simulator object by
