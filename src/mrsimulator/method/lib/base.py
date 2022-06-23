@@ -48,7 +48,7 @@ class BaseNamedMethod(Method):
         )
 
     @validator("channels", pre=True, always=True)
-    def check_for_only_one_channel(cls, v, *, values, **kwargs):
+    def check_channel_count(cls, v, *, values, **kwargs):
         # NOTE: This check will need to change if multi-isotope named methods added
         if len(v) != cls._num_channels:
             raise ValueError(
