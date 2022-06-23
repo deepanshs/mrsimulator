@@ -2,10 +2,10 @@
 
 Least-Squares Fitting Example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``mrsimulator`` can interact with various Python data science 
-packages.  One such package, 
-`LMFIT <https://lmfit.github.io/lmfit-py/>`_, can be used to perform non-linear 
-least-squares analysis of experimental NMR spectra. 
+``mrsimulator`` can interact with various Python data science
+packages.  One such package,
+`LMFIT <https://lmfit.github.io/lmfit-py/>`_, can be used to perform non-linear
+least-squares analysis of experimental NMR spectra.
 
 Here, we illustrate the use of the mrsimulator objects to
 
@@ -18,18 +18,19 @@ Here, we illustrate the use of the mrsimulator objects to
 Import Experimental Dataset
 ---------------------------
 
-In this example, you will apply the least-squares fitting procedure to a 
+In this example, you will apply the least-squares fitting procedure to a
 :math:`^{27}\text{Al}` magic-angle spinning spectrum of :math:`\text{Al
 (acac)$_3$}` measured with whole echo acquisition.
 
 You will begin by importing an experimental dataset, measured on a 9.4 T Bruker
 AVANCE III HD NMR spectrometer into the script. Bruker datasets are saved in
 folders with a number as the folder name. In this case, that folder has been
-transferred from the spectrometer and renamed "Al_acac". 
+transferred from the spectrometer and renamed "Al_acac".
 
 For our purposes, the folder was also compressed into a zip archive and uploaded
-to an internet-accessible server.  You can used the code block below to download
-the zip archive from the server and unzip it into the originally named folder.
+to an internet-accessible server.  You can used the code block below to
+download the zip archive from the server and unzip it into the originally named
+folder.
 
 .. plot::
     :context: close-figs
@@ -44,7 +45,7 @@ the zip archive from the server and unzip it into the originally named folder.
 
 
 Now that the Bruker dataset folder is accessible to your Python code, you can use the
-Python package `nmrglue <https://github.com/jjhelmus/nmrglue>`_ to convert the 
+Python package `nmrglue <https://github.com/jjhelmus/nmrglue>`_ to convert the
 dataset into a `CSDM <https://csdmpy.readthedocs.io/en/stable/>`_ object.
 
 
@@ -57,7 +58,7 @@ dataset into a `CSDM <https://csdmpy.readthedocs.io/en/stable/>`_ object.
     converter = ng.convert.converter()
 
     # read in the bruker dataset file
-    dic, data = ng.bruker.read("Al_acac") 
+    dic, data = ng.bruker.read("Al_acac")
 
     converter.from_bruker(dic,data)
 
@@ -81,16 +82,16 @@ sure that it was imported correctly.
 
 This is the raw time-domain dataset, acquired using whole-echo acquisition. The
 blue and orange lines are the real and imaginary parts of the complex
-time-domain signal. If you're working with your own experimental dataset and have already 
-processed it into the frequency domain, then you can skip the next few steps and proceed 
-to the `Measure Noise`_ section.
+time-domain signal. If you're working with your own experimental dataset and
+have already processed it into the frequency domain, then you can skip the next
+few steps and proceed to the `Measure Noise`_ section.
 
 Process Experimental Dataset
 ----------------------------
 
 Proceeding from here, you'll need to transform this dataset into the frequency
 domain for the least-squares analysis. Before applying the Fourier transform,
-however, there are two things that need to be adjusted. 
+however, there are two things that need to be adjusted.
 
 First, you need to adjust the ``coordinates_offset`` to place the time origin at
 the top of the echo. This time offset can be found among the pulse sequence
@@ -101,17 +102,16 @@ additional receiver delays before the signal acquisition begins, and those
 times need to be subtracted from the interpulse spacing. In this measurement,
 we determine the echo top position to be 0.00816 s. The ``coordinates_offset``,
 which is the time associated with the first point in the signal, will need to
-be set to –0.00816 s. When correctly set, the time origin should coincide with 
+be set to –0.00816 s. When correctly set, the time origin should coincide with
 the maximum magnitude of the complex signal.
 
 Second, you need to phase correct the time domain so that the maximum echo
-amplitude is in the real part of the signal. For this operation, you can use numpy
-`abs() <https://numpy.org/doc/stable/reference/generated/numpy.absolute.html>`_ to
-take the absolute value of each complex signal amplitude, and 
-numpy `argmax() <https://numpy.org/doc/stable/reference/generated/numpy.argmax.html>`_ 
-to find the time index where the absolute value of the signal is at a maximum. Then use 
-the signal phase at that time index to place the maximum amplitude into the real part
-of the time domain signal.
+amplitude is in the real part of the signal. For this operation, you can use
+numpy `abs() <https://numpy.org/doc/stable/reference/generated/numpy.absolute.html>`_ to take the absolute value of each complex signal amplitude, and numpy
+`argmax() <https://numpy.org/doc/stable/reference/generated/numpy.argmax.html>`_ to
+find the time index where the absolute value of the signal is at a maximum.
+Then use the signal phase at that time index to place the maximum amplitude
+into the real part of the time domain signal.
 
 Both these steps are performed by the code below.
 
@@ -137,16 +137,24 @@ Both these steps are performed by the code below.
     plt.show()
 
 Here, you see that the echo top has been phased so that the maximum amplitude is
-in the real (blue) part and that the echo top occurs at the time origin. 
+in the real (blue) part and that the echo top occurs at the time origin.  Notice
+that the echo has a slight asymmetry about the time origin after it has been phased.
+The first half of the echo has a slightly stronger amplitude than the last half. This
+asymmetry is due to an additional dephasing caused by homonuclear dipolar couplings
+among the :math:`^{27}\text{Al}` nuclei.  It may have been possible to remove or
+minimize the effects of these dipolar couplings using a higher MAS rate.  Nonetheless,
+you can still proceed in this analysis, and, as you will see later, can model this
+additional decay with an ad-hoc Gaussian convolution of the spectrum.
 
-Next, create a SignalProcessor object to apply the Fourier transform operation to the 
-CSDM object ``exp_spectrum``.  Note that with a correctly set time origin, the ``FFT`` 
-operation automatically applies the appropriate first-order phase correction 
-to the spectrum after performing the fast Fourier transform.  After performing the Fourier
-transform, convert the coordinate units of the CSDM dimension from frequency to a
-frequency ratio using the 
-`to() <https://csdmpy.readthedocs.io/en/stable/api/Dimensions.html#csdmpy.Dimension.to>`_ 
-method of the `Dimension <https://csdmpy.readthedocs.io/en/stable/api/Dimensions.html>`_ object.
+Next, create a SignalProcessor object to apply the Fourier transform operation
+to the CSDM object ``exp_spectrum``.  Note that with a correctly set time
+origin, the ``FFT`` operation automatically applies the appropriate first-order
+phase correction to the spectrum after performing the fast Fourier transform.
+After performing the Fourier transform, convert the coordinate units of the
+CSDM dimension from frequency to a frequency ratio using the
+`to() <https://csdmpy.readthedocs.io/en/stable/api/Dimensions.html#csdmpy.Dimension.to>`_
+method of the `Dimension
+<https://csdmpy.readthedocs.io/en/stable/api/Dimensions.html>`_ object.
 
 .. plot::
     :context: close-figs
@@ -170,26 +178,27 @@ method of the `Dimension <https://csdmpy.readthedocs.io/en/stable/api/Dimensions
     plt.tight_layout()
     plt.show()
 
-Again, the blue and orange lines are the real and imaginary parts of the complex frequency-domain 
-spectrum.
+Again, the blue and orange lines are the real and imaginary parts of the complex
+frequency-domain spectrum.
 
 .. _Measure Noise:
 
 Measure Noise
 -------------
 
-Now that you have an adequately phased frequency domain dataset, you'll need to take the
-real part of the spectrum for the rest of the analysis, i.e., remove the imaginary 
-part. 
+Now that you have an adequately phased frequency domain dataset, you'll need to
+take the real part of the spectrum for the rest of the analysis, i.e., remove
+the imaginary part.
 
 The least-squares analysis also needs the standard deviation of the noise in the
-spectrum. We can obtain that from the spectrum regions below -20 ppm or
-above 20 ppm, where there is no signal amplitude.  To accomplish this, you can
-use numpy `where() <https://numpy.org/doc/stable/reference/generated/numpy.where.html>`_.
-It evaluates a condition for each item in the list, and return the indexes for those 
-items where the condition is true.   With the indexes returned by 
-`where() <https://numpy.org/doc/stable/reference/generated/numpy.where.html>`_,
-the standard deviation of the noise region can be caculated with numpy 
+spectrum. We can obtain that from the spectrum regions below -20 ppm or above
+20 ppm, where there is no signal amplitude.  To accomplish this, you can use
+numpy
+`where() <https://numpy.org/doc/stable/reference/generated/numpy.where.html>`_. It
+evaluates a condition for each item in the list, and return the indexes for
+those items where the condition is true.   With the indexes returned by
+`where() <https://numpy.org/doc/stable/reference/generated/numpy.where.html>`_, the
+standard deviation of the noise region can be caculated with numpy
 `std() <https://numpy.org/doc/stable/reference/generated/numpy.std.html>`_.
 
 .. plot::
@@ -209,63 +218,34 @@ Create Fitting Model
 
 To create a proper fitting model, you'll need more information about the nuclei
 being observed, the material's phase, and some idea about the local structure
-around the atoms holding the observed nuclei. In this example, you know that you
-are working with :math:`^{27}\text{Al}`, a quadrupolar nucleus with a
-half-integer spin of 5/2, and that the material, :math:`\text{Al(acac)$_3$}`, is a solid
-polycrystalline sample. The symmetry of the first-coordination sphere around
-aluminum is likely low enough to generate a large electric field gradient, and
-hence a sizeable quadrupolar coupling constant for :math:`^{27}\text{Al}`. These
-details are usually sorted out before the NMR measurement and used to choose
-the appropriate NMR methods for the sample. In this example, the measurement
-was performed under magic-angle spinning at a rotation rate of 12.5 kHz. Due to
-the expected large quadrupolar coupling, relatively low power rf pulses were
-used to excite only the central :math:`m = \tfrac{1}{2}\rightarrow-\tfrac{1}
-{2}` transition of :math:`^{27}\text{Al}`. The central transition is much narrower and
-more easily detected than the other transitions.
+around the atoms holding the observed nuclei. In this example, you know that
+you are working with :math:`^{27}\text{Al}`, a quadrupolar nucleus with a
+half-integer spin of 5/2, and that the material, :math:`\text{Al
+(acac)$_3$}`, is a solid polycrystalline sample. The symmetry of the
+first-coordination sphere around aluminum is likely low enough to generate a
+large electric field gradient, and hence a sizeable quadrupolar coupling
+constant for :math:`^{27}\text{Al}`. These details are usually sorted out
+before the NMR measurement and used to choose the appropriate NMR methods for
+the sample. In this example, the measurement was performed under magic-angle
+spinning at a rotation rate of 12.5 kHz. Due to the expected large quadrupolar
+coupling, relatively low power rf pulses were used to excite only the
+central :math:`m = \tfrac{1}{2}\rightarrow-\tfrac{1}{2}` transition of
+:math:`^{27}\text{Al}`. The central transition is much narrower and more easily
+detected than the other transitions.  Armed with this understanding of the
+sample and method, you can proceed to create the fitting model.
 
-Armed with this understanding of the sample and method, you can proceed to create
-the fitting model. You might begin by setting up the spin system. But here again, you are
-faced with needing more information about the nuclei being observed, i.e., you
-need to know how many magnetically inequivalent nuclei are in the sample, and
-if there are any couplings between nuclei. Inspection of the spectrum reveals
-an anisotropic lineshape that appears to be characteristic of the second-order
-MAS lineshape of a single site. Knowing this requires that you are already
-familiar with such lineshapes (``mrsimulator`` can help with that!). One
-might also hypothesize that there may be other sites with lower intensity
-present in the spectrum, or perhaps the spectrum is from a distribution of
-sites with very similar NMR tensor parameters as well as having dipole couplings
-among them. These are all valid hypotheses and could be used to create more 
-elaborate spin system models. For now, you can invoke Occam's razor and choose 
-the simplest spin system model with a single :math:`^{27}\text{Al}` site,  as 
-shown in the code below.
-
-.. plot::
-    :context: close-figs
-
-    from mrsimulator import Site, SpinSystem, Simulator
-
-    site = Site(
-        isotope = "27Al",
-        isotropic_chemical_shift = 5, 
-        quadrupolar = {"Cq" : 3e6, "eta" : 0.0},
-    )
-    sys = SpinSystem(sites = [site]) 
-
-The tensor parameters above are an educated guess for the tensor parameters, 
-which can be iteratively refined using the code that follows.
-
-Next, create the Method object to model the experimental method used to
-acquire the spectrum. It is a straightforward procedure in this case. Choose
-the ``BlochDecayCTSpectrum`` method since the measurement is designed to
-excite only the central transition of the :math:`^{27}\text{Al}` nuclei. From
-the CSDM object holding the experimental spectrum, i.e., ``exp_spectrum``, you
-can extract the relevant parameters for the ``spectral_dimension`` attribute of
-the ``BlochDecayCTSpectrum`` method using the fitting utility function
-``get_spectral_dimensions()``. The experimental measurement parameters
-associated with the method attributes ``magnetic_flux_density`` and
-``rotor_frequency`` are also used in creating this ``BlochDecayCTSpectrum``
-method. Finally, every Method object has ``experiment`` attribute used to hold
-the experimental spectrum that is to be modeled with the Method object.
+Start by creating the Method object to model the experimental method used to
+acquire the spectrum. Choose the ``BlochDecayCTSpectrum`` method since the
+measurement is designed to excite only the central transition of the
+:math:`^{27}\text{Al}` nuclei. From the CSDM object holding the experimental
+spectrum, i.e., ``exp_spectrum``, you can extract the relevant parameters for
+the ``spectral_dimension`` attribute of the ``BlochDecayCTSpectrum`` method
+using the fitting utility function ``get_spectral_dimensions()``. The
+experimental measurement parameters associated with the method attributes
+``magnetic_flux_density`` and ``rotor_frequency`` are also used in creating
+this ``BlochDecayCTSpectrum`` method. Finally, every Method object has
+``experiment`` attribute used to hold the experimental spectrum that is to be
+modeled with the Method object.
 
 .. plot::
     :context: close-figs
@@ -282,6 +262,36 @@ the experimental spectrum that is to be modeled with the Method object.
         experiment = exp_spectrum,  # add the measurement to the method.
     )
 
+
+To build a spin system, you need to know how many magnetically inequivalent
+nuclei are in the sample and if there are couplings between them.
+Inspection of the spectrum reveals an anisotropic lineshape that appears to be
+characteristic of the second-order MAS lineshape of a single site. Knowing this
+requires that you are already familiar with such lineshapes(``mrsimulator`` can
+help with that!). One might also hypothesize that there may be other sites with
+lower intensity present in the spectrum, or perhaps the spectrum, as noted earlier,
+is from a distribution of :math:`^{27}\text{Al}` sites with very similar NMR tensor
+parameters with dipolar couplings among them. These are all valid hypotheses and
+could be used to create more elaborate and perhaps even more realistic spin system models.
+For now, you can choose the simplest spin system model with a single
+:math:`^{27}\text{Al}` site,  as shown in the code below.
+
+.. plot::
+    :context: close-figs
+
+    from mrsimulator import Site, SpinSystem, Simulator
+
+    site = Site(
+        isotope = "27Al",
+        isotropic_chemical_shift = 5,
+        quadrupolar = {"Cq" : 3e6, "eta" : 0.0},
+    )
+    sys = SpinSystem(sites = [site])
+
+The tensor parameters above are an educated guess for the tensor parameters,
+which can be iteratively refined using the code that follows.
+
+
 Create the simulator object initialized with the SpinSystem and
 Method objects and run.
 
@@ -292,13 +302,13 @@ Method objects and run.
     sim.run()
 
 Before comparing the simulation to the experimental spectrum, you need to add
-some line broadening to the simulation.  Setup a SignalProcessor object to do
+the Gaussian line broadening to the simulation.  Setup a SignalProcessor object to do
 a Gaussian lineshape convolution with a FWHM of 50 Hz.
 
 Additionally, the simulation needs to be scaled in intensity to
 match the experimental spectrum. You may have noticed in earlier plots that the
-vertical axis of the experimental spectrum plot was on the order of 1e6.  Use 
-numpy `max() <https://numpy.org/doc/stable/reference/generated/numpy.maximum.html>`_  
+vertical axis of the experimental spectrum plot was on the order of 1e6.  Use
+numpy `max() <https://numpy.org/doc/stable/reference/generated/numpy.maximum.html>`_
 to get the highest amplitude and set that as the factor as a Scale
 operation in the SignalProcessor.
 
@@ -350,7 +360,7 @@ Perform Least-Squares Analysis
 Up to this point in the discussion, you've done little more than what you've
 learned earlier in setting up a simulation with ``mrsimulator``. Except now,
 you're ready to leverage the power of LMFIT to obtain the best-fit parameters.
-Begin by using an ``mrsimulator`` utility function :py:meth:`~make_LMFIT_params` 
+Begin by using an ``mrsimulator`` utility function :py:meth:`~make_LMFIT_params`
 to extract a list of LMFIT parameters from the Simulator and SignalProcessor objects.
 
 .. plot::
@@ -373,31 +383,31 @@ to extract a list of LMFIT parameters from the Simulator and SignalProcessor obj
 
 The output of the ``print()`` statement, shown above, gives the table of the
 LMFIT parameters.  Here, you can determine which parameters are fit and which
-are fixed.  
+are fixed.
 
 How can you change params attributes, e.g., Vary from True to False?
 
 
 .. note::
 
-    First-principles DFT calculations based on structural hypotheses can sometimes help determine 
-    the initial guess for some parameters, however, they are rarely accurate enough–even when 
-    using the correct structure–to be used as "ground-truth" fixed parameters in a least-squares 
-    analysis of an experimental spectrum. 
+    First-principles DFT calculations based on structural hypotheses can sometimes help determine
+    the initial guess for some parameters, however, they are rarely accurate enough–even when
+    using the correct structure–to be used as "ground-truth" fixed parameters in a least-squares
+    analysis of an experimental spectrum.
 
 
 The least-squares analysis is performed by creating a `LMFIT
 <https://lmfit.github.io/lmfit-py/>`_ `Minimizer
 <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.Minimizer>`_
-object initialized with chi-squared function, the fit parameters (``params``), and 
-any additional objects needed to evaluate the chi-squared function.  Here, you will 
-set the chi-squared function to the ``mrsimulator`` utility function 
-``sf.LMFIT_min_function`` and ``fcn_args`` to hold the Simulator, SignalProcessor, 
+object initialized with chi-squared function, the fit parameters (``params``), and
+any additional objects needed to evaluate the chi-squared function.  Here, you will
+set the chi-squared function to the ``mrsimulator`` utility function
+``sf.LMFIT_min_function`` and ``fcn_args`` to hold the Simulator, SignalProcessor,
 and the noise standard deviation of the experimental spectrum.
 
 After minimize() exits the parameters in the Simulator and SignalProcessor will be updated, and the
-results of the least-squares analysis are returned as an object containing the optimized parameters 
-and several goodness-of-fit statistics in ``result``.  
+results of the least-squares analysis are returned as an object containing the optimized parameters
+and several goodness-of-fit statistics in ``result``.
 
 .. plot::
     :context: close-figs
@@ -438,11 +448,11 @@ the best-fit simulation and the residuals as CSDM objects.
 
 The Minimizer will improve the fit parameters even if the initial parameters guess
 is far from the best-fit values.  However, if the initial guess is too far away, the
-Minimizer may not reach the best-fit parameters in a single run.  If you think that 
-may be the case, you can re-extract a new initial guess from the Simulator and 
-SignalProcessor objects using ``make_LMFIT_params()``, create and initialize a new 
+Minimizer may not reach the best-fit parameters in a single run.  If you think that
+may be the case, you can re-extract a new initial guess from the Simulator and
+SignalProcessor objects using ``make_LMFIT_params()``, create and initialize a new
 Minimizer object as before, and run again, i.e., restart at the beginning of this
-section.  You may see that the fit improves and obtain a lower chi-squared value.
+section.  You may see that the fit improves and gives a lower chi-squared value.
 
 
 
@@ -459,4 +469,3 @@ the :ref:`fitting_examples`.
     import shutil
 
     shutil.rmtree("Al_acac")
-

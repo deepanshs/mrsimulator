@@ -47,13 +47,13 @@ To activate the environment, use
 Make sure git is installed on your computer.
 ''''''''''''''''''''''''''''''''''''''''''''
 
-`Git <https://git-scm.com>`_ is the name of a source code management system.  
-It keeps track of the changes made to the code and manages contributions from 
-several individuals.  You may notice that much of its terminology comes from 
-river metaphors, i.e., source, fork, upstream, etc.  You may read about git 
+`Git <https://git-scm.com>`_ is the name of a source code management system.
+It keeps track of the changes made to the code and manages contributions from
+several individuals.  You may notice that much of its terminology comes from
+river metaphors, i.e., source, fork, upstream, etc.  You may read about git
 at the `Git Basics <https://git-scm.com/book/>`_.
 
-If you are using anaconda/miniconda, you probably have git pre-installed. To check, 
+If you are using anaconda/miniconda, you probably have git pre-installed. To check,
 type in terminal
 
 .. code-block:: bash
@@ -66,7 +66,7 @@ If git is not installed, `install <https://git-scm.com/downloads>`_ it.
 
 **Basic git configuration:**
 
-Follow the instructions at 
+Follow the instructions at
 `Set Up Git <https://docs.github.com/en/github/getting-started-with-github/set-up-git#set-up-git>`_
 at GitHub to configure:
 
@@ -171,7 +171,13 @@ Note for the developers and contributors.
 **Before commits**: Mrsimulator follows Python community standards for writing code and documentation.
 To help guide the developers and contributors toward these standards, we have created
 a *.pre-commit-config.yaml* file that, when used with ``pre-commit``, will inspect
-the code and document for issues. Type ``pre-commit run`` before git commits to review the changes.
+the code and document for issues. At the root directory of the mrsimulator package folder, type
+
+.. code-block:: bash
+
+    $ pre-commit run
+
+before git commits to review the changes.
 
 You can also set up the git hook script to automatically run *pre-commit* on git commits
 with the ``pre-commit install``. Read more about

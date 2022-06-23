@@ -31,12 +31,12 @@ Spin Systems
 
 The molecules in a sample of ethanol, :math:`\text{CH$_3$CH$_2$OH}`, can be
 formed with any of the naturally abundant isotopes of hydrogen, carbon, and
-oxygen present.  Of the most abundant isotopes, 
+oxygen present.  Of the most abundant isotopes,
 :math:`^1\text{H}` (99.985%), :math:`^{12}\text{C}` (98.93%), and :math:`^
 {16}\text{O}` (99.762%), only :math:`^1\text{H}` is NMR active.  The most
-abundant NMR active isotopes of carbon and oxygen are 
+abundant NMR active isotopes of carbon and oxygen are
 :math:`^{13}\text{C}` (1.11%) and :math:`^{17}\text{O}` (0.038%).  Additionally,
-the 
+the
 :math:`^2\text{H}` (0.015%) isotope will be present.   For our purposes, we will
 ignore the effects of the lower abundant :math:`^{17}\text
 {O}` and :math:`^2\text{H}` isotopes, and focus solely on the spectra of the
@@ -52,13 +52,13 @@ isotopomers of ethanol shown below.
 
     The three most abundant isotopomers of ethanol.
 
-The most abundant isotopomer, on the left, has a probability of 
+The most abundant isotopomer, on the left, has a probability of
 :math:`(0.99985)^6 \times (0.9893)^2 \times (0.99762) =0.9625`, while the last
 two have identical probabilities of :math:`(0.99985)^6 \times (0.0111)
 (0.9893) \times (0.99762) = 0.0108`
 
 Before you can construct spin systems for each of these isotopomers, you'll need
-to create sites for each of the three magnetically inequivalent :math:`^1\text{H}` 
+to create sites for each of the three magnetically inequivalent :math:`^1\text{H}`
 and two magnetically inequivalent :math:`^{13}\text{C}` sites, as shown in the code below.
 
 .. plot::
@@ -85,20 +85,20 @@ To create the SpinSystem object for the most abundant isotopomer, start by creat
 
 .. plot::
     :context: close-figs
-    
+
     #  Put sites into list
     iso1_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH]
 
-Each site in the isotopomer is identified by its index in the ``iso1_sites`` 
-ordered list, which are numbered from 0 to 5.   Remember that the two Sites 
+Each site in the isotopomer is identified by its index in the ``iso1_sites``
+ordered list, which are numbered from 0 to 5.   Remember that the two Sites
 involved in a Coupling are identified by their indexes in this list.
 
 Next, create the :ref:`coupling_documentation` objects between the sites and
-place the Coupling objects in a list. 
+place the Coupling objects in a list.
 
 .. plot::
     :context: close-figs
-    
+
     # All isotropic_j coupling in Hz
     HH_coupling_1 = Coupling(site_index = [0, 3], isotropic_j = 7)
     HH_coupling_2 = Coupling(site_index = [0, 4], isotropic_j = 7)
@@ -121,7 +121,7 @@ Finally, create the SpinSystem object for this isotopomer along with its abundan
 
 .. plot::
     :context: close-figs
-    
+
         isotopomer1 = SpinSystem(sites=iso1_sites, couplings=iso1_couplings, abundance=96.25)
 
 
@@ -178,7 +178,7 @@ Methods
 -------
 
 For this example, create two ``BlochDecaySpectrum`` methods for :math:`^1\text
-{H}` and :math:`^{13}\text{C}`. Recall that this method simulates the spectrum 
+{H}` and :math:`^{13}\text{C}`. Recall that this method simulates the spectrum
 for the first isotope in the ``channels`` attribute list.
 
 .. plot::
@@ -222,7 +222,7 @@ spin systems and the list of your two methods, and run the simulations.
     :context: close-figs
 
     sim = Simulator(
-        spin_systems = [isotopomer1, isotopomer2, isotopomer3], 
+        spin_systems = [isotopomer1, isotopomer2, isotopomer3],
         methods = [method_H, method_C])
     sim.run()
 
@@ -247,8 +247,8 @@ that gives an FWHM of 20 Hz.
     :context: close-figs
 
     # Get the simulation datasets
-    H_dataset = sim.methods[0].simulation
-    C_dataset = sim.methods[1].simulation
+    H_spectrum = sim.methods[0].simulation
+    C_spectrum = sim.methods[1].simulation
 
     # Create the signal processors
     processor_1H = sp.SignalProcessor(
@@ -268,8 +268,8 @@ that gives an FWHM of 20 Hz.
     )
 
     # apply the signal processors
-    processed_H_dataset = processor_1H.apply_operations(dataset = H_dataset)
-    processed_C_dataset = processor_13C.apply_operations(dataset = C_dataset)
+    processed_H_spectrum = processor_1H.apply_operations(dataset = H_spectrum)
+    processed_C_spectrum = processor_13C.apply_operations(dataset = C_spectrum)
 
 
 Plotting the Dataset
@@ -291,11 +291,11 @@ as a pdf file in this example.
         nrows = 1, ncols = 2, subplot_kw = {"projection": "csdm"}, figsize = [9, 4]
     )
 
-    ax[0].plot(processed_H_dataset.real)
+    ax[0].plot(processed_H_spectrum.real)
     ax[0].invert_xaxis()
     ax[0].set_title("$^1$H")
 
-    ax[1].plot(processed_C_dataset.real)
+    ax[1].plot(processed_C_spectrum.real)
     ax[1].invert_xaxis()
     ax[1].set_title("$^{13}$C")
 
@@ -315,8 +315,8 @@ You can save the spectra in csdf format using the code below.
 .. plot::
     :context: close-figs
 
-    processed_H_dataset.save("processed_H_dataset.csdf")
-    processed_C_dataset.save("processed_C_dataset.csdf")
+    processed_H_spectrum.save("processed_H_spectrum.csdf")
+    processed_C_spectrum.save("processed_C_spectrum.csdf")
 
 
 Saving the SpinSystems
@@ -338,7 +338,7 @@ encourage the convention of using ``.mrsys`` extension for this JSON file.
 The list of SpinSystem objects can be reloaded back into a Simulator object by
 calling ``load_spin_systems()`` with the file name of the saved SpinSystem
 objects, as shown below.
- 
+
 .. plot::
     :context: close-figs
 
@@ -365,7 +365,7 @@ file.
 The list of Method objects can also be reloaded back into a Simulator object by
 calling ``load_methods()`` with the file name of the saved Method objects, as
 shown below.
- 
+
 .. plot::
     :context: close-figs
 
@@ -379,7 +379,7 @@ Saving the full Simulation
 The Simulation and SignalProcessor objects can also be serialized into JSON
 files. At some point, however, saving the Python script or Juypiter notebook
 with your code will be just as convenient.  Nonetheless, you can find
-additional details on JSON serialization of ``mrsimulator`` objects in the 
+additional details on JSON serialization of ``mrsimulator`` objects in the
 :ref:`IO_documentation` section.
 
 .. plot::
@@ -389,7 +389,7 @@ additional details on JSON serialization of ``mrsimulator`` objects in the
     from os.path import isfile
 
     if isfile("spectra.pdf"): os.remove("spectra.pdf")
-    if isfile("processed_H_dataset.csdf"): os.remove("processed_H_dataset.csdf")
-    if isfile("processed_C_dataset.csdf"): os.remove("processed_C_dataset.csdf")
+    if isfile("processed_H_spectrum.csdf"): os.remove("processed_H_spectrum.csdf")
+    if isfile("processed_C_spectrum.csdf"): os.remove("processed_C_spectrum.csdf")
     if isfile("ethanol.mrsys"): os.remove("ethanol.mrsys")
     if isfile("H1C13Methods.mrmtd"): os.remove("H1C13Methods.mrmtd")
