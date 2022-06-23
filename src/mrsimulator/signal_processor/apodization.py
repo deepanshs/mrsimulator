@@ -76,12 +76,12 @@ class MultiDimensionApodization(ModuleOperation):
         dv_indexes = self._get_dv_indexes(self.dv_index, n=len(dataset.y))
 
         for index in dv_indexes:
-            dataset.y[index].components = dataset.y[index].components * apodization_matrix
+            dataset.y[index].components=dataset.y[index].components*apodization_matrix
         return dataset
 
 
 class Gaussian(Apodization):
-    r"""Apodize dependent variable objects of the CSDM dataset with a Gaussian function.
+    r"""Apodize dependent variable objects of CSDM dataset with Gaussian function.
 
     The apodization function follows
 
