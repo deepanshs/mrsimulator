@@ -254,10 +254,10 @@ def test_simulator_2():
     sim.save("test_sim_save.temp")
     sim_load = Simulator.load("test_sim_save.temp")
 
-    sim_load_data = sim_load.methods[0].simulation
-    sim_data = sim.methods[0].simulation
-    sim_load_data._timestamp = ""
-    assert sim_load_data.dict() == sim_data.dict()
+    sim_load_dataset = sim_load.methods[0].simulation
+    sim_dataset = sim.methods[0].simulation
+    sim_load_dataset._timestamp = ""
+    assert sim_load_dataset.dict() == sim_dataset.dict()
 
     sim_load.methods[0].simulation = None
     sim.methods[0].simulation = None

@@ -38,14 +38,14 @@ class ConstantOffset(Baseline):
 
     offset: float = 0
 
-    def operate(self, data):
+    def operate(self, dataset):
         """Applies the operation for which the class is named for.
 
         Args:
-            data: CSDM object
+            dataset: CSDM object
         """
-        data += self.offset
-        return data
+        dataset += self.offset
+        return dataset
 
 
 class Polynomial(Baseline):
@@ -78,18 +78,18 @@ class Polynomial(Baseline):
     dim_index: int = 0
     # property_units: Dict = {"default": "Hz"}
 
-    def operate(self, data):
+    def operate(self, dataset):
         """Applies the operation.
 
         Args:
-            data: CSDM object
+            dataset: CSDM object
         """
-        x = data.dimensions[self.dim_index].coordinates
+        x = dataset.dimensions[self.dim_index].coordinates
         d1 = x.value
         fn = np.zeros(len(x))
         for key, val in self.polynomial_dictionary.items():
             exponent = key.split("c")[-1]
             fn += float(val) * d1 ** int(exponent)
-        for item in data.y:
+        for item in dataset.y:
             item.components += fn
-        return data
+        return dataset

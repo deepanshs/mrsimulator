@@ -93,14 +93,14 @@ sim.run()
 # Post Simulation Processing
 # --------------------------
 processor = sp.SignalProcessor(operations=[sp.Scale(factor=2000)])
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset = sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(pass_cross_section, color="k", linewidth=1, label="Experiment")
-ax.plot(processed_data, color="r", alpha=0.75, linewidth=1, label="guess spectrum")
+ax.plot(processed_dataset, color="r", alpha=0.75, linewidth=1, label="guess spectrum")
 plt.grid()
 ax.invert_xaxis()
 plt.legend()

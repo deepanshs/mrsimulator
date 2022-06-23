@@ -113,13 +113,13 @@ sim.methods = [mqvas]  # add the method
 sim.config.number_of_sidebands = 1
 sim.run()
 
-data = sim.methods[0].simulation.real
+dataset = sim.methods[0].simulation.real
 
 # %%
 # The plot of the corresponding spectrum.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data / data.max(), cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(dataset / dataset.max(), cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)
 ax.set_ylim(-20, -50)
 ax.set_xlim(80, 20)

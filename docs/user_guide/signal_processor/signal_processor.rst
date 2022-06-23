@@ -14,12 +14,15 @@ function. For this reason, ``mrsimulator`` offers some frequently used NMR signa
 CSDM object
 -----------
 
-The simulated spectrum is held in a CSDM [#f1]_ object, which supports multi-dimensional scientific datasets (NMR, EPR, FTIR, GC, etc.). For more information, see the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
+The simulated spectrum is held in a CSDM [#f1]_ object, which supports multi-dimensional 
+scientific datasets (NMR, EPR, FTIR, GC, etc.). For more information, see 
+the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
 
 ``SignalProcessor`` class
 -------------------------
 
-Signal processing is a series of operations sequentially applied to the dataset. In ``mrsimulator``, the :py:class:`~mrsimulator.signal_processor.SignalProcessor` object is
+Signal processing is a series of operations sequentially applied to the dataset. 
+In ``mrsimulator``, the :py:class:`~mrsimulator.signal_processor.SignalProcessor` object is
 used to apply operations. Here we create a new SignalProcessor object
 
 .. plot::
@@ -43,8 +46,13 @@ Each signal processor object holds a list of operations under the *operations* a
         sp.Scale(factor=120),
     ]
 
-First, an inverse Fourier transform is applied to the dataset. Then, a gaussian apodization with a full-width-at-half-maximum of 50 Hz in the frequency domain is applied. The unit used for the *FWHM* attribute corresponds to the dimensionality of the dataset. By choosing Hz, we imply the dataset is in units of frequency. Finally, a forward Fourier transform is applied to the apodized dataset, and all points are scaled
-up by 120 times.
+First, an inverse Fourier transform is applied to the dataset. Then, 
+a Gaussian apodization with a full-width-at-half-maximum of 50 Hz 
+in the frequency domain is applied. The unit used for the *FWHM* 
+attribute corresponds to the dimensionality of the dataset. By 
+choosing Hz, we imply the dataset is in units of frequency. 
+Finally, a forward Fourier transform is applied to the apodized 
+dataset, and all points are scaled up by 120 times.
 
 .. note::
 
@@ -75,23 +83,24 @@ the :py:meth:`~mrsimulator.signal_processor.SignalProcessor.apply_operations` me
 .. plot::
     :context: close-figs
 
-    processed_data = processor.apply_operations(data=csdm_object)
+    processed_dataset = processor.apply_operations(dataset = csdm_object)
 
-The variable ``processed_data`` is another CSDM object holding the dataset after the list of operations has been applied to ``csdm_object``. Below is a plot comparing the unprocessed and
-processed data
+The variable ``processed_dataset`` is another CSDM object holding the dataset 
+after the list of operations has been applied to ``csdm_object``. Below is a 
+plot comparing the unprocessed and processed dataset
 
 .. skip: next
 
 .. plot::
     :context: close-figs
-    :caption: The unprocessed data (left) and processed data (right) with a Gaussian convolution
+    :caption: The unprocessed dataset (left) and processed dataset (right) with a Gaussian convolution
         and scale factor.
 
     import matplotlib.pyplot as plt
     _, ax = plt.subplots(1, 2, figsize = (8, 3), subplot_kw = {"projection":"csdm"})
     ax[0].plot(csdm_object, color="black", linewidth=1)
     ax[0].set_title("Unprocessed")
-    ax[1].plot(processed_data.real, color="black", linewidth=1)
+    ax[1].plot(processed_dataset.real, color="black", linewidth=1)
     ax[1].set_title("Processed")
     plt.tight_layout()
     plt.show()
@@ -151,12 +160,13 @@ Let's add another dependent variable to the previously created CSDM object to ta
     csdm_object.add_dependent_variable(cp.as_dependent_variable(test_data))
 
 Now, we again apply the operations with the
-:py:meth:`~mrsimulator.signal_processor.SignalProcessor.apply_operations` method. The comparison of the unprocessed and processed data is also shown below.
+:py:meth:`~mrsimulator.signal_processor.SignalProcessor.apply_operations` method. 
+The comparison of the unprocessed and processed dataset is also shown below.
 
 .. plot::
     :context: close-figs
 
-    processed_data = processor.apply_operations(data=csdm_object)
+    processed_dataset = processor.apply_operations(dataset = csdm_object)
 
 Below is a plot of the dataset before and after applying the operations
 
@@ -164,19 +174,19 @@ Below is a plot of the dataset before and after applying the operations
 
 .. plot::
     :context: close-figs
-    :caption: The unprocessed data (left) and the processed data (right) with
+    :caption: The unprocessed dataset (left) and the processed dataset (right) with
         convolutions applied to different dependent variables.
 
     _, ax = plt.subplots(1, 2, figsize=(8, 3), subplot_kw={"projection":"csdm"})
     ax[0].plot(csdm_object, linewidth=1)
     ax[0].set_title("Unprocessed")
-    ax[1].plot(processed_data.real, linewidth=1)
+    ax[1].plot(processed_dataset.real, linewidth=1)
     ax[1].set_title("Processed")
     plt.tight_layout()
     plt.show()
 
 .. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.,
     Core Scientific Dataset Model: A lightweight and portable model and
-    file format for multi-dimensional scientific data, PLOS ONE,
+    file format for multi-dimensional scientific dataset, PLOS ONE,
     **15**, 1-38, (2020).
     `DOI:10.1371/journal.pone.0225953 <https://doi.org/10.1371/journal.pone.0225953>`__

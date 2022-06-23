@@ -386,16 +386,16 @@ class Simulator(Parseable):
                 seq.origin_offset = origin_offset
 
             if isinstance(amp[0], list):
-                simulated_data = []
+                simulated_dataset = []
                 for item in amp:
-                    simulated_data += item
+                    simulated_dataset += item
             if isinstance(amp[0], np.ndarray):
-                simulated_data = [np.asarray(amp).sum(axis=0)]
+                simulated_dataset = [np.asarray(amp).sum(axis=0)]
 
             method.simulation = (
-                self._as_csdm_object(simulated_data, method)
+                self._as_csdm_object(simulated_dataset, method)
                 if pack_as_csdm
-                else np.asarray(simulated_data)
+                else np.asarray(simulated_dataset)
             )
             amp = None
 

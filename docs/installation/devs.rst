@@ -47,9 +47,14 @@ To activate the environment, use
 Make sure git is installed on your computer.
 ''''''''''''''''''''''''''''''''''''''''''''
 
-`Git <https://git-scm.com>`_ is the name of a source code management system.  It keeps track of the changes made to the code and manages contributions from several individuals. You may read about git at the `Git Basics <https://git-scm.com/book/>`_.
+`Git <https://git-scm.com>`_ is the name of a source code management system.  
+It keeps track of the changes made to the code and manages contributions from 
+several individuals.  You may notice that much of its terminology comes from 
+river metaphors, i.e., source, fork, upstream, etc.  You may read about git 
+at the `Git Basics <https://git-scm.com/book/>`_.
 
-If you are using anaconda/miniconda, you probably have git pre-installed. To check, type in terminal
+If you are using anaconda/miniconda, you probably have git pre-installed. To check, 
+type in terminal
 
 .. code-block:: bash
 
@@ -61,12 +66,14 @@ If git is not installed, `install <https://git-scm.com/downloads>`_ it.
 
 **Basic git configuration:**
 
-Follow the instructions at `Set Up Git <https://docs.github.com/en/github/getting-started-with-github/set-up-git#set-up-git>`_
+Follow the instructions at 
+`Set Up Git <https://docs.github.com/en/github/getting-started-with-github/set-up-git#set-up-git>`_
 at GitHub to configure:
 
-- Your user name and email in your copy of git.
-- Authentication, so you don’t have to type your GitHub password every time you
-- need to access GitHub from the command line.
+- your user name and email in your copy of git.
+- authentication, so you don’t have to type your GitHub password every time you
+
+You'll need to access GitHub from the command line.
 
 
 Copy your fork of mrsimulator from GitHub to your computer

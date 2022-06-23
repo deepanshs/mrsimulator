@@ -21,12 +21,12 @@ def check_sim_save(sim1, sim2, message):
         mth.simulation._timestamp = ""
         _ = [item.to("ppm", "nmr_frequency_ratio") for item in mth.simulation.x]
 
-    data1 = sim1.methods[0].simulation.copy()
+    dataset1 = sim1.methods[0].simulation.copy()
     sim1.methods[0].simulation = None
-    data2 = sim2.methods[0].simulation.copy()
+    dataset2 = sim2.methods[0].simulation.copy()
     sim2.methods[0].simulation = None
 
-    assert data1 == data2, f"data saved and loaded is not equal: type {message}."
+    assert dataset1 == dataset2, f"dataset saved and loaded is not equal: type {message}."
     assert sim1 == sim2, f".mrsim saved and loaded is not equal: type {message}."
 
 
@@ -35,12 +35,12 @@ def check_methods_save_load(sim1, sim2):
         mth.simulation._timestamp = ""
         _ = [item.to("ppm", "nmr_frequency_ratio") for item in mth.simulation.x]
 
-    data1 = sim1.methods[0].simulation.copy()
+    dataset1 = sim1.methods[0].simulation.copy()
     sim1.methods[0].simulation = None
-    data2 = sim2.methods[0].simulation.copy()
+    dataset2 = sim2.methods[0].simulation.copy()
     sim2.methods[0].simulation = None
 
-    assert data1 == data2, "method saved and loaded is not equal."
+    assert dataset1 == dataset2, "method saved and loaded is not equal."
     assert sim1 == sim2, ".mrmtd saved and loaded is not equal."
 
 

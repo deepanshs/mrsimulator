@@ -31,12 +31,12 @@ def test_01():
 
     post_sim.operations = operations
 
-    with pytest.raises(ValueError, match="The data must be a CSDM object."):
+    with pytest.raises(ValueError, match="The dataset must be a CSDM object."):
         post_sim.apply_operations([])
 
-    data = cp.as_csdm(np.arange(20))
-    data.x[0] = cp.LinearDimension(count=20, increment="10 K")
-    post_sim.apply_operations(data)
+    dataset = cp.as_csdm(np.arange(20))
+    dataset.x[0] = cp.LinearDimension(count=20, increment="10 K")
+    post_sim.apply_operations(dataset)
 
     # to dict with units
     dict_ = post_sim.json()
@@ -60,7 +60,7 @@ def test_01():
     assert post_sim.operations == post_sim_2.operations
 
 
-def generate_data():
+def generate_dataset():
     dv1 = cp.as_dependent_variable(np.random.rand(20))
     dv2 = cp.as_dependent_variable(np.random.rand(20))
     dv3 = cp.as_dependent_variable(np.random.rand(20))
@@ -69,24 +69,24 @@ def generate_data():
 
 
 def test_scale():
-    data_in = generate_data()
+    dataset_in = generate_dataset()
     PS_0 = [sp.Scale(factor=10)]
     operator = sp.SignalProcessor(operations=PS_0)
-    data_out = operator.apply_operations(data=data_in.copy())
-    _, y0, y1, y2 = data_in.to_list()
-    _, y0_, y1_, y2_ = data_out.to_list()
+    dataset_out = operator.apply_operations(dataset = dataset_in.copy())
+    _, y0, y1, y2 = dataset_in.to_list()
+    _, y0_, y1_, y2_ = dataset_out.to_list()
 
     for in_, out_ in zip([y0, y1, y2], [y0_, y1_, y2_]):
         assert np.allclose(out_.max() / in_.max(), 10), "Scaling failed"
 
 
 def test_linear():
-    data_in = generate_data()
+    dataset_in = generate_dataset()
     PS_0 = [sp.Linear(amplitude=4.1, offset=10)]
     operator = sp.SignalProcessor(operations=PS_0)
-    data_out = operator.apply_operations(data=data_in.copy())
-    _, y0, y1, y2 = data_in.to_list()
-    _, y0_, y1_, y2_ = data_out.to_list()
+    dataset_out = operator.apply_operations(dataset = dataset_in.copy())
+    _, y0, y1, y2 = dataset_in.to_list()
+    _, y0_, y1_, y2_ = dataset_out.to_list()
 
     for in_, out_ in zip([y0, y1, y2], [y0_, y1_, y2_]):
         assert np.allclose((out_.max() - 10) / in_.max(), 4.1), "Offset failed"

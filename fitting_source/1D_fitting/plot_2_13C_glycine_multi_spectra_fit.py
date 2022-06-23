@@ -5,9 +5,9 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
-# The following is a multi-data least-squares fitting example of
+# The following is a multi-dataset least-squares fitting example of
 # :math:`^{13}\text{C}` MAS NMR spectrum of Glycine spinning at 5 kHz, 1.94 kHz, and
-# 960 Hz. Before trying multi-data fitting, we recommend that you first try individual
+# 960 Hz. Before trying multi-dataset fitting, we recommend that you first try individual
 # fits. The experimental datasets are part of DMFIT [#f1]_ examples.
 import csdmpy as cp
 import matplotlib.pyplot as plt
@@ -59,7 +59,7 @@ plt.show()
 # %%
 # Create a fitting model
 # ----------------------
-# **Spin System**: The objective of a multi-data fitting is to optimize the spin
+# **Spin System**: The objective of a multi-dataset fitting is to optimize the spin
 # system parameters using multiple datasets. In this example, we create two single-site
 # spin systems, which are then shared by three method objects.
 C1 = Site(
@@ -159,18 +159,18 @@ processor3 = sp.SignalProcessor(
 )
 processors = [processor1, processor2, processor3]
 
-processed_data = []
+processed_dataset = []
 for i, proc in enumerate(processors):
-    processed_data.append(proc.apply_operations(data=sim.methods[i].simulation).real)
+    processed_dataset.append(proc.apply_operations(dataset = sim.methods[i].simulation).real)
 
 
 # Plot of the guess Spectrum
 # --------------------------
 
 fig, ax = plt.subplots(1, 3, figsize=(12, 3), subplot_kw={"projection": "csdm"})
-for i, exp_data in enumerate(experiments):
-    ax[i].plot(exp_data, color="black", linewidth=0.5, label="Experiment")
-    ax[i].plot(processed_data[i], linewidth=2, alpha=0.6)
+for i, exp_dataset in enumerate(experiments):
+    ax[i].plot(exp_dataset, color="black", linewidth=0.5, label="Experiment")
+    ax[i].plot(processed_dataset[i], linewidth=2, alpha=0.6)
     ax[i].set_xlim(280, -10)
     ax[i].grid()
 

@@ -126,19 +126,19 @@ def simulator_setup(
 def simulator_process(sim, data_object):
     sim.run()
 
-    sim_data = sim.methods[0].simulation
+    sim_dataset = sim.methods[0].simulation
 
     if "operations" in data_object:
         processor = sp.SignalProcessor.parse_dict_with_units(
             {"operations": data_object["operations"]}
         )
-        sim_data = processor.apply_operations(data=sim_data)
+        sim_dataset = processor.apply_operations(dataset =sim_dataset)
 
-    data_mrsimulator = np.asarray(sim_data.to_list()[1:])
+    data_mrsimulator = np.asarray(sim_dataset.to_list()[1:])
     data_mrsimulator = data_mrsimulator.sum(axis=0)
     data_mrsimulator /= data_mrsimulator.sum()
 
-    dv = sim_data.y[0]
+    dv = sim_dataset.y[0]
     assert dv.name == "test name"
     assert dv.description == "test description"
 

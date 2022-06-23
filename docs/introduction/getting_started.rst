@@ -9,8 +9,8 @@ classes:
 :ref:`spin_system_documentation`, :ref:`method_documentation`, and
 :ref:`simulator_documentation`. :ref:`spin_system_documentation` defines the
 spin system and its tensor parameters used to generate a particular
-subspectrum, and :ref:`method_documentation` defines the parameters for the
-particular NMR measurement to be simulated. A list
+subspectrum, and :ref:`method_documentation` defines the behavior and parameters 
+for the particular NMR measurement to be simulated. A list
 of :ref:`method_documentation` and
 :ref:`spin_system_documentation` objects are used to initialize a Simulator
 object, which is then used to generate the corresponding NMR spectra--returned
@@ -124,7 +124,7 @@ method :py:class:`~mrsimulator.method.lib.BlochDecaySpectrum`. This method
 simulations the spectrum obtained from the Fourier transform of a Bloch decay
 signal, i.e., one-pulse and acquire.   You can use the code below to create
 the Method object intialized with attributes whose names should be relatively
-familar to a NMR spectroscopist. 
+familar to an NMR spectroscopist. 
 
 .. plot::
     :context: close-figs
@@ -157,13 +157,15 @@ the spectrum.  The
 dimension.  In this example, that spectral dimension has 2048 points, spanning
 80 kHz with a reference offset of 6 kHz.
 
-Next, put the SpinSystem and Method objects together to simulate the spectrum.
+Next, you will bring the SpinSystem and Method objects together and create a Simulator object 
+that will simulate the spectrum.
 
 Simulator
 ---------
 
 At the heart of ``mrsimulator`` is the :ref:`simulator_documentation` object, which
-calculates the NMR spectrum. ``mrsimulator`` performs all calculations in the frequency domain, and all resonance frequencies are calculated in the weakly-coupled (Zeeman) basis for the spin system.
+calculates the NMR spectrum. ``mrsimulator`` performs all calculations in the frequency domain, 
+and all resonance frequencies are calculated in the weakly-coupled (Zeeman) basis for the spin system.
 
 In the code below, you create a :ref:`simulator_api` object,
 initialized with your previously defined spin system and method, and then call
@@ -182,7 +184,8 @@ initialized with your previously defined spin system and method, and then call
 The simulated spectrum is stored as a CSDM object in the Method object at
 ``sim.methods[0].simulation``. To match an experimental MAS spectrum, however,
 you still need to add some line broadening to the simulated spectrum. For this,
-you can use the :ref:`signal_processor_documentation` object described next.
+you can use the :ref:`signal_processor_documentation` object described in the 
+next section.
 
 
 SignalProcessor
@@ -190,8 +193,8 @@ SignalProcessor
 
 A :ref:`signal_processor_api` object holds a list of operations applied
 sequentially to a dataset. For a comprehensive list of operations and further
-details on using the :ref:`signal_processor_api` object, see
-the :ref:`signal_processor_documentation` documentation page.
+details on using the :ref:`signal_processor_api` object, consult
+the :ref:`signal_processor_documentation` documentation.
 
 Use the code below to create a SignalProcessor object that performs a
 convolution of the simulated spectrum with a Lorentzian distribution having a
@@ -216,8 +219,8 @@ back into the frequency domain.
         ]
     )
 
-    # Apply the processor to the simulation data
-    processed_data = processor.apply_operations(data = sim.methods[0].simulation)
+    # Apply the processor to the simulation dataset
+    processed_simulation = processor.apply_operations(dataset = sim.methods[0].simulation)
 
 
 PyPlot
@@ -226,7 +229,7 @@ PyPlot
 You can use `PyPlot
 <https://matplotlib.org/stable/tutorials/introductory/pyplot.html>`__ to plot your
 simulations. To aid in plotting CSDM objects with PyPlot, csdmpy provides a
-custom CSDM data plot axes.  To use it, simply add ``projection="csdm"`` to the
+custom CSDM dataset plot axes.  To use it, simply add ``projection="csdm"`` to the
 PyPlot's Axes instance. Below is code using PyPlot that will generate a
 plot and a  pdf file of the simulated spectrum:
 
@@ -239,7 +242,7 @@ plot and a  pdf file of the simulated spectrum:
     import matplotlib.pyplot as plt
     plt.figure(figsize = (5, 3))  # set the figure size
     ax = plt.subplot(projection = "csdm")
-    ax.plot(processed_data.real)
+    ax.plot(processed_simulation.real)
     ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout()
     plt.savefig("spectrum.pdf")
@@ -278,7 +281,7 @@ csdf file as shown below.
 .. plot::
     :context: close-figs
 
-    processed_data.save("processed_simulation.csdf")
+    processed_simulation.save("processed_simulation.csdf")
 
 For more information on the CSDM file formats, see the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
 

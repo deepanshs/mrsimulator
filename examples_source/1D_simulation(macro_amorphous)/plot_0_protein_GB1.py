@@ -77,20 +77,20 @@ sim.methods = [method_13C, method_15N]
 # Run the simulation.
 sim.run()
 
-# Get the simulation data from the respective methods.
-data_13C = sim.methods[0].simulation  # method at index 0 is 13C Bloch decay method.
-data_15N = sim.methods[1].simulation  # method at index 1 is 15N Bloch decay method.
+# Get the simulation dataset from the respective methods.
+dataset_13C = sim.methods[0].simulation  # method at index 0 is 13C Bloch decay method.
+dataset_15N = sim.methods[1].simulation  # method at index 1 is 15N Bloch decay method.
 
 # %%
 # Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[sp.IFFT(), sp.apodization.Exponential(FWHM="10 Hz"), sp.FFT()]
 )
-# apply post-simulation processing to data_13C
-processed_data_13C = processor.apply_operations(data=data_13C).real
+# apply post-simulation processing to dataset_13C
+processed_dataset_13C = processor.apply_operations(dataset = dataset_13C).real
 
-# apply post-simulation processing to data_15N
-processed_data_15N = processor.apply_operations(data=data_15N).real
+# apply post-simulation processing to dataset_15N
+processed_dataset_15N = processor.apply_operations(dataset = dataset_15N).real
 
 # %%
 # The plot of the simulation after signal processing.
@@ -98,10 +98,10 @@ fig, ax = plt.subplots(
     1, 2, subplot_kw={"projection": "csdm"}, sharey=True, figsize=(9, 4)
 )
 
-ax[0].plot(processed_data_13C, color="black", linewidth=0.5)
+ax[0].plot(processed_dataset_13C, color="black", linewidth=0.5)
 ax[0].invert_xaxis()
 
-ax[1].plot(processed_data_15N, color="black", linewidth=0.5)
+ax[1].plot(processed_dataset_15N, color="black", linewidth=0.5)
 ax[1].set_ylabel(None)
 ax[1].invert_xaxis()
 

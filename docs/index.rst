@@ -334,7 +334,7 @@ If you use mrsimulator in your publication, please consider citing the following
 
 - Deepansh J. Srivastava, Matthew Giammar, Maxwell C. Venetos, Shyam Dwaraknath, Philip J. Grandinetti, & Alexis McCarthy. (2021). mrsimulator: v0.6.1. Zenodo. https://doi.org/10.5281/zenodo.5559730
 
-- Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific data. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
+- Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific dataset. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
 
 *Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package.*
 

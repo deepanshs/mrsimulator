@@ -64,13 +64,13 @@ class Shear(AffineTransformation):
     def str_to_quantity(cls, v, values):
         return _str_to_quantity(v, values, "factor")
 
-    def operate(self, data):
+    def operate(self, dataset):
         """Applies the operation.
 
         Args:
-            data: CSDM object.
+            dataset: CSDM object.
         """
-        dims = data.dimensions
+        dims = dataset.dimensions
         n_dim = len(dims)
 
         x, y = dims[self.dim_index], dims[self.parallel]
@@ -88,13 +88,13 @@ class Shear(AffineTransformation):
         # a is the factor.
         apodization_vector = np.exp(-2j * np.pi * xy * self.factor * multiplier)
 
-        dv_indexes = self._get_dv_indexes(self.dv_index, n=len(data.y))
+        dv_indexes = self._get_dv_indexes(self.dv_index, n=len(dataset.y))
 
         for i in dv_indexes:
-            datum = data.y[i].components
+            datum = dataset.y[i].components
             datum *= apodization_vector
 
-        return data
+        return dataset
 
 
 class Scale(AffineTransformation):
@@ -118,17 +118,17 @@ class Scale(AffineTransformation):
     def str_to_quantity(cls, v, values):
         return _str_to_quantity(v, values, "factor")
 
-    def operate(self, data):
+    def operate(self, dataset):
         """Applies the operation.
 
         Args:
-            data: CSDM object.
+            dataset: CSDM object.
         """
-        data_ref = data.x[self.dim_index]
+        data_ref = dataset.x[self.dim_index]
         data_ref.increment *= self.factor
         data_ref.coordinates_offset *= self.factor
         data_ref.reciprocal.coordinates_offset /= self.factor
-        return data
+        return dataset
 
 
 # class Translate(AffineTransformation):
@@ -174,15 +174,15 @@ class Scale(AffineTransformation):
 #     # class Config:
 #     #     validate_assignment = True
 
-#     def operate(self, data):
+#     def operate(self, dataset):
 #         """
 #         Applies the operation for which the class is named for.
 
-#         data: CSDM object
+#         dataset: CSDM object
 #         dep_var: int. The index of the dependent variable to apply operation to.
 #         """
-#         # data.x[self.dim_index].increment *= self.factor
-#         data.x[self.dim_index].coordinates_offset += (
+#         # dataset.x[self.dim_index].increment *= self.factor
+#         dataset.x[self.dim_index].coordinates_offset += (
 #             self.factor * self.property_units["factor"]
 #         )
-#         return data
+#         return dataset

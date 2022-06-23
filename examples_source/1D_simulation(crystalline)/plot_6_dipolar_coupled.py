@@ -58,14 +58,14 @@ processor = sp.SignalProcessor(
         sp.FFT(),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation)
+processed_dataset = processor.apply_operations(dataset = sim.methods[0].simulation)
 
 # %%
 # **Plot**
 #
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(processed_data.real, color="black", linewidth=1)
+ax.plot(processed_dataset.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

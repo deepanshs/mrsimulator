@@ -246,9 +246,9 @@ that gives an FWHM of 20 Hz.
 .. plot::
     :context: close-figs
 
-    # Get the simulation data
-    H_data = sim.methods[0].simulation
-    C_data = sim.methods[1].simulation
+    # Get the simulation datasets
+    H_dataset = sim.methods[0].simulation
+    C_dataset = sim.methods[1].simulation
 
     # Create the signal processors
     processor_1H = sp.SignalProcessor(
@@ -268,12 +268,12 @@ that gives an FWHM of 20 Hz.
     )
 
     # apply the signal processors
-    processed_H_data = processor_1H.apply_operations(data = H_data)
-    processed_C_data = processor_13C.apply_operations(data = C_data)
+    processed_H_dataset = processor_1H.apply_operations(dataset = H_dataset)
+    processed_C_dataset = processor_13C.apply_operations(dataset = C_dataset)
 
 
-Plotting the Data
-'''''''''''''''''
+Plotting the Dataset
+''''''''''''''''''''
 
 Finally, after applying the convolution with a Lorentizan line shape, you can
 plot the two spectra using the code below.  Additionally, you can save the plot
@@ -291,11 +291,11 @@ as a pdf file in this example.
         nrows = 1, ncols = 2, subplot_kw = {"projection": "csdm"}, figsize = [9, 4]
     )
 
-    ax[0].plot(processed_H_data.real)
+    ax[0].plot(processed_H_dataset.real)
     ax[0].invert_xaxis()
     ax[0].set_title("$^1$H")
 
-    ax[1].plot(processed_C_data.real)
+    ax[1].plot(processed_C_dataset.real)
     ax[1].invert_xaxis()
     ax[1].set_title("$^{13}$C")
 
@@ -315,8 +315,8 @@ You can save the spectra in csdf format using the code below.
 .. plot::
     :context: close-figs
 
-    processed_H_data.save("processed_H_data.csdf")
-    processed_C_data.save("processed_C_data.csdf")
+    processed_H_dataset.save("processed_H_dataset.csdf")
+    processed_C_dataset.save("processed_C_dataset.csdf")
 
 
 Saving the SpinSystems
@@ -389,7 +389,7 @@ additional details on JSON serialization of ``mrsimulator`` objects in the
     from os.path import isfile
 
     if isfile("spectra.pdf"): os.remove("spectra.pdf")
-    if isfile("processed_H_data.csdf"): os.remove("processed_H_data.csdf")
-    if isfile("processed_C_data.csdf"): os.remove("processed_C_data.csdf")
+    if isfile("processed_H_dataset.csdf"): os.remove("processed_H_dataset.csdf")
+    if isfile("processed_C_dataset.csdf"): os.remove("processed_C_dataset.csdf")
     if isfile("ethanol.mrsys"): os.remove("ethanol.mrsys")
     if isfile("H1C13Methods.mrmtd"): os.remove("H1C13Methods.mrmtd")

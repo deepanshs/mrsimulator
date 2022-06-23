@@ -108,14 +108,14 @@ processor = sp.SignalProcessor(
         sp.Scale(factor=50),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset = sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 plt.figure(figsize=(8, 4))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
-ax.plot(processed_data, linewidth=2, alpha=0.6)
+ax.plot(processed_dataset, linewidth=2, alpha=0.6)
 ax.set_xlim(1200, -1200)
 plt.grid()
 plt.legend()

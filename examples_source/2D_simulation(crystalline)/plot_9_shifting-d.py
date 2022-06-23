@@ -164,7 +164,7 @@ sim.run()
 
 # %%
 # Add post-simulation signal processing.
-data = sim.methods[0].simulation
+dataset = sim.methods[0].simulation
 processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
@@ -174,19 +174,19 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_data = processor.apply_operations(data=data)
+processed_dataset = processor.apply_operations(dataset = dataset)
 
 
 # %%
 # The plot of the simulation. Because we configured the simulator object to simulate
-# spectrum per spin system, the following data is a CSDM object containing five
-# simulations (dependent variables). Let's visualize the first data corresponding to
+# spectrum per spin system, the following dataset is a CSDM object containing five
+# simulations (dependent variables). Let's visualize the first dataset corresponding to
 # :math:`\text{NiCl}_2\cdot 2 \text{D}_2\text{O}`.
-data_Ni = data.split()[0].real
+dataset_Ni = dataset.split()[0].real
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data_Ni / data_Ni.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(dataset_Ni / dataset_Ni.max(), aspect="auto", cmap="gist_ncar_r")
 plt.title(None)
 plt.colorbar(cb)
 plt.tight_layout()
@@ -195,11 +195,11 @@ plt.show()
 
 # %%
 # The plot of the simulation after signal processing.
-proc_data_Ni = processed_data.split()[0].real
+proc_dataset_Ni = processed_dataset.split()[0].real
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(proc_data_Ni / proc_data_Ni.max(), cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(proc_dataset_Ni / proc_dataset_Ni.max(), cmap="gist_ncar_r", aspect="auto")
 plt.title(None)
 plt.colorbar(cb)
 plt.tight_layout()
@@ -210,8 +210,8 @@ plt.show()
 fig, ax = plt.subplots(
     2, 5, sharex=True, sharey=True, figsize=(12, 5.5), subplot_kw={"projection": "csdm"}
 )
-for i, data_obj in enumerate([data, processed_data]):
-    for j, datum in enumerate(data_obj.split()):
+for i, dataset_obj in enumerate([dataset, processed_dataset]):
+    for j, datum in enumerate(dataset_obj.split()):
         ax[i, j].imshow((datum / datum.max()).real, aspect="auto", cmap="gist_ncar_r")
         ax[i, j].invert_xaxis()
         ax[i, j].invert_yaxis()

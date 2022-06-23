@@ -33,10 +33,10 @@ freqHz = sim.methods[0].spectral_dimensions[0].coordinates_Hz()
 def test_scale():
     PS_0 = [sp.Scale(factor=10)]
     post_sim = sp.SignalProcessor(operations=PS_0)
-    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
+    dataset = post_sim.apply_operations(dataset = sim.methods[0].simulation.copy())
     _, y0, y1, y2 = sim.methods[0].simulation.to_list()
-    _, y0_, y1_, y2_ = data.to_list()
-    # cast complex data
+    _, y0_, y1_, y2_ = dataset.to_list()
+    # cast complex dataset
     assert np.allclose(y0_, y0 * 10), "Scaling failed"
     assert np.allclose(y1_, y1 * 10), "Scaling failed"
     assert np.allclose(y2_, y2 * 10), "Scaling failed"
@@ -49,8 +49,8 @@ def test_Lorentzian():
         sp.FFT(dim_index=0),
     ]
     post_sim = sp.SignalProcessor(operations=PS_1)
-    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
-    _, y0, y1, y2 = data.to_list()
+    dataset = post_sim.apply_operations(dataset = sim.methods[0].simulation.copy())
+    _, y0, y1, y2 = dataset.to_list()
 
     FWHM = 200
     test = (FWHM / 2) / (np.pi * (freqHz**2 + (FWHM / 2) ** 2))
@@ -80,8 +80,8 @@ def test_Gaussian():
     ]
 
     post_sim = sp.SignalProcessor(operations=PS_2)
-    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
-    _, y0, y1, _ = data.to_list()
+    dataset = post_sim.apply_operations(dataset = sim.methods[0].simulation.copy())
+    _, y0, y1, _ = dataset.to_list()
 
     sigma = 200
     test = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-((freqHz / sigma) ** 2) / 2)
@@ -94,8 +94,8 @@ def test_Gaussian():
 
     # test None for dv_index
     post_sim = sp.SignalProcessor(operations=PS_3)
-    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
-    _, y0, y1, y2 = data.to_list()
+    dataset = post_sim.apply_operations(dataset = sim.methods[0].simulation.copy())
+    _, y0, y1, y2 = dataset.to_list()
 
     assert np.allclose(y0, y1), "Gaussian apodization on dv at 0 and 1 are unequal."
     assert np.allclose(y0, y2), "Gaussian apodization on dv at 0 and 2 are unequal."
@@ -117,14 +117,14 @@ def test_SkewedGaussian():
     ]
 
     post_sim = sp.SignalProcessor(operations=PS_2)
-    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
-    _, y0, y1, _ = data.to_list()
+    dataset = post_sim.apply_operations(dataset = sim.methods[0].simulation.copy())
+    _, y0, y1, _ = dataset.to_list()
 
     assert np.allclose(y0, y1), "Gaussian apodization on two dv are not equal."
 
 
 def test_TopHat():
-    test_data = cp.CSDM(
+    test_dataset = cp.CSDM(
         dependent_variables=[cp.as_dependent_variable(np.ones(500))],
         dimensions=[cp.LinearDimension(500, "1 s")],
     )
@@ -134,27 +134,27 @@ def test_TopHat():
         sp.apodization.TopHat(rising_edge="100 s", falling_edge="400 s")
     ]
 
-    rise_and_fall_data = processor.apply_operations(test_data.copy())
+    rise_and_fall_dataset = processor.apply_operations(test_dataset.copy())
     rise_and_fall_should_be = np.zeros(500)
     rise_and_fall_should_be[100:400] = 1
 
-    assert np.allclose(rise_and_fall_data.y[0].components, rise_and_fall_should_be)
+    assert np.allclose(rise_and_fall_dataset.y[0].components, rise_and_fall_should_be)
 
     processor.operations = [sp.apodization.TopHat(rising_edge="100 s")]
 
-    rise_only_data = processor.apply_operations(test_data.copy())
+    rise_only_dataset = processor.apply_operations(test_dataset.copy())
     rise_only_should_be = np.zeros(500)
     rise_only_should_be[100:] = 1
 
-    assert np.allclose(rise_only_data.y[0].components, rise_only_should_be)
+    assert np.allclose(rise_only_dataset.y[0].components, rise_only_should_be)
 
     processor.operations = [sp.apodization.TopHat(falling_edge="400 s")]
 
-    fall_only_data = processor.apply_operations(test_data.copy())
+    fall_only_dataset = processor.apply_operations(test_dataset.copy())
     fall_only_should_be = np.zeros(500)
     fall_only_should_be[:400] = 1
 
-    assert np.allclose(fall_only_data.y[0].components, fall_only_should_be)
+    assert np.allclose(fall_only_dataset.y[0].components, fall_only_should_be)
 
 
 def test_Mask():
@@ -167,8 +167,8 @@ def test_Mask():
     ]
 
     post_sim = sp.SignalProcessor(operations=PS_5)
-    data = post_sim.apply_operations(data=sim.methods[0].simulation.copy())
-    _, y0, y1, _ = data.to_list()
+    dataset = post_sim.apply_operations(dataset = sim.methods[0].simulation.copy())
+    _, y0, y1, _ = dataset.to_list()
 
     _, test_y0, test_y1, _ = sim.methods[0].simulation.to_list()
 
@@ -263,8 +263,8 @@ def test_2D_area():
     ]
 
     post_sim = sp.SignalProcessor(operations=PS)
-    data_new = post_sim.apply_operations(data=csdm_obj.copy())
-    _, __, y1 = data_new.to_list()
+    dataset_new = post_sim.apply_operations(dataset = csdm_obj.copy())
+    _, __, y1 = dataset_new.to_list()
 
     assert np.allclose(y1.sum(), data.sum())
 
@@ -277,8 +277,8 @@ def test_2D_area():
     ]
 
     post_sim = sp.SignalProcessor(operations=PS)
-    data_new = post_sim.apply_operations(data=csdm_obj.copy())
-    _, __, y1 = data_new.to_list()
+    dataset_new = post_sim.apply_operations(dataset = csdm_obj.copy())
+    _, __, y1 = dataset_new.to_list()
 
     assert np.allclose(y1.sum(), data.sum())
 

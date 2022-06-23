@@ -56,7 +56,7 @@ dataset into a `CSDM <https://csdmpy.readthedocs.io/en/stable/>`_ object.
     # initialize nmrglue converter object
     converter = ng.convert.converter()
 
-    # read in the bruker data file
+    # read in the bruker dataset file
     dic, data = ng.bruker.read("Al_acac") 
 
     converter.from_bruker(dic,data)
@@ -154,7 +154,7 @@ method of the `Dimension <https://csdmpy.readthedocs.io/en/stable/api/Dimensions
     from mrsimulator import signal_processor as sp
 
     ft = sp.SignalProcessor(operations = [sp.FFT()])
-    exp_spectrum = ft.apply_operations(data = phased_ds)
+    exp_spectrum = ft.apply_operations(dataset = phased_ds)
     exp_spectrum.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
     fig, ax = plt.subplots(1, 2, figsize = (9, 3.5), subplot_kw = {"projection": "csdm"})
@@ -314,7 +314,7 @@ operation in the SignalProcessor.
             sp.Scale(factor = exp_spectrum.max())
         ]
     )
-    processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+    processed_dataset = processor.apply_operations(dataset = sim.methods[0].simulation).real
 
 
 You now have set up and run a simulation of the first guess in modeling the experimental spectrum.
@@ -328,7 +328,7 @@ Plot it and see how it compares to the experimental spectrum.
     plt.figure(figsize = (6, 3.0))
     ax = plt.subplot(projection="csdm")
     ax.plot(exp_spectrum.real, label = "Experiment")
-    ax.plot(processed_data.real, label = "guess spectrum")
+    ax.plot(processed_dataset.real, label = "guess spectrum")
     ax.set_xlim(-15, 15)
     plt.legend()
     plt.grid()
