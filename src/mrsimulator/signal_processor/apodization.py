@@ -81,7 +81,7 @@ class MultiDimensionApodization(ModuleOperation):
 
 
 class Gaussian(Apodization):
-    r"""Apodize dependent variable objects of CSDM dataset with Gaussian function.
+    r"""Apodize dependent variables of CSDM dataset with Gaussian function.
 
     The apodization function follows
 
@@ -131,7 +131,7 @@ class Gaussian(Apodization):
 
 
 class Exponential(Apodization):
-    r"""Apodize a dependent variable of the CSDM object by an exponential function.
+    r"""Apodize dependent variables of CSDM by exponential function.
 
     The apodization function follows
 
@@ -180,7 +180,7 @@ class Exponential(Apodization):
 
 
 class SkewedGaussian(Apodization):
-    r"""Apodize dependent variable objects of the CSDM dataset with a skewed Gaussian function.
+    r"""Apodize dependent variables of CSDM dataset with skewed Gaussian function.
 
     The apodization function is derived from the skewed Gaussian distribution
 
@@ -245,7 +245,7 @@ class SkewedGaussian(Apodization):
 
 
 class TopHat(Apodization):
-    r"""Apodize a dependent variable of the CSDM object by a top hat function.
+    r"""Apodize dependent variables of CSDM object by top hat function.
 
     The apodization function follows
 
@@ -331,7 +331,7 @@ class Array(np.ndarray, metaclass=ArrayMeta):
 
 
 class Mask(MultiDimensionApodization):
-    r"""Apodize a dependent variable of the CSDM object by a user defined mask.
+    r"""Apodize dependent variables of CSDM object by user defined mask.
 
     The apodization function follows
 
