@@ -18,6 +18,7 @@ class BaseNamedMethod(Method):
     """BaseNamedMethod class."""
 
     _named_method: bool = PrivateAttr(True)
+    _num_channels: ClassVar[int] = 1
     ndim: ClassVar[int] = 1
 
     def __init__(self, **kwargs):
@@ -45,6 +46,16 @@ class BaseNamedMethod(Method):
             "`rotor_frequency=1e12 Hz` is fixed for all 2D named Methods, except SSB2D,"
             "and cannot be modified."
         )
+
+    @validator("channels", pre=True, always=True)
+    def check_channel_count(cls, v, *, values, **kwargs):
+        # NOTE: This check will need to change if multi-isotope named methods added
+        if len(v) != cls._num_channels:
+            raise ValueError(
+                f"{cls.__name__} only supports {cls._num_channels} channel(s). "
+                f"Got {len(v)} channels."
+            )
+        return v
 
     @classmethod
     def update(cls, **kwargs):
