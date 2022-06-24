@@ -344,7 +344,7 @@ SignalProcessor.
             sp.IFFT(),
             sp.apodization.Gaussian(FWHM = "50 Hz"),
             sp.FFT(),
-            sp.Scale(factor = exp_spectrum.max())
+            sp.Scale(factor = exp_spectrum.max()/2)
         ]
     )
     processed_dataset = processor.apply_operations(dataset = sim.methods[0].simulation).real
@@ -449,8 +449,7 @@ it be held constant during the fit.
     First-principles DFT calculations based on structural hypotheses can sometimes
     help determine the initial guess for some parameters; however, they are rarely
     accurate enough, even when using the correct structure, to be used as fixed
-    parameters in a least-squares analysis of an experimental spectrum. This is
-    illustrated in the code below.
+    parameters in a least-squares analysis of an experimental spectrum. 
 
 
 
