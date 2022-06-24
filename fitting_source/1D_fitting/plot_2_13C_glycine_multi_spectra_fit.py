@@ -7,8 +7,8 @@
 # %%
 # The following is a multi-dataset least-squares fitting example of
 # :math:`^{13}\text{C}` MAS NMR spectrum of Glycine spinning at 5 kHz, 1.94 kHz, and
-# 960 Hz. Before trying multi-dataset fitting, we recommend that you first try individual
-# fits. The experimental datasets are part of DMFIT [#f1]_ examples.
+# 960 Hz. Before trying multi-dataset fitting, we recommend that you first try
+# individual fits. The experimental datasets are part of DMFIT [#f1]_ examples.
 import csdmpy as cp
 import matplotlib.pyplot as plt
 from lmfit import Minimizer
@@ -161,7 +161,9 @@ processors = [processor1, processor2, processor3]
 
 processed_dataset = []
 for i, proc in enumerate(processors):
-    processed_dataset.append(proc.apply_operations(dataset = sim.methods[i].simulation).real)
+    processed_dataset.append(
+        proc.apply_operations(dataset=sim.methods[i].simulation).real
+    )
 
 
 # Plot of the guess Spectrum

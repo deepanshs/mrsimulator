@@ -11,7 +11,7 @@ def test_baseline_constant_offset():
     dataset_in = generate_dataset()
     PS_0 = [sp.baseline.ConstantOffset(offset=10)]
     operator = sp.SignalProcessor(operations=PS_0)
-    dataset_out = operator.apply_operations(dataset = dataset_in.copy())
+    dataset_out = operator.apply_operations(dataset=dataset_in.copy())
     _, y0, y1, y2 = dataset_in.to_list()
     _, y0_, y1_, y2_ = dataset_out.to_list()
 
@@ -33,7 +33,9 @@ def test_baseline_polynomial():
 
     # zeroth order
     PS_0 = [sp.baseline.Polynomial(polynomial_dictionary={"c0": 10})]
-    dataset_out = sp.SignalProcessor(operations=PS_0).apply_operations(dataset = dataset_in.copy())
+    dataset_out = sp.SignalProcessor(operations=PS_0).apply_operations(
+        dataset=dataset_in.copy()
+    )
 
     _, y0, y1, y2 = dataset_in.to_list()
     _, y0_, y1_, y2_ = dataset_out.to_list()
@@ -43,7 +45,9 @@ def test_baseline_polynomial():
 
     # first order
     PS_0 = [sp.baseline.Polynomial(polynomial_dictionary={"c0": 30, "c1": 1})]
-    dataset_out = sp.SignalProcessor(operations=PS_0).apply_operations(dataset = dataset_in.copy())
+    dataset_out = sp.SignalProcessor(operations=PS_0).apply_operations(
+        dataset=dataset_in.copy()
+    )
 
     _, y0, y1, y2 = dataset_in.to_list()
     _, y0_, y1_, y2_ = dataset_out.to_list()
@@ -53,7 +57,9 @@ def test_baseline_polynomial():
 
     # second order
     PS_0 = [sp.baseline.Polynomial(polynomial_dictionary={"c0": 1, "c2": 1})]
-    dataset_out = sp.SignalProcessor(operations=PS_0).apply_operations(dataset = dataset_in.copy())
+    dataset_out = sp.SignalProcessor(operations=PS_0).apply_operations(
+        dataset=dataset_in.copy()
+    )
 
     _, y0, y1, y2 = dataset_in.to_list()
     _, y0_, y1_, y2_ = dataset_out.to_list()
@@ -65,7 +71,9 @@ def test_baseline_polynomial():
     PS_0 = [
         sp.baseline.Polynomial(polynomial_dictionary={"c0": 10, "c3": 2, "c1": 13.1})
     ]
-    dataset_out = sp.SignalProcessor(operations=PS_0).apply_operations(dataset = dataset_in.copy())
+    dataset_out = sp.SignalProcessor(operations=PS_0).apply_operations(
+        dataset=dataset_in.copy()
+    )
 
     _, y0, y1, y2 = dataset_in.to_list()
     _, y0_, y1_, y2_ = dataset_out.to_list()

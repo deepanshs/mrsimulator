@@ -87,10 +87,10 @@ processor = sp.SignalProcessor(
     operations=[sp.IFFT(), sp.apodization.Exponential(FWHM="10 Hz"), sp.FFT()]
 )
 # apply post-simulation processing to dataset_13C
-processed_dataset_13C = processor.apply_operations(dataset = dataset_13C).real
+processed_dataset_13C = processor.apply_operations(dataset=dataset_13C).real
 
 # apply post-simulation processing to dataset_15N
-processed_dataset_15N = processor.apply_operations(dataset = dataset_15N).real
+processed_dataset_15N = processor.apply_operations(dataset=dataset_15N).real
 
 # %%
 # The plot of the simulation after signal processing.

@@ -9,7 +9,7 @@ classes:
 :ref:`spin_system_documentation`, :ref:`method_documentation`, and
 :ref:`simulator_documentation`. :ref:`spin_system_documentation` defines the
 spin system and its tensor parameters used to generate a particular
-subspectrum, and :ref:`method_documentation` defines the behavior and parameters 
+subspectrum, and :ref:`method_documentation` defines the behavior and parameters
 for the particular NMR measurement to be simulated. A list
 of :ref:`method_documentation` and
 :ref:`spin_system_documentation` objects are used to initialize a Simulator
@@ -25,9 +25,9 @@ model because it is human-readable if properly organized and easily integrable
 with numerous programming languages and related software packages. It is also
 the preferred serialization for data exchange in web-based applications.
 
-Here, we have put together a tutorial which introduces the key objects in 
-a typical ``mrsimulator`` workflow. See the User Documentation section 
-for more detailed documentation on the usage of ``mrsimulator`` classes. Also, 
+Here, we have put together a tutorial which introduces the key objects in
+a typical ``mrsimulator`` workflow. See the User Documentation section
+for more detailed documentation on the usage of ``mrsimulator`` classes. Also,
 check out our :ref:`example_gallery` and :ref:`fitting_examples`.
 
 SpinSystem
@@ -36,8 +36,8 @@ SpinSystem
 An NMR spin system is an isolated system of sites (spins) and couplings. Spin
 systems can include as many sites and couplings as necessary to model a sample.
 For this introductory example, you will create a coupled
-:math:`^1\text{H}` - :math:`^{13}\text{C}` spin system.  Use the code below to 
-construct two :ref:`site_documentation` objects for the :math:`^1\text{H}` 
+:math:`^1\text{H}` - :math:`^{13}\text{C}` spin system.  Use the code below to
+construct two :ref:`site_documentation` objects for the :math:`^1\text{H}`
 and :math:`^{13}\text{C}` sites.
 
 .. plot::
@@ -72,12 +72,12 @@ chemical shift and other coupling parameters, are initialized to zero by
 default. Additionally, the default Site isotope is ``1H``. In the code above, for
 example, you could have used ``H_site = Site()``.
 
-At the end of the code above, you placed ``H_site`` and ``C_site`` into a 
-Python ordered list named ``my_sites``.  The order of Sites in this list is important, 
-as the indexes of Sites in this list are used when specifying couplings between sites. 
-Note that indexes in Python start at zero. 
+At the end of the code above, you placed ``H_site`` and ``C_site`` into a
+Python ordered list named ``my_sites``.  The order of Sites in this list is important,
+as the indexes of Sites in this list are used when specifying couplings between sites.
+Note that indexes in Python start at zero.
 
-Using the code below, define a dipolar coupling between ``H_site`` and ``C_site`` 
+Using the code below, define a dipolar coupling between ``H_site`` and ``C_site``
 by creating a :ref:`coupling_documentation` object.
 
 .. plot::
@@ -93,8 +93,8 @@ by creating a :ref:`coupling_documentation` object.
     )
 
 
-The two sites involved in the Coupling are identified by their indexes in the list 
-variable ``site_index``.  
+The two sites involved in the Coupling are identified by their indexes in the list
+variable ``site_index``.
 
 Now you have all the pieces needed to create the spin system using the code below.
 
@@ -110,8 +110,8 @@ Now you have all the pieces needed to create the spin system using the code belo
         couplings = [coupling],
     )
 
-That's it! You have created a spin system whose spectrum is ready to be simulated. 
-If you had wanted to create an uncoupled spin system, simply omit the 
+That's it! You have created a spin system whose spectrum is ready to be simulated.
+If you had wanted to create an uncoupled spin system, simply omit the
 ``couplings`` attribute.
 
 
@@ -120,11 +120,11 @@ Method
 
 A :ref:`method_documentation` object in ``mrsimulator`` describes an NMR method.
 For this introduction, you can use the pre-defined
-method :py:class:`~mrsimulator.method.lib.BlochDecaySpectrum`. This method 
+method :py:class:`~mrsimulator.method.lib.BlochDecaySpectrum`. This method
 simulations the spectrum obtained from the Fourier transform of a Bloch decay
 signal, i.e., one-pulse and acquire.   You can use the code below to create
-the Method object intialized with attributes whose names should be relatively
-familar to an NMR spectroscopist. 
+the Method object initialized with attributes whose names should be relatively
+familiar to an NMR spectroscopist.
 
 .. plot::
     :context: close-figs
@@ -149,22 +149,22 @@ familar to an NMR spectroscopist.
         ],
     )
 
-The ``channel`` attribute holds a list of isotope strings.  In the 
+The ``channel`` attribute holds a list of isotope strings.  In the
 :py:class:`~mrsimulator.method.lib.BlochDecaySpectrum` method, however, only the
 first isotope in the list, i.e., :math:`^{13}\text{C}`, is used to simulate
-the spectrum.  The 
+the spectrum.  The
 :py:class:`~mrsimulator.method.lib.BlochDecaySpectrum` method has one spectral
 dimension.  In this example, that spectral dimension has 2048 points, spanning
 80 kHz with a reference offset of 6 kHz.
 
-Next, you will bring the SpinSystem and Method objects together and create a Simulator object 
+Next, you will bring the SpinSystem and Method objects together and create a Simulator object
 that will simulate the spectrum.
 
 Simulator
 ---------
 
 At the heart of ``mrsimulator`` is the :ref:`simulator_documentation` object, which
-calculates the NMR spectrum. ``mrsimulator`` performs all calculations in the frequency domain, 
+calculates the NMR spectrum. ``mrsimulator`` performs all calculations in the frequency domain,
 and all resonance frequencies are calculated in the weakly-coupled (Zeeman) basis for the spin system.
 
 In the code below, you create a :ref:`simulator_api` object,
@@ -184,7 +184,7 @@ initialized with your previously defined spin system and method, and then call
 The simulated spectrum is stored as a CSDM object in the Method object at
 ``sim.methods[0].simulation``. To match an experimental MAS spectrum, however,
 you still need to add some line broadening to the simulated spectrum. For this,
-you can use the :ref:`signal_processor_documentation` object described in the 
+you can use the :ref:`signal_processor_documentation` object described in the
 next section.
 
 

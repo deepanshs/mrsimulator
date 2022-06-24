@@ -52,7 +52,7 @@ csdm_object = cp.CSDM(
 # Now to apply the processor to the CSDM object, use the
 # :py:meth:`~mrsimulator.signal_processor.SignalProcessor.apply_operations` method as
 # follows
-processed_dataset = processor.apply_operations(dataset = csdm_object.copy()).real
+processed_dataset = processor.apply_operations(dataset=csdm_object.copy()).real
 
 # %%
 # To see the results of the exponential apodization, we create a simple plot using the

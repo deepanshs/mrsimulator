@@ -434,7 +434,7 @@ def LMFIT_min_function(
     sim.run()
 
     processed_dataset = [
-        item.apply_operations(dataset = data.simulation)
+        item.apply_operations(dataset=data.simulation)
         for item, data in zip(processors, sim.methods)
     ]
 
@@ -462,7 +462,7 @@ def bestfit(sim: Simulator, processors: list = None):
     sim.run()
 
     return [
-        proc.apply_operations(dataset = mth.simulation).real
+        proc.apply_operations(dataset=mth.simulation).real
         for mth, proc in zip(sim.methods, processors)
     ]
 

@@ -2,9 +2,9 @@
 Common Python Syntax Errors
 ===========================
 
-Python syntax is slightly different than other languages, which causes some confusion. 
-A dedicated code editor is the easiest way to find and prevent syntax errors. We recommend 
-using VS Code on your local machine or Google Colab, which runs everything online. 
+Python syntax is slightly different than other languages, which causes some confusion.
+A dedicated code editor is the easiest way to find and prevent syntax errors. We recommend
+using VS Code on your local machine or Google Colab, which runs everything online.
 These programs check for syntax errors as you write code. The following are some typical
 syntax errors encountered and how to solve them.
 
@@ -47,10 +47,10 @@ Mismatched Brackets and Square Brackets
 
 Nesting many lists and dictionaries inside each other become hard to read. If you have mismatched or
 missing brackets, Python will throw ``SyntaxError: invalid syntax``. Code editors can automatically
-format large nestings and highlight which openings and closings go together, making the code easier 
+format large nestings and highlight which openings and closings go together, making the code easier
 to understand.
 
-Make sure all brackets are balanced and that opening and closing brackets match. Python uses 
+Make sure all brackets are balanced and that opening and closing brackets match. Python uses
 three types of brackets:
 
 
@@ -74,7 +74,7 @@ The most common reason ``TypeError: object is not callable`` is when ``()`` is u
     foo(1)
     # I received 1
 
-But parentheses aren't valid for indexing a subscriptable object (list, tuple, etc.). 
+But parentheses aren't valid for indexing a subscriptable object (list, tuple, etc.).
 For example, the following code will throw a TypeError
 
 .. skip: next

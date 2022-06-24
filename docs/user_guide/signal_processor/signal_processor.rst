@@ -14,14 +14,14 @@ function. For this reason, ``mrsimulator`` offers some frequently used NMR signa
 CSDM object
 -----------
 
-The simulated spectrum is held in a CSDM [#f1]_ object, which supports multi-dimensional 
-scientific datasets (NMR, EPR, FTIR, GC, etc.). For more information, see 
+The simulated spectrum is held in a CSDM [#f1]_ object, which supports multi-dimensional
+scientific datasets (NMR, EPR, FTIR, GC, etc.). For more information, see
 the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
 
 ``SignalProcessor`` class
 -------------------------
 
-Signal processing is a series of operations sequentially applied to the dataset. 
+Signal processing is a series of operations sequentially applied to the dataset.
 In ``mrsimulator``, the :py:class:`~mrsimulator.signal_processor.SignalProcessor` object is
 used to apply operations. Here we create a new SignalProcessor object
 
@@ -46,12 +46,12 @@ Each signal processor object holds a list of operations under the *operations* a
         sp.Scale(factor=120),
     ]
 
-First, an inverse Fourier transform is applied to the dataset. Then, 
-a Gaussian apodization with a full-width-at-half-maximum of 50 Hz 
-in the frequency domain is applied. The unit used for the *FWHM* 
-attribute corresponds to the dimensionality of the dataset. By 
-choosing Hz, we imply the dataset is in units of frequency. 
-Finally, a forward Fourier transform is applied to the apodized 
+First, an inverse Fourier transform is applied to the dataset. Then,
+a Gaussian apodization with a full-width-at-half-maximum of 50 Hz
+in the frequency domain is applied. The unit used for the *FWHM*
+attribute corresponds to the dimensionality of the dataset. By
+choosing Hz, we imply the dataset is in units of frequency.
+Finally, a forward Fourier transform is applied to the apodized
 dataset, and all points are scaled up by 120 times.
 
 .. note::
@@ -85,8 +85,8 @@ the :py:meth:`~mrsimulator.signal_processor.SignalProcessor.apply_operations` me
 
     processed_dataset = processor.apply_operations(dataset = csdm_object)
 
-The variable ``processed_dataset`` is another CSDM object holding the dataset 
-after the list of operations has been applied to ``csdm_object``. Below is a 
+The variable ``processed_dataset`` is another CSDM object holding the dataset
+after the list of operations has been applied to ``csdm_object``. Below is a
 plot comparing the unprocessed and processed dataset
 
 .. skip: next
@@ -160,7 +160,7 @@ Let's add another dependent variable to the previously created CSDM object to ta
     csdm_object.add_dependent_variable(cp.as_dependent_variable(test_data))
 
 Now, we again apply the operations with the
-:py:meth:`~mrsimulator.signal_processor.SignalProcessor.apply_operations` method. 
+:py:meth:`~mrsimulator.signal_processor.SignalProcessor.apply_operations` method.
 The comparison of the unprocessed and processed dataset is also shown below.
 
 .. plot::

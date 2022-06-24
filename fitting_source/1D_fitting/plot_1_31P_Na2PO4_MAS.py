@@ -77,8 +77,8 @@ spin_systems = [SpinSystem(sites=[P_31])]
 
 # %%
 # **Step 2:** Create the method object. Create an appropriate method object that closely
-# resembles the technique used in acquiring the experimental dataset. The attribute values
-# of this method must meet the experimental conditions, including the acquisition
+# resembles the technique used in acquiring the experimental dataset. The attribute
+# values of this method must meet the experimental conditions, including the acquisition
 # channels, the magnetic flux density, rotor angle, rotor frequency, and the
 # spectral/spectroscopic dimension.
 #
@@ -125,7 +125,7 @@ processor = sp.SignalProcessor(
         sp.baseline.ConstantOffset(offset=-2),
     ]
 )
-processed_dataset = processor.apply_operations(dataset = sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # %%
 # **Step 5:** The plot of the dataset and the guess spectrum.

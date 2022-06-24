@@ -46,11 +46,11 @@ class method :meth:`~mrsimulator.Simulator.run`.
 
     sim.run()
 
-The simulated spectrum is stored as a CSDM object in each method object under 
-the :py:attr:`~mrsimulator.Method.simulation` attribute. For more information 
+The simulated spectrum is stored as a CSDM object in each method object under
+the :py:attr:`~mrsimulator.Method.simulation` attribute. For more information
 on the Core Scientific Data Model (CSDM),
 see the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`_.
-Below we put the simulated spectra of the method at index 0 into the 
+Below we put the simulated spectra of the method at index 0 into the
 variable ``dataset_0``
 
 .. plot::

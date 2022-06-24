@@ -56,7 +56,8 @@ def test_MQMAS():
             sp.FFT(dim_index=1),
         ]
     )
-    processed_dataset = processor.apply_operations(dataset = sim.methods[0].simulation).real
+    processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
+    processed_dataset = processed_dataset.real
 
     # Since there is a single site, after the shear and scaling transformations, there
     # should be a single perak along the isotropic dimension at index 70.

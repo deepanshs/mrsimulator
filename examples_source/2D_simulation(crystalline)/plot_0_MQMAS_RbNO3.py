@@ -101,14 +101,14 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_dataset = processor.apply_operations(dataset = sim.methods[0].simulation)
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
 processed_dataset /= processed_dataset.max()
 
 # %%
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_dataset.real, cmap = "gist_ncar_r", aspect= "auto")
+cb = ax.imshow(processed_dataset.real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)
 ax.set_ylim(-40, -70)
 ax.set_xlim(-20, -60)

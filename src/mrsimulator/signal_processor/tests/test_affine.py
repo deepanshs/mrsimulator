@@ -32,7 +32,7 @@ def test_shear_01():
         ]
     )
 
-    shear_dataset = processor.apply_operations(dataset = csdm_object)
+    shear_dataset = processor.apply_operations(dataset=csdm_object)
     index = np.where(shear_dataset.y[0].components[0] > 0.99999999)
 
     a = np.arange(40)
@@ -41,7 +41,7 @@ def test_shear_01():
     # complex_fft dim=0 to false
     csdm_object.x[0].complex_fft = False
     csdm_object.x[1].complex_fft = True
-    shear_dataset = processor.apply_operations(dataset = csdm_object)
+    shear_dataset = processor.apply_operations(dataset=csdm_object)
     index = np.where(shear_dataset.y[0].components[0] > 0.99999999)
 
     a1 = np.arange(20)
@@ -52,7 +52,7 @@ def test_shear_01():
     # complex_fft dim=1 to false
     csdm_object.x[0].complex_fft = True
     csdm_object.x[1].complex_fft = False
-    shear_dataset = processor.apply_operations(dataset = csdm_object)
+    shear_dataset = processor.apply_operations(dataset=csdm_object)
     index = np.where(shear_dataset.y[0].components[0] > 0.99999999)
 
     b = np.arange(40)
@@ -62,7 +62,7 @@ def test_shear_01():
     # both complex_fft set to false
     csdm_object.x[0].complex_fft = False
     csdm_object.x[1].complex_fft = False
-    shear_dataset = processor.apply_operations(dataset = csdm_object)
+    shear_dataset = processor.apply_operations(dataset=csdm_object)
     index = np.where(shear_dataset.y[0].components[0] > 0.99999999)
 
     a1 = np.arange(21)[::-1]
@@ -106,7 +106,7 @@ def test_scale():
     c_off = csdm_object.x[1].coordinates_offset.value
 
     processor = sp.SignalProcessor(operations=[sp.affine.Scale(factor=2, dim_index=1)])
-    scaled_dataset = processor.apply_operations(dataset = csdm_object)
+    scaled_dataset = processor.apply_operations(dataset=csdm_object)
 
     s_inc = scaled_dataset.x[1].increment.value
     s_off = scaled_dataset.x[1].coordinates_offset.value

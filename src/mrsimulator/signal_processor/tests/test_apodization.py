@@ -33,7 +33,7 @@ freqHz = sim.methods[0].spectral_dimensions[0].coordinates_Hz()
 def test_scale():
     PS_0 = [sp.Scale(factor=10)]
     post_sim = sp.SignalProcessor(operations=PS_0)
-    dataset = post_sim.apply_operations(dataset = sim.methods[0].simulation.copy())
+    dataset = post_sim.apply_operations(dataset=sim.methods[0].simulation.copy())
     _, y0, y1, y2 = sim.methods[0].simulation.to_list()
     _, y0_, y1_, y2_ = dataset.to_list()
     # cast complex dataset
@@ -49,7 +49,7 @@ def test_Lorentzian():
         sp.FFT(dim_index=0),
     ]
     post_sim = sp.SignalProcessor(operations=PS_1)
-    dataset = post_sim.apply_operations(dataset = sim.methods[0].simulation.copy())
+    dataset = post_sim.apply_operations(dataset=sim.methods[0].simulation.copy())
     _, y0, y1, y2 = dataset.to_list()
 
     FWHM = 200
@@ -80,7 +80,7 @@ def test_Gaussian():
     ]
 
     post_sim = sp.SignalProcessor(operations=PS_2)
-    dataset = post_sim.apply_operations(dataset = sim.methods[0].simulation.copy())
+    dataset = post_sim.apply_operations(dataset=sim.methods[0].simulation.copy())
     _, y0, y1, _ = dataset.to_list()
 
     sigma = 200
@@ -94,7 +94,7 @@ def test_Gaussian():
 
     # test None for dv_index
     post_sim = sp.SignalProcessor(operations=PS_3)
-    dataset = post_sim.apply_operations(dataset = sim.methods[0].simulation.copy())
+    dataset = post_sim.apply_operations(dataset=sim.methods[0].simulation.copy())
     _, y0, y1, y2 = dataset.to_list()
 
     assert np.allclose(y0, y1), "Gaussian apodization on dv at 0 and 1 are unequal."
@@ -117,7 +117,7 @@ def test_SkewedGaussian():
     ]
 
     post_sim = sp.SignalProcessor(operations=PS_2)
-    dataset = post_sim.apply_operations(dataset = sim.methods[0].simulation.copy())
+    dataset = post_sim.apply_operations(dataset=sim.methods[0].simulation.copy())
     _, y0, y1, _ = dataset.to_list()
 
     assert np.allclose(y0, y1), "Gaussian apodization on two dv are not equal."
@@ -167,7 +167,7 @@ def test_Mask():
     ]
 
     post_sim = sp.SignalProcessor(operations=PS_5)
-    dataset = post_sim.apply_operations(dataset = sim.methods[0].simulation.copy())
+    dataset = post_sim.apply_operations(dataset=sim.methods[0].simulation.copy())
     _, y0, y1, _ = dataset.to_list()
 
     _, test_y0, test_y1, _ = sim.methods[0].simulation.to_list()
@@ -263,7 +263,7 @@ def test_2D_area():
     ]
 
     post_sim = sp.SignalProcessor(operations=PS)
-    dataset_new = post_sim.apply_operations(dataset = csdm_obj.copy())
+    dataset_new = post_sim.apply_operations(dataset=csdm_obj.copy())
     _, __, y1 = dataset_new.to_list()
 
     assert np.allclose(y1.sum(), data.sum())
@@ -277,7 +277,7 @@ def test_2D_area():
     ]
 
     post_sim = sp.SignalProcessor(operations=PS)
-    dataset_new = post_sim.apply_operations(dataset = csdm_obj.copy())
+    dataset_new = post_sim.apply_operations(dataset=csdm_obj.copy())
     _, __, y1 = dataset_new.to_list()
 
     assert np.allclose(y1.sum(), data.sum())

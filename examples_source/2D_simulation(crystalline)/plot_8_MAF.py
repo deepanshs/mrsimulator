@@ -111,7 +111,7 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_dataset = processor.apply_operations(dataset = csdm_dataset).real
+processed_dataset = processor.apply_operations(dataset=csdm_dataset).real
 processed_dataset /= processed_dataset.max()
 
 # %%

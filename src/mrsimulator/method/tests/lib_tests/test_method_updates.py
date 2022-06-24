@@ -26,7 +26,8 @@ def check_sim_save(sim1, sim2, message):
     dataset2 = sim2.methods[0].simulation.copy()
     sim2.methods[0].simulation = None
 
-    assert dataset1 == dataset2, f"dataset saved and loaded is not equal: type {message}."
+    e = f"dataset saved and loaded is not equal: type {message}."
+    assert dataset1 == dataset2, e
     assert sim1 == sim2, f".mrsim saved and loaded is not equal: type {message}."
 
 

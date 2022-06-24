@@ -93,7 +93,7 @@ sim.run()
 # Post Simulation Processing
 # --------------------------
 processor = sp.SignalProcessor(operations=[sp.Scale(factor=2000)])
-processed_dataset = processor.apply_operations(dataset = sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------

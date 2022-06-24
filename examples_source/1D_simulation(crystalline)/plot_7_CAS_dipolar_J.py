@@ -106,7 +106,7 @@ processor = sp.SignalProcessor(
 )
 # apply the same post-simulation processing to all the twelve simulations.
 processed_dataset = [
-    processor.apply_operations(dataset = method.simulation) for method in sim.methods
+    processor.apply_operations(dataset=method.simulation) for method in sim.methods
 ]
 
 # %%

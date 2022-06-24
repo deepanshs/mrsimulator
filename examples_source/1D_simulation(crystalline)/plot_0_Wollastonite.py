@@ -92,7 +92,7 @@ plt.show()
 processor = sp.SignalProcessor(
     operations=[sp.IFFT(), sp.apodization.Exponential(FWHM="70 Hz"), sp.FFT()]
 )
-processed_dataset = processor.apply_operations(dataset = sim.methods[0].simulation)
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
 
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))

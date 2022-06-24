@@ -132,7 +132,7 @@ def simulator_process(sim, data_object):
         processor = sp.SignalProcessor.parse_dict_with_units(
             {"operations": data_object["operations"]}
         )
-        sim_dataset = processor.apply_operations(dataset =sim_dataset)
+        sim_dataset = processor.apply_operations(dataset=sim_dataset)
 
     data_mrsimulator = np.asarray(sim_dataset.to_list()[1:])
     data_mrsimulator = data_mrsimulator.sum(axis=0)

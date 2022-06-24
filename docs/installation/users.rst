@@ -5,9 +5,9 @@ For the users
 
 .. note::
 
-  If you encounter an issue during installation, see our 
+  If you encounter an issue during installation, see our
   `troubleshooting section <instillation_troubleshooting>`_.
-  If that doesn't resolve your issue, please create a bug report on our 
+  If that doesn't resolve your issue, please create a bug report on our
   `Github issue tracker <https://github.com/deepanshs/mrsimulator/issues>`_.\
 
 
@@ -27,18 +27,18 @@ Make sure you have the required version of Python by typing the following in the
 
       $ python --version
 
-For *MacOS* users, Python version 3 is installed under the name *python3*. You may 
+For *MacOS* users, Python version 3 is installed under the name *python3*. You may
 replace *python* for *python3* in the above command and all subsequent Python statements.
 
 For *Windows* users, Python is not usually installed by default. See
-`Python.org <https://www.python.org/downloads/windows/>`_ for a list of official Python 
+`Python.org <https://www.python.org/downloads/windows/>`_ for a list of official Python
 downloads and Windows installation instructions.
 
 .. seealso::
 
   If you do not have Python or have an older version of Python, you may visit the
   `Python downloads <https://www.python.org/downloads/>`_ or
-  `Anaconda <https://www.anaconda.com/products/individual/>`_ websites and follow their 
+  `Anaconda <https://www.anaconda.com/products/individual/>`_ websites and follow their
   instructions on installing Python.
 
 Installing ``mrsimulator``

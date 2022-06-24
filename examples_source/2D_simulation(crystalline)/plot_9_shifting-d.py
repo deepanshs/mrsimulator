@@ -174,7 +174,7 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_dataset = processor.apply_operations(dataset = dataset)
+processed_dataset = processor.apply_operations(dataset=dataset)
 
 
 # %%
@@ -199,7 +199,9 @@ proc_dataset_Ni = processed_dataset.split()[0].real
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(proc_dataset_Ni / proc_dataset_Ni.max(), cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(
+    proc_dataset_Ni / proc_dataset_Ni.max(), cmap="gist_ncar_r", aspect="auto"
+)
 plt.title(None)
 plt.colorbar(cb)
 plt.tight_layout()

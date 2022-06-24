@@ -58,7 +58,7 @@ processor = sp.SignalProcessor(
         sp.FFT(),
     ]
 )
-processed_dataset = processor.apply_operations(dataset = sim.methods[0].simulation)
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
 
 # %%
 # **Plot**

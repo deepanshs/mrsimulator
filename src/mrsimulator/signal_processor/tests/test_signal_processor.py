@@ -72,7 +72,7 @@ def test_scale():
     dataset_in = generate_dataset()
     PS_0 = [sp.Scale(factor=10)]
     operator = sp.SignalProcessor(operations=PS_0)
-    dataset_out = operator.apply_operations(dataset = dataset_in.copy())
+    dataset_out = operator.apply_operations(dataset=dataset_in.copy())
     _, y0, y1, y2 = dataset_in.to_list()
     _, y0_, y1_, y2_ = dataset_out.to_list()
 
@@ -84,7 +84,7 @@ def test_linear():
     dataset_in = generate_dataset()
     PS_0 = [sp.Linear(amplitude=4.1, offset=10)]
     operator = sp.SignalProcessor(operations=PS_0)
-    dataset_out = operator.apply_operations(dataset = dataset_in.copy())
+    dataset_out = operator.apply_operations(dataset=dataset_in.copy())
     _, y0, y1, y2 = dataset_in.to_list()
     _, y0_, y1_, y2_ = dataset_out.to_list()
 

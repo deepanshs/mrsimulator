@@ -113,7 +113,7 @@ processor = sp.SignalProcessor(
 )
 processed_dataset = []
 for item in dataset:
-    processed_dataset.append(processor.apply_operations(dataset = item))
+    processed_dataset.append(processor.apply_operations(dataset=item))
     processed_dataset[-1] /= processed_dataset[-1].max()
 
 # %%
