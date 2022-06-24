@@ -418,7 +418,7 @@ def LMFIT_min_function(
     Args:
         params: Parameters object containing parameters for OLS minimization.
         sim: Simulator object.
-        processors: A list of PostSimulator objects corresponding to the methods in the
+    processors: A list of PostSimulator objects corresponding to the methods in the
             Simulator object.
         sigma: A list of standard deviations corresponding to the experiments in the
             Simulator.methods attribute

@@ -27,6 +27,10 @@ AVANCE III HD NMR spectrometer into the script. Bruker datasets are saved in
 folders with a number as the folder name. In this case, that folder has been
 transferred from the spectrometer and renamed "Al_acac".
 
+
+Download experimental dataset
+'''''''''''''''''''''''''''''
+
 For our purposes, the folder was also compressed into a zip archive and uploaded
 to an internet-accessible server.  You can used the code block below to
 download the zip archive from the server and unzip it into the originally named
@@ -43,6 +47,9 @@ folder.
     z = zipfile.ZipFile(BytesIO(request.content))
     z.extractall("Al_acac")
 
+
+Convert experimental dataset to CSDM
+''''''''''''''''''''''''''''''''''''
 
 Now that the Bruker dataset folder is accessible to your Python code, you can use the
 Python package `nmrglue <https://github.com/jjhelmus/nmrglue>`_ to convert the
@@ -65,7 +72,7 @@ dataset into a `CSDM <https://csdmpy.readthedocs.io/en/stable/>`_ object.
     # convert to CSDM format
     csdm_ds = converter.to_csdm()
 
-Now that the dataset is converted into a CSDM object plot the dataset to make
+With that the dataset converted into a CSDM object, plot the dataset to make
 sure that it was imported correctly.
 
 .. plot::
@@ -107,7 +114,8 @@ the maximum magnitude of the complex signal.
 
 Second, you need to phase correct the time domain so that the maximum echo
 amplitude is in the real part of the signal. For this operation, you can use
-numpy `abs() <https://numpy.org/doc/stable/reference/generated/numpy.absolute.html>`_ to take the absolute value of each complex signal amplitude, and numpy
+numpy `abs() <https://numpy.org/doc/stable/reference/generated/numpy.absolute.html>`_
+to take the absolute value of each complex signal amplitude, and numpy
 `argmax() <https://numpy.org/doc/stable/reference/generated/numpy.argmax.html>`_ to
 find the time index where the absolute value of the signal is at a maximum.
 Then use the signal phase at that time index to place the maximum amplitude
@@ -148,10 +156,10 @@ additional decay with an ad-hoc Gaussian convolution of the spectrum.
 
 Next, create a SignalProcessor object to apply the Fourier transform operation
 to the CSDM object ``exp_spectrum``.  Note that with a correctly set time
-origin, the ``FFT`` operation automatically applies the appropriate first-order
-phase correction to the spectrum after performing the fast Fourier transform.
-After performing the Fourier transform, convert the coordinate units of the
-CSDM dimension from frequency to a frequency ratio using the
+origin, the :py:meth:`~mrsimulator.signal_processor.FFT` operation automatically
+applies the appropriate first-order phase correction to the spectrum after performing
+the fast Fourier transform. After performing the Fourier transform, convert the coordinate
+units of the CSDM dimension from frequency to a frequency ratio using the
 `to() <https://csdmpy.readthedocs.io/en/stable/api/Dimensions.html#csdmpy.Dimension.to>`_
 method of the `Dimension
 <https://csdmpy.readthedocs.io/en/stable/api/Dimensions.html>`_ object.
@@ -235,16 +243,20 @@ detected than the other transitions.  Armed with this understanding of the
 sample and method, you can proceed to create the fitting model.
 
 Start by creating the Method object to model the experimental method used to
-acquire the spectrum. Choose the ``BlochDecayCTSpectrum`` method since the
+acquire the spectrum. Choose the
+:py:meth:`~mrsimulator.method.lib.base.BlochDecayCTSpectrum()` method since the
 measurement is designed to excite only the central transition of the
 :math:`^{27}\text{Al}` nuclei. From the CSDM object holding the experimental
 spectrum, i.e., ``exp_spectrum``, you can extract the relevant parameters for
-the ``spectral_dimension`` attribute of the ``BlochDecayCTSpectrum`` method
-using the fitting utility function ``get_spectral_dimensions()``. The
+the ``spectral_dimension`` attribute of the
+:py:meth:`~mrsimulator.method.lib.base.BlochDecayCTSpectrum()` method
+using the fitting utility function
+:py:meth:`~mrsimulator.utils.get_spectral_dimensions`. The
 experimental measurement parameters associated with the method attributes
 ``magnetic_flux_density`` and ``rotor_frequency`` are also used in creating
-this ``BlochDecayCTSpectrum`` method. Finally, every Method object has
-``experiment`` attribute used to hold the experimental spectrum that is to be
+this :py:meth:`~mrsimulator.method.lib.base.BlochDecayCTSpectrum()` method.
+Finally, every Method object has ``experiment`` attribute used to hold the
+experimental spectrum that is to be
 modeled with the Method object.
 
 .. plot::
@@ -270,8 +282,8 @@ characteristic of the second-order MAS lineshape of a single site. Knowing this
 requires that you are already familiar with such lineshapes(``mrsimulator`` can
 help with that!). One might also hypothesize that there may be other sites with
 lower intensity present in the spectrum, or perhaps the spectrum, as noted earlier,
-is from a distribution of :math:`^{27}\text{Al}` sites with very similar NMR tensor
-parameters with dipolar couplings among them. These are all valid hypotheses and
+is from a distribution of :math:`^{27}\text{Al}` sites with very similar efg tensor
+parameters and dipolar couplings among them. These are all valid hypotheses and
 could be used to create more elaborate and perhaps even more realistic spin system models.
 For now, you can choose the simplest spin system model with a single
 :math:`^{27}\text{Al}` site,  as shown in the code below.
@@ -347,7 +359,7 @@ Plot it and see how it compares to the experimental spectrum.
 
 
 The fit parameters are the spin system tensor and signal processor
-parameters. If your initial guess was not so good, you could iteratively change
+parameters. If your initial guess is not so good, you could iteratively change
 the fit parameters until your simulation is closer to the experimental spectrum.
 This will ensure faster convergence to the best-fit parameters and could
 prevent the least-squares analysis from falling into false minima on the
@@ -359,16 +371,23 @@ Perform Least-Squares Analysis
 
 Up to this point in the discussion, you've done little more than what you've
 learned earlier in setting up a simulation with ``mrsimulator``. Except now,
-you're ready to leverage the power of LMFIT to obtain the best-fit parameters.
-Begin by using an ``mrsimulator`` utility function :py:meth:`~make_LMFIT_params`
+you're ready to leverage the power of `LMFIT
+<https://lmfit.github.io/lmfit-py/>`_ to obtain the best-fit parameters.
+
+Define the fit parameters
+'''''''''''''''''''''''''
+
+
+Begin by using an ``mrsimulator`` utility function
+:py:meth:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params`
 to extract a list of LMFIT parameters from the Simulator and SignalProcessor objects.
 
 .. plot::
     :context: close-figs
 
     from mrsimulator.utils import spectral_fitting as sf
-    params = sf.make_LMFIT_params(sim, processor)
-    print(params.pretty_print(columns = ["value", "min", "max", "vary", "expr"]))
+    fit_parameters = sf.make_LMFIT_params(sim, processor)
+    print(fit_parameters.pretty_print(columns = ["value", "min", "max", "vary", "expr"]))
 
 .. parsed-literal::
 
@@ -381,50 +400,94 @@ to extract a list of LMFIT parameters from the Simulator and SignalProcessor obj
     sys_0_site_0_quadrupolar_eta                0.2        0        1     True     None
     None
 
-The output of the ``print()`` statement, shown above, gives the table of the
-LMFIT parameters.  Here, you can determine which parameters are fit and which
-are fixed.
+The output of the ``print()`` statement, shown above, gives the table of the LMFIT
+parameters created by :py:meth:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params`.
+The returned ``fit_parameters`` is a dictionary with each fit parameter object identified
+by a string.  LMFIT does not allow the parameter string identifiers to include special
+characters such as "[", "]", "." or "_".  Therefore, when the
+:py:meth:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` function creates the
+LMFIT parameters dictionary, it flattens the variable namespace into a string,
+for example,
 
-How can you change params attributes, e.g., Vary from True to False?
+**"sim.spin_systems[0].sites[1].quadrupolar.Cq"** :math:`\rightarrow`
+**"sys_0_site_1_quadrupolar_Cq"**
+
+or
+
+**"sp[0].operation[3].scale_factor"** :math:`\rightarrow` **"SP_0_operation_3_Scale_factor"**.
+
+Using these parameter string names, you can access and change any of its LMFIT parameter attributes, i.e.,
+"value", "min", "max", "vary", "expr".  For example, using the code below, you can set the
+quadrupolar asymmetry parameter value to be zero, and request that it be held constant during the fit.
+
+.. plot::
+    :context: close-figs
+
+    fit_parameters["sys_0_site_0_quadrupolar_eta"].value = 0
+    fit_parameters["sys_0_site_0_quadrupolar_eta"].vary = False
 
 
-.. note::
+.. warning::
 
     First-principles DFT calculations based on structural hypotheses can sometimes help determine
-    the initial guess for some parameters, however, they are rarely accurate enough–even when
-    using the correct structure–to be used as "ground-truth" fixed parameters in a least-squares
-    analysis of an experimental spectrum.
+    the initial guess for some parameters, however, they are rarely accurate enough, even when
+    using the correct structure, to be used as fixed parameters in a least-squares
+    analysis of an experimental spectrum.  This is illustrated in the code below.
 
+
+Define and minimize the chi-squared function
+''''''''''''''''''''''''''''''''''''''''''''
+
+To perform a least-squares analysis, `LMFIT
+<https://lmfit.github.io/lmfit-py/>`_ needs a chi-squared function.  LMFIT expects this
+function to return an list of residuals (difference between model and data) divided by
+the experimental noise standard deviation.  ``mrsimulator`` comes with a pre-built
+chi-squared function :py:meth:`~mrsimulator.utils.spectral_fitting.LMFIT_min_function`
+which takes the Simulator, SignalProcessor, and the experimental noise standard deviation
+as function arguments.
+
+Perform the chi-squared minimization
+''''''''''''''''''''''''''''''''''''
 
 The least-squares analysis is performed by creating a `LMFIT
 <https://lmfit.github.io/lmfit-py/>`_ `Minimizer
 <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.Minimizer>`_
-object initialized with chi-squared function, the fit parameters (``params``), and
-any additional objects needed to evaluate the chi-squared function.  Here, you will
-set the chi-squared function to the ``mrsimulator`` utility function
-``sf.LMFIT_min_function`` and ``fcn_args`` to hold the Simulator, SignalProcessor,
-and the noise standard deviation of the experimental spectrum.
+object initialized with a chi-squared function, the fit parameters (``fit_parameters``).
+Any additional objects needed to evaluate the chi-squared function are placed in
+``fcn_args``.  For :py:meth:`~mrsimulator.utils.spectral_fitting.LMFIT_min_function`,
+``fcn_args``  needs to hold the Simulator, SignalProcessor, and the noise standard
+deviation of the experimental spectrum.
 
-After minimize() exits the parameters in the Simulator and SignalProcessor will be updated, and the
-results of the least-squares analysis are returned as an object containing the optimized parameters
-and several goodness-of-fit statistics in ``result``.
+After the ``minimize()`` function of the ``Minimizer`` object exits, the parameters in the
+Simulator and SignalProcessor are updated with the best-fit parameters, and the results of
+the least-squares analysis is returned as an object containing the optimized parameters
+and several goodness-of-fit statistics.
+
+Use the code below to create and initialize the ``Minimizer`` object, run the minimization,
+and print the output.
 
 .. plot::
     :context: close-figs
 
     from lmfit import Minimizer
-    minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+    minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args = (sim, processor, sigma))
     result = minner.minimize()
     result
 
 
-.. figure:: ../_static/FitStatistics.*
-    :width: 800
+.. figure:: ../_static/FitStatistics1.*
+    :width: 1200
     :alt: figure
     :align: center
 
-You should also plot the experimental and simulated spectra along with the residuals.  Use
-the ``mrsimulator`` utility function ``sf.bestfit()`` and ``sf.residuals()`` to extract
+
+
+Compare experimental and best-fit spectra with residuals
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+You can now plot the experimental and best-fit simulated spectra along with the residuals.  Use
+the ``mrsimulator`` utility function :py:meth:`~mrsimulator.utils.spectral_fitting.bestfit`
+and :py:meth:`~mrsimulator.utils.spectral_fitting.residuals` to extract
 the best-fit simulation and the residuals as CSDM objects.
 
 .. plot::
@@ -450,11 +513,43 @@ The Minimizer will improve the fit parameters even if the initial parameters gue
 is far from the best-fit values.  However, if the initial guess is too far away, the
 Minimizer may not reach the best-fit parameters in a single run.  If you think that
 may be the case, you can re-extract a new initial guess from the Simulator and
-SignalProcessor objects using ``make_LMFIT_params()``, create and initialize a new
+SignalProcessor objects using
+:py:meth:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params`, create and initialize a new
 Minimizer object as before, and run again, i.e., restart at the beginning of this
 section.  You may see that the fit improves and gives a lower chi-squared value.
 
 
+As mentioned earlier, the Gaussian line broadening and the quadrupolar asymmetry parameter
+are correlated in the fit.   If you allow the quadrupolar asymmetry parameter to be
+a fit parameter, you will find that the Gaussian FWHM gets smaller as the quadrupolar
+asymmetry parameter increases, and the fit does get slightly better.
+
+.. plot::
+    :context: close-figs
+
+    fit_parameters["sys_0_site_0_quadrupolar_eta"].value = 0
+    fit_parameters["sys_0_site_0_quadrupolar_eta"].vary = True
+    minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args=(sim, processor, sigma))
+    result = minner.minimize()
+    best_fit = sf.bestfit(sim, processor)[0]
+    residuals = sf.residuals(sim, processor)[0]
+
+    # Plot the spectrum
+    plt.figure(figsize = (6, 3.0))
+    ax = plt.subplot(projection = "csdm")
+    ax.plot(exp_spectrum, label = "Experiment")
+    ax.plot(best_fit, alpha=0.75, label = "Best Fit")
+    ax.plot(residuals, alpha=0.75, label = "Residuals")
+    ax.set_xlim(-15, 15)
+    plt.legend()
+    plt.grid()
+    plt.tight_layout()
+    plt.show()
+
+.. figure:: ../_static/FitStatistics2.*
+    :width: 1200
+    :alt: figure
+    :align: center
 
 
 
