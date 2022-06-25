@@ -496,13 +496,13 @@ minimization, and print the
 `MinimizerResult <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.MinimizerResult>`_.
 
 
-.. plot::
-    :context: close-figs
+.. .. plot::
+..     :context: close-figs
 
-    from lmfit import Minimizer
-    minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args = (sim, processor, sigma))
-    result = minner.minimize()
-    result
+..     from lmfit import Minimizer
+..     minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args = (sim, processor, sigma))
+..     result = minner.minimize()
+..     result
 
 
 .. figure:: ../_static/FitStatistics1.*
@@ -540,23 +540,23 @@ function :py:meth:`~mrsimulator.utils.spectral_fitting.bestfit`
 and :py:meth:`~mrsimulator.utils.spectral_fitting.residuals` to extract the
 best-fit simulation and the residuals as CSDM objects.
 
-.. plot::
-    :context: close-figs
+.. .. plot::
+..     :context: close-figs
 
-    best_fit = sf.bestfit(sim, processor)[0]
-    residuals = sf.residuals(sim, processor)[0]
+..     best_fit = sf.bestfit(sim, processor)[0]
+..     residuals = sf.residuals(sim, processor)[0]
 
-    # Plot the spectrum
-    plt.figure(figsize = (6, 3.0))
-    ax = plt.subplot(projection = "csdm")
-    ax.plot(exp_spectrum, label = "Experiment")
-    ax.plot(best_fit, alpha=0.75, label = "Best Fit")
-    ax.plot(residuals, alpha=0.75, label = "Residuals")
-    ax.set_xlim(-15, 15)
-    plt.legend()
-    plt.grid()
-    plt.tight_layout()
-    plt.show()
+..     # Plot the spectrum
+..     plt.figure(figsize = (6, 3.0))
+..     ax = plt.subplot(projection = "csdm")
+..     ax.plot(exp_spectrum, label = "Experiment")
+..     ax.plot(best_fit, alpha=0.75, label = "Best Fit")
+..     ax.plot(residuals, alpha=0.75, label = "Residuals")
+..     ax.set_xlim(-15, 15)
+..     plt.legend()
+..     plt.grid()
+..     plt.tight_layout()
+..     plt.show()
 
 
 The Minimizer will improve the fit parameters even if the initial parameters are
@@ -576,27 +576,27 @@ Gaussian line broadening FWHM in the fit. Set the quadrupolar asymmetry
 parameter to be a fit parameter, and rerun the analysis.
 
 
-.. plot::
-    :context: close-figs
+.. .. plot::
+..     :context: close-figs
 
-    fit_parameters["sys_0_site_0_quadrupolar_eta"].value = 0
-    fit_parameters["sys_0_site_0_quadrupolar_eta"].vary = True
-    minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args=(sim, processor, sigma))
-    result = minner.minimize()
-    best_fit = sf.bestfit(sim, processor)[0]
-    residuals = sf.residuals(sim, processor)[0]
+..     fit_parameters["sys_0_site_0_quadrupolar_eta"].value = 0
+..     fit_parameters["sys_0_site_0_quadrupolar_eta"].vary = True
+..     minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args=(sim, processor, sigma))
+..     result = minner.minimize()
+..     best_fit = sf.bestfit(sim, processor)[0]
+..     residuals = sf.residuals(sim, processor)[0]
 
-    # Plot the spectrum
-    plt.figure(figsize = (6, 3.0))
-    ax = plt.subplot(projection = "csdm")
-    ax.plot(exp_spectrum, label = "Experiment")
-    ax.plot(best_fit, alpha=0.75, label = "Best Fit")
-    ax.plot(residuals, alpha=0.75, label = "Residuals")
-    ax.set_xlim(-15, 15)
-    plt.legend()
-    plt.grid()
-    plt.tight_layout()
-    plt.show()
+..     # Plot the spectrum
+..     plt.figure(figsize = (6, 3.0))
+..     ax = plt.subplot(projection = "csdm")
+..     ax.plot(exp_spectrum, label = "Experiment")
+..     ax.plot(best_fit, alpha=0.75, label = "Best Fit")
+..     ax.plot(residuals, alpha=0.75, label = "Residuals")
+..     ax.set_xlim(-15, 15)
+..     plt.legend()
+..     plt.grid()
+..     plt.tight_layout()
+..     plt.show()
 
 .. figure:: ../_static/FitStatistics2.*
     :width: 1200
