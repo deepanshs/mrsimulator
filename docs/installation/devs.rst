@@ -171,17 +171,25 @@ Note for the developers and contributors
 **Before commits**: Mrsimulator follows Python community standards for writing code and documentation.
 To help guide the developers and contributors toward these standards, we have created
 a *.pre-commit-config.yaml* file that, when used with ``pre-commit``, will inspect
-the code and document for issues. At the root level of the mrsimulator folder, type
+the code and document for issues. To set up ``pre-commit``, type the following one-time
+install statement in the terminals,
+
+.. code-block:: bash
+
+    $ pre-commit install
+
+Once set up, navigate to the root level of the mrsimulator folder and type
 
 .. code-block:: bash
 
     $ pre-commit run
 
-before git commits to review the changes.
+The above statement auto-fixes some issues and lists others for you to fix. Review the
+changes and address the listed issues before a git commit.
 
-You can also set up the git hook script to automatically run *pre-commit* on git commits
-with the ``pre-commit install``. Read more about
-`pre-commit <https://pre-commit.com/#3-install-the-git-hook-scripts>`_.
+.. You can also set up the git hook script to automatically run *pre-commit* on git commits
+.. with the ``pre-commit install``. Read more about
+.. `pre-commit <https://pre-commit.com/#3-install-the-git-hook-scripts>`_.
 
 .. note::
     The pre-commit command ignores unstaged changes. Before running ``pre-commit run``, make sure
