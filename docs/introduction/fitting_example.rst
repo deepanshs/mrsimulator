@@ -43,6 +43,7 @@ the zip archive from the server and unzip it into the originally named folder.
     import requests
     import zipfile
     from io import BytesIO
+
     file_ = "https://ssnmr.org/sites/default/files/mrsimulator/Al_acac3_0.zip"
     request = requests.get(file_)
     z = zipfile.ZipFile(BytesIO(request.content))
@@ -69,7 +70,7 @@ object.
     # read in the bruker dataset file
     dic, data = ng.bruker.read("Al_acac")
 
-    converter.from_bruker(dic,data)
+    converter.from_bruker(dic, data)
 
     # convert to CSDM format
     csdm_ds = converter.to_csdm()
@@ -189,7 +190,7 @@ method of the
     ax[1].plot(exp_spectrum.real)
     ax[1].plot(exp_spectrum.imag)
     ax[1].set_title("Zoomed Spectrum")
-    ax[1].set_xlim(-15,15)
+    ax[1].set_xlim(-15, 15)
     ax[1].grid()
     plt.tight_layout()
     plt.show()
@@ -237,8 +238,8 @@ To create a proper fitting model, you'll need more information about the nuclei
 being observed, the material's phase, and some idea about the local structure
 around the atoms holding the observed nuclei. In this example, you know that
 you are working with :math:`^{27}\text{Al}`, a quadrupolar nucleus with a
-half-integer spin of 5/2, and that the material, :math:`\text{Al
-(acac)$_3$}`, is a solid polycrystalline sample. The symmetry of the
+half-integer spin of 5/2, and that the material, :math:`\text{Al(acac)$_3$}`,
+is a solid polycrystalline sample. The symmetry of the
 first-coordination sphere around aluminum is likely low enough to generate a
 large electric field gradient, and hence a sizeable quadrupolar coupling
 constant for :math:`^{27}\text{Al}`. These details are usually sorted out
@@ -306,7 +307,7 @@ model with a single
     site = Site(
         isotope = "27Al",
         isotropic_chemical_shift = 5,
-        quadrupolar = {"Cq" : 3e6, "eta" : 0.0},
+        quadrupolar = {"Cq": 3e6, "eta": 0.0},
     )
     sys = SpinSystem(sites = [site])
 

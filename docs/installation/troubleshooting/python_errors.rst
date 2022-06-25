@@ -18,10 +18,10 @@ Code editors make finding troublesome whitespace easier, but the error should al
 code snippet which threw the error.
 
 - ``IndentationError: expected an indented block`` means some code is missing an indent after a
-class/method/loop deceleration.
+  class/method/loop deceleration.
 
- -``IndentationError: unindent does not match any outer indentation level`` means the code didn't
-return to a previous indentation level.
+- ``IndentationError: unindent does not match any outer indentation level`` means the code didn't
+  return to a previous indentation level.
 
 - ``IndentationError: unexpected indent`` means Python encountered unexpected whitespace.
 
