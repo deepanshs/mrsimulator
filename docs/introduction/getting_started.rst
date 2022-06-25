@@ -93,7 +93,7 @@ by creating a :ref:`coupling_documentation` object.
     )
 
 
-The two sites involved in the Coupling are identified by their indexes in the list
+The two sites involved in the :ref:`coupling_documentation` are identified by their indexes in the list
 variable ``site_index``.
 
 Now you have all the pieces needed to create the spin system using the code below.

@@ -251,8 +251,8 @@ central :math:`m = \tfrac{1}{2}\rightarrow-\tfrac{1}{2}` transition of
 detected than the other transitions.  Armed with this understanding of the
 sample and method, you can proceed to create the fitting model.
 
-Start by creating the Method object to model the experimental method used to
-acquire the spectrum. Choose the
+Start by creating a :ref:`method_documentation` object to model 
+the experimental method used to acquire the spectrum. Choose the
 :py:meth:`~mrsimulator.method.lib.base.BlochDecayCTSpectrum()` method since the
 measurement is designed to excite only the central transition of the
 :math:`^{27}\text{Al}` nuclei. From the CSDM object holding the experimental
@@ -295,8 +295,8 @@ is from a distribution of :math:`^{27}\text{Al}` sites with very similar efg
 tensor parameters and dipolar couplings among them. These are all valid
 hypotheses and could be used to create more elaborate and perhaps even more
 realistic spin system models. For now, you can choose the simplest spin system
-model with a single
-:math:`^{27}\text{Al}` site,  as shown in the code below.
+model by creating a single
+:math:`^{27}\text{Al}` :ref:`site_documentation`,  as shown in the code below.
 
 .. plot::
     :context: close-figs

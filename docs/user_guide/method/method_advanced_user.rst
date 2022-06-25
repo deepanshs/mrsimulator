@@ -5,22 +5,152 @@
 Method
 ======
 
-Shortly after the birth of Nuclear Magnetic Resonance (NMR) spectroscopy, it was realized that spin
-and spatial degrees of freedom could be manipulated on a time scale faster than the coherence
-lifetimes of the nuclear spin transitions. This led to an explosion of multi-pulse and sample
-reorientation methodologies in magnetic resonance for probing the structure and dynamics of matter
-over a wide range of length and time scales.
+``mrsimulator`` is designed to be versatile in its ability to model spectra from
+various multi-pulse NMR methods using concepts from the `symmetry pathway
+approach <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_. In this approach, a
+pulse sequence is understood in terms of a set of desired
+(and undesired) *transition pathways*. Each transition pathway is associated
+with a single resonance in a multi-dimensional NMR spectrum.  The transition
+pathway signal encodes information about the spin system interactions in its
+amplitude and correlated frequencies. Consider the illustration of a 2D pulse
+sequence shown below, where a desired signal for the method is associated with
+a particular transition pathway, :math:`{\hat{A} \rightarrow \hat
+{B} \rightarrow \hat{C} \rightarrow \hat{D} \rightarrow \hat
+{E} \rightarrow \hat{F}}`.
 
-Numerical simulations of the NMR spectra from these methods have long been a critical
-part of their analyses. The most robust and rigorous numerical approaches employ the full density
-operator, ideal for dealing with finite pulse effects, weak to intermediate to strong couplings,
-non-commuting Hamiltonians, and relaxation and exchange processes. However, such approaches can be
-highly inefficient, particularly when Hamiltonians commute, pulses are ideal, and transverse relaxation
-can be treated as an ad-hoc line broadening. ``mrsimulator``, an open-source python package, achieves
-high benchmarks in spectral simulations and analyses by limiting itself to these simpler situations.
-Fortunately, working within this limit only prevents ``mrsimulator`` from modeling spectra of a small
-fraction of popular NMR methods. The efficiency gains with this approach over conventional density
-operator simulations are tremendous.
+.. figure:: ../../_static/TransitionPathway.*
+    :width: 700
+    :alt: figure
+    :align: center
+
+Here, the first spectral dimension, i.e., the Fourier transform of the
+transition pathway signal as a function of :math:`t_1`, derives its frequency,
+:math:`\overline{\Omega}_1`, from a weighted average of the :math:`\hat{A}`, 
+:math:`\hat{B}`, and :math:`\hat{C}` transition frequencies. The second spectral
+dimension, i.e., the FT with respect to :math:`t_2`, derives its frequency, 
+:math:`\overline{\Omega}_2`, from a weighted average of the :math:`\hat
+{E}`, and :math:`\hat{F}` transition frequencies. Much of the experimental
+design and implementation of an NMR method is in identifying the desired
+transition pathways and finding ways to acquire their signals while
+eliminating all undesired transition pathway signals. 
+
+While NMR measurements take place in the time domain, ``mrsimulator`` simulates
+the corresponding multi-dimensional spectra directly in the frequency domain.
+The :py:meth:`~mrsimulator.method.Method` object in ``mrsimulator`` needs only
+a few details of the NMR pulse sequence to generate the spectrum.  It mimics
+the result of the pulse sequence given the desired transition pathways and
+their effective frequency in each spectroscopic dimension of the dataset. To
+this end, a :ref:`method_api` object is organized according to the UML diagram
+below.  
+
+
+.. figure:: ../../_static/MethodUML.*
+    :width: 700
+    :alt: figure
+    :align: center
+
+At the heart of a :ref:`method_api` object is an ordered list of 
+:py:meth:`~mrsimulator.method.spectral_dimension.SpectralDimension` objects in
+the same order as the time evolution dimensions of the corresponding NMR pulse
+sequence. Each :py:meth:`~mrsimulator.method.spectral_dimension.SpectralDimension` object, in turn, object holds an ordered list of 
+:py:meth:`~mrsimulator.method.event` objects, which are divided into three types
+of objects: (1) :py:meth:`~mrsimulator.method.SpectralEvent`,
+(2) :py:meth:`~mrsimulator.method.ConstantDurationEvent`, and
+(3) :py:meth:`~mrsimulator.method.MixingEvent`.  
+
+Spectral and constant duration events are associated with excited states of the
+spin system, with various transitions evolving under the influence of specified
+Hamiltonian contributions. No coherence transfer among transitions or
+populations can occur in a spectral or constant duration event. ``mrsimulator``
+allows the user to select among a list of NMR frequency contributions to
+transitions present during such an event in a list using the ``freq_contrib``
+attribute values given in 
+:py:meth:`~mrsimulator.method.frequency_contrib.FrequencyEnum`. If unspecified,
+i.e., its value is set to ``Null``, a default list holding the enumeration
+literals for all contributions is generated for the event.
+
+Additionally, the user can change other measurement attributes during a spectral
+or constant duration event: ``rotor_frequency`` or ``rotor_angle`,
+``magnetic_flux_density``.  If unspecified, these attributes default to the
+values of the identically named attributes in the :ref:`method_api` object.
+Spectral events objects use the ``fraction`` attribute  to calculate the
+weighted average frequency for each selected transition pathway during the
+spectral dimension.
+
+Inside :py:meth:`~mrsimulator.method.SpectralEvent` and 
+:py:meth:`~mrsimulator.method.ConstantDurationEvent` objects, is a
+list of :py:meth:`~mrsimulator.method.query.TransitionQuery` objects (*vide infra*) 
+which determine which
+transitions are "alive" during the event.  :ref:`method_api` objects in
+``mrsimulator`` are general purpose in the sense that they are designed for
+an arbitrary spin system.  That is, a method does not know, in advance, the
+energy eigenvalues and eigenstates of the spin system.  Thus, when designing
+a :ref:`method_api` object you cannot identify and select a transition through
+its initial and final eigenstate quantum numbers.  Transition selection,
+however, is done through :py:meth:`~mrsimulator.method.query.TransitionQuery` 
+objects during individual spectral or constant duration events.   It is only the 
+:py:meth:`~mrsimulator.Simulator` object, holding both a :ref:`method_api` and a 
+:ref:`spin_system_documentation` object, that can pass this 
+:py:meth:`~mrsimulator.method.query.TransitionQuery`  object from
+a :ref:`method_api` to a :ref:`spin_sys_api` object and obtain the selected
+transitions as identified by their initial and final eigenstate quantum numbers
+for a spin system.  :py:meth:`~mrsimulator.method.query.TransitionQuery` 
+objects hold a list of :py:meth:`~mrsimulator.method.query.SymmetryQuery`
+objects which act on specific isotopes present in the, as yet
+to be determined, spin system.  A list of isotopes upon which the 
+:py:meth:`~mrsimulator.method.query.SymmetryQuery` objects can act are held 
+by the ``channels`` attribute in :ref:`method_api`.  Details on how 
+:py:meth:`~mrsimulator.method.query.TransitionQuery` and 
+:py:meth:`~mrsimulator.method.query.SymmetryQuery` objects are designed 
+are given in the next section.
+
+Mixing events are used to transfer (permute) among transitions and populations,
+e.g., :math:`\pi/2` or :math:`\pi` rotations between consecutive spectral or constant
+duration events.  For a rotation in a mixing event, the efficiency associated
+with the coherence transfer from 
+
+:math:`\ketbra{I, m_f}{I, m_i}\to\ketbra{I,m_f'}{I,m_i'}`
+
+is 
+
+:math:`d_{m_f',m_f}^{(I)}(\theta)d_{m_i',m_i}^{(I)}(\theta)e^
+{-i\Delta p\phi}(i)^{\Delta p}`
+
+where :math:`\Delta p = p' - p`.  From this result, we obtain a useful
+rule that
+
+:math:`\ketbra{m_f}{m_i}  \stackrel{\pi}{\longrightarrow} \ketbra{-m_f}{-m_i}`
+
+The :py:meth:`~mrsimulator.method.MixingEvent` object holds the details of these
+rotations in a :py:meth:`~mrsimulator.method.query.MixingQuery` object.
+
+:py:meth:`~mrsimulator.method.query.RFRotation` object and ``channels`` attribute.
+
+It is through :py:meth:`~mrsimulator.method.query.MixingQuery` and 
+:py:meth:`~mrsimulator.method.query.TransitionQuery` 
+objects that the desired transition pathways are selected and undesired transition 
+pathways are eliminated.
+
+:py:meth:`~mrsimulator.method.spectral_dimension.SpectralDimension` has additional 
+attributes that have already been
+discussed in earlier sections of the documentation.  Notably, ``origin_offset`` 
+and ``reference_offset`` are important for converting
+the frequency coordinate into a dimensionless frequency ratio coordinate. For
+spectra where all the spectral dimensions are associated with single-quantum
+transitions on a single isotope, the convention for defining ``origin_offset`` 
+and ``reference_offset`` is well established;
+the ``origin_offset``, :math:`o_k`, is interpreted as the NMR spectrometer
+frequency and  the ``reference_offset`, :math:`b_k`, as the reference
+frequency. Given the frequency coordinate, :math:`{X}`, the corresponding
+dimensionless-frequency ratio follows,
+
+:math:`{X}^\text{ratio} = \displaystye \frac{{X}}{o_k - b_k}.`
+
+In the case of multiple quantum dimensions, however, there appear
+to be no formal conventions for defining ``origin_offset`` and 
+``reference_offset``. 
+
+
 
 Mrsimulator allows users to create custom methods and simulate the NMR spectrum.
 At the top level, a :ref:`method_api` object is no different than the pre-built
