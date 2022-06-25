@@ -1,7 +1,7 @@
 .. _event_api:
 
-Events
-------
+Event
+-----
 
 .. currentmodule:: mrsimulator.method
 

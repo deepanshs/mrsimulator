@@ -5,6 +5,17 @@
 Method
 ======
 
+While ``mrismulator``'s organization of the :ref:`spin_sys_api` object and 
+its component objects, :ref:`site_api`, and :ref:`coupling_api` are easily 
+understood by anyone familar with their corresponding physical concepts, the 
+organization of the :ref:`method_api` object and its related component 
+objects requires further explanation.
+
+An experimental NMR method involves a sequence of rf pulses and free evolution
+periods, along with sample motion (most commonly magic-angle spinning).  In
+``mrsimulator``, :ref:`method_api` object only models NMR pulse sequences 
+that lead to a frequency-domain signal, i.e., a spectrum.  
+
 ``mrsimulator`` is designed to be versatile in its ability to model spectra from
 various multi-pulse NMR methods using concepts from the `symmetry pathway
 approach <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_. In this approach, a
@@ -24,10 +35,10 @@ a particular transition pathway, :math:`{\hat{A} \rightarrow \hat
     :align: center
 
 Here, the first spectral dimension, i.e., the Fourier transform of the
-transition pathway signal as a function of :math:`t_1`, derives its frequency,
-:math:`\overline{\Omega}_1`, from a weighted average of the :math:`\hat{A}`, 
+transition pathway signal as a function of :math:`t_1`, derives its *average 
+frequency*, :math:`\overline{\Omega}_1`, from a weighted average of the :math:`\hat{A}`, 
 :math:`\hat{B}`, and :math:`\hat{C}` transition frequencies. The second spectral
-dimension, i.e., the FT with respect to :math:`t_2`, derives its frequency, 
+dimension, i.e., the FT with respect to :math:`t_2`, derives its average frequency, 
 :math:`\overline{\Omega}_2`, from a weighted average of the :math:`\hat
 {E}`, and :math:`\hat{F}` transition frequencies. Much of the experimental
 design and implementation of an NMR method is in identifying the desired
@@ -36,12 +47,12 @@ eliminating all undesired transition pathway signals.
 
 While NMR measurements take place in the time domain, ``mrsimulator`` simulates
 the corresponding multi-dimensional spectra directly in the frequency domain.
-The :py:meth:`~mrsimulator.method.Method` object in ``mrsimulator`` needs only
+The :ref:`method_api` object in ``mrsimulator`` needs only
 a few details of the NMR pulse sequence to generate the spectrum.  It mimics
 the result of the pulse sequence given the desired transition pathways and
-their effective frequency in each spectroscopic dimension of the dataset. To
-this end, a :ref:`method_api` object is organized according to the UML diagram
-below.  
+their complex amplitudes and average frequencies in each spectroscopic dimension 
+of the dataset. To this end, a :ref:`method_api` object is organized according to 
+the UML diagram below.  
 
 
 .. figure:: ../../_static/MethodUML.*
@@ -49,14 +60,17 @@ below.
     :alt: figure
     :align: center
 
-At the heart of a :ref:`method_api` object is an ordered list of 
-:py:meth:`~mrsimulator.method.spectral_dimension.SpectralDimension` objects in
-the same order as the time evolution dimensions of the corresponding NMR pulse
-sequence. Each :py:meth:`~mrsimulator.method.spectral_dimension.SpectralDimension` object, in turn, object holds an ordered list of 
-:py:meth:`~mrsimulator.method.event` objects, which are divided into three types
-of objects: (1) :py:meth:`~mrsimulator.method.SpectralEvent`,
+At the heart of a :ref:`method_api` object, assigned
+to the attribute ``spectral_dimensions``, is an ordered list of :ref:`spectral_dim_api`
+objects in the same order as the time evolution dimensions of the corresponding NMR pulse
+sequence. In each :ref:`spectral_dim_api` object, assigned to the attribute ``events``, 
+is an ordered list of :ref:`event_api` objects, 
+which are divided into three types: (1) :py:meth:`~mrsimulator.method.SpectralEvent`,
 (2) :py:meth:`~mrsimulator.method.ConstantDurationEvent`, and
-(3) :py:meth:`~mrsimulator.method.MixingEvent`.  
+(3) :py:meth:`~mrsimulator.method.MixingEvent`.  This ordered list of :ref:`event_api` objects is 
+used to determine the average frequency and complex amplitude of every simulated transition 
+pathway signal in the
+:py:meth:`~mrsimulator.method.spectral_dimension.SpectralDimension`.  
 
 Spectral and constant duration events are associated with excited states of the
 spin system, with various transitions evolving under the influence of specified
@@ -72,7 +86,7 @@ literals for all contributions is generated for the event.
 Additionally, the user can change other measurement attributes during a spectral
 or constant duration event: ``rotor_frequency`` or ``rotor_angle`,
 ``magnetic_flux_density``.  If unspecified, these attributes default to the
-values of the identically named attributes in the :ref:`method_api` object.
+values of the identically named global attributes in the :ref:`method_api` object.
 Spectral events objects use the ``fraction`` attribute  to calculate the
 weighted average frequency for each selected transition pathway during the
 spectral dimension.
