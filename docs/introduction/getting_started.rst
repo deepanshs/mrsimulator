@@ -13,7 +13,7 @@ subspectrum, and :ref:`method_documentation` defines the behavior and parameters
 for the particular NMR measurement to be simulated. A list
 of :ref:`method_documentation` and
 :ref:`spin_system_documentation` objects are used to initialize a Simulator
-object, which is then used to generate the corresponding NMR spectra--returned
+object, which is then used to generate the corresponding NMR spectra---returned
 as a CSDM object in each Method object. For more information on the CSDM
 (Core Scientific Dataset Model), see the `csdmpy documentation
 <https://csdmpy.readthedocs.io/en/stable/>`__. There is an additional class,
