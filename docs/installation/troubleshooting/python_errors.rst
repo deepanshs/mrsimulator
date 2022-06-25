@@ -2,7 +2,7 @@
 Common Python Syntax Errors
 ===========================
 
-Python syntax is slightly different than other languages, which causes some confusion.
+Python syntax is slightly different than other languages, which can cause some confusion.
 A dedicated code editor is the easiest way to find and prevent syntax errors. We recommend
 using VS Code on your local machine or Google Colab, which runs everything online.
 These programs check for syntax errors as you write code. The following are some typical
@@ -17,13 +17,13 @@ If you encounter an ``IndentationError``, you have an extra/missing whitespace i
 Code editors make finding troublesome whitespace easier, but the error should also show the
 code snippet which threw the error.
 
-``IndentationError: expected an indented block`` means some code is missing an indent after a
+- ``IndentationError: expected an indented block`` means some code is missing an indent after a
 class/method/loop deceleration.
 
-``IndentationError: unindent does not match any outer indentation level`` means the code didn't
+ -``IndentationError: unindent does not match any outer indentation level`` means the code didn't
 return to a previous indentation level.
 
-``IndentationError: unexpected indent`` means Python encountered unexpected whitespace.
+- ``IndentationError: unexpected indent`` means Python encountered unexpected whitespace.
 
 Code blocks in Python rely on indentation levels (1 level = 4 spaces), so whitespace can't be placed
 randomly. Code blocks are preceded by a ``:``, and all code in one block has the same indentation.
@@ -107,7 +107,7 @@ with a keyword. For example
 
     spam = {"ham": "Hello World!", "eggs": 54.73}
     print(spam["ham"])  # prints Hello World!
-    print(spam("ham"))
+    print(spam("ham"))  # throws error
 
 .. code-block:: shell
 

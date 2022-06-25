@@ -165,10 +165,10 @@ origin, the :py:meth:`~mrsimulator.signal_processor.FFT` operation
 automatically applies the appropriate first-order phase correction to the
 spectrum after performing the fast Fourier transform. After performing the
 Fourier transform, convert the coordinate units of the CSDM dimension from
-frequency to a frequency ratio using the 
+frequency to a frequency ratio using the
 `to()
 <https://csdmpy.readthedocs.io/en/stable/api/Dimensions.html#csdmpy.Dimension.to>`_
-method of the 
+method of the
 `Dimension <https://csdmpy.readthedocs.io/en/stable/api/Dimensions.html>`_ object.
 
 
@@ -209,12 +209,12 @@ the imaginary part.
 The least-squares analysis also needs the standard deviation of the noise in the
 spectrum. We can obtain that from the spectrum regions below -20 ppm or above
 20 ppm, where there is no signal amplitude. To accomplish this, you can use
-numpy 
+numpy
 `where() <https://numpy.org/doc/stable/reference/generated/numpy.where.html>`_. It
 evaluates a condition for each item in the list and returns the indexes for
-those items where the condition is true. With the indexes returned by 
+those items where the condition is true. With the indexes returned by
 `where() <https://numpy.org/doc/stable/reference/generated/numpy.where.html>`_, you
-can calculate the standard deviation of the noise region with numpy 
+can calculate the standard deviation of the noise region with numpy
 `std() <https://numpy.org/doc/stable/reference/generated/numpy.std.html>`_.
 
 
@@ -329,7 +329,7 @@ to do a Gaussian lineshape convolution with an FWHM of 50 Hz.
 
 Additionally, you must scale the simulation in intensity to match the
 experimental spectrum. You may have noticed in earlier plots that the vertical
-axis of the experimental spectrum plot was on the order of 1e6. Use numpy 
+axis of the experimental spectrum plot was on the order of 1e6. Use numpy
 `max() <https://numpy.org/doc/stable/reference/generated/numpy.maximum.html>`_ to
 get the highest amplitude, set that as the factor as a Scale operation in the
 SignalProcessor.
@@ -449,7 +449,7 @@ it be held constant during the fit.
     First-principles DFT calculations based on structural hypotheses can sometimes
     help determine the initial guess for some parameters; however, they are rarely
     accurate enough, even when using the correct structure, to be used as fixed
-    parameters in a least-squares analysis of an experimental spectrum. 
+    parameters in a least-squares analysis of an experimental spectrum.
 
 
 
@@ -479,19 +479,19 @@ For :py:meth:`~mrsimulator.utils.spectral_fitting.LMFIT_min_function`,
 ``fcn_args`` needs to hold the Simulator, SignalProcessor, and the experimental
 noise standard deviation.
 
-After the 
+After the
 `minimize() <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.minimize>`_
-function of the 
+function of the
 `Minimizer <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.Minimizer>`_
 object exits, the parameters in the Simulator and SignalProcessor are updated
 with the best-fit parameters and the results of the least-squares analysis is
-returned as an 
+returned as an
 `MinimizerResult <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.MinimizerResult>`_
 object containing the optimized parameters and several goodness-of-fit
 statistics.
 
 Use the code below to create and initialize the ``Minimizer`` object, run the
-minimization, and print the 
+minimization, and print the
 `MinimizerResult <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.MinimizerResult>`_.
 
 
@@ -509,10 +509,10 @@ minimization, and print the
     :alt: figure
     :align: center
 
-From the printout of the 
+From the printout of the
 `MinimizerResult <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.MinimizerResult>`_
 above, you can find the best-fit parameters and their associated uncertainties
-from least-squares analysis. 
+from least-squares analysis.
 
 .. warning::
 
@@ -526,7 +526,7 @@ from least-squares analysis.
     underestimated. Such discrepancies between the experimental and simulated
     spectra can often arise from measurement artifacts, e.g., receiver
     deadtimes, non-uniform excitation, etc. They can also arise from an
-    inadequate model (spin systems and method) for the spectrum. 
+    inadequate model (spin systems and method) for the spectrum.
 
 
 

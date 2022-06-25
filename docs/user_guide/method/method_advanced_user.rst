@@ -16,13 +16,13 @@ part of their analyses. The most robust and rigorous numerical approaches employ
 operator, ideal for dealing with finite pulse effects, weak to intermediate to strong couplings,
 non-commuting Hamiltonians, and relaxation and exchange processes. However, such approaches can be
 highly inefficient, particularly when Hamiltonians commute, pulses are ideal, and transverse relaxation
-can be treated as an ad-hoc line broadening. ``mrsimulator``, an open-source python package, achieves
+can be treated as an ad-hoc line broadening. ``mrsimulator`` achieves
 high benchmarks in spectral simulations and analyses by limiting itself to these simpler situations.
 Fortunately, working within this limit only prevents ``mrsimulator`` from modeling spectra of a small
 fraction of popular NMR methods. The efficiency gains with this approach over conventional density
 operator simulations are tremendous.
 
-Mrsimulator allows users to create custom methods and simulate the NMR spectrum.
+Users can create custom methods and simulate the NMR spectrum.
 At the top level, a :ref:`method_api` object is no different than the pre-built
 methods provided within the ``mrsimulator.method.lib`` module.
 

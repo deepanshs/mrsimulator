@@ -5,8 +5,8 @@
 Multi-quantum variable-angle spinning
 -------------------------------------
 
-The following classes are used in a simulating multi-quantum variable-angle spinning
-spectrum correlating the frequencies from the symmetric multiple-quantum transition to
+The following classes are used when simulating a multi-quantum variable-angle spinning
+spectrum which correlates the frequencies from the symmetric multiple-quantum transition to
 the central transition frequencies. The :math:`p` and :math:`d` pathways for the MQVAS
 methods are
 

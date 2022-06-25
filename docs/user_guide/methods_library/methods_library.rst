@@ -29,11 +29,16 @@ The syntax for all library methods follows,
         ],
     )
 
-where `BlochDecaySpectrum` can be replaced with another method class. Each method has the *channels* attribute, which is a list of isotopes probed by the method as well as the
-*magnetic_flux_density*, *rotor_angle*, and *rotor_frequency* attributes which define the global experiment parameters.
+where `BlochDecaySpectrum` can be replaced with another method class. Each method has the
+*channels* attribute, which is a list of isotopes probed by the method as well as the
+*magnetic_flux_density*, *rotor_angle*, and *rotor_frequency* attributes which define the
+global experiment parameters.
 See :numref:`table_generic_method` for more details.
 
-The method object also has the *spectral_dimensions* attribute, which contains a list of SpectralDimension objects defining the spectral grid. A 2D method will have two spectral dimensions in this list, whereas a 1D method will only have one. See :numref:`table_generic_spectral_dimension` for the attributes of a SpectralDimension object.
+The method object also has the *spectral_dimensions* attribute, which contains a list of
+SpectralDimension objects defining the spectral grid. A 2D method will have two spectral
+dimensions in this list, whereas a 1D method will only have one. See
+:numref:`table_generic_spectral_dimension` for the attributes of a SpectralDimension object.
 
 .. _bloch_decay:
 .. include:: bloch_decay.rst

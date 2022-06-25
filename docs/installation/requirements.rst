@@ -3,6 +3,8 @@
 Package dependencies
 ====================
 
+``mrsimulator`` works with Python versions 3.7 and higher
+
 ``mrsimulator`` is compatible with the following operating systems:
 
 - MacOS 10.15 or later

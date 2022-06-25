@@ -10,7 +10,7 @@ use what is most familiar. For new developers, we recommend
 community extensions.
 
 Make your copy of mrsimulator on GitHub
-'''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''
 
 Making a copy of someone's code on GitHub is the same as making a *fork*.  A fork is a complete
 copy of the code and its revision history.
@@ -26,7 +26,7 @@ After that, you should find yourself on the home page for your forked copy of mr
 Create a development environment
 ''''''''''''''''''''''''''''''''
 
-It is good practice to create separate virtual python environments when developing packages.
+It is good practice to create separate virtual environments when developing packages.
 There are many environment managers available; however, we recommend using
 `Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_
 
@@ -44,10 +44,10 @@ To activate the environment, use
     $ conda activate mrsimulator-dev
 
 
-Make sure git is installed on your computer.
-''''''''''''''''''''''''''''''''''''''''''''
+Make sure git is installed on your computer
+'''''''''''''''''''''''''''''''''''''''''''
 
-`Git <https://git-scm.com>`_ is the name of a source code management system.
+`Git <https://git-scm.com>`_ is a source code management system.
 It keeps track of the changes made to the code and manages contributions from
 several individuals.  You may notice that much of its terminology comes from
 river metaphors, i.e., source, fork, upstream, etc.  You may read about git
@@ -61,7 +61,7 @@ type in terminal
     $ git --version
     # if git is installed, you will get something like git version 2.30.2
 
-If git is not installed, `install <https://git-scm.com/downloads>`_ it.
+If git is not installed, `install <https://git-scm.com/downloads>`_ it before continuing.
 
 
 **Basic git configuration:**
@@ -129,8 +129,8 @@ OS-dependent prerequisites
 """"""""""""""""""""""""""
 
 .. note::
-   Installing OS-dependent prerequisites is a one-time process. If you are
-   upgrading to a newer version of mrsimulator, skip to the next section.
+    Installing OS-dependent prerequisites is a one-time process. If you are
+    upgrading to a newer version of mrsimulator, skip to the next section.
 
 .. tabs::
 
@@ -165,13 +165,13 @@ package into the default site-packages directory, you may try installing by addi
 ``--user`` option.
 
 
-Note for the developers and contributors.
-'''''''''''''''''''''''''''''''''''''''''
+Note for the developers and contributors
+''''''''''''''''''''''''''''''''''''''''
 
 **Before commits**: Mrsimulator follows Python community standards for writing code and documentation.
 To help guide the developers and contributors toward these standards, we have created
 a *.pre-commit-config.yaml* file that, when used with ``pre-commit``, will inspect
-the code and document for issues. At the root directory of the mrsimulator package folder, type
+the code and document for issues. At the root level of the mrsimulator folder, type
 
 .. code-block:: bash
 
@@ -183,8 +183,12 @@ You can also set up the git hook script to automatically run *pre-commit* on git
 with the ``pre-commit install``. Read more about
 `pre-commit <https://pre-commit.com/#3-install-the-git-hook-scripts>`_.
 
-**Running tests**: We use the pytest module for unit tests. At the root directory
-of the mrsimulator package folder, type
+.. note::
+    The pre-commit command ignores unstaged changes. Before running ``pre-commit run``, make sure
+    to stage files for a commit.
+
+**Running tests**: We use the pytest module for unit tests. At the root level
+of the mrsimulator folder, type
 
 .. code-block:: bash
 
@@ -192,7 +196,7 @@ of the mrsimulator package folder, type
 
 which will run a series of tests.
 
-**Building docs**: We use the sphinx python documentation generator for building docs. Navigate
+**Building docs**: We use the sphinx Python documentation generator for building docs. Navigate
 to the *docs* folder within the mrsimulator package folder, and type,
 
 .. code-block:: bash
@@ -200,8 +204,8 @@ to the *docs* folder within the mrsimulator package folder, and type,
     $ make html
 
 The above command will build the documentation and store the build at
-*mrsimulator/docs/_build/html*. Double click the *index.html* file within this folder to view
-the offline documentation.
+*mrsimulator/docs/_build/html*. Open the *index.html* file in a web browser within this folder
+to view the locally-built documentation.
 
 .. **Submitting pull requests** Make sure all the tests pass and the documentation build
 .. is successful before creating a pull request.

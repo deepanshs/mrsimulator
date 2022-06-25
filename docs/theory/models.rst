@@ -37,7 +37,10 @@ second-rank irreducible spherical tensor components [#f3]_, :math:`R_{2,k}`, fol
 
 In the Czjzek model, the distribution of the second-rank traceless symmetric tensor is
 based on the assumption of a random distribution of the five irreducible spherical
-tensor components, :math:`R_{2,k}`, drawn from an uncorrelated five-dimensional multivariate normal distribution. Since :math:`R_{2,k}` components are complex, random sampling is performed on the equivalent real tensor components, which are a linear combination of :math:`R_{2,k}`, and are given as
+tensor components, :math:`R_{2,k}`, drawn from an uncorrelated five-dimensional
+multivariate normal distribution. Since :math:`R_{2,k}` components are complex, random
+sampling is performed on the equivalent real tensor components, which are a linear combination
+of :math:`R_{2,k}`, and are given as
 
 .. math::
     U_1 &= \frac{1}{\sqrt{6}} R_{2,0}, \\
@@ -46,9 +49,13 @@ tensor components, :math:`R_{2,k}`, drawn from an uncorrelated five-dimensional 
     U_4 &= -\frac{i}{\sqrt{12}} (R_{2,2} - R_{2,-2}), \\
     U_5 &= \frac{1}{\sqrt{12}} (R_{2,2} + R_{2,-2}),
 
-where :math:`U_i` forms an ortho-normal basis. The components, :math:`U_i`, are drawn from a five-dimensional uncorrelated multivariate normal distribution with zero mean and covariance matrix, :math:`\Lambda=\sigma^2 {\bf I}_5`, where :math:`{\bf I}_5` is a :math:`5 \times 5` identity matrix and :math:`\sigma` is the standard deviation.
+where :math:`U_i` forms an ortho-normal basis. The components, :math:`U_i`, are drawn
+from a five-dimensional uncorrelated multivariate normal distribution with zero mean
+and covariance matrix, :math:`\Lambda=\sigma^2 {\bf I}_5`, where :math:`{\bf I}_5` is a
+:math:`5 \times 5` identity matrix and :math:`\sigma` is the standard deviation.
 
-In terms of :math:`U_i`, the traceless second-rank symmetric Cartesian tensor elements, :math:`S_{ij}`, follows
+In terms of :math:`U_i`, the traceless second-rank symmetric Cartesian tensor elements,
+:math:`S_{ij}`, follows
 
 .. math::
     S_{xx} &= \sqrt{3} U_5 - U_1, \\
@@ -77,14 +84,18 @@ symmetric tensor as :math:`S_C(\sigma)`.
 Extended Czjzek distribution
 ----------------------------
 
-An Extended Czjzek distribution model [#f2]_ is a random perturbation of the second-rank traceless symmetric tensors about a non-zero tensor, which is given as
+An Extended Czjzek distribution model [#f2]_ is a random perturbation of the second-rank
+traceless symmetric tensors about a non-zero tensor, which is given as
 
 .. math::
     S_T = S(0) + \rho S_C(\sigma=1),
 
 where :math:`S_T` is the total tensor, :math:`S(0)` is the non-zero dominant second-rank
 tensor, :math:`S_C(\sigma=1)` is the Czjzek random model attributing to the random
-perturbation of the tensor about the dominant tensor, :math:`S(0)`, and :math:`\rho` is the size of the perturbation. In the above equation, the :math:`\sigma` parameter from the Czjzek random model, :math:`S_C`, has no meaning and is set to one. The factor, :math:`\rho`, is defined as
+perturbation of the tensor about the dominant tensor, :math:`S(0)`, and :math:`\rho` is
+the size of the perturbation. In the above equation, the :math:`\sigma` parameter
+from the Czjzek random model, :math:`S_C`, has no meaning and is set to one. The factor,
+:math:`\rho`, is defined as
 
 .. math::
     \rho = \frac{||S(0)|| \epsilon}{\sqrt{30}},
