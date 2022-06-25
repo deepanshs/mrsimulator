@@ -19,8 +19,8 @@ Import Experimental Dataset
 ---------------------------
 
 In this example, you will apply the least-squares fitting procedure to a
-:math:`^{27}\text{Al}` magic-angle spinning spectrum of :math:`\text{Al
-(acac)$_3$}` measured with whole echo acquisition.
+:math:`^{27}\text{Al}` magic-angle spinning spectrum of :math:`\text{Al(acac)$_3$}`
+measured with whole echo acquisition.
 
 You will begin by importing an experimental dataset measured on a 9.4 T Bruker
 AVANCE III HD NMR spectrometer into the script. Bruker datasets are saved in
@@ -35,7 +35,6 @@ Download experimental dataset
 For our purposes, the folder was also compressed into a zip archive and uploaded
 to an internet-accessible server. You can use the code block below to download
 the zip archive from the server and unzip it into the originally named folder.
-
 
 .. plot::
     :context: reset
@@ -129,6 +128,7 @@ into the real part of the time domain signal.
 
 Both these steps are performed by the code below.
 
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -141,12 +141,7 @@ Both these steps are performed by the code below.
     # Phase echo top, putting maximum amplitude into real part
     index = np.argmax(np.abs(csdm_ds.dependent_variables[0].components[0]))
     angle = np.angle(csdm_ds.dependent_variables[0].components[0][index])
-    phased_ds = csdm_ds * np.exp(-1j*angle)
-
-.. skip: next
-
-.. plot::
-    :context: close-figs
+    phased_ds = csdm_ds * np.exp(-1j * angle)
 
     plt.figure(figsize = (5, 3))  # set the figure size
     ax = plt.subplot(projection = "csdm")
@@ -179,6 +174,8 @@ frequency to a frequency ratio using the
 method of the
 `Dimension <https://csdmpy.readthedocs.io/en/stable/api/Dimensions.html>`_ object.
 
+.. skip: next
+
 .. plot::
     :context: close-figs
 
@@ -187,11 +184,6 @@ method of the
     ft = sp.SignalProcessor(operations = [sp.FFT()])
     exp_spectrum = ft.apply_operations(dataset = phased_ds)
     exp_spectrum.dimensions[0].to("ppm", "nmr_frequency_ratio")
-
-.. skip: next
-
-.. plot::
-    :context: close-figs
 
     fig, ax = plt.subplots(1, 2, figsize = (9, 3.5), subplot_kw = {"projection": "csdm"})
     ax[0].plot(exp_spectrum.real)
@@ -229,6 +221,7 @@ those items where the condition is true. With the indexes returned by
 can calculate the standard deviation of the noise region with numpy
 `std() <https://numpy.org/doc/stable/reference/generated/numpy.std.html>`_.
 
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -279,6 +272,7 @@ this :py:meth:`~mrsimulator.method.lib.base.BlochDecayCTSpectrum()` method.
 Finally, every Method object has the ``experiment`` attribute used to hold the
 experimental spectrum that is to be modeled with the Method object.
 
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -310,6 +304,8 @@ realistic spin system models. For now, you can choose the simplest spin system
 model with a single
 :math:`^{27}\text{Al}` site,  as shown in the code below.
 
+.. skip: next
+
 .. plot::
     :context: close-figs
 
@@ -329,6 +325,8 @@ which can be iteratively refined using the code that follows.
 Create the simulator object initialized with the SpinSystem and Method objects
 and run.
 
+.. skip: next
+
 .. plot::
     :context: close-figs
 
@@ -346,6 +344,7 @@ axis of the experimental spectrum plot was on the order of 1e6. Use numpy
 get the highest amplitude, set that as the factor as a Scale operation in the
 SignalProcessor.
 
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -407,6 +406,8 @@ Begin by using an ``mrsimulator`` utility function
 :py:meth:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` to extract a
 list of LMFIT parameters from the Simulator and SignalProcessor objects.
 
+.. skip: next
+
 .. plot::
     :context: close-figs
 
@@ -449,6 +450,7 @@ parameter attributes, i.e.,
 can set the quadrupolar asymmetry parameter value to be zero and request that
 it be held constant during the fit.
 
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -507,6 +509,7 @@ Use the code below to create and initialize the ``Minimizer`` object, run the
 minimization, and print the
 `MinimizerResult <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.MinimizerResult>`_.
 
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -589,6 +592,8 @@ such low values, the quadrupolar asymmetry parameter is correlated to the
 Gaussian line broadening FWHM in the fit. Set the quadrupolar asymmetry
 parameter to be a fit parameter, and rerun the analysis.
 
+.. skip: next
+
 .. plot::
     :context: close-figs
 
@@ -598,11 +603,6 @@ parameter to be a fit parameter, and rerun the analysis.
     result = minner.minimize()
     best_fit = sf.bestfit(sim, processor)[0]
     residuals = sf.residuals(sim, processor)[0]
-
-.. skip: next
-
-.. plot::
-    :context: close-figs
 
     # Plot the spectrum
     plt.figure(figsize = (6, 3.0))
