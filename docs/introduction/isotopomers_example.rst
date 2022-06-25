@@ -86,7 +86,7 @@ To create the SpinSystem object for the most abundant isotopomer, start by creat
 .. plot::
     :context: close-figs
 
-    #  Put sites into list
+    # Put sites into list
     iso1_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH]
 
 Each site in the isotopomer is identified by its index in the ``iso1_sites``
@@ -122,7 +122,7 @@ Finally, create the SpinSystem object for this isotopomer along with its abundan
 .. plot::
     :context: close-figs
 
-        isotopomer1 = SpinSystem(sites=iso1_sites, couplings=iso1_couplings, abundance=96.25)
+    isotopomer1 = SpinSystem(sites=iso1_sites, couplings=iso1_couplings, abundance=96.25)
 
 
 Isotopomer 2
@@ -139,7 +139,7 @@ along with the isotopomer's abundance of 1.08%.
 .. plot::
     :context: close-figs
 
-    #  Put sites into list
+    # Put sites into list
     iso2_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH, C_CH3]
 
     # Define methyl 13C - 1H couplings
@@ -161,7 +161,7 @@ methylene carbon replaced with a :math:`^{13}\text{C}` isotope.
 .. plot::
     :context: close-figs
 
-    #  Put sites into list
+    # Put sites into list
     iso3_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH, C_CH2]
 
     # Define methylene 13C - 1H couplings
@@ -223,7 +223,8 @@ spin systems and the list of your two methods, and run the simulations.
 
     sim = Simulator(
         spin_systems = [isotopomer1, isotopomer2, isotopomer3],
-        methods = [method_H, method_C])
+        methods = [method_H, method_C]
+    )
     sim.run()
 
 
@@ -275,7 +276,7 @@ that gives an FWHM of 20 Hz.
 Plotting the Dataset
 ''''''''''''''''''''
 
-Finally, after applying the convolution with a Lorentizan line shape, you can
+Finally, after applying the convolution with a Lorentzian line shape, you can
 plot the two spectra using the code below.  Additionally, you can save the plot
 as a pdf file in this example.
 
@@ -377,7 +378,7 @@ Saving the full Simulation
 ++++++++++++++++++++++++++
 
 The Simulation and SignalProcessor objects can also be serialized into JSON
-files. At some point, however, saving the Python script or Juypiter notebook
+files. At some point, however, saving the Python script or Jupyter notebook
 with your code will be just as convenient.  Nonetheless, you can find
 additional details on JSON serialization of ``mrsimulator`` objects in the
 :ref:`IO_documentation` section.

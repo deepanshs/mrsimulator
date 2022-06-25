@@ -233,7 +233,9 @@ custom CSDM dataset plot axes.  To use it, simply add ``projection="csdm"`` to t
 PyPlot's Axes instance. Below is code using PyPlot that will generate a
 plot and a  pdf file of the simulated spectrum:
 
-.. _fig1-getting-started: skip: next
+.. _fig1-getting-started:
+
+.. skip: next
 
 .. plot::
     :context: close-figs

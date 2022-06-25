@@ -38,7 +38,7 @@ the zip archive from the server and unzip it into the originally named folder.
 
 
 .. plot::
-    :context: close-figs
+    :context: reset
 
     import requests
     import zipfile
@@ -77,6 +77,8 @@ object.
 
 With the dataset converted into a CSDM object, plot the dataset to make sure
 that you imported it correctly.
+
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -141,6 +143,11 @@ Both these steps are performed by the code below.
     angle = np.angle(csdm_ds.dependent_variables[0].components[0][index])
     phased_ds = csdm_ds * np.exp(-1j*angle)
 
+.. skip: next
+
+.. plot::
+    :context: close-figs
+
     plt.figure(figsize = (5, 3))  # set the figure size
     ax = plt.subplot(projection = "csdm")
     ax.plot(phased_ds.real)
@@ -172,7 +179,6 @@ frequency to a frequency ratio using the
 method of the
 `Dimension <https://csdmpy.readthedocs.io/en/stable/api/Dimensions.html>`_ object.
 
-
 .. plot::
     :context: close-figs
 
@@ -181,6 +187,11 @@ method of the
     ft = sp.SignalProcessor(operations = [sp.FFT()])
     exp_spectrum = ft.apply_operations(dataset = phased_ds)
     exp_spectrum.dimensions[0].to("ppm", "nmr_frequency_ratio")
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
 
     fig, ax = plt.subplots(1, 2, figsize = (9, 3.5), subplot_kw = {"projection": "csdm"})
     ax[0].plot(exp_spectrum.real)
@@ -345,7 +356,7 @@ SignalProcessor.
             sp.IFFT(),
             sp.apodization.Gaussian(FWHM = "50 Hz"),
             sp.FFT(),
-            sp.Scale(factor = exp_spectrum.max()/2)
+            sp.Scale(factor = exp_spectrum.max())
         ]
     )
     processed_dataset = processor.apply_operations(dataset = sim.methods[0].simulation).real
@@ -354,6 +365,7 @@ SignalProcessor.
 You now have set up and simulated the first guess in modeling the experimental
 spectrum. Plot it and see how it compares to the experimental spectrum.
 
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -496,13 +508,13 @@ minimization, and print the
 `MinimizerResult <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.MinimizerResult>`_.
 
 
-.. .. plot::
-..     :context: close-figs
+.. plot::
+    :context: close-figs
 
-..     from lmfit import Minimizer
-..     minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args = (sim, processor, sigma))
-..     result = minner.minimize()
-..     result
+    from lmfit import Minimizer
+    minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args = (sim, processor, sigma))
+    result = minner.minimize()
+    result
 
 
 .. figure:: ../_static/FitStatistics1.*
@@ -540,23 +552,25 @@ function :py:meth:`~mrsimulator.utils.spectral_fitting.bestfit`
 and :py:meth:`~mrsimulator.utils.spectral_fitting.residuals` to extract the
 best-fit simulation and the residuals as CSDM objects.
 
-.. .. plot::
-..     :context: close-figs
+.. skip: next
 
-..     best_fit = sf.bestfit(sim, processor)[0]
-..     residuals = sf.residuals(sim, processor)[0]
+.. plot::
+    :context: close-figs
 
-..     # Plot the spectrum
-..     plt.figure(figsize = (6, 3.0))
-..     ax = plt.subplot(projection = "csdm")
-..     ax.plot(exp_spectrum, label = "Experiment")
-..     ax.plot(best_fit, alpha=0.75, label = "Best Fit")
-..     ax.plot(residuals, alpha=0.75, label = "Residuals")
-..     ax.set_xlim(-15, 15)
-..     plt.legend()
-..     plt.grid()
-..     plt.tight_layout()
-..     plt.show()
+    best_fit = sf.bestfit(sim, processor)[0]
+    residuals = sf.residuals(sim, processor)[0]
+
+    # Plot the spectrum
+    plt.figure(figsize = (6, 3.0))
+    ax = plt.subplot(projection = "csdm")
+    ax.plot(exp_spectrum, label = "Experiment")
+    ax.plot(best_fit, alpha=0.75, label = "Best Fit")
+    ax.plot(residuals, alpha=0.75, label = "Residuals")
+    ax.set_xlim(-15, 15)
+    plt.legend()
+    plt.grid()
+    plt.tight_layout()
+    plt.show()
 
 
 The Minimizer will improve the fit parameters even if the initial parameters are
@@ -575,28 +589,32 @@ such low values, the quadrupolar asymmetry parameter is correlated to the
 Gaussian line broadening FWHM in the fit. Set the quadrupolar asymmetry
 parameter to be a fit parameter, and rerun the analysis.
 
+.. plot::
+    :context: close-figs
 
-.. .. plot::
-..     :context: close-figs
+    fit_parameters["sys_0_site_0_quadrupolar_eta"].value = 0
+    fit_parameters["sys_0_site_0_quadrupolar_eta"].vary = True
+    minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args=(sim, processor, sigma))
+    result = minner.minimize()
+    best_fit = sf.bestfit(sim, processor)[0]
+    residuals = sf.residuals(sim, processor)[0]
 
-..     fit_parameters["sys_0_site_0_quadrupolar_eta"].value = 0
-..     fit_parameters["sys_0_site_0_quadrupolar_eta"].vary = True
-..     minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args=(sim, processor, sigma))
-..     result = minner.minimize()
-..     best_fit = sf.bestfit(sim, processor)[0]
-..     residuals = sf.residuals(sim, processor)[0]
+.. skip: next
 
-..     # Plot the spectrum
-..     plt.figure(figsize = (6, 3.0))
-..     ax = plt.subplot(projection = "csdm")
-..     ax.plot(exp_spectrum, label = "Experiment")
-..     ax.plot(best_fit, alpha=0.75, label = "Best Fit")
-..     ax.plot(residuals, alpha=0.75, label = "Residuals")
-..     ax.set_xlim(-15, 15)
-..     plt.legend()
-..     plt.grid()
-..     plt.tight_layout()
-..     plt.show()
+.. plot::
+    :context: close-figs
+
+    # Plot the spectrum
+    plt.figure(figsize = (6, 3.0))
+    ax = plt.subplot(projection = "csdm")
+    ax.plot(exp_spectrum, label = "Experiment")
+    ax.plot(best_fit, alpha=0.75, label = "Best Fit")
+    ax.plot(residuals, alpha=0.75, label = "Residuals")
+    ax.set_xlim(-15, 15)
+    plt.legend()
+    plt.grid()
+    plt.tight_layout()
+    plt.show()
 
 .. figure:: ../_static/FitStatistics2.*
     :width: 1200
