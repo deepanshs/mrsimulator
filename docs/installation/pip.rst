@@ -16,6 +16,5 @@ in which case, use the following,
 If you get a ``PermissionError``, it usually means that you do not have the administrative access
 to install new packages to your Python installation. In this case, you may consider adding the
 ``--user`` option at the end of the statement to install the package into your home directory.
-You can read more about how to do this in
-
-the `pip documentation <https://pip.pypa.io/en/stable/user_guide/#user-installs>`_.
+You can read more about how to do this in the
+`pip documentation <https://pip.pypa.io/en/stable/user_guide/#user-installs>`_.

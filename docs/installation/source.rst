@@ -22,17 +22,17 @@ extract the *.tar.gz* file.
    .. tab:: Linux
       :tabid: linus_source
 
-   .. include:: source_install/linux.rst
+      .. include:: source_install/linux.rst
 
    .. tab:: Mac OSX
       :tabid: macosx_source
 
-   .. include:: source_install/macosx.rst
+      .. include:: source_install/macosx.rst
 
    .. tab:: Windows
       :tabid: windows_source
 
-   .. include:: source_install/windows.rst
+      .. include:: source_install/windows.rst
 
 **Building and Installing**
 
