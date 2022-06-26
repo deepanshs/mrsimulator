@@ -217,15 +217,17 @@ triple-quantum (:math:`\text{p}_I = \pm 3`) transitions, etc.
 
 Specifying :math:`\text{p}_I` alone, however, is not enough to select a 
 single-spin transition.  Any single-spin transition can be identified 
-the combination of two spin transition symmetry function values 
+by a combination of the two spin transition symmetry function values 
 :math:`\text{p}_I` and :math:`\text{d}_I`, given by
 
 .. math::
 
     \text{d}_I(m_i,m_j) =  ~m_j^2 - m_i^2.
 
-These values are shown for all single-spin transitions for :math:`I=1`, 
-:math:`I=3/2`, and :math:`I=5/2` below.
+Shown below are the values of :math:`\text{p}_I` and :math:`\text{d}_I` 
+for all single-spin transitions for :math:`I=1`, :math:`I=3/2` 
+and :math:`I=5/2`
+
 
 .. figure:: ../../_static/SpinOneThreeHalves.*
     :width: 800
@@ -239,7 +241,8 @@ These values are shown for all single-spin transitions for :math:`I=1`,
     :align: center
 
 
-  .. note::
+
+.. note::
 
     In the `symmetry pathway approach
     <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_,  the idea of coherence order is extended to form
@@ -279,7 +282,7 @@ These values are shown for all single-spin transitions for :math:`I=1`,
     :math:`\ell = 2I`. As described in ":ref:`theory`", these functions functions 
     play an important role in evaluating the individual frequency contributions in
     given in :py:meth:`~mrsimulator.method.frequency_contrib.FrequencyEnum` to the
-    overall transition frequency. They also aid in pulse sequence design by
+    overall transition frequency. They can also be used to design pulse sequences by
     identifying how different frequency contributions refocus through the
     transition pathways.
 
