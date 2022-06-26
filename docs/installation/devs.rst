@@ -49,9 +49,9 @@ Make sure git is installed on your computer
 
 `Git <https://git-scm.com>`_ is a source code management system.
 It keeps track of the changes made to the code and manages contributions from
-several individuals.  You may notice that much of its terminology comes from
-river metaphors, i.e., source, fork, upstream, etc.  You may read about git
-at the `Git Basics <https://git-scm.com/book/>`_.
+several individuals.
+.. You may notice that much of its terminology comes from river metaphors, i.e., source, fork, upstream, etc.
+You may read about git at the `Git Basics <https://git-scm.com/book/>`_.
 
 If you are using anaconda/miniconda, you probably have git pre-installed. To check,
 type in terminal
