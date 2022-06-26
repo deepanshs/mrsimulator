@@ -6,9 +6,10 @@ What's new
 
 **General**
 
-- Support for complex amplitude simulation.
+- Add Support for complex amplitude simulation.
 - Add `isotropic_interpolation` as a `sim.config` parameter. The interpolation schemes are linear
   and Gaussian.
+- Drop support for Python version 3.6
 
 **Method**
 

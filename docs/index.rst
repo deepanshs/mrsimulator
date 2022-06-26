@@ -89,7 +89,7 @@ magnetic resonance (NMR) spectra in fluid and solid phases.
 
     .. raw:: html
 
-        <h3>See our example gallery</h3>
+        <h3>See our example galleries</h3>
         <div class='sim-gallery'>
           <div>
             <a href="examples/index.html">Gallery
@@ -115,7 +115,7 @@ magnetic resonance (NMR) spectra in fluid and solid phases.
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
 - It includes simulation of weakly coupled nuclei experiencing J and dipolar couplings.
-- It is fully documented with a stable and simple API and is easily incorporated into your
+- It is fully documented with a stable and simple API and is easily incorporated into
   Python scripts and web apps.
 - It is compatible with modern Python packages, such as Scikit-learn, Keras, etc.
 - Packages using mrsimulator -
@@ -159,9 +159,11 @@ magnetic resonance (NMR) spectra in fluid and solid phases.
 
 ----
 
-Throughout the web version of this documentation, you can copy code blocks into your clipboard by hovering your
-mouse inside the gray code block to reveal the copy-to-clipboard icon in the top right corner. This is
-useful for copying code examples into your Jupyter notebooks.
+.. note::
+
+  Throughout the web version of this documentation, you can copy code blocks into your clipboard by
+  hovering over the top right corner of each gray code block and clicking the copy-to-clipboard
+  icon. This is useful for copying code examples into your Python scripts and Jupyter notebooks.
 
 
 **Features**

@@ -77,11 +77,11 @@ already installed on your system. In this case, type the following in the termin
 All done! You may now start using the library or proceed to
 :ref:`getting_started` to continue the tutorial.
 
-Test your build
----------------
+Testing your build
+------------------
 
 .. note::
-  For Windows users using anaconda python 3.8 and higher, you need to set the following
+  For Windows users using anaconda Python 3.8 and higher, you need to set the following
   environment variable in the ``Anaconda Prompt`` before running mrsimulator scripts.
 
   .. code-block:: bash

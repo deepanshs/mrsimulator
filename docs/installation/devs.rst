@@ -36,7 +36,7 @@ The following is an example of creating a Conda environment.
 
     $ conda create -n mrsimulator-dev python=3.9
 
-The above command will create a new environment named *mrsimulator-dev* using python 3.9.
+The above command will create a new environment named *mrsimulator-dev* using Python 3.9.
 To activate the environment, use
 
 .. code-block:: bash
@@ -202,7 +202,7 @@ of the mrsimulator folder, type
 
     $ pytest
 
-which will run a series of tests.
+which will run a series of tests alerting you to any unit tests that fail.
 
 **Building docs**: We use the sphinx Python documentation generator for building docs. Navigate
 to the *docs* folder within the mrsimulator package folder, and type,
