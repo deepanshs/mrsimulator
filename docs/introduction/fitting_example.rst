@@ -265,7 +265,7 @@ acquire the spectrum. Choose the
 measurement is designed to excite only the central transition of the
 :math:`^{27}\text{Al}` nuclei. From the CSDM object holding the experimental
 spectrum, i.e., ``exp_spectrum``, you can extract the relevant parameters for
-the ``spectral_dimension`` attribute of the
+the ``spectral_dimensions`` attribute of the
 BlochDecayCTSpectrum method using the
 fitting utility function
 :py:meth:`~mrsimulator.utils.get_spectral_dimensions`. The experimental
