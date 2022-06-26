@@ -83,14 +83,16 @@ under the influence of specified Hamiltonian contributions. No coherence
 transfer among transitions or populations can occur in a spectral or 
 constant duration event. **mrsimulator** allows the user to select among a 
 list of NMR frequency contributions to transitions present during such an 
-event in the ``freq_contrib`` attribute holding a list of enumeration literals. 
-If unspecified, i.e., its value is set to ``Null``, a default list holding the 
-enumeration literals for all contributions is generated for the event.
+event in the ``freq_contrib`` attribute holding a list of 
+:ref:`enumeration literals<freq_contrib_api>`.  If unspecified, i.e., its value 
+is set to ``Null``, a default list holding the enumeration literals for 
+all contributions is generated for the event.
+
 
 .. note::
 
   All frequency contributions from direct and indirect spin-spin couplings are 
-  calculated in the weak-coupling limit in **mrsimulator **.
+  calculated in the weak-coupling limit in **mrsimulator**.
 
 
 Additionally, the user can change other measurement attributes during a spectral
@@ -136,14 +138,17 @@ determined by the channels attribute in Method.
 In this guide for designing custom Method objects, we focus first on the
 queries objects, i.e., SymmetryQuery and RotationalQuery, and how to use
 design them to select the desired transition pathways for a custom method.
+The ability to select from a list of frequency contributions by setting
+the ``freq_contrib`` attribute in a SpectralEvent of ConstantDuration object 
+to a list of :ref:`enumeration literals<freq_contrib_api>` provides another 
+means to ensure that your custom Method objects has the right behavior.
 
 Symmetry Query
 --------------
 
 Before giving details on how to create a SymmetryQuery object, we need to
-review a few key concepts about transition symmetry functions.
-
-The number of possible transition pathways for a spin system depends on the
+review a few key concepts about spin transition symmetry functions. The 
+number of possible transition pathways for a spin system depends on the
 number of energy eigenstates and the number of spectral and constant duration
 events in a method. The number of quantized energy eigenstates for :math:`N`
 coupled nuclei is 
@@ -175,7 +180,7 @@ transitions.   A two spin system, :math:`\left\{ I, S \right\} = \left\{ \tfrac
 
     \Upsilon_{\left\{ 1/2, 1/2 \right\}} = (2I +1) \cdot (2S +1) = 4
 
-energy levels and  
+ energy levels and
 
 .. math::
 
@@ -183,18 +188,22 @@ energy levels and
     \frac{[(2I +1) \cdot (2S +1)]!}{((2I +1) \cdot (2S +1)-2)!} 
     = \frac{[2 \cdot 2]!}{(2 \cdot 0)!} = 12
 
-possible NMR transitions.  For compactness, we will write a transition
+possible NMR transitions. For compactness, we will write a transition
 (coherence) from state :math:`i` to :math:`j` using the outer product
 notation :math:`\ketbra{j}{i}`.  In **mrsimulator**, all simulations are
 performed in the high-field limit and further assume that all spin-spin 
 couplings are in the weak limit.  In this case, we can identify a transition  
 by the quantum numbers of its initial and final Zeeman eigenstate. In the density 
 matrix for an ensemble of a given spin system, we could easily identify 
-a single transition by its row and column indexes.  However, those indexes depend 
-on how you have assigned the eigenstates to those indexes.  Remember, we design 
-the Method object without any details of the spin systems upon which they will act.
+a transition by its row and column indexes.  However, those indexes depend 
+on how you have assigned the spins and their eigenstates to those indexes.  
+Remember, we need to design the Method object without any details of the 
+spin systems upon which they will act.
 
-One way you can select a subset of transitions, if you don't know the
+Selecting Single-Spin Transitions
+'''''''''''''''''''''''''''''''''
+
+One way you can select a subset of single-spin transitions, if you don't know the
 spin :math:`I` and its associated energy eigenstate quantum numbers, is to request 
 all transitions whose spin transition symmetry function, :math:`\text{p}_I` symmetry 
 function is :math:`-1`, i.e.,
@@ -204,21 +213,27 @@ function is :math:`-1`, i.e.,
 
 The :math:`\text{p}_I` spin transition symmetry function is also known as the
 `coherence order of the transition <https://doi.org/10.1016/0022-2364
-(84)90142-2>`_.  For example, in the high field limit, only transitions with 
-:math:`{\text{p}_I = \pm 1}` are directly observed.  For a given transition
-the signals from :math:`{\text{p}_I = \pm 1}` are complex conjugates of each 
-other, so the convention is to only present the :math:`{\text{p}_I = - 1}`` 
-transition signal in spectra.  So, by selecting transitions with 
-:math:`\text{p}_I = -1`, you get all the observed transitions from the 
+(84)90142-2>`_.  
+
+.. note::
+
+    In the high field limit, only single-spin transitions with 
+    :math:`{\text{p}_I = \pm 1}` are directly observed.  For a given single-spin
+    transition, the signals from :math:`{\text{p}_I = \pm 1}` are complex conjugates 
+    of each other, so the convention is to only present the :math:`{\text{p}_I = - 1}`` 
+    transition signal in spectra.  
+
+By selecting only single-spin transitions with :math:`\text{p}_I = -1`, you get all
+the "observed" transitions from the 
 set of all possible transitions.  Similarly, you can use  :math:`\text{p}_I` 
-to select any subset of desired transitions, such as double-quantum 
+to select any subset of single-spin transitions, such as double-quantum 
 (:math:`\text{p}_I = \pm 2`) transitions, 
 triple-quantum (:math:`\text{p}_I = \pm 3`) transitions, etc.
 
-Specifying :math:`\text{p}_I` alone, however, is not enough to select a 
-single-spin transition.  Any single-spin transition can be identified 
-by a combination of the two spin transition symmetry function values 
-:math:`\text{p}_I` and :math:`\text{d}_I`, given by
+Specifying :math:`\text{p}_I` alone, however, is not enough to select
+an individual single-spin transition.  However, any individual single-spin 
+transition can be identified by a combination of :math:`\text{p}_I` and the 
+single-spin transition symmetry function :math:`\text{d}_I`, given by
 
 .. math::
 
@@ -287,6 +302,46 @@ and :math:`I=5/2`
     transition pathways.
 
 
+For example, for spin :math:`I=1`, the transition :math:`\ketbra{-1}{0}` 
+can be selected with :math:`(\text{p}_I,\text{d}_I) = (-1,1)`.  In **mrsimulator**, 
+this transition is specified using the SymmetryQuery object, 
+
+.. code-block:: python
+
+    from mrsimulator.method.query import SymmetryQuery
+
+    symm_query = SymmetryQuery(P = [-1], D=[1])
+
+
+Most notable, :math:`\text{d}_I = 0` for all symmetric transitions, 
+:math:`m \rightarrow - m`.  This is particularly useful for quadrupolar 
+nuclei, as these transitions are unaffected by the first-order quadrupolar 
+coupling frequency contribution.  Thus,  :math:`\ketbra{-\tfrac{1}{2}}{\tfrac{1}{2}}` 
+the so-called "central transition" of a quadrupolar nucleus, can be specified 
+with the SymmetryQuery object below
+
+.. code-block:: python
+
+    ct_query = SymmetryQuery(P = [-1], D=[0])
+
+Similarly, the symmetric triple quantum transition 
+:math:`\ketbra{-\tfrac{3}{2}}{\tfrac{3}{2}}` can be specified using 
+
+.. code-block:: python
+
+    sym_triple_quant_query = SymmetryQuery(P = [-3], D=[0])
+
+
+
+Selecting Multi-Spin Transitions
+'''''''''''''''''''''''''''''''''
+
+
+A SymmetryQuery object has only two attributes ``P`` and ``D``, each of which holds a
+list of single-spin transition symmetry function values for :math:`
+
+Let's look at an example of creating a SymmetryQuery object that will be associated
+with the ``ch1`` attribute of a TransitionQuery object in a SpectralEvent.
 
 .. figure:: ../../_static/CoupledOneHalf.*
     :width: 700
@@ -296,15 +351,6 @@ and :math:`I=5/2`
 
 Rotational Query
 ----------------
-
-.. code-block:: python
-
-    from mrsimulator.method.query import SymmetryQuery, TransitionQuery
-    from mrsimulator.method import SpectralEvent
-
-    symm_query = SymmetryQuery(P = [-1])
-    trans_query = TransitionQuery(ch1=symm_query)
-    spectral_event = SpectralEvent(transition_query = trans_query)
 
 
 Mixing events are used to transfer (permute) among transitions and populations,
