@@ -445,7 +445,7 @@ into a string with these special characters replaced by a ``_``. For example,
 
 or
 
-**"sp[0].operation[3].scale_factor"** :math:`\rightarrow` **"SP_0_operation_3_Scale_factor"**.
+**"sp[0].operation[3].factor"** :math:`\rightarrow` **"SP_0_operation_3_Scale_factor"**.
 
 Using these parameter string names, you can access and change any of its LMFIT
 parameter attributes, i.e.,

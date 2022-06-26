@@ -205,7 +205,7 @@ of the mrsimulator folder, type
 which will run a series of tests alerting you to any unit tests that fail.
 
 **Building docs**: We use the sphinx Python documentation generator for building docs. Navigate
-to the *docs* folder within the mrsimulator package folder, and type,
+to the *docs* directory within the mrsimulator folder, and type,
 
 .. code-block:: bash
 
