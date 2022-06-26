@@ -66,16 +66,16 @@ and two magnetically inequivalent :math:`^{13}\text{C}` sites, as shown in the c
 
     # All shifts in ppm
     # methyl proton site
-    H_CH3 = Site(isotope = "1H", isotropic_chemical_shift = 1.226)
+    H_CH3 = Site(isotope="1H", isotropic_chemical_shift=1.226)
     # methylene proton site
-    H_CH2 = Site(isotope = "1H", isotropic_chemical_shift = 2.61)
+    H_CH2 = Site(isotope="1H", isotropic_chemical_shift=2.61)
     # hydroxyl proton site
-    H_OH = Site(isotope = "1H", isotropic_chemical_shift = 3.687)
+    H_OH = Site(isotope="1H", isotropic_chemical_shift=3.687)
 
     # methyl carbon site
-    C_CH3 = Site(isotope = "13C", isotropic_chemical_shift = 18)
+    C_CH3 = Site(isotope="13C", isotropic_chemical_shift=18)
     # methylene carbon site
-    C_CH2 = Site(isotope = "13C", isotropic_chemical_shift = 58)
+    C_CH2 = Site(isotope="13C", isotropic_chemical_shift=58)
 
 These sites will be used, along with :ref:`coupling_documentation` objects described below, to create each of the isotopomers.
 
@@ -100,12 +100,12 @@ place the Coupling objects in a list.
     :context: close-figs
 
     # All isotropic_j coupling in Hz
-    HH_coupling_1 = Coupling(site_index = [0, 3], isotropic_j = 7)
-    HH_coupling_2 = Coupling(site_index = [0, 4], isotropic_j = 7)
-    HH_coupling_3 = Coupling(site_index = [1, 3], isotropic_j = 7)
-    HH_coupling_4 = Coupling(site_index = [1, 4], isotropic_j = 7)
-    HH_coupling_5 = Coupling(site_index = [2, 3], isotropic_j = 7)
-    HH_coupling_6 = Coupling(site_index = [2, 4], isotropic_j = 7)
+    HH_coupling_1 = Coupling(site_index=[0, 3], isotropic_j=7)
+    HH_coupling_2 = Coupling(site_index=[0, 4], isotropic_j=7)
+    HH_coupling_3 = Coupling(site_index=[1, 3], isotropic_j=7)
+    HH_coupling_4 = Coupling(site_index=[1, 4], isotropic_j=7)
+    HH_coupling_5 = Coupling(site_index=[2, 3], isotropic_j=7)
+    HH_coupling_6 = Coupling(site_index=[2, 4], isotropic_j=7)
 
     # Put couplings into list
     iso1_couplings = [
@@ -143,14 +143,14 @@ along with the isotopomer's abundance of 1.08%.
     iso2_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH, C_CH3]
 
     # Define methyl 13C - 1H couplings
-    CH3_coupling_1 = Coupling(site_index = [0, 6], isotropic_j = 125)
-    CH3_coupling_2 = Coupling(site_index = [1, 6], isotropic_j = 125)
-    CH3_coupling_3 = Coupling(site_index = [2, 6], isotropic_j = 125)
+    CH3_coupling_1 = Coupling(site_index=[0, 6], isotropic_j=125)
+    CH3_coupling_2 = Coupling(site_index=[1, 6], isotropic_j=125)
+    CH3_coupling_3 = Coupling(site_index=[2, 6], isotropic_j=125)
 
     # Add new couplings to existing 1H - 1H couplings
     iso2_couplings = iso1_couplings + [CH3_coupling_1, CH3_coupling_2, CH3_coupling_3]
 
-    isotopomer2 = SpinSystem(sites = iso2_sites, couplings = iso2_couplings, abundance = 1.08)
+    isotopomer2 = SpinSystem(sites=iso2_sites, couplings=iso2_couplings, abundance=1.08)
 
 Isotopomer 3
 ''''''''''''
@@ -165,13 +165,13 @@ methylene carbon replaced with a :math:`^{13}\text{C}` isotope.
     iso3_sites = [H_CH3, H_CH3, H_CH3, H_CH2, H_CH2, H_OH, C_CH2]
 
     # Define methylene 13C - 1H couplings
-    CH2_coupling_1 = Coupling(site_index = [3, 6], isotropic_j = 141)
-    CH2_coupling_2 = Coupling(site_index = [4, 6], isotropic_j = 141)
+    CH2_coupling_1 = Coupling(site_index=[3, 6], isotropic_j=141)
+    CH2_coupling_2 = Coupling(site_index=[4, 6], isotropic_j=141)
 
     # Add new couplings to existing 1H - 1H couplings
     iso3_couplings = iso1_couplings + [CH2_coupling_1, CH2_coupling_2]
 
-    isotopomer3 = SpinSystem(sites = iso3_sites, couplings = iso3_couplings, abundance = 1.08)
+    isotopomer3 = SpinSystem(sites=iso3_sites, couplings=iso3_couplings, abundance=1.08)
 
 
 Methods
@@ -185,27 +185,27 @@ for the first isotope in the ``channels`` attribute list.
     :context: close-figs
 
     method_H = BlochDecaySpectrum(
-        channels = ["1H"],
-        magnetic_flux_density = 9.4,  # in T
-        spectral_dimensions = [
+        channels=["1H"],
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
             SpectralDimension(
-                count = 16000,
-                spectral_width = 1.5e3,  # in Hz
-                reference_offset = 950,  # in Hz
-                label = "$^{1}$H frequency",
+                count=16000,
+                spectral_width=1.5e3,  # in Hz
+                reference_offset=950,  # in Hz
+                label="$^{1}$H frequency",
             )
         ],
     )
 
     method_C = BlochDecaySpectrum(
-        channels = ["13C"],
-        magnetic_flux_density = 9.4,  # in T
-        spectral_dimensions = [
+        channels=["13C"],
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
             SpectralDimension(
-                count = 32000,
-                spectral_width = 8e3,  # in Hz
-                reference_offset = 4e3,  # in Hz
-                label = "$^{13}$C frequency",
+                count=32000,
+                spectral_width=8e3,  # in Hz
+                reference_offset=4e3,  # in Hz
+                label="$^{13}$C frequency",
             )
         ],
     )
@@ -223,7 +223,7 @@ spin systems and the list of your two methods, and run the simulations.
 
     sim = Simulator(
         spin_systems = [isotopomer1, isotopomer2, isotopomer3],
-        methods = [method_H, method_C]
+        methods=[method_H, method_C]
     )
     sim.run()
 
@@ -253,24 +253,24 @@ that gives an FWHM of 20 Hz.
 
     # Create the signal processors
     processor_1H = sp.SignalProcessor(
-        operations = [
+        operations=[
             sp.IFFT(),
-            sp.apodization.Exponential(FWHM = "1 Hz"),
+            sp.apodization.Exponential(FWHM="1 Hz"),
             sp.FFT(),
         ]
     )
 
     processor_13C = sp.SignalProcessor(
-        operations = [
+        operations=[
             sp.IFFT(),
-            sp.apodization.Exponential(FWHM = "20 Hz"),
+            sp.apodization.Exponential(FWHM="20 Hz"),
             sp.FFT(),
         ]
     )
 
     # apply the signal processors
-    processed_H_spectrum = processor_1H.apply_operations(dataset = H_spectrum)
-    processed_C_spectrum = processor_13C.apply_operations(dataset = C_spectrum)
+    processed_H_spectrum=processor_1H.apply_operations(dataset=H_spectrum)
+    processed_C_spectrum=processor_13C.apply_operations(dataset=C_spectrum)
 
 
 Plotting the Dataset
@@ -289,7 +289,7 @@ as a pdf file in this example.
         and 2.6 ppm in the :math:`^1\text{H}` spectrum.
 
     fig, ax = plt.subplots(
-        nrows = 1, ncols = 2, subplot_kw = {"projection": "csdm"}, figsize = [9, 4]
+        nrows=1, ncols=2, subplot_kw={"projection": "csdm"}, figsize=[9, 4]
     )
 
     ax[0].plot(processed_H_spectrum.real)
@@ -380,7 +380,7 @@ Saving the full Simulation
 The Simulation and SignalProcessor objects can also be serialized into JSON
 files. At some point, however, saving the Python script or Jupyter notebook
 with your code will be just as convenient.  Nonetheless, you can find
-additional details on JSON serialization of ``mrsimulator`` objects in the
+additional details on JSON serialization of mrsimulator objects in the
 :ref:`IO_documentation` section.
 
 .. plot::

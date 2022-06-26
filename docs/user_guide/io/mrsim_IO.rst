@@ -1,15 +1,15 @@
 .. _IO_documentation:
 
-===================
-``mrsimulator`` I/O
-===================
+===============
+mrsimulator I/O
+===============
 
 We offer a range of serialization options based on a JSON structure demonstrated below.
 
 Dictionary Representation of Objects
 ------------------------------------
 
-All ``mrsimulator`` objects can be serialized into a JSON format. Calling the
+All mrsimulator objects can be serialized into a JSON format. Calling the
 ``json()`` method on an object will return a Python dictionary representing the object
 in JSON format.
 Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` class.
@@ -39,7 +39,7 @@ Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` c
 All values are serialized with units when applicable, but you may call ``json(units=False)``
 if you wish to serialize values without units.
 
-Similarly, all ``mrsimulator`` objects can be loaded from a dictionary representation. Here we
+Similarly, all mrsimulator objects can be loaded from a dictionary representation. Here we
 construct the same site as a dictionary and call :meth:`~mrsimulator.Site.parse_dict_with_units`
 to create a :ref:`site_api` object from a dictionary.
 

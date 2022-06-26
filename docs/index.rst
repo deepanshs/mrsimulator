@@ -136,19 +136,19 @@ magnetic resonance (NMR) spectra in fluid and solid phases.
     import matplotlib.pyplot as plt
 
     # Make Site and SpinSystem objects
-    H_site = Site(isotope = "1H", shielding_symmetric = {"zeta": 13.89, "eta": 0.25})
-    spin_system = SpinSystem(sites = [H_site])
+    H_site = Site(isotope="1H", shielding_symmetric={"zeta": 13.89, "eta": 0.25})
+    spin_system = SpinSystem(sites=[H_site])
 
     # Make static and MAS one-pulse acquire Method objects
-    static = BlochDecaySpectrum(channels = ["1H"])
-    mas = BlochDecaySpectrum(channels = ["1H"], rotor_frequency = 1000)  # in Hz
+    static = BlochDecaySpectrum(channels=["1H"])
+    mas = BlochDecaySpectrum(channels=["1H"], rotor_frequency=1000)  # in Hz
 
     # Setup and run the Simulation object
-    sim = Simulator(spin_systems = [spin_system], methods = [static, mas])
+    sim = Simulator(spin_systems=[spin_system], methods=[static, mas])
     sim.run()
 
     # Plot the spectra
-    fig, ax = plt.subplots(1, 2, figsize = (6, 3), subplot_kw = {"projection": "csdm"})
+    fig, ax = plt.subplots(1, 2, figsize=(6, 3), subplot_kw={"projection": "csdm"})
     ax[0].plot(sim.methods[0].simulation)
     ax[0].set_title("Static")
     ax[1].plot(sim.methods[1].simulation)

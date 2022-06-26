@@ -4,7 +4,7 @@
 Simulator
 =========
 
-The :ref:`simulator_api` object is the core of the ``mrsimulator`` library. Each :ref:`simulator_api`
+The :ref:`simulator_api` object is the core of the mrsimulator library. Each :ref:`simulator_api`
 object holds a list of :ref:`spin_sys_api` objects and a list of :ref:`method_api` objects.
 A simulator object also holds a :ref:`config_api` object, which can be modified to change aspects
 of the simulation as discussed below.
@@ -67,7 +67,7 @@ Configuring the Simulator Object
 --------------------------------
 
 Until now, we have used the simulator object with the default settings.
-In ``mrsimulator``, we choose the default settings such that it applies to a wide
+In mrsimulator, we choose the default settings such that it applies to a wide
 range of simulations, including static, magic angle spinning (MAS), and variable angle
 spinning (VAS) spectra. In certain situations, however, the default settings are insufficient
 to represent the spectrum accurately.
@@ -161,7 +161,7 @@ enumeration with two string literals,
 ``octant`` and ``hemisphere``. The integration volume refers to the volume of the sphere over
 which the NMR frequencies are integrated. The default value is *octant*, i.e., the spectrum is
 comprised of integrated frequencies arising from the positive octant of the sphere.
-``mrsimulator`` can exploit the problem's orientational symmetry, thus optimizing the simulation
+mrsimulator can exploit the problem's orientational symmetry, thus optimizing the simulation
 by performing a partial integration.
 
 To learn more about the orientational symmetries, refer to Eden et al. [#f4]_

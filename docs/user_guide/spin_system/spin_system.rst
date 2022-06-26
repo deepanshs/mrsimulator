@@ -4,7 +4,7 @@
 Spin System
 ===========
 
-At the heart of any ``mrsimulator`` calculation is the definition of a :ref:`spin_sys_api`
+At the heart of any mrsimulator calculation is the definition of a :ref:`spin_sys_api`
 object describing the sites and couplings within a spin system. Each :ref:`simulator_api` object
 holds a list of :ref:`spin_sys_api` objects which will be used to calculate frequency
 contributions.
@@ -66,7 +66,7 @@ and *gamma*, which are the relative orientation of the EFG tensor from a common 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
 the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
 
-Also, all objects in  ``mrsimulator``
+Also, all objects in  mrsimulator
 have the attribute *property_units* which provides the units for all class properties.
 
 .. code-block:: python

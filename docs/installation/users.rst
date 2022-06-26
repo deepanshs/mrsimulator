@@ -14,7 +14,7 @@ For the users
 Strict Requirements
 -------------------
 
-``mrsimulator`` has the following strict requirements:
+mrsimulator has the following strict requirements:
 
 - `Python <https://www.python.org>`_ 3.7 or later
 - `Numpy <https://numpy.org>`_ 1.17 or later
@@ -41,8 +41,8 @@ downloads and Windows installation instructions.
   `Anaconda <https://www.anaconda.com/products/individual/>`_ websites and follow their
   instructions on installing Python.
 
-Installing ``mrsimulator``
---------------------------
+Installing mrsimulator
+----------------------
 
 .. tabs::
 
@@ -62,11 +62,11 @@ Installing ``mrsimulator``
     .. include:: source.rst
 
 
-Updating ``mrsimulator``
-------------------------
+Updating mrsimulator
+--------------------
 
 
-If you are upgrading to a newer version of ``mrsimulator``, you should have all the prerequisites
+If you are upgrading to a newer version of mrsimulator, you should have all the prerequisites
 already installed on your system. In this case, type the following in the terminal/Prompt
 
 .. code-block:: bash

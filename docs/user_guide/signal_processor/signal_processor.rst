@@ -5,7 +5,7 @@ Signal Processor
 ================
 
 After running a simulation, you may need to apply some post-simulation signal processing. For example, you may need to scale the simulated spectrum to match experimental intensities, or you may want to convolve the spectrum with a Lorentzian, Gaussian, or other line-broadening
-function. For this reason, ``mrsimulator`` offers some frequently used NMR signal processing tools within the ``mrsimulator.signal_processor`` module.
+function. For this reason, mrsimulator offers some frequently used NMR signal processing tools within the ``mrsimulator.signal_processor`` module.
 
 .. seealso::
 
@@ -22,7 +22,7 @@ the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
 -------------------------
 
 Signal processing is a series of operations sequentially applied to the dataset.
-In ``mrsimulator``, the :py:class:`~mrsimulator.signal_processor.SignalProcessor` object is
+In mrsimulator, the :py:class:`~mrsimulator.signal_processor.SignalProcessor` object is
 used to apply operations. Here we create a new SignalProcessor object
 
 .. plot::
@@ -56,7 +56,7 @@ dataset, and all points are scaled up by 120 times.
 
 .. note::
 
- Convolutions in ``mrsimulator`` are performed using the
+ Convolutions in mrsimulator are performed using the
  `Convolution Theorem <https://en.wikipedia.org/wiki/Convolution_theorem>`_. A spectrum is
  Fourier transformed, and apodizations are performed in the time domain before being transformed back into the frequency domain.
 

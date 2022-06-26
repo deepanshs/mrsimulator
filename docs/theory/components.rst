@@ -1,11 +1,11 @@
 
 .. _theory:
 
-******************************
-How does ``mrsimulator`` work?
-******************************
+**************************
+How does mrsimulator work?
+**************************
 
-The NMR spectral simulation in ``mrsimulator`` is based on
+The NMR spectral simulation in mrsimulator is based on
 Symmetry Pathways in Solid-State NMR by Grandinetti *et al.* [#f1]_
 
 Introduction to NMR frequency components
@@ -80,7 +80,7 @@ where :math:`d_{n_i, n_j}^L(\beta)` is Wigner small :math:`d` element.
 ----
 
 In the case of the single interaction Hamiltonian, that is, in the absence of
-cross-terms, ``mrsimulator`` further defines the product of the size of the
+cross-terms, mrsimulator further defines the product of the size of the
 :math:`k^\text{th}` frequency component, :math:`\omega_k`, and the
 :math:`L^\text{th}`-rank irreducible tensor components, :math:`\varrho_{L,n}^{(k)}`, in
 the principal axis system of the interaction tensor,
@@ -126,7 +126,7 @@ axis system of the interaction tensor and corresponds to the
 .. .. list-table:: A list of :math:`\mathcal{R}_{L,n}^{(k)}` from Eq. :eq:`eq_5`
 .. of rank :math:`L` given in the principal axis system for the
 .. :math:`M^\text{th}` order perturbation expansion of the
-.. interactions supported in ``mrsimulator``.
+.. interactions supported in mrsimulator.
 .. :widths: 20 80
 .. :header-rows: 1
 
@@ -565,7 +565,7 @@ Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}`
 .. _tb_freq_components:
 .. list-table:: The table presents a list of frequency tensors defined in the principal
   axis system of the respective interaction tensor from Eq. :eq:`eq_7`,
-  :math:`\varpi_{L,n}^{(k)}`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonian supported in ``mrsimulator``.
+  :math:`\varpi_{L,n}^{(k)}`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonian supported in mrsimulator.
   :widths: 20 15 15 50
   :header-rows: 1
 
