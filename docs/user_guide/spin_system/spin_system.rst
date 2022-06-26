@@ -7,7 +7,7 @@ Spin System
 At the heart of any ``mrsimulator`` calculation is the definition of
 a :ref:`spin_sys_api` object describing the sites and couplings within a spin
 system. Each :ref:`simulator_api` object holds a list of :ref:`spin_sys_api`
-objects which will be used to calculate frequency contributions.
+objects which are used to calculate frequency contributions. 
 
 .. note::
 
@@ -149,6 +149,11 @@ Additionally, the dipolar coupling interaction between the coupled nuclei is def
 *dipolar* key. A dipolar tensor is a second-rank traceless symmetric tensor, and we describe the dipolar
 coupling constant with the parameter *D*.  The Euler angle orientations, *alpha*, *beta*, and *gamma*
 are the relative orientation of the dipolar tensor from a common reference frame.
+
+.. note::
+
+  All frequency contributions from spin-spin couplings are calculated in the weak-coupling limit.
+
 
 See :numref:`table_coupling` and :numref:`table_symmetric_tensor` for further information on
 the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
