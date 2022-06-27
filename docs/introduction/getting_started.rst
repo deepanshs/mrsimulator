@@ -226,15 +226,19 @@ back into the frequency domain.
     processed_simulation = processor.apply_operations(dataset=sim.methods[0].simulation)
 
 
-PyPlot
-------
+Visualization with PyPlot
+-------------------------
 
-You can use `PyPlot
+You can use Matplotlib's `PyPlot module
 <https://matplotlib.org/stable/tutorials/introductory/pyplot.html>`__ to plot your
 simulations. To aid in plotting CSDM objects with PyPlot, csdmpy provides a
-custom CSDM dataset plot axes.  To use it, simply add ``projection="csdm"`` to the
-PyPlot's Axes instance. Below is code using PyPlot that will generate a
-plot and a  pdf file of the simulated spectrum:
+custom CSDM dataset plot axes.  To use it, simply pass ``projection="csdm"`` when instantiating
+an Axes instance. Below is code using the PyPlot module which will generate a
+plot and a pdf file of the simulated spectrum:
+
+.. note::
+
+    To use the custom CSDM axes with ``projection="csdm"``, the csdmpy library needs imported.
 
 .. _fig1-getting-started:
 
@@ -245,6 +249,7 @@ plot and a  pdf file of the simulated spectrum:
     :caption: A simulated :math:`^{13}\text{C}` MAS spectrum.
 
     import matplotlib.pyplot as plt
+
     plt.figure(figsize=(5, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
     ax.plot(processed_simulation.real)

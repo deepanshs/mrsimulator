@@ -49,9 +49,9 @@ Make sure git is installed on your computer
 
 `Git <https://git-scm.com>`_ is a source code management system.
 It keeps track of the changes made to the code and manages contributions from
-several individuals.
-.. You may notice that much of its terminology comes from river metaphors, i.e., source, fork, upstream, etc.
-You may read about git at the `Git Basics <https://git-scm.com/book/>`_.
+several individuals.  You may notice that much of its terminology comes from
+river metaphors, i.e., source, fork, upstream, etc.  You may read about git
+at the `Git Basics <https://git-scm.com/book/>`_.
 
 If you are using anaconda/miniconda, you probably have git pre-installed. To check,
 type in terminal
@@ -203,6 +203,16 @@ of the mrsimulator folder, type
     $ pytest
 
 which will run a series of tests alerting you to any unit tests that fail.
+
+**Checking test coverage**: To check which lines in the codebase are covered when running a test,
+use the following command.
+
+.. code-block:: bash
+
+    $ pytest --cov-report=html
+
+To view the unit test coverage report, open the *mrsimulator/htmlcov/index.html* file in a
+web browser.
 
 **Building docs**: We use the sphinx Python documentation generator for building docs. Navigate
 to the *docs* directory within the mrsimulator folder, and type,
