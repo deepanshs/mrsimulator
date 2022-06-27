@@ -146,8 +146,8 @@ Both these steps are performed by the code below.
 
     plt.figure(figsize=(5, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
-    ax.plot(csdm_ds.real, label="real")
-    ax.plot(csdm_ds.imag, label="imag")
+    ax.plot(phased_ds.real, label="real")
+    ax.plot(phased_ds.imag, label="imag")
     plt.tight_layout()
     plt.grid()
     plt.legend()
@@ -354,11 +354,12 @@ SignalProcessor.
 
     # Post Simulation Processing
     # --------------------------
+    relative_intensity_factor = exp_spectrum.max() / sim.methods[0].simulation.max()
     processor = sp.SignalProcessor(operations=[
             sp.IFFT(),
             sp.apodization.Gaussian(FWHM="50 Hz"),
             sp.FFT(),
-            sp.Scale(factor=exp_spectrum.max())
+            sp.Scale(factor=relative_intensity_factor)
         ]
     )
     processed_dataset=processor.apply_operations(dataset=sim.methods[0].simulation).real
@@ -390,7 +391,7 @@ If your initial guess is not so good, you could iteratively change the fit
 parameters until your simulation is closer to the experimental spectrum. This
 will ensure faster convergence to the best-fit parameters and could prevent the
 least-squares analysis from falling into false minima on the chi-squared
-surface.
+surface. For this example, however, the above initial guess should be good enough
 
 
 Perform Least-Squares Analysis
@@ -422,7 +423,7 @@ list of LMFIT parameters from the Simulator and SignalProcessor objects.
 
     Name                                      Value      Min      Max     Vary     Expr
     SP_0_operation_1_Gaussian_FWHM               50     -inf      inf     True     None
-    SP_0_operation_3_Scale_factor          4.322e+06     -inf      inf     True     None
+    SP_0_operation_3_Scale_factor          4.322e+06    -inf      inf     True     None
     sys_0_abundance                             100        0      100    False      100
     sys_0_site_0_isotropic_chemical_shift         5     -inf      inf     True     None
     sys_0_site_0_quadrupolar_Cq               3e+06     -inf      inf     True     None
