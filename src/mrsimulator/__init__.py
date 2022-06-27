@@ -42,7 +42,7 @@ from .method.spectral_dimension import (  # lgtm [py/import-own-module] # noqa:F
     SpectralDimension,
 )
 from .method import Method  # lgtm [py/import-own-module] # noqa:F401
-from mrsimulator.signal_processing import SignalProcessor
+from mrsimulator.signal_processor import SignalProcessor
 from mrsimulator.utils.error import FileConversionError
 from mrsimulator.utils.importer import import_json
 from mrsimulator.utils.parseable import Parseable
@@ -63,7 +63,7 @@ class Mrsimulator(Parseable):
 
     simulator: A :ref:`simulator_api` object.
 
-    signal_processor: A list of :ref:`signal_processing_api` objects.
+    signal_processor: A list of :ref:`signal_processor_api` objects.
 
     version: The current version of the library represented by a string. This attribute
         is not meant to be modified and serialization will only reflect the current

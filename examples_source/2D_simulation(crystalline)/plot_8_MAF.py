@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
@@ -102,7 +102,7 @@ sim.run()
 
 # %%
 # Add post-simulation signal processing.
-csdm_data = sim.methods[0].simulation
+csdm_dataset = sim.methods[0].simulation
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(dim_index=(0, 1)),
@@ -111,14 +111,14 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_data = processor.apply_operations(data=csdm_data).real
-processed_data /= processed_data.max()
+processed_dataset = processor.apply_operations(dataset=csdm_dataset).real
+processed_dataset /= processed_dataset.max()
 
 # %%
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_data.T, aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(processed_dataset.T, aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()

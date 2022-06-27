@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import csdmpy as cp
 import numpy as np
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -32,8 +32,8 @@ def test_shear_01():
         ]
     )
 
-    shear_data = processor.apply_operations(data=csdm_object)
-    index = np.where(shear_data.y[0].components[0] > 0.99999999)
+    shear_dataset = processor.apply_operations(dataset=csdm_object)
+    index = np.where(shear_dataset.y[0].components[0] > 0.99999999)
 
     a = np.arange(40)
     assert np.allclose(index, [a, a])
@@ -41,8 +41,8 @@ def test_shear_01():
     # complex_fft dim=0 to false
     csdm_object.x[0].complex_fft = False
     csdm_object.x[1].complex_fft = True
-    shear_data = processor.apply_operations(data=csdm_object)
-    index = np.where(shear_data.y[0].components[0] > 0.99999999)
+    shear_dataset = processor.apply_operations(dataset=csdm_object)
+    index = np.where(shear_dataset.y[0].components[0] > 0.99999999)
 
     a1 = np.arange(20)
     b1 = a1 + 20
@@ -52,8 +52,8 @@ def test_shear_01():
     # complex_fft dim=1 to false
     csdm_object.x[0].complex_fft = True
     csdm_object.x[1].complex_fft = False
-    shear_data = processor.apply_operations(data=csdm_object)
-    index = np.where(shear_data.y[0].components[0] > 0.99999999)
+    shear_dataset = processor.apply_operations(dataset=csdm_object)
+    index = np.where(shear_dataset.y[0].components[0] > 0.99999999)
 
     b = np.arange(40)
     b[1:] = a[::-1][:-1]
@@ -62,8 +62,8 @@ def test_shear_01():
     # both complex_fft set to false
     csdm_object.x[0].complex_fft = False
     csdm_object.x[1].complex_fft = False
-    shear_data = processor.apply_operations(data=csdm_object)
-    index = np.where(shear_data.y[0].components[0] > 0.99999999)
+    shear_dataset = processor.apply_operations(dataset=csdm_object)
+    index = np.where(shear_dataset.y[0].components[0] > 0.99999999)
 
     a1 = np.arange(21)[::-1]
     b1 = a1[1:-1] + 20
@@ -106,10 +106,10 @@ def test_scale():
     c_off = csdm_object.x[1].coordinates_offset.value
 
     processor = sp.SignalProcessor(operations=[sp.affine.Scale(factor=2, dim_index=1)])
-    scaled_data = processor.apply_operations(data=csdm_object)
+    scaled_dataset = processor.apply_operations(dataset=csdm_object)
 
-    s_inc = scaled_data.x[1].increment.value
-    s_off = scaled_data.x[1].coordinates_offset.value
+    s_inc = scaled_dataset.x[1].increment.value
+    s_off = scaled_dataset.x[1].coordinates_offset.value
 
     assert s_inc == 2 * c_inc
     assert s_off == 2 * c_off

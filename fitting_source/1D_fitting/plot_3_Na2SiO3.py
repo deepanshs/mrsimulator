@@ -22,7 +22,7 @@ from lmfit import Minimizer
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method.lib import BlochDecayCTSpectrum
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -33,7 +33,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # Import the dataset
 # ------------------
 #
-# Import the experimental data. We use dataset file serialized with the CSDM
+# Import the experimental dataset. We use dataset file serialized with the CSDM
 # file-format, using the
 # `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_ module.
 filename = "https://ssnmr.org/sites/default/files/mrsimulator/Na2SiO3_O17.csdf"
@@ -83,8 +83,8 @@ spin_systems = [
 
 # %%
 # **Step 2:** Create the method object. Create an appropriate method object that closely
-# resembles the technique used in acquiring the experimental data. The attribute values
-# of this method must meet the experimental conditions, including the acquisition
+# resembles the technique used in acquiring the experimental dataset. The attribute
+# values of this method must meet the experimental conditions, including the acquisition
 # channels, the magnetic flux density, rotor angle, rotor frequency, and the
 # spectral/spectroscopic dimension.
 #
@@ -121,7 +121,7 @@ sim.run()
 
 # %%
 # **Step 4:** Create a SignalProcessor class object and apply the post-simulation
-# signal processing operations.
+# signal processor operations.
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
@@ -130,14 +130,14 @@ processor = sp.SignalProcessor(
         sp.Scale(factor=200.0),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # %%
-# **Step 5:** The plot of the data and the guess spectrum.
+# **Step 5:** The plot of the dataset and the guess spectrum.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
-ax.plot(processed_data, linewidth=2, alpha=0.6)
+ax.plot(processed_dataset, linewidth=2, alpha=0.6)
 ax.set_xlim(100, -50)
 plt.legend()
 plt.grid()
@@ -185,7 +185,7 @@ result = minner.minimize()
 result
 
 # %%
-# **Step 8:** The plot of the fit and the measurement data.
+# **Step 8:** The plot of the fit and the measurement dataset.
 
 # Best fit spectrum
 best_fit = sf.bestfit(sim, processor)[0].real

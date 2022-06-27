@@ -449,14 +449,14 @@ class SpinSystem(Parseable):
 
 
 def allowed_isotopes(spin_I: float = None) -> list:
-    """List of NMR active isotopes currently supported in ``mrsimulator``.
+    """List of NMR active isotopes currently supported in mrsimulator.
 
     Args:
         float spin_I: Optional spin quantum number. The valid values are multiples
             of 0.5. The default is None.
 
     Returns:
-        A list of all isotopes supported in ``mrsimulator`` with the given spin
+        A list of all isotopes supported in mrsimulator with the given spin
         quantum number `I`. If the spin is unspecified or None, a list of all
         allowed isotopes is returned instead.
     """

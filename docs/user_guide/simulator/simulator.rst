@@ -4,9 +4,9 @@
 Simulator
 =========
 
-The :ref:`simulator_api` object is the core of the ``mrsimulator`` library. Each :ref:`simulator_api`
+The :ref:`simulator_api` object is the core of the mrsimulator library. Each :ref:`simulator_api`
 object holds a list of :ref:`spin_sys_api` objects and a list of :ref:`method_api` objects.
-A simulator object also holds a :ref:`config_api` object which can be modified to change aspects
+A simulator object also holds a :ref:`config_api` object, which can be modified to change aspects
 of the simulation as discussed below.
 
 Set Up
@@ -48,30 +48,31 @@ class method :meth:`~mrsimulator.Simulator.run`.
 
     sim.run()
 
-The simulated spectrum is stored as a CSDM object in each method object under the
-:py:attr:`~mrsimulator.Method.simulation` attribute. For more information on
-the Core Scientific Data Model (CSDM),
+The simulated spectrum is stored as a CSDM object in each method object under
+the :py:attr:`~mrsimulator.Method.simulation` attribute. For more information
+on the Core Scientific Data Model (CSDM),
 see the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`_.
-Below we put the simulated spectra of the method at index 0 into the variable ``data_0``
+Below we put the simulated spectra of the method at index 0 into the
+variable ``dataset_0``
 
 .. plot::
     :context: close-figs
 
-    data_0 = sim.methods[0].simulation
-    # data_n = sim.methods[n].simulation (for multiple methods)
+    dataset_0 = sim.methods[0].simulation
+    # dataset_n = sim.methods[n].simulation (for multiple methods)
 
 .. _config_simulator:
 
 Configuring the Simulator Object
 --------------------------------
 
-Up until now, we have been using the simulator object with the default settings.
-In ``mrsimulator``, we choose the default settings such that it applies to a wide
-range of simulations including, static, magic angle spinning (MAS), and
-variable angle spinning (VAS) spectra. In certain situations, however, the
-default settings are not sufficient to accurately represent the spectrum.
+Until now, we have used the simulator object with the default settings.
+In mrsimulator, we choose the default settings such that it applies to a wide
+range of simulations, including static, magic angle spinning (MAS), and variable angle
+spinning (VAS) spectra. In certain situations, however, the default settings are insufficient
+to represent the spectrum accurately.
 
-The following code is used to create the plots in this section
+The following code is used to create the plots in this section.
 
 .. plot::
     :context: close-figs
@@ -99,9 +100,8 @@ The number of sidebands simulated is determined by the attribute
 :py:attr:`~mrsimulator.simulator.ConfigSimulator.number_of_sidebands`
 where ``sim`` is a simulator object. The default value is 64 and is sufficient for most cases.
 
-In certain circumstances,
-especially when the anisotropy is large or the rotor spin frequency is low, 64 sidebands might
-not be sufficient.
+In certain circumstances, especially when the anisotropy is large or the rotor spin frequency is
+low, 64 sidebands might not be sufficient.
 
 .. skip: next
 
@@ -148,7 +148,7 @@ resolve the issue.
     sim.run()
     plot(sim.methods[0].simulation)
 
-Conversely, 64 sidebands might be redundant, in which case the number of sidebands can be reduced.
+Conversely, 64 sidebands might be redundant, so the number of sidebands can be reduced.
 Reducing the number of sidebands
 will significantly improve performance, which might save computation time
 when used in iterative algorithms, such as least-squares minimization.
@@ -159,16 +159,16 @@ Integration Volume
 The attribute :py:attr:`~mrsimulator.simulator.ConfigSimulator.integration_volume` is an
 enumeration with two string literals,
 ``octant`` and ``hemisphere``. The integration volume refers to the volume of the sphere over
-which the NMR frequencies are integrated. The default value is *octant*, i.e., the spectrum
-comprises of integrated frequencies arising from the positive octant of the sphere.
-``mrsimulator`` can exploit the orientational symmetry of
-the problem, and thus optimize the simulation by performing a partial integration.
+which the NMR frequencies are integrated. The default value is *octant*, i.e., the spectrum is
+comprised of integrated frequencies arising from the positive octant of the sphere.
+mrsimulator can exploit the problem's orientational symmetry, thus optimizing the simulation
+by performing a partial integration.
 
-To learn more about the orientational symmetries, refer to Eden et. al. [#f4]_
+To learn more about the orientational symmetries, refer to Eden et al. [#f4]_
 
 Consider the :math:`^{29}\text{Si}` site, ``Si29_site``, from the previous example. This
 site has a symmetric shielding tensor with *zeta* and *eta* as 100 ppm and 0.2,
-respectively. With only *zeta* and *eta*, we can exploit the symmetry of the problem,
+respectively. With only *zeta* and *eta*, we can exploit the symmetry of the problem
 and evaluate the frequency integral over the octant, which is equivalent to the
 integration over the sphere. By adding the Euler angles to this tensor, we break the
 symmetry, and the integration over the octant is no longer accurate.
@@ -178,8 +178,7 @@ Consider the following examples.
 
 .. plot::
     :context: close-figs
-    :caption: Inaccurate simulation resulting from integrating over an octant when the spin
-        system has Euler angles.
+    :caption: Inaccurate simulation resulting from integrating over an octant when the spin system has Euler angles.
 
     # add Euler angles to the previous site Si29 site
     Si29_site.shielding_symmetric.alpha = 1.563  # in rad
@@ -224,7 +223,7 @@ number of orientations, :math:`\Theta_\text{count}`, is given as
     \Theta_\text{count} = M (n + 1)(n + 2)/2,
 
 where :math:`M` is the number of octants and :math:`n` is value of this attribute. The
-number of octants is deciphered form the value of the *integration_volume* attribute.
+number of octants is deciphered from the value of the *integration_volume* attribute.
 The default value of this attribute, 70, produces 2556 orientations at which the NMR
 frequency contribution is evaluated.
 
@@ -249,7 +248,7 @@ frequency contribution is evaluated.
     # 5151
 
 Decreasing the integration density may decrease simulation time for computationally intensive
-experiments, but will also decrease the quality of the spectrum. Similarly, increasing integration
+experiments but will also reduce the quality of the spectrum. Similarly, increasing integration
 density will improve spectrum quality but also increase computation time.
 
 Decompose Spectrum
@@ -316,10 +315,10 @@ Isotropic interpolation
 The attribute :py:attr:`~mrsimulator.simulator.ConfigSimulator.isotropic_interpolation`
 is an enumeration with two string literals, ``linear`` and ``gaussian``. The default value is ``linear``.
 
-The value specifies the interpolation scheme using in binning isotropic contributions.
+The value specifies the interpolation scheme used in binning isotropic contributions.
 
 ----
 
 .. [#f4] Edén, M. and Levitt, M. H. Computation of orientational averages in
-        solid-state nmr by gaussian spherical quadrature. J. Mag. Res.,
-        **132**, *2*, 220-239, 1998. `doi:10.1006/jmre.1998.1427 <https://doi.org/10.1006/jmre.1998.1427>`_.
+    solid-state nmr by gaussian spherical quadrature. J. Mag. Res.,
+    **132**, *2*, 220-239, 1998. `doi:10.1006/jmre.1998.1427 <https://doi.org/10.1006/jmre.1998.1427>`_.

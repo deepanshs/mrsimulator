@@ -3,30 +3,64 @@
 Package dependencies
 ====================
 
-``mrsimulator`` is compatible with the following operating systems:
+mrsimulator works with Python versions >3.7 and is compatible with the
+following operating systems:
 
 - MacOS 10.15 or later
 - Windows 7 or later
 - Most releases of Linux
 
-``mrsimulator`` depends on the following packages:
+----
+
+mrsimulator depends on the following packages:
 
 **Required packages**
 
 - `NumPy>=1.17 <https://www.numpy.org>`_
-- openblas
-- cython>=0.29.14
-- typing-extensions>=3.7
-- `matplotlib>=3.3.4 <https://matplotlib.org>`_ for figures and visualization,
-- monty>=2.0.4
+- `matplotlib>=3.3.4 <https://matplotlib.org>`_ for figures and visualization
+- `lmfit>=1.0.3 <https://lmfit.github.io/lmfit-py/>`_ for least-squares fitting
+- `pandas>=1.1.3 <https://pandas.pydata.org/docs/>`_
 - `csdmpy>=0.4.1 <https://csdmpy.readthedocs.io/en/stable/>`_
 - `pydantic>=1.9 <https://pydantic-docs.helpmanual.io>`_
+- `nmrglue>=0.9 <https://nmrglue.readthedocs.io/>`_
+- monty>=2.0.4
+- typing-extensions>=3.7
+- numexpr>=2.7.1
+- psutil>=5.4.8
+- joblib>=1.0.0
 
-**Other packages**
+**Required libraries for local build**
 
-- pytest>=4.5.0 for unit tests.
-- pre-commit for code formatting
-- sphinx>=2.0 for generating the documentation
-- sphinxjp.themes.basicstrap for documentation.
-- breathe==4.26 for generating C documentation
-- sphinx-copybutton
+- openblas
+- fftw
+
+----
+
+For ``mrsimualtor`` developers, the following packages are required:
+
+*For building C libraries*
+
+- cython>=0.29.14
+
+*For unit tests*
+- sympy
+- pytest>=5.3
+- pytest-cov
+- sybil>=3.0.0
+
+*For formatting*
+
+- black
+- pre-commit>=2.11.1
+
+*For building documentation*
+
+- sphinxjp.themes.basicstrap
+- sphinx>=2.0
+- sphinx-gallery>=0.10
+- pillow>=7.1.2
+- breathe==4.34.0
+- sphinx_copybutton>=0.3.0
+- sphinx-tabs>=1.1.13
+- recommonmark
+- sphinx-version-warning

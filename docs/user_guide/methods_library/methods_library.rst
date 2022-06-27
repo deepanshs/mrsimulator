@@ -30,14 +30,14 @@ The syntax for all library methods follows,
     )
 
 where `BlochDecaySpectrum` can be replaced with another method class. Each method has the
-*channels* attribute which is a list of isotopes probed by the method as well as the
+*channels* attribute, which is a list of isotopes probed by the method as well as the
 *magnetic_flux_density*, *rotor_angle*, and *rotor_frequency* attributes which define the
 global experiment parameters.
 See :numref:`table_generic_method` for more details.
 
-The method object also has the *spectral_dimensions* attribute which contains a list of
+The method object also has the *spectral_dimensions* attribute, which contains a list of
 SpectralDimension objects defining the spectral grid. A 2D method will have two spectral
-dimensions in this list whereas a 1D method will only have one. See
+dimensions in this list, whereas a 1D method will only have one. See
 :numref:`table_generic_spectral_dimension` for the attributes of a SpectralDimension object.
 
 .. _bloch_decay:
@@ -64,14 +64,19 @@ dimensions in this list whereas a 1D method will only have one. See
 
   * - Keywords
     - Description
+
   * - channels
     - A list of isotope symbols over which the given method applies.
+
   * - magnetic_flux_density
     - The macroscopic magnetic flux density, in T, of the applied external magnetic field.
+
   * - rotor_angle
     - The angle between the sample rotation axis and the applied external magnetic field in radians.
+
   * - rotor_frequency
     - The sample rotation frequency in Hz.
+
   * - spectral_dimensions
     - A list of spectral dimensions. The coordinates along each spectral dimension is
       described with the keywords, *count* (:math:`N`), *spectral_width*
@@ -79,7 +84,7 @@ dimensions in this list whereas a 1D method will only have one. See
       coordinates are given as,
 
       .. math::
-        \left([0, 1, 2, ... N-1] - \frac{T}{2}\right) \frac{\nu_\text{sw}}{N} + \nu_0
+         \left([0, 1, 2, ... N-1] - \frac{T}{2}\right) \frac{\nu_\text{sw}}{N} + \nu_0
 
       where :math:`T=N` when :math:`N` is even else :math:`T=N-1`.
 
@@ -93,9 +98,12 @@ dimensions in this list whereas a 1D method will only have one. See
 
   * - Keywords
     - Description
+
   * - count
     - An integer representing the number of points in the spectral dimension
+
   * - spectral_width
     - The spectral width of the spectral dimension in Hz.
+
   * - reference_offset
     - The reference offset of the spectral dimension in Hz.

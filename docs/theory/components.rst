@@ -1,11 +1,11 @@
 
 .. _theory:
 
-******************************
-How does ``mrsimulator`` work?
-******************************
+**************************
+How does mrsimulator work?
+**************************
 
-The NMR spectral simulation in ``mrsimulator`` is based on
+The NMR spectral simulation in mrsimulator is based on
 Symmetry Pathways in Solid-State NMR by Grandinetti *et al.* [#f1]_
 
 Introduction to NMR frequency components
@@ -48,7 +48,7 @@ The spatial orientation function, :math:`\Xi_L^{(k)}(\Theta)`, in Eq.
 direction of the external magnetic field. This function is the spatial
 contribution to the observed frequency component arising from the
 rotation of the :math:`L^\text{th}`-rank irreducible tensor,
-:math:`\varrho_{L,n}^{(k)}`, from the principal axis system, to the lab frame
+:math:`\varrho_{L,n}^{(k)}`, from the principal axis system to the lab frame
 via Wigner rotation which follows,
 
 .. math::
@@ -80,7 +80,7 @@ where :math:`d_{n_i, n_j}^L(\beta)` is Wigner small :math:`d` element.
 ----
 
 In the case of the single interaction Hamiltonian, that is, in the absence of
-cross-terms, ``mrsimulator`` further defines the product of the size of the
+cross-terms, mrsimulator further defines the product of the size of the
 :math:`k^\text{th}` frequency component, :math:`\omega_k`, and the
 :math:`L^\text{th}`-rank irreducible tensor components, :math:`\varrho_{L,n}^{(k)}`, in
 the principal axis system of the interaction tensor,
@@ -98,10 +98,10 @@ tensor. Using Eqs. :eq:`eq_3` and :eq:`eq_5`, we re-express Eq. :eq:`eq_2` as
 .. math::
     :label: eq_6
 
-    \Omega_k(\Theta, i, j) =  \sum_{n_0=-L}^L D^L_{n_0,0}(\Theta_0)
-                              \sum_{n_1=-L}^L D^L_{n_1,n_0}(\Theta_1) ~ ... ~
-                              \sum_{n_i=-L}^L D^L_{n_i,n}(\Theta_i) ~~
-                              \varpi_{L, n}^{(k)},
+    \Omega_k(\Theta, i, j) = \sum_{n_0=-L}^L D^L_{n_0,0}(\Theta_0)
+                             \sum_{n_1=-L}^L D^L_{n_1,n_0}(\Theta_1) ~ ... ~
+                             \sum_{n_i=-L}^L D^L_{n_i,n}(\Theta_i) ~~
+                             \varpi_{L, n}^{(k)},
 
 where
 
@@ -116,38 +116,38 @@ axis system of the interaction tensor and corresponds to the
 
 
 .. |quad_description| replace:: The parameter :math:`\omega_q` is defined as
-      :math:`\omega_q = \frac{2\piC_q}{2I(2I-1)}`, where :math:`C_q` is the quadrupole
-      coupling constant, and :math:`I` is the spin quantum number
-      of the quadrupole nucleus. The parameters :math:`\eta_q` and :math:`\omega_0` are the
-      quadrupole asymmetry and Larmor frequency of the nucleus, respectively.
+  :math:`\omega_q = \frac{2\piC_q}{2I(2I-1)}`, where :math:`C_q` is the quadrupole
+  coupling constant, and :math:`I` is the spin quantum number
+  of the quadrupole nucleus. The parameters :math:`\eta_q` and :math:`\omega_0` are the
+  quadrupole asymmetry and Larmor frequency of the nucleus, respectively.
 
 .. .. cssclass:: table-bordered table-hover centered
 
 .. .. list-table:: A list of :math:`\mathcal{R}_{L,n}^{(k)}` from Eq. :eq:`eq_5`
-..                 of rank :math:`L` given in the principal axis system for the
-..                 :math:`M^\text{th}` order perturbation expansion of the
-..                 interactions supported in ``mrsimulator``.
-..   :widths: 20 80
-..   :header-rows: 1
+.. of rank :math:`L` given in the principal axis system for the
+.. :math:`M^\text{th}` order perturbation expansion of the
+.. interactions supported in mrsimulator.
+.. :widths: 20 80
+.. :header-rows: 1
 
-..   * - Interaction
-..     - Description
+.. * - Interaction
+.. - Description
 
-..   * - Nuclear shielding
-..     - The parameter :math:`\varrho_\text{iso}` is the isotropic nuclear
-..       shielding.
+.. * - Nuclear shielding
+.. - The parameter :math:`\varrho_\text{iso}` is the isotropic nuclear
+.. shielding.
 
-..       .. cssclass:: table-bordered table-hover centered
-..       .. list-table::
-..         :widths: 20 20 60
-..         :header-rows: 1
+.. .. cssclass:: table-bordered table-hover centered
+.. .. list-table::
+.. :widths: 20 20 60
+.. :header-rows: 1
 
-..         * - Order, :math:`M`
-..           - Rank, :math:`L`
-..           - :math:`\mathbf{\mathcal{R}}_{L,n}`
-..         * - 1
-..           - 0
-..           - :math:`\mathcal{R}_{0,0}^{(\sigma)} = \varrho_\text{iso}`
+.. * - Order, :math:`M`
+.. - Rank, :math:`L`
+.. - :math:`\mathbf{\mathcal{R}}_{L,n}`
+.. * - 1
+.. - 0
+.. - :math:`\mathcal{R}_{0,0}^{(\sigma)} = \varrho_\text{iso}`
 
 .. |SOF| replace:: :math:`\mathbf{\varsigma}_{L,n}^{(k)}`
 .. |L| replace:: :math:`L`
@@ -164,12 +164,11 @@ Single nucleus scaled spatial orientation tensor components
 Nuclear shielding interaction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The nuclear shielding tensor, :math:`\boldsymbol{\rho}^{(\sigma)}`, is a second
-rank reducible tensor which can be decomposed into a sum of the zeroth-rank
-isotropic, first-rank anti-symmetric, and second-rank traceless symmetric
-irreducible spherical tensors.
-In the principal axis system, the zeroth-rank, :math:`\rho_{0,0}^{(\sigma)}`
-and the second-rank, :math:`\rho_{2,n}^{(\sigma)}`, irreducible tensors follow,
+The nuclear shielding tensor, :math:`\boldsymbol{\rho}^{(\sigma)}`, is a second-rank reducible
+tensor, which can be decomposed into a sum of the zeroth-rank isotropic, first-rank anti-symmetric,
+and second-rank traceless symmetric irreducible spherical tensors. In the principal axis system,
+the zeroth-rank, :math:`\rho_{0,0}^{(\sigma)}` and the second-rank, :math:`\rho_{2,n}^{(\sigma)}`,
+irreducible tensors follow,
 
 .. math::
     \begin{array}{c c c c}
@@ -179,19 +178,17 @@ and the second-rank, :math:`\rho_{2,n}^{(\sigma)}`, irreducible tensors follow,
     \rho_{2,\pm2}^{(\sigma)} = - \frac{1}{2}\eta_\sigma \zeta_\sigma,
     \end{array}
 
-where :math:`\sigma_\text{iso}, \zeta_\sigma`, and :math:`\eta_\sigma` are the
-isotropic nuclear shielding, shielding anisotropy, and shielding asymmetry of
-the site, respectively. The shielding anisotropy, and asymmetry are defined
-using Haeberlen notation.
+where :math:`\sigma_\text{iso}, \zeta_\sigma`, and :math:`\eta_\sigma` are the isotropic nuclear
+shielding, shielding anisotropy, and shielding asymmetry of the site, respectively. The shielding
+anisotropy and asymmetry are defined using Haeberlen notation.
 
 **First-order perturbation**
 
-The size of the frequency component, :math:`\omega_k`, from the first-order
-perturbation expansion of Nuclear shielding Hamiltonian is
-:math:`-\omega_0=\gamma B_0`, where :math:`\omega_0` is the Larmor angular
-frequency of the nucleus, and :math:`\gamma`, :math:`B_0` are the gyromagnetic
-ratio of the nucleus and the macroscopic magnetic flux density of the applied
-external magnetic field, respectively. The relation between
+The size of the frequency component, :math:`\omega_k`, from the first-order perturbation
+expansion of Nuclear shielding Hamiltonian is :math:`-\omega_0=\gamma B_0`, where
+:math:`\omega_0` is the Larmor angular frequency of the nucleus, and :math:`\gamma`, :math:`B_0`
+are the gyromagnetic ratio of the nucleus and the macroscopic magnetic flux density of the
+applied external magnetic field, respectively. The relation between
 :math:`\varrho_{L,n}^{(\sigma)}` and :math:`\rho_{L,n}^{(\sigma)}` follows,
 
 .. math::
@@ -228,8 +225,8 @@ Electric quadrupole interaction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The electric field gradient (efg) tensor, :math:`\boldsymbol{\rho}^{(q)}`, is
-also a second-rank tensor, however, unlike the nuclear shielding tensor, the
-efg tensor is always a symmetric second-rank irreducible tensor.
+also a second-rank tensor; however, unlike the nuclear shielding tensor,
+the efg tensor is always a symmetric second-rank irreducible tensor.
 In the principal axis system, this tensor is given as,
 
 .. math::
@@ -239,18 +236,17 @@ In the principal axis system, this tensor is given as,
     \rho_{2,\pm2}^{(q)} = - \frac{1}{2}\eta_q \zeta_q,
     \end{array}
 
-where :math:`\zeta_q`, and :math:`\eta_q` are the efg tensor anisotropy, and
-asymmetry of the site, respectively. The efg anisotropy, and
-asymmetry are defined using Haeberlen convention.
+where :math:`\zeta_q`, and :math:`\eta_q` are the efg tensor anisotropy and
+asymmetry of the site, respectively. The efg anisotropy and
+asymmetry values are defined using the Haeberlen convention.
 
 **First-order perturbation**
 
-The size of the frequency component from the first-order perturbation expansion
-of Electric quadrupole Hamiltonian is :math:`\omega_k = \omega_q`,
-where :math:`\omega_q = \frac{6\pi C_q}{2I(2I-1)}` is the quadrupole splitting
-angular frequency. Here, :math:`C_q` is the quadrupole coupling constant, and
-:math:`I` is the spin quantum number of the quadrupole nucleus.
-The relation between :math:`\varrho_{L,n}^{(q)}` and
+The size of the frequency component from the first-order perturbation expansion of Electric
+quadrupole Hamiltonian is :math:`\omega_k = \omega_q`, where
+:math:`\omega_q = \frac{6\pi C_q}{2I(2I-1)}` is the quadrupole splitting angular frequency.
+Here, :math:`C_q` is the quadrupole coupling constant, and :math:`I` is the spin quantum number
+of the quadrupole nucleus. The relation between :math:`\varrho_{L,n}^{(q)}` and
 :math:`\rho_{L,n}^{(q)}` follows,
 
 .. math::
@@ -261,9 +257,8 @@ The relation between :math:`\varrho_{L,n}^{(q)}` and
 The size of the frequency component from the second-order perturbation
 expansion of Electric quadrupole Hamiltonian is
 :math:`\omega_k = \frac{\omega_q^2}{\omega_0}`, where :math:`\omega_0` is
-the Larmor angular frequency of the quadrupole nucleus.
-The relation between :math:`\varrho_{L,n}^{(qq)}` and
-:math:`\rho_{L,n}^{(q)}` follows,
+the Larmor angular frequency of the quadrupole nucleus. The relation between
+:math:`\varrho_{L,n}^{(qq)}` and :math:`\rho_{L,n}^{(q)}` follows,
 
 .. math::
     \varrho_{L,n}^{(qq)} = \frac{1}{9\zeta_q^2} \sum_{m=-2}^2
@@ -275,9 +270,9 @@ coefficient.
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of scaled spatial orientation tensors in the principal
-                axis system of the efg tensor, |SOF| from Eq. :eq:`eq_5`, of
-                rank L resulting from the Mth order perturbation expansion
-                of the Electric Quadrupole Hamiltonian is presented.
+  axis system of the efg tensor, |SOF| from Eq. :eq:`eq_5`, of
+  rank L resulting from the Mth order perturbation expansion
+  of the Electric Quadrupole Hamiltonian is presented.
   :widths: 25 25 50
   :header-rows: 1
 
@@ -324,12 +319,11 @@ Coupled nucleus scaled spatial orientation tensor components
 Weak :math:`J`-coupling interaction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :math:`J`-coupling tensor, :math:`\boldsymbol{\rho}^{(J)}`, is a second
-rank reducible tensor which can be decomposed into a sum of the zeroth-rank
-isotropic, first-rank anti-symmetric, and second-rank traceless symmetric
-irreducible spherical tensors.
-In the principal axis system, the zeroth-rank, :math:`\rho_{0,0}^{(J)}`
-and the second-rank, :math:`\rho_{2,n}^{(J)}`, irreducible tensors follow,
+The :math:`J`-coupling tensor, :math:`\boldsymbol{\rho}^{(J)}`, is a second-rank reducible tensor,
+which can be decomposed into a sum of the zeroth-rank isotropic, first-rank anti-symmetric, and
+second-rank traceless symmetric irreducible spherical tensors. In the principal axis system, the
+zeroth-rank, :math:`\rho_{0,0}^{(J)}` and the second-rank, :math:`\rho_{2,n}^{(J)}`, irreducible
+tensors follow,
 
 .. math::
     \begin{array}{c c c c}
@@ -383,9 +377,9 @@ Weak dipolar-coupling interaction
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The dipolar-coupling tensor, :math:`\boldsymbol{\rho}^{(d)}`, is a second
-rank reducible tensor which can be decomposed as a second-rank traceless
-symmetric irreducible spherical tensors.
-In the principal axis system, the second-rank, :math:`\rho_{2,n}^{(d)}`,
+rank reducible tensor, which can be decomposed as a second-rank traceless
+symmetric irreducible spherical tensors. In the principal axis system,
+the second-rank, :math:`\rho_{2,n}^{(d)}`,
 irreducible tensors follow,
 
 .. math::
@@ -452,15 +446,14 @@ manipulated via the coupling of the nuclear magnetic dipole moment with the
 oscillating external magnetic field from the applied radio-frequency pulse.
 Considering the strength of the external magnetic rf field is orders of
 magnitude larger than the internal spin-couplings, the manipulation of spin
-transition functions are described using the orthogonal rotation subgroups.
+transition functions is described using the orthogonal rotation subgroups.
 
 Single nucleus spin transition functions
 ----------------------------------------
 
 .. cssclass:: table-bordered table-striped centered
 
-.. list-table:: A list of single nucleus spin transition functions,
-                :math:`\xi_L^{(k)}(i,j)`.
+.. list-table:: A list of single nucleus spin transition functions, :math:`\xi_L^{(k)}(i,j)`.
   :widths: 10 12 43 35
   :header-rows: 1
 
@@ -494,8 +487,7 @@ Single nucleus spin transition functions
 Here, :math:`\hat{T}_{L,k}(\bf{I})` are the irreducible spherical tensor
 operators of rank :math:`L`, :math:`k \in [-L, L]`, for transition
 :math:`|i\rangle \rightarrow |j\rangle`.
-In terms of the tensor product of the Cartesian operators, the above spherical
-tensors are expressed as follows,
+In terms of the tensor product of the Cartesian operators, the above spherical tensors are expressed as follows,
 
 .. cssclass:: table-bordered table-striped centered
 
@@ -505,12 +497,16 @@ tensors are expressed as follows,
 
   * - Spherical tensor operator
     - Representation in Cartesian operators
+
   * - :math:`\hat{T}_{0,0}(\bf{I})`
     - :math:`\hat{1}`
+
   * - :math:`\hat{T}_{1,0}(\bf{I})`
     - :math:`\hat{I}_z`
+
   * - :math:`\hat{T}_{2,0}(\bf{I})`
     - :math:`\frac{1}{\sqrt{6}} \left[3\hat{I}^2_z - I(I+1)\hat{1} \right]`
+
   * - :math:`\hat{T}_{3,0}(\bf{I})`
     - :math:`\frac{1}{\sqrt{10}} \left[5\hat{I}^3_z + \left(1 - 3I(I+1)\right)\hat{I}_z\right]`
 
@@ -519,8 +515,7 @@ where :math:`I` is the spin quantum number of the nucleus and
 
 .. cssclass:: table-bordered table-striped centered
 .. list-table:: A list of composite single nucleus spin transition functions,
-                :math:`\xi_L^{(k)}(i,j)`. Here, `I` is the spin quantum
-                number of the nucleus.
+  :math:`\xi_L^{(k)}(i,j)`. Here, `I` is the spin quantum number of the nucleus.
   :widths: 50 50
   :header-rows: 1
 
@@ -543,7 +538,7 @@ Weakly coupled nucleus spin transition functions
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of weakly coupled nucleus spin transition functions,
-                :math:`\xi_L^{(k)}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`.
+  :math:`\xi_L^{(k)}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`.
   :widths: 22 22 56
   :header-rows: 1
 
@@ -570,7 +565,7 @@ Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}`
 .. _tb_freq_components:
 .. list-table:: The table presents a list of frequency tensors defined in the principal
   axis system of the respective interaction tensor from Eq. :eq:`eq_7`,
-  :math:`\varpi_{L,n}^{(k)}`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonian supported in ``mrsimulator``.
+  :math:`\varpi_{L,n}^{(k)}`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonian supported in mrsimulator.
   :widths: 20 15 15 50
   :header-rows: 1
 

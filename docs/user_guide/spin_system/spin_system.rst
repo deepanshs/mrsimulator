@@ -4,7 +4,7 @@
 Spin System
 ===========
 
-At the heart of any ``mrsimulator`` calculation is the definition of a :ref:`spin_sys_api`
+At the heart of any mrsimulator calculation is the definition of a :ref:`spin_sys_api`
 object describing the sites and couplings within a spin system. Each :ref:`simulator_api` object
 holds a list of :ref:`spin_sys_api` objects which will be used to calculate frequency
 contributions.
@@ -66,7 +66,7 @@ and *gamma*, which are the relative orientation of the EFG tensor from a common 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
 the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
 
-Also, all objects in  ``mrsimulator``
+Also, all objects in  mrsimulator
 have the attribute *property_units* which provides the units for all class properties.
 
 .. code-block:: python
@@ -195,7 +195,7 @@ Again we see the optional *name* and *description* attributes. The *sites* attri
 a list of two :ref:`site_api` objects, the previous :math:`^1\text{H}` site and the new
 :math:`^{13}\text{C}` site. We have also set the *abundance* of this spin system to *0.148%*.
 By leveraging the abundance attribute, multiple spin systems with varying abundances can be
-simulated together. See our :ref:`introduction_ethanol_example` where isotopomers of varying
+simulated together. See our :ref:`introduction_isotopomers_example` where isotopomers of varying
 abundance are simulated in tandem.
 
 Coupled Spin System
@@ -269,7 +269,7 @@ A list of :ref:`coupling_api` objects passed to the *couplings* keywords. The
 *site_index* attribute of ``H2_C13_coupling`` correspond to the index of ``H2_site`` and
 ``C13_site`` in the sites list. If we were to add more sites, *site_index* might need to be
 updated to reflect the index `H2_site`` and ``C13_site`` in the sites list. Again, our
-:ref:`introduction_ethanol_example` has good usage cases for multiple couplings in a
+:ref:`introduction_isotopomers_example` has good usage cases for multiple couplings in a
 spin system.
 
 -------------------------

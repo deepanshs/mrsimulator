@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
@@ -94,11 +94,11 @@ sim.run()
 
 # %%
 # The plot of the simulation.
-data = sim.methods[0].simulation
+dataset = sim.methods[0].simulation
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(dataset.real / dataset.real.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.set_xlim(-0, -55)
 ax.set_ylim(80, -180)
@@ -116,14 +116,14 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_data = processor.apply_operations(data=data)
-processed_data /= processed_data.max()
+processed_dataset = processor.apply_operations(dataset=dataset)
+processed_dataset /= processed_dataset.max()
 
 # %%
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(processed_dataset.real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)
 ax.set_xlim(-0, -55)
 ax.set_ylim(80, -180)

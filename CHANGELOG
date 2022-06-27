@@ -6,9 +6,10 @@ What's new
 
 **General**
 
-- Support for complex amplitude simulation.
+- Add support for complex amplitude simulation.
 - Add `isotropic_interpolation` as a `sim.config` parameter. The interpolation schemes are linear
   and Gaussian.
+- Drop support for Python version 3.6
 
 **Method**
 
@@ -44,7 +45,7 @@ Changes
 '''''''
 
 - `reduced_dict` function is deprecated, use `json(units=False)` instead.
-
+- The `mrsimulator.signal_processing` module is renamed to `mrsimulator.signal_processor`
 
 Bug fixes
 '''''''''

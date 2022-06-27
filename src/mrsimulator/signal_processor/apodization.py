@@ -27,13 +27,13 @@ class Apodization(ModuleOperation):
     def function(self):
         return "apodization"
 
-    def operate(self, data):
+    def operate(self, dataset):
         """Apply the operation function.
 
         Args:
-            data: A CSDM object.
+            dataset: A CSDM object.
         """
-        dims = data.dimensions
+        dims = dataset.dimensions
         ndim = len(dims)
 
         dim_index = self.dim_index
@@ -43,11 +43,11 @@ class Apodization(ModuleOperation):
             x = self.get_coordinates(dims[i])  # dims[i].coordinates
             apodization_vector = _get_broadcast_shape(self.fn(x), i, ndim)
 
-            dv_indexes = self._get_dv_indexes(self.dv_index, n=len(data.y))
+            dv_indexes = self._get_dv_indexes(self.dv_index, n=len(dataset.y))
 
             for index in dv_indexes:
-                data.y[index].components *= apodization_vector
-        return data
+                dataset.y[index].components *= apodization_vector
+        return dataset
 
 
 class MultiDimensionApodization(ModuleOperation):
@@ -59,13 +59,13 @@ class MultiDimensionApodization(ModuleOperation):
     def function(self):
         return "apodization"
 
-    def operate(self, data):
+    def operate(self, dataset):
         """Apply the operation function.
 
         Args:
-            data: A CSDM object.
+            dataset: A CSDM object.
         """
-        dims = data.dimensions
+        dims = dataset.dimensions
         ndim = len(dims)
 
         dim_index = self.dim_index
@@ -73,15 +73,15 @@ class MultiDimensionApodization(ModuleOperation):
 
         apodization_matrix = _get_broadcast_shape(self.fn(), dim_index, ndim)
 
-        dv_indexes = self._get_dv_indexes(self.dv_index, n=len(data.y))
+        dv_indexes = self._get_dv_indexes(self.dv_index, n=len(dataset.y))
 
         for index in dv_indexes:
-            data.y[index].components = data.y[index].components * apodization_matrix
-        return data
+            dataset.y[index].components *= apodization_matrix
+        return dataset
 
 
 class Gaussian(Apodization):
-    r"""Apodize dependent variable objects of the CSDM data with a Gaussian function.
+    r"""Apodize dependent variables of CSDM dataset with Gaussian function.
 
     The apodization function follows
 
@@ -131,7 +131,7 @@ class Gaussian(Apodization):
 
 
 class Exponential(Apodization):
-    r"""Apodize a dependent variable of the CSDM object by an exponential function.
+    r"""Apodize dependent variables of CSDM by exponential function.
 
     The apodization function follows
 
@@ -180,7 +180,7 @@ class Exponential(Apodization):
 
 
 class SkewedGaussian(Apodization):
-    r"""Apodize dependent variable objects of the CSDM data with a skewed Gaussian function.
+    r"""Apodize dependent variables of CSDM dataset with skewed Gaussian function.
 
     The apodization function is derived from the skewed Gaussian distribution
 
@@ -245,7 +245,7 @@ class SkewedGaussian(Apodization):
 
 
 class TopHat(Apodization):
-    r"""Apodize a dependent variable of the CSDM object by a top hat function.
+    r"""Apodize dependent variables of CSDM object by top hat function.
 
     The apodization function follows
 
@@ -263,12 +263,12 @@ class TopHat(Apodization):
     rising_edge:
         The lowest value in the time domain from which to start the function
         window. The default value is None which will take the lowest possible
-        value for the supplied data.
+        value for the supplied dataset.
 
     falling_edge:
         The highest value in the time domain from which to end the function
         window. The default value is None which will take the largest possible
-        value for the supplied data.
+        value for the supplied dataset.
 
     dim_index:
         The index of the CSDM dimension along which the operation is applied. The
@@ -331,7 +331,7 @@ class Array(np.ndarray, metaclass=ArrayMeta):
 
 
 class Mask(MultiDimensionApodization):
-    r"""Apodize a dependent variable of the CSDM object by a user defined mask.
+    r"""Apodize dependent variables of CSDM object by user defined mask.
 
     The apodization function follows
 
@@ -339,7 +339,7 @@ class Mask(MultiDimensionApodization):
         f(x) = \text{mask}
 
     where mask is a user-supplied numpy array containing an apodization mask to apply
-    to the data.
+    to the dataset.
 
     Arguments
     ---------

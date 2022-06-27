@@ -89,7 +89,7 @@ class Method(Parseable):
         Example
         -------
 
-        >>> bloch.experiment = my_data # doctest: +SKIP
+        >>> bloch.experiment = my_dataset # doctest: +SKIP
 
     name:
         Name or id of the method. The default value is None.
@@ -197,14 +197,14 @@ class Method(Parseable):
             check_for_at_least_one_event(kwargs)
 
     @staticmethod
-    def __check_csdm__(data):
-        if data is None:
+    def __check_csdm__(dataset):
+        if dataset is None:
             return None
-        if isinstance(data, dict):
-            return cp.parse_dict(data)
-        if isinstance(data, cp.CSDM):
-            return data
-        raise ValueError("Unable to read the data.")
+        if isinstance(dataset, dict):
+            return cp.parse_dict(dataset)
+        if isinstance(dataset, cp.CSDM):
+            return dataset
+        raise ValueError("Unable to read the dataset.")
 
     @validator("experiment", pre=True, always=True)
     def validate_experiment(cls, v, *, values, **kwargs):

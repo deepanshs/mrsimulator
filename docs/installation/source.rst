@@ -1,44 +1,43 @@
 
 **Prerequisites**
 
-You will need a C-compiler suite and the development headers for the BLAS and FFTW
-libraries, along with development headers from Python and Numpy, to build the
-``mrsimulator`` library from source.
+You will need a C-compiler suite and the development headers for the BLAS and FFTW libraries,
+along with development headers from Python and Numpy, to build the
+mrsimulator library from source.
 The mrsimulator package utilizes the BLAS and FFTW routines for numerical computation.
-To leverage the best performance, we recommend installing the BLAS and FFTW libraries,
-which are optimized and tuned for your system. In the following,
-we list recommendations on how to install the c-compiler (if applicable), BLAS, FFTW,
-and building the mrsimulator libraries.
+To leverage the best performance, we recommend installing the BLAS and FFTW libraries which are
+optimized and tuned for your system. In the following, we list recommendations on installing the
+C-compiler (if applicable), BLAS, FFTW, and building the mrsimulator libraries.
 
 **Obtaining the Source Packages**
 
-The latest stable source package for ``mrsimulator`` is available on
+The latest stable source package for mrsimulator is available on
 `PyPI <https://pypi.org/project/mrsimulator/#files>`_ and
-`Github  release <https://github.com/deepanshs/mrsimulator/releases>`_. Download and
+`Github release <https://github.com/deepanshs/mrsimulator/releases>`_. Download and
 extract the *.tar.gz* file.
 
 **OS-dependent prerequisites**
 
 .. note::
-    Installing OS-dependent prerequisites is a one-time process. If you are
-    upgrading to a newer version of mrsimulator, skip to next section.
+ Installing OS-dependent prerequisites is a one-time process. If upgrading to a newer version of
+ mrsimulator, skip to the next section.
 
 .. tabs::
 
-	.. tab:: Linux
-		:tabid: linus_source
+   .. tab:: Linux
+      :tabid: linus_source
 
-		.. include:: source_install/linux.rst
+      .. include:: source_install/linux.rst
 
-	.. tab:: Mac OSX
-		:tabid: macosx_source
+   .. tab:: Mac OSX
+      :tabid: macosx_source
 
-		.. include:: source_install/macosx.rst
+      .. include:: source_install/macosx.rst
 
-	.. tab:: Windows
-		:tabid: windows_source
+   .. tab:: Windows
+      :tabid: windows_source
 
-		.. include:: source_install/windows.rst
+      .. include:: source_install/windows.rst
 
 **Building and Installing**
 

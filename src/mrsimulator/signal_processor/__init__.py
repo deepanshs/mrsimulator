@@ -17,7 +17,7 @@ __email__ = "maxvenetos@gmail.com"
 
 
 class SignalProcessor(Parseable):
-    """Signal processing class to apply a series of operations to the dependent
+    """SignalProcessor class to apply a series of operations to the dependent
     variables of the simulation dataset.
 
     Arguments
@@ -32,7 +32,7 @@ class SignalProcessor(Parseable):
     >>> post_sim = SignalProcessor(operations=[o1, o2]) # doctest: +SKIP
     """
 
-    processed_data: cp.CSDM = None
+    processed_dataset: cp.CSDM = None
     operations: List[Operation] = []
 
     class Config:
@@ -68,20 +68,20 @@ class SignalProcessor(Parseable):
         op["operations"] = [item.json() for item in self.operations]
         return op
 
-    def apply_operations(self, data, **kwargs):
+    def apply_operations(self, dataset, **kwargs):
         """Function to apply all the operation functions in the operations member of a
-        SignalProcessor object. Operations applied sequentially over the data member.
+        SignalProcessor object. Operations applied sequentially over the dataset member.
 
         Returns:
-            CSDM object: A copy of the data member with the operations applied to it.
+            CSDM object: A copy of the dataset member with the operations applied to it.
         """
-        if not isinstance(data, cp.CSDM):
-            raise ValueError("The data must be a CSDM object.")
+        if not isinstance(dataset, cp.CSDM):
+            raise ValueError("The dataset must be a CSDM object.")
         for filters in self.operations:
-            data = filters.operate(data)
-        self.processed_data = data
+            dataset = filters.operate(dataset)
+        self.processed_dataset = dataset
 
-        return data
+        return dataset
 
 
 class Scale(Operation):
@@ -99,7 +99,7 @@ class Scale(Operation):
     Example
     -------
 
-    >>> from mrsimulator import signal_processing as sp
+    >>> from mrsimulator import signal_processor as sp
     >>> operation1 = sp.Scale(factor=20)
     """
 
@@ -108,13 +108,13 @@ class Scale(Operation):
     class Config:
         extra = "forbid"
 
-    def operate(self, data):
+    def operate(self, dataset):
         r"""Applies the operation.
         Args:
-            data: CSDM object
+            dataset: CSDM object
         """
-        data *= self.factor
-        return data
+        dataset *= self.factor
+        return dataset
 
 
 class Linear(Operation):
@@ -130,7 +130,7 @@ class Linear(Operation):
     Example
     -------
 
-    >>> from mrsimulator import signal_processing as sp
+    >>> from mrsimulator import signal_processor as sp
     >>> operation1 = sp.Linear(amplitude=20, offset=-10)
     """
 
@@ -140,15 +140,15 @@ class Linear(Operation):
     class Config:
         extra = "forbid"
 
-    def operate(self, data):
+    def operate(self, dataset):
         """Applies the operation.
 
         Args:
-            data: CSDM object
+            dataset: CSDM object
         """
-        data *= self.amplitude
-        data += self.offset
-        return data
+        dataset *= self.amplitude
+        dataset += self.offset
+        return dataset
 
 
 class IFFT(Operation):
@@ -171,15 +171,15 @@ class IFFT(Operation):
     class Config:
         extra = "forbid"
 
-    def operate(self, data):
+    def operate(self, dataset):
         r"""Applies the operation.
         Args:
-            data: CSDM object
+            dataset: CSDM object
         """
         d_i = [self.dim_index] if isinstance(self.dim_index, int) else self.dim_index
         for i in d_i:
-            data = data.fft(axis=i)
-        return data
+            dataset = dataset.fft(axis=i)
+        return dataset
 
 
 class FFT(IFFT):

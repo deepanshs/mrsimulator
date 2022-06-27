@@ -127,28 +127,28 @@ def test_method():
     # test experiment assignment
     assert the_method.experiment is None
 
-    with pytest.raises(ValidationError, match="Unable to read the data."):
+    with pytest.raises(ValidationError, match="Unable to read the dataset."):
         the_method.experiment = "test"
 
     data = np.random.rand(100).reshape(10, 10)
-    csdm_data = cp.as_csdm(data)
+    csdm_dataset = cp.as_csdm(data)
 
-    csdm_data.x[0] *= cp.ScalarQuantity("Hz")
-    csdm_data.x[1] *= cp.ScalarQuantity("Hz")
+    csdm_dataset.x[0] *= cp.ScalarQuantity("Hz")
+    csdm_dataset.x[1] *= cp.ScalarQuantity("Hz")
 
-    the_method.experiment = csdm_data
-    the_method.simulation = csdm_data
+    the_method.experiment = csdm_dataset
+    the_method.simulation = csdm_dataset
     assert isinstance(the_method.experiment, cp.CSDM)
     assert isinstance(the_method.simulation, cp.CSDM)
 
-    csdm_dict = csdm_data.to_dict()
+    csdm_dict = csdm_dataset.to_dict()
     the_method.experiment = csdm_dict
     assert isinstance(the_method.experiment, cp.CSDM)
-    assert the_method.experiment == csdm_data
+    assert the_method.experiment == csdm_dataset
 
     the_method.simulation = csdm_dict
     assert isinstance(the_method.simulation, cp.CSDM)
-    assert the_method.simulation == csdm_data
+    assert the_method.simulation == csdm_dataset
 
     # json()
     event_dictionary_ = {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}
@@ -165,8 +165,8 @@ def test_method():
         "rotor_frequency": "1000.0 Hz",
         "rotor_angle": "0.9553059660790962 rad",
         "spectral_dimensions": [dimension_dictionary_, dimension_dictionary_],
-        "simulation": csdm_data.to_dict(),
-        "experiment": csdm_data.to_dict(),
+        "simulation": csdm_dataset.to_dict(),
+        "experiment": csdm_dataset.to_dict(),
     }
     serialize = the_method.json()
     serialize["simulation"]["csdm"].pop("timestamp")
@@ -187,8 +187,8 @@ def test_method():
         "rotor_frequency": 1000.0,
         "rotor_angle": 0.9553059660790962,
         "spectral_dimensions": [dimension_dictionary_, dimension_dictionary_],
-        "simulation": csdm_data.to_dict(),
-        "experiment": csdm_data.to_dict(),
+        "simulation": csdm_dataset.to_dict(),
+        "experiment": csdm_dataset.to_dict(),
     }
     serialize = the_method.json(units=False)
     serialize["simulation"]["csdm"].pop("timestamp")
