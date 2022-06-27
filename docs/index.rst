@@ -226,7 +226,7 @@ User Guide
     user_guide/spin_system/spin_system
     user_guide/spin_system_distributions/spin_system_distributions
     user_guide/methods_library/methods_library
-    user_guide/method/method_advanced_user
+    user_guide/method/method
     user_guide/method/query_objects
     user_guide/simulator/simulator
     user_guide/signal_processor/signal_processor

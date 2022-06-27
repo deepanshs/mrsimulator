@@ -13,19 +13,6 @@ characteristic
 couplings between :math:`^{1}\text{H}` and :math:`^{13}\text{C}` in
 low-abundance isotopomers.
 
-Begin by importing all the required packages and classes at the beginning of the
-code, a common Python coding practice.
-
-.. plot::
-    :context: reset
-
-    import matplotlib.pyplot as plt
-
-    from mrsimulator import Simulator, Site, SpinSystem, Coupling
-    from mrsimulator.method.lib import BlochDecaySpectrum
-    from mrsimulator.method import SpectralDimension
-    from mrsimulator import signal_processor as sp
-
 Spin Systems
 ------------
 
@@ -63,6 +50,8 @@ and two magnetically inequivalent :math:`^{13}\text{C}` sites, as shown in the c
 
 .. plot::
     :context: close-figs
+
+    from mrsimulator import Simulator, Site, SpinSystem, Coupling
 
     # All shifts in ppm
     # methyl proton site
@@ -184,6 +173,9 @@ for the first isotope in the ``channels`` attribute list.
 .. plot::
     :context: close-figs
 
+    from mrsimulator.method.lib import BlochDecaySpectrum
+    from mrsimulator.method import SpectralDimension
+
     method_H = BlochDecaySpectrum(
         channels=["1H"],
         magnetic_flux_density=9.4,  # in T
@@ -247,6 +239,8 @@ that gives an FWHM of 20 Hz.
 .. plot::
     :context: close-figs
 
+    from mrsimulator import signal_processor as sp
+
     # Get the simulation datasets
     H_spectrum = sim.methods[0].simulation
     C_spectrum = sim.methods[1].simulation
@@ -287,6 +281,8 @@ as a pdf file in this example.
     :caption: :math:`^1\text{H}` and :math:`^{13}\text{C}` spectrum of ethanol. Note,
         the :math:`^{13}\text{C}` satellites seen on either side of the peaks near 1.2 ppm
         and 2.6 ppm in the :math:`^1\text{H}` spectrum.
+
+    import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(
         nrows=1, ncols=2, subplot_kw={"projection": "csdm"}, figsize=[9, 4]

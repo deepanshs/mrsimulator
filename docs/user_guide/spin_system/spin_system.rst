@@ -4,10 +4,38 @@
 Spin System
 ===========
 
-At the heart of any mrsimulator calculation is the definition of a :ref:`spin_sys_api`
-object describing the sites and couplings within a spin system. Each :ref:`simulator_api` object
-holds a list of :ref:`spin_sys_api` objects which will be used to calculate frequency
-contributions.
+At the heart of any ``mrsimulator`` calculation is the definition of
+a :ref:`spin_sys_api` object describing the sites and couplings within a spin
+system. Each :ref:`simulator_api` object holds a list of :ref:`spin_sys_api`
+objects which are used to calculate frequency contributions. 
+
+.. note::
+
+    ``mrsimulator`` faces the same limitation faced by all other NMR simulation
+    codes: the computational cost increases exponentially(?) with the number of
+    couplings between sites in a spin system.   In liquids, where isotropic
+    molecular motion averages away intermolecular anisotropic couplings, the
+    situation is more tractable as only the intramolecular isotropic J couplings
+    remain.  
+
+    In solids, where no such isotropic motion exists, the situation is
+    more problematic.  In solids that are dilute in NMR-active nuclei is often
+    possible to build a set of SpinSystem objects that can be used to accurately
+    model a spectrum.  In solids that are not dilute in NMR-active nuclei, there
+    are still situations where one can build approximately accurate spin systems 
+    to model the spectrum. One such case is when the individual anisotropic spin 
+    interactions, such as the shielding (shift) anisotropy or the quadrupolar 
+    couplings, dominant the spectrum, i.e., they are significantly larger than 
+    any dipolar couplings. This can happen for spin 1/2 nuclei in static samples or 
+    samples spinning away from the magic-angle.  In the case of half-integer 
+    quadrupolar nuclei, this can also happen for a central transition 
+    spectrum that is significantly broadened by 
+    second-order quadrupolar effects. Another case is when an experimental method can 
+    successfully decouple the effects of dipolar couplings from the spectrum, 
+    rendering it similar to that of a dilute spin  system.  This can be achieved through 
+    rapid sample rotation, a pulse sequence, or some clever combination of the two. 
+    In all such cases, any effects of residual dipolar couplings on the
+    spectrum are usually modeled as an ad-hoc Gaussian lineshape convolution.
 
 .. _site_documentation:
 
@@ -66,7 +94,7 @@ and *gamma*, which are the relative orientation of the EFG tensor from a common 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
 the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
 
-Also, all objects in  mrsimulator
+Also, all objects in  ``mrsimulator``
 have the attribute *property_units* which provides the units for all class properties.
 
 .. code-block:: python
@@ -121,6 +149,11 @@ Additionally, the dipolar coupling interaction between the coupled nuclei is def
 *dipolar* key. A dipolar tensor is a second-rank traceless symmetric tensor, and we describe the dipolar
 coupling constant with the parameter *D*.  The Euler angle orientations, *alpha*, *beta*, and *gamma*
 are the relative orientation of the dipolar tensor from a common reference frame.
+
+.. note::
+
+  All frequency contributions from spin-spin couplings are calculated in the weak-coupling limit.
+
 
 See :numref:`table_coupling` and :numref:`table_symmetric_tensor` for further information on
 the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
