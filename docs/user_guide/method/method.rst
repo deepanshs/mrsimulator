@@ -93,7 +93,7 @@ and determine their average frequency and complex amplitude in the
 with excited states of the spin system, where selected transitions evolve 
 under the influence of specified Hamiltonian contributions. No coherence 
 transfer among transitions or populations occurs in a spectral or 
-constant duration event. **mrsimulator** allows the user to select among a 
+delay event. **mrsimulator** allows the user to select among a 
 list of NMR frequency contributions to transitions present during such an 
 event in the ``freq_contrib`` attribute holding a list of 
 :ref:`enumeration literals<freq_contrib_api>`.  If unspecified, i.e., its value 
@@ -108,7 +108,7 @@ all contributions is generated for the event.
 
 
 Additionally, the user can change other measurement attributes during a spectral
-or constant duration event: ``rotor_frequency`` or ``rotor_angle``,
+or delay event: ``rotor_frequency`` or ``rotor_angle``,
 ``magnetic_flux_density``.  If unspecified, these attributes default to the
 values of the identically named global attributes in the :ref:`method_api`
 object. Spectral events objects use the ``fraction`` attribute  to calculate
@@ -127,7 +127,7 @@ a :ref:`method_api` object you cannot identify and select a transition
 through its initial and final eigenstate quantum numbers.  Instead,
 transition selection is done
 through :py:meth:`~mrsimulator.method.query.TransitionQuery` objects during
-individual spectral or constant duration events.  During a simulation,
+individual spectral or delay events.  During a simulation,
 the :ref:`method_api` object uses its 
 :py:meth:`~mrsimulator.method.query.TransitionQuery` objects to determine the
 selected transition pathways for a given :ref:`spin_sys_api` object as
@@ -153,12 +153,15 @@ objects, i.e., SymmetryQuery and RotationalQuery, and how to use them to select
 the desired transition pathways for a custom method. Then we examine how
 transitions frequencies in the desired transition pathways can be selected from
 a list of frequency contributions using the ``freq_contrib`` attribute of a
-SpectralEvent of ConstantDuration object. The ability to select 
+SpectralEvent of DelayEvent object. The ability to select 
 :ref:`frequency contributions<freq_contrib_api>` can often reduce the number of
 events needed in the design of your custom Method object.
 
+Spectral Events
+---------------
+
 Symmetry Query
---------------
+''''''''''''''
 
 Before giving details on how to create a SymmetryQuery object, we need to
 review a few key concepts about spin transitions and *transition symmetry 
@@ -325,7 +328,7 @@ and TransitionQuery objects,
 
     symm_query = SymmetryQuery(P=[-1], D=[1])
     trans_query = TransitionQuery(ch1=symm_query)
-    event = SpectralEvent(fraction=1, transition_query=trans_query)
+    event = SpectralEvent(fraction=1, transition_query=[trans_query])
 
 
 In the example above, the SymmetryQuery instance is created and assigned to the
@@ -349,7 +352,7 @@ of a quadrupolar nucleus, is selected with the SymmetryQuery object below
 
     sym_query_dict = {"P": [-1], "D":[0]}
     ct_query = TransitionQuery(ch1=sym_query_dict)
-    event = SpectralEvent(fraction=1, transition_query=ct_query)
+    event = SpectralEvent(fraction=1, transition_query=[ct_query])
 
 Here, we assign the ``ch1`` attribute to a Python dictionary instead of the 
 SymmetryQuery object.  The dictionary uses the SymmetryQuery attribute names as
@@ -366,16 +369,37 @@ Similarly, the symmetric triple quantum transition
 
     from mrsimulator.method import SpectralEvent
 
-    event = SpectralEvent(fraction=1,transition_query={"ch1':{"P":[-3],"D": [0]}})
+    event = SpectralEvent(fraction=1,transition_query=[{"ch1':{"P":[-3],"D": [0]}}])
 
 Here again, we use use Python dictionaries for defining the attributes of both TransitionQuery and 
 SymmetryQuery objects.
 
+You may use the multiple transition query selection criterion to select multiple
+transitions. Consider the case of the two satellite transitions closest to the
+central transition of a quadrupolar nucleus.  The :math:`\text{p}_I` and 
+:math:`\text{d}_I` values for these two transitions are
 
-*What is the SymmetryQuery for selecting the central and inner satellite transitions of a
-half-integer spin?*
+- :math:`|-1/2\rangle\rightarrow|-3/2\rangle \,\,\,\,\,\,\,\,\left(\text{p}_I, \text{d}_I\right)=(-11,2)`
+- :math:`|-3/2\rangle\rightarrow|-5/2\rangle \,\,\,\,\,\,\,\,\left(\text{p}_I, \text{d}_I\right)=(-11,4)`
 
+And they can be selected using the code below.
 
+.. code-block:: python
+
+    event = SpectralEvent(
+        transition_query=[
+            # select inter satellite transitions
+            {"ch1": {"P": [-1], "D": [2]}},
+            # select outer satellite transitions
+            {"ch1": {"P": [-1], "D": [4]}},
+        ]
+    )
+
+The ``transition_query`` attribute of SpectralEvent holds an unordered list of
+TransitionQuery objects.   Each TransitionQuery applies to the full set of 
+transitions present in the spin system.    In the above example, the resulting 
+subset of selected transitions is the union of transition subsets from the 
+two queries. 
 
 Selecting Multi-Spin Transitions
 '''''''''''''''''''''''''''''''''
@@ -499,9 +523,13 @@ is surprisingly simple and given in the code below.
 
     event = SpectralEvent(fraction=1,transition_query={"ch1':{"P":[-1]}})
 
-When this generic TransitionQuery is combined with multi-site SpinSystem object, it must 
-first expand its SymmetryQuery into an intermediate set of spin-system-specifc 
-symmetry queries, as illustrated in the table below.
+To a TransitionQuery object, all Sites with the isotope associated with ``ch1``
+are "indistinguishable."  Recall that ``ch1`` is associated with the first 
+isotope in the list of isotope strings assigned to the Method attribute ``channels``.  If that
+first isotope string is "1H", then when this TransitionQuery is 
+combined with a SpinSystem object with three protons, it must first expand its 
+SymmetryQuery into an intermediate set of spin-system-specifc 
+symmetry queries, illustrated by each row in the table below.
 
 .. list-table:: 
    :widths: 25 25 25 25
@@ -512,25 +540,26 @@ symmetry queries, as illustrated in the table below.
      - :math:`\text{p}_M`
      - :math:`\text{p}_X`
    * - :math:`\hat{A}_1, \hat{A}_2`
-     - -1
+     - –1
      - 0
      - 0
    * - :math:`\hat{M}_1, \hat{M}_2`
      - 0
-     - -1
+     - –1
      - 0
    * - :math:`\hat{X}_1, \hat{X}_2`
      - 0
      - 0
-     - -1
+     - –1
 
-These intermediate spin-system-specifc symmetry queries can then be used to 
-identify the subset of transitions in the spin system by the quantum numbers 
-of their initial and final Zeeman eigenstates.
+The intermediate spin-system-specifc symmetry query in each row is used to 
+select a subset of transitions from the full set of transitions.  The
+final set of selected transitions is obtained from the union of transition 
+subsets from each spin-system-specifc symmetry query.
 
-To further illustrate how the SymmetryQuery object works in a multi-site spin
-system, let's examine a few more examples in the case of three weakly coupled 
-proton sites.   
+To further illustrate how the TransitionQuery and SymmetryQuery objects 
+works in a multi-site spin system, let's examine a few more examples in 
+the case of three weakly coupled proton sites.   
 
 In this spin system there are six *two-spin double-quantum transitions* where 
 :math:`\text{p}_{AMX} = \text{p}_{A} + \text{p}_{M} + \text{p}_{X} = -2` and
@@ -545,7 +574,7 @@ below.
     :align: center
 
 
-The code below will select the six two-spin double-quantum transitions where 
+The code below will select the six *two-spin double-quantum transitions* where 
 :math:`\text{p}_{AMX} = -2`.
 
 .. code-block:: python
@@ -565,26 +594,27 @@ spin-system-specifc symmetry queries illustrated in the table below.
      - :math:`\text{p}_M`
      - :math:`\text{p}_X`
    * - :math:`\hat{D}_{1,AM}, \hat{D}_{2,AM}`
-     - -1
-     - -1
+     - –1
+     - –1
      - 0
    * - :math:`\hat{D}_{1,MX}, \hat{D}_{2,MX}`
      - 0
-     - -1
-     - -1
+     - –1
+     - –1
    * - :math:`\hat{D}_{1,AX}, \hat{D}_{2,AX}`
-     - -1
+     - –1
      - 0
-     - -1
+     - –1
 
-Again, these intermediate spin-system-specifc symmetry queries are then used to 
-identify the subset of transitions in the spin system by the quantum numbers 
-of their initial and final Zeeman eigenstates.
+Again, the intermediate spin-system-specifc symmetry query in each row is used to 
+select a subset of transitions from the full set of transitions.  The
+final set of selected transitions is obtained from the union of transition 
+subsets from each spin-system-specifc symmetry query.
 
 Another interesting example in this spin system with three weakly coupled 
 proton sites are the three *three-spin single-quantum transitions* having 
 :math:`\text{p}_{AMX} = \text{p}_{A} + \text{p}_{M} + \text{p}_{X} = -1` and the
-three three-spin single-quantum transitions having 
+three *three-spin single-quantum transitions* having 
 :math:`\text{p}_{AMX} = \text{p}_{A} + \text{p}_{M} + \text{p}_{X} = +1`
 
 The three *three-spin single-quantum transitions* having 
@@ -615,17 +645,17 @@ in the table below.
      - :math:`\text{p}_M`
      - :math:`\text{p}_X`
    * - :math:`\hat{S}_{1,AMX}`
-     - -1
+     - –1
      - +1
-     - -1
+     - –1
    * - :math:`\hat{S}_{2,AMX}`
-     - -1
-     - -1
+     - –1
+     - –1
      - +1
    * - :math:`\hat{S}_{3,AMX}`
      - +1
-     - -1
-     - -1
+     - –1
+     - –1
 
 As you can surmise from these examples, the attributes of 
 SymmetryQuery, ``P`` and ``D``, hold a list of single-spin transition 
@@ -660,14 +690,21 @@ Let's look at an example of creating a SymmetryQuery object that will be associa
 with the ``ch1`` attribute of a TransitionQuery object in a SpectralEvent.
 
 
+Mixing Events
+-------------
+
+Default Mixing between Events
+'''''''''''''''''''''''''''''
+
+No Mixing Event
+'''''''''''''''
 
 Rotational Query
-----------------
-
+''''''''''''''''
 
 Mixing events are used to transfer (permute) among transitions and populations,
 e.g., :math:`\pi/2` or :math:`\pi` rotations between consecutive spectral or
-constant duration events.  For a rotation in a mixing event, the efficiency
+delay events.  For a rotation in a mixing event, the efficiency
 associated with the coherence transfer from 
 
 .. math::
@@ -718,7 +755,7 @@ Transition and Symmetry Pathways
 --------------------------------
 
 The number of possible transition pathways for a spin system depends on the
-number of energy eigenstates and the number of spectral and constant duration
+number of energy eigenstates and the number of spectral and delay
 events in a method. 
 
 
@@ -879,17 +916,15 @@ for all allowed transitions from spectral events, **e0**, that when rotated by :
 with a phase zero, results in a transition allowed by the spectral event, **e1**. The
 resulting pair of transitions form a set of allowed transition pathways.
 
-
 :py:meth:`~mrsimulator.method.spectral_dimension.SpectralDimension` has additional 
-attributes that have already been
-discussed in earlier sections of the documentation.  Notably, ``origin_offset`` 
-and ``reference_offset`` are important for converting
+attributes that have already been discussed in earlier sections of the documentation. 
+Notably, ``origin_offset`` and ``reference_offset`` are important for converting
 the frequency coordinate into a dimensionless frequency ratio coordinate. For
 spectra where all the spectral dimensions are associated with single-quantum
 transitions on a single isotope, the convention for defining ``origin_offset`` 
 and ``reference_offset`` is well established;
 the ``origin_offset``, :math:`o_k`, is interpreted as the NMR spectrometer
-frequency and  the ``reference_offset`, :math:`b_k`, as the reference
+frequency and  the ``reference_offset``, :math:`b_k`, as the reference
 frequency. Given the frequency coordinate, :math:`{X}`, the corresponding
 dimensionless-frequency ratio follows,
 
@@ -950,12 +985,12 @@ Examples
         ]
     )
 
-Attribute Summaries
--------------------
+Attribute Summaries of Method and related Objects
+-------------------------------------------------
 
 .. cssclass:: table-bordered table-striped centered
 .. _table_method:
-.. list-table:: The attributes of a Method, Method1D, and Method2D object
+.. list-table:: The attributes of a Method object
   :widths: 20 15 65
   :header-rows: 1
 
