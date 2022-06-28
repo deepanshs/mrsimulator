@@ -20,10 +20,10 @@ objects which are used to calculate frequency contributions.
 
     In solids, where no such isotropic motion exists, the situation is
     more problematic.  In solids that are dilute in NMR-active nuclei is often
-    possible to build a set of SpinSystem objects that can be used to accurately
-    model a spectrum.  In solids that are not dilute in NMR-active nuclei, there
+    possible to build a set of SpinSystem objects that can accurately model 
+    a spectrum.  In solids that are not dilute in NMR-active nuclei, there
     are still situations where one can build approximately accurate spin systems 
-    to model the spectrum. One such case is when the individual anisotropic spin 
+    models. One such case is when the individual anisotropic spin 
     interactions, such as the shielding (shift) anisotropy or the quadrupolar 
     couplings, dominant the spectrum, i.e., they are significantly larger than 
     any dipolar couplings. This can happen for spin 1/2 nuclei in static samples or 

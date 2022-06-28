@@ -369,7 +369,7 @@ Similarly, the symmetric triple quantum transition
 
     from mrsimulator.method import SpectralEvent
 
-    event = SpectralEvent(fraction=1,transition_query=[{"ch1':{"P":[-3],"D": [0]}}])
+    event = SpectralEvent(fraction=1,transition_query=[{"ch1":{"P":[-3],"D":[0]}}])
 
 Here again, we use use Python dictionaries for defining the attributes of both TransitionQuery and 
 SymmetryQuery objects.
@@ -379,8 +379,8 @@ transitions. Consider the case of the two satellite transitions closest to the
 central transition of a quadrupolar nucleus.  The :math:`\text{p}_I` and 
 :math:`\text{d}_I` values for these two transitions are
 
-- :math:`|-1/2\rangle\rightarrow|-3/2\rangle \,\,\,\,\,\,\,\,\left(\text{p}_I, \text{d}_I\right)=(-11,2)`
-- :math:`|-3/2\rangle\rightarrow|-5/2\rangle \,\,\,\,\,\,\,\,\left(\text{p}_I, \text{d}_I\right)=(-11,4)`
+- :math:`|-1/2\rangle\rightarrow|-3/2\rangle \,\,\,\,\,\text{is}\,\,\,\left(\text{p}_I, \text{d}_I\right)=(-1,2)`
+- :math:`|-3/2\rangle\rightarrow|-5/2\rangle \,\,\,\,\,\text{is}\,\,\,\left(\text{p}_I, \text{d}_I\right)=(-1,4)`
 
 And they can be selected using the code below.
 
@@ -521,7 +521,7 @@ is surprisingly simple and given in the code below.
 
 .. code-block:: python
 
-    event = SpectralEvent(fraction=1,transition_query={"ch1':{"P":[-1]}})
+    event = SpectralEvent(fraction=1,transition_query=[{"ch1":{"P":[-1]}}])
 
 To a TransitionQuery object, all Sites with the isotope associated with ``ch1``
 are "indistinguishable."  Recall that ``ch1`` is associated with the first 
@@ -579,7 +579,7 @@ The code below will select the six *two-spin double-quantum transitions* where
 
 .. code-block:: python
 
-    event = SpectralEvent(fraction=1,transition_query={"ch1':{"P":[-1,-1]}})
+    event = SpectralEvent(fraction=1,transition_query=[{"ch1":{"P":[-1,-1]}}])
 
 As before, when this generic TransitionQuery is combined with the three-site 
 SpinSystem object, the SymmetryQuery is expanded into an intermediate set of 
@@ -629,7 +629,7 @@ The code below will select these *three-spin single-quantum transitions*.
 
 .. code-block:: python
 
-    event = SpectralEvent(fraction=1,transition_query={"ch1':{"P":[-1,-1,+1]}})
+    event = SpectralEvent(fraction=1,transition_query=[{"ch1":{"P":[-1,-1,+1]}}])
 
 
 Again, combined with the three-site SpinSystem object, the SymmetryQuery is 
