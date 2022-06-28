@@ -18,10 +18,10 @@ An experimental NMR method involves a sequence of rf pulses, free evolution
 periods, and sample motion (most commonly magic-angle spinning in solids).
 The :ref:`method_api` object in **mrsimulator** models NMR pulse sequences that
 lead to a frequency-domain signal, i.e., a spectrum. The :ref:`method_api`
-object is designed to be versatile in its ability to model spectra from
-various multi-pulse NMR methods using concepts from the `symmetry pathway
-approach <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_ where a pulse
-sequence is understood in terms of a set of desired (and undesired) 
+object is designed to be versatile in its ability to model spectra from various
+multi-pulse NMR methods using concepts from the `symmetry pathway approach
+<https://doi.org/10.1016/j.pnmrs.2010.11.003>`_ where a pulse sequence is
+understood in terms of a set of desired (and undesired) 
 *transition pathways*. Each transition pathway is associated with a single
 resonance in a multi-dimensional NMR spectrum. The transition pathway signal
 encodes information about the spin system interactions in its amplitude and
@@ -38,24 +38,24 @@ particular transition pathway, :math:`{\hat{A} \rightarrow \hat
     :align: center
 
 Here, the first spectral dimension, i.e., the Fourier transform of the
-transition pathway signal as a function of :math:`t_1`, derives its *average 
-frequency*, :math:`\overline{\Omega}_1`, from a weighted average of the :math:`\hat{A}`, 
-:math:`\hat{B}`, and :math:`\hat{C}` transition frequencies. The second spectral
-dimension, i.e., the FT with respect to :math:`t_2`, derives its average frequency, 
-:math:`\overline{\Omega}_2`, from a weighted average of the :math:`\hat
-{E}`, and :math:`\hat{F}` transition frequencies. Much of the experimental
-design and implementation of an NMR method is in identifying the desired
-transition pathways and finding ways to acquire their signals while
-eliminating all undesired transition pathway signals. 
+transition pathway signal as a function of :math:`t_1`, derives its *average
+frequency*, :math:`\overline{\Omega}_1`, from a weighted average of
+the :math:`\hat{A}`, :math:`\hat{B}`, and :math:`\hat{C}` transition
+frequencies. The second spectral dimension, i.e., the FT with respect
+to :math:`t_2`, derives its average frequency, :math:`\overline{\Omega}_2`, 
+from a weighted average of the :math:`\hat{E}`, and :math:`\hat{F}` transition frequencies. Much of the experimental design and implementationof an NMR method 
+is in identifying the desired transition pathways and finding
+ways to acquire their signals while eliminating all undesired transition
+pathway signals. 
 
 While NMR measurements take place in the time domain, **mrsimulator** simulates
 the corresponding multi-dimensional spectra directly in the frequency domain.
-The :ref:`method_api` object in **mrsimulator** needs only
-a few details of the NMR pulse sequence to generate the spectrum.  It mimics
-the result of the pulse sequence given the desired transition pathways and
-their complex amplitudes and average frequencies in each spectroscopic dimension 
-of the dataset. To this end, a :ref:`method_api` object is organized according to 
-the UML diagram below.  
+The :ref:`method_api` object in **mrsimulator** needs only a few details of the
+NMR pulse sequence to generate the spectrum.  It mimics the result of the pulse
+sequence given the desired transition pathways and their complex amplitudes and
+average frequencies in each spectroscopic dimension of the dataset. To this
+end, a :ref:`method_api` object is organized according to the UML diagram
+below.  
 
 
 .. figure:: ../../_static/MethodUML.*
@@ -78,7 +78,7 @@ in the same order as the time evolution dimensions of the experimental NMR
 sequence. In each :ref:`spectral_dim_api` object, assigned to the attribute
 ``events``, is an ordered list of :ref:`event_api` objects, which are divided
 into three types: (1) :py:meth:`~mrsimulator.method.SpectralEvent`,
-(2) :py:meth:`~mrsimulator.method.ConstantDurationEvent`, and
+(2) :py:meth:`~mrsimulator.method.DelayEvent`, and
 (3) :py:meth:`~mrsimulator.method.MixingEvent`.  This ordered list
 of :ref:`event_api` objects is used to select the desired transition pathways
 and determine their average frequency and complex amplitude in the
@@ -86,10 +86,10 @@ and determine their average frequency and complex amplitude in the
 
 .. warning::
 
-  ConstantDurationEvent objects are not available in version 0.7 of **mrsimulator**.
+  DelayEvent objects are not available in version 0.7 of **mrsimulator**.
 
 :py:meth:`~mrsimulator.method.SpectralEvent` and 
-:py:meth:`~mrsimulator.method.ConstantDurationEvent` objects are associated 
+:py:meth:`~mrsimulator.method.DelayEvent` objects are associated 
 with excited states of the spin system, where selected transitions evolve 
 under the influence of specified Hamiltonian contributions. No coherence 
 transfer among transitions or populations occurs in a spectral or 
@@ -110,52 +110,52 @@ all contributions is generated for the event.
 Additionally, the user can change other measurement attributes during a spectral
 or constant duration event: ``rotor_frequency`` or ``rotor_angle``,
 ``magnetic_flux_density``.  If unspecified, these attributes default to the
-values of the identically named global attributes in the :ref:`method_api` object.
-Spectral events objects use the ``fraction`` attribute  to calculate the
-weighted average frequency for each selected transition pathway during the
+values of the identically named global attributes in the :ref:`method_api`
+object. Spectral events objects use the ``fraction`` attribute  to calculate
+the weighted average frequency for each selected transition pathway during the
 spectral dimension.
 
 Inside :py:meth:`~mrsimulator.method.SpectralEvent` and 
-:py:meth:`~mrsimulator.method.ConstantDurationEvent` objects, is a
-list of :py:meth:`~mrsimulator.method.query.TransitionQuery` objects (*vide infra*) 
-which determine which
-transitions are "alive" during the event.  :ref:`method_api` objects in
-**mrsimulator** are general purpose in the sense that they are designed for
-an arbitrary spin system.  That is, a method does not know, in advance, the
+:py:meth:`~mrsimulator.method.DelayEvent` objects, is a list
+of :py:meth:`~mrsimulator.method.query.TransitionQuery` objects (*vide infra*)
+which determine which transitions are "alive" during the
+event. :ref:`method_api` objects in
+**mrsimulator** are general purpose in the sense that they are designed for an
+arbitrary spin system.  That is, a method does not know, in advance, the
 energy eigenvalues and eigenstates of the spin system.  Thus, when designing
-a :ref:`method_api` object you cannot identify and select a transition through
-its initial and final eigenstate quantum numbers.  Instead, transition selection
-is done through :py:meth:`~mrsimulator.method.query.TransitionQuery` 
-objects during individual spectral or constant duration events.  During a simulation,
+a :ref:`method_api` object you cannot identify and select a transition
+through its initial and final eigenstate quantum numbers.  Instead,
+transition selection is done
+through :py:meth:`~mrsimulator.method.query.TransitionQuery` objects during
+individual spectral or constant duration events.  During a simulation,
 the :ref:`method_api` object uses its 
-:py:meth:`~mrsimulator.method.query.TransitionQuery` objects 
-to determine the selected transition pathways for a given :ref:`spin_sys_api` 
-object as identified by their initial and final eigenstate quantum numbers. 
-:py:meth:`~mrsimulator.method.query.TransitionQuery` 
-objects hold a list of :py:meth:`~mrsimulator.method.query.SymmetryQuery`
-objects which act on specific isotopes in the, as yet
-to be determined, spin system.  A list of specific isotopes upon which the 
-:py:meth:`~mrsimulator.method.query.SymmetryQuery` objects act are determined 
-by the ``channels`` attribute in :ref:`method_api`.  
+:py:meth:`~mrsimulator.method.query.TransitionQuery` objects to determine the
+selected transition pathways for a given :ref:`spin_sys_api` object as
+identified by their initial and final eigenstate quantum numbers. 
+:py:meth:`~mrsimulator.method.query.TransitionQuery` objects hold a list
+of :py:meth:`~mrsimulator.method.query.SymmetryQuery` objects which act on
+specific isotopes in the, as yet to be determined, spin system.  A list of
+specific isotopes upon which the 
+:py:meth:`~mrsimulator.method.query.SymmetryQuery` objects act are determined by
+the ``channels`` attribute in :ref:`method_api`.  
 
 Inside :py:meth:`~mrsimulator.method.MixingEvent` objects is a 
 :py:meth:`~mrsimulator.method.query.MixingQuery` object, which determines the
 coherence transfer amplitude between transitions. A 
 :py:meth:`~mrsimulator.method.query.MixingQuery` object holds a list of 
-:py:meth:`~mrsimulator.method.query.RotationalQuery` objects which act on 
-specific isotopes present in the spin system. As before, the list of isotopes upon 
-which the :py:meth:`~mrsimulator.method.query.RotationalQuery` objects act are 
-determined by the ``channels`` attribute in Method. 
+:py:meth:`~mrsimulator.method.query.RotationalQuery` objects which act on
+specific isotopes present in the spin system. As before, the list of isotopes
+upon which the :py:meth:`~mrsimulator.method.query.RotationalQuery` objects
+act are determined by the ``channels`` attribute in Method. 
 
-In this guide to designing custom Method objects, we focus first on the
-queries objects, i.e., SymmetryQuery and RotationalQuery, and how to use
-them to select the desired transition pathways for a custom method.
-Then we examine how transitions frequencies in the desired transition
-pathways can be selected from a list of frequency contributions using
-the ``freq_contrib`` attribute of a SpectralEvent of ConstantDuration object. 
-The ability to select 
-:ref:`frequency contributions<freq_contrib_api>` can often reduce the number 
-of events needed in the design of your custom Method object.
+In this guide to designing custom Method objects, we focus first on the queries
+objects, i.e., SymmetryQuery and RotationalQuery, and how to use them to select
+the desired transition pathways for a custom method. Then we examine how
+transitions frequencies in the desired transition pathways can be selected from
+a list of frequency contributions using the ``freq_contrib`` attribute of a
+SpectralEvent of ConstantDuration object. The ability to select 
+:ref:`frequency contributions<freq_contrib_api>` can often reduce the number of
+events needed in the design of your custom Method object.
 
 Symmetry Query
 --------------
@@ -214,17 +214,17 @@ spin systems upon which they will act.
 Selecting Single-Spin Transitions
 '''''''''''''''''''''''''''''''''
 
-One way you can select a subset of single-spin transitions, even if you don't know the
-spin quantum number :math:`I` and its associated energy eigenstate quantum numbers, is to request 
-all transitions whose single-spin transition symmetry function, :math:`\text{p}_I` symmetry 
-function is :math:`-1`, i.e.,
+One way you can select a subset of single-spin transitions, even if you don't
+know the spin quantum number :math:`I` and its associated energy eigenstate
+quantum numbers, is to request all transitions whose single-spin transition
+symmetry function, :math:`\text{p}_I` symmetry function is :math:`-1`, i.e.,
 
 .. math::
     \text{p}_I(m_f,m_i) = m_f - m_i = -1.
 
-The :math:`\text{p}_I` single-spin transition symmetry function is also known as the
-single-spin `coherence order of the transition <https://doi.org/10.1016/0022-2364
-(84)90142-2>`_.  
+The :math:`\text{p}_I` single-spin transition symmetry function is also known as
+the single-spin `coherence order of the transition
+<https://doi.org/10.1016/0022-2364(84)90142-2>`_.  
 
 .. note::
 
@@ -234,26 +234,25 @@ single-spin `coherence order of the transition <https://doi.org/10.1016/0022-236
     of each other, so the convention is to only present the :math:`{\text{p}_I = - 1}`` 
     transition signal in spectra.  
 
-By selecting only single-spin transitions with :math:`\text{p}_I = -1`, you get all
-the "observed" transitions from the 
-set of all possible transitions.  Similarly, you can use  :math:`\text{p}_I` 
-to select any subset of single-spin transitions, such as double-quantum 
-(:math:`\text{p}_I = \pm 2`) transitions, 
+By selecting only single-spin transitions with :math:`\text{p}_I = -1`, you get
+all the "observed" transitions from the set of all possible transitions.
+Similarly, you can use  :math:`\text{p}_I` to select any subset of single-spin
+transitions, such as double-quantum(:math:`\text{p}_I = \pm 2`) transitions,
 triple-quantum (:math:`\text{p}_I = \pm 3`) transitions, etc.
 
-Specifying :math:`\text{p}_I` alone is not enough to select
-an individual single-spin transition.  However, any individual single-spin 
-transition can be identified by a combination of :math:`\text{p}_I` and the 
-single-spin transition symmetry function :math:`\text{d}_I`, given by
+Specifying :math:`\text{p}_I` alone is not enough to select an individual
+single-spin transition.  However, any individual single-spin transition can be
+identified by a combination of :math:`\text{p}_I` and the single-spin
+transition symmetry function :math:`\text{d}_I`, given by
 
 .. math::
 
     \text{d}_I(m_i,m_j) =  ~m_j^2 - m_i^2.
 
-You can verify that this is the case from the values of :math:`\text{p}_I` and :math:`\text{d}_I` 
-for all single-spin transitions for :math:`I=1`, :math:`I=3/2` and :math:`I=5/2` 
-shown below.  Note that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2`
-nucleus.
+You can verify that this is the case from the values of :math:`\text
+{p}_I` and :math:`\text{d}_I` for all single-spin transitions
+for :math:`I=1`, :math:`I=3/2` and :math:`I=5/2` shown below.  Note
+that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
 
 
 .. figure:: ../../_static/SpinOneThreeHalves.*
@@ -306,7 +305,7 @@ nucleus.
 
     The :math:`\ell=0` function is dropped as it always evaluates to zero. For a
     single spin, :math:`I`, a complete set of functions are defined up to 
-    :math:`\ell = 2I`. As described in ":ref:`theory`", these functions functions 
+    :math:`\ell = 2I`. As described in ":ref:`theory`", these functions play an important 
     play an important role in evaluating the individual frequency contributions in
     given in :py:meth:`~mrsimulator.method.frequency_contrib.FrequencyEnum` to the
     overall transition frequency. They can also be used to design pulse sequences by
@@ -329,20 +328,19 @@ and TransitionQuery objects,
     event = SpectralEvent(fraction=1, transition_query=trans_query)
 
 
-In the example above, the SymmetryQuery instance is created and assigned to 
-the ``ch1`` attribute of a TransitionQuery, so that it acts on the first isotope 
-in the list assigned to the ``channels`` attribute  of the Method object.  This 
-TransitionQuery instance is then assigned to the ``transition_query`` of a 
-SpectralEvent which can be later added to an ordered list of Events in the 
+In the example above, the SymmetryQuery instance is created and assigned to the
+``ch1`` attribute of a TransitionQuery, so that it acts on the first isotope in
+the list assigned to the ``channels`` attribute  of the Method object.  This
+TransitionQuery instance is then assigned to the ``transition_query`` of a
+SpectralEvent which can be later added to an ordered list of Events in the
 ``events`` attribute of a SpectralDimension object.
 
 A notable case, that :math:`\text{d}_I = 0` for all symmetric 
-:math:`(m \rightarrow - m)` transitions, is particularly useful for quadrupolar 
-nuclei, as these transitions are unaffected by the first-order quadrupolar 
+:math:`(m \rightarrow - m)` transitions, is particularly useful for quadrupolar
+nuclei, as these transitions are unaffected by the first-order quadrupolar
 coupling frequency contribution.  Thus, 
-:math:`\ketbra{-\tfrac{1}{2}}{\tfrac{1}{2}}`, the so-called "central 
-transition" of a quadrupolar nucleus, is selected 
-with the SymmetryQuery object below
+:math:`\ketbra{-\tfrac{1}{2}}{\tfrac{1}{2}}`, the so-called "central transition"
+of a quadrupolar nucleus, is selected with the SymmetryQuery object below
 
 .. code-block:: python
 
@@ -356,9 +354,10 @@ with the SymmetryQuery object below
 Here, we assign the ``ch1`` attribute to a Python dictionary instead of the 
 SymmetryQuery object.  The dictionary uses the SymmetryQuery attribute names as
 key strings.  Note that whenever the ``D`` attribute is omitted, the
-SymmetryQuery allows transitions with any value of :math:`d_I`.  The same is
-true whenever the ``P`` attribute is omitted, except when it omitted from a
-SymmetryQuery assigned to ``ch1``, in which case it defaults to :math:`p_I = -1`.
+SymmetryQuery allows transitions with any value of :math:`d_I`.  On the other hand,
+whenever the ``P`` attribute is omitted it takes on a default value of 
+:math:`p_I = 0`, except when it omitted from a SymmetryQuery assigned 
+to ``ch1``, in which case it defaults to :math:`p_I = -1`.
 
 Similarly, the symmetric triple quantum transition 
 :math:`\ketbra{-\tfrac{3}{2}}{\tfrac{3}{2}}` is selected using 
@@ -372,87 +371,16 @@ Similarly, the symmetric triple quantum transition
 Here again, we use use Python dictionaries for defining the attributes of both TransitionQuery and 
 SymmetryQuery objects.
 
+
+*What is the SymmetryQuery for selecting the central and inner satellite transitions of a
+half-integer spin?*
+
+
+
 Selecting Multi-Spin Transitions
 '''''''''''''''''''''''''''''''''
 When there is more than one site in a spin system, things get a little more 
-complicated. Consider the case of three weakly coupled proton sites.  Here, the
-selection rule for observable transitions is
-
-.. math::
-    \left.
-    \begin{array}{ll}
-    \text{p}_A = - 1 \mbox{  while  }  \text{p}_M = 0, \text{p}_X = 0 \\
-    \text{p}_M = - 1 \mbox{  while  }  \text{p}_A = 0, \text{p}_X = 0 \\
-    \text{p}_X = - 1 \mbox{  while  }  \text{p}_A = 0, \text{p}_M = 0 \\
-    \end{array}
-    \right\}
-    \text{ Detection Selection Rules.}
-
-In the energy level diagrams below, that corresponds to the :math:`\hat{A}_1`, 
-:math:`\hat{A}_2`, :math:`\hat{M}_1`, 
-:math:`\hat{M}_2`, :math:`\hat{X}_1`, and :math:`\hat{X}_2` transitions.
-
-.. figure:: ../../_static/ThreeCoupledSpinsEnergy.*
-    :width: 700
-    :alt: figure
-    :align: center
-
-Keep in mind that the Method object does not know, in advance, the 
-number of sites in a spin system.   Next, consider the generic TransitionQuery 
-in the code below
-
-.. code-block:: python
-
-    event = SpectralEvent(fraction=1,transition_query={"ch1':{"P":[-1]}})
-
-Before this TransitionQuery can be used to select transitions in a given spin system, 
-it will first need to be expanded in spin-system-specifc symmetry query.
-
-.. list-table:: 
-   :widths: 25 25 25 25
-   :header-rows: 1
-
-   * - Transition
-     - :math:`\text{p}_A`
-     - :math:`\text{p}_M`
-     - :math:`\text{p}_X`
-   * - :math:`\hat{A}_1, \hat{A}_2`
-     - -1
-     - 0
-     - 0
-   * - :math:`\hat{M}_1, \hat{M}_2`
-     - 0
-     - -1
-     - 0
-   * - :math:`\hat{X}_1, \hat{X}_2`
-     - 0
-     - 0
-     - -1
-
-The attributes of SymmetryQuery, ``P`` and ``D``, hold a list of single-spin transition symmetry function values.
-
-If you wanted to select the two-spin double-quantum transition, labeled :math:`D` in the 
-diagram above, you could create the SymmetryQuery below.
-
-.. code-block:: python
-
-    two_spin_double_quantum_query = SymmetryQuery(P=[-1,-1])
-
-If you tried to select the two-spin zero-quantum transition using the SymmetryQuery
-below,
-
-.. code-block:: python
-
-    two_spin_zero_q_sym_query = SymmetryQuery(P=[1,-1])
-    two_spin_zero_q_trans_query = TransitionQuery(ch1=two_spin_zero_q_sym_query)
-
- 
-you would select both transitions :math:`Z^*` and :math:`Z`.  Why will :math:`Z` get 
-selected?  That is because every SymmetryQuery gets permutated according to the number
-of coupled nuclei, that is, P=[1,-1] becomes both P=[1,-1] and P=[-1,1].
-
-Let's look at an example of creating a SymmetryQuery object that will be associated
-with the ``ch1`` attribute of a TransitionQuery object in a SpectralEvent.
+complicated. 
 
 
 .. note::
@@ -532,6 +460,205 @@ with the ``ch1`` attribute of a TransitionQuery object in a SpectralEvent.
     \vdots & \vdots &  & \vdots
     \end{array}
 
+  These symmetry functions also play an important role in evaluating the 
+  individual frequency contributions in given in FrequencyEnum() to the 
+  overall transition frequency, and are also useful in the design of
+  experimental pulse sequences.
+
+
+Consider the case of three weakly coupled proton sites.  Here, the
+selection rule for observable transitions is
+
+.. math::
+    \left.
+    \begin{array}{ll}
+    \text{p}_A = - 1 \mbox{  while  }  \text{p}_M = 0, \text{p}_X = 0 \\
+    \text{p}_M = - 1 \mbox{  while  }  \text{p}_A = 0, \text{p}_X = 0 \\
+    \text{p}_X = - 1 \mbox{  while  }  \text{p}_A = 0, \text{p}_M = 0 \\
+    \end{array}
+    \right\}
+    \text{ Detection Selection Rules.}
+
+In the energy level diagram below, these corresponds to the *single-spin 
+single-quantum transitions* labeled :math:`\hat{A}_1`, 
+:math:`\hat{A}_2`, :math:`\hat{M}_1`, 
+:math:`\hat{M}_2`, :math:`\hat{X}_1`, and :math:`\hat{X}_2`.
+
+.. figure:: ../../_static/ThreeCoupledSpinsEnergy.*
+    :width: 700
+    :alt: figure
+    :align: center
+
+Keep in mind that the Method object does not know, in advance, the 
+number of sites in a spin system.   
+
+The TransitionQuery for selecting these 12 *single-spin single-quantum* transitions
+is surprisingly simple and given in the code below.
+
+.. code-block:: python
+
+    event = SpectralEvent(fraction=1,transition_query={"ch1':{"P":[-1]}})
+
+When this generic TransitionQuery is combined with multi-site SpinSystem object, it must 
+first expand its SymmetryQuery into an intermediate set of spin-system-specifc 
+symmetry queries, as illustrated in the table below.
+
+.. list-table:: 
+   :widths: 25 25 25 25
+   :header-rows: 1
+
+   * - Transitions
+     - :math:`\text{p}_A`
+     - :math:`\text{p}_M`
+     - :math:`\text{p}_X`
+   * - :math:`\hat{A}_1, \hat{A}_2`
+     - -1
+     - 0
+     - 0
+   * - :math:`\hat{M}_1, \hat{M}_2`
+     - 0
+     - -1
+     - 0
+   * - :math:`\hat{X}_1, \hat{X}_2`
+     - 0
+     - 0
+     - -1
+
+These intermediate spin-system-specifc symmetry queries can then be used to 
+identify the subset of transitions in the spin system by the quantum numbers 
+of their initial and final Zeeman eigenstates.
+
+To further illustrate how the SymmetryQuery object works in a multi-site spin
+system, let's examine a few more examples in the case of three weakly coupled 
+proton sites.   
+
+In this spin system there are six *two-spin double-quantum transitions* where 
+:math:`\text{p}_{AMX} = \text{p}_{A} + \text{p}_{M} + \text{p}_{X} = -2` and
+another six *two-spin double-quantum transitions* where 
+:math:`\text{p}_{AMX} = \text{p}_{A} + \text{p}_{M} + \text{p}_{X} = +2`.  The
+:math:`\text{p}_{AMX} = -2` transitions are illustrated in the energy-level diagram 
+below.
+
+.. figure:: ../../_static/ThreeCoupledSpinsDoubleQuantum.*
+    :width: 700
+    :alt: figure
+    :align: center
+
+
+The code below will select the six two-spin double-quantum transitions where 
+:math:`\text{p}_{AMX} = -2`.
+
+.. code-block:: python
+
+    event = SpectralEvent(fraction=1,transition_query={"ch1':{"P":[-1,-1]}})
+
+As before, when this generic TransitionQuery is combined with the three-site 
+SpinSystem object, the SymmetryQuery is expanded into an intermediate set of 
+spin-system-specifc symmetry queries illustrated in the table below.
+
+.. list-table:: 
+   :widths: 25 25 25 25
+   :header-rows: 1
+
+   * - Transitions
+     - :math:`\text{p}_A`
+     - :math:`\text{p}_M`
+     - :math:`\text{p}_X`
+   * - :math:`\hat{D}_{1,AM}, \hat{D}_{2,AM}`
+     - -1
+     - -1
+     - 0
+   * - :math:`\hat{D}_{1,MX}, \hat{D}_{2,MX}`
+     - 0
+     - -1
+     - -1
+   * - :math:`\hat{D}_{1,AX}, \hat{D}_{2,AX}`
+     - -1
+     - 0
+     - -1
+
+Again, these intermediate spin-system-specifc symmetry queries are then used to 
+identify the subset of transitions in the spin system by the quantum numbers 
+of their initial and final Zeeman eigenstates.
+
+Another interesting example in this spin system with three weakly coupled 
+proton sites are the three *three-spin single-quantum transitions* having 
+:math:`\text{p}_{AMX} = \text{p}_{A} + \text{p}_{M} + \text{p}_{X} = -1` and the
+three three-spin single-quantum transitions having 
+:math:`\text{p}_{AMX} = \text{p}_{A} + \text{p}_{M} + \text{p}_{X} = +1`
+
+The three *three-spin single-quantum transitions* having 
+:math:`\text{p}_{AMX} = -1` are illustrated in the energy level diagram below.
+
+.. figure:: ../../_static/ThreeCoupledSpinsSingleQuantum.*
+    :width: 700
+    :alt: figure
+    :align: center
+
+The code below will select these *three-spin single-quantum transitions*.
+
+.. code-block:: python
+
+    event = SpectralEvent(fraction=1,transition_query={"ch1':{"P":[-1,-1,+1]}})
+
+
+Again, combined with the three-site SpinSystem object, the SymmetryQuery is 
+expanded into the set of spin-system-specifc symmetry queries illustrated 
+in the table below.
+
+.. list-table:: 
+   :widths: 25 25 25 25
+   :header-rows: 1
+
+   * - Transitions
+     - :math:`\text{p}_A`
+     - :math:`\text{p}_M`
+     - :math:`\text{p}_X`
+   * - :math:`\hat{S}_{1,AMX}`
+     - -1
+     - +1
+     - -1
+   * - :math:`\hat{S}_{2,AMX}`
+     - -1
+     - -1
+     - +1
+   * - :math:`\hat{S}_{3,AMX}`
+     - +1
+     - -1
+     - -1
+
+As you can surmise from these examples, the attributes of 
+SymmetryQuery, ``P`` and ``D``, hold a list of single-spin transition 
+symmetry function values.  The length of the list is the number of spins that
+are involved in the transition to be selected.
+
+*How does ``D`` fit into the multi-site SymmetryQuery story?*
+
+
+
+If you wanted to select the two-spin double-quantum transition, labeled :math:`D` in the 
+diagram above, you could create the SymmetryQuery below.
+
+.. code-block:: python
+
+    two_spin_double_quantum_query = SymmetryQuery(P=[-1,-1])
+
+If you tried to select the two-spin zero-quantum transition using the SymmetryQuery
+below,
+
+.. code-block:: python
+
+    two_spin_zero_q_sym_query = SymmetryQuery(P=[1,-1])
+    two_spin_zero_q_trans_query = TransitionQuery(ch1=two_spin_zero_q_sym_query)
+
+ 
+you would select both transitions :math:`Z^*` and :math:`Z`.  Why will :math:`Z` get 
+selected?  That is because every SymmetryQuery gets permutated according to the number
+of coupled nuclei, that is, P=[1,-1] becomes both P=[1,-1] and P=[-1,1].
+
+Let's look at an example of creating a SymmetryQuery object that will be associated
+with the ``ch1`` attribute of a TransitionQuery object in a SpectralEvent.
+
 
 
 Rotational Query
@@ -546,14 +673,14 @@ associated with the coherence transfer from
 .. math::
     :label: transition
 
-    \ketbra{I, m_f}{I, m_i} \stackrel{\theta_\phi}{\longrightarrow} a(\theta,\phi) \ketbra{I,m_f'}{I,m_i'}
+    \ketbra{I, m_f}{I, m_i} \stackrel{\theta_\phi}{\longrightarrow} a(I,\theta,\phi) \ketbra{I,m_f'}{I,m_i'}
 
 is 
 
 .. math::
     :label: rotation
 
-     a(\theta,\phi) = d_{m_f',m_f}^{(I)}(\theta)d_{m_i',m_i}^{(I)}(\theta)e^
+     a(I,\theta,\phi) = d_{m_f',m_f}^{(I)}(\theta)d_{m_i',m_i}^{(I)}(\theta)e^
     {-i\Delta p\phi}(i)^{\Delta p}
 
 where :math:`\Delta p = p' - p`.  From this result, we obtain a useful
