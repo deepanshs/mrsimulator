@@ -37,7 +37,7 @@ classes and modules.
     from mrsimulator import Site, SpinSystem, Simulator
     from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
     from mrsimulator.spin_system.tensors import SymmetricTensor
-    from mrsimulator import signal_processing as sp
+    from mrsimulator import signal_processor as sp
     import matplotlib.pyplot as plt
     from pprint import pprint
 
