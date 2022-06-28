@@ -79,9 +79,9 @@ Welcome to the Mrsimulator documentation
 
 **About**
 
-``mrsimulator`` is an open-source python package for fast simulation and analysis of
-multi-dimensional solid-state magnetic resonance (NMR) spectra of crystalline and
-amorphous materials.
+**mrsimulator** is an open-source Python package for fast computation/analysis of nuclear
+magnetic resonance (NMR) spectra in fluid and solid phases.
+
 
 ----
 
@@ -89,7 +89,7 @@ amorphous materials.
 
     .. raw:: html
 
-        <h3>See our example gallery</h3>
+        <h3>See our example galleries</h3>
         <div class='sim-gallery'>
           <div>
             <a href="examples/index.html">Gallery
@@ -111,13 +111,13 @@ amorphous materials.
 **Why use mrsimulator?**
 
 - It is open-source and free.
-- It is a fast and versatile multi-dimensional solid-state NMR spectra simulator including, MAS
+- It is a fast and versatile multi-dimensional solid-state NMR spectra simulator, including MAS
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
 - It includes simulation of weakly coupled nuclei experiencing J and dipolar couplings.
-- It is fully documented with a stable and simple API and is easily incorporated into your
-  python scripts and web apps.
-- It is compatible with modern python packages, such as scikit-learn, Keras, etc.
+- It is fully documented with a stable and simple API and is easily incorporated into
+  Python scripts and web apps.
+- It is compatible with modern Python packages, such as Scikit-learn, Keras, etc.
 - Packages using mrsimulator -
 
   - `mrinversion <https://mrinversion.readthedocs.io/en/stable/>`_
@@ -129,7 +129,7 @@ amorphous materials.
 .. skip: next
 
 .. plot::
-    :caption: An example simulating solid-state NMR spectrums of static and MAS experiments
+    :caption: Simulation of static and MAS solid-state NMR spectra
 
     from mrsimulator import Simulator, SpinSystem, Site
     from mrsimulator.method.lib import BlochDecaySpectrum
@@ -149,15 +149,21 @@ amorphous materials.
 
     # Plot the spectra
     fig, ax = plt.subplots(1, 2, figsize=(6, 3), subplot_kw={"projection": "csdm"})
-    ax[0].plot(sim.methods[0].simulation.real, color="black", linewidth=1)
+    ax[0].plot(sim.methods[0].simulation)
     ax[0].set_title("Static")
-    ax[1].plot(sim.methods[1].simulation.real, color="black", linewidth=1)
+    ax[1].plot(sim.methods[1].simulation)
     ax[1].set_title("MAS")
     plt.tight_layout()
     plt.show()
 
 
 ----
+
+.. note::
+
+  Throughout the web version of this documentation, you can copy code blocks into your clipboard by
+  hovering over the top right corner of each gray code block and clicking the copy-to-clipboard
+  icon. This is useful for copying code examples into your Python scripts and Jupyter notebooks.
 
 
 **Features**
@@ -172,15 +178,15 @@ The ``mrsimulator`` package offers the following
     - at arbitrary rotor angles
     - at arbitrary spinning frequency
 
-- A library of **NMR methods**,
+- A library of pre-built **NMR methods**,
     - 1D Bloch decay spectrum
     - 1D Bloch decay central transition spectrum
-    - 2D Multi-quantum Variable Angle Spinning (MQ-VAS)
-    - 2D Satellite-transition Variable Angle Spinning (ST-VAS)
-    - 2D Dynamic Angle Spinning (DAS)
+    - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS)
+    - 2D Satellite-Transition Variable Angle Spinning (ST-VAS)
     - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
-    - 2D Magic Angle Flipping (MAF)
-    - Custom user-defined 1D and 2D methods (Method)
+    - 2D Magic-Angle Flipping (MAF)
+    - 2D Dynamic-Angle Spinning (DAS)
+    - Custom user-defined methods (Method)
 
 - **Models** for tensor parameter distribution in amorphous materials.
     - Czjzek
@@ -207,7 +213,8 @@ Introduction
 
     installation/installation
     introduction/getting_started
-    introduction/ethanol_example
+    introduction/isotopomers_example
+    introduction/fitting_example
 
 User Guide
 ----------
@@ -219,11 +226,10 @@ User Guide
     user_guide/spin_system/spin_system
     user_guide/spin_system_distributions/spin_system_distributions
     user_guide/methods_library/methods_library
-    user_guide/method/writing_custom_methods
-    user_guide/method/advanced_method_usage
+    user_guide/method/method_advanced_user
     user_guide/method/query_objects
     user_guide/simulator/simulator
-    user_guide/signal_processing/signal_processing
+    user_guide/signal_processor/signal_processor
     user_guide/io/mrsim_IO
 
 Examples
@@ -235,7 +241,7 @@ Examples
 
     examples/index
     fitting/index
-    signal_processing/index
+    signal_processor/index
 
 Theory
 ------
@@ -255,7 +261,7 @@ API and references
     :caption: API and references
 
     api_py/py-simulator
-    api_py/py-signal-processing
+    api_py/py-signal-processor
     api_py/py-model
     api_py/py-fitting
     api_c/c_api
@@ -316,7 +322,7 @@ If you use mrsimulator in your publication, please consider citing the following
 
 - Deepansh J. Srivastava, Matthew Giammar, Maxwell C. Venetos, Shyam Dwaraknath, Philip J. Grandinetti, & Alexis McCarthy. (2021). mrsimulator: v0.6.1. Zenodo. https://doi.org/10.5281/zenodo.5559730
 
-- Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific data. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
+- Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific dataset. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
 
 *Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package.*
 
