@@ -37,6 +37,24 @@ objects which are used to calculate frequency contributions.
     In all such cases, any effects of residual dipolar couplings on the
     spectrum are usually modeled as an ad-hoc Gaussian lineshape convolution.
 
+A :ref:`method_api` object is organized according to the UML diagram
+below.  
+
+.. figure:: ../../_static/SpinSystemUML.*
+    :width: 800
+    :alt: figure
+    :align: center
+
+.. note::
+
+  In UML (Unified Modeling Language) diagrams, each class is represented with 
+  a box that contains two compartments.  The top compartment contains the name 
+  of the class, and the bottom compartment contains the attributes of the class.
+  Default attribute values are shown as assignments. A composition 
+  is depicted as a binary association decorated with a filled black diamond. 
+  Inheritance is shown as a line with a hollow triangle as an arrowhead.
+
+
 .. _site_documentation:
 
 Site
