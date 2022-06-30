@@ -91,7 +91,6 @@ generic Method object.
                     SpectralEvent(transition_query=[{"ch1": {"P": [-1]}}])
                 ]
             )
-
         ]
     )
 
@@ -111,9 +110,7 @@ Next we set up and run the simulator object with our spin system and method.
 .. plot::
     :context: close-figs
 
-    sim = Simulator()
-    sim.spin_systems = spin_systems
-    sim.methods = [pulseacquire]
+    sim = Simulator(spin_systems=spin_systems, methods=[pulseacquire])
     sim.config.number_of_sidebands = 256
     sim.run()
 
@@ -136,13 +133,7 @@ to the simulated spectrum and plot the processed dataset.
 
     processed_data = processor.apply_operations(dataset=sim.methods[0].simulation.real)
 
-    fig, ax = plt.subplots(
-        nrows=1,
-        ncols=2,
-        subplot_kw={"projection": "csdm"},
-        figsize=(8, 4)
-    )
-
+    fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "csdm"}, figsize=(8.5, 3))
     ax[0].plot(processed_data.real, color="black", linewidth=1)
     ax[0].invert_xaxis()
     ax[1].plot(processed_data.real, color="black", linewidth=1)
@@ -198,7 +189,6 @@ We now replace the old ``pulseacquire`` method in the simulator object with our 
 
     plt.figure(figsize=(6, 4))
     ax = plt.subplot(projection="csdm")
-    # ax.plot(sim.methods[0].simulation, color="blue", linewidth=1)
     ax.plot(processed_data.real, color="black", linewidth=1)
     ax.invert_xaxis()
     plt.tight_layout()
@@ -221,7 +211,7 @@ Now, let’s construct a method to simulate a 3Q-MAS spectrum.
                 count=128,
                 spectral_width=6e3,  # in Hz
                 reference_offset=-9e3,  # in Hz
-                # label="Isotropic dimension",
+                label="3Q resonances",
                 events=[
                     SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])
                 ]
@@ -230,7 +220,7 @@ Now, let’s construct a method to simulate a 3Q-MAS spectrum.
                 count=256,
                 spectral_width=6e3,  # in Hz
                 reference_offset=-5e3,  # in Hz
-                # label="MAS dimension",
+                label="1Q resonances",
                 events=[
                     SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])
                 ]
@@ -529,13 +519,7 @@ Now we setup and run the simulation then process and plot the data
     hahn_data = processor.apply_operations(dataset=sim.methods[0].simulation)
     solid_data = processor.apply_operations(dataset=sim.methods[1].simulation)
 
-    fig, ax = plt.subplots(
-        nrows=1,
-        ncols=2,
-        subplot_kw={"projection": "csdm"},
-        figsize=[8, 4]
-    )
-
+    fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "csdm"}, figsize=[8.5, 3])
     ax[0].plot(hahn_data.real, color="black", linewidth=1)
     ax[0].invert_xaxis()
     ax[1].plot(solid_data.real, color="black", linewidth=1)
