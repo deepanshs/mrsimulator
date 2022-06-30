@@ -397,8 +397,9 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
     refocus through the transition pathways.
 
 
+
 Single-Spin Transition Queries
-''''''''''''''''''''''''''''''
+------------------------------
 
 Based on the review above, we now know that the spin :math:`I=1`, the 
 transition :math:`\ketbra{-1}{0}` can be selected with 
@@ -574,7 +575,7 @@ custom Method shown below.
     sites = [site1, site2, site3]
     spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
-    sim.methods = [mqmas]
+    sim = Simulator(spin_systems=spin_systems, methods=[mqmas])
     sim.run()
 
     # Apply Gaussian line broadening along both dimensions
@@ -635,13 +636,13 @@ These two transitions can be selected using the code below.
 
 
 Multi-Spin Transition Queries
-'''''''''''''''''''''''''''''
+-----------------------------
 
 When there is more than one site in a spin system, things get a little more 
 complicated. 
 
 Single-Spin Single-Quantum Transitions
-""""""""""""""""""""""""""""""""""""""
+''''''''''''''''''''''''''''''''''''''
 
 Consider the case of three weakly coupled proton sites.  Here, the
 selection rule for observable transitions is
@@ -789,7 +790,7 @@ works in a multi-site spin system, let's examine a few more examples in
 the case of three weakly coupled proton sites.   
 
 Two-Spin Double-Quantum Transitions
-"""""""""""""""""""""""""""""""""""
+'''''''''''''''''''''''''''''''''''
 
 In this spin system there are six *two-spin double-quantum transitions* where 
 :math:`\text{p}_{AMX} = \text{p}_{A} + \text{p}_{M} + \text{p}_{X} = -2` and
@@ -895,7 +896,7 @@ subsets from each spin-system-specifc symmetry query.
 
 
 Three-Spin Single-Quantum Transitions
-"""""""""""""""""""""""""""""""""""""
+'''''''''''''''''''''''''''''''''''''
 
 Another interesting example in this spin system with three weakly coupled 
 proton sites are the three *three-spin single-quantum transitions* having 
@@ -999,7 +1000,7 @@ symmetry function values, and the length of the list is the desired number
 of spins that are involved in the transition.
 
 Heteronuclear multiple-spin transitions
-"""""""""""""""""""""""""""""""""""""""
+'''''''''''''''''''''''''''''''''''''''
 
 How does ``D`` fit into the multi-site SymmetryQuery story? Consider the 
 case of two coupled hydrogen, except we replace one of the :math:`^1H` with
@@ -1448,8 +1449,8 @@ Examples
         ]
     )
 
-Attribute Summaries of Method and related Objects
--------------------------------------------------
+Method and related Objects Attribute Summaries
+----------------------------------------------
 
 .. cssclass:: table-bordered table-striped centered
 .. _table_method:
