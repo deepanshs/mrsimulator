@@ -8,10 +8,10 @@ The power of mrsimulator lies in the method object. Most time-domain NMR simulat
 software requires users to walk through all aspects of a pulse sequence, but mrsimulator
 preforms calculations in the frequency-domain and only needs descriptions of the spectral
 dimensions being simulated. For a more in-depth discussion on how a method defined
-spectral dimensions, see the :ref:`method_documentation`.
+spectral dimensions, see the :ref:`Method documentation page <method_documentation>`.
 
 On this page, we will illustrate how to write custom methods by simulating progressively
-more complicated NMR experiments on :math:`RbNO_3`. First lets import the necessary
+more complicated NMR experiments on :math:`\text{RbNO}_3`. First lets import the necessary
 classes and modules.
 
 .. The Method object is where the versatility of mrsimulator becomes clear.
@@ -28,7 +28,7 @@ classes and modules.
 .. a list of events, in which you can adjust parameters, like rotor speed
 .. or angle, select transitions based on their :math:`p` or :math:`d`
 .. symmetries, etc. To illustrate this, let’s look at a few different
-.. common NMR experiments on :math:`RbNO_3`, starting with a simple 1D
+.. common NMR experiments on :math:`\text{RbNO}_3`, starting with a simple 1D
 .. pulse-acquire experiment. We begin by making all necessary imports.
 
 .. plot::
@@ -41,14 +41,14 @@ classes and modules.
     import matplotlib.pyplot as plt
     from pprint import pprint
 
-Now we build the :math:`RbNO_3` spin system.
+Now we build the :math:`\text{RbNO}_3` spin system.
 
 .. plot::
     :context: close-figs
 
     site1 = Site(
         isotope="87Rb",
-        isotropic_chemical_shift=-27.4,  # ppm,
+        isotropic_chemical_shift=-27.4,  # ppm
         quadrupolar=SymmetricTensor(Cq=1.68e6, eta=0.2)  # Cq in Hz
     )
     site2 = Site(
@@ -97,7 +97,8 @@ generic Method object.
 The *channels* key holds the nucleus being probed, here rubidium-87. The
 *magnetic_flux_density* key holds the external magnetic field strength in T, and
 *rotor_frequency* holds the rotor frequency in Hz. The *spectral_dimensions* key
-holds a list of SpectralDimension objects defining the spectral grid of the method.
+holds a list of ::py:meth:`~mrsimulator.method.SpectralDimension`
+objects defining the spectral grid of the method.
 each SpectralDimension object contains a *count* key, defining the number of points
 in that dimension, a *spectral_width* key, containing the spectral width in Hz,
 and a *reference_offset* key, containing the reference offset of the dimension in Hz.
@@ -121,7 +122,7 @@ to the simulated spectrum and plot the processed dataset.
 
 .. plot::
     :context: close-figs
-    :caption: A simulated one-pulse acquire spectrum of :math:`{87}^\text{Rb}` with all sidebands shown (left) and zoomed in plot of the central transition (right).
+    :caption: A simulated one-pulse acquire spectrum of :math:`^{87}\text{Rb}` with all sidebands shown (left) and zoomed in plot of the central transition (right).
 
     processor = sp.SignalProcessor(
         operations=[
@@ -179,10 +180,10 @@ We now replace the old ``pulseacquire`` method in the simulator object with our 
 
 .. plot::
     :context: close-figs
-    :caption: A simulated central-transition selective spectrum of :math:`{87}^\text{Rb}`. The large number of sidebands from the previous simulation have been suppressed.
+    :caption: A simulated central-transition selective spectrum of :math:`^{87}\text{Rb}`. The large number of sidebands from the previous simulation have been suppressed.
 
     sim.methods = [ct_pulseacquire]
-    sim.config.number_of_sidebands = 70  # Reset number of sidebands for efficiency
+    sim.config.number_of_sidebands = 70  # Reduce number of sidebands for efficiency
     sim.run()
 
     processed_data = processor.apply_operations(dataset=sim.methods[0].simulation.real)
@@ -235,14 +236,14 @@ transition query of :math:`p=-3` and :math:`d=0`. In the MAS dimension,
 we are selecting the central transition with a transition query of
 :math:`p=-1` and :math:`d=0`.
 
-Again, we add this method to the simulator object, run the simulation, and
+Again, we replace the previous method, ``ct_pulseaquire``, with ``mqmas``, run the simulation, and
 plot the data.
 
 .. skip: next
 
 .. plot::
     :context: close-figs
-    :caption: An unsheared 3Q-MAS spectrum of :math:`{87}^\text{Rb}`
+    :caption: An unsheared 3Q-MAS spectrum of :math:`^{87}\text{Rb}`
 
     sim.methods = [mqmas]
     sim.run()
@@ -305,18 +306,19 @@ Let’s re-make our 3Q-MAS method with this affine matrix.
         affine_matrix=[[9/16, 7/16], [0, 1]]
     )
 
-.. note:
+.. note::
+
     The *affine_matrix* in mrsimulator is given in row-major as a n by n array
     where n is the number of spectral dimensions
 
-Again, we now add the method to the simulator object, run the
+Again, we replace the method in the simulator object with ``sheared_mqmas``, run the
 simulation, and plot the data.
 
 .. skip: next
 
 .. plot::
     :context: close-figs
-    :caption: A 3Q-MAS spectrum of :math:`{87}^\text{Rb}` sheared such that the dimensions are purely MAS and isotropic.
+    :caption: A 3Q-MAS spectrum of :math:`^{87}\text{Rb}` sheared such that the dimensions are purely MAS and isotropic.
 
     sim.methods = [sheared_mqmas]
     sim.run()
@@ -337,7 +339,7 @@ simulation, and plot the data.
 For convenience sake, the one-pulse acquire (BlochDecaySpectrum), one-pulse acquire central
 transition selective (BlochDecayCTSpectrum), and Three-Quantum MAS (ThreeQ_VAS) methods
 along with other common methods can be imported from the ``mrsimulator.method.lib`` package.
-For more details, see the :ref:`methods_library_documentation`.
+For more details, see the :ref:`methods_library_documentation` page.
 
 .. For the convenience methods mentioned here and more, please see our
 .. methods library. For a more in-depth description of creating methods,
@@ -387,8 +389,8 @@ pathways observed by the Hahn Echo experiment.
     Energy level transitions and symmetry pathways for the Hahn Echo experiment.
 
 Although a normal experiment would start with a :math:`\frac{\pi}{2}` rotation to transfer the
-equilibrium magnetization to a desired symmetry, we can eliminate the first rotation in
-mrsimulator by defining the first symmetry as :math:`\mathbb{p} = +1`. Our transition symmetry
+equilibrium magnetization to a desired symmetry, mrsimulator eliminates the need for this first
+rotation by defining the first symmetry as :math:`\mathbb{p} = +1`. Our transition symmetry
 pathway now becomes
 
 .. math::
@@ -396,7 +398,7 @@ pathway now becomes
     \mathbb{p}: +1 \xrightarrow[]{\pi} -1
 
 Below is a method object which simulated the Hahn Echo experiment. The MixingEvent defines the
-:math:`\pi` rotation between the two SpectralEvents. We also plot the transition pathways for
+:math:`\pi` rotation between the two SpectralEvents.
 
 .. plot::
     :context: close-figs
