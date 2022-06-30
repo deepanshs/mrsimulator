@@ -9,7 +9,7 @@ While **mrsimulator**'s organization of the :ref:`spin_sys_api` object and its
 composite objects, :ref:`site_api`, and :ref:`coupling_api` are easily
 understood by anyone familiar with the underlying physical concepts, the
 organization of the :ref:`method_api` object in **mrsimulator** and its related
-composite objects, however, requires a more detailed explanation of its design.
+composite objects requires a more detailed explanation of its design.
 
 Overview
 --------
@@ -514,8 +514,9 @@ selection rule for observable transitions is
 
 These corresponds to the *single-spin 
 single-quantum transitions* labeled :math:`\hat{A}_1`, 
-:math:`\hat{A}_2`, :math:`\hat{M}_1`, 
-:math:`\hat{M}_2`, :math:`\hat{X}_1`, and :math:`\hat{X}_2` 
+:math:`\hat{A}_2`, :math:`\hat{A}_3`, :math:`\hat{A}_4`, :math:`\hat{M}_1`, 
+:math:`\hat{M}_2`, :math:`\hat{M}_3`,:math:`\hat{M}_4`, :math:`\hat{X}_1`,
+math:`\hat{X}_2`, math:`\hat{X}_3`, and :math:`\hat{X}_4` 
 in the energy level diagram below.
 
 .. figure:: ../../_static/ThreeCoupledSpinsEnergy.*
@@ -578,10 +579,16 @@ is given in the code below.
     plt.figure(figsize=(10, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
     ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation))
+    ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout()
     plt.grid()
     plt.show()
 
+The assignment of transitions in the spectrum above are, from left to right, are 
+:math:`\hat{X}_4, (\hat{X}_3, \hat{X}_2)`, and :math:`\hat{X}_1` centered at 
+4.5 ppm, :math:`\hat{M}_4, (\hat{M}_3, \hat{M}_2)`, and :math:`\hat{M}_1` 
+centered at 2.5 ppm, and :math:`\hat{A}_4, (\hat{A}_3, \hat{A}_2)`, and 
+:math:`\hat{A}_1` centered at 0.5 ppm.
 
 To understand how the TransitionQuery works in this case, it is important to 
 realize that all Sites having same isotope are  "indistinguishable" to a 
@@ -600,15 +607,15 @@ symmetry queries, illustrated by each row in the table below.
      - :math:`\text{p}_A`
      - :math:`\text{p}_M`
      - :math:`\text{p}_X`
-   * - :math:`\hat{A}_1, \hat{A}_2`
+   * - :math:`\hat{A}_1, \hat{A}_2, \hat{A}_3, \hat{A}_4`
      - –1
      - 0
      - 0
-   * - :math:`\hat{M}_1, \hat{M}_2`
+   * - :math:`\hat{M}_1, \hat{M}_2, \hat{M}_3, \hat{M}_4`
      - 0
      - –1
      - 0
-   * - :math:`\hat{X}_1, \hat{X}_2`
+   * - :math:`\hat{X}_1, \hat{X}_2, \hat{X}_3, \hat{X}_4`
      - 0
      - 0
      - –1
@@ -617,6 +624,26 @@ The intermediate spin-system-specifc symmetry query in each row is used to
 select a subset of transitions from the full set of transitions.  The
 final set of selected transitions is obtained from the union of transition 
 subsets from each spin-system-specifc symmetry query.
+
+The :py:meth:`~mrsimulator.Method.get_transition_pathways` function will allow
+you to inspect the transitions selected by the TransitionQuery objects in the
+SpectralEvent in terms of the initial and final Zeeman eigenstate quantum
+numbers.
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
+
+    from pprint import pprint
+    pprint(method.get_transition_pathways(system))
+
+
+.. figure:: ../../_static/method_user_doc_pprint_output1.*
+    :width: 450
+    :alt: figure
+    :align: center
+
 
 To further illustrate how the TransitionQuery and SymmetryQuery objects 
 works in a multi-site spin system, let's examine a few more examples in 
@@ -671,9 +698,15 @@ The code below will select the six *two-spin double-quantum transitions* where
     plt.figure(figsize=(10, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
     ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation))
+    ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout()
     plt.grid()
     plt.show()
+
+The assignment of transitions in the spectrum above are, from left to right, are 
+:math:`\hat{D}_{2,MX}`, :math:`\hat{D}_{1,MX}`, :math:`\hat{D}_{2,AX}`, 
+:math:`\hat{D}_{1,AX}`, :math:`\hat{D}_{2,AM}`, and
+:math:`\hat{D}_{1,AM}`, 
 
 
 As before, when this generic TransitionQuery is combined with the three-site 
@@ -705,6 +738,22 @@ Again, the intermediate spin-system-specifc symmetry query in each row is used t
 select a subset of transitions from the full set of transitions.  The
 final set of selected transitions is obtained from the union of transition 
 subsets from each spin-system-specifc symmetry query.
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
+
+    from pprint import pprint
+    pprint(method.get_transition_pathways(system))
+
+
+.. figure:: ../../_static/method_user_doc_pprint_output2.*
+    :width: 450
+    :alt: figure
+    :align: center
+
+
 
 Three-Spin Single-Quantum Transitions
 """""""""""""""""""""""""""""""""""""
@@ -755,10 +804,13 @@ The code below will select these *three-spin single-quantum transitions*.
     plt.figure(figsize=(10, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
     ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation))
+    ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout()
     plt.grid()
     plt.show()
 
+The assignment of transitions in the spectrum above are, from left to right, are 
+:math:`\hat{S}_{3,AMX}`, :math:`\hat{S}_{2,AMX}`, and :math:`\hat{S}_{1,AMX}`
 
 Again, combined with the three-site SpinSystem object, the SymmetryQuery is 
 expanded into the set of spin-system-specifc symmetry queries illustrated 
@@ -785,15 +837,40 @@ in the table below.
      - –1
      - –1
 
-As you can surmise from these examples, the attributes of 
+
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
+
+    from pprint import pprint
+    pprint(method.get_transition_pathways(system))
+
+
+.. figure:: ../../_static/method_user_doc_pprint_output3.*
+    :width: 450
+    :alt: figure
+    :align: center
+
+
+As you can surmise from the examples, the attributes of 
 SymmetryQuery, ``P`` and ``D``, hold a list of single-spin transition 
 symmetry function values, and the length of the list is the desired number 
 of spins that are involved in the transition.
 
-*How does ``D`` fit into the multi-site SymmetryQuery story?*
+Heteronuclear multiple-spin transitions
+"""""""""""""""""""""""""""""""""""""""
 
-Consider the case of two coupled hydrogen, except we replace the :math:`^1H`
-with  :math:`^2H`.
+How does ``D`` fit into the multi-site SymmetryQuery story? Consider the 
+case of two coupled hydrogen, except we replace one of the :math:`^1H` with
+:math:`^2H`.
+
+.. figure:: ../../_static/Spin1SpinHalfCouple.*
+    :width: 500
+    :alt: figure
+    :align: center
+
 
 .. skip: next
 
@@ -805,45 +882,79 @@ with  :math:`^2H`.
     from mrsimulator import signal_processor as sp
 
     site_A = Site(isotope="2H", isotropic_chemical_shift=0.5)
-    site_X = Site(isotope="2H", isotropic_chemical_shift=4.5)
+    site_X = Site(isotope="1H", isotropic_chemical_shift=4.5)
     sites = [site_A,site_X]
     coupling_AX = Coupling(site_index=[0, 1], isotropic_j=12)
     couplings = [coupling_AX]
     system = SpinSystem(sites=sites, couplings=couplings)
 
-    method = Method(
-        channels=["2H"],
+    proton_method = Method(
+        channels=["1H","2H"],
         magnetic_flux_density=9.4,  # in T
         spectral_dimensions=[
             SpectralDimension(
                 count=16000,
-                spectral_width=700,  # in Hz
-                reference_offset=150,  # in Hz
-                label="$^{2}$H frequency",
+                spectral_width=200,  # in Hz
+                reference_offset=1800,  # in Hz
+                label="$^{1}$H frequency",
                 events=[
                   {
                   "fraction":1,
-                  "transition_query":[{"ch1":{"P":[-1]}}]
+                  "transition_query":[
+                    {
+                    "ch1":{"P":[-1]},
+                    "ch2":{"P":[0]}
+                    }
+                    ]
                   }
                 ]
             )
         ]
     )
 
-    sim = Simulator(spin_systems=[system],methods=[method])
+    deuterium_method = Method(
+        channels=["1H","2H"],
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
+            SpectralDimension(
+                count=16000,
+                spectral_width=200,  # in Hz
+                reference_offset=0,  # in Hz
+                label="$^{2}$H frequency",
+                events=[
+                  {
+                  "fraction":1,
+                  "transition_query":[
+                    {
+                    "ch2":{"P":[-1],"D":[1]}
+                    }
+                    ]
+                  }
+                ]
+            )
+        ]
+    )
+
+    sim = Simulator(spin_systems=[system],methods=[proton_method,deuterium_method])
     sim.run()
 
-    plt.figure(figsize=(10, 3))  # set the figure size
-    ax = plt.subplot(projection="csdm")
-    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation))
+    fig, ax = plt.subplots(1, 2, figsize=(10, 3), subplot_kw={"projection": "csdm"})
+    ax[0].plot(processor.apply_operations(dataset=sim.methods[0].simulation))
+    ax[0].set_title("Proton Spectrum")
+    ax[0].invert_xaxis()  # reverse x-axis
+    ax[0].grid()
+    ax[1].plot(processor.apply_operations(dataset=sim.methods[1].simulation))
+    ax[1].set_title("Deuterium Spectrum")
+    ax[1].invert_xaxis()  # reverse x-axis
+    ax[1].grid()
     plt.tight_layout()
-    plt.grid()
     plt.show()
 
 
+The assignment of transitions in the spectrum above are, from left to right, are 
+:math:`\hat{X}_3`, :math:`\hat{X}_2`, :math:`\hat{X}_1` centered at 
+4.5 ppm, and :math:`\hat{A}_2`, and :math:`\hat{A}_1` centered at 0.5 ppm.
 
-Heteronuclear multiple-spin transitions
-"""""""""""""""""""""""""""""""""""""""
 
 
 Mixing Events
