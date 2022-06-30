@@ -369,15 +369,14 @@ Hahn Echo
 
 The Hahn Echo experiment observes the transition frequencies from the following
 :math:`\mathbb{p}` transition symmetry pathways (a.k.a coherence transfer pathways).
-For more discussion on transition symmetry pathways, see the ((pathway documentation page??))
 
 .. math::
 
     \mathbb{p}: 0 \xrightarrow[]{\frac{\pi}{2}} +1 \xrightarrow[]{\pi} -1
 
-(??) This pathway selectively refocuses the :math:`\mathbb{p}` frequency contributions into
+This pathway selectively refocuses the :math:`\mathbb{p}` frequency contributions into
 an echo while leaving the :math:`\mathbb{d}` contributions free to evolve unaffected by the
-:math:`\pi` pulse. (??)
+:math:`\pi` pulse.
 Below is a diagram representing the different energy level transitions and corresponding
 pathways observed by the Hahn Echo experiment.
 
@@ -441,7 +440,11 @@ Below is a method object which simulated the Hahn Echo experiment. The MixingEve
 Solid Echo
 """"""""""
 
-Any discussion such as transition pathways goes here
+The Solid Echo experiment selectively refocuses the the :math:`\mathbb{d}` frequency contributions
+into an echo using a :math:`\frac{\pi}{2}` rotation while keeping the :math:`\mathbb{p}` pathway
+constant.
+Below is a diagram representing the different energy level transitions and corresponding
+pathways observed by the Solid Echo experiment.
 
 .. figure:: ../../_static/deuteriumSolidEcho.*
     :alt: Transition symmetry pathways for the Hahn Echo experiment
@@ -452,13 +455,12 @@ Any discussion such as transition pathways goes here
 
 .. math::
 
-    \mathbb{p}: 0 \xrightarrow[]{\frac{\pi}{2}} +1 \xrightarrow[]{\frac{\pi}{2}} -1
-
-simplifies to
-
-.. math::
-
     \mathbb{p}: -1 \xrightarrow[]{\frac{\pi}{2}} -1
+
+    \mathbb{d}: \pm 1 \xrightarrow[]{\frac{\pi}{2}} \mp 1
+
+Below we construct the Solid Echo method and print out the transition pathways for the
+deuterium spin system.
 
 .. plot::
     :context: close-figs
@@ -496,7 +498,12 @@ simplifies to
     [|-1.0⟩⟨0.0| ⟶ |0.0⟩⟨1.0|, weight=(0.5+0j)
      |0.0⟩⟨1.0| ⟶ |-1.0⟩⟨0.0|, weight=(0.5+0j)]
 
+.. note::
 
+    Although we explicitly defined the :math:`D` values for each transition query in the
+    above method, mrsimulator will expand an undefined :math:`D` to all allowed values.
+    The transition queries in the Solid Echo method could have just as easily been defined
+    as ``{"ch1": {"P": [-1]}}``.
 
 Now we setup and run the simulation then process and plot the data
 
