@@ -32,7 +32,7 @@ classes and modules.
 .. pulse-acquire experiment. We begin by making all necessary imports.
 
 .. plot::
-    :context: close-figs
+    :context: reset
 
     from mrsimulator import Site, SpinSystem, Simulator
     from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
@@ -96,7 +96,7 @@ generic Method object.
     )
 
 The *channels* key holds the nucleus being probed, here rubidium-87. The
-*magnetic_flux_density* key holds the external magnetic field stength in T, and
+*magnetic_flux_density* key holds the external magnetic field strength in T, and
 *rotor_frequency* holds the rotor frequency in Hz. The *spectral_dimensions* key
 holds a list of SpectralDimension objects defining the spectral grid of the method.
 each SpectralDimension object contains a *count* key, defining the number of points
@@ -110,7 +110,6 @@ Next we set up and run the simulator object with our spin system and method.
 
 .. plot::
     :context: close-figs
-    :caption: A simulated one-pulse acquire spectrum of :math:`{87}^\text{Rb}` with all sidebands shown (left) and zoomed in plot of the central transition (right).
 
     sim = Simulator()
     sim.spin_systems = spin_systems
@@ -125,6 +124,7 @@ to the simulated spectrum and plot the processed dataset.
 
 .. plot::
     :context: close-figs
+    :caption: A simulated one-pulse acquire spectrum of :math:`{87}^\text{Rb}` with all sidebands shown (left) and zoomed in plot of the central transition (right).
 
     processor = sp.SignalProcessor(
         operations=[
@@ -134,7 +134,7 @@ to the simulated spectrum and plot the processed dataset.
         ]
     )
 
-    processed_data = processor.apply_operations(data=sim.methods[0].simulation.real)
+    processed_data = processor.apply_operations(dataset=sim.methods[0].simulation.real)
 
     fig, ax = plt.subplots(
         nrows=1,
@@ -154,7 +154,7 @@ to the simulated spectrum and plot the processed dataset.
 Selecting the Central Transition
 --------------------------------
 
-Now, let’s say we wanted to supress the satellites. To do this, we need
+Now, let’s say we wanted to suppress the satellites. To do this, we need
 to simulate a central-transition-selective 1D experiment. We now add a restriction to
 :math:`D`, defined as :math:`D = m_f^2 -m_i^2`, in our transition query. For the
 central-transition selective method, we specify :math:`D=0`.
@@ -182,7 +182,7 @@ We now replace the old ``pulseacquire`` method in the simulator object with our 
 ``ct_pulseacquire`` method and re-simulate the spectrum.
 
 .. We simply add this new method to the simulator object, run the
-.. simulation, apply our proceessing, and plot the data.
+.. simulation, apply our processing, and plot the data.
 
 .. skip: next
 
@@ -194,7 +194,7 @@ We now replace the old ``pulseacquire`` method in the simulator object with our 
     sim.config.number_of_sidebands = 70  # Reset number of sidebands for efficiency
     sim.run()
 
-    processed_data = processor.apply_operations(data=sim.methods[0].simulation.real)
+    processed_data = processor.apply_operations(dataset=sim.methods[0].simulation.real)
 
     plt.figure(figsize=(6, 4))
     ax = plt.subplot(projection="csdm")
@@ -266,7 +266,7 @@ plot the data.
             sp.FFT(dim_index=(0, 1)),
         ]
     )
-    data = processor.apply_operations(data=sim.methods[0].simulation)
+    data = processor.apply_operations(dataset=sim.methods[0].simulation)
 
     plt.figure(figsize=(6, 4))
     ax = plt.subplot(projection="csdm")
@@ -331,7 +331,7 @@ simulation, and plot the data.
     sim.methods = [sheared_mqmas]
     sim.run()
 
-    data = processor.apply_operations(data=sim.methods[0].simulation)
+    data = processor.apply_operations(dataset=sim.methods[0].simulation)
 
     plt.figure(figsize=(6, 4))
     ax = plt.subplot(projection="csdm")
@@ -512,7 +512,7 @@ Now we setup and run the simulation then process and plot the data
 
 .. plot::
     :context: close-figs
-    :caption: Simulated Hanh Echo spectrum (left) and Solid Echo spectrum (right) for the same :math:`2^\text{H}` spin system.
+    :caption: Simulated Hahn Echo spectrum (left) and Solid Echo spectrum (right) for the same :math:`2^\text{H}` spin system.
 
     sim = Simulator()
     sim.spin_systems = [spin_system]
@@ -526,8 +526,8 @@ Now we setup and run the simulation then process and plot the data
             sp.FFT(),
         ]
     )
-    hahn_data = processor.apply_operations(data=sim.methods[0].simulation)
-    solid_data = processor.apply_operations(data=sim.methods[1].simulation)
+    hahn_data = processor.apply_operations(dataset=sim.methods[0].simulation)
+    solid_data = processor.apply_operations(dataset=sim.methods[1].simulation)
 
     fig, ax = plt.subplots(
         nrows=1,

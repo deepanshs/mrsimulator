@@ -354,7 +354,7 @@ SignalProcessor.
 
     # Post Simulation Processing
     # --------------------------
-    relative_intensity_factor = exp_spectrum.max() / sim.methods[0].simulation.max()
+    relative_intensity_factor = exp_spectrum.max() / sim.methods[0].simulation.real.max()
     processor = sp.SignalProcessor(operations=[
             sp.IFFT(),
             sp.apodization.Gaussian(FWHM="50 Hz"),
