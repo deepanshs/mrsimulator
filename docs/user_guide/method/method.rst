@@ -598,18 +598,77 @@ custom Method shown below.
     plt.tight_layout()
     plt.show()
 
-Similarly, the symmetric triple quantum transition 
-:math:`\ketbra{-\tfrac{3}{2}}{\tfrac{3}{2}}` is selected using 
 
-.. code-block:: python
+.. warning::
+  This custom Method, as well as the built-in Multi-Quantum VAS methods, 
+  assumes uniform excitation and mixing of the multiple-quantum transition.
+  In an experimental MQ-MAS measurement both excitation and mixing efficiencies
+  are dependent on the ratio of the quadrupolar coupling constant to the
+  rf field strength.  Therefore, the relative integrated intensities of this
+  simulation may not agree with experiment.
 
-    from mrsimulator.method import SpectralEvent
 
-    event = SpectralEvent(fraction=1,
-      transition_query=[{"ch1":{"P":[-3],"D":[0]}}])
+For 3Q-MAS experiments, however, the spectrum is often sheared and scaled 
+to make the vertical dimension the purely isotropic dimension. This can 
+be accomplished with an affine matrix added to the method. Let’s re-make 
+our 3Q-MAS method with this affine matrix.
 
-Here again, we use use Python dictionaries for defining the attributes of 
-both TransitionQuery and SymmetryQuery objects.
+.. skip: next
+
+.. plot::
+    :context: close-figs
+
+    sheared_mqmas = Method(
+        channels=["87Rb"],
+        magnetic_flux_density=9.4,
+        rotor_frequency=10000,
+        spectral_dimensions=[
+            SpectralDimension(
+                count=128,
+                spectral_width=6e3,  # in Hz
+                reference_offset=-9e3,  # in Hz
+                label="Isotropic dimension",
+                events=[
+                    SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])
+                ]
+            ),
+            SpectralDimension(
+                count=256,
+                spectral_width=6e3,  # in Hz
+                reference_offset=-5e3,  # in Hz
+                label="MAS dimension",
+                events=[
+                    SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])
+                ]
+            )
+        ],
+        affine_matrix=[[9/16, 7/16], [0, 1]]
+    )
+
+    sim = Simulator(spin_systems=spin_systems, methods=[sheared_mqmas])
+    sim.run()
+
+    # Apply Gaussian line broadening along both dimensions
+    processor = sp.SignalProcessor(
+        operations=[
+            sp.IFFT(dim_index=(0, 1)),
+            sp.apodization.Gaussian(FWHM="0.08 kHz", dim_index=0),
+            sp.apodization.Gaussian(FWHM="0.22 kHz", dim_index=1),
+            sp.FFT(dim_index=(0, 1)),
+        ]
+    )
+    data = processor.apply_operations(dataset=sim.methods[0].simulation)
+
+    plt.figure(figsize=(6, 4))
+    ax = plt.subplot(projection="csdm")
+    cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
+    plt.colorbar(cb)
+    ax.invert_xaxis()
+    ax.invert_yaxis()
+    plt.tight_layout()
+    plt.show()
+
+
 
 You may have noticed that the ``transition_queries`` attribute of SpectralEvent 
 holds a list of TransitionQuery objects.   Each TransitionQuery in the list 
@@ -634,6 +693,8 @@ These two transitions can be selected using the code below.
         ]
     )
 
+
+*Add Hahn vs Solid Echo here* 
 
 Multi-Spin Transition Queries
 -----------------------------
