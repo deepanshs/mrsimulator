@@ -529,13 +529,16 @@ number of sites in a spin system.
 The TransitionQuery for selecting these 12 *single-spin single-quantum* transitions
 is given in the code below.
 
+.. skip: next
+
 .. plot::
     :context: close-figs
 
     from mrsimulator import Site, Coupling, SpinSystem, Simulator
     from mrsimulator import Method, SpectralDimension
     from mrsimulator import signal_processor as sp
-
+    import matplotlib.pyplot as plt
+    
     site_A = Site(isotope="1H", isotropic_chemical_shift=0.5)
     site_M = Site(isotope="1H", isotropic_chemical_shift=2.5)
     site_X = Site(isotope="1H", isotropic_chemical_shift=4.5)
@@ -638,6 +641,7 @@ below.
 The code below will select the six *two-spin double-quantum transitions* where 
 :math:`\text{p}_{AMX} = -2`.
 
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -721,6 +725,7 @@ The three *three-spin single-quantum transitions* having
 
 The code below will select these *three-spin single-quantum transitions*.
 
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -790,6 +795,8 @@ of spins that are involved in the transition.
 Consider the case of two coupled hydrogen, except we replace the :math:`^1H`
 with  :math:`^2H`.
 
+.. skip: next
+
 .. plot::
     :context: close-figs
 
@@ -823,7 +830,7 @@ with  :math:`^2H`.
         ]
     )
 
-    sim = Simulator(spin_systems = [system],methods=[method])
+    sim = Simulator(spin_systems=[system],methods=[method])
     sim.run()
 
     plt.figure(figsize=(10, 3))  # set the figure size
@@ -846,6 +853,8 @@ Default Mixing between Events
 '''''''''''''''''''''''''''''
 
 .. code-block:: python
+
+    from mrsimulator.method import MixingEvent
 
     MixingEvent(query="TotalMixing"),
 
@@ -896,9 +905,8 @@ rotations in a :py:meth:`~mrsimulator.method.query.MixingQuery` object as a
 
     import numpy as np
     from mrsimulator.method.query import RotationalQuery
-
-    rot_query = RotationalQuery(angle = np.pi/2, phase = 0)
-    rot_mixing = MixingEvent(query=rot_query)
+    rot_query = RotationalQuery(angle=np.pi/2, phase=0)
+    rot_mixing = MixingEvent(query={"ch1": rot_query})
 
 It is through :py:meth:`~mrsimulator.method.query.MixingQuery` and 
 :py:meth:`~mrsimulator.method.query.TransitionQuery` 
