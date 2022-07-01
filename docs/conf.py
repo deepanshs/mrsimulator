@@ -450,6 +450,10 @@ latex_elements = {
         \newunicodechar{Δ}{$\Delta$}
         \newunicodechar{⭐}{$\star$}
 
+        \newcommand{\bra}[1]{\mbox{$\left \langle #1 \right|$}}
+        \newcommand{\ket}[1]{\mbox{$\left |#1 \right \rangle $}}
+        \newcommand{\braket}[2]{\mbox{$\left \langle #1 |#2 \right \rangle $}}
+        \newcommand{\ketbra}[2]{\mbox{$\left | #1 \right \rangle \left \langle #2 \right |$}}
 
         %%% reduce spaces for Table of contents, figures and tables
         %%% it is used "\addtocontents{toc}{\vskip -1.2cm}" etc. in the document

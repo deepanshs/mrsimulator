@@ -12,15 +12,14 @@ organization of the :ref:`method_api` object in **mrsimulator** and its related
 composite objects requires a more detailed explanation of its design.  This
 section assumes that you are already familar with topics covered in the
 introduction sections :ref:`getting_started`, 
-:ref:`introduction_isotopomers_example`, and :ref:`fitting_example`
+:ref:`introduction_isotopomers_example`, and :ref:`fitting_example`.
 
 Overview
 --------
 
 An experimental NMR method involves a sequence of rf pulses, free evolution
 periods, and sample motion. The :ref:`method_api` object in **mrsimulator** 
-models NMR pulse sequences that lead to a frequency-domain signal, i.e., a 
-spectrum. The :ref:`method_api`
+models the spectrum from an NMR pulse sequences. The :ref:`method_api`
 object is designed to be versatile in its ability to model spectra from various
 multi-pulse NMR methods using concepts from the `symmetry pathway approach
 <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_ where a pulse sequence is
@@ -46,7 +45,8 @@ frequency*, :math:`\overline{\Omega}_1`, from a weighted average of
 the :math:`\hat{A}`, :math:`\hat{B}`, and :math:`\hat{C}` transition
 frequencies. The second spectral dimension, i.e., the FT with respect
 to :math:`t_2`, derives its average frequency, :math:`\overline{\Omega}_2`, 
-from a weighted average of the :math:`\hat{E}`, and :math:`\hat{F}` transition frequencies. Much of the experimental design and implementationof an NMR method 
+from a weighted average of the :math:`\hat{E}`, and :math:`\hat{F}` transition 
+frequencies. Much of the experimental design and implementationof an NMR method 
 is in identifying the desired transition pathways and finding
 ways to acquire their signals while eliminating all undesired transition
 pathway signals. 
@@ -220,8 +220,8 @@ However, those indexes depend on the spin system and
 how the spins and their eigenstates have been assigned to those indexes.
 Therefore, we can not use such another approach for selecting transitions.
 
-Selecting Single-Spin Transitions
-'''''''''''''''''''''''''''''''''
+Spin Transition Symmetry Functions
+''''''''''''''''''''''''''''''''''
 
 One way you can select a subset of single-spin transitions, even if you don't
 know the spin quantum number :math:`I` and its associated energy eigenstate
@@ -1715,8 +1715,8 @@ Examples
         ]
     )
 
-Method and related Objects Attribute Summaries
-----------------------------------------------
+Attribute Summaries
+-------------------
 
 .. cssclass:: table-bordered table-striped centered
 .. _table_method:

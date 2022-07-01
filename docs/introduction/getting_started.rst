@@ -226,8 +226,8 @@ back into the frequency domain.
     processed_simulation = processor.apply_operations(dataset=sim.methods[0].simulation)
 
 
-Visualization with PyPlot
--------------------------
+PyPlot
+------
 
 You can use Matplotlib's `PyPlot module
 <https://matplotlib.org/stable/tutorials/introductory/pyplot.html>`__ to plot your
