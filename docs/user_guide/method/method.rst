@@ -410,7 +410,7 @@ and TransitionQuery objects,
 .. skip: next
 
 .. plot::
-    :context: close-figs
+    :context: reset
 
     from mrsimulator.method.query import SymmetryQuery, TransitionQuery
     from mrsimulator.method import SpectralEvent
@@ -697,8 +697,189 @@ These two transitions can be selected using the code below.
     )
 
 
-*Add Hahn vs Solid Echo here* 
 
+We have seen how a Method object can select between different coherences by using
+SpectralDimension and SpectralEvents. By adding a MixingEvent, we can selectively simulate
+frequencies from specific transition pathways. Below we construct a deuterium spin system
+and two Method objects to simulate a Hahn and Solid Echo experiment.
+
+Hahn Echo
+"""""""""
+
+The Hahn Echo experiment observes the transition frequencies from the following
+:math:`\mathbb{p}` transition symmetry pathways (a.k.a coherence transfer pathways).
+
+.. math::
+
+    \mathbb{p}: 0 \xrightarrow[]{\frac{\pi}{2}} +1 \xrightarrow[]{\pi} -1
+
+This pathway selectively refocuses the :math:`\mathbb{p}` frequency contributions into
+an echo while leaving the :math:`\mathbb{d}` contributions free to evolve unaffected by the
+:math:`\pi` pulse.
+Below is a diagram representing the different energy level transitions and corresponding
+pathways observed by the Hahn Echo experiment.
+
+.. figure:: ../../_static/deuteriumHahnEcho.*
+    :alt: Transition symmetry pathways for the Hahn Echo experiment
+    :align: center
+    :width: 50%
+
+    Energy level transitions and symmetry pathways for the Hahn Echo experiment.
+
+Although a normal experiment would start with a :math:`\frac{\pi}{2}` rotation to transfer the
+equilibrium magnetization to a desired symmetry, mrsimulator eliminates the need for this first
+rotation by defining the first symmetry as :math:`\mathbb{p} = +1`. Our transition symmetry
+pathway now becomes
+
+.. math::
+
+    \mathbb{p}: +1 \xrightarrow[]{\pi} -1
+
+Below is a method object which simulated the Hahn Echo experiment. The MixingEvent defines the
+:math:`\pi` rotation between the two SpectralEvents.
+
+.. plot::
+    :context: close-figs
+
+    from mrsimulator.method import MixingEvent
+    from pprint import pprint
+
+    hahn_echo = Method(
+        channels=["2H"],
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
+            SpectralDimension(
+                count=512,
+                spectral_width=2e4,  # in Hz
+                events=[
+                    SpectralEvent(fraction=0.5, transition_query=[
+                        {"ch1": {"P": [1], "D": [1]}},
+                        {"ch1": {"P": [1], "D": [-1]}},
+                    ]),
+                    MixingEvent(query={"ch1": {"angle": 3.141592, "phase": 0}}),
+                    SpectralEvent(fraction=0.5, transition_query=[
+                        {"ch1": {"P": [-1], "D": [1]}},
+                        {"ch1": {"P": [-1], "D": [-1]}},
+                    ])
+                ]
+            )
+        ]
+    )
+
+    spin_system = SpinSystem(sites=[deuterium])
+    pprint(hahn_echo.get_transition_pathways(spin_system))
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    [|1.0⟩⟨0.0| ⟶ |-1.0⟩⟨0.0|, weight=(1+0j)
+     |0.0⟩⟨-1.0| ⟶ |0.0⟩⟨1.0|, weight=(1+0j)]
+
+
+
+Solid Echo
+""""""""""
+
+The Solid Echo experiment selectively refocuses the the :math:`\mathbb{d}` frequency contributions
+into an echo using a :math:`\frac{\pi}{2}` rotation while keeping the :math:`\mathbb{p}` pathway
+constant.
+Below is a diagram representing the different energy level transitions and corresponding
+pathways observed by the Solid Echo experiment.
+
+.. figure:: ../../_static/deuteriumSolidEcho.*
+    :alt: Transition symmetry pathways for the Hahn Echo experiment
+    :align: center
+    :width: 50%
+
+    Energy level transitions and symmetry pathways for the Solid Echo experiment.
+
+.. math::
+
+    \mathbb{p}: -1 \xrightarrow[]{\frac{\pi}{2}} -1
+
+    \mathbb{d}: \pm 1 \xrightarrow[]{\frac{\pi}{2}} \mp 1
+
+Below we construct the Solid Echo method and print out the transition pathways for the
+deuterium spin system.
+
+.. plot::
+    :context: close-figs
+
+    solid_echo = Method(
+        channels=["2H"],
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
+            SpectralDimension(
+                count=512,
+                spectral_width=2e4,  # in Hz
+                events=[
+                    SpectralEvent(fraction=0.5, transition_query=[
+                        {"ch1": {"P": [-1], "D": [1]}},
+                        {"ch1": {"P": [-1], "D": [-1]}},
+                    ]),
+                    MixingEvent(query={"ch1": {"angle": 3.141592 / 2, "phase": 0}}),
+                    SpectralEvent(fraction=0.5, transition_query=[
+                        {"ch1": {"P": [-1], "D": [1]}},
+                        {"ch1": {"P": [-1], "D": [-1]}},
+                    ]),
+                ]
+            )
+        ]
+    )
+
+    pprint(solid_echo.get_transition_pathways(spin_system))
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    [|-1.0⟩⟨0.0| ⟶ |0.0⟩⟨1.0|, weight=(0.5+0j)
+     |0.0⟩⟨1.0| ⟶ |-1.0⟩⟨0.0|, weight=(0.5+0j)]
+
+.. note::
+
+    Although we explicitly defined the :math:`D` values for each transition query in the
+    above method, mrsimulator will expand an undefined :math:`D` to all allowed values.
+    The transition queries in the Solid Echo method could have just as easily been defined
+    as ``{"ch1": {"P": [-1]}}``.
+
+Now we setup and run the simulation then process and plot the data
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: Simulated Hahn Echo spectrum (left) and Solid Echo spectrum (right) for the same :math:`2^\text{H}` spin system.
+
+    sim = Simulator()
+    sim.spin_systems = [spin_system]
+    sim.methods = [hahn_echo, solid_echo]
+    sim.run()
+
+    processor = sp.SignalProcessor(
+        operations=[
+            sp.IFFT(),
+            sp.apodization.Gaussian(FWHM="100 Hz"),
+            sp.FFT(),
+        ]
+    )
+    hahn_data = processor.apply_operations(dataset=sim.methods[0].simulation)
+    solid_data = processor.apply_operations(dataset=sim.methods[1].simulation)
+
+    fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "csdm"}, figsize=[8.5, 3])
+    ax[0].plot(hahn_data.real, color="black", linewidth=1)
+    ax[0].invert_xaxis()
+    ax[1].plot(solid_data.real, color="black", linewidth=1)
+    ax[1].invert_xaxis()
+    plt.tight_layout()
+    plt.show()
+
+    
 Multi-Spin Transition Queries
 -----------------------------
 
