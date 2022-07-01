@@ -407,8 +407,6 @@ transition :math:`\ketbra{-1}{0}` can be selected with
 this transition is selected during a SpectralEvent using the SymmetryQuery 
 and TransitionQuery objects, 
 
-.. skip: next
-
 .. plot::
     :context: reset
 
@@ -426,8 +424,6 @@ TransitionQuery instance is then added to a list assigned to the
 ``transition_queries`` attribute of a SpectralEvent which can be added 
 to an ordered list of Events in the ``events`` attribute of a SpectralDimension 
 object, as shown in the code below.
-
-.. skip: next
 
 .. plot::
     :context: close-figs
@@ -489,6 +485,11 @@ object, as shown in the code below.
     processor = sp.SignalProcessor(
         operations=[sp.IFFT(),sp.apodization.Gaussian(FWHM="100 Hz"),sp.FFT()]
     )
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
 
     fig, ax = plt.subplots(1, 2, figsize=(10, 3.5), subplot_kw={"projection": "csdm"})
     ax[0].plot(processor.apply_operations(dataset=sim.methods[0].simulation))
