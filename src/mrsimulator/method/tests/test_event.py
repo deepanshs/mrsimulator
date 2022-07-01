@@ -91,7 +91,7 @@ def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
         magnetic_flux_density="11.7 T",
         rotor_frequency="25000.0 Hz",
         rotor_angle=f"{angle} rad",
-        transition_query=[{"ch1": {"P": [-1]}}],
+        transition_query=[{"ch1": {"P": [0]}}],
     )
     should_be = {
         "magnetic_flux_density": 11.7,
@@ -105,7 +105,7 @@ def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
         assert the_event.json(units=False) == {
             "fraction": 1.2,
             **should_be,
-            "transition_query": [{"ch1": {"P": [-1]}}],
+            "transition_query": [{"ch1": {"P": [0]}}],
         }
 
     if type_ == "constant_duration":
@@ -114,7 +114,7 @@ def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
         assert the_event.json(units=False) == {
             "duration": 1.2,
             **should_be,
-            "transition_query": [{"ch1": {"P": [-1.0]}}],
+            "transition_query": [{"ch1": {"P": [0]}}],
         }
 
 

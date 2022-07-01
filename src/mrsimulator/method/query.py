@@ -55,7 +55,7 @@ class SymmetryQuery(Parseable):
     """
 
     P: List[int] = Field(
-        default=[-1],
+        default=[0],
         description=(
             "A list of p symmetry functions per site. Here p = Δm = (m_f-m_i) is the "
             "difference between spin quantum numbers of the final and initial states."
@@ -159,7 +159,7 @@ class TransitionQuery(Parseable):
     @staticmethod
     def cartesian_product_indexing(permutation):
         """Return Cartesian product of indexes"""
-        permutation_length = [np.arange(len(p)) for p in permutation if len(p) != 0]
+        permutation_length = [np.arange(len(p)) for p in permutation]
         if permutation_length == []:
             return np.asarray([])
 
