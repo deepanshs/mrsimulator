@@ -9,7 +9,10 @@ While **mrsimulator**'s organization of the :ref:`spin_sys_api` object and its
 composite objects, :ref:`site_api`, and :ref:`coupling_api` are easily
 understood by anyone familiar with the underlying physical concepts, the
 organization of the :ref:`method_api` object in **mrsimulator** and its related
-composite objects requires a more detailed explanation of its design.
+composite objects requires a more detailed explanation of its design.  This
+section assumes that you are already familar with topics covered in the
+introduction sections :ref:`getting_started`, 
+:ref:`introduction_isotopomers_example`, and :ref:`fitting_example`
 
 Overview
 --------
@@ -263,13 +266,13 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
 
 
 .. figure:: ../../_static/SpinOneThreeHalves.*
-    :width: 800
+    :width: 600
     :alt: figure
     :align: center
 
 
 .. figure:: ../../_static/SpinFiveHalf.*
-    :width: 800
+    :width: 650
     :alt: figure
     :align: center
 
@@ -522,7 +525,7 @@ half-integer quadrupolar nuclei, as these transitions are unaffected by
 the first-order quadrupolar coupling frequency contribution.  Thus, 
 :math:`\ketbra{-\tfrac{1}{2}}{\tfrac{1}{2}}`, the so-called "central transition"
 of a quadrupolar nucleus, and the symmetric triple quantum transition 
-:math:`\ketbra{-\tfrac{3}{2}}{\tfrac{3}{2}}` are selected the two-dimensional
+:math:`\ketbra{-\tfrac{3}{2}}{\tfrac{3}{2}}` are selected in the two-dimensional
 custom Method shown below.
 
 .. skip: next
@@ -609,7 +612,7 @@ custom Method shown below.
   simulation may not agree with experiment.
 
 
-For 3Q-MAS experiments, however, the spectrum is often sheared and scaled 
+For 3Q-MAS experiments, the spectrum is often sheared and scaled 
 to make the vertical dimension the purely isotropic dimension. This can 
 be accomplished with an affine matrix added to the method. Let’s re-make 
 our 3Q-MAS method with this affine matrix.
@@ -669,7 +672,8 @@ our 3Q-MAS method with this affine matrix.
     plt.tight_layout()
     plt.show()
 
-
+See the `"Symmetry Pathways in Solid-State NMR" paper
+<https://doi.org/10.1016/j.pnmrs.2010.11.003>`_  for more details on affine transforations.
 
 You may have noticed that the ``transition_queries`` attribute of SpectralEvent 
 holds a list of TransitionQuery objects.   Each TransitionQuery in the list 
@@ -911,7 +915,7 @@ math:`\hat{X}_2`, math:`\hat{X}_3`, and :math:`\hat{X}_4`
 in the energy level diagram below.
 
 .. figure:: ../../_static/ThreeCoupledSpinsEnergy.*
-    :width: 700
+    :width: 600
     :alt: figure
     :align: center
 
@@ -1046,7 +1050,7 @@ another six *two-spin double-quantum transitions* where
 below.
 
 .. figure:: ../../_static/ThreeCoupledSpinsDoubleQuantum.*
-    :width: 700
+    :width: 600
     :alt: figure
     :align: center
 
@@ -1154,7 +1158,7 @@ The three *three-spin single-quantum transitions* having
 :math:`\text{p}_{AMX} = -1` are illustrated in the energy level diagram below.
 
 .. figure:: ../../_static/ThreeCoupledSpinsSingleQuantum.*
-    :width: 700
+    :width: 600
     :alt: figure
     :align: center
 
