@@ -684,7 +684,10 @@ two transitions are
 
 These two transitions can be selected using the code below.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
+
+    from mrsimulator.method import SpectralEvent
 
     event = SpectralEvent(
         transition_query=[
@@ -1210,7 +1213,9 @@ Mixing Events
 Default Mixing between Events
 '''''''''''''''''''''''''''''
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
+
 
     from mrsimulator.method import MixingEvent
 
@@ -1220,7 +1225,9 @@ Default Mixing between Events
 No Mixing Event
 '''''''''''''''
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
+
 
     MixingEvent(query="NoMixing"),
 
@@ -1259,7 +1266,9 @@ rotations in a :py:meth:`~mrsimulator.method.query.MixingQuery` object as a
 :py:meth:`~mrsimulator.method.query.RotationalQuery` object associated with a
 ``channels`` attribute.
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
+
 
     import numpy as np
     from mrsimulator.method.query import RotationalQuery
@@ -1294,7 +1303,9 @@ methods provided within the ``mrsimulator.method.lib`` module.
 
 A generic setup for a custom method (similar to the stock method) follows,
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
+
 
     from mrsimulator.method import Method, SpectralDimension
 
@@ -1328,7 +1339,9 @@ also where we define various events---``SpectralEvent`` and ``MixingEvent``, of 
 SpectralEvent is responsible for the NMR frequencies. The syntax for a SpectralDimension
 object follows,
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
+
 
     from mrsimulator.method import SpectralEvent, MixingEvent
 
@@ -1378,7 +1391,9 @@ SpectralEvent
 A SpectralEvent is where we add instructions on how the frequencies are calculated in mrsimulator.
 A generic syntax for the ``SpectralEvent`` follows,
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
+
 
     SpectralEvent(
         fraction=0.5,  # weights w_i
@@ -1425,7 +1440,8 @@ transition from a spectral event, say **e0**, will mix with the spin transitions
 subsequent spectral event **e1**. As such, mixing events are generally sandwiched between
 two spectral events, as follows,
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     SpectralDimension(
         events=[
@@ -1469,7 +1485,8 @@ Examples
 
 :math:`\mathbf{\nu}_\text{iso} =  \frac{9}{16}\nu_{3Q} + \frac{7}{16}\nu_{1Q}`
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     SpectralDimension(
         events=[
@@ -1486,7 +1503,8 @@ Examples
 
 :math:`\mathbb{p}: +1 \xrightarrow[]{\pi} -1`
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     SpectralDimension(
         events=[
@@ -1500,7 +1518,8 @@ Examples
 
 :math:`\mathbb{p}: -1 \xrightarrow[]{\frac{\pi}{2}} -1`
 
-.. code-block:: python
+.. plot::
+    :context: close-figs
 
     SpectralDimension(
         events=[
