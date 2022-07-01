@@ -105,9 +105,11 @@ tensor represented by a :ref:`sy_api` object.
 Since deuterium is a quadrupolar nucleus, :math:`I>1/2`, there also can be a quadrupolar coupling
 interaction between the nuclear quadrupole moment and the surrounding electric field gradient (EFG) tensor,
 defined in the optional *quadrupolar* key. An EFG tensor is a second-rank traceless
-symmetric tensor, and we describe its components with *Cq* and *eta*, i.e., the quadrupolar coupling constant
-and asymmetry parameter, respectively.  Additionally, we use the Euler angle orientations, *alpha*, *beta*,
-and *gamma*, which are the relative orientation of the EFG tensor from a common reference frame.
+symmetric tensor, and we describe its coupling to a quadrupolar nucleus with *Cq* 
+and *eta*, i.e., the quadrupolar coupling constant and asymmetry parameter, 
+respectively.  Additionally, we use the Euler angle orientations, *alpha*, *beta*,
+and *gamma*, which are the relative orientation of the EFG tensor from a common 
+reference frame.
 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
 the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
@@ -155,8 +157,9 @@ Consider the example below of a :ref:`coupling_api` object between two sites
         ),
     )
 
-The *site_index* key holds a list of two integers corresponding to the index of the two coupled sites
-within the spin system. The ordering of the integers is irrelevant.
+The *site_index* key holds a list of two integers corresponding to the index of the 
+two coupled sites in the ordered list ``sites`` within the SpinSystem object. The 
+ordering of the integers in ``site_index`` is irrelevant.
 
 The value of the *isotropic_j* is the isotropic
 *J*-coupling, here given as *15 Hz*. We have additionally defined an optional *j_symmetric* key,

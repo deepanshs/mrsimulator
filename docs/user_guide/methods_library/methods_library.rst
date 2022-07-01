@@ -12,7 +12,7 @@ For convenience, mrsimulator offers the following pre-built methods -
 * :ref:`st_vas`
 * :ref:`ssb2d`
 
-The syntax for all library methods follows,
+An example of the syntax that all library methods follows is shown below.
 
 .. code-block:: python
 
@@ -29,7 +29,7 @@ The syntax for all library methods follows,
         ],
     )
 
-where `BlochDecaySpectrum` can be replaced with another method class. Each method has the
+where `BlochDecaySpectrum` can be replaced with another pre-built method class. Each method has the
 *channels* attribute, which is a list of isotopes probed by the method as well as the
 *magnetic_flux_density*, *rotor_angle*, and *rotor_frequency* attributes which define the
 global experiment parameters.
