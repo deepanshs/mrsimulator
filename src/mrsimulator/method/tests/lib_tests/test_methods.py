@@ -35,11 +35,12 @@ sample_method_dict = dict(
     ],
 )
 
+sq_tq = {"transition_query": [{"ch1": {"P": [-1]}}]}
 sample_test_output = {
     "count": 1024,
     "events": [
-        {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"]},
-        {"fraction": 1, "freq_contrib": ["Quad2_4"]},
+        {"fraction": 27 / 17, "freq_contrib": ["Quad2_0"], **sq_tq},
+        {"fraction": 1, "freq_contrib": ["Quad2_4"], **sq_tq},
     ],
 }
 
@@ -58,8 +59,8 @@ def test_03():
         magnetic_flux_density=9.4,  # in T
         rotor_frequency=1000000000000.0,
         spectral_dimensions=[
-            {"count": 1024, "spectral_width": 5e4, "events": [{}]},
-            {"count": 1024, "spectral_width": 5e4, "events": [{}]},
+            {"count": 1024, "spectral_width": 5e4, "events": [sq_tq]},
+            {"count": 1024, "spectral_width": 5e4, "events": [sq_tq]},
         ],
     )
 
