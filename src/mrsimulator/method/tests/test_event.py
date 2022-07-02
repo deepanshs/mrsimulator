@@ -221,7 +221,7 @@ def test_total_and_no_mixing():
 
 
 def check_equal(query, isotopes, channels, res):
-    test = SpectralEvent(transition_query=query).permutation(isotopes, channels)
+    test = SpectralEvent(transition_query=query).combination(isotopes, channels)
     for i, item in enumerate(res):
         for item2 in item[0]:
             assert item2 in test[i]["P"]
@@ -230,7 +230,7 @@ def check_equal(query, isotopes, channels, res):
             assert item2 in test[i]["D"]
 
 
-def test_BaseEvent_permutation():
+def test_BaseEvent_combination():
     # P = -1 D = -1 on A B B A system, channel A, B
     # P = +1 D = -1 on A B B A system, channel A, B
     query = [
