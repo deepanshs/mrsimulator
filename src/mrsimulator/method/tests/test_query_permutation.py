@@ -66,7 +66,7 @@ def test_00():
     query = {"ch1": {"P": [-1], "D": [1]}}
     desired = {
         "P": [[-1, 0, 0, 0], [0, 0, -1, 0]],
-        "D": [[1.0, NAN, 0.0, NAN], [0.0, NAN, 1.0, NAN]],
+        "D": [[1, NAN, 00, NAN], [00, NAN, 1, NAN]],
     }
     check_equal(query, ["A", "B", "A", "B"], ["A"], desired)
 
@@ -128,3 +128,28 @@ def test_02():
         "D": [[NAN, 1, 0, NAN], [NAN, 0, 1, NAN]],
     }
     check_equal(query, ["A", "B", "B", "A"], ["A", "B"], desired)
+
+    query = {"ch1": {"P": [-1], "D": [1]}, "ch2": {"P": [-1, 1], "D": [0]}}
+    desired = {"P": [], "D": [[1, 0, NAN, 0], [0, 0, NAN, 1]]}
+    check_equal(query, ["A", "B", "C", "A"], ["A", "B", "C"], desired)
+
+    query = {"ch1": {"P": [-1, 1], "D": [-1, 1]}, "ch2": {"P": [-1]}}
+    desired = {
+        "P": [
+            [-1, 0, -1, 1],
+            [0, -1, -1, 1],
+            [1, 0, -1, -1],
+            [-1, 1, -1, 0],
+            [1, -1, -1, 0],
+            [0, 1, -1, -1],
+        ],
+        "D": [
+            [-1, 0, NAN, 1],
+            [0, -1, NAN, 1],
+            [1, 0, NAN, -1],
+            [-1, 1, NAN, 0],
+            [1, -1, NAN, 0],
+            [0, 1, NAN, -1],
+        ],
+    }
+    check_equal(query, ["A", "A", "B", "A"], ["A", "B"], desired)
