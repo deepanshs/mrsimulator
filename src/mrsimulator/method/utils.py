@@ -34,7 +34,14 @@ def get_symmetry_indexes(fn, list_of_sym):
     return reduce(
         np.union1d,
         [
-            reduce(np.intersect1d, [np.where(fn[:, i] == search[i]) for i in range(n)])
+            reduce(
+                np.intersect1d,
+                [
+                    np.where(fn[:, i] == search[i])
+                    for i in range(n)
+                    if not np.isnan(search[i])
+                ],
+            )
             for search in list_of_sym
         ],
         np.asarray([], dtype=np.int64),
