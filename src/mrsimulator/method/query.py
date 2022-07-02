@@ -23,6 +23,8 @@ ON_FAIL_MESSAGE = (
     "number of channels."
 )
 
+SYMMETRY_ELEMENTS = ["P", "D"]
+
 
 class SymmetryQuery(Parseable):
     """Base SymmetryQuery class.
@@ -93,7 +95,8 @@ class SymmetryQuery(Parseable):
         """
         query = getattr(self, symmetry)
         if query is None:
-            return []
+            query = [0 if symmetry == "P" else None] * n_site_at_channel_id
+            return list(set(permutations(query)))
         query_size = len(query)
         if query_size > n_site_at_channel_id:
             return []
@@ -160,8 +163,8 @@ class TransitionQuery(Parseable):
     def cartesian_product_indexing(permutation):
         """Return Cartesian product of indexes"""
         permutation_length = [np.arange(len(p)) for p in permutation]
-        if permutation_length == []:
-            return np.asarray([])
+        # if permutation_length == []:
+        #     return np.asarray([])
 
         indexes = cartesian_product(*permutation_length)  # cartesian indexes
         return np.asarray(
@@ -175,21 +178,33 @@ class TransitionQuery(Parseable):
             (list) isotopes: List of isotope symbols, ['29Si , '13C', '13C', '1H'].
             (int) channels: List of method channels, ['29Si , '13C'].
         """
-
         iso_dict = get_iso_dict(channels=channels, isotopes=isotopes)
         sites_per_channel = [
             iso_dict[item].size if item in iso_dict else 0 for item in channels
         ]
 
-        # expanded_symmetry = {}
-        # for symmetry in ["P", "D"]:
         expanded_symmetry = {
             sym: self.expand_elements_for_symmetry(
                 sym, isotopes, iso_dict, channels, sites_per_channel
             )
-            for sym in ["P", "D"]
+            for sym in SYMMETRY_ELEMENTS
         }
+
+        # remove nan queries
+        for key, value in expanded_symmetry.items():
+            if np.all(np.isnan(value)):
+                expanded_symmetry[key] = np.asarray([])
+
         return expanded_symmetry
+
+    def _get_missing_channel_isotope(self, isotopes, channels):
+        missing_ch = []
+        unique_isotopes = list(set(isotopes))
+        unique_channels = list(set(channels))
+        for isotope in unique_isotopes:
+            if isotope not in unique_channels:
+                missing_ch.append(isotope)
+        return missing_ch
 
     def expand_elements_for_symmetry(
         self, symmetry, isotopes, iso_dict, channels, sites_per_channel
@@ -199,13 +214,12 @@ class TransitionQuery(Parseable):
         live_n_sites = []
         for i, channel_id in enumerate(channels):
             ch_obj = getattr(self, f"ch{i+1}")
-            if ch_obj is not None:
+            ch_obj = ch_obj if ch_obj is not None else SymmetryQuery()
+            if channel_id in isotopes:
                 P_permutated += [ch_obj.permutate_query(symmetry, sites_per_channel[i])]
                 live_ch += [channel_id]
                 live_ch_index += [i]
                 live_n_sites += [sites_per_channel[i]]
-
-        # P_permutated = [item for item in P_permutated if item != []]
 
         if P_permutated == [[]]:
             return np.asarray(P_permutated)
@@ -215,16 +229,25 @@ class TransitionQuery(Parseable):
 
         symmetry_expanded = TransitionQuery.cartesian_product_indexing(P_permutated)
 
-        if symmetry_expanded.size == 0:
-            return symmetry_expanded
+        # if symmetry_expanded.size == 0:
+        #     return symmetry_expanded
 
         P_expanded = np.zeros((symmetry_expanded.shape[0], len(isotopes)))
+
+        # set missing channel isotope query to nan for non P query
+        value = 0 if symmetry == "P" else np.nan
+        missing_ch = self._get_missing_channel_isotope(isotopes, channels)
+        for ch in missing_ch:
+            index = np.where(np.asarray(isotopes) == ch)
+            P_expanded[:, index] = value
+
         _ = [
             P_expanded.__setitem__(
                 (slice(None, None, None), iso_dict[channels[live_ch_index[i]]]),
                 symmetry_expanded[:, linear_iso_dict[live_ch[i]]],
             )
             for i in range(len(P_permutated))
+            if channels[live_ch_index[i]] in iso_dict
         ]
 
         return P_expanded
