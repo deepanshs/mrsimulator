@@ -506,9 +506,9 @@ code below.
         ax[0].legend()
         ax[0].grid()
         ax[0].invert_xaxis()  # reverse x-axis
-        ax[1].plot(processor.apply_operations(dataset=sim.methods[1].simulation), 
+        ax[1].plot(processor.apply_operations(dataset=sim.methods[1].simulation),
             label="$(p_I,d_I) = (-1,+1)$ transitions")
-        ax[1].plot(processor.apply_operations(dataset=sim.methods[2].simulation), 
+        ax[1].plot(processor.apply_operations(dataset=sim.methods[2].simulation),
             label="$(p_I,d_I) = (-1,-1)$ transitions")
         ax[1].set_title("Single-Quantum Spectrum Single Transitions")
         ax[1].legend()
@@ -609,14 +609,14 @@ transition.   The code below is an example of a custom 2D method using two
     data = processor.apply_operations(dataset=sim.methods[0].simulation)
 
 
-In the code below we use the PyPlot method 
-`imshow() <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html>`__ 
-to return an image the dataset on a 2D regular raster.  We also use 
-`gist_ncar_r <https://matplotlib.org/stable/gallery/color/colormap_reference.html>`__ as the 
+In the code below we use the PyPlot method
+`imshow() <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html>`__
+to return an image the dataset on a 2D regular raster.  We also use
+`gist_ncar_r <https://matplotlib.org/stable/gallery/color/colormap_reference.html>`__ as the
 colormap to map the dataset amplitude to colors.  The "_r" indicates that it a reversed version
 of the "gist_ncar" map.  The `colorbar()
 <https://matplotlib.org/stable/api/colorbar_api.html?highlight=colorbar#module-matplotlib.colorbar>`__
-method provides the visualization of the dataset mapping to color to the right of the plot. 
+method provides the visualization of the dataset mapping to color to the right of the plot.
 
 .. skip: next
 
@@ -643,27 +643,9 @@ method provides the visualization of the dataset mapping to color to the right o
 Inspecting Transition and Symmetry Pathways
 '''''''''''''''''''''''''''''''''''''''''''
 
-You can view the transition pathway that will be selected by your custom method in a given
-spin system using the function :py:meth:`~mrsimulator.Method.get_transition_pathways` as shown
+You can view the symmetry pathways that will be selected by your custom method in a given
+spin system using the function :py:meth:`~mrsimulator.Method.get_symmetry_pathways` as shown
 below.
-
-.. plot::
-    :context: close-figs
-
-    from pprint import pprint
-    pprint(my_mqmas.get_transition_pathways(SpinSystem(sites=[site1])))
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    [|-1.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
-
-
-Similarly, you can view the symmetry pathways that will be selected by your custom method in a given
-spin system using the function :py:meth:`~mrsimulator.Method.get_symmetry_pathways`.
 
 .. plot::
     :context: close-figs
@@ -698,6 +680,27 @@ pathway diagram of the method.
 
     pathway_diagram = my_mqmas.plot()
     pathway_diagram.show()
+
+
+Similarly, you can view the transition pathway that will be selected by your custom method in a given
+spin system using the function :py:meth:`~mrsimulator.Method.get_transition_pathways` as shown
+below.
+
+.. plot::
+    :context: close-figs
+
+    from pprint import pprint
+    pprint(my_mqmas.get_transition_pathways(SpinSystem(sites=[site1])))
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    [|-1.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
+
+
 
 
 Affine Transformations
@@ -756,7 +759,7 @@ be accomplished by adding an affine matrix added to the method.
         \right]
 
     For 3Q-MAS on a spin :math:`I=3/2` nucleus, where the shear factor is
-    :math:`\kappa^{(\omega_2)} = 21/27`, the affine matrix giving the 
+    :math:`\kappa^{(\omega_2)} = 21/27`, the affine matrix giving the
     appropriate shear and scale transformation is given by
 
     .. math::
@@ -785,11 +788,11 @@ be accomplished by adding an affine matrix added to the method.
         =
         \frac{1}{1 + |\kappa^{(\omega_1)}|}
         \,
-        \Omega_{iso}(m,-m)
+        \Omega_\text{iso}(m,-m)
         +
         \frac{\kappa^{(\omega_1)}}{1 + |\kappa^{(\omega_1)}|}
         \,
-        \Omega_{iso}\left(\textstyle \frac{1}{2},-\frac{1}{2}\right).
+        \Omega_\text{iso}\left(\textstyle \frac{1}{2},-\frac{1}{2}\right).
 
     If the spectrum is to be referenced to a frequency other than the rf carrier
     frequency (i.e. zero is not defined in the middle of the spectrum), then the
@@ -857,7 +860,7 @@ this shear transformation.
 
     For MQ-MAS, a second shear and scale can be applied to remove isotropic
     chemical shift component along the :math:`\Omega^{[2]''}` axis.  For a
-    spin :math:`I=3/2` nucleus, with a second shear factor of 
+    spin :math:`I=3/2` nucleus, with a second shear factor of
     :math:`\kappa^{(\omega_1)} = - 8/17`, the affine matrix is given by
 
     .. math::
@@ -951,19 +954,111 @@ this shear transformation.
     plt.show()
 
 
-Mixing Queries
-''''''''''''''
+SpectralDimension with Multiple Events and Weighted Average Frequency
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-Default Mixing between Events
-"""""""""""""""""""""""""""""
+To illustrate the versatility of the Method object, we can also design an MQ-MAS
+method that correlates the isotropic MQ-MAS frequency to the central transition
+without the need for an affine transformation.  Recall that the 3Q-MAS isotropic
+frequency on spin :math:`I=3/2` is given by
+
+.. math::
+    \Omega_\text{iso} =  \frac{9}{16}\Omega_{3Q} + \frac{7}{16}\Omega_{CT}
+
+As we saw at the beginning of this section, the first spectral dimension can
+derives its *average frequency*, :math:`\overline{\Omega}_1`, from a weighted
+average of multiple transition frequencies. Thus, this weighted average frequency can
+be obtained the use of multiple **SpectralEvent** objects in  the
+**SpectralDimension** associated with the isotropic dimension, as shown in the
+code below.
+
+.. skip: next
 
 .. plot::
     :context: close-figs
 
+    my_three_event_mqmas = Method(
+        channels=["87Rb"],
+        magnetic_flux_density=9.4,
+        rotor_frequency=10000,
+        spectral_dimensions=[
+            SpectralDimension(
+                count=128,
+                spectral_width=6e3,  # in Hz
+                reference_offset=-9e3,  # in Hz
+                label="3Q-MAS isotropic dimension",
+                events=[
+                    SpectralEvent(
+                        fraction=9/16, transition_query=[{"ch1": {"P": [-3], "D": [0]}}]
+                    ),
+                    SpectralEvent(
+                        fraction=7/16, transition_query=[{"ch1": {"P": [-1], "D": [0]}}]
+                    ),
+                ]
+            ),
+            SpectralDimension(
+                count=256,
+                spectral_width=6e3,  # in Hz
+                reference_offset=-5e3,  # in Hz
+                label="Central Transition Frequency",
+                events=[
+                    SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])
+                ]
+            )
+        ],
+    )
+
+    sim = Simulator(spin_systems=spin_systems, methods=[my_three_event_mqmas])
+    sim.run()
+
+    data = processor.apply_operations(dataset=sim.methods[0].simulation)
+
+    plt.figure(figsize=(6, 4))
+    ax = plt.subplot(projection="csdm")
+    cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
+    plt.colorbar(cb)
+    ax.invert_xaxis()
+    ax.invert_yaxis()
+    plt.tight_layout()
+    plt.show()
+
+We could go a step further and apply an affine transformation to remove the isotropic chemical shift
+from the central transition (horizontal) dimension.  If you go back to the previous discussion, you
+will find that required code for the affine matrix is
+
+``affine_matrix=[[1,0],[-8/25, 17/25]]``
+
+
+Mixing Queries
+''''''''''''''
+
+Default Total Mixing between Adjacent Spectral or Delay Events
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+In previous discussions, we made no mention of the efficiency of transfer
+between selected transitions in adjacent **SpectralEvent** ojbects.  As a
+default behavior, **mrsimulator** places the mixing event,
+``MixingEvent(query="TotalMixing")`` between all SpectralEvent or DelayEvent
+objects, unless another MixingEvent is explicitly placed between SpectralEvent
+or DelayEvent objects.  In this default behavior was explicitly shown in the
+previous example, the events list in the first **SpectralDimension** would have
+been
+
+.. plot::
+    :context: close-figs
 
     from mrsimulator.method import MixingEvent
 
-    MixingEvent(query="TotalMixing"),
+    events=[
+        SpectralEvent(
+            fraction=9/16, transition_query=[{"ch1": {"P": [-3], "D": [0]}}]
+        ),
+        MixingEvent(query="TotalMixing"),
+        SpectralEvent(
+            fraction=7/16, transition_query=[{"ch1": {"P": [-1], "D": [0]}}]
+        ),
+        MixingEvent(query="TotalMixing")
+    ]
 
 
 No Mixing Event
@@ -1043,11 +1138,11 @@ The Hahn Echo experiment observes the transition frequencies from the following
 
     \mathbb{p}: 0 \xrightarrow[]{\frac{\pi}{2}} +1 \xrightarrow[]{\pi} -1
 
-This pathway selectively refocuses the :math:`\mathbb{p}` frequency contributions into
-an echo while leaving the :math:`\mathbb{d}` contributions free to evolve unaffected by the
-:math:`\pi` pulse.
-Below is a diagram representing the different energy level transitions and corresponding
-pathways observed by the Hahn Echo experiment.
+This pathway selectively refocuses the :math:`\mathbb{p}` frequency
+contributions into an echo while leaving the :math:`\mathbb{d}` contributions
+free to evolve unaffected by the :math:`\pi` pulse. Below is a diagram
+representing the different energy level transitions and corresponding pathways
+observed by the Hahn Echo experiment.
 
 .. figure:: ../../_static/deuteriumHahnEcho.*
     :alt: Transition symmetry pathways for the Hahn Echo experiment
