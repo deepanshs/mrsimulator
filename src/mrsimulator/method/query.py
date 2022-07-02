@@ -163,6 +163,9 @@ class TransitionQuery(Parseable):
     def cartesian_product_indexing(combinations):
         """Return Cartesian product of indexes"""
         combination_length = [np.arange(len(p)) for p in combinations]
+        # if combination_length == []:
+        #     return np.asarray([])
+
         index = cartesian_product(*combination_length)  # cartesian indexes
         return np.asarray(
             [np.hstack([combinations[i][j] for i, j in enumerate(ix)]) for ix in index]
@@ -227,6 +230,9 @@ class TransitionQuery(Parseable):
         linear_iso_dict = get_iso_dict(channels, isotopes=np.hstack(linear_isotopes))
 
         symmetry_expanded = TransitionQuery.cartesian_product_indexing(sym_combination)
+
+        if symmetry_expanded.size == 0:
+            return symmetry_expanded
 
         all_combinations = np.zeros((symmetry_expanded.shape[0], len(isotopes)))
 
