@@ -669,8 +669,8 @@ spin system using the function :py:meth:`~mrsimulator.Method.get_symmetry_pathwa
     :context: close-figs
 
     from pprint import pprint
-    pprint(my_mqmas.get_symmetry_pathways("P")))
-    pprint(my_mqmas.get_symmetry_pathways("D")))
+    pprint(my_mqmas.get_symmetry_pathways("P"))
+    pprint(my_mqmas.get_symmetry_pathways("D"))
 
 .. rst-class:: sphx-glr-script-out
 
