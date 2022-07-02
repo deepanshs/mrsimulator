@@ -625,9 +625,12 @@ transition.   The code below is an example of a custom 2D method using two
     pprint(mqmas.get_transition_pathways(SpinSystem(sites=[site1])))
 
 
-.. plot::
-    :context: close-figs
+.. rst-class:: sphx-glr-script-out
 
+ Out:
+
+ .. code-block:: none
+    
     [|-1.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
 
 
@@ -836,7 +839,7 @@ this shear transformation.
         =
         \left[
         \begin{array}{cc}
-        0 & 1 \\
+        9/16 & 7/16 \\
         -9/50 & 27/50
         \end{array}
         \right]
@@ -866,13 +869,13 @@ this shear transformation.
                 count=256,
                 spectral_width=6e3,  # in Hz
                 reference_offset=0,  # in Hz
-                label="Central Transition Frequency",
+                label="CT Quad-Only Frequency",
                 events=[
                     SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])
                 ]
             )
         ],
-        affine_matrix=[[0, 1],[-9/50, 27/50]]
+        affine_matrix=[[9/16, 7/16],[-9/50, 27/50]]
     )
 
     sim = Simulator(spin_systems=spin_systems, methods=[shearedtwice_mqmas])
@@ -889,6 +892,9 @@ this shear transformation.
     plt.tight_layout()
     plt.show()
 
+
+*Under Construction below*
+--------------------------
 
 You may have noticed that the ``transition_queries`` attribute of **SpectralEvent** 
 holds a list of **TransitionQuery** objects.   Each **TransitionQuery** in the list 
