@@ -77,8 +77,8 @@ class SymmetryQuery(Parseable):
     class Config:
         validate_assignment = True
 
-    def permutate_query(self, symmetry, n_site_at_channel_id):
-        """Permutation of symmetry query based on the number of sites in given channel.
+    def query_combination(self, symmetry, n_site_at_channel_id):
+        """Combination of symmetry query based on the number of sites in given channel.
 
         Args:
             (str) symmetry: The symmetry element, 'P' or 'D'.
@@ -90,8 +90,8 @@ class SymmetryQuery(Parseable):
                 n_isotopes = [3]
                 channels = ['A']
         then,
-        1. P query will expand and permutate to [-1, 0, 0], [0, -1, 0], and [0, 0, -1]
-        2. D query will expand and permutate to [1, 0, 0], [0, 1, 0], and [0, 0, 1]
+        1. P query will expand to [-1, 0, 0], [0, -1, 0], and [0, 0, -1] combinations
+        2. D query will expand to [1, 0, 0], [0, 1, 0], and [0, 0, 1] combinations
         """
         query = getattr(self, symmetry)
         if query is None:
@@ -160,19 +160,16 @@ class TransitionQuery(Parseable):
         extra = "forbid"
 
     @staticmethod
-    def cartesian_product_indexing(permutation):
+    def cartesian_product_indexing(combinations):
         """Return Cartesian product of indexes"""
-        permutation_length = [np.arange(len(p)) for p in permutation]
-        # if permutation_length == []:
-        #     return np.asarray([])
-
-        indexes = cartesian_product(*permutation_length)  # cartesian indexes
+        combination_length = [np.arange(len(p)) for p in combinations]
+        index = cartesian_product(*combination_length)  # cartesian indexes
         return np.asarray(
-            [np.hstack([permutation[i][j] for i, j in enumerate(ix)]) for ix in indexes]
+            [np.hstack([combinations[i][j] for i, j in enumerate(ix)]) for ix in index]
         )
 
-    def permutation(self, isotopes, channels):
-        """Permutation of TransitionQuery based on the number of sites per channel.
+    def combination(self, isotopes, channels):
+        """Combinations of TransitionQuery based on the number of sites per channel.
 
         Args:
             (list) isotopes: List of isotope symbols, ['29Si , '13C', '13C', '1H'].
@@ -209,48 +206,47 @@ class TransitionQuery(Parseable):
     def expand_elements_for_symmetry(
         self, symmetry, isotopes, iso_dict, channels, sites_per_channel
     ):
-        P_permutated = []
+        sym_combination = []
         live_ch, live_ch_index = [], []
         live_n_sites = []
         for i, channel_id in enumerate(channels):
             ch_obj = getattr(self, f"ch{i+1}")
             ch_obj = ch_obj if ch_obj is not None else SymmetryQuery()
             if channel_id in isotopes:
-                P_permutated += [ch_obj.permutate_query(symmetry, sites_per_channel[i])]
+                sym_combination += [
+                    ch_obj.query_combination(symmetry, sites_per_channel[i])
+                ]
                 live_ch += [channel_id]
                 live_ch_index += [i]
                 live_n_sites += [sites_per_channel[i]]
 
-        if P_permutated == [[]]:
-            return np.asarray(P_permutated)
+        if sym_combination == [[]]:
+            return np.asarray(sym_combination)
 
         linear_isotopes = [[ch] * ns for ch, ns in zip(live_ch, live_n_sites)]
         linear_iso_dict = get_iso_dict(channels, isotopes=np.hstack(linear_isotopes))
 
-        symmetry_expanded = TransitionQuery.cartesian_product_indexing(P_permutated)
+        symmetry_expanded = TransitionQuery.cartesian_product_indexing(sym_combination)
 
-        # if symmetry_expanded.size == 0:
-        #     return symmetry_expanded
-
-        P_expanded = np.zeros((symmetry_expanded.shape[0], len(isotopes)))
+        all_combinations = np.zeros((symmetry_expanded.shape[0], len(isotopes)))
 
         # set missing channel isotope query to nan for non P query
         value = 0 if symmetry == "P" else np.nan
         missing_ch = self._get_missing_channel_isotope(isotopes, channels)
         for ch in missing_ch:
             index = np.where(np.asarray(isotopes) == ch)
-            P_expanded[:, index] = value
+            all_combinations[:, index] = value
 
         _ = [
-            P_expanded.__setitem__(
+            all_combinations.__setitem__(
                 (slice(None, None, None), iso_dict[channels[live_ch_index[i]]]),
                 symmetry_expanded[:, linear_iso_dict[live_ch[i]]],
             )
-            for i in range(len(P_permutated))
+            for i in range(len(sym_combination))
             if channels[live_ch_index[i]] in iso_dict
         ]
 
-        return P_expanded
+        return all_combinations
 
 
 class RotationalQuery(Parseable):

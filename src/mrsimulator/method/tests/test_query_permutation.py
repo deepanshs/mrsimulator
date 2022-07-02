@@ -9,7 +9,7 @@ NAN = np.nan
 
 
 def check_equal(query, isotopes, channels, desired):
-    test = TransitionQuery(**query).permutation(isotopes, channels)
+    test = TransitionQuery(**query).combination(isotopes, channels)
 
     for element in ["P", "D"]:
         assert len(test[element]) == len(desired[element])
