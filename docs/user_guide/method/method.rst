@@ -416,7 +416,7 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
     component.  The experimentalist indirectly influences a frequency component
     :math:`\Omega_k` by direct manipulation of the quantum transition, :math:`i
     \rightarrow  j`, and the spatial orientation,  :math:`\Theta` of the sample.
-    
+
     The function symbol :math:`\Xi_\ell(\Theta)` is similarly replaced with the
     upper-case symbols :math:`\mathbb{S}`, :math:`\mathbb{P}(\Theta)`,
     :math:`\mathbb{D}(\Theta)`, :math:`\mathbb{F}(\Theta)`,
@@ -449,11 +449,11 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
       - anisotropy
       - ``freq_contrib``
       - Expression
-    * - 
+    * -
       - order
       - rank
-      - 
-      - 
+      -
+      -
     * - shielding
       - 1st
       - 0th
