@@ -120,21 +120,20 @@ spectral dimension.
 
 Inside **SpectralEvent** and **DelayEvent** objects, is a list of
 :py:meth:`~mrsimulator.method.query.TransitionQuery` objects (*vide infra*)
-which determine which transitions are "alive" during the event. **Method**
+which determine which transitions are observed during the event. **Method**
 objects in **mrsimulator** are general-purpose because they are designed for an
-arbitrary spin system. That is, a method does not know, in advance, the energy
-eigenvalues and eigenstates of the spin system. Thus, when designing a
-**Method** object, you cannot identify and select a transition through its
-initial and final eigenstate quantum numbers. Instead, transition selection is
-done through **TransitionQuery** objects during individual spectral or delay
-events. It is only during a simulation that the **Method** object uses its
-**TransitionQuery** objects to determine the selected transition pathways for a
-given **SpinSystem** object by the initial and final eigenstate quantum numbers
-of each transition. **TransitionQuery** objects hold a list of
-:py:meth:`~mrsimulator.method.query.SymmetryQuery` objects which act on specific
-isotopes in the, as yet to be determined, spin system. A list of specific
-isotopes upon which the **SymmetryQuery** objects act are determined by the
-``channels`` attribute in **Method**.
+arbitrary spin system. That is, a method does not know the spin system in
+advance. Thus, when designing a **Method** object, you cannot identify and
+select a transition through its initial and final eigenstate quantum numbers.
+Instead, transition selection is done through **TransitionQuery** objects during
+individual spectral or delay events. It is only during a simulation that the
+**Method** object uses its **TransitionQuery** objects to determine the selected
+transition pathways for a given **SpinSystem** object by the initial and final
+eigenstate quantum numbers of each transition. **TransitionQuery** objects hold
+a list of :py:meth:`~mrsimulator.method.query.SymmetryQuery` objects which act
+on specific isotopes in the, as yet to be determined, spin system. A list of
+specific isotopes upon which the **SymmetryQuery** objects act are determined by
+the ``channels`` attribute in **Method**.
 
 
 
@@ -210,14 +209,14 @@ any details of the spin systems upon which they will act. For example, in the
 density matrix of a spin system ensemble, one could easily identify a transition
 by its row and column indexes. However, those indexes depend on the spin system
 and how the spins and their eigenstates have been assigned to those indexes.
-Therefore, we can not use such another approach for selecting transitions.
+Therefore, we need a spin-system agnostic approach for selecting transitions.
 
 
 Spin Transition Symmetry Functions
 ''''''''''''''''''''''''''''''''''
 
-One way you can select a subset of single-spin transitions, even if you don't
-know the energy eigenstate quantum numbers, is to request all transitions whose
+One way you can select a subset of single-spin transitions if you don't
+know the energy eigenstate quantum numbers is to request all transitions whose
 single-spin transition symmetry function, :math:`\text{p}_I` symmetry function
 is :math:`-1`, i.e.,
 
@@ -363,7 +362,7 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
 
 
     When the :math:`\ell` are zero on all nuclei except two, then we identify
-    these functions using a combination of sub-shell letter designations, e.g.,
+    these functions using a concatenation of sub-shell letter designations, e.g.,
 
     .. math::
 
@@ -386,7 +385,8 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
       \end{array}
 
     Below is an energy level diagram of two coupled spin :math:`I=1/2` nuclei with
-    transition labeled according to their transition symmetry function values.
+    transition labeled according to their transition symmetry function values.  Each
+    transition has a unique set of transition symmetry function values.
 
     .. figure:: ../../_static/CoupledOneHalf.*
         :width: 650
@@ -432,6 +432,13 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
     \theta_R)`. The other spatial symmetry functions are removed by spinning the
     sample about the corresponding root of the Lth-rank Legendre polynomial
     ":math:`P_L(\cos \theta_R)`.
+
+    For 2nd-order quadrupolar coupling contributions, it is convenient to define
+    "hybrid" spin transition functions as linear combinations of the spin
+    transition functions
+
+    .. math::
+        \mathbb{c}_L(m_i,m_j)  = \pi_{L,1}^{\{2,2\}} \mathbb{p}_I + \pi_{L,3}^{\{2,2\}}  \mathbb{f}_I.
 
     As described in ":ref:`theory`", these transition symmetry functions play an
     important role in evaluating the individual frequency contributions to the
@@ -519,6 +526,18 @@ Based on the review above, we now know that the spin :math:`I=1`, the transition
     trans_query = TransitionQuery(ch1=symm_query)
     event = SpectralEvent(fraction=1, transition_query=[trans_query])
 
+.. note::
+        Python dictionaries can be used to create and initialize an object. To do this,
+        the dictionary must use the object's attribute names as the key strings. For
+        example, the code above could have been written
+
+        .. plot::
+            :context: reset
+
+            symm_query = {"P":[-1], "D":[1]}
+            trans_query = {"ch1":symm_query}
+            event = {"fraction":1, "transition_query":[trans_query]}
+
 In the example above, the **SymmetryQuery** object is created and assigned to
 the **TransitionQuery** attribute ``ch1``, i.e., it acts on the isotope in the
 "first channel". Recall that the ``channels`` attribute of the **Method** object
@@ -552,7 +571,7 @@ code below.
     )
     spin_system = SpinSystem(sites=[deuterium])
 
-    # This method selects all observable (P=–1) transitions
+    # This method selects all observable (p_I=–1) transitions
     method_both_transitions = Method(
       channels=["2H"],
       magnetic_flux_density=9.4,  # in T
@@ -565,7 +584,7 @@ code below.
           ]
       )
 
-    # This method selects observable (P=–1) transitions with D = 1
+    # This method selects observable (p_I=–1) transitions with d_I = 1
     method_transition1 = Method(
       channels=["2H"],
       magnetic_flux_density=9.4,  # in T
@@ -578,7 +597,7 @@ code below.
           ]
       )
 
-    # This method selects observable (P=–1) transitions with D = -1
+    # This method selects observable (p_I=–1) transitions with d_I = -1
     method_transition2 = Method(
       channels=["2H"],
       magnetic_flux_density=9.4,  # in T
@@ -629,12 +648,8 @@ code below.
     Whenever the ``D`` attribute is omitted, the **SymmetryQuery** allows
     transitions with all values of :math:`\text{d}_I`. On the other hand,
     whenever the ``P`` attribute is omitted it defaults to ``P=[0]``,
-    i.e., only single spin :math:`\text{p}_I = 0` (no) transitions on
-    the assigned channel.
+    i.e., no selected transitions on the assigned channel.
 
-You may have noticed in the example above that the **SymmetryQuery** and
-**TransitionQuery** objects were created using Python dictionaries.  To do this,
-the dictionary must use the object's attribute names as the key strings.
 
 
 Selecting Symmetric Single-Spin Transitions
@@ -681,6 +696,7 @@ transition.   The code below is an example of a custom 2D method using two
         ],
     )
 
+    # Create three sites in RbNO3
     site1 = Site(
       isotope="87Rb",
       isotropic_chemical_shift=-27.4,  # ppm
@@ -716,7 +732,7 @@ transition.   The code below is an example of a custom 2D method using two
     data = processor.apply_operations(dataset=sim.methods[0].simulation)
 
 
-In the code below we use the PyPlot method
+In the code below, we use the PyPlot method
 `imshow() <https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html>`__
 to return an image the dataset on a 2D regular raster.  We also use
 `gist_ncar_r <https://matplotlib.org/stable/gallery/color/colormap_reference.html>`__ as the
@@ -985,9 +1001,9 @@ this shear transformation.
         1 & 0 \\
         -8/25 & 17/25
         \end{array}
-        \right]
+        \right],
 
-    the product of the two affine transformations is
+    and the product of the two affine transformations is
 
     .. math::
         {\cal A}_T = {\cal A}_1 {\cal A}_2
@@ -1010,9 +1026,9 @@ this shear transformation.
         9/16 & 7/16 \\
         -9/50 & 27/50
         \end{array}
-        \right]
+        \right].
 
-
+Below is the code for simulating a 3Q-MAS spectrum with a double shear transformation.
 
 .. skip: next
 
@@ -1070,12 +1086,12 @@ without the need for an affine transformation.  Recall that the 3Q-MAS isotropic
 frequency on spin :math:`I=3/2` is given by
 
 .. math::
-    \Omega_\text{iso} =  \frac{9}{16}\Omega_{3Q} + \frac{7}{16}\Omega_{CT}
+    \Omega_\text{iso} =  \frac{9}{16}\Omega_{3Q} + \frac{7}{16}\Omega_{CT}.
 
-As we saw at the beginning of this section, the first spectral dimension can
+As we saw at the beginning of this section, the first spectral dimension
 derives its *average frequency*, :math:`\overline{\Omega}_1`, from a weighted
 average of multiple transition frequencies. Thus, this weighted average frequency can
-be obtained the use of multiple **SpectralEvent** objects in  the
+be obtained through the use of multiple **SpectralEvent** objects in  the
 **SpectralDimension** associated with the isotropic dimension, as shown in the
 code below.
 
@@ -1131,32 +1147,40 @@ code below.
 
 We could go a step further and apply an affine transformation to remove the isotropic chemical shift
 from the central transition (horizontal) dimension.  If you go back to the previous discussion, you
-will find that required value for the ``affine_matrix`` in the **Method** object is
+will find that the required value for the ``affine_matrix`` in the **Method** object to do this shear
+is given by
 
 ``affine_matrix=[[1,0],[-8/25, 17/25]]``
 
 
 Mixing Queries
 ''''''''''''''
+It is during a mixing period that there is a transfer among transitions and populations.
+It is this branching out of the transition pathways at every mixing event that makes
+NMR spectroscopy such a rich and versatile technique.
 
 Default Total Mixing between Adjacent Spectral or Delay Events
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 In previous discussions, we made no mention of the efficiency of transfer
 between selected transitions in adjacent **SpectralEvent** objects.  As a
-default behavior, **mrsimulator** places the mixing event,
+default behavior, **mrsimulator** places the total mixing event,
 ``MixingEvent(query="TotalMixing")`` between all SpectralEvent or DelayEvent
 objects, unless another MixingEvent is explicitly placed between SpectralEvent
 or DelayEvent objects.  The "TotalMixing" query tells **mrsimulator** to connect
 all selected transitions in the two adjacent spectral or delay events.   That is,
 a selected transition, :math:`\ketbra{I, m_f}{I, m_i}`, in a spectral or delay
-event is transferred to all selected transitions, :math:`\ketbra{I,m_f'}{I,m_i'}`
-in the next spectral or delay event, according to
+event is transferred to all transitions in the subset of selected transition,
+:math:`\ketbra{I,m_f'}{I,m_i'} \in \{T\}` in the next spectral or delay event, according to
 
 .. math::
 
-    \ketbra{I, m_f}{I, m_i} \longrightarrow \sum_{m_f'}\sum_{m_i'}\ketbra{I,m_f'}{I,m_i'}.
+    \ketbra{I, m_f}{I, m_i} \longrightarrow \sum_{m_i',m_f' \in \{T\} }\ketbra{I,m_f'}{I,m_i'}.
 
+
+.. warning::
+    The use of total mixing complicates the comparison of integrated intensities among
+    different methods.
 
 If this default behavior had been explicitly shown in the previous example, the
 events list in the first **SpectralDimension** would have looked like
@@ -1177,13 +1201,13 @@ events list in the first **SpectralDimension** would have looked like
         MixingEvent(query="TotalMixing")
     ]
 
-Since only one transition was selected in each SpectralEvent, the expected
-(and default) behavior is that there is a mixing (transfer) of coherence between
-those two transitions, forming the desired transition pathway. However, when
-multiple transitions are selected in a SpectralEvent or DelayEvent, you may need
-to prevent undesired mixing between certain transition in the two adjacent events.
-You  can avoid a "TotalMixing" event by inserting MixingEvents with other query types,
-as described below.
+Since only one transition was selected in each SpectralEvent, the expected (and
+default) behavior is that there is a mixing (transfer) of coherence between
+those the symmetric triple-quantum and central transitions, forming the desired
+transition pathway. However, when multiple transitions are selected in a
+SpectralEvent or DelayEvent, you may need to prevent undesired mixing between
+certain transition in the two adjacent events. You  can avoid a "TotalMixing"
+event by inserting MixingEvents with other query types, as described below.
 
 Rotation Query
 """"""""""""""
@@ -1198,7 +1222,7 @@ to
 
     \ketbra{I, m_f}{I, m_i} \stackrel{\theta_\phi}{\longrightarrow} \sum_{m_f'}\sum_{m_i'}d_{m_f',m_f}^{(I)}(\theta)d_{m_i',m_i}^{(I)}(\theta)e^{-i\Delta p\phi}(i)^{\Delta p}\ketbra{I,m_f'}{I,m_i'},
 
-where :math:`\Delta p_I = p_I' - p_I`.  From this expression, we obtain the important result that
+where :math:`\Delta p_I = p_I' - p_I`.  From this expression, we obtain the useful result that
 
 .. math::
     :label: piPulseTransition
@@ -1234,7 +1258,10 @@ with the code below.
     MixingEvent(query="NoMixing"),
 
 Let's examine two examples in deuterium spin system where **RotationQuery** objects
-are used to select the desired transition pathways.
+are used to select the desired transition pathways, and also illustrate the importance
+of echo classification in understanding how transition frequency contributions can
+be eliminated or separated based on their dependence on different transition
+symmetry functions.
 
 
 .. note::
