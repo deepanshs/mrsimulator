@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-¹³⁹La Extended Czjzek NMR of LaY
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Extended Czjzek fitting of ¹³⁹La MAS NMR of La₀.₂Y₁.₈Si₂2O₇
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
 # The following is a demonstration on how to fit tensor distributions to an experimental
-# spectrum using a structure-forward approach. TODO: Discussion of dataset
+# spectrum using a structure-forward approach. The dataset was acquired from a
+# sample of :math:`\text{La}_{0.2}\text{Y}_{1.8}\text{Si}_2\text{O}_7` silicate glass
+# and shared by Fernańdez-Carrioń `et al.` [#f1]_.
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method.lib import BlochDecayCTSpectrum
 from mrsimulator.models import ExtCzjzekDistribution
@@ -27,7 +29,7 @@ import matplotlib.pyplot as plt
 # Import the dataset
 # ------------------
 host = "http://ssnmr.org/sites/default/files/"
-filename = "mrsimulator/La%20bc%20-%20LaY90%20cpmg.csdf"
+filename = "mrsimulator/La bc - LaY90 cpmg.csdf"
 experiment = cp.load(host + filename).real
 experiment.x[0].to("ppm", "nmr_frequency_ratio")
 experiment /= experiment.max()
@@ -40,15 +42,17 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# Get the noise of the experiment in this cell
-pass
+# Calculate Noise Standard Deviation
+# ----------------------------------
+loc = np.where(experiment.dimensions[0].coordinates < -5000e-6)
+sigma = experiment[loc].std()
+print(sigma)
 
 # %%
-# ppm_to_hz_factor used in fft shift later
-ppm_to_hz_factor = Isotope(symbol="139La").gyromagnetic_ratio * 17.6
-
-# %%
-# Next setup a method which simulates the experiment again using the
+# Setup Method and Processor
+# --------------------------
+#
+# Next setup a method which simulates the experiment, again using the
 # :py:meth:`~mrsimulator.utils.get_spectral_dimensions` function to get the spectral
 # dimension parameters from the experimental dataset.
 # We also create a signal processor object which will scale the simulated spectrum.
@@ -61,9 +65,13 @@ processor = sp.SignalProcessor(operations=[sp.Scale(factor=1000)])
 
 
 # %%
-# To fit model values to the experimental dataset, you could define a custom
-# function which recomputes the spectrum from a list of spin system objects generated
-# from a set of values, but this would be inefficient! The grid of :math:`\text{Cq}`
+# Create a Lineshape Kernel
+# -------------------------
+#
+# An approach for fitting model values to the experimental dataset could be computing
+# the spectrum from a list of spin system objects with tensor parameters pulled from
+# an Extended Czjzek model during each round of fitting, but this would be inefficient!
+# The grid of :math:`\text{Cq}`
 # and :math:`\eta_q` points will not change during the fit; we are interested in the
 # probability distribution across these points.
 #
@@ -104,12 +112,15 @@ kernel = make_kernel(cq_range, eta_range, method, "139La")
 
 
 # %%
+# Make spectrum from kernel and model values
+# ------------------------------------------
+#
 # Next define a function which takes a LMFIT Parameters object, the pre-computed kernel
 # and a signal processor object and returns a CSDM object holding the guess spectrum.
-# Here the Parameters object holds values for the
-# :py:class:`~mrsimulator.models.ExtCzjzekDistribution` object which is used to
-# create the probability density function, :math:`{\bf f}`, which is then multiplied
-# with the kernel, :math:`{\bf K}`, to produce a spectrum, :math:`{\bf s}`.
+# Here the Parameters object holds attributes from the
+# :py:class:`~mrsimulator.models.ExtCzjzekDistribution` class which is used to
+# create the probability density function, :math:`{\bf f}`. Then :math:`{\bf f}` is
+# multiplied with the kernel, :math:`{\bf K}`, to produce a spectrum, :math:`{\bf s}`.
 #
 # .. math::
 #
@@ -117,7 +128,7 @@ kernel = make_kernel(cq_range, eta_range, method, "139La")
 #
 # A constant isotropic chemical shift, whose value is also in the Parameters object,
 # is applied to :math:`{\bf s}` using the `Fouier shift relation
-# <https://en.wikipedia.org/wiki/Fourier_transform#Translation_/_time_shifting`__.
+# <https://en.wikipedia.org/wiki/Fourier_transform#Translation_/_time_shifting>`__.
 # Finally, the spectrum is scaled and returned.
 def make_spectrum_from_parameters(
     params, kernel, processor, cq_range=cq_range, eta_range=eta_range
@@ -139,7 +150,6 @@ def make_spectrum_from_parameters(
     eta = values["dist_eta"]
     eps = values["dist_eps"]
     iso_shift = values["dist_iso_shift"]
-    iso_shift_in_hz = ppm_to_hz_factor * iso_shift
 
     # Setup model object and get the amplitude
     model_quad = ExtCzjzekDistribution({"Cq": Cq, "eta": eta}, eps)
@@ -154,6 +164,10 @@ def make_spectrum_from_parameters(
         dependent_variables=[cp.as_dependent_variable(dist)],
     )
 
+    # Calculate isotropic shift in Hz
+    ppm_to_hz_factor = Isotope(symbol="139La").gyromagnetic_ratio * 17.6
+    iso_shift_in_hz = ppm_to_hz_factor * iso_shift
+
     # Apply isotropic shift using FFT shift theorem
     guess_dataset = guess_dataset.fft()
     time_coords = guess_dataset.x[0].coordinates.value
@@ -165,7 +179,7 @@ def make_spectrum_from_parameters(
     # Apply signal processor and return
     processor.operations[0].factor = values["sp_scale_factor"]
     guess_dataset = processor.apply_operations(guess_dataset)
-    return guess_dataset
+    return guess_dataset.real
 
 
 def residuals(exp_spectra, simulated_spectra):
@@ -174,6 +188,9 @@ def residuals(exp_spectra, simulated_spectra):
 
 
 # %%
+# Make initial guess
+# ------------------
+#
 # Next pack the attributes to be fit into a Parameters object and plot the initial guess
 # spectrum.
 #
@@ -195,8 +212,8 @@ residual_spectrum = residuals(experiment, initial_guess)
 plt.figure(figsize=(6, 4))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment.real, "k", alpha=0.5)
-ax.plot(initial_guess.real, "r", label="Guess")
-ax.plot(residual_spectrum.real, "b", label="Residuals")
+ax.plot(initial_guess.real, "r", alpha=0.75, label="Guess")
+ax.plot(residual_spectrum.real, "b", alpha=0.75, label="Residuals")
 plt.legend()
 plt.grid()
 plt.tight_layout()
@@ -204,10 +221,13 @@ plt.show()
 
 
 # %%
+# Least-squares minimization with LMFIT
+# -------------------------------------
+#
 # Now define minimization function per the LMFIT specifications which will return
 # the difference between the experimental and guess spectrum scaled by the noise
 # standard deviation which was calculated in a previous cell.
-def minimization_function(params, experiment, processor, kernel, sigma=0.005100602):
+def minimization_function(params, experiment, processor, kernel, sigma=sigma):
     guess_spectrum = make_spectrum_from_parameters(params, kernel, processor)
     residual_spectrum = residuals(experiment, guess_spectrum)
     return residual_spectrum.y[0].components[0].real / sigma
@@ -226,6 +246,9 @@ best_fit_params = result.params  # Grab the Parameters object from the best fit
 result
 
 # %%
+# Plot the best-fit solution
+# --------------------------
+#
 # Finally, plot the best fit spectrum and the residuals.
 final_fit = make_spectrum_from_parameters(best_fit_params, kernel, processor)
 residual_spectrum = residuals(experiment, final_fit)
@@ -234,10 +257,20 @@ residual_spectrum = residuals(experiment, final_fit)
 plt.figure(figsize=(6, 4))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
-ax.plot(final_fit, "r", label="Fit")
-ax.plot(residual_spectrum, "b", label="Residuals")
+ax.plot(final_fit, "r", alpha=0.75, label="Fit")
+ax.plot(residual_spectrum, "b", alpha=0.75, label="Residuals")
 plt.legend()
 ax.set_xlim(-11000, 9000)
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+#
+# .. [#f1] A. J. Fernández-Carrión, M. Allix, P. Florian, M. R. Suchomel, and A. I.
+#       Becerro.
+#       Revealing Structural Detail in the High Temperature La2Si2O7–Y2Si2O7 Phase
+#       Diagram by Synchrotron Powder Diffraction and Nuclear Magnetic Resonance
+#       Spectroscopy.
+#       The Journal of Physical Chemistry C 2012 **116** (40), 21523-21535
+#       `DOI: 10.1021/jp305777m <https://doi.org/10.1021/jp305777m>`_
