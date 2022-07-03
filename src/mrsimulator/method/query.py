@@ -311,7 +311,7 @@ class MixingQuery(Parseable):
 
 
 class MixingEnum(Enum):
-    """Enumerations for defining common mixing queries. The enumerations are as follows
+    """Enumerations for defining common mixing queries. The enumerations are as follows:
 
     Attributes
     ----------
@@ -323,6 +323,21 @@ class MixingEnum(Enum):
 
     NoMixing:
         Defines mixing query where no pathways connect
+
+    Example
+    -------
+
+    The query attribute of the :py:class:`~mrsimulator.method.event.MixingEvent` can be
+    set to the Enum itself or a string representing the Enum.
+
+    >>> from mrsimulator.method import MixingEvent
+    >>> from mrsimulator.method.query import MixingEnum
+    >>> # From Enum object
+    >>> total_mix = MixingEvent(query=MixingEnum.TotalMixing)
+    >>> no_mix = MixingEvent(query=MixingEnum.NoMixing)
+    >>> # From string representing Enum
+    >>> total_mix = MixingEvent(query="TotalMixing")
+    >>> no_mix = MixingEvent(query="NoMixing")
     """
 
     @classmethod
