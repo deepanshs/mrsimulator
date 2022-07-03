@@ -93,7 +93,7 @@ frequency and complex amplitude in the **SpectralDimension**.
 
 
 **SpectralEvent** and **DelayEvent** objects define which transitions are
-"alive" during the event and under which transition-dependent frequency
+observed during the event and under which transition-dependent frequency
 contributions they evolve. No coherence transfer among transitions or
 populations occurs in a spectral or delay event. The transition-dependent
 frequency contributions during an Event are selected from a list of
@@ -122,18 +122,17 @@ Inside **SpectralEvent** and **DelayEvent** objects, is a list of
 :py:meth:`~mrsimulator.method.query.TransitionQuery` objects (*vide infra*)
 which determine which transitions are observed during the event. **Method**
 objects in **mrsimulator** are general-purpose because they are designed for an
-arbitrary spin system. That is, a method does not know the spin system in
-advance. Thus, when designing a **Method** object, you cannot identify and
-select a transition through its initial and final eigenstate quantum numbers.
-Instead, transition selection is done through **TransitionQuery** objects during
-individual spectral or delay events. It is only during a simulation that the
+arbitrary spin system, i.e., a method does not know the spin system in advance.
+When designing a **Method** object, you cannot identify and select a transition
+through its initial and final eigenstate quantum numbers. Transition selection
+is done through **TransitionQuery** and
+:py:meth:`~mrsimulator.method.query.SymmetryQuery` objects during individual
+spectral or delay events. **TransitionQuery** objects hold a list of
+**SymmetryQuery** objects which act on specific isotopes defined by the
+``channels`` attribute in **Method**. It is only during a simulation that the
 **Method** object uses its **TransitionQuery** objects to determine the selected
 transition pathways for a given **SpinSystem** object by the initial and final
-eigenstate quantum numbers of each transition. **TransitionQuery** objects hold
-a list of :py:meth:`~mrsimulator.method.query.SymmetryQuery` objects which act
-on specific isotopes in the, as yet to be determined, spin system. A list of
-specific isotopes upon which the **SymmetryQuery** objects act are determined by
-the ``channels`` attribute in **Method**.
+eigenstate quantum numbers of each transition.
 
 
 
@@ -209,7 +208,7 @@ any details of the spin systems upon which they will act. For example, in the
 density matrix of a spin system ensemble, one could easily identify a transition
 by its row and column indexes. However, those indexes depend on the spin system
 and how the spins and their eigenstates have been assigned to those indexes.
-Therefore, we need a spin-system agnostic approach for selecting transitions.
+Instead, we need a spin-system agnostic approach for selecting transitions.
 
 
 Spin Transition Symmetry Functions
@@ -307,7 +306,7 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
         \cdots
 
     The :math:`\ell=0` function is dropped as it always evaluates to zero. For a
-    single spin, :math:`I`, a complete set of functions are defined up to
+    single spin, :math:`I`, a complete set of functions is defined up to
     :math:`\ell = 2I`.
 
 
@@ -350,13 +349,13 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
 
       \begin{array}{c}
       \mathbb{p}_{1,2,\ldots,n} =  \mathbb{p}_{1}
-      + \mathbb{p}_{2} + \cdots \mathbb{p}_{n} \\
+      + \mathbb{p}_{2} + \cdots \mathbb{p}_{n}, \\
       \\
       \mathbb{d}_{1,2,\ldots,n} =  \mathbb{d}_{1}
-      + \mathbb{d}_{2} + \cdots \mathbb{d}_{n} \\
+      + \mathbb{d}_{2} + \cdots \mathbb{d}_{n}, \\
       \\
       \mathbb{f}_{1,2,\ldots,n} =  \mathbb{f}_{1}
-      + \mathbb{f}_{2} + \cdots \mathbb{f}_{n} \\
+      + \mathbb{f}_{2} + \cdots \mathbb{f}_{n}, \\
       \vdots
       \end{array}
 
@@ -385,8 +384,8 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
       \end{array}
 
     Below is an energy level diagram of two coupled spin :math:`I=1/2` nuclei with
-    transition labeled according to their transition symmetry function values.  Each
-    transition has a unique set of transition symmetry function values.
+    transition labeled according to their transition symmetry function values.  Note
+    that each transition has a unique set of transition symmetry function values.
 
     .. figure:: ../../_static/CoupledOneHalf.*
         :width: 650
@@ -422,10 +421,10 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
     :math:`\mathbb{D}(\Theta)`, :math:`\mathbb{F}(\Theta)`,
     :math:`\mathbb{G}(\Theta)`, :math:`\ldots`, i.e., following the
     spectroscopic sub-shell letter designations for :math:`L`. Consult the
-    `Symmetry Pathways<https://doi.org/10.1016/j.pnmrs.2010.11.003>`_ paper for
+    `Symmetry Pathways paper <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_ for
     more details on the form of the spatial symmetry
     functions.  In short, the :math:`\mathbb{S}` function is independent of
-    sample orientation, i.e., it will be part of all isotropic frequency
+    sample orientation, i.e., it will appear in all isotropic frequency
     contributions.  The :math:`\mathbb{D}(\Theta)` function has a second-rank
     dependence on sample orientation, and can be averaged away with fast
     magic-angle spinning, i.e., spinning about an angle, :math:`\theta_R`, that
@@ -526,6 +525,7 @@ Based on the review above, we now know that the spin :math:`I=1`, the transition
 :math:`\ketbra{-1}{0}` can be selected with :math:`{(\text{p}_I,\text{d}_I) =
 (-1,1)}`.  In **mrsimulator**, this transition is selected during a
 **SpectralEvent** using the **SymmetryQuery** and **TransitionQuery** objects,
+as defined in the code below.
 
 .. plot::
     :context: reset
@@ -538,12 +538,12 @@ Based on the review above, we now know that the spin :math:`I=1`, the transition
     event = SpectralEvent(fraction=1, transition_query=[trans_query])
 
 .. note::
-        Python dictionaries can be used to create and initialize an object. To do this,
-        the dictionary must use the object's attribute names as the key strings. For
-        example, the code above could have been written
+    Python dictionaries can also be used to create and initialize an object. To do this,
+    the dictionary must use the object's attribute names as the key strings. For
+    example, the code above could have been written
 
-        .. plot::
-            :context: reset
+    .. plot::
+        :context: close-figs
 
             symm_query = {"P":[-1], "D":[1]}
             trans_query = {"ch1":symm_query}
@@ -637,15 +637,15 @@ code below.
 
         # Plot spectra from all three methods
         fig, ax = plt.subplots(1, 2, figsize=(10, 3.5), subplot_kw={"projection": "csdm"})
-        ax[0].plot(processor.apply_operations(dataset=sim.methods[0].simulation),
+        ax[0].plot(processor.apply_operations(dataset=sim.methods[0].simulation).real,
             label="$p_I = -1$ transitions")
         ax[0].set_title("Single-Quantum Spectrum All Transitions")
         ax[0].legend()
         ax[0].grid()
         ax[0].invert_xaxis()  # reverse x-axis
-        ax[1].plot(processor.apply_operations(dataset=sim.methods[1].simulation),
+        ax[1].plot(processor.apply_operations(dataset=sim.methods[1].simulation).real,
             label="$(p_I,d_I) = (-1,+1)$ transitions")
-        ax[1].plot(processor.apply_operations(dataset=sim.methods[2].simulation),
+        ax[1].plot(processor.apply_operations(dataset=sim.methods[2].simulation).real,
             label="$(p_I,d_I) = (-1,-1)$ transitions")
         ax[1].set_title("Single-Quantum Spectrum Single Transitions")
         ax[1].legend()
