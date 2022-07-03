@@ -272,11 +272,11 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
 
 .. note::
 
-        Spin Transition Symmetry Functions
+    **Spin Transition Symmetry Functions**
 
     In the `symmetry pathway approach
     <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_,  the idea of coherence order is extended to form
-    a complete set of spin transition symmetry functions, :math:`{\xi}_l
+    a complete set of spin transition symmetry functions, :math:`\xi_\ell
     (i,j)`, given by
 
     .. math::
@@ -393,14 +393,112 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
         :alt: figure
         :align: center
 
-    As described in ":ref:`theory`", these transition symmetry functions
-    play an important role in evaluating the individual frequency
-    contributions in given in
-    :py:meth:`~mrsimulator.method.frequency_contrib.FrequencyEnum` to the
-    overall transition frequency. They also aid in pulse sequence
-    design by identifying how different frequency contributions
-    refocus through the transition pathways.
 
+
+    **NMR Transition Frequency Contributions**
+
+    The NMR frequency, :math:`\Omega(\Theta,i,j)`, of an :math:`i  \rightarrow  j`
+    transition between the eigenstates of the stationary-state semi-classical
+    Hamiltonian in a sample with a lattice spatial orientation, :math:`\Theta`, can be
+    written as a sum of components,
+
+    .. math::
+        \Omega(\Theta,i,j) = \sum_k \Omega_k(\Theta,i,j)
+
+    with each component, :math:`\Omega_k(\Theta,i,j)`, separated into three parts:
+
+    .. math::
+        \Omega_k(\Theta,i,j) = \omega_k \, {\Xi}^{(k)}_L (\Theta) \,{\xi}^{(k)}_\ell (i,j),
+
+    where :math:`{\xi}^{(k)}_\ell(i,j)` are the spin transition symmetry
+    functions described earlier, :math:`{\Xi}^{(k)}_L(\Theta)` are the spatial
+    symmetry functions, and :math:`\omega_k` gives the size of the kth frequency
+    component.  The experimentalist indirectly influences a frequency component
+    :math:`\Omega_k` by direct manipulation of the quantum transition, :math:`i
+    \rightarrow  j`, and the spatial orientation,  :math:`\Theta` of the sample.
+    
+    The function symbol :math:`\Xi_\ell(\Theta)` is similarly replaced with the
+    upper-case symbols :math:`\mathbb{S}`, :math:`\mathbb{P}(\Theta)`,
+    :math:`\mathbb{D}(\Theta)`, :math:`\mathbb{F}(\Theta)`,
+    :math:`\mathbb{G}(\Theta)`, :math:`\ldots`, i.e., following the
+    spectroscopic sub-shell letter designations for :math:`L`. Consult the
+    Symmetry Pathways paper for more details on the form of the spatial symmetry
+    functions.  In short, the :math:`\mathbb{S}` function is independent of
+    sample orientation, i.e., it will be part of all isotropic frequency
+    contributions.  The :math:`\mathbb{D}(\Theta)` function has a second-rank
+    dependence on sample orientation, and can be averaged away with fast
+    magic-angle spinning, i.e., spinning about an angle, :math:`\theta_R`, that
+    is the root of the second-rank Legendre polynomial ":math:`P_2(\cos
+    \theta_R)`. The other spatial symmetry functions are removed by spinning the
+    sample about the corresponding root of the Lth-rank Legendre polynomial
+    ":math:`P_L(\cos \theta_R)`.
+
+    As described in ":ref:`theory`", these transition symmetry functions play an
+    important role in evaluating the individual frequency contributions to the
+    overall transition frequency, given in the table below and in
+    :py:meth:`~mrsimulator.method.frequency_contrib.FrequencyEnum`. They also
+    aid in pulse sequence design by identifying how different frequency
+    contributions refocus through the transition pathways.
+
+.. list-table::
+    :widths: 25 25 25 25 25
+    :header-rows: 2
+
+    * - Interactions
+      - perturbation
+      - anisotropy
+      - ``freq_contrib``
+      - Expression
+    * - 
+      - order
+      - rank
+      - 
+      - 
+    * - shielding
+      - 1st
+      - 0th
+      - ``Shielding1_0``
+      - :math:`-\omega_0 \sigma_\text{iso} \cdot \mathbb{p}_I`
+    * - shielding
+      - 1st
+      - 2nd
+      - ``Shielding1_2``
+      - :math:`-\omega_0 \zeta_\sigma \cdot \mathbb{D}^{\{\sigma\}} \cdot \mathbb{p}_I`
+    * - weak J
+      - 1st
+      - 0th
+      - ``J1_0``
+      - :math:`2 \pi J_\text{iso} \, (\mathbb{pp})_{IS}`
+    * - weak J
+      - 1st
+      - 2nd
+      - ``J1_2``
+      - :math:`2 \pi \zeta_J \cdot \mathbb{D}^{\{d_{IS}\}} \cdot (\mathbb{pp})_{IS}`
+    * - weak dipolar
+      - 1st
+      - 2nd
+      - ``D1_2``
+      - :math:`\omega_d \cdot \mathbb{D}^{\{d_{IS}\}} \cdot (\mathbb{pp})_{IS}`
+    * - quadrupolar
+      - 1st
+      - 2nd
+      - ``Quad1_2``
+      - :math:`\omega_q \cdot \mathbb{D}^{\{q\}} \cdot \mathbb{d}_I`
+    * - quadrupolar
+      - 2nd
+      - 0th
+      - ``Quad2_0``
+      - :math:`\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{S}^{\{qq\}} \cdot \mathbb{c}_0`
+    * - quadrupolar
+      - 2nd
+      - 2nd
+      - ``Quad2_2``
+      - :math:`\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{D}^{\{qq\}} \cdot \mathbb{c}_2`
+    * - quadrupolar
+      - 2nd
+      - 4th
+      - ``Quad2_4``
+      - :math:`\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{G}^{\{qq\}} \cdot \mathbb{c}_4`
 
 
 Single-Spin Queries
@@ -1142,26 +1240,6 @@ are used to select the desired transition pathways.
 .. note::
 
         Echo Symmetry Classification
-
-    The NMR frequency, :math:`\Omega(\Theta,i,j)`, of an :math:`i  \rightarrow  j`
-    transition between the eigenstates of the stationary-state semi-classical
-    Hamiltonian in a sample with a lattice spatial orientation, :math:`\Theta`, can be
-    written as a sum of components,
-
-    .. math::
-        \Omega(\Theta,i,j) = \sum_k \Omega_k(\Theta,i,j)
-
-    with each component, :math:`\Omega_k(\Theta,i,j)`, separated into three parts:
-
-    .. math::
-        \Omega_k(\Theta,i,j) = \omega_k \, {\Xi}^{(k)}_L (\Theta) \,{\xi}^{(k)}_l (i,j),
-
-    where :math:`{\xi}^{(k)}_l(i,j)` are the spin transition symmetry functions
-    (described earlier), :math:`{\Xi}^{(k)}_L(\Theta)` is the spatial symmetry
-    functions, and :math:`\omega_k` gives the size of the kth frequency
-    component.  The experimentalist indirectly influences a frequency component
-    :math:`\Omega_k` by direct manipulation of the quantum transition, :math:`i
-    \rightarrow  j`, and the spatial orientation,  :math:`\Theta` of the sample.
 
     The well known Hahn-echo occurs when frequency components dependent on
     :math:`p_I` values change sign in an experiment. That is, a Hahn echo forms
