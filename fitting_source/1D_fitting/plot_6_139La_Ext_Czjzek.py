@@ -101,7 +101,7 @@ def make_kernel(cq_range, eta_range, method, isotope):
     sim.run(pack_as_csdm=False)
 
     amp = sim.methods[0].simulation.real
-    return amp
+    return np.swapaxes(amp, 0, 1)
 
 
 # Create ranges to construct cq and eta grid points
@@ -156,7 +156,7 @@ def make_spectrum_from_parameters(
     _, _, amp = model_quad.pdf(pos=[cq_range, eta_range])
 
     # Create spectra by dotting the amplitude distribution with the kernel
-    dist = np.dot(amp.flatten(), kernel)
+    dist = kernel.dot(amp.flatten())
 
     # Pack numpy array as csdm object and apply signal processing
     guess_dataset = cp.CSDM(
