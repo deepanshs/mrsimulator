@@ -422,7 +422,8 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
     :math:`\mathbb{D}(\Theta)`, :math:`\mathbb{F}(\Theta)`,
     :math:`\mathbb{G}(\Theta)`, :math:`\ldots`, i.e., following the
     spectroscopic sub-shell letter designations for :math:`L`. Consult the
-    Symmetry Pathways paper for more details on the form of the spatial symmetry
+    `Symmetry Pathways<https://doi.org/10.1016/j.pnmrs.2010.11.003>`_ paper for
+    more details on the form of the spatial symmetry
     functions.  In short, the :math:`\mathbb{S}` function is independent of
     sample orientation, i.e., it will be part of all isotropic frequency
     contributions.  The :math:`\mathbb{D}(\Theta)` function has a second-rank
@@ -438,7 +439,17 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
     transition functions
 
     .. math::
-        \mathbb{c}_L(m_i,m_j)  = \pi_{L,1}^{\{2,2\}} \mathbb{p}_I + \pi_{L,3}^{\{2,2\}}  \mathbb{f}_I.
+
+        \mathbb{c}_0  = \,\,\,\frac{4}{\sqrt{125}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  + \sqrt{\frac{18}{25}} \, \mathbb{f}_I
+
+    .. math::
+
+        \mathbb{c}_2  = \,\,\,\frac{2}{\sqrt{175}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  - \frac{6}{\sqrt{35}} \, \mathbb{f}_I
+
+    .. math::
+
+        \mathbb{c}_4  = -\frac{184}{\sqrt{875}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  - \frac{17}{\sqrt{175}} \, \mathbb{f}_I
+
 
     As described in ":ref:`theory`", these transition symmetry functions play an
     important role in evaluating the individual frequency contributions to the
@@ -495,17 +506,17 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
       - 2nd
       - 0th
       - ``Quad2_0``
-      - :math:`\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{S}^{\{qq\}} \cdot \mathbb{c}_0`
+      - :math:`\displaystyle \frac{\omega_q^2}{\omega_0}  \cdot \mathbb{S}^{\{qq\}} \cdot \mathbb{c}_0`
     * - quadrupolar
       - 2nd
       - 2nd
       - ``Quad2_2``
-      - :math:`\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{D}^{\{qq\}} \cdot \mathbb{c}_2`
+      - :math:`\displaystyle\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{D}^{\{qq\}} \cdot \mathbb{c}_2`
     * - quadrupolar
       - 2nd
       - 4th
       - ``Quad2_4``
-      - :math:`\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{G}^{\{qq\}} \cdot \mathbb{c}_4`
+      - :math:`\displaystyle\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{G}^{\{qq\}} \cdot \mathbb{c}_4`
 
 
 Single-Spin Queries
