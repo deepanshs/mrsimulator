@@ -132,7 +132,7 @@ spectral or delay events. **TransitionQuery** objects hold a list of
 ``channels`` attribute in **Method**. It is only during a simulation that the
 **Method** object uses its **TransitionQuery** objects to determine the selected
 transition pathways for a given **SpinSystem** object by the initial and final
-eigenstate quantum numbers of each transition.
+eigenstate quantum numbers of each transition. 
 
 
 
@@ -1166,9 +1166,23 @@ is given by
 
 Mixing Queries
 ''''''''''''''
-It is during a mixing period that there is a transfer among transitions and populations.
-It is this branching out of the transition pathways at every mixing event that makes
-NMR spectroscopy such a rich and versatile technique.
+
+*This section under construction*
+
+The amplitude of a transition pathway signal derives from the product
+of mixing amplitudes associated with each transfer between transitions,
+e.g., 
+
+.. math::
+    (a_{0A})\,\hat{t}_A \rightarrow (a_{0A}a_{AB})\,\hat{t}_B\rightarrow (a_{0A}a_{AB}a_{BC})\,\hat{t}_C \rightarrow \cdots
+
+Here, :math:`a_{0A}` is the amplitude of the initial :math:`\hat{t}_A` transition, 
+:math:`a_{AB}` is the mixing amplitude for the transfer from
+:math:`\hat{t}_A` to :math:`\hat{t}_B`,  :math:`a_{BC}` is the mixing amplitude
+for the transfer from :math:`\hat{t}_B` to :math:`\hat{t}_C`, and so on.  Eliminating
+a transition with a TransitionQuery in a spectral or delay event sets the eliminated
+transition's pathway amplitude to zero.
+
 
 Default Total Mixing between Adjacent Spectral or Delay Events
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1177,17 +1191,10 @@ In previous discussions, we made no mention of the efficiency of transfer
 between selected transitions in adjacent **SpectralEvent** objects.  As a
 default behavior, **mrsimulator** places the total mixing event,
 ``MixingEvent(query="TotalMixing")`` between all SpectralEvent or DelayEvent
-objects, unless another MixingEvent is explicitly placed between SpectralEvent
-or DelayEvent objects.  The "TotalMixing" query tells **mrsimulator** to connect
-all selected transitions in the two adjacent spectral or delay events.   That is,
-a selected transition, :math:`\ketbra{I, m_f}{I, m_i}`, in a spectral or delay
-event is transferred to all transitions in the subset of selected transition,
-:math:`\ketbra{I,m_f'}{I,m_i'} \in \{T\}` in the next spectral or delay event, according to
-
-.. math::
-
-    \ketbra{I, m_f}{I, m_i} \longrightarrow \sum_{m_i',m_f' \in \{T\} }\ketbra{I,m_f'}{I,m_i'}.
-
+objects, unless another type of MixingEvent is explicitly placed between
+SpectralEvent or DelayEvent objects.  A total mixing event simply assumes
+(unrealistically) that all selected transitions in the two adjacent spectral or
+delay events are connected with a mixing amplitude of 1.
 
 .. warning::
     The use of total mixing complicates the comparison of integrated intensities among
@@ -1217,7 +1224,7 @@ default) behavior is that there is a mixing (transfer) of coherence between
 those the symmetric triple-quantum and central transitions, forming the desired
 transition pathway. However, when multiple transitions are selected in a
 SpectralEvent or DelayEvent, you may need to prevent undesired mixing between
-certain transition in the two adjacent events. You  can avoid a "TotalMixing"
+certain transition in the two adjacent events. You can avoid a "TotalMixing"
 event by inserting MixingEvents with other query types, as described below.
 
 Rotation Query
