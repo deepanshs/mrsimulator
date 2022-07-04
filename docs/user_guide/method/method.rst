@@ -132,7 +132,7 @@ spectral or delay events. **TransitionQuery** objects hold a list of
 ``channels`` attribute in **Method**. It is only during a simulation that the
 **Method** object uses its **TransitionQuery** objects to determine the selected
 transition pathways for a given **SpinSystem** object by the initial and final
-eigenstate quantum numbers of each transition. 
+eigenstate quantum numbers of each transition.
 
 
 
@@ -269,7 +269,6 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
 
 
 .. note::
-
     **Spin Transition Symmetry Functions**
 
     In the `symmetry pathway approach
@@ -393,6 +392,7 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
         :align: center
 
 
+.. note::
 
     **NMR Transition Frequency Contributions**
 
@@ -457,7 +457,11 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
     aid in pulse sequence design by identifying how different frequency
     contributions refocus through the transition pathways.
 
-.. list-table::
+
+
+.. _frequency_contribution_table:
+
+.. list-table:: Frequency Contributions
     :widths: 25 25 25 25 25
     :header-rows: 2
 
@@ -1170,38 +1174,49 @@ Mixing Queries
 *This section under construction*
 
 The amplitude of a transition pathway signal derives from the product
-of mixing amplitudes associated with each transfer between transitions,
-e.g., 
+of mixing amplitudes associated with each transfer between transitions in a
+transition pathway,
+e.g.,
 
 .. math::
     (a_{0A})\,\hat{t}_A \rightarrow (a_{0A}a_{AB})\,\hat{t}_B\rightarrow (a_{0A}a_{AB}a_{BC})\,\hat{t}_C \rightarrow \cdots
 
-Here, :math:`a_{0A}` is the amplitude of the initial :math:`\hat{t}_A` transition, 
+Here, :math:`a_{0A}` is the amplitude of the initial :math:`\hat{t}_A` transition,
 :math:`a_{AB}` is the mixing amplitude for the transfer from
 :math:`\hat{t}_A` to :math:`\hat{t}_B`,  :math:`a_{BC}` is the mixing amplitude
-for the transfer from :math:`\hat{t}_B` to :math:`\hat{t}_C`, and so on.  Eliminating
-a transition with a TransitionQuery in a spectral or delay event sets the eliminated
-transition's pathway amplitude to zero.
+for the transfer from :math:`\hat{t}_B` to :math:`\hat{t}_C`, and so on.  The
+growing product :math:`(a_{0A}a_{AB}a_{BC} \cdots)` is the transition pathway
+amplitude.  Eliminating a transition with a TransitionQuery in a spectral or
+delay event sets the eliminated transition's pathway amplitude to zero, i.e., it
+prunes that transition pathway branch.
 
 
 Default Total Mixing between Adjacent Spectral or Delay Events
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 In previous discussions, we made no mention of the efficiency of transfer
-between selected transitions in adjacent **SpectralEvent** objects.  As a
-default behavior, **mrsimulator** places the total mixing event,
-``MixingEvent(query="TotalMixing")`` between all SpectralEvent or DelayEvent
-objects, unless another type of MixingEvent is explicitly placed between
-SpectralEvent or DelayEvent objects.  A total mixing event simply assumes
-(unrealistically) that all selected transitions in the two adjacent spectral or
-delay events are connected with a mixing amplitude of 1.
+between selected transitions in adjacent **SpectralEvent** objects.  This is
+because, as a default behavior, **mrsimulator** does a *total mixing*, i.e., it
+connects all selected transitions in the two adjacent spectral or delay events.
+In other words, if the first of two adjacent SpectralEvents has three selected
+transitions and the second has two selected transitions, then **mrsimulator** will
+make :math:`3 \times 2 = 6` connections, i.e., six transition pathways passing
+from the first to second SpectralEvents.
+
+Additionally, this total mixing event assumes that every connection has a mixing
+amplitude of 1.   This is obviously unrealistic, but if used correctly gives a
+significant speed up in the simulation by avoid the need to calculate mixing
+amplitudes.
+
 
 .. warning::
-    The use of total mixing complicates the comparison of integrated intensities among
-    different methods.
+    The use of total mixing, i.e., the default mixing, can complicate the comparison
+    of integrated intensities between different methods, depending on the selected
+    transition pathways.
 
-If this default behavior had been explicitly shown in the previous example, the
-events list in the first **SpectralDimension** would have looked like
+If this default mixing behavior had been explicitly shown in the previous example,
+the events list in the first **SpectralDimension** would have looked like the code
+below.
 
 .. plot::
     :context: close-figs
@@ -1222,10 +1237,14 @@ events list in the first **SpectralDimension** would have looked like
 Since only one transition was selected in each SpectralEvent, the expected (and
 default) behavior is that there is a mixing (transfer) of coherence between
 those the symmetric triple-quantum and central transitions, forming the desired
-transition pathway. However, when multiple transitions are selected in a
-SpectralEvent or DelayEvent, you may need to prevent undesired mixing between
-certain transition in the two adjacent events. You can avoid a "TotalMixing"
-event by inserting MixingEvents with other query types, as described below.
+transition pathway.
+
+
+However, when multiple transition pathways are present in a method, you may
+need more accurate mixing amplitudes when connecting selected transitions
+of adjacent events.  You may also need to prevent undesired mixing of certain
+transitions between two adjacent events.  You can avoid a "TotalMixing" event
+by inserting MixingEvents using RotationQuery objects, as described below.
 
 Rotation Query
 """"""""""""""
@@ -1238,15 +1257,54 @@ to
 
 .. math::
 
-    \ketbra{I, m_f}{I, m_i} \stackrel{\theta_\phi}{\longrightarrow} \sum_{m_f'}\sum_{m_i'}d_{m_f',m_f}^{(I)}(\theta)d_{m_i',m_i}^{(I)}(\theta)e^{-i\Delta p\phi}(i)^{\Delta p}\ketbra{I,m_f'}{I,m_i'},
+    \ketbra{I, m_f}{I, m_i} \stackrel{\theta_\phi}{\longrightarrow} \sum_{m_f'}\sum_{m_i'} d_{m_f',m_f}^{(I)}(\theta)d_{m_i',m_i}^{(I)}(\theta)e^{-i\Delta p\phi}(i)^{\Delta p}\ketbra{I,m_f'}{I,m_i'},
 
-where :math:`\Delta p_I = p_I' - p_I`.  From this expression, we obtain the useful result that
+where :math:`\Delta p_I = p_I' - p_I`.  From this expression, we obtain the complex mixing amplitude
+from :math:`\ketbra{I, m_f}{I, m_i}` to :math:`\ketbra{I, m_f'}{I, m_i'}` due to a rotation to be
+
+.. math::
+
+    a(\theta,\phi) = d_{m_f',m_f}^{(I)}(\theta)d_{m_i',m_i}^{(I)}(\theta)e^{-i\Delta p\phi}(i)^{\Delta p}.
+
+From this expression, we note a few interesting and useful cases:
 
 .. math::
     :label: piPulseTransition
 
-    \ketbra{m_f}{m_i}  \stackrel{\pi_\phi}{\longrightarrow} \ketbra{-m_f}{-m_i}
-    e^{-i\Delta p\phi}(i)^{\Delta p}.
+    \ketbra{I,m_f}{I, m_i}  \stackrel{\pi_\phi}{\longrightarrow} \ketbra{I, -m_f}{I, -m_i} e^{-i\Delta p\phi}(i)^{\Delta p}.
+
+That is, a :math:`\pi` rotation will make only one connection between transitions in
+adjacent events.  It is also a special connection because the
+:math:`\text{p}_I` transition symmetry value for the two transitions are
+equal but opposite in sign.  Additionally, the :math:`\text{d}_I` transition symmetry
+remains unchanged (:math:`\Delta \text{d}_I = 0`) for the two transitions.
+(In fact, this behavior under a :math:`\pi` rotation is generally true for
+odd (:math:`\text{p}_I, \text{f}_I, \ldots)` and even (:math:`\text{d}_I, \text{g}_I, \ldots)`
+rank spin transition symmetry functions.)
+
+While a :math:`\pi/2` rotation can transfer a transition into many other transitions, it
+is useful to know that the :math:`\text{d}_I` transition symmetry value cannot remain
+unchanged (:math:`\Delta \text{d}_I \neq 0`) between two connected transitions
+under a :math:`\pi/2` rotation.
+
+Finally, another useful result is
+
+.. math::
+    :label: zeroPulseTransition
+
+    \ketbra{I,m_f}{I, m_i}  \stackrel{(0)_\phi}{\longrightarrow} \ketbra{I, m_f}{I, m_i}.
+
+While it's not surprising that a rotation through an angle of zero does nothing
+to the transition, this turns out to be useful in acting as the opposite of a total
+mixing event, i.e., a **no** mixing event.  As a convenience, this is defined as a
+"NoMixing" query and can be implemented with the code below.
+
+.. plot::
+    :context: close-figs
+
+
+    MixingEvent(query="NoMixing"),
+
 
 The **MixingEvent** object holds the rotation details in a **MixingQuery** object as
 a **RotationQuery** object associated with a ``channels`` attribute.  This is
@@ -1261,58 +1319,44 @@ illustrated in the sample code below.
     rot_query = RotationalQuery(angle=np.pi/2, phase=0)
     rot_mixing = MixingEvent(query={"ch1": rot_query})
 
-No Mixing Event
-"""""""""""""""
 
-A **RotationQuery** with ``angle=0`` leads to no mixing of selected transitions, i.e.,
-:math:`\ketbra{m_f}{m_i} \longrightarrow \ketbra{m_f}{m_i}`, between adjacent
-events.  As a convenience, this is defined as a "NoMixing" query and can be implemented
-with the code below.
-
-.. plot::
-    :context: close-figs
-
-
-    MixingEvent(query="NoMixing"),
-
-Let's examine two examples in deuterium spin system where **RotationQuery** objects
-are used to select the desired transition pathways, and also illustrate the importance
-of echo classification in understanding how transition frequency contributions can
-be eliminated or separated based on their dependence on different transition
-symmetry functions.
+Let's examine two examples in deuterium spin system where **RotationQuery**
+objects are used to select the desired transition pathways.  These examples also
+illustrate the importance of echo classification in understanding how transition
+frequency contributions can be eliminated or separated based on their dependence
+on different transition symmetry functions.
 
 
 .. note::
 
-        Echo Symmetry Classification
+    **Echo Symmetry Classification**
 
-    The well known Hahn-echo occurs when frequency components dependent on
-    :math:`p_I` values change sign in an experiment. That is, a Hahn echo forms
-    when
+    The well-known Hahn-echo can occur whenever the :math:`p_I` values of
+    transitions in a transition pathway change sign.  This is because the
+    changing sign of :math:`p_I` leads to a sign change for every
+    :math:`p_I`-dependent transition frequency contribution. Thus, a Hahn
+    echo forms whenever
 
     .. math::
         \overline{\text{p}_I} = \frac{1}{t} \int_0^t \text{p}_I(t') \, dt' = 0,
 
-    assuming a frequency component's spatial multiplier, :math:`{\Xi}`, remains
-    constant during this period.   A problem with showing only the pathway for
-    :math:`p_I` values is that it does not explain the formation of NMR echoes
-    that result when other frequency components change sign during time
-    evolution. Frequency components contain spin transition symmetry functions
-    such as :math:`\text{p}_I`, :math:`\text{d}_I`, :math:`\text{f}_I`,
-    :math:`\text{(pp)}_{AX}`, etc, in products with spatial symmetry functions
-    such as :math:`\mathbb{S}`, :math:`\mathbb{P}`, :math:`\mathbb{D}`, or
-    :math:`\mathbb{G}`. In other words, the :math:`\text{p}_I` pathway only
-    shows a small part of how components of an NMR transition frequency can
-    change between evolution periods. To fully understand when and which
-    frequency components refocus into echoes, we must follow *all* relevant
-    spatial, transition, or spatial-transition product symmetries through an NMR
+    assuming a frequency contribution's spatial symmetry function, :math:`{\Xi}`,
+    remains constant during this period.  As seen in the table in the
+    :ref:`frequency_contribution_table` table, sign changes in other symmetry
+    functions can also lead to corresponding sign changes for dependent
+    frequency contributions.  Thus, a problem with showing only the :math:`p_I`
+    symmetry pathway for an NMR method is that it does not explain the formation
+    of other classes of echoes that result when other symmetry functions change
+    sign in a transition pathway.  To fully understand when and which frequency
+    contributions refocus into echoes, we must follow *all* relevant spatial,
+    transition, or spatial-transition product symmetries through an NMR
     experiment.   Thus, we generally classify echoes that refocus during a time
-    interval as a *transition symmetry echo* at constant :math:`{\Xi}_k` when
+    interval as a *transition symmetry echo* (at constant :math:`{\Xi}_k`) when
 
     .. math::
         \overline{{\xi}_k} = \frac{1}{t} \int_0^t {\xi}_k(t') \, dt' = 0,
 
-    and as a *spatial symmetry echo* at constant :math:`{\xi}_k` when
+    and as a *spatial symmetry echo* (at constant :math:`{\xi}_k`) when
 
     .. math::
         \overline{{\Xi}_k} = \frac{1}{t} \int_0^t {\Xi}_k(t') \, dt' = 0,
@@ -1326,46 +1370,72 @@ symmetry functions.
     Within the class of transition echoes we find subclasses such as
     :math:`\text{p}` echoes, which include the Hahn echo and the stimulated
     echo; :math:`\text{d}` echoes, which include the solid echo and Solomon
-    echoes, and many other types of echoes classified by higher spin
-    transition symmetry functions.
+    echoes,  :math:`\text{c}_4` echoes, used in MQ-MAS and Satellite-Transition
+    Magic-Angle Spinning (ST-MAS); :math:`\text{c}_2` echoes, used in
+    Correlation Of Anisotropies Separated Through Echo Refocusing (COASTER); and
+    :math:`\text{c}_0` echoes, used in Multiple-Quantum DOuble Rotation
+    (MQ-DOR).
 
-The Hahn Echo experiment generates a refocusing of magnetization that evolves
-under transition frequencies that follow :math:`\text{p}_I` symmetry pathways.
+    Within the class of spatial echoes we find subclasses such as :math:`\mathbb{D}`
+    rotary echoes, which occur during sample rotation, and :math:`\mathbb{D}_0` and
+    :math:`\mathbb{G}_0` echoes, which are designed to occur simultaneously during the
+    Dynamic-Angle Spinning (DAS) experiment.
 
-.. math::
 
-    \text{p}_I: 0 \xrightarrow[]{\frac{\pi}{2}} +1 \xrightarrow[]{\pi} -1
+p and d Echoes on Deuterium
+"""""""""""""""""""""""""""
 
-This pathway selectively refocuses the :math:`\mathbb{p}` frequency
-contributions into an echo while leaving the :math:`\mathbb{d}` contributions
-free to evolve unaffected by the :math:`\pi` pulse. Below is a diagram
-representing the different energy level transitions and corresponding pathways
-observed by the Hahn Echo experiment.
+
+The Hahn Echo sequence of :math:`\pi/2-\tau-\pi-t-` leads to the formation of a
+:math:`\text{p}_I` echo at :math:`t = \tau`.  The two transition pathways created
+by this sequence on a deuterium nucleus are illustrated below.
 
 .. figure:: ../../_static/deuteriumHahnEcho.*
     :alt: Transition symmetry pathways for the Hahn Echo experiment
     :align: center
     :width: 50%
 
-    Energy level transitions and symmetry pathways for the Hahn Echo experiment.
+Remember that a :math:`\pi` rotation is a special because it connects transitions with
+equal but opposite signs of :math:`\text{p}_I` while  :math:`\text{d}_I` unchanged.
 
-Although a normal experiment would start with a :math:`\frac{\pi}{2}` rotation to transfer the
-equilibrium magnetization to a desired symmetry, mrsimulator eliminates the need for this first
-rotation by defining the first symmetry as :math:`\mathbb{p} = +1`. Our transition symmetry
-pathway now becomes
+The Solid Echo sequence of :math:`\pi/2-\tau-\pi/2-t-` leads to the formation of a
+:math:`\text{d}_I` echo at :math:`t = \tau`.    The two transition pathways created
+by this sequence on a deuterium nucleus are illustrated below.
 
-.. math::
+.. figure:: ../../_static/deuteriumSolidEcho.*
+    :alt: Transition symmetry pathways for the Hahn Echo experiment
+    :align: center
+    :width: 50%
 
-    \text{p}_I: +1 \xrightarrow[]{\pi} -1
+Here, also recall that the :math:`\text{d}_I` transition symmetry value cannot remain
+unchanged (:math:`\Delta \text{d}_I \neq 0`) between two connected transitions
+under a :math:`\pi/2` rotation.
 
-Below is a method object which simulated the Hahn Echo experiment. The MixingEvent defines the
-:math:`\pi` rotation between the two SpectralEvents.
+
+Below are two custom **Method** objects for simulating the Hahn and Solid Echo
+experiments. There is only one **SpectralDimension** object in each method, and
+the average frequency during each spectral dimension is derived from equal
+fractions of two **SpectralEvent** objects.  Between these two **SpectralEvent**
+objects is a **MixingEvent** with a **RotationQuery** object. The
+**RotationQuery** object is created with a :math:`\pi` rotation in the Hahn Echo
+method, and a :math:`\pi/2` rotation in the Solid Echo method.
+
+.. note ::
+
+    The ``transition_queries`` attribute of **SpectralEvent** holds a list
+    of **TransitionQuery** objects.   Each **TransitionQuery** in the list applies
+    to the full set of transitions present in the spin system.  It is the union of
+    these transition subsets that becomes the final set of selected transitions
+    during the **SpectralEvent**.
+
+We use the deuterium Site defined earlier in this document.
 
 .. plot::
     :context: close-figs
 
     from mrsimulator.method import MixingEvent
-    from pprint import pprint
+
+    spin_system = SpinSystem(sites=[deuterium])
 
     hahn_echo = Method(
         channels=["2H"],
@@ -1389,55 +1459,6 @@ Below is a method object which simulated the Hahn Echo experiment. The MixingEve
         ]
     )
 
-    spin_system = SpinSystem(sites=[deuterium])
-    pprint(hahn_echo.get_transition_pathways(spin_system))
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    [|1.0⟩⟨0.0| ⟶ |-1.0⟩⟨0.0|, weight=(1+0j)
-     |0.0⟩⟨-1.0| ⟶ |0.0⟩⟨1.0|, weight=(1+0j)]
-
-The ``transition_queries`` attribute of **SpectralEvent**
-holds a list of **TransitionQuery** objects.   Each **TransitionQuery** in the list
-applies to the full set of transitions present in the spin system.  It is the
-union of these transition subsets that becomes the final set of selected
-transitions during the **SpectralEvent**.
-
-
-
-
-Solid Echo
-""""""""""
-
-The Solid Echo experiment selectively refocuses the the :math:`\mathbb{d}` frequency contributions
-into an echo using a :math:`\frac{\pi}{2}` rotation while keeping the :math:`\mathbb{p}` pathway
-constant.
-Below is a diagram representing the different energy level transitions and corresponding
-pathways observed by the Solid Echo experiment.
-
-.. figure:: ../../_static/deuteriumSolidEcho.*
-    :alt: Transition symmetry pathways for the Hahn Echo experiment
-    :align: center
-    :width: 50%
-
-    Energy level transitions and symmetry pathways for the Solid Echo experiment.
-
-.. math::
-
-    \text{p}_I: -1 \xrightarrow[]{\frac{\pi}{2}} -1
-
-    \text{d}_I: \pm 1 \xrightarrow[]{\frac{\pi}{2}} \mp 1
-
-Below we construct the Solid Echo method and print out the transition pathways for the
-deuterium spin system.
-
-.. plot::
-    :context: close-figs
-
     solid_echo = Method(
         channels=["2H"],
         magnetic_flux_density=9.4,  # in T
@@ -1460,6 +1481,30 @@ deuterium spin system.
         ]
     )
 
+
+We can check the resulting transition pathways using these TransitionQuery objects with the
+code below for the ``hahn_echo`` method,
+
+.. plot::
+    :context: close-figs
+
+    from pprint import pprint
+    pprint(hahn_echo.get_transition_pathways(spin_system))
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    [|1.0⟩⟨0.0| ⟶ |-1.0⟩⟨0.0|, weight=(1+0j)
+     |0.0⟩⟨-1.0| ⟶ |0.0⟩⟨1.0|, weight=(1+0j)]
+
+and for the ``solid_echo`` method with the code below.
+
+.. plot::
+    :context: close-figs
     pprint(solid_echo.get_transition_pathways(spin_system))
 
 .. rst-class:: sphx-glr-script-out
@@ -1471,20 +1516,22 @@ deuterium spin system.
     [|-1.0⟩⟨0.0| ⟶ |0.0⟩⟨1.0|, weight=(0.5+0j)
      |0.0⟩⟨1.0| ⟶ |-1.0⟩⟨0.0|, weight=(0.5+0j)]
 
-.. note::
+Notice that the weights of the transition pathways in the solid-echo method are
+half of those in the Hahn-echo method.   This is because the :math:`\pi` pulse
+in the Hahn-echo method gave perfect transfer between the two transitions in the
+adjacent spectral events.  In contrast, while the :math:`\pi/2` pulse in the
+Hahn-echo method prevented the undesired transition pathways with :math:`\Delta
+\text{d}_I = 0`, it also connected the selected transitions during the first
+spectral event to undesired transitions in the second spectral event which were
+eliminated by its symmetry query.
 
-    Although we explicitly defined the :math:`D` values for each transition query in the
-    above method, mrsimulator will expand an undefined :math:`D` to all allowed values.
-    The transition queries in the Solid Echo method could have just as easily been defined
-    as ``{"ch1": {"P": [-1]}}``.
-
-Now we setup and run the simulation then process and plot the data
+Next, we run the simulation for both methods, perform a Gaussian line shape convolution on
+each output spectrum, and plot the datasets.
 
 .. skip: next
 
 .. plot::
     :context: close-figs
-    :caption: Simulated Hahn Echo spectrum (left) and Solid Echo spectrum (right) for the same :math:`2^\text{H}` spin system.
 
     sim = Simulator()
     sim.spin_systems = [spin_system]
@@ -1498,23 +1545,107 @@ Now we setup and run the simulation then process and plot the data
             sp.FFT(),
         ]
     )
-    hahn_data = processor.apply_operations(dataset=sim.methods[0].simulation)
-    solid_data = processor.apply_operations(dataset=sim.methods[1].simulation)
+    hahn_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
+    solid_dataset = processor.apply_operations(dataset=sim.methods[1].simulation)
 
     fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "csdm"}, figsize=[8.5, 3])
-    ax[0].plot(hahn_data.real, color="black", linewidth=1)
+    ax[0].set_title("Hahn-Echo Spectrum")
+    ax[0].plot(hahn_dataset.real)
     ax[0].invert_xaxis()
-    ax[1].plot(solid_data.real, color="black", linewidth=1)
+    ax[0].legend()
+    ax[1].set_title("Solid-Echo Spectrum")
+    ax[1].plot(solid_dataset.real)
     ax[1].invert_xaxis()
+    ax[1].legend()
     plt.tight_layout()
     plt.show()
+
+In the Hahn-echo spectrum, the :math:`\text{p}_I`-dependent frequency contributions (i.e., the
+shielding contributions) were averaged to zero, leaving only the :math:`\text{d}_I`-dependent
+frequency contributions (i.e., the first-order quadrupolar contribution).  Conversely, in the
+solid-echo spectrum, the :math:`\text{d}_I`-dependent frequency contributions (i.e., the
+first-order quadrupolar contribution) were averaged to zero, leaving only the
+:math:`\text{p}_I`-dependent frequency contributions (i.e., the
+shielding contributions).
+
+While these two examples nicely illustrate numerous important concepts for building custom-methods,
+it should also be noted that identical spectra could have been obtained with a simpler custom-method
+that used the ``freq_contrib`` to remove the undesired contributions.
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
+
+    quad_only = Method(
+        channels=["2H"],
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
+            SpectralDimension(
+                count=512,
+                spectral_width=2e4,  # in Hz
+                events=[SpectralEvent(
+                    transition_query=[{"ch1": {"P": [-1]}}],
+                    freq_contrib=["Quad1_2"]
+                )
+                ]
+            )
+        ]
+    )
+
+    shielding_only = Method(
+        channels=["2H"],
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
+            SpectralDimension(
+                count=512,
+                spectral_width=2e4,  # in Hz
+                events=[SpectralEvent(
+                    transition_query=[{"ch1": {"P": [-1]}}],
+                    freq_contrib=["Shielding1_0","Shielding1_2"]
+                )
+                ]
+            )
+        ]
+    )
+
+    sim = Simulator()
+    sim.spin_systems = [SpinSystem(sites=[deuterium])]
+    sim.methods = [quad_only, shielding_only]
+    sim.run()
+
+    processor = sp.SignalProcessor(
+        operations=[
+            sp.IFFT(),
+            sp.apodization.Gaussian(FWHM="100 Hz"),
+            sp.FFT(),
+        ]
+    )
+    quad_only_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
+    shielding_only_dataset = processor.apply_operations(dataset=sim.methods[1].simulation)
+
+    fig, ax = plt.subplots(1, 2, subplot_kw={"projection": "csdm"}, figsize=[8.5, 3])
+    ax[0].set_title("Quad. Only Spectrum")
+    ax[0].plot(quad_only_dataset.real)
+    ax[0].invert_xaxis()
+    ax[0].legend()
+    ax[1].set_title("Shielding Only Spectrum")
+    ax[1].plot(shielding_only_dataset.real)
+    ax[1].invert_xaxis()
+    ax[1].legend()
+    plt.tight_layout()
+    plt.show()
+
+
 
 
 Multi-Spin Queries
 ------------------
 
 When there is more than one site in a spin system, things get a little more
-complicated.
+complicated with the SymmetryQuery objects.  Here we review some important
+concepts associated with transition symmetry functions in coupled spin systems,
+and see how SymmetryQuery objects are designed to work in such cases.
 
 Single-Spin Single-Quantum Transitions
 ''''''''''''''''''''''''''''''''''''''
@@ -2018,70 +2149,8 @@ The deuterium spectrum of a static-polycrystalline sample is shown on the left i
 
 The single transition in the heteronuclear two-spin (:math:`^2\text{H}`-:math:`^1\text{H}`) triple-quantum spectrum is unaffected by the dipolar and quadrupolar frequency anisotropies.
 
-
-Frequency Contributions
------------------------
-
-
-The net frequency, :math:`\mathbf{f}_j`, associated with the :math:`j^\text{th}` spectral
-dimension is the weighted average of the frequencies from each spectral event within the
-dimension,
-
-.. math::
-  :label: eq_spectral_average
-
-    \mathbf{f}_j = \sum_{i=0}^{N-1} ~ w_i ~~ \mathbf{e}_i,
-
-where the index :math:`i` spans through the list of spectral events, and :math:`w_i` and
-:math:`\mathbf{e}_i` are the weight and corresponding frequency vector from the
-:math:`i^\text{th}` spectral event.
-
-In the above example, the average frequency is
-:math:`\mathbf{f} = 0.5 \mathbf{e}_0 + 0.5 \mathbf{e}_1`.
-
-.. note::
-  Mixing events are not directly involved in spectral frequencies.
-
-
-
-Events
-------
-
-SpectralEvent
-'''''''''''''
-
-A SpectralEvent is where we add instructions on how the frequencies are calculated in mrsimulator.
-A generic syntax for the ``SpectralEvent`` follows,
-
-.. plot::
-    :context: close-figs
-
-
-    SpectralEvent(
-        fraction=0.5,  # weights w_i
-        magnetic_flux_density=4.7,  # T
-        rotor_angle=57.735 * 3.1415 / 180,  # rad
-        rotor_frequency=10000,  # Hz
-        freq_contrib=["Quad2_0", "Quad2_4"],  # frequency contributions list.
-        transition_query=[
-            {"ch1": {"P": [-3], "D": [0]}},  # A TransitionQuery object
-        ],  # transition queries list
-    )
-
-Here, `fraction` is the frequency scaling factor for the event and is the same as the weight,
-:math:`w_i` in Eq. :eq:`eq_spectral_average`. The attributes `magnetic_flux_density`,
-`rotor_angle`, and `rotor_frequency` describe the condition under which frequencies are computed.
-These attributes are local to the event, `i.e.`, attributes from a spectral event do not
-carry over to the next spectral event. If undefined, the global value from the method attribute
-is used for the event.
-
-The attribute `freq_contrib` is a list of frequency contributions allowed during the
-event and is used to select specific frequency contributions.
-In the above example, the selection only allows the second-order zeroth and fourth-rank
-quadrupolar frequency contributions during the event. If undefined, all frequency
-contributions are allowed by default. Refer to the :ref:`freq_contrib_api` for the list of
-allowed enumerations and :numref:`tb_freq_components` for further details.
-
+Origin and Reference Offset
+---------------------------
 
 :py:meth:`~mrsimulator.method.spectral_dimension.SpectralDimension` has additional
 attributes that have already been discussed in earlier sections of the documentation.
