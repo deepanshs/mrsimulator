@@ -91,7 +91,7 @@ def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
         magnetic_flux_density="11.7 T",
         rotor_frequency="25000.0 Hz",
         rotor_angle=f"{angle} rad",
-        transition_query=[{"ch1": {"P": [-1]}}],
+        transition_query=[{"ch1": {"P": [0]}}],
     )
     should_be = {
         "magnetic_flux_density": 11.7,
@@ -105,7 +105,7 @@ def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
         assert the_event.json(units=False) == {
             "fraction": 1.2,
             **should_be,
-            "transition_query": [{"ch1": {"P": [-1]}}],
+            "transition_query": [{"ch1": {"P": [0]}}],
         }
 
     if type_ == "constant_duration":
@@ -114,7 +114,7 @@ def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
         assert the_event.json(units=False) == {
             "duration": 1.2,
             **should_be,
-            "transition_query": [{"ch1": {"P": [-1.0]}}],
+            "transition_query": [{"ch1": {"P": [0]}}],
         }
 
 
@@ -221,7 +221,7 @@ def test_total_and_no_mixing():
 
 
 def check_equal(query, isotopes, channels, res):
-    test = SpectralEvent(transition_query=query).permutation(isotopes, channels)
+    test = SpectralEvent(transition_query=query).combination(isotopes, channels)
     for i, item in enumerate(res):
         for item2 in item[0]:
             assert item2 in test[i]["P"]
@@ -230,7 +230,7 @@ def check_equal(query, isotopes, channels, res):
             assert item2 in test[i]["D"]
 
 
-def test_BaseEvent_permutation():
+def test_BaseEvent_combination():
     # P = -1 D = -1 on A B B A system, channel A, B
     # P = +1 D = -1 on A B B A system, channel A, B
     query = [

@@ -34,7 +34,14 @@ def get_symmetry_indexes(fn, list_of_sym):
     return reduce(
         np.union1d,
         [
-            reduce(np.intersect1d, [np.where(fn[:, i] == search[i]) for i in range(n)])
+            reduce(
+                np.intersect1d,
+                [
+                    np.where(fn[:, i] == search[i])
+                    for i in range(n)
+                    if not np.isnan(search[i])
+                ],
+            )
             for search in list_of_sym
         ],
         np.asarray([], dtype=np.int64),
@@ -417,59 +424,3 @@ def _add_two_euler_angles(a1, b1, g1, a2, b2, g2):
 #         alpha, beta, gamma = _add_two_euler_angles(alpha, beta, gamma, *euler_angles)
 
 #     return alpha, beta, gamma
-
-# Deprecated
-# def query_permutations(query, isotope, channel, transition_symmetry="P"):
-#     """
-#     Determines the transition symmetries that are involved in a given transition
-#     query.
-
-#     Args:
-#         query: Transition query dict object
-#         channel: List of channels as atomic number followed by symbol. Eg. '29Si',
-#         isotope: List of isotopes within the spin system. Eg. ['29Si', '29Si', '1H']
-#         transition_symmetry: str object. Derived from a transition query
-#     """
-#     P_permutated = []
-
-#     iso_dict = get_iso_dict(channels=channel, isotopes=isotope)
-#     query_symmetry = query[transition_symmetry]  # get the query for symmetry element.
-
-#     # def warn_message(id_):
-#     #     return (
-#     #         f"Channel asks for isotope `{id_}` but it is not present in the list "
-#     #         "of spin systems."
-#     #     )
-
-#     on_fail_message = (
-#         "The length of the transition query symmetry elements cannot exceed than "
-#         "the number of channels."
-#     )
-#     for i, channel_id in enumerate(channel):
-#         # Check if method's channel isotope is present in the spin system
-#         if channel_id not in iso_dict:
-#             # warnings.warn(warn_message(channel_id))
-#             return np.asarray([])
-
-#         n_sites_channel_i = iso_dict[channel_id].size
-#         channel_query = query_symmetry[f"channel-{i+1}"]
-
-#         temp_P = []
-#         for item in channel_query:
-#             query_item_len = len(item)
-#             # Check transition query exceed the number of isotopes present
-#             if query_item_len > n_sites_channel_i:
-#                 raise ValueError(on_fail_message)
-
-#             item += (n_sites_channel_i - query_item_len) * [0]
-#             temp_P += list(set(permutations(item)))
-#         P_permutated += [temp_P]
-
-#     # Expand the permutation to the number of sites in the spin system
-#     permutation_length = max(len(item) for item in P_permutated)
-#     P_expanded = np.zeros((permutation_length, len(isotope)))
-#     for i, iso_trans_symmetry in enumerate(P_permutated):
-#         # Update the channel-i indexes with the permuted symmetry.
-#         P_expanded[:, iso_dict[channel[i]]] = iso_trans_symmetry
-
-#     return P_expanded

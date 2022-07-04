@@ -36,7 +36,7 @@ def test_TransitionQuery():
     assert obj2.name is None
     assert obj2.description is None
     assert obj2.label is None
-    assert obj2.ch1 == SymmetryQuery(P=[-1]), "TransitionQuery ch1 not equal."
+    assert obj2.ch1 == SymmetryQuery(P=[0]), "TransitionQuery ch1 not equal."
     assert obj2.ch2 == SymmetryQuery(P=[-2], D=[2]), "TransitionQuery ch2 not equal."
     assert obj2.ch3 is None, "TransitionQuery ch3 not equal."
 

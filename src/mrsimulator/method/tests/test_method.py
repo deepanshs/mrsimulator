@@ -58,7 +58,7 @@ def basic_method_tests(the_method):
 
     # json()
 
-    evt = [{"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}] * 2
+    evt = [{"fraction": 0.5, "transition_query": [{"ch1": {"P": [0]}}]}] * 2
     serialize = {
         "name": "test worked",
         "description": "test worked again",
@@ -151,7 +151,7 @@ def test_method():
     assert the_method.simulation == csdm_dataset
 
     # json()
-    event_dictionary_ = {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}
+    event_dictionary_ = {"fraction": 0.5, "transition_query": [{"ch1": {"P": [0]}}]}
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "100.0 Hz",
@@ -173,7 +173,7 @@ def test_method():
     assert serialize == method_dictionary_
 
     # json(units=False)
-    event_dictionary_ = {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}
+    event_dictionary_ = {"fraction": 0.5, "transition_query": [{"ch1": {"P": [0]}}]}
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": 100.0,
