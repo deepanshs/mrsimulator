@@ -158,7 +158,7 @@ the design of your custom Method object.
 Theoretical Background
 ----------------------
 
-Before giving details on how to create a custom Method object, we review a 
+Before giving details on how to create a custom Method object, we review a
 few key concepts about spin transitions and *transition symmetry functions*
 
 The number of quantized energy eigenstates for :math:`N` coupled nuclei is
@@ -646,10 +646,10 @@ of the plot.
     plt.show()
 
 .. warning::
-    This custom method, as well as the built-in Multi-Quantum VAS methods, assumes uniform 
-    excitation and mixing of the multiple-quantum transition. In an experimental MQ-MAS 
-    measurement, excitation and mixing efficiencies depend on the ratio of the quadrupolar 
-    coupling constant to the rf field strength. Therefore, the relative integrated intensities 
+    This custom method, as well as the built-in Multi-Quantum VAS methods, assumes uniform
+    excitation and mixing of the multiple-quantum transition. In an experimental MQ-MAS
+    measurement, excitation and mixing efficiencies depend on the ratio of the quadrupolar
+    coupling constant to the rf field strength. Therefore, the relative integrated intensities
     of this simulation may not agree with the experiment.
 
 
@@ -1934,7 +1934,7 @@ p and d Echoes on Deuterium
 Here, we examine two examples in a deuterium spin system that illustrate the
 importance of echo classification in understanding how transition-frequency
 contributions can be eliminated or separated based on their dependence on
-different transition symmetry functions. 
+different transition symmetry functions.
 
 First, we implement two **Method** objects that follow the design of the
 experimental pulse sequence. In this effort, we use **RotationQuery** objects to
