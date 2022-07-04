@@ -94,14 +94,14 @@ def make_kernel(cq_range, eta_range, method, isotope):
 
     spin_systems = [
         SpinSystem(sites=[Site(isotope=isotope, quadrupolar=dict(Cq=cq * 1e6, eta=e))])
-        for cq, e in zip(Cq.flatten(), eta.flatten())
+        for cq, e in zip(Cq.ravel(), eta.ravel())
     ]
     sim = Simulator(spin_systems=spin_systems, methods=[method])
     sim.config.decompose_spectrum = "spin_system"
-    sim.run(pack_as_csdm=False)
+    sim.run(pack_as_csdm=False)  # Will return spectrum as numpy array, not CSDM object
 
     amp = sim.methods[0].simulation.real
-    return np.swapaxes(amp, 0, 1)
+    return amp.T
 
 
 # Create ranges to construct cq and eta grid points
@@ -127,7 +127,7 @@ kernel = make_kernel(cq_range, eta_range, method, "139La")
 #     {\bf s} = {\bf K \cdot f},
 #
 # A constant isotropic chemical shift, whose value is also in the Parameters object,
-# is applied to :math:`{\bf s}` using the `Fouier shift relation
+# is applied to :math:`{\bf s}` using the `Fourier shift relation
 # <https://en.wikipedia.org/wiki/Fourier_transform#Translation_/_time_shifting>`__.
 # Finally, the spectrum is scaled and returned.
 def make_spectrum_from_parameters(
@@ -156,7 +156,7 @@ def make_spectrum_from_parameters(
     _, _, amp = model_quad.pdf(pos=[cq_range, eta_range])
 
     # Create spectra by dotting the amplitude distribution with the kernel
-    dist = kernel.dot(amp.flatten())
+    dist = kernel.dot(amp.ravel())
 
     # Pack numpy array as csdm object and apply signal processing
     guess_dataset = cp.CSDM(
@@ -165,8 +165,8 @@ def make_spectrum_from_parameters(
     )
 
     # Calculate isotropic shift in Hz
-    ppm_to_hz_factor = Isotope(symbol="139La").gyromagnetic_ratio * 17.6
-    iso_shift_in_hz = ppm_to_hz_factor * iso_shift
+    larmor_freq = Isotope(symbol="139La").gyromagnetic_ratio * 17.6
+    iso_shift_in_hz = larmor_freq * iso_shift
 
     # Apply isotropic shift using FFT shift theorem
     guess_dataset = guess_dataset.fft()
@@ -235,9 +235,7 @@ def minimization_function(params, experiment, processor, kernel, sigma=sigma):
 
 # %%
 # Create the Minimization object with all the functions and variables previously
-# created. Here the ``powell`` method is used for minimization since the
-# ``least_squares`` method will not optimize values due to no interpolation scheme
-# being used when creating the spectrum from the kernel and pdf.
+# created.
 minner = Minimizer(
     minimization_function, params, fcn_args=(experiment, processor, kernel)
 )
@@ -253,7 +251,6 @@ result
 final_fit = make_spectrum_from_parameters(best_fit_params, kernel, processor)
 residual_spectrum = residuals(experiment, final_fit)
 
-# plt.rcParams['figure.facecolor'] = 'white'
 plt.figure(figsize=(6, 4))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
