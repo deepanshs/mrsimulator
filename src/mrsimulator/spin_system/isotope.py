@@ -99,7 +99,7 @@ class Isotope(BaseModel):
         -------
 
         >>> silicon = Isotope(symbol="29Si")
-        >>> silicon.larmor_freq(B0 = 9.4)
+        >>> freq = silicon.larmor_freq(B0 = 9.4)
         """
         return -self.gyromagnetic_ratio * B0
 
