@@ -4,40 +4,36 @@
 Spin System
 ===========
 
-At the heart of any ``mrsimulator`` calculation is the definition of
+At the heart of any **mrsimulator** calculation is the definition of
 a :ref:`spin_sys_api` object describing the sites and couplings within a spin
 system. Each :ref:`simulator_api` object holds a list of :ref:`spin_sys_api`
 objects which are used to calculate frequency contributions.
 
-.. note::
+**mrsimulator** faces the same limitation faced by all other NMR simulation
+codes: the computational cost increases exponentially with the number of
+couplings between sites in a spin system. In liquids, where isotropic molecular
+motion averages away intermolecular anisotropic couplings, the situation is more
+tractable as only the intramolecular isotropic J couplings remain.
 
-    ``mrsimulator`` faces the same limitation faced by all other NMR simulation
-    codes: the computational cost increases exponentially(?) with the number of
-    couplings between sites in a spin system.   In liquids, where isotropic
-    molecular motion averages away intermolecular anisotropic couplings, the
-    situation is more tractable as only the intramolecular isotropic J couplings
-    remain.
+In solids, where no such isotropic motion exists, the situation is more
+problematic.  In solids that are dilute in NMR-active nuclei is often possible
+to build a set of SpinSystem objects that can accurately model a spectrum.  In
+solids that are not dilute in NMR-active nuclei, there are still situations
+where one can build approximately accurate spin systems models. One such case is
+when the individual anisotropic spin interactions, such as the shielding (shift)
+anisotropy or the quadrupolar couplings, dominant the spectrum, i.e., they are
+significantly larger than any dipolar couplings. This can happen for spin 1/2
+nuclei in static samples or samples spinning away from the magic-angle.  In the
+case of half-integer quadrupolar nuclei, this can also happen for a central
+transition spectrum that is significantly broadened by second-order quadrupolar
+effects. Another case is when an experimental method can successfully decouple
+the effects of dipolar couplings from the spectrum, rendering it similar to that
+of a dilute spin system.  This can be achieved through rapid sample rotation, a
+pulse sequence, or some clever combination of the two. In all such cases, any
+effects of residual dipolar couplings on the spectrum are usually modeled as an
+ad-hoc Gaussian lineshape convolution.
 
-    In solids, where no such isotropic motion exists, the situation is
-    more problematic.  In solids that are dilute in NMR-active nuclei is often
-    possible to build a set of SpinSystem objects that can accurately model
-    a spectrum.  In solids that are not dilute in NMR-active nuclei, there
-    are still situations where one can build approximately accurate spin systems
-    models. One such case is when the individual anisotropic spin
-    interactions, such as the shielding (shift) anisotropy or the quadrupolar
-    couplings, dominant the spectrum, i.e., they are significantly larger than
-    any dipolar couplings. This can happen for spin 1/2 nuclei in static samples or
-    samples spinning away from the magic-angle.  In the case of half-integer
-    quadrupolar nuclei, this can also happen for a central transition
-    spectrum that is significantly broadened by
-    second-order quadrupolar effects. Another case is when an experimental method can
-    successfully decouple the effects of dipolar couplings from the spectrum,
-    rendering it similar to that of a dilute spin  system.  This can be achieved through
-    rapid sample rotation, a pulse sequence, or some clever combination of the two.
-    In all such cases, any effects of residual dipolar couplings on the
-    spectrum are usually modeled as an ad-hoc Gaussian lineshape convolution.
-
-A :ref:`method_api` object is organized according to the UML diagram
+A :ref:`spin_sys_api` object is organized according to the UML diagram
 below.
 
 .. figure:: ../../_static/SpinSystemUML.*
@@ -104,18 +100,18 @@ tensor represented by a :ref:`sy_api` object.
 
 Since deuterium is a quadrupolar nucleus, :math:`I>1/2`, there also can be a quadrupolar coupling
 interaction between the nuclear quadrupole moment and the surrounding electric field gradient (EFG) tensor,
-defined in the optional *quadrupolar* key. An EFG tensor is a second-rank traceless
-symmetric tensor, and we describe its coupling to a quadrupolar nucleus with *Cq*
-and *eta*, i.e., the quadrupolar coupling constant and asymmetry parameter,
-respectively.  Additionally, we use the Euler angle orientations, *alpha*, *beta*,
-and *gamma*, which are the relative orientation of the EFG tensor from a common
+defined in the optional ``quadrupolar`` key. An EFG tensor is a second-rank traceless
+symmetric tensor, and we describe its coupling to a quadrupolar nucleus with ``Cq``
+and ``eta``, i.e., the quadrupolar coupling constant and asymmetry parameter,
+respectively.  Additionally, we use the Euler angle orientations, ``alpha``, ``beta``,
+and ``gamma``, which are the relative orientation of the EFG tensor from a common
 reference frame.
 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
 the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
 
-Also, all objects in  ``mrsimulator``
-have the attribute *property_units* which provides the units for all class properties.
+Also, all objects in  **mrsimulator**
+have the attribute ``property_units`` which provides the units for all class properties.
 
 .. code-block:: python
 
@@ -157,12 +153,12 @@ Consider the example below of a :ref:`coupling_api` object between two sites
         ),
     )
 
-The *site_index* key holds a list of two integers corresponding to the index of the
+The ``site_index`` key holds a list of two integers corresponding to the index of the
 two coupled sites in the ordered list ``sites`` within the SpinSystem object. The
 ordering of the integers in ``site_index`` is irrelevant.
 
-The value of the *isotropic_j* is the isotropic
-*J*-coupling, here given as *15 Hz*. We have additionally defined an optional *j_symmetric* key,
+The value of the ``isotropic_j`` is the isotropic *J*-coupling, here given as
+``15 Hz``. We have additionally defined an optional ``j_symmetric`` key,
 whose value holds a SymmetricTensor object representing the traceless 2nd-rank symmetric *J*-coupling
 tensor.
 

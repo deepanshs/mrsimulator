@@ -29,7 +29,7 @@ An example of the syntax that all library methods follows is shown below.
         ],
     )
 
-where `BlochDecaySpectrum` can be replaced with another pre-built method class. Each method has the
+where `BlochDecaySpectrum` can be replaced with another library method class. Each method has the
 *channels* attribute, which is a list of isotopes probed by the method as well as the
 *magnetic_flux_density*, *rotor_angle*, and *rotor_frequency* attributes which define the
 global experiment parameters.
