@@ -11,10 +11,8 @@ understood by anyone familiar with the underlying physical concepts, the
 organization of the :ref:`method_api` object in **mrsimulator** and its related
 composite objects require a more detailed explanation of their design. This
 section assumes that you are already familiar with the topics covered in the
-introduction sections :ref:`getting_started`,
+Introduction sections :ref:`getting_started`,
 :ref:`introduction_isotopomers_example`, and :ref:`fitting_example`.
-
-
 
 Overview
 --------
@@ -94,13 +92,8 @@ populations occurs in a spectral or delay event. The transition-dependent
 frequency contributions during an Event are selected from a list of
 :ref:`enumeration literals<freq_contrib_api>` and placed in the ``freq_contrib``
 attribute of the event. If ``freq_contrib`` is left unspecified, i.e., the
-<<<<<<< HEAD
 value of ``freq_contrib`` is set to ``None``, a default list holding the
-=======
-value of ``freq_contrib`` is set to ``Null``, a default list holding the
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 enumeration literals for *all* contributions is generated for the event.
-
 
 .. note::
 
@@ -124,7 +117,6 @@ When designing a **Method** object, you cannot identify and select a transition
 through its initial and final eigenstate quantum numbers. Transition selection
 is done through **TransitionQuery** and
 :py:meth:`~mrsimulator.method.query.SymmetryQuery` objects during individual
-<<<<<<< HEAD
 spectral or delay events. **TransitionQuery** objects can hold a
 **SymmetryQuery** object in ``ch1``, ``ch2``, or ``ch3``, which act on
 specific isotopes defined by the ``channels`` attribute in **Method**. It is
@@ -132,27 +124,17 @@ only during a simulation that the **Method** object uses its **TransitionQuery**
 objects to determine the selected transition pathways for a given **SpinSystem**
 object by the initial and final eigenstate quantum numbers of each transition.
 
-Between adjacent SpectralEvent or DelayEvent objects,
-=======
-spectral or delay events. **TransitionQuery** objects hold a list of
-**SymmetryQuery** objects which act on specific isotopes defined by the
-``channels`` attribute in **Method**. It is only during a simulation that the
-**Method** object uses its **TransitionQuery** objects to determine the selected
-transition pathways for a given **SpinSystem** object by the initial and final
-eigenstate quantum numbers of each transition.
-
-Between adjacent SpectralEvent or DelayEvent objects in an events list,
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
-**mrsimulator** defaults to *total mixing*, i.e., connecting all selected
-transitions in the two adjacent spectral or delay events. This default behavior
-can be overridden by placing a **MixingEvent** object between such events.
-Inside **MixingEvent** objects is a
-:py:meth:`~mrsimulator.method.query.MixingQuery` object, which determines the
-coherence transfer amplitude between transitions. A **MixingQuery** object holds
-:py:meth:`~mrsimulator.method.query.RotationalQuery` objects acting on
-specific isotopes in the spin system. As before, the list of isotopes upon which
-the **RotationQuery** objects act is determined by the ``channels`` attribute in
-the **Method** object.
+Between adjacent SpectralEvent or DelayEvent objects, **mrsimulator** defaults
+to *total mixing*, i.e., connecting all selected transitions in the two adjacent
+spectral or delay events. This default behavior can be overridden by placing an
+explicit **MixingEvent** object between such events. Inside **MixingEvent**
+objects is a :py:meth:`~mrsimulator.method.query.MixingQuery` object, which
+determines the coherence transfer amplitude between transitions. A
+**MixingQuery** object holds
+:py:meth:`~mrsimulator.method.query.RotationalQuery` objects acting on specific
+isotopes in the spin system. As before, the isotope upon which the
+**RotationQuery** objects act is determined by the ``channels`` attribute in the
+**Method** object.
 
 In this guide to designing custom Method objects, we begin with a brief review
 of the relevant *Symmetry Pathway* concepts employed in **mrsimulator**. This
@@ -174,7 +156,7 @@ Theoretical Background
 ----------------------
 
 Before giving details on how to create a custom Method object, we review a
-few key concepts about spin transitions and *transition symmetry functions*
+few key concepts about spin transitions and *transition symmetry functions*.
 
 The number of quantized energy eigenstates for :math:`N` coupled nuclei is
 
@@ -182,24 +164,21 @@ The number of quantized energy eigenstates for :math:`N` coupled nuclei is
 
     \Upsilon_{\left\{ I_1, I_2, \ldots, I_N \right\}} = \prod_{u=1}^N (2 I_u+1),
 
-where :math:`I_u` is the total spin angular momentum of the :math:`u\text
-{th}` nucleus and the system of coupled nuclei under consideration is
-represented with the notation
-:math:`\left\{ I_1, I_2, \ldots, I_N \right\}`. The transition from quantized
-energy level :math:`E_i` to :math:`E_j` is one of
+where :math:`I_u` is the total spin angular momentum quantum number of the
+:math:`u\text{th}` nucleus. The transition from quantized energy level
+:math:`E_i` to :math:`E_j` is one of
 
 .. math::
 
     \mathcal{N}_{\left\{ I_1, I_2, \ldots, I_N \right\}} = \frac{\Upsilon_{\left\{ I_1, I_2, \ldots, I_N \right\}}!}{(\Upsilon_{\left\{ I_1, I_2, \ldots, I_N \right\}}-2)!}
 
-possible transitions between the :math:`\Upsilon` levels.   Here we
-count :math:`i  \rightarrow  j` and :math:`j  \rightarrow  i` as different
-transitions.  For example, a single spin with angular momentum :math:`I=3/2`,
-indicated by :math:`\left\{ I \right\} = \left\{ \tfrac{3}{2} \right\}`, will
-have :math:`\Upsilon_{\left\{ 3/2 \right\}} = 2I+1 = 4` energy levels
-and :math:`\mathcal{N}_{\left\{ 3/2 \right\}} = 2I(2I+1) = 12` possible NMR
-transitions.   A two spin system, :math:`\left\{ I, S \right\} = \left\{ \tfrac
-{1}{2}, \tfrac{1}{2} \right\}`, will have
+possible transitions between the :math:`\Upsilon` levels.   Here we count
+:math:`i  \rightarrow  j` and :math:`j  \rightarrow  i` as different
+transitions.  For example, a single spin with angular momentum quantum number :math:`I=3/2`
+will have :math:`\Upsilon_{\left\{ 3/2 \right\}} = 2I+1 = 4` energy levels and
+:math:`\mathcal{N}_{\left\{ 3/2 \right\}} = 2I(2I+1) = 12` possible NMR
+transitions.   A two spin system, with quantum numbers :math:`I = 1/2` and :math:`S = 1/2`,
+will have
 
 .. math::
     \Upsilon_{\left\{ 1/2, 1/2 \right\}} = (2I +1) \cdot (2S +1) = 4
@@ -225,20 +204,6 @@ could easily identify a transition by its row and column indexes. However, those
 indexes depend on the spin system and how the spins and their eigenstates have
 been assigned to those indexes. Instead, we need a spin-system agnostic approach
 for selecting transitions.
-
-<<<<<<< HEAD
-=======
-To write a custom Method in *mrsimulator*, you'll need to determine the desired
-transition pathways and select the desired transitions during each
-**SpectralEvent** or **DelayEvent**. Keep in mind, however, that **Method**
-objects are designed without any details of the spin systems upon which they
-will act. For example, in the density matrix of a spin system ensemble, one
-could easily identify a transition by its row and column indexes. However, those
-indexes depend on the spin system and how the spins and their eigenstates have
-been assigned to those indexes. Instead, we need a spin-system agnostic approach
-for selecting transitions.
-
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 
 
 Spin Transition Symmetry Functions
@@ -285,18 +250,15 @@ You can verify this from the values of :math:`\text
 for :math:`I=1`, :math:`I=3/2` and :math:`I=5/2` shown below.  Note
 that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
 
-
 .. figure:: ../../_static/SpinOneThreeHalves.*
     :width: 500
     :alt: figure
     :align: center
 
-
 .. figure:: ../../_static/SpinFiveHalf.*
     :width: 550
     :alt: figure
     :align: center
-
 
 .. note::
     **Spin Transition Symmetry Functions**
@@ -337,7 +299,6 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
     The :math:`\ell=0` function is dropped as it always evaluates to zero. For a
     single spin, :math:`I`, a complete set of functions is defined up to
     :math:`\ell = 2I`.
-
 
     For weakly coupled nuclei, we define the transition symmetry functions
 
@@ -388,7 +349,6 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
       \vdots
       \end{array}
 
-
     When the :math:`\ell` are zero on all nuclei except two, then we identify
     these functions using a concatenation of sub-shell letter designations, e.g.,
 
@@ -421,7 +381,6 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
         :alt: figure
         :align: center
 
-
 Single-Spin Queries
 -------------------
 
@@ -439,7 +398,7 @@ as defined in the code below.
 
     symm_query = SymmetryQuery(P=[-1], D=[1])
     trans_query = TransitionQuery(ch1=symm_query)
-    spec_event = SpectralEvent(fraction=1, transition_query=[trans_query])
+    spec_event = SpectralEvent(transition_query=[trans_query])
 
 .. note::
     Python dictionaries can also be used to create and initialize an object. To do this,
@@ -451,7 +410,7 @@ as defined in the code below.
 
             symm_query = {"P":[-1], "D":[1]}
             trans_query = {"ch1":symm_query}
-            event = {"fraction":1, "transition_query":[trans_query]}
+            spec_event = {"transition_query":[trans_query]}
 
 In the example above, the **SymmetryQuery** object is created and assigned to
 the **TransitionQuery** attribute ``ch1``, i.e., it acts on the isotope in the
@@ -467,7 +426,6 @@ The **TransitionQuery** object goes into an unordered list in the
 attribute of a **SpectralDimension** object. All this is illustrated in the code
 below.
 
-
 .. plot::
     :context: close-figs
 
@@ -479,57 +437,54 @@ below.
 
     # Create single Site and Spin System
     deuterium = Site(
-      isotope="2H",
-      isotropic_chemical_shift=10,  # in ppm
-      shielding_symmetric={"zeta":-80, "eta":0.25},  # zeta in ppm
-      quadrupolar={"Cq":10e3, "eta":0.0,"alpha":0, "beta":np.pi/2, "gamma":0}
-    )
+        isotope="2H",
+        isotropic_chemical_shift=10,  # in ppm
+        shielding_symmetric={"zeta":-80, "eta":0.25},  # zeta in ppm
+        quadrupolar={"Cq":10e3, "eta":0.0,"alpha":0, "beta":np.pi/2, "gamma":0}
+        )
     spin_system = SpinSystem(sites=[deuterium])
 
     # This method selects all observable (p_I=–1) transitions
     method_both_transitions = Method(
-      channels=["2H"],
-      magnetic_flux_density=9.4,  # in T
-      spectral_dimensions=[
-        SpectralDimension(
-          count=512,
-          spectral_width=40000,  # in Hz
-          events=[SpectralEvent(fraction=1,
-            transition_query=[{"ch1":{"P":[-1]}}]
-                )
-            ]
-        )
+        channels=["2H"],
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
+            SpectralDimension(
+                count=512,
+                spectral_width=40000,  # in Hz
+                events=[SpectralEvent(transition_query=[{"ch1":{"P":[-1]}}])]
+            )
         ]
     )
 
     # This method selects observable (p_I=–1) transitions with d_I = 1
     method_transition1 = Method(
-      channels=["2H"],
-      magnetic_flux_density=9.4,  # in T
-      spectral_dimensions=[
-        SpectralDimension(
-          count=512,
-          spectral_width=40000,  # in Hz
-          events=[SpectralEvent(fraction=1,
-            transition_query=[{"ch1":{"P":[-1], "D":[1]}}])])
-          ]
-      )
+        channels=["2H"],
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
+            SpectralDimension(
+                count=512,
+                spectral_width=40000,  # in Hz
+                events=[SpectralEvent(transition_query=[{"ch1":{"P":[-1], "D":[1]}}])]
+                )
+            ]
+        )
 
     # This method selects observable (p_I=–1) transitions with d_I = -1
     method_transition2 = Method(
-      channels=["2H"],
-      magnetic_flux_density=9.4,  # in T
-      spectral_dimensions=[
-        SpectralDimension(
-          count=512,
-          spectral_width=40000,  # in Hz
-          events=[SpectralEvent(fraction=1,
-            transition_query=[{"ch1":{"P":[-1], "D":[-1]}}])])
-          ]
-      )
+        channels=["2H"],
+        magnetic_flux_density=9.4,  # in T
+        spectral_dimensions=[
+            SpectralDimension(
+                count=512,
+                spectral_width=40000,  # in Hz
+                events=[SpectralEvent(transition_query=[{"ch1":{"P":[-1], "D":[-1]}}])]
+                )
+            ]
+        )
     # Simulate spectra for all three method with spin system
     sim = Simulator(spin_systems = [spin_system],
-      methods=[method_both_transitions,method_transition1,method_transition2])
+        methods=[method_both_transitions,method_transition1,method_transition2])
     sim.run()
 
     # Create SignalProcessor for Gaussian Convolution
@@ -542,34 +497,31 @@ below.
 .. plot::
     :context: close-figs
 
-        # Plot spectra from all three methods
-        fig, ax = plt.subplots(1, 2, figsize=(10, 3.5), subplot_kw={"projection": "csdm"})
-        ax[0].plot(processor.apply_operations(dataset=sim.methods[0].simulation).real,
-            label="$p_I = -1$ transitions")
-        ax[0].set_title("Single-Quantum Spectrum All Transitions")
-        ax[0].legend()
-        ax[0].grid()
-        ax[0].invert_xaxis()  # reverse x-axis
-        ax[1].plot(processor.apply_operations(dataset=sim.methods[1].simulation).real,
-            label="$(p_I,d_I) = (-1,+1)$ transitions")
-        ax[1].plot(processor.apply_operations(dataset=sim.methods[2].simulation).real,
-            label="$(p_I,d_I) = (-1,-1)$ transitions")
-        ax[1].set_title("Single-Quantum Spectrum Single Transitions")
-        ax[1].legend()
-        ax[1].grid()
-        ax[1].invert_xaxis()  # reverse x-axis
-        plt.tight_layout()
-        plt.show()
+    # Plot spectra from all three methods
+    fig, ax = plt.subplots(1, 2, figsize=(10, 3.5), subplot_kw={"projection": "csdm"})
+    ax[0].plot(processor.apply_operations(dataset=sim.methods[0].simulation).real,
+        label="$p_I = -1$ transitions")
+    ax[0].set_title("Single-Quantum Spectrum All Transitions")
+    ax[0].legend()
+    ax[0].grid()
+    ax[0].invert_xaxis()  # reverse x-axis
+    ax[1].plot(processor.apply_operations(dataset=sim.methods[1].simulation).real,
+        label="$(p_I,d_I) = (-1,+1)$ transitions")
+    ax[1].plot(processor.apply_operations(dataset=sim.methods[2].simulation).real,
+        label="$(p_I,d_I) = (-1,-1)$ transitions")
+    ax[1].set_title("Single-Quantum Spectrum Single Transitions")
+    ax[1].legend()
+    ax[1].grid()
+    ax[1].invert_xaxis()  # reverse x-axis
+    plt.tight_layout()
+    plt.show()
 
 .. note::
 
- Whenever the ``D`` attribute is omitted, the **SymmetryQuery** allows
- transitions with all values of :math:`\text{d}_I`. On the other hand, whenever
- the ``P`` attribute is omitted, it defaults to ``P=[0]``,  i.e., no selected
- transitions on the assigned channel.
-
-
-
+    Whenever the ``D`` attribute is omitted, the **SymmetryQuery** allows
+    transitions with all values of :math:`\text{d}_I`. On the other hand, whenever
+    the ``P`` attribute is omitted, it defaults to ``P=[0]``,  i.e., no selected
+    transitions on the assigned channel.
 
 Selecting Symmetric Single-Spin Transitions
 '''''''''''''''''''''''''''''''''''''''''''
@@ -598,43 +550,35 @@ transition.   The code below is an example of a custom 2D method using two
                 count=128,
                 spectral_width=6e3,  # in Hz
                 reference_offset=-9e3,  # in Hz
-<<<<<<< HEAD
                 label="Symmetric 3Q Frequency",
-=======
-                label="Symmetric Triple Quantum Frequency",
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
-                events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])
-                ]
+                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])]
             ),
             SpectralDimension(
                 count=256,
                 spectral_width=6e3,  # in Hz
                 reference_offset=-5e3,  # in Hz
                 label="Central Transition Frequency",
-                events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])
-                ]
+                events=[SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])]
             )
         ],
     )
 
     # Create three sites in RbNO3
     site1 = Site(
-      isotope="87Rb",
-      isotropic_chemical_shift=-27.4,  # ppm
-      quadrupolar={"Cq":1.68e6, "eta":0.2}  # Cq in Hz
-      )
+        isotope="87Rb",
+        isotropic_chemical_shift=-27.4,  # ppm
+        quadrupolar={"Cq":1.68e6, "eta":0.2}  # Cq in Hz
+        )
     site2 = Site(
-      isotope="87Rb",
-      isotropic_chemical_shift=-28.5,  # ppm
-      quadrupolar={"Cq":1.94e6, "eta":1}  # Cq in Hz
-      )
+        isotope="87Rb",
+        isotropic_chemical_shift=-28.5,  # ppm
+        quadrupolar={"Cq":1.94e6, "eta":1}  # Cq in Hz
+        )
     site3 = Site(
-      isotope="87Rb",
-      isotropic_chemical_shift=-31.3,  # ppm
-      quadrupolar={"Cq":1.72e6, "eta":0.5}  # Cq in Hz
-      )
+        isotope="87Rb",
+        isotropic_chemical_shift=-31.3,  # ppm
+        quadrupolar={"Cq":1.72e6, "eta":0.5}  # Cq in Hz
+        )
 
     # No Couplings, so create a separate SpinSystem for each site.
     sites = [site1, site2, site3]
@@ -644,7 +588,7 @@ transition.   The code below is an example of a custom 2D method using two
     sim.run()
 
     # Apply Gaussian line broadening along both dimensions
-    processor = sp.SignalProcessor(
+    gauss_convolve = sp.SignalProcessor(
         operations=[
             sp.IFFT(dim_index=(0, 1)),
             sp.apodization.Gaussian(FWHM="0.08 kHz", dim_index=0),
@@ -652,7 +596,7 @@ transition.   The code below is an example of a custom 2D method using two
             sp.FFT(dim_index=(0, 1)),
         ]
     )
-    dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
+    dataset = gauss_convolve.apply_operations(dataset=sim.methods[0].simulation)
 
 
 In the code below, we use the PyPlot method `imshow()
@@ -664,7 +608,6 @@ version of the "gist_ncar" map. The `colorbar()
 <https://matplotlib.org/stable/api/colorbar_api.html?highlight=colorbar#module-matplotlib.colorbar>`__
 function provides the visualization of the dataset mapping to color to the right
 of the plot.
-
 
 .. skip: next
 
@@ -681,6 +624,7 @@ of the plot.
     plt.show()
 
 .. warning::
+
     This custom method, as well as the built-in Multi-Quantum VAS methods, assumes uniform
     excitation and mixing of the multiple-quantum transition. In an experimental MQ-MAS
     measurement, excitation and mixing efficiencies depend on the ratio of the quadrupolar
@@ -749,7 +693,6 @@ below.
     [|-1.5⟩⟨1.5| ⟶ |-0.5⟩⟨0.5|, weight=(1+0j)]
 
 
-
 Multi-Spin Queries
 ------------------
 
@@ -777,11 +720,7 @@ selection rule for observable transitions is
 These corresponds to the *single-spin
 single-quantum transitions* labeled :math:`\hat{A}_1`,
 :math:`\hat{A}_2`, :math:`\hat{A}_3`, :math:`\hat{A}_4`, :math:`\hat{M}_1`,
-<<<<<<< HEAD
 :math:`\hat{M}_2`, :math:`\hat{M}_3`, :math:`\hat{M}_4`, :math:`\hat{X}_1`,
-=======
-:math:`\hat{M}_2`, :math:`\hat{M}_3`,:math:`\hat{M}_4`, :math:`\hat{X}_1`,
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 :math:`\hat{X}_2`, :math:`\hat{X}_3`, and :math:`\hat{X}_4`
 in the energy level diagram below.
 
@@ -859,7 +798,6 @@ the SpinSystem object with three :math:`^1\text{H}` Sites, it must first expand
 its SymmetryQuery into an intermediate set of spin-system-specific symmetry
 queries, illustrated by each row in the table below.
 
-
 .. list-table::
    :widths: 25 25 25 25
    :header-rows: 1
@@ -890,7 +828,6 @@ The :py:meth:`~mrsimulator.Method.get_transition_pathways` function will allow
 you to inspect the transitions selected by the TransitionQuery objects in the
 SpectralEvent in terms of the initial and final Zeeman eigenstate quantum
 numbers.
-
 
 .. skip: next
 
@@ -940,7 +877,6 @@ below.
     :alt: figure
     :align: center
 
-
 The code below will select the six *two-spin double-quantum transitions* where
 :math:`\text{p}_{AMX} = -2`.
 
@@ -984,11 +920,9 @@ The assignment of transitions in the spectrum above are, from left to right, are
 :math:`\hat{D}_{1,AX}`, :math:`\hat{D}_{2,AM}`, and
 :math:`\hat{D}_{1,AM}`,
 
-
 As before, when this generic TransitionQuery is combined with the three-site
 SpinSystem object, the SymmetryQuery is expanded into an intermediate set of
 spin-system-specific symmetry queries illustrated in the table below.
-
 
 .. list-table::
    :widths: 25 25 25 25
@@ -1010,7 +944,6 @@ spin-system-specific symmetry queries illustrated in the table below.
      - –1
      - 0
      - –1
-
 
 Again, each row's intermediate spin-system-specific symmetry query is used to
 select a subset of transitions from the complete set of transitions. The final
@@ -1122,8 +1055,6 @@ the table below.
      - –1
      - –1
 
-
-
 .. skip: next
 
 .. plot::
@@ -1147,7 +1078,6 @@ As you can surmise from the examples, the attributes of SymmetryQuery, ``P`` and
 length of the list is the desired number of spins that are involved in the
 transition.
 
-
 Heteronuclear multiple-spin transitions
 '''''''''''''''''''''''''''''''''''''''
 
@@ -1160,7 +1090,6 @@ the right.
     :width: 850
     :alt: figure
     :align: center
-
 
 .. skip: next
 
@@ -1261,7 +1190,6 @@ the right.
     plt.tight_layout()
     plt.show()
 
-
 The deuterium spectrum of a static-polycrystalline sample is shown on the left
 for all single-spin single-quantum transitions on deuterium,
 :math:`\hat{A}_{1\pm}` and :math:`\hat{A}_{2\pm}`. The spectrum on the right is
@@ -1298,8 +1226,6 @@ The single transition in the heteronuclear two-spin
 (:math:`^2\text{H}`-:math:`^1\text{H}`) triple-quantum spectrum is unaffected by
 the dipolar and quadrupolar frequency anisotropies.
 
-
-
 Affine Transformations
 ----------------------
 
@@ -1316,14 +1242,11 @@ passive transformations leave the appearance of the signal unchanged while
 changing the coordinate system. Both active and passive transformations are used
 extensively in NMR.
 
-
 The general form of the affine transformation of a n-dimensional spectrum is
 
 .. math::
 
     {\boldsymbol \Omega}' = {\cal A} {\boldsymbol \Omega}
-<<<<<<< HEAD
-
 
 In the two-dimensional case, this is given by
 
@@ -1403,102 +1326,13 @@ In the two-dimensional case, this is given by
     See the `"Symmetry Pathways in Solid-State NMR" paper
     <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_  for a more detailed
     discussion on affine transformations in NMR.
-=======
-
-
-In the two-dimensional case, this is given by
-
-.. math::
-    \left[
-    \begin{array}{c}
-    \Omega^{'[1]} \\
-    \Omega^{'[2]}
-    \end{array}
-    \right]
-    =
-    \underbrace{
-    \left[
-    \begin{array}{cc}
-    a & b \\
-    c & d
-    \end{array}
-    \right]
-    }_{\cal A}
-    \left[
-    \begin{array}{c}
-    \Omega^{[1]} \\
-    \Omega^{[2]}
-    \end{array}
-    \right]
-
-.. note::
-
-    For the multiple-quantum MAS experiment, a shear and scale transformation is
-    often applied to the spectrum to create a 2D spectrum correlating the MQ-MAS
-    isotropic frequency to the anisotropic central transition frequency. This
-    correlation can be achieved by adding an affine matrix added to the method.
-
-    For 3Q-MAS on a spin :math:`I=3/2` nucleus, where the shear factor is
-    :math:`\kappa^{(\omega_2)} = 21/27`, the affine matrix giving the
-    appropriate shear and scale transformation is given by
-
-    .. math::
-        {\cal A}_2 =
-        \left[
-        \begin{array}{cc}
-        \displaystyle \frac{1}{1 + |\kappa^{(\omega_2)}|}
-        & \displaystyle \frac{	\kappa^{(\omega_2)}}{1 + |\kappa^{(\omega_2)}| } \\
-        0 & 1
-        \end{array}
-        \right]
-        =
-        \left[
-        \begin{array}{cc}
-        9/16 & 7/16 \\
-        0 & 1
-        \end{array}
-        \right]
-
-    After the affine transformation, the position of the resonance in the
-    isotropic projection is a weighted average of the multiple quantum and
-    central transition isotropic frequencies given by
-
-    .. math::
-        \left \langle\Omega_{iso} \right \rangle_{\text{MQ-MAS}}
-        =
-        \frac{1}{1 + |\kappa^{(\omega_1)}|}
-        \,
-        \Omega_\text{iso}(m,-m)
-        +
-        \frac{\kappa^{(\omega_1)}}{1 + |\kappa^{(\omega_1)}|}
-        \,
-        \Omega_\text{iso}\left(\textstyle \frac{1}{2},-\frac{1}{2}\right).
-
-    If the spectrum is to be referenced to a frequency other than the rf carrier
-    frequency (i.e. zero is not defined in the middle of the spectrum), then the
-    reference offset used in the single-quantum dimension must be multiplied by a
-    factor of
-    :math:`{\left({\text{p}_I^{[1]}}/{\text{p}_I^{[2]}} + |\kappa^{(\omega_1)}| \right)/(1+ |\kappa^{(\omega_1)}| )}`
-    when used in the isotropic dimension.
-
-    See the `"Symmetry Pathways in Solid-State NMR" paper
-    <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_  for a more detailed
-    discussion on affine transformations in NMR.
-
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 
 In the code below, the 3Q-MAS method described earlier is modified to include an
 affine matrix to perform this shear transformation.
 
-<<<<<<< HEAD
 In the code below, the 3Q-MAS method described earlier is modified to include an
 affine matrix to perform this shear transformation.
-=======
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 
-.. skip: next
-
-<<<<<<< HEAD
 .. skip: next
 
 .. plot::
@@ -1534,15 +1368,6 @@ affine matrix to perform this shear transformation.
     sim = Simulator(spin_systems=RbNO3_spin_systems, methods=[my_sheared_mqmas])
     sim.run()
 
-    # Apply Gaussian line broadening along both dimensions
-    gauss_convolve = sp.SignalProcessor(
-        operations=[
-            sp.IFFT(dim_index=(0, 1)),
-            sp.apodization.Gaussian(FWHM="0.08 kHz", dim_index=0),
-            sp.apodization.Gaussian(FWHM="0.22 kHz", dim_index=1),
-            sp.FFT(dim_index=(0, 1)),
-        ]
-    )
     dataset = gauss_convolve.apply_operations(dataset=sim.methods[0].simulation)
 
     plt.figure(figsize=(4, 3))
@@ -1553,65 +1378,7 @@ affine matrix to perform this shear transformation.
     ax.invert_yaxis()
     plt.tight_layout()
     plt.show()
-=======
-.. plot::
-    :context: close-figs
 
-    my_sheared_mqmas = Method(
-        channels=["87Rb"],
-        magnetic_flux_density=9.4,
-        rotor_frequency = np.inf, # in Hz (here, set to infinity)
-        spectral_dimensions=[
-            SpectralDimension(
-                count=128,
-                spectral_width=6e3,  # in Hz
-                reference_offset=-9e3,  # in Hz
-                label="3Q-MAS isotropic dimension",
-                events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])
-                ]
-            ),
-            SpectralDimension(
-                count=256,
-                spectral_width=6e3,  # in Hz
-                reference_offset=-5e3,  # in Hz
-                label="Central Transition Frequency",
-                events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])
-                ]
-            )
-        ],
-        affine_matrix=[[9/16, 7/16], [0, 1]]
-    )
-
-    sim = Simulator(spin_systems=spin_systems, methods=[my_sheared_mqmas])
-    sim.run()
-
-    # Apply Gaussian line broadening along both dimensions
-    processor = sp.SignalProcessor(
-        operations=[
-            sp.IFFT(dim_index=(0, 1)),
-            sp.apodization.Gaussian(FWHM="0.08 kHz", dim_index=0),
-            sp.apodization.Gaussian(FWHM="0.22 kHz", dim_index=1),
-            sp.FFT(dim_index=(0, 1)),
-        ]
-    )
-    dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
-
-    plt.figure(figsize=(4, 3))
-    ax = plt.subplot(projection="csdm")
-    cb = ax.imshow(dataset.real / dataset.real.max(), aspect="auto", cmap="gist_ncar_r")
-    plt.colorbar(cb)
-    ax.invert_xaxis()
-    ax.invert_yaxis()
-    plt.tight_layout()
-    plt.show()
-
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
-
-.. note::
-
-<<<<<<< HEAD
 .. note::
 
     For MQ-MAS, a second shear and scale can be applied to remove isotropic
@@ -1668,62 +1435,6 @@ Below is the code for simulating a 3Q-MAS spectrum with a double shear transform
 .. plot::
     :context: close-figs
 
-=======
-    For MQ-MAS, a second shear and scale can be applied to remove isotropic
-    chemical shift component along the :math:`\Omega^{[2]''}` axis.  For a
-    spin :math:`I=3/2` nucleus, with a second shear factor of
-    :math:`\kappa^{(\omega_1)} = - 8/17`, the affine matrix is given by
-
-    .. math::
-        {\cal A}_1 =
-        \left[
-        \begin{array}{cc}
-        1 & 0 \\
-        \displaystyle \frac{	\kappa^{(\omega_1)}}{1 + |\kappa^{(\omega_1)}| }
-        & \displaystyle \frac{1}{1 + |\kappa^{(\omega_1)}|}
-        \end{array}
-        \right]
-        =
-        \left[
-        \begin{array}{cc}
-        1 & 0 \\
-        -8/25 & 17/25
-        \end{array}
-        \right],
-
-    and the product of the two affine transformations is
-
-    .. math::
-        {\cal A}_T = {\cal A}_1 {\cal A}_2
-        =
-        \left[
-        \begin{array}{cc}
-        1 & 0 \\
-        -8/25 & 17/25
-        \end{array}
-        \right]
-        \left[
-        \begin{array}{cc}
-        9/16 & 7/16 \\
-        0 & 1
-        \end{array}
-        \right]
-        =
-        \left[
-        \begin{array}{cc}
-        9/16 & 7/16 \\
-        -9/50 & 27/50
-        \end{array}
-        \right].
-
-Below is the code for simulating a 3Q-MAS spectrum with a double shear transformation.
-
-.. skip: next
-
-.. plot::
-    :context: close-figs
-
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
     my_twice_sheared_mqmas = Method(
         channels=["87Rb"],
         magnetic_flux_density=9.4,
@@ -1751,17 +1462,10 @@ Below is the code for simulating a 3Q-MAS spectrum with a double shear transform
         affine_matrix=[[9/16, 7/16],[-9/50, 27/50]]
     )
 
-<<<<<<< HEAD
     sim = Simulator(spin_systems=RbNO3_spin_systems, methods=[my_twice_sheared_mqmas])
     sim.run()
 
     dataset = gauss_convolve.apply_operations(dataset=sim.methods[0].simulation)
-=======
-    sim = Simulator(spin_systems=spin_systems, methods=[my_twice_sheared_mqmas])
-    sim.run()
-
-    dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 
     plt.figure(figsize=(4, 3))
     ax = plt.subplot(projection="csdm")
@@ -1830,11 +1534,7 @@ code below.
     sim = Simulator(spin_systems=spin_systems, methods=[my_three_event_mqmas])
     sim.run()
 
-<<<<<<< HEAD
     data = gauss_convolve.apply_operations(dataset=sim.methods[0].simulation)
-=======
-    data = processor.apply_operations(dataset=sim.methods[0].simulation)
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 
     plt.figure(figsize=(4, 3))
     ax = plt.subplot(projection="csdm")
@@ -1851,7 +1551,6 @@ previous discussion, you will find that the required value for the
 ``affine_matrix`` in the **Method** object to do this shear is given by
 
 ``affine_matrix=[[1,0],[-8/25, 17/25]]``
-
 
 Mixing Queries
 --------------
@@ -1873,7 +1572,6 @@ amplitude.  Eliminating a transition with a TransitionQuery in a spectral or
 delay event sets the eliminated transition's pathway amplitude to zero, i.e., it
 prunes that transition pathway branch.
 
-
 Default Total Mixing between Adjacent Spectral or Delay Events
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -1890,8 +1588,8 @@ Additionally, this total mixing event assumes that every connection has a mixing
 amplitude of 1. This is unrealistic, but if used correctly gives a significant
 speed-up in the simulation by avoiding the need to calculate mixing amplitudes.
 
-
 .. warning::
+
     The use of total mixing, i.e., the default mixing, can complicate the comparison
     of integrated intensities between different methods, depending on the selected
     transition pathways.
@@ -1918,7 +1616,7 @@ below.
 
 Since only one transition was selected in each SpectralEvent, the expected (and
 default) behavior is that there is a mixing (transfer) of coherence between
-those the symmetric triple-quantum and central transitions, forming the desired
+ the symmetric triple-quantum and central transitions, forming the desired
 transition pathway.
 
 However, when multiple transition pathways are present in a method, you may need
@@ -1926,7 +1624,6 @@ more accurate mixing amplitudes when connecting selected transitions of adjacent
 events. You may also need to prevent the undesired mixing of specific
 transitions between two adjacent events. As described below, you can avoid a
 "TotalMixing" event by inserting MixingEvents using RotationQuery objects.
-
 
 Rotation Query
 """"""""""""""
@@ -1948,26 +1645,27 @@ from :math:`\ketbra{I, m_f}{I, m_i}` to :math:`\ketbra{I, m_f'}{I, m_i'}` due to
 
     a(\theta,\phi) = d_{m_f',m_f}^{(I)}(\theta)d_{m_i',m_i}^{(I)}(\theta)e^{-i\Delta p\phi}(i)^{\Delta p}.
 
-From this expression, we note a few interesting and useful cases:
+From this expression, we note a few interesting and useful cases.  One is the coherence
+transfer under a :math:`\pi` rotation, given by
 
 .. math::
     :label: piPulseTransition
 
     \ketbra{I,m_f}{I, m_i}  \stackrel{\pi_\phi}{\longrightarrow} \ketbra{I, -m_f}{I, -m_i} e^{-i\Delta p\phi}(i)^{\Delta p}.
 
-That is, a :math:`\pi` rotation will make only one connection between transitions in
-adjacent events.  It is also a special connection because the
-:math:`\text{p}_I` transition symmetry value for the two transitions are
-equal but opposite in sign.  Additionally, the :math:`\text{d}_I` transition symmetry
-remains unchanged (:math:`\Delta \text{d}_I = 0`) for the two transitions.
-(In fact, this behavior under a :math:`\pi` rotation is generally true for
-odd (:math:`\text{p}_I, \text{f}_I, \ldots)` and even (:math:`\text{d}_I, \text{g}_I, \ldots)`
-rank spin transition symmetry functions.)
+That is, a :math:`\pi` rotation will make only one connection between
+transitions in adjacent events.  It is also a special connection because the
+:math:`\text{p}_I` transition symmetry value for the two transitions are equal
+but opposite in sign.  Additionally, the :math:`\text{d}_I` transition symmetry
+remains unchanged (:math:`\Delta \text{d}_I = 0`) for the two transitions. (In
+fact, this behavior under a :math:`\pi` rotation is generally true for odd
+(:math:`\text{p}_I, \text{f}_I, \ldots)` and even (:math:`\text{d}_I,
+\text{g}_I, \ldots)` rank spin transition symmetry functions.)
 
-While a :math:`\pi/2` rotation can transfer a transition into many other transitions, it
-is useful to know that the :math:`\text{d}_I` transition symmetry value cannot remain
-unchanged (:math:`\Delta \text{d}_I \neq 0`) between two connected transitions
-under a :math:`\pi/2` rotation.
+Another interesting result is that, while a rotation can transfer a transition
+into many other transitions, the :math:`\text{d}_I` transition symmetry value
+cannot remain unchanged (:math:`\Delta \text{d}_I \neq 0`) between two connected
+transitions under a :math:`\pi/2` rotation.
 
 Finally, another useful result is
 
@@ -1981,13 +1679,10 @@ to the transition, this turns out to help act as the opposite of a total mixing
 event, i.e., a **no** mixing event. As a convenience, this is defined as a
 "NoMixing" query and can be implemented with the code below.
 
-
 .. plot::
     :context: close-figs
 
-
     MixingEvent(query="NoMixing"),
-
 
 The **MixingEvent** object holds the rotation details in a **MixingQuery** object as
 a **RotationQuery** object associated with a ``channels`` attribute.  This is
@@ -1996,12 +1691,10 @@ illustrated in the sample code below.
 .. plot::
     :context: close-figs
 
-
     import numpy as np
     from mrsimulator.method.query import RotationalQuery
     rot_query = RotationalQuery(angle=np.pi/2, phase=0)
     rot_mixing = MixingEvent(query={"ch1": rot_query})
-
 
 Frequency Contributions
 -----------------------
@@ -2026,11 +1719,7 @@ The experimentalist indirectly influences a frequency component :math:`\Omega_k`
 by direct manipulation of the quantum transition, :math:`i \rightarrow  j`, and
 the spatial orientation,  :math:`\Theta` of the sample.
 
-<<<<<<< HEAD
 The function symbol :math:`\Xi_\ell(\Theta)` is replaced with the
-=======
-The function symbol :math:`\Xi_\ell(\Theta)` is similarly replaced with the
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 upper-case symbols :math:`\mathbb{S}`, :math:`\mathbb{P}(\Theta)`,
 :math:`\mathbb{D}(\Theta)`, :math:`\mathbb{F}(\Theta)`,
 :math:`\mathbb{G}(\Theta)`, :math:`\ldots`, i.e., following the spectroscopic
@@ -2043,24 +1732,26 @@ a second-rank dependence on sample orientation, and can be averaged away with
 fast magic-angle spinning, i.e., spinning about an angle, :math:`\theta_R`, that
 is the root of the second-rank Legendre polynomial ":math:`P_2(\cos \theta_R)`.
 The other spatial symmetry functions are removed by spinning the sample about
-the corresponding root of the Lth-rank Legendre polynomial ":math:`P_L(\cos
+the corresponding root of the :math:`L`th-rank Legendre polynomial ":math:`P_L(\cos
 \theta_R)`.
 
-For 2nd-order quadrupolar coupling contributions, it is convenient to define
-"hybrid" spin transition functions as linear combinations of the spin transition
-functions
+.. note::
 
-.. math::
+    For 2nd-order quadrupolar coupling contributions, it is convenient to define
+    "hybrid" spin transition functions as linear combinations of the spin transition
+    functions
 
-    \mathbb{c}_0  = \,\,\,\frac{4}{\sqrt{125}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  + \sqrt{\frac{18}{25}} \, \mathbb{f}_I
+    .. math::
 
-.. math::
+        \mathbb{c}_0  = \,\,\,\frac{4}{\sqrt{125}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  + \sqrt{\frac{18}{25}} \, \mathbb{f}_I
 
-    \mathbb{c}_2  = \,\,\,\frac{2}{\sqrt{175}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  - \frac{6}{\sqrt{35}} \, \mathbb{f}_I
+    .. math::
 
-.. math::
+        \mathbb{c}_2  = \,\,\,\frac{2}{\sqrt{175}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  - \frac{6}{\sqrt{35}} \, \mathbb{f}_I
 
-    \mathbb{c}_4  = -\frac{184}{\sqrt{875}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  - \frac{17}{\sqrt{175}} \, \mathbb{f}_I
+    .. math::
+
+        \mathbb{c}_4  = -\frac{184}{\sqrt{875}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  - \frac{17}{\sqrt{175}} \, \mathbb{f}_I
 
 As described in ":ref:`theory`", these transition symmetry functions play an
 essential role in evaluating the individual frequency contributions to the
@@ -2068,7 +1759,6 @@ overall transition frequency, given in the table below and in
 :py:meth:`~mrsimulator.method.frequency_contrib.FrequencyEnum`. They also aid in
 pulse sequence design by identifying how different frequency contributions
 refocus through the transition pathways.
-
 
 .. _frequency_contribution_table:
 
@@ -2131,7 +1821,6 @@ refocus through the transition pathways.
       - 4th
       - ``Quad2_4``
       - :math:`\displaystyle\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{G}^{\{qq\}} \cdot \mathbb{c}_4`
-
 
 .. note::
 
@@ -2333,11 +2022,7 @@ Notice that the weights of the transition pathways in the solid-echo method are
 half of those in the Hahn-echo method. This is because the :math:`\pi` pulse in
 the Hahn-echo method gives perfect transfer between the two transitions in the
 adjacent spectral events. In contrast, while the :math:`\pi/2` pulse in the
-<<<<<<< HEAD
 solid-echo method prevents the undesired transition pathways with :math:`\Delta
-=======
-Hahn-echo method prevents the undesired transition pathways with :math:`\Delta
->>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 \text{d}_I = 0`, it also connects the selected transitions during the first
 spectral event to undesired transitions in the second spectral event, which are
 eliminated by its symmetry query.
