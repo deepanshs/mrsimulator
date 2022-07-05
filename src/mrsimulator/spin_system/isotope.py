@@ -86,6 +86,23 @@ class Isotope(BaseModel):
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["atomic_number"]
 
+    def larmor_freq(self, B0=9.4):
+        """Return the Larmor frequency of the isotope at a magnetic field strength B0.
+
+        Args:
+            float B0: magnetic field strength in T
+
+        Returns:
+            float: larmor frequency in MHz
+
+        Example
+        -------
+
+        >>> silicon = Isotope(symbol="29Si")
+        >>> silicon.larmor_freq(B0 = 9.4)
+        """
+        return -self.gyromagnetic_ratio * B0
+
 
 def format_isotope_string(isotope_string: str) -> str:
     """Format the isotope string to {A}{symbol}, where A is the isotope number."""
