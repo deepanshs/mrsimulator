@@ -101,14 +101,15 @@ class BaseEvent(Parseable):
         array[[item.index() for item in self.freq_contrib]] = 1
         return array
 
-    def permutation(self, isotopes, channels):
-        """Permutate the event queries over the given channels and list of isotopes.
+    def combination(self, isotopes, channels):
+        """All possible combinations of the event queries over the given channels and
+        list of isotopes.
 
         Args:
             (list) isotopes: List of isotopes in the spin system.
             (list) channels: List of method channels.
         """
-        return [item.permutation(isotopes, channels) for item in self.transition_query]
+        return [item.combination(isotopes, channels) for item in self.transition_query]
 
     def filter_transitions(self, all_transitions, isotopes, channels):
         """Filter transitions based on the transition query.
@@ -118,13 +119,11 @@ class BaseEvent(Parseable):
             (list) isotopes: List of isotopes in the spin system.
             (list) channels: List of method channels.
         """
+        symmetry_combinations = self.combination(isotopes, channels)
 
-        symmetry_permutations = self.permutation(isotopes, channels)
-        # print("symmetry_permutations", symmetry_permutations)
         segment = []
-        for item in symmetry_permutations:
+        for item in symmetry_combinations:
             st = all_transitions[:]
-            # print(item["P"].size, item["D"].size)
             st = st[P_symmetry_indexes(st, item["P"])] if item["P"].size > 0 else st
             st = st[D_symmetry_indexes(st, item["D"])] if item["D"].size > 0 else st
             segment += [st]

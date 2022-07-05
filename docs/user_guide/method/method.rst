@@ -94,7 +94,11 @@ populations occurs in a spectral or delay event. The transition-dependent
 frequency contributions during an Event are selected from a list of
 :ref:`enumeration literals<freq_contrib_api>` and placed in the ``freq_contrib``
 attribute of the event. If ``freq_contrib`` is left unspecified, i.e., the
+<<<<<<< HEAD
 value of ``freq_contrib`` is set to ``None``, a default list holding the
+=======
+value of ``freq_contrib`` is set to ``Null``, a default list holding the
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 enumeration literals for *all* contributions is generated for the event.
 
 
@@ -120,6 +124,7 @@ When designing a **Method** object, you cannot identify and select a transition
 through its initial and final eigenstate quantum numbers. Transition selection
 is done through **TransitionQuery** and
 :py:meth:`~mrsimulator.method.query.SymmetryQuery` objects during individual
+<<<<<<< HEAD
 spectral or delay events. **TransitionQuery** objects can hold a
 **SymmetryQuery** object in ``ch1``, ``ch2``, or ``ch3``, which act on
 specific isotopes defined by the ``channels`` attribute in **Method**. It is
@@ -128,6 +133,16 @@ objects to determine the selected transition pathways for a given **SpinSystem**
 object by the initial and final eigenstate quantum numbers of each transition.
 
 Between adjacent SpectralEvent or DelayEvent objects,
+=======
+spectral or delay events. **TransitionQuery** objects hold a list of
+**SymmetryQuery** objects which act on specific isotopes defined by the
+``channels`` attribute in **Method**. It is only during a simulation that the
+**Method** object uses its **TransitionQuery** objects to determine the selected
+transition pathways for a given **SpinSystem** object by the initial and final
+eigenstate quantum numbers of each transition.
+
+Between adjacent SpectralEvent or DelayEvent objects in an events list,
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 **mrsimulator** defaults to *total mixing*, i.e., connecting all selected
 transitions in the two adjacent spectral or delay events. This default behavior
 can be overridden by placing a **MixingEvent** object between such events.
@@ -211,6 +226,19 @@ indexes depend on the spin system and how the spins and their eigenstates have
 been assigned to those indexes. Instead, we need a spin-system agnostic approach
 for selecting transitions.
 
+<<<<<<< HEAD
+=======
+To write a custom Method in *mrsimulator*, you'll need to determine the desired
+transition pathways and select the desired transitions during each
+**SpectralEvent** or **DelayEvent**. Keep in mind, however, that **Method**
+objects are designed without any details of the spin systems upon which they
+will act. For example, in the density matrix of a spin system ensemble, one
+could easily identify a transition by its row and column indexes. However, those
+indexes depend on the spin system and how the spins and their eigenstates have
+been assigned to those indexes. Instead, we need a spin-system agnostic approach
+for selecting transitions.
+
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 
 
 Spin Transition Symmetry Functions
@@ -570,7 +598,11 @@ transition.   The code below is an example of a custom 2D method using two
                 count=128,
                 spectral_width=6e3,  # in Hz
                 reference_offset=-9e3,  # in Hz
+<<<<<<< HEAD
                 label="Symmetric 3Q Frequency",
+=======
+                label="Symmetric Triple Quantum Frequency",
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
                 events=[
                     SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])
                 ]
@@ -745,7 +777,11 @@ selection rule for observable transitions is
 These corresponds to the *single-spin
 single-quantum transitions* labeled :math:`\hat{A}_1`,
 :math:`\hat{A}_2`, :math:`\hat{A}_3`, :math:`\hat{A}_4`, :math:`\hat{M}_1`,
+<<<<<<< HEAD
 :math:`\hat{M}_2`, :math:`\hat{M}_3`, :math:`\hat{M}_4`, :math:`\hat{X}_1`,
+=======
+:math:`\hat{M}_2`, :math:`\hat{M}_3`,:math:`\hat{M}_4`, :math:`\hat{X}_1`,
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 :math:`\hat{X}_2`, :math:`\hat{X}_3`, and :math:`\hat{X}_4`
 in the energy level diagram below.
 
@@ -1286,6 +1322,7 @@ The general form of the affine transformation of a n-dimensional spectrum is
 .. math::
 
     {\boldsymbol \Omega}' = {\cal A} {\boldsymbol \Omega}
+<<<<<<< HEAD
 
 
 In the two-dimensional case, this is given by
@@ -1366,12 +1403,102 @@ In the two-dimensional case, this is given by
     See the `"Symmetry Pathways in Solid-State NMR" paper
     <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_  for a more detailed
     discussion on affine transformations in NMR.
+=======
 
+
+In the two-dimensional case, this is given by
+
+.. math::
+    \left[
+    \begin{array}{c}
+    \Omega^{'[1]} \\
+    \Omega^{'[2]}
+    \end{array}
+    \right]
+    =
+    \underbrace{
+    \left[
+    \begin{array}{cc}
+    a & b \\
+    c & d
+    \end{array}
+    \right]
+    }_{\cal A}
+    \left[
+    \begin{array}{c}
+    \Omega^{[1]} \\
+    \Omega^{[2]}
+    \end{array}
+    \right]
+
+.. note::
+
+    For the multiple-quantum MAS experiment, a shear and scale transformation is
+    often applied to the spectrum to create a 2D spectrum correlating the MQ-MAS
+    isotropic frequency to the anisotropic central transition frequency. This
+    correlation can be achieved by adding an affine matrix added to the method.
+
+    For 3Q-MAS on a spin :math:`I=3/2` nucleus, where the shear factor is
+    :math:`\kappa^{(\omega_2)} = 21/27`, the affine matrix giving the
+    appropriate shear and scale transformation is given by
+
+    .. math::
+        {\cal A}_2 =
+        \left[
+        \begin{array}{cc}
+        \displaystyle \frac{1}{1 + |\kappa^{(\omega_2)}|}
+        & \displaystyle \frac{	\kappa^{(\omega_2)}}{1 + |\kappa^{(\omega_2)}| } \\
+        0 & 1
+        \end{array}
+        \right]
+        =
+        \left[
+        \begin{array}{cc}
+        9/16 & 7/16 \\
+        0 & 1
+        \end{array}
+        \right]
+
+    After the affine transformation, the position of the resonance in the
+    isotropic projection is a weighted average of the multiple quantum and
+    central transition isotropic frequencies given by
+
+    .. math::
+        \left \langle\Omega_{iso} \right \rangle_{\text{MQ-MAS}}
+        =
+        \frac{1}{1 + |\kappa^{(\omega_1)}|}
+        \,
+        \Omega_\text{iso}(m,-m)
+        +
+        \frac{\kappa^{(\omega_1)}}{1 + |\kappa^{(\omega_1)}|}
+        \,
+        \Omega_\text{iso}\left(\textstyle \frac{1}{2},-\frac{1}{2}\right).
+
+    If the spectrum is to be referenced to a frequency other than the rf carrier
+    frequency (i.e. zero is not defined in the middle of the spectrum), then the
+    reference offset used in the single-quantum dimension must be multiplied by a
+    factor of
+    :math:`{\left({\text{p}_I^{[1]}}/{\text{p}_I^{[2]}} + |\kappa^{(\omega_1)}| \right)/(1+ |\kappa^{(\omega_1)}| )}`
+    when used in the isotropic dimension.
+
+    See the `"Symmetry Pathways in Solid-State NMR" paper
+    <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_  for a more detailed
+    discussion on affine transformations in NMR.
+
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 
 In the code below, the 3Q-MAS method described earlier is modified to include an
 affine matrix to perform this shear transformation.
 
+<<<<<<< HEAD
+In the code below, the 3Q-MAS method described earlier is modified to include an
+affine matrix to perform this shear transformation.
+=======
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 
+.. skip: next
+
+<<<<<<< HEAD
 .. skip: next
 
 .. plot::
@@ -1426,8 +1553,65 @@ affine matrix to perform this shear transformation.
     ax.invert_yaxis()
     plt.tight_layout()
     plt.show()
+=======
+.. plot::
+    :context: close-figs
 
+    my_sheared_mqmas = Method(
+        channels=["87Rb"],
+        magnetic_flux_density=9.4,
+        rotor_frequency = np.inf, # in Hz (here, set to infinity)
+        spectral_dimensions=[
+            SpectralDimension(
+                count=128,
+                spectral_width=6e3,  # in Hz
+                reference_offset=-9e3,  # in Hz
+                label="3Q-MAS isotropic dimension",
+                events=[
+                    SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])
+                ]
+            ),
+            SpectralDimension(
+                count=256,
+                spectral_width=6e3,  # in Hz
+                reference_offset=-5e3,  # in Hz
+                label="Central Transition Frequency",
+                events=[
+                    SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])
+                ]
+            )
+        ],
+        affine_matrix=[[9/16, 7/16], [0, 1]]
+    )
 
+    sim = Simulator(spin_systems=spin_systems, methods=[my_sheared_mqmas])
+    sim.run()
+
+    # Apply Gaussian line broadening along both dimensions
+    processor = sp.SignalProcessor(
+        operations=[
+            sp.IFFT(dim_index=(0, 1)),
+            sp.apodization.Gaussian(FWHM="0.08 kHz", dim_index=0),
+            sp.apodization.Gaussian(FWHM="0.22 kHz", dim_index=1),
+            sp.FFT(dim_index=(0, 1)),
+        ]
+    )
+    dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
+
+    plt.figure(figsize=(4, 3))
+    ax = plt.subplot(projection="csdm")
+    cb = ax.imshow(dataset.real / dataset.real.max(), aspect="auto", cmap="gist_ncar_r")
+    plt.colorbar(cb)
+    ax.invert_xaxis()
+    ax.invert_yaxis()
+    plt.tight_layout()
+    plt.show()
+
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
+
+.. note::
+
+<<<<<<< HEAD
 .. note::
 
     For MQ-MAS, a second shear and scale can be applied to remove isotropic
@@ -1484,6 +1668,62 @@ Below is the code for simulating a 3Q-MAS spectrum with a double shear transform
 .. plot::
     :context: close-figs
 
+=======
+    For MQ-MAS, a second shear and scale can be applied to remove isotropic
+    chemical shift component along the :math:`\Omega^{[2]''}` axis.  For a
+    spin :math:`I=3/2` nucleus, with a second shear factor of
+    :math:`\kappa^{(\omega_1)} = - 8/17`, the affine matrix is given by
+
+    .. math::
+        {\cal A}_1 =
+        \left[
+        \begin{array}{cc}
+        1 & 0 \\
+        \displaystyle \frac{	\kappa^{(\omega_1)}}{1 + |\kappa^{(\omega_1)}| }
+        & \displaystyle \frac{1}{1 + |\kappa^{(\omega_1)}|}
+        \end{array}
+        \right]
+        =
+        \left[
+        \begin{array}{cc}
+        1 & 0 \\
+        -8/25 & 17/25
+        \end{array}
+        \right],
+
+    and the product of the two affine transformations is
+
+    .. math::
+        {\cal A}_T = {\cal A}_1 {\cal A}_2
+        =
+        \left[
+        \begin{array}{cc}
+        1 & 0 \\
+        -8/25 & 17/25
+        \end{array}
+        \right]
+        \left[
+        \begin{array}{cc}
+        9/16 & 7/16 \\
+        0 & 1
+        \end{array}
+        \right]
+        =
+        \left[
+        \begin{array}{cc}
+        9/16 & 7/16 \\
+        -9/50 & 27/50
+        \end{array}
+        \right].
+
+Below is the code for simulating a 3Q-MAS spectrum with a double shear transformation.
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
+
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
     my_twice_sheared_mqmas = Method(
         channels=["87Rb"],
         magnetic_flux_density=9.4,
@@ -1511,10 +1751,17 @@ Below is the code for simulating a 3Q-MAS spectrum with a double shear transform
         affine_matrix=[[9/16, 7/16],[-9/50, 27/50]]
     )
 
+<<<<<<< HEAD
     sim = Simulator(spin_systems=RbNO3_spin_systems, methods=[my_twice_sheared_mqmas])
     sim.run()
 
     dataset = gauss_convolve.apply_operations(dataset=sim.methods[0].simulation)
+=======
+    sim = Simulator(spin_systems=spin_systems, methods=[my_twice_sheared_mqmas])
+    sim.run()
+
+    dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 
     plt.figure(figsize=(4, 3))
     ax = plt.subplot(projection="csdm")
@@ -1583,7 +1830,11 @@ code below.
     sim = Simulator(spin_systems=spin_systems, methods=[my_three_event_mqmas])
     sim.run()
 
+<<<<<<< HEAD
     data = gauss_convolve.apply_operations(dataset=sim.methods[0].simulation)
+=======
+    data = processor.apply_operations(dataset=sim.methods[0].simulation)
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 
     plt.figure(figsize=(4, 3))
     ax = plt.subplot(projection="csdm")
@@ -1775,7 +2026,11 @@ The experimentalist indirectly influences a frequency component :math:`\Omega_k`
 by direct manipulation of the quantum transition, :math:`i \rightarrow  j`, and
 the spatial orientation,  :math:`\Theta` of the sample.
 
+<<<<<<< HEAD
 The function symbol :math:`\Xi_\ell(\Theta)` is replaced with the
+=======
+The function symbol :math:`\Xi_\ell(\Theta)` is similarly replaced with the
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 upper-case symbols :math:`\mathbb{S}`, :math:`\mathbb{P}(\Theta)`,
 :math:`\mathbb{D}(\Theta)`, :math:`\mathbb{F}(\Theta)`,
 :math:`\mathbb{G}(\Theta)`, :math:`\ldots`, i.e., following the spectroscopic
@@ -2078,7 +2333,11 @@ Notice that the weights of the transition pathways in the solid-echo method are
 half of those in the Hahn-echo method. This is because the :math:`\pi` pulse in
 the Hahn-echo method gives perfect transfer between the two transitions in the
 adjacent spectral events. In contrast, while the :math:`\pi/2` pulse in the
+<<<<<<< HEAD
 solid-echo method prevents the undesired transition pathways with :math:`\Delta
+=======
+Hahn-echo method prevents the undesired transition pathways with :math:`\Delta
+>>>>>>> 58ee9263fad2af98d5c75083aeaa5c1a6455bffe
 \text{d}_I = 0`, it also connects the selected transitions during the first
 spectral event to undesired transitions in the second spectral event, which are
 eliminated by its symmetry query.

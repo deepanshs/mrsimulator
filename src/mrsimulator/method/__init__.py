@@ -478,7 +478,7 @@ class Method(Parseable):
         isotopes = spin_system.get_isotopes(symbol=True)
         channels = [item.symbol for item in self.channels]
         if np.any([item not in isotopes for item in channels]):
-            return []
+            return np.asarray([])
 
         segments = [
             evt.filter_transitions(all_transitions, isotopes, channels)
@@ -495,7 +495,7 @@ class Method(Parseable):
 
     def _get_transition_pathway_weights(self, pathways, spin_system):
         if pathways == []:
-            return []
+            return np.asarray([])
 
         symbol = [item.isotope.symbol for item in spin_system.sites]
         spins = np.asarray([item.isotope.spin for item in spin_system.sites])
