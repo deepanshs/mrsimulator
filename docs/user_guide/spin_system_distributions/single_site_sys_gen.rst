@@ -127,51 +127,51 @@ of the site without the tensor parameter.
 
     * - ``isotope``
       - ``str`` or list of ``str``
-      - A **required** string or list of strings representing the label of the *isotope* attribute
+      - A **required** string or list of strings representing the label of the ``isotope`` attribute
         of the :ref:`site_api` (e.g. ``"1H"`` or ``["29Si", "17O"]``).
 
     * - ``isotropic_chemical_shift``
       - ``float``, list of ``float``, or numpy array
-      - An **optional** number or list of numbers representing the *isotropic_chemical_shift*
+      - An **optional** number or list of numbers representing the ``isotropic_chemical_shift``
         attribute of the :ref:`site_api` (e.g. ``17.3`` or ``[2.4, 19.5]``) in ppm.
         The default value is ``0``.
 
     * - ``shielding_symmetric``
       - ``dict``
-      - An *optional* dictionary representing the *shielding_symmetric* attribute of the :ref:`site_api`
+      - An *optional* dictionary representing the ``shielding_symmetric`` attribute of the :ref:`site_api`
         where the keys are valid :ref:`sy_api` attributes and the values are floats or lists/numpy
         arrays of floats. The default is ``None``.
 
     * - ``shielding_antisymmetric``
       - ``dict``
-      - An *optional* dictionary representing the *shielding_antisymmetric* attribute of the
+      - An *optional* dictionary representing the ``shielding_antisymmetric`` attribute of the
         :ref:`site_api` where the keys are valid :ref:`asy_api` attributes and the values are floats
         or lists/numpy arrays of floats. The default is ``None``.
 
     * - ``quadrupolar``
       - ``dict``
-      - An *optional* dictionary representing the *quadrupolar* attribute of the
+      - An *optional* dictionary representing the ``quadrupolar`` attribute of the
         :ref:`site_api` where the keys are valid :ref:`sy_api` attributes and the values are floats
         or lists/numpy arrays of floats. The default is ``None``.
 
     * - ``abundance``
       - ``float``, list of ``float``, or numpy array
-      - An *optional* number or list of numbers representing the *abundance* attribute of
+      - An *optional* number or list of numbers representing the ``abundance`` attribute of
         the **SpinSystem** (e.g. ``0.182`` or ``[85, 7.3]``. By default, the abundance
         of each spin system will be set to ``1 / n_sys`` where ``n_sys`` is the number of spin
         systems generated.
 
     * - ``site_name``
       - ``str`` or list of ``str``
-      - An *optional* string or list of strings representing the *name* attribute of each
+      - An *optional* string or list of strings representing the ``name`` attribute of each
         :ref:`site_api`. By default, each :ref:`site_api` will take the default name of ``None``
 
     * - ``site_label``
       - ``str`` or list of ``str``
-      - An *optional* string or list of strings representing the *label* attribute of each
+      - An *optional* string or list of strings representing the ``label`` attribute of each
         :ref:`site_api`. By default, each :ref:`site_api` will take the default label of ``None``
 
     * - ``site_description``
       - ``str`` or list of ``str``
-      - An *optional* string or list of strings representing the *description* attribute of each
+      - An *optional* string or list of strings representing the ``description`` attribute of each
         :ref:`site_api`. By default, each :ref:`site_api` will take the default description of ``None``

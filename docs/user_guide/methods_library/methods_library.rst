@@ -4,7 +4,7 @@
 Methods Library
 ===============
 
-For convenience, mrsimulator offers the following pre-built methods -
+For convenience, **mrsimulator** offers the following pre-built methods -
 
 * :ref:`bloch_decay`
 * :ref:`bloch_decay_CT`
@@ -30,12 +30,12 @@ An example of the syntax that all library methods follows is shown below.
     )
 
 where `BlochDecaySpectrum` can be replaced with another library method class. Each method has the
-*channels* attribute, which is a list of isotopes probed by the method as well as the
-*magnetic_flux_density*, *rotor_angle*, and *rotor_frequency* attributes which define the
+``channels`` attribute, which is a list of isotopes probed by the method as well as the
+``magnetic_flux_density``, ``rotor_angle``, and ``rotor_frequency`` attributes which define the
 global experiment parameters.
 See :numref:`table_generic_method` for more details.
 
-The method object also has the *spectral_dimensions* attribute, which contains a list of
+The method object also has the ``spectral_dimensions`` attribute, which contains a list of
 SpectralDimension objects defining the spectral grid. A 2D method will have two spectral
 dimensions in this list, whereas a 1D method will only have one. See
 :numref:`table_generic_spectral_dimension` for the attributes of a SpectralDimension object.
@@ -79,8 +79,8 @@ dimensions in this list, whereas a 1D method will only have one. See
 
   * - spectral_dimensions
     - A list of spectral dimensions. The coordinates along each spectral dimension is
-      described with the keywords, *count* (:math:`N`), *spectral_width*
-      (:math:`\nu_\text{sw}`), and *reference_offset* (:math:`\nu_0`). The
+      described with the keywords, ``count`` (:math:`N`), ``spectral_width``
+      (:math:`\nu_\text{sw}`), and ``reference_offset`` (:math:`\nu_0`). The
       coordinates are given as,
 
       .. math::

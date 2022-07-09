@@ -376,7 +376,7 @@ Saving the full Simulation
 The Simulation and SignalProcessor objects can also be serialized into JSON
 files. At some point, however, saving the Python script or Jupyter notebook
 with your code will be just as convenient.  Nonetheless, you can find
-additional details on JSON serialization of mrsimulator objects in the
+additional details on JSON serialization of **mrsimulator** objects in the
 :ref:`IO_documentation` section.
 
 .. plot::

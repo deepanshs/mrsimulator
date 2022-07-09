@@ -5,7 +5,7 @@ Signal Processor
 ================
 
 After running a simulation, you may need to apply some post-simulation signal processing. For example, you may need to scale the simulated spectrum to match experimental intensities, or you may want to convolve the spectrum with a Lorentzian, Gaussian, or other line-broadening
-function. For this reason, mrsimulator offers some frequently used NMR signal processing tools within the ``mrsimulator.signal_processor`` module.
+function. For this reason, **mrsimulator** offers some frequently used NMR signal processing tools within the ``mrsimulator.signal_processor`` module.
 
 .. seealso::
 
@@ -48,7 +48,7 @@ Each signal processor object holds a list of operations under the *operations* a
 
 First, an inverse Fourier transform is applied to the dataset. Then,
 a Gaussian apodization with a full-width-at-half-maximum of 50 Hz
-in the frequency domain is applied. The unit used for the *FWHM*
+in the frequency domain is applied. The unit used for the ``FWHM``
 attribute corresponds to the dimensionality of the dataset. By
 choosing Hz, we imply the dataset is in units of frequency.
 Finally, a forward Fourier transform is applied to the apodized
@@ -56,7 +56,7 @@ dataset, and all points are scaled up by 120 times.
 
 .. note::
 
- Convolutions in mrsimulator are performed using the
+ Convolutions in **mrsimulator** are performed using the
  `Convolution Theorem <https://en.wikipedia.org/wiki/Convolution_theorem>`_. A spectrum is
  Fourier transformed, and apodizations are performed in the time domain before being transformed back into the frequency domain.
 
@@ -108,9 +108,9 @@ plot comparing the unprocessed and processed dataset
 Applying Operations along a Dimension
 -------------------------------------
 
-Multi-dimensional NMR simulations may need different operations applied along different dimensions. Each operation has the attribute *dim_index*, which is used to apply operations along a certain dimension.
+Multi-dimensional NMR simulations may need different operations applied along different dimensions. Each operation has the attribute ``dim_index``, which is used to apply operations along a certain dimension.
 
-By default, *dim_index* is ``None`` and is applied along the 1st dimension. An integer or list of integers can be passed to *dim_index*, specifying the dimensions. Below are examples of specifying the dimensions
+By default, ``dim_index`` is ``None`` and is applied along the 1st dimension. An integer or list of integers can be passed to ``dim_index``, specifying the dimensions. Below are examples of specifying the dimensions
 
 .. plot::
     :context: close-figs
@@ -128,7 +128,7 @@ Applying Apodizations to specific Dependent Variables
 -----------------------------------------------------
 
 Each dimension in a simulated spectrum can hold multiple dependent variables (a.k.a. contributions from multiple spin systems). Each spin system may need different convolutions applied to match an experimental spectrum. The
-:py:class:`~mrsimulator.signal_processor.Apodization` sub-classes have the *dv_index* attribute, specifying which dependent variable (spin system) to apply the operation on. By default, *dv_index* is ``None`` and will apply the convolution to all dependent variables
+:py:class:`~mrsimulator.signal_processor.Apodization` sub-classes have the ``dv_index`` attribute, specifying which dependent variable (spin system) to apply the operation on. By default, ``dv_index`` is ``None`` and will apply the convolution to all dependent variables
 in a dimension.
 
 .. note::

@@ -22,7 +22,7 @@ as a CSDM object in each Method object. For more information on the CSDM
 :ref:`signal_processor_documentation`, for applying various post-simulation
 signal processing operations to CSDM dataset objects.
 
-All objects in mrsimulator can be
+All objects in **mrsimulator** can be
 serialized. We adopt the `Javascript Object Notation
 (JSON) <https://www.json.org>`__ as the file-serialization format for the
 model because it is human-readable if properly organized and easily integrable
@@ -30,8 +30,8 @@ with numerous programming languages and related software packages. It is also
 the preferred serialization for data exchange in web-based applications.
 
 Here, we have put together a tutorial which introduces the key objects in
-a typical mrsimulator workflow. See the User Documentation section
-for more detailed documentation on the usage of mrsimulator classes. Also,
+a typical **mrsimulator** workflow. See the User Documentation section
+for more detailed documentation on the usage of **mrsimulator** classes. Also,
 check out our :ref:`example_gallery` and :ref:`fitting_examples`.
 
 SpinSystem
@@ -63,7 +63,7 @@ and :math:`^{13}\text{C}` sites.
     )
     my_sites = [H_site, C_site]
 
-Note that isotopes in mrsimulator are specified with a string that starts
+Note that isotopes in **mrsimulator** are specified with a string that starts
 with the isotope's mass number followed by its element symbol.
 
 In the code above, you created two :ref:`site_api` objects in the variables
@@ -121,7 +121,7 @@ If you had wanted to create an uncoupled spin system, simply omit the
 Method
 ------
 
-A :ref:`method_documentation` object in mrsimulator describes an NMR method.
+A :ref:`method_documentation` object in **mrsimulator** describes an NMR method.
 For this introduction, you can use the pre-defined
 method :py:class:`~mrsimulator.method.lib.BlochDecaySpectrum`. This method
 simulations the spectrum obtained from the Fourier transform of a Bloch decay
@@ -166,8 +166,8 @@ that will simulate the spectrum.
 Simulator
 ---------
 
-At the heart of mrsimulator is the :ref:`simulator_documentation` object, which
-calculates the NMR spectrum. Mrsimulator performs all calculations in the frequency domain,
+At the heart of **mrsimulator** is the :ref:`simulator_documentation` object, which
+calculates the NMR spectrum. **Mrsimulator** performs all calculations in the frequency domain,
 and all resonance frequencies are calculated in the weakly-coupled (Zeeman) basis for the spin system.
 
 In the code below, you create a :ref:`simulator_api` object,
@@ -268,8 +268,8 @@ to understand its methods and learn how to further customize your plots.
 CSDM
 ----
 
-mrsimulator is designed to be part of a larger data workflow involving other
-software packages. For this larger context, mrsimulator uses the Core
+**Mrsimulator** is designed to be part of a larger data workflow involving other
+software packages. For this larger context, **mrsimulator** uses the Core
 Scientific Dataset Model (CSDM) for importing and exporting your datasets. CSDM
 is a lightweight, portable, human-readable, and versatile standard for intra-
 and interdisciplinary exchange of scientific datasets. The model supports
@@ -280,8 +280,8 @@ can also hold correlated datasets assuming the different physical quantities
 variables. The CSDM can also serve as a re-usable building block in developing
 more sophisticated portable scientific dataset file standards.
 
-mrsimulator also uses CSDM internally as its object model for simulated and
-experimental datasets. Any CSDM object in mrsimulator can be serialized as
+**Mrsimulator** also uses CSDM internally as its object model for simulated and
+experimental datasets. Any CSDM object in **mrsimulator** can be serialized as
 a JavaScript Object Notation (JSON) file using its ``save()`` method. For
 example, the simulation after the signal processing step above is saved as a
 csdf file as shown below.

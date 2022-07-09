@@ -21,7 +21,7 @@ class as follows.
 
     cz_model = CzjzekDistribution(sigma=0.8)
 
-The *CzjzekDistribution* class accepts a single argument, *sigma*, which is the standard
+The **CzjzekDistribution** class accepts a single argument, ``sigma``, which is the standard
 deviation of the second-rank traceless symmetric tensor parameters. In the above example,
 we create ``cz_model`` as an instance of the CzjzekDistribution class with
 :math:`\sigma=0.8`.

@@ -86,16 +86,16 @@ Consider the example below of a :ref:`site_api` object for a deuterium nucleus c
         ),
     )
 
-The *isotope* key holds the spin isotope, here given a value of *2H*.
-The *isotropic_chemical_shift* is the isotropic chemical shift of the site isotope,
+The ``isotope`` key holds the spin isotope, here given a value of ``"2H"``.
+The ``isotropic_chemical_shift`` is the isotropic chemical shift of the site isotope,
 :math:`^2\text{H}`, here given as *4.1 ppm*. We have additionally defined an optional
-*shielding_symmetric* key, whose value is a second-rank traceless symmetric nuclear shielding
+``shielding_symmetric`` key, whose value is a second-rank traceless symmetric nuclear shielding
 tensor represented by a :ref:`sy_api` object.
 
 .. note::
-  We parameterize a SymmetricTensor using the Haeberlen convention with parameters *zeta* and *eta*,
-  defined as the shielding anisotropy and asymmetry, respectively. The Euler angle orientations, *alpha*,
-  *beta*, and *gamma* are the relative orientation of the nuclear shielding tensor from a common reference
+  We parameterize a SymmetricTensor using the Haeberlen convention with parameters ``zeta`` and ``eta``,
+  defined as the shielding anisotropy and asymmetry, respectively. The Euler angle orientations, ``alpha``,
+  ``beta``, and ``gamma`` are the relative orientation of the nuclear shielding tensor from a common reference
   frame.
 
 Since deuterium is a quadrupolar nucleus, :math:`I>1/2`, there also can be a quadrupolar coupling
@@ -163,8 +163,8 @@ whose value holds a SymmetricTensor object representing the traceless 2nd-rank s
 tensor.
 
 Additionally, the dipolar coupling interaction between the coupled nuclei is defined with an optional
-*dipolar* key. A dipolar tensor is a second-rank traceless symmetric tensor, and we describe the dipolar
-coupling constant with the parameter *D*.  The Euler angle orientations, *alpha*, *beta*, and *gamma*
+``dipolar`` key. A dipolar tensor is a second-rank traceless symmetric tensor, and we describe the dipolar
+coupling constant with the parameter ``D``.  The Euler angle orientations, ``alpha``, ``beta``, and ``gamma``
 are the relative orientation of the dipolar tensor from a common reference frame.
 
 .. note::
@@ -201,14 +201,14 @@ Here we create a relatively unexciting single site proton spin system
         abundance=80,  # percentage
     )
 
-We find four keywords at the root level of our SpinSystem object definition: *name*,
-*description*, *sites*, and *abundance*. The value of the *name* key is the
+We find four keywords at the root level of our SpinSystem object definition: ``name``,
+``description``, ``sites``, and ``abundance``. The value of the ``name`` key is the
 optional name of the spin system. Likewise, the value of the description key is an optional
 string describing the spin system.
 
-The value of the *sites* key is a list of :ref:`site_api` objects. Here, this list is simply
+The value of the ``sites`` key is a list of :ref:`site_api` objects. Here, this list is simply
 the single object, `H1_site`.
-The value of the *abundance* key is the abundance of the spin system, here given
+The value of the ``abundance`` key is the abundance of the spin system, here given
 a value of *80%*. If the abundance key is omitted, the abundance defaults to *100%*.
 
 See :numref:`table_spin_system` for further description of the :ref:`spin_sys_api` class and
@@ -241,9 +241,9 @@ proton site to a new spin system.
         abundance=0.148,  # percentage
     )
 
-Again we see the optional *name* and *description* attributes. The *sites* attribute is now
+Again we see the optional ``name`` and ``description`` attributes. The ``sites`` attribute is now
 a list of two :ref:`site_api` objects, the previous :math:`^1\text{H}` site and the new
-:math:`^{13}\text{C}` site. We have also set the *abundance* of this spin system to *0.148%*.
+:math:`^{13}\text{C}` site. We have also set the ``abundance`` of this spin system to *0.148%*.
 By leveraging the abundance attribute, multiple spin systems with varying abundances can be
 simulated together. See our :ref:`introduction_isotopomers_example` where isotopomers of varying
 abundance are simulated in tandem.
@@ -311,13 +311,13 @@ construct such a spin system.
 
     coupled_spin_system = SpinSystem(sites=[H2_site, C13_site], couplings=[H2_C13_coupling])
 
-In contrast to the previous examples, we have omitted the optional *name*, *description*, and
-*abundance* keywords. The name and description for ``coupled_spin_system`` will both be ``None``
+In contrast to the previous examples, we have omitted the optional ``name``, ``description``, and
+``abundance`` keywords. The name and description for ``coupled_spin_system`` will both be ``None``
 and the abundance will be *100%*.
 
-A list of :ref:`coupling_api` objects passed to the *couplings* keywords. The
-*site_index* attribute of ``H2_C13_coupling`` correspond to the index of ``H2_site`` and
-``C13_site`` in the sites list. If we were to add more sites, *site_index* might need to be
+A list of :ref:`coupling_api` objects passed to the ``couplings`` keywords. The
+``site_index`` attribute of ``H2_C13_coupling`` correspond to the index of ``H2_site`` and
+``C13_site`` in the sites list. If we were to add more sites, ``site_index`` might need to be
 updated to reflect the index `H2_site`` and ``C13_site`` in the sites list. Again, our
 :ref:`introduction_isotopomers_example` has good usage cases for multiple couplings in a
 spin system.
