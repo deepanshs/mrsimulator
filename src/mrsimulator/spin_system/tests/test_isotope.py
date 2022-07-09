@@ -15,6 +15,7 @@ def test_isotope():
     assert silicon.natural_abundance == 4.683
     assert silicon.quadrupole_moment == 0.0
     assert silicon.spin == 0.5
+    assert silicon.larmor_freq(B0=11.75) == 99.46962016339306
 
     proton = Isotope(symbol="1H")
     assert proton.atomic_number == 1
@@ -22,6 +23,7 @@ def test_isotope():
     assert proton.natural_abundance == 99.985
     assert proton.quadrupole_moment == 0.0
     assert proton.spin == 0.5
+    assert proton.larmor_freq(B0=9.40) == -400.2283045725638
 
     nitrogen = Isotope(symbol="14N")
     assert nitrogen.atomic_number == 7
@@ -29,6 +31,7 @@ def test_isotope():
     assert nitrogen.natural_abundance == 99.634
     assert nitrogen.quadrupole_moment == 0.0193
     assert nitrogen.spin == 1
+    assert nitrogen.larmor_freq(B0=18.79) == -57.830093199115574
 
     with pytest.raises(Exception, match="Could not parse isotope string"):
         Isotope(symbol="x")
