@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Potassium Sulfate, ³³S (I=3/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

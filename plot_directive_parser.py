@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This file adjusts the Sybil CodeBlockParser class to add the capability to
 test the matplotlib plot directives in static documentation. All the code is
 the same except for the constant CODEBLOCK_START which is now regex which targets

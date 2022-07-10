@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import mrsimulator.signal_processor as sp
 import numpy as np
 from lmfit import Parameters
@@ -230,7 +229,7 @@ def make_simulator_params(sim: Simulator, include={}):
 
     # get total abundance scaling factor
     length = len(sim.spin_systems)
-    abundance_scale = 100 / sum([sys.abundance for sys in sim.spin_systems])
+    abundance_scale = 100 / sum(sys.abundance for sys in sim.spin_systems)
 
     # expression for the last abundance.
     last_abundance = f"{length - 1}_abundance"

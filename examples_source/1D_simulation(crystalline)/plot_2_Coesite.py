@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Coesite, ¹⁷O (I=5/2)
 ^^^^^^^^^^^^^^^^^^^^

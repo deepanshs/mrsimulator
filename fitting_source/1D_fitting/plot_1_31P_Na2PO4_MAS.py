@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ³¹P MAS NMR of crystalline Na2PO4 (CSA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

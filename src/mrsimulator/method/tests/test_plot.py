@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import matplotlib.projections as proj
 import numpy as np
 import pandas as pd

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ¹³C 2D MAT NMR of L-Histidine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

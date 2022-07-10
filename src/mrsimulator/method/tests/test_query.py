@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from mrsimulator.method.query import MixingEnum
 from mrsimulator.method.query import MixingQuery

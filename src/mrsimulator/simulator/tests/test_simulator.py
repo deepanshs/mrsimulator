@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test for the base Simulator class."""
 import os
 from random import randint

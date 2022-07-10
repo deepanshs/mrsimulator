@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Wollastonite, ²⁹Si (I=1/2), MAF
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

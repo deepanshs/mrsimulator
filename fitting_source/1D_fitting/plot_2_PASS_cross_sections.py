@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 1D PASS/MAT sideband order cross-section
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

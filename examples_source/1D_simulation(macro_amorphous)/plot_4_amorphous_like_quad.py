@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Amorphous material, ²⁷Al (I=5/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

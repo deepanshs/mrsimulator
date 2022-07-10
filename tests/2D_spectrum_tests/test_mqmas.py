@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Lineshape Test."""
 import csdmpy as cp
 import mrsimulator.signal_processor.affine as aft

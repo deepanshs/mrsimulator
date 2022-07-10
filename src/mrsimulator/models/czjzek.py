@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from mrsimulator.spin_system.tensors import SymmetricTensor
 

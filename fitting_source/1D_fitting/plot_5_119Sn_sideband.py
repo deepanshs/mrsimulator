@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ¹¹⁹Sn MAS NMR of SnO
 ^^^^^^^^^^^^^^^^^^^^

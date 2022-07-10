@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import warnings
 from copy import deepcopy
 from typing import ClassVar

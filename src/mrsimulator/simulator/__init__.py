@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Base Simulator class."""
 import json
 from copy import deepcopy
