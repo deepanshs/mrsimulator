@@ -651,8 +651,6 @@ number of sites in a spin system.
 The TransitionQuery for selecting these 12 *single-spin single-quantum* transitions
 is given in the code below.
 
-.. skip: next
-
 .. plot::
     :context: close-figs
 
@@ -796,8 +794,6 @@ below.
 The code below will select the six *two-spin double-quantum transitions* where
 :math:`\text{p}_{AMX} = -2`.
 
-.. skip: next
-
 .. plot::
     :context: close-figs
 
@@ -904,8 +900,6 @@ The three *three-spin single-quantum transitions* having
     :align: center
 
 The code below will select these *three-spin single-quantum transitions*.
-
-.. skip: next
 
 .. plot::
     :context: close-figs
