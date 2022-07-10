@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Base Isotope class."""
 from os import path
 from re import match

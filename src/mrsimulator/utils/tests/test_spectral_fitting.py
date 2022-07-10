@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import csdmpy as cp
 import mrsimulator.utils.spectral_fitting as sf
 import numpy as np

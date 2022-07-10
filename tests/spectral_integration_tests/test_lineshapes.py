@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Lineshape Test."""
 from os import path
 

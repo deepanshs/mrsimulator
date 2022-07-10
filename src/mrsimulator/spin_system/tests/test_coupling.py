@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test for the base Site class."""
 import pytest
 from mrsimulator import Coupling
@@ -57,13 +56,13 @@ def test_direct_init_coupling1():
         "Site index must a list of two integers",
         "The two site indexes must be unique integers",
     ]
-    with pytest.raises(ValidationError, match=".*{0}.*".format(*error)):
+    with pytest.raises(ValidationError, match=".*{}.*".format(*error)):
         Coupling(site_index=[])
 
-    with pytest.raises(ValidationError, match=".*{0}.*".format(*error)):
+    with pytest.raises(ValidationError, match=".*{}.*".format(*error)):
         Coupling(site_index=[2, 3, 4])
 
-    with pytest.raises(ValidationError, match=".*{0}.*".format(*error)):
+    with pytest.raises(ValidationError, match=".*{}.*".format(*error)):
         Coupling(site_index=[2])
 
     with pytest.raises(ValidationError, match=".*{1}.*".format(*error)):

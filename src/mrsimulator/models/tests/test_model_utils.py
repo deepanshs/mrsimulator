@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from mrsimulator.models.utils import get_Haeberlen_components
 from mrsimulator.models.utils import get_principal_components

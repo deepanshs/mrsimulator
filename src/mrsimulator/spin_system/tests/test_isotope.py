@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 from mrsimulator.spin_system.isotope import Isotope
 

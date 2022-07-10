@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from copy import deepcopy
 from typing import ClassVar
 
@@ -126,9 +125,9 @@ class BaseNamedMethod(Method):
             for k in obj_keys:  # iterate over event attributes
                 fail = False
                 if k in check_keys:
-                    obj_attr, default_attr, check_attr = [
+                    obj_attr, default_attr, check_attr = (
                         getattr(_, k) for _ in [ev_obj, default_obj, ev_check]
-                    ]
+                    )
                     fail_1 = obj_attr != default_attr  # not default (user passed value)
                     fail_2 = obj_attr != check_attr  # passed attr does not match base
                     fail_3 = default_attr is not None

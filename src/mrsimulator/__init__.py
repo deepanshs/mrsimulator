@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Solid-state NMR spectra simulation module for Python
 ====================================================

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Itraconazole, ¹³C (I=1/2) PASS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

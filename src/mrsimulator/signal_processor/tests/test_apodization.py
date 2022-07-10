@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Apodization test"""
 import csdmpy as cp
 import numpy as np

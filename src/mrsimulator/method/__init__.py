@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
@@ -245,11 +244,9 @@ class Method(Parseable):
         speeds = {sp for sp in speeds if 0 < sp < 1e12}
         if len(speeds) > 1:
             raise NotImplementedError(
-                (
-                    "Sideband-sideband correlation is not supported in mrsimulator. "
-                    "Only one event with non-zero finite `rotor_frequency` is allowed "
-                    "in a method."
-                )
+                "Sideband-sideband correlation is not supported in mrsimulator. "
+                "Only one event with non-zero finite `rotor_frequency` is allowed "
+                "in a method."
             )
         return v
 
@@ -793,4 +790,4 @@ class Method(Parseable):
             >>> method.shape()
             (40, 10)
         """
-        return tuple([item.count for item in self.spectral_dimensions])
+        return tuple(item.count for item in self.spectral_dimensions)

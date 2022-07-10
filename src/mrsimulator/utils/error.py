@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 class NamedMethodError(Exception):
     """Exception raised when NamedClassMethods are renamed.
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import csdmpy as cp
 import numpy as np
 from mrsimulator import signal_processor as sp

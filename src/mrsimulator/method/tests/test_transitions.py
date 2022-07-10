@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method

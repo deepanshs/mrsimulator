@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The Event class."""
 from typing import ClassVar
 from typing import Dict
@@ -74,7 +73,7 @@ class Shear(AffineTransformation):
         n_dim = len(dims)
 
         x, y = dims[self.dim_index], dims[self.parallel]
-        x_value, y_value = [self.get_coordinates(_).value for _ in [x, y]]
+        x_value, y_value = (self.get_coordinates(_).value for _ in [x, y])
 
         vector_x = _get_broadcast_shape(x_value, self.dim_index, n_dim)
         vector_y = _get_broadcast_shape(y_value, self.parallel, n_dim)

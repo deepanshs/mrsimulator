@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The Transition class."""
 from typing import List
 

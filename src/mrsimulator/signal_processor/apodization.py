@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The Event class."""
 from typing import ClassVar
 from typing import Dict
