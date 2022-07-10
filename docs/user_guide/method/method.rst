@@ -111,7 +111,7 @@ Additionally, the user can affect transition frequencies during a spectral or
 delay event by changing other measurement attributes: ``rotor_frequency``,
 ``rotor_angle``, and ``magnetic_flux_density``. If left unspecified, these
 attributes default to the values of the identically named global attributes in
-the **Method** object. SpectralEvents objects use the ``fraction`` attribute to
+the **Method** object. SpectralEvent**** objects use the ``fraction`` attribute to
 calculate the weighted average frequency during the spectral dimension for each
 selected transition pathway.
 
@@ -267,6 +267,8 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
     :alt: figure
     :align: center
 
+----
+
 For discussion on higher-level transition symmetry functions and how they can be used when
 selecting NMR coherence order pathways, click on the following dropdown.
 
@@ -313,7 +315,7 @@ as defined in the code below.
             symm_query_dict = {"P": [-1], "D": [1]}
             trans_query_dict = {"ch1": symm_query_dict}
 
-            # Dictionary of TransitionQuery passed at SpectralEvent instantiation
+            # Dictionary of TransitionQuery passed to SpectralEvent
             spec_event = SpectralEvent(transition_query=[trans_query_dict])
 
 In the example above, the **SymmetryQuery** object is created and assigned to
@@ -346,7 +348,7 @@ below.
         shielding_symmetric={"zeta": -80, "eta": 0.25},  # zeta in ppm
         quadrupolar={"Cq": 10e3, "eta": 0.0, "alpha": 0, "beta": np.pi / 2, "gamma": 0},
     )
-    spin_system = SpinSystem(sites=[deuterium])
+    deuterium_system = SpinSystem(sites=[deuterium])
 
     # This method selects all observable (p_I=–1) transitions
     method_both_transitions = Method(
@@ -388,7 +390,7 @@ below.
     )
     # Simulate spectra for all three method with spin system
     sim = Simulator(
-        spin_systems=[spin_system],
+        spin_systems=[deuterium_system],
         methods=[method_both_transitions, method_transition1, method_transition2],
     )
     sim.run()
@@ -745,8 +747,6 @@ The :py:meth:`~mrsimulator.Method.get_transition_pathways` function will allow
 you to inspect the transitions selected by the **Method**
 in terms of the initial and final Zeeman eigenstate quantum numbers.
 
-.. skip: next
-
 .. plot::
     :context: close-figs
 
@@ -866,13 +866,11 @@ select a subset of transitions from the complete set of transitions. The final
 set of selected transitions is obtained from the union of transition subsets
 from each spin-system-specific symmetry query.
 
-.. skip: next
-
 .. plot::
     :context: close-figs
 
     from pprint import pprint
-    pprint(method.get_transition_pathways(system))
+    pprint(method.get_transition_pathways(proton_system))
 
 .. rst-class:: sphx-glr-script-out
 
@@ -971,13 +969,11 @@ the table below.
      - –1
      - –1
 
-.. skip: next
-
 .. plot::
     :context: close-figs
 
     from pprint import pprint
-    pprint(method.get_transition_pathways(system))
+    pprint(method.get_transition_pathways(proton_system))
 
 .. rst-class:: sphx-glr-script-out
 
@@ -1242,18 +1238,13 @@ In the two-dimensional case, this is given by
 In the code below, the 3Q-MAS method described earlier is modified to include an
 affine matrix to perform this shear transformation.
 
-In the code below, the 3Q-MAS method described earlier is modified to include an
-affine matrix to perform this shear transformation.
-
-.. skip: next
-
 .. plot::
     :context: close-figs
 
     my_sheared_mqmas = Method(
         channels=["87Rb"],
         magnetic_flux_density=9.4,
-        rotor_frequency = np.inf, # in Hz (here, set to infinity)
+        rotor_frequency=np.inf,  # in Hz (here, set to infinity)
         spectral_dimensions=[
             SpectralDimension(
                 count=128,
@@ -1262,7 +1253,7 @@ affine matrix to perform this shear transformation.
                 label="3Q-MAS isotropic dimension",
                 events=[
                     SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])
-                ]
+                ],
             ),
             SpectralDimension(
                 count=256,
@@ -1270,11 +1261,11 @@ affine matrix to perform this shear transformation.
                 reference_offset=-5e3,  # in Hz
                 label="Central Transition Frequency",
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])
-                ]
-            )
+                    SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [0]}}])
+                ],
+            ),
         ],
-        affine_matrix=[[9/16, 7/16], [0, 1]]
+        affine_matrix=[[9 / 16, 7 / 16], [0, 1]],
     )
 
     sim = Simulator(spin_systems=RbNO3_spin_systems, methods=[my_sheared_mqmas])
@@ -1347,15 +1338,13 @@ affine matrix to perform this shear transformation.
 
 Below is the code for simulating a 3Q-MAS spectrum with a double shear transformation.
 
-.. skip: next
-
 .. plot::
     :context: close-figs
 
     my_twice_sheared_mqmas = Method(
         channels=["87Rb"],
         magnetic_flux_density=9.4,
-        rotor_frequency = np.inf, # in Hz (here, set to infinity)
+        rotor_frequency=np.inf,  # in Hz (here, set to infinity)
         spectral_dimensions=[
             SpectralDimension(
                 count=128,
@@ -1364,7 +1353,7 @@ Below is the code for simulating a 3Q-MAS spectrum with a double shear transform
                 label="3Q-MAS isotropic dimension",
                 events=[
                     SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])
-                ]
+                ],
             ),
             SpectralDimension(
                 count=256,
@@ -1372,11 +1361,11 @@ Below is the code for simulating a 3Q-MAS spectrum with a double shear transform
                 reference_offset=0,  # in Hz
                 label="CT Quad-Only Frequency",
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])
-                ]
-            )
+                    SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [0]}}])
+                ],
+            ),
         ],
-        affine_matrix=[[9/16, 7/16],[-9/50, 27/50]]
+        affine_matrix=[[9 / 16, 7 / 16], [-9 / 50, 27 / 50]],
     )
 
     sim = Simulator(spin_systems=RbNO3_spin_systems, methods=[my_twice_sheared_mqmas])
@@ -1425,7 +1414,7 @@ code below.
     my_three_event_mqmas = Method(
         channels=["87Rb"],
         magnetic_flux_density=9.4,
-        rotor_frequency = np.inf, # in Hz (here, set to infinity)
+        rotor_frequency=np.inf,  # in Hz (here, set to infinity)
         spectral_dimensions=[
             SpectralDimension(
                 count=128,
@@ -1434,12 +1423,12 @@ code below.
                 label="3Q-MAS isotropic dimension",
                 events=[
                     SpectralEvent(
-                        fraction=9/16, transition_query=[{"ch1": {"P": [-3], "D": [0]}}]
+                        fraction=9 / 16, transition_query=[{"ch1": {"P": [-3], "D": [0]}}]
                     ),
                     SpectralEvent(
-                        fraction=7/16, transition_query=[{"ch1": {"P": [-1], "D": [0]}}]
+                        fraction=7 / 16, transition_query=[{"ch1": {"P": [-1], "D": [0]}}]
                     ),
-                ]
+                ],
             ),
             SpectralDimension(
                 count=256,
@@ -1447,16 +1436,16 @@ code below.
                 reference_offset=-5e3,  # in Hz
                 label="Central Transition Frequency",
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P":[-1], "D": [0]}}])
-                ]
-            )
+                    SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [0]}}])
+                ],
+            ),
         ],
     )
 
     sim = Simulator(spin_systems=RbNO3_spin_systems, methods=[my_three_event_mqmas])
     sim.run()
 
-    data = gauss_convolve.apply_operations(dataset=sim.methods[0].simulation)
+    dataset = gauss_convolve.apply_operations(dataset=sim.methods[0].simulation)
 
 .. skip: next
 
@@ -1465,7 +1454,7 @@ code below.
 
     plt.figure(figsize=(4, 3))
     ax = plt.subplot(projection="csdm")
-    cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
+    cb = ax.imshow(dataset.real / dataset.real.max(), aspect="auto", cmap="gist_ncar_r")
     plt.colorbar(cb)
     ax.invert_xaxis()
     ax.invert_yaxis()
@@ -1506,10 +1495,10 @@ In previous discussions, we did not mention the efficiency of transfer between
 selected transitions in adjacent **SpectralEvent** objects. This is because, as
 default behavior, **mrsimulator** does a *total mixing*, i.e., connects all
 selected transitions in the two adjacent spectral or delay events. In other
-words, if the first of two adjacent SpectralEvents has three selected
+words, if the first of two adjacent **SpectralEvent** objects has three selected
 transitions, and the second has two selected transitions, then **mrsimulator**
 will make :math:`3 \times 2 = 6` connections, i.e., six transition pathways
-passing from the first to second SpectralEvents.
+passing from the first to second **SpectralEvent** objects.
 
 Additionally, this total mixing event assumes that every connection has a mixing
 amplitude of 1. This is unrealistic, but if used correctly gives a significant
@@ -1530,18 +1519,14 @@ below.
 
     from mrsimulator.method import MixingEvent
 
-    events=[
-        SpectralEvent(
-            fraction=9/16, transition_query=[{"ch1": {"P": [-3], "D": [0]}}]
-        ),
+    events = [
+        SpectralEvent(fraction=9 / 16, transition_query=[{"ch1": {"P": [-3], "D": [0]}}]),
         MixingEvent(query="TotalMixing"),
-        SpectralEvent(
-            fraction=7/16, transition_query=[{"ch1": {"P": [-1], "D": [0]}}]
-        ),
-        MixingEvent(query="TotalMixing")
+        SpectralEvent(fraction=7 / 16, transition_query=[{"ch1": {"P": [-1], "D": [0]}}]),
+        MixingEvent(query="TotalMixing"),
     ]
 
-Since only one transition was selected in each SpectralEvent, the expected (and
+Since only one transition was selected in each **SpectralEvent**, the expected (and
 default) behavior is that there is a mixing (transfer) of coherence between
 the symmetric triple-quantum and central transitions, forming the desired
 transition pathway.
@@ -1550,7 +1535,8 @@ However, when multiple transition pathways are present in a method, you may need
 more accurate mixing amplitudes when connecting selected transitions of adjacent
 events. You may also need to prevent the undesired mixing of specific
 transitions between two adjacent events. As described below, you can avoid a
-"TotalMixing" event by inserting MixingEvents using RotationQuery objects.
+``"TotalMixing"`` event by inserting **MixingEvent** object with a certain rotation
+query.
 
 Rotation Query
 ''''''''''''''
@@ -1603,8 +1589,8 @@ Finally, another useful result is
 
 While it's not surprising that a rotation through an angle of zero does nothing
 to the transition, this turns out to help act as the opposite of a total mixing
-event, i.e., a **no** mixing event. As a convenience, this is defined as a
-"NoMixing" query and can be implemented with the code below.
+event, i.e., a **no mixing** event. As a convenience, this is defined as a
+``"NoMixing"`` query and can be implemented with the code below.
 
 .. plot::
     :context: close-figs
@@ -1620,8 +1606,13 @@ illustrated in the sample code below.
 
     import numpy as np
     from mrsimulator.method.query import RotationalQuery
-    rot_query = RotationalQuery(angle=np.pi/2, phase=0)
-    rot_mixing = MixingEvent(query={"ch1": rot_query})
+    rot_query_90 = RotationalQuery(angle=np.pi/2, phase=0)
+    rot_query_180 = RotationalQuery(angle=np.pi, phase=0)
+    rot_mixing = MixingEvent(query={
+            "ch1": rot_query_90,
+            "ch2": rot_query_180
+        }
+    )
 
 Frequency Contributions
 -----------------------
@@ -1857,7 +1848,6 @@ method, and a :math:`\pi/2` rotation in the Solid Echo method.
     subsets becomes the final set of selected transitions during the
     **SpectralEvent**.
 
-
 We use the deuterium Site defined earlier in this document.
 
 .. plot::
@@ -1865,7 +1855,13 @@ We use the deuterium Site defined earlier in this document.
 
     from mrsimulator.method import MixingEvent
 
-    spin_system = SpinSystem(sites=[deuterium])
+    deuterium = Site(
+        isotope="2H",
+        isotropic_chemical_shift=10,  # in ppm
+        shielding_symmetric={"zeta": -80, "eta": 0.25},  # zeta in ppm
+        quadrupolar={"Cq": 10e3, "eta": 0.0, "alpha": 0, "beta": np.pi / 2, "gamma": 0},
+    )
+    deuterium_system = SpinSystem(sites=[deuterium])
 
     hahn_echo = Method(
         channels=["2H"],
@@ -1875,18 +1871,24 @@ We use the deuterium Site defined earlier in this document.
                 count=512,
                 spectral_width=2e4,  # in Hz
                 events=[
-                    SpectralEvent(fraction=0.5, transition_query=[
-                        {"ch1": {"P": [1], "D": [1]}},
-                        {"ch1": {"P": [1], "D": [-1]}},
-                    ]),
+                    SpectralEvent(
+                        fraction=0.5,
+                        transition_query=[
+                            {"ch1": {"P": [1], "D": [1]}},
+                            {"ch1": {"P": [1], "D": [-1]}},
+                        ],
+                    ),
                     MixingEvent(query={"ch1": {"angle": 3.141592, "phase": 0}}),
-                    SpectralEvent(fraction=0.5, transition_query=[
-                        {"ch1": {"P": [-1], "D": [1]}},
-                        {"ch1": {"P": [-1], "D": [-1]}},
-                    ])
-                ]
+                    SpectralEvent(
+                        fraction=0.5,
+                        transition_query=[
+                            {"ch1": {"P": [-1], "D": [1]}},
+                            {"ch1": {"P": [-1], "D": [-1]}},
+                        ],
+                    ),
+                ],
             )
-        ]
+        ],
     )
 
     solid_echo = Method(
@@ -1897,20 +1899,25 @@ We use the deuterium Site defined earlier in this document.
                 count=512,
                 spectral_width=2e4,  # in Hz
                 events=[
-                    SpectralEvent(fraction=0.5, transition_query=[
-                        {"ch1": {"P": [-1], "D": [1]}},
-                        {"ch1": {"P": [-1], "D": [-1]}},
-                    ]),
+                    SpectralEvent(
+                        fraction=0.5,
+                        transition_query=[
+                            {"ch1": {"P": [-1], "D": [1]}},
+                            {"ch1": {"P": [-1], "D": [-1]}},
+                        ],
+                    ),
                     MixingEvent(query={"ch1": {"angle": 3.141592 / 2, "phase": 0}}),
-                    SpectralEvent(fraction=0.5, transition_query=[
-                        {"ch1": {"P": [-1], "D": [1]}},
-                        {"ch1": {"P": [-1], "D": [-1]}},
-                    ]),
-                ]
+                    SpectralEvent(
+                        fraction=0.5,
+                        transition_query=[
+                            {"ch1": {"P": [-1], "D": [1]}},
+                            {"ch1": {"P": [-1], "D": [-1]}},
+                        ],
+                    ),
+                ],
             )
-        ]
+        ],
     )
-
 
 We can check the resulting transition pathways using these TransitionQuery objects with the
 code below for the ``hahn_echo`` method,
@@ -1919,7 +1926,7 @@ code below for the ``hahn_echo`` method,
     :context: close-figs
 
     from pprint import pprint
-    pprint(hahn_echo.get_transition_pathways(spin_system))
+    pprint(hahn_echo.get_transition_pathways(deuterium_system))
 
 .. rst-class:: sphx-glr-script-out
 
@@ -1935,7 +1942,7 @@ and for the ``solid_echo`` method with the code below.
 .. plot::
     :context: close-figs
 
-    pprint(solid_echo.get_transition_pathways(spin_system))
+    pprint(solid_echo.get_transition_pathways(deuterium_system))
 
 .. rst-class:: sphx-glr-script-out
 
@@ -1958,13 +1965,11 @@ eliminated by its symmetry query.
 Next, we simulate both methods, and perform a Gaussian line shape convolution on
 each output spectrum, and plot the datasets.
 
-.. skip: next
-
 .. plot::
     :context: close-figs
 
     sim = Simulator()
-    sim.spin_systems = [spin_system]
+    sim.spin_systems = [deuterium_system]
     sim.methods = [hahn_echo, solid_echo]
     sim.run()
 
@@ -2010,9 +2015,6 @@ have been obtained with a simpler custom method that used the ``freq_contrib``
 to remove the undesired frequency contributions. The code for these two methods
 is illustrated below.
 
-
-.. skip: next
-
 .. plot::
     :context: close-figs
 
@@ -2023,13 +2025,14 @@ is illustrated below.
             SpectralDimension(
                 count=512,
                 spectral_width=2e4,  # in Hz
-                events=[SpectralEvent(
-                    transition_query=[{"ch1": {"P": [-1]}}],
-                    freq_contrib=["Quad1_2"]
-                )
-                ]
+                events=[
+                    SpectralEvent(
+                        transition_query=[{"ch1": {"P": [-1]}}],
+                        freq_contrib=["Quad1_2"]
+                    )
+                ],
             )
-        ]
+        ],
     )
 
     shielding_only = Method(
@@ -2039,13 +2042,14 @@ is illustrated below.
             SpectralDimension(
                 count=512,
                 spectral_width=2e4,  # in Hz
-                events=[SpectralEvent(
-                    transition_query=[{"ch1": {"P": [-1]}}],
-                    freq_contrib=["Shielding1_0","Shielding1_2"]
-                )
-                ]
+                events=[
+                    SpectralEvent(
+                        transition_query=[{"ch1": {"P": [-1]}}],
+                        freq_contrib=["Shielding1_0", "Shielding1_2"],
+                    )
+                ],
             )
-        ]
+        ],
     )
 
     sim = Simulator()
@@ -2120,7 +2124,7 @@ Attribute Summaries
     - Description
 
   * - channels
-    - ``List``
+    - ``list``
     - A *required* list of isotopes given as strings over which the given method applies.
       For example, ``["1H"]``.
 
@@ -2142,12 +2146,12 @@ Attribute Summaries
       ``54.735 * 3.14159 / 180 = 0.955305`` radians.
 
   * - spectral_dimensions
-    - ``List``
+    - ``list``
     - A list of :ref:`spectral_dim_api` objects describing the spectral dimensions for the method.
 
   * - affine_matrix
-    - ``np.ndarray``
-    - A (``n`` x ``n``) affine transformation matrix represented by a numpy array where ``n`` is
+    - ``list`` or ``np.ndarray``
+    - An *optional* (``n`` x ``n``) affine transformation matrix represented by a numpy array where ``n`` is
       the number of spectral dimensions. If provided, the transformation is applied after running
       a simulation. The default value is ``None`` and no transformation is applied.
 
@@ -2190,14 +2194,14 @@ Attribute Summaries
 
   * - origin_offset
     - ``float``
-    - An optional float representing the origin offset, or Larmor frequency, along the
+    - An *optional* float representing the origin offset, or Larmor frequency, along the
       spectroscopic dimension in units of Hz. The default value is ``None`` and the origin offset
       is set to the Larmor frequency of isotope from the :attr:`~mrsimulator.Method.channels`
       attribute of the method containing the spectral dimension.
 
   * - events
     - ``List``
-    - An *optional* list of :ref:`event_api` objects used to emulate an experiment.
+    - An *optional* list of :ref:`event_api` used to emulate an experiment.
       The default value is an empty list.
 
 
@@ -2215,20 +2219,20 @@ Attribute Summaries
     - ``float``
     - An *optional* float describing the macroscopic magnetic flux density of the applied
       external magnetic field in tesla. For example, ``18.8`` tesla. The default value is
-      ``None`` and takes the global magnetic flux density defined by
-      :attr:`~mrsimulator.Method.magnetic_flux_density`.
+      ``None`` and takes the global magnetic flux density defined by the method's
+      :attr:`~mrsimulator.Method.magnetic_flux_density` attribute.
 
   * - rotor_angle
     - ``float``
     - An *optional* float describing the angle between the sample rotation axis and the external
       magnetic field in radians. The default is ``None`` and takes the global rotor angle defined
-      by :attr:`~mrsimulator.Method.rotor_angle`.
+      by the method's :attr:`~mrsimulator.Method.rotor_angle` attribue.
 
   * - rotor_frequency
     - ``float``
     - An *optional* float describing the sample rotation frequency in Hz. For example, ``2000`` Hz.
-      The default value is ``None`` and takes the global rotor frequency defined by
-      :attr:`~mrsimulator.Method.rotor_frequency`.
+      The default value is ``None`` and takes the global rotor frequency defined by the method's
+      :attr:`~mrsimulator.Method.rotor_frequency` attribute.
 
   * - freq_contrib
     - ``List``
@@ -2239,7 +2243,7 @@ Attribute Summaries
 
   * - transition_query
     - ``list``
-    - An *optional* ``list`` of :ref:`transition_api`, or their ``dict`` representations``
+    - An *optional* ``list`` of :ref:`transition_api` objects, or their ``dict`` representations
       selecting transitions active during the event. Only these selected transitions will
       contribute to the net frequency. The default is one **TransitionQuery** with *P=[0]*
       on ``ch1`` and ``None`` on all other channels
@@ -2256,9 +2260,9 @@ Attribute Summaries
     - Description
 
   * - query
-    - ``dict`` or :ref:`mixing_query_api`
-    - A :ref:`mixing_query_api` object, or its ``dict`` representation, selecting a set of
-      transition pathways between two **SpectralEvent** or **DelayEvent**
+    - ``dict`` or :py:class:`~mrsimulator.method.MixingQuery`
+    - A :py:class:`~mrsimulator.method.MixingQuery` object, or its ``dict`` representation,
+      selecting a set of transition pathways between two **SpectralEvent** or **DelayEvent**
 
 ..   - The coordinates along each spectral dimension are
 ..       described with the keywords,``count``(:math:`N`), ``spectral_width``
