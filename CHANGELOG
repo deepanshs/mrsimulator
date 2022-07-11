@@ -49,6 +49,7 @@ What's new
 - Restructured documentation layout
 - Improved troubleshooting section.
 - Added section *User Guide* detailing the use and attributes of most objects.
+- Added section *Method* demonstrating how to create custom **Method** objects.
 - Condensed simulation/fitting gallery by removing redundant examples.
 - New gallery demonstrating signal processing functions.
 
