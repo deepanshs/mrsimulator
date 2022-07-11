@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from mrsimulator import Coupling
 from mrsimulator import Site
 from mrsimulator import SpinSystem

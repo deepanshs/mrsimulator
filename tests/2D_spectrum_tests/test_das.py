@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Lineshape Test."""
 import numpy as np
 from mrsimulator import Simulator

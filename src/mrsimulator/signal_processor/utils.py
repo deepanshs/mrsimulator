@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from csdmpy.units import string_to_quantity
 

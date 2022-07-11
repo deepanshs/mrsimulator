@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Function list:
     - ST1_VAS

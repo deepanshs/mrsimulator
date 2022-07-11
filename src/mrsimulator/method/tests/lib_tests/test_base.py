@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method.lib.base import BaseNamedMethod1D

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Writing Custom methods (HahnEcho)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

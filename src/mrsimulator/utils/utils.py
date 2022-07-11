@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 __author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]
 __email__ = ["srivastava.89@osu.edu", "giammar.7@osu.edu"]
 

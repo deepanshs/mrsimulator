@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Czjzek distribution, ²⁷Al (I=5/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

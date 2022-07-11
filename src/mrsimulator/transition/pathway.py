@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from mrsimulator.utils.abstract_list import AbstractList
 from pydantic import BaseModel

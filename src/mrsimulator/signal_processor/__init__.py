@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from sys import modules
 from typing import List
 from typing import Union

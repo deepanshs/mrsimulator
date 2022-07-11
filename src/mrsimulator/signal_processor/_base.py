@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The Operation class."""
 from sys import modules
 from typing import ClassVar

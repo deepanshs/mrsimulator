@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Rb₂SO₄, ⁸⁷Rb (I=3/2) QMAT
 ^^^^^^^^^^^^^^^^^^^^^^^^^

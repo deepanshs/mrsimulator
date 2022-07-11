@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Protein GB1, ¹³C and ¹⁵N (I=1/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

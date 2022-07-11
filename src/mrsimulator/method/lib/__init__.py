@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from .base import BlochDecayCentralTransitionSpectrum  # noqa:F401
 from .base import BlochDecayCTSpectrum  # noqa:F401
 from .base import BlochDecaySpectrum  # noqa:F401

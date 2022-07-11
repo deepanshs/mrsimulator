@@ -26,3 +26,8 @@ Query objects
     :show-inheritance:
     :members:
     :inherited-members: BaseModel
+
+.. autoclass:: MixingEnum
+    :show-inheritance:
+    :members:
+    :inherited-members: BaseModel

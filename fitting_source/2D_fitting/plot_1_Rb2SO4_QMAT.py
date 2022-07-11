@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ⁸⁷Rb 2D QMAT NMR of Rb₂SO₄
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

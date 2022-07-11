@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Utility function module."""
 import json
 from urllib.parse import urlparse
