@@ -50,8 +50,8 @@ Make sure git is installed on your computer
 `Git <https://git-scm.com>`_ is a source code management system.
 It keeps track of the changes made to the code and manages contributions from
 several individuals.  You may notice that much of its terminology comes from
-river metaphors, i.e., source, fork, upstream, etc.  You may read about git
-at the `Git Basics <https://git-scm.com/book/>`_.
+river and tree metaphors, i.e., source, fork, branch, upstream, etc.  You may read
+about git at the `Git Basics <https://git-scm.com/book/>`_.
 
 If you are using anaconda/miniconda, you probably have git pre-installed. To check,
 type in terminal
@@ -80,7 +80,7 @@ Copy your fork of mrsimulator from GitHub to your computer
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Unless you plan on always editing the code using the online Github editor, you may need to
-copy the fork of mrsimulator from your GitHub account to your computer. Make a complete
+copy the fork of **mrsimulator** from your GitHub account to your computer. Make a complete
 copy of the fork with
 
 .. code-block:: bash
@@ -90,8 +90,8 @@ copy of the fork with
 Insert *your-user-name* with your GitHub account username. If there is an error at this
 stage, it is probably an error in setting up authentication.
 
-You now have a copy of the mrsimulator fork from your GitHub account to your local
-computer into a mrsimulator folder.
+You now have a copy of the **mrsimulator** fork from your GitHub account to your local
+computer into a **mrsimulator** folder.
 
 Understanding *Remotes*
 '''''''''''''''''''''''
@@ -101,8 +101,8 @@ The repository that contains the latest "official" development version is tradit
 called the *upstream* remote. You can read more about
 `remotes on Git Basics <https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes>`_.
 
-At this point, your local copy of mrsimulator doesn't know where the *upstream* development
-version of mrsimulator is. To let git know, change into the mrsimulator folder you created in
+At this point, your local copy of **mrsimulator** doesn't know where the *upstream* development
+version of **mrsimulator** is. To let git know, change into the **mrsimulator** folder you created in
 the previous step, and add a remote:
 
 .. code-block:: bash
@@ -111,7 +111,7 @@ the previous step, and add a remote:
     git remote add mrsimulator git://github.com/deepanshs/mrsimulator.git
 
 You can check that everything is set up correctly so far by asking git to show you all of the
-remotes it knows about for your local repository of mrsimulator with ``git remote -v``, which
+remotes it knows about for your local repository of **mrsimulator** with ``git remote -v``, which
 should display
 
 .. code-block:: bash
@@ -153,7 +153,7 @@ Build and install
 """""""""""""""""
 
 Before building the development version of mrsimulator, install the development requirement
-packages with pip. In the directory where your copy of mrsimulator is, type:
+packages with pip. In the directory where your copy of **mrsimulator** is, type:
 
 .. code-block:: bash
 
@@ -168,7 +168,7 @@ package into the default site-packages directory, you may try installing by addi
 Note for the developers and contributors
 ''''''''''''''''''''''''''''''''''''''''
 
-**Before commits**: Mrsimulator follows Python community standards for writing code and documentation.
+**Before commits**: **mrsimulator** follows Python community standards for writing code and documentation.
 To help guide the developers and contributors toward these standards, we have created
 a *.pre-commit-config.yaml* file that, when used with ``pre-commit``, will inspect
 the code and document for issues. To set up ``pre-commit``, type the following one-time
@@ -178,7 +178,7 @@ install statement in the terminals,
 
     $ pre-commit install
 
-Once set up, navigate to the root level of the mrsimulator folder and type
+Once set up, navigate to the root level of the **mrsimulator** folder and type
 
 .. code-block:: bash
 
@@ -196,7 +196,7 @@ changes and address the listed issues before a git commit.
     to stage files for a commit.
 
 **Running tests**: We use the pytest module for unit tests. At the root level
-of the mrsimulator folder, type
+of the **mrsimulator** folder, type
 
 .. code-block:: bash
 
@@ -215,7 +215,7 @@ To view the unit test coverage report, open the *mrsimulator/htmlcov/index.html*
 web browser.
 
 **Building docs**: We use the sphinx Python documentation generator for building docs. Navigate
-to the *docs* directory within the mrsimulator folder, and type,
+to the *docs* directory within the **mrsimulator** folder, and type,
 
 .. code-block:: bash
 

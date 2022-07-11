@@ -118,7 +118,7 @@ magnetic resonance (NMR) spectra in fluid and solid phases.
 - It is fully documented with a stable and simple API and is easily incorporated into
   Python scripts and web apps.
 - It is compatible with modern Python packages, such as Scikit-learn, Keras, etc.
-- Packages using mrsimulator -
+- Packages using **mrsimulator** -
 
   - `mrinversion <https://mrinversion.readthedocs.io/en/stable/>`_
 
@@ -168,7 +168,7 @@ magnetic resonance (NMR) spectra in fluid and solid phases.
 
 **Features**
 
-The ``mrsimulator`` package offers the following
+The **mrsimulator** package offers the following
 
 - **Fast simulation** of one and two-dimensional solid-state NMR spectra.
 
@@ -198,7 +198,7 @@ The ``mrsimulator`` package offers the following
 .. Contribution
 .. ------------
 
-.. ``Mrsimulator`` is a open source NMR simulation package. We are a small team
+.. **mrsimulator** is a open source NMR simulation package. We are a small team
 .. working on developing the package for the NMR community. Any contribution and
 .. suggestion is greatly appreciated.
 
@@ -226,7 +226,7 @@ User Guide
     user_guide/spin_system/spin_system
     user_guide/spin_system_distributions/spin_system_distributions
     user_guide/methods_library/methods_library
-    user_guide/method/method_advanced_user
+    user_guide/method/method
     user_guide/method/query_objects
     user_guide/simulator/simulator
     user_guide/signal_processor/signal_processor
@@ -318,7 +318,7 @@ Discussions are welcome on the `Github discussion <https://github.com/deepanshs/
 How to cite
 -----------
 
-If you use mrsimulator in your publication, please consider citing the following.
+If you use **mrsimulator** in your publication, please consider citing the following.
 
 - Deepansh J. Srivastava, Matthew Giammar, Maxwell C. Venetos, Shyam Dwaraknath, Philip J. Grandinetti, & Alexis McCarthy. (2021). mrsimulator: v0.6.1. Zenodo. https://doi.org/10.5281/zenodo.5559730
 

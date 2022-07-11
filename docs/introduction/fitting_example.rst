@@ -2,12 +2,12 @@
 
 Least-Squares Fitting Example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mrsimulator can interact with various Python data science
+**Mrsimulator** can interact with various Python data science
 packages.  One such package,
 `LMFIT <https://lmfit.github.io/lmfit-py/>`_, can be used to perform non-linear
 least-squares analysis of experimental NMR spectra.
 
-Here, we illustrate the use of the mrsimulator objects to
+Here, we illustrate the use of the **mrsimulator** objects to
 
 - import and prepare an experimental dataset for the least-squares analysis,
 - create a fitting model using Simulator and SignalProcessor objects,
@@ -297,7 +297,7 @@ To build a spin system, you need to know how many magnetically inequivalent
 nuclei are in the sample and if there are couplings between them. Inspection of
 the spectrum reveals an anisotropic lineshape that appears to be characteristic
 of the second-order MAS lineshape of a single site. Knowing this requires that
-you are already familiar with such lineshapes (mrsimulator can help with
+you are already familiar with such lineshapes (**mrsimulator** can help with
 that!). One might also hypothesize that there may be other sites with lower
 intensity present in the spectrum, or perhaps the spectrum, as noted earlier,
 is from a distribution of :math:`^{27}\text{Al}` sites with very similar efg
@@ -406,7 +406,7 @@ Define the fit parameters
 '''''''''''''''''''''''''
 
 
-Begin by using an mrsimulator utility function
+Begin by using an **mrsimulator** utility function
 :py:meth:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` to extract a
 list of LMFIT parameters from the Simulator and SignalProcessor objects.
 
@@ -556,7 +556,7 @@ Compare experimental and best-fit spectra with residuals
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 You can now plot the experimental and best-fit simulated spectra along with the
-residuals.  Use the mrsimulator utility
+residuals.  Use the **mrsimulator** utility
 function :py:meth:`~mrsimulator.utils.spectral_fitting.bestfit`
 and :py:meth:`~mrsimulator.utils.spectral_fitting.residuals` to extract the
 best-fit simulation and the residuals as CSDM objects.

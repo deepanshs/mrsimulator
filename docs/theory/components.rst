@@ -5,7 +5,7 @@
 How does mrsimulator work?
 **************************
 
-The NMR spectral simulation in mrsimulator is based on
+The NMR spectral simulation in **mrsimulator** is based on
 Symmetry Pathways in Solid-State NMR by Grandinetti *et al.* [#f1]_
 
 Introduction to NMR frequency components
@@ -80,7 +80,7 @@ where :math:`d_{n_i, n_j}^L(\beta)` is Wigner small :math:`d` element.
 ----
 
 In the case of the single interaction Hamiltonian, that is, in the absence of
-cross-terms, mrsimulator further defines the product of the size of the
+cross-terms, **mrsimulator** further defines the product of the size of the
 :math:`k^\text{th}` frequency component, :math:`\omega_k`, and the
 :math:`L^\text{th}`-rank irreducible tensor components, :math:`\varrho_{L,n}^{(k)}`, in
 the principal axis system of the interaction tensor,

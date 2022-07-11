@@ -11,7 +11,7 @@ Events
     :inherited-members: BaseModel
 
 
-.. .. autoclass:: ConstantDurationEvent
+.. .. autoclass:: DelayEvent
 ..     :show-inheritance:
 ..     :members:
 ..     :inherited-members: BaseModel
