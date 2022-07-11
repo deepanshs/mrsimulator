@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Base Tensor class."""
 from typing import ClassVar
 from typing import Dict

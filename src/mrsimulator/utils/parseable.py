@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Base Parseable class."""
 import warnings
 from copy import copy

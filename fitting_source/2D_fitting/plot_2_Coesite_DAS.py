@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ¹⁷O 2D DAS NMR of Coesite
 ^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Function list:
     - ThreeQ_VAS

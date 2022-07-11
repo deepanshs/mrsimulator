@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test for the base Dimension class."""
 from copy import deepcopy
 

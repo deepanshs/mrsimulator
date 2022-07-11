@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # import pytest
 # from mrsimulator.method.query import TransitionQuery
 # from mrsimulator.method.lib import Cosy

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Albite, ²⁷Al (I=5/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

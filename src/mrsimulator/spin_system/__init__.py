@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Base SpinSystem class."""
 from copy import deepcopy
 from typing import ClassVar

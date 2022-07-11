@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 RbNO₃, ⁸⁷Rb (I=3/2) STMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^

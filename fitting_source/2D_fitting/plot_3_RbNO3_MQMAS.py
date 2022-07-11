@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ⁸⁷Rb 2D 3QMAS NMR of RbNO₃
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from mrsimulator.method.frequency_contrib import FrequencyEnum
 
 __author__ = "Deepansh J. Srivastava"
