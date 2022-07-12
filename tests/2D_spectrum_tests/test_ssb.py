@@ -29,7 +29,7 @@ def SSB2D_setup(ist, vr, method_type):
     spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
     B0 = 11.7
-    sq_tq = {"transition_query": [{"ch1": {"P": [-1]}}]}
+    sq_tq = {"transition_queries": [{"ch1": {"P": [-1]}}]}
     if method_type == "PASS":
         method = SSB2D(
             channels=[ist],

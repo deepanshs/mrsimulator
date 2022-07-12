@@ -62,14 +62,15 @@ spin_system_2 = SpinSystem(sites=[S1, S2], couplings=[S12], label="Coupled syste
 #       p = 1 \rightarrow -1.
 #
 # In the following code, we define the two SpectralEvent objects with fraction 0.5 and
-# the transition_query on channel-1 of P=[1] and P=[-1], respectively. Notice, the value
-# for the ``P`` attribute is a list. Here, it is a list with a single integer. The list
-# notation, ``[1]``, implies that the query selects all transitions where exactly one
-# spin is undergoing a :math:`p=+1` transition with the remaining spin at :math:`p=0`.
-# A similar argument holds for ``[-1]`` query. By implementing query objects, we
-# decouple the method from the spin system, i.e., once a method is defined, it can be
-# used to simulate spectra from any given spin system. We will demonstrate this
-# momentarily by simulating a Hahn echo spectrum from single and two-site spin systems.
+# the transition_queries on channel-1 of P=[1] and P=[-1], respectively. Notice, the
+# value for the ``P`` attribute is a list. Here, it is a list with a single integer. The
+# list notation, ``[1]``, implies that the query selects all transitions where exactly
+# one spin is undergoing a :math:`p=+1` transition with the remaining spin at
+# :math:`p=0`. A similar argument holds for ``[-1]`` query. By implementing query
+# objects, we decouple the method from the spin system, i.e., once a method is defined,
+# it can be used to simulate spectra from any given spin system. We will demonstrate
+# this momentarily by simulating a Hahn echo spectrum from single and two-site spin
+# systems.
 #
 # Besides the SpectralEvent, you may also notice a MixingEvent sandwiched in-between
 # the two SpectralEvent. A MixingEvent does not directly contribute to the frequencies.
@@ -85,9 +86,9 @@ hahn_echo = Method(
             count=512,
             spectral_width=2e4,  # in Hz
             events=[
-                SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [1]}}]),
+                SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [1]}}]),
                 MixingEvent(query={"ch1": {"angle": np.pi, "phase": 0}}),
-                SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]),
+                SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
             ],
         )
     ],

@@ -165,7 +165,7 @@ def test_summary():
                     "magnetic_flux_density": 1,
                     "rotor_frequency": 0,  # in kHz
                     "rotor_angle": 0.1,
-                    "transition_query": [{"ch1": {"P": [0], "D": [0]}}],
+                    "transition_queries": [{"ch1": {"P": [0], "D": [0]}}],
                 },
                 {
                     "label": "Spec0",
@@ -173,7 +173,7 @@ def test_summary():
                     "magnetic_flux_density": 2,
                     "rotor_frequency": 20000,
                     "rotor_angle": 0.2,
-                    "transition_query": [{"ch1": {"P": [1], "D": [-2]}}],
+                    "transition_queries": [{"ch1": {"P": [1], "D": [-2]}}],
                 },
             ]
         },
@@ -189,7 +189,7 @@ def test_summary():
                     "magnetic_flux_density": 3,
                     "rotor_frequency": 0,
                     "rotor_angle": 0.3,
-                    "transition_query": [{"ch1": {"P": [3], "D": [-4]}}],
+                    "transition_queries": [{"ch1": {"P": [3], "D": [-4]}}],
                 },
                 {
                     "label": "Spec1",
@@ -197,7 +197,7 @@ def test_summary():
                     "magnetic_flux_density": 4,
                     "rotor_frequency": 0,
                     "rotor_angle": 0.4,
-                    "transition_query": [{"ch1": {"P": [4], "D": [-6]}}],
+                    "transition_queries": [{"ch1": {"P": [4], "D": [-6]}}],
                 },
             ]
         },
@@ -215,14 +215,14 @@ def test_summary():
                     "duration": 1,
                     "rotor_frequency": 0,
                     "rotor_angle": 0.5,
-                    "transition_query": [{"ch1": {"P": [0], "D": [0]}}],
+                    "transition_queries": [{"ch1": {"P": [0], "D": [0]}}],
                 },
                 {
                     "label": "Spec0",
                     "fraction": 1,
                     "rotor_frequency": 20000,
                     "rotor_angle": 0.5,
-                    "transition_query": [{"ch1": {"P": [1], "D": [0]}}],
+                    "transition_queries": [{"ch1": {"P": [1], "D": [0]}}],
                 },
             ]
         },
@@ -237,14 +237,14 @@ def test_summary():
                     "duration": 2,
                     "rotor_frequency": 0,
                     "rotor_angle": 0.5,
-                    "transition_query": [{"ch1": {"P": [3], "D": [0]}}],
+                    "transition_queries": [{"ch1": {"P": [3], "D": [0]}}],
                 },
                 {
                     "label": "Spec1",
                     "fraction": 1,
                     "rotor_frequency": 0,
                     "rotor_angle": 0.5,
-                    "transition_query": [{"ch1": {"P": [4], "D": [0]}}],
+                    "transition_queries": [{"ch1": {"P": [4], "D": [0]}}],
                 },
             ]
         },

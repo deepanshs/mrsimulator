@@ -122,7 +122,7 @@ class Mrsimulator(Parseable):
         ...           {
         ...             "count": 1024,
         ...             "spectral_width": "25000.0 Hz",
-        ...             "events": [{ "transition_query": [{ "ch1": { "P": [-1] } }] }]
+        ...             "events": [{ "transition_queries": [{ "ch1": { "P": [-1] } }] }]
         ...           }
         ...         ],
         ...         "magnetic_flux_density": "9.4 T",

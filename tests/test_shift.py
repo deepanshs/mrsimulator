@@ -21,7 +21,7 @@ def pre_setup(isotope, shift, reference_offset):
                     "events": [
                         {
                             "magnetic_flux_density": "9.4 T",
-                            "transition_query": [{"ch1": {"P": [-1]}}],
+                            "transition_queries": [{"ch1": {"P": [-1]}}],
                         }
                     ],
                 }

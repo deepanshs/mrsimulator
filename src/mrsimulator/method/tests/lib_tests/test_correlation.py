@@ -27,16 +27,16 @@
 #             method(spectral_dimensions=[{}])
 #
 #
-# def test_correlation_setting_transition_query():
+# def test_correlation_setting_transition_queries():
 #     def error(name):
-#         return f"`transition_query` value cannot be modified for {name} method."
+#         return f"`transition_queries` value cannot be modified for {name} method."
 #
 #     for name, method in zip(names, methods):
 #         e = error(name)
 #         with pytest.raises(ValueError, match=f".*{e}.*"):
 #             method(
 #                 spectral_dimensions=[
-#                     {"events": [{"transition_query": {"P": [-1]}}]},
+#                     {"events": [{"transition_queries": {"P": [-1]}}]},
 #                     {},
 #                 ],
 #             )
@@ -64,10 +64,10 @@
 #
 #     des = "Simulate an infinite spinning COrrelation SpectroscopY spectrum."
 #     assert mth.description == des
-#     assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
+#     assert mth.spectral_dimensions[0].events[0].transition_queries == TransitionQuery(
 #         P={"channel-1": [[-1]]}
 #     )
-#     assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
+#     assert mth.spectral_dimensions[1].events[0].transition_queries == TransitionQuery(
 #         P={"channel-1": [[-1]]}
 #     )
 #     assert Cosy.parse_dict_with_units(mth.json()) == mth
@@ -120,10 +120,10 @@
 #         "Transfer Experiment spectrum."
 #     )
 #     assert mth.description == des
-#     assert mth.spectral_dimensions[0].events[0].transition_query == TransitionQuery(
+#     assert mth.spectral_dimensions[0].events[0].transition_queries == TransitionQuery(
 #         P={"channel-1": [[-1, -1]]}
 #     )
-#     assert mth.spectral_dimensions[1].events[0].transition_query == TransitionQuery(
+#     assert mth.spectral_dimensions[1].events[0].transition_queries == TransitionQuery(
 #         P={"channel-1": [[-1]]}
 #     )
 #     assert Inadequate.parse_dict_with_units(mth.json()) == mth

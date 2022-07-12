@@ -375,17 +375,17 @@ class Method(Parseable):
             ...             "events": [
             ...                 {
             ...                     "fraction": 0.5,
-            ...                     "transition_query": [{"ch1": {"P": [1]}}]
+            ...                     "transition_queries": [{"ch1": {"P": [1]}}]
             ...                 },
             ...                 {
             ...                     "fraction": 0.5,
-            ...                     "transition_query": [{"ch1": {"P": [0]}}]
+            ...                     "transition_queries": [{"ch1": {"P": [0]}}]
             ...                 }
             ...             ],
             ...         },
             ...         {
             ...             "events": [
-            ...                 {"transition_query": [{"ch1": {"P": [-1]}}]},
+            ...                 {"transition_queries": [{"ch1": {"P": [-1]}}]},
             ...             ],
             ...         }
             ...     ]
@@ -406,14 +406,14 @@ class Method(Parseable):
             ...         {
             ...             "events": [{
             ...                 "fraction": 0.5,
-            ...                 "transition_query": [
+            ...                 "transition_queries": [
             ...                     {"ch1": {"P": [1]}},
             ...                     {"ch1": {"P": [-1]}},
             ...                 ]
             ...             },
             ...             {
             ...                 "fraction": 0.5,
-            ...                 "transition_query": [  # selecting double quantum
+            ...                 "transition_queries": [  # selecting double quantum
             ...                     {"ch1": {"P": [-1]}, "ch2": {"P": [-1]}},
             ...                     {"ch1": {"P": [1]}, "ch2": {"P": [1]}},
             ...                 ]
@@ -421,7 +421,7 @@ class Method(Parseable):
             ...         },
             ...         {
             ...             "events": [{
-            ...                 "transition_query": [ # selecting single quantum
+            ...                 "transition_queries": [ # selecting single quantum
             ...                     {"ch1": {"P": [-1]}},
             ...                 ]
             ...             }],

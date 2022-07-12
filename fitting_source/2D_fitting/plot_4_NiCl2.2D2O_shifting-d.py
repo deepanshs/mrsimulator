@@ -102,7 +102,7 @@ shifting_d = Method(
             label="Quadrupolar frequency",
             events=[
                 SpectralEvent(
-                    transition_query=[{"ch1": {"P": [-1]}}],
+                    transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Quad1_2"],
                 ),
                 MixingEvent(query="NoMixing"),
@@ -113,7 +113,7 @@ shifting_d = Method(
             label="Paramagnetic shift",
             events=[
                 SpectralEvent(
-                    transition_query=[{"ch1": {"P": [-1]}}],
+                    transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Shielding1_0", "Shielding1_2"],
                 )
             ],

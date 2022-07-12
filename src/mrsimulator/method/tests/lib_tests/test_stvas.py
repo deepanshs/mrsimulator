@@ -22,7 +22,7 @@ def sample_test_output(n):
                 "spectral_width": "50000.0 Hz",
                 "events": [
                     {
-                        "transition_query": [
+                        "transition_queries": [
                             {"ch1": {"P": [-1], "D": [i]}} for i in [n, -n]
                         ]
                     }
@@ -31,7 +31,7 @@ def sample_test_output(n):
             {
                 "count": 1024,
                 "spectral_width": "50000.0 Hz",
-                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
+                "events": [{"transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]}],
             },
         ],
     }
@@ -80,11 +80,11 @@ def test_ST1_VAS_general():
         "spinning spectrum."
     )
     assert mth.description == des
-    assert mth.spectral_dimensions[0].events[0].transition_query == [
+    assert mth.spectral_dimensions[0].events[0].transition_queries == [
         TransitionQuery(ch1={"P": [-1], "D": [2]}),
         TransitionQuery(ch1={"P": [-1], "D": [-2]}),
     ]
-    assert mth.spectral_dimensions[1].events[0].transition_query == [
+    assert mth.spectral_dimensions[1].events[0].transition_queries == [
         TransitionQuery(ch1={"P": [-1], "D": [0]})
     ]
     assert ST1_VAS.parse_dict_with_units(mth.json()) == mth
@@ -107,7 +107,7 @@ def test_ST1_VAS_general():
                 "spectral_width": "30000.0 Hz",
                 "events": [
                     {
-                        "transition_query": [
+                        "transition_queries": [
                             {"ch1": {"P": [-1], "D": [i]}} for i in [2, -2]
                         ]
                     }
@@ -116,7 +116,7 @@ def test_ST1_VAS_general():
             {
                 "count": 1024,
                 "spectral_width": "20000.0 Hz",
-                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
+                "events": [{"transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]}],
             },
         ],
     }
@@ -139,11 +139,11 @@ def test_ST2_VAS_general():
         "spinning spectrum."
     )
     assert mth.description == des
-    assert mth.spectral_dimensions[0].events[0].transition_query == [
+    assert mth.spectral_dimensions[0].events[0].transition_queries == [
         TransitionQuery(ch1={"P": [-1], "D": [4]}),
         TransitionQuery(ch1={"P": [-1], "D": [-4]}),
     ]
-    assert mth.spectral_dimensions[1].events[0].transition_query == [
+    assert mth.spectral_dimensions[1].events[0].transition_queries == [
         TransitionQuery(ch1={"P": [-1], "D": [0]})
     ]
     assert ST2_VAS.parse_dict_with_units(mth.json()) == mth

@@ -45,7 +45,7 @@ def coaster_simulation():
                 reference_offset=-8e3,  # in Hz
                 label="$\\omega_1$ (CSA)",
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P": [3], "D": [0]}}]),
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [3], "D": [0]}}]),
                     MixingEvent(query={"ch1": {"angle": np.pi * 109.5 / 180}}),
                 ],
             ),
@@ -55,7 +55,7 @@ def coaster_simulation():
                 reference_offset=-4e3,  # in Hz
                 label="$\\omega_2$ (Q)",
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [0]}}])
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [-1], "D": [0]}}])
                 ],
             ),
         ],
@@ -78,7 +78,7 @@ def csa_1D_projection():
                 events=[
                     SpectralEvent(
                         freq_contrib=["Quad2_0", "Shielding1_0", "Shielding1_2"],
-                        transition_query=[{"ch1": {"P": [3], "D": [0]}}],
+                        transition_queries=[{"ch1": {"P": [3], "D": [0]}}],
                     ),
                 ],
             )
@@ -102,7 +102,7 @@ def quad_1D_projection():
                     SpectralEvent(
                         fraction=1 / 4,
                         freq_contrib=["Quad2_0"],
-                        transition_query=[{"ch1": {"P": [3], "D": [0]}}],
+                        transition_queries=[{"ch1": {"P": [3], "D": [0]}}],
                     ),
                     MixingEvent(
                         query={"ch1": {"angle": np.pi * 109.5 / 180, "phase": 0}}
@@ -110,7 +110,7 @@ def quad_1D_projection():
                     SpectralEvent(
                         fraction=3 / 4,
                         freq_contrib=["Quad2_0", "Quad2_2"],
-                        transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                        transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                     ),
                 ],
             )

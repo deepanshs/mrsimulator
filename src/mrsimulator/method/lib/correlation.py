@@ -75,10 +75,10 @@ class Cosy(BaseNamedMethod2D):
     @classmethod
     def update(self, **kwargs):
         event_0 = [
-            {"transition_query": [{"ch1": {"P": [-1]}}]},
+            {"transition_queries": [{"ch1": {"P": [-1]}}]},
             {"query": {"ch1": {"angle": np.pi / 2}}},
         ]
-        event_1 = [{"transition_query": [{"ch1": {"P": [-1]}}]}]
+        event_1 = [{"transition_queries": [{"ch1": {"P": [-1]}}]}]
 
         return {
             "spectral_dimensions": [{"events": event_0}, {"events": event_1}],
@@ -138,8 +138,8 @@ class Inadequate(BaseNamedMethod2D):
 
     @classmethod
     def update(cls, **kwargs):
-        event_0 = [{"transition_query": [{"ch1": {"P": [-1, -1]}}]}]
-        event_1 = [{"transition_query": [{"ch1": {"P": [-1]}}]}]
+        event_0 = [{"transition_queries": [{"ch1": {"P": [-1, -1]}}]}]
+        event_1 = [{"transition_queries": [{"ch1": {"P": [-1]}}]}]
 
         return {
             "spectral_dimensions": [{"events": event_0}, {"events": event_1}],

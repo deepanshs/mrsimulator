@@ -41,7 +41,7 @@ class SymmetryQuery(Parseable):
         >>> method = Method(channels=['1H'], spectral_dimensions=[{"events": [
         ...     {"fraction": 1}
         ... ]}])
-        >>> method.spectral_dimensions[0].events[0].transition_query[0].ch1.P = [-1]
+        >>> method.spectral_dimensions[0].events[0].transition_queries[0].ch1.P = [-1]
 
     D:
         A list of d symmetry functions per site. Here d = :math:`m_f^2 - m_i^2` is the
@@ -51,7 +51,7 @@ class SymmetryQuery(Parseable):
         Example
         -------
 
-        >>> method.spectral_dimensions[0].events[0].transition_query[0].ch1.D = [0]
+        >>> method.spectral_dimensions[0].events[0].transition_queries[0].ch1.D = [0]
 
     """
 
@@ -254,8 +254,8 @@ class TransitionQuery(Parseable):
         return all_combinations
 
 
-class RotationalQuery(Parseable):
-    """Base RotationalQuery class.
+class RotationQuery(Parseable):
+    """Base RotationQuery class.
 
     Attributes
     ----------
@@ -285,13 +285,13 @@ class MixingQuery(Parseable):
     ----------
 
     ch1:
-        An optional RotationalQuery object for channel at index 0 of method's channels."
+        An optional RotationQuery object for channel at index 0 of method's channels."
 
     ch2:
-        An optional RotationalQuery object for channel at index 1 of method's channels."
+        An optional RotationQuery object for channel at index 1 of method's channels."
 
     ch3:
-        An optional RotationalQuery object for channel at index 2 of method's channels."
+        An optional RotationQuery object for channel at index 2 of method's channels."
 
     Example
     -------
@@ -300,9 +300,9 @@ class MixingQuery(Parseable):
 
     """
 
-    ch1: Optional[RotationalQuery] = None
-    ch2: Optional[RotationalQuery] = None
-    ch3: Optional[RotationalQuery] = None
+    ch1: Optional[RotationQuery] = None
+    ch2: Optional[RotationQuery] = None
+    ch3: Optional[RotationQuery] = None
 
     class Config:
         validate_assignment = True
@@ -323,13 +323,13 @@ class MixingQuery(Parseable):
         """
         py_dict_copy = deepcopy(py_dict)
         obj = {
-            k: RotationalQuery.parse_dict_with_units(v) for k, v in py_dict_copy.items()
+            k: RotationQuery.parse_dict_with_units(v) for k, v in py_dict_copy.items()
         }
         py_dict_copy.update(obj)
         return super().parse_dict_with_units(py_dict_copy)
 
     @property
-    def channels(self) -> List[RotationalQuery]:
+    def channels(self) -> List[RotationQuery]:
         """Returns an ordered list of all channels"""
         return [self.ch1, self.ch2, self.ch3]
 

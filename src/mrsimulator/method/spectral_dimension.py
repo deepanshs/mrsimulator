@@ -214,8 +214,8 @@ class SpectralDimension(Parseable):
     #     df = pd.DataFrame(index=rows)
     #     for i in range(len(self.events)):
     #         _lst = [getattr(self.events[i], att) for att in attributes]
-    #         _lst.append(self.events[i].transition_query.get_p())
-    #         _lst.append(self.events[i].transition_query.get_d())
+    #         _lst.append(self.events[i].transition_queries.get_p())
+    #         _lst.append(self.events[i].transition_queries.get_d())
     #         df[i] = _lst
     #     return df
 
@@ -236,14 +236,14 @@ class SpectralDimension(Parseable):
             >>> sp = SpectralDimension(
             ...     events = [{
             ...         "fraction": 0.5,
-            ...         "transition_query": [
+            ...         "transition_queries": [
             ...             {"ch1": {"P": [1, 1]}, "ch2": {"P": [1], "D": [2]}},
             ...             {"ch1": {"P": [-1, -1]}},
             ...         ]
             ...     },
             ...     {
             ...         "fraction": 0.5,
-            ...         "transition_query": [
+            ...         "transition_queries": [
             ...             {"ch1": {"P": [-1]}},
             ...         ]
             ...     }]
@@ -253,7 +253,7 @@ class SpectralDimension(Parseable):
              {'ch1': [[-1, -1], [-1]], 'ch2': [None, None], 'ch3': [None, None]}]
         """
         ha, ga = hasattr, getattr
-        tq, de = "transition_query", np.asarray([0])
+        tq, de = "transition_queries", np.asarray([0])
 
         indexes = [np.arange(len(ga(e, tq))) if ha(e, tq) else de for e in self.events]
         products = cartesian_product(*indexes)
@@ -261,8 +261,8 @@ class SpectralDimension(Parseable):
         return [
             {
                 ch: [
-                    ga(ga(e.transition_query[i], ch), symmetry_element)
-                    if ha(e, tq) and ga(e.transition_query[i], ch) is not None
+                    ga(ga(e.transition_queries[i], ch), symmetry_element)
+                    if ha(e, tq) and ga(e.transition_queries[i], ch) is not None
                     else None
                     for e, i in zip(self.events, item)
                 ]

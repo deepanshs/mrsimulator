@@ -51,12 +51,12 @@ def setup_simulation(site, affine_matrix, class_id=0):
                     {
                         "fraction": 27 / 17,
                         "freq_contrib": ["Quad2_0"],
-                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                        "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                     {
                         "fraction": 1,
                         "freq_contrib": ["Quad2_4"],
-                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                        "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                 ],
             }

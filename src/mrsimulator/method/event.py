@@ -45,7 +45,7 @@ class BaseEvent(Parseable):
     freq_contrib:
         A list of FrequencyEnum enumeration. The default is all frequency enumerations.
 
-    transition_query:
+    transition_queries:
         A TransitionQuery or an equivalent dict object listing the queries used in
         selecting the active transitions during the event. Only the active transitions
         from this query will contribute to the net frequency.
@@ -55,7 +55,7 @@ class BaseEvent(Parseable):
     rotor_frequency: float = Field(default=None, ge=0.0)
     rotor_angle: float = Field(default=None, ge=0.0, le=1.5707963268)
     freq_contrib: List[FrequencyEnum] = default_freq_contrib
-    transition_query: List[TransitionQuery] = [TransitionQuery()]
+    transition_queries: List[TransitionQuery] = [TransitionQuery()]
 
     property_unit_types: ClassVar[Dict] = {
         "magnetic_flux_density": "magnetic flux density",
@@ -108,7 +108,9 @@ class BaseEvent(Parseable):
             (list) isotopes: List of isotopes in the spin system.
             (list) channels: List of method channels.
         """
-        return [item.combination(isotopes, channels) for item in self.transition_query]
+        return [
+            item.combination(isotopes, channels) for item in self.transition_queries
+        ]
 
     def filter_transitions(self, all_transitions, isotopes, channels):
         """Filter transitions based on the transition query.
@@ -155,7 +157,7 @@ class SpectralEvent(BaseEvent):
     freq_contrib:
         A list of FrequencyEnum enumeration. The default is all frequency enumerations.
 
-    transition_query:
+    transition_queries:
         A TransitionQuery or an equivalent dict object listing the queries used in
         selecting the active transitions during the event. Only the active transitions
         from this query will contribute to the net frequency.
@@ -194,7 +196,7 @@ class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
     freq_contrib:
         A list of FrequencyEnum enumeration. The default is all frequency enumerations.
 
-    transition_query:
+    transition_queries:
         A TransitionQuery or an equivalent dict object listing the queries used in
         selecting the active transitions during the event. Only the active transitions
         from this query will contribute to the net frequency.

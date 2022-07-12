@@ -22,7 +22,7 @@ Query objects
     :members:
     :inherited-members: BaseModel
 
-.. autoclass:: RotationalQuery
+.. autoclass:: RotationQuery
     :show-inheritance:
     :members:
     :inherited-members: BaseModel

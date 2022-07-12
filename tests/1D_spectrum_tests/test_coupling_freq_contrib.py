@@ -37,9 +37,9 @@ def hahn_method():
                 count=512,
                 spectral_width=2e4,  # in Hz
                 events=[
-                    SpectralEvent(fraction=0.5, transition_query=positive_sq_tq),
+                    SpectralEvent(fraction=0.5, transition_queries=positive_sq_tq),
                     MixingEvent(query={"ch1": {"angle": np.pi, "phase": 0}}),
-                    SpectralEvent(fraction=0.5, transition_query=negative_sq_tq),
+                    SpectralEvent(fraction=0.5, transition_queries=negative_sq_tq),
                 ],
             )
         ],
@@ -62,7 +62,9 @@ def contrib_method(contrib):
                 count=512,
                 spectral_width=2e4,
                 events=[
-                    SpectralEvent(freq_contrib=contrib, transition_query=negative_sq_tq)
+                    SpectralEvent(
+                        freq_contrib=contrib, transition_queries=negative_sq_tq
+                    )
                 ],
             )
         ],

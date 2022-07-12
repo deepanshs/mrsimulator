@@ -57,9 +57,9 @@ class MQ_VAS(BaseNamedMethod2D):
         P = -P if mq == spin else P
 
         # set transition symmetry elements for spectral dimension 0
-        events_0 = [{"transition_query": [{"ch1": {"P": [P], "D": [0]}}]}]
+        events_0 = [{"transition_queries": [{"ch1": {"P": [P], "D": [0]}}]}]
         # set transition symmetry elements for spectral dimension 1
-        events_1 = [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}]
+        events_1 = [{"transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]}]
 
         # method affine matrix shear factor
         k = shear_factor_MQ_MAS[nQ][spin]

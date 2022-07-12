@@ -58,7 +58,7 @@ coaster = Method(
             reference_offset=-8e3,  # in Hz
             label="$\\omega_1$ (CSA)",
             events=[
-                SpectralEvent(transition_query=[{"ch1": {"P": [3], "D": [0]}}]),
+                SpectralEvent(transition_queries=[{"ch1": {"P": [3], "D": [0]}}]),
                 MixingEvent(query={"ch1": {"angle": np.pi * 109.5 / 180, "phase": 0}}),
             ],
         ),
@@ -68,7 +68,7 @@ coaster = Method(
             spectral_width=8e3,  # in Hz
             reference_offset=-4e3,  # in Hz
             label="$\\omega_2$ (Q)",
-            events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [0]}}])],
+            events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1], "D": [0]}}])],
         ),
     ],
     affine_matrix=[[1, 0], [1 / 4, 3 / 4]],

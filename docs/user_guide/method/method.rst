@@ -138,7 +138,7 @@ explicit **MixingEvent** object between such events. Inside **MixingEvent**
 objects is a :py:meth:`~mrsimulator.method.query.MixingQuery` object, which
 determines the coherence transfer amplitude between transitions. A
 **MixingQuery** object holds
-:py:meth:`~mrsimulator.method.query.RotationalQuery` objects acting on specific
+:py:meth:`~mrsimulator.method.query.RotationQuery` objects acting on specific
 isotopes in the spin system. As before, the isotope upon which the
 **RotationQuery** objects act is determined by the ``channels`` attribute in the
 **Method** object.
@@ -300,7 +300,7 @@ as defined in the code below.
 
     symm_query = SymmetryQuery(P=[-1], D=[1])
     trans_query = TransitionQuery(ch1=symm_query)
-    spec_event = SpectralEvent(transition_query=[trans_query])
+    spec_event = SpectralEvent(transition_queries=[trans_query])
 
 .. note::
     Python dictionaries can also be used to create and initialize **mrsimulator** objects.
@@ -316,7 +316,7 @@ as defined in the code below.
             trans_query_dict = {"ch1": symm_query_dict}
 
             # Dictionary of TransitionQuery passed to SpectralEvent
-            spec_event = SpectralEvent(transition_query=[trans_query_dict])
+            spec_event = SpectralEvent(transition_queries=[trans_query_dict])
 
 In the example above, the **SymmetryQuery** object is created and assigned to
 the **TransitionQuery** attribute ``ch1``, i.e., it acts on the isotope in the
@@ -358,7 +358,7 @@ below.
             SpectralDimension(
                 count=512,
                 spectral_width=40000,  # in Hz
-                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1]}}])],
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}])],
             )
         ],
     )
@@ -371,7 +371,7 @@ below.
             SpectralDimension(
                 count=512,
                 spectral_width=40000,  # in Hz
-                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [1]}}])],
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1], "D": [1]}}])],
             )
         ],
     )
@@ -384,7 +384,7 @@ below.
             SpectralDimension(
                 count=512,
                 spectral_width=40000,  # in Hz
-                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [-1]}}])],
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1], "D": [-1]}}])],
             )
         ],
     )
@@ -467,14 +467,14 @@ transition.   The code below is an example of a custom 2D method using two
                 spectral_width=6e3,  # in Hz
                 reference_offset=-9e3,  # in Hz
                 label="Symmetric 3Q Frequency",
-                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])],
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-3], "D": [0]}}])],
             ),
             SpectralDimension(
                 count=256,
                 spectral_width=6e3,  # in Hz
                 reference_offset=-5e3,  # in Hz
                 label="Central Transition Frequency",
-                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [0]}}])],
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1], "D": [0]}}])],
             ),
         ],
     )
@@ -675,7 +675,7 @@ is given in the code below.
                 spectral_width=1800,  # in Hz
                 reference_offset=1000,  # in Hz
                 label="$^{1}$H frequency",
-                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1]}}])],
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}])],
             )
         ],
     )
@@ -806,7 +806,7 @@ The code below will select the six *two-spin double-quantum transitions* where
                 spectral_width=2000,  # in Hz
                 reference_offset=2000,  # in Hz
                 label="$^{1}$H frequency",
-                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1, -1]}}])],
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1, -1]}}])],
             )
         ],
     )
@@ -913,7 +913,7 @@ The code below will select these *three-spin single-quantum transitions*.
                 spectral_width=4000,  # in Hz
                 reference_offset=1000,  # in Hz
                 label="$^{1}$H frequency",
-                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1, -1, +1]}}])]
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1, -1, +1]}}])]
             )
         ],
     )
@@ -1031,7 +1031,7 @@ the right.
                 spectral_width=200000,  # in Hz
                 reference_offset=0,  # in Hz
                 label="$^{2}$H frequency",
-                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1]}}])],
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}])],
             )
         ],
     )
@@ -1045,7 +1045,7 @@ the right.
                 spectral_width=200000,  # in Hz
                 reference_offset=0,  # in Hz
                 label="$^{2}$H frequency",
-                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [-1]}}])],
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1], "D": [-1]}}])],
             )
         ],
     )
@@ -1061,7 +1061,7 @@ the right.
                 label="$^{2}$H frequency",
                 events=[
                     SpectralEvent(
-                        transition_query=[{"ch1": {"P": [-2]}, "ch2": {"P": [-1]}}]
+                        transition_queries=[{"ch1": {"P": [-2]}, "ch2": {"P": [-1]}}]
                     )
                 ],
             )
@@ -1246,7 +1246,7 @@ affine matrix to perform this shear transformation.
                 reference_offset=-9e3,  # in Hz
                 label="3Q-MAS isotropic dimension",
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [-3], "D": [0]}}])
                 ],
             ),
             SpectralDimension(
@@ -1255,7 +1255,7 @@ affine matrix to perform this shear transformation.
                 reference_offset=-5e3,  # in Hz
                 label="Central Transition Frequency",
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [0]}}])
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [-1], "D": [0]}}])
                 ],
             ),
         ],
@@ -1346,7 +1346,7 @@ Below is the code for simulating a 3Q-MAS spectrum with a double shear transform
                 reference_offset=-9e3,  # in Hz
                 label="3Q-MAS isotropic dimension",
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P": [-3], "D": [0]}}])
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [-3], "D": [0]}}])
                 ],
             ),
             SpectralDimension(
@@ -1355,7 +1355,7 @@ Below is the code for simulating a 3Q-MAS spectrum with a double shear transform
                 reference_offset=0,  # in Hz
                 label="CT Quad-Only Frequency",
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [0]}}])
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [-1], "D": [0]}}])
                 ],
             ),
         ],
@@ -1417,10 +1417,10 @@ code below.
                 label="3Q-MAS isotropic dimension",
                 events=[
                     SpectralEvent(
-                        fraction=9 / 16, transition_query=[{"ch1": {"P": [-3], "D": [0]}}]
+                        fraction=9 / 16, transition_queries=[{"ch1": {"P": [-3], "D": [0]}}]
                     ),
                     SpectralEvent(
-                        fraction=7 / 16, transition_query=[{"ch1": {"P": [-1], "D": [0]}}]
+                        fraction=7 / 16, transition_queries=[{"ch1": {"P": [-1], "D": [0]}}]
                     ),
                 ],
             ),
@@ -1430,7 +1430,7 @@ code below.
                 reference_offset=-5e3,  # in Hz
                 label="Central Transition Frequency",
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P": [-1], "D": [0]}}])
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [-1], "D": [0]}}])
                 ],
             ),
         ],
@@ -1514,9 +1514,9 @@ below.
     from mrsimulator.method import MixingEvent
 
     events = [
-        SpectralEvent(fraction=9 / 16, transition_query=[{"ch1": {"P": [-3], "D": [0]}}]),
+        SpectralEvent(fraction=9 / 16, transition_queries=[{"ch1": {"P": [-3], "D": [0]}}]),
         MixingEvent(query="TotalMixing"),
-        SpectralEvent(fraction=7 / 16, transition_query=[{"ch1": {"P": [-1], "D": [0]}}]),
+        SpectralEvent(fraction=7 / 16, transition_queries=[{"ch1": {"P": [-1], "D": [0]}}]),
         MixingEvent(query="TotalMixing"),
     ]
 
@@ -1599,9 +1599,9 @@ illustrated in the sample code below.
     :context: close-figs
 
     import numpy as np
-    from mrsimulator.method.query import RotationalQuery
-    rot_query_90 = RotationalQuery(angle=np.pi/2, phase=0)
-    rot_query_180 = RotationalQuery(angle=np.pi, phase=0)
+    from mrsimulator.method.query import RotationQuery
+    rot_query_90 = RotationQuery(angle=np.pi/2, phase=0)
+    rot_query_180 = RotationQuery(angle=np.pi, phase=0)
     rot_mixing = MixingEvent(query={
             "ch1": rot_query_90,
             "ch2": rot_query_180
@@ -1867,7 +1867,7 @@ We use the deuterium Site defined earlier in this document.
                 events=[
                     SpectralEvent(
                         fraction=0.5,
-                        transition_query=[
+                        transition_queries=[
                             {"ch1": {"P": [1], "D": [1]}},
                             {"ch1": {"P": [1], "D": [-1]}},
                         ],
@@ -1875,7 +1875,7 @@ We use the deuterium Site defined earlier in this document.
                     MixingEvent(query={"ch1": {"angle": 3.141592, "phase": 0}}),
                     SpectralEvent(
                         fraction=0.5,
-                        transition_query=[
+                        transition_queries=[
                             {"ch1": {"P": [-1], "D": [1]}},
                             {"ch1": {"P": [-1], "D": [-1]}},
                         ],
@@ -1895,7 +1895,7 @@ We use the deuterium Site defined earlier in this document.
                 events=[
                     SpectralEvent(
                         fraction=0.5,
-                        transition_query=[
+                        transition_queries=[
                             {"ch1": {"P": [-1], "D": [1]}},
                             {"ch1": {"P": [-1], "D": [-1]}},
                         ],
@@ -1903,7 +1903,7 @@ We use the deuterium Site defined earlier in this document.
                     MixingEvent(query={"ch1": {"angle": 3.141592 / 2, "phase": 0}}),
                     SpectralEvent(
                         fraction=0.5,
-                        transition_query=[
+                        transition_queries=[
                             {"ch1": {"P": [-1], "D": [1]}},
                             {"ch1": {"P": [-1], "D": [-1]}},
                         ],
@@ -2021,7 +2021,7 @@ is illustrated below.
                 spectral_width=2e4,  # in Hz
                 events=[
                     SpectralEvent(
-                        transition_query=[{"ch1": {"P": [-1]}}],
+                        transition_queries=[{"ch1": {"P": [-1]}}],
                         freq_contrib=["Quad1_2"]
                     )
                 ],
@@ -2038,7 +2038,7 @@ is illustrated below.
                 spectral_width=2e4,  # in Hz
                 events=[
                     SpectralEvent(
-                        transition_query=[{"ch1": {"P": [-1]}}],
+                        transition_queries=[{"ch1": {"P": [-1]}}],
                         freq_contrib=["Shielding1_0", "Shielding1_2"],
                     )
                 ],
@@ -2235,7 +2235,7 @@ Attribute Summaries
       ``["Shielding1_0", "Shielding1_2"]``. By default, the list is all frequency enumerations and
       all frequency contributions are calculated.
 
-  * - transition_query
+  * - transition_queries
     - ``list``
     - An *optional* ``list`` of :ref:`transition_api` objects, or their ``dict`` representations
       selecting transitions active during the event. Only these selected transitions will
