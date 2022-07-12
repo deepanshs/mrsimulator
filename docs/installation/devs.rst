@@ -28,7 +28,24 @@ Create a development environment
 
 It is good practice to create separate virtual environments when developing packages.
 There are many environment managers available; however, we recommend using
-`Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_
+`Anaconda or Miniconda <https://docs.anaconda.com/anaconda/install/>`_.
+
+.. note::
+
+    For Mac users with Apple Silicon, Anaconda and Miniconda are natively supported on M1 as of
+    `release 2022.05 <https://www.anaconda.com/blog/new-release-anaconda-distribution-now-supporting-m1>`__.
+    See the
+    `downloads page <https://docs.conda.io/en/latest/miniconda.html#latest-miniconda-installer-links>`_
+    for compatible versions.
+
+    If your Python is built for Apple Silicon, the following command should display similar
+    output.
+
+    .. code-block:: bash
+
+        $ file `which python`
+        /some/path/to/python: Mach-O 64-bit executable arm64
+
 
 The following is an example of creating a Conda environment.
 
@@ -163,6 +180,12 @@ packages with pip. In the directory where your copy of **mrsimulator** is, type:
 As before, if you get an error that you don’t have the permission to install the
 package into the default site-packages directory, you may try installing by adding the
 ``--user`` option.
+
+.. note::
+
+    If you are using a Mac with Apple Silicon and unable to install **mrsimulator**,
+    `open an issue <https://github.com/deepanshs/mrsimulator/issues/new/choose>`__ on
+    the GitHub page.
 
 
 Note for the developers and contributors
