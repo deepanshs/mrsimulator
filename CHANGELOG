@@ -84,6 +84,8 @@ Please review these changes and make changes according.
   Use `SignalProcessor.apply_operations(dataset=...)`
 - The `transition_query` attribute of the `mrsimulator.method.SpectralEvent` class
   is renamed to `transition_queries`.
+- The `mrsimulator.method.query.RotationalQuery` class is renamed to
+  `mrsimulator.method.query.RotationQuery`
 
 **For advanced users**
 - Complete redesign of the `TransitionQuery` object. Please refer to the documentation for details.
