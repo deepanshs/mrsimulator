@@ -187,5 +187,5 @@ follows,
     }
 
 where ``ch-`` s are the channels over which the query is performed. Its value is the
-python dictionary representation of the :class:`~mrsimulator.method.query.RotationalQuery`
+python dictionary representation of the :class:`~mrsimulator.method.query.RotationQuery`
 object. A MixingQuery is a channel-wise selective rotation with parameters `angle` and `phase`.

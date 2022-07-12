@@ -138,7 +138,7 @@ explicit **MixingEvent** object between such events. Inside **MixingEvent**
 objects is a :py:meth:`~mrsimulator.method.query.MixingQuery` object, which
 determines the coherence transfer amplitude between transitions. A
 **MixingQuery** object holds
-:py:meth:`~mrsimulator.method.query.RotationalQuery` objects acting on specific
+:py:meth:`~mrsimulator.method.query.RotationQuery` objects acting on specific
 isotopes in the spin system. As before, the isotope upon which the
 **RotationQuery** objects act is determined by the ``channels`` attribute in the
 **Method** object.
@@ -1599,9 +1599,9 @@ illustrated in the sample code below.
     :context: close-figs
 
     import numpy as np
-    from mrsimulator.method.query import RotationalQuery
-    rot_query_90 = RotationalQuery(angle=np.pi/2, phase=0)
-    rot_query_180 = RotationalQuery(angle=np.pi, phase=0)
+    from mrsimulator.method.query import RotationQuery
+    rot_query_90 = RotationQuery(angle=np.pi/2, phase=0)
+    rot_query_180 = RotationQuery(angle=np.pi, phase=0)
     rot_mixing = MixingEvent(query={
             "ch1": rot_query_90,
             "ch2": rot_query_180
