@@ -54,7 +54,7 @@ def assert_parsing(method, fn1):
     event_error = "Event objects are immutable for"
     serialize = fn1.json()
     ent = serialize["spectral_dimensions"][0]["events"]
-    ent[0]["transition_query"][0]["ch1"]["P"] = [-100]
+    ent[0]["transition_queries"][0]["ch1"]["P"] = [-100]
 
     if method not in [Method]:
         with pytest.raises(ImmutableEventError, match=f".*{event_error}.*"):
@@ -65,7 +65,9 @@ def assert_parsing(method, fn1):
 
         with pytest.raises(ImmutableEventError, match=f".*{event_error}.*"):
             ent[0]["fraction"] = 0.5
-            ent.append({"fraction": 0.5, "transition_query": [{"ch1": {"P": [-100]}}]})
+            ent.append(
+                {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [-100]}}]}
+            )
             method.parse_dict_with_units(serialize)
 
 

@@ -56,12 +56,12 @@ class SSB2D(BaseNamedMethod2D):
     @classmethod
     def update(cls, **kwargs):
         # events for spectral dimension at index 0
-        events_0 = [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}]
+        events_0 = [{"transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]}]
         # events for spectral dimension at index 1
         events_1 = [
             {
                 "rotor_frequency": 1.0e12,
-                "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
             },
         ]
         return {"spectral_dimensions": [{"events": events_0}, {"events": events_1}]}

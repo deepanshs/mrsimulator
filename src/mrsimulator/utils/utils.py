@@ -42,13 +42,13 @@ def _update_old_dict_struct(py_dict):
 
     # Attempt to convert old transition queries
     if "methods" in py_dict["simulator"]:
-        _ = [convert_transition_query(mtd) for mtd in py_dict["simulator"]["methods"]]
+        _ = [convert_transition_queries(mtd) for mtd in py_dict["simulator"]["methods"]]
 
     return py_dict
 
 
-def convert_transition_query(py_dict):
-    """Convert transition_query->P->... to transition_query->ch1->P->... if no channel
+def convert_transition_queries(py_dict):
+    """Convert transition_queries->P->... to transition_queries->ch1->P->... if no channel
     is defined."""
     # check if old structure without channels
     missing_channels = (
@@ -56,36 +56,36 @@ def convert_transition_query(py_dict):
         for dim in py_dict["spectral_dimensions"]
         if "spectral_dimensions" in py_dict and "events" in dim
         for evt in dim["events"]
-        if "transition_query" in evt
-        for tq in evt["transition_query"]
+        if "transition_queries" in evt
+        for tq in evt["transition_queries"]
     )
     if not all(missing_channels):
         return
 
-    map_transition_query_object_to_v_7(py_dict)
+    map_transition_queries_object_to_v_7(py_dict)
     # warnings.warn(VO7_QUERY_WARNING, UserWarning)
     # Add channels to transition queries
     for dim in py_dict["spectral_dimensions"]:
         if "events" in dim:
             for event in dim["events"]:
-                if "transition_query" in event:
-                    transitions = [{"ch1": tq} for tq in event["transition_query"]]
-                    event["transition_query"] = transitions
+                if "transition_queries" in event:
+                    transitions = [{"ch1": tq} for tq in event["transition_queries"]]
+                    event["transition_queries"] = transitions
 
 
-def map_transition_query_object_to_v_7(py_dict):
+def map_transition_queries_object_to_v_7(py_dict):
     """Update the transition query dict object from version 0.6 to version 0.7
 
     1. update transition query dist to a list of dicts.
     """
     # update transition query list
     _ = [
-        evt.update({"transition_query": [evt["transition_query"]]})
+        evt.update({"transition_queries": [evt["transition_queries"]]})
         for dim in py_dict["spectral_dimensions"]
         if "events" in dim
         for evt in dim["events"]
-        if "transition_query" in evt
-        if not isinstance(evt["transition_query"], list)
+        if "transition_queries" in evt
+        if not isinstance(evt["transition_queries"], list)
     ]
 
     _ = [
@@ -93,7 +93,7 @@ def map_transition_query_object_to_v_7(py_dict):
         for dim in py_dict["spectral_dimensions"]
         if "events" in dim
         for evt in dim["events"]
-        if "transition_query" in evt
+        if "transition_queries" in evt
     ]
 
 
@@ -138,10 +138,10 @@ def map_p_and_d_symmetry_to_v_7(py_dict):
             return [{"P": p if isinstance(p, list) else [p]} for p in itemP]
 
     val = []
-    for item in py_dict["transition_query"]:
+    for item in py_dict["transition_queries"]:
         val += expand_p_and_d(item) if "P" in item or "D" in item else [item]
 
-    py_dict.update({"transition_query": val})
+    py_dict.update({"transition_queries": val})
 
 
 # def prepare_method_structure(template, **kwargs):
@@ -185,9 +185,9 @@ def map_p_and_d_symmetry_to_v_7(py_dict):
 #                 parse_events(evt)
 #     return spectral_dimensions
 # def parse_events(evt):
-#     if "transition_query" not in evt.keys():
+#     if "transition_queries" not in evt.keys():
 #         return
-#     t_query = evt["transition_query"]
+#     t_query = evt["transition_queries"]
 #     for item in t_query:
 #         keys = item.keys()
 #         if "ch1" not in keys and "ch2" not in keys and "ch3" not in keys:

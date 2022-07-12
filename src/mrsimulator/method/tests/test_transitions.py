@@ -12,12 +12,12 @@ __email__ = "srivastava.89@osu.edu"
 
 method1 = Method(
     channels=["13C"],
-    spectral_dimensions=[{"events": [{"transition_query": [{"ch1": {"P": [-1]}}]}]}],
+    spectral_dimensions=[{"events": [{"transition_queries": [{"ch1": {"P": [-1]}}]}]}],
 )
 
 method2 = Method(
     channels=["13C"],
-    spectral_dimensions=[{"events": [{"transition_query": [{"ch1": {"P": [-2]}}]}]}],
+    spectral_dimensions=[{"events": [{"transition_queries": [{"ch1": {"P": [-2]}}]}]}],
 )
 
 
@@ -96,9 +96,9 @@ def test_hahn():
         spectral_dimensions=[
             {
                 "events": [
-                    {"fraction": 0.5, "transition_query": [{"ch1": {"P": [1]}}]},
+                    {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [1]}}]},
                     {"query": {"ch1": {"angle": np.pi, "phase": 0}}},
-                    {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]},
+                    {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [-1]}}]},
                 ]
             },
         ],
@@ -124,12 +124,14 @@ def test_cosy():
         spectral_dimensions=[
             {
                 "events": [
-                    {"fraction": 1, "transition_query": [{"ch1": {"P": [-1]}}]},
+                    {"fraction": 1, "transition_queries": [{"ch1": {"P": [-1]}}]},
                     {"query": {"ch1": {"angle": np.pi / 2, "phase": 0}}},
                 ],
             },
             {
-                "events": [{"fraction": 1, "transition_query": [{"ch1": {"P": [-1]}}]}],
+                "events": [
+                    {"fraction": 1, "transition_queries": [{"ch1": {"P": [-1]}}]}
+                ],
             },
         ],
     )
@@ -169,12 +171,12 @@ def test_total_mixing():
         spectral_dimensions=[
             SpectralDimension(
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P": [-1]}}]),
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
                     MixingEvent(query=MixingEnum.TotalMixing),
                 ]
             ),
             SpectralDimension(
-                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1]}}])]
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}])]
             ),
         ],
     )
@@ -203,12 +205,12 @@ def test_no_mixing():
         spectral_dimensions=[
             SpectralDimension(
                 events=[
-                    SpectralEvent(transition_query=[{"ch1": {"P": [-1]}}]),
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
                     MixingEvent(query=MixingEnum.NoMixing),
                 ]
             ),
             SpectralDimension(
-                events=[SpectralEvent(transition_query=[{"ch1": {"P": [-1]}}])]
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}])]
             ),
         ],
     )

@@ -413,7 +413,7 @@ def method2_df():
                     },
                     {
                         "fraction": 1,
-                        "transition_query": [{"ch1": {"P": [1], "D": [0]}}],
+                        "transition_queries": [{"ch1": {"P": [1], "D": [0]}}],
                     },
                     {
                         "query": {
@@ -429,7 +429,7 @@ def method2_df():
                     },
                     {
                         "duration": 1.5,
-                        "transition_query": [{"ch1": {"P": [-1], "D": [2]}}],
+                        "transition_queries": [{"ch1": {"P": [-1], "D": [2]}}],
                     },
                 ],
             },
@@ -484,14 +484,14 @@ def method3_df():
                 "events": [
                     {
                         "fraction": 0.1,
-                        "transition_query": [
+                        "transition_queries": [
                             {"ch1": {"P": [1, 1]}},
                             {"ch1": {"P": [2]}},
                         ],
                     },
                     {
                         "fraction": 0.9,
-                        "transition_query": [
+                        "transition_queries": [
                             {"ch1": {"P": [-1, -1]}},
                             {"ch1": {"P": [-2]}},
                         ],

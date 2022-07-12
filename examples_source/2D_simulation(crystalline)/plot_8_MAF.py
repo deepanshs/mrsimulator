@@ -65,7 +65,7 @@ maf = Method(
             events=[
                 SpectralEvent(
                     rotor_angle=90 * 3.14159 / 180,  # in rads
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
                 MixingEvent(query="NoMixing"),
             ],
@@ -78,7 +78,7 @@ maf = Method(
             events=[
                 SpectralEvent(
                     rotor_angle=54.735 * 3.14159 / 180,  # in rads
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
         ),

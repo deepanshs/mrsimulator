@@ -90,7 +90,7 @@ def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
         magnetic_flux_density="11.7 T",
         rotor_frequency="25000.0 Hz",
         rotor_angle=f"{angle} rad",
-        transition_query=[{"ch1": {"P": [0]}}],
+        transition_queries=[{"ch1": {"P": [0]}}],
     )
     should_be = {
         "magnetic_flux_density": 11.7,
@@ -104,7 +104,7 @@ def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
         assert the_event.json(units=False) == {
             "fraction": 1.2,
             **should_be,
-            "transition_query": [{"ch1": {"P": [0]}}],
+            "transition_queries": [{"ch1": {"P": [0]}}],
         }
 
     if type_ == "constant_duration":
@@ -113,7 +113,7 @@ def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
         assert the_event.json(units=False) == {
             "duration": 1.2,
             **should_be,
-            "transition_query": [{"ch1": {"P": [0]}}],
+            "transition_queries": [{"ch1": {"P": [0]}}],
         }
 
 
@@ -179,7 +179,7 @@ def test_Mixing_event():
     the_event = MixingEvent.parse_dict_with_units(mix_event_dict)
     basic_mixing_event_tests(the_event)
 
-    # Queries of MixingEvents, like the transition_query of the SpectralEvent, need
+    # Queries of MixingEvents, like the transition_queries of the SpectralEvent, need
     # to be defined in a channel-wise dict. Check to make sure error is raised when
     # P and D symmetries are supplied at the base level
     with pytest.raises(ValidationError):
@@ -220,7 +220,7 @@ def test_total_and_no_mixing():
 
 
 def check_equal(query, isotopes, channels, res):
-    test = SpectralEvent(transition_query=query).combination(isotopes, channels)
+    test = SpectralEvent(transition_queries=query).combination(isotopes, channels)
     for i, item in enumerate(res):
         for item2 in item[0]:
             assert item2 in test[i]["P"]

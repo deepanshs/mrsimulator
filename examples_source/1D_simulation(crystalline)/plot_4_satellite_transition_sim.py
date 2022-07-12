@@ -39,9 +39,9 @@ spin_system = SpinSystem(sites=[site])
 # :ref:`spectral_dim_api` object in Method contains additional argument---`events`.
 #
 # The :ref:`event_api` object is a collection of attributes, which are local to the
-# event. It is here where we define a `transition_query` to select one or more
-# transitions for simulating the spectrum. The two attributes of the `transition_query`
-# are `P` and `D`, which are given as,
+# event. It is here where we define a `transition_queries` to select one or more
+# transitions for simulating the spectrum. The two attributes of the
+# `transition_queries` are `P` and `D`, which are given as,
 #
 # .. math::
 #     P &= m_f - m_i \\
@@ -72,7 +72,7 @@ method = Method(
             events=[
                 SpectralEvent(
                     # Selecting the inner satellite transitions
-                    transition_query=[{"ch1": {"P": [-1], "D": [2]}}],
+                    transition_queries=[{"ch1": {"P": [-1], "D": [2]}}],
                 )
             ],
         )
@@ -122,7 +122,7 @@ method2 = Method(
             reference_offset=1e4,  # in Hz
             events=[
                 SpectralEvent(
-                    transition_query=[
+                    transition_queries=[
                         # select inter satellite transitions
                         {"ch1": {"P": [-1], "D": [2]}},
                         # select outer satellite transitions

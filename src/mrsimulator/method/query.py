@@ -41,7 +41,7 @@ class SymmetryQuery(Parseable):
         >>> method = Method(channels=['1H'], spectral_dimensions=[{"events": [
         ...     {"fraction": 1}
         ... ]}])
-        >>> method.spectral_dimensions[0].events[0].transition_query[0].ch1.P = [-1]
+        >>> method.spectral_dimensions[0].events[0].transition_queries[0].ch1.P = [-1]
 
     D:
         A list of d symmetry functions per site. Here d = :math:`m_f^2 - m_i^2` is the
@@ -51,7 +51,7 @@ class SymmetryQuery(Parseable):
         Example
         -------
 
-        >>> method.spectral_dimensions[0].events[0].transition_query[0].ch1.D = [0]
+        >>> method.spectral_dimensions[0].events[0].transition_queries[0].ch1.D = [0]
 
     """
 

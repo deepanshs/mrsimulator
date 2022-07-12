@@ -20,7 +20,7 @@ MAS_DIM = {
     "events": [
         {
             "rotor_angle": 54.735 * np.pi / 180,
-            "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+            "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
         },
     ],
 }
@@ -34,7 +34,7 @@ sample_method_dict = dict(
     ],
 )
 
-sq_tq = {"transition_query": [{"ch1": {"P": [-1]}}]}
+sq_tq = {"transition_queries": [{"ch1": {"P": [-1]}}]}
 sample_test_output = {
     "count": 1024,
     "events": [
@@ -94,7 +94,7 @@ def test_04():
                 "count": 512,
                 "spectral_width": 5e4,  # in Hz
                 "events": [
-                    {"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]},
+                    {"transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]},
                 ],
             },
             MAS_DIM.copy(),
@@ -112,7 +112,7 @@ def test_BlochDecaySpectrum():
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "25000.0 Hz",
-        "events": [{"transition_query": [{"ch1": {"P": [-1]}}]}],
+        "events": [{"transition_queries": [{"ch1": {"P": [-1]}}]}],
     }
 
     should_be = {
@@ -142,7 +142,7 @@ def test_BlochDecaySpectrum():
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "25000.0 Hz",
-        "events": [{"transition_query": [{"ch1": {"P": [-1]}}]}],
+        "events": [{"transition_queries": [{"ch1": {"P": [-1]}}]}],
     }
 
     should_be = {
@@ -169,7 +169,7 @@ def test_05():
         events=[
             {
                 "rotor_angle": 0 * np.pi / 180,
-                "transition_query": [
+                "transition_queries": [
                     {"ch1": {"P": [-1], "D": [2]}},
                     {"ch1": {"P": [-1], "D": [-2]}},
                 ],
@@ -227,12 +227,12 @@ def test_methods():
                     {
                         "fraction": 0.5,
                         "rotor_angle": 70.12 * 3.14159 / 180,  # in rads
-                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                        "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                     {
                         "fraction": 0.5,
                         "rotor_angle": 30.12 * 3.14159 / 180,  # in rads
-                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                        "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                 ],
             },
@@ -242,7 +242,7 @@ def test_methods():
                 "spectral_width": 3e4,  # in Hz
                 "reference_offset": -7e3,  # in Hz
                 "label": "MAS dimension",
-                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
+                "events": [{"transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]}],
             },
         ],
     )

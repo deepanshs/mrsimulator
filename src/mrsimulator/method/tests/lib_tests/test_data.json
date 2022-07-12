@@ -8,7 +8,7 @@
 				"count": 1024,
 				"spectral_width": "50000.0 Hz",
 				"events": [{
-					"transition_query": [{
+					"transition_queries": [{
 						"ch1": {
 							"P": [-1]
 						}
@@ -19,7 +19,7 @@
 				"count": 1024,
 				"spectral_width": "50000.0 Hz",
 				"events": [{
-					"transition_query": [{
+					"transition_queries": [{
 						"ch1": {
 							"P": [-1]
 						}
@@ -38,7 +38,7 @@
 				"count": 512,
 				"spectral_width": "50000.0 Hz",
 				"events": [{
-					"transition_query": [{
+					"transition_queries": [{
 						"ch1": {
 							"P": [-1],
 							"D": [0]
@@ -51,7 +51,7 @@
 				"spectral_width": "50000.0 Hz",
 				"events": [{
 					"rotor_angle": "0.9553059660790962 rad",
-					"transition_query": [{
+					"transition_queries": [{
 						"ch1": {
 							"P": [-1],
 							"D": [0]
@@ -72,7 +72,7 @@
 				"spectral_width": "5000000.0 Hz",
 				"events": [{
 					"rotor_angle": "0.0 rad",
-					"transition_query": [{
+					"transition_queries": [{
 							"ch1": {
 								"P": [-1],
 								"D": [2]
@@ -92,7 +92,7 @@
 				"spectral_width": "50000.0 Hz",
 				"events": [{
 					"rotor_angle": "0.9553059660790962 rad",
-					"transition_query": [{
+					"transition_queries": [{
 						"ch1": {
 							"P": [-1],
 							"D": [0]
@@ -116,7 +116,7 @@
 				"events": [{
 						"fraction": 0.5,
 						"rotor_angle": "1.2238238377777777 rad",
-						"transition_query": [{
+						"transition_queries": [{
 							"ch1": {
 								"P": [-1],
 								"D": [0]
@@ -126,7 +126,7 @@
 						{
 						"fraction": 0.5,
 						"rotor_angle": "0.5256927266666667 rad",
-						"transition_query": [{
+						"transition_queries": [{
 							"ch1": {
 								"P": [-1],
 								"D": [0]
@@ -141,7 +141,7 @@
 				"reference_offset": "-7000.0 Hz",
 				"label": "MAS dimension",
 				"events": [{
-					"transition_query": [{
+					"transition_queries": [{
 						"ch1": {
 							"P": [-1],
 							"D": [0]

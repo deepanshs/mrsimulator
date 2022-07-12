@@ -166,7 +166,7 @@ class BlochDecaySpectrum(BaseNamedMethod1D):
 
     @classmethod
     def update(cls, **kwargs):
-        events = [{"transition_query": [{"ch1": {"P": [-1]}}]}]
+        events = [{"transition_queries": [{"ch1": {"P": [-1]}}]}]
         return {
             "spectral_dimensions": [{"events": events}],
         }
@@ -185,7 +185,7 @@ class BlochDecayCTSpectrum(BaseNamedMethod1D):
 
     @classmethod
     def update(cls, **kwargs):
-        events = [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}]
+        events = [{"transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]}]
         return {
             "spectral_dimensions": [{"events": events}],
         }

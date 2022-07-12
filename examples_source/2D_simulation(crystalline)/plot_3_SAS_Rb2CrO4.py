@@ -53,7 +53,7 @@ sas = Method(
             events=[
                 SpectralEvent(
                     rotor_angle=70.12 * 3.14159 / 180,  # in radians
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
         ),
@@ -65,7 +65,7 @@ sas = Method(
             events=[
                 SpectralEvent(
                     rotor_angle=54.74 * 3.14159 / 180,  # in radians
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
         ),

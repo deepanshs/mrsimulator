@@ -8,37 +8,37 @@ What's new
 
 - Support for complex amplitude simulation.
 - New isotropic interpolation schemes. Added `isotropic_interpolation` as a `sim.config` parameter.
- Allowed values are `linear` and `Gaussian`.
+  Allowed values are `linear` and `Gaussian`.
 - New `larmor_freq(B0)` function added to the `Isotope` class which returns the Larmor frequency
- of the isotope, given a magnetic flux density. For example, `H1.larmor_freq(B0=9.40)`
+  of the isotope, given a magnetic flux density. For example, `H1.larmor_freq(B0=9.40)`
 - New weak J and dipolar coupling enumerations added to `freq_contrib`.
 - New command-line interface (CLI) tools for mrsimulator.
-- Added 200+ NMR active isotopes to the library. 
+- Added 200+ NMR active isotopes to the library.
 - Support for python 3.10
 
 **Method**
 
 - New Event classes---``SpectralEvent`` and ``MixingEvent``. The MixingEvent controls the transition
- amplitude mixing in a multi-event method.
+  amplitude mixing in a multi-event method.
 - New ``TotalMixing`` and ``NoMixing`` mixing query enumerations for quick scripting of common mixing
- events.
+  events.
 - New weights attribute for the ``TransitionPathway`` object, which holds the probability of
- the transition pathway based on the mixing events defined within the method.
+  the transition pathway based on the mixing events defined within the method.
 - New ``plot()`` function in Method class, which generates a visual representation of the method's events,
- transition pathways, rotor angle, etc.
+  transition pathways, rotor angle, etc.
 - Support for concurrent mixing events.
 - Support for negative spectral width in a spectral dimension.
 - Deprecated ``Method1D`` and ``Method2D`` classes. Use the generic ``mrsimulator.method.Method``
- object for custom 1D and 2D methods.
+  object for custom 1D and 2D methods.
 
 **SpinSystem**
 
 - New function ``simplify()`` to simplifies a spin system object to
- a list of irreducible spin systems.
+  a list of irreducible spin systems.
 - New function ``site_generator()`` added to the utility collection sub-module, which simplifies
- the process of creating Site objects in bulk.
+  the process of creating Site objects in bulk.
 - Added gyromagnetic ratio and quadrupole moment metadata for all isotopes, including unstable
- isotopes.
+  isotopes.
 
 **SignalProcessor**
 
@@ -80,11 +80,13 @@ Please review these changes and make changes according.
 
 - The `mrsimulator.methods` module is renamed as `mrsimulator.method.lib`.
 - The `mrsimulator.signal_processing` module is renamed to `mrsimulator.signal_processor`.
-- The `data` attribute of `SignalProcessor.apply_operations(data=...)` is rename to `dataset`.
- Use `SignalProcessor.apply_operations(dataset=...)`
+- The `data` attribute of `SignalProcessor.apply_operations(data=...)` is renamed to `dataset`.
+  Use `SignalProcessor.apply_operations(dataset=...)`
+- The `transition_query` attribute of the `mrsimulator.method.SpectralEvent` class
+  is renamed to `transition_queries`.
 
 **For advanced users**
-- Complete redesign of the `TransitionQuery` object. Please refer to the documentation for details. 
+- Complete redesign of the `TransitionQuery` object. Please refer to the documentation for details.
 
 
 v0.6.0

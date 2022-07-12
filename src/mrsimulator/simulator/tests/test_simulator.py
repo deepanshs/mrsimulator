@@ -132,7 +132,7 @@ def test_simulator_1():
                 "spectral_dimensions": [
                     {
                         "count": 1024,
-                        "events": [{"transition_query": [{"ch1": {"P": [-1]}}]}],
+                        "events": [{"transition_queries": [{"ch1": {"P": [-1]}}]}],
                         "spectral_width": 25000.0,
                     }
                 ],
