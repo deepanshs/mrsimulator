@@ -269,6 +269,14 @@ def check_for_number_of_spectral_dimensions(py_dict, is_named_method=False, n=No
     if "spectral_dimensions" not in py_dict or py_dict["spectral_dimensions"] == []:
         raise MissingSpectralDimensionError()
 
+    # Currently only support 2 SpectralDimensions in C code, limit to 2 for now
+    num_spec_dims = len(py_dict["spectral_dimensions"])
+    if num_spec_dims > 2:
+        raise NotImplementedError(
+            "Mrsimulator currently supports a maximum of two spectral dimensions. "
+            f"Found {num_spec_dims} spectral dimensions. "
+        )
+
 
 def check_spectral_dimensions_are_dict(py_dict):
     """Check if type of passed spectral dimension is dict
