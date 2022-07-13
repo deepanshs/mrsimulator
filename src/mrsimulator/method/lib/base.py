@@ -43,7 +43,7 @@ class BaseNamedMethod(Method):
             return v
         raise ValueError(
             "`rotor_frequency=1e12 Hz` is fixed for all 2D named Methods, except SSB2D,"
-            "and cannot be modified."
+            " and cannot be modified."
         )
 
     @validator("channels", pre=True, always=True)
