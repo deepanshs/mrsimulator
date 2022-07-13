@@ -187,6 +187,21 @@ class Method(Parseable):
             for item in self.property_units.keys()
             if hasattr(ev, item) and getattr(ev, item) is None
         ]
+        # Check for only one event with 0 < rotor_freq < infinity
+        speeds = [
+            ev.rotor_frequency
+            for sd in self.spectral_dimensions
+            for ev in sd.events
+            if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
+        ]
+        speeds = [sp for sp in speeds if 0 < sp < 1e12]
+        if len(speeds) > 1:
+            raise NotImplementedError(
+                f"Sideband-sideband correlation is not yet supported in mrsimulator. "
+                f"Only one event with non-zero and finite `rotor_frequency` is allowed "
+                f"in a method. Found {len(speeds)} events with rotor frequencies "
+                f"{speeds}."
+            )
 
     @classmethod
     def check(cls, kwargs, is_named_method=False, ndim=None):
@@ -225,29 +240,6 @@ class Method(Parseable):
             raise ValueError(f"Expecting a {dim_len}x{dim_len} affine matrix.")
         if v1.ravel()[0] == 0:
             raise ValueError("The first element of the affine matrix cannot be zero.")
-        return v
-
-    @validator("spectral_dimensions", always=True)
-    def validate_spectral_dimensions(cls, v, *, values, **kwargs):
-        """Check for exactly one non-zero and finite rotor_frequency in the method."""
-
-        global_rf = (
-            0.0 if "rotor_frequency" not in values else values["rotor_frequency"]
-        )
-        speeds = [
-            ev.rotor_frequency if ev.rotor_frequency is not None else global_rf
-            for sd in v
-            for ev in sd.events
-            if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
-        ]
-        # remove all zero and infinite (>1e12 Hz) speeds from list
-        speeds = {sp for sp in speeds if 0 < sp < 1e12}
-        if len(speeds) > 1:
-            raise NotImplementedError(
-                "Sideband-sideband correlation is not supported in mrsimulator. "
-                "Only one event with non-zero finite `rotor_frequency` is allowed "
-                "in a method."
-            )
         return v
 
     @classmethod

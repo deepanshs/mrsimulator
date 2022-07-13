@@ -19,7 +19,7 @@ event_dictionary = {
     "fraction": 0.5,
     "freq_contrib": freq_default,
     "magnetic_flux_density": "9.6 T",
-    "rotor_frequency": "1 kHz",
+    "rotor_frequency": "0 kHz",
     "rotor_angle": "54.735 deg",
 }
 dimension_dictionary = {
@@ -63,7 +63,7 @@ def basic_method_tests(the_method):
         "description": "test worked again",
         "channels": ["1H", "17O"],
         "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1000.0 Hz",
+        "rotor_frequency": "0.0 Hz",
         "rotor_angle": "0.9553059660790962 rad",
         "spectral_dimensions": [
             {
@@ -81,7 +81,7 @@ def basic_method_tests(the_method):
         "description": "test worked again",
         "channels": ["1H", "17O"],
         "magnetic_flux_density": 9.6,
-        "rotor_frequency": 1000.0,
+        "rotor_frequency": 0,
         "rotor_angle": 0.9553059660790962,
         "spectral_dimensions": [
             {
@@ -102,7 +102,7 @@ def test_method():
         "description": "Test-1",
         "channels": ["29Si"],
         "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1 kHz",
+        "rotor_frequency": "0 kHz",
         "rotor_angle": "54.735 deg",
         "spectral_dimensions": [dimension_dictionary],
     }
@@ -117,7 +117,7 @@ def test_method():
         "description": "Test-1",
         "channels": ["29Si"],
         "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1 kHz",
+        "rotor_frequency": "0 kHz",
         "rotor_angle": "54.735 deg",
         "spectral_dimensions": [dimension_dictionary, dimension_dictionary],
     }
@@ -161,7 +161,7 @@ def test_method():
         "description": "Test-1",
         "channels": ["29Si"],
         "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1000.0 Hz",
+        "rotor_frequency": "0.0 Hz",
         "rotor_angle": "0.9553059660790962 rad",
         "spectral_dimensions": [dimension_dictionary_, dimension_dictionary_],
         "simulation": csdm_dataset.to_dict(),
@@ -183,7 +183,7 @@ def test_method():
         "description": "Test-1",
         "channels": ["29Si"],
         "magnetic_flux_density": 9.6,
-        "rotor_frequency": 1000.0,
+        "rotor_frequency": 0,
         "rotor_angle": 0.9553059660790962,
         "spectral_dimensions": [dimension_dictionary_, dimension_dictionary_],
         "simulation": csdm_dataset.to_dict(),
@@ -245,15 +245,13 @@ def test_rotor_frequency():
         )
 
     with pytest.raises(NotImplementedError):
+        # Both events should take 10000 Hz rotor_frequency
         Method(
             channels=["27Al"],
-            rotor_frequency=np.inf,
+            rotor_frequency=10000,
             spectral_dimensions=[
                 SpectralDimension(
-                    events=[
-                        SpectralEvent(fraction=0.5, rotor_frequency=0.1),
-                        SpectralEvent(fraction=0.5, rotor_frequency=456),
-                    ]
+                    events=[SpectralEvent(fraction=0.5), SpectralEvent(fraction=0.5)]
                 )
             ],
         )
