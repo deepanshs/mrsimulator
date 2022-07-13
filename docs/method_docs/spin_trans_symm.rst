@@ -111,7 +111,7 @@ Below is an energy level diagram of two coupled spin :math:`I=1/2` nuclei with
 transition labeled according to their transition symmetry function values.  Note
 that each transition has a unique set of transition symmetry function values.
 
-.. figure:: ../../_static/CoupledOneHalf.*
+.. figure:: ../_static/CoupledOneHalf.*
     :width: 650
     :alt: figure
     :align: center

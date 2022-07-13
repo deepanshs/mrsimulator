@@ -40,6 +40,8 @@ SpectralDimension objects defining the spectral grid. A 2D method will have two 
 dimensions in this list, whereas a 1D method will only have one. See
 :numref:`table_generic_spectral_dimension` for the attributes of a SpectralDimension object.
 
+If you are interested in writing custom Methods, see the :ref:
+
 .. _bloch_decay:
 .. include:: bloch_decay.rst
 

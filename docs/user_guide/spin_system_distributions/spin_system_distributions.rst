@@ -22,6 +22,15 @@ Extended Czjzek Distribution
     extended_czjzek
 
 
+Theoretical Background
+----------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    model_theory
+
+
 User-defined distributions
 --------------------------
 

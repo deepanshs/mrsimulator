@@ -226,11 +226,25 @@ User Guide
     user_guide/spin_system/spin_system
     user_guide/spin_system_distributions/spin_system_distributions
     user_guide/methods_library/methods_library
-    user_guide/method/method
-    user_guide/method/query_objects
     user_guide/simulator/simulator
     user_guide/signal_processor/signal_processor
     user_guide/io/mrsim_IO
+
+Method Documentation
+--------------------
+
+.. toctree::
+  :maxdepth: 2
+  :caption: Method Documentation
+
+  method_docs/method.rst
+  method_docs/overview.rst
+  method_docs/transition_query.rst
+  method_docs/mixing_query.rst
+  method_docs/affine_transformation.rst
+  method_docs/frequency_contrib.rst
+  method_docs/method_theory.rst
+  method_docs/attribute_tables.rst
 
 Examples
 --------
@@ -242,16 +256,6 @@ Examples
     examples/index
     fitting/index
     signal_processor/index
-
-Theory
-------
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Theory
-
-    theory/components
-    theory/models
 
 API and references
 ------------------
@@ -280,31 +284,6 @@ Project details
     credits/acknowledgment
 
 .. .. only:: html
-
-.. 	.. toctree::
-.. 		:maxdepth: 2
-.. 		:caption: Table of Contents:
-
-.. 		about
-.. 		installation
-.. 		requirements
-.. 		understanding-spin_systems
-.. 		getting_started
-.. 		using_mrsimulator_objects
-.. 		load_sample
-.. 		configuring_simulator
-.. 		benchmark
-.. 		examples/index
-.. 		theory/components
-.. 		api_py/py_api
-.. 		api_c/c_api
-
-
-.. understanding_system
-..    objects
-..    spectrum_object
-..    theory/wigner_rotations
-..    examples
 
 Reporting Bugs
 --------------
