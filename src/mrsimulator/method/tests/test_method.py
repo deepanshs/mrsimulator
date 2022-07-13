@@ -261,3 +261,7 @@ def test_empty_spectral_dimensions():
     e = ".*Method requires at least one SpectralDimension, none found.*"
     with pytest.raises(MissingSpectralDimensionError, match=e):
         Method(channels=["1H"])
+
+    e = ".*Mrsimulator currently supports a maximum of two spectral dimensions.*"
+    with pytest.raises(NotImplementedError, match=e):
+        Method(channels=["1H"], spectral_dimensions=[dimension_dictionary] * 3)
