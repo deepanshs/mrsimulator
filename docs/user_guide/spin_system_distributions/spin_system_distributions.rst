@@ -22,15 +22,6 @@ Extended Czjzek Distribution
     extended_czjzek
 
 
-Theoretical Background
-----------------------
-
-.. toctree::
-    :maxdepth: 2
-
-    model_theory
-
-
 User-defined distributions
 --------------------------
 
@@ -42,3 +33,12 @@ models of materials.
     :maxdepth: 2
 
     single_site_sys_gen
+
+
+Theoretical Background
+----------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    model_theory
