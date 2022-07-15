@@ -75,12 +75,6 @@ At the heart of a **Method** object, assigned to its attribute
 in the same order as the time evolution dimensions of the experimental NMR
 sequence. 
 
-.. note::
-
-    Lists in Python are always ordered; however, we use the phrase *ordered list* when
-    the order is necessary for **mrsimulator**.
-
-
 In each **SpectralDimension** object, assigned to the attribute
 ``events``, is an ordered list of :ref:`event_api` objects, which are divided
 into three types: (1) :py:meth:`~mrsimulator.method.SpectralEvent`, (2)
