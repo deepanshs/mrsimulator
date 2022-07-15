@@ -234,7 +234,7 @@ can calculate the standard deviation of the noise region with numpy
 
     # Use region below -20 ppm to calculate the noise standard deviation
     loc = np.where(exp_spectrum.dimensions[0].coordinates < -20e-6)
-    sigma = exp_spectrum[loc].std()
+    sigma = exp_spectrum[loc].real.std()
 
 You can now move to the next step and create the fitting model.
 

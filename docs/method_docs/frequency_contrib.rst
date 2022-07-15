@@ -58,7 +58,7 @@ the corresponding root of the :math:`L`th-rank Legendre polynomial ":math:`P_L(\
 
         \mathbb{c}_4  = -\frac{184}{\sqrt{875}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  - \frac{17}{\sqrt{175}} \, \mathbb{f}_I
 
-As described in ":ref:`method_theory`", these transition symmetry functions play an
+As described in ":ref:`transition_query_documentation`", these transition symmetry functions play an
 essential role in evaluating the individual frequency contributions to the
 overall transition frequency, given in the table below and in
 :py:meth:`~mrsimulator.method.frequency_contrib.FrequencyEnum`. They also aid in
