@@ -4,6 +4,9 @@
 Spin System
 ===========
 
+Overview
+--------
+
 At the heart of any **mrsimulator** calculation is the definition of
 a :ref:`spin_sys_api` object describing the sites and couplings within a spin
 system. Each :ref:`simulator_api` object holds a list of :ref:`spin_sys_api`
@@ -322,7 +325,8 @@ updated to reflect the index `H2_site`` and ``C13_site`` in the sites list. Agai
 :ref:`introduction_isotopomers_example` has good usage cases for multiple couplings in a
 spin system.
 
--------------------------
+Attribute Summaries
+-------------------
 
 .. cssclass:: table-bordered table-striped centered
 .. _table_spin_system:
