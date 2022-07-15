@@ -170,7 +170,7 @@ isotopes are associated with ``ch1``, ``ch2``, and ``ch3``, respectively.
 Currently, **mrsimulator** only supports up to three channels, although this may
 be increased in future versions.
 
-The **TransitionQuery** object goes into an unordered list in the
+The **TransitionQuery** object goes into a list in the
 ``transition_queries`` attribute of a **SpectralEvent** object. The
 **SpectralEvent** object, in turn, is added to an ordered list in the ``events``
 attribute of a **SpectralDimension** object. All this is illustrated in the code
